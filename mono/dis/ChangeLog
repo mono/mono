@@ -1,5 +1,11 @@
 2004-12-10  Martin Baulig  <martin@ximian.com>
 
+	* get.c (init_key_table): Added `type'.
+	(get_generic_param): Also escape the type parameter names.
+	Correctly handle multiple constraints.
+
+2004-12-10  Martin Baulig  <martin@ximian.com>
+
 	* get.c (get_fieldref_signature): Escape the field type and name
 	here, too.
 
