@@ -161,6 +161,7 @@ namespace Novell.Directory.Ldap
 		/// <li>SEARCH_RESULT_REFERENCE = 19;</li>
 		/// <li>EXTENDED_REQUEST        = 23;</li>
 		/// <li>EXTENDED_RESPONSE       = 24;</li>
+		/// <li>INTERMEDIATE_RESPONSE   = 25;</li>
 		/// </ul>
 		/// 
 		/// </summary>
@@ -289,6 +290,10 @@ namespace Novell.Directory.Ldap
 					
 					case EXTENDED_RESPONSE: 
 						name = "LdapExtendedResponse";
+						break;
+
+				        case INTERMEDIATE_RESPONSE:
+					        name = "LdapIntermediateResponse";
 						break;
 					
 					default: 
@@ -484,7 +489,13 @@ namespace Novell.Directory.Ldap
 		/// EXTENDED_RESONSE = 24
 		/// </summary>
 		public const int EXTENDED_RESPONSE = 24;
-		
+
+		/// <summary> An intermediate response operation.
+		/// 
+		/// INTERMEDIATE_RESONSE = 25
+		/// </summary>
+	        public const int INTERMEDIATE_RESPONSE = 25;
+
 		/// <summary> A request or response message for an asynchronous Ldap operation.</summary>
 		protected internal RfcLdapMessage message;
 		

@@ -21,30 +21,44 @@
 * SOFTWARE.
 *******************************************************************************/
 //
-// Novell.Directory.Ldap.LdapReferralHandler.cs
+// Novell.Directory.Ldap.Events.Edir.EdirEventArgs.cs
 //
 // Author:
-//   Sunil Kumar (Sunilk@novell.com)
+//   Anil Bhatia (banil@novell.com)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
 using System;
 
-namespace Novell.Directory.Ldap
+namespace Novell.Directory.Ldap.Events.Edir
 {
-	
-	/// <summary> 
-	/// Shared ancestor to the two types of referral objects - LdapBindHandler and
-	/// LdapAuthHandler.
-	/// 
-	/// </summary>
-	/// <seealso cref="LdapBindHandler">
-	/// </seealso>
-	/// <seealso cref="LdapAuthHandler">
-	/// 
-	/// </seealso>
-	public interface LdapReferralHandler
-		{
-		}
+  /// <summary> 
+  /// This class represents the EventArgs for Edir events in general.
+  /// </summary>
+  public class EdirEventArgs : DirectoryEventArgs
+  {
+    /// <summary> 
+    /// This property gives the contained event information in the form
+    /// of an IntermediateResponse if the contained information is of correct
+    /// type. In case the type of contained information is incorrect, null is returned.
+    /// </summary>
+    public EdirEventIntermediateResponse IntermediateResponse
+    {
+      get
+      {
+	if (ldap_message is EdirEventIntermediateResponse)
+	  return (EdirEventIntermediateResponse)ldap_message;
+	else
+	  return null;
+      }
+    }
+
+    public EdirEventArgs(LdapMessage sourceMessage,
+			 EventClassifiers aClassification)
+      : base(sourceMessage, aClassification)
+    {
+    }
+
+  }
 }

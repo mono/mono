@@ -34,6 +34,8 @@ using Novell.Directory.Ldap;
 using Novell.Directory.Ldap.Asn1;
 using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Utilclass;
+using Mono.Security.Protocol.Tls;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Novell.Directory.Ldap
 {
@@ -304,6 +306,30 @@ namespace Novell.Directory.Ldap
 			}
 			
 		}
+
+
+		///<summary>  Indicates whther the perform Secure Operation or not
+		///</summary>
+                ///
+                ///<returns> 
+                /// True if SSL is on
+                /// False if its not on 
+                ///</returns>
+		public bool SecureSocketLayer
+                {
+			get
+			{
+				return conn.Ssl;
+			}
+			set
+                        {
+				conn.Ssl=value;
+                        }
+                }
+
+
+
+
 		/// <summary> Indicates whether the object has authenticated to the connected Ldap
 		/// server.
 		/// 
@@ -334,6 +360,26 @@ namespace Novell.Directory.Ldap
 			}
 			
 		}
+
+	        /// <summary> Indicatates if the connection is protected by TLS.
+       	 	///
+	        /// </summary>
+       		/// <returns> If startTLS has completed this method returns true.
+        	/// If stopTLS has completed or start tls failed, this method returns false.
+        	/// </returns>
+        	/// <returns>  True if the connection is protected by TLS.
+        	///
+        	/// </returns>
+        	virtual public bool TLS
+        	{
+            		get
+            		{
+		                return conn.TLS;
+            		}
+            
+        	}
+
+
 		/// <summary>  Returns the Server Controls associated with the most recent response
 		/// to a synchronous request on this connection object, or null
 		/// if the latest response contained no Server Controls. The method
@@ -550,6 +596,16 @@ namespace Novell.Directory.Ldap
 			conn = new Connection();
 			return ;
 		}
+		
+/*		public LdapConnection(X509Certificate cert)
+		{
+			InitBlock();
+			// Get a unique connection name for debug
+			conn = new Connection();
+			conn.Cert = cert;
+			return ;
+		}
+*/
 		/*
 		* The following are methods that affect the operation of
 		* LdapConnection, but are not Ldap requests.
@@ -728,6 +784,87 @@ namespace Novell.Directory.Ldap
 		/// LdapTLSSocketFactory an LdapException is thrown.
 		/// 
 		/// </exception>
+
+        public virtual void  startTLS()
+        {
+ 
+            LdapMessage startTLS = MakeExtendedOperation(new LdapExtendedOperation(LdapConnection.START_TLS_OID, null), null);
+                                                                                
+            int tlsID = startTLS.MessageID;
+                                                                                
+            conn.acquireWriteSemaphore(tlsID);
+            try
+            {
+                if (!conn.areMessagesComplete())
+                {
+                    throw new LdapLocalException(ExceptionMessages.OUTSTANDING_OPERATIONS, LdapException.OPERATIONS_ERROR);
+                }
+                // Stop reader when response to startTLS request received
+                conn.stopReaderOnReply(tlsID);
+                                                                                
+                // send tls message
+                LdapResponseQueue queue = SendRequestToServer(startTLS, defSearchCons.TimeLimit, null, null);
+                                                                                
+                LdapExtendedResponse response = (LdapExtendedResponse) queue.getResponse();
+                response.chkResultCode();
+                                                                                
+                conn.startTLS();
+            }
+            finally
+            {
+                //Free this semaphore no matter what exceptions get thrown
+                conn.startReader();
+                conn.freeWriteSemaphore(tlsID);
+           }
+            return ;
+        }
+                                                                                
+        /// <summary> Stops Transport Layer Security(TLS) on the LDAPConnection and reverts
+        /// back to an anonymous state.
+        ///
+        /// @throws LDAPException This can occur for the following reasons: 
+        /// <UL>        
+        /// <LI>StartTLS has not been called before stopTLS</LI>
+        /// <LI>There exists outstanding messages that have not received all
+        /// responses</LI>
+        /// <LI>The sever was not able to support the operation</LI></UL>
+        ///
+        /// <p>Note: The Sun and IBM implementions of JSSE do not currently allow
+        /// stopping TLS on an open Socket.  In order to produce the same results
+        /// this method currently disconnects the socket and reconnects, giving
+        /// the application an anonymous connection to the server, as required
+        /// by StopTLS</p>
+        /// </summary>
+        public virtual void  stopTLS()
+        {
+                                                                                
+            if (!TLS)
+            {
+                throw new LdapLocalException(ExceptionMessages.NO_STARTTLS, LdapException.OPERATIONS_ERROR);
+            }
+                                                                                
+            int semaphoreID = conn.acquireWriteSemaphore();
+            try
+            {
+                if (!conn.areMessagesComplete())
+               {
+                    throw new LdapLocalException(ExceptionMessages.OUTSTANDING_OPERATIONS, LdapException.OPERATIONS_ERROR);
+                }
+                //stopTLS stops and starts the reader thread for us.
+                conn.stopTLS();
+            }
+            finally
+            {
+                conn.freeWriteSemaphore(semaphoreID);
+                                                                                
+                /* Now that the TLS socket is closed, reset everything.  This next
+                line is temporary until JSSE is fixed to properly handle TLS stop */
+                this.Connect(this.Host, this.Port);
+            }
+            return ;
+        }
+                                                                                
+
 		//*************************************************************************
 		// Below are all of the Ldap protocol operation methods
 		//*************************************************************************

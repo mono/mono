@@ -21,63 +21,49 @@
 * SOFTWARE.
 *******************************************************************************/
 //
-// Novell.Directory.Ldap.LdapSearchResultReference.cs
+// Novell.Directory.Ldap.Events.Edir.EventData.ReferralAddress.cs
 //
 // Author:
-//   Sunil Kumar (Sunilk@novell.com)
+//   Anil Bhatia (banil@novell.com)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
-using System;
-using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Asn1;
 
-namespace Novell.Directory.Ldap
+namespace Novell.Directory.Ldap.Events.Edir.EventData
 {
-	
-	/// <summary> 
-	/// Encapsulates a continuation reference from an asynchronous search operation.
-	/// 
-	/// </summary>
-	public class LdapSearchResultReference:LdapMessage
-	{
-		/// <summary> Returns any URLs in the object.
-		/// 
-		/// </summary>
-		/// <returns> The URLs.
-		/// </returns>
-		virtual public System.String[] Referrals
-		{
-			get
-			{
-				Asn1Object[] references = ((RfcSearchResultReference) message.Response).toArray();
-				srefs = new System.String[references.Length];
-				for (int i = 0; i < references.Length; i++)
-				{
-					srefs[i] = ((Asn1OctetString) (references[i])).stringValue();
-				}
-				return (srefs);
-			}
-			
-		}
-		
-		private System.String[] srefs;
-		private static System.Object nameLock; // protect agentNum
-		private static int refNum = 0; // Debug, LdapConnection number
-		private System.String name; // String name for debug
-		/*package*/ /// <summary> Constructs an LdapSearchResultReference object.
-		/// 
-		/// </summary>
-		/// <param name="message">The LdapMessage with a search reference.
-		/// </param>
-		internal LdapSearchResultReference(RfcLdapMessage message):base(message)
-		{
-			return ;
-		}
-		static LdapSearchResultReference()
-		{
-			nameLock = new System.Object();
-		}
-	}
+  /// <summary> 
+  /// This class represents the data for Address(IP/IPX/IPV6 etc) datastructure for
+  /// Edir Events Notification.
+  /// </summary>
+  public class ReferralAddress
+  {
+    protected int address_type;
+    public int AddressType
+    {
+      get
+      {
+	return address_type;
+      }
+    }
+
+    protected string strAddress;
+    public string Address
+    {
+      get
+      {
+	return strAddress;
+      }
+    }
+
+    /// <summary> 
+    /// Returns a string representation of the object.
+    /// </summary>
+    public ReferralAddress(Asn1Sequence dseObject)
+    {
+      address_type = ((Asn1Integer) dseObject.get_Renamed(0)).intValue();
+      strAddress = ((Asn1OctetString) dseObject.get_Renamed(1)).stringValue();
+    }
+  }
 }

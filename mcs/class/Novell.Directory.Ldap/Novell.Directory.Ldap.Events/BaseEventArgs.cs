@@ -21,30 +21,39 @@
 * SOFTWARE.
 *******************************************************************************/
 //
-// Novell.Directory.Ldap.LdapReferralHandler.cs
+// Novell.Directory.Ldap.Events.BaseEventArgs.cs
 //
 // Author:
-//   Sunil Kumar (Sunilk@novell.com)
+//   Anil Bhatia (banil@novell.com)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
 using System;
 
-namespace Novell.Directory.Ldap
+namespace Novell.Directory.Ldap.Events
 {
-	
-	/// <summary> 
-	/// Shared ancestor to the two types of referral objects - LdapBindHandler and
-	/// LdapAuthHandler.
-	/// 
-	/// </summary>
-	/// <seealso cref="LdapBindHandler">
-	/// </seealso>
-	/// <seealso cref="LdapAuthHandler">
-	/// 
-	/// </seealso>
-	public interface LdapReferralHandler
-		{
-		}
+  /// <summary> 
+  /// This is the base class for other EventArgs representing exception 
+  /// and normal events.
+  /// </summary>
+  /// <seealso cref='Novell.Directory.Ldap.Events.DirectoryExceptionEventArgs'/>
+  /// <seealso cref='Novell.Directory.Ldap.Events.DirectoryEventArgs'/>
+  public class BaseEventArgs : EventArgs
+  {
+    protected LdapMessage ldap_message;
+    public LdapMessage ContianedEventInformation
+    {
+      get
+      {
+	return ldap_message;
+      }
+    }
+
+    public BaseEventArgs(LdapMessage message)
+    {
+      ldap_message = message;
+    }
+
+  }
 }

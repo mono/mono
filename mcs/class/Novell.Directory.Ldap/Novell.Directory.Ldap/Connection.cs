@@ -34,6 +34,18 @@ using System.Threading;
 using Novell.Directory.Ldap.Asn1;
 using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Utilclass;
+using Mono.Security.Protocol.Tls;
+using Mono.Security.X509.Extensions;
+using Syscert = System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
+using System.Net;
+using System.Net.Sockets;
+using System.Collections;
+using System.IO;
+using System.Text;
+using Mono.Security.X509;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Novell.Directory.Ldap
 {
@@ -85,6 +97,20 @@ namespace Novell.Directory.Ldap
 				return (cloneCount > 0);
 			}
 			
+		}
+	
+
+
+		internal bool Ssl
+		{
+			get
+			{
+				return ssl;
+			}
+			set
+			{
+				ssl=value;
+			}
 		}
 		/// <summary> gets the host used for this connection</summary>
 		internal System.String Host
@@ -275,6 +301,7 @@ namespace Novell.Directory.Ldap
 		* if nonTLSBackup is null then startTLS has not been called,
 		* or stopTLS has been called to end TLS protection
 		*/
+		private System.Net.Sockets.Socket sock = null;
 		private System.Net.Sockets.TcpClient socket = null;
 		private System.Net.Sockets.TcpClient nonTLSBackup = null;
 		
@@ -282,6 +309,8 @@ namespace Novell.Directory.Ldap
 		private System.IO.Stream out_Renamed = null;
 		// When set to true the client connection is up and running
 		private bool clientActive = true;
+		
+		private bool ssl = false;
 		
 		// Indicates we have received a server shutdown unsolicited notification
 		private bool unsolSvrShutDnNotification = false;
@@ -575,7 +604,46 @@ namespace Novell.Directory.Ldap
 			connect(host, port, 0);
 			return ;
 		}
-		
+
+
+/****************************************************************************/
+ public  bool ServerCertificateValidation(
+                        Syscert.X509Certificate certificate,
+                        int[]                   certificateErrors)
+                {
+			
+			bool retFlag=false;
+
+                        if (certificateErrors != null &&
+                                certificateErrors.Length > 0)
+                        {
+				if( certificateErrors.Length==1 && certificateErrors[0] == -2146762481)
+				{
+						retFlag = true;
+				}
+				else
+                                {
+                                	Console.WriteLine("Detected errors in the Server Certificate:");
+                                                                                                
+       		                         for (int i = 0; i < certificateErrors.Length; i++)
+               		                 {
+                       		                 Console.WriteLine(certificateErrors[i]);
+                                	 }
+					retFlag = false;
+				}
+                        }
+			else
+			{
+				retFlag = true;
+			}
+
+ 
+                        // Skip the server cert errors.
+                        return retFlag;
+                }
+
+
+/***********************************************************************/	
 		/// <summary> Constructs a TCP/IP connection to a server specified in host and port.
 		/// Starts the reader thread.
 		/// 
@@ -614,10 +682,32 @@ namespace Novell.Directory.Ldap
 			{
 				if ((in_Renamed == null) || (out_Renamed == null))
 				{
-   				    socket = new System.Net.Sockets.TcpClient(host, port);
-					
-					in_Renamed = (System.IO.Stream) socket.GetStream();
-					out_Renamed = (System.IO.Stream) socket.GetStream();
+					if(Ssl)
+					{
+						this.host = host;
+						this.port = port;
+						this.sock = 	new Socket ( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+						IPAddress hostadd = Dns.Resolve(host).AddressList[0];
+						IPEndPoint ephost = new IPEndPoint(hostadd,port);
+						sock.Connect(ephost);
+						NetworkStream nstream = new NetworkStream(sock,true);
+						SslClientStream sslstream = new SslClientStream(
+											nstream,
+											host,
+											false,
+											Mono.Security.Protocol.Tls.SecurityProtocolType.Ssl3|Mono.Security.Protocol.Tls.SecurityProtocolType.Tls);
+						sslstream.ServerCertValidationDelegate += new CertificateValidationCallback(ServerCertificateValidation);
+//						byte[] buffer = new byte[0];
+//						sslstream.Read(buffer, 0, buffer.Length);
+//						sslstream.doHandshake();												
+ 						in_Renamed = (System.IO.Stream) sslstream;
+						out_Renamed = (System.IO.Stream) sslstream;
+					}
+					else{
+						socket = new System.Net.Sockets.TcpClient(host, port);				
+						in_Renamed = (System.IO.Stream) socket.GetStream();
+						out_Renamed = (System.IO.Stream) socket.GetStream();
+					}
 				}
 				else
 				{
@@ -688,7 +778,7 @@ namespace Novell.Directory.Ldap
 			lock (this)
 			{
 				Connection conn = this;
-				
+
 				if (cloneCount > 0)
 				{
 					cloneCount--;
@@ -898,6 +988,7 @@ namespace Novell.Directory.Ldap
 					sbyte[] ber = msg.Asn1Object.getEncoding(encoder);
 					out_Renamed.Write(SupportClass.ToByteArray(ber), 0, ber.Length);
 					out_Renamed.Flush();
+
 				}
 				catch (System.Exception ex)
 				{
@@ -913,13 +1004,20 @@ namespace Novell.Directory.Ldap
 				// Close the socket
 				try
 				{
-					socket.Close();
+					if(Ssl)
+					{
+						sock.Shutdown(SocketShutdown.Both);
+						sock.Close();
+					}
+					else
+						socket.Close();
 				}
 				catch (System.IO.IOException ie)
 				{
 					// ignore problem closing socket
 				}
 				socket = null;
+				sock = null;
 			}
 			freeWriteSemaphore(semId);
 			return ;
@@ -988,6 +1086,18 @@ namespace Novell.Directory.Ldap
 			return ;
 		}
 		
+		/// <summary> Indicates if the conenction is using TLS protection
+		///
+		/// Return true if using TLS protection
+		/// </summary>
+		internal bool TLS
+		{
+			get
+			{
+				return (this.nonTLSBackup != null);
+			}
+		}
+		
 		/// <summary> StartsTLS, in this package, assumes the caller has:
 		/// 1) Acquired the writeSemaphore
 		/// 2) Stopped the reader thread
@@ -1001,43 +1111,42 @@ namespace Novell.Directory.Ldap
 		/// and start the reader thread.
 		/// </summary>
 		/* package */
-/*		internal void  startTLS()
+		internal void  startTLS()
 		{
-			if (this.mySocketFactory == null)
-			{
-				throw new LdapException(ExceptionMessages.NO_TLS_FACTORY, LdapException.TLS_NOT_SUPPORTED, null);
-			}
-			else if (!(this.mySocketFactory is LdapTLSSocketFactory))
-			{
-				throw new LdapException(ExceptionMessages.WRONG_FACTORY, LdapException.TLS_NOT_SUPPORTED, null);
-			}
 			
 			try
 			{
 				waitForReader(null);
 				this.nonTLSBackup = this.socket;
-				this.socket = ((LdapTLSSocketFactory) this.mySocketFactory).createSocket(this.socket);
-				this.in_Renamed = (System.IO.Stream) socket.GetStream();
-				this.out_Renamed = (System.IO.Stream) socket.GetStream();
-				
-				if (Debug.Ldap_DEBUG)
-				{
-					Debug.trace(Debug.TLS, "connection.startTLS, nonTLSBackup:" + nonTLSBackup + ", TLSSocket:" + socket + ", input:" + in_Renamed + "," + "output:" + out_Renamed);
-				}
-			}
-			catch (System.Exception uhe)
-			{
-				this.nonTLSBackup = null;
-				throw new LdapException("The host is unknown", LdapException.CONNECT_ERROR, null, uhe);
+/*				this.sock = 	new Socket ( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+				IPAddress hostadd = Dns.Resolve(host).AddressList[0];
+				IPEndPoint ephost = new IPEndPoint(hostadd,port);
+				sock.Connect(ephost);
+*/
+//				NetworkStream nstream = new NetworkStream(this.socket,true);
+				SslClientStream sslstream = new SslClientStream(
+									socket.GetStream(),
+//									nstream,
+									host,
+									false,
+									Mono.Security.Protocol.Tls.SecurityProtocolType.Ssl3| Mono.Security.Protocol.Tls.SecurityProtocolType.Tls);
+				sslstream.ServerCertValidationDelegate = new CertificateValidationCallback(ServerCertificateValidation);
+				this.in_Renamed = (System.IO.Stream) sslstream;
+				this.out_Renamed = (System.IO.Stream) sslstream;
 			}
 			catch (System.IO.IOException ioe)
 			{
 				this.nonTLSBackup = null;
 				throw new LdapException("Could not negotiate a secure connection", LdapException.CONNECT_ERROR, null, ioe);
 			}
+			catch (System.Exception uhe)
+			{
+				this.nonTLSBackup = null;
+				throw new LdapException("The host is unknown", LdapException.CONNECT_ERROR, null, uhe);
+			}
 			return ;
 		}
-*/		
+		
 		/*
 		* Stops TLS.
 		*
@@ -1060,20 +1169,19 @@ namespace Novell.Directory.Ldap
 		* IBM's JSSE hangs when you close the JSSE socket.
 		*/
 		/* package */
-/*		internal void  stopTLS()
+		internal void  stopTLS()
 		{
 			try
 			{
 				this.stopReaderMessageID = Connection.STOP_READING;
-				this.socket.Close();
+				this.out_Renamed.Close();
+				this.in_Renamed.Close();
+//				this.sock.Shutdown(SocketShutdown.Both);
+//				this.sock.Close();
 				waitForReader(null);
 				this.socket = this.nonTLSBackup;
 				this.in_Renamed = (System.IO.Stream) this.socket.GetStream();
 				this.out_Renamed = (System.IO.Stream) this.socket.GetStream();
-				if (Debug.Ldap_DEBUG)
-				{
-					Debug.trace(Debug.TLS, "connection.stopTLS, nonTLSBackup:" + nonTLSBackup + ", TLSSocket:" + socket + ", input:" + in_Renamed + "," + "output:" + out_Renamed);
-				}
 				// Allow the new reader to start
 				this.stopReaderMessageID = Connection.CONTINUE_READING;
 			}
@@ -1088,7 +1196,7 @@ namespace Novell.Directory.Ldap
 			}
 			return ;
 		}
-*///TLS not supported in first release		
+///TLS not supported in first release		
 
 		public class ReaderThread
 		{
@@ -1380,7 +1488,7 @@ namespace Novell.Directory.Ldap
 		static Connection()
 		{
 			nameLock = new System.Object();
-			sdk = new System.Text.StringBuilder("3.0").ToString();
+			sdk = new System.Text.StringBuilder("2.1.1").ToString();
 			protocol = 3;
 		}
 	}

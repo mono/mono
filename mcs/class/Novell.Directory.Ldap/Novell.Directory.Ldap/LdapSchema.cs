@@ -445,7 +445,6 @@ namespace Novell.Directory.Ldap
 				//All non schema attributes are ignored.
 				continue;
 			}
-			return ;
 		}
 		
 		/// <summary> Adds the schema definition to the idList and nameList HashMaps.

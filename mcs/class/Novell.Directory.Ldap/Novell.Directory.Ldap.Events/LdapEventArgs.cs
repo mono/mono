@@ -21,30 +21,63 @@
 * SOFTWARE.
 *******************************************************************************/
 //
-// Novell.Directory.Ldap.LdapReferralHandler.cs
+// Novell.Directory.Ldap.Events.LdapEventArgs.cs
 //
 // Author:
-//   Sunil Kumar (Sunilk@novell.com)
+//   Anil Bhatia (banil@novell.com)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
-using System;
 
-namespace Novell.Directory.Ldap
+using System;
+using System.Text;
+
+using Novell.Directory.Ldap.Controls;
+
+namespace Novell.Directory.Ldap.Events
 {
-	
-	/// <summary> 
-	/// Shared ancestor to the two types of referral objects - LdapBindHandler and
-	/// LdapAuthHandler.
-	/// 
-	/// </summary>
-	/// <seealso cref="LdapBindHandler">
-	/// </seealso>
-	/// <seealso cref="LdapAuthHandler">
-	/// 
-	/// </seealso>
-	public interface LdapReferralHandler
-		{
-		}
+  /// <summary> 
+  /// This class represents the EventArgs for Ldap events in general.
+  /// This is also the base class for more specific Ldap events.
+  /// </summary>
+  /// <seealso cref='Novell.Directory.Ldap.Events.SearchResultEventArgs'/>
+  /// <seealso cref='Novell.Directory.Ldap.Events.SearchReferralEventArgs'/>
+  public class LdapEventArgs : DirectoryEventArgs
+  {
+    protected LdapEventType eType;
+    public LdapEventType EventType
+    {
+      get
+      {
+	return eType;
+      }
+      set
+      {
+	eType = value;
+      }
+    }
+
+    public LdapEventArgs(
+		     LdapMessage sourceMessage,
+		     EventClassifiers aClassification,
+		     LdapEventType aType)
+      : base(sourceMessage, aClassification)
+    {
+      eType = aType;
+    }
+
+    public override string ToString()
+    {
+      StringBuilder buf = new StringBuilder();
+      buf.Append("[");
+      buf.AppendFormat("{0}:", GetType());
+      buf.AppendFormat("(Classification={0})", eClassification);
+      buf.AppendFormat("(Type={0})", eType);
+      buf.AppendFormat("(EventInformation:{0})", ldap_message);
+      buf.Append("]");
+
+      return buf.ToString();
+    }
+  } // end of class LdapEventArgs
 }

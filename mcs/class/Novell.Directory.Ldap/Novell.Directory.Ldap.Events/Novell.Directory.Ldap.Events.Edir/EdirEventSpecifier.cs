@@ -21,30 +21,59 @@
 * SOFTWARE.
 *******************************************************************************/
 //
-// Novell.Directory.Ldap.LdapReferralHandler.cs
+// Novell.Directory.Ldap.Events.Edir.EdirEventSpecifier.cs
 //
 // Author:
-//   Sunil Kumar (Sunilk@novell.com)
+//   Anil Bhatia (banil@novell.com)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
-using System;
 
-namespace Novell.Directory.Ldap
+namespace Novell.Directory.Ldap.Events.Edir
 {
-	
-	/// <summary> 
-	/// Shared ancestor to the two types of referral objects - LdapBindHandler and
-	/// LdapAuthHandler.
-	/// 
-	/// </summary>
-	/// <seealso cref="LdapBindHandler">
-	/// </seealso>
-	/// <seealso cref="LdapAuthHandler">
-	/// 
-	/// </seealso>
-	public interface LdapReferralHandler
-		{
-		}
+  /// <summary>
+  /// This class denotes the mechanism to specify the event of interest.
+  /// </summary>
+  public class EdirEventSpecifier
+  {
+    private EdirEventType event_type;
+    public EdirEventType EventType 
+    {
+      get
+      {
+	return event_type;
+      }
+    }
+
+    private EdirEventResultType event_result_type;
+    public EdirEventResultType EventResultType
+    {
+      get
+      {
+	return event_result_type;
+      }
+    }
+
+    private string event_filter;
+    public string EventFilter
+    {
+      get
+      {
+	return event_filter;
+      } 
+    }
+
+    public EdirEventSpecifier(EdirEventType eventType, EdirEventResultType eventResultType) :
+      this(eventType, eventResultType, null)
+    {
+    }
+
+    public EdirEventSpecifier(EdirEventType eventType, EdirEventResultType eventResultType, string filter)
+    {
+      event_type = eventType;
+      event_result_type = eventResultType;
+      event_filter = filter;
+    }
+  }
 }

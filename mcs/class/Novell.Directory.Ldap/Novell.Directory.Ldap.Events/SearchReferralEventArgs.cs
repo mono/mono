@@ -21,30 +21,34 @@
 * SOFTWARE.
 *******************************************************************************/
 //
-// Novell.Directory.Ldap.LdapReferralHandler.cs
+// Novell.Directory.Ldap.Events.SearchReferralEventArgs.cs
 //
 // Author:
-//   Sunil Kumar (Sunilk@novell.com)
+//   Anil Bhatia (banil@novell.com)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
-using System;
 
-namespace Novell.Directory.Ldap
+namespace Novell.Directory.Ldap.Events
 {
-	
-	/// <summary> 
-	/// Shared ancestor to the two types of referral objects - LdapBindHandler and
-	/// LdapAuthHandler.
-	/// 
-	/// </summary>
-	/// <seealso cref="LdapBindHandler">
-	/// </seealso>
-	/// <seealso cref="LdapAuthHandler">
-	/// 
-	/// </seealso>
-	public interface LdapReferralHandler
-		{
-		}
+  /// <summary> 
+  /// This class represents the EventArgs corresponding to 
+  /// LdapSearchResultReference notification sent by Ldap Server.
+  /// </summary>
+  public class SearchReferralEventArgs : LdapEventArgs
+  {
+    public SearchReferralEventArgs(LdapMessage sourceMessage,
+				 EventClassifiers aClassification,
+				 LdapEventType aType)
+      : base(sourceMessage, EventClassifiers.CLASSIFICATION_LDAP_PSEARCH, 
+	     LdapEventType.LDAP_PSEARCH_ANY) // TODO: why type is ANY..?
+    {
+    }
+
+    public string[] getUrls() {
+        return ((LdapSearchResultReference) ldap_message).Referrals;
+    }
+
+  }
 }

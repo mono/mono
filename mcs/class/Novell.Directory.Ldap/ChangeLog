@@ -1,14 +1,23 @@
-2003-11-14  Sunil Kumar  <sunilk@novell.com>
-
-	* Changed the Directory structure and Class file names as per the Microsoft Standards.
+2004-12-06 Anil Bhatia <banil@novell.com>
 	
-	* Changed the build scripts accordingly
+	* Updated with support for SSL, 
+	Ldap Events, Edir Events, Intermediate Response
 
-2003-11-15  Sunil Kumar  <sunilk@novell.com>
-	
-	* Changed the LdapConnection public Method name as per MS naming convention
+	* Updated ChangeLog so that latest changes are
+	on the top.
 
-	* Added the Authors description	
+2003-12-14  Sunil Kumar  <sunilk@novell.com>
+
+	* Updated with XML Doc. Support
+
+2003-12-09  Sunil Kumar  <sunilk@novell.com>
+
+	* Updated with Schema Support
+
+2003-11-21  Sunil Kumar  <sunilk@novell.com>
+
+	* Changed the linux build script to replace corlib.dll
+	  with mscorlib.dll
 
 2003-11-16  Sunil Kumar  <sunilk@novell.com>
 
@@ -16,15 +25,19 @@
 	
 	* Added Samples for LDAP controls
 
-2003-11-21  Sunil Kumar  <sunilk@novell.com>
+2003-11-15  Sunil Kumar  <sunilk@novell.com>
+	
+	* Changed the LdapConnection public Method name as per MS naming convention
 
-	* Changed the linux build script to replace corlib.dll
-	  with mscorlib.dll
+	* Added the Authors description	
+	
+2003-11-14  Sunil Kumar  <sunilk@novell.com>
 
-2003-12-09  Sunil Kumar  <sunilk@novell.com>
+	* Changed the Directory structure and Class file names as per the Microsoft Standards.
+	
+	* Changed the build scripts accordingly
 
-	* Updated with Schema Support
 
-2003-12-14  Sunil Kumar  <sunilk@novell.com>
 
-	* Updated with XML Doc. Support
+
+

@@ -32,6 +32,7 @@
 using System;
 using RfcLdapMessage = Novell.Directory.Ldap.Rfc2251.RfcLdapMessage;
 using ExtResponseFactory = Novell.Directory.Ldap.Utilclass.ExtResponseFactory;
+using IntermediateResponseFactory = Novell.Directory.Ldap.Utilclass.IntermediateResponseFactory;
 
 namespace Novell.Directory.Ldap
 {
@@ -218,7 +219,11 @@ namespace Novell.Directory.Ldap
 					ExtResponseFactory fac = new ExtResponseFactory();
 					response = ExtResponseFactory.convertToExtendedResponse(message);
 					break;
-				
+
+				case LdapMessage.INTERMEDIATE_RESPONSE                       : 
+					response = IntermediateResponseFactory.convertToIntermediateResponse(message);
+					break;				
+
 				default: 
 					response = new LdapResponse(message);
 					break;

@@ -269,6 +269,10 @@ namespace Novell.Directory.Ldap.Rfc2251
 					set_Renamed(1, new RfcExtendedResponse(dec, bais, content.Length));
 					break;
 				
+				case LdapMessage.INTERMEDIATE_RESPONSE:
+					set_Renamed(1, new RfcIntermediateResponse(dec, bais, content.Length));
+					break;
+
 				case LdapMessage.MODIFY_RESPONSE: 
 					set_Renamed(1, new RfcModifyResponse(dec, bais, content.Length));
 					break;
