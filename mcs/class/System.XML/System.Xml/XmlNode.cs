@@ -119,10 +119,8 @@ namespace System.Xml
 			set { }
 		}
 
-		[MonoTODO]
 		public abstract string LocalName { get;	}
 
-		[MonoTODO]
 		public abstract string Name	{ get; }
 
 		[MonoTODO]
@@ -134,7 +132,6 @@ namespace System.Xml
 			get { return null; }
 		}
 
-		[MonoTODO]
 		public abstract XmlNodeType NodeType { get;	}
 
 		[MonoTODO]
@@ -329,10 +326,8 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public abstract void WriteContentTo (XmlWriter w);
 
-		[MonoTODO]
 		public abstract void WriteTo (XmlWriter w);
 
 		#endregion

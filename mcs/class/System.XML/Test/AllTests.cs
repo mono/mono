@@ -20,6 +20,7 @@ namespace Ximian.Mono.Tests
 			get {
 				TestSuite suite =  new TestSuite ();
 				suite.AddTest (new TestSuite (typeof (XmlTextReaderTests)));
+				suite.AddTest (new TestSuite (typeof (XmlTextWriterTests)));
 				suite.AddTest (new TestSuite (typeof (XmlNamespaceManagerTests)));
 				suite.AddTest (new TestSuite (typeof (XmlAttributeTests)));
 				suite.AddTest (new TestSuite (typeof (XmlDocumentTests)));

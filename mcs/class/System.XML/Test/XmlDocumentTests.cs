@@ -17,12 +17,6 @@ namespace Ximian.Mono.Tests
 			document = new XmlDocument ();
 		}
 
-		///////////////////////////////////////////////////////////////////////
-		//
-		//  Createxxx() tests.
-		//
-		///////////////////////////////////////////////////////////////////////
-		
 		public void TestCreateProcessingInstructionInvalid()
 		{
 			XmlProcessingInstruction processingInstruction;
@@ -44,7 +38,6 @@ namespace Ximian.Mono.Tests
 //				Fail("Should have thrown an ArgumentException.");
 //			} catch (ArgumentException) { }
 			
-
 			processingInstruction = null;
 			processingInstruction = document.CreateProcessingInstruction("foo", "bar?>baz");
 			Assert(processingInstruction != null);
@@ -66,12 +59,6 @@ namespace Ximian.Mono.Tests
 
 		}
 
-
-		///////////////////////////////////////////////////////////////////////
-		//
-		//  LoadXml(string) tests.
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		public void TestLoadProcessingInstruction ()
 		{
@@ -119,8 +106,8 @@ namespace Ximian.Mono.Tests
 		public void TestLoadXmlElementWithChildElement ()
 		{
 			document.LoadXml ("<foo><bar/></foo>");
-//			Assert (document.ChildNodes.Count == 1);
-//			Assert (document.FirstChild.ChildNodes.Count == 1);
+			Assert (document.ChildNodes.Count == 1);
+			Assert (document.FirstChild.ChildNodes.Count == 1);
 			AssertEquals ("foo", document.DocumentElement.LocalName);
 			AssertEquals ("bar", document.DocumentElement.FirstChild.LocalName);
 		}

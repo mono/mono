@@ -1,77 +1,154 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.Xml.XmlWriter
+// System.Xml.XmlTextWriter
 //
 // Author:
-//   Daniel Weber (daniel-weber@austin.rr.com)
+//   Kral Ferch <kral_ferch@hotmail.com>
 //
-// (C) 2001 Daniel Weber
+// (C) 2002 Kral Ferch
+//
 
 using System;
 
 namespace System.Xml
 {
-	/// <summary>
-	/// Abstract class XmlWriter
-	/// </summary>
 	public abstract class XmlWriter
 	{
-		// Private data members
-		//===========================================================================
+		#region Constructors
 
-		// public properties
-		//===========================================================================
-		/// <summary>
-		/// Get the state of the writer.
-		/// </summary>
-		public abstract WriteState WriteState {get;}
+		protected XmlWriter () { }
 
-		/// <summary>
-		/// Get the current xml:lang scope, or null if not defined.
-		/// </summary>
-		public abstract string XmlLang {get;}
+		#endregion
 
-		/// <summary>
-		/// get an XmlSpace representing the current xml:space scope
-		/// </summary>
-		public abstract XmlSpace XmlSpace {get;}
+		#region Properties
 
-		// Public Methods
-		//===========================================================================
-		/// <summary>
-		/// When overriden, closes this stream and the underlying stream.
-		/// </summary>
-		/// <exception cref="InvalidOperationException">A call is made to write more output when the stream is closed.</exception>
-		public abstract void Close();
+		public abstract WriteState WriteState { get; }
+		
+		public abstract string XmlLang { get; }
 
-		/// <summary>
-		/// Flushes whatever is in the buffer to the underlying streams, and flushes any underlying streams.
-		/// </summary>
-		public abstract void Flush();
+		public abstract XmlSpace XmlSpace { get; }
 
-		/// <summary>
-		/// Returns closest prefix in current namespace, or null if none found.
-		/// </summary>
-		/// <param name="ns">namespace URI to find a prefix for.</param>
-		/// <exception cref="ArgumentException">ns is null, or string.Empty</exception>
-		/// <returns></returns>
-		public abstract string LookupPrefix(string ns);
+		#endregion
 
-		/// <summary>
-		/// Write out all the attributes found at the current position in the XmlReader
-		/// </summary>
-		/// <param name="reader">XmlReader to read from</param>
-		/// <param name="defattr">true to copy default attributes</param>
-		/// <exception cref="ArgumentException">Reader is a null reference</exception>
-		public virtual void WriteAttributes(
-			XmlReader reader,
-			bool defattr
-			)
+		#region Methods
+
+		public abstract void Close ();
+
+		public abstract void Flush ();
+
+		public abstract string LookupPrefix (string ns);
+
+		[MonoTODO]
+		public virtual void WriteAttributes (XmlReader reader, bool defattr)
 		{
-			//TODO - implement XmlWriter.WriteAttributes(XmlReader, bool)
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public void WriteAttributeString (string localName, string value)
+		{
+			throw new NotImplementedException ();
+		}
 
+		[MonoTODO]
+		public void WriteAttributeString (string localName,	string ns, string value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteAttributeString (string prefix, string localName, string ns, string value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public abstract void WriteBase64 (byte[] buffer, int index, int count);
+
+		public abstract void WriteBinHex (byte[] buffer, int index, int count);
+
+		public abstract void WriteCData (string text);
+
+		public abstract void WriteCharEntity (char ch);
+
+		public abstract void WriteChars (char[] buffer, int index, int count);
+
+		public abstract void WriteComment (string text);
+
+		public abstract void WriteDocType (string name, string pubid, string sysid, string subset);
+
+		public void WriteElementString (string localName, string value)
+		{
+			WriteStartElement(localName);
+			WriteString(value);
+			WriteEndElement();
+		}
+
+		public void WriteElementString (string localName, string ns, string value)
+		{
+			WriteStartElement(localName, ns);
+			WriteString(value);
+			WriteEndElement();
+		}
+
+		public abstract void WriteEndAttribute ();
+
+		public abstract void WriteEndDocument ();
+
+		public abstract void WriteEndElement ();
+
+		public abstract void WriteEntityRef (string name);
+
+		public abstract void WriteFullEndElement ();
+
+		public abstract void WriteName (string name);
+
+		public abstract void WriteNmToken (string name);
+
+		[MonoTODO]
+		public virtual void WriteNode (XmlReader reader, bool defattr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public abstract void WriteProcessingInstruction (string name, string text);
+
+		public abstract void WriteQualifiedName (string localName, string ns);
+
+		public abstract void WriteRaw (string data);
+
+		public abstract void WriteRaw (char[] buffer, int index, int count);
+
+		[MonoTODO]
+		public void WriteStartAttribute (string localName, string ns)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public abstract void WriteStartAttribute (string prefix, string localName, string ns);
+
+		public abstract void WriteStartDocument ();
+
+		public abstract void WriteStartDocument (bool standalone);
+
+		[MonoTODO]
+		public void WriteStartElement (string localName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteStartElement (string localName, string ns)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public abstract void WriteStartElement (string prefix, string localName, string ns);
+
+		public abstract void WriteString (string text);
+
+		public abstract void WriteSurrogateCharEntity (char lowChar, char highChar);
+
+		public abstract void WriteWhitespace (string ws);
+
+		#endregion
 	}
 }
