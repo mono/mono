@@ -305,6 +305,39 @@ namespace MonoTests.System.IO
                 	                		
                 }
 
+                [Test]
+                public void Seek ()
+                {
+                	string path = "resources/FST.Seek.Test";
+                	if (File.Exists (path))
+                		File.Delete (path);
+                	
+                	FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+                	FileStream stream2 = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                	
+                	stream.Write (new byte [] {1, 2, 3, 4, 5, 6, 7, 8, 10}, 0, 9);
+                	Assertion.AssertEquals ("test#01", 5, stream2.Seek (5, SeekOrigin.Begin));
+                	Assertion.AssertEquals ("test#02", -1, stream2.ReadByte ());
+                	
+                	Assertion.AssertEquals ("test#03", 2, stream2.Seek (-3, SeekOrigin.Current));
+                	Assertion.AssertEquals ("test#04", -1, stream2.ReadByte ());
+                	
+                	Assertion.AssertEquals ("test#05", 12, stream.Seek (3, SeekOrigin.Current));
+                	Assertion.AssertEquals ("test#06", -1, stream.ReadByte ());
+
+                	Assertion.AssertEquals ("test#07", 5, stream.Seek (-7, SeekOrigin.Current));
+                	Assertion.AssertEquals ("test#08", 6, stream.ReadByte ());
+
+                	Assertion.AssertEquals ("test#09", 5, stream2.Seek (5, SeekOrigin.Begin));
+                	Assertion.AssertEquals ("test#10", 6, stream2.ReadByte ());
+                	                	
+                	stream.Close ();
+                	stream2.Close ();
+
+                	if (File.Exists (path))
+                		File.Delete (path);                	
+                }
+
                 public void TestSeek ()
                 {
                 	if (File.Exists (".testFileStream.Test.2"))
