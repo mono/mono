@@ -1,5 +1,11 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h (MonoBasicBlock): Reorganize fields a bit.
+
+	* mini-ops.h inssel.brg: Add OP_NOT_REACHED.
+
+	* mini.c: Add support for OP_NOT_TAKEN.
+
 	* mini-amd64.h mini-amd64.c: Add support for passing/returning small 
 	structures in registers for pinvoke wrappers.
 
