@@ -31,6 +31,11 @@ SOURCES =				\
 	codegen/BranchInstr.cs		\
 	codegen/SwitchInstr.cs		\
 	codegen/TypeInstr.cs		\
+	codegen/MethodInstr.cs          \
+        codegen/Local.cs                \
+        codegen/IMethodRef.cs           \
+        codegen/ExternMethodRef.cs      \
+        codegen/MethodRef.cs            \
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
