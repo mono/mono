@@ -170,25 +170,21 @@ namespace System.Xml
 		public virtual XmlNodeList GetElementsByTagName (string name)
 		{
 			ArrayList nodeArrayList = new ArrayList ();
-			this.searchNodesRecursively (this, name, nodeArrayList);
+			this.searchNodesRecursively (this, name, String.Empty, nodeArrayList);
 			return new XmlNodeArrayList (nodeArrayList);
 		}
 
-		private void searchNodesRecursively (XmlNode argNode, string argName, ArrayList argArrayList)
+		private void searchNodesRecursively (XmlNode argNode, string argName, string argNamespaceURI, 
+			ArrayList argArrayList)
 		{
 			XmlNodeList xmlNodeList = argNode.ChildNodes;
-			foreach (XmlNode node in xmlNodeList){
-				if (node.Name.Equals (argName))
+			foreach (XmlNode node in xmlNodeList)
+			{
+				if (node.LocalName.Equals (argName) && node.NamespaceURI.Equals (argNamespaceURI))
 					argArrayList.Add (node);
 				else	
-					this.searchNodesRecursively (node, argName, argArrayList);
+					this.searchNodesRecursively (node, argName, argNamespaceURI, argArrayList);
 			}
-		}
-
-		[MonoTODO]
-		public virtual XmlNodeList GetElementsByTagName (string localName, string namespaceURI)
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

@@ -1,6 +1,12 @@
+2002-08-22  Jason Diamond <jason@injektilo.org>
+
+	* XmlDocumentTests.cs, XmlElementTests.cs: Added tests for 
+	namespace qualified GetElementsByTagName courtesy of Matt Hunter 
+	<xrkune@tconl.com>.
+
 2002-08-19  Jason Diamond <jason@injektilo.org>
 
-	* XmlDocument.cs, XmlElement.cs: Added tests for 
+	* XmlDocumentTests.cs, XmlElementTests.cs: Added tests for 
 	GetElementsByTagName courtesy of Matt Hunter <xrkune@tconl.com>.
 
 2002-08-17  Jason Diamond  <jason@injektilo.org>

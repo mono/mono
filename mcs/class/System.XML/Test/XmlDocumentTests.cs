@@ -547,6 +547,29 @@ namespace MonoTests.System.Xml
 			AssertEquals ("GetElementsByTagName (string) returned incorrect count.", 4, bookList.Count);
 		}
 
+		public void TestGetElementsByTagNameUsingNameSpace ()
+		{
+			StringBuilder xml = new StringBuilder ();
+			xml.Append ("<?xml version=\"1.0\" ?><library xmlns:North=\"http://www.foo.com\"");
+			xml.Append ("xmlns:South=\"http://www.goo.com\"><North:book type=\"non-fiction\"> ");
+			xml.Append ("<North:title type=\"intro\">XML Fun</North:title> " );
+			xml.Append ("<North:author>John Doe</North:author> " );
+			xml.Append ("<North:price>34.95</North:price></North:book> " );
+			xml.Append ("<South:book type=\"fiction\"> " );
+			xml.Append ("<South:title>Bear and the Dragon</South:title> " );
+			xml.Append ("<South:author>Tom Clancy</South:author> " );
+                        xml.Append ("<South:price>6.95</South:price></South:book> " );
+			xml.Append ("<South:book type=\"fiction\"><South:title>Bourne Identity</South:title> " );
+			xml.Append ("<South:author>Robert Ludlum</South:author> " );
+			xml.Append ("<South:price>9.95</South:price></South:book></library>");
+
+			MemoryStream memoryStream = new MemoryStream (Encoding.UTF8.GetBytes (xml.ToString ()));
+			document = new XmlDocument ();
+			document.Load (memoryStream);
+			XmlNodeList bookList = document.GetElementsByTagName ("book", "http://www.goo.com");
+			AssertEquals ("GetElementsByTagName (string, uri) returned incorrect count.", 2, bookList.Count);
+		}
+
 	
 		public void TestInnerAndOuterXml ()
 		{
