@@ -650,9 +650,12 @@ namespace System.IO
 				pos = Position + offset;
 				break;
 
-			case SeekOrigin.Begin: default:
+			case SeekOrigin.Begin:
 				pos = offset;
 				break;
+
+			default:
+				throw new ArgumentException ("origin", "Invalid SeekOrigin");
 			}
 
 			if (pos < 0) {

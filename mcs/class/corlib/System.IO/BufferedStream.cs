@@ -112,13 +112,21 @@ namespace System.IO {
 
 		public override long Seek (long offset, SeekOrigin origin)
 		{
-			Flush();
-			return m_stream.Seek(offset, origin);
+			CheckObjectDisposedException ();
+			if (!CanSeek) {
+				throw new NotSupportedException (
+					Locale.GetText ("Non seekable stream."));
+			}
+			Flush ();
+			return m_stream.Seek (offset, origin);
 		}
 
 		public override void SetLength (long value)
 		{
+			CheckObjectDisposedException ();
 			m_stream.SetLength(value);
+			if (Position > value)
+				Position = value;
 		}
 
 		public override int ReadByte ()
