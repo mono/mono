@@ -106,27 +106,95 @@ namespace System.Xml
 			w.WriteRaw (String.Format ("<?xml {0}?>", Value));
 		}
 
+		private int SkipWhitespace (string input, int index)
+		{
+			while (index < input.Length) {
+				if (XmlChar.IsWhitespace (input [index]))
+					index++;
+				else
+					break;
+			}
+			return index;
+		}
+
 		void ParseInput (string input)
 		{
-			char [] sep = new char [] {'\'', '"'};
-			if (!input.Trim (XmlChar.WhitespaceChars).StartsWith ("version"))
-				throw new XmlException("missing \"version\".");
-			int start = input.IndexOf ("encoding");
-			int sstart = -1;
-			if (start > 0) {
-				int valStart = input.IndexOfAny (sep, start) + 1;
-				int valEnd = input.IndexOfAny (sep, valStart);
-				Encoding = input.Substring (valStart, valEnd - valStart);
-				sstart = input.IndexOf ("standalone");
-			}
-			else
-				sstart = input.IndexOf ("standalone");
+			int index = SkipWhitespace (input, 0);
+			if (index + 7 > input.Length || input.IndexOf ("version", index, 7) != index)
+				throw new XmlException ("Missing 'version' specification.");
+			index = SkipWhitespace (input, index + 7);
 
-			if (sstart > 0) {
-				int svalStart = input.IndexOfAny (sep, sstart) + 1;
-				int svalEnd = input.IndexOfAny (sep, svalStart);
-				Standalone = input.Substring (svalStart, svalEnd - svalStart);
-			}	// TODO: some error check
+			char c = input [index];
+			if (c != '=')
+				throw new XmlException ("Invalid 'version' specification.");
+			index++;
+			index = SkipWhitespace (input, index);
+			c = input [index];
+			if (c != '"' && c != '\'')
+				throw new XmlException ("Invalid 'version' specification.");
+			index++;
+			int end = input.IndexOf (c, index);
+			if (end < 0 || input.IndexOf ("1.0", index, 3) != index)
+				throw new XmlException ("Invalid 'version' specification.");
+			index += 4;
+			if (index == input.Length)
+				return;
+			if (!XmlChar.IsWhitespace (input [index]))
+				throw new XmlException ("Invalid XML declaration.");
+			index = SkipWhitespace (input, index + 1);
+			if (index == input.Length)
+				return;
+
+			if (input.Length > index + 8 && input.IndexOf ("encoding", index, 8) > 0) {
+				index = SkipWhitespace (input, index + 8);
+				c = input [index];
+				if (c != '=')
+					throw new XmlException ("Invalid 'version' specification.");
+				index++;
+				index = SkipWhitespace (input, index);
+				c = input [index];
+				if (c != '"' && c != '\'')
+					throw new XmlException ("Invalid 'encoding' specification.");
+				end = input.IndexOf (c, index + 1);
+				if (end < 0)
+					throw new XmlException ("Invalid 'encoding' specification.");
+				Encoding = input.Substring (index + 1, end - index - 1);
+				index = end + 1;
+				if (index == input.Length)
+					return;
+				if (!XmlChar.IsWhitespace (input [index]))
+					throw new XmlException ("Invalid XML declaration.");
+				index = SkipWhitespace (input, index + 1);
+					return;
+			}
+
+			if (input.Length > index + 10 && input.IndexOf ("standalone", index, 10) > 0) {
+				index = SkipWhitespace (input, index + 10);
+				c = input [index];
+				if (c != '=')
+					throw new XmlException ("Invalid 'version' specification.");
+				index++;
+				index = SkipWhitespace (input, index);
+				c = input [index];
+				if (c != '"' && c != '\'')
+					throw new XmlException ("Invalid 'standalone' specification.");
+				end = input.IndexOf (c, index + 1);
+				if (end < 0)
+					throw new XmlException ("Invalid 'standalone' specification.");
+				string tmp = input.Substring (index + 1, end - index - 1);
+				switch (tmp) {
+				case "yes":
+				case "no":
+					break;
+				default:
+					throw new XmlException ("Invalid standalone specification.");
+				}
+				Standalone = tmp;
+				index = end + 1;
+				index = SkipWhitespace (input, index);
+			}
+			if (index != input.Length)
+				throw new XmlException ("Invalid XML declaration.");
 		}
 	}
 }

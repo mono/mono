@@ -1,5 +1,9 @@
 2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDeclaration.cs : More strict check on InnerText and Value.
+
+2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDReader.cs, XmlConvert.cs, XmlDeclaration.cs, XmlImplementation.cs,
 	  XmlNode.cs : Culture independency fix.
 
