@@ -66,7 +66,8 @@ namespace System
 			MethodBase[] match;
 			int count = 0;
 			foreach (ConstructorInfo m in methods) {
-				if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+				// Under MS.NET, Standard|HasThis matches Standard...
+				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
 					continue;
 				found = m;
 				count++;
@@ -84,7 +85,7 @@ namespace System
 			else {
 				count = 0;
 				foreach (ConstructorInfo m in methods) {
-					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
 						continue;
 					match [count++] = m;
 				}
@@ -158,7 +159,8 @@ namespace System
 			foreach (MethodInfo m in methods) {
 				if (String.Compare (m.Name, name, ignoreCase) != 0)
 					continue;
-				if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+				// Under MS.NET, Standard|HasThis matches Standard...
+				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
 					continue;
 				found = m;
 				count++;
@@ -178,7 +180,7 @@ namespace System
 				foreach (MethodInfo m in methods) {
 					if (String.Compare (m.Name, name, ignoreCase) != 0)
 						continue;
-					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
 						continue;
 					match [count++] = m;
 				}

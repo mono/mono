@@ -1,3 +1,8 @@
+2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoType.cs: Make Standard|HasThis match Standard in GetMethod and
+	GetConstructor, as done by MS.
+
 2003-11-19  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* FloatingPointFormatter.cs: Removed some unused variables to prevent csc compiler warnings
