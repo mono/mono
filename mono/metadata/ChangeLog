@@ -1,3 +1,7 @@
+2003-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: fix the build on windows.
+
 2003-08-22 Lluis Sanchez <lluis@ximian.com>
 
 	* object.cs: Fixed bug #47785.
