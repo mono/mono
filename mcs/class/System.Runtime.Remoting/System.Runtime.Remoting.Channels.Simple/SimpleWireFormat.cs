@@ -125,8 +125,6 @@ namespace System.Runtime.Remoting.Channels.Simple {
 			
 			MonoMethodMessage msg = new MonoMethodMessage (svr_type, method_name, args);
 			
-			Console.WriteLine ("Deserialize " + msg);
-			
 			return msg;
 		}
 

@@ -19,7 +19,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 	public class SimpleServerChannel : IChannelReceiver, IChannel
 	{
 		int port = 0;
-		string name = "tcp";
+		string name = "simple";
 		string host;
 		int priority = 1;
 		Thread server_thread = null;
