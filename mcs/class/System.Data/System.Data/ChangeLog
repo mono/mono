@@ -1,3 +1,12 @@
+2003-11-19  Eran Domb  <erand@mainsoft.com>
+	* DataRow.cs : Throw exceptions if Row is Detached. 
+	(EndEdit) : Check that we are not in middle of ChangeEvent.
+	(AcceptChanges) : Detach the row.
+	
+	* DataRelation.cs : throw correct exception.
+	*UniqueConstraint.cs : throw correct exception.
+	
+
 2003-11-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DataRow.cs: Use RemoveInternal instead of Remove because the last
