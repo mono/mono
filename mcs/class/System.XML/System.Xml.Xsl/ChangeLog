@@ -1,5 +1,10 @@
 2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* ManagedXslTransform.cs, XslTransformImpl.cs: Add support for
+	encoding.
+
+2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* *.cs: Support for xsl:output. (Oleg)
 
 2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>

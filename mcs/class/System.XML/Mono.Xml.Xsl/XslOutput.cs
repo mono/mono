@@ -18,6 +18,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using System.Text;
 
 namespace Mono.Xml.Xsl
 {
@@ -36,7 +37,7 @@ namespace Mono.Xml.Xsl
 		QName customMethod;
 		OutputMethod method = OutputMethod.XML; 
 		string version;
-		string encoding;
+		Encoding encoding = System.Text.Encoding.UTF8;
 		bool omitXmlDeclaration;
 		string standalone;
 		string doctypePublic;
@@ -65,7 +66,7 @@ namespace Mono.Xml.Xsl
 			get { return version; }
 		}
 
-		public string Encoding {
+		public Encoding Encoding {
 			get { return encoding; }
 		}
 
@@ -166,7 +167,7 @@ namespace Mono.Xml.Xsl
 
 			att = nav.GetAttribute ("encoding", "");
 			if (att != String.Empty)
-				this.encoding = att;
+				this.encoding = System.Text.Encoding.GetEncoding (att);
 
 			att = nav.GetAttribute ("standalone", "");
 			if (att != String.Empty)

@@ -43,12 +43,16 @@ namespace System.Xml.Xsl {
 			XslOutput xslOutput = (XslOutput)s.Style.Outputs[String.Empty];
 			if (xslOutput == null) {
 				//No xsl:output - subject to output method autodetection, XML for a while
-				Transform(input, args, new XmlTextWriter(output), resolver);
+				XmlWriter w = new XmlTextWriter(output);
+				Transform(input, args, w, resolver);
+				w.Close ();
 				return;
 			}				
 			switch (xslOutput.Method) {
 				case OutputMethod.XML:
-					Transform(input, args, new XmlTextWriter(output), resolver);
+					XmlWriter w = new XmlTextWriter(output);
+					Transform(input, args, w, resolver);
+					w.Close ();
 					break;
 				case OutputMethod.HTML:
 					throw new NotImplementedException("HTML output method is not implemented yet.");
@@ -58,6 +62,15 @@ namespace System.Xml.Xsl {
 				case OutputMethod.Custom:
 					throw new NotImplementedException("Custom output method is not implemented yet.");
 			}
+		}
+		
+		public override void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
+		{
+			XslOutput xslOutput = (XslOutput)s.Style.Outputs[String.Empty];
+			if (xslOutput == null)
+				Transform (input, args, new StreamWriter (output), resolver);
+			else
+				Transform (input, args, new StreamWriter (output, xslOutput.Encoding), resolver);
 		}
 	}
 }

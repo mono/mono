@@ -31,13 +31,16 @@ namespace System.Xml.Xsl {
 		public abstract void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence);	
 
 		public abstract void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver);
-
 		public abstract void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver);
+		public virtual void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
+		{
+			Transform (input, args, new StreamWriter (output), resolver);
+		}
 
 		public virtual void Transform (string inputfile, string outputfile, XmlResolver resolver)
 		{
-			using (StreamWriter w = new StreamWriter (outputfile)) {
-				Transform(new XPathDocument (inputfile).CreateNavigator (), null, w, resolver);
+			using (Stream s =  new FileStream (outputfile, FileMode.Create, FileAccess.ReadWrite)) {
+				Transform(new XPathDocument (inputfile).CreateNavigator (), null, s, resolver);
 			}
 		}
 	}
