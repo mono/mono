@@ -1,4 +1,8 @@
 
+Thu Apr 11 12:29:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: String::GetHashCode() icall implementation.
+
 Wed Apr 10 21:16:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: String::IndexOfAny icall.
