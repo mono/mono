@@ -1,3 +1,7 @@
+2002-08-08  Jason Diamond  <jason@injektilo.org>
+
+	* System.XML_linux_test.args: Added Kral's new test classes.
+
 2002-08-07  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlCharacterDataTests.cs:  New file.

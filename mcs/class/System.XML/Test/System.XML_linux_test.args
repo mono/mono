@@ -9,6 +9,7 @@ NameTableTests.cs
 SelectNodesTests.cs
 XmlAttributeTests.cs
 XmlCDataSectionTests.cs
+XmlCharacterDataTests.cs
 XmlCommentTests.cs
 XmlDeclarationTests.cs
 XmlDocumentTests.cs
@@ -16,6 +17,7 @@ XmlDocumentTypeTests.cs
 XmlElementTests.cs
 XmlNamespaceManagerTests.cs
 XmlNodeListTests.cs
+XmlNodeTests.cs
 XmlProcessingInstructionTests.cs
 XmlSignificantWhitespaceTests.cs
 XmlTextReaderTests.cs
