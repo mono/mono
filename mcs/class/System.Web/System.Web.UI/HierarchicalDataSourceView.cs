@@ -40,8 +40,13 @@ namespace System.Web.UI {
 		protected HierarchicalDataSourceView ()
 		{
 		}
-		
-		public abstract IHierarchicalEnumerable Select();
+	
+		public abstract IHierarchicalEnumerable GetHierarchcialList ();
+		public override IEnumerable Select ()
+		{
+			return GetHierarchicalList ();
+		}	
+	//	public abstract IHierarchicalEnumerable Select();
 	}
 }
 #endif
