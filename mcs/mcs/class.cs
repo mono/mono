@@ -2325,6 +2325,9 @@ namespace Mono.CSharp {
 			// If implementing is still valid, set flags
 			//
 			if (implementing != null){
+				if (implementing.DeclaringType.IsInterface)
+					flags |= MethodAttributes.NewSlot;
+				
 				flags |=
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
@@ -2961,9 +2964,14 @@ namespace Mono.CSharp {
 			// If implementing is still valid, set flags
 			//
 			if (implementing != null){
+				//
+				// When implementing interface methods, set NewSlot.
+				//
+				if (implementing.DeclaringType.IsInterface)
+					flags |= MethodAttributes.NewSlot;
+				
 				flags |=
 					MethodAttributes.Virtual |
-					// removed newslot
 					MethodAttributes.HideBySig;
 
 				// If an interface implementation, then we can set Final.
@@ -3538,9 +3546,14 @@ namespace Mono.CSharp {
 				}
 			}
 			if (implementing != null){
+				//
+				// When implementing interface methods, set NewSlot.
+				//
+				if (implementing.DeclaringType.IsInterface)
+					attr |= MethodAttributes.NewSlot;
+				
 				attr |=
 					MethodAttributes.Virtual |
-					// removed newslot
 					MethodAttributes.HideBySig;
 
 				// If an interface implementing, then we can set final.

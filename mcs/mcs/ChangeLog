@@ -1,5 +1,12 @@
 2002-03-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Property.DefineMethod): When implementing an interface
+	method, set newslot, when implementing an abstract method, do not
+	set the flag (before we tried never setting it, or always setting
+	it, which is the difference).
+	(Indexer.DefineMethod): same.
+	(Method.DefineMethod): same.
+
 	* ecore.cs: Only set the status used flag if we get back a Field.
 
 	* attribute.cs: Temporary hack, so Paolo can keep working.
