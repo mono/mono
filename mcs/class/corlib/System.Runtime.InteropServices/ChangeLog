@@ -1,3 +1,8 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* _Exception.cs: New interface in Fx 2.0 to preserve member's order
+	for COM interop.
+
 2004-06-22  Raja R Harinath  <rharinath@novell.com>
 
 	Fix bootstrap with mcs 0.31.
