@@ -1,5 +1,8 @@
 compiler.pdb
 compiler.exe
+compiler.suo
+compiler.csproj
+compiler.csproj.user
 cs-parser.cs
 y.output
 *.pdb

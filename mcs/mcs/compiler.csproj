@@ -118,6 +118,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "cs-parser.jay"
+                    SubType = "Code"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "cs-tokenizer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
