@@ -101,9 +101,6 @@ namespace System.Runtime.Serialization
 			return assem.GetType (name);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern object GetUninitializedObjectInternal (Type type);
-
 		public static object GetUninitializedObject (Type type)
 		{
 			if (type == null)
@@ -112,7 +109,7 @@ namespace System.Runtime.Serialization
 			if (type == typeof (string))
 				throw new ArgumentException ("Uninitialized Strings cannot be created.");
 
-			return GetUninitializedObjectInternal (type);
+			return System.Runtime.Remoting.Activation.ActivationServices.AllocateUninitializedClassInstance (type);
 		}
 
 		public static object PopulateObjectMembers (object obj, MemberInfo [] members, object [] data)
@@ -147,4 +144,3 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
-

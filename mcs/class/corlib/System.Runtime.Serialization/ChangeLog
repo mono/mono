@@ -1,3 +1,8 @@
+2003-10-18  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* FormatterServices.cs: In GetUninitializedObject methdod, reuse
+	ActivationServices.AllocateUninitializedClassInstance, it does the same.
+
 2003-07-28  Duncan Mak  <duncan@ximian.com>
 
 	* Formatter.cs (WriteSByte): Added CLSCompliant attribute.
