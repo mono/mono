@@ -1,10 +1,3 @@
-//
-// Accoring to the spec (26.7.1), this should compile since
-// there's an implicit reference conversion from B to A.
-//
-// However, csc reports a CS0309.
-//
-
 using System;
 
 public class Foo<T>
@@ -26,12 +19,8 @@ public class A
 	}
 }
 
-public class B
+public class B : A
 {
-	public static implicit operator A (B b)
-	{
-		return new A ();
-	}
 }
 
 class X
