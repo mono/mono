@@ -1,3 +1,9 @@
+2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Initialize pointer type locals correctly.
+	Fixes #72148.
+
+	* iltests.il: Add new test.
 
 Wed Feb 2 16:53:59 CET 2005 Paolo Molaro <lupus@ximian.com>
 
