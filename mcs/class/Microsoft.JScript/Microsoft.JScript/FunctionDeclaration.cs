@@ -117,8 +117,8 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldstr, "STRING_REPRESENTATION_OF_THE_FUNCTION"); // FIXME
 			ig.Emit (OpCodes.Ldnull); // FIXME: this hard coded for now.
 
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			CodeGenerator.load_engine (parent, ig);
+
 			ig.Emit (OpCodes.Call, typeof (FunctionDeclaration).GetMethod ("JScriptFunctionDeclaration"));
 
 			if (parent == null || parent.GetType () == typeof (ScriptBlock))
