@@ -28,13 +28,22 @@ namespace Testing
 
 	public class AnotherAttribute : Attribute {
 		private int n;
+		private string s;
 
 		public AnotherAttribute (int _n) {
 			n = _n;
 		}
 
+		public AnotherAttribute (string _s) {
+			s = _s;
+		}
+
 		public int N {
 			get {return n;}
+		}
+
+		public string S {
+			get {return s;}
 		}
 	}
 
@@ -91,13 +100,13 @@ namespace Testing
 			set {PublicField = value;}
 		}
 
-    public static int StaticGetter {
-      get {return 42;}
-    }
+		public static int StaticGetter {
+			get {return 42;}
+		}
 
-    public static int StaticSetter {
-      set {/* ignore */}
-    }
+		public static int StaticSetter {
+			set {/* ignore */}
+		}
 
 		protected short ProtectedGetter {
 			get {return -1;}
@@ -121,16 +130,16 @@ namespace Testing
 		public const int msBar = 64;
 
 		[MyAttribute ("Some Name")]
-		[return: MyAttribute ("Return Attribute")]
+		[return: AnotherAttribute ("Return Attribute")]
 		public short PublicMethod ([MyAttribute("The parameter")] [AnotherAttribute(42)] short s) 
 		{
 			PubFoo (); return s;
 		}
 
-    public static TestEnum PublicMethod2 ()
-    {
-      return TestEnum.Foo;
-    }
+		public static TestEnum PublicMethod2 ()
+		{
+			return TestEnum.Foo;
+		}
 
 		private int PrivateMethod (int i) {PrivFoo (); return i;}
 		protected long ProtectedMethod (long l) {ProFoo (); return l;}

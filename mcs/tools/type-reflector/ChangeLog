@@ -1,3 +1,38 @@
+2002-12-10  Jonathan Pryor <jonpryor@vt.edu>
+	* TestTypes.cs: Use a different attribute type for [return:] attribute on 
+		TestClass.PublicMethod, as mcs doesn't support [return:] attributes yet
+		and it was generating an error for the two "MyAttribute" attributes.
+
+2002-12-08  Jonathan Pryor <jonpryor@vt.edu>
+	* DESIGN: Read this to understand the new design that was implemented.
+	* ConsoleOutput.cs: Deal with "new world order" of Node objects
+	* Makefile: minor cleanup
+	* TestTypes.cs: additional tests
+	* TypeReflectorOptions.cs: new options
+	* CSharpTypeDisplayer.cs: removed
+	* ExplicitTypeDisplayer.cs: removed
+	* IndentingTypeDisplayer.cs: removed
+	* ReflectionTypeDisplayer.cs: removed
+	* TypeDisplayer.cs: removed
+	* TypeDisplayerFactory.cs: removed
+	* CSharpNodeFormatter.cs: new file
+	* DefaultNodeFormatter.cs: new file
+	* ExplicitNodeFinder.cs: new file
+	* Factories.cs: new file
+	* GroupingNodeFinder.cs: new file
+	* INodeFinder.cs: new file
+	* INodeFormatter.cs: new file
+	* LICENSE: new file
+	* LanguageNodeFormatter.cs: new file
+	* Node.cs: new file
+	* NodeFinder.cs: new file
+	* NodeFormatter.cs: new file
+	* NodeGrouper.cs: new file
+	* NodeInfo.cs: new file
+	* NodeTypes.cs: new file
+	* ReflectionNodeFinder.cs: new file
+	* TypeFactory.cs: new file
+
 2002-09-04  Jonathan Pryor <jonpryor@vt.edu>
 	* CSharpTypeDisplayer.cs: Better attribute output
 	* TestTypes.cs: Improve test cases
