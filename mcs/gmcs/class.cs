@@ -657,7 +657,9 @@ namespace Mono.CSharp {
 				fe.InstanceExpression = instance_expr;
 				ExpressionStatement a = new Assign (fe, e, l);
 
+				ec.IsFieldInitializer = true;
 				a = a.ResolveStatement (ec);
+				ec.IsFieldInitializer = false;
 				if (a == null)
 					return false;
 
@@ -5372,7 +5374,7 @@ namespace Mono.CSharp {
 		public override bool Define ()
 		{
 			MemberType = Parent.ResolveType (Type, false, Location);
-			
+
 			if (MemberType == null)
 				return false;
 

@@ -2957,7 +2957,8 @@ namespace Mono.CSharp {
 					Report_AssignToReadonly (false);
 
 				Type ctype;
-				if (ec.TypeContainer.CurrentType != null)
+				if (!ec.IsFieldInitializer &&
+				    (ec.TypeContainer.CurrentType != null))
 					ctype = ec.TypeContainer.CurrentType.ResolveType (ec);
 				else
 					ctype = ec.ContainerType;
