@@ -1052,5 +1052,27 @@ namespace MonoTests.System.Xml
 			document.AppendChild (document.CreateElement ("root"));
 			document.DocumentElement.AppendChild (document.CreateEntityReference ("foo"));
 		}
+
+		[Test]
+		public void ReadNodeEmptyContent ()
+		{
+			XmlTextReader xr = new XmlTextReader ("", XmlNodeType.Element, null);
+			xr.Read ();
+			Console.WriteLine (xr.NodeType);
+			XmlNode n = document.ReadNode (xr);
+			AssertNull (n);
+		}
+
+		[Test]
+		public void ReadNodeWhitespace ()
+		{
+			XmlTextReader xr = new XmlTextReader ("  ", XmlNodeType.Element, null);
+			xr.Read ();
+			Console.WriteLine (xr.NodeType);
+			document.PreserveWhitespace = false; // Note this line.
+			XmlNode n = document.ReadNode (xr);
+			AssertNotNull (n);
+			AssertEquals (XmlNodeType.Whitespace, n.NodeType);
+		}
 	}
 }

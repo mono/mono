@@ -382,6 +382,15 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void SetAttributeNodeError ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root xmlns:x='urn:foo'/>");
+			doc.DocumentElement.SetAttributeNode ("x:lang", "urn:foo");
+		}
+
+		[Test]
 		public void SetAttributeXmlns ()
 		{
 			// should not affect Element node's xmlns
