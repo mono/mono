@@ -172,24 +172,40 @@ namespace System.Net
 			return values;
 		}
 
-		private static string[] GetMultipleValues (string[] values)
+		static string [] GetMultipleValues (string [] values)
 		{
 			ArrayList mvalues = new ArrayList (values.Length);
+			StringBuilder sb = null;
 			for (int i = 0; i < values.Length; ++i) {
 				string val = values [i];
 				if (val.IndexOf (',') == -1) {
 					mvalues.Add (val);
 					continue;
 				}
-				string[] vals = val.Split (',');
-				for (int j = 0; j < vals.Length; ++j)
-					mvalues.Add (vals [j].Trim ());
+
+				if (sb == null)
+					sb = new StringBuilder ();
+
+				bool quote = false;
+				for (int k = 0; k < val.Length; k++) {
+					char c = val [k];
+					if (c == '"') {
+						quote = !quote;
+					} else if (!quote && c == ',') {
+						mvalues.Add (sb.ToString ().Trim ());
+						sb.Length = 0;
+						continue;
+					}
+					sb.Append (c);
+				}
+
+				if (sb.Length > 0) {
+					mvalues.Add (sb.ToString ().Trim ());
+					sb.Length = 0;
+				}
 			}
-			if (mvalues.Count != values.Length) {
-				values = new string [mvalues.Count];
-				mvalues.CopyTo (values);
-			}
-			return values;
+
+			return (string []) mvalues.ToArray (typeof (string));
 		}
 
 		public static bool IsRestricted (string headerName)

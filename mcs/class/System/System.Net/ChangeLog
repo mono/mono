@@ -1,3 +1,8 @@
+2005-03-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebHeaderCollection.cs: handle commas inside quotes when splitting
+	a multi-value header. Fixes bug #73151.
+
 2005-02-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DigestClient.cs: fix for digest auth. and URIs containing query. Patch
