@@ -1,3 +1,14 @@
+2001-11-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Makefile.am (mono_SOURCES): renamed testjit to mono
+
+	* x86.brg: added debugging support 
+
+	* testjit.c: added support for value types, CFG improvements
+
+	* emit-x86.c (enter_method): handle value types
+	(tree_allocate_regs): impl. a better way to handle chain rules
+
 2001-11-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (INITOBJ): bug fix: initialize data before use,
