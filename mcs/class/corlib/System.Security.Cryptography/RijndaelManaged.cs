@@ -274,7 +274,7 @@ namespace System.Security.Cryptography {
 			Byte curr = 0x1;
 			for (int i=1; i < rcon.Length; i++) {
 				rcon[i] = curr << 24;
-				curr = Mult_GF(2,curr);
+				curr = Mult2_GF(curr);
 			}
 		}
 	
@@ -407,6 +407,17 @@ namespace System.Security.Cryptography {
 				return 0;
 			}
 		}
+
+		// Faster version for 2
+		private Byte Mult2_GF(Byte a)
+		{
+			if ((a & 0x80) == 0) {
+				return (byte) (a << 1);
+			} else {
+				return (byte) ((a << 1) ^ 0x1b);
+			}
+		}
+
 	
 		private void MixColumn()
 		{
@@ -414,7 +425,7 @@ namespace System.Security.Cryptography {
 			for (int col = 0; col < Nb; col++) {
 				for (int row = 0; row < 4; row++) {
 					tmp[row,col] = 
-						Mult_GF(2, state[row, col]) ^
+						Mult2_GF(state[row, col]) ^
 						Mult_GF(3, state[(row+1) % 4, col]) ^
 						state[(row+2) % 4, col] ^
 						state[(row+3) % 4, col];

@@ -1,5 +1,9 @@
 2002-09-22  Andrew Birkett  <andy@nobugs.org>
 
+	* RijndaelManaged.cs: Added faster case for multiplication by 2 in GF(8)
+	
+2002-09-22  Andrew Birkett  <andy@nobugs.org>
+
 	* RijndaelManaged.cs: BlockSize now reports size in bytes.
 	* ICryptoTransform.cs: Updated comments - BlockSizes are in bytes, unlike elsewhere.
 
