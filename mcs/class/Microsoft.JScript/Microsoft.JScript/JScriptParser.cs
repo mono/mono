@@ -225,11 +225,8 @@ _loop4_breakloop:			;
 			if (0==inputState.guessing)
 			{
 				
-						  if (stm != null) {
+						  if (stm != null)
 						  	  elems.Add (stm); 
-						  	  Console.WriteLine ("DEBUG::src_elem::Add::{0}", 
-									     stm.ToString ());
-						  }
 					
 			}
 			break;
@@ -242,7 +239,6 @@ _loop4_breakloop:			;
 				
 						  if (stm != null)
 							  elems.Add (stm);
-							  Console.WriteLine ("DEBUG:src_elem::Add (function)");
 					
 			}
 			break;
@@ -1669,8 +1665,11 @@ _loop58_breakloop:			;
 				if (0==inputState.guessing)
 				{
 					
-							  Binary a = new Binary (parent, left, right, op);
-							  Console.WriteLine ("\nDEBUG::jscript.g::assign_expr::ToString::" + a.ToString () + "\n");
+							  Assign a;
+							  if (right is Assign)
+							  	  a = new Assign (parent, left, right, op, true);
+							  else
+							  	  a = new Assign (parent, left, right, op, false);
 							  assign_expr = a;
 						
 				}
@@ -3146,7 +3145,7 @@ _loop86_breakloop:			;
 		
 			eq_expr = null;
 			AST left = null;
-			Equality right = null;
+			AST right = null;
 		
 		
 		left=relational_expr(parent);
@@ -3157,23 +3156,23 @@ _loop86_breakloop:			;
 					  if (right == null)
 						  eq_expr = left;
 					  else {
-						  eq_expr = new Equality (parent, left, right, right.old_op);
+						  eq_expr = new Binary (parent, left, right, ((Binary) right).old_op);
 					  }
 				
 		}
 		return eq_expr;
 	}
 	
-	public Equality  equality_aux(
+	public AST  equality_aux(
 		AST parent
 	) //throws RecognitionException, TokenStreamException
 {
-		Equality eq_aux;
+		AST eq_aux;
 		
 		
 			eq_aux = null;
 			AST left = null;
-			Equality right = null;
+			AST right = null;
 			JSToken op = JSToken.None;
 		
 		
@@ -3192,11 +3191,10 @@ _loop86_breakloop:			;
 				{
 					
 							   if (right == null)
-								  eq_aux = new Equality (parent, left, null, JSToken.None);
+								  eq_aux = new Binary (parent, left, null, JSToken.None);
 							   else
-								  eq_aux = new Equality (parent, left, right, right.old_op);
-					
-							  eq_aux.old_op = op;
+								  eq_aux = new Binary (parent, left, right, ((Binary) right).old_op);
+							  ((Binary) eq_aux).old_op = op;
 						
 				}
 				break;
