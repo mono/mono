@@ -743,7 +743,7 @@ namespace System.Web {
 		public static string HtmlEncode (string s) 
 		{
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				return null;
 
 			StringBuilder output = new StringBuilder ();
 			

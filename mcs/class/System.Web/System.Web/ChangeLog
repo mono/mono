@@ -1,3 +1,8 @@
+2004-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: return null in HtmlDecode for null input instead of
+	throwing an exception. Patch by Jan Jaros (bug #57083).
+
 2004-04-10  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* TimeoutManager.cs: Swap the order of initialization of contexts
