@@ -84,7 +84,8 @@ namespace System.IO {
 			if (position > size - count)
 				count = size - position;
 
-			Buffer.MemCopy (base_address, position, buffer, offset, count);
+			// FIXME: this method doesn't exist:
+			// Buffer.MemCopy (base_address, position, buffer, offset, count);
 			position += count;
 			return count;
 		}
@@ -95,7 +96,7 @@ namespace System.IO {
 				return -1;
 
 			unsafe {
-				byte *p = base_address.ToPointer ();
+				byte *p = (byte*)base_address;
 				return p [position++];
 			}
 		}
