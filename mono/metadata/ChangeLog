@@ -1,3 +1,7 @@
+2003-10-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c: More refcount fixes.
+
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* string-icalls.c: if we're not trimming, return the same string.
