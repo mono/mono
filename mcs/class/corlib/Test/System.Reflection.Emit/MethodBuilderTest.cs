@@ -553,18 +553,24 @@ public class MethodBuilderTest : Assertion
 
 		MethodBuilder mb = genClass.DefineMethod (
 			mname, MethodAttributes.Public, typeof (void), 
-			new Type [] { typeof (string) });
+			new Type [] { typeof (int), typeof (string) });
 		ParameterBuilder pb = mb.DefineParameter (1, 0, "foo");
+		pb.SetConstant (52);
 		pb.SetCustomAttribute (new CustomAttributeBuilder (typeof (ParamAttribute).GetConstructors () [0], new object [] { }));
+		ParameterBuilder pb2 = mb.DefineParameter (2, 0, "bar");
+		pb2.SetConstant ("foo");
 		mb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		Type t = genClass.CreateType ();
 		MethodInfo m = t.GetMethod (mname);
-		ParameterInfo pi = m.GetParameters ()[0];
+		ParameterInfo[] pi = m.GetParameters ();
 
-		AssertEquals ("foo", pi.Name);
+		AssertEquals ("foo", pi [0].Name);
+		AssertEquals (52, pi [0].DefaultValue);
+		object[] cattrs = pi [0].GetCustomAttributes (true);
 
-		object[] cattrs = pi.GetCustomAttributes (true);
+		AssertEquals ("foo", pi [1].DefaultValue);
+		
 
 		/* This test does not run under MS.NET: */
 		/*

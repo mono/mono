@@ -1,3 +1,7 @@
+2004-10-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBuilderTest.cs: Add tests for default values for parameters.
+
 2004-10-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Added test to ensure NotSupportedException is
