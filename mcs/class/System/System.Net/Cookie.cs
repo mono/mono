@@ -32,7 +32,7 @@ namespace System.Net {
 		private string val;
 		private int version;
 		
-		private static char [] reservedCharsName = new char [] {'=', ';', ',', '\n', '\r', '\t'};
+		private static char [] reservedCharsName = new char [] {' ', '=', ';', ',', '\n', '\r', '\t'};
 		private static char [] reservedCharsValue = new char [] {';', ','};
 		private static char [] portSeparators = new char [] {'"', ','};
                 private static string tspecials = "()<>@,;:\\\"/[]?={} \t";   // from RFC 2965, 2068
@@ -107,14 +107,13 @@ namespace System.Net {
 			get { return name; }
 			set { 
 				if (value == null || value.Length == 0) {
-					name = String.Empty;
-					return;
+					throw new CookieException ("Name cannot be empty");
 				}			
 				
 				if (value [0] == '$' || value.IndexOfAny (reservedCharsName) != -1) {
 					// see CookieTest, according to MS implementation
 					// the name value changes even though it's incorrect
-					name = value;
+					name = String.Empty;
 					throw new CookieException ("Name contains invalid characters");
 				}
 					
@@ -204,7 +203,7 @@ namespace System.Net {
 			       String.Compare (this.name, c.name, true) == 0 &&
 			       String.Compare (this.val, c.val, false) == 0 &&
 			       String.Compare (this.path, c.path, false) == 0 &&
-			       String.Compare (this.domain, c.domain) == 0 &&
+			       String.Compare (this.domain, c.domain, true) == 0 &&
 			       this.version == c.version;
 		}
 		

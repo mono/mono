@@ -1,3 +1,10 @@
+2002-05-09  Lawrence Pit <loz@cable.a2000.nl>
+
+	* fixed bug in IPEndPoint.Equals method
+	* fixed bug in IPAddress.Parse method
+	* fixed bug in IPAddress.SwapLong method
+	* fixed several bugs in Cookie.cs
+
 2002-05-06  Lawrence Pit <loz@cable.a2000.nl>
 
 	* WebRequest.cs: added

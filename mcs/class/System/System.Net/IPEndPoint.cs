@@ -13,6 +13,9 @@ namespace System.Net {
 	[Serializable]
 	public class IPEndPoint : EndPoint {
 
+		private IPAddress address;
+		private int port;
+
 		public const int MaxPort = 65535;
 		public const int MinPort = 0;
 		
@@ -29,10 +32,9 @@ namespace System.Net {
 		{
 		}
 
-		private IPAddress address;
 		public IPAddress Address {
 			get {
-				return(address);
+				return (address);
 			}
 			set {
 				address=value;
@@ -45,7 +47,6 @@ namespace System.Net {
 			}
 		}
 
-		private int port;
 		public int Port {
 			get {
 				return port;
@@ -114,12 +115,10 @@ namespace System.Net {
 
 		public override bool Equals (Object obj)
 		{
-			if (obj is System.Net.IPEndPoint) {
-				return ( ((IPEndPoint) obj).port == port &&
-					 ((IPEndPoint) obj).address == address);
-			}
-
-			return false;
+			IPEndPoint p = obj as IPEndPoint;
+			return p != null && 
+			       p.port == port && 
+			       p.address.Equals (address);
 		}
 
 		public override int GetHashCode ()

@@ -54,7 +54,7 @@ namespace System.Net {
 			byte b5 = (byte) ((number >> 16) & 0xFF);
 			byte b6 = (byte) ((number >> 8) & 0xFF);
 			byte b7 = (byte) (number & 0xFF);
-			return b0 + (b1 << 8) + (b2 << 16) + (b3 << 24) + (b4 << 32) + (b5 << 40) + (b6 << 48) + (b7 << 56);
+			return (long) b0 + ((long) b1 << 8) + ((long) b2 << 16) + ((long) b3 << 24) + ((long) b4 << 32) + ((long) b5 << 40) + ((long) b6 << 48) + ((long) b7 << 56);
 		}
 
 		public static short HostToNetworkOrder(short host) {
@@ -146,12 +146,11 @@ namespace System.Net {
 				throw new FormatException ("the string is not a valid ip");
 
 
-			int a = 0;
+			long a = 0;
 			string [] ips = ip.Split (new char [] {'.'});
 			// Make the number in network order
 			for (int i = ips.Length - 1; i >= 0; i--)
 				a = (a << 8) |  (Byte.Parse(ips [i]));
-			
 			return (new IPAddress (a));
 		}
 		
@@ -160,10 +159,11 @@ namespace System.Net {
 				return address;
 			}
 			set {
-				// FIXME: Temporarily disabled as a workaround for bug #23547
-				/*if (value < 0 || value > 0x00000000FFFFFFFF)
+				/* no need to do this test, ms.net accepts any value.
+				if (value < 0 || value > 0x00000000FFFFFFFF)
 					throw new ArgumentOutOfRangeException (
-						"the address must be between 0 and 0xFFFFFFFF");*/
+						"the address must be between 0 and 0xFFFFFFFF");
+				*/
 
 				address = value;
 			}
