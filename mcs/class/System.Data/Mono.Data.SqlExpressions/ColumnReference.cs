@@ -12,13 +12,13 @@ using System.Collections;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public enum ReferencedTable {
+	internal enum ReferencedTable {
 		Self,
 		Parent,
 		Child
 	}
 	
-	public class ColumnReference : IExpression {
+	internal class ColumnReference : IExpression {
 		ReferencedTable refTable;
 		string relationName, columnName;
 

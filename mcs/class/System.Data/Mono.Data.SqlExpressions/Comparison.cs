@@ -11,7 +11,7 @@ using System;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public class Comparison : BinaryOpExpression {
+	internal class Comparison : BinaryOpExpression {
 		public Comparison (Operation op, IExpression e1, IExpression e2) : base (op, e1, e2) {}
 	
 		override public object Eval (DataRow row)
