@@ -1,5 +1,10 @@
 2005-01-13  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* map.h: Correct Mono_Posix_OpenFlags values (they should now match 
+	  x86 linux); remove unused enumerations (MountFlags, etc.).
+
+2005-01-13  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* fstab.c: Fix HPUX support.  HPUX includes both <fstab.h> and
 	  <checkpoint.h>, so we need to give preference to <checkpoint.h>.
 

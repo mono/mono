@@ -184,18 +184,18 @@ int Mono_Posix_ToSyslogLevel (int x, int *r);
 #define Mono_Posix_OpenFlags_O_RDONLY 0x00000000
 #define Mono_Posix_OpenFlags_O_WRONLY 0x00000001
 #define Mono_Posix_OpenFlags_O_RDWR 0x00000002
-#define Mono_Posix_OpenFlags_O_CREAT 0x00000004
-#define Mono_Posix_OpenFlags_O_EXCL 0x00000008
-#define Mono_Posix_OpenFlags_O_NOCTTY 0x00000010
-#define Mono_Posix_OpenFlags_O_TRUNC 0x00000020
-#define Mono_Posix_OpenFlags_O_APPEND 0x00000040
-#define Mono_Posix_OpenFlags_O_NONBLOCK 0x00000080
-#define Mono_Posix_OpenFlags_O_SYNC 0x00000100
-#define Mono_Posix_OpenFlags_O_NOFOLLOW 0x00000200
-#define Mono_Posix_OpenFlags_O_DIRECTORY 0x00000400
-#define Mono_Posix_OpenFlags_O_DIRECT 0x00000800
-#define Mono_Posix_OpenFlags_O_ASYNC 0x00001000
-#define Mono_Posix_OpenFlags_O_LARGEFILE 0x00002000
+#define Mono_Posix_OpenFlags_O_CREAT 0x00000040
+#define Mono_Posix_OpenFlags_O_EXCL 0x00000080
+#define Mono_Posix_OpenFlags_O_NOCTTY 0x00000100
+#define Mono_Posix_OpenFlags_O_TRUNC 0x00000200
+#define Mono_Posix_OpenFlags_O_APPEND 0x00000400
+#define Mono_Posix_OpenFlags_O_NONBLOCK 0x00000800
+#define Mono_Posix_OpenFlags_O_SYNC 0x00001000
+#define Mono_Posix_OpenFlags_O_NOFOLLOW 0x00020000
+#define Mono_Posix_OpenFlags_O_DIRECTORY 0x00010000
+#define Mono_Posix_OpenFlags_O_DIRECT 0x00004000
+#define Mono_Posix_OpenFlags_O_ASYNC 0x00002000
+#define Mono_Posix_OpenFlags_O_LARGEFILE 0x00008000
 int Mono_Posix_FromOpenFlags (int x, int *r);
 int Mono_Posix_ToOpenFlags (int x, int *r);
 
@@ -325,30 +325,6 @@ int Mono_Posix_ToPosixMadviseAdvice (int x, int *r);
 #define Mono_Posix_Signum_SIGUNUSED 0x0000001f
 int Mono_Posix_FromSignum (int x, int *r);
 int Mono_Posix_ToSignum (int x, int *r);
-
-#define Mono_Posix_MountFlags_MS_RDONLY 0x00000001
-#define Mono_Posix_MountFlags_MS_NOSUID 0x00000002
-#define Mono_Posix_MountFlags_MS_NODEV 0x00000004
-#define Mono_Posix_MountFlags_MS_NOEXEC 0x00000008
-#define Mono_Posix_MountFlags_MS_SYNCHRONOUS 0x00000010
-#define Mono_Posix_MountFlags_MS_REMOUNT 0x00000020
-#define Mono_Posix_MountFlags_MS_MANDLOCK 0x00000040
-#define Mono_Posix_MountFlags_S_WRITE 0x00000080
-#define Mono_Posix_MountFlags_S_APPEND 0x00000100
-#define Mono_Posix_MountFlags_S_IMMUTABLE 0x00000200
-#define Mono_Posix_MountFlags_MS_NOATIME 0x00000400
-#define Mono_Posix_MountFlags_MS_NODIRATIME 0x00000800
-#define Mono_Posix_MountFlags_MS_BIND 0x00001000
-#define Mono_Posix_MountFlags_MS_RMT_MASK 0x00000041
-#define Mono_Posix_MountFlags_MS_MGC_VAL 0xc0ed0000
-#define Mono_Posix_MountFlags_MS_MGC_MSK 0xffff0000
-int Mono_Posix_FromMountFlags (guint64 x, guint64 *r);
-int Mono_Posix_ToMountFlags (guint64 x, guint64 *r);
-
-#define Mono_Posix_UmountFlags_MNT_FORCE 0x00000001
-#define Mono_Posix_UmountFlags_MNT_DETACH 0x00000002
-int Mono_Posix_FromUmountFlags (int x, int *r);
-int Mono_Posix_ToUmountFlags (int x, int *r);
 
 #define Mono_Posix_WaitOptions_WNOHANG 0x00000001
 #define Mono_Posix_WaitOptions_WUNTRACED 0x00000002
