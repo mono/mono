@@ -79,6 +79,7 @@ namespace System.Data.Odbc
 			this.sourceColumn = srcColumn;
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public OdbcParameter(string name, OdbcType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 			: this (name, dataType, size, srcColumn)
 		{
@@ -142,36 +143,57 @@ namespace System.Data.Odbc
 			}
 		}
 		
+ 		[OdbcDescription ("DataParameter_ParameterName")]
+                [DefaultValue ("")]	
 		public string ParameterName {
 			get { return name; }
 			set { name = value; }
 		}
 
+		[OdbcDescription ("DbDataParameter_Precision")]
+                [OdbcCategory ("DataCategory_Data")]
+                [DefaultValue (0)]
 		public byte Precision {
 			get { return precision; }
 			set { precision = value; }
 		}
 		
+                [OdbcDescription ("DbDataParameter_Scale")]
+                [OdbcCategory ("DataCategory_Data")]
+                [DefaultValue (0)]
 		public byte Scale {
 			get { return scale; }
 			set { scale = value; }
 		}
 		
+		[OdbcDescription ("DbDataParameter_Size")]
+                [OdbcCategory ("DataCategory_Data")]
+                [DefaultValue (0)]
 		public int Size {
 			get { return size; }
 			set { size = value; }
 		}
 
+		[OdbcDescription ("DataParameter_SourceColumn")]
+                [OdbcCategory ("DataCategory_Data")]
+                [DefaultValue ("")]
 		public string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
 		}
 		
+                [OdbcDescription ("DataParameter_SourceVersion")]
+                [OdbcCategory ("DataCategory_Data")]
+                [DefaultValue (512)]			
 		public DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
 		}
-		
+
+		[TypeConverter (typeof(StringConverter))]
+                [OdbcDescription ("DataParameter_Value")]
+                [OdbcCategory ("DataCategory_Data")]
+                [DefaultValue (null)]		
 		public object Value {
 			get { 
 				return ParamValue;

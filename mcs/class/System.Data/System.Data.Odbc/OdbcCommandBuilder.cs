@@ -45,7 +45,7 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-		[DataSysDescriptionAttribute ("The DataAdapter for which to automatically generate OleDbCommands")]
+		[OdbcDescriptionAttribute ("The DataAdapter for which to automatically generate OdbcCommands")]
 		[DefaultValue (null)]
 		public OdbcDataAdapter DataAdapter {
 			get {
@@ -57,7 +57,7 @@ namespace System.Data.Odbc
 		}
 
 		[BrowsableAttribute (false)]
-		[DataSysDescriptionAttribute ("The prefix string wrapped around sql objects")]
+		[OdbcDescriptionAttribute ("The prefix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public string QuotePrefix {
 			get {
@@ -69,7 +69,7 @@ namespace System.Data.Odbc
 		}
 
 		[BrowsableAttribute (false)]
-                [DataSysDescriptionAttribute ("The suffix string wrapped around sql objects")]
+                [OdbcDescriptionAttribute ("The suffix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public string QuoteSuffix {
 			get {

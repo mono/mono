@@ -20,12 +20,18 @@ namespace System.Data.Odbc
 		#region Constructors
 
 		[MonoTODO]
+#if NET_1_1
+               [Obsolete ("use OdbcPermission(PermissionState.None)", true)]
+#endif
 		public OdbcPermission () : base (PermissionState.None)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+#if NET_1_1
+               [Obsolete ("use OdbcPermission(PermissionState.None)", true)]
+#endif
 		public OdbcPermission (PermissionState state)
 			: base (state)
 		{

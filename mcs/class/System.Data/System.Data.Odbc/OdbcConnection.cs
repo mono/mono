@@ -59,7 +59,7 @@ namespace System.Data.Odbc
 			get { return hdbc; }
 		}
 	
-		[DataCategory ("Data")]
+		[OdbcCategoryAttribute ("DataCategory_Data")]		
 		[DefaultValue ("")]
 		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]	
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
@@ -280,8 +280,12 @@ namespace System.Data.Odbc
 
 		#region Events and Delegates
 
+		[OdbcDescription ("DbConnection_StateChange")]
+                [OdbcCategory ("DataCategory_StateChange")]
 		public event StateChangeEventHandler StateChange;
 
+ 		[OdbcDescription ("DbConnection_InfoMessage")]
+                [OdbcCategory ("DataCategory_InfoMessage")]
 		public event OdbcInfoMessageEventHandler InfoMessage;
 
 		#endregion

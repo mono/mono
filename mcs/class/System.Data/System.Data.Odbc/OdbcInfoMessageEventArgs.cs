@@ -23,10 +23,6 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-		public int ErrorCode {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
 
 		public OdbcErrorCollection Errors {
 			[MonoTODO]
@@ -34,11 +30,6 @@ namespace System.Data.Odbc
 		}
 
 		public string Message {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
-
-		public string Source {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
