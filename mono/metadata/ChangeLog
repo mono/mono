@@ -1,3 +1,8 @@
+2004-04-26  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c (mono_debugger_initialize): Set
+	`mono_debugger_initialized' before calling mono_debug_lock().
+
 2004-04-42  Robert Shade <rshade@dvsconsulting.com>
 
 	* icall.c: icalls for Char.ToUpper/ToLower are now hooked to
