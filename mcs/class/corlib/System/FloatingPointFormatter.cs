@@ -68,7 +68,7 @@ namespace System {
 				try {
 					return FormatCustom(value, nfi, format);
 				}
-				catch (Exception e) {
+				catch (Exception) {
 					string msg = "An exception was thrown but the " +
 						"application will continue working right.\n" +
 						"Please mail to \"yoros@wanadoo.es\" with the " +
@@ -678,7 +678,6 @@ namespace System {
 
 		private string FormatCustom (double value,
 				NumberFormatInfo nfi, string format) {
-			string first, middle, last;
 			int first_semicolon, last_semicolon;
 			first_semicolon = format.IndexOf(';');
 			last_semicolon = format.LastIndexOf(';');

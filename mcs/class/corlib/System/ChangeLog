@@ -1,3 +1,7 @@
+2003-11-19  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* FloatingPointFormatter.cs: Removed some unused variables to prevent csc compiler warnings
+
 2003-11-18  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TypeInitializationException.cs: Added missing serialization constructor.
