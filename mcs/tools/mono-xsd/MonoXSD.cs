@@ -1,10 +1,10 @@
 ///
 /// MonoXSD.cs -- A reflection-based tool for dealing with XML Schema.
-/// 
+///
 /// Author: Duncan Mak (duncan@ximian.com)
 ///
-/// Copyright (C) 2003, Duncan Mak, 
-///			Ximian, Inc. 
+/// Copyright (C) 2003, Duncan Mak,
+///                     Ximian, Inc.
 ///
 
 using System;
@@ -20,14 +20,33 @@ using System.Xml.Serialization;
 namespace Mono.Util {
 
         public class Driver {
-                static void Main (string [] args) {
-                        string assembly = args [0];
 
-                        if (assembly.EndsWith (".dll") || assembly.EndsWith (".exe")) {
+                public static readonly string helpString = 
+                        "MonoXSD.exe - a utility for generating schema or class files\n\nMonoXSD.exe <assembly>.dll|<assembly>.exe [/output:] [/type]\n";
+
+                static void Main (string [] args) {
+
+                        if (args.Length < 1) {
+                                Console.WriteLine (helpString);
+                                Environment.Exit (0);
+                        }
+
+                        string input = args [0];
+                        string lookup_type = null;
+                        string output_dir = null;
+
+                        if (input.EndsWith (".dll") || input.EndsWith (".exe")) {
+
+                                if (args.Length >= 2 && args [1].StartsWith ("/o"))
+                                        output_dir = args [1].Substring (args [1].IndexOf (':') + 1);
+
+                                if (args.Length >= 3 && args [2].StartsWith ("/t"))
+                                        lookup_type = args [2].Substring (args [2].IndexOf (':') + 1);
+
                                 MonoXSD xsd = new MonoXSD ();
-                          
+
                                 try {
-                                        xsd.WriteSchema (assembly);
+                                        xsd.WriteSchema (input, lookup_type, output_dir);
                                 } catch (ArgumentException e) {
                                         Console.WriteLine (e.Message + "\n");
                                         Environment.Exit (0);
@@ -56,7 +75,7 @@ namespace Mono.Util {
                 /// <summary>
                 ///     Writes a schema for each type in the assembly
                 /// </summary>
-                public void WriteSchema (string assembly) {
+                public void WriteSchema (string assembly, string lookup_type, string output_dir) {
 
                         Assembly a;
 
@@ -72,6 +91,10 @@ namespace Mono.Util {
                         XmlSchemaType schemaType;
 
                         foreach (Type t in a.GetTypes ()) {
+
+                                if (lookup_type != null && t.Name != lookup_type)
+                                        continue;
+                                
                                 try {
                                         schemaType = WriteSchemaType (t);
                                 } catch (ArgumentException e) {
@@ -90,34 +113,38 @@ namespace Mono.Util {
                         schema.Compile (new ValidationEventHandler (OnSchemaValidation));
 
                         string output = String.Format ("schema{0}.xsd", fileCount);
+
+                        if (output_dir != null)
+                                output = Path.Combine (output_dir, output);
+
                         XmlTextWriter writer = new XmlTextWriter (output, Encoding.UTF8);
                         writer.Formatting = Formatting.Indented;
                         schema.Write (writer);
-                        Console.WriteLine ("Writing {0}.", output);
+                        Console.WriteLine ("\nWriting {0}.", output);
                 }
 
                 /// <summary>
-                ///     Given a Type and its associated schema type, add aa '<xs;element>' node 
+                ///     Given a Type and its associated schema type, add aa '<xs;element>' node
                 ///     to the schema.
                 /// </summary>
-                public XmlSchemaElement WriteSchemaElement (Type type, XmlSchemaType schemaType) 
+                public XmlSchemaElement WriteSchemaElement (Type type, XmlSchemaType schemaType)
                 {
                         XmlSchemaElement schemaElement = new XmlSchemaElement ();
                         schemaElement.Name = type.Name;
 
                         if (schemaType.QualifiedName == null || schemaType.QualifiedName == XmlQualifiedName.Empty)
                                 schemaElement.SchemaTypeName = new XmlQualifiedName (schemaType.Name);
-                        
+
                         else
                                 schemaElement.SchemaTypeName = schemaType.QualifiedName;
-                       
+
                         if (schemaType is XmlSchemaComplexType)
                                 schemaElement.IsNillable = true;
 
                         return schemaElement;
                 }
-		
-                public void OnSchemaValidation (object sender, ValidationEventArgs args) 
+
+                public void OnSchemaValidation (object sender, ValidationEventArgs args)
                 {
                         Console.WriteLine (args.Message);
                 }
@@ -127,7 +154,7 @@ namespace Mono.Util {
                 ///     From a Type, create a corresponding ComplexType node to
                 ///     represent this Type.
                 /// </summary>
-                public XmlSchemaType WriteSchemaType (Type type) 
+                public XmlSchemaType WriteSchemaType (Type type)
                 {
                         if (generatedSchemaTypes.Contains (type.FullName)) // Caching
                                 return generatedSchemaTypes [type.FullName] as XmlSchemaType;
@@ -167,7 +194,7 @@ namespace Mono.Util {
 
                                                         if (attribute_type == typeof (System.Xml.Schema.XmlSchemaAnyAttribute))
                                                                 complexType.AnyAttribute = new XmlSchemaAnyAttribute ();
-                                                        else 
+                                                        else
                                                                 complexType.Attributes.Add (WriteSchemaAttribute (member, attribute_type));
                                                 }
                                         }
@@ -181,7 +208,7 @@ namespace Mono.Util {
                                         isText = false;
                                 }
 
-                                complexType.Particle = sequence;                        
+                                complexType.Particle = sequence;
                                 generatedSchemaTypes.Add (type.FullName, complexType);
 
                                 schemaType = complexType;
@@ -190,7 +217,7 @@ namespace Mono.Util {
                         return schemaType;
                 }
 
-                public XmlSchemaAttribute WriteSchemaAttribute (MemberInfo member, Type attribute_type) 
+                public XmlSchemaAttribute WriteSchemaAttribute (MemberInfo member, Type attribute_type)
                 {
                         if (member == null || attribute_type == null)
                                 return null;
@@ -215,7 +242,7 @@ namespace Mono.Util {
                         XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType ();
                         simpleType.Name = type.Name;
                         FieldInfo [] fields = type.GetFields ();
-                        
+
                         XmlSchemaSimpleTypeRestriction simpleRestriction = new XmlSchemaSimpleTypeRestriction ();
                         simpleType.Content = simpleRestriction;
                         simpleRestriction.BaseTypeName = new XmlQualifiedName ("string", xs);
@@ -244,7 +271,7 @@ namespace Mono.Util {
 
                         if (qname == null)
                                 complexType.Name = type.Name;
-                        else 
+                        else
                                 complexType.Name = qname.Name;
 
                         XmlSchemaSequence sequence = new XmlSchemaSequence ();
@@ -253,16 +280,16 @@ namespace Mono.Util {
                         element.MinOccurs = 0;
                         element.MaxOccursString = "unbounded";
                         element.IsNillable = true;
-                        element.Name = qname.Name.ToLower (); 
-                  
-                        object [] attrs = member.GetCustomAttributes (false);         
-               
+                        element.Name = qname.Name.ToLower ();
+
+                        object [] attrs = member.GetCustomAttributes (false);
+
                         if (attrs.Length > 0) {
                                 foreach (object o in attrs) {
                                         if (o is XmlArrayItemAttribute) {
                                                 if (type.IsArray == false)
                                                         throw new ArgumentException (
-                                                                String.Format ("XmlArrayAttribute is not applicable to {0}, because it is not an array.", 
+                                                                String.Format ("XmlArrayAttribute is not applicable to {0}, because it is not an array.",
                                                                 member.Name));
 
                                                 XmlArrayItemAttribute attr = (XmlArrayItemAttribute) o;
@@ -277,15 +304,15 @@ namespace Mono.Util {
                                                 return null;
                                 }
                         }
-                        
+
                         element.SchemaTypeName = GetQualifiedName (
                                 type.FullName.Substring (0, type.FullName.Length - 2));
-                        
+
                         sequence.Items.Add (element);
                         complexType.Particle = sequence;
 
                         generatedSchemaTypes.Add (type.FullName, complexType);
-                        return complexType;                        
+                        return complexType;
                 }
 
                 public XmlSchemaType WriteComplexSchemaType ()
@@ -301,8 +328,8 @@ namespace Mono.Util {
 
 
                 /// <summary>
-                ///     Handle derivation by extension. 
-                ///     If type is null, it'll create a new complexType 
+                ///     Handle derivation by extension.
+                ///     If type is null, it'll create a new complexType
                 ///     with an XmlAny node in its sequence child node.
                 /// </summary>
                 public XmlSchemaType WriteComplexSchemaType (Type type)
@@ -317,7 +344,7 @@ namespace Mono.Util {
                         XmlSchemaSequence sequence;
                         XmlSchemaComplexContentExtension extension = new XmlSchemaComplexContentExtension ();
                         XmlSchemaComplexContent content = new XmlSchemaComplexContent ();
-                        
+
                         complexType.ContentModel = content;
                         content.Content = extension;
 
@@ -347,23 +374,23 @@ namespace Mono.Util {
 
                         generatedSchemaTypes.Add (type.FullName, complexType);
                         return complexType;
-                }       
+                }
 
-                public XmlSchemaSequence PopulateSequence (FieldInfo [] fields, PropertyInfo [] properties) 
+                public XmlSchemaSequence PopulateSequence (FieldInfo [] fields, PropertyInfo [] properties)
                 {
                         if (fields.Length == 0 && properties.Length == 0)
                                 return null;
 
                         XmlSchemaSequence sequence = new XmlSchemaSequence ();
-                        
+
                         try {
                                 foreach (FieldInfo field in fields)
                                         if (IsXmlAttribute (field))
                                                 attributes.Add (field, field.FieldType);
                                         else if (IsXmlAnyAttribute (field))
-                                                attributes.Add (field, 
+                                                attributes.Add (field,
                                                         typeof (System.Xml.Schema.XmlSchemaAnyAttribute));
-                                        else 
+                                        else
                                                 AddElement (sequence, field, field.FieldType);
 
                         } catch (Exception e) {
@@ -377,7 +404,7 @@ namespace Mono.Util {
                                         if (IsXmlAttribute (property))
                                                 attributes.Add (property, property.PropertyType);
                                         else if (IsXmlAnyAttribute (property))
-                                                attributes.Add (property, 
+                                                attributes.Add (property,
                                                         typeof (System.Xml.Schema.XmlSchemaAnyAttribute));
                                         else {
                                                 AddElement (sequence, property, property.PropertyType);
@@ -390,14 +417,14 @@ namespace Mono.Util {
                         return sequence;
                 }
 
-                public bool IsXmlAttribute (MemberInfo member) 
+                public bool IsXmlAttribute (MemberInfo member)
                 {
                         object [] attrs = member.GetCustomAttributes (
                                 typeof (System.Xml.Serialization.XmlAttributeAttribute), false);
 
                         if (attrs.Length == 0)
                                 return false;
-                        else 
+                        else
                                 return true;
                 }
 
@@ -407,14 +434,14 @@ namespace Mono.Util {
 
                         if (attrs.Length == 0)
                                 return false;
-                        else 
+                        else
                                 return true;
                 }
 
                 ///<summary>
-                ///	Populates element nodes inside a '<xs:sequence>' node.
+                ///     Populates element nodes inside a '<xs:sequence>' node.
                 ///</summary>
-                public void AddElement (XmlSchemaSequence sequence, MemberInfo member, Type type) 
+                public void AddElement (XmlSchemaSequence sequence, MemberInfo member, Type type)
                 {
                         //
                         // Only read/write properties are supported.
@@ -450,7 +477,7 @@ namespace Mono.Util {
                         }
 
                         XmlSchemaElement element = new XmlSchemaElement ();
-        
+
                         element.Name = member.Name;
                         XmlQualifiedName schema_type_name = GetQualifiedName (type);
 
@@ -459,15 +486,15 @@ namespace Mono.Util {
 
                          } else if (schema_type_name.Name == "xml") {
                                  element.SchemaType = WriteComplexSchemaType ();
-                                element.SchemaTypeName = XmlQualifiedName.Empty; // 'xml' is just a temporary name
+                                 element.SchemaTypeName = XmlQualifiedName.Empty; // 'xml' is just a temporary name
                          
                          } else if (schema_type_name == null) {
                                 throw new ArgumentException (String.Format ("The type '{0}' cannot be represented in XML Schema.", type.FullName));
 
                          } else  // this is the normal case
                                 element.SchemaTypeName = schema_type_name;
-                        
-                        object [] attrs = member.GetCustomAttributes (false);                        
+
+                        object [] attrs = member.GetCustomAttributes (false);
 
                         if (attrs.Length > 0) {
                                 foreach (object o in attrs) {
@@ -480,13 +507,13 @@ namespace Mono.Util {
                                                         element.Name = attr.ElementName;
 
                                                 continue;
-                                        } 
-                                        
+                                        }
+
                                         if (o is XmlArrayAttribute) {
 
                                                 if (type.IsArray == false)
                                                         throw new ArgumentException (
-                                                                String.Format ("XmlArrayAttribute is not applicable to {0}, because it is not an array.", 
+                                                                String.Format ("XmlArrayAttribute is not applicable to {0}, because it is not an array.",
                                                                                 member.Name));
 
                                                 XmlArrayAttribute attr = (XmlArrayAttribute) o;
@@ -495,8 +522,8 @@ namespace Mono.Util {
                                                         element.Name = attr.ElementName;
 
                                                 continue;
-                                        }              
-              
+                                        }
+
                                         //
                                         // isText signals that the mixed="true" in the schema type.
                                         //
@@ -514,18 +541,18 @@ namespace Mono.Util {
                                         }
                                 }
                         }
-                        
+
                         if (type.IsClass)
                                 element.MinOccurs = 0;
-                        else if (type.IsValueType) 
+                        else if (type.IsValueType)
                                 element.MinOccurs = 1;
-                        
+
                         element.MaxOccurs = 1;
 
                         sequence.Items.Add (element);
                 }
 
-                public XmlQualifiedName GetQualifiedName (Type type) 
+                public XmlQualifiedName GetQualifiedName (Type type)
                 {
                         //
                         // XmlAttributes are not saved.
@@ -543,25 +570,23 @@ namespace Mono.Util {
 
                         if (type.IsArray) {
                                 TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
-				string type_name = type.FullName.Substring (0, type.FullName.Length - 2);
-				Console.WriteLine ("type: " + type_name);
-				
+                                string type_name = type.FullName.Substring (0, type.FullName.Length - 2);
+
                                 XmlQualifiedName qname = GetQualifiedName (type_name);
                                 string array_type;
-				Console.WriteLine (type.Name);
-				
+
                                 if (qname != null)
                                         array_type = ti.ToTitleCase (qname.Name);
                                 else
                                         array_type = ti.ToTitleCase (type.Name.Substring (0, type.Name.Length - 2));
 
                                 return new XmlQualifiedName ("ArrayOf" + array_type);
-                        } 
+                        }
 
                         return GetQualifiedName (type.FullName);
                 }
 
-                public XmlQualifiedName GetQualifiedName (string type) 
+                public XmlQualifiedName GetQualifiedName (string type)
                 {
                         string type_name;
 
@@ -609,20 +634,20 @@ namespace Mono.Util {
                                         type_name = "unsignedInt";
                                         break;
                                 case "System.UInt64":
-                                        type_name = "unsignedLong";		
-                                        break;           
+                                        type_name = "unsignedLong";
+                                        break;
                                 default:
                                         type_name = null;
                                         break;
-                        }       
-                                
+                        }
+
                         if (type_name == null)
                                 return null;
 
                         else {
                                 XmlQualifiedName name = new XmlQualifiedName (type_name, xs);
-                                return name;                                                
-                        }                        
+                                return name;
+                        }
                 }
         }
 }

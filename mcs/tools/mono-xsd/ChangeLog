@@ -1,3 +1,10 @@
+2003-03-25  Duncan Mak  <duncan@ximian.com>
+
+	* MonoXSD.cs: Added support for two command line arguments:
+
+	   /output: specify the directory to put the generated schema.
+	   /type:   specify a specific type in the assembly.
+
 2003-03-24  Duncan Mak  <duncan@ximian.com>
 
 	* MonoXSD.cs: Add support for having enums as a field in the
