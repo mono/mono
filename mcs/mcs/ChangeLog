@@ -1,5 +1,7 @@
 2001-12-20  Miguel de Icaza  <miguel@ximian.com>
 
+	* const.cs: Use the underlying type for enumerations
+
 	* delegate.cs: Compute the basename for the delegate creation,
 	that should fix the delegate test case, and restore the correct
 	Type Lookup semantics in rootcontext

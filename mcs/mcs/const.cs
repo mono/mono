@@ -15,7 +15,6 @@ namespace Mono.CSharp {
 	using System.Reflection.Emit;
 	using System.Collections;
 
-
 	public class Const : MemberCore {
 		public readonly string ConstantType;
 		public Expression Expr;
@@ -59,7 +58,7 @@ namespace Mono.CSharp {
 
 			if (type == null)
 				return false;
-			
+
 			if (!TypeManager.IsBuiltinType (type) &&
 			    (!type.IsSubclassOf (TypeManager.enum_type))) {
 				Report.Error (
@@ -82,6 +81,10 @@ namespace Mono.CSharp {
 			} else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
 
+			if (type.IsSubclassOf (TypeManager.enum_type)){
+				type = System.Enum.GetUnderlyingType (type);
+			}
+			
 			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 
 			TypeManager.RegisterConstant (FieldBuilder, this);
@@ -113,8 +116,7 @@ namespace Mono.CSharp {
 			}
 
 			ConstantValue = ((Literal) Expr).GetValue ();
-
-			Console.WriteLine ("Constant Type: " + ConstantValue.GetType ());
+			
 			FieldBuilder.SetConstant (ConstantValue);
 
 			if (!TypeManager.RegisterField (FieldBuilder, ConstantValue))

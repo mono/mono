@@ -321,8 +321,9 @@ namespace Mono.CSharp {
 				return new FieldExpr ((FieldInfo) mi, loc);
 			else if (mi is PropertyInfo)
 				return new PropertyExpr ((PropertyInfo) mi, loc);
-		        else if (mi is Type)
+		        else if (mi is Type){
 				return new TypeExpr ((Type) mi);
+			}
 
 			return null;
 		}
@@ -425,7 +426,7 @@ namespace Mono.CSharp {
 
 				mi = RootContext.TypeManager.FindMembers (
 					current_type, mt, bf | BindingFlags.DeclaredOnly,
-					Type.FilterName, name);
+					System.Type.FilterName, name);
 				
 				if (current_type == TypeManager.object_type)
 					searching = false;
