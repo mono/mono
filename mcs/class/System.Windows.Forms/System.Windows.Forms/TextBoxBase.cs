@@ -324,11 +324,9 @@ namespace System.Windows.Forms {
 				createParams.ClassStyle = 0;
 				createParams.ExStyle = 0;
 				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
+				createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE);
+//				window.CreateHandle (createParams);
 				return createParams;
 			}
 		}

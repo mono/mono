@@ -43,8 +43,7 @@ namespace System.Windows.Forms {
 					if( window == null) {
 						window = new ControlNativeWindow (this);
 					}
-
-					createParams.Caption = Text;
+					Console.WriteLine("text = " + Text);					createParams.Caption = Text;
 					createParams.ClassName = "BUTTON";
 					createParams.X = Left;
 					createParams.Y = Top;
@@ -84,11 +83,7 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		
-		[MonoTODO]
-		public void PerformClick() 
-		{
-			//FIXME:
-		}
+		[MonoTODO]		public void PerformClick() 		{			//FIXME:		}
 		
 		// --- Button methods for events ---
 		protected override void OnClick(EventArgs e) 

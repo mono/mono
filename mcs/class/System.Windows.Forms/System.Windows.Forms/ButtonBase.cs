@@ -52,7 +52,8 @@ namespace System.Windows.Forms {
 		}
 
 		// --- Properties ---
-		protected override CreateParams CreateParams {
+		protected override CreateParams CreateParams 
+		{
 			get { return createParams; }
 		}
 		
@@ -172,8 +173,7 @@ namespace System.Windows.Forms {
 					Invalidate();
 				}
 			}
-		}
-
+		}
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected override void Dispose(bool);

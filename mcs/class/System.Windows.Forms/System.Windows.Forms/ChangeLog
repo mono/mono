@@ -1,4 +1,4 @@
-2003-02-26  Reggie Burnett <reggie@bytefx.com>	* Form.Close now actually destroys the Window	* Application now closes when launching form is closed 2003-02-19 Alexandre Pigolkine <pigolkine@gmx.de>
+2003-02-27  Reggie Burnett <reggie@bytefx.com>	* Added several external functions to Win32funcs.cs	* Added necessary LoadLibrary to RichTextEdit to load common control library	2003-02-26  Reggie Burnett <reggie@bytefx.com>	* Form.Close now actually destroys the Window	* Application now closes when launching form is closed 2003-02-19 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Button.cs
 	* CheckedListBox.cs
 	* ComboBox.cs

@@ -67,10 +67,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override DockStyle Dock {
 			get {
-				throw new NotImplementedException ();
+				return base.Dock;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Dock = value;
 			}
 		}
 		[MonoTODO]

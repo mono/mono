@@ -16,7 +16,9 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-    public class RichTextBox : TextBoxBase {
+    public class RichTextBox : TextBoxBase 
+	{
+		private IntPtr	handleCommCtrlLib;
 
 		//
 		//  --- Constructor
@@ -24,9 +26,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public RichTextBox()
 		{
-			
+			handleCommCtrlLib = Win32.LoadLibraryA("riched20.dll");
 		}
 
+		#region Properties
 		//
 		//  --- Public Properties
 		//
@@ -331,10 +334,19 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+		#endregion
 
+		#region Public Methods
 		//
 		//  --- Public Methods
 		//
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			Win32.FreeLibrary(handleCommCtrlLib);
+		}
+
 
 		[MonoTODO]
 		public bool CanPaste(DataFormats.Format clipFormat)
@@ -441,7 +453,9 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+		#endregion
 
+		#region Public Events
 		//
 		//  --- Public Events
 		//
@@ -452,18 +466,21 @@ namespace System.Windows.Forms {
 		public event EventHandler Protected;
 		public event EventHandler SelectionChanged;
 		public event EventHandler VScroll;
+		#endregion
 
+		#region Protected Properties
 		//
 		//  --- Protected Properties
 		//
 		[MonoTODO]
-		protected override CreateParams CreateParams {
+		protected override CreateParams CreateParams 
+		{
 			get {
 				CreateParams createParams = new CreateParams ();
 				window = new ControlNativeWindow (this);
 
 				createParams.Caption = Text;
-				createParams.ClassName = "RICHTEXTBOX";
+				createParams.ClassName = "RichEdit20A";
 				createParams.X = Left;
 				createParams.Y = Top;
 				createParams.Width = Width;
@@ -471,11 +488,8 @@ namespace System.Windows.Forms {
 				createParams.ClassStyle = 0;
 				createParams.ExStyle = 0;
 				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
+				createParams.Parent = Parent.Handle;
+				createParams.Style = (int) ( WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE);
 				return createParams;
 			}		
 		}
@@ -486,7 +500,9 @@ namespace System.Windows.Forms {
 				return new System.Drawing.Size(300,300);
 			}
 		}
+		#endregion
 
+		#region Protected Methods
 		//
 		//  --- Protected Methods
 		//
@@ -517,7 +533,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void  OnHandleCreated(EventArgs e)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -585,5 +600,6 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+		#endregion
 	 }
 }

@@ -75,24 +75,17 @@ namespace System.Windows.Forms{
 			StringBuilder systemNameBuffer,
 			int systemNameBufferSize);
 		[DllImport("kernel32.dll")]
-		internal static extern void OutputDebugString(string message);
+		internal static extern IntPtr LoadLibraryA(string filename);
 
-		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
-		internal extern static uint GetLastError ();
+		[DllImport("kernel32.dll")]
+		internal static extern bool FreeLibrary( IntPtr handle );
+
+		[DllImport("kernel32.dll", EntryPoint="OutputDebugStringW")]		internal static extern void OutputDebugString(string message);
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,			 CharSet = CharSet.Auto)]		internal extern static uint GetLastError ();
 		
-		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
-		internal extern static uint  FormatMessage (
-			uint flags, IntPtr lpSource,uint messageId, uint languageId,
-			StringBuilder lpBuffer, int nSize, IntPtr Arguments);
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,			 CharSet = CharSet.Auto, EntryPoint = "FormatMessageW")]		internal extern static uint  FormatMessage (			uint flags, IntPtr lpSource, uint messageId, uint languageId,			StringBuilder lpBuffer, int nSize, IntPtr Arguments);
 				
-		internal static string FormatMessage(uint error) {
-			StringBuilder sb = new StringBuilder(2048);
-			Win32.FormatMessage( (uint)(FM_.FORMAT_MESSAGE_FROM_SYSTEM | FM_.FORMAT_MESSAGE_IGNORE_INSERTS),
-				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);
-			return sb.ToString();
-		}
+		internal static string FormatMessage(uint error) 		{			Console.WriteLine("error = " + error);			StringBuilder sb = new StringBuilder(2048);			Win32.FormatMessage( (uint)(FM_.FORMAT_MESSAGE_FROM_SYSTEM | FM_.FORMAT_MESSAGE_IGNORE_INSERTS),				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);			return sb.ToString();		}
 	#endregion
 	
 		#region Gdi32.dll functions
@@ -249,8 +242,7 @@ namespace System.Windows.Forms{
 		internal static extern IntPtr PostMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="PostMessageA")]
 		internal static extern IntPtr PostMessage(IntPtr hWnd, Msg msg, int wParam, int lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		internal static extern IntPtr SetWindowsHookEx(WindowsHookCodes hookid, HookProc pfnhook, IntPtr hinst, int threadid);
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="SetWindowsHookExW")]		internal static extern IntPtr SetWindowsHookEx(WindowsHookCodes hookid, HookProc pfnhook, IntPtr hinst, int threadid);
 		[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
 		internal static extern bool UnhookWindowsHookEx(IntPtr hhook);
 		[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
@@ -345,8 +337,7 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		internal static extern int GetClassName(IntPtr hWnd,  StringBuilder ClassName, int nMaxCount);
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="GetClassNameW")]		internal static extern int GetClassName(IntPtr hWnd,  StringBuilder ClassName, int nMaxCount);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="SetWindowLongA")]
 		internal static extern int SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, int dwNewLong);
@@ -421,8 +412,7 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="GetWindowLongA")]
 		static internal extern IntPtr GetWindowLong(IntPtr hWnd, GetWindowLongFlag flag);
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		static internal extern int SetProp(IntPtr hWnd, IntPtr atom, IntPtr hData);
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="SetPropW")]		static internal extern int SetProp(IntPtr hWnd, IntPtr atom, IntPtr hData);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="CallWindowProcA")]
 		static internal extern int CallWindowProc(IntPtr hOldProc, IntPtr hWnd, int message, int wParam, int lParam);
