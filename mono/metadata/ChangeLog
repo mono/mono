@@ -1,4 +1,9 @@
 
+Fri Jul 18 11:26:58 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, appdomain.h, appdomain.c: support full runtime shutdown
+	on Environment.Exit () call.
+
 Thu Jul 17 17:21:57 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, reflection.h, reflection.c, verify.c: cleanups,
