@@ -2768,8 +2768,7 @@ namespace Mono.CSharp {
 			Label false_target = ig.DefineLabel ();
 			Label end_target = ig.DefineLabel ();
 
-			expr.Emit (ec);
-			ig.Emit (OpCodes.Brfalse, false_target);
+			Statement.EmitBoolExpression (ec, expr, false_target, false);
 			trueExpr.Emit (ec);
 			ig.Emit (OpCodes.Br, end_target);
 			ig.MarkLabel (false_target);

@@ -1,6 +1,9 @@
 2002-10-04  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (ArrayCreation.CheckIndices): Use the patch from
+	* expression.cs (Conditional.Emit): Use the EmitBoolExpression to
+	generate nicer code, as requested by Paolo.
+
+	(ArrayCreation.CheckIndices): Use the patch from
 	hwang_rob@yahoo.ca to validate the array initializers. 
 
 2002-10-03  Miguel de Icaza  <miguel@ximian.com>
