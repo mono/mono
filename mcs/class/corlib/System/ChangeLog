@@ -1,3 +1,8 @@
+2004-11-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoType.cs (UnderlyingSystemType): Make this return this as in
+	MS.NET. Fixes #56245.
+
 2004-11-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GC.cs : Collect(generation) actually does not throw an exception
