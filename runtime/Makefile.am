@@ -64,7 +64,11 @@ EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
 # Keep in sync with mono/mono/metadata/Makefile.am
 #
 assembliesdir = $(libdir)
+if PLATFORM_WIN32
+monobinsdir = $(libdir)
+else
 monobinsdir = $(bindir)
+endif
 
 $(assemblies_DATA):
 	@f=$(mcs_topdir)/class/lib/$@; \

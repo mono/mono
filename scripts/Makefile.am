@@ -11,7 +11,7 @@ MONO_INTERP = mint
 endif
 
 if PLATFORM_WIN32
-plat_bindir = $(shell cygpath -m $(bindir))
+plat_bindir = $(shell cygpath -m $(libdir))
 else
 plat_bindir = $(bindir)
 endif
