@@ -1,5 +1,8 @@
 2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_image_create_pefile): Free the assembly streams
+	after writing out the assembly file.
+
 	* object.c (mono_runtime_run_main): Fix small memory leak.
 
 	* icall.c (ves_icall_Type_GetPropertiesByName): Add support for
