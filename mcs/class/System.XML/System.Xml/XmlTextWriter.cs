@@ -227,6 +227,9 @@ namespace System.Xml
 				{
 					string ans = (string) ent.Value;
 					string aprefix = (string) ent.Key;
+
+					if (aprefix == prefix)
+						continue;
 	
 					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
 					w.Write(formatXmlns);
@@ -491,6 +494,9 @@ namespace System.Xml
 			if (openElements.Count == 0)
 				throw new InvalidOperationException("There was no XML start tag open.");
 
+			if (openAttribute)
+				WriteEndAttribute ();
+
 			indentLevel--;
 			CheckState ();
 			AddMissingElementXmlns ();
@@ -499,7 +505,9 @@ namespace System.Xml
 				if (openAttribute)
 					WriteEndAttribute ();
 				if (fullEndElement) {
-					w.Write ("></");
+					w.Write ('>');
+					w.Write (indentFormatting);
+					w.Write ("</");
 					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements.Peek ();
 					if (el.Prefix != String.Empty) {
 						w.Write (el.Prefix);
