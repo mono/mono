@@ -15,6 +15,7 @@ namespace Mine {
 			Console.WriteLine ("Converting from Blah->int");
 			return 3;
 		}
+
 	}
 
 	public class Foo : Blah {

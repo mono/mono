@@ -33,7 +33,13 @@ namespace Mine {
 			if (k)
 				Console.WriteLine ("k is definitely true");
 
-	
+			k = new Blah ();
+
+			float f = (float) k;
+
+			if (f == 2.0)
+				Console.WriteLine ("Explicit conversion correct.");
+
 			return 0;
 			
 		}
@@ -97,6 +103,12 @@ namespace Mine {
 		{
 			Console.WriteLine ("Converting implicitly from int->Blah");
 			return null;
+		}
+
+		public static explicit operator float (Blah i)
+		{
+			Console.WriteLine ("Converting explicitly from Blah->float");
+			return 2.0;
 		}
 
 	}
