@@ -15,13 +15,17 @@ namespace System.Web.Hosting
 {
 	public sealed class ApplicationHost
 	{
-		class ConfigInitHelper
+		internal class ConfigInitHelper : MarshalByRefObject
 		{
-			public void InitConfig ()
+			internal void InitConfig ()
 			{
 			}
 		}
 		
+		private ApplicationHost ()
+		{
+		}
+
 		public static object CreateApplicationHost (Type hostType,
 							    string virtualDir,
 							    string physicalDir)
@@ -58,7 +62,8 @@ namespace System.Web.Hosting
 				domain.SetData (key, (string) hTable [key]);
 
 			domain.SetData (".hostingVirtualPath", virtualDir);
-			//domain.SetData(".hostingInstallDir", ?????);
+			//FIXME: this should be the directory where dlls reside.
+			domain.SetData(".hostingInstallDir", "FIXME hostingInstallDir");
 			InitConfigInNewAppDomain (domain);
 			ObjectHandle o = domain.CreateInstance (hostType.Assembly.FullName,
 								hostType.FullName);
