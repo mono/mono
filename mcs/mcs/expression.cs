@@ -2279,18 +2279,42 @@ namespace Mono.CSharp {
 			if (method != null)
 				return false;
 
-			if (!(oper == Operator.Equality ||
-			      oper == Operator.Inequality ||
-			      oper == Operator.LessThan ||
-			      oper == Operator.GreaterThan ||
-			      oper == Operator.LessThanOrEqual ||
-			      oper == Operator.GreaterThanOrEqual))
-				return false;
+			ILGenerator ig = ec.ig;
 
+			//
+			// This is more complicated than it looks, but its just to avoid
+			// duplicated tests: basically, we allow ==, !=, >, <, >= and <=
+			// but on top of that we want for == and != to use a special path
+			// if we are comparing against null
+			//
+			if (oper == Operator.Equality || oper == Operator.Inequality){
+				bool my_on_true = oper == Operator.Inequality ? onTrue : !onTrue;
+				
+				if (left is NullLiteral){
+					right.Emit (ec);
+					if (my_on_true)
+						ig.Emit (OpCodes.Brtrue, target);
+					else
+						ig.Emit (OpCodes.Brfalse, target);
+					return true;
+				} else if (right is NullLiteral){
+					left.Emit (ec);
+					if (my_on_true)
+						ig.Emit (OpCodes.Brtrue, target);
+					else
+						ig.Emit (OpCodes.Brfalse, target);
+					return true;
+				} 
+			} else if (!(oper == Operator.LessThan ||
+				      oper == Operator.GreaterThan ||
+				      oper == Operator.LessThanOrEqual ||
+				      oper == Operator.GreaterThanOrEqual))
+				return false;
+			
+
+			
 			left.Emit (ec);
 			right.Emit (ec);
-
-			ILGenerator ig = ec.ig;
 
 			bool isUnsigned = is_unsigned (left.Type);
 

@@ -820,7 +820,9 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (!expr.Type.IsSubclassOf (TypeManager.exception_type)) {
+				Type t = expr.Type;
+				
+				if (t != TypeManager.exception_type && !t.IsSubclassOf (TypeManager.exception_type)) {
 					Report.Error (155, loc,
 						      "The type caught or thrown must be derived " +
 						      "from System.Exception");
@@ -3687,7 +3689,8 @@ namespace Mono.CSharp {
 				if (type == null)
 					return false;
 
-				if (!type.Type.IsSubclassOf (TypeManager.exception_type)) {
+				Type t = type.Type;
+				if (t != TypeManager.exception_type && !t.IsSubclassOf (TypeManager.exception_type)){
 					Report.Error (155, Location,
 						      "The type caught or thrown must be derived " +
 						      "from System.Exception");
