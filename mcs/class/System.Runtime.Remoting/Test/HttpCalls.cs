@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.HttpCalls.cs
+// MonoTests.Remoting.HttpCalls.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -12,7 +12,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Http;
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	[TestFixture]
 	public class HttpSyncCallTest : SyncCallTest

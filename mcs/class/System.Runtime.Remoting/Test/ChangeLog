@@ -1,3 +1,10 @@
+2004-02-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* AsyncCalls.cs, BaseCalls.cs, CallSeq.cs, ContextHookAttribute.cs, 
+	  ContextsTest.cs, CrossDomainCalls.cs, DelegateCalls.cs, HttpCalls.cs,
+	  ReflectionCalls.cs, ServerObject.cs, SyncCalls.cs, TcpCalls.cs:
+	  Shortened namespace name.
+
 2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BaseCalls.cs: Little fix.

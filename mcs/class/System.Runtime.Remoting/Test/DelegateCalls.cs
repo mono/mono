@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.DelegateCalls.cs
+// MonoTests.Remoting.DelegateCalls.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -12,7 +12,7 @@ using NUnit.Framework;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	public abstract class DelegateCallTest : BaseCallTest
 	{

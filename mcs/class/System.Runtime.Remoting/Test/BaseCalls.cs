@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.BaseCalls.cs
+// MonoTests.Remoting.BaseCalls.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -11,6 +11,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Collections;
+using System.Globalization;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
@@ -21,7 +22,7 @@ using System.Runtime.Remoting.Contexts;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	public abstract class BaseCallTest : Assertion
 	{
@@ -33,7 +34,14 @@ namespace MonoTests.System.Runtime.Remoting
 		[TestFixtureSetUp]
 		public void Run()
 		{
-			remoteDomId = CreateServer ();
+			try
+			{
+				remoteDomId = CreateServer ();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine (ex);
+			}
 		}
 
 		[TestFixtureTearDown]
@@ -49,7 +57,7 @@ namespace MonoTests.System.Runtime.Remoting
 			ChannelServices.RegisterChannel (chs);
 
 			AppDomain domain = AppDomain.CreateDomain ("testdomain");
-			server = (CallsDomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.System.Runtime.Remoting.CallsDomainServer");
+			server = (CallsDomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.CallsDomainServer");
 			remoteUris = server.Start (cm);
 			return server.GetDomId ();
 		}
@@ -482,7 +490,7 @@ namespace MonoTests.System.Runtime.Remoting
 
 		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
 		{
-			string res = "" + a1 + "-" + b1 + "-" + c1 + "-" + d1 + "@" + Thread.GetDomainID();
+			string res = "" + a1 + "-" + b1.ToString(CultureInfo.InvariantCulture) + "-" + c1 + "-" + d1 + "@" + Thread.GetDomainID();
 			a2 = 12345678;
 			b2 = 53455.345f;
 			c2 = 'g';

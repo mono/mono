@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.CallSeq.cs
+// MonoTests.Remoting.CallSeq.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -11,7 +11,7 @@ using System.Threading;
 using System.Collections;
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	public class CallSeq
 	{

@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.TcpCalls.cs
+// MonoTests.Remoting.TcpCalls.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -12,7 +12,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	[TestFixture]
 	public class TcpSyncCallTest : SyncCallTest
@@ -60,7 +60,7 @@ namespace MonoTests.System.Runtime.Remoting
 
 		public override IChannelReceiver CreateServerChannel ()
 		{
-			return new TcpChannel (1122);
+			return new TcpChannel (9738);
 		}
 	}
 }

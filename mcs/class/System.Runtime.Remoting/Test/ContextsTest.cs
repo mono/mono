@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.ContextsTest.cs
+// MonoTests.Remoting.ContextsTest.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -18,7 +18,7 @@ using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Contexts;
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	[TestFixture]
 	public class ContextsTest
@@ -81,7 +81,7 @@ namespace MonoTests.System.Runtime.Remoting
 		public void TestRemoteContext ()
 		{
 			AppDomain domain = AppDomain.CreateDomain ("test");
-			DomainServer server = (DomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.System.Runtime.Remoting.DomainServer");
+			DomainServer server = (DomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.DomainServer");
 			try
 			{
 				CallSeq.Init("TestRemoteContext");

@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.ContextHookAttribute.cs
+// MonoTests.Remoting.ContextHookAttribute.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -14,7 +14,7 @@ using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting;
 using System.Threading;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	[Serializable,AttributeUsage(AttributeTargets.Class)]
 	public class ContextHookAttribute: Attribute, IContextAttribute, IContextProperty, IContributeObjectSink, IContributeServerContextSink, IContributeEnvoySink, IContributeClientContextSink

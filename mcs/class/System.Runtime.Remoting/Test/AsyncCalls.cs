@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.AsyncCalls.cs
+// MonoTests.Remoting.AsyncCalls.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -13,7 +13,7 @@ using NUnit.Framework;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	public abstract class AsyncCallTest : BaseCallTest
 	{

@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Runtime.Remoting.ServerObject.cs
+// MonoTests.Remoting.ServerObject.cs
 //
 // Author: Lluis Sanchez Gual (lluis@ximian.com)
 //
@@ -11,7 +11,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
 using System.Collections;
 
-namespace MonoTests.System.Runtime.Remoting
+namespace MonoTests.Remoting
 {
 	// A list of ServerObject instances
 
