@@ -15,8 +15,8 @@ namespace System.Xml
 	{
 		#region Fields
 
-		private WriteState ws = WriteState.Start;
-		private XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
+		protected WriteState ws = WriteState.Start;
+		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 
 		#endregion
 

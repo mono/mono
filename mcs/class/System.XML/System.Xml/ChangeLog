@@ -1,3 +1,9 @@
+2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlWriter.cs: made ws and namespaceManager protected. mcs has a bug
+	that allowed compiling this.
+	[ FIXME: filed bug #29435. mcs should have failed on this ]
+
 2002-08-25  Tim Coleman <tim@timcoleman.com>
         * XmlNode.cs:
                 Change CreateNavigator to not be virtual.
