@@ -1,0 +1,9 @@
+2003-04-07  Martin Baulig  <martin@ximian.com>
+
+	* Makefile.am: Added Makefile.am.
+
+	* debugger-main.c: Removed, this is now in the debugger where it
+	belongs.
+
+	* mini.pc.in: Call this package `mini' for the moment.
+
