@@ -1,3 +1,7 @@
+2003-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NameObjectCollectionBase.cs: added serialization support.
+
 2003-09-04  Duncan Mak  <duncan@ximian.com>
 
 	Patches from Alon Gazit <along@mainsoft.com>.

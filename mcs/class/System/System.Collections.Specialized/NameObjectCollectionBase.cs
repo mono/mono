@@ -246,11 +246,28 @@ namespace System.Collections.Specialized
 			return new _KeysEnumerator(this);
 		}
 		// GetHashCode
-		
+
 		// ISerializable
-		public virtual void /*ISerializable*/ GetObjectData( SerializationInfo info, StreamingContext context )
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new Exception("Not implemented yet");
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			int count = Count;
+			string [] keys = new string [count];
+			object [] values = new object [count];
+			int i = 0;
+			foreach (_Item item in m_ItemsArray) {
+				keys [i] = item.key;
+				values [i] = item.value;
+				i++;
+			}
+
+			info.AddValue ("m_hashprovider", m_hashprovider);
+			info.AddValue ("m_comparer", m_comparer);
+			info.AddValue ("m_readonly", m_readonly);
+			info.AddValue ("keys", keys);
+			info.AddValue ("values", values);
 		}
 
 		// ICollection
@@ -274,14 +291,42 @@ namespace System.Collections.Specialized
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 
 		// IDeserializationCallback
-		public virtual void OnDeserialization( object sender)
+		public virtual void OnDeserialization (object sender)
 		{
-			throw new Exception("Not implemented yet");
+			if (sender == null)
+				throw new ArgumentNullException ("sender");
+
+			SerializationInfo info = sender as SerializationInfo;
+			if (info == null)
+				throw new SerializationException ("The object is not a SerializationInfo");
+
+			m_hashprovider = (IHashCodeProvider) info.GetValue ("m_hashprovider",
+									    typeof (IHashCodeProvider));
+
+			if (m_hashprovider == null)
+				throw new SerializationException ("The hash provider is null");
+
+			m_comparer = (IComparer) info.GetValue ("m_comparer", typeof (IComparer));
+			if (m_comparer == null)
+				throw new SerializationException ("The comparer is null");
+
+			m_readonly = info.GetBoolean ("m_readonly");
+			string [] keys = (string []) info.GetValue ("keys", typeof (string []));
+			if (keys == null)
+				throw new SerializationException ("keys is null");
+
+			object [] values = (object []) info.GetValue ("values", typeof (object []));
+			if (values == null)
+				throw new SerializationException ("values is null");
+
+			Init ();
+			int count = keys.Length;
+			for (int i = 0; i < count; i++)
+				BaseAdd (keys [i], values [i]);
 		}
-		
 		//--------------- Protected Instance Properties ----------------
 		/// <summary>
 		/// SDK: Gets or sets a value indicating whether the NameObjectCollectionBase instance is read-only.
@@ -319,9 +364,8 @@ namespace System.Collections.Specialized
 					m_ItemsContainer.Add(name,newitem);
 				}
 			m_ItemsArray.Add(newitem);
-			
-//			throw new Exception("Not implemented yet");
 		}
+
 		protected void BaseClear()
 		{
 			if (this.IsReadOnly)
