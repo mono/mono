@@ -1,3 +1,8 @@
+2005-01-11  Dick Porter  <dick@ximian.com>
+
+	* error.c (errno_to_WSA): Add EADDRNOTAVAIL error code
+	translation.
+
 Mon Jan 10 16:15:19 EST 2005 Neale Ferguson <nealeferguson@earthlink.net>
 
 	* atomic.h: Fix functions on s390.
