@@ -42,26 +42,42 @@ namespace System.Web.UI.WebControls {
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.HierarchicalDataBoundControlDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
 	public abstract class DataBoundControl : BaseDataBoundControl
 	{
+		DataSourceSelectArguments selectArguments;
+		IDataSource currentSource;
+
 		protected DataBoundControl ()
 		{
 		}
 		
 		protected IDataSource GetDataSource ()
 		{
-			if (DataSourceID != "")
-				return NamingContainer.FindControl (DataSourceID) as IDataSource;
+			if (IsBoundUsingDataSourceID) {
+				Control ctrl = NamingContainer.FindControl (DataSourceID);
+				if (ctrl == null)
+					throw new HttpException (string.Format ("A control with ID '{0}' could not be found.", DataSourceID));
+				if (!(ctrl is IDataSource))
+					throw new HttpException (string.Format ("The control with ID '{0}' is not a control of type IDataSource.", DataSourceID));
+				return (IDataSource) ctrl;
+			}
 			
-			return DataSource as IDataSource;
+			if (DataSource == null) return null;
+			
+			IDataSource ds = DataSource as IDataSource;
+			if (ds != null) return ds;
+			
+			IEnumerable ie = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+			if (ie != null) return new CollectionDataSource (ie);
+			
+			throw new HttpException (string.Format ("Unexpected data source type: {0}", DataSource.GetType()));
 		}
 		
-		[MonoTODO ("Wrap DataSource object with a dynamically created data source view")]
 		protected DataSourceView GetData ()
 		{
-			if (DataSource != null && DataSourceID != "")
-				throw new HttpException ();
+			if (DataSource != null && IsBoundUsingDataSourceID)
+				throw new HttpException ("Control bound using both DataSourceID and DataSource properties.");
 			
 			IDataSource ds = GetDataSource ();
-			if (ds != null && DataSourceID != "")
+			if (ds != null)
 				return ds.GetView (DataMember);
 			else
 				return null; 
@@ -69,7 +85,8 @@ namespace System.Web.UI.WebControls {
 		
 		protected override void OnDataPropertyChanged ()
 		{
-			RequiresDataBinding = true;
+			base.OnDataPropertyChanged ();
+			SubscribeSourceChangeEvent ();
 		}
 		
 		protected virtual void OnDataSourceViewChanged (object sender, EventArgs e)
@@ -77,14 +94,29 @@ namespace System.Web.UI.WebControls {
 			RequiresDataBinding = true;
 		}
 		
+		protected override void OnPagePreLoad (object sender, EventArgs e)
+		{
+			base.OnPagePreLoad (sender, e);
+			SubscribeSourceChangeEvent ();
+		}
+		
+		void SubscribeSourceChangeEvent ()
+		{
+			IDataSource ds = GetDataSource ();
+			
+			if (currentSource != ds) {
+				currentSource.DataSourceChanged -= new EventHandler (OnDataSourceViewChanged);
+				currentSource = ds;
+			}
+				
+			if (ds != null)
+				ds.DataSourceChanged += new EventHandler (OnDataSourceViewChanged);
+		}
+		
 		// should be `internal protected' (why, oh WHY did they do that !?!)
 		protected override void OnLoad (EventArgs e)
 		{
-			IDataSource ds = GetDataSource ();
-			if (ds != null && DataSourceID != "")
-				ds.DataSourceChanged += new EventHandler (OnDataSourceViewChanged);
-			
-			if (!Page.IsPostBack || !EnableViewState)
+			if (IsBoundUsingDataSourceID && (!Page.IsPostBack || !EnableViewState))
 				RequiresDataBinding = true;
 
 			base.OnLoad(e);
@@ -95,12 +127,11 @@ namespace System.Web.UI.WebControls {
 			OnDataBinding (EventArgs.Empty);
 		}
 
-		
 		protected override void ValidateDataSource (object dataSource)
 		{
-			if (dataSource is IListSource || dataSource is IEnumerable)
+			if (dataSource is IListSource || dataSource is IEnumerable || dataSource is IDataSource)
 				return;
-			throw new ArgumentException ();
+			throw new ArgumentException ("Invalid data source source type. The data source must be of type IListSource, IEnumerable or IDataSource.");
 		}
 
 		[ThemeableAttribute (false)]
@@ -129,28 +160,34 @@ namespace System.Web.UI.WebControls {
 				return String.Empty;
 			}
 			set {
-				if (Initialized)
-					RequiresDataBinding = true;
-				
 				ViewState ["DataSourceID"] = value;
+				base.DataSourceID = value;
 			}
 		}
 		
 		protected override void PerformSelect ()
 		{
-			IEnumerable data = null;
 			DataSourceView view = GetData ();
 			if (view != null)
-				data = view.ExecuteSelect (SelectArguments);
-			else if (DataSource != null)
-				data = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
-
+				view.Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
+		}
+		
+		void OnSelect (IEnumerable data)
+		{
 			PerformDataBinding (data);
 		}
 		
-		[MonoTODO]
+		protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments ()
+		{
+			return DataSourceSelectArguments.Empty;
+		}
+		
 		protected DataSourceSelectArguments SelectArguments {
-			get { return null; }
+			get {
+				if (selectArguments == null)
+					selectArguments = CreateDataSourceSelectArguments ();
+				return selectArguments;
+			}
 		}
 	}
 }

@@ -169,22 +169,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-#if NET_2_0
-		[BindableAttribute (true)]
-		[LocalizableAttribute (true)]
-		[DefaultValueAttribute ("")]
-		public string SoftkeyLabel {
-			get {
-				string text = (string)ViewState["SoftkeyLabel"];
-				if (text!=null) return text;
-				return String.Empty;
-			}
-			set {
-				ViewState["SoftkeyLabel"] = value;
-			}
-		}
-#endif
-		
 		public override void Initialize ()
 		{
 			textFieldDescriptor = null;

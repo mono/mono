@@ -237,9 +237,9 @@ namespace System.Web.UI.WebControls
 		/// <summary>
 		/// Undocumented
 		/// </summary>
-		protected static string GetDateElementOrder (CultureInfo culture)
+		protected static string GetDateElementOrder ()
 		{
-			string pattern = culture.DateTimeFormat.ShortDatePattern;
+			string pattern = DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
 
 			//TODO: What are the various possibilities?
 			// I can think of only y*/M*/d*, d*/M*/y*, M*/d*/y*
@@ -264,7 +264,7 @@ namespace System.Web.UI.WebControls
 				return true;
 			}
 
-			string order = GetDateElementOrder (culture);
+			string order = GetDateElementOrder ();
 			int date = 0, mth = 0, year = 0;
 			string dateStr = null;
 			string mthStr = null;

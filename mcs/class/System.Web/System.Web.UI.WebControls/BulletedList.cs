@@ -156,8 +156,13 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		[MonoTODO ("ListControl has a CausesValidation prop in v1.2, we need to use it")]
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+			
+		[MonoTODO ("ListControl has a CausesValidation prop in v1.2, we need to use it")]
+		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
 			//if (CausesValidation)
 			//	Page.Validate ();

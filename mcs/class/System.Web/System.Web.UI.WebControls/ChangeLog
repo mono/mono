@@ -1,3 +1,13 @@
+2005-02-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Style.cs: Method name fix.
+	* HyperLinkColumn.cs, HyperLink.cs: Moved SoftkeyLabel to HyperLink.
+	* BaseCompareValidator.cs: Method signature fix.
+	* CollectionDataSource.cs: Implemented DataSource wrapper for collections.
+	* BaseDataList.cs, Repeater.cs: Fixed data binding code.
+	* BulletedList.cs: Added missing method.
+	* DataBoundControl.cs, BaseDataBoundControl.cs: Made it behave like MS.NET.
+
 2005-02-16  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* HyperLinkColumn.cs, Label.cs: Added missing 2.0 properties.

@@ -56,14 +56,22 @@ namespace System.Web.UI.WebControls
 			set {
 				ValidateDataSource (value);
 				dataSource = value;
+				if (initialized)
+					OnDataPropertyChanged ();
 			}
 		}
 		
 		[DefaultValueAttribute ("")]
 		[ThemeableAttribute (false)]
 		public virtual string DataSourceID {
-			get { return dataSourceId != null ? dataSourceId : string.Empty; }
-			set { dataSourceId = value; }
+			get {
+				return dataSourceId != null ? dataSourceId : string.Empty;
+			}
+			set {
+				dataSourceId = value;
+				if (initialized)
+					OnDataPropertyChanged ();
+			}
 		}
 		
 		protected bool Initialized {
@@ -76,17 +84,12 @@ namespace System.Web.UI.WebControls
 		
 		protected bool RequiresDataBinding {
 			get { return requiresDataBinding; }
-			set {
-				if (value && DataSourceID.Length > 0)
-					DataBind ();
-				else
-					requiresDataBinding = value;
-			}
+			set { requiresDataBinding = value; }
 		}
 		
-		[MonoTODO]
 		protected void ConfirmInitState ()
 		{
+			initialized = true;
 		}
 		
 		public override void DataBind ()
@@ -98,7 +101,7 @@ namespace System.Web.UI.WebControls
 		
 		protected void EnsureDataBound ()
 		{
-			if (RequiresDataBinding && DataSourceID != "")
+			if (RequiresDataBinding && IsBoundUsingDataSourceID)
 				DataBind ();
 		}
 		
@@ -107,24 +110,21 @@ namespace System.Web.UI.WebControls
 			if (DataBound != null)
 				DataBound (this, e);
 		}
-		
-		[MonoTODO]
+
 		protected virtual void OnDataPropertyChanged ()
 		{
+			RequiresDataBinding = true;
 		}
 		
-		[MonoTODO]
 		protected override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
-			initialized = true;
-			if (!Page.IsPostBack)
-				RequiresDataBinding = true;
+			Page.PreLoad += new EventHandler (OnPagePreLoad);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnPagePreLoad (object sender, EventArgs e)
 		{
+			ConfirmInitState ();
 		}
 		
 		protected override void OnPreRender (EventArgs e)

@@ -325,7 +325,7 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_2_0
-		public CssStyleCollection FillStyleAttributes (IUrlResolutionService urlResolver)
+		public CssStyleCollection GetStyleAttributes (IUrlResolutionService urlResolver)
 		{
 			CssStyleCollection ats = new CssStyleCollection ();
 			FillStyleAttributes (ats, urlResolver);
@@ -564,10 +564,12 @@ namespace System.Web.UI.WebControls
 			get { return IsTrackingViewState; }
 		}
 
+#if !NET_2_0
 		public override string ToString ()
 		{
 			return String.Empty;
 		}
+#endif
 
 		protected internal void SetBit (int bit)
 		{
