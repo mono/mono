@@ -1,3 +1,10 @@
+Thu Jul 26 19:11:19 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, row_indexes.h: added header with enumerations to use
+	to index in the columns from tables in metadata and to decode coded
+	tokens: we should start using this instead of embedding magic numbers
+	all over the code.
+
 Thu Jul 26 13:03:27 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c, cil-coff.h, image.c, image.h, pedump.c, typedef.c:
