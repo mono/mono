@@ -13,6 +13,8 @@
 			<arg value="/nowarn:0169"/>
 			<arg value="/nowarn:0679"/>
 			<arg value="/nowarn:0649"/>
+			<arg value="/nowarn:0219"/>
+			<arg value="/nowarn:0168"/>
 			<arg value="/unsafe"/>
 			<arg value="/noconfig"/>
 			<arg value="/r:System.dll"/>

@@ -409,6 +409,12 @@ namespace System.Data {
 		/// Clears the DataTable of all data.
 		/// </summary>
 		public void Clear () {
+			// TODO: thow an exception if any rows that 
+			//       have enforced child relations 
+			//       that would result in child rows being orphaned
+			// TODO: throw a NotSupportedException if the DataTable is part
+			//       of a DataSet that is binded to an XmlDataDocument
+
 			_rows.Clear ();
 		}
 
@@ -431,8 +437,29 @@ namespace System.Data {
 		[MonoTODO]
 		public object Compute (string expression, string filter) 
 		{
-			//FIXME: //Do a real compute
-			object obj = "a";
+			// TODO: implement this function based
+			//       on Select (expression)
+			//
+			// expression is an aggregate function
+			// filter is an expression used to limit rows
+
+			object obj = null;
+
+			// filter rows
+			ExpressionElement Expression = new ExpressionMainElement (filter);
+			
+			ArrayList List = new ArrayList ();
+			foreach (DataRow Row in Rows) {
+				
+				if (Expression.Test (Row))
+					List.Add (Row);
+			}
+			
+			DataRow[] rows = (DataRow [])List.ToArray (typeof (DataRow));
+
+			// TODO: with the filtered rows, execute the aggregate function
+			//       mentioned in expression
+
 			return obj;
 		}
 

@@ -240,8 +240,7 @@ namespace System.Data {
 				
 				object[] newItems = new object[_table.Columns.Count];			
 				object v = null;
-				int i = 0;
-				while(i < _table.Columns.Count) {
+				for (int i = 0; i < _table.Columns.Count; i++) {
 
 					if (i < value.Length)
 						v = value[i];
@@ -249,7 +248,6 @@ namespace System.Data {
 						v = null;
 
 					newItems[i] = SetColumnValue (v, i);
-					i ++;
 				}
 
 				//FIXME: BeginEdit() not correct 

@@ -243,7 +243,11 @@ namespace System.Data {
 
 		public void Clear()
 		{
-			throw new NotImplementedException ();
+			// TODO: if currently bound to a XmlDataDocument
+			//       throw a NotSupportedException
+			for (int t = 0; t < tableCollection.Count; t++) {
+				tableCollection[t].Clear ();
+			}
 		}
 
 		public virtual DataSet Clone()
@@ -420,6 +424,9 @@ namespace System.Data {
 
 		public void WriteXml(XmlWriter writer, XmlWriteMode mode)
 		{
+			if (writer.WriteState == WriteState.Start)
+				writer.WriteStartDocument (true);
+
 			((XmlTextWriter)writer).Formatting = Formatting.Indented;
 			WriteStartElement( writer, mode, Namespace, Prefix, DataSetName );
 			

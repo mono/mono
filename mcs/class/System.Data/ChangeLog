@@ -1,3 +1,19 @@
+2003-03-17  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.build: on windows build, ignore
+	warnings CS0219: "The variable xxx is assigned but its value is
+	never used" and CS0168: "The variable xxx
+	is declared but never used"
+	
+	* System.Data/DataRow.cs: flush
+	
+	* System.Data/DataSet.cs: start implementation on Clear(),
+	and WriteXml() should write the start element <?xml ... ?> at the top
+	of the document
+	
+	* System.Data/DataTable.cs: TODO/FIXME notes. Start implementation
+	of Compute() - still not working
+
 2003-03-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data/DataRowView.cs: in the constructor pass
