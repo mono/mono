@@ -90,7 +90,7 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 	}
 
-
+	[Serializable]
 	internal class CallContextRemotingData : ICloneable
 	{
 		string _logicalCallID;
