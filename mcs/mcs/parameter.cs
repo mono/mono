@@ -57,6 +57,15 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
+				if (parameter_type == TypeManager.typed_reference_type ||
+				    parameter_type == TypeManager.arg_iterator_type){
+					Report.Error (1601, l,
+						      "out or ref parameter can not be of type TypedReference or ArgIterator");
+					return false;
+				}
+			}
+			
 			return parameter_type != null;
 		}
 

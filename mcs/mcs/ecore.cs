@@ -1532,11 +1532,13 @@ namespace Mono.CSharp {
 		public BoxedCast (Expression expr)
 			: base (expr, TypeManager.object_type) 
 		{
+			eclass = ExprClass.Value;
 		}
 
 		public BoxedCast (Expression expr, Type target_type)
 			: base (expr, target_type)
 		{
+			eclass = ExprClass.Value;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)

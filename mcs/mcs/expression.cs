@@ -4039,8 +4039,9 @@ namespace Mono.CSharp {
 						
 						pr.AddressOf (ec, mode);
 					}
-				} else
+				} else {
 					((IMemoryLocation)Expr).AddressOf (ec, mode);
+				}
 			} else
 				Expr.Emit (ec);
 		}
