@@ -197,6 +197,11 @@ multi-6:
 	$(INTERNAL_MCS) -target:library ns0.cs
 	$(INTERNAL_MCS) ns.cs -r:ns0.dll
 
+multi-7:
+	$(INTERNAL_MCS) -target:library vararg-lib.cs
+	$(INTERNAL_MCS) vararg-exe.cs -r:vararg-lib.dll
+	$(TEST_RUNTIME) vararg-exe.exe
+
 ilasm:
 	$(INTERNAL_ILASM) /dll property-il.il
 	$(INTERNAL_MCS) /r:property-il.dll property-main.cs /out:property-main.exe
