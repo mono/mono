@@ -366,6 +366,7 @@ namespace System.Web.Services.Protocols {
 		internal string                  WebServiceName;
 		internal string                  WebServiceNamespace;
 		internal string                  DefaultBinding;
+		internal string                  Description;
 		internal XmlSerializer           FaultSerializer;
 		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 		internal SoapBindingStyle SoapBindingStyle;
@@ -377,9 +378,9 @@ namespace System.Web.Services.Protocols {
 			o = t.GetCustomAttributes (typeof (WebServiceAttribute), false);
 			if (o.Length == 1){
 				WebServiceAttribute a = (WebServiceAttribute) o [0];
-
-				WebServiceName = a.Name;
-				WebServiceNamespace = a.Namespace;
+				WebServiceName = (a.Name != string.Empty) ? a.Name : t.Name;
+				WebServiceNamespace = (a.Namespace != string.Empty) ? a.Namespace : WebServiceAttribute.DefaultNamespace;
+				Description = a.Description;
 			} else {
 				WebServiceName = t.Name;
 				WebServiceNamespace = WebServiceAttribute.DefaultNamespace;

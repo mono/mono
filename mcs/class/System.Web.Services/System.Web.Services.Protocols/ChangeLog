@@ -1,3 +1,7 @@
+2003-09-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Methods.cs: In TypeStubInfo, added Documentation field.
+
 2003-07-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs: 
