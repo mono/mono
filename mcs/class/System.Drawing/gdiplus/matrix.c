@@ -7,8 +7,7 @@
  *
  */
 
-#include "gdip_main.h"
-#include "gdip_win32.h"
+#include "gdip.h"
 
 GpStatus
 GdipCreateMatrix (GpMatrix **matrix)

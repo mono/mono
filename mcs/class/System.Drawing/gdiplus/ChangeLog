@@ -1,3 +1,22 @@
+2003-11-12  Duncan Mak  <duncan@ximian.com>
+
+	* bitmap.c, brush.c, general.c:
+	* graphics.c, image.c, matrix.c:
+	* pen.c, solidbrush.c: Use gdip.h instead of gdip_main.h.
+	
+	* gdip.h: New header file, merged from gdip_main.h and
+	gdip_defs.h.
+
+	* gdip_main.h, gdip_defs.h: Removed.
+
+	* pen.c
+	(convert_line_join, convert_line_cap): new function for converting
+	enumerations between GDI+ and Cairo.
+	(gdip_pen_setup): set miter limit and line join.
+	(GdipSetPenMiterLimit, GdipGetPenMiterLimit):
+	(GdipSetPenLineJoin, GdipGetPenLineJoin): 
+	(GdipSetPenLineJoin, GdipGetPenTransform): implemented.	
+	
 2003-11-12  Alexandre Pigolkine <pigolkine@gmx.de>
 	* bitmap.c 		copy image funciton added
 	

@@ -22,7 +22,7 @@
  *   Alexandre Pigolkine(pigolkine@gmx.de)
  */
 
-#include "gdip_main.h"
+#include "gdip.h"
 
 void 
 gdip_brush_init (GpBrush *brush)

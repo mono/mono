@@ -23,7 +23,7 @@
  *
  */
 
-#include "gdip_main.h"
+#include "gdip.h"
 #include <math.h>
 
 void 

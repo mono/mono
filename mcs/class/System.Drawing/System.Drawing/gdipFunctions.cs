@@ -155,6 +155,22 @@ namespace System.Drawing {
 		internal static extern Status GdipCreatePen1(int argb, float width, Unit unit, out int pen);
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDeletePen(IntPtr pen);
+		[DllImport("gdiplus.dll")]
+                internal static extern Status GdipSetPenMiterLimit (IntPtr pen, float miterLimit);
+		[DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenMiterLimit (IntPtr pen, out float miterLimit);
+		[DllImport("gdiplus.dll")]
+                internal static extern Status GdipSetPenLineJoin (IntPtr pen, LineJoin lineJoin);
+		[DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenLineJoin (IntPtr pen, out LineJoin lineJoin);
+		[DllImport("gdiplus.dll")]
+                internal static extern Status GdipSetPenLineCap (IntPtr pen, LineCap lineCap);
+		[DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenLineCap (IntPtr pen, out LineCap lineCap);
+		[DllImport("gdiplus.dll")]
+                internal static extern Status GdipSetPenTransform (IntPtr pen, Matrix matrix);
+		[DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenTransform (IntPtr pen, out Matrix matrix);
 		
 		// Bitmap functions
 		[DllImport("gdiplus.dll")]

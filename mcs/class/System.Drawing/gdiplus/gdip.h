@@ -1,9 +1,27 @@
 /*
- * Enums, structs and functions
+ * gdip.h
+ *
+ * Authors:
+ *      Alexandre Pigolkine (pigolkine@gmx.de)
+ *      Duncan Mak (duncan@ximian.com)
+ *      Miguel de Icaza (miguel@ximian.com)
+ *
  */
 
-#ifndef _GDIP_DEFS_H
-#define _GDIP_DEFS_H
+#ifndef _GDIP_H
+#define _GDIP_H
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <cairo.h>
+#include <cairo-xlib.h>
+#include <mono/io-layer/uglify.h>
+
+/*
+ * Enums
+ *
+ */
 
 typedef enum {
     Ok = 0,
@@ -42,7 +60,7 @@ typedef enum {
     UnitInch	 = 4,       
     UnitDocument = 5,   
     UnitMillimeter = 6 
-} Unit;
+} GpUnit, Unit;
 
 typedef enum {
 	Alpha = 262144,
@@ -81,6 +99,157 @@ typedef enum {
         FillModeAlternate,
         FillModeWinding
 } GpFillMode;
+
+typedef enum {
+        DashStyleSolid = 0,      /* solid line */
+        DashStyleDash = 1,       /* dashed line */
+        DashStyleDot = 2,        /* dotted line */
+        DashStyleDashDot = 3,    /* alt. dash-dot */
+        DashStyleDashDotDot = 4, /* alt. dash-dot-dot */
+        dashStyleCustom = 5      /* user-defined */
+} GpDashStyle;
+
+typedef enum {
+        LineJoinMiter = 0,       /* sharp corner */
+        LineJoinBevel = 1,       /* round corner */
+        LineJoinRound = 2,       /* circular, smooth, circular arc */
+        LineJoinMiterClipped = 3 /* miter, sharp or beveled corner */
+} GpLineJoin;
+
+typedef enum  {
+	imageUndefined,
+	imageBitmap,
+	imageMetafile
+} ImageType;
+
+typedef enum {
+	gtUndefined,
+	gtX11Drawable,
+	gtMemoryBitmap
+} GraphicsType;
+
+typedef enum {
+    LineCapFlat = 0,
+    LineCapSquare = 1,
+    LineCapRound = 2,
+    LineCapTriangle = 3,
+    LineCapNoAnchor = 0x10,
+    LineCapSquareAnchor = 0x11,
+    LineCapRoundAnchor = 0x12,
+    LineCapDiamondAnchor = 0x13,
+    LineCapArrowAnchor = 0x14,
+    LineCapCustom = 0xff
+} GpLineCap;
+
+/*
+ * Structures
+ *
+ */
+typedef struct {
+	unsigned int Width;
+	unsigned int Height;
+	int          Stride;
+	int          PixelFormat;
+	void         *Scan0;
+	unsigned int Reserved;
+} GdipBitmapData, BitmapData;
+
+typedef struct {
+	int left, top, right, bottom;
+} GpRect, Rect;
+
+typedef struct tagRectF{
+	float left, top, right, bottom;
+} GpRectF, RectF;
+
+typedef struct {
+        int X, Y;
+} GpPoint;
+
+typedef struct {
+        float X, Y;
+} GpPointF;
+
+typedef struct {
+	cairo_t         *ct;
+	cairo_matrix_t  *copy_of_ctm;
+	void            *hdc;
+	int             hdc_busy_count;
+	void            *image;
+	int             type; 
+} GpGraphics;
+
+typedef cairo_matrix_t GpMatrix;
+
+typedef struct {
+	int color;
+	float width;
+        float miter_limit;
+        GpLineJoin line_join;
+        GpDashStyle dash_style;
+        GpLineCap line_cap;
+        float dash_offset;
+        int dash_count;
+        GpMatrix *matrix;
+} GpPen;
+
+typedef struct {
+	cairo_matrix_t		*matrix;
+} GpState;
+
+typedef struct {
+	ImageType     type;
+	cairo_surface_t   *surface;
+	GpGraphics  *graphics;		/* created by GdipGetImageGraphicsContext */
+} GpImage;
+
+typedef struct {
+	GpImage	image;
+	int cairo_format;
+	BitmapData	data;
+	void *hBitmapDC;
+	void *hInitialBitmap;
+	void *hBitmap;
+} GpBitmap;
+
+typedef struct {
+	int color;
+} GpBrush;
+
+/*
+ * Functions
+ * 
+ */
+void gdip_image_init              (GpImage *image);
+void *gdip_image_create_Win32_HDC (GpImage *image);
+void gdip_image_destroy_Win32_HDC (GpImage *image, void *hdc);
+
+void gdip_bitmap_init  (GpBitmap *bitmap);
+GpBitmap *gdip_bitmap_new   (void);
+void gdip_bitmap_dispose (GpBitmap *bitmap);
+
+void *gdip_bitmap_create_Win32_HDC (GpBitmap *bitmap);
+void gdip_bitmap_destroy_Win32_HDC (GpBitmap *bitmap, void *hdc);
+
+void *_get_gdi32Handle (void);
+void *_get_user32Handle (void);
+
+void gdip_graphics_init (GpGraphics *graphics);
+GpGraphics *gdip_graphics_new (void);
+void gdip_graphics_attach_bitmap (GpGraphics *graphics, GpBitmap *image);
+void gdip_graphics_detach_bitmap (GpGraphics *graphics, GpBitmap *image);
+
+void gdip_brush_init (GpBrush *brush);
+GpBrush *gdip_brush_new (void);
+void gdip_brush_setup (GpGraphics *graphics, GpBrush *brush);
+
+void gdip_pen_init (GpPen *pen);
+GpPen *gdip_pen_new (void);
+void gdip_pen_setup (GpGraphics *graphics, GpPen *pen);
+
+extern Display *GDIP_display;
+
+void initializeGdipWin32 (void);
 
 /* Bitmap */
 GpStatus GdipCreateBitmapFromScan0 (int width, int height, int strideIn, int format, void *scan0, GpBitmap **bitmap);
@@ -129,6 +298,16 @@ GpStatus gdip_get_status (cairo_t *ct);
 GpStatus GdipCloneBrush (GpBrush *brush, GpBrush **clonedBrush);
 GpStatus GdipDeleteBrush (GpBrush *brush);
 
+/* Pen */
+GpStatus GdipCreatePen1 (int argb, float width, GpUnit unit, GpPen **pen);
+GpStatus GdipDeletePen (GpPen *pen);
+GpStatus GdipSetPenMiterLimit (GpPen *pen, float miterLimit);
+GpStatus GdipGetPenMiterLimit (GpPen *pen, float *miterLimit);
+GpStatus GdipSetPenLineCap (GpPen *pen, GpLineCap lineCap);
+GpStatus GdipGetPenLineCap (GpPen *pen, GpLineCap *lineCap);
+GpStatus GdipSetPenLineJoine (GpPen *pen, GpLineJoin lineJoin);
+GpStatus GdipGetPenLineCap (GpPen *pen, GpLineJoin *lineJoin);
+
 /* Text */
 GpStatus GdipDrawString (GpGraphics *graphics, const char *string, int len, void *font, RectF *rc, void *format, GpBrush *brush);
 
@@ -159,4 +338,4 @@ GpStatus GdipIsMatrixEqual (GpMatrix *matrix, GpMatrix *matrix2, int *result);
 void *GdipAlloc (int size);
 void GdipFree (void *ptr);
 
-#endif /* _GDIP_DEFS_H */
+#endif /* _GDIP_H */

@@ -77,6 +77,61 @@ namespace System.Drawing {
 			}
 		}
 
+                public LineCap LineCap {
+
+                        get {
+                                LineCap result;
+                                GDIPlus.GdipGetPenLineCap (nativeObject, out result);
+                                return result;
+                        }
+
+                        set {
+                                GDIPlus.GdipSetPenLineCap (nativeObject, value);
+                        }
+                                
+                }
+
+                public LineJoin LineJoin {
+
+                        get {
+                                LineJoin result;
+                                GDIPlus.GdipGetPenLineJoin (nativeObject, out result);
+                                return result;
+                        }
+
+                        set {
+                                GDIPlus.GdipSetPenLineJoin (nativeObject, value);
+                        }
+                                
+                }
+
+                public float MiterLimit {
+
+                        get {
+                                float result;
+                                GDIPlus.GdipGetPenMiterLimit (nativeObject, out result);
+                                return result;
+                        }
+
+                        set {
+                                GDIPlus.GdipSetPenMiterLimit (nativeObject, value);
+                        }
+                                
+                }
+
+                public Matrix Transform {
+
+                        get {
+                                Matrix result;
+                                GDIPlus.GdipGetPenTransform (nativeObject, out result);
+                                return result;
+                        }
+
+                        set {
+                                GDIPlus.GdipSetPenTransform (nativeObject, value);
+                        }
+                }
+
 		public float Width {
 			get {
 				return width;

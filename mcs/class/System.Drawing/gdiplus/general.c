@@ -23,7 +23,7 @@
  *   Duncan Mak (duncan@ximian.com)
  */
 
-#include "gdip_main.h"
+#include "gdip.h"
 #include <dlfcn.h>
 #include <cairo.h>
 

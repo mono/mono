@@ -23,7 +23,7 @@
  */
 
 #include <glib.h>
-#include "gdip_main.h"
+#include "gdip.h"
 #include "gdip_win32.h"
 #include <string.h>
 #include <unistd.h>

@@ -24,7 +24,7 @@
  *
  */
 
-#include "gdip_main.h"
+#include "gdip.h"
 #include "gdip_win32.h"
 #include <math.h>
 
@@ -38,8 +38,8 @@ gdip_graphics_init (GpGraphics *graphics)
 	graphics->hdc_busy_count = 0;
 	graphics->image = 0;
 	graphics->type = gtUndefined;
-        cairo_select_font (graphics->ct, "serif:12");
-	/* cairo_select_font (graphics->ct, "serif:12", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL); */
+        /* cairo_select_font (graphics->ct, "serif:12"); */
+	cairo_select_font (graphics->ct, "serif:12", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 }
 
 GpGraphics *
