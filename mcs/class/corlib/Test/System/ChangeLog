@@ -1,3 +1,7 @@
+2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Add test for bug #69389.
+
 2004-11-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add test for bug #69365.

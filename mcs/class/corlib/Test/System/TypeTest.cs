@@ -231,6 +231,21 @@ namespace MonoTests.System
 		public void GetFieldIgnoreCase () {
 			AssertNotNull (typeof (TypeTest).GetField ("afield", BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase));
 		}
+
+		public int Count {
+			internal get {
+				return 0;
+			}
+
+			set {
+			}
+		}
+
+		[Test]
+		public void GetPropertyAccessorModifiers () {
+			AssertNotNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.Public));
+			AssertNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.NonPublic));
+		}
 	}
 }
 
