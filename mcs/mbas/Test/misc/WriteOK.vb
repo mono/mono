@@ -79,6 +79,8 @@ Module WriteOK
 		else
 			Console.WriteLine("un-Ho!")	
 		End If
+		
+		Redimpreserve.doTest()
     End Sub
 
 

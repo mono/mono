@@ -13,7 +13,7 @@ run-test-ondotnet-local: WriteOK.exe
 	./WriteOK.exe --sayho /about -say:this,that,those /say:what?
 
 WriteOK.exe: Makefile *.vb *.mbs
-	$(BASCOMPILE) --reference=Mono.GetOptions -r:System.Data,System.Messaging --main WriteOK WriteOK.vb WriteOK2.mbs AssemblyInfo.vb
+	$(BASCOMPILE) --reference=Mono.GetOptions -r:System.Data,System.Messaging --main WriteOK WriteOK.vb WriteOK2.mbs RedimPreserve.vb AssemblyInfo.vb
 
 verbose:
 	$(MAKE) LOCAL_MBAS_FLAGS='--verbosegetoptions --verbose --stacktrace' WriteOK.exe

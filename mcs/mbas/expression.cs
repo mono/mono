@@ -7125,4 +7125,54 @@ namespace Mono.MonoBASIC {
 			ig.Emit (OpCodes.Localloc);
 		}
 	}
+	public class Preserve : ExpressionStatement {
+		ArrayList args = null;
+		MethodInfo mi = null;
+		Expression target = null;
+		ExpressionStatement source = null;
+
+
+		public Preserve (Expression RedimTarget, ExpressionStatement acExpr, Location l)
+		{
+			Type type = typeof(Microsoft.VisualBasic.CompilerServices.Utils);
+			mi = type.GetMethod("CopyArray");
+
+			target = RedimTarget;
+			source = acExpr;
+
+			eclass = ExprClass.Value;
+			loc = l;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			//
+			// We are born fully resolved
+			//
+			type = mi.ReturnType;
+
+			source.Resolve (ec);
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			args = new ArrayList (2);
+
+			args.Add (new Argument (target, Argument.AType.Expression));
+			args.Add (new Argument (source, Argument.AType.Expression));
+
+			Invocation.EmitArguments (ec, mi, args);
+
+			ec.ig.Emit (OpCodes.Call, mi);
+			return;
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			Emit (ec);
+		}
+
+	}
 }

@@ -5,7 +5,7 @@ include ../build/rules.make
 PROGRAM = mbas.exe
 BUILT_SOURCES = mb-parser.cs
 
-LOCAL_MCS_FLAGS = /r:System.dll /r:$(topdir)/class/lib/$(PROFILE)/Mono.GetOptions.dll
+LOCAL_MCS_FLAGS = /r:System.dll /r:$(topdir)/class/lib/$(PROFILE)/Mono.GetOptions.dll /r:$(topdir)/class/lib/$(PROFILE)/Microsoft.VisualBasic.dll
 
 EXTRA_DISTFILES = mb-parser.jay mbas.csproj mbas.ico mbas.sln
 CLEAN_FILES = y.output 

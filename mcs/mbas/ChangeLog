@@ -1,5 +1,13 @@
-2004-11-25  Raja R Harinath  <rharinath@novell.com>
+2004-11-30 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+    * Test/misc/Makefile : Compile new RedimPreserve.vb test source
+    * Added Test/misc/RedimPreserve.vb
+    
+2004-11-30  Alexandre Rocha Lima e Marcondes <alexandremarcondes@psl-pr.softwarelivre.org>
+	* Makefile: Included Microsoft.VisualBasic.dll assembly on LOCAL_MCS_FLAGS.
+	* expression.cs: Created class Preserve to implement REDIM PRESERVE syntax.
+	* statement.cs: Implemented REDIM PRESERVE syntax on Redim.Resolve().
 
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
 	* Makefile (SUBDIRS): Just list Test.
 	(mb-parser.cs): Depend on jay/skeleton.cs.
 

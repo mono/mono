@@ -5699,10 +5699,8 @@ namespace Mono.MonoBASIC {
 				// TODO: we are in a foreach we probably can't reuse ReDimExpr, must turn it into an array(list)
 				if (Preserve)
 				{
-					// TODO: Generate call to copying code, which has to make lots of verifications
-					//PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
-					//ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, PreserveExpr, loc), loc);
-					ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
+					ExpressionStatement PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
+					ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, PreserveExpr, loc), loc);
 				}
 				else
 					ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
