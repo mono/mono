@@ -1,3 +1,7 @@
+2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* delegate.cs: Add test for bug #52092.
+
 2004-02-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal10.cs: Oops, wrong test.
