@@ -1,4 +1,9 @@
 
+Sat Jun 1 14:10:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monobitset.c: fix my screwup pointed out by Lawrence Pit
+	(loz@cable.a2000.nl).
+
 Fri May 31 15:34:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monobitset.c, monobitset.h: fixes. added mono_bitset_foreach().
