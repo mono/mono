@@ -45,7 +45,7 @@
                  } finally {
                         ldc.i4.1
                         stsfld int32 T::fin_caught
-                        leave outer
+                        endfinally
                  }
            
 
