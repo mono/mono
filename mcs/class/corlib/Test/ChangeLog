@@ -1,0 +1,8 @@
+2001-08-29  Alexander Klyubin <klyubin@aqris.com>
+  
+  * Added tests for System.Diagnostics.StackFrame and
+    System.Diagnostics.StackTrace. The tests only run against Microsoft's
+    implementation as StackTrace and StackFrame classes in Mono are not yet
+    properly implemented.
+    
+    Note that StackFrameTest runs properly only if compiled with /debug switch.
