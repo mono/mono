@@ -1,3 +1,7 @@
+2003-06-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_Module_GetGuidInternal): 
+	New icall to return the GUID of a module.
 
 Mon Jun 9 19:33:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
