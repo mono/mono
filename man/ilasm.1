@@ -1,0 +1,44 @@
+.TH "ilasm" 1
+.SH NAME
+ilasm \- Mono IL assembler
+.SH SYNOPSIS
+.B ilasm
+[option] [source-files]
+.SH DESCRIPTION
+ilasm is the Mono ILAsm assembler.  You can pass one or more options to
+drive the compiler, and a set of source files.  
+
+The Mono ILAsm assembler accepts options starting with / or - for mosted 
+options. 
+
+The Mono ILAsm assembler generates images (.exe and .dll files) that contain
+CIL byte code that can be executed by any system that implemented a Common
+Language Infrastructure virtual machine. 
+.SH OPTIONS
+.TP
+.B \//out:<file_name>
+Specify the output file name.
+.TP
+.B \//exe 
+Generate an exe
+.TP
+.B \//dll
+Generate a library
+.TP
+.B \//scan_only
+Just scan the IL code and display tokens.
+.TP
+.B \//show_tokens
+Show tokens as they are parsed.
+.TP
+.B \//show_method_def 
+Display method information when a method is defined.
+.TP
+.B \//show_method_ref
+Display method information when a method is referenced
+.TP
+.B \--about
+Display information about ilasm
+.TP
+.B \--version
+Display ilasm version
