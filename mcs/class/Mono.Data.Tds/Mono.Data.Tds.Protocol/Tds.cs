@@ -54,6 +54,8 @@ namespace Mono.Data.TdsClient.Internal {
 		bool autoCommit;
                 Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
+		bool inUse = false;
+
 		#endregion // Fields
 
 		#region Properties
@@ -70,6 +72,11 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public TdsVersion TdsVersion {
 			get { return tdsVersion; }
+		}
+
+		public bool InUse {
+			get { return inUse; }
+			set { inUse = value; }
 		}
 
 		#endregion // Properties
@@ -976,6 +983,10 @@ Console.WriteLine ("Column Metadata");
 				done = (result is TdsPacketEndTokenResult) && (!((TdsPacketEndTokenResult) result).MoreResults);
 				
 			} while (!done);
+		}
+
+		public void Close ()
+		{
 		}
 
 		public bool Logon (TdsConnectionParameters parms)
