@@ -1649,10 +1649,6 @@ namespace Mono.Security.X509 {
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
 
-			if (File.Exists (filename)) {
-				File.Delete (filename);
-			}
-
 			using (FileStream fs = File.OpenWrite (filename)) {
 				byte[] data = GetBytes ();
 				fs.Write (data, 0, data.Length);
@@ -1663,26 +1659,15 @@ namespace Mono.Security.X509 {
 
 		public object Clone ()
 		{
+			PKCS12 clone = null;
 			if (_password != null) {
-				return new PKCS12 (GetBytes (), Encoding.BigEndianUnicode.GetString (_password));
+				clone = new PKCS12 (GetBytes (), Encoding.BigEndianUnicode.GetString (_password));
+			} else {
+				clone = new PKCS12 (GetBytes ());
 			}
-			return new PKCS12 (GetBytes ());
-		}
+			clone.IterationCount = this.IterationCount;
 
-		public override bool Equals (object o)
-		{
-			if (o == null) return false;
-
-			PKCS12 p = (o as PKCS12);
-			if (p == null)
-				return false;
-
-			return Compare (GetBytes (), p.GetBytes ());
-		}
-
-		public override int GetHashCode ()
-		{
-			return GetBytes ().GetHashCode ();
+			return clone;
 		}
 
 		// static methods
