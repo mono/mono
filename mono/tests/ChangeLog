@@ -1,3 +1,12 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (check-local): New.  Hook into 'make check'.
+	(CSC): Define using in-tree mono and mcs.exe.
+	(ILASM): New.  Likewise, with in-tree ilasm.exe.
+	* async_read.cs (Main): Read async_read.exe, since async_read.cs
+	will not necessarily be in the build directory.
+	* test-driver: Preserve stderr.
+
 2004-11-10  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* cross-domain.cs: New tests for cross-domain calls.
