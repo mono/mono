@@ -1,4 +1,9 @@
-2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
+2003-01-29  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Context.cs: Object sinks must be created for each object
+	  (they can contain object-specific info).
+
+2002-12-20  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Context.cs: Added creation of default server context and
 	  object context sinks.
