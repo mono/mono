@@ -1,3 +1,8 @@
+2005-03-10  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_bounded_array_class_get): Initialize `eclass' if
+	it's a generic instance.
+
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_get_object_from_blob): Applied patch from
