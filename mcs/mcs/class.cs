@@ -1360,7 +1360,7 @@ namespace CIR {
 			//
 			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
 			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
-			
+
 			if ((ModFlags & va) == va){
 				if ((ModFlags & va) == va){
 					Report.Error (
@@ -1399,6 +1399,7 @@ namespace CIR {
 			//
 			// Finally, define the method
 			//
+			
 			MethodBuilder = parent.TypeBuilder.DefineMethod (
 				Name, flags,
 				GetCallingConvention (parent is Class),

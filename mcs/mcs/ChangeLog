@@ -1,5 +1,8 @@
 2001-10-04  Miguel de Icaza  <miguel@ximian.com>
 
+	* modifiers.cs: If the ABSTRACT keyword is present, also set the
+	virtual and newslot bits. 
+
 	* class.cs (TypeContainer::RegisterRequiredImplementations):
 	Record methods we need.
 

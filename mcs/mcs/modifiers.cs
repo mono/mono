@@ -89,7 +89,7 @@ namespace CIR {
 				t |= TypeAttributes.Sealed;
 			if ((mod_flags & ABSTRACT) != 0)
 				t |= TypeAttributes.Abstract;
-			
+
 			// If we do not have static constructors, static methods
 			// can be invoked without initializing the type.
 			if (!caller.HaveStaticConstructor)
@@ -139,8 +139,10 @@ namespace CIR {
 
 			if ((mod_flags & STATIC) != 0)
 				ma |= MethodAttributes.Static;
-			if ((mod_flags & ABSTRACT) != 0)
-				ma |= MethodAttributes.Abstract;
+			if ((mod_flags & ABSTRACT) != 0){
+				ma |= MethodAttributes.Abstract | MethodAttributes.Virtual |
+					MethodAttributes.NewSlot;
+			}
 			if ((mod_flags & SEALED) != 0)
 				ma |= MethodAttributes.Final;
 			if ((mod_flags & VIRTUAL) != 0)

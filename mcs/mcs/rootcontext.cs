@@ -441,7 +441,7 @@ namespace CIR {
 				return null;
 
 			type_container_resolve_order.Add (tc);
-			
+
 			tb = mb.DefineType (name,
 					    tc.TypeAttr | TypeAttributes.Class,
 					    parent,

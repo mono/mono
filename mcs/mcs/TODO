@@ -92,18 +92,3 @@
 	Where B is a class defined in the source code, my guess is that
 	the look for ".ctor" fails
 
-* Broken code:
-
-	This fails:
-------
-abstract class X {
-	public abstract void A ();
-}
-------
-
-And if you add this, it fails too:
-
-class Y : X {
-	public override void A () {
-	}
-}
