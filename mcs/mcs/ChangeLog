@@ -1,3 +1,9 @@
+2003-05-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (PointerArithmetic.Emit): If our operand is a
+	long, convert our constants to match the operand before
+	multiplying.  Convert to I type before adding.   Fixes 43670.
+	
 2003-05-14  Ravi Pratap  <ravi@ximian.com>
 
 	* enum.cs (ImplicitConversionExists) : Rename to

@@ -3134,8 +3134,7 @@ namespace Mono.CSharp {
 		//
 		// We assume that `l' is always a pointer
 		//
-		public PointerArithmetic (bool is_addition, Expression l, Expression r, Type t,
-					  Location loc)
+		public PointerArithmetic (bool is_addition, Expression l, Expression r, Type t, Location loc)
 		{
 			type = t;
 			eclass = ExprClass.Variable;
@@ -3158,8 +3157,9 @@ namespace Mono.CSharp {
 			Type op_type = left.Type;
 			ILGenerator ig = ec.ig;
 			int size = GetTypeSize (op_type.GetElementType ());
+			Type rtype = right.Type;
 			
-			if (right.Type.IsPointer){
+			if (rtype.IsPointer){
 				//
 				// handle (pointer - pointer)
 				//
@@ -3187,7 +3187,12 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Sizeof, op_type);
 					else 
 						IntLiteral.EmitInt (ig, size);
+					if (rtype == TypeManager.int64_type)
+						ig.Emit (OpCodes.Conv_I8);
+					else if (rtype == TypeManager.uint64_type)
+						ig.Emit (OpCodes.Conv_U8);
 					ig.Emit (OpCodes.Mul);
+					ig.Emit (OpCodes.Conv_I);
 				}
 				if (is_add)
 					ig.Emit (OpCodes.Add);
@@ -6557,7 +6562,7 @@ namespace Mono.CSharp {
 	///   An Element Access expression.
 	///
 	///   During semantic analysis these are transformed into 
-	///   IndexerAccess or ArrayAccess 
+	///   IndexerAccess, ArrayAccess or a PointerArithmetic.
 	/// </summary>
 	public class ElementAccess : Expression {
 		public ArrayList  Arguments;
