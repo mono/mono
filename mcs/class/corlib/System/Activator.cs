@@ -141,7 +141,8 @@ namespace System
 			}
 			ConstructorInfo ctor = type.GetConstructor (atypes);
 			if (ctor == null)
-				return null;
+				throw new MissingMethodException ("Constructor not found");
+
 
 			return ctor.Invoke (args);
 		}
@@ -163,6 +164,9 @@ namespace System
 						     CultureInfo culture,
 						     object [] activationAttributes)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+		
 			// activationAttributes?
 			int length = 0;
 			if (args != null)
@@ -174,7 +178,7 @@ namespace System
 			}
 			ConstructorInfo ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
 			if (ctor == null)
-				return null;
+				throw new MissingMethodException ("Constructor not found");
 
 			return ctor.Invoke (bindingAttr, binder, args, culture);
 		}
@@ -186,7 +190,7 @@ namespace System
 				
 			ConstructorInfo ctor = type.GetConstructor (Type.EmptyTypes);
 			if (ctor != null && !ctor.IsPublic && nonPublic == false)
-				return null;
+				throw new MissingMethodException ("Default constructor not found");
 
 			if (ctor == null)
 				throw new MissingMethodException ("Default constructor not found");

@@ -1,3 +1,14 @@
+2002-12-28  Marcus Urban <mathpup@mylinuxisp.com>
+
+	* Activator.cs: Since the documentation indicates the method
+	either succeeds or throws one of the listed exceptions, we weren't
+	expecting that CreateInstance might be returning null.
+
+	For more information on the bug, see http://bugs.ximian.com/show_bug.cgi?id=36109
+
+2002-12-20 Lluis Sanchez Gual <lsg@ctv.es>
+
+	* MarshalByRefObject.cs: implemented CreateObjRef.
 
 2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
