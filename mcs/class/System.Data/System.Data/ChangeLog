@@ -1,3 +1,8 @@
+2004-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDataReader.cs : type change is required before setting value
+	  string to row item.
+
 2004-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : Loop-break of the last fix was incorrect.

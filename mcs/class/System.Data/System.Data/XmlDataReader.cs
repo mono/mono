@@ -183,7 +183,7 @@ namespace System.Data
 			DataColumn col = row.Table.Columns [XmlConvert.DecodeName (reader.LocalName)];
 			if (col == null || col.Namespace != reader.NamespaceURI)
 				return;
-			row [col] = reader.Value;
+			row [col] = StringToObject (col.DataType, reader.Value);
 		}
 
 		private void ReadElementContent (DataRow row)
@@ -216,8 +216,9 @@ namespace System.Data
 #if SILLY_MS_COMPATIBLE
 // As to MS, "test string" and "test <!-- comment -->string" are different :P
 				if (simple != null && row.IsNull (simple))
-					row [simple] = s;
+					row [simple] = StringToObject (simple.DataType, s);
 #else
+// But it does not mean we support "123<!-- comment -->456". just allowed for string
 				if (simple != null)
 					row [simple] += s;
 #endif
@@ -258,7 +259,7 @@ namespace System.Data
 
 				bool wasEmpty = reader.IsEmptyElement;
 				int depth = reader.Depth;
-				row [col] = reader.ReadElementString ();
+				row [col] = StringToObject (col.DataType, reader.ReadElementString ());
 				if (!wasEmpty && reader.Depth > depth) {
 				// This means, instance does not match with
 				// the schema (because the instance element
@@ -302,6 +303,34 @@ namespace System.Data
 			// Matched neither of the above: just skip
 			reader.Skip ();
 			reader.MoveToContent ();
+		}
+
+		internal static object StringToObject (Type type, string value)
+		{
+			if (type == null) return value;
+
+			switch (Type.GetTypeCode (type)) {
+				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
+				case TypeCode.Byte: return XmlConvert.ToByte (value);
+				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);
+				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
+				case TypeCode.Decimal: return XmlConvert.ToDecimal (value);
+				case TypeCode.Double: return XmlConvert.ToDouble (value);
+				case TypeCode.Int16: return XmlConvert.ToInt16 (value);
+				case TypeCode.Int32: return XmlConvert.ToInt32 (value);
+				case TypeCode.Int64: return XmlConvert.ToInt64 (value);
+				case TypeCode.SByte: return XmlConvert.ToSByte (value);
+				case TypeCode.Single: return XmlConvert.ToSingle (value);
+				case TypeCode.UInt16: return XmlConvert.ToUInt16 (value);
+				case TypeCode.UInt32: return XmlConvert.ToUInt32 (value);
+				case TypeCode.UInt64: return XmlConvert.ToUInt64 (value);
+			}
+
+			if (type == typeof (TimeSpan)) return XmlConvert.ToTimeSpan (value);
+			if (type == typeof (Guid)) return XmlConvert.ToGuid (value);
+			if (type == typeof (byte[])) return Convert.FromBase64String (value);
+
+			return Convert.ChangeType (value, type);
 		}
 	}
 }
