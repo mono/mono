@@ -224,7 +224,7 @@ namespace System.Web.UI
 			}
 
 			try {
-				assembly = Assembly.Load (name);
+				assembly = Assembly.LoadWithPartialName (name);
 				string loc = assembly.Location;
 				fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
 			} catch (Exception e) {
