@@ -1,3 +1,7 @@
+2003-02-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: fixed loading assemblies from PrivateBinPath.
+
 2003-02-03  Patrik Torstensson
 	* appdomain.[c|h], domain.c : 
 	 - Added support for getting a domain via domain id
