@@ -1,3 +1,9 @@
+2004-06-14  Dick Porter  <dick@ximian.com>
+
+	* Directory.cs:
+	* File.cs: Catch PATH_NOT_FOUND errors in Exists() too.  Fixes bug
+	59354.
+
 2004-06-09  Duncan Mak  <duncan@ximian.com>
 
 	* BufferedStream.cs (SetLength): Add checks and throw the
