@@ -1,3 +1,7 @@
+2003-12-11  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* System.Xml.dll.sources : Added ScriptCompilerInfo.cs.
+
 2003-12-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* System.Xml_test.dll.sources : patch by David Sheldon. Added XmlSchemaLengthFacetTests.cs.

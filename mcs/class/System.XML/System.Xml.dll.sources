@@ -46,6 +46,7 @@ Mono.Xml.Xsl/GenericOutputter.cs
 Mono.Xml.Xsl/HtmlEmitter.cs
 Mono.Xml.Xsl/MSXslScriptManager.cs
 Mono.Xml.Xsl/Outputter.cs
+Mono.Xml.Xsl/ScriptCompilerInfo.cs
 Mono.Xml.Xsl/TextEmitter.cs
 Mono.Xml.Xsl/TextOutputter.cs
 Mono.Xml.Xsl/XmlWriterEmitter.cs
