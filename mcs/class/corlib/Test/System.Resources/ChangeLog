@@ -1,3 +1,7 @@
+2002-05-22  Nick Drochak  <ndrochak@gol.com>
+
+	* ResourceReaderTest.cs: Fix path name to resource files (again).
+
 2002-02-09  Nick Drochak  <ndrochak@gol.com>
 
 	* ResourceReaderTest.cs: Fix path name to resource files
