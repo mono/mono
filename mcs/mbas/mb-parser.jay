@@ -2341,8 +2341,8 @@ statement_list
 	| statement_list end_of_stmt statement
 	;
 	
-statement : 
-	    declaration_statement
+statement 
+	  : declaration_statement
 	    {
 		  if ($1 != null && (Block) $1 != current_block){
 			current_block.AddStatement ((Statement) $1);
@@ -3656,7 +3656,6 @@ primary_expression
 		string name = (string) $1;
 		$$ = DecomposeQI (name, lexer.Location);
 	  }
-	//FIXME: address_of_expression is apparently missing here
 	| get_type_expression
 	| member_access
 	| invocation_expression
@@ -3749,7 +3748,7 @@ member_access
 		}
 	  }
 	;
-
+	
 predefined_type
 	: builtin_types
 	;
@@ -4768,36 +4767,19 @@ void CheckAttributeTarget (string a)
 
 private void AddHandler (Block b, Expression evt_id, Expression handles_exp)
 {
-   	Location loc = lexer.Location;
-   	if (handles_exp is MemberAccess) {
-		string evt_def = ((MemberAccess)handles_exp).ToString();
-		string evt_target = evt_id.ToString();
-   		evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
+	Expression evt_target;
+	Location loc = lexer.Location;
+	
+	if (evt_id is MemberAccess)
+		evt_target = ((MemberAccess)evt_id).Expr;
+	else
+		evt_target = (new This (current_block, lexer.Location));
 		
-		Statement addhnd = (Statement) new AddHandler (evt_id, 
-							DecomposeQI(evt_def, loc), 
-							DecomposeQI(evt_target, loc), loc);
-
-		b.AddStatement (addhnd);
-	} else if (handles_exp is SimpleName) {
-		string evt_def = ((SimpleName)handles_exp).ToString();
-		string evt_target = evt_id.ToString();
-   		evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
-		
-		Statement addhnd = (Statement) new AddHandler (evt_id, 
-							DecomposeQI(evt_def, loc), 
-							DecomposeQI(evt_target, loc), loc);
-
-		b.AddStatement (addhnd);
-
-	} else if (handles_exp is BaseAccess) {
-		string evt_def = ((BaseAccess) handles_exp).member;
-		Statement addhnd = (Statement) new AddHandler (evt_id, 
-									DecomposeQI(evt_def, loc), 
-									handles_exp, loc);	
-									
-		b.AddStatement (addhnd);
-	}
+	Statement addhnd = (Statement) new AddHandler (evt_id, 
+													handles_exp, 
+													evt_target, 
+													loc);
+	b.AddStatement (addhnd);
 }
 
 private void RaiseEvent (string evt_name, ArrayList args)

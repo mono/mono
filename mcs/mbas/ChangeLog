@@ -1,3 +1,7 @@
+2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Unnecessary to and fro conversion of types
+			is removed from AddHandler function
+
 2004-09-23 Anirban Bhattacharjee <banirban@novell.com>
 	* expression.cs: Enhanced mbas to resolve Default property or indexer
 
