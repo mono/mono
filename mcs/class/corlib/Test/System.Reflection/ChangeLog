@@ -1,3 +1,7 @@
+2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BinderTests.cs: added test for null type in the argument list.
+
 2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BinderTests.cs: one more test for matching a single property. Adapted

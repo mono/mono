@@ -19,6 +19,19 @@ namespace MonoTests.System.Reflection
 		Two
 	}
 	
+	class SampleClass {
+		public static void SampleMethod (object o) { }
+
+		public Type this[decimal i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[object i] {
+			get { return i.GetType (); }
+		}
+
+	}
+	
 	class SingleIndexer {
 		public Type this [int i] {
 			get { return i.GetType (); }
@@ -176,6 +189,26 @@ namespace MonoTests.System.Reflection
 			Assert.IsNotNull (prop, "int");
 			prop = binder.SelectProperty (0, props, null, new Type [] { typeof (short) }, null);
 			Assert.IsNotNull (prop, "short");
+		}
+
+		[Test]
+		public void ArgNullOnMethod () // see bug 58846. We throwed nullref here.
+		{
+			Type type = typeof (SampleClass);
+			BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod;
+			type.InvokeMember ("SampleMethod", flags, null, null, new object[] { null });
+		}
+
+		[Test]
+		public void ArgNullOnProperty ()
+		{
+			Type type = typeof (SampleClass);
+			PropertyInfo [] props = type.GetProperties (BindingFlags.DeclaredOnly |
+								    BindingFlags.Public |
+								    BindingFlags.Instance);
+
+			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [] {null}, null);
+			Assert.IsNotNull (prop);
 		}
 	}
 }
