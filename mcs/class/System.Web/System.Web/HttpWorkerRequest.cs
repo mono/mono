@@ -11,6 +11,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Web
@@ -172,8 +173,12 @@ namespace System.Web
 			s_HttpResponseHeaderNames = new string [30];
 
 			// Lookup tables (name -> id)
-			s_HttpRequestHeaderTable = new Hashtable ();
-			s_HttpResponseHeadersTable = new Hashtable ();
+			CaseInsensitiveHashCodeProvider hprovider;
+			hprovider = new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture);
+			CaseInsensitiveComparer hcomparer;
+			hcomparer = new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
+			s_HttpRequestHeaderTable = new Hashtable (hprovider, hcomparer);
+			s_HttpResponseHeadersTable = new Hashtable (hprovider, hcomparer);
 
 			AddHeader (true, true, 0, "Cache-Control");
 			AddHeader (true, true, 1, "Connection");
