@@ -1,3 +1,7 @@
+2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.c (get_typespec): Append '*' to pointer types. Fixes #62331.
+
 2004-08-03  Martin Baulig  <martin@ximian.com>
 
 	* dump.c (method_dor_to_token): Moved to get.c and made public.
