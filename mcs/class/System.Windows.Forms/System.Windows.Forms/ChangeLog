@@ -201,6 +201,22 @@ Added delegates. All delegates in System.Windows.Forms done
 * LinkClickedEventHandler.cs
 * LinkLabelLinkClickedEventHandler.cs
 
+2002-5-27 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* NumericUpDown.cs
+* OpacityConverter.cs
+* OpenFileDialog.cs
+* OSFeature.cs
+* PageSetupDialog.cs
+* PaintEventArgs.cs
+* MonthCalendar.HitTestInfo.cs
+* MouseEventArgs.cs
+* NativeWindow.cs
+* Stubbed and commented out
+* NativeWindow.cs, MonthCalendar.HitTestInfo.cs, MouseEventArgs.cs,
+* have bad extra byte from old skeleton, need new corrected version.
+* MonthCalendar.HitTestInfo.cs needs to be incorporated into MonthCalendar.
+
 
 
 
