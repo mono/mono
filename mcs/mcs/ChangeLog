@@ -1,3 +1,7 @@
+2004-05-31  Martin Baulig  <martin@ximian.com>
+
+	MCS is now frozen for beta 2.
+
 2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* convert.cs: add a trivial cache for overload operator resolution.
