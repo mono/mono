@@ -1,3 +1,7 @@
+2002-05-01  Ravi Pratap  <ravi@ximian.com>
+
+	* SerializationInfo.cs : Insert MonoTODO attribute.
+
 2001-08-24  Nick Drochak  <ndrochak@gol.com>
 
 	* IDeserializationCallback.cs: New File

@@ -11,6 +11,7 @@
 
 namespace System.Runtime.Serialization {
 
+	[MonoTODO]
 	public sealed class SerializationInfo {
 		Type type;
 		[CLSCompliant(false)] IFormatterConverter converter;
@@ -21,7 +22,8 @@ namespace System.Runtime.Serialization {
 			this.type = type;
 			this.converter = converter;
 		}
-		
+
+		[MonoTODO]
 		public string AssemblyName {
 			get {
 				return "TODO: IMPLEMENT ME";
@@ -30,7 +32,8 @@ namespace System.Runtime.Serialization {
 			set {
 			}
 		}
-		
+
+		[MonoTODO]
 		public string FullTypeName {
 			get {
 				return "TODO: IMLEMENT ME";
@@ -49,48 +52,73 @@ namespace System.Runtime.Serialization {
 
 		//Public Instance Methods
 #region TODO: Implement these
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][MonoTODO]
 		public void AddValue(string name, short value){}
-		[CLSCompliant(false)]
-	    public void AddValue(string name, UInt16 value){}
-	    public void AddValue(string name, int value){}
-	    public void AddValue(string name, byte value){}
-	    public void AddValue(string name, bool value){}
-	    public void AddValue(string name, char value){}
-	    [CLSCompliant(false)]
-	    public void AddValue(string name, SByte value){}
-	    public void AddValue(string name, double value){}
-	    public void AddValue(string name, Decimal value){}
-	    public void AddValue(string name, DateTime value){}
-	    public void AddValue(string name, float value){}
-	    [CLSCompliant(false)]
-	    public void AddValue(string name, UInt32 value){}
-	    public void AddValue(string name, long value){}
-	    [CLSCompliant(false)]
-	    public void AddValue(string name, UInt64 value){}
-	    public void AddValue(string name, object value){}
-	    public void AddValue(string name, object value, Type type){}
-	    public bool GetBoolean(string name){return false;}
-	    public byte GetByte(string name){return 0;}
-	    public char GetChar(string name){return 'x';}
-	    public DateTime GetDateTime(string name){return new DateTime();}
-	    public Decimal GetDecimal(string name){return new Decimal();}
-	    public double GetDouble(string name){return 0;}
-	    public System.Runtime.Serialization.SerializationInfoEnumerator GetEnumerator(){return null;}
-	    public short GetInt16(string name){return 0;}
-	    public int GetInt32(string name){return 0;}
-	    public long GetInt64(string name){return 0;}
-	    [CLSCompliant(false)]
-	    public SByte GetSByte(string name){return new SByte();}
-	    public float GetSingle(string name){return 0;}
-	    public string GetString(string name){return "";}
-	    [CLSCompliant(false)]
-	    public UInt16 GetUInt16(string name){return 0;}
-	    [CLSCompliant(false)]
-	    public UInt32 GetUInt32(string name){return 0;}
-	    [CLSCompliant(false)]
-	    public UInt64 GetUInt64(string name){return 0;}
-	    public object GetValue(string name, Type type){return null;}
+		[CLSCompliant(false)][MonoTODO]
+		public void AddValue(string name, UInt16 value){}
+		[MonoTODO]	
+		public void AddValue(string name, int value){}
+		[MonoTODO]	
+		public void AddValue(string name, byte value){}
+		[MonoTODO]
+		public void AddValue(string name, bool value){}
+		[MonoTODO]
+	        public void AddValue(string name, char value){}
+		[CLSCompliant(false)][MonoTODO]
+	        public void AddValue(string name, SByte value){}
+		[MonoTODO]	
+	        public void AddValue(string name, double value){}
+		[MonoTODO]
+	        public void AddValue(string name, Decimal value){}
+		[MonoTODO]
+	        public void AddValue(string name, DateTime value){}
+		[MonoTODO]
+	        public void AddValue(string name, float value){}
+		[CLSCompliant(false)][MonoTODO]
+	        public void AddValue(string name, UInt32 value){}
+		[MonoTODO]
+	        public void AddValue(string name, long value){}
+		[CLSCompliant(false)][MonoTODO]
+	        public void AddValue(string name, UInt64 value){}
+		[MonoTODO]
+	        public void AddValue(string name, object value){}
+		[MonoTODO]
+		public void AddValue(string name, object value, Type type){}
+		[MonoTODO]
+		public bool GetBoolean(string name){return false;}
+		[MonoTODO]
+	        public byte GetByte(string name){return 0;}
+		[MonoTODO]
+	        public char GetChar(string name){return 'x';}
+		[MonoTODO]
+	        public DateTime GetDateTime(string name){return new DateTime();}
+		[MonoTODO]
+		public Decimal GetDecimal(string name){return new Decimal();}
+		[MonoTODO]
+		public double GetDouble(string name){return 0;}
+		[MonoTODO]
+		public System.Runtime.Serialization.SerializationInfoEnumerator GetEnumerator(){return null;}
+		[MonoTODO]
+		public short GetInt16(string name){return 0;}
+		[MonoTODO]
+		public int GetInt32(string name){return 0;}
+		[MonoTODO]
+		public long GetInt64(string name){return 0;}
+		[CLSCompliant(false)][MonoTODO]
+		public SByte GetSByte(string name){return new SByte();}
+		[MonoTODO]
+		public float GetSingle(string name){return 0;}
+		[MonoTODO]
+		public string GetString(string name){return "";}
+		[CLSCompliant(false)][MonoTODO]
+		public UInt16 GetUInt16(string name){return 0;}
+		[CLSCompliant(false)][MonoTODO]
+		public UInt32 GetUInt32(string name){return 0;}
+		[CLSCompliant(false)][MonoTODO]
+		public UInt64 GetUInt64(string name){return 0;}
+		[MonoTODO]
+		public object GetValue(string name, Type type){return null;}
+		[MonoTODO]
 		public void SetType(Type type){}
 #endregion TODO
 	}
