@@ -56,7 +56,6 @@ namespace Mono.CSharp
 		static string target_ext = ".exe";
 
 		static bool want_debugging_support = false;
-		static ArrayList debug_arglist = new ArrayList ();
 
 		static bool parse_only = false;
 		static bool timestamps = false;
@@ -198,8 +197,6 @@ namespace Mono.CSharp
 				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
 				"   -debug[+-]         Generate debugging information\n" + 
 				"   -g                 Generate debugging information\n" +
-				"   --debug-args X     Specify additional arguments for the\n" +
-				"                      symbol writer.\n" +
 				"   --fatal            Makes errors fatal\n" +
 				"   -lib:PATH1,PATH2   Adds the paths to the assembly link path\n" +
 				"   -main:class        Specified the class that contains the entry point\n" +
@@ -776,7 +773,6 @@ namespace Mono.CSharp
 			case "--timestamp":
 				timestamps = true;
 				last_time = first_time = DateTime.Now;
-				debug_arglist.Add ("timestamp");
 				return true;
 
 			case "--pause":
@@ -785,15 +781,6 @@ namespace Mono.CSharp
 				
 			case "--debug": case "-g":
 				want_debugging_support = true;
-				return true;
-				
-			case "--debug-args":
-				if ((i + 1) >= args.Length){
-					Report.Error (5, "--debug-args requires an argument");
-					Environment.Exit (1);
-				}
-				char[] sep = { ',' };
-				debug_arglist.AddRange (args [++i].Split (sep));
 				return true;
 				
 			case "--noconfig":
@@ -1217,9 +1204,7 @@ namespace Mono.CSharp
 					output_file = first_source + target_ext;
 			}
 
-			string[] debug_args = new string [debug_arglist.Count];
-			debug_arglist.CopyTo (debug_args);
-			CodeGen.Init (output_file, output_file, want_debugging_support, debug_args);
+			CodeGen.Init (output_file, output_file, want_debugging_support);
 
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
@@ -1372,16 +1357,6 @@ namespace Mono.CSharp
 
 			Timer.ShowTimers ();
 			
-			if (want_debugging_support) {
-				// Avoid error if we don't support debugging for the platform
-				try {
-					CodeGen.SaveSymbols ();
-				} catch (Exception) { }
-
-				if (timestamps)
-					ShowTime ("Saved symbols");
-			}
-
 			if (Report.ExpectedError != 0){
 				Console.WriteLine("Failed to report expected error " + Report.ExpectedError);
 				Environment.Exit (1);
