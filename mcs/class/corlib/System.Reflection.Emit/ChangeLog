@@ -1,0 +1,4 @@
+
+Tue Sep 25 16:53:08 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs, ConstructorBuilder.cs, ModuleBuilder.cs: added.
