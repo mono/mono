@@ -1,3 +1,14 @@
+2004-05-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
+	* assembly.c:
+	* gc.c:
+	* locales.c:
+	* mono-config.c:
+	* rand.c: getenv -> g_getenv (windows!)
+
+	* process.c: complete_path is also used on non-windows platforms.
+
 2004-05-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: new signature for Process_Start.
