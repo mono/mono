@@ -1,3 +1,18 @@
+2002-11-26  Daniel Morgan <danmorg@sc.rr.com>
+
+	* list: changed the name of the files beginning 
+	with Sql to PgSql.  Added missing files to linux build.
+	
+	* makefile.gnu: added .dll to end of assembly names
+	
+	* Mono.Data.PostgreSqlClient: created new directory within
+	mcs/class/Mono.Data.PostgreSqlClient
+	
+	* copy files from ./*.cs to ./Mono.Data.PostgreSqlClient/*.cs
+	on cvs server (thanks to Miguel) 
+	
+	* remove ./*.cs files
+
 2002-11-14  Daniel Morgan <danmorg@sc.rr.com>
 
 	* PgSqlConnection.cs: redid connection parameters
