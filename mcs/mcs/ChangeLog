@@ -10,6 +10,9 @@
 
 2004-03-29  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (IsDuplicateImplementation): Improve error reporting to
+	flag 663 (method only differs in parameter modifier).
+
 	* cs-tokenizer.cs: Do not require whitespace when a ( or " will do
 	in preprocessor directives.
 

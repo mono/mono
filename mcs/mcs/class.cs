@@ -2460,6 +2460,18 @@ namespace Mono.CSharp {
 				if (param_types [i] != ParameterTypes [i])
 					return false;
 
+			//
+			// Try to report 663: method only differs on out/ref
+			//
+			ParameterData info = ParameterInfo;
+			ParameterData other_info = method.ParameterInfo;
+			for (int i = 0; i < info.Count; i++){
+				if (info.ParameterModifier (i) != other_info.ParameterModifier (i)){
+					Report.Error (663, Location, "Overload method only differs in parameter modifier");
+					return false;
+				}
+			}
+
 			Report.Error (111, Location, "Class `{0}' already defines a " +
 				      "member called `{1}' with the same parameter types",
 				      tc.Name, Name);
