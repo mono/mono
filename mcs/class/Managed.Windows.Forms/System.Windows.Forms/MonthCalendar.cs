@@ -105,7 +105,7 @@ namespace System.Windows.Forms {
 
 			// iniatialise local members
 			annually_bolded_dates = null;
-			back_color = SystemColors.Window;
+			back_color = ThemeEngine.Current.ColorWindow;
 			bolded_dates = null;
 			calendar_dimensions = new Size (1,1);
 			first_day_of_week = Day.Default;
@@ -118,8 +118,8 @@ namespace System.Windows.Forms {
 			show_today = true;
 			show_today_circle = true;
 			show_week_numbers = false;
-			title_back_color = SystemColors.ActiveCaption;
-			title_fore_color = SystemColors.ActiveCaptionText;			
+			title_back_color = ThemeEngine.Current.ColorActiveTitle;
+			title_fore_color = ThemeEngine.Current.ColorTitleText;
 			today_date_set = false;
 			trailing_fore_color = Color.Gray;
 			

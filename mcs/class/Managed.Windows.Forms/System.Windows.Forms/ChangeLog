@@ -1,3 +1,8 @@
+2004-11-30  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* MonthCalendar.cs, ListView.cs: use Theme colours instead of 
+	System.Colors
+	
 2004-11-30  Ravindra <rkumar@novell.com>
 
 	* ThemeWin32Classic.cs (DrawListViewItem): Fixed selected item

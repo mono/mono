@@ -152,7 +152,7 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ListView ()
 		{
-			background_color = SystemColors.Window;
+			background_color = ThemeEngine.Current.ColorWindow;
 			checked_indices = new CheckedIndexCollection (this);
 			checked_items = new CheckedListViewItemCollection (this);
 			columns = new ColumnHeaderCollection (this);
