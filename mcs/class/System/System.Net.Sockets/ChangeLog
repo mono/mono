@@ -1,3 +1,7 @@
+2004-07-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+        * Socket.cs: if'ed RemoveReferences calls.
+
 2004-07-09  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Slight tweak to allow unknown objects to be returned

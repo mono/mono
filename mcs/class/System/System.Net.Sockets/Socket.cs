@@ -1020,7 +1020,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
-			RemoveReference (req);
+			if (supportsAsync && socket_type == SocketType.Stream)
+				RemoveReference (req);
+
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
@@ -1063,7 +1065,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
-			RemoveReference (req);
+			if (supportsAsync && socket_type == SocketType.Stream)
+				RemoveReference (req);
+
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
