@@ -1,3 +1,9 @@
+
+Mon Jan 27 17:12:19 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: add size to encoding for ByValStr and ByValArray
+	marshal blob (from "Jerome Laban" <jlaban@wanadoo.fr>).
+
 2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_class_setup_vtable): pass the override info as an
