@@ -40,6 +40,19 @@ namespace Mono.PEToolkit {
 				linenumNum = reader.ReadInt16 ();
 				flags = (SectionCharacteristics) reader.ReadUInt32 ();
 			}
+			
+			public void Write (BinaryWriter writer)
+			{
+				writer.Write (phAddr_virtSize);
+				virtAddr.Write (writer);
+				writer.Write (rawSize);
+				rawDataPtr.Write (writer);
+				relocPtr.Write (writer);
+				lineNumPtr.Write (writer);
+				writer.Write (relocNum);
+				writer.Write (linenumNum);
+				writer.Write ((uint) flags);
+			}
 		}
 
 		private string name;

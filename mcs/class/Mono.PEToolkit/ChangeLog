@@ -1,5 +1,9 @@
 2003-02-21 Jackson Harper <jackson@latitudegeo.com>
 
+	* Section.cs: Add Method to write Headers
+
+2003-02-21 Jackson Harper <jackson@latitudegeo.com>
+
 	* Section.cs: Make Read method safe
 
 2003-02-21 Jackson Harper <jackson@latitudegeo.com>
