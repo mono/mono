@@ -1482,7 +1482,7 @@ namespace System
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance(fp);
 
 			if (format == null)
-				format = dfi.FullDateTimePattern;
+				format = "G";
 
 			bool useutc = false;
 

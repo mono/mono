@@ -1,3 +1,8 @@
+2004-05-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DateTime.cs : In ToString(string, IFormatProvider), use "G" if
+	  string format argument is null. This should fix bug #57656.
+
 2004-05-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Version.cs: Rename of data fields to match those in Microsoft.NET.
