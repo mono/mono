@@ -1,3 +1,7 @@
+2005-02-09  Kazuki Oikawa <kazuki@panicode.com>
+
+	* ListBox.cs: Fixes AddRange bug
+	
 2005-02-09  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ProgressBar.cs

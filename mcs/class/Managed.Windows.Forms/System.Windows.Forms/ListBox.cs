@@ -1914,7 +1914,7 @@ namespace System.Windows.Forms
 				foreach (object mi in items)
 					AddItem (mi);
 
-				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count);
+				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count - 1);
 			}
 
 			public void AddRange (ObjectCollection col)
@@ -1924,7 +1924,7 @@ namespace System.Windows.Forms
 				foreach (object mi in col)
 					AddItem (mi);
 
-				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count);
+				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count - 1);
 			}
 
 			public virtual void Clear ()
