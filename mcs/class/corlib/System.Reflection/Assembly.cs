@@ -496,15 +496,15 @@ namespace System.Reflection {
 		//
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern MethodBase MonoDebugger_GetMethod (int token);
+		internal static extern MethodBase MonoDebugger_GetMethod (Assembly assembly, int token);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern int MonoDebugger_GetMethodToken (MethodBase method);
+		internal static extern int MonoDebugger_GetMethodToken (Assembly assembly, MethodBase method);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Type MonoDebugger_GetLocalTypeFromSignature (byte[] signature);
+		internal static extern Type MonoDebugger_GetLocalTypeFromSignature (Assembly assembly, byte[] signature);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Type MonoDebugger_GetType (int token);
+		internal static extern Type MonoDebugger_GetType (Assembly assembly, int token);
 	}
 }

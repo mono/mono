@@ -1,3 +1,7 @@
+2004-01-16  Martin Baulig  <martin@ximian.com>
+
+	* Assembly.cs: Make the `MonoDebugger_' methods static.
+
 2004-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoProperty.cs: changed get_property_info so that it only gets the
