@@ -1,3 +1,9 @@
+2004-04-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* icall.c: Registered icalls for ThreadPool.GetMinThreads and 
+	ThreadPool.SetMinThreads.
+	* threadpool.c: Implemented ThreadPool.GetMinThreads and
+	ThreadPool.SetMinThreads.
 
 Thu Apr 15 15:36:40 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
