@@ -947,7 +947,6 @@ namespace System.Net
 			req.Append (GetHeaders ());
 			string reqstr = req.ToString ();
 			byte [] bytes = Encoding.UTF8.GetBytes (reqstr);
-			Console.WriteLine (reqstr);
 			writeStream.SetHeaders (bytes, 0, bytes.Length);
 		}
 
