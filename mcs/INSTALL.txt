@@ -29,8 +29,8 @@ Build Features for Developers.
 These instructions apply to both Linux and Windows. To build this
 package, you must already have a C# compiler installed.  This means
 that to build on Linux, you need to get a distribution of the MCS
-binaries; these are called monocharges. See README.building for
-information on where to get them. On Windows, you can just use the
+binaries; these are called monocharges. They can be found at
+www.go-mono.com/daily. On Windows, you can just use the
 Microsoft compiler. You also need GNU make to build the software (on
 Windows, you will need for example the Cygwin environment setup).
 
