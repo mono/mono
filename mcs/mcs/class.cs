@@ -1057,11 +1057,11 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!parent.AsAccessible (this, ModFlags))
-					Report.Error (60, Location,
-						      "Inconsistent accessibility: base class `" +
-						      parent.Name + "' is less accessible than class `" +
-						      Name + "'");
+				if (!parent.AsAccessible (this, ModFlags)) {
+					Report.SymbolRelatedToPreviousError (parent.Type);
+					Report.Error (60, Location, "Inconsistent accessibility: base class '{0}' is less accessible than class '{1}'", 
+						TypeManager.CSharpName (parent.Type), GetSignatureForError ());
+				}
 			}
 
 			if (parent != null)
@@ -6246,6 +6246,10 @@ namespace Mono.CSharp {
 		{
 			Add = new AddDelegateMethod (this, add);
 			Remove = new RemoveDelegateMethod (this, remove);
+
+			// For this event syntax we don't report error CS0067
+			// because it is hard to do it.
+			SetAssigned ();
 		}
 
 		public override string[] ValidAttributeTargets {
