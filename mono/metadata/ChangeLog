@@ -1,5 +1,7 @@
 2003-01-10  Dietmar Maurer  <dietmar@ximian.com>
 
+	* marshal.c (emit_struct_conv): added an assertion for EXPLICIT_LAYOUT
+
 	* loader.c (mono_method_get_marshal_info): bug fix
 
 	* marshal.c (mono_marshal_get_ptr_to_struct): don't convert
