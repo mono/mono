@@ -1,3 +1,13 @@
+2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ObjectStateFormatter.cs: before choosing the binary formatter, check
+	if the object type has a TypeConverter that can convert to/from string.
+	Fixes bug #59495.
+
+	* Page.cs: call GetViewStateString from outside the WriteLine. This
+	allows writing to the Response when getting the string without breaking
+	the HTML generated.
+
 2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextWriter.cs: render end tag for unknown tags.

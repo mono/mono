@@ -3,13 +3,17 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) 2003 Ben Maurer
+// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //#define TRACE
 
 using System.Collections;
+using System.ComponentModel;
+using System.Globalization;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -160,6 +164,7 @@ namespace System.Web.UI {
 			static TypeFormatter typeFormatter;
 			static EnumFormatter enumFormatter;
 			static SingleRankArrayFormatter singleRankArrayFormatter;
+			static TypeConverterFormatter typeConverterFormatter;
 			
 			static ObjectFormatter ()
 			{			
@@ -180,16 +185,19 @@ namespace System.Web.UI {
 				new FontUnitFormatter ().Register ();
 				
 				new ColorFormatter ().Register ();
-				
+
 				enumFormatter = new EnumFormatter ();
 				enumFormatter.Register ();
-				
+
 				typeFormatter = new TypeFormatter ();
 				typeFormatter.Register ();
-				
+
 				singleRankArrayFormatter = new SingleRankArrayFormatter ();
 				singleRankArrayFormatter.Register ();
-				
+
+				typeConverterFormatter = new TypeConverterFormatter (typeFormatter);
+				typeConverterFormatter.Register ();
+
 				binaryObjectFormatter = new BinaryObjectFormatter ();
 				binaryObjectFormatter.Register ();
 			}
@@ -261,8 +269,18 @@ namespace System.Web.UI {
 						fmt = enumFormatter;
 					else if (t.IsArray && ((Array) o).Rank == 1)
 						fmt = singleRankArrayFormatter;
-					else
-						fmt = binaryObjectFormatter;
+					else {
+						TypeConverter converter;
+						converter = TypeDescriptor.GetConverter (o);
+						if (converter == null ||
+						    !converter.CanConvertTo (typeof (string)) ||
+						    !converter.CanConvertFrom (typeof (string))) {
+							fmt = binaryObjectFormatter;
+						} else {
+							typeConverterFormatter.Converter = converter;
+							fmt = typeConverterFormatter;
+						}
+					}
 				}
 
 				fmt.Write (w, o, ctx);
@@ -770,6 +788,43 @@ namespace System.Web.UI {
 			
 			protected override Type Type {
 				get { return typeof (Unit); }
+			}
+		}
+
+		class TypeConverterFormatter : StringFormatter {
+			TypeFormatter typefmt;
+			TypeConverter converter;
+
+			public TypeConverterFormatter (TypeFormatter typefmt) : base ()
+			{
+				this.typefmt = typefmt;
+			}
+
+			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			{
+				w.Write (PrimaryId);
+				typefmt.Write (w, o.GetType (), ctx);
+				string v = (string) converter.ConvertTo (null, CultureInfo.InvariantCulture,
+									 o, typeof (string));
+				base.Write (w, v, ctx);
+			}
+			
+			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			{
+				token = r.ReadByte ();
+				Type t = (Type) typefmt.Read (token, r, ctx);
+				converter = TypeDescriptor.GetConverter (t);
+				token = r.ReadByte ();
+				string v = (string) base.Read (token, r, ctx);
+				return converter.ConvertFrom (null, CultureInfo.InvariantCulture, v);
+			}
+			
+			protected override Type Type {
+				get { return typeof (TypeConverter); }
+			}
+
+			public TypeConverter Converter {
+				set { converter = value; }
 			}
 		}
 

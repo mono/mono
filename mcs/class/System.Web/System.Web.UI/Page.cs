@@ -547,8 +547,9 @@ public class Page : TemplateControl, IHttpHandler
 		}
 
 		if (handleViewState) {
+			string vs = GetViewStateString ();
 			writer.Write ("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
-			writer.WriteLine ("value=\"{0}\" />", GetViewStateString ());
+			writer.WriteLine ("value=\"{0}\" />", vs);
 		}
 
 		WriteScripts (writer, clientScriptBlocks);
