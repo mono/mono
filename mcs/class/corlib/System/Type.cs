@@ -351,6 +351,9 @@ namespace System {
 			get {return MemberTypes.TypeInfo;}
 		}
 
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		override
+#endif
 		public abstract Module Module {get;}
 	
 		public abstract string Namespace {get;}
