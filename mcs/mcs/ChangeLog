@@ -1,3 +1,9 @@
+2003-07-13  Ravi Pratap <ravi@ximian.com>
+
+	* class.cs (Operator.Emit): Do not emit attributes here - it is
+	taken care of by the Method class that we delegate too. This takes
+	care of bug #45876.
+	
 2003-07-10  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (TypeOfVoid): New class.

@@ -4719,9 +4719,6 @@ namespace Mono.CSharp {
 		
 		public void Emit (TypeContainer container)
 		{
-			EmitContext ec = new EmitContext (container, Location, null, null, ModFlags);
-			Attribute.ApplyAttributes (ec, OperatorMethodBuilder, this, OptAttributes);
-
 			//
 			// abstract or extern methods have no bodies
 			//
