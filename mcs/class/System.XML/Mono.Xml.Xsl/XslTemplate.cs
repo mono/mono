@@ -49,15 +49,21 @@ namespace Mono.Xml.Xsl {
 				TemplateWithPriority a = this,
 					b = (TemplateWithPriority)o;
 				
+				//Debug.WriteLine (a.Pattern.ToString () + " ? " + b.Pattern.ToString ());
+				//Debug.WriteLine (a.Priority + "   " + b.Priority);
+				
 				int r0 = a.Priority.CompareTo (b.Priority);
+				//Debug.WriteLine (r0);
 				if (r0 != 0) return r0;
 				
-				return a.TemplateID.CompareTo (b.TemplateID);
+				int r1 = a.TemplateID.CompareTo (b.TemplateID);
+				//Debug.WriteLine (r1);
+				return r1;
 			}
 			
 			public bool Matches (XPathNavigator n, XslTransformProcessor p)
 			{
-			//	Debug.WriteLine (Pattern.ToString ());
+				//Debug.WriteLine (Pattern.ToString ());
 				return p.Matches (Pattern, n);
 			}
 		}
@@ -81,7 +87,7 @@ namespace Mono.Xml.Xsl {
 
 		public void Add (XslTemplate t)
 		{
-			if (t.Priority != double.NaN)
+			if (!double.IsNaN (t.Priority))
 				unnamedTemplates.Add (new TemplateWithPriority (t, t.Priority));
 			else
 				Add (t, t.Match);
@@ -102,10 +108,13 @@ namespace Mono.Xml.Xsl {
 		
 		public XslTemplate FindMatch (XPathNavigator node, XslTransformProcessor p)
 		{
-		//	Debug.WriteLine ("...");
-			if (!sorted)
+			//Debug.WriteLine ("...");
+			if (!sorted) {
 				unnamedTemplates.Sort ();
-			sorted = true;
+				unnamedTemplates.Reverse ();
+				
+				sorted = true;
+			}
 			
 			foreach (TemplateWithPriority t in this.unnamedTemplates)
 				if (t.Matches (node, p))
@@ -206,7 +215,7 @@ namespace Mono.Xml.Xsl {
 		XmlQualifiedName name;
 		Pattern match;
 		XmlQualifiedName mode;
-		double priority;
+		double priority = double.NaN;
 		Hashtable parameters;
 		XslOperation content;
 		
@@ -227,7 +236,6 @@ namespace Mono.Xml.Xsl {
 			if (c.Input.NamespaceURI != Compiler.XsltNamespace) {
 				this.name = QName.Empty;
 				this.match = null;
-				this.priority = double.NaN;
 				this.mode = QName.Empty;
 			} else {
 				this.name = c.ParseQNameAttribute ("name");
