@@ -254,9 +254,7 @@ namespace MonoTests.System.Data
 			try {
 				Rows.Clear ();
 				Fail ("test#03");
-			} catch (Exception e) {
-				AssertEquals ("test#04", typeof (InvalidConstraintException), e.GetType ());
-				AssertEquals ("test#05", "Cannot clear table Table1 because ForeignKeyConstraint REL enforces constraints and there are child rows in child.", e.Message);
+			} catch (InvalidConstraintException) {
 			}
 			
 			AssertEquals ("test#06", 3, Table.Rows.Count);

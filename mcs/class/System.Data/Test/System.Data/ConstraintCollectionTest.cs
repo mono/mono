@@ -83,14 +83,15 @@ namespace MonoTests.System.Data
 				_constraint2.ConstraintName = "dog"; //case insensitive
 				col.Add(_constraint1);
 				col.Add(_constraint2);
-#if NET_1_0
+#if NET_1_1
+#else
 				Fail("Failed to throw Duplicate name exception.");
 #endif
 				col.Remove (_constraint2); // only for !1.0
 				col.Remove (_constraint1);
 			}
 			catch (DuplicateNameException) {
-#if !NET_1_0
+#if NET_1_1
 				throw;
 #endif
 			}
@@ -104,13 +105,15 @@ namespace MonoTests.System.Data
 			try 
 			{
 				col.Add(_constraint1);
-#if NET_1_0
+#if NET_1_1
+#else
 				Fail("B2: Failed to throw ArgumentException.");
 #endif
 				col.Remove (_constraint1);
 			}
 			catch (ArgumentException) {
-#if !NET_1_0
+#if NET_1_1
+#else
 				throw;
 #endif
 			}
@@ -381,10 +384,10 @@ namespace MonoTests.System.Data
 //                        Assertion.Assert ("#A03", constraints [2].Table.ToString().Equals ("Table"));
                         Assertion.Assert ("#A04", table.Constraints.Contains ("Unique1"));
                         Assertion.Assert ("#A05", table.Constraints.Contains ("Unique2"));
-#if NET_1_0 // really?
-                        Assertion.Assert ("#A06", table.Constraints.Contains ("Unique3"));
-#else
+#if NET_1_1 // really?
                         Assertion.Assert ("#A06", !table.Constraints.Contains ("Unique3"));
+#else
+                        Assertion.Assert ("#A06", table.Constraints.Contains ("Unique3"));
 #endif
                 }
         

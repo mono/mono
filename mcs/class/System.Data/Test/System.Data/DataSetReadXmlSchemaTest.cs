@@ -62,34 +62,47 @@ namespace MonoTests.System.Data
 			// LocaleOnRootWithoutIsDataSet(), that tests if locale on
 			// the (mere) data table modifies *DataSet's* locale.
 			string xsbase = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' id='hoge'>
-	<xs:element name='Root'> <!-- becomes table -->
+	<xs:element name='Root'> <!-- When simple, it becomes table. When complex, it becomes DataSet -->
 		<xs:complexType>
 			<xs:choice maxOccurs='unbounded'>
 				{0}
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name='more' type='xs:string' />
 </xs:schema>";
 			string simple = "<xs:element name='Child' type='xs:string' />";
 			string complex = @"<xs:element name='Child'>
 					<xs:complexType>
 						<xs:attribute name='a1' />
-						<xs:attribute name='a2'/>
+						<xs:attribute name='a2' type='xs:integer'/>
 					</xs:complexType>
 				</xs:element>";
+			string elref = "<xs:element ref='more' />";
 
 			DataSet ds = new DataSet ();
 
 			string xs = String.Format (xsbase, simple);
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertDataSet ("simple", ds, "hoge", 1);
-			AssertDataTable ("simple", ds.Tables [0], "Root", 1, 0);
+			AssertDataSet ("simple", ds, "hoge", 1, 0);
+			AssertDataTable ("simple", ds.Tables [0], "Root", 1, 0, 0, 0);
 
 			ds = new DataSet ();
 			xs = String.Format (xsbase, complex);
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertDataSet ("complex", ds, "Root", 1);
-			AssertDataTable ("complex", ds.Tables [0], "Child", 2, 0);
+			AssertDataSet ("complex", ds, "hoge", 2, 1);
+			AssertDataTable ("complex", ds.Tables [0], "Root", 1, 0, 0, 1);
+			DataTable dt = ds.Tables [1];
+			AssertDataTable ("complex", dt, "Child", 3, 0, 1, 0);
+			AssertDataColumn ("a1", dt.Columns [0], "a1", true, false, 0, 1, "a1", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("a2", dt.Columns [1], "a2", true, false, 0, 1, "a2", MappingType.Attribute, typeof (long), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
+			AssertDataColumn ("Root_Id", dt.Columns [2], "Root_Id", true, false, 0, 1, "Root_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
+
+			ds = new DataSet ();
+			xs = String.Format (xsbase, elref);
+			ds.ReadXmlSchema (new StringReader (xs));
+			AssertDataSet ("complex", ds, "hoge", 1, 0);
+			AssertDataTable ("complex", ds.Tables [0], "Root", 1, 0, 0, 0);
 		}
 
 		[Test]
@@ -113,8 +126,8 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			// Here "unusedType" table is never imported.
-			AssertDataSet ("ds", ds, "hoge", 1);
-			AssertDataTable ("dt", ds.Tables [0], "Root", 1, 0);
+			AssertDataSet ("ds", ds, "hoge", 1, 0);
+			AssertDataTable ("dt", ds.Tables [0], "Root", 1, 0, 0, 0);
 		}
 
 		[Test]
@@ -128,7 +141,7 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			// nothing is imported.
-			AssertDataSet ("ds", ds, "NewDataSet", 0);
+			AssertDataSet ("ds", ds, "NewDataSet", 0, 0);
 		}
 
 		[Test]
@@ -150,7 +163,7 @@ namespace MonoTests.System.Data
 
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertDataSet ("ds", ds, "Root", 0); // name is "Root"
+			AssertDataSet ("ds", ds, "Root", 0, 0); // name is "Root"
 
 			// But when explicit msdata:IsDataSet value is "false", then
 			// treat as usual.
@@ -158,7 +171,7 @@ namespace MonoTests.System.Data
 
 			ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertDataSet ("ds", ds, "NewDataSet", 1);
+			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 		}
 
 		[Test]
@@ -207,7 +220,7 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			// Child should not be regarded as DataSet element
-			AssertDataSet ("ds", ds, "NewDataSet", 1);
+			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 		}
 
 		[Test]
@@ -226,10 +239,10 @@ namespace MonoTests.System.Data
 
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertDataSet ("ds", ds, "NewDataSet", 1);
+			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			AssertEquals ("fi-FI", ds.Locale.Name); // DataSet's Locale comes from current thread
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("dt", dt, "Root", 2, 0);
+			AssertDataTable ("dt", dt, "Root", 2, 0, 0, 0);
 			AssertEquals ("ja-JP", dt.Locale.Name); // DataTable's Locale comes from msdata:Locale
 			AssertDataColumn ("col1", dt.Columns [0], "Attr", true, false, 0, 1, "Attr", MappingType.Attribute, typeof (Int64), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col2", dt.Columns [1], "Child", false, false, 0, 1, "Child", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
@@ -345,9 +358,9 @@ namespace MonoTests.System.Data
 			// No prefixes on tables and columns
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertDataSet ("ds", ds, "DS", 3);
+			AssertDataSet ("ds", ds, "DS", 3, 1);
 			DataTable dt = ds.Tables [0];
-			AssertDataTable ("R3", dt, "R3", 3, 0);
+			AssertDataTable ("R3", dt, "R3", 3, 0, 0, 0);
 			AssertDataColumn ("col1", dt.Columns [0], "Attr", true, false, 0, 1, "Attr", MappingType.Attribute, typeof (Int64), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 		}
 
@@ -374,12 +387,12 @@ namespace MonoTests.System.Data
 
 		private void ReadTest1Check (DataSet ds)
 		{
-			AssertDataSet ("dataset", ds, "NewDataSet", 2);
-			AssertDataTable ("tbl1", ds.Tables [0], "Table1", 3, 0);
-			AssertDataTable ("tbl2", ds.Tables [1], "Table2", 3, 0);
+			AssertDataSet ("dataset", ds, "NewDataSet", 2, 1);
+			AssertDataTable ("tbl1", ds.Tables [0], "Table1", 3, 0, 0, 1);
+			AssertDataTable ("tbl2", ds.Tables [1], "Table2", 3, 0, 1, 0);
 
 			DataRelation rel = ds.Relations [0];
-			AssertDataRelation ("rel", rel, "Rel1",
+			AssertDataRelation ("rel", rel, "Rel1", false,
 				new string [] {"Column1_3"},
 				new string [] {"Column2_1"}, true, true);
 			AssertUniqueConstraint ("uc", rel.ParentKeyConstraint, 

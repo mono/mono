@@ -898,7 +898,8 @@ namespace MonoTests.System.Data
 			DataColumn[] colArray = {table.Columns[0]};
 			table.PrimaryKey = colArray;
 			table.ExtendedProperties.Add ("TimeStamp", DateTime.Now);
-#if NET_1_0 // This prevents further tests after .NET 1.1.
+#if NET_1_1 // This prevents further tests after .NET 1.1.
+#else
 			CultureInfo cultureInfo = new CultureInfo ("en-gb");
 			table.Locale = cultureInfo;
 #endif
@@ -926,7 +927,8 @@ namespace MonoTests.System.Data
 			AssertEquals ("#A06", "Id / Name + (Id * Id)", cloneTable.DisplayExpression);
 			AssertEquals ("#A07", 1 ,cloneTable.ExtendedProperties.Count);
 			AssertEquals ("#A08", false ,cloneTable.HasErrors);
-#if NET_1_0
+#if NET_1_1
+#else
 			AssertEquals ("#A09", 2057, cloneTable.Locale.LCID);
 #endif
 			AssertEquals ("#A10", 100, cloneTable.MinimumCapacity);
@@ -946,7 +948,8 @@ namespace MonoTests.System.Data
 			AssertEquals ("#A21", "Id / Name + (Id * Id)", copyTable.DisplayExpression);
 			AssertEquals ("#A22", 1 ,copyTable.ExtendedProperties.Count);
 			AssertEquals ("#A23", true ,copyTable.HasErrors);
-#if NET_1_0
+#if NET_1_1
+#else
 			AssertEquals ("#A24", 2057, copyTable.Locale.LCID);
 #endif
 			AssertEquals ("#A25", 100, copyTable.MinimumCapacity);
@@ -1136,19 +1139,20 @@ namespace MonoTests.System.Data
 			}
 			try {
 				table.Clear ();
-#if NET_1_0
+#if NET_1_1
+#else
 				Fail ("#A03");
 #endif
 			}
 			catch (Exception e) {
-#if NET_1_0
+#if NET_1_1
+				throw e;
+#else
 				if (e.GetType () != typeof (AssertionException)) {
 					// FIXME: Don't depend on localizable error messages.
 					AssertEquals ("#A04", "Cannot clear table Parent because ForeignKeyConstraint DR enforces Child.", e.Message);
 				}
 				else throw e;
-#else
-				throw e;
 #endif
 			}
 			table1.Reset ();
@@ -1158,10 +1162,10 @@ namespace MonoTests.System.Data
 		
 			table.Clear ();
 			AssertEquals ("#A08", 0, table.Rows.Count);
-#if NET_1_0
-			AssertEquals ("#A09", 1, table.Constraints.Count);
-#else
+#if NET_1_1
 			AssertEquals ("#A09", 0, table.Constraints.Count);
+#else
+			AssertEquals ("#A09", 1, table.Constraints.Count);
 #endif
 			AssertEquals ("#A05", 0, table.ChildRelations.Count);
 		}

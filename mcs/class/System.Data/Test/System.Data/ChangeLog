@@ -1,3 +1,20 @@
+2004-04-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* ConstraintCollectionTest.cs,
+	  DataSetTest.cs,
+	  DataTableTest.cs,
+	  ForeignKeyConstraintTest.cs : Fixes for incorrect NET_1_0 use.
+	* DataRowCollectionTest.cs : just check exception type. Don't check
+	  localizable error message.
+	* DataSetAssertion.cs : Removed AssertDataSet() with just 4 argument.
+	  Added relation count parameter for AssertDataTable().
+	  Added Nested check parameter for AssertDataRelation().
+	* DataSetInferXmlSchemaTest.cs,
+	  DataSetReadXmlTest.cs,
+	  DataSetReadXmlSchemaTest.cs :
+	  Applied new AssertDataTable().  Added more check on
+	  DataSetReadXmlSchemaTest.SingleElementTreatmentDifference ().
+
 2004-04-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	All fixes are to make them pass under MS.NET 1.1.

@@ -18,24 +18,21 @@ namespace MonoTests.System.Data
 {
 	public class DataSetAssertion : Assertion
 	{
-		public void AssertDataSet (string label, DataSet ds, string name, int tableCount)
-		{
-			AssertEquals (label + ".DataSetName", name, ds.DataSetName);
-			AssertEquals (label + ".TableCount", tableCount, ds.Tables.Count);
-		}
-
 		public void AssertDataSet (string label, DataSet ds, string name, int tableCount, int relCount)
 		{
 			AssertEquals (label + ".DataSetName", name, ds.DataSetName);
 			AssertEquals (label + ".TableCount", tableCount, ds.Tables.Count);
-			AssertEquals (label + ".RelationCount", relCount, ds.Relations.Count);
+			if (relCount >= 0)
+				AssertEquals (label + ".RelationCount", relCount, ds.Relations.Count);
 		}
 
-		public void AssertDataTable (string label, DataTable dt, string name, int columnCount, int rowCount)
+		public void AssertDataTable (string label, DataTable dt, string name, int columnCount, int rowCount, int parentRelationCount, int childRelationCount)
 		{
 			AssertEquals (label + ".TableName", name, dt.TableName);
 			AssertEquals (label + ".ColumnCount", columnCount, dt.Columns.Count);
 			AssertEquals (label + ".RowCount", rowCount, dt.Rows.Count);
+			AssertEquals (label + ".ParentRelCount", parentRelationCount, dt.ParentRelations.Count);
+			AssertEquals (label + ".ChildRelCount", childRelationCount, dt.ChildRelations.Count);
 		}
 
 		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount)
@@ -48,15 +45,16 @@ namespace MonoTests.System.Data
 		{
 			XmlReader xtr = new XmlTextReader (xml, XmlNodeType.Element, null);
 			AssertEquals (label + ".return", resultMode, ds.ReadXml (xtr, readMode));
-			AssertDataSet (label + ".dataset", ds, datasetName, tableCount);
+			AssertDataSet (label + ".dataset", ds, datasetName, tableCount, -1);
 			AssertEquals (label + ".readstate", state, xtr.ReadState);
 		}
 
-		public void AssertDataRelation (string label, DataRelation rel, string name,
+		public void AssertDataRelation (string label, DataRelation rel, string name, bool nested,
 			string [] parentColNames, string [] childColNames,
 			bool existsUK, bool existsFK)
 		{
 			AssertEquals (label + ".Name", name, rel.RelationName);
+			AssertEquals (label + ".Nested", nested, rel.Nested);
 			for (int i = 0; i < parentColNames.Length; i++)
 				AssertEquals (label + ".parentColumn_" + i, parentColNames [i], rel.ParentColumns [i].ColumnName);
 			AssertEquals (label + ".ParentColCount", parentColNames.Length, rel.ParentColumns.Length);
