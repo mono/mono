@@ -1,5 +1,15 @@
 2004-08-02  Martin Baulig  <martin@ximian.com>
 
+	Started to do some API review.
+
+	* ICollection.cs (ICollection<T>): Added IsReadOnly, Add, Clear,
+	Contains and Remove.
+
+	* IList.cs (IList<T>): Removed Add, Clear, Constains, Remove,
+	IsReadOnly and IsFixedSize.
+
+2004-08-02  Martin Baulig  <martin@ximian.com>
+
 	* IList.cs (IList.Add): Changed return type to void.
 
 	* List.cs (List.Add): Likewise.

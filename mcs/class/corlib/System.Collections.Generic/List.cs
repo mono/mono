@@ -152,11 +152,14 @@ namespace System.Collections.Generic
 			Insert (index, (T) item);
 		}
 
-		public void Remove (T item)
+		public bool Remove (T item)
 		{
 			int index = IndexOf (item);
-			if (index >= 0)
-				RemoveAt (index);
+			if (index < 0)
+				return false;
+
+			RemoveAt (index);
+			return true;
 		}
 
 		void IList.Remove (object item)

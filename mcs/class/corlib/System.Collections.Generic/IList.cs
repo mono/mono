@@ -41,27 +41,11 @@ namespace System.Collections.Generic
 	[ComVisible(false)]
 	public interface IList<T> : ICollection<T>
 	{
-		void Add (T item);
-
-		void Clear ();
-
-		bool Contains (T item);
-
 		int IndexOf (T item);
 
 		void Insert (int index, T item);
 
-		void Remove (T item);
-
 		void RemoveAt (int index);
-
-		bool IsFixedSize {
-			get;
-		}
-
-		bool IsReadOnly {
-			get;
-		}
 
 		T this [int switchName] {
 			get; set;

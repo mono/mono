@@ -139,6 +139,20 @@ namespace System.Collections.Generic
 			get { return this; }
 		}
 
+		public bool IsReadOnly {
+			get { return false; }
+		}
+
+		public void Add (T item)
+		{
+			Enqueue (item);
+		}
+
+		public bool Remove (T item)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public IEnumerator<T> GetEnumerator ()
 		{
 			return new Enumerator (this);
