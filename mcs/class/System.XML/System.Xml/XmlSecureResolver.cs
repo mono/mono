@@ -12,6 +12,7 @@ using System;
 using System.Net;
 using System.Security;
 using System.Security.Policy;
+using System.Security.Permissions;
 
 namespace System.Xml
 {
@@ -20,10 +21,36 @@ namespace System.Xml
 
 #region Static Members
 
-		[MonoTODO]
 		public static Evidence CreateEvidenceForUrl (string securityUrl)
 		{
-			throw new NotImplementedException ();
+			Evidence e = new Evidence ();
+			Url url = null;
+			Zone zone = null;
+			Site site = null;
+
+			try {
+				url = new Url (securityUrl);
+			} catch (ArgumentException) {
+			}
+
+			try {
+				zone = Zone.CreateFromUrl (securityUrl);
+			} catch (ArgumentException) {
+			}
+
+			try {
+				site = Site.CreateFromUrl (securityUrl);
+			} catch (ArgumentException) {
+			}
+
+			if (url != null)
+				e.AddHost (url);
+			if (zone != null)
+				e.AddHost (zone);
+			if (site != null)
+				e.AddHost (site);
+
+			return e;
 		}
 
 		[MonoTODO]
@@ -33,27 +60,31 @@ namespace System.Xml
 		}
 #endregion
 
+		XmlResolver resolver;
+		PermissionSet permissionSet;
+//		Evidence evidence;
+
 #region .ctor and Finalizer
 
-		[MonoTODO]
 		public XmlSecureResolver (
 			XmlResolver resolver, Evidence evidence)
 		{
-			throw new NotImplementedException ();
+			this.resolver = resolver;
+//			this.evidence = evidence;
+			this.permissionSet = SecurityManager.ResolvePolicy (evidence);
 		}
 
-		[MonoTODO]
 		public XmlSecureResolver (
 			XmlResolver resolver, PermissionSet permissionSet)
 		{
-			throw new NotImplementedException ();
+			this.resolver = resolver;
+			this.permissionSet = permissionSet;
 		}
 
-		[MonoTODO]
 		public XmlSecureResolver (
 			XmlResolver resolver, string securityUrl)
+			: this (resolver, CreateEvidenceForUrl (securityUrl))
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -65,28 +96,25 @@ namespace System.Xml
 
 #region Property
 
-		[MonoTODO]
 		public override ICredentials Credentials {
-			set { throw new NotImplementedException (); }
+			set { resolver.Credentials = value; }
 		}
 
 #endregion
 
 #region Methods
 
-		[MonoTODO]
 		public override object GetEntity (
 			Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
-			throw new NotImplementedException ();
+			permissionSet.PermitOnly ();
+			return resolver.GetEntity (absoluteUri, role, ofObjectToReturn);
 		}
 
-		[MonoTODO]
-		public override Uri ResolveUri ( Uri baseUri, string relativeUri)
+		public override Uri ResolveUri (Uri baseUri, string relativeUri)
 		{
-			throw new NotImplementedException ();
+			return resolver.ResolveUri (baseUri, relativeUri);
 		}
-
 #endregion
 
 	}

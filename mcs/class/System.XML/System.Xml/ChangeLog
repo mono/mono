@@ -1,5 +1,9 @@
 2003-10-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlSecureResolver.cs : Implemented basic feature.
+
+2003-10-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlUrlResolver.cs : Should work with null type argument.
 
 2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
