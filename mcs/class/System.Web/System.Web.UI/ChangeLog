@@ -1,3 +1,7 @@
+2004-08-05 Sanjay Gupta <gsanjay@novell.com>
+
+	* PostBackOptions.cs: Added new file and implemented the class.
+
 2004-08-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextWriterTag.cs: readded author name.
