@@ -1,7 +1,10 @@
 2005-01-07  Sureshkumar T  <tsureshkumar@novell.com>
 
-	* Tds70.cs : add a special case for datetime parameters to convert
-	to invariant culture. fixes bug #70209.
+	* Tds70.cs : 
+	- add a special case for datetime parameters to convert to
+	invariant culture. fixes bug #70209.
+	- change format to MMM dd yyyy, this works for both client locale
+	change and server login locale change. fixes bug #66564.
 
 2005-01-06  Sureshkumar T  <tsureshkumar@novell.com>
 

@@ -185,7 +185,7 @@ namespace Mono.Data.Tds.Protocol {
 			domain = connectionParameters.DefaultDomain = Environment.UserDomainName;
 
 			int idx = 0;
-			if ((idx = username.IndexOf (@"\")) > -1) {
+			if ((idx = username.IndexOf ("\\")) > -1) {
 				domain = username.Substring (0, idx);
 				username = username.Substring (idx + 1);
 
@@ -410,7 +410,7 @@ namespace Mono.Data.Tds.Protocol {
 			case "datetime":
 				DateTime d = (DateTime)parameter.Value;
 				value = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-                                                      "'{0:MM/dd/yyyy hh:mm:ss tt}'", d );
+                                                      "'{0:MMM dd yyyy hh:mm:ss tt}'", d );
                                 break;
 			case "bigint":
 			case "decimal":
