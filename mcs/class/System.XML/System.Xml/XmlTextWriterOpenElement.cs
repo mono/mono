@@ -7,6 +7,8 @@ namespace System.Xml
 		#region Fields
 
 		string name;
+		string xmlLang;
+		XmlSpace xmlSpace;
 		bool indentingOverriden = false;
 
 		#endregion
@@ -31,6 +33,18 @@ namespace System.Xml
 		{
 			get { return indentingOverriden; }
 			set { indentingOverriden = value; }
+		}
+
+		public string XmlLang
+		{
+			get { return xmlLang; }
+			set { xmlLang = value; }
+		}
+
+		public XmlSpace XmlSpace
+		{
+			get { return xmlSpace; }
+			set { xmlSpace = value; }
 		}
 
 		#endregion

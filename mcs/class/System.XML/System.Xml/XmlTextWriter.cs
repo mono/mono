@@ -35,6 +35,10 @@ namespace System.Xml
 		protected int indentLevel = 0;
 		protected string indentFormatting;
 		protected Stream baseStream = null;
+		protected string xmlLang = null;
+		protected XmlSpace xmlSpace = XmlSpace.None;
+		protected bool openXmlLang = false;
+		protected bool openXmlSpace = false;
 
 		#endregion
 
@@ -136,14 +140,36 @@ namespace System.Xml
 			get { return ws; }
 		}
 		
-		[MonoTODO]
 		public override string XmlLang {
-			get { throw new NotImplementedException(); }
+			get {
+				string xmlLang = null;
+				int i;
+
+				for (i = 0; i < openElements.Count; i++) 
+				{
+					xmlLang = ((XmlTextWriterOpenElement)openElements.ToArray().GetValue(i)).XmlLang;
+					if (xmlLang != null)
+						break;
+				}
+
+				return xmlLang;
+			}
 		}
 
-		[MonoTODO]
 		public override XmlSpace XmlSpace {
-			get { throw new NotImplementedException(); }
+			get {
+				XmlSpace xmlSpace = XmlSpace.None;
+				int i;
+
+				for (i = 0; i < openElements.Count; i++) 
+				{
+					xmlSpace = ((XmlTextWriterOpenElement)openElements.ToArray().GetValue(i)).XmlSpace;
+					if (xmlSpace != XmlSpace.None)
+						break;
+				}
+
+				return xmlSpace;
+			}
 		}
 
 		#endregion
@@ -178,15 +204,6 @@ namespace System.Xml
 			w.Close();
 			ws = WriteState.Closed;
 			openWriter = false;
-		}
-
-		private void CloseStartAttribute ()
-		{
-			if (openStartAttribute) 
-			{
-				w.Write("={0}", quoteChar);
-				openStartAttribute = false;
-			}
 		}
 
 		private void CloseStartElement ()
@@ -279,8 +296,18 @@ namespace System.Xml
 
 			CheckState ();
 
-			if (openStartAttribute)
-				CloseStartAttribute ();
+			if (openXmlLang) {
+				w.Write (xmlLang);
+				openXmlLang = false;
+				((XmlTextWriterOpenElement)openElements.Peek()).XmlLang = xmlLang;
+			}
+
+			if (openXmlSpace) 
+			{
+				w.Write (xmlSpace.ToString ().ToLower ());
+				openXmlSpace = false;
+				((XmlTextWriterOpenElement)openElements.Peek()).XmlSpace = xmlSpace;
+			}
 
 			w.Write ("{0}", quoteChar);
 
@@ -367,8 +394,15 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO("haven't tested namespaces on attributes code yet.")]
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
+			if ((prefix == "xml") && (localName == "lang"))
+				openXmlLang = true;
+
+			if ((prefix == "xml") && (localName == "space"))
+				openXmlSpace = true;
+
 			if ((prefix == "xmlns") && (localName == "xmlns"))
 				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.");
 
@@ -395,11 +429,10 @@ namespace System.Xml
 				formatPrefix = prefix + ":";
 			}
 
-			w.Write (" {0}{1}", formatPrefix, localName);
+			w.Write (" {0}{1}={2}", formatPrefix, localName, quoteChar);
 
 			openAttribute = true;
 			ws = WriteState.Attribute;
-			openStartAttribute = true;
 		}
 
 		public override void WriteStartDocument ()
@@ -508,19 +541,34 @@ namespace System.Xml
 				text = text.Replace ("<", "&lt;");
 				text = text.Replace (">", "&gt;");
 				
-				if (openStartAttribute) {
+				if (openAttribute) {
 					if (quoteChar == '"')
 						text = text.Replace ("\"", "&quot;");
 					else
 						text = text.Replace ("'", "&apos;");
 				}
 
-				if (openStartAttribute)
-					CloseStartAttribute ();
-				else
+				if (!openAttribute)
 					CloseStartElement ();
 
-				w.Write (text);
+				if (!openXmlLang && !openXmlSpace)
+					w.Write (text);
+				else {
+					if (openXmlLang)
+						xmlLang = text;
+					else {
+						switch (text) {
+							case "default":
+								xmlSpace = XmlSpace.Default;
+								break;
+							case "preserve":
+								xmlSpace = XmlSpace.Preserve;
+								break;
+							default:
+								throw new ArgumentException ("'{0}' is an invalid xml:space value.");
+						}
+					}
+				}
 			}
 
 			IndentingOverriden = true;
@@ -532,10 +580,14 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteWhitespace (string ws)
 		{
-			throw new NotImplementedException ();
+			foreach (char c in ws) {
+				if ((c != ' ') && (c != '\t') && (c != '\r') && (c != '\n'))
+					throw new ArgumentException ();
+			}
+
+			w.Write (ws);
 		}
 
 		#endregion

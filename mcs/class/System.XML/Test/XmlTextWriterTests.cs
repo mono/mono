@@ -591,49 +591,71 @@ namespace Ximian.Mono.Tests
 				sw.GetStringBuilder ().ToString ());
 		}
 
-		// TODO: need attribute methods to be implemented before this test will pass.
-		public void saveTestXmlLang ()
+		public void TestXmlLang ()
 		{
+			xtw.QuoteChar = '\'';
+
 			AssertNull (xtw.XmlLang);
+			
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("xml", "lang", null, "langfoo");
 			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo'", sw.GetStringBuilder ().ToString ());
 
 			xtw.WriteAttributeString ("boo", "yah");
 			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'", sw.GetStringBuilder ().ToString ());
 			
 			xtw.WriteElementString("bar", "baz");
 			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>",
+				sw.GetStringBuilder ().ToString ());
 			
 			xtw.WriteString("baz");
 			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz",
+				sw.GetStringBuilder ().ToString ());
 			
 			xtw.WriteStartElement ("quux");
 			xtw.WriteStartAttribute ("xml", "lang", null);
 			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='",
+				sw.GetStringBuilder ().ToString ());
 			
 			xtw.WriteString("langbar");
 			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='",
+				sw.GetStringBuilder ().ToString ());
 			
 			xtw.WriteEndAttribute ();
 			AssertEquals ("langbar", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'",
+				sw.GetStringBuilder ().ToString ());
 			
 			xtw.WriteElementString ("quuux", "squonk");
 			AssertEquals ("langbar", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><quuux>squonk</quuux>",
+				sw.GetStringBuilder ().ToString ());
 			
 			xtw.WriteEndElement ();
 			AssertEquals ("langfoo", xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><quuux>squonk</quuux></quux>",
+				sw.GetStringBuilder ().ToString ());
 			
 			xtw.WriteEndElement ();
 			AssertNull (xtw.XmlLang);
+			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'><quuux>squonk</quuux></quux></foo>",
+				sw.GetStringBuilder ().ToString ());
 			
 			xtw.Close ();
 			AssertNull (xtw.XmlLang);
 		}
 
 		// TODO: test operational aspects
-		public void saveTestXmlSpace ()
+		public void TestXmlSpace ()
 		{
+			xtw.QuoteChar = '\'';
+
 			xtw.WriteStartElement ("foo");
 			AssertEquals (XmlSpace.None, xtw.XmlSpace);
 
@@ -652,26 +674,52 @@ namespace Ximian.Mono.Tests
 			xtw.WriteWhitespace (" ");
 			xtw.WriteString ("bar");
 			xtw.WriteString (" baz quux");
-			AssertEquals ("<foo>foo bar baz quux<bar xml:space=\"preserve\">foo bar baz quux",
+			AssertEquals ("<foo>foo bar baz quux<bar xml:space='preserve'>foo bar baz quux",
 				sw.GetStringBuilder ().ToString ());
 
 			xtw.WriteStartElement ("baz");
-			xtw.WriteAttributeString ("xml", "space", null, "default");
+			xtw.WriteStartAttribute ("xml", "space", null);
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+			AssertEquals ("<foo>foo bar baz quux<bar xml:space='preserve'>foo bar baz quux<baz xml:space='",
+				sw.GetStringBuilder ().ToString ());
+
+			xtw.WriteString ("default");
+			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+			AssertEquals ("<foo>foo bar baz quux<bar xml:space='preserve'>foo bar baz quux<baz xml:space='",
+				sw.GetStringBuilder ().ToString ());
+			
+			xtw.WriteEndAttribute ();
 			AssertEquals (XmlSpace.Default, xtw.XmlSpace);
+			AssertEquals ("<foo>foo bar baz quux<bar xml:space='preserve'>foo bar baz quux<baz xml:space='default'",
+				sw.GetStringBuilder ().ToString ());
 
 			xtw.WriteString ("foo");
 			xtw.WriteWhitespace (" ");
 			xtw.WriteString ("bar");
 			xtw.WriteString (" baz quux");
-			AssertEquals ("<foo>foo bar baz quux<bar xml:space=\"preserve\">foo bar baz quux<baz xml:space=\"default\">foo bar baz quux",
+			AssertEquals ("<foo>foo bar baz quux<bar xml:space='preserve'>foo bar baz quux<baz xml:space='default'>foo bar baz quux",
 				sw.GetStringBuilder ().ToString ());
 
 			xtw.WriteStartElement ("quux");
 			try {
 				xtw.WriteAttributeString ("xml", "space", null, "bubba");
-			} catch (ArgumentException e) {
-				AssertEquals ("'{0}' is an invalid xml:space value.", e.Message);
-			}
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteAttributeString ("xml", "space", null, "PRESERVE");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteAttributeString ("xml", "space", null, "Preserve");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteAttributeString ("xml", "space", null, "Default");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteWhitespace ("x");
+			} catch (ArgumentException) { }
 		}
 	}
 }

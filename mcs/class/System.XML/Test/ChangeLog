@@ -1,5 +1,9 @@
 2002-03-29  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XmlTextWriterTests.cs: XmlLang and XmlSpace tests.
+	
+2002-03-29  Kral Ferch <kral_ferch@hotmail.com>
+
 	* XmlTextWriterTests.cs: Working on Attributes.
 	
 2002-03-28  Duncan Mak  <duncan@ximian.com>
