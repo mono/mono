@@ -1,3 +1,8 @@
+2004-07-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* loader.c: Removed the mono_loader_wine_init hack now that we are
+	doing a managed version of Windows.Forms.
+
 2004-07-09  Ben Maurer  <bmaurer@ximian.com>
 
 	* domain.c, gc.c, marshal.c, mono-debug-debugger.c,
