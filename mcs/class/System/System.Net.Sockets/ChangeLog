@@ -1,3 +1,8 @@
+2002-11-13  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Only close the socket in one place, ie the Dispose
+	method.  Fixes bug 32054.
+
 2002-11-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: offset == size == 0 it's ok in Send ().

@@ -541,8 +541,7 @@ namespace System.Net.Sockets
 		private extern static void Close_internal(IntPtr socket);
 		
 		public void Close() {
-			connected=false;
-			Close_internal(socket);
+			this.Dispose();
 		}
 
 		// Connects to the remote address
@@ -965,7 +964,9 @@ namespace System.Net.Sockets
 
 				// Release unmanaged resources
 				this.disposed=true;
-				this.Close();
+			
+				connected=false;
+				Close_internal(socket);
 			}
 		}
 
