@@ -8,6 +8,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Reflection;
 
 
 namespace MonoTests.System
@@ -85,75 +86,67 @@ public class EnumTest : TestCase
 		Assert("Shouldn't match null", !e1.Equals(null));
 	}
 
-	public void TestFormat() {
+	public void TestFormat_Args() {
 		try {
 			TestingEnum x = TestingEnum.Test;
 			Enum.Format(null, x, "G");
 			Fail("null first arg not caught.");
 		} catch (ArgumentNullException) {
-			return;
+			// do nothing
 		} catch (Exception e) {
 			Fail("first arg null, wrong exception: " + e.ToString());
 		}
-		Fail ("01 - Should not be here");
 
 		try {
-			TestingEnum x = TestingEnum.Test;
-			Enum.Format(x.GetType(), null, "G");
+			Enum.Format(typeof(TestingEnum), null, "G");
 			Fail("null second arg not caught.");
 		} catch (ArgumentNullException) {
-			return;
+			// do nothing
 		} catch (Exception e) {
 			Fail("second arg null, wrong exception: " + e.ToString());
 		}
-		Fail ("02 - Should not be here");
 
 		try {
 			TestingEnum x = TestingEnum.Test;
 			Enum.Format(x.GetType(), x, null);
 			Fail("null third arg not caught.");
 		} catch (ArgumentNullException) {
-			return;
+			// do nothing
 		} catch (Exception e) {
 			Fail("third arg null, wrong exception: " + e.ToString());
 		}
-		Fail ("03 - Should not be here");
 
 		try {
-			String bad = "huh?";
 			TestingEnum x = TestingEnum.Test;
-			Enum.Format(bad.GetType(), x, "G");
+			Enum.Format(typeof(string), x, "G");
 			Fail("bad type arg not caught.");
-		} catch (ArgumentNullException) {
-			return;
+		} catch (ArgumentException) {
+			// do nothing
 		} catch (Exception e) {
 			Fail("bad type, wrong exception: " + e.ToString());
 		}
-		Fail ("04 - Should not be here");
 
 		try {
 			TestingEnum x = TestingEnum.Test;
 			TestingEnum2 y = TestingEnum2.Test;
 			Enum.Format(y.GetType(), x, "G");
 			Fail("wrong enum type not caught.");
-		} catch (ArgumentNullException) {
-			return;
+		} catch (ArgumentException) {
+			// do nothing
 		} catch (Exception e) {
 			Fail("wrong enum type, wrong exception: " + e.ToString());
 		}
-		Fail ("05 - Should not be here");
 
 		try {
 			String bad = "huh?";
 			TestingEnum x = TestingEnum.Test;
 			Enum.Format(x.GetType(), bad, "G");
 			Fail("non-enum object not caught.");
-		} catch (ArgumentNullException) {
-			return;
+		} catch (ArgumentException) {
+			// do nothing
 		} catch (Exception e) {
 			Fail("non-enum object, wrong exception: " + e.ToString());
 		}
-		Fail ("06 - Should not be here");
 
 		string[] codes = {"a", "b", "c", "ad", "e", "af", "ag", "h", 
 				  "i", "j", "k", "l", "m", "n", "o", "p", 
@@ -165,23 +158,34 @@ public class EnumTest : TestCase
 				Enum.Format(x.GetType(), x, code);
 				Fail ("bad format code not caught - " + code);
 			} catch (FormatException) {
-
+				// do nothing
 			} catch (Exception e) {
-				Fail ("bad format code, wrong exception: " + e.ToString());
+				Fail (String.Format ("bad format code ({0}), wrong exception: {1}", 
+				                     code, e.ToString()));
 			}
 		}
 
-		{
-			TestingEnum x = TestingEnum.Test;
-			AssertEquals("decimal format wrong", 
-				     "3", Enum.Format(x.GetType(), x, "d"));
-			AssertEquals("named format wrong", 
-				     "Test", Enum.Format(x.GetType(), x, "g"));
-			AssertEquals("hex format wrong", 
-				     "00000003", Enum.Format(x.GetType(), x, "x"));
-			AssertEquals("bitfield format wrong", 
-				     "Test", Enum.Format(x.GetType(), x, "f"));
-		}
+		TestingEnum ex = TestingEnum.Test;
+		AssertEquals("decimal format wrong", 
+			     "3", Enum.Format(ex.GetType(), ex, "d"));
+		AssertEquals("named format wrong", 
+			     "Test", Enum.Format(ex.GetType(), ex, "g"));
+		AssertEquals("hex format wrong", 
+			     "00000003", Enum.Format(ex.GetType(), ex, "x"));
+		AssertEquals("bitfield format wrong", 
+			     "Test", Enum.Format(ex.GetType(), ex, "f"));
+	}
+
+	public void TestFormat_FormatSpecifier ()
+	{
+		ParameterAttributes pa = 
+			ParameterAttributes.In | ParameterAttributes.HasDefault;
+		const string fFormatOutput = "In, HasDefault";
+		const string xFormatOutput = "00001001";
+		string fOutput = Enum.Format (pa.GetType(), pa, "f");
+		AssertEquals ("#F_FS:f", fFormatOutput, fOutput);
+		string xOutput = Enum.Format (pa.GetType(), pa, "x");
+		AssertEquals ("#F_FS:x", xFormatOutput, xOutput);
 	}
 
 	public void TestGetHashCode() {
