@@ -14,17 +14,17 @@ namespace MonoTests.System.Net {
         /// </summary>
         public class AllTests : TestCase {
 
-                public AllTests(string name) : base(name) {}
+                public AllTests (string name) : base (name) {}
                 
                 public static ITest Suite { 
                         get 
                         {
-                                TestSuite suite = new TestSuite();
+                                TestSuite suite = new TestSuite ();
                                 suite.AddTest (IPAddressTest.Suite);
                                 suite.AddTest (IPEndPointTest.Suite);
                                 suite.AddTest (CookieTest.Suite);
                                 suite.AddTest (CookieCollectionTest.Suite);
-                                // suite.AddTest (CookieContainerTest.Suite);
+                                suite.AddTest (CookieContainerTest.Suite);
 				return suite;
                         }
                 }

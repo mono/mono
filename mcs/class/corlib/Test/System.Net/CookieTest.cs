@@ -71,7 +71,7 @@ public class CookieTest : TestCase
 		try {
 			c.Name = "xxx\r\n";
 			Fail ("#2g");			
-		} catch (CookieException ttt) {
+		} catch (CookieException) {
 			AssertEquals ("#2h", String.Empty, c.Name);			
 		}		
 		try {

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Lawrence Pit (loz@cable.a2000.nl)
 //
 // (C) Ximian, Inc. http://www.ximian.com
 
@@ -10,55 +11,85 @@ using System.Globalization;
 using System.Collections;
 using System.Text;
 
-namespace System.Security {
-
-	[MonoTODO ("See bottom of the class for missing methods")]
+namespace System.Security 
+{
 	[Serializable]
-	public sealed class SecurityElement {
+	public sealed class SecurityElement 
+	{
 		string text;
 		string tag;
+		Hashtable attributes;
+		ArrayList children;
+		
+		// these values are determined by a simple test program against the MS.Net implementation:
+		//	for (int i = 0; i < 256; i++) {
+		//		if (!SecurityElement.IsValidTag ("" + ((char) i))) {
+		//			System.Console.WriteLine ("TAG: " + i);
+		//		}
+		//	}		
+		// note: this is actually an incorrect implementation of MS, as for example the &
+		// character is not a valid character in tag names.
+		private static char [] invalid_tag_chars = new char [] { ' ', '<', '>' };
+		private static char [] invalid_text_chars = new char [] { '<', '>' };
+		private static char [] invalid_attr_name_chars = new char [] { ' ', '<', '>' };
+		private static char [] invalid_attr_value_chars = new char [] { '"', '<', '>' };
+		private static char [] invalid_chars = new char [] { '<', '>', '"', '\'', '&' };
+		
+		public SecurityElement (string tag) : this (tag, null)
+		{
+		}
 		
 		public SecurityElement (string tag, string text)
 		{
-			if (tag.IndexOfAny (invalid_chars) != -1)
-				throw new ArgumentException (Locale.GetText ("Invalid XML string"));
-			if (text.IndexOfAny (invalid_chars) != -1 ||
-			    tag.IndexOfAny (invalid_chars) != -1)
-				throw new ArgumentException (Locale.GetText ("Invalid XML string"));
-			
-			this.tag = tag;
-			this.text = text;
+			this.Tag = tag;
+			this.Text = (text == null) ? String.Empty : text;
 		}
-		public SecurityElement (string tag)
-		{
-			if (tag.IndexOfAny (invalid_chars) != -1)
-				throw new ArgumentException (Locale.GetText ("Invalid XML string"));
-
-			this.tag = tag;
-		}
-
-		Hashtable attributes;
+		
 		public Hashtable Attributes {
 			get {
-				return attributes;
+				if (attributes == null) 
+					return null;
+					
+				Hashtable result = new Hashtable ();
+				IDictionaryEnumerator e = attributes.GetEnumerator ();
+				while (e.MoveNext ())
+					result.Add (e.Key, e.Value);
+				return result;
 			}
 
-			set {
-				attributes = value;
+			set {				
+				if (value == null || value.Count == 0) {
+					attributes = null;
+					return;
+				}
+				
+				Hashtable result = new Hashtable ();
+				IDictionaryEnumerator e = value.GetEnumerator ();
+				while (e.MoveNext ()) {
+					string key = (string) e.Key;
+					string val = (string) e.Value;
+					if (IsValidAttributeName (key))		
+						throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + key);
+					if (IsValidAttributeValue (val))		
+						throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + key);
+					result.Add (key, val);
+				}
+				attributes = result;
 			}
 		}
 
-		ArrayList children;
 		public ArrayList Children {
 			get {
 				return children;
 			}
 
 			set {
-				if (value != null){
-					foreach (object o in children){
+				if (value != null) {
+					foreach (object o in value) {
 						if (o == null)
 							throw new ArgumentNullException ();
+						// shouldn't we also throw an exception 
+						// when o isn't an instance of SecurityElement?
 					}
 				}
 				children = value;
@@ -72,8 +103,8 @@ namespace System.Security {
 			set {
 				if (value == null)
 					throw new ArgumentNullException ();
-				if (tag.IndexOfAny (invalid_chars) != -1)
-					throw new ArgumentException (Locale.GetText ("Invalid XML string"));
+				if (!IsValidTag (value))
+					throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + value);
 				tag = value;
 			}
 		}
@@ -84,9 +115,8 @@ namespace System.Security {
 			}
 
 			set {
-				if (value != null && (value.IndexOfAny (invalid_chars) != -1))
-					throw new ArgumentException (Locale.GetText ("Invalid XML string"));
-				
+				if (!IsValidText (value))
+					throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + text);				
 				text = value;
 			}
 		}
@@ -103,11 +133,11 @@ namespace System.Security {
 			// The hashtable will throw ArgumentException if name is already there
 			//
 
-			if (name.IndexOfAny (invalid_chars) != -1)
-				throw new ArgumentException (Locale.GetText ("Invalid XML string"));
+			if (!IsValidAttributeName (name))
+				throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + name);
 
-			if (value.IndexOfAny (invalid_chars) != -1)
-				throw new ArgumentException (Locale.GetText ("Invalid XML string"));
+			if (!IsValidAttributeValue (value))
+				throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + value);
 			
 			attributes.Add (name, value);
 		}
@@ -138,18 +168,48 @@ namespace System.Security {
 		{
 			if (other == null)
 				return false;
+				
+			if (this == other)
+				return true;
 
-			if (text != other.text)
+			if (this.text != other.text)
 				return false;
 
-			if (tag != other.tag)
+			if (this.tag != other.tag)
 				return false;
 
-			throw new Exception ("IMPLEMENT ME: Compare attributes and children");
+			if (this.attributes == null && other.attributes != null && other.attributes.Count != 0)
+				return false;
+				
+			if (other.attributes == null && this.attributes != null && this.attributes.Count != 0)
+				return false;
+
+			if (this.attributes != null && other.attributes != null) {
+				if (this.attributes.Count != other.attributes.Count) 
+					return false;
+				IDictionaryEnumerator e = attributes.GetEnumerator ();
+				while (e.MoveNext ()) 
+					if (other.attributes [e.Key] != e.Value)
+						return false;
+			}
+			
+			if (this.children == null && other.children != null & other.children.Count != 0)
+				return false;
+					
+			if (other.children == null && this.children != null & this.children.Count != 0)
+				return false;
+				
+			if (this.children != null && other.children != null) {
+				if (this.children.Count != other.children.Count)
+					return false;
+				for (int i = 0; i < this.children.Count; i++) 
+					if (!((SecurityElement) this.children [i]).Equal ((SecurityElement) other.children [i]))
+						return false;
+			}
+			
+			return true;
 		}
 
-		static char [] invalid_chars = new char [] { '<', '>', '"', '\'', '&' };
-		
 		public static string Escape (string str)
 		{
 			StringBuilder sb;
@@ -160,10 +220,10 @@ namespace System.Security {
 			sb = new StringBuilder ();
 			int len = str.Length;
 			
-			for (int i = 0; i < len; i++){
+			for (int i = 0; i < len; i++) {
 				char c = str [i];
 
-				switch (c){
+				switch (c) {
 				case '<':  sb.Append ("&lt;"); break;
 				case '>':  sb.Append ("&gt;"); break;
 				case '"':  sb.Append ("&quot;"); break;
@@ -176,31 +236,103 @@ namespace System.Security {
 			return sb.ToString ();
 		}
 
-		public static bool IsInvalidAttributeName (string name)
+		public static bool IsValidAttributeName (string name)
 		{
-			return name.IndexOfAny (invalid_chars) != -1;
+			return name != null && name.IndexOfAny (invalid_attr_name_chars) == -1;
 		}
 
-		public static bool IsInvalidAttributeValue (string value)
+		public static bool IsValidAttributeValue (string value)
 		{
-			return value.IndexOfAny (invalid_chars) != -1;
+			return value != null && value.IndexOfAny (invalid_attr_value_chars) == -1;
 		}
 
-		public static bool IsInvalidTag (string value)
+		public static bool IsValidTag (string value)
 		{
-			return value.IndexOfAny (invalid_chars) != -1;
+			return value != null && value.IndexOfAny (invalid_tag_chars) == -1;
 		}
 
-		public static bool IsInvalidText (string value)
+		public static bool IsValidText (string value)
 		{
-			return value.IndexOfAny (invalid_chars) != -1;
+			return value != null && value.IndexOfAny (invalid_text_chars) == -1;
 		}
 
-		//
-		// TODO:
-		//
-		// SearchForChildByTag
-		// SearchForTextOfTag
-		// ToString
+		public SecurityElement SearchForChildByTag (string tag) 
+		{
+			if (tag == null)
+				throw new ArgumentNullException ("tag");
+				
+			if (this.children == null)
+				return null;
+				
+			for (int i = 0; i < children.Count; i++) {
+				SecurityElement elem = (SecurityElement) children [i];
+				if (elem.tag == tag)
+					return elem;
+			}
+			return null;
+		}			
+
+		public string SearchForTextOfTag (string tag) 
+		{
+			if (tag == null)
+				throw new ArgumentNullException ("tag");
+				
+			if (this.tag == tag)
+				return this.text;
+				
+			if (this.children == null)
+				return null;
+			
+			for (int i = 0; i < children.Count; i++) {
+				string result = ((SecurityElement) children [i]).SearchForTextOfTag (tag);
+				if (result != null) 
+					return result;
+			}
+
+			return null;			
+		}
+		
+		public override string ToString ()
+		{
+			StringBuilder s = new StringBuilder ();
+			ToXml (ref s, 0);
+			return s.ToString ();
+		}
+		
+		private void ToXml(ref StringBuilder s, int level)
+		{
+			s.Append (' ', level << 2);
+			s.Append ("<");
+			s.Append (tag);
+			
+			if (attributes != null) {
+				IDictionaryEnumerator e = attributes.GetEnumerator ();				
+				while (e.MoveNext ()) {
+					s.Append (" ")
+					 .Append (e.Key)
+					 .Append ("=\"")
+					 .Append (e.Value)
+					 .Append ("\"");
+				}
+			}
+			
+			if ((text == null || text == String.Empty) && 
+			    (children == null || children.Count == 0))
+				s.Append ("/>");
+			else {
+				s.Append (">").Append (text);
+				if (children != null) {
+					for (int i = 0; i < children.Count; i++) {
+						s.Append (Environment.NewLine);
+						((SecurityElement) children [i]).ToXml (ref s, level + 1);
+					}
+				}
+				s.Append (Environment.NewLine)
+				 .Append (' ', level << 2)
+				 .Append ("</")
+				 .Append (tag)
+				 .Append (">");
+			}
+		}
 	}
 }
