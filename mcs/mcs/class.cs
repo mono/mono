@@ -1030,7 +1030,7 @@ namespace Mono.CSharp {
 				Type ptype = null;
 				Type t = pclass.TypeBuilder.BaseType;
 				while ((t != null) && (ptype == null)) {
-					pname = MakeFQN (t.Name, Basename);
+					pname = MakeFQN (t.FullName, Basename);
 					ptype = RootContext.LookupType (this, pname, true, Location.Null);
 					t = t.BaseType;
 				}

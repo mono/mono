@@ -1,3 +1,8 @@
+2003-07-28  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineMembers): Use the base type's full
+	name when looking up the base class of a nested class.  Fixes #46977.
+
 2003-07-26  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Indexers.Indexer): New nested struct; contains
