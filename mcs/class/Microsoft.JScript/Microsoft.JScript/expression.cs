@@ -86,7 +86,10 @@ namespace Microsoft.JScript {
 		}			
 	}
 
-	public class Binary : BinaryOp {
+	internal class Binary : BinaryOp, IAssignable {
+
+		bool assign;
+		AST right_side;
 
 		internal Binary (AST parent, AST left, JSToken op)
 			: this (parent, left, null, op)
@@ -98,7 +101,7 @@ namespace Microsoft.JScript {
 			this.parent = parent;
 			this.left = left;
 			this.right = right;
-			this.current_op = op;	
+			this.op = op;	
 		}
 		
 		public override string ToString ()
@@ -106,8 +109,8 @@ namespace Microsoft.JScript {
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (left.ToString () + " ");
 			
-			if (current_op != JSToken.None)
-				sb.Append (current_op + " ");
+			if (op != JSToken.None)
+				sb.Append (op + " ");
 			
 			if (right != null)
 				sb.Append (right.ToString ());
@@ -130,20 +133,32 @@ namespace Microsoft.JScript {
 			this.no_effect = no_effect;
 			return Resolve (context);
 		}
+		
+		public bool ResolveAssign (IdentificationTable context, AST right_side)
+		{
+			if (op == JSToken.LeftBracket || op == JSToken.AccessField) {
+				this.no_effect = false;
+				this.assign = true;
+				this.right_side = right_side;
+				return Resolve (context);
+			} else 
+				throw new Exception ("error JS5008: Illegal assignment");
+		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;			
-			if (current_op == JSToken.None) {
+			if (op == JSToken.None) {
 				if (left != null)
 					left.Emit (ec);
-			} else if (current_op == JSToken.LogicalAnd || current_op == JSToken.LogicalOr)
+			} else if (op == JSToken.LogicalAnd || op == JSToken.LogicalOr)
 				emit_jumping_code (ec);
-			else if (current_op == JSToken.LeftBracket) {
-				get_default_this (ig);
+			else if (op == JSToken.LeftBracket) {
+				if (!assign)
+					get_default_this (ig);
 				if (left != null)
 					left.Emit (ec);
-				emit_access (ec);
+				emit_access (ec);				
 			} else {
 				emit_operator (ig);
 				if (left != null)
@@ -158,7 +173,11 @@ namespace Microsoft.JScript {
 
 		internal void get_default_this (ILGenerator ig)
 		{
-			ig.Emit (OpCodes.Ldarg_0);
+			if (parent == null || parent.GetType () == typeof (ScriptBlock))
+				ig.Emit (OpCodes.Ldarg_0);
+			else
+				ig.Emit (OpCodes.Ldarg_1);
+			
 			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
 			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
@@ -175,17 +194,28 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldc_I4_0);
 			if (right != null)
 				right.Emit (ec);
-			ig.Emit (OpCodes.Stelem_Ref);
-			ig.Emit (OpCodes.Ldc_I4_0);
-			ig.Emit (OpCodes.Ldc_I4_1);
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
+			ig.Emit (OpCodes.Stelem_Ref);			
+
+			if (assign) {
+				if (right_side != null)
+					right_side.Emit (ec);
+				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("SetIndexedPropertyValueStatic"));
+			} else {
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Ldc_I4_1);
+
+				if (parent == null || parent.GetType () == typeof (ScriptBlock)) {
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+				} else
+					ig.Emit (OpCodes.Ldarg_1);
+				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
+			}
 		}
 
 		internal void emit_op_eval (ILGenerator ig)
 		{
-			switch (current_op) {
+			switch (op) {
 			case JSToken.Plus:
 				ig.Emit (OpCodes.Callvirt, typeof (Plus).GetMethod ("EvaluatePlus"));
 				break;
@@ -227,50 +257,50 @@ namespace Microsoft.JScript {
 			LocalBuilder local_builder = null;
 			Type t = null;
 			
-			if (current_op == JSToken.Plus) {
+			if (op == JSToken.Plus) {
 				t = typeof (Plus);
 				local_builder = ig.DeclareLocal (t);				
 				ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {}));
 				ig.Emit (OpCodes.Stloc, local_builder);
 				ig.Emit (OpCodes.Ldloc, local_builder);
 				return;
-			} else if (current_op == JSToken.Minus) {
+			} else if (op == JSToken.Minus) {
 				t = typeof (NumericBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 47);
-			} else if (current_op == JSToken.LeftShift) {
+			} else if (op == JSToken.LeftShift) {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 61);
-			} else if (current_op == JSToken.RightShift) {
+			} else if (op == JSToken.RightShift) {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 62);
-			} else if (current_op == JSToken.UnsignedRightShift) {
+			} else if (op == JSToken.UnsignedRightShift) {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 63);
-			} else if (current_op == JSToken.Multiply) {
+			} else if (op == JSToken.Multiply) {
 				t = typeof (NumericBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 64);
-			} else if (current_op == JSToken.Divide) {
+			} else if (op == JSToken.Divide) {
 				t = typeof (NumericBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 65);
-			} else if (current_op == JSToken.Modulo) {
+			} else if (op == JSToken.Modulo) {
 				t = typeof (NumericBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 66);
-			} else if (current_op == JSToken.BitwiseOr) {
+			} else if (op == JSToken.BitwiseOr) {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 50);
-			} else if (current_op == JSToken.BitwiseXor) {
+			} else if (op == JSToken.BitwiseXor) {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 51);				
-			} else if (current_op == JSToken.BitwiseAnd) {
+			} else if (op == JSToken.BitwiseAnd) {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 52);
@@ -421,6 +451,7 @@ namespace Microsoft.JScript {
 		internal string name;
 		internal AST binding;
 		internal bool assign;
+		AST right_side;
 
 		internal Identifier (AST parent, string id)
 		{
@@ -452,10 +483,11 @@ namespace Microsoft.JScript {
 			return Resolve (context);
 		}
 
-		public bool ResolveAssign (IdentificationTable context)
+		public bool ResolveAssign (IdentificationTable context, AST right_side)			
 		{
 			this.assign = true;
 			this.no_effect = false;
+			this.right_side = right_side;
 			if (name != String.Empty)			
 				return Resolve (context);
 			return true;
@@ -464,7 +496,8 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-
+			if (right_side != null)
+				right_side.Emit (ec);
 			if (binding is FormalParam) {
 				FormalParam f = binding as FormalParam;
 				ig.Emit (OpCodes.Ldarg_S, f.pos);
@@ -483,7 +516,7 @@ namespace Microsoft.JScript {
 					else
 						ig.Emit (OpCodes.Ldloc, local_builder);
 				}
-			} 
+			}
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
 		}
@@ -641,20 +674,22 @@ namespace Microsoft.JScript {
 			this.left = left;
 			this.right = right;
 			this.is_embedded = is_embedded;
-			current_op = op;
+			this.op = op;
 		}
 
+		//
+		// after calling Resolve, left contains all the 
+		// information about the assignment
+		//
 		internal override bool Resolve (IdentificationTable context)
 		{						
 			bool r;
 			if (left is IAssignable)
-				r = ((IAssignable) left).ResolveAssign (context);
-			else 
-				return false;
-
+				r = ((IAssignable) left).ResolveAssign (context, right);
+			else
+				throw new Exception ("(" + line_number + ",0): error JS5008: Illegal assignment");
 			if (right is Exp)
 				r &=((Exp) right).Resolve (context, false);
-
 			return r;
 		}
 
@@ -670,10 +705,8 @@ namespace Microsoft.JScript {
 			if (is_embedded) {
 				Console.WriteLine ("embedded assignments not supported yet");
 				Environment.Exit (-1);
-			} else {
-				right.Emit (ec);
-				left.Emit (ec);
-			}			
+			} 
+			left.Emit (ec);
 		}
 		
 		public override string ToString ()
@@ -714,6 +747,6 @@ namespace Microsoft.JScript {
 	}
 	
 	internal interface IAssignable {
-		bool ResolveAssign (IdentificationTable context);
+		bool ResolveAssign (IdentificationTable context, AST right_side);
 	}
 }

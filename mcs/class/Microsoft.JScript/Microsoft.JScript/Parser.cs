@@ -675,6 +675,7 @@ namespace Microsoft.JScript {
 			if (tt == Token.ASSIGN) {
 				ts.GetToken ();
 				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), JSToken.Assign, false);
+				return pn;
 			} else if (tt == Token.ASSIGNOP) {
 				ts.GetToken ();
 				int op = ts.GetOp ();
@@ -851,7 +852,6 @@ namespace Microsoft.JScript {
 				int peeked;				
 				if (((peeked = ts.PeekToken ()) == Token.INC || peeked == Token.DEC) && ts.LineNumber == line_number) {
 					int pf = ts.GetToken ();
-					// FIXME, set to proper JSToken.
 					return new PostOrPrefixOperator (null, pn, ToJSToken (peeked));
 				}
 				return pn;
@@ -943,7 +943,7 @@ namespace Microsoft.JScript {
 			while ((tt = ts.GetToken ()) > Token.EOF) {
 				if (tt == Token.DOT) {
 					MustMatchToken (Token.NAME, "msg.no.name.after.dot");
-					string s = ts.GetString;					
+					string s = ts.GetString;
 					// FIXME: is 'new Identifier' appropriate here?
 					pn = new Binary (null, pn, new Identifier (null, ts.GetString), JSToken.AccessField);
 				} else if (tt == Token.LB) {

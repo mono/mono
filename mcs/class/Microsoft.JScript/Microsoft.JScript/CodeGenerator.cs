@@ -263,7 +263,7 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			if (ast is Binary) {
 				Binary b = ast as Binary;
-				switch (b.current_op) {
+				switch (b.op) {
 				case JSToken.LogicalOr:
 					Label ftLb = ig.DefineLabel ();
 					fall_false (ec, b.left, ftLb);
@@ -288,7 +288,7 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			if (ast is Binary) {
 				Binary b = ast as Binary;
-				switch (b.current_op) {
+				switch (b.op) {
 				case JSToken.LogicalOr:
 					fall_false (ec, b.left, lbl);
 					fall_false (ec, b.right, lbl);

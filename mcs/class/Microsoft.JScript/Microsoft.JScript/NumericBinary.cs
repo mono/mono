@@ -36,7 +36,7 @@ namespace Microsoft.JScript {
 
 		public NumericBinary (int operatorTok)
 		{			
-			current_op = (JSToken) operatorTok;
+			op = (JSToken) operatorTok;
 		}
 
 		public object EvaluateNumericBinary (object v1, object v2)

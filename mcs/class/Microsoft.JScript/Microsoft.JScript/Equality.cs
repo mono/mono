@@ -40,7 +40,7 @@ namespace Microsoft.JScript {
 		{
 			this.left = left;
 			this.right = right;
-			this.current_op = op;
+			this.op = op;
 		}
 
 		public Equality (Context context, AST oper1, AST oper2, JSToken operatorTok)
@@ -50,7 +50,7 @@ namespace Microsoft.JScript {
 
 		public Equality (int i)
 		{
-			current_op = (JSToken) i;
+			op = (JSToken) i;
 		}
 
 		public bool EvaluateEquality (object v1, object v2)
@@ -70,8 +70,8 @@ namespace Microsoft.JScript {
 
 			sb.Append (left.ToString ());
 
-			if (current_op != JSToken.None)
-				sb.Append (current_op + " ");
+			if (op != JSToken.None)
+				sb.Append (op + " ");
 
 			if (right != null)
 				sb.Append (right.ToString ());
@@ -100,12 +100,12 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			LocalBuilder local_builder;
 
-			if (current_op != JSToken.None) {
+			if (op != JSToken.None) {
 				Type t = typeof (Equality);				
 				local_builder = ig.DeclareLocal (t);
-				if (current_op == JSToken.Equal)
+				if (op == JSToken.Equal)
 					ig.Emit (OpCodes.Ldc_I4_S, (byte) 53);
-				else if (current_op == JSToken.NotEqual)
+				else if (op == JSToken.NotEqual)
 					ig.Emit (OpCodes.Ldc_I4_S, (byte) 54);
 				ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {typeof (int)}));
 				ig.Emit (OpCodes.Stloc, local_builder);
@@ -117,16 +117,16 @@ namespace Microsoft.JScript {
 			if (right != null)
 				right.Emit (ec);			       
 			
-			if (current_op == JSToken.Equal || current_op == JSToken.NotEqual) {
+			if (op == JSToken.Equal || op == JSToken.NotEqual) {
 				ig.Emit (OpCodes.Call, typeof (Equality).GetMethod ("EvaluateEquality"));
 
 				if (no_effect) {
 					Label t_lbl = ig.DefineLabel ();
 					Label f_lbl = ig.DefineLabel ();
 
-					if (current_op == JSToken.Equal)
+					if (op == JSToken.Equal)
 						ig.Emit (OpCodes.Brtrue_S, t_lbl);
-					else if (current_op == JSToken.NotEqual)
+					else if (op == JSToken.NotEqual)
 						ig.Emit (OpCodes.Brfalse_S, t_lbl);
 					
 					ig.Emit (OpCodes.Ldc_I4_0);

@@ -36,7 +36,7 @@ namespace Microsoft.JScript {
 
 		public BitwiseBinary (int operatorTok)
 		{
-			current_op = (JSToken) operatorTok;
+			op = (JSToken) operatorTok;
 		} 
 
 		public BitwiseBinary (Context context, AST operand1, AST operand2,
