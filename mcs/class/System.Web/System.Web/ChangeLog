@@ -1,5 +1,13 @@
 2004-08-02  Duncan Mak  <duncan@ximian.com>
 
+	* ApplicationShutdownReason.cs: Fixed typos.
+
+	* HttpCookieMode.cs:
+	* HttpDataTransferMode.cs:
+	* HttpRequestPriority.cs: Added [Serializable] attribute.
+	
+2004-08-02  Duncan Mak  <duncan@ximian.com>
+
 	* ApplicationShutdownReason.cs:
 	* HttpCookieMode.cs:
 	* HttpDataTransferMode.cs:

@@ -29,6 +29,7 @@
 #if NET_2_0
 namespace System.Web
 {
+        [Serializable]
         public enum HttpRequestPriority
         {
                 Normal = 10,

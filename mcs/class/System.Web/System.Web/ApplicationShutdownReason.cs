@@ -29,13 +29,14 @@
 #if NET_2_0
 namespace System.Web
 {
+        [Serializable]
         public enum ApplicationShutdownReason
         {
                 None = 0,
                 HostingEnvironment = 1,
                 ChangeInGlobalAsax = 2,
                 ConfigurationChange = 3,
-                UnloadAppdomainCalled = 4,
+                UnloadAppDomainCalled = 4,
                 ChangeInSecurityPolicyFile = 5,
                 BinDirChangeOrDirectoryRename = 6,
                 BrowsersDirChangeOrDirectoryRename = 7,
@@ -45,7 +46,7 @@ namespace System.Web
                 PhysicalApplicationPathChanged = 11,
                 HttpRuntimeClose = 12,
                 InitializationError = 13,
-                MaxRecompilationReached = 14
+                MaxRecompilationsReached = 14
         }
 }
 #endif
