@@ -80,7 +80,7 @@ public class ArrayTest : TestCase
 		} catch (ArgumentNullException) {
 			errorThrown = true;
 		}
-		Assert("Error not thrown", errorThrown);
+		Assert("#B01", errorThrown);
 		errorThrown = false;
 		try {
 			char[,] c1 = new Char[2,2];
@@ -88,31 +88,31 @@ public class ArrayTest : TestCase
 		} catch (RankException) {
 			errorThrown = true;
 		}
-		Assert("Error not thrown", errorThrown);
+		Assert("#B02", errorThrown);
 
 		{
 			char[] bad = {'d', 'a', 'd', 'a', 'c', 'a'};
-			AssertEquals("shouldn't find elem in badly-sorted array", -1, Array.BinarySearch(bad, 'c'));
+			AssertEquals("#B03", -1, Array.BinarySearch(bad, 'c'));
 		}
 		{
 			char[] bad = {'a', 'd', 'a', 'd', 'a', 'c', 'a'};
-			AssertEquals("shouldn't find elem in badly-sorted array", -2, Array.BinarySearch(bad, 'c'));
+			AssertEquals("#B04", -2, Array.BinarySearch(bad, 'c'));
 		}
 		{
 			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			Assert("couldn't find elem", 
+			Assert("#B05", 
 			       Array.BinarySearch(arr, 'c') >= 3);
-			Assert("couldn't find elem", 
+			Assert("#B06", 
 			       Array.BinarySearch(arr, 'c') < 6);
 		}
 		{
 			char[] arr = {'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e'};
-			AssertEquals("couldn't find next-higher elem", 
+			AssertEquals("#B07", 
 				     -4, Array.BinarySearch(arr, 'c'));
 		}
 		{
 			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			AssertEquals("couldn't find end", 
+			AssertEquals("#B08", 
 				     -9, Array.BinarySearch(arr, 'e'));
 		}
 	}
@@ -123,7 +123,7 @@ public class ArrayTest : TestCase
 		} catch (ArgumentNullException) {
 			errorThrown = true;
 		}
-		Assert("Error not thrown", errorThrown);
+		Assert("#B20", errorThrown);
 		errorThrown = false;
 		try {
 			char[,] c1 = new Char[2,2];
@@ -131,7 +131,7 @@ public class ArrayTest : TestCase
 		} catch (RankException) {
 			errorThrown = true;
 		}
-		Assert("Error not thrown", errorThrown);
+		Assert("#B21", errorThrown);
 		errorThrown = false;
 		try {
 			char[] c1 = {'a'};
@@ -139,7 +139,7 @@ public class ArrayTest : TestCase
 		} catch (ArgumentOutOfRangeException) {
 			errorThrown = true;
 		}
-		Assert("Error not thrown", errorThrown);
+		Assert("#B22", errorThrown);
 		errorThrown = false;
 		try {
 			char[] c1 = {'a'};
@@ -147,7 +147,7 @@ public class ArrayTest : TestCase
 		} catch (ArgumentOutOfRangeException) {
 			errorThrown = true;
 		}
-		Assert("Error not thrown", errorThrown);
+		Assert("#B23", errorThrown);
 		errorThrown = false;
 		try {
 			char[] c1 = {'a'};
@@ -155,33 +155,33 @@ public class ArrayTest : TestCase
 		} catch (ArgumentException) {
 			errorThrown = true;
 		}
-		Assert("Error not thrown", errorThrown);
+		Assert("#B24", errorThrown);
 
 		// FIXME - see commented-out tests in TestBinarySearch1, above
 		
 		{
 			char[] bad = {'z', 'z', 'd', 'a', 'd', 'a', 'c', 'a'};
-			AssertEquals("shouldn't find elem in badly-sorted array", -3, Array.BinarySearch(bad, 2, 6, 'c'));
+			AssertEquals("#B25", -3, Array.BinarySearch(bad, 2, 6, 'c'));
 		}
 		{
 			char[] bad = {'z', 'z', 'a', 'd', 'a', 'd', 'a', 'c', 'a'};
-			AssertEquals("shouldn't find elem in badly-sorted array", -4, Array.BinarySearch(bad, 2, 7, 'c'));
+			AssertEquals("#B25", -4, Array.BinarySearch(bad, 2, 7, 'c'));
 		}
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			Assert("couldn't find elem", 
+			Assert("#B26", 
 			       Array.BinarySearch(arr, 2, 8, 'c') >= 5);
-			Assert("couldn't find elem", 
+			Assert("#B27", 
 			       Array.BinarySearch(arr, 2, 8, 'c') < 8);
 		}
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e'};
-			AssertEquals("couldn't find next-higher elem", 
+			AssertEquals("#B28", 
 				     -6, Array.BinarySearch(arr, 2, 8, 'c'));
 		}
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			AssertEquals("couldn't find end", 
+			AssertEquals("#B29", 
 				     -11, Array.BinarySearch(arr, 2, 8, 'e'));
 		}
 	}
@@ -195,69 +195,69 @@ public class ArrayTest : TestCase
 		} catch (ArgumentNullException) {
 			errorThrown = true;
 		}
-		Assert("error not thrown", errorThrown);
+		Assert("#C01", errorThrown);
 
 		int[] i1 = { 1, 2, 3, 4 };
 		{
 			int[] compare = {1,2,3,4};
-			AssertEquals("array match", compare[0], i1[0]);
-			AssertEquals("array match", compare[1], i1[1]);
-			AssertEquals("array match", compare[2], i1[2]);
-			AssertEquals("array match", compare[3], i1[3]);
+			AssertEquals("#C02", compare[0], i1[0]);
+			AssertEquals("#C03", compare[1], i1[1]);
+			AssertEquals("#C04", compare[2], i1[2]);
+			AssertEquals("#C05", compare[3], i1[3]);
 		}
 		Array.Clear(i1, 3, 1);
 		{
 			int[] compare = {1,2,3,0};
-			AssertEquals("array match", compare[0], i1[0]);
-			AssertEquals("array match", compare[1], i1[1]);
-			AssertEquals("array match", compare[2], i1[2]);
-			AssertEquals("array match", compare[3], i1[3]);
+			AssertEquals("#C06", compare[0], i1[0]);
+			AssertEquals("#C07", compare[1], i1[1]);
+			AssertEquals("#C08", compare[2], i1[2]);
+			AssertEquals("#C09", compare[3], i1[3]);
 		}
 		Array.Clear(i1, 1, 1);
 		{
 			int[] compare = {1,0,3,0};
-			AssertEquals("array match", compare[0], i1[0]);
-			AssertEquals("array match", compare[1], i1[1]);
-			AssertEquals("array match", compare[2], i1[2]);
-			AssertEquals("array match", compare[3], i1[3]);
+			AssertEquals("#C10", compare[0], i1[0]);
+			AssertEquals("#C11", compare[1], i1[1]);
+			AssertEquals("#C12", compare[2], i1[2]);
+			AssertEquals("#C13", compare[3], i1[3]);
 		}
 		Array.Clear(i1, 1, 3);
 		{
 			int[] compare = {1,0,0,0};
-			AssertEquals("array match", compare[0], i1[0]);
-			AssertEquals("array match", compare[1], i1[1]);
-			AssertEquals("array match", compare[2], i1[2]);
-			AssertEquals("array match", compare[3], i1[3]);
+			AssertEquals("#C14", compare[0], i1[0]);
+			AssertEquals("#C15", compare[1], i1[1]);
+			AssertEquals("#C16", compare[2], i1[2]);
+			AssertEquals("#C17", compare[3], i1[3]);
 		}
 
 		string[] s1 = { "red", "green", "blue" };
 		Array.Clear(s1, 0, 3);
 		{
 			string[] compare = {null, null, null};
-			AssertEquals("array match", compare[0], s1[0]);
-			AssertEquals("array match", compare[1], s1[1]);
-			AssertEquals("array match", compare[2], s1[2]);
+			AssertEquals("#C18", compare[0], s1[0]);
+			AssertEquals("#C19", compare[1], s1[1]);
+			AssertEquals("#C20", compare[2], s1[2]);
 		}
 	}
 
 	public void TestClone() {
 		char[] c1 = {'a', 'b', 'c'};
 		char[] c2 = (char[])c1.Clone();
-		AssertEquals("Array match", c1[0], c2[0]);
-		AssertEquals("Array match", c1[1], c2[1]);
-		AssertEquals("Array match", c1[2], c2[2]);
+		AssertEquals("#D01", c1[0], c2[0]);
+		AssertEquals("#D02", c1[1], c2[1]);
+		AssertEquals("#D03", c1[2], c2[2]);
 
 		char[] d10 = {'a', 'b'};
 		char[] d11 = {'a', 'c'};
 		char[] d12 = {'b', 'c'};
 		char[][] d1 = {d10, d11, d12};
 		char[][] d2 = (char[][])d1.Clone();
-		AssertEquals("Array match", d1[0], d2[0]);
-		AssertEquals("Array match", d1[1], d2[1]);
-		AssertEquals("Array match", d1[2], d2[2]);
+		AssertEquals("#D04", d1[0], d2[0]);
+		AssertEquals("#D05", d1[1], d2[1]);
+		AssertEquals("#D06", d1[2], d2[2]);
 
 		d1[0][0] = 'z';
-		AssertEquals("shallow copy", d1[0], d2[0]);
+		AssertEquals("#D07", d1[0], d2[0]);
 	}
 
 	public void TestCopy() {
@@ -269,7 +269,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -279,7 +279,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E02", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -290,7 +290,7 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E03", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -301,7 +301,7 @@ public class ArrayTest : TestCase
 			} catch (ArrayTypeMismatchException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E04", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -317,7 +317,7 @@ public class ArrayTest : TestCase
 				//        between InvalidCastException and ArrayTypeMismatchException
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E05", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -328,7 +328,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E06", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -339,7 +339,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E07", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -350,26 +350,26 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E08", errorThrown);
 		}
 
 		char[] orig = {'a', 'b', 'd', 'a'};
 		char[] copy = new Char[4];
 		Array.Copy(orig, copy, 4);
 		for (int i = 0; i < orig.Length; i++) {
-			AssertEquals("copy unsuccessful " + i,
+			AssertEquals("#E09(" + i + ")",
 				     orig[i], copy[i]);
 		}
 		Array.Clear(copy, 0, copy.Length);
 		for (int i = 0; i < orig.Length; i++) {
-			AssertEquals("clear unsuccessful " + i,
+			AssertEquals("#E10(" + i + ")",
 				     (char)0, copy[i]);
 		}
 		Array.Copy(orig, copy, 2);
-		AssertEquals("copy unsuccessful 1", orig[0], copy[0]);
-		AssertEquals("copy unsuccessful 2", orig[1], copy[1]);
-		Assert("copy unsuccessful 3", orig[2] != copy[2]);
-		Assert("copy unsuccessful 4", orig[3] != copy[3]);
+		AssertEquals("#E11", orig[0], copy[0]);
+		AssertEquals("#E12", orig[1], copy[1]);
+		Assert("#E13", orig[2] != copy[2]);
+		Assert("#E14", orig[3] != copy[3]);
 	}
 	public void TestCopy2() {
 		{
@@ -381,7 +381,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E31", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -392,23 +392,23 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E32", errorThrown);
 		}
 		
 		char[] orig = {'a', 'b', 'd', 'a'};
 		char[] copy = new Char[4];
 		Array.Copy(orig, 1, copy, 1, 3);
-		Assert("copy unsuccessful", copy[0] != orig[0]);
+		Assert("#E33", copy[0] != orig[0]);
 		for (int i = 1; i < orig.Length; i++) {
-			AssertEquals("copy unsuccessful " + i,
+			AssertEquals("#E34(" + i + ")",
 				     orig[i], copy[i]);
 		}
 		Array.Clear(copy, 0, copy.Length);
 		Array.Copy(orig, 1, copy, 0, 2);
-		AssertEquals("copy unsuccessful", orig[1], copy[0]);
-		AssertEquals("copy unsuccessful", orig[2], copy[1]);
-		Assert("copy unsuccessful", copy[2] != orig[2]);
-		Assert("copy unsuccessful", copy[3] != orig[3]);
+		AssertEquals("#E35", orig[1], copy[0]);
+		AssertEquals("#E36", orig[2], copy[1]);
+		Assert("#E37", copy[2] != orig[2]);
+		Assert("#E38", copy[3] != orig[3]);
 	}
 
 	public void TestCopyTo() {
@@ -420,7 +420,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E61", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -431,7 +431,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E62", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -442,7 +442,7 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E63", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -453,7 +453,7 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E64", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -464,7 +464,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E65", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -475,7 +475,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E66", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -486,7 +486,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E67", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -501,28 +501,26 @@ public class ArrayTest : TestCase
 			} catch (ArrayTypeMismatchException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#E68", errorThrown);
 		}
 
 		Char[] orig = {'a', 'b', 'c', 'd'};
 		Char[] copy = new Char[10];
 		Array.Clear(copy, 0, copy.Length);
 		orig.CopyTo(copy, 3);
-		AssertEquals("Wrong CopyTo 0", (char)0, copy[0]);
-		AssertEquals("Wrong CopyTo 0", (char)0, copy[1]);
-		AssertEquals("Wrong CopyTo 0", (char)0, copy[2]);
-		AssertEquals("Wrong CopyTo 0", orig[0], copy[3]);
-		AssertEquals("Wrong CopyTo 0", orig[1], copy[4]);
-		AssertEquals("Wrong CopyTo 0", orig[2], copy[5]);
-		AssertEquals("Wrong CopyTo 0", orig[3], copy[6]);
-		AssertEquals("Wrong CopyTo 0", (char)0, copy[7]);
-		AssertEquals("Wrong CopyTo 0", (char)0, copy[8]);
-		AssertEquals("Wrong CopyTo 0", (char)0, copy[9]);
+		AssertEquals("#E69", (char)0, copy[0]);
+		AssertEquals("#E70", (char)0, copy[1]);
+		AssertEquals("#E71", (char)0, copy[2]);
+		AssertEquals("#E72", orig[0], copy[3]);
+		AssertEquals("#E73", orig[1], copy[4]);
+		AssertEquals("#E74", orig[2], copy[5]);
+		AssertEquals("#E75", orig[3], copy[6]);
+		AssertEquals("#E76", (char)0, copy[7]);
+		AssertEquals("#E77", (char)0, copy[8]);
+		AssertEquals("#E78", (char)0, copy[9]);
 	}
 
 	public void TestCreateInstance() {
-		// FIXME: This is not yet implemented.
-		return;
 		{
 			bool errorThrown = false;
 			try {
@@ -530,7 +528,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#F01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -539,11 +537,56 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#F02", errorThrown);
+		}
+		{
+			bool errorThrown = false;
+			try {
+				Array.CreateInstance(Type.GetType("System.Char"), null);
+			} catch (ArgumentNullException) {
+				errorThrown = true;
+			}
+			Assert("#F03", errorThrown);
+		}
+		{
+			bool errorThrown = false;
+			try {
+				Array.CreateInstance(Type.GetType("System.Char"), null, null);
+			} catch (ArgumentNullException) {
+				errorThrown = true;
+			}
+			Assert("#F04", errorThrown);
+		}
+		{
+			bool errorThrown = false;
+			try {
+				int[] lengths = new int [0];
+				Array.CreateInstance(Type.GetType("System.Char"), lengths);
+			} catch (ArgumentException) {
+				errorThrown = true;
+			}
+			Assert("#F05", errorThrown);
+		}
+		{
+			bool errorThrown = false;
+			try {
+				int[] lengths = new int [1];
+				int[] bounds = new int [2];
+				// FIXME: Broken
+				// Array.CreateInstance(Type.GetType("System.Char"), lengths, bounds);
+				errorThrown = true;
+			} catch (ArgumentException) {
+				errorThrown = true;
+			}
+			Assert("#F06", errorThrown);
 		}
 
 		char[] c1 = (char[])Array.CreateInstance(Type.GetType("System.Char"), 12);
-		AssertEquals("Array wrong size", 12, c1.Length);
+		AssertEquals("#F07", 12, c1.Length);
+
+		Array c2 = Array.CreateInstance(Type.GetType("System.Char"), 12, 5);
+		AssertEquals("#F08", 2, c2.Rank);
+		AssertEquals("#F09", 60, c2.Length);
 	}
 
 	public void TestGetEnumerator() {
@@ -551,11 +594,11 @@ public class ArrayTest : TestCase
 		return;
 		String[] s1 = {"this", "is", "a", "test"};
 		IEnumerator en = s1.GetEnumerator();
-		AssertNotNull("No enumerator", en);
+		AssertNotNull("#G01", en);
 
 		for (int i = 0; i < s1.Length; i++) {
 			en.MoveNext();
-			AssertEquals("Not enumerating", s1[i], en.Current);
+			AssertEquals("#G02", s1[i], en.Current);
 		}
 	}
 
@@ -568,7 +611,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#H01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -578,17 +621,17 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#H02", errorThrown);
 		}
 
 		char[] c2 = new Char[5];
-		AssertEquals("wrong single dimension length", 
+		AssertEquals("#H03", 
 			     5, c2.GetLength(0));
 
 		char[,] c3 = new Char[6,7];
-		AssertEquals("wrong single dimension length", 
+		AssertEquals("#H04", 
 			     6, c3.GetLength(0));
-		AssertEquals("wrong single dimension length", 
+		AssertEquals("#H05", 
 			     7, c3.GetLength(1));
 	}
 
@@ -601,7 +644,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#H31", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -611,17 +654,17 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#H32", errorThrown);
 		}
 
 		char[] c1 = new Char[5];
-		AssertEquals("single-dimensional lower bound", 
+		AssertEquals("#H33", 
 			     0, c1.GetLowerBound(0));
 
 		char[,] c2 = new Char[4,4];
-		AssertEquals("multiple-dimensional lower bound", 
+		AssertEquals("#H34", 
 			     0, c2.GetLowerBound(0));
-		AssertEquals("multiple-dimensional lower bound", 
+		AssertEquals("#H35", 
 			     0, c2.GetLowerBound(1));
 	}
 
@@ -634,7 +677,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#H61", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -644,17 +687,17 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#H62", errorThrown);
 		}
 
 		char[] c1 = new Char[5];
-		AssertEquals("single-dimensional lower bound", 
+		AssertEquals("#H63", 
 			     4, c1.GetUpperBound(0));
 
 		char[,] c2 = new Char[4,6];
-		AssertEquals("multiple-dimensional lower bound", 
+		AssertEquals("#H64", 
 			     3, c2.GetUpperBound(0));
-		AssertEquals("multiple-dimensional lower bound", 
+		AssertEquals("#H65", 
 			     5, c2.GetUpperBound(1));
 	}
 
@@ -667,7 +710,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -677,7 +720,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I02", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -687,12 +730,12 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I03", errorThrown);
 		}
 
 		char[] c1 = {'a', 'b', 'c', 'd'};
 		for (int i = 0; i < c1.Length; i++) {
-			AssertEquals("Bad GetValue", c1[i], c1.GetValue(i));
+			AssertEquals("#I04(" + i + ")", c1[i], c1.GetValue(i));
 		}
 	}
 	public void TestGetValue2() {
@@ -704,7 +747,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I21", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -714,7 +757,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I22", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -724,7 +767,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I23", errorThrown);
 		}
 
 		char[,] c1 = new Char[4,6];
@@ -735,7 +778,7 @@ public class ArrayTest : TestCase
 		}
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
-				AssertEquals("Bad GetValue", 
+				AssertEquals("#I24(" + i + "," + j + ")",
 					     c1[i,j], c1.GetValue(i, j));
 			}
 		}
@@ -749,7 +792,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I41", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -759,7 +802,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I42", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -769,7 +812,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I43", errorThrown);
 		}
 
 		char[,,] c1 = new Char[4,2,3];
@@ -783,8 +826,8 @@ public class ArrayTest : TestCase
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				for (int k = 0; k < c1.GetLength(2); k++) {
-				AssertEquals("Bad GetValue", 
-					     c1[i,j,k], c1.GetValue(i,j,k));
+					AssertEquals("#I44(" + i + "," + j + ")",
+						     c1[i,j,k], c1.GetValue(i,j,k));
 				}
 			}
 		}
@@ -798,7 +841,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I61", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -809,7 +852,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I62", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -820,7 +863,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I63", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -831,7 +874,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#I64", errorThrown);
 		}
 
 		char[,] c1 = new Char[4,6];
@@ -843,7 +886,7 @@ public class ArrayTest : TestCase
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				int[] coords = {i, j};
-				AssertEquals("Bad GetValue", 
+				AssertEquals("#I65(" + i + "," + j + ")",
 					     c1[i,j], c1.GetValue(coords));
 			}
 		}
@@ -857,7 +900,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -867,14 +910,14 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J02", errorThrown);
 		}
 
 		String[] s1 = {"this", "is", "a", "test"};
-		AssertEquals("No null here", -1, Array.IndexOf(s1, null));
-		AssertEquals("No nothing here", -1, Array.IndexOf(s1, "nothing"));
-		AssertEquals("Found first", 0, Array.IndexOf(s1, "this"));
-		AssertEquals("Found last", 3, Array.IndexOf(s1, "test"));
+		AssertEquals("#J03", -1, Array.IndexOf(s1, null));
+		AssertEquals("#J04", -1, Array.IndexOf(s1, "nothing"));
+		AssertEquals("#J05", 0, Array.IndexOf(s1, "this"));
+		AssertEquals("#J06", 3, Array.IndexOf(s1, "test"));
 	}
 	public void TestIndexOf2() {
 		{
@@ -884,7 +927,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J21", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -894,7 +937,7 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J22", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -904,15 +947,15 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J23", errorThrown);
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("No null here", -1, Array.IndexOf(s1, null, 1));
-		AssertEquals("No nothing here", -1, Array.IndexOf(s1, "nothing", 1));
-		AssertEquals("Didn't find first", -1, Array.IndexOf(s1, "this", 1));
-		AssertEquals("Found first", 1, Array.IndexOf(s1, "is", 1));
-		AssertEquals("Found last", 4, Array.IndexOf(s1, "test", 1));
+		AssertEquals("#J24", -1, Array.IndexOf(s1, null, 1));
+		AssertEquals("#J25", -1, Array.IndexOf(s1, "nothing", 1));
+		AssertEquals("#J26", -1, Array.IndexOf(s1, "this", 1));
+		AssertEquals("#J27", 1, Array.IndexOf(s1, "is", 1));
+		AssertEquals("#J28", 4, Array.IndexOf(s1, "test", 1));
 	}
 	public void TestIndexOf3() {
 		{
@@ -922,7 +965,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J41", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -932,7 +975,7 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J42", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -942,7 +985,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J43", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -952,16 +995,16 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#J44", errorThrown);
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("No null here", -1, Array.IndexOf(s1, null, 1, 3));
-		AssertEquals("No nothing here", -1, Array.IndexOf(s1, "nothing", 1, 3));
-		AssertEquals("Didn't find first", -1, Array.IndexOf(s1, "this", 1, 3));
-		AssertEquals("Found first", 1, Array.IndexOf(s1, "is", 1, 3));
-		AssertEquals("Didn't find last", -1, Array.IndexOf(s1, "test", 1, 3));
-		AssertEquals("Found last", 3, Array.IndexOf(s1, "a", 1, 3));
+		AssertEquals("#J45", -1, Array.IndexOf(s1, null, 1, 3));
+		AssertEquals("#J46", -1, Array.IndexOf(s1, "nothing", 1, 3));
+		AssertEquals("#J47", -1, Array.IndexOf(s1, "this", 1, 3));
+		AssertEquals("#J48", 1, Array.IndexOf(s1, "is", 1, 3));
+		AssertEquals("#J49", -1, Array.IndexOf(s1, "test", 1, 3));
+		AssertEquals("#J50", 3, Array.IndexOf(s1, "a", 1, 3));
 	}
 	
 	public void TestLastIndexOf1() {
@@ -972,7 +1015,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -982,15 +1025,15 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K02", errorThrown);
 		}
 
 		String[] s1 = {"this", "is", "a", "a", "test"};
-		AssertEquals("No null here", -1, Array.LastIndexOf(s1, null));
-		AssertEquals("No nothing here", -1, Array.LastIndexOf(s1, "nothing"));
-		AssertEquals("Found first", 0, Array.LastIndexOf(s1, "this"));
-		AssertEquals("Found last", 4, Array.LastIndexOf(s1, "test"));
-		AssertEquals("Found repeat", 3, Array.LastIndexOf(s1, "a"));
+		AssertEquals("#K03", -1, Array.LastIndexOf(s1, null));
+		AssertEquals("#K04", -1, Array.LastIndexOf(s1, "nothing"));
+		AssertEquals("#K05", 0, Array.LastIndexOf(s1, "this"));
+		AssertEquals("#K06", 4, Array.LastIndexOf(s1, "test"));
+		AssertEquals("#K07", 3, Array.LastIndexOf(s1, "a"));
 	}
 	public void TestLastIndexOf2() {
 		{
@@ -1000,7 +1043,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K21", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1010,7 +1053,7 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K22", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1020,15 +1063,15 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K23", errorThrown);
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("No null here", -1, Array.LastIndexOf(s1, null, 3));
-		AssertEquals("No nothing here", -1, Array.LastIndexOf(s1, "nothing", 3));
-		AssertEquals("Didn't find last", -1, Array.LastIndexOf(s1, "test", 3));
-		AssertEquals("Found last", 3, Array.LastIndexOf(s1, "a", 3));
-		AssertEquals("Found first", 0, Array.LastIndexOf(s1, "this", 3));
+		AssertEquals("#K24", -1, Array.LastIndexOf(s1, null, 3));
+		AssertEquals("#K25", -1, Array.LastIndexOf(s1, "nothing", 3));
+		AssertEquals("#K26", -1, Array.LastIndexOf(s1, "test", 3));
+		AssertEquals("#K27", 3, Array.LastIndexOf(s1, "a", 3));
+		AssertEquals("#K28", 0, Array.LastIndexOf(s1, "this", 3));
 	}
 	public void TestLastIndexOf3() {
 		{
@@ -1038,7 +1081,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K41", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1048,7 +1091,7 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K42", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1058,7 +1101,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K43", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1068,21 +1111,21 @@ public class ArrayTest : TestCase
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#K44", errorThrown);
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("No null here", 
+		AssertEquals("#K45", 
 			     -1, Array.LastIndexOf(s1, null, 3, 3));
-		AssertEquals("No nothing here", 
+		AssertEquals("#K46", 
 			     -1, Array.LastIndexOf(s1, "nothing", 3, 3));
-		AssertEquals("Didn't find first", 
+		AssertEquals("#K47", 
 			     -1, Array.LastIndexOf(s1, "this", 3, 3));
-		AssertEquals("Found first", 
+		AssertEquals("#K48",
 			     1, Array.LastIndexOf(s1, "is", 3, 3));
-		AssertEquals("Didn't find last", 
+		AssertEquals("#K49", 
 			     -1, Array.LastIndexOf(s1, "test", 3, 3));
-		AssertEquals("Found last", 
+		AssertEquals("#K50", 
 			     3, Array.LastIndexOf(s1, "a", 3, 3));
 	}
 
@@ -1094,7 +1137,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#L01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1104,15 +1147,15 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#L02", errorThrown);
 		}
 		
 		char[] c1 = {'a', 'b', 'c', 'd'};
 		Array.Reverse(c1);
-		AssertEquals("Reverse not working", 'd', c1[0]);
-		AssertEquals("Reverse not working", 'c', c1[1]);
-		AssertEquals("Reverse not working", 'b', c1[2]);
-		AssertEquals("Reverse not working", 'a', c1[3]);
+		AssertEquals("#L03", 'd', c1[0]);
+		AssertEquals("#L04", 'c', c1[1]);
+		AssertEquals("#L05", 'b', c1[2]);
+		AssertEquals("#L06", 'a', c1[3]);
 
 		{
 			bool errorThrown = false;
@@ -1121,7 +1164,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#L07", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1131,7 +1174,7 @@ public class ArrayTest : TestCase
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#L08", errorThrown);
 		}
 		//{
 		//bool errorThrown = false;
@@ -1141,7 +1184,7 @@ public class ArrayTest : TestCase
 		//} catch (ArgumentOutOfRangeException) {
 		//	errorThrown = true;
 		//}
-		//Assert("error not thrown", errorThrown);
+		//Assert("#L09", errorThrown);
 		//}
 		//{
 		//bool errorThrown = false;
@@ -1151,15 +1194,15 @@ public class ArrayTest : TestCase
 		//} catch (ArgumentOutOfRangeException) {
 		//	errorThrown = true;
 		//}
-		//Assert("error not thrown", errorThrown);
+		//Assert("#L10", errorThrown);
 		//}
 
 		char[] c2 = { 'a', 'b', 'c', 'd'};
 		Array.Reverse(c2, 1, 2);
-		AssertEquals("Reverse not working", 'a', c2[0]);
-		AssertEquals("Reverse not working", 'c', c2[1]);
-		AssertEquals("Reverse not working", 'b', c2[2]);
-		AssertEquals("Reverse not working", 'd', c2[3]);
+		AssertEquals("#L11", 'a', c2[0]);
+		AssertEquals("#L12", 'c', c2[1]);
+		AssertEquals("#L13", 'b', c2[2]);
+		AssertEquals("#L14", 'd', c2[3]);
 	}
 
 	public void TestSetValue1() {
@@ -1171,7 +1214,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1181,7 +1224,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M02", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1191,7 +1234,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M03", errorThrown);
 		}
 
 		char[] c1 = {'a', 'b', 'c', 'd'};
@@ -1200,9 +1243,28 @@ public class ArrayTest : TestCase
 			c2.SetValue(c1[i], i);
 		}
 		for (int i = 0; i < c1.Length; i++) {
-			AssertEquals("Bad SetValue", c1[i], c2[i]);
+			AssertEquals("#M04(" + i + ")", c1[i], c2[i]);
 		}
+
+		int[] c3 = { 1, 2, 3 };
+		long[] c4 = new long [3];
+
+		for (int i = 0; i < c3.Length; i++)
+			c4.SetValue (c3 [i], i);
+		c3.CopyTo (c4, 0);
+		for (int i = 0; i < c3.Length; i++)
+			Assert ("#M05(" + i + ")", c3[i] == c4[i]);
+
+		Object[] c5 = new Object [3];
+		long[] c6 = new long [3];
+
+		c4.CopyTo (c5, 0);
+
+		c5.CopyTo (c6, 0);
+		// for (int i = 0; i < c5.Length; i++)
+		// Assert ("#M06(" + i + ")", c5[i] == c6[i]);
 	}
+
 	public void TestSetValue2() {
 		{
 			bool errorThrown = false;
@@ -1212,7 +1274,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M21", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1222,7 +1284,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M22", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1232,7 +1294,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M23", errorThrown);
 		}
 
 		char[,] c1 = new Char[4,6];
@@ -1245,7 +1307,7 @@ public class ArrayTest : TestCase
 		}
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
-				AssertEquals("Bad SetValue", 
+				AssertEquals("#M24(" + i + "," + j + ")",
 					     c1[i,j], c2[i, j]);
 			}
 		}
@@ -1259,7 +1321,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M41", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1269,7 +1331,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M42", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1279,7 +1341,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M43", errorThrown);
 		}
 
 		char[,,] c1 = new Char[4,2,3];
@@ -1295,8 +1357,8 @@ public class ArrayTest : TestCase
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				for (int k = 0; k < c1.GetLength(2); k++) {
-				AssertEquals("Bad SetValue", 
-					     c1[i,j,k], c2[i,j,k]);
+					AssertEquals("#M44(" + i + "," + j + " )",
+						     c1[i,j,k], c2[i,j,k]);
 				}
 			}
 		}
@@ -1310,7 +1372,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M61", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1321,7 +1383,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M62", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1332,7 +1394,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M63", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1343,7 +1405,7 @@ public class ArrayTest : TestCase
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown", errorThrown);
+			Assert("#M64", errorThrown);
 		}
 
 		char[,] c1 = new Char[4,6];
@@ -1357,11 +1419,210 @@ public class ArrayTest : TestCase
 		}
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
-				AssertEquals("Bad SetValue", 
+				AssertEquals("#M65(" + i + "," + j + ")",
 					     c1[i,j], c2[i,j]);
 			}
 		}
 	}
+
+	public void TestSetValue4() {
+		{
+			int[] c1 = { 1, 2, 3 };
+			long[] c2 = new long [3];
+
+			for (int i = 0; i < c1.Length; i++)
+				c2.SetValue (c1 [i], i);
+
+			for (int i = 0; i < c1.Length; i++) {
+				Assert ("#M81(" + i + ")", c1[i] == c2[i]);
+				AssertEquals ("#M82(" + i + ")", typeof (long), c2[i].GetType ());
+			}
+		}
+		{
+			long[] c1 = { 1, 2, 3 };
+			int[] c2 = new int [3];
+			bool errorThrown = false;
+			try {
+				c2.SetValue (c1 [0], 0);
+			} catch (ArgumentException) {
+				errorThrown = true;
+			}
+			Assert("#M83", errorThrown);
+		}
+		{
+			int[] c1 = { 1, 2, 3 };
+			Object[] c2 = new Object [3];
+
+			for (int i = 0; i < c1.Length; i++)
+				c2.SetValue (c1 [i], i);
+
+			for (int i = 0; i < c1.Length; i++)
+				AssertEquals ("#M84(" + i + ")", c1[i], Convert.ToInt32 (c2[i]));
+		}
+		{
+			Object[] c1 = new Object [3];
+			Object[] c2 = new Object [3];
+			c1[0] = new Object ();
+
+			for (int i = 0; i < c1.Length; i++)
+				c2.SetValue (c1 [i], i);
+
+			for (int i = 0; i < c1.Length; i++)
+				AssertEquals ("#M85(" + i + ")", c1[i], c2[i]);
+		}
+		{
+			Object[] c1 = new Object [3];
+			string[] c2 = new String [3];
+			string test = "hello";
+			c1[0] = test;
+
+			c2.SetValue (c1 [0], 0);
+			AssertEquals ("#M86", c1[0], c2[0]);
+			AssertEquals ("#M87", "hello", c2[0]);
+		}
+		{
+			char[] c1 = { 'a', 'b', 'c' };
+			string[] c2 = new string [3];
+			bool errorThrown = false;
+			try {
+				c2.SetValue (c1 [0], 0);
+				// FIXME
+				errorThrown = true;
+			} catch (InvalidCastException) {
+				errorThrown = true;
+			}
+			Assert("#M88", errorThrown);
+		}
+		{
+			Single[] c1 = { 1.2F, 2.3F, 3.4F, 4.5F };
+			long[] c2 = new long [3];
+			bool errorThrown = false;
+			try {
+				c2.SetValue (c1 [0], 0);
+				// FIXME
+				errorThrown = true;
+			} catch (ArgumentException) {
+				errorThrown = true;
+			}
+			Assert("#M89", errorThrown);
+		}
+		{
+			Type[] types = {
+				typeof (Boolean),
+				typeof (Byte),
+				typeof (Char),
+				typeof (Double),
+				typeof (Int16),
+				typeof (Int32),
+				typeof (Int64),
+				typeof (SByte),
+				typeof (Single),
+				typeof (UInt16),
+				typeof (UInt32),
+				typeof (UInt64)
+			};
+
+			bool v1 = true;
+			Byte v2 = 1;
+			Char v3 = 'a';
+			Double v4 = -1.2;
+			Int16 v5 = -32;
+			Int32 v6 = -234;
+			Int64 v7 = -34523;
+			SByte v8 = -1;
+			Single v9 = -4.8F;
+			UInt16 v10 = 24234;
+			UInt32 v11 = 235354;
+			UInt64 v12 = 234552;
+
+			Object[] va1 = { v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12 };
+			Object[] va2 = { "true", "1", "a", "-1.2", "-32", "-234", "-34523", "-1",
+					 "-4.8F", "24234", "235354", "234552" };
+
+			Object[][] vt = { va1, va1, va1, va1, va1, va1, va1, va1, va1, va1, va1, va1 };
+
+			int[] arg_ex = {
+				0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+				1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+				1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+				1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1,
+				1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1,
+				1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1,
+				1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+				1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1,
+				1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+				1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0,
+				1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0
+			};
+
+			for (int i = 0; i < types.Length; i++) {
+				for (int j = 0; j < types.Length; j++) {
+					Array array = Array.CreateInstance (types [j], 2);
+
+					Object value = vt[j][i];
+
+					bool errorThrown = false;
+					try {
+						array.SetValue (value, 0);
+					} catch (ArgumentException) {
+						errorThrown = true;
+					}
+
+					int ex_index = (i * types.Length) + j;
+
+					AssertEquals ("#M90(" + types [i] + "," + types [j] + ")",
+						      errorThrown, arg_ex [ex_index] == 1);
+				}
+			}
+
+			for (int i = 0; i < types.Length; i++) {
+				String[] array = new String [2];
+
+				Object value = va1 [i];
+
+				bool errorThrown = false;
+				try {
+					array.SetValue (value, 0);
+				} catch (InvalidCastException) {
+					errorThrown = true;
+				}
+
+				Assert ("#M91(" + types [i] + ")", errorThrown);
+			}
+
+			for (int i = 0; i < types.Length; i++) {
+				Array array = Array.CreateInstance (types [i], 2);
+
+				Object value = va2 [i];
+
+				bool errorThrown = false;
+				try {
+					array.SetValue (value, 0);
+				} catch (InvalidCastException) {
+					errorThrown = true;
+				}
+
+				Assert ("#M92(" + types [i] + ")", errorThrown);
+			}
+
+			for (int i = 0; i < types.Length; i++) {
+				Array array = Array.CreateInstance (types [i], 2);
+
+				Object value = null;
+
+				bool errorThrown = false;
+				try {
+					array.SetValue (value, 0);
+				} catch (InvalidCastException) {
+					errorThrown = true;
+				}
+
+				Assert ("#M93(" + types [i] + ")", !errorThrown);
+			}
+		}
+	}
+
 
 	public void TestSort() {
 		{
@@ -1371,7 +1632,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown 1", errorThrown);
+			Assert("#N01", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1380,7 +1641,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown 2", errorThrown);
+			Assert("#N02", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1390,7 +1651,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown 5", errorThrown);
+			Assert("#N03", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -1400,7 +1661,7 @@ public class ArrayTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("error not thrown 6", errorThrown);
+			Assert("#N04", errorThrown);
 		}
 
 		// note: null second array => just sort first array
@@ -1409,56 +1670,56 @@ public class ArrayTest : TestCase
 		{
 			char[] c1 = (char[])starter.Clone();
 			Array.Sort(c1);
-			AssertEquals("Basic sort problem", 'a', c1[0]);
-			AssertEquals("Basic sort problem", 'b', c1[1]);
-			AssertEquals("Basic sort problem", 'c', c1[2]);
-			AssertEquals("Basic sort problem", 'd', c1[3]);
-			AssertEquals("Basic sort problem", 'e', c1[4]);
-			AssertEquals("Basic sort problem", 'f', c1[5]);
+			AssertEquals("#N21", 'a', c1[0]);
+			AssertEquals("#N22", 'b', c1[1]);
+			AssertEquals("#N23", 'c', c1[2]);
+			AssertEquals("#N24", 'd', c1[3]);
+			AssertEquals("#N25", 'e', c1[4]);
+			AssertEquals("#N26", 'f', c1[5]);
 		}
 		{
 			char[] c1 = (char[])starter.Clone();
 			int[] i1 = (int[])starter1.Clone();
 			Array.Sort(c1, i1);
-			AssertEquals("Keyed sort problem", 'a', c1[0]);
-			AssertEquals("Keyed sort problem", 'b', c1[1]);
-			AssertEquals("Keyed sort problem", 'c', c1[2]);
-			AssertEquals("Keyed sort problem", 'd', c1[3]);
-			AssertEquals("Keyed sort problem", 'e', c1[4]);
-			AssertEquals("Keyed sort problem", 'f', c1[5]);
-			AssertEquals("Keyed sort problem", 5, i1[0]);
-			AssertEquals("Keyed sort problem", 2, i1[1]);
-			AssertEquals("Keyed sort problem", 6, i1[2]);
-			AssertEquals("Keyed sort problem", 1, i1[3]);
-			AssertEquals("Keyed sort problem", 4, i1[4]);
-			AssertEquals("Keyed sort problem", 3, i1[5]);
+			AssertEquals("#N41", 'a', c1[0]);
+			AssertEquals("#N42", 'b', c1[1]);
+			AssertEquals("#N43", 'c', c1[2]);
+			AssertEquals("#N44", 'd', c1[3]);
+			AssertEquals("#N45", 'e', c1[4]);
+			AssertEquals("#N46", 'f', c1[5]);
+			AssertEquals("#N47", 5, i1[0]);
+			AssertEquals("#N48", 2, i1[1]);
+			AssertEquals("#N49", 6, i1[2]);
+			AssertEquals("#N50", 1, i1[3]);
+			AssertEquals("#N51", 4, i1[4]);
+			AssertEquals("#N52", 3, i1[5]);
 		}
 		{
 			char[] c1 = (char[])starter.Clone();
 			Array.Sort(c1, 1, 4);
-			AssertEquals("Basic sort chunk problem", 'd', c1[0]);
-			AssertEquals("Basic sort chunk problem", 'a', c1[1]);
-			AssertEquals("Basic sort chunk problem", 'b', c1[2]);
-			AssertEquals("Basic sort chunk problem", 'e', c1[3]);
-			AssertEquals("Basic sort chunk problem", 'f', c1[4]);
-			AssertEquals("Basic sort chunk problem", 'c', c1[5]);
+			AssertEquals("#N61", 'd', c1[0]);
+			AssertEquals("#N62", 'a', c1[1]);
+			AssertEquals("#N63", 'b', c1[2]);
+			AssertEquals("#N64", 'e', c1[3]);
+			AssertEquals("#N65", 'f', c1[4]);
+			AssertEquals("#N66", 'c', c1[5]);
 		}
 		{
 			char[] c1 = (char[])starter.Clone();
 			int[] i1 = (int[])starter1.Clone();
 			Array.Sort(c1, i1, 1, 4);
-			AssertEquals("Keyed sort chunk problem", 'd', c1[0]);
-			AssertEquals("Keyed sort chunk problem", 'a', c1[1]);
-			AssertEquals("Keyed sort chunk problem", 'b', c1[2]);
-			AssertEquals("Keyed sort chunk problem", 'e', c1[3]);
-			AssertEquals("Keyed sort chunk problem", 'f', c1[4]);
-			AssertEquals("Keyed sort chunk problem", 'c', c1[5]);
-			AssertEquals("Keyed sort chunk problem", 1, i1[0]);
-			AssertEquals("Keyed sort chunk problem", 5, i1[1]);
-			AssertEquals("Keyed sort chunk problem", 2, i1[2]);
-			AssertEquals("Keyed sort chunk problem", 4, i1[3]);
-			AssertEquals("Keyed sort chunk problem", 3, i1[4]);
-			AssertEquals("Keyed sort chunk problem", 6, i1[5]);
+			AssertEquals("#N81", 'd', c1[0]);
+			AssertEquals("#N82", 'a', c1[1]);
+			AssertEquals("#N83", 'b', c1[2]);
+			AssertEquals("#N84", 'e', c1[3]);
+			AssertEquals("#N85", 'f', c1[4]);
+			AssertEquals("#N86", 'c', c1[5]);
+			AssertEquals("#N87", 1, i1[0]);
+			AssertEquals("#N88", 5, i1[1]);
+			AssertEquals("#N89", 2, i1[2]);
+			AssertEquals("#N90", 4, i1[3]);
+			AssertEquals("#N91", 3, i1[4]);
+			AssertEquals("#N92", 6, i1[5]);
 		}
 	}
 

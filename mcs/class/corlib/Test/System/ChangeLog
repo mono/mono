@@ -1,3 +1,8 @@
+2002-03-06  Martin Baulig  <martin@gnome.org>
+
+	* ArrayTest.cs: Use unique labels for all the tests.
+	(TestSetValue4): A big new testcase.
+
 2002-03-06  Nick Drochak  <ndrochak@gol.com>
 
 	* VersionTest.cs: Fix for mscorlib behavior vs. docs. CompareTo(null)
