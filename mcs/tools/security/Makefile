@@ -8,7 +8,7 @@ LOCAL_MCS_FLAGS = /lib:$(topdir)/class/lib/$(PROFILE) /r:Mono.Security.dll
 SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe MakeCert.exe chktrust.exe signcode.exe setreg.exe certmgr.exe caspol.exe permview.exe
 SECURITY_SOURCES = AssemblyInfo.cs StrongNameManager.cs $(SECURITY_PROGRAMS:.exe=.cs)
 
-PROGRAM_INSTALL_DIR = $(libdir)/mono/$(FRAMEWORK_VERSION)
+PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 DISTFILES = README $(SECURITY_SOURCES)
 

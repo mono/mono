@@ -35,7 +35,7 @@ install-local uninstall-local:
 else
 
 ifndef PROGRAM_INSTALL_DIR
-PROGRAM_INSTALL_DIR = $(libdir)/mono/$(FRAMEWORK_VERSION)
+PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 endif
 
 install-local: $(PROGRAM) $(PROGRAM_config)
