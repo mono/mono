@@ -750,6 +750,13 @@ namespace System.Web {
 
 				return _sQueryStringRaw;
 			}
+			
+			set {
+				_sQueryStringRaw = value;
+				_oQueryString = null;
+				_arrRawContent = null;
+				_sRawUrl = null;
+			}
 		}
 
 		public string RawUrl {
@@ -1027,6 +1034,11 @@ namespace System.Web {
 
 			oFile.Flush();
 			oFile.Close();
+		}
+
+		internal void SetFilePath (string filePath)
+		{
+			_sFilePath = filePath;
 		}
 	}
 }

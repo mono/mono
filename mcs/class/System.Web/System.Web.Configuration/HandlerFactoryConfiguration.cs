@@ -15,6 +15,7 @@ namespace System.Web.Configuration
 	class HandlerFactoryConfiguration
 	{
 		ArrayList mappings;
+		int ownIndex;
 
 		public HandlerFactoryConfiguration () : this (null)
 		{
@@ -26,6 +27,8 @@ namespace System.Web.Configuration
 				mappings = new ArrayList (parent.mappings);
 			else
 				mappings = new ArrayList ();
+
+			ownIndex = mappings.Count;
 		}
 
 		public void Add (HandlerItem mapping)
@@ -62,6 +65,14 @@ namespace System.Web.Configuration
 		{
 			int end = mappings.Count;
 
+			for (int i = ownIndex; i < end; i++) {
+				HandlerItem item = (HandlerItem) mappings [i];
+				if (item.IsMatch (verb, path))
+					return i;
+			}
+
+			// parent mappings
+			end = ownIndex;
 			for (int i = 0; i < end; i++) {
 				HandlerItem item = (HandlerItem) mappings [i];
 				if (item.IsMatch (verb, path))

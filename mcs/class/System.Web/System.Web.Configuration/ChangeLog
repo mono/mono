@@ -1,3 +1,8 @@
+2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerFactoryConfiguration.cs: first search in the mappings of this
+	instance, then in the parent.
+
 2003-02-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GlobalizationConfiguration.cs: added internal fields to hold the

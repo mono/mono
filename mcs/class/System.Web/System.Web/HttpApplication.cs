@@ -718,7 +718,7 @@ namespace System.Web
 #endregion
 
 #region Methods
-		private IHttpHandler CreateHttpHandler (HttpContext context,
+		internal IHttpHandler CreateHttpHandler (HttpContext context,
 							string type,
 							string file,
 							string path)

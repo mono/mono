@@ -1,5 +1,15 @@
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplication.cs: CreateHttpHandler is now internal.
+
+	* HttpRequest.cs: allow setting QueryStringRaw, which
+	invalidates the data obtained from the previous value. Added internal
+	SetFilePath method.
+
+	* HttpServerUtility.cs: implemented Execute and GetLastError.
+
+2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpServerUtility.cs: style.
 
 2003-02-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
