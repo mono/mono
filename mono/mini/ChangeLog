@@ -1,5 +1,8 @@
 2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_emit_prolog): Adjust stack after calls to
+	mono_jit_thread_attach.
+
 	* mini.c (mono_method_to_ir): Verify called method is not abstract.
 
 2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
