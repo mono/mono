@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+Assembly/Consts.cs
 System.Drawing/Bitmap.cs
 System.Drawing/Brush.cs
 System.Drawing/Brushes.cs
@@ -127,6 +128,7 @@ System.Drawing.Imaging/ImageLockMode.cs
 System.Drawing.Imaging/JPEGCodec.cs
 System.Drawing.Imaging/Metafile.cs
 System.Drawing.Imaging/MetafileFrameUnit.cs
+System.Drawing.Imaging/MetafileHeader.cs
 System.Drawing.Imaging/MetafileType.cs
 System.Drawing.Imaging/MetaHeader.cs
 System.Drawing.Imaging/PaletteFlags.cs

@@ -1,3 +1,7 @@
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Drawing.dll.sources: MetafileHeader added (was missing), Consts.cs added
+
 2003-10-14  Bernie Solomon  <bernard@ugsolutions.com>
 	* Makefile			do not build gdiplus on Windows
 
