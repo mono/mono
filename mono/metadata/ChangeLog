@@ -1,5 +1,13 @@
 2004-05-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.{h,c}: Add support for UnmanagedType.AsAny.
+
+	* marshal.c: Use mono_metadata_signature_{alloc,dup} where appropriate.
+
+	* metadata.h: Add new marshalling conversions.
+
+	* metadata.h metadata.c (mono_metadata_signature_dup): New helper function.
+
 	* reflection.c (mono_reflection_get_type): Lookup the type in all
 	modules of a multi-module assembly. Fixes #58291.
 
