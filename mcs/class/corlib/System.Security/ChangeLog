@@ -1,3 +1,13 @@
+2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Made ThrowSecurityException static so it 
+	can be reused from PermissionSet.
+	* SecurityManager.cs: Use the new icalls for SecurityEnabled and
+	CheckExecutionRights properties. Fix IsGranted for unrestricted 
+	permissions. Set type correctly when loading policy files.
+	* PermissionSet.cs: Now supports unrestricted permission set when
+	evaluating demands.
+
 2005-01-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityFrame.cs: Keep RuntimeDeclSecurityEntry enum in sync with

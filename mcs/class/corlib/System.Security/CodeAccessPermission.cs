@@ -314,7 +314,7 @@ namespace System.Security {
 				current = frame.Assembly;
 				// 1. CheckDemand
 				if (!SecurityManager.IsGranted (current, this)) {
-					ThrowSecurityException ("Demand failed assembly permissions checks.",
+					ThrowSecurityException (this, "Demand failed assembly permissions checks.",
 						current, frame.Method, SecurityAction.Demand, this);
 				}
 			}
@@ -326,31 +326,25 @@ namespace System.Security {
 			// 2. CheckPermitOnly
 			if (frame.PermitOnly != null) {
 				foreach (IPermission p in frame.PermitOnly) {
-					if (p is CodeAccessPermission) {
-						if (!CheckPermitOnly (p as CodeAccessPermission))
-							ThrowSecurityException ("PermitOnly", current, frame.Method, SecurityAction.Demand, p);
-					}
+					if (!CheckPermitOnly (p as CodeAccessPermission))
+						ThrowSecurityException (this, "PermitOnly", current, frame.Method, SecurityAction.Demand, p);
 				}
 			}
 
 			// 3. CheckDeny
 			if (frame.Deny != null) {
 				foreach (IPermission p in frame.Deny) {
-					if (p is CodeAccessPermission) {
-						if (!CheckDeny (p as CodeAccessPermission))
-							ThrowSecurityException ("Deny", current, frame.Method, SecurityAction.Demand, p);
-					}
+					if (!CheckDeny (p as CodeAccessPermission))
+						ThrowSecurityException (this, "Deny", current, frame.Method, SecurityAction.Demand, p);
 				}
 			}
 
 			// 4. CheckAssert
 			if (frame.Assert != null) {
 				foreach (IPermission p in frame.Assert) {
-					if (p is CodeAccessPermission) {
-						if (!CheckAssert (p as CodeAccessPermission)) {
-							// FIXME: partial asserts
-							return true; // stop the stack walk
-						}
+					if (!CheckAssert (p as CodeAccessPermission)) {
+						// FIXME: partial asserts
+						return true; // stop the stack walk
 					}
 				}
 			}
@@ -374,11 +368,11 @@ namespace System.Security {
 			throw new ExecutionEngineException (String.Format (msg, stackmod));
 		}
 
-		internal void ThrowSecurityException (string message, Assembly a, MethodInfo mi, SecurityAction action, IPermission failed)
+		internal static void ThrowSecurityException (object demanded, string message, Assembly a, MethodInfo mi, SecurityAction action, IPermission failed)
 		{
 			throw new SecurityException (Locale.GetText (message), 
 				a.GetName (), a.GrantedPermissionSet, 
-				a.DeniedPermissionSet, mi, action, this, 
+				a.DeniedPermissionSet, mi, action, demanded, 
 				failed, a.Evidence);
 		}
 	}

@@ -215,8 +215,8 @@ namespace System.Security {
 			// don't start the stack walk if
 			// - the permission set only contains non CAS permissions; or
 			// - security isn't enabled (applis only to CAS!)
-			if ((cas.Count > 0) && SecurityManager.SecurityEnabled)
-				CasOnlyDemand (_declsec ? 3 : 2);
+			if (!cas.IsEmpty () && SecurityManager.SecurityEnabled)
+				CasOnlyDemand (_declsec ? 4 : 2);
 		}
 
 		// The number of frames to skip depends on who's calling
@@ -678,6 +678,19 @@ namespace System.Security {
 
 		internal bool ProcessFrame (SecurityFrame frame, ref Assembly current)
 		{
+			if (IsUnrestricted ()) {
+				// we request unrestricted
+				if (frame.Deny != null) {
+					// but have restrictions (some denied permissions)
+					CodeAccessPermission.ThrowSecurityException (this, "Deny", frame.Assembly, 
+						frame.Method, SecurityAction.Demand, null);
+				} else if (frame.PermitOnly != null) {
+					// but have restrictions (onyl some permitted permissions)
+					CodeAccessPermission.ThrowSecurityException (this, "PermitOnly", frame.Assembly,
+						frame.Method, SecurityAction.Demand, null);
+				}
+			}
+
 			foreach (CodeAccessPermission cap in list) {
 				if (cap.ProcessFrame (frame, ref current))
 					return true; // Assert reached - abort stack walk!

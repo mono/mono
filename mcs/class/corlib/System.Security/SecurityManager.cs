@@ -45,8 +45,6 @@ namespace System.Security {
 
 	public sealed class SecurityManager {
 
-		private static bool checkExecutionRights;
-		private static bool securityEnabled;
 		private static object _lockObject;
 		private static ArrayList _hierarchy;
 		private static PermissionSet _fullTrust; // for [AllowPartiallyTrustedCallers]
@@ -57,8 +55,6 @@ namespace System.Security {
 			// lock(this) is bad
 			// http://msdn.microsoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
 			_lockObject = new object ();
-			securityEnabled = true;
-//			checkExecutionRights = true;
 		}
 
 		private SecurityManager ()
@@ -67,24 +63,22 @@ namespace System.Security {
 
 		// properties
 
-		public static bool CheckExecutionRights {
-			get { return checkExecutionRights; }
+		extern public static bool CheckExecutionRights {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
-			set {
-				// throw a SecurityException if we don't have ControlPolicy permission
-				checkExecutionRights = value; 
-			}
+			set;
 		}
 
-		public static bool SecurityEnabled {
-			get { return securityEnabled; }
+		extern public static bool SecurityEnabled {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
-			set {
-				// throw a SecurityException if we don't have ControlPolicy permission
-				securityEnabled = value; 
-			}
+			set;
 		}
 
 		// methods
@@ -103,7 +97,7 @@ namespace System.Security {
 		{
 			if (perm == null)
 				return true;
-			if (!securityEnabled)
+			if (!SecurityEnabled)
 				return true;
 
 			// - Policy driven
@@ -118,18 +112,23 @@ namespace System.Security {
 		{
 			CodeAccessPermission grant = null;
 
-			if (a.GrantedPermissionSet != null)
+			if (a.GrantedPermissionSet != null) {
 				grant = (CodeAccessPermission) a.GrantedPermissionSet.GetPermission (perm.GetType ());
-
-			if ((grant == null) || !perm.IsSubsetOf (grant)) {
-				if (a.DeniedPermissionSet != null) {
-					CodeAccessPermission refuse = (CodeAccessPermission) a.DeniedPermissionSet.GetPermission (perm.GetType ());
-					if ((refuse != null) && perm.IsSubsetOf (refuse))
+				if (grant == null) {
+					if (!a.GrantedPermissionSet.IsUnrestricted () || !(perm is IUnrestrictedPermission)) {
 						return false;
+					}
+				} else if (!perm.IsSubsetOf (grant)) {
+					return false;
 				}
-				return true;
 			}
-			return false;
+
+			if (a.DeniedPermissionSet != null) {
+				CodeAccessPermission refuse = (CodeAccessPermission) a.DeniedPermissionSet.GetPermission (perm.GetType ());
+				if ((refuse != null) && perm.IsSubsetOf (refuse))
+					return false;
+			}
+			return true;
 		}
 
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
@@ -141,7 +140,7 @@ namespace System.Security {
 
 			PolicyLevel pl = null;
 			try {
-				pl = new PolicyLevel (type.ToString (), PolicyLevelType.AppDomain);
+				pl = new PolicyLevel (type.ToString (), type);
 				pl.LoadFromFile (path);
 			}
 			catch (Exception e) {
@@ -159,7 +158,7 @@ namespace System.Security {
 
 			PolicyLevel pl = null;
 			try {
-				pl = new PolicyLevel (type.ToString (), PolicyLevelType.AppDomain);
+				pl = new PolicyLevel (type.ToString (), type);
 				pl.LoadFromString (str);
 			}
 			catch (Exception e) {
