@@ -271,6 +271,33 @@ namespace System.Windows.Forms {
 			Run (context);
 		}
 		
+		public static void enterModalLoop ( Form form )
+		{
+			form.ExitModalLoop = false;
+
+			MSG msg = new MSG();
+			while( Win32.GetMessageA( ref msg, 0, 0, 0 ) != 0 ) {
+
+				if ( form.ExitModalLoop ) {
+					break;
+				}
+
+				if( Win32.IsDialogMessage ( form.Handle, ref msg ) )
+					continue;
+				
+				Win32.TranslateMessage (ref msg);
+				Win32.DispatchMessageA (ref msg);
+			}
+			
+		}
+		
+		public static void exitModalLoop ( Form form )
+		{
+			form.ExitModalLoop = true;
+
+			Win32.PostMessage( IntPtr.Zero, Msg.WM_NULL, 0, 0 ); 
+		}
+
 		// --- Events ---
 		public static event EventHandler ApplicationExit;
 		public static event EventHandler Idle;

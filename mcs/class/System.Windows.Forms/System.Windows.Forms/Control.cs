@@ -1293,6 +1293,24 @@
 				//FIXME:
     		}
     		
+		// tries to find appropriate owner for modal form
+		internal static Control getOwnerWindow ( Control skip )
+		{
+			// temporary solution
+			IEnumerator cw = controlsCollection.GetEnumerator ( );
+
+			while ( cw.MoveNext ( ) ) {
+				Control c = ( (DictionaryEntry) cw.Current).Value as Control;
+				if ( c != null && c != skip ) {
+					IntPtr parent = Win32.GetParent ( c.Handle );
+					IntPtr owner  = Win32.GetWindow ( c.Handle, (uint) GetWindowConstants.GW_OWNER );
+					if ( parent == IntPtr.Zero && owner == IntPtr.Zero )
+						return c;
+				}
+			}
+			return null;
+		}
+
  			//Compact Framework
     		public void Invalidate (Rectangle rc) 
     		{
@@ -1984,6 +2002,11 @@
 			if( IsHandleCreated) {
 				DestroyHandle ();
 				CreateHandle ();
+
+				IEnumerator cw = childControls.GetEnumerator();
+				while ( cw.MoveNext() )
+					(( Control )cw.Current).RecreateHandle ( );
+
 			}
 			statuses [ RECREATING_HANDLE ] = false;
 		}

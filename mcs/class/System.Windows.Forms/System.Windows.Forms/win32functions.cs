@@ -831,6 +831,11 @@ namespace System.Windows.Forms{
 		internal static extern IntPtr GetParent (IntPtr hWnd);
 
 		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Auto)]
+		internal static extern IntPtr GetWindow (IntPtr hWnd, uint uCmd);
+
+		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
 			 CharSet = CharSet.Ansi)]
 		internal static extern bool SetWindowTextA (
@@ -877,6 +882,12 @@ namespace System.Windows.Forms{
 			 CharSet = CharSet.Auto)]
 		internal static extern bool EnableWindow (
 			IntPtr hWnd, bool bEnable);
+
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Auto)]
+		internal static extern bool IsDialogMessage (
+			IntPtr hWnd, ref MSG mes);
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 

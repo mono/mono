@@ -2656,4 +2656,13 @@ namespace System.Windows.Forms{
 		UDM_SETPOS32       =(WM_USER+113),
 		UDM_GETPOS32       =(WM_USER+114)
 	}
+
+	internal enum GetWindowConstants : int {
+		GW_HWNDFIRST       = 0,
+		GW_HWNDLAST        = 1,
+		GW_HWNDNEXT        = 2,
+		GW_HWNDPREV        = 3,
+		GW_OWNER           = 4,
+		GW_CHILD           = 5
+	}
 }

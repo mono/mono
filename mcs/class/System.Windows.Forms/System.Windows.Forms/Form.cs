@@ -22,6 +22,7 @@
 			Size maximumSize;
 			Size minimizeSize;
 			double opacity;
+			bool   topLevel;
 			// Temperary varibles that may be replaced
 			// with win32 functions
 
@@ -70,10 +71,16 @@
 
 		MdiClient mdiClientWnd;
 		Form      mdiParent;
+		Control   dialog_owner;
+		bool      modal;
+		bool      exitModalLoop;
 
-			public Form () : base ()
+		public Form () : base ()
     		{
-				opacity = 0;
+			opacity = 0;
+			topLevel = true;
+			modal    = false;
+			dialogResult = DialogResult.None;
     		}
     		
     		static Form ()
@@ -212,7 +219,15 @@
     				return dialogResult;
     			}
     			set {
-    				dialogResult = value;
+				if ( !Enum.IsDefined ( typeof(DialogResult), value ) )
+					throw new InvalidEnumArgumentException( "DialogResult",
+						(int)value,
+						typeof(DialogResult));
+
+				dialogResult = value;
+				if ( Modal && dialogResult != DialogResult.None ) {
+					Application.exitModalLoop ( this );
+				}
     			}
     		}
     
@@ -374,11 +389,8 @@
     			}
     		}
     
-    		[MonoTODO]
     		public bool Modal {
-    			get {
-    				throw new NotImplementedException ();
-    			}
+    			get {	return modal;	}
     		}
     
     		[MonoTODO]
@@ -462,11 +474,11 @@
     		[MonoTODO]
     		public bool TopLevel {
     			get {
-    				throw new NotImplementedException ();
+    				return topLevel;
     			}
     			set {
-					//FIXME:
-				}
+				topLevel = value;
+			}
     		}
     
     		[MonoTODO]
@@ -580,9 +592,35 @@
     		[MonoTODO]
     		public DialogResult ShowDialog ()
     		{
-				Win32.ShowWindow (Handle, ShowWindowStyles.SW_SHOW);
-				return new DialogResult();
+			Control owner = Control.getOwnerWindow ( this );
+			Control oldOwner = dlgOwner;
+			dlgOwner = owner;
+
+			 // needs to be recreated because ownership can't be changed
+			if ( IsHandleCreated ) {
+				if ( oldOwner != owner )
+					RecreateHandle();
 			}
+			else
+				CreateControl ( );
+
+			if ( owner != null )
+				owner.Enabled = false;
+
+			Show ( );
+			
+			modal = true;
+			Application.enterModalLoop ( this );
+			modal = false;
+
+			if ( owner != null ) {
+				owner.Enabled = true;
+				Win32.SetFocus ( owner.Handle );
+			}
+			Hide ( );
+
+			return DialogResult;
+		}
     
   			//Compact Framework
     		[MonoTODO]
@@ -636,9 +674,13 @@
 							WindowStyles.WS_CLIPSIBLINGS /* |
 							WindowStyles.WS_CLIPCHILDREN */);
 				}
-				if ( Parent == null ) 
+				if ( TopLevel && Parent == null ) 
 					pars.Parent = IntPtr.Zero;
-
+				
+				// this property is used for modal dialogs
+				if ( dlgOwner != null )
+					pars.Parent = dlgOwner.Handle;
+				
 				// should have WS_CLIPCHILDREN style but there are
 				// problems with GroupBox at the moment
 
@@ -726,7 +768,12 @@
     		{
 			if ( Closing != null )
     				Closing ( this, e);
-    		}
+
+			if ( Modal ) {
+				e.Cancel = true; // don't destroy modal form
+				DialogResult = DialogResult.Cancel;
+			}
+		}
     
     		protected override void OnCreateControl ()
     		{
@@ -1096,6 +1143,17 @@
 				Win32.DrawMenuBar ( Handle );
 				
 		}
+
+		internal Control dlgOwner {
+			get { return dialog_owner; }
+			set { dialog_owner = value;}
+		}
+
+		internal bool ExitModalLoop {
+			get { return exitModalLoop; }
+			set { exitModalLoop = value; }
+		}
+
     		//sub class
     		//System.Windows.Forms.Form.ControlCollection.cs
     		//

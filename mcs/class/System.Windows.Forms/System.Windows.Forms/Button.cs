@@ -75,7 +75,14 @@ namespace System.Windows.Forms {
 		// --- IButtonControl property ---
 		public virtual DialogResult DialogResult {
 			get { return dialogResult; }
-			set { dialogResult = value; }
+			set { 
+				if ( !Enum.IsDefined ( typeof(DialogResult), value ) )
+					throw new System.ComponentModel.InvalidEnumArgumentException( "DialogResult",
+						(int)value,
+						typeof(DialogResult));
+
+				dialogResult = value;
+			}
 		}
 
 		// --- IButtonControl method ---
@@ -105,6 +112,11 @@ namespace System.Windows.Forms {
 		// --- Button methods for events ---
 		protected override void OnClick(EventArgs e) 
 		{
+			if ( DialogResult != DialogResult.None ) {
+				Form parent = Parent as Form;
+				if ( parent != null )
+					parent.DialogResult = this.DialogResult;
+			}
 			base.OnClick (e);
 		}
 		
