@@ -61,6 +61,12 @@ while (defined ($input = <MCS>)) {
     next unless $input =~ m,\((\d+)\)\s+(warning|error)\s+(CS\d+):,;
     my $had;
 
+    if (!defined $lines{$1}) {
+	print "Unexpected $2 $3 on line $1.\n";
+	$failures++ if $strict == 2;
+	next;
+    }
+
     if ($2 eq 'warning') {
 	($had, $warnings{$3}) = remove $1, $warnings{$3};
 	if ($strict && ! $had) {

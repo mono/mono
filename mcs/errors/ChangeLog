@@ -1,3 +1,7 @@
+2005-02-21  Raja R Harinath  <rharinath@novell.com>
+
+	* runtest.pl: Add unexpected error check.
+
 2005-02-18  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0120-5.cs: New test from #72678.
