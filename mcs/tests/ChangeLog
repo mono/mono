@@ -1,3 +1,7 @@
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* test-243.cs: New test for #57014.
+
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
 	* test-154.cs: Added test case for #52625.
