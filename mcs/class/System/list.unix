@@ -1,6 +1,8 @@
 Microsoft.CSharp/CSharpCodeCompiler.cs
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
+Microsoft.VisualBasic/VBCodeGenerator.cs
+Microsoft.VisualBasic/VBCodeProvider.cs
 Microsoft.Win32/PowerModeChangedEventArgs.cs
 Microsoft.Win32/PowerModeChangedEventHandler.cs
 Microsoft.Win32/PowerModes.cs

@@ -1,3 +1,7 @@
+2003-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* list.unix: Add VBCodeGenerator.cs, VBCodeProvider.cs
+
 2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* list.unix: Add CodeParser.cs, Executor.cs, removed CompilerOptions.cs
