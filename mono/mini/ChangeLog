@@ -1,3 +1,7 @@
+2003-06-13  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (optimize_branches): improved to handle all kinds of
+	conditional branches.
 
 Tue Jun 10 19:00:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
