@@ -1,5 +1,13 @@
 2002-03-01  Martin Baulig  <martin@gnome.org>
 
+	* icall.c (ves_icall_System_Array_GetLength): This must throw an
+	ArgumentOutOfRangeException(), not an ArgumentException().
+	(ves_icall_System_Array_GetLowerBound): Likewise.
+	(ves_icall_System_Array_GetValue): Improved argument checking.
+	(ves_icall_System_Array_SetValue): Improved argument checking.
+
+2002-03-01  Martin Baulig  <martin@gnome.org>
+
 	* icall.c (ves_icall_System_Array_GetValue): Raise an exception when
 	called with invalid arguments rather than just dying with g_assert().
 	(ves_icall_System_Array_SetValue): Likewise.
