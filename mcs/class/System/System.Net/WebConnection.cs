@@ -52,7 +52,6 @@ namespace System.Net
 		bool certsAvailable;
 		static bool sslCheck;
 		static Type sslStream;
-		static PropertyInfo piCRL;
 		static PropertyInfo piClient;
 		static PropertyInfo piServer;
 

@@ -77,7 +77,6 @@ namespace System.Net
 			length = this.header.Length;
 			while (pos < length) {
 				string key, value;
-				bool useQuote;
 				if (!GetKeywordAndValue (out key, out value))
 					return false;
 
