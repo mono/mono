@@ -1,6 +1,6 @@
 2004-09-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
-	* liveness.c: reset spill costs on each scan
+	* liveness.c: reset spill costs on each scan: bug 62107
 
 2004-09-07  Bernie Solomon  <bernard@ugsolutions.com>
 
