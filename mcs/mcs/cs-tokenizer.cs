@@ -1328,7 +1328,8 @@ namespace Mono.CSharp
 				if (c == '\''){
 					c = getChar ();
 					if (c == '\''){
-						error_details = "CS1011: Empty character literal";
+						error_details = "Empty character literal";
+						Report.Error (1011, Location, error_details);
 						return Token.ERROR;
 					}
 					c = escape (c);
@@ -1337,8 +1338,11 @@ namespace Mono.CSharp
 					val = new System.Char ();
 					val = (char) c;
 					c = getChar ();
+
 					if (c != '\''){
-						error_details = "CS1012: Too many characters in character literal";
+						error_details = "Too many characters in character literal";
+						Report.Error (1012, Location, error_details);
+
 						// Try to recover, read until newline or next "'"
 						while ((c = getChar ()) != -1){
 							if (c == '\n' || c == '\'')
