@@ -1,3 +1,11 @@
+2002-12-12  Juli Mallett  <jmallett@FreeBSD.org>
+
+	* gc.h, gc-internal.h: Rename header for GC internal calls to
+	gc-internal.h from gc.h as to not clash with Boehm GC having its
+	header installed as <gc.h> in outside include paths.
+	* appdomain.c, gc.c, icall.c, object.c: Account for aforementioned.
+	* threads.c: If SIGRTMIN is not defined, fall back to SIGUSR1.
+
 2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: assign minor, build and revision in FillName.
