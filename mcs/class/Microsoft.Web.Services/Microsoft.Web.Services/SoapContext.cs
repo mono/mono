@@ -158,7 +158,11 @@ namespace Microsoft.Web.Services {
 		}
 
 		public SecurityCollection ExtendedSecurity {
-			get { return extendedSecurity; }
+			get { 
+				if (extendedSecurity == null)
+					extendedSecurity = new SecurityCollection ();
+				return extendedSecurity; 
+			}
 		}
 
 		public object this [string key] { 

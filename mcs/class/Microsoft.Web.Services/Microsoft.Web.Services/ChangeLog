@@ -1,3 +1,8 @@
+2003-10-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SoapContext.cs: Now construct the SecurityCollection for 
+	ExtendedSecurity when null.
+
 2003-10-25  Todd Berman <tberman@gentoo.org>
 
 	* AsyncResult.cs: csc fixes
