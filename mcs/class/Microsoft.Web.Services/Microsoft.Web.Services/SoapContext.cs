@@ -12,7 +12,9 @@ using Microsoft.Web.Services.Referral;
 using Microsoft.Web.Services.Routing;
 using Microsoft.Web.Services.Security;
 using Microsoft.Web.Services.Timestamp;
+#if !WSE1
 using Microsoft.Web.Services.Addressing;
+#endif
 
 using System;
 using System.Collections;
@@ -26,8 +28,11 @@ namespace Microsoft.Web.Services {
 		private Microsoft.Web.Services.Timestamp.Timestamp timestamp;
 		private Microsoft.Web.Services.Security.Security security;
 		private Hashtable table;
+		
+		#if !WSE1
 		private AddressingHeaders addressingHeaders;
-
+		#endif
+		
 		internal SoapContext () 
 		{
 			timestamp = new Microsoft.Web.Services.Timestamp.Timestamp ();
@@ -45,6 +50,8 @@ namespace Microsoft.Web.Services {
 			get { return actor; }
 		}
 
+
+		#if !WSE1
 		public Action Action {
 			get { return addressingHeaders.Action; }
 			set { addressingHeaders.Action = value; }
@@ -58,6 +65,7 @@ namespace Microsoft.Web.Services {
 		public To To {
 			get { return addressingHeaders.To; }
 		}
+		#endif
 
 		public DimeAttachmentCollection Attachments { 
 			get { return null; }

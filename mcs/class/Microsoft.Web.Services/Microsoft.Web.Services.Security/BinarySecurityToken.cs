@@ -18,7 +18,9 @@
 using System;
 using System.Security.Cryptography.Xml;
 using System.Xml;
+#if !WSE1
 using Microsoft.Web.Services.Xml;
+#endif
 
 namespace Microsoft.Web.Services.Security {
 

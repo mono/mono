@@ -19,7 +19,9 @@
 using System;
 using System.Xml;
 using Microsoft.Web.Services;
+#if !WSE1
 using Microsoft.Web.Services.Xml;
+#endif
 
 namespace Microsoft.Web.Services.Timestamp {
 

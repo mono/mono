@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.Services.Addressing.SoapSender
+// Microsoft.Web.Services.Messaging.SoapSender
 //
 // Author: Todd Berman <tberman@gentoo.org>
 //

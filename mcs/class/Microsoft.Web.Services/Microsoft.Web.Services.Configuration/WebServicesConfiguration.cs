@@ -18,7 +18,7 @@ namespace Microsoft.Web.Services.Configuration {
 		public static FilterConfiguration FilterConfiguration { 
 			get { return new FilterConfiguration (); }
 		}
-
+/* FIXME: Classes are not stubbed yet, breaks a WSE2 build
 #if WSE2
 		[MonoTODO()]
 		public static MessagingConfiguration MessagingConfiguration {
@@ -29,7 +29,7 @@ namespace Microsoft.Web.Services.Configuration {
 		public static TokenIssuerConfiguration TokenIssuerConfiguration {
 			get { return null; }
 		}
-#endif
+#endif */
 
 		// from IConfigurationSectionHandler
 		[MonoTODO()]
