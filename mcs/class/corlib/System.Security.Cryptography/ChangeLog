@@ -1,3 +1,10 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Added support to create RIPEMD160 and the new HMAC
+	algorithms (HMACMD5, HMACRIPEMD160, HMACSHA256, HMACSHA384 and 
+	HMACSHA512). This fix the unit tests failures in Mono.Security.dll in
+	the NET_2_0 profile.
+
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Change the OID for SHA-2 algorithms to match 2.0

@@ -67,6 +67,11 @@ public class CryptoConfig {
 	private const string defaultRSASigDesc = defaultNamespace + "RSAPKCS1SHA1SignatureDescription";
 #if NET_2_0
 	private const string defaultRIPEMD160 = defaultNamespace + "RIPEMD160Managed";
+	private const string defaultHMACMD5 = defaultNamespace + "HMACMD5";
+	private const string defaultHMACRIPEMD160 = defaultNamespace + "HMACRIPEMD160";
+	private const string defaultHMACSHA256 = defaultNamespace + "HMACSHA256";
+	private const string defaultHMACSHA384 = defaultNamespace + "HMACSHA384";
+	private const string defaultHMACSHA512 = defaultNamespace + "HMACSHA512";
 #endif
 
 	// LAMESPEC: undocumented names in CryptoConfig
@@ -157,8 +162,8 @@ public class CryptoConfig {
 	private const string nameRNGa = "RandomNumberGenerator";
 	private const string nameRNGb = "System.Security.Cryptography.RandomNumberGenerator";
 	private const string nameKeyHasha = "System.Security.Cryptography.KeyedHashAlgorithm";
-	private const string nameHMACa = "HMACSHA1";
-	private const string nameHMACb = "System.Security.Cryptography.HMACSHA1";
+	private const string nameHMACSHA1a = "HMACSHA1";
+	private const string nameHMACSHA1b = "System.Security.Cryptography.HMACSHA1";
 	private const string nameMAC3DESa = "MACTripleDES";
 	private const string nameMAC3DESb = "System.Security.Cryptography.MACTripleDES";
 	// LAMESPEC: only documentated in ".NET Framework Security" book
@@ -167,6 +172,18 @@ public class CryptoConfig {
 	private const string nameRIPEMD160a = "RIPEMD160";
 	private const string nameRIPEMD160b = "RIPEMD-160";
 	private const string nameRIPEMD160c = "System.Security.Cryptography.RIPEMD160";
+	private const string nameHMACa = "HMAC";
+	private const string nameHMACb = "System.Security.Cryptography.HMAC";
+	private const string nameHMACMD5a = "HMACMD5";
+	private const string nameHMACMD5b = "System.Security.Cryptography.HMACMD5";
+	private const string nameHMACRIPEMD160a = "HMACRIPEMD160";
+	private const string nameHMACRIPEMD160b = "System.Security.Cryptography.HMACRIPEMD160";
+	private const string nameHMACSHA256a = "HMACSHA256";
+	private const string nameHMACSHA256b = "System.Security.Cryptography.HMACSHA256";
+	private const string nameHMACSHA384a = "HMACSHA384";
+	private const string nameHMACSHA384b = "System.Security.Cryptography.HMACSHA384";
+	private const string nameHMACSHA512a = "HMACSHA512";
+	private const string nameHMACSHA512b = "System.Security.Cryptography.HMACSHA512";
 #endif
 
 	private const string urlXmlDsig = "http://www.w3.org/2000/09/xmldsig#";
@@ -253,14 +270,25 @@ public class CryptoConfig {
 		algorithms.Add (nameRNGa, defaultRNG);
 		algorithms.Add (nameRNGb, defaultRNG);
 		algorithms.Add (nameKeyHasha, defaultHMAC);
-		algorithms.Add (nameHMACa, defaultHMAC);
-		algorithms.Add (nameHMACb, defaultHMAC);
+		algorithms.Add (nameHMACSHA1a, defaultHMAC);
+		algorithms.Add (nameHMACSHA1b, defaultHMAC);
 		algorithms.Add (nameMAC3DESa, defaultMAC3DES);
 		algorithms.Add (nameMAC3DESb, defaultMAC3DES);
 #if NET_2_0
 		algorithms.Add (nameRIPEMD160a, defaultRIPEMD160);
 		algorithms.Add (nameRIPEMD160b, defaultRIPEMD160);
 		algorithms.Add (nameRIPEMD160c, defaultRIPEMD160);
+		algorithms.Add (nameHMACb, defaultHMAC);
+		algorithms.Add (nameHMACMD5a, defaultHMACMD5);
+		algorithms.Add (nameHMACMD5b, defaultHMACMD5);
+		algorithms.Add (nameHMACRIPEMD160a, defaultHMACRIPEMD160);
+		algorithms.Add (nameHMACRIPEMD160b, defaultHMACRIPEMD160);
+		algorithms.Add (nameHMACSHA256a, defaultHMACSHA256);
+		algorithms.Add (nameHMACSHA256b, defaultHMACSHA256);
+		algorithms.Add (nameHMACSHA384a, defaultHMACSHA384);
+		algorithms.Add (nameHMACSHA384b, defaultHMACSHA384);
+		algorithms.Add (nameHMACSHA512a, defaultHMACSHA512);
+		algorithms.Add (nameHMACSHA512b, defaultHMACSHA512);
 #endif
 
 		// LAMESPEC These URLs aren't documented but (hint) installing the WSDK
