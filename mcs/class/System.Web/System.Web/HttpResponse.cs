@@ -676,6 +676,8 @@ namespace System.Web
 						   _sTransferEncoding == null) {
 							// Check we are going todo chunked encoding
 							string sProto = Request.ServerVariables ["SERVER_PROTOCOL"];
+							sProto = "HTTP/1.0"; // Remove this line when we support properly
+									     // chunked content
 
 							if (sProto != null && sProto == "HTTP/1.1") {
 								AppendHeader (
