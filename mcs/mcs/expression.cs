@@ -2467,6 +2467,10 @@ namespace Mono.CSharp {
 				if (oper == Operator.Equality || oper == Operator.Inequality ||
 				    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
 				    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
+					if (left.Type != right.Type){
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
 					type = TypeManager.bool_type;
 					return this;
 				}

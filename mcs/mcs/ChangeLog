@@ -1,5 +1,8 @@
 2003-04-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): Only allow the compare
+	operators on enums if they are of the same type.
+
 	* ecore.cs (Expression.ImplicitReferenceConversion): handle target
 	types of ValueType on their own case.  Before we were giving them
 	the same treatment as objects.
