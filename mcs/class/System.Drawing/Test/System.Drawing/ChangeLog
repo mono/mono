@@ -1,3 +1,8 @@
+2004-01-26  Ravindra <rkumar@novell.com>
+	* TestPointF.cs: Added.
+	* TestSize.cs: Added.
+	* TestSizeF: Added.
+
 2004-01-16  Ravindra <rkumar@novell.com>
 	* BmpPaint.cs   did not run on .NET.
 	Modified to make it run on .NET. Specs say
