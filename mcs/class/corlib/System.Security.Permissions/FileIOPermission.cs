@@ -21,7 +21,7 @@ namespace System.Security.Permissions {
                 : CodeAccessPermission, IBuiltInPermission, IUnrestrictedPermission {
 
 		private static char[] m_badCharacters = {'\"','<', '>', '|', '*', '?'};
-		private bool m_Unrestricted = false;c
+		private bool m_Unrestricted = false;
 		private Hashtable m_PathList = new Hashtable();
 		private FileIOPermissionAccess m_AllFilesAccess = FileIOPermissionAccess.NoAccess;
 		private FileIOPermissionAccess m_AllLocalFilesAccess = FileIOPermissionAccess.NoAccess;
