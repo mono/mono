@@ -87,22 +87,27 @@ namespace System.Diagnostics {
 
 		public override void Flush ()
 		{
-			writer.Flush ();
+			if (writer != null)
+				writer.Flush ();
 		}
 
 		public override void Write (string message)
 		{
-			if (NeedIndent)
-				WriteIndent ();
-			writer.Write (message);
+			if (writer != null) {
+				if (NeedIndent)
+					WriteIndent ();
+				writer.Write (message);
+			}
 		}
 
 		public override void WriteLine (string message)
 		{
-			if (NeedIndent)
-				WriteIndent ();
-			writer.WriteLine (message);
-			NeedIndent = true;
+			if (writer != null) {
+				if (NeedIndent)
+					WriteIndent ();
+				writer.WriteLine (message);
+				NeedIndent = true;
+			}
 		}
 	}
 }

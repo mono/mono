@@ -1,3 +1,12 @@
+2004-04-06  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* DiagnosticsConfigurationHandler.cs: If initializeData is provided, use the
+	constructor that only takes one string as parameter to construct the 
+	listener. The name is set using the Name property, not the constructor.
+	
+	* TextWriterTraceListener.cs: In Write*, do nothing if no writer was 
+	provided.
+
 2004-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs: use the ISynchronizeInvoke object to invoke the event.

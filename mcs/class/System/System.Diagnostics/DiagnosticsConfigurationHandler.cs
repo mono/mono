@@ -253,20 +253,28 @@ namespace System.Diagnostics
 		private void AddTraceListener (string name, string type, string initializeData)
 		{
 			Type t = Type.GetType (type);
-			object[] args = null;
-			if (initializeData == null)
-				args = new object[]{name};
-			else
-				args = new object[]{initializeData, name};
-			try {
-				TraceListener l = (TraceListener) Activator.CreateInstance (t, args);
-				TraceImpl.Listeners.Add (l);
+			if (t == null)
+				throw new ConfigurationException (string.Format ("Invalid Type Specified: {0}", type));
+
+			object[] args;
+			Type[] types;
+			
+			if (initializeData != null) {
+				args = new object[] { initializeData };
+				types = new Type[] { typeof(string) };
 			}
-			catch (Exception e) {
-				throw new ConfigurationException (
-						string.Format ("Invalid Type Specified: {0}", type),
-						e);
+			else {
+				args = null;
+				types = new Type[0];
 			}
+				
+			System.Reflection.ConstructorInfo ctor = t.GetConstructor (types);
+			if (ctor == null) 
+				throw new ConfigurationException ("Couldn't find constructor for class " + type);
+			
+			TraceListener l = (TraceListener) ctor.Invoke (args);
+			l.Name = name;
+			TraceImpl.Listeners.Add (l);
 		}
 
 		private void RemoveTraceListener (string name)
