@@ -241,11 +241,11 @@ namespace System.Xml {
 		{
 			if (s == null)
 				throw new ArgumentNullException();
-			if (s == "INF" || s == NumberFormatInfo.CurrentInfo.PositiveInfinitySymbol)
+			if (s == "INF")
 				return Double.PositiveInfinity;
-			if (s == "-INF" || s == NumberFormatInfo.CurrentInfo.NegativeInfinitySymbol)
+			if (s == "-INF")
 				return Double.NegativeInfinity;
-			if (s == "NaN" || s == NumberFormatInfo.CurrentInfo.NaNSymbol)
+			if (s == "NaN")
 				return Double.NaN;
 			return Double.Parse (s, floatStyle);
 		}
@@ -280,11 +280,11 @@ namespace System.Xml {
 		{
 			if (s == null)
 				throw new ArgumentNullException();
-			if (s == "INF" || s == NumberFormatInfo.CurrentInfo.PositiveInfinitySymbol)
+			if (s == "INF")
 				return Single.PositiveInfinity;
-			if (s == "-INF" || s == NumberFormatInfo.CurrentInfo.NegativeInfinitySymbol)
+			if (s == "-INF")
 				return Single.NegativeInfinity;
-			if (s == "NaN" || s == NumberFormatInfo.CurrentInfo.NaNSymbol)
+			if (s == "NaN")
 				return Single.NaN;
 			return Single.Parse(s, floatStyle);
 		}
