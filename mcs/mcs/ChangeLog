@@ -1,5 +1,11 @@
 2003-10-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay (declare_local_constants): Take an arraylist
+	instead of a single constant.
+
+	(local_constant_declaration): It should take a
+	constant_declarators, not a constant_declarator.
+
 	* convert.cs: Fix error report.
 
 2003-10-13 Jackson Harper <jackson@ximian.com>
