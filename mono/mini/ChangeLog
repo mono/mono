@@ -2,6 +2,8 @@
 
 	* mini.c (print_dfn): commenting out the code that prints
 	the cil. With -O=deadce, this makes -v -v crash.
+	
+	* cpu-pentium.md: make checkthis have a length of 2
 
 2004-04-21  Bernie Solomon  <bernard@ugsolutions.com>
 
