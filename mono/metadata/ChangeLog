@@ -1,5 +1,10 @@
 2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
 
+	* image.c (load_class_names): Cast the second argument to
+	g_hash_table_insert() to char* to hush compiler warnings about the
+	arg being a const.
+	(mono_image_open): Same here.
+
 	* socket-io.c: Don't conditionally include sys/filio.h or
 	sys/sockio.h here anymore since we now get them from
 	io-layer/io-layer.h
