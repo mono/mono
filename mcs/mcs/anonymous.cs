@@ -1007,7 +1007,7 @@ namespace Mono.CSharp {
 				cc.EmitParameterInstance (ec, name);
 				return;
 			}
-			Block invocation_block = ec.CurrentBlock;
+			
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
 			if (par_info != null){
 				// 
