@@ -1,3 +1,7 @@
+2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile: Add '.' to MONO_PATH during test. Fixes #68377.
+
 2004-09-27  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Runtime.Remoting_test.dll.sources: Added RemotingServicesTest.cs.

@@ -9,6 +9,8 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Web.dll \
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /r:System.Runtime.Remoting.dll
 
+TEST_MONO_PATH = .
+
 EXTRA_DISTFILES = Test/corba-example.cs Test/simple-example.cs
 
 include ../../build/library.make
