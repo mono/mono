@@ -114,16 +114,19 @@ namespace Mono.CSharp {
 					param_names [i] = TypeParameters [i].Name;
 
 				GenericTypeParameterBuilder[] gen_params;
-				
 				gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
-				for (int i = 0; i < gen_params.Length; i++)
-					TypeParameters [i].Define (gen_params [i]);
+				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].Define (gen_params [i]);
 
-				foreach (TypeParameter type_param in TypeParameters) {
-					if (!type_param.DefineType (ec))
+				foreach (TypeParameter type_param in CurrentTypeParameters) {
+					if (!type_param.Resolve (this))
 						return null;
 				}
+
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].DefineConstraints ();
 
 				TypeExpr current = new ConstructedType (Name, TypeParameters, Location);
 				current = current.ResolveAsTypeTerminal (ec);

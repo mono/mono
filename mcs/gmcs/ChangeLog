@@ -1,3 +1,8 @@
+2005-01-26  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs (Delegate.DefineType): Correctly define our type
+	parameters.  Fixes #71483.
+
 2005-01-25  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #71602.
