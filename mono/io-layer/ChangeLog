@@ -1,3 +1,9 @@
+2003-01-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* io.c (SetFileAttributes): This routine is not currently
+	implemented for the general case, but I added a special case to
+	set the executable bit on Linux.
+
 Wed Jan 15 15:55:40 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* sockets.h, daemon.c, io.c: compilation fixes on MacOSX.
