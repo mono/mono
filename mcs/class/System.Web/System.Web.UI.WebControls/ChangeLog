@@ -1,5 +1,10 @@
 2003-07-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CheckBoxList.cs: fixes bug reported on the list about the state of
+	the CheckButtons not being preserved across posts.
+
+2003-07-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ListControl.cs: added SelectedValue property (1.1). Closes 46412.
 
 2003-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>

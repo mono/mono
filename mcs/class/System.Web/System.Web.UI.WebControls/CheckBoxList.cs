@@ -30,7 +30,7 @@ namespace System.Web.UI.WebControls
 			checkBoxRepeater = new CheckBox();
 			checkBoxRepeater.ID = "0";
 			checkBoxRepeater.EnableViewState = false;
-			checkBoxRepeater.Controls.Add(this);
+			Controls.Add (checkBoxRepeater);
 			isChangeNotified = false;
 		}
 
