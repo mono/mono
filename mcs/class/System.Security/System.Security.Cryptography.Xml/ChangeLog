@@ -1,3 +1,8 @@
+2004-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXml.cs: The old method was working for creating signature -
+	so it was reintroduced for (only) this case.
+
 2004-03-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SignedXml.cs : the result from enveloped signature transform should

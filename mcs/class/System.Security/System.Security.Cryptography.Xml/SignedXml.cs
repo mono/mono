@@ -212,7 +212,16 @@ namespace System.Security.Cryptography.Xml {
 		{
 			Transform t = GetC14NMethod ();
 
-			if (signatureElement != null) {
+			if (signatureElement == null) {
+				// when creating signatures
+				XmlDocument doc = new XmlDocument ();
+				doc.PreserveWhitespace = true;
+				doc.LoadXml (signature.SignedInfo.GetXml ().OuterXml);
+
+				t.LoadInput (doc);
+			}
+			else {
+				// when verifying signatures
 				// TODO - check signature.SignedInfo.Id
 				XmlNodeList xnl = signatureElement.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI);
 				byte[] si = Encoding.UTF8.GetBytes (xnl [0].OuterXml);
