@@ -1,3 +1,7 @@
+2003-04-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c: Track name changes in Object and ValueType.
+
 2003-04-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_type_stack_size): size should be a multiple of
