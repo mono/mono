@@ -234,66 +234,14 @@ namespace System.Collections.Generic
 
 		public IEnumerator<T> GetEnumerator ()
 		{
-			return new Enumerator (this);
+			for (int i = 0; i < count; i++)
+				yield return contents [i];
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator (this);
-		}
-
-		protected class Enumerator : IEnumerator<T>, IEnumerator
-		{
-			List<T> list;
-			int modified;
-			int current;
-
-			public Enumerator (List<T> list)
-			{
-				this.list = list;
-				this.modified = list.modified;
-				this.current = -1;
-			}
-
-			public T Current {
-				get {
-					if (list.modified != modified)
-						throw new InvalidOperationException ();
-					if (current < 0)
-						current = 0;
-					if (current > list.count)
-						throw new ArgumentException ();
-					return list.contents [current];
-				}
-			}
-
-			object IEnumerator.Current {
-				get {
-					return Current;
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (list.modified != modified)
-					throw new InvalidOperationException ();
-
-				current++;
-				return current < list.count;
-			}
-
-			public void Reset ()
-			{
-				if (list.modified != modified)
-					throw new InvalidOperationException ();
-
-				current = -1;
-			}
-
-			public void Dispose ()
-			{
-				modified = -1;
-			}
+			for (int i = 0; i < count; i++)
+				yield return contents [i];
 		}
 	}
 }

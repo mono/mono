@@ -139,12 +139,14 @@ namespace System.Collections.Generic
 
 		public IEnumerator<T> GetEnumerator ()
 		{
-			return new Enumerator (this);
+			for (Node current = head; current != null; current = current.Next)
+				yield return current.Item;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator (this);
+			for (Node current = head; current != null; current = current.Next)
+				yield return current.Item;
 		}
 
 		protected sealed class Node
@@ -156,60 +158,6 @@ namespace System.Collections.Generic
 			{
 				this.Next = next;
 				this.Item = item;
-			}
-		}
-
-		protected class Enumerator : IEnumerator<T>, IEnumerator
-		{
-			Stack<T> stack;
-			int modified;
-			Node current;
-
-			public Enumerator (Stack<T> stack)
-			{
-				this.stack = stack;
-				this.modified = stack.modified;
-				this.current = stack.head;
-			}
-
-			public T Current {
-				get {
-					if (stack.modified != modified)
-						throw new InvalidOperationException ();
-					if (current == null)
-						throw new ArgumentException ();
-					return current.Item;
-				}
-			}
-
-			object IEnumerator.Current {
-				get {
-					return Current;
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (stack.modified != modified)
-					throw new InvalidOperationException ();
-				if (current == null)
-					throw new ArgumentException ();
-
-				current = current.Next;
-				return current != null;
-			}
-
-			public void Reset ()
-			{
-				if (stack.modified != modified)
-					throw new InvalidOperationException ();
-
-				current = stack.head;
-			}
-
-			public void Dispose ()
-			{
-				modified = -1;
 			}
 		}
 	}
