@@ -9,7 +9,8 @@
 
 #if NET_1_2
 
-using System.Data.MappingSchema;
+using System.Data;
+using System.Data.Mapping;
 
 namespace System.Data.ObjectSpaces
 {
@@ -19,7 +20,7 @@ namespace System.Data.ObjectSpaces
                 public DbObjectReader (IDataReader dataReader, Type type, MappingSchema map) 
                 {
                         if (dataReader == null || type == null || map == null)
-                                throw new ObjectException();
+                                throw ObjectException.CreateObjectException ();
                         
                 }
                         
@@ -28,8 +29,13 @@ namespace System.Data.ObjectSpaces
                         ObjectContext context)
                 {
                         if (dataReader == null || type == null || map == null || context == null)
-                                throw new ObjectException(); 
+                                throw ObjectException.CreateObjectException (); 
                 }
+
+		[MonoTODO]
+		public override bool HasObjects {
+			get { throw new NotImplementedException (); }
+		}
                 
                 [MonoTODO]
                 public bool NextResult (Type type, MappingSchema map)

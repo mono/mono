@@ -8,6 +8,8 @@
 //
 #if NET_1_2
 
+using System.Collections;
+
 namespace System.Data.ObjectSpaces
 {
         [MonoTODO]
@@ -26,7 +28,10 @@ namespace System.Data.ObjectSpaces
                 } 
  
                 [MonoTODO]
-                public IEnumerator GetEnumerator () {}
+                public IEnumerator GetEnumerator () 
+		{
+			throw new NotImplementedException ();
+		}
                 
                 [MonoTODO]
                 public override int GetHashCode () 

@@ -21,15 +21,9 @@ namespace System.Data.ObjectSpaces
                 
                 [MonoTODO]
                 public virtual void Add (object obj, ObjectState state) {}
-                
-                [MonoTODO]                
-                public abstract void Delete (object obj) {}
-                
-                [MonoTODO]
-                public abstract ValueRecord GetCurrentValueRecord (object obj)
-                {
-                        return null;        
-                }
+
+                public abstract void Delete (object obj);
+                public abstract ValueRecord GetCurrentValueRecord (object obj);
                   
                 [MonoTODO]
                 public static ObjectContext GetInternalContext (ObjectSpace objectSpace)
@@ -43,26 +37,11 @@ namespace System.Data.ObjectSpaces
                         return null;
                 }
                 
-                [MonoTODO]
-                public abstract ObjectState GetObjectState (object obj)
-                {
-                        return null;        
-                }
-                
-                [MonoTODO]
-                public abstract ValueRecord GetOriginalValueRecord (object obj)
-                {
-                        return null;        
-                }
-                               
-                [MonoTODO]
-                public abstract void Import (ObjectContext context) {}
-                                
-                [MonoTODO]
-                public abstract void Import (ObjectContext context, object obj) {}
-
-                [MonoTODO]
-                public abstract void Remove (object obj) {}
+                public abstract ObjectState GetObjectState (object obj);
+                public abstract ValueRecord GetOriginalValueRecord (object obj);
+                public abstract void Import (ObjectContext context);
+                public abstract void Import (ObjectContext context, object obj);
+                public abstract void Remove (object obj);
                                 
         }
 }

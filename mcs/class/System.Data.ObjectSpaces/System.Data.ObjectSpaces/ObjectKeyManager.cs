@@ -15,10 +15,16 @@ namespace System.Data.ObjectSpaces
         public class ObjectKeyManager 
         {
                 [MonoTODO]
-                public override int GetHashCode() {}
+                public override int GetHashCode() 
+		{
+			throw new NotImplementedException ();
+		}
                 
                 [MonoTODO]
-                public override bool Equals(object obj) {}
+                public override bool Equals(object obj) 
+		{
+			throw new NotImplementedException ();
+		}
         }
 }
 

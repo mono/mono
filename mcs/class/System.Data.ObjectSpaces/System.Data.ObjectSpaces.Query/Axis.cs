@@ -2,8 +2,9 @@
 // System.Data.ObjectSpaces.Query.Axis
 //
 //
-// Author:
+// Authors:
 //	Richard Thombs (stony@stony.org)
+//      Tim Coleman (tim@timcoleman.com)
 //
 
 #if NET_1_2
@@ -19,6 +20,16 @@ namespace System.Data.ObjectSpaces.Query
 		public Axis(Expression source,Expression constraint) : base(source,constraint)
 		{
 			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		public override bool IsConst {
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO()]
+		public override NodeType NodeType {
+			get { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO()]

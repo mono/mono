@@ -11,6 +11,7 @@
 
 using System.Collections;
 using System.Data.Mapping;
+using System.Reflection;
 
 namespace System.Data.ObjectSpaces
 {

@@ -18,19 +18,29 @@ namespace System.Data.ObjectSpaces
         {
                 
                 [MonoTODO]
-                public ObjectList () : this(typeof(ArrayList) {}
+                public ObjectList () : this (typeof (ArrayList), null) {}
 
                 [MonoTODO]
                 public ObjectList (Type type, object[] parameters)
                 {
                         if (type == null || !(type is IList))
-                                throw new ObjectException();
+                                throw ObjectException.CreateObjectException ();
                 }
 
                 [MonoTODO]
                 public int Count {
                         get { return 0; }
                 }     
+
+		[MonoTODO]
+		private bool ICollection.IsSynchronized {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		private object ICollection.SyncRoot {
+			get { throw new NotImplementedException (); }
+		}
                 
                 [MonoTODO]
                 public IList InnerList {
@@ -49,8 +59,8 @@ namespace System.Data.ObjectSpaces
                 
                 [MonoTODO]
                 public object this[int index] {
-                        get {}       
-                        set { return null; }
+                        get { throw new NotImplementedException (); }       
+                        set { throw new NotImplementedException (); }       
                 }
                 
                 [MonoTODO]

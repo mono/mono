@@ -9,6 +9,8 @@
 
 #if NET_1_2
 
+using System.Data.ObjectSpaces.Schema;
+
 namespace System.Data.ObjectSpaces
 {
         public class CommonObjectContext : ObjectContext
@@ -17,28 +19,28 @@ namespace System.Data.ObjectSpaces
                 public CommonObjectContext (ObjectSchema objectSchema)
                 {
                         if (objectSchema == null)
-                                throw new ObjectException ();
+                                throw ObjectException.CreateObjectException ();
                 }
                 
                 [MonoTODO]
                 public override void Add (object obj, ObjectState state)
                 {
-                        if (obj == null || state == null)
-                                throw new ObjectException ();
+                        if (obj == null)
+                                throw ObjectException.CreateObjectException ();
                 }
                 
                 [MonoTODO]
                 public override void Delete (object obj)
                 {
                         if (obj == null)
-                                throw new ObjectException ();
+                                throw ObjectException.CreateObjectException ();
                 }
                 
                 [MonoTODO]
                 public override ValueRecord GetCurrentValueRecord (object obj)
                 {
                         if (obj == null)
-                                throw new ObjectException ();
+                                throw ObjectException.CreateObjectException ();
                         
                         return null;        
                 }
@@ -47,16 +49,16 @@ namespace System.Data.ObjectSpaces
                 public override ObjectState GetObjectState (object obj)
                 {
                         if (obj == null)
-                                throw new ObjectException ();
-                        
-                        return null;        
+                                throw ObjectException.CreateObjectException ();
+                      
+			throw new NotImplementedException ();
                 }
                 
                 [MonoTODO]
                 public override ValueRecord GetOriginalValueRecord (object obj)
                 {
                         if (obj == null)
-                                throw new ObjectException ();
+                                throw ObjectException.CreateObjectException ();
                         
                         return null;        
                 }
@@ -65,21 +67,21 @@ namespace System.Data.ObjectSpaces
                 public override void Import (ObjectContext context)
                 {
                         if (context == null)
-                                throw new ObjectException ();        
+                                throw ObjectException.CreateObjectException ();
                 }
                                 
                 [MonoTODO]
                 public override void Import (ObjectContext context, object obj)
                 {
                         if (context == null)
-                                throw new ObjectException ();                
+                                throw ObjectException.CreateObjectException ();
                 }
 
                 [MonoTODO]
                 public override void Remove (object obj)
                 {
                         if (obj == null)
-                                throw new ObjectException ();                
+                                throw ObjectException.CreateObjectException ();
                 }
                 
         }

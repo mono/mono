@@ -15,7 +15,9 @@ namespace System.Data.ObjectSpaces
         public abstract class KeyGenerator
         {
                 [MonoTODO]
-                protected KeyGenerator () ;
+                protected KeyGenerator () 
+		{
+		}
                 
                 public abstract Type OwnerType { get; }
 

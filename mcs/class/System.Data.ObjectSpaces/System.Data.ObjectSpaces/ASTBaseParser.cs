@@ -9,6 +9,8 @@
 
 #if NET_1_2
 
+using System.Data.ObjectSpaces.Query;
+
 namespace System.Data.ObjectSpaces
 {
         public class ASTBaseParser

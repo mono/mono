@@ -11,32 +11,16 @@
 
 namespace System.Data.ObjectSpaces
 {
-        [MonoTODO]        
         public interface IObjectNotification
         {
-                [MonoTODO]
-                public void OnCreated () {}
-                
-                [MonoTODO]
-                public void OnCreating () {}
-                
-                [MonoTODO]
-                public void OnDeleted () {}
-                
-                [MonoTODO]
-                public void OnDeleting () {}
-                
-                [MonoTODO]
-                public void OnMaterialized () {}
-                
-                [MonoTODO]
-                public void OnPersistError () {}
-                
-                [MonoTODO]
-                public void OnUpdated () {}
-                
-                [MonoTODO]
-                public void OnUpdating () {}
+                void OnCreated ();
+                void OnCreating ();
+                void OnDeleted ();
+                void OnDeleting ();
+                void OnMaterialized ();
+                void OnPersistError ();
+                void OnUpdated ();
+                void OnUpdating ();
                                                                                                                  
         }
 }

@@ -11,20 +11,11 @@
 
 namespace System.Data.ObjectSpaces
 {
-        [MonoTODO]
         public interface IObjectHelper
         {
-                [MonoTODO]
-                public object this[string name] {
-                        get 
-                        {
-                                if (false)
-                                        throw new IndexOutOfRangeException();
-                                
-                                return null;
-                        }
-                        
-                        set {}
+                object this [string name] {
+			get;
+			set;
                 }
                                                                                                                  
         }

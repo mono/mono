@@ -9,6 +9,8 @@
 
 #if NET_1_2
 
+using System.Collections;
+
 namespace System.Data.ObjectSpaces
 {
         public abstract class ObjectReader : IDisposable,  IEnumerable
@@ -24,12 +26,7 @@ namespace System.Data.ObjectSpaces
                         get { return null; }
                 }
 
-                
-                [MonoTODO]
-                public abstract bool HasObjects { 
-                        get { return false; } 
-                } 
-
+                public abstract bool HasObjects { get; }
 
                 [MonoTODO]
                 public virtual bool IsClosed { 
@@ -40,11 +37,13 @@ namespace System.Data.ObjectSpaces
                 [MonoTODO]
                 public ObjectContext ObjectContext { 
                         get { return null; } 
+		}
 
 
                 [MonoTODO]
                 public Type ObjectType { 
                         get { return null; }                 
+		}
 
 
                 [MonoTODO]
@@ -68,7 +67,6 @@ namespace System.Data.ObjectSpaces
                 [MonoTODO]
                 private void IDisposable.Dispose ()
                 {
-                        return false;
                 }
 
                 [MonoTODO]
