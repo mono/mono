@@ -1,3 +1,7 @@
+2002-12-07 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs Compiler.cs: Moving these classes to their own assembly
+
 2002-11-11 Jackson Harper <jackson@latitudegeo.com>
 
 	* CompilerError.cs: Reordered ErrorLevel enumeration to match MS values
