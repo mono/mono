@@ -1,3 +1,7 @@
+2002-10-17  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c: Added back support for locals.
+
 2002-10-14  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.c: Added MONO_TYPE_I, MONO_TYPE_U and
