@@ -50,7 +50,7 @@ namespace System.Reflection
 					ArrayList mlist, ArrayList clist, ArrayList flist)
 		{
 			if (parent != null)
-				parent.inflate (reflected, mlist, clist, flist);
+				parent.inflate (parent, mlist, clist, flist);
 			else if (BaseType != null) {
 				mlist.AddRange (generic_type.BaseType.GetMethods (flags));
 				clist.AddRange (generic_type.BaseType.GetConstructors (flags));
