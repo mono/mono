@@ -1,3 +1,9 @@
+
+Tue Mar 1 16:16:42 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: typed allocs have issues with bitmap sizes > 30,
+	so check for max_set >= 30.
+
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_array): Implement marshalling of arrays to
