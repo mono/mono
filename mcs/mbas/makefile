@@ -4,34 +4,34 @@ CSCFLAGS=/nologo /debug+ /debug:full /optimize /target:exe /r:System.dll /out:mb
 VERSION=0.13
 
 COMPILER_SOURCES = \
-	assign.cs			\
+	assign.cs		\
 	attribute.cs		\
-      cfold.cs			\
-	class.cs 			\
-	codegen.cs			\
-	const.cs			\
-	constant.cs			\
+	cfold.cs		\
+	class.cs 		\
+	codegen.cs		\
+	const.cs		\
+	constant.cs		\
 	decl.cs			\
-	delegate.cs			\
-	driver.cs 	 		\
+	delegate.cs		\
+	driver.cs 	 	\
 	enum.cs			\
-	ecore.cs			\
+	ecore.cs		\
 	expression.cs 		\
-	genericparser.cs		\
+	genericparser.cs	\
 	interface.cs		\
-	literal.cs			\
+	literal.cs		\
 	location.cs 		\
 	mb-parser.cs 		\
-	mb-tokenizer.cs 		\
+	mb-tokenizer.cs 	\
 	modifiers.cs 		\
 	namespace.cs		\
 	parameter.cs		\
-	report.cs			\
+	report.cs		\
 	rootcontext.cs		\
 	statement.cs		\
 	statementCollection.cs	\
-	support.cs			\
-	tree.cs 			\
+	support.cs		\
+	tree.cs 		\
 	typemanager.cs
 
 all: mbas.exe
