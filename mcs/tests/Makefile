@@ -83,6 +83,7 @@ TEST_SOURCES_common = \
 	mtest-3-dll mtest-3-exe \
 	mtest-4-dll mtest-4-exe \
 	mtest-5-dll mtest-5-exe \
+	mtest-6-dll mtest-6-exe \
 	test-319-dll test-319-exe \
 	covariance-1 covariance-2 covariance-3 \
 	conv-dll conv-exe \

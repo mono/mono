@@ -102,8 +102,8 @@ namespace Mono.CSharp {
 				
 				mi = TypeContainer.FindMembers (
 					current_type, MemberTypes.Method,
-					BindingFlags.Public | BindingFlags.Instance |
-					BindingFlags.DeclaredOnly,
+					BindingFlags.Public | BindingFlags.NonPublic |
+					BindingFlags.Instance | BindingFlags.DeclaredOnly,
 					virtual_method_filter, null);
 
 				if (current_type == TypeManager.object_type)

@@ -1,3 +1,11 @@
+2005-02-22  Abin Thomas  <projectmonokochi@rediffmail.com>
+	    Anoob V E  <projectmonokochi@rediffmail.com>
+	    Harilal P R  <projectmonokochi@rediffmail.com>
+
+	Fix #71134.
+	* pending.cs (PendingImplementation.GetAbstractMethods):
+	Find NonPublic members too.
+
 2005-02-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs.cs (ConditionalLogicalOperator.DoResolve):

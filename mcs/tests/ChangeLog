@@ -1,3 +1,7 @@
+2005-02-22  Raja R Harinath  <rharinath@novell.com>
+
+	* mtest-6-exe.cs, mtest-6-dll.cs: New test based on #71134.
+
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
 
 	* test-351.cs: New test from #68955.

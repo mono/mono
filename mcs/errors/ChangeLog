@@ -1,7 +1,7 @@
 2005-02-22  Raja R Harinath  <rharinath@novell.com>
 
-	* cs0534-3.cs, cs0534-4.cs, CS0534-3-lib.cs, CS0534-4-lib.cs: New
-	files based on #71134.
+	* cs0115-3.c, cs0534-3.cs, cs0534-4.cs: New files based on #71134.
+	* CS0534-3-lib.cs, CS0534-4-lib.cs: Likewise.
 	* Makefile (all-local): Add CS0534-3-lib.dll and CS0534-4-lib.dll.
 
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
