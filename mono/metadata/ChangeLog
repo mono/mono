@@ -1,3 +1,10 @@
+2005-01-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* debug-mono-symfile.c (mono_debug_open_mono_symbol_file): Use
+	mmap rather than allocating a huge buffer.
+	(mono_debug_close_mono_symbol_file): Free the buffer allocated
+	above.
+
 2005-01-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall.c: Add new internal calls for SecurityManager.SecurityEnabled
