@@ -1,3 +1,8 @@
+2003-12-01  Jackson Harper <jackson@ximian.com>
+
+	* WebControl.cs: Only allow access keys to be null or a single
+	char. Patch by Alon Gazit <along@mainsoft.com>.
+	
 2003-11-30  Jackson Harper <jackson@ximian.com>
 
 	* CheckBoxList.cs: A checkbox will have null post data if it is

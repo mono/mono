@@ -58,6 +58,8 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if (value != null && value.Length > 1)
+					throw new ArgumentOutOfRangeException ("value");
 				ViewState["AccessKey"] = value;
 			}
 		}
