@@ -1,5 +1,20 @@
 2004-05-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSet.cs :
+	  Eliminated CRLF injection.
+	  More clear message in Clear().
+	  Updates reflecting XmlSchemaDataImporter change.
+	  Added duplicate check for XmlSerializerNamespaces in BuildSchema().
+	  Don't use xmlns attribute for UnhandledAttributes (its not mandatory
+	  but that depends on different behavior from ms.net).
+	  Set locale also for DataTable.
+	  Add xs:element only when target namespace matches to the
+	  element's namespace. Otherwise, add xs:import for external namespace.
+	  Put xs:sequence for dataset element's particle _only when_ actual
+	  contents exist.
+
+2004-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDataReader.cs : Added. This class will work better when our
 	  schema inference and schema read engine gets improved. (It contains
 	  standalone testable Driver class.)

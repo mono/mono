@@ -308,7 +308,7 @@ namespace System.Data {
 		public void Clear ()
 		{
 			if (_xmlDataDocument != null)
-				throw new NotSupportedException ("Clear function on dataset and datatable is not supported on XmlDataDocument.");
+				throw new NotSupportedException ("Clear function on dataset and datatable is not supported when XmlDataDocument is bound to the DataSet.");
 			for (int t = 0; t < tableCollection.Count; t++) {
 				tableCollection[t].Clear ();
 			}
@@ -766,7 +766,7 @@ namespace System.Data {
 		public void ReadXmlSchema (XmlReader reader)
 		{
 #if true
-			new XmlSchemaDataImporter (this, reader);
+			new XmlSchemaDataImporter (this, reader).Process ();
 #else
 			XmlSchemaMapper SchemaMapper = new XmlSchemaMapper (this);
 			SchemaMapper.Read (reader);
@@ -1251,6 +1251,24 @@ namespace System.Data {
 			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
 		}
 
+		private void CheckNamespace (string prefix, string ns, XmlNamespaceManager nsmgr, XmlSchema schema)
+		{
+			if (ns == String.Empty)
+				return;
+			if (ns != nsmgr.DefaultNamespace) {
+				if (nsmgr.LookupNamespace (prefix) != ns) {
+					for (int i = 1; i < int.MaxValue; i++) {
+						string p = nsmgr.NameTable.Add ("app" + i);
+						if (!nsmgr.HasNamespace (p)) {
+							nsmgr.AddNamespace (p, ns);
+							HandleExternalNamespace (p, ns, schema);
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
 			return BuildSchema ();
@@ -1265,50 +1283,53 @@ namespace System.Data {
 		{
 			string constraintPrefix = "";
 			XmlSchema schema = new XmlSchema ();
-
-			schema.Namespaces.Add("xs", XmlSchema.Namespace);
-			schema.Namespaces.Add(XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager (new NameTable ());
 			
 			if (Namespace != "") {
 				schema.AttributeFormDefault = XmlSchemaForm.Qualified;
 				schema.ElementFormDefault = XmlSchemaForm.Qualified;
 				schema.TargetNamespace = Namespace;
-				schema.Namespaces.Add(XmlConstants.TnsPrefix, Namespace);
 				constraintPrefix = XmlConstants.TnsPrefix + ":";
 			}
 
-			// Namespaces defined in tables and columns	
-			// FIXME: What if the same prefix is mapped? Create another
-			//        prefix and apply them. (But how?)
-			foreach (DataTable dt in tables) {
-				if (dt.Namespace != String.Empty)
-					schema.Namespaces.Add (dt.Prefix, dt.Namespace);
-				foreach (DataColumn col in dt.Columns)
-					if (col.Namespace != String.Empty)
-						schema.Namespaces.Add (col.Prefix, col.Namespace);
-			}
-
 			// set the schema id
+			string xmlNSURI = "http://www.w3.org/2000/xmlns/";
 			schema.Id = DataSetName;
 			XmlDocument doc = new XmlDocument ();
-			XmlAttribute xmlnsAttr = doc.CreateAttribute("xmlns");
-			xmlnsAttr.Value = Namespace;
+			XmlAttribute attr = null;
+			ArrayList atts = new ArrayList ();
 
-			schema.UnhandledAttributes = new XmlAttribute[] {xmlnsAttr};
+			nsmgr.AddNamespace ("xs", XmlSchema.Namespace);
+			nsmgr.AddNamespace (XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
+			if (Namespace != "") {
+				nsmgr.AddNamespace (XmlConstants.TnsPrefix, Namespace);
+				nsmgr.AddNamespace (String.Empty, Namespace);
+			}
+
+			if (atts.Count > 0)
+				schema.UnhandledAttributes = atts.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
 
 			XmlSchemaElement elem = new XmlSchemaElement ();
 			elem.Name = XmlConvert.EncodeName (DataSetName);
 
-			XmlAttribute[] atts = new XmlAttribute [2];
-			atts[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsDataSet, XmlConstants.MsdataNamespace);
-			atts[0].Value = "true";
+			// Add namespaces used in DataSet components (tables, columns, ...)
+			foreach (DataTable dt in Tables) {
+				foreach (DataColumn col in dt.Columns)
+					CheckNamespace (col.Prefix, col.Namespace, nsmgr, schema);
+				CheckNamespace (dt.Prefix, dt.Namespace, nsmgr, schema);
+			}
 
-			atts[1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Locale, XmlConstants.MsdataNamespace);
-			atts[1].Value = locale.Name;
+			// Attributes for DataSet element
+			atts.Clear ();
+			attr = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsDataSet, XmlConstants.MsdataNamespace);
+			attr.Value = "true";
+			atts.Add (attr);
 
-			elem.UnhandledAttributes = atts;
+			attr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Locale, XmlConstants.MsdataNamespace);
+			attr.Value = locale.Name;
+			atts.Add (attr);
 
-			schema.Items.Add (elem);
+			elem.UnhandledAttributes = atts.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
 
 			XmlSchemaComplexType complex = new XmlSchemaComplexType ();
 			elem.SchemaType = complex;
@@ -1327,14 +1348,28 @@ namespace System.Data {
 					}
 				}
 				
-				if (isTopLevel){
-					choice.Items.Add (GetTableSchema (doc, table));
+				if (isTopLevel) {
+					if (table.Namespace != SafeNS (schema.TargetNamespace)) {
+						XmlSchemaElement extElem = new XmlSchemaElement ();
+						extElem.RefName = new XmlQualifiedName (table.TableName, table.Namespace);
+						choice.Items.Add (extElem);
+					}
+					else
+						choice.Items.Add (GetTableSchema (doc, table, schema, nsmgr));
 				}
 			}
+
+			schema.Items.Add (elem);
 			
 			AddConstraintsToSchema (elem, constraintPrefix, tables, relations);
+			foreach (string prefix in nsmgr) {
+				string ns = nsmgr.LookupNamespace (prefix);
+				if (prefix != "xmlns" && prefix != "xml" && ns != null && ns != String.Empty)
+					schema.Namespaces.Add (prefix, ns);
+			}
 			return schema;
 		}
+		
 		
 		// Add all constraints in all tables to the schema.
 		private void AddConstraintsToSchema (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables, DataRelationCollection relations) 
@@ -1455,7 +1490,7 @@ namespace System.Data {
 			}
 		}
 
-		private XmlSchemaElement GetTableSchema (XmlDocument doc, DataTable table)
+		private XmlSchemaElement GetTableSchema (XmlDocument doc, DataTable table, XmlSchema schemaToAdd, XmlNamespaceManager nsmgr)
 		{
 			ArrayList elements;
 			ArrayList atts;
@@ -1496,7 +1531,6 @@ namespace System.Data {
 				//A sequence of element types or a simple content node
 				//<xs:sequence>
 				XmlSchemaSequence seq = new XmlSchemaSequence ();
-				complex.Particle = seq;
 
 				foreach (DataColumn col in elements) {
 					
@@ -1533,7 +1567,7 @@ namespace System.Data {
 					if (colElem.SchemaTypeName == XmlConstants.QnString && col.DataType != typeof (string) 
 						&& col.DataType != typeof (char)) {
 						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.DataType, XmlConstants.MsdataNamespace);
-						xattr.Value = col.DataType.ToString();
+						xattr.Value = col.DataType.AssemblyQualifiedName;
 						xattrs.Add (xattr);
 					}
 
@@ -1554,10 +1588,23 @@ namespace System.Data {
 					colElem.UnhandledAttributes = (XmlAttribute[])xattrs.ToArray(typeof (XmlAttribute));
 					seq.Items.Add (colElem);
 				}
+				if (seq.Items.Count > 0)
+					complex.Particle = seq;
 
 				foreach (DataRelation rel in table.ChildRelations) {
 					if (rel.Nested) {
-						seq.Items.Add(GetTableSchema (doc, rel.ChildTable));
+						if (rel.ChildTable.Namespace != SafeNS (schemaToAdd.TargetNamespace)) {
+							XmlSchemaElement el = new XmlSchemaElement ();
+							el.RefName = new XmlQualifiedName (rel.ChildTable.TableName, rel.ChildTable.Namespace);
+						} else {
+							XmlSchemaElement el = GetTableSchema (doc, rel.ChildTable, schemaToAdd, nsmgr);
+							XmlSchemaComplexType ct = (XmlSchemaComplexType) el.SchemaType;
+							ct.Name = el.Name;
+							el.SchemaType = null;
+							el.SchemaTypeName = new XmlQualifiedName (ct.Name, schemaToAdd.TargetNamespace);
+							schemaToAdd.Items.Add (ct);
+							seq.Items.Add (el);
+						}
 					}
 				}
 			}
@@ -1567,12 +1614,36 @@ namespace System.Data {
 				//<xs:attribute name=col.ColumnName form="unqualified" type=MappedType/>
 				XmlSchemaAttribute att = new XmlSchemaAttribute ();
 				att.Name = col.ColumnName;
-				att.Form = XmlSchemaForm.Unqualified;
+				if (col.Namespace != String.Empty) {
+					att.Form = XmlSchemaForm.Qualified;
+					string prefix = col.Prefix == String.Empty ? "app" + schemaToAdd.Namespaces.Count : col.Prefix;
+					att.Name = prefix + ":" + col.ColumnName;
+					// FIXME: Handle prefix mapping correctly.
+					schemaToAdd.Namespaces.Add (prefix, col.Namespace);
+				}
 				att.SchemaTypeName = MapType (col.DataType);
 				complex.Attributes.Add (att);
 			}
 
 			return elem;
+		}
+
+		private string SafeNS (string ns)
+		{
+			return ns != null ? ns : String.Empty;
+		}
+
+		private void HandleExternalNamespace (string prefix, string ns, XmlSchema schema)
+		{
+			foreach (XmlSchemaExternal ext in schema.Includes) {
+				XmlSchemaImport imp = ext as XmlSchemaImport;
+				if (imp != null && imp.Namespace == ns)
+					return; // nothing to do
+			}
+			XmlSchemaImport i = new XmlSchemaImport ();
+			i.Namespace = ns;
+			i.SchemaLocation = "_" + prefix + ".xsd";
+			schema.Includes.Add (i);
 		}
 
 		private XmlSchemaSimpleType GetTableSimpleType (XmlDocument doc, DataColumn col)
