@@ -1,3 +1,13 @@
+2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs: return a null ticket when an exception is
+	thrown creating it. Implemented RenewTicketIfOld.
+
+	* FormsAuthenticationModule.cs: implemented event handlers for
+	AuthenticateRequest and EndRequest.
+
+	* FormsAuthenticationTicket.cs: implemented SetDates and Clone methods.
+
 2002-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: implemented GetAuthCookie, SetAuthCookie,

@@ -129,8 +129,9 @@ namespace System.Web.Configuration
 
 		internal string LoginUrl {
 			get {
-				// MS docs says it is default.aspx.
-				// If null others will search for Default.aspx, default.aspx, index.aspx
+				if (loginUrl == null)
+					loginUrl = "login.aspx";
+
 				return loginUrl;
 			}
 			set {

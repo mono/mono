@@ -70,6 +70,23 @@ namespace System.Web.Security
 			this.cookiePath = "/";
 		}
 
+		internal void SetDates (DateTime issueDate, DateTime expiration)
+		{
+			this.issueDate = issueDate;
+			this.expiration = expiration;
+		}
+		
+		internal FormsAuthenticationTicket Clone ()
+		{
+			return new FormsAuthenticationTicket   (version,
+								name,
+								issueDate,
+								expiration,
+								isPersistent,
+								userData,
+								cookiePath);
+		}
+
 		public string CookiePath
 		{
 			get {

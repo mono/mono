@@ -72,6 +72,7 @@ namespace System.Web.Security
 				if (values.Length != 8)
 					throw new Exception (values.Length + " " + encryptedTicket);
 
+
 				ticket = new FormsAuthenticationTicket (Int32.Parse (values [0]),
 									values [1],
 									new DateTime (Int64.Parse (values [2])),
@@ -80,7 +81,7 @@ namespace System.Web.Security
 									values [5],
 									values [6]);
 			} catch (Exception e) {
-				throw new ArgumentException ("Invalid encrypted ticket", "encryptedTicket", e);
+				ticket = null;
 			}
 
 			return ticket;
@@ -229,10 +230,21 @@ namespace System.Web.Security
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public static FormsAuthenticationTicket RenewTicketIfOld (FormsAuthenticationTicket tOld)
 		{
-			throw new NotImplementedException ();
+			if (tOld == null)
+				return null;
+
+			DateTime now = DateTime.Now;
+			TimeSpan toIssue = now - tOld.IssueDate;
+			TimeSpan toExpiration = tOld.Expiration - now;
+			if (toExpiration > toIssue)
+				return tOld;
+
+			FormsAuthenticationTicket tNew = tOld.Clone ();
+			tNew.SetDates (now, now - toExpiration + toIssue);
+			return tNew;
 		}
 
 		public static void SetAuthCookie (string userName, bool createPersistentCookie)
