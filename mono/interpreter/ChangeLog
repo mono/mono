@@ -1,4 +1,8 @@
 
+Fri Aug 24 16:09:20 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: updates for merge of MonoParam in MonoType.
+
 Thu Aug 23 12:04:34 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: removed beforefieldinit check, it's a useless flag.

@@ -1,3 +1,11 @@
+
+Fri Aug 24 15:50:31 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c, class.h, class.c: squeezed MonoParam
+	into MonoType: one less level of indirection and allocation and
+	simplifies quite a bit of code. Added cache for MonoTypes that are
+	used frequently, so that we don't need to allocate them all the time.
+
 2001-08-24  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_create_from_typedef): System.Enum is also a
