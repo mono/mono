@@ -415,8 +415,13 @@ namespace System.Text.RegularExpressions {
 				count = Int32.MaxValue;
 
 			int ptr = startat;
+			Match m = null;
 			while (--count > 0) {
-				Match m = Match (input, ptr);
+				if (m != null)
+					m = m.NextMatch ();
+				else
+					m = Match (input, ptr);
+
 				if (!m.Success)
 					break;
 			

@@ -1,8 +1,21 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* regex.cs: use NextMatch to move on to the next match. Fixes bug
+	#57274.
+
+2004-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* parser.cs : cast.
+
+2004-11-08  Ben Maurer  <bmaurer@ximian.com>
+
+	* replace.cs, parser.cs: Use stringbuilder for allocation sanity.
+
 2004-10-21 Joerg Rosenkranz <joergr@voelcker.com>
 
-    * regex.cs: Fixed a bug introduced with the last patch which
-      prevented any replacements when a postive count is given.
-      This also happens in all overloads without count parameter.
+	* regex.cs: Fixed a bug introduced with the last patch which
+	prevented any replacements when a postive count is given.
+	This also happens in all overloads without count parameter.
 
 2004-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

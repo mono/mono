@@ -59,7 +59,7 @@ namespace System.Text.RegularExpressions {
 
 		private void Compile (string replacement) {
 			replacement = Parser.Unescape (replacement);
-			string literal = "";
+			StringBuilder literal = new StringBuilder ();
 
 			int ptr = 0;
 			char c;
@@ -75,18 +75,18 @@ namespace System.Text.RegularExpressions {
 				}
 
 				if (term != null) {
-					term.Literal = literal;
+					term.Literal = literal.ToString ();
 					terms.Add (term);
 
 					term = null;
-					literal = "";
+					literal.Length = 0;
 				}
 				else
-					literal += c;
+					literal.Append (c);
 			}
 
 			if (term == null && literal.Length > 0) {
-				terms.Add (new Term (literal));
+				terms.Add (new Term (literal.ToString ()));
 			}
 		}
 

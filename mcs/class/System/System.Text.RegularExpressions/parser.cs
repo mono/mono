@@ -1048,7 +1048,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			this.pattern = pattern;
 			this.ptr = 0;
 
-			string result = "";
+			StringBuilder result = new StringBuilder (pattern.Length);
 			while (ptr < pattern.Length) {
 				int c = pattern[ptr ++];
 				if (c == '\\') {
@@ -1060,10 +1060,10 @@ namespace System.Text.RegularExpressions.Syntax {
 							c = '\b';
 					}
 				}
-				result += (char)c;
+				result.Append ((char) c);
 			}
 
-			return result;
+			return result.ToString ();
 		}
 
 		private void ResolveReferences () {
