@@ -271,10 +271,10 @@ namespace System.Web
 		/// URL path to the page.
 		/// </summary>
 		/// <param name="path">The URL path of the new page on the server to execute. </param>
-		[MonoTODO()]
 		public void Transfer (string path)
 		{
-			throw new NotImplementedException ();
+			Execute (path);
+			_Context.Response.End ();
 		}
 
 		/// <summary>
@@ -284,10 +284,10 @@ namespace System.Web
 		/// <param name="path">The URL path of the new page on the server to execute. </param>
 		/// <param name="preserveForm">If true, the QueryString and Form collections are preserved. If false,
 		/// they are cleared. The default is false. </param>
-		[MonoTODO()]
-		public void Transfer(string path, bool preserveForm)
+		[MonoTODO("Figure out how to preserve form data")]
+		public void Transfer (string path, bool preserveForm)
 		{
-			throw new NotImplementedException ();
+			Transfer (path);
 		}
 
 		/// <summary>

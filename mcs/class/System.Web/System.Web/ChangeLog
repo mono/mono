@@ -1,3 +1,7 @@
+2003-03-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpServerUtility.cs: implemented Transfer ().
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntime.cs: Cache no longer have a Dispose method.
