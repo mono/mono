@@ -24,20 +24,17 @@ convention is that assemblies must also be placed in a separate
 directory for being accessed to the compiler.  This is done with the
 -package directive to gacutil.
 .PP
-The tool allows for installationl, removal, and listing of the
+The tool allows for installation, removal, and listing of the
 contents of the assembly cache.
 .PP
 The GAC is relative to the Mono installation prefix:
 mono_prefix/lib/mono.
-.SH FLAGS
-The "-user" flag enables you to install/remove the assembly into the
-user's assembly cache, as opposed to the global one.
 .PP
 .SH COMMANDS
-.I "-i path_to_assembly" [-f] [-root ROOTDIR] [-package NAME]
+.I -i <assembly_path> [-check_refs] [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]
 .Sp
-The above installs the assembly into the GAC, use the -f flag to force
-an installation an overwrite anything in there.  
+ Installs an assembly into the global assembly cache. <assembly_path>
+is the name of the file that contains the assembly manifest
 .Sp
 The -package option can be used to also create a directory in in
 prefix/lib/mono with the name NAME, and a symlink is created from
@@ -47,18 +44,32 @@ developers can reference a set of libraries at once.
 The -root option is used by developers integrating this with automake
 tools or packaging tools that require a prefix directory to be
 specified.  The root represents the "libdir" component of a prefix
-(typically prefix/lib).  
+(typically prefix/lib).
+.Sp
+The -gacdir option is used to specify the GACs base directory. Once an
+assembly has been installed to a non standard gacdir the MONO_GAC_PATH
+environment variable must be used to access the assembly.
+.Sp
+The -check_refs option is used to ensure that the assembly being
+installed into the GAC does not reference any non strong named
+assemblies. Assemblies being installed to the GAC should not reference
+non strong named assemblies, however the is an optional check.
 .fi
 .PP
-.I "-l"
+.I "-l" [assembly_name] [-root ROOTDIR] [-gacdir GACDIR]
 .Sp
-Lists the contents of the Global Assembly Cache
+Lists the contents of the global assembly cache. When the
+<assembly_name> parameter is specified only matching assemblies are
+listed.
 .PP
-.I "-u assembly_name [-root]"
+.I "-u" <assembly_display_name> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]
 .Sp
-The above removes the given assembly name from the Global Assembly
-Cache.  As opposed to the install option that takes a filename, this
-takes as an argument the assembly name, which looks like this:
+Uninstalls an assembly from the global assembly cache.
+<assembly_display_name> is the name of the assembly (partial or
+fully qualified) to remove from the global assembly cache. If a
+partial name is specified all matching assemblies will be
+uninstalled. As opposed to the install option that takes a filename,
+this takes as an argument the assembly name, which looks like this:
 .nf
 	MyLibrary.Something, version=1.0.0.0, publicKeyToken=xxxx,culture=neutral
 .fi
@@ -69,6 +80,29 @@ to quote them.
 The removal performs a greedy removal, if you only specifiy one
 component like, "MyLibrary.Something", it will remove all versions of
 the library.
+.Sp
+.I "-us" <assembly_path> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]
+Uninstalls an assembly using the specifed assemblies full name.
+<assembly path> is the path to an assembly. The full assembly name
+is retrieved from the specified assembly if there is an assembly in
+the GAC with a matching name, it is removed. Unlike the -u option this
+option takes a file name, like this:
+.nf
+        Example: -us myDll.dll
+.fi
+.Sp
+.I "-ul" <assembly_list_file> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]
+Uninstalls one or more assemblies from the global assembly cache.
+<assembly_list_file> is the path to a test file containing a list of
+assembly names on separate lines.
+.nf
+Example -ul assembly_list.txt
+.fi
+.nf
+assembly_list.txt contents:
+    assembly1,Version=1.0.0.0,Culture=en,PublicKeyToken=0123456789abcdef
+    assembly2,Version=2.0.0.0,Culture=en,PublicKeyToken=0123456789abcdef
+.fi
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
