@@ -23,9 +23,12 @@ namespace System.IO.IsolatedStorage
                 protected static IsolatedStorageScope storage_scope;
 
 		// Properties
-                [MonoTODO]
+		[MonoTODO ("Code Identity is CAS related")]
 		public object AssemblyIdentity {
-			get {return null;}                        
+			get {
+				throw new NotImplementedException (
+					Locale.GetText ("CAS related")); 
+			}
 		}
 
 		[CLSCompliant (false)]
@@ -36,9 +39,12 @@ namespace System.IO.IsolatedStorage
                         }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Code Identity is CAS related")]
 		public object DomainIdentity {
-			get {return null;}
+			get {
+				throw new NotImplementedException (
+					Locale.GetText ("CAS related")); 
+			}
 		}
 
 		[CLSCompliant (false)]
@@ -64,11 +70,12 @@ namespace System.IO.IsolatedStorage
 		// Methods
 		protected abstract IsolatedStoragePermission GetPermission (PermissionSet ps);
 
-		[MonoTODO]
+		[MonoTODO ("Evidences are CAS related")]
 		protected void InitStore (
                         IsolatedStorageScope scope, Type domainEvidenceType,
                         Type assemblyEvidenceType)
 		{
+			// no exception here because this can work without CAS
 		}
 
 		public abstract void Remove ();

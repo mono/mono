@@ -3,21 +3,22 @@
 // Sean MacIsaac (macisaac@ximian.com)
 //
 // (C) 2001 Ximian, Inc.
+// (C) 2004 Novell (http://www.novell.com)
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 
 namespace System.IO.IsolatedStorage {
 
-	[MonoTODO]
 	public class IsolatedStorageFileStream : FileStream
 	{
 		private static string CreateIsolatedPath (string path)
 		{
 			string dir = IsolatedStorageInfo.CreateAssemblyFilename (Assembly.GetEntryAssembly());
 
-			string file = dir + "/" + path;
+			string file = Path.Combine (dir, path);
 
 			// Ensure that the file can be created.
 			FileInfo fi = new FileInfo (file);
@@ -80,7 +81,10 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		public override IntPtr Handle {
-			get {return base.Handle;}
+			get {
+				throw new IsolatedStorageException (
+					Locale.GetText ("Information is restricted"));
+			}
 		}
 
 		public override bool IsAsync {

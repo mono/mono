@@ -31,7 +31,7 @@ namespace System.IO.IsolatedStorage
 		}
 
 		[CLSCompliant(false)]
-                [MonoTODO("The IsolatedStorage area should be limited, to prevent DOS attacks.  What's a reasonable size?")]
+                [MonoTODO ("The IsolatedStorage area should be limited, to prevent DOS attacks.  What's a reasonable size?")]
 		public override ulong MaximumSize {
 			get {return ulong.MaxValue;}
 		}
@@ -43,7 +43,7 @@ namespace System.IO.IsolatedStorage
 			return a.GetEnumerator ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Functional but missing CAS support")]
 		public static IsolatedStorageFile GetStore (
 			IsolatedStorageScope scope,
 			System.Security.Policy.Evidence domainEvidence,
@@ -54,7 +54,7 @@ namespace System.IO.IsolatedStorage
 			return GetStore (scope);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Functional but missing CAS support")]
 		public static IsolatedStorageFile GetStore (
 			IsolatedStorageScope scope,
 			object domainIdentity,
@@ -63,7 +63,7 @@ namespace System.IO.IsolatedStorage
 			return GetStore (scope);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Functional but missing CAS support")]
 		public static IsolatedStorageFile GetStore (
 			IsolatedStorageScope scope,
 			Type domainEvidenceType,
@@ -165,7 +165,7 @@ namespace System.IO.IsolatedStorage
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Permissions are CAS related")]
 		protected override IsolatedStoragePermission GetPermission (PermissionSet ps)
 		{
 			throw new NotImplementedException ();
