@@ -36,7 +36,6 @@ namespace System.Drawing.Printing
 		public virtual Graphics OnStartPage (PrintDocument document, PrintPageEventArgs e)
 		{
 			throw new NotImplementedException();
-			return null;
 		}
 	}
 }
