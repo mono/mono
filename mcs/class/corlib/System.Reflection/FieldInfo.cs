@@ -24,7 +24,7 @@ namespace System.Reflection {
 		public abstract FieldAttributes Attributes {get;}
 		public abstract RuntimeFieldHandle FieldHandle {get;}
 
-		internal FieldInfo () {}
+		protected FieldInfo () {}
 		
 		public abstract Type FieldType { get; }
 

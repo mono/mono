@@ -1,3 +1,8 @@
+2004-05-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* FieldInfo.cs: changed default constructor from internal to protected, so classes
+	that inherit from it can get build. 
+
 2004-05-18  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* MonoProperty.cs: return correct MethodInfo for 
