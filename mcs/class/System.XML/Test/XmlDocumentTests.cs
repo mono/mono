@@ -8,6 +8,7 @@ namespace Ximian.Mono.Tests
 {
 	public class XmlDocumentTests : TestCase
 	{
+		public XmlDocumentTests() : base("Ximian.Mono.Tests.XmlDocumentTests testsuite") { }
 		public XmlDocumentTests(string name) : base(name) { }
 
 		public void TestDocumentElement()

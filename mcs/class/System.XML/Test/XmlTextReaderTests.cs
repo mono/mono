@@ -19,6 +19,7 @@ namespace Ximian.Mono.Tests
 {
 	public class XmlTextReaderTests : TestCase
 	{
+		public XmlTextReaderTests() : base("Ximian.Mono.Tests.XmlTextReaderTests testsuite") { }
 		public XmlTextReaderTests(string name) : base(name) { }
 
 		private void AssertStartDocument(XmlReader xmlReader)

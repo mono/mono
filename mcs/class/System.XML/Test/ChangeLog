@@ -1,3 +1,10 @@
+2002-02-27  Martin Baulig  <martin@gnome.org>
+
+	* System.XML_test.build: Build new executable RunTests.System.XML.exe
+	which you can use to run the tests on Linux.
+
+	* *.cs: Added zero-args constructors.
+
 2002-02-26  Duncan Mak  <duncan@ximian.com>
 
 	* NameTableTests.cs: Test for System.Xml.NameTable.

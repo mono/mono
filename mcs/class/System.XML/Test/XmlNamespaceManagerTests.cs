@@ -18,6 +18,7 @@ namespace Ximian.Mono.Tests
 {
 	public class XmlNamespaceManagerTests : TestCase
 	{
+		public XmlNamespaceManagerTests() : base("Ximian.Mono.Tests.XmlNameSpaceManagerTests testsuite") { }
 		public XmlNamespaceManagerTests(string name) : base(name) { }
 
 		private XmlNamespaceManager _NamespaceManager;
