@@ -334,7 +334,24 @@ namespace MonoTests.System.Data
                                                                                                     
                         rowC.SetParentRow (table.Rows [0], dr);
                                                                                                     
-                        AssertEquals ("#A44", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
+                        AssertEquals ("#PRT-01", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
+                        AssertEquals ("#PRT-02", tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0]);
+
+                        ds.Relations.Clear ();
+                        dr = new DataRelation ("PO", table.Columns ["Id"], tableC.Columns ["Id"], false);
+                        ds.Relations.Add (dr);
+                        rowC.SetParentRow (table.Rows [0], dr);
+                        AssertEquals ("#PRT-03", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
+                        AssertEquals ("#PRT-04", tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0]);
+
+                        ds.Relations.Clear ();
+                        dr = new DataRelation ("PO", table.Columns ["Id"], tableC.Columns ["Id"], false);
+                        tableC.ParentRelations.Add (dr);
+                        rowC.SetParentRow (table.Rows [0]);
+                        AssertEquals ("#PRT-05", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
+                        AssertEquals ("#PRT-06", tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0]);
+
+
                 } 
 
 

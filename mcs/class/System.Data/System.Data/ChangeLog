@@ -1,3 +1,11 @@
+2005-02-01  Sureshkumar T  <tsureshkumar@novell.com>
+	    Ankit Jain     <radical@corewars.org>
+
+        * DataRow.cs: SetParentRow (): use relation.ParentColumns &
+	relation.ChildColumns instead of relation.ChildKeyConstraint.*
+	because createConstrains flag may be false when creating data
+	relations.
+
 2005-01-28  Sureshkumar T  <tsureshkumar@novell.com>
 
         * DataRow.cs: CopyValuesToRow : set the column value with the

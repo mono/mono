@@ -1,3 +1,9 @@
+2005-02-01  Sureshkumar T  <tsureshkumar@novell.com>
+	    Ankit Jain     <radical@corewars.org>
+
+	* DataRowTest.cs: Added case for SetparentRow: create
+	DataRelations with createConstraints=false.
+	
 2005-01-28  Sureshkumar T  <tsureshkumar@novell.com>
                                                                                                                              
         * DataTableTest.cs: added test case for checking ImportRow when
