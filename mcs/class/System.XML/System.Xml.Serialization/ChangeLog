@@ -1,3 +1,8 @@
+2003-08-12  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializationWriterInterpreter.cs: any element members can be serialized
+	  as text nodes. Support it.
+
 2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* CodeIdentifier.cs: Fixed MakeValid method.

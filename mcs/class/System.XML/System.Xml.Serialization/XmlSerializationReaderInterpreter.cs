@@ -186,7 +186,7 @@ namespace System.Xml.Serialization
 								SetMemberValue (map.NamespaceDeclarations, ob, nss, isValueList);
 							}
 							if (Reader.Prefix == "xmlns")
-nss.Add (Reader.LocalName, Reader.Value);
+								nss.Add (Reader.LocalName, Reader.Value);
 							else
 								nss.Add ("", Reader.Value);
 						}
@@ -311,11 +311,10 @@ nss.Add (Reader.LocalName, Reader.Value);
 				}
 				else if (Reader.NodeType == System.Xml.XmlNodeType.Text && map.XmlTextCollector != null)
 				{
-					if (map.XmlTextCollector.GetType() == typeof (XmlTypeMapMemberFlatList))
+					if (map.XmlTextCollector is XmlTypeMapMemberExpandable)
 					{
-						XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)map.XmlTextCollector;
-						XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ListMap.ItemInfo [0];
-						object val = (info.TypeData.Type == typeof (string)) ? (object) Reader.ReadString() : (object) ReadXmlNode (false);
+						XmlTypeMapMemberExpandable mem = (XmlTypeMapMemberExpandable)map.XmlTextCollector;
+						object val = (mem.TypeData.ListItemType == typeof (string)) ? (object) Reader.ReadString() : (object) ReadXmlNode (false);
 						AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, val, true);
 					}
 					else
