@@ -259,6 +259,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Cursor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DialogResult.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -781,6 +786,11 @@
                 <File
                     RelPath = "UICuesEventHandler.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UserControl.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
