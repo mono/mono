@@ -1,3 +1,8 @@
+2003-11-10  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Rfc2898DeriveBytesTest.cs: New. Unit tests for Rfc2898DeriveBytes
+	and test vectors from RFC3211.
+
 2003-11-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* HMACMD5Test.cs: New. Unit test for HMAC-MD5 with test vectors from 
