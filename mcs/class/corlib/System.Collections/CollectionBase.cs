@@ -82,7 +82,13 @@ namespace System.Collections {
 			newPosition = InnerList.Count;
 			OnInsert(newPosition, value);
 			InnerList.Add(value);
-			OnInsertComplete(newPosition, value);
+			try {
+				OnInsertComplete(newPosition, value);
+			} catch {
+				InnerList.RemoveAt (newPosition);
+				throw;
+			}
+			
 			return newPosition;
 		}
 		
@@ -98,13 +104,20 @@ namespace System.Collections {
 			OnValidate(value);
 			OnInsert(index, value);
 			InnerList.Insert(index, value);
-			OnInsertComplete(index, value);
+			try {
+				OnInsertComplete(index, value);
+			} catch {
+				InnerList.RemoveAt (index);
+				throw;
+			}
 		}
 
 		void IList.Remove (object value) {
 			int removeIndex;
 			OnValidate(value);
 			removeIndex = InnerList.IndexOf(value);
+			if (removeIndex == -1)
+				throw new ArgumentException ("The element cannot be found.", "value");
 			OnRemove(removeIndex, value);
 			InnerList.Remove(value);
 			OnRemoveComplete(removeIndex, value);
@@ -122,6 +135,9 @@ namespace System.Collections {
 		object IList.this[int index] { 
 			get { return InnerList[index]; }
 			set { 
+				if (index < 0 || index >= InnerList.Count)
+					throw new ArgumentOutOfRangeException ("index");
+
 				object oldValue;
 				// make sure we have been given a valid value
 				OnValidate(value);

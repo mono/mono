@@ -2647,7 +2647,7 @@ namespace System.Collections
 		/// <summary>
 		/// <see cref="IList.IsFixedSize"/>
 		/// </summary>
-		/// <remarks>
+		/// <remarks/>
 		public virtual bool IsFixedSize 
 		{
 			get 
