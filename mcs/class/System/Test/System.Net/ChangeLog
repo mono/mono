@@ -1,5 +1,9 @@
 2005-01-10  Nick Drochak  <ndrochak@ieee.org>
 
+	* IPAddressTest.cs: Make tests pass on Fx1.1
+
+2005-01-10  Nick Drochak  <ndrochak@ieee.org>
+
 	* SocketPermissionAttributeTest.cs: Do not run tests on .NET where there
 	are bugs in the framework.
 	* WebPermissionAttributeTest.cs: Assuming these all pass on Fx2.0, so

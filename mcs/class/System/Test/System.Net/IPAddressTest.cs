@@ -70,20 +70,20 @@ public class IPAddressTest
 												   "0.0.0.0",					IPAddress.Any.ToString(),
 												   "255.255.255.255",			IPAddress.Broadcast.ToString(),
 												   "12.1.1.3 ",					"12.1.1.3",
-												   " 12.1.1.1",					"0.0.0.0",
 												   "12.1 .1.2",					"12.0.0.1",
-												   ".1.1.6",					"0.1.1.6",
 												   "12.1.7",					"12.1.0.7",
-												   "12.1.8. ",					"12.1.8.0",
 												   "12",						"0.0.0.12",
 												   "12.1 foo.1.2.3.4.5.bar",	"12.0.0.1",		
-												   "12.1.2. ",					"12.1.2.0",		
-												   "12.. .",					"12.0.0.0",	
-												   " ",							"0.0.0.0",		
-												   " foo",						"0.0.0.0"
+												   " ",							"0.0.0.0"	
 											   };
 
 	static object[] ipv4ParseWrong = new object[] {
+													  " foo",		typeof(FormatException),
+													  "12.. .",		typeof(FormatException),
+													  "12.1.2. ",	typeof(FormatException),
+													  "12.1.8. ",	typeof(FormatException),
+													  ".1.1.6",		typeof(FormatException),
+													  " 12.1.1.1",	typeof(FormatException),
 													  "12.+1.1.4",	typeof(FormatException),
 													  "12.1.-1.5",	typeof(FormatException), 
 													  "257.1.1.9",	typeof(FormatException), 
@@ -195,8 +195,16 @@ public class IPAddressTest
 	public void ParseOk ()
 	{
 		for(int i=0; i<ipv4ParseOk.Length / 2; i++) {
-			IPAddress ip = IPAddress.Parse (ipv4ParseOk [i*2]);
-			Assertion.Assert ("ParseIPv4 #" + i, ip.ToString () == ipv4ParseOk [i*2+1]);
+			IPAddress ip;
+			try
+			{
+				ip = IPAddress.Parse (ipv4ParseOk [i*2]);
+				Assertion.Assert ("ParseIPv4 #" + i, ip.ToString () == ipv4ParseOk [i*2+1]);
+			}
+			catch
+			{
+				Assertion.Fail ("Cannot parse test i=" + i + ": '" + ipv4ParseOk [i*2] + "'");
+			}
 		}
 
 #if NET_1_1
