@@ -5,6 +5,12 @@
 
 	* WebConnectionStream.cs: new RequestWritten property.
 
+2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* WebHeaderCollection.cs: Fix GetValues(string) to split the values on
+	  commas if the header is a Multi-Value header.  This matches
+	  MonoTests.System.Net.WebHeaderCollectionTest.
+
 2004-12-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: remove unneeded check. Write detects and
