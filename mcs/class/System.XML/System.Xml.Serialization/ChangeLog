@@ -1,5 +1,9 @@
 2003-06-11  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* XmlSerializationReader.cs: Minor fix.
+
+2003-06-11  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlSerializationReader.cs, XmlSerializationReaderInterpreter.cs: Minor fixes.
 
 2003-06-10  Lluis Sanchez Gual <lluis@ximian.com>

@@ -502,9 +502,11 @@ namespace System.Xml.Serialization {
 
 			// Registers delayed list
 			
-			foreach (DictionaryEntry entry in delayedListFixups)
-				AddTarget ((string)entry.Key, entry.Value);
-			
+			if (delayedListFixups != null)
+			{
+				foreach (DictionaryEntry entry in delayedListFixups)
+					AddTarget ((string)entry.Key, entry.Value);
+			}
 			// Fix arrays
 
 			if (collItemFixups != null)
