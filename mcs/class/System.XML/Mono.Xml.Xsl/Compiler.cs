@@ -373,7 +373,7 @@ namespace Mono.Xml.Xsl {
 							nav.NamespaceURI == (isXslt ? String.Empty : XsltNamespace))
 						{
 							foreach (string ns in nav.Value.Split (' ')) {
-								if (ret [ns] == nsScope.GetNamespace (ns == "#default" ? "" : ns))
+								if ((string)ret [ns] == nsScope.GetNamespace (ns == "#default" ? "" : ns))
 									ret.Remove (ns);
 							}
 						}
