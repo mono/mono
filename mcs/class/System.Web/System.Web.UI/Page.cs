@@ -57,6 +57,7 @@ public class Page : TemplateControl, IHttpHandler
 	private NameValueCollection secondPostData;
 	private bool requiresPostBackScript = false;
 	private bool postBackScriptRendered = false;
+	private Hashtable registeredArrayDeclares;
 	Hashtable clientScriptBlocks;
 	Hashtable startupScriptBlocks;
 	Hashtable hiddenFields;
@@ -538,6 +539,31 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
 	{
+		if (registeredArrayDeclares != null) {
+			writer.WriteLine();
+			writer.WriteLine("<script language=\"javascript\">");
+			writer.WriteLine("<!--");
+			IDictionaryEnumerator arrayEnum = registeredArrayDeclares.GetEnumerator();
+			while (arrayEnum.MoveNext()) {
+				writer.Write("\tvar ");
+				writer.Write(arrayEnum.Key);
+				writer.Write(" =  new Array(");
+				IEnumerator arrayListEnum = ((ArrayList) arrayEnum.Value).GetEnumerator();
+				bool isFirst = true;
+				while (arrayListEnum.MoveNext()) {
+					if (isFirst)
+						isFirst = false;
+					else
+						writer.Write(", ");
+					writer.Write(arrayListEnum.Current);
+				}
+				writer.WriteLine(");");
+			}
+			writer.WriteLine("// -->");
+			writer.WriteLine("</script>");
+			writer.WriteLine();
+		}
+
 		if (!postBackScriptRendered && requiresPostBackScript)
 			RenderPostBackScript (writer, formUniqueID);
 
@@ -698,11 +724,16 @@ public class Page : TemplateControl, IHttpHandler
 		sourceControl.RaisePostBackEvent (eventArgument);
 	}
 	
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterArrayDeclaration (string arrayName, string arrayValue)
 	{
-		throw new NotImplementedException ();
+		if (registeredArrayDeclares == null)
+			registeredArrayDeclares = new Hashtable();
+
+		if (!registeredArrayDeclares.ContainsKey (arrayName))
+			registeredArrayDeclares.Add (arrayName, new ArrayList());
+
+		((ArrayList) registeredArrayDeclares[arrayName]).Add(arrayValue);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]

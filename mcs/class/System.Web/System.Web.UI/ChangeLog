@@ -1,3 +1,8 @@
+2003-12-02  Jackson Harper <jackson@ximian.com>
+
+	* Page.cs: Implemented registered array declarations. Patch by
+	Benjamin Jemlich <pcgod@gmx.net>
+	
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: basic check for 'classname' attribute and added
