@@ -140,7 +140,7 @@ namespace System.IO {
 		}
 
 		public override string ToString () {
-			return OriginalPath;
+			return Name;
 		}
 	}
 }
