@@ -1,3 +1,11 @@
+2003-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XslTransform.cs: implemented all Load and Transform methods. It uses
+	libxml2 and libxslt. No more temp files. It's slow and memory consuming,
+	but, well, that's XSLT... ;-). Idea from Zdravko Tashev.
+
+	Now the Xsl web control works.
+
 2002-09-23  Duncan Mak  <duncan@ximian.com>
 
 	* XslTransform.cs (Laod): Implemented the simple version that

@@ -1,7 +1,12 @@
 // System.Xml.Xsl.XslTransform
 //
-// Author: Tim Coleman <tim@timcoleman.com>
+// Authors:
+//	Tim Coleman <tim@timcoleman.com>
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
 // (C) Copyright 2002 Tim Coleman
+// (c) 2003 Ximian Inc. (http://www.ximian.com)
+//
 
 using System;
 using System.Xml.XPath;
@@ -17,13 +22,14 @@ namespace System.Xml.Xsl
 		#region Fields
 
 		XmlResolver xmlResolver;
-		string stylesheet_file;
+		IntPtr stylesheet;
+
 		#endregion
 
 		#region Constructors
 		public XslTransform ()
 		{
-			stylesheet_file = String.Empty;
+			stylesheet = IntPtr.Zero;
 		}
 
 		#endregion
@@ -38,6 +44,14 @@ namespace System.Xml.Xsl
 
 		#region Methods
 
+		void FreeStylesheetIfNeeded ()
+		{
+			if (stylesheet != IntPtr.Zero) {
+				xsltFreeStylesheet (stylesheet);
+				stylesheet = IntPtr.Zero;
+			}
+		}
+		
 		// Loads the XSLT stylesheet contained in the IXPathNavigable.
 		public void Load (IXPathNavigable stylesheet)
 		{
@@ -47,148 +61,269 @@ namespace System.Xml.Xsl
 		// Loads the XSLT stylesheet specified by a URL.
 		public void Load (string url)
 		{
-			stylesheet_file = url;
+			if (url == null)
+				throw new ArgumentNullException ("url");
+
+			FreeStylesheetIfNeeded ();
+			stylesheet = xsltParseStylesheetFile (url);
+			Cleanup ();
+			if (stylesheet == IntPtr.Zero)
+				throw new XmlException ("Error creating stylesheet");
+		}
+
+		static IntPtr GetStylesheetFromString (string xml)
+		{
+			IntPtr result = IntPtr.Zero;
+
+			IntPtr xmlDoc = xmlParseDoc (xml);
+
+			if (xmlDoc == IntPtr.Zero) {
+				Cleanup ();
+				throw new XmlException ("Error parsing stylesheet");
+			}
+				
+			result = xsltParseStylesheetDoc (xmlDoc);
+			xmlFreeDoc (xmlDoc);
+			Cleanup ();
+			if (result == IntPtr.Zero)
+				throw new XmlException ("Error creating stylesheet");
+
+			return result;
 		}
 
 		// Loads the XSLT stylesheet contained in the XmlReader
 		public void Load (XmlReader stylesheet)
 		{
-			stylesheet_file = Path.GetTempFileName ();
-			Save (stylesheet, stylesheet_file);
+			FreeStylesheetIfNeeded ();
+			// Create a document for the stylesheet
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (stylesheet);
+			
+			// Store the XML in a StringBuilder
+			StringWriter sr = new UTF8StringWriter ();
+			XmlTextWriter writer = new XmlTextWriter (sr);
+			doc.Save (writer);
+
+			this.stylesheet = GetStylesheetFromString (sr.GetStringBuilder ().ToString ());
 		}
 
 		// Loads the XSLT stylesheet contained in the XPathNavigator
 		public void Load (XPathNavigator stylesheet)
 		{
-			stylesheet_file = Path.GetTempFileName ();
-			Save (stylesheet, stylesheet_file);
+			FreeStylesheetIfNeeded ();
+			StringWriter sr = new UTF8StringWriter ();
+			Save (stylesheet, sr);
+			this.stylesheet = GetStylesheetFromString (sr.GetStringBuilder ().ToString ());
 		}
 
-		[MonoTODO]
+		[MonoTODO("use the resolver")]
 		// Loads the XSLT stylesheet contained in the IXPathNavigable.
 		public void Load (IXPathNavigable stylesheet, XmlResolver resolver)
 		{
-			throw new NotImplementedException ();
+			Load (stylesheet);
 		}
 
-		[MonoTODO]
+		[MonoTODO("use the resolver")]
 		// Loads the XSLT stylesheet specified by a URL.
 		public void Load (string url, XmlResolver resolver)
 		{
-			throw new NotImplementedException ();
+			Load (url);
 		}
 
-		[MonoTODO]
+		[MonoTODO("use the resolver")]
 		// Loads the XSLT stylesheet contained in the XmlReader
 		public void Load (XmlReader stylesheet, XmlResolver resolver)
 		{
-			throw new NotImplementedException ();
+			Load (stylesheet);
 		}
 
-		[MonoTODO]
+		[MonoTODO("use the resolver")]
 		// Loads the XSLT stylesheet contained in the XPathNavigator
 		public void Load (XPathNavigator stylesheet, XmlResolver resolver)
 		{
-			throw new NotImplementedException ();
+			Load (stylesheet);
 		}
 
-		[DllImport ("libxslt.so")]
-		static extern IntPtr xsltParseStylesheetFile (string filename);
-
-		[DllImport ("libxslt.so")]
-		static extern IntPtr xsltApplyStylesheet (IntPtr stylePtr, IntPtr DocPtr, string [] parameters);
-
-		[DllImport ("libxslt.so")]
-		static extern IntPtr xmlNewDoc (string version);
-
-		[DllImport ("libxslt.so")]
-		static extern IntPtr xmlParseFile (string filename);
-
-		[DllImport ("libxslt.so")]
-		static extern int xmlSaveFile (string filename, IntPtr cur);
-
-		[MonoTODO]
 		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to an XmlReader.
 		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args)
 		{
-			throw new NotImplementedException ();
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			return Transform (input.CreateNavigator (), args);
 		}
 
-		[MonoTODO]
 		// Transforms the XML data in the input file and outputs
 		// the result to an output file.
 		public void Transform (string inputfile, string outputfile)
 		{
-			IntPtr xmlDocument = xmlParseFile (inputfile);
-			IntPtr xmlStylesheet = xsltParseStylesheetFile (stylesheet_file);
-			IntPtr xmlOutput = xmlNewDoc ("1.0");
-			string [] parameters = new string [] {};
+			IntPtr xmlDocument = IntPtr.Zero;
+			IntPtr resultDocument = IntPtr.Zero;
 
-			xmlOutput = xsltApplyStylesheet (xmlStylesheet, xmlDocument, parameters);
-			
-			xmlSaveFile (outputfile, xmlOutput);
+			try {
+				xmlDocument = xmlParseFile (inputfile);
+				if (xmlDocument == IntPtr.Zero)
+					throw new XmlException ("Error parsing input file");
+
+				resultDocument = ApplyStylesheet (xmlDocument);
+				/*
+				* If I do this, the <?xml version=... is always present *
+				if (-1 == xsltSaveResultToFilename (outputfile, resultDocument, stylesheet, 0))
+					throw new XmlException ("Error xsltSaveResultToFilename");
+				*/
+				StreamWriter writer = new StreamWriter (File.OpenWrite (outputfile));
+				writer.Write (GetStringFromDocument (resultDocument));
+				writer.Close ();
+			} finally {
+				if (xmlDocument != IntPtr.Zero);
+					xmlFreeDoc (xmlDocument);
+
+				if (resultDocument != IntPtr.Zero);
+					xmlFreeDoc (resultDocument);
+
+				Cleanup ();
+			}
 		}
 
-		[MonoTODO]
+		IntPtr ApplyStylesheet (IntPtr doc)
+		{
+			if (stylesheet == IntPtr.Zero)
+				throw new XmlException ("No style sheet!");
+
+			IntPtr result = xsltApplyStylesheet (stylesheet, doc, IntPtr.Zero);
+			if (result == IntPtr.Zero)
+				throw new XmlException ("Error applying style sheet");
+
+			return result;
+		}
+
+		static void Cleanup ()
+		{
+			xsltCleanupGlobals ();
+			xmlCleanupParser ();
+		}
+
+		static string GetStringFromDocument (IntPtr doc)
+		{
+			IntPtr mem = IntPtr.Zero;
+			int size = 0;
+			xmlDocDumpMemory (doc, ref mem, ref size);
+			if (mem == IntPtr.Zero)
+				throw new XmlException ("Error dumping document");
+
+			string docStr = Marshal.PtrToStringAnsi (mem, size);
+			// FIXME: Using xmlFree segfaults :-???
+			//xmlFree (mem);
+			Marshal.FreeHGlobal (mem);
+			//
+
+			// Get rid of the <?xml...
+			// FIXME: any other (faster) way that works?
+			StringReader result = new StringReader (docStr);
+			result.ReadLine (); // we want the semantics of line ending used here
+			//
+			return result.ReadToEnd ();
+		}
+
+		string ApplyStylesheetAndGetString (IntPtr doc)
+		{
+			IntPtr xmlOutput = ApplyStylesheet (doc);
+			string strOutput = GetStringFromDocument (xmlOutput);
+			xmlFreeDoc (xmlOutput);
+
+			return strOutput;
+		}
+
+		IntPtr GetDocumentFromNavigator (XPathNavigator nav)
+		{
+			StringWriter sr = new UTF8StringWriter ();
+			Save (nav, sr);
+			IntPtr xmlInput = xmlParseDoc (sr.GetStringBuilder ().ToString ());
+			if (xmlInput == IntPtr.Zero)
+				throw new XmlException ("Error getting XML from input");
+
+			return xmlInput;
+		}
+
+		[MonoTODO("args")]
 		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to an XmlReader.
 		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
 		{
-			throw new NotImplementedException ();
+			IntPtr xmlInput = GetDocumentFromNavigator (input);
+			string xslOutputString = ApplyStylesheetAndGetString (xmlInput);
+			xmlFreeDoc (xmlInput);
+			Cleanup ();
+
+			return new XmlTextReader (xslOutputString);
 		}
 
-		[MonoTODO]
 		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to a Stream.
 		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output)
 		{
-			throw new NotImplementedException ();
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			Transform (input.CreateNavigator (), args, new StreamWriter (output));
 		}
 
-		[MonoTODO]
 		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to a TextWriter.
 		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
 		{
-			throw new NotImplementedException ();
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			Transform (input.CreateNavigator (), args, output);
 		}
 
-		[MonoTODO]
 		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to an XmlWriter.
 		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
 		{
-			throw new NotImplementedException ();
+			StringWriter writer = new UTF8StringWriter ();
+			Transform (input, args, writer);
+			output.WriteRaw (writer.GetStringBuilder ().ToString ());
 		}
 
-		[MonoTODO]
 		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to a Stream.
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
 		{
-			throw new NotImplementedException ();
+			Transform (input, args, new StreamWriter (output));
 		}
 
-		[MonoTODO]
 		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to a TextWriter.
 		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
 		{
-			throw new NotImplementedException ();
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			if (output == null)
+				throw new ArgumentNullException ("output");
+
+			IntPtr inputDoc = GetDocumentFromNavigator (input);
+			string transform = ApplyStylesheetAndGetString (inputDoc);
+			xmlFreeDoc (inputDoc);
+			Cleanup ();
+			output.Write (transform);
 		}
 
-		[MonoTODO]
 		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to an XmlWriter.
 		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
 		{
-			throw new NotImplementedException ();
+			StringWriter writer = new UTF8StringWriter ();
+			Transform (input, args, writer);
+			output.WriteRaw (writer.GetStringBuilder ().ToString ());
 		}
 
-		static void Save (XmlReader rdr, string filename)
+		static void Save (XmlReader rdr, TextWriter baseWriter)
 		{
-			XmlTextWriter writer = new XmlTextWriter (filename, new UTF8Encoding ());
+			XmlTextWriter writer = new XmlTextWriter (baseWriter);
 		
 			while (rdr.Read ()) {
 				switch (rdr.NodeType) {
@@ -237,12 +372,14 @@ namespace System.Xml.Xsl
 			writer.Close ();
 		}
 
-		static void Save (XPathNavigator navigator, string filename)
+		static void Save (XPathNavigator navigator, TextWriter writer)
 		{
-			XmlTextWriter writer = new XmlTextWriter (filename, new UTF8Encoding ());
+			XmlTextWriter xmlWriter = new XmlTextWriter (writer);
 			XPathNodeType type = XPathNodeType.All;
 
-			WriteTree (navigator, writer, type);
+			WriteTree (navigator, xmlWriter, type);
+			xmlWriter.WriteEndDocument ();
+			xmlWriter.Flush ();
 		}
 
 		// Walks the XPathNavigator tree recursively 
@@ -250,24 +387,22 @@ namespace System.Xml.Xsl
 		{
 			WriteCurrentNode (navigator, writer, ref type);
 
-			if (navigator.HasAttributes) {
-				navigator.MoveToFirstAttribute ();
-				
+			if (navigator.MoveToFirstAttribute ()) {
 				do {
 					WriteCurrentNode (navigator, writer, ref type);
-				} while ( navigator.MoveToNextAttribute ());
+				} while (navigator.MoveToNextAttribute ());
 
 				navigator.MoveToParent ();
-			} 
+			}
 
-			if (navigator.HasChildren) {
-				navigator.MoveToFirstChild ();
-
+			if (navigator.MoveToFirstChild ()) {
 				do {
 					WriteTree (navigator, writer, type);
 				} while (navigator.MoveToNext ());
 
 				navigator.MoveToParent ();
+				if (navigator.NodeType != XPathNodeType.Root)
+					writer.WriteEndElement ();
 			}
 		}
 
@@ -275,6 +410,10 @@ namespace System.Xml.Xsl
 		static void WriteCurrentNode (XPathNavigator navigator, XmlTextWriter writer, ref XPathNodeType current_type)
 		{
 			switch (navigator.NodeType) {
+			case XPathNodeType.Root:
+				current_type = XPathNodeType.Root;
+				writer.WriteStartDocument ();
+				break;
 			case XPathNodeType.Attribute:
 				current_type = XPathNodeType.Attribute;
 				writer.WriteAttributeString (navigator.LocalName, navigator.Value);
@@ -295,12 +434,6 @@ namespace System.Xml.Xsl
 
 			case XPathNodeType.Text:
 				writer.WriteString (navigator.Value);
-
-				if (current_type == XPathNodeType.Element) {
-					writer.WriteEndElement ();
-					current_type = XPathNodeType.All;
-				}
-
 				break;
 
 			case XPathNodeType.SignificantWhitespace:
@@ -309,6 +442,69 @@ namespace System.Xml.Xsl
 				break;
 			}
 		}
+
 		#endregion
+
+		#region Calls to external libraries
+		// libxslt
+		[DllImport ("libxslt")]
+		static extern IntPtr xsltParseStylesheetFile (string filename);
+
+		[DllImport ("libxslt")]
+		static extern IntPtr xsltParseStylesheetDoc (IntPtr docPtr);
+
+		[DllImport ("libxslt")]
+		static extern IntPtr xsltApplyStylesheet (IntPtr stylePtr, IntPtr DocPtr, IntPtr notused);
+
+		[DllImport ("libxslt")]
+		static extern int xsltSaveResultToFilename (string URI, IntPtr doc, IntPtr styleSheet, int compression);
+
+		[DllImport ("libxslt")]
+		static extern void xsltCleanupGlobals ();
+
+		[DllImport ("libxslt")]
+		static extern void xsltFreeStylesheet (IntPtr cur);
+
+		// libxml2
+		[DllImport ("libxml2")]
+		static extern IntPtr xmlNewDoc (string version);
+
+		[DllImport ("libxml2")]
+		static extern int xmlSaveFile (string filename, IntPtr cur);
+
+		[DllImport ("libxml2")]
+		static extern IntPtr xmlParseFile (string filename);
+
+		[DllImport ("libxml2")]
+		static extern IntPtr xmlParseDoc (string document);
+
+		[DllImport ("libxml2", EntryPoint="xmlParseDoc")]
+		static extern IntPtr xmlParseDocUTF16 ([MarshalAs(UnmanagedType.LPWStr)] string document);
+
+		[DllImport ("libxml2")]
+		static extern void xmlFreeDoc (IntPtr doc);
+
+		[DllImport ("libxml2")]
+		static extern void xmlCleanupParser ();
+
+		[DllImport ("libxml2")]
+		static extern void xmlDocDumpMemory (IntPtr doc, ref IntPtr mem, ref int size);
+
+		[DllImport ("libxml2")]
+		static extern void xmlFree (IntPtr data);
+
+		#endregion
+
+		// This class just makes XmlTextWriter use 'encoding="utf-8"'
+		class UTF8StringWriter : StringWriter
+		{
+			static Encoding encoding = new UTF8Encoding (false);
+
+			public override Encoding Encoding {
+				get {
+					return encoding;
+				}
+			}
+		}
 	}
 }
