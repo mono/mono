@@ -234,6 +234,15 @@ namespace Mono.CSharp {
 			defined_names.Add (name, o);
 		}
 
+		/// <summary>
+		///   Returns the object associated with a given name in the declaration
+		///   space.  This is the inverse operation of `DefineName'
+		/// </summary>
+		public object GetDefinition (string name)
+		{
+			return defined_names [name];
+		}
+		
 		bool in_transit = false;
 		
 		/// <summary>

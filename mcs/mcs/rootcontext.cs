@@ -78,6 +78,8 @@ namespace Mono.CSharp {
 		{
 			tree = new Tree ();
 			TypeManager = new TypeManager ();
+			interface_resolve_order = new ArrayList ();
+			type_container_resolve_order = new ArrayList ();
 		}
 
 		static public Tree Tree {
@@ -151,13 +153,10 @@ namespace Mono.CSharp {
 
 			ArrayList ifaces = root.Interfaces;
 			if (ifaces != null){
-				interface_resolve_order = new ArrayList ();
 				foreach (Interface i in ifaces) 
 					i.DefineInterface (mb);
 			}
 						
-			type_container_resolve_order = new ArrayList ();
-			
 			foreach (TypeContainer tc in root.Types) 
 				tc.DefineType (mb);
 
@@ -169,6 +168,199 @@ namespace Mono.CSharp {
 				foreach (Enum e in root.Enums)
 					e.DefineEnum (mb);
 			
+		}
+
+		static void Error_TypeConflict (string name, Location loc)
+		{
+			Report.Error (
+				520, loc, "`" + name + "' conflicts with a predefined type");
+		}
+
+		static void Error_TypeConflict (string name)
+		{
+			Report.Error (
+				520, "`" + name + "' conflicts with a predefined type");
+		}
+
+		//
+		// Resolves a single class during the corlib bootstrap process
+		//
+		static void BootstrapCorlib_ResolveClass (TypeContainer root, string name)
+		{
+			object o = root.GetDefinition (name);
+			if (o == null){
+				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				return;
+			}
+
+			if (!(o is Class)){
+				if (o is DeclSpace){
+					DeclSpace d = (DeclSpace) o;
+
+					Error_TypeConflict (name, d.Location);
+				} else
+					Error_TypeConflict (name);
+
+				return;
+			}
+
+			((TypeContainer) o).DefineType (mb);
+		}
+
+		//
+		// Resolves a struct during the corlib bootstrap process
+		//
+		static void BootstrapCorlib_ResolveStruct (TypeContainer root, string name)
+		{
+			object o = root.GetDefinition (name);
+			if (o == null){
+				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				return;
+			}
+
+			if (!(o is Struct)){
+				if (o is DeclSpace){
+					DeclSpace d = (DeclSpace) o;
+
+					Error_TypeConflict (name, d.Location);
+				} else
+					Error_TypeConflict (name);
+
+				return;
+			}
+
+			((TypeContainer) o).DefineType (mb);
+		}
+
+		//
+		// Resolves a struct during the corlib bootstrap process
+		//
+		static void BootstrapCorlib_ResolveInterface (TypeContainer root, string name)
+		{
+			object o = root.GetDefinition (name);
+			if (o == null){
+				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				return;
+			}
+
+			if (!(o is Interface)){
+				if (o is DeclSpace){
+					DeclSpace d = (DeclSpace) o;
+
+					Error_TypeConflict (name, d.Location);
+				} else
+					Error_TypeConflict (name);
+
+				return;
+			}
+
+			((Interface) o).DefineInterface (mb);
+		}
+
+		//
+		// Resolves a delegate during the corlib bootstrap process
+		//
+		static void BootstrapCorlib_ResolveDelegate (TypeContainer root, string name)
+		{
+			object o = root.GetDefinition (name);
+			if (o == null){
+				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				Environment.Exit (0);
+			}
+
+			if (!(o is Delegate)){
+				Error_TypeConflict (name);
+				return;
+			}
+
+			((Delegate) o).DefineDelegate (mb);
+		}
+		
+
+		/// <summary>
+		///    Resolves the core types in the compiler when compiling with --nostdlib
+		/// </summary>
+		static public void ResolveCore ()
+		{
+			TypeContainer root = Tree.Types;
+
+			string [] classes_first_stage = {
+				"System.Object", "System.ValueType"
+			};
+
+			foreach (string cname in classes_first_stage)
+				BootstrapCorlib_ResolveClass (root, cname);
+
+			string [] interfaces_first_stage = {
+				"System.IComparable", "System.ICloneable",
+				"System.IConvertible",
+				
+				"System.Collections.IEnumerable",
+				"System.Collections.ICollection",
+				"System.Collections.IEnumerator",
+				"System.Collections.IList", 
+				"System.IAsyncResult",
+				"System.IDisposable",
+				
+				"System.Runtime.Serialization.ISerializable",
+
+				"System.Reflection.IReflect",
+				"System.Reflection.ICustomAttributeProvider"
+			};
+
+			foreach (string iname in interfaces_first_stage)
+				BootstrapCorlib_ResolveInterface (root, iname);
+
+			//
+			// These are the base value types
+			//
+			string [] structs_first_stage = {
+				"System.Byte",    "System.SByte",
+				"System.Int16",   "System.UInt16",
+				"System.Int32",   "System.UInt32",
+				"System.Int64",   "System.UInt64",
+				"System.Single",  "System.Double",
+				"System.Char",    "System.Boolean",
+				"System.Decimal", "System.Void",
+				"System.RuntimeFieldHandle",
+				"System.RuntimeTypeHandle",
+				"System.IntPtr"
+			};
+			
+			foreach (string cname in structs_first_stage)
+				BootstrapCorlib_ResolveStruct (root, cname);
+			
+			//
+			// These are classes that depends on the core interfaces
+			//
+			string [] classes_second_stage = {
+				"System.String", "System.Enum",
+				"System.Array",  "System.MulticastDelegate",
+				"System.Delegate",
+
+				"System.Reflection.MemberInfo",
+				"System.Type",
+
+				//
+				// These are not really important in the order, but they
+				// are used by the compiler later on (typemanager/CoreLookupType-d)
+				//
+				"System.Runtime.CompilerServices.RuntimeHelpers",
+				"System.Reflection.DefaultMemberAttribute",
+				"System.Threading.Monitor",
+				
+				"System.AttributeUsageAttribute",
+				"System.Runtime.InteropServices.DllImportAttribute",
+				"System.Runtime.CompilerServices.MethodImplAttribute",
+				"System.Runtime.InteropServices.MarshalAsAttribute",
+				"System.ParamArrayAttribute",
+				"System.Security.UnverifiableCodeAttribute",
+			};
+			
+			foreach (string cname in classes_second_stage)
+				BootstrapCorlib_ResolveClass (root, cname);
+
+			BootstrapCorlib_ResolveDelegate (root, "System.AsyncCallback");
 		}
 			
 		// <summary>

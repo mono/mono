@@ -309,13 +309,6 @@ public class TypeManager {
 				return t;
 			}
 		}
-
-		//
-		// Hack to emulate the csc behavior
-		//
-		if (name.StartsWith ("System")){
-			
-		}
 		
 		return null;
 	}
@@ -457,7 +450,14 @@ public class TypeManager {
 		unverifiable_code_type = CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 
 		void_ptr_type        = CoreLookupType ("System.Void*");
-		
+
+	}
+
+	//
+	// The helper methods that are used by the compiler
+	//
+	public void InitCodeHelpers ()
+	{
 		//
 		// Now load the default methods that we use.
 		//

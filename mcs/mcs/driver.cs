@@ -809,6 +809,12 @@ namespace Mono.CSharp
 			//
 			if (timestamps)
 				ShowTime ("Initializing Core Types");
+			if (!RootContext.StdLib){
+				RootContext.ResolveCore ();
+				if (Report.Errors > 0)
+					return;
+			}
+			
 			RootContext.TypeManager.InitCoreTypes ();
 			if (timestamps)
 				ShowTime ("   Core Types done");
@@ -823,6 +829,9 @@ namespace Mono.CSharp
 				ShowTime ("Populate tree");
 			RootContext.PopulateTypes ();
 			
+			if (RootContext.StdLib)
+				RootContext.TypeManager.InitCodeHelpers ();
+				
 			if (Report.Errors > 0){
 				error ("Compilation failed");
 				return;

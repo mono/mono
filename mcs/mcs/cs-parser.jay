@@ -1698,6 +1698,7 @@ delegate_declaration
 		                             MakeName ((string) $5), (Parameters) $7, 
 					     (Attributes) $1, lexer.Location);
 		  
+
 		CheckDef (current_container.AddDelegate (del), del.Name);
 	  }	
 	| opt_attributes
@@ -1708,8 +1709,9 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		Delegate del = new Delegate ("System.Void", (int) $2, (string) $5, (Parameters) $7, 
-					     (Attributes) $1, lexer.Location);
+		Delegate del = new Delegate (
+			"System.Void", (int) $2, MakeName ((string) $5), (Parameters) $7, 
+		        (Attributes) $1, lexer.Location);
 
 		CheckDef (current_container.AddDelegate (del), del.Name);
 	  }

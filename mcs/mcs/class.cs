@@ -1026,7 +1026,7 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
-			if (this is Class){
+			if (this is Class && parent != null){
 				if (parent == TypeManager.enum_type ||
 				    (parent == TypeManager.value_type && RootContext.StdLib) ||
 				    parent == TypeManager.delegate_type ||

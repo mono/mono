@@ -1,4 +1,26 @@
+2002-03-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (InitCodeHelpers): Split the functionality from
+	the InitCodeTypes function.
+
+	* driver.cs: Call InitCodeHelpers after we have populated the
+	types. 
+
+	* cs-parser.jay (delegate_declaration): we did not used to compute
+	the delegate name correctly for void delegates.
+
 2002-03-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs (RootContext): Init the interface_resolve_order
+	and type_container_resolve_order always.
+
+	(ResolveCore, BootstrapCorlib_ResolveClass,
+	BootstrapCorlib_ResolveStruct): New functions to bootstrap the
+	compiler when compiling with --nostdlib
+
+	* class.cs (TypeContainer.DefineType): Check that our parent is
+	not null.  This test is most important when we are bootstraping
+	the core types.
 
 	* codegen.cs: Split out the symbol writing code.
 
