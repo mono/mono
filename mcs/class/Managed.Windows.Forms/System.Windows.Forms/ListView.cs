@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ListView.cs,v $
+// Revision 1.3  2004/10/15 15:03:39  ravindra
+// Implemented Paint method and fixed coding style.
+//
 // Revision 1.2  2004/10/02 11:32:01  ravindra
 // Added attributes.
 //
@@ -50,32 +53,32 @@ namespace System.Windows.Forms
 	{
 		private ItemActivation activation = ItemActivation.Standard;
 		private ListViewAlignment alignment = ListViewAlignment.Top;
-		private bool allowColumnReorder = false;
-		private bool autoArrange = true;
-		private BorderStyle borderStyle = BorderStyle.Fixed3D;
-		private bool checkBoxes = false;
-		private CheckedIndexCollection checkedIndices;
-		private CheckedListViewItemCollection checkedItems;
+		private bool allow_column_reorder = false;
+		private bool auto_arrange = true;
+		private BorderStyle border_style = BorderStyle.Fixed3D;
+		private bool check_boxes = false;
+		private CheckedIndexCollection checked_indices;
+		private CheckedListViewItemCollection checked_items;
 		private ColumnHeaderCollection columns;
-		private ListViewItem focusedItem;
-		private bool fullRowSelect = false;
-		private bool gridLines = false;
-		private ColumnHeaderStyle headerStyle = ColumnHeaderStyle.Clickable;
-		private bool hideSelection = true;
-		private bool hoverSelection = false;
+		private ListViewItem focused_item;
+		private bool full_row_select = false;
+		private bool grid_lines = false;
+		private ColumnHeaderStyle header_style = ColumnHeaderStyle.Clickable;
+		private bool hide_selection = true;
+		private bool hover_selection = false;
 		private ListViewItemCollection items;
-		private bool labelEdit = false;
-		private bool labelWrap = true;
-		internal ImageList largeImageList;
-		private IComparer itemSorter;
+		private bool label_edit = false;
+		private bool label_wrap = true;
+		internal ImageList large_image_list;
+		private IComparer item_sorter;
 		private bool multiselect = true;
 		private bool redraw = true;
 		private bool scrollable = true;
-		private SelectedIndexCollection selectedIndices;
-		private SelectedListViewItemCollection selectedItems;
-		internal ImageList smallImageList;
-		private SortOrder sortOrder = SortOrder.None;
-		private ImageList stateImageList;
+		private SelectedIndexCollection selected_indices;
+		private SelectedListViewItemCollection selected_items;
+		internal ImageList small_image_list;
+		private SortOrder sort_order = SortOrder.None;
+		private ImageList state_image_list;
 		private bool updating = false;
 		private View view = View.LargeIcon;
 
@@ -106,12 +109,17 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ListView ()
 		{
-			checkedIndices = new CheckedIndexCollection (this);
-			checkedItems = new CheckedListViewItemCollection (this);
+			background_color = SystemColors.Window;
+			checked_indices = new CheckedIndexCollection (this);
+			checked_items = new CheckedListViewItemCollection (this);
 			columns = new ColumnHeaderCollection (this);
+			foreground_color = SystemColors.WindowText;
 			items = new ListViewItemCollection (this);
-			selectedIndices = new SelectedIndexCollection (this);
-			selectedItems = new SelectedListViewItemCollection (this);
+			selected_indices = new SelectedIndexCollection (this);
+			selected_items = new SelectedListViewItemCollection (this);
+
+			// event handlers
+			base.Paint += new PaintEventHandler (ListView_Paint);
 		}
 		#endregion	// Public Constructors
 
@@ -121,7 +129,7 @@ namespace System.Windows.Forms
 		}
 
 		protected override Size DefaultSize {
-			get { return new Size (121, 97); }
+			get { return ThemeEngine.Current.ListViewDefaultSize; }
 		}
 		#endregion	// Protected Properties
 
@@ -141,14 +149,14 @@ namespace System.Windows.Forms
 
 		[DefaultValue (false)]
 		public bool AllowColumnReorder {
-			get { return allowColumnReorder; }
-			set { allowColumnReorder = value; }
+			get { return allow_column_reorder; }
+			set { allow_column_reorder = value; }
 		}
 
 		[DefaultValue (true)]
 		public bool AutoArrange {
-			get { return autoArrange; }
-			set { autoArrange = value; }
+			get { return auto_arrange; }
+			set { auto_arrange = value; }
 		}
 
 		public override Color BackColor {
@@ -173,26 +181,26 @@ namespace System.Windows.Forms
 		[DefaultValue (BorderStyle.Fixed3D)]
 		[DispId (-504)]
 		public BorderStyle BorderStyle {
-			get { return borderStyle; }
-			set { borderStyle = value; }
+			get { return border_style; }
+			set { border_style = value; }
 		}
 
 		[DefaultValue (false)]
 		public bool CheckBoxes {
-			get { return checkBoxes; }
-			set { checkBoxes = value; }
+			get { return check_boxes; }
+			set { check_boxes = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public CheckedIndexCollection CheckedIndices {
-			get { return checkedIndices; }
+			get { return checked_indices; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public CheckedListViewItemCollection CheckedItems {
-			get { return checkedItems; }
+			get { return checked_items; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -205,7 +213,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem FocusedItem {
-			get { return focusedItem; }
+			get { return focused_item; }
 		}
 
 		public override Color ForeColor {
@@ -215,32 +223,32 @@ namespace System.Windows.Forms
 
 		[DefaultValue (false)]
 		public bool FullRowSelect {
-			get { return fullRowSelect; }
-			set { fullRowSelect = value; }
+			get { return full_row_select; }
+			set { full_row_select = value; }
 		}
 
 		[DefaultValue (false)]
 		public bool GridLines {
-			get { return gridLines; }
-			set { gridLines = value; }
+			get { return grid_lines; }
+			set { grid_lines = value; }
 		}
 
 		[DefaultValue (ColumnHeaderStyle.Clickable)]
 		public ColumnHeaderStyle HeaderStyle {
-			get { return headerStyle; }
-			set { headerStyle = value; }
+			get { return header_style; }
+			set { header_style = value; }
 		}
 
 		[DefaultValue (true)]
 		public bool HideSelection {
-			get { return hideSelection; }
-			set { hideSelection = value; }
+			get { return hide_selection; }
+			set { hide_selection = value; }
 		}
 
 		[DefaultValue (false)]
 		public bool HoverSelection {
-			get { return hoverSelection; }
-			set { hoverSelection = value; }
+			get { return hover_selection; }
+			set { hover_selection = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -252,28 +260,28 @@ namespace System.Windows.Forms
 
 		[DefaultValue (false)]
 		public bool LabelEdit {
-			get { return labelEdit; }
-			set { labelEdit = value; }
+			get { return label_edit; }
+			set { label_edit = value; }
 		}
 
 		[DefaultValue (false)]
 		[Localizable (true)]
 		public bool LabelWrap {
-			get { return labelWrap; }
-			set { labelWrap = value; }
+			get { return label_wrap; }
+			set { label_wrap = value; }
 		}
 
 		[DefaultValue (null)]
 		public ImageList LargeImageList {
-			get { return largeImageList; }
-			set { largeImageList = value; }
+			get { return large_image_list; }
+			set { large_image_list = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IComparer ListViewItemSorter {
-			get { return itemSorter; }
-			set { itemSorter = value; }
+			get { return item_sorter; }
+			set { item_sorter = value; }
 		}
 
 		[DefaultValue (true)]
@@ -291,31 +299,31 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SelectedIndexCollection SelectedIndices {
-			get { return selectedIndices; }
+			get { return selected_indices; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SelectedListViewItemCollection SelectedItems {
-			get { return selectedItems; }
+			get { return selected_items; }
 		}
 
 		[DefaultValue (null)]
 		public ImageList SmallImageList {
-			get { return smallImageList; }
-			set { smallImageList = value; }
+			get { return small_image_list; }
+			set { small_image_list = value; }
 		}
 
 		[DefaultValue (SortOrder.None)]
 		public SortOrder Sorting {
-			get { return sortOrder; }
-			set { sortOrder = value; }
+			get { return sort_order; }
+			set { sort_order = value; }
 		}
 
 		[DefaultValue (null)]
 		public ImageList StateImageList {
-			get { return stateImageList; }
-			set { stateImageList = value; }
+			get { return state_image_list; }
+			set { state_image_list = value; }
 		}
 
 		[Bindable (false)]
@@ -358,6 +366,23 @@ namespace System.Windows.Forms
 		private void CalculateListView ()
 		{
 			// FIXME: TODO
+		}
+
+		private void ListView_Paint (object sender, PaintEventArgs pe)
+		{
+			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
+				return;
+
+			if (redraw) {
+				ThemeEngine.Current.DrawListView (this.DeviceContext, pe.ClipRectangle, this);
+				redraw = false;
+			}
+
+			// paint on the screen
+			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
+
+			if (Paint != null)
+				Paint (this, pe);
 		}
 		#endregion	// Internal Methods
 
@@ -521,10 +546,10 @@ namespace System.Windows.Forms
 
 		public void Sort ()
 		{
-			if (sortOrder != SortOrder.None)
-				items.list.Sort (itemSorter);
+			if (sort_order != SortOrder.None)
+				items.list.Sort (item_sorter);
 
-			if (sortOrder == SortOrder.Descending)
+			if (sort_order == SortOrder.Descending)
 				items.list.Reverse ();
 		}
 
