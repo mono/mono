@@ -1,5 +1,11 @@
 2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocument.cs : Fixed bugzilla #49607. Save() outputs XML 
+	  declaration even though there is no XmlDeclaration child.
+	* XmlTextReader.cs : Fixed Init() so that ResetState() should work.
+
+2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextWriter.cs : Implemented WriteSurrogateCharEntity().
 	  Reverted my recent extraneous check in WriteStartAttribute().
 

@@ -920,7 +920,12 @@ namespace System.Xml
 			//
 			// This should preserve white space if PreserveWhiteSpace is true
 			//
+			bool autoXmlDecl = FirstChild != null && FirstChild.NodeType != XmlNodeType.XmlDeclaration;
+			if (autoXmlDecl)
+				xmlWriter.WriteStartDocument ();
 			WriteContentTo (xmlWriter);
+			if (autoXmlDecl)
+				xmlWriter.WriteEndDocument ();
 			xmlWriter.Flush ();
 		}
 

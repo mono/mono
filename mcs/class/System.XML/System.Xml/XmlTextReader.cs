@@ -863,7 +863,7 @@ namespace System.Xml
 		private bool depthUp;
 
 		private bool popScope;
-		private Stack elementStack;
+		private Stack elementStack = new Stack();
 		private bool allowMultipleRoot;
 
 		private bool isStandalone;
@@ -879,7 +879,7 @@ namespace System.Xml
 		private int nameCapacity;
 		private const int initialNameCapacity = 256;
 
-		private StringBuilder valueBuffer;
+		private StringBuilder valueBuffer = new StringBuilder (512);
 
 		private TextReader reader;
 		private bool can_seek;
@@ -891,7 +891,7 @@ namespace System.Xml
 
 		private int line;
 		private int column;
-		private StringBuilder currentTag;
+		private StringBuilder currentTag = new StringBuilder ();
 
 		private int currentLinkedNodeLineNumber;
 		private int currentLinkedNodeLinePosition;
@@ -907,48 +907,58 @@ namespace System.Xml
 		//	EndElement: after document element
 		private XmlNodeType currentState;
 
-		private XmlResolver resolver = new XmlUrlResolver ();
+		// For ReadChars()/ReadBase64()/ReadBinHex()
+		private bool shouldSkipUntilEndTag;
 
 		// These values are never re-initialized.
 		private bool namespaces = true;
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
+		private XmlResolver resolver = new XmlUrlResolver ();
 		private bool normalization = false;
-
-		// For ReadChars()/ReadBase64()/ReadBinHex()
-		private bool shouldSkipUntilEndTag;
 
 		private void Init ()
 		{
+			currentToken = new XmlTokenInfo (this);
+			cursorToken = currentToken;
+			currentAttribute = -1;
+			currentAttributeValue = -1;
+			attributeCount = 0;
+
 			readState = ReadState.Initial;
-			currentState = XmlNodeType.None;
 			allowMultipleRoot = false;
 
 			depth = 0;
+			elementDepth = 0;
 			depthUp = false;
 
-			currentTag = new StringBuilder ();
-			peek_char = 0;
-			has_peek = false;
-			can_seek = false;
-			hasPeekChars = false;
-			peekChars = new char [6];
+			popScope = allowMultipleRoot = false;
+			elementStack.Clear ();
 
-			popScope = false;
-			elementStack = new Stack();
-			currentAttribute = -1;
-			currentAttributeValue = -1;
-
+			isStandalone = false;
+			valueBuilderAvailable = false;
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
 
 			nameBuffer = new char [initialNameCapacity];
 			nameLength = 0;
 			nameCapacity = initialNameCapacity;
-			
-			valueBuffer = new StringBuilder (512);
 
-			currentToken = new XmlTokenInfo (this);
-			cursorToken = currentToken;
+			can_seek = has_peek = false;
+			peek_char = peekCharsIndex = 0;
+			peekChars = new char [6];
+
+			line = 1;
+			column = 0;
+			currentTag.Length = 0;
+
+			valueBuffer.Length = 0;
+
+			currentLinkedNodeLineNumber = currentLinkedNodeLinePosition = 0;
+			useProceedingLineInfo = false;
+
+			currentState = XmlNodeType.None;
+
+			shouldSkipUntilEndTag = false;
 		}
 
 		private void InitializeContext (string url, XmlParserContext context, TextReader fragment, XmlNodeType fragType)
@@ -2280,7 +2290,7 @@ namespace System.Xml
 
 		// The reader is positioned on the first character
 		// of the name.
-		internal string ReadName ()
+		private string ReadName ()
 		{
 			return ReadNameOrNmToken(false);
 		}
