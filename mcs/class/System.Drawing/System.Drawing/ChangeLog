@@ -1,3 +1,8 @@
+2002-04-27  Christian Meyer  <Christian.Meyer@cs.tum.edu>
+
+	* Bitmap.cs: Ximian is the new copyright holder now.
+	* Image.cs: ditto
+
 2002-04-05  Christian Meyer  <Christian.Meyer@cs.tum.edu>
 
 	* Uppercased several files.

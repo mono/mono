@@ -1,7 +1,7 @@
-// created on 25.02.2002 at 22:43
 //
-// Bitmap.cs
+// System.Drawing.Bitmap.cs
 //
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Christian Meyer
 // eMail: Christian.Meyer@cs.tum.edu
 //

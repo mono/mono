@@ -1,7 +1,7 @@
-// created on 20.02.2002 at 21:18
 //
-// Image.cs
+// System.Drawing.Image.cs
 //
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Christian Meyer
 // eMail: Christian.Meyer@cs.tum.edu
 //
