@@ -184,15 +184,8 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			if (target is IndexerAccess){
-				if (source_type != target_type){
-					source = ConvertImplicitRequired (ec, source, target_type, l);
-					if (source == null)
-						return null;
-				}
-				
+			if (target is IndexerAccess)
 				return this;
-			}
 
 			if (target is EventExpr) {
 
