@@ -1,5 +1,11 @@
 2004-09-23  Martin Baulig  <martin@ximian.com>
 
+	* object-internals.h (MonoReflectionGenericParam): Replaced
+	'has_ctor_constraint', `has_reference_type' and `has_value_type'
+	with `guint32 attrs'.
+
+2004-09-23  Martin Baulig  <martin@ximian.com>
+
 	* icall.c (ves_icall_Type_GetGenericParameterAttributes): New interncall.
 
 2004-09-23  Martin Baulig  <martin@ximian.com>
