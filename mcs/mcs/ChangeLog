@@ -1,3 +1,8 @@
+2004-07-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Resolve the constant expression before returning
+	it.  Fixes: 61702
+
 2004-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs (handle_preprocessing_directive): Do not return

@@ -3672,7 +3672,7 @@ namespace Mono.CSharp {
 			if (e != null) {
 				local_info.Used = true;
 				eclass = ExprClass.Value;
-				return e;
+				return e.Resolve (ec);
 			}
 
 			VariableInfo variable_info = local_info.VariableInfo; 
