@@ -1,3 +1,7 @@
+2003-04-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* attribute.cs: Avoid allocation of ArrayLists in the common case.
+
 2003-04-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Unary.TryReduceNegative): Add missing minus sign

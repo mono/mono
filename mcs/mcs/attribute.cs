@@ -207,10 +207,17 @@ namespace Mono.CSharp {
 			// Now process named arguments
 			//
 
-			ArrayList field_infos = new ArrayList ();
-			ArrayList prop_infos  = new ArrayList ();
-			ArrayList field_values = new ArrayList ();
-			ArrayList prop_values = new ArrayList ();
+			ArrayList field_infos = null;
+			ArrayList prop_infos  = null;
+			ArrayList field_values = null;
+			ArrayList prop_values = null;
+
+			if (named_args.Count > 0) {
+				field_infos = new ArrayList ();
+				prop_infos  = new ArrayList ();
+				field_values = new ArrayList ();
+				prop_values = new ArrayList ();
+			}
 			
 			for (i = 0; i < named_args.Count; i++) {
 				DictionaryEntry de = (DictionaryEntry) named_args [i];
@@ -323,23 +330,27 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			PropertyInfo [] prop_info_arr = new PropertyInfo [prop_infos.Count];
-			FieldInfo [] field_info_arr = new FieldInfo [field_infos.Count];
-			object [] field_values_arr = new object [field_values.Count];
-			object [] prop_values_arr = new object [prop_values.Count];
-
-			field_infos.CopyTo  (field_info_arr, 0);
-			field_values.CopyTo (field_values_arr, 0);
-
-			prop_values.CopyTo  (prop_values_arr, 0);
-			prop_infos.CopyTo   (prop_info_arr, 0);
-
 			try {
-				cb = new CustomAttributeBuilder (
-					(ConstructorInfo) constructor, pos_values,
-					prop_info_arr, prop_values_arr,
-					field_info_arr, field_values_arr); 
+				if (named_args.Count > 0) {
+					PropertyInfo [] prop_info_arr = new PropertyInfo [prop_infos.Count];
+					FieldInfo [] field_info_arr = new FieldInfo [field_infos.Count];
+					object [] field_values_arr = new object [field_values.Count];
+					object [] prop_values_arr = new object [prop_values.Count];
 
+					field_infos.CopyTo  (field_info_arr, 0);
+					field_values.CopyTo (field_values_arr, 0);
+
+					prop_values.CopyTo  (prop_values_arr, 0);
+					prop_infos.CopyTo   (prop_info_arr, 0);
+
+					cb = new CustomAttributeBuilder (
+						(ConstructorInfo) constructor, pos_values,
+						prop_info_arr, prop_values_arr,
+						field_info_arr, field_values_arr);
+				}
+				else
+					cb = new CustomAttributeBuilder (
+						(ConstructorInfo) constructor, pos_values);
 			} catch (NullReferenceException) {
 				// 
 				// Don't know what to do here
@@ -666,14 +677,15 @@ namespace Mono.CSharp {
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs)
 		{
-			ArrayList emitted_attrs = new ArrayList ();
-			ArrayList emitted_targets = new ArrayList ();
 			Type attr_type = null;
 			
 			if (opt_attrs == null)
 				return;
 			if (opt_attrs.AttributeSections == null)
 				return;
+
+			ArrayList emitted_attrs = new ArrayList ();
+			ArrayList emitted_targets = new ArrayList ();
 
 			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
 				string attr_target = asec.Target;
