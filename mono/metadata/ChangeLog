@@ -1,5 +1,11 @@
 2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object-internals.h (_MonoReflectionMethodBody): Make local_index a 
+	guint16 to match the managed side.
+
+	* reflection.c (mono_reflection_body_get_object): Fill out local
+	variables array.
+
 	* reflection.c (mono_method_body_get_object): Fill out local_var_sig_token
 	as well.
 
