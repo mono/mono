@@ -1,3 +1,7 @@
+2002-03-20  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* file-io.c: Flush shouldn't throw exceptions.
+
 2002-03-19  Dan Lewis <dihlewis@yahoo.co.uk>
 
 	* file-io.c: FileStream flush support; FileSetLength now
