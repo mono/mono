@@ -415,7 +415,7 @@ namespace System.Net.Sockets
 			Assembly ass;
 			
 			try {
-				ass=Assembly.Load("Mono.Posix");
+				ass = Assembly.Load (Consts.AssemblyMono_Posix);
 			} catch (FileNotFoundException) {
 				return;
 			}

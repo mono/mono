@@ -1,3 +1,7 @@
+2004-05-03  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Socket.cs: Use assembly name const to load Mono.Posix.
+
 2004-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: only enable socket AIO if MONO_ENABLE_SOCKET_AIO is there.
