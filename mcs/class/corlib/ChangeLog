@@ -1,3 +1,10 @@
+2002-01-25  Mark Crichton  <crichton@gimp.org>
+
+	* System.Security.Cryptography/RijndaelManaged.cs: added
+	
+	* System.Security.Cryptography/Rijndael.cs: changed constructor
+	to set default values.  Hopefully I did it correctly.
+
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* Unix/Errno.cs: Added
