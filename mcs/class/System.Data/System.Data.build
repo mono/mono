@@ -26,6 +26,7 @@
 				-->
 				<excludes name="System.Data/DataTableRelationCollection.cs"/>
 				<excludes name="System.Data/DataView.cs"/>
+				<excludes name="System.Data/DataViewManager.cs/">
 				<excludes name="System.Data/DataSet.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="System.Data.Common/*"/>
