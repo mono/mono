@@ -239,7 +239,8 @@ public class StringTest : TestCase
 		AssertEquals ("Formatted argument, right justified.", "#  033#", String.Format ("#{0,5:x3}#", 0x33));
 		AssertEquals ("Formatted argument, left justified.", "#033  #", String.Format ("#{0,-5:x3}#", 0x33));
 		AssertEquals ("Escaped bracket", "typedef struct _MonoObject { ... } MonoObject;", String.Format ("typedef struct _{0} {{ ... }} MonoObject;", "MonoObject"));
-
+		AssertEquals("With Slash", "Could not find file \"a/b\"", String.Format ("Could not find file \"{0}\"", "a/b"));
+		AssertEquals("With BackSlash", "Could not find file \"a\\b\"", String.Format ("Could not find file \"{0}\"", "a\\b"));
 
 		// TODO test format exceptions
 

@@ -1,3 +1,7 @@
+2002-05-14  Nick Drochak  <ndrochak@gol.com>
+
+	* StringTest.cs: A couple more tests
+
 2002-05-07  Nick Drochak  <ndrochak@gol.com>
 
 	* ExceptionTest.cs: New File. Provided by Linus Upson.
