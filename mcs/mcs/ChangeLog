@@ -1,5 +1,8 @@
 2003-05-28  Miguel de Icaza  <miguel@ximian.com>
 
+	* iterators.cs: Change the name of the proxy class to include two
+	underscores.
+
 	* cs-parser.jay: Update grammar to include anonymous methods.
 	
 	* anonymous.cs: new file.

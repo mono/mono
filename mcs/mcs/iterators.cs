@@ -182,7 +182,7 @@ namespace Mono.CSharp {
 		static int proxy_count;
 		string MakeProxyName ()
 		{
-			return String.Format ("<Proxy_{0}>", proxy_count++);
+			return String.Format ("__Proxy_{0}", proxy_count++);
 		}
 
 		public void EmitYieldBreak (ILGenerator ig, bool add_return)
