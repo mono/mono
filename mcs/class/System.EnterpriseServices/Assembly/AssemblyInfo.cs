@@ -40,6 +40,7 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: ComVisible(false)]
+[assembly: Guid("4fb2d46f-efc8-4643-bcd0-6e5bfa6a174c")]
 [assembly: AllowPartiallyTrustedCallers]
 
 [assembly: AssemblyDelaySign(true)]
