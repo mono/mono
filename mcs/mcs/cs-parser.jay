@@ -2706,6 +2706,7 @@ for_initializer
 			current_block.AddStatement ((Statement) $1);
 			current_block = (Block) $1;
 		}
+		$$ = null;
 	  }
 	| statement_expression_list
 	;

@@ -1,3 +1,13 @@
+2001-11-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: A for_initializer if is a
+	local_variable_declaration really ammount to have an implicit
+	block with the variable declaration and no initializer for for.
+
+	* statement.cs (For.Emit): Cope with null initializers.
+
+	This fixes the infinite loop on for initializers.
+
 2001-11-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* enum.cs: More cleanup.

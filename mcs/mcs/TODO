@@ -248,18 +248,3 @@
 
 	We are catching this now.  But it does not work.
 
-* Infinite loop
-
-	The following goes into an infinite loop because of the implicit
-	variable declaration and the initialization, easy to fix:
-
-class X {
-
-	static void Main ()
-	{
-		for (int i = 0; i < 10; i++)
-			;
-	}
-}
-
-	Set a breakpoint in assign.DoResolve to watch it.

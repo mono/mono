@@ -232,9 +232,10 @@ namespace CIR {
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
 			Label loop = ig.DefineLabel ();
-			
-			if (! (InitStatement is EmptyStatement))
-				InitStatement.Emit (ec);
+
+			if (InitStatement != null)
+				if (! (InitStatement is EmptyStatement))
+					InitStatement.Emit (ec);
 
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
