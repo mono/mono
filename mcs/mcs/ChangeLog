@@ -1,5 +1,12 @@
 2001-09-27  Ravi Pratap  <ravi@ximian.com>
 
+	* expression.cs (Invocation::BetterConversion): Fix to cope
+	with q being null, since this was introducing a bug.
+
+	* expression.cs (ConvertImplicit): Do built-in conversions first.
+
+2001-09-27  Ravi Pratap  <ravi@ximian.com>
+
 	* expression.cs (UserImplicitCast::Resolve): Fix bug.
 
 2001-09-27  Ravi Pratap  <ravi@ximian.com>

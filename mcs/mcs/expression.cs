@@ -333,16 +333,6 @@ namespace CIR {
 				return expr;
 			
 			//
-			// Step 1: Perform implicit conversions as found on expr.Type
-			//
-
-			if (UserImplicitCast.CanConvert (tc, expr, target_type) == true) {
-				Expression imp = new UserImplicitCast (expr, target_type);
-				imp.Resolve (tc);
-				return imp;
-			}
-			
-			//
 			// Step 2: Built-in conversions.
 			//
 			if (expr_type == TypeManager.sbyte_type){
@@ -476,7 +466,12 @@ namespace CIR {
 			} else
 				return ImplicitReferenceConversion (expr, target_type);
 
-			
+
+			if (UserImplicitCast.CanConvert (tc, expr, target_type) == true) {
+				Expression imp = new UserImplicitCast (expr, target_type);
+				imp.Resolve (tc);
+				return imp;
+			}
 
 			//
 			//  Could not find an implicit cast.
@@ -2593,11 +2588,10 @@ namespace CIR {
 
 			if (argument_type == null)
 				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
-			
-			
+
 			if (p == q)
 				return 0;
-
+			
 			if (argument_type == p)
 				return 1;
 
@@ -2662,16 +2656,26 @@ namespace CIR {
 				}
 			}
 
-			// User-defined Implicit conversions come here
-			
-			if (q != null)
-				if (ConversionExists (tc, p, q) == true &&
-				    ConversionExists (tc, q, p) == false)
+			if (q == null) {
+
+				Expression tmp;
+
+				tmp = ConvertImplicit (tc, argument_expr, p);
+
+				if (tmp != null)
 					return 1;
+				else
+					return 0;
+
+			}
+			
+			if (ConversionExists (tc, p, q) == true &&
+			    ConversionExists (tc, q, p) == false)
+				return 1;
 			
 			if (p == TypeManager.sbyte_type)
 				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
-				    q == TypeManager.uint32_type || q == TypeManager.uint64_type) 
+				    q == TypeManager.uint32_type || q == TypeManager.uint64_type)
 					return 1;
 
 			if (p == TypeManager.short_type)
@@ -2839,7 +2843,7 @@ namespace CIR {
 				i--;
 				MethodBase candidate  = me.Methods [i];
 				int x;
-				
+
 				x = BetterFunction (tc, Arguments, candidate, method);
 				
 				if (x == 0)
@@ -2849,34 +2853,34 @@ namespace CIR {
 					method = me.Methods [best_match_idx];
 				}
 			}
-			
-			if (best_match_idx != -1)
-				return method;
-
-			// Now we see if we can at least find a method with the same number of arguments
-			// and then try doing implicit conversion on the arguments
 
 			if (Arguments == null)
 				argument_count = 0;
 			else
 				argument_count = Arguments.Count;
-
-			ParameterData pd = null;
 			
-			for (int i = me.Methods.Length; i > 0;) {
-				i--;
-				MethodBase mb = me.Methods [i];
-				pd = GetParameterData (mb);
+			ParameterData pd;
+			
+			// Now we see if we can at least find a method with the same number of arguments
+			// and then try doing implicit conversion on the arguments
+			if (best_match_idx == -1) {
+				
+				for (int i = me.Methods.Length; i > 0;) {
+					i--;
+					MethodBase mb = me.Methods [i];
+					pd = GetParameterData (mb);
+					
+					if (pd.Count == argument_count) {
+						best_match_idx = i;
+						method = me.Methods [best_match_idx];
+						break;
+					} else
+						continue;
+				}
 
-				if (pd.Count == argument_count) {
-					best_match_idx = i;
-					method = me.Methods [best_match_idx];
-					break;
-				} else
-					continue;
 			}
 
-			if (best_match_idx == -1)
+			if (method == null)
 				return null;
 
 			// And now convert implicitly, each argument to the required type
@@ -3691,7 +3695,8 @@ namespace CIR {
 			if (union != null) {
 				
 				method = Invocation.OverloadResolve (tc, union, arguments,
-										new Location ("FIXME", 1, 1));
+								     new Location ("FIXME", 1, 1));
+
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
 					
