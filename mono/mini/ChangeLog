@@ -1,3 +1,8 @@
+2004-08-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* mini-x86.c: make all push_imm instructions that get
+	patched always emit the long form
+
 2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_create_jump_trampoline): Store the jump trampolines 
