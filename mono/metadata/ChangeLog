@@ -1,6 +1,14 @@
 2004-06-08  Dick Porter  <dick@ximian.com>
 
 	* locales.c
+	(ves_icall_System_Globalization_CompareInfo_internal_index):
+	(ves_icall_System_Globalization_CompareInfo_internal_index_char):
+	Double-check the resuls of usearches, because ICU currently
+	ignores most of the collator settings here.  Fixes bug 59720.
+	
+2004-06-08  Dick Porter  <dick@ximian.com>
+
+	* locales.c
 	(ves_icall_System_Globalization_CompareInfo_internal_index_char):
 	Fix memory leak and segfault-causing typo.  No idea how this one
 	lasted so long without being noticed.
