@@ -1,5 +1,12 @@
 2003-07-23  Dick Porter  <dick@ximian.com>
 
+	* shared.c:
+	* daemon.c (maybe_exit): Avoid the race condition when the daemon is
+	closing but another client comes along when the shared data is still
+	visible.  Should fix bugs 33671 and 35213.
+
+2003-07-23  Dick Porter  <dick@ximian.com>
+
 	* handles.c:  Initialise handle mutex and cond.  Fix by
 	Bernie Solomon <bernard@ugsolutions.com>
 
