@@ -153,6 +153,11 @@ namespace Mono.CSharp {
 		///   Whether we are in a Catch block
 		/// </summary>
 		public bool InCatch;
+
+		/// <summary>
+		///  Whether we are inside an unsafe block
+		/// </summary>
+		public bool InUnsafe;
 		
 		/// <summary>
 		///   Location for this EmitContext
