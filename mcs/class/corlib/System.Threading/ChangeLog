@@ -1,3 +1,10 @@
+2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ThreadPool.cs: now the monitor thread is not sleeping and checking if
+	more worker threads needed. It waits on _DataInQueue. If (and only if)
+	there's data in the queue it checks if more worker threads needed and
+	then sleeps 5 before waiting for queued data again.
+
 2002-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ThreadPool.cs: set IsThreadPoolThread before starting the worker.

@@ -66,7 +66,7 @@ namespace System.Threading
          _ThreadsInUse = 0;
          _ThreadCreateTriggerRequests = 5;
 
-         // Keeps track of requests in the queue and inreases the number of threads if neededs
+         // Keeps track of requests in the queue and increases the number of threads if needed
          _MonitorThread = new Thread(new ThreadStart(MonitorThread));
          _MonitorThread.Start();
       }
@@ -99,8 +99,6 @@ namespace System.Threading
       }
 
       internal void AddItem(ref ThreadPoolWorkItem Item) {
-         CheckIfStartThread();
-         
          if (Interlocked.Increment(ref _RequestInQueue) == 1) {
             _DataInQueue.Set();
          }
@@ -148,9 +146,11 @@ namespace System.Threading
 
       internal void MonitorThread() {
          while (true) {
-            Thread.Sleep(500);
+            if (_DataInQueue.WaitOne ()) {
+		    CheckIfStartThread();
+            }
 
-            CheckIfStartThread();
+            Thread.Sleep(5000);
          }
       }
 
