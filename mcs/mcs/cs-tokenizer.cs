@@ -548,7 +548,7 @@ namespace CSC
 			number.Length = 0;
 
 			if (Char.IsDigit ((char)c)){
-				if (peekChar () == 'x' || peekChar () == 'X'){
+				if (c == '0' && peekChar () == 'x' || peekChar () == 'X'){
 					getChar ();
 					hex_digits (-1);
 					val = new System.Int32 ();
@@ -700,7 +700,7 @@ namespace CSC
 		public int xtoken ()
 		{
 			int t;
-			bool allow_keyword = false;
+			bool allow_keyword_as_ident = false;
 			bool doread = false;
 			int c;
 
@@ -722,25 +722,15 @@ namespace CSC
 					}
 					
 					ids = id.ToString ();
-					
-					if (!is_keyword (ids)){
-						val = id.ToString ();
-						return Token.IDENTIFIER;
-					}
-					
-					if (allow_keyword) {
+
+					if (!is_keyword (ids) || allow_keyword_as_ident) {
 						val = ids;
 						return Token.IDENTIFIER;
 					}
 
-					if (ids == "true")
-						return Token.TRUE;
-					else if (ids == "false")
-						return Token.FALSE;
-					else if (ids == "null")
-						return Token.NULL;
-					
+					// true, false and null are in the hash anyway.
 					return getKeyword (ids);
+
 				}
 
 				if (c == '.'){
@@ -874,7 +864,7 @@ namespace CSC
 				}
 
 				if (c == '@'){
-					allow_keyword = true;
+					allow_keyword_as_ident = true;
 					continue;
 				}
 
