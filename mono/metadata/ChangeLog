@@ -1,3 +1,9 @@
+
+Wed Feb 2 14:14:00 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: patch from Geoff Norton <gnorton@customerdna.com>
+	to byteswap arrays of enum values, too (bug #72080).
+
 2005-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (set_domain_search_path): Allow this to be called if
