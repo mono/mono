@@ -78,6 +78,35 @@ namespace System.Threading
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static float Exchange(ref float location1, float value);
+
+#if NET_2_0
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static long CompareExchange(ref long location1, long value, long comparand);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr CompareExchange(ref IntPtr location1, IntPtr value, IntPtr comparand);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static double CompareExchange(ref double location1, double value, double comparand);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static long Exchange(ref long location1, long value);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr Exchange(ref IntPtr location1, IntPtr value);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static double Exchange(ref double location1, double value);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static long Read(ref long location1);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static int Add(ref int location1, int add);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static long Add(ref long location1, long add);
+#endif
 	}
 }
 
