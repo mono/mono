@@ -1,3 +1,8 @@
+2004-08-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources:
+	  added System.Xml.Query/XQueryArithmeticOperator.cs.
+
 2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources:
