@@ -5,6 +5,7 @@
 //   Atsushi Enomoto  (ginga@kit.hi-ho.ne.jp)
 //
 // (C)2003 Atsushi Enomoto
+// (C)2004 Novell Inc.
 //
 // FIXME:
 //	When a parameter entity contains cp section, it should be closed 
@@ -170,7 +171,8 @@ namespace System.Xml
 		private bool ProcessDTDSubset ()
 		{
 			SkipWhitespace ();
-			switch(ReadChar ())
+			int c2 = ReadChar ();
+			switch(c2)
 			{
 			case -1:
 				return false;
@@ -180,17 +182,21 @@ namespace System.Xml
 					DTD.InternalSubsetHasPEReference = true;
 				string peName = ReadName ();
 				Expect (';');
-				currentInput.InsertParameterEntityBuffer (" ");
-				currentInput.InsertParameterEntityBuffer (GetPEValue (peName));
-				currentInput.InsertParameterEntityBuffer (" ");
-				int currentLine = currentInput.LineNumber;
-				int currentColumn = currentInput.LinePosition;
+				string peValue = GetPEValue (peName);
+				if (peValue == String.Empty)
+					break;
+				currentInput.InsertParameterEntityBuffer (peValue);
+//				int currentLine = currentInput.LineNumber;
+//				int currentColumn = currentInput.LinePosition;
 				while (currentInput.HasPEBuffer)
 					ProcessDTDSubset ();
-				if (currentInput.LineNumber != currentLine ||
-					currentInput.LinePosition != currentColumn)
-					throw new XmlException (this as IXmlLineInfo,
-						"Incorrectly nested parameter entity.");
+				SkipWhitespace ();
+				// FIXME: Implement correct nest-level check.
+				// Don't depend on lineinfo (might not be supplied)
+//				if (currentInput.LineNumber != currentLine ||
+//					currentInput.LinePosition != currentColumn)
+//					throw new XmlException (this as IXmlLineInfo,
+//						"Incorrectly nested parameter entity.");
 				break;
 			case '<':
 				int c = ReadChar ();
@@ -218,7 +224,7 @@ namespace System.Xml
 				SkipWhitespace ();
 				break;
 			default:
-				throw new XmlException (this as IXmlLineInfo,String.Format ("Syntax Error inside doctypedecl markup : {0}({1})", PeekChar (), (char) PeekChar ()));
+				throw new XmlException (this as IXmlLineInfo,String.Format ("Syntax Error inside doctypedecl markup : {0}({1})", c2, (char) c2));
 			}
 			currentInput.InitialState = false;
 			return true;

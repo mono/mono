@@ -208,19 +208,7 @@ namespace System.Xml
 		}
 
 		public override string Value {
-			get {
-				/*
-				switch (ChildNodes.Count) {
-				case 0:
-					return String.Empty;
-				case 1:
-					return FirstChild.Value;
-				default:
-					return BuildChildValue (ChildNodes);
-				}
-				*/
-				return BuildChildValue (ChildNodes);
-			}
+			get { return BuildChildValue (ChildNodes); }
 
 			set {
 				XmlNode firstChild = FirstChild;

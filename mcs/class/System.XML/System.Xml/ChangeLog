@@ -1,3 +1,15 @@
+2004-04-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDReader.cs : In ProcessDTDSubset(), 1)error message was 
+	  generated with incorrect stream character, 2)entity nest check 
+	  should not depend on line info which might not be supplied, 3)
+	  empty PE should be skipped.
+	* XmlParserInput.cs : use index for StringBuilder instead of calling
+	  Remove() many times. This highly optimizes DTD parser.
+
+	* XmlAttribute.cs : removed commented code.
+	* XmlEntity.cs : removed unused field.
+
 2004-04-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs : (DTDAttributeDefinition) create ArrayList 

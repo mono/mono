@@ -36,7 +36,6 @@ namespace System.Xml
 		string publicId;
 		string systemId;
 		string baseUri;
-		XmlLinkedNode lastChild;
 
 		#endregion
 
