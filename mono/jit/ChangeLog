@@ -1,3 +1,9 @@
+2002-05-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: buf fix. if exception variable is allocated to a register. 
+
+	* jit.c (mono_find_final_block): bug fix.
+
 2002-05-15  Dietmar Maurer  <dietmar@ximian.com>
 
 	* delegate.c (arch_end_invoke): fix bug #24653, simplified the
