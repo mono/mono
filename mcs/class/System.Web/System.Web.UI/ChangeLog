@@ -1,3 +1,7 @@
+2004-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: properly fixed bug #59794.
+
 2004-06-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs:
