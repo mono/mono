@@ -12,6 +12,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 //using Windows.Drawing;
 //using System.Windows.Forms;
 
@@ -25,10 +26,65 @@ namespace Microsoft.VisualBasic {
 		// Constructors
 		// Properties
 		// Methods
-		[MonoTODO]
-		public static System.Int32 Shell (System.String Pathname, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(2)] Microsoft.VisualBasic.AppWinStyle Style, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(false)] System.Boolean Wait, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(-1)] System.Int32 Timeout)
+		//[MonoTODO]
+		public static System.Int32 Shell (System.String Pathname, 
+			[System.Runtime.InteropServices.Optional] 
+			[System.ComponentModel.DefaultValue(2)] 
+			Microsoft.VisualBasic.AppWinStyle Style, 
+			[System.Runtime.InteropServices.Optional] 
+			[System.ComponentModel.DefaultValue(false)] 
+			System.Boolean Wait, 
+			[System.Runtime.InteropServices.Optional] 
+			[System.ComponentModel.DefaultValue(-1)] 
+			System.Int32 Timeout)
 		{ 
-			throw new NotImplementedException ();
+			Process prcs = new Process();
+
+			ProcessWindowStyle PWinStyle = 0;
+			switch (Style){
+				case AppWinStyle.Hide:
+					PWinStyle = ProcessWindowStyle.Hidden;
+					break;
+				case AppWinStyle.NormalFocus:
+					PWinStyle = ProcessWindowStyle.Normal;
+					break;
+				case AppWinStyle.MinimizedFocus:
+					PWinStyle = ProcessWindowStyle.Minimized;
+					break;
+				case AppWinStyle.MaximizedFocus:
+					PWinStyle = ProcessWindowStyle.Maximized;
+					break;
+				case AppWinStyle.NormalNoFocus:
+					PWinStyle = ProcessWindowStyle.Normal; //ToDo: no focus is not set
+					break;
+				case AppWinStyle.MinimizedNoFocus:
+					PWinStyle = ProcessWindowStyle.Minimized; //ToDo: no focus is not set
+					break;
+			}
+
+			prcs.StartInfo.FileName = Pathname;
+			prcs.StartInfo.WindowStyle = PWinStyle;
+
+			try	
+			{
+				if(prcs.Start()) 
+				{
+					if (Wait)
+					{
+						if (Timeout == -1)
+							prcs.WaitForExit();
+						else
+							prcs.WaitForExit(Timeout);
+					}
+					return prcs.Id;
+				}
+				else
+					return 0;
+			}
+			catch (System.ComponentModel.Win32Exception e){
+				throw new System.IO.FileNotFoundException (
+					Utils.GetResourceString(53));
+			}
 		}
 			
 		[MonoTODO]
@@ -42,9 +98,6 @@ namespace Microsoft.VisualBasic {
 		{ 
 			throw new NotImplementedException ();
 		}
-			
-			
-			
 			
 		[MonoTODO]
 		public static System.String InputBox (System.String Prompt, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue("")] System.String Title, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue("")] System.String DefaultResponse, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(-1)] System.Int32 XPos, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(-1)] System.Int32 YPos)
@@ -387,15 +440,8 @@ namespace Microsoft.VisualBasic {
 				
 
 			
-			}
-
-
-
-
-
-	*/	}
-
-
+			}	*/	
+		}
 	}
 }
 
