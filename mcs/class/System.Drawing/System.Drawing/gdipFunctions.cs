@@ -150,7 +150,7 @@ namespace System.Drawing {
  		[DllImport("gdiplus.dll")]
  		internal static extern Status GdipCloneBitmapAreaI (int x, int y, int width, int height, PixelFormat format, IntPtr original, out int bitmap);
 		
-I		// Pen functions
+		// Pen functions
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreatePen1(int argb, float width, Unit unit, out int pen);
 		[DllImport("gdiplus.dll")]
