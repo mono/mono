@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ldml>
+	<dates>
+		<calendars>
+			<calendar type="gregorian">
+				<am>AM</am>
+				<pm>PM</pm>
+				<dateFormats>
+					<default type="medium"/>
+					<dateFormatLength type="medium">
+						<dateFormat >
+							<pattern>MM d, yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
+					<dateFormatLength type="short">
+						<dateFormat >
+							<pattern>M/d/yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
+					<timeFormatLength type="long">
+						<timeFormat>
+							<pattern>h:mm:ss tt</pattern>
+						</timeFormat>
+					</timeFormatLength>
+				</dateFormats>
+			</calendar>
+		</calendars>
+	</dates>
   <numbers>
     <decimalFormats>
       <decimalFormatLength >

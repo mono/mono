@@ -8,8 +8,24 @@
 <ldml>
 	<dates>
 		<calendars>
-                  <calendar_type type="ThaiBuddhistCalendar" />
-                </calendars>
-        </dates>
+			<calendar_type type="ThaiBuddhistCalendar" />
+			<calendar type="ThaiBuddhistCalendar">
+				<dateFormats>
+					<dateFormatLength type="short">
+						<dateFormat >
+							<pattern>d/M/yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
+				</dateFormats>
+				<timeFormats>
+					<timeFormatLength type="long">
+						<timeFormat >
+							<pattern>H:mm:ss</pattern>
+						</timeFormat>
+					</timeFormatLength >
+				</timeFormats>
+			</calendar>
+		</calendars>
+	</dates>
 </ldml>
 

@@ -21,13 +21,6 @@
 						</dateFormat>
 					</dateFormatLength >
 				</dateFormats>
-				<timeFormats>
-					<timeFormatLength type="long">
-						<timeFormat >
-							<pattern>HH:mm:ss</pattern>
-						</timeFormat>
-					</timeFormatLength >
-				</timeFormats>
 			</calendar>
 		</calendars>
 	</dates>

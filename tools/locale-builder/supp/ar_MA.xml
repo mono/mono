@@ -8,8 +8,24 @@
 <ldml>
 	<dates>
 		<calendars>
-                  <calendar_type type="GregorianCalendar" />
-                </calendars>
-        </dates>
+			<calendar_type type="GregorianCalendar" />
+			<calendar type="gregorian">
+				<dateFormats>
+					<dateFormatLength type="short">
+						<dateFormat >
+							<pattern>dd-MM-yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
+				</dateFormats>
+				<timeFormats>
+					<timeFormatLength type="long">
+						<timeFormat >
+							<pattern>H:mm:ss</pattern>
+						</timeFormat>
+					</timeFormatLength >
+				</timeFormats>
+			</calendar>
+		</calendars>
+	</dates>
 </ldml>
 
