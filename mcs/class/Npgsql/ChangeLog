@@ -1,3 +1,8 @@
+2004-09-18  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+        * NpgsqlCommand.cs,
+        NpgsqlConnector.cs:  Improved portal and plan name creation to use an unique number from NpgsqlConnector instead of using an static field in NpgsqlCommand. Thanks Martin ( martijn at boland dot org) for the heads up.
+
 2004-09-15  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
     * Npgsql/NpgsqlRowDescription.cs:
         FieldIndex: Really added support for case insensitive fields index lookup. Thanks Martin ( martijn at boland dot org)
