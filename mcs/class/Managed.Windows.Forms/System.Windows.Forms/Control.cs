@@ -251,6 +251,22 @@ namespace System.Windows.Forms
 						return;
 					}
 				}
+
+				if (value.tab_index == -1) {
+					int	end;
+					int	index;
+					int	use;
+
+					use = 0;
+					end = owner.child_controls.Count;
+					for (int i = 0; i < end; i++) {
+						index = owner.child_controls[i].tab_index;
+						if (index >= use) {
+							use = index + 1;
+						}
+					}
+					value.tab_index = use;
+				}
 				list.Add (value);
 				value.Parent = owner;
 			}
@@ -476,6 +492,7 @@ namespace System.Windows.Forms
 			layout_suspended = 0;		
 			double_buffering = true;
 			mouse_clicks = 1;
+			tab_index = -1;
 
 			parent = null;
 			background_image = null;
@@ -1355,11 +1372,17 @@ namespace System.Windows.Forms
 
 		public int TabIndex {
 			get {
-				return tab_index;
+				if (tab_index != -1) {
+					return tab_index;
+				}
+				return 0;
 			}
 
 			set {
-				tab_index = value;
+				if (tab_index != value) {
+					tab_index = value;
+					OnTabIndexChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -1714,6 +1737,10 @@ namespace System.Windows.Forms
 				current = current.parent;
 			}
 			return null;
+		}
+
+		public Control GetNextControl(Control ctl, bool forward) {
+			return ctl;
 		}
 
 		public void Hide() {

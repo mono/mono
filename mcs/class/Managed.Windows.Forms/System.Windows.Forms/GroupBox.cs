@@ -59,6 +59,8 @@ namespace System.Windows.Forms
 		{
 			TabStop = false;
 			flat_style = FlatStyle.Standard;
+
+			SetStyle(ControlStyles.ContainerControl, true);
 		}
 
 		#region Public Properties
