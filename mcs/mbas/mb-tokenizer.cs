@@ -2,7 +2,7 @@
 // Mono.MonoBASIC.Tokenizer.cs: The Tokenizer for the MonoBASIC compiler
 //
 // Author: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
-//	   
+//	 : Manjula GHM (mmanjula@novell.com)  
 // Based on cs-tokenizer.cs by Miguel de Icaza (miguel@gnu.org)
 //
 // Licensed under the terms of the GNU GPL
@@ -498,7 +498,6 @@ namespace Mono.MonoBASIC
 			
 			if (c != -1)
 				number.Append ((char) c);
-			
 			while ((d = peekChar ()) != -1){
 				if (Char.IsDigit ((char)d)){
 					number.Append ((char) d);
@@ -662,12 +661,14 @@ namespace Mono.MonoBASIC
 			bool is_real = false;
 			number = new StringBuilder ();
 			int type;
+			bool non_prefixdecimal = false; //To capture decimals like .50
 
 			number.Length = 0;
 
 			if (Char.IsDigit ((char)c)){
 				decimal_digits (c);
-				c = peekChar ();
+				c = peekChar ();	
+				non_prefixdecimal = true;
 			}
 
 			//
@@ -675,11 +676,13 @@ namespace Mono.MonoBASIC
 			// "1.1" vs "1.ToString()" (LITERAL_SINGLE vs NUMBER DOT IDENTIFIER)
 			//
 			if (c == '.'){
+				if (non_prefixdecimal == false)
+					 putback ('.');
 				if (decimal_digits (getChar())){
 					is_real = true;
 					c = peekChar ();
 				} else {
-					putback ('.');
+			//		putback ('.');
 					number.Length -= 1;
 					val = System.Int64.Parse(number.ToString());
 					return integer_type_suffix('.');
@@ -731,6 +734,7 @@ namespace Mono.MonoBASIC
 				return putback_char;
 			return reader.Peek ();
 		}
+		
 
 		void putback (int c)
 		{
@@ -943,6 +947,14 @@ namespace Mono.MonoBASIC
 				}
 			
 				// handle numeric literals
+
+				if (Char.IsDigit ((char) c))
+                                {
+                                        cant_have_a_type_character = true;
+                                        tokens_seen = true;
+                                        return is_number (c);
+                                }
+
 				if (c == '.')
 				{
 					cant_have_a_type_character = true;
@@ -951,14 +963,6 @@ namespace Mono.MonoBASIC
 						return is_number (c);
 					return Token.DOT;
 				}
-				
-				if (Char.IsDigit ((char) c))
-				{
-					cant_have_a_type_character = true;
-					tokens_seen = true;
-					return is_number (c);
-				}
-
 				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR) {
 					cant_have_a_type_character = true;
 

@@ -1,3 +1,6 @@
+2005-03-31 Manjula GHM <mmanjula@novell.com>
+	*mb-tokenizer.cs: Support declaration of decimal numbers with no digits before point like '.52' instead of '0.52'
+
 2005-03-29 Manjula GHM <mmanjula@novell.com>
 	*assign.cs: Disallow New Date assignment with types other than date and object type
 
