@@ -42,6 +42,8 @@ namespace System.Xml.Serialization {
 			get { return includeMetadata; }
 		}
 
+		#endregion Properties
+
 		#region Methods
 
 		[MonoTODO]

@@ -60,5 +60,6 @@ namespace System.ComponentModel {
 		{
 			return (!recommendedAsConfigurable);
 		}
+		#endregion // Methods
 	}
 }

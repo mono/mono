@@ -41,6 +41,8 @@ namespace System.Xml.Serialization {
 		public CodeAttributeDeclarationCollection IncludeMetadata {
 			get { return includeMetadata; }
 		}
+		
+		#endregion // Properties
 
 		#region Methods
 
