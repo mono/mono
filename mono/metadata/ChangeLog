@@ -1,3 +1,7 @@
+2002-07-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): support BOOLEAN
+
 2002-06-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (class_compute_field_layout): compute class->blittable attribute.
