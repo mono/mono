@@ -1,3 +1,8 @@
+2004-07-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* mini.c (print_dfn): commenting out the code that prints
+	the cil. With -O=deadce, this makes -v -v crash.
+
 2004-04-21  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mini-sparc.h: fix implementations of __builtin
