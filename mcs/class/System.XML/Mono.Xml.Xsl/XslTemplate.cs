@@ -216,7 +216,7 @@ namespace Mono.Xml.Xsl {
 		Pattern match;
 		XmlQualifiedName mode;
 		double priority = double.NaN;
-		Hashtable parameters;
+		ArrayList parameters;
 		XslOperation content;
 		
 		static int nextId = 0;
@@ -269,10 +269,6 @@ namespace Mono.Xml.Xsl {
 		public double Priority {
 			get { return priority; }
 		}
-
-		public Hashtable Parameters {
-			get { return parameters; }
-		}
 		
 		public XslStylesheet Parent {
 			get { return style; }
@@ -293,10 +289,9 @@ namespace Mono.Xml.Xsl {
 						{ alldone = false; break; }
 					
 					if (this.parameters == null)
-						this.parameters = new Hashtable ();
+						this.parameters = new ArrayList ();
 					
-					XslLocalParam p = new XslLocalParam (c);
-					this.parameters [p.Name] = p;
+					parameters.Add (new XslLocalParam (c));
 					
 				} while (c.Input.MoveToNext ());
 				if (!alldone)
@@ -311,11 +306,15 @@ namespace Mono.Xml.Xsl {
 
 			if (parameters != null) {
 				if (withParams == null) {
-					foreach (XslLocalParam param in parameters.Values)
+					int len = parameters.Count;
+					for (int i = 0; i < len; i++) {
+						XslLocalParam param = (XslLocalParam)parameters [i];
 						param.Evaluate (p);
+					}
 				} else {
-					foreach (XslLocalParam param in parameters.Values)
-					{
+					int len = parameters.Count;
+					for (int i = 0; i < len; i++) {
+						XslLocalParam param = (XslLocalParam)parameters [i];
 						if (withParams.Contains (param.Name))
 							param.Override (p, withParams [param.Name]);
 						else

@@ -58,10 +58,12 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			foreach (XslIf test in conditions) {
-				if (test.EvaluateIfTrue (p))
+			int len = conditions.Count;
+			for (int i = 0; i < len; i++) {
+				if (((XslIf)conditions [i]).EvaluateIfTrue (p))
 					return;
 			}
+			
 			if (defaultChoice != null) 	
 				defaultChoice.Evaluate (p);
 		}

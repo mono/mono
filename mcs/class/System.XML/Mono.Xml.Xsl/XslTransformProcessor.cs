@@ -134,8 +134,11 @@ namespace Mono.Xml.Xsl {
 			} else
 				ret = new Hashtable ();
 			
-			foreach (XslVariableInformation param in withParams)
+			int len = withParams.Count;
+			for (int i = 0; i < len; i++) {
+				XslVariableInformation param = (XslVariableInformation)withParams [i];
 				ret.Add (param.Name, param.Evaluate (this));
+			}
 			return ret;
 		}
 		

@@ -136,8 +136,9 @@ namespace Mono.Xml.Xsl.Operations {
 			if (hasStack)
 				p.PushStack (stackSize);
 			
-			foreach (XslOperation op in content)
-				op.Evaluate (p);
+			int len = content.Count;
+			for (int i = 0; i < len; i++)
+				((XslOperation) content [i]).Evaluate (p);
 			
 			if (hasStack)
 				p.PopStack ();

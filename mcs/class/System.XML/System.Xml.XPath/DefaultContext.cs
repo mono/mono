@@ -321,8 +321,9 @@ namespace System.Xml.XPath
 		{
 			StringBuilder sb = new StringBuilder ();
 			
-			foreach (Expression e in rgs)
-				sb.Append (e.EvaluateString (iter));
+			int len = rgs.Count;
+			for (int i = 0; i < len; i++)
+				sb.Append (((Expression)rgs[i]).EvaluateString (iter));
 			
 			return sb.ToString ();
 		}
