@@ -1,3 +1,7 @@
+2001-12-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* x86.brg, jit.c: Implement conv.ovf.u4, conv.ovf.u2, conv.ovf.i2,
+	conv.ovf.u8 
 
 Mon Dec 3 17:16:36 CET 2001 Paolo Molaro <lupus@ximian.com>
 
