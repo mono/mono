@@ -2098,7 +2098,7 @@ namespace Mono.CSharp {
 						} else if (right is LongConstant){
 							long ll = ((LongConstant) right).Value;
 
-							if (ll > 0)
+							if (ll >= 0)
 								right = new ULongConstant ((ulong) ll);
 						} else {
 							e = Convert.ImplicitNumericConversion (ec, right, l, loc);
