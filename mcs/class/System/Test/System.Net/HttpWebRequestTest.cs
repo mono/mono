@@ -17,32 +17,28 @@ namespace MonoTests.System.Net
 {
 
 [TestFixture]
-public class HttpWebRequestTest
+public class HttpWebRequestTest : Assertion
 {
         [Test]
         public void Sync ()
         {
-		try {
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
-			req.UserAgent = "MonoClient v1.0";
-			Console.WriteLine ("req:If Modified Since: " + req.IfModifiedSince);
-			WriteHeaders ("req:", req.Headers);		
+		HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
+		AssertNotNull ("req:If Modified Since: ", req.IfModifiedSince);
 
-			HttpWebResponse res = (HttpWebResponse) req.GetResponse ();
-			Console.WriteLine ("res:HttpStatusCode: " + res.StatusCode);
-			Console.WriteLine ("res:HttpStatusDescription: " + res.StatusDescription);
+		req.UserAgent = "MonoClient v1.0";
+		AssertEquals ("req Header 1", "User-Agent", req.Headers.GetKey (0));
+		AssertEquals ("req Header 2", "MonoClient v1.0", req.Headers.Get (0));
+
+		HttpWebResponse res = (HttpWebResponse) req.GetResponse ();
+		AssertEquals ("res:HttpStatusCode: ", "OK", res.StatusCode);
+		AssertEquals ("res:HttpStatusDescription: ", "OK", res.StatusDescription);
+		
+		AssertEquals ("res Header 1", "text/html", res.Headers.Get ("Content-Type"));
+		AssertNotNull ("Last Modified: ", res.LastModified);
+		
+		AssertEquals ("res:", 0, res.Cookies.Count);
 			
-			WriteHeaders ("res:", res.Headers);		
-			Console.WriteLine("Last Modified: " + res.LastModified);
-			
-			WriteCookies ("res:", res.Cookies);
-				
-			WriteHeaders ("req:", req.Headers);		
-				
-			res.Close ();
-		} catch (WebException e) {
-			Console.WriteLine("\nThe following Exception was raised : {0}", e.Message);
-		}
+		res.Close ();
 	}
 	
         [Test]
@@ -64,7 +60,9 @@ public class HttpWebRequestTest
 			Assertion.Fail ("#2");
 		} catch (InvalidOperationException) {}
 	}
-	
+
+/* Unused code for now, but might be useful for debugging later
+
 	private void WriteHeaders (string label, WebHeaderCollection col) 
 	{
 		label += "Headers";
@@ -86,6 +84,8 @@ public class HttpWebRequestTest
 		for (int i = 0; i < col.Count; i++)
 			Console.WriteLine ("\t" + col [i]);
 	}
+*/
+
 }
 
 }

@@ -1,3 +1,11 @@
+2003-12-30  Nick Drochak  <ndrochak@gol.com>
+
+	* DnsTest.cs: Update with new IP address for www.go-mono.com and make
+	test failure output more informative. All Tests pass for me on
+	.NET 1.1.
+	* HttpWebRequestTest.cs: Get rid of WriteLines and use Asserts to make
+	it a proper unit test.
+
 2003-07-16  Peter Williams  <peter@newton.cx>
 
 	* IPAddressTest.cs: #if NET_1_1 for some IPv6 tests that
