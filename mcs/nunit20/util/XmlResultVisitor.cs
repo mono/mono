@@ -108,7 +108,7 @@ namespace NUnit.Util
 				
 					xmlWriter.WriteStartElement("stack-trace");
 					if(caseResult.StackTrace != null)
-						xmlWriter.WritrString( ( StackTraceFilter.Filter( caseResult.StackTrace ) );
+						xmlWriter.WriteString( StackTraceFilter.Filter( caseResult.StackTrace ) );
 					xmlWriter.WriteEndElement();
 				
 					xmlWriter.WriteEndElement();

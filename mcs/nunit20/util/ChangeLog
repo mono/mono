@@ -1,5 +1,9 @@
 2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlResultVisitor.cs : ... was still broken.
+
+2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlResultVisitor.cs : Local fix - don't use WriteCData() which
 	  cannot escape invalid characters. It broke VB unit test. See also:
 	  http://sourceforge.net/tracker/?group_id=10749&atid=110749&func=detail&aid=1073539
