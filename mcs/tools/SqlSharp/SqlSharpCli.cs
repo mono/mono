@@ -35,7 +35,7 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
-//using System.Data.Odbc;
+using System.Data.Odbc;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
@@ -695,7 +695,7 @@ namespace Mono.Data.SqlSharp {
 			try {
 				switch(provider) {
 				case "ODBC":
-					//conn = new OdbcConnection();
+					conn = new OdbcConnection();
 					break;
 				case "OLEDB":
 					conn = new OleDbConnection();
@@ -788,6 +788,10 @@ namespace Mono.Data.SqlSharp {
 					Console.WriteLine("Warning: Currently, the SqlClient provider is the PostgreSQL provider.");
 					break;
 				case "ODBC":
+					UseParameters = false;
+					UseSimpleReader = false;
+					provider = parm;
+					break;
 				case "GDA":
 				case "OLEDB":
 					UseParameters = false;
