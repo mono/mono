@@ -1,3 +1,8 @@
+2002-07-01  Dick Porter  <dick@ximian.com>
+	
+	* object.h:
+	* object.c (mono_runtime_run_main): Removed unneeded argument
+
 2002-06-28  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.c: Reflect latest MonoDwarfFileWriter changes.
