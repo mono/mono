@@ -1,3 +1,10 @@
+2003-03-31  Stefan Görling <stefan@gorling.se>
+
+	* HttpSessionState.cs:
+	* ISessionHandler.cs:
+	* SessionInProcHandler.cs:
+	* SessionStateModule.cs: initial implementation of InProc session.
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSessionState.cs: implemented CodePage.

@@ -372,6 +372,8 @@ System.Web.SessionState/SessionDictionary.cs
 System.Web.SessionState/SessionStateMode.cs
 System.Web.SessionState/SessionStateModule.cs
 System.Web.SessionState/SessionStateSectionHandler.cs
+System.Web.SessionState/SessionInProcHandler.cs
+System.Web.SessionState/ISessionHandler.cs
 System.Web.Compilation/AspComponentFoundry.cs
 System.Web.Compilation/AspElements.cs
 System.Web.Compilation/AspGenerator.cs

@@ -3,21 +3,21 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Stefan Görling (stefan@gorling.se)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
-//
+// (C) 2003 Stefan Görling (http://www.gorling.se)
+
 using System.Web;
 
 namespace System.Web.SessionState
 {
 	[MonoTODO]
-	public sealed class SessionStateModule : IHttpModule
+	public sealed class SessionStateModule : IHttpModule, IRequiresSessionState
 	{
 		static SessionConfig config;
 		Type handlerType;
-		object handler;
-		
-		class SessionInProcHandler {}
+		ISessionHandler handler;
 		
 		public SessionStateModule ()
 		{
@@ -25,6 +25,8 @@ namespace System.Web.SessionState
 
 		public void Dispose ()
 		{
+		    if (handler!=null)
+			handler.Dispose();
 		}
 
 		[MonoTODO]
@@ -50,8 +52,10 @@ namespace System.Web.SessionState
 				}
 			}
 
-			if (handlerType != null && handler == null)
-				handler = Activator.CreateInstance (handlerType);
+			if (handlerType != null && handler == null) {
+				handler = (ISessionHandler) Activator.CreateInstance (handlerType);
+				handler.Init(app); //initialize
+			}
 		}
 
 		void OnReleaseRequestState (object o, EventArgs args)
@@ -64,7 +68,21 @@ namespace System.Web.SessionState
 
 		IAsyncResult OnBeginAcquireState (object o, EventArgs args, AsyncCallback cb, object data)
 		{
-			return null;
+
+			HttpApplication application = (HttpApplication) o;
+			HttpContext context = application.Context;
+
+			if (handler!=null)
+			    handler.UpdateContext (context);
+			
+			// In the future, we might want to move the Async stuff down to
+			// the interface level, if we're going to support other than
+			// InProc, we might actually want to do things async, now we
+			// simply fake it.
+			HttpAsyncResult result=new HttpAsyncResult (cb,this);
+			result.Complete (true, o, null);
+
+			return result;
 		}
 
 		void OnEndAcquireState (IAsyncResult result)
@@ -75,4 +93,7 @@ namespace System.Web.SessionState
 		public event EventHandler End;
 	}
 }
+
+
+
 

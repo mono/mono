@@ -80,6 +80,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 
 	public bool IsNewSession {
 		get { return _newSession; }
+		set { _newSession=value; }
 	}
 
 	public bool IsReadOnly {
