@@ -1,3 +1,8 @@
+2005-03-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* process.c: Fix buffer length in ves_icall_System_Diagnostics_Process
+	_ProcessName_internal.
+
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_load_remote_field_new): Fix returning uninitialized
