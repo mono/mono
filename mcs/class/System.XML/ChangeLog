@@ -1,3 +1,7 @@
+2002-07-24  Tim Coleman <tim@timcoleman.com>
+	* list.unix:
+		Add some more classes to this build list.
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* list.unix:
 		Add System.Xml.Serialization/SoapReflectionImporter.cs to build

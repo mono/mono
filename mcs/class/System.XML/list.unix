@@ -157,7 +157,9 @@ System.Xml.Schema/XmlSchemaInfo.cs
 System.Xml.Schema/XmlSchemaUtil.cs
 System.Xml.Schema/XmlSchemaReader.cs
 System.Xml.Serialization/AssemblyInfo.cs
+System.Xml.Serialization/CodeIdentifier.cs
 System.Xml.Serialization/CodeIdentifiers.cs
+System.Xml.Serialization/IXmlSerializable.cs
 System.Xml.Serialization/SoapAttributeAttribute.cs
 System.Xml.Serialization/SoapAttributeOverrides.cs
 System.Xml.Serialization/SoapAttributes.cs
@@ -203,6 +205,11 @@ System.Xml.Serialization/XmlRootAttribute.cs
 System.Xml.Serialization/XmlSchemaExporter.cs
 System.Xml.Serialization/XmlSchemaImporter.cs
 System.Xml.Serialization/XmlSchemas.cs
+System.Xml.Serialization/XmlSerializationCollectionFixupCallback.cs
+System.Xml.Serialization/XmlSerializationFixupCallback.cs
+System.Xml.Serialization/XmlSerializationReadCallback.cs
+System.Xml.Serialization/XmlSerializationReader.cs
+System.Xml.Serialization/XmlSerializationWriteCallback.cs
 System.Xml.Serialization/XmlSerializer.cs
 System.Xml.Serialization/XmlSerializerNamespaces.cs
 System.Xml.Serialization/XmlTextAttribute.cs
