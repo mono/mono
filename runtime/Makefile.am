@@ -56,7 +56,7 @@ $(fx11_DATA):
 	if test -f $(mcs_topdir)/mcs/mcs.exe; then f=$(mcs_topdir)/mcs/mcs.exe; else f=$(fx11dir)/mcs.exe; fi; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
-	if test -f $(mcs_topdir)/mcs/mbas.exe; then f=$(mcs_topdir)/mcs/mbas.exe; else f=$(fx11dir)/mbas.exe; fi; \
+	if test -f $(mcs_topdir)/mbas/mbas.exe; then f=$(mcs_topdir)/mbas/mbas.exe; else f=$(fx11dir)/mbas.exe; fi; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
 
