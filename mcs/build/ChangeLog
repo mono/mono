@@ -1,3 +1,7 @@
+2005-01-16 Nick Drochak  <ndrochak@ieee.org>
+
+	* library.make: /exclude for nunit needs a comma separated list
+
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* library.make : output TestResult-ondotnet-(profile).log instead of
