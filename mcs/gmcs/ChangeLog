@@ -1,5 +1,9 @@
 2004-11-17  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (TypeExpr.ResolveType): Don't make this virtual.
+
+2004-11-17  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs
 	(Expression.ResolveAsTypeTerminal): Removed the `bool silent' argument.
 

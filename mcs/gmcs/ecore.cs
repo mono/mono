@@ -2377,7 +2377,7 @@ namespace Mono.CSharp {
 
 		public abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
 
-		public virtual Type ResolveType (EmitContext ec)
+		public Type ResolveType (EmitContext ec)
 		{
 			TypeExpr t = ResolveAsTypeTerminal (ec);
 			if (t == null)
@@ -2542,16 +2542,6 @@ namespace Mono.CSharp {
 			}
 
 			return new TypeExpression (type, loc);
-		}
-
-		public override Type ResolveType (EmitContext ec)
-		{
-			TypeExpr t = ResolveAsTypeTerminal (ec);
-			if (t == null)
-				return null;
-
-			type = t.ResolveType (ec);
-			return type;
 		}
 
 		public override bool CheckAccessLevel (DeclSpace ds)
