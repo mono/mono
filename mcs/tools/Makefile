@@ -6,8 +6,7 @@ MONO_TOOLS = \
 	monostyle.exe 		\
 	GenerateDelegate.exe 	\
 	EnumCheck.exe 		\
-	IFaceDisco.exe		\
-	gacutil.exe
+	IFaceDisco.exe
 
 DISTFILES = \
 	assemblies.xml			\
@@ -52,7 +51,7 @@ dist-local: dist-default
 	$(CSCOMPILE) /target:exe /out:$@ $^
 
 EnumCheck.exe: EnumCheck.cs EnumCheckAssemblyCollection.cs
-	$(CSCOMPILE) /target:exe /out:$@ $^
+	$(CSCOMPILE) -r:System.Xml.dll /target:exe /out:$@ $^
 
 IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	$(CSCOMPILE) /target:exe /out:$@ $^
