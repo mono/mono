@@ -1,3 +1,8 @@
+2003-10-28 Jackson Harper <jackson@ximian.com>
+
+	* Driver.cs: Stub some command line args to maintain compatibility
+	with MS.
+	
 2003-10-01 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Remove delete on error, add quiet option.

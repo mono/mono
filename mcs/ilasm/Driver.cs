@@ -166,6 +166,19 @@ namespace Mono.ILASM {
                                         case "quiet":
                                                 quiet = true;
                                                 break;
+                                        // Stubs to stay commandline compatible with MS 
+                                        case "listing":
+                                        case "nologo":
+                                        case "debug":
+                                        case "clock":
+                                        case "error":
+                                        case "subsystem":
+                                        case "flags":
+                                        case "alignment":
+                                        case "base":
+                                        case "key":
+                                        case "resource":
+                                                break;
                                         case "scan_only":
                                                 scan_only = true;
                                                 break;
