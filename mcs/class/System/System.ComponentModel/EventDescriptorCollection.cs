@@ -135,15 +135,18 @@ namespace System.ComponentModel
 			get { return false; }
 		}
 
-//		[MonoTODO]
 		bool IList.IsReadOnly {
 			get { return false; }
 		}
 
-		object IList.this [int index] {
-			get { return this [index]; }
+		object IList.this[int index] {
+			get {
+				return eventList[index];
+			}
 			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 
 		// ICollection methods

@@ -1,3 +1,8 @@
+2002-05-10  Rodrigo Moya <rodrigo@ximian.com>
+
+	* EventDescriptorCollection.cs (this[index]): call eventList[index],
+	not this[index], which issues an 'ambigous call' error on Linux.
+
 2002-05-07  Rodrigo Moya <rodrigo@ximian.com>
 
 	* EventDescriptor.cs: added missing constructors.
