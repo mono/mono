@@ -1,1 +1,13 @@
 System.DirectoryServices/AssemblyInfo.cs
+System.DirectoryServices/DirectoryEntry.cs
+System.DirectoryServices/DirectoryEntries.cs
+System.DirectoryServices/SchemaNameCollection.cs
+System.DirectoryServices/AuthenticationTypes.cs
+System.DirectoryServices/PropertyCollection.cs
+System.DirectoryServices/PropertyValueCollection.cs
+System.DirectoryServices/DirectorySearcher.cs
+System.DirectoryServices/ReferralChasingOption.cs
+System.DirectoryServices/SearchScope.cs
+System.DirectoryServices/SortDirection.cs
+System.DirectoryServices/ResultPropertyValueCollection.cs
+System.DirectoryServices/ResultPropertyCollection.cs
