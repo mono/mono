@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -17,122 +18,111 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        public sealed class OpenFileDialog : FileDialog {
+	public sealed class OpenFileDialog : FileDialog {
 
 		//
 		//  --- Constructor
 		//
 		[MonoTODO]
-		public OpenFileDialog()
-		{
+		public OpenFileDialog() {
 			throw new NotImplementedException ();
 		}
 
 		//
 		//  --- Public Properties
 		//
-		[MonoTODO]
-		public IContainer Container {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public string DefaultExt {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public string FileName {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public string[] FileNames {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public string Filter {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public int FilterIndex {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public string InitialDirectory {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public virtual ISite Site {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public string Title {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public bool AddExtension {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public bool CheckPathExists {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public bool DereferenceLinks {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+		//public IContainer Container {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public string DefaultExt {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public string FileName {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public string[] FileNames {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public string Filter {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public int FilterIndex {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public string InitialDirectory {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public virtual ISite Site {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public string Title {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public bool AddExtension {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//
+		//public override bool CheckPathExists {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+
+		//public bool DereferenceLinks {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		[MonoTODO]
 		public bool Multiselect {
 			get {
@@ -151,24 +141,22 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
-		public bool RestoreDirectory {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public bool ShowHelp {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+		//public bool RestoreDirectory {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//public bool ShowHelp {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		[MonoTODO]
 		public bool ShowReadOnly {
 			get {
@@ -178,15 +166,14 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
-		public bool ValidateNames {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+		//public bool ValidateNames {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		[MonoTODO]
 		public override bool CheckFileExists {
 			get {
@@ -200,94 +187,78 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
+		//inherited
+		//public void Dispose() {
+		//	throw new NotImplementedException ();
+		//}
+		//public virtual ObjRef CreateObjRef(Type requestedType)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public void Dispose()
-		{
+		public override bool Equals(object o) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual ObjRef CreateObjRef(Type requestedType)
-		{
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}
+		//inherited
+		//public static bool Equals(object o1, object o2) {
+		//	throw new NotImplementedException ();
+		//}
+		//public Type GetType() {
+		//	throw new NotImplementedException ();
+		//}
+		//public object GetLifetimeService() {
+		//	throw new NotImplementedException ();
+		//}
+		//public virtual object InitializeLifetimeService() {
+		//	throw new NotImplementedException ();
+		//}
+		[MonoTODO]
+		public Stream OpenFile() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual bool Equals(object o)
-		{
+		public override void Reset() {
 			throw new NotImplementedException ();
 		}
+		//public DialogResult ShowDialog() {
+		//	throw new NotImplementedException ();
+		//}
+		
+		//public DialogResult ShowDialog(IWin32Window owner) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual int GetHashCode()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Type GetType()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object GetLifetimeService()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual object InitializeLifetimeService()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Stream OpenFile()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override void Reset()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public DialogResult ShowDialog()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public DialogResult ShowDialog(IWin32Window owner)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual string ToString()
-		{
+		public override string ToString() {
 			throw new NotImplementedException ();
 		}
 
 		//
 		//  --- Public Events
 		//
-		public event EventHandler Disposed; 
-		public event CancelEventHandler FileOk;
-		public event EventHandler HelpRequest;
+		//inherited
+		//public event EventHandler Disposed; 
+		//public event CancelEventHandler FileOk;
+		//public event EventHandler HelpRequest;
 
 		//
 		//  --- Protected Properties
 		//
-		[MonoTODO]
-		protected bool DesignMode {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		protected EventHandlerList Events {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+
+		//protected bool DesignMode {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//protected EventHandlerList Events {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 
 		//
 		//  --- Protected Methods
@@ -337,9 +308,8 @@ namespace System.Windows.Forms {
 		//  --- Destructor
 		//
 		[MonoTODO]
-		~OpenFileDialog()
-		{
+		~OpenFileDialog() {
 			throw new NotImplementedException ();
 		}
-	 }
+	}
 }

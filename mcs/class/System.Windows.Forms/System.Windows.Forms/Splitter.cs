@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -141,111 +142,97 @@ namespace System.Windows.Forms {
 		
 		//  --- Public Methods
 		
+		//public IAsyncResult BeginInvoke(Delegate del)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public IAsyncResult BeginInvoke(Delegate del, object[] obj)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public override void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public IAsyncResult BeginInvoke(Delegate del)
+		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
+
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public IAsyncResult BeginInvoke(Delegate del, object[] obj)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Dispose()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(bool b)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Rectangle rect)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Region reg)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Rectangle rect, bool b)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object Invoke(Delegate del)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object Invoke(Delegate del, object[] objs)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void PerformLayout()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void PerformLayout(Control ctl, string str)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void ResumeLayout()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void ResumeLayout(bool b)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Scale(float val1)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Scale(float val1, float val2)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Select()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void SetBounds(int val1, int val2, int val3, int val4)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds)
-		{
-			throw new NotImplementedException ();
-		}
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}		
+		//public void Invalidate()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void Invalidate(bool b)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void Invalidate(Rectangle rect)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void Invalidate(Region reg)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void Invalidate(Rectangle rect, bool b)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public object Invoke(Delegate del)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public object Invoke(Delegate del, object[] objs)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void PerformLayout()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void PerformLayout(Control ctl, string str)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void ResumeLayout()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void ResumeLayout(bool b)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void Scale(float val1)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void Scale(float val1, float val2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void Select()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void SetBounds(int val1, int val2, int val3, int val4)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public override string ToString()
 		{
@@ -302,44 +289,40 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment halign)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment lralign)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void Select(bool val1, bool val2)
-		{
-			throw new NotImplementedException ();
-		}
+		//ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment halign)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment lralign)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//protected virtual void Select(bool val1, bool val2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected override void SetBoundsCore( int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected void UpdateBounds()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void UpdateBounds(int val1, int val2, int val3, int val4)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		{
+		//protected void UpdateBounds()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//protected void UpdateBounds(int val1, int val2, int val3, int val4)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		bool IMessageFilter.PreFilterMessage(ref Message m){
 			throw new NotImplementedException ();
 		}
 	 }

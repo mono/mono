@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -223,6 +224,12 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
+			throw new NotImplementedException ();
+		}
+		void ISupportInitialize.BeginInit(){
+			throw new NotImplementedException ();
+		}
+		void ISupportInitialize.EndInit(){
 			throw new NotImplementedException ();
 		}
 	}

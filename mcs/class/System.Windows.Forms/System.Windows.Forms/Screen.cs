@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -106,13 +107,12 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[Serializable]
-		[ClassInterface(ClassInterfaceType.AutoDual)]
-		[MonoTODO]
-		public Type GetType()
-		{
-			throw new NotImplementedException ();
-		}
+		//[Serializable]
+		//[ClassInterface(ClassInterfaceType.AutoDual)]
+		//public Type GetType()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		[MonoTODO]
 		public static Rectangle GetWorkingArea(Control ctl)

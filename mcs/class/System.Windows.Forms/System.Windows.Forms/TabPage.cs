@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,14 +15,13 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        public class TabPage : Panel {
+	public class TabPage : Panel {
 
 		//
 		//  --- Public Constructor
 		//
 		[MonoTODO]
-		public TabPage()
-		{
+		public TabPage() {
 			throw new NotImplementedException ();
 		}
 		//
@@ -29,56 +29,46 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public override AnchorStyles Anchor {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}	
 		}
 		[MonoTODO]
 		public override DockStyle Dock {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
 		public int ImageIndex {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
 		public override string Text  {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
 		public string ToolTipText  {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
@@ -86,36 +76,33 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		
 		[MonoTODO]
-		public static TabPage GetTabPageOfComponent(object comp)
-		{
+		public static TabPage GetTabPageOfComponent(object comp) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override string ToString()
-		{
+		public override string ToString() {
 			throw new NotImplementedException ();
 		}
 		
 		//  --- Protected Methods
 		
 		[MonoTODO]
-		protected override ControlCollection CreateControlsInstance()
-		{
+		protected override ControlCollection CreateControlsInstance() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
-		{
+		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			throw new NotImplementedException ();
 		}
-		public class TabPageControlCollection : Control.ControlCollection {
-			//
-			// --- Public Methods
-			//
-			public override void Add(Control value)
-			{
-				throw new NotImplementedException ();
-			}
-		}
+		// FIXME  dont compile
+		//[MonoTODO]
+		//public class TabPageControlCollection : Control.ControlCollection {
+		//	//
+		//	// --- Public Methods
+		//	//
+		//	public override void Add(Control value) {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 	}
 }

@@ -1,9 +1,18 @@
+//
+// System.Windows.Forms.ToolBar
+//
+// Author:
+//   stubbed out by ?
+//	Dennis Hayes (dennish@raytek.com)
+//
+// (C) 2002 Ximian, Inc
+//
 using System;
 using System.Drawing;
 
 namespace System.Windows.Forms {
 
-	public class UserControl {
+	public class UserControl : ContainerControl{
 
 		// --- Properties ---
 		[MonoTODO]

@@ -15,19 +15,17 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-    public class QueryAccessibilityHelpEventArgs : EventArgs {
+	public class QueryAccessibilityHelpEventArgs : EventArgs {
 		string helpnamespace;
 		string helpstring;
 		string helpkeyword;
 		//
 		//  --- Constructor
 		//
-		public QueryAccessibilityHelpEventArgs()
-		{
+		public QueryAccessibilityHelpEventArgs() {
 			//
 		}
-		public QueryAccessibilityHelpEventArgs(string helpNamespace, string helpString, string helpKeyword)
-		{
+		public QueryAccessibilityHelpEventArgs(string helpNamespace, string helpString, string helpKeyword) {
 			helpkeyword = helpKeyword;
 			helpnamespace = helpNamespace;
 			helpstring =helpString;
@@ -67,15 +65,18 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+
+		//public static bool Equals(object o1, object o2) {
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}	 
+	}
 }

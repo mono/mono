@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -24,7 +25,10 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-
+//		void UpDownBase.DownButton(){
+		public override void DownButton(){
+			throw new NotImplementedException ();
+		}
 		//
 		//  --- Public Properties
 		//
@@ -123,7 +127,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void OnTextBoxKeyPress(object source, KeyPressEventArgs e)
+		protected override void OnTextBoxKeyPress(object source, KeyPressEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
@@ -148,9 +152,19 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-
-
-
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+		//Inherited/not needed
+		//public static bool Equals(object o1, object o2) {
+		//	throw new NotImplementedException ();
+		//}
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}
 
 
 		#region Inherited Not Needed
@@ -1610,5 +1624,12 @@ namespace System.Windows.Forms {
 		//}
 		
 		#endregion
+		void ISupportInitialize.BeginInit(){
+			throw new NotImplementedException ();
+		}
+		void ISupportInitialize.EndInit(){
+			throw new NotImplementedException ();
+		}
+
 	}
 }

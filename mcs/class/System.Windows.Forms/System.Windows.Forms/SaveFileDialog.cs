@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -51,11 +52,10 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public void Dispose()
-		{
-			throw new NotImplementedException ();
-		}
+		//public void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public Stream OpenFile()
 		{
@@ -66,11 +66,11 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public DialogResult ShowDialog()
-		{
-			throw new NotImplementedException ();
-		}
+		
+		//public DialogResult ShowDialog()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Protected Methods

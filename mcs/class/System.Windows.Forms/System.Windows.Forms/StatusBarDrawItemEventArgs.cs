@@ -87,7 +87,7 @@ namespace System.Windows.Forms {
 		{
 			// FIXME: In a perfect world, get hashcode would include
 			//		  Panel, but this shouldbe good enough.
-			return base.GetHashCode;
+			return base.GetHashCode();
 		}
 
 		/// <summary>

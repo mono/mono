@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -11,13 +12,15 @@
 using System;
 using System.Collections;
 using System.Drawing;
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	// <summary>
 	//	This is only a template.  Nothing is implemented yet.
 	//	Represents a Windows status bar control.
 	// </summary>
-      public class StatusBar : Control {
+	public class StatusBar : Control {
 
 		//
 		//  --- Private Fields
@@ -31,7 +34,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public StatusBar() : base()
 		{
-			Dock = DockStyle.bottom;
+			Dock = DockStyle.Bottom;
 			showPanels = false;
 			sizingGrip = true;
 			throw new NotImplementedException ();
@@ -103,7 +106,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Events
 		//
-		public event StatusBarDrawItmeEventHandler DrawItem;
+		public event StatusBarDrawItemEventHandler DrawItem;
 		public event StatusBarPanelClickEventHandler PanelClick;
 
 		//
@@ -151,14 +154,14 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool ShowPanels // default false {
+		public bool ShowPanels {// default false {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
 		public bool SizingGrip // default true {
-
+		{
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -199,6 +202,7 @@ namespace System.Windows.Forms {
 		//
 		// Author:
 		//   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+		//   stub ammended by Jaak Simm (jaaksimm@firm.ee)
 		//   Implemented by Richard Baumann <biochem333@nyc.rr.com>
 		// (C) Ximian, Inc., 2002
 		//
@@ -226,6 +230,7 @@ namespace System.Windows.Forms {
 			//
 			//  --- Public Methods
 			//
+			[MonoTODO]
 			public virtual int Add(StatusBarPanel panel)
 			{
 				string method_string = "Add(StatusBarPanel) ";
@@ -237,17 +242,22 @@ namespace System.Windows.Forms {
 
 					throw new ArgumentException(class_string + method_string + "panel.Parent != null");
 				}
-				panel.Parent = owner;
+				// FIXME: StatusBarPanel.Parent is readonly!
+				//panel.Parent = owner;
 				return list.Add(panel);
 			}
+			[MonoTODO]
 			public virtual StatusBarPanel Add(string s)
 			{
-				StatusBarPanel tmp = new StatusBarPanel();
-				tmp.Text = s;
-				tmp.Parent = owner;
-				list.Add(tmp);
-				return tmp;
+				throw new NotImplementedException ();
+			//	StatusBarPanel tmp = new StatusBarPanel();
+			//	tmp.Text = s;
+			//	// FIXME: StatusBarPanel.Parent is readonly!
+			//	//tmp.Parent = owner;
+			//	list.Add(tmp);
+			//	return tmp;
 			}
+			[MonoTODO]
 			public virtual void AddRange(StatusBarPanel[] panels)
 			{
 				string method_string = "AddRange(StatusBarPanel[]) ";
@@ -256,8 +266,8 @@ namespace System.Windows.Forms {
 					throw new ArgumentNullException(class_string + method_string + "panels == null");
 				}
 				for (int i = 0; i < panels.Length; i++) {
-
-					panels[i].Parent = owner;
+					// FIXME: StatusBarPanel.Parent is readonly!
+					//panels[i].Parent = owner;
 				}
 				list.AddRange(panels);
 			}
@@ -277,6 +287,7 @@ namespace System.Windows.Forms {
 			{
 				return list.IndexOf(panel);
 			}
+			[MonoTODO]
 			public virtual void Insert(int index, StatusBarPanel panel)
 			{
 				string method_string = "Insert(int,StatusBarPanel) ";
@@ -297,7 +308,8 @@ namespace System.Windows.Forms {
 				list.Insert(index,panel);
 				
 				                      // do this after insert because insert does the range checking and might throw an exception
-				panel.Parent = owner; // a rethrow for a better exception message, or an extra range check, would incur an unnecessary performance cost
+				// FIXME: StatusBarPanel.Parent is readonly!
+				// panel.Parent = owner; // a rethrow for a better exception message, or an extra range check, would incur an unnecessary performance cost
 			}
 			public virtual void Remove(StatusBarPanel panel)
 			{
@@ -387,14 +399,19 @@ namespace System.Windows.Forms {
 
 			
 			//  --- Public Properties
-			
+			[MonoTODO]
 			public int Count {
-
-				get {/* return list.Count;*/ }
+				get { throw new NotImplementedException (); }
+				//get { return list.Count; }
 			}
 			public bool IsReadOnly {
 
 				get { return false; }
+			}
+			object IList.this[int index] {
+
+				get { return this[index]; }
+				set { this[index]=(StatusBarPanel)value; }
 			}
 			public virtual StatusBarPanel this[int index] {
 
@@ -411,7 +428,7 @@ namespace System.Windows.Forms {
 					//{
 					//	throw new ArgumentOutOfRangeException(class_string + method_string + "index >= Count");
 					//}
-					return list[index];
+					return (StatusBarPanel)list[index];
 				}
 				set
 				{
@@ -433,13 +450,23 @@ namespace System.Windows.Forms {
 					list[index] = value;
 				}
 			}
+			bool IList.IsFixedSize {
+				[MonoTODO] get { throw new NotImplementedException (); }
+			}
+			object ICollection.SyncRoot {
+
+				[MonoTODO] get { throw new NotImplementedException (); }
+			}
+			bool ICollection.IsSynchronized {
+
+				[MonoTODO] get { throw new NotImplementedException (); }
+			}
 			
 			
 			//  --- Private Properties
 			
-			private bool IsFixedSize { get { return false; } } {
+			private bool IsFixedSize { get { return false; } }
 
-			private object SyncRoot { get { return null; } }
 //			private object ILList.this[int index]
 //			{
 //				get { return (StatusBarPanel) this[index]; }
@@ -456,3 +483,4 @@ namespace System.Windows.Forms {
 		}
 	}
 }
+

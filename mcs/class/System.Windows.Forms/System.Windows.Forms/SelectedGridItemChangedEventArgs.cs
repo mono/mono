@@ -13,15 +13,14 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-        public class SelectedGridItemChangedEventArgs : EventArgs {
-			GridItem old;
-			GridItem newGridItem;
+	public class SelectedGridItemChangedEventArgs : EventArgs {
+		GridItem old;
+		GridItem newGridItem;
 
 		//
 		//  --- Constructor
 		//
-		public SelectedGridItemChangedEventArgs(GridItem old, GridItem newGridItem)
-		{
+		public SelectedGridItemChangedEventArgs(GridItem old, GridItem newGridItem) {
 			this.newGridItem = newGridItem;
 			this.old = old;
 		}
@@ -43,15 +42,18 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
+		[MonoTODO]
+		public override bool Equals(object o) {
+			throw new NotImplementedException ();
+		}
+
+		//public static bool Equals(object o1, object o2) {
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}	 
+	}
 }

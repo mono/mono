@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -49,7 +50,7 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException();
 		}
-		[MonoTODO]
+//		[MonoTODO]
 //		//FIXME
 //		protected void MainMenu(Menu m)
 //		{
@@ -57,83 +58,63 @@ namespace System.Windows.Forms {
 //		}
 
 		[MonoTODO]
-		public virtual ObjRef CreateObjRef(Type requestedType)
+		public override ObjRef CreateObjRef(Type requestedType)
 		{
+			throw new NotImplementedException();
+		}
+		[MonoTODO]
+		public override bool Equals(object o) {
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
-		public void Dispose() 
-		{
-			throw new NotImplementedException();
-		}
 
 		[MonoTODO]
-		protected virtual void Dispose(bool b) 
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public virtual bool Equals(object o) 
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public static bool Equals(object o, object o)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public ContextMenu GetContextMenu()
-		{
-			throw new NotImplementedException();
-		}
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}		//inherited
+		//public override void Dispose() 
+		//{
+		//	throw new NotImplementedException();
+		//}
+		//
+		//protected override void Dispose(bool b) 
+		//{
+		//	throw new NotImplementedException();
+		//}
+		//public override bool Equals(object o, object o)
+		//{
+		//	throw new NotImplementedException();
+		//}
+		//public ContextMenu GetContextMenu()
+		//{
+		//	throw new NotImplementedException();
+		//}
+		//public object GetLifetimeService()
+		//{
+		//	throw new NotImplementedException();
+		//}
+		//public MainMenu GetMainMenu() {
+		//	throw new NotImplementedException();
+		//}
+		//
+		//public override Type GetType() {
+		//	throw new NotImplementedException();
+		//}
+		//
+		//public virtual object InitializeLifetimeService() {
+		//	throw new NotImplementedException();
+		//}
+		//
+		//public virtual void MergeMenu(Menu menuSrc) {
+		//	throw new NotImplementedException();
+		//}
 
 		[MonoTODO]
 		public Form GetForm()
 		{
 			throw new NotImplementedException();
 		}
-
-		[MonoTODO]
-		public virtual int GetHashCode()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public object GetLifetimeService()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public MainMenu GetMainMenu()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public Type GetType() 
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public virtual object InitializeLifetimeService() 
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public virtual void MergeMenu(Menu menuSrc) 
-		{
-			throw new NotImplementedException();
-		}
-
 		[MonoTODO]
 		public override string ToString() 
 		{
@@ -144,32 +125,25 @@ namespace System.Windows.Forms {
 		// -- Protected Methods
 		//
 
-		[MonoTODO]
-		protected void CloneMenu(Menu menuSrc) 
-		{
-			throw new NotImplementedException();
-		}
-
-		//[MonoTODO]
+		//protected void CloneMenu(Menu menuSrc) 
+		//{
+		//	throw new NotImplementedException();
+		//}
 		//protected override void Dispose(bool b) 
 		//{
 		//	throw new NotImplementedException();
 		//}
-
-		//[MonoTODO]
 		//public void Dispose() 
+		//{
+		//	throw new NotImplementedException();
+		//}
+		//protected object MemberwiseClone() 
 		//{
 		//	throw new NotImplementedException();
 		//}
 
 		[MonoTODO]
 		protected virtual object GetService() 
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		protected object MemberwiseClone() 
 		{
 			throw new NotImplementedException();
 		}
@@ -187,68 +161,57 @@ namespace System.Windows.Forms {
 		//
 		// -- Public Events
 		//
-
-		[MonoTODO]
-		public event EventHandler Disposed;
+		//inherited
+		//public event EventHandler Disposed;
 
 		//
 		// -- Public Properties
 		//
+		//inherited
+		//public IContainer Container  {
+		//	get 
+		//	{
+		//		throw new NotImplementedException(); 
+		//	}
+		//}
+		//public IntPtr Handle  {
+		//	get
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//}
+		//public MenuItem MdiListItem  {
+		//	get 
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//}
+		//public Menu.MenuItemCollection MenuItems  {
+		//	get
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//}
+		//public override ISite Site  {
+		//	get 
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//	set
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//}
 
 		[MonoTODO]
-		public IContainer Container  {
+		public override bool IsParent  {
 			get 
 			{
-				throw new NotImplementedException(); 
-			}
-		}
-
-		[MonoTODO]
-		public IntPtr Handle  {
-			get
-			{
 				throw new NotImplementedException();
 			}
 		}
-
-		[MonoTODO]
-		public virtual bool IsParent  {
-			get 
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		[MonoTODO]
-		public MenuItem MdiListItem  {
-			get 
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		[MonoTODO]
-		public Menu.MenuItemCollection MenuItems  {
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
-
 		[MonoTODO]
 		public virtual RightToLeft RightToLeft  {
-			get 
-			{
-				throw new NotImplementedException();
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		[MonoTODO]
-		public virtual ISite Site  {
 			get 
 			{
 				throw new NotImplementedException();
@@ -262,21 +225,18 @@ namespace System.Windows.Forms {
 		//
 		// -- protected Properties
 		//
-
-		[MonoTODO]
-		protected bool DesignMode  {
-			get 
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		[MonoTODO]
-		protected EventHandler Events  {
-			get 
-			{
-				throw new NotImplementedException();
-			}
-		}
+		//inherited
+		//protected bool DesignMode  {
+		//	get 
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//}
+		//protected EventHandler Events  {
+		//	get 
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//}
 	}
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //	 stubbed out by Dennis Hayes(dennish@raytek.com)
+//   stub ammended by Jaak Simm (jaaksimm@firm.ee)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -13,13 +14,26 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Summary description for ToolBarButtonClickEventArgs.
 	/// </summary>
-	public class ToolBarButtonClickEventArgs {
-
-		public ToolBarButtonClickEventArgs()
+	[MonoTODO]
+	public class ToolBarButtonClickEventArgs : EventArgs {
+		#region Field
+		ToolBarButton button;
+		#endregion
+		
+		#region Constructor
+		public ToolBarButtonClickEventArgs(ToolBarButton button)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			this.button=button;
 		}
+		#endregion
+		
+		
+		#region Properties
+		public ToolBarButton Button {
+			get { return button; }
+			set { button=value; }
+		}
+		#endregion
 	}
 }
+

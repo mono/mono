@@ -20,7 +20,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		[ComVisible(true)] 
+		//[ComVisible(true)] 
 		public QueryContinueDragEventArgs(int keyState, bool escapePressed, DragAction action)
 		{
 			keystate = keyState;
@@ -56,13 +56,18 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//public virtual bool Equals(object o);
+		public override bool Equals(object o)
+		{
+			throw new NotImplementedException ();
+		}
+		//public static bool Equals(object o1, object o2)
 		//{
 		//	throw new NotImplementedException ();
 		//}
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		[MonoTODO]
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
+		}	 
+	}
 }

@@ -37,47 +37,47 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-//		[MonoTODO]
-//		public virtual bool Equals(object o)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		public static bool Equals(object o1, object o2)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		public virtual int GetHashCode()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		public Type GetType()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		public virtual string ToString()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		//
-//		//  --- Protected Methods
-//		//
-//		[MonoTODO]
-//		protected object MemberwiseClone()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		//
-//		//  --- DeConstructor
-//		//
-//		[MonoTODO]
-//		~NavigateEventArgs()
-//		{
-//			throw new NotImplementedException ();
-//		}
+		[MonoTODO]
+		public override bool Equals(object o)
+		{
+			throw new NotImplementedException ();
+		}
+		//inherited
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+			[MonoTODO]
+			public override int GetHashCode() {
+				//FIXME add our proprities
+				return base.GetHashCode();
+			}
+		//inherited
+		//public Type GetType()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		[MonoTODO]
+		public override string ToString()
+		{
+			throw new NotImplementedException ();
+		}
+
+		//
+		//  --- Protected Methods
+		//
+		//inherited
+		//protected object MemberwiseClone()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//
+		//  --- DeConstructor
+		//
+		[MonoTODO]
+		~NavigateEventArgs()
+		{
+			throw new NotImplementedException ();
+		}
 	 }
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -36,25 +37,23 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		[MonoTODO]
-		public virtual bool Equals(object o)
+		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
 		}
-		[MonoTODO]
-		public virtual int GetHashCode()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Type GetType()
-		{
-			throw new NotImplementedException ();
-		}
+		//public Type GetType()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public override Version GetVersionPresent(object feature)
 		{
@@ -71,7 +70,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual string ToString()
+		public override string ToString()
 		{
 			throw new NotImplementedException ();
 		}
@@ -79,11 +78,10 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		[MonoTODO]
-		protected object MemberwiseClone()
-		{
-			throw new NotImplementedException ();
-		}
+		//protected object MemberwiseClone()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Destructor

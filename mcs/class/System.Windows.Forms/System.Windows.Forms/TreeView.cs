@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -358,8 +359,7 @@ namespace System.Windows.Forms {
 		public event TreeViewCancelEventHandler BeforeSelect;
 		[MonoTODO]
 		public event ItemDragEventHandler ItemDrag;
-		[MonoTODO]
-		public new event PaintEventHandler Paint;
+		//public new event PaintEventHandler Paint;
         
         // --- Protected Properties
         

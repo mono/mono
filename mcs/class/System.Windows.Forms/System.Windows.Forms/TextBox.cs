@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -123,7 +124,8 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected virtual void OnTextAlignChanged(EventArgs e)
+		//[Lame Spec] spec says this should be virtural
+		protected override void OnTextAlignChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}

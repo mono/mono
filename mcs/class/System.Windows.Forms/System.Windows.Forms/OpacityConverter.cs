@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -28,21 +29,20 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public bool CanConvertFrom(Type sourceType)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object ConvertFrom(object context)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object ConvertTo(object context, Type destinationType)
-		{
-			throw new NotImplementedException ();
-		}
+
+		//public bool CanConvertFrom(Type sourceType)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		
+		//public object ConvertFrom(object context)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public object ConvertTo(object context, Type destinationType)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 
 		#region Inherited from bases no implmentation needed

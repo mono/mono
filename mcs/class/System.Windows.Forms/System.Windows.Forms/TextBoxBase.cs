@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -297,7 +298,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public event EventHandler BorderStyleChanged;
 		[MonoTODO]
-		public new event EventHandler Click;
+		public override event EventHandler Click;
 		[MonoTODO]
 		public event EventHandler HideSelectionChanged;
 		[MonoTODO]

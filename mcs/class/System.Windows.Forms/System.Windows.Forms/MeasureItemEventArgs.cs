@@ -40,7 +40,7 @@ namespace System.Windows.Forms  {
 		{
 			this.index = index;
 			this.graphics = graphics;
-			itenheight = ItemHeight;
+			itemheight = ItemHeight;
 		}
 		
 		//

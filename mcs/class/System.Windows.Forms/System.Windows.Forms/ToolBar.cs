@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -367,6 +368,89 @@ namespace System.Windows.Forms {
 			{
 				throw new NotImplementedException ();
 			}
+			/// <summary>
+			/// IList Interface implmentation.
+			/// </summary>
+			bool IList.IsReadOnly{
+				get{
+					// We allow addition, removeal, and editing of items after creation of the list.
+					return false;
+				}
+			}
+			bool IList.IsFixedSize{
+				get{
+					// We allow addition and removeal of items after creation of the list.
+					return false;
+				}
+			}
+
+			//[MonoTODO]
+			object IList.this[int index]{
+				get{
+					throw new NotImplementedException ();
+				}
+				set{
+					throw new NotImplementedException ();
+				}
+			}
+		
+			[MonoTODO]
+			void IList.Clear(){
+				throw new NotImplementedException ();
+			}
+		
+			[MonoTODO]
+			int IList.Add( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			bool IList.Contains( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			int IList.IndexOf( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Insert(int index, object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.Remove( object value){
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IList.RemoveAt( int index){
+				throw new NotImplementedException ();
+			}
+			// End of IList interface
+			/// <summary>
+			/// ICollection Interface implmentation.
+			/// </summary>
+			int ICollection.Count{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			bool ICollection.IsSynchronized{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			object ICollection.SyncRoot{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			void ICollection.CopyTo(Array array, int index){
+				throw new NotImplementedException ();
+			}
+			// End Of ICollection
 		}
 	}
 }

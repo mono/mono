@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -84,12 +85,12 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
-		public IContainer Container {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+		
+		//public IContainer Container {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		[MonoTODO]
 		public PrintDocument Document {
 			get {
@@ -126,98 +127,87 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
-		public virtual ISite Site {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+		//public virtual ISite Site {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 
 		//
 		//  --- Public Methods
 		//
+		//public virtual ObjRef CreateObjRef(Type requestedType)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public override void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public virtual ObjRef CreateObjRef(Type requestedType)
+		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
+
+		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public void Dispose()
-		{
-			throw new NotImplementedException ();
+		public override int GetHashCode() {
+			//FIXME add our proprities
+			return base.GetHashCode();
 		}
-		[MonoTODO]
-		public virtual bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public static bool Equals(object o1, object o2)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual int GetHashCode()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object GetLifetimeService()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Type GetType()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual object InitializeLifetimeService()
-		{
-			throw new NotImplementedException ();
-		}
+	
+		//public object GetLifetimeService()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public Type GetType()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public virtual object InitializeLifetimeService()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public override void Reset()
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public DialogResult ShowDialog()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public DialogResult ShowDialog(IWin32Window owner)
-		{
-			throw new NotImplementedException ();
-		}
+		//public DialogResult ShowDialog()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//public DialogResult ShowDialog(IWin32Window owner)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Events
 		//
-		[MonoTODO]
-		public event EventHandler Disposed;
-		public event EventHandler HelpRequest;
+		//public event EventHandler Disposed;
+		//public event EventHandler HelpRequest;
 
 		//
 		//  --- Protected Properties
 		//
-		[MonoTODO]
-		protected bool DesignMode {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		protected EventHandlerList Events {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
+		//protected bool DesignMode {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//protected EventHandlerList Events {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		//
 		//  --- Protected Methods
 		//

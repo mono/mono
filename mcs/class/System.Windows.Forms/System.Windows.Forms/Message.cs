@@ -114,11 +114,11 @@ namespace System.Windows.Forms {
 
 		public static Message create(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
 		{
-			NewMessage = new Message();
+			Message NewMessage =  new Message();
 			NewMessage.msg = msg;
-			NewMessage.wparm = wparam;
+			NewMessage.wparam = wparam;
 			NewMessage.lparam = lparam;
-			NewMessage.hWnd = hWnd;
+			NewMessage.hwnd = hWnd;
 			return NewMessage;
 		}
 
@@ -148,7 +148,7 @@ namespace System.Windows.Forms {
 		
 		public override int GetHashCode ()
 		{
-			return (int)( msg ^ lparam ^ wparam ^ result ^ whnd);
+			return base.GetHashCode();// (int)( msg ^ lparam ^ wparam ^ result ^ whnd);
 		}
 
 		/// <summary>
@@ -161,7 +161,7 @@ namespace System.Windows.Forms {
 		
 		public override string ToString ()
 		{
-			return String.Format ("[{0},{1},{2},{3},{4}]", msg.ToString, lparam.ToString, wparam.ToString, result.ToString, whnd.ToString);
+			return String.Format ("[{0},{1},{2},{3},{4}]", msg.ToString(), lparam.ToString(), wparam.ToString(), result.ToString(), hwnd.ToString());
 		}
 
 //		public object GetLParam(Type cls){

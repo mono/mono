@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,19 +15,17 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        public sealed class ToolTip : Component, IExtenderProvider {
+	public sealed class ToolTip : Component, IExtenderProvider {
 
 		//
 		//  --- Public Constructors
 		//
 		[MonoTODO]
-		public ToolTip() 
-		{
+		public ToolTip() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public ToolTip(IContainer cont)
-		{
+		public ToolTip(IContainer cont) {
 			throw new NotImplementedException ();
 		}
 		//
@@ -34,67 +33,55 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public bool Active {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}	
 		}
 		[MonoTODO]
 		public int AutomaticDelay {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}	
 		}
 		[MonoTODO]
 		public int AutoPopDelay{
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
 		public int InitialDelay {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
 		public int ReshowDelay {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
 		public bool ShowAlways {
-			get
-			{
+			get {
 				throw new NotImplementedException ();
 			}
-			set
-			{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
@@ -102,32 +89,31 @@ namespace System.Windows.Forms {
 		// --- Public Methods
 		
 		[MonoTODO]
-		public void RemoveAll()
-		{
+		public void RemoveAll() {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void SetToolTip(Control control, string caption)
-		{
+		public void SetToolTip(Control control, string caption) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override string ToString()
-		{
+		public override string ToString() {
 			throw new NotImplementedException ();
 		}
 		//
 		// --- Protected Methods
 		//
 		[MonoTODO]
-		protected override void Dispose(bool disposing)
-		{
+		protected override void Dispose(bool disposing) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		~ToolTip() 
-		{
+		~ToolTip() {
 			throw new NotImplementedException ();
 		}
+		bool IExtenderProvider.CanExtend(object extendee){
+			throw new NotImplementedException ();
+		}
+
 	}
 }
