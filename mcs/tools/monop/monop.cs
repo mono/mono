@@ -11,10 +11,11 @@
 
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.CodeDom.Compiler;
+using System.Collections;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 
 class MonoP {
 	static string assembly;
@@ -57,6 +58,29 @@ class MonoP {
 		}
 
 		return t;
+	}	
+
+	static string [] GetAssemblyNamesFromGAC ()
+	{
+		Process p = new Process ();
+		p.StartInfo.UseShellExecute = false;
+		p.StartInfo.RedirectStandardOutput = true;
+		p.StartInfo.FileName = "gacutil";
+		p.StartInfo.Arguments = "-l";
+		p.Start ();
+
+		string s;
+		ArrayList names = new ArrayList ();
+		StreamReader output = p.StandardOutput;
+
+		while ((s = output.ReadLine ()) != null)
+			names.Add (s);
+
+		p.WaitForExit ();
+
+		string [] retval = new string [names.Count - 2];
+		names.CopyTo (1, retval, 0, retval.Length); // skip the first and last line
+		return retval;
 	}
 
 	static Assembly GetAssembly (string assembly, bool exit)
@@ -247,17 +271,24 @@ class MonoP {
 			}
 		}
 
+		string message = null;
 		if (t == null) {
-			foreach (string assm in common_assemblies) {
+			foreach (string assm in GetAssemblyNamesFromGAC ()) {
 				try {
 					Assembly a = GetAssembly (assm, false);
 					t = a.GetType (tname, false, true);
-					if (t != null)
+					if (t != null) {
+						message = String.Format ("{0} is included in the {1} assembly.",
+								t.FullName, 
+								t.Assembly.GetName ().Name);
 						goto found;
+					}
 					foreach (string ns in common_ns) {
 						t = a.GetType (ns + "." + tname, false, true);
 						if (t != null) {
-							Console.WriteLine ("(using class from {0})", ns);
+							message = String.Format ("{0} is included in the {1} assembly.",
+								t.FullName, 
+								t.Assembly.GetName ().Name);
 							goto found;
 						}
 					}
@@ -277,6 +308,9 @@ class MonoP {
 		StreamWriter sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);
 		new Outline (t, sw).OutlineType (default_flags);
 		sw.Flush ();
+
+		if (message != null)
+			Console.WriteLine (message);
 	}
 }
 

@@ -1,3 +1,12 @@
+2004-11-30  Duncan Mak  <duncan@ximian.com>
+
+	* monop.cs (GetAssemblyNamesFromGAC): New method, calls out to
+	"gacutil -l" and returns an array of Assembly fullnames. 
+	(Main): Instead of probing the common_assemblies, use
+	GetAssemblyNamesFromGAC. If we found the type via probing, print
+	out a message noting the full type name and assembly name. This
+	fixes bug #70043.
+	
 2004-11-11  Ben Maurer  <bmaurer@ximian.com>
 
 	* outline.cs: Remove `public virtual' for interface methods.
