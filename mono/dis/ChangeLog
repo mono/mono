@@ -1,3 +1,8 @@
+2003-10-21 Jackson Harper <jackson@ximian.com>
+
+	* get.c (get_fieldref_signature): Use MONO_MEMBERREF_SIGNATURE in
+	the member ref table.
+	
 2003-10-21  Martin Baulig  <martin@ximian.com>
 
 	* get.c (get_typespec): Add MONO_TYPE_VAR and MONO_TYPE_MVAR.
