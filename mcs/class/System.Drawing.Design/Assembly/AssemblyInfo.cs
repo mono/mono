@@ -13,7 +13,7 @@ using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the system assembly
+// General Information about the System.Drawing.Design assembly
 
 #if (NET_1_0)
 	[assembly: AssemblyVersion("1.0.3300.0")]
