@@ -4830,6 +4830,9 @@ namespace Mono.CSharp {
 			if (expr is BaseAccess)
 				is_base = true;
 
+			if (expr is ConstructedType)
+				expr = ((ConstructedType) expr).GetMemberAccess (ec.TypeContainer.CurrentType);
+
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;

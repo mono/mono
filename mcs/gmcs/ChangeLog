@@ -1,3 +1,12 @@
+2004-01-29  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.DoResolve): If we're a
+	`ConstructedType', then we're actually a generic method, so
+	rewrite the expr as a GenericMemberAccess.
+
+	* cs-parser.jay (member_name): Don't use `namespace_or_type_name'
+	here; manually parse it into a string.
+
 2004-01-28  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.IsEqual): New static method.

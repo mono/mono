@@ -423,6 +423,11 @@ namespace Mono.CSharp {
 			return type;
 		}
 
+		public Expression GetMemberAccess (TypeExpr current_type)
+		{
+			return new GenericMemberAccess (current_type, name, args, loc);
+		}
+
 		public override bool CheckAccessLevel (DeclSpace ds)
 		{
 			return ds.CheckAccessLevel (gt);
