@@ -211,8 +211,10 @@ void SendMail (const char *szTo, const MailFields *pmf)
 				int cch = 0;
 
 				const char *szBasename = (char *) strrchr ((const char *) optarg, '/');
-				if (szBasename == NULL)
+				if (szBasename == NULL || szBasename [1] == '\0')
 					szBasename = optarg;
+				else
+					szBasename ++;
 
 				fprintf (ps, "--multipart-%s\r\nContent-Type: text/plain; name=\"%s\"\r\nContent-Disposition: attachment; name=\"%s\"\r\nContent-Transfer-Encoding: base64\r\n\r\n", rgchBoundary, szBasename, szBasename);
 
