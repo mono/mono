@@ -1,3 +1,8 @@
+2002-09-08  Nick Drochak  <ndrochak@gol.com>
+
+	* PathTest.cs (TestCombine): XP puts it's system root in WINDOWS not
+	WINNT.
+
 2002-09-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PathTest.cs: some fixes to make it work also on unix.

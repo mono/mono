@@ -139,7 +139,7 @@ namespace MonoTests.System.IO
 		{
 			string [] files = new string [3];
 			files [(int) OsType.Unix] = "/etc/init.d";
-			files [(int) OsType.Windows] = "C:\\WINNT\\system32";
+			files [(int) OsType.Windows] = Environment.GetEnvironmentVariable ("SYSTEMROOT") + @"\system32";
 			files [(int) OsType.Mac] = "foo:bar";
 
 			string testPath = Path.Combine (path2, path3);
