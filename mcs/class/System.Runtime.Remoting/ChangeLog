@@ -2,8 +2,8 @@
 
 	* TcpMessageIO.cs: Changed header format to match MS.NET. Based on the patch
 	  sent by Jose Luís Martín.
-	* TcpClientTransportSink.cs: Added Content-Type header. Improved support
-	  for OneWay messages.
+	* TcpClientTransportSink.cs: Improved support for OneWay messages.
+	* BinaryClientFormatterSink.cs: Added Content-Type header.
 
 2003-03-25  Martin Willemoes Hansen <mwh@sysrq.dk>
 	
