@@ -3939,6 +3939,12 @@ namespace Mono.CSharp {
 			this.ArgType = type;
 		}
 
+		public Argument (Expression expr)
+		{
+			this.Expr = expr;
+			this.ArgType = AType.Expression;
+		}
+
 		public Type Type {
 			get {
 				if (ArgType == AType.Ref || ArgType == AType.Out)

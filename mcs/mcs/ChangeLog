@@ -1,3 +1,11 @@
+2004-07-20  Martin Baulig  <martin@ximian.com>
+
+	* iterator.cs: This is the first of a set of changes in the
+	iterator code.  Match the spec more closely: if we're an
+	IEnumerable, then GetEnumerator() must be called.  The first time
+	GetEnumerator() is called, it returns the current instance; all
+	subsequent invocations (if any) must create a copy.
+
 2004-07-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Resolve the constant expression before returning
