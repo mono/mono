@@ -535,6 +535,9 @@ System.Runtime.Remoting.Contexts/CrossContextDelegate.cs
 System.Runtime.Remoting.Contexts/IContextAttribute.cs
 System.Runtime.Remoting.Contexts/IContextProperty.cs
 System.Runtime.Remoting.Contexts/IContributeClientContextSink.cs
+System.Runtime.Remoting.Contexts/IContributeDynamicSink.cs
+System.Runtime.Remoting.Contexts/IContributeEnvoySink.cs
+System.Runtime.Remoting.Contexts/IContributeObjectSink.cs
 System.Runtime.Remoting.Contexts/IContributeServerContextSink.cs
 System.Runtime.Remoting.Contexts/IDynamicMessageSink.cs
 System.Runtime.Remoting.Contexts/IDynamicProperty.cs
