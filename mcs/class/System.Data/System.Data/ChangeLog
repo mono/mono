@@ -1,3 +1,7 @@
+2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataView.cs: implemented Dispose.
+
 2003-01-30  Ville Palo <vi64pa@koti.soon.fi>
 
 	* ExpressionElement.cs: Added new file. This file is for parsing
