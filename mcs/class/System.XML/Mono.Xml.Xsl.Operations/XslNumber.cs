@@ -66,8 +66,9 @@ namespace Mono.Xml.Xsl.Operations {
 			from = c.CompilePattern (c.GetAttribute ("from"));
 			value = c.CompileExpression (c.GetAttribute ("value"));
 			
-			if (value != null && value.ReturnType != XPathResultType.Number && value.ReturnType != XPathResultType.Any)
-				throw new Exception ("The expression for attribute 'value' must return a number");
+			// This may result in NodeSet.
+//			if (value != null && value.ReturnType != XPathResultType.Number && value.ReturnType != XPathResultType.Any)
+//				throw new Exception ("The expression for attribute 'value' must return a number");
 			
 			format = c.ParseAvtAttribute ("format");
 			lang = c.ParseAvtAttribute ("lang");
@@ -325,6 +326,7 @@ namespace Mono.Xml.Xsl.Operations {
 				{
 					switch (item [0])
 					{
+						default: // See XSLT 1.0 spec 7.7.1.
 						case '0': case '1':
 							return new DigitItem (sep, item.Length, gpSep, gpSize);
 						case 'a':
@@ -335,9 +337,6 @@ namespace Mono.Xml.Xsl.Operations {
 							return new RomanItem (sep, false);
 						case 'I':
 							return new RomanItem (sep, true);
-						
-						default:
-							throw new Exception ();
 					}
 				}
 			}

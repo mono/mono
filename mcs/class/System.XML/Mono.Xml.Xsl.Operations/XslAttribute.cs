@@ -37,15 +37,28 @@ namespace Mono.Xml.Xsl.Operations {
 			ns = c.ParseAvtAttribute ("namespace");
 
 			calcName = XslAvt.AttemptPreCalc (ref name);
-			
+			calcPrefix = String.Empty;
+
 			if (calcName != null && ns == null) {
 				int colonAt = calcName.IndexOf (':');
 				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
 				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
 				calcNs = nav.GetNamespace (calcPrefix);
-			} else if (ns != null)
+			} else if (ns != null) {
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
-			
+			}
+
+			if (calcNs ==null && calcPrefix != String.Empty) {
+				string test = c.CurrentStylesheet.PrefixInEffect (calcPrefix, null);
+				if (test != null) {
+					string alias = c.CurrentStylesheet.NamespaceAliases [calcPrefix] as string;
+					if (alias != null)
+						calcNs = c.Input.GetNamespace (alias);
+					else
+						calcNs = c.Input.NamespaceURI;
+				}
+			}
+
 			if (ns == null && calcNs == null)
 				nsm = c.GetNsm ();
 				

@@ -66,13 +66,17 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			localName = nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
-			prefix = calcPrefix != null ? calcPrefix : String.Empty;
 
 			if (nmsp == null) {
 				QName q = XslNameUtil.FromString (nm, nsm);
 				localName = q.Name;
 				nmsp = q.Namespace;
+				int colonAt = nm.IndexOf (':');
+				if (colonAt > 0)
+					calcPrefix = nm.Substring (0, colonAt);
 			}
+			prefix = calcPrefix != null ? calcPrefix : String.Empty;
+
 			if (calcPrefix == String.Empty) {
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 					do {
@@ -87,9 +91,12 @@ namespace Mono.Xml.Xsl.Operations {
 
 			XmlConvert.VerifyName (nm);
 
+			bool cdataStarted = false;
+			if (!p.InsideCDataElement && p.PushCDataState (localName, nmsp))
+				cdataStarted = true;
 			p.Out.WriteStartElement (prefix, localName, nmsp);
-			
-			p.TryStylesheetNamespaceOutput ();
+			p.TryStylesheetNamespaceOutput (null);
+
 			if (useAttributeSets != null)
 				foreach (XmlQualifiedName s in useAttributeSets)
 					p.ResolveAttributeSet (s).Evaluate (p);
@@ -100,6 +107,8 @@ namespace Mono.Xml.Xsl.Operations {
 				p.Out.WriteEndElement ();
 			else
 				p.Out.WriteFullEndElement ();
+			if (cdataStarted)
+				p.PopCDataState ();
 		}
 	}
 }

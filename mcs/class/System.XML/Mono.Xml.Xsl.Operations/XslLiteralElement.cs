@@ -17,12 +17,14 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {	
 	public class XslLiteralElement : XslCompiledElement {
+		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 		XslOperation children;
 		string localname, prefix, nsUri;
 		bool isEmptyElement;
 		ArrayList attrs;
 		XmlQualifiedName [] useAttributeSets;
 		Hashtable nsDecls;
+		string excludeResultPrefixes;
 		
 		public XslLiteralElement (Compiler c) : base (c) {}
 			
@@ -46,14 +48,23 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
-			
 			this.prefix = c.Input.Prefix;
-			this.nsUri = c.Input.NamespaceURI;
+
+			string alias = c.CurrentStylesheet.PrefixInEffect (c.Input.Prefix, null);
+			if (alias != c.Input.Prefix) {
+				nsUri = c.Input.GetNamespace (alias);
+				if (alias != null)
+					prefix = alias;
+			}
+			else
+				nsUri = c.Input.NamespaceURI;
+
 			this.localname = c.Input.LocalName;
 			this.useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets", XsltNamespace);
 			this.nsDecls = c.GetNamespacesToCopy ();
 			if (nsDecls.Count == 0) nsDecls = null;
 			this.isEmptyElement = c.Input.IsEmptyElement;
+			this.excludeResultPrefixes = c.Input.GetAttribute ("exclude-result-prefixes", XsltNamespace);
 			
 			if (c.Input.MoveToFirstAttribute ())
 			{
@@ -73,6 +84,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			bool cdataStarted = false;
+			if (!p.InsideCDataElement && p.PushCDataState (localname, nsUri))
+				cdataStarted = true;
 			p.Out.WriteStartElement (prefix, localname, nsUri);
 
 			if (useAttributeSets != null)
@@ -85,16 +99,20 @@ namespace Mono.Xml.Xsl.Operations {
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
 			
-			p.TryStylesheetNamespaceOutput ();
+			p.TryStylesheetNamespaceOutput (new ArrayList (excludeResultPrefixes.Split (wsChars)));
 			if (nsDecls != null)
 				foreach (DictionaryEntry de in nsDecls)
 					p.Out.WriteNamespaceDecl ((string)de.Key, (string)de.Value);
 			
 			if (children != null) children.Evaluate (p);
+
 			if (isEmptyElement)
 				p.Out.WriteEndElement ();
 			else
 				p.Out.WriteFullEndElement ();
+
+			if (cdataStarted)
+				p.PopCDataState ();
 		}
 	}
 }
