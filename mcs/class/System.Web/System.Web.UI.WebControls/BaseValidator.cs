@@ -19,6 +19,8 @@ using System.Drawing;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty("ErrorMessage")]
+	//TODO: [Designer("??")]
 	public abstract class BaseValidator: Label, IValidator
 	{
 		private bool isValid;

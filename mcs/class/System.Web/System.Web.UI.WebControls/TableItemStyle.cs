@@ -32,6 +32,11 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[Bindable(true)]
+		[DefaultValue(HorizontalAlign.NotSet)]
+		[NotifyParentProperty(true)]
+		[WebCategory("Layout")]
+		[WebSysDescription("TableItemStyle_HorizontalAlign")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -51,6 +56,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Bindable(true)]
+		[DefaultValue(VerticalAlign.NotSet)]
+		[NotifyParentProperty(true)]
+		[WebCategory("Layout")]
+		[WebSysDescription("TableItemStyle_VerticalAlign")]
 		public virtual VerticalAlign VerticalAlign
 		{
 			get
@@ -70,6 +80,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Bindable(true)]
+		[DefaultValue(VerticalAlign.NotSet)]
+		[NotifyParentProperty(true)]
+		[WebCategory("Layout")]
+		[WebSysDescription("TableItemStyle_Wrap")]
 		public virtual bool Wrap
 		{
 			get

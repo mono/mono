@@ -22,10 +22,13 @@ using System.Drawing;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("SelectionChanged")]
+	[DefaultProperty("SelectedDate")]
+	//TODO: [Designer("??")]
+	//[DataBindingHandler("??")]
 	public class Calendar : WebControl, IPostBackEventHandler
 	{
 		//
-
 		private TableItemStyle          dayHeaderStyle;
 		private TableItemStyle          dayStyle;
 		private TableItemStyle          nextPrevStyle;

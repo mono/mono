@@ -15,9 +15,15 @@ using System;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
+using Sytem.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty("Text")]
+	[ToolboxItem(false)]
+	[ControlBuilder(typeof(TableCellControlBuilder))]
+	[ParseChildren(false)]
+	[PersistChildren(true)]
 	public class TableCell: WebControl
 	{
 		[MonoTODO]

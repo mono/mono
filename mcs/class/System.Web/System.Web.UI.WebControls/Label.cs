@@ -11,8 +11,19 @@
  * (C) Gaurav Vaish (2001)
  */
 
+using System;
+using System.ComponentModel;
+using System.Web;
+using System.Web.UI;
+
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty("Text")]
+	//[Designer("??")]
+	[ControlBuilder(typeof(LabelControlBuilder))]
+	//[DataBindingHandler("??")]
+	[ParseChildren(false)]
+	[ToolboxData("<{0}:Label runat=\"server\">Label</{0}:Label>")]
 	public class Label : WebControl
 	{
 		public Label(): base()

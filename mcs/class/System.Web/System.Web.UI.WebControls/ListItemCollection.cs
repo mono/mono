@@ -15,9 +15,13 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultMember("Item")]
+	//[Editor("??", typeof(Design.WebControls.ListItemCollectionEditor))]
 	public class ListItemCollection : IList, ICollection, IEnumerable, IStateManager
 	{
 		private ArrayList items;

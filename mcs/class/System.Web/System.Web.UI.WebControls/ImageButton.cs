@@ -19,6 +19,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("Click")]
 	public class ImageButton: Image, IPostBackDataHandler, IPostBackEventHandler
 	{
 		private static readonly object ClickEvent   = new object();

@@ -17,6 +17,9 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty("Text")]
+	[ControlBuilder(typeof(LiteralControlBuilder))]
+	//[DataBindingHandler("??")]
 	public class Literal : Control
 	{
 		public Literal(): base()

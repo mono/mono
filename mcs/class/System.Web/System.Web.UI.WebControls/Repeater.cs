@@ -18,6 +18,11 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("ItemCommand")]
+	[DefaultProperty("DataSource")]
+	//[Designer("??")]
+	[ParseChildren(true)]
+	[PersistChildren(false)]
 	public class Repeater : Control, INamingContainer
 	{
 		private static readonly object ItemCommandEvent   = new object();

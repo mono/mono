@@ -18,9 +18,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	//TODO: [Designer("??")]
+	//TODO: [Editor("??")]
 	public class DataList: BaseDataList, INamingContainer, IRepeatInfoUser
 	{
-		//
 		public const string CancelCommandName = "Cancel";
 		public const string DeleteCommandName = "Delete";
 		public const string EditCommandName   = "Edit";

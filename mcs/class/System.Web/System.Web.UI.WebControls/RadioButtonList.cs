@@ -18,6 +18,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[ValidationProperty("SelectedItem")]
 	public class RadioButtonList : ListControl, IRepeatInfoUser, INamingContainer, IPostBackDataHandler
 	{
 		private bool  selectionIndexChanged;

@@ -18,19 +18,21 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[TypeConverter(typeof(ExpandableObjectConverter))]
+	[ContolBuilder(typeof(ListItemControlBuilder))]
 	public sealed class ListItem : IStateManager, IParserAccessor, IAttributeAccessor
 	{
 		private static int MARKED   = (0x01 << 0);
 		private static int SELECTED = (0x01 << 1);
 		private static int DIRTY_T  = (0x01 << 2);
 		private static int DIRTY_V  = (0x01 << 3);
-		
+
 		private static int selBits;
-		
+
 		private AttributeCollection attributes;
 		private string              text;
 		private string              val;
-		
+
 		public ListItem(string text, string value)
 		{
 			this.text  = text;
@@ -38,20 +40,20 @@ namespace System.Web.UI.WebControls
 			selBits    = 0x00;
 			attributes = null;
 		}
-		
+
 		public ListItem(string text): this(text, null)
 		{
 		}
-		
+
 		public ListItem(): this(null, null)
 		{
 		}
-		
+
 		public static ListItem FromString(string text)
 		{
 			return new ListItem(text);
 		}
-		
+
 		public AttributeCollection Attributes
 		{
 			get
@@ -61,7 +63,7 @@ namespace System.Web.UI.WebControls
 				return attributes;
 			}
 		}
-		
+
 		public bool Selected
 		{
 			get
@@ -73,7 +75,7 @@ namespace System.Web.UI.WebControls
 				Set(SELECTED);
 			}
 		}
-		
+
 		internal bool Dirty
 		{
 			get
@@ -86,17 +88,17 @@ namespace System.Web.UI.WebControls
 				Set(DIRTY_V);
 			}
 		}
-		
+
 		private bool IsSet(int bit)
 		{
 			return ( (selBits & bit) != 0x00 );
 		}
-		
+
 		private void Set(int bit)
 		{
 			selBits |= bit;
 		}
-		
+
 		public string Text
 		{
 			get
@@ -120,7 +122,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public string Value
 		{
 			get
@@ -144,17 +146,17 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		string IAttributeAccessor.GetAttribute(string key)
 		{
 			return attributes[key];
 		}
-		
+
 		void IAttributeAccessor.SetAttribute(string key, string value)
 		{
 			attributes[key] = value;
 		}
-		
+
 		/// <remarks>
 		/// The data is parsed - object must be of type LiteralControl or DataBoundLiteralControl.
 		/// In latter case, throw an exception telling that the data cannot be bind-ed.
@@ -222,7 +224,7 @@ namespace System.Web.UI.WebControls
 			}
 			return null;
 		}
-		
+
 		bool IStateManager.IsTrackingViewState
 		{
 			get
@@ -230,17 +232,17 @@ namespace System.Web.UI.WebControls
 				return IsTrackingViewState;
 			}
 		}
-		
+
 		void IStateManager.TrackViewState()
 		{
 			TrackViewState();
 		}
-		
+
 		object IStateManager.SaveViewState()
 		{
 			return SaveViewState();
 		}
-		
+
 		void IStateManager.LoadViewState(object state)
 		{
 			LoadViewState(state);

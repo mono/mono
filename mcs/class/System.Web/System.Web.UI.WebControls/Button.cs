@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     Button
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -18,6 +18,11 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("Click")]
+	[DefaultProperty("Text")]
+	//TODO: [Designer("??")]
+	//TODO: [DataBindingHandler("??UI.Design.TextDataBindingHandler??")]
+	[ToolboxData("<{0}:Button runat=\"server\" Text=\"Button\"></{0}:Button>")]
 	public class Button : WebControl, IPostBackEventHandler
 	{
 		private static readonly object ClickEvent   = new object();
@@ -112,7 +117,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(CommandEvent, value);
 			}
 		}
-		
+
 		protected virtual void OnClick(EventArgs e)
 		{
 			if(Events != null)
@@ -132,7 +137,7 @@ namespace System.Web.UI.WebControls
 					eh(this,e);
 			}
 		}
-		
+
 		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
 		{
 			if(CausesValidation)
@@ -142,7 +147,7 @@ namespace System.Web.UI.WebControls
 				OnCommand(new CommandEventArgs(CommandName, CommandArgument));
 			}
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			writer.AddAttribute(HtmlTextWriterAttribute.Type,"submit");
@@ -155,7 +160,7 @@ namespace System.Web.UI.WebControls
 			}
 			AddAttributesToRender(writer);
 		}
-		
+
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
 			// Preventing subclasses to do anything

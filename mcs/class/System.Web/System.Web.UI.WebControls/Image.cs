@@ -17,6 +17,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty("ImageUrl")]
 	public class Image : WebControl
 	{
 		public Image(): base(HtmlTextWriterTag.Img)

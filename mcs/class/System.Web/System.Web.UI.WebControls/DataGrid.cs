@@ -15,9 +15,12 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	//TODO: [Designer("??")]
+	//TODO: [Editor("??")]
 	public class DataGrid : BaseDataList, INamingContainer
 	{
 		public const string CancelCommandName   = "Cancel";

@@ -17,6 +17,13 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("Click")]
+	[DefaultProperty("Text")]
+	//[Designer("??")]
+	[ControlBuilder(typeof(LinkButtonControlBuilder))]
+	//[DataBindingHandler("??")]
+	[ParseChildren(false)]
+	[ToolboxData("<{0}:LinkButton runat=\"server\">LinkButton</{0}:LinkButton>")]
 	public class LinkButton : WebControl, IPostBackEventHandler
 	{
 		private static readonly object ClickEvent   = new object();

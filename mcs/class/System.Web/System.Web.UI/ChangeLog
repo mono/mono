@@ -1,3 +1,9 @@
+2002-03-26   Gaurav Vaish <gvaish@iitk.ac.in>
+
+        * DataBindingHandlerAttribute.cs
+                                   - Completed
+        * ToolboxDataAttribute.cs  - Completed
+
 2002-01-03  Nick Drochak  <ndrochak@gol.com>
 
 	* DesignTimeParseData.cs: initialze static member to avoid compile

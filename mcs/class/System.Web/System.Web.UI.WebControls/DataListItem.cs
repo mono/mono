@@ -15,9 +15,11 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[ToolboxItem(false)]
 	public class DataListItem : WebControl, INamingContainer
 	{
 		int itemIndex;
@@ -62,6 +64,7 @@ namespace System.Web.UI.WebControls
 		public virtual void RenderItem(HtmlTextWriter writer, bool extractRows, bool tableLayout)
 		{
 			//TODO: Complete me!
+			throw new NotImplementedException();
 		}
 
 		protected override Style CreateControlStyle()

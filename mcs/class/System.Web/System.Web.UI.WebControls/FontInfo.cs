@@ -17,9 +17,11 @@ using System.Reflection;
 using System.Web;
 using System.Web.UI;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[TypeConverter(typeof(ExpandableObjectConverter))]
 	public sealed class FontInfo
 	{
 		private Style infoOwner;				

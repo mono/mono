@@ -20,9 +20,15 @@ using System.Web.Caching;
 using System.Web.UI;
 using System.Xml;
 using System.Web.Utils;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("AdCreated")]
+	[DefaultProperty("AdvertisementFile")]
+	//TODO: [Designer("??")]
+	[ToolboxData("<{0}:AdRotator runat=\"server\" Height=\"60px\""
+	             + "Width=\"468\"></{0}:AdRotator>")]
 	public class AdRotator: WebControl
 	{
 

@@ -21,6 +21,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[ValidationProperty("SelectedItem")]
 	public class ListBox : ListControl, IPostBackDataHandler
 	{
 		public ListBox(): base()

@@ -19,6 +19,9 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty("Rows")]
+	//[Designer("??")]
+	[ParseChildren(true, "Rows")]
 	public class Table: WebControl
 	{
 		private TableRowCollection rows;

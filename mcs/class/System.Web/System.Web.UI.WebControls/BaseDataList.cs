@@ -19,6 +19,9 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("SelectedIndexChanged")]
+	[DefaultProperty("DataSource")]
+	//TODO: [Designer("??")]
 	public abstract class BaseDataList: WebControl
 	{
 		private  static readonly object SelectedIndexChangedEvent = new object();

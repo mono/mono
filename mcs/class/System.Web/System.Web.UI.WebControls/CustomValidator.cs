@@ -17,6 +17,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("ServerValidate")]
+	[ToolboxData("<{0}:CustomValidator runat=\"server\""
+	             + "ErrorMessage=\"CustomValidator\">"
+	             + "</{0}:CustomValidator>")]
 	public class CustomValidator : BaseValidator
 	{
 		private static readonly object ServerValidateEvent = new object();

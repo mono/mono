@@ -22,6 +22,8 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[ToolboxItem(false)]
+	[TypeConverter(typeof(ExpandableObjectConverter))]
 	public class Style : Component , IStateManager
 	{
 		internal static int MARKED      = (0x01 << 0);
@@ -530,6 +532,11 @@ namespace System.Web.UI.WebControls
 			{
 				return IsTrackingViewState;
 			}
+		}
+
+		public override string ToString()
+		{
+			return String.Empty;
 		}
 	}
 }

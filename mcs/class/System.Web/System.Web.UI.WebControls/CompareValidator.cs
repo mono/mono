@@ -16,6 +16,8 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[ToolboxData("<{0}:CompareValidator runat=\"server\""
+	             + "ErrorMessage=\"CompareValidator\"></{0}:CompareValidator>")]
 	public class CompareValidator: BaseCompareValidator
 	{
 		public CompareValidator()

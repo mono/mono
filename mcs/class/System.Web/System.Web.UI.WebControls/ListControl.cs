@@ -20,6 +20,11 @@ using System.Web.Utils;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("SelectedIndexChanged")]
+	[DefaultProperty("DataSource")]
+	//[Designer("??")]
+	//[DataBindingHandler("??")]
+	[ParseChildren(true, "Items")]
 	public class ListControl: WebControl
 	{
 		private static readonly object SelectedIndexChangedEvent = new object();

@@ -18,6 +18,9 @@ using System.Text.RegularExpressions;
 
 namespace System.Web.UI.WebControls
 {
+	[ToolboxData("<{0}:RegularExpressionValidator runat=\"server\" "
+	              + "ErrorMessage=\"RegularExpressionValidator\">"
+	              + "</{0}:RegularExpressionValidator>")]
 	public class RegularExpressionValidator : BaseValidator
 	{
 		public RegularExpressionValidator(): base()

@@ -18,6 +18,8 @@ using System.Xml;
 
 namespace System.Web.UI.WebControls
 {
+	[ToolboxData("<{0}:RangeValidator runat=\"server\" "
+	              + "ErrorMessage=\"RangeValidator\"></{0}:RangeValidator>")]
 	public class RangeValidator : BaseCompareValidator
 	{
 		public RangeValidator(): base()

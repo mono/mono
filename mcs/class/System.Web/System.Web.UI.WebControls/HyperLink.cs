@@ -13,6 +13,12 @@
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty("Text")]
+	//[Designer(??)]
+	[ControlBuilder(typeof(HyperLinkControlBuilder))]
+	//[DataBindingHandler("??")]
+	[ParseChildren(false)]
+	[ToolboxData("<{0}:HyperLink runat=\"server\">HyperLink</{0}:HyperLink>")]
 	public class HyperLink: WebControl
 	{
 		public HyperLink(): base()

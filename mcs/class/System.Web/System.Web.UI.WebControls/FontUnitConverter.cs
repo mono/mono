@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  60%
+ * Status: 95%
  *
  * (C) Gaurav Vaish (2002)
  */
@@ -48,7 +48,6 @@ namespace System.Web.UI.WebControls
 			return base.ConvertFrom(context, culture, value);
 		}
 
-		[MonoTODO("ConvertTo")]
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			if(value != null && value is FontUnit)
@@ -61,6 +60,22 @@ namespace System.Web.UI.WebControls
 				return val.ToString(culture);
 			}
 			return base.ConvertTo(context, culture, value, destinationType);
+		}
+
+		[MonoTODO("GetStandardValues")]
+		public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+		{
+			return false;
+		}
+
+		public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+		{
+			return true;
 		}
 	}
 }

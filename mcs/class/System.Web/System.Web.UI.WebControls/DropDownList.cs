@@ -19,6 +19,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[ValidationProperty("SelectedItem")]
 	public class DropDownList : ListControl, IPostBackDataHandler
 	{
 		public DropDownList(): base()

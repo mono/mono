@@ -15,9 +15,11 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	//[Editor("??")]
 	public sealed class TableCellCollection: IList, ICollection, IEnumerable
 	{
 		private TableRow owner;
