@@ -102,8 +102,11 @@ namespace Mono.Security.Authenticode {
 				ICryptoTransform dec = rc4.CreateDecryptor (key, null);
 				int x = 24 + salt.Length + 8;
 				dec.TransformBlock (keypair, 8, keypair.Length - 8, keypair, 8);
-				rsa = CryptoConvert.FromCapiPrivateKeyBlob (keypair);
-				if (rsa == null) {
+				try {
+					rsa = CryptoConvert.FromCapiPrivateKeyBlob (keypair);
+					weak = false;
+				}
+				catch (CryptographicException) {
 					weak = true;
 					// second change using weak crypto
 					Array.Copy (pvk, 24 + saltlen, keypair, 0, keylen);
@@ -115,8 +118,6 @@ namespace Mono.Security.Authenticode {
 					dec.TransformBlock (keypair, 8, keypair.Length - 8, keypair, 8);
 					rsa = CryptoConvert.FromCapiPrivateKeyBlob (keypair);
 				}
-				else
-					weak = false;
 				Array.Clear (key, 0, key.Length);
 			}
 			else  {

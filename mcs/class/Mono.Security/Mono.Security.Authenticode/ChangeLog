@@ -1,3 +1,8 @@
+2004-02-23  Sebastien Pouliot  <sebastien@ximian.com>	
+
+	* PrivateKey.cs: Adjusted to catch exceptions from CryptoConvert.
+	FromCapiPrivateKeyBlob when dealing with weakly encrypted keys.
+
 2004-02-20  Sebastien Pouliot  <sebastien@ximian.com>	
 
 	* AuthenticodeDeformatter.cs: Updated to use the new X509Chain syntax. 
