@@ -447,8 +447,8 @@ namespace Mono.CSharp {
 			
 			for (int i = length; i > 0; ) {
 				i--;
-				
-				sb.Append (TypeManager.CSharpName (pd.ParameterType (length - i - 1)));
+
+				sb.Append (pd.ParameterDesc (length - i - 1));
 				if (i != 0)
 					sb.Append (", ");
 			}

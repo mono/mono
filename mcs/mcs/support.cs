@@ -170,10 +170,14 @@ namespace Mono.CSharp {
 				p = Parameters.ArrayParameter;
 			else
 				p = Parameters.FixedParameters [pos];
-			
-			if (p.ModFlags == Parameter.Modifier.REF)
+
+			//
+			// We need to and for REF/OUT, because if either is set the
+			// extra flag ISBYREF will be set as well
+			//
+			if ((p.ModFlags & Parameter.Modifier.REF) != 0)
 				tmp = "ref ";
-			else if (p.ModFlags == Parameter.Modifier.OUT)
+			else if ((p.ModFlags & Parameter.Modifier.OUT) != 0)
 				tmp = "out ";
 			else if (p.ModFlags == Parameter.Modifier.PARAMS)
 				tmp = "params ";

@@ -1,5 +1,15 @@
 2002-10-30  Miguel de Icaza  <miguel@ximian.com>
 
+	* delegate.cs (FullDelegateDesc): use ParameterDesc to get the
+	full type signature instead of calling TypeManger.CSharpName
+	ourselves. 
+
+	* support.cs (InternalParameters.ParameterDesc): Do not compare
+	directly to the modflags, because REF/OUT will actually be bitsets
+	if set. 
+
+	* delegate.cs (VerifyMethod): Check also the modifiers.
+
 	* cs-tokenizer.cs: Fix bug where floating point values with an
 	exponent where a sign was missing was ignored.
 
