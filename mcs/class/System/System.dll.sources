@@ -323,8 +323,14 @@ System.ComponentModel.Design.Serialization/IDesignerLoaderService.cs
 System.ComponentModel.Design.Serialization/InstanceDescriptor.cs
 System.Configuration/AppSettingsReader.cs
 System.Configuration/ConfigHelper.cs
+System.Configuration/ConfigurationElement.cs
 System.Configuration/ConfigurationException.cs
+System.Configuration/ConfigurationProperty.cs
+System.Configuration/ConfigurationPropertyCollection.cs
+System.Configuration/ConfigurationPropertyFlags.cs
 System.Configuration/ConfigurationSettings.cs
+System.Configuration/ConfigurationUpdateMode.cs
+System.Configuration/ConfigurationValidationAttribute.cs
 System.Configuration/ConfigXmlDocument.cs
 System.Configuration/DictionarySectionHandler.cs
 System.Configuration/IConfigurationSectionHandler.cs

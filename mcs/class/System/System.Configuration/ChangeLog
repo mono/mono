@@ -1,3 +1,14 @@
+2004-08-06  Duncan Mak  <duncan@ximian.com>
+
+	* ConfigurationElement.cs: Added stubs.
+
+	* ConfigurationProperty.cs:
+	* ConfigurationPropertyCollection.cs:
+	* ConfigurationValidationAttribute.cs: Added.
+
+	* ConfigurationPropertyFlags.cs: 
+	* ConfigurationUpdateMode.cs: Added 2.0 enumerations.	
+
 2004-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: allow empty <configSections>.
