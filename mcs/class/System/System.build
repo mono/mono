@@ -20,6 +20,8 @@
 				<excludes name="System.Net.Sockets/SocketException.cs"/>
 				<excludes name="System.Net/Dns.cs"/>
 				<excludes name="System.Net/IPHostEntry.cs"/>
+				<excludes name="System.Net/IAuthenticationModule.cs"/>
+				<excludes name="System.Net/AuthenticationManager.cs"/>
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>
