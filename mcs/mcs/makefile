@@ -54,7 +54,7 @@ mcs3.exe: mcs2.exe
 mm:
 	mint $(MINTFLAGS) ./mcs.exe $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
 
-monomcs:
+monomcs: cs-parser.cs
 	mcs $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
 
 test: mcs3.exe
