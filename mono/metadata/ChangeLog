@@ -1,3 +1,8 @@
+2004-04-02  Martin Baulig  <martin@ximian.com>
+
+	* icall.c
+	(ves_icall_MonoGenericInst_GetDeclaringType): New icall.
+
 2004-04-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c: Fix build.
