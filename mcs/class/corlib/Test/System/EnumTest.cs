@@ -35,6 +35,7 @@ public class EnumTest : TestCase
 
 	enum TestingEnum {This, Is, A, Test};
 	enum TestingEnum2 {This, Is, A, Test};
+	enum TestingEnum3: ulong {This, Is, A, Test = ulong.MaxValue };
 
 	public void TestCompareTo() {
 		Enum e1 = new TestingEnum();
@@ -168,6 +169,8 @@ public class EnumTest : TestCase
 		TestingEnum ex = TestingEnum.Test;
 		AssertEquals("decimal format wrong", 
 			     "3", Enum.Format(ex.GetType(), ex, "d"));
+		AssertEquals("decimal format wrong for ulong enums", 
+			     "18446744073709551615", Enum.Format(typeof(TestingEnum3), TestingEnum3.Test, "d"));
 		AssertEquals("named format wrong", 
 			     "Test", Enum.Format(ex.GetType(), ex, "g"));
 		AssertEquals("hex format wrong", 
