@@ -436,7 +436,7 @@ class_head 		: D_CLASS class_attr id extends_clause
 				} else {
 					codegen.AddClass ((TypeAttr)$2, (string) $3, null);
 				}
-				
+                                
 				ArrayList impl_list = (ArrayList) $5;
 				if (impl_list != null) {
 					foreach (TypeRef type_ref in impl_list)
@@ -543,36 +543,117 @@ class_decl		: method_all
 			  OPEN_PARENS sig_args CLOSE_PARENS
 			| language_decl
 			;
-			
+
 type			: K_CLASS class_ref
+                          {
+                                $$ = $2;
+                          }
 			| K_OBJECT
+                          {
+                                $$ = new TypeRef (PrimitiveType.Object, "System.Object");
+                          }
 			| K_STRING
+                          {
+                                $$ = new TypeRef (PrimitiveType.String, "System.String");
+                          }
 			| K_VALUE K_CLASS class_ref
+                          {
+                                $$ = $3;
+                          }
 			| K_VALUETYPE class_ref
+                          {
+                                $$ = $2;
+                          }
 			| type OPEN_BRACKET CLOSE_BRACKET
+                          {
+                                TypeRef base_type = (TypeRef) $1;
+                                PEAPI.Type arr_type = new ZeroBasedArray (base_type.Type);
+                                $$ = new TypeRef (arr_type, base_type.FullName + "[]");
+                          }
 			| type OPEN_BRACKET bounds CLOSE_BRACKET
-			| type AMPERSAND 
+                          {
+                                // TODO   
+                          }
+			| type AMPERSAND
+                          {
+                                TypeRef base_type = $1 as TypeRef;
+                                PEAPI.Type ref_type = new ManagedPointer (base_type.Type);
+                                $$ = new TypeRef (ref_type, base_type.FullName + '&');
+                          }
 			| type STAR
+                          {
+                                TypeRef base_type = (TypeRef) $1;
+                                PEAPI.Type ptr_type = new UnmanagedPointer (base_type.Type);
+                                $$ = new TypeRef (ptr_type, base_type.FullName + '&');
+                          }
 			| type K_PINNED
 			| type K_MODREQ OPEN_PARENS class_ref CLOSE_PARENS
 			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS
 			| K_METHOD call_conv type STAR OPEN_PARENS sig_args CLOSE_PARENS
 			| K_TYPEDREF
 			| K_CHAR
+                          {
+                                $$ = new TypeRef (PrimitiveType.Char, "System.Char");
+                          }
 			| K_VOID
+                          {
+                                $$ = new TypeRef (PrimitiveType.Void, "System.Void");
+                          }
 			| K_BOOL
+                          {
+                                $$ = new TypeRef (PrimitiveType.Boolean, "System.Bool");
+                          }
 			| K_INT8
+                          {
+                                $$ = new TypeRef (PrimitiveType.Int8, "System.Int8");
+                          }
 			| K_INT16
+                          {
+                                $$ = new TypeRef (PrimitiveType.Int16, "System.Int16");
+                          }
 			| K_INT32
+                          {
+                                $$ = new TypeRef (PrimitiveType.Int32, "System.Int32");
+                          }
 			| K_INT64
+                          {
+                                $$ = new TypeRef (PrimitiveType.Int64, "System.Int64");
+                          }
 			| K_FLOAT32
+                          {
+                                $$ = new TypeRef (PrimitiveType.Float32, "System.Float32");
+                          }
 			| K_FLOAT64
+                          {
+                                $$ = new TypeRef (PrimitiveType.Float64, "System.Float64");
+                          }
 			| K_UNSIGNED K_INT8
+                          {
+                                $$ = new TypeRef (PrimitiveType.UInt8, "System.UInt8");
+                          }
 			| K_UNSIGNED K_INT16
+                          {
+                                $$ = new TypeRef (PrimitiveType.UInt16, "System.UInt16");     
+                          }
 			| K_UNSIGNED K_INT32
+                          {
+                                $$ = new TypeRef (PrimitiveType.UInt32, "System.UInt32");
+                          }
 			| K_UNSIGNED K_INT64
+                          {
+                                $$ = new TypeRef (PrimitiveType.UInt64, "System.UInt64");
+                          }
 			| K_NATIVE K_INT
+                          {
+                                // TODO: Is this the proper full name
+                                $$ = new TypeRef (PrimitiveType.NativeInt, "native int");
+                          }
+                        
 			| K_NATIVE K_UNSIGNED K_INT
+                          {
+                                // TODO: Is this the proper full name
+                                $$ = new TypeRef (PrimitiveType.NativeUInt, "native uint");
+                          }
 			;
 
 bounds			: bound

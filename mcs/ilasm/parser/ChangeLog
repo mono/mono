@@ -1,5 +1,9 @@
 2003-03-30 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Implement most of type
+	
+2003-03-30 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Add code from old parser to declare and define classes.
 		
 2003-03-30 Jackson Harper <jackson@latitudegeo.com>
