@@ -48,7 +48,7 @@ namespace Mono.CSharp {
 		CS0502_cannot_be_both_abstract_and_sealed = 502,
 		CS0553_user_defined_conversion_to_from_base_class = 553,
 		CS0554_user_defined_conversion_to_from_derived_class = 554,
-		CS0577_Conditional_not_valid_on_because_it_is_a_destructor,_operator,_or_explicit_interface_implementation = 557,
+		CS0577_Conditional_not_valid_on_because_it_is_a_destructor_operator_or_explicit_interface_implementation = 577,
 		CS0578_Conditional_not_valid_on_because_its_return_type_is_not_void = 578,
 		CS0582_Conditional_not_valid_on_interface_members = 582,
 		CS0592_Attribute_is_not_valid_on_this_declaration_type = 592,

@@ -3503,7 +3503,7 @@ namespace Mono.CSharp {
 
 			if (a.Type == TypeManager.conditional_attribute_type) {
 				if (IsOperator || IsExplicitImpl) {
-					Report.Error (Message.CS0577_Conditional_not_valid_on_because_it_is_a_destructor, Location, GetSignatureForError ());
+					Report.Error (Message.CS0577_Conditional_not_valid_on_because_it_is_a_destructor_operator_or_explicit_interface_implementation, Location, GetSignatureForError ());
 					return;
 				}
 
@@ -4631,7 +4631,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.conditional_attribute_type) {
-				Report.Error (Message.CS0577_Conditional_not_valid_on_because_it_is_a_destructor, Location, GetSignatureForError ());
+				Report.Error (Message.CS0577_Conditional_not_valid_on_because_it_is_a_destructor_operator_or_explicit_interface_implementation, Location, GetSignatureForError ());
 				return;
 			}
 
