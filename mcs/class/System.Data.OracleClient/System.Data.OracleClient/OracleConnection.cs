@@ -8,11 +8,13 @@
 // Namespace: System.Data.OracleClient
 //
 // Authors: 
-//    Daniel Morgan <danmorg@sc.rr.com>
+//    Daniel Morgan <danielmorgan@verizon.net>
 //    Tim Coleman <tim@timcoleman.com>
+//    Hubert FONGARNAND <informatique.internet@fiducial.fr>
 //
-// Copyright (C) Daniel Morgan, 2002
+// Copyright (C) Daniel Morgan, 2002, 2005
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Hubert FONGARNAND, 2005
 //
 // Original source code for setting ConnectionString 
 // by Tim Coleman <tim@timcoleman.com>
@@ -36,9 +38,10 @@ namespace System.Data.OracleClient
 {
 	internal struct OracleConnectionInfo 
 	{
-		public string Username;
-		public string Password;
-		public string Database;
+		internal string Username;
+		internal string Password;
+		internal string Database;
+		internal string ConnectionString;
 	}
 
 	[DefaultEvent ("InfoMessage")]
@@ -52,6 +55,11 @@ namespace System.Data.OracleClient
 		OracleTransaction transaction = null;
 		string connectionString = "";
 		OracleDataReader dataReader = null;
+		bool pooling = true;
+		static OracleConnectionPoolManager pools = new OracleConnectionPoolManager ();
+		OracleConnectionPool pool;
+		int minPoolSize = 0;
+		int maxPoolSize = 100;
 
 		#endregion // Fields
 
@@ -60,7 +68,6 @@ namespace System.Data.OracleClient
 		public OracleConnection () 
 		{
 			state = ConnectionState.Closed;
-			oci = new OciGlue ();
 		}
 
 		public OracleConnection (string connectionString) 
@@ -146,10 +153,7 @@ namespace System.Data.OracleClient
 			IntPtr sh = oci.ServiceContext;
 			IntPtr eh = oci.ErrorHandle;
 
-			OciCalls.OCIServerVersion (sh, 
-				eh, 
-				ref buffer,  bufflen,
-				OciHandleType.Service);
+			OciCalls.OCIServerVersion (sh, eh, ref buffer,  bufflen, OciHandleType.Service);
 			
 			// Get length of returned string
 			int 	rsize = 0;
@@ -275,7 +279,7 @@ namespace System.Data.OracleClient
 		{
 			byte[] buffer = new Byte[bufflen];
 
-			int st = OciCalls.OCINlsGetInfo (Session, ErrorHandle, 
+			int st = OciCalls.OCINlsGetInfo (handle, ErrorHandle, 
 				ref buffer, bufflen, (ushort) item);
 
 			// Get length of returned string
@@ -291,7 +295,14 @@ namespace System.Data.OracleClient
 
 		public void Open () 
 		{
-			oci.CreateConnection (conInfo);
+			if (!pooling) {	
+				oci = new OciGlue ();
+				oci.CreateConnection (conInfo);
+			}
+			else {
+				pool = pools.GetConnectionPool (conInfo, minPoolSize, maxPoolSize);
+				oci = pool.GetConnection ();
+			}
 			state = ConnectionState.Open;
 			CreateStateChange (ConnectionState.Closed, ConnectionState.Open);
 		}
@@ -325,7 +336,11 @@ namespace System.Data.OracleClient
 			if (transaction != null)
 				transaction.Rollback ();
 
-			oci.Disconnect ();
+			if (!pooling)
+				oci.Disconnect ();
+			else if (pool != null)
+				pool.ReleaseConnection (oci);
+
 			state = ConnectionState.Closed;
 			CreateStateChange (ConnectionState.Open, ConnectionState.Closed);
 		}
@@ -386,6 +401,8 @@ namespace System.Data.OracleClient
 			}
 
 			SetProperties (parameters);
+
+			conInfo.ConnectionString = connectionString;
 		}
 
 		private void SetProperties (NameValueCollection parameters) 
@@ -395,6 +412,24 @@ namespace System.Data.OracleClient
 				value = parameters[name];
 
 				switch (name) {
+				case "UNICODE":
+					break;
+				case "ENLIST":
+					break;
+				case "CONNECTION LIFETIME":
+					// TODO:
+					break;
+				case "INTEGRATED SECURITY":
+					throw new NotImplementedException ();
+				case "PERSIST SECURITY INFO":
+					// TODO:
+					break;
+				case "MIN POOL SIZE":
+					minPoolSize = int.Parse (value);
+					break;
+				case "MAX POOL SIZE":
+					maxPoolSize = int.Parse (value);
+					break;
 				case "DATA SOURCE" :
 				case "SERVER" :
 					conInfo.Database = value;
@@ -406,6 +441,20 @@ namespace System.Data.OracleClient
 				case "UID" :
 				case "USER ID" :
 					conInfo.Username = value;
+					break;
+				case "POOLING" :
+					switch (value.ToUpper ()) {
+					case "YES":
+					case "TRUE":
+						pooling = true;
+						break;
+					case "NO":
+					case "FALSE":
+						pooling = false;
+						break;
+					default:
+						throw new ArgumentException("Connection parameter not supported: '" + name + "'");
+					}
 					break;
 				default:
 					throw new ArgumentException("Connection parameter not supported: '" + name + "'");

@@ -26,11 +26,16 @@ using System.Runtime.InteropServices;
 using System.Data;
 using System.Data.OracleClient;
 using System.Text;
+using System.Threading;
 
 namespace Test.OracleClient
 {
 	public class OracleTest
 	{
+		private static Thread t = null;
+		private static string conStr;
+		public static readonly int MAX_CONNECTIONS = 30; // max connections default to 100, but I will set to 30.
+
 		public OracleTest() 
 		{
 
@@ -937,6 +942,93 @@ namespace Test.OracleClient
 			Console.WriteLine("StateChange OriginalState:" + e.OriginalState.ToString ());
 		}
 
+		public static void ConnectionPoolingTest1 () {
+			Console.WriteLine("Start Connection Pooling Test 1...");
+			OracleConnection[] connections = null;
+			int maxCon = MAX_CONNECTIONS + 1; // add 1 more over the max connections to cause it to wait for the next available connection
+			int i = 0;
+
+			try {
+				connections = new OracleConnection[maxCon];			
+		
+				for (i = 0; i < maxCon; i++) {
+					Console.WriteLine("   Open connection: {0}", i);
+					connections[i] = new OracleConnection(conStr);
+					connections[i].Open ();
+				}
+			} catch (InvalidOperationException e) {
+				Console.WriteLine("Expected exception InvalidOperationException caught.");
+				Console.WriteLine(e);
+			}
+
+			for (i = 0; i < maxCon; i++) {
+				if (connections[i] != null) {
+					Console.WriteLine("   Close connection: {0}", i);
+					if (connections[i].State == ConnectionState.Open)
+						connections[i].Close ();
+					connections[i].Dispose ();
+					connections[i] = null;
+				}
+			}
+
+			connections = null;
+
+			Console.WriteLine("Done Connection Pooling Test 1.");
+		}
+
+		public static void ConnectionPoolingTest2 () {
+			Console.WriteLine("Start Connection Pooling Test 2...");
+			OracleConnection[] connections = null;
+			int maxCon = MAX_CONNECTIONS;
+			int i = 0;
+
+			connections = new OracleConnection[maxCon];			
+		
+			for (i = 0; i < maxCon; i++) {
+				Console.WriteLine("   Open connection: {0}", i);
+				connections[i] = new OracleConnection(conStr);
+				connections[i].Open ();
+			}
+		
+			Console.WriteLine("Start another thread...");
+			t = new Thread(new ThreadStart(AnotherThreadProc));
+			t.Start ();
+
+			Console.WriteLine("Sleep...");
+			Thread.Sleep(100);
+
+			Console.WriteLine("Closing...");
+			for (i = 0; i < maxCon; i++) {
+				if (connections[i] != null) {
+					Console.WriteLine("   Close connection: {0}", i);
+					if (connections[i].State == ConnectionState.Open)
+						connections[i].Close ();
+					connections[i].Dispose ();
+					connections[i] = null;
+				}
+			}
+
+			connections = null;
+		}
+
+		private static void AnotherThreadProc () {
+			Console.WriteLine("Open connection via another thread...");
+			OracleConnection[] connections = null;
+			int maxCon = MAX_CONNECTIONS; 
+			int i = 0;
+
+			connections = new OracleConnection[maxCon];			
+		
+			for (i = 0; i < maxCon; i++) {
+				Console.WriteLine("   Open connection: {0}", i);
+				connections[i] = new OracleConnection(conStr);
+				connections[i].Open ();
+			}
+
+			Console.WriteLine("Done Connection Pooling Test 2.");
+			System.Environment.Exit (0);
+		}
+
 		[STAThread]
 		static void Main(string[] args) 
 		{ 	
@@ -950,6 +1042,8 @@ namespace Test.OracleClient
 				"User ID={1};" +
 				"Password={2}",
 				args[0], args[1], args[2]);
+
+			conStr = connectionString;
 
 			OracleConnection con1 = new OracleConnection();
 
@@ -1029,7 +1123,11 @@ namespace Test.OracleClient
 			Console.WriteLine("Closing...");
 			con1.Close ();
 			Console.WriteLine("Closed.");
-			
+
+			conStr = conStr + ";pooling=true;min pool size=4;max pool size=" + MAX_CONNECTIONS.ToString ();
+			ConnectionPoolingTest1 ();
+			ConnectionPoolingTest2 ();
+
 			Console.WriteLine("Done.");
 		}
 	}

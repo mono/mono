@@ -1,3 +1,31 @@
+2005-03-06  Daniel Morgan <danielmorgan@verizon.net>
+
+	- Applied patch by Hubert FONGARNAND 
+	  <informatique.internet@fiducial.fr>
+	- Had to re-format according to mono style 
+	  and remove Console.WriteLines
+	- Made sure maxPoolSize and minPoolSize can be specified 
+	  via the connection string, and that pooling can be disabled
+	- if the next opened connection surpasses the max pool size, it waits
+	  for a specified time in milliseconds, if it did not 
+	  get another connection from the connection pool,
+	  throw an InvalidOperationException for timeout expired
+	  
+	* System.Data.OracleClient.dll.sources: add 
+	OracleConnectionPool.cs	to the build
+	
+	* System.Data.OracleClient/OracleConnection.cs: modified 
+	  - add connection pooling to OracleClient
+	  - GetNlsInfo () was not using the passed handle, it was always
+	  a session handle
+	
+	* System.Data.OracleClient/OracleConnectionPoolManager.cs
+	* System.Data.OracleClient/OracleConnectionPool.cs: added
+	new file for connection pooling in OracleClient
+	
+	* System.Data.OracleClient/Test/TestOracleClient.cs: added tests
+	for OracleClient connection pooling
+	
 2005-02-25  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleParameter.cs: modified 

@@ -38,6 +38,8 @@ System.Data.OracleClient/OracleBinary.cs
 System.Data.OracleClient/OracleBoolean.cs
 System.Data.OracleClient/OracleCommand.cs
 System.Data.OracleClient/OracleConnection.cs
+System.Data.OracleClient/OracleConnectionPool.cs
+System.Data.OracleClient/OracleConnectionPoolManager.cs
 System.Data.OracleClient/OracleDataAdapter.cs
 System.Data.OracleClient/OracleDataReader.cs
 System.Data.OracleClient/OracleDateTime.cs
