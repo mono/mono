@@ -1,3 +1,9 @@
+
+Fri Jul 30 15:49:26 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: make sure temp regs are not used for global reg
+	allocation.
+
 2004-07-29  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* cpu-sparc.md: conv_i8 fix for 64bits
