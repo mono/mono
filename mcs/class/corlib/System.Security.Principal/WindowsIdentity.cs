@@ -3,13 +3,15 @@
 //
 // Authors:
 //      Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace System.Security.Principal {
@@ -26,45 +28,68 @@ namespace System.Security.Principal {
 		private bool _authenticated;
 		private string _name;
 
+		static private IntPtr invalidWindows = IntPtr.Zero;
+		// that seems to be the value used for (at least) AIX and MacOSX
+		static private IntPtr invalidPosix = (IntPtr) unchecked (-2);
+
 		public WindowsIdentity (IntPtr userToken) 
-			: this (userToken, "NTLM", WindowsAccountType.Normal, false) {}
+			: this (userToken, null, WindowsAccountType.Normal, false)
+		{
+		}
 
 		public WindowsIdentity (IntPtr userToken, string type) 
-			: this (userToken, type, WindowsAccountType.Normal, false) {}
+			: this (userToken, type, WindowsAccountType.Normal, false)
+		{
+		}
 
 		public WindowsIdentity (IntPtr userToken, string type, WindowsAccountType acctType)
-			: this (userToken, type, acctType, false) {}
+			: this (userToken, type, acctType, false)
+		{
+		}
 
 		public WindowsIdentity (IntPtr userToken, string type, WindowsAccountType acctType, bool isAuthenticated)
 		{
-			if (userToken == IntPtr.Zero)
-				throw new ArgumentException ("Invalid token");
-
-			_token = userToken;
 			_type = type;
 			_account = acctType;
 			_authenticated = isAuthenticated;
 			_name = null;
+			// last - as it can override some fields
+			SetToken (userToken);
 		}
 #if !NET_1_0
 		public WindowsIdentity (string sUserPrincipalName) 
-			: this (sUserPrincipalName, null) {}
+			: this (sUserPrincipalName, null)
+		{
+		}
 
-		[MonoTODO]
 		public WindowsIdentity (string sUserPrincipalName, string type)
 		{
 			if (sUserPrincipalName == null)
 				throw new NullReferenceException ("sUserPrincipalName");
 
-			throw new ArgumentException ("only for Windows Server 2003 +");
+			// TODO: Windows 2003 compatibility should be done in runtime
+			IntPtr token = GetUserToken (sUserPrincipalName);
+			if ((!IsPosix) && (token == IntPtr.Zero)) {
+				throw new ArgumentException ("only for Windows Server 2003 +");
+			}
+
+			_authenticated = true;
+			_account = WindowsAccountType.Normal;
+			_type = type;
+			// last - as it can override some fields
+			SetToken (token);
 		}
 
 		[MonoTODO]
-		public WindowsIdentity (SerializationInfo info, StreamingContext context) {}
+		public WindowsIdentity (SerializationInfo info, StreamingContext context)
+		{
+		}
 #endif
-		[MonoTODO]
+
 		~WindowsIdentity ()
 		{
+			// clear our copy but don't close it
+			// http://www.develop.com/kbrown/book/html/whatis_windowsprincipal.html
 			_token = IntPtr.Zero;
 		}
 
@@ -72,17 +97,25 @@ namespace System.Security.Principal {
 
 		public static WindowsIdentity GetAnonymous ()
 		{
-			WindowsIdentity id = new WindowsIdentity ((IntPtr)1, String.Empty, WindowsAccountType.Anonymous, false);
-			// special case
-			id._token = IntPtr.Zero;
-			id._name = String.Empty;
+			WindowsIdentity id = null;
+			if (IsPosix) {
+				id = new WindowsIdentity ("nobody");
+				// special case
+				id._account = WindowsAccountType.Anonymous;
+				id._authenticated = false;
+				id._type = String.Empty;
+			}
+			else {
+				id = new WindowsIdentity (IntPtr.Zero, String.Empty, WindowsAccountType.Anonymous, false);
+				// special case (don't try to resolve the name)
+				id._name = String.Empty;
+			}
 			return id;
 		}
 
-		[MonoTODO]
 		public static WindowsIdentity GetCurrent ()
 		{
-			throw new NotImplementedException ();
+			return new WindowsIdentity (GetCurrentToken (), null, WindowsAccountType.Normal, true);
 		}
 
 		// methods
@@ -124,13 +157,12 @@ namespace System.Security.Principal {
 			get { return (_account == WindowsAccountType.System); }
 		}
 
-		[MonoTODO ("resolve missing")]
 		public virtual string Name
 		{
 			get {
 				if (_name == null) {
-					// TODO: resolve name from token
-					throw new NotImplementedException ();
+					// revolve name (runtime)
+					_name = GetTokenName (_token);
 				}
 				return _name; 
 			}
@@ -153,6 +185,51 @@ namespace System.Security.Principal {
 			throw new NotImplementedException ();
 		}
 #endif
+		private static bool IsPosix {
+			get { return ((int) Environment.Platform == 128); }
+		}
+
+		private void SetToken (IntPtr token) 
+		{
+			if (IsPosix) {
+				if (token == invalidPosix)
+					throw new ArgumentException ("Invalid token");
+
+				_token = token;
+				// apply defaults
+				if (_type == null)
+					_type = "POSIX";
+				// override user choice in this specific case
+				if (_token == IntPtr.Zero)
+					_account = WindowsAccountType.System;
+			}
+			else {
+				if ((token == invalidWindows) && (_account != WindowsAccountType.Anonymous))
+					throw new ArgumentException ("Invalid token");
+
+				_token = token;
+				// apply defaults
+				if (_type == null)
+					_type = "NTLM";
+			}
+		}
+
+		// see mono/mono/metadata/security.c for implementation
+
+		// Many people use reflection to get a user's roles - so many 
+		// that's it's hard to say it's an "undocumented" feature -
+		// so we also implement it in Mono :-/
+		// http://www.dotnet247.com/247reference/msgs/39/195403.aspx
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string[] _GetRoles (IntPtr token);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static IntPtr GetCurrentToken ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string GetTokenName (IntPtr token);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static IntPtr GetUserToken (string username);
 	}
 }
-

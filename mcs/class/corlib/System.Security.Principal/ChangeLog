@@ -1,3 +1,12 @@
+2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WindowsIdentity.cs: Implemented for both Windows and Linux. Fix bug
+	#52532. Class is only missing serialization bits.
+	* WindowsImpersonationContext.cs: Implemented for both Windows and 
+	Linux. Fix bug #52532.
+	* WindowsPrincipal.cs: Implemented for both Windows and Linux.  Fix 
+	bug #52532.
+
 2003-12-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PrincipalPolicy.cs: Added missing [Serializable] to enum.
