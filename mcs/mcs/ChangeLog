@@ -1,5 +1,7 @@
 2002-03-06  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (Expression.ConvertReferenceExplicit): Removed dead code.
+
 	* cs-parser.jay: Add opt_semicolon to the interface declaration.
 
 	* expression.cs: Pass location information to

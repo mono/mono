@@ -177,7 +177,6 @@ public class TypeManager {
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
 		builder_to_container = new PtrHashtable ();
-		type_interface_cache = new PtrHashtable ();
 		NoTypes = new Type [0];
 	}
 
@@ -845,16 +844,21 @@ public class TypeManager {
 			return pi.GetGetMethod ();
 	}
 				
-	// <remarks>
-	//  The following is used to check if a given type implements an interface.
-	//  The cache helps us reduce the expense of hitting Type.GetInterfaces everytime.
-	// </remarks>
-
-	static Hashtable type_interface_cache;
+	/// <remarks>
+	///  The following is used to check if a given type implements an interface.
+	///  The cache helps us reduce the expense of hitting Type.GetInterfaces everytime.
+	/// </remarks>
 	public static bool ImplementsInterface (Type t, Type iface)
 	{
 		Type [] interfaces;
 
+		//
+		// FIXME OPTIMIZATION:
+		// as soon as we hit a non-TypeBuiler in the interface
+		// chain, we could return, as the `Type.GetInterfaces'
+		// will return all the interfaces implement by the type
+		// or its parents.
+		//
 		do {
 			interfaces = t.GetInterfaces ();
 

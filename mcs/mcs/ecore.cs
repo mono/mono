@@ -1718,9 +1718,6 @@ namespace Mono.CSharp {
 			// From any interface type S to any interface T provided S is not derived from T
 			//
 			if (source_type.IsInterface && target_type.IsInterface){
-
-				Type [] ifaces = source_type.GetInterfaces ();
-
 				if (TypeManager.ImplementsInterface (source_type, target_type))
 					return null;
 				else
