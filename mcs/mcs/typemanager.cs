@@ -443,8 +443,18 @@ public class TypeManager {
         static public string CSharpSignature (MethodBase mb)
         {
                 string sig = "(";
-                InternalParameters iparams = LookupParametersByBuilder(mb);
 
+		//
+		// FIXME: We should really have a single function to do
+		// everything instead of the following 5 line pattern
+		//
+                ParameterData iparams = LookupParametersByBuilder (mb);
+
+		if (iparams == null){
+			ParameterInfo [] pi = mb.GetParameters ();
+			iparams = new ReflectionParameters (pi);
+		}
+		
                 for (int i = 0; i < iparams.Count; i++) {
                         if (i > 0) {
                                 sig += ", ";
