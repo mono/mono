@@ -17,6 +17,7 @@ using System.Data.Common;
 
 namespace System.Data.SqlClient {
 	[DefaultEvent ("RowUpdated")]
+	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
 		#region Fields
@@ -61,6 +62,7 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for deleted rows in DataSet.")]
 		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public SqlCommand DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
@@ -69,6 +71,7 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for new rows in DataSet.")]
 		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public SqlCommand InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
@@ -77,6 +80,7 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Fill")]
 		[DataSysDescription ("Used during Fill/FillSchema.")]
 		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public SqlCommand SelectCommand {
 			get { return selectCommand; }
 			set { selectCommand = value; }
@@ -85,6 +89,7 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for modified rows in DataSet.")]
 		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public SqlCommand UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
