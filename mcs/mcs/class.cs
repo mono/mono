@@ -60,6 +60,9 @@ namespace CIR {
 
 		// Holds the operators
 		ArrayList operators;
+
+		// Maps MethodBuilders to Methods
+		Hashtable method_builders_to_methods;
 		
 		//
 		// Pointers to the default constructor and the default static constructor
@@ -604,8 +607,12 @@ namespace CIR {
 			}
 
 			if (Methods != null){
-				foreach (Method m in Methods)
+				method_builders_to_methods = new Hashtable ();
+				
+				foreach (Method m in Methods){
 					m.Define (this);
+					method_builders_to_methods [m.MethodBuilder] = m;
+				}
 			}
 
 			if (Properties != null) {
@@ -641,6 +648,11 @@ namespace CIR {
 			
 		}
 
+		public Method LookupMethodByBuilder (MethodBuilder mb)
+		{
+			return (Method) method_builders_to_methods [mb];
+		}
+		
 		//
 		// Emits the code, this step is performed after all
 		// the types, enumerations, constructors
@@ -686,46 +698,26 @@ namespace CIR {
 		}
 
 		// <summary>
-		// This method returns the members of this type just like Type.FindMembers would
-		// Only, we need to use this for types which are _being_ defined because MS' brain
-		// dead implementation can't take care of that ;-)
+		//   This method returns the members of this type just like Type.FindMembers would
+		//   Only, we need to use this for types which are _being_ defined because MS' 
+		//   implementation can't take care of that.
 		// </summary>
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
+						  MemberFilter filter, object criteria)
 		{
-
-			// FIXME : Is this an accurate count for now ?
-			int c = 0;
-
-			if (Fields != null)
-				c += Fields.Count;
-
-			if (Methods != null)
-				c += Methods.Count;
-
-			if (Properties != null)
-				c += Properties.Count;
-
-			if (Events != null)
-				c += Events.Count;
-
-			if (Types != null)
-				c += Types.Count;
+			ArrayList members = new ArrayList ();
 			
-			int i = 0;
-			
-			MemberInfo [] mi = new MemberInfo [c];
-
 			if ((mt & MemberTypes.Field) != 0 && Fields != null) {
 				foreach (Field f in Fields) {
-					if (filter (f.FieldBuilder, criteria) == true) 
-						mi [i++] = f.FieldBuilder;
+					if (filter (f.FieldBuilder, criteria) == true)
+						members.Add (f.FieldBuilder);
 				}
 			}
 			
 			if ((mt & MemberTypes.Method) != 0 && Methods != null) {
 				foreach (Method m in Methods) {
 					if (filter (m.MethodBuilder, criteria) == true)
-						mi [i++] = m.MethodBuilder;
+						members.Add (m.MethodBuilder);
 				}
 			}
 
@@ -742,21 +734,22 @@ namespace CIR {
 			if ((mt & MemberTypes.Property) != 0 && Properties != null) {
 				foreach (Property p in Properties) {
 					if (filter (p.PropertyBuilder, criteria) == true)
-						mi [i++] = p.PropertyBuilder;
+						members.Add (p.PropertyBuilder);
 				}
 			}
 			
 			if ((mt & MemberTypes.NestedType) != 0 && Types != null) {
 				foreach (TypeContainer t in Types) { 
 					if (filter (t.TypeBuilder, criteria) == true)
-						mi [i++] = t.TypeBuilder;
+						members.Add (t.TypeBuilder);
 				}
 			}
-			
+
+			MemberInfo [] mi = new MemberInfo [members.Count];
+			members.CopyTo (mi);
+
 			return mi;
-			
 		}
-		
 	}
 
 	public class Class : TypeContainer {
@@ -847,6 +840,11 @@ namespace CIR {
 		public readonly int        ModFlags;
 		public MethodBuilder MethodBuilder;
 		public readonly Attributes OptAttributes;
+
+		//
+		// Parameters, cached for semantic analysis.
+		//
+		InternalParameters parameter_info;
 		
 		Block block;
 		
@@ -944,6 +942,8 @@ namespace CIR {
 				GetCallingConvention (parent is Class),
 				ret_type, parameters);
 
+			parameter_info = new InternalParameters (parameters);
+
 			//
 			// This is used to track the Entry Point,
 			//
@@ -981,6 +981,11 @@ namespace CIR {
 			EmitContext ec = new EmitContext (parent, ig);
 			
 			ec.EmitTopBlock (block);
+		}
+
+		public InternalParameters GetParameters ()
+		{
+			return parameter_info;
 		}
 	}
 

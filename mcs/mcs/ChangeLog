@@ -1,3 +1,29 @@
+2001-09-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Allocate a MemberInfo of the correct size, as the code
+	elsewhere depends on the test to reflect the correct contents.
+
+	(Method::) Keep track of parameters, due to System.Reflection holes
+
+	(TypeContainer::Populate): Keep track of MethodBuilders to Method
+	mapping here.
+
+	(TypeContainer::FindMembers): Use ArrayList and then copy an array
+	of the exact size and return that.
+
+	(Class::LookupMethodByBuilder): New function that maps
+	MethodBuilders to its methods.  Required to locate the information
+	on methods because System.Reflection bit us again.
+
+	* support.cs: New file, contains an interface ParameterData and
+	two implementations: ReflectionParameters and InternalParameters
+	used to access Parameter information.  We will need to grow this
+	as required.
+
+	* expression.cs (Invocation::GetParameterData): implement a cache
+	and a wrapper around the ParameterData creation for methods. 
+	(Invocation::OverloadResolve): Use new code.
+
 2001-09-13  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (TypeContainer::EmitField): Remove and move into 

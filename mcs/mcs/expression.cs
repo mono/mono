@@ -1395,6 +1395,8 @@ namespace CIR {
 		Expression expr;
 		MethodInfo method = null;
 		
+		static Hashtable method_parameter_cache;
+			
 		//
 		// arguments is an ArrayList, but we do not want to typecast,
 		// as it might be null.
@@ -1423,10 +1425,10 @@ namespace CIR {
 		///   -1  represents a type mismatch.
 		///   -2  represents a ref/out mismatch.
 		/// </summary>
-		static int Badness (Argument a, ParameterInfo pi)
+		static int Badness (Argument a, Type t)
 		{
-			Console.WriteLine ("Considering: " + pi.ParameterType + " and " + a.Expr.Type); 
-			if (pi.ParameterType == a.Expr.Type)
+			Console.WriteLine ("Considering: " + t + " and " + a.Expr.Type); 
+			if (t == a.Expr.Type)
 				return 0;
 
 			// FIXME: Implement implicit conversions here.
@@ -1435,10 +1437,33 @@ namespace CIR {
 			return -1;
 		}
 
+		static ParameterData GetParameterData (TypeContainer tc, MethodBase mb)
+		{
+			object pd = method_parameter_cache [mb];
+
+			if (pd != null)
+				return (ParameterData) pd;
+
+			if (mb is MethodBuilder){
+				Method m = tc.LookupMethodByBuilder ((MethodBuilder) mb);
+
+				InternalParameters ip = m.GetParameters ();
+				method_parameter_cache [mb] = ip;
+
+				return (ParameterData) ip;
+			} else {
+				ParameterInfo [] pi = mb.GetParameters ();
+				ReflectionParameters rp = new ReflectionParameters (pi);
+				method_parameter_cache [mb] = rp;
+
+				return (ParameterData) rp;
+			}
+		}
+		
 		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
 		// </summary>
-		static MethodInfo OverloadResolve (MethodGroupExpr me, ArrayList Arguments)
+		static MethodInfo OverloadResolve (TypeContainer tc, MethodGroupExpr me, ArrayList Arguments)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match = 10000;
@@ -1447,22 +1472,25 @@ namespace CIR {
 			
 			for (int i = me.Methods.Length; i > 0; ){
 				i--;
-				ParameterInfo [] pi = me.Methods [i].GetParameters ();
+				MethodBase mb = me.Methods [i];
+				ParameterData pd;
+
+				pd = GetParameterData (tc, mb);
 
 				//
 				// Compute how good this is
 				//
-				if (pi.Length == Arguments.Count){
+				if (pd.Count == Arguments.Count){
 					int badness = 0;
 					
 					for (int j = Arguments.Count; j > 0;){
 						int x;
 						j--;
-
+						
 						Argument a = (Argument) Arguments [j];
-
-						x = Badness (a, pi [j]);
-
+						
+						x = Badness (a, pd.ParameterType (j));
+						
 						if (x < 0){
 							badness = best_match;
 							continue;
@@ -1470,7 +1498,7 @@ namespace CIR {
 						
 						badness += x;
 					}
-
+					
 					if (badness < best_match){
 						best_match = badness;
 						method = me.Methods [i];
@@ -1502,6 +1530,9 @@ namespace CIR {
 				return null;
 			}
 
+			if (method_parameter_cache == null)
+				method_parameter_cache = new Hashtable ();
+
 			//
 			// Next, evaluate all the expressions in the argument list
 			//
@@ -1515,7 +1546,7 @@ namespace CIR {
 				}
 			}
 
-			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments);
+			method = OverloadResolve (tc, (MethodGroupExpr) this.expr, Arguments);
 
 			if (method == null){
 				tc.RootContext.Report.Error (-6,
