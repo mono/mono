@@ -1,3 +1,7 @@
+2003-12-19  Jackson Harper <jackson@ximian.com>
+
+	* HtmlInputFile.cs: Do not set value when loading post data.
+	
 2003-12-14  Alon Gazit <along@mainsoft.com>
 	* HtmlInputButton.cs: The problem was in RenderAttributes().
 	Before adding the script to the HTML, the number of Validators should 
