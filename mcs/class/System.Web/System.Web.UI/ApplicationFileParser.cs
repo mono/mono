@@ -37,6 +37,10 @@ namespace System.Web.UI
 			get { return typeof (HttpApplication); }
 		}
 
+		internal override string DefaultBaseTypeName {
+			get { return "System.Web.HttpApplication"; }
+		}
+
 		internal override string DefaultDirectiveName {
 			get { return "application"; }
 		}

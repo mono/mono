@@ -301,6 +301,9 @@ namespace System.Web
 
 				return (TimeSpan) configTimeout;
 			}
+			set {
+				configTimeout = value;
+			}
 		}
 		
 		internal string ErrorPage {

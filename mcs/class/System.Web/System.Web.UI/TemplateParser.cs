@@ -14,6 +14,7 @@ using System.IO;
 using System.Reflection;
 using System.Web;
 using System.Web.Compilation;
+using System.Web.Configuration;
 using System.Web.Util;
 
 namespace System.Web.UI
@@ -40,6 +41,7 @@ namespace System.Web.UI
 		int oc_duration;
 		string oc_header, oc_custom, oc_param;
 		OutputCacheLocation oc_location;
+		Assembly srcAssembly;
                 
 		internal TemplateParser ()
 		{
@@ -339,26 +341,12 @@ namespace System.Web.UI
 			compilerOptions = GetString (atts, "CompilerOptions", null);
 			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);
 			string src = GetString (atts, "Src", null);
-			Assembly srcAssembly = null;
 			if (src != null)
 				srcAssembly = GetAssemblyFromSource (src);
 
 			string inherits = GetString (atts, "Inherits", null);
-			if (inherits != null) {
-				Type parent;
-				if (srcAssembly != null)
-					parent = srcAssembly.GetType (inherits);
-				else
-					parent = LoadType (inherits);
-
-				if (parent == null)
-					ThrowParseException ("Cannot find type " + inherits);
-
-				if (!DefaultBaseType.IsAssignableFrom (parent))
-					ThrowParseException ("The parent type does not derive from " + DefaultBaseType);
-
-				baseType = parent;
-			}
+			if (inherits != null)
+				SetBaseType (inherits);
 
 			className = GetString (atts, "ClassName", null);
 			if (className != null && !CodeGenerator.IsValidLanguageIndependentIdentifier (className))
@@ -366,6 +354,27 @@ namespace System.Web.UI
 
 			if (atts.Count > 0)
 				ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
+		}
+
+		internal void SetBaseType (string type)
+		{
+			if (type == DefaultBaseTypeName)
+				return;
+
+			Type parent = null;
+			if (srcAssembly != null)
+				parent = srcAssembly.GetType (type);
+
+			if (parent == null)
+				parent = LoadType (type);
+
+			if (parent == null)
+				ThrowParseException ("Cannot find type " + type);
+
+			if (!DefaultBaseType.IsAssignableFrom (parent))
+				ThrowParseException ("The parent type does not derive from " + DefaultBaseType);
+
+			baseType = parent;
 		}
 
 		Assembly GetAssemblyFromSource (string vpath)
@@ -389,7 +398,7 @@ namespace System.Web.UI
 		}
 		
 		internal abstract Type DefaultBaseType { get; }
-
+		internal abstract string DefaultBaseTypeName { get; }
 		internal abstract string DefaultDirectiveName { get; }
 
 		internal string InputFile
@@ -507,6 +516,10 @@ namespace System.Web.UI
 
 		internal string OutputCacheVaryByParam {
 			get { return oc_param; }
+		}
+
+		internal PagesConfiguration PagesConfig {
+			get { return PagesConfiguration.GetInstance (Context); }
 		}
 			
 	}

@@ -1,3 +1,15 @@
+2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs: add setter for ConfigTimeout.
+	* HttpException.cs: added Description property and HTML encode some
+	unescaped values.
+
+	* HttpRequest.cs: support request validation.
+
+	* HttpRequestValidationException.cs: added message and description.
+
+	* HttpServerUtility.cs: implemented ScriptTimeout.
+
 2004-01-11  Jackson Harper <jackson@ximian.com>
 
 	* TraceManager.cs: Dont crash if there is no trace config element.

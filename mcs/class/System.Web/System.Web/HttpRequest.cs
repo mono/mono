@@ -1,13 +1,14 @@
-// 
+//
 // System.Web.HttpRequest
 //
 // Authors:
 //   	Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //   	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-// 
+//
 // (c) 2001, 2002 Patrick Torstensson
-// (c) 2002 Ximian, Inc. (http://www.ximian.com)
-// 
+// (c) 2002,2003 Ximian, Inc. (http://www.ximian.com)
+// (c) 2004 Novell, Inc. (http://www.novell.com)
+//
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -65,6 +66,11 @@ namespace System.Web {
 		private bool rewritten;
 		Stream userFilter;
 		HttpRequestStream requestFilter;
+#if NET_1_1
+		bool validateCookies;
+		bool validateForm;
+		bool validateQueryString;
+#endif
 
 		public HttpRequest(string Filename, string Url, string Querystring) {
 			_iContentLength = -1;
@@ -213,9 +219,6 @@ namespace System.Web {
 
 		private void ParseFormData ()
 		{
-			if (_oFormData != null)
-				return;
-
 			string contentType = ContentType;
 			if (0 == String.Compare (contentType, "application/x-www-form-urlencoded", true)) {
 				byte [] arrData = GetRawContent ();
@@ -523,6 +526,10 @@ namespace System.Web {
 					cookies = new HttpCookieCollection (null, false);
 					if (_WorkerRequest != null)
 						GetCookies ();
+#if NET_1_1
+					if (validateCookies)
+						ValidateCookieCollection (cookies);
+#endif
 				}
 
 				return cookies;
@@ -582,7 +589,7 @@ namespace System.Web {
 			if (multipartContent != null) return multipartContent;
 			
 			byte [] raw = GetRawContent ();
-			byte [] boundary = Encoding.ASCII.GetBytes (("--" + GetValueFromHeader (ContentType, "boundary")).ToCharArray ());
+			byte [] boundary = Encoding.ASCII.GetBytes (("--" + GetValueFromHeader (ContentType, "boundary")));
 			return multipartContent = HttpMultipartContentParser.Parse (raw, boundary, ContentEncoding);
 		}
 
@@ -606,12 +613,17 @@ namespace System.Web {
 			}
 		}
 
-
 		public NameValueCollection Form {
 			get {
-				ParseFormData();
+				if (_oFormData == null) {
+					ParseFormData ();
+#if NET_1_1
+					if (validateForm)
+						ValidateNameValueCollection ("Form", _oFormData);
+#endif
+				}
 
-				return (NameValueCollection) _oFormData;
+				return _oFormData;
 			}
 		}
 
@@ -811,6 +823,10 @@ namespace System.Web {
 						_oQueryString = new HttpValueCollection(QueryStringRaw, true,
 											Encoding.ASCII);
 					}
+#if NET_1_1
+					if (validateQueryString)
+						ValidateNameValueCollection ("QueryString", _oQueryString);
+#endif
 				}
 
 				return _oQueryString;
@@ -1150,10 +1166,11 @@ namespace System.Web {
 		}
 
 #if NET_1_1
-		[MonoTODO]
 		public void ValidateInput ()
 		{
-			throw new NotImplementedException ();
+			validateCookies = true;
+			validateQueryString = true;
+			validateForm = true;
 		}
 #endif
 		
@@ -1179,5 +1196,59 @@ namespace System.Web {
 			headers [name] = value;
 			headers.MakeReadOnly ();
 		}
+
+#if NET_1_1
+		static void ValidateNameValueCollection (string name, NameValueCollection coll)
+		{
+			if (coll == null)
+				return;
+
+			foreach (string key in coll.Keys) {
+				string val = coll [key];
+				if (CheckString (val))
+					ThrowValidationException (name, key, val);
+			}
+		}
+
+		static void ValidateCookieCollection (HttpCookieCollection cookies)
+		{
+			if (cookies == null)
+				return;
+
+			foreach (HttpCookie cookie in cookies) {
+				if (CheckString (cookie.Value))
+					ThrowValidationException ("Cookies", cookie.Name, cookie.Value);
+			}
+		}
+
+		static void ThrowValidationException (string name, string key, string value)
+		{
+			string v = "\"" + value + "\"";
+			if (v.Length > 20)
+				v = v.Substring (16) + "...\"";
+
+			string msg = String.Format ("A potentially dangerous Request.{0} value was " +
+						    "detected from the client ({1}={2}).", name, key, v);
+
+			throw new HttpRequestValidationException (msg);
+		}
+
+		static char [] dangerousChars = "<>".ToCharArray ();
+		static bool CheckString (string val)
+		{
+			if (val == null)
+				return false;
+
+			//TODO: More checks
+			if (val.IndexOfAny (dangerousChars) != -1 && val.Length > 1) {
+				foreach (char c in val)
+					if (Array.IndexOf (dangerousChars, c) != -1)
+						return true;
+			}
+
+			return false;
+		}
+#endif
 	}
 }
+

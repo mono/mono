@@ -1,3 +1,11 @@
+2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.Configuration/GlobalizationConfiguration.cs: undo old fix.
+
+	* System.Web.Configuration/PagesConfiguration.cs:
+	* System.Web.Configuration/PagesConfigurationHandler.cs: new files for
+	processing system.web/pages section.
+
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
 	* TraceConfig.cs: New class contains trace configuration data.

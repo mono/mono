@@ -40,10 +40,8 @@ namespace System.Web.Configuration
 			if (context == null)
 				context = HttpContext.Context;
 
-			//config = context.GetConfig ("system.web/globalization") as GlobalizationConfiguration;
 			try {
-				config = HttpContext.GetAppConfig ("system.web/globalization")
-								as GlobalizationConfiguration;
+				config = context.GetConfig ("system.web/globalization") as GlobalizationConfiguration;
 			} catch {
 				return null;
 			}

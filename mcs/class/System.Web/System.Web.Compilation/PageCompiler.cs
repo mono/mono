@@ -110,6 +110,16 @@ namespace System.Web.Compilation
                                 stmt.Right = new CodeFieldReferenceExpression (tm, pageParser.TraceMode.ToString ());
                                 method.Statements.Add (stmt);
                         }
+
+#if NET_1_1
+			if (pageParser.ValidateRequest) {
+				CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression ();
+                                CodePropertyReferenceExpression prop;
+                                prop = new CodePropertyReferenceExpression (thisRef, "Request");
+				expr.Method = new CodeMethodReferenceExpression (prop, "ValidateInput");
+				method.Statements.Add (expr);
+			}
+#endif
                         
 			base.AddStatementsToFrameworkInitialize (method);
 		}

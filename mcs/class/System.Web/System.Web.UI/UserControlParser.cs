@@ -7,6 +7,7 @@
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.Collections;
 using System.IO;
 using System.Web;
 using System.Web.Compilation;
@@ -36,18 +37,22 @@ namespace System.Web.UI
 			return generator.GetCompiledType ();
 		}
 
-		internal override Type DefaultBaseType
+		internal override void ProcessMainAttributes (Hashtable atts)
 		{
-			get {
-				return typeof (UserControl);
-			}
+			SetBaseType (PagesConfig.UserControlBaseType);
+			base.ProcessMainAttributes (atts);
+		}
+		
+		internal override Type DefaultBaseType {
+			get { return typeof (UserControl); }
 		}
 
-		internal override string DefaultDirectiveName
-		{
-			get {
-				return "control";
-			}
+		internal override string DefaultBaseTypeName {
+			get { return "System.Web.UI.UserControl"; }
+		}
+
+		internal override string DefaultDirectiveName {
+			get { return "control"; }
 		}
 	}
 }

@@ -26,8 +26,8 @@ namespace System.Web.UI
 
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
-			autoEventWireup = GetBool (atts, "AutoEventWireup", true);
-			enableViewState = GetBool (atts, "EnableViewState", true);
+			autoEventWireup = GetBool (atts, "AutoEventWireup", PagesConfig.AutoEventWireup);
+			enableViewState = GetBool (atts, "EnableViewState", PagesConfig.EnableViewState);
 
 			atts.Remove ("TargetSchema"); // Ignored
 
@@ -135,7 +135,6 @@ namespace System.Web.UI
 
 				return;
 			}
-
 
 			atts.Remove ("OutputCache"); // ignored
 			base.AddDirective (directive, atts);

@@ -1,3 +1,17 @@
+2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ApplicationFileParser.cs: adde DefaultBaseTypeName property.
+
+	* PageParser.cs: support validateRequest.
+
+	* TemplateControlParser.cs: get default values from system.web/pages
+	section.
+
+	* TemplateParser.cs: added separate method for changing base type
+	(Inherits or system.web/pages).
+	
+	* UserControlParser.cs: support system.web/pages defined base type.
+
 2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* UserControl.cs: Added missing attribute, implemented method

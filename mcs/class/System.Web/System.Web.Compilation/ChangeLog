@@ -1,3 +1,7 @@
+2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PageCompiler.cs: invoke Request.ValidateInput if required.
+
 2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: don't rely on GC to close the files parsed. Fixes bug

@@ -29,6 +29,8 @@ namespace System.Web.UI
 		string culture;
 		string uiculture;
 		string errorPage;
+		bool validateRequest;
+		Type baseType = typeof (Page);
 
 		public PageParser ()
 		{
@@ -53,7 +55,8 @@ namespace System.Web.UI
 
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
-			string enabless = GetString (atts, "EnableSessionState", null);
+			SetBaseType (PagesConfig.PageBaseType);
+			string enabless = GetString (atts, "EnableSessionState", PagesConfig.EnableSessionState);
 			if (enabless != null) {
 				readonlySessionState = (String.Compare (enabless, "readonly", true) == 0);
 				if (readonlySessionState == true || String.Compare (enabless, "true", true) == 0) {
@@ -187,13 +190,13 @@ namespace System.Web.UI
 			}
 			
 			errorPage = GetString (atts, "ErrorPage", null);
+			validateRequest = GetBool (atts, "ValidateRequest", PagesConfig.ValidateRequest);
 
 			// Ignored by now
 			GetString (atts, "Buffer", null);
 			GetString (atts, "ClientTarget", null);
 			GetString (atts, "EnableViewStateMac", null);
 			GetString (atts, "SmartNavigation", null);
-			GetBool (atts, "ValidateRequest", true);
 
 			base.ProcessMainAttributes (atts);
 		}
@@ -231,7 +234,11 @@ namespace System.Web.UI
 		}
 		
 		internal override Type DefaultBaseType {
-			get { return typeof (Page); }
+			get { return baseType; }
+		}
+
+		internal override string DefaultBaseTypeName {
+			get { return "System.Web.UI.Page"; }
 		}
 
 		internal override string DefaultDirectiveName {
@@ -264,6 +271,10 @@ namespace System.Web.UI
 
 		internal string ErrorPage {
 			get { return errorPage; }
+		}
+
+		internal bool ValidateRequest {
+			get { return validateRequest; }
 		}
 	}
 }

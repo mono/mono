@@ -60,16 +60,15 @@ namespace System.Web
 			}
 		}
 
-		/// <summary>
-		/// Gets and sets the request time-out in seconds.
-		/// </summary>
-		[MonoTODO()]
 		public int ScriptTimeout {
 			get {
-				throw new NotImplementedException ();
+				return (int) _Context.ConfigTimeout.TotalSeconds;
 			} 
 			set {
-				throw new NotImplementedException ();
+				if (value <= 0)
+					throw new ArgumentOutOfRangeException ("value");
+
+				_Context.ConfigTimeout = new TimeSpan (0, 0, value);
 			}
 		}
 

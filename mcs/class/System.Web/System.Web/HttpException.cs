@@ -92,6 +92,10 @@ namespace System.Web
 			return GetHtmlizedErrorMessage ();
 		}
 
+		internal virtual string Description {
+			get { return "Error processing request."; }
+		}
+		
 		string GetDefaultErrorMessage ()
 		{
 			StringBuilder builder = new StringBuilder ("<html>\r\n<title>");
@@ -102,10 +106,12 @@ namespace System.Web
 			builder.AppendFormat ("</title><body bgcolor=\"white\">" + 
 					      "<h1><font color=\"red\">Server error in '{0}' " + 
 					      "application</font></h1><hr>\r\n",
-					      HttpRuntime.AppDomainAppVirtualPath);
+					      HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
 
-			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n", Message);
-			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", "Error processing request.");
+			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n",
+					      HtmlEncode (Message));
+
+			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", Description);
 			builder.Append ("<b>Error Message: </b>");
 			if (http_code != 0)
 				builder.AppendFormat ("HTTP {0}. ", http_code);

@@ -1,7 +1,12 @@
+2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: added new files in S.W.Configuration.
+
 2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* makefile: Dependency to EnterpriseServices.dll added
-	* System.Web.dll.sources: Added 4 files in System.Util, sorted Web.Util file names
+	* System.Web.dll.sources: Added 4 files in System.Util, sorted Web.Util
+	file names.
 
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
