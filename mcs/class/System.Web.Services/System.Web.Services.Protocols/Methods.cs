@@ -136,6 +136,7 @@ namespace System.Web.Services.Protocols {
 				Action = RequestNamespace.EndsWith("/") ? (RequestNamespace + Name) : (RequestNamespace + "/" + Name);
 			
 			bool hasWrappingElem = (ParameterStyle == SoapParameterStyle.Wrapped);
+			bool writeAccessors = (SoapBindingStyle == SoapBindingStyle.Rpc);
 			
 			XmlReflectionMember [] in_members = BuildRequestReflectionMembers (optional_ns);
 			XmlReflectionMember [] out_members = BuildResponseReflectionMembers (optional_ns);
@@ -145,8 +146,8 @@ namespace System.Web.Services.Protocols {
 				OutputMembersMapping = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem);
 			}
 			else {
-				InputMembersMapping = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem, true);
-				OutputMembersMapping = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem, true);
+				InputMembersMapping = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem, writeAccessors);
+				OutputMembersMapping = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem, writeAccessors);
 			}
 
 			requestSerializerId = parent.RegisterSerializer (InputMembersMapping);
