@@ -18,7 +18,7 @@ namespace System.Net
 			
 		}
 
-        internal object Clone()
+        object ICloneable.Clone()
 		{
 			return MemberwiseClone();
 		}

@@ -1,3 +1,8 @@
+2003-07-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* NetConfig.cs: If Clone method is not public, then it must use
+	  explicit interface method implementation syntax.
+
 2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
 
 	* Dns.cs: Reworked indentation.
