@@ -1,3 +1,7 @@
+2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exception.c (mono_exception_from_token): New helper function.
+
 2004-12-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c (mono_assembly_load_with_partial_name): Call 
