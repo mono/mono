@@ -1,3 +1,11 @@
+2003-10-30  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (MTYPE_PARAM_TO_TYPE, MTYPE_PARAM_TO_CLASS): New macros;
+	similar to TYPE_PARAM_TO_TYPE and TYPE_PARAM_TO_CLASS, but for
+	method parameters.
+	(mono_method_to_ir): Added support for MONO_TYPE_MVAR; similar to
+	MONO_TYPE_VAR, we the actual types from MTYPE_PARAM_TO_CLASS().	
+
 2003-10-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c mini-ops.h inssel.brg: Implement undeniable exception 
