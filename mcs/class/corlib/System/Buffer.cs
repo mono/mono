@@ -65,6 +65,6 @@ namespace System {
 		private extern static void SetByteInternal (Array array, int index, int value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void BlockCopyInternal (Array src, int src_offset, Array dest, int dest_offset, int count);
+		internal extern static void BlockCopyInternal (Array src, int src_offset, Array dest, int dest_offset, int count);
 	}
 }

@@ -1,3 +1,6 @@
+2003-01-31  Patrik Torstensson
+
+	* Buffer.cs: Changed access level of BlockCopyInternal
 
 Thu Jan 30 19:54:30 CET 2003 Paolo Molaro <lupus@ximian.com>
 
