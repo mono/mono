@@ -1,3 +1,8 @@
+2004-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* loader.c: prints a message on module loading error we set MONO_DEBUG
+	environment variable.
+
 2004-05-05  Jackson Harper  <jackson@ximian.com>
 
 	* appdomain.c: Handle PublicKeyToken=null properly.
