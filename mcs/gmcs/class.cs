@@ -3748,7 +3748,8 @@ namespace Mono.CSharp {
 		string obsolete = null;
 		bool obsolete_error = false;
 
-		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method, DeclSpace ds)
+		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method,
+						     EmitContext ec)
 		{
 			if ((opt_attrs == null) || (opt_attrs.Attrs == null))
 				return true;
@@ -3925,8 +3926,10 @@ namespace Mono.CSharp {
 			MethodInfo implementing = null;
 			string prefix;
 
+			ec = method.CreateEmitContext (container, null);
+
 			if (method.OptAttributes != null)
-				if (!ApplyAttributes (method.OptAttributes, is_method, container))
+				if (!ApplyAttributes (method.OptAttributes, is_method, ec))
 					return false;
 
 			if (member.IsExplicitImpl)
@@ -4024,8 +4027,6 @@ namespace Mono.CSharp {
 
 				IsImplementing = true;
 			}
-
-			ec = method.CreateEmitContext (container, null);
 
 			//
 			// Create the MethodBuilder for the method
