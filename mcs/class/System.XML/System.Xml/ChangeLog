@@ -1,3 +1,7 @@
+2002-10-26  Piers Haken <piersh@friskit.com>
+
+	* XmlDocumentNavigator.cs: return invalid XPathNodeType (-1) for unknown node types.
+
 2002-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextReader.cs: don't increment depth for entity references.

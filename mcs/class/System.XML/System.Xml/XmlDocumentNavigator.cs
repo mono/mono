@@ -123,7 +123,7 @@ namespace System.Xml
 				case XmlNodeType.ProcessingInstruction:
 					return XPathNodeType.ProcessingInstruction;
 				}
-				throw new InvalidOperationException ();
+				return (XPathNodeType) (-1);
 			}
 		}
 
