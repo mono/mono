@@ -14,6 +14,7 @@ using System.Collections;
 using System.Xml.XPath;
 using System.IO;
 using System.Text;
+using Mono.Xml;
 
 namespace System.Xml
 {
@@ -37,15 +38,22 @@ namespace System.Xml
 			string namespaceURI, 
 			XmlDocument doc) : base (doc)
 		{
-			this.prefix = prefix;
-			this.localName = localName;
-			this.namespaceURI = namespaceURI;
+			this.prefix = doc.NameTable.Add (prefix);
+			this.localName = doc.NameTable.Add (localName);
+			this.namespaceURI = doc.NameTable.Add (namespaceURI);
 
 			attributes = new XmlAttributeCollection (this);
 
-			// TODO: Adds default attributes
 			if(doc.DocumentType != null)
 			{
+				DTDAttListDeclaration attlist = doc.DocumentType.DTD.AttListDecls [localName];
+				if (attlist != null) {
+					for (int i = 0; i < attlist.Definitions.Count; i++) {
+						DTDAttributeDefinition def = attlist [i];
+						if (def.DefaultValue != null)
+							SetAttribute (def.Name, def.DefaultValue);
+					}
+				}
 			}
 		}
 

@@ -18,7 +18,7 @@ namespace System.Xml
 		protected internal XmlEntityReference (string name, XmlDocument doc)
 			: base (doc)
 		{
-			entityName = name;
+			entityName = doc.NameTable.Add (name);
 		}
 
 		// Properties

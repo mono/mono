@@ -1529,7 +1529,7 @@ namespace System.Xml
 
 			ReadChar (); // ';'
 
-			// FIXME: how to handle such chars larger than 0xffff?
+			// There is no way to save surrogate pairs...
 			if (normalization && value < 0xffff && !XmlConstructs.IsValid (value))
 				throw new XmlException (this as IXmlLineInfo,
 					"Referenced character was not allowed in XML.");
@@ -2421,7 +2421,6 @@ namespace System.Xml
 		// Does not consume the first non-whitespace character.
 		private bool SkipWhitespace ()
 		{
-			//FIXME: Should not skip if whitespaceHandling == WhiteSpaceHandling.None
 			bool skipped = XmlChar.IsWhitespace (PeekChar ());
 			while (XmlChar.IsWhitespace (PeekChar ()))
 				ReadChar ();

@@ -30,8 +30,8 @@ namespace System.Xml
 				      string systemId, XmlDocument doc)
 			: base (doc)
 		{
-			this.localName = localName;
-			this.prefix = prefix;
+			this.localName = doc.NameTable.Add (localName);
+			this.prefix = doc.NameTable.Add (prefix);
 			this.publicId = publicId;
 			this.systemId = systemId;
 		}

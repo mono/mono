@@ -270,7 +270,6 @@ namespace Mono.Xml
 				return false;
 		}
 
-		[MonoTODO ("Handling of whitespace entities are still not enough.")]
 		public override bool Read ()
 		{
 			if (currentTextValue != null)
@@ -411,14 +410,12 @@ namespace Mono.Xml
 				if (currentAutomata == DTD.Invalid) {
 					HandleError (String.Format ("Invalid start element found: {0}", reader.Name),
 						XmlSeverityType.Error);
-					// FIXME: validation recovery code here.
 					currentAutomata = previousAutomata;
 				}
 				DTDElementDeclaration decl = DTD.ElementDecls [reader.Name];
 				if (decl == null) {
 					HandleError (String.Format ("Element {0} is not declared.", reader.Name),
 						XmlSeverityType.Error);
-					// FIXME: validation recovery code here.
 					currentAutomata = previousAutomata;
 				}
 
@@ -437,7 +434,6 @@ namespace Mono.Xml
 						HandleError (String.Format (
 							"Attributes are found on element {0} while it has no attribute definitions.", currentElement),
 							XmlSeverityType.Error);
-						// FIXME: validation recovery code here.
 					}
 					SetupValidityIgnorantAttributes ();
 				}
@@ -463,7 +459,6 @@ namespace Mono.Xml
 				if (decl == null) {
 					HandleError (String.Format ("Element {0} is not declared.", reader.Name),
 						XmlSeverityType.Error);
-					// FIXME: validation recovery code here.
 				}
 
 				previousAutomata = currentAutomata;
@@ -472,7 +467,6 @@ namespace Mono.Xml
 				if (tmpAutomata == DTD.Invalid) {
 					HandleError (String.Format ("Invalid end element found: {0}", reader.Name),
 						XmlSeverityType.Error);
-					// FIXME: validation recovery code here.
 					currentAutomata = previousAutomata;
 				}
 
@@ -594,7 +588,6 @@ namespace Mono.Xml
 						} else
 							break;
 					}
-					// FIXME: Should recursively resolve entities.
 					switch (targetReader.NodeType) {
 					case XmlNodeType.EntityReference:
 						DTDEntityDeclaration edecl = DTD.EntityDecls [targetReader.Name];
@@ -626,7 +619,6 @@ namespace Mono.Xml
 				if (def == null) {
 					HandleError (String.Format ("Attribute {0} is not declared.", reader.Name),
 						XmlSeverityType.Error);
-					// FIXME: validation recovery code here.
 				} else {
 					// check enumeration constraint
 					if (def.EnumeratedAttributeDeclaration.Count > 0)
@@ -712,7 +704,6 @@ namespace Mono.Xml
 						HandleError (String.Format ("Fixed attribute {0} in element {1} has invalid value {2}.",
 							def.Name, decl.Name, attrValue),
 							XmlSeverityType.Error);
-						// FIXME: validation recovery code here.
 					}
 				}
 			}
@@ -724,7 +715,6 @@ namespace Mono.Xml
 						HandleError (String.Format ("Required attribute {0} in element {1} not found .",
 							def.Name, decl.Name),
 							XmlSeverityType.Error);
-						// FIXME: validation recovery code here.
 					}
 					else if (def.DefaultValue != null) {
 						if (this.isStandalone && !def.IsInternalSubset)

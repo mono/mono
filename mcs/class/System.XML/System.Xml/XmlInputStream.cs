@@ -170,11 +170,7 @@ namespace Mono.Xml.Native
 					c = SkipWhitespace (ms);
 
 					// version. It is optional here.
-					if (c != 'v') {
-						// FIXME: temporarily comment out here.
-//						if (isDocumentEntity)
-//							throw new XmlException ("invalid xml declaration.");
-					} else {
+					if (c == 'v') {
 						ms.WriteByte ((byte)'v');
 						while (loop++ >= 0 && c >= 0) {
 							c = stream.ReadByte ();

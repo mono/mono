@@ -17,7 +17,7 @@ namespace System.Xml
 				    XmlDocument doc)
 			: base (doc)
 		{
-			this.name = name;
+			this.name = doc.NameTable.Add (name);
 			this.NDATA = NDATA;
 			this.publicId = publicId;
 			this.systemId = systemId;

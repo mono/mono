@@ -56,9 +56,9 @@ namespace System.Xml
 			else if (!XmlChar.IsName (localName))
 				throw new ArgumentException ("Invalid attribute local name.");
 
-			this.prefix = prefix;
-			this.localName = localName;
-			this.namespaceURI = namespaceURI;
+			this.prefix = doc.NameTable.Add (prefix);
+			this.localName = doc.NameTable.Add (localName);
+			this.namespaceURI = doc.NameTable.Add (namespaceURI);
 		}
 
 		#endregion

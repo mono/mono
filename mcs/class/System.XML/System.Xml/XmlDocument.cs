@@ -317,7 +317,11 @@ namespace System.Xml
 		{
 			if ((localName == null) || (localName == String.Empty))
 				throw new ArgumentException ("The local name for elements or attributes cannot be null or an empty string.");
-			CheckName (localName);
+			// FIXME: MS.NET has a weird behavior that they can Load() from XmlTextReader 
+			// whose Namespaces = false, but their CreateElement() never allows qualified name.
+			// I leave it as it is.
+			if (!XmlChar.IsName (localName))
+				throw new ArgumentException ("Invalid name.", "localName");
 			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this);
 		}
 
@@ -363,7 +367,7 @@ namespace System.Xml
 				case XmlNodeType.Attribute: return CreateAttribute (prefix, name, namespaceURI);
 				case XmlNodeType.CDATA: return CreateCDataSection (null);
 				case XmlNodeType.Comment: return CreateComment (null);
-				case XmlNodeType.Document: return new XmlDocument (); // TODO - test to see which constructor to use, i.e. use existing NameTable or not.
+				case XmlNodeType.Document: return new XmlDocument ();
 				case XmlNodeType.DocumentFragment: return CreateDocumentFragment ();
 				case XmlNodeType.DocumentType: return CreateDocumentType (null, null, null, null);
 				case XmlNodeType.Element: return CreateElement (prefix, name, namespaceURI);
@@ -678,14 +682,6 @@ namespace System.Xml
 				prefix = "";
 				localName = name;
 			}
-		}
-
-		// Checks that Element's name is valid
-		private void CheckName (String name)
-		{
-			// TODO: others validations?
-			if (name.IndexOf (" ") >= 0)
-				throw new XmlException ("The ' ' characted cannot be included in a name");
 		}
 
 		// Reads XmlReader and creates Attribute Node.

@@ -1,3 +1,12 @@
+2003-10-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDReader.cs, DTDValidatingReader.cs, XmlInputStream.cs,
+	  XmlTextReader.cs : More cleanup.
+	* XmlDocument.cs : Removed CheckName(). Code cleanup.
+	* XmlElement.cs : .ctor() now adds default attributes (if required).
+	* XmlAttribute.cs, XmlElement.cs, XmlEntity.cs, XmlEntityReference.cs,
+	  XmlNotation.cs : Now uses OwnerDocument's NameTable.
+
 2003-10-25  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* XmlConvert.cs: Support for the sign in double and single. The

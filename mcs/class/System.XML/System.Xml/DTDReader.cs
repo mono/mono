@@ -928,7 +928,7 @@ namespace System.Xml
 				if (!breakup) {
 					try {
 						parsed = def.Datatype.ParseValue (normalized, DTD.NameTable, null);
-					} catch (Exception ex) { // FIXME: bad catch ;-(
+					} catch (Exception ex) { // FIXME: (wishlist) bad catch ;-(
 						DTD.AddError (new XmlSchemaException ("Invalid default value for ENTITY type.",
 							def.LineNumber, def.LinePosition, null, def.BaseURI, ex));
 						breakup = true;
@@ -1138,7 +1138,6 @@ namespace System.Xml
 		// Does not consume the first non-whitespace character.
 		private bool SkipWhitespace ()
 		{
-			//FIXME: Should not skip if whitespaceHandling == WhiteSpaceHandling.None
 			bool skipped = XmlChar.IsWhitespace (PeekChar ());
 			while (XmlChar.IsWhitespace (PeekChar ()))
 				ReadChar ();
@@ -1401,7 +1400,7 @@ namespace System.Xml
 
 			ReadChar (); // ';'
 
-			// FIXME: how to handle such chars larger than 0xffff?
+			// There is no way to save surrogate pairs...
 			if (value < 0xffff && !XmlConstructs.IsValid (value))
 				throw new XmlException (this as IXmlLineInfo,
 					"Referenced character was not allowed in XML.");
@@ -1515,7 +1514,7 @@ namespace System.Xml
 			parserInputStack.Push (currentInput);
 			try {
 				currentInput = new XmlParserInput (new XmlStreamReader (url, false, DTD.Resolver, DTD.BaseURI), absPath);
-			} catch (Exception ex) { // FIXME: Bad exception catch ;-(
+			} catch (Exception ex) { // FIXME: (wishlist) Bad exception catch ;-(
 				int line = currentInput == null ? 0 : currentInput.LineNumber;
 				int col = currentInput == null ? 0 : currentInput.LinePosition;
 				string bu = (currentInput == null) ? String.Empty : currentInput.BaseURI;
