@@ -752,11 +752,17 @@ declaration
 		} else
 			break;
 
-		if ((mod_flags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
+		if ((mod_flags & (Modifiers.PRIVATE)) != 0){
 			Report.Error (
-				1527, lexer.Location, 
+				31089, lexer.Location, 
 				"Namespace elements cannot be explicitly " +
-			        "declared private or protected in '" + name + "'");
+			        "declared private in '" + name + "'");
+			}
+		else if ((mod_flags & (Modifiers.PROTECTED)) != 0){
+			Report.Error (
+				31047, lexer.Location, 
+				"Namespace elements cannot be explicitly " +
+			        "declared protected in '" + name + "'");
 		}
 	  }
 	;

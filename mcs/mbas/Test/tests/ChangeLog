@@ -1,4 +1,57 @@
 
+2005-01-13  Ritvik Mayank  <mritvik@novell.com>
+	
+	*ExpConversionBoolToByteA1.vb:
+	*ExpConversionBoolToByteA2.vb:
+	*ExpConversionBoolToDecimalA1.vb:
+	*ExpConversionBoolToDecimalA2.vb:
+	*ExpConversionBoolToDoubleA1.vb:
+	*ExpConversionBoolToDoubleA2.vb:
+	*ExpConversionBoolToIntA1.vb:
+	*ExpConversionBoolToIntA2.vb:
+	*ExpConversionBoolToLongA1.vb:
+	*ExpConversionBoolToLongA2.vb:
+	*ExpConversionBoolToShortA1.vb:
+	*ExpConversionBoolToShortA2.vb:
+	*ExpConversionBoolToSingleA1.vb:
+	*ExpConversionBoolToSingleA2.vb:
+	*ExpConversionByteToBoolA1.vb:
+	*ExpConversionDecimalToBoolA1.vb:
+	*ExpConversionDoubleToBoolA1.vb:
+	*ExpConversionIntToBoolA1.vb:
+	*ExpConversionLongToBoolA1.vb:
+	*ExpConversionShortToBoolA1.vb:
+	*ExpConversionSingleToBoolA1.vb:
+	
+	Above Test cases are for Explicit Conversion from Boolean to different Numeric type and form different Numeric type to Boolean  	
+	
+2005-01-13  Ritvik Mayank  <mritvik@novell.com>
+
+	*ImpConversionBoolToByteA1.vb:
+	*ImpConversionBoolToByteA2.vb:
+	*ImpConversionBoolToDecimalA1.vb:
+	*ImpConversionBoolToDecimalA2.vb:
+	*ImpConversionBoolToDoubleA1.vb:
+	*ImpConversionBoolToDoubleA2.vb:
+	*ImpConversionBoolToIntA1.vb:
+	*ImpConversionBoolToIntA2.vb:
+	*ImpConversionBoolToLongA1.vb:
+	*ImpConversionBoolToLongA2.vb:
+	*ImpConversionBoolToShortA1.vb:
+	*ImpConversionBoolToShortA2.vb:
+	*ImpConversionBoolToSingleA1.vb:
+	*ImpConversionBoolToSingleA2.vb:
+	*ImpConversionByteToBoolA1.vb:
+	*ImpConversionDecimalToBoolA1.vb:
+	*ImpConversionDoubleToBoolA1.vb:
+	*ImpConversionIntToBoolA1.vb:
+	*ImpConversionLongToBoolA1.vb:
+	*ImpConversionShortToBoolA1.vb:
+	*ImpConversionSingleToBoolA1.vb:
+
+	Above Test cases are for Implicit Conversion from Boolean to different Numeric type and form different Numeric type to Boolean
+	
+	
 2005-01-11 Manjula GHM <mmanjula@novell.com>
 	Added following files
 	

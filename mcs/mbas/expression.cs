@@ -6667,7 +6667,7 @@ namespace Mono.MonoBASIC {
 					ec, new MethodGroupExpr (ilist.getters, loc), arguments, loc);
 
 			if (get == null){
-				Error (154, "indexer can not be used in this context, because " +
+				Error (30524, "indexer can not be used in this context, because " +
 				       "it lacks a 'get' accessor");
 				return null;
 			}
@@ -6702,7 +6702,7 @@ namespace Mono.MonoBASIC {
 			}
 			
 			if (set == null){
-				Error (200, "indexer X.this [" + TypeManager.MonoBASIC_Name (right_type) +
+				Error (30526, "indexer X.this [" + TypeManager.MonoBASIC_Name (right_type) +
 				       "] lacks a 'set' accessor");
 				return null;
 			}

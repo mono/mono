@@ -5685,7 +5685,7 @@ namespace Mono.MonoBASIC {
 
 				NewIndexes = args;
 				if (RedimTarget.Type.GetArrayRank() != args.Count)
-					Report.Error (415, "'ReDim' cannot change the number of dimensions of an array.");
+					Report.Error (3415, "'ReDim' cannot change the number of dimensions of an array.");
 
 				BaseType = RedimTarget.Type.GetElementType();
 				Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);

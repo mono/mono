@@ -4647,7 +4647,7 @@ namespace Mono.MonoBASIC {
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (getter == null){
-				Report.Error (154, loc, 
+				Report.Error (30524, loc, 
 					      "The property '" + PropertyInfo.Name +
 					      "' can not be used in " +
 					      "this context because it lacks a get accessor");
@@ -4671,7 +4671,7 @@ namespace Mono.MonoBASIC {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			if (setter == null){
-				Report.Error (154, loc, 
+				Report.Error (30526, loc, 
 					      "The property '" + PropertyInfo.Name +
 					      "' can not be used in " +
 					      "this context because it lacks a set accessor");
