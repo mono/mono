@@ -3,7 +3,10 @@ topdir = ../..
 LIBRARY = $(topdir)/class/lib/System.Drawing.dll
 
 LIB_LIST = list.unix
-LIB_FLAGS = -r corlib -r System
+# to use JPEG decoder add -r ./cdeclRedirector/cdeclCallback.dll 
+# and remove -define:DECLARE_CDECL_DELEGATES
+# cdeclCallback.dll should be manually copied to library folder
+LIB_FLAGS = --unsafe -r corlib -r System -define:DECLARE_CDECL_DELEGATES
 
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=./Test*
