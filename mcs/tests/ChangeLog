@@ -1,3 +1,8 @@
+2002-07-10  Ravi Pratap  <ravi@ximian.com>
+
+	* test-142.cs : Add. This ensures events can be accessed
+	correctly from subclasses etc.
+	
 2002-07-06  Andrew Birkett  <adb@tardis.ed.ac.uk>
 
 	* test-74.cs: Added test for \n in verbatim string.
