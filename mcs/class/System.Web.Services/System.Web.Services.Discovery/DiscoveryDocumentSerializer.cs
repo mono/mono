@@ -16,7 +16,7 @@ using System.Globalization;
 
 namespace System.Web.Services.Discovery
 {
-	public class DiscoveryDocumentReader : XmlSerializationReader
+	internal class DiscoveryDocumentReader : XmlSerializationReader
 	{
 		public System.Web.Services.Discovery.DiscoveryDocument ReadTree ()
 		{
@@ -292,7 +292,7 @@ namespace System.Web.Services.Discovery
 
 	}
 
-	public class DiscoveryDocumentWriter : XmlSerializationWriter
+	internal class DiscoveryDocumentWriter : XmlSerializationWriter
 	{
 		public void WriteTree (System.Web.Services.Discovery.DiscoveryDocument ob)
 		{
