@@ -1,4 +1,4 @@
-2003-02-05  Alan Tam <Tam@suiLung.com>
+2003-02-05  Alan Tam <Tam@SiuLung.com>
 
 	* DataSet.cs: Added framework for DataSet.Update Implemented missing 
 	methods GetSchemaSerializable, GetSerializationData, 
