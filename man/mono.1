@@ -10,7 +10,7 @@
 ..
 .TH Mono "Mono 1.0"
 .SH NAME
-mono \- Mono's code ECMA-CLI code generator (Just-in-Time and Ahead-of-Time)
+mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
 .PP
 .B mono [options] file [arguments...]
@@ -85,9 +85,11 @@ The following optimizations are implemented:
              cmov       Conditional moves
              shared     Emit per-domain code
              sched      Instruction scheduling
-             intrins   Intrinsic method implementations
+             intrins    Intrinsic method implementations
              tailc      Tail recursion and tail calls
              loop       Loop related optimizations
+             leaf       Leaf procedures optimizations
+             profile    Use profiling information
 .fi
 .Sp
 For example, to enable all the optimization but dead code
@@ -95,41 +97,27 @@ elimination and inlining, you can use:
 .nf
 	-O=all,-deadce,-inline
 .fi
-.SH DEVELOPMENT OPTIONS
 .TP
-.I "--break method"
-Inserts a breakpoint before the method whose name is `method'
-(namespace.class:methodname).  Use `Main' as method name to insert a
-breakpoint on the application's main method.
-.TP
-.I "--breakonex"
-Inserts a breakpoint on exceptions.  This allows you to debug your
-application with a native debugger when an exception is thrown.
-.TP
-.I "--coverage"
-Performs coverage analysis on the underlying IL code.
-.TP
-.I "--trace"
-Shows method names as they are invoked.
-
+.I "-V", "--version"
+Prints JIT version information.
 
 
 .SH DEVELOPMENT OPTIONS
-The following options are used to debug a JITed application.  They're
-only useful when running the JIT in a debugger:
+The following options are used to help when developing a JITed application.
 .TP
 .I "--debug"
 Turns on the debugging mode in the runtime.  If an assembly was
 compiled with debugging information, it will produce line number
 information for stack traces. 
 .TP
-.I "--profile"
+.I "--profile[=profiler[:profiler_args]]"
 Instructs the runtime to collect profiling information about execution
 times and memory allocation, and dump it at the end of the execution.
+If a profiler is not specified, the default profiler is used. profiler_args 
+is a profiler-specific string of options for the profiler itself.
 
 
-
-.SH MAINTAINER OPTIONS
+.SH JIT MAINTAINER OPTIONS
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
 .TP
@@ -167,10 +155,20 @@ compiled.  This is used for testing the code generator performance.
 .TP
 .I "-v", "--verbose"
 Increases the verbosity level, each time it is listed, increases the
-verbosity level to include more information.
+verbosity level to include more information (including, for example, 
+a disassembly of the native code produced, code selector info etc.).
 .TP
-.I "-V", "--version"
-Prints JIT version information.
+.I "--break method"
+Inserts a breakpoint before the method whose name is `method'
+(namespace.class:methodname).  Use `Main' as method name to insert a
+breakpoint on the application's main method.
+.TP
+.I "--breakonex"
+Inserts a breakpoint on exceptions.  This allows you to debug your
+application with a native debugger when an exception is thrown.
+.TP
+.I "--trace"
+Shows method names as they are invoked.
 
 
 .SH ENVIRONMENT VARIABLES
