@@ -1686,7 +1686,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		private static object createZeroForCompare(TypeCode tc) {
 			switch(tc) {
 				case TypeCode.Boolean:
-					return (int)0;
+					return false ;
 				case TypeCode.Char:
 					return (char)0;
 				case TypeCode.Byte:
