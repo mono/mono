@@ -1,3 +1,7 @@
+2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DirectoryTest.cs: added test from bug 58875.
+
 2004-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MemoryStreamTest.cs: Test that we zeroize old data when we manipulate

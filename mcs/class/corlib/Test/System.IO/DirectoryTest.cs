@@ -1169,6 +1169,13 @@ public class DirectoryTest : Assertion {
 	}
 
 
+	[Test]
+	public void GetNoFiles () // Bug 58875. This throwed an exception on windows.
+	{
+		DirectoryInfo dir = new DirectoryInfo (".");
+		dir.GetFiles ("*.nonext");
+	}
+
 	private void DeleteDirectory (string path)
 	{
 		if (Directory.Exists (path))
