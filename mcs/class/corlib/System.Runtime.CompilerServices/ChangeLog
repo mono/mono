@@ -1,3 +1,7 @@
+2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* *.cs: Add new 2.0 classes.
+
 2004-06-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* RuntimeHelpers.cs: OffsetToStringData is now and intrinsic,
