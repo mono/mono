@@ -9,3 +9,7 @@ numbers to match the Microsoft numbers:
 
 -2	Internal error, an interface is being defined inside an
 	interface (This should never happen).
+
+-3      Constant type is not one of sbyte, byte, short, ushort, int,
+	uint, long, ulong, char, float, double, decimal, bool, string, enum
+	or null type. 
