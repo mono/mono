@@ -49,6 +49,8 @@ namespace System.IO
 			exc = e;
 			completed = true;
 			wh.Set ();
+			if (cb != null)
+				cb (ares);
 		}
 		
 		public void SetComplete (Exception e, int nbytes)

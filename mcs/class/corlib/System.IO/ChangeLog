@@ -1,3 +1,8 @@
+2004-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStreamAsyncResult.cs: invoke the callback if set as completed
+	before the asynchronous stuff jumps in.
+
 2004-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: only pass the async flag set to true when opening the
