@@ -11,7 +11,7 @@ namespace System.Runtime.CompilerServices {
 
 	[Serializable]
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter)]
-	public class IDispatchConstantAttribute : CustomConstantAttribute
+	public sealed class IDispatchConstantAttribute : CustomConstantAttribute
 	{
 		public IDispatchConstantAttribute ()
 		{

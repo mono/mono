@@ -11,7 +11,7 @@ namespace System.Runtime.CompilerServices {
 
 	[Serializable] [CLSCompliant (false)]
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter)]
-	public class DecimalConstantAttribute : Attribute
+	public sealed class DecimalConstantAttribute : Attribute
 	{
 		byte scale;
 		bool sign;

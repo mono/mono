@@ -9,6 +9,7 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
+	[AttributeUsage (AttributeTargets.Field)]
 	public sealed class AccessedThroughPropertyAttribute : Attribute
 	{
 		string name;

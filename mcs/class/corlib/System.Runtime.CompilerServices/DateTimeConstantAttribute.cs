@@ -11,7 +11,7 @@ namespace System.Runtime.CompilerServices {
 
 	[Serializable]
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter)]
-	public class DateTimeConstantAttribute : CustomConstantAttribute
+	public sealed class DateTimeConstantAttribute : CustomConstantAttribute
 	{
 		long ticks;
 		

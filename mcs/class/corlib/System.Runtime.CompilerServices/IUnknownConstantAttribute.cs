@@ -11,7 +11,7 @@ namespace System.Runtime.CompilerServices {
 
 	[Serializable]
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter)]
-	public class IUnknownConstantAttribute : CustomConstantAttribute
+	public sealed class IUnknownConstantAttribute : CustomConstantAttribute
 	{
 		public IUnknownConstantAttribute ()
 		{

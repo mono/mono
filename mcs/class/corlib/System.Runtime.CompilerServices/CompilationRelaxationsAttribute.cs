@@ -9,8 +9,8 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	[AttributeUsage (AttributeTargets.Module)]
-	public sealed class CompilationRelaxationsAttribute : Attribute
+	[AttributeUsage (AttributeTargets.Module)] [Serializable]
+	public class CompilationRelaxationsAttribute : Attribute
 	{
 		int relax;
 		public CompilationRelaxationsAttribute (int relaxations)
@@ -18,7 +18,7 @@ namespace System.Runtime.CompilerServices {
 			relax = relaxations;
 		}
 
-		public int Relaxations {
+		public int CompilationRelaxations {
 			get { return relax; }
 		}
 	}

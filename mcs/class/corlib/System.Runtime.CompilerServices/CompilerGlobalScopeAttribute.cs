@@ -12,7 +12,7 @@ namespace System.Runtime.CompilerServices {
 	[AttributeUsage (AttributeTargets.Class)] [Serializable]
 	public class CompilerGlobalScopeAttribute : Attribute
 	{
-		protected CompilerGlobalScopeAttribute ()
+		public CompilerGlobalScopeAttribute ()
 		{
 		}
 	}

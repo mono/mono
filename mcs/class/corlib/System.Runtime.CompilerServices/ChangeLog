@@ -1,3 +1,15 @@
+2002-07-24  Duncan Mak  <duncan@ximian.com>
+
+	* AccessedThroughPropertyAttribute.cs:
+	* CompilationRelaxationsAttribute.cs: 
+	* CompilerGlobalScopeAttribute.cs: 
+	* DateTimeConstantAttribute.cs: 
+	* DecimalConstantAttribute.cs: 
+	* IDispatchConstantAttribute.cs:
+	* IsVolatile.cs:
+	* IUnknownConstantAttribute.cs: 
+	* RequiredAttributeAttribute.cs: Visibility changes.
+
 2002-07-23  Duncan Mak  <duncan@ximian.com>
 
 	* AccessedThroughPropertyAttribute.cs: 

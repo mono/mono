@@ -14,7 +14,7 @@ namespace System.Runtime.CompilerServices {
 	[Serializable]
 	public sealed class RequiredAttributeAttribute : Attribute
 	{
-		public RequiredAttributeAttribute ()
+		public RequiredAttributeAttribute (Type requiredContract)
 		{
 		}
 
