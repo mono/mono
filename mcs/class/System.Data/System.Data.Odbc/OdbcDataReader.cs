@@ -499,7 +499,7 @@ namespace System.Data.Odbc
 
 					case OdbcType.BigInt:
 						long long_data=0;
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.BigInt, ref long_data, 0, ref outsize);
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.SignedBigInt, ref long_data, 0, ref outsize);
 						DataValue=long_data;
 						break;
 					case OdbcType.NVarChar:

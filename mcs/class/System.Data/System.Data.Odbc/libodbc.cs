@@ -158,6 +158,9 @@ namespace System.Data.Odbc
 		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcType TargetType, ref long TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32.dll")]
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref long TargetPtr, int BufferLen, ref int Len);
+
+                [DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcType TargetType, ref short TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32.dll")]
@@ -230,7 +233,6 @@ namespace System.Data.Odbc
 							   byte [] Sqlstate, ref int NativeError,
 							   byte [] MessageText, short BufferLength,
 							   ref short TextLength);
-		
 
 	}
 }
