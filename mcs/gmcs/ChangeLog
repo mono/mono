@@ -1,3 +1,7 @@
+2005-02-24  Martin Baulig  <martin@ximian.com>
+
+	* README, README.Changes: Removed; they're old and obsolete.
+
 2005-02-22  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeParameter.Resolve): If resolving the constraints
