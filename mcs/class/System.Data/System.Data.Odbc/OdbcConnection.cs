@@ -46,7 +46,7 @@ namespace System.Data.Odbc
 		int connectionTimeout;
 		internal OdbcTransaction transaction;
 		IntPtr henv=IntPtr.Zero, hdbc=IntPtr.Zero;
-		bool dispose = false;			
+		bool disposed = false;			
 		
 		#endregion
 
