@@ -1,5 +1,25 @@
 2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
 
+	* marshal.c: In the runtime invoke wrapper, reset the abort
+	exception if it is cached. This avoids the automatic rethrowal of 
+	the exception after the catch of the wrapper. Also check for pending
+	interruptions before calling the managed method. This is done using
+	the new method emit_thread_force_interrupt_checkpoint, since the
+	normal checkpoint method is ignored when running the invoke wrapper.
+	* object.c: If the abort exception is rethrown, set the abort_exc
+	field of the thread, so it will be rethrown aftere every catch.
+	* threadpool.c: Only run an interruption checkpoint if what has been
+	requested is a stop of the thread (aborts will be ignored).
+	* threads.c: By default, a thread will now never be interrumped while
+	running the runtime invoke wrapper (this ensures that runtime_invoke
+	will always return to the caller if an exception pointer is provided).
+	There is a new special method mono_thread_force_interruption_checkpoint()
+	to force an interruption checkpoint even if running a protected
+	wrapper, which is used by the same runtime invoke wrapper to do a check
+	at a safe point.
+
+2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
+
 	* object.c, object-internals.h: Implemented mono_release_type_locks,
 	which releases the cctor locks held by a thread.
 	* threads.c, threads.h: In thread_cleanup, release cctor locks held
