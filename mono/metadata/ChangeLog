@@ -1,3 +1,8 @@
+2002-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: fixed bug #31235 by copying a few lines from GetMethods to
+	GetProperties. Also avoid calling g_slist_length in GetProperties and
+	GetMethods.
 
 Wed Sep 25 22:18:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
