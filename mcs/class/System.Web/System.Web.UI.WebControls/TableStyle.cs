@@ -138,6 +138,9 @@ namespace System.Web.UI.WebControls
 			if(CellSpacing >= 0)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Cellspacing, CellSpacing.ToString(NumberFormatInfo.InvariantInfo));
+				if(CellSpacing == 0)
+					writer.AddStyleAttribute(HtmlTextWriterStyle.BorderCollapse, "collapse");
+				
 			}
 			if(CellPadding >= 0)
 			{
@@ -147,11 +150,10 @@ namespace System.Web.UI.WebControls
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Align, Enum.Format(typeof(HorizontalAlign), HorizontalAlign, "G"));
 			}
-			string gd = "";
+			string gd = String.Empty;
 			switch(GridLines)
 			{
-				case GridLines.None:       gd = "";
-				                           break;
+				case GridLines.None:	   break;
 				case GridLines.Horizontal: gd = "rows";
 				                           break;
 				case GridLines.Vertical:   gd = "cols";
@@ -159,7 +161,6 @@ namespace System.Web.UI.WebControls
 				case GridLines.Both:       gd = "all";
 				                           break;
 			}
-			if (gd != "")
 				writer.AddAttribute(HtmlTextWriterAttribute.Rules, gd);
 		}
 
@@ -191,9 +192,17 @@ namespace System.Web.UI.WebControls
 
 		public override void MergeWith(Style s)
 		{
-			if(s != null && s is TableStyle && !s.IsEmpty)
+			if(s != null && !s.IsEmpty)
 			{
+				if (base.IsEmpty) {
+					base.CopyFrom (s);
+					return;
+				}
 				base.MergeWith(s);
+
+				if (!(s is TableStyle))
+					return;
+				
 				TableStyle with = (TableStyle)s;
 				if(with.IsSet(HOR_ALIGN) && IsSet(HOR_ALIGN))
 				{

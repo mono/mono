@@ -181,9 +181,11 @@ namespace System.Web.UI.WebControls
 
 		public override void CopyFrom(Style s)
 		{
-			if(s != null && !s.IsEmpty && s is DataGridPagerStyle)
+			if(s != null && !s.IsEmpty)
 			{
 				base.CopyFrom(s);
+				if(!(s is DataGridPagerStyle)) return;
+
 				DataGridPagerStyle from = (DataGridPagerStyle)s;
 				if(from.IsSet(MODE))
 				{
@@ -214,9 +216,18 @@ namespace System.Web.UI.WebControls
 
 		public override void MergeWith(Style s)
 		{
-			if(s != null && !s.IsEmpty && s is DataGridPagerStyle)
+			if(s != null && !s.IsEmpty)
 			{
+				if(base.IsEmpty)
+				{
+					base.CopyFrom(s);
+					return;
+				}
+
 				base.MergeWith(s);
+
+				if(!(s is DataGridPagerStyle)) return;
+
 				DataGridPagerStyle with = (DataGridPagerStyle)s;
 				if(with.IsSet(MODE) && !IsSet(MODE))
 				{

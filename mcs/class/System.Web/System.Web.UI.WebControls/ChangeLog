@@ -1,5 +1,17 @@
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
+	* PagedDataSource.cs (PageCount): Return page count of 1 if there
+	paging is disabled. Patch by Yaron Shkop.
+	* PagedDataSource.cs (CopyTo): Improve. Patch by Yaron Shkop.
+	* TableStyle.cs (AddAttributesToRender): Render border style
+	collapse. Patch by Yaron Shkop.
+	* TableStyle.cs:
+	* TableItemStyle.cs:
+	* DataGridPagerStyle.cs: Call base copy and merge even if style is of
+	the wrong type. Patch by Yaron Shkop.	
+	
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
 	* BoundColumn.cs: Render readonly columns. Patch by Mohammad DAMT.
 	
 2003-11-02 Ben Maurer  <bmaurer@users.sourceforge.net>

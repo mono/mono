@@ -200,13 +200,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(dataSource != null)
-				{
-					int total = DataSourceCount;
+				if(dataSource != null) {
 					if(!IsPagingEnabled)
-					{
-						return total;
-					}
+						return 1;
+                                        
+					int total = DataSourceCount;
 					return (total + pageSize - 1)/pageSize;
 				}
 				return 0;
@@ -247,10 +245,11 @@ namespace System.Web.UI.WebControls
 
 		public void CopyTo(Array array, int index)
 		{
-			foreach(object current in this)
-			{
-				array.SetValue(array, index++);
-			}
+			IEnumerator enumerator = this.GetEnumerator();
+			if(enumerator == null) return;
+
+			while(enumerator.MoveNext())
+				array.SetValue(enumerator.Current, index++);
 		}
 
 		public IEnumerator GetEnumerator()

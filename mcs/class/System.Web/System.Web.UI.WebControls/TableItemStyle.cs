@@ -101,9 +101,13 @@ namespace System.Web.UI.WebControls
 
 		public override void CopyFrom(Style s)
 		{
-			if(s!=null && s is TableItemStyle && !s.IsEmpty)
+			if(s!=null && !s.IsEmpty)
 			{
 				base.CopyFrom(s);
+
+				if (!(s is TableItemStyle))
+					return;
+                                
 				TableItemStyle from = (TableItemStyle)s;
 				if(from.IsSet(H_ALIGN))
 				{
@@ -122,9 +126,17 @@ namespace System.Web.UI.WebControls
 
 		public override void MergeWith(Style s)
 		{
-			if(s!=null && s is TableItemStyle && !s.IsEmpty)
+			if(s!=null && !s.IsEmpty)
 			{
+				if (base.IsEmpty) {
+					base.CopyFrom (s);
+					return;
+				}
 				base.MergeWith(s);
+
+				if (!(s is TableItemStyle))
+					return;
+				
 				TableItemStyle with = (TableItemStyle)s;
 				if(with.IsSet(H_ALIGN) && !IsSet(H_ALIGN))
 				{
