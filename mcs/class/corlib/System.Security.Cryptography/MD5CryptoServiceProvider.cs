@@ -7,9 +7,6 @@
 // Copyright 2001 by Matthew S. Ford.
 //
 
-
-using System.Security.Cryptography;
-
 namespace System.Security.Cryptography {
 
 	/// <summary>
@@ -19,20 +16,31 @@ namespace System.Security.Cryptography {
 		private const int BLOCK_SIZE_BYTES =  64;
 		private const int HASH_SIZE_BYTES  =  16;
 		private const int HASH_SIZE_BITS   = 128;
-		[CLSCompliant(false)] protected uint[] _H;
-		[CLSCompliant(false)] protected uint count;
+		[CLSCompliant(false)] private uint[] _H;
+		[CLSCompliant(false)] private uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
 	
 		/// <summary>
 		/// Creates a new MD5CryptoServiceProvider.
 		/// </summary>
-		public MD5CryptoServiceProvider () {
+		public MD5CryptoServiceProvider () 
+		{
 			_H = new uint[4];
 			HashSizeValue = HASH_SIZE_BITS;
 			_ProcessingBuffer = new byte[BLOCK_SIZE_BYTES];
 
 			Initialize();
+		}
+
+		~MD5CryptoServiceProvider () 
+		{
+			Dispose (false);
+		}
+
+		protected override void Dispose (bool disposing) 
+		{
+			// nothing to do (managed implementation)
 		}
 
 		/// <summary>
@@ -41,7 +49,8 @@ namespace System.Security.Cryptography {
 		/// <param name="rgb">Byte array containing the data to hash.</param>
 		/// <param name="start">Where in the input buffer to start.</param>
 		/// <param name="size">Size in bytes of the data in the buffer to hash.</param>
-		protected override void HashCore (byte[] rgb, int start, int size) {
+		protected override void HashCore (byte[] rgb, int start, int size) 
+		{
 			int i;
 			State = 1;
 
@@ -74,7 +83,8 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// This finalizes the hash.  Takes the data from the chaining variables and returns it.
 		/// </summary>
-		protected override byte[] HashFinal () {
+		protected override byte[] HashFinal () 
+		{
 			byte[] hash = new byte[16];
 			int i, j;
 
@@ -92,7 +102,8 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Resets the class after use.  Called automatically after hashing is done.
 		/// </summary>
-		public override void Initialize () {
+		public override void Initialize () 
+		{
 			count = 0;
 			_ProcessingBufferCount = 0;
 
@@ -107,7 +118,8 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		/// <param name="inputBuffer">Byte array to process data from.</param>
 		/// <param name="inputOffset">Where in the byte array to start processing.</param>
-		private void ProcessBlock(byte[] inputBuffer, int inputOffset) {
+		private void ProcessBlock (byte[] inputBuffer, int inputOffset) 
+		{
 			uint[] buff = new uint[16];
 			uint a, b, c, d;
 			int i;
@@ -410,7 +422,8 @@ namespace System.Security.Cryptography {
 		/// <param name="inputBuffer">Buffer to grab data from.</param>
 		/// <param name="inputOffset">Position in buffer in bytes to get data from.</param>
 		/// <param name="inputCount">How much data in bytes in the buffer to use.</param>
-		private void ProcessFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount) {
+		private void ProcessFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
+		{
 			byte[] fooBuffer;
 			int paddingSize;
 			int i;

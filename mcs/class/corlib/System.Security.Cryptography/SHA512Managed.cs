@@ -19,15 +19,11 @@ public class SHA512Managed : SHA512 {
 	private byte[] xBuf;
 	private int xBufOff;
 
-	[CLSCompliant(false)]
 	private ulong byteCount1;
-	[CLSCompliant(false)]
 	private ulong byteCount2;
 
-	[CLSCompliant(false)]
-	protected ulong H1, H2, H3, H4, H5, H6, H7, H8;
+	private ulong H1, H2, H3, H4, H5, H6, H7, H8;
 
-	[CLSCompliant(false)]
 	private ulong[] W = new ulong [80];
 	private int wOff;
 

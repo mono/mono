@@ -1,7 +1,9 @@
 //
 // System.Security.Cryptography.RC2.cs
 //
-// Authors: Andrew Birkett (andy@nobugs.org)
+// Authors: 
+//	Andrew Birkett (andy@nobugs.org)
+//	Sebastien Pouliot (spouliot@motus.com)
 //          
 
 using System;
@@ -21,6 +23,7 @@ namespace System.Security.Cryptography {
 		}
 
 		protected int EffectiveKeySizeValue;
+
 		public virtual int EffectiveKeySize {
 			get {
 				if (EffectiveKeySizeValue == 0)
@@ -28,7 +31,11 @@ namespace System.Security.Cryptography {
 				else
 					return EffectiveKeySizeValue;
 			}
-			set { EffectiveKeySizeValue = value; }
+			set { 
+				if (!IsLegalKeySize (LegalKeySizesValue, value))
+					throw new CryptographicException ("key size not supported by algorithm");
+				EffectiveKeySizeValue = value; 
+			}
 		}
 
 		// Overridden, which makes me suspect it changes effective keysize too?

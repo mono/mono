@@ -60,7 +60,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		public bool CanReuseTransform {
+		public virtual bool CanReuseTransform {
 			get { return false; }
 		}
 
@@ -94,7 +94,7 @@ namespace System.Security.Cryptography {
 			Dispose (true);
 		}
 
-		public void Dispose () 
+		void IDisposable.Dispose () 
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);  // Finalization is now unnecessary

@@ -20,15 +20,14 @@ namespace System.Security.Cryptography {
 
 public class PasswordDeriveBytes : DeriveBytes {
 
-	protected string HashNameValue;
-	protected string PasswordValue;
-	protected byte[] SaltValue;
-	protected int IterationsValue;
+	private string HashNameValue;
+	private string PasswordValue;
+	private byte[] SaltValue;
+	private int IterationsValue;
 
 	private HashAlgorithm hash;
 	private int state;
 	private byte[] output;
-	private int posOut;
 
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt) 
 	{
@@ -165,8 +164,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 
 		hash = HashAlgorithm.Create (HashNameValue);
 		output = hash.ComputeHash (input);
-		// we start serving key from the first byte
-		posOut = 0;
 	}
 } 
 	

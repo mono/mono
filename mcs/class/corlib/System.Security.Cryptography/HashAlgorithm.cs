@@ -10,7 +10,6 @@
 //
 
 using System.IO;
-using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 	public abstract class HashAlgorithm : ICryptoTransform {
@@ -82,7 +81,7 @@ namespace System.Security.Cryptography {
 			byte[] buffer = new byte [l];
 			inputStream.Read (buffer, 0, l);
 
-			return ComputeHash (buffer);
+			return ComputeHash (buffer, 0, l);
 		}
 	
 		/// <summary>
@@ -157,9 +156,10 @@ namespace System.Security.Cryptography {
 			get { return 1; }
 		}
 
-		void System.IDisposable.Dispose () 
+		void IDisposable.Dispose () 
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);  // Finalization is now unnecessary
 		}
 		
 		/// <summary>

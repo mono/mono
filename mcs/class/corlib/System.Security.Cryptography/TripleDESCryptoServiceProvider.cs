@@ -19,7 +19,7 @@ namespace System.Security.Cryptography {
 //	not free :-(
 //	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E52%2D1998
 
-public class TripleDESCryptoServiceProvider : TripleDES {
+public sealed class TripleDESCryptoServiceProvider : TripleDES {
 
 	public TripleDESCryptoServiceProvider () 
 	{

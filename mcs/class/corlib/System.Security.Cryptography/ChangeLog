@@ -1,3 +1,42 @@
+2002-11-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptographicUnexpectedOperationException.cs: Forgot it last time!
+	* FromBase64Transform.cs: Added missing virtual to CanReuseTransform.
+	Changed Dispose().
+	* HashAlgorithm.cs: Changed Dispose().
+	* MD5CryptoServiceProvider.cs: Added destructor and Dipose(bool).
+	* PasswordDeriveBytes.cs: Changed some declaration from
+	protected to private.
+	* RC2.cs: Added valid keysize check in EffectiveKeySize.
+	* RC2CryptoServiceProvider.cs: Overriden EffectiveKeySize to match
+	corlib declarations.
+	* RSAOAEPKeyExchangeDeformatter.cs: Changed some declaration from
+	protected to private.
+	* RSAOAEPKeyExchangeFormatter.cs: Changed some declaration from
+	protected to private.
+	* RSAPKCS1KeyExchangeDeformatter.cs: Changed some declaration from
+	protected to private.
+	* RSAPKCS1KeyExchangeFormatter.cs: Changed some declaration from
+	protected to private.
+	* RSAPKCS1SignatureDeformatter.cs: Changed some declaration from
+	protected to private.
+	* RSAPKCS1SignatureFormatter.cs: Changed some declaration from
+	protected to private.
+	* SHA1CryptoServiceProvider.cs: Moved SHA1 code to SHA1Internal.
+	SHA1CryptoServiceProvider now use SHA1Internal. Added Dispose and
+	destructor.
+	* SHA1Managed.cs: New. Use SHA1Internal. Same as 
+	SHA1CryptoServiceProvider but is required for binary compatibility.
+	* SHA256Managed.cs: Changed some declaration from protected to private.
+	* SHA384Managed.cs: Changed some declaration from protected to private.
+	* SHA512Managed.cs: Changed some declaration from protected to private.
+	* SymmetricAlgorithm.cs: Added Clear(), changed Dispose() and added
+	virtual to Dispose(bool).
+	* ToBase64Transform.cs: Added missing virtual to CanReuseTransform.
+	Changed Dispose().
+	* TripleDESCryptoServiceProvider.cs: Added missing sealed to class
+	declaration.
+
 2002-11-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoAPITransform.cs: Added missing CanReuseTransform property,

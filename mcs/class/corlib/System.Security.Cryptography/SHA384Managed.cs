@@ -25,8 +25,7 @@ public class SHA384Managed : SHA384 {
 	private ulong byteCount2;
 
 	[CLSCompliant(false)]
-	protected ulong H1, H2, H3, H4, H5, H6, H7, H8;
-
+	private ulong H1, H2, H3, H4, H5, H6, H7, H8;
 	[CLSCompliant(false)]
 	private ulong[] W = new ulong [80];
 	private int wOff;
@@ -277,7 +276,6 @@ public class SHA384Managed : SHA384 {
 		0x28db77f523047d84L, 0x32caab7b40c72493L, 0x3c9ebe0a15c9bebcL, 0x431d67c49c100d4cL,
 		0x4cc5d4becb3e42b6L, 0x597f299cfc657e2aL, 0x5fcb6fab3ad6faecL, 0x6c44198c4a475817L
 	};
-
 }
 
 }

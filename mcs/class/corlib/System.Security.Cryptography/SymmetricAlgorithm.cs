@@ -14,7 +14,7 @@ namespace System.Security.Cryptography {
 
 	// This class implement most of the common code required for symmetric
 	// algorithm transforms, like:
-	// - CipherMode: Build CBC... on top of (descendant supplied) ECB
+	// - CipherMode: Builds CBC and CFB on top of (descendant supplied) ECB
 	// - PaddingMode, transform properties, multiple blocks, reuse...
 	//
 	// Descendants MUST:
@@ -48,7 +48,7 @@ namespace System.Security.Cryptography {
 			Dispose (false);
 		}
 
-		public void Dispose () 
+		void IDisposable.Dispose () 
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);  // Finalization is now unnecessary
@@ -299,13 +299,18 @@ namespace System.Security.Cryptography {
 			Dispose (false);
 		}
 
-		public void Dispose () 
+		public void Clear() 
+		{
+			Dispose (true);
+		}
+
+		void IDisposable.Dispose () 
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);  // Finalization is now unnecessary
 		}
 
-		protected void Dispose (bool disposing) 
+		protected virtual void Dispose (bool disposing) 
 		{
 			if (!m_disposed) {
 				// always zeroize keys

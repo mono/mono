@@ -1,14 +1,19 @@
 //
 // System.Security.Cryptography SHA1CryptoServiceProvider Class implementation
 //
-// Author:
-//   Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
+// Authors:
+//	Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // Copyright 2001 by Matthew S. Ford.
 //
 
-
-using System.Security.Cryptography;
+// Note:
+// The MS Framework includes two (almost) identical class for SHA1.
+//	SHA1Managed is a 100% managed implementation.
+//	SHA1CryptoServiceProvider (this file) is a wrapper on CryptoAPI.
+// Mono must provide those two class for binayry compatibility.
+// In our case both class are wrappers around a managed internal class SHA1Internal.
 
 namespace System.Security.Cryptography {
 
@@ -16,7 +21,7 @@ namespace System.Security.Cryptography {
 	/// C# implementation of the SHA1 cryptographic hash function.
 	/// LAMESPEC?: Basically the same thing as SHA1Managed except for how its implemented.
 	/// </summary>
-	public sealed class SHA1CryptoServiceProvider : SHA1 {
+	internal class SHA1Internal {
 		private const int BLOCK_SIZE_BYTES =  64;
 		private const int HASH_SIZE_BYTES  =  20;
 		private const int HASH_SIZE_BITS   = 160;
@@ -24,13 +29,13 @@ namespace System.Security.Cryptography {
 		[CLSCompliant(false)] private uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
-	
+
 		/// <summary>
 		/// Creates a new SHA1CryptoServiceProvider.
 		/// </summary>
-		public SHA1CryptoServiceProvider () {
+		public SHA1Internal () 
+		{
 			_H = new uint[5];
-			HashSizeValue = HASH_SIZE_BITS;
 			_ProcessingBuffer = new byte[BLOCK_SIZE_BYTES];
 			
 			Initialize();
@@ -42,9 +47,9 @@ namespace System.Security.Cryptography {
 		/// <param name="rgb">Byte array containing the data to hash.</param>
 		/// <param name="start">Where in the input buffer to start.</param>
 		/// <param name="size">Size in bytes of the data in the buffer to hash.</param>
-		protected override void HashCore (byte[] rgb, int start, int size) {
+		public void HashCore (byte[] rgb, int start, int size) 
+		{
 			int i;
-			State = 1;
 
 			if (_ProcessingBufferCount != 0) {
 				if (size < (BLOCK_SIZE_BYTES - _ProcessingBufferCount)) {
@@ -75,7 +80,8 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// This finalizes the hash.  Takes the data from the chaining variables and returns it.
 		/// </summary>
-		protected override byte[] HashFinal () {
+		public byte[] HashFinal () 
+		{
 			byte[] hash = new byte[20];
 			int i, j;
 
@@ -87,7 +93,6 @@ namespace System.Security.Cryptography {
 				}
 			}
 
-			State = 0;
 			return hash;
 		}
 
@@ -95,7 +100,8 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Resets the class after use.  Called automatically after hashing is done.
 		/// </summary>
-		public override void Initialize () {
+		public void Initialize () 
+		{
 			count = 0;
 			_ProcessingBufferCount = 0;
 
@@ -111,7 +117,8 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		/// <param name="inputBuffer">Byte array to process data from.</param>
 		/// <param name="inputOffset">Where in the byte array to start processing.</param>
-		private void ProcessBlock(byte[] inputBuffer, int inputOffset) {
+		public void ProcessBlock(byte[] inputBuffer, int inputOffset) 
+		{
 			uint[] buff = new uint[80];
 			uint a, b, c, d, e;
 			int i;
@@ -409,7 +416,8 @@ namespace System.Security.Cryptography {
 		/// <param name="inputBuffer">Buffer to grab data from.</param>
 		/// <param name="inputOffset">Position in buffer in bytes to get data from.</param>
 		/// <param name="inputCount">How much data in bytes in the buffer to use.</param>
-		private void ProcessFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount) {
+		public void ProcessFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount) 
+		{
 			byte[] fooBuffer;
 			int paddingSize;
 			int i;
@@ -451,5 +459,54 @@ namespace System.Security.Cryptography {
 			}
 		}
 	}
+
+	public sealed class SHA1CryptoServiceProvider : SHA1 {
+
+		private SHA1Internal sha;
+
+		public SHA1CryptoServiceProvider () 
+		{
+			sha = new SHA1Internal ();
+		}
+
+		~SHA1CryptoServiceProvider () 
+		{
+			Dispose (false);
+		}
+
+		protected override void Dispose (bool disposing) 
+		{
+			// nothing new to do (managed implementation)
+			base.Dispose (disposing);
+		}
+
+		protected override void HashCore (byte[] rgb, int start, int size) 
+		{
+			State = 1;
+			sha.HashCore (rgb, start, size);
+		}
+
+		protected override byte[] HashFinal () 
+		{
+			State = 0;
+			return sha.HashFinal ();
+		}
+
+		public override void Initialize () 
+		{
+			sha.Initialize ();
+		}
+
+		private void ProcessBlock (byte[] inputBuffer, int inputOffset) 
+		{
+			sha.ProcessBlock (inputBuffer, inputOffset);
+		}
+
+		private void ProcessFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
+		{
+			sha.ProcessFinalBlock (inputBuffer, inputOffset, inputCount);
+		}
+	}
+
 }
 

@@ -13,8 +13,8 @@ namespace System.Security.Cryptography {
 
 public class RSAPKCS1SignatureDeformatter : AsymmetricSignatureDeformatter {
 
-	protected RSA rsa;
-	protected HashAlgorithm hash;
+	private RSA rsa;
+	private HashAlgorithm hash;
 
 	public RSAPKCS1SignatureDeformatter () 
 	{

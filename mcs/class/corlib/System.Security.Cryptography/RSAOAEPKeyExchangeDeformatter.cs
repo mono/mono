@@ -13,8 +13,8 @@ namespace System.Security.Cryptography {
 
 public class RSAOAEPKeyExchangeDeformatter : AsymmetricKeyExchangeDeformatter {
 
-	protected RSA rsa;
-	protected string param;
+	private RSA rsa;
+	private string param;
 
 	public RSAOAEPKeyExchangeDeformatter ()
 	{

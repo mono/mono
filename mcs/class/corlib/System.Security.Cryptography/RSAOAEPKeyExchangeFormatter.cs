@@ -13,8 +13,8 @@ namespace System.Security.Cryptography {
 
 public class RSAOAEPKeyExchangeFormatter : AsymmetricKeyExchangeFormatter {
 
-	protected RSA rsa;
-	protected RandomNumberGenerator random;
+	private RSA rsa;
+	private RandomNumberGenerator random;
 
 	public RSAOAEPKeyExchangeFormatter () 
 	{
@@ -24,6 +24,11 @@ public class RSAOAEPKeyExchangeFormatter : AsymmetricKeyExchangeFormatter {
 	public RSAOAEPKeyExchangeFormatter (AsymmetricAlgorithm key) 
 	{
 		SetKey (key);
+	}
+
+	public byte[] Parameter {
+		get { return null; }
+		set { ; }
 	}
 
 	public override string Parameters {
