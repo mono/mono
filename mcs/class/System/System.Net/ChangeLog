@@ -11,6 +11,19 @@
 	* WebConnection.cs: setup the tunnled connection when using a proxy and
 	https.
 
+2004-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: ProxyQuery returns true when we use a proxy without
+	tunneling a secure connection.
+
+	* ServicePoint.cs: added UseConnect property.
+
+	* ServicePointManager.cs: set the UseConnect property when we use a http
+	proxy for a https connection.
+
+	* WebConnection.cs: setup the tunnled connection when using a proxy and
+	https.
+
 2004-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: remove unused SplitValue method.
