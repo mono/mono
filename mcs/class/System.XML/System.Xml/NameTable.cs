@@ -28,8 +28,10 @@ namespace System.Xml
 		{
 			if (table.ContainsKey (key))
 				return (string) table [key];
-			else 
-				return table.Add (key.GetHashCode (), key);
+			else {
+				table.Add (key.GetHashCode (), key);
+				return key;
+			}
 		}
 
 		public override string Add (char[] key, int start, int len)
