@@ -80,6 +80,83 @@ namespace Mono.Xml.Schema
 		{
 			return this.Normalize (s, XsdWhitespaceFacet.Collapse).Split (whitespaceArray);
 		}
+		
+		internal virtual bool AllowsFacet(XmlSchemaFacet xsf)
+		{
+			// Can you even use XsdAnySimpleType in a schema?
+			return false;
+		}
+
+
+
+		/* Matches facets allowed on boolean type
+		 */
+		protected static bool BooleanAllowsFacet(XmlSchemaFacet xsf) 
+		{
+			if (xsf is XmlSchemaPatternFacet ||
+					xsf is XmlSchemaWhiteSpaceFacet ) {
+				return true;
+			}
+			return false;
+		}
+
+		/* Matches facets allowed on decimal type. 
+		 */
+
+		protected static bool DecimalAllowsFacet(XmlSchemaFacet xsf) 
+		{
+			if (xsf is XmlSchemaPatternFacet ||
+					xsf is XmlSchemaEnumerationFacet ||
+					xsf is XmlSchemaWhiteSpaceFacet ||
+					xsf is XmlSchemaMaxInclusiveFacet ||
+					xsf is XmlSchemaMaxExclusiveFacet ||
+					xsf is XmlSchemaMinInclusiveFacet ||
+					xsf is XmlSchemaMinExclusiveFacet || 
+					xsf is XmlSchemaFractionDigitsFacet || 
+					xsf is XmlSchemaTotalDigitsFacet) {
+				return true;
+			}
+			return false;
+		}
+
+
+		/* Matches facets allowed on float, double, duration, dateTime, time, date,
+		 * gYearMonth, gYear, gMonthDay, gMonth, and gDay types
+		 */
+
+		protected static bool DurationAllowsFacet(XmlSchemaFacet xsf) 
+		{
+			if (xsf is XmlSchemaPatternFacet ||
+					xsf is XmlSchemaEnumerationFacet ||
+					xsf is XmlSchemaWhiteSpaceFacet ||
+					xsf is XmlSchemaMaxInclusiveFacet ||
+					xsf is XmlSchemaMaxExclusiveFacet ||
+					xsf is XmlSchemaMinInclusiveFacet ||
+					xsf is XmlSchemaMinExclusiveFacet ) {
+				return true;
+			}
+			return false;
+		}
+
+
+		/* Matches facet allowed on string, hexBinary, base64Binary,
+		 * anyURI, QName and NOTATION types 
+		 *
+		 * Also used on list types
+		 */
+
+		protected static bool StringAllowsFacet(XmlSchemaFacet xsf) 
+		{
+			if (xsf is XmlSchemaLengthFacet ||
+					xsf is XmlSchemaMinLengthFacet || 
+					xsf is XmlSchemaMaxLengthFacet ||
+					xsf is XmlSchemaPatternFacet ||
+					xsf is XmlSchemaEnumerationFacet ||
+					xsf is XmlSchemaWhiteSpaceFacet) {
+				return true;
+			}
+			return false;
+		}
 	}
 
 	// xs:string
@@ -122,6 +199,11 @@ namespace Mono.Xml.Schema
 		public string Pattern;
 		public ICollection Enumeration;
 		*/
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return StringAllowsFacet(xsf);
+		}
+	
 	}
 
 	// xs:normalizedString
@@ -418,6 +500,14 @@ namespace Mono.Xml.Schema
 		public int MinLength;
 		public string Pattern;
 		public ICollection Enumeration;
+
+
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return StringAllowsFacet(xsf);
+		}
+
+
 	}
 
 	// xs:decimal
@@ -465,6 +555,14 @@ namespace Mono.Xml.Schema
 		public int MinLength;
 		public string Pattern;
 		public ICollection Enumeration;
+		
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DecimalAllowsFacet(xsf);
+		}
+		
+		
 	}
 
 	// xs:integer
@@ -472,7 +570,6 @@ namespace Mono.Xml.Schema
 	{
 		public XsdInteger ()
 		{
-			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
 		// Here it may be bigger than int's (or long's) MaxValue.
@@ -697,6 +794,11 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.ToSingle (Normalize (s));
 		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
+		}
 	}
 
 	// xs:double
@@ -724,6 +826,11 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return XmlConvert.ToDouble (Normalize (s));
+		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
 		}
 	}
 
@@ -765,6 +872,11 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.FromBinHexString (Normalize (s));
 		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return StringAllowsFacet(xsf);
+		}
 
 		// Fundamental Facets ... no need to override
 	}
@@ -800,6 +912,7 @@ namespace Mono.Xml.Schema
 			return new XmlQualifiedName (localName, nsmgr.LookupNamespace (
 				colonAt < 0 ? "" : s.Substring (0, colonAt - 1)));
 		}
+		
 	}
 
 	// xs:boolean
@@ -835,6 +948,12 @@ namespace Mono.Xml.Schema
 		}
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Total; }
+		}
+		
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return BooleanAllowsFacet(xsf);
 		}
 	}
 
@@ -891,6 +1010,13 @@ namespace Mono.Xml.Schema
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Partial; }
 		}
+	 
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
+		}
+
+		
 	}
 
 	// xs:dateTime
@@ -927,6 +1053,11 @@ namespace Mono.Xml.Schema
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Partial; }
 		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
+		}
 	}
 
 	// xs:date
@@ -949,6 +1080,11 @@ namespace Mono.Xml.Schema
 		// Fundamental Facets ... no need to override except for Ordered.
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Partial; }
+		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
 		}
 	}
 
@@ -1000,6 +1136,11 @@ namespace Mono.Xml.Schema
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Partial; }
 		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
+		}
 	}
 
 	// xs:gYearMonth
@@ -1014,6 +1155,11 @@ namespace Mono.Xml.Schema
 		{
 			return DateTime.ParseExact (Normalize (s), "yyyy-MM", null);
 		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
+		}
 	}
 
 	// xs:gMonthDay
@@ -1027,6 +1173,11 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return DateTime.ParseExact (Normalize (s), "--MM-dd", null);
+		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
 		}
 	}
 
@@ -1044,6 +1195,11 @@ namespace Mono.Xml.Schema
 		{
 			return DateTime.ParseExact (s, "yyyy", null);
 		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
+		}
 	}
 
 	// xs:gMonth
@@ -1058,6 +1214,11 @@ namespace Mono.Xml.Schema
 		{
 			return DateTime.ParseExact (s, "--MM--", null);
 		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
+		}
 	}
 
 	// xs:gDay
@@ -1071,6 +1232,11 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return DateTime.ParseExact (s, "---dd", null);
+		}
+		
+		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
+		{
+			return DurationAllowsFacet(xsf);
 		}
 	}
 

@@ -96,6 +96,50 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
+		/** Checks if this facet is valid on this restriction. Does not check that it has
+			* not been fixed in the baseType. That is done elsewhere.
+			*/
+		private bool IsAllowedFacet(XmlSchemaFacet xsf) {
+		/* Must be called after this.ValidateActualType, as it uses actualBaseSchemaType */
+
+			XsdAnySimpleType ast = actualBaseSchemaType as XsdAnySimpleType;
+			if (ast != null) {
+				// Based directly on an xsd type 
+				return ast.AllowsFacet(xsf);
+			}
+			else {
+			 XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)actualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
+			 if (st != null) {
+				 XmlSchemaSimpleTypeRestriction str = st as XmlSchemaSimpleTypeRestriction;
+				 if (str != null) {
+					 return str.IsAllowedFacet(xsf);
+				 }
+				 XmlSchemaSimpleTypeList stl = st as XmlSchemaSimpleTypeList;
+				 if (stl != null) {
+					 return (xsf is XmlSchemaLengthFacet || 
+									 xsf is XmlSchemaMaxLengthFacet ||
+									 xsf is XmlSchemaMinLengthFacet ||
+									 xsf is XmlSchemaPatternFacet ||
+									 xsf is XmlSchemaEnumerationFacet ||
+									 xsf is XmlSchemaWhiteSpaceFacet);
+				 }
+
+				 XmlSchemaSimpleTypeUnion stu = st as XmlSchemaSimpleTypeUnion;
+				 if (stu != null) {
+					 return (xsf is XmlSchemaPatternFacet ||
+									 xsf is XmlSchemaEnumerationFacet);
+				 }
+				 
+			 }
+			 else {
+				 // TODO: Should this be either a XmlSchemaSimpleType or XmlSchemaDatatype ?
+				 // If so report error
+			 }
+			}
+			// Not sure it could ever get here
+			return false;
+		}
+		
 		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
@@ -113,6 +157,15 @@ namespace System.Xml.Schema
 			ArrayList enums = null;
 			ArrayList patterns = null;
 			for (int i = 0; i < facets.Count; i++) {
+
+				XmlSchemaFacet facet = facets[i] as XmlSchemaFacet;
+				if (facet != null) {
+					if (!IsAllowedFacet(facet)) {
+						facet.error(h, facet +" is not a valid facet for this type");
+						continue;
+					}
+				}
+				
 				XmlSchemaEnumerationFacet ef = facets [i] as XmlSchemaEnumerationFacet;
 				if (ef != null) {
 					if (enums == null)

@@ -1,4 +1,13 @@
 2003-12-14  David Sheldon <dave-mono@earth.li>
+  
+  * BuiltInDatatype.cs : Added code to tell which facets were valid on
+    types derived from each basetype.
+
+  * XmlSchemaSimpleTypeRestriction.cs : Complain if an invalid facet
+    has been added to a restriction.
+
+
+2003-12-14  David Sheldon <dave-mono@earth.li>
 
   * XmlSchemaSimpleTypeRestriction.cs : Check that min/max/lengths 
     specified are integers. Also made some error messages more useful.
