@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Implementation: yes
  * Contact: <gvaish@iitk.ac.in>
- * Status:  30%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -73,9 +73,32 @@ namespace System.Web.UI.WebControls
 			base.AddAttributesToRender(writer);
 			if(RenderUplevel)
 			{
-				//writer.AddAttribute("type", 
+				writer.AddAttribute("type", PropertyConverter.EnumToString(typeof(ValidationDataType), Type));
+				NumberFormatInfo currInfo = NumberFormatInfo.CurrentInfo;
+				if(Type == ValidationDataType.Double)
+				{
+					writer.AddAttribute("decimalchar", currInfo.NumberDecimalSeparator);
+					return;
+				}
+				if(Type == ValidationDataType.Currency)
+				{
+					writer.AddAttribute("decimalchar", currInfo.CurrencyDecimalSeparator);
+					string grpSep = currInfo.CurrencyGroupSeparator;
+					if(grpSep[0] == 0xA0)
+					{
+						grpSep = " ";
+					}
+					writer.AddAttribute("groupchar", grpSep);
+					writer.AddAttribute("digits", currInfo.CurrencyDecimalDigits.ToString(NumberFormatInfo.InvariantInfo));
+					return;
+				}
+				if(Type == ValidationType.Date)
+				{
+					writer.AddAttribute("cutoffyear", CutoffYear);
+					writer.AddAttribute("century", ( DateTime.Today.Year - (DateTime.Today.Year % 100) ).ToString());
+					return;
+				}
 			}
-			throw new NotImplementedException();
 		}
 		
 		protected override bool DetermineRenderUplevel()
@@ -162,7 +185,9 @@ namespace System.Web.UI.WebControls
 			return "dmy";
 		}
 		
-		// Uncodumented
+		/// <summary>
+		/// Undocumented
+		/// </summary>
 		protected static bool Convert(string text, ValidationDataType type, out object convertedValue)
 		{
 			//throw new NotImplementedException();
@@ -230,7 +255,7 @@ namespace System.Web.UI.WebControls
 						string decSep = NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator;
 						string grpSep = NumberFormatInfo.CurrentInfo.CurrencyGroupSeparator;
 						int    decDig = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
-						if(grpSep[0] > 0xA0)
+						if(grpSep[0] == 0xA0)
 						{
 							grpSep = " ";
 						}
