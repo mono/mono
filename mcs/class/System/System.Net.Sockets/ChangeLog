@@ -1,3 +1,9 @@
+2002-10-08  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: 
+	* NetworkStream.cs: Bounds checking fixes, and better exception
+	texts.  Changes by timothyjmills@hotmail.com (Timothy J. Mills).
+
 2002-10-03  Dick Porter  <dick@ximian.com>
 
 	* TcpClient.cs: NoDelay is a TCP option, not Socket

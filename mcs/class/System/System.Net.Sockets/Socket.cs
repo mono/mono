@@ -709,10 +709,13 @@ namespace System.Net.Sockets
 		public int Receive(byte[] buf, int offset, int size,
 				   SocketFlags flags) {
 			if(buf==null) {
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("buffer is null");
 			}
-			if(offset+size>buf.Length) {
-				throw new ArgumentException();
+			if(offset<0 || offset >= buf.Length) {
+				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
+			}
+			if(offset+size<0 || offset+size > buf.Length) {
+				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 			
 			int ret;
@@ -758,11 +761,17 @@ namespace System.Net.Sockets
 		public int ReceiveFrom(byte[] buf, int offset, int size,
 				       SocketFlags flags,
 				       ref EndPoint remote_end) {
-			if(buf==null || remote_end==null) {
-				throw new ArgumentNullException();
+			if(buf==null) {
+				throw new ArgumentNullException("buffer is null");
 			}
-			if(offset+size>buf.Length) {
-				throw new ArgumentException();
+			if(remote_end==null) {
+				throw new ArgumentNullException("remote endpoint is null");
+			}
+			if(offset<0 || offset>=buf.Length) {
+				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
+			}
+			if(offset+size<0 || offset+size>buf.Length) {
+				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 
 			SocketAddress sockaddr=remote_end.Serialize();
@@ -806,10 +815,13 @@ namespace System.Net.Sockets
 		public int Send(byte[] buf, int offset, int size,
 				SocketFlags flags) {
 			if(buf==null) {
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("buffer is null");
 			}
-			if(offset+size>buf.Length) {
-				throw new ArgumentException();
+			if(offset<0 || offset>=buf.Length) {
+				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
+			}
+			if(offset+size<0 || offset+size>buf.Length) {
+				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 
 			int ret;
@@ -854,11 +866,17 @@ namespace System.Net.Sockets
 
 		public int SendTo(byte[] buffer, int offset, int size,
 				  SocketFlags flags, EndPoint remote_end) {
-			if(buffer==null || remote_end==null) {
-				throw new ArgumentNullException();
+			if(buffer==null) {
+				throw new ArgumentNullException("buffer is null");
 			}
-			if(offset+size>buffer.Length) {
-				throw new ArgumentException();
+			if(remote_end==null) {
+				throw new ArgumentNullException("remote endpoint is null");
+			}
+			if(offset<0 || offset>=buffer.Length) {
+				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
+			}
+			if(offset+size<0 || offset+size>buffer.Length) {
+				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 
 			SocketAddress sockaddr=remote_end.Serialize();
