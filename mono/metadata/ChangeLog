@@ -1,3 +1,11 @@
+2003-08-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_runtime_class_init): Execute static constructors in
+	the correct appdomain.
+
+	* image.c (build_guid_table): Handle the case when multiple images have
+	the same GUID.
+
 2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added a couple of icalls for System.Web.
