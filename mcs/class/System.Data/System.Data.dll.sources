@@ -135,6 +135,7 @@ System.Data.Common/DataAdapter.cs
 System.Data.Common/DataColumnMappingCollection.cs
 System.Data.Common/DataColumnMapping.cs
 System.Data.Common/DataColumnMappingConverter.cs
+System.Data.Common/DataContainer.cs
 System.Data.Common/DataTableMappingCollection.cs
 System.Data.Common/DataTableMapping.cs
 System.Data.Common/DataTableMappingConverter.cs
@@ -164,6 +165,7 @@ System.Data.Common/DbTransaction.cs
 System.Data.Common/FieldNameLookup.cs
 System.Data.Common/GroupByBehavior.cs
 System.Data.Common/IdentifierCase.cs
+System.Data.Common/RecordCache.cs
 System.Data.Common/RowUpdatedEventArgs.cs
 System.Data.Common/RowUpdatingEventArgs.cs
 System.Data.Common/SchemaInfo.cs
