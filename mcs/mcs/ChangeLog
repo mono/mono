@@ -1,5 +1,23 @@
 2004-08-03  Ben Maurer  <bmaurer@ximian.com>
 
+	* ecore.cs (MethodGroupExpr): new IsBase property.
+
+	* expression.cs (BaseAccess): Set IsBase on MethodGroupExpr.
+
+	* delegate.cs (DelegateCreation): store a MethodGroupExpr
+	rather than an instance expr.
+
+	(DelegateCreation.Emit): Use the method group rather than
+	the instance expression. Also, if you have base.Foo as the
+	method for a delegate, make sure to emit ldftn, not ldftnvirt.
+
+	(ResolveMethodGroupExpr): Use the MethodGroupExpr. 
+
+	(NewDelegate.DoResolve): Only check for the existance of Invoke
+	if the method is going to be needed. Use MethodGroupExpr.
+
+	(NewDelegate.Emit): Remove, DelegateCreation implements this.	
+
 	* expression.cs: For pointer arith., make sure to use
 	the size of the type, not the size of the pointer to
 	the type.

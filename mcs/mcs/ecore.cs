@@ -2390,6 +2390,7 @@ namespace Mono.CSharp {
 		Expression instance_expression = null;
 		bool is_explicit_impl = false;
 		bool identical_type_name = false;
+		bool is_base;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Location l)
 		{
@@ -2461,6 +2462,15 @@ namespace Mono.CSharp {
 
 			set {
 				identical_type_name = value;
+			}
+		}
+		
+		public bool IsBase {
+			get {
+				return is_base;
+			}
+			set {
+				is_base = value;
 			}
 		}
 
