@@ -15,7 +15,8 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Collections
 {
-	public class StackTest: TestCase
+	[TestFixture]
+	public class StackTest: Assertion
 	{
                 private Stack stack1;
                 private Stack stack2;
@@ -26,7 +27,7 @@ namespace MonoTests.System.Collections
                         AssertEquals(false, stack1 == null);
                 }
                 
-                public void TestICollectionConstructor()
+                public void TestICollectionConstructor1()
                 {
                         Stack stackTest = new Stack(new int[] {0, 1, 2, 3, 4});
 
@@ -36,12 +37,39 @@ namespace MonoTests.System.Collections
                         AssertEquals(0, stackTest.Count);
                 }
 
-                public void TestIntConstructor()
+		public void TestICollectionConstructor2()
+		{
+			bool exceptionThrown = false;
+			try {
+				Stack stackTest = new Stack(null);
+			} catch (ArgumentNullException e) {
+				exceptionThrown = true;
+				AssertEquals("ParamName must be \"col\"","col",e.ParamName);
+			}
+			Assert("null argument must throw ArgumentNullException", exceptionThrown);
+					
+		}
+
+                public void TestIntConstructor1()
                 {
                         Stack stackTest = new Stack(50);
 
-                        AssertEquals(false, stackTest == null);
+                        Assert(stackTest != null);
                 }
+
+		public void TestIntConstructor2()
+		{
+			bool exceptionThrown = false;
+			try {
+				Stack stackTest = new Stack(-1);
+			} 
+			catch (ArgumentOutOfRangeException e) 
+			{
+				exceptionThrown = true;
+				AssertEquals("ParamName must be \"initialCapacity\"","initialCapacity",e.ParamName);
+			}
+			Assert("negative argument must throw ArgumentOutOfRangeException", exceptionThrown);
+		}
 
                 public void TestCount()
                 {
@@ -66,7 +94,7 @@ namespace MonoTests.System.Collections
                         AssertEquals(false, stack1.SyncRoot == null);
                 }
 
-                public void TestGetEnumerator()
+                public void TestGetEnumerator1()
                 {
                         stackInt.Pop();
 
@@ -83,6 +111,79 @@ namespace MonoTests.System.Collections
 
                         AssertEquals(false, e.MoveNext());
                 }
+
+		public void TestGetEnumerator2()
+		{
+			
+			IEnumerator e = stackInt.GetEnumerator();
+			try 
+			{
+				// Tests InvalidOperationException if enumerator is uninitialized
+				Object o = e.Current;
+				Fail("InvalidOperationException should be thrown");
+			} catch (InvalidOperationException) {}
+		}
+
+		public void TestGetEnumerator3()
+		{
+			
+			IEnumerator e = stack1.GetEnumerator();
+			e.MoveNext();
+			try 
+			{
+				// Tests InvalidOperationException if enumeration has ended
+				Object o = e.Current;
+				Fail("InvalidOperationException should be thrown");
+			} catch (InvalidOperationException) {}
+		}
+	
+		public void TestEnumeratorReset1() 
+		{
+			IEnumerator e = stackInt.GetEnumerator();
+
+			e.MoveNext();
+			AssertEquals("current value", 4, e.Current);
+			e.MoveNext();
+
+			e.Reset();
+
+			e.MoveNext();
+			AssertEquals("current value after reset", 4, e.Current);
+		}
+
+		public void TestEnumeratorReset2() 
+		{
+			IEnumerator e = stackInt.GetEnumerator();
+
+			e.MoveNext();
+			AssertEquals("current value", 4, e.Current);
+
+			// modifies underlying the stack. Reset must throw InvalidOperationException
+			stackInt.Push(5);
+			
+			try 
+			{
+				e.Reset();
+				Fail("InvalidOperationException should be thrown");
+			} 
+			catch (InvalidOperationException) {}
+		}
+
+		public void TestEnumeratorMoveNextException() 
+		{
+			IEnumerator e = stackInt.GetEnumerator();
+
+			// modifies underlying the stack. MoveNext must throw InvalidOperationException
+			stackInt.Push(5);
+			
+			try 
+			{
+				e.MoveNext();
+				Fail("InvalidOperationException should be thrown");
+			} 
+			catch (InvalidOperationException) {}
+		}
+
 
                 public void TestClear()
                 {
@@ -105,11 +206,18 @@ namespace MonoTests.System.Collections
                 {
                         string toLocate = "test";
 
+
                         stackInt.Push(toLocate);
 
                         stackInt.Push("chaff");
 
-                        Assert(stackInt.Contains(toLocate));
+			stackInt.Push(null);
+
+			Assert(stackInt.Contains(toLocate));
+
+			Assert("must contain null", stackInt.Contains(null));
+
+			stackInt.Pop();
 
                         stackInt.Pop();
 
@@ -136,15 +244,19 @@ namespace MonoTests.System.Collections
                         {
                                 stackInt.CopyTo(null, 0);
                                 Fail("Should throw an ArgumentNullException");
-                        } 
-                        catch (ArgumentNullException) {}
+                        } catch (ArgumentNullException e) {
+				AssertEquals("ParamName must be \"array\"","array",e.ParamName);
+			}
 
                         try
                         {
                                 stackInt.CopyTo(arr, -1);
                                 Fail("Should throw an ArgumentOutOfRangeException");
                         } 
-                        catch (ArgumentOutOfRangeException) {}
+			catch (ArgumentOutOfRangeException e) 
+			{
+				AssertEquals("ParamName must be \"index\"","index",e.ParamName);
+			}
 
                         try
                         {
@@ -214,7 +326,21 @@ namespace MonoTests.System.Collections
                         test.Push(null);
 
                         AssertEquals(null, test.Pop());
+
                 }
+		
+		public void TestPop()
+		{
+			for (int i = 4; i >= 0; i--) 
+			{
+				AssertEquals(i, stackInt.Pop());
+			}
+			try {
+				stackInt.Pop();
+				Fail("must throw InvalidOperationException");
+			} catch (InvalidOperationException){
+			}
+		}
 
                 public void TestToArray()
                 {
@@ -225,8 +351,26 @@ namespace MonoTests.System.Collections
                         for (int i = 0; i < 5; i++)
                                 AssertEquals(arr[i], stackInt.Pop());
                 }
+		
+		public void TestResize()
+		{
+			Stack myStack = new Stack(20);
 
-                protected override void SetUp()
+			for (int i = 0; i < 500; i++) 
+			{
+				myStack.Push(i);
+				AssertEquals("push count test",i+1, myStack.Count);
+			}
+			
+			for (int i = 499; i >= 0; i--) 
+			{
+				AssertEquals(i, myStack.Pop());
+				AssertEquals("pop count test",i, myStack.Count);
+			}
+		}
+
+		[SetUp]
+                protected  void SetUp()
                 {
                         stack1 = new Stack();
                         stack2 = new Stack();
