@@ -1,3 +1,9 @@
+2004-03-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* FloatingPointFormatter.cs: Made the class thread safe. Had to move some
+	  internal variables to structures that are moved around methods.
+	  Factorized some common formatting code into FormatNumberInternal.
+	  
 2004-03-23  Dick Porter  <dick@ximian.com>
 
 	* DateTime.cs: Check the date string for too many digits when

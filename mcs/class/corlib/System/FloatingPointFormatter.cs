@@ -2,9 +2,9 @@
 // System.FloatingPointFormatter.cs
 //
 // Author:
-//   Pedro Martinez Juli·  <yoros@wanadoo.es>
+//   Pedro Martinez Juli√° <yoros@wanadoo.es>
 //
-// Copyright (C) 2003 Pedro MartÌnez Juli· <yoros@wanadoo.es>
+// Copyright (C) 2003 Pedro Mart√≠ez Juli√° <yoros@wanadoo.es>
 //
 
 using System;
@@ -17,39 +17,34 @@ namespace System {
 
 	internal class FloatingPointFormatter {
 
-		double p;
-		double p10;
-		int dec_len;
-		int dec_len_min;
-
-		double p1;
-		double p101;
-		int dec_len1;
-		int dec_len_min1;
-
-		double p2;
-		double p102;
-		int dec_len2;
-		int dec_len_min2;
-
-		bool no_precision_specified;
+		struct Format {
+			public double p;
+			public double p10;
+			public int dec_len;
+			public int dec_len_min;
+		}
+		
+		Format format1;
+		Format format2;
 
 		public FloatingPointFormatter
 			(double p, double p10, int dec_len, int dec_len_min,
 			 double p2, double p102, int dec_len2, int dec_len_min2) {
-			this.p = this.p1 = p;
-			this.p10 = this.p101 = p10;
-			this.dec_len = this.dec_len1 = dec_len;
-			this.dec_len_min = this.dec_len_min1 = dec_len_min;
-			this.p2 = p2;
-			this.p102 = p102;
-			this.dec_len2 = dec_len2;
-			this.dec_len_min2 = dec_len_min2;
+			 
+			format1.p = p;
+			format1.p10 = p10;
+			format1.dec_len = dec_len;
+			format1.dec_len_min = dec_len_min;
+			
+			format2.p = p2;
+			format2.p10 = p102;
+			format2.dec_len = dec_len2;
+			format2.dec_len_min = dec_len_min2;
 		}
 
 		public string GetStringFrom
 				(string format, NumberFormatInfo nfi, double value) {
-			no_precision_specified = false;
+				
 			if (format == null || format == "") {
 				format = "G";
 			}
@@ -65,11 +60,12 @@ namespace System {
 			if (Double.IsPositiveInfinity(value)) {
 				return nfi.PositiveInfinitySymbol;
 			}
+			
 			char specifier;
 			int precision;
 			if (!ParseFormat(format, out specifier, out precision)) {
 				try {
-					return FormatCustom(value, nfi, format);
+					return FormatCustom (format1, value, nfi, format);
 				}
 				catch (Exception) {
 					string msg = "An exception was thrown but the " +
@@ -78,34 +74,32 @@ namespace System {
 						"subject \"FORMAT_EXCEPTION\" and the content: " +
 						"Format: ->" + format + "<-; Value: ->" + value +
 						"<-;\n";
-					Console.Error.Write(msg); 
-					return FormatGeneral(value, nfi, -1);
+					Console.Error.Write (msg); 
+					return FormatGeneral (format1, value, nfi, -1);
 				}
 			}
-			if (precision > dec_len+1) {
-				p = p2;
-				p10 = p102;
-				dec_len = dec_len2;
-				dec_len_min = dec_len_min2;
-			}
+			
+			Format formatData = format1;//(precision > format1.dec_len+1) ? format2 : format1;
+			
 			switch (specifier) {
 			case 'C':
-				return FormatCurrency(value, nfi, precision);
+				return FormatCurrency (formatData, value, nfi, precision);
 			case 'D':
 				throw new FormatException(Locale.GetText(
 					"The specified format is invalid") + ": " + format);
 			case 'E':
-				return FormatExponential(value, nfi, precision, format[0]);
+				formatData = (precision > format1.dec_len) ? format2 : format1;
+				return FormatExponential (formatData, value, nfi, precision, format[0]);
 			case 'F':
-				return FormatFixedPoint(value, nfi, precision);
+				return FormatFixedPoint (formatData, value, nfi, precision);
 			case 'G':
-				return FormatGeneral(value, nfi, precision);
+				return FormatGeneral (formatData, value, nfi, precision);
 			case 'N':
-				return FormatNumber(value, nfi, precision);
+				return FormatNumber (formatData, value, nfi, precision);
 			case 'P':
-				return FormatPercent(value, nfi, precision);
+				return FormatPercent (formatData, value, nfi, precision);
 			case 'R':
-				return FormatReversible(value, nfi, precision);
+				return FormatReversible (formatData, value, nfi, precision);
 			case 'X':
 				throw new FormatException(Locale.GetText(
 					"The specified format is invalid") + ": " + format);
@@ -118,14 +112,17 @@ namespace System {
 		private bool ParseFormat (string format,
 				out char specifier, out int precision) {
 			specifier = '\0';
-			precision = dec_len2;
+			precision = format2.dec_len;
+			
 			// FIXME: Math.Round is used and the max is 15.
+			
 			if (precision > 15)
 				precision = 15;
+				
 			switch (format.Length) {
 			case 1:
 				specifier = Char.ToUpper(format[0]);
-				no_precision_specified = true;
+				precision = -1;
 				return true;
 			case 2:
 				if (Char.IsLetter(format[0]) && Char.IsDigit(format[1])) {
@@ -146,7 +143,7 @@ namespace System {
 			return false;
 		}
 
-		private void Normalize (double value, int precision,
+		private void Normalize (Format formatData, double value, int precision,
 				out long mantissa, out int exponent) {
 			mantissa = 0;
 			exponent = 0;
@@ -156,22 +153,24 @@ namespace System {
 				return;
 			}
 			value = Math.Abs(value);
-			if (precision <= (dec_len) && precision >= 0) {
+			if (precision <= (formatData.dec_len) && precision >= 0) {
 				value = Math.Round (value, precision);
 			}
+			
 			if (value == 0.0 ||
 				Double.IsInfinity(value) ||
 				Double.IsNaN(value)) {
 				return;
 			}
-			if (value >= p10) {
-				while (value >= p10) {
+			
+			if (value >= formatData.p10) {
+				while (value >= formatData.p10) {
 					value /= 10;
 					exponent++;
 				}
 			}
-			else if (value < p) {
-				while (value < p) {
+			else if (value < formatData.p) {
+				while (value < formatData.p) {
 					value *= 10;
 					exponent--;
 				}
@@ -179,72 +178,11 @@ namespace System {
 			mantissa = (long) Math.Round(value);
 		}
 
-		private string FormatCurrency (double value,
+		private string FormatCurrency (Format formatData, double value,
 				NumberFormatInfo nfi, int precision) {
-			StringBuilder sb = new StringBuilder();
-			precision = no_precision_specified ? nfi.CurrencyDecimalDigits : precision;
-			int decimals = precision;
-			long mantissa;
-			int exponent;
-			Normalize(value, precision, out mantissa, out exponent);
-			if (exponent >= 0) {
-				while (decimals > 0) {
-					sb.Append("0");
-					decimals--;
-				}
-			}
-			else {
-				int decimal_limit = -(decimals+1);
-				while (exponent < 0) {
-					if (exponent > decimal_limit) {
-						sb.Insert(0, (char)('0' + (mantissa % 10)));
-					}
-					mantissa /= 10;
-					exponent++;
-					decimals--;
-				}
-				if (decimals > 0) {
-					sb.Append ('0', decimals);
-					decimals = 0;
-				}
-			}
-			if (precision != 0) {
-				sb.Insert(0, nfi.NumberDecimalSeparator);
-			}
-			if (mantissa == 0) {
-				sb.Insert(0, "0");
-			}
-			else {
-				int i = 0;
-				while (exponent > 0) {
-					int fin = nfi.NumberGroupSizes[i];
-					if (fin == 0) {
-						fin = int.MaxValue;
-					}
-					for (int j = 0; (j < fin) && (exponent > 0);
-							j++, exponent--) {
-						sb.Insert(0, "0");
-					}
-					sb.Insert(0, nfi.NumberGroupSeparator);
-					if (i < nfi.NumberGroupSizes.Length - 1)
-						i++;
-				}
-				while (mantissa != 0) {
-					int fin = nfi.NumberGroupSizes[i];
-					if (fin == 0) {
-						fin = int.MaxValue;
-					}
-					for (int j = 0; (j < fin) && (mantissa != 0); j++) {
-						sb.Insert(0, (char)('0' + (mantissa % 10)));
-						mantissa /= 10;
-					}
-					if (mantissa != 0)
-						sb.Insert(0, nfi.NumberGroupSeparator);
-					if (i < nfi.NumberGroupSizes.Length - 1)
-						i++;
-				}
-			}
-			string numb = sb.ToString();
+				
+			precision = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;
+			string numb = FormatNumberInternal (formatData, value, nfi, precision);
 			if (value < 0) {
 				switch (nfi.CurrencyNegativePattern) {
 				case 0:
@@ -301,27 +239,27 @@ namespace System {
 			}
 		}
 
-		private string FormatExponential (double value, NumberFormatInfo nfi,
+		private string FormatExponential (Format formatData, double value, NumberFormatInfo nfi,
 				int precision, char exp_char) {
 			StringBuilder sb = new StringBuilder();
-			precision = no_precision_specified ? nfi.NumberDecimalDigits : precision;
+			precision = (precision >= 0) ? precision : 6;
 			int decimals = precision;
 			long mantissa;
 			int exponent;
-			Normalize(value, precision, out mantissa, out exponent);
-			if (dec_len > precision) {
+			Normalize (formatData, value, precision, out mantissa, out exponent);
+			if (formatData.dec_len > precision) {
 				double aux = mantissa;
-				for (int i = 0; i < dec_len - precision; i++) {
+				for (int i = 0; i < formatData.dec_len - precision; i++) {
 					aux /= 10;
 				}
 				mantissa = (long) Math.Round(aux);
-				for (int i = 0; i < dec_len - precision; i++) {
+				for (int i = 0; i < formatData.dec_len - precision; i++) {
 					mantissa *= 10;
 				}
 			}
 			bool not_null = false;
 			if (mantissa != 0.0) {
-				for (int i = 0; i < dec_len || mantissa >= 10; i++) {
+				for (int i = 0; i < formatData.dec_len || mantissa >= 10; i++) {
 					if ((not_null == false) && ((mantissa % 10) != 0)) {
 						not_null = true;
 					}
@@ -361,14 +299,14 @@ namespace System {
 			return sb.ToString();
 		}
 
-		private string FormatFixedPoint (double value,
+		private string FormatFixedPoint (Format formatData, double value,
 				NumberFormatInfo nfi, int precision) {
 			StringBuilder sb = new StringBuilder();
-			precision = no_precision_specified ? nfi.NumberDecimalDigits : precision;
+			precision = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
 			int decimals = precision;
 			long mantissa;
 			int exponent;
-			Normalize(value, precision, out mantissa, out exponent);
+			Normalize (formatData, value, precision, out mantissa, out exponent);
 			if (exponent >= 0) {
 				while (decimals > 0) {
 					sb.Append("0");
@@ -412,29 +350,40 @@ namespace System {
 			return sb.ToString();
 		}
 
-		private string FormatGeneral (double value,
+		private string FormatGeneral (Format formatData, double value,
 				NumberFormatInfo nfi, int precision) {
 			StringBuilder sb = new StringBuilder();
 			if (value == 0.0) {
 				sb.Append("0");
 			}
 			else {
-//				precision = (precision >= 0) ?
-//					precision : nfi.NumberDecimalDigits;
+				precision = (precision > 0) ?
+					precision : formatData.dec_len+1;
+					
 				long mantissa;
 				int exponent;
-				Normalize(value, precision, out mantissa, out exponent);
+				Normalize (formatData, value, precision, out mantissa, out exponent);
 				if (precision > 0) {
 					double dmant = mantissa;
-					for (int i = 0; i < dec_len - precision + 1; i++) {
+					for (int i = 0; i < formatData.dec_len - precision + 1; i++) {
 						dmant /= 10;
 					}
 					mantissa = (long) Math.Round (dmant);
-					for (int i = 0; i < dec_len - precision + 1; i++) {
+					for (int i = 0; i < formatData.dec_len - precision + 1; i++) {
 						mantissa *= 10;
 					}
 				}
-				if (exponent > dec_len_min && exponent <= 0) {
+				
+				/* Calculate the exponent we would get using the scientific notation */
+				int snExponent = exponent;
+				long snMantissa = mantissa;
+			
+				while (snMantissa >= 10) {
+					snMantissa /= 10;
+					snExponent++;
+				}
+				
+				if (snExponent > -5 && snExponent < precision) {
 					bool not_null = false;
 					while (exponent < 0) {
 						if ((not_null == false) && ((mantissa % 10) != 0)) {
@@ -461,7 +410,7 @@ namespace System {
 				}
 				else {
 					bool not_null = false;
-					for (int i = 0; i < dec_len; i++) {
+					while (mantissa >= 10) {
 						if ((not_null == false) && ((mantissa % 10) != 0)) {
 							not_null = true;
 						}
@@ -482,7 +431,7 @@ namespace System {
 					else {
 						sb.Append("E" + nfi.NegativeSign);
 					}
-					sb.Append(Math.Abs(exponent).ToString());
+					sb.Append(Math.Abs(exponent).ToString("00"));
 				}
 				if (value < 0.0) {
 					sb.Insert(0, nfi.NegativeSign);
@@ -491,72 +440,10 @@ namespace System {
 			return sb.ToString();
 		}
 
-		private string FormatNumber (double value, NumberFormatInfo nfi,
-				int precision) {
-			StringBuilder sb = new StringBuilder();
-			precision = no_precision_specified ? nfi.NumberDecimalDigits : precision;
-			int decimals = precision;
-			long mantissa;
-			int exponent;
-			Normalize(value, precision, out mantissa, out exponent);
-			if (exponent >= 0) {
-				while (decimals > 0) {
-					sb.Append("0");
-					decimals--;
-				}
-			}
-			else {
-				int decimal_limit = -(decimals + 1);
-				while (exponent < 0) {
-					if (exponent > decimal_limit) {
-						sb.Insert(0, (char)('0' + (mantissa % 10)));
-					}
-					mantissa /= 10;
-					exponent++;
-					decimals--;
-				}
-				if (decimals > 0) {
-					sb.Append ('0', decimals);
-					decimals = 0;
-				}
-			}
-			if (precision != 0) {
-				sb.Insert(0, nfi.NumberDecimalSeparator);
-			}
-			if (mantissa == 0) {
-				sb.Insert(0, "0");
-			}
-			else {
-				int i = 0;
-				while (exponent > 0) {
-					int fin = nfi.NumberGroupSizes[i];
-					if (fin == 0) {
-						fin = int.MaxValue;
-					}
-					for (int j = 0; (j < fin) && (exponent > 0);
-							j++, exponent--) {
-						sb.Insert(0, "0");
-					}
-					sb.Insert(0, nfi.NumberGroupSeparator);
-					if (i < nfi.NumberGroupSizes.Length - 1)
-						i++;
-				}
-				while (mantissa != 0) {
-					int fin = nfi.NumberGroupSizes[i];
-					if (fin == 0) {
-						fin = int.MaxValue;
-					}
-					for (int j = 0; (j < fin) && (mantissa != 0); j++) {
-						sb.Insert(0, (char)('0' + (mantissa % 10)));
-						mantissa /= 10;
-					}
-					if (mantissa != 0)
-						sb.Insert(0, nfi.NumberGroupSeparator);
-					if (i < nfi.NumberGroupSizes.Length - 1)
-						i++;
-				}
-			}
-			string numb = sb.ToString();
+		private string FormatNumber (Format formatData, double value, NumberFormatInfo nfi, int precision) {
+		
+			precision = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
+			string numb = FormatNumberInternal (formatData, value, nfi, precision);
 			if (value < 0) {
 				switch (nfi.NumberNegativePattern) {
 				case 0:
@@ -577,73 +464,11 @@ namespace System {
 			return numb;
 		}
 
-		private string FormatPercent (double value, NumberFormatInfo nfi,
+		private string FormatPercent (Format formatData, double value, NumberFormatInfo nfi,
 				int precision) {
-			StringBuilder sb = new StringBuilder();
-			precision = no_precision_specified ? nfi.PercentDecimalDigits : precision;
-			int decimals = precision;
-			long mantissa;
-			int exponent;
-			Normalize(value, precision, out mantissa, out exponent);
-			exponent += 2;
-			if (exponent >= 0) {
-				while (decimals > 0) {
-					sb.Append("0");
-					decimals--;
-				}
-			}
-			else {
-				int decimal_limit = -(decimals + 1);
-				while (exponent < 0) {
-					if (exponent > decimal_limit) {
-						sb.Insert(0, (char)('0' + (mantissa % 10)));
-					}
-					mantissa /= 10;
-					exponent++;
-					decimals--;
-				}
-				if (decimals > 0) {
-					sb.Append ('0', decimals);
-					decimals = 0;
-				}
-			}
-			if (precision != 0) {
-				sb.Insert(0, nfi.NumberDecimalSeparator);
-			}
-			if (mantissa == 0) {
-				sb.Insert(0, "0");
-			}
-			else {
-				int i = 0;
-				while (exponent > 0) {
-					int fin = nfi.NumberGroupSizes[i];
-					if (fin == 0) {
-						fin = int.MaxValue;
-					}
-					for (int j = 0; (j < fin) && (exponent > 0);
-							j++, exponent--) {
-						sb.Insert(0, "0");
-					}
-					sb.Insert(0, nfi.NumberGroupSeparator);
-					if (i < nfi.NumberGroupSizes.Length - 1)
-						i++;
-				}
-				while (mantissa != 0) {
-					int fin = nfi.NumberGroupSizes[i];
-					if (fin == 0) {
-						fin = int.MaxValue;
-					}
-					for (int j = 0; (j < fin) && (mantissa != 0); j++) {
-						sb.Insert(0, (char)('0' + (mantissa % 10)));
-						mantissa /= 10;
-					}
-					if (mantissa != 0)
-						sb.Insert(0, nfi.NumberGroupSeparator);
-					if (i < nfi.NumberGroupSizes.Length - 1)
-						i++;
-				}
-			}
-			string numb = sb.ToString();
+
+			precision = (precision >= 0) ? precision : nfi.PercentDecimalDigits;
+			string numb = FormatNumberInternal (formatData, value*100, nfi, precision);
 			if (value < 0) {
 				switch (nfi.PercentNegativePattern) {
 				case 0:
@@ -672,13 +497,81 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
-		private string FormatReversible (double value, NumberFormatInfo nfi,
-				int precision) {
-			return FormatGeneral(value, nfi, precision);
+		private string FormatNumberInternal (Format formatData, double value, NumberFormatInfo nfi, int precision) 
+		{
+			StringBuilder sb = new StringBuilder();
+			int decimals = precision;
+			long mantissa;
+			int exponent;
+			Normalize (formatData, value, precision, out mantissa, out exponent);
+			if (exponent >= 0) {
+				while (decimals > 0) {
+					sb.Append("0");
+					decimals--;
+				}
+			}
+			else {
+				int decimal_limit = -(decimals + 1);
+				while (exponent < 0) {
+					if (exponent > decimal_limit) {
+						sb.Insert(0, (char)('0' + (mantissa % 10)));
+					}
+					mantissa /= 10;
+					exponent++;
+					decimals--;
+				}
+				if (decimals > 0) {
+					sb.Append ('0', decimals);
+					decimals = 0;
+				}
+			}
+			if (precision != 0) {
+				sb.Insert(0, nfi.NumberDecimalSeparator);
+			}
+			if (mantissa == 0) {
+				sb.Insert(0, "0");
+			}
+			else {
+				int groupIndex = 0;
+				int groupPos = 0;
+				int groupSize = nfi.NumberGroupSizes[0];
+				if (groupSize == 0) groupSize = int.MaxValue;
+				
+				while (exponent > 0 || mantissa != 0) {
+					
+					if (groupPos == groupSize) {
+						sb.Insert (0, nfi.NumberGroupSeparator);
+						groupPos = 0;
+						if (groupIndex < nfi.NumberGroupSizes.Length - 1) {
+							groupIndex++;
+							groupSize = nfi.NumberGroupSizes[groupIndex];
+							if (groupSize == 0) groupSize = int.MaxValue;
+						}
+					}
+					
+					if (exponent > 0) {
+						sb.Insert (0, "0");
+						exponent--;
+					}
+					else {
+						sb.Insert(0, (char)('0' + (mantissa % 10)));
+						mantissa /= 10;
+					}
+					
+					groupPos++;
+				}
+			}
+			return sb.ToString();
 		}
 
-		private string FormatCustom (double value,
+
+		[MonoTODO]
+		private string FormatReversible (Format formatData, double value, NumberFormatInfo nfi,
+				int precision) {
+			return FormatGeneral (formatData, value, nfi, precision);
+		}
+
+		private string FormatCustom (Format formatData, double value,
 				NumberFormatInfo nfi, string format) {
 			int first_semicolon, last_semicolon;
 			first_semicolon = format.IndexOf(';');
@@ -686,7 +579,7 @@ namespace System {
 			if (first_semicolon == last_semicolon) {
 				if (first_semicolon == -1) {
 					if (value < 0.0) {
-						string result = FormatCustomParser(value, nfi, format);
+						string result = FormatCustomParser (formatData, value, nfi, format);
 						if (result == "0") {
 							return "0";
 						}
@@ -695,26 +588,26 @@ namespace System {
 						}
 						return result;
 					}
-					return FormatCustomParser(value, nfi, format);
+					return FormatCustomParser (formatData, value, nfi, format);
 					
 				}
 				if (value < 0.0) {
 					return FormatCustomParser
-						(value, nfi, format.Substring(first_semicolon + 1));
+						(formatData, value, nfi, format.Substring(first_semicolon + 1));
 				}
-				return FormatCustomParser (value, nfi,
+				return FormatCustomParser (formatData, value, nfi,
 						format.Substring(0, first_semicolon - 1));
 			}
 			if (value > 0.0) {
-				return FormatCustomParser (value, nfi,
+				return FormatCustomParser (formatData, value, nfi,
 						format.Substring(0, first_semicolon - 1));
 			}
 			else if (value < 0.0) {
-				return FormatCustomParser (value, nfi,
+				return FormatCustomParser (formatData, value, nfi,
 						format.Substring (first_semicolon + 1,
 							last_semicolon - first_semicolon));
 			}
-			return FormatCustomParser (value, nfi,
+			return FormatCustomParser (formatData, value, nfi,
 					format.Substring(last_semicolon + 1));
 		}
 
@@ -788,7 +681,7 @@ namespace System {
 			return f;
 		}
 
-		private string FormatCustomParser (double value,
+		private string FormatCustomParser (Format formatData, double value,
 				NumberFormatInfo nfi, string format) {
 			long mantissa;
 			int exponent;
@@ -811,12 +704,12 @@ namespace System {
 					len = 0;
 				}
 				value = Math.Round(value, len);
-				Normalize(value, 15, out mantissa, out exponent);
+				Normalize (formatData, value, 15, out mantissa, out exponent);
 				exponent += exp;
 			}
 			else {
 				value = Math.Round(value, f.DecimalLength);
-				Normalize(value, 15, out mantissa, out exponent);
+				Normalize (formatData, value, 15, out mantissa, out exponent);
 			}
 			StringBuilder sb = new StringBuilder();
 			if (f.ExpPos > 0) {
