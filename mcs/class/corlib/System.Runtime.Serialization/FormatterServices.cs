@@ -78,7 +78,7 @@ namespace System.Runtime.Serialization
 			FieldInfo [] fs = type.GetFields (fieldFlags);
 			foreach (FieldInfo field in fs)
 				if (!(field.IsNotSerialized))
-					fields.Add (member);
+					fields.Add (field);
 		}
 
 		public static Type GetTypeFromAssembly (Assembly assem, string name)
