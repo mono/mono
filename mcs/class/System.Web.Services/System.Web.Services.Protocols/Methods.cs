@@ -419,11 +419,24 @@ namespace System.Web.Services.Protocols {
 			XmlTypeMapping tm;
 			if (use == SoapBindingUse.Literal) {
 				XmlReflectionImporter ri = new XmlReflectionImporter ();
-				tm = ri.ImportTypeMapping (type, WebServiceAttribute.DefaultNamespace);
+				
+				// MS.NET reflects header classes in a weird way. The root element
+				// name is the CLR class name unless it is specified in an XmlRootAttribute.
+				// The usual is to use the xml type name by default, but not in this case.
+				
+				XmlRootAttribute root;
+				XmlAttributes ats = new XmlAttributes (type);
+				if (ats.XmlRoot != null) root = ats.XmlRoot;
+				else root = new XmlRootAttribute (type.Name);
+				
+				if (root.Namespace == null) root.Namespace = LogicalType.WebServiceLiteralNamespace;
+				if (root.ElementName == null) root.ElementName = type.Name;
+				
+				tm = ri.ImportTypeMapping (type, root);
 			}
 			else {
 				SoapReflectionImporter ri = new SoapReflectionImporter ();
-				tm = ri.ImportTypeMapping (type, WebServiceAttribute.DefaultNamespace);
+				tm = ri.ImportTypeMapping (type, LogicalType.WebServiceEncodedNamespace);
 			}
 			
 			int sid = RegisterSerializer (tm);

@@ -1,3 +1,8 @@
+2004-01-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Methods.cs: Set the correct element name and namespace for headers (those
+	are not managed like other data classes).
+
 2004-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs:
