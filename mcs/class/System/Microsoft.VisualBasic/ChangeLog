@@ -1,3 +1,8 @@
+2004-02-10  Jackson Harper <jackson@ximian.com>
+
+	* VBCodeCompiler.cs: Use the temp files collection for
+	creating temp files.
+	
 2004-02-05  Jackson Harper <jackson@ximian.com>
 
 	* VBCodeCompiler.cs: Set file extensions properly.

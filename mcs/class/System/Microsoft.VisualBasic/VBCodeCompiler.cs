@@ -2,7 +2,7 @@
 // Microsoft VisualBasic VBCodeCompiler Class implementation
 //
 // Authors:
-// 	Jochen Wezel (jwezel@compumaster.de)
+//	Jochen Wezel (jwezel@compumaster.de)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (c) 2003 Jochen Wezel (http://www.compumaster.de)
@@ -53,7 +53,7 @@ namespace Microsoft.VisualBasic
 			StringCollection assemblies = options.ReferencedAssemblies;
 
 			foreach (CodeCompileUnit e in ea) {
-				fileNames [i] = GetTempFileNameWithExtension ("vb");
+				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, "vb");
 				FileStream f = new FileStream (fileNames [i], FileMode.OpenOrCreate);
 				StreamWriter s = new StreamWriter (f);
 				if (e.ReferencedAssemblies != null) {
@@ -135,7 +135,7 @@ namespace Microsoft.VisualBasic
 			string [] fileNames = new string [sources.Length];
 			int i = 0;
 			foreach (string source in sources) {
-				fileNames [i] = GetTempFileNameWithExtension ("vb");
+				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, "vb");
 				FileStream f = new FileStream (fileNames [i], FileMode.OpenOrCreate);
 				StreamWriter s = new StreamWriter (f);
 				s.Write (source);
@@ -167,7 +167,7 @@ namespace Microsoft.VisualBasic
 
 			if (options.OutputAssembly == null) {
 				string ext = (options.GenerateExecutable ? "exe" : "dll");
-				options.OutputAssembly = GetTempFileNameWithExtension (ext);
+				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, ext);
 			}
 
 			args.AppendFormat ("/out:\"{0}\" ", options.OutputAssembly);
@@ -176,13 +176,13 @@ namespace Microsoft.VisualBasic
 			Reference2MSVBFound = false;
 			if (null != options.ReferencedAssemblies) 
 			{
- 				foreach (string import in options.ReferencedAssemblies)
+				foreach (string import in options.ReferencedAssemblies)
 				{
 					if (string.Compare (import, "Microsoft.VisualBasic", true, System.Globalization.CultureInfo.InvariantCulture) == 0)
 						Reference2MSVBFound = true;
- 					args.AppendFormat ("/r:\"{0}\" ", import);
+					args.AppendFormat ("/r:\"{0}\" ", import);
 				}
- 			}
+			}
 			// add standard import to Microsoft.VisualBasic if missing
 			if (Reference2MSVBFound == false)
 				args.AppendFormat ("/r:\"{0}\" ", "Microsoft.VisualBasic");
@@ -227,24 +227,9 @@ namespace Microsoft.VisualBasic
 			return error;
 		}
 
-		static string GetTempFileNameWithExtension (string extension)
+		static string GetTempFileNameWithExtension (TempFileCollection temp_files, string extension)
 		{
-			Exception exc;
-			string extFile;
-
-			do {
-				string tmpFile = Path.GetTempFileName ();
-				FileInfo fileInfo = new FileInfo (tmpFile);
-				extFile = Path.ChangeExtension (tmpFile, extension);
-				try {
-					fileInfo.MoveTo (extFile);
-					exc = null;
-				} catch (Exception e) {
-					exc = e;
-				}
-			} while (exc != null);
-
-			return extFile;
+			return temp_files.AddExtension (extension);
 		}
 	}
 }
