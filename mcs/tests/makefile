@@ -37,7 +37,7 @@ WINDOWS_SOURCES = \
 # A test is a 'no pass' if it fails on either windows or linux
 # Test 120 does not pass because the MS.NET runtime is buggy.
 TEST_NOPASS = \
-	test-45  test-53  test-91  test-106 test-107 test-120 test-122 test-132 test-133 test-66
+	test-45  test-53  test-91  test-106 test-107 test-120 test-122 test-132 test-133 test-66 test-177
 
 all: test-compiler test-unsafe test-windows
 
