@@ -51,7 +51,6 @@ namespace System.Reflection.Emit {
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
 		internal Type corlib_void_type = typeof (void);
-		private int[] table_indexes;
 		ArrayList resource_writers = null;
 		bool created;
 
@@ -73,20 +72,6 @@ namespace System.Reflection.Emit {
 			}
 
 			basic_init (this);
-		}
-
-		internal int get_next_table_index (object obj, int table, bool inc) {
-			if (table_indexes == null) {
-				table_indexes = new int [64];
-				for (int i=0; i < 64; ++i)
-					table_indexes [i] = 1;
-				/* allow room for .<Module> in TypeDef table */
-				table_indexes [0x02] = 2;
-			}
-			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
-			if (inc)
-				return table_indexes [table]++;
-			return table_indexes [table];
 		}
 
 		public override string CodeBase {

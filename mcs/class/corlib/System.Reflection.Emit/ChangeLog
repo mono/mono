@@ -1,3 +1,8 @@
+2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs (get_next_table_index): Moved to ModuleBuilder,
+	since table indexes are per-module.
+
 2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs (DefineDefaultConstructor): Pass an array instead of 

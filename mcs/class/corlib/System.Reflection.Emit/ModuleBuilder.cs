@@ -33,6 +33,7 @@ namespace System.Reflection.Emit {
 		internal IMonoSymbolWriter symbol_writer;
 		Hashtable name_cache;
 		Hashtable us_string_cache = new Hashtable ();
+		private int[] table_indexes;
 		bool transient;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -323,7 +324,17 @@ namespace System.Reflection.Emit {
 		}
 
 		internal int get_next_table_index (object obj, int table, bool inc) {
-			return assemblyb.get_next_table_index (obj, table, inc);
+			if (table_indexes == null) {
+				table_indexes = new int [64];
+				for (int i=0; i < 64; ++i)
+					table_indexes [i] = 1;
+				/* allow room for .<Module> in TypeDef table */
+				table_indexes [0x02] = 2;
+			}
+			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
+			if (inc)
+				return table_indexes [table]++;
+			return table_indexes [table];
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
