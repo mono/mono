@@ -8,7 +8,6 @@ public class Blah {
 	{
 		const int foo = 10;
 		
-		Blah blah = new Blah ();
 		int j = Blah.i;
 
 		if (j != 5)

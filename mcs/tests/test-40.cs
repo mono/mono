@@ -2,6 +2,11 @@ using System;
 
 public class Blah {
 
+	enum Bar {
+		a = MyEnum.Foo,
+		b = A.c
+	}
+	
 	public enum MyEnum : byte {
 		Foo = 254,
 		Bar
@@ -39,6 +44,16 @@ public class Blah {
 			return 1;
 
 		A var = A.b;
+
+		i = (int) Bar.a;
+
+		if (i != 254)
+			return 1;
+
+		i = (int) Bar.b;
+
+		if (i != 2)
+			return 1;
 
 		Console.WriteLine ("Enum emission test okay");
 		return 0;

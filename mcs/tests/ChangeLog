@@ -1,3 +1,7 @@
+2001-12-01  Ravi Pratap  <ravi@ximian.com>
+
+	* test-40.cs : Update to do recursive enumeration definition.
+
 2001-11-28  Ravi Pratap  <ravi@ximian.com>
 
 	* test-48.cs : Add for constant emission tests.
