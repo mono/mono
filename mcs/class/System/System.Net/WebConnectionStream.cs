@@ -127,6 +127,13 @@ namespace System.Net
 			cnc.NextRead ();
 		}
 		
+	   	static void CallbackWrapper (IAsyncResult r)
+		{
+			WebAsyncResult result = (WebAsyncResult) r.AsyncState;
+			result.InnerAsyncResult = r;
+			result.DoCallback ();
+		}
+
 		public override int Read (byte [] buffer, int offset, int size)
 		{
 			if (!isRead)
@@ -154,7 +161,7 @@ namespace System.Net
 
 			WebAsyncResult result = new WebAsyncResult (cb, state, buffer, offset, size);
 			if (totalRead >= contentLength) {
-				result.SetCompleted (true, 0);
+				result.SetCompleted (true, -1);
 				result.DoCallback ();
 				return result;
 			}
@@ -180,7 +187,13 @@ namespace System.Net
 				pending.Reset ();
 			}
 
-			result.InnerAsyncResult = cnc.BeginRead (buffer, offset, size, null, null);
+			if (cb != null)
+				cb = new AsyncCallback (CallbackWrapper);
+
+			if (contentLength != Int32.MaxValue && contentLength - totalRead < size)
+				size = contentLength - totalRead;
+
+			result.InnerAsyncResult = cnc.BeginRead (buffer, offset, size, cb, result);
 			return result;
 		}
 
@@ -196,9 +209,13 @@ namespace System.Net
 						pending.Set ();
 				}
 
+				bool finished = (nbytes == -1);
+				if (finished && result.NBytes > 0)
+					nbytes = 0;
+
 				result.SetCompleted (false, nbytes + result.NBytes);
 				totalRead += nbytes;
-				if (nbytes == 0)
+				if (finished || nbytes == 0)
 					contentLength = totalRead;
 			}
 
@@ -229,7 +246,10 @@ namespace System.Net
 				result.SetCompleted (true, 0);
 				result.DoCallback ();
 			} else {
-				result.InnerAsyncResult = cnc.BeginWrite (buffer, offset, size, cb, state);
+				if (cb != null)
+					cb = new AsyncCallback (CallbackWrapper);
+
+				result.InnerAsyncResult = cnc.BeginWrite (buffer, offset, size, cb, result);
 				if (result.InnerAsyncResult == null)
 					throw new WebException ("Aborted");
 			}

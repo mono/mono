@@ -1,3 +1,8 @@
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs: when a callback is passed to BeginRead/Write,
+	wrap it and do our job before calling it. Fixes bug #48497.
+
 2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* WebExceptionStatus.cs: Restyled, Added .Net 1.1 members
