@@ -933,10 +933,8 @@ namespace System.Text.RegularExpressions.Syntax {
 			// control characters
 
 			case 'c':
-				c = pattern[p ++];
-				if (c >= 'A' && c <= 'Z')
-					return c - 'A';
-				else if (c >= '@' && c <= '_')
+				c = pattern[ptr ++];
+				if (c >= '@' && c <= '_')
 					return c - '@';
 				else
 					throw NewParseException ("Unrecognized control character.");
@@ -1031,10 +1029,16 @@ namespace System.Text.RegularExpressions.Syntax {
 
 			string result = "";
 			while (ptr < pattern.Length) {
-				int c = pattern[ptr];
-				if (c == '\\')
+				int c = pattern[ptr ++];
+				if (c == '\\') {
 					c = ParseEscape ();
-				ptr ++;	
+
+					if(c < 0) {
+						c = pattern[ptr ++];
+						if(c == 'b')
+							c = '\b';
+					}
+				}
 				result += (char)c;
 			}
 

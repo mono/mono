@@ -1,3 +1,13 @@
+2004-06-06  Jambunathan K <kjambunathan@novell.com>
+	
+	* parser.cs: Fixed issues with Regex.Unescape() identified as part of
+	debugging bug #58256. The original problem reported was about
+	inconsistency between the way we treat replacement patterns and the 
+	way microsoft treats the replacement patterns in Regex.Replace(). MS
+	implementation is buggy and doesn't honour escape sequences in the
+	replacement patterns, even though the SDK claims otherwise.
+
+	
 2004-06-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* syntax.cs: re-applied my patch from 2004-05-27 plus a fix which is
