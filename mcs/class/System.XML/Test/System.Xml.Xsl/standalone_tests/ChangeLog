@@ -1,5 +1,13 @@
 2005-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile, xslttest.cs : Rewrote to be runnable against the latest
+	  draft version of OASIS XSLT tests. Also, Makefile now unifies
+	  existing xslttest.exe and new alltest.exe (might be renamed later).
+	* simplify.xsl : added comment.
+	* alltest.cs : code format.
+
+2005-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile.mstest,
 	  alltest.cs,
 	  simplify.xsl : another test runner from MainSoft. See the top of

@@ -6,12 +6,8 @@ using System.Xml.XPath;
 
 namespace simpleTests
 {
-	/// <summary>
-	/// Summary description for Class1.
-	/// </summary>
-	class Class1
+	class TestRunner
 	{
-
 		static void Process (string id, string path, string data,
 			string stylesheet, string output, string resDirName)
 		{
@@ -26,7 +22,6 @@ namespace simpleTests
 				Directory.SetCurrentDirectory (Path.Combine ("Xalan_Conformance_Tests", path));
 			else
 				Directory.SetCurrentDirectory (Path.Combine ("MSFT_Conformance_Tests", path));
-//Console.WriteLine ("SS: {0} / Inst {1} / resfile {2} / path {3}", stylesheet, data, resFileName, path);
 
 			XslTransform xslt = new XslTransform();
 			StreamWriter strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);
@@ -34,8 +29,8 @@ namespace simpleTests
 			try {
 				XmlDocument xml = new XmlDocument();
 				xml.Load (data);
-				xslt.Load(stylesheet);
-				xslt.Transform(xml, null, wr, null);
+				xslt.Load (stylesheet);
+				xslt.Transform (xml, null, wr, null);
 			}
 			catch(Exception x) {
 				strWr.Close();
@@ -48,9 +43,6 @@ namespace simpleTests
 			Directory.SetCurrentDirectory ("../..");
 		}
 
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
 		static void Main(string[] args)
 		{
 			string topdir = "Results";
@@ -58,24 +50,23 @@ namespace simpleTests
 				topdir = args [0];
 
 			string pathPrefix = "testsuite/TESTS";
-			Directory.SetCurrentDirectory(pathPrefix);
+			Directory.SetCurrentDirectory (pathPrefix);
 
-			XmlDocument catalog = new XmlDocument();
+			XmlDocument catalog = new XmlDocument ();
 			catalog.Load ("catalog-out.xml");
-			XmlNodeList list = catalog.SelectNodes("//tests/test");
-			foreach (XmlNode node in list)
-			{
-				if (node.SelectSingleNode("@ignore")!=null)
+			XmlNodeList list = catalog.SelectNodes ("//tests/test");
+			foreach (XmlNode node in list) {
+				if (node.SelectSingleNode ("@ignore")!=null)
 					continue;
-				string id = node.SelectSingleNode("@id").InnerText;
-				string path = node.SelectSingleNode("path").InnerText;
-				string data = node.SelectSingleNode("data").InnerText;
-				string stylesheet = node.SelectSingleNode("stylesheet").InnerText;
-				string output = node.SelectSingleNode("output").InnerText;
+				string id = node.SelectSingleNode ("@id").InnerText;
+				string path = node.SelectSingleNode ("path").InnerText;
+				string data = node.SelectSingleNode ("data").InnerText;
+				string stylesheet = node.SelectSingleNode ("stylesheet").InnerText;
+				string output = node.SelectSingleNode ("output").InnerText;
 
-				Console.Write("Processing {0} ...", id);
+				Console.Write ("Processing {0} ...", id);
 				Process (id, path, data, stylesheet, output, topdir);
-				Console.WriteLine();
+				Console.WriteLine ();
 			}
 		}
 	}

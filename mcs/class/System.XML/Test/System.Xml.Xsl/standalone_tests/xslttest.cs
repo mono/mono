@@ -15,6 +15,7 @@ namespace XsltTest
 		static bool useDomStyle;
 		static bool useDomInstance;
 		static bool generateOutput;
+		static bool listOutput;
 		static bool whitespaceStyle;
 		static bool whitespaceInstance;
 		static bool stopImmediately;
@@ -27,48 +28,36 @@ namespace XsltTest
 		static XsltTest ()
 		{
 			skipTargets = new ArrayList (new string [] {
-"attribset15.xsl",
-"lre12.xsl", 
-"namespace23.xsl", // under .NET, XPathDocument behavior is different from dom
-"namespace40.xsl", 
-"namespace42.xsl", 
-"namespace43.xsl",
-"namespace48.xsl", 
-"namespace60.xsl", 
-"namespace73.xsl", 
-"namespace106.xsl",
-// output22,77: not-supported encoding, but MS passes...?
-// output72.xsl: should not pass
-"output22.xsl", 
-"output72.xsl",
-"output77.xsl"
+"Keys_PerfRepro3"
 			}); 
 		}
 
 		static void Usage ()
 		{
-			Console.WriteLine (@"mono xslttest.exe [options] [targetFileMatch] -report:reportfile
+			Console.WriteLine (@"
+mono xslttest.exe [options] [targetFileMatch] -report:reportfile
 
-	Options:
-		--details : Output detailed output differences.
-		--dom : use XmlDocument for both stylesheet and input source.
-		--domxsl : use XmlDocument for stylesheet.
-		--domsrc : use XmlDocument for input source.
-		--generate : generate output files specified in catalog.
-				Use this feature only when you want to update
-				reference output.
-		--outall : Output fine results as OK (omitted by default).
-		--stoponerror : stops the test process and throw detailed
+Options:
+	--details	Output detailed output differences.
+	--dom		Use XmlDocument for both stylesheet and input source.
+	--domxsl	Use XmlDocument for stylesheet.
+	--domsrc	Use XmlDocument for input source.
+	--generate	Generate output files specified in catalog.
+			Use this feature only when you want to update
+			reference output.
+	--list		Print output list to console.
+	--outall	Output fine results as OK (omitted by default).
+	--stoponerror	Stops the test process and throw detailed
 			error if happened.
-		--ws : preserve spaces for both stylesheet and input source.
-		--wsxsl : preserve spaces for stylesheet.
-		--wssrc : preserve spaces for input source.
-		--xml : report into xml output.
-		--report : write reports into specified file.
+	--ws		Preserve spaces for both stylesheet and input source.
+	--wsxsl		Preserve spaces for stylesheet.
+	--wssrc		Preserve spaces for input source.
+	--xml		Report into xml output.
+	--report	Write reports into specified file.
 
-	FileMatch:
-		arbitrary string that specifies part of file name.
-		(no * or ? available)
+FileMatch:
+	arbitrary string that specifies part of file name.
+	(no * or ? available)
 ");
 		}
 
@@ -105,6 +94,9 @@ namespace XsltTest
 					break;
 				case "--generate":
 					generateOutput = true;
+					break;
+				case "--list":
+					listOutput = true;
 					break;
 				case "--outall":
 					outputAll = true;
@@ -156,30 +148,37 @@ namespace XsltTest
 					+ explicitTarget);
 
 			XmlDocument whole = new XmlDocument ();
-			whole.Load (@"testsuite/TESTS/Xalan_Conformance_Tests/catalog.xml");
+			whole.Load (@"testsuite/TESTS/catalog.xml");
 
-			Console.WriteLine ("Started: " + 
-				DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
+			if (!listOutput)
+				Console.WriteLine ("Started: " + DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
 
 			foreach (XmlElement testCase in whole.SelectNodes (
 				"test-suite/test-catalog/test-case")) {
 				string stylesheetBase = null;
+				string testid = testCase.GetAttribute ("id");
+				if (skipTargets.Contains (testid))
+					continue;
 				try {
 					string filePath = testCase.SelectSingleNode ("file-path").InnerText;
-					string path = @"testsuite/TESTS/Xalan_Conformance_Tests/" + filePath + "/";
+					// hack hack
+					string testAuthorDir =
+						filePath [0] >= 'a' ?
+						"Xalan_Conformance_Tests" :
+						"MSFT_Conformance_Tests";
+					string path = @"testsuite/TESTS/" + testAuthorDir + "/" + filePath + "/";
 					foreach (XmlElement scenario in 
 						testCase.SelectNodes ("scenario")) {
 						RunTest (scenario, path, stylesheetBase);
 					}
 				} catch (Exception ex) {
-					if (skipTargets.Contains (stylesheetBase))
-						continue;
 					if (stopImmediately)
 						throw;
 					Report (testCase, "Exception: " + testCase.GetAttribute ("id") + ": " + ex.Message);
 				}
 			}
-Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
+			if (!listOutput)
+				Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
 
 			if (reportAsXml)
 				reportXmlWriter.WriteEndElement (); // test-results
@@ -187,10 +186,19 @@ Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"))
 
 		static void RunTest (XmlElement scenario, string path, string stylesheetBase)
 		{
-			XslTransform trans = new XslTransform ();
 			stylesheetBase = scenario.SelectSingleNode ("input-file[@role='principal-stylesheet']").InnerText;
 			string stylesheet = path + stylesheetBase;
 			string srcxml = path + scenario.SelectSingleNode ("input-file[@role='principal-data']").InnerText;
+			XmlNode outputNode = scenario.SelectSingleNode ("output-file[@role='principal']");
+			string outfile = outputNode != null ? path + outputNode.InnerText : null;
+
+			if (listOutput) {
+				if (outfile != null)
+					Console.WriteLine (outfile);
+				return;
+			}
+
+			XslTransform trans = new XslTransform ();
 
 			if (explicitTarget != null && stylesheetBase.IndexOf (explicitTarget) < 0)
 				return;
@@ -210,8 +218,6 @@ Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"))
 					stylesheet,
 					whitespaceStyle ? XmlSpace.Preserve :
 					XmlSpace.Default));
-
-			string outfile = path + scenario.SelectSingleNode ("output-file[@role='principal']").InnerText;
 
 			XmlTextReader xtr = new XmlTextReader (srcxml);
 			XmlValidatingReader xvr = new XmlValidatingReader (xtr);

@@ -4,6 +4,7 @@
 	<xsl:template match="/">
 		<tests>
 			<xsl:for-each select="test-suite/test-catalog/test-case[scenario/@operation='standard']">
+<!-- temporary exclusion. Find out why it result in (maybe) loop -->
 <xsl:if test="@id != 'Keys_PerfRepro3'">
 				<xsl:element name="test">
 					<xsl:attribute name="id">
