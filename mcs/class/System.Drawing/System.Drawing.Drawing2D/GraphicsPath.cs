@@ -270,12 +270,12 @@ namespace System.Drawing.Drawing2D
 
                 public void AddPie (int x, int y, int width, int height, float startAngle, float sweepAngle)
                 {
-                        GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, sweepAngle, sweepAngle);
+                        GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, startAngle, sweepAngle);
                 }
 
                 public void AddPie (float x, float y, float width, float height, float startAngle, float sweepAngle)
                 {
-                        GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, sweepAngle, sweepAngle);                
+                        GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, startAngle, sweepAngle);                
                 }
 
                 //

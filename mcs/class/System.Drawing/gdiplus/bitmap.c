@@ -185,7 +185,7 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 	}
 
 	if (scan0 == NULL) {
-                scan0 = GdipAlloc (stride*height);
+                scan0 = GdipAlloc (stride * height);
                 own_scan0 = TRUE;
         }
 
@@ -197,7 +197,6 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 	result->data.PixelFormat = format;
 	result->data.Scan0 = scan0;
         result->data.own_scan0 = own_scan0;
-
 		
 	*bitmap = result;
 	return Ok;
