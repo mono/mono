@@ -66,5 +66,8 @@ namespace System {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void BlockCopyInternal (Array src, int src_offset, Array dest, int dest_offset, int count);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static void MemCopy (IntPtr src, int offset, Array dest, int dest_offset, int count);
 	}
 }
