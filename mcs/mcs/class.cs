@@ -2259,12 +2259,14 @@ namespace CIR {
 				ec = new EmitContext (tc, null, PropertyType, ModFlags);
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes != null) {
-							foreach (Attribute a in asec.Attributes) {
-								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb != null)
-									PropertyBuilder.SetCustomAttribute (cb);
-							}
+						if (asec.Attributes == null)
+							continue;
+						
+						foreach (Attribute a in asec.Attributes) {
+							CustomAttributeBuilder cb = a.Resolve (ec);
+							if (cb == null)
+								continue;
+							PropertyBuilder.SetCustomAttribute (cb);
 						}
 					}
 				}
