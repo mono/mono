@@ -1359,11 +1359,14 @@
     			}
     		}
     		
-    		[MonoTODO]
-    		public void Invalidate (bool invalidateChildren) 
+    		public void Invalidate ( bool invalidateChildren ) 
     		{
-				//FIXME:
-    		}
+			Invalidate ( ) ;
+			if ( invalidateChildren ) {
+				foreach ( Control child in Controls )
+					child.Invalidate ( invalidateChildren );
+			}
+		}
     		
 		// tries to find appropriate owner for modal form
 		internal static Control getOwnerWindow ( Control skip )
@@ -2414,11 +2417,14 @@
 
 			visible = value;
 
+			if ( IsHandleCreated ) {
+				SetWindowPosFlags flags = value ? SetWindowPosFlags.SWP_SHOWWINDOW : SetWindowPosFlags.SWP_HIDEWINDOW;
+				flags |= SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE;
+				Win32.SetWindowPos( Handle, 0, 0, 0, 0, 0, flags );
+			}
+
 			foreach ( Control c in Controls )
 				c.Visible = value ;
-
-			if ( IsHandleCreated )
-				Win32.ShowWindow ( Handle, value ? ShowWindowStyles.SW_SHOW : ShowWindowStyles.SW_HIDE );
 
 			if ( visibleChanged )
 				OnVisibleChanged ( EventArgs.Empty );

@@ -2572,6 +2572,7 @@ namespace System.Windows.Forms{
 
 	internal enum TabControlMessages : int {
 		TCM_FIRST          =  0x1300,
+		TCM_SETIMAGELIST   =  (TCM_FIRST + 3),
 		TCM_GETITEM        =  (TCM_FIRST + 60),
 		TCM_SETITEM        =  (TCM_FIRST + 6),
 		TCM_INSERTITEM     =  (TCM_FIRST + 7),

@@ -104,6 +104,8 @@ namespace System.Windows.Forms {
 			}
 			set {
 				imageListStreamer = value;
+				destroyHandle ( );
+				handle = imageListStreamer.Handle;
 			}
 		}
 
@@ -141,10 +143,18 @@ namespace System.Windows.Forms {
 		//
 		public event EventHandler RecreateHandle;
 
-		private void createHandle ( ) {
+		private void createHandle ( )
+		{
+			ImageListStreamer.initCommonControlsLibrary( );
 		}
 
 		private void recreateHandle ( ) {
+		}
+
+		private void destroyHandle ( )
+		{
+			if ( HandleCreated )
+				Win32.ImageList_Destroy ( handle );
 		}
 
 		//

@@ -76,9 +76,9 @@ namespace System.Windows.Forms {
 				if (!registeredClass) {
 					WNDCLASS wndClass = new WNDCLASS();
 
-					wndClass.style = (int) (CS_.CS_OWNDC |
+					wndClass.style = (int) (CS_.CS_OWNDC /*|
 						CS_.CS_VREDRAW |
-						CS_.CS_HREDRAW);
+						CS_.CS_HREDRAW*/);
 					wndClass.lpfnWndProc = GetWindowProc();
 					wndClass.cbClsExtra = 0;
 					wndClass.cbWndExtra = 0;

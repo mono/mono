@@ -168,11 +168,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public ImageList ImageList  {
 			get {	return imageList; }
 			set {
-				imageList = value;
+				if ( imageList != value ) {
+					imageList = value;
+					if ( IsHandleCreated )
+						setImageList ( imageList != null ? imageList.Handle : IntPtr.Zero );
+				}
 			}
 		}
 
@@ -207,13 +210,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public Point Padding  {
 			get {	return padding;	}
 			set {
 				if ( padding != value ) {
 					if ( value.X < 0 || value.Y < 0 )
-						throw new ArgumentException ( ); // FIXME: message
+						throw new ArgumentException (
+							string.Format ( "'{0}' is not a valid value for 'Padding'.", value ) );
 
 					padding = value;
 					
@@ -234,13 +237,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public int SelectedIndex {
 			get {	return selectedIndex;  }
 			set {
 				if ( selectedIndex != value ) {
 					if ( value < -1 )
-						throw new ArgumentException ( ); // FIXME: message
+						throw new ArgumentException (
+							string.Format( " '{0}' is not a valid value for 'value'.  'value' must be greater than or equal to -1.", value ) ); 
 
 					selectedIndex = value;
 
@@ -422,6 +425,8 @@ namespace System.Windows.Forms {
 			setPages ( );
 			setPadding ( );
 			setItemSize ( );
+			if ( imageList != null )
+				setImageList ( imageList.Handle );
 		}
 
 		[MonoTODO]
@@ -473,7 +478,7 @@ namespace System.Windows.Forms {
 				switch ( nmhdr.code ) {
 				case (int)TabControlNotifications.TCN_SELCHANGE:
 					selectedIndex =	Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_GETCURSEL, 0, 0);
-					updatePage ( selectedIndex );
+					updatePage ( selectedIndex , true );
 					OnSelectedIndexChanged ( EventArgs.Empty );
 				break;
 				case (int)TabControlNotifications.TCN_SELCHANGING:
@@ -498,7 +503,7 @@ namespace System.Windows.Forms {
 		private void update ( ) {
 		}
 
-		private void updatePage ( int index ) {
+		private void updatePage ( int index , bool doShowOrHide ) {
 			if ( Controls.Count != 0 && index >=0 && index < Controls.Count ) {
 				Control c = Controls[ index ];
 
@@ -506,8 +511,8 @@ namespace System.Windows.Forms {
 					c.CreateControl ( );
 
 				c.SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
-
-				showOrHidePages( index );
+				if ( doShowOrHide )
+					showOrHidePages( index );
 			}
 		}
 
@@ -522,18 +527,15 @@ namespace System.Windows.Forms {
 				return;
 
 			TCITEM header = new TCITEM();
-			header.mask = (uint) TabControlItemFlags.TCIF_TEXT;
+			header.mask = (uint) ( TabControlItemFlags.TCIF_TEXT | TabControlItemFlags.TCIF_IMAGE );
 			header.pszText = tabPage.Text;
+			header.iImage  = tabPage.ImageIndex;
 				
 			sendMessageHelper ( TabControlMessages.TCM_INSERTITEM, index, ref header );
 			tabPage.isAdded = true;
 
-			if ( index == SelectedIndex )
+			if ( !RecreatingHandle && index == SelectedIndex )
 				selectPage ( index );
-			else {
-				tabPage.Visible = false;
-				tabPage.SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
-			}
 		}
 
 		internal void pageTextChanged ( TabPage page ) {
@@ -543,6 +545,19 @@ namespace System.Windows.Forms {
 					TCITEM header = new TCITEM();
 					header.mask = (uint) TabControlItemFlags.TCIF_TEXT;
 					header.pszText = page.Text;
+				
+					sendMessageHelper ( TabControlMessages.TCM_SETITEM, index, ref header );
+				}
+			}
+		}
+
+		internal void pageImageIndexChanged ( TabPage page ) {
+			if ( IsHandleCreated ) {
+				int index = Controls.IndexOf ( page );
+				if ( index != -1 ) {
+					TCITEM header = new TCITEM();
+					header.mask = (uint) TabControlItemFlags.TCIF_IMAGE;
+					header.iImage = page.ImageIndex;
 				
 					sendMessageHelper ( TabControlMessages.TCM_SETITEM, index, ref header );
 				}
@@ -573,7 +588,7 @@ namespace System.Windows.Forms {
 				if ( Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETCURSEL, selectedIndex, 0 ) != -1 )
 					OnSelectedIndexChanged ( EventArgs.Empty );
 			}
-			updatePage ( selectedIndex != -1 ? selectedIndex : 0 );
+			updatePage ( selectedIndex != -1 ? selectedIndex : 0 , true );
 		}
 
 		private void removeAllTabs ( ) {
@@ -595,16 +610,22 @@ namespace System.Windows.Forms {
 				Controls[i].Visible = ( i == index ) ? true : false;
 		}
 
+		private void setImageList ( IntPtr handle )
+		{
+			Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETIMAGELIST, 0, handle.ToInt32 ( ) );
+
+			int CurrentPage = SelectedIndex;
+			updatePage ( CurrentPage, false );
+
+			if ( Controls.Count != 0 && CurrentPage >=0 && CurrentPage < Controls.Count )
+				Controls [ CurrentPage ].Invalidate ( true );
+		}
+
 		private void recreate ( ) {
 			removeAllTabs ( );
 
 			if ( IsHandleCreated ) {
 				RecreateHandle ( );
-
-				for  ( int i = 0; i < Controls.Count; i++ ) {
-					Controls[ i ].SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
-				}
-				
 				selectPage ( SelectedIndex );
 			}
 		}

@@ -1,3 +1,11 @@
+2003-05-27  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Contols.cs : changes to SetVisibleCore, Invalidate (bool) is implemented
+	* NativeWindow.cs : don't use CS_VREDRAW and CS_HREDRAW flags
+	* ImageList.cs
+	* ImageListStreamer.cs : small fixes
+	* TabControl.cs
+	* TabPage.cs : image list support was added
+
 2003-05-26  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* ImageListStreamer.cs: added deserialization code
 	* win32functions.cs : added some prototypes required for ImageList impl.

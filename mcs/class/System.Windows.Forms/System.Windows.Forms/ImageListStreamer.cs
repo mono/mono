@@ -21,11 +21,6 @@ namespace System.Windows.Forms {
 		private static bool   comCtrlInit = false;
 
 		IntPtr himl;
-		ImageList imageList;
-
-		public ImageListStreamer ( ImageList list )
-		{
-		}
 
 		//Deserialization constructor.
 		private ImageListStreamer (SerializationInfo info, StreamingContext context) {
@@ -124,6 +119,10 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context){
+		}
+
+		internal IntPtr Handle {
+			get { return himl; }
 		}
 
 		static IntPtr readBitmap( BinaryReader reader, int ilcFlag, int cx, int cy )
@@ -230,7 +229,7 @@ namespace System.Windows.Forms {
 			return hbitmap;
 		}
 
-		private void initCommonControlsLibrary ( ) {
+		static internal void initCommonControlsLibrary ( ) {
 			if ( !comCtrlInit ) {
 				Win32.InitCommonControls ( );
 				comCtrlInit = true;

@@ -31,10 +31,12 @@ namespace System.Windows.Forms {
 
 		private string toolTipText;
 		private bool   added;
+		private int    imageIndex;
 
 		[MonoTODO]
 		public TabPage() {
 			added = false;
+			imageIndex = -1;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
@@ -49,13 +51,21 @@ namespace System.Windows.Forms {
 			set {	base.Dock = value;}
 		}
 
-		[MonoTODO]
 		public int ImageIndex {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return imageIndex; }
 			set {
-				//FIXME:
+				if ( value < -1 )
+					throw new ArgumentException(
+						string.Format("'{0}' is not a valid value for 'value'. 'value' must be greater than or equal to -1.",
+						value ) ) ;
+
+				if ( imageIndex != value ) {
+					imageIndex = value;
+
+					if ( Parent != null && Parent is TabControl ) {
+						( ( TabControl ) Parent ).pageImageIndexChanged ( this );
+					}
+				}
 			}
 		}
 		[MonoTODO]
