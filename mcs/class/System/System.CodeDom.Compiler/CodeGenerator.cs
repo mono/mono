@@ -1008,8 +1008,6 @@ namespace System.CodeDom.Compiler {
 			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
 
-			InitOutput (output, options);
-
 			foreach (CodeCommentStatement statement in type.Comments)
 				GenerateCommentStatement (statement);
 
@@ -1025,8 +1023,6 @@ namespace System.CodeDom.Compiler {
 		{
 			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
-
-			InitOutput (output, options);
 
 			foreach (CodeCommentStatement statement in type.Comments)
 				GenerateCommentStatement (statement);
