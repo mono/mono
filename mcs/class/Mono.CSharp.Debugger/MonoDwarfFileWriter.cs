@@ -14,6 +14,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics.SymbolStore;
+using System.Collections;
 using System.IO;
 	
 namespace Mono.CSharp.Debugger
@@ -26,6 +27,10 @@ namespace Mono.CSharp.Debugger
 		protected CompileUnit[] compile_units = new CompileUnit [0];
 		protected StreamWriter writer = null;
 		protected string symbol_file = null;
+
+		// Write a generic file which contains no machine dependant stuff but
+		// only function and type declarations.
+		protected readonly bool DoGeneric = true;
 
 		//
 		// DwarfFileWriter public interface
@@ -66,6 +71,14 @@ namespace Mono.CSharp.Debugger
 			get {
 				return producer_id;
 			}
+		}
+
+		//
+		// Create a debugging information entry for the given type.
+		//
+		public Die CreateType (DieCompileUnit die_compile_unit, Type type)
+		{
+			return new DieBaseType (die_compile_unit, type);
 		}
 
 		//
@@ -137,8 +150,12 @@ namespace Mono.CSharp.Debugger
 				end_index = dw.WriteSectionSize ();
 				dw.WriteUInt16 (2);
 				dw.WriteOffset ("debug_abbrev_b");
-				dw.AddRelocEntry (RelocEntryType.TARGET_ADDRESS_SIZE);
-				dw.WriteUInt8 (0);
+				if (dw.DoGeneric)
+					dw.WriteUInt8 (4);
+				else {
+					dw.AddRelocEntry (RelocEntryType.TARGET_ADDRESS_SIZE);
+					dw.WriteUInt8 (0);
+				}
 
 				if (dies != null)
 					foreach (Die die in dies)
@@ -153,24 +170,32 @@ namespace Mono.CSharp.Debugger
 		// DWARF tag from the DWARF 2 specification.
 		public enum DW_TAG {
 			TAG_compile_unit	= 0x11,
+			TAG_base_type		= 0x24,
 			TAG_subprogram		= 0x2e
 		}
 
 		// DWARF attribute from the DWARF 2 specification.
 		public enum DW_AT {
 			AT_name			= 0x03,
+			AT_byte_size		= 0x0b,
 			AT_low_pc		= 0x11,
 			AT_high_pc		= 0x12,
 			AT_language		= 0x13,
 			AT_producer		= 0x25,
-			AT_external		= 0x3f
+			AT_declaration		= 0x3c,
+			AT_encoding		= 0x3e,
+			AT_external		= 0x3f,
+			AT_type			= 0x49
 		}
 
 		// DWARF form from the DWARF 2 specification.
 		public enum DW_FORM {
 			FORM_addr		= 0x01,
 			FORM_string		= 0x08,
-			FORM_data1		= 0x0b
+			FORM_data1		= 0x0b,
+			FORM_flag		= 0x0c,
+			FORM_ref4		= 0x13
+
 		}
 
 		public enum DW_LANG {
@@ -185,8 +210,13 @@ namespace Mono.CSharp.Debugger
 			protected Die[] child_dies;
 			public readonly Die Parent;
 
+			private static int next_ref_index = 0;
+
 			protected readonly int abbrev_id;
 			protected readonly AbbrevDeclaration abbrev_decl;
+
+			public readonly int ReferenceIndex;
+			public readonly string ReferenceLabel;
 
 			//
 			// Create a new die If @parent is not null, add the newly
@@ -204,6 +234,8 @@ namespace Mono.CSharp.Debugger
 				this.Parent = parent;
 				this.abbrev_id = abbrev_id;
 				this.abbrev_decl = GetAbbrevDeclaration (abbrev_id);
+				this.ReferenceIndex = ++next_ref_index;
+				this.ReferenceLabel = ".L_DIE_" + this.ReferenceIndex;
 
 				if (parent != null)
 					parent.AddChildDie (this);
@@ -237,6 +269,10 @@ namespace Mono.CSharp.Debugger
 			//
 			public virtual void Emit ()
 			{
+				EmitMeta ();
+
+				dw.WriteLabel (ReferenceLabel);
+
 				dw.WriteULeb128 (abbrev_id);
 				DoEmit ();
 
@@ -250,6 +286,14 @@ namespace Mono.CSharp.Debugger
 			}
 
 			//
+			// This is called before actually emitting anything.
+			//
+			public virtual void EmitMeta ()
+			{
+				// Do nothing
+			}
+
+			//
 			// Derived classes must implement this function to actually
 			// write themselves to the dwarf file.
 			//
@@ -257,12 +301,22 @@ namespace Mono.CSharp.Debugger
 			// if you don't like this, you must override Emit() as well.
 			//
 			public abstract void DoEmit ();
+
+			//
+			// Gets the compile unit of this die.
+			//
+			public virtual DieCompileUnit GetCompileUnit ()
+			{
+				return null;
+			}
 		}
 
 		// DW_TAG_compile_unit
 		public class DieCompileUnit : Die
 		{
 			private static int my_abbrev_id;
+
+			protected Hashtable types = new Hashtable ();
 
 			static DieCompileUnit ()
 			{
@@ -278,6 +332,7 @@ namespace Mono.CSharp.Debugger
 			}
 
 			public readonly CompileUnit compile_unit;
+			public readonly bool DoGeneric;
 
 			//
 			// Create a new DW_TAG_compile_unit debugging information entry
@@ -287,7 +342,59 @@ namespace Mono.CSharp.Debugger
 				: base (compile_unit.DwarfFileWriter, my_abbrev_id)
 			{
 				this.compile_unit = compile_unit;
+				this.DoGeneric = dw.DoGeneric;
 				compile_unit.AddDie (this);
+			}
+
+			// Registers a new type
+			public Die RegisterType (Type type)
+			{
+				if (types.Contains (type))
+					return (Die) types [type];
+
+				Die die = dw.CreateType (this, type);
+
+				types.Add (type, die);
+				return die;
+			}
+
+			public override DieCompileUnit GetCompileUnit ()
+			{
+				return this;
+			}
+
+			public void WriteRelativeDieReference (Die target_die)
+			{
+				if (target_die.GetCompileUnit () != this)
+					throw new ArgumentException ("Target die must be in the same "
+								     + "compile unit");
+
+				dw.WriteRelativeReference (ReferenceLabel, target_die.ReferenceLabel);
+			}
+
+			public void WriteTypeReference (Type type)
+			{
+				Die type_die = RegisterType (type);
+				WriteRelativeDieReference (type_die);
+			}
+
+			public override void EmitMeta ()
+			{
+				// GDB doesn't support DW_TAG_base_types yet, so we need to
+				// include the types in each compile unit.
+				RegisterType (typeof (void));
+				RegisterType (typeof (bool));
+				RegisterType (typeof (char));
+				RegisterType (typeof (SByte));
+				RegisterType (typeof (Byte));
+				RegisterType (typeof (Int16));
+				RegisterType (typeof (UInt16));
+				RegisterType (typeof (Int32));
+				RegisterType (typeof (UInt32));
+				RegisterType (typeof (Int64));
+				RegisterType (typeof (UInt64));
+				RegisterType (typeof (Single));
+				RegisterType (typeof (Double));
 			}
 
 			public override void DoEmit ()
@@ -303,34 +410,73 @@ namespace Mono.CSharp.Debugger
 		{
 			private static int my_abbrev_id_1;
 			private static int my_abbrev_id_2;
+			private static int my_abbrev_id_3;
+			private static int my_abbrev_id_4;
 
 			static DieSubProgram ()
 			{
 				// Method without return value
 				AbbrevEntry[] entries_1 = {
 					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
-					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_data1),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
 					new AbbrevEntry (DW_AT.AT_low_pc, DW_FORM.FORM_addr),
 					new AbbrevEntry (DW_AT.AT_high_pc, DW_FORM.FORM_addr)
 				};
 				// Method with return value
 				AbbrevEntry[] entries_2 = {
 					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
-					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_data1),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
 					new AbbrevEntry (DW_AT.AT_low_pc, DW_FORM.FORM_addr),
-					new AbbrevEntry (DW_AT.AT_high_pc, DW_FORM.FORM_addr)
+					new AbbrevEntry (DW_AT.AT_high_pc, DW_FORM.FORM_addr),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
 				};
+				// Method declaration without return value
+				AbbrevEntry[] entries_3 = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
+					new AbbrevEntry (DW_AT.AT_declaration, DW_FORM.FORM_flag)
+				};
+				// Method declaration with return value
+				AbbrevEntry[] entries_4 = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
+					new AbbrevEntry (DW_AT.AT_declaration, DW_FORM.FORM_flag),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
+				};
+
 
 				AbbrevDeclaration decl_1 = new AbbrevDeclaration (
 					DW_TAG.TAG_subprogram, true, entries_1);
 				AbbrevDeclaration decl_2 = new AbbrevDeclaration (
 					DW_TAG.TAG_subprogram, true, entries_2);
+				AbbrevDeclaration decl_3 = new AbbrevDeclaration (
+					DW_TAG.TAG_subprogram, true, entries_3);
+				AbbrevDeclaration decl_4 = new AbbrevDeclaration (
+					DW_TAG.TAG_subprogram, true, entries_4);
 
 				my_abbrev_id_1 = RegisterAbbrevDeclaration (decl_1);
 				my_abbrev_id_2 = RegisterAbbrevDeclaration (decl_2);
+				my_abbrev_id_3 = RegisterAbbrevDeclaration (decl_3);
+				my_abbrev_id_4 = RegisterAbbrevDeclaration (decl_4);
+			}
+
+			private static int get_abbrev_id (DieCompileUnit parent_die, Type ret_type)
+			{
+				if (parent_die.DoGeneric)
+					if (ret_type == typeof (void))
+						return my_abbrev_id_3;
+					else
+						return my_abbrev_id_4;
+				else
+					if (ret_type == typeof (void))
+						return my_abbrev_id_1;
+					else
+						return my_abbrev_id_2;
 			}
 
 			protected string name;
+			protected Type ret_type;
+			protected DieCompileUnit comp_unit_die;
 
 			//
 			// Create a new DW_TAG_subprogram debugging information entry
@@ -338,21 +484,147 @@ namespace Mono.CSharp.Debugger
 			// to the @parent_die
 			//
 			public DieSubProgram (DieCompileUnit parent_die, string name)
-				: base (parent_die, my_abbrev_id_1)
+				: this (parent_die, name, typeof (void))
+			{ }
+
+			public DieSubProgram (DieCompileUnit parent_die,
+					      System.Reflection.MethodInfo method_info)
+				: this (parent_die, method_info.Name, method_info.ReturnType)
+			{ }
+
+			public DieSubProgram (DieCompileUnit parent_die, string name, Type ret_type)
+				: base (parent_die, get_abbrev_id (parent_die, ret_type))
 			{
 				this.name = name;
+				this.comp_unit_die = parent_die;
+				ret_type = ret_type;
 			}
 
 			public override void DoEmit ()
 			{
 				dw.WriteString (name);
 				dw.WriteFlag (true);
-				dw.AddRelocEntry (RelocEntryType.IL_OFFSET);
-				dw.WriteAddress (0);
-				dw.AddRelocEntry (RelocEntryType.IL_OFFSET);
-				dw.WriteAddress (0);
+				if (dw.DoGeneric)
+					dw.WriteFlag (true);
+				else {
+					dw.AddRelocEntry (RelocEntryType.IL_OFFSET);
+					dw.WriteAddress (0);
+					dw.AddRelocEntry (RelocEntryType.IL_OFFSET);
+					dw.WriteAddress (0);
+				}
+				if (ret_type != null) {
+					Die ret_type_die = comp_unit_die.RegisterType (ret_type);
+					comp_unit_die.WriteRelativeDieReference (ret_type_die);
+				}
 			}
 		}
+
+		// DW_TAG_base_type
+		public class DieBaseType : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieBaseType ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_encoding, DW_FORM.FORM_data1),
+					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data1)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_base_type, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected Type type;
+
+			//
+			// Create a new DW_TAG_base_type debugging information entry
+			//
+			public DieBaseType (DieCompileUnit parent_die, Type type)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.type = type;
+			}
+
+			protected enum DW_ATE {
+				ATE_void		= 0x00,
+				ATE_address		= 0x01,
+				ATE_boolean		= 0x02,
+				ATE_complex_float	= 0x03,
+				ATE_float		= 0x04,
+				ATE_signed		= 0x05,
+				ATE_signed_char		= 0x06,
+				ATE_unsigned		= 0x07,
+				ATE_unsigned_char	= 0x08
+			}
+
+			public override void DoEmit ()
+			{
+				string name = type.Name;
+
+				dw.WriteString (name);
+				switch (name) {
+				case "Void":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_address);
+					dw.WriteUInt8 (0);
+					break;
+				case "Boolean":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_boolean);
+					dw.WriteUInt8 (1);
+					break;
+				case "Char":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned_char);
+					dw.WriteUInt8 (2);
+					break;
+				case "SByte":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_signed);
+					dw.WriteUInt8 (1);
+					break;
+				case "Byte":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
+					dw.WriteUInt8 (1);
+					break;
+				case "Int16":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_signed);
+					dw.WriteUInt8 (2);
+					break;
+				case "UInt16":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
+					dw.WriteUInt8 (2);
+					break;
+				case "Int32":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_signed);
+					dw.WriteUInt8 (4);
+					break;
+				case "UInt32":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
+					dw.WriteUInt8 (4);
+					break;
+				case "Int64":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_signed);
+					dw.WriteUInt8 (8);
+					break;
+				case "UInt64":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
+					dw.WriteUInt8 (8);
+					break;
+				case "Single":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_float);
+					dw.WriteUInt8 (4);
+					break;
+				case "Double":
+					dw.WriteUInt8 ((int) DW_ATE.ATE_float);
+					dw.WriteUInt8 (8);
+					break;
+				default:
+					throw new ArgumentException ("Not a base type: " + type);
+				}
+			}
+		}
+
 
 		protected const int reloc_table_version = 1;
 
@@ -580,7 +852,6 @@ namespace Mono.CSharp.Debugger
 			WriteSectionEnd ();
 		}
 
-
 		protected void WriteAnonLabel (int index)
 		{
 			writer.WriteLine (".L_" + index + ":");
@@ -600,6 +871,11 @@ namespace Mono.CSharp.Debugger
 			WriteAnonLabel (start_index);
 
 			return end_index;
+		}
+
+		protected void WriteRelativeReference (string start_label, string end_label)
+		{
+			writer.WriteLine ("\t.long\t\t" + end_label + " - " + start_label);
 		}
 
 		protected void WriteSectionStart (Section section)
