@@ -54,13 +54,13 @@ namespace System.Web.Security
 			}
 				
 			HttpCookie cookie = context.Request.Cookies [cookieName];
-			if (cookie == null || (cookie.Expires != DateTime.MinValue && cookie.Expires < DateTime.Now))
+			if (cookie == null || (cookie.Expires != DateTime.MinValue && cookie.Expires < DateTime.Now)) {
 				return;
+			}
 
 			FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt (cookie.Value);
 			FormsAuthentication.RenewTicketIfOld (ticket);
 			context.User = new GenericPrincipal (new FormsIdentity (ticket), new string [0]);
-			Console.WriteLine ("name: " + ticket.Name);
 
 			cookie.Value = FormsAuthentication.Encrypt (ticket);
 			cookie.Path = cookiePath;
@@ -82,7 +82,6 @@ namespace System.Web.Security
 				return;
 
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
-			Console.WriteLine ("Redirecting to login page: '{0}'", config.LoginUrl);
 			context.Response.Redirect (config.LoginUrl);
 		}
 

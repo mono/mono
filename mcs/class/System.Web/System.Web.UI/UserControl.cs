@@ -131,6 +131,7 @@ namespace System.Web.UI
 			if (initialized)
 				return;
 			initialized = true;
+			this.Page = page;
 			WireupAutomaticEvents ();
 			FrameworkInitialize ();
 		}
@@ -155,8 +156,7 @@ namespace System.Web.UI
 
 		protected override void OnInit (EventArgs e)
 		{
-			if (Page != null)
-				InitializeAsUserControl (Page);
+			InitializeAsUserControl (Page);
 
 			base.OnInit(e);
 		}

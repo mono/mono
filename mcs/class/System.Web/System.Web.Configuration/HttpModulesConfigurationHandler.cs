@@ -73,6 +73,7 @@ namespace System.Web.Configuration
 				HandlersUtil.ThrowException ("Unrecognized element", child);
 			}
 
+			mapper.Add (new ModuleItem ("DefaultAuthentication", typeof (DefaultAuthenticationModule)));
 			return mapper;
 		}
 	}

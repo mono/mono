@@ -1,3 +1,15 @@
+2003-01-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(AddedControl): take the children to the same state of the parent.
+	(InitRecursive): set the page of the children.
+
+	* Page.cs: removed one line (it's done a few lines above).
+
+	* UserControl.cs:
+	(OnInit): always call InitializeAsUserControl
+	(InitializeAsUserControl): sets the page for the control.
+
 2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: fixed bug #36037.

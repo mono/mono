@@ -1,3 +1,10 @@
+2003-01-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultAuthenticationModule.cs: implemented. It just create a default 
+	unauthenticated user when no one else provided one.
+
+	* FormsAuthenticationModule.cs: removed debug output.
+
 2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthenticationModule.cs: remove debug lines.

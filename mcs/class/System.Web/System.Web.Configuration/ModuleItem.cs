@@ -21,6 +21,14 @@ namespace System.Web.Configuration {
 				throw new HttpException(HttpRuntime.FormatResourceString("type_not_module"));
 		}
 
+		public ModuleItem(string name, Type type) {
+			_typeName = type.ToString ();
+			_name = name;
+			_type = type;
+			if (!typeof(IHttpModule).IsAssignableFrom(_type))
+				throw new HttpException(HttpRuntime.FormatResourceString("type_not_module"));
+		}
+
 		public IHttpModule Create() {
 			return (IHttpModule) HttpRuntime.CreateInternalObject(_type);
 		}

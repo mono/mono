@@ -40,6 +40,7 @@ namespace System.Web
 		// ID objects used to indentify the event
 		static object AcquireRequestStateId = new Object ();
 		static object AuthenticateRequestId = new Object ();
+		static object DefaultAuthenticationId = new Object ();
 		static object EndRequestId = new Object ();
 		static object DisposedId = new Object ();
 		static object BeginRequestId = new Object ();
@@ -125,6 +126,11 @@ namespace System.Web
 		public event EventHandler PreSendRequestHeaders {
 			add { Events.AddHandler (PreSendRequestHeadersId, value); }
 			remove { Events.RemoveHandler (PreSendRequestHeadersId, value); }
+		}
+
+		internal event EventHandler DefaultAuthentication {
+			add { Events.AddHandler (DefaultAuthenticationId, value); }
+			remove { Events.RemoveHandler (DefaultAuthenticationId, value); }
 		}
 
 		public void AddOnAcquireRequestStateAsync (BeginEventHandler beg, EndEventHandler end)
@@ -505,6 +511,10 @@ namespace System.Web
 				if (null != _app._authenticateRequestAsync)
 					_app._authenticateRequestAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.AuthenticateRequestId, states);
+
+				// DefaultAuthentication
+				EventHandler defaultAuthHandler = (EventHandler) _app.Events [HttpApplication.DefaultAuthenticationId];
+				states.Add (new EventState (_app, defaultAuthHandler));
 
 				// AuthorizeRequest
 				if (null != _app._authorizeRequestAsync)

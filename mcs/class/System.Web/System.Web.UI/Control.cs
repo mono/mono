@@ -117,6 +117,10 @@ namespace System.Web.UI
 		private bool creatingControls = false;
 		private bool bindingContainer = true;
 		private bool autoEventWireup = true;
+
+		bool inited = false;
+		bool loaded = false;
+		bool prerendered = false;
         	
         	    private DataBindingCollection dataBindings = null;
 
@@ -355,9 +359,14 @@ namespace System.Web.UI
 			if (control.AutoID == true && control.ID == null)
 				control.ID = ID + "_ctrl_" + defaultNumberID++;
 
-			control.InitRecursive (_isNamingContainer ? this : NamingContainer);
-			control.LoadRecursive ();
-			control.PreRenderRecursiveInternal ();
+			if (inited)
+				control.InitRecursive (_isNamingContainer ? this : NamingContainer);
+
+			if (loaded)
+				control.LoadRecursive ();
+
+			if (prerendered)
+				control.PreRenderRecursiveInternal ();
 		}
 
                 protected virtual void AddParsedSubObject(object obj) //DIT
@@ -398,15 +407,17 @@ namespace System.Web.UI
                 protected virtual Control FindControl(string id, int pathOffset)
                 {
                         //TODO: I think there is Naming Container stuff here. Redo.
-                        int i;
-			Control ctrl;
-                        for (i = pathOffset; i < _controls.Count; i++){
-				ctrl = _controls [i];
+			EnsureChildControls ();
+			if (_controls == null)
+				return null;
+
+                        for (int i = pathOffset; i < _controls.Count; i++){
+				Control ctrl = _controls [i];
 				
                                 if (ctrl.ID == id)
 					return ctrl;
 
-				if (ctrl.Controls.Count > 0){
+				if (ctrl._controls != null && ctrl._controls.Count > 0){
 					Control other = ctrl.FindControl (id);
 					if (other != null)
 						return other;
@@ -638,6 +649,7 @@ namespace System.Web.UI
                 {
                         OnLoad(EventArgs.Empty);
                         if (_controls != null) foreach (Control c in _controls) c.LoadRecursive();
+			loaded = true;
                 }
 
                 protected void UnloadRecursive(Boolean dispose)
@@ -658,13 +670,21 @@ namespace System.Web.UI
 				foreach (Control c in _controls)
 					c.PreRenderRecursiveInternal ();
 			}
+			prerendered = true;
                 }
 
                 protected void InitRecursive(Control namingContainer)
                 {
-                        if (_controls != null) foreach (Control c in _controls) c.InitRecursive(namingContainer);
-                        OnInit(EventArgs.Empty);
+                        if (_controls != null) {
+				foreach (Control c in _controls) {
+					c._page = Page;
+					c.InitRecursive (namingContainer);
+				}
+			}
+
+                        OnInit (EventArgs.Empty);
 			TrackViewState ();
+			inited = true;
                 }
                 
                 internal object SaveViewStateRecursive()

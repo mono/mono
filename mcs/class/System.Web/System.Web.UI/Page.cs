@@ -451,7 +451,6 @@ public class Page : TemplateControl, IHttpHandler
 		WebTrace.WriteLine ("InitRecursive");
 		InitRecursive (null);
 		renderingForm = false;	
-		_context = context;
 		if (IsPostBack) {
 			LoadPageViewState ();
 			ProcessPostData (DeterminePostBackMode (), false);
