@@ -27,6 +27,7 @@ namespace System.Runtime.Remoting {
 
 		public WellKnownClientTypeEntry (string typeName, string assemblyName, string objectUrl)
 		{
+			obj_url = objectUrl;
 			AssemblyName = assemblyName;
 			TypeName = typeName;
 			Assembly a = Assembly.Load (assemblyName);

@@ -2,23 +2,35 @@
 // System.Runtime.Remoting.SoapServices.cs
 //
 // Author: Jaime Anguiano Olarra (jaime@gnome.org)
-//         Lluis Sanchez Gual (lsg@ctv.es)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (c) 2002, Jaime Anguiano Olarra
 // 
 
 
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Metadata;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace System.Runtime.Remoting {
 
-	[Serializable]
-	[ClassInterface (ClassInterfaceType.AutoDual)]
 	public class SoapServices
 	{
+		static Hashtable _xmlTypes = new Hashtable ();
+		static Hashtable _xmlElements = new Hashtable ();
+		static Hashtable _soapActions = new Hashtable ();
+		static Hashtable _soapActionsMethods = new Hashtable ();
+		static Hashtable _typeInfos = new Hashtable ();
+		
+		class TypeInfo
+		{
+			public Hashtable Attributes;
+			public Hashtable Elements;
+		}
+		
 		// Private constructor: nobody instantiates this class
 		private SoapServices () {}
 		
@@ -87,33 +99,62 @@ namespace System.Runtime.Remoting {
 				return false;
 		}
 
-		[MonoTODO]
 		public static void GetInteropFieldTypeAndNameFromXmlAttribute (Type containingType,
-										string xmlAttribute,
-										string xmlNamespace,
-										out Type type,
-										out string name) {
-			throw new NotImplementedException (); 
-		
+										string xmlAttribute, string xmlNamespace,
+										out Type type, out string name) 
+		{
+			TypeInfo tf = (TypeInfo) _typeInfos [containingType];
+			Hashtable ht = tf != null ? tf.Attributes : null;
+			GetInteropFieldInfo (ht, xmlAttribute, xmlNamespace, out type, out name);
 		}
 
-		[MonoTODO]
 		public static void GetInteropFieldTypeAndNameFromXmlElement (Type containingType,
-										string xmlElement,
-										string xmlNamespace,
-										out Type type,
-										out string name) {
-			throw new NotImplementedException (); 
+										string xmlElement, string xmlNamespace,
+										out Type type, out string name) 
+		{
+			TypeInfo tf = (TypeInfo) _typeInfos [containingType];
+			Hashtable ht = tf != null ? tf.Elements : null;
+			GetInteropFieldInfo (ht, xmlElement, xmlNamespace, out type, out name);
 		}
 
-		[MonoTODO]
-		public static Type GetInteropTypeFromXmlElement (string xmlElement, string xmlNamespace) {
-			throw new NotImplementedException (); 
+		public static void GetInteropFieldInfo (Hashtable fields, 
+										string xmlName, string xmlNamespace,
+										out Type type, out string name) 
+		{
+			if (fields != null)
+			{
+				FieldInfo field = (FieldInfo) fields [GetNameKey (xmlName, xmlNamespace)];
+				if (field != null)
+				{
+					type = field.FieldType;
+					name = field.Name;
+					return;
+				}
+			}
+			type = null;
+			name = null;
+		}
+		
+		static string GetNameKey (string name, string namspace)
+		{
+			if (namspace == null) return name;
+			else return name + " " + namspace;
+		}
+
+		public static Type GetInteropTypeFromXmlElement (string xmlElement, string xmlNamespace) 
+		{
+			lock (_xmlElements.SyncRoot)
+			{
+				return (Type) _xmlElements [xmlElement + " " + xmlNamespace];
+			}
 		}
 			
-		[MonoTODO]
-		public static Type GetInteropTypeFromXmlType (string xmlType, string xmlTypeNamespace) {
-			throw new NotImplementedException (); 
+		public static Type GetInteropTypeFromXmlType (string xmlType, string xmlTypeNamespace) 
+		{
+			lock (_xmlTypes.SyncRoot)
+			{
+				return (Type) _xmlTypes [xmlType + " " + xmlTypeNamespace];
+			}
 		}
 
 		private static string GetAssemblyName(MethodBase mb)
@@ -126,13 +167,24 @@ namespace System.Runtime.Remoting {
 
 		public static string GetSoapActionFromMethodBase (MethodBase mb) 
 		{
-			string ns = CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.Name, GetAssemblyName(mb));
-			return ns + "#" + mb.Name;
+			return InternalGetSoapAction (mb);
 		}
 
 		public static bool GetTypeAndMethodNameFromSoapAction (string soapAction, 
 									out string typeName, 
-									out string methodName) {
+									out string methodName) 
+		{
+			lock (_soapActions.SyncRoot)
+			{
+				MethodBase mb = (MethodBase) _soapActionsMethods [soapAction];
+				if (mb != null)
+				{
+					typeName = mb.DeclaringType.AssemblyQualifiedName;
+					methodName = mb.Name;
+					return true;
+				}
+			}
+			
 			string type;
 			string assembly;
 
@@ -155,12 +207,29 @@ namespace System.Runtime.Remoting {
 			return true;
 		}
 
-		[MonoTODO]
-		public static bool GetXmlElementForInteropType (Type type, 
-								out string xmlElement, 
-								out string xmlNamespace) {
-			throw new NotImplementedException (); 
-
+		public static bool GetXmlElementForInteropType (Type type, out string xmlElement, out string xmlNamespace)
+		{
+			SoapTypeAttribute att = (SoapTypeAttribute) InternalRemotingServices.GetCachedSoapAttribute (type);
+			if (att == null || (att.XmlElementName == null && att.XmlNamespace == null))
+			{
+				xmlElement = null;
+				xmlNamespace = null;
+				return false;
+			}
+			
+			if (att.XmlElementName != null)
+				xmlElement = att.XmlElementName;
+			else
+				xmlElement = type.Name;
+			
+			if (att.XmlNamespace != null)
+				xmlNamespace = att.XmlNamespace;
+			else if (att.XmlTypeNamespace != null)
+				xmlNamespace = att.XmlTypeNamespace;
+			else
+				xmlNamespace = CodeXmlNamespaceForClrTypeNamespace (type.Namespace, type.Assembly.GetName().Name);
+				
+			return true;
 		}
 
 		public static string GetXmlNamespaceForMethodCall (MethodBase mb) 
@@ -173,12 +242,28 @@ namespace System.Runtime.Remoting {
 			return CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.Name, GetAssemblyName(mb));
 		}
 
-		[MonoTODO]
-		public static bool GetXmlTypeForInteropType (Type type, 
-							out string xmlType, 
-							out string xmlTypeNamespace) {
-			throw new NotImplementedException (); 
+		public static bool GetXmlTypeForInteropType (Type type, out string xmlType, out string xmlTypeNamespace) 
+		{
+			SoapTypeAttribute att = (SoapTypeAttribute) InternalRemotingServices.GetCachedSoapAttribute (type);
+			
+			if (att == null || (att.XmlTypeName == null && att.XmlTypeNamespace == null))
+			{
+				xmlType = null;
+				xmlTypeNamespace = null;
+				return false;
+			}
+			
+			if (att.XmlTypeName != null)
+				xmlType = att.XmlTypeName;
+			else
+				xmlType = type.Name;
+			
+			if (att.XmlTypeNamespace != null)
+				xmlTypeNamespace = att.XmlTypeNamespace;
+			else
+				xmlTypeNamespace = CodeXmlNamespaceForClrTypeNamespace (type.Namespace, type.Assembly.GetName().Name);
 
+			return true;
 		}
 
 		public static bool IsClrTypeNamespace (string namespaceString) 
@@ -194,47 +279,105 @@ namespace System.Runtime.Remoting {
 
 			if (methodName != mb.Name) return false;
 
-			string methodClassType = mb.DeclaringType.FullName + ", " + mb.DeclaringType.Assembly.GetName().Name;
+			string methodClassType = mb.DeclaringType.AssemblyQualifiedName;
 			return typeName == methodClassType;
 		}
 
-		[MonoTODO]
-		public static void PreLoad (Assembly assembly) {
-			throw new NotImplementedException (); 
-
+		public static void PreLoad (Assembly assembly) 
+		{
+			foreach (Type t in assembly.GetTypes ())
+				PreLoad (t);
 		}
 
-		[MonoTODO]
-		public static void PreLoad (Type type) {
-			throw new NotImplementedException (); 
-
+		public static void PreLoad (Type type) 
+		{
+			string name, namspace;
+			TypeInfo tf = _typeInfos [type] as TypeInfo;
+			if (tf != null) return;
+			
+			if (GetXmlTypeForInteropType (type, out name, out namspace))
+				RegisterInteropXmlType (name, namspace, type);
+				
+			if (GetXmlElementForInteropType (type, out name, out namspace))
+				RegisterInteropXmlElement (name, namspace, type);
+				
+			lock (_typeInfos.SyncRoot)
+			{
+				tf = new TypeInfo ();
+				FieldInfo[] fields = type.GetFields (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				
+				foreach (FieldInfo field in fields)
+				{
+					SoapFieldAttribute att = (SoapFieldAttribute) Attribute.GetCustomAttribute (field, typeof (SoapFieldAttribute));
+					if (att == null) continue;
+					
+					string key = GetNameKey (att.XmlElementName, att.XmlNamespace);
+					if (att.UseAttribute)
+					{
+						if (tf.Attributes == null) tf.Attributes = new Hashtable ();
+						tf.Attributes [key] = field;
+					}
+					else
+					{
+						if (tf.Elements == null) tf.Elements = new Hashtable ();
+						tf.Elements [key] = field;
+					}
+				}
+				_typeInfos [type] = tf;
+			}			
 		}
 		
-		[MonoTODO]
-		public static void RegisterInteropXmlElement (string xmlElement, 
-								string xmlNamespace, 
-								Type type) {
-			throw new NotImplementedException (); 
-
+		public static void RegisterInteropXmlElement (string xmlElement, string xmlNamespace, Type type) 
+		{
+			lock (_xmlElements.SyncRoot)
+			{
+				_xmlElements [xmlElement + " " + xmlNamespace] = type;
+			}
 		}
 
-		[MonoTODO]
-		public static void RegisterInteropXmlType (string xmlType, 
-							string xmlTypeNamespace, 
-							Type type) {
-			throw new NotImplementedException (); 
-	
+		public static void RegisterInteropXmlType (string xmlType, string xmlTypeNamespace, Type type) 
+		{
+			lock (_xmlTypes.SyncRoot)
+			{
+				_xmlTypes [xmlType + " " + xmlTypeNamespace] = type;
+			}
 		}
 
-		[MonoTODO]
-		public static void RegisterSoapActionForMethodBase (MethodBase mb) {
-			throw new NotImplementedException (); 
-	
+		public static void RegisterSoapActionForMethodBase (MethodBase mb) 
+		{
+			InternalGetSoapAction (mb);
+		}
+		
+		public static string InternalGetSoapAction (MethodBase mb)
+		{
+			lock (_soapActions.SyncRoot)
+			{
+				string action = (string) _soapActions [mb];
+				if (action == null)
+				{
+					SoapMethodAttribute att = (SoapMethodAttribute) Attribute.GetCustomAttribute (mb, typeof (SoapMethodAttribute));
+					if (att != null)
+						action = att.SoapAction;
+					
+					if (action == null)
+					{
+						string ns = CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.FullName, GetAssemblyName(mb));
+						action = ns + "#" + mb.Name;
+					}
+					_soapActions [mb] = action;
+					_soapActionsMethods [action] = mb;
+				}
+				return action;
+			}
 		}
 
-		[MonoTODO]
-		public static void RegisterSoapActionForMethodBase (MethodBase mb, string soapAction) {
-			throw new NotImplementedException (); 
+		public static void RegisterSoapActionForMethodBase (MethodBase mb, string soapAction) 
+		{
+			lock (_soapActions.SyncRoot)
+			{
+				_soapActions [mb] = soapAction;
+				_soapActionsMethods [soapAction] = mb;
+			}
 		}
 	}
 }
