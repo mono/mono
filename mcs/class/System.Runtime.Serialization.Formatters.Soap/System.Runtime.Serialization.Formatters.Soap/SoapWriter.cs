@@ -268,13 +268,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			Type[] paramTypes = message.ParamTypes;
 			object[] paramValues = message.ParamValues;
 			int length = (paramNames != null)?paramNames.Length:0;
-
 			for(int i = 0; i < length; i++) 
 			{
 				_xmlWriter.WriteStartElement(paramNames[i]);
-//				bool specifyEncoding = false;
-//				if(paramValues[i].GetType() != paramTypes[i]) specifyEncoding = true;
-				SerializeComponent(paramValues[i], IsEncodingNeeded(paramValues[i], paramTypes[i]));
+				SerializeComponent(paramValues[i], true);
 				_xmlWriter.WriteEndElement();
 			}
 
@@ -518,15 +515,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				return;
 			}
 
-			if(obj is double)
-				_xmlWriter.WriteString(((double)obj).ToString("R"));
-			else if(obj is DateTime)
-				_xmlWriter.WriteString(((DateTime)obj).ToString("s")
-					+ ((DateTime)obj).ToString(".fffffffzzz"));
-			else
-				_xmlWriter.WriteString(obj.ToString());
+			_xmlWriter.WriteString (SoapTypeMapper.GetXsdValue (obj));
 		}
-
+		
 		private void EncodeType(Type type) 
 		{
 			if(type == null) 

@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using System.Xml.Schema;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.Remoting;
@@ -115,7 +116,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 		private bool IsNull()
 		{
-			string tmp = xmlReader["xsi:null"];
+			string tmp = xmlReader["null", XmlSchema.InstanceNamespace];
 			return (tmp == null || tmp == string.Empty)?false:true;
 		}
 
@@ -143,7 +144,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		{
 			Type type = null;
 			if(GetId() != 0) return typeof(string);
-			string strValue = xmlReader["xsi:type"];
+			
+			string strValue = xmlReader["type", XmlSchema.InstanceNamespace];
 			if(strValue == null) return null;
 			string[] strName = strValue.Split(':');
 			string namespaceURI = xmlReader.LookupNamespace(strName[0]);
@@ -181,10 +183,18 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			{
 				long paramId, paramHref;
 				object objParam = null;
-				paramNames.Add(xmlReader.Name);
+				paramNames.Add (xmlReader.Name);
+				Type paramType = null;
+				
+				if (message.ParamTypes != null) {
+					if (i >= message.ParamTypes.Length)
+						throw new SerializationException ("Not enough parameter types in SoapMessages");
+					paramType = message.ParamTypes [i];
+				}
+				
 				indices[0] = i;
 				objParam = DeserializeComponent(
-					null,
+					paramType,
 					out paramId,
 					out paramHref,
 					paramValuesId,
@@ -197,7 +207,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				}
 				else if(paramId != 0) 
 				{
-					RegisterObject(paramId, objParam, null, paramValuesId, null, indices);
+//					RegisterObject(paramId, objParam, null, paramValuesId, null, indices);
 				}
 				else 
 				{
@@ -347,11 +357,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			if(SoapTypeMapper.CanBeValue(type)) 
 			{
 				string elementString = xmlReader.ReadElementString();
-				object obj;
-				if(type.IsEnum)
-					obj = Enum.Parse(type, elementString);
-				else
-					obj = Convert.ChangeType(elementString, type);
+				object obj = SoapTypeMapper.ParseXsdValue (elementString, type);
+				
 				if(id > 0) 
 					RegisterObject(id, obj, info, parentId, parentMemberInfo, indices);
 
@@ -593,7 +600,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			int[] indices)
 		{
 			if (parentObjectId == 0) indices = null;
-
 
 			if (!objectInstance.GetType().IsValueType || parentObjectId == 0)
 				objMgr.RegisterObject (objectInstance, objectId, info, 0, null, null);

@@ -14,6 +14,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Xml.Schema;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using System.Globalization;
 
 namespace System.Runtime.Serialization.Formatters.Soap {
 
@@ -338,7 +340,53 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 
 		}
-
+		
+		public static string GetXsdValue (object value)
+		{
+			if (value is DateTime) {
+				return SoapDateTime.ToString ((DateTime)value);
+			}
+			else if (value is decimal) {
+				return ((decimal) value).ToString (CultureInfo.InvariantCulture);
+			}
+			else if (value is double) {
+				return ((double) value).ToString (CultureInfo.InvariantCulture);
+			}
+			else if (value is float) {
+				return ((float) value).ToString (CultureInfo.InvariantCulture);
+			}
+			else if (value is TimeSpan) {
+				return SoapDuration.ToString ((TimeSpan)value);
+			}
+			else {
+				return value.ToString ();
+			}
+		}
+		
+		public static object ParseXsdValue (string value, Type type)
+		{
+			if (type == typeof(DateTime)) {
+				return SoapDateTime.Parse (value);
+			}
+			else if (type == typeof(decimal)) {
+				return decimal.Parse (value, CultureInfo.InvariantCulture);
+			}
+			else if (type == typeof(double)) {
+				return double.Parse (value, CultureInfo.InvariantCulture);
+			}
+			else if (type == typeof(float)) {
+				return float.Parse (value, CultureInfo.InvariantCulture);
+			}
+			else if (type == typeof (TimeSpan)) {
+				return SoapDuration.Parse (value);
+			}
+			else if(type.IsEnum) {
+				return Enum.Parse(type, value);
+			}
+			else {
+				return Convert.ChangeType (value, type, CultureInfo.InvariantCulture);
+			}
+		}
 
 	}
 }
