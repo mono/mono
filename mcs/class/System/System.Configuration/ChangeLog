@@ -1,9 +1,29 @@
+2004-08-16  Duncan Mak  <duncan@ximian.com>
+
+	* ConfigurationElement.cs (InitializeDefault): Made virtual.
+
+	* AppSettingsSection.cs:
+	* Configuration.cs:
+	* ConfigurationLocation.cs:
+	* ConfigurationLocationCollection.cs:
+	* ConfigurationSection.cs:
+	* ConfigurationSectionCollection.cs:
+	* ConfigurationSectionGroup.cs:
+	* ConfigurationSectionGroupCollection.cs:
+	* ConnectionStringsSection.cs: Added stubs and bits of implementation.
+
+	Other than ConfigurationElementCollection and
+	ConnectionStringsSectionCollection, we now have the basic skeleton
+	for implementing the configuration system in the
+	System.Configuration namespace.
+
 2004-08-11  Duncan Mak  <duncan@ximian.com>
 
 	* ProtectedConfigurationProvider.cs: Use XML_DEP.
 
 2004-08-11  Duncan Mak  <duncan@ximian.com>	
 
+	* ProtectedConfigurationProvider.cs:
 	* ProviderBase.cs: Implemented.
 
 	* ConfigurationPropertyAttribute.cs: Implemented attribute.

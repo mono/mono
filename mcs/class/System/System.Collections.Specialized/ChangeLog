@@ -1,3 +1,9 @@
+2004-08-16  Duncan Mak  <duncan@ximian.com>
+
+	* NameObjectCollectionBase.cs: Fix line endings. It's mostly in
+	DOS endings, so I left it at that.
+	(GetEnumerator): Made virtual.
+
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HybridDictionary.cs: Fixed Contains for null argument (again). Return

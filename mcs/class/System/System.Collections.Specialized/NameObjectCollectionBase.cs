@@ -265,7 +265,7 @@ namespace System.Collections.Specialized
 		/// <remark>This enumerator returns the keys of the collection as strings.</remark>
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerator GetEnumerator()
+		public virtual IEnumerator GetEnumerator()
 		{
 			return new _KeysEnumerator(this);
 		}

@@ -114,7 +114,7 @@ namespace System.Configuration
                         throw new NotImplementedException ();
                 }
 
-                protected internal void InitializeDefault ()
+                protected internal virtual void InitializeDefault ()
                 {
                         throw new NotImplementedException ();
                 }
