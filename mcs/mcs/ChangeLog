@@ -1,3 +1,9 @@
+2004-07-18  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs (Iterator.Define): Moved the
+	`container.AddInterator (this)' call here from the .ctor; only do
+	it if we resolved successfully.
+
 2004-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs (handle_preprocessing_directive): Do not return

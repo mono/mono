@@ -110,6 +110,7 @@ namespace Mono.CSharp {
 	}
 
 	public class Iterator : Class {
+		string original_name;
 		Block original_block;
 		Block block;
 
@@ -253,12 +254,11 @@ namespace Mono.CSharp {
 			this.return_type = return_type;
 			this.param_types = param_types;
 			this.parameters = parameters;
+			this.original_name = name;
 			this.original_block = block;
 			this.block = new Block (null);
 
 			is_static = (modifiers & Modifiers.STATIC) != 0;
-
-			container.AddIterator (this);
 		}
 
 		public bool Define ()
@@ -268,7 +268,7 @@ namespace Mono.CSharp {
 					1624, Location,
 					"The body of `{0}' cannot be an iterator block " +
 					"because '{1}' is not an iterator interface type",
-					Name, TypeManager.CSharpName (return_type));
+					original_name, TypeManager.CSharpName (return_type));
 				return false;
 			}
 
@@ -290,6 +290,8 @@ namespace Mono.CSharp {
 			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
 
 			iterator_type_expr = new TypeExpression (iterator_type, Location);
+
+			container.AddIterator (this);
 
 			Bases = list;
 			return true;
