@@ -1,5 +1,8 @@
 2004-03-13  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: keep track of return's parent.
+	* Statement.cs: added parent parameter to constructor.
+
 	* expression.cs: refactored Emit code from Identifier, now we take
 	care of function's paramenter references. First attack to function
 	calls, check if Resolve from Call succeed.

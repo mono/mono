@@ -651,7 +651,7 @@ _loop15_breakloop:			;
 		if (0==inputState.guessing)
 		{
 			
-			if_stm = new If (parent, cond, true_stm, false_stm);
+					  if_stm = new If (parent, cond, true_stm, false_stm);
 				
 		}
 		return if_stm;
@@ -821,7 +821,7 @@ _loop15_breakloop:			;
 				e=expr(parent);
 				if (0==inputState.guessing)
 				{
-					r = new Return (e);
+					r = new Return (parent, e);
 				}
 				break;
 			}
