@@ -43,6 +43,7 @@ namespace System
 
 		static string GetAppBase (string appBase)
 		{
+			if (appBase == null) return null;
 			int len = appBase.Length;
 			if (len >= 8 && appBase.ToLower ().StartsWith ("file://")) {
 				appBase = appBase.Substring (7);
@@ -50,10 +51,7 @@ namespace System
 					appBase = appBase.Replace ('/', Path.DirectorySeparatorChar);
 
 			} else if (appBase.IndexOf (':') == -1) {
-				if (!Path.IsPathRooted (appBase))
-					appBase = Path.Combine (Path.GetTempPath (), appBase);
-				else
-					appBase = Path.GetFullPath (appBase);
+				appBase = Path.GetFullPath (appBase);
 			}
 
 			return appBase;
@@ -61,10 +59,10 @@ namespace System
 		
 		public string ApplicationBase {
 			get {
-				return GetAppBase (application_base);
+				return application_base;
 			}
 			set {
-				application_base = value;
+				application_base = GetAppBase (value);
 			}
 		}
 
@@ -106,10 +104,19 @@ namespace System
 
 		public string DynamicBase {
 			get {
-				return dynamic_base;
+				if (Path.IsPathRooted (dynamic_base))
+					return dynamic_base;
+
+				if (ApplicationBase == null)
+					throw new MemberAccessException ("The ApplicationBase must be set before retrieving this property.");
+				
+				return Path.Combine (ApplicationBase, dynamic_base);
 			}
 			set {
-				dynamic_base = value;
+				if (application_name == null)
+					throw new MemberAccessException ("ApplicationName must be set before the DynamicBase can be set.");
+				uint id = (uint) application_name.GetHashCode ();
+				dynamic_base = Path.Combine (value, id.ToString("x"));
 			}
 		}
 

@@ -131,16 +131,6 @@ namespace System {
 			}
 		}
 
-		private static bool IsDigit (char c)
-		{
-			return !(c < '0' || c > '9'); 
-		}
-		
-		private static bool IsLetter (char c)
-		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); 
-		}
- 
 		private static bool ParseFormat (string format, out char specifier,  out int precision, out bool custom)
 		{		 		 
 			precision = -1;
@@ -155,19 +145,18 @@ namespace System {
 			char[] chars = format.ToCharArray ();
 			specifier = chars[0];
 
-			// TODO: IsLetter() and IsDigit() should be replaced by Char.Is*()
-			if (IsLetter(specifier) && length <= 3) {
+			if (Char.IsLetter(specifier) && length <= 3) {
 				switch (length){
 				case 1:
 					return true;
 				case 2:
-					if (IsDigit(chars[1])) {
+					if (Char.IsDigit(chars[1])) {
 						precision = chars[1] - '0';
 						return true;
 					}
 					break;
 				case 3:
-					if (IsDigit(chars[1]) && IsDigit(chars[2])) {
+					if (Char.IsDigit(chars[1]) && Char.IsDigit(chars[2])) {
 						precision = chars[1] - '0';
 						precision = precision * 10 + chars[2] - '0';
 						return true;

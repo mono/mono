@@ -129,7 +129,6 @@ namespace System
 			return CreateInstance (type, args, new object [0]);
 		}
 
-		[MonoTODO]
 		public static object CreateInstance (Type type, object [] args, object [] activationAttributes)
 		{
 			if (type == null)
@@ -169,7 +168,6 @@ namespace System
 			return CreateInstance (type, bindingAttr, binder, args, culture, new object [0]);
 		}
 
-		[MonoTODO]
 		public static object CreateInstance (Type type, BindingFlags bindingAttr, Binder binder, object [] args,
 		                                     CultureInfo culture, object [] activationAttributes)
 		{

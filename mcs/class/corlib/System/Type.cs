@@ -6,8 +6,6 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-// TODO: Mucho left to implement.
-//
 
 using System.Reflection;
 using System.Collections;
@@ -17,11 +15,6 @@ using System.Globalization;
 
 namespace System {
 
-	//
-	// FIXME: Implement the various IReflect dependencies
-	//
-
-	[MonoTODO]
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 	public abstract class Type : MemberInfo, IReflect {

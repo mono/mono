@@ -183,11 +183,10 @@ namespace System
             }
         }
 
-	[MonoTODO]
-	public static decimal FromOACurrency(long cy)
-	{
-		throw new NotImplementedException();
-	}
+		public static decimal FromOACurrency(long cy)
+		{
+			return (decimal)cy / (decimal)10000;
+		}
 	
         public static int[] GetBits(Decimal d) 
         {
@@ -912,10 +911,9 @@ namespace System
 		return Convert.ToInt64 (value);
 	}
 
-	[MonoTODO]
 	public static long ToOACurrency (decimal value)
 	{
-		throw new NotImplementedException ();
+		return (long) (value * 10000);
 	}
 
 	[CLSCompliant(false)]

@@ -19,7 +19,6 @@ namespace System
 #if NET_1_1
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 #endif
-	[MonoTODO]
 	public abstract class Delegate : ICloneable, ISerializable
 	{
 		protected Type target_type;

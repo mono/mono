@@ -78,6 +78,7 @@ namespace System {
 
 		// Fields
 		public static readonly object DBNull = System.DBNull.Value;
+		public static ToBase64Transform toBase64Transform = new ToBase64Transform();
 	
 		private Convert () {}
 
@@ -159,8 +160,7 @@ namespace System {
 			if (offsetIn < 0 || length < 0 || offsetOut < 0 || (offsetIn + length) > inArray.Length)
 				throw new ArgumentOutOfRangeException();
 			
-			ToBase64Transform t = new ToBase64Transform();
-			byte[] outArr = t.TransformFinalBlock(inArray, offsetIn, length);
+			byte[] outArr = toBase64Transform.TransformFinalBlock(inArray, offsetIn, length);
 			
 			char[] cOutArr = new System.Text.ASCIIEncoding().GetChars(outArr);
 			
@@ -189,8 +189,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException();
 			
 			// FIXME: change to stand alone Base64 Encoder class
-			ToBase64Transform t = new ToBase64Transform();
-			byte[] outArr = t.TransformFinalBlock(inArray, offset, length);
+			byte[] outArr = toBase64Transform.TransformFinalBlock(inArray, offset, length);
 			
 			return (new System.Text.ASCIIEncoding().GetString(outArr));
 		}

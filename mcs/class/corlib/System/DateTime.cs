@@ -459,6 +459,13 @@ namespace System
 			return new DateTime (true, w32file_epoch + fileTime);
 		}
 
+#if NET_1_1
+		public static DateTime FromFileTimeUtc (long fileTime) 
+		{
+			return new DateTime (false, w32file_epoch + fileTime);
+		}
+#endif
+
 		public static DateTime FromOADate (double d)
 		{
 			// An OLE Automation date is implemented as a floating-point number
@@ -1102,6 +1109,17 @@ namespace System
 			
 			return(universalTime.Ticks - w32file_epoch);
 		}
+
+#if NET_1_1
+		public long ToFileTimeUtc()
+		{
+			if (Ticks < w32file_epoch) {
+				throw new ArgumentOutOfRangeException("file time is not valid");
+			}
+			
+			return (Ticks - w32file_epoch);
+		}
+#endif
 
 		public string ToLongDateString()
 		{

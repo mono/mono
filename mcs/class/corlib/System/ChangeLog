@@ -1,3 +1,19 @@
+2004-04-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Activator.cs: Removed TODOs for finished methods.
+	* AppDomainSetup.cs: When setting a relative path to ApplicationBase, it
+	  must be relative to the current directory, not the temp directory.
+	  Implemented DynamicBase.
+	* Convert.cs: No need to create a ToBase64Transform instance at every call
+	  to ToBase64CharArray.
+	* DateTime.cs: Implemented missing methods FromFileTimeUtc and 
+	  ToFileTimeUtc.
+	* Decimal.cs: Implemented FromOACurrency and ToOACurrency.
+	* Delegate.cs: Removed class TODO.
+	* IntegerFormatter.cs: Use Char.IsLetter and Char.IsDigit instead of ad-hoc
+	  methods.
+	* Type.cs: Removed TODOs for things already implemented.
+	
 2004-04-21  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Char.cs: Implemented culture-dependent ToLower and ToUpper methods.
