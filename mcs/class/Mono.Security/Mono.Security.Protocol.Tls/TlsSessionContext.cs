@@ -44,11 +44,16 @@ namespace Mono.Security.Protocol.Tls
 		// Information sent and request by the server in the Handshake protocol
 		private TlsServerSettings	serverSettings;
 
+		// Cipher suite information
+		private CipherSuite					cipher;
+		private TlsCipherSuiteCollection	supportedCiphers;
+
 		// Misc
 		private bool				isActual;
+		private bool				helloDone;
+		private	bool				handshakeFinished;
 		private bool				connectionEnd;
-		private TlsCipherSuite		cipher;
-
+		
 		// Sequence numbers
 		private long				writeSequenceNumber;
 		private long				readSequenceNumber;
@@ -56,6 +61,8 @@ namespace Mono.Security.Protocol.Tls
 		// Random data
 		private byte[]				clientRandom;
 		private byte[]				serverRandom;
+		private byte[]				randomCS;
+		private byte[]				randomSC;
 
 		// Key information
 		private byte[]				masterSecret;
@@ -81,109 +88,139 @@ namespace Mono.Security.Protocol.Tls
 
 		public TlsProtocol Protocol
 		{
-			get { return protocol; }
-			set { protocol = value; }
+			get { return this.protocol; }
+			set { this.protocol = value; }
 		}
 
 		public TlsCompressionMethod CompressionMethod
 		{
-			get { return compressionMethod; }
-			set { compressionMethod = value; }
+			get { return this.compressionMethod; }
+			set { this.compressionMethod = value; }
 		}
 
 		public TlsServerSettings ServerSettings
 		{
-			get { return serverSettings; }
-			set { serverSettings = value; }
+			get { return this.serverSettings; }
+			set { this.serverSettings = value; }
 		}
 
 		public bool	IsActual
 		{
-			get { return isActual; }
-			set { isActual = value; }
+			get { return this.isActual; }
+			set { this.isActual = value; }
+		}
+
+		public bool HelloDone
+		{
+			get { return helloDone; }
+			set { helloDone = value; }
+		}
+
+		public bool HandshakeFinished
+		{
+			get { return handshakeFinished; }
+			set { handshakeFinished = value; }
 		}
 
 		public bool ConnectionEnd
 		{
-			get { return connectionEnd; }
-			set { connectionEnd = value; }
+			get { return this.connectionEnd; }
+			set { this.connectionEnd = value; }
 		}
 
-		public TlsCipherSuite Cipher
+		public CipherSuite Cipher
 		{
-			get { return cipher; }
-			set { cipher = value; }
+			get { return this.cipher; }
+			set { this.cipher = value; }
+		}
+
+		public TlsCipherSuiteCollection SupportedCiphers
+		{
+			get { return supportedCiphers; }
+			set { supportedCiphers = value; }
 		}
 
 		public TlsHandshakeHashes HandshakeHashes
 		{
-			get { return handshakeHashes; }
+			get { return this.handshakeHashes; }
 		}
 
 		public long WriteSequenceNumber
 		{
-			get { return writeSequenceNumber; }
-			set { writeSequenceNumber = value; }
+			get { return this.writeSequenceNumber; }
+			set { this.writeSequenceNumber = value; }
 		}
 
 		public long ReadSequenceNumber
 		{
-			get { return readSequenceNumber; }
-			set { readSequenceNumber = value; }
+			get { return this.readSequenceNumber; }
+			set { this.readSequenceNumber = value; }
 		}
 
 		public byte[] ClientRandom
 		{
-			get { return clientRandom; }
-			set { clientRandom = value; }
+			get { return this.clientRandom; }
+			set { this.clientRandom = value; }
 		}
 
 		public byte[] ServerRandom
 		{
-			get { return serverRandom; }
-			set { serverRandom = value; }
+			get { return this.serverRandom; }
+			set { this.serverRandom = value; }
+		}
+
+		public byte[] RandomCS
+		{
+			get { return this.randomCS; }
+			set { this.randomCS = value; }
+		}
+
+		public byte[] RandomSC
+		{
+			get { return this.randomSC; }
+			set { this.randomSC = value; }
 		}
 
 		public byte[] MasterSecret
 		{
-			get { return masterSecret; }
-			set { masterSecret = value; }
+			get { return this.masterSecret; }
+			set { this.masterSecret = value; }
 		}
 
 		public byte[] ClientWriteMAC
 		{
-			get { return clientWriteMAC; }
-			set { clientWriteMAC = value; }
+			get { return this.clientWriteMAC; }
+			set { this.clientWriteMAC = value; }
 		}
 
 		public byte[] ServerWriteMAC
 		{
-			get { return serverWriteMAC; }
-			set { serverWriteMAC = value; }
+			get { return this.serverWriteMAC; }
+			set { this.serverWriteMAC = value; }
 		}
 
 		public byte[] ClientWriteKey
 		{
-			get { return clientWriteKey; }
-			set { clientWriteKey = value; }
+			get { return this.clientWriteKey; }
+			set { this.clientWriteKey = value; }
 		}
 
 		public byte[] ServerWriteKey
 		{
-			get { return serverWriteKey; }
-			set { serverWriteKey = value; }
+			get { return this.serverWriteKey; }
+			set { this.serverWriteKey = value; }
 		}
 
 		public byte[] ClientWriteIV
 		{
-			get { return clientWriteIV; }
-			set { clientWriteIV = value; }
+			get { return this.clientWriteIV; }
+			set { this.clientWriteIV = value; }
 		}
 
 		public byte[] ServerWriteIV
 		{
-			get { return serverWriteIV; }
-			set { serverWriteIV = value; }
+			get { return this.serverWriteIV; }
+			set { this.serverWriteIV = value; }
 		}
 
 		#endregion
@@ -223,23 +260,23 @@ namespace Mono.Security.Protocol.Tls
 		public void ClearKeyInfo()
 		{
 			// Clear Master Secret
-			masterSecret	= null;
+			this.masterSecret	= null;
 
 			// Clear client and server random
-			clientRandom	= null;
-			serverRandom	= null;
+			this.clientRandom	= null;
+			this.serverRandom	= null;
+			this.randomCS		= null;
+			this.randomSC		= null;
 
 			// Clear client keys
-			clientWriteKey	= null;
-			clientWriteIV	= null;
-			clientWriteMAC	= null;
+			this.clientWriteKey	= null;
+			this.clientWriteIV	= null;
+			this.clientWriteMAC	= null;
 
 			// Clear server keys
-			serverWriteKey	= null;
-			serverWriteIV	= null;
-			serverWriteMAC	= null;
-
-			// Force the GC to recollect the memory ??
+			this.serverWriteKey	= null;
+			this.serverWriteIV	= null;
+			this.serverWriteMAC	= null;
 		}
 
 		#endregion

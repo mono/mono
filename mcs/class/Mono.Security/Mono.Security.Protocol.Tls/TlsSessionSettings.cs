@@ -66,7 +66,8 @@ namespace Mono.Security.Protocol.Tls
 			get { return protocol; }
 			set 
 			{ 
-				if (value != TlsProtocol.Tls1)
+				if (value != TlsProtocol.Tls1 &&
+					value != TlsProtocol.Ssl3)
 				{
 					throw new NotSupportedException("Specified protocol is not supported");
 				}

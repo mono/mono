@@ -69,19 +69,19 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			rsaParams = new RSAParameters();
+			this.rsaParams = new RSAParameters();
 			
 			// Read modulus
-			short length		= ReadInt16();
-			rsaParams.Modulus	= ReadBytes(length);
+			short length		= this.ReadInt16();
+			rsaParams.Modulus	= this.ReadBytes(length);
 
 			// Read exponent
-			length				= ReadInt16();
-			rsaParams.Exponent	= ReadBytes(length);
+			length				= this.ReadInt16();
+			rsaParams.Exponent	= this.ReadBytes(length);
 
 			// Read signed params
-			length				= ReadInt16();
-			signedParams		= ReadBytes(length);
+			length				= this.ReadInt16();
+			signedParams		= this.ReadBytes(length);
 		}
 
 		#endregion
@@ -96,8 +96,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// Create server params array
 			TlsStream stream = new TlsStream();
 
-			stream.Write(Session.Context.ClientRandom);
-			stream.Write(Session.Context.ServerRandom);
+			stream.Write(this.Session.Context.RandomCS);
 			stream.Write(rsaParams.Modulus.Length);
 			stream.Write(rsaParams.Modulus);
 			stream.Write(rsaParams.Exponent.Length);

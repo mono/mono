@@ -34,7 +34,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		private TlsCompressionMethod	compressionMethod;
 		private byte[]					random;
 		private byte[]					sessionId;
-		private TlsCipherSuite			cipherSuite;
+		private CipherSuite	cipherSuite;
 		
 		#endregion
 
@@ -53,11 +53,25 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			Session.SetSessionId(this.sessionId);
-			Session.Context.ServerRandom		= this.random;
-			Session.Context.Cipher				= this.cipherSuite;
-			Session.Context.CompressionMethod	= this.compressionMethod;
-			Session.Context.Cipher.Context		= this.Session.Context;
+			this.Session.SetSessionId(this.sessionId);
+			this.Session.Context.ServerRandom		= this.random;
+			this.Session.Context.Cipher				= this.cipherSuite;
+			this.Session.Context.CompressionMethod	= this.compressionMethod;
+			this.Session.Context.Cipher.Context		= this.Session.Context;
+
+			// Compute ClientRandom + ServerRandom
+			TlsStream random = new TlsStream();
+			random.Write(this.Session.Context.ClientRandom);
+			random.Write(this.Session.Context.ServerRandom);
+			this.Session.Context.RandomCS = random.ToArray();
+
+			// Server Random + Client Random
+			random.Reset();
+			random.Write(this.Session.Context.ServerRandom);
+			random.Write(this.Session.Context.ClientRandom);
+
+			this.Session.Context.RandomSC = random.ToArray();
+			random.Reset();
 		}
 
 		#endregion
@@ -66,7 +80,31 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			#warning "Check that the protocol sent by the server is supported"
+			// Read protocol version
+			this.protocol	= (TlsProtocol)this.ReadInt16();
+			
+			// Read random  - Unix time + Random bytes
+			this.random		= this.ReadBytes(32);
+			
+			// Read Session id
+			int length = (int)ReadByte();
+			if (length > 0)
+			{
+				this.sessionId = this.ReadBytes(length);
+			}
+
+			// Read cipher suite
+			short cipherCode = this.ReadInt16();
+			if (this.Session.Context.SupportedCiphers.IndexOf(cipherCode) == -1)
+			{
+				// The server has sent an invalid ciphersuite
+				throw new TlsException("Invalid cipher suite received from server");
+			}
+			this.cipherSuite = this.Session.Context.SupportedCiphers[cipherCode];
+			
+			// Read compression methods ( always 0 )
+			this.compressionMethod = (TlsCompressionMethod)this.ReadByte();
 		}
 
 		protected override void ProcessAsTls1()
@@ -86,12 +124,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			// Read cipher suite
 			short cipherCode = this.ReadInt16();
-			if (this.Session.SupportedCiphers.IndexOf(cipherCode) == -1)
+			if (this.Session.Context.SupportedCiphers.IndexOf(cipherCode) == -1)
 			{
 				// The server has sent an invalid ciphersuite
 				throw new TlsException("Invalid cipher suite received from server");
 			}
-			this.cipherSuite = this.Session.SupportedCiphers[cipherCode];
+			this.cipherSuite = this.Session.Context.SupportedCiphers[cipherCode];
 			
 			// Read compression methods ( always 0 )
 			this.compressionMethod = (TlsCompressionMethod)this.ReadByte();

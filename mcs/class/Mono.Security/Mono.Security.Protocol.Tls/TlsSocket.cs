@@ -54,7 +54,7 @@ namespace Mono.Security.Protocol.Tls
 
 		internal BufferedStream InputBuffer
 		{
-			get { return inputBuffer; }
+			get { return this.inputBuffer; }
 		}
 
 		#endregion
@@ -112,33 +112,33 @@ namespace Mono.Security.Protocol.Tls
 
 		public new int Receive(byte[] buffer, int offset, int size, SocketFlags socketFlags)
 		{
-			if (!session.IsSecure)
+			if (!this.session.IsSecure)
 			{
 				return base.Receive(buffer, offset, size, socketFlags);
 			}
 			
 			// If actual buffer is full readed reset it
-			if (inputBuffer.Position == inputBuffer.Length)
+			if (this.inputBuffer.Position == this.inputBuffer.Length)
 			{
 				this.resetBuffer();
 			}
 
 			// Check if we have space in the middle buffer
 			// if not Read next TLS record and update the inputBuffer
-			while ((inputBuffer.Length - inputBuffer.Position) < size)
+			while ((this.inputBuffer.Length - this.inputBuffer.Position) < size)
 			{
 				// Read next record and write it into the inputBuffer
-				long	position	= inputBuffer.Position;					
+				long	position	= this.inputBuffer.Position;					
 				byte[]	record		= this.receiveRecord();
 
 				if (record.Length > 0)
 				{
 					// Write new data to the inputBuffer
-					inputBuffer.Seek(0, SeekOrigin.End);
-					inputBuffer.Write(record, 0, record.Length);
+					this.inputBuffer.Seek(0, SeekOrigin.End);
+					this.inputBuffer.Write(record, 0, record.Length);
 
 					// Restore buffer position
-					inputBuffer.Seek(position, SeekOrigin.Begin);
+					this.inputBuffer.Seek(position, SeekOrigin.Begin);
 				}
 
 				if (base.Available == 0)
@@ -147,7 +147,7 @@ namespace Mono.Security.Protocol.Tls
 				}
 			}
 
-			return inputBuffer.Read(buffer, offset, size);
+			return this.inputBuffer.Read(buffer, offset, size);
 		}
 
 		public new int Send(byte[] buffer)
@@ -167,7 +167,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public new int Send(byte[] buffer, int offset, int size, SocketFlags socketFlags)
 		{
-			if (!session.IsSecure)
+			if (!this.session.IsSecure)
 			{
 				return base.Send(buffer, offset, size, socketFlags);
 			}
@@ -185,14 +185,14 @@ namespace Mono.Security.Protocol.Tls
 
 		private byte[] receiveRecord()
 		{
-			if (session.Context.ConnectionEnd)
+			if (this.session.Context.ConnectionEnd)
 			{
-				throw session.CreateException("The session is finished and it's no longer valid.");
+				throw this.session.CreateException("The session is finished and it's no longer valid.");
 			}
 			
 			TlsContentType	contentType	= (TlsContentType)this.ReadByte();
 			TlsProtocol		protocol	= (TlsProtocol)this.ReadShort();
-			int				length		= this.ReadShort();
+			short			length		= this.ReadShort();
 			
 			// Read Record data
 			int		received	= 0;
@@ -203,17 +203,16 @@ namespace Mono.Security.Protocol.Tls
 					buffer, received, buffer.Length - received, SocketFlags.None);
 			}
 
-			TlsStream message	= new TlsStream(buffer);
+			TlsStream message = new TlsStream(buffer);
 		
-			// Check that the message as a valid protocol version
-			if (protocol != session.Context.Protocol)
+			// Check that the message has a valid protocol version
+			if (protocol != this.session.Context.Protocol)
 			{
 				throw session.CreateException("Invalid protocol version on message received from server");
 			}
 
 			// Decrypt message contents if needed
-			if (contentType == TlsContentType.Alert &&
-				length == 2)
+			if (contentType == TlsContentType.Alert && length == 2)
 			{
 			}
 			else
@@ -221,9 +220,9 @@ namespace Mono.Security.Protocol.Tls
 				if (session.Context.IsActual &&
 					contentType != TlsContentType.ChangeCipherSpec)
 				{
-					message = decryptRecordFragment(
+					message = this.decryptRecordFragment(
 						contentType, 
-						protocol, 
+						protocol,
 						message.ToArray());
 				}
 			}
@@ -234,13 +233,13 @@ namespace Mono.Security.Protocol.Tls
 			switch (contentType)
 			{
 				case TlsContentType.Alert:
-					processAlert((TlsAlertLevel)message.ReadByte(),
+					this.processAlert((TlsAlertLevel)message.ReadByte(),
 						(TlsAlertDescription)message.ReadByte());
 					break;
 
 				case TlsContentType.ChangeCipherSpec:
 					// Reset sequence numbers
-					session.Context.ReadSequenceNumber = 0;
+					this.session.Context.ReadSequenceNumber = 0;
 					break;
 
 				case TlsContentType.ApplicationData:
@@ -249,7 +248,7 @@ namespace Mono.Security.Protocol.Tls
 				case TlsContentType.Handshake:
 					while (!message.EOF)
 					{
-						processHandshakeMessage(message);
+						this.processHandshakeMessage(message);
 					}
 					// Update handshakes of current messages
 					this.session.Context.HandshakeHashes.Update(message.ToArray());
@@ -269,21 +268,21 @@ namespace Mono.Security.Protocol.Tls
 		private byte[] encryptRecordFragment(TlsContentType contentType, byte[] fragment)
 		{
 			// Calculate message MAC
-			byte[] mac	= encodeClientRecordMAC(contentType, fragment);
+			byte[] mac	= this.session.Context.Cipher.ComputeClientRecordMAC(contentType, fragment);
 
 			// Encrypt the message
-			byte[] ecr = session.Context.Cipher.EncryptRecord(fragment, mac);
+			byte[] ecr = this.session.Context.Cipher.EncryptRecord(fragment, mac);
 
 			// Set new IV
-			if (session.Context.Cipher.CipherMode == CipherMode.CBC)
+			if (this.session.Context.Cipher.CipherMode == CipherMode.CBC)
 			{
-				byte[] iv = new byte[session.Context.Cipher.IvSize];
+				byte[] iv = new byte[this.session.Context.Cipher.IvSize];
 				System.Array.Copy(ecr, ecr.Length - iv.Length, iv, 0, iv.Length);
-				session.Context.Cipher.UpdateClientCipherIV(iv);
+				this.session.Context.Cipher.UpdateClientCipherIV(iv);
 			}
 
 			// Update sequence number
-			session.Context.WriteSequenceNumber++;
+			this.session.Context.WriteSequenceNumber++;
 
 			return ecr;
 		}
@@ -296,18 +295,18 @@ namespace Mono.Security.Protocol.Tls
 			byte[]	dcrMAC		= null;
 
 			// Decrypt message
-			session.Context.Cipher.DecryptRecord(fragment, ref dcrFragment, ref dcrMAC);
+			this.session.Context.Cipher.DecryptRecord(fragment, ref dcrFragment, ref dcrMAC);
 
 			// Set new IV
-			if (session.Context.Cipher.CipherMode == CipherMode.CBC)
+			if (this.session.Context.Cipher.CipherMode == CipherMode.CBC)
 			{
 				byte[] iv = new byte[session.Context.Cipher.IvSize];
 				System.Array.Copy(fragment, fragment.Length - iv.Length, iv, 0, iv.Length);
-				session.Context.Cipher.UpdateServerCipherIV(iv);
+				this.session.Context.Cipher.UpdateServerCipherIV(iv);
 			}
 			
 			// Check MAC code
-			byte[] mac = this.encodeServerRecordMAC(contentType, dcrFragment);
+			byte[] mac = this.session.Context.Cipher.ComputeServerRecordMAC(contentType, dcrFragment);
 
 			// Check that the mac is correct
 			if (mac.Length != dcrMAC.Length)
@@ -323,7 +322,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			// Update sequence number
-			session.Context.ReadSequenceNumber++;
+			this.session.Context.ReadSequenceNumber++;
 
 			return new TlsStream(dcrFragment);
 		}
@@ -368,10 +367,10 @@ namespace Mono.Security.Protocol.Tls
 			int bytesSent = this.sendRecord(TlsContentType.ChangeCipherSpec, new byte[] {1});
 
 			// Reset sequence numbers
-			session.Context.WriteSequenceNumber = 0;
+			this.session.Context.WriteSequenceNumber = 0;
 
 			// Make the pending state to be the current state
-			session.Context.IsActual = true;
+			this.session.Context.IsActual = true;
 
 			// Send Finished message
 			bytesSent += this.sendRecord(TlsHandshakeType.Finished);
@@ -381,9 +380,9 @@ namespace Mono.Security.Protocol.Tls
 		
 		private int sendRecord(TlsContentType contentType, byte[] recordData)
 		{
-			if (session.Context.ConnectionEnd)
+			if (this.session.Context.ConnectionEnd)
 			{
-				throw session.CreateException("The session is finished and it's no longer valid.");
+				throw this.session.CreateException("The session is finished and it's no longer valid.");
 			}
 
 			int			bytesSent = 0;
@@ -392,16 +391,16 @@ namespace Mono.Security.Protocol.Tls
 			{
 				byte[] fragment = fragments[i];
 
-				if (session.Context.IsActual)
+				if (this.session.Context.IsActual)
 				{
 					// Encrypt fragment
-					fragment = encryptRecordFragment(contentType, fragment);
+					fragment = this.encryptRecordFragment(contentType, fragment);
 				}
 
 				// Write tls message
 				TlsStream record = new TlsStream();
 				record.Write((byte)contentType);
-				record.Write((short)TlsProtocol.Tls1);
+				record.Write((short)this.session.Context.Protocol);
 				record.Write((short)fragment.Length);
 				record.Write(fragment);
 
@@ -468,7 +467,7 @@ namespace Mono.Security.Protocol.Tls
 			handMsg.Read(data, 0, length);
 
 			// Create and process the server message
-			message = createServerHandshakeMessage(handshakeType, data);
+			message = this.createServerHandshakeMessage(handshakeType, data);
 
 			// Update session
 			if (message != null)
@@ -477,27 +476,26 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
-		private void processAlert(TlsAlertLevel alertLevel, 
-			TlsAlertDescription alertDesc)
+		private void processAlert(TlsAlertLevel alertLevel, TlsAlertDescription alertDesc)
 		{
 			switch (alertLevel)
 			{
 				case TlsAlertLevel.Fatal:
-					throw session.CreateException(alertLevel, alertDesc);					
+					throw this.session.CreateException(alertLevel, alertDesc);					
 
 				case TlsAlertLevel.Warning:
 				default:
 				switch (alertDesc)
 				{
 					case TlsAlertDescription.CloseNotify:
-						session.Context.ConnectionEnd = true;
+						this.session.Context.ConnectionEnd = true;
 						break;
 
 					default:
-						session.RaiseWarningAlert(alertLevel, alertDesc);
+						this.session.RaiseWarningAlert(alertLevel, alertDesc);
 						break;
 				}
-					break;
+				break;
 			}
 		}
 
@@ -509,42 +507,6 @@ namespace Mono.Security.Protocol.Tls
 		{
 			this.inputBuffer.SetLength(0);
 			this.inputBuffer.Position = 0;
-		}
-
-		private byte[] encodeServerRecordMAC(TlsContentType contentType, byte[] fragment)
-		{
-			TlsStream	data	= new TlsStream();
-			byte[]		result	= null;
-
-			data.Write(session.Context.ReadSequenceNumber);
-			data.Write((byte)contentType);
-			data.Write((short)TlsProtocol.Tls1);
-			data.Write((short)fragment.Length);
-			data.Write(fragment);
-
-			result = session.Context.Cipher.ServerHMAC.ComputeHash(data.ToArray());
-
-			data.Reset();
-
-			return result;
-		}
-
-		private byte[] encodeClientRecordMAC(TlsContentType contentType, byte[] fragment)
-		{
-			TlsStream	data	= new TlsStream();
-			byte[]		result	= null;
-
-			data.Write(session.Context.WriteSequenceNumber);
-			data.Write((byte)contentType);
-			data.Write((short)TlsProtocol.Tls1);
-			data.Write((short)fragment.Length);
-			data.Write(fragment);
-
-			result = session.Context.Cipher.ClientHMAC.ComputeHash(data.ToArray());
-
-			data.Reset();
-
-			return result;
 		}
 
 		private byte ReadByte()
@@ -599,14 +561,14 @@ namespace Mono.Security.Protocol.Tls
 			this.sendRecord(TlsHandshakeType.ClientHello);
 
 			// Read server response
-			while (!session.HelloDone)
+			while (!this.session.Context.HelloDone)
 			{
 				// Read next record
 				this.receiveRecord();
 			}
 			
 			// Send client certificate if requested
-			if (session.Context.ServerSettings.CertificateRequest)
+			if (this.session.Context.ServerSettings.CertificateRequest)
 			{
 				this.sendRecord(TlsHandshakeType.Certificate);
 			}
@@ -618,7 +580,7 @@ namespace Mono.Security.Protocol.Tls
 			this.session.Context.Cipher.InitializeCipher();
 
 			// Send certificate verify if requested
-			if (session.Context.ServerSettings.CertificateRequest)
+			if (this.session.Context.ServerSettings.CertificateRequest)
 			{
 				this.sendRecord(TlsHandshakeType.CertificateVerify);
 			}
@@ -630,7 +592,7 @@ namespace Mono.Security.Protocol.Tls
 			this.receiveRecord();
 
 			// Read server finished
-			if (!session.HandshakeFinished)
+			if (!this.session.Context.HandshakeFinished)
 			{
 				this.receiveRecord();
 			}
@@ -693,7 +655,7 @@ namespace Mono.Security.Protocol.Tls
 					return new TlsServerFinished(session, buffer);
 
 				default:
-					throw session.CreateException("Unknown server handshake message received ({0})", type.ToString());
+					throw this.session.CreateException("Unknown server handshake message received ({0})", type.ToString());
 			}
 		}
 

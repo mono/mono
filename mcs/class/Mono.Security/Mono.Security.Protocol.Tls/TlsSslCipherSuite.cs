@@ -33,8 +33,29 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal class TlsSslCipherSuite : TlsAbstractCipherSuite
+	internal class TlsSslCipherSuite : CipherSuite
 	{
+		#region FIELDS
+
+		private byte[] pad1;
+		private byte[] pad2;
+
+		#endregion
+
+		#region PROPERTIES
+
+		public byte[] Pad1
+		{
+			get { return pad1; }
+		}
+
+		public byte[] Pad2
+		{
+			get { return pad2; }
+		}
+
+		#endregion
+
 		#region CONSTRUCTORS
 		
 		public TlsSslCipherSuite(short code, string name, string algName, 
@@ -45,84 +66,207 @@ namespace Mono.Security.Protocol.Tls
 			keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes,
 			ivSize, blockSize)
 		{
+			this.GeneratePad(hashName, ref this.pad1, ref this.pad2);
 		}
 
 		#endregion
 
-		#region METHODS
+		#region MAC_GENERATION_METHOD
 
-		public override byte[] EncryptRecord(byte[] fragment, byte[] mac)
+		public override byte[] ComputeServerRecordMAC(TlsContentType contentType, byte[] fragment)
 		{
-			// Encryption ( fragment + mac [+ padding + padding_length] )
-			MemoryStream ms = new MemoryStream();
-			CryptoStream cs = new CryptoStream(ms, encryptionCipher, CryptoStreamMode.Write);
+			HashAlgorithm	hash	= HashAlgorithm.Create(this.HashName);
+			TlsStream		block	= new TlsStream();
 
-			cs.Write(fragment, 0, fragment.Length);
-			cs.Write(mac, 0, mac.Length);
-			if (cipherMode == CipherMode.CBC)
-			{
-				// Calculate padding_length
-				int fragmentLength	= fragment.Length + mac.Length + 1;
-				int paddingLength	= (((fragmentLength/blockSize)*8) + blockSize) - fragmentLength;
+			block.Write(this.Context.ServerWriteMAC);
+			block.Write(this.pad1);
+			block.Write(this.Context.ReadSequenceNumber);
+			block.Write((byte)contentType);
+			block.Write((short)fragment.Length);
+			block.Write(fragment);
+			
+			byte[] blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
 
-				// Write padding length byte
-				cs.WriteByte((byte)paddingLength);
-			}
-			//cs.FlushFinalBlock();
-			cs.Close();			
+			block.Reset();
 
-			return ms.ToArray();
+			block.Write(this.Context.ServerWriteMAC);
+			block.Write(this.pad2);
+			block.Write(blockHash);
+
+			blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+
+			block.Reset();
+
+			return blockHash;
 		}
 
-		public override void DecryptRecord(byte[] fragment, ref byte[] dcrFragment, ref byte[] dcrMAC)
+		public override byte[] ComputeClientRecordMAC(TlsContentType contentType, byte[] fragment)
 		{
-			int	fragmentSize	= 0;
-			int paddingLength	= 0;
+			HashAlgorithm	hash	= HashAlgorithm.Create(this.HashName);
+			TlsStream		block	= new TlsStream();
 
-			// Decrypt message fragment ( fragment + mac [+ padding + padding_length] )
-			byte[] buffer = new byte[fragment.Length];
-			decryptionCipher.TransformBlock(fragment, 0, fragment.Length, buffer, 0);
+			block.Write(this.Context.ClientWriteMAC);
+			block.Write(this.pad1);
+			block.Write(this.Context.WriteSequenceNumber);
+			block.Write((byte)contentType);
+			block.Write((short)fragment.Length);
+			block.Write(fragment);
+			
+			byte[] blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
 
-			// Calculate fragment size
-			if (cipherMode == CipherMode.CBC)
+			block.Reset();
+
+			block.Write(this.Context.ClientWriteMAC);
+			block.Write(this.pad2);
+			block.Write(blockHash);
+
+			blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+
+			block.Reset();
+
+			return blockHash;
+		}
+
+		public void GeneratePad(string hashName, ref byte[] pad1, ref byte[] pad2)
+		{
+			switch (hashName)
 			{
-				// Calculate padding_length
-				paddingLength = buffer[buffer.Length - 1];
-				for (int i = (buffer.Length - 1); i > (buffer.Length - (paddingLength + 1)); i--)
-				{
-					if (buffer[i] != paddingLength)
-					{
-						paddingLength = 0;
-						break;
-					}
-				}
+				case "MD5":
+					pad1 = new byte[48];
+					pad2 = new byte[48];
+					break;
 
-				fragmentSize = (buffer.Length - (paddingLength + 1)) - HashSize;
+				case "SHA":
+				case "SHA1":
+					pad1 = new byte[40];
+					pad2 = new byte[40];					
+					break;
 			}
-			else
+
+			for (int i = 0; i  < pad1.Length; i++)
 			{
-				fragmentSize = buffer.Length - HashSize;
+				pad1[i] = (byte)0x36;
+				pad2[i] = (byte)0x5C;
 			}
-
-			dcrFragment = new byte[fragmentSize];
-			dcrMAC		= new byte[HashSize];
-
-			Buffer.BlockCopy(buffer, 0, dcrFragment, 0, dcrFragment.Length);
-			Buffer.BlockCopy(buffer, dcrFragment.Length, dcrMAC, 0, dcrMAC.Length);
 		}
 
 		#endregion
 
 		#region KEY_GENERATION_METODS
 
-		public override void CreateMasterSecret(byte[] preMasterSecret)
+		public override void ComputeMasterSecret(byte[] preMasterSecret)
 		{
-			throw new NotSupportedException();
+			TlsStream masterSecret = new TlsStream();
+
+			masterSecret.Write(this.prf(preMasterSecret, "A", this.Context.RandomCS));
+			masterSecret.Write(this.prf(preMasterSecret, "BB", this.Context.RandomCS));
+			masterSecret.Write(this.prf(preMasterSecret, "CCC", this.Context.RandomCS));
+
+			this.Context.MasterSecret = masterSecret.ToArray();
 		}
 
-		public override void CreateKeys()
+		public override void ComputeKeys()
 		{
-			throw new NotSupportedException();
+			// Compute KeyBlock
+			TlsStream tmp = new TlsStream();
+			
+			char	labelChar	= 'A';
+			int		count		= 1;
+			while (tmp.Length < this.KeyBlockSize)
+			{
+				string label = String.Empty;
+
+				for (int i = 0; i < count; i++)
+				{
+					label += labelChar.ToString();
+				}
+						
+				byte[] block = this.prf(this.Context.MasterSecret, label.ToString(), this.Context.RandomSC);
+
+				int size = (tmp.Length + block.Length) > this.KeyBlockSize ? (this.KeyBlockSize - (int)tmp.Length) : block.Length;
+				
+				tmp.Write(block, 0, size);
+
+				labelChar++;
+				count++;
+			}
+			
+			// Create keyblock
+			TlsStream keyBlock = new TlsStream(tmp.ToArray());
+
+			this.Context.ClientWriteMAC = keyBlock.ReadBytes(this.HashSize);
+			this.Context.ServerWriteMAC = keyBlock.ReadBytes(this.HashSize);
+			this.Context.ClientWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
+			this.Context.ServerWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
+
+			if (!this.IsExportable)
+			{
+				if (this.IvSize != 0)
+				{
+					this.Context.ClientWriteIV = keyBlock.ReadBytes(this.IvSize);
+					this.Context.ServerWriteIV = keyBlock.ReadBytes(this.IvSize);
+				}
+				else
+				{
+					this.Context.ClientWriteIV = new byte[0];
+					this.Context.ServerWriteIV = new byte[0];
+				}
+			}
+			else
+			{
+				MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+
+				// Generate final write keys
+				byte[] finalClientWriteKey	= new byte[md5.HashSize];
+				md5.TransformBlock(this.Context.ClientWriteKey, 0, this.Context.ClientWriteKey.Length, finalClientWriteKey, 0);
+				finalClientWriteKey = md5.TransformFinalBlock(this.Context.RandomCS, 0, this.Context.RandomCS.Length);
+
+				byte[] finalServerWriteKey	= new byte[md5.HashSize];
+				md5.TransformBlock(this.Context.ServerWriteKey, 0, this.Context.ServerWriteKey.Length, finalServerWriteKey, 0);
+				finalClientWriteKey = md5.TransformFinalBlock(this.Context.RandomSC, 0, this.Context.RandomSC.Length);
+				
+				this.Context.ClientWriteKey	= finalClientWriteKey;
+				this.Context.ServerWriteKey	= finalServerWriteKey;
+
+				// Generate IV keys
+				this.Context.ClientWriteIV = md5.TransformFinalBlock(this.Context.RandomCS, 0, this.Context.RandomCS.Length);
+				this.Context.ServerWriteIV = md5.TransformFinalBlock(this.Context.RandomSC, 0, this.Context.RandomSC.Length);
+			}
+
+			// Clear no more needed data
+			keyBlock.Reset();
+			tmp.Reset();
+		}
+
+		#endregion
+
+		#region PRIVATE_METHODS
+
+		private byte[] prf(byte[] secret, string label, byte[] random)
+		{
+			MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+			SHA1CryptoServiceProvider sha = new SHA1CryptoServiceProvider();
+
+			// Compute SHA hash
+			TlsStream block = new TlsStream();
+			block.Write(Encoding.ASCII.GetBytes(label));
+			block.Write(secret);
+			block.Write(random);
+						
+			byte[] shaHash = sha.ComputeHash(block.ToArray(), 0, (int)block.Length);
+
+			block.Reset();
+
+			// Compute MD5 hash
+			block.Write(secret);
+			block.Write(shaHash);
+
+			byte[] result = md5.ComputeHash(block.ToArray(), 0, (int)block.Length);
+
+			// Free resources
+			block.Reset();
+
+			return result;
 		}
 
 		#endregion

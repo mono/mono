@@ -47,7 +47,7 @@ namespace Mono.Security.Protocol.Tls
 
 		private static TlsCipherSuiteCollection GetTls1SupportedCiphers()
 		{
-			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection();
+			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection(TlsProtocol.Tls1);
 
 			// Supported ciphers
 			scs.Add((0x00 << 0x08) | 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA", "Rijndael", "SHA", false, true, 32, 32, 256, 16, 16);
@@ -116,7 +116,7 @@ namespace Mono.Security.Protocol.Tls
 
 		private static TlsCipherSuiteCollection GetSsl3SupportedCiphers()
 		{
-			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection();
+			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection(TlsProtocol.Ssl3);
 
 			// Supported ciphers
 			scs.Add((0x00 << 0x08) | 0x0A, "SSL_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA", false, true, 24, 24, 168, 8, 8);

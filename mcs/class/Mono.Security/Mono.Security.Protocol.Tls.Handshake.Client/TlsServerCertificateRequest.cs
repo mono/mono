@@ -52,9 +52,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			Session.Context.ServerSettings.CertificateTypes		= this.certificateTypes;
-			Session.Context.ServerSettings.DistinguisedNames	= this.distinguisedNames;
-			Session.Context.ServerSettings.CertificateRequest	= true;
+			this.Session.Context.ServerSettings.CertificateTypes	= this.certificateTypes;
+			this.Session.Context.ServerSettings.DistinguisedNames	= this.distinguisedNames;
+			this.Session.Context.ServerSettings.CertificateRequest	= true;
 		}
 
 		#endregion
@@ -69,13 +69,13 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsTls1()
 		{
 			// Read requested certificate types
-			int typesCount = ReadByte();
+			int typesCount = this.ReadByte();
 						
 			certificateTypes = new TlsClientCertificateType[typesCount];
 
 			for (int i = 0; i < typesCount; i++)
 			{
-				certificateTypes[i] = (TlsClientCertificateType)ReadByte();
+				certificateTypes[i] = (TlsClientCertificateType)this.ReadByte();
 			}
 
 			/*
@@ -89,8 +89,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			 * attributeType OBJECT IDENTIFIER
 			 * attributeValue ANY }
 			 */
-			int		tmp = ReadInt16();
-			ASN1	rdn = new ASN1(ReadBytes(ReadInt16()));
+			int		tmp = this.ReadInt16();
+			ASN1	rdn = new ASN1(this.ReadBytes(this.ReadInt16()));
 
 			distinguisedNames = new string[rdn.Count];
 

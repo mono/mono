@@ -45,23 +45,18 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
-		}
-
-		protected override void ProcessAsTls1()
-		{
 			// Compute pre master secret
-			byte[] preMasterSecret = Session.Context.Cipher.CreatePremasterSecret();
+			byte[] preMasterSecret = this.Session.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
 			RSACryptoServiceProvider rsa = null;
-			if (Session.Context.ServerSettings.ServerKeyExchange)
+			if (this.Session.Context.ServerSettings.ServerKeyExchange)
 			{
-				rsa = Session.Context.Cipher.CreateRSA(Session.Context.ServerSettings.RsaParameters);
+				rsa = this.Session.Context.Cipher.CreateRSA(this.Session.Context.ServerSettings.RsaParameters);
 			}
 			else
 			{
-				rsa = Session.Context.Cipher.CreateRSA(Session.Context.ServerSettings.ServerCertificates[0]);
+				rsa = this.Session.Context.Cipher.CreateRSA(this.Session.Context.ServerSettings.ServerCertificates[0]);
 			}			
 			
 			// Encrypt premaster_sercret
@@ -69,14 +64,47 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			// Write the preMasterSecret encrypted
 			byte[] buffer = formatter.CreateKeyExchange(preMasterSecret);
-			Write((short)buffer.Length);
-			Write(buffer);
+			this.Write(buffer);
 
 			// Create master secret
-			Session.Context.Cipher.CreateMasterSecret(preMasterSecret);
+			this.Session.Context.Cipher.ComputeMasterSecret(preMasterSecret);
 
 			// Create keys
-			Session.Context.Cipher.CreateKeys();
+			this.Session.Context.Cipher.ComputeKeys();
+
+			// Clear resources
+			rsa.Clear();
+		}
+
+		protected override void ProcessAsTls1()
+		{
+			// Compute pre master secret
+			byte[] preMasterSecret = this.Session.Context.Cipher.CreatePremasterSecret();
+
+			// Create a new RSA key
+			RSACryptoServiceProvider rsa = null;
+			if (this.Session.Context.ServerSettings.ServerKeyExchange)
+			{
+				rsa = this.Session.Context.Cipher.CreateRSA(this.Session.Context.ServerSettings.RsaParameters);
+			}
+			else
+			{
+				rsa = this.Session.Context.Cipher.CreateRSA(this.Session.Context.ServerSettings.ServerCertificates[0]);
+			}			
+			
+			// Encrypt premaster_sercret
+			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);
+
+			// Write the preMasterSecret encrypted
+			byte[] buffer = formatter.CreateKeyExchange(preMasterSecret);
+			this.Write((short)buffer.Length);
+			this.Write(buffer);
+
+			// Create master secret
+			this.Session.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+
+			// Create keys
+			this.Session.Context.Cipher.ComputeKeys();
 
 			// Clear resources
 			rsa.Clear();

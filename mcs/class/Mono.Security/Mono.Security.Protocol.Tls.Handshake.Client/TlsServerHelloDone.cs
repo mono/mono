@@ -43,7 +43,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			Session.HelloDone = true;
+			this.Session.Context.HelloDone = true;
 		}
 
 		#endregion

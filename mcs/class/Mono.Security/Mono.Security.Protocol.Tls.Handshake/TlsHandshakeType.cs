@@ -38,6 +38,5 @@ namespace Mono.Security.Protocol.Tls.Handshake
 		CertificateVerify	= 15,
 		ClientKeyExchange	= 16,
 		Finished			= 20,
-		Unknown				= 255
 	}
 }

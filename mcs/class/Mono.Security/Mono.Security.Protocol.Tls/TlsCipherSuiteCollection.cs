@@ -31,24 +31,39 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal sealed class TlsCipherSuiteCollection : ArrayList
 	{
+		#region FIELDS
+
+		private TlsProtocol protocol;
+
+		#endregion
+
 		#region PROPERTIES
 
-		public TlsCipherSuite this[string name] 
+		public CipherSuite this[string name] 
 		{
-			get { return (TlsCipherSuite)this[IndexOf(name)]; }
-			set { this[IndexOf(name)] = (TlsCipherSuite)value; }
+			get { return (CipherSuite)this[IndexOf(name)]; }
+			set { this[IndexOf(name)] = (CipherSuite)value; }
 		}
 
-		public TlsCipherSuite this[short code] 
+		public CipherSuite this[short code] 
 		{
-			get { return (TlsCipherSuite)base[IndexOf(code)]; }
-			set { base[IndexOf(code)] = (TlsCipherSuite)value; }
+			get { return (CipherSuite)base[IndexOf(code)]; }
+			set { base[IndexOf(code)] = (CipherSuite)value; }
 		}
 
-		public new TlsCipherSuite this[int code] 
+		public new CipherSuite this[int code] 
 		{
-			get { return (TlsCipherSuite)base[code]; }
-			set { base[code] = (TlsCipherSuite)value; }
+			get { return (CipherSuite)base[code]; }
+			set { base[code] = (CipherSuite)value; }
+		}
+
+		#endregion
+
+		#region CONSTRUCTORS
+
+		public TlsCipherSuiteCollection(TlsProtocol protocol) : base()
+		{
+			this.protocol = protocol;
 		}
 
 		#endregion
@@ -63,7 +78,7 @@ namespace Mono.Security.Protocol.Tls
 		public int IndexOf(string name)
 		{
 			int index = 0;
-			foreach(TlsCipherSuite suite in this)
+			foreach (CipherSuite suite in this)
 			{
 				if (cultureAwareCompare(suite.Name, name))
 				{
@@ -77,7 +92,7 @@ namespace Mono.Security.Protocol.Tls
 		public int IndexOf(short code)
 		{
 			int index = 0;
-			foreach(TlsCipherSuite suite in this)
+			foreach (CipherSuite suite in this)
 			{
 				if (suite.Code == code)
 				{
@@ -93,18 +108,35 @@ namespace Mono.Security.Protocol.Tls
 			RemoveAt(IndexOf(errorMessage));
 		}
 
-		public TlsCipherSuite Add(TlsCipherSuite cipherSuite)
+		public CipherSuite Add(short code, string name, string algName, string hashName, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
+		{
+			switch (this.protocol)
+			{
+				case TlsProtocol.Tls1:
+					return this.add(
+						new TlsCipherSuite(code, name, algName, hashName, exportable, blockMode, keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes, ivSize, blockSize));
+
+				case TlsProtocol.Ssl3:
+					return this.add(
+						new TlsSslCipherSuite(code, name, algName, hashName, exportable, blockMode, keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes, ivSize, blockSize));
+
+				default:
+					throw new NotSupportedException();
+			}
+		}
+
+		private TlsCipherSuite add(TlsCipherSuite cipherSuite)
 		{
 			base.Add(cipherSuite);
 
 			return cipherSuite;
 		}
 
-		public TlsCipherSuite Add(short code, string name, string algName, string hashName, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
+		private TlsSslCipherSuite add(TlsSslCipherSuite cipherSuite)
 		{
-			TlsCipherSuite cipherSuite = new TlsCipherSuite(code, name, algName, hashName, exportable, blockMode, keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes, ivSize, blockSize);
+			base.Add(cipherSuite);
 
-			return Add(cipherSuite);
+			return cipherSuite;
 		}
 
 		private bool cultureAwareCompare(string strA, string strB)

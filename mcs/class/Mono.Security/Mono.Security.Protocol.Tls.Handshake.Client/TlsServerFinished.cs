@@ -44,7 +44,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			Session.HandshakeFinished = true;
+			this.Session.Context.HandshakeFinished = true;
 		}
 
 		#endregion
@@ -58,13 +58,13 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			byte[]		serverPRF	= ReadBytes((int)Length);
+			byte[]		serverPRF	= this.ReadBytes((int)Length);
 			TlsStream	hashes		= new TlsStream();
 
-			hashes.Write(Session.Context.HandshakeHashes.GetMD5Hash());
-			hashes.Write(Session.Context.HandshakeHashes.GetSHAHash());
+			hashes.Write(this.Session.Context.HandshakeHashes.GetMD5Hash());
+			hashes.Write(this.Session.Context.HandshakeHashes.GetSHAHash());
 
-			byte[] clientPRF = Session.Context.Cipher.PRF(Session.Context.MasterSecret, "server finished", hashes.ToArray(), 12);
+			byte[] clientPRF = this.Session.Context.Cipher.PRF(this.Session.Context.MasterSecret, "server finished", hashes.ToArray(), 12);
 
 			hashes.Reset();
 
@@ -81,7 +81,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				}
 			}
 
-			Session.Context.HandshakeHashes.Clear();
+			this.Session.Context.HandshakeHashes.Clear();
 		}
 
 		#endregion

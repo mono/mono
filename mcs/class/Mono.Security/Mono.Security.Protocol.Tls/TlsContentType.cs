@@ -32,6 +32,5 @@ namespace Mono.Security.Protocol.Tls
 		Alert				= 21,
 		Handshake			= 22,
 		ApplicationData		= 23,
-		Unknown				= 255
 	}
 }

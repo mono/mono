@@ -50,9 +50,42 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region PROTECTED_METHODS
 
+		private byte[] computeSslHash(string hashName, byte[] hashes, int sender)
+		{
+			HashAlgorithm		hash	= HashAlgorithm.Create(hashName);
+			TlsStream			block	= new TlsStream();
+			TlsSslCipherSuite	cipher	= (TlsSslCipherSuite)this.Session.Context.Cipher;
+			byte[]				pad1	= null;
+			byte[]				pad2	= null;
+
+			cipher.GeneratePad(hashName, ref pad1, ref pad2);
+
+			block.Write(hashes);
+			block.Write(sender);
+			block.Write(this.Session.Context.MasterSecret);
+			block.Write(cipher.Pad1);
+
+			byte[] blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+
+			block.Reset();
+
+			block.Write(this.Session.Context.MasterSecret);
+			block.Write(cipher.Pad2);
+			block.Write(blockHash);
+
+			blockHash = hash.ComputeHash(block.ToArray(), 0, (int)block.Length);
+
+			block.Reset();
+
+			return blockHash;
+		}
+
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			this.Write(computeSslHash("MD5", Session.Context.HandshakeHashes.Messages, 0x434C4E54));
+			this.Write(computeSslHash("SHA1", Session.Context.HandshakeHashes.Messages, 0x434C4E54));
+			
+			Session.Context.HandshakeHashes.Reset();
 		}
 
 		protected override void ProcessAsTls1()

@@ -69,8 +69,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 
 			// Compose the message
-			WriteInt24((int)stream.Length);
-			Write(stream.ToArray());
+			this.WriteInt24((int)stream.Length);
+			this.Write(stream.ToArray());
 		}
 
 		#endregion

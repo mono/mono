@@ -38,9 +38,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#region CONSTRUCTORS
 
 		public TlsClientHello(TlsSession session) 
-						: base(session, 
-								TlsHandshakeType.ClientHello, 
-								TlsContentType.Handshake)
+			: base(session, TlsHandshakeType.ClientHello, TlsContentType.Handshake)
 		{
 		}
 
@@ -63,13 +61,13 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			this.ProcessAsTls1();
 		}
 
 		protected override void ProcessAsTls1()
 		{
 			// Client Version
-			Write((short)this.Session.Context.Protocol);
+			this.Write((short)this.Session.Context.Protocol);
 								
 			// Random bytes - Unix time + Radom bytes [28]
 			TlsStream clientRandom = new TlsStream();
@@ -78,37 +76,37 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.random = clientRandom.ToArray();
 			clientRandom.Reset();
 
-			Write(this.random);
+			this.Write(this.random);
 
 			// Session id
 			// Send the session ID empty
 			if (this.Session.SessionId != null)
 			{
-				Write((byte)this.Session.SessionId.Length);
+				this.Write((byte)this.Session.SessionId.Length);
 				if (this.Session.SessionId.Length > 0)
 				{
-					Write(this.Session.SessionId);
+					this.Write(this.Session.SessionId);
 				}
 			}
 			else
 			{
-				Write((byte)0);
+				this.Write((byte)0);
 			}
 			
 			// Write length of Cipher suites			
-			Write((short)(this.Session.SupportedCiphers.Count*2));
+			this.Write((short)(this.Session.Context.SupportedCiphers.Count*2));
 
 			// Write Supported Cipher suites
-			for (int i = 0; i < this.Session.SupportedCiphers.Count; i++)
+			for (int i = 0; i < this.Session.Context.SupportedCiphers.Count; i++)
 			{
-				Write((short)this.Session.SupportedCiphers[i].Code);
+				this.Write((short)this.Session.Context.SupportedCiphers[i].Code);
 			}
 
 			// Compression methods length
-			Write((byte)1);
+			this.Write((byte)1);
 			
 			// Compression methods ( 0 = none )
-			Write((byte)TlsCompressionMethod.None);
+			this.Write((byte)this.Session.Context.CompressionMethod);
 		}
 
 		#endregion

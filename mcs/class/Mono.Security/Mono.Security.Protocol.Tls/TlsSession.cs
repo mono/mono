@@ -46,10 +46,7 @@ namespace Mono.Security.Protocol.Tls
 		
 		private byte[]						sessionId;
 		private TlsSessionContext			context;
-		private bool						helloDone;
-		private	bool						handshakeFinished;
 		private TlsSessionSettings			settings;
-		private TlsCipherSuiteCollection	supportedCiphers;
 		private TlsSocket					socket;
 		private TlsNetworkStream			networkStream;
 		private bool						isSecure;
@@ -81,23 +78,6 @@ namespace Mono.Security.Protocol.Tls
 		internal TlsSessionContext Context
 		{
 			get { return context; }
-		}
-
-		internal TlsCipherSuiteCollection SupportedCiphers
-		{
-			get { return supportedCiphers; }
-		}
-				
-		internal bool HelloDone
-		{
-			get { return helloDone; }
-			set { helloDone = value; }
-		}
-
-		internal bool HandshakeFinished
-		{
-			get { return handshakeFinished; }
-			set { handshakeFinished = value; }
 		}
 
 		internal bool IsSecure
@@ -163,10 +143,10 @@ namespace Mono.Security.Protocol.Tls
 			{
 				this.context.Protocol			= settings.Protocol;
 				this.context.CompressionMethod	= settings.CompressionMethod;
-				this.state						= TlsSessionState.OpeningSecure;
-				this.supportedCiphers			= TlsCipherSuiteFactory.GetSupportedCiphers(context.Protocol);
+				this.context.SupportedCiphers	= TlsCipherSuiteFactory.GetSupportedCiphers(context.Protocol);
+				this.state						= TlsSessionState.OpeningSecure;				
 				this.socket.DoHandshake();
-				this.state				= TlsSessionState.OpenSecure;
+				this.state						= TlsSessionState.OpenSecure;
 			}
 			catch (TlsException ex)
 			{
@@ -276,8 +256,6 @@ namespace Mono.Security.Protocol.Tls
 
 			// Reset session information
 			this.isSecure			= false;
-			this.helloDone			= false;
-			this.handshakeFinished	= false;
 			this.context			= new TlsSessionContext();
 			this.sessionId			= new byte[0];			
 		}

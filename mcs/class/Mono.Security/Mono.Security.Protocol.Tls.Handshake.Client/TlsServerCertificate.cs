@@ -70,7 +70,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			this.ProcessAsTls1();
 		}
 
 		protected override void ProcessAsTls1()
@@ -78,7 +78,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.certificates = new X509CertificateCollection();
 			
 			int readed	= 0;
-			int length	= ReadInt24();
+			int length	= this.ReadInt24();
 
 			while (readed < length)
 			{
@@ -91,12 +91,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				if (certLength > 0)
 				{
 					// Read certificate
-					X509Certificate certificate = new X509Certificate(ReadBytes(certLength));
+					X509Certificate certificate = new X509Certificate(this.ReadBytes(certLength));
 					certificates.Add(certificate);
 
 					readed += certLength;
 
-					validateCertificate(certificate);
+					this.validateCertificate(certificate);
 				}
 			}
 		}

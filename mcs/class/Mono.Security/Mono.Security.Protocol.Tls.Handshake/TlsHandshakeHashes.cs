@@ -37,6 +37,15 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		#endregion
 
+		#region PROPERTIES
+
+		internal byte[] Messages
+		{
+			get { return messages.ToArray(); }
+		}
+
+		#endregion
+
 		#region CONSTRUCTORS
 
 		public TlsHandshakeHashes()
