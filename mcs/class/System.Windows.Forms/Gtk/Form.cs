@@ -16,7 +16,7 @@ using GtkSharp;
 namespace System.Windows.Forms {
 
 	public class Form : ContainerControl {
-		Window win;
+		internal Window win;
 		string caption;
 		Size csize;
 
@@ -255,14 +255,14 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		// [MonoTODO]
-		//public Control Menu {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//			Controls.AddRange(new System.Windows.Forms.Control[] {value}); 
-		//	}
-		//}
+		public Control Menu {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				Control.Controls.Add(value);
+			}
+		}
 		// [MonoTODO]
 		// public MainMenu MergedMenu {
 		//	get {

@@ -1,3 +1,14 @@
+2003-05-24  Joel Basson  <jstrike@mweb.co.za>
+* MainMenu.cs
+* MenuItems.cs
+* Some more work done to MessageBox.cs
+
+2003-05-11  Joel Basson  <jstrike@mweb.co.za>
+
+* MessageBox.cs
+* Bugfix to ComboBox.cs
+* Small update to Form.cs 
+
 2003-05-09  Joel Basson  <jstrike@mweb.co.za>
 
 * Added many new properties to Combo.cs

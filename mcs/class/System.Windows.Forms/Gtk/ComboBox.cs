@@ -18,11 +18,12 @@ namespace System.Windows.Forms {
 
 	public class ComboBox: Control{
 		
+		private int menusize;
 		private bool UpdateState;
 		public ItemCollection Items = new ItemCollection(this);
  		GLib.List list = new GLib.List (IntPtr.Zero, typeof (string));
 		System.Collections.ArrayList alist = new System.Collections.ArrayList();
-
+		
 		public class ItemCollection {
 
 			ComboBox owner;
@@ -74,8 +75,9 @@ namespace System.Windows.Forms {
 		}
 
 		public int FindString (string value){
-
-			return alist.BinarySearch(value);	
+			
+			//return alist.BinarySearch(value);	
+			return alist.IndexOf(value);
 		}
 		
 		public int SelectedIndex{
@@ -96,5 +98,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public int DropDownWidth {
+			get {		
+				return menusize;
+			}
+			set {	
+				menusize = value;
+			}
+		}
 	}
 }

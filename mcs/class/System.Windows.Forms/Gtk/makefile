@@ -28,6 +28,10 @@ SOURCES = \
 	FontDialog.cs	\
 	ColorDialog.cs	\
 	ComboBox.cs	\
+	MessageBox.cs	\
+	MessageBoxButtons.cs	\
+	MenuItem.cs	\
+	MainMenu.cs	\
 	ScrollableControl.cs
 
 all: demo.exe 
