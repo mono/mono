@@ -1,3 +1,11 @@
+
+Tue May 25 14:33:56 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ops.h, mini-ppc.c, cpu-g4.md, inssel-ppc.brg: eliminate the use
+	of the mcrxr instruction which is not available on some processors
+	even if it's documented to be. Implement add and sub overflow correctly
+	(still not complete for long unsigned). Speed up icalls a bit.
+
 2004-05-25 13:01 CET Patrik Torstenson <totte@hiddenpeaks.com>
 
 	* mini.c (mono_jit_compile_method_with_opt): Make sure that
