@@ -1,3 +1,25 @@
+2002-01-18  Duncan Mak  <duncan@ximian.com>
+
+	* EnvironmentPermissionAttribute.cs: 
+	* FileDialogPermissionAttribute.cs: 
+	* FileIOPermissionAttribute.cs: 
+	* IsolatedStorageAttribute.cs: 
+	* IsolatedStorageFilePermissionAttribute.cs: 
+	* PermissionSetAttribute.cs: 
+	* PrinciplePermissionAttribute.cs: 
+	* ReflectionPermissionAttribute.cs: 
+	* RegistryPermissionAttribute.cs: 
+	* SiteIdentityPermissionAttribute.cs: 
+	* StrongNamePermissionAttribute.cs: 
+	* UIPermissionAttribute.cs: 
+	* UrlIdentityPermissionAttribute.cs: 
+	* ZoneIdentityPermissionAttribute.cs: New files. Stubbed out with MonoTODOs
+
+	* Note: These are all the Attributes in the
+	System.Security.Permissions namespace. The only missing one is
+	PublishIdentityPermissionAttribute.cs because we don't have
+	anything for the X509Certificate class.
+
 2002-01-14  Nick Drochak  <ndrochak@gol.com>
 
 	* FileIOPermission.cs: New file.  Implemented.
