@@ -2,6 +2,7 @@
 // System.Runtime.Serialization.Formatters.SoapMessage.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+// 	   Jean-Marc Andre (jean-marc.andre@polymtl.ca)	
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -15,45 +16,45 @@ namespace System.Runtime.Serialization.Formatters {
 	[Serializable]
 	public class SoapMessage : ISoapMessage
 	{
-		[MonoTODO]
+		private Header[] _headers;
+		private string _methodName;
+		private string[] _paramNames;
+		private Type[] _paramTypes;
+		private object[] _paramValues;
+		private string _xmlNameSpace;
+		
 		public SoapMessage ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		public Header[] Headers {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _headers; }
+			set { _headers = value; }
 		}
 
-		[MonoTODO]
 		public string MethodName {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _methodName; }
+			set { _methodName = value; }
 		}
 
-		[MonoTODO]
 		public string [] ParamNames {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _paramNames; }
+			set { _paramNames = value; }
 		}
 
-		[MonoTODO]
 		public Type [] ParamTypes {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _paramTypes; }
+			set { _paramTypes = value; }
 		}
 
-		[MonoTODO]
 		public object [] ParamValues {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _paramValues; }
+			set { _paramValues = value; }
 		}
 
-		[MonoTODO]
 		public string XmlNameSpace {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _xmlNameSpace; }
+			set { _xmlNameSpace = value; }
 		}
 	}
 }

@@ -2,6 +2,7 @@
 // System.Runtime.Serialization.Formatters.SoapFault.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+//         Jean-Marc Andre (jean-marc.andre@polymtl.ca)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -17,19 +18,18 @@ namespace System.Runtime.Serialization.Formatters {
 		string code;
 		string actor;
 		string faultString;
-		ServerFault serverFault;
+		object detail;
 
-		[MonoTODO]
 		public SoapFault ()
 		{
-			throw new NotImplementedException ();
+
 		}
 
 		private SoapFault (SerializationInfo info, StreamingContext context)
 		{
-			FaultCode = info.GetString ("faultcode");
-			FaultString = info.GetString ("faultstring");
-			Detail = info.GetValue ("detail", typeof (object));
+			code = info.GetString ("faultcode");
+			faultString = info.GetString ("faultstring");
+			detail = info.GetValue ("detail", typeof (object));
 		}
 
 		public SoapFault (string faultCode, string faultString,
@@ -38,13 +38,13 @@ namespace System.Runtime.Serialization.Formatters {
 			this.code = faultCode;
 			this.actor = faultActor;
 			this.faultString = faultString;
-			this.serverFault = serverFault;
+			this.detail = serverFault;
 		}
 		
-		[MonoTODO]
+
 		public object Detail {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return detail; }
+			set { detail = value; }
 		}
 
 		public string FaultActor {
@@ -65,9 +65,9 @@ namespace System.Runtime.Serialization.Formatters {
 		public void GetObjectData (SerializationInfo info,
 					   StreamingContext context)
 		{
-			info.AddValue ("faultcode", FaultCode, typeof (string));
-			info.AddValue ("faultstring", FaultString, typeof (string));
-			info.AddValue ("detail", Detail, typeof (object));
+			info.AddValue ("faultcode", code, typeof (string));
+			info.AddValue ("faultstring", faultString, typeof (string));
+			info.AddValue ("detail", detail, typeof (object));
 		}
 	}
 }

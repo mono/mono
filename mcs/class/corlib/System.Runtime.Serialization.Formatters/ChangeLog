@@ -1,3 +1,9 @@
+2003-05-28  Jean-Marc Andre <jean-marc.andre@polymtl.ca>
+
+	* SoapFault.cs: finishing implementation
+	* ServerFault.cs: finishing implementation
+	* SoapMessage.cs: finishing implementation
+
 2002-08-22  Nick Drochak  <ndrochak@gol.com>
 
 	* SoapFault.cs: Serialization ctr should be private
