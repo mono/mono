@@ -1,4 +1,8 @@
 
+Thu May 29 12:52:40 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* opcode.def, cil-opcodes.xml: fix opcode entries.
+
 Wed Sep 5 15:54:47 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* opcode.def: cvs add to reduce build dependencies for
