@@ -11,6 +11,7 @@
 	* attribute.cs: fixed compilation. The error was:
 	"attribute.cs(571,17): error CS0177: The out parameter 'is_error' must 
 	be assigned to before control leaves the current method."
+	[FIXME:  Filed as bug #28186: MCS must report this error.]
 
 2002-07-25  Martin Baulig  <martin@gnome.org>
 
