@@ -24,7 +24,7 @@ namespace System.Reflection {
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 		private IntPtr _mono_assembly;
-
+		
 		internal Assembly () {}
 
 		//TODO: when adding this, MonoReflectionAssembly must be modified too.
@@ -40,7 +40,10 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string InternalImageRuntimeVersion ();
-		
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern bool get_global_assembly_cache ();
+
 		public virtual string CodeBase {
 			get {
 				return get_code_base ();
@@ -85,8 +88,7 @@ namespace System.Reflection {
 		[MonoTODO]
 		public bool GlobalAssemblyCache {
 			get {
-				//TODO: if we ever have a GAC, fix this.
-				return false;
+				return get_global_assembly_cache ();
 			}
 		}
 		
