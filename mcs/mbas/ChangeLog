@@ -1,5 +1,6 @@
 2004-08-07 Bernie Solomon <bernard@ugsolutions.com>
 	* mb-parser.jay: Implement GetType(x) 
+	implement Is as equals for the moment so it can be used
 
 2004-08-07 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Check for empty enum declaration
