@@ -1,3 +1,6 @@
+2005-03-04  Manjula GHM <mmanjula@novell.com>
+	* StringType.cs: Assigned value to destination in string manipulation of MidStmtStr()
+
 2005-02-15  Duncan Mak  <duncan@novell.com>
 
 	* Bytetype.cs, StaticLocalInitFlags.cs:

@@ -301,8 +301,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			if (insertLen == 0)
 				return;
 			//TODO: are the next two lines equvlent to the 8 that follow?
-            dest.Remove(startPosition,insertLen);
-			dest.Insert(startPosition,sInsert.Substring(0,insertLen));
+            		dest = dest.Remove(startPosition,insertLen);
+			dest = dest.Insert(startPosition,sInsert.Substring(0,insertLen));
 			//Java version
 			//sb = new StringBuilder(dest);
 			//if (sInsert.Length == insertLen)
