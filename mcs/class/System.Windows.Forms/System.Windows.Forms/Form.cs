@@ -19,8 +19,6 @@ namespace System.Windows.Forms {
 
 	public class Form : ContainerControl  {
 
-		string caption;
-
 		public Form () : base ()
 		{
 		}
@@ -336,13 +334,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
+
 		public override ISite Site {
 			get {
-				throw new NotImplementedException ();
+				return base.Site;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Site = value;
 			}
 		}
 

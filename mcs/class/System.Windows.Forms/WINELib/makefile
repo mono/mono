@@ -12,6 +12,7 @@ SOURCES = \
 	MenuItem.cs \
 	DrawItemEventArgs.cs \
 	DrawItemEventHandler.cs \
+	../System.Windows.Forms/BorderStyle.cs \
 	../System.Windows.Forms/Message.cs \
 	../System.Windows.Forms/CreateParams.cs \
 	../System.Windows.Forms/MdiLayout.cs \
@@ -107,7 +108,7 @@ monostub.exe.so: monostub.o monostub.exe.spec.o monostub.exe.dbg.o
 	monostub.exe.spec.o \
 	monostub.o monostub.exe.dbg.o -I/usr/local/include \
 	 $(GLIB20_INCUDE) -L/usr/lib \
-	/usr/local/lib/libmono.a -lgc  \
+	/usr/local/lib/libmono.a  \
 	-lwine -lntdll.dll $(GLIB20_LIB) -lm -lpthread 
 
 clean:	

@@ -9,6 +9,10 @@ class FormTest : Form {
 	public FormTest () : base ()
 	{
 		label = new Label ();
+		label.Top = 60;
+		label.Left = 50;
+		label.Width = 50;
+		label.Height = 50;
 		label.Parent = this;
 		label.Text = "Hello";
 	}

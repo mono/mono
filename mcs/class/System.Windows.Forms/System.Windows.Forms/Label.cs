@@ -5,10 +5,13 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	  implemented for Gtk+ by Rachel Hestilow (hestilow@ximian.com)
 //	Dennis Hayes (dennish@raytek.com)
+//   WineLib implementation started by John Sohn (jsohn@columbus.rr.com)
+//
 // (C) 2002 Ximian, Inc
 //
 
 namespace System.Windows.Forms {
+	using System.ComponentModel;
 	using System.Drawing;
 
 	// <summary>
@@ -16,51 +19,89 @@ namespace System.Windows.Forms {
 	// </summary>
 	
 	public class Label : Control {
-	
+
+		CreateParams createParams;
+		Image backgroundImage;
+		BorderStyle borderStyle;
+		bool autoSize;
+		Image image;
+		ContentAlignment imageAlign;
+		ImeMode defaultImeMode;
+		bool renderTransparent;
+		FlatStyle flatStyle;
+		int preferredHeight;
+		int preferredWidth;
+		bool tabStop;
+		ContentAlignment textAlign;
+		bool useMnemonic;
+
+		//
+		//  --- Constructor
+		//
 		public Label () : base ()
 		{
 
 		}
 		
-		[MonoTODO]
+		//
+		//  --- Public Properties
+		//
 		public virtual bool AutoSize {
 			get {
-				throw new NotImplementedException ();
+				return autoSize;
 			}
 			set {
-				throw new NotImplementedException ();
+				autoSize = value;
 			}
 		}
 
-		[MonoTODO]
+		public override Image BackgroundImage {
+			get {
+				return backgroundImage;
+			}
+			set {
+				backgroundImage = value;
+				// FIXME: force redraw
+			}
+		}
+
+		public virtual BorderStyle BorderStyle {
+			get {
+				return borderStyle;
+			}
+			set {
+				borderStyle = value;
+			}
+		}
+
+
 		public FlatStyle FlatStyle {
 			get {
-				throw new NotImplementedException ();
+				return flatStyle;
 			}
 			set {
-				throw new NotImplementedException ();
+				flatStyle = value;
 			}
 		}
 
-		[MonoTODO]
 		public Image Image {
 			get {
-				throw new NotImplementedException ();
+				return image;
 			}
 			set {
-				throw new NotImplementedException ();
+				image = value;
 			}
 		}
 
-		[MonoTODO]
 		public ContentAlignment ImageAlign {
 			get {
-				throw new NotImplementedException ();
+				return imageAlign;
 			}
 			set {
-				throw new NotImplementedException ();
+				imageAlign = value;
 			}
 		}
+
 
 		[MonoTODO]
 		public int ImageIndex {
@@ -81,6 +122,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public new ImeMode ImeMode {
 			get {
@@ -91,48 +133,74 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public int PreferredHeight {
 			get {
-				throw new NotImplementedException ();
+				return preferredHeight;
 			}
 		}
 
-		[MonoTODO]
 		public int PreferredWidth {
 			get {
-				throw new NotImplementedException ();
+				return preferredWidth;
 			}
 		}
 
-		[MonoTODO]
 		public new bool TabStop {
 			get {
-				throw new NotImplementedException ();
+				return tabStop;
 			}
 			set {
-				throw new NotImplementedException ();
+				tabStop = value;
 			}
 		}
 
-		[MonoTODO]
-		//virtual
-		public ContentAlignment TextAlign {
+		public virtual ContentAlignment TextAlign {
 			get {
-				throw new NotImplementedException ();
+				return textAlign;
 			}
 			set {
-				throw new NotImplementedException ();
+				textAlign = value;
 			}
 		}
 
-		[MonoTODO]
 		public bool UseMnemonic {
 			get {
-				throw new NotImplementedException ();
+				return useMnemonic;
 			}
 			set {
+				useMnemonic = value;
+			}
+		}
+
+		//
+		//  --- Protected Properties
+		//
+
+		protected override CreateParams CreateParams {
+			get {
+				return createParams;
+			}
+		}
+
+		protected override Size DefaultSize {
+			get {
+				// FIXME: use GetSystemMetrics?
 				throw new NotImplementedException ();
+			}
+		}
+
+		protected virtual bool RenderTransparent {
+			get {
+				return renderTransparent;
+			}
+			set {
+				renderTransparent = value;
+			}
+		}
+
+		protected override ImeMode DefaultImeMode {
+			get {
+				return defaultImeMode;
 			}
 		}
 
@@ -144,19 +212,17 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
+
 		public override int GetHashCode() {
 			//FIXME add our proprities
 			return base.GetHashCode();
 		}
-		//public void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
+		public new void Select()
+		{
+			base.Select ();
+		}
+
 		[MonoTODO]
 		public override string ToString()
 		{
@@ -188,124 +254,29 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected  Rectangle CalcImageRenderBounds( Image image, Rectangle rect,  ContentAlignment align)
-		{
-			throw new NotImplementedException ();
-		}
-// 		[MonoTODO]
-// 		protected  override AccessibleObject CreateAccessibilityInstance()
-// 		{
-// 			throw new NotImplementedException ();
-// 		}
-
-		//protected  void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected  override void Dispose(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		protected  void DrawImage (Graphics g, Image img, 
-					   Rectangle r, ContentAlignment align)
+		protected  Rectangle CalcImageRenderBounds (
+			Image image, Rectangle rect, ContentAlignment align)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected override void  OnEnabledChanged (EventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void  OnFontChanged (EventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void  OnPaint (PaintEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void  OnParentChanged (EventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void  OnTextChanged (EventArgs e) {
-			throw new NotImplementedException ();
-			//((Gtk.Label) Widget).Text = Text;
-		}
-
-		[MonoTODO]
-		protected override void  OnVisibleChanged (EventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override bool ProcessMnemonic(char charCode)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//protected ContentAlignment RtlTranslateAlignment( ContentAlignment alignment)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected HorizontalAlignment RtlTranslateAlignment( HorizontalAlignment alignment)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected override void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		protected override void SetBoundsCore(  int x, int y,  int width, int height,  BoundsSpecified specified)
-		{
-			throw new NotImplementedException ();
-		}
-		//protected void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int b1, int b2, int b3, int b4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		protected override void WndProc(ref Message m)
-		{
-			base.WndProc (ref m);
-		}
-
-		// missing stubs:
-		public new Control Parent {
-			get { return base.Parent; } 
-			set { base.Parent = value; }
-		}
+//  		[MonoTODO]
+//  		protected  override AccessibleObject CreateAccessibilityInstance()
+//  		{
+//  			throw new NotImplementedException ();
+//  		}
 
 		protected override void CreateHandle () 
 		{
 			CreateParams createParams = new CreateParams ();
 			window = new ControlNativeWindow (this);
 
-			// FIXME: set based on attributes
 			createParams.Caption = Text;
 			createParams.ClassName = "STATIC";
-			createParams.X = 10;
-			createParams.Y = 10;
-			createParams.Width = 100;
-			createParams.Height = 50;
+			createParams.X = Top;
+			createParams.Y = Left;
+			createParams.Width = Width;
+			createParams.Height = Height;
 			createParams.ClassStyle = 0;
 			createParams.ExStyle = 0;
 			createParams.Param = 0;
@@ -314,6 +285,127 @@ namespace System.Windows.Forms {
 				Win32.WS_CHILD | 
 				Win32.WS_VISIBLE | Win32.SS_LEFT );
 			window.CreateHandle (createParams);
+		}
+
+		protected new virtual void Dispose()
+		{
+			//throw new NotImplementedException ();
+		}
+
+		protected  override void Dispose(bool disposing)
+		{
+			//throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected  void DrawImage (Graphics g, Image img, 
+					   Rectangle r, ContentAlignment align)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected virtual void OnAutoSizeChanged (EventArgs e) {
+			if (AutoSizeChanged != null)
+				AutoSizeChanged (this, e);
+
+		}
+
+		protected override void OnEnabledChanged (EventArgs e)
+		{
+			base.OnEnabledChanged (e);
+		}
+
+		protected override void OnFontChanged (EventArgs e)
+		{
+			base.OnFontChanged (e);
+		}
+
+		protected override void OnPaint (PaintEventArgs e)
+		{
+
+		}
+
+		protected override void OnParentChanged (EventArgs e)
+		{
+			base.OnParentChanged (e);
+		}
+
+		protected virtual void OnTextAlignChanged (EventArgs e) {
+			if (TextAlignChanged != null)
+				TextAlignChanged (this, e);
+		}
+
+		protected override void OnTextChanged (EventArgs e) {
+			base.OnTextChanged (e);
+		}
+
+		protected override void OnVisibleChanged (EventArgs e)
+		{
+			base.OnVisibleChanged (e);
+		}
+
+		protected override bool ProcessMnemonic(char charCode)
+		{
+			return base.ProcessMnemonic (charCode);
+		}
+
+		[MonoTODO]
+		protected new ContentAlignment RtlTranslateAlignment (
+			ContentAlignment alignment)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected new HorizontalAlignment RtlTranslateAlignment (
+			HorizontalAlignment alignment)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected new LeftRightAlignment RtlTranslateAlignment (
+			LeftRightAlignment align)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected new virtual void Select (bool directed, bool forward)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void SetBoundsCore (
+			int x, int y, int width, int height,
+			BoundsSpecified specified)
+		{
+			base.SetBoundsCore (x, y, width, height, specified);
+		}
+
+		protected new void UpdateBounds()
+		{
+			base.UpdateBounds ();
+		}
+
+		protected new void UpdateBounds (int x, int y,
+					     int width, int height)
+		{
+			base.UpdateBounds (x, y, width, height);
+		}
+
+
+		protected new void UpdateBounds (int x, int y, int width,
+					     int height, int clientWidth,
+					     int clientHeight)
+		{
+			base.UpdateBounds (x, y, width, height, clientWidth, 
+					   clientHeight);
+		}
+
+		protected override void WndProc(ref Message m)
+		{
+			base.WndProc (ref m);
 		}
 	}
 }
