@@ -1,5 +1,6 @@
 topdir = ../..
 
+TEST_DIR= Test
 LIBRARY = $(topdir)/class/lib/System.Data.dll
 
 LIB_LIST = list

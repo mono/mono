@@ -1,3 +1,7 @@
+2002-10-29  Rodrigo Moya <rodrigo@ximian.com>
+
+	* makefile.gnu: added Test directory.
+
 2002-10-29  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlGuid.cs: Fixed some bugs and finished 
