@@ -26,12 +26,12 @@ clean: clean-recursive #clean-local
 # fun specialty targets
 
 all-profiles:
-	$(MAKE) PROFILE=default all || exit 1 ; \
-	$(MAKE) PROFILE=net_2_0 all || exit 1 ;
+	$(MAKE) PROFILE=default all
+	$(MAKE) PROFILE=net_2_0 all
 
 clean-profiles:
-	$(MAKE) PROFILE=default clean || exit 1 ; \
-	$(MAKE) PROFILE=net_2_0 clean || exit 1 ;
+	$(MAKE) PROFILE=default clean
+	$(MAKE) PROFILE=net_2_0 clean
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test

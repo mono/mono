@@ -1,3 +1,7 @@
+2004-06-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (all-profiles, clean-profiles): Simplify slightly.
+
 2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: added target run-test-ondotnet.
