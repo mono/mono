@@ -1,3 +1,8 @@
+2003-07-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStream.cs: Fixed bug #46143 (exception) - however we dont 
+	returns the same result as MS. Class needs to be re-written.
+
 2003-07-09  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SymmetricAlgorithm.cs: Fixed FinalEncrypt. Return empty array if inputCount is 0.

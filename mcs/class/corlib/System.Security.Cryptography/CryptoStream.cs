@@ -84,7 +84,8 @@ public class CryptoStream : Stream {
 		//if (_mode != CryptoStreamMode.Write)
 		//	throw new NotSupportedException ();
 
-		if (!_flushedFinalBlock)
+		// only flush in write mode (bugzilla 46143)
+		if ((!_flushedFinalBlock) && (_mode == CryptoStreamMode.Write))
 			FlushFinalBlock ();
 
 		if (_stream != null)
