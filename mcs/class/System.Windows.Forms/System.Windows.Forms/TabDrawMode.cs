@@ -10,8 +10,6 @@ using System;
 
 namespace System.Windows.Forms {
 
-	/// <summary>
-	/// </summary>
 	public enum TabDrawMode {
 		Normal = 0,
 		OwnerDrawFixed =1
