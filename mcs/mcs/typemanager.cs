@@ -1914,11 +1914,12 @@ public class TypeManager {
 			bool ok = CheckStructCycles (ftc, seen, hash);
 
 			hash.Remove (tc);
-			if (!seen.Contains (ftc))
-				seen.Add (ftc, null);
 
 			if (!ok)
 				return false;
+
+			if (!seen.Contains (ftc))
+				seen.Add (ftc, null);
 		}
 
 		return true;
