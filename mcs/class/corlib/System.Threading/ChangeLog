@@ -1,3 +1,7 @@
+2004-04-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Timer.cs: call Abort on the Runner instance too.
+
 2004-04-07  Jackson Harper  <jackson@ximian.com>
 
 	* Thread.cs: Use new culture info method for constructing the

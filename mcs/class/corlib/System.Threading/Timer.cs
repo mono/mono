@@ -202,6 +202,7 @@ namespace System.Threading
 				t.Abort ();
 				t = null;
 			}
+			runner.Abort ();
 			runner = null;
 			GC.SuppressFinalize (this);
 		}
@@ -215,11 +216,11 @@ namespace System.Threading
 
 		~Timer ()
 		{
-			if (t != null && t.IsAlive) {
+			if (t != null && t.IsAlive)
 				t.Abort ();
-				t = null;
-			}
-			runner = null;
+
+			if (runner != null)
+				runner.Abort ();
 		}
 	}
 }
