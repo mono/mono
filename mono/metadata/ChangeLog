@@ -1,6 +1,13 @@
 2002-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object.c:
+	(mono_print_unhandled_exception): after previous commit, i realized
+	that MS calls ToString on the exception. I changed this function to
+	do that. This way we get stack_trace for free.
+
+2002-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* object.c:
 	(mono_print_unhandled_exception): invoke Message property instead of
 	getting 'message' field from Exception. Don't allocate memory for
 	'trace' and 'message' if not needed.
