@@ -2939,7 +2939,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			// We are born in resolved state. 
+			// We are born in resolved state.
 			return this;
 		}
 

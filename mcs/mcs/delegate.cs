@@ -115,19 +115,28 @@ namespace Mono.CSharp {
 			// Here the various methods like Invoke, BeginInvoke etc are defined
 
 			//
-			// TODO: Call AsAccessible for each type
-			//
-
-			//
 			// Invoke method
 			//
  			param_types = Parameters.GetParameterInfo (parent);
 			if (param_types == null)
 				return false;
+
+			// Check accessibility
+			foreach (Type partype in param_types)
+				if (!TypeContainer.AsAccessible (partype, ModFlags))
+					return false;
 			
   			ret_type = parent.LookupType (ReturnType, false);
 			if (ret_type == null)
 				return false;
+
+			if (!TypeContainer.AsAccessible (ret_type, ModFlags))
+				return false;
+
+			//
+			// We don't have to check any others because they are all
+			// guaranteed to be accessible - they are standard types.
+			//
 			
   			CallingConventions cc = Parameters.GetCallingConvention ();
 
@@ -600,6 +609,9 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Type del_type = InstanceExpr.Type;
+
+			if (del_type == null)
+				return null;
 			
 			if (Arguments != null){
 				for (int i = Arguments.Count; i > 0;){

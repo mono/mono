@@ -1178,15 +1178,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			// FIXME : This ain't right because EventBuilder is not a
-			// MemberInfo. What do we do ?
-			
 			if ((mt & MemberTypes.Event) != 0) {
-				//if (Events != null)
-				//        foreach (Event e in Events) {
-				//		if (filter (e.EventBuilder, criteria) == true)
-				//		        members.Add (e.EventBuilder);
-				//          }
+				if (Events != null)
+				        foreach (Event e in Events) {
+						if (filter (e.EventBuilder, criteria) == true)
+						        members.Add (e.EventBuilder);
+				          }
 			}
 			
 			if ((mt & MemberTypes.Property) != 0){
@@ -2306,6 +2303,10 @@ namespace Mono.CSharp {
 				}
 			}
 
+			foreach (Type partype in parameters)
+				if (!TypeContainer.AsAccessible (partype, ModFlags))
+					return false;
+
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
 				ca, GetCallingConvention (parent is Class), parameters);
 
@@ -2812,6 +2813,138 @@ namespace Mono.CSharp {
 		}
 	}
 
+
+	/// </summary>
+	///  Gigantic workaround  for lameness in SRE follows :
+	///  This class derived from EventInfo and attempts to basically
+	///  wrap around the EventBuilder so that FindMembers can quickly
+	///  return this in it search for members
+	/// </summary>
+	public class MyEventBuilder : EventInfo {
+		
+		//
+		// We use this to "point" to our Builder which is
+		// not really a MemberInfo
+		//
+		EventBuilder MyBuilder;
+		
+		//
+		// We "catch" and wrap these methods
+		//
+		MethodInfo raise, remove, add;
+
+		EventAttributes attributes;
+		Type declaring_type, reflected_type;
+		string name;
+
+		public MyEventBuilder (TypeBuilder type_builder, string name, EventAttributes event_attr, Type event_type)
+		{
+			MyBuilder = type_builder.DefineEvent (name, event_attr, event_type);
+
+			// And now store the values in our own fields.
+			
+			declaring_type = type_builder;
+
+			// FIXME : This is supposed to be MyBuilder but since that doesn't
+			// derive from Type, I have no clue what to do with this.
+			reflected_type = null;
+			
+			attributes = event_attr;
+			this.name = name;
+		}
+		
+		//
+		// Methods that you have to override.  Note that you only need 
+		// to "implement" the variants that take the argument (those are
+		// the "abstract" methods, the others (GetAddMethod()) are 
+		// regular.
+		//
+		public override MethodInfo GetAddMethod (bool nonPublic)
+		{
+			return add;
+		}
+		
+		public override MethodInfo GetRemoveMethod (bool nonPublic)
+		{
+			return remove;
+		}
+		
+		public override MethodInfo GetRaiseMethod (bool nonPublic)
+		{
+			return raise;
+		}
+		
+		//
+		// These methods make "MyEventInfo" look like a Builder
+		//
+		public void SetRaiseMethod (MethodBuilder raiseMethod)
+		{
+			raise = raiseMethod;
+			MyBuilder.SetRaiseMethod (raiseMethod);
+		}
+
+		public void SetRemoveOnMethod (MethodBuilder removeMethod)
+		{
+			remove = removeMethod;
+			MyBuilder.SetRemoveOnMethod (removeMethod);
+		}
+
+		public void SetAddOnMethod (MethodBuilder addMethod)
+		{
+			add = addMethod;
+			MyBuilder.SetAddOnMethod (addMethod);
+		}
+
+		public void SetCustomAttribute (CustomAttributeBuilder cb)
+		{
+			MyBuilder.SetCustomAttribute (cb);
+		}
+		
+		public override object [] GetCustomAttributes (bool inherit)
+		{
+			// FIXME : There's nothing which can be seemingly done here because
+			// we have no way of getting at the custom attribute objects of the
+			// EventBuilder !
+			return null;
+		}
+
+		public override object [] GetCustomAttributes (Type t, bool inherit)
+		{
+			// FIXME : Same here !
+			return null;
+		}
+
+		public override bool IsDefined (Type t, bool b)
+		{
+			return true;
+		}
+
+		public override EventAttributes Attributes {
+			get {
+				return attributes;
+			}
+		}
+
+		public override string Name {
+			get {
+				return name;
+			}
+		}
+
+		public override Type DeclaringType {
+			get {
+				return declaring_type;
+			}
+		}
+
+		public override Type ReflectedType {
+			get {
+				return reflected_type;
+			}
+		}
+		
+	}
+
 	public class Event : MemberCore {
 		
 		const int AllowedModifiers =
@@ -2830,7 +2963,7 @@ namespace Mono.CSharp {
 		public readonly Object    Initializer;
 		public readonly Block     Add;
 		public readonly Block     Remove;
-		public EventBuilder       EventBuilder;
+		public MyEventBuilder     EventBuilder;
 		public Attributes         OptAttributes;
 		Type EventType;
 
@@ -2862,6 +2995,7 @@ namespace Mono.CSharp {
 			if (!TypeContainer.AsAccessible (EventType, ModFlags))
 				return false;
 			
+
 			if (!EventType.IsSubclassOf (TypeManager.delegate_type)) {
 				Report.Error (66, Location, "'" + parent.Name + "." + Name +
 					      "' : event must be of a delegate type");
@@ -2870,8 +3004,8 @@ namespace Mono.CSharp {
 			
 			Type [] parameters = new Type [1];
 			parameters [0] = EventType;
-			
-			EventBuilder = parent.TypeBuilder.DefineEvent (Name, e_attr, EventType);
+
+			EventBuilder = new MyEventBuilder (parent.TypeBuilder, Name, e_attr, EventType);
 			
 			if (Add != null) {
 				mb = parent.TypeBuilder.DefineMethod ("add_" + Name, m_attr, null,
@@ -3263,6 +3397,10 @@ namespace Mono.CSharp {
 						     OptAttributes, Location.Null);
 			
 			OperatorMethod.Define (parent);
+
+			if (OperatorMethod.MethodBuilder == null)
+				return false;
+			
 			OperatorMethodBuilder = OperatorMethod.MethodBuilder;
 
 			Type [] param_types = OperatorMethod.ParameterTypes (parent);
@@ -3359,6 +3497,8 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
+			
+		
 			
 			return true;
 		}

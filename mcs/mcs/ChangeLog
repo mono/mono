@@ -1,3 +1,50 @@
+2001-12-19  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Event.Define): Revamp use of EventBuilder completely. We now
+	use MyEventBuilder only and let it wrap the real builder for us.
+
+	(MyEventBuilder): Revamp constructor etc.
+
+	Implement all operations that we perform on EventBuilder in precisely the same
+	way here too.
+
+	(FindMembers): Update to use the EventBuilder member.
+
+	(Event.Emit): Update accordingly.
+
+2001-12-18  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (MyEventBuilder.Set*): Chain to the underlying builder
+	by calling the appropriate methods.
+
+	(GetCustomAttributes): Make stubs as they cannot possibly do anything
+	useful.
+
+	(Event.Emit): Use MyEventBuilder everywhere - even to set attributes.
+
+2001-12-17  Ravi Pratap  <ravi@ximian.com>
+
+	* delegate.cs (Delegate.Populate): Check that the return type
+	and various parameters types are indeed accessible.
+
+	* class.cs (Constructor.Define): Same here.
+
+	(Field.Define): Ditto.
+
+	(Event.Define): Ditto.
+
+	(Operator.Define): Check that the underlying Method defined itself
+	correctly - so it's MethodBuilder should not be null.
+
+	* delegate.cs (DelegateInvocation.DoResolve): Bale out if the type of the Instance
+	expression happens to be null.
+
+	* class.cs (MyEventBuilder): Workaround for SRE lameness. Implement various abstract
+	members but as of now we don't seem to be able to do anything really useful with it.
+
+	(FindMembers): Handle events separately by returning the MyEventBuilder of the event,
+	not the EventBuilder.
+
 2001-12-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Add support for defines.
@@ -45,7 +92,6 @@
 
 	* class.cs (Event.Define): The lookup can fail.
 	
-
 	* cs-tokenizer.cs: Begin implementation of pre-procesor. 
 
 	* expression.cs: Resolve the this instance before invoking the code.
