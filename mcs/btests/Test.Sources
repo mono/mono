@@ -7,9 +7,13 @@ Dll1 \
 Override_dll \
 Delegate_dll \
 Event_dll \
+OptionalArgu_dll
 
 #
 # All positive test cases goes here
+#
+#ArrayB \
+#FunctionArgu_ByReferenceA \
 #
 
 TEST_SOURCES = \
@@ -140,7 +144,6 @@ ConstantB \
 StructureA \
 StructureB \
 ArrayA \
-ArrayB \
 ArrayC \
 ArrayD \
 ArrayE \
@@ -176,7 +179,6 @@ FunctionArgu_ByValueA \
 FunctionArgu_ByValueB \
 FunctionArgu_ByValueC \
 FunctionArgu_ByValueD \
-FunctionArgu_ByReferenceA \
 FunctionArgu_ByReferenceB \
 FunctionArgu_ByReferenceC \
 FunctionArgu_ByReferenceD \
@@ -203,6 +205,7 @@ OptionalArgu_ByRefFuncA \
 OptionalArgu_ByRefFuncB \
 OptionalArgu_ByRefFuncC \
 OptionalArgu_ByRefFuncD \
+OptionalArgu_exe \
 AssignmentOperators \
 RelationalOperators \
 RelationalOperatorsA \

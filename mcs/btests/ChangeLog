@@ -1,3 +1,10 @@
+2004-09-15 Anirban Bhattacharjee <banirban@novell.com>
+	* OptionalArgu_dll.vb:
+	* OptionalArgu_exe.vb:
+		Tests for optional argument accross assembly
+	* Test.Sources : updated
+	* Makefile: Added dll name
+
 2004-09-09 Bernie Solomon <bernard@ugsolutions.com>
 	* Test.Sources: fix case of a couple of filenames
 
