@@ -8,6 +8,10 @@ System.Drawing/Color.cs
 System.Drawing/ColorTranslator.cs
 System.Drawing/ContentAlignment.cs
 System.Drawing.Design/UITypeEditorEditStyle.cs
+System.Drawing.Design/IPropertyValueUIService.cs
+System.Drawing.Design/PropertyValueItem.cs
+System.Drawing.Design/PropertyValueUIHandler.cs
+System.Drawing.Design/PropertyValueUIItemInvokeHandler.cs
 System.Drawing.Drawing2D/AdjustableArrowCap.cs
 System.Drawing.Drawing2D/Blend.cs
 System.Drawing.Drawing2D/ColorBlend.cs
