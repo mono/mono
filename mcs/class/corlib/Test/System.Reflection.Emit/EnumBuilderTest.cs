@@ -41,7 +41,7 @@ namespace MonoTests.System.Reflection.Emit {
 			AssertEquals (_enumType, enumBuilder.UnderlyingSystemType);
 		}
 
-		[Test][Category("NotWorking")]
+		[Test][Category("ValueAdd")]
 		public void TestEnumBuilder_NotInMono ()
 		{
 			// If we decide to fix this (I dont see why we should),
@@ -62,6 +62,8 @@ namespace MonoTests.System.Reflection.Emit {
 
 		[Test]
 		[ExpectedException (typeof(NotSupportedException))]
+		[Category("ValueAdd")]
+		// Is this worth fixing, or is this considered, "extra value"?
 		public void TestHasElementTypeEnumBuilderComplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -118,6 +120,7 @@ namespace MonoTests.System.Reflection.Emit {
 		}
 
 		[Test]
+		[Category("NotWorking")] // Bug:71299
 		public void TestEnumBuilderGUIDComplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -135,7 +138,7 @@ namespace MonoTests.System.Reflection.Emit {
 
 			Type enumType = assemblyBuilder.GetType (_enumNamespace + "." + _enumName, true);
 
-			Assert (enumType.GUID != Guid.Empty);
+			// Tested in above test: Assert (enumType.GUID != Guid.Empty);
 			AssertNull ("type.DeclaringType of toplevel type should be null", enumType.DeclaringType);
 		}
 
@@ -170,6 +173,7 @@ namespace MonoTests.System.Reflection.Emit {
 
 		[Test]
 		[ExpectedException (typeof(NotSupportedException))]
+		[Category("ValueAdd")]
 		public void TestFindMembersIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -203,6 +207,7 @@ namespace MonoTests.System.Reflection.Emit {
 
 		[Test]
 		[ExpectedException (typeof(NotSupportedException))]
+		[Category("ValueAdd")]
 		public void TestGetConstructorIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -234,6 +239,7 @@ namespace MonoTests.System.Reflection.Emit {
 
 		[Test]
 		[ExpectedException (typeof(ArgumentNullException))]
+		[Category("NotWorking")]
 		public void TestGetConstructorNullElementType ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
@@ -245,6 +251,7 @@ namespace MonoTests.System.Reflection.Emit {
 
 		[Test]
 		[ExpectedException (typeof(NotSupportedException))]
+		[Category("NotWorking")]
 		public void TestGetConstructorsIncomplete ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();

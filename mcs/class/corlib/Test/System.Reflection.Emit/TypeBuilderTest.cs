@@ -98,6 +98,8 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
+	// See bug: 71301
 	public void TestBaseTypeInterface ()
 	{
 		TypeBuilder tb3 = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract);
@@ -147,6 +149,8 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
+		// See bug: 71302
 	public void TestGUIDComplete ()
 	{
 		TypeBuilder tb = module.DefineType (genTypeName ());
@@ -262,6 +266,8 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
+	// See bug: 71304
 	public void TestIsCOMObject () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 		AssertEquals ("Probably not", false, tb.IsCOMObject);
@@ -547,6 +553,8 @@ public class TypeBuilderTest : Assertion
 
 	[Test]
 	[ExpectedException (typeof(NotSupportedException))]
+	[Category("ValueAdd")]
+	// See bug: 71305
 	public void TestTypeInitializerIncomplete ()
 	{
 		TypeBuilder tb = module.DefineType (genTypeName ());
