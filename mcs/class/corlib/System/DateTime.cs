@@ -79,8 +79,8 @@ namespace System
 		private const double OAMinValue = -657435.0d;
 		private const double OAMaxValue = 2958466.0d;
 
-		public static readonly DateTime MaxValue = new DateTime (false, MAX_VALUE_TICKS);
-		public static readonly DateTime MinValue = new DateTime (false, 0);
+		public static readonly DateTime MaxValue = new DateTime (false, new TimeSpan (MAX_VALUE_TICKS));
+		public static readonly DateTime MinValue = new DateTime (false, new TimeSpan (0));
 
 		private static readonly string[] commonFormats = {
 			// For compatibility with MS's CLR, this format (which

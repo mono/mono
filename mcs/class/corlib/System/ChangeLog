@@ -1,3 +1,8 @@
+2005-01-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* DateTime.cs: Create MaxValue and MinValue using a different constructor to avoid static 
+	initialization problems.
+
 2005-01-02  Ben Maurer  <bmaurer@ximian.com>
 
 	* Int32.cs: NumberStyles.AllowExponent was supported by the
