@@ -1,3 +1,9 @@
+2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_string_builder_to_utf8): Fix stringbuilder 
+	marshalling.
+	(mono_marshal_method_from_wrapper): Add null pointer check.
+
 2004-01-16  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.h: Set version number to 36 and reflect
