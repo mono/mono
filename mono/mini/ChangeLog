@@ -1,3 +1,8 @@
+
+2003-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* exceptions-x86.c: fixed small leaks in mono_arch_handle_exception.
+
 2003-05-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini-x86.c (mono_arch_emit_prolog): avoid reallocs with better
