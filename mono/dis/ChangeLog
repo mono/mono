@@ -1,5 +1,6 @@
 2004-12-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* dump.c:
 	* dis-cil.c: added isinf() for Solaris, that does not seem to have it.
 	Fixes the build on Solaris.
 
