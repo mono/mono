@@ -1,5 +1,13 @@
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.MayBecomeEqualGenericTypes): Make
+	this actually work.
+
+	* class.cs (MethodCore.MayUnify): Use
+	TypeManager.MayBecomeEqualGenericTypes().	
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Is.DoResolve, As.DoResolve): If we're a type
 	parameter, box it.  Fixes #69233.
 

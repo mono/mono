@@ -1145,7 +1145,8 @@ namespace Mono.CSharp {
 					if (iface == t)
 						continue;
 
-					if (!TypeManager.MayBecomeEqualGenericInstances (iface, t))
+					Type[] infered = new Type [CountTypeParameters];
+					if (!TypeManager.MayBecomeEqualGenericInstances (iface, t, infered, null))
 						continue;
 
 					Report.Error (
@@ -3518,7 +3519,7 @@ namespace Mono.CSharp {
 			else
 				method_infered = null;
 
-			return Invocation.InferTypeArguments (
+			return TypeManager.MayBecomeEqualGenericInstances (
 				first.ParameterTypes, second.ParameterTypes, class_infered, method_infered);
 		}
 
@@ -3546,7 +3547,7 @@ namespace Mono.CSharp {
 			// TODO: make operator compatible with MethodCore to avoid this
 			if (this is Operator && method is Operator) {
 				if (MemberType != method.MemberType)
-					equal = false;
+					equal = may_unify = false;
 			}
 
 			if (equal) {

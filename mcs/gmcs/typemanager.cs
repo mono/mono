@@ -1857,7 +1857,7 @@ public class TypeManager {
 		return false;
 	}
 
-	public static bool MayBecomeEqualGenericTypes (Type a, Type b)
+	public static bool MayBecomeEqualGenericTypes (Type a, Type b, Type[] class_infered, Type[] method_infered)
 	{
 		if (a.IsGenericParameter) {
 			//
@@ -1877,8 +1877,16 @@ public class TypeManager {
 			//    class X<T,U> : I<T>, I<U>
 			//    class X<T> : I<T>, I<float>
 			// 
-			if (b.IsGenericParameter || !b.IsGenericInstance)
-				return true;
+			if (b.IsGenericParameter || !b.IsGenericInstance) {
+				int pos = a.GenericParameterPosition;
+				Type[] args = a.DeclaringMethod != null ? method_infered : class_infered;
+				if (args [pos] == null) {
+					args [pos] = b;
+					return true;
+				}
+
+				return args [pos] == a;
+			}
 
 			//
 			// We're now comparing a type parameter with a
@@ -1903,7 +1911,7 @@ public class TypeManager {
 		}
 
 		if (b.IsGenericParameter)
-			return MayBecomeEqualGenericTypes (b, a);
+			return MayBecomeEqualGenericTypes (b, a, class_infered, method_infered);
 
 		//
 		// At this point, neither a nor b are a type parameter.
@@ -1915,7 +1923,7 @@ public class TypeManager {
 		//
 
 		if (a.IsGenericInstance || b.IsGenericInstance)
-			return MayBecomeEqualGenericInstances (a, b);
+			return MayBecomeEqualGenericInstances (a, b, class_infered, method_infered);
 
 		//
 		// If both of them are arrays.
@@ -1928,7 +1936,7 @@ public class TypeManager {
 			a = a.GetElementType ();
 			b = b.GetElementType ();
 
-			return MayBecomeEqualGenericTypes (a, b);
+			return MayBecomeEqualGenericTypes (a, b, class_infered, method_infered);
 		}
 
 		//
@@ -1942,7 +1950,8 @@ public class TypeManager {
 	// Checks whether two generic instances may become equal for some
 	// particular instantiation (26.3.1).
 	//
-	public static bool MayBecomeEqualGenericInstances (Type a, Type b)
+	public static bool MayBecomeEqualGenericInstances (Type a, Type b,
+							   Type[] class_infered, Type[] method_infered)
 	{
 		if (!a.IsGenericInstance || !b.IsGenericInstance)
 			return false;
@@ -1952,15 +1961,23 @@ public class TypeManager {
 		Type[] aargs = GetTypeArguments (a);
 		Type[] bargs = GetTypeArguments (b);
 
+		return MayBecomeEqualGenericInstances (
+			GetTypeArguments (a), GetTypeArguments (b), class_infered, method_infered);
+	}
+
+	public static bool MayBecomeEqualGenericInstances (Type[] aargs, Type[] bargs,
+							   Type[] class_infered, Type[] method_infered)
+	{
 		if (aargs.Length != bargs.Length)
 			return false;
 
+		Type[] args = new Type [aargs.Length];
 		for (int i = 0; i < aargs.Length; i++) {
-			if (MayBecomeEqualGenericTypes (aargs [i], bargs [i]))
-				return true;
+			if (!MayBecomeEqualGenericTypes (aargs [i], bargs [i], class_infered, method_infered))
+				return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	public static bool IsEqualGenericInstance (Type type, Type parent)
