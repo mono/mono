@@ -1,3 +1,8 @@
+
+Thu Jan 8 19:56:08 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mono-uri.c: fixed compile problem.
+
 2003-12-02  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mono-math.c: fix for older C compilers and big endian machines
