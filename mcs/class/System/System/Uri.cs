@@ -429,6 +429,11 @@ namespace System
 			return true;
 		}
 
+		[MonoTODO ("Find out what this should do")]
+		protected virtual void Canonicalize ()
+		{
+		}
+
 		public static bool CheckSchemeName (string schemeName) 
 		{
 			if (schemeName == null || schemeName.Length == 0)
@@ -446,7 +451,12 @@ namespace System
 			
 			return true;
 		}
-		
+
+		[MonoTODO ("Find out what this should do")]
+		protected virtual void CheckSecurity ()
+		{
+		}
+
 		public override bool Equals (object comparant) 
 		{
 			if (comparant == null) 
@@ -621,7 +631,7 @@ namespace System
 			return cachedToString;
 		}
 
-		public void GetObjectData (SerializationInfo info, 
+		void ISerializable.GetObjectData (SerializationInfo info, 
 					  StreamingContext context)
 		{
 			info.AddValue ("AbsoluteUri", this.AbsoluteUri);
@@ -629,6 +639,11 @@ namespace System
 
 
 		// Internal Methods		
+
+		protected virtual void Escape ()
+		{
+			path = EscapeString (path);
+		}
 
 		protected static string EscapeString (string str) 
 		{
@@ -664,7 +679,12 @@ namespace System
 			}
 			
 			return s.ToString ();
-		}		
+		}
+
+		[MonoTODO ("Find out what this should do!")]
+		protected virtual void Parse ()
+		{
+		}	
 		
 		protected virtual string Unescape (string str) 
 		{
