@@ -33,7 +33,7 @@ namespace System.Runtime.Remoting.Channels {
 		[MonoTODO]
 		public IDictionary Properties {
 			get {
-				throw new NonImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -41,13 +41,13 @@ namespace System.Runtime.Remoting.Channels {
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
 					  ITransportHeaders headers, Stream stream)
 		{
-			throw new NonImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public Stream GetReponseStream (IMessage msg, ITransportHeaders headers)
 		{
-			throw new NonImplementedException ();
+			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
@@ -55,7 +55,7 @@ namespace System.Runtime.Remoting.Channels {
 							IMessage requestMsg, ITransportHeaders requestHeaders, Stream requestStream,
 							out IMessage responseMsg, out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
-			throw new NonImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		[Serializable]

@@ -1,3 +1,11 @@
+2002-08-01  Duncan Mak  <duncan@ximian.com>
+
+	* BinaryServerFormatterSink.cs: 
+	* SoapServerFormatterSink.cs: Fixed typo.
+
+	* IServerChannelSink.cs:
+	(ProcessMessage): Fixed definition.
+
 2002-07-31  Duncan Mak  <duncan@ximian.com>
 
 	* BinaryServerFormatterSink.cs:

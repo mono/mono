@@ -20,7 +20,8 @@ namespace System.Runtime.Remoting.Channels {
 
 		Stream GetReponseStream (IMessage msg, ITransportHeaders headers);
 
-		void ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, Stream requestStream,
-				     out ITransportHeaders responseHeaders, out Stream responseStream);
+		ServerProcessing ProcessMessage (IServerChannelSinkStack sinkStack,
+						 IMessage requestMsg, ITransportHeaders requestHeaders, Stream requestStream,
+						 out IMessage responseMsg, out ITransportHeaders responseHeaders, out Stream responseStream);
 	}
 }
