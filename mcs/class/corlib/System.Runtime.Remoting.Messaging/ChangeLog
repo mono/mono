@@ -1,3 +1,9 @@
+2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* MethodCall.cs, CADMessages.cs: String.Copy (x) is the same
+	thing as new string (x.ToCharArray ()), however it involves
+	half the memory allocation
+
 2004-07-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MethodCall.cs: Use RemotingServices.GetMethodBaseFromName to get the

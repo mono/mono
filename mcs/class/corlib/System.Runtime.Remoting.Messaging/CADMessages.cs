@@ -170,8 +170,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 			CADObjRef objref = arg as CADObjRef;
 			if (null != objref) {
-				string typeName = new string (objref.TypeName.ToCharArray());
-				string uri = new string (objref.URI.ToCharArray());
+				string typeName = string.Copy (objref.TypeName);
+				string uri = string.Copy (objref.URI);
 				int domid = objref.SourceDomain;
 				
 				ChannelInfo cinfo = new ChannelInfo (new CrossAppDomainData (domid));
@@ -224,7 +224,7 @@ namespace System.Runtime.Remoting.Messaging {
 				case TypeCode.UInt16: return (UInt16)arg;
 				case TypeCode.UInt32: return (UInt32)arg;
 				case TypeCode.UInt64: return (UInt64)arg;
-				case TypeCode.String: return new String (((string)arg).ToCharArray());
+				case TypeCode.String: string.Copy ((string) arg);
 				case TypeCode.DateTime: return new DateTime (((DateTime)arg).Ticks);
 				default:
 					if (arg is TimeSpan) return new TimeSpan (((TimeSpan)arg).Ticks);
