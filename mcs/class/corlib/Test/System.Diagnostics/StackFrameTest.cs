@@ -224,11 +224,12 @@ namespace MonoTests.System.Diagnostics {
         ///   debug information?
         /// </remarks>
 	[TestFixture]
-        public class StackFrameTest3 : TestCase {
+        public class StackFrameTest3 : Assertion {
                 private StackFrame frame1;
                 private StackFrame frame2;
                 
-                protected override void SetUp() {
+		[SetUp]
+                public void SetUp() {
                         // In order to get better test cases with stack traces
                         NestedSetUp();
                 }
@@ -238,7 +239,8 @@ namespace MonoTests.System.Diagnostics {
                         frame2 = new StackFrame(1, true);
                 }
                 
-                protected override void TearDown() {
+		[TearDown]
+                public void TearDown() {
                         frame1 = null;
                         frame2 = null;
                 }
@@ -266,7 +268,7 @@ namespace MonoTests.System.Diagnostics {
                                      frame1.GetFileLineNumber());
                                      
                         AssertEquals("Line number (2)",
-                                     230,
+                                     235,
                                      frame2.GetFileLineNumber());
                 }
                 

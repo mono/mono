@@ -1,6 +1,10 @@
 2003-06-10  Nick Drochak <ndrochak@gol.com>
 
-	* StactFrameTest.cs: Cleanups.  Now tests pass.
+	* StackFrameTest.cs: More cleanups.  Now *all* tests pass.
+
+2003-06-10  Nick Drochak <ndrochak@gol.com>
+
+	* StackFrameTest.cs: Cleanups.  Now tests pass.
 
 2003-04-17  Nick Drochak  <ndrochak@gol.com>
 
