@@ -788,7 +788,7 @@ namespace Mono.MonoBASIC {
 			//
 			// Attempt to do the implicit constant expression conversions
 
-			if (expr is IntConstant || expr is LongConstant || expr is DoubleConstant || expr is FloatConstant){
+			if (expr is BoolConstant || expr is IntConstant || expr is LongConstant || expr is DoubleConstant || expr is FloatConstant){
 				Expression e;
 				
 				e = TryImplicitNumericConversion (target_type, (Constant) expr);
@@ -2210,6 +2210,35 @@ namespace Mono.MonoBASIC {
 			}
 		      return null;
 		}
+
+		static public Expression ConvertNothingToDefaultValues (EmitContext ec, Expression expr,
+									Type target_type, Location loc)
+		{
+			switch (Type.GetTypeCode (target_type)) {
+			case TypeCode.Boolean  :
+				return new BoolConstant (false);
+			case TypeCode.Byte  :
+				return new ByteConstant (0);
+			case TypeCode.Char  :
+				return new CharConstant ((char)0);
+			case TypeCode.SByte :
+				return new SByteConstant (0);
+			case TypeCode.Int16 :
+				return new ShortConstant (0);
+			case TypeCode.Int32 :
+				return new IntConstant (0);
+			case TypeCode.Int64 :
+				return new LongConstant (0);
+			case TypeCode.Decimal :
+				return new DecimalConstant (System.Decimal.Zero);
+			case TypeCode.Single :
+				return new FloatConstant (0.0F);
+			case TypeCode.Double :
+				return new DoubleConstant (0.0);
+			}
+
+			return null;
+		}
 										  		
 		/// <summary>
 		///   Attempts to apply the 'Standard Implicit
@@ -2226,6 +2255,14 @@ namespace Mono.MonoBASIC {
 		{
 			Type expr_type = expr.Type;
 			Expression e;
+
+			if (expr is NullLiteral) {
+				if (target_type == TypeManager.string_type)
+					return expr;
+				e = ConvertNothingToDefaultValues (ec, expr, target_type, loc);
+				if (e != null)
+					return e;
+			}
 
 			if (expr_type == target_type)
 				return expr;
@@ -2281,6 +2318,15 @@ namespace Mono.MonoBASIC {
 		static protected Expression TryImplicitNumericConversion (Type target_type, Constant ic)
 		{
 			double value = 0;
+			if (ic is BoolConstant) {
+				bool val = (bool) ((BoolConstant)ic).Value;
+				if (val) {
+					if (target_type == TypeManager.byte_type)
+						value = Byte.MaxValue;
+					else 
+						value = -1;
+				}
+			}
 			if (ic is IntConstant) 
 				value = (double)((IntConstant)ic).Value;
 			
@@ -2298,7 +2344,11 @@ namespace Mono.MonoBASIC {
 			//
 			// FIXME: This could return constants instead of EmptyCasts
 			//
-			if (target_type == TypeManager.sbyte_type){
+			if (target_type == TypeManager.bool_type){
+				if (value != 0)
+					return new BoolConstant (true);
+				return new BoolConstant (false);
+			} else if (target_type == TypeManager.sbyte_type){
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
 					return new SByteConstant ((sbyte) System.Math.Round (value));
 			} else if (target_type == TypeManager.byte_type){

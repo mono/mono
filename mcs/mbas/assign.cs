@@ -228,38 +228,38 @@ namespace Mono.MonoBASIC {
 			//To support 'Mid' Assignment Statement
 			if(target is Invocation) {
 
-                        Invocation i = (Invocation) target;
-                        Expression mid_expr;
-                        mid_expr = i.Expr;
+                        	Invocation i = (Invocation) target;
+                        	Expression mid_expr;
+                        	mid_expr = i.Expr;
 
-                        if (mid_expr is SimpleName) {
-                                SimpleName sn = mid_expr as SimpleName;
-                                string s = sn.Name;
+                        	if (mid_expr is SimpleName) {
+                                	SimpleName sn = mid_expr as SimpleName;
+                                	string s = sn.Name;
                                
-				 if (s == "Mid" || s == "Mid$") {
-			//It is Mid statement. Construct the function and 
-			//call corresponding Microsoft.VisualBasic.CompilerServices function 
-                        		Expression etmp;
-                        		ArrayList arglist = new ArrayList();
-
-                        		Argument arg4;
-                        		Expression e = null;
-                        		eclass = ExprClass.Value;
-
-                         		arglist  = i.Arguments;
-
-                        		etmp = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.StringType.MidStmtStr", loc);
-			//Get fourth argument and add it to argument list
-
-		                        arg4 = new Argument (source, Argument.AType.Expression);
-		                        arglist.Add (arg4);
-                        		e = (Expression) new Invocation (etmp, arglist, loc);
-                        		e = e.Resolve(ec);
-                        		return e;
-                		}
-			}
+				 	if (s == "Mid" || s == "Mid$") {
+					//It is Mid statement. Construct the function and 
+					//call corresponding Microsoft.VisualBasic.CompilerServices function 
+                        			Expression etmp;
+                        			ArrayList arglist = new ArrayList();
 	
-		}
+                        			Argument arg4;
+                        			Expression e = null;
+                        			eclass = ExprClass.Value;
+	
+                         			arglist  = i.Arguments;
+	
+                        			etmp = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.StringType.MidStmtStr", loc);
+						//Get fourth argument and add it to argument list
+	
+		                        	arg4 = new Argument (source, Argument.AType.Expression);
+		                        	arglist.Add (arg4);
+                        			e = (Expression) new Invocation (etmp, arglist, loc);
+                        			e = e.Resolve(ec);
+                        			return e;
+                			}
+				}
+	
+			}
 			target = target.ResolveLValue (ec, source);
 
 			if (target == null)

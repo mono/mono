@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Manjula GHM (mmanjula@novell.com)
+//   Satya Sudha K (ksathyasudha@novell.com)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -1576,6 +1577,15 @@ namespace Mono.MonoBASIC {
 			Type l = left.Type;
 			Type r = right.Type;
 
+			if (left is NullLiteral && right is NullLiteral) {
+				Error_OperatorCannotBeApplied (loc, "^", l, r);
+				return null;
+			}
+			if (left is NullLiteral)
+				l = r;
+			if (right is NullLiteral)
+				r = l;
+
 			if (l == TypeManager.object_type || r == TypeManager.object_type) {
 				if (r.IsValueType)
 					right = ConvertImplicit (ec, right, TypeManager.object_type, loc);
@@ -1932,19 +1942,22 @@ namespace Mono.MonoBASIC {
 		//
 		bool DoNumericPromotions (EmitContext ec, Type l, Type r, Operator oper)
 		{
-			// Need not do anything for shift operators, as this will be handled by the
-			// 'cHECKsHiftArguments' method
 
 			Type conv_left_as = null;
 			Type conv_right_as = null;
+			if (left is NullLiteral)
+				conv_left_as = r;
+			if (right is NullLiteral)
+				conv_right_as = l;
+
+			// Need not do anything for shift operators, as this will be handled by the
+			// 'CheckShiftArguments' method
 			if (oper == Operator.LeftShift || oper == Operator.RightShift)
 				return true;
 			if (l == TypeManager.bool_type && r == TypeManager.bool_type) {
-				if (IsBitwiseOperator (oper) || IsRelationalOperator (oper) || IsLogicalOperator (oper)) 
-					return true;
 				if (IsArithmaticOperator (oper) && oper != Operator.Division) {
 					type = TypeManager.int32_type;
-					conv_left_as = conv_left_as = TypeManager.short_type;
+					conv_left_as = conv_right_as = TypeManager.short_type;
 				}
 			}
 
@@ -1969,8 +1982,6 @@ namespace Mono.MonoBASIC {
 					conv_left_as = TypeManager.bool_type;
 				else if (r == TypeManager.decimal_type)
 					conv_right_as = TypeManager.bool_type;
-				else 
-					return true;
 			} else if ((l == TypeManager.double_type || r == TypeManager.double_type) ||
 			    (oper == Operator.Division && 
 			    !(l == TypeManager.decimal_type || r == TypeManager.decimal_type))) {
@@ -1997,11 +2008,12 @@ namespace Mono.MonoBASIC {
 			} else if (l == TypeManager.int32_type || r == TypeManager.int32_type){
 				type = conv_left_as = conv_right_as = TypeManager.int32_type;
 			} else if (l == TypeManager.short_type || r == TypeManager.short_type){
-				conv_left_as = conv_right_as = TypeManager.int32_type;
+				conv_left_as = conv_right_as = TypeManager.short_type;
 				type = TypeManager.int32_type;
 			} else {
 				type = TypeManager.int32_type;
 			}
+
 			if (conv_left_as != null)
 				left = ConvertImplicit (ec, left, conv_left_as, loc);
 			if (conv_right_as != null)
@@ -2046,7 +2058,27 @@ namespace Mono.MonoBASIC {
 			}
 
 			type = left.Type;
+			if (left is NullLiteral) {
+				type = right.Type; 
+				if (right.Type != TypeManager.bool_type) {
+					left =  ConvertImplicit (ec, left, right.Type, loc);
+					if (left == null) {
+						Error_OperatorCannotBeApplied (loc, OperName (oper), left.Type, right.Type);
+						return null;
+					}
+				}
+			}
 			right = e;
+
+			if (type == TypeManager.bool_type) {
+				left = ConvertImplicit (ec, left, TypeManager.short_type, loc);
+				if (left == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), left.Type, right.Type);
+					return null;
+				}
+				type = left.Type;
+			}
+
 			int mask = 0;
 			if ( type == TypeManager.byte_type)
 				mask = 7;
@@ -2061,19 +2093,15 @@ namespace Mono.MonoBASIC {
 				right = right.DoResolve (ec);
 			}
 
-			if (type == TypeManager.bool_type) {
-				left = ConvertImplicit (ec, left, TypeManager.short_type, loc);
-				if (left == null) {
-					Error_OperatorCannotBeApplied (loc, OperName (oper), left.Type, right.Type);
-					return null;
-				}
-			}
 			if (type == TypeManager.byte_type || 
 			    type == TypeManager.short_type ||
-			    type == TypeManager.int32_type ||
-			    type == TypeManager.int64_type)
+			    type == TypeManager.int32_type) {
+				type = TypeManager.int32_type;
 				return this;
+			}
 
+			if (type == TypeManager.int64_type)
+				return this;
 			if ((e = ConvertImplicit (ec, left, TypeManager.int64_type, loc)) != null) {
 				left = e;
 				type = TypeManager.int64_type;
@@ -2153,6 +2181,20 @@ namespace Mono.MonoBASIC {
 
 			Type conv_left_as = null;
 			Type conv_right_as = null;
+
+			if (left is NullLiteral && (r.IsValueType || r == TypeManager.string_type)) {
+				// Just treat nothing as the other type, implicit conversion 
+				// will return the default value
+				conv_left_as = r;
+				l = r;
+			}
+
+			if (right is NullLiteral && (l.IsValueType || l == TypeManager.string_type)) {
+				// Just treat nothing as the other type, implicit conversion 
+				// will return the default value
+				conv_right_as = l;
+				r = l;
+			}
 
 			// deal with objects and reference types first
 			if (l == TypeManager.object_type || r == TypeManager.object_type) {
@@ -2310,7 +2352,15 @@ namespace Mono.MonoBASIC {
 				bool right_is_string = (right.Type == TypeManager.string_type);
 
 				if (left_is_string || right_is_string) {
-
+	
+					if (left is NullLiteral) {
+						left_is_string = true;
+						l = r;
+					}
+					if (right is NullLiteral) {
+						right_is_string = true;
+						r = l;
+					}
 					if (left_is_string && right_is_string) {
 						if (oper == Operator.Addition) {
 						// Both operands are string 
@@ -2332,7 +2382,7 @@ namespace Mono.MonoBASIC {
 							return e.Resolve(ec);
 						} 
 					} 
-	
+
 					Expression other = right_is_string ? left: right;
 					Type other_type = other.Type;
 	
@@ -2493,6 +2543,9 @@ namespace Mono.MonoBASIC {
 
 				l = left.Type;
 				r = right.Type;
+				// Required conversions done by 'DoNumericPromotions' method
+				// So Reset 'conv_left_as', 'conv_right_as'
+				conv_left_as = conv_right_as = null;
 				if (l == TypeManager.decimal_type  && r == TypeManager.decimal_type) {
 					if (IsRelationalOperator (oper)) {
 						Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI ("System.Decimal.Compare", Location.Null);
@@ -2664,14 +2717,25 @@ namespace Mono.MonoBASIC {
 					return e;
 			}
 
-			Type l = left.Type;
 			Expression etmp = ResolveOperator (ec);
+			Type l = left.Type;
+			
 			// if the operands are of type byte/short, convert the result back to short/byte
-			if ((l == TypeManager.short_type || l == TypeManager.byte_type) &&
-			    (IsArithmaticOperator (oper) || IsBitwiseOperator (oper) || IsShiftOperator (oper))) {
-				Expression conv_exp = ConvertImplicit (ec, etmp, left.Type, loc);
-				if (conv_exp != null)
-					return conv_exp;
+			if (l == TypeManager.bool_type || l == TypeManager.short_type || l == TypeManager.byte_type) {
+				if (l == TypeManager.bool_type)
+					l = TypeManager.short_type;
+				if (IsArithmaticOperator (oper) && oper != Operator.Division) {
+					Expression conv_exp = ConvertImplicit (ec, etmp, l, loc);
+					if (conv_exp != null)
+						return conv_exp;
+				} 
+				if (IsShiftOperator (oper)) {
+					// No overflow checks are needed
+					if (l == TypeManager.byte_type)
+						return new OpcodeCast (etmp, l, OpCodes.Conv_U1);
+					else 
+						return new OpcodeCast (etmp, l, OpCodes.Conv_I2);
+				}
 			}
 
 			return etmp;

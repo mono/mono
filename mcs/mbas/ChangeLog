@@ -1,3 +1,11 @@
+2005-03-11 Satya Sudha K <ksathyasudha@novell.com>
+	* expression.cs :
+			 Support for 'Nothing' with all operators.
+			 A few fixes to the 'DoNumericPromotions' method
+	* ecore.cs      :
+			 Fixed Boolean constant conversions
+			 Supported conversion of 'nothing' to value types
+
 2005-03-10 Manjula GHM <mmanjula@novell.com>
 	*expression.cs :
 		Support 'Is' for all reference types
