@@ -1,5 +1,10 @@
 2002-09-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (SimpleName.DoResolveType): During the initial type
+	resolution process, when we define types recursively, we must
+	check first for types in our current scope before we perform
+	lookups in the enclosing scopes.
+
 	* expression.cs (MakeByteBlob): Handle Decimal blobs.
 
 	(Invocation.VerifyArgumentsCompat): Call
