@@ -165,12 +165,14 @@ namespace System.IO
 
 		public static string GetFullPath(string path)
 		{
-			if(path != null)
-			{
-				//TODO: Implement this correctly
+			if (path == null)
+				throw(new ArgumentNullException("path", "You must specify a path when calling System.IO.Path.GetFullPath"));
+
+			if (path.StartsWith(new string(DirectorySeparatorChar, 1)) ||
+						path.StartsWith(new string(AltDirectorySeparatorChar, 1)))
 				return path;
-			}
-			return null;
+
+			return _os.GetCurrentDirectory() + new string(DirectorySeparatorChar, 1) + path;
 		}
 
 		public static string GetPathRoot(string path)

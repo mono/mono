@@ -1,3 +1,8 @@
+2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
+
+	* FileNotFoundException.cs: Added some constructors
+
+	* Path.cs (GetFullPath): Fixed implementation
 
 Fri Nov 2 18:27:58 CET 2001 Paolo Molaro <lupus@ximian.com>
 

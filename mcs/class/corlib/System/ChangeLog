@@ -1,3 +1,19 @@
+2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
+
+	* AttributeUseage.cs: Should define AttributeUsageAttribute.
+
+	* CLSCompliant.cs: Marked with AttributeUsage attribute.
+
+	* Decimal.cs: Fixed CLSCompliant attributes.
+
+	* Type.cs: changed _impl to internal (needs to be accessable by
+	subclasses).
+
+	(TypeHandle): Marked as abstract, implementation removed.
+
+	(IsNotPublic, IsPublic, GetMethods, GetPropery, GetConstructor,
+	GetMethod): Added stub implementations so NUnit would link against
+	corlib
 
 Tue Nov 6 09:11:43 CET 2001 Paolo Molaro <lupus@ximian.com>
 

@@ -92,7 +92,7 @@ namespace System
             }
         }
 
-        [CLSCompliantAttribute(false)]
+        [CLSCompliant(false)]
         public Decimal(uint val) 
         {
             lo32 = val;
@@ -121,7 +121,7 @@ namespace System
             }
         }
 
-        [CLSCompliantAttribute(false)]
+        [CLSCompliant(false)]
         public Decimal(ulong uval) 
         {
             unchecked 

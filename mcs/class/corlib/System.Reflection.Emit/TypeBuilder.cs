@@ -129,5 +129,7 @@ namespace System.Reflection.Emit {
 		public override Type GetElementType () { return null; }
 
 		public override Type[] GetInterfaces () { return null; }
+
+		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }
 	}
 }

@@ -22,6 +22,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
 using System.Collections;
+using System.Reflection;
 
 namespace System.PAL
 {
@@ -283,11 +284,8 @@ namespace System.PAL
 			return new DateTime(0);
 		}
 
-		public string GetCurrentDirectory()
-		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetCurrentDirectory(): Stub Method");
-			return null;
-		}
+		[System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern string GetCurrentDirectory();
 
 		public string[]	GetDirectories(string path, string searchPattern)
 		{
@@ -602,7 +600,5 @@ namespace System.PAL
 
 		[ DllImport("libm", EntryPoint="tanh") ]
 		public extern static double Tanh(double d);
-
-
 	}
 }

@@ -13,12 +13,13 @@ using System.Runtime.Serialization;
 using System.Reflection.Emit;
 using System.IO;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
-		private IntPtr mono_assembly;
+		private IntPtr _mono_assembly;
 
 		public virtual string CodeBase { get {return null;} }
 
@@ -124,12 +125,15 @@ namespace System.Reflection {
 
 		public virtual Type GetType(String name, Boolean throwOnError)
 		{
-			return null;
+			return GetType (name, throwOnError, false);
 		}
 
-		public virtual Type GetType(String name)
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern virtual Type GetType(String name);
+
+		public Type GetType(String name, Boolean throwOnError, Boolean ignoreCase)
 		{
-			return GetType (name, true);
+			return null;
 		}
 		
 		public virtual AssemblyName GetName(Boolean copiedName)
@@ -162,11 +166,6 @@ namespace System.Reflection {
 			return null;
 		}
 
-		public Type GetType(String name, Boolean throwOnError, Boolean ignoreCase)
-		{
-			return null;
-		}
-
 		public Assembly GetSatelliteAssembly(CultureInfo culture)
 		{
 			return null;
@@ -174,13 +173,11 @@ namespace System.Reflection {
 
 		public static Assembly LoadFrom(String assemblyFile)
 		{
-			return null;
+			return LoadFrom (assemblyFile, new Evidence());
 		}
 
-		public static Assembly LoadFrom(String assemblyFile, Evidence securityEvidence)
-		{
-			return null;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern Assembly LoadFrom(String assemblyFile, Evidence securityEvidence);
 
 		public static Assembly Load(String assemblyString)
 		{

@@ -15,11 +15,12 @@ namespace System {
 	///
 	/// <remarks>
 	/// </remarks>
-	public class CLSCompliant : Attribute {
+	[AttributeUsage(AttributeTargets.All)]
+	public class CLSCompliant: Attribute {
 
 		bool is_compliant;
 
-		public CLSCompliant (bool is_compliant)
+		public CLSCompliant(bool is_compliant)
 		{
 			this.is_compliant = is_compliant;
 		}

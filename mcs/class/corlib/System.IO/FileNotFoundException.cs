@@ -10,6 +10,8 @@
 namespace System.IO {
 
 	public class FileNotFoundException : SystemException {
+		private string _fileName;
+
 		// Constructors
 		public FileNotFoundException ()
 			: base ("File not found")
@@ -24,6 +26,18 @@ namespace System.IO {
 		public FileNotFoundException (string message, Exception inner)
 			: base (message, inner)
 		{
+		}
+
+		public FileNotFoundException (string message, string fileName)
+			: base (message)
+		{
+			_fileName = fileName;
+		}
+
+		public string FileName {
+			get {
+				return _fileName;
+			}
 		}
 
 		public string FusionLog {

@@ -19,7 +19,8 @@ namespace System {
 	//
 	
 	public abstract class Type : MemberInfo /* IReflect */ {
-		private RuntimeTypeHandle _impl;
+		
+		internal RuntimeTypeHandle _impl;
 
 		/// <summary>
 		///   The assembly where the type is defined.
@@ -98,16 +99,18 @@ namespace System {
 			return internal_from_name (typeName);
 		}
 
+		public static Type GetType(string typeName, bool throwOnError)
+		{
+			// LAMESPEC: what kinds of errors cause exception to be thrown?
+			return internal_from_name (typeName);
+		}
+
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
 		{ 
 			return internal_from_handle (handle);
 		}
 
-		public RuntimeTypeHandle TypeHandle {
-			get {
-				return _impl;
-			}
-		}
+		public abstract RuntimeTypeHandle TypeHandle { get; }
 		
 		public bool IsValueType {
 			get {
@@ -183,6 +186,50 @@ namespace System {
 			get {
 				return typeof (ContextBoundObject).IsAssignableFrom (this);
 			}
+		}
+
+		public bool IsNotPublic {
+			get {
+				// FIXME
+				return false;
+			}
+		}
+
+		public bool IsPublic {
+			get {
+				// FIXME
+				return false;
+			}
+		}
+
+		public MethodInfo[] GetMethods ()
+		{
+			// FIXME
+			return null;
+		}
+
+		public MethodInfo[] GetMethods (BindingFlags bindingAttr)
+		{
+			// FIXME
+			return null;
+		}
+
+		public PropertyInfo GetProperty (string name, Type[] types)
+		{
+			// FIXME
+			return null;
+		}
+
+		public ConstructorInfo GetConstructor (Type[] types)
+		{
+			// FIXME
+			return null;
+		}
+
+		public MethodInfo GetMethod (string name, Type[] types)
+		{
+			// FIXME
+			return null;
 		}
 	}
 }

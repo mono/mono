@@ -1,3 +1,8 @@
+2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
+
+	* Assembly.cs: Filled in some stub implementations
+
+	* ConstructorInfo.cs: Added some stub functions for NUnit
 
 Fri Nov 2 18:29:36 CET 2001 Paolo Molaro <lupus@ximian.com>
 

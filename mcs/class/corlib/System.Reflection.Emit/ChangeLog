@@ -1,3 +1,6 @@
+2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
+
+	* TypeBuilder.cs: Added implementation for TypeHandle.
 
 Tue Nov 6 09:13:45 CET 2001 Paolo Molaro <lupus@ximian.com>
 

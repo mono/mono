@@ -15,5 +15,11 @@ namespace System.Reflection {
 		public override MemberTypes MemberType {
 			get {return MemberTypes.Constructor;}
 		}
+
+		public object Invoke (object[] parameters)
+		{
+			//FIXME
+			return null;
+		}
 	}
 }

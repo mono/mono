@@ -10,11 +10,11 @@
 namespace System {
 
 	[AttributeUsage(AttributeTargets.All)]
-	public class AttributeUsage : Attribute {
+	public class AttributeUsageAttribute : Attribute {
 		AttributeTargets valid_on;
 		bool allow_multiple, inherited;
 		
-		public AttributeUsage (AttributeTargets validOn)
+		public AttributeUsageAttribute (AttributeTargets validOn)
 		{
 			valid_on = validOn;
 		}
