@@ -27,10 +27,9 @@ namespace System.Runtime.InteropServices
 		public static int AddRef (IntPtr pUnk) {
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public static IntPtr AllocCoTaskMem (int cb) {
-			throw new NotImplementedException ();
-		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr AllocCoTaskMem (int cb);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr AllocHGlobal (IntPtr cb);
@@ -126,10 +125,8 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static void FreeCoTaskMem (IntPtr ptr) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void FreeCoTaskMem (IntPtr ptr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void FreeHGlobal (IntPtr hglobal);
