@@ -1,3 +1,8 @@
+2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaException.cs : removed get_Message in 2.0 profile (all done
+	  in .ctor()).
+
 2004-11-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSet.cs : use NameTable when creating XmlTextReader.

@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// XmlSchemaException.cs
+//
+// Author:
+// 	Dwivedi, Ajay kumar Adwiv@Yahoo.com
+//	Enomoto, Atsushi atsushi@ximian.com
+//
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -41,6 +46,13 @@ namespace System.Xml.Schema
 		private XmlSchemaObject sourceObj;
 		private string sourceUri;
 
+#if NET_2_0
+		public XmlSchemaException ()
+			: this ("A schema error occured.", null)
+		{
+		}
+#endif
+
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -50,10 +62,19 @@ namespace System.Xml.Schema
 			this.sourceUri = info.GetString ("sourceUri");
 			this.sourceObj = info.GetValue ("sourceObj", typeof (XmlSchemaObject)) as XmlSchemaObject;
 		}
-		
-		internal XmlSchemaException(string message, int lineNumber, int linePosition,
+
+#if NET_2_0
+		public XmlSchemaException (string message, Exception innerException, int lineNumber, int linePosition)
+			: this (message, lineNumber, linePosition, null, null, innerException)
+		{
+		}
+#endif
+
+		internal XmlSchemaException (string message, int lineNumber, int linePosition,
 			XmlSchemaObject sourceObject, string sourceUri, Exception innerException)
-			: base(message, innerException)
+			: base (
+				GetMessage (message, sourceUri, lineNumber, linePosition, sourceObject),
+				innerException)
 		{
 			hasLineInfo = true;
 			this.lineNumber		= lineNumber;
@@ -62,9 +83,9 @@ namespace System.Xml.Schema
 			this.sourceUri		= sourceUri;
 		}
 
-		internal XmlSchemaException(string message, object sender,
+		internal XmlSchemaException (string message, object sender,
 			string sourceUri, XmlSchemaObject sourceObject, Exception innerException)
-			: base(message, innerException)
+			: base (GetMessage (message, sourceUri, sender, sourceObject), innerException)
 		{
 			IXmlLineInfo li = sender as IXmlLineInfo;
 			if (li != null && li.HasLineInfo ()) {
@@ -77,7 +98,9 @@ namespace System.Xml.Schema
 
 		internal XmlSchemaException(string message, XmlSchemaObject sourceObject,
 			Exception innerException)
-			: base(message, innerException)
+			: base (
+				GetMessage (message, null, 0, 0, sourceObject),
+				innerException)
 		{
 			hasLineInfo = true;
 			this.lineNumber = sourceObject.LineNumber;
@@ -87,10 +110,14 @@ namespace System.Xml.Schema
 		}
 
 		public XmlSchemaException(string message, Exception innerException)
-			: base(message,innerException){}
+			: base (
+				GetMessage (message, null, 0, 0, null),
+				innerException )
+		{
+		}
 
 		// Properties
-		public int LineNumber 
+		public int LineNumber
 		{ 
 			get{ return this.lineNumber;} 
 		}
@@ -107,21 +134,34 @@ namespace System.Xml.Schema
 			get{ return this.sourceUri; } 
 		}
 
-		public override string Message
+		private static string GetMessage (string message, string sourceUri, object sender, XmlSchemaObject sourceObj)
 		{
-			get {
-				string msg = "XmlSchema error: " + base.Message;
-				if (hasLineInfo)
-					msg += String.Format (CultureInfo.InvariantCulture, " XML {0} Line {1}, Position {2}.",
-						(sourceUri != null && sourceUri != "") ? "URI: " + sourceUri + " ." : "",
-						lineNumber,
-						linePosition);
-				if (sourceObj != null)
-					msg += String.Format (CultureInfo.InvariantCulture, " Related schema item SourceUri: {0}, Line {1}, Position {2}.",
-						sourceObj.SourceUri, sourceObj.LineNumber, sourceObj.LinePosition);
-				return msg;
-			}
+			IXmlLineInfo li = sender as IXmlLineInfo;
+			if (li == null)
+				return GetMessage (message, sourceUri, 0, 0, sourceObj);
+			else
+				return GetMessage (message, sourceUri, li.LineNumber, li.LinePosition, sourceObj);
 		}
+
+		private static string GetMessage (string message, string sourceUri, int lineNumber, int linePosition, XmlSchemaObject sourceObj)
+		{
+			string msg = "XmlSchema error: " + message;
+			if (lineNumber > 0)
+				msg += String.Format (CultureInfo.InvariantCulture, " XML {0} Line {1}, Position {2}.",
+					(sourceUri != null && sourceUri != "") ? "URI: " + sourceUri + " ." : "",
+					lineNumber,
+					linePosition);
+			if (sourceObj != null)
+				msg += String.Format (CultureInfo.InvariantCulture, " Related schema item SourceUri: {0}, Line {1}, Position {2}.",
+					sourceObj.SourceUri, sourceObj.LineNumber, sourceObj.LinePosition);
+			return msg;
+		}
+
+#if NET_2_0
+		public override string Message {
+			get { return base.Message; }
+		}
+#endif
 
 		// Methods
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
