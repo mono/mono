@@ -1,3 +1,14 @@
+2003-3-15 DennisHayes <dennish@raytek.com>
+	* Stubbed and somewhat implmented
+
+	* CustomLineCap.cs
+	* GraphicsContainer.cs
+	* GraphicsPath.cs
+	* GraphicsPathIterator.cs
+	* GraphicsState.cs
+	* HatchBrush.cs
+	* LinearGradientBrush.cs
+
 2003-3-5 DennisHayes <dennish@raytek.com>
 	* Added values for enums
 	* Stubbed and somewhat implmented Blend, ColorBlend, CustomLineCap

@@ -8,15 +8,39 @@
 //
 using System;
 
-namespace System.Drawing.Drawing2D
-{
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for HatchBrush.
 	/// </summary>
-	public class HatchBrush
-	{
-		public HatchBrush()
-		{
+	public sealed class HatchBrush : Brush {
+		public HatchBrush(HatchStyle hatchstyle, Color foreColor, Color backColor) {
 		}
+
+		public HatchBrush(HatchStyle hatchstyle, Color foreColor) {
+		}
+
+		public Color BackgroundColor {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public Color ForegroundColor {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public HatchStyle HatchStyle {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override object Clone(){
+			throw new NotImplementedException ();
+		}
+
+
 	}
 }

@@ -8,15 +8,11 @@
 //
 using System;
 
-namespace System.Drawing.Drawing2D
-{
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for GraphicsContainer.
 	/// </summary>
-	public class GraphicsContainer
-	{
-		public GraphicsContainer()
-		{
-		}
+	public sealed class GraphicsContainer : MarshalByRefObject {
+		//Everything is inherited!
 	}
 }

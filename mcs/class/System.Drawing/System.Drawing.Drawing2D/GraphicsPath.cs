@@ -14,6 +14,7 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class GraphicsPath //: MarshalByRefObject, ICloneable, IDisposable
 	{
+		// Constructors
 		//[MonoTODO]
 		//public GraphicsPath() {
 		//}

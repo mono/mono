@@ -8,15 +8,11 @@
 //
 using System;
 
-namespace System.Drawing.Drawing2D
-{
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for GraphicsState.
 	/// </summary>
-	public class GraphicsState
-	{
-		public GraphicsState()
-		{
-		}
+	public sealed class GraphicsState {
+		//All members inherited
 	}
 }
