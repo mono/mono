@@ -1,3 +1,10 @@
+2003-09-16  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c (allocate_symbol_file_entry): Initialize
+	`symfile->range_entry_size' and `symfile->class_entry_size' here;
+	the `symfile' data structure must be fully initialized before it
+	gets added to the table.
+
 2003-09-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_Type_IsArrayImpl): Added MONO_ARCH_SAVE_REGS.
