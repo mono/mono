@@ -426,7 +426,7 @@ namespace System
 					int iMid = (iMin + iMax) / 2;
 					object elt = array.GetValueImpl (iMid);
 
-+					iCmp = comparer.Compare (value, elt);
+					iCmp = comparer.Compare (value, elt);
 
 					if (iCmp == 0)
 						return iMid;
