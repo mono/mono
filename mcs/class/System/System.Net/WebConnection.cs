@@ -67,8 +67,6 @@ namespace System.Net
 		Queue queue;
 		bool reused;
 		int position;
-		delegate void ReadAllHandler ();
-		ReadAllHandler RAll;
 
 		bool ssl;
 		bool certsAvailable;
@@ -348,7 +346,6 @@ namespace System.Net
 			cnc.position = 0;
 
 			WebConnectionStream stream = new WebConnectionStream (cnc);
-			cnc.RAll = new ReadAllHandler (stream.ReadAll);
 
 			string contentType = data.Headers ["Transfer-Encoding"];
 			cnc.chunkedRead = (contentType != null && contentType.ToLower ().IndexOf ("chunked") != -1);
@@ -378,16 +375,7 @@ namespace System.Net
 			if (!ExpectContent (data.StatusCode))
 				stream.ForceCompletion ();
 
-			lock (cnc) {
-				lock (cnc.queue) {
-					if (cnc.queue.Count > 0) {
-						stream.ReadAll ();
-					} else {
-						stream.CheckComplete ();
-					}
-				}
-			}
-			
+			stream.CheckComplete ();
 			data.request.SetResponseData (data);
 		}
 
@@ -556,11 +544,6 @@ namespace System.Net
 		internal EventHandler SendRequest (HttpWebRequest request)
 		{
 			lock (this) {
-				if (RAll != null) {
-					RAll.BeginInvoke (null, null);
-					RAll = null;
-				}
-
 				if (!busy) {
 					busy = true;
 					ThreadPool.RegisterWaitForSingleObject (goAhead, initConn,
@@ -829,11 +812,10 @@ namespace System.Net
 			}
 		}
 
-		void Close (bool sendNext)
+		internal void Close (bool sendNext)
 		{
 			lock (this) {
 				busy = false;
-				RAll = null;
 				if (nstream != null) {
 					try {
 						nstream.Close ();
