@@ -1,5 +1,9 @@
 2004-07-16  Martin Baulig  <martin@ximian.com>
 
+	* iterators.cs: Added generics support.
+
+2004-07-16  Martin Baulig  <martin@ximian.com>
+
 	* iterators.cs: Rewrote this.  We're now using one single Proxy
 	class for both the IEnumerable and the IEnumerator interface and
 	`Iterator' derives from Class so we can use the high-level API.

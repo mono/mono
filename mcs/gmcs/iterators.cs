@@ -132,6 +132,12 @@ namespace Mono.CSharp {
 		Type [] param_types;
 		InternalParameters parameters;
 
+		Expression enumerator_type;
+		Expression enumerable_type;
+		Expression generic_enumerator_type;
+		Expression generic_enumerable_type;
+		TypeArguments generic_args;
+
 		static int proxy_count;
 
 		public void EmitYieldBreak (ILGenerator ig, bool add_return)
@@ -238,7 +244,7 @@ namespace Mono.CSharp {
 				 Type [] param_types, InternalParameters parameters,
 				 int modifiers, Block block, Location loc)
 			: base (container.NamespaceEntry, container,
-				"<Iterator:" + name + (proxy_count++) + ":>",
+				new MemberName ("<Iterator:" + name + (proxy_count++) + ":>"),
 				Modifiers.PRIVATE, null, loc)
 		{
 			this.container = container;
@@ -274,12 +280,31 @@ namespace Mono.CSharp {
 				}
 			}
 
+			generic_args = new TypeArguments (Location);
+			generic_args.Add (new TypeExpression (iterator_type, Location));
+
 			ArrayList list = new ArrayList ();
-			if (is_enumerable)
-				list.Add (new TypeExpression (
-						  TypeManager.ienumerable_type, Location));
-			list.Add (new TypeExpression (TypeManager.ienumerator_type, Location));
+			if (is_enumerable) {
+				enumerable_type = new TypeExpression (
+					TypeManager.ienumerable_type, Location);
+				list.Add (enumerable_type);
+
+				generic_enumerable_type = new ConstructedType (
+					TypeManager.generic_ienumerable_type,
+					generic_args, Location);
+				list.Add (generic_enumerable_type);
+			}
+
+			enumerator_type = new TypeExpression (
+				TypeManager.ienumerator_type, Location);
+			list.Add (enumerator_type);
+
 			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
+
+			generic_enumerator_type = new ConstructedType (
+				TypeManager.generic_ienumerator_type,
+				generic_args, Location);
+			list.Add (generic_enumerator_type);
 
 			iterator_type_expr = new TypeExpression (iterator_type, Location);
 
@@ -294,13 +319,16 @@ namespace Mono.CSharp {
 		{
 			Define_Fields ();
 			Define_Constructor ();
-			Define_Current ();
+			Define_Current (false);
+			Define_Current (true);
 			Define_MoveNext ();
 			Define_Reset ();
 			Define_Dispose ();
 
-			if (is_enumerable)
-				Define_GetEnumerator ();
+			if (is_enumerable) {
+				Define_GetEnumerator (false);
+				Define_GetEnumerator (true);
+			}
 
 			Create_Block ();
 
@@ -441,8 +469,22 @@ namespace Mono.CSharp {
 			return new Throw (new New (ex_type, null, Location), Location);
 		}
 
-		void Define_Current ()
+		void Define_Current (bool is_generic)
 		{
+			MemberName left;
+			Expression type;
+			if (is_generic) {
+				left = new MemberName (
+					"System.Collections.Generic.IEnumerator",
+					generic_args);
+				type = iterator_type_expr;
+			} else {
+				left = new MemberName ("System.Collections.IEnumerator");
+				type = TypeManager.system_object_expr;
+			}
+
+			MemberName name = new MemberName (left, "Current", null);
+
 			Block get_block = new Block (null);
 
 			get_block.AddStatement (new If (
@@ -458,8 +500,7 @@ namespace Mono.CSharp {
 			Accessor getter = new Accessor (get_block, null);
 
 			Property current = new Property (
-				this, iterator_type_expr, Modifiers.PUBLIC,
-				false, "Current", null, getter, null, Location);
+				this, type, 0, false, name, null, getter, null, Location);
 			AddProperty (current);
 		}
 
@@ -467,7 +508,7 @@ namespace Mono.CSharp {
 		{
 			Method move_next = new Method (
 				this, TypeManager.system_boolean_expr,
-				Modifiers.PUBLIC, false, "MoveNext",
+				Modifiers.PUBLIC, false, new MemberName ("MoveNext"),
 				Parameters.EmptyReadOnlyParameters, null,
 				Location.Null);
 			AddMethod (move_next);
@@ -478,12 +519,24 @@ namespace Mono.CSharp {
 			block.AddStatement (inline);
 		}
 
-		void Define_GetEnumerator ()
+		void Define_GetEnumerator (bool is_generic)
 		{
+			MemberName left;
+			Expression type;
+			if (is_generic) {
+				left = new MemberName (
+					"System.Collections.Generic.IEnumerable",
+					generic_args);
+				type = generic_enumerator_type;
+			} else {
+				left = new MemberName ("System.Collections.IEnumerable");
+				type = enumerator_type;
+			}
+
+			MemberName name = new MemberName (left, "GetEnumerator", null);
+
 			Method get_enumerator = new Method (
-				this,
-				new TypeExpression (TypeManager.ienumerator_type, Location),
-				Modifiers.PUBLIC, false, "GetEnumerator",
+				this, type, 0, false, name,
 				Parameters.EmptyReadOnlyParameters, null,
 				Location.Null);
 			AddMethod (get_enumerator);
@@ -600,8 +653,8 @@ namespace Mono.CSharp {
 		{
 			Method reset = new Method (
 				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
-				false, "Reset", Parameters.EmptyReadOnlyParameters,
-				null, Location);
+				false, new MemberName ("Reset"),
+				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (reset);
 
 			reset.Block = new Block (null);
@@ -612,8 +665,8 @@ namespace Mono.CSharp {
 		{
 			Method dispose = new Method (
 				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
-				false, "Dispose", Parameters.EmptyReadOnlyParameters,
-				null, Location);
+				false, new MemberName ("Dispose"),
+				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (dispose);
 
 			dispose.Block = new Block (null);
@@ -656,6 +709,24 @@ namespace Mono.CSharp {
 				return true;
 			} else if (t == TypeManager.ienumerator_type) {
 				iterator_type = TypeManager.object_type;
+				is_enumerable = false;
+				return true;
+			}
+
+			if (!t.IsGenericInstance)
+				return false;
+
+			Type[] args = TypeManager.GetTypeArguments (t);
+			if (args.Length != 1)
+				return false;
+
+			Type gt = t.GetGenericTypeDefinition ();
+			if (gt == TypeManager.generic_ienumerable_type) {
+				iterator_type = args [0];
+				is_enumerable = true;
+				return true;
+			} else if (gt == TypeManager.generic_ienumerator_type) {
+				iterator_type = args [0];
 				is_enumerable = false;
 				return true;
 			}
