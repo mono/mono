@@ -80,7 +80,11 @@ namespace System
 
 		public static Stream OpenStandardError (int bufferSize)
 		{
-			return new FileStream (MonoIO.ConsoleError, FileAccess.Write, false, bufferSize, false, bufferSize == 0);
+			try {
+				return new FileStream (MonoIO.ConsoleError, FileAccess.Write, false, bufferSize, false, bufferSize == 0);
+			} catch (IOException) {
+				return new NullStream ();
+			}
 		}
 
 		public static Stream OpenStandardInput ()
@@ -90,7 +94,11 @@ namespace System
 
 		public static Stream OpenStandardInput (int bufferSize)
 		{
-			return new FileStream (MonoIO.ConsoleInput, FileAccess.Read, false, bufferSize, false, bufferSize == 0);
+			try {
+				return new FileStream (MonoIO.ConsoleInput, FileAccess.Read, false, bufferSize, false, bufferSize == 0);
+			} catch (IOException) {
+				return new NullStream ();
+			}
 		}
 
 		public static Stream OpenStandardOutput ()
@@ -100,7 +108,11 @@ namespace System
 
 		public static Stream OpenStandardOutput (int bufferSize)
 		{
-			return new FileStream (MonoIO.ConsoleOutput, FileAccess.Write, false, bufferSize, false, bufferSize == 0);
+			try {
+				return new FileStream (MonoIO.ConsoleOutput, FileAccess.Write, false, bufferSize, false, bufferSize == 0);
+			} catch (IOException) {
+				return new NullStream ();
+			}
 		}
 
 		public static void SetError (TextWriter newError)

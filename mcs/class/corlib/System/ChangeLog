@@ -1,3 +1,10 @@
+2004-03-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* Console.cs: If we fail to open stdin/stdout/stderr, create
+	readers with a NullStream.  This can happen if our caller does not
+	setup stdin/stoud/stderr file handles.  #56158 exposed this, but
+	it will happen elsewhere.
+
 2004-03-29  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Convert.cs: In ToSingle(double), removed checks for Single.MaxValue and
