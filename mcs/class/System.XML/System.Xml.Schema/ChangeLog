@@ -1,5 +1,11 @@
 2005-01-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs : XmlSchema.Write() should not write duplicating
+	  top-level entry in XmlSerializerNamespaces and XmlNamespaceManager.
+	  This fixes some DataSet bugs.
+
+2005-01-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaValidator.cs : in case of open start tag,
 	  ValidateEndElement() calls ValidateEndOfAttributes().
 

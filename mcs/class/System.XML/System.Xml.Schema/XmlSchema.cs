@@ -906,7 +906,13 @@ namespace System.Xml.Schema
 			}
 
 			XmlSchemaSerializer xser = new XmlSchemaSerializer ();
-			xser.Serialize (writer, this, nss);
+			XmlSerializerNamespaces backup = Namespaces;
+			try {
+				Namespaces = null;
+				xser.Serialize (writer, this, nss);
+			} finally {
+				Namespaces = backup;
+			}
 			writer.Flush();
 		}
 		#endregion
