@@ -1,0 +1,5 @@
+2003-03-21  Cesar Octavio Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* mcs/class/Microsoft.Vsa: Added this ChangeLog file, and also
+	makefile.gnu and unix.args to provide the *nix build.
+
