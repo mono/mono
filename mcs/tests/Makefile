@@ -191,7 +191,7 @@ test-harness-run:
 #
 # Tests that require separate compilation
 #
-multi: multi-2 ilasm
+multi: multi-2 multi-3 ilasm
 	echo Multi-assembly test passes
 
 #
@@ -205,6 +205,10 @@ multi-2:
 	$(CSCOMPILE) -target:library pp.cs
 	$(CSCOMPILE) pu.cs -r:pi.dll -r:pp.dll
 	$(CSCOMPILE) pu.cs -r:pp.dll -r:pi.dll
+
+multi-3:
+	$(CSCOMPILE) -target:library pover-a.cs
+	$(CSCOMPILE) -target:library pover-b.cs -r:pover-a.dll
 
 ilasm:
 	$(INTERNAL_ILASM) /dll property-il.il
