@@ -113,9 +113,9 @@ namespace System.Reflection {
 			
 			MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod | PInfo.SetMethod);
 			if (info.set_method != null && (nonPublic || info.set_method.IsPublic))
-				nget = 1;
-			if (info.get_method != null && (nonPublic || info.get_method.IsPublic))
 				nset = 1;
+			if (info.get_method != null && (nonPublic || info.get_method.IsPublic))
+				nget = 1;
 
 			MethodInfo[] res = new MethodInfo [nget + nset];
 			int n = 0;
