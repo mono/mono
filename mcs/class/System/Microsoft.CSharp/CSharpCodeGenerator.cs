@@ -202,8 +202,11 @@ namespace Mono.CSharp
 
 		protected override void GenerateMethodReferenceExpression( CodeMethodReferenceExpression expression )
 		{
-			GenerateExpression( expression.TargetObject );
-			Output.Write( '.' );
+			if (expression.TargetObject != null)
+			{
+				GenerateExpression( expression.TargetObject );
+				Output.Write( '.' );
+			};
 			Output.Write( GetSafeName (expression.MethodName) );
 		}
 
@@ -271,6 +274,7 @@ namespace Mono.CSharp
 		{
 			Output.Write( "throw " );
 			GenerateExpression( statement.ToThrow );
+			Output.WriteLine(";");
 		}
 
 		protected override void GenerateComment( CodeComment comment )
@@ -497,7 +501,10 @@ namespace Mono.CSharp
 
 			MemberAttributes attributes = method.Attributes;
 
-			OutputMemberAccessModifier( attributes );
+			if (method.PrivateImplementationType == null)
+			{
+				OutputMemberAccessModifier( attributes );
+			};
 			OutputMemberScopeModifier( attributes );
 
 			OutputType( method.ReturnType );
@@ -515,7 +522,7 @@ namespace Mono.CSharp
 			OutputParameters( method.Parameters );
 			output.Write( ')' );
 
-			if ( (attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract )
+			if ( (attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract || declaration.IsInterface)
 				output.WriteLine( ';' );
 			else {
 				output.WriteLine( " {" );
@@ -538,30 +545,50 @@ namespace Mono.CSharp
 			OutputMemberAccessModifier( attributes );
 			OutputMemberScopeModifier( attributes );
 
-			OutputTypeNamePair( property.Type, GetSafeName (property.Name));
+			if (property.Name == "Item")
+			{
+				// indexer
+				
+				OutputTypeNamePair( property.Type, "this");
+				output.Write("[");
+				OutputParameters(property.Parameters);
+				output.Write("]");
+			}
+			else
+			{
+				OutputTypeNamePair( property.Type, GetSafeName (property.Name));
+			}
 			output.WriteLine (" {");
 			++Indent;
 
-			if (property.HasGet)
+			if (declaration.IsInterface)
 			{
-				output.WriteLine ("get {");
-				++Indent;
-
-				GenerateStatements (property.GetStatements);
-
-				--Indent;
-				output.WriteLine ("}");
+				if (property.HasGet) output.WriteLine("get; ");
+				if (property.HasSet) output.WriteLine("set; ");
 			}
-			
-			if (property.HasSet)
+			else
 			{
-				output.WriteLine ("set {");
-				++Indent;
+				if (property.HasGet)
+				{
+					output.WriteLine ("get {");
+					++Indent;
 
-				GenerateStatements (property.SetStatements);
+					GenerateStatements (property.GetStatements);
 
-				--Indent;
-				output.WriteLine ("}");
+					--Indent;
+					output.WriteLine ("}");
+				}
+
+				if (property.HasSet)
+				{
+					output.WriteLine ("set {");
+					++Indent;
+
+					GenerateStatements (property.SetStatements);
+
+					--Indent;
+					output.WriteLine ("}");
+				}
 			}
 
 			--Indent;
@@ -574,7 +601,36 @@ namespace Mono.CSharp
 			OutputMemberAccessModifier (constructor.Attributes);
 			Output.Write (GetSafeName (CurrentTypeName) + " (");
 			OutputParameters (constructor.Parameters);
-			Output.WriteLine (") {");
+			Output.Write (") ");
+			if (constructor.ChainedConstructorArgs.Count > 0)
+			{
+				Output.Write(": this(");
+				bool first = true;
+				foreach (CodeExpression ex in constructor.ChainedConstructorArgs)
+				{
+					if (!first)
+						Output.Write(", ");
+					first = false;
+					GenerateExpression(ex);
+				}
+				
+				Output.Write(") ");
+			};
+ 			if (constructor.BaseConstructorArgs.Count > 0)
+			{
+				Output.Write(": base(");
+				bool first = true;
+				foreach (CodeExpression ex in constructor.BaseConstructorArgs)
+				{
+					if (!first)
+						Output.Write(", ");
+					first = false;
+					GenerateExpression(ex);
+				}
+				
+				Output.Write(") ");
+			};
+			Output.WriteLine ("{");
 			Indent++;
 			GenerateStatements (constructor.Statements);
 			Indent--;

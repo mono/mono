@@ -1,3 +1,10 @@
+2003-08-15  Jaroslaw Kowalski <jarek@atm.com.pl>
+
+	* CodeTypeDeclaration.cs:
+
+	  - TypeAttributes of CodeTypeDeclaration now defaults to
+	    TypeAttributes.Public (same as MS implementation)
+
 2003-04-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeEventReferenceExpression.cs: fixed typo that prevented event

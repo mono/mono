@@ -1,3 +1,20 @@
+2003-08-15  Jaroslaw Kowalski <jarek@atm.com.pl>
+
+	* CSharpCodeGenerator.cs:
+	
+	  - fixed support for method references where target
+		object is null
+	  - fixed CodeThrowExceptionStatement
+	  - disabled member access modifiers for private method
+	    implementations
+	  - disabled generation of empty method body for interface
+	    declarations
+	  - disabled generation of empty property accessor bodies
+	    in interface declarations
+	  - added support for indexers (properties named "Item")
+	  - added support for chained constructor arguments and
+	    base constructor arguments
+
 2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* CSharpCodeGenerator.cs: Added method GetSafeName() that checks if

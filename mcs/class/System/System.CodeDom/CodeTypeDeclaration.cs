@@ -21,7 +21,7 @@ namespace System.CodeDom
 	{
 		private CodeTypeReferenceCollection baseTypes;
 		private CodeTypeMemberCollection members;
-		private TypeAttributes typeAttributes;
+		private TypeAttributes typeAttributes = TypeAttributes.Public;
 		private bool isEnum;
 		private bool isStruct;
 
