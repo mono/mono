@@ -1,3 +1,8 @@
+2004-12-12  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): Only call mono_debug_init_method()
+	if we are the "real" method, ie. not an inlined method inside it.
+
 2004-12-11  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c (CEE_LDSFLD): Make sure that the vtable has been init'd
@@ -5,6 +10,7 @@
 	../tests/thread-static-init.cs.
 
 2004-12-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* mini.c: return immediately after setting OP_ARRAY_RANK or CEE_LDLEN
 	for Array get_Rank and get_Length. Fixes bug #70465.
 
