@@ -334,11 +334,19 @@ namespace System
 
 		// private methods
 
+		private static string GacPath
+		{
+			get { return Path.Combine (Path.Combine (internalGetGacPath (), "mono"), "gac"); }
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetEnvironmentVariableNames ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static string GetMachineConfigPath ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string internalGetGacPath ();
 	}
 }
 
