@@ -1380,15 +1380,17 @@ constructor_declaration
 		Constructor c = (Constructor) $3;
 		c.Block = (Block) $4;
 		c.OptAttributes = (Attributes) $1;
+		c.ModFlags = (int) $2;
 	
 		if ((c.ModFlags & Modifiers.STATIC) != 0){
-			c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, 0, c.Location);	
-
-			if ((c.ModFlags & Modifiers.Accessibility) != 0) {
+			if ((c.ModFlags & Modifiers.Accessibility) != 0){
 				Report.Error (
-					515, c.Location, 
-					"Access modifiers are not allowed on static constructors");
+					515, c.Location, String.Format (
+					"`{0}.{1}': static constructor can not have access modifiers",
+					c.Name, current_container.Name));
 			}
+
+			c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, 0, c.Location);	
 
 			if (c.Initializer != null){
 				Report.Error (
