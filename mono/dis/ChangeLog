@@ -1,4 +1,8 @@
 
+Tue Nov 27 16:31:52 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: output a marker for method (used in debug support).
+
 Mon Nov 19 11:32:28 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: remove arch_create_jit_trampoline().

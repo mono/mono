@@ -1,3 +1,14 @@
+
+Tue Nov 27 16:32:41 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* debug.c, debug.h: added support for generating stabs.
+	Stabs can be compiled with as and the resulting object file can be
+	loaded in a gdb session with add-symbol-file object.o.
+	* jit.c, jit.h: add --stabs and --debug command line arguments. Keep track
+	where locals and arguments are stored in the stack. Add support for
+	passing command line arguments to CLR programs.
+	* emit-x86.c: insert a breakpoint at method invocation if needed.
+
 2001-11-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c: exception support
