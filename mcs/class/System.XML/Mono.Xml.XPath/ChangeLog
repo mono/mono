@@ -1,3 +1,8 @@
+2004-10-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs : When the reader's root node is not of type
+	  Root, it incorrectly skipped the node itself.
+
 2004-09-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathDocument2.cs, XPathDocument2Editable.cs:

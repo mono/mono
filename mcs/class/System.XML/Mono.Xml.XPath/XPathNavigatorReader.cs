@@ -431,8 +431,11 @@ namespace Mono.Xml.XPath
 				return false;
 			case ReadState.Initial:
 				started = true;
-				if (current.NodeType != XPathNodeType.Root)
+				if (current.NodeType != XPathNodeType.Root) {
+					if (current.IsEmptyElement)
+						nextIsEOF = true;
 					return true;
+				}
 				break;
 			}
 
@@ -444,12 +447,12 @@ namespace Mono.Xml.XPath
 
 			MoveToElement ();
 
-			if (endElement || current.MoveToFirstChild () == false) {
-				if (current.MoveToNext () == false) {
-					if (current.IsSamePosition (root)) {	// It should happen only when the root node was empty.
-						eof = true;
-						return false;
-					}
+			if (endElement || !current.MoveToFirstChild ()) {
+				if (current.IsSamePosition (root)) {	// It should happen only when the root node was empty.
+					eof = true;
+					return false;
+				}
+				if (!current.MoveToNext ()) {
 					current.MoveToParent ();
 					depth--;
 					endElement = (current.NodeType == XPathNodeType.Element);
