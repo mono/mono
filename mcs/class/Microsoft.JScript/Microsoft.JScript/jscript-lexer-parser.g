@@ -881,7 +881,7 @@ literal [AST parent] returns [AST l]
 		  StringLiteral str = new StringLiteral (s.getText ());
 		  l = str;
 	  }      
-	| l = numeric_literal
+	| l = numeric_literal [parent]
 	;
 
 property_name_and_value_list
@@ -889,18 +889,18 @@ property_name_and_value_list
 	;
 
 property_name
-	: (IDENTIFIER | STRING_LITERAL | numeric_literal) 
+	: (IDENTIFIER | STRING_LITERAL | numeric_literal [null]) 
 	;
 
 array_literal
 	: OPEN_BRACKET (primary_expr [null] (COMMA primary_expr [null])* | ) CLOSE_BRACKET
 	;	
 
-numeric_literal returns [NumericLiteral num_lit]
+numeric_literal [AST parent] returns [NumericLiteral num_lit]
 {
 	num_lit = null;
 }
-	: d:DECIMAL_LITERAL { num_lit = new NumericLiteral (Convert.ToSingle (d.getText ())); }
+	: d:DECIMAL_LITERAL { num_lit = new NumericLiteral (parent, Convert.ToSingle (d.getText ())); }
 	| HEX_INTEGER_LITERAL
 	;
 

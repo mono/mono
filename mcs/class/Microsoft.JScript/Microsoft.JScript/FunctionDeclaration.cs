@@ -83,9 +83,9 @@ namespace Microsoft.JScript {
 						    Function.return_type,
 						    Function.params_types ());
 	
-			ec.ig = method.GetILGenerator ();
-		
+			ec.ig = method.GetILGenerator ();		
 			Function.body.Emit (ec);
+			ec.ig.Emit (OpCodes.Ret);
 		}
 
 		internal override bool Resolve (IdentificationTable context)

@@ -1,3 +1,15 @@
+2003-12-18  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: Keep track of parent for numeric_literal.
+
+	* VariableDeclaration.cs: now I handle initialization (ex. var x =
+	2; or function f () { var x = 4; }) at global scope or at
+	function's body.
+
+	* Literal.cs: Added parent param to NumericLiteral constructor.
+
+	* FunctionDeclaration.cs: Added Ret opcode for all function declaration bodies.
+
 2003-12-17  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* CodeGenerator.cs: Added IL emittion for ldnull on default ending code for 'Global Code'.

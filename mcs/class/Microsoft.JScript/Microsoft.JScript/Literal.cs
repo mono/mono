@@ -67,8 +67,9 @@ namespace Microsoft.JScript {
 
 		double val;
 
-		internal NumericLiteral (double val)
+		internal NumericLiteral (AST parent, double val)
 		{
+			this.parent = parent;
 			this.val = val;
 		}
 

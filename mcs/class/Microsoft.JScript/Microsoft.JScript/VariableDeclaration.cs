@@ -76,8 +76,19 @@ namespace Microsoft.JScript {
 				field = type.DefineField (id, Type,
 							  FieldAttributes.Public |
 							  FieldAttributes.Static);
-			} else
-				ec.ig.DeclareLocal (Type);
+				if (val != null) {
+					val.Emit (ec);
+					ec.gc_ig.Emit (OpCodes.Stsfld, field);
+				}
+			} else {
+				ILGenerator ig = ec.ig;
+				LocalBuilder lb = ig.DeclareLocal (Type);
+
+				if (val != null) {
+					val.Emit (ec);
+					ig.Emit (OpCodes.Stloc, lb);
+				}
+			}
 		}
 
 		internal override bool Resolve (IdentificationTable context)
