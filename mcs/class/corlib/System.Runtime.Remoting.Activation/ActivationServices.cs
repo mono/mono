@@ -177,7 +177,7 @@ namespace System.Runtime.Remoting.Activation
 
 		// Allocates an uninitialized instance. It never creates proxies.
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern object AllocateUninitializedClassInstance (Type type);
+		public static extern object AllocateUninitializedClassInstance (Type type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void EnableProxyActivation (Type type, bool enable);

@@ -1,3 +1,8 @@
+2003-10-18  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ActivationServices.cs: make AllocateUninitializedClassInstance public,
+	  so it can be reused.
+	
 2003-10-08  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* AppDomainLevelActivator.cs: little fix.
