@@ -1084,6 +1084,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void ForceExpose (IntPtr handle) {
+			XEvent xevent;
+
+			HandleData data = (HandleData) handle_data [handle];
+			if (data == null) {
+				data = new HandleData ();
+				handle_data [handle] = data;
+			} else if (data.HasExpose || !data.IsVisible) {
+				return;
+			}
+
+			xevent = new XEvent ();
+			xevent.type = XEventName.Expose;
+			xevent.ExposeEvent.display = DisplayHandle;
+			xevent.ExposeEvent.window = handle;
+
+			message_queue.Enqueue (xevent);
+			data.HasExpose = true;
+		}
+
 		private void AddExpose (XEvent xevent)
 		{
 			HandleData data = (HandleData) handle_data [xevent.AnyEvent.window];
@@ -2084,6 +2104,11 @@ namespace System.Windows.Forms {
 			if (data == null) {
 				data = new HandleData ();
 				handle_data [hwnd] = data;
+			} else if (data.InvalidArea != Rectangle.Empty) {
+				// BIG FAT WARNING. This only works with how we use this function right now
+				// where we basically still scroll the whole window, but work around areas
+				// that are covered by our children
+				data.ScrollInvalidArea(XAmount, YAmount);
 			}
 
 			gc_values = new XGCValues();
@@ -2107,7 +2132,8 @@ namespace System.Windows.Forms {
 			}
 			XFreeGC(DisplayHandle, gc);
 
-			NativeWindow.WndProc(hwnd, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+			ForceExpose(hwnd);
+			//NativeWindow.WndProc(hwnd, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
 		}
 
 		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
@@ -2126,6 +2152,8 @@ namespace System.Windows.Forms {
 			if (data == null) {
 				data = new HandleData ();
 				handle_data [hwnd] = data;
+			} else if (data.InvalidArea != Rectangle.Empty) {
+				data.ScrollInvalidArea(XAmount, YAmount);
 			}
 
 			// We're abusing clear_width and height, here, don't want two extra vars, we don't use the results here
@@ -2153,7 +2181,8 @@ namespace System.Windows.Forms {
 
 			XFreeGC(DisplayHandle, gc);
 
-			NativeWindow.WndProc(hwnd, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+			ForceExpose(hwnd);
+			//NativeWindow.WndProc(hwnd, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
 		}
 
 		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt) {

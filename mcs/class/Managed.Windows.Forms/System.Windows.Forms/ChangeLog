@@ -1,5 +1,11 @@
 2005-01-28  Peter Bartok  <pbartok@novell.com>
 
+	* XplatUIX11.cs: Improvement over last patch, not sending
+	  the WM_PAINT directly anymore, instead we scroll any pending
+	  exposed areas and let the system pick out the WM_PAINT later
+
+2005-01-28  Peter Bartok  <pbartok@novell.com>
+
 	* SWF.csproj: Deleted, no longer used. Instead,
 	  Managed.Windows.Forms/SWF.csproj should be used
 	* XplatUIX11.cs: Instead of posting the WM_PAINT, we send it
