@@ -103,9 +103,25 @@ namespace System.Web.UI
 				string page = GetString (atts, "Page", null);
 				string control = GetString (atts, "Control", null);
 
-				//TODO: compile and store control/page
-				Console.WriteLine ("WARNING: Reference is not supported yet!");
-				
+				bool is_page = (page != null);
+				if (!is_page && control == null)
+					ThrowParseException ("Must provide 'page' or 'control' attribute");
+
+				if (is_page && control != null)
+					ThrowParseException ("'page' and 'control' are mutually exclusive");
+
+				string filepath = (!is_page) ? control : page;
+				filepath = MapPath (filepath);
+				AddDependency (filepath);
+				Type ctype;
+				if (is_page) {
+					PageParser pp = new PageParser (page, filepath, Context);
+					ctype = pp.CompileIntoType ();
+				} else {
+					ctype = UserControlParser.GetCompiledType (control, filepath, Context);
+				}
+
+				AddAssembly (ctype.Assembly, true);
 				if (atts.Count != 0)
 					ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 
