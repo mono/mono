@@ -3298,20 +3298,26 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 		return implicit_block;
 
 	foreach (VariableDeclaration decl in inits){
+		Assign assign;
+		Expression expr;
+		
 		if (decl.expression_or_array_initializer is Expression){
-			Expression expr = (Expression) decl.expression_or_array_initializer;
-			Assign assign;
-			
-			assign = new Assign (new LocalVariableReference (
-					     implicit_block, decl.identifier), 
-					     expr, decl.Location);
+			expr = (Expression) decl.expression_or_array_initializer;
 
-			implicit_block.AddStatement (new StatementExpression (assign));
 		} else {
-			Console.WriteLine ("Not handling Array initializers yet");
-		}
-	}
+			ArrayList init = (ArrayList) decl.expression_or_array_initializer;
 			
+			string base_type = type.Substring (0, type.IndexOf ("["));
+			string rank = type.Substring (type.IndexOf ("["));
+
+			expr = new ArrayCreation (base_type, rank, init, decl.Location);
+			
+		}
+
+		assign = new Assign (new LocalVariableReference (implicit_block, decl.identifier), expr, decl.Location);
+		implicit_block.AddStatement (new StatementExpression (assign));
+	}
+	
 	return implicit_block;
 }
 

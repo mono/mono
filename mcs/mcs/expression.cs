@@ -2984,15 +2984,15 @@ namespace Mono.CSharp {
 		{
 			Report.Error (178, loc, "Incorrectly structured array initializer");
 		}
-
+		
 		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx,
-					  bool require_constant, bool unspecified_dims)
+					  bool require_constant, bool specified_dims)
 		{
 			foreach (object o in probe) {
-				
+
 				if (o is ArrayList) {
 
-					if (!unspecified_dims) { 
+					if (specified_dims) { 
 						Argument a = (Argument) Arguments [idx];
 						
 						if (!a.Resolve (ec, loc))
@@ -3014,12 +3014,12 @@ namespace Mono.CSharp {
 					}
 
 					bool ret = CheckIndices (ec, (ArrayList) o, ++idx,
-								 require_constant, unspecified_dims);
+								 require_constant, specified_dims);
 					if (!ret)
 						return false;
 					
 				} else {
-					
+
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
 					tmp = Expression.Reduce (ec, tmp);
@@ -3032,7 +3032,7 @@ namespace Mono.CSharp {
 					Expression conv = ConvertImplicitRequired (ec, tmp,
 										   underlying_type, loc);
 					
-					if (conv == null)
+					if (conv == null) 
 						return false;
 
 					ArrayData.Add (((Literal) tmp).GetValue ());
@@ -3066,7 +3066,7 @@ namespace Mono.CSharp {
 		{
 			if (Initializers == null)
 				return true;
-			
+
 			underlying_type = ec.TypeContainer.LookupType (RequestedType, false);
 
 			//
@@ -3076,15 +3076,16 @@ namespace Mono.CSharp {
 			ArrayData = new ArrayList ();
 			
 			bool ret;
-			
+
 			if (Arguments != null) {
-				ret = CheckIndices (ec, Initializers, 0, true, false);
+				ret = CheckIndices (ec, Initializers, 0, true, true);
 				return ret;
 				
 			} else {
 				Arguments = new ArrayList ();
 
-				ret = CheckIndices (ec, Initializers, 0, true, true);
+				ret = CheckIndices (ec, Initializers, 0, true, false);
+				
 				if (!ret)
 					return false;
 				
@@ -3094,7 +3095,7 @@ namespace Mono.CSharp {
 					error178 ();
 					return false;
 				}
-				
+
 				return ret;
 			}
 		}
@@ -3208,7 +3209,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public byte [] MakeByteBlob ()
+		public static byte [] MakeByteBlob (ArrayList ArrayData, Type underlying_type, Location loc)
 		{
 			int factor;
 			byte [] data;
@@ -3269,7 +3270,7 @@ namespace Mono.CSharp {
 			if (Initializers != null) {
 				FieldBuilder fb;
 
-				byte [] data = MakeByteBlob ();
+				byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
 
 				if (data != null) {
 					fb = ec.TypeContainer.RootContext.MakeStaticData (data);

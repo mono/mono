@@ -1,3 +1,15 @@
+2001-11-22  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (EmitFieldInitializer): Take care of the case when we have a
+	field which is an array type.
+
+	* cs-parser.jay (declare_local_variables): Support array initialization too.
+
+2001-11-21  Ravi Pratap  <ravi@ximian.com>
+
+	* parameter.cs (GetCallingConvention): Always return
+	CallingConventions.Standard for now.
+
 2001-11-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Update the values of `l'

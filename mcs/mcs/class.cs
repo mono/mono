@@ -517,28 +517,34 @@ namespace Mono.CSharp {
 			foreach (Field f in fields){
 				Object init = f.Initializer;
 
-				if (init is Expression){
-					Expression e = (Expression) init;
-
-					e = e.Resolve (ec);
-					if (e == null)
-						return false;
-
-					if (!is_static)
-						ig.Emit (OpCodes.Ldarg_0);
-					
-					e.Emit (ec);
-
-					if (is_static)
-						ig.Emit (OpCodes.Stsfld, f.FieldBuilder);
-					else
-						ig.Emit (OpCodes.Stfld, f.FieldBuilder);
+				Expression e;
+				if (init is Expression)
+					e = (Expression) init;
+				else {
+					string base_type = f.Type.Substring (0, f.Type.IndexOf ("["));
+					string rank = f.Type.Substring (f.Type.IndexOf ("["));
+					e = new ArrayCreation (base_type, rank, (ArrayList) init, f.Location); 
 				}
+				
+				e = e.Resolve (ec);
+				if (e == null)
+					return false;
+				
+				if (!is_static)
+					ig.Emit (OpCodes.Ldarg_0);
+				
+				e.Emit (ec);
+				
+				if (is_static)
+					ig.Emit (OpCodes.Stsfld, f.FieldBuilder);
+				else
+					ig.Emit (OpCodes.Stfld, f.FieldBuilder);
+				
 			}
-
+			
 			return true;
 		}
-
+		
 		//
 		// Defines the default constructors
 		//
@@ -2153,7 +2159,7 @@ namespace Mono.CSharp {
 		public readonly Attributes OptAttributes;
 		public FieldBuilder  FieldBuilder;
 		
-		Location Location;
+		public Location Location;
 		
 		// <summary>
 		//   Modifiers allowed in a class declaration

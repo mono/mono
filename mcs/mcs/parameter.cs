@@ -244,10 +244,8 @@ namespace Mono.CSharp {
 
 		public CallingConventions GetCallingConvention ()
 		{
-			if (ArrayParameter != null)
-				return CallingConventions.VarArgs;
-			else
-				return CallingConventions.Standard;
+			// For now this is the only correc thing to do
+			return CallingConventions.Standard;
 		}
 	}
 }
