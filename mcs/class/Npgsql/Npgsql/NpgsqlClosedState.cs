@@ -52,13 +52,16 @@ namespace Npgsql
                 return _instance;
             }
         }
-
+        
+        
         public override void Open(NpgsqlConnection context)
         {
+
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
 
             try
             {
+                
                 TcpClient tcpc = new TcpClient(context.ServerName, Int32.Parse(context.ServerPort));
                 Stream stream = tcpc.GetStream();
                 // If the PostgreSQL server has SSL connections enabled Open SslClientStream if (response == 'S') {
@@ -71,22 +74,36 @@ namespace Npgsql
                     if (response == 'S')
                     {
                         stream = new SslClientStream(tcpc.GetStream(), context.ServerName, true, Mono.Security.Protocol.Tls.SecurityProtocolType.Default);
+                        /*stream = new SslClientStream(
+                            tcpc.GetStream(),
+                            context.ServerName,
+                            true,
+                            Tls.SecurityProtocolType.Tls|
+                            Tls.SecurityProtocolType.Ssl3);*/
+                        
+                            
+                        ((SslClientStream)stream).ServerCertValidationDelegate = context.CertificateValidationCallback;
+                        ((SslClientStream)stream).ClientCertSelectionDelegate = context.CertificateSelectionCallback;
+                        ((SslClientStream)stream).PrivateKeyCertSelectionDelegate = context.PrivateKeySelectionCallback;
+
                     }
                 }
                 
-                context.Connector.Stream = stream;
                 
-                               
+
+                context.Connector.Stream = stream;
+
+
             }
             catch (TlsException e)
             {
                 throw new NpgsqlException(e.ToString());
             }
-            
+
             NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.ServerName, context.ServerPort);
             ChangeState(context, NpgsqlConnectedState.Instance);
             context.Startup();
-            
+
         }
 
     }

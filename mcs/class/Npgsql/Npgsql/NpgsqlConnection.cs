@@ -32,6 +32,8 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
+using Mono.Security.Protocol.Tls;
 using NpgsqlTypes;
 using Npgsql.Design;
 
@@ -59,7 +61,14 @@ namespace Npgsql
         /// </summary>
         public event NotificationEventHandler Notification;
 
-
+        
+        // Public properties for ssl callbacks
+        public CertificateValidationCallback CertificateValidationCallback;
+        public CertificateSelectionCallback CertificateSelectionCallback;
+        public PrivateKeySelectionCallback PrivateKeySelectionCallback;
+        
+        
+        
         private NpgsqlState			state;
 
         private ConnectionState	connection_state;
@@ -154,7 +163,9 @@ namespace Npgsql
             _oidToNameMapping = new Hashtable();
             
             _connectionTimeout = 15;
-            
+        
+            CertificateValidationCallback = new CertificateValidationCallback(DefaultCertificateValidationCallback);
+                    
 
             if (connection_string != String.Empty)
                 ParseConnectionString();
@@ -710,6 +721,17 @@ namespace Npgsql
         {
             CurrentState.Execute(this, execute);
         }
+        
+        
+        // Default SSL Callbacks implementation.
+        private Boolean DefaultCertificateValidationCallback(
+                                                    X509Certificate certificate,
+                                                    int[]        certificateErrors)
+        {
+            return true;
+        }
+        
+        
 
         internal NpgsqlState CurrentState {
             get

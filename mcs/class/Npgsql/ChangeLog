@@ -1,4 +1,15 @@
 
+2004-03-13  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	* Npgsql/NpgsqlConnection.cs:
+	* Npgsql/NpgsqlClosedState.cs: Added support for SSL callbacks points. Now, client applications can provide the callbacks. Npgsql provide a default callback implementation which always assumes the certificate is ok. This allows easy use as client don't need to provide callback to use ssl connections. This also fixes bug 705 in gborg.
+	* NpgsqlTypes/NpgsqlTypesHelper: Applied patch to correctly parse datetimes values with timezone information. Thanks Glen Parker <glenebob@nwlink.com> for the patch.
+	
+
+2004-03-06  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	* Npgsql/NpgsqlConnectorPool.cs: Fixed bug 706 in gborg. Now Max timeout will be working correctly. Thanks Sami Kuhmonen <feenix@iqs.fi> for the patch.
+
 2004-02-29  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 	* Npgsql/NpgsqlConnection.cs: Better handling of connection encoding. Added support for encoding and connection timeout in connection string.
 	* Npgsql/NpgsqlConnectorPool.cs: Added support for timeout and max connection pool.
