@@ -652,15 +652,18 @@ namespace Mono.CSharp {
 	}
 
 	public class LabeledStatement : Statement {
+		public readonly Location Location;
 		string label_name;
 		bool defined;
+		bool referenced;
 		Label label;
 
 		ArrayList vectors;
 		
-		public LabeledStatement (string label_name)
+		public LabeledStatement (string label_name, Location l)
 		{
 			this.label_name = label_name;
+			this.Location = l;
 		}
 
 		public Label LabelTarget (EmitContext ec)
@@ -679,6 +682,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool HasBeenReferenced {
+			get {
+				return referenced;
+			}
+		}
+
 		public void AddUsageVector (FlowBranching.UsageVector vector)
 		{
 			if (vectors == null)
@@ -691,6 +700,8 @@ namespace Mono.CSharp {
 		{
 			if (vectors != null)
 				ec.CurrentBranching.CurrentUsageVector.MergeJumpOrigins (vectors);
+
+			referenced = true;
 
 			return true;
 		}
@@ -1946,6 +1957,7 @@ namespace Mono.CSharp {
 		public LocalBuilder LocalBuilder;
 		public Type VariableType;
 		public readonly Location Location;
+		public readonly int Block;
 
 		public int Number;
 		
@@ -1953,9 +1965,10 @@ namespace Mono.CSharp {
 		public bool Assigned;
 		public bool ReadOnly;
 		
-		public VariableInfo (Expression type, Location l)
+		public VariableInfo (Expression type, int block, Location l)
 		{
 			Type = type;
+			Block = block;
 			LocalBuilder = null;
 			Location = l;
 		}
@@ -2055,7 +2068,10 @@ namespace Mono.CSharp {
 
 		public int ID {
 			get {
-				return this_id;
+				if (Implicit)
+					return Parent.ID;
+				else
+					return this_id;
 			}
 		}
 		
@@ -2110,17 +2126,34 @@ namespace Mono.CSharp {
 			if (variables == null)
 				variables = new Hashtable ();
 
-			if (GetVariableType (name) != null)
+			VariableInfo vi = GetVariableInfo (name);
+			if (vi != null) {
+				if (vi.Block != ID)
+					Report.Error (136, l, "A local variable named `" + name + "' " +
+						      "cannot be declared in this scope since it would " +
+						      "give a different meaning to `" + name + "', which " +
+						      "is already used in a `parent or current' scope to " +
+						      "denote something else");
+				else
+					Report.Error (128, l, "A local variable `" + name + "' is already " +
+						      "defined in this scope");
 				return null;
+			}
 
 			if (pars != null) {
 				int idx = 0;
 				Parameter p = pars.GetParameterByName (name, out idx);
-				if (p != null) 
+				if (p != null) {
+					Report.Error (136, l, "A local variable named `" + name + "' " +
+						      "cannot be declared in this scope since it would " +
+						      "give a different meaning to `" + name + "', which " +
+						      "is already used in a `parent or current' scope to " +
+						      "denote something else");
 					return null;
+				}
 			}
 			
-			VariableInfo vi = new VariableInfo (type, l);
+			vi = new VariableInfo (type, ID, l);
 
 			variables.Add (name, vi);
 
@@ -2431,6 +2464,14 @@ namespace Mono.CSharp {
 
 			ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;
+
+			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
+				foreach (LabeledStatement label in labels.Values)
+					if (!label.HasBeenReferenced)
+						Report.Warning (164, label.Location,
+								"This label has not been referenced");
+			}
+
 			return ok;
 		}
 		

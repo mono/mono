@@ -1,5 +1,12 @@
 2002-08-05  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Block.AddVariable): Do the error reporting here
+	and distinguish between CS0128 and CS0136.
+	(Block.DoResolve): Report all unused labels (warning CS0164).
+	(LabeledStatement): Pass the location to the constructor.
+	(LabeledStatement.HasBeenReferenced): New property.
+	(LabeledStatement.Resolve): Set it to true here.
+
 	* statement.cs (Return.Emit): Return success even after reporting
 	a type mismatch error (CS0126 or CS0127), this is what csc does and
 	it avoids confusing the users with any consecutive errors.

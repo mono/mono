@@ -1034,7 +1034,7 @@ namespace Mono.CSharp {
 		{
 			Expression e = base.DoResolve (ec);
 
-			if (e == null)
+			if ((e == null) || (expr == null))
 				return null;
 
 			Type etype = expr.Type;
@@ -1434,13 +1434,16 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
+			int errors = Report.Errors;
+
 			bool old_state = ec.OnlyLookupTypes;
 			ec.OnlyLookupTypes = true;
 			target_type = target_type.Resolve (ec);
 			ec.OnlyLookupTypes = old_state;
 			
 			if (target_type == null){
-				Report.Error (-10, loc, "Can not resolve type");
+				if (errors == Report.Errors)
+					Report.Error (-10, loc, "Can not resolve type");
 				return null;
 			}
 

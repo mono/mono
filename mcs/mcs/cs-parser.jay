@@ -2710,7 +2710,7 @@ empty_statement
 labeled_statement
 	: IDENTIFIER COLON 
 	  {
-		LabeledStatement labeled = new LabeledStatement ((string) $1);
+		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
 		if (!current_block.AddLabel ((string) $1, labeled)){
 			Location l = lexer.Location;
@@ -3047,29 +3047,24 @@ for_statement
 
 				vi = current_block.AddVariable (
 					type, decl.identifier, current_local_parameters, decl.Location);
-				if (vi == null){
-					Report.Error (128, decl.Location, 
-						      "A local variable `" + decl.identifier + 
-						      "' is already defined in this scope");
+				if (vi == null)
+					continue;
+
+				Location l = lexer.Location;
+				Expression expr;
+				if (decl.expression_or_array_initializer is Expression){
+					expr = (Expression) decl.expression_or_array_initializer;
 				} else {
-					Location l = lexer.Location;
-					Expression expr;
-					if (decl.expression_or_array_initializer is Expression){
-						expr = (Expression) decl.expression_or_array_initializer;
-						
-					} else {
-						ArrayList init = (ArrayList) decl.expression_or_array_initializer;
-						expr = new ArrayCreation (type, "", init, decl.Location);
-					}
-					
-					LocalVariableReference var;
-					var = new LocalVariableReference (
-									  assign_block, decl.identifier, l);
-					
-					Assign a = new Assign (var, expr, decl.Location);
-					
-					assign_block.AddStatement (new StatementExpression (a, lexer.Location));
+					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+					expr = new ArrayCreation (type, "", init, decl.Location);
 				}
+					
+				LocalVariableReference var;
+				var = new LocalVariableReference (assign_block, decl.identifier, l);
+					
+				Assign a = new Assign (var, expr, decl.Location);
+					
+				assign_block.AddStatement (new StatementExpression (a, lexer.Location));
 			}
 			
 			$3 = null;
@@ -3149,20 +3144,17 @@ foreach_statement
 		oob_stack.Push (current_block);
 
 		Block foreach_block = new Block (current_block, true);
-		LocalVariableReference v;
+		LocalVariableReference v = null;
 		Location l = lexer.Location;
 		VariableInfo vi;
 
 		vi = foreach_block.AddVariable ((Expression) $3, (string) $4, current_local_parameters, l);
-		if (vi == null){
-			Report.Error (
-				128, l, "A local variable `" + (string) $4 + "' is already "+
-				"defined in this scope");
-		}
-		vi.ReadOnly = true;
+		if (vi != null) {
+			vi.ReadOnly = true;
 
-		// Get a writable reference to this read-only variable.
-		v = new LocalVariableReference (foreach_block, (string) $4, l, vi, false);
+			// Get a writable reference to this read-only variable.
+			v = new LocalVariableReference (foreach_block, (string) $4, l, vi, false);
+		}
 		current_block = foreach_block;
 
 		oob_stack.Push (v);
@@ -3177,8 +3169,10 @@ foreach_statement
 
 		current_block = prev_block;
 
-		Foreach f = new Foreach ((Expression) $3, v, (Expression) $7, (Statement) $10, l);
-		foreach_block.AddStatement (f);
+		if (v != null) {
+			Foreach f = new Foreach ((Expression) $3, v, (Expression) $7, (Statement) $10, l);
+			foreach_block.AddStatement (f);
+		}
 
 		$$ = foreach_block;
 	  }
@@ -3408,11 +3402,8 @@ fixed_statement
 			VariableInfo v;
 
 			v = current_block.AddVariable (type, (string) p.First,current_local_parameters, l);
-			if (v == null){
-				Report.Error (
-					128, l, "A local variable `" + (string) p.First + "' is already "+
-					"defined in this scope");
-			}
+			if (v == null)
+				continue;
 			v.ReadOnly = true;
 			p.First = v;
 			list [i] = p;
@@ -3488,12 +3479,8 @@ using_statement
 				VariableInfo vi	= current_block.AddVariable (
 					type, decl.identifier, 
 					current_local_parameters, decl.Location);
-				if (vi == null){
-					Report.Error (128, decl.Location, 
-					"A local variable `" + decl.identifier + "' is already" +
-					"defined in this scope");
+				if (vi == null)
 					continue;
-				}
 				vi.ReadOnly = true;
 
 				Expression expr;
@@ -3762,9 +3749,6 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 					inits = new ArrayList ();
 				inits.Add (decl);
 			}
-		} else {
-			Report.Error (128, decl.Location, "A local variable `" + decl.identifier +
-					 "' is already defined in this scope");
 		}
 	}
 
@@ -3806,8 +3790,6 @@ Block declare_local_constant (Expression type, VariableDeclaration decl)
 
 	if (!(implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer,
 					  current_local_parameters, decl.Location))){
-		Report.Error (128, decl.Location, "A local variable `" + decl.identifier +
-			      "' is already defined in this scope");
 	}
 	
 	return implicit_block;
