@@ -43,7 +43,7 @@ namespace System.Data
 			switch (mode) {
 			case XmlReadMode.Auto:
 				Result = DSet.Tables.Count == 0 ? XmlReadMode.InferSchema : XmlReadMode.IgnoreSchema;
-				ReadModeSchema (reader, mode);
+				ReadModeSchema (reader, DSet.Tables.Count == 0 ? XmlReadMode.Auto : XmlReadMode.IgnoreSchema);
 				break;
 			case XmlReadMode.InferSchema:
 				Result = XmlReadMode.InferSchema;
@@ -68,8 +68,18 @@ namespace System.Data
 		{
 			bool inferSchema = mode == XmlReadMode.InferSchema || mode == XmlReadMode.Auto;
 			bool fillRows = mode != XmlReadMode.InferSchema;
-			// FIXME: Do we really need this process here?
-			// If embedded schema is allowed, then this check should not be done here.
+			// This check is required for full DiffGram.
+			// It is not described in MSDN and it is impossible
+			// with WriteXml(), but when writing XML using
+			// XmlSerializer, the output is like this:
+			// <dataset>
+			//  <schema>...</schema>
+			//  <diffgram>...</diffgram>
+			// </dataset>
+			//
+			// FIXME: This, this check should (also) be done
+			// after reading the top-level element.
+
 			//check if the current element is schema.
 			if (reader.LocalName == "schema") {
 				if (mode != XmlReadMode.Auto)

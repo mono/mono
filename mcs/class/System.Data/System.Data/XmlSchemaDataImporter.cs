@@ -159,6 +159,8 @@ namespace System.Data
 		XmlSchema schema;
 
 		Hashtable nameToComponentMap = new Hashtable ();
+		Hashtable relationParentColumns = new Hashtable ();
+		Hashtable nestedRelationColumns = new Hashtable ();
 
 		// such element that has an attribute msdata:IsDataSet="true"
 		XmlSchemaElement datasetElement;
@@ -270,14 +272,17 @@ namespace System.Data
 				}
 			}
 
+			// FIXME: It should be more simple. It is likely to occur when the type was not resulted in a DataTable
+
 			// Read the design notes for detail... it is very complicated.
 			if (schema.Elements.Count == 1 &&
 				el.SchemaType is XmlSchemaComplexType) { // i.e. defined inline (IT IS required!! but wtf?)
 				XmlSchemaComplexType ct = (XmlSchemaComplexType) el.SchemaType;
 				XmlSchemaGroupBase gb = ct.ContentTypeParticle as XmlSchemaGroupBase;
 				XmlSchemaElement cpElem = gb != null && gb.Items.Count > 0 ? gb.Items [0] as XmlSchemaElement : null;
+				XmlSchemaComplexType ct2 = cpElem != null ? cpElem.ElementType as XmlSchemaComplexType : null;
 				// What a complex condition!!!!!!!!!
-				if (cpElem != null && cpElem.ElementType is XmlSchemaComplexType) {
+				if (cpElem != null && ct2 != null && ct2.Attributes.Count == 0) {
 					ProcessDataSetElement (el);
 					return;
 				}
@@ -375,9 +380,9 @@ namespace System.Data
 
 			// Handle content type particle
 			if (ct.ContentTypeParticle is XmlSchemaElement)
-				ImportColumnElement ((XmlSchemaElement) ct.ContentTypeParticle);
+				ImportColumnElement ((XmlSchemaElement) ct.ContentTypeParticle, name);
 			else if (ct.ContentTypeParticle is XmlSchemaGroupBase)
-				ImportColumnGroupBase ((XmlSchemaGroupBase) ct.ContentTypeParticle);
+				ImportColumnGroupBase ((XmlSchemaGroupBase) ct.ContentTypeParticle, name);
 			// else if null then do nothing.
 
 			// add columns to the table in specified order 
@@ -390,20 +395,40 @@ namespace System.Data
 			foreach (DataColumn dc in currentNonOrdinalColumns)
 				contextTable.Columns.Add (dc);
 
+			// If there is a parent column, create DataRelation and pk
+			DataColumn col = relationParentColumns [el] as DataColumn;
+			if (col != null) {
+				if (col.Table.PrimaryKey.Length > 0)
+					throw new DataException (String.Format ("There is already primary keys in the table \"{0}\".", contextTable.TableName));
+				col.Table.PrimaryKey = new DataColumn [] {col};
+
+				DataColumn child = new DataColumn ();
+				child.ColumnName = col.ColumnName;
+				child.ColumnMapping = MappingType.Hidden;
+				child.DataType = col.DataType;
+				contextTable.Columns.Add (child);
+
+				DataRelation rel = new DataRelation (col.Table.TableName + '_' + child.Table.TableName, col, child);
+				if (nestedRelationColumns.ContainsValue (col))
+					rel.Nested = true;
+				dataset.Relations.Add (rel);
+			}
+
 			contextTable = null;
 		}
 
-		private void ImportColumnGroupBase (XmlSchemaGroupBase gb)
+		private void ImportColumnGroupBase (XmlSchemaGroupBase gb, string parentName)
 		{
 			foreach (XmlSchemaParticle p in gb.Items) {
 				XmlSchemaElement el = p as XmlSchemaElement;
 				if (el != null)
-					ImportColumnElement (el);
+					ImportColumnElement (el, parentName);
 				else
-					ImportColumnGroupBase ((XmlSchemaGroupBase) gb);
+					ImportColumnGroupBase ((XmlSchemaGroupBase) gb, parentName);
 			}
 		}
 
+		// Note that this column might be Hidden
 		private void ImportColumnAttribute (XmlSchemaAttribute attr)
 		{
 			DataColumn col = new DataColumn ();
@@ -411,15 +436,26 @@ namespace System.Data
 			XmlSchemaDatatype dt = attr.AttributeType as XmlSchemaDatatype;
 			if (dt == null && attr.AttributeType != null)
 				dt = ((XmlSchemaSimpleType) attr.AttributeType).Datatype;
+			// This complicated check comes from the fact that
+			// MS.NET fails to map System.Object to anyType (that
+			// will cause ReadTypedObject() fail on XmlValidatingReader).
+			// ONLY In DataSet context, we set System.String for
+			// simple ur-type.
 			col.DataType = ConvertDatatype (dt);
-			col.ColumnMapping = MappingType.Attribute;
+			if (col.DataType == typeof (object))
+				col.DataType = typeof (string);
+			// When attribute use="prohibited", then it is regarded as 
+			// Hidden column.
+			col.ColumnMapping = attr.Use == XmlSchemaUse.Prohibited ? MappingType.Hidden : MappingType.Attribute;
 			col.DefaultValue = attr.DefaultValue;
+
+			FillFacet (col, attr.AttributeType as XmlSchemaSimpleType);
 
 			// Call this method after filling the name
 			ImportColumnCommon (attr, attr.QualifiedName, col);
 		}
 
-		private void ImportColumnElement (XmlSchemaElement el)
+		private void ImportColumnElement (XmlSchemaElement el, string parentName)
 		{
 			// FIXME: element nest check
 
@@ -430,7 +466,7 @@ namespace System.Data
 			// FIXME: need to handle array item for maxOccurs > 1
 			if (el.ElementType is XmlSchemaComplexType)
 				// import new table and set this column as reference.
-				FillDataColumnComplexElement (el, col);
+				FillDataColumnComplexElement (el, col, parentName);
 			else
 				FillDataColumnSimpleElement (el, col);
 
@@ -475,19 +511,28 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		private void FillDataColumnComplexElement (XmlSchemaElement el, DataColumn col)
+		private void FillDataColumnComplexElement (XmlSchemaElement el, DataColumn col, string parentName)
 		{
+			if (targetElements.Contains (el))
+				return; // do nothing
+
 			// Those components will be handled later.
 			targetElements.Add (el);
 
 			// create identical name
-			string name = el.QualifiedName.Name + "_Id";
-			string nameTmp = name;
-			for (int i = 0; currentColumnNames.Contains (nameTmp); i++)
-				nameTmp = name + i;
+			string name = parentName + "_Id";
+			if (currentColumnNames.Contains (name))
+				throw new DataException (String.Format ("There is already a column that has the same name: {0}", name));
 
-			col.ColumnName = nameTmp;
+			col.ColumnName = name;
 			col.ColumnMapping = MappingType.Hidden;
+			col.DataType = typeof (int);
+
+			// For nested relations, DataRelation.Nested will be filled later
+			if (el.SchemaType != el.ElementType)
+				nestedRelationColumns [el] = col;
+
+			relationParentColumns.Add (el, col);
 		}
 
 		private void FillDataColumnSimpleElement (XmlSchemaElement el, DataColumn col)
@@ -498,16 +543,25 @@ namespace System.Data
 			if (dt == null && el.ElementType != null)
 				dt = ((XmlSchemaSimpleType) el.ElementType).Datatype;
 			col.DataType = ConvertDatatype (dt);
-			XmlSchemaSimpleType st = el.ElementType as XmlSchemaSimpleType;
+			FillFacet (col, el.ElementType as XmlSchemaSimpleType);
+		}
+
+		private void FillFacet (DataColumn col, XmlSchemaSimpleType st)
+		{
+			if (st == null)
+				return;
+
 			// Handle restriction facets
 			// FIXME: how to handle list and union??
+
 			XmlSchemaSimpleTypeRestriction restriction = st == null ? null : st.Content as XmlSchemaSimpleTypeRestriction;
-			if (restriction != null) {
-				foreach (XmlSchemaFacet f in restriction.Facets) {
-					if (f is XmlSchemaMaxLengthFacet)
-						// There is no reason why MaxLength is limited to int, except for the fact that DataColumn.MaxLength property is int.
-						col.MaxLength = int.Parse (f.Value);
-				}
+			if (restriction == null)
+				return;
+
+			foreach (XmlSchemaFacet f in restriction.Facets) {
+				if (f is XmlSchemaMaxLengthFacet)
+					// There is no reason why MaxLength is limited to int, except for the fact that DataColumn.MaxLength property is int.
+					col.MaxLength = int.Parse (f.Value);
 			}
 		}
 
@@ -516,7 +570,11 @@ namespace System.Data
 			if (dt == null)
 				return typeof (string);
 			else if (dt == schemaIntegerType)
-				return typeof (long); // LAMESPEC: MSDN documentation says it is based on 
+				// LAMESPEC: MSDN documentation says it is based 
+				// on ValueType. However, in the System.Xml.Schema
+				// context, xs:integer is mapped to Decimal, while
+				// in DataSet context it is mapped to Int64.
+				return typeof (long);
 			else
 				return dt.ValueType;
 		}
