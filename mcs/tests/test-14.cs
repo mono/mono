@@ -25,8 +25,10 @@ namespace Obj {
 				result |= 1 << 1;
 			if (b.G () != 4)
 				result |= 1 << 2;
-			if (a.G () != 4)
+			if (a.G () != 4){
+				Console.WriteLine ("oops: " + a.G ());
 				result |= 1 << 3;
+			}
 			if (a.H () != 10)
 				result |= 1 << 4;
 			if (b.H () != 11)
