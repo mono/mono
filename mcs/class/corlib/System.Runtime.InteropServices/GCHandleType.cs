@@ -17,6 +17,15 @@ namespace System.Runtime.InteropServices {
 	/// </summary>
 	public enum GCHandleType {
 
+		
+		/// <summary>
+		/// </summary>
+		Weak = 0,
+  
+		/// <summary>
+		/// </summary>
+		WeakTrackResurrection = 1,
+ 
 		/// <summary>
 		/// </summary>
 		Normal = 2,

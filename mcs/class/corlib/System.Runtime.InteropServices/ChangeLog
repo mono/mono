@@ -1,5 +1,9 @@
 2002-02-26  Duncan Mak  <duncan@ximian.com>
 
+	* GCHandle.cs: Added to CVS. Patch from Ajay kumar Dwivedi.
+
+	* GCHandleType.cs: Committed patch from Ajay.
+
 	* ImporterEventKind.cs: Added to CVS.
 
 2002-01-24  Miguel de Icaza  <miguel@ximian.com>
