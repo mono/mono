@@ -1,3 +1,10 @@
+
+Fri Feb 20 11:01:44 PST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixed clt.un, cgt.un. Optimized calls to functions
+	low in the address space. Correctly flush memory in thunks where we
+	output native code.
+
 2004-02-20  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mini_get_method): New static method; inflate all generic
