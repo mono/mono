@@ -26,10 +26,14 @@ namespace Mono.Xml.Xsl.Operations {
 
 		XslOperation value;
 		XmlQualifiedName [] useAttributeSets;
+
+		XPathNavigator nav;
 		
 		public XslElement (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)
 		{
+			nav = c.Input.Clone ();
+
 			name = c.ParseAvtAttribute ("name");
 			ns = c.ParseAvtAttribute ("namespace");
 			
@@ -70,7 +74,6 @@ namespace Mono.Xml.Xsl.Operations {
 				nmsp = q.Namespace;
 			}
 			if (calcPrefix == String.Empty) {
-				XPathNavigator nav = this.InputNode.Clone ();
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 					do {
 						if (nav.Value == nmsp) {
@@ -78,6 +81,7 @@ namespace Mono.Xml.Xsl.Operations {
 							break;
 						}
 					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
+					nav.MoveToParent ();
 				}
 			}
 

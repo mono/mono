@@ -1,3 +1,8 @@
+2003-11-03 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslCompiledElement.cs, XslAttribute.cs, XslElement.cs :
+	  Removed Clone() everywhere. Limited only to required places.
+
 2003-11-02 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslCompiledElement.cs : Added InputNode for namespace-prefix support.

@@ -25,21 +25,24 @@ namespace Mono.Xml.Xsl.Operations {
 		XmlNamespaceManager nsm;
 		
 		XslOperation value;
+		XPathNavigator nav;
+
 		public XslAttribute (Compiler c) : base (c) {}
 		
 		protected override void Compile (Compiler c)
 		{
+			nav = c.Input.Clone ();
+			
 			name = c.ParseAvtAttribute ("name");
 			ns = c.ParseAvtAttribute ("namespace");
-			
-			
+
 			calcName = XslAvt.AttemptPreCalc (ref name);
 			
 			if (calcName != null && ns == null) {
 				int colonAt = calcName.IndexOf (':');
 				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
 				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
-				calcNs = c.Input.GetNamespace (calcPrefix);
+				calcNs = nav.GetNamespace (calcPrefix);
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
 			
@@ -50,6 +53,7 @@ namespace Mono.Xml.Xsl.Operations {
 				value = c.CompileTemplateContent ();
 				c.Input.MoveToParent ();
 			}
+
 		}
 
 		public override void Evaluate (XslTransformProcessor p)
@@ -80,7 +84,6 @@ namespace Mono.Xml.Xsl.Operations {
 			}
 
 			if (nmsp != String.Empty && prefix == String.Empty) {
-				XPathNavigator nav = this.InputNode.Clone ();
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 					do {
 						if (nav.Value == nmsp) {
@@ -88,6 +91,7 @@ namespace Mono.Xml.Xsl.Operations {
 							break;
 						}
 					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
+					nav.MoveToParent ();
 				}
 			}
 
