@@ -1,3 +1,10 @@
+2005-01-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* aot.c: Allow decoding of the new  MONO_PATCH_INFO_DECLSEC.
+	* driver.c: Removed the AOT/security restriction. Now initialize the
+	security manager (in metadata) if --security is used.
+	* mini.c|h: Add the MONO_PATCH_INFO_DECLSEC code to use the index,
+	rather than the pointer to declarative security, when AOT is used.
 
 Sat Jan 22 09:35:19 EST 2005 Paolo Molaro <lupus@ximian.com>
 
