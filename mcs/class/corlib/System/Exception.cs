@@ -27,19 +27,21 @@ namespace System {
 		string stack_trace = null;
 		string remote_stack_trace = "";
 		int remote_stack_index = 0;
-		int hresult;
+		int hresult = unchecked ((int)0x80004005);
 		string source;
 
 		public Exception ()
 		{
 			inner_exception = null;
 			message = null;
+			class_name = GetType().FullName;
 		}
 
 		public Exception (string msg)
 		{
 			inner_exception = null;
 			message = msg;
+			class_name = GetType().FullName;
 		}
 
 		protected Exception (SerializationInfo info, StreamingContext sc)
@@ -51,7 +53,7 @@ namespace System {
 			message			= info.GetString ("Message");
 			help_link		= info.GetString ("HelpURL");
 			stack_trace		= info.GetString ("StackTraceString");
-			remote_stack_trace	= info.GetString ("RemoteStackTrace");
+			remote_stack_trace	= info.GetString ("RemoteStackTraceString");
 			remote_stack_index	= info.GetInt32  ("RemoteStackIndex");
 			hresult                 = info.GetInt32  ("HResult");
 			source                  = info.GetString ("Source");
@@ -62,6 +64,7 @@ namespace System {
 		{
 			inner_exception = e;
 			message = msg;
+			class_name = GetType().FullName;
 		}
 
 		public Exception InnerException 
@@ -184,10 +187,11 @@ namespace System {
 			info.AddValue ("InnerException", inner_exception);
 			info.AddValue ("HelpURL",   help_link);
 			info.AddValue ("StackTraceString", stack_trace);
-			info.AddValue ("RemoteStackTrace", remote_stack_trace);
+			info.AddValue ("RemoteStackTraceString", remote_stack_trace);
 			info.AddValue ("RemoteStackIndex", remote_stack_index);
 			info.AddValue ("HResult", hresult);
-			info.AddValue ("Source", source);
+			info.AddValue ("Source", Source);
+			info.AddValue ("ExceptionMethod", null);
 		}
 
 		public override string ToString ()

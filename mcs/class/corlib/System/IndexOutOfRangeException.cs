@@ -8,6 +8,8 @@
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
+
 namespace System {
 
 	[Serializable]
@@ -25,6 +27,11 @@ namespace System {
 
 		public IndexOutOfRangeException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+		
+		internal IndexOutOfRangeException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}

@@ -1,3 +1,12 @@
+2003-12-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Exception.cs: Several changes to make it compatible with MS.NET (needed
+	for remoting interoperability): set a default value for hresult, added 
+	initialization of class_name, serialization field RemoteStackTrace must
+	be RemoteStackTraceString, added ser. field ExceptionMethod.
+
+	* IndexOutOfRangeException.cs: Added serialization constructor.
+
 2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* Int32 (Parse):
