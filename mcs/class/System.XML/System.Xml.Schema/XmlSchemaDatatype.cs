@@ -134,6 +134,8 @@ namespace System.Xml.Schema
 				return datatypePositiveInteger;
 			case "float":
 				return datatypeFloat;
+			case "double":
+				return datatypeDouble;
 			case "base64Binary":
 				return datatypeBase64Binary;
 			case "boolean":
@@ -180,6 +182,7 @@ namespace System.Xml.Schema
 		private static XsdNonPositiveInteger datatypeNonPositiveInteger = new XsdNonPositiveInteger ();
 		private static XsdNegativeInteger datatypeNegativeInteger = new XsdNegativeInteger ();
 		private static XsdFloat datatypeFloat = new XsdFloat ();
+		private static XsdDouble datatypeDouble = new XsdDouble ();
 		private static XsdBase64Binary datatypeBase64Binary = new XsdBase64Binary ();
 		private static XsdBoolean datatypeBoolean = new XsdBoolean ();
 		private static XsdAnyURI datatypeAnyURI = new XsdAnyURI ();

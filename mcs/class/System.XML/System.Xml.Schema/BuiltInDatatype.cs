@@ -621,6 +621,19 @@ namespace Mono.Xml.Schema
 		}
 	}
 
+	// xs:double
+	public class XsdDouble : XsdDecimal
+	{
+		public override Type ValueType {
+			get { return typeof (double); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDouble (Normalize (s));
+		}
+	}
 
 	// xs:base64Binary
 	public class XsdBase64Binary : XsdString

@@ -1,3 +1,7 @@
+2003-08-28  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BuiltInDatatypes.cs, XmlSchemaDatatype.cs: Added double type.
+
 2003-08-08  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BuiltInDatatypes.cs, XmlSchemaDatatype.cs: Added XsdAnyURI,
