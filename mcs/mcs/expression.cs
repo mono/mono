@@ -4155,6 +4155,14 @@ namespace Mono.CSharp {
 					// we can optimize this case: a positive int32
 					// always fits on a uint64
 					//
+
+                                        //
+                                        // This special case is needed because csc behaves like this.
+                                        // int -> uint is better than int -> ulong!
+                                        //
+                                        if (q == TypeManager.uint32_type)
+                                                return 0;
+                                        
 					if (q == TypeManager.int64_type)
 						return 0;
 					else if (value >= 0)
@@ -4630,7 +4638,7 @@ namespace Mono.CSharp {
 			int candidate_top = candidates.Count;
 			for (int ix = 0; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
-				
+
                                 bool cand_params = (bool) candidate_to_form [candidate];
                                 bool method_params = false;
 
