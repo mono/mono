@@ -95,7 +95,7 @@ uninstall-local:
 	  for i in ''$(gac_assemblies_list); do \
 	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) $(gacutil) /u $$i" ; \
 	    MONO_PATH=$(srcdir)/../net_1_1 \
-	      $(mono_runtime) $(gacutil) /u $$i || exit 1 ; \
+	      $(mono_runtime) $(gacutil) /u $$i || true ; \
 	  done; fi
 
 copy_dlls:
