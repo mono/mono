@@ -1,10 +1,15 @@
-// cs1501-4.cs : No overload for method `NUnit.Framework.IgnoreAttribute' takes `0' arguments
-// Line: 8 
+// cs1501-4.cs : No overload for method `IgnoreAttribute' takes `0' arguments
+// Line: 14
 
-using NUnit.Framework;
+using System;
 
-class C
-{
+public class IgnoreAttribute : Attribute {
+
+        public IgnoreAttribute (String name) { }
+}
+
+class C {
+        
 	[Ignore]
 	public void Method ()
 	{
