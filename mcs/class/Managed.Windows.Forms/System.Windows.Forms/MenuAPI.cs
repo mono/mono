@@ -412,7 +412,9 @@ namespace System.Windows.Forms
 			if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE) {
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
 					(ThemeEngine.Current.ColorHilight), item.rect);				
-			}
+			} else
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+					(ThemeEngine.Current.ColorMenu), item.rect);	
 
 			if (item.item.Enabled) {
 
