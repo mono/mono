@@ -1,3 +1,8 @@
+2003-11-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Assembly.cs (LoadWithPartialName): Return null instead of throwing
+	an exception to match MS behavior.
+
 2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoMethod.cs: Add missing constructor.

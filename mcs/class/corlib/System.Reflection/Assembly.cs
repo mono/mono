@@ -356,9 +356,15 @@ namespace System.Reflection {
 		[MonoTODO]
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
-			return AppDomain.CurrentDomain.Load (partialName, securityEvidence);
+			try {
+				return AppDomain.CurrentDomain.Load (partialName, securityEvidence);
+			}
+			catch (Exception ex) {
+				// According to MSDN, this should return null instead of
+				// throwing an exception
+				return null;
+			}
 		}
-
 
 		public Object CreateInstance (String typeName) 
 		{
