@@ -3,4 +3,4 @@
 # Yes, the -lib: there is required, in preparation for Beta2, remove
 # this script at your own risk
 #
-exec @bindir@/@mono_interp@ @mono_one_instdir@/mcs.exe -lib:@gtkdir@ "$@"
+exec @bindir@/@mono_interp@ @mono_one_instdir@/mcs.exe "$@"

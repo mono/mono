@@ -19,10 +19,9 @@ plat_bindir = $(bindir)
 mono_one_instdir = $(libdir)/mono/1.0
 mono_two_instdir = $(libdir)/mono/2.0
 endif
-gtkdir = $(libdir)/mono/gtk-sharp
 
 mcs: mcs.in
-	sed -e 's^\@gtkdir\@^$(gtkdir)^g' -e 's^\@mono_one_instdir\@^$(mono_one_instdir)^g' -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/mcs.in > mcs.tmp \
+	sed -e 's^\@mono_one_instdir\@^$(mono_one_instdir)^g' -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/mcs.in > mcs.tmp \
 	&& mv mcs.tmp mcs
 
 gmcs: gmcs.in
