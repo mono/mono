@@ -1,164 +1,269 @@
-   // 
+// 
 // System.Web.HttpApplication
 //
 // Author:
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 using System;
 using System.ComponentModel;
+using System.Security.Principal;
 using System.Web.SessionState;
 
 namespace System.Web {
-   [MonoTODO()]
-   public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
-      private bool _CompleteRequest;
+	[ToolboxItem (true)]
+	[MonoTODO()]
+	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
 
-      private HttpContext _Context;
-      private HttpContext _OverrideContext;
+		#region Fields
+
+		bool _CompleteRequest;
+
+		HttpContext _Context;
+		HttpContext _OverrideContext;
          
-      private bool _InPreRequestResponseMode;
+		bool _InPreRequestResponseMode;
 
-      private ISite _Site;
-      private HttpModuleCollection _ModuleCollection;
-      private HttpSessionState _Session;
+		ISite _Site;
+		HttpModuleCollection _ModuleCollection;
+		HttpSessionState _Session;
+		IPrincipal user;
 
-      public event EventHandler AcquireRequestState;
-      public event EventHandler AuthenticateRequest;
-      public event EventHandler AuthorizeRequest;
-      public event EventHandler BeginRequest;
-      public event EventHandler Disposed;
-      public event EventHandler EndRequest;
-      public event EventHandler Error;
-      public event EventHandler PostRequestHandlerExecute;
-      public event EventHandler PreRequestHandlerExecute;
-      public event EventHandler PreSendRequestContent;
-      public event EventHandler PreSendRequestHeaders;
-      public event EventHandler ReleaseRequestState;
-      public event EventHandler ResolveRequestCache;
-      public event EventHandler UpdateRequestCache;
+		#endregion // Fields
 
-      [MonoTODO()]
-      public HttpApplication() {
-         // Init HTTP context and the methods from HttpRuntime....
-      }
+		#region Constructors
 
-      internal void ClearError() {
-         // Called from Server Utility
-      }
+		[MonoTODO()]
+		public HttpApplication() 
+		{
+			// Init HTTP context and the methods from HttpRuntime....
+		}
 
-      public HttpContext Context {
-         get {
-            if (null != _OverrideContext) {
-               return _OverrideContext;
-            }
+		#endregion // Constructors
 
-            return _Context;
-         }
-      }
+		#region Properties
 
-      public HttpModuleCollection Modules {
-         get {
-            if (null == _ModuleCollection) {
-               _ModuleCollection = new HttpModuleCollection();
-            }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public HttpApplicationState Application {
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+		}
 
-            return _ModuleCollection;
-         }
-      }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public HttpContext Context {
+			get {
+				if (null != _OverrideContext) 
+					return _OverrideContext;
+				return _Context;
+			}
+		}
 
-      public HttpRequest Request {
-         get {
-            if (null != _Context && (!_InPreRequestResponseMode)) {
-               return _Context.Request;
-            }
+		protected EventHandlerList Events {
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+		}
 
-            throw new HttpException("Cant get request object");
-         }
-      }
+		bool IHttpHandler.IsReusable {
+			[MonoTODO]
+			get { throw new NotImplementedException(); }
+		}
 
-      public HttpResponse Response {
-         get {
-            if (null != _Context && (!_InPreRequestResponseMode)) {
-               return _Context.Response;
-            }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public HttpModuleCollection Modules {
+			get {
+				if (null == _ModuleCollection) 
+					_ModuleCollection = new HttpModuleCollection();
+            			return _ModuleCollection;
+			}
+		}
 
-            throw new HttpException("Cant get response object");
-         }
-      }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public HttpRequest Request {
+			get {
+				if (null != _Context && (!_InPreRequestResponseMode)) 
+					return _Context.Request;
+				throw new HttpException("Cant get request object");
+			}
+		}
 
-      public HttpServerUtility Server {
-         get {
-            if (null != _Context) {
-               return _Context.Server;
-            }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public HttpResponse Response {
+			get {
+				if (null != _Context && (!_InPreRequestResponseMode)) 
+					return _Context.Response;
+				throw new HttpException("Cant get response object");
+			}
+		}
 
-            return new HttpServerUtility(this);
-         }
-      }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public HttpServerUtility Server {
+			get {
+				if (null != _Context) 
+					return _Context.Server;
+				return new HttpServerUtility(this);
+			}
+		}
 
-      public HttpSessionState Session {
-         get {
-            if (null != _Session) {
-               return _Session;
-            }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public HttpSessionState Session {
+			get {
+				if (null != _Session) 
+					return _Session;
+				if (null != _Context && null != _Context.Session) 
+					return _Context.Session;
+				throw new HttpException("Failed to get session object");
+			}
+		}
 
-            if (null != _Context && null != _Context.Session) {
-               return _Context.Session;
-            }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public ISite Site {
+			get { return _Site; }
+			set { _Site = value; }
+		}
 
-            throw new HttpException("Failed to get session object");
-         }
-      }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public IPrincipal User {
+			get { return user; }
+			[MonoTODO ("This requires the ControlPrincipal flag to be set in Flags.")]
+			set { user = value; }
+		}
 
-      public virtual string GetVaryByCustomString(HttpContext context, string custom) {
-         if (custom.ToLower() == "browser") {
-            return context.Request.Browser.Type;
-         }
+		#endregion Properties
 
-         return string.Empty;
-      }
+		#region Methods
 
-      [MonoTODO()]
-      IAsyncResult IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData) {
-         throw new NotImplementedException();
-      }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnAcquireRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
 
-      [MonoTODO()]
-      void IHttpAsyncHandler.EndProcessRequest(IAsyncResult result) {
-         throw new NotImplementedException();
-      }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnAuthenticateRequestAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
 
-      [MonoTODO()]
-      void IHttpHandler.ProcessRequest(HttpContext context) {
-         throw new NotImplementedException();
-      }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnAuthorizeRequestAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
 
-      bool IHttpHandler.IsReusable {
-         get {
-            throw new NotImplementedException();
-         }
-      }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnBeginRequestAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
 
-      public ISite Site {
-         get {
-            return _Site;
-         }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnEndRequestAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
 
-         set {
-            _Site = value;
-         }
-      }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnPostRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
 
-      public void CompleteRequest() {
-         _CompleteRequest = true;
-      }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnPreRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
 
-      [MonoTODO("Cleanup")]
-      public virtual void Dispose() {
-         
-      }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnReleaseRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
 
-      public virtual void Init() {
-      }
-   }
+		[MonoTODO ("Implementation required.")]
+		public void AddOnResolveRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("Implementation required.")]
+		public void AddOnUpdateRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal void ClearError() 
+		{
+			// Called from Server Utility
+		}
+
+		public void CompleteRequest () 
+		{
+			_CompleteRequest = true;
+		}
+
+		[MonoTODO("Cleanup")]
+		public virtual void Dispose () 
+		{
+		}
+
+		public virtual string GetVaryByCustomString (HttpContext context, string custom) 
+		{
+			if (custom.ToLower() == "browser") 
+				return context.Request.Browser.Type;
+			return string.Empty;
+		}
+
+		[MonoTODO()]
+		IAsyncResult IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData) 
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		void IHttpAsyncHandler.EndProcessRequest(IAsyncResult result) 
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO()]
+		void IHttpHandler.ProcessRequest(HttpContext context) 
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual void Init() 
+		{
+		}
+
+		#endregion // Methods
+
+		#region Events and Delegates
+
+		public event EventHandler AcquireRequestState;
+		public event EventHandler AuthenticateRequest;
+		public event EventHandler AuthorizeRequest;
+		public event EventHandler BeginRequest;
+		public event EventHandler Disposed;
+		public event EventHandler EndRequest;
+		public event EventHandler Error;
+		public event EventHandler PostRequestHandlerExecute;
+		public event EventHandler PreRequestHandlerExecute;
+		public event EventHandler PreSendRequestContent;
+		public event EventHandler PreSendRequestHeaders;
+		public event EventHandler ReleaseRequestState;
+		public event EventHandler ResolveRequestCache;
+		public event EventHandler UpdateRequestCache;
+
+		#endregion // Events and Delegates
+	}
 }

@@ -15,144 +15,129 @@ public class HttpBrowserCapabilities : HttpCapabilitiesBase
 	{
 	}
 
-	public bool ActiveXControls
-	{
+	public bool ActiveXControls {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public bool AOL
-	{
+	public bool AOL {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public bool BackgroundSounds
-	{
+	public bool BackgroundSounds {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public bool Beta
-	{
+	public bool Beta {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public string Browser
-	{
+	public string Browser {
 		get { return "Not Implemented"; }
 	}
 
 	[MonoTODO()]
-	public bool CDF
-	{
+	public bool CDF {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public Version ClrVersion
-	{
+	public Version ClrVersion {
 		get { return new Version (0, 0); }
 	}
 
 	[MonoTODO()]
-	public bool Cookies
-	{
+	public bool Cookies {
 		get { return true; }
 	}
 
 	[MonoTODO()]
-	public bool Crawler
-	{
+	public bool Crawler {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public Version EcmaScriptVersion
-	{
+	public Version EcmaScriptVersion {
 		get { return new Version (0, 0); }
 	}
 
 	[MonoTODO()]
-	public bool Frames
-	{
+	public bool Frames {
 		get { return true; }
 	}
 
 	[MonoTODO()]
-	public bool JavaApplets
-	{
+	public bool JavaApplets {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public bool JavaScript
-	{
+	public bool JavaScript {
 		get { return true; }
 	}
 
 	[MonoTODO()]
-	public int MajorVersion
-	{
+	public int MajorVersion {
 		get { return 0; }
 	}
 
 	[MonoTODO()]
-	public double MinorVersion
-	{
+	public double MinorVersion {
 		get { return 0.0; }
 	}
 
 	[MonoTODO()]
-	public Version MSDomVersion
-	{
+	public Version MSDomVersion {
 		get { return new Version (0, 0); }
 	}
 
 	[MonoTODO()]
-	public string Platform
-	{
+	public string Platform {
 		get { return "mono::"; }
 	}
 
 	[MonoTODO()]
-	public bool Tables
-	{
+	public bool Tables {
 		get { return true; }
 	}
 
 	[MonoTODO()]
-	public string Type
-	{
+	public Type TagWriter {
+		get { throw new NotImplementedException (); }
+	}
+
+	[MonoTODO()]
+	public string Type {
 		get { return "4"; }
 	}
 
 	[MonoTODO()]
-	public bool VBScript
-	{
+	public bool VBScript {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public string Version
-	{
+	public string Version {
 		get { return "4.0"; }
 	}
 
 	[MonoTODO()]
-	public bool Win16
-	{
+	public Version W3CDomVersion {
+		get { return new Version (0, 0); }
+	}
+
+	[MonoTODO()]
+	public bool Win16 {
 		get { return false; }
 	}
 
 	[MonoTODO()]
-	public bool Win32
-	{
+	public bool Win32 {
 		get { return true; }
 	}
-
-
 
 }
 }
