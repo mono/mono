@@ -1,3 +1,6 @@
+2003-05-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mono_method_to_ir): inlining fixes/cleanups
 
 Fri May 16 13:27:23 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
