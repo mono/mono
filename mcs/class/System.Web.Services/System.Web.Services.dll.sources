@@ -11,6 +11,8 @@ System.Web.Services.Configuration/WebServicesConfigurationSectionHandler.cs
 System.Web.Services.Configuration/XmlFormatExtensionAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionPointAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionPrefixAttribute.cs
+System.Web.Services.Description/BasicProfileViolation.cs
+System.Web.Services.Description/BasicProfileViolationCollection.cs
 System.Web.Services.Description/Binding.cs
 System.Web.Services.Description/BindingCollection.cs
 System.Web.Services.Description/DocumentableItem.cs
@@ -43,6 +45,7 @@ System.Web.Services.Description/MimeTextBinding.cs
 System.Web.Services.Description/MimeTextMatch.cs
 System.Web.Services.Description/MimeTextMatchCollection.cs
 System.Web.Services.Description/MimeXmlBinding.cs
+System.Web.Services.Description/NamedItem.cs
 System.Web.Services.Description/Operation.cs
 System.Web.Services.Description/OperationBinding.cs
 System.Web.Services.Description/OperationBindingCollection.cs
@@ -74,6 +77,12 @@ System.Web.Services.Description/ServiceDescriptionImporter.cs
 System.Web.Services.Description/ServiceDescriptionSerializerBase.cs
 System.Web.Services.Description/ServiceDescriptionReflector.cs
 System.Web.Services.Description/ExtensionManager.cs
+System.Web.Services.Description/Soap12AddressBinding.cs
+System.Web.Services.Description/Soap12Binding.cs
+System.Web.Services.Description/Soap12BodyBinding.cs
+System.Web.Services.Description/Soap12FaultBinding.cs
+System.Web.Services.Description/Soap12HeaderBinding.cs
+System.Web.Services.Description/Soap12OperationBinding.cs
 System.Web.Services.Description/SoapAddressBinding.cs
 System.Web.Services.Description/SoapBinding.cs
 System.Web.Services.Description/SoapBindingStyle.cs
@@ -90,6 +99,9 @@ System.Web.Services.Description/SoapProtocolImporter.cs
 System.Web.Services.Description/SoapProtocolReflector.cs
 System.Web.Services.Description/SoapTransportImporter.cs
 System.Web.Services.Description/Types.cs
+System.Web.Services.Description/WebReference.cs
+System.Web.Services.Description/WebReferenceCollection.cs
+System.Web.Services.Description/WebServicesInteroperability.cs
 System.Web.Services.Protocols/Methods.cs
 System.Web.Services.Protocols/AnyReturnReader.cs
 System.Web.Services.Protocols/Fault.cs

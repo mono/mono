@@ -1,3 +1,19 @@
+2004-07-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Web.Services.dll.sources: Added new files:
+		System.Web.Services.Description/BasicProfileViolation.cs
+		System.Web.Services.Description/BasicProfileViolationCollection.cs
+		System.Web.Services.Description/NamedItem.cs
+		System.Web.Services.Description/Soap12AddressBinding.cs
+		System.Web.Services.Description/Soap12Binding.cs
+		System.Web.Services.Description/Soap12BodyBinding.cs
+		System.Web.Services.Description/Soap12FaultBinding.cs
+		System.Web.Services.Description/Soap12HeaderBinding.cs
+		System.Web.Services.Description/Soap12OperationBinding.cs
+		System.Web.Services.Description/WebReference.cs
+		System.Web.Services.Description/WebReferenceCollection.cs
+		System.Web.Services.Description/WebServicesInteroperability.cs
+
 2004-07-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.Web.Services.dll.sources: Added 2.0 files:
