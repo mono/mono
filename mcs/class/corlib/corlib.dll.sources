@@ -793,6 +793,7 @@ System.Security.Permissions/FileDialogPermissionAttribute.cs
 System.Security.Permissions/FileIOPermission.cs
 System.Security.Permissions/FileIOPermissionAccess.cs
 System.Security.Permissions/FileIOPermissionAttribute.cs
+System.Security.Permissions/IBuiltInPermission.cs
 System.Security.Permissions/IsolatedStorageContainment.cs
 System.Security.Permissions/IsolatedStorageFilePermission.cs 
 System.Security.Permissions/IsolatedStorageFilePermissionAttribute.cs
