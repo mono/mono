@@ -1,3 +1,8 @@
+2002-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MulticastDelegate.cs: make GetInvocationList work for more than 1
+	delegate.
+
 2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MulticastDelegate.cs: implemented GetInvocationList. I'll check later
