@@ -1,0 +1,3 @@
+2003-07-24  Sebastien Pouliot <spouliot@motus.com>
+
+	* XmlCanonicalizer.cs: New. C14N class from Aleksey Sanin.
