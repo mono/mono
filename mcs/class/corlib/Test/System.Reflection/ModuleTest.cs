@@ -118,6 +118,151 @@ public class ModuleTest : Assertion
 		AssertEquals (m2.GetField ("DATA", BindingFlags.Public), null);
 	}
 
+#if NET_2_0
+
+	[Test]
+	public void ResolveType () {
+		Type t = typeof (ModuleTest);
+		Module module = t.Module;
+
+		AssertEquals (t, module.ResolveType (t.MetadataToken));
+
+		/* We currently throw ArgumentException for this one */
+		try {
+			module.ResolveType (1234);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			module.ResolveType (t.GetMethod ("ResolveType").MetadataToken);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			module.ResolveType (t.MetadataToken + 10000);
+			Fail ();
+		}
+		catch (ArgumentOutOfRangeException) {
+		}
+	}
+
+	[Test]
+	public void ResolveMethod () {
+		Type t = typeof (ModuleTest);
+		Module module = t.Module;
+
+		AssertEquals (t.GetMethod ("ResolveMethod"), module.ResolveMethod (t.GetMethod ("ResolveMethod").MetadataToken));
+
+		try {
+			module.ResolveMethod (1234);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			module.ResolveMethod (t.MetadataToken);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			module.ResolveMethod (t.GetMethod ("ResolveMethod").MetadataToken + 10000);
+			Fail ();
+		}
+		catch (ArgumentOutOfRangeException) {
+		}
+	}
+
+	public int aField;
+
+	[Test]
+	public void ResolveField () {
+		Type t = typeof (ModuleTest);
+		Module module = t.Module;
+
+		AssertEquals (t.GetField ("aField"), module.ResolveField (t.GetField ("aField").MetadataToken));
+
+		try {
+			module.ResolveField (1234);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			module.ResolveField (t.MetadataToken);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			module.ResolveField (t.GetField ("aField").MetadataToken + 10000);
+			Fail ();
+		}
+		catch (ArgumentOutOfRangeException) {
+		}
+	}
+
+	[Test]
+	public void ResolveString () {
+		Type t = typeof (ModuleTest);
+		Module module = t.Module;
+
+		for (int i = 1; i < 10000; ++i) {
+			try {
+				module.ResolveString (0x70000000 + i);
+			}
+			catch (Exception) {
+			}
+		}
+
+		try {
+			module.ResolveString (1234);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			module.ResolveString (t.MetadataToken);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			module.ResolveString (0x70000000 | 10000);
+			Fail ();
+		}
+		catch (ArgumentOutOfRangeException) {
+		}
+	}
+
+
+	[Test]
+	public void ResolveMember () {
+		Type t = typeof (ModuleTest);
+		Module module = t.Module;
+
+		AssertEquals (t, module.ResolveMember (t.MetadataToken));
+		AssertEquals (t.GetField ("aField"), module.ResolveMember (t.GetField ("aField").MetadataToken));
+		AssertEquals (t.GetMethod ("ResolveMember"), module.ResolveMember (t.GetMethod ("ResolveMember").MetadataToken));
+
+		try {
+			module.ResolveMember (module.MetadataToken);
+		}
+		catch (ArgumentException) {
+		}
+	}
+#endif
+
 	[Test]
 	public void FindTypes () {
 		Module m = typeof (ModuleTest).Module;

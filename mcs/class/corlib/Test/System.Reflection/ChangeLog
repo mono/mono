@@ -1,3 +1,7 @@
+2004-09-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleTest.cs: Add tests for NET 2.0 ResolveXXX methods.
+
 2004-09-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyTest.cs: Add tests for MetadataToken and ManifestModule.
