@@ -1,3 +1,8 @@
+2004-01-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlSchemaExporter.cs: Don't create referenced element if it has already
+	  been created (two types could be referencing the same schema element).
+
 2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlReflectionImporter.cs: Read IsNullable flag from XmlArrayAttribute.

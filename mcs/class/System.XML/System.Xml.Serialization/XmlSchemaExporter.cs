@@ -307,6 +307,10 @@ namespace System.Xml.Serialization {
 			else
 			{
 				sat.RefName = new XmlQualifiedName (attinfo.AttributeName, attinfo.Namespace);
+				foreach (XmlSchemaObject ob in memberSchema.Items)
+					if (ob is XmlSchemaAttribute && ((XmlSchemaAttribute)ob).Name == attinfo.AttributeName)
+						return sat;
+						
 				memberSchema.Items.Add (GetSchemaAttribute (memberSchema, attinfo));
 			}
 			return sat;
@@ -400,6 +404,10 @@ namespace System.Xml.Serialization {
 			else
 			{
 				selem.RefName = new XmlQualifiedName (einfo.ElementName, einfo.Namespace);
+				foreach (XmlSchemaObject ob in memberSchema.Items)
+					if (ob is XmlSchemaElement && ((XmlSchemaElement)ob).Name == einfo.ElementName)
+						return selem;
+						
 				AddSchemaElement (memberSchema.Items, memberSchema, einfo, defaultValue, false);
 			}
 			return selem;
