@@ -226,18 +226,27 @@ namespace System
 		
 		public static int BinarySearch (Array array, object value)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
 			return BinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
 					     value, null);
 		}
 
 		public static int BinarySearch (Array array, object value, IComparer comparer)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
 			return BinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
 					     value, comparer);
 		}
 
 		public static int BinarySearch (Array array, int index, int length, object value)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
 			return BinarySearch (array, index, length, value, null);
 		}
 
@@ -311,6 +320,9 @@ namespace System
 
 		public static void Copy (Array source, Array dest, int length)
 		{
+			if (source == null || dest == null)
+				throw new ArgumentNullException ();
+
 			// I don't know how to handle this ?
 			if (source.Rank > 1 || dest.Rank > 1)
 				throw new RankException ();
@@ -320,9 +332,8 @@ namespace System
 
 		public static void Copy (Array source, int source_idx, Array dest, int dest_idx, int length)
 		{
-			// I don't know how to handle this ?
-			if (source.Rank > 1 || dest.Rank > 1)
-				throw new RankException ();
+			if (source == null || dest == null)
+				throw new ArgumentNullException ();
 
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ();
@@ -338,22 +349,35 @@ namespace System
 			if (source.Rank != dest.Rank)
 				throw new RankException ();
 
+			// I don't know how to handle this ?
+			if (source.Rank > 1 || dest.Rank > 1)
+				throw new RankException ();
+
 			for (int i = 0; i < length; i++) 
 			{
-				int index = source.GetLowerBound (0) + i + source_idx;
+				int srcindex = source.GetLowerBound (0) + i + source_idx;
+				int dstindex = dest.GetLowerBound (0) + i + dest_idx;
 
-				dest.SetValue(source.GetValue(index), dest_idx + i + dest.GetLowerBound (0));
+				Object newval = source.GetValue(srcindex);
+
+				dest.SetValue(newval, dstindex);
 			}
 			
 		}
 		
 		public static int IndexOf (Array array, object value)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+	
 			return IndexOf (array, value, 0, array.Length);
 		}
 
 		public static int IndexOf (Array array, object value, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
 			return IndexOf (array, value, index, array.Length - index);
 		}
 		
@@ -377,11 +401,17 @@ namespace System
 
 		public static int LastIndexOf (Array array, object value)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+	
 			return LastIndexOf (array, value, 0, array.Length);
 		}
 
 		public static int LastIndexOf (Array array, object value, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+	
 			return LastIndexOf (array, value, index, array.Length - index);
 		}
 		
@@ -405,6 +435,9 @@ namespace System
 
 		public static void Reverse (Array array)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
 			Reverse (array, array.GetLowerBound (0), array.GetLength (0));
 		}
 
@@ -434,16 +467,25 @@ namespace System
 		
 		public static void Sort (Array array)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
 			Sort (array, null, array.GetLowerBound (0), array.GetLength (0), null);
 		}
 
 		public static void Sort (Array keys, Array items)
 		{
+			if (keys == null)
+				throw new ArgumentNullException ();
+
 			Sort (keys, items, keys.GetLowerBound (0), keys.GetLength (0), null);
 		}
 
 		public static void Sort (Array array, IComparer comparer)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
 			Sort (array, null, array.GetLowerBound (0), array.GetLength (0), comparer);
 		}
 
@@ -454,6 +496,9 @@ namespace System
 
 		public static void Sort (Array keys, Array items, IComparer comparer)
 		{
+			if (keys == null)
+				throw new ArgumentNullException ();
+
 			Sort (keys, items, keys.GetLowerBound (0), keys.GetLength (0), comparer);
 		}
 
@@ -481,6 +526,9 @@ namespace System
 			int low = low0;
 			int high = high0;
 			
+			if (keys == null)
+				throw new ArgumentNullException ();
+
 			if (keys.Rank > 1 || (items != null && items.Rank > 1))
 				throw new RankException ();
 
@@ -541,6 +589,20 @@ namespace System
 	
 		public virtual void CopyTo (Array array, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ();
+
+			// The order of these exception checks may look strange,
+			// but that's how the microsoft runtime does it.
+			if (this.Rank > 1)
+				throw new RankException ();
+			if (index >= this.GetLength(0))
+				throw new ArgumentException ();
+			if (array.Rank > 1)
+				throw new RankException ();
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ();
+
 			Copy (this, this.GetLowerBound(0), array, index, this.GetLength (0));
 		}
 	}
