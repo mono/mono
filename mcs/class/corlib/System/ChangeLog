@@ -1,3 +1,9 @@
+2001-08-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Attribute.cs: uncomment some code to make it compile again
+
+	* mono.src: removed duplicated Attribute.cs
+
 2001-08-16  Nick Drochak <ndrochak@gol.com>
 
 	* Attribute.cs: implemented all methods except GetHashCode()

@@ -60,10 +60,13 @@ namespace System {
 		{
 			// attributeType must be derived from type System.Attribute
 			Type t = typeof(System.Attribute);
+			
+			/* fixme: thgi does not work for target monolib2
 			if (!attributeType.IsSubclassOf(t))
 			{
 				throw new ArgumentException("Parameter is not a type derived from System.Attribute", "attributeType");
 			}
+			*/
 		}
 
 		public static Attribute GetCustomAttribute(System.Reflection.ParameterInfo element, Type attributeType){
