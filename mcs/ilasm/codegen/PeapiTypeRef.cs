@@ -16,24 +16,18 @@ namespace Mono.ILASM {
         public class PeapiTypeRef  {
 
                 private PEAPI.Type peapi_type;
-                private string full_name;
                 private bool is_pinned;
                 private bool is_array;
                 private bool is_ref;
                 private bool use_type_spec;
 
-                public PeapiTypeRef (PEAPI.Type peapi_type, string full_name)
+                public PeapiTypeRef (PEAPI.Type peapi_type)
                 {
                         this.peapi_type = peapi_type;
-                        this.full_name = full_name;
                         is_pinned = false;
                         is_array = false;
                         is_ref = false;
                         use_type_spec = false;
-                }
-
-                public string FullName {
-                        get { return full_name; }
                 }
 
                 public bool IsPinned {
@@ -66,7 +60,6 @@ namespace Mono.ILASM {
                         } else {
                                 peapi_type = new PEAPI.ZeroBasedArray (peapi_type);
                         }
-                        full_name += "[]";
                         is_array = true;
                 }
 
@@ -109,8 +102,6 @@ namespace Mono.ILASM {
                         } else {
                                 peapi_type = new PEAPI.BoundArray (peapi_type, (uint) dimen);
                         }
-                        /// TODO: Proper full names
-                        full_name += "[][]";
                         is_array = true;
                 }
 
@@ -119,7 +110,6 @@ namespace Mono.ILASM {
                         use_type_spec = true;
 
                         peapi_type = new PEAPI.ManagedPointer (peapi_type);
-                        full_name += "&";
                         is_ref = true;
                 }
 
@@ -128,7 +118,6 @@ namespace Mono.ILASM {
                         use_type_spec = true;
 
                         peapi_type = new PEAPI.UnmanagedPointer (peapi_type);
-                        full_name += "*";
                 }
 
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,

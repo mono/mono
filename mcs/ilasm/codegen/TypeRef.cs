@@ -27,8 +27,9 @@ namespace Mono.ILASM {
 
                 private Location location;
                 private string full_name;
+                private string sig_mod;
                 private PEAPI.Type type;
-		private bool is_valuetype;
+                private bool is_valuetype;
 
                 private bool is_resolved;
 
@@ -39,12 +40,18 @@ namespace Mono.ILASM {
                 {
                         this.full_name = full_name;
                         this.location = location;
-			this.is_valuetype = is_valuetype;
+                        this.is_valuetype = is_valuetype;
+                        sig_mod = String.Empty;
                         is_resolved = false;
                 }
 
                 public string FullName {
-                        get { return full_name; }
+                        get { return full_name + sig_mod; }
+                }
+
+                public override string SigMod {
+                        get { return sig_mod; }
+                        set { sig_mod = value; }
                 }
 
                 public PEAPI.Type PeapiType {
@@ -59,10 +66,10 @@ namespace Mono.ILASM {
                         get { return is_resolved; }
                 }
 
-		public void MakeValueClass ()
-		{
-			is_valuetype = true;
-		}
+                public void MakeValueClass ()
+                {
+                        is_valuetype = true;
+                }
 
                 public  IMethodRef GetMethodRef (ITypeRef ret_type,
                         PEAPI.CallConv call_conv, string name, ITypeRef[] param)
@@ -83,7 +90,7 @@ namespace Mono.ILASM {
                         PEAPI.Type base_type;
 
                         base_type = code_gen.TypeManager.GetPeapiType (full_name);
-                        type = Modify (code_gen, base_type, ref full_name);
+                        type = Modify (code_gen, base_type);
 
                         is_resolved = true;
                 }

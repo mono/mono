@@ -18,20 +18,26 @@ namespace Mono.ILASM {
         public class PrimitiveTypeRef : ModifiableType, ITypeRef {
 
                 private string full_name;
+                private string sig_mod;
                 private PEAPI.Type type;
 
-		private bool is_resolved;
+                private bool is_resolved;
 
                 public PrimitiveTypeRef (PEAPI.PrimitiveType type, string full_name)
                 {
                         this.type = type;
                         this.full_name = full_name;
-		
-			is_resolved = false;
+                        sig_mod = String.Empty;
+                        is_resolved = false;
                 }
 
                 public string FullName {
-                        get { return full_name; }
+                        get { return full_name + sig_mod; }
+                }
+
+                public override string SigMod {
+                        get { return sig_mod; }
+                        set { sig_mod = value; }
                 }
 
                 public PEAPI.Type PeapiType {
@@ -40,13 +46,13 @@ namespace Mono.ILASM {
 
                 public void Resolve (CodeGen code_gen)
                 {
-			if (is_resolved)
-				return;
+                        if (is_resolved)
+                                return;
 
                         // Perform all of the types modifications
-                        type = Modify (code_gen, type, ref full_name);
-			
-			is_resolved = true;
+                        type = Modify (code_gen, type);
+
+                        is_resolved = true;
                 }
 
                 /// <summary>

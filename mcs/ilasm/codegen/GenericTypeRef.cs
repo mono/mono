@@ -12,12 +12,36 @@ using System;
 
 namespace Mono.ILASM {
 
-        public class GenericTypeRef : PeapiTypeRef, ITypeRef {
+        public class GenericTypeRef : ModifiableType, ITypeRef {
+
+                private PEAPI.Type type;
+                private string full_name;
+                private string sig_mod;
 
                 public GenericTypeRef (PEAPI.GenericTypeSpec gen_type,
-                                string full_name) : base (gen_type, full_name)
+                                string full_name)
                 {
+                        this.type = gen_type;
+                        this.full_name = full_name;
+                        sig_mod = String.Empty;
+                }
 
+                public string FullName {
+                        get { return full_name + sig_mod; }
+                }
+
+                public override string SigMod {
+                        get { return sig_mod; }
+                        set { sig_mod = value; }
+                }
+
+                public PEAPI.Type PeapiType {
+                        get { return type; }
+                }
+
+                public void Resolve (CodeGen code_gen)
+                {
+                        type = Modify (code_gen, type);
                 }
 
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
@@ -30,12 +54,6 @@ namespace Mono.ILASM {
                 {
                         return new TypeSpecFieldRef (this, ret_type, name);
                 }
-
-                public IClassRef AsClassRef (CodeGen code_gen)
-                {
-                        throw new NotImplementedException ("Can not create classrefs from generic types.");
-                }
-
         }
 
 }

@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class ModifiableType {
+        public abstract class ModifiableType {
 
                 private ArrayList conversion_list;
                 private bool is_pinned;
@@ -32,6 +32,11 @@ namespace Mono.ILASM {
                 public ModifiableType ()
                 {
                         conversion_list = new ArrayList (5);
+                }
+
+                public abstract string SigMod {
+                        get;
+                        set;
                 }
 
                 public bool IsPinned {
@@ -55,6 +60,7 @@ namespace Mono.ILASM {
                         use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeArray);
                         is_array = true;
+                        SigMod += "[]";
                 }
 
                 public void MakeBoundArray (ArrayList bounds)
@@ -63,6 +69,7 @@ namespace Mono.ILASM {
                         conversion_list.Add (ConversionMethod.MakeBoundArray);
                         conversion_list.Add (bounds);
                         is_array = true;
+                        SigMod += "[,]"; // TODO: Check spec on this
                 }
 
                 public void MakeManagedPointer ()
@@ -70,12 +77,14 @@ namespace Mono.ILASM {
                         use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeManagedPointer);
                         is_ref = true;
+                        SigMod += "&";
                 }
 
                 public void MakeUnmanagedPointer ()
                 {
                         use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeUnmanagedPointer);
+                        SigMod += "*";
                 }
 
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
@@ -93,10 +102,9 @@ namespace Mono.ILASM {
                         is_pinned = true;
                 }
 
-
-                protected PEAPI.Type Modify (CodeGen code_gen, PEAPI.Type type, ref string full_name)
+                protected PEAPI.Type Modify (CodeGen code_gen, PEAPI.Type type)
                 {
-                        PeapiTypeRef peapi_type = new PeapiTypeRef (type, full_name);
+                        PeapiTypeRef peapi_type = new PeapiTypeRef (type);
                         int count = conversion_list.Count;
                         for (int i=0; i<count; i++) {
                                 switch ((ConversionMethod) conversion_list[i]) {
@@ -120,7 +128,6 @@ namespace Mono.ILASM {
 
                         }
 
-                        full_name = peapi_type.FullName;
                         return peapi_type.PeapiType;
                 }
 

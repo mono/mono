@@ -1,3 +1,19 @@
+2003-08-10 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Fix tabbing
+	* ModifiableType.cs: Modify a types signature when the type is
+	modified instead of waiting untill the end. Signatures need to be
+	modified immediatly because they are used in method signatures and
+	would fail for overloaded operations if sigs weren't modified
+	right away.
+	* ExternTypeRef.cs: Add signature modifications, fix some tabbing
+	* GenericTypeInst.cs: Use ModifiableType as a base
+	* GenericTypeRef.cs: Use ModifiableType as a base
+	* PeapiTypeRef.cs: No longer take or modify type names.
+	* PrimitiveTypeRef.cs: Add signature modifications, fix some tabbing.
+	* Sentinel.cs: Add signature modifications, fix some tabbing.
+	* TypeRef.cs: Add signature modifications, fix some tabbing.
+		
 2003-08-05  Nick Drochak <ndrochak@gol.com>
 
 	* IClassRef.cs: Fix build on .NET

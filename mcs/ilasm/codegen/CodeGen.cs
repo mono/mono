@@ -39,15 +39,15 @@ namespace Mono.ILASM {
                 private int cor_flags;
                 private long image_base;
 
-		private string output_file;
-		private bool is_dll;
-		private bool is_assembly;
+                private string output_file;
+                private bool is_dll;
+                private bool is_assembly;
 
                 public CodeGen (string output_file, bool is_dll, bool is_assembly)
                 {
-			this.output_file = output_file;
-			this.is_dll = is_dll;
-			this.is_assembly = is_assembly;
+                        this.output_file = output_file;
+                        this.is_dll = is_dll;
+                        this.is_assembly = is_assembly;
 
                         type_manager = new TypeManager (this);
                         extern_table = new ExternTable ();
@@ -183,7 +183,12 @@ namespace Mono.ILASM {
                 public void EndTypeDef ()
                 {
                         typedef_stack.Pop ();
-                        current_typedef = null;
+
+                        if (typedef_stack.Count > 0)
+                                current_typedef = (TypeDef) typedef_stack.Peek ();
+                        else
+                                current_typedef = null;
+
                 }
 
                 public void AddToDefineContentsList (TypeDef typedef)
@@ -193,38 +198,38 @@ namespace Mono.ILASM {
 
                 public void Write ()
                 {
-			FileStream out_stream = null;
-			
-			try {
-				out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
-				pefile = new PEFile (assembly_name, is_dll, is_assembly, out_stream);			
-				extern_table.Resolve (this);
-                        	type_manager.DefineAll ();
+                        FileStream out_stream = null;
 
-                        	foreach (FieldDef fielddef in global_field_table.Values) {
-                                	fielddef.Define (this);
-                        	}
+                        try {
+                                out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
+                                pefile = new PEFile (assembly_name, is_dll, is_assembly, out_stream);
+                                extern_table.Resolve (this);
+                                type_manager.DefineAll ();
 
-                        	foreach (MethodDef methoddef in global_method_table.Values) {
-                                	methoddef.Define (this);
-                        	}
+                                foreach (FieldDef fielddef in global_field_table.Values) {
+                                        fielddef.Define (this);
+                                }
 
-                        	foreach (TypeDef typedef in defcont_list) {
-                                	typedef.DefineContents (this);
-                        	}
+                                foreach (MethodDef methoddef in global_method_table.Values) {
+                                        methoddef.Define (this);
+                                }
 
-                        	if (sub_system != -1)
-                                	pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
-                        	if (cor_flags != -1)
-                                	pefile.SetCorFlags (cor_flags);
+                                foreach (TypeDef typedef in defcont_list) {
+                                        typedef.DefineContents (this);
+                                }
 
-                        	pefile.WritePEFile ();
-			} catch {
-				throw;
-			} finally {
-				if (out_stream != null)
-					out_stream.Close ();
-			}
+                                if (sub_system != -1)
+                                        pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
+                                if (cor_flags != -1)
+                                        pefile.SetCorFlags (cor_flags);
+
+                                pefile.WritePEFile ();
+                        } catch {
+                                throw;
+                        } finally {
+                                if (out_stream != null)
+                                        out_stream.Close ();
+                        }
                 }
 
                 public PEAPI.Method ResolveMethod (string signature)

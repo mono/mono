@@ -13,11 +13,12 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class GenericTypeInst : ITypeRef {
+        public class GenericTypeInst : ModifiableType, ITypeRef {
 
                 private string full_name;
+                private string sig_mod;
                 private ITypeRef[] type_list;
-                private PEAPI.GenericTypeInst gen_inst;
+                private PEAPI.Type gen_inst;
 
                 private bool is_resolved;
 
@@ -26,33 +27,22 @@ namespace Mono.ILASM {
                 {
                         this.full_name = full_name;
                         this.type_list = type_list;
-
+                        sig_mod = String.Empty;
                         is_resolved = false;
                 }
 
                 public string FullName {
-                        get { return full_name; }
+                        get { return full_name + sig_mod; }
                 }
 
-                public bool IsPinned { get { return false; } }
-                public bool IsRef { get { return false; } }
-                public bool IsArray { get { return false; } }
-
-                public bool UseTypeSpec {
-                        get { return true; }
+                public override string SigMod {
+                        get { return sig_mod; }
+                        set { sig_mod = value; }
                 }
 
                 public PEAPI.Type PeapiType {
                         get { return gen_inst; }
                 }
-
-                public void MakeArray () { }
-                public void MakeBoundArray (ArrayList bounds) { }
-                public void MakeManagedPointer () { }
-                public void MakeUnmanagedPointer () { }
-                public void MakeCustomModified (CodeGen code_gen,
-                                PEAPI.CustomModifier modifier, IClassRef klass) { }
-                public void MakePinned () { }
 
                 public void Resolve (CodeGen code_gen)
                 {
@@ -70,6 +60,7 @@ namespace Mono.ILASM {
                         }
 
                         gen_inst = new PEAPI.GenericTypeInst (p_gen_type, p_type_list);
+                        gen_inst = Modify (code_gen, gen_inst);
 
                         is_resolved = true;
                 }
@@ -85,10 +76,6 @@ namespace Mono.ILASM {
                         return new TypeSpecFieldRef (this, ret_type, name);
                 }
 
-                public IClassRef AsClassRef (CodeGen code_gen)
-                {
-                        throw new NotImplementedException ("GenericTypeInst::AsClassRef");
-                }
         }
 
 }
