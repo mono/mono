@@ -6,6 +6,14 @@ enum A {
 	Hello
 }
 
+class Y {
+	public Y ()
+	{
+		value = 3;
+	}
+	public int value;
+}
+
 class X {
 
 	static int Main ()
@@ -16,7 +24,11 @@ class X {
 		Console.WriteLine ("value is: " + (5.ToString ()));
 		if (5.ToString () != "5")
 			return 2;
-		
+
+		Y y = new Y ();
+		if (y.value.ToString () != "3")
+			return 3;		
+		Console.WriteLine ("Test ok");
 		return 0;
 	}
 }
