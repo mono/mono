@@ -1,3 +1,6 @@
+2003-06-07  Ben Maurer <bmaurer@users.sourceforge.net>
+	* Stack.cs: Contains (null) works correctly.
+
 2003-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Stack.cs: fixed Clone ().

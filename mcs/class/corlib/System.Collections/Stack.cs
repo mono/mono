@@ -168,10 +168,17 @@ namespace System.Collections {
 		public virtual bool Contains(object obj) {
 			if (count == 0)
 				return false;
-
-			for (int i = 0; i < count; i++) {
-				if (contents[i].Equals(obj))
-					return true; 
+			
+			if (obj == null) {
+					for (int i = 0; i < count; i++) {
+						if (contents[i] == null)
+							return true; 
+					}
+			} else {
+					for (int i = 0; i < count; i++) {
+						if (contents[i].Equals(obj))
+							return true; 
+					}
 			}
 
 			return false;

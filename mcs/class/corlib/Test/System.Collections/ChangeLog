@@ -1,3 +1,6 @@
+2003-06-07  Ben Maurer <bmaurer@users.sourceforge.net>
+	* StackTest.cs: Added test for Contains (null)
+
 2003-05-13 Nick Drochak <ndrochak@gol.com>
 
 	* DictionaryEntry.cs: Added test

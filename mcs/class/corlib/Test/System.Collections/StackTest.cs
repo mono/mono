@@ -118,6 +118,13 @@ namespace MonoTests.System.Collections
                         stackInt.Pop();
 
                         Assert(!stackInt.Contains(toLocate));
+			
+			stackInt.Push(null);
+			Assert(stackInt.Contains(null));
+			stackInt.Pop();
+			Assert(!stackInt.Contains(null));
+			
+			
                 }
 
                 public void TestCopyTo()
