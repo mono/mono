@@ -1,3 +1,7 @@
+2003-12-08  Jackson Harper <jackson@ximian.com>
+
+	* main.cs: escape module names.
+	
 2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* main.c (dis_field_list): Update after changes to 
