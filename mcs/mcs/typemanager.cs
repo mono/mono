@@ -513,6 +513,11 @@ public class TypeManager {
 	/// </summary>
 	public static void AddAssembly (Assembly a)
 	{
+		foreach (Assembly assembly in assemblies) {
+			if (a == assembly)
+				return;
+		}
+
 		int top = assemblies.Length;
 		Assembly [] n = new Assembly [top + 1];
 

@@ -1,5 +1,9 @@
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
 
+	* typemanager.cs: Avoid inclusion of same assembly more than once.
+
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
 	* cs-parser.jay: Fixed problem where the last assembly attribute
           has been applied also to following declaration (class, struct, etc.)
           
