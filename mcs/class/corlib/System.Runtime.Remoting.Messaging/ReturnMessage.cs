@@ -48,7 +48,7 @@ namespace System.Runtime.Remoting.Messaging
 		Exception _exception;
 		MethodBase _methodBase;
 		string _methodName;
-		object _methodSignature;
+		Type [] _methodSignature;
 		string _typeName;
 		MethodReturnDictionary _properties;
 		Identity _targetIdentity;
@@ -66,9 +66,6 @@ namespace System.Runtime.Remoting.Messaging
 			_callCtx = callCtx;
 			_uri = request.Uri;
 			_methodBase = request.MethodBase;
-			_methodName = request.MethodName;
-			_methodSignature = request.MethodSignature;
-			_typeName = request.TypeName;
 			if (_args == null) _args = new object [outArgCount];
 		}
 
@@ -77,12 +74,7 @@ namespace System.Runtime.Remoting.Messaging
 			_exception = exc;
 			
 			if (request != null)
-			{
 				_methodBase = request.MethodBase;
-				_methodName = request.MethodName;
-				_methodSignature = request.MethodSignature;
-				_typeName = request.TypeName;
-			}
 			_args = new object[0];	// .NET does this
 		}
 		
@@ -118,13 +110,20 @@ namespace System.Runtime.Remoting.Messaging
 
 		public string MethodName {
 			get {
+				if (_methodBase != null && _methodName == null)
+					_methodName = _methodBase.Name;
 				return _methodName;
-
 			}
 		}
 
 		public object MethodSignature {
 			get {
+				if (_methodBase != null && _methodSignature == null) {
+					ParameterInfo[] parameters = _methodBase.GetParameters();
+					_methodSignature = new Type [parameters.Length];
+					for (int n=0; n<parameters.Length; n++)
+						_methodSignature[n] = parameters[n].ParameterType;
+				}
 				return _methodSignature;
 			}
 		}
@@ -138,7 +137,12 @@ namespace System.Runtime.Remoting.Messaging
 
 		public string TypeName {
 			get {
+
+				// lazily fill in _typeName from _methodBase
+				if (_methodBase != null && _typeName == null)
+					_typeName = _methodBase.DeclaringType.AssemblyQualifiedName;
 				return _typeName;
+
 			}
 		}
 

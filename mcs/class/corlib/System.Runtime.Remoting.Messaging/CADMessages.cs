@@ -278,26 +278,12 @@ namespace System.Runtime.Remoting.Messaging {
 	// Used when passing a IMethodCallMessage between appdomains
 	internal class CADMethodCallMessage : CADMessageBase {
 		string _uri;
-		string _methodName;
-		string _typeName;
 		
 		internal RuntimeMethodHandle MethodHandle;
-
-		internal string TypeName {
-			get {
-				return _typeName;
-			}
-		}
-
+		
 		internal string Uri {
 			get {
 				return _uri;
-			}
-		}
-
-		internal string MethodName {
-			get {
-				return _methodName;
 			}
 		}
 
@@ -310,8 +296,6 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		internal CADMethodCallMessage (IMethodCallMessage callMsg) {
-			_methodName = callMsg.MethodName;
-			_typeName = callMsg.TypeName;
 			_uri = callMsg.Uri;
 			MethodHandle = callMsg.MethodBase.MethodHandle;
 

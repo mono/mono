@@ -75,9 +75,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		internal MethodCall (CADMethodCallMessage msg) 
 		{
-			_typeName = string.Copy (msg.TypeName);
 			_uri = string.Copy (msg.Uri);
-			_methodName = string.Copy (msg.MethodName);
 			
 			// Get unmarshalled arguments
 			ArrayList args = msg.GetArguments ();
@@ -208,7 +206,12 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		public string MethodName {
-			get { return _methodName; }
+			get {
+				// lazily fill in _methodName from _methodBase
+				if (_methodName == null)
+					_methodName = _methodBase.Name;
+				return _methodName;
+			}
 		}
 
 		public object MethodSignature {
@@ -241,7 +244,12 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public string TypeName 
 		{
-			get { return _typeName; }
+			get {
+				// lazily fill in _typeName from _methodBase
+				if (_typeName == null)
+					_typeName = _methodBase.DeclaringType.AssemblyQualifiedName;
+				return _typeName;
+			}
 		}
 
 		public string Uri {

@@ -1,5 +1,11 @@
 2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* CADMessages.cs: get rid of method / type name, it is not needed
+	* MethodCall.cs: lazily init method / type name.
+	* ReturnMessage.cs: lazily init method / type name, sig.
+
+2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* CADMessages.cs, MethodCall.cs: When doing an x-appdomain
 	call, store the method in a RuntimeMethodHandle. This allows
 	us to avoid the expensive lookup operations that must be done
