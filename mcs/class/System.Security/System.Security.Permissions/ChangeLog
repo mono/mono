@@ -1,3 +1,9 @@
+2005-01-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DataProtectionPermission.cs: Removed IBuiltInPermission (it's not in
+	corlib so it's no more built-in). Updated to use PermissionHelper.
+	* PermissionHelper.cs: New. Common helpers for permissions classes.
+
 2005-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DataProtectionPermission.cs: Moved from corlib.

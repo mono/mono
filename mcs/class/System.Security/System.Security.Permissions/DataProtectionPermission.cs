@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,7 +33,7 @@ using System.Globalization;
 namespace System.Security.Permissions {
 	
 	[Serializable]
-	public sealed class DataProtectionPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
+	public sealed class DataProtectionPermission : CodeAccessPermission, IUnrestrictedPermission {
 
 		private const int version = 1;
 
@@ -42,7 +42,7 @@ namespace System.Security.Permissions {
 
 		public DataProtectionPermission (PermissionState state)
 		{
-			if (CheckPermissionState (state, true) == PermissionState.Unrestricted)
+			if (PermissionHelper.CheckPermissionState (state, true) == PermissionState.Unrestricted)
 				_flags = DataProtectionPermissionFlags.AllFlags;
 			else
 				_flags = DataProtectionPermissionFlags.NoFlags;
@@ -120,7 +120,7 @@ namespace System.Security.Permissions {
 		public override void FromXml (SecurityElement e) 
 		{
 			// General validation in CodeAccessPermission
-			CheckSecurityElement (e, "e", version, version);
+			PermissionHelper.CheckSecurityElement (e, "e", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
@@ -130,15 +130,9 @@ namespace System.Security.Permissions {
 
 		public override SecurityElement ToXml () 
 		{
-			SecurityElement e = Element (version);
+			SecurityElement e = PermissionHelper.Element (typeof (DataProtectionPermission), version);
 			e.AddAttribute ("Flags", _flags.ToString ());
 			return e;
-		}
-
-		// IBuiltInPermission
-		int IBuiltInPermission.GetTokenIndex ()
-		{
-			return (int) BuiltInToken.DataProtection;
 		}
 
 		// helpers
@@ -150,7 +144,7 @@ namespace System.Security.Permissions {
 
 			DataProtectionPermission dp = (target as DataProtectionPermission);
 			if (dp == null) {
-				ThrowInvalidPermission (target, typeof (DataProtectionPermission));
+				PermissionHelper.ThrowInvalidPermission (target, typeof (DataProtectionPermission));
 			}
 
 			return dp;
