@@ -1,3 +1,10 @@
+2002-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigHelper.cs: workaround for a bug in NameValueCollection.
+	* ConfigurationSettings.cs: load sections when the parent holds a
+	handler for it. Now overriding appSettings values in the app config
+	file works (first <remove..> and then <add...).
+
 2002-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigHelper.cs:

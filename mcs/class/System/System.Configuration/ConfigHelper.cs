@@ -99,8 +99,11 @@ namespace System.Configuration
 					new NameValueCollection (CaseInsensitiveHashCodeProvider.Default,
 								 CaseInsensitiveComparer.Default);
 
-			if (prev != null)
-				coll.Add (prev);
+			if (prev != null) {
+				//coll.Add (prev); FIXME: gotta fix NameValueCollection or fill a bug report
+				foreach (string s in prev.Keys)
+					coll.Add (s, prev [s]);
+			}
 
 			CollectionWrapper result = new CollectionWrapper (coll);
 			result = GoGetThem (result, region, nameAtt, valueAtt);

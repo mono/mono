@@ -81,6 +81,9 @@ namespace System.Configuration
 
 		public object GetConfig (string sectionName)
 		{
+			if (config == null) 
+				return null;
+
 			return config.GetConfig (sectionName);
 		}
 
@@ -96,6 +99,11 @@ namespace System.Configuration
 						ConfigurationData appData = new ConfigurationData (data);
 						appData.Load (GetAppConfigPath ());
 						config = appData;
+					} else {
+						Console.WriteLine ("** Warning **: cannot find " + GetMachineConfigPath ());
+						Console.WriteLine ("Trying to load app config file...");
+						data.Load (GetAppConfigPath ());
+						config = data;
 					}
 				}
 			}
@@ -111,6 +119,8 @@ namespace System.Configuration
 
 		private static string GetAppConfigPath ()
 		{
+		/* FIXME: Uncomment and use this stuff when the current domain is initialized with
+			  the appropiate information.
 			AppDomainSetup currentInfo = AppDomain.CurrentDomain.SetupInformation;
 
 			string appBase = currentInfo.ApplicationBase;
@@ -118,8 +128,16 @@ namespace System.Configuration
 			// FIXME: need to check out default domain configuration file name
 			if (configFile == null || configFile.Length == 0)
 				return null;
+		*/
+
+		// Remove when uncomment the previous comment
+			string assemblyName = Assembly.GetEntryAssembly ().FullName;
+			string appBase = Path.GetDirectoryName (assemblyName);
+			string configFile = Path.GetFileName (assemblyName) + ".exe.config";
+		// End remove
 
 			return Path.Combine (appBase, configFile);
+
 		}
 	}
 
@@ -150,10 +168,14 @@ namespace System.Configuration
 			XmlTextReader reader = null;
 
 			try {
-				reader = new XmlTextReader (fileName);
+				try {
+					reader = new XmlTextReader (fileName);
+				} catch {
+					return false;
+				}
+				
 				InitRead (reader);
-				MoveToNextElement (reader);
-				ReadSections (reader, null);
+				ReadConfigFile (reader);
 			} finally {
 				if (reader != null)
 					reader.Close();
@@ -167,7 +189,7 @@ namespace System.Configuration
 			object o = factories [sectionName];
 			if (o == null || o == removedMark) {
 				if (parent != null)
-					return parent.GetConfig (sectionName);
+					return parent.GetHandler (sectionName);
 
 				return null;
 			}
@@ -206,12 +228,19 @@ namespace System.Configuration
 		XmlDocument GetDocumentForSection (string sectionName)
 		{
 			ConfigXmlDocument doc = new ConfigXmlDocument ();
-			XmlTextReader reader = new XmlTextReader (fileName);
+			XmlTextReader reader = null;
+			try {
+				reader = new XmlTextReader (fileName);
+			} catch {
+				return doc;
+			}
+
 			InitRead (reader);
 			string [] sectionPath = sectionName.Split ('/');
 			int i = 0;
 			if (!reader.EOF) {
-				reader.Skip ();
+				if (reader.Name == "configSections")
+					reader.Skip ();
 				while (!reader.EOF) {
 					if (reader.NodeType == XmlNodeType.Element &&
 					    reader.Name == sectionPath [i]) {
@@ -235,14 +264,25 @@ namespace System.Configuration
 		public object GetConfig (string sectionName)
 		{
 			object handler = GetHandler (sectionName);
+			if (handler == null)
+				return null;
+
 			if (!(handler is IConfigurationSectionHandler))
 				return handler;
 
-			XmlDocument doc = GetDocumentForSection (sectionName);
-			if (doc == null)
-				throw new ConfigurationException ("Section not found: " + sectionName);
+			object parentConfig = null;
+			if (parent != null)
+				parentConfig = parent.GetConfig (sectionName);
 
-			return ((IConfigurationSectionHandler) handler).Create (null, null, doc);
+			XmlDocument doc = GetDocumentForSection (sectionName);
+			if (doc == null) {
+				if (parentConfig == null)
+					return null;
+
+				return parentConfig;
+			}
+
+			return ((IConfigurationSectionHandler) handler).Create (parentConfig, null, doc);
 		}
 
 		private object LookForFactory (string key)
@@ -267,11 +307,6 @@ namespace System.Configuration
 				ThrowException ("Unrecognized attribute in root element", reader);
 
 			MoveToNextElement (reader);
-			if (reader.Depth == 1 && reader.Name == "configSections") {
-				if (reader.HasAttributes)
-					ThrowException ("Unrecognized attribute in configSections element.",
-							reader);
-			}
 		}
 
 		private void MoveToNextElement (XmlTextReader reader)
@@ -386,9 +421,6 @@ namespace System.Configuration
 			int depth = reader.Depth;
 			while (reader.Depth == depth) {
 				string name = reader.Name;
-				if (reader.Name == null)
-					continue;
-					
 				if (name == "section") {
 					ReadSection (reader, configSection);
 					continue;
@@ -404,6 +436,7 @@ namespace System.Configuration
 						ThrowException ("Unrecognized attribute.", reader);
 
 					factories.Clear ();
+					MoveToNextElement (reader);
 					continue;
 				}
 
@@ -411,11 +444,29 @@ namespace System.Configuration
 					ReadSectionGroup (reader, configSection);
 					continue;
 				}
+				
 
-				ThrowException ("Unrecognized element", reader);
+				ThrowException ("Unrecognized element: " + reader.Name, reader);
 			}
 		}
 
+		private void ReadConfigFile (XmlTextReader reader)
+		{
+			int depth = reader.Depth;
+			while (reader.Depth == depth) {
+				string name = reader.Name;
+				if (name == "configSections") {
+					if (reader.HasAttributes)
+						ThrowException ("Unrecognized attribute in configSections element.", reader);
+					MoveToNextElement (reader);
+					ReadSections (reader, null);
+					return;
+				}
+
+				MoveToNextElement (reader);
+			}
+		}
+				
 		private void ThrowException (string text, XmlTextReader reader)
 		{
 			throw new ConfigurationException (text, fileName, reader.LineNumber);
