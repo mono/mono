@@ -1,4 +1,14 @@
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
+	
+	* System.Windows.Forms.Design/ControlDesigner.cs:
+	stubbed
+
+2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* System.Windows.Forms.Design/ISelectionUIHandler.cs:
+	converted linefeeds to unix
+
+2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* System.Design.dll.sources: added ISelectionUIHandler
 	* System.Windows.Forms.Design/ISelectionUIHandler.cs: 
