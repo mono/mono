@@ -61,22 +61,22 @@ namespace System.Data.OleDb
 
 		#region Properties
 
-		public new OleDbCommand DeleteCommand {
+		public OleDbCommand DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
 		}
 
-		public new OleDbCommand InsertCommand {
+		public OleDbCommand InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
 		}
 
-		public new OleDbCommand SelectCommand {
+		public OleDbCommand SelectCommand {
 			get { return selectCommand; }
 			set { selectCommand = value; }
 		}
 
-		public new OleDbCommand UpdateCommand {
+		public OleDbCommand UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
 		}

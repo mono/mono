@@ -11,10 +11,15 @@ namespace System.Data.OleDb.Test
 		{
 			m_cnc = new OleDbConnection ("PostgreSQL");
 		}
-		
+
+		void TestDataReader ()
+		{
+		}
+
 		static void Main (string[] args)
 		{
 			TestOleDb test = new TestOleDb ();
+			test.TestDataReader ();
 		}
 	}
 }
