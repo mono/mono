@@ -1,3 +1,8 @@
+
+Sat May 29 10:45:58 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: emit castclass/isinst in their own trees (bug #54209/59057).
+
 2004-05-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.h (MONO_ARCH_NEED_DIV_CHECK): Define this.
