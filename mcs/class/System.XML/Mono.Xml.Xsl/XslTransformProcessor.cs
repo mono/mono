@@ -303,5 +303,25 @@ namespace Mono.Xml.Xsl {
 		
 		#endregion
 		
+		#region Free/Busy
+		Hashtable busyTable = new Hashtable ();
+		static object busyObject = new object ();
+		
+		public void SetBusy (object o)
+		{
+			busyTable [o] = busyObject;
+		}
+		
+		public void SetFree (object o)
+		{
+			busyTable.Remove (o);
+		}
+		
+		public bool IsBusy (object o)
+		{
+			return busyTable [o] == busyObject;
+		}
+		#endregion
+		
 	}
 }

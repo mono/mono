@@ -40,8 +40,10 @@ namespace Mono.Xml.Xsl {
 		{
 			this.name = c.ParseQNameAttribute ("name");
 			
-			foreach (QName q in c.ParseQNameListAttribute ("use-attribute-sets"))
-				usedAttributeSets.Add (q);
+			QName [] attrSets = c.ParseQNameListAttribute ("use-attribute-sets");
+			if (attrSets != null)
+				foreach (QName q in c.ParseQNameListAttribute ("use-attribute-sets"))
+					usedAttributeSets.Add (q);
 
 			
 			if (!c.Input.MoveToFirstChild ()) return;
@@ -67,11 +69,8 @@ namespace Mono.Xml.Xsl {
 					usedAttributeSets.Add (q);
 		}
 		
-		// busy flag to detect circular dependencies
-		// TODO: Move this logic into the compiler, for MT safty
-		bool busy = false;
 		public override void Evaluate (XslTransformProcessor p) {
-			busy = true;
+			p.SetBusy (this);
 			
 			foreach (Operations.XslAttribute a in attributes)
 				a.Evaluate (p);
@@ -83,14 +82,14 @@ namespace Mono.Xml.Xsl {
 					if (s == null)
 						throw new Exception ("Could not resolve attribute set");
 					
-					if (s.busy)
+					if (p.IsBusy (s))
 						throw new Exception ("circular dependency");
 					
 					s.Evaluate (p);
 				}
 			}
 			
-			busy = false;
+			p.SetFree (this);
 		}
 	}
 }

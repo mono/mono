@@ -1,3 +1,10 @@
+2003-08-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslTransformProcessor.cs: Add a table to detect when an object
+	is busy.
+	* XslAttributeSet.cs: Use the above table. Dont throw nullref
+	exception when no use-attribute-sets are specified.
+
 2003-08-04 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Compiler.cs: Add support for boolean attributes (yes/no).
