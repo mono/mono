@@ -75,7 +75,7 @@ namespace System.Windows.Forms {
 		private Socket wake;
 
 #if __MonoCS__
-		private pollfd [] pollfds;
+		private Pollfd [] pollfds;
 #endif
 
 		private object xlib_lock = new object ();
@@ -144,12 +144,12 @@ namespace System.Windows.Forms {
 			wake.Connect (listen.LocalEndPoint);
 
 #if __MonoCS__
-			pollfds = new pollfd [2];
-			pollfds [0] = new pollfd ();
+			pollfds = new Pollfd [2];
+			pollfds [0] = new Pollfd ();
 			pollfds [0].fd = XConnectionNumber (DisplayHandle);
 			pollfds [0].events = PollEvents.POLLIN;
 
-			pollfds [1] = new pollfd ();
+			pollfds [1] = new Pollfd ();
 			pollfds [1].fd = wake.Handle.ToInt32 ();
 			pollfds [1].events = PollEvents.POLLIN;
 #endif
@@ -673,7 +673,7 @@ namespace System.Windows.Forms {
 				int timeout = NextTimeout (now);
 				if (timeout > 0) {
 #if __MonoCS__
-					Syscall.poll (pollfds, pollfds.Length, timeout);
+					Syscall.poll (pollfds, (uint) pollfds.Length, timeout);
 #endif
 					pending = XPending (DisplayHandle);
 				}
