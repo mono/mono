@@ -4,6 +4,7 @@
 	to the MSDN docs. Also marked DefineUnmanagedResource and its friends
 	as not implemented.
 	* ModuleBuilder.cs: Added new property FileName used by AssemblyBuilder.
+	* ModuleBuilder.cs AssemblyBuilder.cs: Implemented IsTransient ().
 
 2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
 

@@ -204,7 +204,7 @@ namespace System.Reflection.Emit {
 					throw new InvalidOperationException ("Assembly was already saved.");
 			}
 
-			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo, modules == null);
+			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo, modules == null, transient);
 
 			if (modules != null) {
 				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];
@@ -521,7 +521,7 @@ namespace System.Reflection.Emit {
 			if (modules != null) {
 				for (int i = 0; i < modules.Length; ++i) {
 					// Use fileName instead of fullFileName here
-					if (modules [i].FileName == fileName)
+					if (!modules [i].IsTransient () && (modules [i].FileName == fileName))
 						throw new ArgumentException ("Duplicate file name '" + fileName + "'");
 					if (modules [i].Name == name)
 						throw new ArgumentException ("Duplicate name '" + name + "'");

@@ -31,15 +31,17 @@ namespace System.Reflection.Emit {
 		private bool is_main_module;
 		internal IMonoSymbolWriter symbol_writer;
 		Hashtable name_cache;
+		bool transient;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
 
-		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo, bool isMainModule) {
+		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo, bool isMainModule, bool transient) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
 			this.is_main_module = isMainModule;
+			this.transient = transient;
 			guid = Guid.NewGuid().ToByteArray ();
 			table_idx = get_next_table_index (this, 0x00, true);
 			name_cache = new Hashtable ();
@@ -86,6 +88,10 @@ namespace System.Reflection.Emit {
 		}
 
 		public override string FullyQualifiedName {get { return fqname;}}
+
+		public bool IsTransient () {
+			return transient;
+		}
 
 		public void CreateGlobalFunctions () 
 		{
