@@ -180,9 +180,9 @@ namespace Mono.Xml.Xsl {
 		public bool ParseYesNoAttribute (string localName, string ns, bool defaultVal)
 		{
 			string s = GetAttribute (localName, ns);
-			
+
 			switch (s) {
-			case null: return defaultVal;
+			case "": return defaultVal;
 			case "yes": return true;
 			case "no": return false;
 			default: throw new Exception ("invalid value for " + localName);
