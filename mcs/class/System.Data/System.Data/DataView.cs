@@ -51,14 +51,14 @@ namespace System.Data
 		public DataView () 
 		{
 			dataTable = new DataTable ();
-			rowState = DataViewRowState.None;
+			rowState = DataViewRowState.CurrentRows;
 			Open ();
 		}
 
 		public DataView (DataTable table) 
 		{
 			dataTable = table;
-			rowState = DataViewRowState.None;
+			rowState = DataViewRowState.CurrentRows;
 			Open ();
 		}
 
@@ -66,7 +66,7 @@ namespace System.Data
 				string Sort, DataViewRowState RowState) 
 		{
 			dataTable = table;
-			rowState = DataViewRowState.None;
+			rowState = DataViewRowState.CurrentRows;
 			rowFilter = RowFilter;
 			sort = Sort;
 			rowState = RowState;

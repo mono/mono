@@ -1,3 +1,6 @@
+2003-11-05  Eran Domb  <erand@mainsoft.com>
+	* DataView.cs (ctor) : Changing default RowStateFilter to CurrentRow.
+
 2003-11-04  Eran Domb  <erand@mainsoft.com>
 	* DataRow.cs (CheckChildRows) : Improving the implementation - checking child for all FK, and not
 	on all Relations.
