@@ -1,3 +1,8 @@
+2004-11-13  Ben Maurer  <bmaurer@ximian.com>
+
+	* icall.c (WriteToFile): rename of getDataChunk. Rewrite
+	the method so that it does not have to copy to managed code.
+
 2004-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_method_get_header): Fix build for older glibs which does not define G_LIKELY.
