@@ -4,8 +4,7 @@
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Alexandre Pigolkine (pigolkine@gmx.de)
-//
-// (C) 2002/2003 Ximian, Inc
+// (C) 2002/2004 Ximian, Inc
 //
 using System;
 using System.Drawing.Text;
@@ -20,18 +19,20 @@ namespace System.Drawing {
 		static FontFamily genericMonospace;
 		static FontFamily genericSansSerif;
 		static FontFamily genericSerif;
-
 		string name;
-
 		internal IntPtr nativeFontFamily = IntPtr.Zero;
 				
 		internal FontFamily ( IntPtr fntfamily )
 		{
 			nativeFontFamily = fntfamily;		
-			int language = 0;
-						
+			refreshName();			
+		}
+		
+		internal void refreshName()
+		{
+			int language = 0;			
 			StringBuilder sBuilder = new StringBuilder(GDIPlus.FACESIZE * UnicodeEncoding.CharSize);	
-    		Status status = GDIPlus.GdipGetFamilyName (fntfamily, sBuilder, language);
+    		Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, sBuilder, language);
     		name = sBuilder.ToString();    		    		
 		}
 		
@@ -55,39 +56,36 @@ namespace System.Drawing {
 
 		public FontFamily ( GenericFontFamilies genericFamily ) 
 		{
-			IntPtr generic = IntPtr.Zero;
 			Status status;
 			switch ( genericFamily ) 
 			{
 				case GenericFontFamilies.Monospace :
-					status = GDIPlus.GdipGetGenericFontFamilyMonospace ( out generic );
+					status = GDIPlus.GdipGetGenericFontFamilyMonospace ( out nativeFontFamily);
 					if ( status != Status.Ok ) 
-					{
-						generic = IntPtr.Zero;
 						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilyMonospace: " + status );
-					}
-					nativeFontFamily = generic ;
-					name = "Courier New";
+					
+					refreshName();
 					break;
 				case GenericFontFamilies.SansSerif :
-					status = GDIPlus.GdipGetGenericFontFamilySansSerif ( out generic );
+					status = GDIPlus.GdipGetGenericFontFamilySansSerif ( out nativeFontFamily );
 					if ( status != Status.Ok ) 
-					{
-						generic = IntPtr.Zero;
 						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySansSerif: " + status );
-					}
-					nativeFontFamily = generic ;
-					name = "Sans Serif";
+					
+					refreshName();
 					break;
 				case GenericFontFamilies.Serif :
-					status = GDIPlus.GdipGetGenericFontFamilySerif ( out generic );
+					status = GDIPlus.GdipGetGenericFontFamilySerif ( out nativeFontFamily );
 					if ( status != Status.Ok ) 
-					{
-						generic = IntPtr.Zero;
 						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySerif: " + status );
-					}
-					nativeFontFamily = generic ;
-					name = "Times New Roman";
+					
+					refreshName();
+					break;
+				default:	// Undocumented default 
+					status = GDIPlus.GdipGetGenericFontFamilyMonospace ( out nativeFontFamily);
+					if ( status != Status.Ok ) 
+						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilyMonospace: " + status );
+					
+					refreshName();
 					break;
 			}
 		}
@@ -109,7 +107,8 @@ namespace System.Drawing {
 				nativeFontFamily = IntPtr.Zero;
 				throw new Exception ( "Error calling GDIPlus.GdipCreateFontFamilyFromName: " + status );
 			}
-			name = familyName;
+			
+			refreshName();
 		}
 		
 		public string Name 
@@ -134,7 +133,7 @@ namespace System.Drawing {
 						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilyMonospace: " + status );
 					}
 					genericMonospace = new FontFamily ( generic );
-					genericMonospace.name = "Courier New";					
+					genericMonospace.refreshName();
 				}
 				return genericMonospace;
 			}
@@ -154,7 +153,7 @@ namespace System.Drawing {
 						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySansSerif: " + status );
 					}
 					genericSansSerif = new FontFamily ( generic );
-					genericSansSerif.name = "Sans Serif";					
+					genericSansSerif.refreshName();
 				}
 				return genericSansSerif;
 			}
@@ -174,7 +173,7 @@ namespace System.Drawing {
 						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySerif: " + status );
 					}
 					genericSerif = new FontFamily ( generic );
-					genericSerif.name = "Times New Roman";					
+					genericSerif.refreshName();
 				}
 				return genericSerif;
 			}

@@ -1,3 +1,6 @@
+2004-02-13  Jordi Mas i Hernandez <jordi@ximian.com>
+	* FontFamily.cs: remove hardcoded font names, a few bug fixes
+	
 2004-02-12  Sanjay Gupta <gsanjay@novell.com>
 	* gdipFunctions.cs: Added Image class functions
 	* Image.cs: Added few methods 
