@@ -1,3 +1,8 @@
+2004-04-30  Dick Porter  <dick@ximian.com>
+
+	* StringInfo.cs: 
+	* TextElementEnumerator.cs: Implemented
+
 2004-04-27  Jackson Harper <jackson@ximian.com>
 
 	* CultureInfo.cs: Make specific names lower case, because all data

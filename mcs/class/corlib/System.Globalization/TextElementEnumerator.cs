@@ -5,6 +5,7 @@
 //	Dick Porter (dick@ximian.com)
 //
 // (C) 2002 Ximian, Inc.
+// (C) 2004 Novell, Inc.
 //
 
 using System.Collections;
@@ -13,41 +14,71 @@ namespace System.Globalization {
 
 	[Serializable]
 	public class TextElementEnumerator: IEnumerator {
+		private int index;
+		private int elementindex;
+		private int startpos;
+		private string str;
+		private string element;
+		
 		/* Hide the .ctor() */
-		TextElementEnumerator() {}
+		internal TextElementEnumerator(string str, int startpos) {
+			this.index = -1;
+			this.startpos = startpos;
+			this.str = str.Substring (startpos);
+			this.element = null;
+		}
 
-		[MonoTODO]
 		public object Current 
 		{
 			get {
-				throw new NotImplementedException();
+				if (element == null) {
+					throw new InvalidOperationException ();
+				}
+
+				return(element);
 			}
 		}
 
-		[MonoTODO]
 		public int ElementIndex 
 		{
 			get {
-				throw new NotImplementedException();
+				if (element == null) {
+					throw new InvalidOperationException ();
+				}
+
+				return(elementindex + startpos);
 			}
 		}
 
-		[MonoTODO]
 		public string GetTextElement()
 		{
-			throw new NotImplementedException();
+			if (element == null) {
+				throw new InvalidOperationException ();
+			}
+
+			return(element);
 		}
 
-		[MonoTODO]
 		public bool MoveNext()
 		{
-			throw new NotImplementedException();
+			elementindex = index + 1;
+			
+			if (elementindex < str.Length) {
+				element = StringInfo.GetNextTextElement (str, elementindex);
+				index += element.Length;
+				
+				return(true);
+			} else {
+				element = null;
+
+				return(false);
+			}
 		}
 
-		[MonoTODO]
 		public void Reset()
 		{
-			throw new NotImplementedException();
+			element = null;
+			index = -1;
 		}
 	}
 }
