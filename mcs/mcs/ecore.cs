@@ -706,10 +706,19 @@ namespace Mono.CSharp {
 							       OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.decimal_type)
 					return InternalTypeConstructor (ec, expr, target_type);
-			} else if ((expr_type == TypeManager.uint64_type) ||
-				   (expr_type == TypeManager.int64_type)){
+			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long/ulong to float, double
+				//
+				if (real_target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (real_target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);	
+				if (real_target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (ec, expr, target_type);
+			} else if (expr_type == TypeManager.uint64_type){
+				//
+				// From ulong to float, double
 				//
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,

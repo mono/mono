@@ -1,3 +1,8 @@
+2002-07-18  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (Expression.ImplicitNumericConversion): Don't emit a
+	Conv_R_Un for the signed `long' type.
+
 2002-07-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (MemberAccess.DoResolve): Do not reuse the field
