@@ -23,7 +23,7 @@ namespace System.Windows.Forms  {
 	/// <summary>
 	/// </summary>
 	using System.ComponentModel;
-	public abstract class Menu : Component 	{
+	public abstract class Menu : Component {
 
 		//
 		// -- Public Methods
@@ -41,7 +41,7 @@ namespace System.Windows.Forms  {
 
 		[MonoTODO]
 		public virtual void MergeMenu(Menu menuSrc) {
-			// FIXME:
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -56,7 +56,7 @@ namespace System.Windows.Forms  {
 		//
 
 		protected void CloneMenu(Menu menuSrc) {
-			// FIXME:
+			//FIXME:
 		}
 
 		protected Menu( MenuItem[] items) {
@@ -67,31 +67,21 @@ namespace System.Windows.Forms  {
 		// -- Public Properties
 		//
 
-		private bool menuStructureModified_ = true;
-
-		internal bool MenuStructureModified {
-			set {
-				menuStructureModified_ = value;
-			}
-		}
-
+		protected internal bool menuStructureModified_ = true;
 		
-		internal void BuildMenuStructure () {
+		internal void BuildMenuStructure ()
+		{
 			if( menuStructureModified_) {
-				Win32.SetMenuDefaultItem(menuHandle_, -1, 0);
 				while( Win32.RemoveMenu( menuHandle_, 0, (uint)MF_.MF_BYPOSITION) != 0);
 				foreach(MenuItem mi in MenuItems) {
-					//System.Console.WriteLine("MenuItem {0} Parent {1}", mi.Text, mi.IsParent);
+					System.Console.WriteLine("MenuItem {0} Parent {1}", mi.Text, mi.IsParent);
 					if( mi.IsParent){
 						Win32.AppendMenuA( menuHandle_, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP,
 															mi.Handle, mi.Text);
 					}
 					else {
-						Win32.AppendMenuA( menuHandle_, mi.MenuItemFlags,
+						Win32.AppendMenuA( menuHandle_, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING,
 								   (IntPtr) mi.GetID(), mi.Text);
-						if(mi.DefaultItem) {
-							Win32.SetMenuDefaultItem(menuHandle_, mi.GetID(), 0);
-						}
 					}
 				}
 				menuStructureModified_ = false;
@@ -101,7 +91,8 @@ namespace System.Windows.Forms  {
         protected Menu parent_ = null;
         
 		protected IntPtr menuHandle_ = IntPtr.Zero;
-		internal void CreateMenuHandle() {
+		internal void CreateMenuHandle()
+		{
 			if( menuHandle_ == IntPtr.Zero) {
 				menuHandle_ = Win32.CreateMenu();
 				//System.Console.WriteLine("Create menu {0}", menuHandle_);
@@ -142,12 +133,12 @@ namespace System.Windows.Forms  {
 			}
 		}
 
-
 		// Library interface
 
 		// Recursively searches for specified item in menu.
 		// Goes immediately into child, when mets one.
-		internal MenuItem GetMenuItemByID (uint id) {
+		internal MenuItem GetMenuItemByID (uint id)
+		{
 			foreach( MenuItem mi in MenuItems) {
 				if( mi.IsParent) {
 					MenuItem submi = mi.GetMenuItemByID(id);
@@ -164,7 +155,8 @@ namespace System.Windows.Forms  {
 		
 		private static Hashtable allMenus_ = new Hashtable();
 		
-		internal static Menu GetMenuByHandle (IntPtr hMenu) {
+		internal static Menu GetMenuByHandle (IntPtr hMenu)
+		{
 			Menu result = null;
 			try {
 				result = allMenus_[hMenu] as Menu;
@@ -176,7 +168,8 @@ namespace System.Windows.Forms  {
 			return result;
 		}
 		
-		internal void OnNewMenuItemAdd (MenuItem mi){
+		internal void OnNewMenuItemAdd (MenuItem mi)
+		{
 			menuStructureModified_ = true;
 			mi.SetParent( this);
 		}
@@ -198,7 +191,7 @@ namespace System.Windows.Forms  {
 				menuHandle_ = IntPtr.Zero;
 				
 				if( parent_ != null) {
-					parent_.MenuStructureModified = true;
+					parent_.menuStructureModified_ = true;
 				}
 			}
 		}
@@ -211,6 +204,10 @@ namespace System.Windows.Forms  {
 		{
 			BuildMenuStructure();
 		}
+
+		//
+		// -- Protected Properties
+		//
 
 		//
 		// System.Windows.Forms.Menu.MenuItemCollection.cs
@@ -234,7 +231,8 @@ namespace System.Windows.Forms  {
 				parentMenu_ = m;
 			}
 
-			internal void MoveItemToIndex( int index, MenuItem mi) {
+			internal void MoveItemToIndex( int index, MenuItem mi)
+			{
 				if( index >= items_.Count){
 					// FIXME: Set exception parameters
 					throw new ArgumentException();
@@ -257,6 +255,17 @@ namespace System.Windows.Forms  {
 					items_.Add(mi);
 					result = items_.Count - 1;
 					mi.SetIndex(result);
+					//System.Console.WriteLine("Adding menuItem {0}, parent {1}", mi.Text, mi.IsParent);
+/*					
+					if( mi.IsParent){
+						Win32.AppendMenuA( parentMenu_.Handle, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP,
+															mi.Handle, mi.Text);
+					}
+					else {
+						Win32.AppendMenuA( parentMenu_.Handle, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING,
+								   (IntPtr) mi.GetID(), mi.Text);
+					}
+*/					
 				}
 				return result;
 			}
@@ -280,6 +289,18 @@ namespace System.Windows.Forms  {
 					items_.Insert(i, mi);
 					result = i;
 					mi.SetIndex(result);
+/*					
+					if( mi.IsParent){
+						Win32.InsertMenuA( parentMenu_.Handle, (uint)i,
+											(int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP | (int)MF_.MF_BYPOSITION,
+											mi.Handle, mi.Text);
+					}
+					else {
+						Win32.InsertMenuA( parentMenu_.Handle, (uint)i,
+											(int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_BYPOSITION,
+								   			(IntPtr) mi.GetID(), mi.Text);
+					}
+*/					
 				}
 				return result;
 			}
@@ -300,20 +321,16 @@ namespace System.Windows.Forms  {
 				}
 			}
 
-			private void DoClear() {
-				if( parentMenu_ != null) {
+			public virtual void Clear() {
+				if( parentMenu_ != null){
 					foreach( MenuItem mi in items_) {
 						parentMenu_.OnRemoveMenuItem( mi);
 					}
 				}
 				items_.Clear();
-				if( parentMenu_ != null) {
+				if( parentMenu_ != null){
 					parentMenu_.OnLastSubItemRemoved();
 				}				
-			}
-
-			public virtual void Clear() {
-				DoClear();
 			}
 
 			public bool Contains(MenuItem m) {
@@ -326,16 +343,6 @@ namespace System.Windows.Forms  {
 					MenuItem newMi = mi.CloneMenu();
 					a.SetValue(newMi,targetIdx++);
 				}
-			}
-
-			public override bool Equals(object o) {
-				return base.Equals(o);
-			}
-
-			[MonoTODO]
-			public override int GetHashCode() {
-				//FIXME add our proprities
-				return base.GetHashCode();
 			}
 
 			public IEnumerator GetEnumerator() {
@@ -362,23 +369,6 @@ namespace System.Windows.Forms  {
 				Remove(items_[i] as MenuItem);
 			}
 
-			public override string ToString() {
-				throw new NotImplementedException ();
-			}
-
-			//
-			// -- Protected Methods
-			//
-
-			~MenuItemCollection() {
-				Clear();
-			}
-
-			//inherited
-			//protected object MemberwiseClone() {
-			//	throw new NotImplementedException ();
-			//}
-
 			//
 			// -- Public Properties
 			//
@@ -400,102 +390,79 @@ namespace System.Windows.Forms  {
 			/// <summary>
 			/// IList Interface implmentation.
 			/// </summary>
-			bool IList.IsReadOnly {
-				get {
+			bool IList.IsReadOnly{
+				get{
 					// We allow addition, removeal, and editing of items after creation of the list.
 					return false;
 				}
 			}
-
-			bool IList.IsFixedSize {
-				get {
+			bool IList.IsFixedSize{
+				get{
 					// We allow addition and removeal of items after creation of the list.
 					return false;
 				}
 			}
 
-			public MenuItem this[int index] {
-				get {
-					return items_[index] as MenuItem;
-				}
-			}
-
-			//[MonoTODO]
-			object IList.this[int index] {
-				get {
-					return items_[index];
-				}
-				set {
-					// FIXME: Set exception members
-					throw new System.NotSupportedException();
-				}
+			object IList.this[int index]{
+				[MonoTODO] get { throw new NotImplementedException (); }
+				[MonoTODO] set { throw new NotImplementedException (); }
 			}
 		
 			[MonoTODO]
-			void IList.Clear() {
-				DoClear();
+			void IList.Clear(){
+				//FIXME:
 			}
-
-			private MenuItem Object2MenuItem( object value) {
-				MenuItem result = value as MenuItem;
-				if( result == null) {
-					// FIXME: Set exception parameters
-					throw new System.ArgumentException();
-				}
-				return result;
+		
+			[MonoTODO]
+			int IList.Add( object value){
+				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			int IList.Add( object value) {
-				return Add( Object2MenuItem(value));
+			bool IList.Contains( object value){
+				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			bool IList.Contains( object value) {
-				return Contains(Object2MenuItem(value));
+			int IList.IndexOf( object value){
+				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			int IList.IndexOf( object value) {
-				return IndexOf(Object2MenuItem(value));
+			void IList.Insert(int index, object value){
+				//FIXME:
 			}
 
 			[MonoTODO]
-			void IList.Insert(int index, object value) {
-				Add( index, Object2MenuItem(value));
-			}
-
-			[MonoTODO]
-			void IList.Remove( object value) {
-				Remove( Object2MenuItem(value));
+			void IList.Remove( object value){
+				//FIXME:
 			}
 
 			[MonoTODO]
 			void IList.RemoveAt( int index){
-				RemoveAt(index);
+				//FIXME:
 			}
 			// End of IList interface
-
 			/// <summary>
 			/// ICollection Interface implmentation.
 			/// </summary>
-			int ICollection.Count {
-				get {
-					return Count;
-				}
-			}
-			bool ICollection.IsSynchronized {
-				get {
+			int ICollection.Count{
+				get{
 					throw new NotImplementedException ();
 				}
 			}
-			object ICollection.SyncRoot {
-				get {
+			bool ICollection.IsSynchronized{
+				get{
+					throw new NotImplementedException ();
+				}
+			}
+			object ICollection.SyncRoot{
+				get{
 					throw new NotImplementedException ();
 				}
 			}
 			void ICollection.CopyTo(Array array, int index){
-				CopyTo(array, index);
+				throw new NotImplementedException ();
 			}
 			// End Of ICollection
 		}

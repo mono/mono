@@ -50,7 +50,7 @@ namespace System.Windows.Forms {
 			}
 		}
 	
-		public System.Windows.Forms.Font Font {
+		public Font Font {
 			get {
 				if(font != null){
 					return  font;

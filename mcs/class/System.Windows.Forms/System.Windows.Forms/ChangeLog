@@ -1,11 +1,3 @@
-  2002-12-17  DennisHayes <dennish@raytek.com>	
-	* checkin for Alexandre Pigolkine (pigolkine@gmx.de)
-	* Menu.cs
-	* MenuItems.cs
-	* More implmentation
-	* win32functions.cs
-	* added new menu api
-
   2002-12-9  DennisHayes <dennish@raytek.com>	
 
 	* Form.cs

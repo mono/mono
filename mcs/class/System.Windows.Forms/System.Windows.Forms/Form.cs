@@ -557,49 +557,12 @@
     
     		
     		//  --- Protected Properties
-			private static bool classRegistered = false;
     		
     		protected override CreateParams CreateParams {
-				get {
-					if (!classRegistered) {
-						WNDCLASS wndClass = new WNDCLASS();
- 
-						wndClass.style = (int) (CS_.CS_OWNDC | CS_.CS_VREDRAW | CS_.CS_HREDRAW);
-						wndClass.lpfnWndProc = NativeWindow.GetWindowProc();
-						wndClass.cbClsExtra = 0;
-						wndClass.cbWndExtra = 0;
-						wndClass.hInstance = (IntPtr)0;
-						wndClass.hIcon = (IntPtr)0;
-						wndClass.hCursor = (IntPtr)0;
-						wndClass.hbrBackground = (IntPtr)6;  // ???
-						wndClass.lpszMenuName = "";
-						wndClass.lpszClassName = "MONOFORM";
-    
-						if (Win32.RegisterClass(ref wndClass) != 0) 
-							classRegistered = true; 
-					}		
-
-					CreateParams createParams = new CreateParams ();
-					createParams.Caption = "Hello World";
-					createParams.ClassName = "MONOFORM";
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
-					createParams.Height = Height;
-					createParams.ClassStyle = 0;
-					createParams.ExStyle = 0;
-					createParams.Param = 0;
-  				
-					//if (parent != null)
-					//	createParams.Parent = parent.Handle;
-					//else 
-					//createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
-					//test version with scroll bars.
-					createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
-	  
-					return createParams;			
-				}
-			}
+    			get {
+    				return base.CreateParams;
+    			}
+    		}
     
     		protected override ImeMode DefaultImeMode {
     			get {

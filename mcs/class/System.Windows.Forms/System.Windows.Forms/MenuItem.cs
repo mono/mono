@@ -21,7 +21,6 @@ using System.Text;
 namespace System.Windows.Forms {
 
 	/// <summary>
-	/// ToDo note:
 	/// </summary>
 
 	public class MenuItem : Menu {
@@ -32,16 +31,16 @@ namespace System.Windows.Forms {
 		}
 
 		public MenuItem(string s) : this(){
-			Text = s;
+			text_ = s;
 		}
 
 		public MenuItem(string s, EventHandler e) : this() {
-			Text = s;
+			text_ = s;
 			Click += e;
 		}
 
 		public MenuItem(string s, MenuItem[] items) : base(items) {
-			Text = s;
+			text_ = s;
 		}
 
 		public MenuItem(string s, EventHandler e, Shortcut sc) : this() {
@@ -142,71 +141,34 @@ namespace System.Windows.Forms {
 		//
 		// -- Public Properties
 		//
-		private void ModifyParent() 
-		{
-			if( Parent != null) 
-			{
-				Parent.MenuStructureModified = true;
-			}
-		}
-
-		private uint MenuItemFlags_ = (uint)MF_.MF_ENABLED | (uint)MF_.MF_STRING;
-		internal uint MenuItemFlags 
-		{
-			get
-			{
-				return MenuItemFlags_;
-			}
-		}
-
-		private bool GetPropertyByFlag( MF_ flag)
-		{
-			return (MenuItemFlags_ & (uint)flag) != 0 ? true : false;
-		}
-
-		private void SetPropertyByFlag( MF_ flag, bool SetOrClear)
-		{
-			uint PrevState = MenuItemFlags_;
-			if( SetOrClear)
-			{
-				MenuItemFlags_ |= (uint)flag;
-			}
-			else 
-			{
-				MenuItemFlags_ &= ~(uint)flag;
-			}
-			if( PrevState != MenuItemFlags_)
-				ModifyParent();
-		}
 
 		public bool BarBreak {
+
 			get {
-				return GetPropertyByFlag(MF_.MF_MENUBARBREAK);
+				throw new NotImplementedException ();
 			}
 			set {
-				SetPropertyByFlag(MF_.MF_MENUBARBREAK, value);
+				throw new NotImplementedException ();
 			}
 		}
 
-		public bool Break 
-		{
+		public bool Break {
+
 			get {
-				return GetPropertyByFlag(MF_.MF_MENUBREAK);
+				throw new NotImplementedException ();
 			}
 			set {
-				SetPropertyByFlag(MF_.MF_MENUBREAK, value);
+				throw new NotImplementedException ();
 			}
 		}
 
-		public bool Checked 
-		{
-			get 
-			{
-				return GetPropertyByFlag(MF_.MF_CHECKED);
+		public bool Checked {
+
+			get {
+				throw new NotImplementedException ();
 			}
-			set 
-			{
-				SetPropertyByFlag(MF_.MF_CHECKED, value);
+			set {
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -217,24 +179,22 @@ namespace System.Windows.Forms {
 		//}
 
 		public bool DefaultItem {
-			get 
-			{
-				return GetPropertyByFlag(MF_.MF_DEFAULT);
+
+			get {
+				throw new NotImplementedException ();
 			}
-			set 
-			{
-				SetPropertyByFlag(MF_.MF_DEFAULT, value);
+			set {
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool Enabled {
-			get 
-			{
-				return !GetPropertyByFlag(MF_.MF_DISABLED | MF_.MF_GRAYED);
+
+			get {
+				throw new NotImplementedException ();
 			}
-			set 
-			{
-				SetPropertyByFlag(MF_.MF_DISABLED | MF_.MF_GRAYED, !value);
+			set {
+				throw new NotImplementedException ();
 			}
 		}
 /*
@@ -259,9 +219,9 @@ namespace System.Windows.Forms {
 			}
 			set {
 				if( index_ != value){
-					if(Parent != null) {
+					if(Parent != null){
 						Parent.MenuItems.MoveItemToIndex(value, this);
-						Parent.MenuStructureModified = true;
+						Parent.menuStructureModified_ = true;
 					}
 				}
 			}
@@ -312,11 +272,12 @@ namespace System.Windows.Forms {
 		}
 
 		public bool OwnerDraw {
+
 			get {
-				return GetPropertyByFlag(MF_.MF_OWNERDRAW);
+				throw new NotImplementedException ();
 			}
 			set {
-				SetPropertyByFlag(MF_.MF_OWNERDRAW, value);
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -334,15 +295,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private bool RadioCheck_ = false;
 		public bool RadioCheck {
 
 			get {
-				return RadioCheck_;
+				throw new NotImplementedException ();
 			}
 			set {
-				RadioCheck_ = value;
-				ModifyParent();
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -364,27 +323,16 @@ namespace System.Windows.Forms {
 			}
 			set {
 				text_ = value;
-				if( text_ == "-") {
-					SetPropertyByFlag(MF_.MF_SEPARATOR, true);
-				}
-				else {
-					SetPropertyByFlag(MF_.MF_SEPARATOR, false);
-					//SetPropertyByFlag(MF_.MF_STRING, true);
-				}
-
-				ModifyParent();
 			}
 		}
 
-		private bool Visible_ = true;
 		public bool Visible {
 
 			get {
-				return Visible_;
+				throw new NotImplementedException ();
 			}
 			set {
-				Visible_ = value;
-				ModifyParent();
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -393,6 +341,7 @@ namespace System.Windows.Forms {
 		//
 
 		internal const int INVALID_MENU_ID = -1; //0xffffffff;
+		// Variables are stored here to provide access for the base functions
 		protected int MenuID_ = INVALID_MENU_ID;
 
 		// Provides unique id to all items in all menus, hopefully space is enougth.
@@ -400,7 +349,8 @@ namespace System.Windows.Forms {
 		// and reuse them.
 		protected static int MenuIDs_ = 1;
 
-		protected int GetNewMenuID() {
+		protected int GetNewMenuID()
+		{
 			return MenuIDs_++;
 		}
 
@@ -418,7 +368,8 @@ namespace System.Windows.Forms {
 		// Btw, this function is funky, it is being used by routines that are supposed
 		// to be passing an IntPtr to the AppendMenu function
 		//
-		internal int GetID() {
+		internal int GetID()
+		{
 			return MenuID;
 		}
 

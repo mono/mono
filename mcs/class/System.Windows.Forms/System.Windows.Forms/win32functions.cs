@@ -802,9 +802,6 @@ namespace System.Windows.Forms{
 			 CallingConvention = CallingConvention.StdCall)]
 		internal static extern int DrawMenuBar (IntPtr hWnd);
 		
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall)]
-		internal static extern int SetMenuDefaultItem(IntPtr hMenu, int uItem, int fByPos );
 
 
 		[DllImport ("user32.dll", CallingConvention = 
