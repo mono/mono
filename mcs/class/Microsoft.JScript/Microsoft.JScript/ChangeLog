@@ -1,3 +1,10 @@
+2003-12-10  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: added 'tokens { IN = "in"; INSTANCE_OF =
+	"instanceof"; }' in order to be able to parse both keywords. When
+	generating the parser, one warning about nondeterminism
+	(k==1:"in") is generated ignore it.
+
 2003-12-07  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: things like 'new Point (10, 20).x' were

@@ -215,7 +215,7 @@ inside_for [AST parent]
 	// done, in order to interrupt if c > 1 and we are inside a "in"
 	| "var" (var_decl_list [null, null]
 		  ( SEMI_COLON (expr [parent] | ) SEMI_COLON (expr [parent] | )
-		  | "in" expr [parent]))
+		  | IN expr [parent]))
 	// FIXME: left_hand_side_expr in exp rule, missing
 	;
 	
@@ -588,7 +588,8 @@ relational_op returns [JSToken rel_op]
 	| GREATER_THAN { rel_op = JSToken.GreaterThan; }
 	| LESS_EQ { rel_op = JSToken.LessThanEqual; }
 	| GREATER_EQ { rel_op = JSToken.GreaterThanEqual; }
-	| "instanceof" { rel_op = JSToken.InstanceOf; }
+	| INSTANCE_OF { rel_op = JSToken.InstanceOf; }
+	| IN { rel_op = JSToken.In; }
 	;
 
 
@@ -930,6 +931,10 @@ options {
 	testLiterals = false;
 	k = 3;
 }
+tokens {
+	IN = "in";
+	INSTANCE_OF = "instanceof";
+}
 
 DECIMAL_LITERAL: ('0'  | ('1'..'9')('0'..'9')*) (DOT ('0'..'9')* | ) (('e' | 'E') (('+' | '-' | ) ('0'..'9')+) | )
     ;
@@ -941,7 +946,6 @@ STRING_LITERAL
 	: '"' (~('"' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))* '"' | 
 	  '\''(~('\'' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))* '\''
 	;
-
 
 IDENTIFIER
 options { testLiterals = true; }
