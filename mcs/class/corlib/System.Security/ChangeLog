@@ -1,7 +1,12 @@
+2001-12-29  Nick Drochak  <ndrochak@gol.com>
+
+	* ISecurityPolicyEncodable.cs, PolicyLevelType.cs, 
+	SecurityZone.cs, SecurityException.cs, UnverifiableCodeAttribute.cs,
+	SuppressUnmanagedCodeSecurityAttribute.cs,
+	VerificationException.cs, XmlSyntaxException.cs: New files
+
 2001-12-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* SecurityElement.cs, CodeAccessPermission.cs IPermission.cs
 	IStackWalk.cs SecurityElement.cs ISecurityEncodable.cs: New files.
 	
-
-
