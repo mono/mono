@@ -386,9 +386,6 @@ namespace System.Web.UI.WebControls
 
 		protected virtual void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			if (Page != null)
-				Page.VerifyRenderingInServerForm (this);
-
 			if(ID!=null)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);

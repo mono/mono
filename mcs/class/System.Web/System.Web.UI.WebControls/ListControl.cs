@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				if(value < -1 || value > Items.Count)
+				if(value < -1 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException();
 				ViewState["SelectedIndex"] = value;
 			}
@@ -182,11 +182,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(SelectedIndex > 0)
-				{
-					return Items[SelectedIndex];
-				}
-				return null;
+				int idx = SelectedIndex;
+				if (idx < 0)
+					return null;
+
+				return Items [idx];
 			}
 		}
 
