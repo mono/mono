@@ -1,3 +1,10 @@
+2002-04-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: (Invocation.OverloadResolve): I believe Ravi
+	wanted to pass `false' as the `is_delegate' argument.  If this is
+	the case, why not use delegate_type == null to mean `is_delegate =
+	false' and anything else as is_delegate = true.
+
 Tue Apr  9 05:40:12  2002 Piers Haken <piersh@friskit.com>
 
 	* statement.cs: fixed SimpleSwitchEmit to make 'goto case' goto the

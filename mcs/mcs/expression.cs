@@ -1852,7 +1852,7 @@ namespace Mono.CSharp {
 					type = l;
 					return this;
 				}
-				
+				return null;
 			}
 			
 			if (oper == Operator.LeftShift || oper == Operator.RightShift)
@@ -3409,13 +3409,14 @@ namespace Mono.CSharp {
 			//
 
 			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
-						   chose_params_expanded, true, null, loc))
+						   chose_params_expanded, false, null, loc))
 				return method;
 			else
 				return null;
 		}
 
-		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments, int argument_count,
+		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
+							  int argument_count,
 							  MethodBase method, 
 							  bool chose_params_expanded,
 							  bool is_delegate, Type delegate_type,
