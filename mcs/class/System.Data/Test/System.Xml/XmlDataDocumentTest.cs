@@ -35,8 +35,8 @@ namespace MonoTests.System.Data.Xml
                 {
                 	XmlDataDocument doc = new XmlDataDocument ();
 			
-                	doc.DataSet.ReadXmlSchema ("System.Xml/region.xsd");
-                	doc.Load ("System.Xml/region.xml");
+                	doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+                	doc.Load ("Test/System.Xml/region.xml");
                 
                 	XmlDataDocument doc2 = (XmlDataDocument)doc.CloneNode (false);
 			
@@ -57,15 +57,15 @@ namespace MonoTests.System.Data.Xml
 		public void EditingXmlTree ()
 		{	
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("System.Xml/region.xsd");
-			doc.Load ("System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			doc.Load ("Test/System.Xml/region.xml");
 
 			XmlElement Element = doc.GetElementFromRow (doc.DataSet.Tables [0].Rows [1]);
 			Element.FirstChild.InnerText = "64";
 			AssertEquals ("test#01", "64", doc.DataSet.Tables [0].Rows [1] [0]);
 			
 			DataSet Set = new DataSet ();
-			Set.ReadXml ("System.Xml/region.xml");
+			Set.ReadXml ("Test/System.Xml/region.xml");
 			doc = new XmlDataDocument (Set);
 			
 			Element = doc.GetElementFromRow (doc.DataSet.Tables [0].Rows [1]);
@@ -89,7 +89,7 @@ namespace MonoTests.System.Data.Xml
 		[Test]
 		public void EditingDataSet ()
 		{
-			XmlReader Reader = new XmlTextReader ("System.Xml/region.xml");
+			XmlReader Reader = new XmlTextReader ("Test/System.Xml/region.xml");
 			XmlDataDocument Doc = new XmlDataDocument ();
 			Doc.DataSet.ReadXml (Reader);
 			AssertEquals ("test#01", "EndOfFile", Reader.ReadState.ToString ());
@@ -103,8 +103,8 @@ namespace MonoTests.System.Data.Xml
 		public void CreateElement1 ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("System.Xml/region.xsd");
-			doc.Load ("System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			doc.Load ("Test/System.Xml/region.xml");
 			
 			XmlElement Element = doc.CreateElement ("prefix", "localname", "namespaceURI"); 			
 			AssertEquals ("test#01", "prefix", Element.Prefix);
@@ -147,8 +147,8 @@ namespace MonoTests.System.Data.Xml
 		public void CreateElement2 ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("System.Xml/region.xsd");
-			doc.Load ("System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			doc.Load ("Test/System.Xml/region.xml");
 			
 			XmlElement Element = doc.CreateElement ("ElementName"); 			
 			AssertEquals ("test#01", "", Element.Prefix);
@@ -165,8 +165,8 @@ namespace MonoTests.System.Data.Xml
 		public void CreateElement3 ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("System.Xml/region.xsd");
-			doc.Load ("System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			doc.Load ("Test/System.Xml/region.xml");
 			
 			XmlElement Element = doc.CreateElement ("ElementName", "namespace"); 			
 			AssertEquals ("test#01", "", Element.Prefix);
@@ -183,8 +183,8 @@ namespace MonoTests.System.Data.Xml
 		public void Navigator ()
 		{	
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("System.Xml/region.xsd");
-			doc.Load ("System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			doc.Load ("Test/System.Xml/region.xml");
 
 			XPathNavigator Nav = doc.CreateNavigator ();
 			
@@ -218,10 +218,10 @@ namespace MonoTests.System.Data.Xml
                         XmlDataDocument doc = new XmlDataDocument();
 
                         //Load the schema file.
-                        doc.DataSet.ReadXmlSchema("System.Xml/store.xsd"); 
+                        doc.DataSet.ReadXmlSchema("Test/System.Xml/store.xsd"); 
 			Console.WriteLine ("books: " + doc.DataSet.Tables.Count);
                         //Load the XML data.
-                        doc.Load("System.Xml/2books.xml");
+                        doc.Load("Test/System.Xml/2books.xml");
 			
                         //Update the price on the first book using the DataSet methods.
                         DataTable books = doc.DataSet.Tables["book"];
@@ -290,9 +290,9 @@ namespace MonoTests.System.Data.Xml
                 {
                         DataSet RegionDS = new DataSet ();
                         DataRow RegionRow;
-                        RegionDS.ReadXmlSchema ("System.Xml/region.xsd");
+                        RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
                         XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-                        DataDoc.Load("System.Xml/region.xml" );
+                        DataDoc.Load("Test/System.Xml/region.xml" );
 
 
                         RegionRow = RegionDS.Tables[0].Rows[0];
@@ -429,8 +429,8 @@ namespace MonoTests.System.Data.Xml
                 {
                 	XmlDataDocument DataDoc = new XmlDataDocument ();
                 	DataSet dataset = DataDoc.DataSet;
-                	dataset.ReadXmlSchema ("System.Xml/region.xsd");
-                        DataDoc.Load("System.Xml/region.xml" );
+                	dataset.ReadXmlSchema ("Test/System.Xml/region.xsd");
+                        DataDoc.Load("Test/System.Xml/region.xml" );
 
 			DataDoc.GetElementsByTagName ("Region") [0].RemoveAll ();
 
@@ -517,9 +517,9 @@ namespace MonoTests.System.Data.Xml
 		{
                         DataSet RegionDS = new DataSet ();
 			
-                        RegionDS.ReadXmlSchema ("System.Xml/region.xsd");
+                        RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
                         XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-                        DataDoc.Load("System.Xml/region.xml" );
+                        DataDoc.Load("Test/System.Xml/region.xml" );
 			DataTable table = DataDoc.DataSet.Tables ["Region"];
 			DataRow newRow = table.NewRow ();
 			newRow [0] = "new row";
@@ -675,9 +675,9 @@ namespace MonoTests.System.Data.Xml
 		{
                         DataSet RegionDS = new DataSet ();
 			
-                        RegionDS.ReadXmlSchema ("System.Xml/region.xsd");
+                        RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
                         XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-                        DataDoc.Load("System.Xml/region.xml" );
+                        DataDoc.Load("Test/System.Xml/region.xml" );
 			try {
 				DataDoc.DocumentElement.AppendChild (DataDoc.DocumentElement.FirstChild);
 				Fail ("#G01");
@@ -731,7 +731,7 @@ namespace MonoTests.System.Data.Xml
 		{
 			DataSet RegionDS = new DataSet ();
 			
-			RegionDS.ReadXmlSchema ("System.Xml/region.xsd");
+			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
 			DataDoc.Load("System.Xml/region.xml" );
 			DataDoc.DataSet.EnforceConstraints = false;
@@ -788,8 +788,8 @@ namespace MonoTests.System.Data.Xml
                 public void GetElementFromRow ()
                 {
                 	XmlDataDocument doc = new XmlDataDocument ();
-                	doc.DataSet.ReadXmlSchema ("System.Xml/region.xsd");
-                	doc.Load ("System.Xml/region.xml");
+                	doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+                	doc.Load ("Test/System.Xml/region.xml");
                 	DataTable table = doc.DataSet.Tables ["Region"];
                 	
                 	XmlElement element = doc.GetElementFromRow (table.Rows [2]);
@@ -809,8 +809,8 @@ namespace MonoTests.System.Data.Xml
                 public void GetRowFromElement ()
                 {
                 	XmlDataDocument doc = new XmlDataDocument ();
-                	doc.DataSet.ReadXmlSchema ("System.Xml/region.xsd");
-                	doc.Load ("System.Xml/region.xml");
+                	doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+                	doc.Load ("Test/System.Xml/region.xml");
 			XmlElement root = doc.DocumentElement;
 
         		DataRow row = doc.GetRowFromElement((XmlElement)root.FirstChild);
