@@ -1,3 +1,13 @@
+2004-02-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* codegen.cs: Implemented attribute support for modules.
+        New AssemblyClass, ModuleClass and CommonAssemblyModulClass for
+        Assembly/Module functionality.
+        
+        * attribute.cs, class.cs, cs-parser.jay, delegate.cs, driver.cs, enum.cs
+        interface.cs, rootcontext.cs, statement.cs, typemanager.cs:
+        Updated dependencies on CodeGen.ModuleBuilder and CodeGen.AssemblyBuilder.
+
 2004-02-16  Marek Safar  <marek.safar@seznam.cz>
 
 	* interface.cs (FindMembers): The operation is performed on all base

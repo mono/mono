@@ -30,11 +30,6 @@ namespace Mono.CSharp {
 		public static Hashtable AllDefines = new Hashtable ();
 		
 		//
-		// The list of global attributes (those that target the assembly)
-		//
-		static Hashtable global_attributes = new Hashtable ();
-		
-		//
 		// Whether we are being linked against the standard libraries.
 		// This is only used to tell whether `System.Object' should
 		// have a parent or not.
@@ -715,20 +710,8 @@ namespace Mono.CSharp {
 			// Because of the strange way in which we do things, global
 			// attributes must be processed first.
 			//
-			if (global_attributes.Count > 0){
-				AssemblyBuilder ab = CodeGen.AssemblyBuilder;
-				TypeContainer dummy = new TypeContainer ();
-				EmitContext temp_ec = new EmitContext (
-					dummy, Mono.CSharp.Location.Null, null, null, 0, false);
-			
-				foreach (DictionaryEntry de in global_attributes){
-					NamespaceEntry ns = (NamespaceEntry) de.Key;
-					Attributes attrs = (Attributes) de.Value;
-					
-					dummy.NamespaceEntry = ns;
-					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs);
-				}
-			}
+			CodeGen.Assembly.Emit ();
+			CodeGen.Module.Emit ();
                         
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
@@ -754,18 +737,6 @@ namespace Mono.CSharp {
 
 			if (EmitCodeHook != null)
 				EmitCodeHook ();
-
-			
-			if (Unsafe) {
-				if (TypeManager.unverifiable_code_ctor == null) {
-					Console.WriteLine ("Internal error ! Cannot set unverifiable code attribute.");
-					return;
-				}
-				
-				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor,
-											new object [0]);
-				CodeGen.ModuleBuilder.SetCustomAttribute (cb);
-			}
 		}
 		
 		//
@@ -803,7 +774,7 @@ namespace Mono.CSharp {
 			FieldBuilder fb;
 			
 			if (impl_details_class == null){
-				impl_details_class = CodeGen.ModuleBuilder.DefineType (
+				impl_details_class = CodeGen.Module.Builder.DefineType (
 					"<PrivateImplementationDetails>",
                                         TypeAttributes.NotPublic,
                                         TypeManager.object_type);
@@ -816,21 +787,6 @@ namespace Mono.CSharp {
 				FieldAttributes.Static | FieldAttributes.Assembly);
 			
 			return fb;
-		}
-
-		//
-		// Adds a global attribute that was declared in `container', 
-		// the attribute is in `attr', and it was defined at `loc'
-		//
-		static public void AddGlobalAttributeSection (TypeContainer container, AttributeSection attr)
-		{
-			NamespaceEntry ns = container.NamespaceEntry;
-			Attributes a = (Attributes) global_attributes [ns];
-
-			if (a == null)
-				global_attributes [ns] = new Attributes (attr);
-			else
-				a.AddAttributeSection (attr);
 		}
 	}
 }

@@ -4067,7 +4067,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < rank; i++)
 					args [i] = TypeManager.int32_type;
 
-				ModuleBuilder mb = CodeGen.ModuleBuilder;
+				ModuleBuilder mb = CodeGen.Module.Builder;
 				get = mb.GetArrayMethod (
 					array_type, "Get",
 					CallingConventions.HasThis| CallingConventions.Standard,

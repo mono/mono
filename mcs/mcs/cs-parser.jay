@@ -337,7 +337,7 @@ namespace_declaration
 		if (attrs != null) {
 			foreach (AttributeSection asec in attrs.AttributeSections)
 				if (asec.Target == "assembly")
-					RootContext.AddGlobalAttributeSection (current_container, asec);
+					CodeGen.Assembly.AddAttribute (current_container, asec);
 				else
 					Report.Error(1518, Lexer.Location,
 					"Attributes cannot be applied to namespaces."
@@ -457,7 +457,11 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $1;
 
 		if (sect.Target == "assembly") {
-			RootContext.AddGlobalAttributeSection (current_container, sect);
+			CodeGen.Assembly.AddAttribute (current_container, sect);
+			$$ = null;
+		}
+		else if (sect.Target == "module") {
+			CodeGen.Module.AddAttribute (current_container, sect);
 			$$ = null;
 		}
 		else
@@ -469,8 +473,12 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $2;
 
 		if (sect.Target == "assembly") {
-			RootContext.AddGlobalAttributeSection (current_container, sect);
-		} else {
+			CodeGen.Assembly.AddAttribute (current_container, sect);
+		}
+		else if (sect.Target == "module") {
+			CodeGen.Module.AddAttribute (current_container, sect);
+		}
+		else {
 			if (attrs == null)
 				attrs = new Attributes (sect);
 			else
@@ -4110,7 +4118,7 @@ void CheckAttributeTarget (string a)
 {
 	switch (a) {
 
-	case "assembly" : case "field" : case "method" : case "param" : case "property" : case "type" :
+	case "assembly" : case "module" : case "field" : case "method" : case "param" : case "property" : case "type" :
 		return;
 		
 	default :

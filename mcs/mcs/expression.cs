@@ -5924,7 +5924,7 @@ namespace Mono.CSharp {
 				eclass = ExprClass.Value;
 				return this;
 			} else {
-				ModuleBuilder mb = CodeGen.ModuleBuilder;
+				ModuleBuilder mb = CodeGen.Module.Builder;
 				ArrayList args = new ArrayList ();
 				
 				if (arguments != null) {
@@ -6140,7 +6140,7 @@ namespace Mono.CSharp {
 			if (dims != 1){
 				Type [] args;
 				ModuleBuilder mb = null;
-				mb = CodeGen.ModuleBuilder;
+				mb = CodeGen.Module.Builder;
 				args = new Type [dims + 1];
 
 				int j;
@@ -7323,7 +7323,7 @@ namespace Mono.CSharp {
 
 		MethodInfo FetchGetMethod ()
 		{
-			ModuleBuilder mb = CodeGen.ModuleBuilder;
+			ModuleBuilder mb = CodeGen.Module.Builder;
 			int arg_count = ea.Arguments.Count;
 			Type [] args = new Type [arg_count];
 			MethodInfo get;
@@ -7344,7 +7344,7 @@ namespace Mono.CSharp {
 
 		MethodInfo FetchAddressMethod ()
 		{
-			ModuleBuilder mb = CodeGen.ModuleBuilder;
+			ModuleBuilder mb = CodeGen.Module.Builder;
 			int arg_count = ea.Arguments.Count;
 			Type [] args = new Type [arg_count];
 			MethodInfo address;
@@ -7467,7 +7467,7 @@ namespace Mono.CSharp {
 			if (rank == 1)
 				EmitStoreOpcode (ig, t);
 			else {
-				ModuleBuilder mb = CodeGen.ModuleBuilder;
+				ModuleBuilder mb = CodeGen.Module.Builder;
 				int arg_count = ea.Arguments.Count;
 				Type [] args = new Type [arg_count + 1];
 				MethodInfo set;

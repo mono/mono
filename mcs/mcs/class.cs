@@ -810,7 +810,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				ModuleBuilder builder = CodeGen.ModuleBuilder;
+				ModuleBuilder builder = CodeGen.Module.Builder;
 				TypeBuilder = builder.DefineType (
 					Name, type_attributes, ptype, null);
 				
@@ -5353,10 +5353,7 @@ namespace Mono.CSharp {
 			// If only accessible to the defining assembly or 
 			if (prot == MethodAttributes.FamANDAssem ||
 			    prot == MethodAttributes.Assembly){
-				if (m.DeclaringType.Assembly == CodeGen.AssemblyBuilder)
-					return true;
-				else
-					return false;
+				return m.DeclaringType.Assembly == CodeGen.Assembly.Builder;
 			}
 
 			// Anything else (FamOrAssembly and Public) is fine

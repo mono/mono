@@ -324,7 +324,7 @@ namespace Mono.CSharp
 
 			try {
 				try {
-					m = (Module)adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { module });
+					m = (Module)adder_method.Invoke (CodeGen.Assembly.Builder, new object [] { module });
 				}
 				catch (TargetInvocationException ex) {
 					throw ex.InnerException;
@@ -340,7 +340,7 @@ namespace Mono.CSharp
 
 					try {
 						try {
-							m = (Module)adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { full_path });
+							m = (Module)adder_method.Invoke (CodeGen.Assembly.Builder, new object [] { full_path });
 						}
 						catch (TargetInvocationException ex) {
 							throw ex.InnerException;
@@ -1371,10 +1371,10 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 
-				module_only.SetValue (CodeGen.AssemblyBuilder, true, null);
+				module_only.SetValue (CodeGen.Assembly.Builder, true, null);
 			}
 
-			TypeManager.AddModule (CodeGen.ModuleBuilder);
+			TypeManager.AddModule (CodeGen.Module.Builder);
 
 			if (modules.Count > 0) {
 				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
@@ -1473,7 +1473,7 @@ namespace Mono.CSharp
 					return false;
 				}
 
-				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+				CodeGen.Assembly.Builder.SetEntryPoint (ep, k);
 			} else if (RootContext.MainClass != null) {
 				Report.Error (2017, "Can not specify -main: when building module or library");
 			}
@@ -1493,7 +1493,7 @@ namespace Mono.CSharp
 					} else
 						file = res = spec;
 
-					CodeGen.AssemblyBuilder.AddResourceFile (res, file);
+					CodeGen.Assembly.Builder.AddResourceFile (res, file);
 				}
 			}
 			
@@ -1517,7 +1517,7 @@ namespace Mono.CSharp
 							margs [0] = margs [1] = spec;
 
 						if (File.Exists ((string) margs [1]))
-							embed_res.Invoke (CodeGen.AssemblyBuilder, margs);
+							embed_res.Invoke (CodeGen.Assembly.Builder, margs);
 						else {
 							Report.Error (1566, "Can not find the resource " + margs [1]);
 						}
@@ -1529,11 +1529,11 @@ namespace Mono.CSharp
 			// Add Win32 resources
 			//
 
-			CodeGen.AssemblyBuilder.DefineVersionInfoResource ();
+			CodeGen.Assembly.Builder.DefineVersionInfoResource ();
 
 			if (win32ResourceFile != null) {
 				try {
-					CodeGen.AssemblyBuilder.DefineUnmanagedResource (win32ResourceFile);
+					CodeGen.Assembly.Builder.DefineUnmanagedResource (win32ResourceFile);
 				}
 				catch (ArgumentException) {
 					Report.Warning (0, new Location (-1), "Cannot embed win32 resources on this runtime: try the Mono runtime instead.");
@@ -1545,7 +1545,7 @@ namespace Mono.CSharp
 				if (define_icon == null) {
 					Report.Warning (0, new Location (-1), "Cannot embed icon resource on this runtime: try the Mono runtime instead.");
 				}
-				define_icon.Invoke (CodeGen.AssemblyBuilder, new object [] { win32IconFile });
+				define_icon.Invoke (CodeGen.Assembly.Builder, new object [] { win32IconFile });
 			}
 
 			if (Report.Errors > 0)

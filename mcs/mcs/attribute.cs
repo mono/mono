@@ -625,8 +625,13 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is AssemblyBuilder){
+			} else if (element is AssemblyClass){
 				if ((targets & AttributeTargets.Assembly) != 0)
+					return true;
+				else
+					return false;
+			} else if (element is ModuleClass){
+				if ((targets & AttributeTargets.Module) != 0)
 					return true;
 				else
 					return false;
@@ -827,9 +832,6 @@ namespace Mono.CSharp {
 				string attr_target = asec.Target;
 				
 				if (asec.Attributes == null)
-					continue;
-
-				if (attr_target == "assembly" && !(builder is AssemblyBuilder))
 					continue;
 
 				if (attr_target == "return" && !(builder is ParameterBuilder))

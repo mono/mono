@@ -559,7 +559,7 @@ public class TypeManager {
 		//
 		if (ret == null){
 			if (references [t] == null)
-				references [t] = CodeGen.ModuleBuilder.GetType (tname);
+				references [t] = CodeGen.Module.Builder.GetType (tname);
 			ret = (Type) references [t];
 		}
 
@@ -584,7 +584,7 @@ public class TypeManager {
 		//
 		if (ret == null){
 			if (pointers [t] == null)
-				pointers [t] = CodeGen.ModuleBuilder.GetType (tname);
+				pointers [t] = CodeGen.Module.Builder.GetType (tname);
 			
 			ret = (Type) pointers [t];
 		}
@@ -1069,7 +1069,7 @@ public class TypeManager {
 				args [2] = enum_type;
 				args [3] = void_type;
 				
-				set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
+				set_corlib_type_builders.Invoke (CodeGen.Assembly.Builder, args);
 			} else {
 				// Compatibility for an older version of the class libs.
 				set_corlib_type_builders = GetMethod (
@@ -1086,7 +1086,7 @@ public class TypeManager {
 				args [1] = value_type;
 				args [2] = enum_type;
 				
-				set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
+				set_corlib_type_builders.Invoke (CodeGen.Assembly.Builder, args);
 			}
 		}
 
