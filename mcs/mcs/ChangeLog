@@ -1,5 +1,10 @@
 2002-09-14  Martin Baulig  <martin@gnome.org>
 
+	* decl.cs (MemberCache.SetupCacheForInterface): Don't add an interface
+	multiple times.  Fixes bug #30295, added test-166.cs.
+
+2002-09-14  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (Block.Emit): Don't emit unreachable code.
 	(Switch.SimpleSwitchEmit, Switch.TableSwitchEmit): Check for missing
 	`break' statements.
