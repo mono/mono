@@ -1,0 +1,4 @@
+2003-04-26  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs
+	* Image.cs
+			first version of GTK implementations
