@@ -11,6 +11,7 @@ using System.Drawing.Design;
 
 namespace System.Windows.Forms.Design 
 {
+	[MonoTODO()]
 	public class FolderNameEditor : UITypeEditor
 	{
 		#region Public Instance Constructors
@@ -21,7 +22,7 @@ namespace System.Windows.Forms.Design
 
 		#endregion Public Instance Constructors
 
-		#region Public Instance Methods
+		#region Override implementation of UITypeEditor
 
 		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
@@ -42,7 +43,7 @@ namespace System.Windows.Forms.Design
 			return UITypeEditorEditStyle.Modal;
 		}
 
-		#endregion Public Instance Methods
+		#endregion Override implementation of UITypeEditor
 
 		#region Protected Instance Methods
 
@@ -73,6 +74,7 @@ namespace System.Windows.Forms.Design
 			Templates = 21
 		}
 
+		[Flags()]
 		protected enum FolderBrowserStyles {
 			BrowseForComputer = 4096,
 			BrowseForEverything = 16384,
