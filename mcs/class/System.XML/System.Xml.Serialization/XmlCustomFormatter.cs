@@ -175,6 +175,7 @@ namespace System.Xml.Serialization {
 				case "unsignedLong": return XmlConvert.ToString ((UInt64)value);
 				case "guid": return XmlConvert.ToString ((Guid)value);
 				case "base64Binary": return Convert.ToBase64String ((byte[])value);
+				case "anyURI":
 				default: return value.ToString ();
 			}
 		}
@@ -203,6 +204,7 @@ namespace System.Xml.Serialization {
 				case "unsignedLong": return XmlConvert.ToUInt64 (value);
 				case "guid": return XmlConvert.ToGuid (value);
 				case "base64Binary": return Convert.FromBase64String (value);
+				case "anyUri": return new Uri (value);
 				default: return Convert.ChangeType (value, type.Type);
 			}
 		}
