@@ -17,6 +17,7 @@ SCARY_LIB=/lib:$(prefix)/lib
 endif
 
 LIB_MCS_FLAGS = $(SCARY_LIB) /r:System.Xml.dll /r:$(corlib)
+TEST_MCS_FLAGS = /nowarn:1595 /nowarn:0618
 
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
