@@ -3,6 +3,8 @@
 // a more thorough set of tests for the user defined explicit
 // conversions
 //
+using System;
+
 class A {
 	public static explicit operator X (A foo)
 	{
@@ -25,9 +27,16 @@ class blah {
 		
 		X testX = (X) testA;
 
-		Y testY = (Y) testA;
+		try {
+			Y testY = (Y) testA;
+		} catch (InvalidCastException){
+			return 0;
+		}
 
-		return 0;
+		//
+		// We should have thrown the exception above
+		//
+		return 1;
 	}
 }
 		
