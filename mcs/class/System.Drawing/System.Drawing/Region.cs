@@ -158,62 +158,77 @@ namespace System.Drawing
 		//
 		public bool IsVisible(int x, int y, Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(int x, int y, int width, int height)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(int x, int y, int width, int height, Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(Point point)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(PointF point)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(Point point, Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(PointF point, Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(Rectangle rect)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(RectangleF rect)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(Rectangle rect, Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(RectangleF rect, Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(float x, float y)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(float x, float y, Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(float x, float y, float width, float height)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsVisible(float x, float y, float width, float height, Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 
@@ -223,10 +238,12 @@ namespace System.Drawing
 
 		public bool IsEmpty(Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public bool IsInfinite(Graphics g)
 		{
+		    throw new NotImplementedException ();
 		}
 
 		public void MakeEmpty()
@@ -235,6 +252,7 @@ namespace System.Drawing
 
 		public void MakeInfinite()
 		{
+		    throw new NotImplementedException ();
 		}
 		
 		
