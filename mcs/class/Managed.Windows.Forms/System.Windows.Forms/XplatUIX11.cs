@@ -466,10 +466,20 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException("Finish me");
 		}
 
-		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
-			// FIXME - we're not properly interpreting the clear flag, we're assuming it's always true
-			lock (xlib_lock) {
-				XClearArea(DisplayHandle, handle, rc.Left, rc.Top, (uint)rc.Width, (uint)rc.Height, true);
+		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
+			if (clear) {
+				XClearArea (DisplayHandle, handle, rc.Left, rc.Top, (uint)rc.Width, (uint)rc.Height, true);
+			} else {
+				XEvent xevent = new XEvent ();
+				xevent.type = XEventName.Expose;
+				xevent.ExposeEvent.display = DisplayHandle;
+				xevent.ExposeEvent.window = handle;
+				xevent.ExposeEvent.x = rc.X;
+				xevent.ExposeEvent.y = rc.Y;
+				xevent.ExposeEvent.width = rc.Width;
+				xevent.ExposeEvent.height = rc.Height;
+
+				message_queue.Enqueue (xevent);
 			}
 		}
 
