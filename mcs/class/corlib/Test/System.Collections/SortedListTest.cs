@@ -1,6 +1,8 @@
 // SortedListTest.cs - NUnit Test Cases for the System.Collections.SortedList class
 //
-// Jaak Simm
+// Authors:
+//      Jaak Simm
+//      Duncan Mak (duncan@ximian.com)
 //
 // Thanks go to David Brandt (bucky@keystreams.com),
 // because this file is based on his ArrayListTest.cs
@@ -21,17 +23,20 @@ namespace MonoTests.System.Collections {
 
 
 /// <summary>SortedList test.</summary>
-public class SortedListTest : TestCase {
+[TestFixture]
+public class SortedListTest : Assertion {
 	protected SortedList sl1;
 	protected SortedList sl2;
 	protected SortedList emptysl;
 	protected const int icap=16;
-		
-	protected override void SetUp() 
+
+        [SetUp]
+	public  void SetUp() 
 	{
 	}
 
-	protected override void TearDown() 
+        [TearDown]
+	public void TearDown() 
 	{
 	}
 
@@ -40,7 +45,8 @@ public class SortedListTest : TestCase {
 		AssertNotNull("sl.constructor-1: returns null", temp1);
 		AssertEquals("sl.constructor-1: incorrect initial capacity", icap, temp1.Capacity);
 	}
-	
+
+        [Test]
 	public void TestConstructor2() {
 		Comparer c = Comparer.Default;
 		SortedList temp1 = new SortedList(c);
@@ -48,6 +54,7 @@ public class SortedListTest : TestCase {
 		AssertEquals("sl.constructor-2: incorrect initial capacity", icap, temp1.Capacity);
 	}
 
+        [Test]
 	public void TestConstructor3() {
 		Hashtable d = new Hashtable();
 		d.Add("one", "Mircosoft");
@@ -79,7 +86,8 @@ public class SortedListTest : TestCase {
 			Fail ("Unexpected Exception throw: e=" + e);
 		}
 	}
-	
+
+        [Test]	
 	public void TestConstructor4() {
 		SortedList temp1 = new SortedList(17);
 		AssertNotNull("sl.constructor-4: returns null", temp1);
@@ -95,6 +103,7 @@ public class SortedListTest : TestCase {
 		}
 	}
 
+        [Test]	
 	public void TestConstructor5() {
 		Comparer c = Comparer.Default;
 		SortedList temp1 = new SortedList(c,27);
@@ -106,6 +115,7 @@ public class SortedListTest : TestCase {
 		} catch (ArgumentOutOfRangeException) {}
 	}
 
+        [Test]	
 	public void TestIsSynchronized() {
 		SortedList sl1 = new SortedList();
 		Assert("sl: should not be synchronized by default", 
@@ -114,6 +124,7 @@ public class SortedListTest : TestCase {
 		Assert("sl: synchronized wrapper not working", sl2.IsSynchronized);
 	}
 
+        [Test]	
 	public void TestCapacity() {
 		for (int i = 0; i < 100; i++) {
 			SortedList sl1 = new SortedList(i);
@@ -122,6 +133,34 @@ public class SortedListTest : TestCase {
 		}
 	}
 
+        [Test]
+        public void TestCapacity2 ()
+        {
+                SortedList list = new SortedList ();
+                list.Capacity = 5;
+
+                AssertEquals (5, list.Capacity);
+        }
+
+        [Test]
+        public void TestCapacity3 ()
+        {
+                SortedList list = new SortedList (1000);
+                list.Capacity = 5;
+
+                AssertEquals (16, list.Capacity);
+        }
+
+        [Test]
+        [ExpectedException (typeof (OutOfMemoryException))]
+        [Ignore ("This is not implemented in the runtime yet")]
+        public void TestCapacity4 ()
+        {
+                SortedList list = new SortedList ();
+                list.Capacity = Int32.MaxValue;
+        }
+
+        [Test]	
 	public void TestCount() {
 		{
 			SortedList sl1 = new SortedList();
@@ -135,17 +174,21 @@ public class SortedListTest : TestCase {
 		}
 	}
 
+        [Test]	
 	public void TestIsFixed() {
 		SortedList sl1 = new SortedList();
 		Assert("should not be fixed by default", !sl1.IsFixedSize);
 	}
 
+
+        [Test]	
 	public void TestIsReadOnly() {
 		SortedList sl1 = new SortedList();
 		Assert("should not be ReadOnly by default", !sl1.IsReadOnly);
 	}
 
 
+        [Test]	
 	public void TestItem() {
 		SortedList sl1 = new SortedList();
 		string key = null;
@@ -170,9 +213,10 @@ public class SortedListTest : TestCase {
 		}
 	}
 
-  public void TestSyncRoot()
-  {
-  	SortedList sl1 = new SortedList();
+        [Test]
+        public void TestSyncRoot()
+        {
+                SortedList sl1 = new SortedList();
 		AssertEquals("sl.SyncRoot: does not function",false, sl1.SyncRoot == null);
 		/*
 		lock( sl1.SyncRoot ) {
@@ -182,8 +226,9 @@ public class SortedListTest : TestCase {
  			}
 		}
 		*/
-  }
+        }
 
+        [Test]
 	public void TestValues()
 	{
   	SortedList sl1 = new SortedList();
@@ -196,6 +241,7 @@ public class SortedListTest : TestCase {
 	
 	
 	// TODO: Add with IComparer
+        [Test]
 	public void TestAdd() {
 		// seems SortedList cannot be set fixedsize or readonly
 		SortedList sl1 = new SortedList();
@@ -222,7 +268,8 @@ public class SortedListTest : TestCase {
 			} catch (ArgumentException) {}
 		}
 	}
-	
+
+        [Test]
 	public void TestClear() {
 		SortedList sl1 = new SortedList(10);
 		sl1.Add("kala", 'c');
@@ -234,6 +281,7 @@ public class SortedListTest : TestCase {
 		AssertEquals("sl.Clear: capacity is altered", 16, sl1.Capacity);
 	}
 
+        [Test]
 	public void TestClone() {
 		{
 			SortedList sl1 = new SortedList(10);
@@ -262,6 +310,7 @@ public class SortedListTest : TestCase {
 		}
 	}
 
+        [Test]
 	public void TestContains() {
 		SortedList sl1 = new SortedList(55);
 		for (int i = 0; i <= 50; i++) {sl1.Add("kala "+i,i);}
@@ -275,6 +324,7 @@ public class SortedListTest : TestCase {
 		Assert("sl.Contains: finds non-existing key", !sl1.Contains("ohoo"));
 	}
 
+        [Test]
 	public void TestContainsKey() {
 		SortedList sl1 = new SortedList(55);
 		for (int i = 0; i <= 50; i++) {sl1.Add("kala "+i,i);}
@@ -288,18 +338,21 @@ public class SortedListTest : TestCase {
 		Assert("sl.ContainsKey: finds non-existing key", !sl1.ContainsKey("ohoo"));
 	}
 
+        [Test]
 	public void TestContainsValue() {
 		SortedList sl1 = new SortedList(55);
-    sl1.Add(0, "zero");
-    sl1.Add(1, "one");
-    sl1.Add(2, "two");
-    sl1.Add(3, "three");
-    sl1.Add(4, "four");
+                sl1.Add(0, "zero");
+                sl1.Add(1, "one");
+                sl1.Add(2, "two");
+                sl1.Add(3, "three");
+                sl1.Add(4, "four");
+
 		Assert("sl.ContainsValue: can't find existing value", sl1.ContainsValue("zero"));
 		Assert("sl.ContainsValue: finds non-existing value", !sl1.ContainsValue("ohoo"));
 		Assert("sl.ContainsValue: finds non-existing value", !sl1.ContainsValue(null));
 	}
-	
+
+        [Test]	
 	public void TestCopyTo() {
 		SortedList sl1 = new SortedList();
 		for (int i = 0; i <= 10; i++) {sl1.Add("kala "+i,i);}
@@ -397,7 +450,8 @@ public class SortedListTest : TestCase {
 		il.Add( "brown" );
 		return il;
 	}
-	
+
+        [Test]	
 	public void TestGetByIndex() {
 		SortedList sl1 = DefaultSL();
 		AssertEquals("cl.GetByIndex: failed(1)",sl1.GetByIndex(4),"over");
@@ -412,6 +466,7 @@ public class SortedListTest : TestCase {
 		} catch (ArgumentOutOfRangeException) {}
 	}
 
+        [Test]
 	public void TestGetEnumerator() {
 		SortedList sl1 = DefaultSL();
 		IDictionaryEnumerator e = sl1.GetEnumerator();
@@ -420,6 +475,7 @@ public class SortedListTest : TestCase {
 		AssertNotNull("sl.GetEnumerator: enumerator not working(2)",e.Current);
 	}
 
+        [Test]
 	public void TestGetKey() {
 		SortedList sl1 = DefaultSL();
 		AssertEquals("sl.GetKey: failed(1)",sl1.GetKey(4),1.5);
@@ -433,7 +489,8 @@ public class SortedListTest : TestCase {
 			Fail("sl.GetKey: does not throw ArgumentOutOfRangeException with too large index");
 		} catch (ArgumentOutOfRangeException) {}
 	}
-
+        
+        [Test]
 	public void TestGetKeyList() {
 		SortedList sl1 = DefaultSL();
 		IList keys = sl1.GetKeyList();
@@ -446,6 +503,7 @@ public class SortedListTest : TestCase {
 		AssertEquals("sl.GetKeyList: incorrect key(2)",keys[8],33.9);
 	}
 
+        [Test]
 	public void TestGetValueList() {
 		SortedList sl1 = DefaultSL();
 		IList originalvals = DefaultValues();
@@ -473,6 +531,7 @@ public class SortedListTest : TestCase {
 	}
 	*/
 
+        [Test]
 	public void TestIndexOfKey() {
 		SortedList sl1 = new SortedList(24);
 		string s=null;
@@ -499,6 +558,7 @@ public class SortedListTest : TestCase {
 		}
 	}
 
+        [Test]
 	public void TestIndexOfValue() {
 		SortedList sl1 = new SortedList(24);
 		string s=null;
@@ -516,8 +576,30 @@ public class SortedListTest : TestCase {
 			AssertEquals("sl.IndexOfValue: incorrect index key", i, sl1.IndexOfValue(100+i*i));
 		}
 	}
-	
 
+        [Test]
+        public void TestIndexOfValue2 ()
+        {
+                SortedList list = new SortedList ();
+                list.Add ("key0", "la la");
+                list.Add ("key1", "value");
+                list.Add ("key2", "value");
+
+                int i = list.IndexOfValue ("value");
+
+                AssertEquals (1, i);
+        }
+
+        [Test]
+        public void TestIndexOfValue3 ()
+        {
+                SortedList list = new SortedList ();
+                int i = list.IndexOfValue ((string) null);
+
+                AssertEquals (1, -i);
+        }
+
+        [Test]
 	public void TestRemove() {
 		SortedList sl1 = new SortedList(24);
 		string s=null;
@@ -544,6 +626,7 @@ public class SortedListTest : TestCase {
 			AssertEquals("sl.Remove: removing failed(2)",sl1["kala "+i],null);
 	}
 
+        [Test]
 	public void TestRemoveAt() {
 		SortedList sl1 = new SortedList(24);
 		int k;
@@ -574,6 +657,7 @@ public class SortedListTest : TestCase {
 			AssertEquals("sl.RemoveAt: removing failed(4)",sl1["kala "+string.Format("{0:D2}", i)],i);
 	}
 
+        [Test]
 	public void TestSetByIndex() {
 		SortedList sl1 = new SortedList(24);
 		for (int i = 49; i>=0; i--) sl1.Add(100+i,i);
@@ -597,6 +681,7 @@ public class SortedListTest : TestCase {
 
 	}
 
+        [Test]
 	public void TestTrimToSize() {
 		SortedList sl1 = new SortedList(24);
 		

@@ -162,14 +162,25 @@ namespace System.Collections {
 			get {
 				return table.Length;
 			}
+
 			set {
-				Slot [] table = this.table;
-				int current = table.Length;
+				int current = this.table.Length;
 
 				if (inUse > value)
 					throw new ArgumentOutOfRangeException("capacity too small");
 
-				if (value > current) {
+                                else if (current > INITIAL_SIZE && value < current) {
+                                        Slot [] newTable = new Slot [INITIAL_SIZE];
+                                        Array.Copy (table, newTable, inUse);
+                                        this.table = newTable;
+                                
+                                } else if (value > inUse) {
+                                        Slot [] newTable = new Slot [value];
+                                        Array.Copy (table, newTable, inUse);
+                                        this.table = newTable;
+
+
+                                } else if (value > current) {
 					Slot [] newTable = new Slot [value];
 					Array.Copy (table, newTable, current);
 					this.table = newTable;
@@ -320,18 +331,15 @@ namespace System.Collections {
 
 		public virtual int IndexOfValue (object value)
 		{
-			if (null == value)
-				return -1;
+                        if (inUse == 0)
+                                return -1;
+                        
+                        for (int i = 0; i < inUse; i ++) {
+                                Slot current = this.table [i];
 
-			Slot [] table = this.table;
-			int len = table.Length;
-
-			for (int i=0; i < len; i++) {
-				object trialValue = table[i].value;
-				if ((null != trialValue) && (trialValue.Equals (value))) {
+                                if (Equals (current.value, value))
 					return i;
-				}
-			}
+                        }
 
 			return -1;
 		}
@@ -358,37 +366,38 @@ namespace System.Collections {
 
 		public virtual object GetByIndex (int index)
 		{
-			if (index >= 0 && index < Count) {
+			if (index >= 0 && index < Count)
 				return table [index].value;
-			} else {
+
+			else 
 				throw new ArgumentOutOfRangeException("index out of range");
-			}
 		}
 
 
 		public virtual void SetByIndex (int index, object value)
 		{
-			if (index >= 0 && index < Count) {
+			if (index >= 0 && index < Count)
 				table [index].value = value;
-			} else {
+
+			else
 				throw new ArgumentOutOfRangeException("index out of range");
-			}
 		}
 
 
 		public virtual object GetKey (int index)
 		{
-			if (index >= 0 && index < Count) {
+			if (index >= 0 && index < Count)
 				return table [index].key;
-			} else {
+
+			else
 				throw new ArgumentOutOfRangeException("index out of range");
-			}
 		}
 
 		public static SortedList Synchronized (SortedList list)
 		{
 			if (list == null)
 				throw new ArgumentNullException (Locale.GetText ("Base list is null."));
+
 			return new SynchedSortedList (list);
 		}
 
@@ -398,8 +407,10 @@ namespace System.Collections {
 			// Trimming an empty SortedList sets the capacity
 			// of the SortedList to the default capacity,
 			// not zero.
-			if (Count == 0) Resize (INITIAL_SIZE, false);
-			else Resize (Count, true);
+			if (Count == 0)
+                                Resize (INITIAL_SIZE, false);
+			else
+                                Resize (Count, true);
 		}
 
 
@@ -520,8 +531,6 @@ namespace System.Collections {
 
 			if (i < 0 || i + this.Count > arr.Length)
 				throw new ArgumentOutOfRangeException ("i");
-			
-
 			
 			IEnumerator it = new Enumerator (this, mode);
 

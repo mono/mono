@@ -1,3 +1,26 @@
+2003-06-12  Duncan Mak  <duncan@ximian.com>
+
+	* Hashtable.cs (constructor):
+	if loadFactor equals Single.NaN, then throw an
+	ArgumentOutOfRangeException.
+
+	if we set capacity to be too big (ie. capacity / loadFactor is
+	greater than Int32.MaxValue), then we throw an ArgumentException.
+
+2003-06-11  Duncan Mak  <duncan@ximian.com>
+
+	* SortedList.cs: Oi! What a mess.
+
+	If the list was constructed using the null-param constructor, and
+	it tries to set it to a size lower than the default, let it do so.
+
+	If the list was constructed with a specific size, and it tries to
+	set it to a size lower than the specified size, set it to the
+	default size.
+
+	(IndexOfValue): Clean up the code somewhat, make it allow for
+	values to be null.
+
 2003-06-08  Ben Maurer <bmaurer@users.sourceforge.net>
 	* ArrayList.cs, Hashtable.cs, SortedList.cs: Enumerator fixes, error
 	checking

@@ -22,11 +22,15 @@ namespace MonoTests.System.Collections {
 
 /// <summary>Hashtable test.</summary>
 [TestFixture]
-public class HashtableTest : TestCase {
+public class HashtableTest : Assertion {
+
+        [Test]
 	public void TestCtor1() {
 		Hashtable h = new Hashtable();
 		AssertNotNull("No hash table", h);
 	}
+
+        [Test]
 	public void TestCtor2() {
 		{
 			bool errorThrown = false;
@@ -52,9 +56,26 @@ public class HashtableTest : TestCase {
 			}
 		}
 	}
+
+        [Test]
+        [ExpectedException (typeof (ArgumentOutOfRangeException))]
+        public void TestCtor3 ()
+        {
+                Hashtable h = new Hashtable ();
+                Hashtable hh = new Hashtable (h, Single.NaN);
+        }
+
+        [Test]
+        [ExpectedException (typeof (ArgumentException))]
+        public void TestCtor4 ()
+        {
+                Hashtable ht = new Hashtable (Int32.MaxValue, 0.1f, null, null);
+        }
+        
 	// TODO - Ctors for capacity and load (how to test? any access?)
         // TODO - Ctors with IComparer, IHashCodeProvider, Serialization
-	
+
+        [Test]	
 	public void TestCount() {
 		Hashtable h = new Hashtable();
 		AssertEquals("new table - count zero", 0, h.Count);
@@ -71,6 +92,7 @@ public class HashtableTest : TestCase {
 		}
 	}
 
+        [Test]        
 	public void TestIsFixedSize() {
 		Hashtable h = new Hashtable();
 		AssertEquals("hashtable not fixed by default",
@@ -85,6 +107,7 @@ public class HashtableTest : TestCase {
 		// TODO - any way to get a read-only hashtable?
 	}
 
+        [Test]        
 	public void TestIsSynchronized() {
 		Hashtable h = new Hashtable();
 		Assert("hashtable not synced by default", !h.IsSynchronized);
@@ -92,6 +115,7 @@ public class HashtableTest : TestCase {
 		Assert("hashtable should by synced", h2.IsSynchronized);
 	}
 
+        [Test]
 	public void TestItem() {
 		{
 			bool errorThrown = false;
@@ -118,6 +142,7 @@ public class HashtableTest : TestCase {
 		}
 	}
 
+        [Test]
 	public void TestKeys() {
 		string[] keys = {"this", "is", "a", "test"};
 		char[] values1 = {'a', 'b', 'c', 'd'};
@@ -136,7 +161,7 @@ public class HashtableTest : TestCase {
 	}
 
 	// TODO - SyncRoot
-
+        [Test]        
 	public void TestValues() {
 		string[] keys = {"this", "is", "a", "test"};
 		char[] values1 = {'a', 'b', 'c', 'd'};
@@ -153,7 +178,8 @@ public class HashtableTest : TestCase {
 		AssertEquals("values wrong size 2",
 			     keys.Length, h1.Values.Count);
 	}
-	
+
+	[Test]
 	public void TestAdd() {
 		{
 			bool errorThrown = false;
@@ -190,6 +216,7 @@ public class HashtableTest : TestCase {
 		}
 	}
 
+        [Test]
 	public void TestClear() {
 		// TODO - hit NotSupportedException
 		Hashtable h = new Hashtable();
@@ -204,6 +231,7 @@ public class HashtableTest : TestCase {
 			     0, h.Count);
 	}
 
+        [Test]
 	public void TestClone() {
 		{
 			char[] c1 = {'a', 'b', 'c'};
@@ -243,6 +271,7 @@ public class HashtableTest : TestCase {
 		}
 	}
 
+        [Test]
 	public void TestContains() {
 		{
 			bool errorThrown = false;
@@ -263,6 +292,7 @@ public class HashtableTest : TestCase {
 		}
 	}
 
+        [Test]
 	public void TestContainsKey() {
 		{
 			bool errorThrown = false;
@@ -282,7 +312,8 @@ public class HashtableTest : TestCase {
 			Assert("'b'? no way!", !h.ContainsKey('b'));
 		}
 	}
-	
+
+        [Test]        
 	public void TestContainsValue() {
 		{
 			Hashtable h = new Hashtable();
@@ -294,6 +325,7 @@ public class HashtableTest : TestCase {
 		}
 	}
 
+        [Test]        
 	public void TestCopyTo() {
 		{
 			bool errorThrown = false;
@@ -387,6 +419,7 @@ public class HashtableTest : TestCase {
 		}
 	}
 
+        [Test]        
 	public void TestGetEnumerator() {
 		String[] s1 = {"this", "is", "a", "test"};
 		Char[] c1 = {'a', 'b', 'c', 'd'};
@@ -408,7 +441,7 @@ public class HashtableTest : TestCase {
 
 	// TODO - GetObjectData
 	// TODO - OnDeserialization
-
+        [Test]
 	public void TestSerialization () {
 		Random r = new Random();
 		string filename = "hashtable_" + r.Next(99999).ToString() + ".dat";
@@ -444,6 +477,7 @@ public class HashtableTest : TestCase {
 		Assert("Binary Serialization Error", result);
 	}
 
+        [Test]        
 	public void TestRemove() {
 		{
 			bool errorThrown = false;
@@ -477,6 +511,7 @@ public class HashtableTest : TestCase {
 		}
 	}
 
+        [Test]        
 	public void TestSynchronized() {
 		{
 			bool errorThrown = false;
@@ -503,7 +538,7 @@ public class HashtableTest : TestCase {
 	private static Random rnd;
 	
 	[SetUp]
-	protected override void SetUp() {
+	public void SetUp() {
 		ht=new Hashtable();
 		rnd=new Random();
 	}
@@ -515,7 +550,7 @@ public class HashtableTest : TestCase {
 		ht.Add("k3","hashtable");
 	}
 	
-	
+        [Test]
 	public void TestAddRemoveClear() {
 		ht.Clear();
 		Assert(ht.Count==0);
@@ -534,7 +569,8 @@ public class HashtableTest : TestCase {
 		Assert(ht["k2"].Equals("cool"));
 		
 	}
-	
+
+        [Test]	
 	public void TestCopyTo2() {
 		SetDefaultData();
 		Object[] entries=new Object[ht.Count];
@@ -542,7 +578,7 @@ public class HashtableTest : TestCase {
 		Assert("Not an entry.",entries[0] is DictionaryEntry);
 	}
 	
-	
+        [Test]	
 	public void TestUnderHeavyLoad() {
 		ht.Clear();
 		int max=100000;
@@ -615,6 +651,7 @@ public class HashtableTest : TestCase {
 	///  Test hashtable with CaseInsensitiveHashCodeProvider
 	///  and CaseInsensitive comparer.
 	/// </summary>
+        [Test]        
 	public void TestCaseInsensitive ()
 	{
 		// Not very meaningfull test, just to make
@@ -630,7 +667,7 @@ public class HashtableTest : TestCase {
 
 	}
 
-
+        [Test]
 	public void TestCopyConstructor ()
 	{
 		SetDefaultData ();
@@ -640,7 +677,7 @@ public class HashtableTest : TestCase {
 		Assert(ht.Count == htCopy.Count);
 	}
 
-
+        [Test]
 	public void TestEnumerator ()
 	{
 		SetDefaultData ();

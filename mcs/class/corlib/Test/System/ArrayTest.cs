@@ -636,7 +636,7 @@ public class ArrayTest : Assertion
 	}
 	
 	[Test]
-        [ExpectedException (typeof (ArgumentException))]
+        [ExpectedException (typeof (ArgumentNullException))]
         public void TestCreateInstance2 ()
         {
                 Array a = Array.CreateInstance (typeof (Int32), null);

@@ -110,12 +110,17 @@ namespace System.Collections {
 			if (capacity<0)
 				throw new ArgumentOutOfRangeException ("negative capacity");
 
-			if (loadFactor<0.1 || loadFactor>1)
+			if (loadFactor < 0.1f || loadFactor > 1.0f || Single.IsNaN (loadFactor))
 				throw new ArgumentOutOfRangeException ("load factor");
 
 			if (capacity == 0) ++capacity;
 			this.loadFactor = 0.75f*loadFactor;
-			int size = (int) (capacity/this.loadFactor);
+			double tableSize = capacity / this.loadFactor;
+
+                        if (tableSize > Int32.MaxValue)
+                                throw new ArgumentException ("Size is too big");
+
+                        int size = (int) tableSize;
 			size = ToPrime (size);
 			this.SetTable (new Slot [size]);
 

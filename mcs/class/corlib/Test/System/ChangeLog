@@ -1,3 +1,9 @@
+2003-06-13  Duncan Mak  <duncan@ximian.com>
+
+	* ArrayTest.cs (TestCreateInstance2): Expects
+	ArgumentNullException, which is a specific subtype of
+	ArgumentException.
+
 2003-06-10  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DateTimeTest.cs: more tests.

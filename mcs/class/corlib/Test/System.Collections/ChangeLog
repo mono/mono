@@ -1,4 +1,21 @@
+2003-06-12  Duncan Mak  <duncan@ximian.com>
 
+	* HashtableTest.cs: Converted it to the new style of NUnit tests.
+
+	(TestCtor3): 
+	(TestCtor4): new tests for the constructor.
+
+2003-06-11  Duncan Mak  <duncan@ximian.com>
+
+	* SortedListTest.cs: Convert it to the new style of NUnit tests.
+
+	(TestCapacity2):
+	(TestCapacity3):
+	(TestCapacity4): new tests for the Capacity property.
+
+	(TestIndexOfValue2):
+	(TestIndexOfValue3): new tests for the IndexOfValue method.
+	
 2003-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HashtableTest.cs: removed duplicate tests and unneeded inner class.
