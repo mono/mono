@@ -1,5 +1,7 @@
 2002-05-28  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_analyze_stack): impl. CEE_CALLI
+
 	* x86.brg (JMP): impl. JMP opcode
 
 2002-05-27  Dietmar Maurer  <dietmar@ximian.com>
