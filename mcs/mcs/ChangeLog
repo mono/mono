@@ -1,3 +1,30 @@
+2004-11-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs (MemberName): Renamed GetFullName to GetPartialName
+	since it will not return correct data if people use this
+	unresolved in the presence of using statements (see test-313).
+
+	* class.cs (MethodData.Define): If we are an explicit interface
+	implementation, set the method name to the full name of the
+	interface plus the name of the method.  
+
+	Notice that using the method.MethodName.GetFullName() does not
+	work, as it will only contain the name as declared on the source
+	file (it can be a shorthand in the presence of using statements)
+	and not the fully qualifed type name, for example:
+
+	using System;
+
+	class D : ICloneable {
+		object ICloneable.Clone ()  {
+		}
+	}
+
+	Would produce a method called `ICloneable.Clone' instead of
+	`System.ICloneable.Clone'.
+
+	* namespace.cs (Alias.Resolve): Use GetPartialName.
+	
 2004-11-01  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Add error 1055 report.

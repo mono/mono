@@ -4428,8 +4428,8 @@ namespace Mono.CSharp {
 		{
 			MethodInfo implementing = null;
 
-			string method_name = method.MethodName.GetFullName ();
 			string name = method.MethodName.Name;
+			string method_name = name;
 
 			Type[] ParameterTypes = method.ParameterTypes;
 
@@ -4441,9 +4441,13 @@ namespace Mono.CSharp {
 					implementing = container.Pending.IsInterfaceMethod (
 						member.InterfaceType, name, method.ReturnType, ParameterTypes);
 
-				if (member.InterfaceType != null && implementing == null){
-					Report.Error (539, method.Location, "'{0}' in explicit interface declaration is not an interface", method_name);
-					return false;
+				if (member.InterfaceType != null){
+					if (implementing == null){
+						Report.Error (539, method.Location,
+							      "'{0}' in explicit interface declaration is not an interface", method_name);
+						return false;
+					}
+					method_name = member.InterfaceType.FullName + "." + name;
 				}
 			}
 

@@ -250,7 +250,7 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				string alias = Alias.ToString ();
+				string alias = Alias.GetPartialName ();
 
 				// According to section 16.3.1, the namespace-or-type-name is resolved
 				// as if the immediately containing namespace body has no using-directives.

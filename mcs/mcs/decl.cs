@@ -55,10 +55,14 @@ namespace Mono.CSharp {
 				return name;
 		}
 
-		public string GetFullName ()
+		///
+		/// This returns exclusively the name as seen on the source code
+		/// it is not the fully qualifed type after resolution
+		///
+		public string GetPartialName ()
 		{
 			if (Left != null)
-				return Left.GetFullName () + "." + Name;
+				return Left.GetPartialName () + "." + Name;
 			else
 				return Name;
 		}
@@ -98,7 +102,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return GetFullName ();
+			throw new Exception ();
 		}
 	}
 
