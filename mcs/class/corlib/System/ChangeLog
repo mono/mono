@@ -1,3 +1,7 @@
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
+	* Enum.cs (GetValues): According to the docu this is sorted after
+	values, not names.
 
 Tue Mar 19 18:18:49 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -141,6 +141,7 @@ namespace System {
 		public static Array GetValues (Type enumType) {
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
+			Array.Sort (info.values, info.values);
 			return info.values;
 		}
 		
