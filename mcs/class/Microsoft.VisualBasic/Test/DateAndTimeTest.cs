@@ -68,7 +68,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			
 			// should be same time within a reasonable tolerance
 			Assert("#TI01", secNow >= secTimer);
-			Assert("#TI02", secTimer2 >= secNow);
+			Assert("#TI02: SecTimer2=" + secTimer2 + " secNow=" + secNow, secTimer2 >= secNow);
 
 			// third timer should be greater than the first
 			Assert("#TI03", secTimer3 > secTimer);
@@ -278,7 +278,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			catch (Exception e) {
 				Fail ("Unexpected exception:" + e);
 			}
-			AssertEquals("#TV03", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
+			AssertEquals("#TV03", new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
 		}
 
 		public void TestYear () {
