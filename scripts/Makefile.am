@@ -66,11 +66,11 @@ REWRITE = sed \
 	-e 's,@''exe_file@,$@.exe,g'				\
 	-e 's,@''mono_interp@,$(MONO_INTERP),g'
 
-$(bin_SCRIPTS): script.in Makefile.am
+$(bin_SCRIPTS): script.in Makefile
 	$(REWRITE) $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
-$(bin2_SCRIPTS): script2.in Makefile.am
+$(bin2_SCRIPTS): script2.in Makefile
 	$(REWRITE) $(srcdir)/script2.in > $@.tmp
 	mv $@.tmp $@
 
