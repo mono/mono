@@ -1,3 +1,8 @@
+2003-11-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* ManagedXslTransform.cs : Now WriteStartDocument() is moved internal to
+	  GenericOutputter.
+
 2003-11-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* ManagedXslTransform.cs : Transform() should raise an error if no 
