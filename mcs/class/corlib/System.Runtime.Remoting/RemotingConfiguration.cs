@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace System.Runtime.Remoting
 {	
@@ -56,7 +57,15 @@ namespace System.Runtime.Remoting
 		
 		public static string ProcessId 
 		{
-			get { return processId; }
+			get { 
+				try {
+					processId = String.Format ("{0}", Process.GetCurrentProcess().Id);
+				}
+				catch (Exception e) {
+					throw e;
+				}
+				return processId; 
+			}
 		}
 
 		// public methods
