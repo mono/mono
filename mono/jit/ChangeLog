@@ -1,7 +1,10 @@
 2002-01-11  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_analyze_stack): fixed calculation of last_instr
+
 	* x86.brg (LDLEN): emit null_reference exception
 	(BLE_UN): bug fix. 
+	(RET, RET_VOID, RET_OBJ, ...) fixed jump to epilog
 
 2002-01-04  Dietmar Maurer  <dietmar@ximian.com>
 
