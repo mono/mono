@@ -71,8 +71,6 @@ namespace System.Xml
 
 			if ((prefix == "xmlns") || (localName == "xmlns")) 
 			{
-				namespaceManager.PushScope ();
-
 				if (prefix == "xmlns")
 					namespaceManager.AddNamespace (localName, ns);
 				else

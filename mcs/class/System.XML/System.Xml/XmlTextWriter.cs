@@ -222,10 +222,14 @@ namespace System.Xml
 			w.Flush ();
 		}
 
-		[MonoTODO]
 		public override string LookupPrefix (string ns)
 		{
-			throw new NotImplementedException ();
+			string prefix = namespaceManager.LookupPrefix (ns);
+
+			if (prefix == String.Empty)
+				prefix = null;
+
+			return prefix;
 		}
 
 		private void UpdateIndentChars ()
@@ -235,10 +239,9 @@ namespace System.Xml
 				indentChars += indentChar;
 		}
 
-		[MonoTODO]
 		public override void WriteBase64 (byte[] buffer, int index, int count)
 		{
-			throw new NotImplementedException ();
+			w.Write (Convert.ToBase64String (buffer, index, count));
 		}
 
 		[MonoTODO]
@@ -249,10 +252,8 @@ namespace System.Xml
 
 		public override void WriteCData (string text)
 		{
-			if (text.IndexOf("]]>") > 0) 
-			{
+			if (text.IndexOf("]]>") > 0)
 				throw new ArgumentException ();
-			}
 
 			CheckState ();
 			CloseStartElement ();
@@ -260,10 +261,16 @@ namespace System.Xml
 			w.Write("<![CDATA[{0}]]>", text);
 		}
 
-		[MonoTODO]
 		public override void WriteCharEntity (char ch)
 		{
-			throw new NotImplementedException ();
+			Int16	intCh = (Int16)ch;
+
+			// Make sure the character is not in the surrogate pair
+			// character range, 0xd800- 0xdfff
+			if ((intCh >= -10240) && (intCh <= -8193))
+				throw new ArgumentException ("Surrogate Pair is invalid.");
+
+			w.Write("&#x{0:X};", intCh);
 		}
 
 		[MonoTODO]
@@ -337,8 +344,9 @@ namespace System.Xml
 			}
 			else {
 				w.Write ("{0}</{1}>", indentFormatting, openElements.Pop ());
-				namespaceManager.PopScope();
 			}
+
+			namespaceManager.PopScope();
 		}
 
 		[MonoTODO]
@@ -395,7 +403,6 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("haven't tested namespaces on attributes code yet.")]
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
 			if ((prefix == "xml") && (localName == "lang"))

@@ -1,5 +1,14 @@
 2002-03-31  Kral Ferch  <kral_ferch@hotmail.com>
 
+	* XmlTextWriter.cs: Impls for LookupPrefix, WriteBase64,
+	and WriteCharEntity.
+	
+	* XmlWrite.cs:  Fixed bug where attribute namespace decl
+	was pushing a scope onto the namespace manager when it shouldn't
+	have been.
+	
+2002-03-31  Kral Ferch  <kral_ferch@hotmail.com>
+
 	* XmlTextWriter.cs: Some tweaks for WriteAttibuteString
 	in different states (no open start element, in WriteState.Content mode).
 	

@@ -31,16 +31,8 @@ namespace Ximian.Mono.Tests
 			xtw.QuoteChar = '\'';
 		}
 
-		public void TestAttributeNamespacesXmlnsXmlns ()
+		private string StringWriterText 
 		{
-			xtw.WriteStartElement ("foo");
-			try {
-				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
-				Fail ("Expected an ArgumentException to be thrown.");
-			} catch (ArgumentException) {}
-		}
-
-		private string StringWriterText {
 			get { return sw.GetStringBuilder ().ToString (); }
 		}
 
@@ -61,11 +53,10 @@ namespace Ximian.Mono.Tests
 			AssertEquals ("<foo xmlns:abc='http://abc.def' bar='baz'", StringWriterText);
 		}
 
-		public void TestAttributeNamespacesWithTextInNamespaceParam ()
+		public void TestAttributeNamespacesThreeParamWithNullInNamespaceParam ()
 		{
-			try {
-				xtw.WriteAttributeString ("xmlns", "abc", "http://somenamespace.com", "http://abc.def");
-			} catch (ArgumentException) {}
+			xtw.WriteAttributeString ("xmlns", null, "http://abc.def");
+			AssertEquals ("xmlns='http://abc.def'", StringWriterText);
 		}
 
 		public void TestAttributeNamespacesThreeParamWithTextInNamespaceParam ()
@@ -83,30 +74,22 @@ namespace Ximian.Mono.Tests
 			AssertEquals ("xmlns:abc='http://abc.def'", StringWriterText);
 		}
 
-		public void TestAttributeNamespacesThreeParamWithNullInNamespaceParam ()
+		public void TestAttributeNamespacesWithTextInNamespaceParam ()
 		{
-			xtw.WriteAttributeString ("xmlns", null, "http://abc.def");
-			AssertEquals ("xmlns='http://abc.def'", StringWriterText);
+			try {
+				xtw.WriteAttributeString ("xmlns", "abc", "http://somenamespace.com", "http://abc.def");
+			} catch (ArgumentException) {}
 		}
 
-		public void TestAttributeWriteAttributeStringWithoutParentElement ()
-		{
-			xtw.WriteAttributeString ("foo", "bar");
-			AssertEquals ("foo='bar'", StringWriterText);
-
-			xtw.WriteAttributeString ("baz", "quux");
-			AssertEquals ("foo='bar' baz='quux'", StringWriterText);
-		}
-
-		public void TestAttributeWriteAttributeStringNotInsideOpenStartElement ()
+		public void TestAttributeNamespacesXmlnsXmlns ()
 		{
 			xtw.WriteStartElement ("foo");
-			xtw.WriteString ("bar");
-			
-			try {
-				xtw.WriteAttributeString ("baz", "quux");
-				Fail ("Expected an InvalidOperationException to be thrown.");
-			} catch (InvalidOperationException) {}
+			try 
+			{
+				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
+				Fail ("Expected an ArgumentException to be thrown.");
+			} 
+			catch (ArgumentException) {}
 		}
 
 		public void TestAttributeWriteAttributeString ()
@@ -129,6 +112,28 @@ namespace Ximian.Mono.Tests
 			// TODO: Why does this pass Microsoft?
 			xtw.WriteAttributeString (null, "quuux");
 			AssertEquals ("<foo foo='bar' bar='' baz='' ='quux' ='quuux'", StringWriterText);
+		}
+
+		public void TestAttributeWriteAttributeStringNotInsideOpenStartElement ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteString ("bar");
+			
+			try 
+			{
+				xtw.WriteAttributeString ("baz", "quux");
+				Fail ("Expected an InvalidOperationException to be thrown.");
+			} 
+			catch (InvalidOperationException) {}
+		}
+
+		public void TestAttributeWriteAttributeStringWithoutParentElement ()
+		{
+			xtw.WriteAttributeString ("foo", "bar");
+			AssertEquals ("foo='bar'", StringWriterText);
+
+			xtw.WriteAttributeString ("baz", "quux");
+			AssertEquals ("foo='bar' baz='quux'", StringWriterText);
 		}
 
 		public void TestCDataValid ()
@@ -375,6 +380,26 @@ namespace Ximian.Mono.Tests
 			AssertEquals ("<ol>\r\n  <li>The big <b>E</b><i>lephant</i> walks slowly.</li>\r\n</ol>", StringWriterText);
 		}
 
+		public void TestLookupPrefix ()
+		{
+			xtw.WriteStartElement ("root");
+
+			xtw.WriteStartElement ("one");
+			xtw.WriteAttributeString ("xmlns", "foo", null, "http://abc.def");
+			xtw.WriteAttributeString ("xmlns", "bar", null, "http://ghi.jkl");
+			AssertEquals ("foo", xtw.LookupPrefix ("http://abc.def"));
+			AssertEquals ("bar", xtw.LookupPrefix ("http://ghi.jkl"));
+			xtw.WriteEndElement ();
+
+			xtw.WriteStartElement ("two");
+			xtw.WriteAttributeString ("xmlns", "baz", null, "http://mno.pqr");
+			xtw.WriteString("quux");
+			AssertEquals ("baz", xtw.LookupPrefix ("http://mno.pqr"));
+			AssertNull (xtw.LookupPrefix ("http://abc.def"));
+			AssertNull (xtw.LookupPrefix ("http://ghi.jkl"));
+
+			AssertNull (xtw.LookupPrefix ("http://bogus"));
+		}
 
 		public void TestNamespacesAttributesPassingInNamespaces ()
 		{
@@ -551,6 +576,53 @@ namespace Ximian.Mono.Tests
 			try {
 				xtw.QuoteChar = 'x';
 				Fail ("Should have thrown an ArgumentException.");
+			} catch (ArgumentException) {}
+		}
+
+		public void TestWriteBase64 ()
+		{
+			UTF8Encoding encoding = new UTF8Encoding();
+			byte[] fooBar = encoding.GetBytes("foobar");
+			xtw.WriteBase64 (fooBar, 0, 6);
+			AssertEquals("Zm9vYmFy", StringWriterText);
+
+			try {
+				xtw.WriteBase64 (fooBar, 3, 6);
+				Fail ("Expected an Argument Exception to be thrown.");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteBase64 (fooBar, -1, 6);
+				Fail ("Expected an Argument Exception to be thrown.");
+			} catch (ArgumentOutOfRangeException) {}
+
+			try {
+				xtw.WriteBase64 (fooBar, 3, -1);
+				Fail ("Expected an Argument Exception to be thrown.");
+			} catch (ArgumentOutOfRangeException) {}
+
+			try {
+				xtw.WriteBase64 (null, 0, 6);
+				Fail ("Expected an Argument Exception to be thrown.");
+			} catch (ArgumentNullException) {}
+		}
+
+		public void TestWriteCharEntity ()
+		{
+			xtw.WriteCharEntity ('a');
+			AssertEquals ("&#x61;", StringWriterText);
+
+			xtw.WriteCharEntity ('A');
+			AssertEquals ("&#x61;&#x41;", StringWriterText);
+
+			xtw.WriteCharEntity ('1');
+			AssertEquals ("&#x61;&#x41;&#x31;", StringWriterText);
+
+			xtw.WriteCharEntity ('K');
+			AssertEquals ("&#x61;&#x41;&#x31;&#x4B;", StringWriterText);
+
+			try {
+				xtw.WriteCharEntity ((char)0xd800);
 			} catch (ArgumentException) {}
 		}
 

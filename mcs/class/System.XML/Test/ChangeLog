@@ -1,5 +1,10 @@
 2002-03-31  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XmlTextWriterTests.cs: Tests for LookupPrefix, WriteBase64,
+	and WriteCharEntity.
+
+2002-03-31  Kral Ferch <kral_ferch@hotmail.com>
+
 	* XmlTextWriterTests.cs: Finished XmlLang, XmlSpace, and
 	Attribute namespace declaration tests.
 	
