@@ -450,6 +450,8 @@ namespace Mono.CSharp {
 						field_values.Add (value);
 					} else if (e is TypeOf) {
 						field_values.Add (((TypeOf) e).TypeArg);
+					} else if (e is ArrayCreation) {
+						field_values.Add (((ArrayCreation) e).EncodeAsAttribute());
 					} else {
 						Error_AttributeArgumentNotValid (Location);
 						return null;
