@@ -1,5 +1,15 @@
 2002-07-19  Martin Baulig  <martin@gnome.org>
 
+	Added the super-cool set of makefiles from Peter Williams which run on
+	GNU/Linux without NAnt.  I named them `makefile.gnu' and not `GNUmakefile'
+	since this won't break the windows build.
+
+	To compile stuff on GNU/Linux, just do a `make -f makefile.gnu'.
+
+	* mcs-tool, */makefile.gnu, class/library.make: New files.
+
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
 	* */makefile (NANT): Use a variable `NANT' so the user can override it with
 	`make NANT=/usr/local/bin/NAnt.exe'.
 

@@ -6,3 +6,4 @@ compiler.csproj.user
 cs-parser.cs
 y.output
 *.pdb
+mcs
