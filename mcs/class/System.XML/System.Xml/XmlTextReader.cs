@@ -767,7 +767,6 @@ namespace System.Xml
 			}
 
 			if (returnEntityReference) {
-				++depth;
 				SetEntityReferenceProperties ();
 			} else {
     			switch (PeekChar ())
