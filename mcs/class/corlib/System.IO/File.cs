@@ -88,7 +88,7 @@ namespace System.IO
 				throw new NotSupportedException();
 
 			string DirName = Path.GetDirectoryName(path);
-			if (!Directory.Exists (DirName))
+			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 			if (Exists(path)){
 				if ((GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly){
