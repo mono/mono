@@ -17,38 +17,45 @@ namespace System.Drawing {
 
 		internal class BitmapFactory : IBitmapFactory
 		{
-			public IBitmap Bitmap(int width, int height)
+			public IBitmap Bitmap (int width, int height)
 			{
-				return new Bitmap(width, height);
+				return new Bitmap (width, height);
 			}
 
-			public IBitmap Bitmap(int width, int height, System.Drawing.Graphics g)
+			public IBitmap Bitmap (int width, int height, System.Drawing.Graphics g)
 			{
-				return new Bitmap(width, height, (Graphics)g.implementation);
+				return new Bitmap (width, height, (Graphics)g.implementation);
 			}
 
-			public IBitmap Bitmap(int width, int height, System.Drawing.Imaging.PixelFormat format) {
-				return new Bitmap(width, height, format);
+			public IBitmap Bitmap (int width, int height, System.Drawing.Imaging.PixelFormat format)
+			{
+				return new Bitmap (width, height, format);
 			}
 
-			public IBitmap Bitmap(System.Drawing.Image original, Size newSize){
-				return new Bitmap((System.Drawing.Win32Impl.Image)original.implementation, newSize);
+			public IBitmap Bitmap (System.Drawing.Image original, Size newSize)
+			{
+				return new Bitmap ((System.Drawing.Win32Impl.Image)original.implementation, newSize);
 			}
 
-			public IBitmap Bitmap(Stream stream, bool useIcm){
-				return new Bitmap(stream, useIcm);
+			public IBitmap Bitmap (Stream stream, bool useIcm)
+			{
+				return new Bitmap (stream, useIcm);
 			}
 
-			public IBitmap Bitmap(string filename, bool useIcm){
-				return new Bitmap(filename, useIcm);
+			public IBitmap Bitmap (string filename, bool useIcm)
+			{
+				return new Bitmap (filename, useIcm);
 			}
 
-			public IBitmap Bitmap(Type type, string resource){
-				return new Bitmap(type, resource);
+			public IBitmap Bitmap (Type type, string resource)
+			{
+				return new Bitmap (type, resource);
 			}
 
-			public IBitmap Bitmap(int width, int height, int stride, System.Drawing.Imaging.PixelFormat format, IntPtr scan0){
-				return new Bitmap(width, height, stride, format, scan0);
+			public IBitmap Bitmap (int width, int height, int stride,
+					System.Drawing.Imaging.PixelFormat format, IntPtr scan0)
+			{
+				return new Bitmap (width, height, stride, format, scan0);
 			}
 		}
 
@@ -56,7 +63,7 @@ namespace System.Drawing {
 		{
 			#region constructors
 			// constructors
-			public Bitmap (int width, int height) : this( width, height, PixelFormat.Format32bppArgb)
+			public Bitmap (int width, int height) : this (width, height, PixelFormat.Format32bppArgb)
 			{
 			}
 
@@ -68,7 +75,8 @@ namespace System.Drawing {
 				g.ReleaseHdc(hdc);
 			}
 
-			public Bitmap (int width, int height, System.Drawing.Imaging.PixelFormat format) {
+			public Bitmap (int width, int height, System.Drawing.Imaging.PixelFormat format)
+			{
 				IntPtr hdc = Win32.GetDC(IntPtr.Zero);
 				pixelFormat_ = format;
 				BITMAPINFO_FLAT bmi = new BITMAPINFO_FLAT();
@@ -87,10 +95,11 @@ namespace System.Drawing {
 				nativeObject_ = Win32.CreateDIBSection(hdc, ref bmi, DibUsage.DIB_RGB_COLORS,
 								out bitsPtr, IntPtr.Zero, 0);
 				imageSize_ = new Size(width, height);
-				Win32.ReleaseDC( IntPtr.Zero, hdc);
+				Win32.ReleaseDC (IntPtr.Zero, hdc);
 			}
 			
-			public Bitmap (Image origial) {
+			public Bitmap (Image origial)
+			{
 				throw new NotImplementedException ();
 			}
 
@@ -111,7 +120,8 @@ namespace System.Drawing {
 				//this.newSize = newSize;
 			}
 
-			void InitFromStream( Stream stream) {
+			void InitFromStream (Stream stream)
+			{
 				InternalImageInfo info = System.Drawing.Image.Decode(stream);
 				if (info != null) {
 					sourceImageInfo = info;
@@ -130,35 +140,38 @@ namespace System.Drawing {
 					bmi.bmiHeader_biClrUsed = 0;
 					bmi.bmiHeader_biClrImportant = 0;
 					int palIdx = 0;
-					foreach( Color col in info.Palette.Entries) {
+					foreach (Color col in info.Palette.Entries) {
 						bmi.bmiColors[palIdx++] = col.B;
 						bmi.bmiColors[palIdx++] = col.G;
 						bmi.bmiColors[palIdx++] = col.R;
 						bmi.bmiColors[palIdx++] = col.A;
 					}
 
-					//byte[] bmpInfoBytes = CreateBITMAPINFOArray( info);
-					nativeObject_ = Win32.CreateDIBSection(memDC, ref bmi, DibUsage.DIB_RGB_COLORS, out dibBits, IntPtr.Zero, 0);
-					if (nativeObject_ == IntPtr.Zero) {
-						Console.WriteLine("Error creating Win32 DIBSection {0}", Win32.FormatMessage(Win32.GetLastError()));
-					}
-					Marshal.Copy(info.RawImageBytes, 0, dibBits, info.RawImageBytes.Length);
-					Win32.DeleteDC(memDC);
+					//byte[] bmpInfoBytes = CreateBITMAPINFOArray (info);
+					nativeObject_ = Win32.CreateDIBSection (
+						memDC, ref bmi, DibUsage.DIB_RGB_COLORS, out dibBits, IntPtr.Zero, 0);
+					
+					if (nativeObject_ == IntPtr.Zero) 
+						Console.WriteLine ("Error creating Win32 DIBSection {0}",
+								Win32.FormatMessage(Win32.GetLastError()));
+
+					Marshal.Copy (info.RawImageBytes, 0, dibBits, info.RawImageBytes.Length);
+					Win32.DeleteDC (memDC);
 					imageSize_ = info.Size;
 					imageFormat_ = info.RawFormat;
-					pixelFormat_ =  info.PixelFormat;
+					pixelFormat_ = info.PixelFormat;
 				}
 			}
 			
 			public Bitmap (Stream stream, bool useIcm) 
 			{
-				InitFromStream(stream);
+				InitFromStream (stream);
 			}
 
 			public Bitmap (string filename, bool useIcm) 
 			{
-				FileStream file = new FileStream(filename, FileMode.Open);
-				InitFromStream(file);
+				FileStream file = new FileStream (filename, FileMode.Open);
+				InitFromStream (file);
 				file.Close();
 			}
 
@@ -179,7 +192,8 @@ namespace System.Drawing {
 
 
 			public Bitmap (int width, int height, int stride,
-						       System.Drawing.Imaging.PixelFormat format, IntPtr scan0) {
+					System.Drawing.Imaging.PixelFormat format, IntPtr scan0)
+			{
 						throw new NotImplementedException ();
 			//			//this.width = width;
 			//			//this.heigth = heigth;
@@ -198,11 +212,13 @@ namespace System.Drawing {
 			{
 			}
 
-			public IBitmap Clone (Rectangle rect, System.Drawing.Imaging.PixelFormat format) {
+			public IBitmap Clone (Rectangle rect, System.Drawing.Imaging.PixelFormat format)
+			{
 				throw new NotImplementedException ();
 			}
 					
-			public IBitmap Clone (RectangleF rect, System.Drawing.Imaging.PixelFormat format) {
+			public IBitmap Clone (RectangleF rect, System.Drawing.Imaging.PixelFormat format)
+			{
 				throw new NotImplementedException ();
 			}
 
@@ -211,8 +227,7 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 
-			public static Bitmap FromResource (IntPtr hinstance,
-				string bitmapName) 
+			public static Bitmap FromResource (IntPtr hinstance, string bitmapName) 
 			{
 				throw new NotImplementedException ();
 			}
@@ -232,8 +247,10 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 
-			public System.Drawing.Imaging.BitmapData LockBits (Rectangle rect, System.Drawing.Imaging.ImageLockMode flags,
-					                            System.Drawing.Imaging.PixelFormat format) {
+			public System.Drawing.Imaging.BitmapData LockBits (
+				Rectangle rect, System.Drawing.Imaging.ImageLockMode flags,
+				System.Drawing.Imaging.PixelFormat format)
+			{
 				throw new NotImplementedException ();
 			}
 
@@ -252,11 +269,13 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 
-			void IDisposable.Dispose() {
+			void IDisposable.Dispose()
+			{
 				Win32.DeleteObject(nativeObject_);
 			}
 
-			public void UnlockBits (System.Drawing.Imaging.BitmapData bitmapdata) {
+			public void UnlockBits (System.Drawing.Imaging.BitmapData bitmapdata)
+			{
 				throw new NotImplementedException ();
 			}
 

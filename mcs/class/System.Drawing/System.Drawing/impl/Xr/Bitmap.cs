@@ -15,37 +15,47 @@ using System.Drawing.Imaging;
 namespace System.Drawing {
 	namespace XrImpl {
 
-		internal class BitmapFactory : IBitmapFactory {
-			public IBitmap Bitmap(int width, int height) {
-				return new Bitmap(width, height);
+		internal class BitmapFactory : IBitmapFactory
+		{
+			public IBitmap Bitmap (int width, int height)
+			{
+				return new Bitmap (width, height);
 			}
 
-			public IBitmap Bitmap(int width, int height, System.Drawing.Graphics g) {
-				return new Bitmap(width, height, (Graphics)g.implementation);
+			public IBitmap Bitmap (int width, int height, System.Drawing.Graphics g)
+			{
+				return new Bitmap (width, height, (Graphics)g.implementation);
 			}
 
-			public IBitmap Bitmap(int width, int height, System.Drawing.Imaging.PixelFormat format) {
-				return new Bitmap(width, height, format);
+			public IBitmap Bitmap (int width, int height, System.Drawing.Imaging.PixelFormat format)
+			{
+				return new Bitmap (width, height, format);
 			}
 
-			public IBitmap Bitmap(System.Drawing.Image original, Size newSize){
-				return new Bitmap((System.Drawing.XrImpl.Image)original.implementation, newSize);
+			public IBitmap Bitmap (System.Drawing.Image original, Size newSize)
+			{
+				return new Bitmap ((System.Drawing.XrImpl.Image)original.implementation, newSize);
 			}
 
-			public IBitmap Bitmap(Stream stream, bool useIcm){
-				return new Bitmap(stream);
+			public IBitmap Bitmap (Stream stream, bool useIcm)
+			{
+				return new Bitmap (stream);
 			}
 
-			public IBitmap Bitmap(string filename, bool useIcm){
-				return new Bitmap(filename, useIcm);
+			public IBitmap Bitmap (string filename, bool useIcm)
+			{
+				return new Bitmap (filename, useIcm);
 			}
 
-			public IBitmap Bitmap(Type type, string resource){
-				return new Bitmap(type, resource);
+			public IBitmap Bitmap (Type type, string resource)
+			{
+				return new Bitmap (type, resource);
 			}
 
-			public IBitmap Bitmap(int width, int height, int stride, System.Drawing.Imaging.PixelFormat format, IntPtr scan0){
-				return new Bitmap(width, height, stride, format, scan0);
+			public IBitmap Bitmap (int width, int height, int stride,
+					System.Drawing.Imaging.PixelFormat format, IntPtr scan0)
+			{
+				return new Bitmap (width, height, stride, format, scan0);
 			}
 		}
 
@@ -54,12 +64,14 @@ namespace System.Drawing {
 			float horizontalResolution;
 			float verticalResolution;
 			
-			internal void CommonInit (int width, int height) {
+			internal void CommonInit (int width, int height)
+			{
 				CommonInit (width, height, true);
 			}
 
-			internal void CommonInit (int width, int height, bool allocNativeObject) {
-				size = new Size(width, height);
+			internal void CommonInit (int width, int height, bool allocNativeObject)
+			{
+				size = new Size (width, height);
 				imageFormat = ImageFormat.Bmp;
 				switch( pixelFormat) {
 				case PixelFormat.Format32bppArgb:
@@ -73,6 +85,7 @@ namespace System.Drawing {
 				default:
 					throw new NotImplementedException ();
 				}
+
 				horizontalResolution = verticalResolution = 96.0F;
 			}
 			
@@ -81,12 +94,14 @@ namespace System.Drawing {
 			/// Constructors
 			/// </summary>
 
-			public Bitmap (int width, int height) {
+			internal Bitmap (int width, int height)
+			{
 				pixelFormat = PixelFormat.Format32bppArgb;
 				CommonInit (width, height);
 			}
 
-			public Bitmap (int width, int height, Graphics g) {
+			internal Bitmap (int width, int height, Graphics g)
+			{
 				// TODO: Get pixelFormat from g
 				CommonInit (width,height);
 				//TODO: use graphics to set vertial and horzontal resolution.
@@ -94,18 +109,21 @@ namespace System.Drawing {
 			}
 
 			[MonoTODO]
-			public Bitmap(int width, int height, PixelFormat format) {
+			internal Bitmap (int width, int height, PixelFormat format)
+			{
 				this.pixelFormat = format;
 				CommonInit (width, height);
 			}
 
-			public Bitmap (Image origial) {
+			internal Bitmap (Image origial)
+			{
 				throw new NotImplementedException ();
 				//this.original = original;
 			}
 			
-			unsafe void InitFromStream( Stream stream) {
-				InternalImageInfo info = System.Drawing.Image.Decode(stream);
+			unsafe void InitFromStream (Stream stream)
+			{
+				InternalImageInfo info = System.Drawing.Image.Decode (stream);
 				if (info != null) {
 					imageFormat = info.RawFormat;
 					pixelFormat = info.PixelFormat;
@@ -132,36 +150,45 @@ namespace System.Drawing {
 				}
 			}
 			
-			public Bitmap(Stream stream) : this(stream, false){
+			internal Bitmap (Stream stream)
+				: this (stream, false)
+			{
 			}
 
 
-			public Bitmap (string filename) : this(filename, false){
+			internal Bitmap (string filename)
+				: this (filename, false)
+			{
 			}
 
-			public Bitmap (Image original, Size newSize) {
+			internal Bitmap (Image original, Size newSize)
+			{
 				throw new NotImplementedException ();
 				//this.original = original;
 				//this.newSize = newSize;
 			}
 
-			public Bitmap (Stream stream, bool useIcm) {
+			internal Bitmap (Stream stream, bool useIcm)
+			{
 				InitFromStream(stream);
 			}
 
-			public Bitmap (string filename, bool useIcm) {
+			internal Bitmap (string filename, bool useIcm)
+			{
 				FileStream file = new FileStream(filename, FileMode.Open);
 				InitFromStream(file);
 				file.Close();
 			}
 
-			public Bitmap (Type type, string resource) {
+			internal Bitmap (Type type, string resource)
+			{
 				throw new NotImplementedException ();
 				//this.type = type;
 				//this.resource = resource;
 			}
 
-			public Bitmap (Image original, int width, int heigth) {
+			internal Bitmap (Image original, int width, int heigth)
+			{
 				throw new NotImplementedException ();
 				//this.original = original;
 				//this.width = width;
@@ -169,8 +196,10 @@ namespace System.Drawing {
 			}
 
 
-			public Bitmap (int width, int height, int stride,
-				PixelFormat format, IntPtr scan0) {
+			internal Bitmap (
+				int width, int height, int stride,
+				PixelFormat format, IntPtr scan0)
+			{
 				throw new NotImplementedException ();
 				//this.width = width;
 				//this.heigth = heigth;
@@ -181,18 +210,22 @@ namespace System.Drawing {
 			#endregion
 
 			// methods
-			public Color GetPixel (int x, int y) {
+			Color IBitmap.GetPixel (int x, int y)
+			{
 				throw new NotImplementedException ();
 			}
 
-			public void SetPixel (int x, int y, Color color) {
+			void IBitmap.SetPixel (int x, int y, Color color)
+			{
 				throw new NotImplementedException ();
 			}
-			public IBitmap Clone (Rectangle rect,PixelFormat format) {
+			IBitmap IBitmap.Clone (Rectangle rect,PixelFormat format)
+			{
 				throw new NotImplementedException ();
 			}
 		
-			public IBitmap Clone (RectangleF rect, PixelFormat format) {
+			IBitmap IBitmap.Clone (RectangleF rect, PixelFormat format)
+			{
 				throw new NotImplementedException ();
 			}
 
@@ -202,51 +235,58 @@ namespace System.Drawing {
 			}
 
 			[MonoTODO]
-			public static Bitmap FromResource (IntPtr hinstance,
-				string bitmapName) {
+			public static Bitmap FromResource (IntPtr hinstance, string bitmapName)
+			{
 				throw new NotImplementedException ();
 			}
 
-			public IntPtr GetHbitmap () {
+			IntPtr IBitmap.GetHbitmap ()
+			{
 				throw new NotImplementedException ();
 			}
 
-			public IntPtr GetHbitmap (Color background) {
+			IntPtr IBitmap.GetHbitmap (Color background)
+			{
 				throw new NotImplementedException ();
 			}
 
-			public IntPtr GetHicon () {
+			IntPtr IBitmap.GetHicon ()
+			{
 				throw new NotImplementedException ();
 			}
 
 
 			[MonoTODO]
-			public BitmapData LockBits(Rectangle rect, ImageLockMode flags, PixelFormat format) {
+			BitmapData IBitmap.LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format)
+			{
 				throw new NotImplementedException ();
 			}
 
-			public void MakeTransparent () {
+			void IBitmap.MakeTransparent ()
+			{
 				throw new NotImplementedException ();
 			}
 
-			public void MakeTransparent (Color transparentColor) {
+			void IBitmap.MakeTransparent (Color transparentColor)
+			{
 				throw new NotImplementedException ();
 			}
 
-			public void SetResolution (float xDpi, float yDpi) {
+			void IBitmap.SetResolution (float xDpi, float yDpi)
+                        {
 				horizontalResolution = xDpi;
 				verticalResolution = yDpi;
 			}
 		
 			//Fixme: gtk should be inherited from Image
-			public PixelFormat PixelFormat {
-			// public new PixelFormat PixelFormat {
+			PixelFormat IImage.PixelFormat {
 				get {
 					return pixelFormat;
 				}
 			}
 
-			public void UnlockBits(BitmapData bitmapdata) {
+			void IBitmap.UnlockBits (BitmapData bitmapdata)
+			{
 				// nothing to do!
 			}
 		
@@ -257,15 +297,17 @@ namespace System.Drawing {
 			/// <summary>
 			/// Methods 
 			/// </summary>
-			protected override void Dispose(bool disposing) {
+			protected override void Dispose (bool disposing)
+			{
 				if (selected_into_graphics == null) {
 					GDK.gdk_pixbuf_finalize (native_object);			
 				}
 				base.Dispose(disposing);
 			}
+			
 			//FIXME: included with gtk code. should be inherited from Image.
 			//		[MonoTODO]
-			//		public override void RotateFlip(RotateFlipType rotateFlipType) {
+			//		public override void RotateFlip (RotateFlipType rotateFlipType) {
 			//			throw new NotImplementedException();
 			//		}
 		

@@ -1,5 +1,6 @@
 2003-08-06  Duncan Mak  <duncan@ximian.com>
 
+	* Bitmap.cs: 
 	* Image.cs: Reformatted.
 
 	* Graphics.cs (DrawImage): Cast wineImage to IImage before calling
