@@ -1,3 +1,11 @@
+2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathEditableNavigator.cs :
+	  AppendChild(xmlReader) ignored nodes after than first one, and
+	  resulted in infinite loop.
+	  Added get_OuterXml overrides. set_OuterXml should not move to
+	  parent before deleting current.
+
 2004-08-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathAtomicValue.cs : Value was not returning expected value when

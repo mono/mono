@@ -50,7 +50,6 @@ namespace System.Xml.XPath
 		{
 		}
 
-		[MonoTODO ("No implementation as yet")]
 		public abstract XmlWriter AppendChild ();
 
 		[MonoTODO]
@@ -66,11 +65,12 @@ namespace System.Xml.XPath
 			XmlReader reader)
 		{
 			XmlWriter w = AppendChild ();
-			w.WriteNode (reader, false);
+			while (!reader.EOF)
+				w.WriteNode (reader, false);
 			w.Close ();
 			XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
 			nav.MoveToFirstChild ();
-			while (!nav.MoveToNext ())
+			while (nav.MoveToNext ())
 				;
 			return nav;
 		}
@@ -290,16 +290,23 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		// It seems like setter is virtual but getter is overriden.
 		public virtual new string OuterXml {
+			get {
+				return base.OuterXml;
+			}
 			set {
-				if (NodeType == XPathNodeType.Root) {
-					InnerXml = value;
-					return;
+				switch (NodeType) {
+				case XPathNodeType.Root:
+				case XPathNodeType.Attribute:
+				case XPathNodeType.Namespace:
+					throw new XmlException ("Setting OuterXml Root, Attribute and Namespace is not supported.");
 				}
 
-				XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
-				nav.MoveToParent ();
+//				XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+//				nav.MoveToParent ();
+//				MoveToParent ();
 				DeleteCurrent ();
-				nav.AppendChild (new XmlTextReader (value, XmlNodeType.Document, null));
+				AppendChild (value);
+				MoveToFirstChild ();
 			}
 		}
 	}
