@@ -70,12 +70,14 @@ namespace System.Windows.Forms
 		{
 			internal int Index;
 			internal bool Selected;
+			internal int ItemHeight;		/* Only used for OwnerDrawVariable */
 			internal CheckState State;
 
 			public ListBoxItem (int index)
 			{
 				Index = index;
 				Selected = false;
+				ItemHeight = -1;
 				State = CheckState.Unchecked;
 			}
 		}
@@ -188,8 +190,8 @@ namespace System.Windows.Forms
 					return;
 
     				base.BackColor = value;
-				Refresh ();
-			}
+				base.Refresh ();	// Careful. Calling the base method is not the same that calling 
+			}				// the overriden one that refresh also all the items
 		}
 
 		public override Image BackgroundImage {
@@ -203,7 +205,7 @@ namespace System.Windows.Forms
     				if (BackgroundImageChanged != null)
 					BackgroundImageChanged (this, EventArgs.Empty);
 
-				Refresh ();
+				base.Refresh ();
 			}
 		}
 
@@ -218,7 +220,7 @@ namespace System.Windows.Forms
 					return;
 
     				border_style = value;
-				Refresh ();
+				base.Refresh ();
     			}
 		}
 
@@ -235,7 +237,7 @@ namespace System.Windows.Forms
     				else
     					ColumnWidthInternal = value;
 
-				Refresh ();
+				base.Refresh ();
 			}
 		}
 
@@ -253,12 +255,15 @@ namespace System.Windows.Forms
     			set {
 				if (!Enum.IsDefined (typeof (DrawMode), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for DrawMode", value));
+					
+				if (value == DrawMode.OwnerDrawVariable && multicolumn == true)
+					throw new InvalidEnumArgumentException ("Cannot have variable height and multicolumn");
 
 				if (draw_mode == value)
 					return;
 
     				draw_mode = value;
-				Refresh ();
+				base.Refresh ();
     			}
 		}
 
@@ -270,7 +275,7 @@ namespace System.Windows.Forms
 					return;
 
     				base.ForeColor = value;
-				Refresh ();
+				base.Refresh ();
 			}
 		}
 
@@ -281,7 +286,7 @@ namespace System.Windows.Forms
 					return;
 
     				horizontal_extent = value;
-				Refresh ();
+				base.Refresh ();
 			}
 		}
 
@@ -293,7 +298,7 @@ namespace System.Windows.Forms
 
     				horizontal_scrollbar = value;
     				UpdateShowHorizontalScrollBar ();
-				Refresh ();
+				base.Refresh ();
 			}
 		}
 
@@ -335,7 +340,7 @@ namespace System.Windows.Forms
     				multicolumn = value;
     				UpdateShowVerticalScrollBar (); /* the needs for scrollbars may change */
 				UpdateShowHorizontalScrollBar ();
-				Refresh ();
+				base.Refresh ();
 			}
 		}
 
@@ -351,7 +356,7 @@ namespace System.Windows.Forms
 
     				base.RightToLeft = value;
     				UpdateFormatString ();
-				Refresh ();
+				base.Refresh ();
 			}
 		}
 
@@ -427,7 +432,7 @@ namespace System.Windows.Forms
 					return;
 
     				selection_mode = value;
-				Refresh ();
+				base.Refresh ();
     			}
 		}
 
@@ -478,7 +483,7 @@ namespace System.Windows.Forms
 					return;
 
 				value = top_index;
-				Refresh ();
+				base.Refresh ();
 			}
 		}
 
@@ -491,7 +496,7 @@ namespace System.Windows.Forms
 
     				use_tabstops = value;
     				UpdateFormatString ();
-				Refresh ();
+				base.Refresh ();
     			}
 		}
 
@@ -540,7 +545,7 @@ namespace System.Windows.Forms
 		{
 			suspend_ctrlupdate = false;
 			UpdateItemInfo (false, -1, -1);
-			Refresh ();
+			base.Refresh ();
 		}
 
 		public int FindString (String s)
@@ -577,6 +582,18 @@ namespace System.Windows.Forms
 		{
 			if (index < 0 || index >= Items.Count)
 				throw new ArgumentOutOfRangeException ("Index of out range");
+				
+			if (DrawMode == DrawMode.OwnerDrawVariable && IsHandleCreated == true) {
+				
+				if ((Items.GetListBoxItem (index)).ItemHeight != -1) {
+					return (Items.GetListBoxItem (index)).ItemHeight;
+				}
+				
+				MeasureItemEventArgs args = new MeasureItemEventArgs (DeviceContext, index, ItemHeight);
+				OnMeasureItem (args);
+				(Items.GetListBoxItem (index)).ItemHeight = args.ItemHeight;
+				return args.ItemHeight;
+			}
 
 			return ItemHeight;
 		}
@@ -590,10 +607,19 @@ namespace System.Windows.Forms
 
 			if (MultiColumn == false) {
 
-				rect.X = 0;
-				rect.Y = ItemHeight * index;
-				rect.Height = ItemHeight;
+				rect.X = 0;				
+				rect.Height = GetItemHeight (index);
 				rect.Width = listbox_info.textdrawing_rect.Width;
+				
+				if (DrawMode == DrawMode.OwnerDrawVariable) {
+					rect.Y = 0;
+					for (int i = 0; i < index; i++) {
+						rect.Y += GetItemHeight (i);
+					}					
+				} else {
+					rect.Y = ItemHeight * index;	
+				}
+				
 			}
 			else {
 				int which_page;
@@ -700,7 +726,11 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMeasureItem (MeasureItemEventArgs e)
 		{
-
+			if (draw_mode != DrawMode.OwnerDrawVariable)
+				return;
+				
+			if (MeasureItem != null)
+				MeasureItem (this, e);
 		}
 
 		protected override void OnParentChanged (EventArgs e)
@@ -729,12 +759,23 @@ namespace System.Windows.Forms
 
 		public override void Refresh ()
 		{
+			if (draw_mode == DrawMode.OwnerDrawVariable) {
+				for (int i = 0; i < Items.Count; i++)  {
+					(Items.GetListBoxItem (i)).ItemHeight = -1;
+				}
+			}
+			
 			base.Refresh ();
 		}
 
 		protected override void RefreshItem (int index)
 		{
-
+			if (index < 0 || index >= Items.Count)
+				throw new ArgumentOutOfRangeException ("Index of out range");
+				
+			if (draw_mode == DrawMode.OwnerDrawVariable) {
+				(Items.GetListBoxItem (index)).ItemHeight = -1;
+			}			
 		}
 
 		protected override void SetBoundsCore (int x,  int y, int width, int height, BoundsSpecified specified)
@@ -775,7 +816,7 @@ namespace System.Windows.Forms
 				return;
 
 			Items.Sort ();
-			Refresh ();
+			base.Refresh ();
 		}
 
 		public override string ToString ()
@@ -830,7 +871,21 @@ namespace System.Windows.Forms
 			if (listbox_info.show_horizontalsb)
 				listbox_info.textdrawing_rect.Height -= hscrollbar_ctrl.Height;
 
-			listbox_info.page_size = listbox_info.textdrawing_rect.Height / listbox_info.item_height;
+			if (DrawMode == DrawMode.OwnerDrawVariable) {				
+				int height = 0;
+				
+				listbox_info.page_size = 0;
+				for (int i = 0; i < Items.Count; i++) {
+					height += GetItemHeight (i);
+					if (height > listbox_info.textdrawing_rect.Height)
+						break;
+						
+					listbox_info.page_size++;					
+				}
+								
+			} else {			
+				listbox_info.page_size = listbox_info.textdrawing_rect.Height / listbox_info.item_height;
+			}
 
 			if (listbox_info.page_size == 0) {
 				listbox_info.page_size = 1;
@@ -852,7 +907,7 @@ namespace System.Windows.Forms
 					listbox_info.client_rect.Height -= remaining;
 					CalcClientArea ();
 					RellocateScrollBars ();
-					Refresh ();
+					base.Refresh ();
 				}
 			}
 		}
@@ -918,7 +973,7 @@ namespace System.Windows.Forms
 		{
 			LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;
 			LBoxInfo.last_item = LastVisibleItem ();
-			Refresh ();
+			base.Refresh ();
 		}
 
 		// Only returns visible points. The diference of with IndexFromPoint is that the rectangle
@@ -1345,7 +1400,7 @@ namespace System.Windows.Forms
 			LBoxInfo.last_item = LastVisibleItem ();
 
 			UpdateShowHorizontalScrollBar ();
-			Refresh ();
+			base.Refresh ();
 		}
 
 		private void UpdateInternalClientRect (Rectangle client_rectangle)
@@ -1447,7 +1502,7 @@ namespace System.Windows.Forms
 			LBoxInfo.top_item = /*listbox_info.page_size + */ vscrollbar_ctrl.Value;
 			LBoxInfo.last_item = LastVisibleItem ();
 
-			Refresh ();
+			base.Refresh ();
 		}
 
 		#endregion Private Methods

@@ -1,3 +1,9 @@
+2005-01-20  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListBox.cs:
+		- Owner draw support
+		- Fixes		
+		
 2005-01-20  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIStructs.cs: More misc keys
