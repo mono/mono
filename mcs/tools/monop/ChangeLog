@@ -1,3 +1,54 @@
+2004-11-08  Ben Maurer  <bmaurer@ximian.com>
+
+	* outline.cs: Report sealed and abstract
+
+2004-10-27  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: report [Obsolete] types
+
+2004-09-22  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: use simpler IsDefined method
+	for checking params and [Flags]
+
+2004-09-18  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: add const = value; for const fields (Ben's idea)
+	detect ParamArrayAttribute for parameters
+
+2004-09-03  John Luke  <john.luke@gmail.com>
+	
+	* monop.cs: report CLSCompliant for assemblies
+
+2004-08-15  John Luke  <john.luke@gmail.com>
+
+	* monop.cs: add declared-only option
+	* outline.cs: add limited attribute support (only for
+	[Serializable] and [Flags])
+
+2004-08-13  John Luke  <john.luke@gmail.com>
+
+	* monop.cs: add MONO_PATH support
+
+2004-08-13  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: remove unused isPointer 
+	* monop.cs: show information about the assembly that is being used
+	- remove unused IndentedTextWriter
+	- rework how Assemblies are being loaded, so that it works by trying
+	in order fromfile, fullname, partialname which fixes loading
+	from relative paths and generally should be more correct
+	* TODO: update
+
+2004-08-06  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: add field support
+
+2004-08-04  John Luke  <john.luke@gmail.com>
+
+	* monop.cs: add PrintUsage so that it is reused in the few
+	places it is needed, add PrintHelp to display --help information
+
 2004-05-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* monop.cs: give the correct assembly that fails loading or the type.

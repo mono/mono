@@ -1,12 +1,6 @@
 TODO
 ----
 
-	* Add options like /show-private. For example, if you view System.String
-	  you should only see public methods etc unless you specify /private. Similar
-	  thing for other scope things.
-	* Add support for events
-	* Support for params (show the params keyword)
-	* Handle interfaces:
-		* handle explicit vs. implicit impl
-	* Fields
-	* Do delegates
+	* handle explicit vs. implicit interfaces
+	* handle ~ based paths (ex -r:~/foo.dll)
+	* improve commandline handling

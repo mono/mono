@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	John Luke  (john.luke@gmail.com)
 //
 // (C) 2004 Ben Maurer
+// (C) 2004 John Luke
 //
 
 
@@ -59,29 +61,47 @@ class MonoP {
 
 	static Assembly GetAssembly (string assembly, bool exit)
 	{
-		Assembly a;
+		Assembly a = null;
 
 		try {
-			// if is starts with / use the full path
-			// otherwise try to load from the GAC
-			if (assembly.StartsWith ("/"))
+			// if it exists try to use LoadFrom
+			if (File.Exists (assembly))
 				a = Assembly.LoadFrom (assembly);
-			else
-				a = Assembly.LoadWithPartialName (assembly);
-
-			// if the above failed try Load
-			if (a == null)
+			// if it looks like a fullname try that
+			else if (assembly.Split (',').Length == 4)
 				a = Assembly.Load (assembly);
+			// see if MONO_PATH has it
+			else
+				a = LoadFromMonoPath (assembly);
+		} catch {
+			// ignore exception it gets handled below
+		}
 
-			return a;
+		// last try partial name
+		// this (apparently) is exception safe
+		if (a == null)
+			a = Assembly.LoadWithPartialName (assembly);
+
+		if (a == null && exit) {
+			Console.WriteLine ("Could not load {0}", MonoP.assembly);
+			Environment.Exit (1);
 		}
-		catch {
-			if (exit) {
-				Console.WriteLine ("Could not load {0}", MonoP.assembly);
-				Environment.Exit (1);
-			}
-			return null;
+
+		return a;
+	}
+
+	static Assembly LoadFromMonoPath (string assembly)
+	{
+		// ; on win32, : everywhere else
+		char sep = (Path.DirectorySeparatorChar == '/' ? ':' : ';');
+		string[] paths = Environment.GetEnvironmentVariable ("MONO_PATH").Split (sep);
+		foreach (string path in paths)
+		{	
+			string apath = Path.Combine (path, assembly);
+			if (File.Exists (apath))
+				return Assembly.LoadFrom (apath);	
 		}
+		return null;
 	}
 
 	static Type GetType (string tname)
@@ -92,6 +112,22 @@ class MonoP {
 	static void PrintTypes (string assembly)
 	{
 		Assembly a = GetAssembly (assembly, true);
+
+		Console.WriteLine ();
+		Console.WriteLine ("Assembly Information:");
+
+		object[] cls = a.GetCustomAttributes (typeof (CLSCompliantAttribute), false);
+		if (cls.Length > 0)
+		{
+			CLSCompliantAttribute cca = cls[0] as CLSCompliantAttribute;
+			if (cca.IsCompliant)
+				Console.WriteLine ("[CLSCompliant]");
+		}
+
+		foreach (string ai in a.ToString ().Split (','))
+			Console.WriteLine (ai.Trim ());
+			
+		Console.WriteLine ();
 		Type [] types = a.GetExportedTypes ();
 
 		foreach (Type t in types)
@@ -138,16 +174,36 @@ class MonoP {
 		}
 		
 	}
+
+	static void PrintUsage ()
+	{
+		Console.WriteLine ("Usage is: monop [option] [-c] [-r:Assembly] [class-name]");
+	}
+
+	static void PrintHelp ()
+	{
+		PrintUsage ();
+		Console.WriteLine ("");
+		Console.WriteLine ("options:");
+		Console.WriteLine ("\t--declared-only,-d\tOnly show members declared in the Type");
+		Console.WriteLine ("\t--help,-h\t\tShow this information");
+		Console.WriteLine ("\t--private,-p\t\tShow private members");
+	}
 	
 	static void Main (string [] args)
 	{
 		if (args.Length < 1) {
-			Console.WriteLine ("monop [-c] [-r:Assembly] [class-name]");
+			PrintUsage ();
 			return;
 		}
-		
-		IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
 
+		if (args.Length == 1 && (args[0] == "--help" || args[0] == "-h"))
+		{
+			PrintHelp ();
+			return;
+
+		}
+		
 		int i = 0;
 		if (args [0].StartsWith ("-r:") || args [0].StartsWith ("/r:")){
 			i++;
@@ -169,8 +225,13 @@ class MonoP {
 				i++;
 		}
 
-		if (args.Length < i+1){
-			Console.WriteLine ("Usage is: monop [-r:Assembly] [class-name]");
+		if (args [i] == "--declared-only" || args [i] == "-d") {
+				default_flags |= BindingFlags.DeclaredOnly;
+				i++;
+		}
+
+		if (args.Length < i + 1) {
+			PrintUsage ();
 			return;
 		}
 

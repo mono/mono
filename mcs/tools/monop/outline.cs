@@ -27,7 +27,16 @@ public class Outline {
 
 	public void OutlineType (BindingFlags flags)
         {
+		OutlineAttributes ();
 		o.Write (GetTypeVisibility (t));
+		
+		if (t.IsClass && !t.IsSubclassOf (typeof (System.MulticastDelegate))) {
+			if (t.IsSealed)
+				o.Write (t.IsAbstract ? " static" : " sealed");
+			else if (t.IsAbstract)
+				o.Write (" abstract");
+		}
+		
 		o.Write (" ");
 		o.Write (GetTypeKind (t));
 		o.Write (" ");
@@ -111,6 +120,13 @@ public class Outline {
 		}
 		
 		o.WriteLine ();
+
+		foreach (FieldInfo fi in t.GetFields (flags))
+		{
+			OutlineField (fi);
+		}
+
+		o.WriteLine ();
 		
 		foreach (EventInfo ei in Comparer.Sort (t.GetEvents (flags))) {
 			OutlineEvent (ei);
@@ -124,6 +140,19 @@ public class Outline {
 			new Outline (ntype, o).OutlineType (flags);
 		
 		o.Indent--; o.WriteLine ("}");
+	}
+
+	// FIXME: add other interesting attributes?
+	void OutlineAttributes ()
+	{
+		if (t.IsSerializable)
+			o.WriteLine ("[Serializable]");
+
+		if (t.IsDefined (typeof (System.FlagsAttribute), true))
+			o.WriteLine ("[Flags]");
+
+		if (t.IsDefined (typeof (System.ObsoleteAttribute), true))
+			o.WriteLine ("[Obsolete]");
 	}
 
 	void OutlineEvent (EventInfo ei)
@@ -192,12 +221,15 @@ public class Outline {
 	{
 		int i = 0;
 		foreach (ParameterInfo p in pi) {
-			bool isPointer = false;
 			if (p.ParameterType.IsByRef) {
 				o.Write (p.IsOut ? "out " : "ref ");
 				o.Write (FormatType (p.ParameterType.GetElementType ()));
-			} else
+			} else if (p.IsDefined (typeof (ParamArrayAttribute), false)) {
+				o.Write ("params ");
 				o.Write (FormatType (p.ParameterType));
+			} else {
+				o.Write (FormatType (p.ParameterType));
+			}
 			
 			o.Write (" ");
 			o.Write (p.Name);
@@ -205,6 +237,24 @@ public class Outline {
 				o.Write (", ");
 			i++;
 		}
+	}
+
+	void OutlineField (FieldInfo fi)
+	{
+		if (fi.IsPublic)   o.Write ("public ");
+		if (fi.IsFamily)   o.Write ("protected ");
+		if (fi.IsPrivate)  o.Write ("private ");
+		if (fi.IsAssembly) o.Write ("internal ");
+		if (fi.IsLiteral) o.Write ("const ");
+		o.Write (FormatType (fi.FieldType));
+		o.Write (" ");
+		o.Write (fi.Name);
+		if (fi.IsLiteral)
+		{
+			o.Write (" = ");
+			o.Write (fi.GetValue (this));
+		}
+		o.WriteLine (";");
 	}
 
 	static string GetMethodVisibility (MethodBase m)
