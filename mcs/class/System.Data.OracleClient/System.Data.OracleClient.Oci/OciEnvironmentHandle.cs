@@ -68,7 +68,7 @@ namespace System.Data.OracleClient.Oci {
 			info.ErrorCode = 0;
 			info.ErrorMessage = String.Empty;
 
-			OciGlue.OCIErrorGet (handle,
+			OciGlue.OCIErrorGet (Handle,
 					1,
 					IntPtr.Zero,
 					out info.ErrorCode,
