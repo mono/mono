@@ -1,3 +1,8 @@
+2003-10-01 Jackson Harper <jackson@latitudegeo.com>
+
+	* LabelInfo.cs: Fix tabbing, add ToString so labels are printed
+	properly in error messages.
+	
 2003-09-27 Jackson Harper <jackson@latitudegeo.com>
 
 	* MethodDef.cs: Allow PInvoke info to be added.
