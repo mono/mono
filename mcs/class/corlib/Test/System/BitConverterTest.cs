@@ -5,6 +5,7 @@
 //   Duco Fijma (duco@lorentz.xs4all.nl)
 //
 // (C) 2002 Duco Fijma
+// Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 
 using NUnit.Framework;
@@ -13,14 +14,9 @@ using System;
 namespace MonoTests.System
 {
 
-public class BitConverterTest : TestCase {
+[TestFixture]
+public class BitConverterTest : Assertion {
 	
-	public BitConverterTest () {}
-
-	protected override void SetUp () {}
-
-	protected override void TearDown() {}
-
 	public void TestIsLittleEndian ()
 	{
 		byte[] b;
@@ -532,5 +528,28 @@ public class BitConverterTest : TestCase {
 
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToUpperLimit () 
+	{
+		byte[] array = new byte [4];
+		BitConverter.ToInt32 (array, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToLowerLimit () 
+	{
+		byte[] array = new byte [4];
+		BitConverter.ToInt32 (array, Int32.MinValue);
+	}
+
+	[Test]
+	public void ToBoolean () 
+	{
+		byte[] array = new byte [2] { 0x01, 0x00 };
+		Assert ("True", BitConverter.ToBoolean (array, 0));
+		Assert ("False", !BitConverter.ToBoolean (array, 1));
+	}
 }
 }
