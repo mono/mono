@@ -1,3 +1,10 @@
+2003-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* object.c:
+	(mono_unhandled_exception): fill in the arguments for the
+	UnhandledException event. Only trigger that event for the default
+	domain (as MS does).
+
 2003-04-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c: Improve typed allocation stuff based on suggestions from
