@@ -1,3 +1,11 @@
+2002-11-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* UnicodeEncoding.cs: the bytemark should only be used to return
+	information in GetPreamble, not to actually encode the information
+	on the stream.  That is taken care of by the Stream classes.
+
+	* UTF8Encoding.cs: ditto.
+
 2002-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringBuilder.cs: only move the remaining chars in Remove.

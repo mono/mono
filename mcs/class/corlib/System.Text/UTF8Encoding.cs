@@ -50,8 +50,7 @@ public class UTF8Encoding : Encoding
 
 	// Internal version of "GetByteCount" which can handle a rolling
 	// state between multiple calls to this method.
-	private static int InternalGetByteCount (char[] chars, int index, int count, uint leftOver,
-						 bool emitIdentifier, bool flush)
+	private static int InternalGetByteCount (char[] chars, int index, int count, uint leftOver, bool flush)
 	{
 		// Validate the parameters.
 		if (chars == null) {
@@ -104,13 +103,13 @@ public class UTF8Encoding : Encoding
 		}
 
 		// Return the final length to the caller.
-		return length + (emitIdentifier ? 3 : 0);
+		return length;
 	}
 
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
 	{
-		return InternalGetByteCount (chars, index, count, 0, emitIdentifier, true);
+		return InternalGetByteCount (chars, index, count, 0, true);
 	}
 
 	// Convenience wrappers for "GetByteCount".
@@ -156,9 +155,9 @@ public class UTF8Encoding : Encoding
 	// Internal version of "GetBytes" which can handle a rolling
 	// state between multiple calls to this method.
 	private static int InternalGetBytes (char[] chars, int charIndex,
-									    int charCount, byte[] bytes,
-									    int byteIndex, ref uint leftOver,
-										bool emitIdentifier, bool flush)
+					     int charCount, byte[] bytes,
+					     int byteIndex, ref uint leftOver,
+					     bool flush)
 	{
 		// Validate the parameters.
 		if (chars == null) {
@@ -183,14 +182,6 @@ public class UTF8Encoding : Encoding
 		uint pair;
 		uint left = leftOver;
 		int posn = byteIndex;
-		if (emitIdentifier) {
-			if ((posn + 3) > length) {
-				throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-			}
-			bytes[posn++] = (byte)0xEF;
-			bytes[posn++] = (byte)0xBB;
-			bytes[posn++] = (byte)0xBF;
-		}
 		while (charCount > 0) {
 			// Fetch the next UTF-16 character pair value.
 			ch = chars[charIndex++];
@@ -272,8 +263,7 @@ public class UTF8Encoding : Encoding
 								 byte[] bytes, int byteIndex)
 	{
 		uint leftOver = 0;
-		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, 
-				ref leftOver, emitIdentifier, true);
+		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, ref leftOver, true);
 	}
 
 	// Convenience wrappers for "GetBytes".
@@ -302,14 +292,6 @@ public class UTF8Encoding : Encoding
 		int length = bytes.Length;
 		uint pair;
 		int posn = byteIndex;
-		if (emitIdentifier) {
-			if ((posn + 3) > length) {
-				throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
-			}
-			bytes[posn++] = (byte)0xEF;
-			bytes[posn++] = (byte)0xBB;
-			bytes[posn++] = (byte)0xBF;
-		}
 		while (charCount > 0) {
 			// Fetch the next UTF-16 character pair value.
 			ch = s[charIndex++];
@@ -614,7 +596,7 @@ public class UTF8Encoding : Encoding
 		if (charCount < 0) {
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_NonNegative"));
 		}
-		return charCount * 4 + (emitIdentifier ? 3 : 0);
+		return charCount * 4;
 	}
 
 	// Get the maximum number of characters needed to decode a
@@ -797,14 +779,13 @@ public class UTF8Encoding : Encoding
 		public override int GetByteCount (char[] chars, int index,
 					 int count, bool flush)
 		{
-			return InternalGetByteCount (chars, index, count, leftOver, emitIdentifier, flush);
+			return InternalGetByteCount (chars, index, count, leftOver, flush);
 		}
 		public override int GetBytes (char[] chars, int charIndex,
 					 int charCount, byte[] bytes, int byteCount, bool flush)
 		{
 			int result;
-			result = InternalGetBytes (chars, charIndex, charCount, bytes, byteCount,
-				 ref leftOver, emitIdentifier, flush);
+			result = InternalGetBytes (chars, charIndex, charCount, bytes, byteCount, ref leftOver, flush);
 			emitIdentifier = false;
 			return result;
 		}

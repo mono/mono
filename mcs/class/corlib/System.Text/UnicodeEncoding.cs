@@ -69,7 +69,7 @@ public class UnicodeEncoding : Encoding
 		if (count < 0 || count > (chars.Length - index)) {
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
-		return count * 2 + (byteOrderMark ? 2 : 0);
+		return count * 2;
 	}
 
 	// Convenience wrappers for "GetByteCount".
@@ -78,7 +78,7 @@ public class UnicodeEncoding : Encoding
 		if (s == null) {
 			throw new ArgumentNullException ("s");
 		}
-		return s.Length * 2 + (byteOrderMark ? 2 : 0);
+		return s.Length * 2;
 	}
 
 	// Get the bytes that result from encoding a character buffer.
@@ -100,26 +100,18 @@ public class UnicodeEncoding : Encoding
 		if (byteIndex < 0 || byteIndex > bytes.Length) {
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
-		if ((bytes.Length - byteIndex) < (charCount * 2 + (byteOrderMark ? 2 : 0))) {
+		if ((bytes.Length - byteIndex) < (charCount * 2)) {
 			throw new ArgumentException (_("Arg_InsufficientSpace"));
 		}
 		int posn = byteIndex;
 		char ch;
 		if (bigEndian) {
-			if (byteOrderMark) {
-				bytes[posn++] = (byte)0xFE;
-				bytes[posn++] = (byte)0xFF;
-			}
 			while (charCount-- > 0) {
 				ch = chars[charIndex++];
 				bytes[posn++] = (byte)(ch >> 8);
 				bytes[posn++] = (byte)ch;
 			}
 		} else {
-			if (byteOrderMark) {
-				bytes[posn++] = (byte)0xFF;
-				bytes[posn++] = (byte)0xFE;
-			} 
 			while (charCount-- > 0) {
 				ch = chars[charIndex++];
 				bytes[posn++] = (byte)ch;
@@ -148,26 +140,18 @@ public class UnicodeEncoding : Encoding
 		if (byteIndex < 0 || byteIndex > bytes.Length) {
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
-		if ((bytes.Length - byteIndex) < (charCount * 2 + (byteOrderMark ? 2 : 0))) {
+		if ((bytes.Length - byteIndex) < (charCount * 2)) {
 			throw new ArgumentException (_("Arg_InsufficientSpace"));
 		}
 		int posn = byteIndex;
 		char ch;
 		if (bigEndian) {
-			if (byteOrderMark) {
-				bytes[posn++] = (byte)0xFE;
-				bytes[posn++] = (byte)0xFF;
-			}
 			while (charCount-- > 0) {
 				ch = s[charIndex++];
 				bytes[posn++] = (byte)(ch >> 8);
 				bytes[posn++] = (byte)ch;
 			}
 		} else {
-			if (byteOrderMark) {
-				bytes[posn++] = (byte)0xFF;
-				bytes[posn++] = (byte)0xFE;
-			}
 			while (charCount-- > 0) {
 				ch = s[charIndex++];
 				bytes[posn++] = (byte)ch;
@@ -270,7 +254,7 @@ public class UnicodeEncoding : Encoding
 		if (charCount < 0) {
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_NonNegative"));
 		}
-		return charCount * 2 + (byteOrderMark ? 2 : 0);
+		return charCount * 2;
 	}
 
 	// Get the maximum number of characters needed to decode a
