@@ -1,3 +1,11 @@
+2002-04-30  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: If LocalDataStoreSlot already has data set, remove it
+	before adding a new one.
+
+	Use the Thread object destructor to tell the runtime to close the
+	thread handle.
+
 2002-04-14 Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* Interlocked.cs: made all methods icalls.

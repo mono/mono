@@ -140,6 +140,11 @@ namespace System.Threading
 		public static void SetData(LocalDataStoreSlot slot,
 					   object data) {
 			Hashtable slothash=GetTLSSlotHash();
+
+			if(slothash[slot]!=null) {
+				slothash.Remove(slot);
+			}
+			
 			slothash.Add(slot, data);
 		}
 
@@ -187,6 +192,9 @@ namespace System.Threading
 			// creates the new thread, but blocks it until
 			// Start() is called later.
 			system_thread_handle=Thread_internal(start);
+
+			// Should throw an exception here if
+			// Thread_internal returns NULL
 		}
 
 		[MonoTODO]
@@ -407,9 +415,13 @@ namespace System.Threading
 			// this thread should now suspend
 		}
 
-		[MonoTODO]
+		// Closes the system thread handle
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void Thread_free_internal(IntPtr handle);
+
 		~Thread() {
-			// FIXME
+			// Free up the handle
+			Thread_free_internal(system_thread_handle);
 		}
 
 		private void set_state(ThreadState set) {
