@@ -210,6 +210,7 @@ System.Xml.Serialization/XmlSerializationFixupCallback.cs
 System.Xml.Serialization/XmlSerializationReadCallback.cs
 System.Xml.Serialization/XmlSerializationReader.cs
 System.Xml.Serialization/XmlSerializationWriteCallback.cs
+System.Xml.Serialization/XmlSerializationWriter.cs
 System.Xml.Serialization/XmlSerializer.cs
 System.Xml.Serialization/XmlSerializerNamespaces.cs
 System.Xml.Serialization/XmlTextAttribute.cs
