@@ -1,4 +1,8 @@
 
+Tue Mar 19 18:15:29 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c: use unsigned for variables.
+
 Sat Mar 16 19:13:57 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c: handle TypeSpec token in memberref table dump.
