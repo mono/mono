@@ -36,7 +36,7 @@ using System.IO;
 using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
-using Mono.Xml; // only required for NET_2_0 (XmlFilterReader)
+using Mono.Xml; // only required for NET_2_0
 #if NET_2_0
 using MS.Internal.Xml; // only required for NET_2_0
 #endif
@@ -92,11 +92,15 @@ namespace System.Xml
 
 		public abstract bool HasValue { get; }
 
-		public abstract bool IsDefault { get; }
-
-		public abstract bool IsEmptyElement { get; }
-
 #if NET_2_0
+		public virtual bool IsDefault {
+			get { return false; }
+		}
+
+		public virtual bool IsEmptyElement {
+			get { return false; }
+		}
+
 		public virtual string this [int i] {
 			get { return GetAttribute (i); }
 		}
@@ -109,6 +113,10 @@ namespace System.Xml
 			get { return GetAttribute (name, namespaceURI); }
 		}
 #else
+		public abstract bool IsDefault { get; }
+
+		public abstract bool IsEmptyElement { get; }
+
 		public abstract string this [int i] { get; }
 
 		public abstract string this [string name] { get; }
@@ -153,9 +161,19 @@ namespace System.Xml
 
 		public abstract string Value { get; }
 
+#if NET_2_0
+		public virtual string XmlLang {
+			get { return String.Empty; }
+		}
+
+		public virtual XmlSpace XmlSpace {
+			get { return XmlSpace.None; }
+		}
+#else
 		public abstract string XmlLang { get; }
 
 		public abstract XmlSpace XmlSpace { get; }
+#endif
 
 		#endregion
 
@@ -720,7 +738,7 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlReader ReadSubtree ()
 		{
-			throw new NotImplementedException ();
+			return new SubtreeXmlReader (this);
 		}
 
 		[MonoTODO]
