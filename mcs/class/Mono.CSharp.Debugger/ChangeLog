@@ -1,5 +1,10 @@
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolWriter.cs (MonoSymbolWriter.ctor): We don't need the
+	`mbuilder_array' anymore.
+
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolWriter.cs (SourceFile): Derive from SourceFileEntry.
 	(SourceBlock): We don't need source lines here.
 	(SourceMethod): We're always constructed with source info.

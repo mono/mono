@@ -294,7 +294,6 @@ namespace Mono.CSharp.Debugger
 		protected ArrayList orphant_methods = null;
 		protected ArrayList methods = null;
 		protected Hashtable sources = null;
-		private ArrayList mbuilder_array = null;
 		private MonoSymbolFile file = null;
 
 		internal SourceMethod[] Methods {
@@ -319,14 +318,13 @@ namespace Mono.CSharp.Debugger
 		// Interface IMonoSymbolWriter
 		//
 
-		public MonoSymbolWriter (ModuleBuilder mb, ArrayList mbuilder_array)
+		public MonoSymbolWriter (ModuleBuilder mb)
 		{
 			this.module_builder = mb;
 			this.methods = new ArrayList ();
 			this.sources = new Hashtable ();
 			this.orphant_methods = new ArrayList ();
 			this.locals = new ArrayList ();
-			this.mbuilder_array = mbuilder_array;
 			this.file = new MonoSymbolFile ();
 		}
 
