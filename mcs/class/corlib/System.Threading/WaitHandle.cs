@@ -2,9 +2,10 @@
 // System.Threading.WaitHandle.cs
 //
 // Author:
-//   Dick Porter (dick@ximian.com)
+// 	Dick Porter (dick@ximian.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2002,2003 Ximian, Inc.	(http://www.ximian.com)
 //
 
 using System.Runtime.CompilerServices;
@@ -16,52 +17,46 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
 		
-		public static bool WaitAll(WaitHandle[] waitHandles) {
-			if(waitHandles.Length>64) {
-				throw new NotSupportedException("Too many handles");
+		static void CheckArray (WaitHandle [] handles)
+		{
+			if (handles == null)
+				throw new ArgumentNullException ("waitHandles");
+
+			int length = handles.Length;
+			if (length > 64)
+				throw new NotSupportedException ("Too many handles");
+
+			foreach (WaitHandle w in handles) {
+				if (w == null)
+					throw new ArgumentNullException ("waitHandles", "null handle");
+
+				if (w.os_handle == InvalidHandle)
+					throw new ArgumentException ("null element found", "waitHandle");
 			}
-			for(int i=0; i<waitHandles.Length; i++) {
-				if(waitHandles[i]==null) {
-					throw new ArgumentNullException("null handle");
-				}
-			}
-			
-			return(WaitAll_internal(waitHandles, Timeout.Infinite,
-						false));
+		}
+		
+		public static bool WaitAll(WaitHandle[] waitHandles)
+		{
+			CheckArray (waitHandles);
+			return(WaitAll_internal(waitHandles, Timeout.Infinite, false));
 		}
 
-		public static bool WaitAll(WaitHandle[] waitHandles,
-					   int millisecondsTimeout,
-					   bool exitContext) {
-			if(waitHandles.Length>64) {
-				throw new NotSupportedException("Too many handles");
-			}
-			for(int i=0; i<waitHandles.Length; i++) {
-				if(waitHandles[i]==null) {
-					throw new ArgumentNullException("null handle");
-				}
-			}
-			
+		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext)
+		{
+			CheckArray (waitHandles);
 			return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles,
 					   TimeSpan timeout,
-					   bool exitContext) {
+					   bool exitContext)
+		{
+			CheckArray (waitHandles);
 			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
 			
-			if(ms < 0 || ms > Int32.MaxValue) {
+			if(ms < 0 || ms > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException("Timeout out of range");
-			}
-			if(waitHandles.Length>64) {
-				throw new NotSupportedException("Too many handles");
-			}
-			for(int i=0; i<waitHandles.Length; i++) {
-				if(waitHandles[i]==null) {
-					throw new ArgumentNullException("null handle");
-				}
-			}
-			
+
 			return(WaitAll_internal(waitHandles, ms, exitContext));
 		}
 
@@ -69,53 +64,29 @@ namespace System.Threading
 		private static extern int WaitAny_internal(WaitHandle[] handles, int ms, bool exitContext);
 
 		// LAMESPEC: Doesn't specify how to signal failures
-		public static int WaitAny(WaitHandle[] waitHandles) {
-			if(waitHandles.Length>64) {
-				throw new NotSupportedException("Too many handles");
-			}
-			for(int i=0; i<waitHandles.Length; i++) {
-				if(waitHandles[i]==null) {
-					throw new ArgumentNullException("null handle");
-				}
-			}
-			
-			return(WaitAny_internal(waitHandles, Timeout.Infinite,
-						false));
+		public static int WaitAny(WaitHandle[] waitHandles)
+		{
+			CheckArray (waitHandles);
+			return(WaitAny_internal(waitHandles, Timeout.Infinite, false));
 		}
 
 		public static int WaitAny(WaitHandle[] waitHandles,
 					  int millisecondsTimeout,
-					  bool exitContext) {
-			if(waitHandles.Length>64) {
-				throw new NotSupportedException("Too many handles");
-			}
-			for(int i=0; i<waitHandles.Length; i++) {
-				if(waitHandles[i]==null) {
-					throw new ArgumentNullException("null handle");
-				}
-			}
-			
-			return(WaitAny_internal(waitHandles,
-						millisecondsTimeout,
-						exitContext));
+					  bool exitContext)
+		{
+			CheckArray (waitHandles);
+			return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
 		}
 
 		public static int WaitAny(WaitHandle[] waitHandles,
-					  TimeSpan timeout, bool exitContext) {
+					  TimeSpan timeout, bool exitContext)
+		{
+			CheckArray (waitHandles);
 			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
 			
-			if(ms < 0 || ms > Int32.MaxValue) {
+			if(ms < 0 || ms > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException("Timeout out of range");
-			}
-			if(waitHandles.Length>64) {
-				throw new NotSupportedException("Too many handles");
-			}
-			for(int i=0; i<waitHandles.Length; i++) {
-				if(waitHandles[i]==null) {
-					throw new ArgumentNullException("null handle");
-				}
-			}
-			
+
 			return(WaitAny_internal(waitHandles, ms, exitContext));
 		}
 
@@ -143,23 +114,31 @@ namespace System.Threading
 			GC.SuppressFinalize (this);
 		}
 
+		protected void CheckDisposed ()
+		{
+			if (disposed || os_handle == InvalidHandle)
+				throw new ObjectDisposedException (GetType ().FullName);
+		}
+		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
 
-		public virtual bool WaitOne() {
-			return(WaitOne_internal(os_handle, Timeout.Infinite,
-						false));
+		public virtual bool WaitOne()
+		{
+			CheckDisposed ();
+			return(WaitOne_internal(os_handle, Timeout.Infinite, false));
 		}
 
-		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext) {
-			return(WaitOne_internal(os_handle,
-						millisecondsTimeout,
-						exitContext));
+		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext)
+		{
+			CheckDisposed ();
+			return(WaitOne_internal(os_handle, millisecondsTimeout, exitContext));
 		}
 
-		public virtual bool WaitOne(TimeSpan timeout, bool exitContext) {
-			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
-			
+		public virtual bool WaitOne(TimeSpan timeout, bool exitContext)
+		{
+			int ms=Convert.ToInt32 (timeout.TotalMilliseconds);
+			CheckDisposed ();
 			return(WaitOne_internal(os_handle, ms, exitContext));
 		}
 

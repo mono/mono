@@ -1,4 +1,8 @@
 
+2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WaitHandle.cs: checks and exceptions.
+
 2003-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NativeEventCalls.cs: added CloseEvent_intenal.
