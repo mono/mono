@@ -130,7 +130,7 @@ namespace System
 
 		public static double Max (double val1, double val2)
 		{
-			if (val1 == Double.NaN || val2 == Double.NaN) {
+			if (Double.IsNaN (val1) || Double.IsNaN (val2)) {
 				return Double.NaN;
 			}
 			return (val1 > val2)? val1: val2;
@@ -138,7 +138,7 @@ namespace System
 
 		public static float Max (float val1, float val2)
 		{
-			if (val1 == Single.NaN || val2 == Single.NaN) {
+			if (Single.IsNaN (val1) || Single.IsNaN (val2)) {
 				return Single.NaN;
 			}
 			return (val1 > val2)? val1: val2;
@@ -195,7 +195,7 @@ namespace System
 
 		public static double Min (double val1, double val2)
 		{
-			if (val1 == Double.NaN || val2 == Double.NaN) {
+			if (Double.IsNaN (val1) || Double.IsNaN (val2)) {
 				return Double.NaN;
 			}
 			return (val1 < val2)? val1: val2;
@@ -203,7 +203,7 @@ namespace System
 
 		public static float Min (float val1, float val2)
 		{
-			if (val1 == Single.NaN || val2 == Single.NaN) {
+			if (Single.IsNaN (val1) || Single.IsNaN (val2)) {
 				return Single.NaN;
 			}
 			return (val1 < val2)? val1: val2;
@@ -302,7 +302,7 @@ namespace System
 
 		public static int Sign (double value)
 		{
-			if (value == Double.NaN)
+			if (Double.IsNaN (value))
 				throw new ArithmeticException ("NAN");
 			if (value > 0) return 1;
 			return (value == 0)? 0: -1;
@@ -310,7 +310,7 @@ namespace System
 
 		public static int Sign (float value)
 		{
-			if (value == Single.NaN)
+			if (Single.IsNaN (value))
 				throw new ArithmeticException ("NAN");
 			if (value > 0) return 1;
 			return (value == 0)? 0: -1;
