@@ -3,6 +3,9 @@
 	* TextBoxBase.cs: The previous method to enforce height yet remember
 	  the requested high was less than ideal, this is an attempt to do
 	  it better.
+	* Control.cs: Added comment about possible problem
+	* Copyright: Updated format
+	* GridItemType.cs: Fixed swapped values
 
 2005-02-15  Jackson Harper  <jackson@ximian.com>
 

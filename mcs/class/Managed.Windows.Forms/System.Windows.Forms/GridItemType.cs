@@ -30,9 +30,9 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum GridItemType 
 	{
-		ArrayValue	= 0,
+		Property	= 0,
 		Category	= 1,
-		Property	= 2,
+		ArrayValue	= 2,
 		Root		= 3
 	}
 }

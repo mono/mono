@@ -2874,6 +2874,8 @@ namespace System.Windows.Forms
 				return;
 			}
 
+			// FIXME - this thing is doing the wrong stuff, needs to be similar to SelectNextControl
+
 			index = parent.child_controls.IndexOf(this);
 			result = false;
 
@@ -2906,7 +2908,7 @@ namespace System.Windows.Forms
 				y = Top;
 			}
 
-			if ((specified & BoundsSpecified.Width)!= BoundsSpecified.Width) {
+			if ((specified & BoundsSpecified.Width) != BoundsSpecified.Width) {
 				width = Width;
 			}
 
@@ -3014,6 +3016,7 @@ namespace System.Windows.Forms
 			}
 
 			XplatUI.GetWindowPos(this.Handle, this is Form, out x, out y, out width, out height, out client_width, out client_height);
+
 			UpdateBounds(x, y, width, height, client_width, client_height);
 		}
 
