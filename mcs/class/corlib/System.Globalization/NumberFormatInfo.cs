@@ -61,6 +61,11 @@ namespace System.Globalization {
 
 		internal NumberFormatInfo (int lcid)
 		{
+			//FIXME: should add more LCID
+			// CultureInfo uses this one also.
+			if (lcid != 0x007F)
+				lcid = 0x007F;
+			
 			switch (lcid){
 
 				// The Invariant Culture Info ID.

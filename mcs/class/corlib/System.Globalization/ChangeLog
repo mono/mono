@@ -1,3 +1,8 @@
+2002-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NumberFormatInfo.cs: always set the values for the invariant culture
+	until there are more cultures supported.
+
 2002-04-22  Nick Drochak  <ndrochak@gol.com>
 
 	* NumberStyles.cs: Add [Serializable].
