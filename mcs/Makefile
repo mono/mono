@@ -1,5 +1,5 @@
 thisdir := .
-SUBDIRS := build jay mcs class mbas nunit20 monoresgen ilasm tools tests errors docs
+SUBDIRS := build jay mcs monoresgen class mbas nunit20 ilasm tools tests errors docs
 OVERRIDE_BARE_TARGETS = hells yeah
 include build/rules.make
 
