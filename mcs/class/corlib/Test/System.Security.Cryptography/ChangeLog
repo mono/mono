@@ -1,3 +1,7 @@
+2003-06-23  Nick Drochak <ndrochak@gol.com>
+
+        * MACTripleDESTest.cs: Adjust for .NET 1.1.
+
 2003-06-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests2.cs: Converted tests to NUnit2 format.
