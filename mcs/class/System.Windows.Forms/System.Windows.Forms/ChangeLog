@@ -1,4 +1,10 @@
 2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* HScrollBar.cs
+	* ScrollBar.cs
+	* VScrollBar.cs : implemented
+	* ScrollEventArgs.cs: typo fix
+
+2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* AxHost.cs
 	* MonthCalendar.cs : fixed issues breaking the build
 

@@ -30,7 +30,7 @@ namespace System.Windows.Forms {
 		//
 		public ScrollEventArgs(ScrollEventType type, int newVal)
 		{
-			this.newvalue = newvalue;
+			this.newvalue = newVal;
 			this.type = type;
 		}
 		

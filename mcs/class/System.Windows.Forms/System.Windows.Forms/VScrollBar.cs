@@ -4,18 +4,17 @@
 // Author:
 //   John Rebbeck <john@rebent.com>
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 using System;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
 	public class VScrollBar : ScrollBar {
 
-		private RightToLeft rightToLeft;
-		// --- Properties ---
-		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams createParams = base.CreateParams;
@@ -24,32 +23,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		protected override Size DefaultSize {
-			get {
-				//Set to Microsoft Default
-				return new Size(16,80);
-			}
+			get { return new Size(13,80); }
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override RightToLeft RightToLeft {
-
-			get {
-				return rightToLeft;
-			}
-			set {
-				rightToLeft = value;
-				//FixMe: invalidate to force redraw.
-				//Invalidate();
-			}
+			get { return base.RightToLeft;  }
+			set { base.RightToLeft = value; }
 		}
 
-		// --- Constructor ---
-		[MonoTODO]
 		public VScrollBar()
 		{
-			rightToLeft = RightToLeft.Inherit;
+			RightToLeft = RightToLeft.No;
 		}
 	}
 }
