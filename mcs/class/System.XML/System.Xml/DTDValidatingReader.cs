@@ -228,7 +228,7 @@ namespace Mono.Xml
 				return false;
 
 			bool b = reader.MoveToElement ();
-			if (!b)
+			if (!b && !IsDefault)
 				return false;
 			currentAttribute = null;
 			consumedAttribute = false;
@@ -719,8 +719,6 @@ namespace Mono.Xml
 						break;
 					case XmlTokenizedType.IDREFS:
 						foreach (string idref in list) {
-							// FIXME: is this normalization required?
-//							string each = FilterNormalization (def.Name, idref);
 							if (!idList.Contains (idref))
 								missingIDReferences.Add (idref);
 						}

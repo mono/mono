@@ -50,12 +50,14 @@ namespace System.Xml
 				namespaceURI = String.Empty;
 
 			// Prefix "xml" should be also checked (http://www.w3.org/XML/xml-names-19990114-errata#NE05)
-			// but MS.NET ignores such case.
-			if (prefix == "xmlns" || (prefix == "" && localName == "xmlns"))
-				if (namespaceURI != XmlNamespaceManager.XmlnsXmlns)
+			// but MS.NET ignores such case
+			if (checkNamespace) {
+				if (prefix == "xmlns" || (prefix == "" && localName == "xmlns"))
+					if (namespaceURI != XmlNamespaceManager.XmlnsXmlns)
+						throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
+				else if (prefix == "xml" && namespaceURI != XmlNamespaceManager.XmlnsXml)
 					throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
-			else if (prefix == "xml" && namespaceURI != XmlNamespaceManager.XmlnsXml)
-					throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
+			}
 
 			// There are no means to identify the DOM is namespace-
 			// aware or not, so we can only check Name validity.

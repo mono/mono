@@ -95,12 +95,12 @@ namespace System.Xml
 				if (FirstChild != null && FirstChild.NodeType == XmlNodeType.Text)
 					FirstChild.Value = value;
 				else {
-					if(FirstChild != null) {
+					if (FirstChild != null) {
 						foreach (XmlNode n in ChildNodes)
 							this.RemoveChild (n);
 					}
 					// creates new Text node
-					AppendChild(OwnerDocument.CreateTextNode(value));
+					AppendChild (OwnerDocument.CreateTextNode (value));
 				}
 			}
 		}
@@ -321,12 +321,11 @@ namespace System.Xml
 
 		public virtual string SetAttribute (string localName, string namespaceURI, string value)
 		{
-			XmlAttribute attr = attributes[localName, namespaceURI];
-			if(attr == null)
-			{
-				attr = OwnerDocument.CreateAttribute(localName, namespaceURI);
+			XmlAttribute attr = attributes [localName, namespaceURI];
+			if (attr == null) {
+				attr = OwnerDocument.CreateAttribute (localName, namespaceURI);
 				attr.Value = value;
-				attributes.SetNamedItem(attr);
+				attributes.SetNamedItem (attr);
 			}
 			else
 				attr.Value = value;
@@ -339,35 +338,38 @@ namespace System.Xml
 				throw new InvalidOperationException (
 					"Specified attribute is already an attribute of another element.");
 
-			XmlNode oldAttr = Attributes.SetNamedItem(newAttr);
-			return oldAttr != null ? oldAttr as XmlAttribute : null;
+			return Attributes.SetNamedItem (newAttr) as XmlAttribute;
 		}
 
 		public virtual XmlAttribute SetAttributeNode (string localName, string namespaceURI)
 		{
-			XmlDocument xmlDoc = this.OwnerDocument;
-			XmlAttribute xmlAttribute = new XmlAttribute (String.Empty, localName, namespaceURI, xmlDoc, false, true);
-			return this.attributes.Append (xmlAttribute);
+			// Note that this constraint is only for this method.
+			// SetAttribute() allows prefixed name.
+			XmlConvert.VerifyNCName (localName);
+
+			return Attributes.Append (OwnerDocument.CreateAttribute (String.Empty, localName, namespaceURI, false, true));
 		}
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			foreach(XmlNode childNode in ChildNodes)
-				childNode.WriteTo(w);
+			int count = ChildNodes.Count;
+			for (int i = 0; i < count; i++)
+				ChildNodes [i].WriteTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)
 		{
 			w.WriteStartElement (NamespaceURI == null || NamespaceURI.Length == 0 ? String.Empty : Prefix, LocalName, NamespaceURI);
 
-			foreach(XmlAttribute attributeNode in Attributes)
-				if (attributeNode.Specified)
-					attributeNode.WriteTo(w);
+			for (int i = 0; i < Attributes.Count; i++)
+				if (Attributes [i].Specified)
+					Attributes [i].WriteTo(w);
+
 			if (IsEmpty)
 				w.WriteEndElement ();
 			else {
-				WriteContentTo(w);
-				w.WriteFullEndElement();
+				WriteContentTo (w);
+				w.WriteFullEndElement ();
 			}
 		}
 

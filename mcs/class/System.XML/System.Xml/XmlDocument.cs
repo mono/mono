@@ -249,10 +249,15 @@ namespace System.Xml
 
 		public virtual XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI)
 		{
+			return CreateAttribute (prefix, localName, namespaceURI, false, true);
+		}
+
+		internal XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI, bool atomizedNames, bool checkNamespace)
+		{
 			if ((localName == null) || (localName == String.Empty))
 				throw new ArgumentException ("The attribute local name cannot be empty.");
 
-			return new XmlAttribute (prefix, localName, namespaceURI, this, false, true);
+			return new XmlAttribute (prefix, localName, namespaceURI, this, atomizedNames, checkNamespace);
 		}
 
 		public virtual XmlCDataSection CreateCDataSection (string data)
@@ -588,8 +593,10 @@ namespace System.Xml
 				loadMode = true;
 				do {
 					XmlNode n = ReadNode (xmlReader);
-					if(n == null) break;
-					AppendChild (n);
+					if (n == null)
+						break;
+					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
+						AppendChild (n);
 				} while (true);
 			} finally {
 				loadMode = false;
@@ -676,7 +683,7 @@ namespace System.Xml
 				reader.MoveToFirstAttribute ();
 			else if(reader.NodeType != XmlNodeType.Attribute)
 				throw new InvalidOperationException (MakeReaderErrorMessage ("bad position to read attribute.", reader));
-			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI, false, false); // different NameTable
 			ReadAttributeNodeValue (reader, attribute);
 
 			// Keep the current reader position
@@ -691,10 +698,10 @@ namespace System.Xml
 		}
 
 		// Reads attribute from XmlReader and then creates attribute value children. XmlAttribute also uses this.
-		internal void ReadAttributeNodeValue(XmlReader reader, XmlAttribute attribute)
+		internal void ReadAttributeNodeValue (XmlReader reader, XmlAttribute attribute)
 		{
-			while(reader.ReadAttributeValue ()) {
-				if(reader.NodeType == XmlNodeType.EntityReference)
+			while (reader.ReadAttributeValue ()) {
+				if (reader.NodeType == XmlNodeType.EntityReference)
 					// FIXME: if DocumentType is available, then try to resolve it.
 					attribute.AppendChild (CreateEntityReference (reader.Name));
 				// FIXME: else if(NodeType == EndEntity) -- reset BaseURI and so on -- ;
@@ -706,10 +713,6 @@ namespace System.Xml
 
 		public virtual XmlNode ReadNode (XmlReader reader)
 		{
-			XmlNode resultNode = null;
-			XmlNode newNode = null;
-			XmlNode currentNode = null;
-
 			switch (reader.ReadState) {
 			case ReadState.Interactive:
 				break;
@@ -720,146 +723,108 @@ namespace System.Xml
 				return null;
 			}
 
-			int startDepth = reader.Depth;
-			bool ignoredWhitespace;
-			bool reachedEOF = false;
+			XmlNode n;
+			switch (reader.NodeType) {
 
-			do {
-				ignoredWhitespace = false;
-				if (reader.ReadState != ReadState.Interactive)
-					if (reachedEOF)
-						throw new Exception ("XML Reader reached to end while reading node.");
-					else
-						reachedEOF = true;
-				switch (reader.NodeType) {
+			case XmlNodeType.Attribute:
+				return ReadAttributeNode (reader);
 
-				case XmlNodeType.Attribute:
-					newNode = ReadAttributeNode (reader);
-					break;
+			case XmlNodeType.CDATA:
+				n = CreateCDataSection (reader.Value);
+				break;
 
-				case XmlNodeType.CDATA:
-					newNode = CreateCDataSection (reader.Value);
-					if(currentNode != null)
-						currentNode.AppendChild (newNode);
-					break;
+			case XmlNodeType.Comment:
+				n = CreateComment (reader.Value);
+				break;
 
-				case XmlNodeType.Comment:
-					newNode = CreateComment (reader.Value);
-					if(currentNode != null)
-						currentNode.AppendChild (newNode);
-					break;
+			case XmlNodeType.Element:
+				XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+				element.IsEmpty = reader.IsEmptyElement;
 
-				case XmlNodeType.Element:
-					XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-					element.IsEmpty = reader.IsEmptyElement;
-
-					// set the element's attributes.
-					while (reader.MoveToNextAttribute ()) {
+				// set the element's attributes.
+				if (reader.MoveToFirstAttribute ()) {
+					do {
 						element.SetAttributeNode (ReadAttributeNode (reader));
-					}
-
+					} while (reader.MoveToNextAttribute ());
 					reader.MoveToElement ();
+				}
 
-					// MS.NET adds element to document after its attributes are filled.
-					if(currentNode != null)
-						currentNode.AppendChild (element);
-					else
-						resultNode = element;
+				int depth = reader.Depth;
 
-					if (!reader.IsEmptyElement)
-						currentNode = element;
-
-					break;
-
-				case XmlNodeType.EndElement:
-					if (currentNode == null)
-						throw new XmlException ("Unexpected end element.");
-					else if (currentNode.Name != reader.Name)
-						throw new XmlException (reader as IXmlLineInfo, String.Format ("mismatch end tag. Expected {0} but found {1}", currentNode.Name, reader.Name));
-					currentNode = currentNode.ParentNode;
-					break;
-
-				case XmlNodeType.EndEntity:
-					break;	// no operation
-
-				case XmlNodeType.ProcessingInstruction:
-					newNode = CreateProcessingInstruction (reader.Name, reader.Value);
-					if(currentNode != null)
-						currentNode.AppendChild (newNode);
-					break;
-
-				case XmlNodeType.Text:
-					newNode = CreateTextNode (reader.Value);
-					if(currentNode != null)
-						currentNode.AppendChild (newNode);
-					break;
-
-				case XmlNodeType.XmlDeclaration:
-					// empty strings are dummy, then gives over setting value contents to setter.
-					newNode = CreateXmlDeclaration ("1.0" , String.Empty, String.Empty);
-					((XmlDeclaration)newNode).Value = reader.Value;
-					if(currentNode != null)
-						throw new XmlException (reader as IXmlLineInfo, "XmlDeclaration at invalid position.");
-					break;
-
-				case XmlNodeType.DocumentType:
-					if(currentNode != null)
-						throw new XmlException (reader as IXmlLineInfo, "XmlDocumentType at invalid position.");
-
-					DTDObjectModel dtd = null;
-					XmlTextReader xtReader = reader as XmlTextReader;
-					if (xtReader != null)
-						dtd = xtReader.DTD;
-					XmlNodeReader xnReader = reader as XmlNodeReader;
-					if (xnReader != null)
-						dtd = xnReader.GetInternalParserContext ().Dtd;
-					XmlValidatingReader xvReader = reader as XmlValidatingReader;
-					if (xvReader != null)
-						dtd = xvReader.GetInternalParserContext ().Dtd;
-					IHasXmlParserContext ctxReader = reader as IHasXmlParserContext;
-					if (ctxReader != null)
-						dtd = ctxReader.ParserContext.Dtd;
-
-					if (dtd != null)
-						newNode = CreateDocumentType (dtd);
-					else
-						newNode = CreateDocumentType (reader.Name, reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
-
-					break;
-
-				case XmlNodeType.EntityReference:
-					if (this.loadMode && this.DocumentType != null &&
-						DocumentType.Entities.GetNamedItem (reader.Name) == null)
-						throw new XmlException ("Reference to undeclared entity was found.");
-					newNode = CreateEntityReference (reader.Name);
-					if(currentNode != null)
-						currentNode.AppendChild (newNode);
-					break;
-
-				case XmlNodeType.SignificantWhitespace:
-					newNode = CreateSignificantWhitespace (reader.Value);
-					if(currentNode != null)
-						currentNode.AppendChild (newNode);
-					break;
-
-				case XmlNodeType.Whitespace:
-					if(PreserveWhitespace) {
-						newNode = CreateWhitespace (reader.Value);
-						if(currentNode != null)
-							currentNode.AppendChild (newNode);
-					}
-					else
-						ignoredWhitespace = true;
+				if (element.IsEmpty) {
+					n = element;
 					break;
 				}
-				// Read next, except for reading attribute node.
-				if (!(newNode is XmlAttribute) && !reader.Read ())
-					break;
-			} while (ignoredWhitespace || reader.Depth > startDepth ||
-				(reader.Depth == startDepth && reader.NodeType == XmlNodeType.EndElement));
-			if (startDepth < reader.Depth && reader.EOF)
-				throw new XmlException ("Unexpected end of xml reader.");
-			return resultNode != null ? resultNode : newNode;
+
+				reader.Read ();
+				while (reader.Depth > depth) {
+					n = ReadNode (reader);
+					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
+						element.AppendChild (n);
+				}
+				n = element;
+				break;
+
+			case XmlNodeType.ProcessingInstruction:
+				n = CreateProcessingInstruction (reader.Name, reader.Value);
+				break;
+
+			case XmlNodeType.Text:
+				n = CreateTextNode (reader.Value);
+				break;
+
+			case XmlNodeType.XmlDeclaration:
+				n = CreateXmlDeclaration ("1.0" , String.Empty, String.Empty);
+				n.Value = reader.Value;
+				break;
+
+			case XmlNodeType.DocumentType:
+				DTDObjectModel dtd = null;
+				XmlTextReader xtReader = reader as XmlTextReader;
+				if (xtReader != null)
+					dtd = xtReader.DTD;
+				XmlNodeReader xnReader = reader as XmlNodeReader;
+				if (xnReader != null)
+					dtd = xnReader.GetInternalParserContext ().Dtd;
+				XmlValidatingReader xvReader = reader as XmlValidatingReader;
+				if (xvReader != null)
+					dtd = xvReader.GetInternalParserContext ().Dtd;
+				IHasXmlParserContext ctxReader = reader as IHasXmlParserContext;
+				if (ctxReader != null)
+					dtd = ctxReader.ParserContext.Dtd;
+
+				if (dtd != null)
+					n = CreateDocumentType (dtd);
+				else
+					n = CreateDocumentType (reader.Name, reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
+				break;
+
+			case XmlNodeType.EntityReference:
+				if (this.loadMode && this.DocumentType != null &&
+					DocumentType.Entities.GetNamedItem (reader.Name) == null)
+					throw new XmlException ("Reference to undeclared entity was found.");
+
+				n = CreateEntityReference (reader.Name);
+				break;
+
+			case XmlNodeType.SignificantWhitespace:
+				n = CreateSignificantWhitespace (reader.Value);
+				break;
+
+			case XmlNodeType.Whitespace:
+				n = CreateWhitespace (reader.Value);
+				break;
+
+			case XmlNodeType.None:
+				return null;
+
+			default:
+				// No idea why MS does throw NullReferenceException ;-P
+				throw new NullReferenceException ("Unexpected node type " + reader.NodeType + ".");
+			}
+
+			reader.Read ();
+			return n;
 		}
 
 		private string MakeReaderErrorMessage (string message, XmlReader reader)

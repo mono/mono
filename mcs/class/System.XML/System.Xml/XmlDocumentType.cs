@@ -49,12 +49,12 @@ namespace System.Xml
 			foreach (DTDEntityDeclaration decl in DTD.EntityDecls.Values) {
 				XmlNode n = new XmlEntity (decl.Name, decl.NotationName,
 					decl.PublicId, decl.SystemId, OwnerDocument);
-				entities.Nodes.Add (n);
+				entities.SetNamedItem (n);
 			}
 			foreach (DTDNotationDeclaration decl in DTD.NotationDecls.Values) {
 				XmlNode n = new XmlNotation (decl.LocalName, decl.Prefix,
 					decl.PublicId, decl.SystemId, OwnerDocument);
-				notations.Nodes.Add (n);
+				notations.SetNamedItem (n);
 			}
 		}
 

@@ -11,8 +11,6 @@
 
 // FIXME:
 //
-//   NameTables aren't being used completely yet.
-//
 //   Some thought needs to be given to performance. There's too many
 //   strings being allocated.
 //
@@ -140,10 +138,11 @@ namespace System.Xml
 		public override int Depth
 		{
 			get {
+				int nodeTypeMod = currentToken.NodeType == XmlNodeType.Element  ? 0 : -1;
 				if (currentAttributeValue >= 0)
-					return elementDepth + 2; // inside attribute value.
+					return nodeTypeMod + elementDepth + 2; // inside attribute value.
 				else if (currentAttribute >= 0)
-					return elementDepth + 1;
+					return nodeTypeMod + elementDepth + 1;
 				return elementDepth;
 			}
 		}
@@ -1667,7 +1666,7 @@ namespace System.Xml
 
 		// The reader is positioned on the first character of
 		// the attribute name.
-		private void ReadAttributes (bool endsWithQuestion)
+		private void ReadAttributes (bool isXmlDecl)
 		{
 			int peekChar = -1;
 			bool requireWhitespace = false;
@@ -1699,7 +1698,7 @@ namespace System.Xml
 				if (!SkipWhitespace ())
 					requireWhitespace = true;
 				peekChar = PeekChar ();
-				if (endsWithQuestion) {
+				if (isXmlDecl) {
 					if (peekChar == '?')
 						break;
 				}
@@ -1810,19 +1809,7 @@ namespace System.Xml
 					Expect (';');
 					int predefined = XmlChar.GetPredefinedEntity (entName);
 					if (predefined < 0) {
-						DTDEntityDeclaration entDecl = 
-							DTD == null ? null : DTD.EntityDecls [entName];
-						if (DTD != null && resolver != null && entDecl == null)
-							throw new XmlException (this as IXmlLineInfo, "Entity declaration does not exist.");
-						if (entDecl != null && entDecl.HasExternalReference)
-							throw new XmlException (this as IXmlLineInfo,
-								"Reference to external entities is not allowed in the value of an attribute.");
-						if (isStandalone && !entDecl.IsInternalSubset)
-							throw new XmlException (this as IXmlLineInfo,
-								"Reference to external entities is not allowed in the value of an attribute.");
-						if (entDecl != null && entDecl.EntityValue.IndexOf ('<') >= 0)
-							throw new XmlException (this as IXmlLineInfo,
-								"Attribute must not contain character '<' either directly or indirectly by way of entity references.");
+						CheckAttributeEntityReferenceWFC (entName);
 						currentAttributeValueToken.Value = CreateValueString ();
 						currentAttributeValueToken.NodeType = XmlNodeType.Text;
 						if (!isNewToken)
@@ -1850,6 +1837,24 @@ namespace System.Xml
 			}
 			currentAttributeToken.ValueTokenEndIndex = currentAttributeValue;
 
+		}
+
+		private void CheckAttributeEntityReferenceWFC (string entName)
+		{
+			DTDEntityDeclaration entDecl = 
+				DTD == null ? null : DTD.EntityDecls [entName];
+			if (DTD != null && resolver != null && entDecl == null)
+				throw new XmlException (this, "Referenced entity does not exist.");
+
+			if (entDecl == null)
+				return;
+
+			if (entDecl.HasExternalReference)
+				throw new XmlException (this, "Reference to external entities is not allowed in the value of an attribute.");
+			if (isStandalone && !entDecl.IsInternalSubset)
+				throw new XmlException (this, "Reference to external entities is not allowed in the internal subset.");
+			if (entDecl.EntityValue.IndexOf ('<') >= 0)
+				throw new XmlException (this, "Attribute must not contain character '<' either directly or indirectly by way of entity references.");
 		}
 
 		// The reader is positioned on the first character

@@ -85,11 +85,11 @@ namespace System.Xml
 
 			XmlEntity ent = doctype.Entities.GetNamedItem (Name) as XmlEntity;
 			if (ent == null)
-				InsertBefore (OwnerDocument.CreateTextNode (String.Empty), null, false);
+				InsertBefore (OwnerDocument.CreateTextNode (String.Empty), null, false, true);
 			else {
 				ent.SetEntityContent ();
 				for (int i = 0; i < ent.ChildNodes.Count; i++)
-					InsertBefore (ent.ChildNodes [i].CloneNode (true), null, false);
+					InsertBefore (ent.ChildNodes [i].CloneNode (true), null, false, true);
 			}
 		}
 	}

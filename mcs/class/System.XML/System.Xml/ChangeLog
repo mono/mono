@@ -1,3 +1,24 @@
+2004-02-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : Fixed MoveToElement() that causes incorrect
+	  IsDefault and Depth.
+	* XmlAttribute.cs : Fixed .ctor(). Omit more namespace check when 
+	  checkNamespace = false.
+	* XmlNamedNodeMap.cs : Fixed SetNamedItem() to raise events.
+	* XmlAttributeCollection.cs : Reimplemented InsertAfter to use
+	  InsertBefore() (similar to XmlNode).
+	* XmlDocument.cs : Added internal .ctor().  Reimplemented ReadNode()
+	  as recursive, to make event order compatible.
+	* XmlDocumentType.cs : Use SetNamedItem() (to raise events).
+	* XmlElement.cs : Some refactory.  Fixed SetAttributeNode() with 
+	  string name to block prefixed name.
+	* XmlEntity.cs : Don't raise events on setting contents.
+	* XmlNode.cs : Some refactory. Added raiseEvent argument to internal
+	  InsertBefore().
+	* XmlEntityReference.cs : related fix for XmlNode change.
+	* XmlTextReader.cs : When the reader is on "attributes" of xmldecl or
+	  doctype, Depth 1 lower than usual attribute. Split large function.
+
 2004-02-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvert.cs : ToSingle() and ToDouble() should be culture 

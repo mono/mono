@@ -146,7 +146,7 @@ namespace System.Xml
 			do {
 				XmlNode n = OwnerDocument.ReadNode (xmlReader);
 				if(n == null) break;
-				InsertBefore (n, null, false);
+				InsertBefore (n, null, false, false);
 			} while (true);
 		}
 		#endregion

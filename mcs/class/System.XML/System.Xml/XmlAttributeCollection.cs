@@ -83,58 +83,39 @@ namespace System.Xml
 
 		public virtual XmlAttribute InsertAfter (XmlAttribute newNode, XmlAttribute refNode)
 		{
-			if(newNode.OwnerDocument != this.ownerDocument)
-				throw new ArgumentException ("different document created this newNode.");
-
-			ownerDocument.onNodeInserting (newNode, null);
-
-			int pos = Nodes.Count + 1;
-			if(refNode != null)
-			{
-				for(int i=0; i<Nodes.Count; i++)
-				{
-					XmlNode n = Nodes [i] as XmlNode;
-					if(n == refNode)
-					{
-						pos = i + 1;
-						break;
-					}
-				}
-				if(pos > Nodes.Count)
-					throw new XmlException ("refNode not found in this collection.");
+			if (refNode == null) {
+				if (Nodes.Count == 0)
+					return InsertBefore (newNode, null);
+				else
+					return InsertBefore (newNode, this [0]);
 			}
-			else
-				pos = 0;
-			SetNamedItem (newNode, pos);
+			for (int i = 0; i < Nodes.Count; i++)
+				if (refNode == Nodes [i])
+					return InsertBefore (newNode, Nodes.Count == i + 1 ? null : this [i + 1]);
 
-			ownerDocument.onNodeInserted (newNode, null);
-
-			return newNode;
+			throw new ArgumentException ("refNode not found in this collection.");
 		}
 
 		public virtual XmlAttribute InsertBefore (XmlAttribute newNode, XmlAttribute refNode)
 		{
-			if(newNode.OwnerDocument != ownerDocument)
+			if (newNode.OwnerDocument != ownerDocument)
 				throw new ArgumentException ("different document created this newNode.");
 
 			ownerDocument.onNodeInserting (newNode, null);
 
 			int pos = Nodes.Count;
-			if(refNode != null)
-			{
-				for(int i=0; i<Nodes.Count; i++)
-				{
+			if (refNode != null) {
+				for (int i = 0; i < Nodes.Count; i++) {
 					XmlNode n = Nodes [i] as XmlNode;
-					if(n == refNode)
-					{
+					if (n == refNode) {
 						pos = i;
 						break;
 					}
 				}
-				if(pos == Nodes.Count)
-					throw new XmlException ("refNode not found in this collection.");
+				if (pos == Nodes.Count)
+					throw new ArgumentException ("refNode not found in this collection.");
 			}
-			SetNamedItem (newNode, pos);
+			SetNamedItem (newNode, pos, false);
 
 			ownerDocument.onNodeInserted (newNode, null);
 
@@ -208,8 +189,15 @@ namespace System.Xml
 			XmlAttribute attr = node as XmlAttribute;
 			if (attr.OwnerElement != null)
 				throw new InvalidOperationException ("This attribute is already set to another element.");
+
+			ownerElement.OwnerDocument.onNodeInserting (node, ownerElement);
+
 			attr.SetOwnerElement (ownerElement);
-			return AdjustIdenticalAttributes (node as XmlAttribute, base.SetNamedItem (node, -1) as XmlAttribute);
+			XmlNode n = AdjustIdenticalAttributes (node as XmlAttribute, base.SetNamedItem (node, -1, false));
+
+			ownerElement.OwnerDocument.onNodeInserted (node, ownerElement);
+
+			return n as XmlAttribute;
 		}
 
 		internal void AddIdenticalAttribute ()

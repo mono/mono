@@ -88,29 +88,45 @@ namespace System.Xml
 
 		public virtual XmlNode SetNamedItem (XmlNode node)
 		{
-			return SetNamedItem(node, -1);
+			return SetNamedItem (node, -1, true);
 		}
 
-		internal XmlNode SetNamedItem (XmlNode node, int pos)
+		public virtual XmlNode SetNamedItem (XmlNode node, bool raiseEvent)
+		{
+			return SetNamedItem (node, -1, raiseEvent);
+		}
+
+		internal XmlNode SetNamedItem (XmlNode node, int pos, bool raiseEvent)
 		{
 			if (readOnly || (node.OwnerDocument != parent.OwnerDocument))
 				throw new ArgumentException ("Cannot add to NodeMap.");
 
-			foreach (XmlNode x in nodeList)
-				if(x.LocalName == node.LocalName && x.NamespaceURI == node.NamespaceURI) {
-					nodeList.Remove (x);
-					if (pos < 0)
-						nodeList.Add (node);
-					else
-						nodeList.Insert (pos, node);
-					return x;
+			if (raiseEvent)
+				parent.OwnerDocument.onNodeInserting (node, parent);
+
+			try {
+				foreach (XmlNode x in nodeList) {
+					if(x.LocalName == node.LocalName && x.NamespaceURI == node.NamespaceURI) {
+						nodeList.Remove (x);
+						if (pos < 0)
+							nodeList.Add (node);
+						else
+							nodeList.Insert (pos, node);
+						return x;
+					}
 				}
 			
-			if(pos < 0)
-				nodeList.Add (node);
-			else
-				nodeList.Insert(pos, node);
-			return null;
+				if(pos < 0)
+					nodeList.Add (node);
+				else
+					nodeList.Insert (pos, node);
+
+				return null;
+			} finally {
+				if (raiseEvent)
+					parent.OwnerDocument.onNodeInserted (node, parent);
+			}
+
 		}
 
 		internal ArrayList Nodes { get { return nodeList; } }
