@@ -7,7 +7,7 @@
 //   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //	 Alexandre Pigolkine (pigolkine@gxm.de)
 //
-// (C) Ximian, Inc., 2002
+// (C) Ximian, Inc., 2002/3
 //
 using System;
 using System.Drawing;

@@ -1,4 +1,8 @@
 2003-04-6  DennisHayes <dennish@raytek.com>
+	* Converted to Unix newlines
+	* Changed copyright from 2002 to 2002/3
+
+2003-04-6  DennisHayes <dennish@raytek.com>
 	* CheckOutList Update, removed everyone from list, active developers need to readd.
 	* Binding.cs Marked some funmctions for Compact frame work
 	* RadioButton.cs //removed inherited members 

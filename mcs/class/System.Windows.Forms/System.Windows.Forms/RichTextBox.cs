@@ -353,6 +353,11 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
+		public override bool Equals(object o)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MonoTODO]
 		public override int GetHashCode() {

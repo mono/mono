@@ -6,7 +6,7 @@
 //	Dennis Hayes (dennish@raytek.com)
 //	Alexandre Pigolkine (pigolkine@gxm.de)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.ComponentModel;
 namespace System.Windows.Forms {

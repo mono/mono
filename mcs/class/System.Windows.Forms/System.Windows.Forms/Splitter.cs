@@ -212,7 +212,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void SetBoundsCore( int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			//throw new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 		bool IMessageFilter.PreFilterMessage(ref Message m){
 			throw new NotImplementedException ();

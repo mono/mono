@@ -5,7 +5,7 @@
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //	Dennis hayes (dennish@raytek.com)
 //
-// (C) Ximian, Inc 2002
+// (C) Ximian, Inc 2002/3
 //
 
 namespace System.Windows.Forms {

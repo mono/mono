@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.ComponentModel;
 using System.Drawing;

@@ -6,7 +6,7 @@
 //   Dennis Hayes (dennish@Raytek.com)
 //   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
-// (C) Ximian, Inc., 2002
+// (C) Ximian, Inc., 2002/3
 //
 using System.Drawing;
 using System.ComponentModel;

@@ -4,7 +4,7 @@
 // Author:
 //   Jaak Simm (jaaksimm@firm.ee)
 //	Dennis Hayes (dennish@raytek.com)
-// (C) Ximian, Inc 2002
+// (C) Ximian, Inc 2002/3
 //
 using System.Runtime.InteropServices;
 

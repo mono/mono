@@ -5,7 +5,7 @@
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) Ximian, Inc., 2002
+// (C) Ximian, Inc., 2002/3
 //
 
 using System.Drawing;
