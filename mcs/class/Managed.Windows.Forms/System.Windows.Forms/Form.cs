@@ -49,7 +49,7 @@ namespace System.Windows.Forms {
 		FormBorderStyle formBorderStyle = FormBorderStyle.Sizable;
 		private static bool		autoscale;
 		private static Size		autoscale_base_size;
-		private bool			is_modal;
+		internal bool			is_modal;
 		internal bool			end_modal;			// This var is being monitored by the application modal loop
 		private IButtonControl		accept_button;
 		private IButtonControl		cancel_button;
