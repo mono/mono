@@ -270,8 +270,12 @@ namespace System
 			// was added as a small fix to a very obscure bug.
 			// It makes a small difference when start_index is
 			// outside the range and length==0. 
-			if (startIndex < 0 || length < 0 || startIndex >= value.Length)
+			if (startIndex < 0 || length < 0 || startIndex >= value.Length) {
+				// special (but valid) case (e.g. new byte [0])
+				if ((startIndex == 0) && (value.Length == 0))
+					return String.Empty;
 				throw new ArgumentOutOfRangeException ("startIndex");
+			}
 			// note: re-ordered to avoid possible integer overflow
 			if (startIndex > value.Length - length)
 				throw new ArgumentException ("startIndex + length > value.Length");

@@ -1,3 +1,8 @@
+2004-11-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BitConverter.cs: Added support for special case when ToString is 
+	called with (new byte [0]).
+
 2004-11-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomain.cs (CreateDomain): Handle the case when info is null. 
