@@ -1,3 +1,7 @@
+2002-04-16  Duncan Mak  <duncan@ximian.com>
+
+	* XmlParserContext.cs (NameTable): Fixed a typo in the set block.
+
 2002-04-12  Duncan Mak  <duncan@ximian.com>
 
 	* XmlAttribute.cs (Prefix): Added preliminary code for set block,

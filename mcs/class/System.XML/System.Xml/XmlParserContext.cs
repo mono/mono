@@ -158,7 +158,7 @@ namespace System.Xml
 
 		public XmlNameTable NameTable {
 			get { return nameTable; }
-			set { nameTable = nameTable; }
+			set { nameTable = value; }
 		}
 
 		public string PublicId {
