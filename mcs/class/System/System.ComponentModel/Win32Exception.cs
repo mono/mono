@@ -46,14 +46,13 @@ namespace System.ComponentModel
 			}
 		}
 
-		[MonoTODO]
-		public override void GetObjectData(SerializationInfo info,
-						   StreamingContext context) {
-			if(info==null) {
-				throw new ArgumentNullException();
-			}
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			if (info==null)
+				throw new ArgumentNullException ("info");
 
-			throw new NotImplementedException();
+			info.AddValue ("native_error_code", native_error_code);
+			base.GetObjectData (info, context);
 		}
 
 		private static Hashtable w32_errors = new Hashtable();
