@@ -67,7 +67,7 @@ namespace System.Drawing
 			else if (strFormat.Equals (ImageFormat.Wmf.ToString ()))
 				return ImageFormat.Wmf;
 			else
-				return new NotSupportedException ("ImageFormatConverter cannot convert from " + val.GetType ());
+				throw new NotSupportedException ("ImageFormatConverter cannot convert from " + val.GetType ());
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
@@ -75,7 +75,7 @@ namespace System.Drawing
 			if ((val is ImageFormat) && (destType == typeof (string)))
 				return val.ToString ();
 			
-			return new NotSupportedException ("ImageFormatConverter can not convert from " + val.GetType ());
+			throw new NotSupportedException ("ImageFormatConverter can not convert from " + val.GetType ());
 		}
 
 		[MonoTODO ("Implement")]
