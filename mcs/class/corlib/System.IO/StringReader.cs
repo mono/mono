@@ -37,12 +37,9 @@ namespace System.IO {
 	[Serializable]
 	public class StringReader : TextReader {
 
-		private string source;
-		private char[] sourceChars;
-
-		private int nextChar;
-		private int sourceLength;
-		private bool disposed = false;
+		string source;
+		int nextChar;
+		int sourceLength;
 
 		public StringReader( string s ) {
 
@@ -52,17 +49,16 @@ namespace System.IO {
 			this.source = s;
 			nextChar = 0;
 			sourceLength = s.Length;
-			sourceChars = s.ToCharArray();
 		}
 
-		public override void Close() {
-			Dispose( true );
-			disposed = true;
+		public override void Close ()
+		{
+			Dispose (true);
 		}
 
 		protected override void Dispose (bool disposing)
 		{
-			sourceChars = null;
+			source = null;
 			base.Dispose (disposing);
 		}
 
@@ -94,28 +90,26 @@ namespace System.IO {
 		// the actual number of characters read, or zero if the end of the string
 		// has been reached and no characters are read.
 
-		public override int Read ([In, Out] char[] buffer, int index, int count )
+		public override int Read ([In, Out] char[] buffer, int index, int count)
 		{
 			CheckObjectDisposedException ();
 
-			if( buffer == null ) {
+			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			} else if( buffer.Length - index < count ) {
-				throw new ArgumentException();
-			} else if( index < 0 || count < 0 ) {
-				throw new ArgumentOutOfRangeException();
-			}
+			if (buffer.Length - index < count)
+				throw new ArgumentException ();
+			if (index < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ();
 
 			int charsToRead;
 
 			// reordered to avoir possible integer overflow
-			if (nextChar > sourceLength - count) {
+			if (nextChar > sourceLength - count)
 				charsToRead = sourceLength - nextChar;
-			} else {
+			else
 				charsToRead = count;
-			}
-
-			Array.Copy(sourceChars, nextChar, buffer, index, charsToRead );
+			
+			source.CopyTo (nextChar, buffer, index, charsToRead);
 
 			nextChar += charsToRead;
 
@@ -175,10 +169,9 @@ namespace System.IO {
 
 		private void CheckObjectDisposedException ()
 		{
-			if (disposed) {
+			if (source == null)
 				throw new ObjectDisposedException ("StringReader", 
 					Locale.GetText ("Cannot read from a closed StringReader"));
-			}
 		}
 	}
 }

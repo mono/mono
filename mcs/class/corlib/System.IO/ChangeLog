@@ -1,3 +1,11 @@
+2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* StringReader.cs (StreamReader): remove sourceChars and disposed
+	variables
+	(Read): Copy directly from the string, rather than a char []
+	(Dispose, CheckObjectDisposedException): the flag for being
+	disposed is now source == null.
+
 2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Stream.cs: Close() does not call Flush(). Fixes bug #65340.
