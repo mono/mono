@@ -1,3 +1,8 @@
+2004-01-01 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Remove the Nop's that Miguel put
+	in by mistake.
+
 2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* report.cs, codegen.cs: Give the real stack trace to

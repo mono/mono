@@ -6209,10 +6209,7 @@ namespace Mono.CSharp {
 							ig.Emit (OpCodes.Ldelema, etype);
 						}
 
-						ig.Emit (OpCodes.Nop);
 						e.Emit (ec);
-						ig.Emit (OpCodes.Nop);
-						ig.Emit (OpCodes.Nop);
 
                                                 if (dims == 1)
                                                         ArrayAccess.EmitStoreOpcode (ig, array_element_type);
