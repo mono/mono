@@ -1,3 +1,13 @@
+2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_emit_native_wrapper): New helper function
+	extracted from mono_marshal_get_native_wrapper.
+
+	* marshal.c (mono_marshal_get_native_func_wrapper): New helper function
+	to create wrappers around native functions.
+
+	* marshal.c (mono_ftnptr_to_delegate): Add support for creating 
+	delegates for arbitrary function pointers. Fixes #71472.
 
 Tue Feb 15 11:01:09 CET 2005 Paolo Molaro <lupus@ximian.com>
 
