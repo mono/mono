@@ -8,56 +8,35 @@
 // (C) 2004 Novell (http://www.novell.com)
 //
 
-
-using System.Security.Cryptography;
-
 namespace System.Security.Cryptography {
 	
-	/// <summary>
-	/// C# implementation of the SHA1 cryptographic hash function.
-	/// LAMESPEC?: Basically the same thing as SHA1Managed except for how its implemented.
-	/// </summary>
 	public class SHA256Managed : SHA256 {
+
 		private const int BLOCK_SIZE_BYTES =  64;
 		private const int HASH_SIZE_BYTES  =  32;
-		private const int HASH_SIZE_BITS   = 256;
-		[CLSCompliant(false)] private uint[] _H;
-		[CLSCompliant(false)] private uint[] K;
-		[CLSCompliant(false)] private uint count;
+		private uint[] _H;
+		private uint[] K;
+		private uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
 	
-		/// <summary>
-		/// Creates a new SHA256Managed class.
-		/// </summary>
 		public SHA256Managed () 
 		{
-			_H = new uint[8];
-			HashSizeValue = HASH_SIZE_BITS;
-			_ProcessingBuffer = new byte[BLOCK_SIZE_BYTES];
-			Initialize();
+			_H = new uint [8];
+			_ProcessingBuffer = new byte [BLOCK_SIZE_BYTES];
+			Initialize ();
 		}
 
-
-		/// <summary>
-		/// Internal function handling a subset of the algorithm.
-		/// </summary>
 		private uint Ch (uint u, uint v, uint w) 
 		{
 			return (u&v) ^ (~u&w);
 		}
 
-		/// <summary>
-		/// Internal function handling a subset of the algorithm.
-		/// </summary>
 		private uint Maj (uint u, uint v, uint w) 
 		{
 			return (u&v) ^ (u&w) ^ (v&w);
 		}
 
-		/// <summary>
-		/// Internal function handling a subset of the algorithm.
-		/// </summary>
 		private uint Ro0 (uint x) 
 		{
 			return ((x >> 7) | (x << 25))
@@ -65,9 +44,6 @@ namespace System.Security.Cryptography {
 				^ (x >> 3);
 		}
 
-		/// <summary>
-		/// Internal function handling a subset of the algorithm.
-		/// </summary>
 		private uint Ro1 (uint x) 
 		{
 			return ((x >> 17) | (x << 15))
@@ -75,9 +51,6 @@ namespace System.Security.Cryptography {
 				^ (x >> 10);
 		}
 
-		/// <summary>
-		/// Internal function handling a subset of the algorithm.
-		/// </summary>
 		private uint Sig0 (uint x) 
 		{
 			return ((x >> 2) | (x << 30))
@@ -85,9 +58,6 @@ namespace System.Security.Cryptography {
 				^ ((x >> 22) | (x << 10));
 		}
 
-		/// <summary>
-		/// Internal function handling a subset of the algorithm.
-		/// </summary>
 		private uint Sig1 (uint x) 
 		{
 			return ((x >> 6) | (x << 26))
@@ -95,12 +65,6 @@ namespace System.Security.Cryptography {
 				^ ((x >> 25) | (x << 7));
 		}
 
-		/// <summary>
-		/// Drives the hashing function.
-		/// </summary>
-		/// <param name="rgb">Byte array containing the data to hash.</param>
-		/// <param name="start">Where in the input buffer to start.</param>
-		/// <param name="size">Size in bytes of the data in the buffer to hash.</param>
 		protected override void HashCore (byte[] rgb, int start, int size) 
 		{
 			int i;
@@ -132,15 +96,12 @@ namespace System.Security.Cryptography {
 			}
 		}
 	
-		/// <summary>
-		/// This finalizes the hash.  Takes the data from the chaining variables and returns it.
-		/// </summary>
 		protected override byte[] HashFinal () 
 		{
 			byte[] hash = new byte[32];
 			int i, j;
 
-			ProcessFinalBlock(_ProcessingBuffer, 0, _ProcessingBufferCount);
+			ProcessFinalBlock (_ProcessingBuffer, 0, _ProcessingBufferCount);
 
 			for (i=0; i<8; i++) {
 				for (j=0; j<4; j++) {
@@ -152,9 +113,6 @@ namespace System.Security.Cryptography {
 			return hash;
 		}
 
-		/// <summary>
-		/// Resets the class after use.  Called automatically after hashing is done.
-		/// </summary>
 		public override void Initialize () 
 		{
 			count = 0;
@@ -170,11 +128,6 @@ namespace System.Security.Cryptography {
 			_H[7] = 0x5BE0CD19;
 		}
 
-		/// <summary>
-		/// This is the meat of the hash function.  It is what processes each block one at a time.
-		/// </summary>
-		/// <param name="inputBuffer">Byte array to process data from.</param>
-		/// <param name="inputOffset">Where in the byte array to start processing.</param>
 		private void ProcessBlock (byte[] inputBuffer, int inputOffset) 
 		{
 			uint a, b, c, d, e, f, g, h;
@@ -230,13 +183,6 @@ namespace System.Security.Cryptography {
 			_H[7] += h;
 		}
 	
-		/// <summary>
-		/// Pads and then processes the final block.
-		/// Non-standard.
-		/// </summary>
-		/// <param name="inputBuffer">Buffer to grab data from.</param>
-		/// <param name="inputOffset">Position in buffer in bytes to get data from.</param>
-		/// <param name="inputCount">How much data in bytes in the buffer to use.</param>
 		private void ProcessFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
 			byte[] fooBuffer;

@@ -13,27 +13,20 @@
 // The MS Framework includes two (almost) identical class for SHA1.
 //	SHA1Managed is a 100% managed implementation.
 //	SHA1CryptoServiceProvider (this file) is a wrapper on CryptoAPI.
-// Mono must provide those two class for binayry compatibility.
+// Mono must provide those two class for binary compatibility.
 // In our case both class are wrappers around a managed internal class SHA1Internal.
 
 namespace System.Security.Cryptography {
 
-	/// <summary>
-	/// C# implementation of the SHA1 cryptographic hash function.
-	/// LAMESPEC?: Basically the same thing as SHA1Managed except for how its implemented.
-	/// </summary>
 	internal class SHA1Internal {
+	
 		private const int BLOCK_SIZE_BYTES =  64;
 		private const int HASH_SIZE_BYTES  =  20;
-		private const int HASH_SIZE_BITS   = 160;
-		[CLSCompliant(false)] private uint[] _H;  // these are my chaining variables
-		[CLSCompliant(false)] private uint count;
+		private uint[] _H;  // these are my chaining variables
+		private uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
 
-		/// <summary>
-		/// Creates a new SHA1CryptoServiceProvider.
-		/// </summary>
 		public SHA1Internal () 
 		{
 			_H = new uint[5];
@@ -42,12 +35,6 @@ namespace System.Security.Cryptography {
 			Initialize();
 		}
 
-		/// <summary>
-		/// Drives the hashing function.
-		/// </summary>
-		/// <param name="rgb">Byte array containing the data to hash.</param>
-		/// <param name="start">Where in the input buffer to start.</param>
-		/// <param name="size">Size in bytes of the data in the buffer to hash.</param>
 		public void HashCore (byte[] rgb, int start, int size) 
 		{
 			int i;
@@ -78,29 +65,21 @@ namespace System.Security.Cryptography {
 			}
 		}
 	
-		/// <summary>
-		/// This finalizes the hash.  Takes the data from the chaining variables and returns it.
-		/// </summary>
 		public byte[] HashFinal () 
 		{
 			byte[] hash = new byte[20];
-			int i, j;
 
-			ProcessFinalBlock(_ProcessingBuffer, 0, _ProcessingBufferCount);
+			ProcessFinalBlock (_ProcessingBuffer, 0, _ProcessingBufferCount);
 
-			for (i=0; i<5; i++) {
-				for (j=0; j<4; j++) {
-					hash[i*4+j] = (byte)(_H[i] >> (8*(3-j)));
+			for (int i=0; i<5; i++) {
+				for (int j=0; j<4; j++) {
+					hash [i*4+j] = (byte)(_H[i] >> (8*(3-j)));
 				}
 			}
 
 			return hash;
 		}
 
-		
-		/// <summary>
-		/// Resets the class after use.  Called automatically after hashing is done.
-		/// </summary>
 		public void Initialize () 
 		{
 			count = 0;
@@ -113,12 +92,7 @@ namespace System.Security.Cryptography {
 			_H[4] = 0xC3D2E1F0;
 		}
 
-		/// <summary>
-		/// This is the meat of the hash function.  It is what processes each block one at a time.
-		/// </summary>
-		/// <param name="inputBuffer">Byte array to process data from.</param>
-		/// <param name="inputOffset">Where in the byte array to start processing.</param>
-		public void ProcessBlock(byte[] inputBuffer, int inputOffset) 
+		private void ProcessBlock(byte[] inputBuffer, int inputOffset) 
 		{
 			uint[] buff = new uint[80];
 			uint a, b, c, d, e;
@@ -143,7 +117,6 @@ namespace System.Security.Cryptography {
 			c = _H[2];
 			d = _H[3];
 			e = _H[4];
-
 
 			// This function was unrolled because it seems to be doubling our performance with current compiler/VM.
 			// Possibly roll up if this changes.
@@ -210,8 +183,6 @@ namespace System.Security.Cryptography {
 			a += ((b << 5) | (b >> 27)) + (((d ^ e) & c) ^ e) + 0x5A827999 + buff[19];
 			c = (c << 30) | (c >> 2);
 
-
-
 			// ---- Round 2 --------
   
 			e += ((a << 5) | (a >> 27)) + (b ^ c ^ d) + 0x6ED9EBA1 + buff[20];
@@ -274,8 +245,6 @@ namespace System.Security.Cryptography {
 			a += ((b << 5) | (b >> 27)) + (c ^ d ^ e) + 0x6ED9EBA1 + buff[39];
 			c = (c << 30) | (c >> 2);
 
-
-
 			// ---- Round 3 --------
   
 			e += ((a << 5) | (a >> 27)) + ((b&c) | (b&d) | (c&d)) + 0x8F1BBCDC + buff[40];
@@ -337,8 +306,6 @@ namespace System.Security.Cryptography {
 
 			a += ((b << 5) | (b >> 27)) + ((c&d) | (c&e) | (d&e)) + 0x8F1BBCDC + buff[59];
 			c = (c << 30) | (c >> 2);
-
-
 
 			// ---- Round 4 --------
   
@@ -410,26 +377,15 @@ namespace System.Security.Cryptography {
 			_H[4] += e;
 		}
 	
-		/// <summary>
-		/// Pads and then processes the final block.
-		/// Non-standard.
-		/// </summary>
-		/// <param name="inputBuffer">Buffer to grab data from.</param>
-		/// <param name="inputOffset">Position in buffer in bytes to get data from.</param>
-		/// <param name="inputCount">How much data in bytes in the buffer to use.</param>
-		public void ProcessFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount) 
+		private void ProcessFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
-			byte[] fooBuffer;
-			int paddingSize;
 			int i;
-			uint size;
-
-			paddingSize = (int)(56 - (inputCount + count) % BLOCK_SIZE_BYTES);
+			int paddingSize = (int)(56 - (inputCount + count) % BLOCK_SIZE_BYTES);
 
 			if (paddingSize < 1)
 				paddingSize += BLOCK_SIZE_BYTES;
 
-			fooBuffer = new byte[inputCount+paddingSize+8];
+			byte[] fooBuffer = new byte[inputCount+paddingSize+8];
 
 			for (i=0; i<inputCount; i++) {
 				fooBuffer[i] = inputBuffer[i+inputOffset];
@@ -440,8 +396,8 @@ namespace System.Security.Cryptography {
 				fooBuffer[i] = 0x00;
 			}
 
-			size = (uint)(count+inputCount);
-			size *= 8;  // I deal in bytes.  They algorythm deals in bits.
+			// I deal in bytes. The algorithm deals in bits.
+			uint size = (uint)((count+inputCount) << 3);
 
 			fooBuffer[inputCount+paddingSize]   = 0x00;
 			fooBuffer[inputCount+paddingSize+1] = 0x00;
@@ -499,4 +455,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-
