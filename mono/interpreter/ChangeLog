@@ -1,3 +1,7 @@
+2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* interp.c: Added support for context static fields.
+
 2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (mono_create_method_pointer): New function which contains
