@@ -1,3 +1,8 @@
+2002-03-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_create_jit_trampoline): bug fix: preserve
+	caller saved registers.  
+
 2002-03-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: use x86_widen_reg for CONV opcodes
