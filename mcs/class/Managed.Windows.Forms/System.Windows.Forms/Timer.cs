@@ -31,18 +31,22 @@ namespace System.Windows.Forms {
 	public class Timer : Component {
 
 		private System.Timers.Timer timer;
-
 		private IContainer container;
 
-		public Timer () : this (null)
+		public Timer ()
 		{
-		}
-
-		public Timer (IContainer container)
-		{
-			container.Add (this);
 			timer = new System.Timers.Timer ();
 			timer.Elapsed += new System.Timers.ElapsedEventHandler (ElapsedEventHandler);
+		}
+
+		public Timer (IContainer container) : this ()
+		{
+			container.Add (this);
+		}
+
+		~Timer ()
+		{
+			Dispose (false);
 		}
 
 		public bool Enabled {
@@ -84,9 +88,14 @@ namespace System.Windows.Forms {
 			timer.Dispose ();
 		}
 
+		private void TickHandler (object sender, EventArgs e)
+		{
+			OnTick (e);
+		}
+
 		private void ElapsedEventHandler (object sender, System.Timers.ElapsedEventArgs e)
 		{
-			OnTick (EventArgs.Empty);
+			Control.BeginInvokeInternal (new EventHandler (TickHandler), new object [] { this, e });
 		}
 		
 	}
