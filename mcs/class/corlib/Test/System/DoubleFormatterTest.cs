@@ -902,6 +902,14 @@ namespace MonoTests.System {
 			FormatStringTest ("DblFn2 #382", NumberFormat, Double.PositiveInfinity, "P9", "Oneindig");  
 			FormatStringTest ("DblFn2 #383", NumberFormat, Double.PositiveInfinity, "P67", "Oneindig");  
 		}
+
+		[Test]
+		public void TestNumberDecimals ()
+		{
+			NumberFormatInfo nfi = new NumberFormatInfo ();
+			nfi.NumberDecimalDigits = 5;
+			FormatStringTest ("#1", nfi, 70.50, "N", "70.50000");
+		}
 	}
 }
 		

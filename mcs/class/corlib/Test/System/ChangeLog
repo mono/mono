@@ -1,3 +1,8 @@
+2004-03-21  Jackson Harper  <jackson@ximian.com>
+
+	* DoubleFormatterTest.cs: test setting the number of decimal
+	digits.
+
 2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConvertTest.cs: Added another test showing that input length 
