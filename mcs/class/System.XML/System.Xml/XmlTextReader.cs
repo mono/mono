@@ -176,14 +176,8 @@ namespace System.Xml
 		}
 #endif
 
-		public override bool EOF
-		{
-			get
-			{
-				return
-					readState == ReadState.EndOfFile ||
-					readState == ReadState.Closed;
-			}
+		public override bool EOF {
+			get { return readState == ReadState.EndOfFile; }
 		}
 
 #if NET_2_0
@@ -1304,6 +1298,9 @@ namespace System.Xml
 					"Multiple document element was detected.");
 			currentState = XmlNodeType.Element;
 
+			currentLinkedNodeLineNumber = line;
+			currentLinkedNodeLinePosition = column;
+
 			parserContext.NamespaceManager.PushScope ();
 
 			string name = ReadName ();
@@ -1405,6 +1402,9 @@ namespace System.Xml
 			if (currentState != XmlNodeType.Element)
 				throw new XmlException (this as IXmlLineInfo,
 					"End tag cannot appear in this state.");
+
+			currentLinkedNodeLineNumber = line;
+			currentLinkedNodeLinePosition = column;
 
 			string name = ReadName ();
 			if (elementNameStackPos == 0)
