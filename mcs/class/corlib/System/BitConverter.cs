@@ -247,9 +247,12 @@ namespace System
 			// was added as a small fix to a very obscure bug.
 			// It makes a small difference when start_index is
 			// outside the range and length==0. 
-			if (startIndex < 0 || length < 0 || startIndex + length > value.Length || startIndex >= value.Length) {
+			if (startIndex < 0 || length < 0 || startIndex >= value.Length)
 				throw new ArgumentOutOfRangeException ("startIndex");
-			}
+			// note: re-ordered to avoid possible integer overflow
+			if (startIndex > value.Length - length)
+				throw new ArgumentException ("startIndex + length > value.Length");
+
 			string ret = "";
 			int end = startIndex + length;
 

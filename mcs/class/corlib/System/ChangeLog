@@ -1,5 +1,7 @@
 2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Array.cs: Fixed possible integer overflow.
+	* BitConverter.cs: Fixed a possible integer overflow in ToString.
 	* Guid.cs: Added an internal method to create a random Guid without
 	using CryptoConfig (which is heavy on first use). This is only used
 	in S.R.E.ModuleBuilder to speedup MCS compilation.

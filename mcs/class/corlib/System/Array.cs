@@ -523,7 +523,8 @@ namespace System
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
 					"Value has to be >= 0."));
-			if (index + length > array.GetLowerBound (0) + array.GetLength (0))
+			// re-ordered to avoid possible integer overflow
+			if (index > array.GetLowerBound (0) + array.GetLength (0) - length)
 				throw new ArgumentException (Locale.GetText (
 					"index and length do not specify a valid range in array."));
 			if (!(value is IComparable))
@@ -547,7 +548,8 @@ namespace System
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
 					"Value has to be >= 0."));
-			if (index + length > array.GetLowerBound (0) + array.GetLength (0))
+			// re-ordered to avoid possible integer overflow
+			if (index > array.GetLowerBound (0) + array.GetLength (0) - length)
 				throw new ArgumentException (Locale.GetText (
 					"index and length do not specify a valid range in array."));
 
@@ -604,7 +606,8 @@ namespace System
 				throw new IndexOutOfRangeException ("index < lower bound");
 			index = index - low;
 
-			if (index + length > array.Length)
+			// re-ordered to avoid possible integer overflow
+			if (index > array.Length - length)
 				throw new IndexOutOfRangeException ("index + length > size");
 
 			for (int i = 0; i < length; i++) 
@@ -654,7 +657,8 @@ namespace System
 			int source_pos = sourceIndex - sourceArray.GetLowerBound (0);
 			int dest_pos = destinationIndex - destinationArray.GetLowerBound (0);
 
-			if (source_pos + length > sourceArray.Length || dest_pos + length > destinationArray.Length)
+			// re-ordered to avoid possible integer overflow
+			if (source_pos > sourceArray.Length - length || dest_pos > destinationArray.Length - length)
 				throw new ArgumentException ("length");
 
 			if (sourceArray.Rank != destinationArray.Rank)
@@ -756,7 +760,8 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 
-			if (count < 0 || startIndex < array.GetLowerBound (0) || startIndex + count - 1 > array.GetUpperBound (0))
+			// re-ordered to avoid possible integer overflow
+			if (count < 0 || startIndex < array.GetLowerBound (0) || startIndex - 1 > array.GetUpperBound (0) - count)
 				throw new ArgumentOutOfRangeException ();
 
 			int max = startIndex + count;
@@ -832,7 +837,8 @@ namespace System
 			if (index < array.GetLowerBound (0) || length < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (index + length > array.GetUpperBound (0) + 1)
+			// re-ordered to avoid possible integer overflow
+			if (index > array.GetUpperBound (0) + 1 - length)
 				throw new ArgumentException ();
 
 			for (int i = 0; i < length / 2; i++)
