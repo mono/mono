@@ -5473,11 +5473,11 @@ namespace Mono.CSharp {
 			bool old_unsafe = ec.InUnsafe;
 			ec.InUnsafe = InUnsafe;
 			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
-			ec.InUnsafe = old_unsafe;
 			if (texpr == null)
 				return false;
 
 			MemberType = texpr.ResolveType (ec);
+			ec.InUnsafe = old_unsafe;
 
 			if (!CheckBase ())
 				return false;

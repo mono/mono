@@ -1,3 +1,8 @@
+2004-10-18  Raja R Harinath  <rharinath@novell.com>
+
+	* class.cs (FieldMember.DoDefine): Reset ec.InUnsafe after doing
+	the ResolveType.
+
 2004-10-17  John Luke  <john.luke@gmail.com>
 
 	* class.cs (Operator.GetSignatureForError): use CSharpName
