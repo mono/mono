@@ -1,3 +1,8 @@
+2004-04-29 Marek Safar <marek.safar@seznam.cz>
+
+	* cs0629.cs,
+	* cs1667-3.cs: 2 new error tests.
+
 2004-04-12 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0109.cs: New test.
