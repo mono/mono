@@ -174,8 +174,16 @@ namespace Mono.Data.SqliteClient
                 }
 
                 public IDbTransaction BeginTransaction ()
-                {
-                    return null;
+		{
+                        if (state != ConnectionState.Open)
+				throw new InvalidOperationException("Invalid operation: The connection is close");
+
+			SqliteTransaction t = new SqliteTransaction();
+			t.Connection = this;
+			SqliteCommand cmd = this.CreateCommand();
+			cmd.CommandText = "BEGIN";
+			cmd.ExecuteNonQuery();
+			return t;
                 }
 
                 public IDbTransaction BeginTransaction (IsolationLevel il)
