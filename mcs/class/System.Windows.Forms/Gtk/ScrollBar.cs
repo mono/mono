@@ -174,7 +174,8 @@ namespace System.Windows.Forms {
 
 		internal protected void changed_cb (object o, EventArgs args)
 		{
-			ValueChanged (o, args);
+			if (ValueChanged != null)
+				ValueChanged (this, args);
 		}
 		
 		internal protected void ConnectToChanged ()
