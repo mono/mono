@@ -358,15 +358,48 @@ namespace System.Collections {
 		}
 
 		public virtual void CopyTo (Array array) {
-			System.Array.Copy (dataArray, 0, array, 0, count);
+			if (null == array)
+				throw new ArgumentNullException("array");
+			if (array.Rank > 1)
+				throw new ArgumentException("array cannot be multidimensional");
+
+			System.Array.Copy (dataArray, 0, array, 0, this.count);
 		}
 
 		public virtual void CopyTo (Array array, int arrayIndex) {
-			System.Array.Copy (dataArray, 0, array, arrayIndex, count);
+			if (null == array)
+				throw new ArgumentNullException("array");
+			if (arrayIndex < 0)
+				throw new ArgumentOutOfRangeException("arrayIndex");
+			if (array.Rank > 1)
+				throw new ArgumentException("array cannot be multidimensional");
+			if (arrayIndex >= array.Length)
+				throw new ArgumentException("arrayIndex is greater than or equal to array's length");
+			if (this.count > array.Length - arrayIndex)
+				throw new ArgumentException("this ArrayList has more items than the space available in array from arrayIndex to the end of array");
+			
+			System.Array.Copy (dataArray, 0, array, arrayIndex, this.count);
 		}
 
 		public virtual void CopyTo (int index, Array array,
 					    int arrayIndex, int count) {
+			if (null == array)
+				throw new ArgumentNullException("array");
+			if (arrayIndex < 0)
+				throw new ArgumentOutOfRangeException("arrayIndex");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException("index");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count");
+			if (index >= this.count)
+				throw new ArgumentException("index is greater than or equal to the source ArrayList.Count");
+			if (array.Rank > 1)
+				throw new ArgumentException("array cannot be multidimensional");
+			if (arrayIndex >= array.Length)
+				throw new ArgumentException("arrayIndex is greater than or equal to array's length");
+			if (this.count > array.Length - arrayIndex)
+				throw new ArgumentException("this ArrayList has more items than the space available in array from arrayIndex to the end of array");
+
 			System.Array.Copy (dataArray, index, array, arrayIndex, count);
 		}
 
