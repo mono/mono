@@ -4,6 +4,9 @@
 	overflow errors when valuetypes are allocated in a loop. Fixes
 	#27420. Is the new code still faster than using malloc/free ?
 
+	* interp.c (interp_mono_runtime_invoke): Unbox value type instances
+	before calling the method. Fixes appdomain2.exe.
+
 	* interp.c: Fix warnings.
 	
 	* interp.c: Report unhandled exceptions correctly.
