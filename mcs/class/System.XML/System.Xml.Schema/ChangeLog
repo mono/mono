@@ -1,5 +1,11 @@
 2004-04-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaComplexType.cs : Set basetype as ur-type for such complex
+	  type that has an immediate Particle (W3C specified as restriction
+	  of ur-type).
+
+2004-04-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaAttribute.cs : When type was inline simple type, it is not
 	  validated correctly.
 	* XmlSchemaSimpleType.cs : When Content was restriction, DataType was

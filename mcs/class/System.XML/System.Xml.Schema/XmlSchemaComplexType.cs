@@ -436,6 +436,8 @@ namespace System.Xml.Schema
 				else
 					resolvedContentType = XmlSchemaContentType.ElementOnly;
 			}
+			if (this != AnyType)
+				BaseXmlSchemaTypeInternal = XmlSchemaComplexType.AnyType;
 		}
 
 		private void CollectContentTypeFromContentModel (ValidationEventHandler h, XmlSchema schema)
