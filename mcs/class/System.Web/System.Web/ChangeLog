@@ -1,3 +1,9 @@
+2004-04-10  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* TimeoutManager.cs: Swap the order of initialization of contexts
+	and the Timer, to avoid race condition of CheckTimeouts being called
+	before contexts gets initialized.
+
 2004-03-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequestStream.cs: patch from Jan Jaros that fixes bug #56080.

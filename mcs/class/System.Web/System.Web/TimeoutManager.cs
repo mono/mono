@@ -25,8 +25,8 @@ namespace System.Web
 
 		public TimeoutManager ()
 		{
-			timer = new Timer (new TimerCallback (CheckTimeouts), null, 0, 15000);
 			contexts = Hashtable.Synchronized (new Hashtable ());
+			timer = new Timer (new TimerCallback (CheckTimeouts), null, 0, 15000);
 		}
 
 		public void Add (HttpContext context)
