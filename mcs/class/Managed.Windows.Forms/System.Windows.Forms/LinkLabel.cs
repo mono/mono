@@ -26,11 +26,16 @@
 //	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
 //	Jaak Simm (jaaksimm@firm.ee) (stubbed out)
 //
+// TODO:
+//	- Change the cursor to a hand cursor when you are over a link (when cursors are available)
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: LinkLabel.cs,v $
+// Revision 1.2  2004/07/22 15:22:19  jordi
+// link label: check link overlapping, implement events, and fixes
+//
 // Revision 1.1  2004/07/21 16:19:17  jordi
 // LinkLabel control implementation
 //
@@ -73,7 +78,7 @@ namespace System.Windows.Forms
 			public int		end;
 			public LinkLabel.Link	link;	// Empty link indicates regular text
 			public RectangleF	rect;
-	
+
 			public Piece ()
 			{
 				start = end = 0;
@@ -90,8 +95,8 @@ namespace System.Windows.Forms
 		private LinkCollection link_collection;
 		private bool link_visited;
 		private Font link_font;
-		private bool link_pressed;
-		Piece[] pieces;
+		private bool link_click;
+		private Piece[] pieces;
 
 		#region Events
 		public event LinkLabelLinkClickedEventHandler linkclicked_event;
@@ -109,7 +114,7 @@ namespace System.Windows.Forms
 			link_behavior = LinkBehavior.SystemDefault;
 			link_collection = new LinkCollection (this);
 			link_visited = false;
-			link_pressed = false;
+			link_click = false;
 			pieces = null;
 
 			ThemePainter_LinkLabel.DefaultColors (this);
@@ -222,7 +227,7 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO]
-		void IButtonControl.PerformClick()
+		void IButtonControl.PerformClick ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -245,12 +250,11 @@ namespace System.Windows.Forms
 		}
 
 		protected override void CreateHandle ()
-		{
-			Console.WriteLine ("CreateHandle");
+		{		
 			CreateLinkFont ();
 			CreateLinkPieces ();
-			
-			base.CreateHandle();			
+
+			base.CreateHandle();
 		}
 
 
@@ -285,14 +289,22 @@ namespace System.Windows.Forms
 			if (!Enabled) return;
 
 			base.OnMouseDown(e);
+			Point pnt = new Point (e.X, e.Y);
 
-			if (paint_area.Contains (new Point (e.X, e.Y))) {
-				link_pressed = true;
-
-				//if (linkclicked_event == null)
-				//	linkclicked_event (this, new EventArgs ());
-
-				Invalidate ();
+			if (Links.Count == 0)  {
+				if (paint_area.Contains (pnt)) {
+					link_click = true;
+					Invalidate ();
+				}
+			}
+			else {
+				for (int i = 0; i < pieces.Length; i++) {
+					if (pieces[i].rect.Contains (pnt)) {
+						link_click = true;
+						Invalidate ();
+						break;
+					}
+				}
 			}
 		}
 
@@ -305,8 +317,6 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
-			if (!Enabled) return;
-
 			base.OnMouseMove (e);
 		}
 
@@ -315,9 +325,36 @@ namespace System.Windows.Forms
 			if (!Enabled) return;
 
 			base.OnMouseUp (e);
+			Point pnt = new Point (e.X, e.Y);
+
+			if (Links.Count == 0)  {
+				if (paint_area.Contains (pnt)) {
+					link_click = false;
+
+					if (linkclicked_event != null)
+						linkclicked_event (this, new LinkLabelLinkClickedEventArgs (new Link ()));
+
+					Invalidate ();
+				}
+			}
+			else {
+				for (int i = 0; i < pieces.Length; i++) {
+					if (pieces[i].rect.Contains (pnt)) {
+						link_click = false;
+
+						if ((linkclicked_event != null) && (pieces[i].link != null))
+							linkclicked_event (this, new LinkLabelLinkClickedEventArgs (pieces[i].link));
+
+						Invalidate ();
+						break;
+					}
+				}
+			}
 
 			if (paint_area.Contains (new Point (e.X, e.Y))) {
-				link_pressed = false;
+
+
+				link_click = false;
 				Invalidate ();
 			}
 		}
@@ -345,7 +382,7 @@ namespace System.Windows.Forms
 		internal void CreateLinkPieces ()
 		{
 			//Console.WriteLine ("CreateLinkPieces:" + Links.Count);
-			
+
 			if (Links.Count == 0)
 				return;
 
@@ -392,12 +429,6 @@ namespace System.Windows.Forms
 				pieces[cur_piece].text = Text.Substring (pieces[cur_piece].start, pieces[cur_piece].end - pieces[cur_piece].start);
 			}
 
-			/*
-			// Dump pieces
-			for (int i = 0 ; i < pieces.Length; i++)
-				Console.WriteLine ("text:'" + pieces[i].text + "' start:" + pieces[i].start
-					+ " end:" + pieces[i].end);*/
-
 			CharacterRange[] charRanges = new CharacterRange [pieces.Length];
 
 			for (int i = 0; i < pieces.Length; i++)
@@ -410,24 +441,44 @@ namespace System.Windows.Forms
 			for (int i = 0; i < pieces.Length; i++)
 				pieces[i].rect = charRegions[i].GetBounds (dc_mem);
 
+			if (Visible && IsHandleCreated)
+				Invalidate ();
+
+		}
+
+		/* Check if the links overlap */
+		internal void CheckLinks ()
+		{						
+			for (int i = 0; i < Links.Count; i++) {
+				for (int l = 0; l < Links.Count; l++) {
+					if (i==l) continue;
+
+					if (((Links[i].Start + Links[i].Length) >= Links[l].Start &&
+						Links[i].Start + Links[i].Length <= Links[l].Start + Links[l].Length) ||
+						(Links[i].Start  >= Links[l].Start &&
+						Links[i].Start  <= Links[l].Start + Links[l].Length))						
+						throw new InvalidOperationException ("Overlapping link regions.");					
+				}
+			}
 		}
 
 		protected override void draw ()
 		{
 			Color color;
 
+			if (Visible == false) return;
+
+
 			if (Enabled == false)
 				color = DisabledLinkColor;
 			else
-				if (link_pressed == true)
+				if (link_click == true)
 					color = ActiveLinkColor;
 				else
 					if (LinkVisited == true)
 						color = VisitedLinkColor;
 					else
 						color = LinkColor;
-						
-			//Console.WriteLine ("Draw:" + Links.Count + " pieces:" + pieces);
 
 			if (Links.Count == 0 || pieces == null) {
 
@@ -439,16 +490,17 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			
+
 			for (int i = 0; i < pieces.Length; i++)	{
+
 				if (pieces[i].link == null)
 					dc_mem.DrawString (pieces[i].text, Font, new SolidBrush (Color.Black),
 						pieces[i].rect.X, pieces[i].rect.Y, string_format);
 				else
 					dc_mem.DrawString (pieces[i].text, link_font, new SolidBrush (color),
-						pieces[i].rect.X, pieces[i].rect.Y, string_format);				
+						pieces[i].rect.X, pieces[i].rect.Y, string_format);
 			}
-			
+
 			DrawImage (dc_mem, Image, paint_area, image_align);
 		}
 
@@ -468,24 +520,50 @@ namespace System.Windows.Forms
 			private object linkData;
 			private int start;
 			private bool visited;
+			private LinkLabel owner;
 
 			internal Link ()
 			{
-				enabled = false;
-				length = 0;
-				linkData = null;
-				start = 0;
+				enabled = true;
 				visited = false;
+				length = start = 0;
+				linkData = null;
+				owner = null;
+			}
+
+			internal Link (LinkLabel owner)
+			{
+				enabled = true;
+				visited = false;
+				length = start = 0;
+				linkData = null;
+				this.owner = owner;
 			}
 
 			public bool Enabled {
 				get { return enabled; }
-				set { enabled=value; }
+				set {
+					if (enabled == value)
+						return;
+
+					enabled = value;
+
+					if (owner != null)
+						owner.CreateLinkPieces ();
+				}
 			}
 
 			public int Length {
 				get { return length; }
-				set { length = value; }
+				set {
+					if (length == value)
+						return;
+
+					length = value;
+
+					if (owner != null)
+						owner.CreateLinkPieces ();
+				}
 			}
 
 			public object LinkData {
@@ -495,12 +573,28 @@ namespace System.Windows.Forms
 
 			public int Start {
 				get { return start; }
-				set { start = value; }
+				set {
+					if (start == value)
+						return;
+
+					start = value;
+
+					if (owner != null)
+						owner.CreateLinkPieces ();
+				}
 			}
 
 			public bool Visited {
 				get { return visited; }
-				set { visited = value; }
+				set {
+					if (visited == value)
+						return;
+
+					visited = value;
+
+					if (owner != null)
+						owner.CreateLinkPieces ();
+				}
 			}
 		}
 
@@ -545,12 +639,12 @@ namespace System.Windows.Forms
 				Link link = new Link ();
 				int idx;
 
-				link.Enabled = true;
 				link.Length = length;
 				link.Start = start;
 
 				idx = collection.Add (link);
-				owner.CreateLinkPieces ();				
+				owner.CheckLinks ();
+				owner.CreateLinkPieces ();
 				return (Link)collection[idx];
 			}
 
@@ -560,19 +654,20 @@ namespace System.Windows.Forms
 				Link link = new Link ();
 				int idx;
 
-				link.Enabled = true;
 				link.Length = length;
 				link.Start = start;
 				link.LinkData = o;
 
 				idx = collection.Add (link);
+
+				owner.CheckLinks ();
+				owner.CreateLinkPieces ();
 				
-				owner.CreateLinkPieces ();				
 				return (Link) collection[idx];
 			}
 
 			public virtual void Clear ()
-			{				
+			{
 				collection.Clear();
 				owner.CreateLinkPieces ();
 			}
@@ -601,7 +696,7 @@ namespace System.Windows.Forms
 				collection.Remove (collection[index]);
 				owner.CreateLinkPieces ();
 			}
-			
+
 			bool IList.IsFixedSize {
 				get {return collection.IsFixedSize;}
 			}
@@ -629,28 +724,28 @@ namespace System.Windows.Forms
 			{
 				throw new NotImplementedException ();
 			}
-			
-			
+
+
 			int IList.Add (object control)
 			{
 				return collection.Add (control);
 			}
-			
+
 			bool IList.Contains (object control)
 			{
 				return collection.Contains (control);
 			}
-			
+
 			int IList.IndexOf (object control)
 			{
 				return collection.IndexOf (control);
 			}
-			
+
 			void IList.Insert (int index, object value)
 			{
 				collection.Insert (index, value);
 			}
-			
+
 			void IList.Remove (object control)
 			{
 				collection.Remove (control);

@@ -1,8 +1,6 @@
 //
 // System.LinkLabelLinkClickEventHandler.cs
-//
-// Author:
-//   Dennis hayes (dennish@raytek.com)
+//  
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -26,11 +24,15 @@
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
+//	Dennis hayes (dennish@raytek.com)
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: LinkLabelLinkClickedEventHandler.cs,v $
+// Revision 1.2  2004/07/22 15:22:19  jordi
+// link label: check link overlapping, implement events, and fixes
+//
 // Revision 1.1  2004/07/21 16:19:17  jordi
 // LinkLabel control implementation
 //
