@@ -2281,6 +2281,16 @@ namespace Mono.Posix {
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_utimes")]
 		public static extern int utimes (string filename, ref Timeval tvp);
+
+		// Obsolete this after 1.2 is out:
+		//[Obsolete ("Use Mono.Posix.Stdlib.strerror")]
+		public static string strerror (int errnum)
+		{
+			IntPtr r = Stdlib.sys_strerror (errnum);
+			return PosixMarshal.PtrToString (r);
+		}
+
+
 	}
 }
 
