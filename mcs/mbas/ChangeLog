@@ -1,3 +1,8 @@
+2005-03-04 Manjula GHM <mmanjula@novell.com>
+	* mb-parser.jay:
+	* assign.cs:
+		Support Mid Assignment Statement
+
 2004-12-01 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs: correcting the handling of many options. 
 	* Upgraded to latest Mono.GetOptions that supports vbc style boolean arguments /debug+ /debug-, and /help2 to hide less used options
