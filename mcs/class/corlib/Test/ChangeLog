@@ -1,3 +1,8 @@
+2002-03-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* corlib_test.build: remove two more lines that excluded
+	IntegerFormatterTest.
+
 2002/03/28  Nick Drochak <ndrochak@gol.com>
 
 	* corlib_test.build: Don't exclude IntegerFormatterTest any more.

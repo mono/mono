@@ -28,7 +28,6 @@
 			<sources>
 				<includes name="**/*.cs"/>
 				<excludes name="TheTests.cs"/>
-				<excludes name="System/IntegerFormatterTest.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
@@ -39,7 +38,6 @@
 		<csc target="exe" output="RunTests.corlib.exe" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
-				<excludes name="System/IntegerFormatterTest.cs"/>
 				<excludes name="System.Collections/StackTest.cs"/>
 				<excludes name="**/AllTests.cs"/>
 				<excludes name="**/MartinTests.cs"/>
@@ -59,7 +57,6 @@
 				<includes name="**/*.cs"/>
 				<excludes name="**/MartinTests.cs"/>
 				<excludes name="TheTests.cs"/>
-				<excludes name="System/IntegerFormatterTest.cs"/>
 				<excludes name="System.Security.Policy/*.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">

@@ -84,6 +84,8 @@
 //     function call.
 //
 
+using System;
+using System.Collections;
 using System.Globalization;
 
 namespace System {
@@ -95,41 +97,87 @@ namespace System {
 		private static int maxIntLength = 12;
 		private static int maxLongLength = 22;
 
-		private static char[] digitLowerTable = 
-       		{ '0', '1', '2', '3', '4', '5', '6', '7', 
-		  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+		private static char[] digitLowerTable;
+/**
+ * This makes a TypeNotInitialized exception be thrown.
+ *		{ '0', '1', '2', '3', '4', '5', '6', '7', 
+ *		  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+ */
 
-		private static char[] digitUpperTable = 
-		{ '0', '1', '2', '3', '4', '5', '6', '7', 
-		  '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		private static char[] digitUpperTable;
+/*
+ *		{ '0', '1', '2', '3', '4', '5', '6', '7', 
+ *		  '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+ */
 
+		static IntegerFormatter ()
+		{
+			int i;
+
+			digitLowerTable = new char[16];
+			digitUpperTable = new char[16];
+
+			for (i = 0; i < 10; i++){
+				digitLowerTable[i] = (char) ('0' + i);
+				digitUpperTable[i] = (char) ('0' + i);
+			}
+
+			char lc = 'a';
+			char uc = 'A';
+			while (i < 16){
+				digitLowerTable[i] = (char) (lc + i);
+				digitUpperTable[i] = (char) (uc + i);
+				i++;
+			}
+		}
+
+		private static bool IsDigit (char c)
+		{
+			return !(c < '0' || c > '9'); 
+		}
+		
+		private static bool IsLetter (char c)
+		{
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); 
+		}
+ 
 		private static bool ParseFormat (string format, out char specifier,  out int precision)
 		{		 		 
 			precision = -1;
 			specifier = '\0';
 			
 			int length = format.Length;
-			if (length < 1 || length > 3)
+			// TODO: Could an empty string be a custom format string?
+			if (length < 1)
 				return false;
 			
 			char[] chars = format.ToCharArray ();
 			specifier = chars[0];
 
-			if (length == 1) 
-				return true;
-			
-			if (length == 2) {
-				if (chars[1] < '0' || chars[1] > '9')
-					return false;
+			// TODO: IsLetter() and IsDigit() should be replaced by Char.Is*()
+			if (IsLetter(specifier) && length <= 3) {
+				switch (length){
+				case 1:
+					return true;
+				case 2:
+					if (IsDigit(chars[1])) {
+						precision = chars[1] - '0';
+						return true;
+					}
+					break;
+				case 3:
+					if (IsDigit(chars[1]) && IsDigit(chars[2])) {
+						precision = chars[1] - '0';
+						precision = precision * 10 + chars[2] - '0';
+						return true;
+					}
+					break;
+				}
 				
-				precision = chars[1] - '0';
-			} else {
-				if (chars[1] < '0' || chars[2] < '0' || chars[1] > '9' || chars[2] > '9')
-					return false;
-				
-				precision = (chars[1] - '0') * 10 + (chars[2] - '0');
 			}
 			
+			// We've got a custom format string.
+			specifier = 'z';
 			return true;
 		}	 
 
@@ -141,7 +189,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -162,8 +210,9 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'z': return FormatCustom (format, value, nfi);
 			default: 
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
 		}		
 
@@ -173,7 +222,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -194,8 +243,9 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this insance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'z': return FormatCustom (format, value, nfi);
 			default: 
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
 		}
 
@@ -205,7 +255,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);	
@@ -226,8 +276,9 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'z': return FormatCustom (format, value, nfi);
 			default: 
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
 		}
 
@@ -237,7 +288,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -258,19 +309,20 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'z': return FormatCustom (format, value, nfi);
 			default: 
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}			
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, sbyte value)
 		{
 			char specifier;
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -291,19 +343,20 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'z': return FormatCustom (format, value, nfi);
 			default: 
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, ushort value)
 		{
 			char specifier;
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -324,19 +377,20 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'z': return FormatCustom (format, value, nfi);
 			default: 
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, uint value)
 		{
 			char specifier;
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -357,19 +411,20 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'z': return FormatCustom (format, value, nfi);
 			default: 
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, ulong value)
 		{
 			char specifier;
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -390,8 +445,9 @@ namespace System {
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'z': return FormatCustom (format, value, nfi);
 			default: 
-				throw new FormatException (Locale.GetText ("The specified format is invalid"));
+				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
 		}
 
@@ -3432,5 +3488,507 @@ namespace System {
 			return new string(buffy, position, (size - position));
 		}
 
+		// ============ Format Custom ============ //
+
+		private static string FormatCustom (string format, sbyte number, NumberFormatInfo nfi)
+		{
+			string strnum = FormatGeneral (number, -1, nfi, true);
+			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			int sign = (number < 0) ? -1 : (number > 0) ? 1 : 0;
+			return fp.FormatNumber (strnum, sign);
+		}
+
+		private static string FormatCustom (string format, short number, NumberFormatInfo nfi)
+		{
+			string strnum = FormatGeneral (number, -1, nfi, true);
+			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			int sign = (number < 0) ? -1 : (number > 0) ? 1 : 0;
+			return fp.FormatNumber (strnum, sign);
+		}
+
+		private static string FormatCustom (string format, int number, NumberFormatInfo nfi)
+		{
+			string strnum = FormatGeneral (number, -1, nfi, true);
+			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			int sign = (number < 0) ? -1 : (number > 0) ? 1 : 0;
+			return fp.FormatNumber (strnum, sign);
+		}
+
+		private static string FormatCustom (string format, long number, NumberFormatInfo nfi)
+		{
+			string strnum = FormatGeneral (number, -1, nfi, true);
+			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			int sign = (number < 0) ? -1 : (number > 0) ? 1 : 0;
+			return fp.FormatNumber (strnum, sign);
+		}
+
+		private static string FormatCustom (string format, byte number, NumberFormatInfo nfi)
+		{
+			string strnum = FormatGeneral (number, -1, nfi, true);
+			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			return fp.FormatNumber (strnum, (number == 0) ? 0 : 1);
+		}
+
+		private static string FormatCustom (string format, ushort number, NumberFormatInfo nfi)
+		{
+			string strnum = FormatGeneral (number, -1, nfi, true);
+			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			return fp.FormatNumber (strnum, (number == 0) ? 0 : 1);
+		}
+
+		private static string FormatCustom (string format, uint number, NumberFormatInfo nfi)
+		{
+			string strnum = FormatGeneral (number, -1, nfi, true);
+			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			return fp.FormatNumber (strnum, (number == 0) ? 0 : 1);
+		}
+
+		private static string FormatCustom (string format, ulong number, NumberFormatInfo nfi)
+		{
+			string strnum = FormatGeneral (number, -1, nfi, true);
+			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			return fp.FormatNumber (strnum, (number == 0) ? 0 : 1);
+		}
 	}
+
+class FormatSection {
+	public int nph;
+	public int nphPreDot;
+	public int npercent;
+	public int ndividers;
+	public int ntokens;
+	public string [] tokens;
+	public int [] TokenTypes;
+	public bool HaveDot;
+	public bool HaveSci;
+	public bool sciSignAlways = false;
+	public int sciDigits;
+	public int numCommas;
+}
+
+class FormatParse {
+	const int AS_IS = 0;
+	const int PH_0 = 1;
+	const int PH_NUMBER = 2;
+	const int COMMA = 3;
+	const int PERCENT = 4;
+	const int DIVIDERS = 5;
+	const int DOT = 6;
+	const int ESCAPE_SEQ = 7;
+	const int SCIENTIFIC = 8;
+	const int NEW_SECTION = 9;
+	private FormatSection [] sections = new FormatSection[3];
+	private int nsections = 0;
+	private int pos; // Position in the format string
+	private int group = 0; // Used in FormatPlain to insert a comma between groups of digits
+	private bool isNegative;
+
+	private FormatParse ()
+	{
+	}
+	
+	public FormatParse (string format)
+	{
+		parseFormat (format);
+	}
+
+	private void FormatSci (char [] digits, ArrayList outputList, FormatSection sec)
+	{
+		int tokidx = sec.ntokens - 1;
+
+		// Output everything until we get to the SCIENTIFIC
+		while (tokidx >= 0 && sec.TokenTypes [tokidx] != SCIENTIFIC){
+			outputList.Add ((string) sec.tokens [tokidx--]);
+		}
+
+		// Exponent
+		int exponent = digits.Length - sec.nph;
+		outputList.Add ((string) exponent.ToString ());
+		if (sec.sciSignAlways && exponent > 0)
+			outputList.Add ("+");
+		outputList.Add ((string) sec.tokens [tokidx--]);
+
+		if (exponent < 0) {
+			char [] newDigits;
+			exponent = -exponent;
+			newDigits = new char [digits.Length + exponent];
+			Array.Copy (digits, 0, newDigits, exponent, digits.Length);
+			for (int i = 0; i < exponent; i++)
+				newDigits[i] = '0';
+			digits = newDigits;
+		}
+
+		// Now format the rest
+		int digitIdx = 0;
+		if (sec.HaveDot)
+			FormatDot (digits, ref digitIdx, outputList, sec, tokidx, 0);
+		else
+			FormatPlain (digits, ref digitIdx, outputList, sec, tokidx, 0, sec.numCommas > 0);
+	}
+
+	private void FormatDot (char [] digits, ref int digitIdx, ArrayList outputList, 
+				FormatSection sec, int lastToken, int firstToken)
+	{
+		int tokidx = lastToken;
+		int type;
+
+		while (tokidx >= firstToken) {
+			type = sec.TokenTypes [tokidx];
+			if (type == DOT || type == PH_NUMBER || type == PH_0)
+				break;
+			tokidx--;
+		}
+
+		if (tokidx > 0) {
+			char [] postDotDigits = new char [sec.nph - sec.nphPreDot];
+			int max = (postDotDigits.Length > digits.Length) ? digits.Length : postDotDigits.Length;
+			Array.Copy (digits, 0, postDotDigits, 0, max);
+			int postDotDigitsIdx = 0;
+			FormatPlain (postDotDigits, ref postDotDigitsIdx, outputList, sec, lastToken, tokidx, false);
+			tokidx--;
+			digitIdx += max;
+			FormatPlain (digits, ref digitIdx, outputList, sec, tokidx, 0, sec.numCommas > 0);
+		}
+	}
+
+	private void FormatPlain (char [] digits, ref int digitIdx, ArrayList outputList, 
+				FormatSection sec, int lastToken, int firstToken, bool insertComma)
+	{
+		int tokidx = lastToken;
+		int type;
+
+		while (tokidx >= firstToken) {
+			type = sec.TokenTypes [tokidx];
+			if (type == PH_0 || type == PH_NUMBER) {
+				//FIXME: PH_NUMBER should also check for significant digits
+				Console.WriteLine ("group : {0}", group);
+				int i = sec.tokens [tokidx].Length - 1;
+				while (i >= 0) {
+					if (insertComma && group == 3) {
+						outputList.Add (","); // FIXME: from NumberFormatInfo
+						group = 0;
+					}
+
+					if (digitIdx < digits.Length)
+						outputList.Add ((string) digits[digitIdx++].ToString ());
+					else
+						outputList.Add ("0");
+					i--;
+					if (insertComma)
+						group++;
+					sec.nph--;
+					while (sec.nph == 0 && digitIdx < digits.Length) {
+						// Flush the numbers left
+						if (insertComma && group == 3){
+							outputList.Add (","); // FIXME: from NumberFormatInfo
+							group = 0;
+						}
+						outputList.Add ((string) digits [digitIdx++].ToString ());
+						if (insertComma)
+							group++;
+					}
+
+					if (sec.nph == 0 && isNegative)
+						outputList.Add ("-");
+				}
+			} else {
+				outputList.Add ((string) sec.tokens [tokidx]);
+			}
+			tokidx--;
+		}
+
+	}
+
+	private char [] AdjustDigits (string number, FormatSection sec)
+	{
+		char [] digits = number.ToCharArray ();
+		char [] newDigits = digits;
+		int decPointIdx = 0;
+		int postDot = 0;
+		
+		decPointIdx -= sec.ndividers * 3;
+		decPointIdx += sec.npercent * 2;
+		if (sec.HaveDot){
+			postDot = sec.nph - sec.nphPreDot;
+			decPointIdx += postDot;
+		}
+
+		if (decPointIdx > 0) {
+			newDigits = new char [digits.Length + decPointIdx];
+			Array.Copy (digits, 0, newDigits, 0, digits.Length);
+			for (int i = 0; i < decPointIdx; i++)
+				newDigits[digits.Length + i] = '0';
+		} else if (decPointIdx < 0) {
+			decPointIdx = -decPointIdx;
+			if (decPointIdx >= digits.Length) {
+				if (sec.HaveSci){
+				} else {
+					// The numbers turns into 0 when formatting applied
+					digits = new char [1] {'0'};
+				}
+			} else {
+				int newLength = digits.Length - decPointIdx + postDot - 1;
+				newDigits = new char [newLength];
+				int max = digits.Length >= newLength ? newLength : digits.Length;
+				Array.Copy (digits, 0, newDigits, 0, max);
+				if (newLength > digits.Length)
+					for (int i = 0; i < decPointIdx; i++)
+						newDigits[digits.Length + i] = '0';
+			}
+		}
+
+		return newDigits;
+	}
+
+	public string FormatNumber (string number, int signValue)
+	{
+		char [] digits;
+
+		isNegative = signValue < 0;
+		int section = 0;
+		if (signValue < 0 && nsections > 0)
+			section = 1;
+		if (signValue == 0 && nsections > 1)
+			section = 2;
+
+		FormatSection sec = sections [section];
+		digits = AdjustDigits (number.ToString (), sec);
+		if (digits.Length == 1 && digits [0] == '0')
+			if (nsections > 2)
+				sec = sections [2]; // Format as a 0
+			else
+				sec = sections [0]; // Format as positive
+
+		ArrayList outputList = new ArrayList ();
+
+		int digitIdx = 0;
+		Array.Reverse (digits);
+
+		if (sec.HaveSci)
+			FormatSci (digits, outputList, sec);
+		else if (sec.HaveDot)
+			FormatDot (digits, ref digitIdx, outputList, sec, sec.ntokens - 1, 0);
+		else
+			FormatPlain (digits, ref digitIdx, outputList, sec, sec.ntokens - 1, 0, sec.numCommas > 0);
+
+		string result = "";
+		for (int i = outputList.Count - 1; i >= 0; i--) {
+			result += (string) outputList[i];
+		}
+
+		return result;
+	}
+
+	private void parseFormat (string format)
+	{
+		char [] fmt_chars = format.ToCharArray ();
+		int fmtlen = fmt_chars.Length;
+		int type = AS_IS;
+		int prevType = AS_IS;
+		string token;
+
+		sections[0] = new FormatSection();
+		while (pos < fmtlen) {
+
+			token = getNextToken (fmt_chars, fmtlen, out type);
+			if (type == NEW_SECTION) {
+				nsections++;
+				if (nsections > 3)
+					break;
+				sections[nsections] = new FormatSection();
+			} else {
+				prevType = AddToken (token, type, prevType);
+			}			
+		}
+	}
+
+	private int AddToken (string token, int type, int prevType)
+	{
+		FormatSection sec = sections[nsections];
+		string [] newTokens = new string [sec.ntokens + 1];
+		int [] newTokenTypes = new int [sec.ntokens + 1];
+		for (int i = 0; i < sec.ntokens; i++) {
+			newTokens[i] = sec.tokens[i];
+			newTokenTypes[i] = sec.TokenTypes[i];
+		}
+
+		switch (type) {
+		case ESCAPE_SEQ :
+			type = AS_IS;
+			break;
+		case COMMA :
+			if (!sec.HaveDot && (prevType == PH_0 || prevType == PH_NUMBER)) {
+				sec.numCommas++;
+			} else
+				type = AS_IS;
+
+			token = "";
+			break;
+		case DOT :
+			if (!sec.HaveDot && (prevType == PH_0 || prevType == PH_NUMBER ||
+			    prevType == DIVIDERS || prevType == COMMA)) {
+				sec.HaveDot = true;
+				sec.nphPreDot = sec.nph;
+			} else
+				type = AS_IS;
+
+			break;
+		case PERCENT :
+			sec.npercent++;
+			break;
+		case DIVIDERS :
+			token = "";
+			if (!sec.HaveDot)
+				sec.ndividers = token.Length;
+			else
+				type = AS_IS;
+			break;
+		case PH_0 :
+			if (!sec.HaveSci)
+				sec.nph += token.Length;
+			else
+				type = AS_IS;
+			break;
+		case PH_NUMBER :
+			if (!sec.HaveSci)
+				sec.nph += token.Length;
+			else
+				type = AS_IS;
+			break;
+		case SCIENTIFIC :
+			if (!sec.HaveSci && sec.nph > 0) {
+				sec.HaveSci = true;
+				char [] sci = token.ToCharArray ();
+				sec.sciSignAlways = sci[1] == '+' ? true : false;
+				int expLen = sci[1] == '0' ? token.Length - 1 : token.Length - 2;
+				sec.sciDigits = expLen;
+				token = sci[0].ToString ();
+			} else {
+				type = AS_IS;
+			}
+			break;
+		}
+
+		newTokens[sec.ntokens] = token;
+		newTokenTypes[sec.ntokens] = type;
+		sec.tokens = newTokens;
+		sec.TokenTypes = newTokenTypes;
+		sec.ntokens++;
+		return type;
+	}
+	
+	private string getNextToken (char [] fmt_chars, int fmtlen, out int type)
+	{
+		int curpos = pos;
+		string result = null;
+		char current;
+		
+		type = AS_IS; // Default
+		current = fmt_chars[curpos];
+		if (current == ';'){
+			type = NEW_SECTION;
+			result = "NEW_SECTION";
+			pos++;
+		}
+		else if (current == '\'' || current == '"') {
+			char Quote = current;
+			curpos++;
+			int endpos = Array.IndexOf (fmt_chars, current, curpos);
+			if (endpos == -1)
+				endpos = fmtlen;
+			result = new string (fmt_chars, curpos, endpos - curpos);
+			pos = endpos + 1;
+		} 
+		else if (current == '\\') { //MS seems not to translate escape seqs!
+			type = ESCAPE_SEQ;
+			current = fmt_chars[++pos];
+			result = current.ToString ();
+			pos++;
+		}
+		else if (current == '%') {
+			type = PERCENT;
+			result = "%";
+			pos++;
+		}
+		else if (current == '.') {
+			type = DOT;
+			result = ".";
+			pos++;
+		}
+		else if (current == ',') {
+			int begpos = curpos;
+
+			while (++curpos < fmtlen && fmt_chars[curpos] == ',');
+			if (curpos == fmtlen || fmt_chars[curpos] == '.') {
+				// ,,,,
+				result = new string (fmt_chars, begpos, curpos - begpos);
+				type = DIVIDERS;
+				pos = curpos;
+			} else {
+				result = ",";
+				type = COMMA;
+				pos++;
+			}
+		}
+		else if (current == '0' || current == '#') {
+			char placeHolder = current;
+			int begpos = curpos;
+			type = placeHolder == '0' ? PH_0 : PH_NUMBER;
+			curpos++;
+			while (curpos < fmtlen && fmt_chars [curpos] == placeHolder)
+				curpos++;
+			result = new string (fmt_chars, begpos, curpos - begpos);
+			pos = curpos;
+		}
+		else if (current == 'e' || current == 'E') {
+			if (fmtlen <= curpos + 1){
+				result = current.ToString ();
+				pos++;
+			}
+			else {
+				char next1 = fmt_chars [curpos + 1];
+
+				if (next1 != '-' && next1 != '+' && next1 != '0') {
+					result = new string (fmt_chars, curpos, 2);
+					pos += 2;
+				}
+				else {
+					int begpos = curpos;
+
+					if (next1 == '-' || next1 == '+')
+						curpos++;
+
+					curpos++;
+
+					if (curpos < fmtlen && fmt_chars [curpos] == '0'){
+						type = SCIENTIFIC;
+						while (curpos < fmtlen && fmt_chars [curpos] == '0')
+							curpos++;
+					}
+
+					result = new string (fmt_chars, begpos, curpos - begpos);
+					pos = curpos;
+				}
+			}
+		}
+		else {
+			char [] format_spec = { '0', '#', ',', '.', '%', 'E', 'e', '"', '\'', '\\' };
+			int nextFE;
+
+			while (curpos < fmtlen) {
+				current = fmt_chars[curpos];
+				nextFE = Array.IndexOf (format_spec, current);
+				if (nextFE != -1)
+					break;
+				curpos++;
+			}
+
+			result = new string (fmt_chars, pos, curpos - pos);
+			pos = curpos;
+		}
+
+		return result;
+	}
+}
+
 }
