@@ -3,54 +3,59 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+using System.Globalization;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapMonth : ISoapXsd
+	public sealed class SoapMonth : ISoapXsd
 	{
-		[MonoTODO]
-		public SoapMonth()
+		static string[] _datetimeFormats = new string[]
 		{
+			"--MM--",
+			"--MM--zzz"
+		};
+		
+		DateTime _value;
+		
+		public SoapMonth ()
+		{
+		}
+		
+		public SoapMonth (DateTime value)
+		{
+			_value = value;
 		}
 		
 		public DateTime Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "gMonth"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
 		public static SoapMonth Parse (string value)
 		{
-			throw new NotImplementedException();
+			DateTime d = DateTime.ParseExact (value, _datetimeFormats, null, DateTimeStyles.None);
+			return new SoapMonth (d);
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapMonth()
-		{
+			return _value.ToString("--MM--", CultureInfo.InvariantCulture);
 		}
 	}
 }

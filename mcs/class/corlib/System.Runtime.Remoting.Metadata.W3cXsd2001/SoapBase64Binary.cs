@@ -3,54 +3,51 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapBase64Binary : ISoapXsd
+	public sealed class SoapBase64Binary : ISoapXsd
 	{
-		[MonoTODO]
-		public SoapBase64Binary()
+		byte[] _value;
+		
+		public SoapBase64Binary ()
 		{
+		}
+
+		public SoapBase64Binary (byte[] value)
+		{
+			_value = value;
 		}
 
 		public byte [] Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "base64Binary"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
 		public static SoapBase64Binary Parse (string value)
 		{
-			throw new NotImplementedException();
+			return new SoapBase64Binary (Convert.FromBase64String (value));
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapBase64Binary()
-		{
+			return Convert.ToBase64String (_value);
 		}
 	}
 }

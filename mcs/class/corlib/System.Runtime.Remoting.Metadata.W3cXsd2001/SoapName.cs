@@ -3,54 +3,51 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapName : ISoapXsd
+	public sealed class SoapName : ISoapXsd
 	{
-		[MonoTODO]
-		public SoapName()
+		string _value;
+		
+		public SoapName ()
 		{
+		}
+		
+		public SoapName (string value)
+		{
+			_value = SoapHelper.Normalize (value);
 		}
 		
 		public string Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "Name"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
 		public static SoapName Parse (string value)
 		{
-			throw new NotImplementedException();
+			return new SoapName (value);
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapName()
-		{
+			return _value;
 		}
 	}
 }

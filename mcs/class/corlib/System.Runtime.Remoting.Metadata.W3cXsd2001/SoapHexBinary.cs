@@ -3,54 +3,80 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+using System.Text;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapHexBinary : ISoapXsd
+	public sealed class SoapHexBinary : ISoapXsd
 	{
-		[MonoTODO]
-		public SoapHexBinary()
+		byte[] _value;
+		
+		public SoapHexBinary ()
+		{
+		}
+		
+		public SoapHexBinary (byte[] value)
 		{
 		}
 		
 		public byte [] Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "hexBinary"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
-		public static SoapHexBinary Parse (string value)
+		public static SoapHexBinary Parse (string s)
 		{
-			throw new NotImplementedException();
+			char [] chars = s.ToCharArray ();
+			byte [] bytes = new byte [chars.Length / 2 + chars.Length % 2];
+			FromBinHexString (chars, 0, chars.Length, bytes);
+			return new SoapHexBinary (bytes);
 		}
 
-		[MonoTODO]
+		internal static int FromBinHexString (char [] chars, int offset, int charLength, byte [] buffer)
+		{
+			int bufIndex = offset;
+			for (int i = 0; i < charLength - 1; i += 2) {
+				buffer [bufIndex] = (chars [i] > '9' ?
+						(byte) (chars [i] - 'A' + 10) :
+						(byte) (chars [i] - '0'));
+				buffer [bufIndex] <<= 4;
+				buffer [bufIndex] += chars [i + 1] > '9' ?
+						(byte) (chars [i + 1] - 'A' + 10) : 
+						(byte) (chars [i + 1] - '0');
+				bufIndex++;
+			}
+			if (charLength %2 != 0)
+				buffer [bufIndex++] = (byte)
+					((chars [charLength - 1] > '9' ?
+						(byte) (chars [charLength - 1] - 'A' + 10) :
+						(byte) (chars [charLength - 1] - '0'))
+					<< 4);
+
+			return bufIndex - offset;
+		}
+
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapHexBinary()
-		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (byte b in _value)
+				sb.Append (b.ToString ("X2"));
+			return sb.ToString ();
 		}
 	}
 }

@@ -3,54 +3,59 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+using System.Globalization;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapDay : ISoapXsd
+	public sealed class SoapDay : ISoapXsd
 	{
-		[MonoTODO]
-		public SoapDay()
+		static string[] _datetimeFormats = new string[]
 		{
+			"---dd",
+			"---ddzzz"
+		};
+		
+		DateTime _value;
+		
+		public SoapDay ()
+		{
+		}
+		
+		public SoapDay (DateTime value)
+		{
+			_value = value;
 		}
 		
 		public DateTime Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "gDay"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
 		public static SoapDay Parse (string value)
 		{
-			throw new NotImplementedException();
+			DateTime d = DateTime.ParseExact (value, _datetimeFormats, null, DateTimeStyles.None);
+			return new SoapDay (d);
 		}
-
-		[MonoTODO]
+		
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapDay()
-		{
+			return _value.ToString("---dd", CultureInfo.InvariantCulture);
 		}
 	}
 }

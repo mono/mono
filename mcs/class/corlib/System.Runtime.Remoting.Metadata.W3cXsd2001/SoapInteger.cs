@@ -3,54 +3,51 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapInteger : ISoapXsd
+	public sealed class SoapInteger : ISoapXsd
 	{
-		[MonoTODO]
-		public SoapInteger()
+		decimal _value;
+		
+		public SoapInteger ()
 		{
+		}
+		
+		public SoapInteger (decimal value)
+		{
+			_value = value;
 		}
 		
 		public decimal Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "integer"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
 		public static SoapInteger Parse (string value)
 		{
-			throw new NotImplementedException();
+			return new SoapInteger (decimal.Parse (value));
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapInteger()
-		{
+			return _value.ToString ();
 		}
 	}
 }

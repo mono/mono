@@ -3,54 +3,51 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapNormalizedString : ISoapXsd
+	public sealed class SoapNormalizedString : ISoapXsd
 	{
-		[MonoTODO]
+		string _value;
+		
 		public SoapNormalizedString()
 		{
 		}
 		
+		public SoapNormalizedString (string value)
+		{
+			_value = SoapHelper.Normalize (value);
+		}
+		
 		public string Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "normalizedString"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
 		public static SoapNormalizedString Parse (string value)
 		{
-			throw new NotImplementedException();
+			return new SoapNormalizedString (value);
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapNormalizedString()
-		{
+			return _value;
 		}
 	}
 }

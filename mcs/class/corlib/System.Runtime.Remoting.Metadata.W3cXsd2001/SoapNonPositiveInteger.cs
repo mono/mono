@@ -3,54 +3,53 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapNonPositiveInteger : ISoapXsd
+	public sealed class SoapNonPositiveInteger : ISoapXsd
 	{
-		[MonoTODO]
+		decimal _value;
+		
 		public SoapNonPositiveInteger()
 		{
 		}
 		
+		public SoapNonPositiveInteger(decimal value)
+		{
+			if (value > 0) 
+				throw SoapHelper.GetException (this, "invalid " + value);
+			_value = value;
+		}
+		
 		public decimal Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "nonPositiveInteger"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
 		public static SoapNonPositiveInteger Parse (string value)
 		{
-			throw new NotImplementedException();
+			return new SoapNonPositiveInteger (decimal.Parse (value));
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapNonPositiveInteger()
-		{
+			return _value.ToString ();
 		}
 	}
 }

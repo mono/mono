@@ -3,62 +3,82 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
+using System.Globalization;
+
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-        public sealed class SoapYear : ISoapXsd
+	public sealed class SoapYear : ISoapXsd
 	{
-		[MonoTODO]
+		static string[] _datetimeFormats = new string[]
+		{
+			"yyyy",
+			"'+'yyyy",
+			"'-'yyyy",
+			"yyyyzzz",
+			"'+'yyyyzzz",
+			"'-'yyyyzzz"
+		};
+		
+		int _sign;
+		DateTime _value;
+		
 		public SoapYear()
 		{
 		}
 
-		public int Sign {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+		public SoapYear (DateTime date)
+		{
+			_value = date;
 		}
 
-		public DateTime Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		public SoapYear (DateTime date, int sign)
+		{
+			_value = date;
+			_sign = sign;
+		}
 
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+		public int Sign {
+			get { return _sign; } 
+			set { _sign = value; }
+		}
+		
+		public DateTime Value {
+			get { return _value; } 
+			set { _value = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "gYear"; }
 		}
-		
-		[MonoTODO]
+
 		public string GetXsdType()
 		{
-			throw new NotImplementedException(); 
+			return XsdType;
 		}
-
-		[MonoTODO]
+		
 		public static SoapYear Parse (string value)
 		{
-			throw new NotImplementedException(); 
+			DateTime d = DateTime.ParseExact (value, _datetimeFormats, null, DateTimeStyles.None);
+			
+			SoapYear res = new SoapYear (d);
+			if (value.StartsWith ("-")) res.Sign = -1;
+			else res.Sign = 0;
+			return res;
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException(); 
-		}
-
-		[MonoTODO]
-		~SoapYear()
-		{
+			if (_sign >= 0)
+				return _value.ToString("yyyy", CultureInfo.InvariantCulture);
+			else
+				return _value.ToString("'-'yyyy", CultureInfo.InvariantCulture);
 		}
 	}
 }

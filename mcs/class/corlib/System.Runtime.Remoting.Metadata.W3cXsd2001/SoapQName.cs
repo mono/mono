@@ -3,70 +3,86 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
+
+using System;
 
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
 	public sealed class SoapQName : ISoapXsd
 	{
-		[MonoTODO]
-		public SoapQName()
+		string _name;
+		string _prefix;
+		string _namespace;
+		
+		public SoapQName ()
 		{
+		}
+
+		public SoapQName (string localName)
+		{
+			_name = localName;
+		}
+
+		public SoapQName (string prefix, string localName)
+		{
+			_prefix = prefix;
+			_name = localName;
+		}
+
+		public SoapQName (string prefix, string localName, string namspace)
+		{
+			_prefix = prefix;
+			_name = localName;
+			_namespace = namspace;
 		}
 
 		public string Key {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _prefix; } 
+			set { _prefix = value; }
 		}
 
 		public string Name {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _name; } 
+			set { _name = value; }
 		}
 
 		public string Namespace {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
+			get { return _namespace; } 
+			set { _namespace = value; }
 		}
 
 		public static string XsdType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return "QName"; }
 		}
 
-		[MonoTODO]
 		public string GetXsdType()
 		{
-			throw new NotImplementedException();
+			return XsdType;
 		}
 		
-		[MonoTODO]
 		public static SoapQName Parse (string value)
 		{
-			throw new NotImplementedException();
+			SoapQName res = new SoapQName ();
+			int i = value.IndexOf (":");
+			if (i != -1)
+			{
+				res.Key = value.Substring (0,i);
+				res.Name = value.Substring (i+1);
+			}
+			else
+				res.Name = value;
+			return res;
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SoapQName()
-		{
+			if (_prefix == null || _prefix == "") return _name;
+			else return _prefix + ":" + _name;
 		}
 	}
 }
