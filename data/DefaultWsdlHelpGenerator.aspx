@@ -9,7 +9,7 @@
 //
 %>
 
-﻿<%@ Import Namespace="System.Collections" %>
+<%@ Import Namespace="System.Collections" %>
 <%@ Import Namespace="System.IO" %>
 <%@ Import Namespace="System.Xml.Serialization" %>
 <%@ Import Namespace="System.Xml" %>
