@@ -10,7 +10,7 @@
 using System;
 using System.Drawing.Imaging;
 using System.Threading;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace System.Drawing
 {
