@@ -224,7 +224,11 @@ namespace MonoTests.System.Data
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+#if NET_1_0
 			AssertEquals ("test#16", "              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring);
+#elif NET_1_1
+			AssertEquals ("test#16", "              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring);
+#endif
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -848,13 +852,12 @@ namespace MonoTests.System.Data
 		[Test]
 		public void WriteDifferentNamespaceSchema ()
 		{
-			// Attribute order is modified from MS.NET output
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns='urn:bar' xmlns:mstns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:app1='urn:baz' xmlns:app2='urn:foo'>
+<xs:schema id='NewDataSet' targetNamespace='urn:bar' xmlns:mstns='urn:bar' xmlns='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified' xmlns:app1='urn:baz' xmlns:app2='urn:foo'>
   <!--ATTENTION: This schema contains references to other imported schemas-->
   <xs:import namespace='urn:baz' schemaLocation='_app1.xsd' />
   <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
-  <xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:Locale='ja-JP'>
+  <xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:Locale='fi-FI'>
     <xs:complexType>
       <xs:choice maxOccurs='unbounded'>
         <xs:element ref='app2:NS1Table' />
@@ -865,8 +868,7 @@ namespace MonoTests.System.Data
       </xs:choice>
     </xs:complexType>
   </xs:element>
-</xs:schema>
-";
+</xs:schema>";
 
 			DataSet ds = new DataSet();
 			DataTable dt = new DataTable ();
@@ -911,7 +913,8 @@ namespace MonoTests.System.Data
 		[Test]
 		public void SerializeDataSet ()
 		{
-			string xml = "<?xml version='1.0' encoding='shift_jis'?><DS><xs:schema id='NewDataSet' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:Locale='ja-JP'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DS>";
+			// see GetReady() for current culture
+			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 			DataSet ds = new DataSet ();
 			ds.DataSetName = "DS";
 			XmlSerializer ser = new XmlSerializer (typeof (DataSet));

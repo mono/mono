@@ -214,7 +214,7 @@ namespace MonoTests.System.Data
 			// FIXME: Also test ReadXml (, XmlReadMode.InferSchema) and
 			// make sure that ReadXml() stores DataRow to el1 (and maybe to others)
 			DataSet ds = GetDataSet (xml9, null);
-			AssertDataSet ("ds", ds, "NewDataSet", 4, 0);
+			AssertDataSet ("ds", ds, "NewDataSet", 4, 3);
 			DataTable dt = ds.Tables [0];
 
 			AssertDataTable ("dt", dt, "el1", 3, 0);
@@ -235,15 +235,15 @@ namespace MonoTests.System.Data
 			AssertDataTable ("dt", dt, "el3", 4, 0);
 			AssertDataColumn ("el3_attr3", dt.Columns [0], "attr3", true, false, 0, 1, "attr3", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("el3_attrC", dt.Columns [1], "attrC", true, false, 0, 1, "attrC", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
-			AssertDataColumn ("el3_Text", dt.Columns [2], "el3_Text", true, false, 0, 1, "el3_Text", MappingType.SimpleContent, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
+			AssertDataColumn ("el3_Text", dt.Columns [2], "el3_Text", true, false, 0, 1, "el3_Text", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
 			AssertDataColumn ("el3_el2Id", dt.Columns [3], "el2_Id", true, false, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
 
 			dt = ds.Tables [3];
 			AssertDataTable ("dt", dt, "el4", 4, 0);
 			AssertDataColumn ("el3_attr4", dt.Columns [0], "attr4", true, false, 0, 1, "attr4", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("el4_attrD", dt.Columns [1], "attrD", true, false, 0, 1, "attrD", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
-			AssertDataColumn ("el4_Text", dt.Columns [2], "el4_Text", true, false, 0, 1, "el4_Text", MappingType.SimpleContent, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
-			AssertDataColumn ("el4_el2Id", dt.Columns [4], "el2_Id", true, false, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
+			AssertDataColumn ("el4_Text", dt.Columns [2], "el4_Text", true, false, 0, 1, "el4_Text", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
+			AssertDataColumn ("el4_el2Id", dt.Columns [3], "el2_Id", true, false, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
 		}
 
 		[Test]
@@ -369,8 +369,8 @@ namespace MonoTests.System.Data
 
 			dt = ds.Tables [1];
 			AssertDataTable ("dt", dt, "col", 2, 0);
-			AssertDataColumn ("table_refId", dt.Columns [1], "table_Id", true, false, 0, 1, "table_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
-			AssertDataColumn ("another_col", dt.Columns [0], "another_col", true, false, 0, 1, "another_col", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
+			AssertDataColumn ("table_refId", dt.Columns [0], "table_Id", true, false, 0, 1, "table_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("another_col", dt.Columns [1], "another_col", true, false, 0, 1, "another_col", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 
 			DataRelation dr = ds.Relations [0];
 			AssertDataRelation ("rel", dr, "table_col", new string [] {"table_Id"}, new string [] {"table_Id"}, true, true);
@@ -412,7 +412,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (DataException))]
+		[ExpectedException (typeof (ConstraintException))]
 		public void ConflictExistingPrimaryKey ()
 		{
 			// The 'col' DataTable tries to create another primary key (and fails)

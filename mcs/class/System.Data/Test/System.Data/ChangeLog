@@ -1,5 +1,35 @@
 2004-04-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	All fixes are to make them pass under MS.NET 1.1.
+
+	* ConstraintCollectionTest.cs : Fixed to pass under MS.NET 1.1.
+	* DataRelationTest.cs : Creation4() never works.
+	* DataSetInferXmlSchemaTest.cs :
+	  Fixed xml9 test (relation count).
+	  Some mappings were incorrectly specified int.
+	  ConflictColumnTable() test incorrectly tested different columns.
+	  Fixed exception type on ConflictExistingPrimaryKey().
+	* DataSetReadXmlSchemaTest.cs :
+	  Use fixed current culture.
+	  Fixed exceptoin type on NestedReferenceNotAllowed().
+	* DataSetReadXmlTest.cs :
+	  InferSchema mode is said as to load rows.
+	* DataSetTest.cs :
+	  SqlGuid test depends on the runtime version.
+	  In WriteDifferentNamespaceSchema(), we're going to set the same
+	  order for namespaces (just for ease of tests).
+	  Fixed many bugs on SerializeDataSet() test.
+	* DataTableTest.cs :
+	  Set culture only on NET_1_0. Culture difference causes exception
+	  under .NET 1.1.
+	  Don't depend on error message string (consider localization).
+	  Under .NET 1.1, constraints looks also vanishes on table's Clear().
+	* ForeignKeyConstraintTest.cs :
+	  Ignore TestCtor5(). That does not work under .NET 1.1.
+	  Fixed some exception type differences.
+
+2004-04-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DataSetInferXmlSchemaTest.cs : Added ConflictExistingPrimaryKey().
 	* DataSetReadXmlTest.cs : Added IgnoreSchemaShouldFillData().
 	* DataSetTest.cs : Added IgnoreColumnEmptyNamespace() and

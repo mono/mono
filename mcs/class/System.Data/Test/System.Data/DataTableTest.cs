@@ -898,8 +898,10 @@ namespace MonoTests.System.Data
 			DataColumn[] colArray = {table.Columns[0]};
 			table.PrimaryKey = colArray;
 			table.ExtendedProperties.Add ("TimeStamp", DateTime.Now);
+#if NET_1_0 // This prevents further tests after .NET 1.1.
 			CultureInfo cultureInfo = new CultureInfo ("en-gb");
 			table.Locale = cultureInfo;
+#endif
 
 			row = table1.NewRow ();
 			row ["Name"] = "Abc";
@@ -924,7 +926,9 @@ namespace MonoTests.System.Data
 			AssertEquals ("#A06", "Id / Name + (Id * Id)", cloneTable.DisplayExpression);
 			AssertEquals ("#A07", 1 ,cloneTable.ExtendedProperties.Count);
 			AssertEquals ("#A08", false ,cloneTable.HasErrors);
+#if NET_1_0
 			AssertEquals ("#A09", 2057, cloneTable.Locale.LCID);
+#endif
 			AssertEquals ("#A10", 100, cloneTable.MinimumCapacity);
 			AssertEquals ("#A11","Namespace#1", cloneTable.Namespace);
 			AssertEquals ("#A12", "PrefixNo:1",cloneTable.Prefix);
@@ -942,7 +946,9 @@ namespace MonoTests.System.Data
 			AssertEquals ("#A21", "Id / Name + (Id * Id)", copyTable.DisplayExpression);
 			AssertEquals ("#A22", 1 ,copyTable.ExtendedProperties.Count);
 			AssertEquals ("#A23", true ,copyTable.HasErrors);
+#if NET_1_0
 			AssertEquals ("#A24", 2057, copyTable.Locale.LCID);
+#endif
 			AssertEquals ("#A25", 100, copyTable.MinimumCapacity);
 			AssertEquals ("#A26","Namespace#1", copyTable.Namespace);
 			AssertEquals ("#A27", "PrefixNo:1",copyTable.Prefix);
@@ -983,12 +989,7 @@ namespace MonoTests.System.Data
 				table.EndLoadData ();
 				Fail ("#A01");
 			}
-			catch (Exception e) {
-				if (e.GetType () != typeof (AssertionException))
-					AssertEquals ("#A02", "Column 'Id' contains non-unique values",e.Message);
-                                else
-                                        Console.WriteLine (e);
-
+			catch (ConstraintException) {
 			}
 		}
 		[Test]
@@ -1131,19 +1132,24 @@ namespace MonoTests.System.Data
 				table.Reset ();
 				Fail ("#A01");
 			}
-                        catch (Exception e) {
-				if (e.GetType () != typeof (AssertionException)) {
-					AssertEquals ("#A02", "Cannot clear table Parent because ForeignKeyConstraint DR enforces Child.", e.Message);
-				}
+                        catch (ArgumentException) {
 			}
 			try {
 				table.Clear ();
+#if NET_1_0
 				Fail ("#A03");
+#endif
 			}
 			catch (Exception e) {
+#if NET_1_0
 				if (e.GetType () != typeof (AssertionException)) {
+					// FIXME: Don't depend on localizable error messages.
 					AssertEquals ("#A04", "Cannot clear table Parent because ForeignKeyConstraint DR enforces Child.", e.Message);
 				}
+				else throw e;
+#else
+				throw e;
+#endif
 			}
 			table1.Reset ();
 			AssertEquals ("#A05", 0, table1.Rows.Count);
@@ -1152,7 +1158,11 @@ namespace MonoTests.System.Data
 		
 			table.Clear ();
 			AssertEquals ("#A08", 0, table.Rows.Count);
+#if NET_1_0
 			AssertEquals ("#A09", 1, table.Constraints.Count);
+#else
+			AssertEquals ("#A09", 0, table.Constraints.Count);
+#endif
 			AssertEquals ("#A05", 0, table.ChildRelations.Count);
 		}
 	}

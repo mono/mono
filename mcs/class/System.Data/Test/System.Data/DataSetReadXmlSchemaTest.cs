@@ -10,7 +10,9 @@
 using System;
 using System.IO;
 using System.Data;
+using System.Globalization;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using NUnit.Framework;
 
@@ -33,6 +35,20 @@ namespace MonoTests.System.Data
 			ds.Tables [0].Rows.Add (new object [] {"ppp", "www", "xxx"});
 			ds.Relations.Add ("Rel1", ds.Tables [0].Columns [2], ds.Tables [1].Columns [0]);
 			return ds;
+		}
+
+		CultureInfo currentCultureBackup;
+		[SetUp]
+		public void Setup ()
+		{
+			currentCultureBackup = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("fi-FI");
+		}
+
+		[TearDown]
+		public void Teardown ()
+		{
+			Thread.CurrentThread.CurrentCulture = currentCultureBackup;
 		}
 
 		[Test]
@@ -146,7 +162,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (DataException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void NestedReferenceNotAllowed ()
 		{
 			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
@@ -211,9 +227,10 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			AssertDataSet ("ds", ds, "NewDataSet", 1);
-			AssertEquals ("ja-JP", ds.Locale.Name);
+			AssertEquals ("fi-FI", ds.Locale.Name); // DataSet's Locale comes from current thread
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("dt", dt, "Root", 2, 0);
+			AssertEquals ("ja-JP", dt.Locale.Name); // DataTable's Locale comes from msdata:Locale
 			AssertDataColumn ("col1", dt.Columns [0], "Attr", true, false, 0, 1, "Attr", MappingType.Attribute, typeof (Int64), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col2", dt.Columns [1], "Child", false, false, 0, 1, "Child", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 		}
