@@ -72,6 +72,11 @@ volatile LONG GC_max_thread_index = 0; /* Largest index in thread_table	*/
 
 extern LONG WINAPI GC_write_fault_handler(struct _EXCEPTION_POINTERS *exc_info);
 
+int GC_thread_is_registered (void)
+{
+	return 1;
+}
+
 /*
  * This may be called from DllMain, and hence operates under unusual
  * constraints.

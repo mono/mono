@@ -827,6 +827,9 @@ GC_API GC_PTR GC_is_visible GC_PROTO((GC_PTR p));
 /* Always returns its argument.						*/
 GC_API GC_PTR GC_is_valid_displacement GC_PROTO((GC_PTR	p));
 
+/* Returns 1 if the calling thread is registered with the GC, 0 otherwise */
+GC_API int GC_thread_is_registered GC_PROTO((void));
+
 /* Safer, but slow, pointer addition.  Probably useful mainly with 	*/
 /* a preprocessor.  Useful only for heap pointers.			*/
 #ifdef GC_DEBUG

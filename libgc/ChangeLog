@@ -1,3 +1,8 @@
+2005-03-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* include/gc.h pthread_support.c win32_threads.: Add 
+	GC_thread_is_registered API function.
+
 2005-02-17  Raja R Harinath  <rharinath@novell.com>
 
 	* acinclude.m4: Don't include distributed libtool.m4.
