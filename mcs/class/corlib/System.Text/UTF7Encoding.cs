@@ -336,7 +336,7 @@ class UTF7Encoding : Encoding
 
 		// Determine the length of the result.
 		int length = 0;
-		int byteval, b64value;
+		int byteval;
 		bool normal = ((leftOver & 0x01000000) == 0);
 		bool prevIsPlus = ((leftOver & 0x02000000) != 0);
 		int leftOverSize = ((leftOver >> 16) & 0xFF);
@@ -362,7 +362,7 @@ class UTF7Encoding : Encoding
 						leftOverSize = 0;
 					}
 					normal = true;
-				} else if ((b64value = base64[byteval]) != -1) {
+				} else if (base64 [byteval] != -1) {
 					// Extra character in a base64 sequence.
 					leftOverSize += 6;
 					if (leftOverSize >= 16) {
