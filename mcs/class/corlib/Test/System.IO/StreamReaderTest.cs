@@ -116,7 +116,7 @@ public class StreamReaderTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("!$what? what? Huh? !$*#");
+				StreamReader r = new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0]);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {
@@ -255,7 +255,7 @@ public class StreamReaderTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("!$what? what? Huh? !$*#", false);
+				StreamReader r = new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0], false);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {
@@ -320,7 +320,7 @@ public class StreamReaderTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("!$what? what? Huh? !$*#", true);
+				StreamReader r = new StreamReader("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0], true);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {

@@ -112,7 +112,7 @@ public class StreamWriterTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamWriter r = new StreamWriter("!$what? what? Huh? !$*#");
+				StreamWriter r = new StreamWriter("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0]);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {
@@ -122,7 +122,7 @@ public class StreamWriterTest : TestCase
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
-			Assert("invalid filename error not thrown", errorThrown);
+			Assert("1 invalid filename error not thrown", errorThrown);
 		}
 		// TODO - Security/Auth exceptions
 		{
@@ -168,7 +168,7 @@ public class StreamWriterTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamWriter r = new StreamWriter("!$what? what? Huh? !$*#", false);
+				StreamWriter r = new StreamWriter("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0], false);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {
@@ -178,7 +178,7 @@ public class StreamWriterTest : TestCase
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
-			Assert("invalid filename error not thrown", errorThrown);
+			Assert("2 invalid filename error not thrown", errorThrown);
 		}
 		{
 			StreamWriter r = new StreamWriter(_codeFileName, false);
@@ -221,7 +221,7 @@ public class StreamWriterTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamWriter r = new StreamWriter("!$what? what? Huh? !$*#", true);
+				StreamWriter r = new StreamWriter("!$what? what? Huh? !$*#" + Path.InvalidPathChars[0], true);
 			} catch (IOException) {
 				errorThrown = true;
 			} catch (ArgumentException) {
@@ -231,7 +231,7 @@ public class StreamWriterTest : TestCase
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 8: " + e.ToString());
 			}
-			Assert("invalid filename error not thrown", errorThrown);
+			Assert("3 invalid filename error not thrown", errorThrown);
 		}
 		{
 			try {

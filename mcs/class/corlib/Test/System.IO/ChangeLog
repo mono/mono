@@ -1,3 +1,10 @@
+2002-05-15  Nick Drochak  <ndrochak@gol.com>
+
+	* StreamReaderTest.cs: 
+	* StreamWriterTest.cs: 
+	Make sure invalid file name has invalid characters in it.  These are 
+	platform dependant.
+
 2002-05-14  Nick Drochak  <ndrochak@gol.com>
 
 	* FileTest.cs: Delete temporary files after each test method; Catch
