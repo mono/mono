@@ -85,6 +85,6 @@ using System.Runtime.CompilerServices;
 #if !StronglyNamedAssembly
 [assembly: AssemblyDelaySign(false)]
 #else
-[assembly: AssemblyKeyFile("..\\..\\..\\Nunit.key")]
+[assembly: AssemblyKeyFile("..\\..\\..\\nunit.key")]
 [assembly: AssemblyKeyName("")]
 #endif

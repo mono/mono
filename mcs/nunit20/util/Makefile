@@ -2,7 +2,8 @@ thisdir = nunit20/util
 SUBDIRS = 
 include ../../build/rules.make
 
-LIBRARY = nunit.util.dll
+LIBRARY = NUnit.Util.dll
+LIBRARY_NAME = nunit.util.dll
 LOCAL_MCS_FLAGS= \
 	/resource:Transform.resources,NUnit.Util.Transform.resources \
 	-r:nunit.framework.dll -r:nunit.core.dll -r:System.dll \
