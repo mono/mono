@@ -619,7 +619,7 @@ method_declaration
 	;
 	
 sub_declaration
-	: SUB IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_evt_handler EOL
+	: SUB IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_evt_handler opt_implement_clause EOL
 	  { 
 	  	
 	  	current_local_parameters = (Parameters) $4;
@@ -645,7 +645,8 @@ sub_declaration
 	  END SUB EOL
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
-					    (Parameters) current_local_parameters, null, lexer.Location);
+					    (Parameters) current_local_parameters, null, (Expression) $7, 
+					    lexer.Location);
 	
 		method.Block = (Block) end_block();
 		$$ = method;
@@ -663,16 +664,14 @@ sub_declaration
 					AddHandler (p.Set.Block, (Expression)$6, (string) $2);
 					break;
 				}
-			}
-							
-							
+			}				
 		}	
 	  }	  
 	;
 	
 func_declaration
 	: FUNCTION IDENTIFIER 
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type EOL
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type opt_implement_clause EOL
 	  { 
 	  	
 	  	current_local_parameters = (Parameters) $4;
@@ -696,14 +695,15 @@ func_declaration
 		// Add local var declaration
 		// for return value
 		ArrayList retval = new ArrayList ();
-		retval.Add (new VariableDeclaration ((string) $2, null, lexer.Location));
+		retval.Add (new VariableDeclaration ((string) $2, (Expression) $7, lexer.Location));
 		declare_local_variables ((Expression) $7, retval, lexer.Location);
 	  }	  
 	  opt_statement_list
 	  END FUNCTION EOL
 	  {
 		Method method = new Method ((Expression) $7, (int) current_modifiers, (string) $2,
-					    (Parameters) current_local_parameters, null, lexer.Location);
+					    (Parameters) current_local_parameters, null, 
+					    (Expression) $7, lexer.Location);
 	
 		method.Block = end_block();
 		$$ = method;
@@ -832,7 +832,7 @@ interface_property_declaration
 	  {
 		// FIXME we MUST pass property parameters
 		$$ = new InterfaceProperty ((Expression) $6, (string) $2, false,
-					    false, false, current_attributes,
+					    true, true, current_attributes,
 					    lexer.Location);
 	  }
 	;
@@ -846,7 +846,7 @@ interface_event_declaration
 	;
 
 property_declaration
-	  : PROPERTY IDENTIFIER opt_property_parameters AS type EOL
+	  : PROPERTY IDENTIFIER opt_property_parameters AS type opt_implement_clause EOL
 	  {
 		get_implicit_value_parameter_type = (Expression) $5;
 		get_implicit_value_parameter_name = (string) $2;
@@ -871,14 +871,14 @@ property_declaration
 		lexer.PropertyParsing = false;
 
 		Property prop;
-		Pair pair = (Pair) $8;
+		Pair pair = (Pair) $9;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 		Location loc = lexer.Location;
 		
 		prop = new Property ((Expression) $5, (string) $2, current_modifiers, get_block, set_block,
 				     current_attributes, loc, set_implicit_value_parameter_name, 
-				     get_parameters, set_parameters);
+				     get_parameters, set_parameters, (Expression) $6);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		get_implicit_value_parameter_type = null;
@@ -892,12 +892,23 @@ property_declaration
 opt_property_parameters
 	: /* empty */
 	  {
-	  	$$ = Parameters.EmptyReadOnlyParameters; ;
+	  	$$ = Parameters.EmptyReadOnlyParameters;
 	  }
 	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 	  	$$ = $2;
 	  }
+	;
+	
+opt_implement_clause
+	: /* empty */
+	  {
+	  	$$ = null;
+	  }
+	| IMPLEMENTS qualified_identifier
+	  {
+	  	$$ = DecomposeQI ((string)$2, lexer.Location);
+	  }	
 	;
 	
 accessor_declarations
@@ -932,7 +943,7 @@ get_accessor_declaration
 		// Add local var declaration
 		// for return value
 		ArrayList retval = new ArrayList ();
-		retval.Add (new VariableDeclaration (get_implicit_value_parameter_name, null, lexer.Location));
+		retval.Add (new VariableDeclaration (get_implicit_value_parameter_name, get_implicit_value_parameter_type, lexer.Location));
 		declare_local_variables (get_implicit_value_parameter_type, retval, lexer.Location);	
 		
 	  }
@@ -2675,12 +2686,7 @@ public class VariableDeclaration {
 	public Attributes OptAttributes;
 	public Expression type;
 	public ArrayList dims;
-	
-	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs) :	this 
-					(id, TypeManager.system_object_expr, eoai, l, opt_attrs)
-	{
-	}
-	
+		
 	public VariableDeclaration (string id, Expression t, object eoai, Location l, Attributes opt_attrs)
 	{
 		this.identifier = id;
@@ -2694,6 +2700,15 @@ public class VariableDeclaration {
 	public VariableDeclaration (string id, object eoai, Location l) : this (id, eoai, l, null)
 	{
 	}
+	
+	public VariableDeclaration (string id, Expression t, Location l) : this (id, t, null, l, null)
+	{
+	}	
+	
+	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs) :	this 
+					(id, TypeManager.system_object_expr, eoai, l, opt_attrs)
+	{
+	}	
 	
 	public static void FixupTypes (ArrayList vars)
 	{

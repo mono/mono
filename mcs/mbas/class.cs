@@ -2197,7 +2197,16 @@ namespace Mono.CSharp {
 		public Method (Expression return_type, int mod, string name, Parameters parameters,
 			       Attributes attrs, Location l)
 			: base (return_type, mod, AllowedModifiers, name, attrs, parameters, l)
-		{ }
+		{ 
+			Implements = null;
+		}
+
+		public Method (Expression return_type, int mod, string name, Parameters parameters,
+			Attributes attrs, Expression impl_what, Location l)
+			: base (return_type, mod, AllowedModifiers, name, attrs, parameters, l)
+		{ 
+			Implements = impl_what;
+		}
 
 		//
 		// Returns the `System.Type' for the ReturnType of this
@@ -3148,6 +3157,7 @@ namespace Mono.CSharp {
 	abstract public class MemberBase : MemberCore {
 		public Expression Type;
 		public readonly Attributes OptAttributes;
+		public Expression Implements;
 
 		protected MethodAttributes flags;
 
@@ -3671,13 +3681,28 @@ namespace Mono.CSharp {
 				Attributes attrs, Location loc, string set_name, 
 				Parameters p_get, Parameters p_set)
 			: base (type, name, mod_flags, AllowedModifiers,
-				p_set, // FIXME ???????????
+				p_set,
 				get_block, set_block, attrs, loc)
 		{
 			set_parameter_name = set_name;
 			get_params = p_get;
 			set_params = p_set;
+			Implements = null;
 		}
+		
+		public Property (Expression type, string name, int mod_flags,
+				Accessor get_block, Accessor set_block,
+				Attributes attrs, Location loc, string set_name, 
+				Parameters p_get, Parameters p_set, Expression impl_what)
+			: base (type, name, mod_flags, AllowedModifiers,
+				p_set,
+				get_block, set_block, attrs, loc)
+		{
+			set_parameter_name = set_name;
+			get_params = p_get;
+			set_params = p_set;
+			Implements = impl_what;
+		}		
 
 		public Property (Expression type, string name, int mod_flags,
 				 Accessor get_block, Accessor set_block,
