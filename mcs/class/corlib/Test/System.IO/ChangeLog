@@ -1,3 +1,7 @@
+2003-06-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FileStreamTest.cs: New tests for recently fixed bugs.
+
 2003-06-08  Ville Palo <vi64pa@kolumbus.fi>
 
 	* BinaryWriterTest.cs:

@@ -161,7 +161,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]
 		public void CtorDirectoryNotFoundException ()
 		{
-			string path = TempFolder + "/thisDicrectoryShouldNotExists";
+			string path = TempFolder + "/thisDirectoryShouldNotExists";
 			if (Directory.Exists (path))
 				Directory.Delete (path, true);
 
@@ -306,6 +306,59 @@ namespace MonoTests.System.IO
 				DeleteFile (path);
 			}
 		}
+
+		[Test]
+		public void Write ()
+		{
+			string path = TempFolder + "/FileStreamTest.Write";
+
+			DeleteFile (path);
+
+			FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite, 8);
+
+			byte[] outbytes = new byte [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+			byte[] bytes = new byte [15];
+
+			// Check that the data is flushed when we overflow the buffer
+			// with a large amount of data
+			stream.Write (outbytes, 0, 5);
+			stream.Write (outbytes, 5, 10);
+			stream.Seek (0, SeekOrigin.Begin);
+
+			stream.Read (bytes, 0, 15);
+			for (int i = 0; i < 15; ++i)
+				AssertEquals (i + 1, bytes [i]);
+
+			// Check that the data is flushed when we overflow the buffer
+			// with a small amount of data
+			stream.Write (outbytes, 0, 7);
+			stream.Write (outbytes, 7, 7);
+			stream.Write (outbytes, 14, 1);
+
+			stream.Read (bytes, 0, 15);
+			stream.Seek (15, SeekOrigin.Begin);
+			for (int i = 0; i < 15; ++i)
+				AssertEquals (i + 1, bytes [i]);
+			stream.Close ();
+		}
+
+		[Test]
+		public void Length ()
+		{
+			// Test that the Length property takes into account the data
+			// in the buffer
+			string path = TempFolder + "/FileStreamTest.Length";
+
+			DeleteFile (path);
+
+			FileStream stream = new FileStream (path, FileMode.CreateNew);
+
+			byte[] outbytes = new byte [] {1, 2, 3, 4};
+
+			stream.Write (outbytes, 0, 4);
+			AssertEquals (stream.Length, 4);
+			stream.Close ();
+		}
 		
 		[Test]
 		public void Flush ()
@@ -411,8 +464,8 @@ namespace MonoTests.System.IO
                 		AssertEquals ("test#01", typeof (IOException), e.GetType ());
                 	}
                		                
-                	stream2.Seek (5, SeekOrigin.Begin);               		
-               		stream2.Read (bytes, 0, 5);                		
+                	stream2.Seek (5, SeekOrigin.Begin);
+               		stream2.Read (bytes, 0, 5);
                 	
                 	AssertEquals ("test#02", 5, bytes [0]);
                 	AssertEquals ("test#03", 6, bytes [1]);                	
