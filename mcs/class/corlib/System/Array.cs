@@ -4,8 +4,9 @@
 //   Joe Shaw (joe@ximian.com)
 //   Martin Baulig (martin@gnome.org)
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) 2001-2003 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Collections;
@@ -218,6 +219,90 @@ namespace System
 			return GetValue (ind);
 		}
 
+#if NET_1_1
+		public object GetValue (long idx)
+		{
+			if (idx < 0 || idx > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx");
+
+			return GetValue ((int) idx);
+		}
+
+		public object GetValue (long idx1, long idx2)
+		{
+			if (idx1 < 0 || idx1 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx1");
+
+			if (idx2 < 0 || idx2 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx2");
+
+			return GetValue ((int) idx1, (int) idx2);
+		}
+
+		public object GetValue (long idx1, long idx2, long idx3)
+		{
+			if (idx1 < 0 || idx1 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx1");
+
+			if (idx2 < 0 || idx2 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx2");
+
+			if (idx3 < 0 || idx3 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx3");
+
+			return GetValue ((int) idx1, (int) idx2, (int) idx3);
+		}
+
+		public void SetValue (object value, long idx)
+		{
+			if (idx < 0 || idx > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx");
+
+			int[] ind = new int [1];
+
+			ind [0] = (int) idx;
+
+			SetValue (value, ind);
+		}
+		
+		public void SetValue (object value, long idx1, long idx2)
+		{
+			if (idx1 < 0 || idx1 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx1");
+
+			if (idx2 < 0 || idx2 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx2");
+
+			int[] ind = new int [2];
+
+			ind [0] = (int) idx1;
+			ind [1] = (int) idx2;
+
+			SetValue (value, ind);
+		}
+
+		public void SetValue (object value, long idx1, long idx2, long idx3)
+		{
+			if (idx1 < 0 || idx1 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx1");
+
+			if (idx2 < 0 || idx2 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx2");
+
+			if (idx3 < 0 || idx3 > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("idx3");
+
+			int[] ind = new int [3];
+
+			ind [0] = (int) idx1;
+			ind [1] = (int) idx2;
+			ind [2] = (int) idx3;
+
+			SetValue (value, ind);
+		}
+
+#endif
+
 		// This function is currently unused, but just in case we need it later on ... */
 		internal int IndexToPos (int[] idxs)
 		{
@@ -339,7 +424,39 @@ namespace System
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
-		
+#if NET_1_1
+
+		static int [] GetIntArray (long [] values)
+		{
+			int len = values.Length;
+			int [] ints = new int [len];
+			for (int i = 0; i < len; i++) {
+				long current = values [i];
+				if (current < 0 || current > (long) Int32.MaxValue)
+					throw new ArgumentOutOfRangeException ("indices", "Value too big");
+
+				ints [i] = (int) current;
+			}
+
+			return ints;
+		}
+
+		public static Array CreateInstance (Type elementType, params long [] lengths)
+		{
+			return CreateInstance (elementType, GetIntArray (lengths));
+		}
+
+		public object GetValue (long [] indices)
+		{
+			return GetValue (GetIntArray (indices));
+		}
+
+		public void SetValue (object value, long [] indices)
+		{
+			SetValue (value, GetIntArray (indices));
+		}
+#endif
+
 		public static int BinarySearch (Array array, object value)
 		{
 			if (array == null)

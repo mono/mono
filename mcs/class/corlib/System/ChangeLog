@@ -1,3 +1,8 @@
+2003-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Array.cs: added the new overloaded CreateInstance, GetValue, SetValue
+	taking 'longs'. All tests pass.
+
 2003-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Exception.cs: Add ClassInterface attr. Implement TargetSite and
