@@ -1,3 +1,11 @@
+2004-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathAtomicValue.cs : All .ctor() are separeted from Init().
+	  In .ctor(object, XmlSchemaType):
+	  - For lists that contains just one item, Init() recursively.
+	  - For XPathAtomicValue, Init() recursively for its content fields.
+	  For Value and TypedValue, consider typecode from XmlSchemaType.
+
 2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathEditableNavigator.cs :
