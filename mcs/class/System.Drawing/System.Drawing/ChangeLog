@@ -1,4 +1,8 @@
 2004-03-06  Ravindra  <rkumar@novell.com>
+	* gdipFunctions.cs: Added few more GDI+ P/Invoke calls
+	for PathGradientBrush.
+
+2004-03-06  Ravindra  <rkumar@novell.com>
 	* gdipFunctions.cs: Added GDI+ P/Invoke calls for
 	PathGradientBrush.
 
