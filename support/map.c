@@ -14,15 +14,25 @@
 #endif /* ndef _XOPEN_SOURCE */
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_SYS_POLL_H
 #include <sys/poll.h>
+#endif
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
+#ifdef HAVE_POLL_H
 #include <poll.h>
+#endif
+#ifdef HAVE_GRP_H
 #include <grp.h>
+#endif
 #include <errno.h>
+#ifdef HAVE_SYSLOG_H
 #include <syslog.h>
+#endif
 
 int Mono_Posix_FromError (int x, int *r)
 {
