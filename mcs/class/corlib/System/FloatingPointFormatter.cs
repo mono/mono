@@ -666,6 +666,9 @@ namespace System {
 				if (first_semicolon == -1) {
 					if (value < 0.0) {
 						string result = FormatCustomParser(format);
+						if (result == "0") {
+							return "0";
+						}
 						if (result.Length > 0) {
 							result = "-" + result;
 						}
