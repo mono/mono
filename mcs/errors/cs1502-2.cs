@@ -1,5 +1,5 @@
-// This should not compile as void can't be converted to bool
-
+// CS1502: This should not compile as void can't be converted to bool
+// Line: 10
 using System;
 
 public class MainClass

@@ -12,6 +12,7 @@ class EventDemo {
 
 	public static void Main(){
 		MyEvent evt = new MyEvent();
+		// CS0070
                 evt.SomeEvent();
         }
 }

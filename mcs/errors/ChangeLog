@@ -1,5 +1,9 @@
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
+	* error-4.cs: Renamed to cs1502-2.cs.
+
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
 	* makefile: Ignore CS0162 and CS0169.
 
 2003-03-29  Gaurav Vaish <gvaish_mono@lycos.com>
