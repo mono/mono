@@ -125,19 +125,19 @@ namespace System.Xml
 		}
 
 		// ============  Constructors =========================================
-		public XmlAttribute()
+		public XmlAttribute(XmlDocument aOwnerDoc) : base(aOwnerDoc)
 		{
 			//
 			// TODO: Add constructor logic here
 			//
 		}
 
-		internal XmlAttribute ( XmlNode aOwner,				// owner document
+		internal XmlAttribute ( XmlDocument aOwner,			// owner document
 			string elementName,								// can be ""
 			string attributeName,							// cannot be ""
 			// attType,
 			// defaultDecl,
-			string attValue)								// attValue
+			string attValue) : base(aOwner)
 		{
 			if (aOwner == null)
 				throw new ArgumentException("Null OwnerDocument passed to XmlAttribute constructor");

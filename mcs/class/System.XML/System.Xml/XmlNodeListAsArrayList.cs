@@ -4,9 +4,9 @@ using System.Collections;
 namespace System.Xml
 {
 	/// <summary>
-	/// Summary description for XmlNodeListAsArrayList.
+	/// Internal implementation of XmlNodeList for XmlNode
 	/// </summary>
-	public class XmlNodeListAsArrayList : XmlNodeList
+	internal class XmlNodeListAsArrayList : XmlNodeList
 	{
 		// Private data members
 		ArrayList _items;
@@ -18,6 +18,14 @@ namespace System.Xml
 			get
 			{
 				return _items.Count;
+			}
+		}
+
+		public IList data
+		{
+			get
+			{
+				return _items;
 			}
 		}
 		

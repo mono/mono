@@ -146,5 +146,9 @@ namespace System.Xml
 			throw new NotImplementedException();
 		}
 
+		// Constructors
+		internal XmlCharacterData ( XmlDocument aOwnerDoc) : base(aOwnerDoc)
+		{
+		}
 	}
 }

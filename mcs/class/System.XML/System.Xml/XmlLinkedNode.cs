@@ -48,5 +48,11 @@ namespace System.Xml
 		{
 			_nextSibling = next;
 		}
+
+		// Constructors
+		//===========================================================================
+		internal XmlLinkedNode( XmlDocument aOwner ) : base(aOwner)
+		{
+		}
 	}
 }

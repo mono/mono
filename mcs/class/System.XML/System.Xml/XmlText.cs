@@ -49,6 +49,17 @@ namespace System.Xml
 
 		// Public Methods
 		//===========================================================================
+		/// <summary>
+		/// Override.  Throw InvalidOperationException - text nodes do not have child nodes
+		/// </summary>
+		/// <param name="newChild">N/A</param>
+		/// <param name="refChild">N/A</param>
+		/// <returns>N/A</returns>
+		public override XmlNode InsertAfter(XmlNode newChild, XmlNode refChild)
+		{
+			throw new InvalidOperationException("#text nodes do not have child nodes");
+		}
+
 		public override XmlNode CloneNode( bool deep)
 		{
 			throw new NotImplementedException();
@@ -69,6 +80,9 @@ namespace System.Xml
 
 		// Constructors
 		//===========================================================================
+		internal XmlText (XmlDocument aOwnerDoc ) : base(aOwnerDoc)
+		{
+		}
 
 	}
 }
