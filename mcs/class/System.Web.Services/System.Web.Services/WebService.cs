@@ -18,7 +18,6 @@ namespace System.Web.Services {
 		#region Fields
 
 		HttpContext _context;
-		HttpSessionState session;
 
 		#endregion // Fields
 
@@ -35,11 +34,6 @@ namespace System.Web.Services {
 		internal void SetContext (HttpContext context)
 		{
 			_context = context;
-		}
-
-		internal void SetSession (HttpSessionState session)
-		{
-			this.session = session;
 		}
 
 		[Browsable (false)]
@@ -67,7 +61,7 @@ namespace System.Web.Services {
 		[WebServicesDescription ("The ASP.NET session object for the current request.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpSessionState Session {
-			get { return session; }
+			get { return _context.Session; }
 		}
 
 		[Browsable (false)]
