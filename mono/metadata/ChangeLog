@@ -15,6 +15,10 @@
 
 2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* icall.c: Add a new icall for Array.Clear
+
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* object.c: When allocating an array, we have to throw
 	an overflow exception if any of the lengths are < 0.
 
