@@ -1,3 +1,9 @@
+
+Wed Jan 19 19:57:43 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: fix off-by-one error.
+	* domain.c: free data allocated in the domain.
+
 2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_method_body_get_object): Fill out exception info
