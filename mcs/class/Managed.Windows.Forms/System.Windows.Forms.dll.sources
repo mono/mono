@@ -61,6 +61,7 @@ System.Windows.Forms/ContentsResizedEventArgs.cs
 System.Windows.Forms/ContentsResizedEventHandler.cs
 System.Windows.Forms/ContextMenu.cs
 System.Windows.Forms/Control.cs
+System.Windows.Forms/ControlBindingsCollection.cs
 System.Windows.Forms/ControlEventArgs.cs
 System.Windows.Forms/ControlEventHandler.cs
 System.Windows.Forms/ControlPaint.cs
@@ -68,6 +69,7 @@ System.Windows.Forms/ControlStyles.cs
 System.Windows.Forms/ConvertEventArgs.cs
 System.Windows.Forms/ConvertEventHandler.cs
 System.Windows.Forms/CreateParams.cs
+System.Windows.Forms/CurrencyManager.cs
 System.Windows.Forms/Cursor.cs
 System.Windows.Forms/Cursors.cs
 System.Windows.Forms/DataGrid.cs
@@ -219,6 +221,7 @@ System.Windows.Forms/PictureBoxSizeMode.cs
 System.Windows.Forms/ProgressBar.cs
 System.Windows.Forms/PropertyGrid.cs
 System.Windows.Forms/PropertyGridView.cs
+System.Windows.Forms/PropertyManager.cs
 System.Windows.Forms/PropertySort.cs
 System.Windows.Forms/PropertyTabChangedEventArgs.cs
 System.Windows.Forms/PropertyTabChangedEventHandler.cs
