@@ -1,5 +1,5 @@
 // cs0020.cs : Division by constant zero.
-// Line : 999999999
+// Line: 9
 
 using System;
 
