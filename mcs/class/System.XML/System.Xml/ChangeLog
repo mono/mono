@@ -1,3 +1,20 @@
+2002-11-03  Atsushi Enomoto <gigna@kit.hi-ho.ne.jp>
+
+	* XmlAttributeCollection.cs : checks owner element.
+		implemented CopyTo, InsertAfter, InsertBefore, Prepend,
+		Remove, RemoveAt, SetNamedItem.
+		removed some logics that sets 'Parent' (that should be null)
+	* XmlDocument.cs : set_InnerXml, [PreserveWhitespace(incomplete)]
+	* XmlDocumentFragment.cs : get_InnerXml, WriteContentTo, WriteTo
+	* XmlElement.cs : implemented WriteTo, set_InnerText.
+		Fixed WriteTo() to add xmlns:* attributes when
+		writer.LookupPrefix() returned mismatching.
+	* XmlNamedNodeMap.cs : compare not only name but localname and nsuri.
+		Removing different prefixes for the same uri now runs correct.
+		added SetNamedItem(XmlNode node, int position_to_insert).
+	* XmlNode.cs : ConstructDOM (logically) creates XmlEntityReference,
+		XmlWhitespace, and XmlSignificantWhitespace
+
 2002-10-31  Atsushi Enomoto <gigna@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs : implemented CreateDocumentFragment()

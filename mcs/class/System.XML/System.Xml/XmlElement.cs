@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Xml.XPath;
+using System.Text;
 
 namespace System.Xml
 {
@@ -38,7 +39,7 @@ namespace System.Xml
 
 			attributes = new XmlAttributeCollection (this);
 
-			// Adds default attributes
+			// TODO: Adds default attributes
 			if(doc.DocumentType != null)
 			{
 			}
@@ -56,13 +57,18 @@ namespace System.Xml
 			get { return attributes.Count > 0; }
 		}
 
-		[MonoTODO ("Setter.")]
 		public override string InnerText {
 			get {
-				// Not sure why this is an override.  Passing through for now.
 				return base.InnerText;
 			}
-			set { throw new NotImplementedException (); }
+			set {
+				foreach(XmlNode n in ChildNodes)
+				{
+					this.RemoveChild(n);
+				}
+				// creates new Text node
+				AppendChild(OwnerDocument.CreateTextNode(value));
+			}
 		}
 
 		[MonoTODO ("Setter is immature")]
@@ -244,10 +250,11 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual bool HasAttribute (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			XmlNode attributeNode = Attributes.GetNamedItem (localName, namespaceURI);
+			return attributeNode != null;
 		}
 
-		[MonoTODO ("Don't remove default attributes.")]
+		[MonoTODO ("confirm not removing default attributes [when DTD feature was implemented.")]
 		public override void RemoveAll ()
 		{
 			// Remove the child nodes.
@@ -257,66 +264,74 @@ namespace System.Xml
 			attributes.RemoveAll ();
 		}
 
-		[MonoTODO ("Don't remove default attributes.")]
+		[MonoTODO ("confirm not removing default attributes [when DTD feature was implemented.")]
 		public virtual void RemoveAllAttributes ()
 		{
 			attributes.RemoveAll ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual void RemoveAttribute (string name)
 		{
-			throw new NotImplementedException ();
+			attributes.Remove((XmlAttribute)attributes.GetNamedItem(name));
 		}
 
-		[MonoTODO]
+		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual void RemoveAttribute (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			attributes.Remove((XmlAttribute)attributes.GetNamedItem(localName, namespaceURI));
 		}
 
-		[MonoTODO]
+		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual XmlNode RemoveAttributeAt (int i)
 		{
-			throw new NotImplementedException ();
+			return attributes.Remove(attributes[i]);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual XmlAttribute RemoveAttributeNode (XmlAttribute oldAttr)
 		{
-			throw new NotImplementedException ();
+			return attributes.Remove(oldAttr);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual XmlAttribute RemoveAttributeNode (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			return attributes.Remove(attributes[localName, namespaceURI]);
 		}
 
 		[MonoTODO]
 		public virtual void SetAttribute (string name, string value)
 		{
 			XmlAttribute attribute = OwnerDocument.CreateAttribute (name);
-			attribute.SetParentNode (this);
+			attribute.SetOwnerElement(this);
 			attribute.Value = value;
 			Attributes.SetNamedItem (attribute);
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public virtual string SetAttribute (string localName, string namespaceURI, string value)
 		{
-			throw new NotImplementedException ();
+			XmlAttribute attr = attributes[localName, namespaceURI];
+			if(attr == null)
+			{
+				attr = OwnerDocument.CreateAttribute(localName, namespaceURI);
+				attr.Value = value;
+				attributes.SetNamedItem(attr);
+			}
+			else
+				attr.Value = value;
+			return attr.Value;
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public virtual XmlAttribute SetAttributeNode (XmlAttribute newAttr)
 		{
-			newAttr.SetParentNode(this);
+			newAttr.SetOwnerElement(this);
 			XmlNode oldAttr = Attributes.SetNamedItem(newAttr);
 			return oldAttr != null ? oldAttr as XmlAttribute : null;
 		}
 
-		
 		public virtual XmlAttribute SetAttributeNode (string localName, string namespaceURI)
 		{
 			XmlDocument xmlDoc = this.OwnerDocument;
@@ -330,14 +345,42 @@ namespace System.Xml
 				childNode.WriteTo(w);
 		}
 
+		[MonoTODO("indenting feature is incomplete.")]
 		public override void WriteTo (XmlWriter w)
 		{
 			w.WriteStartElement(Prefix, LocalName, NamespaceURI);
 
+			// write namespace declarations(if not exist)
+			if(Prefix != null && w.LookupPrefix(Prefix) != NamespaceURI)
+				w.WriteAttributeString("xmlns", Prefix, "http://www.w3.org/2000/xmlns/", NamespaceURI);
+
 			foreach(XmlNode attributeNode in Attributes)
+			{
 				attributeNode.WriteTo(w);
+				// write namespace declarations(if not exist)
+				if(attributeNode.Prefix != null && w.LookupPrefix(attributeNode.Prefix) != attributeNode.NamespaceURI)
+					w.WriteAttributeString("xmlns", attributeNode.Prefix, "http://www.w3.org/2000/xmlns/", attributeNode.NamespaceURI);
+			}
+
+			// indent(when PreserveWhitespace = false)
+			// Only XmlWriter has this XmlElement's xml:space information;-)
+			if(!OwnerDocument.PreserveWhitespace && w.XmlSpace != XmlSpace.Preserve)
+			{
+				XmlNode n = this;
+				StringBuilder sb = new StringBuilder();
+				while(n != OwnerDocument)
+				{
+					sb.Append('\t');
+					n = n.ParentNode;
+				}
+				w.WriteWhitespace(sb.ToString());
+			}
 
 			WriteContentTo(w);
+
+			// indent (linefeeding)
+			if(!OwnerDocument.PreserveWhitespace && w.XmlSpace != XmlSpace.Preserve)
+				w.WriteWhitespace("\n");
 
 			w.WriteEndElement();
 		}

@@ -245,5 +245,29 @@ namespace MonoTests.System.Xml
 			el.InnerXml = "<hoge />";
 			AssertEquals("#Namespaced.VerifyPreviousCleared", "hoge", el.FirstChild.Name);
 		}
+
+		public void TestRemoveAttribute()
+		{
+			string xlinkURI = "http://www.w3.org/1999/XLink";
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml("<root a1='1' a2='2' xlink:href='urn:foo' xmlns:xlink='" + xlinkURI + "' />");
+			XmlElement el =  doc.DocumentElement;
+			el.RemoveAttribute("a1");
+			AssertNull("RemoveAttribute", el.GetAttributeNode("a1"));
+			el.RemoveAttribute("xlink:href");
+			AssertNull("RemoveAttribute", el.GetAttributeNode("href", xlinkURI));
+			el.RemoveAllAttributes();
+			AssertNull("RemoveAllAttributes", el.GetAttributeNode("a2"));
+		}
+
+		public void TestWriteToWithDeletedNamespacePrefix()
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml("<root xmlns:foo='urn:dummy'><foo foo:bar='baz' /></root>");
+			doc.DocumentElement.RemoveAllAttributes();
+
+			Assert(doc.DocumentElement.FirstChild.OuterXml.IndexOf("xmlns:foo") > 0);
+		}
+
 	}
 }

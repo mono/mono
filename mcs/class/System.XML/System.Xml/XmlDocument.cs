@@ -29,6 +29,7 @@ namespace System.Xml
 		XmlNameTable nameTable;
 		string baseURI = String.Empty;
 		XmlImplementation implementation;
+		bool preserveWhitespace = true;	// Its true initial value is false.
 
 		#endregion
 
@@ -111,14 +112,13 @@ namespace System.Xml
 			get { return implementation; }
 		}
 
-		[MonoTODO ("Setter.")]
 		public override string InnerXml {
 			get {
-				// Not sure why this is an override.  Passing through for now.
-				// ... Maybe its setter may be an override :-) [ginga]
 				return base.InnerXml;
 			}
-			set { throw new NotImplementedException(); }
+			set {	// reason for overriding
+				this.LoadXml(value);
+			}
 		}
 
 		public override bool IsReadOnly {
@@ -161,10 +161,10 @@ namespace System.Xml
 			get { return null; }
 		}
 
-		[MonoTODO]
+		[MonoTODO("wait for getting 'xml:space' status for each node")]
 		public bool PreserveWhitespace {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return preserveWhitespace; }
+			set { preserveWhitespace = value; }
 		}
 
 		[MonoTODO]

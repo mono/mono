@@ -7,6 +7,7 @@
 // (C), Ximian, Inc
 //
 using System;
+using System.Text;
 
 namespace System.Xml
 {
@@ -31,7 +32,12 @@ namespace System.Xml
 		[MonoTODO]
 		public override string InnerXml {
 			set { throw new NotImplementedException (); }
-			get { throw new NotImplementedException (); }
+			get {
+				StringBuilder sb = new StringBuilder();
+				foreach(XmlNode n in ChildNodes)
+					sb.Append(n.OuterXml);
+				return sb.ToString();
+			}
 		}
 		
 		public override string LocalName {
@@ -55,7 +61,8 @@ namespace System.Xml
 			get { return null; } // it's always null here.
 		}
 
-		// copied this way from XmlElement
+		// It is really not a type of XmlLinkedNode,
+		//   but I copied this way from XmlElement. I looks good.
 		internal override XmlLinkedNode LastLinkedChild
 		{
 			get { return lastLinkedChild; }
@@ -79,16 +86,20 @@ namespace System.Xml
 				return new XmlDocumentFragment (OwnerDocument);
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public override void WriteContentTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			foreach(XmlNode n in ChildNodes)
+				n.WriteContentTo(w);
+//			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			foreach(XmlNode n in ChildNodes)
+				n.WriteTo(w);
+//			throw new NotImplementedException ();
 		}
 
 		#endregion

@@ -592,6 +592,24 @@ namespace System.Xml
 						else
 							throw new XmlException("construction of DocumentType node from this XmlReader is not supported.");
 						break;
+
+					case XmlNodeType.EntityReference:
+						newNode = doc.CreateEntityReference(xmlReader.Name);
+						currentNode.AppendChild(newNode);
+						break;
+
+					case XmlNodeType.SignificantWhitespace:
+						newNode = doc.CreateSignificantWhitespace(xmlReader.Value);
+						currentNode.AppendChild(newNode);
+						break;
+
+					case XmlNodeType.Whitespace:
+						if(doc.PreserveWhitespace)
+						{
+							newNode = doc.CreateWhitespace(xmlReader.Value);
+							currentNode.AppendChild(newNode);
+						}
+						break;
 				}
 			}
 		}

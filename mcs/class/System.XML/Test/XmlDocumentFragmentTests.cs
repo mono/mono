@@ -66,5 +66,17 @@ namespace MonoTests.System.Xml
 			AssertEquals("#AppendFragmentToElement.FirstChild", "p", body.FirstChild.Name);
 			AssertEquals("#AppendFragmentToElement.LastChild", "div", body.LastChild.Name);
 		}
+
+		public void TestGetInnerXml()
+		{
+			// this will be of TestWriteTo/TestWriteContentTo
+
+			document = new XmlDocument();
+			fragment = document.CreateDocumentFragment();
+			fragment.AppendChild(document.CreateElement("foo"));
+			fragment.AppendChild(document.CreateElement("bar"));
+			fragment.AppendChild(document.CreateElement("baz"));
+			AssertEquals("#Simple", "<foo /><bar /><baz />", fragment.InnerXml);
+		}
 	}
 }

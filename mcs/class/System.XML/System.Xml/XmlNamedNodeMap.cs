@@ -87,17 +87,25 @@ namespace System.Xml
 
 		public virtual XmlNode SetNamedItem (XmlNode node)
 		{
+			return SetNamedItem(node, -1);
+		}
+
+		internal XmlNode SetNamedItem (XmlNode node, int pos)
+		{
 			if (readOnly || (node.OwnerDocument != parent.OwnerDocument))
 				throw new ArgumentException ("Cannot add to NodeMap.");
-						
+
 			foreach (XmlNode x in nodeList)
-				if (x.Name == node.Name) {
+				if(x.LocalName == node.LocalName && x.NamespaceURI == node.NamespaceURI) {
 					nodeList.Remove (x);
 					nodeList.Add (node);
 					return x;
 				}
 			
-			nodeList.Add (node);
+			if(pos < 0)
+				nodeList.Add (node);
+			else
+				nodeList.Insert(pos, node);
 			return null;
 		}
 
