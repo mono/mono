@@ -1,3 +1,8 @@
+2004-03-22  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.InferParamsTypeArguments): New static
+	method; does type inference for params arguments.
+
 2004-03-21  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.IsGenericMethod): New public static

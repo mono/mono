@@ -4400,6 +4400,16 @@ namespace Mono.CSharp {
 			return union;
 		}
 
+		static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
+						      ArrayList arguments, ref MethodBase candidate)
+		{
+			if (!me.HasTypeArguments &&
+			    !InferParamsTypeArguments (ec, arguments, ref candidate))
+				return false;
+
+			return IsParamsMethodApplicable (ec, arguments, candidate);
+		}
+
 		/// <summary>
 		///   Determines if the candidate method, if a params method, is applicable
 		///   in its expanded form to the given set of arguments
@@ -4475,6 +4485,16 @@ namespace Mono.CSharp {
 			}
 			
 			return true;
+		}
+
+		static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
+					  ArrayList arguments, ref MethodBase candidate)
+		{
+			if (!me.HasTypeArguments &&
+			    !InferTypeArguments (ec, arguments, ref candidate))
+				return false;
+
+			return IsApplicable (ec, arguments, candidate);
 		}
 
 		/// <summary>
@@ -4584,12 +4604,7 @@ namespace Mono.CSharp {
 			MethodBase[] methods = me.Methods;
 
 			for (int i = 0; i < methods.Length; i++) {
-				if (!me.HasTypeArguments &&
-				    !InferTypeArguments (ec, Arguments, ref methods [i]))
-					continue;
-
-				MethodBase candidate = methods [i];
-                                Type decl_type = candidate.DeclaringType;
+                                Type decl_type = methods [i].DeclaringType;
 
                                 //
                                 // If we have already found an applicable method
@@ -4601,22 +4616,21 @@ namespace Mono.CSharp {
                                     found_applicable)
 					continue;
 
-
 				// Check if candidate is applicable (section 14.4.2.1)
-				if (IsApplicable (ec, Arguments, candidate)) {
+				if (IsApplicable (ec, me, Arguments, ref methods [i])) {
 					// Candidate is applicable in normal form
+					MethodBase candidate = methods [i];
 					candidates.Add (candidate);
 					applicable_type = candidate.DeclaringType;
 					found_applicable = true;
 					candidate_to_form [candidate] = false;
-				} else {
-                                        if (IsParamsMethodApplicable (ec, Arguments, candidate)) {
-                                                // Candidate is applicable in expanded form
-                                                candidates.Add (candidate);
-                                                applicable_type = candidate.DeclaringType;
-                                                found_applicable = true; 
-                                                candidate_to_form [candidate] = true;
-                                        }
+				} else if (IsParamsMethodApplicable (ec, me, Arguments, ref methods [i])) {
+					// Candidate is applicable in expanded form
+					MethodBase candidate = methods [i];
+					candidates.Add (candidate);
+					applicable_type = candidate.DeclaringType;
+					found_applicable = true; 
+					candidate_to_form [candidate] = true;
 				}
 			}
 
@@ -4888,6 +4902,78 @@ namespace Mono.CSharp {
 				if (!InferType (pt_args [i], at_args [i], ref infered))
 					return false;
 
+			return true;
+		}
+
+		static bool InferParamsTypeArguments (EmitContext ec, ArrayList arguments,
+						      ref MethodBase candidate)
+		{
+			MethodInfo method = candidate as MethodInfo;
+			if ((arguments == null) || (method == null) ||
+			    !TypeManager.IsGenericMethod (method))
+				return true;
+
+			int arg_count;
+			
+			if (arguments == null)
+				arg_count = 0;
+			else
+				arg_count = arguments.Count;
+			
+			ParameterData pd = GetParameterData (method);
+
+			int pd_count = pd.Count;
+
+			if (pd_count == 0)
+				return false;
+			
+			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
+				return false;
+			
+			if (pd_count - 1 > arg_count)
+				return false;
+			
+			if (pd_count == 1 && arg_count == 0)
+				return true;
+
+			Type[] method_args = method.GetGenericArguments ();
+			Type[] infered_types = new Type [method_args.Length];
+
+			//
+			// If we have come this far, the case which
+			// remains is when the number of parameters is
+			// less than or equal to the argument count.
+			//
+			for (int i = 0; i < pd_count - 1; ++i) {
+				Argument a = (Argument) arguments [i];
+
+				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
+					continue;
+
+				Type pt = pd.ParameterType (i);
+				Type at = a.Type;
+
+				if (!InferType (pt, at, ref infered_types))
+					return false;
+			}
+
+			Type element_type = TypeManager.GetElementType (pd.ParameterType (pd_count - 1));
+
+			for (int i = pd_count - 1; i < arg_count; i++) {
+				Argument a = (Argument) arguments [i];
+
+				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
+					continue;
+
+				if (!InferType (element_type, a.Type, ref infered_types))
+					return false;
+			}
+
+			for (int i = 0; i < infered_types.Length; i++)
+				if (infered_types [i] == null)
+					return false;
+
+			candidate = method.BindGenericParameters (infered_types);
 			return true;
 		}
 
