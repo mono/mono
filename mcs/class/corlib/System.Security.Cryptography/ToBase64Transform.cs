@@ -20,11 +20,10 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		/* Right now we have nothing to dispose to finalizer isn't required
-		~ToBase64Transform () 
+		~ToBase64Transform ()
 		{
 			Dispose (false);
-		}*/
+		}
 
 		public bool CanTransformMultipleBlocks {
 			get { return false; }
