@@ -1,3 +1,24 @@
+2004-11-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* convert.cs (ImplicitConversionRequired): Add error cs0642 for
+	decimal types.
+
+2004-11-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (EventField.ApplyAttributeBuilder): Fix error
+	test cs1667-5.cs.
+
+2004-11-19  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (MemberBase.DoDefine): Fix error cs0508 report.
+
+	* pending.cs (PendingImplementation): Grab only interfaces.
+
+2004-11-19  Marek Safar  <marek.safar@seznam.cz>
+
+	* statement.cs (ForeachHelperMethods): Add location member and
+	error 202 detection.
+
 2004-11-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (DoResolveBase): Fixed wrong warning for out
