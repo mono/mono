@@ -1,3 +1,18 @@
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (mono_type_size): Added MONO_TYPE_VAR and MONO_TYPE_MVAR.
+
+	* reflection.h (MonoReflectionGenericParam): New typedef.
+	(MonoReflectionTypeBuilder): Added `num_generic_params' and
+	`generic_params' fields to get the generic parameters from the
+	managed TypeBuilder.
+
+	* reflection.c (mono_reflection_define_generic_parameter): New function.
+	(mono_reflection_create_runtime_class): Encode generic parameters.
+	(mono_reflection_setup_generic_class): New function; this is
+	called after adding adding all generic params to the TypeBuilder.
+	(encode_type): Added MONO_TYPE_VAR.
+
 2003-09-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.h class.c (mono_class_needs_cctor_run): Moved this method
