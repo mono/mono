@@ -2141,14 +2141,10 @@ opt_rank_specifier
 	;
 
 rank_specifiers
-	: rank_specifier
+	: rank_specifier opt_rank_specifier
 	  {
-		  $$ = $1;
+		  $$ = (string) $1 + (string) $2;
 	  }
-	| rank_specifiers rank_specifier
-	  {
-		  $$ = (string) $2 + (string) $1;
-	  }     	
         ;
 
 rank_specifier

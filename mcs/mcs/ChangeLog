@@ -1,3 +1,7 @@
+2002-11-02  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
+
+	* cs-parser.jay: simplified a rule and 5 SR conflicts dissapeared.
+
 2002-11-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay (switch_section): A beautiful patch from Martin
