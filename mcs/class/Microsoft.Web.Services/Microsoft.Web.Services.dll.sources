@@ -52,6 +52,7 @@ Microsoft.Web.Services.Dime/TypeFormatEnum.cs
 Microsoft.Web.Services.Addressing/Action.cs
 Microsoft.Web.Services.Addressing/Address.cs
 Microsoft.Web.Services.Addressing/AddressingFormatException.cs
+Microsoft.Web.Services.Addressing/AddressingHeaders.cs
 Microsoft.Web.Services.Addressing/AttributedUri.cs
 Microsoft.Web.Services.Addressing/AttributedUriString.cs
 Microsoft.Web.Services.Addressing/EndpointReference.cs

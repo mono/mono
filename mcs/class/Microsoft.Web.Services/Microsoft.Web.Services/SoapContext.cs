@@ -26,9 +26,7 @@ namespace Microsoft.Web.Services {
 		private Microsoft.Web.Services.Timestamp.Timestamp timestamp;
 		private Microsoft.Web.Services.Security.Security security;
 		private Hashtable table;
-		private Action action;
-		private ReplyTo replyto;
-		private To to;
+		private AddressingHeaders addressingHeaders;
 
 		internal SoapContext () 
 		{
@@ -48,17 +46,17 @@ namespace Microsoft.Web.Services {
 		}
 
 		public Action Action {
-			get { return action; }
-			set { action = value; }
+			get { return addressingHeaders.Action; }
+			set { addressingHeaders.Action = value; }
 		}
 
 		public ReplyTo ReplyTo {
-			get { return replyto; }
-			set { replyto = value; }
+			get { return addressingHeaders.ReplyTo; }
+			set { addressingHeaders.ReplyTo = value; }
 		}
 
 		public To To {
-			get { return to; }
+			get { return addressingHeaders.To; }
 		}
 
 		public DimeAttachmentCollection Attachments { 
