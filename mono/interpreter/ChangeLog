@@ -1,7 +1,11 @@
 2003-08-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* interp.c (main): Fix the order of initialization calls so it maches 
+	the order in the JIT.Patch by Bernie Solomon (bernard@ugsolutions.com).
+	Also remove the unused ms mutex.
+	
 	* interp.c: Get rid of metadata_section.
-
+	
 2003-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (main): Call g_thread_init () to make glib thread-safe. 
