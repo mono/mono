@@ -28,7 +28,7 @@ USE_MCS_FLAGS :=
 NEW_TEST_SOURCES_common = \
 	test-297 test-287 test-294 test-299 test-300 \
 	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309 test-310 \
-	test-311 test-312 \
+	test-311 test-312 test-313 \
 	a-call		a-capture5    a-instance	a-parameter2			\
 	a-capture10	a-capture6    a-nested-anon2  					\
 	a-capture1	a-capture7    a-nested-anon3    a-parameter4			\
@@ -113,7 +113,7 @@ TEST_SOURCES_win32 = test-50 test-67
 # A test is a 'no pass' if it fails on either windows or linux
 # Test 120 does not pass because the MS.NET runtime is buggy.
 
-TEST_NOPASS = test-120 test-132 test-133 a-parameter4.cs test-313
+TEST_NOPASS = test-120 test-132 test-133 a-parameter4.cs 
 #	test-28 test-45 test-53 test-91 test-102 test-106 test-107 test-122 test-66 test-177
 
 all-local install-local uninstall-local:
