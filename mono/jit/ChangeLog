@@ -1,6 +1,7 @@
 2002-03-21  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (usage): new option to specify maximum number of worker threads
+	(mono_analyze_stack): avoid cyclic dependency in CEE_LDFTN
 
 	* delegate.c (async_invoke_abort): added support for asynchronous exceptions
 	(arch_get_async_invoke): notify listeners before we call the
