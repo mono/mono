@@ -102,11 +102,14 @@ Names the output file to be generated.
 .I \-\-parse
 Used for benchmarking.  The compiler will only parse its input files.
 .TP
-.I /resource:RESOURCE
-Embeds to the given resource file.
+.I /resource:RESOURCE[,ID]
+Embeds to the given resource file.  The optional ID can be used to
+give a different name to the resource.  If not specified, the resource
+name will be the file name.
 .TP
-.I /linkresource:RESOURCE 
-Links to the given resource file.
+.I /linkresource:RESOURCE[,ID]
+Links to the specified RESOURCE.  The optional ID can be used to give
+a name to the linked resource.
 .TP
 .I \-recurse:PATTERN, --recurse PATTERN
 Does recursive compilation using the specified pattern.  In Unix the
