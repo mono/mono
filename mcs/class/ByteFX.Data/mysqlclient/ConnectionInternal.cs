@@ -40,7 +40,7 @@ namespace ByteFX.Data.MySqlClient
 			Packet packet;
 			try 
 			{
-				byte[] bytes = driver.Encoding.GetBytes("select @@version");
+				byte[] bytes = driver.Encoding.GetBytes("select connection_id();");
 				packet = driver.SendSql( bytes );
 				// we have to read for two last packets since MySql sends
 				// us a last packet after schema and again after rows
@@ -55,7 +55,7 @@ namespace ByteFX.Data.MySqlClient
 					packet = driver.ReadPacket();
 				return true;
 			}
-			catch
+			catch (Exception ex)
 			{
 				return false;
 			}
