@@ -1,3 +1,6 @@
+2002-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FieldInfo.cs: implemented SetValue.
 
 Wed Aug 14 17:37:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

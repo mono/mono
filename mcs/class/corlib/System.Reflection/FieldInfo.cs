@@ -110,8 +110,13 @@ namespace System.Reflection {
 
 		public abstract void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
 
-		[MonoTODO]
-		public void SetValue( object obj, object value) {
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void SetValueInternal (FieldInfo fi, object obj, object value);
+
+		public void SetValue (object obj, object value)
+		{
+			//FIXME: when Binder.BindToField works, use it to check conversion
+			SetValueInternal (this, obj, value);
 		}
 	}
 }
