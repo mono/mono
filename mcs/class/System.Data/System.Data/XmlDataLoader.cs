@@ -18,6 +18,7 @@
 using System;
 using System.Data;
 using System.Xml;
+using System.Xml.XPath;
 using System.Collections;
 using System.Globalization;
 
@@ -100,84 +101,11 @@ namespace System.Data {
 		// These methods should be in their own class for example XmlDiffLoader. But for now, let them be here
 		#region diffgram-methods
 
-		// Reads diffgr:before -values from diffgram
-		private void ReadModeDiffGramBefore (XmlReader reader)
-		{
-			while (reader.Read ()) {
-
-				if (String.Compare (reader.LocalName, "before", true) == 0) {
-
-					while (reader.Read ()) {
-
-						if (reader.NodeType == XmlNodeType.Element && DSet.Tables.Contains (reader.LocalName)) {
-							
-							string id = reader ["diffgr:id"];
-							string TableName = reader.LocalName;
-							DataTable table = DSet.Tables [TableName];
-							DataRow row = table.NewRow ();
-
-							ReadColumns (reader, row, table, TableName);
-
-							table.Rows.Add (row);
-							DiffGrRows.Add (id, row);
-							row.AcceptChanges ();
-						} 
-						else if (reader.NodeType == XmlNodeType.Element) {
-							throw new DataException (Locale.GetText ("Cannot load diffGram. Table '" + reader.LocalName + "' is missing in the destination dataset"));
-						}
-					}
-				}
-			}
-		}
-
-		// Reader current values from diffgram
-		private void ReadModeDiffGramCurrent (XmlReader reader)
-		{
-			while (reader.Read ()) {
-
-				if (reader.NodeType == XmlNodeType.Element) {
-
-					if (DSet.Tables.Contains (reader.LocalName)) {
-						
-						string TableName = reader.LocalName;
-						bool NewRow = false;
-						DataTable table = DSet.Tables [TableName];
-						DataRow row; 
-
-						if (DiffGrRows.Contains (reader ["diffgr:id"])) {
-							row = (DataRow)DiffGrRows [reader ["diffgr:id"]];
-						} 
-						else {
-							row = table.NewRow ();
-							NewRow = true;
-						}
-
-						ReadColumns (reader, row, table, TableName);
-
-						if (NewRow)
-							table.Rows.Add (row);
-					}
-					else if (String.Compare (reader.LocalName, "before", true) == 0) {
-						break;
-					}
-					else {
-						throw new DataException (Locale.GetText ("Cannot load diffGram. Table '" + reader.LocalName + "' is missing in the destination dataset"));
-					}
-				}
-			}
-		}
-
 		// XmlReadMode.DiffGram
 		private void ReadModeDiffGram (XmlReader reader)
 		{
-			reader.MoveToContent ();
-			string Prefix = reader.Prefix;
-			reader.Read ();
-			XmlTextReader TempReader = new XmlTextReader (reader.BaseURI);
-			ReadModeDiffGramBefore (TempReader);
-			TempReader.Close ();
-						
-			ReadModeDiffGramCurrent (reader);
+			XmlDiffLoader DiffLoader = new XmlDiffLoader (DSet);
+			DiffLoader.Load (reader);
 		}
 
 		#endregion // diffgram-methods

@@ -1,3 +1,10 @@
+2003-01-06  Ville Palo <vi64pa@koti.soon.fi>
+
+	* XmlDataLoader.cs: Moved diffgram stuff to new internal class
+	XmlDiffLoader.
+	* XmlDiffLoader.cs: new class for diffgrams. Added handling of 
+	diffgr:Errors and some fixes and changed XmlReader to XPathNavigator.
+	
 2003-01-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataView.cs: made dataViewManager internal.
