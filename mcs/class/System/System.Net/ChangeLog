@@ -1,3 +1,8 @@
+2003-02-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SocketAddress.cs: byte 1 of the data is the high byte of the family,
+	not the size.
+
 2003-01-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* WebClient.cs : hacked OpenRead, DownloadData and DownloadFile.

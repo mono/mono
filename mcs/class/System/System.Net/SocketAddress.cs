@@ -23,25 +23,25 @@ namespace System.Net {
 			
 			data=new byte[size];
 			data[0]=(byte)family;
-			data[1]=(byte)size;
+			data[1]=(byte) ((int) family >> 8);
 		}
 
 		public SocketAddress (AddressFamily family)
+			: this (family, 32)
 		{
-			data=new byte[32];
-			data[0]=(byte)family;
-			data[1]=(byte)32;
 		}
 		
+		//LAMESPEC: the MS doc about this class is wrong. The size is not stored in byte 1. Instead
+		// byte [0] and byte [1] hold the family (little endian).
 		public AddressFamily Family {
 			get {
-				return((AddressFamily)data[0]);
+				return (AddressFamily) (data [0] + (data [1] << 8));
 			}
 		}
 
 		public int Size {
 			get {
-				return((int)data[1]);
+				return data.Length;
 			}
 		}
 
@@ -57,7 +57,7 @@ namespace System.Net {
 
 		public override string ToString() {
 			string af=((AddressFamily)data[0]).ToString();
-			int size=(int)data[1];
+			int size = data.Length;
 			string ret=af+":"+size+":{";
 			
 			for(int i=2; i<size; i++) {
