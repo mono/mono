@@ -1,3 +1,8 @@
+
+Fri Dec 10 18:09:22 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, aot.c, driver.c: allow disabling the aot code.
+
 2004-12-10  Patrik Torstensson  <patrik.torstensson@gmail.com>
 
 	* mini.c (mini_get_inst_for_method): Changed to allow ports
