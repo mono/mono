@@ -1,5 +1,10 @@
 2003-10-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.h object.c: Remove G_GNUC_NORETURN from the signature of
+	mono_raise_exception, since otherwise gcc doesn't generate the function
+	epilog for raise_exception, confusing the stack unwinding in the JIT.
+	Fixes #45043.
+
 	* rawbuffer.c (mono_raw_buffer_load_mmap): Map mmap-ed memory with
 	PROT_EXEC. This seems to prevent segmentation faults on Fedora Linux.
 	Fixes #49499.
