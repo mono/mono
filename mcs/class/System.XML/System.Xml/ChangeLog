@@ -1,3 +1,17 @@
+2002-03-12  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlAttribute.cs: Moved a method from amongst properties down to
+	it's alphabetical position in the methods section.
+	
+	* XmlNode.cs: Passes in 'this' to XmlNodeList constructor instead of
+	last linked child.  Set XmlNode base class to return false for IsReadOnly().
+	Implemented GetEnumerator() and RemoveChild().
+	
+	* XmlNodeListChildren.cs: Now stores the parent instead of the last child.
+	This is to support the behavior that the Enumerator doesn't become invalid
+	when changes to the children occur.  Flushed out rest of implementation for
+	MoveNext, Current, and Reset.
+
 2002-03-12  Duncan Mak  <duncan@ximian.com>
 
 	* XmlCharacterData.cs: Reformatted the properties for better readability.

@@ -15,39 +15,52 @@ namespace System.Xml
 	public class XmlNodeListChildren : XmlNodeList
 	{
 		#region Enumerator
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Enumerator
-		//
-		///////////////////////////////////////////////////////////////////////
+
 		private class Enumerator : IEnumerator
 		{
+			XmlNode parent;
 			XmlLinkedNode currentChild;
-			XmlLinkedNode lastChild;
+			bool passedLastNode;
 
-			internal Enumerator (XmlLinkedNode lastChild)
+			internal Enumerator (XmlNode parent)
 			{
 				currentChild = null;
-				this.lastChild = lastChild;
+				this.parent = parent;
+				passedLastNode = false;
 			}
 
 			public virtual object Current {
 				get {
+					if ((currentChild == null) ||
+						(parent.LastLinkedChild == null) ||
+						(passedLastNode == true))
+						throw new InvalidOperationException();
+
 					return currentChild;
 				}
 			}
 
 			public virtual bool MoveNext()
 			{
-				bool passedEndOfCollection = Object.ReferenceEquals(currentChild, lastChild);
+				bool movedNext = true;
 
-				if (currentChild == null) {
-					currentChild = lastChild;
+				if (parent.LastLinkedChild == null) {
+					movedNext = false;
+				}
+				else if (currentChild == null) {
+					currentChild = parent.LastLinkedChild.NextLinkedSibling;
+				}
+				else {
+					if (Object.ReferenceEquals(currentChild, parent.LastLinkedChild)) {
+						movedNext = false;
+						passedLastNode = true;
+					}
+					else {
+						currentChild = currentChild.NextLinkedSibling;
+					}
 				}
 
-				currentChild = currentChild.NextLinkedSibling;
-
-				return passedEndOfCollection;
+				return movedNext;
 			}
 
 			public virtual void Reset()
@@ -59,46 +72,30 @@ namespace System.Xml
 		#endregion
 
 		#region Fields
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Fields
-		//
-		///////////////////////////////////////////////////////////////////////
 
-		XmlLinkedNode lastChild;
+		XmlNode parent;
 
 		#endregion
 
 		#region Constructors
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Constructors
-		//
-		///////////////////////////////////////////////////////////////////////
-
-		public XmlNodeListChildren(XmlLinkedNode lastChild)
+		public XmlNodeListChildren(XmlNode parent)
 		{
-			this.lastChild = lastChild;
+			this.parent = parent;
 		}
 
 		#endregion
 
 		#region Properties
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Properties
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		public override int Count {
 			get {
 				int count = 0;
 
-				if (lastChild != null) {
-					XmlLinkedNode currentChild = lastChild.NextLinkedSibling;
+				if (parent.LastLinkedChild != null) {
+					XmlLinkedNode currentChild = parent.LastLinkedChild.NextLinkedSibling;
 					
 					count = 1;
-					while (!Object.ReferenceEquals(currentChild, lastChild)) {
+					while (!Object.ReferenceEquals(currentChild, parent.LastLinkedChild)) {
 						currentChild = currentChild.NextLinkedSibling;
 						count++;
 					}
@@ -111,15 +108,10 @@ namespace System.Xml
 		#endregion
 
 		#region Methods
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Methods
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		public override IEnumerator GetEnumerator ()
 		{
-			return new Enumerator(lastChild);
+			return new Enumerator(parent);
 		}
 
 		public override XmlNode Item (int index)
@@ -129,11 +121,11 @@ namespace System.Xml
 			// Instead of checking for && index < Count which has to walk
 			// the whole list to get a count, we'll just keep a count since
 			// we have to walk the list anyways to get to index.
-			if ((index >= 0) && (lastChild != null)) {
-				XmlLinkedNode currentChild = lastChild.NextLinkedSibling;
+			if ((index >= 0) && (parent.LastLinkedChild != null)) {
+				XmlLinkedNode currentChild = parent.LastLinkedChild.NextLinkedSibling;
 				int count = 0;
 
-				while ((count < index) && !Object.ReferenceEquals(currentChild, lastChild)) 
+				while ((count < index) && !Object.ReferenceEquals(currentChild, parent.LastLinkedChild)) 
 				{
 					currentChild = currentChild.NextLinkedSibling;
 					count++;

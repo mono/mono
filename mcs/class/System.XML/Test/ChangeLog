@@ -1,3 +1,14 @@
+2002-03-12  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlNodeListTests.cs: New tests: TestNodeTypesThatCantHaveChildren,
+	TestZeroChildren, TestOneChild, TestMultipleChildren,
+	TestAppendChildAffectOnEnumeration, TestRemoveChildAffectOnEnumeration,
+	TestRemoveOnlyChildAffectOnEnumeration, TestCurrentBeforeFirstNode,
+	TestCurrentAfterLastNode, TestCurrentDoesntMove, and TestReset.  Made
+	two other tests but not in use yet until RemoveAll is implemented for
+	attributes and XmlNode.ReplaceChild is implemented.  The tests are called
+	saveTestReplaceChildAffectOnEnumeration and saveTestRemoveAllAffectOnEnumeration.
+
 2002-03-08  Jason Diamond <jason@injektilo.org>
 
 	* XmlTextReaderTests.cs: Test MoveToElement and MoveToFirstAttribute.

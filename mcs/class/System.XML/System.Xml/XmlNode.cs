@@ -46,7 +46,7 @@ namespace System.Xml
 
 		public virtual XmlNodeList ChildNodes {
 			get {
-				return new XmlNodeListChildren(LastLinkedChild);
+				return new XmlNodeListChildren(this);
 			}
 		}
 
@@ -77,9 +77,8 @@ namespace System.Xml
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public virtual bool IsReadOnly {
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		[System.Runtime.CompilerServices.IndexerName("Item")]
@@ -176,12 +175,15 @@ namespace System.Xml
 			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) {
 				XmlLinkedNode newLinkedChild = (XmlLinkedNode)newChild;
 				XmlLinkedNode lastLinkedChild = LastLinkedChild;
+				
 				if (lastLinkedChild != null) {
 					newLinkedChild.NextLinkedSibling = lastLinkedChild.NextLinkedSibling;
 					lastLinkedChild.NextLinkedSibling = newLinkedChild;
 				} else
 					newLinkedChild.NextLinkedSibling = newLinkedChild;
+				
 				LastLinkedChild = newLinkedChild;
+
 				return newChild;
 			} else
 				throw new InvalidOperationException();
@@ -201,10 +203,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return new XmlNodeListChildren(this).GetEnumerator();
 		}
 
 		[MonoTODO]
@@ -258,10 +259,33 @@ namespace System.Xml
 			LastLinkedChild = null;
 		}
 
-		[MonoTODO]
 		public virtual XmlNode RemoveChild (XmlNode oldChild)
 		{
-			throw new NotImplementedException ();
+			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) 
+			{
+				if (IsReadOnly)
+					throw new ArgumentException();
+
+				if (Object.ReferenceEquals(LastLinkedChild, LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals(LastLinkedChild, oldChild))
+					LastLinkedChild = null;
+				else {
+					XmlLinkedNode oldLinkedChild = (XmlLinkedNode)oldChild;
+					XmlLinkedNode beforeLinkedChild = LastLinkedChild;
+					
+					while (!Object.ReferenceEquals(beforeLinkedChild.NextLinkedSibling, LastLinkedChild) && !Object.ReferenceEquals(beforeLinkedChild.NextLinkedSibling, oldLinkedChild))
+						beforeLinkedChild = beforeLinkedChild.NextLinkedSibling;
+
+					if (!Object.ReferenceEquals(beforeLinkedChild.NextLinkedSibling, oldLinkedChild))
+						throw new ArgumentException();
+
+					beforeLinkedChild.NextLinkedSibling = oldLinkedChild.NextLinkedSibling;
+					oldLinkedChild.NextLinkedSibling = null;
+				 }
+
+				return oldChild;
+			} 
+			else
+				throw new ArgumentException();
 		}
 
 		[MonoTODO]

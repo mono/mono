@@ -105,11 +105,6 @@ namespace System.Xml
 			}
 		}
 
-		internal void SetOwnerElement (XmlElement ownerElement)
-		{
-			this.ownerElement = ownerElement;
-		}
-
 		[MonoTODO]
 		public override XmlNode ParentNode {
 			get {
@@ -155,6 +150,11 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal void SetOwnerElement (XmlElement ownerElement)
+		{
+			this.ownerElement = ownerElement;
 		}
 
 		[MonoTODO]
