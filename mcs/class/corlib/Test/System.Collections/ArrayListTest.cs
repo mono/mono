@@ -1381,15 +1381,14 @@ public class ArrayListTest : TestCase {
 		{
 			ArrayList al1 = new ArrayList();
 			int capacity = al1.Capacity;
-			while (al1.Capacity <= capacity) {
+			int size = capacity / 2;
+			for (int i = 1; i <=size; i++) {
 				al1.Add('?');
 			}
 			al1.RemoveAt(0);
-			AssertEquals("size not good", capacity, al1.Count);
-			Assert("capacity not good", al1.Capacity > capacity);
 			al1.TrimToSize();
 			AssertEquals("no capacity match", 
-				     capacity, al1.Capacity);
+				     size - 1, al1.Capacity);
 
 			al1.Clear();
 			al1.TrimToSize();

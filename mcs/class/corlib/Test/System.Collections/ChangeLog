@@ -1,5 +1,11 @@
 2002-04-30  Nick Drochak  <ndrochak@gol.com>
 
+	* ArrayListTest.cs (TestTrimToSize): Change test so that it doesn't
+	rely on the specific timing of a capacity change.  Our corlib doubles
+	capacity sooner than the reference system does.
+
+2002-04-30  Nick Drochak  <ndrochak@gol.com>
+
 	* ArrayListTest.cs: Catch unexpected exception typs and report as
 	failures.
 
