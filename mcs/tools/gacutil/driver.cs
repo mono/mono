@@ -136,8 +136,8 @@ namespace Mono.Tools {
 			string link_gacdir = gacdir;
 			string link_libdir = libdir;
 			if (root != null) {
-				libdir = CombinePaths (root, libdir);
-				gacdir = CombinePaths (root, gacdir);
+				libdir = Path.Combine (root, "mono");
+				gacdir = Path.Combine (libdir, "gac");
 			}
 
 			switch (command) {
