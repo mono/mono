@@ -58,7 +58,11 @@ debugging the runtime itself.
 This option is used to precompile the CIL code in the specified
 assembly to native code.  The generated code is stored in a file with
 the extension .so.  This file will be automatically picked up by the
-runtime when the assembly is executed.
+runtime when the assembly is executed.  
+.TP
+This pre-compiles the methods, but the original assembly is still
+required to execute as this one contains the metadata and exception
+information which is not availble on the generated file. 
 .TP
 Pre compilation is just a mechanism to reduce startup time, and avoid
 just-in-time compilation costs.  The original assembly must still be
