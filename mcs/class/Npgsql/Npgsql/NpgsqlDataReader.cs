@@ -131,7 +131,12 @@ namespace Npgsql
 
                 String[] _returnStringTokens = ((String)_responses[_resultsetIndex]).Split(null);	// whitespace separator.
 
-                return Int32.Parse(_returnStringTokens[_returnStringTokens.Length - 1]);
+                try {
+                    return Int32.Parse(_returnStringTokens[_returnStringTokens.Length - 1]);
+                }
+                catch (FormatException) {
+                    return -1;
+		}
             }
 
         }
