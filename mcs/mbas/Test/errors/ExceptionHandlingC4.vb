@@ -1,4 +1,4 @@
-REM LineNo: 9
+REM LineNo: 11
 REM ExpectedError: BC30665
 REM ErrorMessage: 'Throw' operand must derive from 'System.Exception'
 

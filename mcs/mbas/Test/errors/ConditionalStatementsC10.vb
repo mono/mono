@@ -1,4 +1,4 @@
-REM LineNo: 14
+REM LineNo: 13
 REM ExpectedError: BC30095
 REM ErrorMessage: 'Select Case' must end with a matching 'End Select'.
 

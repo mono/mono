@@ -1,4 +1,4 @@
-REM LineNo: 6
+REM LineNo: 7
 REM ExpectedError: BC30297
 REM ErrorMessage: Constructor 'Public Sub New(a As String)' cannot call itself:
 

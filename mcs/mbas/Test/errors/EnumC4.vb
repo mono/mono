@@ -1,4 +1,4 @@
-REM LineNo: 10
+REM LineNo: 9
 REM ExpectedError: BC30500
 REM ErrorMessage: Constant 'A' cannot depend on its own value.
 

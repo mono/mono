@@ -1,4 +1,4 @@
-REM LineNo: 18
+REM LineNo: 20
 REM ExpectedError: BC30451
 REM ErrorMessage: Name 'j' is not declared
 

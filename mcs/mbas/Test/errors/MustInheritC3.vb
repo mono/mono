@@ -1,4 +1,4 @@
-REM LineNo: 5
+REM LineNo: 6
 REM ExpectedError: BC31411
 REM ErrorMessage: 'C1' must be declared 'MustInherit' because it contains methods declared 'MustOverride'.
 

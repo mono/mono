@@ -1,3 +1,15 @@
+2005-04-04 Ritvik Mayank <mritvik@novell.com>
+	* ConditionalStatementsC10.vb
+	* ConstructorC1.vb
+	* ExceptionHandlingC4.vb
+	* MustInheritC3.vb
+	* ExceptionHandlingC6.vb
+	* ModuleTestC4.vb
+	* InterfaceC6.vb
+	* ExternalSourceDirectivesC2.vb
+	* EnumC4.vb
+		Correction in Line No.
+
 2005-03-18 Manjula GHM <mmanjula@novell.com>
 	   Sudharsan V <vsudharsan@novell.com>
 	  * Test cases for Type members and Like operator

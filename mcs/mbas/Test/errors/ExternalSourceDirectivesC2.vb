@@ -1,4 +1,4 @@
-REM LineNo: 17
+REM LineNo: 14
 REM ExpectedError: BC30579
 REM ErrorMessage: '#ExternalSource' statement must end with a matching '#End ExternalSource'.
 

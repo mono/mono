@@ -6,7 +6,7 @@ REM LineNo: 21
 REM ExpectedError: BC30401
 REM ErrorMessage: 'S' cannot implement 'S' because there is no matching sub on interface 'I'.
 
-REM LineNo: 303030 
+REM LineNo: 30 
 REM ExpectedError: BC30401
 REM ErrorMessage: 'S' cannot implement 'S' because there is no matching sub on interface 'I'.
 
