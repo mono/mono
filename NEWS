@@ -1,3 +1,92 @@
+Hello everyone!
+
+   We have made a new release of Mono available.  Despite the fact
+that we just did Mono 0.18, this release is packed with new features.
+
+* Availability.
+
+   Mono 0.19 is available in package format from:
+
+	http://www.go-mono.com/download.html
+
+   We released packages for SuSE 8.0, Mandrake 8.2, Debian and various
+Red Hat releases.  It is also available from Red Carpet on the Mono
+channel.
+
+   Source code for Mono, MCS, the Mono Debugger, XSP is available as
+well from that web page. 
+
+* New in this release
+
+	* Remoting news:
+
+		Lluis has implemented and documented the Binary formatter
+		Woohoo!  He has done a lot of work as well to support
+		remoting.
+
+		Patrik has also been working heavily on fixing a
+		number of remoting related bugs and missing features.
+
+		Ajay also implemented 1-d array serialization in System.Xml
+
+	* New database provider: IBM DB2
+
+		Christopher Bockner has contributed a DB2 data
+		provider for System.Data.  We have a very complete
+		range of data providers.
+		
+	* System.Web.Mobile
+
+		Gaurav has started work on this assembly, this will
+		allow us to run the unmodified reference ASP.NET
+		applications that were designed to support Mobile
+		browsing.
+
+	* System.Data and System.XML:
+
+		More implementation work on XmlDataDocument from Ville
+		and plenty of fixes from Atsushi.
+
+	* MacOS patches:
+
+		Paolo integrated John Duncan's and Benjamin Reed
+		patches to make Mono run on MacOS X out of the box.
+
+	* IsolatedStorage
+
+		The initial implementation of it was done by Jonathan
+		Pryor and included in this release.
+
+	* Compilers:
+
+		More work on the Mono Visual Basic compiler (it is now
+		included in the packages).
+
+		Plenty of bug fixes from Jackson, Miguel to the C#
+		compiler.
+
+		Patches from Francesco and Daniel to the VB.NET
+		support runtime.
+
+	* Debugger support
+
+		Plenty of updates to run the new Mono Debugger from Martin.
+
+* Main missing bits:
+
+   Some of everyone's favorite patches or code chunks have not yet
+been integrated, hopefully Mono 0.20 will have them:
+
+	* Zoltan's patch to run IKVM is not yet on this release
+
+	* Some parts of Patrik's remoting code did not make it to the
+	  release either.
+
+	* Reggie's MySQL native provider is also missing.
+
+Enjoy!
+Miguel.
+------------------------------------------------------------------------------
 Happy new year!
 
         The Mono team is proud to release Mono 0.18, with plenty of bug
