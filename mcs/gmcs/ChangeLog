@@ -1,7 +1,48 @@
+2005-01-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (IsAccessorAccessible): Accessibility to private fields
+	of a different type is only allowed to private fields of a
+	containing type, not on fields of a base class.
+
+	See test-174.cs and error cs0122-9.cs
+
+2005-01-13  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-335.cs (bug #58126).
+	* cs-parser.jay (argument): Split out non-expression parts of the
+	rule into 'non_simple_argument'.
+	(invocation_expression): Support parenthesized invocations with
+	multiple arguments, and with single non-simple arguments.
+
+2005-01-13  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-tokenizer.cs (xtoken): Reset 'comments_seen' in a couple more
+	places.
+
+2005-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0038-1.cs, cs1640-6.cs.
+	* ecore.cs (Expression.Resolve): Remove special-case for
+	SimpleName in error-handling.
+	(Expression.almostMatchedMembers): Relax access permission to
+	protected.
+	(Expression.MemberLookupFailed): Handle duplicates in
+	almostMatchedMembers list.
+	(SimpleName.DoSimpleNameResolve): Catch CS0038 errors earlier.
+	* expression.cs (New.DoResolve): Report CS1540 for more cases.
+	* typemanager.cs (GetFullNameSignature): Use the MethodBase
+	overload if the passed in MemberInfo is a MethodBase.
+
 2005-01-25  Martin Baulig  <martin@ximian.com>
 
 	* doc.cs
 	(DocUtil.emptyParamList): Removed; use `Type.EmptyTypes' instead.
+
+2005-01-12  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70749
+	* attribute.cs (ExtractSecurityPermissionSet): Don't report error
+	for non-CAS & merge permission sets properly.
 
 2005-01-11  Raja R Harinath  <rharinath@novell.com>
 

@@ -230,9 +230,9 @@ namespace Mono.CSharp {
 			//
 			if (ma == MethodAttributes.Private) {
 				Type declaring_type = mi.DeclaringType;
-					
+
 				if (invocation_type != declaring_type)
-					return TypeManager.IsNestedFamilyAccessible (invocation_type, declaring_type);
+					return TypeManager.IsNestedChildOf (invocation_type, declaring_type);
 
 				return true;
 			}
@@ -372,12 +372,8 @@ namespace Mono.CSharp {
 
 			ec.DoFlowAnalysis = old_do_flow_analysis;
 
-			if (e == null) {
-				if (this is SimpleName)
-					MemberLookupFailed (ec, null, ec.ContainerType, ((SimpleName) this).Name, 
-							    ec.DeclSpace.Name, loc);
+			if (e == null)
 				return null;
-			}
 
 			if ((e is TypeExpr) || (e is ComposedCast) || (e is Namespace)) {
 				if ((flags & ResolveFlags.Type) == 0) {
@@ -585,8 +581,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-
-		private static ArrayList almostMatchedMembers = new ArrayList (4);
+		protected static ArrayList almostMatchedMembers = new ArrayList (4);
 
 		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
@@ -741,13 +736,25 @@ namespace Mono.CSharp {
 					// base class (CS1540).  If the qualifier_type is a base of the
 					// ec.ContainerType and the lookup succeeds with the latter one,
 					// then we are in this situation.
-					foreach (MemberInfo m in almostMatchedMembers)
+					for (int i = 0; i < almostMatchedMembers.Count; ++i) {
+						MemberInfo m = (MemberInfo) almostMatchedMembers [i];
+						for (int j = 0; j < i; ++j) {
+							if (m == almostMatchedMembers [j]) {
+								m = null;
+								break;
+							}
+						}
+						if (m == null)
+							continue;
+
+						Report.SymbolRelatedToPreviousError (m);
 						Report.Error (1540, loc, 
 							      "Cannot access protected member `{0}' via a qualifier of type `{1}';"
 							      + " the qualifier must be of type `{2}' (or derived from it)", 
 							      TypeManager.GetFullNameSignature (m),
 							      TypeManager.CSharpName (qualifier_type),
 							      TypeManager.CSharpName (ec.ContainerType));
+					}
 					return;
 				}
 				almostMatchedMembers.Clear ();
@@ -2156,6 +2163,8 @@ namespace Mono.CSharp {
 			//
 
 			DeclSpace lookup_ds = ec.DeclSpace;
+			Type almost_matched_type = null;
+			ArrayList almost_matched = null;
 			do {
 				if (lookup_ds.TypeBuilder == null)
 					break;
@@ -2164,14 +2173,33 @@ namespace Mono.CSharp {
 				if (e != null)
 					break;
 
+				if (almost_matched == null && almostMatchedMembers.Count > 0) {
+					almost_matched_type = lookup_ds.TypeBuilder;
+					almost_matched = (ArrayList) almostMatchedMembers.Clone ();
+				}
+
 				lookup_ds =lookup_ds.Parent;
 			} while (lookup_ds != null);
 
 			if (e == null && ec.ContainerType != null)
 				e = MemberLookup (ec, ec.ContainerType, Name, loc);
 
-			if (e == null)
-				return ResolveAsTypeStep (ec);
+			if (e == null) {
+				if (almost_matched == null && almostMatchedMembers.Count > 0) {
+					almost_matched_type = ec.ContainerType;
+					almost_matched = (ArrayList) almostMatchedMembers.Clone ();
+				}
+				e = ResolveAsTypeStep (ec);
+			}
+
+			if (e == null) {
+				if (almost_matched != null)
+					almostMatchedMembers = almost_matched;
+				if (almost_matched_type == null)
+					almost_matched_type = ec.ContainerType;
+				MemberLookupFailed (ec, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, loc);
+				return null;
+			}
 
 			if (e is TypeExpr)
 				return e;
