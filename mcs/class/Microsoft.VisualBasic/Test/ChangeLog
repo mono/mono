@@ -1,0 +1,4 @@
+2002-10-23  Nick Drochak  <ndrochak@gol.com>
+
+	* DateAndTimeTest.cs: Try to set the culture for these tests and see
+	if that helps.  All but one works on my machine.

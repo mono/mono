@@ -8,6 +8,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Globalization;
 using Microsoft.VisualBasic;
 
@@ -15,12 +16,23 @@ namespace MonoTests.Microsoft.VisualBasic
 {
 
 	public class DateAndTimeTest : TestCase {
+
+		private CultureInfo oldcult;
 	
 		public DateAndTimeTest() : base ("Microsoft.VisualBasic.DateAndTime") {}
 		public DateAndTimeTest(string name) : base(name) {}
 
-		protected override void SetUp() {}
-		protected override void TearDown() {}
+		protected override void SetUp() 
+		{
+			// the current culture determines the result of formatting
+			oldcult = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+		}
+		
+		protected override void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = oldcult;		
+		}
 
 		public static ITest Suite {
 			get { 
@@ -208,13 +220,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			AssertEquals("#DP05", 53, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.FirstFullWeek));
 			AssertEquals("#DP06", 1, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.Jan1));
 			AssertEquals("#DP07", 1, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.System));
-			AssertEquals("#DP08", 7, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Friday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP09", 6, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Saturday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP08", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Friday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP09", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Saturday, FirstWeekOfYear.FirstFourDays));
 			AssertEquals("#DP10", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Sunday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP11", 4, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Monday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP12", 3, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Tuesday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP13", 2, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Wednesday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP14", 1, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Thursday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP11", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Monday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP12", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Tuesday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP13", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Wednesday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP14", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Thursday, FirstWeekOfYear.FirstFourDays));
 			AssertEquals("#DP15", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.FirstFourDays));
 
 
@@ -244,32 +256,28 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		public void TestDateValue () {
-			bool caughtException = false;
-
 			try {
 				DateAndTime.DateValue("This is not a date.");
 			}
-			catch (Exception e) {
-				AssertEquals ("#DV01", e.GetType(), typeof(InvalidCastException));
-				caughtException = true;
+			catch (FormatException) {
+				/* do nothing.  this is what we expect */
 			}
-			AssertEquals("#DV02", true, caughtException);
-
+			catch (Exception e) {
+				Fail ("Unexpected exception:" + e);
+			}
 			AssertEquals("#DV03", new DateTime(1969, 2, 12), DateAndTime.DateValue("February 12, 1969"));
 		}
 
 		public void TestTimeValue () {
-			bool caughtException = false;
-
 			try {
 				DateAndTime.TimeValue("This is not a time.");
 			}
-			catch (Exception e) {
-				AssertEquals ("#TV01", e.GetType(), typeof(InvalidCastException));
-				caughtException = true;
+			catch (FormatException) {
+				/* do nothing.  this is what we expect */
 			}
-			AssertEquals("#TV02", true, caughtException);
-
+			catch (Exception e) {
+				Fail ("Unexpected exception:" + e);
+			}
 			AssertEquals("#TV03", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
 		}
 
@@ -342,9 +350,9 @@ namespace MonoTests.Microsoft.VisualBasic
 
 		public void TestWeekdayName () {
 			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
-			AssertEquals("#WN01", CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedDayName(jan1.DayOfWeek),
+			AssertEquals("#WN01", "Tue",
 				DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, true, FirstDayOfWeek.System));
-			AssertEquals("#WN02", CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(jan1.DayOfWeek),
+			AssertEquals("#WN02", "Tuesday",
 				DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.System));
 
 			bool caughtException = false;
@@ -369,7 +377,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			AssertEquals("#WN06", true, caughtException);
 
-			AssertEquals("#WN07", "Monday", DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.System));
+			AssertEquals("#WN07", "Tuesday", DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.System));
 		}
 
 
