@@ -33,10 +33,10 @@ namespace System.Reflection.Emit {
 			name_cache = new Hashtable ();
 
 			if (emitSymbolInfo)
-				symbol_writer = GetSymbolWriter ();
+				symbol_writer = GetSymbolWriter (fullyqname);
 		}
 
-		internal ISymbolWriter GetSymbolWriter ()
+		internal ISymbolWriter GetSymbolWriter (string filename)
 		{
 			Assembly assembly;
 			try {
@@ -49,13 +49,17 @@ namespace System.Reflection.Emit {
 			if (type == null)
 				return null;
 
-			Type[] arg_types = new Type [0];
+			Type[] arg_types = new Type [1];
+			arg_types [0] = typeof (string);
 			ConstructorInfo constructor = type.GetConstructor (arg_types);
+
+			object[] args = new object [1];
+			args [0] = filename;
 
 			if (constructor == null)
 				return null;
 
-			Object instance = constructor.Invoke (null);
+			Object instance = constructor.Invoke (args);
 			if (instance == null)
 				return null;
 

@@ -1,3 +1,9 @@
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
+	* ModuleBuilder.cs (GetSymbolWriter): The MonoSymbolWriter's constructor
+	now takes a `string assembly_filename' argument, pass it our fully
+	qualified assembly name.
+
 2002-03-24  Nick Drochak  <ndrochak@gol.com>
 
 	* ILGenerator.cs: Use #if-#endif instead of if(false){} to disable
