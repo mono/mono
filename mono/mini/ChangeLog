@@ -1,5 +1,8 @@
 2005-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.c (EXCLUDED_FROM_ALL): Disable SSAPRE until bug #70637 is 
+	fixed.
+
 	* mini-sparc.h mini-sparc.c: Enable out-of-line bblock support.
 
 	* tramp-*.c: Only patch vtable slots if the object is in the current
