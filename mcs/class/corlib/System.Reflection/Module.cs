@@ -67,7 +67,8 @@ namespace System.Reflection {
 			FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
 		}
 
-		internal Module () { }
+		internal Module () {
+		}
 
 		~Module () {
 			Close ();
@@ -128,7 +129,8 @@ namespace System.Reflection {
 			if (IsResource ())
 				return null;
 
-			return GetGlobalType ().GetField (name, BindingFlags.Public | BindingFlags.Static);
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetField (name, BindingFlags.Public | BindingFlags.Static) : null;
 		}
 	
 		public FieldInfo GetField (string name, BindingFlags flags) 
@@ -136,7 +138,8 @@ namespace System.Reflection {
 			if (IsResource ())
 				return null;
 
-			return GetGlobalType ().GetField (name, flags);
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetField (name, flags) : null;
 		}
 	
 		public FieldInfo[] GetFields () 
@@ -144,7 +147,8 @@ namespace System.Reflection {
 			if (IsResource ())
 				return new FieldInfo [0];
 
-			return GetGlobalType ().GetFields (BindingFlags.Public | BindingFlags.Static);
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetFields (BindingFlags.Public | BindingFlags.Static) : new FieldInfo [0];
 		}
 	
 		public MethodInfo GetMethod (string name) 
@@ -167,7 +171,8 @@ namespace System.Reflection {
 			if (IsResource ())
 				return null;
 
-			return GetGlobalType ().GetMethod (name, bindingAttr, binder, callConvention, types, modifiers);
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers) : null;
 		}
 	
 		public MethodInfo[] GetMethods () 
@@ -175,7 +180,8 @@ namespace System.Reflection {
 			if (IsResource ())
 				return new MethodInfo [0];
 
-			return GetGlobalType ().GetMethods ();
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetMethods () : new MethodInfo [0];
 		}
 
 #if NET_2_0
@@ -183,7 +189,8 @@ namespace System.Reflection {
 			if (IsResource ())
 				return new MethodInfo [0];
 
-			return GetGlobalType ().GetMethods (flags);
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetMethods (flags) : new MethodInfo [0];
 		}
 
 		public FieldInfo[] GetFields (BindingFlags flags) 
@@ -191,7 +198,8 @@ namespace System.Reflection {
 			if (IsResource ())
 				return new FieldInfo [0];
 
-			return GetGlobalType ().GetFields (flags);
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetFields (flags) : new FieldInfo [0];
 		}
 #endif
 	

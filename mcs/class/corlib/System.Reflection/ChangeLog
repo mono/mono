@@ -1,3 +1,7 @@
+2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Module.cs: Handle the case when the global type does not exists.
+
 2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* LocalVariableInfo.cs: Reorganize fields so LocalBuilder can inherit
