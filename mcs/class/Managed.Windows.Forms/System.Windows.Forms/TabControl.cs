@@ -222,6 +222,9 @@ namespace System.Windows.Forms {
 					Controls [selected_index].Visible = false;
 				}
 				selected_index = value;
+
+				OnSelectedIndexChanged (EventArgs.Empty);
+
 				if (selected_index != -1) {
 					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
 					Controls [selected_index].Visible = true;
@@ -413,6 +416,12 @@ namespace System.Windows.Forms {
 				base.WndProc (ref m);
 				break;
 			}
+		}
+
+		protected virtual void OnSelectedIndexChanged (EventArgs e)
+		{
+			if (SelectedIndexChanged != null)
+				SelectedIndexChanged (this, e);
 		}
 
 		#endregion	// Protected Instance Methods
