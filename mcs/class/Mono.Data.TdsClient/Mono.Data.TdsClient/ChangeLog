@@ -1,3 +1,8 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TdsDataReader.cs: Null values are now represented with DBNull instances. 
+	  Deal with this.
+
 2002-11-04  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Locale.cs: added missing file.  Build blocker.

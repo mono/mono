@@ -144,24 +144,30 @@ namespace Mono.Data.TdsClient {
 		public bool GetBoolean (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is bool))
+			if (!(value is bool)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (bool) value;
 		}
 
 		public byte GetByte (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is byte))
+			if (!(value is byte)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (byte) value;
 		}
 
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
-			if (!(value is byte []))
+			if (!(value is byte [])) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
 			return ((byte []) value).Length - dataIndex;
 		}
@@ -169,16 +175,20 @@ namespace Mono.Data.TdsClient {
 		public char GetChar (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is char))
+			if (!(value is char)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (char) value;
 		}
 
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
-			if (!(value is char[]))
+			if (!(value is char[])) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			Array.Copy ((char []) value, (int) dataIndex, buffer, bufferIndex, length);
 			return ((char []) value).Length - dataIndex;
 		}
@@ -197,24 +207,30 @@ namespace Mono.Data.TdsClient {
 		public DateTime GetDateTime (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is DateTime))
+			if (!(value is DateTime)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (DateTime) value;
 		}
 
 		public decimal GetDecimal (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is decimal))
+			if (!(value is decimal)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (decimal) value;
 		}
 
 		public double GetDouble (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is double))
+			if (!(value is double)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (double) value;
 		}
 
@@ -226,40 +242,50 @@ namespace Mono.Data.TdsClient {
 		public float GetFloat (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is float))
+			if (!(value is float)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (float) value;
 		}
 
 		public Guid GetGuid (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is Guid))
+			if (!(value is Guid)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (Guid) value;
 		}
 
 		public short GetInt16 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is short))
+			if (!(value is short)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (short) value;
 		}
 
 		public int GetInt32 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is int))
+			if (!(value is int)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (int) value;
 		}
 
 		public long GetInt64 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is long))
+			if (!(value is long)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (long) value;
 		}
 
@@ -582,18 +608,18 @@ namespace Mono.Data.TdsClient {
 
 			switch (type) {
 			case TdsType.BigInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsInt64.Null;
 				return (TdsInt64) ((long) value);
 			case TdsType.Binary:
 			case TdsType.Image:
 			case TdsType.VarBinary:
 			case TdsType.Timestamp:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsBinary.Null;
 				return (TdsBinary) ((byte[]) value);
 			case TdsType.Bit:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsBoolean.Null;
 				return (TdsBoolean) ((bool) value);
 			case TdsType.Char:
@@ -602,47 +628,47 @@ namespace Mono.Data.TdsClient {
 			case TdsType.NVarChar:
 			case TdsType.Text:
 			case TdsType.VarChar:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsString.Null;
 				return (TdsString) ((string) value);
 			case TdsType.DateTime:
 			case TdsType.SmallDateTime:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsDateTime.Null;
 				return (TdsDateTime) ((DateTime) value);
 			case TdsType.Decimal:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsDecimal.Null;
 				if (value is TdsBigDecimal)
 					return TdsDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
 				return (TdsDecimal) ((decimal) value);
 			case TdsType.Float:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsDouble.Null;
 				return (TdsDouble) ((double) value);
 			case TdsType.Int:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsInt32.Null;
 				return (TdsInt32) ((int) value);
 			case TdsType.Money:
 			case TdsType.SmallMoney:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsMoney.Null;
 				return (TdsMoney) ((decimal) value);
 			case TdsType.Real:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsSingle.Null;
 				return (TdsSingle) ((float) value);
 			case TdsType.UniqueIdentifier:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsGuid.Null;
 				return (TdsGuid) ((Guid) value);
 			case TdsType.SmallInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsInt16.Null;
 				return (TdsInt16) ((short) value);
 			case TdsType.TinyInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return TdsByte.Null;
 				return (TdsByte) ((byte) value);
 			}
@@ -670,8 +696,10 @@ namespace Mono.Data.TdsClient {
 		public string GetString (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is string))
+			if (!(value is string)) {
+				if (value is DBNull) throw new TdsNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (string) value;
 		}
 
@@ -707,7 +735,7 @@ namespace Mono.Data.TdsClient {
 
 		public bool IsDBNull (int i)
 		{
-			return GetValue (i) == null;
+			return GetValue (i) == DBNull.Value;
 		}
 
 		public bool NextResult ()
