@@ -1,3 +1,7 @@
+2004-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FloatingPointFormatterTest.cs : Added regression for #59890.
+
 2004-06-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimeSpanTest.cs: Added valid cases to parse MinValue and MaxValue.
