@@ -32,37 +32,38 @@ namespace System.Web.UI
                 private static readonly object LoadEvent = new object();
                 private static readonly object PreRenderEvent = new object();
                 private static readonly object UnloadEvent = new object();
-		private bool id_set = false;
 		private string uniqueID;
-                private string _userId = null;
-                private string _cachedClientId = null;
-                private ControlCollection _controls = null;
+                private string _userId;
+		private bool id_set;
+                private string _cachedClientId;
+                private ControlCollection _controls;
                 private bool _enableViewState = true;
-                private IDictionary _childViewStates = null; //TODO: Not sure datatype. Placeholder guess.
-                private bool _isNamingContainer = false;
-                private Control _namingContainer = null;
-                private Page _page = null;
-                private Control _parent = null;
-                private ISite _site = null;
+                private IDictionary _childViewStates; //TODO: Not sure datatype. Placeholder guess.
+                private bool _isNamingContainer;
+                private Control _namingContainer;
+                private Page _page;
+                private Control _parent;
+                private ISite _site;
                 private bool _visible = true;
-                private HttpContext _context = null;
-                private bool _childControlsCreated = false;
-                private StateBag _viewState = null;
-                private bool _trackViewState = false;
+                private bool visibleChanged;
+                private HttpContext _context;
+                private bool _childControlsCreated;
+                private StateBag _viewState;
+                private bool _trackViewState;
                 private EventHandlerList _events = new EventHandlerList();
-                private RenderMethod _renderMethodDelegate = null;
+                private RenderMethod _renderMethodDelegate;
 		private bool autoID = true;
-		private bool creatingControls = false;
+		private bool creatingControls;
 		private bool bindingContainer = true;
 		private bool autoEventWireup = true;
 
-		bool inited = false;
+		bool inited;
 		bool viewStateLoaded;
-		bool loaded = false;
-		bool prerendered = false;
-		int defaultNumberID = 0;
+		bool loaded;
+		bool prerendered;
+		int defaultNumberID;
  
-		private DataBindingCollection dataBindings = null;
+		DataBindingCollection dataBindings;
 		Hashtable pendingVS; // may hold unused viewstate data from child controls
 
                 public Control()
@@ -246,8 +247,10 @@ namespace System.Web.UI
                         }
 
                         set {
-				if (value != _visible)
-					ViewState ["Visible"] = value;
+				if (value != _visible) {
+					if (IsTrackingViewState)
+						visibleChanged = true;
+				}
 
                                 _visible = value;
                         }
@@ -498,8 +501,10 @@ namespace System.Web.UI
 			if (savedState != null) {
 				ViewState.LoadViewState (savedState);
 				object o = ViewState ["Visible"];
-				if (o != null)
+				if (o != null) {
 					_visible = (bool) o;
+					visibleChanged = true;
+				}
 			}
                 }
 
@@ -581,8 +586,11 @@ namespace System.Web.UI
 
                 protected virtual object SaveViewState ()
                 {
-			if (_viewState == null)
+			if (visibleChanged) {
+				ViewState ["Visible"] = Visible;
+			} else if (_viewState == null) {
 				return null;
+			}
 
 			return _viewState.SaveViewState ();
                 }
