@@ -1,3 +1,8 @@
+2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* codegen.cs (Init): Create the dynamic assembly with 
+	AssemblyBuilderAccess.Save, to enable some optimizations in the runtime.
+
 2003-12-02 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* support.cs: Make the PtrHashtable use only one

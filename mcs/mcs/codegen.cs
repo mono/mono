@@ -92,7 +92,7 @@ namespace Mono.CSharp {
 			
 			current_domain = AppDomain.CurrentDomain;
 			AssemblyBuilder = current_domain.DefineDynamicAssembly (
-				an, AssemblyBuilderAccess.RunAndSave, Dirname (name));
+				an, AssemblyBuilderAccess.Save, Dirname (name));
 
 			//
 			// Pass a path-less name to DefineDynamicModule.  Wonder how
