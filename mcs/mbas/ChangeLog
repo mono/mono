@@ -1,4 +1,7 @@
 2004-09-08 Bernie Solomon <bernard@ugsolutions.com>
+	* mb-parser.jay: fix CopyTo args when parsing parameters
+
+2004-09-08 Bernie Solomon <bernard@ugsolutions.com>
 	* expression.cs: cope with ParamArray for no args
 	* mb-parser.jay: dump parsing exception with --stacktrace
 

@@ -2244,7 +2244,7 @@ formal_parameter_list
 			}
 		if (non_array_count > 0) {
 			pars = new Parameter [non_array_count];
-			pars_list.CopyTo (pars);
+			pars_list.CopyTo (0, pars, 0, non_array_count);
 		}
 	  	$$ = new Parameters (pars, array_parameter, lexer.Location); 
 	  } 
