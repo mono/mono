@@ -2,7 +2,6 @@
 # being compiled on windows.
 #
 
-mcs_topdir=$(top_srcdir)/../mcs
 gacutil=$(srcdir)/../gacutil.exe
 
 if USE_JIT
@@ -71,13 +70,8 @@ corlib_DATA = mscorlib.dll
 EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
-#
-# Keep in sync with mono/mono/metadata/Makefile.am
-#
-assembliesdir = $(libdir)
-
 mscorlib.dll $(gac_assemblies):
-	cp -f $(mcs_topdir)/class/lib/default/$@ $(srcdir)
+	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@ $@
 
 all-local: $(gac_assemblies)
 

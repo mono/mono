@@ -54,21 +54,10 @@ monoonedir = $(libdir)/mono/1.0/
 monotwodir = $(libdir)/mono/2.0/
 endif
 
-$(monoone_DATA):
-	if test -f $(mcs_topdir)/mcs/mcs.exe; then f=$(mcs_topdir)/mcs/mcs.exe; else f=$(fx11dir)/mcs.exe; fi; \
-	echo "cp -f $$f $(srcdir)"; \
-	cp -f $$f $(srcdir)
-	if test -f $(mcs_topdir)/mbas/mbas.exe; then f=$(mcs_topdir)/mbas/mbas.exe; else f=$(fx11dir)/mbas.exe; fi; \
-	echo "cp -f $$f $(srcdir)"; \
-	cp -f $$f $(srcdir)
-
-$(monotwo_DATA):
-	if test -f $(mcs_topdir)/gmcs/gmcs.exe; then f=$(mcs_topdir)/gmcs/gmcs.exe; else f=$(fx20dir)/gmcs.exe; fi; \
-	echo "cp -f $$f $(srcdir)"; \
-	cp -f $$f $(srcdir)
-
-$(monobins_DATA):
+$(monoone_DATA) $(monotwo_DATA) $(monobins_DATA):
 	@case "$@" in \
+	mcs.exe)		 d=mcs				;; \
+	mbas.exe)		 d=mbas				;; \
 	monoresgen.exe)          d=monoresgen                   ;; \
 	ilasm.exe)               d=ilasm                        ;; \
 	cilc.exe)                d=tools/cilc                   ;; \
@@ -94,10 +83,8 @@ $(monobins_DATA):
 	gacutil.exe)		 d=tools/gacutil		;; \
 	gmcs.exe)                d=gmcs				;; \
 	esac; \
-	f=$(mcs_topdir)/$$d/$@; \
-	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
-	echo "cp -f $$f $(srcdir)"; \
-	cp -f $$f $(srcdir)
+	echo "  cd $(srcdir) && $(LN_S) ../../mcs/$$d/$@ $@" ; \
+	cd $(srcdir) && $(LN_S) ../../mcs/$$d/$@ $@
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .
