@@ -15,25 +15,34 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Contexts; 
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection;
 
 namespace System.Runtime.Remoting.Channels 
 {
 
 	// Holds the cross appdomain channel data (used to get/create the correct sink)
 	[Serializable]
-	internal class CrossAppDomainChannelData 
+	internal class CrossAppDomainData 
 	{
 		// TODO: Add context support
-		private int _domainId;
+		private int _ContextID;
+		private int _DomainID;
+		private string _processGuid;
 
-		internal CrossAppDomainChannelData(int domainId) 
+		internal CrossAppDomainData(int domainId) 
 		{
-			_domainId = domainId;
+			_DomainID = domainId;
+			_processGuid = RemotingConfiguration.ProcessId;
 		}
 
 		internal int DomainID 
 		{  
-			get { return _domainId;	}
+			get { return _DomainID;	}
+		}
+
+		internal string ProcessID
+		{
+			get { return _processGuid; }
 		}
 	}
 
@@ -76,7 +85,7 @@ namespace System.Runtime.Remoting.Channels
 		// IChannelReceiver
 		public virtual Object ChannelData 
 		{
-			get { return new CrossAppDomainChannelData(Thread.GetDomainID()); }
+			get { return new CrossAppDomainData(Thread.GetDomainID()); }
 		}	
 		
 		public virtual String[] GetUrlsForUri(String objectURI) 
@@ -97,8 +106,8 @@ namespace System.Runtime.Remoting.Channels
 			if (url == null && data != null) 
 			{
 				// Get the data and then get the sink
-				CrossAppDomainChannelData cadData = data as CrossAppDomainChannelData;
-				if (cadData != null) 
+				CrossAppDomainData cadData = data as CrossAppDomainData;
+				if (cadData != null && cadData.ProcessID == RemotingConfiguration.ProcessId)
 					// GetSink creates a new sink if we don't have any (use contexts here later)
 					sink = CrossAppDomainSink.GetSink(cadData.DomainID);
 			} 
@@ -115,7 +124,6 @@ namespace System.Runtime.Remoting.Channels
 
 			return sink;
 		}
-
 	}
 	
 	[MonoTODO("Handle domain unloading?")]
@@ -208,7 +216,7 @@ namespace System.Runtime.Remoting.Channels
 				}
 			}
 
-		    	return retMessage;
+	    	return retMessage;
 		}
 
 		public virtual IMessageCtrl AsyncProcessMessage(IMessage reqMsg, IMessageSink replySink) 
@@ -270,4 +278,5 @@ namespace System.Runtime.Remoting.Channels
 			return serializer.Deserialize (mem);
 		}
 	}
+
 }

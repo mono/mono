@@ -1,3 +1,10 @@
+2003-04-10  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* ChannelDataStore.cs: renamed some members to match MS.NET.
+	* ChannelServices.cs: renamed ChannelInfoStore an its members to match MS.NET.
+	* CrossAppDomainChannel.cs: Renamed CrossAppDomainChannelData to match MS.NET.
+	  Added processId property to CrossAppDomainData. Now it is checked in CreateSink.
+
 2003-03-15  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* CrossAppDomainChannel.cs: fixes bugs #39380 and #39331.

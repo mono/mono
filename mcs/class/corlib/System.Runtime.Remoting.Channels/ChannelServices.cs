@@ -9,38 +9,44 @@
 //
 
 using System.Collections;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Contexts;
 
-namespace System.Runtime.Remoting.Channels
+namespace System.Runtime.Remoting
 {
 	[Serializable]
-	internal class ChannelInfoStore : IChannelInfo
+	internal class ChannelInfo : IChannelInfo
 	{
-		object [] data = null;
+		object [] channelData = null;
 
-		public ChannelInfoStore ()
+		public ChannelInfo ()
 		{
-			this.data = ChannelServices.GetCurrentChannelInfo ();
+			channelData = ChannelServices.GetCurrentChannelInfo ();
 		}
 
-		public ChannelInfoStore (object remoteChannelData)
+		public ChannelInfo (object remoteChannelData)
 		{
-			this.data = new object[] { remoteChannelData };
+			channelData = new object[] { remoteChannelData };
 		}
 		
-		public object[] ChannelData {
-
+		public object[] ChannelData 
+		{
 			get {
-				return data;
+				return channelData;
 			}
 			
 			set {
-				data = value;
+				channelData = value;
 			}
 		}
 	}
+}
+
 	
+namespace System.Runtime.Remoting.Channels
+{
 	public sealed class ChannelServices
 	{
 		private static ArrayList registeredChannels = new ArrayList ();
@@ -181,7 +187,14 @@ namespace System.Runtime.Remoting.Channels
 				throw new RemotingException ();
 
 			registeredChannels.Remove ((object) chnl);
-		}
+
+/*
+			FIXME: uncomment when Thread.Abort works for windows.
+			IChannelReceiver chnlReceiver = chnl as IChannelReceiver;
+			if(chnlReceiver != null)
+				chnlReceiver.StopListening(null);
+				*/
+}
 
 		internal static object [] GetCurrentChannelInfo ()
 		{
