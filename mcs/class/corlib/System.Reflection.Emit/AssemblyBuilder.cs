@@ -356,13 +356,33 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO]
 		public void DefineVersionInfoResource ()
 		{
-			throw new NotImplementedException ();
+			if (version_res != null)
+				throw new ArgumentException ("Native resource has already been defined.");			
+
+			version_res = new Win32VersionResource (1, 0);
+
+			if (cattrs != null) {
+				foreach (CustomAttributeBuilder cb in cattrs) {
+					string attrname = cb.Ctor.ReflectedType.FullName;
+
+					if (attrname == "System.Reflection.AssemblyProductAttribute")
+						version_res.ProductName = cb.string_arg ();
+					else if (attrname == "System.Reflection.AssemblyCompanyAttribute")
+						version_res.CompanyName = cb.string_arg ();
+					else if (attrname == "System.Reflection.AssemblyCopyrightAttribute")
+						version_res.LegalCopyright = cb.string_arg ();
+					else if (attrname == "System.Reflection.AssemblyTrademarkAttribute")
+						version_res.LegalTrademarks = cb.string_arg ();
+					else if (attrname == "System.Reflection.AssemblyCultureAttribute")
+						version_res.FileLanguage = new CultureInfo (cb.string_arg ()).LCID;
+					else if (attrname == "System.Reflection.AssemblyFileVersionAttribute")
+						version_res.FileVersion = cb.string_arg ();
+				}
+			}
 		}
 
-		[MonoTODO]
 		public void DefineVersionInfoResource (string product, string productVersion,
 						       string company, string copyright, string trademark)
 		{
@@ -412,7 +432,8 @@ namespace System.Reflection.Emit {
 
 		private void DefineVersionInfoResourceImpl (string fileName) {
 			// Add missing info
-			version_res.FileVersion = version;
+			if (version_res.FileVersion == "0.0.0.0")
+				version_res.FileVersion = version;
 			version_res.OriginalFilename = fileName;
 
 			AddUnmanagedResource (version_res);
@@ -549,16 +570,10 @@ namespace System.Reflection.Emit {
 			int len, pos;
 			Mono.Security.StrongName sn;
 			if (attrname == "System.Reflection.AssemblyVersionAttribute") {
-				data = customBuilder.Data;
-				pos = 2;
-				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
-				version = create_assembly_version (CustomAttributeBuilder.string_from_bytes (data, pos, len));
+				version = create_assembly_version (customBuilder.string_arg ());
 				return;
 			} else if (attrname == "System.Reflection.AssemblyKeyFileAttribute") {
-				data = customBuilder.Data;
-				pos = 2;
-				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
-				string keyfile_name = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				string keyfile_name = customBuilder.string_arg ();
 				if (keyfile_name == String.Empty)
 					return;
 				using (FileStream fs = new FileStream (keyfile_name, FileMode.Open)) {
@@ -573,10 +588,7 @@ namespace System.Reflection.Emit {
 				}
 				return;
 			} else if (attrname == "System.Reflection.AssemblyKeyNameAttribute") {
-				data = customBuilder.Data;
-				pos = 2;
-				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
-				string key_name = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				string key_name = customBuilder.string_arg ();
 				if (key_name == String.Empty)
 					return;
 				CspParameters csparam = new CspParameters ();
@@ -586,10 +598,7 @@ namespace System.Reflection.Emit {
 				public_key = sn.PublicKey;
 				return;
 			} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
-				data = customBuilder.Data;
-				pos = 2;
-				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
-				culture = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				culture = customBuilder.string_arg ();
 			} else if (attrname == "System.Reflection.AssemblyAlgorithmIdAttribute") {
 				data = customBuilder.Data;
 				pos = 2;

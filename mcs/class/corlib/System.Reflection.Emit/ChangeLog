@@ -1,5 +1,11 @@
 2004-01-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* CustomAttributeBuilder.cs (string_arg): New helper method.
+
+	* AssemblyBuilder.cs (DefineVersionInfoResource): Implement.
+
+	* AssemblyBuilder.cs (SetCustomAttribute): Use the new helper method.
+
 	* AssemblyBuilder.cs (DefineUnmanagedResource): Implement.
 
 	* AssemblyBuilder.cs (DefineIconResource): New internal method to

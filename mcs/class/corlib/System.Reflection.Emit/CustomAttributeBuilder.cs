@@ -47,6 +47,8 @@ namespace System.Reflection.Emit {
 		}
 		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues) {
 			ctor = con;
+			if (constructorArgs == null)
+				throw new ArgumentNullException ("constructorArgs");
 			data = GetBlob (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
 		}
 
@@ -70,6 +72,13 @@ namespace System.Reflection.Emit {
 		{
 			return System.Text.Encoding.UTF8.GetString(data, pos, len);
 		}
+
+		internal string string_arg ()
+		{
+			int pos = 2;
+			int len = decode_len (data, pos, out pos);
+			return string_from_bytes (data, pos, len);
+		}			
 
 		internal static UnmanagedMarshal get_umarshal (CustomAttributeBuilder customBuilder, bool is_field) {
 			byte[] data = customBuilder.Data;
