@@ -147,7 +147,7 @@ namespace System.IO {
 			Initialize (stream, encoding, detect_encoding_from_bytemarks, buffer_size);
 		}
 
-		protected void Initialize (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
+		internal void Initialize (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
 		{
 			if (null == stream)
 				throw new ArgumentNullException("stream");

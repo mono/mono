@@ -1,3 +1,11 @@
+2003-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* SignatureHelper.cs: This class does not have the
+	SerializableAttribute.
+
+	* OpCodes.cs (Boxval): 'Boxval' is not listed in neither the 1.0
+	nor the 1.1 docs. Commented it out.
+
 2003-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs: Added argument checking to all methods according

@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
-	[Serializable]
+
 	public sealed class SignatureHelper {
 		internal enum SignatureHelperType {
 			HELPER_FIELD,

@@ -32,7 +32,10 @@ namespace System {
 		[MonoTODO]
                 public void GetObjectData (SerializationInfo info, StreamingContext context)
                 {
-			throw new NotImplementedException ();
+                        if (info == null)
+                                throw new ArgumentNullException ("info");
+                        
+                        throw new NotImplementedException ();
                 }
 
 		[MethodImpl (MethodImplOptions.InternalCall)]

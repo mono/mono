@@ -31,7 +31,7 @@ namespace System.Globalization
 		private static readonly string[] INVARIANT_MONTH_NAMES
 			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ""};
 
-		public static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
+		internal static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
 		private bool readOnly;
 		

@@ -1,3 +1,8 @@
+2003-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* WaitHandle.cs (CheckDisposed): This method is not in the public
+	API, mark it as 'internal'.
+
 2003-07-01  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Throw an exception if thread creation failed.

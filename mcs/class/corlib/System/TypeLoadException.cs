@@ -19,7 +19,12 @@ namespace System {
 		// Fields
 		private string msg;
 		private string type;
-		
+
+                private string ClassName;
+                private string AssemblyName;
+                private string MessageArg;
+                private string ResourceID;
+                
                 // Constructors
 		public TypeLoadException ()
 			: base (Locale.GetText ("A type load exception has occurred."))
@@ -39,10 +44,16 @@ namespace System {
 			msg = message;
 		}
 
-		protected TypeLoadException (SerializationInfo info,
-					  StreamingContext context)
+		protected TypeLoadException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info is null.");
+
+                        ClassName = info.GetString ("TypeLoadClassName");
+                        AssemblyName = info.GetString ("TypeLoadAssemblyName");
+                        MessageArg = info.GetString ("MessageArg");
+                        ResourceID = info.GetString ("ResourceID");
 		}
 
 		// Properties
@@ -57,17 +68,16 @@ namespace System {
 		}
 
 		// Methods
-		//
-		// It seems like this object serializes more fields than those described.
-		// Those fields are TypeLoadClassName, TypeLoadAssemblyName,
-		// TypeLoadMessageArg and TypeLoadResourceID.
-		//
-		[MonoTODO] 
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info is null.");
+
 			base.GetObjectData (info, context);
+                        info.AddValue ("TypeLoadClassName", ClassName, typeof (string)); 
+                        info.AddValue ("TypeLoadAssemblyName", AssemblyName, typeof (string));
+                        info.AddValue ("TypeLoadMessageArg", MessageArg, typeof (string));
+                        info.AddValue ("TypeLoadResourceID", ResourceID);
 		}
 	}
 }

@@ -75,7 +75,7 @@ namespace System {
 			}
 		}
 
-		public void GetObjectData (SerializationInfo si, StreamingContext sc)
+		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext sc)
 		{
 			if( si == null )
 				throw new ArgumentNullException( "si" );

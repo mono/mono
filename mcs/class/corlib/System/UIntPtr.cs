@@ -22,32 +22,23 @@ using System.Runtime.InteropServices;
 namespace System
 {
 
-[CLSCompliant(false)]
-[Serializable]
+[CLSCompliant (false)] [Serializable]
 public unsafe struct UIntPtr : ISerializable
 {
     public static readonly UIntPtr Zero = new UIntPtr(0u);
     private void* _pointer;
 
-    [
-        CLSCompliant(false)
-    ]
     public UIntPtr(ulong value)
     {
         _pointer = (void*) value;
     }
     
-    [
-        CLSCompliant(false)
-    ]
     public UIntPtr(uint value)
     {
         _pointer = (void*)value;
     }
 
-    [
-        CLSCompliant(false)
-    ]
+    [CLSCompliant (false)]
     public unsafe UIntPtr(void* value)
     {
         _pointer = value;
@@ -68,25 +59,17 @@ public unsafe struct UIntPtr : ISerializable
         return (int)_pointer;
     }
     
-    [
-        CLSCompliant(false)
-    ]
     public uint ToUInt32()
     {
         return (uint) _pointer;
     }
 
-    [
-        CLSCompliant(false)
-    ]
     public ulong ToUInt64()
     {
         return (ulong) _pointer;
     }
 
-    [
-        CLSCompliant(false)
-    ]
+    [CLSCompliant (false)]
     public unsafe void* ToPointer()
     {
         return _pointer;
@@ -116,60 +99,40 @@ public unsafe struct UIntPtr : ISerializable
         return value1._pointer != value2._pointer;
     }
 
-    [
-        CLSCompliant(false)
-    ]
     public static explicit operator ulong(UIntPtr value)
     {
         return (ulong)value._pointer;
     }
 
-    [
-        CLSCompliant(false)
-    ]
     public static explicit operator uint(UIntPtr value)
     {
         return (uint)value._pointer;
     }
     
-    [
-        CLSCompliant(false)
-    ]
     public static explicit operator UIntPtr(ulong value)
     {
         return new UIntPtr(value);
     }
 
-    [
-        CLSCompliant(false)
-    ]
+    [CLSCompliant (false)]
     public unsafe static explicit operator UIntPtr(void* value)
     {
         return new UIntPtr(value);
     }
 
-    [
-        CLSCompliant(false)
-    ]
+    [CLSCompliant (false)]
     public unsafe static explicit operator void*(UIntPtr value)
     {
         return value.ToPointer();
     }
     
-    [
-        CLSCompliant(false)
-    ]
     public static explicit operator UIntPtr(uint value)
     {
         return new UIntPtr(value);
     }
 
-    public static int Size
-    {
-        get
-        {   
-            return sizeof(void*); 
-        }
+    public static int Size {
+        get { return sizeof (void*); }
     }
 }
 

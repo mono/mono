@@ -114,7 +114,7 @@ namespace System.Threading
 			GC.SuppressFinalize (this);
 		}
 
-		protected void CheckDisposed ()
+		internal void CheckDisposed ()
 		{
 			if (disposed || os_handle == InvalidHandle)
 				throw new ObjectDisposedException (GetType ().FullName);

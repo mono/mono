@@ -1,3 +1,8 @@
+2003-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* DateTimeFormatInfo.cs: theInvariantDateTimeFormatInfo should not
+	be public.
+
 2003-05-11  Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* *Calendar.cs: Implemented the TwoDigitYearMax property.

@@ -1,3 +1,7 @@
+2003-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* StreamReader.cs (Initialize): This method is not exposed in the
+	API, mark as internal.
 
 Fri Jul 18 14:42:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

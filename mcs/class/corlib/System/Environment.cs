@@ -28,6 +28,11 @@ namespace System
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
 			//       have unix/linux counterparts
+
+#if NET_1_1
+                        Desktop = 0x00,
+                        MyComputer = 0x11,
+#endif
 			Programs = 0x02,
 			Personal = 0x05,
 			Favorites = 0x06,
@@ -76,16 +81,14 @@ namespace System
 			// so the Directory class will call this class for its get/set current directory
 			
 			// [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-			get
-			{
+			get {
 				MonoIOError error;
 				
 				return MonoIO.GetCurrentDirectory (out error);
 			}
 			[MonoTODO("disabled because of compile error. Need mcs magic.")]
 			//[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-			set
-			{
+			set {
 				MonoIOError error;
 				
 				MonoIO.SetCurrentDirectory (value, out error);
@@ -183,7 +186,6 @@ namespace System
 		/// <summary>
 		/// Get UserDomainName
 		/// </summary>
-		[MonoTODO]
 		public static string UserDomainName {
 			get {
 				return MachineName;
@@ -196,8 +198,7 @@ namespace System
 		[MonoTODO]
 		public static bool UserInteractive
 		{
-			get
-			{
+			get {
 				return false;
 			}
 		}
@@ -205,17 +206,14 @@ namespace System
 		/// <summary>
 		/// Get the user name of current process is running under
 		/// </summary>
-		[MonoTODO]
 		public static string UserName
 		{
-			get
-			{
-				// TODO: needs more research/work/thought
-				string result = GetEnvironmentVariable("USERNAME");
-				if(result == null || result.Equals(string.Empty))
-				{
-					result = GetEnvironmentVariable("USER");
-				}
+			get {
+				string result = GetEnvironmentVariable ("USERNAME");
+
+				if (result == null || result == String.Empty)
+					result = GetEnvironmentVariable ("USER");
+
 				return result;
 			}
 		}
@@ -236,14 +234,13 @@ namespace System
 		[MonoTODO]
 		public static long WorkingSet
 		{
-			get
-			{
+			get {
 				return 0;
 			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void Exit(int exitCode);
+		public extern static void Exit (int exitCode);
 
 		/// <summary>
 		/// Substitute environment variables in the argument "name"
@@ -276,7 +273,7 @@ namespace System
 			Hashtable vars = new Hashtable ();
 			foreach (string name in GetEnvironmentVariableNames ())
 				vars [name] = GetEnvironmentVariable (name);
-			
+
 			return vars;
 		}
 
@@ -284,18 +281,35 @@ namespace System
 		/// Returns the fully qualified path of the
 		/// folder specified by the "folder" parameter
 		/// </summary>
-		[MonoTODO]
 		public static string GetFolderPath(SpecialFolder folder)
 		{
-			// At least return HOME path
-			return GetEnvironmentVariable("HOME");
-		}
+                        switch (folder) {
+
+#if NET_1_1                                
+                        case SpecialFolder.MyComputer: // MyComputer is a virtual directory
+                                return "";
+                                break;
+                                
+                        case SpecialFolder.Desktop:
+#endif                                
+                        case SpecialFolder.DesktopDirectory:
+                                return Path.Combine (GetEnvironmentVariable ("HOME"), "Desktop");
+                                break;
+                                
+                         case SpecialFolder.Personal:
+                                 return GetEnvironmentVariable ("HOME");
+
+                        default:
+                                return "";
+                                break;
+                        }
+                }
 
 		/// <summary>
 		/// Returns an array of the logical drives
 		/// </summary>
 		[MonoTODO]
-		public static string[] GetLogicalDrives()
+		public static string[] GetLogicalDrives ()
 		{
 			return null;
 		}

@@ -1,3 +1,22 @@
+2003-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* Environment.cs (SpecialFolder): Added 'Desktop' and 'MyComputer'
+	as values for NET_1_1.
+	(GetFolderPath): Return the empty string ("") for values of
+	SpecialFolder that have no corresponding equivalents in
+	Linux. Return "$HOME/Desktop" for SpecialFolder.DesktopDirectory
+	and "$HOME" for SpecialFolder.Personal.
+
+	* IntPtr.cs (GetObjectData): Mark it as an interface
+	implementation, instead of a public method.
+
+	* Guid.cs (NewGuid): Remove MonoTODOAttribute.
+
+	* TypeLoadException.cs (GetObjectData):
+	Create stubs for the fields that are being serialized.
+
+	* UIntPtr.cs: Removed erroneous CLSCompliantAttributes.
+
 2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* Enum.cs: Fixed enum formatting. For flag enums, if one of

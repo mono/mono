@@ -523,7 +523,6 @@ public struct Guid  : IFormattable, IComparable  {
 		return (char)((b<0xA)?('0' + b):('a' + b - 0xA));
 	}
 
-	[MonoTODO]
 	public static Guid NewGuid ()
 	{
 		return NewRandomGuid();
