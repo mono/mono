@@ -951,9 +951,33 @@ module_member_declarator
 	|  type_spec_declaration			
 	;
 	
-constant_declaration // TODO: implement truly the logic
-	: CONST identifier ASSIGN primary_expression EOL
-	| CONST identifier AS type ASSIGN constant_expression EOL
+constant_declaration
+	: CONST constant_declarators EOL
+	{
+		int mod = (int) current_modifiers;
+
+		VariableDeclaration.FixupTypes ((ArrayList) $2);
+		VariableDeclaration.FixupArrayTypes ((ArrayList) $2);
+		
+/*		if (current_container is Module)
+			mod = mod | Modifiers.STATIC;
+*/			
+
+		mod = mod ^ Modifiers.STATIC;
+		
+		// Structure members are Public by default			
+		if ((current_container is Struct) && (mod == 0))
+			mod = Modifiers.PUBLIC;			
+					
+		foreach (VariableDeclaration var in (ArrayList) $2){
+			Location l = var.Location;
+			Const vconstant = new Const ((Expression)var.type, (String)var.identifier, 
+						 (Expression)var.expression_or_array_initializer, 
+						 mod, (Attributes) null, l);
+
+			CheckDef (current_container.AddConstant (vconstant), vconstant.Name, l);
+		}
+	}
 	;
 	   
 opt_class_member_declarations
@@ -2802,10 +2826,62 @@ local_constant_declaration
 	  }
 	;	 
 	
-constant_declarator
-	: identifier ASSIGN constant_expression
+constant_declarators
+	: constant_declarator 
 	  {
-		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+		ArrayList decl = new ArrayList ();
+		decl.Add ($1);
+		$$ = decl;
+	  }
+	| constant_declarators COMMA constant_declarator
+	  {
+		ArrayList decls = (ArrayList) $1;
+		decls.Add ($3);
+		$$ = $1;
+	  }
+	;
+
+constant_declarator
+	: variable_name opt_type_decl opt_variable_initializer
+	  {
+		VarName vname = (VarName) $1;
+		string varname = (string) vname.Name;
+		current_rank_specifiers = (ArrayList) vname.Rank;
+		object varinit = $3;
+		ArrayList a_dims = null;
+
+		if (varinit == null)
+			Report.Error (
+				30438, lexer.Location, "Constant should have a value"
+				);
+
+		if (vname.Type != null && $2 != null)
+			Report.Error (
+				30302, lexer.Location, 
+				"Type character cannot be used with explicit type declaration" );
+
+		Expression vartype = ($2 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $2;
+
+		if (current_rank_specifiers != null) 
+		{
+			Report.Error (30424, lexer.Location, "Constant doesn't support array");
+	  	}
+	  	
+	  	/*
+	  	   Check for a declaration like Dim a(2) or Dim a(2,3)
+	  	   If this is the case, we must generate an ArrayCreationExpression
+	  	   and, in case, add the initializer after the array has been created.
+	  	*/
+	  	if (VariableDeclaration.IsArrayDecl (this)) {	
+			if (VariableDeclaration.IndexesSpecified(current_rank_specifiers)) {   
+				a_dims = (ArrayList) current_rank_specifiers;
+				VariableDeclaration.VBFixIndexLists (ref a_dims);
+				varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, lexer.Location);
+			}
+			vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (this), lexer.Location);
+		}
+	  
+	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
 	  }
 	;		
 
@@ -2846,31 +2922,30 @@ variable_declarator
 			current_rank_specifiers = (ArrayList) vname.Rank;
 			a_dims = null;
 			varinit = $3;
-	
-		  	if(vname.Type != null && $2 != null)
+
+	  		if(vname.Type != null && $2 != null)
 				Report.Error (
 					30302, lexer.Location, 
 					"Type character cannot be used with explicit type declaration" );
-	
-		  	// Some checking is required for particularly weird declarations
+
+	  		// Some checking is required for particularly weird declarations
 	  		// like Dim a As Integer(,)
-		  	if ($2 is Pair) {
-		  		vartype = (Expression) ((Pair) $2).First;
+	  		if ($2 is Pair) {
+	  			vartype = (Expression) ((Pair) $2).First;
 				
 	  			if ($3 != null && $3 is ArrayList)
-		  			Report.Error (205, "End of statement expected.");
+	  				Report.Error (205, "End of statement expected.");
 		  			
 				ArrayList args = (ArrayList) ((Pair) $2).Second;
 				if (VariableDeclaration.IndexesSpecifiedInRank (args))	  	  
-					Report.Error (638, 
-					"Array bounds cannot appear in type specifiers.");	
-	
+					Report.Error (638, "Array bounds cannot appear in type specifiers.");	
+		
 				string s_vartype = vartype.ToString();				
 				s_vartype += "[";
 				if (args != null)
 					for (int x = 0; x < args.Count; x++)
 						s_vartype += ",";
-				
+					
 				s_vartype += "]";	
 				vartype = DecomposeQI(s_vartype, Location.Null);						
 	  		}
@@ -2899,8 +2974,8 @@ variable_declarator
 					if (broken)
 						break;
 				}
-		  	}
-		
+	  		}
+			
 	  		/*
 	  		Check for a declaration like Dim a(2) or Dim a(2,3)
 	  		If this is the case, we must generate an ArrayCreationExpression
@@ -2927,8 +3002,8 @@ variable_declarator
 				}
 			}
 	  		VarDeclarations.Add (new VariableDeclaration (varname, vartype, varinit, lexer.Location, null));
-		}// end of for
-		$$ = VarDeclarations;
+	    }// end of for
+	    $$ = VarDeclarations;
 	  } 
 	;
 
@@ -3594,9 +3669,10 @@ assignment_expression
 	  }	  	  
 	;
 
-constant_expression
+/*constant_expression
 	: expression
 	;
+*/
 
 boolean_expression
 	: expression
