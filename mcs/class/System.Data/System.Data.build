@@ -13,19 +13,14 @@
 			<arg value="/nowarn:0169"/>
 			<arg value="/nowarn:0649"/>
 			<arg value="/unsafe"/>
+			<arg value="/noconfig"/>
+			<arg value="/r:System.dll"/>
+			<arg value="/r:System.Xml.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
-				<excludes name="System.Data/DataViewSetting.cs"/>
-				<excludes name="System.Data/DataViewSettingCollection.cs"/>
 				<excludes name="System.Data/DataTableRelationCollection.cs"/>
-				<excludes name="System.Data/DataView.cs"/>
-				<excludes name="System.Data/DataViewManager.cs"/>
-				<excludes name="System.Data/DataRowView.cs"/>
-				<excludes name="System.Data/DataViewSetting.cs"/>
-				<excludes name="System.Data/DataSet.cs"/>
-				<excludes name="System.Data/MergeFailedEventArgs.cs"/>
 				<excludes name="Test/**"/>
-				<excludes name="System.Data.Common/*"/>
+				<excludes name="System.Data.Common/DbDataPermission.cs"/>
 				<excludes name="System.Data.SqlClient/SqlDataAdapter.cs"/>
 				<excludes name="System.Data.SqlClient/SqlInfoMessageEventArgs.cs"/>
 				<excludes name="System.Data.SqlClient/SqlRowUpdatingEventArgs.cs"/>
