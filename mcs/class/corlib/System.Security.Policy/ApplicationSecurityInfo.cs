@@ -39,7 +39,6 @@ namespace System.Security.Policy {
 		private ActivationContext _context;
 		private Evidence _evidence;
 		private ApplicationId _appid;
-		private Hashtable _requests;
 		private PermissionSet _defaultSet;
 		private ApplicationId _deployid;
 
@@ -65,18 +64,6 @@ namespace System.Security.Policy {
 				if (value == null)
 					throw new ArgumentNullException ("ApplicationId");
 				_appid = value;
-			}
-		}
-
-		public IDictionary AssemblyRequests {
-			get { return (IDictionary) _requests; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("AssemblyRequests");
-				if (!(value is Hashtable))
-					throw new ArgumentException (Locale.GetText ("wrong type"));
-
-				_requests = (Hashtable) value;
 			}
 		}
 

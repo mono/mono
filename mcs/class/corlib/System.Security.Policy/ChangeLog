@@ -1,3 +1,10 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationTrustCollection.cs: Updated for Dec CTP.
+	* ApplicationTrust.cs: Updated for Dec CTP.
+	* ApplicationSecurityInfo.cs: Updated for Dec CTP.
+	* ApplicationSecurityManager.cs: Updated for Dec CTP.
+
 2005-01-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Evidence.cs: Fix problem with default evidence when ICU is enabled.

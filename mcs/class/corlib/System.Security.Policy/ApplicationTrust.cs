@@ -28,7 +28,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Policy {
@@ -36,7 +35,6 @@ namespace System.Security.Policy {
 	public sealed class ApplicationTrust : ISecurityEncodable, ISecurityPolicyEncodable {
 
 		private ApplicationIdentity _appid;
-		private IDictionary _grants;
 		private PolicyStatement _defaultPolicy;
 		private object _xtranfo;
 		private bool _trustrun;
@@ -45,7 +43,6 @@ namespace System.Security.Policy {
 		[MonoTODO]
 		public ApplicationTrust ()
 		{
-			_grants = (IDictionary) new Hashtable ();
 		}
 
 		[MonoTODO]
@@ -56,11 +53,6 @@ namespace System.Security.Policy {
 
 		public ApplicationIdentity ApplicationIdentity {
 			get { return _appid; }
-		}
-
-		public IDictionary AssemblyGrants {
-			get { return _grants; }
-			set { _grants = value; }
 		}
 
 		public PolicyStatement DefaultGrantSet {

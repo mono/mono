@@ -33,7 +33,7 @@ using System.Collections;
 namespace System.Security.Policy {
 
 	[Serializable]
-	public sealed class ApplicationSecurityManager {
+	public static class ApplicationSecurityManager {
 
 		private const string config = "ApplicationTrust.config";
 
@@ -43,10 +43,6 @@ namespace System.Security.Policy {
 		static private IDictionary _userApps;
 		static private ApplicationTrustCollection _machineAppTrusts;
 		static private ApplicationTrustCollection _userAppTrusts;
-
-		private ApplicationSecurityManager ()
-		{
-		}
 
 		// properties
 
@@ -69,12 +65,6 @@ namespace System.Security.Policy {
 		[MonoTODO]
 		public static ApplicationTrustCollection MachineApplicationTrusts {
 			get { return _machineAppTrusts; }
-		}
-
-		[MonoTODO]
-		public static ITrustManager TrustManager {
-			get { return _trustManager; }
-			set { _trustManager = value; }
 		}
 
 		[MonoTODO]

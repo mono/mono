@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,17 +33,41 @@ using System.Globalization;
 
 namespace System.Security.Policy {
 
-	public sealed class ApplicationTrustCollection : CollectionBase {
+	public sealed class ApplicationTrustCollection : ICollection, IEnumerable {
+
+		private ArrayList _list;
 
 		internal ApplicationTrustCollection ()
 		{
+			_list = new ArrayList ();
 		}
+
+		// constants
+
+		public const string ApplicationTrustProperty = "ApplicationTrust";
+		public const string InstallReferenceIdentifier = "{3f471841-eef2-47d6-89c0-d028f03a4ad5}";
 
 		// properties
 
+		public int Count {
+			get { return _list.Count; }
+		}
+
+		public bool IsSynchronized {
+			get { return false; }	// always false
+		}
+
+		public object SyncRoot {
+			get { return this; }	// self
+		}
+
 		public ApplicationTrust this [int index] {
-			get { return (ApplicationTrust) InnerList [index]; }
-			set { InnerList [index] = value; }
+			get { return (ApplicationTrust) _list [index]; }
+		}
+
+		[MonoTODO]
+		public ApplicationTrust this [string appFullName] {
+			get { return (ApplicationTrust) _list [0]; }
 		}
 
 		// methods
@@ -57,7 +81,7 @@ namespace System.Security.Policy {
 					"ApplicationTrust.ApplicationIdentity can't be null."), "trust");
 			}
 
-			return InnerList.Add (trust);
+			return _list.Add (trust);
 		}
 
 		public void AddRange (ApplicationTrust[] trusts)
@@ -70,7 +94,7 @@ namespace System.Security.Policy {
 					throw new ArgumentException (Locale.GetText (
 						"ApplicationTrust.ApplicationIdentity can't be null."), "trust");
 				}
-				InnerList.Add (t);
+				_list.Add (t);
 			}
 		}
 
@@ -84,25 +108,30 @@ namespace System.Security.Policy {
 					throw new ArgumentException (Locale.GetText (
 						"ApplicationTrust.ApplicationIdentity can't be null."), "trust");
 				}
-				InnerList.Add (t);
+				_list.Add (t);
 			}
 		}
 
-		public bool Contains (ApplicationTrust trust)
+		public void Clear ()
 		{
-			return (IndexOf (trust) >= 0);
+			_list.Clear ();
 		}
 
 		public void CopyTo (ApplicationTrust[] array, int index)
 		{
-			InnerList.CopyTo (array, index);
+			_list.CopyTo (array, index);
+		}
+
+		void ICollection.CopyTo (Array array, int index)
+		{
+			_list.CopyTo (array, index);
 		}
 
 		[MonoTODO ("missing MatchExactVersion")]
 		public ApplicationTrustCollection Find (ApplicationIdentity applicationIdentity, ApplicationVersionMatch versionMatch)
 		{
 			ApplicationTrustCollection coll = new ApplicationTrustCollection ();
-			foreach (ApplicationTrust t in InnerList) {
+			foreach (ApplicationTrust t in _list) {
 				if (t.ApplicationIdentity.Equals (applicationIdentity)) {
 					switch (versionMatch) {
 					case ApplicationVersionMatch.MatchAllVersions:
@@ -117,29 +146,14 @@ namespace System.Security.Policy {
 			return coll;
 		}
 
-		public new ApplicationTrustEnumerator GetEnumerator ()
+		public ApplicationTrustEnumerator GetEnumerator ()
 		{
 			return new ApplicationTrustEnumerator (this);
 		}
 
-		public int IndexOf (ApplicationTrust trust)
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			if (trust == null)
-				throw new ArgumentNullException ("trust");
-
-			for (int i=0; i < InnerList.Count; i++) {
-				if (trust.Equals (InnerList [i]))
-					return i;
-			}
-			return -1;
-		}
-
-		public void Insert (int index, ApplicationTrust trust)
-		{
-			if (trust == null)
-				throw new ArgumentNullException ("trust");
-
-			InnerList.Insert (index, trust);
+			return (IEnumerator) new ApplicationTrustEnumerator (this);
 		}
 
 		public void Remove (ApplicationTrust trust)
@@ -187,9 +201,9 @@ namespace System.Security.Policy {
 
 		internal void RemoveAllInstances (ApplicationTrust trust)
 		{
-			for (int i=InnerList.Count - 1; i >= 0; i--) {
-				if (trust.Equals (InnerList [i]))
-					InnerList.RemoveAt (i);
+			for (int i=_list.Count - 1; i >= 0; i--) {
+				if (trust.Equals (_list [i]))
+					_list.RemoveAt (i);
 			}
 		}
 	}
