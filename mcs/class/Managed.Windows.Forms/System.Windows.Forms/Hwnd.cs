@@ -58,6 +58,7 @@ namespace System.Windows.Forms {
 		internal bool		visible;
 		internal Rectangle	invalid;
 		internal bool		expose_pending;
+		internal bool		erase_pending;
 		internal bool		nc_expose_pending;
 		internal bool		configure_pending;
 		internal Graphics	client_dc;
@@ -83,6 +84,7 @@ namespace System.Windows.Forms {
 			nc_expose_pending = false;
 			edge_style = Border3DStyle.Raised;
 			client_rectangle = Rectangle.Empty;
+			erase_pending = true;
 		}
 
 		public void Dispose() {
@@ -283,6 +285,16 @@ Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32
 
 			set {
 				edge_style = value;
+			}
+		}
+
+		public bool ErasePending {
+			get {
+				return erase_pending;
+			}
+
+			set {
+				erase_pending = value;
 			}
 		}
 

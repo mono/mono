@@ -340,7 +340,7 @@ namespace System.Windows.Forms {
 				if (icon != value) {
 					icon = value;
 
-					XplatUI.SetIcon(window.Handle, icon);
+					XplatUI.SetIcon(Handle, icon);
 				}
 			}
 		}
@@ -1016,9 +1016,18 @@ namespace System.Windows.Forms {
 		protected override void OnCreateControl() {
 			base.OnCreateControl ();
 			if (this.ActiveControl == null) {
+				bool visible;
+
+				// This visible hack is to work around CanSelect always being false if one of the parents
+				// is not visible; and we by default create Form invisible...
+				visible = this.is_visible;
+				this.is_visible = true;
+
 				if (SelectNextControl(this, true, true, true, true) == false) {
 					Select(this);
 				}
+
+				this.is_visible = visible;
 			}
 			OnLoad(EventArgs.Empty);
 
@@ -1259,13 +1268,17 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_KILLFOCUS: {
+					base.WndProc(ref m);
 					return;
 				}
 
 				case Msg.WM_SETFOCUS: {
+#if not
 					if (this.ActiveControl != null) {
 						ActiveControl.Focus();
 					}
+#endif
+					base.WndProc(ref m);
 					return;
 				}
 

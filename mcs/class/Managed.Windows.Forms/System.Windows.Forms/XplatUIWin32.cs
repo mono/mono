@@ -552,28 +552,7 @@ namespace System.Windows.Forms {
 			return Win32DefWindowProc(hWnd, msg, wParam, lParam);
 		}
 
-		private void EraseWindowBackground(IntPtr hWnd, IntPtr hDc) {
-			IntPtr		hbr;
-			LOGBRUSH	lb;
-			uint		argb;
-			RECT		rect;
-						
-			//msg.wParam
-			argb = Win32GetWindowLong(hWnd, WindowLong.GWL_USERDATA);
-			lb = new LOGBRUSH();
-						
-			lb.lbColor.B = (byte)((argb & 0xff0000)>>16);
-			lb.lbColor.G = (byte)((argb & 0xff00)>>8);
-			lb.lbColor.R = (byte)(argb & 0xff);
-
-			lb.lbStyle = LogBrushStyle.BS_SOLID;
-			hbr = Win32CreateBrushIndirect(ref lb);
-			Win32GetClientRect(hWnd, out rect);
-			Win32FillRect(hDc, ref rect, hbr);
-			Win32DeleteObject(hbr);
-		}
-
-		private static bool MessageWaiting {
+ 		private static bool MessageWaiting {
 			get {
 				if (message_queue.Count == 0) {
 					return false;
@@ -933,7 +912,8 @@ namespace System.Windows.Forms {
 				clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
 //				clip_rect = new Rectangle(rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top);
 
-				if (ps.fErase!=0) {
+				if (ps.fErase != 0) {
+Console.WriteLine("Hit Clear background");
 					EraseWindowBackground(handle, hdc);
 				}
 			} else {
@@ -1065,11 +1045,6 @@ namespace System.Windows.Forms {
 
 				case Msg.WM_RBUTTONUP: {
 					mouse_state &= ~MouseButtons.Right;
-					break;
-				}
-
-				case Msg.WM_ERASEBKGND: {
-					EraseWindowBackground(msg.hwnd, msg.wParam);
 					break;
 				}
 
@@ -1588,6 +1563,27 @@ namespace System.Windows.Forms {
 
 		internal override void SetIcon(IntPtr hwnd, Icon icon) {
 			Win32SendMessage(hwnd, Msg.WM_SETICON, (IntPtr)1, icon.Handle);	// 1 = large icon (0 would be small)
+		}
+
+		internal override void EraseWindowBackground(IntPtr hWnd, IntPtr hDc) {
+			IntPtr          hbr;
+			LOGBRUSH        lb;
+			uint            argb;
+			RECT            rect;
+
+			//msg.wParam
+			argb = Win32GetWindowLong(hWnd, WindowLong.GWL_USERDATA);
+			lb = new LOGBRUSH();
+
+			lb.lbColor.B = (byte)((argb & 0xff0000)>>16);
+			lb.lbColor.G = (byte)((argb & 0xff00)>>8);
+			lb.lbColor.R = (byte)(argb & 0xff);
+
+			lb.lbStyle = LogBrushStyle.BS_SOLID;
+			hbr = Win32CreateBrushIndirect(ref lb);
+			Win32GetClientRect(hWnd, out rect);
+			Win32FillRect(hDc, ref rect, hbr);
+			Win32DeleteObject(hbr);
 		}
 
 		internal override int KeyboardSpeed {

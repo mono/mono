@@ -1112,6 +1112,11 @@ namespace System.Windows.Forms {
 			//Like X11 we need not do anything here
 		}
 
+		internal override void EraseWindowBackground(IntPtr handle, IntPtr wParam) {
+			throw new NotImplementedException();
+		}
+
+
 		internal override void Exit() {
 			GetMessageResult = false;
 			ExitToShell ();

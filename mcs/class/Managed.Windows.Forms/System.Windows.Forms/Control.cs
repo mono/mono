@@ -1141,7 +1141,7 @@ namespace System.Windows.Forms
 
 				parent = this.parent;
 				while (parent != null) {
-					if (!parent.Visible || !parent.is_enabled) {
+					if (!parent.is_visible || !parent.is_enabled) {
 						return false;
 					}
 
@@ -2081,9 +2081,9 @@ namespace System.Windows.Forms
 
 		public bool Focus() {
 			if (IsHandleCreated && !has_focus) {
+				has_focus = true;
 				XplatUI.SetFocus(window.Handle);
 			}
-			has_focus = true;
 			return true;
 		}
 
@@ -2154,7 +2154,7 @@ namespace System.Windows.Forms
 
 			NotifyInvalidate(rc);
 
-			XplatUI.Invalidate(Handle, rc, !GetStyle (ControlStyles.AllPaintingInWmPaint));
+			XplatUI.Invalidate(Handle, rc, false);
 
 			if (invalidateChildren) {
 				for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
@@ -3173,9 +3173,10 @@ namespace System.Windows.Forms
 
 					paint_event = XplatUI.PaintEventStart(Handle);
 
-					if (GetStyle(ControlStyles.AllPaintingInWmPaint)) {
+					if ((control_style & (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) == (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) {
 						OnPaintBackground(paint_event);
 					}
+
 					OnPaint(paint_event);
 					XplatUI.PaintEventEnd(Handle);
 					
@@ -3193,12 +3194,11 @@ namespace System.Windows.Forms
 									Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
 							OnPaintBackground (eraseEventArgs);
 						}
-						m.Result = (IntPtr)1;
 					} else {
-						m.Result = IntPtr.Zero;
-						DefWndProc (ref m);	
-					}    					
-	    					
+						XplatUI.EraseWindowBackground(m.HWnd, m.WParam);
+					}
+					// The DefWndProc will never have to handle this, we don't ever set hbr on the window
+					m.Result = (IntPtr)1;
 					return;
 				}
 

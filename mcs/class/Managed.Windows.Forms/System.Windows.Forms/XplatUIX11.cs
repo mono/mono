@@ -1703,7 +1703,7 @@ namespace System.Windows.Forms {
 					hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
 					XClearArea(DisplayHandle, hwnd.client_window, hwnd.invalid.X, hwnd.invalid.Y, hwnd.invalid.Width, hwnd.invalid.Height, false);
 
-					return IntPtr.Zero;
+					return (IntPtr)1;
 				}
 			}
 			return IntPtr.Zero;
@@ -1781,6 +1781,16 @@ namespace System.Windows.Forms {
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
 			// We do nothing; On X11 SetModal is used to create modal dialogs, on Win32 this function is used (see comment there)
+		}
+
+		internal override void EraseWindowBackground(IntPtr handle, IntPtr wParam) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			lock (XlibLock) {
+				XClearArea (DisplayHandle, hwnd.client_window, hwnd.invalid.Left, hwnd.invalid.Top, hwnd.invalid.Width, hwnd.invalid.Height, false);
+			}
 		}
 
 		internal override void Exit() {
@@ -2201,8 +2211,6 @@ namespace System.Windows.Forms {
 						HideCaret();
 					}
 
-					NativeWindow.WndProc(msg.hwnd, Msg.WM_ERASEBKGND, IntPtr.Zero, IntPtr.Zero);
-
 					if (Caret.Visible == 1) {
 						ShowCaret();
 						Caret.Paused = false;
@@ -2437,24 +2445,31 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
-			if (clear) {
-				lock (XlibLock) {
-					XClearArea (DisplayHandle, Hwnd.ObjectFromHandle(handle).client_window, rc.Left, rc.Top, rc.Width, rc.Height, true);
-				}
-			} else {
-				XEvent xevent;
+			Hwnd	hwnd;
+			XEvent	xevent;
 
-				xevent = new XEvent ();
-				xevent.type = XEventName.Expose;
-				xevent.ExposeEvent.display = DisplayHandle;
-				xevent.ExposeEvent.window = Hwnd.ObjectFromHandle(handle).client_window;
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+
+			xevent = new XEvent ();
+			xevent.type = XEventName.Expose;
+			xevent.ExposeEvent.display = DisplayHandle;
+			xevent.ExposeEvent.window = Hwnd.ObjectFromHandle(handle).client_window;
+
+			if (clear) {
+				hwnd.erase_pending = true;
+				xevent.ExposeEvent.x = hwnd.X;
+				xevent.ExposeEvent.y = hwnd.Y;
+				xevent.ExposeEvent.width = hwnd.Width;
+				xevent.ExposeEvent.height = hwnd.Height;
+			} else {
 				xevent.ExposeEvent.x = rc.X;
 				xevent.ExposeEvent.y = rc.Y;
 				xevent.ExposeEvent.width = rc.Width;
 				xevent.ExposeEvent.height = rc.Height;
-
-				AddExpose (xevent);
 			}
+
+			AddExpose (xevent);
 		}
 
 		internal override bool IsVisible(IntPtr handle) {
@@ -2481,6 +2496,13 @@ namespace System.Windows.Forms {
 				Caret.Paused = true;
 				HideCaret();
 			}
+
+			if (hwnd.erase_pending) {
+				// In our implementation WM_ERASEBKGND always returns 1; otherwise we'd check the result and only call clear if it returned 0
+				NativeWindow.WndProc(hwnd.client_window, Msg.WM_ERASEBKGND, IntPtr.Zero, IntPtr.Zero);
+				hwnd.erase_pending = false;
+			}
+
 
 			hwnd.client_dc  = Graphics.FromHwnd (hwnd.client_window);
 			paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
@@ -2714,11 +2736,15 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetFocus(IntPtr handle) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
 			if (FocusWindow != IntPtr.Zero) {
-				PostMessage(FocusWindow, Msg.WM_KILLFOCUS, handle, IntPtr.Zero);
+				PostMessage(FocusWindow, Msg.WM_KILLFOCUS, hwnd.client_window, IntPtr.Zero);
 			}
-			PostMessage(handle, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
-			FocusWindow = handle;
+			PostMessage(hwnd.client_window, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
+			FocusWindow = hwnd.client_window;
 
 			//XSetInputFocus(DisplayHandle, Hwnd.ObjectFromHandle(handle).client_window, RevertTo.None, IntPtr.Zero);
 		}

@@ -194,8 +194,9 @@ namespace System.Windows.Forms {
 
 		internal abstract void SetIcon(IntPtr handle, Icon icon);
 
-		// System information
+		internal abstract void EraseWindowBackground(IntPtr handle, IntPtr wParam);
 
+		// System information
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 
 		

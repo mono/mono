@@ -1,3 +1,28 @@
+2005-03-15  Peter Bartok  <pbartok@novell.com>
+
+	* Form.cs: Use Handle for icon, to trigger creation if
+	  the window does not yet exist
+	* Control.cs:
+	  - CanSelect: Slight performance improvement
+	  - Focus(): Preventing possible recursion
+	  - Invalidate(): Removed ControlStyle based clear flag setting
+	  - WM_PAINT: fixed logic for calling OnPaintBackground
+	  - WM_ERASEBKGND: Fixed logic, added call to new driver method
+	    EraseWindowBackground if the control doesn't paint background
+	* XplatUIWin32.cs:
+	  - Moved EraseWindowBackground() method to internal methods
+	  - Removed unused WM_ERASEBKGND handling in GetMessage; msg never comes;
+	    is sent via SendMessage on BeginPaint call on Win32
+	* XplatUIX11.cs:
+	  - Added EraseWindowBackground() method
+	  - No longer sends WM_ERASEBKGND on .Expose, but on call to 
+	    PaintEventStart, which more closely matches Win32 behaviour
+	  - Fixed Invalidate() call, now updates new ErasePending Hwnd property
+	  - Fixed SetFocus() to properly deal with client and whole windows
+	* Hwnd.cs: Added ErasePending property
+	* XplatUIOSX.cs: Stubbed EraseWindowBackground() method
+	* XplatUI.cs, XplatUIDriver.cs: Added EraseWindowBackground() method
+
 2005-03-12  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs:

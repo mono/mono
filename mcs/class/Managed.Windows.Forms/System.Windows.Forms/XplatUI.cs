@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 41586; built: 2005/2/9 1:7:30]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 41731; built: 2005/2/11 23:27:29]");
 
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
@@ -331,6 +331,10 @@ namespace System.Windows.Forms {
 
 		internal static void Exit() {
 			driver.Exit();
+		}
+
+		internal static void EraseWindowBackground(IntPtr handle, IntPtr wParam) {
+			driver.EraseWindowBackground(handle, wParam);
 		}
 
 		internal static IntPtr GetActive() {
