@@ -523,6 +523,7 @@ GpStatus
 GdipDrawRectangle (GpGraphics *graphics, GpPen *pen,
                 float x, float y, float width, float height)
 {
+        gdip_pen_setup (graphics, pen);
         cairo_rectangle (graphics->ct, x, y, width, height);
         cairo_stroke (graphics->ct);
 
