@@ -3,8 +3,10 @@
 //
 // Author:
 //   Chris J Breisch (cjbreisch@altavista.net) 
+//   Francesco Delfino (pluto@tipic.com)
 //
 // (C) 2002 Chris J Breisch
+//     2002 Tipic, Inc (http://www.tipic.com)
 //
 
 using System;

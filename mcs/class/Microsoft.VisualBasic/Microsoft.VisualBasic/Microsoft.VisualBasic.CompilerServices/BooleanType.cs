@@ -3,8 +3,10 @@
 //
 // Author:
 //   Chris J Breisch (cjbreisch@altavista.net) 
+//   Francesco Delfino (pluto@tipic.com)
 //
 // (C) 2002 Chris J Breisch
+//     2002 Tipic, Inc (http://www.tipic.com)
 //
 
 using System;
@@ -19,8 +21,12 @@ namespace Microsoft.VisualBasic.CompilerServices
 		// Properties
 		// Methods
 		public static System.Boolean FromString (System.String Value) { return System.Boolean.Parse(Value); }
-		[MonoTODO]
-		public static System.Boolean FromObject (System.Object Value) { throw new NotImplementedException(); }
+		public static System.Boolean FromObject (System.Object Value) 
+		{
+			if ((object)Value == null) return false;
+			//if (Value.GetType() == typeof(string)) return FromString((string)Value);
+			else return System.Convert.ToBoolean(Value);
+		}
 		// Events
 	};
 }

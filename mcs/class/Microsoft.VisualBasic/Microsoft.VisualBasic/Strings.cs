@@ -4,8 +4,10 @@
 // Authors:
 //   Martin Adoue (martin@cwanet.com)
 //   Chris J Breisch (cjbreisch@altavista.net)
+//   Francesco Delfino (pluto@tipic.com)
 //
 // (C) 2002 Ximian Inc.
+//     2002 Tipic, Inc. (http://www.tipic.com)
 //
 
 using System;
@@ -407,6 +409,23 @@ namespace Microsoft.VisualBasic
 			return Str.ToCharArray(Index -1, 1)[0];
 		}
 
+		/// <summary>
+		/// Returns an integer specifying the start position of the first occurrence of one string within another.
+		/// </summary>
+		/// <param name="Start">Required. Numeric expression that sets the starting position for each search. If omitted, search begins at the first character position. The start index is 1 based.</param>
+		/// <param name="String1">Required. String expression being searched.</param>
+		/// <param name="String2">Required. String expression sought.</param>
+		/// <param name="Compare">Optional. Specifies the type of string comparison. If Compare is omitted, the Option Compare setting determines the type of comparison. Specify a valid LCID (LocaleID) to use locale-specific rules in the comparison. </param>
+		[MonoTODO("Needs testing")]
+		public static int InStr(string String1, 
+			string String2, 
+			[OptionCompare]
+			[Optional]
+			[DefaultValue(CompareMethod.Binary)] 
+			CompareMethod Compare)
+		{
+			return InStr(1, String1, String2, Compare);
+		}
 		
 		/// <summary>
 		/// Returns an integer specifying the start position of the first occurrence of one string within another.
@@ -445,14 +464,13 @@ namespace Microsoft.VisualBasic
 			 */
 
 			//FIXME: someone with a non US setup should test this.
-
 			switch (Compare)
 			{
 				case CompareMethod.Text:
 					return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(String2, String1, Start - 1) + 1;
 
 				case CompareMethod.Binary:
-					return String2.IndexOf(String1, Start - 1) + 1;
+					return String1.IndexOf(String2, Start - 1) + 1;
 				default:
 					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
 			}
@@ -853,8 +871,7 @@ namespace Microsoft.VisualBasic
 			if (Length < 0)
 				throw new ArgumentException("Argument 'Length' must be greater or equal to zero.", "Length");
 
-			//FIXME
-			throw new NotImplementedException(); 
+			return Str.Substring (Str.Length - Length);
 		}
 
 		/// <summary>

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Chris J Breisch (cjbreisch@altavista.net) 
+//   Francesco Delfino (pluto@tipic.com
 //
 // (C) 2002 Chris J Breisch
+//     2003 Tipic, Inc. (http://www.tipic.com)
 //
 
 using System;
@@ -18,7 +20,9 @@ namespace Microsoft.VisualBasic
 		// Properties
 		// Methods
 		[MonoTODO]
-		public static Microsoft.VisualBasic.ErrObject Err () { throw new NotImplementedException (); }
+		public static Microsoft.VisualBasic.ErrObject Err () { 
+			return Microsoft.VisualBasic.CompilerServices.ProjectData.Err;
+		}
 		[MonoTODO]
 		[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 		public static System.Int32 Erl () { throw new NotImplementedException (); }

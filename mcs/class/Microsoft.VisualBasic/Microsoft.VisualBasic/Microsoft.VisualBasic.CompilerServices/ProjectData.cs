@@ -4,8 +4,10 @@
 // Authors:
 //   Martin Adoue (martin@cwanet.com)
 //   Chris J Breisch (cjbreisch@altavista.net)
+//   Francesco Delfino (pluto@tipic.com)
 //
 // (C) 2002 Ximian Inc.
+//     2002 Tipic, Inc. (http://www.tipic.com)
 //
 
 using System;
@@ -23,8 +25,24 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[StructLayout(LayoutKind.Auto)] 
 	public class ProjectData{
 
-		private static System.Exception projectError;
-		private static int erl;
+		internal static System.Exception projectError;
+		internal static int erl;
+		internal static Microsoft.VisualBasic.ErrObject pErr;
+
+		internal static Microsoft.VisualBasic.ErrObject Err 
+		{
+			get
+			{
+				if (pErr==null)
+					pErr=new ErrObject();
+
+				return pErr;
+			}
+			set
+			{
+				pErr = value;
+			}
+		}
 
 		/// <summary>
 		/// FIXME: Summary description for ClearProjectError
@@ -55,7 +73,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 		{
 			projectError = ex;
 			erl = lErl;
-
+			Err.SetException (ex);
 		}
 		
 		/*
