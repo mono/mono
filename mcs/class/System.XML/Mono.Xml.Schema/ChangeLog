@@ -1,5 +1,20 @@
 2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdParticleValidationState.cs : removed unused enum.
+	* XsdValidatingReader.cs : more refactoring. Validation process is
+	  now strictly done only when not skipping (no side effect).
+	  - elementQnameStack is used only in keyref resolution, so just moved
+	    Pop() into EndElement block and thus removed popContext.
+	  - Renamed currentQName to attrQName (only used for attribute).
+	  - Create defaultAttributes array only when required.
+	  So now XsdValidationContext has only Element, State and XsiType.
+	  - It now just holds Stack for state objects (instead of Hashtable).
+	    Child state is set inside StartElementSchemaValidity (it is kind
+	    of StartTagCloseDeriv()).
+	  - Removed Clear().
+
+2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReader.cs : more refactoring on XsdValidationContext.
 	  context.Load() was unnecessary. SchemaType is not necessary.
 	  SiblingState and Element are now not accessed externally.

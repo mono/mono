@@ -35,14 +35,6 @@ using Mono.Xml;
 
 namespace Mono.Xml.Schema
 {
-	internal enum XsdParticleEvaluationResult
-	{
-		Matched = 1,	// Matched one of its components.
-		Passed = 2,	// Did not match, but it successfully passed the whole components.
-		InvalidIncomplete = 3,	// It had incomplete validation state, and in fact it failed to pass.
-		Mismatched = 4	// Dis not match, 
-	}
-
 	internal class XsdValidationStateManager
 	{
 		Hashtable table;

@@ -6,11 +6,6 @@
 //
 //	(C)2003 Atsushi Enomoto
 //
-// Note:
-//
-// This class doesn't support set_XmlResolver, since it isn't common to XmlReader interface. 
-// Try to set that of xml reader which is used to construct this object.
-//
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -44,7 +39,8 @@ namespace Mono.Xml.Schema
 {
 	internal class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext, IXmlNamespaceResolver
 	{
-		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
+		static readonly XmlSchemaAttribute [] emptyAttributeArray =
+			new XmlSchemaAttribute [0];
 
 		XmlReader reader;
 		XmlResolver resolver;
@@ -62,26 +58,26 @@ namespace Mono.Xml.Schema
 		ArrayList keyTables = new ArrayList ();
 		ArrayList currentKeyFieldConsumers;
 
-		XsdValidationStateManager stateManager = new XsdValidationStateManager ();
+		XsdValidationStateManager stateManager =
+			new XsdValidationStateManager ();
 		XsdValidationContext context = new XsdValidationContext ();
 
+		int skipValidationDepth = -1;
 		int xsiNilDepth = -1;
 		StringBuilder storedCharacters = new StringBuilder ();
 		bool shouldValidateCharacters;
-		int skipValidationDepth = -1;
 
-		XmlSchemaAttribute [] defaultAttributes = new XmlSchemaAttribute [0];
+		XmlSchemaAttribute [] defaultAttributes = emptyAttributeArray;
 		int currentDefaultAttribute = -1;
-		XmlQualifiedName currentQName;
+		ArrayList defaultAttributesCache = new ArrayList ();
+		bool defaultAttributeConsumed;
+		XmlQualifiedName attrQName;
 
 		ArrayList elementQNameStack = new ArrayList ();
-		bool popContext;
 
 		// Property Cache.
-		bool defaultAttributeConsumed;
 
 		// Validation engine cached object
-		ArrayList defaultAttributesCache = new ArrayList ();
 		ArrayList tmpKeyrefPool;
 
 #region .ctor
@@ -98,9 +94,9 @@ namespace Mono.Xml.Schema
 		// Private Properties
 		private XmlQualifiedName CurrentQName {
 			get {
-				if (currentQName == null)
-					currentQName = new XmlQualifiedName (LocalName, NamespaceURI);
-				return currentQName;
+				if (attrQName == null)
+					attrQName = new XmlQualifiedName (LocalName, NamespaceURI);
+				return attrQName;
 			}
 		}
 
@@ -161,8 +157,6 @@ namespace Mono.Xml.Schema
 				case XmlNodeType.Element:
 					if (context.ActualType != null)
 						return context.ActualType;
-					else if (context.Element != null)
-						return context.Element.ElementType;
 					else
 						return SourceReaderSchemaType;
 				case XmlNodeType.Attribute:
@@ -513,7 +507,7 @@ namespace Mono.Xml.Schema
 			stateManager.CurrentElement = null;
 			context.EvaluateStartElement (reader.LocalName,
 				reader.NamespaceURI);
-			if (context.SiblingState == XsdValidationState.Invalid)
+			if (context.State == XsdValidationState.Invalid)
 				HandleError ("Invalid start element: " + reader.NamespaceURI + ":" + reader.LocalName);
 
 			context.SetElement (stateManager.CurrentElement);
@@ -521,13 +515,12 @@ namespace Mono.Xml.Schema
 
 		private void ValidateEndElementParticle ()
 		{
-			if (context.ChildState != null) {
-				if (!context.ChildState.EvaluateEndElement ()) {
+			if (context.State != null) {
+				if (!context.State.EvaluateEndElement ()) {
 					HandleError ("Invalid end element: " + reader.Name);
 				}
 			}
-			if (skipValidationDepth < 0 || reader.Depth <= skipValidationDepth)
-				context.PopScope (reader.Depth);
+			context.PopScope ();
 		}
 
 		// Utility for missing validation completion related to child items.
@@ -619,7 +612,7 @@ namespace Mono.Xml.Schema
 				switch (st.DerivedBy) {
 				case XmlSchemaDerivationMethod.List:
 					XmlSchemaSimpleTypeList listContent = st.Content as XmlSchemaSimpleTypeList;
-					values = normalized.Split (wsChars);
+					values = normalized.Split (XmlChar.WhitespaceChars);
 					itemDatatype = listContent.ValidatedListItemType as XmlSchemaDatatype;
 					itemSimpleType = listContent.ValidatedListItemType as XmlSchemaSimpleType;
 					for (int vi = 0; vi < values.Length; vi++) {
@@ -702,7 +695,7 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-		private object GetLocalTypeDefinition (string name)
+		private object GetXsiType (string name)
 		{
 			object xsiType = null;
 			XmlQualifiedName typeQName = QualifyName (name);
@@ -767,10 +760,9 @@ namespace Mono.Xml.Schema
 			if (xsiNilDepth >= 0 && xsiNilDepth < reader.Depth)
 				HandleError ("Element item appeared, while current element context is nil.");
 
-			context.MoveToChildState ();
-
+			context.XsiType = null;
 			// If validation state exists, then first assess particle validity.
-			if (context.SiblingState != null) {
+			if (context.State != null) {
 				ValidateStartElementParticle ();
 			}
 
@@ -790,7 +782,7 @@ namespace Mono.Xml.Schema
 			string xsiTypeName = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (xsiTypeName != null) {
 				xsiTypeName = xsiTypeName.Trim (XmlChar.WhitespaceChars);
-				object xsiType = GetLocalTypeDefinition (xsiTypeName);
+				object xsiType = GetXsiType (xsiTypeName);
 				if (xsiType == null)
 					HandleError ("The instance type was not found: " + xsiTypeName + " .");
 				else {
@@ -812,17 +804,15 @@ namespace Mono.Xml.Schema
 							AssessLocalTypeDerivationOK (xsiType, context.Element.ElementType, context.Element.BlockResolved);
 						}
 						AssessStartElementLocallyValidType (xsiType);	// 1.2.2:
-						context.LocalTypeDefinition = xsiType;
+						context.XsiType = xsiType;
 					}
 				}
 			}
-			else
-				context.LocalTypeDefinition = null;
 
 			// Create Validation Root, if not exist.
 			// [Schema Validity Assessment (Element) 1.1]
 			if (context.Element == null)
-				context.Element = FindElement (reader.LocalName, reader.NamespaceURI);
+				context.SetElement (FindElement (reader.LocalName, reader.NamespaceURI));
 			if (context.Element != null) {
 				if (xsiTypeName == null) {
 					AssessElementLocallyValidElement (context.Element, xsiNilValue);	// 1.1.2
@@ -832,11 +822,6 @@ namespace Mono.Xml.Schema
 				case XmlSchemaContentProcessing.Skip:
 					break;
 				case XmlSchemaContentProcessing.Lax:
-					/*
-					schema = schemas [reader.NamespaceURI];
-					if (schema != null && !schema.missedSubComponents)
-						HandleError ("Element declaration for " + reader.LocalName + " is missing.");
-					*/
 					break;
 				default:
 					if (xsiTypeName == null &&
@@ -847,6 +832,7 @@ namespace Mono.Xml.Schema
 				}
 			}
 
+			XsdValidationState next = null;
 			if (stateManager.ProcessContents
 				== XmlSchemaContentProcessing.Skip)
 				skipValidationDepth = reader.Depth;
@@ -854,16 +840,18 @@ namespace Mono.Xml.Schema
 				// create child particle state.
 				XmlSchemaComplexType xsComplexType = SchemaType as XmlSchemaComplexType;
 				if (xsComplexType != null)
-					context.ChildState = stateManager.Create (xsComplexType.ValidatableParticle);
+					next = stateManager.Create (xsComplexType.ValidatableParticle);
 				else if (stateManager.ProcessContents == XmlSchemaContentProcessing.Lax)
-					context.ChildState = stateManager.Create (XmlSchemaAny.AnyTypeContent);
+					next = stateManager.Create (XmlSchemaAny.AnyTypeContent);
 				else
-					context.ChildState = stateManager.Create (XmlSchemaParticle.Empty);
+					next = stateManager.Create (XmlSchemaParticle.Empty);
 			}
 
 			AssessStartIdentityConstraints ();
 
-			context.PushScope (reader.Depth);
+			context.PushScope ();
+
+			context.State = next;
 		}
 
 		// 3.3.4 Element Locally Valid (Element)
@@ -890,11 +878,11 @@ namespace Mono.Xml.Schema
 			// 4.
 			string xsiType = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (xsiType != null) {
-				context.LocalTypeDefinition = GetLocalTypeDefinition (xsiType);
-				AssessLocalTypeDerivationOK (context.LocalTypeDefinition, element.ElementType, element.BlockResolved);
+				context.XsiType = GetXsiType (xsiType);
+				AssessLocalTypeDerivationOK (context.XsiType, element.ElementType, element.BlockResolved);
 			}
 			else
-				context.LocalTypeDefinition = null;
+				context.XsiType = null;
 
 			// 5 Not all things cannot be assessed here.
 			// It is common to 5.1 and 5.2
@@ -990,9 +978,12 @@ namespace Mono.Xml.Schema
 						defaultAttributesCache.Add (attr);
 				}
 			}
-			defaultAttributes = (XmlSchemaAttribute []) 
-				defaultAttributesCache.ToArray (typeof (XmlSchemaAttribute));
-			context.DefaultAttributes = defaultAttributes;
+			if (defaultAttributesCache.Count == 0)
+				defaultAttributes = emptyAttributeArray;
+			else
+				defaultAttributes = (XmlSchemaAttribute []) 
+					defaultAttributesCache.ToArray (
+						typeof (XmlSchemaAttribute));
 			defaultAttributesCache.Clear ();
 			// 5. wild IDs was already checked above.
 		}
@@ -1107,9 +1098,6 @@ namespace Mono.Xml.Schema
 
 		private void AssessEndElementSchemaValidity ()
 		{
-			if (context.ChildState == null)
-				context.ChildState =
-					context.SiblingState;
 			ValidateEndElementParticle ();	// validate against childrens' state.
 
 			if (shouldValidateCharacters) {
@@ -1380,7 +1368,7 @@ namespace Mono.Xml.Schema
 				return;
 			}
 
-			currentQName = null;
+			attrQName = null;
 			if (i < reader.AttributeCount) {
 				reader.MoveToAttribute (i);
 				this.currentDefaultAttribute = -1;
@@ -1403,7 +1391,7 @@ namespace Mono.Xml.Schema
 				return reader.MoveToAttribute (name);
 			}
 
-			currentQName = null;
+			attrQName = null;
 			bool b = reader.MoveToAttribute (name);
 			if (b) {
 				this.currentDefaultAttribute = -1;
@@ -1422,7 +1410,7 @@ namespace Mono.Xml.Schema
 				return reader.MoveToAttribute (localName, ns);
 			}
 
-			currentQName = null;
+			attrQName = null;
 			bool b = reader.MoveToAttribute (localName, ns);
 			if (b) {
 				this.currentDefaultAttribute = -1;
@@ -1447,7 +1435,7 @@ namespace Mono.Xml.Schema
 		{
 			currentDefaultAttribute = -1;
 			defaultAttributeConsumed = false;
-			currentQName = null;
+			attrQName = null;
 			return reader.MoveToElement ();
 		}
 
@@ -1459,7 +1447,7 @@ namespace Mono.Xml.Schema
 				return reader.MoveToFirstAttribute ();
 			}
 
-			currentQName = null;
+			attrQName = null;
 			if (reader.AttributeCount > 0) {
 				bool b = reader.MoveToFirstAttribute ();
 				if (b) {
@@ -1486,7 +1474,7 @@ namespace Mono.Xml.Schema
 				return reader.MoveToNextAttribute ();
 			}
 
-			currentQName = null;
+			attrQName = null;
 			if (currentDefaultAttribute >= 0) {
 				if (defaultAttributes.Length == currentDefaultAttribute + 1)
 					return false;
@@ -1592,16 +1580,12 @@ namespace Mono.Xml.Schema
 		{
 			currentDefaultAttribute = -1;
 			defaultAttributeConsumed = false;
-			currentQName = null;
+			attrQName = null;
 			if (this.checkIdentity)
 				thisElementId = null;
 			defaultAttributes = new XmlSchemaAttribute [0];
 			if (!schemas.IsCompiled)
 				schemas.Compile ();
-			if (popContext) {
-				elementQNameStack.RemoveAt (elementQNameStack.Count - 1);
-				popContext = false;
-			}
 
 			bool result = reader.Read ();
 			// 3.3.4 ElementLocallyValidElement 7 = Root Valid.
@@ -1631,8 +1615,6 @@ namespace Mono.Xml.Schema
 					}
 					AssessStartElementSchemaValidity ();
 					storedCharacters.Length = 0;
-				} else {
-					context.Clear ();
 				}
 
 				if (reader.IsEmptyElement)
@@ -1641,16 +1623,13 @@ namespace Mono.Xml.Schema
 					shouldValidateCharacters = true;
 				break;
 			case XmlNodeType.EndElement:
-				if (reader.Depth == skipValidationDepth) {
+				if (reader.Depth == skipValidationDepth)
 					skipValidationDepth = -1;
-					context.Clear ();
-				}
-				else
+				else if (skipValidationDepth < 0 || reader.Depth <= skipValidationDepth)
 					AssessEndElementSchemaValidity ();
 
 				storedCharacters.Length = 0;
-				context.ChildState = null;
-				popContext = true;
+				elementQNameStack.RemoveAt (elementQNameStack.Count - 1);
 				break;
 
 			case XmlNodeType.CDATA:
@@ -1717,73 +1696,54 @@ namespace Mono.Xml.Schema
 
 		internal class XsdValidationContext
 		{
-			Hashtable contextStack;
+			Stack contextStack = new Stack ();
 
 			public XsdValidationContext ()
 			{
-				contextStack = new Hashtable ();
 			}
 
 			// Some of them might be missing (See the spec section 5.3, and also 3.3.4).
 			public XmlSchemaElement Element;
-			public XsdValidationState SiblingState;
-			public XsdValidationState ChildState;
-			public XmlSchemaAttribute [] DefaultAttributes;
+			public XsdValidationState State;
+			public object XsiType; // xsi:type
 
-			// Some of schema components might be missing (See the spec section 5.3).
-
-			public object LocalTypeDefinition;
-
+			// Note that it represents current element's type.
 			public object ActualType {
 				get {
-					if (LocalTypeDefinition != null)
-						return LocalTypeDefinition;
+					if (XsiType != null)
+						return XsiType;
 					else
 						return Element != null ? Element.ElementType : null;
 				}
 			}
 
-			public void Clear ()
+			public void PushScope ()
 			{
-				Element = null;
-				SiblingState = null;
-				// FIXME: It should be fine. Need more refactory.
-//				ChildState = null;
-				LocalTypeDefinition = null;
+				contextStack.Push (MemberwiseClone ());
 			}
 
-			public void PushScope (int depth)
+			public void PopScope ()
 			{
-				contextStack [depth] = this.MemberwiseClone ();
-			}
-
-			public void PopScope (int depth)
-			{
-				Clear ();
-				XsdValidationContext restored = (XsdValidationContext) contextStack [depth];
+				XsdValidationContext restored = (XsdValidationContext) contextStack.Pop ();
 				this.Element = restored.Element;
-				this.SiblingState = restored.SiblingState;
-				this.LocalTypeDefinition = restored.LocalTypeDefinition;
-				contextStack.Remove (depth + 1);
+				this.State = restored.State;
+				this.XsiType = restored.XsiType;
 			}
 
 			public void EvaluateStartElement (
 				string localName, string ns)
 			{
-				SiblingState = SiblingState.EvaluateStartElement (localName, ns);
-			}
-
-			public void MoveToChildState ()
-			{
-				if (ChildState != null) {
-					SiblingState = ChildState;
-					ChildState = null;
-				}
+				State = State.EvaluateStartElement (localName, ns);
 			}
 
 			public void SetElement (XmlSchemaElement element)
 			{
 				Element = element;
+			}
+
+			public void SetState (XsdValidationState state)
+			{
+				State = state;
 			}
 		}
 	}
