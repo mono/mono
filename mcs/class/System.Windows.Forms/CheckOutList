@@ -1,27 +1,3 @@
-Before you checkin code, run monostyle.exe on it.
-More checkins are better! Checkin often!. More than once a day is great.
-If you do not update your checkout date for 10 days, someone else may take them.
-
-We have work at 4 levels right now:
-
-1) Typing. if you can typ , we can use you.
-	Pick out of the the classes that need stubbing, or the one enum that has not been done
-	and create a skeloton for the class. Throw not implmented for all the functions.
-	Most of the file below can be used to see how to throw the execption.
-	Many more stubs needed for System.Drawing.
-
-2) General implentation. there is a lot of things in these classes that are not win32 api dependant and can
-	be done by people who know some C#.
-
-3) Data base implmentation. the Data* and Binding* classes couls use someone who uses data bases.
-	If you are working on mono databases, keep doing that. It is more importiant than this.
-
-4) WINE/WIN32 API implmentaton of classes.
-
-The same type of task also exist in the System.Drawing namespace.
-
-Who wants to take on Data* and Binding*, all releated to database stuff, probably more than win32 api.?
-
 
 AccessibleObject.cs
 AmbientProperties.cs
@@ -43,7 +19,7 @@ ComboBox.cs				Need CE
 CommonDialog.cs			Need CE
 ContainerControl.cs		Need CE
 ContextMenu.cs			Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
-Control.cs				Need CE
+Control.cs				Need CE - 11-4-2002 Amitabh Iyer <amitabh.iyer@infrasofttech.biz>
 ControlBindingsCollection.cs Need CE
 ControlPaint.cs
 CreateParams.cs
@@ -68,7 +44,7 @@ FeatureSupport.cs
 FileDialog.cs			Need CE
 FolderBrowserDialog.cs
 FontDialog.cs
-Form.cs				Need CE
+Form.cs				Need CE	Amitabh Iyer <amitabh.iyer@infrasofttech.biz>
 GridColumnStylesCollection.cs
 GridItem.cs
 GridItemCollection.cs
@@ -100,8 +76,8 @@ Message.cs
 MessageBox.cs			Need CE
 MethodInvoker.cs
 MonthCalendar.cs
-NativeWindow.cs
-NotifyIcon.cs			Javier - 10-28-2002 - Alvarez <jamaa@tid.es>
+NativeWindow.cs					11-4-2002 Dominik Pich [Dominik@implemented.org]
+NotifyIcon.cs						Javier - 10-28-2002 - Alvarez <jamaa@tid.es>
 NumericUpDown.cs			Need CE
 OpacityConverter.cs
 OpenFileDialog.cs			Need CE
@@ -150,7 +126,7 @@ TreeNodeConverter.cs  				- 10-28-2002 - Jeff Bakst <jbakst@telocity.com>
 TreeView.cs				Need CE	- 10-28-2002 - Jeff Bakst <jbakst@telocity.com>
 TreeViewImageIndexConverter.cs		- 10-28-2002 - Jeff Bakst <jbakst@telocity.com>
 UpDownBase.cs			Need CE
-UserControl.cs
+UserControl.cs					Amitabh Iyer <amitabh.iyer@infrasofttech.biz>
 VScrollBar.cs			Need CE  	- 10-28-2002 - Dennis Hayes <dennish@raytek.com>
 
 ===================================================
