@@ -1,5 +1,9 @@
 2004-11-04  Ben Maurer  <bmaurer@ximian.com>
 
+	* reflection.c (ensure_runtime_vtable): make sure to free
+	overrides.  Also, we were allocating an array of MonoMethod not an
+	array of MonoMethod*.
+
 	* marshal.c (mono_marshal_get_stelemref): do a mono_mb_free here.
 
 	* image.c (mono_image_close): free image->guid here.
