@@ -1,3 +1,8 @@
+2003-07-15  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* FloatingPointFormatter.cs: Few changes for get working Rotor
+	tests.
+
 2003-07-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs (IsAssignableFrom): Implement this as an icall since the
