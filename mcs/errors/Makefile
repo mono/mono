@@ -25,7 +25,7 @@ DISTFILES = \
 	mcs-expect-no-error mcs-expect-wrong-error mcs-ignore-tests \
 	gmcs-expect-no-error gmcs-expect-wrong-error gmcs-ignore-tests \
 	generics-expect-no-error generics-expect-wrong-error \
-	TestRunner.exe know-issues-*
+	TestRunner.exe known-issues-*
 
 all-local: CS0118-2-lib.dll CS0122-10-lib.dll CS0534-3-lib.dll CS0534-4-lib.dll CS0571-3-lib.dll \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
@@ -62,7 +62,7 @@ endif
 # 	@./do-tests.pl generics '$(GENERICS_COMPILE)' "gcs*.cs"
 # else
 run-mcs-tests: TestRunner-$(PROFILE).exe
-	$(with_mono_path) $(RUNTIME) TestRunner-$(PROFILE).exe $(COMPILER_NAME) $(COMPILER) know-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	$(with_mono_path) $(RUNTIME) TestRunner-$(PROFILE).exe $(COMPILER_NAME) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 #endif
 
 clean-local:
