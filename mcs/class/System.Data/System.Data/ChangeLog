@@ -1,4 +1,10 @@
+2003-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* DataSet.cs: Add a few more missing methods, code style updated
+	to Mono style.
+
 2003-11-26  Tim Coleman <tim@timcoleman.com>
+	
 	* ConflictOptions.cs DataAdapterException.cs DataTableReader.cs
 	* DbMetaData.cs FillOptions.cs IDataReader2.cs IDataRecord2.cs
 	* IDataUpdatableRecord.cs IDbAsyncCommand.cs IDbAsyncConnection.cs

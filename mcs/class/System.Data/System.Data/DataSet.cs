@@ -26,14 +26,11 @@ using System.Xml.Serialization;
 using System.Data.Common;
 
 namespace System.Data {
-	/// <summary>
-	/// an in-memory cache of data 
-	/// </summary>
-	//[Designer]
+
 	[ToolboxItem (false)]
 	[DefaultProperty ("DataSetName")]
 	[Serializable]
-	public class DataSet : MarshalByValueComponent, IListSource,
+	public class DataSet : MarshalByValueComponent, IListSource, 
 		ISupportInitialize, ISerializable, IXmlSerializable {
 		private string dataSetName;
 		private string _namespace = "";
@@ -46,23 +43,24 @@ namespace System.Data {
 		private DataViewManager defaultView;
 		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
 		
-		#region Constructors
+#region Constructors
 
-		public DataSet() : this ("NewDataSet") {		
+		public DataSet () : this ("NewDataSet") {		
 		}
-
-		public DataSet(string name) {
+		
+		public DataSet (string name)
+		{
 			dataSetName = name;
 			tableCollection = new DataTableCollection (this);
 			relationCollection = new DataRelationCollection.DataSetRelationCollection (this);
-			properties = new PropertyCollection();
+			properties = new PropertyCollection ();
 			this.prefix = String.Empty;
 			
 			this.Locale = CultureInfo.CurrentCulture;
 		}
 
 		[MonoTODO]
-		protected DataSet(SerializationInfo info, StreamingContext context) : this () {
+		protected DataSet (SerializationInfo info, StreamingContext context) : this () {
 			throw new NotImplementedException ();
 		}
 
@@ -74,7 +72,9 @@ namespace System.Data {
 		[DataSysDescription ("Indicates whether comparing strings within the DataSet is case sensitive.")]
 		[DefaultValue (false)]
 		public bool CaseSensitive {
-			get { return caseSensitive; } 
+			get {
+				return caseSensitive;
+			} 
 			set {
 				foreach (DataTable T in Tables) {
 					if (T.VirginCaseSensitive)
@@ -82,12 +82,10 @@ namespace System.Data {
 				}
 
 				caseSensitive = value; 
-				if (!caseSensitive)
-				{
-					foreach (DataTable table in Tables)
-					{
+				if (!caseSensitive) {
+					foreach (DataTable table in Tables) {
 						foreach (Constraint c in table.Constraints)
-							c.AssertConstraint();
+							c.AssertConstraint ();
 					}
 				}
 			}
@@ -116,15 +114,12 @@ namespace System.Data {
 		public bool EnforceConstraints {
 			get { return enforceConstraints; } 
 			set { 
-				if (value != enforceConstraints)
-				{
+				if (value != enforceConstraints) {
 					enforceConstraints = value; 
-					if (value)
-					{
-						foreach (DataTable table in Tables)
-						{
+					if (value) {
+						foreach (DataTable table in Tables) {
 							foreach (Constraint c in table.Constraints)
-								c.AssertConstraint();
+								c.AssertConstraint ();
 						}
 					}
 				}
@@ -159,7 +154,7 @@ namespace System.Data {
 				return locale;
 			}
 			set {
-				if (locale == null || !locale.Equals(value)) {
+				if (locale == null || !locale.Equals (value)) {
 					// TODO: check if the new locale is valid
 					// TODO: update locale of all tables
 					locale = value;
@@ -190,37 +185,37 @@ namespace System.Data {
 		[MonoTODO]
 		public void Merge (DataRow[] rows, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
-			if(rows == null)
-				throw new ArgumentNullException("rows");
-			if(!IsLegalSchemaAction(missingSchemaAction))
-				throw new ArgumentOutOfRangeException("missingSchemaAction");
+			if (rows == null)
+				throw new ArgumentNullException ("rows");
+			if (!IsLegalSchemaAction (missingSchemaAction))
+				throw new ArgumentOutOfRangeException ("missingSchemaAction");
 			
-			MergeManager.Merge(this, rows, preserveChanges, missingSchemaAction);
+			MergeManager.Merge (this, rows, preserveChanges, missingSchemaAction);
 		}
 		
 		[MonoTODO]
 		public void Merge (DataSet dataSet, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
-			if(dataSet == null)
-				throw new ArgumentNullException("dataSet");
-			if(!IsLegalSchemaAction(missingSchemaAction))
-				throw new ArgumentOutOfRangeException("missingSchemaAction");
+			if (dataSet == null)
+				throw new ArgumentNullException ("dataSet");
+			if (!IsLegalSchemaAction (missingSchemaAction))
+				throw new ArgumentOutOfRangeException ("missingSchemaAction");
 			
-			MergeManager.Merge(this, dataSet, preserveChanges, missingSchemaAction);
+			MergeManager.Merge (this, dataSet, preserveChanges, missingSchemaAction);
 		}
 		
 		[MonoTODO]
 		public void Merge (DataTable table, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
-			if(table == null)
-				throw new ArgumentNullException("table");
-			if(!IsLegalSchemaAction(missingSchemaAction))
-				throw new ArgumentOutOfRangeException("missingSchemaAction");
+			if (table == null)
+				throw new ArgumentNullException ("table");
+			if (!IsLegalSchemaAction (missingSchemaAction))
+				throw new ArgumentOutOfRangeException ("missingSchemaAction");
 			
-			MergeManager.Merge(this, table, preserveChanges, missingSchemaAction);
+			MergeManager.Merge (this, table, preserveChanges, missingSchemaAction);
 		}
 
-		private static bool IsLegalSchemaAction(MissingSchemaAction missingSchemaAction)
+		private static bool IsLegalSchemaAction (MissingSchemaAction missingSchemaAction)
 		{
 			if (missingSchemaAction == MissingSchemaAction.Add || missingSchemaAction == MissingSchemaAction.AddWithKey
 				|| missingSchemaAction == MissingSchemaAction.Error || missingSchemaAction == MissingSchemaAction.Ignore)
@@ -252,14 +247,10 @@ namespace System.Data {
 				//TODO - trigger an event if this happens?
 
 				if (value == null)
-				{
 					value = string.Empty;
-				}
 				
-				if (value != this.prefix)
-				{
-					RaisePropertyChanging("Prefix");
-				}
+				if (value != this.prefix) 
+					RaisePropertyChanging ("Prefix");
 				prefix = value;
 			}
 		}
@@ -299,13 +290,13 @@ namespace System.Data {
 		#region Public Methods
 
 		[MonoTODO]
-		public void AcceptChanges()
+		public void AcceptChanges ()
 		{
 			foreach (DataTable tempTable in tableCollection)
 				tempTable.AcceptChanges ();
 		}
 
-		public void Clear()
+		public void Clear ()
 		{
 			// TODO: if currently bound to a XmlDataDocument
 			//       throw a NotSupportedException
@@ -314,7 +305,7 @@ namespace System.Data {
 			}
 		}
 
-		public virtual DataSet Clone()
+		public virtual DataSet Clone ()
 		{
 			DataSet Copy = new DataSet ();
 			CopyProperties (Copy);
@@ -325,25 +316,24 @@ namespace System.Data {
 
 			//Copy Relationships between tables after existance of tables
 			//and setting properties correctly
-			CopyRelations(Copy);
+			CopyRelations (Copy);
 			
 			return Copy;
 		}
 
 		// Copies both the structure and data for this DataSet.
-		public DataSet Copy()
+		public DataSet Copy ()
 		{
 			DataSet Copy = new DataSet ();
 			CopyProperties (Copy);
 
 			// Copy DatSet's tables
-			foreach (DataTable Table in Tables) {				
+			foreach (DataTable Table in Tables) 
 				Copy.Tables.Add (Table.Copy ());
-			}
 
 			//Copy Relationships between tables after existance of tables
 			//and setting properties correctly
-			CopyRelations(Copy);
+			CopyRelations (Copy);
 
 			return Copy;
 		}
@@ -381,22 +371,20 @@ namespace System.Data {
 				DataColumn[] P_DC = new DataColumn[MyRelation.ParentColumns.Length]; 
 				DataColumn[] C_DC = new DataColumn[MyRelation.ChildColumns.Length];
 				int i = 0;
-				foreach(DataColumn DC in MyRelation.ParentColumns)
-				{
+				
+				foreach (DataColumn DC in MyRelation.ParentColumns) {
 					P_DC[i]=Copy.Tables[pTable].Columns[DC.ColumnName];
 					i++;
 				}
 
 				i = 0;
 
-				foreach(DataColumn DC in MyRelation.ChildColumns)
-				{
+				foreach (DataColumn DC in MyRelation.ChildColumns) {
 					C_DC[i]=Copy.Tables[cTable].Columns[DC.ColumnName];
 					i++;
 				}
 				
-
-				DataRelation cRel = new DataRelation(MyRelation.RelationName,P_DC,C_DC);
+				DataRelation cRel = new DataRelation (MyRelation.RelationName, P_DC, C_DC);
 				//cRel.ChildColumns = MyRelation.ChildColumns;
 				//cRel.ChildTable = MyRelation.ChildTable;
 				//cRel.ExtendedProperties = cRel.ExtendedProperties; 
@@ -404,42 +392,40 @@ namespace System.Data {
 				//cRel.ParentColumns = MyRelation.ParentColumns;
 				//cRel.ParentTable = MyRelation.ParentTable;
 								
-				Copy.Relations.Add(cRel);
+				Copy.Relations.Add (cRel);
 			}
 		}
 
 		
 
 
-		public DataSet GetChanges()
+		public DataSet GetChanges ()
 		{
-			return GetChanges(DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
+			return GetChanges (DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
 		}
 
 		
-		public DataSet GetChanges(DataRowState rowStates)
+		public DataSet GetChanges (DataRowState rowStates)
 		{
-			if(!HasChanges(rowStates))
+			if (!HasChanges (rowStates))
 				return null;
 			
-			DataSet copySet = Clone();
-			IEnumerator tableEnumerator = Tables.GetEnumerator();
+			DataSet copySet = Clone ();
+			IEnumerator tableEnumerator = Tables.GetEnumerator ();
 			DataTable origTable;
 			DataTable copyTable;
-			while (tableEnumerator.MoveNext())
-			{
+			while (tableEnumerator.MoveNext ()) {
 				origTable = (DataTable)tableEnumerator.Current;
 				copyTable = copySet.Tables[origTable.TableName];
 
-				IEnumerator rowEnumerator = origTable.Rows.GetEnumerator();
-				while (rowEnumerator.MoveNext())
-				{
+				IEnumerator rowEnumerator = origTable.Rows.GetEnumerator ();
+				while (rowEnumerator.MoveNext ()) {
 					DataRow row = (DataRow)rowEnumerator.Current;
-					if (row.IsRowChanged(rowStates))
+					if (row.IsRowChanged (rowStates))
 					{
-						DataRow newRow = copyTable.NewRow();
-						copyTable.Rows.Add(newRow);
-						row.CopyValuesToRow(newRow);
+						DataRow newRow = copyTable.NewRow ();
+						copyTable.Rows.Add (newRow);
+						row.CopyValuesToRow (newRow);
 					}
 				}
 			}
@@ -460,16 +446,16 @@ namespace System.Data {
 		}
 #endif
 		
-		public string GetXml()
+		public string GetXml ()
 		{
 			StringWriter Writer = new StringWriter ();
 
 			// Sending false for not printing the Processing instruction
-			WriteXml (Writer, XmlWriteMode.IgnoreSchema,false);
+			WriteXml (Writer, XmlWriteMode.IgnoreSchema, false);
 			return Writer.ToString ();
 		}
 
-		public string GetXmlSchema()
+		public string GetXmlSchema ()
 		{
 			StringWriter Writer = new StringWriter ();
 			WriteXmlSchema (Writer);
@@ -477,29 +463,28 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		public bool HasChanges()
+		public bool HasChanges ()
 		{
-			return HasChanges(DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
+			return HasChanges (DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
 		}
 
 		[MonoTODO]
-		public bool HasChanges(DataRowState rowState)
+		public bool HasChanges (DataRowState rowState)
 		{
-			if(((int)rowState & 0xffffffe0) != 0)
-				throw new ArgumentOutOfRangeException("rowState");
+			if (((int)rowState & 0xffffffe0) != 0)
+				throw new ArgumentOutOfRangeException ("rowState");
 
 			DataTableCollection tableCollection = Tables;
 			DataTable table;
 			DataRowCollection rowCollection;
 			DataRow row;
-			for (int i = 0; i < tableCollection.Count; i++)
-			{
+
+			for (int i = 0; i < tableCollection.Count; i++) {
 				table = tableCollection[i];
 				rowCollection = table.Rows;
-				for (int j = 0; j < rowCollection.Count; j++)
-				{
+				for (int j = 0; j < rowCollection.Count; j++) {
 					row = rowCollection[j];
-					if((row.RowState & rowState) != 0)
+					if ((row.RowState & rowState) != 0)
 						return true;
 				}
 			}
@@ -508,23 +493,23 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		public void InferXmlSchema(XmlReader reader, string[] nsArray)
+		public void InferXmlSchema (XmlReader reader, string[] nsArray)
 		{
 		}
 
-		public void InferXmlSchema(Stream stream, string[] nsArray)
+		public void InferXmlSchema (Stream stream, string[] nsArray)
 		{
-			InferXmlSchema (new XmlTextReader(stream), nsArray);
+			InferXmlSchema (new XmlTextReader (stream), nsArray);
 		}
 
-		public void InferXmlSchema(TextReader reader, string[] nsArray)
+		public void InferXmlSchema (TextReader reader, string[] nsArray)
 		{
-			InferXmlSchema (new XmlTextReader(reader), nsArray);
+			InferXmlSchema (new XmlTextReader (reader), nsArray);
 		}
 
-		public void InferXmlSchema(string fileName, string[] nsArray)
+		public void InferXmlSchema (string fileName, string[] nsArray)
 		{
-			XmlTextReader reader = new XmlTextReader(fileName);
+			XmlTextReader reader = new XmlTextReader (fileName);
 			try {
 				InferXmlSchema (reader, nsArray);
 			} finally {
@@ -546,68 +531,67 @@ namespace System.Data {
 		}
 #endif
 
-		public virtual void RejectChanges()
+		public virtual void RejectChanges ()
 		{
 			int i;
 			bool oldEnforceConstraints = this.EnforceConstraints;
 			this.EnforceConstraints = false;
-			for (i=0;(i<this.Tables.Count);i++)
-			{
-				this.Tables[i].RejectChanges();
-			}
+			
+			for (i = 0; i < this.Tables.Count;i++) 
+				this.Tables[i].RejectChanges ();
+
 			this.EnforceConstraints = oldEnforceConstraints;
 		}
 
-		public virtual void Reset()
+		public virtual void Reset ()
 		{
 			IEnumerator constraintEnumerator;
+
 			// first we remove all ForeignKeyConstraints (if we will not do that
 			// we will get an exception when clearing the tables).
-			for (int i = 0; i < Tables.Count; i++)
-			{
+			for (int i = 0; i < Tables.Count; i++) {
 				ConstraintCollection cc = Tables[i].Constraints;
-				for (int j = 0; j < cc.Count; j++)
-				{
+				for (int j = 0; j < cc.Count; j++) {
 					if (cc[j] is ForeignKeyConstraint)
-						cc.Remove(cc[j]);
+						cc.Remove (cc[j]);
 				}
 			}
 
-			Clear();
-			Relations.Clear();
-			Tables.Clear();
+			Clear ();
+			Relations.Clear ();
+			Tables.Clear ();
 		}
 
-		public void WriteXml(Stream stream)
+		public void WriteXml (Stream stream)
 		{
-			XmlWriter writer = new XmlTextWriter(stream, null );
+			XmlWriter writer = new XmlTextWriter (stream, null);
 			
-			WriteXml( writer );
+			WriteXml (writer);
 		}
 
 		///<summary>
 		/// Writes the current data for the DataSet to the specified file.
 		/// </summary>
 		/// <param name="filename">Fully qualified filename to write to</param>
-		public void WriteXml(string fileName)
+		public void WriteXml (string fileName)
 		{
-			XmlWriter writer = new XmlTextWriter(fileName, null );
+			XmlWriter writer = new XmlTextWriter (fileName, null);
 			
-			WriteXml( writer );
+			WriteXml (writer);
 			
-			writer.Close();
+			writer.Close ();
 		}
 
-		public void WriteXml(TextWriter writer)
+		public void WriteXml (TextWriter writer)
 		{
-			XmlWriter xwriter = new XmlTextWriter(writer );
+			XmlWriter xwriter = new XmlTextWriter (writer);
 			
-			WriteXml( xwriter );
+			WriteXml (xwriter);
 		}
 
-		public void WriteXml(XmlWriter writer)
+		public void WriteXml (XmlWriter writer)
 		{
-			WriteXml( writer, XmlWriteMode.IgnoreSchema,false);
+			WriteXml (writer, XmlWriteMode.IgnoreSchema, false);
 		}
 
 		public void WriteXml (string filename, XmlWriteMode mode)
@@ -616,117 +600,135 @@ namespace System.Data {
 			WriteXml (writer, mode, false);
 		}
 
-		public void WriteXml(Stream stream, XmlWriteMode mode,bool writePI)
+		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
-			XmlWriter writer = new XmlTextWriter(stream, null );
-			
-			WriteXml( writer, mode, writePI );
+			XmlWriter writer = new XmlTextWriter (stream, null);
+
+			WriteXml (writer, mode, false);
 		}
 
-		public void WriteXml(string fileName, XmlWriteMode mode, bool writePI)
+		public void WriteXml (TextWriter writer, XmlWriteMode mode)
 		{
-			XmlWriter writer = new XmlTextWriter(fileName, null );
-			
-			WriteXml( writer, mode, writePI );
-			
-			writer.Close();
+			XmlWriter xwriter = new XmlTextWriter (writer);
+			WriteXml (xwriter, mode, false);
 		}
 
-		public void WriteXml(TextWriter writer,	XmlWriteMode mode, bool writePI)
+		public void WriteXml (XmlWriter writer, XmlWriteMode mode)
 		{
-			XmlWriter xwriter = new XmlTextWriter(writer);
+			WriteXml (writer, mode, false);
+		}
+		
+		public void WriteXml (Stream stream, XmlWriteMode mode, bool writePI)
+		{
+			XmlWriter writer = new XmlTextWriter (stream, null);
 			
-			WriteXml( xwriter, mode, writePI);
+			WriteXml (writer, mode, writePI);
 		}
 
-		public void WriteXml(XmlWriter writer, XmlWriteMode mode, bool writePI)
+		public void WriteXml (string fileName, XmlWriteMode mode, bool writePI)
+		{
+			XmlWriter writer = new XmlTextWriter (fileName, null);
+			
+			WriteXml (writer, mode, writePI);
+			
+			writer.Close ();
+		}
+
+		public void WriteXml (TextWriter writer, XmlWriteMode mode, bool writePI)
+		{
+			XmlWriter xwriter = new XmlTextWriter (writer);
+			
+			WriteXml (xwriter, mode, writePI);
+		}
+
+		public void WriteXml (XmlWriter writer, XmlWriteMode mode, bool writePI)
 		{
 			if (writePI && (writer.WriteState == WriteState.Start))
 				writer.WriteStartDocument (true);
 
-			((XmlTextWriter)writer).Formatting = Formatting.Indented;
-			WriteStartElement( writer, mode, Namespace, Prefix, DataSetName );
+			 ((XmlTextWriter)writer).Formatting = Formatting.Indented;
+			WriteStartElement (writer, mode, Namespace, Prefix, DataSetName);
 			
-			if( mode == XmlWriteMode.WriteSchema )
+			if (mode == XmlWriteMode.WriteSchema)
 			{
-				DoWriteXmlSchema( writer );
+				DoWriteXmlSchema (writer);
 			}
 			
 			//Write out each table in order, providing it is not
 			//part of another table structure via a nested parent relationship
-			foreach( DataTable table in Tables )
+			foreach (DataTable table in Tables)
 			{
 				bool isTopLevel = true;
-				foreach( DataRelation rel in table.ParentRelations )
+				foreach (DataRelation rel in table.ParentRelations)
 				{
-					if( rel.Nested )
+					if (rel.Nested)
 					{
 						isTopLevel = false;
 						break;
 					}
 				}
 				
-				if( isTopLevel )
+				if (isTopLevel)
 				{
-					WriteTable(  writer, table, mode );
+					WriteTable ( writer, table, mode);
 				}
 			}
 			
-			writer.WriteEndElement();			
+			writer.WriteEndElement ();			
 		}
 
-		public void WriteXmlSchema(Stream stream)
+		public void WriteXmlSchema (Stream stream)
 		{
-			XmlWriter writer = new XmlTextWriter(stream, null  );
+			XmlWriter writer = new XmlTextWriter (stream, null );
 			
-			WriteXmlSchema( writer );	
+			WriteXmlSchema (writer);	
 		}
 
-		public void WriteXmlSchema(string fileName)
+		public void WriteXmlSchema (string fileName)
 		{
-			XmlWriter writer = new XmlTextWriter( fileName, null );
+			XmlWriter writer = new XmlTextWriter (fileName, null);
 	    	
-			WriteXmlSchema( writer );
+			WriteXmlSchema (writer);
 		}
 
-		public void WriteXmlSchema(TextWriter writer)
+		public void WriteXmlSchema (TextWriter writer)
 		{
-			XmlWriter xwriter = new XmlTextWriter( writer );
+			XmlWriter xwriter = new XmlTextWriter (writer);
 			
-			WriteXmlSchema( xwriter );
+			WriteXmlSchema (xwriter);
 		}
 
-		public void WriteXmlSchema(XmlWriter writer)
+		public void WriteXmlSchema (XmlWriter writer)
 		{
-			((XmlTextWriter)writer).Formatting = Formatting.Indented;
+			 ((XmlTextWriter)writer).Formatting = Formatting.Indented;
 			//Create a skeleton doc and then write the schema 
 			//proper which is common to the WriteXml method in schema mode
-			writer.WriteStartDocument();
+			writer.WriteStartDocument ();
 			
-			DoWriteXmlSchema( writer );
+			DoWriteXmlSchema (writer);
 			
-			writer.WriteEndDocument();
+			writer.WriteEndDocument ();
 		}
 
-		public void ReadXmlSchema(Stream stream)
+		public void ReadXmlSchema (Stream stream)
 		{
-			XmlReader reader = new XmlTextReader( stream, null );
-			ReadXmlSchema( reader);
+			XmlReader reader = new XmlTextReader (stream, null);
+			ReadXmlSchema (reader);
 		}
 
-		public void ReadXmlSchema(string str)
+		public void ReadXmlSchema (string str)
 		{
-			XmlReader reader = new XmlTextReader( str );
-			ReadXmlSchema( reader );
+			XmlReader reader = new XmlTextReader (str);
+			ReadXmlSchema (reader);
 		}
 
-		public void ReadXmlSchema(TextReader treader)
+		public void ReadXmlSchema (TextReader treader)
 		{
-			XmlReader reader = new XmlTextReader( treader );
-			ReadXmlSchema( reader );			
+			XmlReader reader = new XmlTextReader (treader);
+			ReadXmlSchema (reader);			
 		}
 
-		public void ReadXmlSchema(XmlReader reader)
+		public void ReadXmlSchema (XmlReader reader)
 		{
 			XmlSchemaMapper SchemaMapper = new XmlSchemaMapper (this);
 			SchemaMapper.Read (reader);
@@ -823,7 +825,7 @@ namespace System.Data {
 
 		#region Destructors
 
-		~DataSet()
+		~DataSet ()
 		{
 		}
 
@@ -860,24 +862,24 @@ namespace System.Data {
 		#endregion
 		
 		#region Protected Methods
-		protected void GetSerializationData(SerializationInfo info, StreamingContext context)
+		protected void GetSerializationData (SerializationInfo info, StreamingContext context)
 		{
 			string s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
-			if (s != null) ReadXmlSerializable (new XmlTextReader(new StringReader(s)));
+			if (s != null) ReadXmlSerializable (new XmlTextReader (new StringReader (s)));
 		}
 		
 		
-		protected virtual System.Xml.Schema.XmlSchema GetSchemaSerializable()
+		protected virtual System.Xml.Schema.XmlSchema GetSchemaSerializable ()
 		{
 			return BuildSchema ();
 		}
 		
-		protected virtual void ReadXmlSerializable(XmlReader reader)
+		protected virtual void ReadXmlSerializable (XmlReader reader)
 		{
-			ReadXml(reader, XmlReadMode.DiffGram); // FIXME
+			ReadXml (reader, XmlReadMode.DiffGram); // FIXME
 		}
 
-		void IXmlSerializable.ReadXml(XmlReader reader)
+		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
 			reader.MoveToContent ();
 			reader.ReadStartElement ();	// <DataSet>
@@ -886,16 +888,16 @@ namespace System.Data {
 			ReadXmlSchema (reader);
 
 			reader.MoveToContent ();
-			ReadXml(reader, XmlReadMode.IgnoreSchema);
+			ReadXml (reader, XmlReadMode.IgnoreSchema);
 
 			reader.MoveToContent ();
 			reader.ReadEndElement ();	// </DataSet>
 		}
 		
-		void IXmlSerializable.WriteXml(XmlWriter writer)
+		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
 			DoWriteXmlSchema (writer);
-			WriteXml(writer, XmlWriteMode.IgnoreSchema, true);
+			WriteXml (writer, XmlWriteMode.IgnoreSchema, true);
 		}
 
 		protected virtual bool ShouldSerializeRelations ()
@@ -926,7 +928,7 @@ namespace System.Data {
 		protected internal virtual void OnMergeFailed (MergeFailedEventArgs e)
 		{
 			if (MergeFailed != null)
-				MergeFailed(this, e);
+				MergeFailed (this, e);
 		}
 
 		[MonoTODO]
@@ -937,7 +939,7 @@ namespace System.Data {
 
 		#region Private Xml Serialisation
 
-		private string WriteObjectXml( object o ) {
+		private string WriteObjectXml (object o) {
 			switch (Type.GetTypeCode (o.GetType ())) {
 			case TypeCode.Boolean:
 				return XmlConvert.ToString ((Boolean) o);
@@ -970,17 +972,17 @@ namespace System.Data {
 			}
 			if (o is TimeSpan) return XmlConvert.ToString ((TimeSpan) o);
 			if (o is Guid) return XmlConvert.ToString ((Guid) o);
-			return o.ToString();
+			return o.ToString ();
 		}
 	
-		private void WriteTable( XmlWriter writer, DataTable table, XmlWriteMode mode )
+		private void WriteTable (XmlWriter writer, DataTable table, XmlWriteMode mode)
 		{
 			DataRow[] rows = new DataRow [table.Rows.Count];
 			table.Rows.CopyTo (rows, 0);
 			WriteTable (writer, rows, mode);
 		}
 
-		private void WriteTable( XmlWriter writer, DataRow[] rows, XmlWriteMode mode )
+		private void WriteTable (XmlWriter writer, DataRow[] rows, XmlWriteMode mode)
 		{
 			//The columns can be attributes, hidden, elements, or simple content
 			//There can be 0-1 simple content cols or 0-* elements
@@ -990,9 +992,9 @@ namespace System.Data {
 
 			if (rows.Length == 0) return;
 			DataTable table = rows[0].Table;
-			SplitColumns( table, out atts, out elements, out simple );
+			SplitColumns (table, out atts, out elements, out simple);
 
-			foreach( DataRow row in rows )
+			foreach (DataRow row in rows)
 			{
 				//sort out the namespacing
 				string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
@@ -1013,20 +1015,20 @@ namespace System.Data {
 					continue;
 				}
 
-				WriteStartElement( writer, mode, nspc, table.Prefix, table.TableName );
+				WriteStartElement (writer, mode, nspc, table.Prefix, table.TableName);
 				
-				foreach( DataColumn col in atts )
+				foreach (DataColumn col in atts)
 				{					
-					WriteAttributeString( writer, mode, col.Namespace, col.Prefix, col.ColumnName, row[col].ToString() );
+					WriteAttributeString (writer, mode, col.Namespace, col.Prefix, col.ColumnName, row[col].ToString ());
 				}
 				
-				if( simple != null )
+				if (simple != null)
 				{
-					writer.WriteString( WriteObjectXml(row[simple]) );
+					writer.WriteString (WriteObjectXml (row[simple]));
 				}
 				else
 				{					
-					foreach( DataColumn col in elements )
+					foreach (DataColumn col in elements)
 					{
 						string colnspc = nspc;
 						object rowObject = row [col];
@@ -1034,76 +1036,76 @@ namespace System.Data {
 						if (rowObject == null || rowObject == DBNull.Value)
 							continue;
 
-						if( col.Namespace != null )
+						if (col.Namespace != null)
 						{
 							colnspc = col.Namespace;
 						}
 				
 						//TODO check if I can get away with write element string
-						WriteStartElement( writer, mode, colnspc, col.Prefix, col.ColumnName );
-						writer.WriteString( WriteObjectXml(rowObject) );
-						writer.WriteEndElement();
+						WriteStartElement (writer, mode, colnspc, col.Prefix, col.ColumnName);
+						writer.WriteString (WriteObjectXml (rowObject));
+						writer.WriteEndElement ();
 					}
 				}
 				
 				foreach (DataRelation relation in table.ChildRelations) {
 					if (relation.Nested) {
-						WriteTable (writer, row.GetChildRows(relation), mode);
+						WriteTable (writer, row.GetChildRows (relation), mode);
 					}
 				}
 				
-				writer.WriteEndElement();
+				writer.WriteEndElement ();
 			}
 
 		}
 		    
-		private void WriteStartElement( XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name )
+		private void WriteStartElement (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name)
 		{			
-			switch(  mode )
+			switch ( mode)
 				{
 					case XmlWriteMode.WriteSchema:
-						if( nspc == null || nspc == "" )
+						if (nspc == null || nspc == "")
 						{
-							writer.WriteStartElement( name );
+							writer.WriteStartElement (name);
 						}
-						else if( prefix != null )
+						else if (prefix != null)
 						{							
-							writer.WriteStartElement(prefix, name, nspc );
+							writer.WriteStartElement (prefix, name, nspc);
 						}						
 						else
 						{					
-							writer.WriteStartElement( writer.LookupPrefix( nspc ), name, nspc );
+							writer.WriteStartElement (writer.LookupPrefix (nspc), name, nspc);
 						}
 						break;
 					case XmlWriteMode.DiffGram:
-						throw new NotImplementedException();
+						throw new NotImplementedException ();
 					default:					       
-						writer.WriteStartElement(name );
+						writer.WriteStartElement (name);
 						break;					
 				};
 		}
 		
-		private void WriteAttributeString( XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue )
+		private void WriteAttributeString (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue)
 		{
-			switch(  mode )
+			switch ( mode)
 				{
 					case XmlWriteMode.WriteSchema:
-						writer.WriteAttributeString(prefix, name, nspc );
+						writer.WriteAttributeString (prefix, name, nspc);
 						break;
 					case XmlWriteMode.DiffGram:
-						throw new NotImplementedException();				
+						throw new NotImplementedException ();				
 					default:
-						writer.WriteAttributeString(name, stringValue );
+						writer.WriteAttributeString (name, stringValue);
 						break;					
 				};
 		}
 
-		XmlSchema IXmlSerializable.GetSchema()
+		XmlSchema IXmlSerializable.GetSchema ()
 		{
 			return BuildSchema ();
 		}
 		
-		XmlSchema BuildSchema()
+		XmlSchema BuildSchema ()
 		{
 			XmlSchema schema = new XmlSchema ();
 			schema.AttributeFormDefault = XmlSchemaForm.Qualified;
@@ -1132,19 +1134,19 @@ namespace System.Data {
 			
 			//Write out schema for each table in order, providing it is not
 			//part of another table structure via a nested parent relationship
-			foreach( DataTable table in Tables )
+			foreach (DataTable table in Tables)
 			{		
 				bool isTopLevel = true;
-				foreach( DataRelation rel in table.ParentRelations )
+				foreach (DataRelation rel in table.ParentRelations)
 				{
-					if( rel.Nested )
+					if (rel.Nested)
 					{
 						isTopLevel = false;
 						break;
 					}
 				}
 				
-				if( isTopLevel )
+				if (isTopLevel)
 				{
 					choice.Items.Add (GetTableSchema (doc, table));
 				}
@@ -1170,7 +1172,7 @@ namespace System.Data {
 			elem.SchemaType = complex;
 
 			//TODO - what about the simple content?
-			if( elements.Count == 0 )				
+			if (elements.Count == 0)				
 			{				
 			}
 			else
@@ -1180,7 +1182,7 @@ namespace System.Data {
 				XmlSchemaSequence seq = new XmlSchemaSequence ();
 				complex.Particle = seq;
 
-				foreach( DataColumn col in elements )
+				foreach (DataColumn col in elements)
 				{
 					//<xs:element name=ColumnName type=MappedType Ordinal=index>
 					XmlSchemaElement colElem = new XmlSchemaElement ();
@@ -1199,15 +1201,15 @@ namespace System.Data {
 
 					colElem.SchemaTypeName = MapType (col.DataType);
 
-					if( col.AllowDBNull )
+					if (col.AllowDBNull)
 					{
 						colElem.MinOccurs = 0;
 					}
 
-					//writer.WriteAttributeString( XmlConstants.MsdataPrefix,
-					//                            XmlConstants.Ordinal,
-					//                            XmlConstants.MsdataNamespace,
-					//                            col.Ordinal.ToString() );
+					//writer.WriteAttributeString (XmlConstants.MsdataPrefix, 
+					//                            XmlConstants.Ordinal, 
+					//                            XmlConstants.MsdataNamespace, 
+					//                            col.Ordinal.ToString ());
 
 					// Write SimpleType if column have MaxLength
 					if (col.MaxLength > -1) 
@@ -1220,7 +1222,7 @@ namespace System.Data {
 			}
 
 			//Then a list of attributes
-			foreach( DataColumn col in atts )
+			foreach (DataColumn col in atts)
 			{
 				//<xs:attribute name=col.ColumnName form="unqualified" type=MappedType/>
 				XmlSchemaAttribute att = new XmlSchemaAttribute ();
@@ -1249,7 +1251,7 @@ namespace System.Data {
 			return simple;
 		}
 
-		private void DoWriteXmlSchema( XmlWriter writer )
+		private void DoWriteXmlSchema (XmlWriter writer)
 		{
 			GetSchemaSerializable ().Write (writer);
 		}
@@ -1258,32 +1260,31 @@ namespace System.Data {
 		/// Helper function to split columns into attributes elements and simple
 		/// content
 		/// </summary>
-		private void SplitColumns( 	DataTable table,
-									out ArrayList atts,
-									out ArrayList elements,
-									out DataColumn simple)
+		private void SplitColumns (DataTable table, 
+					   out ArrayList atts, 
+					   out ArrayList elements, 
+					   out DataColumn simple)
 		{
 			//The columns can be attributes, hidden, elements, or simple content
 			//There can be 0-1 simple content cols or 0-* elements
-			atts = new System.Collections.ArrayList();
-			elements = new System.Collections.ArrayList();
+			atts = new System.Collections.ArrayList ();
+			elements = new System.Collections.ArrayList ();
 			simple = null;
 			
 			//Sort out the columns
-			foreach( DataColumn col in table.Columns )
-			{
-				switch( col.ColumnMapping )
+			foreach (DataColumn col in table.Columns) {
+				switch (col.ColumnMapping)
 				{
 					case MappingType.Attribute:
-						atts.Add( col );
+						atts.Add (col);
 						break;
 					case MappingType.Element:
-						elements.Add( col );
+						elements.Add (col);
 						break;
 					case MappingType.SimpleContent:
-						if( simple != null )
+						if (simple != null)
 						{
-							throw new System.InvalidOperationException( "There may only be one simple content element" );
+							throw new System.InvalidOperationException ("There may only be one simple content element");
 						}
 						simple = col;
 						break;
@@ -1315,11 +1316,16 @@ namespace System.Data {
 				case TypeCode.UInt64: return XmlConstants.QnUnsignedLong;
 			}
 			
-			if (typeof (TimeSpan) == type) return XmlConstants.QnDuration;
-			else if (typeof (System.Uri) == type) return XmlConstants.QnUri;
-			else if (typeof (byte[]) == type) return XmlConstants.QnBase64Binary;
-			else if (typeof (XmlQualifiedName) == type) return XmlConstants.QnXmlQualifiedName;
-			else return XmlConstants.QnString;
+			if (typeof (TimeSpan) == type)
+				return XmlConstants.QnDuration;
+			else if (typeof (System.Uri) == type)
+				return XmlConstants.QnUri;
+			else if (typeof (byte[]) == type)
+				return XmlConstants.QnBase64Binary;
+			else if (typeof (XmlQualifiedName) == type)
+				return XmlConstants.QnXmlQualifiedName;
+			else
+				return XmlConstants.QnString;
 		}
 
 		#endregion //Private Xml Serialisation
