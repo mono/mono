@@ -1,3 +1,8 @@
+2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: attach all events from Type and BaseType
+	at the same time. Fixes bug #53454.
+
 2004-01-27  Jackson Harper <jackson@ximian.com>
 
 	* HttpCachePolicy.cs: varybyparams::GetResponseHeader can return

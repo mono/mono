@@ -110,23 +110,10 @@ namespace System.Web {
 			ArrayList evtMethods = new ArrayList ();
 			BindingFlags flags = BindingFlags.Public    |
 					     BindingFlags.NonPublic | 
-					     BindingFlags.DeclaredOnly |
 					     BindingFlags.Instance |
 					     BindingFlags.Static;
 
 			MethodInfo [] methods = appType.GetMethods (flags);
-			foreach (MethodInfo m in methods) {
-				if (IsEventHandler (m))
-					AddEvent (m, appTypeEventHandlers);
-			}
-
-			Type baseType = appType.BaseType;
-			if (baseType == typeof (HttpApplication))
-				return appTypeEventHandlers;
-
-			flags = BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
-
-			methods = appType.GetMethods (flags);
 			foreach (MethodInfo m in methods) {
 				if (IsEventHandler (m))
 					AddEvent (m, appTypeEventHandlers);
