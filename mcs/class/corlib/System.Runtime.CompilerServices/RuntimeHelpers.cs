@@ -33,12 +33,6 @@ namespace System.Runtime.CompilerServices
 	[Serializable]
 	public sealed class RuntimeHelpers
 	{
-		private static int offset_to_string_data;
-
-		static RuntimeHelpers () {
-			offset_to_string_data = GetOffsetToStringData();
-		}
-
 		private RuntimeHelpers () {}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -49,10 +43,9 @@ namespace System.Runtime.CompilerServices
 			InitializeArray (array, fldHandle.Value);
 		}
 
-		public static int OffsetToStringData {
-			get {
-				return offset_to_string_data;
-			}
+		public static extern int OffsetToStringData {
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
 		}
 
 #if NET_1_1
@@ -86,8 +79,5 @@ namespace System.Runtime.CompilerServices
 		{
 			RunClassConstructor (type.Value);
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int GetOffsetToStringData();
 	}
 }

@@ -1,3 +1,8 @@
+2004-06-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* RuntimeHelpers.cs: OffsetToStringData is now and intrinsic,
+	so we dont have to optimize it. Thus, it is now just an icall.
+
 2004-06-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodImplAttribute.cs: changed field name to fix serialization
