@@ -1,3 +1,9 @@
+2004-08-31  Nick Drochak <ndrochak@ieee.org>
+
+	* BooleanTest.cs: Eliminate compiler warning.
+	* DateTimeTest.cs: Allow csc to compile.
+	* TypeTest.cs: Use unsafe for pointers.
+
 2004-08-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add regression test for bug #63768.

@@ -157,7 +157,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void TestName () {
+		unsafe public void TestName () {
 			AssertEquals ("Void*", typeof (void*).Name);
 			AssertEquals ("Void**", typeof (void**).Name);
 		}

@@ -562,7 +562,7 @@ public class DateTimeTest : Assertion
 		AssertEquals("Dash04", 24, t1.Day);
 
 		// Bug 63376
-		t1 = DateTime.ParseExact ("18Aug2004 12:33:00", "ddMMMyyyy hh:mm:ss", new System.Globalization.CultureInfo ("en-US"));
+		t1 = DateTime.ParseExact ("18Aug2004 12:33:00", "ddMMMyyyy hh:mm:ss", new CultureInfo ("en-US"));
 		AssertEquals ("hh allows 12, though it's useless", 0, t1.Hour);
 	}
 

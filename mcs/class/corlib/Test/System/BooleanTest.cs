@@ -76,7 +76,6 @@ public class BooleanTest : Assertion {
 	public void TestEqualOperator ()
 	{
 		Boolean t=true, f=false;
-		string s = "What Ever";
 		Assert ("t==t", t==t);
 		Assert ("f==f", f==f);
 		Assert ("t!=f", t!=f);
