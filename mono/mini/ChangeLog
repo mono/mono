@@ -1,5 +1,7 @@
 2003-11-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* iltests.il (test_0_div_regalloc): New regression test.
+
 	* arrays.cs: Fix compilation error.
 
 Fri Nov 14 21:34:06 CET 2003 Paolo Molaro <lupus@ximian.com>
