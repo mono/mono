@@ -1,3 +1,9 @@
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(TC.OperatorArrayList.OperatorEntry.CheckPairedOperators): Don't
+	crash here.	
+
 2004-08-25  Martin Baulig  <martin@ximian.com>
 
 	* support.cs (ReflectionParameters..ctor): If this is a generic

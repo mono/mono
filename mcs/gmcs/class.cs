@@ -350,7 +350,7 @@ namespace Mono.CSharp {
 							"The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
 				}
 
- 				if (has_equality_or_inequality && container.Methods == null && (RootContext.WarningLevel > 2)) {
+ 				if (has_equality_or_inequality && container.Methods != null && (RootContext.WarningLevel > 2)) {
  					if (!container.Methods.HasEquals)
  						Report.Warning (660, container.Location, "'{0}' defines operator == or operator != but does not override Object.Equals(object o)", container.GetSignatureForError ());
  
