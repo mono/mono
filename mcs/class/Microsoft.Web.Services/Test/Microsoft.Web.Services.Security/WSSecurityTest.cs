@@ -26,7 +26,11 @@ namespace MonoTests.MS.Web.Services.Security {
 		[Test]
 		public void PublicConstStrings () 
 		{
+#if WSE1
 			AssertEquals ("NamespaceURI", "http://schemas.xmlsoap.org/ws/2002/07/secext", WSSecurity.NamespaceURI);
+#else
+			AssertEquals ("NamespaceURI", "http://schemas.xmlsoap.org/ws/2002/12/secext", WSSecurity.NamespaceURI);
+#endif
 			AssertEquals ("Prefix", "wsse", WSSecurity.Prefix);
 		}
 
@@ -46,7 +50,9 @@ namespace MonoTests.MS.Web.Services.Security {
 			// test public const strings
 			AssertEquals ("EncodingType", "EncodingType", WSSecurity.AttributeNames.EncodingType);
 			AssertEquals ("IdentifierType", "IdentifierType", WSSecurity.AttributeNames.IdentifierType);
+#if WSE1
 			AssertEquals ("TokenType", "TokenType", WSSecurity.AttributeNames.TokenType);
+#endif
 			AssertEquals ("Type", "Type", WSSecurity.AttributeNames.Type);
 			AssertEquals ("Uri", "URI", WSSecurity.AttributeNames.Uri);
 			AssertEquals ("ValueType", "ValueType", WSSecurity.AttributeNames.ValueType);

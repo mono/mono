@@ -1,3 +1,8 @@
+2003-10-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ReferenceListTest.cs: New. Complete unit tests for ReferenceList.
+	* WSSecurityTest.cs: Adjusted for WSE2.
+
 2003-10-24 Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SignatureTest.cs: New. Basic tests for Signature.
