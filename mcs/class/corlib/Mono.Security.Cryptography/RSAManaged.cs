@@ -149,8 +149,12 @@ namespace Mono.Security.Cryptography {
 		public override int KeySize {
 			get { 
 				// in case keypair hasn't been (yet) generated
-				if (keypairGenerated)
-					return n.BitCount (); 
+				if (keypairGenerated) {
+					int ks = n.BitCount ();
+					if ((ks & 7) != 0)
+						ks = ks + (8 - (ks & 7));
+					return ks;
+				}
 				else
 					return base.KeySize;
 			}
