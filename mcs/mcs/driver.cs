@@ -190,7 +190,7 @@ namespace Mono.CSharp
 				"   --about            About the Mono C# compiler\n" +
 				"   -checked[+|-]      Set default context to checked\n" +
 				"   -codepage:ID       Sets code page to the one in ID\n" +
-				"                      (number, `utf8' or `reset')" +
+				"                      (number, `utf8' or `reset')\n" +
 				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
 				"   -debug[+-]         Generate debugging information\n" + 
 				"   -g                 Generate debugging information\n" +
@@ -208,15 +208,15 @@ namespace Mono.CSharp
 				"   -recurse:SPEC      Recursively compiles the files in SPEC ([dir]/file)\n" + 
 				"   -reference:ASS     References the specified assembly (-r:ASS)\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
-				"   -target:KIND       Specifies the target (KIND is one of: exe, winexe, " +
-				                       "library, module), (short: /t:)\n" +
+				"   -target:KIND       Specifies the target (KIND is one of: exe, winexe,\n" +
+				"                      library, module), (short: /t:)\n" +
 				"   --timestamp        Displays time stamps of various compiler events\n" +
 				"   -unsafe[+|-]       Allows unsafe code\n" +
 				"   -warnaserror[+|-]  Treat warnings as errors\n" +
 				"   -warn:LEVEL        Sets warning level (the highest is 4, the default)\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" +
 				"\n" +
-				"Resources:" +
+				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource\n" +
 				"   -resource:FILE[,ID]     Embed FILE as a resource\n" +
 				
