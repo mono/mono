@@ -1,3 +1,8 @@
+2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SoapDocumentationHandler.cs: don't close the response stream here
+	to allow filtering.
+
 2003-10-06  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HtmlFormParameterWriter.cs: Fixed WriteRequest().

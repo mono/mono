@@ -96,9 +96,7 @@ namespace System.Web.Services.Protocols
 			if (wsdlId != null && wsdlId != "") di = int.Parse (wsdlId);
 			
 			context.Response.ContentType = "text/xml; charset=utf-8";
-			Stream outStream = context.Response.OutputStream;
-			GetDescriptions() [di].Write (outStream);
-			outStream.Close ();
+			GetDescriptions() [di].Write (context.Response.OutputStream);
 		}
 		
 		void GenerateSchema (HttpContext context, string schemaId)
@@ -107,9 +105,7 @@ namespace System.Web.Services.Protocols
 			if (schemaId != null && schemaId != "") di = int.Parse (schemaId);
 			
 			context.Response.ContentType = "text/xml; charset=utf-8";
-			Stream outStream = context.Response.OutputStream;
-			GetSchemas() [di].Write (outStream);
-			outStream.Close ();
+			GetSchemas() [di].Write (context.Response.OutputStream);
 		}
 		
 		void GenerateCode (HttpContext context, string langId)
@@ -135,9 +131,7 @@ namespace System.Web.Services.Protocols
 			ICodeGenerator generator = provider.CreateGenerator();
 			CodeGeneratorOptions options = new CodeGeneratorOptions();
 			
-			StreamWriter writer = new StreamWriter(context.Response.OutputStream);
-			generator.GenerateCodeFromCompileUnit(codeUnit, writer, options);
-			writer.Close ();
+			generator.GenerateCodeFromCompileUnit(codeUnit, context.Response.Output, options);
 		}
 		
 		private CodeDomProvider GetProvider(string langId)
