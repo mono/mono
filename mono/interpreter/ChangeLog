@@ -1,3 +1,8 @@
+2002-02-16  Radek Doulik  <rodo@ximian.com>
+
+	* interp.c (ves_exec_method): test type of sp [-1] instead of sp
+	[0], because sp [-1] is the value going to be shifted, fixed in
+	CEE_SHL, CEE_SHR, CEE_UN opcodes)
 
 Sat Feb 16 12:00:24 CET 2002 Paolo Molaro <lupus@ximian.com>
 
