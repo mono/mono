@@ -1,7 +1,13 @@
-// System.Xml.Xsl.XsltException
 //
-// Author: Tim Coleman <tim@timcoleman.com>
+// System.Xml.Xsl.XsltException.cs
+//
+// Authors:
+//  Tim Coleman (tim@timcoleman.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
 // (C) Copyright 2002 Tim Coleman
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Runtime.Serialization;
@@ -33,6 +39,14 @@ namespace System.Xml.Xsl
 			lineNumber = info.GetInt32 ("lineNumber");
 			linePosition = info.GetInt32 ("linePosition");
 			sourceUri = info.GetString ("sourceUri");
+		}
+
+		internal XsltException (string message, Exception innerException, int lineNumber, int linePosition, string sourceUri)
+			: base (message, innerException)
+		{
+			this.lineNumber = lineNumber;
+			this.linePosition = linePosition;
+			this.sourceUri = sourceUri;
 		}
 
 		#endregion

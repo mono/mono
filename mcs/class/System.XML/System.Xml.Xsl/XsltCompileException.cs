@@ -1,7 +1,13 @@
-// System.Xml.Xsl.XsltCompileException
 //
-// Author: Tim Coleman <tim@timcoleman.com>
+// System.Xml.Xsl.XsltCompileException.cs
+//
+// Authors:
+//  Tim Coleman (tim@timcoleman.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
 // (C) Copyright 2002 Tim Coleman
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.Runtime.Serialization;
@@ -19,20 +25,15 @@ namespace System.Xml.Xsl
 
 		#region Constructors
 
-		[MonoTODO]
 		protected XsltCompileException (SerializationInfo info, StreamingContext context )
 			: base (info, context)
 		{
 		}
 
-		[MonoTODO]
-		// I don't think this base() call is right, but what
-		// should the message be for XsltException?
 		public XsltCompileException (Exception inner, String sourceUri, int lineNumber, int linePosition)
-			: base (sourceUri, inner)
+			: base (Locale.GetText ("XSLT compile error"), inner, lineNumber, linePosition, sourceUri)
 		{
 		}
-
 
 		#endregion
 
