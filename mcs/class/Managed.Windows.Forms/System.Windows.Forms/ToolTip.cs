@@ -23,8 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Log: ToolTip.cs,v $
+// Revision 1.4  2004/11/08 20:49:35  pbartok
+// - Fixed arguments for updated SetTopmost function
+// - Fixed usage of PointToClient
+//
 // Revision 1.3  2004/10/19 06:04:59  ravindra
 // Fixed constructor.
 //
@@ -93,7 +97,7 @@ namespace System.Windows.Forms {
 			#region ToolTipWindow Class Protected Instance Methods
 			protected override void OnCreateControl() {
 				base.OnCreateControl ();
-				XplatUI.SetTopmost(this.window.Handle, true);
+				XplatUI.SetTopmost(this.window.Handle, IntPtr.Zero, true);
 			}
 
 			protected override CreateParams CreateParams {
@@ -132,9 +136,9 @@ namespace System.Windows.Forms {
 				Control control = (Control)sender;
 
 				if (control.is_visible) {
-					XplatUI.SetTopmost(control.window.Handle, true);
+					XplatUI.SetTopmost(control.window.Handle, IntPtr.Zero, true);
 				} else {
-					XplatUI.SetTopmost(control.window.Handle, false);
+					XplatUI.SetTopmost(control.window.Handle, IntPtr.Zero, false);
 				}
 			}
 			#endregion	// ToolTipWindow Class Protected Instance Methods
@@ -378,7 +382,9 @@ namespace System.Windows.Forms {
 
 			m = Control.MousePosition;
 			c = new Point(control.Bounds.X, control.Bounds.Y);
-			c = control.PointToScreen(c);
+			if (control.parent != null) {
+				c = control.parent.PointToScreen(c);
+			}
 			cw = control.ClientSize;
 
 			if (c.X<=m.X && m.X<(c.X+cw.Width) &&
