@@ -177,6 +177,7 @@ namespace System.Data {
 		{
 			CanRemove(table, true);
 			List.Remove(table);
+			table.dataSet = null;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
 		}
 
@@ -192,6 +193,7 @@ namespace System.Data {
 			DataTable t = this[index];	
 			CanRemove(t, true);
 			List.RemoveAt (index);
+			t.dataSet = null;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, t));
 		}
 

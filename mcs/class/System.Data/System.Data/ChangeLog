@@ -1,3 +1,11 @@
+2004-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataTableCollection.cs : reset the table's DataSet to null when
+	  removing a table from this collection.
+	* DataTable.cs : When Namespace is not specified explicitly, its
+	  Namespace property reflects DataSet's Namespace if exist.
+	  This fixes bug #60469.
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DBConcurrentcyException.cs: CRLF to LF

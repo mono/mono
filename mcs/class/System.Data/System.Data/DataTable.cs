@@ -381,7 +381,13 @@ namespace System.Data {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the XML uri namespace for the elements contained in this table.")]
 		public string Namespace {
-			get { return _nameSpace == null ? "" : _nameSpace; }
+			get {
+				if (_nameSpace != null)
+					return _nameSpace;
+				else if (dataSet != null)
+					return dataSet.Namespace;
+				return String.Empty;
+			}
 			set { _nameSpace = value; }
 		}
 
