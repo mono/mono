@@ -1,3 +1,7 @@
+2004-07-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* threads.c: register roots for gc
+
 2004-07-08  Dick Porter  <dick@ximian.com>
 
 	* io.c (file_seek): If there is a high 32bit offset part, make
