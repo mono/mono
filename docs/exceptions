@@ -1,3 +1,6 @@
+Author: Dietmar Maurer (dietmar@ximian.com)
+(C) 2001 Ximian, Inc.
+
 Exception implementation (jit):
 ===============================
 
@@ -8,8 +11,15 @@ We record the code address (start_address, size) of all methods. That way it is
 possible to map an instruction pointer (IP) to the method information needed
 for unwinding the stack:
 
+We also save a Last Managed Frame (LMF) structure at each call from managed to
+unmanaged code. That way we can recover from exceptions inside unmanaged code.
+
 void handle_exception ((struct sigcontext *ctx, gpointer obj)
 {
+        if (ctx->ip < mono_end_of_stack) {
+	        /* unhandled exception */
+	        abort ();
+	}
 
 	info = mono_jit_info_table_find (mono_jit_info_table, ctx->ip);
 
@@ -21,14 +31,20 @@ void handle_exception ((struct sigcontext *ctx, gpointer obj)
 		execute_all_finally_handler ();
 
 		// restore register, including IP and Frame pointer
-		restore_caller_saved_registers (ji, ctx);
+		ctx = restore_caller_saved_registers_from_ctx (ji, ctx);
 
 		// continue unwinding
 		handle_exception (ctx, obj);
 
 	} else {
 
-		// not implemented 
+	        lmf = get_last_managed_frame ();
+		
+		// restore register, including IP and Frame pointer
+		ctx = restore_caller_saved_registers_from_lmf (ji, lmf);
+		
+		// continue unwinding
+		handle_exception (ctx, obj);
 	}
 }
 
