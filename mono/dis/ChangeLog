@@ -2,12 +2,8 @@
 
 	* dis-cil.c (get_encoded_user_string): use g_strescape instead of
 	escaping manually.
-	
-2003-10-17 Jackson Harper <jackson@ximian.com>
-
 	* util.c (hex_dump): Use uppercase hex so there are no conflicts
 	with ilasm keywords ie cf
-	* get.c
 	
 2003-10-17 Jackson Harper <jackson@ximian.com>
 
