@@ -1,3 +1,7 @@
+2003-07-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* SRDescriptionAttribute.cs: Moved from System.Diagnostics directory
+
 2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Uri.cs: Added MonoTODO'd members, implemented member, fixed signature
