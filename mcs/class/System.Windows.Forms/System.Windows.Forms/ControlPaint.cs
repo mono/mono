@@ -278,7 +278,7 @@ namespace System.Windows.Forms {
 			ButtonState state) {
 			//FIXME:
 		}
-		
+
 		public static void DrawCheckBox( Graphics graphics, Rectangle rectangle, ButtonState state) {
 			DrawFrameControlHelper (graphics, rectangle, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONCHECK);
 		}

@@ -202,7 +202,8 @@ namespace System.Windows.Forms {
 		public event EventHandler FontChanged;
 
 		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-		[MonoTODO]		public AccessibleObject HeaderAccessibleObject {
+		[MonoTODO]
+		public AccessibleObject HeaderAccessibleObject {
 			get{
 				throw new NotImplementedException ();
 			}

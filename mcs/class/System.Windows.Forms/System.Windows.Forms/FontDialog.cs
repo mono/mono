@@ -17,8 +17,8 @@ namespace System.Windows.Forms
         {        	        	
 	        private bool	bAllowScriptChange;
 	        private bool	bAllowSimulations;							
-		  	private bool	bAllowVectorForms;							
-		  	private bool	bAllowVerticalForms;							
+		  	private bool	bAllowVectorFonts;							
+		  	private bool	bAllowVerticalFonts;							
 		  	private Color	color = Color.Black;							
 		  	private bool	bFixedPitchOnly;							
 		  	private Font	font;							
@@ -29,7 +29,9 @@ namespace System.Windows.Forms
 		  	private bool	bShowApply;								  	
 		  	private bool	bShowColor;							
 		  	private bool	bShowEffects;							
-		  	private bool	bShowHelp;	
+		  	private bool	bShowHelp;
+
+			protected static readonly object EventApply;
 	
 			//
 			//  --- Constructor
@@ -44,8 +46,8 @@ namespace System.Windows.Forms
 				font = new Font("Microsoft Sans Serif", 8);
 				bAllowScriptChange = true;
 	        	bAllowSimulations  = true;							
-		  		bAllowVectorForms  = true;							
-		  		bAllowVerticalForms  = true;							
+		  		bAllowVectorFonts  = true;							
+		  		bAllowVerticalFonts  = true;							
 		  		color = Color.Black;							
 		  		bFixedPitchOnly = false;								  		
 		  		bFontMustExist = false;
@@ -61,7 +63,7 @@ namespace System.Windows.Forms
 			//
 			//  --- Public Properties
 			//		
-			public virtual bool AllowScriptChange 
+			public bool AllowScriptChange 
 			{
 				get { return bAllowScriptChange;  }
 				set { bAllowScriptChange = value; }
@@ -73,16 +75,16 @@ namespace System.Windows.Forms
 				set { bAllowSimulations = value; }
 			}
 			
-			public bool AllowVectorForms 
+			public bool AllowVectorFonts 
 			{
-				get { return bAllowVectorForms;  }
-				set { bAllowVectorForms = value; }
+				get { return bAllowVectorFonts;  }
+				set { bAllowVectorFonts = value; }
 			}
 			
-			public bool AllowVerticalForms 
+			public bool AllowVerticalFonts
 			{
-				get { return bAllowVerticalForms;  }
-				set { bAllowVerticalForms = value; }
+				get { return bAllowVerticalFonts;  }
+				set { bAllowVerticalFonts = value; }
 			}
 			
 			public Color Color 
@@ -157,7 +159,14 @@ namespace System.Windows.Forms
 			{				
 				defaultValues();
 			}
+
+			public override string ToString()
+			{				
+				return base.ToString();
+			}
 	
+			protected virtual void OnApply(EventArgs e){
+			}
 			//
 			//  --- Public Events
 			//

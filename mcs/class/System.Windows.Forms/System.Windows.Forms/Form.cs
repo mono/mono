@@ -1253,14 +1253,14 @@
 			}
     		
 			#region new 11.26.2002 from Alexandre Pigolkine (pigolkine@gmx.de)
-			protected virtual void OnWmInitMenu (ref Message m) {
+			internal protected virtual void OnWmInitMenu (ref Message m) {
 				Menu mn = System.Windows.Forms.Menu.GetMenuByHandle( m.WParam);
 				if( mn != null) {
 					mn.OnWmInitMenu();
 				}
 			}
 
-			protected virtual void OnWmInitMenuPopup (ref Message m) {
+			internal protected virtual void OnWmInitMenuPopup (ref Message m) {
 				Menu mn = System.Windows.Forms.Menu.GetMenuByHandle( m.WParam);
 				if( mn != null) {
 					mn.OnWmInitMenuPopup();

@@ -147,12 +147,6 @@ using System.ComponentModel;
 			throw new NotImplementedException ();
 		}
 
-//		[MonoTODO]
-//		public override object InitializeLifetimeService()
-//		{
-//			//FIXME:
-//			return base.InitializeLifetimeService();
-//		}
 		[MonoTODO]
 		public void SetError(Control control,string value)
 		{

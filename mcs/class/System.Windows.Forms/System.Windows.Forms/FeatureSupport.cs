@@ -39,6 +39,32 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public abstract Version GetVersionPresent(object feature);
 
+		[MonoTODO]
+		public static Version GetVersionPresent(string featureClassName, string featureConstName){
+			throw new NotImplementedException ();
+		}
+
+
+		[MonoTODO]
+		public virtual bool IsPresent(object feature){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool IsPresent(object feature, Version minimumVersion){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static bool IsPresent(string featureClassName, string featureConstName){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static bool IsPresent(string featureClassName, string featureConstName, Version minimumVersion){
+			throw new NotImplementedException ();
+		}
+
 		//
 		// --- Protected Constructors
 		//

@@ -55,9 +55,6 @@ namespace System.Windows.Forms {
 			get {
 				throw new NotImplementedException ();
 			}
-			set {
-			//Fixme:
-			}
 		}
 		
 		public bool AllowNull {

@@ -59,7 +59,7 @@ namespace System.Windows.Forms {
 			setDefaults ( );
 		}
 
-		protected override void initOpenFileName ( ref OPENFILENAME opf )
+		internal protected override void initOpenFileName ( ref OPENFILENAME opf )
 		{
 			base.initOpenFileName ( ref opf );
 

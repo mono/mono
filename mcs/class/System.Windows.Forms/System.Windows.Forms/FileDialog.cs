@@ -33,6 +33,7 @@ namespace System.Windows.Forms {
 		bool restoreDirectory;
 		bool validateNames;
 
+		protected static readonly object EventFireOk;
 		internal FileDialog ( )
 		{
 			setDefaults ( );
@@ -201,7 +202,10 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
-		protected virtual void initOpenFileName ( ref OPENFILENAME opf ) 
+		//protected virtual IntPtr Instance{}
+		//protected virtual int Optiions{}
+
+		internal protected virtual void initOpenFileName ( ref OPENFILENAME opf ) 
 		{
 			opf.lStructSize  = (uint)Marshal.SizeOf( opf );
 			char[] FileNameBuffer = new char[MAX_PATH];

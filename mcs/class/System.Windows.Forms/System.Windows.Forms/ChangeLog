@@ -1,4 +1,19 @@
 2003-09-28  Dennis Hayes <dennish@raytek.com>
+	* ControlBindingsCollection.cs
+	* ErrorProvider.cs
+	* DataGridBoolColumn.cs
+	* DataGridTextBoxColumn.cs
+	* ControlPaint.cs
+	* FeatureSupport.cs
+	* FileDialog.cs
+	* OpenFileDialog.cs
+	* Form.cs
+	* FontDialog.cs
+
+	*signiture corrections
+
+2003-09-28  Dennis Hayes <dennish@raytek.com>
+
 	* DataGridColumnStyle.cs
 	* DataGridTableStyle.cs
 	* DataGridTextBoxColumn.cs

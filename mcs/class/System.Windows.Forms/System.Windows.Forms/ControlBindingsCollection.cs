@@ -70,15 +70,15 @@ namespace System.Windows.Forms {
 
 		//internal
 		[MonoTODO]
-		protected virtual void AddCore(Binding dataBinding) {
+		protected override void AddCore(Binding dataBinding) {
 		}
 
 		[MonoTODO]
-		protected virtual void ClearCore(){
+		protected override void ClearCore(){
 		}
 
 		[MonoTODO]
-		protected virtual void RemoveCore(Binding dataBinding){
+		protected override void RemoveCore(Binding dataBinding){
 		}
 
 		#endregion
