@@ -1,0 +1,14 @@
+Mono's Security Tools - README
+
+- This directory contains clones for .NET security tools;
+- All tools are 100% managed code with no dependency to the Mono's runtime or any other libraries.
+- A much as possible the same command line arguments are used;
+- Documentation (man) is available for some tools;
+- All tools, except secutil.exe, requires the Mono.Security.dll assembly.
+
+Last updated: March 6, 2003 (post mono 0.22)
+
+Sebastien Pouliot
+Security Architect, Motus Technologies, http://www.motus.com/
+work: spouliot@motus.com
+home: spouliot@videotron.ca

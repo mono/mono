@@ -1,0 +1,5 @@
+2003-03-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AssemblyInfo.cs: New. Global assembly attributes (version and 
+	  copyright) for security tools.
+	* README: New. Important information about the Mono's security tools
