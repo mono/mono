@@ -1,5 +1,13 @@
 2004-08-02  Martin Baulig  <martin@ximian.com>
 
+	* get.c (dis_stringify_object_with_class): Include our generic
+	arguments in the method's class name.
+
+	* main.c (dis_generic_param_and_constraints): Use the new
+	constraints syntax.
+
+2004-08-02  Martin Baulig  <martin@ximian.com>
+
 	* dump.c (dump_stream_blob): Format this nicely.
 	(dump_table_standalonesig): New public function.
 
