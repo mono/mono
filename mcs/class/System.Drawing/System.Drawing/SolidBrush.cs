@@ -21,6 +21,7 @@ namespace System.Drawing
                 internal SolidBrush (IntPtr ptr)
                         : base (ptr)
                 {
+		
 			int val;
 			Status status = GDIPlus.GdipGetSolidFillColor (ptr, out val);
 			GDIPlus.CheckStatus (status);
@@ -29,11 +30,14 @@ namespace System.Drawing
 
 		public SolidBrush (Color color)
                 {
-			this.color = color;
-			int brush;
-			Status status = GDIPlus.GdipCreateSolidFill (color.ToArgb (), out brush);
-			GDIPlus.CheckStatus (status);
-			nativeObject = (IntPtr) brush;
+			lock (this)
+			{
+				this.color = color;
+				int brush;
+				Status status = GDIPlus.GdipCreateSolidFill (color.ToArgb (), out brush);
+				GDIPlus.CheckStatus (status);
+				nativeObject = (IntPtr) brush;
+			}
 		}
 
 		public Color Color {
@@ -53,12 +57,15 @@ namespace System.Drawing
 		
 		public override object Clone()
 		{
-			IntPtr clonePtr;
-			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
-			GDIPlus.CheckStatus (status);
-
-			SolidBrush clone = new SolidBrush (clonePtr);
-			return clone;
+			lock (this)
+			{
+				IntPtr clonePtr;
+				Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
+				GDIPlus.CheckStatus (status);
+	
+				SolidBrush clone = new SolidBrush (clonePtr);
+				return clone;
+			}
 		}
 		
 		protected override void Dispose (bool disposing)
@@ -68,9 +75,12 @@ namespace System.Drawing
 			// collected by GC.
 			if (! disposed) {
 				if (isModifiable || disposing == false) {
-					Status status = GDIPlus.GdipDeleteBrush (nativeObject);
-					GDIPlus.CheckStatus (status);
-					disposed = true;
+					lock (this) 
+					{
+						Status status = GDIPlus.GdipDeleteBrush (nativeObject);
+						GDIPlus.CheckStatus (status);
+						disposed = true;
+					}
 				}
 				else
 					throw new ArgumentException ("This SolidBrush object can't be modified.");

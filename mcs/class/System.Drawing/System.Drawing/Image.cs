@@ -555,8 +555,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	private void DisposeResources ()
 	{
-		Status status = GDIPlus.GdipDisposeImage (nativeObject);
-		GDIPlus.CheckStatus (status);
+		lock (this)
+		{
+			Status status = GDIPlus.GdipDisposeImage (nativeObject);
+			GDIPlus.CheckStatus (status);
+		}
 	}
 	
 	protected virtual void Dispose (bool disposing)
@@ -570,19 +573,22 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public virtual object Clone()
 	{				
-		IntPtr newimage = IntPtr.Zero;
-		
-		if (!(this is Bitmap)) 
+		lock (this)
+		{
+			IntPtr newimage = IntPtr.Zero;
+			
+			if (!(this is Bitmap)) 
+				throw new NotImplementedException (); 
+			
+			Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);			
+			
+			GDIPlus.CheckStatus (status);			
+			
+			if (this is Bitmap)
+				return new Bitmap (newimage);
+			
 			throw new NotImplementedException (); 
-		
-		Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);			
-		
-		GDIPlus.CheckStatus (status);			
-		
-		if (this is Bitmap)
-			return new Bitmap (newimage);
-		
-		throw new NotImplementedException (); 
+		}
 	}
 
 }

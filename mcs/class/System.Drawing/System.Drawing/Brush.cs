@@ -65,9 +65,12 @@ namespace System.Drawing
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposed == false) {
-				Status status = GDIPlus.GdipDeleteBrush (nativeObject);
-				GDIPlus.CheckStatus (status);
-				disposed = true;
+				lock (this)
+				{
+					Status status = GDIPlus.GdipDeleteBrush (nativeObject);
+					GDIPlus.CheckStatus (status);
+					disposed = true;
+				}
 			}
 		}
 

@@ -21,9 +21,12 @@ namespace System.Drawing
                 private IntPtr nativeRegion = IntPtr.Zero;
                 
 		public Region()
-		{                        
-                        Status status = GDIPlus.GdipCreateRegion (out nativeRegion);
-                        GDIPlus.CheckStatus (status);
+		{                  
+			lock (this)
+			{      
+				Status status = GDIPlus.GdipCreateRegion (out nativeRegion);
+				GDIPlus.CheckStatus (status);
+			}
 		}
 
                 internal Region(IntPtr native)
@@ -33,21 +36,30 @@ namespace System.Drawing
                 
 		
 		public Region (GraphicsPath path)
-		{			
-                        Status status = GDIPlus.GdipCreateRegionPath (path.NativeObject, out nativeRegion);
-                        GDIPlus.CheckStatus (status);
+		{	
+			lock (this)
+			{      					
+				Status status = GDIPlus.GdipCreateRegionPath (path.NativeObject, out nativeRegion);
+				GDIPlus.CheckStatus (status);
+			}
 		}
 
 		public Region (Rectangle rect)                
 		{
-                        Status status = GDIPlus.GdipCreateRegionRectI (ref rect, out nativeRegion);
-                        GDIPlus.CheckStatus (status);
+			lock (this)
+			{      			
+				Status status = GDIPlus.GdipCreateRegionRectI (ref rect, out nativeRegion);
+				GDIPlus.CheckStatus (status);
+			}
 		}
 
 		public Region (RectangleF rect)
 		{
-                        Status status = GDIPlus.GdipCreateRegionRect (ref rect, out nativeRegion);
-                        GDIPlus.CheckStatus (status);
+			lock (this)
+			{      							
+				Status status = GDIPlus.GdipCreateRegionRect (ref rect, out nativeRegion);
+				GDIPlus.CheckStatus (status);
+			}
 		}
 
                 [MonoTODO]
@@ -506,12 +518,15 @@ namespace System.Drawing
 		
 		public Region Clone()
 		{
-                        IntPtr cloned;
-                        
-                        Status status = GDIPlus.GdipCloneRegion (nativeRegion, out cloned);
-                        GDIPlus.CheckStatus (status);
-
-                        return new Region (cloned); 
+			lock (this)
+			{
+				IntPtr cloned;
+				
+				Status status = GDIPlus.GdipCloneRegion (nativeRegion, out cloned);
+				GDIPlus.CheckStatus (status);
+				
+				return new Region (cloned); 
+			}
 		}
 
 		public void Dispose ()
@@ -522,8 +537,12 @@ namespace System.Drawing
 
 		void Dispose (bool disposing)
 		{
-                        if (disposing)
-                                GDIPlus.GdipDeleteRegion (nativeRegion);
+			if (disposing) {
+				lock (this)
+				{
+					GDIPlus.GdipDeleteRegion (nativeRegion);
+				}
+			}
 		}
 
 		~Region ()

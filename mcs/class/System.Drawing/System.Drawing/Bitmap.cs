@@ -39,21 +39,26 @@ namespace System.Drawing
 		}
 
 		public Bitmap (int width, int height, Graphics g)
-		{			
-			IntPtr bmp;
-			Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
-			GDIPlus.CheckStatus (s);
-			nativeObject = (IntPtr)bmp;
-			
+		{		
+			lock (this)
+			{	
+				IntPtr bmp;
+				Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
+				GDIPlus.CheckStatus (s);
+				nativeObject = (IntPtr)bmp;
+			}			
 		}
 
 		public Bitmap (int width, int height, PixelFormat format)
 		{	
-			IntPtr bmp;
-			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, 0, format, IntPtr.Zero, 
-				out bmp);
-			GDIPlus.CheckStatus (s);
-			nativeObject = (IntPtr) bmp;
+			lock (this)
+			{
+				IntPtr bmp;
+				Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, 0, format, IntPtr.Zero, 
+					out bmp);
+				GDIPlus.CheckStatus (s);
+				nativeObject = (IntPtr) bmp;
+			}
 		}
 
 		public Bitmap (Image original) : this (original.Width, original.Height, PixelFormat.Format32bppArgb)
@@ -98,12 +103,16 @@ namespace System.Drawing
 				
 				if (nativeObject!=IntPtr.Zero) Dispose();
 				
-				Bitmap bmpOriginal = (Bitmap) original;
+				lock (this)
+				{
 				
-				IntPtr bmp;
-				Status s = GDIPlus.GdipCloneBitmapAreaI (0, 0, newSize.Width, newSize.Height, bmpOriginal.PixelFormat, bmpOriginal.nativeObject, out bmp);
-				GDIPlus.CheckStatus (s);
-				nativeObject = (IntPtr) bmp;
+					Bitmap bmpOriginal = (Bitmap) original;
+					
+					IntPtr bmp;
+					Status s = GDIPlus.GdipCloneBitmapAreaI (0, 0, newSize.Width, newSize.Height, bmpOriginal.PixelFormat, bmpOriginal.nativeObject, out bmp);
+					GDIPlus.CheckStatus (s);
+					nativeObject = (IntPtr) bmp;
+				}
 			}
 			else {
 				throw new NotImplementedException ();
@@ -112,10 +121,13 @@ namespace System.Drawing
 
 		void InitFromFile (string filename)
 		{
-			IntPtr imagePtr;
-			Status st = GDIPlus.GdipLoadImageFromFile (filename, out imagePtr);
-			GDIPlus.CheckStatus (st);
-			nativeObject = imagePtr;
+			lock (this)
+			{
+				IntPtr imagePtr;
+				Status st = GDIPlus.GdipLoadImageFromFile (filename, out imagePtr);
+				GDIPlus.CheckStatus (st);
+				nativeObject = imagePtr;
+			}
 		}
 
 		public Bitmap (Stream stream, bool useIcm)
@@ -148,12 +160,15 @@ namespace System.Drawing
 		}
 
 		public Bitmap (int width, int height, int stride, PixelFormat format, IntPtr scan0)
-		{						
-			IntPtr bmp;
-			
-			Status status = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, scan0, out bmp);
-			GDIPlus.CheckStatus (status);	
-			nativeObject = (IntPtr) bmp;						 			
+		{		
+			lock (this)
+			{				
+				IntPtr bmp;
+				
+				Status status = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, scan0, out bmp);
+				GDIPlus.CheckStatus (status);	
+				nativeObject = (IntPtr) bmp;						 			
+			}
 			
 		}
 

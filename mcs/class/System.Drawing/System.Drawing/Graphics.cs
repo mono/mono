@@ -127,9 +127,12 @@ namespace System.Drawing
 		{
 			Status status;
 			if (! disposed) {
-				status = GDIPlus.GdipDeleteGraphics (nativeObject);
-				GDIPlus.CheckStatus (status);
-				disposed = true;
+				lock (this)
+				{
+					status = GDIPlus.GdipDeleteGraphics (nativeObject);
+					GDIPlus.CheckStatus (status);
+					disposed = true;
+				}
 			}
 		}
 
@@ -1239,23 +1242,28 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static Graphics FromImage (Image image)
 		{
-			if (image == null) throw new ArgumentException ();
-			int graphics;
-			Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
-			GDIPlus.CheckStatus (status);
-			Graphics result = new Graphics ((IntPtr) graphics);
-			return result;
+			lock (typeof (Graphics))
+			{
+				if (image == null) throw new ArgumentException ();
+				int graphics;
+				Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
+				GDIPlus.CheckStatus (status);
+				Graphics result = new Graphics ((IntPtr) graphics);
+				return result;
+			}
 		}
 
 		internal static Graphics FromXDrawable (IntPtr drawable, IntPtr display)
 		{
-		  IntPtr graphics;
-		  Status s = GDIPlus.GdipCreateFromXDrawable_linux (drawable, display, out graphics);
-		  GDIPlus.CheckStatus (s);
-		  return new Graphics (graphics);
+			lock (typeof (Graphics))
+			{
+				IntPtr graphics;
+				Status s = GDIPlus.GdipCreateFromXDrawable_linux (drawable, display, out graphics);
+				GDIPlus.CheckStatus (s);
+				return new Graphics (graphics);
+			}
 		}
 
 		[MonoTODO]
