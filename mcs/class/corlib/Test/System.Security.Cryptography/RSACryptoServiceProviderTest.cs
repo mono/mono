@@ -221,7 +221,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
+	[ExpectedException (typeof (CryptographicException))]
 	public void SignHashNullOID () 
 	{
 		byte[] hash = new byte [20];
