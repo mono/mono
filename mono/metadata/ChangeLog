@@ -1,5 +1,9 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* icall.c: Reflect latest API changes.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* loader.c (mono_get_method_from_token): Also call
 	mono_metadata_load_generic_params () for abstract and interface
 	methods; replace the type arguments in the method signature with
