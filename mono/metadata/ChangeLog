@@ -1,3 +1,8 @@
+2002-02-13  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c: 
+	* icall.c: Internal calls for Blocking, Select, Shutdown,
+	GetSocketOption and SetSocketOption
 
 Wed Feb 13 19:20:01 CET 2002 Paolo Molaro <lupus@ximian.com>
 
