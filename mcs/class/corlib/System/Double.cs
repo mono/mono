@@ -190,6 +190,9 @@ namespace System {
 						b [didx++] = (byte) c;
 						break;
 					}
+					if (c == 'e' || c == 'E')
+						goto case State.Decimal;
+					
 					if (decimal_separator != null &&
 					    decimal_separator [0] == c){
 						if (s.Substring (sidx, decimal_separator_len) ==
