@@ -1,3 +1,8 @@
+2004-10-18    <vargaz@freemail.hu>
+
+	* marshal.c (emit_marshal_object): Fix freeing of memory when a reference type is
+	marshalled as [In,Out]. Fixes #58325.
+
 2004-10-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_method_body_get_object): Implement some fields.
