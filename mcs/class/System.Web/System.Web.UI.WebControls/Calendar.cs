@@ -848,7 +848,7 @@ namespace System.Web.UI.WebControls
 					    bool isActive,
 					    bool isDownLevel)
 		{
-			TableItemStyle weeksStyle;
+			TableItemStyle weeksStyle = null;
 			TableCell weeksCell = new TableCell ();
 			TableItemStyle weekendStyle = WeekendDayStyle;
 			TableItemStyle otherMonthStyle = OtherMonthDayStyle;
@@ -890,6 +890,7 @@ namespace System.Web.UI.WebControls
 								isActive);
 
 					weeksCell.Text = cellText;
+					weeksCell.ApplyStyle (weeksStyle);
 					RenderCalendarCell (writer, weeksCell, cellText);
 				}
 
