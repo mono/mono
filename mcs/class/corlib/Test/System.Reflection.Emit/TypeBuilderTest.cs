@@ -671,6 +671,25 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
+	[ExpectedException (typeof(NotSupportedException))]
+	public void TestDefineDefaultConstructorParent () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+		tb.DefineConstructor (MethodAttributes.Public,
+			CallingConventions.Standard, 
+			new Type[] { typeof(string) });
+		Type type = tb.CreateType ();
+
+		// create TypeBuilder for type that derived from the 
+		// previously created type (which has no default ctor)
+		tb = module.DefineType (genTypeName (), TypeAttributes.Class
+			| TypeAttributes.Public, type);
+
+		// you cannot create a type with a default ctor that
+		// derives from a type without a default ctor
+		tb.CreateType ();
+	}
+
+	[Test]
 	public void TestDefineEvent () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 

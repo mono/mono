@@ -1,3 +1,9 @@
+2004-10-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Added test to ensure NotSupportedException is
+	thrown when creating a type with a default ctor while parent does
+	not have a default ctor.
+
 2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilderTest.cs: Add test for lookup of global methods.
