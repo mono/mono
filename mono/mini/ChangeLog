@@ -1,4 +1,8 @@
 
+Wed Apr 21 12:27:48 EDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: more macosx support.
+
 Wed Apr 21 16:38:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.h, mini-ppc.c, cpu-g4.md: enable bigmul optimization.
