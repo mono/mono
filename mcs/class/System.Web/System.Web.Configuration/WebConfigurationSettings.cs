@@ -151,7 +151,7 @@ namespace System.Web.Configuration
 			string upper = Path.Combine (realpath, "Web.config");
 			bool isUpper = File.Exists (upper);
 			bool isLower = File.Exists (lower);
-			if (Path.DirectorySeparatorChar == '/' && isUpper && isLower)
+			if (isUpper && isLower && Directory.GetFiles (realpath, "Web.config").Length < 2)
 				throw new ConfigurationException ("Both web.config and Web.config exist for " + dir);
 
 			if (dir == "/")
