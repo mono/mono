@@ -1,3 +1,7 @@
+2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_Type_GetPropertiesByName): Add support for
+	property access modifiers. Fixes #69389.
 
 Mon Nov 15 11:54:22 CET 2004 Paolo Molaro <lupus@ximian.com>
 
