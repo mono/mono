@@ -1,3 +1,7 @@
+2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* opcode.def, cil-opcodes.xml: Added two new opcodes for type checking:
+	mono_cisinst and mono_ccastclass.
 
 Thu May 29 12:52:40 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
