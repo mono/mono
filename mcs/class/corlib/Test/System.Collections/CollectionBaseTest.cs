@@ -302,6 +302,14 @@ public class CollectionBaseTest : Assertion
 			AssertEquals (false, coll.onSetCompleteFired);
 		}
 	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void InvalidRemove ()
+	{
+		ConcreteCollection coll = new ConcreteCollection (0);
+		coll.BaseList.Remove (10);
+	}
 }
 
 }
