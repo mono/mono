@@ -1,3 +1,8 @@
+2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c: Applied patch from Benjamin Jemlich (pcgod@gmx.net).
+	Fix #52451.
+
 2004-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c:
