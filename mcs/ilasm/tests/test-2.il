@@ -1,0 +1,31 @@
+//
+// Mono.ILASM.Tests
+//
+// Author(s):
+//  Jackson Harper (Jackson@LatitudeGeo.com)
+//
+// (C) 2003 Jackson Harper, All rights reserved
+//
+.assembly extern mscorlib { }
+.assembly HelloWorld { }
+.module HelloWorld.exe
+
+.namespace Mono.ILASM.Tests {
+
+	.class public auto ansi Test_2 extends [mscorlib]System.Object {
+	
+		.method public static void check( ) cil managed {
+			.entrypoint
+			.maxstack 1	
+			.locals init (object obj)
+
+			newobj instance void [corlib]System.Object::.ctor()
+			stloc.0 
+			ldloc.0 
+			call void [corlib]System.Console::WriteLine(object)
+		
+			ret
+		}		
+	}
+}
+

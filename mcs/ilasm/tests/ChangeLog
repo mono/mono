@@ -1,3 +1,8 @@
+2003-02-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* test-2.il: Add new test
+	* makefile: Use new test
+
 2003-02-04 Jackson Harper <jackson@latitudegeo.com>
 
 	* test-1.il: Add header, put in a namespace
