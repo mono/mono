@@ -490,6 +490,9 @@ namespace System.Data {
 				for(int i=0; i < mapping.Length; i++) {
 					DataColumn column = Table.Columns[i];
 					column.DataContainer.SetItemFromDataRecord(_proposed, record,mapping[i]);
+					if ( column.AutoIncrement ) { 
+						this[column] = column[_proposed];
+					}
 				}
 			}
 			catch (Exception e){
@@ -833,7 +836,9 @@ namespace System.Data {
 					// check all child rows.
 					CheckChildRows(DataRowAction.Change);
 					_proposed = -1;
-					Table.RecordCache.DisposeRecord(backup);
+					if (_original != backup) {
+						Table.RecordCache.DisposeRecord(backup);
+					}
 				}
 				catch (Exception ex) {
 					// if check child rows failed - rollback to previous state
@@ -1533,14 +1538,16 @@ namespace System.Data {
 		}
 		
 		internal void CheckReadOnlyStatus()
-                {
+        {
 			if (HasVersion(DataRowVersion.Proposed)) {
+				int defaultIdx = IndexFromVersion(DataRowVersion.Default); 
 				foreach(DataColumn column in Table.Columns) {
-					if (this[column] != column[_proposed] && column.ReadOnly)
-        	                        throw new ReadOnlyException();
-                        }
-			}                       
+					if ((column.DataContainer.CompareValues(defaultIdx,_proposed) != 0) && column.ReadOnly) {
+        	            throw new ReadOnlyException();
+					}
                 }
+			}                       
+        }
 	
 		#endregion // Methods
 	}

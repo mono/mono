@@ -1,3 +1,10 @@
+2004-05-27  Boris Kirzner  <borisk@mainsoft.com>
+	* DataRow.cs : 
+		- CheckReadOnlyStatus : use typed (and faster comparing).
+		- EndEdit : bug fix - do not dispose record if it holds original version.
+		- SetValuesFromDataRecord : Take care about autoincrement columns.
+		
+
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MergeManager.cs : don't output debug message to Console.
