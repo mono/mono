@@ -867,6 +867,8 @@ namespace Microsoft.JScript {
 		{
 			if (name == "print")
 				return SemanticAnalyser.print;
+			else if (name == "null")
+				return true;
 			object bind = context.Contains (name);			
 			if (bind == null) 
 				bind = SemanticAnalyser.ObjectSystemContains (name);
@@ -923,7 +925,9 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			if (assign && right_side != null)
+			if (name == "null")
+				ig.Emit (OpCodes.Ldsfld, typeof (DBNull).GetField ("Value"));
+			else if (assign && right_side != null)
 				right_side.Emit (ec);
 			if (binding is FormalParam) {
 				FormalParam f = binding as FormalParam;
