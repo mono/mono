@@ -1,3 +1,12 @@
+2001-12-18  Dick Porter  <dick@ximian.com>
+
+	* file-io.c: Use mono_string_to_utf16() instead of
+	mono_string_chars()
+
+	* object.c: Added mono_string_to_utf16(), which copies the non
+	NULL-terminated MonoString into a new double-null-terminated
+	buffer.
+
 2001-12-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (ves_icall_System_DateTime_GetNow): added EPOCH adjustment
