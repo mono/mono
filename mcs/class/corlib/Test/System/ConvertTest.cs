@@ -466,7 +466,7 @@ namespace MonoTests.System
 			AssertEquals("#F07", '@', Convert.ToChar("@"));
 			AssertEquals("#F08", 'K', Convert.ToChar((ushort)75));
 			AssertEquals("#F09", '=', Convert.ToChar((uint)61));
-			// AssertEquals("#F10", 'È', Convert.ToChar((ulong)200));
+			// AssertEquals("#F10", 'Ãˆ', Convert.ToChar((ulong)200));
 			AssertEquals("#F11", '{', Convert.ToChar((object)trySByte, ci));
 			AssertEquals("#F12", 'o', Convert.ToChar(tryStr.Substring(1,1), ci));
 			
@@ -615,16 +615,15 @@ namespace MonoTests.System
 			}
 		}
 
-		[Ignore ("http://bugzilla.ximian.com/show_bug.cgi?id=45286")]
+		/*[Ignore ("http://bugzilla.ximian.com/show_bug.cgi?id=45286")]
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void G22 () {
 			Convert.ToDateTime("20002-25-01");
-		} 
+		} */
 
 		public void TestToDateTime() {
 			string dateString = "01/01/2002";
-			
 			int iTest = 1;
 			try {
 				AssertEquals("#G01", tryDT, Convert.ToDateTime(tryDT));
@@ -771,6 +770,78 @@ namespace MonoTests.System
 			catch (Exception e) {
 				AssertEquals("#G27", typeof(FormatException), e.GetType());
 			}
+
+			// this is supported by .net 1.1 (defect 41845)
+			try {
+				Convert.ToDateTime("20022-01-01");
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#G28", typeof(ArgumentOutOfRangeException), e.GetType());
+			}
+
+			try {
+				Convert.ToDateTime("2002-21-01");
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#G29", typeof(FormatException), e.GetType());
+			}
+
+			try {
+				Convert.ToDateTime("2002-111-01");
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#G30", typeof(FormatException), e.GetType());
+			}
+
+			try {
+				Convert.ToDateTime("2002-01-41");
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#G31", typeof(FormatException), e.GetType());
+			}
+
+			try {
+				Convert.ToDateTime("2002-01-111");
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#G32", typeof(FormatException), e.GetType());
+			}
+
+			try {
+				AssertEquals("#G33", tryDT, Convert.ToDateTime("2002-01-01"));
+			} catch (Exception e) {
+				Fail ("Unexpected exception at #G33 " + e);
+			}
+
+			try {
+				Convert.ToDateTime("2002-01-11 34:11:11");
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#G34", typeof(FormatException), e.GetType());
+			}
+
+			try {
+				Convert.ToDateTime("2002-01-11 11:70:11");
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#G35", typeof(FormatException), e.GetType());
+			}
+
+			try {
+				Convert.ToDateTime("2002-01-11 11:11:70");
+				Fail();
+			}
+			catch (Exception e) {
+				AssertEquals("#G36", typeof(FormatException), e.GetType());
+			}
+
 		}
 
 		public void TestToDecimal() {
