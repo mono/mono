@@ -1,3 +1,8 @@
+2004-07-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-codeman.c (mono_code_manager_invalidate): Invalidate with
+	x86 break on AMD64 too.
+
 2004-07-23  zovarga  <vargaz@freemail.hu>
 
 	* monobitset.c (my_g_bit_nth_msf): Add workaround for glib 2.2 bug on
