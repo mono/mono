@@ -1,3 +1,7 @@
+2004-01-26  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PermissionSetAttribute.cs: Implemented CreatePermissionSet.
+
 2003-12-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* EnvironmentPermission.cs: Fixed return value to match unit tests.
