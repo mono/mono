@@ -1,3 +1,8 @@
+2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (CreateThread): Wrap pthread_attr_setstacksize call in
+	a conditional for platforms that don't have it.
+
 2003-10-09  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* threads.c: (CreateThread) use stacksize argument
