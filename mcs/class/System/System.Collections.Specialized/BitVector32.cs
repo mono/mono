@@ -98,14 +98,15 @@ namespace System.Collections.Specialized {
 					throw new ArgumentException ("Section can't hold negative values");
 				if (value > section.Mask)
 					throw new ArgumentException ("Value too large to fit in section");
-				bits &= (~section.Mask << section.Offset);
+				bits &= ~(section.Mask << section.Offset);
 				bits |= (value << section.Offset);
 			}
 		}
 		
 		public bool this [int mask] {
 			get {
-				return (bits & mask) == mask;
+				long tmp = (uint)bits;
+				return (tmp & (long)mask) == (long)mask;
 			}
 			
 			set { 
@@ -146,7 +147,7 @@ namespace System.Collections.Specialized {
 			int mask = (1 << bit) - 1;
 			int offset = previous.Offset + NumberOfSetBits (previous.Mask);
 
-			if (offset + NumberOfSetBits (mask) > 32) {
+			if (offset > 32) {
 				throw new ArgumentException ("Sections cannot exceed 32 bits in total");
 			}
 

@@ -121,6 +121,14 @@ namespace System.Collections.Specialized
 
 		public void CopyTo(Array array, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException(
+					"array",
+					"Array cannot be null.");
+
+			if (index < 0)
+				throw new ArgumentOutOfRangeException("index", "index is less than 0");
+
 			int i = index;
 			foreach ( DictionaryEntry entry in this )
 				array.SetValue( entry, i++ );
@@ -196,6 +204,12 @@ namespace System.Collections.Specialized
 		
 		public void Remove(object key)
 		{
+			if (key == null)
+				throw new ArgumentNullException(
+					"key",
+					"Key cannot be null.");
+
+			
 			ListEntry entry = root;
 			
 			for (ListEntry prev = null; entry != null; prev = entry, entry = entry.next) {

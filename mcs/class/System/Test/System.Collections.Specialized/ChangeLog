@@ -1,3 +1,11 @@
+2003-09-04  Duncan Mak  <duncan@ximian.com>
+
+	* BitVector32Test.cs (TestNegativeIndexer, TestSectionIndexer,
+	TestCreateSection): new tests from Alon Gazit <along@mainsoft.com>.
+
+	* ListDictionaryTest.cs (CopyTo1, CopyTo2, Remove): New file, with
+	tests from Alon Gazit <along@mainsoft.com>.
+
 2002-06-24  Nick Drochak  <ndrochak@gol.com>
 
 	* BasicOperationsTest.cs: Make test pass on .NET 1.1.

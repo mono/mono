@@ -123,6 +123,34 @@ namespace MonoTests.System.Collections.Specialized
 			Assertion.AssertEquals ("#10f", (short) 0x0c, s.Offset);			
 		}
 
+                [Test]
+                public void TestNegativeIndexer ()
+                {
+                        BitVector32 bv = new BitVector32 (-1);
+                        Assertion.AssertEquals ("#11a", false, bv [Int32.MinValue]);
+                }
+
+                [Test]
+                public void TestSectionIndexer ()
+                {
+                        BitVector32 bv = new BitVector32 (-1);
+                        BitVector32.Section sect = BitVector32.CreateSection (1);
+                        sect = BitVector32.CreateSection (Int16.MaxValue, sect);
+                        sect = BitVector32.CreateSection (Int16.MaxValue, sect);
+                        sect = BitVector32.CreateSection (1, sect);
+                        bv [sect] = 0; 
+
+                        Assertion.AssertEquals ("#12a", Int32.MaxValue, bv.Data);
+                }
+
+                [Test, ExpectedException (typeof (ArgumentException))]
+                public void TestCreateSection ()
+                {
+                        BitVector32.Section section = BitVector32.CreateSection (Int16.MaxValue);
+                        section = BitVector32.CreateSection (Int16.MaxValue, section);
+                        Console.WriteLine (section);
+                }
+
 		private void Print (BitVector32.Section s)
 		{
 			Console.WriteLine (s.ToString () + " : "+ s.Mask + " : " + s.Offset);

@@ -1,3 +1,22 @@
+2003-09-04  Duncan Mak  <duncan@ximian.com>
+
+	Patches from Alon Gazit <along@mainsoft.com>.
+
+	* BitVector32.cs (CreateSection): Check that the new
+	calculated offset isn't more than 32 and not that the sum of the
+	new offset and the number of set bits is more than 32.
+	(this): Perform bitwise and with the complement of the mask
+	shifted version (~(section.Mask << section.Offset)) and not with
+	the shifted version of the mask's complement (~section.Mask <<
+	section.Offset).
+	(this): Currently doesn't return the correct value when the data
+	in the BitVector32 instance is negative.
+	
+	* ListDictionary.cs (CopyTo): If the array is null, it should
+	throw ArgumentNullException. If the index is less than 0, it
+	should throw ArgumentOutOfRangeException.
+	(Remove): Throw ArgumentNullException when the parameter is null.
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* StringDictionary.cs: Reworked attributes based on the new Consts scheme
