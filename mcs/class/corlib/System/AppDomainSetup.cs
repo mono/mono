@@ -33,12 +33,8 @@ namespace System
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern void InitAppDomainSetup (AppDomainSetup setup);
-
 		public AppDomainSetup ()
 		{
-			InitAppDomainSetup (this);
 		}
 
 		static string GetAppBase (string appBase)
