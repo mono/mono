@@ -31,9 +31,6 @@ interest are the classes:
 	 - ScriptObject
 	 - ScriptFunction
 
-3) Design ideas about the semantic analyser and code generator (I'm
-   looking forward something like mcs EmitContext).
-
 4) Design ideas about the object system (class and prototype based).
 
 
