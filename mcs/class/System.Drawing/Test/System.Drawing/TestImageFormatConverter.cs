@@ -79,7 +79,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertFrom ()
 		{
-			AssertEquals ("CF#1", imageFmtStr, (String) imgFmtConv.ConvertFrom (null,
+			AssertEquals ("CF#1", imageFmt, (ImageFormat) imgFmtConv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								ImageFormat.Bmp.ToString ()));
 			
@@ -130,7 +130,7 @@ namespace MonoTests.System.Drawing
 			}
 
 			
-			AssertEquals ("CF#1", imageFmtStr, (String) imgFmtConvFrmTD.ConvertFrom (null,
+			AssertEquals ("CF#1", imageFmt, (ImageFormat) imgFmtConvFrmTD.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								ImageFormat.Bmp.ToString ()));
 			
