@@ -12,7 +12,7 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
-	internal class StringLiteral : AST {
+	internal class StringLiteral : Exp {
 
 		internal string str;
 
@@ -32,10 +32,18 @@ namespace Microsoft.JScript {
 			return true;
 		}
 
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return true;
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			ig.Emit (OpCodes.Ldstr, str);
+			if (no_effect)
+				ig.Emit (OpCodes.Pop);
 		}
 	}
 }
