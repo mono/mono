@@ -1,3 +1,8 @@
+2001-09-03  Leen Toelen  <toelen@hotmail.com>
+
+        * HtmlAnchor.cs: Initial implementation.
+        * HtmlTextArea.cs: Initial implementation.
+
 2001-08-22  Bob Smith  <bob@thestuff.net>
 
          * HtmlContainerControl.cs: Initial implementation.
