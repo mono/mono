@@ -913,19 +913,6 @@ namespace System
 			}
 			uriString = uriString.Substring (pos + 1);
 
-			// 3
-			if (uriString.StartsWith ("//")
-					|| uriString.StartsWith ("\\\\"))  {
-				if (scheme == Uri.UriSchemeFile)
-					uriString = uriString.TrimStart (new char [] {'/', '\\'});
-				else
-				    	uriString = uriString.Remove (0, 2);
-			} else if (!IsPredefinedScheme (scheme)) {
-				path = uriString;
-				isOpaquePart = true;
-				return;
-			}
-
 			// 8 fragment
 			pos = uriString.IndexOf ('#');
 			if (!IsUnc && pos != -1) {
@@ -941,16 +928,32 @@ namespace System
 				if (!userEscaped)
 					query = EscapeString (query);
 			}
+
+			// 3
+			bool unixAbsPath = scheme == UriSchemeFile && uriString.StartsWith ("///");
+			if (uriString.StartsWith ("//")) {
+				if (uriString.StartsWith ("////"))
+					unixAbsPath = false;
+				uriString = uriString.TrimStart (new char [] {'/'});
+				if (uriString.Length > 1 && uriString [1] == ':')
+					unixAbsPath = false;
+			} else if (!IsPredefinedScheme (scheme)) {
+				path = uriString;
+				isOpaquePart = true;
+				return;
+			}
 			
 			// 5 path
-			pos = uriString.IndexOfAny (new char[] {'/', '\\'});
+			pos = uriString.IndexOfAny (new char[] {'/'});
+			if (unixAbsPath)
+				pos = -1;
 			if (pos == -1) {
 				if ((scheme != Uri.UriSchemeMailto) &&
 				    (scheme != Uri.UriSchemeNews) &&
 					(scheme != Uri.UriSchemeFile))
 					path = "/";
 			} else {
-				path = uriString.Substring (pos).Replace ('\\', '/');
+				path = uriString.Substring (pos);
 				uriString = uriString.Substring (0, pos);
 			}
 
@@ -964,6 +967,8 @@ namespace System
 			// 4.b port
 			port = -1;
 			pos = uriString.LastIndexOf (":");
+			if (unixAbsPath)
+				pos = -1;
 			if (pos != -1 && pos != (uriString.Length - 1)) {
 				string portStr = uriString.Remove (0, pos + 1);
 				if (portStr.Length > 1 && portStr [portStr.Length - 1] != ']') {
@@ -989,7 +994,10 @@ namespace System
 				}
 			}
 
-			if (host.Length == 2 && host [1] == ':') {
+			if (unixAbsPath) {
+				path = '/' + uriString;
+				host = String.Empty;
+			} else if (host.Length == 2 && host [1] == ':') {
 				// windows filepath
 				path = host + path;
 				host = String.Empty;

@@ -1,5 +1,15 @@
 2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Uri.cs :
+	  - We don't have to mind '\\'.
+	  - Fixed bug #58301. When path starts with "///" and not more than
+	    "////" and not "///*:", handle it as unix path and set Host as
+	    empty string. In absolute path case, port should not be parsed
+	    and LocalPath should start with '/'.
+	  - Handle fragment in prior to path. 
+
+2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Uri.cs : Handle Windows UNC. Now we could simplify Parse(). Don't
 	  escape windows path twice. Check scheme name as defined in RFC2396.
 
