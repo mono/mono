@@ -1,3 +1,6 @@
+2002-01-06  Nick Drochak  <ndrochak@gol.com>
+
+	* ResolveEventArgs.cs: New File, completely implemented! ;)
 
 Sat Jan 5 15:53:50 CET 2002 Paolo Molaro <lupus@ximian.com>
 
