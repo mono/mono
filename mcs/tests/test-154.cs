@@ -571,4 +571,14 @@ public class X
 	k_0:
 		;
 	}
+
+	//
+	// Bug 59429
+	//
+	public static int test38 ()
+	{
+		return 0;
+	foo:
+		;
+	}
 }

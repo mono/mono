@@ -1,3 +1,7 @@
+2004-08-05  Martin Baulig  <martin@ximian.com>
+
+	* test-154.cs: Added test case for #59429.
+
 2004-08-04  Martin Baulig  <martin@ximian.com>
 
 	* Makefile (test-generic-3): New target to run all the generic
