@@ -1,3 +1,8 @@
+2004-04-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: Added static to [ThreadStatic] _principal field. 
+	Removed	[ThreadStatic] for _principalPolicy (not required).
+
 2004-04-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* Guid.cs: Flag as Sequential.

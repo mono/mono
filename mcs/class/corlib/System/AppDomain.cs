@@ -47,11 +47,10 @@ namespace System
 
 		// Evidence evidence;
 
-		[ThreadStatic]
 		private PrincipalPolicy _principalPolicy;
 
 		[ThreadStatic]
-		private IPrincipal _principal;
+		private static IPrincipal _principal;
 
 		private AppDomain ()
 		{
