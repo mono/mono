@@ -394,10 +394,15 @@ namespace System.Xml
 		{
 			if (isEndElement || current == null)
 				return false;
+			XmlNode tmpCurrent = current;
+			if (current.ParentNode.NodeType == XmlNodeType.Attribute)
+				current = current.ParentNode;
 
 			XmlAttribute attr = ownerElement.Attributes [name];
-			if (attr == null)
+			if (attr == null) {
+				current = tmpCurrent;
 				return false;
+			}
 			else {
 				current = attr;
 				return true;
@@ -466,7 +471,10 @@ namespace System.Xml
 					XmlAttribute attr = ac [i];
 					if (attr == current)
 					{
-						current = ac [i+1];
+						i++;
+						if (i == ac.Count)
+							return false;
+						current = ac [i];
 						return true;
 					}
 				}
@@ -573,8 +581,10 @@ namespace System.Xml
 				current = current.FirstChild;
 				return current != null;
 			} else if (current.ParentNode.NodeType == XmlNodeType.Attribute) {
+				if (current.NextSibling == null)
+					return false;
 				current = current.NextSibling;
-				return current != null;
+				return true;
 			} else
 				return false;
 		}

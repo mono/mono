@@ -43,17 +43,27 @@ namespace System.Xml
 		{
 			// (MS documentation says) parameter role isn't used yet.
 			Stream s = null;
-//			webClient.Credentials = credential;
-			s = new XmlInputStream (webClient.OpenRead (absoluteUri.ToString ()));
-			if (s.GetType ().IsSubclassOf (ofObjectToReturn))
-				return s;
-			s.Close ();
+			using (s) {
+				WebClient wc = new WebClient ();
+//				wc.Credentials = credential;
+				s = wc.OpenRead (absoluteUri.ToString ());
+				if (s.GetType ().IsSubclassOf (ofObjectToReturn))
+					return s;
+				wc.Dispose ();
+			}
 			return null;
 		}
 
 		public override Uri ResolveUri (Uri baseUri, string relativeUri)
 		{
-			return new Uri (baseUri, relativeUri);
+			if (baseUri == null) {
+				try {
+					return new Uri (relativeUri);
+				} catch (UriFormatException) {
+					return new Uri (Path.Combine (Path.GetFullPath ("."), relativeUri));
+				}
+			} else
+				return new Uri (baseUri, relativeUri);
 		}
 	}
 }

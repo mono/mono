@@ -1,3 +1,13 @@
+2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNodeReader.cs : fixed MoveToNextAttribute(). In some cases 
+	  this method set current node null.
+	* XmlTextReader.cs : fixed GetAttribute (name, ns), which returned
+	  String.Empty instead of null (expected value).
+	* XmlTextReader.cs,
+	  XmlUrlResolver.cs,
+	  XmlInputStream.cs : fixed BaseURI problem (bug #44231).
+
 2003-06-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNodeReader.cs : this [name] and this [name, ns] (and

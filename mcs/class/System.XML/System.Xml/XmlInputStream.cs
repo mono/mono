@@ -35,13 +35,24 @@ namespace Mono.Xml.Native
 		{
 		}
 
-		public XmlStreamReader (string url)
-			: this (url, true)
+//		public XmlStreamReader (string url)
+//			: this (url, true)
+//		{
+//		}
+//
+//		public XmlStreamReader (string url, bool docent)
+//			: this (new XmlInputStream (url, docent, null, null))
+//		{
+//		}
+
+		public XmlStreamReader (string url, XmlResolver resolver, string baseURI)
+			: this (url, true, resolver, baseURI)
 		{
 		}
 
-		public XmlStreamReader (string url, bool docent)
-			: this (new XmlInputStream (url, docent))
+		public XmlStreamReader (string url, bool docent, XmlResolver resolver,
+			string baseURI)
+			: this (new XmlInputStream (url, docent, resolver, baseURI))
 		{
 		}
 
@@ -70,24 +81,35 @@ namespace Mono.Xml.Native
 		bool isDocumentEntity;	// allow omitting "version" or not.
 
 		static XmlException encodingException = new XmlException ("invalid encoding specification.");
-
+/*
 		public XmlInputStream (string url)
 			: this (url, true)
 		{
 		}
-
-		public XmlInputStream (string url, bool docent)
+*/
+		public XmlInputStream (string url, bool docent, XmlResolver resolver, string baseURI)
 		{
 			this.isDocumentEntity = docent;
-#if NetworkEnabled
+			// Use XmlResolver to resolve external entity.
+#if true
+			if (resolver == null)
+				resolver = new XmlUrlResolver ();
+			Uri uri = resolver.ResolveUri (baseURI == null ? null : new Uri (baseURI), url);
+			Stream s = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
+
+			Initialize (s);
+#else
+#if false
+			System.Net.WebClient wc = new System.Net.WebClient ();
 			try {
-				Uri uri = new Uri (url);
-				Initialize (new MemoryStream (new System.Net.WebClient ().DownloadData (url)));
+				UriBuilder ub = new UriBuilder (url);
+				Initialize (new MemoryStream (wc.DownloadData (ub.ToString ())));
 			} catch (UriFormatException ex) {
 				Initialize (new FileStream (url, FileMode.Open, FileAccess.Read));
 			}
 #else
 			Initialize (new FileStream (url, FileMode.Open, FileAccess.Read));
+#endif
 #endif
 		}
 

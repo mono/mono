@@ -76,7 +76,7 @@ namespace System.Xml
 
 		[MonoTODO("Non-filename-url must be supported. Waiting for WebClient")]
 		public XmlTextReader (string url, XmlNameTable nt)
-			: this (url, new XmlStreamReader (url), nt)
+			: this (url, new XmlStreamReader (url, null, null), nt)
 		{
 		}
 
@@ -346,7 +346,7 @@ namespace System.Xml
 		{
 			int idx = this.GetIndexOfQualifiedAttribute (localName, namespaceURI);
 			if (idx < 0)
-				return String.Empty;
+				return null;
 			return UnescapeAttributeValue (attributes [orderedAttributes [idx]] as string);
 		}
 
@@ -810,9 +810,11 @@ namespace System.Xml
 
 			if (url != null && url != String.Empty) {
 				string path = Path.GetFullPath (".");
+				path = Path.Combine (path, url);
 				UriBuilder ub = new UriBuilder (path);
 				ub.Scheme = "file";
-				parserContext.BaseURI = new Uri (ub.Uri, url).ToString ();
+//				parserContext.BaseURI = new Uri (ub.Uri, url).ToString ();
+				parserContext.BaseURI = ub.ToString ();
 			}
 
 			Init ();
@@ -1624,7 +1626,7 @@ namespace System.Xml
 					this.ReaderError ("Nested inclusion is not allowed: " + url);
 			}
 			parserInputStack.Push (currentInput);
-			currentInput = new XmlParserInput (new XmlStreamReader (absUri.ToString (), false), absPath);
+			currentInput = new XmlParserInput (new XmlStreamReader (url, false, resolver, BaseURI), absPath);
 			parserContext.PushScope ();
 			parserContext.BaseURI = absPath;
 		}
