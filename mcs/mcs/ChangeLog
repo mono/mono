@@ -1,3 +1,64 @@
+2001-09-08  Ravi Pratap  <ravi@ximian.com>
+
+	* Merge in changes and adjust code to tackle conflicts. Backed out my
+	code in Assign::Resolve ;-) 
+
+2001-09-08  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (CheckAttributeTarget): Modify call to error to use
+	instead Report.Error and also pass in the location.
+	(CSharpParser::Lexer): New readonly property to return the reference
+	to the Tokenizer object.
+	(declare_local_variables): Use Report.Error with location instead of plain 
+	old error.
+	(CheckDef): Ditto.
+
+	* class.cs (Operator::CheckUnaryOperator): Move into cs-parser.jay.
+	(Operator.CheckBinaryOperator): Ditto.
+
+	* cs-parser.jay (operator_declarator): Update accordingly.
+
+	* cs-parser.jay (CheckUnaryOperator): Modify to use Report.Error
+	(CheckBinaryOperator): Same here.
+
+	* rootcontext.cs (LookupType): Add an extra lookup which simply does a lookup
+	on the name without any prefixes of namespace names etc. This is because we
+	already might have something already fully qualified like 
+	'System.Console.WriteLine'
+
+	* assign.cs (Resolve): Begin implementation. Stuck ;-)
+
+2001-09-07  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-tokenizer.cs (location): Return a string which also contains
+	the file name.
+
+	* expression.cs (ElementAccess): New class for expressions of the
+	type 'element access.'
+	(BaseAccess): New class for expressions of the type 'base access.'
+	(CheckedExpr, UnCheckedExpr): New classes for Checked and Unchecked expressions
+	respectively.
+	
+	* cs-parser.jay (element_access): Implement action.
+	(base_access): Implement actions.
+	(checked_expression, unchecked_expression): Implement.
+
+	* cs-parser.jay (local_variable_type): Correct and implement.
+	(type_suffixes, type_suffix_list, type_suffix): Implement actions.
+
+	* cs-tokenizer.cs (real_type_suffix): Comment out the extra getchar.
+
+	* cs-parser.jay (rank_specifiers): Remove space while concatenating the type's
+	name and the specifiers.
+
+	* interface.cs (InterfaceAttr): New property to return the corresponding TypeAttributes
+	
+	* rootcontext.cs (CreateInterface): Use the InterfaceAttr property instead of 
+	making them all public ;-)
+
+	* cs-parser.jay (error): Remove entirely as we have an implementation in the base
+	class anyways.
+	
 2001-09-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ExprClassFromMemberInfo): Return FieldExpr and
@@ -130,7 +191,6 @@
 	
 	* literal.cs (StringLiteral):  Implement Emit.
 
->>>>>>> 1.37
 2001-09-05  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (error): Add new modifier because we are hiding an inherited

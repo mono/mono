@@ -90,7 +90,7 @@ namespace CIR {
 		//
 		// This behaves like a property ;-)
 		//
-		readonly public RootContext RootContext;
+		public readonly RootContext RootContext;
 
 		// Attributes for this type
 		protected Attributes attributes;
@@ -1290,43 +1290,6 @@ namespace CIR {
 			SecondArgName = arg2name;
 			Block = block;
 			OptAttributes = attrs;
-		}
-			      
-		public static void CheckUnaryOperator (OpType op)
-		{
-			switch (op) {
-
-			case OpType.Bang : case OpType.Tilde : case OpType.Increment : case OpType.Decrement :
-			case OpType.True : case OpType.False : case OpType.Plus : case OpType.Minus :
-
-				break;
-				
-			default :
-				// We have an error
-				CSharpParser.error (1019, "Overloadable unary operator expected"); 
-				break;
-				
-			}
-		}
-
-		public static void CheckBinaryOperator (OpType op)
-		{
-			switch (op) {
-
-			case OpType.Plus : case OpType.Minus : case OpType.Star : case OpType.Div :
-			case OpType.Percent : case OpType.BitAnd : case OpType.BitOr : case OpType.Carret :
-			case OpType.ShiftLeft : case OpType.ShiftRight : case OpType.Eq : case OpType.NotEq :
-			case OpType.GreaterThan : case OpType.LesserThan : case OpType.GreaterOrEq :
-			case OpType.LesserOrEq :
-
-				break;
-
-			default :
-
-				CSharpParser.error (1020, "Overloadable binary operator expected");
-				break;
-			}
-
 		}
 
 	}

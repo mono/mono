@@ -89,9 +89,11 @@ namespace CIR
 				else
 					det = "";
 				
-				return "Line:     "+line+" Col: "+col + "\n" +
-				       "VirtLine: "+ref_line +
-				       " Token: "+current_token + " " + det;
+				//return "Line:     "+line+" Col: "+col + "\n" +
+				//       "VirtLine: "+ref_line +
+				//       " Token: "+current_token + " " + det;
+
+				return ref_name + " " + "(" + line + "," + col + ")";
 			}
 		}
 
@@ -494,7 +496,7 @@ namespace CIR
 			default:
 				return Token.NONE;
 			}
-			getChar ();
+			//getChar ();
 			return t;
 		}
 

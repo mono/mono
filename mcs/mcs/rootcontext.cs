@@ -210,11 +210,9 @@ namespace CIR {
 			if (error)
 				return null;
 
-			// FIXME: use the actual accesibility here, not
-			// TypeAttributes.Public.
 			tb = mb.DefineType (name,
 					    TypeAttributes.Interface |
-					    TypeAttributes.Public |
+					    iface.InterfaceAttr |
 					    TypeAttributes.Abstract,
 					    null,   // Parent Type
 					    ifaces);
@@ -240,8 +238,9 @@ namespace CIR {
 
 			error = false;
 			name = MakeFQN (ns, name);
-			Console.WriteLine ("Attempting to locate " + name);
-
+			//Console.WriteLine ("Attempting to locate " + name);
+			report.Error (-200, "Locating :" + name);
+			
 			t  = type_manager.LookupType (name);
 			if (t != null)
 				return t;
@@ -282,19 +281,20 @@ namespace CIR {
 			if (error)
 				return null;
 			
-			if (t != null)
+			if (t != null) 
 				return t;
 
 			//
 			// Attempt to lookup the class on any of the `using'
 			// namespaces
 			//
+
 			for (Namespace ns = tc.Namespace; ns != null; ns = ns.Parent){
 				ArrayList using_list = ns.UsingTable;
 
 				if (using_list == null)
 					continue;
-				
+
 				foreach (string n in using_list){
 					t = LookupInterfaceOrClass (n, name, is_class, out error);
 					if (error)
@@ -507,7 +507,7 @@ namespace CIR {
 		//
 		// <remarks>
 		//   We usually use TypeBuilder types.  When we are done
-		//   creating the type (which will happen after we have addded
+		//   creating the type (which will happen after we have added
 		//   methods, fields, etc) we need to "Define" them before we
 		//   can save the Assembly
 		// </remarks>
@@ -532,6 +532,16 @@ namespace CIR {
 			if (t != null)
 				return t;
 
+			// It's possible that name already is fully qualified. So we do
+			// a simple direct lookup without adding any namespace names
+
+			// FIXME : We need to determine the exact order in which
+			// we peform the lookups.
+			
+			t = type_manager.LookupType (name); 
+			if (t != null)
+				return t;
+			
 			for (Namespace ns = tc.Namespace; ns != null; ns = ns.Parent){
 				ArrayList using_list = ns.UsingTable;
 
@@ -546,7 +556,7 @@ namespace CIR {
 			}
 
 			if (!silent)
-				report.Error (246, "Can not find type `"+name+"'");
+				report.Error (246, "Cannot find type `"+name+"'");
 			
 			return null;
 		}

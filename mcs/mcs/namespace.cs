@@ -14,7 +14,7 @@ namespace CIR {
 		
 		// <summary>
 		//   Constructor Takes the current namespace and the
-		//   name.  This is bootrstraped with parent == null
+		//   name.  This is bootstrapped with parent == null
 		//   and name = ""
 		// </summary>
 		public Namespace (Namespace parent, string name)

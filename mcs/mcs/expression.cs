@@ -929,6 +929,52 @@ namespace CIR {
 	}
 
 	// <summary>
+	//   Fully resolved expression that evaluates to a type
+	// </summary>
+	public class MethodGroupExpr : Expression {
+		public readonly MethodInfo [] Methods;
+		
+		public MethodGroupExpr (MemberInfo [] mi)
+		{
+			Methods = new MethodInfo [mi.Length];
+			mi.CopyTo (Methods, 0);
+			eclass = ExprClass.MethodGroup;
+		}
+
+		override public Expression Resolve (TypeContainer tc)
+		{
+			return this;
+		}
+
+		override public void Emit (EmitContext ec)
+		{
+			
+		}
+	}
+	
+	public class BuiltinTypeAccess : Expression {
+		public readonly string AccessBase;
+		public readonly string Method;
+		
+		public BuiltinTypeAccess (string type, string method)
+		{
+			System.Console.WriteLine ("DUDE! This type should be fully resolved!");
+			AccessBase = type;
+			Method = method;
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
+	}
+
+
 	//   Fully resolved expression that evaluates to a Field
 	// </summary>
 	public class FieldExpr : Expression {
@@ -984,44 +1030,94 @@ namespace CIR {
 		}
 	}
 
-	// <summary>
-	//   Fully resolved expression that evaluates to a type
-	// </summary>
-	public class MethodGroupExpr : Expression {
-		public readonly MethodInfo [] Methods;
-		
-		public MethodGroupExpr (MemberInfo [] mi)
-		{
-			Methods = new MethodInfo [mi.Length];
-			mi.CopyTo (Methods, 0);
-			eclass = ExprClass.MethodGroup;
-		}
+	public class CheckedExpr : Expression {
 
-		override public Expression Resolve (TypeContainer tc)
-		{
-			return this;
-		}
+		public readonly Expression Expr;
 
-		override public void Emit (EmitContext ec)
+		public CheckedExpr (Expression e)
 		{
-			
-		}
-	}
-	
-	public class BuiltinTypeAccess : Expression {
-		public readonly string AccessBase;
-		public readonly string Method;
-		
-		public BuiltinTypeAccess (string type, string method)
-		{
-			System.Console.WriteLine ("DUDE! This type should be fully resolved!");
-			AccessBase = type;
-			Method = method;
+			Expr = e;
 		}
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
+			// FIXME : Implement !
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
+		
+	}
+
+	public class UnCheckedExpr : Expression {
+
+		public readonly Expression Expr;
+
+		public UnCheckedExpr (Expression e)
+		{
+			Expr = e;
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			// FIXME : Implement !
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
+		
+	}
+
+		public class ElementAccess : Expression {
+
+		public readonly ArrayList  Arguments;
+		public readonly Expression Expr;
+
+		public ElementAccess (Expression e, ArrayList e_list)
+		{
+			Expr = e;
+			Arguments = e_list;
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			// FIXME : Implement
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			// FIXME : Implement !
+		}
+
+	}
+
+	public class BaseAccess : Expression {
+
+		public enum BaseAccessType {
+			Member,
+			Indexer
+		};
+		
+		public readonly BaseAccessType BAType;
+		public readonly string         Member;
+		public readonly ArrayList      Arguments;
+
+		public BaseAccess (BaseAccessType t, string member, ArrayList args)
+		{
+			BAType = t;
+			Member = member;
+			Arguments = args;
+			
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			// FIXME : Implement !
 			return this;
 		}
 
@@ -1029,5 +1125,4 @@ namespace CIR {
 		{
 		}
 	}
-
 }

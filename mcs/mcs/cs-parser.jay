@@ -254,16 +254,15 @@ namespace CIR
 %%
 
 compilation_unit
-	: opt_using_directives opt_attributes opt_namespace_member_declarations 
-	  EOF
+	: opt_using_directives opt_attributes opt_namespace_member_declarations EOF
 	  {
-		// At some point check that using only comes *before* any namespaces
+		// Check that using comes only before namespace elements
 	  }
 	;
 
 using_directives
 	: using_directive 
-	| using_directives using_directive 
+	| using_directives using_directive
 	;
 
 using_directive
@@ -273,7 +272,9 @@ using_directive
 
 using_alias_directive
 	: USING IDENTIFIER ASSIGN 
-	  namespace_or_type_name SEMICOLON {
+	  namespace_or_type_name SEMICOLON
+	  {
+		  // FIXME : Need to implement actual action.
 	  }
 	;
 
@@ -324,7 +325,8 @@ namespace_body
 	: OPEN_BRACE
 	  opt_using_directives
 	  opt_namespace_member_declarations
-	  CLOSE_BRACE {
+	  CLOSE_BRACE
+	  {
 	  }
 	;
 
@@ -614,7 +616,8 @@ constant_declarators
 	;
 
 constant_declarator
-	: IDENTIFIER ASSIGN constant_expression {
+	: IDENTIFIER ASSIGN constant_expression
+	  {
 		$$ = new DictionaryEntry ($1, $3);
 	  }
 	;
@@ -904,8 +907,10 @@ interface_declaration
 		string full_interface_name = MakeName ((string) $4);
 
 		new_interface = new Interface (current_container, full_interface_name, (int) $2, (Attributes) $1);
-		if (current_interface != null)
-			error (-2, "Internal compiler error: interface inside interface");
+		if (current_interface != null) {
+			Location l = lexer.Location;
+			rc.Report.Error (-2, l, "Internal compiler error: interface inside interface");
+		}
 		current_interface = new_interface;
 		tree.RecordInterface (full_interface_name, new_interface);
 	  }
@@ -1078,7 +1083,7 @@ operator_declarator
 	: type OPERATOR overloadable_operator 
 	  OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	{
-		Operator.CheckUnaryOperator ((Operator.OpType) $3);
+		CheckUnaryOperator ((Operator.OpType) $3);
 
 		$$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6, null, null);
 	}
@@ -1088,7 +1093,7 @@ operator_declarator
 	  	type IDENTIFIER 
 	  CLOSE_PARENS
         {
-	       Operator.CheckBinaryOperator ((Operator.OpType) $3);
+	       CheckBinaryOperator ((Operator.OpType) $3);
 	       
 	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6,
 					     (string) $8, (string) $9);
@@ -1148,8 +1153,9 @@ constructor_declaration
 		c.ModFlags = (int) $2;
 
 		if ((c.ModFlags & Modifiers.STATIC) != 0){
-			if ((c.ModFlags & Modifiers.Accessibility) != 0){
-				error (515, "Access modifiers are not allowed on static constructors");
+			if ((c.ModFlags & Modifiers.Accessibility) != 0) {
+				Location l = lexer.Location;
+				rc.Report.Error (515, l, "Access modifiers are not allowed on static constructors");
 			}
 		}
 		CheckDef (current_container.AddConstructor (c), c.Name);
@@ -1487,8 +1493,7 @@ interface_type
 array_type
 	: type rank_specifiers
 	  {
-		  $$ = (string) $1 + " " + (string) $2;
-		// FIXME: We need to create a type for the nested thing.
+		  $$ = (string) $1 + (string) $2;
 	  }
 	;
 
@@ -1594,9 +1599,10 @@ invocation_expression
 		//	$$ = new Call ($1, $3);
 		// else 
 		// 	$$ = new DelegateCall ($1, $3);
-		if ($1 == null)
-			error (1, "THIS IS CRAZY");
-
+		if ($1 == null) {
+			Location l = lexer.Location;
+			rc.Report.Error (1, l, "THIS IS CRAZY");
+		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3);
 	  }
 	; 
@@ -1642,7 +1648,9 @@ variable_reference
 
 element_access
 	: primary_expression OPEN_BRACKET expression_list CLOSE_BRACKET	
-	// finishme
+	  {
+		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3);
+	  }
 	;
 
 expression_list
@@ -1669,9 +1677,13 @@ this_access
 
 base_access
 	: BASE DOT IDENTIFIER
-	// finishme
+	  {
+		$$ = new BaseAccess (BaseAccess.BaseAccessType.Member, (string) $3, null);
+	  }
 	| BASE OPEN_BRACKET expression_list CLOSE_BRACKET
-	// finishme
+	  {
+		$$ = new BaseAccess (BaseAccess.BaseAccessType.Indexer, null, (ArrayList) $3);
+	  }
 	;
 
 post_increment_expression
@@ -1816,10 +1828,16 @@ sizeof_expression
 
 checked_expression
 	: CHECKED OPEN_PARENS expression CLOSE_PARENS
+	  {
+		$$ = new CheckedExpr ((Expression) $3);
+	  }
 	;
 
 unchecked_expression
 	: UNCHECKED OPEN_PARENS expression CLOSE_PARENS
+	  {
+		$$ = new UnCheckedExpr ((Expression) $3);
+	  }
 	;
 
 unary_expression
@@ -2173,16 +2191,18 @@ opt_modifiers
 
 modifiers
 	: modifier
-	| modifiers modifier	{ 
+	| modifiers modifier
+	  { 
 		int m1 = (int) $1;
 		int m2 = (int) $2;
 
-		if ((m1 & m2) != 0)
-			error (1002, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
-
+		if ((m1 & m2) != 0) {
+			Location l = lexer.Location;
+			rc.Report.Error (1002, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
+		}
 		$$ = (int) (m1 | m2);
 	  }
-	;
+        ;
 
 modifier
 	: NEW			{ $$ = Modifiers.NEW; }
@@ -2295,7 +2315,8 @@ labeled_statement
 		$$ = block;
 
 		if (!current_block.AddLabel (lab, block)){
-			error (140, "The label '" + lab + "' is a duplicate");
+			Location l = lexer.Location;
+			rc.Report.Error (140, l, "The label '" + lab + "' is a duplicate");
 			$$ = $3;
 		}	
 	  }
@@ -2316,7 +2337,6 @@ local_variable_type
 	: primary_expression type_suffixes
 	  { 
 		// FIXME: Do something smart here regarding the composition of the type.
-		//
 
 		// Ok, the above "primary_expression" is there to get rid of
 		// both reduce/reduce and shift/reduces in the grammar, it should
@@ -2330,36 +2350,47 @@ local_variable_type
 		if (((Expression) $1) is SimpleName)
 			$$ = ((SimpleName) $1).Name;
 		else {
-			error (-1, "Invalid Type definition");
+			Location l = lexer.Location;
+			rc.Report.Error (-1, l, "Invalid Type definition");
 			$$ = "System.Object";
 		}
 	  }
 	| builtin_types type_suffixes
 	  {
-		// FIXME: Do something smart with the type here.
-		$$ = $1; 
+		$$ = (string) $1 + (string) $2;
 	  }
-	| VOID type_suffixes
-	  {
-		// FIXME: this is a string that represents the type
-		// Figure out something to make this work.
-		$$ = "VOID SOMETHING TYPE FIXME";
-	  }
-	;
+        ;
+
+// FIXME : How can the type of a local variable be void ? I don't quite see ;-)
+//          | VOID 
+//  	  {
+//  		// FIXME: this is a string that represents the type
+//  		// Figure out something to make this work.
+//  		$$ = "void";
+//  	  }
+//  	;
 
 type_suffixes
 	: /* empty */
+	  {
+		$$ = "";
+	  }
 	| type_suffix_list
 	;
 
 type_suffix_list 
 	: type_suffix
 	| type_suffix_list type_suffix
+	  {
+		$$ = (string) $1 + (string) $2;
+	  }
 	;
 
 type_suffix
 	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET
-	/* FIXME: | MULTIPLY */
+	  {
+		$$ = "[" + (string) $2 + "]";
+	  }
 	;
 
 local_variable_declaration
@@ -2860,28 +2891,30 @@ CheckDef (DeclSpace.AdditionResult result, string name)
 	if (result == DeclSpace.AdditionResult.Success)
 		return;
 
+	Location l = lexer.Location;
+	
 	switch (result){
 	case DeclSpace.AdditionResult.NameExists:
-		error (102, "The namespace `" + current_container.Name + 
-			    "' already contains a definition for `"+
-			    name + "'");
+		rc.Report.Error (102, l, "The namespace `" + current_container.Name + 
+				 "' already contains a definition for `"+
+				 name + "'");
 		break;
 
-/*
-	NEED TO HANDLE THIS IN SEMANTIC ANALYSIS:
 
-	case DeclSpace.AdditionResult.MethodDuplicated:
-		error (111, "Class `"+current_container.Name+
-			    "' already defines a member called '" + 
-			    name + "' with the same parameter types");
-		break;
-*/
+//	NEED TO HANDLE THIS IN SEMANTIC ANALYSIS:
+//
+//  	case DeclSpace.AdditionResult.MethodDuplicated:
+//  		error (111, "Class `"+current_container.Name+
+//  			    "' already defines a member called '" + 
+//  			    name + "' with the same parameter types");
+//  		break;
+
 	case DeclSpace.AdditionResult.EnclosingClash:
-		error (542, "Member names cannot be the same as their enclosing type");
+		rc.Report.Error (542, l, "Member names cannot be the same as their enclosing type");
 		break;
-
+		
 	case DeclSpace.AdditionResult.NotAConstructor:
-		error (1520, "Class, struct, or interface method must have a return type");
+		rc.Report.Error (1520, l, "Class, struct, or interface method must have a return type");
 		break;
 	}
 }
@@ -2927,8 +2960,9 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 				inits.Add (decl);
 			}
 		} else {
-			error (128, "A local variable `" + decl.identifier +
-				    "' is already defined in this scope");
+			Location l = lexer.Location;
+			rc.Report.Error (128, l, "A local variable `" + decl.identifier +
+					 "' is already defined in this scope");
 		}
 	}
 
@@ -2967,16 +3001,50 @@ void CheckAttributeTarget (string a)
 		return;
 		
 	default :
-		error (658, "Invalid attribute target");
+		Location l = lexer.Location;
+		rc.Report.Error (658, l, "Invalid attribute target");
 		break;
 	}
 
 }
 
-static new public void error (int code, string desc)
+void CheckUnaryOperator (Operator.OpType op)
 {
-	Console.WriteLine ("Error CS"+code+": "+desc);
-	global_errors++;
+	switch (op) {
+		
+	case Operator.OpType.Bang : case Operator.OpType.Tilde : case Operator.OpType.Increment :
+	case Operator.OpType.Decrement :
+	case Operator.OpType.True : case Operator.OpType.False : case Operator.OpType.Plus : case Operator.OpType.Minus :
+		
+		break;
+		
+	default :
+		Location l = lexer.Location;
+		rc.Report.Error (1019, l, "Overloadable unary operator expected"); 
+		break;
+		
+	}
+}
+
+void CheckBinaryOperator (Operator.OpType op)
+{
+	switch (op) {
+		
+	case Operator.OpType.Plus : case Operator.OpType.Minus : case Operator.OpType.Star : case Operator.OpType.Div :
+	case Operator.OpType.Percent : case Operator.OpType.BitAnd : case Operator.OpType.BitOr :
+	case Operator.OpType.Carret : case Operator.OpType.ShiftLeft : case Operator.OpType.ShiftRight :
+	case Operator.OpType.Eq : case Operator.OpType.NotEq :
+	case Operator.OpType.GreaterThan : case Operator.OpType.LesserThan : case Operator.OpType.GreaterOrEq :
+	case Operator.OpType.LesserOrEq :
+		
+		break;
+		
+	default :
+		Location l = lexer.Location;
+		rc.Report.Error (1020, l, "Overloadable binary operator expected");
+		break;
+	}
+	
 }
 
 void output (string s)
@@ -2990,6 +3058,12 @@ void note (string s)
 }
 
 Tokenizer lexer;
+
+public Tokenizer Lexer {
+	get {
+		return lexer;
+	}
+}		   
 
 public CSharpParser(RootContext rc, string name, System.IO.Stream input) 
 {
@@ -3015,9 +3089,11 @@ public override int parse ()
 		else
 			yyparse (lexer);
 	} catch (Exception e){
-		Console.WriteLine ("Fatal error: "+name);
+		// Console.WriteLine ("Fatal error: " + name);
+		// Console.WriteLine (lexer.location);
+
+		Console.WriteLine (lexer.location + "  : Parsing error");
 		Console.WriteLine (e);
-		Console.WriteLine (lexer.location);
 		global_errors++;
 	}
 	

@@ -169,6 +169,29 @@ namespace CIR {
 			}
 		}
 
+		public virtual TypeAttributes InterfaceAttr {
+			get {
+				TypeAttributes x = 0;
+
+				// FIXME: Figure out exactly how private, public and protected
+				// map to the TypeAttribute flags.
+
+				if ((mod_flags & Modifiers.PUBLIC) != 0)
+					x |= TypeAttributes.Public;
+
+				if ((mod_flags & Modifiers.PRIVATE) != 0)
+					x |= TypeAttributes.NotPublic;
+				
+				if ((mod_flags & Modifiers.ABSTRACT) != 0)
+					x |= TypeAttributes.Abstract;
+				
+				if ((mod_flags & Modifiers.SEALED) != 0)
+					x |= TypeAttributes.Sealed;
+
+				return x;
+			}
+		}
+		
 		void Error111 (InterfaceMethod im)
 		{
 			parent.RootContext.Report.Error (
