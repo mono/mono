@@ -2,23 +2,26 @@
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
+
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
 //
-// Monodoc is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-// 
-// Monodoc is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with Monodoc; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 
 using Mono.Doc.Core;
-
 using System;
 using System.Collections;
 using System.Reflection;
@@ -35,16 +38,12 @@ namespace Mono.Doc.Gui
 
 		public static void LoadTree(TreeView tree, string fileName)
 		{
-			// FIXME: this is a property of the current project
 			Assembly assem = AssemblyLoader.Load(fileName);
 
 			tree.ImageList = AssemblyTreeImages.List;
 
-			tree.BeginUpdate();
-			Cursor.Current = Cursors.WaitCursor;
-
 			// create root element
-			TreeNode root           = new TreeNode(assem.GetName().Name);
+			TreeNode root           = new TreeNode(assem.GetName().Name + " Assembly");
 			root.ImageIndex         = AssemblyTreeImages.AssemblyClosed;
 			root.SelectedImageIndex = AssemblyTreeImages.AssemblyClosed;
 
@@ -55,7 +54,7 @@ namespace Mono.Doc.Gui
 
 			foreach (Type t in assem.GetTypes())
 			{
-				// FIXME: this is overly simple, and should be configurable
+				// TODO: this is overly simple, and should be configurable
 				if (t.IsPublic)
 				{
 					// namespace
@@ -84,8 +83,6 @@ namespace Mono.Doc.Gui
 			}
 			
 			root.Expand();
-			Cursor.Current = Cursors.Default;
-			tree.EndUpdate();
 		}
 
 		private static TreeNode GetNodeForType(Type t)
@@ -95,7 +92,7 @@ namespace Mono.Doc.Gui
 			typeNode.Tag      =
 				TypeNameHelper.GetNameForMemberInfo(t, NamingFlags.TypeSpecifier | NamingFlags.FullName);
 
-			if (t.IsClass) // FIXME: delegates?
+			if (t.IsClass) // TODO: delegates?
 			{
 				typeNode.ImageIndex         = AssemblyTreeImages.Class;
 				typeNode.SelectedImageIndex = AssemblyTreeImages.Class;
@@ -120,7 +117,7 @@ namespace Mono.Doc.Gui
 			} 
 			else 
 			{
-				// FIXME: placeholder
+				// TODO: placeholder
 				typeNode.Text = nodeName + "OTHER";
 			}
 
@@ -133,7 +130,7 @@ namespace Mono.Doc.Gui
 			cNode.ImageIndex         = AssemblyTreeImages.Constructor;
 			cNode.SelectedImageIndex = AssemblyTreeImages.Constructor;
 
-			// FIXME: create nodes for constructors
+			// TODO: create nodes for constructors
 
 			return cNode;
 		}
@@ -144,7 +141,7 @@ namespace Mono.Doc.Gui
 			fNode.ImageIndex         = AssemblyTreeImages.Field;
 			fNode.SelectedImageIndex = AssemblyTreeImages.Field;
 
-			// FIXME: create nodes for fields
+			// TODO: create nodes for fields
 
 			return fNode;
 		}
@@ -155,7 +152,7 @@ namespace Mono.Doc.Gui
 			pNode.ImageIndex         = AssemblyTreeImages.Property;
 			pNode.SelectedImageIndex = AssemblyTreeImages.Property;
 
-			// FIXME: create nodes for properties
+			// TODO: create nodes for properties
 
 			return pNode;
 		}
@@ -166,7 +163,7 @@ namespace Mono.Doc.Gui
 			mNode.ImageIndex         = AssemblyTreeImages.Method;
 			mNode.SelectedImageIndex = AssemblyTreeImages.Method;
 
-			// FIXME: create nodes for methods
+			// TODO: create nodes for methods
 
 			return mNode;
 		}
@@ -177,7 +174,7 @@ namespace Mono.Doc.Gui
 			oNode.ImageIndex         = AssemblyTreeImages.Operator;
 			oNode.SelectedImageIndex = AssemblyTreeImages.Operator;
 
-			// FIXME: create nodes for operators
+			// TODO: create nodes for operators
 
 			return oNode;
 		}
@@ -188,7 +185,7 @@ namespace Mono.Doc.Gui
 			eNode.ImageIndex         = AssemblyTreeImages.Event;
 			eNode.SelectedImageIndex = AssemblyTreeImages.Event;
 
-			// FIXME: create nodes for properties
+			// TODO: create nodes for properties
 
 			return eNode;
 		}

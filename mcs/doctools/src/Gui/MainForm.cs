@@ -2,20 +2,24 @@
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
+
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
 //
-// Monodoc is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-// 
-// Monodoc is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with Monodoc; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 
 using Mono.Doc.Core;
 using System;
@@ -25,6 +29,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Reflection;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Mono.Doc.Gui
 {
@@ -33,6 +38,8 @@ namespace Mono.Doc.Gui
 	/// </summary>
 	public class MainForm : System.Windows.Forms.Form
 	{
+		private DocProject project = null;
+		
 		private System.Windows.Forms.MainMenu mainMenu;
 		private System.Windows.Forms.MenuItem menuProject;
 		private System.Windows.Forms.MenuItem menuEdit;
@@ -53,6 +60,16 @@ namespace Mono.Doc.Gui
 		private System.Windows.Forms.ContextMenu treeContextMenu;
 		private System.Windows.Forms.MenuItem menuItem1;
 		private System.Windows.Forms.MenuItem menuItem2;
+		private System.Windows.Forms.MenuItem menuProjectOpenProject;
+		private System.Windows.Forms.MenuItem menuItem3;
+		private System.Windows.Forms.MenuItem menuProjectRecentProjects;
+		private System.Windows.Forms.MenuItem menuProjectNewProject;
+		private System.Windows.Forms.MenuItem menuEditCut;
+		private System.Windows.Forms.MenuItem menuEditCopy;
+		private System.Windows.Forms.MenuItem menuEditPaste;
+		private System.Windows.Forms.MenuItem menuEditDelete;
+		private System.Windows.Forms.MenuItem menuItem8;
+		private System.Windows.Forms.MenuItem menuItem9;
 
 		/// <summary>
 		/// Required designer variable.
@@ -63,14 +80,9 @@ namespace Mono.Doc.Gui
 		{
 			InitializeComponent();
 
-			// tree stuff
-			// FIXME: hardcoded hack
-			AssemblyTreeLoader.LoadTree(tree, @"F:\projects\mcs\class\lib\System.dll");
-			// test 'Shortcuts' idea
-			shortcuts                    = new TreeNode("Shortcuts");
-			shortcuts.ImageIndex         = AssemblyTreeImages.Shortcuts;
-			shortcuts.SelectedImageIndex = AssemblyTreeImages.Shortcuts;
-			tree.Nodes.Insert(0, shortcuts);
+			tree.ImageList = AssemblyTreeImages.List;
+
+			UpdateTitle();
 		}
 
 		/// <summary>
@@ -113,6 +125,16 @@ namespace Mono.Doc.Gui
 			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.menuItem2 = new System.Windows.Forms.MenuItem();
 			this.verticalSplitter = new System.Windows.Forms.Splitter();
+			this.menuProjectOpenProject = new System.Windows.Forms.MenuItem();
+			this.menuItem3 = new System.Windows.Forms.MenuItem();
+			this.menuProjectRecentProjects = new System.Windows.Forms.MenuItem();
+			this.menuProjectNewProject = new System.Windows.Forms.MenuItem();
+			this.menuEditCut = new System.Windows.Forms.MenuItem();
+			this.menuEditCopy = new System.Windows.Forms.MenuItem();
+			this.menuEditPaste = new System.Windows.Forms.MenuItem();
+			this.menuEditDelete = new System.Windows.Forms.MenuItem();
+			this.menuItem8 = new System.Windows.Forms.MenuItem();
+			this.menuItem9 = new System.Windows.Forms.MenuItem();
 			this.SuspendLayout();
 			// 
 			// mainMenu
@@ -127,19 +149,30 @@ namespace Mono.Doc.Gui
 			// 
 			this.menuProject.Index = 0;
 			this.menuProject.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																						this.menuProjectNewProject,
+																						this.menuProjectOpenProject,
+																						this.menuProjectRecentProjects,
+																						this.menuItem3,
 																						this.menuProjectExit});
-			this.menuProject.Text = "Project";
+			this.menuProject.Text = "&Project";
 			// 
 			// menuProjectExit
 			// 
-			this.menuProjectExit.Index = 0;
-			this.menuProjectExit.Text = "Exit";
+			this.menuProjectExit.Index = 4;
+			this.menuProjectExit.Text = "E&xit";
 			this.menuProjectExit.Click += new System.EventHandler(this.menuProjectExit_Click);
 			// 
 			// menuEdit
 			// 
 			this.menuEdit.Index = 1;
-			this.menuEdit.Text = "Edit";
+			this.menuEdit.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																					 this.menuEditCut,
+																					 this.menuEditCopy,
+																					 this.menuEditPaste,
+																					 this.menuEditDelete,
+																					 this.menuItem8,
+																					 this.menuItem9});
+			this.menuEdit.Text = "&Edit";
 			// 
 			// menuWindow
 			// 
@@ -151,7 +184,7 @@ namespace Mono.Doc.Gui
 																					   this.menuWindowCascade,
 																					   this.menuWindowTile,
 																					   this.menuWindowTileHorizontal});
-			this.menuWindow.Text = "Window";
+			this.menuWindow.Text = "&Window";
 			// 
 			// menuWindowNewGenericDebug
 			// 
@@ -185,7 +218,7 @@ namespace Mono.Doc.Gui
 			this.menuHelp.Index = 3;
 			this.menuHelp.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																					 this.menuHelpAbout});
-			this.menuHelp.Text = "Help";
+			this.menuHelp.Text = "&Help";
 			// 
 			// menuHelpAbout
 			// 
@@ -239,6 +272,63 @@ namespace Mono.Doc.Gui
 			this.verticalSplitter.TabIndex = 3;
 			this.verticalSplitter.TabStop = false;
 			// 
+			// menuProjectOpenProject
+			// 
+			this.menuProjectOpenProject.Index = 1;
+			this.menuProjectOpenProject.Shortcut = System.Windows.Forms.Shortcut.CtrlO;
+			this.menuProjectOpenProject.Text = "&Open Project...";
+			this.menuProjectOpenProject.Click += new System.EventHandler(this.menuFileOpenProject_Click);
+			// 
+			// menuItem3
+			// 
+			this.menuItem3.Index = 3;
+			this.menuItem3.Text = "-";
+			// 
+			// menuProjectRecentProjects
+			// 
+			this.menuProjectRecentProjects.Index = 2;
+			this.menuProjectRecentProjects.Text = "&Recent Projects";
+			// 
+			// menuProjectNewProject
+			// 
+			this.menuProjectNewProject.Index = 0;
+			this.menuProjectNewProject.Shortcut = System.Windows.Forms.Shortcut.CtrlN;
+			this.menuProjectNewProject.Text = "&New Project...";
+			// 
+			// menuEditCut
+			// 
+			this.menuEditCut.Index = 0;
+			this.menuEditCut.Shortcut = System.Windows.Forms.Shortcut.CtrlX;
+			this.menuEditCut.Text = "Cut";
+			// 
+			// menuEditCopy
+			// 
+			this.menuEditCopy.Index = 1;
+			this.menuEditCopy.Shortcut = System.Windows.Forms.Shortcut.CtrlC;
+			this.menuEditCopy.Text = "Copy";
+			// 
+			// menuEditPaste
+			// 
+			this.menuEditPaste.Index = 2;
+			this.menuEditPaste.Shortcut = System.Windows.Forms.Shortcut.CtrlV;
+			this.menuEditPaste.Text = "Paste";
+			// 
+			// menuEditDelete
+			// 
+			this.menuEditDelete.Index = 3;
+			this.menuEditDelete.Shortcut = System.Windows.Forms.Shortcut.Del;
+			this.menuEditDelete.Text = "Delete";
+			// 
+			// menuItem8
+			// 
+			this.menuItem8.Index = 4;
+			this.menuItem8.Text = "-";
+			// 
+			// menuItem9
+			// 
+			this.menuItem9.Index = 5;
+			this.menuItem9.Text = "Select All";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -255,6 +345,86 @@ namespace Mono.Doc.Gui
 
 		}
 		#endregion
+
+		#region Instance Methods
+
+		private void OpenProject(string fileName)
+		{
+			string directoryName = Path.GetDirectoryName(fileName);
+			Directory.SetCurrentDirectory(directoryName);
+
+			try
+			{
+				project = new DocProject();
+				project.Load(fileName);
+
+				tree.BeginUpdate();
+				Cursor.Current = Cursors.WaitCursor;
+				
+				// shortcuts node
+				shortcuts                    = new TreeNode("Shortcuts");
+				shortcuts.ImageIndex         = AssemblyTreeImages.Shortcuts;
+				shortcuts.SelectedImageIndex = AssemblyTreeImages.Shortcuts;
+				tree.Nodes.Add(shortcuts);
+
+				// xml directories node
+				TreeNode xmlDirs = new TreeNode("Doc Directories"); // TODO: i18n
+				xmlDirs.ImageIndex = AssemblyTreeImages.Shortcuts;  // TODO: need folder image
+				xmlDirs.SelectedImageIndex = AssemblyTreeImages.Shortcuts;
+
+				foreach (string xmlDirPath in project.XmlDirectories)
+				{
+					TreeNode xmlDir = new TreeNode(xmlDirPath);
+					xmlDir.ImageIndex = AssemblyTreeImages.Shortcuts; // TODO: need folder image
+					xmlDir.SelectedImageIndex = AssemblyTreeImages.Shortcuts;
+					xmlDirs.Nodes.Add(xmlDir);
+				}
+
+				tree.Nodes.Add(xmlDirs);
+
+				// load assemblies into the tree
+				foreach (string assemblyFile in project.AssemblyFiles)
+				{
+					AssemblyTreeLoader.LoadTree(tree, assemblyFile);
+				}
+
+				tree.EndUpdate();
+
+				UpdateTitle();
+			}
+			catch (MonodocException mde)
+			{
+				// TODO: better error dialog
+				MessageBox.Show("Caught MonodocException: " + mde.Message);
+			}
+			catch (Exception e)
+			{
+				// TODO: better error dialog
+				MessageBox.Show("Caught Exception: " + e.Message);
+			}
+			finally
+			{
+				Cursor.Current = Cursors.Default;
+			}
+		}
+
+		private void UpdateTitle()
+		{
+			string title = GuiResources.GetString("Form.Main.Title");
+
+			if (project != null && project.FilePath != null)
+			{
+				string projectName = Path.GetFileName(project.FilePath);
+				projectName = projectName.Substring(0, projectName.LastIndexOf('.'));
+				this.Text = title + " - " + projectName + (project.IsModified ? "*" : "");
+			}
+			else
+			{
+				this.Text = title;
+			}
+		}
+
+		#endregion // Instance Methods
 
 		// EVENTS /////////
 		private void menuProjectExit_Click(object sender, System.EventArgs e)
@@ -343,6 +513,17 @@ namespace Mono.Doc.Gui
 					shortcuts.Nodes.Remove(sel);
 					break;
 				}
+			}
+		}
+
+		private void menuFileOpenProject_Click(object sender, System.EventArgs e)
+		{
+			OpenFileDialog open = new OpenFileDialog();
+			open.Filter         = "Monodoc Project Files (*.mdproj)|*.mdproj|All files (*.*)|*.*";
+
+			if (open.ShowDialog() == DialogResult.OK)
+			{
+				OpenProject(open.FileName);
 			}
 		}
 	}

@@ -1,23 +1,25 @@
-//   File: AboutForm.cs
-//   Desc: 'About Monodoc' dialog box.
-// Author: John Barnette (jbarn@httcb.net)
+// AboutForm.cs
+// John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
-//
-// Monodoc is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-// 
-// Monodoc is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with Monodoc; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 
 using System;
 using System.Drawing;
@@ -27,28 +29,28 @@ namespace Mono.Doc.Gui
 {
 	public class AboutForm : Form
 	{
-		private PictureBox mAboutLogo;
-		private Button     mCloseButton;
+		private PictureBox aboutLogo;
+		private Button     closeButton;
 
 		public AboutForm()
 		{
-			mAboutLogo   = new PictureBox();
-			mCloseButton = new Button();
+			aboutLogo   = new PictureBox();
+			closeButton = new Button();
 
 			this.SuspendLayout();
 
-			// mAboutLogo properties
-			mAboutLogo.Dock  = DockStyle.Fill;
-			mAboutLogo.Image = GuiResources.AboutMonodocBitmap;
-			mAboutLogo.Name  = "mAboutLogo";
-			mAboutLogo.Size  = new Size(300, 300);
+			// aboutLogo properties
+			aboutLogo.Dock  = DockStyle.Fill;
+			aboutLogo.Image = GuiResources.AboutMonodocBitmap;
+			aboutLogo.Name  = "aboutLogo";
+			aboutLogo.Size  = new Size(300, 300);
 
-			// mCloseButton properties
-			mCloseButton.Location = new Point(96, 272);
-			mCloseButton.Name     = "mCloseButton";
-			mCloseButton.Size     = new Size(104, 24);
-			mCloseButton.TabIndex = 0;
-			mCloseButton.Text     = GuiResources.GetString("Buttons.Close");
+			// closeButton properties
+			closeButton.Location = new Point(96, 272);
+			closeButton.Name     = "closeButton";
+			closeButton.Size     = new Size(104, 24);
+			closeButton.TabIndex = 0;
+			closeButton.Text     = GuiResources.GetString("Buttons.Close");
 
 			
 			// form properties
@@ -65,15 +67,16 @@ namespace Mono.Doc.Gui
 			this.Text              = GuiResources.GetString("Form.About.Title");
 
 			// bind events
-			mCloseButton.Click += new EventHandler(mCloseButton_Click);
+			closeButton.Click += new EventHandler(closeButton_Click);
 
 			// add components
-			this.Controls.AddRange(new Control[] { mCloseButton, mAboutLogo});
+			this.Controls.AddRange(new Control[] { closeButton, aboutLogo});
 
 			this.ResumeLayout(false);
 		}
 
-		private void mCloseButton_Click(object sender, EventArgs args)
+		// events
+		private void closeButton_Click(object sender, EventArgs args)
 		{
 			this.Close();
 		}
