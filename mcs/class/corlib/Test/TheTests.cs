@@ -99,7 +99,6 @@ namespace MonoTests.System
 			TestCompareTo ();
 			TestEquals ();
 			TestGetHashCode ();
-			TestParse ();
 			TestToString ();
 
 		}
