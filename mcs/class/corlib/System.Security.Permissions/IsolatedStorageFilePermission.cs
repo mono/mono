@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Security.Permissions {
 
 	[Serializable]
@@ -116,6 +118,7 @@ namespace System.Security.Permissions {
 
 #if NET_2_0
 		[MonoTODO]
+		[ComVisible (false)]
 		public override SecurityElement ToXml ()
 		{
 			SecurityElement se = base.ToXml ();

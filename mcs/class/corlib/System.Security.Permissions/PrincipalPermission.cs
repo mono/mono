@@ -28,6 +28,7 @@
 //
 
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 
@@ -271,6 +272,7 @@ namespace System.Security.Permissions {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -303,6 +305,7 @@ namespace System.Security.Permissions {
 
 		// according to documentation (fx 2.0 beta 1) we can have 
 		// different hash code even if both a Equals
+		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();

@@ -33,6 +33,7 @@ using System.IO;
 using System.Text;
 
 #if NET_2_0
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 #endif
 
@@ -409,12 +410,14 @@ namespace System.Security.Permissions {
 
 #if NET_2_0
 		[MonoTODO]
+		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
 			return false;
 		}
 
 		[MonoTODO]
+		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
