@@ -37,6 +37,6 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]		
 [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("Mono.Security.Protocol.Tls.snk")]
+// [assembly: AssemblyKeyFile("Mono.Security.Protocol.Tls.snk")]
 [assembly: AssemblyKeyName("")]
 [assembly: CLSCompliant(true)]

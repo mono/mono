@@ -1,3 +1,7 @@
+2003-10-20  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Mono.Security.dll.sources: Added references for Tls files.
+
 2003-09-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyAttributesExtension.cs: New. Added for WSE.

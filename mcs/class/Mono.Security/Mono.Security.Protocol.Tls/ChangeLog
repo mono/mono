@@ -1,0 +1,7 @@
+2003-10-20  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* AssemblyInfo.cs: commented out KeyFile reference.
+
+	* TlsSession.cs: changed Math.Pow for System.Math.Pow because of MCS
+	bug with namespace resolving.
+
