@@ -105,7 +105,8 @@ namespace System
 				if (fragment == null)
 					fragment = String.Empty;
 				else if (fragment.Length > 0)
-					fragment = "#" + EncodeUtf8 (value.Replace ("%23", "#"));
+//					fragment = "#" + EncodeUtf8 (value.Replace ("%23", "#"));
+					fragment = "#" + value.Replace ("%23", "#");
 				query = String.Empty;				
 				modified = true;
 			}
@@ -159,7 +160,8 @@ namespace System
 				if (value == null || value == "")
 					query = String.Empty;
 				else
-					query = "?" + EncodeUtf8 (value);
+//					query = "?" + EncodeUtf8 (value);
+					query = "?" + value;
 				fragment = String.Empty;
 				modified = true;
 			}

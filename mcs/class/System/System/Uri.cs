@@ -32,15 +32,15 @@ namespace System
 		// o  scheme excludes the scheme delimiter
 		// o  port is -1 to indicate no port is defined
 		// o  path is empty or starts with / when scheme delimiter == "://"
-		// o  query is empty or starts with ? char
-		// o  fragment is empty or starts with # char
+		// o  query is empty or starts with ? char, escaped.
+		// o  fragment is empty or starts with # char, unescaped.
 		// o  all class variables are in escaped format when they are escapable,
 		//    except cachedToString.
 		// o  UNC is supported, as starts with "\\" for windows,
 		//    or "//" with unix.
 
-		private bool isWindowsFilePath = false;
 		private bool isUnixFilePath = false;
+		private string source;
 		private string scheme = String.Empty;
 		private string host = String.Empty;
 		private int port = -1;
@@ -89,13 +89,8 @@ namespace System
 		public Uri (string uriString, bool dontEscape) 
 		{			
 			userEscaped = dontEscape;
-			Parse (uriString);
-			
-			if (userEscaped) 
-				return;
-
-			host = EscapeString (host, false, true, false);
-			path = EscapeString (path);
+			source = uriString;
+			Parse ();
 		}
 
 		public Uri (Uri baseUri, string relativeUri) 
@@ -115,20 +110,25 @@ namespace System
 			if (relativeUri == null)
 				throw new NullReferenceException ("relativeUri");
 
+			// Check Windows UNC (for // it is scheme/host separator)
+			if (relativeUri.StartsWith ("\\\\")) {
+				source = relativeUri;
+				Parse ();
+				return;
+			}
+
 			int pos = relativeUri.IndexOf (':');
 			if (pos != -1) {
 
-				int pos2 = relativeUri.IndexOfAny (new char [] {'/', '\\'});
+				int pos2 = relativeUri.IndexOfAny (new char [] {'/', '\\', '?'});
 
-				if (pos2 > pos) {
+				// pos2 < 0 ... e.g. mailto
+				// pos2 > pos ... to block ':' in query part
+				if (pos2 > pos || pos2 < 0) {
 					// equivalent to new Uri (relativeUri, dontEscape)
-					Parse (relativeUri);
+					source = relativeUri;
+					Parse ();
 
-					if (userEscaped) 
-						return;
-
-					host = EscapeString (host, false, true, false);
-					path = EscapeString (path);
 					return;
 				}
 			}
@@ -138,7 +138,6 @@ namespace System
 			this.port = baseUri.port;
 			this.userinfo = baseUri.userinfo;
 			this.isUnc = baseUri.isUnc;
-			this.isWindowsFilePath = baseUri.isWindowsFilePath;
 			this.isUnixFilePath = baseUri.isUnixFilePath;
 			this.isOpaquePart = baseUri.isOpaquePart;
 
@@ -153,6 +152,7 @@ namespace System
 			pos = relativeUri.IndexOf ('#');
 			if (pos != -1) {
 				fragment = relativeUri.Substring (pos);
+				// fragment is not escaped.
 				relativeUri = relativeUri.Substring (0, pos);
 			}
 
@@ -166,10 +166,16 @@ namespace System
 			}
 
 			if (relativeUri.Length > 0 && relativeUri [0] == '/') {
-				path = relativeUri;
-				if (!userEscaped)
-					path = EscapeString (path);
-				return;
+				if (relativeUri.Length > 1 && relativeUri [1] == '/') {
+					source = scheme + ':' + relativeUri;
+					Parse ();
+					return;
+				} else {
+					path = relativeUri;
+					if (!userEscaped)
+						path = EscapeString (path);
+					return;
+				}
 			}
 			
 			// par 5.2 step 6 a)
@@ -240,17 +246,15 @@ namespace System
 		}		
 		
 		// Properties
-
+		
 		public string AbsolutePath { 
 			get { return path; } 
 		}
 
 		public string AbsoluteUri { 
-			get {
+			get { 
 				if (cachedAbsoluteUri == null) {
-//					cachedAbsoluteUri = GetLeftPart (UriPartial.Path) + query + fragment;
-					string qf = IsFile ? query + fragment : EscapeString (query + fragment);
-					cachedAbsoluteUri = GetLeftPart (UriPartial.Path) + qf;
+					cachedAbsoluteUri = GetLeftPart (UriPartial.Path) + query + fragment;
 				}
 				return cachedAbsoluteUri;
 			} 
@@ -668,8 +672,8 @@ namespace System
 		{
 			if (cachedToString != null) 
 				return cachedToString;
-			cachedToString = Unescape (AbsoluteUri);
-
+			string q = query.StartsWith ("?") ? '?' + Unescape (query.Substring (1)) : Unescape (query);
+			cachedToString = Unescape (GetLeftPart (UriPartial.Path), true) + q + fragment;
 			return cachedToString;
 		}
 
@@ -739,12 +743,26 @@ namespace System
 			return s.ToString ();
 		}
 
-		[MonoTODO ("Find out what this should do!")]
+		// This method is called from .ctor(). When overriden, we can
+		// avoid the "absolute uri" constraints of the .ctor() by
+		// overriding with custom code.
 		protected virtual void Parse ()
 		{
-		}	
+			Parse (source);
+
+			if (userEscaped) 
+				return;
+
+			host = EscapeString (host, false, true, false);
+			path = EscapeString (path);
+		}
 		
-		protected virtual string Unescape (string str) 
+		protected virtual string Unescape (string str)
+		{
+			return Unescape (str, false);
+		}
+		
+		private string Unescape (string str, bool excludeSharp) 
 		{
 			if (str == null)
 				return String.Empty;
@@ -753,7 +771,11 @@ namespace System
 			for (int i = 0; i < len; i++) {
 				char c = str [i];
 				if (c == '%') {
-					s.Append (HexUnescape (str, ref i));
+					char x = HexUnescape (str, ref i);
+					if (excludeSharp && x == '#')
+						s.Append ("%23");
+					else
+						s.Append (x);
 					i--;
 				} else
 					s.Append (c);
@@ -811,7 +833,6 @@ namespace System
 					// a windows filepath
 					if (uriString.Length < 3 || (uriString [2] != '\\' && uriString [2] != '/'))
 						throw new UriFormatException ("Invalid URI: The format of the URI could not be determined.");
-					isWindowsFilePath = true;
 					scheme = Uri.UriSchemeFile;
 					path = uriString.Replace ('\\', '/');
 					return;
@@ -833,7 +854,6 @@ namespace System
 				scheme = Uri.UriSchemeFile;
 				if (uriString.StartsWith ("\\\\")) {
 					isUnc = true;
-					isWindowsFilePath = true;
 				}
 				if (uriString.Length > 8 && uriString [8] != '/')
 					isUnc = true;
@@ -865,6 +885,8 @@ namespace System
 			if (pos != -1) {
 				query = uriString.Substring (pos);
 				uriString = uriString.Substring (0, pos);
+				if (!userEscaped)
+					query = EscapeString (query);
 			}
 			
 			// 5 path
