@@ -116,7 +116,7 @@ namespace System.Net
 						lock (typeof (WebConnection)) {
 							sslCheck = true;
 							// HttpsClientStream is an internal glue class in Mono.Security.dll
-							sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, Mono.Security, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false);
+							sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, " + AssemblyMono_Security, false);
 							if (sslStream != null) {
 								piClient = sslStream.GetProperty ("SelectedClientCertificate");
 								piServer = sslStream.GetProperty ("ServerCertificate");
