@@ -1,5 +1,11 @@
 2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_jit_compile_method_inner): Add detection and a 
+	meaningfull error message for assemblies written in Managed C++.
+
+	* tramp-amd64.c mini-amd64.h: Add support for 
+	create_trampoline_from_token ().
+
 	* aot.c mini-x86.c abcremoval.c: Applied patch from
 	Robert Jordan (robertj@gmx.net). Fix compilation errors under gcc-2.95.
 
