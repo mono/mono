@@ -1,3 +1,12 @@
+2004-01-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* jit-icalls.c (helper_stelem_ref_check): New jit icall for array type
+	checking in Array.Set ().
+
+	* mini.c (method_to_ir): Add array type checking in Array.Set (). Fixes
+	#52590.
+
+	* object.cs (test_0_multi_array_cast): New regression test.
 
 Thu Jan 15 16:30:24 CET 2004 Paolo Molaro <lupus@ximian.com>
 
