@@ -1,3 +1,10 @@
+2004-10-20    <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Mark the domainvar as volatile when it is implicitly
+	used by CEE_NEWARR.
+
+	* ssa.c (mono_ssa_deadce): Do not optimize away accesses to volatile variables.
+
 2004-10-20  Martin Baulig  <martin@ximian.com>
 
 	* mini-exceptions.c (mono_handle_exception): Call
