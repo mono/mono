@@ -149,10 +149,22 @@ namespace System.Xml
 				case XPathNodeType.Attribute:
 				case XPathNodeType.Comment:
 				case XPathNodeType.ProcessingInstruction:
+					return node.Value;
 				case XPathNodeType.Text:
 				case XPathNodeType.Whitespace:
 				case XPathNodeType.SignificantWhitespace:
-					return node.Value;
+					string value = node.Value;
+					for (XmlNode n = node.NextSibling; n != null; n = n.NextSibling) {
+						switch (n.XPathNodeType) {
+						case XPathNodeType.Text:
+						case XPathNodeType.Whitespace:
+						case XPathNodeType.SignificantWhitespace:
+							value += n.Value;
+							continue;
+						}
+						break;
+					}
+					return value;
 				case XPathNodeType.Element:
 				case XPathNodeType.Root:
 					return node.InnerText;
@@ -239,7 +251,8 @@ namespace System.Xml
 		public override bool MoveToFirst ()
 		{
 			if (nsNode == null && node.NodeType != XmlNodeType.Attribute && node.ParentNode != null) {
-				MoveToParent ();
+				if (!MoveToParent ())
+					return false;
 				// Follow these 2 steps so that we can skip 
 				// some types of nodes .
 				MoveToFirstChild ();
