@@ -1,5 +1,14 @@
 2004-12-04  Martin Baulig  <martin@ximian.com>
 
+	* loader.c (mono_method_get_signature_full): New public function;
+	like mono_method_get_signature(), but with an additional
+	`MonoGenericContext *' argument.
+
+	* class.c (mono_class_inflate_generic_signature): Formerly known
+	as inflate_generic_signature(); make this public.
+
+2004-12-04  Martin Baulig  <martin@ximian.com>
+
 	* metadata.c
 	(mono_metadata_parse_type_full): Take a `MonoGenericContext *'
 	instead of a `MonoGenericContainer *'.	
