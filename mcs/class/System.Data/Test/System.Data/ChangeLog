@@ -1,5 +1,9 @@
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTableTest.cs : PrimaryKeyColumnChecksNonNull() is working now.
+
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTableTest.cs : added tests for primary key constraint check
 	  (not working right now).
 

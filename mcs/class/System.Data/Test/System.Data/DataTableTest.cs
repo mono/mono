@@ -1277,7 +1277,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (NoNullAllowedException))]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void PrimaryKeyColumnChecksNonNull ()
 		{
 			DataTable dt = new DataTable ("table");

@@ -473,6 +473,15 @@ namespace System.Data {
 				}
 			}
 
+			if (IsPrimaryKey) {
+				object val;
+				for (int i = 0; i < _dataColumns.Length; i++) {
+					val = row[_dataColumns[i]];
+					if (val == null || val == DBNull.Value)
+						throw new NoNullAllowedException("Column '" + _dataColumns[i].ColumnName + "' does not allow nulls.");
+				}
+			}
+
 			try {
 				UpdateIndex (row);
 			}
