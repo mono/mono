@@ -29,7 +29,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 			pattern1 = new RdpElement (new RdpName ("foo", "urn:foo"), RdpEmpty.Instance);
 		}
 		
-		private void AssertPattern (string s, RngPatternType expected, RdpPattern p)
+		private void AssertPattern (string s, RelaxngPatternType expected, RdpPattern p)
 		{
 			AssertEquals (s, expected, p.PatternType);
 		}
@@ -38,17 +38,16 @@ namespace MonoTests.Commons.Xml.Relaxng
 		public void ElementStartTagOpenDeriv ()
 		{
 			result = pattern1.StartTagOpenDeriv ("bar", "urn:foo");
-			AssertPattern ("#element.start.1", RngPatternType.NotAllowed, result);
+			AssertPattern ("#element.start.1", RelaxngPatternType.NotAllowed, result);
 
 			result = pattern1.StartTagOpenDeriv ("foo", "urn:bar");
-			AssertPattern ("#element.start.2", RngPatternType.NotAllowed, result);
+			AssertPattern ("#element.start.2", RelaxngPatternType.NotAllowed, result);
 
 			result = pattern1.StartTagOpenDeriv ("foo", "urn:foo");
-			AssertPattern ("#element.start.3", RngPatternType.After, result);
+			AssertPattern ("#element.start.3", RelaxngPatternType.After, result);
 			RdpAfter after= result as RdpAfter;
-			AssertPattern ("#element.start.4", RngPatternType.Empty, after.LValue);
-			AssertPattern ("#element.start.5", RngPatternType.Empty, after.RValue);
+			AssertPattern ("#element.start.4", RelaxngPatternType.Empty, after.LValue);
+			AssertPattern ("#element.start.5", RelaxngPatternType.Empty, after.RValue);
 		}
-
 	}
 }

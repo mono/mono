@@ -34,9 +34,9 @@ namespace MonoTests.Commons.Xml.Relaxng
 		public void SimpleRead ()
 		{
 			loadGrammarFromUrl ("XmlFiles/SimpleElementPattern1.rng");
-			RngPattern p = reader.ReadPattern ();
+			RelaxngPattern p = reader.ReadPattern ();
 
-			AssertEquals (RngPatternType.Element, p.PatternType);
+			AssertEquals (RelaxngPatternType.Element, p.PatternType);
 		}
 
 /*
@@ -44,9 +44,9 @@ namespace MonoTests.Commons.Xml.Relaxng
 		public void ValidateRelaxngGrammar ()
 		{
 			loadGrammarFromUrl ("XmlFiles/relaxng.rng");
-			RngPattern p = reader.ReadPattern ();
+			RelaxngPattern p = reader.ReadPattern ();
 
-			AssertEquals (RngPatternType.Grammar, p.PatternType);
+			AssertEquals (RelaxngPatternType.Grammar, p.PatternType);
 		}
 */
 

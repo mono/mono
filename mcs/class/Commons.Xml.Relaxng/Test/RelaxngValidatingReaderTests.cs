@@ -39,6 +39,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 				new XmlTextReader (new StringReader (grammar)));
 		}
 
+
 		[Test]
 		public void SimpleElementPattern1 ()
 		{
