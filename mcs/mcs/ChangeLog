@@ -1,5 +1,7 @@
 2003-04-28  Miguel de Icaza  <miguel@ximian.com>
 
+	* delegate.cs: Check unsafe types being used outside of an Unsafe context.
+
 	* ecore.cs: (FieldExpr): Handle field remapping here.
 
 	* iteratators.cs: Pass the instance variable (if the method is an

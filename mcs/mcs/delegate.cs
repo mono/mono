@@ -151,7 +151,7 @@ namespace Mono.CSharp {
 			//
 
 			// Check accessibility
-			foreach (Type partype in param_types)
+			foreach (Type partype in param_types){
 				if (!container.AsAccessible (partype, ModFlags)) {
 					Report.Error (59, Location,
 						      "Inconsistent accessibility: parameter type `" +
@@ -159,6 +159,9 @@ namespace Mono.CSharp {
 						      "accessible than delegate `" + Name + "'");
 					return false;
 				}
+				if (partype.IsPointer && !UnsafeOK (container))
+					return false;
+			}
 			
  			ReturnType = ResolveTypeExpr (ReturnType, false, Location);
    			ret_type = ReturnType.Type;
@@ -172,6 +175,9 @@ namespace Mono.CSharp {
 					      "accessible than delegate `" + Name + "'");
 				return false;
 			}
+
+			if (ret_type.IsPointer && !UnsafeOK (container))
+				return false;
 
 			//
 			// We don't have to check any others because they are all
