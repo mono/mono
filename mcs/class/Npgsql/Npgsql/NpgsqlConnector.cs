@@ -90,7 +90,7 @@ namespace Npgsql
         private NpgsqlBackEndKeyData             _backend_keydata;
 
         // Flag for transaction status.
-//        private Boolean                         _inTransaction = false;
+        //        private Boolean                         _inTransaction = false;
         private NpgsqlTransaction                _transaction = null;
 
         private Boolean                          _supportsPrepare = false;
@@ -222,15 +222,38 @@ namespace Npgsql
 
 
 
-
         /// <summary>
-        /// Check for mediator errors (sent by backend) and throw the appropriate
-        /// exception if errors found.  This needs to be called after every interaction
-        /// with the backend.
+        /// This method checks if the connector is still ok.
+        /// We try to send a simple query text, select 1 as ConnectionTest;
         /// </summary>
-        internal void CheckErrors()
+        internal Boolean IsValid()
         {
-            if (_mediator.Errors.Count > 0) {
+            try
+            {
+                // Here we use a fake NpgsqlCommand, just to send the test query string.
+                Query(new NpgsqlCommand("select 1 as ConnectionTest"));
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+
+
+
+    }
+
+
+    /// <summary>
+    /// Check for mediator errors (sent by backend) and throw the appropriate
+    /// exception if errors found.  This needs to be called after every interaction
+    /// with the backend.
+    /// </summary>
+    internal void CheckErrors()
+        {
+            if (_mediator.Errors.Count > 0)
+            {
                 throw new NpgsqlException(_mediator.Errors);
             }
         }
@@ -242,8 +265,10 @@ namespace Npgsql
         /// </summary>
         internal void CheckNotices()
         {
-            if (Notice != null) {
-                foreach (NpgsqlError E in _mediator.Notices) {
+            if (Notice != null)
+            {
+                foreach (NpgsqlError E in _mediator.Notices)
+                {
                     Notice(this, new NpgsqlNoticeEventArgs(E));
                 }
             }
@@ -256,8 +281,10 @@ namespace Npgsql
         /// </summary>
         internal void CheckNotifications()
         {
-            if (Notification != null) {
-                foreach (NpgsqlNotificationEventArgs E in _mediator.Notifications) {
+            if (Notification != null)
+            {
+                foreach (NpgsqlNotificationEventArgs E in _mediator.Notifications)
+                {
                     Notification(this, E);
                 }
             }
@@ -282,9 +309,12 @@ namespace Npgsql
             string                         targetHost,
             X509CertificateCollection      serverRequestedCertificates)
         {
-            if (CertificateSelectionCallback != null) {
+            if (CertificateSelectionCallback != null)
+            {
                 return CertificateSelectionCallback(clientCertificates, serverCertificate, targetHost, serverRequestedCertificates);
-            } else {
+            }
+            else
+            {
                 return null;
             }
         }
@@ -296,9 +326,12 @@ namespace Npgsql
             X509Certificate       certificate,
             int[]                 certificateErrors)
         {
-            if (CertificateValidationCallback != null) {
+            if (CertificateValidationCallback != null)
+            {
                 return CertificateValidationCallback(certificate, certificateErrors);
-            } else {
+            }
+            else
+            {
                 return true;
             }
         }
@@ -310,9 +343,12 @@ namespace Npgsql
             X509Certificate                certificate,
             string                         targetHost)
         {
-            if (PrivateKeySelectionCallback != null) {
+            if (PrivateKeySelectionCallback != null)
+            {
                 return PrivateKeySelectionCallback(certificate, targetHost);
-            } else {
+            }
+            else
+            {
                 return null;
             }
         }
@@ -492,11 +528,14 @@ namespace Npgsql
         {
             ProtocolVersion      PV;
 
-            // If Connection.ConnectionString specifies a protocol version, we will 
+            // If Connection.ConnectionString specifies a protocol version, we will
             // not try to fall back to version 2 on failure.
-            if (ConnectionString.Contains(ConnectionStringKeys.Protocol)) {
+            if (ConnectionString.Contains(ConnectionStringKeys.Protocol))
+            {
                 PV = ConnectionString.ToProtocolVersion(ConnectionStringKeys.Protocol);
-            } else {
+            }
+            else
+            {
                 PV = ProtocolVersion.Unknown;
             }
 
@@ -516,7 +555,8 @@ namespace Npgsql
             if (_mediator.Errors.Count > 0 && PV == ProtocolVersion.Unknown)
             {
                 // If we attempted protocol version 3, it may be possible to drop back to version 2.
-                if (BackendProtocolVersion == ProtocolVersion.Version3) {
+                if (BackendProtocolVersion == ProtocolVersion.Version3)
+                {
                     NpgsqlError       Error0 = (NpgsqlError)_mediator.Errors[0];
 
                     // If NpgsqlError.ReadFromStream_Ver_3() encounters a version 2 error,
@@ -551,8 +591,8 @@ namespace Npgsql
 
             // First try to determine backend server version using the newest method.
             if (((NpgsqlParameterStatus)_mediator.Parameters["__npgsql_server_version"]) != null)
-                ServerVersionString = ((NpgsqlParameterStatus)_mediator.Parameters["__npgsql_server_version"]).ParameterValue; 
-            
+                ServerVersionString = ((NpgsqlParameterStatus)_mediator.Parameters["__npgsql_server_version"]).ParameterValue;
+
 
             // Fall back to the old way, SELECT VERSION().
             // This should not happen for protocol version 3+.
@@ -597,9 +637,11 @@ namespace Npgsql
         /// </summary>
         internal void Close()
         {
-            try {
+            try
+            {
                 this.CurrentState.Close(this);
-            } catch {}
+            }
+            catch {}
         }
-    }
+}
 }

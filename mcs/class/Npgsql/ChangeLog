@@ -1,3 +1,21 @@
+2004-09-11  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	* Npgsql/NpgsqlConnection.cs: 
+		Dispose: Improved implementation. Also added warning logging for 
+		NpgsqlConnection leakings.
+		Close: Fixed code to allow calling many times even when being disposed.
+	* Npgsql/NpgsqlConnection.resx:
+		Added new warning logging message for NpgsqlConnection leakings.
+	* Npgsql/NpgsqlConnector.cs:
+		IsValid: new method to check if Connector is still valid.
+	* Npgsql/NpgsqlConnectorPool.cs:
+		GetPooledConnector: Improved to check validity of Connector.
+		FixPoolCountBecauseOfConnectionDisposeFalse: new method to fix the connection pool count
+		because NpgsqlConnection leaking. This way, uses doesn't run out of connections from pool.
+
+
+
+
 2004-09-07  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
 	* NpgsqlException.cs:  Added support for deserialization of NpgsqlException.

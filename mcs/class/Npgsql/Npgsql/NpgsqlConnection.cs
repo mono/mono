@@ -239,9 +239,12 @@ namespace Npgsql
             {
                 CheckNotDisposed();
 
-                if (connector != null) {
+                if (connector != null)
+                {
                     return connector.State;
-                } else {
+                }
+                else
+                {
                     return ConnectionState.Closed;
                 }
             }
@@ -335,7 +338,8 @@ namespace Npgsql
 
             CheckConnectionOpen();
 
-            if (connector.Transaction != null) {
+            if (connector.Transaction != null)
+            {
                 throw new InvalidOperationException(resman.GetString("Exception_NoNestedTransactions"));
             }
 
@@ -386,7 +390,7 @@ namespace Npgsql
 
             Close();
 
-            connection_string[ConnectionStringKeys.Database] = dbName;            
+            connection_string[ConnectionStringKeys.Database] = dbName;
 
             Open();
         }
@@ -397,19 +401,20 @@ namespace Npgsql
         /// </summary>
         public void Close()
         {
-            CheckNotDisposed();
+            if (!disposed)
+            {
+                NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");
 
-            if (connector == null) {
-                return;
+                if (connector != null)
+                {
+
+                    connector.Notification -= NotificationDelegate;
+                    connector.Notice -= NoticeDelegate;
+
+                    NpgsqlConnectorPool.ConnectorPoolMgr.ReleaseConnector(this, connector);
+                    connector = null;
+                }
             }
-
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");
-
-            connector.Notification -= NotificationDelegate;
-            connector.Notice -= NoticeDelegate;
-
-            NpgsqlConnectorPool.ConnectorPoolMgr.ReleaseConnector(this, connector);
-            connector = null;
         }
 
         /// <summary>
@@ -444,9 +449,27 @@ namespace Npgsql
         /// <b>false</b> when being called from the finalizer.</param>
         protected override void Dispose(bool disposing)
         {
-            Close();
-            base.Dispose (disposing);
-            disposed = true;
+
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Dispose");
+                    Close();
+                }
+                else
+                {
+                    if (State != ConnectionState.Closed)
+                    {
+                        NpgsqlEventLog.LogMsg(resman, "Log_ConnectionLeaking", LogLevel.Debug);
+                        NpgsqlConnectorPool.ConnectorPoolMgr.FixPoolCountBecauseOfConnectionDisposeFalse(this);
+                    }
+                }
+
+                base.Dispose (disposing);
+                disposed = true;
+
+            }
         }
 
         /// <summary>
@@ -467,10 +490,11 @@ namespace Npgsql
             CheckNotDisposed();
 
             NpgsqlConnection C = new NpgsqlConnection(ConnectionString);
-            
+
             C.Notice += this.Notice;
 
-            if (connector != null) {
+            if (connector != null)
+            {
                 C.Open();
             }
 
@@ -482,14 +506,16 @@ namespace Npgsql
         //
         internal void OnNotice(object O, NpgsqlNoticeEventArgs E)
         {
-            if (Notice != null) {
+            if (Notice != null)
+            {
                 Notice(this, E);
             }
         }
 
         internal void OnNotification(object O, NpgsqlNotificationEventArgs E)
         {
-            if (Notification != null) {
+            if (Notification != null)
+            {
                 Notification(this, E);
             }
         }
@@ -542,9 +568,9 @@ namespace Npgsql
             get
             {
                 return (
-                    connection_string.ToBool(ConnectionStringKeys.Pooling, ConnectionStringDefaults.Pooling) &&
-                    connection_string.ToInt32(ConnectionStringKeys.MaxPoolSize, ConnectionStringDefaults.MaxPoolSize) > 0
-                );
+                           connection_string.ToBool(ConnectionStringKeys.Pooling, ConnectionStringDefaults.Pooling) &&
+                           connection_string.ToInt32(ConnectionStringKeys.MaxPoolSize, ConnectionStringDefaults.MaxPoolSize) > 0
+                       );
             }
         }
 
@@ -584,9 +610,12 @@ namespace Npgsql
             string                         targetHost,
             X509CertificateCollection      serverRequestedCertificates)
         {
-            if (CertificateSelectionCallback != null) {
+            if (CertificateSelectionCallback != null)
+            {
                 return CertificateSelectionCallback(clientCertificates, serverCertificate, targetHost, serverRequestedCertificates);
-            } else {
+            }
+            else
+            {
                 return null;
             }
         }
@@ -598,9 +627,12 @@ namespace Npgsql
             X509Certificate       certificate,
             int[]                 certificateErrors)
         {
-            if (CertificateValidationCallback != null) {
+            if (CertificateValidationCallback != null)
+            {
                 return CertificateValidationCallback(certificate, certificateErrors);
-            } else {
+            }
+            else
+            {
                 return true;
             }
         }
@@ -612,9 +644,12 @@ namespace Npgsql
             X509Certificate                certificate,
             string                         targetHost)
         {
-            if (PrivateKeySelectionCallback != null) {
+            if (PrivateKeySelectionCallback != null)
+            {
                 return PrivateKeySelectionCallback(certificate, targetHost);
-            } else {
+            }
+            else
+            {
                 return null;
             }
         }
@@ -624,43 +659,49 @@ namespace Npgsql
         //
         // Private methods and properties
         //
-       
+
 
         /// <summary>
         /// Write each key/value pair in the connection string to the log.
         /// </summary>
         private void LogConnectionString()
         {
-            foreach (DictionaryEntry DE in connection_string) {
+            foreach (DictionaryEntry DE in connection_string)
+            {
                 NpgsqlEventLog.LogMsg(resman, "Log_ConnectionStringValues", LogLevel.Debug, DE.Key, DE.Value);
             }
         }
 
         private void CheckConnectionOpen()
         {
-            if (disposed) {
+            if (disposed)
+            {
                 throw new ObjectDisposedException(CLASSNAME);
             }
 
-            if (connector == null) {
+            if (connector == null)
+            {
                 throw new InvalidOperationException(resman.GetString("Exception_ConnNotOpen"));
             }
         }
 
         private void CheckConnectionClosed()
         {
-            if (disposed) {
+            if (disposed)
+            {
                 throw new ObjectDisposedException(CLASSNAME);
             }
 
-            if (connector != null) {
+            if (connector != null)
+            {
                 throw new InvalidOperationException(resman.GetString("Exception_ConnOpen"));
             }
         }
 
         private void CheckNotDisposed()
         {
-            if (disposed) {
+            if (disposed)
+            {
                 throw new ObjectDisposedException(CLASSNAME);
             }
         }
