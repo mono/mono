@@ -10,17 +10,11 @@
 namespace System.Web.Services.Description {
 	public sealed class PortCollection : ServiceDescriptionBaseCollection {
 
-		#region Fields
-
-		Service service;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		internal PortCollection (Service service)
 		{
-			this.service = service;
+			parent = service;
 		}
 
 		#endregion
@@ -76,7 +70,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, Port port)
 		{
-			SetParent (port, service);
 			List.Insert (index, port);
 		}
 	

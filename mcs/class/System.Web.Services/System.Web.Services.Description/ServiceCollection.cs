@@ -12,17 +12,11 @@ using System.Web.Services;
 namespace System.Web.Services.Description {
 	public sealed class ServiceCollection : ServiceDescriptionBaseCollection {
 		
-		#region Fields
-
-		ServiceDescription serviceDescription;
-
-		#endregion // Fields
-
 		#region Constructors
 	
 		internal ServiceCollection (ServiceDescription serviceDescription)
 		{
-			this.serviceDescription = serviceDescription;
+			parent = serviceDescription;
 		}
 
 		#endregion // Constructors
@@ -78,7 +72,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, Service service)
 		{
-			SetParent (service, serviceDescription);
 			List.Insert (index, service);
 		}
 	

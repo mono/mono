@@ -12,11 +12,12 @@ using System.Xml;
 
 namespace System.Web.Services.Description {
 	public sealed class ServiceDescriptionCollection : ServiceDescriptionBaseCollection {
-		
+
 		#region Constructors
 	
 		public ServiceDescriptionCollection () 
 		{
+			parent = this;
 		}
 
 		#endregion // Constructors
@@ -30,11 +31,7 @@ namespace System.Web.Services.Description {
 
 				return (ServiceDescription) List[index]; 
 			}
-			set { 
-				Table.Remove (GetKey (List[index]));
-				Table [GetKey (value)] = value;
-				List [index] = value;
-			}
+			set { List [index] = value; }
 		}
 
 		public ServiceDescription this [string ns] {
@@ -111,20 +108,18 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, ServiceDescription serviceDescription)
 		{
-			Table[GetKey (serviceDescription)] = serviceDescription;
 			List.Insert (index, serviceDescription);
 		}
 	
 		public void Remove (ServiceDescription serviceDescription)
 		{
-			Table.Remove (GetKey (serviceDescription));
 			List.Remove (serviceDescription);
 		}
 
-		//protected override void SetParent (object value, object parent)
-		//{
-			//((ServiceDescription) value).SetParent ((ServiceDescriptionCollection) parent);
-		//}
+		protected override void SetParent (object value, object parent)
+		{
+			((ServiceDescription) value).SetParent ((ServiceDescriptionCollection) parent);
+		}
 			
 		#endregion // Methods
 	}

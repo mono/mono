@@ -10,17 +10,11 @@
 namespace System.Web.Services.Description {
 	public sealed class FaultBindingCollection : ServiceDescriptionBaseCollection {
 
-		#region Fields
-
-		OperationBinding operationBinding;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		internal FaultBindingCollection (OperationBinding operationBinding) 
 		{
-			this.operationBinding = operationBinding;
+			parent = operationBinding;
 		}
 
 		#endregion // Constructors
@@ -75,7 +69,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, FaultBinding bindingOperationFault)
 		{
-			SetParent (bindingOperationFault, operationBinding);
 			List.Insert (index, bindingOperationFault);
 		}
 	

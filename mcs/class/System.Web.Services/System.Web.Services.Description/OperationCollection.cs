@@ -10,17 +10,11 @@
 namespace System.Web.Services.Description {
 	public sealed class OperationCollection : ServiceDescriptionBaseCollection {
 
-		#region Fields
-	
-		PortType portType;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		internal OperationCollection (PortType portType) 
 		{
-			this.portType = portType;
+			parent = portType;
 		}
 
 		#endregion // Constructors
@@ -63,7 +57,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, Operation operation)
 		{
-			SetParent (operation, portType);
 			List.Insert (index, operation);
 		}
 	

@@ -10,17 +10,11 @@
 namespace System.Web.Services.Description {
 	public sealed class OperationBindingCollection : ServiceDescriptionBaseCollection {
 
-		#region Fields
-	
-		Binding binding;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		internal OperationBindingCollection (Binding binding)
 		{
-			this.binding = binding;
+			parent = binding;
 		}
 
 		#endregion // Constructors
@@ -63,7 +57,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, OperationBinding bindingOperation)
 		{
-			SetParent (bindingOperation, binding);
 			List.Insert (index, bindingOperation);
 		}
 	

@@ -16,6 +16,7 @@ namespace System.Web.Services.Description {
 		#region Fields
 
 		Hashtable table = new Hashtable ();
+		protected internal object parent;
 
 		#endregion // Fields
 
@@ -31,7 +32,7 @@ namespace System.Web.Services.Description {
 
 		protected virtual string GetKey (object value) 
 		{
-			return null; // per .NET documentation
+			return null; 
 		}
 
 		protected override void OnClear ()
@@ -43,6 +44,7 @@ namespace System.Web.Services.Description {
 		{
 			if (GetKey (value) != null)
 				Table [GetKey (value)] = value;
+			SetParent (value, parent);
 		}
 
 		protected override void OnRemove (int index, object value)
@@ -57,6 +59,7 @@ namespace System.Web.Services.Description {
 				Table.Remove (GetKey (oldValue));
 			if (GetKey (newValue) != null)
 				Table [GetKey (newValue)] = newValue;
+			SetParent (newValue, parent);
 		}
 
 		protected virtual void SetParent (object value, object parent)

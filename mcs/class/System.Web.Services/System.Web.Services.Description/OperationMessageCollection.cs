@@ -12,17 +12,11 @@ using System.Web.Services;
 namespace System.Web.Services.Description {
 	public sealed class OperationMessageCollection : ServiceDescriptionBaseCollection {
 
-		#region Fields
-
-		Operation operation;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		internal OperationMessageCollection (Operation operation)
 		{
-			this.operation = operation; 
+			parent = operation; 
 		}
 
 		#endregion // Constructors
@@ -100,7 +94,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, OperationMessage operationMessage)
 		{
-			SetParent (operationMessage, operation);
 			List.Insert (index, operationMessage);
 		}
 

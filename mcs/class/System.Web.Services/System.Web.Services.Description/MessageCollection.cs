@@ -10,17 +10,11 @@
 namespace System.Web.Services.Description {
 	public sealed class MessageCollection : ServiceDescriptionBaseCollection {
 
-		#region Fields
-
-		ServiceDescription serviceDescription;
-
-		#endregion // Fields
-
 		#region Constructors
 		
 		internal MessageCollection (ServiceDescription serviceDescription)
 		{
-			this.serviceDescription = serviceDescription;
+			parent = serviceDescription;
 		}
 
 		#endregion
@@ -76,7 +70,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, Message message)
 		{
-			SetParent (message, serviceDescription);
 			List.Insert (index, message);
 		}
 	

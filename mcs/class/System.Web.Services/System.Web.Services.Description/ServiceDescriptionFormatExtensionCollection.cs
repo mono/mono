@@ -14,12 +14,6 @@ using System.Xml;
 namespace System.Web.Services.Description {
 	public sealed class ServiceDescriptionFormatExtensionCollection : ServiceDescriptionBaseCollection {
 		
-		#region Fields
-
-		object parent;
-
-		#endregion // Fields
-
 		#region Constructors
 	
 		public ServiceDescriptionFormatExtensionCollection (object parent) 

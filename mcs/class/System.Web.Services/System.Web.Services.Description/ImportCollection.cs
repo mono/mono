@@ -10,17 +10,11 @@
 namespace System.Web.Services.Description {
 	public sealed class ImportCollection : ServiceDescriptionBaseCollection {
 
-		#region Fields
-
-		ServiceDescription serviceDescription;
-
-		#endregion
-
 		#region Constructors
 		
 		internal ImportCollection (ServiceDescription serviceDescription)
 		{
-			this.serviceDescription = serviceDescription;
+			parent = serviceDescription;
 		}
 
 		#endregion
@@ -63,7 +57,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, Import import)
 		{
-			SetParent (import, serviceDescription);
 			List.Insert (index, import);
 		}
 	

@@ -10,17 +10,11 @@
 namespace System.Web.Services.Description {
 	public sealed class OperationFaultCollection : ServiceDescriptionBaseCollection {
 
-		#region Fields
-
-		Operation operation;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		internal OperationFaultCollection (Operation operation) 
 		{
-			this.operation = operation;
+			parent = operation;
 		}
 
 		#endregion // Constructors
@@ -75,8 +69,7 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, OperationFault operationFaultMessage)
 		{
-			SetParent (operationFaultMessage, operation);
-			List.Insert (index, operation);
+			List.Insert (index, operationFaultMessage);
 		}
 	
 		public void Remove (OperationFault operationFaultMessage)
