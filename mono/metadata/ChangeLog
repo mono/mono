@@ -1,3 +1,8 @@
+
+Thu Jun 17 16:50:44 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* *.c, *.h, Makefile.am: more API cleanups and bugfixes.
+
 2004-06-17  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (PLATFORM_LIB): New.  Possibly refer to ../os/libmonoos.la.
