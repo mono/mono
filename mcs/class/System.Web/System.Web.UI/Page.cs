@@ -833,12 +833,16 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		if (!IsCrossPagePostBack)
 			LoadPreviousPageReference ();
+			
+		OnPreInit (EventArgs.Empty);
 #endif
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
 		Trace.Write ("aspx.page", "End Init");
 
 #if NET_2_0
+		OnInitComplete (EventArgs.Empty);
+		
 		if (masterPageFile != null) {
 			Controls.Add (Master);
 			Master.FillPlaceHolders ();
@@ -858,6 +862,8 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		if (IsCrossPagePostBack)
 			return;
+
+		OnPreLoad (EventArgs.Empty);
 #endif
 
 		LoadRecursive ();
@@ -874,6 +880,8 @@ public class Page : TemplateControl, IHttpHandler
 		}
 		
 #if NET_2_0
+		OnLoadComplete (EventArgs.Empty);
+
 		if (IsCallback) {
 			string result = ProcessCallbackData ();
 			HtmlTextWriter callbackOutput = new HtmlTextWriter (_context.Response.Output);
@@ -886,10 +894,18 @@ public class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "Begin PreRender");
 		PreRenderRecursiveInternal ();
 		Trace.Write ("aspx.page", "End PreRender");
+		
+#if NET_2_0
+		OnPreRenderComplete (EventArgs.Empty);
+#endif
 
 		Trace.Write ("aspx.page", "Begin SaveViewState");
 		SavePageViewState ();
 		Trace.Write ("aspx.page", "End SaveViewState");
+		
+#if NET_2_0
+		OnSaveStateComplete (EventArgs.Empty);
+#endif
 		
 		//--
 		Trace.Write ("aspx.page", "Begin Render");
@@ -1146,6 +1162,92 @@ public class Page : TemplateControl, IHttpHandler
 	}
 	
 	#if NET_2_0
+	
+	static readonly object InitCompleteEvent = new object ();
+	static readonly object LoadCompleteEvent = new object ();
+	static readonly object PreInitEvent = new object ();
+	static readonly object PreLoadEvent = new object ();
+	static readonly object PreRenderCompleteEvent = new object ();
+	static readonly object SaveStateCompleteEvent = new object ();
+	
+	public event EventHandler InitComplete {
+		add { Events.AddHandler (InitCompleteEvent, value); }
+		remove { Events.RemoveHandler (InitCompleteEvent, value); }
+	}
+	
+	public event EventHandler LoadComplete {
+		add { Events.AddHandler (LoadCompleteEvent, value); }
+		remove { Events.RemoveHandler (LoadCompleteEvent, value); }
+	}
+	
+	public event EventHandler PreInit {
+		add { Events.AddHandler (PreInitEvent, value); }
+		remove { Events.RemoveHandler (PreInitEvent, value); }
+	}
+	
+	public event EventHandler PreLoad {
+		add { Events.AddHandler (PreLoadEvent, value); }
+		remove { Events.RemoveHandler (PreLoadEvent, value); }
+	}
+	
+	public event EventHandler PreRenderComplete {
+		add { Events.AddHandler (PreRenderCompleteEvent, value); }
+		remove { Events.RemoveHandler (PreRenderCompleteEvent, value); }
+	}
+	
+	public event EventHandler SaveStateComplete {
+		add { Events.AddHandler (SaveStateCompleteEvent, value); }
+		remove { Events.RemoveHandler (SaveStateCompleteEvent, value); }
+	}
+	
+	protected virtual void OnInitComplete (EventArgs e)
+	{
+		if (Events != null) {
+			EventHandler eh = (EventHandler) (Events [InitCompleteEvent]);
+			if (eh != null) eh (this, e);
+		}
+	}
+	
+	protected virtual void OnLoadComplete (EventArgs e)
+	{
+		if (Events != null) {
+			EventHandler eh = (EventHandler) (Events [LoadCompleteEvent]);
+			if (eh != null) eh (this, e);
+		}
+	}
+	
+	protected virtual void OnPreInit (EventArgs e)
+	{
+		if (Events != null) {
+			EventHandler eh = (EventHandler) (Events [PreInitEvent]);
+			if (eh != null) eh (this, e);
+		}
+	}
+	
+	protected virtual void OnPreLoad (EventArgs e)
+	{
+		if (Events != null) {
+			EventHandler eh = (EventHandler) (Events [PreLoadEvent]);
+			if (eh != null) eh (this, e);
+		}
+	}
+	
+	protected virtual void OnPreRenderComplete (EventArgs e)
+	{
+		if (Events != null) {
+			EventHandler eh = (EventHandler) (Events [PreRenderCompleteEvent]);
+			if (eh != null) eh (this, e);
+		}
+	}
+	
+	protected virtual void OnSaveStateComplete (EventArgs e)
+	{
+		if (Events != null) {
+			EventHandler eh = (EventHandler) (Events [SaveStateCompleteEvent]);
+			if (eh != null) eh (this, e);
+		}
+	}
+	
 	public string GetWebResourceUrl(Type type, string resourceName)
 	{
 		if (type == null)
@@ -1315,6 +1417,19 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		if (requireStateControls == null) requireStateControls = new ArrayList ();
 		requireStateControls.Add (control);
+	}
+	
+	public bool RequiresControlState (Control control)
+	{
+		if (requireStateControls == null) return false;
+		return requireStateControls.Contains (control);
+	}
+	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public void UnregisterRequiresControlState (Control control)
+	{
+		if (requireStateControls != null)
+			requireStateControls.Remove (control);
 	}
 	
 	public ValidatorCollection GetValidators (string validationGroup)

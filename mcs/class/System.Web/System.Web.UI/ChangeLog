@@ -1,3 +1,7 @@
+2005-02-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Page.cs: Implemented missing events.
+
 2005-02-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BoundPropertyEntry.cs:
