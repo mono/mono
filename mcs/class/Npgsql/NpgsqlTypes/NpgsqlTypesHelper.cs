@@ -578,18 +578,25 @@ namespace NpgsqlTypes
         /// <summary>
         /// Perform a data conversion from a native object to
         /// a backend representation.
-        /// DBNull will always be converted to "NULL".
+        /// DBNull and null values are handled differently depending if a plain query is used
+        /// When 
         /// </summary>
         /// <param name="NativeData">Native .NET object to be converted.</param>
-        /// <param name="SuppressQuoting">Never add quotes (only applies to certain types).</param>
-        public String ConvertToBackend(Object NativeData, Boolean SuppressQuoting)
+        /// <param name="ForExtendedQuery">Flag indicating if the conversion has to be done for 
+		/// plain queries or extended queries</param>
+        public String ConvertToBackend(Object NativeData, Boolean ForExtendedQuery)
         {
-            if (NativeData == DBNull.Value) {
-                return "NULL";
-            } else if (_ConvertNativeToBackend != null) {
-                return QuoteString(! SuppressQuoting, _ConvertNativeToBackend(this, NativeData));
+            if ((NativeData == DBNull.Value) || (NativeData == null))
+            	if (ForExtendedQuery)
+            		return null;	// Extended query expects null values be represented as null.
+            	else
+            		return "NULL"; 	// Plain queries exptects null values as string NULL. 
+			    
+            else if (_ConvertNativeToBackend != null) {
+                return QuoteString(! ForExtendedQuery, _ConvertNativeToBackend(this, NativeData));
+                
             } else {
-                return QuoteString(! SuppressQuoting, (String)Convert.ChangeType(NativeData, typeof(String), CultureInfo.InvariantCulture));
+                return QuoteString(! ForExtendedQuery, (String)Convert.ChangeType(NativeData, typeof(String), CultureInfo.InvariantCulture));
             }
         }
 
