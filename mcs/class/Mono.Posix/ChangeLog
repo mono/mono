@@ -1,3 +1,7 @@
+2004-11-05  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Mono.Posix.dll.sources: Add lots of new files to the binding.
+
 2004-06-03  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (Mono.Posix/make-map.exe): Depend on $(the_lib) to pick

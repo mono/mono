@@ -1,3 +1,39 @@
+2004-11-05  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* PosixConvert.cs: New file; conversion functions for Mono.Posix types.
+	* PosixDirectory.cs: New file; Friendly wrapper over directory information.
+	* PosixDirectoryInfo.cs: New file; Friendly wrapper over directory information.
+	* PosixEnvironment.cs: New file; Friendly wrapper over environment information.
+	* PosixFile.cs: New file; Friendly wrapper over file information.
+	* PosixFileInfo.cs: New file; Friendly wrapper over file information.
+	* PosixFileSystemInfo.cs: New file; Friendly wrapper over `stat'.
+	* PosixGroup.cs: New file; User Group-related functionality
+	* PosixGroupInfo.cs: New file; User Group-related functionality
+	* PosixIOException.cs: New file; Exception for POSIX-generated exceptions.
+	* PosixMarshal.cs: New file; utility functions for marshaling, etc.
+	* PosixProcess.cs: New file; Friendly wrapper over process information.
+	* PosixStream.cs: New file; Friendly wrapper over file descriptors.
+	* PosixSymbolicLinkInfo.cs: New file; Friendly wrapper over symbolic links.
+	* PosixUser.cs: New file; Friendly wrapper over user information.
+	* PosixUserInfo.cs: New file; Friendly wrapper over user information.
+	* Stdlib.cs: New file; C standard library exports.
+	* Syscall.cs: Effective re-write.  
+	  - Organize exports by header file
+	  - add additional enumerations (Error for the E* error values, etc.)
+	  - always explicitly specify enumeration underlying type
+	  - Use a new wrapping infrastructure so that ABI-stable types are exported
+	  	- For example, size_t is exported as ulong, not IntPtr.
+	  - Wrap more functions, and wrap them better (such as getpwnam).
+	  - This release is NOT backward compatible.  Many names are the same, and
+	    hopefully they're still compatible, but no effort was made to maintain
+	    compatibility.  For example, FileMode was removed and replaced with
+	    FilePermissions, to avoid a name conflict with System.IO.FileMode.
+	* make-map.cs: Another effective re-write, to clean up the code, produce
+	  better output, and produce more output.  For example, most of
+	  PosixConvert can be auto-generated, so it is (modulo version delays and
+	  bootstrap issues).  `map.c' is now conditional on all macros, and has
+	  error checking for invalid/unsupported values.
+
 2004-09-18  Jackson Harper  <jackson@ximian.com>
 
 	* Syscall.cs: Add support for poll ().
