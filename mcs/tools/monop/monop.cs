@@ -14,6 +14,8 @@ using System.Collections;
 using System.CodeDom.Compiler;
 
 class MonoP {
+	static string assembly;
+	
 	// very common namespaces, all in corlib
 	static readonly string [] v_common_ns = {
 		"System",
@@ -38,23 +40,58 @@ class MonoP {
 	};
 	
 	static IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
+
+	static Type GetType (string tname, bool ignoreCase)
+	{
+		Type t;
+		if (assembly != null){
+			Assembly a = Assembly.Load (assembly);
+			t = a.GetType (tname, false, ignoreCase);
+		} else
+			t = Type.GetType (tname, false, ignoreCase);
+
+		return t;
+	}
+
+	static Type GetType (string tname)
+	{
+		return GetType (tname, false);
+	}
+	
 	static void Main (string [] args)
 	{
-		if (args.Length != 1) {
-			Console.WriteLine ("monop <class name>");
+		if (args.Length < 1) {
+			Console.WriteLine ("monop [-r:Assembly] class-name");
 			return;
 		}
 		
-		string tname = args [0];
-		Type t = Type.GetType (tname, false, true);
-		
+		IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
+
+		int i = 0;
+		if (args [0].StartsWith ("-r:")){
+			i++;
+			assembly = args [0].Substring (3);
+		}
+
+		if (args.Length < i+1){
+			Console.WriteLine ("Usage is: monop [-r:Assembly] class-name");
+			return;
+		}
+
+		string tname = args [i];
+		Type t = GetType (tname);
+
 		if (t == null) {
 			// Try some very common ones, dont load anything
 			foreach (string ns in v_common_ns) {
-				t = Type.GetType (ns + "." + tname, false, true);
+				t = GetType (ns + "." + tname, true);
 				if (t != null)
 					goto found;
 			}
+		}
+
+		if (assembly != null){
+			Console.WriteLine ("Did not find type in assembly");
 		}
 		
 		if (t == null) {
@@ -90,7 +127,7 @@ class MonoP {
 		
 		Type [] interfaces = (Type []) Comparer.Sort (t.GetInterfaces ());
 		Type parent = t.BaseType;
-		
+
 		if ((parent != null && parent != typeof (object) && parent != typeof (ValueType))|| interfaces.Length != 0) {
 			bool first = true;
 			o.Write (" : ");
