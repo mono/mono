@@ -1,3 +1,8 @@
+
+Fri Jan 2 13:35:48 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, object.c: prepare for GetType () speedup.
+
 2003-12-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* profiler.c: workaround for --profile null reference exception on
