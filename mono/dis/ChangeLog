@@ -1,4 +1,9 @@
 
+Mon Dec 24 17:24:13 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* main.c, dump.h, dump.c: add dump_table_nestedclass().
+	* dis-cil.c: output int64 as hex.
+
 Tue Dec 18 18:48:00 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: use mono_metadata_methods_from_property() and
