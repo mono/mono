@@ -1,10 +1,15 @@
+2003-01-24  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* unix.args: added System.Runtime.Remoting/TypeInfo.cs and
+	  System.Runtime.Serialization.Formatters.Binary/MessageFormatter.cs
+
 2003-01-18  Jonathan Pryor <jonpryor@vt.edu>
 
 	* unix.args: Added IsolatedStorageFile.cs and IsolatedStorageInfo.cs in
 	  System.IO.IsolatedStorage
 
 
-2003-01-17
+2003-01-17  Lluis Sanchez Gual <lluis@ideary.com>
 	* unix.args: Added System/DelegateSerializationHolder.cs, 
 	  System/UnitySerializationHolder.cs,
 	  System.Runtime.Serialization/ObjectManager.cs,
