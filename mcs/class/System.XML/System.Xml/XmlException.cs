@@ -87,5 +87,13 @@ namespace System.Xml
 		{
 			Fmessage = message;
 		}
+
+		internal XmlException( string message, XmlInputSource src)
+		{
+			FlineNumber = src.lineNumber;
+			FlinePosition = src.columnNumber;
+			Fmessage = message;
+		}
+
 	}
 }

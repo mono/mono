@@ -702,7 +702,6 @@ namespace System.Xml
 				throw new ArgumentException("New parent node owner does not match");
 		}
 		
-
 		//======= Protected methods    ==============================================
 
 		//======= Private Methods ===================================================
