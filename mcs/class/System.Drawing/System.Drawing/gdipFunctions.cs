@@ -856,7 +856,7 @@ namespace System.Drawing {
 		internal static extern Status GdipImageRotateFlip ( IntPtr image, RotateFlipType rotateFlipType );
 		
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
-		internal static extern Status GdipSaveImageToFile (IntPtr image, string filename, ref Guid encoderClsID, IntPtr encoderParameters); 
+		internal static extern Status GdipSaveImageToFile (IntPtr image, string filename,  Guid encoderClsID, IntPtr encoderParameters); 
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipSaveAdd ( IntPtr image, IntPtr encoderParameters );
