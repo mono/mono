@@ -1,3 +1,9 @@
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Added common methods to help building all
+	Permissions classes in corlib. Most are declared static as they can 
+	also help non CodeAccessPermission-derived permissions.
+
 2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Change ResolvePolicy to only care about host
