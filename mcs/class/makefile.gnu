@@ -18,8 +18,7 @@ DIRS =	corlib				\
 	Mono.Data.SqliteClient		\
 	Mono.PEToolkit			\
 	Accessibility			\
-	Microsoft.VisualBasic		\
-	System.Windows.Forms
+	Microsoft.VisualBasic
 
 #	Mono.Data.TdsClient		
 
