@@ -43,7 +43,7 @@ namespace System.IO.IsolatedStorage {
 		// Documented in "C# In A Nutshell"
 		Roaming = 8,
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		Machine = 16,
 		Application = 32
 #endif

@@ -1,3 +1,9 @@
+2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageScope.cs: Add missing BOOTSTRAP_NET_2_0 to new enum 
+	values. Fix #73046.
+	* IsolatedStorageFile.cs: Remove commented security attributes.
+
 2005-03-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Added CAS demands (imperative when possible)

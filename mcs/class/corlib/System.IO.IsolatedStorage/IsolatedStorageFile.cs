@@ -157,8 +157,7 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
-// waiting for fix to http://bugzilla.ximian.com/show_bug.cgi?id=73046
-//		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByMachine)]
+		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByMachine)]
 		public static IsolatedStorageFile GetMachineStoreForApplication ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Application;
@@ -168,8 +167,7 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
-// waiting for fix to http://bugzilla.ximian.com/show_bug.cgi?id=73046
-//		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.AssemblyIsolationByMachine)]
+		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.AssemblyIsolationByMachine)]
 		public static IsolatedStorageFile GetMachineStoreForAssembly ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Assembly;
@@ -179,8 +177,7 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
-// waiting for fix to http://bugzilla.ximian.com/show_bug.cgi?id=73046
-//		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.DomainIsolationByMachine)]
+		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.DomainIsolationByMachine)]
 		public static IsolatedStorageFile GetMachineStoreForDomain ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
@@ -191,8 +188,7 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
-// waiting for fix to http://bugzilla.ximian.com/show_bug.cgi?id=73046
-//		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByUser)]
+		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByUser)]
 		public static IsolatedStorageFile GetUserStoreForApplication ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Application;
