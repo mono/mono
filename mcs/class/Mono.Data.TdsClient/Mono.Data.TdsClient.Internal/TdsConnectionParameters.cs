@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsConnectionParametersInternal.cs
+// Mono.Data.TdsClient.Internal.TdsConnectionParameters.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -8,7 +8,7 @@
 //
 
 namespace Mono.Data.TdsClient.Internal {
-	internal class TdsConnectionParametersInternal 
+	internal class TdsConnectionParameters
 	{
 		public string ApplicationName = "Mono.Data.TdsClient Data Provider";
 		public string Database;
@@ -20,7 +20,7 @@ namespace Mono.Data.TdsClient.Internal {
 		public string Password;
 		public int Port;
 		public string ProgName = "Mono.Data.TdsClient Data Provider";
-		public TdsVersionInternal TdsVersion;
+		public TdsVersion TdsVersion;
 		public string User;
 	}
 }

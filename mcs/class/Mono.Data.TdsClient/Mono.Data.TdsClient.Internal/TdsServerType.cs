@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsServerTypeInternal.cs
+// Mono.Data.TdsClient.Internal.TdsServerType.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -8,8 +8,9 @@
 //
 
 namespace Mono.Data.TdsClient.Internal {
-        internal enum TdsServerTypeInternal 
+        internal enum TdsServerType
 	{
+		Generic,   // use TDS version 4.2
 		SqlServer, // use TDS version 4.2, 7.0, 8.0
 		Sybase     // use TDS version 4,2, 5.0
 	}

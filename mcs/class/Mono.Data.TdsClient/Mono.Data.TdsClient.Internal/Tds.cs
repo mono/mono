@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsInternal.cs
+// Mono.Data.TdsClient.Internal.Tds.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -14,15 +14,15 @@ using System.Net.Sockets;
 using System.Text;
 
 namespace Mono.Data.TdsClient.Internal {
-        internal class TdsInternal 
+        internal class Tds
 	{
 		#region Fields
 
-		TdsServerTypeInternal serverType;
-		TdsCommInternal comm;
-		TdsVersionInternal tdsVersion;
-		TdsConnectionParametersInternal parms;
-		TdsCommandInternal command;
+		TdsServerType serverType;
+		TdsComm comm;
+		TdsVersion tdsVersion;
+		TdsConnectionParameters parms;
+		//TdsCommand command;
 		Encoding encoding;
 		IsolationLevel isolationLevel;
 		bool autoCommit;
@@ -32,17 +32,17 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region Properties
 
-		public TdsCommandInternal Command {
-			get { return command; }
-			set { command = value; }
-		}
+		//public TdsCommandInternal Command {
+			//get { return command; }
+			//set { command = value; }
+		//}
 
 		public string Database {
 			get { return parms.Database; }
 			set { parms.Database = value; }
 		}
 
-		public TdsVersionInternal TdsVersion {
+		public TdsVersion TdsVersion {
 			get { return tdsVersion; }
 			set { tdsVersion = value; }
 		}
@@ -51,7 +51,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region Constructors
 
-		public TdsInternal (TdsConnectionInternal connection, TdsConnectionParametersInternal parms)
+		public Tds (TdsConnectionParameters parms)
 		{
                         IPHostEntry hostEntry = Dns.GetHostByName (parms.Host);
                         IPAddress[] addresses = hostEntry.AddressList;
@@ -67,7 +67,7 @@ namespace Mono.Data.TdsClient.Internal {
                         }
 
 			encoding = Encoding.GetEncoding (parms.Encoding);
-			comm = new TdsCommInternal (socket, parms.PacketSize, tdsVersion);
+			comm = new TdsComm (socket, parms.PacketSize, tdsVersion);
 		}	
 
 		#endregion // Constructors
@@ -77,8 +77,8 @@ namespace Mono.Data.TdsClient.Internal {
 		public void ChangeDatabase (string databaseName)
 		{
                         string query = String.Format ("use {0}", databaseName);
-                        comm.StartPacket (TdsPacketTypeInternal.Query);
-                        if (tdsVersion == TdsVersionInternal.tds70)
+                        comm.StartPacket (TdsPacketType.Query);
+                        if (tdsVersion == TdsVersion.tds70)
                                 comm.AppendChars (query);
                         else {
                                 byte[] queryBytes = encoding.GetBytes (query);
@@ -100,8 +100,8 @@ namespace Mono.Data.TdsClient.Internal {
 			if( query.Length == 0)
 				return true;
 
-			comm.StartPacket (TdsPacketTypeInternal.Query);
-			if (tdsVersion == TdsVersionInternal.tds70)
+			comm.StartPacket (TdsPacketType.Query);
+			if (tdsVersion == TdsVersion.tds70)
 				comm.AppendChars (query);
 			else {
 				byte[] queryBytes = encoding.GetBytes (query);
@@ -112,15 +112,15 @@ namespace Mono.Data.TdsClient.Internal {
 			return isOkay;
 		}
 
-		public bool Logon (TdsConnectionParametersInternal parms)
+		public bool Logon (TdsConnectionParameters parms)
 		{
 			byte pad = (byte) 0;
 			byte[] empty = new byte[0];
 
-			if (tdsVersion == TdsVersionInternal.tds70) {
+			if (tdsVersion == TdsVersion.tds70) {
 				Send70Logon (parms);
 			} else {
-				comm.StartPacket (TdsPacketTypeInternal.Logon);
+				comm.StartPacket (TdsPacketType.Logon);
 
 				// hostname (offset 0)
 				byte[] tmp = encoding.GetBytes (parms.Host);
@@ -273,13 +273,13 @@ namespace Mono.Data.TdsClient.Internal {
 			
 		}
 
-		public void Send70Logon (TdsConnectionParametersInternal parms)
+		public void Send70Logon (TdsConnectionParameters parms)
 		{
 			short packSize = (short) (86 + 2 * (parms.User.Length + parms.Password.Length + parms.ApplicationName.Length + parms.Host.Length + parms.LibraryName.Length + parms.Database.Length));
 			byte[] empty = new byte[0];
 			byte pad = (byte) 0;
 
-			comm.StartPacket (TdsPacketTypeInternal.Logon70);
+			comm.StartPacket (TdsPacketType.Logon70);
 			comm.AppendTdsInt (packSize);
 
 			// TDS Version
@@ -375,7 +375,7 @@ namespace Mono.Data.TdsClient.Internal {
 		private string SqlStatementToSetCommit ()
 		{
 			string result;
-			if (serverType == TdsServerTypeInternal.Sybase) {
+			if (serverType == TdsServerType.Sybase) {
 				if (autoCommit) 
 					result = "set CHAINED off";
 				else

@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsCommInternal.cs
+// Mono.Data.TdsClient.Internal.TdsComm.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -13,13 +13,13 @@ using System.Text;
 using System.Threading;
 
 namespace Mono.Data.TdsClient.Internal {
-        internal sealed class TdsCommInternal 
+        internal sealed class TdsComm
 	{
 		#region Fields
 
 		NetworkStream stream;
 		int packetSize;
-		TdsPacketTypeInternal packetType = TdsPacketTypeInternal.None;
+		TdsPacketType packetType = TdsPacketType.None;
 
 		byte[] outBuffer;
 		int outBufferLength;
@@ -37,13 +37,13 @@ namespace Mono.Data.TdsClient.Internal {
 		int packetsSent = 0;
 		int packetsReceived = 0;
 
-		TdsVersionInternal tdsVersion;
+		TdsVersion tdsVersion;
 		
 		#endregion // Fields
 		
 		#region Constructors
 		
-		public TdsCommInternal (Socket socket, int packetSize, TdsVersionInternal tdsVersion)
+		public TdsComm (Socket socket, int packetSize, TdsVersion tdsVersion)
 		{
 			this.packetSize = packetSize;
 			stream = new NetworkStream (socket);
@@ -62,9 +62,9 @@ namespace Mono.Data.TdsClient.Internal {
 		
 		#region Methods
 		
-		public void StartPacket (TdsPacketTypeInternal type)
+		public void StartPacket (TdsPacketType type)
 		{
-			if (type != TdsPacketTypeInternal.Cancel && inBufferIndex != inBufferLength)
+			if (type != TdsPacketType.Cancel && inBufferIndex != inBufferLength)
 			{
 				// SAfe It's ok to throw this exception so that we will know there
 				//      is a design flaw somewhere, but we should empty the buffer
@@ -88,7 +88,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public bool SomeThreadIsBuildingPacket ()
 		{
-			return packetType != TdsPacketTypeInternal.None;
+			return packetType != TdsPacketType.None;
 		}
 
 		public void AppendByte (byte b)
@@ -191,7 +191,7 @@ namespace Mono.Data.TdsClient.Internal {
 			Monitor.Pulse (packetType);
 			SendPhysicalPacket (true);
 			nextOutBufferIndex = 0;
-			packetType = TdsPacketTypeInternal.None;
+			packetType = TdsPacketType.None;
 			Monitor.Exit (packetType);
 		}
 		
@@ -208,14 +208,14 @@ namespace Mono.Data.TdsClient.Internal {
 
 		private void SendPhysicalPacket (bool isLastSegment)
 		{
-			if (nextOutBufferIndex > headerLength || packetType == TdsPacketTypeInternal.Cancel) {
+			if (nextOutBufferIndex > headerLength || packetType == TdsPacketType.Cancel) {
 				// packet type
 				StoreByte (0, (byte) ((byte) packetType & 0xff));
 				StoreByte (1, isLastSegment ? (byte) 1 : (byte) 0);
 				StoreShort (2, (short) nextOutBufferIndex );
 				StoreByte (4, (byte) 0);
 				StoreByte (5, (byte) 0);
-				StoreByte (6, (byte) (tdsVersion == TdsVersionInternal.tds70 ? 1 : 0));
+				StoreByte (6, (byte) (tdsVersion == TdsVersion.tds70 ? 1 : 0));
 				StoreByte (7, (byte) 0);
 
 				stream.Write (outBuffer, 0, nextOutBufferIndex);
@@ -280,7 +280,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public string GetString (int len)
 		{
-			if (tdsVersion == TdsVersionInternal.tds70) {
+			if (tdsVersion == TdsVersion.tds70) {
 				char[] chars = new char[len];
 				for (int i = 0; i < len; ++i) {
 					int lo = GetByte () & 0xFF;
@@ -355,8 +355,8 @@ namespace Mono.Data.TdsClient.Internal {
 			for (int nread = 0; nread < 8; ) 
 				nread += stream.Read (tmpBuf, nread, 8 - nread);
 
-			TdsPacketTypeInternal packetType = (TdsPacketTypeInternal) tmpBuf[0];
-			if (packetType != TdsPacketTypeInternal.Logon && packetType != TdsPacketTypeInternal.Query && packetType != TdsPacketTypeInternal.Reply) {
+			TdsPacketType packetType = (TdsPacketType) tmpBuf[0];
+			if (packetType != TdsPacketType.Logon && packetType != TdsPacketType.Query && packetType != TdsPacketType.Reply) {
 				//throw new TdsUnknownPacketType (packetType, tmpBuf);
 			}
 

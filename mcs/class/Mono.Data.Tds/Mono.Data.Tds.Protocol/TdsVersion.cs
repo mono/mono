@@ -7,8 +7,8 @@
 // Copyright (C) 2002 Daniel Morgan
 //
 
-namespace Mono.Data.TdsClient {
-	public enum TdsVersionInternal 
+namespace Mono.Data.TdsClient.Internal {
+	public enum TdsVersion
 	{
                 tds42 = 42, // used by older Sybase and Microsoft SQL (< 7.0) servers
                 tds50 = 50, // used by Sybase

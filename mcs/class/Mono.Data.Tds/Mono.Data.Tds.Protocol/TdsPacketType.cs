@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsPacketTypeInternal.cs
+// Mono.Data.TdsClient.Internal.TdsPacketType.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -8,7 +8,7 @@
 //
 
 namespace Mono.Data.TdsClient.Internal {
-        internal enum TdsPacketTypeInternal 
+        internal enum TdsPacketType
 	{
 		None = 0x0,
 		Query = 0x1,
