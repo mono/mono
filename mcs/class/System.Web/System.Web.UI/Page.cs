@@ -46,6 +46,9 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.SessionState;
 using System.Web.Util;
+#if NET_2_0
+using System.Web.UI.HtmlControls;
+#endif
 
 namespace System.Web.UI
 {
@@ -100,6 +103,7 @@ public class Page : TemplateControl, IHttpHandler
 	bool isCrossPagePostBack;
 	ArrayList requireStateControls;
 	Hashtable _validatorsByGroup;
+	HtmlForm _form;
 #endif
 
 	#region Constructor
@@ -1246,6 +1250,15 @@ public class Page : TemplateControl, IHttpHandler
 			EventHandler eh = (EventHandler) (Events [SaveStateCompleteEvent]);
 			if (eh != null) eh (this, e);
 		}
+	}
+	
+	public HtmlForm Form {
+		get { return _form; }
+	}
+	
+	internal void RegisterForm (HtmlForm form)
+	{
+		_form = form;
 	}
 	
 	public string GetWebResourceUrl(Type type, string resourceName)

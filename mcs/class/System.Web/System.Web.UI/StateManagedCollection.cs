@@ -91,6 +91,9 @@ namespace System.Web.UI {
 				else
 					itm = (IStateManager) CreateKnownType ((int) p.Second);
 				
+				if (isTrackingViewState)
+					itm.TrackViewState ();
+
 				itm.LoadViewState (p.First);
 				
 				if (pos >= Count)

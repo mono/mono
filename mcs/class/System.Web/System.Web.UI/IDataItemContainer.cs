@@ -36,6 +36,9 @@ namespace System.Web.UI
 	public interface IDataItemContainer
 	{
 		object DataItem { get; }
+/*		int DataItemIndex { get; }
+		int DisplayIndex { get; }
+*/
 	}
 }
 #endif

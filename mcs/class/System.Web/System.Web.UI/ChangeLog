@@ -1,3 +1,13 @@
+2005-02-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataSourceView.cs: Fixed incorrect implementation of
+	RaiseUnsupportedCapabilityError.
+	* IDataItemContainer.cs: Added new properties.
+	* Page.cs: Implemented Form property.
+	* Control.cs: Fixed formatting.
+	* StateManagedCollection.cs: Track view state of items loaded
+	in LoadViewState.
+
 2005-02-22  Lluis Sanchez Gual <lluis@novell.com>
 
 	* FilterableAttribute.cs: Fix endless loop.

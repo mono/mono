@@ -116,38 +116,17 @@ namespace System.Web.UI {
 		protected internal virtual void RaiseUnsupportedCapabilityError (
 						DataSourceCapabilities capability)
 		{
-			if (capability == DataSourceCapabilities.Sort)
+			if ((capability & DataSourceCapabilities.Sort) != 0)
 				if (!CanSort)
 					throw new NotSupportedException ("Sort Capabilites");
 
-			if (capability == DataSourceCapabilities.Page)
+			if ((capability & DataSourceCapabilities.Page) != 0)
 				if (!CanPage)
 					throw new NotSupportedException("Page Capabilites");
 
-			if (capability == DataSourceCapabilities.RetrieveTotalRowCount)
+			if ((capability & DataSourceCapabilities.RetrieveTotalRowCount) != 0)
 				if (!CanRetrieveTotalRowCount)
 					throw new NotSupportedException("RetrieveTotalRowCount Capabilites");
-			
-			if (capability == (DataSourceCapabilities.Sort & 
-						DataSourceCapabilities.Page))
-				if (!(CanSort && CanPage))
-					throw new NotSupportedException ("Sort Capabilites");
-
-			if (capability == (DataSourceCapabilities.Sort & 
-						DataSourceCapabilities.RetrieveTotalRowCount))
-				if (!(CanSort && CanRetrieveTotalRowCount))
-					throw new NotSupportedException("Page Capabilites");
-
-			if (capability == (DataSourceCapabilities.Page & 
-						DataSourceCapabilities.RetrieveTotalRowCount))
-				if (!(CanPage && CanRetrieveTotalRowCount))
-					throw new NotSupportedException("RetrieveTotalRowCount Capabilites");
-
-			if (capability == (DataSourceCapabilities.Sort & 
-						DataSourceCapabilities.Page & 
-						DataSourceCapabilities.RetrieveTotalRowCount))
-				if (!(CanSort && CanPage && CanRetrieveTotalRowCount))
-					throw new NotSupportedException ("Sort Capabilites");
 
 			return;
 		}
