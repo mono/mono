@@ -2158,7 +2158,7 @@ namespace Mono.Xml.XPath2
 #region CompileAndEvaluate
 
 	// It is instantiated per function call expression.
-	// (e.g. the example below contains 3 FunctionCallExpression instances:
+	// (e.g. the example below contains 4 FunctionCallExpression instances:
 	// "replace(node-name (node-before(/*)), 'foo', node-name($var))"
 	internal class CustomFunctionCallExpr : FunctionCallExprBase
 	{
@@ -2189,6 +2189,8 @@ namespace Mono.Xml.XPath2
 		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
 		{
 			CheckArguments (compiler);
+			for (int i = 0; i < Args.Count; i++)
+				Args [i] = Args [i].Compile (compiler);
 			return this;
 		}
 

@@ -1,3 +1,21 @@
+2004-08-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPath2Expression.cs : in Compiler(), function call's arguments must
+	  also be compiled.
+	* XQueryASTCompiler.cs : When function is external, it should not try
+	  to compile body, and tries to handle it as a native CLI method (I
+	  don't like this name resolution design very much, so it is likely
+	  to be redesigned).
+	* XQueryCliFunction.cs : trivial code comment fix.
+	* XQueryFunction : added user-specified function call support.
+	  When CLI function returned null, don't wrap null and just return
+	  XQueryEmptySequence.
+	* XQueryFunctionCliImpl.cs : fn:nilled() requires certain node.
+	  Implemented numeric functions (in the future they might be
+	  rewritten to avoid boxing).
+	* XQueryTokenizer.cs : Skip XQuery comment inside default state.
+	  PI and XML comment are not read correctly.
+
 2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPath2Expression.cs :

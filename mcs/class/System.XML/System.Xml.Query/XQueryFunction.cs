@@ -160,6 +160,12 @@ namespace Mono.Xml.XPath2
 				);
 		}
 
+		internal static XQueryCliFunction FromQName (XmlQualifiedName qname)
+		{
+			return XQueryCliFunction.CreateFromMethodInfo (
+				qname, FindNamedMethods (Type.GetType (qname.Namespace), qname.Name));
+		}
+
 		private static bool FilterImpl (MemberInfo m, object filterCriteria)
 		{
 			return m.Name == filterCriteria.ToString ();
@@ -242,6 +248,8 @@ namespace Mono.Xml.XPath2
 			for (int i = 0; i < args.Count; i++)
 				instParams [i] = Args [i].Type.ToRuntimeType (args [i].Evaluate (iter));
 			object o = Invoke (iter.Context, instParams);
+			if (o == null)
+				return new XPathEmptySequence (iter);
 			if (o is XPathSequence)
 				return (XPathSequence) o;
 			XPathItem item = o as XPathItem;

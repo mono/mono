@@ -46,7 +46,7 @@ namespace Mono.Xml.XPath2
 	// Ideas:
 	// declare function namespace cli = "http://mono-project.com/xquery/function/cli"
 	// declare variable v = cli:invoke (cli:new (Microsoft.CSharp:CSharpCodeProvider), CreateCompiler);
-	// declare variable v2 = System:Math.Abs (0.5);
+	// declare variable v2 = System.Math:Abs (0.5);
 	//
 
 	public class XQueryCliFunction : XQueryFunction

@@ -153,7 +153,8 @@ namespace Mono.Xml.XPath2
 			if (main != null)
 				main.QueryBody.CheckReference (this);
 			foreach (FunctionDeclaration func in module.Prolog.Functions.Values) {
-				func.FunctionBody.CheckReference (this);
+				if (!func.External)
+					func.FunctionBody.CheckReference (this);
 				CheckSchemaType (func.ReturnType);
 				foreach (XQueryFunctionArgument param in func.Parameters)
 					CheckSchemaType (param.Type);
@@ -225,6 +226,8 @@ namespace Mono.Xml.XPath2
 
 		private XQueryFunction CompileFunction (FunctionDeclaration func)
 		{
+			if (func.External)
+				return XQueryFunction.FromQName (func.Name);
 			return new XQueryUserFunction (func.Name, func.Parameters.ToArray (), func.FunctionBody.Expr, func.ReturnType);
 		}
 

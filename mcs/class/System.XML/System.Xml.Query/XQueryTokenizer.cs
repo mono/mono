@@ -212,15 +212,33 @@ namespace Mono.Xml.XQuery.Parser
 			}
 		}
 
+		private int ParseXQueryComment ()
+		{
+			while (true) {
+				int c = ReadChar ();
+				if (c < 0)
+					throw Error ("Unexpected end of query text inside XML processing instruction content");
+				if (c == ':') {
+					if (PeekChar () == ')') {
+						ReadChar ();
+						tokenValue = CreateValueString ();
+						return Token.XML_PI_TO_END;
+					}
+					else
+						AddValueChar (':');
+				}
+				else
+					AddValueChar ((char) c);
+			}
+		}
+
 		private int ParseXmlPIContent ()
 		{
-			// FIXME: handle ??> correctly
 			while (true) {
-				int c = PeekChar ();
+				int c = ReadChar ();
 				if (c < 0)
 					throw Error ("Unexpected end of query text inside XML processing instruction content");
 				if (c == '?') {
-					ReadChar ();
 					if (PeekChar () == '>') {
 						ReadChar ();
 						tokenValue = CreateValueString ();
@@ -238,11 +256,10 @@ namespace Mono.Xml.XQuery.Parser
 		{
 			// FIXME: handle ---> correctly
 			while (true) {
-				int c = PeekChar ();
+				int c = ReadChar ();
 				if (c < 0)
 					throw Error ("Unexpected end of query text inside XML comment content");
 				if (c == '-') {
-					ReadChar ();
 					if (PeekChar () == '-') {
 						ReadChar ();
 						if (PeekChar () == '>') {
@@ -265,7 +282,7 @@ namespace Mono.Xml.XQuery.Parser
 		{
 			// FIXME: handle ]]]> correctly
 			while (true) {
-				int c = PeekChar ();
+				int c = ReadChar ();
 				if (c < 0)
 					throw Error ("Unexpected end of query text inside XML CDATA section content");
 				if (c == ']') {
@@ -421,7 +438,8 @@ namespace Mono.Xml.XQuery.Parser
 						ReadChar ();
 						return Token.PRAGMA_OPEN;
 					}
-					return Token.OPEN_PAREN_COLON;
+					ParseXQueryComment ();
+					return ParseToken (); // start again
 				}
 				return Token.OPEN_PAREN;
 			case ')':

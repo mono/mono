@@ -95,7 +95,7 @@ namespace Mono.Xml.XPath2
 		public static XmlQualifiedName FnNodeName (XPathNavigator arg)
 		{
 			if (arg == null)
-				return XmlQualifiedName.Empty;
+				return null;
 
 			return arg.LocalName == String.Empty ?
 				XmlQualifiedName.Empty :
@@ -105,7 +105,7 @@ namespace Mono.Xml.XPath2
 		public static bool FnNilled (XPathNavigator arg)
 		{
 			if (arg == null)
-				return false;
+				throw new XmlQueryException ("Function nilled() does not allow empty sequence parameter.");
 
 			IXmlSchemaInfo info = arg.NodeType == XPathNodeType.Element ? arg.SchemaInfo : null;
 			return info != null && info.IsNil;
@@ -119,17 +119,23 @@ namespace Mono.Xml.XPath2
 			return FnString (item);
 		}
 
+		[MonoTODO]
 		public static string FnString (object arg)
 		{
+			if (arg == null)
+				return String.Empty;
 			XPathNavigator nav = arg as XPathNavigator;
 			if (nav != null)
 				return nav.Value;
+			// FIXME: it should be exactly the same as "arg cast as xs:string"
 			XPathItem item = ToItem (arg);
 			return item != null ? XQueryConvert.ItemToString (item) : null;
 		}
 
+		[MonoTODO]
 		public static XPathAtomicValue FnData (object arg)
 		{
+			// FIXME: parameter should be object []
 			XPathNavigator nav = arg as XPathNavigator;
 			if (nav != null) {
 				XmlSchemaType st = nav.SchemaInfo != null ? nav.SchemaInfo.SchemaType : null;
@@ -172,31 +178,66 @@ namespace Mono.Xml.XPath2
 		// Numeric Operation
 
 		[MonoTODO]
-		public static object FnAbs (ValueType arg)
+		public static object FnAbs (object arg)
 		{
-			throw new NotImplementedException ();
+			if (arg is int)
+				return System.Math.Abs ((int) arg);
+			if (arg is long)
+				return System.Math.Abs ((long) arg);
+			else if (arg is decimal)
+				return System.Math.Abs ((decimal) arg);
+			else if (arg is double)
+				return System.Math.Abs ((double) arg);
+			else if (arg is float)
+				return System.Math.Abs ((float) arg);
+			else if (arg is short)
+				return System.Math.Abs ((short) arg);
+			else if (arg is uint || arg is ulong || arg is ushort)
+				return arg;
+			return null;
 		}
 
 		[MonoTODO]
-		public static object FnCeiling (ValueType arg)
+		public static object FnCeiling (object arg)
 		{
-			throw new NotImplementedException ();
+			if (arg is decimal) {
+				decimal d = (decimal) arg;
+				decimal d2 = Decimal.Floor (d);
+				return d2 != d ? d2 + 1 : d2;
+			}
+			else if (arg is double || arg is float)
+				return System.Math.Ceiling ((double) arg);
+			else if (arg is int || arg is long || arg is short || arg is uint || arg is ulong || arg is ushort)
+				return arg;
+			return null;
 		}
 
 		[MonoTODO]
-		public static object FnFloor (ValueType arg)
+		public static object FnFloor (object arg)
 		{
-			throw new NotImplementedException ();
+			if (arg is decimal)
+				return Decimal.Floor ((decimal) arg);
+			else if (arg is double || arg is float)
+				return System.Math.Floor ((double) arg);
+			else if (arg is int || arg is long || arg is short || arg is uint || arg is ulong || arg is ushort)
+				return arg;
+			return null;
 		}
 
 		[MonoTODO]
-		public static object FnRound (ValueType arg)
+		public static object FnRound (object arg)
 		{
-			throw new NotImplementedException ();
+			if (arg is decimal)
+				return Decimal.Round ((decimal) arg, 0);
+			else if (arg is double || arg is float)
+				return System.Math.Round ((double) arg);
+			else if (arg is int || arg is long || arg is short || arg is uint || arg is ulong || arg is ushort)
+				return arg;
+			return null;
 		}
 
 		[MonoTODO]
-		public static object FnRoundHalfToEven (ValueType arg)
+		public static object FnRoundHalfToEven (object arg)
 		{
 			throw new NotImplementedException ();
 		}
@@ -500,10 +541,11 @@ namespace Mono.Xml.XPath2
 			return FnNumber (ctx.CurrentItem);
 		}
 
-		public static double FnNumber (XPathItem item)
+		public static double FnNumber (object arg)
 		{
-			if (item == null)
+			if (arg == null)
 				throw new XmlQueryException ("Context item could not be ndetermined during number() evaluation.");
+			XPathItem item = ToItem (arg);
 			return XQueryConvert.ItemToDouble (item);
 		}
 
