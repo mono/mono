@@ -1,3 +1,10 @@
+
+Fri Aug 2 21:15:42 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix encoding of named args for custom attrs to match
+	the ms implementation. Read them back when instantiating custom
+	attributes.
+
 2002-08-02  Radek Doulik  <rodo@ximian.com>
 
 	* marshal.c (mono_mb_add_data): convert ret value to LE, suggested
