@@ -47,7 +47,7 @@ namespace System.IO {
 		private void Compile (string pattern)
 		{
 			if (pattern == null || pattern.IndexOfAny (InvalidChars) >= 0)
-				throw new ArgumentException ("Invalid search pattern.");
+				throw new ArgumentException ("Invalid search pattern: '" + pattern + "'");
 
 			if (pattern == "*") {	// common case
 				ops = new Op (OpCode.True);

@@ -1,3 +1,11 @@
+2004-03-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FAMWatcher.cs: support monitoring subdirectories. FAM doesn't do that,
+	so we have to register the existing directories and add the new ones
+	that might be created.
+
+	* SearchPattern.cs: provide the pattern when it's wrong.
+
 2004-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SearchPattern.cs: small improvement for files with no wildcard.

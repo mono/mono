@@ -44,6 +44,7 @@ namespace System.IO {
 		public bool IncludeSubdirs;
 		public bool Enabled;
 		public FAMRequest Request;
+		public Hashtable SubDirs;
 	}
 
 	class FAMWatcher : IFileWatcher
@@ -73,8 +74,8 @@ namespace System.IO {
 					return true;
 				}
 
-				watches = new Hashtable ();
-				requests = new Hashtable ();
+				watches = Hashtable.Synchronized (new Hashtable ());
+				requests = Hashtable.Synchronized (new Hashtable ());
 				if (FAMOpen (out conn) == -1) {
 					failed = true;
 					watcher = null;
@@ -106,6 +107,9 @@ namespace System.IO {
 				data.Directory = fsw.FullPath;
 				data.FileMask = fsw.Filter;
 				data.IncludeSubdirs = fsw.IncludeSubdirectories;
+				if (data.IncludeSubdirs)
+					data.SubDirs = new Hashtable ();
+
 				data.Enabled = true;
 				lock (this) {
 					StartMonitoringDirectory (data);
@@ -123,6 +127,22 @@ namespace System.IO {
 				throw new Win32Exception ();
 
 			data.Request = fr;
+			if (!data.IncludeSubdirs)
+				return;
+
+			foreach (string directory in Directory.GetDirectories (data.Directory)) {
+				FAMData fd = new FAMData ();
+				fd.FSW = data.FSW;
+				fd.Directory = directory;
+				fd.FileMask = data.FSW.Filter;
+				fd.IncludeSubdirs = true;
+				fd.SubDirs = new Hashtable ();
+				fd.Enabled = true;
+
+				StartMonitoringDirectory (fd);
+				data.SubDirs [directory] = fd;
+				requests [fd.Request.ReqNum] = fd;
+			}
 		}
 
 		public void StopDispatching (FileSystemWatcher fsw)
@@ -138,6 +158,14 @@ namespace System.IO {
 				requests.Remove (data.Request.ReqNum);
 				if (watches.Count == 0)
 					stop = true;
+
+				if (!data.IncludeSubdirs)
+					return;
+
+				foreach (FAMData fd in data.SubDirs) {
+					StopMonitoringDirectory (fd);
+					requests.Remove (fd.Request.ReqNum);
+				}
 			}
 		}
 
@@ -221,24 +249,56 @@ namespace System.IO {
 						fa = FileAction.Removed;
 					else if (code == (int) FAMCodes.Created)
 						fa = FileAction.Added;
-					
-					if (fa != 0) {
-						if (filename != data.Directory && !fsw.Pattern.IsMatch (filename))
-							continue;
 
-						lock (fsw) {
-							fsw.DispatchEvents (fa, filename, ref renamed);
-							if (fsw.Waiting) {
-								fsw.Waiting = false;
-								System.Threading.Monitor.PulseAll (fsw);
+					if (fa == 0)
+						continue;
+
+					if (fsw.IncludeSubdirectories) {
+						string full = fsw.FullPath;
+						string datadir = data.Directory;
+						if (datadir != full) {
+							string reldir = datadir.Substring (full.Length + 1);
+							datadir = Path.Combine (datadir, filename);
+							filename = Path.Combine (reldir, filename);
+						} else {
+							datadir = Path.Combine (fsw.FullPath, filename);
+						}
+
+						if (fa == FileAction.Added && Directory.Exists (datadir)) {
+							FAMData fd = new FAMData ();
+							fd.FSW = fsw;
+							fd.Directory = datadir;
+							fd.FileMask = fsw.Filter;
+							fd.IncludeSubdirs = true;
+							fd.SubDirs = new Hashtable ();
+							fd.Enabled = true;
+
+							lock (instance) {
+								StartMonitoringDirectory (fd);
 							}
+
+							lock (data) {
+								data.SubDirs [datadir] = fd;
+							}
+
+							requests [fd.Request.ReqNum] = fd;
 						}
 					}
 
+					if (filename != data.Directory && !fsw.Pattern.IsMatch (filename))
+						continue;
+
+					lock (fsw) {
+						fsw.DispatchEvents (fa, filename, ref renamed);
+						if (fsw.Waiting) {
+							fsw.Waiting = false;
+							System.Threading.Monitor.PulseAll (fsw);
+						}
+					}
 				} while (FAMPending (ref conn) > 0);
 			}
 		}
-		
+
 		[DllImport ("fam")]
 		extern static int FAMOpen (out FAMConnection fc);
 
