@@ -1,3 +1,23 @@
+2003-10-13  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_define_generic_parameter): This
+	method isn't called directly from the icall anymore; take a
+	`MonoReflectionAssemblyBuilder *' so we can use this for type and
+	method generic parameters.
+	(ReflectionMethodBuilder): Added `MonoArray *generic_param'.
+	(method_builder_encode_signature): Encode generic parameters.
+	(mono_image_get_method_info): Write generic params to the
+	MONO_TABLE_GENERICPARAM table.
+
+	* reflection.h (MonoReflectionMethodBuilder): Added
+	`MonoArray *generic_params'.
+
+	* metadata.h (MonoMethodSignature): Added `MonoGenericInst *geninst'.
+
+	* icall.c (ves_icall_TypeBuilder_define_generic_parameter): Added
+	wrapper for mono_reflection_define_generic_parameter().
+	(ves_icall_MethodBuilder_define_generic_parameter): Likewise.	
+
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.h: Add missing function to fix build.
@@ -46,13 +66,6 @@
 
 	* threads.h threads.c : add mono_threads_set_default_stacksize
 	and pass default to CreateThread calls.
-
-2003-10-10  Martin Baulig  <martin@ximian.com>
-
-	* reflection.c (MonoReflectionGenericParam): Added `guint32 index'.
-	(mono_reflection_define_generic_parameter): If `gparam->index' is
-	non-zero, create a MONO_TYPE_MVAR.
-	(encode_type): Added support for MONO_TYPE_MVAR.
 
 2003-10-09  Dick Porter  <dick@ximian.com>
 
