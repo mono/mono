@@ -4768,6 +4768,11 @@ shift_expression
 
 relational_expression
 	: shift_expression
+	| relational_expression _mark_ LIKE shift_expression
+	  {
+		$$ = new Binary (Binary.Operator.Like,
+			         (Expression) $1, (Expression) $4, (Location)$2);
+	  }
 	| relational_expression ASSIGN _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.Equality,

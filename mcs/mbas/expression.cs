@@ -1636,7 +1636,6 @@ namespace Mono.MonoBASIC {
 				type = TypeManager.double_type;
 			}
 
-                                                                                                               
                         Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI("System.Math.Pow", loc);
                         ArrayList args = new ArrayList();
                         args.Add (new Argument (left, Argument.AType.Expression));
@@ -1777,6 +1776,7 @@ namespace Mono.MonoBASIC {
 			LeftShift, RightShift,
 			LessThan, GreaterThan, LessThanOrEqual, GreaterThanOrEqual, 
 			Equality, Inequality,
+			Like,
 			BitwiseAnd,
 			ExclusiveOr,
 			BitwiseOr,
@@ -2258,6 +2258,9 @@ namespace Mono.MonoBASIC {
 					case Operator.Exponentiation :
 						fqn = "ObjectType.PowObj";
 						break;
+					case Operator.Like :
+						fqn = "ObjectType.LikeObj";
+						break;
 					case Operator.Equality :
 					case Operator.Inequality :
 					case Operator.LessThan :
@@ -2309,6 +2312,8 @@ namespace Mono.MonoBASIC {
 					args.Add (new Argument (right, Argument.AType.Expression));
 					if (IsRelationalOperator (oper)) 
 						args.Add (new Argument (new BoolConstant (false), Argument.AType.Expression));
+					if (oper == Operator.Like) 
+						args.Add (new Argument(new IntLiteral (0), Argument.AType.Expression));
 					Expression e = new Invocation (etmp, args, loc);
 					if (IsRelationalOperator (oper)) {
 						e = new Binary (oper, e.Resolve(ec), new IntConstant (0), loc);
@@ -2326,6 +2331,7 @@ namespace Mono.MonoBASIC {
 
 		
 			} else if (!l.IsValueType || !r.IsValueType) {
+				
 				if (!l.IsValueType && !r.IsValueType) {
 			 		// If both the operands are reference types, support for 'Is' operator
                                 	if (oper == Operator.Is) {
@@ -2382,7 +2388,7 @@ namespace Mono.MonoBASIC {
 							Expression e = new StringConcat (loc, left, right);
 							return e.Resolve(ec);
 						}
-	
+
 						if (IsRelationalOperator (oper)) {
 	
 							Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.StringType.StrCmp", Location.Null);
@@ -2395,8 +2401,19 @@ namespace Mono.MonoBASIC {
 							Expression e = (Expression) new Invocation (etmp, args, loc);
 							e = new Binary (oper, e.Resolve(ec), new IntConstant(0), loc);
 							return e.Resolve(ec);
-						} 
-					} 
+						}
+
+						if (oper == Operator.Like) {
+							Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.StringType.StrLike", Location.Null);
+							type = TypeManager.bool_type;
+							ArrayList args = new ArrayList ();
+							args.Add (new Argument(left, Argument.AType.Expression));
+							args.Add (new Argument(right, Argument.AType.Expression));
+							args.Add (new Argument(new IntLiteral (0), Argument.AType.Expression));
+							Expression e = (Expression) new Invocation (etmp, args, loc);
+							return e.Resolve (ec);
+						}
+					}
 
 					Expression other = right_is_string ? left: right;
 					Type other_type = other.Type;
@@ -2405,7 +2422,7 @@ namespace Mono.MonoBASIC {
 					// Disallow arithmatic / shift / logical operators on dates and characters
 					//
 					if (other_type == TypeManager.date_type || other_type == TypeManager.char_type) {
-						if (!(oper == Operator.Addition || IsRelationalOperator (oper))) {
+						if (!(oper == Operator.Addition || IsRelationalOperator (oper) || oper == Operator.Like)) {
 							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 							return null;
 						}
@@ -2442,6 +2459,8 @@ namespace Mono.MonoBASIC {
 						}
 						type = TypeManager.bool_type;
 	
+					} else if (oper == Operator.Like) {
+						conv_left_as = conv_right_as = TypeManager.string_type;
 					} else if (oper == Operator.LeftShift || oper == Operator.RightShift) {
 	
 						conv_left_as = TypeManager.int64_type;
@@ -2459,6 +2478,8 @@ namespace Mono.MonoBASIC {
 							conv_left_as = conv_right_as = TypeManager.int64_type;
 							type = TypeManager.int64_type;
 						}
+					} else if (oper == Operator.IntDivision) {
+						conv_left_as = conv_right_as = TypeManager.int64_type;
 					} else {
 						// Arithmatic operators
 						conv_right_as = conv_left_as = TypeManager.double_type;
@@ -2481,7 +2502,10 @@ namespace Mono.MonoBASIC {
 			} else if (l == TypeManager.date_type || r == TypeManager.date_type) {
 				// Date with string operations handled above
 				// Only other possiblity is date with date
-				if (l == TypeManager.date_type && r == TypeManager.date_type) {
+				if (oper == Operator.Like) {
+					conv_right_as = conv_left_as = TypeManager.string_type;
+					type = TypeManager.bool_type;
+				} else if (l == TypeManager.date_type && r == TypeManager.date_type) {
 					if (oper == Operator.Addition) {
 						conv_left_as = conv_right_as = TypeManager.string_type;
 					} else if (IsRelationalOperator (oper)) { 
@@ -2504,7 +2528,10 @@ namespace Mono.MonoBASIC {
 				}
 			} else if (l == TypeManager.char_type || r == TypeManager.char_type) {
 				// char op string handled above
-				if (l == TypeManager.char_type && r == TypeManager.char_type) {
+				if (oper == Operator.Like) {
+					conv_right_as = conv_left_as = TypeManager.string_type;
+					type = TypeManager.bool_type;
+				} else if (l == TypeManager.char_type && r == TypeManager.char_type) {
 					if (oper == Operator.Addition)
 						conv_left_as = conv_right_as = TypeManager.string_type;
 					else if (IsRelationalOperator (oper)) {
@@ -2547,6 +2574,8 @@ namespace Mono.MonoBASIC {
 				Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 				return null;
 
+			} else if (oper == Operator.Like) {
+				conv_left_as = conv_right_as = TypeManager.string_type;
 			} else {
 
 				// Numeric Types
