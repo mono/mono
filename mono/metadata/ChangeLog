@@ -1,7 +1,10 @@
 2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
-	* class.c (mono_class_is_assignable_from): Fix build bustage.
+	* class.c: (mono_class_is_assignable_from): Revert the last changes
+	since they don't work with generics.
 	
+	* class.c (mono_class_is_assignable_from): Fix build bustage.
+
 	* class.c (mono_class_is_assignable_from): If oklass is dynamic, call
 	the managed IsAssignableFrom method. Fixes #73469.
 
