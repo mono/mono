@@ -126,6 +126,23 @@ public class Outline {
 		
 		first = true;
 		
+		foreach (MethodInfo m in t.GetMethods (flags)) {
+			if ((m.Attributes & MethodAttributes.SpecialName) == 0)
+				continue;
+			if (!(m.Name.StartsWith ("op_")))
+				continue;
+
+			if (first)
+				o.WriteLine ();
+			first = false;
+			
+			OutlineOperator (m);
+			
+			o.WriteLine ();
+		}
+
+		first = true;
+		
 		foreach (PropertyInfo pi in Comparer.Sort (t.GetProperties (flags))) {
 			
 			if (first)
@@ -252,6 +269,24 @@ public class Outline {
 		o.Write (");");
 	}
 	
+	void OutlineOperator (MethodInfo mi)
+	{
+		o.Write (GetMethodVisibility (mi));
+		o.Write (GetMethodModifiers  (mi));
+		if (mi.Name == "op_Explicit" || mi.Name == "op_Implicit") {
+			o.Write (mi.Name.Substring (3).ToLower ());
+			o.Write (" operator ");
+			o.Write (FormatType (mi.ReturnType));
+		} else {
+			o.Write (FormatType (mi.ReturnType));
+			o.Write (" operator ");
+			o.Write (OperatorFromName (mi.Name));
+		}
+		o.Write (" (");
+		OutlineParams (mi.GetParameters ());
+		o.Write (");");
+	}
+	
 	void OutlineParams (ParameterInfo [] pi)
 	{
 		int i = 0;
@@ -358,11 +393,11 @@ public class Outline {
 	{
 		string type = t.FullName;
 		
-		if (t.Namespace == this.t.Namespace)
-			return t.Name;
-		
-		if (!type.StartsWith ("System."))
+		if (!type.StartsWith ("System.")) {
+			if (t.Namespace == this.t.Namespace)
+				return t.Name;
 			return type;
+		}
 		
 		if (t.HasElementType) {
 			Type et = t.GetElementType ();
@@ -400,6 +435,37 @@ public class Outline {
 			return type.Substring(7);
 		
 		return type;
+	}
+
+	string OperatorFromName (string name)
+	{
+		switch (name) {
+		case "op_UnaryPlus": return "+";
+		case "op_UnaryNegation": return "-";
+		case "op_LogicalNot": return "!";
+		case "op_OnesComplement": return "~";
+		case "op_Increment": return "++";
+		case "op_Decrement": return "--";
+		case "op_True": return "true";
+		case "op_False": return "false";
+		case "op_Addition": return "+";
+		case "op_Subtraction": return "-";
+		case "op_Multiply": return "*";
+		case "op_Division": return "/";
+		case "op_Modulus": return "%";
+		case "op_BitwiseAnd": return "&";
+		case "op_BitwiseOr": return "|";
+		case "op_ExclusiveOr": return "^";
+		case "op_LeftShift": return "<<";
+		case "op_RightShift": return ">>";
+		case "op_Equality": return "==";
+		case "op_Inequality": return "!=";
+		case "op_GreaterThan": return ">";
+		case "op_LessThan": return "<";
+		case "op_GreaterThanOrEqual": return ">=";
+		case "op_LessThanOrEqual": return "<=";
+		default: return name;
+		}
 	}
 }
 

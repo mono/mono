@@ -1,3 +1,11 @@
+2004-12-09  Dan Winship  <danw@novell.com>
+
+	* outline.cs (OutlineType, OutlineOperator, OperatorFromName):
+	Show overloaded operators and type conversions.
+	(FormatType): fix the logic here so that, eg "System.Int32"
+	becomes "int" rather than "Int32" when looking at a type in the
+	System namespace.
+
 2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* monop.cs : csc build fix. See bug #70185 for details.
