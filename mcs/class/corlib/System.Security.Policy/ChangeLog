@@ -1,3 +1,8 @@
+2004-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Site.cs: Completed implementation.
+	* SiteMembershipCondition.cs: New. Implemented.
+
 2004-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ApplicationDirectory.cs: Added to build. Commented IBuildInEvidence 

@@ -1,10 +1,12 @@
 //
 // System.Security.Policy.Site.cs
 //
-// Author
+// Authors
 //	Duncan Mak (duncan@ximian.com)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Portions (C) 2004 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -15,32 +17,20 @@ using System.Security.Policy;
 namespace System.Security.Policy {
 
         [Serializable]
-        public sealed class Site: IIdentityPermissionFactory
-        {
-                string origin_site;
-                SecurityElement element;
+        public sealed class Site: IIdentityPermissionFactory {
 
-                public Site (string name)
-                {
-                        if (name == null)
-                                throw new ArgumentNullException (Locale.GetText ("name is null"));
+		internal string origin_site;
 
-                        if (IsValidSite (name) == false)
-                                throw new ArgumentException (Locale.GetText ("name is not valid"));
-
-                        origin_site = name;
-                        element = new SecurityElement (
-                                typeof (System.Security.Policy.Site).FullName);
-
-                        element.AddAttribute ("version", "1");
-                        element.AddChild (new SecurityElement ("Name", name));
+		public Site (string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException (Locale.GetText ("name is null"));
+			if (!IsValid (name))
+				throw new ArgumentException (Locale.GetText ("name is not valid"));
+			
+			origin_site = name;
                 }
 
-                private Site (string name, SecurityElement security_element)
-                {
-                        origin_site = name;
-                        element = security_element;
-                }
                 public static Site CreateFromUrl (string url)
                 {
                         return new Site (url);
@@ -48,18 +38,20 @@ namespace System.Security.Policy {
 
                 public object Copy ()
                 {
-                        return new Site (origin_site, element);
+                        return new Site (origin_site);
                 }
 
-                [MonoTODO]
                 public IPermission CreateIdentityPermission (Evidence evidence)
                 {
-                        throw new NotImplementedException ();
+                        return new SiteIdentityPermission (origin_site);
                 }
 
                 public override bool Equals (object o)
                 {
-                        return (o is System.Security.Policy.Site && ((Site) o).Name == Name);
+			if (o is System.Security.Policy.Site) {
+				return (String.Compare (((Site) o).Name, origin_site, true, CultureInfo.InvariantCulture) == 0);
+			}
+			return false;
                 }
 
                 public override int GetHashCode ()
@@ -69,43 +61,43 @@ namespace System.Security.Policy {
 
                 public override string ToString ()
                 {
-                        return element.ToString ();
+			SecurityElement element = new SecurityElement (typeof (System.Security.Policy.Site).FullName);
+			element.AddAttribute ("version", "1");
+			element.AddChild (new SecurityElement ("Name", origin_site));
+			return element.ToString ();
                 }
+
+		// properties
 
                 public string Name {
-                        get {
-                                return origin_site;
-                        }
+                        get { return origin_site; }
                 }
 
-                [MonoTODO ("Improve check")]
-                bool IsValidSite (string site)
+		// internals
+
+                internal static bool IsValid (string name)
                 {
-                        if (site.StartsWith ("file"))
-                                return false;
+			if (name == String.Empty)
+				return false;
+			if ((name.Length == 1) && (name == "."))		// split would remove .
+				return false;
 
-                        string [] parts = site.Split ('.');
-
-                        foreach (string part in parts)
-                                if (!IsValidPart (part))
-                                        return false;
-                        
-                        return true;
-                }
-
-                bool IsValidPart (string part)
-                {
-                        foreach (char c in part) {
-                                if (Char.IsLetterOrDigit (c))
-                                        continue;
-                        
-                                if (c == '/' || c == '*')
-                                        continue;
-
-                                else
-                                        return false;
-                        }
-
+			string [] parts = name.Split ('.');
+			for (int i=0; i < parts.Length; i++) {
+				string part = parts [i];
+				if ((i == 0) && (part == "*"))			// * (only in first part)
+					continue;
+				foreach (char c in part) {
+					int x = Convert.ToInt32 (c);
+					bool result = ((x == 45)		// -
+						|| (x >= 47 && x <= 57)		// /,0-9
+						|| (x >= 64 && x <= 90)		// @,A-Z
+						|| (x == 95)			// _
+						|| (x >= 97 && x <= 122));	// a-z
+					if (!result)
+						return false;
+				}
+			}
                         return true;
                 }
         }
