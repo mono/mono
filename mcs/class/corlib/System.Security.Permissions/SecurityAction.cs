@@ -33,7 +33,7 @@
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 	[Serializable]
 #endif
 	public enum SecurityAction {
@@ -46,7 +46,7 @@ namespace System.Security.Permissions {
 		RequestMinimum = 8,
 		RequestOptional = 9,
 		RequestRefuse = 10,
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		LinkDemandChoice = 16,
 		InheritanceDemandChoice = 17,
 		DemandChoice = 18
