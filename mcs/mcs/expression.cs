@@ -8501,6 +8501,14 @@ namespace Mono.CSharp {
 					return null;
 			}
 
+			Constant c = (Constant)count;
+			// TODO: because we don't have property IsNegative
+			if (c.ConvertToUInt () == null) {
+                                // "Cannot use a negative size with stackalloc"
+				Report.Error_T (247, loc);
+				return null;
+			}
+
 			if (ec.CurrentBranching.InCatch () ||
 			    ec.CurrentBranching.InFinally (true)) {
 				Error (255,

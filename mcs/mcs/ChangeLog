@@ -1,5 +1,10 @@
 2004-06-15  Marek Safar  <marek.safar@seznam.cz>
 
+	* expression.cs (StackAlloc.DoReSolve): Added test for
+	negative parameter (CS0247).
+
+2004-06-15  Marek Safar  <marek.safar@seznam.cz>
+
 	Fix bug #59792
 	* class.cs: (Event.DelegateMethod.Emit): Added synchronization flag.
 

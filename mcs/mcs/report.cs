@@ -91,6 +91,7 @@ namespace Mono.CSharp {
  				case 0122: return "'{0}' is inaccessible due to its protection level";
 				case 0160: return "A previous catch clause already catches all exceptions of this or a super type '{0}'";
  				case 0243: return "Conditional not valid on '{0}' because it is an override method";
+				case 0247: return "Cannot use a negative size with stackalloc";
  				case 0577: return "Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation";
  				case 0578: return "Conditional not valid on '{0}' because its return type is not void";
  				case 0582: return "Conditional not valid on interface members";
