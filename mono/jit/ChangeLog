@@ -1,4 +1,25 @@
+2001-09-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c: impl. LDIND/STIND/LDLOCA, use g_malloc to alloc static
+	data.
+	(map_stind_type): support enum types
+	(map_ldind_type): support enum types
+
+	* emit-x86.c (tree_allocate_regs): added code to support
+	register allocation for addressing modes trees.
+	(tree_emit): bug fix: we have to emit all mono_burg_functins. The
+	previous impl. did not work for chain rules.
+	(compute_branches): support for SWITCH statements
+
+	* x86.brg: added rules to model x86 addressing modes
+
 2001-09-26  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (compute_branches): implemented SWITCH
+
+	* testjit.c (mono_create_forest): implemented LDIND/STIND opcodes
+	(map_ldind_type): add enumeration types.
+	(map_stind_type): add enumeration types.
 
 	* emit-x86.c (arch_compile_method): more documentation.
 
