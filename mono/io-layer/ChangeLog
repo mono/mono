@@ -1,3 +1,11 @@
+2004-04-16  Dick Porter  <dick@ximian.com>
+
+	* threads.c (Sleep): Using div(3) with a negative (when signed)
+	numerator causes the quotient to be 0 and the remainder to be the
+	numerator.  This feeds a small negative value to nanosleep(3),
+	which will return immediately and cause a busy wait.  Fixes bug
+	56351.
+
 2004-04-15  Dick Porter  <dick@ximian.com>
 
 	* io-private.h:
