@@ -11,6 +11,7 @@ SUBDIRS = \
 	System.XML			\
 	System.Drawing			\
 	System.EnterpriseServices	\
+	Mono.Security			\
 	Mono.Data.Tds			\
 	System.Security			\
 	System.Data			\
@@ -38,7 +39,6 @@ SUBDIRS = \
 	System.Windows.Forms		\
 	System.Design			\
 	PEAPI				\
-	Mono.Security			\
 	Npgsql				\
 	ICSharpCode.SharpZipLib		\
 	ByteFX.Data			\
