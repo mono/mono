@@ -1,3 +1,8 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* certmgr.cs: Merge enhancements from HEAD. Now allows users to 
+	manipulate the machine's cert store (not just the user's store).
+
 2004-08-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Update version number for Mono 1.0.1.
