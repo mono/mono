@@ -1,3 +1,7 @@
+2003-10-21  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (create_typespec): Added MONO_TYPE_VAR and MONO_TYPE_MVAR.
+
 2003-10-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exception.c (mono_exception_from_name_msg): New helper function for
