@@ -68,11 +68,33 @@ namespace System.Net
 				if (socket != null && socket.Connected && status == WebExceptionStatus.Success)
 					return;
 
+				if (socket != null) {
+					socket.Close();
+					socket = null;
+				}
 				
-				if (socket == null)
-					socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+				IPHostEntry hostEntry = sPoint.HostEntry;
 
-				status = sPoint.Connect (socket);
+				if(hostEntry == null) {
+					status = sPoint.UsesProxy ? WebExceptionStatus.ProxyNameResolutionFailure :
+						WebExceptionStatus.NameResolutionFailure;
+				}
+				else {
+					foreach(IPAddress address in hostEntry.AddressList) {
+						socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+						try {
+							socket.Connect (new IPEndPoint(address, sPoint.Address.Port));
+							status = WebExceptionStatus.Success;
+							break;
+						} 
+						catch (SocketException e2) {
+							socket.Close();
+							status = WebExceptionStatus.ConnectFailure;
+						}
+					}
+				}
+
 				chunkStream = null;
 			}
 		}

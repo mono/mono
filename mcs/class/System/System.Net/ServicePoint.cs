@@ -130,45 +130,40 @@ namespace System.Net
 				return groups;
 			}
 		}
-		
-		internal IPEndPoint GetEndPoint ()
-		{
-			if (host == null)
-				host = Dns.GetHostByName (uri.Host);
 
-			return new IPEndPoint (host.AddressList [0], uri.Port);
-		}
-
-		internal IPAddress GetIPAddress ()
+		internal IPHostEntry HostEntry
 		{
-			if (host == null) {
-				try {
-					host = Dns.GetHostByName (uri.Host);
-				} catch {
-					return null;
+			get {
+				if (host == null) {
+					string uriHost = uri.Host;
+
+					// There is no need to do DNS resolution on literal IP addresses
+					if (uri.HostNameType == UriHostNameType.IPv6 ||
+						uri.HostNameType == UriHostNameType.IPv4) {
+
+						if (uri.HostNameType == UriHostNameType.IPv6) {
+							// Remove square brackets
+							uriHost = uriHost.Substring(1,uriHost.Length-2);
+						}
+
+						// Creates IPHostEntry
+						host = new IPHostEntry();
+						host.AddressList = new IPAddress[] { IPAddress.Parse(uriHost) };
+
+						return host;
+					}
+
+					// Try DNS resolution on host names
+					try  {
+						host = Dns.GetHostByName (uriHost);
+					} 
+					catch {
+						return null;
+					}
 				}
+
+				return host;
 			}
-
-			return host.AddressList [0];
-		}
-
-		internal WebExceptionStatus Connect (Socket sock)
-		{
-			IPEndPoint ep = null;
-			try {
-				ep = GetEndPoint ();
-			} catch (SocketException e) {
-				return (usesProxy) ? WebExceptionStatus.ProxyNameResolutionFailure :
-						     WebExceptionStatus.NameResolutionFailure;
-			}
-
-			try {
-				sock.Connect (ep);
-			} catch (SocketException e2) {
-				return WebExceptionStatus.ConnectFailure;
-			}
-
-			return WebExceptionStatus.Success;
 		}
 
 		internal WebConnectionGroup GetConnectionGroup (string name)
@@ -180,7 +175,7 @@ namespace System.Net
 			if (group != null)
 				return group;
 
-			group = new WebConnectionGroup (this, name, GetIPAddress ());
+			group = new WebConnectionGroup (this, name);
 			Groups [name] = group;
 			return group;
 		}

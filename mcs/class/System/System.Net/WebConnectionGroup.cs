@@ -16,14 +16,12 @@ namespace System.Net
 	{
 		ServicePoint sPoint;
 		string name;
-		IPAddress address;
 		ArrayList connections;
 
-		public WebConnectionGroup (ServicePoint sPoint, string name, IPAddress address)
+		public WebConnectionGroup (ServicePoint sPoint, string name)
 		{
 			this.sPoint = sPoint;
 			this.name = name;
-			this.address = address;
 			connections = new ArrayList (1);
 		}
 
