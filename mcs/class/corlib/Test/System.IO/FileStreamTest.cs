@@ -1,24 +1,38 @@
-// TestConvert.cs - NUnit Test Cases for System.Convert class
+// FileStreamTests.cs - NUnit2 Test Cases for System.IO.FileStream class
 //
-// Ville Palo (vi64pa@koti.soon.fi)
+// Authors:
+// 	Ville Palo (vi64pa@koti.soon.fi)
+// 	Gert Driesen (gert.driesen@ardatis.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 // 
 // (C) Ville Palo
+// (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // 
 
 
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Text;
 
 namespace MonoTests.System.IO
 {
         public class FileStreamTest : TestCase
         {
+		string bazFileName = Path.Combine ("resources", "baz");
                 public FileStreamTest() {}
                 
-                protected override void SetUp() {
+		[SetUp]
+                protected override void SetUp ()
+		{
+			File.Delete (bazFileName);
                 }
-                protected override void TearDown() {}
+
+		[TearDown]
+		protected override void TearDown ()
+		{
+			File.Delete (bazFileName);
+		}
                 
                 public void TestCtr ()
                 {
@@ -340,6 +354,88 @@ namespace MonoTests.System.IO
                 }
 
 
+		/// <summary>
+		/// Checks whether the <see cref="FileStream" /> throws a <see cref="NotSupportedException" />
+		/// when the stream is opened with access mode <see cref="FileAccess.Read" /> and the
+		/// <see cref="FileStream.Write(byte[], int, int)" /> method is called.
+		/// </summary>
+		[Test]
+		[ExpectedException (typeof(NotSupportedException))]
+		public void TestWriteVerifyAccessMode ()
+		{
+			FileStream bazFileStream = null;
+			byte[] buffer;
+
+			try {
+				buffer = Encoding.ASCII.GetBytes ("test");
+				bazFileStream = new FileStream (bazFileName, FileMode.OpenOrCreate, FileAccess.Read);
+				bazFileStream.Write (buffer, 0, buffer.Length);
+			} finally {
+				if (bazFileStream != null)
+					bazFileStream.Close();
+			}
+		}
+
+		/// <summary>
+		/// Checks whether the <see cref="FileStream" /> throws a <see cref="NotSupportedException" />
+		/// when the stream is opened with access mode <see cref="FileAccess.Read" /> and the
+		/// <see cref="FileStream.WriteByte(byte)" /> method is called.
+		/// </summary>
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TestWriteByteVerifyAccessMode ()
+		{
+			FileStream bazFileStream = null;
+
+			try {
+				bazFileStream = new FileStream (bazFileName, FileMode.OpenOrCreate, FileAccess.Read);
+				bazFileStream.WriteByte (Byte.MinValue);
+			} finally {
+				if (bazFileStream != null)
+					bazFileStream.Close ();
+			}
+		}
+
+		/// <summary>
+		/// Checks whether the <see cref="FileStream" /> throws a <see cref="NotSupportedException" />
+		/// when the stream is opened with access mode <see cref="FileAccess.Write" /> and the
+		/// <see cref="FileStream.Read(byte[], int, int)" /> method is called.
+		/// </summary>
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TestReadVerifyAccessMode ()
+		{
+			FileStream bazFileStream = null;
+			byte[] buffer = new byte [100];
+
+			try {
+				bazFileStream = new FileStream (bazFileName, FileMode.OpenOrCreate, FileAccess.Write);
+				bazFileStream.Read (buffer, 0, buffer.Length);
+			} finally {
+				if (bazFileStream != null)
+					bazFileStream.Close ();
+			}
+		}
+
+		/// <summary>
+		/// Checks whether the <see cref="FileStream" /> throws a <see cref="NotSupportedException" />
+		/// when the stream is opened with access mode <see cref="FileAccess.Write" /> and the
+		/// <see cref="FileStream.ReadByte()" /> method is called.
+		/// </summary>
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TestReadByteVerifyAccessMode ()
+		{
+			FileStream bazFileStream = null;
+
+			try {
+				bazFileStream = new FileStream (bazFileName, FileMode.OpenOrCreate, FileAccess.Write);
+				int readByte = bazFileStream.ReadByte ();
+			} finally {
+				if (bazFileStream != null)
+					bazFileStream.Close();
+			}
+		}
         }
 }
 

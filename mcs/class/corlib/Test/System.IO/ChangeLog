@@ -1,3 +1,8 @@
+2003-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStreamTest.cs: added more tests by Gert Driesen
+	(gert.driesen@ardatis.com).
+
 2003-04-12  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileStreamTest.cs More tests.
