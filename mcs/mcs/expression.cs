@@ -657,12 +657,19 @@ namespace Mono.CSharp {
 	/// for the common case, and one with the extra fields for more complex
 	/// classes (indexers require temporary access;  overloaded require method)
 	///
-	/// Maybe we should have classes PreIncrement, PostIncrement, PreDecrement,
-	/// PostDecrement, that way we could save the `Mode' byte as well.  
 	/// </remarks>
 	public class UnaryMutator : ExpressionStatement {
+		[Flags]
 		public enum Mode : byte {
-			PreIncrement, PreDecrement, PostIncrement, PostDecrement
+			IsIncrement    = 0,
+			IsDecrement    = 1,
+			IsPre          = 0,
+			IsPost         = 2,
+			
+			PreIncrement   = 0,
+			PreDecrement   = IsDecrement,
+			PostIncrement  = IsPost,
+			PostDecrement  = IsPost | IsDecrement
 		}
 		
 		Mode mode;
@@ -802,12 +809,15 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Loads the proper "1" into the stack based on the type
+		// Loads the proper "1" into the stack based on the type, then it emits the
+		// opcode for the operation requested
 		//
-		static void LoadOne (ILGenerator ig, Type t)
+		void LoadOneAndEmitOp (EmitContext ec, Type t)
 		{
+			ILGenerator ig = ec.ig;
+			
 			if (t == TypeManager.uint64_type || t == TypeManager.int64_type)
-				ig.Emit (OpCodes.Ldc_I8, 1L);
+				LongConstant.EmitLong (ig, 1);
 			else if (t == TypeManager.double_type)
 				ig.Emit (OpCodes.Ldc_R8, 1.0);
 			else if (t == TypeManager.float_type)
@@ -821,65 +831,58 @@ namespace Mono.CSharp {
 					IntConstant.EmitInt (ig, n);
 			} else 
 				ig.Emit (OpCodes.Ldc_I4_1);
+
+			//
+			// Now emit the operation
+			//
+			if (ec.CheckState){
+				if (t == TypeManager.int32_type ||
+				    t == TypeManager.int64_type){
+					if ((mode & Mode.IsDecrement) != 0)
+						ig.Emit (OpCodes.Sub_Ovf);
+					else
+						ig.Emit (OpCodes.Add_Ovf);
+				} else if (t == TypeManager.uint32_type ||
+					   t == TypeManager.uint64_type){
+					if ((mode & Mode.IsDecrement) != 0)
+						ig.Emit (OpCodes.Sub_Ovf_Un);
+					else
+						ig.Emit (OpCodes.Add_Ovf_Un);
+				} else {
+					if ((mode & Mode.IsDecrement) != 0)
+						ig.Emit (OpCodes.Sub_Ovf);
+					else
+						ig.Emit (OpCodes.Add_Ovf);
+				}
+			} else {
+				if ((mode & Mode.IsDecrement) != 0)
+					ig.Emit (OpCodes.Sub);
+				else
+					ig.Emit (OpCodes.Add);
+			}
 		}
 
-		
-		//
-		// FIXME: We need some way of avoiding the use of temp_storage
-		// for some types of storage (parameters, local variables,
-		// static fields) and single-dimension array access.
-		//
 		void EmitCode (EmitContext ec, bool is_expr)
 		{
 			ILGenerator ig = ec.ig;
 			IAssignMethod ia = (IAssignMethod) expr;
 			Type expr_type = expr.Type;
-			
-			if (temp_storage == null)
-				temp_storage = new LocalTemporary (ec, expr_type);
 
 			ia.CacheTemporaries (ec);
-			ig.Emit (OpCodes.Nop);
+
+			if (temp_storage == null)
+				temp_storage = new LocalTemporary (ec, expr_type);
+			
 			switch (mode){
 			case Mode.PreIncrement:
 			case Mode.PreDecrement:
 				if (method == null){
 					expr.Emit (ec);
-
-					LoadOne (ig, expr_type);
 					
-					//
-					// Select the opcode based on the check state (then the type)
-					// and the actual operation
-					//
-					if (ec.CheckState){
-						if (expr_type == TypeManager.int32_type ||
-						    expr_type == TypeManager.int64_type){
-							if (mode == Mode.PreDecrement)
-								ig.Emit (OpCodes.Sub_Ovf);
-							else
-								ig.Emit (OpCodes.Add_Ovf);
-						} else if (expr_type == TypeManager.uint32_type ||
-							   expr_type == TypeManager.uint64_type){
-							if (mode == Mode.PreDecrement)
-								ig.Emit (OpCodes.Sub_Ovf_Un);
-							else
-								ig.Emit (OpCodes.Add_Ovf_Un);
-						} else {
-							if (mode == Mode.PreDecrement)
-								ig.Emit (OpCodes.Sub_Ovf);
-							else
-								ig.Emit (OpCodes.Add_Ovf);
-						}
-					} else {
-						if (mode == Mode.PreDecrement)
-							ig.Emit (OpCodes.Sub);
-						else
-							ig.Emit (OpCodes.Add);
-					}
+					LoadOneAndEmitOp (ec, expr_type);
 				} else 
 					method.Emit (ec);
-
+				
 				temp_storage.Store (ec);
 				ia.EmitAssign (ec, temp_storage);
 				if (is_expr)
@@ -896,34 +899,8 @@ namespace Mono.CSharp {
 						expr.Emit (ec);
 					else
 						ig.Emit (OpCodes.Dup);
-
-					LoadOne (ig, expr_type);
 					
-					if (ec.CheckState){
-						if (expr_type == TypeManager.int32_type ||
-						    expr_type == TypeManager.int64_type){
-							if (mode == Mode.PostDecrement)
-								ig.Emit (OpCodes.Sub_Ovf);
-							else
-								ig.Emit (OpCodes.Add_Ovf);
-						} else if (expr_type == TypeManager.uint32_type ||
-							   expr_type == TypeManager.uint64_type){
-							if (mode == Mode.PostDecrement)
-								ig.Emit (OpCodes.Sub_Ovf_Un);
-							else
-								ig.Emit (OpCodes.Add_Ovf_Un);
-						} else {
-							if (mode == Mode.PostDecrement)
-								ig.Emit (OpCodes.Sub_Ovf);
-							else
-								ig.Emit (OpCodes.Add_Ovf);
-						}
-					} else {
-						if (mode == Mode.PostDecrement)
-							ig.Emit (OpCodes.Sub);
-						else
-							ig.Emit (OpCodes.Add);
-					}
+					LoadOneAndEmitOp (ec, expr_type);
 				} else {
 					method.Emit (ec);
 				}
@@ -1014,7 +991,6 @@ namespace Mono.CSharp {
 				return;
 			case Action.AlwaysTrue:
 				ig.Emit (OpCodes.Pop);
-				ig.Emit (OpCodes.Nop);
 				IntConstant.EmitInt (ig, 1);
 				return;
 			case Action.LeaveOnStack:
@@ -2482,12 +2458,13 @@ namespace Mono.CSharp {
 			left.Emit (ec);
 			right.Emit (ec);
 
+			bool isUnsigned = is_unsigned (left.Type);
 			switch (oper){
 			case Operator.Multiply:
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Mul_Ovf;
-					else if (l==TypeManager.uint32_type || l==TypeManager.uint64_type)
+					else if (isUnsigned)
 						opcode = OpCodes.Mul_Ovf_Un;
 					else
 						opcode = OpCodes.Mul;
@@ -2497,14 +2474,14 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.Division:
-				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
+				if (isUnsigned)
 					opcode = OpCodes.Div_Un;
 				else
 					opcode = OpCodes.Div;
 				break;
 
 			case Operator.Modulus:
-				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
+				if (isUnsigned)
 					opcode = OpCodes.Rem_Un;
 				else
 					opcode = OpCodes.Rem;
@@ -2514,7 +2491,7 @@ namespace Mono.CSharp {
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Add_Ovf;
-					else if (l==TypeManager.uint32_type || l==TypeManager.uint64_type)
+					else if (isUnsigned)
 						opcode = OpCodes.Add_Ovf_Un;
 					else
 						opcode = OpCodes.Add;
@@ -2526,7 +2503,7 @@ namespace Mono.CSharp {
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Sub_Ovf;
-					else if (l==TypeManager.uint32_type || l==TypeManager.uint64_type)
+					else if (isUnsigned)
 						opcode = OpCodes.Sub_Ovf_Un;
 					else
 						opcode = OpCodes.Sub;
@@ -2535,7 +2512,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.RightShift:
-				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
+				if (isUnsigned)
 					opcode = OpCodes.Shr_Un;
 				else
 					opcode = OpCodes.Shr;
@@ -2550,30 +2527,43 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.Inequality:
-				ec.ig.Emit (OpCodes.Ceq);
-				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Ceq);
+				ig.Emit (OpCodes.Ldc_I4_0);
 				
 				opcode = OpCodes.Ceq;
 				break;
 
 			case Operator.LessThan:
-				opcode = OpCodes.Clt;
+				if (isUnsigned)
+					opcode = OpCodes.Clt_Un;
+				else
+					opcode = OpCodes.Clt;
 				break;
 
 			case Operator.GreaterThan:
-				opcode = OpCodes.Cgt;
+				if (isUnsigned)
+					opcode = OpCodes.Cgt_Un;
+				else
+					opcode = OpCodes.Cgt;
 				break;
 
 			case Operator.LessThanOrEqual:
-				ec.ig.Emit (OpCodes.Cgt);
-				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				if (isUnsigned)
+					ig.Emit (OpCodes.Cgt_Un);
+				else
+					ig.Emit (OpCodes.Cgt);
+				ig.Emit (OpCodes.Ldc_I4_0);
 				
 				opcode = OpCodes.Ceq;
 				break;
 
 			case Operator.GreaterThanOrEqual:
-				ec.ig.Emit (OpCodes.Clt);
-				ec.ig.Emit (OpCodes.Ldc_I4_1);
+				if (isUnsigned)
+					ig.Emit (OpCodes.Clt_Un);
+				else
+					ig.Emit (OpCodes.Clt);
+				
+				ig.Emit (OpCodes.Ldc_I4_1);
 				
 				opcode = OpCodes.Sub;
 				break;
@@ -3127,6 +3117,7 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Ldarga, arg_idx);
 			}
 		}
+
 	}
 	
 	/// <summary>

@@ -626,7 +626,7 @@ namespace Mono.CSharp
 			case "--linkres":
 				if ((i + 1) >= args.Length){
 					Usage ();
-					Console.WriteLine("Missing argument to --linkres"); 
+					Report.Error (5, "Missing argument to --linkres"); 
 					Environment.Exit (1);
 				}
 				if (resources == null)
@@ -639,7 +639,7 @@ namespace Mono.CSharp
 			case "--res":
 				if ((i + 1) >= args.Length){
 					Usage ();
-					Console.WriteLine("Missing argument to --resource"); 
+					Report.Error (5, "Missing argument to --resource"); 
 					Environment.Exit (1);
 				}
 				if (embedded_resources == null)
@@ -738,14 +738,14 @@ namespace Mono.CSharp
 
 			case "--mcs-debug":
 				if ((i + 1) >= args.Length){
-					Console.WriteLine ("--mcs-debug requires an argument");
+					Report.Error (5, "--mcs-debug requires an argument");
 					Environment.Exit (1);
 				}
 
 				try {
 					Report.DebugFlags = Int32.Parse (args [++i]);
 				} catch {
-					Console.WriteLine ("Invalid argument to --mcs-debug");
+					Report.Error (5, "Invalid argument to --mcs-debug");
 					Environment.Exit (1);
 				}
 				return true;
@@ -756,7 +756,7 @@ namespace Mono.CSharp
 				
 			case "--recurse":
 				if ((i + 1) >= args.Length){
-					Console.WriteLine ("--recurse requires an argument");
+					Report.Error (5, "--recurse requires an argument");
 					Environment.Exit (1);
 				}
 				CompileFiles (args [++i], true); 
@@ -774,7 +774,7 @@ namespace Mono.CSharp
 				
 			case "--debug-args":
 				if ((i + 1) >= args.Length){
-					Console.WriteLine ("--debug-args requires an argument");
+					Report.Error (5, "--debug-args requires an argument");
 					Environment.Exit (1);
 				}
 				char[] sep = { ',' };
@@ -875,7 +875,7 @@ namespace Mono.CSharp
 			case "/linkres":
 			case "/linkresource":
 				if (value == ""){
-					Console.WriteLine ("{0} requires an argument", arg);
+					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
 				if (resources == null)
@@ -887,7 +887,7 @@ namespace Mono.CSharp
 			case "/res":
 			case "/resource":
 				if (value == ""){
-					Console.WriteLine ("{0} requires an argument", arg);
+					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
 				if (embedded_resources == null)
@@ -898,7 +898,7 @@ namespace Mono.CSharp
 				
 			case "/recurse":
 				if (value == ""){
-					Console.WriteLine ("/recurse requires an argument");
+					Report.Error (5, "/recurse requires an argument");
 					Environment.Exit (1);
 				}
 				CompileFiles (value, true); 
@@ -907,7 +907,7 @@ namespace Mono.CSharp
 			case "/r":
 			case "/reference": {
 				if (value == ""){
-					Console.WriteLine ("/reference requires an argument");
+					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
 
@@ -922,7 +922,7 @@ namespace Mono.CSharp
 				string [] libdirs;
 				
 				if (value == ""){
-					Console.WriteLine ("/lib requires an argument");
+					Report.Error (5, "/lib requires an argument");
 					Environment.Exit (1);
 				}
 
@@ -972,7 +972,7 @@ namespace Mono.CSharp
 				string [] warns;
 
 				if (value == ""){
-					Console.WriteLine ("/nowarn requires an argument");
+					Report.Error (5, "/nowarn requires an argument");
 					Environment.Exit (1);
 				}
 				
@@ -1004,7 +1004,7 @@ namespace Mono.CSharp
 			case "/main":
 			case "/m":
 				if (value == ""){
-					Console.WriteLine ("/main requires an argument");					
+					Report.Error (5, arg + " requires an argument");					
 					Environment.Exit (1);
 				}
 				RootContext.MainClass = value;

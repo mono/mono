@@ -1,3 +1,22 @@
+2002-11-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Class.Emit): Report warning 67: event not used if the
+	warning level is beyond 3.
+
+	* ecore.cs (Expression.ConvertExplicit): Missed a check for expr
+	being a NullLiteral.
+
+	* cs-parser.jay: Fix, Gonzalo reverted the order of the rank
+	specifiers. 
+
+	* class.cs (TypeContainer.GetClassBases): Cover a missing code
+	path that might fail if a type can not be resolved.
+
+	* expression.cs (Binary.Emit): Emit unsigned versions of the
+	operators. 
+
+	* driver.cs: use error 5.
+	
 2002-11-02  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 
 	* cs-parser.jay: simplified a rule and 5 SR conflicts dissapeared.

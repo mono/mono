@@ -462,7 +462,7 @@ namespace Mono.CSharp {
 			Type [] parameters = new Type [1];
 			parameters [0] = event_type;
 
-			eb = new MyEventBuilder (TypeBuilder, ie.Name,
+			eb = new MyEventBuilder (null, TypeBuilder, ie.Name,
 						 EventAttributes.None, event_type);
 
 			//

@@ -686,6 +686,9 @@ namespace Mono.CSharp {
 			for (i = start, j = 0; i < count; i++, j++){
 				Expression name = (Expression) bases [i];
 				Expression resolved = ResolveTypeExpr (name, false, Location);
+				if (resolved == null)
+					return null;
+				
 				bases [i] = resolved;
 				Type t = resolved.Type;
 
@@ -1455,31 +1458,40 @@ namespace Mono.CSharp {
 			//
 			// Check for internal or private fields that were never assigned
 			//
-			if (fields != null && RootContext.WarningLevel >= 3) {
-				foreach (Field f in fields) {
-					if ((f.ModFlags & Modifiers.PUBLIC) != 0)
-						continue;
-
-					if (f.status == 0){
+			if (RootContext.WarningLevel >= 3) {
+				if (fields != null){
+					foreach (Field f in fields) {
+						if ((f.ModFlags & Modifiers.PUBLIC) != 0)
+							continue;
+						
+						if (f.status == 0){
+							Report.Warning (
+								169, f.Location, "Private field " +
+								MakeName (f.Name) + " is never used");
+							continue;
+						}
+						
+						//
+						// Only report 649 on level 4
+						//
+						if (RootContext.WarningLevel < 4)
+							continue;
+						
+						if ((f.status & Field.Status.ASSIGNED) != 0)
+							continue;
+						
 						Report.Warning (
-							169, f.Location, "Private field " +
-							MakeName (f.Name) + " is never used");
-						continue;
+							649, f.Location,
+							"Field " + MakeName (f.Name) + " is never assigned " +
+							" to and will always have its default value");
 					}
+				}
 
-					//
-					// Only report 649 on level 4
-					//
-					if (RootContext.WarningLevel < 4)
-						continue;
-
-					if ((f.status & Field.Status.ASSIGNED) != 0)
-						continue;
-
-					Report.Warning (
-						649, f.Location,
-						"Field " + MakeName (f.Name) + " is never assigned " +
-						" to and will always have its default value");
+				if (events != null){
+					foreach (Event e in events){
+						if (e.status == 0)
+							Report.Warning (67, "The event " + MakeName (e.Name) + " is never used");
+					}
 				}
 			}
 			
@@ -3748,7 +3760,9 @@ namespace Mono.CSharp {
 		Type declaring_type, reflected_type, event_type;
 		string name;
 
-		public MyEventBuilder (TypeBuilder type_builder, string name, EventAttributes event_attr, Type event_type)
+		Event my_event;
+
+		public MyEventBuilder (Event ev, TypeBuilder type_builder, string name, EventAttributes event_attr, Type event_type)
 		{
 			MyBuilder = type_builder.DefineEvent (name, event_attr, event_type);
 
@@ -3760,6 +3774,7 @@ namespace Mono.CSharp {
 			
 			attributes = event_attr;
 			this.name = name;
+			my_event = ev;
 			this.event_type = event_type;
 		}
 		
@@ -3858,6 +3873,12 @@ namespace Mono.CSharp {
 				return event_type;
 			}
 		}
+		
+		public void SetUsed ()
+		{
+			if (my_event != null)
+				my_event.status = (FieldBase.Status.ASSIGNED | FieldBase.Status.USED);
+		}
 	}
 	
 	public class Event : FieldBase {
@@ -3939,7 +3960,7 @@ namespace Mono.CSharp {
 			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, "value");
 
 			if (!IsExplicitImpl){
-				EventBuilder = new MyEventBuilder (
+				EventBuilder = new MyEventBuilder (this,
 					parent.TypeBuilder, Name, e_attr, MemberType);
 					
 				if (Add == null && Remove == null) {

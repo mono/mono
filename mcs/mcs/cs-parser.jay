@@ -2143,7 +2143,7 @@ opt_rank_specifier
 rank_specifiers
 	: rank_specifier opt_rank_specifier
 	  {
-		  $$ = (string) $1 + (string) $2;
+		  $$ = (string) $2 + (string) $1;
 	  }
         ;
 

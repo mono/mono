@@ -2199,8 +2199,13 @@ namespace Mono.CSharp {
 			//
 			// Unboxing conversion.
 			//
-			if (expr_type == TypeManager.object_type && target_type.IsValueType)
+			if (expr_type == TypeManager.object_type && target_type.IsValueType){
+				if (expr is NullLiteral){
+					Report.Error (37, "Cannot convert null to value type `" + TypeManager.CSharpName (expr_type) + "'");
+					return null;
+				}
 				return new UnboxCast (expr, target_type);
+			}
 
 			//
 			// Enum types
@@ -4362,9 +4367,11 @@ namespace Mono.CSharp {
 			if (add_accessor.IsStatic || remove_accessor.IsStatic)
 				is_static = true;
 
-			if (EventInfo is MyEventBuilder)
-				type = ((MyEventBuilder) EventInfo).EventType;
-			else
+			if (EventInfo is MyEventBuilder){
+				MyEventBuilder eb = (MyEventBuilder) EventInfo;
+				type = eb.EventType;
+				eb.SetUsed ();
+			} else
 				type = EventInfo.EventHandlerType;
 		}
 
@@ -4410,6 +4417,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
+			
 			return this;
 		}
 
