@@ -1,3 +1,7 @@
+2003-03-15  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* RemotingServices.cs: fixes bugs #39380 and #39331.
+
 2003-02-25 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Identity.cs: Added property to check if an identity is connected (it is remotely accesible)

@@ -1,3 +1,7 @@
+2003-03-15  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* AppDomain.cs: fixes bugs #39380 and #39331.
+
 2003-03-06  Nick Drochak  <ndrochak@gol.com>
 
 	* TimeSpan.cs (Negate): Throw exception when value is MinValue.

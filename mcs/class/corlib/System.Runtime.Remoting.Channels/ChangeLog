@@ -1,3 +1,7 @@
+2003-03-15  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* CrossAppDomainChannel.cs: fixes bugs #39380 and #39331.
+
 2003-03-03  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ChannelServices.cs: Minor corrections.

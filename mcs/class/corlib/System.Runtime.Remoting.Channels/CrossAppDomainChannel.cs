@@ -173,21 +173,7 @@ namespace System.Runtime.Remoting.Channels
 
 				try 
 				{
-					IMessage reqDomMsg;
-
-					if (null != arrRequest)
-						reqDomMsg = CADSerializer.DeserializeMessage (new MemoryStream(arrRequest), null);
-					else
-						reqDomMsg = new MethodCall (cadMsg);
-
-					IMessage retDomMsg = ChannelServices.SyncDispatchMessage (reqDomMsg);
-
-					cadMrm = CADMethodReturnMessage.Create (retDomMsg);
-					if (null == cadMrm) {
-						arrResponse = CADSerializer.SerializeMessage (retDomMsg).GetBuffer();
-					} else
-						arrResponse = null;
-
+ 					AppDomain.CurrentDomain.ProcessMessageInDomain (arrRequest, cadMsg, out arrResponse, out cadMrm);
 				}
 				catch (Exception e) 
 				{

@@ -21,6 +21,7 @@ using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.IO;
 
 namespace System.Runtime.Remoting
 {
@@ -34,8 +35,8 @@ namespace System.Runtime.Remoting
 		
 		static RemotingServices ()
 		{
+			RegisterInternalChannels ();
 			app_id = "/" + Guid.NewGuid().ToString().Replace('-', '_') + "/";
-
 			CreateWellKnownServerIdentity (typeof(RemoteActivator), "RemoteActivationService.rem", WellKnownObjectMode.Singleton);
 		}
 	
@@ -449,26 +450,23 @@ namespace System.Runtime.Remoting
 
 		internal static object GetDomainProxy(AppDomain domain) 
 		{
-			ObjRef appRef = null;
+			byte[] data = null;
 
-			// Make sure that the channels is active in this domain
-			RegisterInternalChannels();
-
-			// this should use contexts in the future
+			Context currentContext = Thread.CurrentContext;
 			AppDomain currentDomain = AppDomain.InternalSetDomain (domain);
 			try 
 			{
-				// Make sure that our new domain also has the internal channels
-				RegisterInternalChannels();
-
-				appRef = RemotingServices.Marshal(domain, null, null);
+				data = domain.GetMarshalledDomainObjRef ();
 			}
 			finally 
 			{
 				AppDomain.InternalSetDomain (currentDomain);
+				AppDomain.InternalSetContext (currentContext);
 			}
 
-			return (AppDomain) RemotingServices.Unmarshal(appRef);
+			MemoryStream stream = new MemoryStream (data);
+			ObjRef appref = (ObjRef) CADSerializer.DeserializeObject (stream);
+			return (AppDomain) RemotingServices.Unmarshal(appref);
 		}
 
 		private static void RegisterInternalChannels() 

@@ -22,6 +22,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Principal;
 using System.Security.Policy;
 using System.Security;
@@ -694,6 +696,33 @@ namespace System {
 
 			return null;
 		}
+
+		internal byte[] GetMarshalledDomainObjRef ()
+		{
+			ObjRef oref = RemotingServices.Marshal(AppDomain.CurrentDomain, null, typeof(AppDomain));
+			return CADSerializer.SerializeObject (oref).GetBuffer();
+		}
+
+		internal void ProcessMessageInDomain (byte[] arrRequest, CADMethodCallMessage cadMsg, out byte[] arrResponse, out CADMethodReturnMessage cadMrm)
+		{
+			IMessage reqDomMsg;
+
+			if (null != arrRequest)
+				reqDomMsg = CADSerializer.DeserializeMessage (new MemoryStream(arrRequest), null);
+			else
+				reqDomMsg = new MethodCall (cadMsg);
+
+			IMessage retDomMsg = ChannelServices.SyncDispatchMessage (reqDomMsg);
+
+			cadMrm = CADMethodReturnMessage.Create (retDomMsg);
+			if (null == cadMrm) 
+			{
+				arrResponse = CADSerializer.SerializeMessage (retDomMsg).GetBuffer();
+			} 
+			else
+				arrResponse = null;
+		}
+
 		// End of methods called from the runtime
 		
 		public event AssemblyLoadEventHandler AssemblyLoad;
