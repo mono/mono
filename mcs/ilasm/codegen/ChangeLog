@@ -1,5 +1,10 @@
 2003-03-17 Jackson Harper <jackson@latitudegeo.com>
 
+	* ClassTable.cs: Set defined flag and type attributes for referenced 
+	classes when they are defined.
+
+2003-03-17 Jackson Harper <jackson@latitudegeo.com>
+
 	* MethodTable.cs: Add method to Check if all methods have been defined, set referenced methods properties
 	when defining them
 	* FieldTable.cs: Add method to check if all fields have been defined, set referenced fields properties

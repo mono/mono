@@ -22,7 +22,7 @@ namespace Mono.ILASM {
 			private int flags;
 
 			public ArrayList LocationList;
-			public Class Class;
+			public ClassDef Class;
 			public MethodTable method_table;
 			public FieldTable field_table;
 
@@ -137,12 +137,18 @@ namespace Mono.ILASM {
 		{
 			string full_name = String.Format ("{0}.{1}", name_space, name);
 			
-			CheckExists (full_name);				
+			ClassTableItem item = (ClassTableItem) table[full_name];
 
-			ClassDef klass = pefile.AddClass (attr, name_space, name);
-			AddDefined (full_name, klass, location);
+			if (item == null) {
+				ClassDef klass = pefile.AddClass (attr, name_space, name);
+				AddDefined (full_name, klass, location);
+				return klass;
+			}
 
-			return klass;
+			item.Class.AddAttribute (attr);
+			item.Defined = true;
+
+			return item.Class;
 		}
 
 		public ClassDef AddDefinition (string name_space, string name, 
@@ -150,12 +156,19 @@ namespace Mono.ILASM {
 		{
 			string full_name = String.Format ("{0}.{1}", name_space, name);
 
-			CheckExists (full_name);				
+			ClassTableItem item = (ClassTableItem) table[full_name];
 
-			ClassDef klass = pefile.AddClass (attr, name_space, name, parent);
-			AddDefined (full_name, klass, location);
+			if (item == null) {
+				ClassDef klass = pefile.AddClass (attr, name_space, name, parent);
+				AddDefined (full_name, klass, location);
+				return klass;
+			}
+			
+			/// TODO: Need to set parent, will need to modify PEAPI for this.
+			item.Class.AddAttribute (attr);
+			item.Defined = true;
 
-			return klass;
+			return item.Class;
 		}
 
 		/// <summary>
