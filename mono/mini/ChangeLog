@@ -1,3 +1,8 @@
+
+Tue Feb 8 18:21:11 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: update to new signature of mono_class_get_allocation_ftn().
+
 2005-02-06  Neale Ferguson <NealeFerguson@earthlink.net>
 
 	* cpu-s390.md,  mini-s390.c: Correct bug with register usage on certain 
