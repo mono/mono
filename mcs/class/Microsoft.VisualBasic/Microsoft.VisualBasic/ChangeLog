@@ -1,3 +1,9 @@
+2005-03-17 Manjula GHM <mmanjula@novell.com>
+	   Ankit Jain <radical@gmail.com>
+	  * Collection.cs:
+	  * ErrObject.cs:
+	   Fix for build breakage on cygwin-head-mono	  
+
 2005-03-16 Manjula GHM <mmanjula@novell.com>
 	   Ankit Jain <radical@gmail.com>
 
@@ -6,7 +12,7 @@
 	  * ErrObject.cs:
 	  * FileSyste.cs:
 	  * Strings.cs:
-	  Added type casting in some places and moved "optional" attribute to be AFTER that __Default* attribute
+	  Added type casting in some places and moved OptionCompare attribute to be AFTER  __DefaultArgumentValue attribute
           	
 
 2005-02-14 Rafael Teixeira <rafaelteixeirabr@hotmail.com>

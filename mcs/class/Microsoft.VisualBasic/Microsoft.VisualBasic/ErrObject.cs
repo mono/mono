@@ -241,10 +241,10 @@ namespace Microsoft.VisualBasic
 
 		[MonoTODO]
 		public void Raise (System.Int32 Number, 
-				   [Optional, __DefaultArgumentValue((object)null)] System.Object Source, 
-				   [Optional, __DefaultArgumentValue((object)null)] System.Object Description, 
-				   [Optional, __DefaultArgumentValue((object)null)] System.Object HelpFile, 
-				   [Optional, __DefaultArgumentValue((object)null)] System.Object HelpContext) 
+				   [Optional, __DefaultArgumentValue(null)] System.Object Source, 
+				   [Optional, __DefaultArgumentValue(null)] System.Object Description, 
+				   [Optional, __DefaultArgumentValue(null)] System.Object HelpFile, 
+				   [Optional, __DefaultArgumentValue(null)] System.Object HelpContext) 
 		{ 
 			Exception e;
 			
