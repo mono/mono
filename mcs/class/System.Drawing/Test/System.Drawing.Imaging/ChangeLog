@@ -1,3 +1,8 @@
+2004-03-22  Jordi Mas i Hernandez <jordi@ximian.com>
+                                                                                
+	* TestColorMatrix.cs: added test case
+	* TestImageAttributes.cs: added test case
+
 2004-06-10  Sanjay Gupta <gsanjay@novell.com>
                                                                                 
         * TestBmpCodec.cs, TestImageCodecInfo.cs, TestJpedCodec.cs: Removed
