@@ -323,7 +323,12 @@ namespace Mono.Xml
 			case XmlNodeType.DocumentType:
 #if true
 				XmlTextReader xmlTextReader = reader as XmlTextReader;
-				this.dtd = xmlTextReader.currentSubset;
+				if (xmlTextReader == null) {
+					xmlTextReader = new XmlTextReader ("", XmlNodeType.Document, null);
+					xmlTextReader.GenerateDTDObjectModel (reader.Name,
+						reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
+				}
+				this.dtd = xmlTextReader.DTD;
 #else
 				// It will support external DTD reader in the future.
 				this.dtd = new DTDReader (reader).DTD;

@@ -1,5 +1,20 @@
 2003-07-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* DTDValidatingReader.cs :
+	  added DTDObjectModel support for non-XmlTextReader XmlReader 
+	  e.g. XmlNodeReader (Read() method).
+	* XmlDocument.cs :
+	  added internal CreateDocumentType(XmlTextReader) and moved
+	  ReadDoctypeNode() to XmlDocumentType.ImportFromDTD().
+	* XmlDocumentType.cs :
+	  added internal .ctor(XmlTextReader, document) and ImportFromDTD().
+	* XmlTextReader.cs :
+	  Renamed useSbForVal (valueBuilderAvailable), valSb (valueBuilder)
+	  and currentSubset (DTD).
+	  Added GenerateDTDObjectModel() (for independent doctype parsing).
+
+2003-07-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlAttribute.cs :
 	  .ctor() should reject xml- or xmlns-prefixed node.
 	* XmlNamespaceManager.cs :

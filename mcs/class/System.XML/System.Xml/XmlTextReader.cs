@@ -157,8 +157,8 @@ namespace System.Xml
 		public override bool HasValue
 		{
 			get { 
-				if (this.useSbForVal)
-					return valSb.Length != 0;
+				if (this.valueBuilderAvailable)
+					return valueBuilder.Length != 0;
 				else
 					return value != String.Empty;
 			}
@@ -271,8 +271,8 @@ namespace System.Xml
 			get {
 				
 				string v = value;
-				if (this.useSbForVal)
-					v = valSb.ToString ();
+				if (valueBuilderAvailable)
+					v = valueBuilder.ToString ();
 				if(NodeType == XmlNodeType.Attribute)
 					return UnescapeAttributeValue(v);
 				else
@@ -700,7 +700,7 @@ namespace System.Xml
 
 		#region Internals
 		// Parsed DTD Objects
-		internal DTDObjectModel currentSubset;
+		internal DTDObjectModel DTD;
 		#endregion
 
 		#region Privates
@@ -726,8 +726,8 @@ namespace System.Xml
 		private string namespaceURI;
 		private bool isEmptyElement;
 		private string value;
-		private StringBuilder valSb;
-		private bool useSbForVal = false;
+		private StringBuilder valueBuilder;
+		private bool valueBuilderAvailable = false;
 
 		private bool isPropertySaved;
 		private XmlNodeType saveNodeType;
@@ -872,7 +872,7 @@ namespace System.Xml
 			this.isEmptyElement = isEmptyElement;
 			this.value = value;
 			this.elementDepth = depth;
-			this.useSbForVal = false;
+			this.valueBuilderAvailable = false;
 
 			if (clearAttributes)
 				ClearAttributes ();
@@ -917,8 +917,8 @@ namespace System.Xml
 			StringBuilder value,
 			bool clearAttributes) {
 			SetProperties (nodeType, name, isEmptyElement, (string)null, clearAttributes);
-			this.useSbForVal = true;
-			this.valSb = value;
+			this.valueBuilderAvailable = true;
+			this.valueBuilder = value;
 		}
 
 		private void SaveProperties ()
@@ -1622,31 +1622,9 @@ namespace System.Xml
 			SkipWhitespace ();
 			Expect ('>');
 
-			// now compile DTD
-			currentSubset = new DTDObjectModel ();	// merges both internal and external subsets in the meantime,
-			currentSubset.Name = doctypeName;
-			int originalParserDepth = parserInputStack.Count;
-			if (intSubsetStartLine > 0) {
-				XmlParserInput original = currentInput;
-				currentInput = new XmlParserInput (new StringReader (parserContext.InternalSubset), BaseURI, intSubsetStartLine, intSubsetStartColumn);
-				do {
-					CompileDTDSubset ();
-					if (PeekChar () == -1 && parserInputStack.Count > 0)
-						PopParserInput ();
-				} while (nodeType != XmlNodeType.None || parserInputStack.Count > originalParserDepth);
-				if (dtdIncludeSect != 0)
-					throw new XmlException (this as IXmlLineInfo,"INCLUDE section is not ended correctly.");
-				currentInput = original;
-			}
-			if (systemId != String.Empty && resolver != null) {
-				PushParserInput (systemId);
-				do {
-					this.CompileDTDSubset ();
-					if (PeekChar () == -1 && parserInputStack.Count > 1)
-						PopParserInput ();
-				} while (nodeType != XmlNodeType.None || parserInputStack.Count > originalParserDepth + 1);
-				PopParserInput ();
-			}
+			GenerateDTDObjectModel (doctypeName, publicId,
+				systemId, parserContext.InternalSubset,
+				intSubsetStartLine, intSubsetStartColumn);
 
 			// set properties for <!DOCTYPE> node
 			SetProperties (
@@ -1656,6 +1634,43 @@ namespace System.Xml
 				parserContext.InternalSubset, // value
 				true // clearAttributes
 				);
+		}
+
+		internal void GenerateDTDObjectModel (string name, string publicId,
+			string systemId, string internalSubset)
+		{
+			GenerateDTDObjectModel (name, publicId, systemId, internalSubset, 0, 0);
+		}
+
+		internal void GenerateDTDObjectModel (string name, string publicId,
+			string systemId, string internalSubset, int intSubsetStartLine, int intSubsetStartColumn)
+		{
+			// now compile DTD
+			DTD = new DTDObjectModel ();	// merges both internal and external subsets in the meantime,
+			DTD.Name = name;
+			int originalParserDepth = parserInputStack.Count;
+			if (internalSubset != null && internalSubset.Length > 0) {
+				XmlParserInput original = currentInput;
+				currentInput = new XmlParserInput (new StringReader (internalSubset), BaseURI, intSubsetStartLine, intSubsetStartColumn);
+				do {
+					CompileDTDSubset ();
+					if (PeekChar () == -1 && parserInputStack.Count > 0)
+						PopParserInput ();
+				} while (nodeType != XmlNodeType.None || parserInputStack.Count > originalParserDepth);
+				if (dtdIncludeSect != 0)
+					throw new XmlException (this as IXmlLineInfo,"INCLUDE section is not ended correctly.");
+				currentInput = original;
+			}
+			if (systemId != null && systemId != String.Empty && resolver != null) {
+				PushParserInput (systemId);
+				do {
+					this.CompileDTDSubset ();
+					if (PeekChar () == -1 && parserInputStack.Count > 1)
+						PopParserInput ();
+				} while (nodeType != XmlNodeType.None || parserInputStack.Count > originalParserDepth + 1);
+				PopParserInput ();
+			}
+
 		}
 
 		private void PushParserInput (string url)
@@ -1927,13 +1942,13 @@ namespace System.Xml
 						break;
 					}
 					DTDEntityDeclaration ent = ReadEntityDecl ();
-					if (currentSubset.EntityDecls [ent.Name] == null)
-						currentSubset.EntityDecls.Add (ent.Name, ent);
+					if (DTD.EntityDecls [ent.Name] == null)
+						DTD.EntityDecls.Add (ent.Name, ent);
 					break;
 				case 'L':
 					Expect ("EMENT");
 					DTDElementDeclaration el = ReadElementDecl ();
-					currentSubset.ElementDecls.Add (el.Name, el);
+					DTD.ElementDecls.Add (el.Name, el);
 					break;
 				default:
 					throw new XmlException (this as IXmlLineInfo,"Syntax Error after '<!E' (ELEMENT or ENTITY must be found)");
@@ -1942,13 +1957,13 @@ namespace System.Xml
 			case 'A':
 				Expect ("TTLIST");
 				DTDAttListDeclaration atl = ReadAttListDecl ();
-//				if (currentSubset.AttListDecls.ContainsKey (atl.Name))
-					currentSubset.AttListDecls.Add (atl.Name, atl);
+//				if (DTD.AttListDecls.ContainsKey (atl.Name))
+					DTD.AttListDecls.Add (atl.Name, atl);
 				break;
 			case 'N':
 				Expect ("OTATION");
 				DTDNotationDeclaration not = ReadNotationDecl ();
-				currentSubset.NotationDecls.Add (not.Name, not);
+				DTD.NotationDecls.Add (not.Name, not);
 				break;
 			case '[':
 				// conditional sections
@@ -2004,7 +2019,7 @@ namespace System.Xml
 		// The reader is positioned on the head of the name.
 		private DTDElementDeclaration ReadElementDecl ()
 		{
-			DTDElementDeclaration decl = new DTDElementDeclaration (currentSubset);
+			DTDElementDeclaration decl = new DTDElementDeclaration (DTD);
 			SkipWhitespace ();
 			TryExpandPERef ();
 			decl.Name = ReadName ();
@@ -2048,7 +2063,7 @@ namespace System.Xml
 						SkipWhitespace ();
 						TryExpandPERef ();
 						SkipWhitespace ();
-						DTDContentModel elem = new DTDContentModel (currentSubset, decl.Name);
+						DTDContentModel elem = new DTDContentModel (DTD, decl.Name);
 						model.ElementName = ReadName ();
 						model.ChildModels.Add (elem);
 						SkipWhitespace ();
@@ -2118,7 +2133,7 @@ namespace System.Xml
 			DTDContentModel model = null;
 			TryExpandPERef ();
 			if(PeekChar () == '(') {
-				model = new DTDContentModel (currentSubset, elem.Name);
+				model = new DTDContentModel (DTD, elem.Name);
 				ReadChar ();
 				SkipWhitespace ();
 				model.ChildModels.Add (ReadCP (elem));
@@ -2151,7 +2166,7 @@ namespace System.Xml
 			}
 			else {
 				TryExpandPERef ();
-				model = new DTDContentModel (currentSubset, elem.Name);
+				model = new DTDContentModel (DTD, elem.Name);
 				model.ElementName = ReadName ();
 			}
 
@@ -2327,7 +2342,7 @@ namespace System.Xml
 			TryExpandPERef ();
 			string name = ReadName ();	// target element name
 			DTDAttListDeclaration decl =
-				currentSubset.AttListDecls [name] as DTDAttListDeclaration;
+				DTD.AttListDecls [name] as DTDAttListDeclaration;
 			if (decl == null)
 				decl = new DTDAttListDeclaration ();
 			decl.Name = name;

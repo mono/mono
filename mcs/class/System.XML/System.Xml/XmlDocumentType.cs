@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using Mono.Xml;
 
 namespace System.Xml
 {
@@ -20,8 +21,7 @@ namespace System.Xml
 		string internalSubset;  // value of the DTD internal subset
 		internal XmlNamedNodeMap entities;
 		internal XmlNamedNodeMap notations;
-		internal Hashtable elementDecls;
-		internal Hashtable attListDecls;
+		DTDObjectModel DTD;
 
 		// Constructor
 		protected internal XmlDocumentType (string name, string publicId,
@@ -33,12 +33,44 @@ namespace System.Xml
 			this.publicId = publicId;
 			this.systemId = systemId;
 			this.internalSubset = internalSubset;
-			entities = new XmlNamedNodeMap (this);
-			notations = new XmlNamedNodeMap (this);
-			elementDecls = new Hashtable ();
-			attListDecls = new Hashtable ();
+
+			XmlTextReader xtr = new XmlTextReader ("", XmlNodeType.Document, null);
+			xtr.GenerateDTDObjectModel (name, publicId, systemId, internalSubset);
+			this.DTD = xtr.DTD;
+
+			ImportFromDTD ();
 		}
 
+		internal XmlDocumentType (XmlTextReader reader, XmlDocument doc)
+			: base (doc)
+		{
+			this.name = reader.Name;
+			this.publicId = reader ["PUBLIC"];
+			this.systemId = reader ["SYSTEM"];
+			this.internalSubset = reader.Value;
+			this.DTD = reader.DTD;
+
+			ImportFromDTD ();
+		}
+
+		private void ImportFromDTD ()
+		{
+			entities = new XmlNamedNodeMap (this);
+			notations = new XmlNamedNodeMap (this);
+
+			foreach (DTDEntityDeclaration decl in DTD.EntityDecls.Values) {
+				XmlNode n = new XmlEntity (decl.Name, decl.NotationName,
+					decl.PublicId, decl.SystemId, OwnerDocument);
+				// FIXME: Value is more complex, similar to Attribute.
+				n.insertBeforeIntern (OwnerDocument.CreateTextNode (decl.EntityValue), null);
+				entities.Nodes.Add (n);
+			}
+			foreach (DTDNotationDeclaration decl in DTD.NotationDecls.Values) {
+				XmlNode n = new XmlNotation (decl.LocalName, decl.Prefix,
+					decl.PublicId, decl.SystemId, OwnerDocument);
+				notations.Nodes.Add (n);
+			}
+		}
 
 		// Properties
 		public XmlNamedNodeMap Entities

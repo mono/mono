@@ -251,6 +251,11 @@ namespace System.Xml
 			return new XmlDocumentType (name, publicId, systemId, internalSubset, this);
 		}
 
+		private XmlDocumentType CreateDocumentType (XmlTextReader reader)
+		{
+			return new XmlDocumentType (reader, this);
+		}
+
 		public XmlElement CreateElement (string name)
 		{
 			return CreateElement (name, String.Empty);
@@ -543,14 +548,11 @@ namespace System.Xml
 		public virtual void Load (Stream inStream)
 		{
 			Load (new XmlTextReader (inStream));
-//			Load (new XmlValidatingReader (
-//				inStream, XmlNodeType.Document, null));
 		}
 
 		public virtual void Load (string filename)
 		{
 			XmlReader xr = new XmlTextReader (filename);
-//			XmlReader xr = new XmlValidatingReader (new XmlTextReader (filename));
 			Load (xr);
 			xr.Close ();
 		}
@@ -558,7 +560,6 @@ namespace System.Xml
 		public virtual void Load (TextReader txtReader)
 		{
 			Load (new XmlTextReader (txtReader));
-//			Load (new XmlValidatingReader (new XmlTextReader (txtReader)));
 		}
 
 		public virtual void Load (XmlReader xmlReader)
@@ -582,8 +583,6 @@ namespace System.Xml
 		{
 			XmlReader xmlReader = new XmlTextReader (
 				xml, XmlNodeType.Document, null);
-//			XmlReader xmlReader = new XmlValidatingReader (
-//				xml, XmlNodeType.Document, null);
 			Load (xmlReader);
 		}
 
@@ -782,18 +781,11 @@ namespace System.Xml
 				case XmlNodeType.DocumentType:
 					// hack ;-)
 					XmlTextReader xtReader = reader as XmlTextReader;
-					if(xtReader == null) {
-						// XmlTextReader doesn't allow such creation that starts reading from Doctype.
-					/*
-						xtReader = new XmlTextReader (reader.ReadOuterXml (),
-							XmlNodeType.DocumentType,
-							new XmlParserContext (NameTable, ConstructNamespaceManager(), XmlLang, XmlSpace));
-						xtReader.Read ();
-					*/
+					if(xtReader == null)
 						newNode = CreateDocumentType (reader.Name, reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
-					} else {
-						newNode = ReadDoctypeNode (xtReader);
-					}
+					else
+						newNode = CreateDocumentType (xtReader);
+
 					if(currentNode != null)
 						throw new XmlException (reader as IXmlLineInfo, "XmlDocumentType at invalid position.");
 					break;
@@ -838,34 +830,6 @@ namespace System.Xml
 				return message;
 		}
 
-		private XmlDocumentType ReadDoctypeNode (XmlTextReader xtReader)
-		{
-			XmlDocumentType doctype = CreateDocumentType (xtReader.Name,
-				xtReader.GetAttribute ("PUBLIC"),
-				xtReader.GetAttribute ("SYSTEM"),
-				xtReader.Value);
-			DTDObjectModel subset = xtReader.currentSubset;
-			foreach (DTDEntityDeclaration decl in subset.EntityDecls.Values) {
-				XmlNode n = new XmlEntity (decl.Name, decl.NotationName,
-					decl.PublicId, decl.SystemId, this);
-				// FIXME: Value is more complex, similar to Attribute.
-				n.insertBeforeIntern (this.CreateTextNode (decl.EntityValue), null);
-				doctype.entities.Nodes.Add (n);
-			}
-			foreach (DTDNotationDeclaration decl in subset.NotationDecls.Values) {
-				XmlNode n = new XmlNotation (decl.LocalName, decl.Prefix,
-					decl.PublicId, decl.SystemId, this);
-				doctype.notations.Nodes.Add (n);
-			}
-			foreach (DTDElementDeclaration decl in subset.ElementDecls.Values) {
-				doctype.elementDecls.Add (decl.Name, decl);
-			}
-			foreach (DTDAttListDeclaration decl in subset.AttListDecls.Values) {
-				doctype.attListDecls.Add (decl.Name, decl);
-			}
-			return doctype;
-		}
-
 		public virtual void Save(Stream outStream)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, Encoding.UTF8);
@@ -882,7 +846,6 @@ namespace System.Xml
 			xmlWriter.Close ();
 		}
 
-		[MonoTODO]
 		public virtual void Save (TextWriter writer)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (writer);
