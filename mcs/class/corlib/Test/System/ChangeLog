@@ -1,3 +1,10 @@
+2002-02-26  Martin Baulig  <martin@gnome.org>
+
+	* DateTimeTest.cs: Added testcases for the parsers. Use the invariant
+	culture to run this test suite.
+
+	* TimeZoneTest.cs: Use the invariant culture to run this test suite.
+
 2002-02-26  Duco Fijma <duco@lorentz.xs4all>
 	* TimeSpanTest.cs: added test from TimeSpan.FromMilliseconds
 

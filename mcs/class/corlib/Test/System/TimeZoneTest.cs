@@ -9,6 +9,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Globalization;
 
 namespace MonoTests.System
@@ -55,7 +56,13 @@ public class TimeZoneTest : TestCase
 
 	protected override void RunTest ()
 	{
+		CultureInfo oldcult = Thread.CurrentThread.CurrentCulture;
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+
 		TestCtors ();
+
+		Thread.CurrentThread.CurrentCulture = oldcult;
 	}
 
 }
