@@ -1401,7 +1401,7 @@ namespace Mono.CSharp
 					int state = (int) ifstack.Peek ();
 
 					if ((state & REGION) != 0) {
-						Error_UnexpectedDirective ("#endregion directive expected");
+						Report.Error (1038, Location, "#endregion directive expected");
 						return true;
 					}
 
@@ -1431,7 +1431,7 @@ namespace Mono.CSharp
 					int state = (int) ifstack.Peek ();
 
 					if ((state & REGION) != 0) {
-						Error_UnexpectedDirective ("#endregion directive expected");
+						Report.Error (1038, Location, "#endregion directive expected");
 						return true;
 					}
 
@@ -1756,11 +1756,21 @@ namespace Mono.CSharp
 				return Token.ERROR;
 			}
 
-			if (ifstack != null && ifstack.Count >= 1)
-				Report.Error (1027, Location, "#endif/#endregion expected");
-
 			return Token.EOF;
 		}
+
+		public void Cleanup ()
+		{
+			if (ifstack != null && ifstack.Count >= 1) {
+				int state = (int) ifstack.Pop ();
+				if ((state & REGION) != 0)
+					Report.Error (1038, "#endregion directive expected");
+				else 
+					Report.Error (1027, "#endif directive expected");
+			}
+				
+		}
+
 	}
 }
 
