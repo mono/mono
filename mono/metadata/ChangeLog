@@ -1,5 +1,8 @@
 2002-11-28  Dietmar Maurer  <dietmar@ximian.com>
 
+	* icall.c: moved MONO_ARCH_SAVE_REGS to the end of the
+	declarations to make it work with older gcc. 
+
 	* loader.c (mono_get_method): set signature->pinvoke for native calls
 
 2002-11-20  Dick Porter  <dick@ximian.com>
