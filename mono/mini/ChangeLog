@@ -1,3 +1,9 @@
+
+Tue May 27 17:56:12 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: thread-static fields are registered in mono_class_vtable(),
+	so ensure the function is called before checking for them.
+
 2003-05-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (optimize_branches): fix for bug 43586
