@@ -4,7 +4,7 @@ CSCRIPT=$(WINDIR)/system32/cscript.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 INSTALL = /usr/bin/install
 
-MONO_TOOLS = monostyle.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./SqlSharp/sqlsharp.exe ./security/secutil.exe
+MONO_TOOLS = monostyle.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./SqlSharp/sqlsharp.exe ./security/secutil.exe ./cilc/cilc.exe
 
 DIRS = 
 
@@ -64,10 +64,14 @@ IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 ./security/secutil.exe: dummy
 	(cd security; make)
 
+./cilc/cilc.exe: dummy
+	(cd cilc; make)
+
 clean:
 	(cd corcompare; make clean)
 	(cd SqlSharp; make clean)
 	(cd security; make clean)
+	(cd cilc; make clean)
 	rm -f *.exe *.pdb *.dbg *.dll
 	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in

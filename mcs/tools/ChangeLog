@@ -1,3 +1,8 @@
+2003-05-01  Duncan Mak  <duncan@ximian.com>
+
+	* makefile:
+	* makefile.gnu: Add 'cilc' to the build.
+	
 2003-03-14  Daniel Morgan  <danmorg@sc.rr.com>
 
 	* mono-win32-setup.nsi: added NSIS 
