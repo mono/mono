@@ -29,9 +29,14 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.18  2004/08/11 13:47:22  pbartok
+// - Rewrote the collection stuff. Might not be as fast now, not keeping
+//   the number of children around and accessible directly, but it's more
+//   straightforward
+//
 // Revision 1.17  2004/08/10 18:32:10  jordi
 // throw ontextchange event
 //
@@ -137,8 +142,6 @@ namespace System.Windows.Forms
 		static internal Hashtable	controls;		// All of the applications controls, in a flat list
 		internal ControlCollection	child_controls;		// our children
 		internal Control		parent;			// our parent control
-		internal int			num_of_children;	// number of children the control has
-		internal Control[]		children;		// our children
 		internal AccessibleObject	accessibility_object;	// object that contains accessibility information about our control
 		internal BindingContext		binding_context;	// TODO
 		internal RightToLeft		right_to_left;		// drawing direction for control
@@ -166,90 +169,52 @@ namespace System.Windows.Forms
 		
 		#region Public Classes
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
-			private class Enumerator : IEnumerator {
-				private Control	owner;
-				private int	current;
-
-				public Enumerator(Control owner) {
-					this.owner=owner;
-					this.current=-1;
-				}
-
-				public bool MoveNext() {
-					current++;
-					if (current>=owner.num_of_children) {
-						return false;
-					}
-
-					return true;
-				}
-
-				public void Reset() {
-					current=-1;
-				}
-
-				public object Current {
-					get {
-						if (current>=0 && current<owner.num_of_children) {
-							return owner.children[current];
-						} else {
-							throw new InvalidOperationException("enumerator out of range");
-						}
-					}
-				}
-			}
-
-			protected Control 	owner;
+			#region	ControlCollection Local Variables
+			private ArrayList	list;
+			private Control		owner;
+			#endregion	// ControlCollection Local Variables
 
 			#region ControlCollection Public Constructor
 			public ControlCollection(Control owner) {
 				this.owner=owner;
+				this.list=new ArrayList();
 			}
 			#endregion
 
-			#region ControlCollection Public Instance Properties
+			#region	ControlCollection Public Instance Properties
 			public int Count {
 				get {
-					return owner.num_of_children;
+					return list.Count;
 				}
 			}
 
 			public bool IsReadOnly {
 				get {
-					return false;
+					return list.IsReadOnly;
 				}
 			}
 
-			public virtual Control this [int index] {
+			public virtual Control this[int index] {
 				get {
-					if ((uint)index>=owner.num_of_children) {
-						throw new ArgumentOutOfRangeException();
+					if (index < 0 || index >= list.Count) {
+						throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
 					}
-					return owner.children[index];
+					return (Control)list[index];
 				}
 			}
-			#endregion	// ControlCollection Public Instance Properties
-
-			#region ControlCollection Public Instance Methods
+			#endregion // ControlCollection Public Instance Properties
+			
+			#region	ControlCollection Private Instance Methods
 			public virtual void Add(Control value) {
-				// Don't add it if we already have it
-				for (int i=0; i<owner.num_of_children; i++) {
-					if (value==owner.child_controls[i]) {
+				for (int i=0; i<list.Count; i++) {
+					if (list[i]==value) {
 						// Do we need to do anything here?
 						return;
 					}
 				}
-				value.Parent=owner;
-
-				// Handle layout duties
-				owner.SuspendLayout();
-//				value.InitLayout();
-				owner.ResumeLayout(false);
-
-				// Let everyone know about our new child
-				owner.OnControlAdded(new ControlEventArgs(value));
+				list.Add(value);
 			}
-
+			
 			public virtual void AddRange(Control[] controls) {
 				for (int i=0; i<controls.Length; i++) {
 					Add(controls[i]);
@@ -258,26 +223,16 @@ namespace System.Windows.Forms
 
 			public virtual void Clear() {
 				owner.SuspendLayout();
-				for (int i=0; i<owner.num_of_children; i++) {
-					Remove(owner.children[i]);
-				}
+				list.Clear();
 				owner.ResumeLayout();
 			}
 
-			public bool Contains(Control control) {
-				for (int i=0; i<owner.num_of_children; i++) {
-					if (owner.children[i]==control) {
-						return true;
-					}
-				}
-
-				return false;
+			public virtual bool Contains(Control value) {
+				return list.Contains(value);
 			}
 
-			public void CopyTo(Array dest, int index) {
-				if (owner.num_of_children>0) {
-					Array.Copy(owner.children, 0, dest, index, owner.num_of_children);
-				}
+			public void CopyTo(Array array, int index) {
+				list.CopyTo(array, index);
 			}
 
 			public override bool Equals(object other) {
@@ -295,7 +250,7 @@ namespace System.Windows.Forms
 			public int GetChildIndex(Control child, bool throwException) {
 				int index;
 
-				index=IndexOf(child);
+				index=list.IndexOf(child);
 
 				if (index==-1 && throwException) {
 					throw new ArgumentException("Not a child control", "child");
@@ -304,7 +259,7 @@ namespace System.Windows.Forms
 			}
 
 			public IEnumerator GetEnumerator() {
-				return new ControlCollection.Enumerator(this.owner);
+				return list.GetEnumerator();
 			}
 
 			public override int GetHashCode() {
@@ -312,131 +267,58 @@ namespace System.Windows.Forms
 			}
 
 			public int IndexOf(Control control) {
-				int index;
-
-				for (index=0; index<owner.num_of_children; index++) {
-					if (owner.children[index] == control) {
-						return index;
-					}
-				}
-				return -1;
+				return list.IndexOf(control);
 			}
 
 			public virtual void Remove(Control value) {
-				for (int i=0; i<owner.num_of_children; i++) {
-					if (owner.children[i]==value) {
-						RemoveAt(i);
-					}
-				}
+				list.Remove(value);
 			}
 
 			public void RemoveAt(int index) {
-				for (int i=index; i<owner.num_of_children; i++) {
-					owner.children[i]=owner.children[i+1];
+				if (index<0 || index>=list.Count) {
+					throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
 				}
+
+				list.RemoveAt(index);
 			}
 
-			public void SetChildIndex(Control child, int new_index) {
+			public void SetChildIndex(Control child, int newIndex) {
 				int	old_index;
 
-				old_index=IndexOf(child);
+				old_index=list.IndexOf(child);
 				if (old_index==-1) {
 					throw new ArgumentException("Not a child control", "child");
 				}
 
-				if (old_index==new_index) {
+				if (old_index==newIndex) {
 					return;
 				}
 
 				RemoveAt(old_index);
 
-				if (new_index>owner.num_of_children) {
-					Add(child);
+				if (newIndex>list.Count) {
+					list.Add(child);
 				} else {
-					for (int i=owner.num_of_children-1;i>new_index; i--) {
-						owner.children[i+1]=owner.children[i];
-					}
-
-					owner.children[new_index]=(Control)child;
+					list.Insert(newIndex, child);
 				}
 			}
-			#endregion 	// ControlCollection Public Instance Methods
+			#endregion // ControlCollection Private Instance Methods
 
-			#region ControlCollection Interface Methods
-#if nodef
-			int IList.Add(Control value) {
-
-				Add(value);
-				
-			}
-#endif
-
-			int IList.Add(object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Not of type Control", "value");
-				}
-				Add((Control)value);
-
-				// Assumes the element was added to the end of the list
-				return owner.num_of_children;
-			}
-
-			void IList.Clear() {
-				this.Clear();
-			}
-
-			bool IList.Contains(object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Not of type Control", "value");
-				}
-				return this.Contains((Control)value);
-			}
-
-			int IList.IndexOf(object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Not of type Control", "value");
-				}
-
-				for (int i=0; i<owner.num_of_children; i++) {
-					if (owner.children[i]==(Control)value) {
-						return i;
-					}
-				}
-
-				return -1;
-			}
-
-			void IList.Insert(int index, object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Not of type Control", "value");
-				}
-
-				if (index>owner.num_of_children) {
-					throw new ArgumentOutOfRangeException("index");
-				}
-
-				for (int i=owner.num_of_children-1;i>index; i--) {
-					owner.children[i+1]=owner.children[i];
-				}
-
-				owner.children[index]=(Control)value;
-			}
-
-			void IList.Remove(object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Not of type Control", "value");
-				}
-
-				this.Remove((Control)value);
-			}
-
-			object IList.this [int index] {
+			#region	ControlCollection Interface Properties
+			object IList.this[int index] {
 				get {
-					return owner.children[index];
+					if (index<0 || index>=list.Count) {
+						throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
+					}
+					return this[index];
 				}
 
 				set {
-					
+					if (!(value is Control)) {
+						throw new ArgumentException("Object of type Control required", "value");
+					}
+
+					list[index]=(Control)value;
 				}
 			}
 
@@ -446,41 +328,80 @@ namespace System.Windows.Forms
 				}
 			}
 
-			object ICollection.SyncRoot {
+			bool IList.IsReadOnly {
 				get {
-					return this;
+					return list.IsReadOnly;
 				}
 			}
 
 			bool ICollection.IsSynchronized {
 				get {
-					return false;
+					return list.IsSynchronized;
+				}
+			}
+
+			object ICollection.SyncRoot {
+				get {
+					return list.SyncRoot;
+				}
+			}
+			#endregion // ControlCollection Interface Properties
+
+			#region	ControlCollection Interface Methods
+			int IList.Add(object value) {
+				if (value == null) {
+					throw new ArgumentNullException("value", "Cannot add null controls");
+				}
+
+				if (!(value is Control)) {
+					throw new ArgumentException("Object of type Control required", "value");
+				}
+
+				return list.Add(value);
+			}
+
+			bool IList.Contains(object value) {
+				if (!(value is Control)) {
+					throw new ArgumentException("Object of type Control required", "value");
+				}
+
+				return this.Contains((Control) value);
+			}
+
+			int IList.IndexOf(object value) {
+				if (!(value is Control)) {
+					throw new ArgumentException("Object of type Control  required", "value");
+				}
+
+				return this.IndexOf((Control) value);
+			}
+
+			void IList.Insert(int index, object value) {
+				if (!(value is Control)) {
+					throw new ArgumentException("Object of type Control required", "value");
+				}
+				list.Insert(index, value);
+			}
+
+			void IList.Remove(object value) {
+				if (!(value is Control)) {
+					throw new ArgumentException("Object of type Control required", "value");
+				}
+				list.Remove(value);
+			}
+
+			void ICollection.CopyTo(Array array, int index) {
+				if (list.Count>0) {
+					list.CopyTo(array, index);
 				}
 			}
 
 			Object ICloneable.Clone() {
 				ControlCollection clone = new ControlCollection(this.owner);
-
+				clone.list=(ArrayList)list.Clone();		// FIXME: Do we need this?
 				return clone;
 			}
 			#endregion // ControlCollection Interface Methods
-
-			class ControlComparer : IComparer {
-				int IComparer.Compare(object x, object y) {
-					int	tab_index_x;
-					int	tab_index_y;
-
-					tab_index_x=((Control)x).tab_index;
-					tab_index_y=((Control)y).tab_index;
-
-					if (tab_index_x<tab_index_y) {
-						return -1;
-					} else if (tab_index_x>tab_index_y) {
-						return 1;
-					}
-					return 0;
-				}
-			}
 		}
 		#endregion	// ControlCollection Class
 		
@@ -1125,7 +1046,7 @@ namespace System.Windows.Forms
 
 			CreateHandle();
 
-			for (int i=0; i<num_of_children; i++) {
+			for (int i=0; i<child_controls.Count; i++) {
 				child_controls[i].CreateControl();
 			}
 			OnCreateControl();
@@ -1261,7 +1182,7 @@ namespace System.Windows.Forms
 			XplatUI.Invalidate(Handle, rc, false);
 
 			if (invalidateChildren) {
-				for (int i=0; i<num_of_children; i++) children[i].Invalidate();
+				for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
 			}
 		}
 
@@ -1275,7 +1196,7 @@ namespace System.Windows.Forms
 
 			// FIXME - should use the GetRegionScans function of the region to invalidate each area
 			if (invalidateChildren) {
-				for (int i=0; i<num_of_children; i++) children[i].Invalidate();
+				for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
 			}
 		}
 
@@ -1316,8 +1237,8 @@ namespace System.Windows.Forms
 				space=this.DisplayRectangle;
 
 				// Deal with docking
-				for (int i=0; i < num_of_children; i++) {
-					child=children[i];
+				for (int i=0; i < child_controls.Count; i++) {
+					child=child_controls[i];
 					switch (child.Dock) {
 						case DockStyle.None: {
 							// Do nothing
@@ -1362,7 +1283,7 @@ namespace System.Windows.Forms
 				space=this.DisplayRectangle;
 
 				// Deal with anchoring
-				for (int i=0; i < num_of_children; i++) {
+				for (int i=0; i < child_controls.Count; i++) {
 					int left;
 					int top;
 					int width;
@@ -1370,7 +1291,7 @@ namespace System.Windows.Forms
 					int diff_width;
 					int diff_height;
 
-					child=children[i];
+					child=child_controls[i];
 					anchor=child.Anchor;
 
 					left=child.Left-space.Left;
@@ -1740,17 +1661,17 @@ namespace System.Windows.Forms
 		#region OnXXX methods
 		protected virtual void OnBackColorChanged(EventArgs e) {
 			if (BackColorChanged!=null) BackColorChanged(this, e);
-			for (int i=0; i<num_of_children; i++) children[i].OnParentBackColorChanged(e);
+			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackColorChanged(e);
 		}
 
 		protected virtual void OnBackgroundImageChanged(EventArgs e) {
 			if (BackgroundImageChanged!=null) BackgroundImageChanged(this, e);
-			for (int i=0; i<num_of_children; i++) children[i].OnParentBackgroundImageChanged(e);
+			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackgroundImageChanged(e);
 		}
 
 		protected virtual void OnBindingContextChanged(EventArgs e) {
 			if (BindingContextChanged!=null) BindingContextChanged(this, e);
-			for (int i=0; i<num_of_children; i++) children[i].OnParentBindingContextChanged(e);
+			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBindingContextChanged(e);
 		}
 
 		protected virtual void OnCausesValidationChanged(EventArgs e) {
@@ -1810,7 +1731,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnEnabledChanged(EventArgs e) {
 			if (EnabledChanged!=null) EnabledChanged(this, e);
-			for (int i=0; i<num_of_children; i++) children[i].OnParentEnabledChanged(e);
+			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentEnabledChanged(e);
 		}
 
 		protected virtual void OnEnter(EventArgs e) {
@@ -1823,7 +1744,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnForeColorChanged(EventArgs e) {
 			if (ForeColorChanged!=null) ForeColorChanged(this, e);
-			for (int i=0; i<num_of_children; i++) children[i].OnParentForeColorChanged(e);
+			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentForeColorChanged(e);
 		}
 
 		protected virtual void OnGiveFeedback(GiveFeedbackEventArgs gfbevent) {
@@ -1996,7 +1917,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRightToLeftChanged(EventArgs e) {
 			if (RightToLeftChanged!=null) RightToLeftChanged(this, e);
-			for (int i=0; i<num_of_children; i++) children[i].OnParentRightToLeftChanged(e);
+			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentRightToLeftChanged(e);
 		}
 
 		protected virtual void OnSizeChanged(EventArgs e) {			
