@@ -48,7 +48,8 @@ namespace System.Data {
 		public void Read (XmlReader Reader)
 		{
 			XmlSchema Schema = XmlSchema.Read (Reader, new ValidationEventHandler (OnXmlSchemaValidation));
-			
+			DSet.Namespace = Schema.TargetNamespace;
+
 			// read items
 			foreach (XmlSchemaObject Item in Schema.Items)
 				ReadXmlSchemaItem (Item);
@@ -80,10 +81,10 @@ namespace System.Data {
 					XmlSchemaElement schemaElement = (XmlSchemaElement)TempObj;
 					// the element can be a Column or a Table
 					// tables do not have a type.
-					if (schemaElement.SchemaTypeName.Name.Length == 0) 
-						ReadXmlSchemaElement (schemaElement, ElementType.ELEMENT_TABLE, Table);
-					else
+					if (schemaElement.SchemaTypeName.Name.Length > 0 || (schemaElement.SchemaType is XmlSchemaSimpleType))
 						ReadXmlSchemaElement (schemaElement, ElementType.ELEMENT_COLUMN, Table);
+					else
+						ReadXmlSchemaElement (schemaElement, ElementType.ELEMENT_TABLE, Table);
 				}
 			}
 		}
@@ -112,9 +113,14 @@ namespace System.Data {
 			Hashtable Attributes = ReadUnhandledAttributes (Element.UnhandledAttributes);
 			DataTable Table2 = null;
 
-			if (Attributes.Contains ("IsDataSet")) { // DataSet -elemt
-				if (String.Compare (Attributes ["IsDataSet"].ToString (), "true", true) == 0)
+			if (Attributes.Contains (XmlConstants.IsDataSet)) { // DataSet -elemt
+				if (String.Compare (Attributes [XmlConstants.IsDataSet].ToString (), "true", true) == 0)
 					DSet.DataSetName = Element.Name;
+
+				if (Attributes.Contains (XmlConstants.Locale)) {
+					DSet.Locale = new CultureInfo((String)Attributes [XmlConstants.Locale]);
+				}
+
 			}
 			else if (Element.SchemaTypeName != null && Element.SchemaTypeName.Namespace != XmlConstants.SchemaNamespace 
 				 && Element.SchemaTypeName.Name != String.Empty) {
@@ -177,23 +183,26 @@ namespace System.Data {
 		private void ReadColumn (XmlSchemaElement Element, DataTable Table)
 		{
 			DataColumn Column = new DataColumn (Element.Name);
+			Column.DataType = GetColumnType(Element.SchemaTypeName.Name);
 			Table.Columns.Add (Column);
 
 			if (Element.UnhandledAttributes != null) {
-
+				
 				foreach (XmlAttribute Attr in Element.UnhandledAttributes) {
-					
 					switch (Attr.LocalName) {
 						
-				        case "Caption":
+				        case XmlConstants.Caption:
 						Column.Caption = Attr.Value;
 						break;
-				        case "DataType":
+				        case XmlConstants.DataType:
 						Column.DataType = Type.GetType (Attr.Value);
 						break;
-				        case "type":
-						// FIXME:
-						break;						
+					case XmlConstants.AutoIncrement:
+						Column.AutoIncrement = bool.Parse(Attr.Value);
+						break;
+					case XmlConstants.AutoIncrementSeed:
+						Column.AutoIncrementSeed = int.Parse(Attr.Value);
+						break;
 				        default:
 						break;
 					}
@@ -213,6 +222,69 @@ namespace System.Data {
 			// If Element have type
 			if (Element.SchemaType != null)
 				ReadXmlSchemaType (Element.SchemaType, Column);
+
+		}
+
+		private Type GetColumnType (String typeName)
+		{
+			if (typeName == null || typeName.Length == 0)
+				return typeof (string);
+			Type t;
+			switch (typeName) {
+			case "char":
+				t = typeof (char);
+				break;
+			case "int" :
+				t = typeof (int);
+				break;
+			case "unsignedInt" :
+				t = typeof (uint);
+				break;
+			case "unsignedByte" :
+				t = typeof (byte);
+				break;
+			case "byte" :
+				t = typeof (sbyte);
+				break;
+			case "short" :
+				t = typeof (short);
+				break;
+			case "usignedShort" :
+				t = typeof (ushort);
+				break;
+			case "long" :
+				t = typeof (long);
+				break;
+			case "unsignedLong" :
+				t = typeof (ulong);
+				break;
+			case "boolean" :
+				t = typeof (bool);
+				break;
+			case "float" :
+				t = typeof (float);
+				break;
+			case "double" :
+				t = typeof (double);
+				break;
+			case "decimal" :
+				t = typeof (decimal);
+				break;
+			case "dateTime" :
+				t = typeof (DateTime);
+				break;
+			case "duration" :
+				t = typeof (TimeSpan);
+				break;
+			case "base64Binary" :
+				t = typeof (byte[]);
+				break;
+			default :
+				t = typeof (string);
+				break;
+			}
+			
+			return t;
 		}
 
 		// Makes new Hashtable of the attributes.
@@ -245,21 +317,29 @@ namespace System.Data {
 		{
 			// FIXME: Parsing XPath
 			string TableName = Unique.Selector.XPath;
-			if (TableName.StartsWith (".//"))
+			int index = TableName.IndexOf(':');
+			if (index != -1)
+				TableName = TableName.Substring (index + 1);
+			else if(TableName.StartsWith (".//"))
 				TableName = TableName.Substring (3);
+			
 			DataColumn [] Columns;
 			if (DSet.Tables.Contains (TableName)) {
 				DataTable Table = DSet.Tables [TableName];
 				Columns = new DataColumn [Unique.Fields.Count];
 				int i = 0;
 				foreach (XmlSchemaXPath Field in Unique.Fields) {
-					if (Table.Columns.Contains (Field.XPath)) {
-						Table.Columns [Field.XPath].Unique = true;
-						Columns [i] = Table.Columns [Field.XPath];
+					string columnName = Field.XPath;
+					index = columnName.IndexOf (':');
+					if (index != -1)
+						columnName = columnName.Substring (index + 1);
+					if (Table.Columns.Contains (columnName)) {
+						Columns [i] = Table.Columns [columnName];
 						i++;
 					}
 				}
-
+				
+				bool isPK = false;
 				// find if there is an attribute with the constraint name
 				// if not use the XmlSchemaUnique name.
 				string constraintName = Unique.Name;
@@ -267,11 +347,15 @@ namespace System.Data {
 					foreach (XmlAttribute attr in Unique.UnhandledAttributes){
 						if (attr.LocalName == "ConstraintName"){
 							constraintName = attr.Value;
-							break;
 						}
+						else if (attr.LocalName == XmlConstants.PrimaryKey){
+							isPK = bool.Parse(attr.Value);
+						}
+
 					}
 				}
-				UniqueConstraint Constraint = new UniqueConstraint (constraintName, Columns);
+				UniqueConstraint Constraint = new UniqueConstraint (constraintName, Columns, isPK);
+				Table.Constraints.Add (Constraint);
 			}
 		}
 
@@ -279,7 +363,10 @@ namespace System.Data {
 		private void ReadXmlSchemaKeyref (XmlSchemaKeyref KeyRef, XmlSchemaObjectCollection collection) {
 			
 			string TableName = KeyRef.Selector.XPath;
-			if (TableName.StartsWith (".//"))
+			int index = TableName.IndexOf(':');
+			if (index != -1)
+				TableName = TableName.Substring (index + 1);
+			else if (TableName.StartsWith (".//"))
 				TableName = TableName.Substring (3);
 			DataColumn [] Columns;
 			if (DSet.Tables.Contains (TableName)) {
@@ -287,15 +374,23 @@ namespace System.Data {
 				Columns = new DataColumn [KeyRef.Fields.Count];
 				int i = 0;
 				foreach (XmlSchemaXPath Field in KeyRef.Fields) {
-					if (Table.Columns.Contains (Field.XPath)) {
-						Columns [i] = Table.Columns [Field.XPath];
+					string columnName = Field.XPath;
+					index = columnName.IndexOf (':');
+					if (index != -1)
+						columnName = columnName.Substring (index + 1);
+					if (Table.Columns.Contains (columnName)) {
+						Columns [i] = Table.Columns [columnName];
 						i++;
 					}
 				}
 				string name = KeyRef.Refer.Name;
 				// get the unique constraint for the releation
 				UniqueConstraint constraint = GetDSConstraint(name, collection);
-				DataRelation relation = new DataRelation(KeyRef.Name, constraint.Columns, Columns);
+				// generate the FK.
+				ForeignKeyConstraint fkConstraint = new ForeignKeyConstraint(constraint.Columns, Columns);
+				Table.Constraints.Add (fkConstraint);
+				// generate the relation.
+				DataRelation relation = new DataRelation(KeyRef.Name, constraint.Columns, Columns, false);
 				if (KeyRef.UnhandledAttributes != null){
 					foreach (XmlAttribute attr in KeyRef.UnhandledAttributes){
 						if (attr.LocalName == "IsNested"){
@@ -319,11 +414,15 @@ namespace System.Data {
 					XmlSchemaUnique unique = (XmlSchemaUnique) shemaObj;
 					if (unique.Name == name){
 						string tableName = unique.Selector.XPath;
-						if (tableName.StartsWith (".//"))
+						int index = tableName.IndexOf (':');
+						if (index != -1)
+							tableName = tableName.Substring (index + 1);
+						else if (tableName.StartsWith (".//"))
 							tableName = tableName.Substring (3);
 						
 						// find the table in the dataset.
 						if (DSet.Tables.Contains(tableName)){
+							
 							DataTable table = DSet.Tables[tableName];
 							string constraintName = unique.Name;
 							// find if there is an attribute with the constraint name
@@ -389,7 +488,7 @@ namespace System.Data {
 		#region TypeReaderHelppers
 
 		private void ReadXmlSchemaSimpleType (XmlSchemaSimpleType SimpleType, DataColumn Column)
-		{			
+		{
 			// Read Contents
 			if (SimpleType.Content is XmlSchemaSimpleTypeRestriction)
 				ReadXmlSchemaSimpleTypeRestriction ((XmlSchemaSimpleTypeRestriction)SimpleType.Content, Column);

@@ -53,6 +53,9 @@ internal class XmlConstants
 	public const string Caption = "Caption";
 	public const string Base = "base";
 	public const string Value = "value";
+	public const string DataType = "DataType";
+	public const string AutoIncrement = "AutoIncrement";
+	public const string AutoIncrementSeed = "AutoIncrementSeed";
 
 	//ms schema objects	
 	public const string MsdataPrefix = "msdata";	
@@ -66,6 +69,7 @@ internal class XmlConstants
 	public const string IsNested = "IsNested";
 	public const string RelationName = "RelationName";
 	public const string ConstraintName = "ConstraintName";
+	public const string PrimaryKey = "PrimaryKey";
 
 	public static XmlQualifiedName QnString = new XmlQualifiedName ("string", XmlSchema.Namespace);
 	public static XmlQualifiedName QnShort = new XmlQualifiedName ("short", XmlSchema.Namespace);

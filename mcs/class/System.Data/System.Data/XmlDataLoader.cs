@@ -231,6 +231,7 @@ namespace System.Data
 					dr.Nested = true;
 					DSet.Relations.Add(dr);
 				}
+				rowValue.Add (relationColumn.ColumnName, relationColumn.GetAutoIncrementValue());
 			}
 
 			// Create new row and add all values to the row.

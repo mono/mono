@@ -180,7 +180,7 @@ namespace System.Data {
 
 				do {
 					if (Table.Columns.Contains (Navigator.LocalName))
-						Row [Navigator.LocalName] = Navigator.Value;
+						Row [Navigator.LocalName] = XmlDataLoader.StringToObject(Table.Columns[Navigator.LocalName].DataType, Navigator.Value);
 					else if (DSet.Tables.Contains (Navigator.LocalName)){
 						if (loadType == LoadType.BEFORE)
 							LoadBeforeTable(Navigator);

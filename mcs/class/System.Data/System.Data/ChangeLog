@@ -1,3 +1,24 @@
+2004-01-26 Eran Domb <erand@mainsoft.com>
+
+	* XmlConstants.cs : Added some constants.
+	* DataColumn.cs : Added a method to retrive AutoIncrement value.
+	* XmlDataLoader.cs : Set the value of the foriegn key column, according to the value of the
+	parent table column.
+	* XmlDiffLoader.cs : Convert the value comming from the xml.
+	* XmlSchemaMapper.cs (Read) : Set the DataSet namespace.
+	 (ReadXmlSchemaSequence) : Change the logic that decides if this element is a column or a table.
+	 (ReadXmlSchemaElement) : Set the locale of the dataset.
+	 (ReadColumn) : Set the column type. Find if the column is AutoIncrement.
+	 (GetColumnType) : New method to get the column type from the attribute value.
+	 (ReadXmlSchemaUnique) : Improve parsing of XPath. Set the constraint as a PK if needed,
+	 and add the constraint to the table.
+	 (ReadXmlSchemaKeyref) : Improve parsing of XPath. Create the FK constraint and add it to
+	 the table.
+	* DataSet.cs : Improving writing of unique constraints, and foriegn key constraint. Givving them the correct names.
+	 Writing more information to the schema for interoperability with ms.net.
+	 Improve diffgarm writing mode.
+	 
+
 2004-01-21 Atsushi Enomoto <atsushi@ximian.com>
 
 	* TypedDataSetGenerator.cs : Implemented GenerateIdName().

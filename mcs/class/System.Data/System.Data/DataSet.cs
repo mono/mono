@@ -652,9 +652,8 @@ namespace System.Data {
 				SetRowsID();
 				WriteDiffGramElement(writer);
 			}
-
-			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
 			
+			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
 			if (mode == XmlWriteMode.WriteSchema) {
 				DoWriteXmlSchema (writer);
 			}
@@ -665,7 +664,7 @@ namespace System.Data {
 				if (HasChanges(DataRowState.Modified | DataRowState.Deleted)) {
 
 					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);	
-					WriteStartElement (writer, XmlWriteMode.DiffGram, Namespace, Prefix, "diffgr:before");
+					WriteStartElement (writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "before");
 					WriteTables (writer, mode, beforeDS.Tables, DataRowVersion.Original);
 					writer.WriteEndElement ();
 				}
@@ -1136,11 +1135,16 @@ namespace System.Data {
 			WriteStartElement (writer, mode, nspc, table.Prefix, table.TableName);
 
 			if (mode == XmlWriteMode.DiffGram) {
-				WriteAttributeString (writer, mode, "", "diffgr", "id", table.TableName + (row.XmlRowID + 1));
-				WriteAttributeString (writer, mode, "", "msdata", "rowOrder", row.XmlRowID.ToString());
-				if (row.RowState == DataRowState.Modified && version != DataRowVersion.Original){
-					WriteAttributeString (writer, mode, "", "diffgr", "hasChanges", "modified");
-				}
+				WriteAttributeString (writer, mode, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "id", table.TableName + (row.XmlRowID + 1));
+				WriteAttributeString (writer, mode, XmlConstants.MsdataNamespace, XmlConstants.MsdataPrefix, "rowOrder", row.XmlRowID.ToString());
+				string modeName = null;
+				if (row.RowState == DataRowState.Modified)
+					modeName = "modified";
+				else if (row.RowState == DataRowState.Added)
+					modeName = "inserted";
+
+				if (version != DataRowVersion.Original && modeName != null)
+					WriteAttributeString (writer, mode, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "hasChanges", modeName);
 			}
 		}
 		    
@@ -1159,7 +1163,15 @@ namespace System.Data {
 					}
 					break;
 				case XmlWriteMode.DiffGram:
-					writer.WriteStartElement (name);
+					if (nspc == null || nspc == "") {
+						writer.WriteStartElement (name);
+					}
+					else if (prefix != null) {							
+						writer.WriteStartElement (prefix, name, nspc);
+					}						
+					else {					
+						writer.WriteStartElement (writer.LookupPrefix (nspc), name, nspc);
+					}
 					break;	
 				default:					       
 					writer.WriteStartElement (name);
@@ -1174,7 +1186,7 @@ namespace System.Data {
 					writer.WriteAttributeString (prefix, name, nspc);
 					break;
 				case XmlWriteMode.DiffGram:
-					writer.WriteAttributeString (prefix, name, nspc, stringValue);
+					writer.WriteAttributeString (prefix, name, nspc,stringValue);
 					break;
 				default:
 					writer.WriteAttributeString (name, stringValue);
@@ -1189,13 +1201,30 @@ namespace System.Data {
 		
 		XmlSchema BuildSchema ()
 		{
+			string constraintPrefix = "";
 			XmlSchema schema = new XmlSchema ();
-			schema.AttributeFormDefault = XmlSchemaForm.Qualified;
 
+			schema.Namespaces.Add("xs", XmlSchema.Namespace);
+			schema.Namespaces.Add(XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
+			
+			if (Namespace != "" && Namespace != null) {
+				schema.AttributeFormDefault = XmlSchemaForm.Qualified;
+				schema.ElementFormDefault = XmlSchemaForm.Qualified;
+				schema.TargetNamespace = Namespace;
+				schema.Namespaces.Add(XmlConstants.TnsPrefix, Namespace);
+				constraintPrefix = XmlConstants.TnsPrefix + ":";
+			}
+				
+			// set the schema id
+			schema.Id = DataSetName;
+			XmlDocument doc = new XmlDocument ();
+			XmlAttribute xmlnsAttr = doc.CreateAttribute("xmlns");
+			xmlnsAttr.Value = Namespace;
+
+			schema.UnhandledAttributes = new XmlAttribute[] {xmlnsAttr};
+						
 			XmlSchemaElement elem = new XmlSchemaElement ();
 			elem.Name = XmlConvert.EncodeName (DataSetName);
-
-			XmlDocument doc = new XmlDocument ();
 
 			XmlAttribute[] atts = new XmlAttribute [2];
 			atts[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsDataSet, XmlConstants.MsdataNamespace);
@@ -1229,87 +1258,110 @@ namespace System.Data {
 				}
 			}
 			
-			bool nameModifier = true;
+			AddConstraintsToSchema (elem, constraintPrefix);
+			return schema;
+		}
+		
+		// Add all constraints in all tables to the schema.
+		private void AddConstraintsToSchema (XmlSchemaElement elem, string constraintPrefix) 
+		{
+			// first add all unique constraints.
+			Hashtable uniqueNames = AddUniqueConstraints (elem, constraintPrefix);
+			// Add all foriegn key constraints.
+			AddForeignKeys (uniqueNames, elem, constraintPrefix);
+		}
+		
+		// Add unique constaraints to the schema.
+		// return hashtable with the names of all XmlSchemaUnique elements we created.
+		private Hashtable AddUniqueConstraints (XmlSchemaElement elem, string constraintPrefix)
+		{
+			XmlDocument doc = new XmlDocument();
+			Hashtable uniqueNames = new Hashtable();
+			foreach (DataTable table in Tables) {
+				
+				foreach (Constraint constaint in table.Constraints) {
+					
+					if (constaint is UniqueConstraint) {
+						ArrayList attrs = new ArrayList ();
+						XmlAttribute attrib;
+						UniqueConstraint uqConst = (UniqueConstraint)constaint;
+						XmlSchemaUnique uniq = new XmlSchemaUnique ();
+						
+						// if constaraint name do not exist in the hashtable we can use it.
+						if (!uniqueNames.ContainsKey (uqConst.ConstraintName)) {
+							uniq.Name = uqConst.ConstraintName;
+						}
+						// generate new constraint name for the XmlSchemaUnique element.
+						else {
+							uniq.Name = uqConst.Table.TableName + "_" + uqConst.ConstraintName;
+							attrib = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.ConstraintName, XmlConstants.MsdataNamespace);
+							attrib.Value = uqConst.ConstraintName;
+							attrs.Add (attrib);
+						}
+						if (uqConst.IsPrimaryKey) {
+							attrib = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.PrimaryKey, XmlConstants.MsdataNamespace);
+							attrib.Value = "true";
+							attrs.Add (attrib);
+						}
+		
+						uniq.UnhandledAttributes = (XmlAttribute[])attrs.ToArray (typeof (XmlAttribute));
+
+						uniq.Selector = new XmlSchemaXPath();
+						uniq.Selector.XPath = ".//"+constraintPrefix + uqConst.Table.TableName;
+						XmlSchemaXPath field;
+						foreach (DataColumn column in uqConst.Columns) {
+				 			field = new XmlSchemaXPath();
+							field.XPath = constraintPrefix+column.ColumnName;
+							uniq.Fields.Add(field);
+						}
+				
+						elem.Constraints.Add (uniq);
+						uniqueNames.Add (uniq.Name, null);
+					}
+				}
+			}
+			return uniqueNames;
+		}
+		
+		// Add the foriegn keys to the schema.
+		private void AddForeignKeys (Hashtable uniqueNames, XmlSchemaElement elem, string constraintPrefix)
+		{
+			XmlDocument doc = new XmlDocument();
 			foreach (DataRelation rel in Relations) {
-				XmlSchemaUnique uniq = new XmlSchemaUnique();
+				
+				ArrayList attrs = new ArrayList ();
+				XmlAttribute attrib;
 				XmlSchemaKeyref keyRef = new XmlSchemaKeyref();
+				keyRef.Name = rel.RelationName;
 				ForeignKeyConstraint fkConst = rel.ChildKeyConstraint;
 				UniqueConstraint uqConst = rel.ParentKeyConstraint;
-								
-				if (nameModifier) {
-					uniq.Name = uqConst.ConstraintName;
-					keyRef.Name = fkConst.ConstraintName;
-					keyRef.Refer = new XmlQualifiedName(uniq.Name);
-					XmlAttribute[] attrib = null;
-					if (rel.Nested){
-						attrib = new XmlAttribute [2];
-						attrib [0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsNested, XmlConstants.MsdataNamespace);
-						attrib [0].Value = "true";
-		
-						attrib [1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.RelationName, XmlConstants.MsdataNamespace);
-						attrib [1].Value = rel.RelationName;
-					}
-					else {
-						attrib = new XmlAttribute [1];
-						attrib[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.RelationName, XmlConstants.MsdataNamespace);
-						attrib[0].Value = rel.RelationName;
-
-					}
-					keyRef.UnhandledAttributes = attrib;
-					nameModifier = false;
+				
+				string concatName = rel.ParentTable.TableName + "_" + uqConst.ConstraintName;
+				// first try to find the concatenated name. If we didn't find it - use constraint name.
+				if (uniqueNames.ContainsKey (concatName)) {
+					keyRef.Refer = new XmlQualifiedName(concatName);
 				}
 				else {
-					uniq.Name = rel.ParentTable.TableName+"_"+uqConst.ConstraintName;
-					keyRef.Name = rel.ChildTable.TableName+"_"+fkConst.ConstraintName;
-					keyRef.Refer = new XmlQualifiedName(uniq.Name);
-					XmlAttribute[] attrib;
-					if (rel.Nested)	{
-						attrib = new XmlAttribute [3];
-						attrib [0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.ConstraintName, XmlConstants.MsdataNamespace);
-						attrib [0].Value = fkConst.ConstraintName;
-						attrib [1] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsNested, XmlConstants.MsdataNamespace);
-						attrib [1].Value = "true";
-		
-						attrib [2] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.RelationName, XmlConstants.MsdataNamespace);
-						attrib [2].Value = rel.RelationName;
-					}
-					else {
-						attrib = new XmlAttribute [2];
-						attrib [0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.ConstraintName, XmlConstants.MsdataNamespace);
-						attrib [0].Value = fkConst.ConstraintName;
-						attrib [1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.RelationName, XmlConstants.MsdataNamespace);
-						attrib [1].Value = rel.RelationName;
-
-					}
-					keyRef.UnhandledAttributes = attrib;
-					attrib = new XmlAttribute [1];
-					attrib [0] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.ConstraintName, XmlConstants.MsdataNamespace);
-					attrib [0].Value = uqConst.ConstraintName; 
-					uniq.UnhandledAttributes = attrib;
+					keyRef.Refer = new XmlQualifiedName(uqConst.ConstraintName);
 				}
 
-				uniq.Selector = new XmlSchemaXPath();
-				uniq.Selector.XPath = ".//"+rel.ParentTable.TableName;
-				XmlSchemaXPath field;
-				foreach (DataColumn column in rel.ParentColumns) {
-				 	field = new XmlSchemaXPath();
-					field.XPath = column.ColumnName;
-					uniq.Fields.Add(field);
+				if (rel.Nested)	{
+					attrib = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsNested, XmlConstants.MsdataNamespace);
+					attrib.Value = "true";
+					attrs.Add (attrib);
 				}
-				
+
 				keyRef.Selector = new XmlSchemaXPath();
-				keyRef.Selector.XPath = ".//"+rel.ChildTable.TableName;
+				keyRef.Selector.XPath = ".//" + constraintPrefix + rel.ChildTable.TableName;
+				XmlSchemaXPath field;
 				foreach (DataColumn column in rel.ChildColumns)	{
 				 	field = new XmlSchemaXPath();
-					field.XPath = column.ColumnName;
+					field.XPath = constraintPrefix+column.ColumnName;
 					keyRef.Fields.Add(field);
 				}
-				
-				elem.Constraints.Add (uniq);
+				keyRef.UnhandledAttributes = (XmlAttribute[])attrs.ToArray (typeof (XmlAttribute));
 				elem.Constraints.Add (keyRef);
 			}
-			
-			return schema;
 		}
 
 		private XmlSchemaElement GetTableSchema (XmlDocument doc, DataTable table)
@@ -1338,19 +1390,40 @@ namespace System.Data {
 				foreach (DataColumn col in elements) {
 					//<xs:element name=ColumnName type=MappedType Ordinal=index>
 					XmlSchemaElement colElem = new XmlSchemaElement ();
+					ArrayList xattrs = new ArrayList();
+					XmlAttribute xattr;
 					colElem.Name = col.ColumnName;
 				
-					if (col.ColumnName != col.Caption && col.Caption != string.Empty) {
-						XmlAttribute[] xatts = new XmlAttribute[1];
-						xatts[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Caption, XmlConstants.MsdataNamespace);
-						xatts[0].Value = col.Caption;
-						colElem.UnhandledAttributes = xatts;
+					if (col.ColumnName != col.Caption && col.Caption != String.Empty) {
+						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Caption, XmlConstants.MsdataNamespace);
+						xattr.Value = col.Caption;
+						xattrs.Add (xattr);
 					}
 
-					if (col.DefaultValue.ToString () != string.Empty)
-						colElem.DefaultValue = col.DefaultValue.ToString ();
+					if (col.AutoIncrement == true) {
+						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.AutoIncrement, XmlConstants.MsdataNamespace);
+						xattr.Value = "true";
+						xattrs.Add (xattr);
+					}
 
-					colElem.SchemaTypeName = MapType (col.DataType);
+					if (col.AutoIncrementSeed != 0) {
+						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.AutoIncrementSeed, XmlConstants.MsdataNamespace);
+						xattr.Value = col.AutoIncrementSeed.ToString();
+						xattrs.Add (xattr);
+					}
+
+					if (col.DefaultValue.ToString () != String.Empty)
+						colElem.DefaultValue = col.DefaultValue.ToString ();
+					
+					if (col.MaxLength < 0)
+						colElem.SchemaTypeName = MapType (col.DataType);
+					
+					if (colElem.SchemaTypeName == XmlConstants.QnString && col.DataType != typeof (string) 
+						&& col.DataType != typeof (char)) {
+						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.DataType, XmlConstants.MsdataNamespace);
+						xattr.Value = col.DataType.ToString();
+						xattrs.Add (xattr);
+					}
 
 					if (col.AllowDBNull) {
 						colElem.MinOccurs = 0;
@@ -1365,7 +1438,8 @@ namespace System.Data {
 					if (col.MaxLength > -1) {
 						colElem.SchemaType = GetTableSimpleType (doc, col);
 					}
-
+					
+					colElem.UnhandledAttributes = (XmlAttribute[])xattrs.ToArray(typeof (XmlAttribute));
 					seq.Items.Add (colElem);
 				}
 
@@ -1402,7 +1476,8 @@ namespace System.Data {
 			XmlSchemaMaxLengthFacet max = new XmlSchemaMaxLengthFacet ();
 			max.Value = XmlConvert.ToString (col.MaxLength);
 			restriction.Facets.Add (max);
-
+			
+			simple.Content = restriction;
 			return simple;
 		}
 
@@ -1450,9 +1525,8 @@ namespace System.Data {
 
 		private void WriteDiffGramElement(XmlWriter writer)
 		{
-			WriteStartElement (writer, XmlWriteMode.DiffGram, Namespace, Prefix, "diffgr:diffgram");
+			WriteStartElement (writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "diffgram");
 			WriteAttributeString(writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
-			WriteAttributeString(writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.DiffgrPrefix, XmlConstants.DiffgrNamespace);
 		}
 
 		private void SetRowsID()
@@ -1476,7 +1550,7 @@ namespace System.Data {
 				case TypeCode.Int64: return XmlConstants.QnLong;
 				case TypeCode.Boolean: return XmlConstants.QnBoolean;
 				case TypeCode.Byte: return XmlConstants.QnUnsignedByte;
-				case TypeCode.Char: return XmlConstants.QnChar;
+				//case TypeCode.Char: return XmlConstants.QnChar;
 				case TypeCode.DateTime: return XmlConstants.QnDateTime;
 				case TypeCode.Decimal: return XmlConstants.QnDecimal;
 				case TypeCode.Double: return XmlConstants.QnDouble;

@@ -231,6 +231,11 @@ namespace System.Data {
 			return currentValue;
 		}
 
+		internal long GetAutoIncrementValue ()
+		{
+			return _nextAutoIncrementValue;
+		}
+
 		internal bool DataHasBeenSet {
 			get {
 				return dataHasBeenSet;
