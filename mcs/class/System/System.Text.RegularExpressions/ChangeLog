@@ -1,6 +1,11 @@
+2004-03-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* parser.cs: fixed group numbering.
+
 2004-03-22  Jackson Harper  <jackson@ximian.com>
 
-	* parser.cs: Use the group number as the name in mapping. Patch by Gert Driesen.
+	* parser.cs: Use the group number as the name in mapping. Patch by
+	Gert Driesen.
 	* regex.cs: Fix off by one error. Patch by Gert Driesen.
 
 2004-03-17  Francois Beauchemin <beauche@softhome.net>
