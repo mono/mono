@@ -157,9 +157,8 @@ namespace System.Windows.Forms {
 					return;
 				check = value;
 
-				// We should just be invalidating the node
 				if (TreeView != null)
-					tree_view.Refresh ();
+					tree_view.UpdateNode (this);
 			}
 		}
 
@@ -453,9 +452,6 @@ namespace System.Windows.Forms {
 				Collapse ();
 			else
 				Expand ();
-
-			if (TreeView != null)
-				TreeView.Refresh ();
 		}
 
 		internal void SetNodes (TreeNodeCollection nodes)

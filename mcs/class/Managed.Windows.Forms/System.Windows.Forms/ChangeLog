@@ -1,3 +1,13 @@
+2005-01-07  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Just update the single node when it is
+	checked. Don't refresh after toggling, the Expand/Collapse already
+	handles this.
+	* TreeView.cs: Respect clipping a little more when drawing. Try
+	not to redraw things that don't need to be redrawn. Just hide the
+	scrollbars when they are no longer needed instead of removing
+	them, so they don't have to be created again and again.
+	
 2005-01-07  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs (SetCaretPos):  We need to translate the view

@@ -560,26 +560,35 @@ namespace System.Windows.Forms {
 		// TODO: Update from supplied node down
 		internal void UpdateBelow (TreeNode node)
 		{
-			Refresh ();
+			// We need to update the current node so the plus/minus block gets update too
+			Rectangle invalid = new Rectangle (0, node.Bounds.Top, Width, Height - node.Bounds.Top);
+			Invalidate (invalid);
 		}
+
+		internal void UpdateNode (TreeNode node)
+		{
+			Rectangle invalid = new Rectangle (0, node.Bounds.Top, Width, node.Bounds.Height);
+			Invalidate (invalid);
+		}
+
+		int draw_count = 0;
 
 		private void DoPaint (PaintEventArgs pe)
 		{
 			if (Width <= 0 || Height <=  0 || Visible == false)
 				return;
 
-			Draw();
-			pe.Graphics.DrawImage (ImageBuffer, 0, 0);
+			Draw (pe.ClipRectangle);
+			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 		
-		private void Draw ()
+		private void Draw (Rectangle clip)
 		{
 			DateTime start = DateTime.Now;
 			if (top_node == null && Nodes.Count > 0)
 				top_node = nodes [0];
 			// Decide if we need a scrollbar
 			int visible_node_count = GetVisibleNodeCount ();
-			Console.WriteLine ("time to get visible node count:  " + (DateTime.Now - start));
 			int node_count = 0;
 
 			Rectangle fill = ClientRectangle;
@@ -595,7 +604,7 @@ namespace System.Windows.Forms {
 			int height = ClientRectangle.Height;
 
 			foreach (TreeNode node in nodes) {
-				DrawNode (node, ref depth, ref node_count, item_height,
+				DrawNode (node, clip, ref depth, ref node_count, item_height,
 						font, ref visible_node_count, height);
 				depth = 0;
 			}
@@ -611,19 +620,14 @@ namespace System.Windows.Forms {
 			if (add_hscroll) {
 				AddHorizontalScrollBar ();
 			} else if (hbar != null) {
-				Controls.Remove (hbar);
-				hbar.Dispose ();
-				hbar_added = false;
 				hbar_offset = 0;
+				hbar.Visible = false;
 			}
 
 			if (add_vscroll) {
 				AddVerticalScrollBar (node_count);
 			} else if (vbar != null) {
-				Controls.Remove (vbar);
-				vbar.Dispose ();
-				vbar = null;
-				vbar_added = false;
+				vbar.Visible = false;
 				skipped_nodes = 0;
 			}
 
@@ -632,20 +636,7 @@ namespace System.Windows.Forms {
 				DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorButtonFace), grip);
 				ControlPaint.DrawSizeGrip (DeviceContext, ThemeEngine.Current.ColorButtonFace, grip);
 			}
-			
-			/*
-			ControlPaint.DrawBorder3D (DeviceContext, ClientRectangle, Border3DStyle.Sunken,
-				Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom);
-			*/
 
-			/*
-			int depth = 0;
-			foreach (TreeNode node in nodes) {
-				DumpNode (node, ref depth);
-				depth = 0;
-			}
-
-			*/
 			Console.WriteLine ("treeview drawing time:  " + (DateTime.Now - start));
 			Console.WriteLine ("node count:		    " + node_count);
 			Console.WriteLine ("total node count:	    " + total_node_count);
@@ -750,7 +741,7 @@ namespace System.Windows.Forms {
 			node.UpdateBounds (x + xoff, y, width, item_height);
 		}
 
-		private void DrawNode (TreeNode node, ref int depth, ref int node_count, int item_height,
+		private void DrawNode (TreeNode node, Rectangle clip, ref int depth, ref int node_count, int item_height,
 				Font font, ref int visible_node_count, int max_height)
 		{
 			node_count++;
@@ -760,6 +751,10 @@ namespace System.Windows.Forms {
 
 			if (visible)
 				visible_node_count++;
+
+			// The thing is totally out of the clipping rectangle
+			if (clip.Top > y || clip.Bottom < y)
+				visible = false;
 
 			int _n_count = node.nodes.Count;
 			int middle = y + (item_height / 2);
@@ -827,7 +822,7 @@ namespace System.Windows.Forms {
 			if (node.IsExpanded) {
 				for (int i = 0; i < _n_count; i++) {
 					int tdepth = depth;
-					DrawNode (node.nodes [i], ref tdepth, ref node_count, item_height,
+					DrawNode (node.nodes [i], clip, ref tdepth, ref node_count, item_height,
 							font, ref visible_node_count, max_height);
 				}
 			}
@@ -852,6 +847,8 @@ namespace System.Windows.Forms {
 				vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
 				vbar_added = true;
 			}
+
+			vbar.Visible = true;
 		}
 
 		private void AddHorizontalScrollBar ()
@@ -867,11 +864,12 @@ namespace System.Windows.Forms {
 				hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
 				hbar_added = true;
 			}
+
+			hbar.Visible = true;
 		}
 
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
-			
 			if (max_node_width > ClientRectangle.Width) {
 				add_hscroll = true;
 				AddHorizontalScrollBar ();
