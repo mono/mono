@@ -12,7 +12,6 @@ using System.Collections;
 
 namespace System
 {
-	[MonoTODO ("implement missing members, strange NOTYET preprocs")]
 	public abstract class MulticastDelegate : Delegate
 	{
 		private MulticastDelegate prev;
@@ -29,22 +28,6 @@ namespace System
 		{
 			prev = null;
 		}
-
-#if NOTYET
-		private MulticastDelegate (Type target_type, string method, Delegate [] list)
-			: base (target_type, method)
-		{
-			invocation_list = (Delegate[])list.Clone ();
-		}
-#endif
-
-#if NOTYET
-		public MethodInfo Method {
-			get {
-				return null;
-			}
-		}
-#endif
 
 		internal override object DynamicInvokeImpl (object[] args)
 		{

@@ -456,12 +456,8 @@ namespace System
 			return c;
 		}
 
-		[MonoTODO]
-		public static char ToLower (char c, CultureInfo culture)
-		{
-			//TODO ignored culture for now
-			return ToLower (c);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern char ToLower (char c, CultureInfo culture);
 
 		public static char ToUpper (char c)
 		{
@@ -474,13 +470,9 @@ namespace System
 			return c;
 		}
 
-		[MonoTODO]
-		public static char ToUpper(char c, CultureInfo culture)
-		{
-			//TODO ignored culture for now
-			return ToUpper (c);
-		}
-
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern char ToUpper (char c, CultureInfo culture);
+		
 		public override string ToString ()
 		{
 			// LAMESPEC: ECMA draft lists this as returning ToString (null), 
