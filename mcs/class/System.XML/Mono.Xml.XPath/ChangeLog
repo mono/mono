@@ -1,3 +1,13 @@
+2004-07-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs :
+	  - it is used only in 2.0 classes.
+	  - It now behaves as a fragment reader.
+	  - Depth is optimized not to call Clone() and MoveToParent().
+	  - AttributeCount could be counted only once in Read().
+	  - ReadState transition is adjusted to be same as other XmlReaders.
+	  - name strings now return "" on initial state.
+
 2004-07-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added XPathEditableDocument.cs.

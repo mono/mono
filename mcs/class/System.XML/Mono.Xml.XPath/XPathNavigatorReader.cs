@@ -40,7 +40,6 @@ namespace Mono.Xml.XPath
 		public XPathNavigatorReader (XPathNavigator nav)
 		{
 			root = nav.Clone ();
-			root.MoveToRoot ();
 			current = nav.Clone ();
 		}
 
@@ -52,6 +51,11 @@ namespace Mono.Xml.XPath
 		bool attributeValueConsumed;
 		StringBuilder readStringBuffer = new StringBuilder ();
 		StringBuilder innerXmlBuilder = new StringBuilder ();
+
+		int depth = 0;
+		int attributeCount = 0;
+		bool eof;
+		bool nextIsEOF;
 
 		#region Properties
 		public override XmlNodeType NodeType 
@@ -87,19 +91,19 @@ namespace Mono.Xml.XPath
 		}
 
 		public override string Name {
-			get { return current.Name; }
+			get { return eof ? String.Empty : current.Name; }
 		}
 
 		public override string LocalName {
-			get { return current.LocalName; }
+			get { return eof ? String.Empty : current.LocalName; }
 		}
 
 		public override string NamespaceURI {
-			get { return current.NamespaceURI; }
+			get { return eof ? String.Empty : current.NamespaceURI; }
 		}
 
 		public override string Prefix {
-			get { return current.Prefix; }
+			get { return eof ? String.Empty : current.Prefix; }
 		}
 
 		public override bool HasValue {
@@ -120,14 +124,11 @@ namespace Mono.Xml.XPath
 
 		public override int Depth {
 			get {
-				if (current.IsSamePosition (root))
+				switch (ReadState) {
+				case ReadState.EndOfFile:
+				case ReadState.Initial:
+				case ReadState.Closed:
 					return 0;
-				XPathNavigator tmp = current.Clone ();
-				// top level nodes' depth = 0.
-				int depth = -1;
-				while (!tmp.IsSamePosition (root)) {
-					tmp.MoveToParent ();
-					depth ++;
 				}
 				return depth;
 			}
@@ -181,36 +182,25 @@ namespace Mono.Xml.XPath
 		}
 
 		public override int AttributeCount {
-			get {
-				XPathNavigator backup = null;
-				try {
-					switch (current.NodeType) {
-					case XPathNodeType.Namespace:
-					case XPathNodeType.Attribute:
-						backup = current.Clone ();
-						current.MoveToParent ();
-						goto case XPathNodeType.Element;
-					case XPathNodeType.Element:
-						int count = 0;
-						if (current.MoveToFirstAttribute ())
-							do {
-								count++;
-							} while (current.MoveToNextAttribute ());
-						current.MoveToParent ();
-						if (current.MoveToFirstNamespace (XPathNamespaceScope.Local))
-							do {
-								count++;
-							} while (current.MoveToNextNamespace (XPathNamespaceScope.Local));
-						current.MoveToParent ();
-						return count;
-					}
-					// default
-					return 0;
-				} finally {
-					if (backup != null)
-						current = backup;
-				}
+			get { return attributeCount; }
+		}
+
+		private int GetAttributeCount ()
+		{
+			int count = 0;
+			if (current.MoveToFirstAttribute ()) {
+				do {
+					count++;
+				} while (current.MoveToNextAttribute ());
+				current.MoveToParent ();
 			}
+			if (current.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
+				do {
+					count++;
+				} while (current.MoveToNextNamespace (XPathNamespaceScope.Local));
+				current.MoveToParent ();
+			}
+			return count;
 		}
 		
 		private XPathNavigator GetAttributeNavigator (int i)
@@ -276,7 +266,7 @@ namespace Mono.Xml.XPath
 
 		public override bool EOF {
 			get {
-				return ReadState == ReadState.EndOfFile;
+				return eof || ReadState == ReadState.EndOfFile;
 			}
 		}
 
@@ -284,9 +274,9 @@ namespace Mono.Xml.XPath
 			get {
 				if (closed)
 					return ReadState.Closed;
-				if (!started)
+				else if (!started)
 					return ReadState.Initial;
-				else if (current.IsSamePosition (root))
+				else if (eof)
 					return ReadState.EndOfFile;
 				return ReadState.Interactive;
 			}
@@ -394,9 +384,8 @@ namespace Mono.Xml.XPath
 
 		public override void Close ()
 		{
-			// It is kinda hack to make ReadState EOF.
-			current = root;
 			closed = true;
+			eof = true;
 		}
 
 		public override bool Read ()
@@ -406,19 +395,45 @@ namespace Mono.Xml.XPath
 			case ReadState.Closed:
 			case ReadState.Error:
 				return false;
+			case ReadState.Initial:
+				started = true;
+				if (current.NodeType != XPathNodeType.Root)
+					return true;
+				break;
 			}
-			started = true;
-			this.MoveToElement ();
+
+			if (nextIsEOF) {
+				nextIsEOF = false;
+				eof = true;
+				return false;
+			}
+
+			MoveToElement ();
 
 			if (endElement || current.MoveToFirstChild () == false) {
 				if (current.MoveToNext () == false) {
-					current.MoveToParent ();
-					if (ReadState == ReadState.EndOfFile)
+					if (current.IsSamePosition (root)) {	// It should happen only when the root node was empty.
+						eof = true;
 						return false;
-					endElement = true;
+					}
+					current.MoveToParent ();
+					depth--;
+					if (current.IsSamePosition (root)) {
+						if (current.NodeType == XPathNodeType.Element)
+							nextIsEOF = true;
+						else {
+							eof = true;
+							return false;
+						}
+					}
+					if (current.NodeType == XPathNodeType.Element)
+						endElement = true;
 				} else
 					endElement = false;
 			}
+			else if (!endElement)
+				depth++;
+			attributeCount = GetAttributeCount ();
 			return true;
 		}
 
