@@ -39,7 +39,11 @@
 #define MPH_ON_BSD
 #endif
 
+#ifdef __GNUC__
 #define MPH_INTERNAL __attribute__((visibility("hidden")))
+#else
+#define MPH_INTERNAL
+#endif
 
 typedef    gint64 mph_blkcnt_t;
 typedef    gint64 mph_blksize_t;

@@ -1,3 +1,8 @@
+2005-01-04  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Add libnsl to LIBS.  Hopefully this will let sparc link.
+	* mph.h: Make MPH_INTERNAL conditional on __GNUC__.
+
 2005-01-03  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* signal.c, stdio.c: Remove "function declaration isn't a prototype" warnings.

@@ -9,7 +9,8 @@ INCLUDES = \
 	-I$(top_srcdir)
 
 LIBS = \
-	$(GLIB_LIBS)
+	$(GLIB_LIBS) \
+	-lnsl
 
 MPH_SOURCE = \
 	mph.h 		\
