@@ -1,5 +1,14 @@
 2003-04-28  Miguel de Icaza  <miguel@ximian.com>
 
+	* attribute.cs (Attribute.GetAttributeArgumentExpression): Moved
+	the functionality for testing whether an expression is valid for
+	an attribute here.  Also handle the case of arrays of elements
+	being stored. 
+
+	* expression.cs (ArrayCreation.EncodeAsAttribute): Add support for
+	encoding a linear array into an array of objects that are suitable
+	to be passed to an CustomAttributeBuilder.
+
 	* delegate.cs: Check unsafe types being used outside of an Unsafe context.
 
 	* ecore.cs: (FieldExpr): Handle field remapping here.

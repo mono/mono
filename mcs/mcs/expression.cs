@@ -5759,7 +5759,30 @@ namespace Mono.CSharp {
 		{
 			DoEmit (ec, true);
 		}
-		
+
+		public object EncodeAsAttribute ()
+		{
+			if (!is_one_dimensional){
+				Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
+				return null;
+			}
+
+			if (array_data == null){
+				Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
+				return null;
+			}
+			
+			Console.WriteLine ("array_data: " + array_data.Count);
+			object [] ret = new object [array_data.Count];
+			int i = 0;
+			foreach (Expression e in array_data){
+				object v = Attribute.GetAttributeArgumentExpression (e, Location);
+				if (v == null)
+					return null;
+				ret [i++] = v;
+			}
+			return ret;
+		}
 	}
 	
 	/// <summary>

@@ -57,9 +57,9 @@ namespace Mono.CSharp {
 				      "are not static.");
 		}
 
-		void Error_AttributeArgumentNotValid ()
+		static void Error_AttributeArgumentNotValid (Location loc)
 		{
-			Report.Error (182, Location,
+			Report.Error (182, loc,
 				      "An attribute argument must be a constant expression, typeof " +
 				      "expression or array creation expression");
 		}
@@ -119,6 +119,26 @@ namespace Mono.CSharp {
 				return false;
 			}
 		}
+
+		//
+		// Given an expression, if the expression is a valid attribute-argument-expression
+		// returns an object that can be used to encode it, or null on failure.
+		//
+		public static object GetAttributeArgumentExpression (Expression e, Location loc)
+		{
+			if (e is Constant) {
+				return ((Constant) e).GetValue ();
+			} else if (e is TypeOf) {
+				return ((TypeOf) e).TypeArg;
+			} else if (e is ArrayCreation){
+				object val =  ((ArrayCreation) e).EncodeAsAttribute ();
+				if (val != null)
+					return val;
+			}
+
+			Error_AttributeArgumentNotValid (loc);
+			return null;
+		}
 		
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
@@ -174,15 +194,10 @@ namespace Mono.CSharp {
 
 				e = a.Expr;
 
-				if (e is Constant) {
-					pos_values [i] = ((Constant) e).GetValue ();
-				} else if (e is TypeOf) {
-					pos_values [i] = ((TypeOf) e).TypeArg;
-				} else {
-					Error_AttributeArgumentNotValid ();
+				object val = GetAttributeArgumentExpression (e, Location);
+				if (val == null)
 					return null;
-				}
-
+				pos_values [i] = val;
 				if (DoCompares){
 					if (UsageAttr)
 						this.Targets = (AttributeTargets) pos_values [0];
@@ -263,7 +278,7 @@ namespace Mono.CSharp {
 					} else if (e is TypeOf) {
 						prop_values.Add (((TypeOf) e).TypeArg);
 					} else {
-						Error_AttributeArgumentNotValid ();
+						Error_AttributeArgumentNotValid (Location);
 						return null;
 					}
 					
@@ -288,7 +303,7 @@ namespace Mono.CSharp {
 					} else if (e is TypeOf) {
 						field_values.Add (((TypeOf) e).TypeArg);
 					} else {
-						Error_AttributeArgumentNotValid ();
+						Error_AttributeArgumentNotValid (Location);
 						return null;
 					}
 					
@@ -325,7 +340,7 @@ namespace Mono.CSharp {
 				Argument a = (Argument) pos_args [j];
 				
 				if (a.Expr is NullLiteral && pd.ParameterType (j) == TypeManager.object_type) {
-					Error_AttributeArgumentNotValid ();
+					Error_AttributeArgumentNotValid (Location);
 					return null;
 				}
 			}
@@ -885,7 +900,7 @@ namespace Mono.CSharp {
 			if (tmp.Expr is Constant)
 				dll_name = (string) ((Constant) tmp.Expr).GetValue ();
 			else { 
-				Error_AttributeArgumentNotValid ();
+				Error_AttributeArgumentNotValid (Location);
 				return null;
 			}
 
@@ -943,7 +958,7 @@ namespace Mono.CSharp {
 						else if (member_name == "PreserveSig")
 							preserve_sig = (bool) c.GetValue ();
 					} else { 
-						Error_AttributeArgumentNotValid ();
+						Error_AttributeArgumentNotValid (Location);
 						return null;
 					}
 					

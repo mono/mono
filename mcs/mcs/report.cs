@@ -143,6 +143,9 @@ namespace Mono.CSharp {
 
 		static public void Error (int code, string text)
 		{
+			if (code < 0)
+				code = 8000-code;
+			
 			string msg = String.Format ("error CS{0:0000}: {1}", code, text);
 //			string msg = String.Format ("error CS{0}: {1}", code, text);
 			
