@@ -42,25 +42,34 @@ namespace System.Xml {
 		// this is needed for inserting new row to datatable via xml
 		private Hashtable TempTable = new Hashtable ();
 
+		DataColumnChangeEventHandler columnChanged;
+		DataRowChangeEventHandler rowDeleted;
+		DataRowChangeEventHandler rowChanged;
+		CollectionChangeEventHandler tablesChanged;
 		#endregion // Fields
 
 		#region Constructors
 
-		public XmlDataDocument() {
+		public XmlDataDocument ()
+		{
+			InitDelegateFields ();
 
 			dataSet = new DataSet();
 			dataSet._xmlDataDocument = this;
-			dataSet.Tables.CollectionChanged += new CollectionChangeEventHandler (OnDataTableChanged);
-			
-			this.NodeChanged += new XmlNodeChangedEventHandler (OnNodeChanged);
-			this.NodeChanging += new XmlNodeChangedEventHandler (OnNodeChanging);
-			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
-			this.NodeRemoved += new XmlNodeChangedEventHandler (OnNodeRemoved);
-			this.NodeInserted += new XmlNodeChangedEventHandler (OnNodeInserted);
+			dataSet.Tables.CollectionChanged += tablesChanged;
+
+			AddXmlDocumentListeners ();
 			DataSet.EnforceConstraints = false;
 		}
 
-		public XmlDataDocument(DataSet dataset) {
+		public XmlDataDocument (DataSet dataset) 
+		{
+			if (dataset == null)
+				throw new ArgumentException ("Parameter dataset cannot be null.");
+			if (dataset._xmlDataDocument != null)
+				throw new ArgumentException ("DataSet cannot be associated with two or more XmlDataDocument.");
+
+			InitDelegateFields ();
 
 			this.dataSet = dataset;
 			this.dataSet._xmlDataDocument = this;
@@ -70,6 +79,11 @@ namespace System.Xml {
 			// Load DataSet's xml-data
 			base.Load (xmlReader);
 			xmlReader.Close ();
+			// FIXME: This is required to avoid Load() error when for
+			// example empty DataSet will be filled on Load(), but
+			// not sure if it works correct.
+			if (DocumentElement.ChildNodes.Count == 0)
+				RemoveChild (DocumentElement);
 
 			foreach (DataTable Table in DataSet.Tables) {
 				
@@ -79,23 +93,21 @@ namespace System.Xml {
 					dataRowID++;
 				}
 			}
-						
-			this.NodeChanged += new XmlNodeChangedEventHandler (OnNodeChanged);
-			this.NodeChanging += new XmlNodeChangedEventHandler (OnNodeChanging);
-			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
-			this.NodeRemoved += new XmlNodeChangedEventHandler (OnNodeRemoved);
-			this.NodeInserted += new XmlNodeChangedEventHandler (OnNodeInserted);
+
+			AddXmlDocumentListeners ();
 
 			foreach (DataTable Table in dataSet.Tables) {
-				Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
-				Table.RowDeleted += new DataRowChangeEventHandler (OnDataTableRowDeleted);
-				Table.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
+				Table.ColumnChanged += columnChanged;
+				Table.RowDeleted += rowDeleted;
+				Table.RowChanged += rowChanged;
 			}
 		}
 
 		// bool clone. If we are cloning XmlDataDocument then clone should be true.
 		private XmlDataDocument (DataSet dataset, bool clone)
 		{
+			InitDelegateFields ();
+
 			this.dataSet = dataset;
 			this.dataSet._xmlDataDocument = this;
 
@@ -107,17 +119,13 @@ namespace System.Xml {
 					dataRowID++;
 				}
 			}
-						
-			this.NodeChanged += new XmlNodeChangedEventHandler (OnNodeChanged);
-			this.NodeChanging += new XmlNodeChangedEventHandler (OnNodeChanging);		
-			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
-			this.NodeRemoved += new XmlNodeChangedEventHandler (OnNodeRemoved);
-			this.NodeInserted += new XmlNodeChangedEventHandler (OnNodeInserted);
+
+			AddXmlDocumentListeners ();
 
 			foreach (DataTable Table in dataSet.Tables) {
-				Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
-				Table.RowDeleted += new DataRowChangeEventHandler (OnDataTableRowDeleted);
-				Table.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
+				Table.ColumnChanged += columnChanged;
+				Table.RowDeleted += rowDeleted;
+				Table.RowChanged += rowChanged;
 			}
 		}
 
@@ -144,7 +152,7 @@ namespace System.Xml {
 			else
 				Document = new XmlDataDocument (DataSet.Clone (), true);
 
-			RemoveXmlDocumentListeners ();
+			Document.RemoveXmlDocumentListeners ();
 
 			Document.PreserveWhitespace = PreserveWhitespace;
 			if (deep) {
@@ -152,7 +160,7 @@ namespace System.Xml {
 					Document.AppendChild (Document.ImportNode (n, deep));
 			}
 
-			AddXmlDocumentListeners ();
+			Document.AddXmlDocumentListeners ();
 
 			return Document;			
 		}
@@ -259,21 +267,26 @@ namespace System.Xml {
 			Load (new XmlTextReader (txtReader));
 		}
 
-		public override void Load(XmlReader reader) {
+		public override void Load (XmlReader reader) 
+		{
+			if (DocumentElement != null)
+				throw new InvalidOperationException ("XmlDataDocument does not support multi-time loading. New XmlDadaDocument is always required.");
 
 			bool OldEC = DataSet.EnforceConstraints;
 			DataSet.EnforceConstraints = false;
 
-			dataSet.Tables.CollectionChanged -= new CollectionChangeEventHandler (OnDataTableChanged);
+			dataSet.Tables.CollectionChanged -= tablesChanged;
 
 			// For reading xml to XmlDocument
-			XmlTextReader textReader = new XmlTextReader (
-				reader.BaseURI);
-			
+//			XmlTextReader textReader = new XmlTextReader (
+//				reader.BaseURI);
+
 			// dont listen these events
 			RemoveXmlDocumentListeners ();
 			DataTable dt = null;
 
+			base.Load (reader);
+			reader = new XmlNodeReader (this);
 
 			if (reader.NodeType != XmlNodeType.Element)
 				reader.MoveToContent ();
@@ -288,14 +301,14 @@ namespace System.Xml {
 					dt = DataSet.Tables [reader.LocalName];
 
 					// Make sure event handlers are not added twice
-					dt.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
-					dt.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+					dt.ColumnChanged -= columnChanged;
+					dt.ColumnChanged += columnChanged;
 
-					dt.RowDeleted -= new DataRowChangeEventHandler (OnDataTableRowDeleted);
-					dt.RowDeleted += new DataRowChangeEventHandler (OnDataTableRowDeleted);
+					dt.RowDeleted -= rowDeleted;
+					dt.RowDeleted += rowDeleted;
 					
-					dt.RowChanged -= new DataRowChangeEventHandler (OnDataTableRowChanged);
-					dt.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
+					dt.RowChanged -= rowChanged;
+					dt.RowChanged += rowChanged;
 				}
 				else
 					continue;
@@ -325,12 +338,12 @@ namespace System.Xml {
 				
 			} while (reader.Read ());
 
-			base.Load (textReader);
-			textReader.Close ();
+//			base.Load (textReader);
+//			textReader.Close ();
 
 			DataSet.EnforceConstraints = OldEC;
 			AddXmlDocumentListeners ();
-			dataSet.Tables.CollectionChanged += new CollectionChangeEventHandler (OnDataTableChanged);
+			dataSet.Tables.CollectionChanged += tablesChanged;
 		}
 		
 		#endregion // overloaded Load methods
@@ -338,11 +351,10 @@ namespace System.Xml {
 
 		#region Protected Methods
 
-		//FIXME: when internal protected bug is fixed uncomment this
-		//[MonoTODO]
-		//protected internal override XPathNavigator CreateNavigator(XmlNode node) {
-		//	throw new NotImplementedException();
-		//}
+		[MonoTODO ("Create optimized XPathNavigator")]
+		protected override XPathNavigator CreateNavigator(XmlNode node) {
+			return base.CreateNavigator (node);
+		}
 
 		#endregion // Protected Methods
 		
@@ -351,9 +363,7 @@ namespace System.Xml {
 		private void OnNodeChanging (object sender, XmlNodeChangedEventArgs args)
 		{
 			if (DataSet.EnforceConstraints) 
-				throw new InvalidOperationException (Locale.GetText ("Please set DataSet.EnforceConstraints == false " +
-										     "before trying to edit XmlDataDocument using " +
-										     "XML operations."));			
+				throw new InvalidOperationException (Locale.GetText ("Please set DataSet.EnforceConstraints == false before trying to edit XmlDataDocument using XML operations."));
 		}
 
 		// Invoked when XmlNode is changed colum is changed
@@ -372,12 +382,12 @@ namespace System.Xml {
 			if (!row.Table.Columns.Contains (args.Node.ParentNode.Name))
 				return;
 
-			row.Table.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			row.Table.ColumnChanged -= columnChanged;
 
 			if (row [args.Node.ParentNode.Name].ToString () != args.Node.InnerText)		
 				row [args.Node.ParentNode.Name] = args.Node.InnerText;		
 
-			row.Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			row.Table.ColumnChanged += columnChanged;
 		}
 
 		// Invoked when XmlNode is removed
@@ -396,17 +406,15 @@ namespace System.Xml {
 				return ;
 
 			// Dont trig event again
-			row.Table.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			row.Table.ColumnChanged -= columnChanged;
 			row [args.Node.Name] = null;
-			row.Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			row.Table.ColumnChanged += columnChanged;
 		}
 
 		private void OnNodeInserting (object sender, XmlNodeChangedEventArgs args) 
 		{
 			if (DataSet.EnforceConstraints) 
-				throw new InvalidOperationException (Locale.GetText ("Please set DataSet.EnforceConstraints == false " +
-										     "before trying to edit XmlDataDocument using " +
-										     "XML operations."));
+				throw new InvalidOperationException (Locale.GetText ("Please set DataSet.EnforceConstraints == false before trying to edit XmlDataDocument using XML operations."));
 			
 		}
 		
@@ -436,7 +444,7 @@ namespace System.Xml {
 				// add row to datatable
 
 				DataTable dt = DataSet.Tables [args.Node.Name];
-				dt.RowChanged -= new DataRowChangeEventHandler (OnDataTableRowChanged);
+				dt.RowChanged -= rowChanged;
 
 				DataRow row = dt.NewRow ();
 				Hashtable ht = TempTable [args.Node.Name] as Hashtable;
@@ -448,7 +456,7 @@ namespace System.Xml {
 				}
 				
 				DataSet.Tables [args.Node.Name].Rows.Add (row);
-				dt.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
+				dt.RowChanged += rowChanged;
 			} 
 
 		}
@@ -462,9 +470,9 @@ namespace System.Xml {
 		{
 			DataTable Table = (DataTable)eventArgs.Element;
 			if (eventArgs.Action == CollectionChangeAction.Add) {
-				Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
-				Table.RowDeleted += new DataRowChangeEventHandler (OnDataTableRowDeleted);
-				Table.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
+				Table.ColumnChanged += columnChanged;
+				Table.RowDeleted += rowDeleted;
+				Table.RowChanged += rowChanged;
 			}
 		}
 
@@ -597,6 +605,13 @@ namespace System.Xml {
 		#endregion // DataSet event handlers
 
 		#region Private methods
+		private void InitDelegateFields ()
+		{
+			columnChanged = new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			rowDeleted = new DataRowChangeEventHandler (OnDataTableRowDeleted);
+			rowChanged = new DataRowChangeEventHandler (OnDataTableRowChanged);
+			tablesChanged = new CollectionChangeEventHandler (OnDataTableChanged);
+		}
 
 		[MonoTODO]
 		private void LoadRow (XmlReader reader, ref DataRow row)
@@ -626,6 +641,7 @@ namespace System.Xml {
 			this.NodeInserted -= new XmlNodeChangedEventHandler (OnNodeInserted);
 			this.NodeChanged -= new XmlNodeChangedEventHandler (OnNodeChanged);
 			this.NodeChanging -= new XmlNodeChangedEventHandler (OnNodeChanging);
+			this.NodeRemoved -= new XmlNodeChangedEventHandler (OnNodeRemoved);
 		}
 
 		private void AddXmlDocumentListeners ()
@@ -634,6 +650,7 @@ namespace System.Xml {
 			this.NodeInserted += new XmlNodeChangedEventHandler (OnNodeInserted);
 			this.NodeChanged += new XmlNodeChangedEventHandler (OnNodeChanged);
 			this.NodeChanging += new XmlNodeChangedEventHandler (OnNodeChanging);
+			this.NodeRemoved += new XmlNodeChangedEventHandler (OnNodeRemoved);
 		}
 		#endregion // Private methods
 	}

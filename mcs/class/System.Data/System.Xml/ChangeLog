@@ -1,3 +1,12 @@
+2004-04-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDataDocument.cs:
+	  Load() should not read xml multiple time nor expect BaseURI (and it
+	  indicates the resource location is readable).
+	  Simplified event handling logic, and fixed missing event removal.
+	  Quick hack to avoid new XmlDataDocument(DataSet ds).Load ().
+	  Enabled CreateNavigator() that was commented out.
+
 2004-03-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDataDocument.cs : Fixed incorrect cast in OnDataTableRowAdded().
