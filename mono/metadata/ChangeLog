@@ -1,3 +1,9 @@
+2004-09-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* reflection.c: Added missing sort to the declarative security 
+	attributes table. MS implementation stops seeing the attributes if the
+	token number regress in the table (as shown by ildasm and permview).
+
 2004-09-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object-internals.h (MonoReflectionModule): Add 'token' field.
