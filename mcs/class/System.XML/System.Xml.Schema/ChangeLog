@@ -1,3 +1,8 @@
+2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaType.cs :
+	  anyType was anonymous, thus GetBuiltInComplexType() didn't work.
+
 2004-08-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaType.cs : return XmlTypeCode.AnyAtomicType for

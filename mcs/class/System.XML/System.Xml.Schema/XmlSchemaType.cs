@@ -161,7 +161,7 @@ namespace System.Xml.Schema
 		internal static XmlSchemaComplexType GetBuiltInComplexType (XmlQualifiedName qualifiedName)
 #endif
 		{
-			if (qualifiedName == XmlSchemaComplexType.AnyType.QualifiedName)
+			if (qualifiedName.Name == "anyType" && qualifiedName.Namespace == XmlSchema.Namespace)
 				return XmlSchemaComplexType.AnyType;
 
 			return null;
