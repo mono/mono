@@ -367,7 +367,10 @@ namespace Mono.CSharp.Debugger
 			this.mbuilder_array = mbuilder_array;
 		}
 
-		public void Close () { }
+		public void Close ()
+		{
+			throw new InvalidOperationException ();
+		}
 
 		public byte[] CreateSymbolFile (AssemblyBuilder assembly_builder)
 		{
