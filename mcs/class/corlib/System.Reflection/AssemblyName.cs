@@ -92,7 +92,7 @@ namespace System.Reflection {
 				fname.Append (", Version=");
 				fname.Append (Version.ToString ());
 				fname.Append (", Culture=");
-				if (CultureInfo == null || CultureInfo.LCID == CultureInfo.InvariantCulture.LCID)
+				if (CultureInfo.LCID == CultureInfo.InvariantCulture.LCID)
 					fname.Append ("neutral");
 				else
 					fname.Append (CultureInfo.ToString ()); // ???
@@ -133,24 +133,6 @@ namespace System.Reflection {
 			set { versioncompat = value; }
 		}
 		
-/*		public override int GetHashCode ()
-		{
-			return name.GetHashCode ();
-		}
-
-		public override bool Equals (object o)
-		{
-			if (!(o is System.Reflection.AssemblyName))
-				return false;
-
-			AssemblyName an = (AssemblyName)o;
-
-			if (an.name == this.name)
-				return true;
-			
-			return false;
-		}*/
-
 		public override string ToString ()
 		{
 			string name = FullName;
@@ -159,7 +141,13 @@ namespace System.Reflection {
 
 		public byte[] GetPublicKey() 
 		{
-			return publicKey;
+			// to match MS implementation -- funny one
+			if (publicKey != null)
+				return publicKey;
+			else if (name == null)
+				return null;
+			else
+				return new byte [0];
 		}
 
 		public byte[] GetPublicKeyToken() 

@@ -1,3 +1,9 @@
+2002-12-23  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* AssemblyName.cs: GetPublicKey now return an empty array (not null)
+	when an assembly isn't signed with a StrongName (to match MS 
+	implementation) and null when no assembly is referenced. Also removed 
+	commented code (no bug reported so it was probably not used).
 
 Thu Dec 19 16:43:19 CET 2002 Paolo Molaro <lupus@ximian.com>
 
