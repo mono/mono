@@ -1,3 +1,9 @@
+2004-10-11  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (test-generics, test-generics-2): New targets.
+	(new_TEST_SOURCES_common): Disabled test-308.cs.
+	(TEST_SOURCES_net_2_0): Enable gen-79.cs.
+
 2004-10-07  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (TEST_TAG): Rename back to 'mcs' and 'gmcs' to keep in
