@@ -1,5 +1,11 @@
 2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_ValueType_Equals): New optimized 
+	implementation.
+
+	* icall.c (ves_icall_System_ValueType_InternalGetHashCode): New 
+	icall.
+
 	* object.c (mono_field_get_value_object): New function.
 
 	* object.c appdomain.h appdomain.c: Make out_of_memory_ex domain
