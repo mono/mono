@@ -6,6 +6,7 @@
 
 namespace System.Reflection
 {
+	[Serializable]
 	public abstract class Binder
 	{
 	}

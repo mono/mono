@@ -9,6 +9,7 @@
 
 namespace System.Security {
 
+	[Serializable]
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk
 	{
 		///<summary>Constructs a new instance of the System.Security.CodeAccessPermission class.</summary>

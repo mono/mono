@@ -9,6 +9,7 @@
 namespace System
 {
 	[AttributeUsage (AttributeTargets.Field)]
+	[Serializable]
 	public class ThreadStaticAttribute : Attribute
 	{
 		// Constructors

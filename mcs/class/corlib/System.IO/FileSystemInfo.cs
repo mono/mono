@@ -14,6 +14,7 @@ using System;
 
 namespace System.IO {
 	
+	[Serializable]
 	public abstract class FileSystemInfo : MarshalByRefObject {
 		// public properties
 

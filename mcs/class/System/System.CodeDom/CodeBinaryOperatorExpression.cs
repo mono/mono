@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeBinaryOperatorExpression : CodeExpression {
 
 		CodeExpression left, right;

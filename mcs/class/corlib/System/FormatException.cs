@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 
 namespace System {
 
+	[Serializable]
 	public class FormatException : SystemException {
 		// Constructors
 		public FormatException ()

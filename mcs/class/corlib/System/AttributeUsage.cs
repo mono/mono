@@ -10,6 +10,7 @@
 namespace System {
 
 	[AttributeUsage(AttributeTargets.All)]
+	[Serializable]
 	public class AttributeUsageAttribute : Attribute {
 		AttributeTargets valid_on;
 		bool allow_multiple, inherited;

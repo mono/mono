@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 
 namespace System {
 
+	[Serializable]
 	public class NotFiniteNumberException : ArithmeticException {
 		double offending_number;
 

@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
+	[Serializable]
 	public class AssemblyName  : ISerializable // ICloneable, , IDeserializationCallback
 	{
 		string name;

@@ -12,6 +12,7 @@ using System.Globalization;
 
 namespace System
 {
+		[Serializable]
         public class Random
         {
                 private int S = 1;

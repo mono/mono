@@ -11,6 +11,7 @@ using System;
 
 namespace System.Runtime.Serialization {
 
+	[Serializable]
 	public sealed class SerializationException : SystemException {
 		// Constructors
 		public SerializationException ()

@@ -11,6 +11,7 @@ using System.Collections;
 namespace System.Security.Policy
 {
 	[MonoTODO]
+	[Serializable]
 	public sealed class Evidence
 	{
 		

@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeDelegateCreateExpression : CodeExpression {
 		string delegateType, methodName;
 		CodeExpression targetObject;

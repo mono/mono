@@ -6,6 +6,7 @@
 
 namespace System.Reflection
 {
+	[Serializable]
 	public class ParameterInfo : ICustomAttributeProvider
 	{
 		protected Type ClassImpl;

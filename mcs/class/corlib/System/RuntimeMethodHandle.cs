@@ -13,6 +13,7 @@ using System.Globalization;
 namespace System {
 
 	//[MonoTODO]
+	[Serializable]
 	public struct RuntimeMethodHandle : ISerializable {
 		IntPtr value;
 		

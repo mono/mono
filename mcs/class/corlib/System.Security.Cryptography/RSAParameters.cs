@@ -14,6 +14,7 @@ using System;
 namespace System.Security.Cryptography {
 	
 	[MonoTODO]
+	[Serializable]
 	public struct RSAParameters {
 		[NonSerialized]
 		public byte[] P;

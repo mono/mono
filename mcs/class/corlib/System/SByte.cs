@@ -12,6 +12,7 @@ using System.Globalization;
 namespace System {
 
 	[CLSCompliant(false)]
+	[Serializable]
 	public struct SByte : IComparable, IFormattable, IConvertible {
 
 		public const sbyte MinValue = -128;

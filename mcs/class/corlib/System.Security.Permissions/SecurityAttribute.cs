@@ -24,6 +24,7 @@ namespace System.Security.Permissions {
 		Inherited=false)
 	]
 
+	[Serializable]
 	public abstract class SecurityAttribute : Attribute {
 
 		private SecurityAction m_Action;

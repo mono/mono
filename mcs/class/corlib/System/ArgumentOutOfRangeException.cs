@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 
 namespace System {
 
+	[Serializable]
 	public class ArgumentOutOfRangeException : ArgumentException {
 		private object actual_value;
 

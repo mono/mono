@@ -9,6 +9,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Represents the Token returned by the metadata to represent a Field.
 	/// </summary>
+	[Serializable]
 	public struct FieldToken {
 
 		internal int tokValue;

@@ -11,6 +11,7 @@ using System.Globalization;
 
 namespace System {
 	
+	[Serializable]
 	public struct Byte : IComparable, IFormattable, IConvertible {
 		
 		public const byte MinValue = 0;

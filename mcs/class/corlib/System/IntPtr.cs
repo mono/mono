@@ -33,6 +33,7 @@ namespace System {
 	[
 		CLSCompliant(true)
 	]
+	[Serializable]
 	public unsafe struct IntPtr : ISerializable {
 
 		private void *value;

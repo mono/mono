@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
-	[AttributeUsage(AttributeTargets.Method, Inherited=false)]
+	[AttributeUsage(AttributeTargets.Method, Inherited=false)] [Serializable]
 	public class MethodImplAttribute : Attribute {
 		MethodImplOptions impl_options;
 		

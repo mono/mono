@@ -12,6 +12,7 @@ using System.Collections;
 
 namespace System.Collections {
 
+	[Serializable]
 	public class Queue : ICollection, IEnumerable, ICloneable {
 
 		private object[] contents;
@@ -282,6 +283,7 @@ namespace System.Collections {
 			}
 		}
 
+		[Serializable]
 		private class QueueEnumerator : IEnumerator {
 			Queue queue;
 			private int modCount;

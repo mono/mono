@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 namespace System.Collections.Specialized{
+	[Serializable]
 	public class NameValueCollection : NameObjectCollectionBase
 	{
 		string[] cachedAllKeys = null;

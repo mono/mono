@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeTypeOfExpression : CodeExpression {
 		string type;
 			

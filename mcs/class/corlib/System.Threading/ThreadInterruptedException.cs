@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 
 namespace System.Threading
 {
+	[Serializable]
 	public class ThreadInterruptedException : SystemException
 	{
 		public ThreadInterruptedException()

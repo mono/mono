@@ -13,6 +13,7 @@ namespace System.Security.Cryptography
 	/// <summary>
 	/// DSA Parameters
 	/// </summary>
+	[Serializable]
 	public struct DSAParameters
 	{
 		public int Counter;

@@ -25,6 +25,7 @@ namespace System.Collections {
 	///   The `On' members are protected and designed to be used only by derived
 	///   classes.
 	/// </remarks>
+	[Serializable]
 	public abstract class DictionaryBase : IDictionary, ICollection, IEnumerable {
 
 		Hashtable dictionary;

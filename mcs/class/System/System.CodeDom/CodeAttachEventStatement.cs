@@ -8,6 +8,7 @@
 //
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeAttachEventStatement : CodeStatement {
 		CodeExpression targetObject;
 		string eventName;

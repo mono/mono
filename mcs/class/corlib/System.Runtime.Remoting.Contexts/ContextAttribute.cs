@@ -13,6 +13,7 @@ using System.Collections;
 namespace System.Runtime.Remoting.Contexts {
 
 	[AttributeUsage (AttributeTargets.Class)]
+	[Serializable]
 	public class ContextAttribute : Attribute, IContextAttribute, IContextProperty {
 		protected string AttributeName;
 

@@ -10,6 +10,7 @@ using System.Globalization;
 
 namespace System.Reflection {
 
+	[Serializable]
 	public class TypeDelegator : Type {
 		protected Type typeImpl;
 	

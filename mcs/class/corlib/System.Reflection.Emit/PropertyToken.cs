@@ -9,6 +9,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Represents the Token returned by the metadata to represent a Property.
 	/// </summary>
+	[Serializable]
 	public struct PropertyToken {
 
 		internal int tokValue;

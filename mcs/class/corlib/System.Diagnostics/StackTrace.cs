@@ -16,7 +16,8 @@ namespace System.Diagnostics {
         ///   Stack trace.
         ///   TODO: more information.
         /// </summary>
-        public class StackTrace {
+        [Serializable]
+	public class StackTrace {
                 /// <value>
                 ///   Uses a constant to define the number of methods that are
                 ///   to be omitted from the stack trace.

@@ -15,6 +15,7 @@ using System.Security.Permissions;
 namespace System.Security.Permissions {
 	
 	[MonoTODO]
+	[Serializable]
 	public sealed class SecurityPermission :
 		CodeAccessPermission, IUnrestrictedPermission
 	{

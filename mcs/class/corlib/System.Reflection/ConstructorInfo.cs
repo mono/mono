@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Globalization;
 
 namespace System.Reflection {
+	[Serializable]
 	public abstract class ConstructorInfo : MethodBase {
 		public static readonly string ConstructorName = ".ctor";
 		public static readonly string TypeConstructorName = ".cctor";

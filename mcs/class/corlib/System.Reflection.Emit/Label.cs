@@ -8,6 +8,7 @@
 //
 
 namespace System.Reflection.Emit {
+	[Serializable]
 	public struct Label {
 		internal int label;
 

@@ -7,7 +7,7 @@
 
 namespace System.IO {
 
-	[MonoTODO]
+	[MonoTODO] [Serializable]
 	public abstract class TextWriter : MarshalByRefObject, IDisposable {
                 
                 protected TextWriter() {

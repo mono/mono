@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeParameterDeclarationExpression : CodeExpression {
 		FieldDirection direction;
 		CodeAttributeBlock customAttributes;

@@ -9,6 +9,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Represents the Token returned by the metadata to represent a Event.
 	/// </summary>
+	[Serializable]
 	public struct EventToken {
 
 		internal int tokValue;

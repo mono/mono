@@ -19,6 +19,7 @@ namespace System
 	/// 1-1-0001 12:00:00 AM to 31-12-9999 23:59:00 Common Era.
 	/// </summary>
 	/// 
+	[Serializable]
 	public struct DateTime : IComparable , IFormattable  , IConvertible
 	{
 		private TimeSpan ticks;

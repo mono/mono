@@ -11,6 +11,7 @@ using System.Globalization;
 
 namespace System {
 	
+	[Serializable]
 	public struct Single : IComparable, IFormattable, IConvertible {
 		public const float Epsilon = 1.4e-45f;
 		public const float MaxValue =  3.40282346638528859e38f;

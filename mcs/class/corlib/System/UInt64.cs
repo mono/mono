@@ -12,6 +12,7 @@ using System.Globalization;
 namespace System {
 
 	[CLSCompliant(false)]
+	[Serializable]
 	public struct UInt64 : IComparable, IFormattable, IConvertible {
 		public const ulong MaxValue = 0xffffffffffffffff;
 		public const ulong MinValue = 0;

@@ -9,7 +9,8 @@
 
 namespace System.CodeDom {
 
-	public class CodeNamespaceImport : CodeStatement {
+	[Serializable]
+	public class CodeNamespaceImport : CodeObject {
 		string nameSpace;
 		
 		public CodeNamespaceImport () {}

@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.Reflection {
+	[Serializable]
 	public class Module : ISerializable, ICustomAttributeProvider {
 
 		public static readonly TypeFilter FilterTypeName;

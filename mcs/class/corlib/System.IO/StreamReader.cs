@@ -11,7 +11,7 @@ using System;
 using System.Text;
 
 namespace System.IO {
-	
+	[Serializable]
 	public class StreamReader : TextReader {
 
 		// buffering members

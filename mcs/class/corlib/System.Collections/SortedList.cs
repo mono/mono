@@ -17,6 +17,7 @@ namespace System.Collections {
 	///  that are sorted by the keys and are accessible by key
 	///  and by index.
 	/// </summary>
+	[Serializable]
 	public class SortedList : IDictionary, ICollection,
 	                          IEnumerable, ICloneable {
 

@@ -11,6 +11,7 @@ using System.Globalization;
 
 namespace System {
 	
+	[Serializable]
 	public struct Int32 : IComparable, IFormattable, IConvertible {
 
 		public const int MaxValue = 0x7fffffff;

@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeTryCatchFinallyStatement : CodeStatement {
 		CodeStatementCollection tryStatements, finallyStatements;
 		CodeCatchClauseCollection catchClauses;

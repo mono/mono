@@ -11,6 +11,7 @@ using System.Globalization;
 
 namespace System.Globalization
 {
+	[Serializable]
 	public class DaylightTime
 	{
 		DateTime start, end;

@@ -11,6 +11,7 @@
 
 namespace System.Reflection {
 
+	[Serializable]
 	public abstract class MemberInfo : ICustomAttributeProvider {
 
 		public abstract Type DeclaringType {

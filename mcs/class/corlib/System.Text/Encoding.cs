@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Text {
 
+	[Serializable]
 	public abstract class Encoding {
                 private static ASCIIEncoding ascii_encoding;
                 private static UnicodeEncoding big_endian_unicode;

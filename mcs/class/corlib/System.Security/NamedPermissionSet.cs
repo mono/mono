@@ -15,6 +15,7 @@ using System.Security.Permissions;
 namespace System.Security {
 	
 	[MonoTODO]
+	[Serializable]
 	public sealed class NamedPermissionSet : PermissionSet {
 		public NamedPermissionSet (string name, PermissionSet set) : base (set) {
 			this.name = name;

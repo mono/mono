@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 
 namespace System {
 
+	[Serializable]
 	public class NullReferenceException : SystemException {
 		// Constructors
 		public NullReferenceException ()

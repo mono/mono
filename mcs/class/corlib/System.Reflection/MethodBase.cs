@@ -13,6 +13,7 @@ using System.Reflection.Emit;
 
 namespace System.Reflection {
 
+	[Serializable]
 	public abstract class MethodBase: MemberInfo {
 
 		public static MethodBase GetCurrentMethod()

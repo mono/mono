@@ -17,6 +17,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
+	[Serializable]
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 		private IntPtr _mono_assembly;

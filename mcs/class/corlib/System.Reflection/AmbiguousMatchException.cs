@@ -11,6 +11,7 @@ using System;
 
 namespace System.Reflection {
 
+	[Serializable]
 	public sealed class AmbiguousMatchException : SystemException {
 		// Constructors
 		public AmbiguousMatchException ()

@@ -12,6 +12,7 @@
 
 namespace System.Configuration.Assemblies {
    
+	[Serializable]
    public struct AssemblyHash : System.ICloneable
    {
       private AssemblyHashAlgorithm _algorithm;

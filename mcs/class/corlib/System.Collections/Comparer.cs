@@ -12,6 +12,7 @@ using System.Collections;
 
 namespace System.Collections {
 
+	[Serializable]
 	public sealed class Comparer : IComparer {
 
 		public static readonly Comparer Default;

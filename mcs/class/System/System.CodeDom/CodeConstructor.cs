@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeConstructor : CodeMemberMethod {
 		CodeExpressionCollection baseConstructorArgs;
 		CodeExpressionCollection chainedConstructorArgs;

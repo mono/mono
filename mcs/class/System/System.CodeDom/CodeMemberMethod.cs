@@ -9,7 +9,8 @@
 
 namespace System.CodeDom {
 
-	public class CodeMemberMethod : CodeClassMember {
+	[Serializable]
+	public class CodeMemberMethod : CodeTypeMember {
 		CodeParameterDeclarationExpressionCollection parameters;
 		CodeStatementCollection statements;
 		string implementsType;

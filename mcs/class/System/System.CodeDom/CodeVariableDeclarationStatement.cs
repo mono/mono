@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeVariableDeclarationStatement : CodeStatement  {
 		CodeExpression initExpression;
 		string type, name;

@@ -12,6 +12,7 @@ using System.Globalization;
 namespace System {
 
 	[CLSCompliant(false)]
+	[Serializable]
 	public struct UInt16 : IComparable, IFormattable, IConvertible {
 
 		public const ushort MaxValue = 0xffff;

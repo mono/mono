@@ -10,6 +10,7 @@
 using System.Globalization;
 namespace System {
 
+	[Serializable]
 	public sealed class MulticastNotSupportedException : SystemException {
 		// Constructors
 		public MulticastNotSupportedException ()

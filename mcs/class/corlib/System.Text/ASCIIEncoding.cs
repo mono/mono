@@ -11,6 +11,7 @@
 
 namespace System.Text {
         
+	[Serializable]
 	public class ASCIIEncoding : Encoding
 	{
 		public ASCIIEncoding () : base ()

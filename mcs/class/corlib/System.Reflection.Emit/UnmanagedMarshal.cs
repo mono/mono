@@ -5,6 +5,7 @@ using System;
 
 namespace System.Reflection.Emit {
 
+	[Serializable]
 	public sealed class UnmanagedMarshal {
 		private int count;
 		private UnmanagedType t;

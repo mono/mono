@@ -15,6 +15,7 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting {
 
+	[Serializable]
 	public class ObjRef : IObjectReference, ISerializable {
 		MarshalByRefObject mbr;
 		SerializationInfo si;

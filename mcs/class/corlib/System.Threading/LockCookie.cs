@@ -10,6 +10,7 @@
 
 namespace System.Threading
 {
+	[Serializable]
 	public struct LockCookie
 		{
 		}

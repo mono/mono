@@ -16,6 +16,7 @@ using System.Runtime.Serialization;
 namespace System.Security
 {
     ///<summary> Represents a collection that can contain different kinds of permissions and perform security      operations.</summary>
+	[Serializable]
     public class PermissionSet: ISecurityEncodable, ICollection, IEnumerable, IStackWalk, IDeserializationCallback
     {
         ///<summary> Constructs a new instance of the System.Security.PermissionSet class with the   specified   value.</summary>

@@ -14,6 +14,7 @@
 namespace System.Text {
       
 	[MonoTODO]
+	[Serializable]
 	public class UnicodeEncoding : Encoding
 	{
 		private bool byteOrderMark;

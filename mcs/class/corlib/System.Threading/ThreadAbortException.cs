@@ -10,6 +10,7 @@
 
 namespace System.Threading
 {
+	[Serializable]
 	public sealed class ThreadAbortException : SystemException
 	{
 		private ThreadAbortException () {}

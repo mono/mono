@@ -11,6 +11,7 @@ using System.Globalization;
 
 namespace System {
 
+	[Serializable]
 	public class ArgumentException : SystemException {
 		private string param_name;
 

@@ -10,6 +10,7 @@
 using System.Globalization;
 namespace System {
 
+	[Serializable]
 	public class DivideByZeroException : ArithmeticException {
 		// Constructors
 		public DivideByZeroException ()

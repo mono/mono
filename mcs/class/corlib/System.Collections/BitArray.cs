@@ -3,6 +3,7 @@ using System;
 namespace System.Collections
 {
   // do we really need to specify IEnumerable since ICollection extends it?
+  [Serializable]
   public class BitArray : ICollection, IEnumerable, ICloneable
   {
     private Int32[] m_array;

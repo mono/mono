@@ -11,6 +11,7 @@ using System;
 
 namespace System.Collections {
 
+	[Serializable]
 	public abstract class ReadOnlyCollectionBase : ICollection,	IEnumerable {
 
 		// private instance properties

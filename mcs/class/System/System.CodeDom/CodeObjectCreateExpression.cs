@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeObjectCreateExpression : CodeExpression {
 		string createType;
 		CodeExpressionCollection parameters;

@@ -9,6 +9,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Represents the Token returned by the metadata to represent a Method.
 	/// </summary>
+	[Serializable]
 	public struct MethodToken {
 
 		internal int tokValue;

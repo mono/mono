@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeMethodInvokeExpression : CodeExpression {
 		string methodName;
 		CodeExpression targetObject;

@@ -14,6 +14,7 @@ using System;
 
 namespace System.IO {
 
+	[Serializable]
 	public sealed class FileInfo : FileSystemInfo {
 	
 		public FileInfo (string path) {

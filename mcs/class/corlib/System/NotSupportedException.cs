@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 
 namespace System {
 
+	[Serializable]
 	public class NotSupportedException : SystemException {
 		// Constructors
 		public NotSupportedException ()

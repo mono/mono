@@ -15,6 +15,7 @@ namespace System.Diagnostics {
         ///   Stack frame.
         ///   TODO: more information.
         /// </summary>
+		[Serializable]
         public class StackFrame {
                 /// <value>
                 ///   Constant returned when the native or IL offset is unknown.

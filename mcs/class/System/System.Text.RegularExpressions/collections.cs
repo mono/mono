@@ -87,6 +87,7 @@ namespace System.Text.RegularExpressions {
 		protected ArrayList list;
 	}
 
+	[Serializable]
 	public class CaptureCollection : RegexCollectionBase, ICollection, IEnumerable {
 		public Capture this[int i] {
 			get { return (Capture)list[i]; }

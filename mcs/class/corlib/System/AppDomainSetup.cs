@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 namespace System {
 
 
+	[Serializable]
 	public sealed class AppDomainSetup : IAppDomainSetup {
 		string application_base;
 		string application_name;

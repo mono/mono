@@ -7,6 +7,7 @@
 
 namespace System.Runtime.CompilerServices
 {
+	[Serializable]
 	public sealed class RuntimeHelpers
 	{
 		private RuntimeHelpers () {}

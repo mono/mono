@@ -33,6 +33,7 @@ namespace System.Text.RegularExpressions {
 		ECMAScript			= 0x100
 	}
 	
+	[Serializable]
 	public class Regex : ISerializable {
 		public static void CompileToAssembly
 			(RegexCompilationInfo[] regexes, AssemblyName aname)

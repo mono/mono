@@ -9,6 +9,7 @@
 
 namespace System.Security.Principal {
 
+	[Serializable]
 	public class GenericPrincipal : IPrincipal {
 		IIdentity identity;
 		string [] roles;

@@ -10,6 +10,7 @@
 namespace System.Diagnostics 
 {
 
+	[Serializable]
 	public sealed class ConditionalAttribute : System.Attribute 
 	{
 

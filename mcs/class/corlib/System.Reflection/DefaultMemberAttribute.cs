@@ -9,6 +9,7 @@
 
 namespace System.Reflection {
 
+	[Serializable]
 	public sealed class DefaultMemberAttribute : Attribute {
 		string member_name;
 		

@@ -9,6 +9,7 @@
 
 namespace System.IO {
 
+	[Serializable]
 	public class DirectoryNotFoundException : IOException {
 		// Constructors
 		public DirectoryNotFoundException ()

@@ -12,6 +12,7 @@ using System.Globalization;
 
 namespace System {
 
+	[Serializable]
 	public class ArgumentNullException : ArgumentException {
 		// Constructors
 		public ArgumentNullException ()

@@ -10,6 +10,7 @@
 namespace System.Text
 {
 
+	[Serializable]
 	public abstract class Encoder
 	{
 

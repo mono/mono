@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 namespace System
 {
 
+	[Serializable]
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
 	{
 		// Constructor		

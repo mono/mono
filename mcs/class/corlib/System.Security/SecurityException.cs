@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using System.Globalization;
 
 namespace System.Security {
+	[Serializable]
 	public class SecurityException : SystemException {
 
 		// Fields

@@ -10,6 +10,7 @@ using System.Threading;
 
 namespace System.Globalization
 {
+	[Serializable]
 	public class CultureInfo : IFormatProvider
 	{
 		static CultureInfo invariant_culture_info;

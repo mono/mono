@@ -9,7 +9,8 @@
 
 namespace System.CodeDom {
 
-	public class CodeExpression {
+	[Serializable]
+	public class CodeExpression : CodeObject {
 		object userData;
 		
 		//

@@ -18,6 +18,7 @@ using System.Runtime.Serialization;
 namespace System.Collections {
 
 	[MonoTODO]
+	[Serializable]
 	public class Hashtable : IDictionary, ICollection, 
 		IEnumerable, ICloneable, ISerializable
 	{

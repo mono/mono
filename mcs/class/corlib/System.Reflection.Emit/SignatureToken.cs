@@ -9,6 +9,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Represents the Token returned by the metadata to represent a Signature.
 	/// </summary>
+	[Serializable]
 	public struct SignatureToken {
 
 		internal int tokValue;

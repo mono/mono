@@ -11,6 +11,7 @@ using System.Collections;
 
 namespace System.Runtime.Remoting.Messaging {
 
+	[Serializable]
 	public class Header {
 		public Header (string name, object value) :
 			this (name, value, true)

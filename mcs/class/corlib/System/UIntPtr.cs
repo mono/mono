@@ -26,6 +26,7 @@ namespace System
     StructLayout(LayoutKind.Auto),
     CLSCompliant(false)
 ]
+[Serializable]
 public unsafe struct UIntPtr : ISerializable
 {
     public static readonly UIntPtr Zero = new UIntPtr(0);

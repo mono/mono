@@ -17,6 +17,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
+	[Serializable]
 	public abstract class FieldInfo : MemberInfo {
 
 		public abstract FieldAttributes Attributes {get;}

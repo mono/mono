@@ -11,6 +11,7 @@ using System;
 
 namespace System.Collections {
 
+	[Serializable]
 	public class ArrayList : IList, ICollection, IEnumerable, ICloneable {
 		// constructors
 
@@ -331,6 +332,7 @@ namespace System.Collections {
 			System.Array.Copy (dataArray, index, array, arrayIndex, count);
 		}
 
+		[Serializable]
 		private class ArrayListEnumerator : IEnumerator {
 			private object[] data;
 			private int idx;

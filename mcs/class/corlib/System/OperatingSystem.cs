@@ -17,6 +17,7 @@ namespace System
 	/// <summary>
 	/// Class representing a specific operating system version for a specific platform
 	/// </summary>
+	[Serializable]
 	public sealed class OperatingSystem : ICloneable
 	{
 		private System.PlatformID itsPlatform;

@@ -10,6 +10,7 @@
 using System.Globalization;
 
 namespace System.Security {
+	[Serializable]
 	public sealed class XmlSyntaxException : SystemException {
 	
 		// Constructors

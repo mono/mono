@@ -8,6 +8,7 @@
 using System;
 
 namespace System.IO {
+	[Serializable]
 	public class StringReader : TextReader {
 
 		protected string source;

@@ -23,6 +23,7 @@ namespace System.Security.Permissions
 		AllowMultiple=true, 
 		Inherited=false)
 	]
+	[Serializable]
 	public abstract class CodeAccessSecurityAttribute : SecurityAttribute {
 
 		public CodeAccessSecurityAttribute(SecurityAction action) : base(action) {}

@@ -9,7 +9,8 @@
 
 namespace System.CodeDom {
 
-	public class CodeMemberEvent : CodeClassMember {
+	[Serializable]
+	public class CodeMemberEvent : CodeTypeMember {
 		string implementsType, type;
 		bool   privateImplements;
 		

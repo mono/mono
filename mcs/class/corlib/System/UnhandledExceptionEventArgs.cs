@@ -12,6 +12,7 @@ using System.Reflection;
 
 namespace System 
 {
+	[Serializable]
 	public class UnhandledExceptionEventArgs: EventArgs
 	{
 		private object exception;

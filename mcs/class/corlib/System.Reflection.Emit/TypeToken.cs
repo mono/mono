@@ -9,6 +9,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Represents the Token returned by the metadata to represent a Type.
 	/// </summary>
+	[Serializable]
 	public struct TypeToken {
 
 		internal int tokValue;

@@ -9,6 +9,7 @@
 
 namespace System.Security.Policy {
 
+	[Serializable]
 	public class PolicyStatement : ISecurityEncodable, ISecurityPolicyEncodable {
 		public PolicyStatement (PermissionSet perms) :
 			this (perms, PolicyStatementAttribute.Nothing)

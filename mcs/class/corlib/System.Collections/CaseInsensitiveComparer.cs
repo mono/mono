@@ -14,6 +14,7 @@ using System.Collections;
 
 namespace System.Collections {
 
+	[Serializable]
 	public class CaseInsensitiveComparer : IComparer {
 
 		private static CaseInsensitiveComparer singleton;

@@ -13,6 +13,7 @@ using System.Globalization;
 
 namespace System {
 	
+	[Serializable]
 	public struct Double : IComparable, IFormattable, IConvertible {
 		public const double Epsilon = 4.9406564584124650e-324;
 		public const double MaxValue =  1.7976931348623157e308;

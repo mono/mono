@@ -9,6 +9,7 @@
 
 namespace System.Runtime.Serialization {
 
+	[Serializable]
 	public struct StreamingContext {
 		StreamingContextStates state;
 		object additional;

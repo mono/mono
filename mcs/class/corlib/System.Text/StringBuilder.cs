@@ -15,6 +15,7 @@
 namespace System.Text {
 	
 	[MonoTODO ("Implement AppendFormat methods and IFormatProvider, IFormattable")]
+	[Serializable]
 	public sealed class StringBuilder {
 
 		private const int defaultCapacity = 16;

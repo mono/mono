@@ -25,6 +25,7 @@ namespace System
     /// Represents a floating-point decimal data type with up to 29 significant
     /// digits, suitable for financial and commercial calculations
     /// </summary>
+	[Serializable]
     public struct Decimal: IComparable, IFormattable
     {
         public static readonly Decimal MinValue = new Decimal(-1, -1, -1, true, 0);

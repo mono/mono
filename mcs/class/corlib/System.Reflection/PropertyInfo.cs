@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Globalization;
 
 namespace System.Reflection {
+	[Serializable]
 	public abstract class PropertyInfo : MemberInfo {
 
 		public abstract PropertyAttributes Attributes {get;}

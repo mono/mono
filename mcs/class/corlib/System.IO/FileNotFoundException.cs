@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 
 namespace System.IO {
 
+	[Serializable]
 	public class FileNotFoundException : IOException {
 		private string fileName;
 		private string fusionLog;

@@ -12,6 +12,7 @@ using System.Globalization;
 namespace System {
 
 	[CLSCompliant(false)]
+	[Serializable]
 	public struct UInt32 : IComparable, IFormattable, IConvertible {
 
 		public const uint MaxValue = 0xffffffff;

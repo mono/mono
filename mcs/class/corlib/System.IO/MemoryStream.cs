@@ -7,6 +7,7 @@
 //
 
 namespace System.IO {
+		[Serializable]
         public class MemoryStream : Stream {
                 private bool canRead;
                 private bool canSeek;

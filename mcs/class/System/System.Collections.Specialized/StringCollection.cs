@@ -14,6 +14,7 @@
 using System;
 
 namespace System.Collections.Specialized {
+	[Serializable]
 	public class StringCollection : IList, ICollection, IEnumerable {
 		private static int   InitialCapacity    = 11;
 		private static float CapacityMultiplier = 2.0f;

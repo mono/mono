@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 
 namespace System {
 	
+	[Serializable]
 	public struct Char : IComparable, IConvertible { //, IFormattable {
 		public const char MaxValue = (char) 0xffff;
 		public const char MinValue = (char) 0;

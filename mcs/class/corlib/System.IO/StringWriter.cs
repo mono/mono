@@ -7,6 +7,7 @@
 using System.Text;
 
 namespace System.IO {
+		[Serializable]
         public class StringWriter : TextWriter {
                 
                 protected StringBuilder internalString;

@@ -10,7 +10,7 @@ using System;
 
 namespace System.IO {
 
-	[MonoTODO]
+	[MonoTODO] [Serializable]
 	public abstract class TextReader : MarshalByRefObject, IDisposable {
 		
 		protected TextReader() { }

@@ -21,6 +21,7 @@ namespace System {
 	//
 
 	[MonoTODO]
+	[Serializable]
 	public abstract class Type : MemberInfo, IReflect {
 		
 		internal RuntimeTypeHandle _impl;

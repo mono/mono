@@ -11,6 +11,7 @@ using System.Text;
 
 namespace System.IO {
 	
+		[Serializable]
         public class StreamWriter : TextWriter {
 
 		private Encoding internalEncoding;

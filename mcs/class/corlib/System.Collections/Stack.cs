@@ -9,6 +9,7 @@
 
 namespace System.Collections {
 
+	[Serializable]
 	public class Stack : ICollection, IEnumerable, ICloneable {
 
 		// properties
@@ -45,6 +46,7 @@ namespace System.Collections {
 			contents = new object[capacity];
 		}
 
+		[Serializable]
 		private class SyncStack : Stack {
 
 			Stack stack;

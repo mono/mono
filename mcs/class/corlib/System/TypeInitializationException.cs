@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 namespace System {
 
+	[Serializable]
 	public class TypeInitializationException : SystemException {
 		string type_name;
 

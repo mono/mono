@@ -10,6 +10,7 @@
 
 namespace System.Text
 {
+	[Serializable]
 	public class UTF8Encoding : Encoding
 	{
 		public UTF8Encoding () : base ("UTF-8", false)

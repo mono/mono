@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 
 namespace System {
 
+	[Serializable]
 	public class Uri : MarshalByRefObject, ISerializable {
 
 		private string path = "";

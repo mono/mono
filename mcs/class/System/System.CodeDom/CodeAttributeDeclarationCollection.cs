@@ -11,6 +11,7 @@ namespace System.CodeDom {
 
 	using System.Collections;
 	
+	[Serializable]
 	public class CodeAttributeDeclarationCollection : IList, ICollection, IEnumerable {
 
 		ArrayList attributeDecls;

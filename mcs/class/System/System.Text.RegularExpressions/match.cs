@@ -10,6 +10,7 @@ using System;
 
 namespace System.Text.RegularExpressions {
 
+	[Serializable]
 	public class Capture {
 		public int Index {
 			get {

@@ -9,6 +9,7 @@ using System;
 
 namespace System.Security.Cryptography {
 
+	[Serializable]
 	public class CryptographicException : SystemException {
 		// Constructors
 		public CryptographicException ()

@@ -9,6 +9,7 @@
 
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeFieldReferenceExpression : CodeExpression {
 		CodeExpression targetObject;
 		string fieldName;

@@ -20,6 +20,7 @@ namespace System {
 	/// </remarks>
 
 	[AttributeUsage (AttributeTargets.Enum)]
+	[Serializable]
 	public class FlagsAttribute : Attribute {
 
 		// No methods.

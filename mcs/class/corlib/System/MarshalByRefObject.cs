@@ -11,6 +11,7 @@ using System.Runtime.Remoting;
 
 namespace System {
 
+	[Serializable]
 	public abstract class MarshalByRefObject {
 
 		public virtual ObjRef CreateObjRef (Type type)

@@ -22,6 +22,7 @@
 
 namespace System.Globalization {
 
+	[Serializable]
 	public sealed class NumberFormatInfo : ICloneable, IFormatProvider {
 		private bool readOnly;
 		

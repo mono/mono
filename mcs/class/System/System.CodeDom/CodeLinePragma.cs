@@ -14,6 +14,7 @@ namespace System.CodeDom {
 	//    Use objects of this class to keep track of locations where
 	//    statements are defined
 	// </summary>
+	[Serializable]
 	public class CodeLinePragma {
 		string fileName;
 		int    lineNumber;

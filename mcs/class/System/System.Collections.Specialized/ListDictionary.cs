@@ -1,5 +1,6 @@
 namespace System.Collections.Specialized
 {
+	[Serializable]
 	public class ListDictionary : IDictionary, ICollection, IEnumerable
 	{
 		private int count;

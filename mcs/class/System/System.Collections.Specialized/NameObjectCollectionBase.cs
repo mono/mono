@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 
 namespace System.Collections.Specialized
 {
+	[Serializable]
 	public abstract class NameObjectCollectionBase : ICollection, IEnumerable, ISerializable, IDeserializationCallback
 	{
 		private Hashtable m_ItemsContainer;
@@ -44,6 +45,7 @@ namespace System.Collections.Specialized
 		/// <summary>
 		/// Implements IEnumerable interface for KeysCollection
 		/// </summary>
+		[Serializable]
 		internal protected /*?*/ class _KeysEnumerator : IEnumerator
 		{
 			private NameObjectCollectionBase m_collection;

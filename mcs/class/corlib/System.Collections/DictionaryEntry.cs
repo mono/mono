@@ -2,6 +2,7 @@ using System;
 
 namespace System.Collections {
 
+	[Serializable]
 	public struct DictionaryEntry {
 		private object key;
 		private object val;

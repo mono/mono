@@ -9,7 +9,8 @@
 
 namespace System.CodeDom {
 
-	public class CodeMemberProperty : CodeClassMember {
+	[Serializable]
+	public class CodeMemberProperty : CodeTypeMember {
 		CodeParameterDeclarationExpressionCollection parameters;
 		CodeStatementCollection getStatements, setStatements;
 		bool hasGet, hasSet;

@@ -9,7 +9,8 @@
 
 namespace System.CodeDom {
 
-	public class CodeNamespace {
+	[Serializable]
+	public class CodeNamespace : CodeObject {
 		CodeClassCollection classes;
 		CodeNamespaceImportCollection imports;
 		bool allowLateBound, requireVariableDeclaration;

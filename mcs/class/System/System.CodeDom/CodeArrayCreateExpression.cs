@@ -8,6 +8,7 @@
 //
 namespace System.CodeDom {
 
+	[Serializable]
 	public class CodeArrayCreateExpression : CodeExpression {
 		string createType;
 		CodeExpressionCollection initializers;

@@ -15,6 +15,7 @@ using System.Collections;
 
 namespace System.IO {
 	
+	[Serializable]
 	public sealed class DirectoryInfo : FileSystemInfo {
 	
 		public DirectoryInfo (string path) {

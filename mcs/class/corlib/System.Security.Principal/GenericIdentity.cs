@@ -9,6 +9,7 @@
 
 namespace System.Security.Principal {
 
+	[Serializable]
 	public class GenericIdentity : IIdentity {
 		string user_name;
 		string authentication_type;
