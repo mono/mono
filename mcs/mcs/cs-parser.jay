@@ -2946,14 +2946,14 @@ statement
 			current_block = (Block) $1;
 		}
 	  }
-	| embedded_statement
+	| valid_declaration_statement
 	  {
 		current_block.AddStatement ((Statement) $1);
 	  }
 	| labeled_statement
 	;
 
-embedded_statement
+valid_declaration_statement
 	: block
 	| empty_statement
         | expression_statement
@@ -2967,6 +2967,20 @@ embedded_statement
 	| using_statement
 	| unsafe_statement
 	| fixed_statement
+	;
+
+embedded_statement
+	: valid_declaration_statement
+	| declaration_statement
+	  {
+		  Report.Error (1023, lexer.Location, "An embedded statement may not be a declaration.");
+		  $$ = null;
+	  }
+	| labeled_statement
+	  {
+		  Report.Error (1023, lexer.Location, "An embedded statement may not be a labeled statement.");
+		  $$ = null;
+	  }
 	;
 
 empty_statement

@@ -1,5 +1,10 @@
 2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* cs-parser.jay: detect invalid embeded statements gracefully.
+	bug #51113.
+
+2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* ecore.cs, typemanager.cs: Correct impl of cs1540 check.
 	As a regex:
 	s/
