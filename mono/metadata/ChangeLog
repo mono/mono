@@ -1,5 +1,7 @@
 2005-02-05  Ben Maurer  <bmaurer@ximian.com>
 
+	* object.c: Use iters.
+
 	* debug-helpers.c: More iters
 
 2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
