@@ -243,7 +243,9 @@ namespace System.Reflection.Emit {
 #endif
   		public static readonly OpCode Volatile;
   		public static readonly OpCode Xor;
-  
+#if NET_1_2
+		public static readonly OpCode Constrained;
+#endif
 
 		private OpCodes () {}
 
@@ -480,8 +482,10 @@ namespace System.Reflection.Emit {
   			Prefix2 = new OpCode("prefix2", 1, OpCodeType.Nternal, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Push0, FlowControl.Meta, 0xFF, 0xFD);
   			Prefix1 = new OpCode("prefix1", 1, OpCodeType.Nternal, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Push0, FlowControl.Meta, 0xFF, 0xFE);
   			Prefixref = new OpCode("prefixref", 1, OpCodeType.Nternal, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Push0, FlowControl.Meta, 0xFF, 0xFF);
-  
 
+#if NET_1_2
+  			Constrained = new OpCode("constrained.", 2, OpCodeType.Prefix, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Push0, FlowControl.Meta, 0xFE, 0x16);
+#endif
 		}
 
 		public static bool TakesSingleByteArgument (OpCode inst)

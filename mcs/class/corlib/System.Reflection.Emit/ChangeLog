@@ -1,3 +1,7 @@
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
+	* OpCodes.cs (OpCodes.Constrained): New opcode.
+
 2004-04-01 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* LocalBuilder.cs: Fix pinned support.
