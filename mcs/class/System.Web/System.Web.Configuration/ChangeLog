@@ -1,3 +1,8 @@
+2004-02-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* WebConfigurationSettings.cs: Load remoting configuration when reading
+	  the web.config file.
+
 2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AuthConfig.cs:

@@ -168,6 +168,10 @@ namespace System.Web.Configuration
 			child.DirName = dir;
 			child.LoadFromFile (wcfile);
 			fileToConfig [dir] = child;
+				
+			// Read remoting configuration
+			System.Runtime.Remoting.RemotingConfiguration.Configure (wcfile);
+				
 			return child;
 		}
 
