@@ -691,7 +691,7 @@ namespace Npgsql
                     //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
                     parameterName = parameters[i].ParameterName;
                     //textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
-                    parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1) + "::" + parameters[i].NpgsqlDbType.ToString());
+                    parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1) + "::" + parameters[i].TypeInfo.Name);
 
                 }
             }
