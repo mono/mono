@@ -275,6 +275,11 @@ namespace System.Reflection.Emit {
 				offset += count;
 			}
 			file.Close ();
+
+			//
+			// The constant 0x80000000 is internal to Mono, it means `make executable'
+			//
+			File.SetAttributes (assemblyFileName, (FileAttributes) 0x80000000);
 		}
 
 		public void SetEntryPoint (MethodInfo entryMethod)
