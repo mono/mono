@@ -1,3 +1,8 @@
+2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal): 
+	Avoid assert on generic types.
+
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal): New icall.
