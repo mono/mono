@@ -1,3 +1,6 @@
+2004-10-15 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Little improvement in For...next statement
+
 2004-10-14 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: For statement is enabled to take
 		optional declaration of the counter variable.

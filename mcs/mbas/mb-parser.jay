@@ -2900,33 +2900,43 @@ for_statement
 	  {
 		if ($3 != null)
 		{
+			start_block();
 			ArrayList VarDeclaration = new ArrayList ();
 			VarDeclaration.Add (new VariableDeclaration ((string) $2, 
 				(Expression) $3, null, lexer.Location, null));
 
 			DictionaryEntry de = new DictionaryEntry (DecomposeQI("_local_vars_", lexer.Location), VarDeclaration);
 			Block b = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
+			current_block = b;
 		}
-		
+		oob_stack.Push (lexer.Location);		
 		start_block();
 	  }
 	  opt_statement_list
 	  NEXT opt_identifier 
 	  {
-	  	Block statement = end_block();
-	  	Expression for_var = (Expression) DecomposeQI ((string)$2, lexer.Location);;
-	  	
-		Expression assign_expr = new Assign (for_var, (Expression) $5, lexer.Location);
-		Expression test_expr =  new Binary (Binary.Operator.LessThanOrEqual,
-			         	        for_var, (Expression) $7, lexer.Location);
-		Expression step_expr = new Assign (for_var, (Expression) new Binary (Binary.Operator.Addition,
-			         for_var, (Expression) $8, lexer.Location), lexer.Location);
-			         
-		Statement assign_stmt =	new StatementExpression ((ExpressionStatement) assign_expr, lexer.Location);		         
-		Statement step_stmt = new StatementExpression ((ExpressionStatement) step_expr, lexer.Location);
-		
-		$$ = new For (assign_stmt, test_expr, step_stmt, statement, lexer.Location);	  	
-	  }	  
+			Block inner_statement = end_block();
+			Location l = (Location) oob_stack.Pop ();
+			Expression for_var = (Expression) DecomposeQI ((string)$2, l);
+			
+            Expression assign_expr = new Assign (for_var, (Expression) $5, l);
+            Expression test_expr =  new Binary (Binary.Operator.LessThanOrEqual,
+                                                            for_var, (Expression) $7, l);
+            Expression step_expr = new Assign (for_var, (Expression) new Binary (Binary.Operator.Addition,
+                                             for_var, (Expression) $8, l), l);
+
+            Statement assign_stmt = new StatementExpression ((ExpressionStatement) assign_expr, l);
+            Statement step_stmt = new StatementExpression ((ExpressionStatement) step_expr, l);
+
+            For f = new For (assign_stmt, test_expr, step_stmt, inner_statement, l);
+			if ($3 != null)
+			{
+				current_block.AddStatement (f);
+				$$ = end_block();
+			}
+			else
+				$$ = f;
+	  }
 	;
 
 opt_step
