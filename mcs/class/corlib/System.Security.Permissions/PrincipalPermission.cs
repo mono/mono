@@ -98,7 +98,7 @@ namespace System.Security.Permissions {
 
 		internal PrincipalPermission (ArrayList principals) 
 		{
-			this.principals = principals;
+			this.principals = (ArrayList) principals.Clone ();
 		}
 
 		// Properties
@@ -147,6 +147,7 @@ namespace System.Security.Permissions {
 			if ((esd.Attributes ["version"] as string) != "1")
 				throw new ArgumentException ("wrong version");
 
+			principals.Clear ();
 			// Children is null, not empty, when no child is present
 			if (esd.Children != null) {
 				foreach (SecurityElement se in esd.Children) {
@@ -273,7 +274,7 @@ namespace System.Security.Permissions {
 
 			PrincipalPermission union = new PrincipalPermission (principals);
 			foreach (PrincipalInfo pi in o.principals)
-				principals.Add (pi);
+				union.principals.Add (pi);
 
 			return union;
 		}
