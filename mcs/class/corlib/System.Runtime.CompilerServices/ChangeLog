@@ -1,5 +1,7 @@
 2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* NGenAttribute.cs: Add ComVisible (false).
+
 	* *.cs: Add some more 2.0 stuff.
 
 	* *.cs: Add more 2.0 stuff.
