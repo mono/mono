@@ -1,3 +1,11 @@
+
+Fri Jan 28 18:23:44 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata-internals.h: add mono_aligned_addr_hash()
+	to get a better distribution in hash tables.
+	* *.c: use mono_aligned_addr_hash() where appropriate.
+	* assembly.c: make var static.
+
 2005-01-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* domain-internals.h: Put MonoJitInfo on a diet.
