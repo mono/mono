@@ -1,6 +1,8 @@
 2002-05-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_flow): always allocate the forest array
+	(mono_stack_duplicate_used_var): impl.
+	(mono_copy_used_var): impl.
 
 	* x86.brg: bug fix in SHR/SHL
 
