@@ -1145,12 +1145,10 @@ namespace System.Web {
 
 		internal void SetHeader (string name, string value)
 		{
-			// this is just to make sure the headers are initialized
-			// we don't actually use this var.
-			NameValueCollection nadda = Headers;
-			_oHeaders.MakeReadWrite ();
-			_oHeaders [name] = value;
-			_oHeaders.MakeReadOnly ();
+			HttpValueCollection headers = (HttpValueCollection) Headers;
+			headers.MakeReadWrite ();
+			headers [name] = value;
+			headers.MakeReadOnly ();
 		}
 	}
 }
