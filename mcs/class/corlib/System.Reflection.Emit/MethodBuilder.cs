@@ -119,7 +119,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public void CreateMethodBody( byte[] il, int count) {
-			if ((il != null) && ((count < 0) || (count >= il.Length)))
+			if ((il != null) && ((count < 0) || (count > il.Length)))
 				throw new ArgumentException ("Index was out of range.  Must be non-negative and less than the size of the collection.");
 
 			if ((code != null) || type.is_created)

@@ -354,6 +354,8 @@ namespace System.Reflection.Emit {
 				!((attributes & MethodAttributes.Virtual) != 0)))
 				throw new ArgumentException ("attributes", "Interface method must be abstract and virtual.");
 
+			if (returnType == null)
+				returnType = typeof (void);
 			MethodBuilder res = new MethodBuilder (this, name, attributes, callingConvention, returnType, parameterTypes);
 			append_method (res);
 			return res;

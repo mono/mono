@@ -1,3 +1,9 @@
+
+Thu May 15 19:16:54 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* MethodBuilder.cs: off by one in CreateMethodBody().
+	* TypeBuilder.cs: if the return type for a method is null, use void.
+
 2003-04-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* MethodBuilder.cs: Mono allows the parameter position to be zero
