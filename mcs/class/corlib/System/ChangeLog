@@ -1,3 +1,11 @@
+2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Activator.cs: change _flags to a const.
+	* IntegerFormatter.cs: make tables readonly.
+	* Convert.cs: tables readonly
+	* DateTime.cs: ditto.
+	* IntPtr.cs: avoid a cctor.
+
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* MonoType.cs: 

@@ -97,11 +97,11 @@ namespace System {
 		private const int maxIntLength = 12;
 		private const int maxLongLength = 22;
 
-		private static char[] digitLowerTable =
+		private static readonly char[] digitLowerTable =
 		{ '0', '1', '2', '3', '4', '5', '6', '7', 
 		  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-		private static char[] digitUpperTable =
+		private static readonly char[] digitUpperTable =
 		{ '0', '1', '2', '3', '4', '5', '6', '7', 
 		  '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 

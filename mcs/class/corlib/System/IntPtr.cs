@@ -30,11 +30,6 @@ namespace System
 
 		public static readonly IntPtr Zero;
 
-		static IntPtr ()
-		{
-			Zero.value = (void *) 0;
-		}
-
 		public IntPtr (int i32)
 		{
 			value = (void *) i32;

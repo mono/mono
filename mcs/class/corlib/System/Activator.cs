@@ -21,7 +21,7 @@ namespace System
 {
 	public sealed class Activator
 	{
-		private static BindingFlags _flags = BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance;
+		const BindingFlags _flags = BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance;
 
 		private Activator ()
 		{

@@ -46,7 +46,7 @@ namespace System
 		public static readonly DateTime MaxValue = new DateTime (false, MAX_VALUE_TICKS);
 		public static readonly DateTime MinValue = new DateTime (false, 0);
 
-		private static string[] formats = {
+		private static readonly string[] formats = {
 			// For compatibility with MS's CLR, this format (which
 			// doesn't have a one-letter equivalent) is parsed
 			// too. It's important because it's used in XML
@@ -74,8 +74,8 @@ namespace System
 			Year
 		};
 	
-		private static int[] daysmonth = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
-		private static int[] daysmonthleap = { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
+		private static readonly int[] daysmonth = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
+		private static readonly int[] daysmonthleap = { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
 
 		private static int AbsoluteDays (int year, int month, int day)
 		{

@@ -2479,7 +2479,7 @@ namespace System {
                 // Lookup table for the conversion ToType method. Order
 		// is important! Used by ToType for comparing the target
 		// type, and uses hardcoded array indexes.
-		private static Type[] conversionTable = {
+		private static readonly Type[] conversionTable = {
 			// Valid ICovnertible Types
 			null,              //  0 empty
 			typeof (object),   //  1 TypeCode.Object
