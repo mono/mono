@@ -12,7 +12,7 @@ using System.Globalization;
 
 namespace System {
 
-	[TODO]
+	//[MonoTODO]
 	public struct RuntimeFieldHandle : ISerializable {
 		IntPtr value;
 		

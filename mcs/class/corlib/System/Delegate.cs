@@ -15,7 +15,7 @@ using System.Runtime.Serialization;
 
 namespace System {
 
-	[TODO]
+	//[MonoTODO]
 	public abstract class Delegate : ICloneable, ISerializable {
 		protected Type target_type;
 		protected object m_target;
@@ -92,7 +92,7 @@ namespace System {
 		}
 
 		// This is from ISerializable
-		[TODO]
+		//[MonoTODO]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			// TODO: IMPLEMENT ME

@@ -263,7 +263,7 @@ namespace System
 		}
 
 		//TODO implement
-		[TODO]
+		//[MonoTODO]
 		public static DateTime Today 
 		{
 			get	
@@ -273,7 +273,7 @@ namespace System
 		}
 
 		//TODO implement
-		[TODO]
+		//[MonoTODO]
 		public static DateTime UtcNow 
 		{
 			get {
@@ -432,35 +432,35 @@ namespace System
 		}
 
 		// TODO: Implement me.
-		[TODO]
+		//[MonoTODO]
 		public static DateTime FromOADate (double d)
 		{
 				return new DateTime(0);
 		}
 		
 		// TODO: Implement me.
-		[TODO]
+		//[MonoTODO]
 		public string[] GetDateTimeFormats() 
 		{
 			return null;
 		}
 
 		//TODO: implement me
-		[TODO]
+		//[MonoTODO]
 		public string[] GetDateTimeFormats(char format)
 		{
 			return null;
 		}
 		
 		// TODO: implement me
-		[TODO]
+		//[MonoTODO]
 		public string[] GetDateTimeFormats(IFormatProvider provider)
 		{
 			return null;
 		}
 
 		//TODO: implement me 
-		[TODO]
+		//[MonoTODO]
 		public string[] GetDateTimeFormats(char format,IFormatProvider provider	)
 		{
 			return null;
@@ -481,35 +481,35 @@ namespace System
 			return  ( (year % 4 == 0 && year % 100 != 0) || year % 400 == 0) ;
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public static DateTime Parse (string s)
 		{
 			// TODO: Implement me
 			return new DateTime (0);
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public static DateTime Parse (string s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return new DateTime (0);
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public static DateTime Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return new DateTime (0);
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public static DateTime ParseExact(string s,	string format, IFormatProvider provider	)
 		{
 			// TODO: Implement me
 			return new DateTime (0);
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public static DateTime ParseExact(string s, string format, IFormatProvider provider, DateTimeStyles style )
 		{
 			// TODO: Implement me
@@ -517,7 +517,7 @@ namespace System
 		
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public static DateTime ParseExact( string s, string[] formats, IFormatProvider provider,
 						   DateTimeStyles style )
 		{
@@ -545,77 +545,77 @@ namespace System
 			return(ticks - w32file_epoch);
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public DateTime ToLocalTime()
 		{
 			// TODO Implement me 
 			return new DateTime (0);
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public string ToLongDateString()
 		{
 			// TODO implement me
 			throw new NotImplementedException ();
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public string ToLongTimeString()
 		{
 			// TODO implement me
 			throw new NotImplementedException ();
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public double ToOADate()
 		{
 			// TODO implement me 
 			return 0;
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public string ToShortDateString()
 		{
 			// TODO implement me 
 			throw new NotImplementedException ();
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public string ToShortTimeString()
 		{
 			// TODO implement me
 			throw new NotImplementedException ();
 		}
 		
-		[TODO]
+		//[MonoTODO]
 		public override string ToString ()
 		{
 			// TODO: Implement me
 			throw new NotImplementedException ();
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public string ToString (IFormatProvider fp)
 		{
 			// TODO: Implement me.
 			throw new NotImplementedException ();
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public string ToString (string format)
 		{
 			// TODO: Implement me.
 			throw new NotImplementedException ();
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
 			throw new NotImplementedException ();
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public DateTime ToUniversalTime()
 		{
 			// TODO: implement me 
@@ -685,7 +685,7 @@ namespace System
 		}
 
 		// TODO Implement me
-		[TODO]
+		//[MonoTODO]
 		public System.DateTime ToDateTime(IFormatProvider provider)
 		{
 			return new System.DateTime(this.ticks);

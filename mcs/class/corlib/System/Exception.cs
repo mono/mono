@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace System {
 
-	[TODO]
+	//[MonoTODO]
 	public class Exception : ISerializable {
 		Exception inner_exception;
 		string message;
@@ -85,7 +85,7 @@ namespace System {
 			}
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public string Source {
 			get {
 				// TODO: if source is null, we must return
@@ -105,7 +105,7 @@ namespace System {
 			}
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public MethodBase TargetSite {
 			get {
 				// TODO: Implement this.
@@ -127,7 +127,7 @@ namespace System {
 			return this;
 		}
 
-		[TODO]
+		//[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			// TODO: implement me.
