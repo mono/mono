@@ -1,3 +1,11 @@
+2003-11-28  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Expression.cs : namespace axis now traversed in reverse order, so it
+	  requires sorting.
+	* Iterator.cs : UnionIterator.Clone() was incomplete. 
+	  NamespaceItarator() should be reverse order (special handling
+	  because of XPathNavigator specification).
+
 2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Iterator.cs : PrecedingIterator.MoveNext() now breaks up at Root.

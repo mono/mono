@@ -1018,6 +1018,7 @@ namespace System.Xml.XPath
 				case Axes.AncestorOrSelf:
 				case Axes.Preceding:
 				case Axes.PrecedingSibling:
+				case Axes.Namespace:
 					return true;
 				default:
 					return false;

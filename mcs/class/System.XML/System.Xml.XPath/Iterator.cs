@@ -665,6 +665,7 @@ namespace System.Xml.XPath
 			return false;
 		}
 
+		public override bool ReverseAxis { get { return true; } }
 		public override bool RequireSorting { get { return false; } }
 	}
 
@@ -1007,7 +1008,6 @@ namespace System.Xml.XPath
 
 		public override bool RequireSorting {
 			get {
-				// FIXME: consider _exprRight (but without collecting).
 				return _iterLeft.RequireSorting || _expr.RequireSorting;
 			}
 		}
@@ -1135,9 +1135,12 @@ namespace System.Xml.XPath
 
 		protected UnionIterator (UnionIterator other) : base (other)
 		{
-			_left = other._left;
-			_right = other._right;
+			_left = (BaseIterator) other._left.Clone ();
+			_right = (BaseIterator) other._right.Clone ();
 			_pos = other._pos;
+			keepLeft = other.keepLeft;
+			keepRight = other.keepRight;
+			useRight = other.useRight;
 		}
 		public override XPathNodeIterator Clone () { return new UnionIterator (this); }
 
