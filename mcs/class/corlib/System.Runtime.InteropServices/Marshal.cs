@@ -355,10 +355,8 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static void PtrToStructure (IntPtr ptr, object structure) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void PtrToStructure (IntPtr ptr, object structure);
 
 		[MonoTODO]
 		public static object PtrToStructure (IntPtr ptr, Type structureType) {
@@ -462,10 +460,8 @@ namespace System.Runtime.InteropServices
 			return SizeOf (structure.GetType ());
 		}
 
-		[MonoTODO]
-		public static int SizeOf (Type t) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static int SizeOf (Type t);
 
 		[MonoTODO]
 		public static IntPtr StringToBSTR (string s) {
@@ -502,10 +498,8 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
 		[MonoTODO]
 		public static void ThrowExceptionForHR (int errorCode) {
