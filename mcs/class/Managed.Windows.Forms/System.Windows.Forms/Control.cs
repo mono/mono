@@ -315,7 +315,7 @@ namespace System.Windows.Forms
 			{
 				owner.SuspendLayout();
 				for (int i = 0; i < list.Count; i++) {
-					owner.OnControlRemoved(new ControlEventArgs(list[i]));
+					owner.OnControlRemoved(new ControlEventArgs((Control)list[i]));
 				}
 				list.Clear();
 				owner.ResumeLayout();
@@ -377,7 +377,7 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
 				}
 
-				owner.OnControlRemoved(new ControlEventArgs(list[index]));
+				owner.OnControlRemoved(new ControlEventArgs((Control)list[index]));
 				list.RemoveAt(index);
 				owner.UpdateZOrder();
 			}
