@@ -1,3 +1,8 @@
+2003-07-14 Jackson Harper <jackson@latitudegeo.com>
+
+	* Makefile: Add the class/lib directory to the lib path so the
+	newest PEAPI is allways loaded.
+	
 2003-06-08 Jackson Harper <jackson@latitudegeo.com>
 
 	* AssemblyInfo.cs: Bump version number up (way up) lots of
