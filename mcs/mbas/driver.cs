@@ -143,7 +143,7 @@ namespace Mono.Languages
 		[Option(-1, "References metadata from specified {module}", "addmodule")]
 		public string AddedModule { set { AddedModules.Add(value); } }
 
-		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", "recurse")]
+//		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", "recurse")]
 		public WhatToDoNext Recurse(string wildcard)
 		{
 			//AddFiles (DirName, true); // TODO wrong semantics
@@ -155,10 +155,10 @@ namespace Mono.Languages
 		
 		// support for the Compact Framework
 		//------------------------------------------------------------------
-		[Option("[NOT IMPLEMENTED YET]Sets the compiler to target the Compact Framework","netcf")]
+//		[Option("[NOT IMPLEMENTED YET]Sets the compiler to target the Compact Framework","netcf")]
 		public bool CompileForCompactFramework = false;
 		
-		[Option("[NOT IMPLEMENTED YET]Specifies the {path} to the location of mscorlib.dll and microsoft.visualbasic.dll", "sdkpath")]
+//		[Option("[NOT IMPLEMENTED YET]Specifies the {path} to the location of mscorlib.dll and microsoft.visualbasic.dll", "sdkpath")]
 		public string SDKPath = null;
 
 		// resource options
@@ -170,25 +170,25 @@ namespace Mono.Languages
 
 		public ArrayList LinkedResources = new ArrayList();
 		
-		[Option(-1, "[NOT IMPLEMENTED YET]Adds the specified {file} as a linked assembly resource", "linkresource", "linkres")]
+//		[Option(-1, "[NOT IMPLEMENTED YET]Adds the specified {file} as a linked assembly resource", "linkresource", "linkres")]
 		public string AddedLinkresource { set { LinkedResources.Add(value); } }
 
 		public ArrayList Win32Resources = new ArrayList();
 		
-		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 resource {file} (.res)", "win32resource")]
+//		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 resource {file} (.res)", "win32resource")]
 		public string AddedWin32resource { set { Win32Resources.Add(value); } }
 
 		public ArrayList Win32Icons = new ArrayList();
 		
-		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 icon {file} (.ico) for the default Win32 resources", "win32icon")]
+//		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 icon {file} (.ico) for the default Win32 resources", "win32icon")]
 		public string AddedWin32icon { set { Win32Icons.Add(value); } }
 
 		// code generation options
 		//------------------------------------------------------------------
-		[Option("[NOT IMPLEMENTED YET]Enable optimizations", "optimize")]
+//		[Option("[NOT IMPLEMENTED YET]Enable optimizations", "optimize")]
 		public bool optimize = false;
 
-		[Option("[NOT IMPLEMENTED YET]Remove integer checks. Default off.")]
+//		[Option("[NOT IMPLEMENTED YET]Remove integer checks. Default off.")]
 		public bool removeintchecks = false;
 
 		// TODO: handle VB.NET [+|-] boolean syntax
@@ -244,17 +244,17 @@ namespace Mono.Languages
 		}
 
 		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("[NOT IMPLEMENTED YET]Require explicit declaration of variables")]
+//		[Option("[NOT IMPLEMENTED YET]Require explicit declaration of variables")]
 		public bool optionexplicit { set { Mono.MonoBASIC.Parser.InitialOptionExplicit = value; } }
 
 		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("[NOT IMPLEMENTED YET]Enforce strict language semantics")]
+//		[Option("[NOT IMPLEMENTED YET]Enforce strict language semantics")]
 		public bool optionstrict { set { Mono.MonoBASIC.Parser.InitialOptionStrict = value; } }
 		
-		[Option("[NOT IMPLEMENTED YET]Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
+//		[Option("[NOT IMPLEMENTED YET]Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
 		public bool optioncomparebinary { set { Mono.MonoBASIC.Parser.InitialOptionCompareBinary = true; } }
 
-		[Option("[NOT IMPLEMENTED YET]Specifies text-style string comparisons.", "optioncompare:text")]
+//		[Option("[NOT IMPLEMENTED YET]Specifies text-style string comparisons.", "optioncompare:text")]
 		public bool optioncomparetext { set { Mono.MonoBASIC.Parser.InitialOptionCompareBinary = false; } }
 
 		[Option("Specifies de root {namespace} for all type declarations")]
@@ -266,7 +266,7 @@ namespace Mono.Languages
 		[Option("[IGNORED]Do not display compiler copyright banner")]
 		public bool nologo = false;
 		
-		[Option("[NOT IMPLEMENTED YET]Quiet output mode")]
+//		[Option("[NOT IMPLEMENTED YET]Quiet output mode")]
 		public bool quiet = false;
 		
 		// TODO: semantics are different and should be adjusted
@@ -276,20 +276,20 @@ namespace Mono.Languages
 		// Advanced options	
 		//------------------------------------------------------------------
 		// TODO: force option to accept number in hex format
-		[Option("[NOT IMPLEMENTED YET]The base {address} for a library or module (hex)")]
+//		[Option("[NOT IMPLEMENTED YET]The base {address} for a library or module (hex)")]
 		public int baseaddress;
 		
-		[Option("[NOT IMPLEMENTED YET]Create bug report {file}")]
+//		[Option("[NOT IMPLEMENTED YET]Create bug report {file}")]
 		public string bugreport;
 		
 		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("[NOT IMPLEMENTED YET]Delay-sign the assembly using only the public portion of the strong name key")]
+//		[Option("[NOT IMPLEMENTED YET]Delay-sign the assembly using only the public portion of the strong name key")]
 		public bool delaysign;
 		
-		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key {container}")]
+//		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key {container}")]
 		public string keycontainer;
 		
-		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key {file}")]
+//		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key {file}")]
 		public string keyfile;
 
 		public string[] libpath = null;
