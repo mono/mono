@@ -1,3 +1,10 @@
+2003-03-04  Dick Porter  <dick@ximian.com>
+
+	* Single.cs:
+	* Double.cs: Temporarily reverted the Double and Single ToString()
+	change, because it broke nunit.
+
+
 2003-03-04  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Double.cs: Changed ToString method. Added NumberFormatInfo support
