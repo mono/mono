@@ -1,3 +1,7 @@
+2004-09-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Fix spelling of ChangeLog file.
+
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* System.EnterpriseServices.dll.sources: Added IConfigurationAttribute
