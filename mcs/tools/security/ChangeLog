@@ -1,3 +1,8 @@
+2004-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* certmgr.cs, signcode.cs, sn.cs: Fixlets to removed compilation 
+	warning (for unused variables).
+
 2004-12-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* certmgr.cs: Add a new -ssl action to download and add the 

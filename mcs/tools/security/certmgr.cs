@@ -236,12 +236,8 @@ namespace Mono.Tools {
 						coll.Count, store.Name);
 					break;
 				case ObjectType.CRL:
-					ArrayList list = LoadCRLs (file);
-					foreach (X509Crl crl in list) {
-						// TODO
-						throw new NotImplementedException ("Add CRL not yet supported");
-					}
-					break;
+					// TODO ArrayList list = LoadCRLs (file);
+					throw new NotImplementedException ("Adding CRL not yet supported");
 				default:
 					throw new NotSupportedException (type.ToString ());
 			}

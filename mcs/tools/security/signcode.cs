@@ -241,6 +241,10 @@ namespace Mono.Tools {
 					break;
 				}
 			}*/
+			// temp
+			if ((timestampRetry > 0) || (timestampDelay > 0)) {
+				Console.WriteLine ("Timestamp retries and delays aren't implemented.");
+			}
 			return 0;
 		}
 	}

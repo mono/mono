@@ -290,7 +290,7 @@ namespace Mono.Tools {
 			else
 				Header();
 
-			bool config = LoadConfig (quiet);
+			LoadConfig (quiet);
 
 			StrongName sn = null;
 			AssemblyName an = null;
