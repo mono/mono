@@ -1,3 +1,7 @@
+2004-08-11 Bernie Solomon <bernard@ugsolutions.com>
+	* EnumB.vb:
+	* Test.Sources: New test
+
 2004-08-11 Sachin Kumar <skumar1@novell.com>
 	* LocalVariables1.vb:
 	* LocalVariablesA.vb:
