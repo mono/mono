@@ -1,3 +1,9 @@
+
+Sun Jun 13 16:44:39 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: keep track of struct size with explicit layout
+	(bug #59979).
+
 2004-06-12  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c: Comment out a debugging g_message().
