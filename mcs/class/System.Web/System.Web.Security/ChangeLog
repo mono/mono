@@ -1,3 +1,8 @@
+2005-02-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthenticationModule.cs: allow accessing other files in the
+	directory where the login page is. Fixes bug #71871.
+
 2004-11-18 Lluis Sanchez Gual <lluis@novell.com>
 
 	* RoleProvider.cs, Roles.cs, SqlRoleProvider.cs, RoleProviderCollection.cs,
