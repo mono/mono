@@ -93,7 +93,12 @@ namespace System.Security.Permissions {
 		private PermissionSet CreateFromXml (string xml) 
 		{
 			SecurityParser sp = new SecurityParser ();
-			sp.LoadXml (xml);
+			try {
+				sp.LoadXml (xml);
+			}
+			catch (Mono.Xml.MiniParser.XMLError xe) {
+				throw new XmlSyntaxException (xe.Line, xe.ToString ());
+			}
 			SecurityElement se = sp.ToXml ();
 
 			string className = se.Attribute ("class");
@@ -106,10 +111,12 @@ namespace System.Security.Permissions {
 
 			if (className.EndsWith ("NamedPermissionSet")) {
 				NamedPermissionSet nps = new NamedPermissionSet (se.Attribute ("Name"), state);
+				nps.FromXml (se);
 				return (PermissionSet) nps;
 			}
 			else if (className.EndsWith ("PermissionSet")) {
 				PermissionSet ps = new PermissionSet (state);
+				ps.FromXml (se);
 				return ps;
 			}
 			return null;

@@ -1,3 +1,8 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetAttribute.cs: Throw proper exception if XML cannot be
+	decoded. Actually load (not just creates) the XML permissions.
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetAttribute.cs: Implemented Hex property (2.0) now that
