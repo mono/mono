@@ -1,3 +1,8 @@
+2005-01-04  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/OptionList.cs: Corrected wrong assumption on string length that caused a exception when a single-dash argument
+	  was being normalized. Now a single-dash is returned a non-processed argument. 
+	  The app driver has to deal with it if it should carry any specific meaning. Bug # 70480 
+
 2004-10-12  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* every *.cs: moved to namespace-based subdirectories as is the norm in Mono
 	* Mono.GetOptions.dll.sources: adjusted to new sources locations

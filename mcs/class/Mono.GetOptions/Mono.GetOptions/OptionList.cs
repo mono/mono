@@ -306,6 +306,11 @@ namespace Mono.GetOptions
 			return (string[])result.ToArray(typeof(string));
 		}
 
+		private static int IndexOfAny(string where, params char[] what)
+		{
+			return where.IndexOfAny(what);
+		}
+		
 		public string[] NormalizeArgs(string[] args)
 		{
 			bool ParsingOptions = true;
@@ -324,7 +329,7 @@ namespace Mono.GetOptions
 						}
 
 						if ((parsingMode & OptionsParsingMode.Linux) > 0 && 
-							 arg[0] == '-' && arg[1] != '-' &&
+							 arg[0] == '-' && arg.Length > 1 && arg[1] != '-' &&
 							 breakSingleDashManyLettersIntoManyOptions)
 						{
 							foreach(char c in arg.Substring(1)) // many single-letter options
@@ -334,7 +339,7 @@ namespace Mono.GetOptions
 
 						if (MaybeAnOption(arg))
 						{
-							int pos = arg.IndexOfAny(":=".ToCharArray());
+							int pos = IndexOfAny(arg, ':', '=');
 
 							if(pos < 0)
 								result.Add(arg);
@@ -382,7 +387,7 @@ namespace Mono.GetOptions
 
 					OptionWasProcessed = false;
 
-					if (arg.StartsWith("-") || arg.StartsWith("/"))
+					if (arg.Length > 1 && (arg.StartsWith("-") || arg.StartsWith("/")))
 					{
 						foreach(OptionDetails option in list)
 						{
