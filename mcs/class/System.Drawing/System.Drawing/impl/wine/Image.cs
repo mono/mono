@@ -17,6 +17,7 @@ namespace System.Drawing {
 		using System.Runtime.Remoting;
 		using System.Runtime.Serialization;
 		using System.Drawing.Imaging;
+		using System.IO;
 
 		//[Serializable]
 		//[ComVisible(true)]
@@ -115,8 +116,18 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 
-			//public void Save(Stream stream, ImageFormat format);
-			//public void Save(string filename, ImageFormat format);
+			public void Save(Stream stream, ImageFormat format)
+			{
+				// Fixme: implement me
+				throw new NotImplementedException ();
+			}
+			
+			public void Save(string filename, ImageFormat format)
+			{
+				// Fixme: implement me
+				throw new NotImplementedException ();
+			}
+			
 			//public void Save(Stream stream, ImageCodecInfo encoder,
 			//                 EncoderParameters encoderParams);
 			//public void Save(string filename, ImageCodecInfo encoder,
