@@ -1731,6 +1731,21 @@ namespace Mono.CSharp {
 				VariableInfo vi = (VariableInfo) p.First;
 				Expression e = (Expression) p.Second;
 
+				//
+				// The rules for the possible declarators are narrow,
+				// but the production on the grammar is more concise.
+				//
+				// So we have to enforce these rules here
+				//
+				if (e is Unary && ((Unary) e).Oper == Unary.Operator.AddressOf){
+					e = e.Resolve (ec);
+					if (e == null)
+						continue;
+
+					if (!TypeManager.VerifyUnManaged (e.Type))
+						continue;
+				}
+				
 				e = e.Resolve (ec);
 				if (e == null)
 					continue;

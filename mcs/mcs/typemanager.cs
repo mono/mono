@@ -880,6 +880,18 @@ public class TypeManager {
 		}
 		throw new Exception ("Unhandled typecode in enum" + tc);
 	}
+
+	/// <summary>
+	///   Utility function that can be used to probe whether a type
+	///   is managed or not.  
+	/// </summary>
+	public static bool VerifyUnManaged (Type t)
+	{
+		if (t.IsValueType)
+			return true;
+		Report.Error (10000, "Not a managed type");
+		return false;	
+	}
 	
 	/// <summary>
 	///   Returns the name of the indexer in a given type.
