@@ -1,0 +1,25 @@
+2002-05-28  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql
+	* Mono.Data.MySql/Mono.Data.MySql: add directories
+	for the Mono.Data.MySql assembly and namespace.  This
+	will contain the MySql .NET Data Provider which will use
+	C# bindings to libMySQL
+	
+	* Mono.Data.MySql/Test.cs: added file to
+	test the C# bindings to MySQL
+	
+	* Mono.Data.MySql/MySql.cs
+	* Mono.Data.MySql/Field.cs: added files
+	for the beginnings of C# bindings to MySQL
+	
+	* Mono.Data.MySql/makefile: added file
+	to build the MySQL C# bindings on csc/Microsoft.NET
+	
+	These C# bindings to the MySQL libMySQL.dll were created by
+	Brad Merrill <zbrad@cybercom.net> 
+	and can be downloaded from
+	http://www.cybercom.net/~zbrad/DotNet/MySql/
+	and put into the Mono Class Library under the X11/MIT License
+	with Brad Merril's permission.
+
