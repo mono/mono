@@ -1,3 +1,7 @@
+2002/06/12  Nick Drochak <ndrochak@gol.com>
+
+	* Random.cs (Next): Fix math error.  Return a number within the range.
+
 2002-06-12  Nick Drochak  <ndrochak@gol.com>
 
 	* String.cs (IndexOf): Return -1 if start index is equal to string

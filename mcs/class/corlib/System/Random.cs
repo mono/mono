@@ -53,7 +53,7 @@ namespace System
 					"Min value is greater then max value."));
                         else if (minValue == maxValue)
                                 return minValue;
-                        return (int)(this.Sample()*maxValue)+minValue;
+                        return (int)(this.Sample()*(maxValue - minValue))+minValue;
                 }
                 public virtual void NextBytes(byte[] buffer)
                 {
