@@ -8,59 +8,61 @@
 //
 
 using System.IO;
+using System.Xml;
 
 namespace System.Xml.XPath
 {
+	[MonoTODO]
 	public class XPathDocument : IXPathNavigable
 	{
-		#region Constructors
+		XmlDocument _doc = new XmlDocument ();
 
-		[MonoTODO]
+#region Constructors
+
 		public XPathDocument (Stream stream)
 		{
-			throw new NotImplementedException ();
+			_doc.Load (stream);
 		}
 
-		[MonoTODO]
 		public XPathDocument (string uri)
 		{
-			throw new NotImplementedException ();
+			_doc.Load (uri);
 		}
 
-		[MonoTODO]
 		public XPathDocument (TextReader reader)
 		{
-			throw new NotImplementedException ();
+			_doc.Load (reader);
 		}
 
-		[MonoTODO]
 		public XPathDocument (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			_doc.Load (reader);
 		}
 
-		[MonoTODO]
 		public XPathDocument (string uri, XmlSpace space)
 		{
-			throw new NotImplementedException ();
+			if (space == XmlSpace.Preserve)
+				_doc.PreserveWhitespace = true;
+			_doc.Load (uri);
 		}
 
-		[MonoTODO]
 		public XPathDocument (XmlReader reader, XmlSpace space)
 		{
-			throw new NotImplementedException ();
+			if (space == XmlSpace.Preserve)
+				_doc.PreserveWhitespace = true;
+			_doc.Load (reader);
 		}
 
-		#endregion
+#endregion
 
-		#region Methods
+#region Methods
 
-		[MonoTODO]
 		public XPathNavigator CreateNavigator ()
 		{
-			throw new NotImplementedException ();
+			return _doc.CreateNavigator ();
 		}
-		
-		#endregion
+
+#endregion
 	}
 }
+
