@@ -1,3 +1,6 @@
+2002-02-21  Duco Fijma <duco@lorentz.xs4all.nl>
+	* GuidTest.cs: changed according to fix in System.Guid
+
 2002-02-20  Nick Drochak  <ndrochak@gol.com>
 
 	* Int64Test.cs: One array was giving us trouble.  Not sure why, but

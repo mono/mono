@@ -29,10 +29,10 @@ public class GuidTest : TestCase
 		bool exception;
 		
 		if (BitConverter.IsLittleEndian) {
-			AssertEquals("A1", g.ToString(), "03020100-0504-0706-0809-0a0b0c0d0e0f");
+			AssertEquals("A1", "03020100-0504-0706-0809-0a0b0c0d0e0f", g.ToString());
 		}
 		else {
-			AssertEquals("A1", g.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f");
+			AssertEquals("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString());
 		}
 
 		try {
@@ -42,7 +42,7 @@ public class GuidTest : TestCase
 		catch (ArgumentNullException) {
 			exception = true;
 		}
-		AssertEquals("A2", exception, true);
+		AssertEquals("A2", true, exception);
 
 		try {
 			Guid g1 = new Guid(new byte[] {0x00, 0x01, 0x02});
@@ -51,21 +51,21 @@ public class GuidTest : TestCase
 		catch (ArgumentException) {
 			exception = true;
 		}
-		AssertEquals("A3", exception, true);
+		AssertEquals("A3", true, exception);
 	}
 
 	public void TestCtor2() {
 		Guid g1 = new Guid ("00010203-0405-0607-0809-0a0b0c0d0e0f"); 
 		Guid g2 = new Guid ("{00010203-0405-0607-0809-0A0B0C0D0E0F}"); 
-		Guid g3 = new Guid ("{0x00010203,0x0405,0x0607,{0x08},{0x09},{0x0a},{0x0b},{0x0c},{0x0d},{0x0e},{0x0f}}");
+		Guid g3 = new Guid ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}");
 		Guid g4;
 		Guid g5;
 
 		bool exception;
 
-		AssertEquals("A1", g1.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f"); 
-		AssertEquals("A2", g2.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f"); 
-		AssertEquals("A3", g3.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f"); 
+		AssertEquals("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString()); 
+		AssertEquals("A2", "00010203-0405-0607-0809-0a0b0c0d0e0f", g2.ToString()); 
+		AssertEquals("A3", "00010203-0405-0607-0809-0a0b0c0d0e0f", g3.ToString()); 
 
 		try {
 			g4 = new Guid((string) null);
@@ -74,7 +74,7 @@ public class GuidTest : TestCase
 		catch (ArgumentNullException) {
 			exception = true;
 		}
-		AssertEquals("A4", exception, true);
+		AssertEquals("A4", true, exception);
 
 		try {
 			g5 = new Guid("invalid");
@@ -83,7 +83,7 @@ public class GuidTest : TestCase
 		catch (FormatException) {
 			exception = true;
 		}
-		AssertEquals("A5", exception, true);
+		AssertEquals("A5", true, exception);
 		
 	}
 
@@ -91,8 +91,8 @@ public class GuidTest : TestCase
 		Guid g1 = new Guid(0x00010203, (short) 0x0405, (short) 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
 		Guid g2 = new Guid(unchecked((int) 0xffffffff), unchecked((short) 0xffff), unchecked((short) 0xffff), 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
 		
-		AssertEquals("A1", g1.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f");
-		AssertEquals("A2", g2.ToString(), "ffffffff-ffff-ffff-ffff-ffffffffffff");
+		AssertEquals("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString());
+		AssertEquals("A2", "ffffffff-ffff-ffff-ffff-ffffffffffff", g2.ToString());
 
 	}
 
@@ -100,13 +100,13 @@ public class GuidTest : TestCase
 		Guid g1 = new Guid(0x00010203u, (ushort) 0x0405u, (ushort) 0x0607u, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
 		Guid g2 = new Guid(0xffffffffu, (ushort) 0xffffu, (ushort) 0xffffu, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
 		
-		AssertEquals("A1", g1.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f");
-		AssertEquals("A2", g2.ToString(), "ffffffff-ffff-ffff-ffff-ffffffffffff");
+		AssertEquals("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString());
+		AssertEquals("A2", "ffffffff-ffff-ffff-ffff-ffffffffffff", g2.ToString());
 
 	}
 
 	public void TestEmpty() {
-		AssertEquals("A1", Guid.Empty.ToString(), "00000000-0000-0000-0000-000000000000");
+		AssertEquals("A1", "00000000-0000-0000-0000-000000000000", Guid.Empty.ToString());
 	}
 
 	public void TestEquals() {
@@ -115,24 +115,24 @@ public class GuidTest : TestCase
 		Guid g3 = new Guid(0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
 		string s = "Thus is not a Guid!";
 
-		AssertEquals("A1", g1.Equals(g1), true);
-		AssertEquals("A2", g1.Equals(g2), true);
-		AssertEquals("A3", g1.Equals(g3), false);
-		AssertEquals("A4", g1.Equals(null), false);
-		AssertEquals("A5", g1.Equals(s), false);
+		AssertEquals("A1", true, g1.Equals(g1));
+		AssertEquals("A2", true, g1.Equals(g2));
+		AssertEquals("A3", false, g1.Equals(g3));
+		AssertEquals("A4", false, g1.Equals(null));
+		AssertEquals("A5", false, g1.Equals(s));
 	}
 
 	public void TestToString() {
 		Guid g = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
 		bool exception;
 		
-		AssertEquals("A1", g.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f");
-		AssertEquals("A2", g.ToString("N"), "000102030405060708090a0b0c0d0e0f");
-		AssertEquals("A3", g.ToString("D"), "00010203-0405-0607-0809-0a0b0c0d0e0f");
-		AssertEquals("A4", g.ToString("B"), "{00010203-0405-0607-0809-0a0b0c0d0e0f}");
-		AssertEquals("A5", g.ToString("P"), "(00010203-0405-0607-0809-0a0b0c0d0e0f)");
-		AssertEquals("A6", g.ToString(""), "000102030405060708090a0b0c0d0e0f");
-		AssertEquals("A7", g.ToString(null), "000102030405060708090a0b0c0d0e0f");
+		AssertEquals("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString() );
+		AssertEquals("A2", "000102030405060708090a0b0c0d0e0f", g.ToString("N") );
+		AssertEquals("A3", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString("D") );
+		AssertEquals("A4", "{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString("B") );
+		AssertEquals("A5", "(00010203-0405-0607-0809-0a0b0c0d0e0f)", g.ToString("P") );
+		AssertEquals("A6", "000102030405060708090a0b0c0d0e0f", g.ToString("") );
+		AssertEquals("A7", "000102030405060708090a0b0c0d0e0f", g.ToString((string)null));
 
 		try {
 			g.ToString("X");
@@ -141,7 +141,7 @@ public class GuidTest : TestCase
 		catch ( FormatException ) {
 			exception = true;
 		}
-		AssertEquals("A8", exception, true);
+		AssertEquals("A8", true, exception);
 
 		try {
 			g.ToString("This is invalid");
@@ -150,9 +150,9 @@ public class GuidTest : TestCase
 		catch ( FormatException ) {
 			exception = true;
 		}
-		AssertEquals("A9", exception, true);
+		AssertEquals("A9", true, exception);
 
-		AssertEquals("A10", g.ToString("B", null), "{00010203-0405-0607-0809-0a0b0c0d0e0f}");
+		AssertEquals("A10", "{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString("B", null));
 
 		
 	}

@@ -1,3 +1,19 @@
+2002-02-21  Duco Fijma <duco@lorentz.xs4all.nl>
+	* Guid.cs: fixed Guid.Guid(string) ctor. Changed format:
+	"{0xdddddddd,0xdddd,0xdddd,{0xdd},{0xdd},{0xdd},{0xdd},{0xdd},{0xdd}}" 
+	to "{0xdddddddd,0xdddd,0xdddd,{0xdd,0xdd,0xdd,0xdd,0xdd,0xdd}}" 
+	The former is documented by Microsoft. The latter is how they
+	actually implemented it in mscorlib:-)
+
+Tue Feb 19 20:34:35 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoCustomAttrs.cs: hooks to get the custom attributes from the
+	runtime.
+	* MonoType.cs: Implemented custom attributes methods.
+
+
+2002-02-21  Duco Fijma <duco@lorentz.xs4all.nl>
+	* Guid.cs: 
 
 Tue Feb 19 20:34:35 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -238,13 +238,17 @@ public struct Guid  : IFormattable, IComparable  {
 			ParseChar (',');
 			ParseHexPrefix ();
 			c = (short) ParseHex (4, false);
+			ParseChar (',');
+			ParseChar ('{');
 			for (i=0; i<8; ++i) {
-				ParseChar (',');
-				ParseChar ('{');
 				ParseHexPrefix ();
 				d[i] = (byte) ParseHex (2, false);
-				ParseChar ('}');
+				if (i != 7) {
+					ParseChar(',');
+				}
+
 			}	
+			ParseChar ('}');
 			ParseChar ('}');
 	
 			return new Guid (a,b,c,d);			
