@@ -1,5 +1,7 @@
 2003-12-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Environment.cs (HasShutdownStarted): Make this static under NET 1.1.
+	
 	* Environment.cs: Bump version number.
 
 2003-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>

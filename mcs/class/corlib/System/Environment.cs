@@ -114,6 +114,9 @@ namespace System
 		}
 
 		[MonoTODO]
+#if NET_1_1
+		static
+#endif
 		public bool HasShutdownStarted
 		{
 			get {
