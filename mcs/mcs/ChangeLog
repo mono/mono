@@ -1,3 +1,9 @@
+2004-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* typemanager.cs: don't report cyclic struct layout when a struct
+	contains 2 or more fields of the same type. Failed for Pango.AttrShape
+	which has 2 Pango.Rectangle fields.
+
 2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* expression.cs: Handle IntPtr comparisons with IL code
