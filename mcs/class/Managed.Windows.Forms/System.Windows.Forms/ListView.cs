@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ListView.cs,v $
+// Revision 1.4  2004/10/26 09:31:35  ravindra
+// Added some internal members and calculations for ListView.
+//
 // Revision 1.3  2004/10/15 15:03:39  ravindra
 // Implemented Paint method and fixed coding style.
 //
@@ -66,21 +69,32 @@ namespace System.Windows.Forms
 		private ColumnHeaderStyle header_style = ColumnHeaderStyle.Clickable;
 		private bool hide_selection = true;
 		private bool hover_selection = false;
+		private IComparer item_sorter;
 		private ListViewItemCollection items;
 		private bool label_edit = false;
 		private bool label_wrap = true;
-		internal ImageList large_image_list;
-		private IComparer item_sorter;
 		private bool multiselect = true;
 		private bool redraw = true;
 		private bool scrollable = true;
 		private SelectedIndexCollection selected_indices;
 		private SelectedListViewItemCollection selected_items;
-		internal ImageList small_image_list;
 		private SortOrder sort_order = SortOrder.None;
 		private ImageList state_image_list;
 		private bool updating = false;
 		private View view = View.LargeIcon;
+		private int layout_wd;    // We might draw more than our client area
+		private int layout_ht;    // therefore we need to have these two.
+		//private TextBox editor;   // Used for editing an item text
+		private ScrollBar h_scroll; // used for scrolling horizontally
+		private ScrollBar v_scroll; // used for scrolling vertically
+
+		// internal variables
+		internal ImageList large_image_list;
+		internal ImageList small_image_list;
+		// FIXME: find a way to calculate width properly in all the
+		// cases. MS has a value, even if there is no text, no icon
+		// no checkbox. default ht is Font.ht.
+		internal Size text_size = Size.Empty;
 
 		#region Events
 		public event LabelEditEventHandler AfterLabelEdit;
@@ -117,6 +131,19 @@ namespace System.Windows.Forms
 			items = new ListViewItemCollection (this);
 			selected_indices = new SelectedIndexCollection (this);
 			selected_items = new SelectedListViewItemCollection (this);
+
+			// we are mostly scrollable
+			h_scroll = new HScrollBar ();
+			v_scroll = new VScrollBar ();
+
+			// scroll bars are disabled initially
+			h_scroll.Enabled = false;
+			h_scroll.Dock = DockStyle.Bottom;
+			v_scroll.Enabled = false;
+			v_scroll.Dock = DockStyle.Right;
+
+			child_controls.Add (this.v_scroll);
+			child_controls.Add (this.h_scroll);
 
 			// event handlers
 			base.Paint += new PaintEventHandler (ListView_Paint);
@@ -354,18 +381,171 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Public Instance Properties
 
-		#region Internal Methods
+		#region Internal Methods Properties
+		internal int TotalWidth {
+			get { return this.layout_wd; }
+		}
+
+		internal int TotalHeight {
+			get { return this.layout_ht; }
+		}
+
 		internal void Redraw (bool recalculate)
 		{
 			if (recalculate)
 				CalculateListView ();
 
 			redraw = true;
+			Refresh ();
 		}
 
+		internal Size GetChildColumnSize (int index)
+		{
+			Size ret_size = Size.Empty;
+			ColumnHeader col = this.columns [index];
+
+			if (col.Width == -2) { // autosize = max(items, columnheader)
+				Size size = Size.Ceiling (this.DeviceContext.MeasureString (text, this.Font));
+				ret_size = BiggestItem (index);
+				if (size.Width > ret_size.Width)
+					ret_size = size;
+			}
+			else // -1 and all the values < -2 are put under one category
+				ret_size = BiggestItem (index);
+
+			return ret_size;
+		}
+
+		// returns the biggest item in a column
+		private Size BiggestItem (int col)
+		{
+			Size temp = Size.Empty;
+			Size ret_size = Size.Empty;
+
+			if (col == 0) {
+				foreach (ListViewItem item in items) {
+						temp = Size.Ceiling (this.DeviceContext.MeasureString (item.Text, this.Font));
+						if (temp.Width > ret_size.Width)
+							ret_size = temp;
+					}
+			}
+			else {
+				foreach (ListViewItem item in items) {
+						if (col >=item.SubItems.Count)
+							continue;
+					Console.WriteLine ("col: {0}, count: {1}", col, item.SubItems.Count);
+						temp = Size.Ceiling (this.DeviceContext.MeasureString (item.SubItems [col].Text	, this.Font));
+						if (temp.Width > ret_size.Width)
+							ret_size = temp;
+					}
+			}				
+			return ret_size;
+		}
+
+		// Sets the size of the biggest item text
+		// as per the view
+		private void CalcTextSize ()
+		{
+			Size temp;
+			// clear the old value
+			text_size = Size.Empty;
+
+			if (items.Count == 0)
+				text_size = Size.Empty;
+			else if (view == View.LargeIcon) {
+				if (this.check_boxes)
+					text_size.Width += 2 * ThemeEngine.Current.CheckBoxWidth;
+				if (large_image_list != null)
+					text_size.Width += large_image_list.ImageSize.Width;
+				if (text_size.Width ==0)
+					text_size.Width = 43;
+			}
+			else if (view == View.Details) {
+				if (columns.Count > 0) {
+						text_size = this.BiggestItem (0);
+						if (check_boxes)
+							text_size.Width -= (ThemeEngine.Current.CheckBoxWidth + 2);
+						if (small_image_list != null)
+							text_size.Width -= small_image_list.ImageSize.Width;
+				}
+			}
+			else
+				text_size = BiggestItem (0);
+			
+			// we do the default settings, if we have got 0's
+			if (text_size.Height <= 0)
+				text_size.Height = this.Font.Height;
+			if (text_size.Width <= 0)
+				text_size.Width = this.Width;
+		}
+
+		// Sets the location of every item on
+		// the ListView as per the view
 		private void CalculateListView ()
 		{
-			// FIXME: TODO
+			int current_pos = 0; // our position marker
+			CalcTextSize ();
+
+			switch (view) {
+
+			case View.Details:
+				int ht = this.Font.Height;
+				if (columns.Count > 0) {
+					foreach (ColumnHeader col in columns) {
+						col.X = current_pos;
+						col.Y = 0;
+						col.CalcColumnHeader ();
+						current_pos += col.Wd;
+					}
+					this.layout_wd = current_pos;
+					// set the position marker for placing items
+					// vertically down
+					current_pos = ht;
+				}
+				if (items.Count > 0) {
+					foreach (ListViewItem item in items) {
+						item.location.X = 0;
+						item.location.Y = current_pos;
+						item.CalcListViewItem ();
+						current_pos += item.entire_rect.Height;
+					}
+					this.layout_ht = current_pos;
+				}
+				break;
+			case View.LargeIcon:
+					// take care of alignment, autoarrange too
+				break;
+
+			case View.List:
+				break;
+
+			case View.SmallIcon:
+					// take care of alignment, autoarrange too
+					
+				break;
+			}
+
+			if (this.scrollable) {
+				// FIXME: We need to set the appropriate
+				// Large and small change properties.
+				// horizontal scrollbar
+				if (this.layout_wd > this.Width) {
+					this.h_scroll.Enabled = true;
+					this.h_scroll.Minimum = this.Width;
+					this.h_scroll.Maximum = this.layout_wd;
+				}
+
+				// vertical scrollbar
+				if (this.layout_ht > this.Height) {
+					this.v_scroll.Enabled = true;
+					this.v_scroll.Minimum = this.Height;
+					this.v_scroll.Maximum = this.layout_ht;
+				}
+			}
+			else {
+				this.h_scroll.Enabled = false;
+				this.v_scroll.Enabled = false;
+			}
 		}
 
 		private void ListView_Paint (object sender, PaintEventArgs pe)
@@ -384,7 +564,7 @@ namespace System.Windows.Forms
 			if (Paint != null)
 				Paint (this, pe);
 		}
-		#endregion	// Internal Methods
+		#endregion	// Internal Methods Properties
 
 		#region Protected Methods
 		protected override void CreateHandle ()
@@ -1058,7 +1238,6 @@ namespace System.Windows.Forms
 			public virtual void Clear ()
 			{
 				list.Clear ();
-				owner.Redraw (true);
 			}
 
 			public bool Contains (ListViewItem item)
