@@ -1,5 +1,10 @@
 2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReader.cs : ReadInnerXml() should progress reader when it is on
+	  an empty element. This fixes bug #56064.
+
+2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDReader.cs : In some places sequential parameter entity was
 	  incorrectly skipped (and caused invalid result).
 

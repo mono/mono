@@ -323,8 +323,10 @@ namespace System.Xml
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter xtw = new XmlTextWriter (sw);
 			if (NodeType == XmlNodeType.Element) {
-				if (IsEmptyElement)
+				if (IsEmptyElement) {
+					Read ();
 					return String.Empty;
+				}
 				int startDepth = Depth;
 				Read ();
 				while (startDepth < Depth) {
