@@ -1,6 +1,11 @@
+2002-05-01  Lawrence Pit <loz@cable.a2000.nl>
+
+	* DnsPermission.cs: implemented
+	* DnsPermissionAttribute.cs: implemented
+
 2002-04-28  Lawrence Pit <loz@cable.a2000.nl>
 
-	* EndpointPermission: implemented
+	* EndpointPermission.cs: implemented
 	* SocketPermission.cs: implemented
 	* SocketPermissionAttribute.cs: implemented
 	* ProtocolViolationException.cs: implemented
