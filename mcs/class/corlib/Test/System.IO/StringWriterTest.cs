@@ -1,7 +1,9 @@
 //
 // System.IO.StringWriter
 //
-// Author: Marcin Szczepanski (marcins@zipworld.com.au)
+// Authors:
+//	Marcin Szczepanski (marcins@zipworld.com.au)
+//	Ben Maurer <bmaurer@users.sourceforge.net>
 //
 // TODO: Add some testing for exceptions
 //
@@ -9,6 +11,7 @@
 using NUnit.Framework;
 using System.IO;
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace MonoTests.System.IO {
@@ -19,6 +22,33 @@ public class StringWriterTest : TestCase {
 
                 StringWriter writer = new StringWriter( sb );
                 AssertEquals( sb, writer.GetStringBuilder() );
+        }
+	
+        public void TestCultureInfoConstructor() {
+
+		StringWriter writer = new StringWriter(CultureInfo.InvariantCulture);
+		AssertNotNull( writer.GetStringBuilder() );
+		
+		AssertEquals( String.Empty, writer.ToString() );
+		
+		writer.Write( 'A' );
+		AssertEquals( "A", writer.ToString() );
+		
+		writer.Write( " foo" );
+		AssertEquals( "A foo", writer.ToString() );
+		
+		
+		char[] testBuffer = "Test String".ToCharArray();
+		
+		writer.Write( testBuffer, 0, 4 );
+		AssertEquals( "A fooTest", writer.ToString() );
+		
+		writer.Write( testBuffer, 5, 6 );
+		AssertEquals( "A fooTestString", writer.ToString() );
+		
+		writer = new StringWriter(CultureInfo.InvariantCulture);
+		writer.Write(null as string);
+		AssertEquals( "", writer.ToString() );
         }
 
         public void TestWrite() {
