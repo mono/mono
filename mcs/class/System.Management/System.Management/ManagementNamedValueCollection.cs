@@ -62,8 +62,7 @@ namespace System.Management
 			BaseClear ();
 		}
 
-		public object this [string name]
-		{
+		public object this [string name] {
 			get { return BaseGet (name); }
 		}
 	}
