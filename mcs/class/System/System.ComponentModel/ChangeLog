@@ -1,3 +1,10 @@
+2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeConverterAttribute.cs: attribute used by 
+	TypeDescriptor.Getconverter ().
+
+	* TypeDescriptor.cs:  implemented GetConverter in the right way.
+
 2002-06-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeConverter.cs:

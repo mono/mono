@@ -10,10 +10,13 @@
 // TODO: Are the static/non static functions declared correctly
 
 using System;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace System.Drawing 
 {
+	[TypeConverter("System.Drawing.ColorConverter,System.Drawing")]
+	[Serializable]
 	public struct Color
 	{
 		// Private transparancy (A) and R,G,B fields.

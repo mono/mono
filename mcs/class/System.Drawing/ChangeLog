@@ -1,0 +1,6 @@
+2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChangeLog: new file.
+
+	* System.Drawing.build: added System.dll dependency
+	

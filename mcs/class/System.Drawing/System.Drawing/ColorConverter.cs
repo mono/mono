@@ -15,6 +15,10 @@ namespace System.Drawing {
 [MonoTODO]
 public class ColorConverter : TypeConverter
 {
+	public ColorConverter ()
+	{
+	}
+
 	[MonoTODO("Only some basic conversion needed by xsp")]
 	public override object ConvertFrom (ITypeDescriptorContext context,
 					    CultureInfo culture,

@@ -8,7 +8,6 @@
 //
 
 using System;
-using System.Drawing;
 
 namespace System.ComponentModel
 {
@@ -18,10 +17,26 @@ public sealed class TypeDescriptor
 {
 	public static TypeConverter GetConverter (Type type)
 	{
-		if (type != typeof (System.Drawing.Color))
-			throw new NotImplementedException ("Only System.Drawing.Color is supported by now.");
+		object [] attrs = type.GetCustomAttributes (false);
+		string converter_name = null;
+		foreach (object o in attrs){
+			if (o is TypeConverterAttribute){
+				TypeConverterAttribute tc = (TypeConverterAttribute) o;
+				converter_name = tc.ConverterTypeName;
+				break;
+			}
+		}
 
-		return new ColorConverter ();
+		if (converter_name == null)
+			return null;
+
+		object converter = null;
+		try {
+			converter = Activator.CreateInstance (Type.GetType (converter_name));
+		} catch (Exception){
+		}
+	
+		return converter as TypeConverter;
 	}
 }
 }

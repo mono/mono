@@ -15,6 +15,7 @@
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
+				<includes name="../lib/System.dll"/>
 			</references>
 		</csc>
 	</target>

@@ -1,3 +1,7 @@
+2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.build: removed System.Drawing.dll dependency.
+
 2002-06-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.build: referenced System.Drawing.dll.
