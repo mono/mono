@@ -5590,6 +5590,7 @@ namespace Mono.CSharp {
 		//
 		Expression value_target;
 		bool value_target_set = false;
+		bool is_type_parameter = false;
 		
 		public New (Expression requested_type, ArrayList arguments, Location l)
 		{
@@ -5667,7 +5668,28 @@ namespace Mono.CSharp {
 				return RequestedType;
 			}
 
-			if (type.IsInterface || type.IsAbstract){
+			if (type.IsGenericParameter) {
+				if (!TypeManager.HasConstructorConstraint (type)) {
+					Error (304, String.Format (
+						       "Cannot create an instance of the " +
+						       "variable type '{0}' because it " +
+						       "doesn't have the new() constraint",
+						       type));
+					return null;
+				}
+
+				if ((Arguments != null) && (Arguments.Count != 0)) {
+					Error (417, String.Format (
+						       "`{0}': cannot provide arguments " +
+						       "when creating an instance of a " +
+						       "variable type.", type));
+					return null;
+				}
+
+				is_type_parameter = true;
+				eclass = ExprClass.Value;
+				return this;
+			} else if (type.IsInterface || type.IsAbstract){
 				Error (144, "It is not possible to create instances of interfaces or abstract classes");
 				return null;
 			}
@@ -5720,6 +5742,18 @@ namespace Mono.CSharp {
 			}
 
 			return this;
+		}
+
+		bool DoEmitTypeParameter (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			ig.Emit (OpCodes.Ldtoken, type);
+			ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
+			ig.Emit (OpCodes.Call, TypeManager.activator_create_instance);
+			ig.Emit (OpCodes.Unbox_Any, type);
+
+			return true;
 		}
 
 		//
@@ -5785,17 +5819,26 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			DoEmit (ec, true);
+			if (is_type_parameter)
+				DoEmitTypeParameter (ec);
+			else
+				DoEmit (ec, true);
 		}
 		
 		public override void EmitStatement (EmitContext ec)
 		{
+			if (is_type_parameter)
+				throw new InvalidOperationException ();
+
 			if (DoEmit (ec, false))
 				ec.ig.Emit (OpCodes.Pop);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
+			if (is_type_parameter)
+				throw new InvalidOperationException ();
+
 			if (!type.IsValueType){
 				//
 				// We throw an exception.  So far, I believe we only need to support

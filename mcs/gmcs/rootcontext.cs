@@ -343,6 +343,7 @@ namespace Mono.CSharp {
 				"System.Reflection.MemberInfo",
 				"System.Type",
 				"System.Exception",
+				"System.Activator",
 
 				//
 				// These are not really important in the order, but they

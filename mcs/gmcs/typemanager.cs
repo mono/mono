@@ -81,6 +81,7 @@ public class TypeManager {
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
 	static public Type exception_type;
+	static public Type activator_type;
 	static public Type invalid_operation_exception_type;
 	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
@@ -158,6 +159,7 @@ public class TypeManager {
 	static public MethodInfo int_array_get_lower_bound_int;
 	static public MethodInfo int_array_get_upper_bound_int;
 	static public MethodInfo void_array_copyto_array_int;
+	static public MethodInfo activator_create_instance;
 	
 	//
 	// The attribute constructors.
@@ -1072,6 +1074,7 @@ public class TypeManager {
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
 
 		exception_type        = CoreLookupType ("System.Exception");
+		activator_type        = CoreLookupType ("System.Activator");
 		invalid_operation_exception_type = CoreLookupType ("System.InvalidOperationException");
 
 		//
@@ -1291,6 +1294,10 @@ public class TypeManager {
 		// Object
 		object_ctor = GetConstructor (object_type, void_arg);
 
+		// Activator
+		Type [] type_arg = { type_type };
+		activator_create_instance = GetMethod (
+			activator_type, "CreateInstance", type_arg);
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;

@@ -1,5 +1,13 @@
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (New): Added support for type parameters.
+
+	* typemanager.cs
+	(TypeManager.activator_type): New public static field.
+	(TypeManager.activator_create_instance): Likewise.
+
+2004-03-30  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.HasConstructorConstraint): New
 	public method.
 
