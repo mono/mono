@@ -1,6 +1,15 @@
-// CodeGen.cs
-// (C) Sergey Chaban (serge@wildwestsoftware.com)
+//
+// Mono.ILASM.CodeGen.cs
+//
+// Author(s):
+//  Sergey Chaban (serge@wildwestsoftware.com)
+//  Jackson Harper (Jackson@LatitudeGeo.com)
+//
+// (C) Sergey Chaban
+// (C) 2003 Jackson Harper, All rights reserved
+//
 
+using PEAPI;
 using System;
 using System.Collections;
 using System.Reflection;
@@ -9,114 +18,54 @@ using System.Reflection.Emit;
 namespace Mono.ILASM {
 
 	public class CodeGen {
-
-		private string name;
-		private string output_file;
-		private AssemblyBuilder asmbld;
-		private ModuleBuilder modbld;
-		private TypeManager type_manager;
 		
-		private Types refTypes = new Types (); // FIXME: postpone init
+		private PEFile pefile;
 
-		private ArrayList classes;
+		private string current_namespace;
+		private ClassDef current_class;
+		private MethodDef current_method;
+		
+		private ClassTable class_table;
 
-
-		/// <summary>
-		/// </summary>
-		/// <param name="output_file">The path of the output file</param>
-		public CodeGen (string output_file)
+		public CodeGen (string output_file, bool is_dll, bool is_assembly)
 		{
-			this.output_file = output_file;
-			this.type_manager = new TypeManager ();
+			pefile = new PEFile (output_file, is_dll, is_assembly);
+			class_table = new ClassTable (pefile);
+		}
+	
+		public PEFile PEFile {
+			get { return pefile; }
 		}
 
+		public string CurrentNameSpace {
+			get { return current_namespace; }
+			set { current_namespace = value; }
+		}
 
-		/// <summary>
-		/// </summary>
-		public CodeGen ()
+		public ClassDef CurrentClass {
+			get { return current_class; }
+			set { current_class = value; }
+		}
+		
+		public MethodDef CurrentMethod {
+			get { return current_method; }
+			set { current_method = value; }
+		}
+
+		public ClassTable ClassTable {
+			get { return class_table; }
+			set { class_table = value; }
+		}
+
+		public void AddClass (TypeAttr at, string name)
 		{
+			current_class = pefile.AddClass (at, current_namespace, name);
 		}
 
-
-		/// <summary>
-		/// </summary>
-		/// <param name="name"></param>
-		public void SetName (string name)
+		public void AddClass (TypeAttr at, string name, Class parent)
 		{
-			this.name = name;
-			AppDomain appDomain = AppDomain.CurrentDomain;
-			AssemblyName asmName = new AssemblyName();
-			asmName.Name = name + "_asmname";
-			asmbld = appDomain.DefineDynamicAssembly (asmName, AssemblyBuilderAccess.RunAndSave);
-
-			// FIXME: exe/lib
-			modbld = asmbld.DefineDynamicModule (name, name + ".exe");
+			current_class = pefile.AddClass (at, current_namespace, name, parent);
 		}
-
-		public void SetEntryPoint (MethodInfo entry_point)
-		{
-			if (asmbld.EntryPoint != null)
-				Console.WriteLine ("Multiple entry points defined.");
-
-			asmbld.SetEntryPoint (entry_point);
-		}
-
-
-		/// <summary>
-		/// </summary>
-		public ModuleBuilder ModBuilder {
-			get {
-				return modbld;
-			}
-		}
-
-
-		/// <summary>
-		/// </summary>
-		public Types RefTypes {
-			get {
-				return refTypes;
-			}
-		}
-
-		public TypeManager TypeManager {
-			get {
-				return type_manager;
-			}
-		}
-
-		/// <summary>
-		/// </summary>
-		public int ClassCount {
-			get {
-				return (classes == null) ? 0 : classes.Count;
-			}
-		}
-
-
-		/// <summary>
-		/// </summary>
-		/// <param name="clazz"></param>
-		public void AddClass (Class clazz)
-		{
-			if (classes == null) classes = new ArrayList ();
-			classes.Add (clazz);
-		}
-
-
-		/// <summary>
-		/// </summary>
-		public void Emit ()
-		{
-			if (ClassCount != 0) {
-				foreach (Class c in classes) {
-					c.Emit (this);
-				}
-			}
-
-			asmbld.Save (output_file);
-		}
-
 	}
 
 }
