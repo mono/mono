@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 class I {
 
@@ -18,10 +19,25 @@ class I {
 }
 
 class X {
-	static void Main ()
+	
+	private void Thread_func () {
+		Console.WriteLine ("Inside the thread !");
+	}
+	
+	public static int Main ()
 	{
 		I.GetTextFn _ = I.GetText;
 
+		X t = new X ();
+
+		Thread thr = new Thread (new ThreadStart (t.Thread_func));
+
+		thr.Start ();
+		Console.WriteLine ("Inside main ");
+		thr.Join ();
+
 		Console.WriteLine (_("Hello"));
+
+		return 0;
 	}
 }

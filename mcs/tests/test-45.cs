@@ -3,12 +3,14 @@ using System;
 public class Blah {
 
 	private static int[] array = {0, 1, 2, 3};
+
+	private static int [,] bar = { {0,1}, {4,5}, {10,20} };
 	
 	public static int Main ()
 	{
-		int [] i = new int [] { 0, 1, 2, 3 };
+		int [] i = new int [4] { 0, 1, 2, 3 };
 
-		int [,] j = new int [,] { {0,1}, {2,3}, {4,5}, {6,7} };
+		int [,] j = new int [4,2] { {0,1}, {2,3}, {4,5}, {6,7} };
 		
 		int [] a = { 4, 5, 6, 7 };
 
@@ -28,6 +30,9 @@ public class Blah {
 			if (a [t] != (t + 4))
 				return 1;
 		}
+
+		if (bar [2,1] != 20)
+			return 1;
 		
 		Console.WriteLine ("Array initialization test okay.");
 				   

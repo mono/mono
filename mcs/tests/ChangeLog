@@ -1,3 +1,8 @@
+2001-11-22  Ravi Pratap  <ravi@ximian.com>
+
+	* test-45.cs : Augment some more to test shorthand declaration
+	of variables/fields that are array types.
+
 2001-11-20  Ravi Pratap  <ravi@ximian.com>
 
 	* test-45.cs : Add for array initialization testing.
