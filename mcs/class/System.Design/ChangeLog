@@ -1,3 +1,8 @@
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Makefile: added reference to System.Data assembly
+	* System.Design.dll.sources: added new stubbed classes
+
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* System.Windows.Forms.Design/IMenuEditorService.cs:
