@@ -65,6 +65,16 @@ namespace Mono.Xml.XPath
 					return XmlNodeType.None;
 				if (endElement)
 					return XmlNodeType.EndElement;
+				if (attributeValueConsumed) {
+					switch (current.NodeType) {
+					case XPathNodeType.Whitespace:
+						return XmlNodeType.Whitespace;
+					case XPathNodeType.SignificantWhitespace:
+						return XmlNodeType.SignificantWhitespace;
+					default:
+						return XmlNodeType.Text;
+					}
+				}
 
 				switch (current.NodeType) {
 				case XPathNodeType.Namespace:
@@ -77,7 +87,8 @@ namespace Mono.Xml.XPath
 				case XPathNodeType.ProcessingInstruction:
 					return XmlNodeType.ProcessingInstruction;
 				case XPathNodeType.Root:
-					return XmlNodeType.Document;
+					// It is actually Document, but in XmlReader there is no such situation to return Document.
+					return XmlNodeType.None;
 				case XPathNodeType.SignificantWhitespace:
 					return XmlNodeType.SignificantWhitespace;
 				case XPathNodeType.Text:
@@ -420,16 +431,16 @@ namespace Mono.Xml.XPath
 					}
 					current.MoveToParent ();
 					depth--;
+					endElement = (current.NodeType == XPathNodeType.Element);
 					if (current.IsSamePosition (root)) {
 						if (current.NodeType == XPathNodeType.Element)
 							nextIsEOF = true;
 						else {
+							endElement = false;
 							eof = true;
 							return false;
 						}
 					}
-					if (current.NodeType == XPathNodeType.Element)
-						endElement = true;
 				} else
 					endElement = false;
 			}
@@ -611,7 +622,6 @@ namespace Mono.Xml.XPath
 		}
 
 		public override bool ReadAttributeValue () {
-			// Nop. In fact, it is impossible to consider it.
 			if (NodeType != XmlNodeType.Attribute)
 				return false;
 			if (attributeValueConsumed)

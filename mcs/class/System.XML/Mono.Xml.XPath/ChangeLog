@@ -1,5 +1,15 @@
 2004-07-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTMXPathNavigator.cs :
+	  Fixed IsSamePosition(). currentAttr and currentNS are not always
+	  the same when current is attribute or current is namespace.
+	* XPathNavigatorReader.cs : Fixed NodeType - 1) When attribute value is
+	  being consumed, then node type should be Text, and 2) Root node is
+	  usually mapped to Document, but XmlReader never returns Document,
+	  just None (both on Initial state and EndOfFile state).
+
+2004-07-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigatorReader.cs : fixed GetAttributeNavigator() that
 	  incorrectly used MoveToNextAttribute().
 

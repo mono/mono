@@ -366,11 +366,16 @@ namespace Mono.Xml.XPath
 			if (another == null || another.document != this.document)
 				return false;
 
-			return this.currentNode == another.currentNode &&
-				this.currentAttr == another.currentAttr &&
-				this.currentIsAttr == another.currentIsAttr &&
-				this.currentIsNode == another.currentIsNode &&
-				this.currentNs == another.currentNs;
+			if (this.currentNode != another.currentNode ||
+				this.currentIsAttr != another.currentIsAttr ||
+				this.currentIsNode != another.currentIsNode)
+				return false;
+
+			if (currentIsAttr)
+				return this.currentAttr == another.currentAttr;
+			else if (!currentIsNode)
+				return this.currentNs == another.currentNs;
+			return true;
 		}
 
 		public override bool MoveTo (XPathNavigator other)
