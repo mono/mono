@@ -1,3 +1,8 @@
+2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
+	
+	* ConstructorBuilder.cs (.ctor): Automatically add RTSpecialName flag
+	as MS does.
+
 2003-11-06  Martin Baulig  <martin@ximian.com>
 
 	* ModuleBuilder.cs (ModuleBuilder.Save): Call `build_metadata'

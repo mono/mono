@@ -31,7 +31,7 @@ namespace System.Reflection.Emit {
 		private bool init_locals = true;
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
-			attrs = attributes | MethodAttributes.SpecialName;
+			attrs = attributes | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
 			call_conv = callingConvention;
 			if (parameterTypes != null) {
 				this.parameters = new Type [parameterTypes.Length];
