@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.66 $
+// $Revision: 1.67 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.67  2004/10/05 03:18:16  jackson
+// When resizing the buffers should be invalidated. This should be handled in Control not in derived classes.
+//
 // Revision 1.66  2004/10/02 19:02:56  pbartok
 // - Added private method to get the Control object from the window handle
 // - Implemented ContextMenu property
@@ -852,6 +855,19 @@ namespace System.Windows.Forms
 			dc_mem = Graphics.FromImage (bmp_mem);
 		}
 
+		internal void InvalidateBuffers ()
+		{
+			if (double_buffering == false)
+				return;
+
+			if (dc_mem != null)
+				dc_mem.Dispose ();
+			if (bmp_mem != null)
+				bmp_mem.Dispose ();
+
+			dc_mem = null;
+			bmp_mem = null;
+		}
 
 		internal static void SetChildColor(Control parent) {
 			Control	child;
@@ -2686,7 +2702,7 @@ namespace System.Windows.Forms
 				break;
 			}
 				
-			case Msg.WM_ERASEBKGND:{					
+			case Msg.WM_ERASEBKGND:{
 				if (GetStyle (ControlStyles.UserPaint)){						
 					if (!GetStyle(ControlStyles.AllPaintingInWmPaint)) {
 						PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
@@ -3089,7 +3105,8 @@ namespace System.Windows.Forms
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentRightToLeftChanged(e);
 		}
 
-		protected virtual void OnSizeChanged(EventArgs e) {			
+		protected virtual void OnSizeChanged(EventArgs e) {
+			InvalidateBuffers ();
 			OnResize(e);
 			if (SizeChanged!=null) SizeChanged(this, e);
 		}
