@@ -80,7 +80,7 @@ namespace Mono.Doc.Core
 							case "xmlDocs":
 								LoadXmlDirectories(xml);
 								break;
-							case "property":
+							case "properties":
 								LoadProperties(xml);
 								break;
 						}
@@ -281,6 +281,7 @@ namespace Mono.Doc.Core
 			{
 				if (!isModified && value && Modified != null)
 				{
+					isModified = value;
 					Modified(this, new EventArgs());
 				}
 				else

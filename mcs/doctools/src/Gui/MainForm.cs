@@ -93,7 +93,9 @@ namespace Mono.Doc.Gui
 
 		public MainForm(string projectFile)
 		{
-			this.project = new DocProject();
+			this.project           = new DocProject();
+			this.project.Modified += new EventHandler(this.project_Modified );
+
 			UpdateTitle();
 
 			this.SuspendLayout();
@@ -111,7 +113,7 @@ namespace Mono.Doc.Gui
 			int       y        = (int) (workArea.Height * 0.75);
 			this.ClientSize    = new Size(x, y);
 
-			// won't completely remove flicker, it but helps
+			// won't completely remove flicker, but it helps
 			this.SetStyle(ControlStyles.DoubleBuffer, true);
 
 			// main menu / items
@@ -563,7 +565,7 @@ namespace Mono.Doc.Gui
 
 		private void treeMenuProjectOptions_Click(object sender, EventArgs args)
 		{
-			Form options = new ProjectOptionsForm(this.project);
+			ProjectOptionsForm options = new ProjectOptionsForm(this.project);
 			options.ShowDialog();
 			options.Dispose();
 		}
@@ -763,5 +765,15 @@ namespace Mono.Doc.Gui
 		}
 
 		#endregion // Main Menu Events
+
+		#region Other Events
+
+		private void project_Modified(object sender, EventArgs args)
+		{
+			UpdateTitle();
+			InitializeTree();
+		}
+
+		#endregion // Other Events
 	}
 }

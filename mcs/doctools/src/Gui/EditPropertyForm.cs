@@ -129,6 +129,7 @@ namespace Mono.Doc.Gui
 																		  this.labelPropertyName});
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 			this.Name = "EditPropertyForm";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Edit Project Property";
 			this.ResumeLayout(false);
 

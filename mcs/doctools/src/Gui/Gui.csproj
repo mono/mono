@@ -15,7 +15,7 @@
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
-                OutputType = "Exe"
+                OutputType = "WinExe"
                 RootNamespace = "Mono.Doc.Gui"
                 StartupObject = "Mono.Doc.Gui.GuiDriver"
             >
@@ -110,6 +110,16 @@
                     RelPath = "AssemblyTreeLoader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DirectorySelectorForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DirectorySelectorForm.resx"
+                    DependentUpon = "DirectorySelectorForm.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "EditPropertyForm.cs"
