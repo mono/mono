@@ -25,6 +25,7 @@
 		<nant basedir="System" target="test"/>
 		<nant basedir="System.XML" target="test"/>
 		<nant basedir="System.Data" target="test"/>
+		<nant basedir="System.Web.Services" target="test"/>
 		<nant basedir="Microsoft.VisualBasic" target="test"/>
 		<nant basedir="System.Configuration.Install" target="test"/>
 	</target>
@@ -40,6 +41,7 @@
 		<nant basedir="System.Drawing" target="clean"/>
 		<nant basedir="System.XML" target="clean"/>
 		<nant basedir="System.Data" target="clean"/>
+		<nant basedir="System.Web.Services" target="clean"/>
 		<nant basedir="Microsoft.VisualBasic" target="clean"/>
 		<nant basedir="System.Configuration.Install" target="clean"/>
 	</target>
