@@ -1040,6 +1040,9 @@ namespace Mono.CSharp {
 		public static bool StandardConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
+
+			if (expr_type == TypeManager.void_type)
+				return false;
 			
 			if (expr_type == target_type)
 				return true;
@@ -1202,6 +1205,7 @@ namespace Mono.CSharp {
 				if (i.Value == 0)
 					return true;
 			}
+
 			return false;
 		}
 
