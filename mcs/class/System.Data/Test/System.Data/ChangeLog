@@ -1,3 +1,8 @@
+2002-12-26  Ville Palo <vi64pa@koti.soon.fi>
+
+	* own_schema.xsd: XmlSchema for testing ReadXmlSchema() -method
+	* DataSetTest.cs: Added more Xml-tests.	
+	
 2002-12-17  Ville Palo <vi64pa@koti.soon.fi>
 
 	* region.xml: 
