@@ -1,4 +1,9 @@
 
+Sun May 4 11:48:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-long32.brg: add missing lreg: OP_LCONV_TO_U8 (lreg) rule
+	(reported by Don Roberts).
+
 Fri May 2 18:36:45 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: temporarily work around two bugs for this release.
