@@ -1,6 +1,7 @@
 2003-07-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: fixed signature of ItemCreated and PageIndexChanged.
+	* DataList.cs: fixed signature of ItemCreated and ItemDataBound.
 
 2003-07-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

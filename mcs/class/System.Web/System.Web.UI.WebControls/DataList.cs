@@ -391,12 +391,12 @@ namespace System.Web.UI.WebControls
 			remove { Events.RemoveHandler (ItemCommandEvent, value); }
 		}
 
-		public event DataListCommandEventHandler ItemCreated {
+		public event DataListItemEventHandler ItemCreated {
 			add { Events.AddHandler (ItemCreatedEvent, value); }
 			remove { Events.RemoveHandler (ItemCreatedEvent, value); }
 		}
 
-		public event DataListCommandEventHandler ItemDataBound {
+		public event DataListItemEventHandler ItemDataBound {
 			add { Events.AddHandler (ItemDataBoundEvent, value); }
 			remove { Events.RemoveHandler (ItemDataBoundEvent, value); }
 		}
