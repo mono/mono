@@ -1,3 +1,7 @@
+2003-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_Type_GetNestedType): Fixed warnings.
+
 2003-04-27  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h (MonoDebuggerEvent): Renamed
