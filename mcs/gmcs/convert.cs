@@ -1679,6 +1679,12 @@ namespace Mono.CSharp {
 			
 			if (source_type == target_type)
 				return true;
+			
+			//
+			// From generic parameter to any type
+			//
+			if (source_type.IsGenericParameter)
+				return true;
 
 			//
 			// From object to a generic parameter
@@ -1735,8 +1741,9 @@ namespace Mono.CSharp {
 					
 					Type source_element_type = TypeManager.GetElementType (source_type);
 					Type target_element_type = TypeManager.GetElementType (target_type);
-					
-					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
+
+					if (source_element_type.IsGenericParameter ||
+					    (!source_element_type.IsValueType && !target_element_type.IsValueType))
 						if (ExplicitReferenceConversionExists (source_element_type,
 										       target_element_type))
 							return true;

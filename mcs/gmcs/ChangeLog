@@ -1,5 +1,12 @@
 2005-03-02  Martin Baulig  <martin@ximian.com>
 
+	Committing a patch from Carlos Alberto Cortez to fix #72887.
+
+	* convert.cs (Convert.ExplicitReferenceConversionExists): Allow
+	casts from `T []' to `int []'.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (TypeManager.IsEqual): Make this symmetric.
 
 	* expression.cs (Binary.ResolveOperator): When resolving a
