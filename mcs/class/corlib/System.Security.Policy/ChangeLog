@@ -1,3 +1,7 @@
+2002-11-11 Jackson Harper <jackson@latitudegeo.com>
+
+	* FirstMatchCodeGroup.cs: Made class sealed
+
 2002-11-5 Jackson Harper <jackson@latitudegeo.com>
 
 	* ApplicationDirectory.cs: Fixed (C) in file header
