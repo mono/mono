@@ -10,3 +10,9 @@ System.String:
 	Need to implement the Format() and CompareOrdinal() methods 
 	as we all implement all of the methods that take into account 
 	CultureInfo or Encoding stuff.
+
+System.Array:
+	It's not possible to test to see if the whole thing works, as
+	GetValue() and SetValue() make calls into the runtime. However,
+	I've tried my implementations of things like BinarySearch() and
+	Sort() on the MS-provided System.Array and they seem to work fine.
