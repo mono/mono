@@ -251,14 +251,9 @@ namespace System.IO
 			return GetFileSystemEntries (path, pattern, 0, 0);
 		}
 		
-		[MonoTODO("Implement on windows, for real")]
 		public static string[] GetLogicalDrives ()
 		{ 
-			//FIXME: Hardcoded Paths
-			if ((int)Environment.OSVersion.Platform == 128)
-				return new string[] { "/" };
-			else
-				return new string [] { "A:\\", "C:\\" };
+			return Environment.GetLogicalDrives ();
 		}
 
 		static bool IsRootDirectory (string path)

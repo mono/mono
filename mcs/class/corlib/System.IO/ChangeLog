@@ -1,3 +1,7 @@
+2004-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: implemented GetLogicalDrives.
+
 2004-06-24  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* StreamReader.cs: In DiscardBufferedData(), reset the mayBlock flag.
