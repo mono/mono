@@ -1,5 +1,5 @@
 //
-// System.ComponentModel.ProvidePropertyAttribute
+// System.ComponentModel.ProvidePropertyAttribute.cs
 //
 // Authors:
 //  Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -11,7 +11,7 @@
 
 namespace System.ComponentModel
 {
-	[AttributeUsage(AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 	public sealed class ProvidePropertyAttribute : Attribute
 	{
 

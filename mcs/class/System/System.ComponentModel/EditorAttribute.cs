@@ -3,8 +3,10 @@
 //
 // Author:
 //   Alejandro Sánchez Acosta (raciel@es.gnu.org)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel {
@@ -12,18 +14,15 @@ namespace System.ComponentModel {
 	/// <summary>
 	///   Editor Attribute for classes. 
 	/// </summary>
-
-	[AttributeUsage (AttributeTargets.All)]
+	[AttributeUsage (AttributeTargets.All, AllowMultiple = true, Inherited = true)]
 	public sealed class EditorAttribute : Attribute {
 		
-		string name;	
+		string name;
 		string basename;
-		Type baseType;
-		Type nametype;
 
 		public EditorAttribute ()
 		{
-			this.name = "";
+			this.name = string.Empty;
 		}
 
 		public EditorAttribute (string typeName, string baseTypeName)
@@ -33,15 +32,13 @@ namespace System.ComponentModel {
 		}
 
 		public EditorAttribute (string typeName, Type baseType)
+			: this (typeName, baseType.AssemblyQualifiedName)
 		{
-			name = typeName;
-			this.baseType = baseType;	
 		}
 
 		public EditorAttribute (Type type, Type baseType)
+			: this (type.AssemblyQualifiedName, baseType.AssemblyQualifiedName)
 		{
-			nametype = type;
-			this.baseType = baseType;
 		}
 
 		public string EditorBaseTypeName {
@@ -67,19 +64,13 @@ namespace System.ComponentModel {
 			if (!(obj is EditorAttribute))
 				return false;
 
-			return (((EditorAttribute) obj).name == name) &&
-				(((EditorAttribute) obj).basename == basename) &&
-				(((EditorAttribute) obj).baseType == baseType) &&
-				(((EditorAttribute) obj).nametype == nametype);
-
+			return ((EditorAttribute) obj).EditorBaseTypeName.Equals (basename) &&
+				((EditorAttribute) obj).EditorTypeName.Equals (name);
 		}
 		
 		public override int GetHashCode ()
 		{
-                        if (name == null)
-	                        return 0;
-
-                        return name.GetHashCode ();
+			return string.Concat(name, basename).GetHashCode ();
 		}
 	}
 }

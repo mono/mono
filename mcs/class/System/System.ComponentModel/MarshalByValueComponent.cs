@@ -18,6 +18,9 @@ namespace System.ComponentModel
 	/// <summary>
 	/// Implements IComponent and provides the base implementation for remotable components that are marshaled by value (a copy of the serialized object is passed).
 	/// </summary>
+	[DesignerCategory ("Component"),
+		TypeConverter (typeof (ComponentConverter)), 
+    		Designer ("System.Windows.Forms.Design.ComponentDocumentDesigner, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IRootDesigner))]
 	public class MarshalByValueComponent : IComponent, IDisposable, IServiceProvider
 	{
 		private EventHandlerList eventList;

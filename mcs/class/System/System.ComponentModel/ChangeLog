@@ -1,4 +1,25 @@
-2003-06-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2003-06-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* DesignerAttribute.cs: Fixed AttributeUsage, implementation errors,
+	better Hashcode generation
+	* EditorAttribute.cs: Fixed AttributeUsage, implementation errors,
+	better Hashcode generation
+	* LicenseContext.cs: Added and implemented missing property
+	* ListBindableAttribute.cs: Simplified implementation, removed
+	unneccessary data.
+	* ReadOnlyAttribute.cs: Better Hashcode generation
+	* RunInstallerAttribute.cs: Better Hashcode generation, more robust
+	Equals check.
+
+	* LicenseProviderAttribute.cs: Fixed AttributeUsage, indentation
+	* ProvidePropertyAttribute.cs: Fixed AttributeUsage
+	* ToolboxItemFilterAttribute.cs: Fixed AttributeUsage
+
+	* MarshalByValueComponent.cs:
+	* IContainer.cs:
+	* IComponent.cs: Added missing attribute(s)
+
+2003-06-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AmbientValueAttribute.cs:
 	* ArrayConverter.cs:

@@ -1,9 +1,9 @@
 //
-// System.ComponentModel.LicenseProviderAttribute
+// System.ComponentModel.LicenseProviderAttribute.cs
 //
 // Authors:
-//  Martin Willemoes Hansen (mwh@sysrq.dk)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
@@ -11,7 +11,7 @@
 
 namespace System.ComponentModel
 {
-	[AttributeUsage(AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 	public sealed class LicenseProviderAttribute : Attribute
 	{
 		private Type Provider;
@@ -38,9 +38,9 @@ namespace System.ComponentModel
 		}
 
 		public override object TypeId {
-		get {
-			// Seems to be MS implementation
-			return (base.ToString() + Provider.ToString());
+			get {
+				// Seems to be MS implementation
+				return (base.ToString() + Provider.ToString());
 			}
 		}
 
@@ -50,7 +50,7 @@ namespace System.ComponentModel
 				return false;
 			if (obj == this)
 				return true;
-			return ((LicenseProviderAttribute) obj).LicenseProvider == Provider;
+			return ((LicenseProviderAttribute) obj).LicenseProvider.Equals (Provider);
 		}
 
 		public override int GetHashCode()

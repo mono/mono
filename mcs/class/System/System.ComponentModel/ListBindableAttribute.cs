@@ -1,10 +1,12 @@
 //
-// System.ComponentModel.ListBindableAttribute
+// System.ComponentModel.ListBindableAttribute.cs
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2003 Andreas Nahr
 //
 
 using System;
@@ -14,29 +16,23 @@ namespace System.ComponentModel
 	[AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
 	public sealed class ListBindableAttribute : Attribute
 	{
-		public static readonly ListBindableAttribute Default = new ListBindableAttribute (true, true);
-		public static readonly ListBindableAttribute No = new ListBindableAttribute (false, true);
-		public static readonly ListBindableAttribute Yes = new ListBindableAttribute (true, true);
+		public static readonly ListBindableAttribute Default = new ListBindableAttribute (true);
+		public static readonly ListBindableAttribute No = new ListBindableAttribute (false);
+		public static readonly ListBindableAttribute Yes = new ListBindableAttribute (true);
 
-		bool deflt;
 		bool bindable;
-
-		private ListBindableAttribute (bool listBindable, bool deflt)
-		{
-			this.deflt = deflt;
-			bindable = listBindable;
-		}
 		
 		public ListBindableAttribute (bool listBindable)
 		{
-			deflt = false;
-			bindable = true;
+			bindable = listBindable;
 		}
 
 		public ListBindableAttribute (BindableSupport flags)
 		{
-			bindable = (flags == BindableSupport.Yes);
-			deflt = (flags == BindableSupport.Default);
+            		if (flags == BindableSupport.No)
+                		bindable = false;
+            		else
+                		bindable = true;
 		}
 
 		public override bool Equals (object obj)
@@ -44,22 +40,20 @@ namespace System.ComponentModel
 			if (!(obj is ListBindableAttribute))
 				return false;
 
-			return (((ListBindableAttribute) obj).bindable == bindable &&
-				((ListBindableAttribute) obj).deflt == deflt);
+			return ((ListBindableAttribute) obj).ListBindable.Equals (bindable);
 		}
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return bindable.GetHashCode ();
 		}
 
 		public override bool IsDefaultAttribute ()
 		{
-			return deflt;
+			return Equals (Default);
 		}
 
-		public bool ListBindable
-		{
+		public bool ListBindable {
 			get {
 				return bindable;
 			}

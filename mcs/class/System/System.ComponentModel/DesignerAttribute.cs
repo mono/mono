@@ -3,11 +3,14 @@
 //
 // Author:
 //   Alejandro Sánchez Acosta (raciel@es.gnu.org)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 //
 
-namespace System.ComponentModel {
+namespace System.ComponentModel 
+{
 
 	/// <summary>
 	///   Designer Attribute for classes. 
@@ -16,73 +19,67 @@ namespace System.ComponentModel {
 	/// <remarks>
 	/// </remarks>
 	
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-		public sealed class DesignerAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
+	public sealed class DesignerAttribute : Attribute
+	{
+		private string name;
+		private string basetypename;
+			
+		public DesignerAttribute (string designerTypeName)
 		{
-			string name;
-			string basetypename;
-			Type type;
-			Type basetype;
-			
-			public DesignerAttribute (string designerTypeName)
-			{
-				name  = designerTypeName;
-			}
+			name = designerTypeName;
+		}
 
-			public DesignerAttribute (Type designerType)
-			{
-				type = designerType;
-			}
+		public DesignerAttribute (Type designerType)
+			: this (designerType.AssemblyQualifiedName)
+		{
+		}
 
-			public DesignerAttribute (string designerTypeName, string designerBaseTypeName)
-			{
-				name = designerTypeName;
-				basetypename = designerBaseTypeName;
-			}
+		public DesignerAttribute (string designerTypeName, Type designerBaseType)
+			: this (designerTypeName, designerBaseType.AssemblyQualifiedName)
+		{
+		}
 
-			public DesignerAttribute (string designerTypeName, Type designerBaseType)
-			{
-				name = designerTypeName;
-				basetype = designerBaseType;
-			}
+		public DesignerAttribute (Type designerType, Type designerBaseType)
+			: this (designerType.AssemblyQualifiedName, designerBaseType.AssemblyQualifiedName)
+		{
+		}
 
-			public DesignerAttribute (Type designerType, Type designerBaseType)
-			{
-				type = designerType;
-				basetype = designerBaseType;
-			}
+		public DesignerAttribute (string designerTypeName, string designerBaseTypeName)
+		{
+			name = designerTypeName;
+			basetypename = designerBaseTypeName;
+        	}
 
-			public string DesignerBaseTypeName {
-				get {
-					return basetypename;
-				}
-			}
+		public string DesignerBaseTypeName {
+            		get {
+				return basetypename;
+ 			}
+		}
 
-			public string DesignerTypeName  {
-				get {
-					return name;
-				}
-			}
-
-			public override object TypeId {
-				get {
-					return this.GetType ();
-				}
-			}
-			
-			public override bool Equals (object obj)
-			{
-	                        if (!(obj is DesignerAttribute))
-	                                return false;
-	                        return (((DesignerAttribute) obj).name == name) && 
-					(((DesignerAttribute) obj).basetype == basetype) &&
-					(((DesignerAttribute) obj).type == type) &&
-					(((DesignerAttribute) obj).basetypename == basetypename);
-			}				
-
-			public override int GetHashCode ()
-			{
-				return base.GetHashCode ();
+		public string DesignerTypeName {
+			get {
+				return name;
 			}
 		}
+
+		public override object TypeId {
+			get {
+				return this.GetType ();
+			}
+		}
+			
+		public override bool Equals (object obj)
+		{
+			if (!(obj is DesignerAttribute))
+				return false;
+			return ((DesignerAttribute) obj).DesignerBaseTypeName.Equals (basetypename) && 
+				((DesignerAttribute) obj).DesignerTypeName.Equals (name);
+		}				
+
+		public override int GetHashCode ()
+		{
+			return string.Concat(name, basetypename).GetHashCode ();
+		}
+	}
 }

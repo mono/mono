@@ -9,7 +9,9 @@
 
 namespace System.ComponentModel {
 
-	public interface IContainer : IDisposable {
+	[ComVisible (true)]
+	public interface IContainer : IDisposable 
+	{
 
 		ComponentCollection Components {
 			get;

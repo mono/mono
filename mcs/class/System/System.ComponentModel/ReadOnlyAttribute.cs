@@ -1,5 +1,5 @@
 //
-// ReadOnlyAttribute.cs
+// System.ComponentModel.ReadOnlyAttribute.cs
 //
 // Author:
 //   Chris J Breisch (cjbreisch@altavista.net)
@@ -35,7 +35,7 @@ namespace System.ComponentModel {
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return read_only.GetHashCode ();
 		}
 
 		public override bool Equals (object o)
@@ -43,7 +43,7 @@ namespace System.ComponentModel {
 			if (!(o is ReadOnlyAttribute))
 				return false;
 
-			return (((ReadOnlyAttribute) o).read_only == read_only);
+			return (((ReadOnlyAttribute) o).IsReadOnly.Equals (read_only));
 		}
 
 		public override bool IsDefaultAttribute ()

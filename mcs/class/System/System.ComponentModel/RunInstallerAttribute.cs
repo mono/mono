@@ -1,10 +1,12 @@
 //
-// System.ComponentModel.RunInstallerAttribute
+// System.ComponentModel.RunInstallerAttribute.cs
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2003 Andreas Nahr
 //
 
 using System;
@@ -30,17 +32,17 @@ namespace System.ComponentModel
 			if (!(obj is RunInstallerAttribute))
 				return false;
 
-			return (((RunInstallerAttribute) obj).runInstaller == runInstaller);
+			return ((RunInstallerAttribute) obj).RunInstaller.Equals (runInstaller);
 		}
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return runInstaller.GetHashCode ();
 		}
 
 		public override bool IsDefaultAttribute ()
 		{
-			return (runInstaller == false); // false is the Default
+			return Equals (Default);
 		}
 
 		public bool RunInstaller
