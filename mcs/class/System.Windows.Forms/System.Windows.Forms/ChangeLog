@@ -1,4 +1,10 @@
 2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : Cursor property, handle WM_SETCURSOR
+	* Cursor.cs : started implementation
+	* Cursors.cs : load system cursor types
+	* win32functions.cs : DestroyCursor function
+
+2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* HScrollBar.cs
 	* ScrollBar.cs
 	* VScrollBar.cs : implemented

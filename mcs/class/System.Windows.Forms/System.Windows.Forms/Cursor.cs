@@ -4,10 +4,11 @@
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) Ximian, Inc., 2002
 //
-
+using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.IO;
@@ -24,13 +25,24 @@ namespace System.Windows.Forms {
 	public sealed class Cursor : IDisposable, ISerializable {
 
 		#region Fields
+		private IntPtr handle;
+		private bool   fromResource    = false;
+		private bool   disposed        = false;
+		private CursorType ctype;
 		#endregion
 		
 		#region Constructors
-		[MonoTODO]
-		public Cursor(IntPtr handle) 
+		internal Cursor ( CursorType type )
 		{
-			
+			handle = Win32.LoadCursor ( IntPtr.Zero, type );
+			fromResource = true;
+			ctype  = type;
+		}
+
+		[MonoTODO]
+		public Cursor( IntPtr handle ) 
+		{
+			this.handle = handle;	
 		}
 		
 		[MonoTODO]
@@ -75,7 +87,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public IntPtr Handle {
-			get { throw new NotImplementedException (); }
+			get { return handle; }
 		}
 		
 		[MonoTODO]
@@ -97,12 +109,29 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public void Dispose() 
 		{
-			throw new NotImplementedException ();
+			GC.SuppressFinalize( this );
+			Dispose( true );
 		}
 		
+		private void Dispose( bool disposing )
+		{
+			lock ( this ) {
+				if ( disposing ) {
+					// dispose managed resources
+				}
+				if ( !this.disposed ) {
+					// release all unmanaged resources
+					// shared cursor should not be destroyed
+					if ( !fromResource )
+						Win32.DestroyCursor ( handle );
+					handle = IntPtr.Zero;
+				}
+				disposed = true;         
+			}
+		}
+
 		[MonoTODO]
 		public void Draw(Graphics g,Rectangle targetRect) 
 		{
@@ -118,13 +147,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override bool Equals(object obj) 
 		{
-			//FIXME:
-			return base.Equals(obj);
+			if ( obj == null ) return false;
+			if ( this.GetType ( ) != obj.GetType ( ) ) return false;
+			Cursor other = ( Cursor ) obj;
+			if ( !fromResource.Equals ( other.fromResource ) ) return false;
+			if ( !ctype.Equals ( other.ctype ) ) return false;
+
+			return true;
 		}
 		
-		[MonoTODO]
 		~Cursor() {
-			throw new NotImplementedException ();
+			Dispose ( false );
 		}
 		
 		[MonoTODO]
@@ -165,13 +198,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static bool operator ==(Cursor left, Cursor right) 
 		{
-			throw new NotImplementedException ();
+			return Object.Equals ( left, right );
 		}
 		
 		[MonoTODO]
 		public static bool operator !=(Cursor left, Cursor right) 
 		{
-			throw new NotImplementedException ();
+			return ! ( left == right );
 		}
 		#endregion
 	}

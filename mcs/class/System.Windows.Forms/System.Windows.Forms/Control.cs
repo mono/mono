@@ -88,6 +88,7 @@
     		protected string text;
     		protected bool visible;
     		protected ControlStyles controlStyles_;
+		Cursor  cursor;
 
 		int clientWidth;
 		int clientHeight;
@@ -211,6 +212,7 @@
     			text = "";
     			visible = true;
     			parent = null;
+			cursor = null;
 
 			oldBounds.Width  = bounds.Width = DefaultSize.Width;
 			oldBounds.Height = bounds.Height= DefaultSize.Height;
@@ -577,12 +579,12 @@
 
     		[MonoTODO]
     		public virtual Cursor Cursor {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-    				throw new NotImplementedException ();
-    			}
+    			get { 
+				if ( cursor == null )
+					return Cursors.Default;
+				return cursor; 
+			}
+    			set { cursor = value;}
     		}
     		
 	  		//Compact Framework
@@ -2836,6 +2838,13 @@
     					CallControlWndProc(ref m);
 					}
 					break;
+				case Msg.WM_SETCURSOR:
+					if ( cursor != null && cursor.Handle != IntPtr.Zero ) {
+						Win32.SetCursor ( cursor.Handle );
+						m.Result = (IntPtr)1;
+					} else
+						CallControlWndProc( ref m );
+				break;
 				default:
 					CallControlWndProc(ref m);
 /*

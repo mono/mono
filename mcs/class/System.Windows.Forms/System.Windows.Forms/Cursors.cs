@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -19,61 +20,31 @@ namespace System.Windows.Forms {
 	/// Provides a collection of Cursor objects for use by a Windows Forms application.
 	/// </summary>
 
-	[MonoTODO]
-	public sealed class Cursors {
+	public sealed class Cursors{
 
-		#region Properties
-		[MonoTODO]
 		public static Cursor AppStarting {
-			
-			get {
-//HANDLE LoadImage(
-//  HINSTANCE hinst,   // handle to instance // = null
-//  LPCTSTR lpszName,  // image to load // = IDC_APPSTARTING
-//  UINT uType,        // image type //= IMAGE_CURSOR
-//  int cxDesired,     // desired width  // = 0
-//  int cyDesired,     // desired height // = 0
-//  UINT fuLoad        // load options // = LR_DEFAULTSIZE || ??
-//);
-				//Cursor cursor = new Cursor(
-				throw new NotImplementedException (); 
-			}
+			get { return new Cursor ( CursorType.IDC_APPSTARTING ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor Arrow {
-			//  LPCTSTR lpszName,  // image to load // = IDC_ARROW
-			get {
-				throw new NotImplementedException (); 
-			}
+			get { return new Cursor ( CursorType.IDC_ARROW ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor Cross {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_CROSS ); }
 		}
 		
 		[MonoTODO]
 		public static Cursor Default {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_ARROW ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor Hand {
-			get {
-				throw new NotImplementedException (); 
-			}
+			get { return new Cursor ( CursorType.IDC_HAND ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor Help {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_HELP ); }
 		}
 		
 		[MonoTODO]
@@ -83,18 +54,12 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public static Cursor IBeam {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_IBEAM ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor No {
-			get {
-				throw new NotImplementedException (); 
-			}
+			get { return new Cursor ( CursorType.IDC_NO ); }
 		}
 		
 		[MonoTODO]
@@ -174,46 +139,28 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public static Cursor SizeAll {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_SIZEALL ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor SizeNESW {
-			get { 
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_SIZENESW ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor SizeNS {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_SIZENS ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor SizeNWSE {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_SIZENWSE ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor SizeWE {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_SIZEWE ); }
 		}
 		
-		[MonoTODO]
 		public static Cursor UpArrow {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_UPARROW ); }
 		}
 		
 		[MonoTODO]
@@ -223,12 +170,8 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public static Cursor WaitCursor {
-			get { 
-				throw new NotImplementedException ();
-			}
+			get { return new Cursor ( CursorType.IDC_WAIT ); }
 		}
-		#endregion
 	}
 }

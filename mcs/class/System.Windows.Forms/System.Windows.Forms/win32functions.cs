@@ -306,6 +306,9 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="LoadCursorA")]
 		internal static extern IntPtr LoadCursor(IntPtr hInstance, CursorType cursor);
 
+		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
+		internal static extern bool DestroyCursor ( IntPtr hCursor );
+
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr SetCursor(IntPtr hCursor);
 
