@@ -1,3 +1,8 @@
+2002-04-21  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* object.c: mono_array_new_full workaround mono_array_class_get
+	problem.
+
 2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* string-icalls.c (mono_string_InternalRemove): Fixed overwrite bug.
