@@ -1,3 +1,9 @@
+2004-05-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: fixed check for 'neutral' culture and removed warning.
+	* reflection.c: fix bug when parsing a full type name and Version is not
+	the last thing in the string.
+
 2004-05-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (get_info_from_assembly_name): Strdup "" to prevent
