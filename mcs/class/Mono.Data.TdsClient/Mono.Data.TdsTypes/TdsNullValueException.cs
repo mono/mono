@@ -18,7 +18,7 @@ namespace Mono.Data.TdsTypes {
 		#region Constructors
 
 		public TdsNullValueException ()
-			: base (Locale.GetText ("The value property is null"))
+			: base (Locale.GetText ("Data is Null. This method or property cannot be called on Null values."))
 		{
 		}
 
