@@ -343,6 +343,23 @@ PublicKeyToken=b77a5c561934e089"));
 			AssertNull (t.GetField ("byref_field"));
 			AssertNull (t.GetProperty ("byref_property"));
 		}
+
+		struct B
+		{
+			int value;
+		}
+
+		[Test]
+		public void CreateValueTypeNoCtor () {
+            typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (MissingMethodException))]
+		public void CreateValueTypeNoCtorArgs () {
+            typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, new object [] { 1 });
+		}
+
 	}
 }
 
