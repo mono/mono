@@ -1,3 +1,8 @@
+2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DoubleFormatterTest.cs: Added new cases from bug reports 60110 
+	(roundtrip format) and 60111 (non-banker rounding).
+
 2004-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConvertTest.cs: Changed compare between Decimals (from a string 

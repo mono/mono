@@ -13,14 +13,8 @@ using System.Globalization;
 namespace MonoTests.System {
 	
 	[TestFixture]
-	public class DoubleFormatterTest 
+	public class DoubleFormatterTest : Assertion
 	{
-		[SetUp]
-		public void GetReady() 	{}
-		
-		[TearDown]
-		public void Clean() {}
-		
 		[Test]
 		[ExpectedException(typeof(FormatException))]
 		public void TestToDecimal()
@@ -909,6 +903,22 @@ namespace MonoTests.System {
 			NumberFormatInfo nfi = new NumberFormatInfo ();
 			nfi.NumberDecimalDigits = 5;
 			FormatStringTest ("#1", nfi, 70.50, "N", "70.50000");
+		}
+
+		// "G" format doesn't use the banker rounding (like Math.Round)
+		// see bug #60111 for more details
+		[Test]
+		public void NonStandardRounding () 
+		{
+			// banker's rounding would results in 2.71828182845904
+			AssertEquals ("G-E", "2.71828182845905", Math.E.ToString (CultureInfo.InvariantCulture));
+		}
+
+		// see bug #60110 for more details
+		[Test]
+		public void Roundtrip () 
+		{
+			AssertEquals ("R-E", "2.7182818284590451", Math.E.ToString ("R", CultureInfo.InvariantCulture));
 		}
 	}
 }
