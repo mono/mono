@@ -1,3 +1,7 @@
+2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: removed a few hacks no longer needed.
+
 2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PageCompiler.cs: tracing.

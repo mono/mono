@@ -1515,12 +1515,6 @@ class AspGenerator
 			"\t\t\tget { return \"/dummypath\"; }\n" +
 			"\t\t}\n\n");
 
-#if MONO
-#else
-		if (!IsUserControl)
-			epilog.Append ("\n\t\tpublic override void VerifyRenderingInServerForm (Control control)\n" +
-					"\t\t{\n\t\t}\n\n");
-#endif
 		epilog.Append ("\n\t\tprotected override void FrameworkInitialize ()\n\t\t{\n" +
 				"\t\t\tthis.__BuildControlTree (this);\n");
 
@@ -1601,24 +1595,17 @@ class AspGenerator
 		
 		StreamReader fileReader = new StreamReader (File.Open (csName, FileMode.Open));
 		data.className = src.Replace ('.', '_');
-#if MONO
-		StringBuilder compilerOptions = new StringBuilder ("-r System.Web -r System.Drawing ");
-		compilerOptions.Append ("--target library ");
-#else
+		
 		StringBuilder compilerOptions = new StringBuilder ("/r:System.Web.dll /r:System.Drawing.dll ");
 		compilerOptions.Append ("/target:library ");
-#endif
+
 		string line;
 		while ((line = fileReader.ReadLine ()) != null && line != "") {
 			if (line.StartsWith ("//<class ")) {
 				data.className = GetAttributeValue (line, "name");
 			} else if (line.StartsWith ("//<reference ")) {
 				string dllName = GetAttributeValue (line, "dll");
-#if MONO
-				compilerOptions.AppendFormat ("-r {0} ", Path.ChangeExtension (dllName, null));
-#else
 				compilerOptions.AppendFormat ("/r:{0} ", dllName);
-#endif
 			} else if (line.StartsWith ("//<compileroptions ")) {
 				string options = GetAttributeValue (line, "options");
 				compilerOptions.Append (" " + options + " ");
@@ -1666,39 +1653,20 @@ class AspGenerator
 
 	private static bool Compile (string csName, string dllName, StringBuilder compilerOptions)
 	{
-#if MONO
-		compilerOptions.AppendFormat ("-o {0} ", dllName);
-#else
 		compilerOptions.AppendFormat ("/out:{0} ", dllName);
-#endif
 		compilerOptions.Append (csName + " ");
 
 		string cmdline = compilerOptions.ToString ();
 		string noext = Path.GetFileNameWithoutExtension (csName);
 		string output_file = "output" + dirSeparator + "output_from_compilation_" + noext + ".txt";
 		string bat_file = "output" + dirSeparator + "last_compilation_" + noext + ".bat";
-#if MONO
 		return RunProcess ("mcs", cmdline, output_file, bat_file);
-#else
-		return RunProcess ("csc.exe", cmdline, output_file, bat_file);
-#endif
 	}
 
 	private static bool RunProcess (string exe, string arguments, string output_file, string script_file)
 	{
 		Process proc = new Process ();
-#if MONO
-		proc.StartInfo.FileName = "redirector.sh";
-		proc.StartInfo.Arguments = exe + " " + output_file + " " + arguments;
-		proc.Start ();
-		proc.WaitForExit ();
-		int result = proc.ExitCode;
-		proc.Close ();
 
-		StreamWriter bat_output = new StreamWriter (File.Create (script_file));
-		bat_output.Write ("./redirector.sh" + " " + exe + " " + output_file + " " + arguments);
-		bat_output.Close ();
-#else
 		proc.StartInfo.FileName = exe;
 		proc.StartInfo.Arguments = arguments;
 		proc.StartInfo.UseShellExecute = false;
@@ -1715,7 +1683,6 @@ class AspGenerator
 		StreamWriter bat_output = new StreamWriter (File.Create (script_file));
 		bat_output.Write (exe + " " + arguments);
 		bat_output.Close ();
-#endif
 
 		return (result == 0);
 	}
