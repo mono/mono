@@ -64,7 +64,9 @@ Microsoft.Web.Services.Addressing/AttributedUriString.cs
 Microsoft.Web.Services.Addressing/EndpointReference.cs
 Microsoft.Web.Services.Addressing/EndpointReferenceType.cs
 Microsoft.Web.Services.Addressing/PortType.cs
+Microsoft.Web.Services.Addressing/ReferenceProperties.cs
 Microsoft.Web.Services.Addressing/ReplyTo.cs
+Microsoft.Web.Services.Addressing/ServiceName.cs
 Microsoft.Web.Services.Addressing/To.cs
 Microsoft.Web.Services.Routing/Path.cs
 Microsoft.Web.Services.Routing/RoutingFormatException.cs

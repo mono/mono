@@ -1,3 +1,11 @@
+2003-10-07  Todd Berman <tberman@gentoo.org>
+
+	* Microsoft.Web.Services.dll.2.sources: Added ReferenceProperties.cs
+
+2003-10-07  Todd Berman <tberman@gentoo.org>
+
+	* Microsoft.Web.Services.dll.2.sources: Added OpenElementElement.cs
+
 2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Microsoft.Web.Services.Diagnostics: Added new namespace with 
