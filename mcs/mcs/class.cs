@@ -1056,7 +1056,7 @@ namespace Mono.CSharp {
 
 			if (this is Class){
 				if (instance_constructors == null){
-					if (default_constructor == null) 
+					if (default_constructor == null)
 						DefineDefaultConstructor (false);
 				}
 
@@ -2504,10 +2504,12 @@ namespace Mono.CSharp {
 			parent_constructor_group = Expression.MemberLookup (
 				ec, t, ".ctor", 
 				MemberTypes.Constructor,
-				BindingFlags.Public | BindingFlags.Instance, location);
+				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				location);
 			
 			if (parent_constructor_group == null){
-				Console.WriteLine ("Could not find a constructor in our parent");
+				Report.Error (1501, location,
+				       "Can not find a constructor for this argument list");
 				return false;
 			}
 			
@@ -2515,7 +2517,8 @@ namespace Mono.CSharp {
 				(MethodGroupExpr) parent_constructor_group, argument_list, location);
 			
 			if (parent_constructor == null){
-				Console.WriteLine ("Could not locate a proper overload function");
+				Report.Error (1501, location,
+				       "Can not find a constructor for this argument list");
 				return false;
 			}
 			
@@ -2644,9 +2647,8 @@ namespace Mono.CSharp {
 				if (Initializer == null)
 					Initializer = new ConstructorBaseInitializer (null, parent.Location);
 				
-				if (!Initializer.Resolve (ec)){
-					Console.WriteLine ("Could not resolve initializer: " + parent.Name);
-				}
+				if (!Initializer.Resolve (ec))
+					return;
 			}
 
 			LabelParameters (ec, ParameterTypes (parent), ConstructorBuilder);

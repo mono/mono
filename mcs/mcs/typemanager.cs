@@ -1172,7 +1172,7 @@ public class TypeManager {
 
 		ArrayList method_list = null;
 		Type current_type = queried_type;
-		bool searching = true;
+		bool searching = (bf & BindingFlags.DeclaredOnly) == 0;
 		do {
 			MemberInfo [] mi;
 			

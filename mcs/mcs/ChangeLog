@@ -1,5 +1,17 @@
 2002-04-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (ConstructorInitializer.Resolve): Also use DeclaredOnly
+	here. 
+
+	(Constructor.Emit): return if we fail to initialize the
+	constructor.  Another door closed!  
+
+	* expression.cs (New.DoResolve): Improve error message (from -6 to
+	1501).  Use DeclaredOnly lookup to find the exact constructor.
+
+	* typemanager.cs (MemberLookup): If DeclaredOnly is set, do not
+	loop.  This is useful.
+
 	* cs-parser.jay: Adjust the default parameters so that destructors
 	have the proper signature.
 

@@ -3887,7 +3887,9 @@ namespace Mono.CSharp {
 				return this;
 			
 			Expression ml;
-			ml = MemberLookup (ec, type, ".ctor", MemberTypes.Constructor, AllBindingFlags, loc);
+			ml = MemberLookup (ec, type, ".ctor",
+					   MemberTypes.Constructor,
+					   AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
@@ -3895,7 +3897,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			
+
 			if (ml != null) {
 				if (Arguments != null){
 					for (int i = Arguments.Count; i > 0;){
@@ -3913,7 +3915,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (method == null && !is_struct) {
-				Error (-6, loc,
+				Error (1501, loc,
 				       "New invocation: Can not find a constructor for " +
 				       "this argument list");
 				return null;
