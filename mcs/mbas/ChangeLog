@@ -1,4 +1,7 @@
 2004-09-15 Anirban Bhattacharjee <banirban@novell.com>
+	* enum.cs: Made Enum member lookup case insensitive
+
+2004-09-15 Anirban Bhattacharjee <banirban@novell.com>
 	* support.cs: Retrieving default value from another assembly in ReflectionParameters class
 
 2004-09-15 Anirban Bhattacharjee <banirban@novell.com>

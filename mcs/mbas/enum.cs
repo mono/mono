@@ -393,7 +393,17 @@ namespace Mono.MonoBASIC {
 
 			// first check whether the requested name is there
 			// in the member list of enum
-			if (!(ordered_enums.Contains(name)))
+			bool found = false;
+			name = name.ToLower();
+			foreach (string nm in ordered_enums) {
+				if (nm.ToLower() == name) {
+					name = nm;
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
 				Report.Error (30456, loc,
 					name + " is not found in member list of enum " + this.Name);
 
