@@ -79,7 +79,6 @@ namespace System.Windows.Forms
 		private int image_index = -1;
 		private bool is_checked = false;
 		private bool is_focused = false;
-		private bool selected;
 		private int state_image_index = -1;
 		private ListViewSubItemCollection sub_items;
 		private object tag;
@@ -93,6 +92,7 @@ namespace System.Windows.Forms
 		internal Rectangle label_rect;
 		internal Point location = Point.Empty;	// set by the ListView control
 		internal ListView owner;
+		internal bool selected;
 
 		#endregion Instance Variables
 

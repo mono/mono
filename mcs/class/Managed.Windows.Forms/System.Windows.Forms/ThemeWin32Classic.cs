@@ -1267,7 +1267,6 @@ namespace System.Windows.Forms
 					ColumnHeader col;
 					ListViewItem.ListViewSubItem subItem;
 					Rectangle sub_item_rect = item.LabelRect;
-					sub_item_rect.X = item.LabelRect.Right;
 
 					// set the format for subitems
 					format.FormatFlags = StringFormatFlags.NoWrap;
@@ -1277,6 +1276,7 @@ namespace System.Windows.Forms
 					for (int index = 1; index < count; index++) {
 						subItem = subItems [index];
 						col = control.Columns [index];
+						sub_item_rect.X = col.Rect.Left;
 						sub_item_rect.Width = col.Wd;
 
 						SolidBrush sub_item_back_br = null;

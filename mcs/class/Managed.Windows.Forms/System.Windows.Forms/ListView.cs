@@ -702,9 +702,13 @@ namespace System.Windows.Forms
 						item.location.X = 0;
 						item.location.Y = current_pos_y;
 						item.CalcListViewItem ();
-						current_pos_y += item.entire_rect.Height;
+						current_pos_y += item.EntireRect.Height;
 					}
 					this.layout_ht = current_pos_y;
+
+					// some space for bottom gridline
+					if (this.grid_lines)
+						this.layout_ht += 2;
 				}
 				break;
 
@@ -754,9 +758,8 @@ namespace System.Windows.Forms
 							}
 						}
 						// adjust the layout dimensions
-						this.layout_ht = Math.Max (max, this.Height);
-						this.layout_wd = Math.Max (current_pos_x,
-									   this.Width);
+						this.layout_ht = max;
+						this.layout_wd = current_pos_x;
 					}
 					else { // other default/top alignment
 						max = this.Width;
@@ -794,8 +797,8 @@ namespace System.Windows.Forms
 							}
 						}
 						// adjust the layout dimensions
-						this.layout_wd = Math.Max (max, this.Width);
-						this.layout_ht = Math.Max (current_pos_y, this.Height);
+						this.layout_wd = max;
+						this.layout_ht = current_pos_y;
 					}
 				}
 				break;
@@ -825,12 +828,11 @@ namespace System.Windows.Forms
 					}
 
 					// adjust the layout dimensions
-					this.layout_ht = Math.Max (max * item_ht, this.Height);
+					this.layout_ht = max * item_ht;
 					if (current == 0) // we have fully filled layout
-						this.layout_wd = Math.Max (current_pos_x, this.Width);
+						this.layout_wd = current_pos_x;
 					else
-						this.layout_wd = Math.Max (current_pos_x +
-									   item_wd, this.Width);
+						this.layout_wd = current_pos_x + item_wd;
 				}
 				break;
 			}
@@ -840,23 +842,19 @@ namespace System.Windows.Forms
 				// other scroll bar visible
 				if (this.layout_wd > this.Width) {
 					this.h_scroll.Visible = true;
-					this.layout_ht += this.h_scroll.Height;
-					if (this.layout_ht > this.Height) {
+					if ((this.layout_ht + this.h_scroll.Height) > this.Height)
 						this.v_scroll.Visible = true;
-						this.layout_wd += this.v_scroll.Width;
-					}
 				}
 				else if (this.layout_ht > this.Height) {
 					this.v_scroll.Visible = true;
-					this.layout_wd += this.v_scroll.Width;
-					if (this.layout_wd > this.Width) {
+					if ((this.layout_wd + this.v_scroll.Width) > this.Width)
 						this.h_scroll.Visible = true;
-						this.layout_ht += this.h_scroll.Height;
-					}
 				}
 
 				// create big enough buffers
-				this.CreateBuffers (this.TotalWidth, this.TotalHeight);
+				if (this.layout_wd > this.Width ||
+				    this.layout_ht > this.Height)
+					this.CreateBuffers (this.TotalWidth, this.TotalHeight);
 
 				if (this.h_scroll.Visible) {
 					this.h_scroll.Location = new Point (0, this.Height 
@@ -920,23 +918,17 @@ namespace System.Windows.Forms
 
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
 		{
-			Console.WriteLine ("key down");
 			if (!ke.Handled && ke.Control) {
-				Console.WriteLine ("CTRL key");
 				this.ctrl_pressed = true;
 				ke.Handled = true;
-				base.OnKeyDown (ke);
 			}
 		}
 
 		private void ListView_KeyUp (object sender, KeyEventArgs ke)
 		{
-			Console.WriteLine ("key up");
 			if (!ke.Handled && ke.Control) {
-				Console.WriteLine ("CTRL key");
 				this.ctrl_pressed = false;
 				ke.Handled = true;
-				base.OnKeyUp (ke);
 			}
 		}
 
@@ -2221,7 +2213,7 @@ namespace System.Windows.Forms
 			{
 				// mark the items as unselected before clearing the list
 				for (int i = 0; i < list.Count; i++)
-					((ListViewItem) list [i]).Selected = false;
+					((ListViewItem) list [i]).selected = false;
 
 				list.Clear ();
 			}
