@@ -905,7 +905,7 @@ namespace System.Web.UI.WebControls
 								dow == DayOfWeek.Sunday ||
 								dow == DayOfWeek.Saturday,
 								currentDay == TodaysDate, 
-								selectedDates.Contains (currentDay),
+								SelectedDates.Contains (currentDay),
 								globCal.GetMonth (currentDay) != month,
 								dayString
 								);

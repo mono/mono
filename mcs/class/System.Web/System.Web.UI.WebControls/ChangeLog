@@ -1,3 +1,7 @@
+2004-01-28 Alon Gazit <along@mainsoft.com>
+
+	* Calendar.cs: prevent NullReferenceException in RenderAllDays().
+
 2004-01-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Calendar.cs: when rendering days, add a LiteralControl containing the
