@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
@@ -77,18 +78,46 @@ namespace Microsoft.JScript {
 		internal static AssemblyBuilder assembly_builder;
 		internal static ModuleBuilder module_builder;
 
+		internal static string Basename (string name)
+		{
+			int pos = name.LastIndexOf ('/');
+
+			if (pos != -1)
+				return name.Substring (pos + 1);
+
+			pos = name.LastIndexOf ('\\');
+			if (pos != -1)
+				return name.Substring (pos + 1);
+
+			return name;
+		}
+
+		internal static string Dirname (string name)
+		{
+			int pos = name.LastIndexOf ('/');
+
+                        if (pos != -1)
+                                return name.Substring (0, pos);
+
+                        pos = name.LastIndexOf ('\\');
+                        if (pos != -1)
+                                return name.Substring (0, pos);
+
+                        return ".";
+		}
+
 		internal static void Init (string file_name)
 		{
 			app_domain = Thread.GetDomain ();
 
 			assembly_name = new AssemblyName ();
-			assembly_name.Name =  trim_extension (file_name);
-
+			assembly_name.Name = Path.GetFileNameWithoutExtension (file_name);
 			mod_name = MODULE;
 
 			assembly_builder = app_domain.DefineDynamicAssembly (
 					     assembly_name,
-					     AssemblyBuilderAccess.RunAndSave);
+					     AssemblyBuilderAccess.RunAndSave,
+					     Dirname (file_name));
 
 			ConstructorInfo ctr_info = typeof (Microsoft.JScript.ReferenceAttribute).GetConstructor (new Type [] { typeof (string) });
 			// FIXME: find out which is the blob.
@@ -96,9 +125,9 @@ namespace Microsoft.JScript {
 			assembly_builder.SetCustomAttribute (ctr_info, blob); 
 
 			module_builder = assembly_builder.DefineDynamicModule (
-						mod_name,
-						assembly_name.Name + ".exe", 
-						false);
+					       mod_name,
+					       Basename (assembly_name.Name + ".exe"),
+					       false);
 		}
 
  		internal static string trim_extension (string file_name)
@@ -113,7 +142,7 @@ namespace Microsoft.JScript {
 
 		internal static void Save (string target_name)
 		{
-			assembly_builder.Save (target_name);
+			assembly_builder.Save (CodeGenerator.Basename (target_name));
 		}
 
 		internal static void Emit (AST prog)

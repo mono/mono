@@ -1,3 +1,7 @@
+2004-12-15  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* CodeGenerator.cs: add support for compiling not only from cwd.
+
 2004-12-13  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs: emit code for null literal.
