@@ -998,7 +998,10 @@ instr                   : INSTR_NONE
 			  }
 			| INSTR_VAR int32	{/* currentInstr = new InstrVar ((OpCode) $1, $2);*/}
 			| INSTR_VAR id		{/* currentInstr = new InstrVar ((OpCode) $1, $2); */}
-			| INSTR_I int32		{/* currentInstr = new InstrI ((OpCode) $1, (Int32) $2);*/}
+			| INSTR_I int32		
+			  {
+				codegen.CodeBuffer.IntInst ((IntOp) $1, (int) $2); 
+  			  }
 			| INSTR_I8 int64	{/* currentInstr = new InstrI8 ((OpCode) $1, (Int64) $2);*/}
 			| INSTR_R float64	{/* currentInstr = new InstrR ((OpCode) $1, (Double) $2);*/}
 			| INSTR_R int64		{/* currentInstr = new InstrR ((OpCode) $1, (Int64) $2);*/}
