@@ -1,4 +1,8 @@
 
+Wed Feb 13 19:20:01 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.cs: better resolver: use it instead of some kludgy code.
+
 Wed Feb 13 18:25:55 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: the best way to speed-up the compiler is to avoid
