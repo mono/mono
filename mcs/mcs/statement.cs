@@ -432,8 +432,9 @@ namespace Mono.CSharp {
 			// an infinite loop
 			//
 			if (Test != null)
-				EmitBoolExpression (ec, Test, ec.LoopEnd, false);
-			ig.Emit (OpCodes.Br, loop);
+				EmitBoolExpression (ec, Test, loop, true);
+			else
+				ig.Emit (OpCodes.Br, loop);
 			ig.MarkLabel (ec.LoopEnd);
 
 			ec.LoopBegin = old_begin;

@@ -1,7 +1,8 @@
 2002-07-09  Miguel de Icaza  <miguel@ximian.com>
 
-	* statement.cs (For): Implement loop inversion for the For
-	statement. 
+	* statement.cs (For): Reduce the number of jumps in loops.
+
+	(For): Implement loop inversion for the For statement.
 
 	(Break): We can be breaking out of a Try/Catch controlled section
 	(foreach might have an implicit try/catch clause), so we need to
