@@ -839,8 +839,12 @@ namespace Mono.CSharp {
 		//
 		void LoadOneAndEmitOp (EmitContext ec, Type t)
 		{
+			//
+			// Measure if getting the typecode and using that is more/less efficient
+			// that comparing types.  t.GetTypeCode() is an internal call.
+			//
 			ILGenerator ig = ec.ig;
-			
+						     
 			if (t == TypeManager.uint64_type || t == TypeManager.int64_type)
 				LongConstant.EmitLong (ig, 1);
 			else if (t == TypeManager.double_type)
@@ -885,6 +889,29 @@ namespace Mono.CSharp {
 				else
 					ig.Emit (OpCodes.Add);
 			}
+
+			if (t == TypeManager.sbyte_type){
+				if (ec.CheckState)
+					ig.Emit (OpCodes.Conv_Ovf_I1);
+				else
+					ig.Emit (OpCodes.Conv_I1);
+			} else if (t == TypeManager.byte_type){
+				if (ec.CheckState)
+					ig.Emit (OpCodes.Conv_Ovf_U1);
+				else
+					ig.Emit (OpCodes.Conv_U1);
+			} else if (t == TypeManager.short_type){
+				if (ec.CheckState)
+					ig.Emit (OpCodes.Conv_Ovf_I2);
+				else
+					ig.Emit (OpCodes.Conv_I2);
+			} else if (t == TypeManager.ushort_type || t == TypeManager.char_type){
+				if (ec.CheckState)
+					ig.Emit (OpCodes.Conv_Ovf_U2);
+				else
+					ig.Emit (OpCodes.Conv_U2);
+			}
+			
 		}
 
 		void EmitCode (EmitContext ec, bool is_expr)

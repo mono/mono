@@ -1,5 +1,9 @@
 2003-05-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (UnaryMutator.LoadOneAndEmitOp): Missing
+	functionality: I needed to convert the data after I had performed
+	the add/sub operation into the operands type size.
+
 	* ecore.cs (ImplicitReferenceConversion): When boxing an interface
 	pass the type for the box operation, otherwise the resulting
 	object would have been of type object.
