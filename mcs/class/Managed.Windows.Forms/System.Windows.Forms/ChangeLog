@@ -1,3 +1,10 @@
+2004-11-23  Peter Bartok <pbartok@novell.com>
+
+	* XplatUIX11.cs: 
+	  - Added generation of WM_MOUSEHOVER event
+	  - Added missing assignment of async_method atom
+	  - Fixed WM_ERASEBKGND; now only redraws the exposed area
+
 2004-11-23  John BouAntoun <jba-mono@optusnet.com.au>
 
 	* ThemeWin32Classic.cs: Fixed DrawMonthCalendar and private support methods
