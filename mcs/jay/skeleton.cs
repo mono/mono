@@ -251,7 +251,7 @@ t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
  epilog			## text following second %%
 .namespace yydebug {
 .        using System;
-.	 public interface yyDebug {
+.	 internal interface yyDebug {
 .		 void push (int state, Object value);
 .		 void lex (int state, int token, string name, Object value);
 .		 void shift (int from, int to, int errorFlag);
@@ -331,14 +331,14 @@ t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
 .  using System;
 .  /** thrown for irrecoverable syntax errors and stack overflow.
 .    */
-.  public class yyException : System.Exception {
+.  internal class yyException : System.Exception {
 .    public yyException (string message) : base (message) {
 .    }
 .  }
 .
 .  /** must be implemented by a scanner object to supply input to the parser.
 .    */
-.  public interface yyInput {
+.  internal interface yyInput {
 .    /** move on to next token.
 .        @return false if positioned beyond tokens.
 .        @throws IOException on input error.

@@ -1,3 +1,10 @@
+2004-06-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* skelton.cs: make classes/interfaces internal.
+
+2004-06-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Makefile : ignore make run-test-ondotnet.
 
 Mon May 3 08:34:32 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
