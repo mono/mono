@@ -788,6 +788,8 @@ namespace Mono.CSharp {
 					type_param.DefineType (ec, TypeBuilder);
 			}
 
+			TypeManager.AddUserInterface (Name, TypeBuilder, this, ifaces);
+
 			if (ifaces != null) {
 				baseTypes = new Type[ifaces.Length];
 				for (int i = 0; i < ifaces.Length; ++i) {
@@ -797,7 +799,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			TypeManager.AddUserInterface (Name, TypeBuilder, this, ifaces);
 			InTransit = false;
 
 			return TypeBuilder;

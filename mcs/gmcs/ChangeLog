@@ -1,5 +1,11 @@
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
+	* interface.cs (Interface.DefineType): Call
+	TypeManager.AddUserInterface() before resolving the interface
+	types; fixes gen-43.cs.
+
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.MayBecomeEqualGenericInstances):
 	New oublic function; checks whether two generic instances may become
 	equal under some instantiations (26.3.1).
