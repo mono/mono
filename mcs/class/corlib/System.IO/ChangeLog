@@ -1,3 +1,8 @@
+2005-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* File.cs: Exists does not throw when there are invalid characters in
+	the file name. Patch by Gert Driesen.
+
 2004-12-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BufferedStream.cs: use Buffer.BlockCopyInternal instead of Array.Copy.

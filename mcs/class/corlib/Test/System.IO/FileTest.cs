@@ -71,6 +71,7 @@ namespace MonoTests.System.IO
 		public void Exists_InvalidFileName () 
 		{
 			Assert ("><|", !File.Exists ("><|"));
+			Assert ("?*", !File.Exists ("?*"));
 		}
 
 		[Test]
