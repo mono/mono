@@ -1,0 +1,13 @@
+
+Small XML test system::
+
+This is a small standalone test system using W3C XML test collection.
+http://www.w3.org/XML/Test/
+
+"make" will do what you need (downloading test archive, expanding,
+compiling test runner).
+
+"make test" will do the actual tests.
+
+Atsushi Eno <atsushi@ximian.com>
+
