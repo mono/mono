@@ -259,6 +259,25 @@ namespace Mono.CSharp
 			}
 		}
 
+		static Hashtable assemblies_loaded = new Hashtable ();
+		
+		static void AddAssemblyAndDeps (Assembly a)
+		{
+			if (assemblies_loaded.Contains (a.CodeBase))
+				return;
+			
+			assemblies_loaded [a.CodeBase] = true;
+			TypeManager.AddAssembly (a);
+
+			foreach (AssemblyName an in a.GetReferencedAssemblies ()){
+				Assembly new_assembly = Assembly.LoadFrom (an.CodeBase);
+
+				if (assemblies_loaded.Contains (new_assembly.CodeBase))
+					continue;
+				AddAssemblyAndDeps (new_assembly);
+			}
+		}
+		
 		static public void LoadAssembly (string assembly, bool soft)
 		{
 			Assembly a;
@@ -272,8 +291,7 @@ namespace Mono.CSharp
 				} else {
 					a = Assembly.Load (assembly);
 				}
-				TypeManager.AddAssembly (a);
-
+				AddAssemblyAndDeps (a);
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
 					string full_path = Path.Combine (dir, assembly);
@@ -282,7 +300,7 @@ namespace Mono.CSharp
 
 					try {
 						a = Assembly.LoadFrom (full_path);
-						TypeManager.AddAssembly (a);
+						AddAssemblyAndDeps (a);
 						return;
 					} catch (FileNotFoundException ff) {
 						total_log += ff.FusionLog;
@@ -312,7 +330,7 @@ namespace Mono.CSharp
 
 			foreach (string r in soft_references)
 				LoadAssembly (r, true);
-			
+
 			return;
 		}
 
