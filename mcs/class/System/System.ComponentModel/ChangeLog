@@ -1,5 +1,10 @@
 2005-03-02  Jackson Harper  <jackson@ximian.com>
 
+	* ReflectionEventDescriptor.cs: Bind handlers to the actual event so that
+	the delegates get invoked when the methods are.
+
+2005-03-02  Jackson Harper  <jackson@ximian.com>
+
 	* EventDescriptorCollection.cs: Handle null in the constructor properly.
 
 2005-02-12  Geoff Norton  <gnorton@customerdna.com>

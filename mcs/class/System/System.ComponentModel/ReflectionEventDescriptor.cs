@@ -4,9 +4,8 @@
 // Authors:
 //  Lluis Sanchez Gual (lluis@ximian.com)
 //
-// (C) Novell, Inc. 2004
+// (C) Novell, Inc. 2004, 2005
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,28 +36,41 @@ namespace System.ComponentModel
 {
 	internal class ReflectionEventDescriptor: EventDescriptor
 	{
-		Hashtable handlers;
 		Type _eventType;
 		Type _componentType;
 		EventInfo _eventInfo;
-		
+
+		MethodInfo add_method;
+		MethodInfo remove_method;
+
 		public ReflectionEventDescriptor (EventInfo eventInfo) : base (eventInfo.Name, (Attribute[]) eventInfo.GetCustomAttributes (true))
 		{
 			_eventInfo = eventInfo;
 			_componentType = eventInfo.DeclaringType;
 			_eventType = eventInfo.EventHandlerType;
+
+			add_method = eventInfo.GetAddMethod ();
+			remove_method = eventInfo.GetRemoveMethod ();
 		}
 
 		public ReflectionEventDescriptor (Type componentType, EventDescriptor oldEventDescriptor, Attribute[] attrs) : base (oldEventDescriptor, attrs)
 		{
 			_componentType = componentType;
 			_eventType = oldEventDescriptor.EventType;
+
+			EventInfo event_info = componentType.GetEvent (oldEventDescriptor.Name);
+			add_method = event_info.GetAddMethod ();
+			remove_method = event_info.GetRemoveMethod ();
 		}
 
 		public ReflectionEventDescriptor (Type componentType, string name, Type type, Attribute[] attrs) : base (name, attrs)
 		{
 			_componentType = componentType;
 			_eventType = type;
+
+			EventInfo event_info = componentType.GetEvent (name);
+			add_method = event_info.GetAddMethod ();
+			remove_method = event_info.GetRemoveMethod ();
 		}
 		
 		EventInfo GetEventInfo ()
@@ -73,27 +85,12 @@ namespace System.ComponentModel
 
 		public override void AddEventHandler (object component, System.Delegate value)
 		{
-			if (handlers == null)
-				handlers = new Hashtable ();
-			
-			ArrayList delegates = (ArrayList) handlers [component];
-			if (delegates == null) {
-				delegates = new ArrayList ();
-				handlers [component] = delegates;
-			}
-			
-			if (!delegates.Contains (value))
-				delegates.Add (value);
+			add_method.Invoke (component, new object [] { value });
 		}
 
 		public override void RemoveEventHandler (object component, System.Delegate value)
 		{
-			if (handlers == null) return;
-			
-			ArrayList delegates = (ArrayList) handlers [component];
-			if (delegates == null) return;
-			
-			delegates.Remove (value);
+			remove_method.Invoke (component, new object [] { value });
 		}
 
 		public override System.Type ComponentType
