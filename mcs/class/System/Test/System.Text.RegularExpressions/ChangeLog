@@ -1,7 +1,12 @@
+2004-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RegexBugs.cs: added test from bug #52924.
+
 2004-01-07  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* RegexBugs.cs: Improved test. In Split(), if the last match is at the end
-	of the string, an empty string must be added to the array of results.
+	* RegexBugs.cs: Improved test. In Split(), if the last match is at the
+	end of the string, an empty string must be added to the array of
+	results.
 
 2003-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

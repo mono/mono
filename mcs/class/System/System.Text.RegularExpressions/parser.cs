@@ -247,7 +247,7 @@ namespace System.Text.RegularExpressions.Syntax {
 					continue;
 				}
 
-				case '*': case '+': case '?': case '{': {
+				case '*': case '+': case '?': {
 					throw NewParseException ("Bad quantifier.");
 				}
 

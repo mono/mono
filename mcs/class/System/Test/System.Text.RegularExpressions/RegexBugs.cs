@@ -70,5 +70,14 @@ namespace MonoTests.System.Text.RegularExpressions
 			AssertEquals ("MEG #12", true, Regex.IsMatch(str, @"(something|dog|)*$"));
 
 		}
+
+		[Test]
+		public void Braces () // bug 52924
+		{
+			// Before the fix, the next line throws an exception
+			Regex regVar = new Regex(@"{\w+}");
+			Match m = regVar.Match ("{   }");
+			AssertEquals ("BR #01", false, m.Success);
+		}
 	}
 }
