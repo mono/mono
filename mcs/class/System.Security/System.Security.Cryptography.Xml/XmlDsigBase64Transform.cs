@@ -15,11 +15,8 @@ using System.Xml;
 namespace System.Security.Cryptography.Xml { 
 
 	// http://www.w3.org/2000/09/xmldsig#base64
-	[MonoTODO]
 	public class XmlDsigBase64Transform : Transform {
 
-		private Type[] input;
-		private Type[] output;
 		private CryptoStream cs;
 
 		public XmlDsigBase64Transform () 
@@ -29,28 +26,18 @@ namespace System.Security.Cryptography.Xml {
 
 		public override Type[] InputTypes {
 			get {
-				if (input == null) {
-					lock (this) {
-						// this way the result is cached if called multiple time
-						input = new Type [3];
-						input[0] = typeof (System.IO.Stream);
-						input[1] = typeof (System.Xml.XmlDocument);
-						input[2] = typeof (System.Xml.XmlNodeList);
-					}
-				}
+				Type[] input = new Type [3];
+				input[0] = typeof (System.IO.Stream);
+				input[1] = typeof (System.Xml.XmlDocument);
+				input[2] = typeof (System.Xml.XmlNodeList);
 				return input;
 			}
 		}
 
 		public override Type[] OutputTypes {
 			get {
-				if (output == null) {
-					lock (this) {
-						// this way the result is cached if called multiple time
-						output = new Type [1];
-						output[0] = typeof (System.IO.Stream);
-					}
-				}
+				Type[] output = new Type [1];
+				output[0] = typeof (System.IO.Stream);
 				return output;
 			}
 		}
@@ -67,7 +54,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public override object GetOutput (Type type) 
 		{
-			if (type != Type.GetType ("System.IO.Stream"))
+			if (type != typeof (System.IO.Stream))
 				throw new ArgumentException ("type");
 			return GetOutput ();
 		}
@@ -77,6 +64,7 @@ namespace System.Security.Cryptography.Xml {
 			// documented as not changing the state of the transform
 		}
 
+		[MonoTODO("There's still one unit test failing")]
 		public override void LoadInput (object obj) 
 		{
 			XmlNodeList xnl = null;
@@ -91,11 +79,12 @@ namespace System.Security.Cryptography.Xml {
 
 			if (xnl != null) {
 				StringBuilder sb = new StringBuilder ();
-				foreach (XmlNode xn in xnl)
-					sb.Append (xn.InnerText);
+				foreach (XmlNode xn in xnl) {
+					if (xn is XmlElement)
+						sb.Append (xn.InnerText);
+				}
 
-				UTF8Encoding utf8 = new UTF8Encoding ();
-				byte[] data = utf8.GetBytes (sb.ToString ());
+				byte[] data = Encoding.UTF8.GetBytes (sb.ToString ());
 				stream = new MemoryStream (data);
 			}
 

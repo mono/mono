@@ -36,13 +36,10 @@ namespace System.Security.Cryptography.Xml {
 		public override XmlElement GetXml () 
 		{
 			XmlDocument document = new XmlDocument ();
-			document.LoadXml ("<KeyValue xmlns=\"" + XmlSignature.NamespaceURI + "\">" + dsa.ToXmlString (false) + "</KeyValue>");
-			return document.DocumentElement;
-
-			// FIX: this way we get a xmlns="" in DSAKeyValue
-/*			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.KeyValue, XmlSignature.NamespaceURI);
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.KeyValue, XmlSignature.NamespaceURI);
+			xel.SetAttribute ("xmlns", XmlSignature.NamespaceURI);
 			xel.InnerXml = dsa.ToXmlString (false);
-			return xel;*/
+			return xel;
 		}
 
 		public override void LoadXml (XmlElement value) 
@@ -50,8 +47,7 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ();
 
-			// FIXME: again hack to match MS implementation (required for previous hack)
-			if ((value.LocalName != XmlSignature.ElementNames.KeyValue) || ((value.NamespaceURI != XmlSignature.NamespaceURI) && (value.GetAttribute("xmlns") != XmlSignature.NamespaceURI)))
+			if ((value.LocalName != XmlSignature.ElementNames.KeyValue) || (value.NamespaceURI != XmlSignature.NamespaceURI))
 				throw new CryptographicException ("value");
 
 			dsa.FromXmlString (value.InnerXml);

@@ -1,3 +1,11 @@
+2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DSAKeyValue.cs: Added patch from Atsushi Eno (to remove string
+	XML generation).
+	* RSAKeyValue.cs: Added patch from Atsushi Eno (to remove string
+	XML generation).
+	* XmlDsigBase64Transform.cs: Fixed problem when using XPath.
+
 2003-03-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DSAKeyValue.cs: New XML generation is commented. Old string technique
