@@ -658,7 +658,7 @@ namespace System.Reflection {
 		internal static extern string MonoDebugger_GetMethodIndex (MethodBase method);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern Type MonoDebugger_MakeArrayType (MonoType type, int rank);
+		internal static extern Type MonoDebugger_MakeArrayType (Type type, int rank);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int MonoDebugger_GetTypeToken (Type type);

@@ -1,3 +1,7 @@
+2005-02-12  Chris Toshok  <toshok@ximian.com>
+
+	* Assembly.cs: Correct the type of MonoDebugger_MakeArrayType.
+
 2005-02-12  Ben Maurer  <bmaurer@ximian.com>
 
 	* Binder.cs (SelectProperty): Use -1 as the dummy `I don't know
