@@ -873,7 +873,10 @@ public class TypeManager {
 	/// </summary>
 	static public string GetFullNameSignature (MemberInfo mi)
 	{
-		return mi.DeclaringType.FullName.Replace ('+', '.') + '.' + mi.Name;
+		// Unfortunately, there's no dynamic dispatch on the arguments of a function.
+		return (mi is MethodBase)
+			? GetFullNameSignature (mi as MethodBase) 
+			: mi.DeclaringType.FullName.Replace ('+', '.') + '.' + mi.Name;
 	}
 
 	static public string GetFullNameSignature (MethodBase mb)

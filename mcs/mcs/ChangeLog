@@ -1,3 +1,17 @@
+2005-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0038-1.cs, cs1640-6.cs.
+	* ecore.cs (Expression.Resolve): Remove special-case for
+	SimpleName in error-handling.
+	(Expression.almostMatchedMembers): Relax access permission to
+	protected.
+	(Expression.MemberLookupFailed): Handle duplicates in
+	almostMatchedMembers list.
+	(SimpleName.DoSimpleNameResolve): Catch CS0038 errors earlier.
+	* expression.cs (New.DoResolve): Report CS1540 for more cases.
+	* typemanager.cs (GetFullNameSignature): Use the MethodBase
+	overload if the passed in MemberInfo is a MethodBase.
+
 2005-01-12  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #70749

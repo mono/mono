@@ -5784,11 +5784,16 @@ namespace Mono.CSharp {
 				}
 
 				method = Invocation.OverloadResolve (
-					ec, (MethodGroupExpr) ml, Arguments, false, loc);
+					ec, (MethodGroupExpr) ml, Arguments, true, loc);
 				
 			}
 
-			if (method == null) { 
+			if (method == null) {
+				if (almostMatchedMembers.Count != 0) {
+					MemberLookupFailed (ec, type, type, ".ctor", null, loc);
+					return null;
+				}
+
                                 if (!is_struct || Arguments.Count > 0) {
         				Error (1501, String.Format (
 					    "New invocation: Can not find a constructor in `{0}' for this argument list",
