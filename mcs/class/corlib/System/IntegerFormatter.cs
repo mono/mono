@@ -3784,6 +3784,9 @@ class FormatParse {
 		if (signValue == 0 && nsections > 1)
 			section = 2;
 
+		if (number [0] == '-')
+			number = number.Substring (1);
+
 		FormatSection sec = sections [section];
 		digits = AdjustDigits (number.ToString (), sec);
 		if (digits.Length == 1 && digits [0] == '0')

@@ -1,3 +1,8 @@
+2002-06-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IntegerFormatter.cs:
+	(FormatParse.FormatNumber): fixed custom format for negative numbers.
+
 2002-06-21  Martin Baulig  <martin@gnome.org>
 
 	* Double.cs: Replace the private `enum State' with constants since this
