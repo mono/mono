@@ -1909,11 +1909,12 @@ namespace PEAPI
 	internal class ClassLayout : MetaDataElement
 	{
     ClassDef parent;
-    short packSize = 0, classSize = 0;
+    ushort packSize = 0;
+    uint classSize = 0;
 
 		internal ClassLayout(int pack, int cSize, ClassDef par) {
-      packSize = (short)pack;
-      classSize = (short)cSize;
+      packSize = (ushort)pack;
+      classSize = (uint)cSize;
       parent = par;
       tabIx = MDTable.ClassLayout;
 		}

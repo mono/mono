@@ -1,3 +1,8 @@
+2003-05-11 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: The class size in class layout metadata table is a
+	uint not a short.
+		
 2003-04-05 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Add indexes to GenericParameters, make string index
