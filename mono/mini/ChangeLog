@@ -1,5 +1,13 @@
 2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_codegen): Avoid infinite loop when an icall wrapper
+	contains a call to the wrapped function.
+
+	* mini-ops.h cpu-pentium.md mini-x86.c inssel-x86.brg: Add 
+	OP_<CALL>_IMM opcodes, and use them under X86.
+	
+	* mini.c (mono_jit_find_compiled_method): Fix warning.
+
 	* cpu-pentium.md: Fix length of opcodes which use x86_alu_membase_imm.
 
 	* jit-icalls.c (mono_ldftn_nosync): New JIT icall.
