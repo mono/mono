@@ -1,3 +1,8 @@
+
+Tue Sep 18 13:21:33 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fix some 64 bit issues. Safer support for delegates.
+
 2001-09-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* interp.c (ves_exec_method): implement conv.u8 opcode. 
