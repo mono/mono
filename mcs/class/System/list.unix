@@ -463,6 +463,8 @@ System.Net/WebConnectionStream.cs
 System.Net/WebException.cs
 System.Net/WebExceptionStatus.cs
 System.Net/WebHeaderCollection.cs
+System.Net/WebPermission.cs
+System.Net/WebPermissionAttribute.cs
 System.Net/WebProxy.cs
 System.Net/WebRequest.cs
 System.Net/WebResponse.cs

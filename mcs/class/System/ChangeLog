@@ -1,3 +1,7 @@
+2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* list.unix: Add WebPermission.cs, WebPermissionAttribute.cs
+
 2003-05-29  Nick Drochak <ndrochak@gol.com>
 
 	* makefile.gnu: turn on debug since it works again.
