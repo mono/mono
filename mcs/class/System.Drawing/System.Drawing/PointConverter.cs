@@ -65,7 +65,7 @@ namespace System.Drawing
 						  Type destinationType)
 		{
 			if ((destinationType == typeof (string)) && (value is Point))
-				return value.ToString ();
+				return ((Point) value).X + ", " + ((Point) value).Y;
 			
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

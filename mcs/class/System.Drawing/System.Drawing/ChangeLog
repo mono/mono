@@ -1,3 +1,9 @@
+2004-04-23  Ravindra <rkumar@novell.com>
+
+	* RectangleConverter.cs: Fixed ConvertTo () method.
+	* SizeConverter.cs: Fixed ConvertTo () method.
+	* PointConverter.cs: Fixed ConvertTo () method.
+
 2004-04-23 Sanjay Gupta <gsanjay@novell.com>
 	* ImageAnimator.cs: Implemented CanAnimate() method.
 

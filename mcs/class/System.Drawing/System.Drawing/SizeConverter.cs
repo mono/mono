@@ -68,7 +68,7 @@ namespace System.Drawing
 						  Type destinationType)
 		{
 			if ((destinationType == typeof (string)) && (value is Size))
-				return value.ToString ();
+				return ((Size) value).Width + ", " + ((Size) value).Height;
 			
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

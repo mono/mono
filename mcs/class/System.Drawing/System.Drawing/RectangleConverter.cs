@@ -14,6 +14,7 @@ using System;
 using System.ComponentModel;
 using System.Collections;
 using System.Globalization;
+using System.Text;
 
 namespace System.Drawing
 {
@@ -69,8 +70,15 @@ namespace System.Drawing
 						  object value,
 						  Type destinationType)
 		{
-			if ((destinationType == typeof (string)) && (value is Rectangle))
-				return value.ToString ();
+			if ((destinationType == typeof (string)) && (value is Rectangle)) {
+				Rectangle rect = (Rectangle) value;
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (rect.X); sb.Append (", ");
+				sb.Append (rect.Y); sb.Append (", ");
+				sb.Append (rect.Width); sb.Append (", ");
+				sb.Append (rect.Height);
+				return sb.ToString ();
+			}
 			
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
