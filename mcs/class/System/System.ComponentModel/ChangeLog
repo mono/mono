@@ -3,6 +3,8 @@
 	* PropertyDescriptorCollection.cs: Added the IList explicit
 	implementation methods. 
 
+	lots of bug fixes to get the build to compile again.
+
 2002-05-01  Duncan Mak  <duncan@ximian.com>
 
 	* ListSortDirection.cs: EnumChecked.
