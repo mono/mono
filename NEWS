@@ -1,3 +1,104 @@
+Happy new year!
+
+        The Mono team is proud to release Mono 0.18, with plenty of bug
+        fixes and improvements.  If you are a happy 0.17 user, this
+        release is a happiness extension release.  Many bugs in the
+	runtime, class libraries and C# compiler have been fixed.
+    
+        Also, our special envoy in Japan has reported that there is
+        some naming confussion about the naming of Mono, as can be
+        seen in the following documentary material:
+    
+        Atsushi Enomoto shows the source of confussion:
+    
+    	http://primates.ximian.com/~duncan/gallery/Duncan-in-Tokyo/DSCN0702
+    
+        Nick and Duncan echo it:
+    
+    	http://primates.ximian.com/~duncan/gallery/Duncan-in-Tokyo/DSCN0703
+    
+* Availability
+
+	Mono 0.18 packages and source code is available for download from:
+
+		http://www.go-mono.com/download.html
+
+	Those using Red Carpet on Linux can install Mono 0.18 from
+        the Mono channel.  The packages have already been pushed for
+        you.
+
+	At release time we have packages for Red Hat 8.0, 7.3,
+    	7.2 and 7.1 and Mandrake 8.2.
+
+* Contributors to this release
+
+	This release is brought to you by:
+
+	Alejandro Sanchez, Alp Toker, Atsushi Enomoto, Cesar Octavio
+	Lopez Netaren, Daniel Lopez (mod_mono), Daniel Morgan, Dennis
+	Hayes, Dick Porter, Dietmar Maurer, Duncan Mak, Eduardo
+	Garcia, Gaurav Vaish, Gonzalo Paniagua, Jackson Harper, Jaime
+	Anguiano, Jeroen Janssen, Johannes Roith, Jonathan Pryor, Juli
+	Mallett, Lluis Sanchez, Marco Ridoni, Martin Baulig, Miguel de
+	Icaza, Nick Drochak, Paolo Molaro, Patrik Torstensson, Piers
+	Haken, Rachel Hestilow, Rafael Teixeira, Ravi Pratap,
+	Sebastian Pouliot, Tim Coleman, Tim Hayes, Ville Palo, Zoltan
+	Varga.
+
+* New in this release
+
+	VB.NET compiler:
+        
+		Many improvements to the Mono VB.NET compiler.
+
+	ASP.NET:
+
+		Plenty of bug fixes in ASP.NET.  Larger applications
+	        can now be run with it.  The authentication system has
+	        been deployed, most changes are from Gonzalo.
+
+		We have a modified IBuySpy running (without Xslt)
+
+		If you want to run ASP.NET you can run it with either
+		our XSP proof-of-concept server, or with Daniel's
+		Apache module that can be fetched from CVS (module
+		name: mod_apache)
+
+	Type Reflector:
+		
+		A Console, Gtk# and Windows.Forms tool to browse
+		compiled assemblies and examine the types on it, from
+		Jonathan Pryor.
+
+	Moving to NUnit 2.0 
+
+		Nick continues the work on moving our test suite to NUnit 2.0 
+
+	Mobile.Controls:
+
+		Gaurav has started work on the Mobile controls, which
+		are required to run some of the reference applications
+		in full-mode like IBuySpy.
+
+	Remoting:
+
+		The remoting infrastructure has got a big boost from
+		Lluis in this release.
+
+	System.Data/XML
+
+		Ville has been working on improving our System.Data
+		classes in the XML assembly. 
+
+	Crypto:
+
+		Plenty of new crypto from Sebastien as well.  A new
+		web page in our	site can be used to track this.
+
+			http://www.go-mono.com/crypto.html
+
+
+----------------------------------------------------------------------
 Hello!
 
 	Version 0.17 of Mono has been released.
@@ -106,7 +207,13 @@ Hello!
 	Many regression tests have been added as well (Ville has been
 	doing a great job here).
 
+	Brian also created a DB provider multiplexor (The ProviderFactory)
+
 	Stuart Caborn contributed Writing XML from a DataSet.
+	Luis Fernandez contributed constraint handling code.
+
+	Also there is new a Gtk# GUI tool from Dan that can be used to
+	try out various providers.
 
 * System.XML:
 
