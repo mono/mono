@@ -1,4 +1,7 @@
 2004-11-22  Jambunathan K  <kjambunathan@novell.com>
+	* Makefile: Added new make target 'consolidate-test-results'.
+
+2004-11-22  Jambunathan K  <kjambunathan@novell.com>
 	* Makefile: Run "make run-test" or "make run-test-ondotnet" to
 	exercise mbas test cases.
 

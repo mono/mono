@@ -13,7 +13,7 @@ test-aspx: aspx_temp.vb
 	mbas --stacktrace --verbosegetoptions /target:library /r:"System.dll" /r:"System.Xml.dll" /r:"System.Data.dll" /r:"System.Web.dll" /r:"System.Web.Services.dll" /r:"System.Drawing.dll" -- aspx_temp.vb
 
 profile: *.vb *.mbs Makefile
-	mono --profile ../mbas.exe /out:x.exe /target:exe -r:System.Windows.Forms -r:System.Web /r:Mono.GetOptions /m:WriteOK *.vb *.mbs > profile
+	mono --profile ../../mbas.exe /libpath:../../../class/lib/default /out:x.exe /target:exe -r:System.Windows.Forms -r:System.Web /r:Mono.GetOptions /m:WriteOK *.vb *.mbs > profile
 
 clean:
 	@rm -f WriteOK.exe aspx_temp.dll x.exe

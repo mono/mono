@@ -12,9 +12,16 @@ CLEAN_FILES = y.output
 
 PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
 
+CONSOLIDATED_TEST_RESULTS_FILE = TestResults.log
+
 include ../build/executable.make
 
 mb-parser.cs: mb-parser.jay
 	$(topdir)/jay/jay -ctv <$(topdir)/jay/skeleton.cs $< >$@
 
+consolidate-test-results:
+	@cp Test/tests/TestResults.log $(CONSOLIDATED_TEST_RESULTS_FILE)
+	@cat Test/tests/*.vb.log >> $(CONSOLIDATED_TEST_RESULTS_FILE) 2> /dev/null; exit 0
 
+	@cat Test/errors/TestResults.log >> $(CONSOLIDATED_TEST_RESULTS_FILE)
+	@cat Test/errors/*.vb.log >> $(CONSOLIDATED_TEST_RESULTS_FILE) 2> /dev/null ; exit 0
