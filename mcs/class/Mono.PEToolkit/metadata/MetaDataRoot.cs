@@ -127,7 +127,7 @@ namespace Mono.PEToolkit.Metadata {
 					*p++ = c;
 				}
 
-				verStr = new string(pVer, 0, len-i-1, Encoding.UTF8);
+				verStr = PEUtils.GetString (pVer, 0, len-i-1, Encoding.UTF8);
 
 				// Round up to dword boundary, relative to header start.
 				pos += len;

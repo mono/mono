@@ -35,7 +35,7 @@ namespace Mono.PEToolkit.Metadata {
 			for (int i = 1; i < len; i++) {
 				if (rawData [i] == 0) {
 					fixed (void* p = &rawData[idx]) {
-						string s = new string ((sbyte*)p, 0, i - idx, Encoding.UTF8);
+						string s = PEUtils.GetString ((sbyte*)p, 0, i - idx, Encoding.UTF8);
 						strings.Add (idx, s);
 					}
 					idx = i + 1;

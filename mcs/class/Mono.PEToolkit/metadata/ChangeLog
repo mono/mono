@@ -1,0 +1,6 @@
+2003-02-17 Jackson Harper <jackson@latitudegeo.com>
+
+	* MDStream.cs: Use PEUtils.GetString instead of new string (byte*)
+	* Rows.cs: Cast a bunch of enums to int when displaying them otherwise an Exception is thrown.,
+	           this is probably a bug but I haven't had time to track it down yet.
+	* StringHeap.cs: Use PEUtils.GetString instead of new string (byte*)

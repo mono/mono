@@ -342,7 +342,7 @@ namespace Mono.PEToolkit.Metadata {
 				"Extends           : {3}" + Environment.NewLine + 
 				"FieldList         : {4}" + Environment.NewLine + 
 				"MethodList        : {5}" + Environment.NewLine,
-				this.Flags,
+				(int)this.Flags,
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])",
 				(Table == null) ? Namespace.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Namespace] + "\" (#Strings[0x" + Namespace.ToString("X") + "])",
 				this.Extends,
@@ -557,7 +557,7 @@ namespace Mono.PEToolkit.Metadata {
 				"Flags             : {0}" + Environment.NewLine + 
 				"Name              : {1}" + Environment.NewLine + 
 				"Signature         : {2}" + Environment.NewLine,
-				this.Flags,
+				(int)this.Flags,
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])",
 				"#Blob[" + Signature.ToString() + "]"
 			);
@@ -783,7 +783,7 @@ namespace Mono.PEToolkit.Metadata {
 				"ParamList         : {5}" + Environment.NewLine,
 				this.RVA,
 				this.ImplFlags,
-				this.Flags,
+				(int)this.Flags,
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])",
 				"#Blob[" + Signature.ToString() + "]",
 				"Param[" + ParamList.ToString() + "]"
@@ -996,7 +996,7 @@ namespace Mono.PEToolkit.Metadata {
 				"Flags             : {0}" + Environment.NewLine + 
 				"Sequence          : {1}" + Environment.NewLine + 
 				"Name              : {2}" + Environment.NewLine,
-				this.Flags,
+				(int)this.Flags,
 				this.Sequence,
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])"
 			);
@@ -2606,7 +2606,7 @@ namespace Mono.PEToolkit.Metadata {
 				"Flags             : {0}" + Environment.NewLine + 
 				"Name              : {1}" + Environment.NewLine + 
 				"Type              : {2}" + Environment.NewLine,
-				this.Flags,
+				(int)this.Flags,
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])",
 				"#Blob[" + Type.ToString() + "]"
 			);
@@ -2717,7 +2717,7 @@ namespace Mono.PEToolkit.Metadata {
 				"Semantics         : {0}" + Environment.NewLine + 
 				"Method            : {1}" + Environment.NewLine + 
 				"Association       : {2}" + Environment.NewLine,
-				this.Semantics,
+				(int)this.Semantics,
 				"Method[" + Method.ToString() + "]",
 				this.Association
 			);
@@ -3599,7 +3599,7 @@ namespace Mono.PEToolkit.Metadata {
 				this.MinorVersion,
 				this.BuildNumber,
 				this.RevisionNumber,
-				this.Flags,
+				(int)this.Flags,
 				"#Blob[" + PublicKey.ToString() + "]",
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])",
 				(Table == null) ? Culture.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Culture] + "\" (#Strings[0x" + Culture.ToString("X") + "])"
@@ -3951,7 +3951,7 @@ namespace Mono.PEToolkit.Metadata {
 				this.MinorVersion,
 				this.BuildNumber,
 				this.RevisionNumber,
-				this.Flags,
+				(int)this.Flags,
 				"#Blob[" + PublicKeyOrToken.ToString() + "]",
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])",
 				(Table == null) ? Culture.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Culture] + "\" (#Strings[0x" + Culture.ToString("X") + "])",
@@ -4286,7 +4286,7 @@ namespace Mono.PEToolkit.Metadata {
 				"Flags             : {0}" + Environment.NewLine + 
 				"Name              : {1}" + Environment.NewLine + 
 				"HashValue         : {2}" + Environment.NewLine,
-				this.Flags,
+				(int)this.Flags,
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])",
 				"#Blob[" + HashValue.ToString() + "]"
 			);
@@ -4405,7 +4405,7 @@ namespace Mono.PEToolkit.Metadata {
 				"TypeName          : {2}" + Environment.NewLine + 
 				"TypeNamespace     : {3}" + Environment.NewLine + 
 				"Implementation    : {4}" + Environment.NewLine,
-				this.Flags,
+				(int)this.Flags,
 				"TypeDef[" + TypeDefId.ToString() + "]",
 				(Table == null) ? TypeName.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [TypeName] + "\" (#Strings[0x" + TypeName.ToString("X") + "])",
 				(Table == null) ? TypeNamespace.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [TypeNamespace] + "\" (#Strings[0x" + TypeNamespace.ToString("X") + "])",
@@ -4523,7 +4523,7 @@ namespace Mono.PEToolkit.Metadata {
 				"Name              : {2}" + Environment.NewLine + 
 				"Implementation    : {3}" + Environment.NewLine,
 				this.Offset,
-				this.Flags,
+				(int)this.Flags,
 				(Table == null) ? Name.ToString() : "\"" + ((Table.Heap.Stream.Root.Streams["#Strings"] as MDStream).Heap as StringsHeap) [Name] + "\" (#Strings[0x" + Name.ToString("X") + "])",
 				this.Implementation
 			);

@@ -42,7 +42,7 @@ namespace Mono.PEToolkit.Metadata {
 
 				int len = (int) (p - pName);
 				if (len != 0) {
-					name = new string(pName, 0, len, Encoding.ASCII);
+					name = PEUtils.GetString (pName, 0, len, Encoding.ASCII);
 				} else {
 					throw new BadImageException("Invalid stream name.");
 				}
