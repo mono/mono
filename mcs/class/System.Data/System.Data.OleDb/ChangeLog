@@ -1,9 +1,14 @@
+2004-06-04  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* OleDbDataAdapter.cs: added stub for missing 
+	Dispose override
+
 2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
 
-       * OleDbParameter.cs: added missing attributes
-       * OleDbPermission.cs: added missing attributes
-       * OleDbConnection.cs: added missing attributes
-       * OleDbDataAdapter.cs: added missing attributes
+        * OleDbParameter.cs: added missing attributes
+        * OleDbPermission.cs: added missing attributes
+        * OleDbConnection.cs: added missing attributes
+        * OleDbDataAdapter.cs: added missing attributes
 
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 

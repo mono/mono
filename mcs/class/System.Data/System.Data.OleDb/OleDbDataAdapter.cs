@@ -238,5 +238,11 @@ namespace System.Data.OleDb
 
 		#endregion // Events and Delegates
 
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+
 	}
 }
