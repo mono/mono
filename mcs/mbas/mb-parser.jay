@@ -1660,6 +1660,19 @@ interface_member_declarations
 	;
 
 interface_member_declaration
+	: opt_attributes
+	  opt_modifiers
+	  { 
+	   	current_attributes = (Attributes) $1;
+	   	current_modifiers = ((int)$2) | Modifiers.ABSTRACT; 
+	  }
+	  interface_member_declarator
+	  {
+	   	$$ = $3;
+	  }
+	;
+	
+interface_member_declarator
 	: interface_method_declaration		
 	  { 
 		Method m = (Method) $1;
@@ -1682,10 +1695,8 @@ opt_new
 interface_method_declaration
 	: SUB identifier opt_params logical_end_of_line
 	  {
-		current_modifiers |= Modifiers.ABSTRACT;
-	  			  	
 	  	Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
-					    (Parameters) $3, null, null, lexer.Location);
+					    (Parameters) $3, current_attributes, null, lexer.Location);
 		
 		$$ = method;
 	  }
@@ -1694,10 +1705,8 @@ interface_method_declaration
 		Expression ftype = ($5 == null) ? (($3 == null) ? TypeManager.	
 			system_object_expr : (Expression) $3 ) : (Expression) $5;
 		
-		current_modifiers |= Modifiers.ABSTRACT;
-
 	  	Method method = new Method ((Expression) ftype, (int) current_modifiers, 
-						(string) $2,(Parameters) $4, null, null, 
+						(string) $2,(Parameters) $4, current_attributes, null, 
 						lexer.Location);
 		
 		$$ = method;
@@ -1710,8 +1719,6 @@ interface_property_declaration
 		Expression ftype = ($5 == null) ? (($3 == null) ? 
 				TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;
 
-		current_modifiers |= Modifiers.ABSTRACT;
-		
 		current_local_parameters = (Parameters) $4;
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
 			get_parameters = current_local_parameters.Copy (lexer.Location);
