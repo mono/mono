@@ -849,12 +849,12 @@ MonoImage *
 mono_image_open (const char *fname, MonoImageOpenStatus *status)
 {
 	MonoImage *image, *image2;
-	const char *absfname;
+	char *absfname;
 	
 	g_return_val_if_fail (fname != NULL, NULL);
 	
 	if (g_path_is_absolute (fname)) 
-		absfname = fname;
+		absfname = (char*)fname;
 	else {
 		gchar *path = g_get_current_dir ();
 		absfname = g_build_filename (path, fname, NULL);
@@ -895,7 +895,7 @@ mono_image_open (const char *fname, MonoImageOpenStatus *status)
 		return image2;
 	}
 	g_hash_table_insert (loaded_images_hash, image->name, image);
-	if (image->assembly_name)
+	if (image->assembly_name && (g_hash_table_lookup (loaded_images_hash, image->assembly_name) == NULL))
 		g_hash_table_insert (loaded_images_hash, (char *) image->assembly_name, image);	
 	g_hash_table_insert (loaded_images_guid_hash, image->guid, image);
 	LeaveCriticalSection (&images_mutex);
@@ -950,19 +950,32 @@ mono_image_close (MonoImage *image)
 	if (image == image2) {
 		/* This is not true if we are called from mono_image_open () */
 		g_hash_table_remove (loaded_images_hash, image->name);
-		if (image->assembly_name)
-			g_hash_table_remove (loaded_images_hash, (char *) image->assembly_name);	
 		g_hash_table_remove (loaded_images_guid_hash, image->guid);
 		/* Multiple images might have the same guid */
 		build_guid_table ();
-	}	
+	}
+	if (image->assembly_name && (g_hash_table_lookup (loaded_images_hash, image->assembly_name) == image))
+		g_hash_table_remove (loaded_images_hash, (char *) image->assembly_name);	
 	LeaveCriticalSection (&images_mutex);
 
 	if (image->f)
 		fclose (image->f);
-	if (image->raw_data_allocated)
-		g_free (image->raw_data);
+	if (image->raw_data_allocated) {
+		/* image->raw_metadata and cli_sections might lie inside image->raw_data */
+		MonoCLIImageInfo *ii = image->image_info;
+		int i;
 
+		if ((image->raw_metadata > image->raw_data) &&
+			(image->raw_metadata <= (image->raw_data + image->raw_data_len)))
+			image->raw_metadata = NULL;
+
+		for (i = 0; i < ii->cli_section_count; i++)
+			if (((char*)(ii->cli_sections [i]) > image->raw_data) &&
+				((char*)(ii->cli_sections [i]) <= ((char*)image->raw_data + image->raw_data_len)))
+				ii->cli_sections [i] = NULL;
+
+		g_free (image->raw_data);
+	}
 	g_free (image->name);
 	g_free (image->files);
 

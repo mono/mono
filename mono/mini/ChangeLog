@@ -1,4 +1,90 @@
+2004-10-15  Geoff Norton  <gnorton@customerdna.com>
 
+	* mini-ppc.c (calculate_sizes): Marshal valuetypes for pinvoke
+        methods as their native size, fixed bug #57543, #57545.
+	* mini-ppc.c (mono_arch_output_basic_block): Use mulli for imm16 types
+        This saves a temporary register and mullw call down into 1 (minor perf
+        increase for cases like sum = sum * 5;  This use to translate into:
+            li r11,5
+            mullw r28,r28,r11
+        It now translates to
+            mulli r28,r28,5
+
+2004-10-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* trace.c (mono_trace_eval): Use mono_method_desc_full_match. Fixes
+	#68388.
+
+2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Fix LDSTR in dynamic methods. Fixes #66132.
+	
+2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* inssel.brg: make ldelema check aot friendly.
+
+Thu Sep 9 20:57:53 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-*.c, mini-ops.h, inssel-long32.brg: introduced
+	OP_ADDCC_IMM and OP_SUBCC_IMM (add/sub immediate that will
+	set the carry/borrow flag). The sparc and s390 implementations
+	can now use optimized versions (and simplify the code). ppc bugfixes.
+
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-long32.brg: Fix OP_LCONV_TO_OVF_I1 rule. Fixes #64578.
+
+2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-x86.brg inssel-amd64: Add yet another missing tree->dreg assignment.
+
+	* mini-x86.c (mono_arch_local_regalloc): Fix bug in long register
+	allocation. Fixes #63085.
+
+2004-08-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-x86.brg: Set dreg of LOCALLOC correctly.
+
+Tue Aug 3 11:20:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: mul.ovf.un exception name fix.
+
+Tue Aug 3 11:19:07 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: reg allocator fix.
+
+Tue Aug 3 11:17:07 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: make sure temp regs are not used for global reg
+	allocation.
+
+Tue Jul 27 16:05:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-sparc.c, mini-s390.c: keep track of line
+	numbers in the debug info (spotted by Geoff Norton,
+	<gnorton@customerdna.com>).
+
+Mon Jul 12 17:47:00 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-ppc.brg: arguments on the stack are always
+	relative to the stack pointer (spotted by Neale Ferguson).
+
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+ 
+ 	* exceptions-x86.c: delay appending the method name to the trace until
+ 	after mono_jit_info_table_find is called, as this gets the real
+ 	MonoMethod.
+ 
+2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (handle_stack_args): Handle some corner cases. Fixes 
+	58863.
+
+2004-07-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (optimize_branches): Fix linking of bblocks in branch->branch
+	optimization.
+	
 Mon Jun 28 18:05:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: reinstated mono_compile_get_interface_var()

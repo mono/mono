@@ -1,3 +1,128 @@
+2004-10-14  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_accept): Revert the previous change.  We now
+	set the accepted socket to have the same blocking status as the
+	listening socket in managed code.  This follows MS behaviour.
+	
+2004-10-14  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_accept): On Darwin, make sure a newly
+	accept()ed socket is blocking.  Fixes bug 67355, patch by
+	grompf@sublimeintervention.com.
+
+2004-09-28  Dick Porter  <dick@ximian.com>
+
+	* io.c (pipe_close_private): Fix one small typo in the last change
+	that totally hosed process creation with redirected pipes.
+
+2004-09-24  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h: 
+	* sockets.c: 
+	* socket-private.h: 
+	* io.c: 
+	* io-private.h: 
+	* handles-private.h: Cope when a file descriptor is reused while
+	the handle that thought it owned it is still referenced, instead
+	of asserting.  Probably fixes bug 66479, though we've been unable
+	to reproduce it.
+
+2004-09-09  Dick Porter  <dick@ximian.com>
+
+	* error.c:
+	* io.c: Set error codes everywhere.
+
+2004-09-06  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_unref): Reset the private record's type
+	(_wapi_handle_process_fork): Fix long-standing bug in checking
+	handle return values.  Also do the required bookkeeping with the
+	new process's handles.
+
+	* daemon.c: When creating a new process's handles, check whether
+	the shared space needs to be increased
+
+2004-08-19  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_count_signalled_handles): Fix thinko
+	introduced with the fd offset stuff: unlock handles properly when
+	backing off.  Fixes the monologue hang at exit.
+
+2004-08-18  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: 
+	* io.c: Check that new fds fit in the table, return error if not
+
+	* daemon.c (_wapi_daemon_main): 
+	* handles.c (shared_init): Have all processes agree on a size for
+	the fd table.
+
+2004-08-17  Dick Porter  <dick@ximian.com>
+
+	* daemon.c (process_new): 
+	* handles.c (_wapi_handle_new_internal): Cope when the space
+	reserved for file descriptors is larger than the shared segment
+	size.  Fixes the crash reported when running mono under gdb on
+	macosx.
+
+2004-08-16  Dick Porter  <dick@ximian.com>
+
+	* sockets.c:
+	* io.c:
+	* handles-private.h (_wapi_handle_fd_offset_to_handle): Improve
+	error checking with passed-in file descriptors.
+
+2004-08-11  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: 
+	* io.c: Returned handle values are the file descriptor the handle
+	encapsulates
+
+	* handles.c: 
+	* handles-private.h: 
+	* daemon.c: Reserve the range of handles that can have the same
+	values as file descriptors.  These won't be used, but the values
+	will be used as file, console, pipe or socket handles.  The fd to
+	handle mapping is done internally and is invisible to users.
+	Fixes bug 61828.
+
+	* wapi-private.h (_WAPI_HANDLE_VERSION): Increment, because we now
+	reserve a chunk of handle space.
+
+2004-07-22  Dick Porter  <dick@ximian.com>
+
+	* timed-thread.c: 
+	* threads.c: Move the destruction of the internal thread data to
+	after the thread has been joined.  Fixes bug 61418.
+
+2004-07-14  Dick Porter  <dick@ximian.com>
+
+	* wait.c (test_and_own): When not waiting for all handles to
+	become signalled, only own and return the lowest.  All the
+	documentation suggests that the old way was correct, but
+	experimentation shows it actually works like this.  Patch by
+	Sébastien Robitaille
+	(sebastien.robitaille@croesus.com), fixes bug 61511.
+
+2004-07-08  Dick Porter  <dick@ximian.com>
+
+	* io.c (file_seek): If there is a high 32bit offset part, make
+	sure the low part isn't sign-extended.  Set error codes when
+	returning failure.  Fixes bug 61131.
+
+2004-07-06  Dick Porter  <dick@ximian.com>
+
+	* io.c (file_setfiletime): Check for underflow when converting to
+	time_t values.  Set error codes when returning failure.  Fixes bug
+	60970.
+
+2004-07-05  Dick Porter  <dick@ximian.com>
+
+	* mutexes.c (mutex_ops_init): Make the named mutex mutex sharable.
+
+	* daemon.c (unref_handle): Only destroy a handle if all processes
+	have released it, not just the current one.  Fixes bug 60887.
+
 2004-06-24  Dick Porter  <dick@ximian.com>
 
 	* mutexes.c: Indicate when a named mutex was reused

@@ -1,3 +1,7 @@
+2004-10-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-codeman.c: Fall back to malloc if MAP_ANON is not defined.
+
 2004-06-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-sha1.c: Use gint32 for 32 types. Fixes random memory corruption

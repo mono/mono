@@ -2546,6 +2546,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		code_start = (guint8*)code;
 		//	if (ins->cil_code)
 		//		g_print ("cil code\n");
+		mono_debug_record_line_number (cfg, ins, offset);
 
 		switch (ins->opcode) {
 		case OP_STOREI1_MEMBASE_IMM:
@@ -2651,6 +2652,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_ADD:
 			sparc_add (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
+		case OP_ADDCC_IMM:
 		case OP_ADD_IMM:
 			/* according to inssel-long32.brg, this should set cc */
 			EMIT_ALU_IMM (ins, add, TRUE);
@@ -2668,6 +2670,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_SUB:
 			sparc_sub (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
+		case OP_SUBCC_IMM:
 		case OP_SUB_IMM:
 			/* according to inssel-long32.brg, this should set cc */
 			EMIT_ALU_IMM (ins, sub, TRUE);

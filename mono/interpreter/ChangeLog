@@ -1,3 +1,9 @@
+2004-07-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mintops.h: Applied patch from Marcin Krzyzanowski (krzak@pld-linux.org). Add support for unaligned access on little endian machines.
+
+	* interp.c:Applied patch from Marcin Krzyzanowski (krzak@pld-linux.org). Fix crash seen on amd64.
+
 2004-06-24  David Waite  <mass@akuma.org>
 
 	* interp.c:  change to C90-style comments from C99/C++-style

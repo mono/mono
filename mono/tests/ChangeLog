@@ -1,3 +1,9 @@
+2004-09-07  Duncan Mak  <duncan@ximian.com>
+ 
+ 	* typeof-ptr.cs: Add unsafe sections to the code that's using
+	pointers directly. This was breaking the test stage on the build
+	boxes.
+
 2004-05-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* invoke.cs: Add an Invoke test.

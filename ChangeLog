@@ -1,3 +1,45 @@
+2004-10-14  Joe Shaw  <joeshaw@novell.com>
+ 
+        * man/mono.1: Fix the syntax of the M: trace syntax
+
+2004-10-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* configure.in: Add some checks for cygwin weirdness.
+
+2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* configure.in: added check for kqueue. Patch from Geoff Norton
+	in HEAD.
+
+2004-08-17  Dick Porter  <dick@ximian.com>
+
+	* configure.in: Correct intl library for FreeBSD and OpenBSD.
+	Fixes bug 62884, patch by Tom McLaughlin (tmclaugh@sdf.lonestar.org).
+
+2004-07-27  John Merryweather Cooper <john_m_cooper@yahoo.com>
+	* configure.in: Disable __thread test (TLS) for FreeBSD as
+	it succeeds on FreeBSD 5.x when it should fail.  Fix pthread
+	library detection for FreeBSD 4.x since pthread is embedded
+	in libc_r on this platform.  Fix some typos in my host
+	regexes for freebsd.
+	
+2004-07-23  Dick Porter  <dick@ximian.com>
+
+	* configure.in: Changes for FreeBSD thread support by John
+	Merryweather Cooper <john_m_cooper@yahoo.com>.
+
+2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
+ 
+ 	* configure.in: Add --with-tls option to replace the misnamed 
+ 	--with-nptl option.
+
+2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* configure.in: Fix trunc check + add SPARC64 defines.	
+
+       * marshal.c (mono_marshal_get_managed_wrapper): Handle returning
+       delegates from a delegate. Fixes #61033.       
+
 2004-06-29  Jackson Harper  <jackson@ximian.com>
 
 	* man/gacutil.1: Update man with new command line options.

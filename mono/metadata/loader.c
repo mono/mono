@@ -580,27 +580,40 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 
 	g_assert (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL);
 
-	if (exc_class) {
-		*exc_class = NULL;
-		*exc_arg = NULL;
-	}
-
 	if (method->addr)
 		return method->addr;
-	if (!piinfo->implmap_idx)
-		return NULL;
-	
-	mono_metadata_decode_row (im, piinfo->implmap_idx - 1, im_cols, MONO_IMPLMAP_SIZE);
 
-	piinfo->piflags = im_cols [MONO_IMPLMAP_FLAGS];
-	import = mono_metadata_string_heap (image, im_cols [MONO_IMPLMAP_NAME]);
-	scope_token = mono_metadata_decode_row_col (mr, im_cols [MONO_IMPLMAP_SCOPE] - 1, MONO_MODULEREF_NAME);
-	orig_scope = mono_metadata_string_heap (image, scope_token);
+	if (method->klass->image->dynamic) {
+		MonoReflectionMethodAux *method_aux = 
+			mono_g_hash_table_lookup (
+				((MonoDynamicImage*)method->klass->image)->method_aux_hash, method);
+		if (!method_aux)
+			return NULL;
+
+		import = method_aux->dllentry;
+		orig_scope = method_aux->dll;
+	}
+	else {
+		if (!piinfo->implmap_idx)
+			return NULL;
+
+		mono_metadata_decode_row (im, piinfo->implmap_idx - 1, im_cols, MONO_IMPLMAP_SIZE);
+
+		piinfo->piflags = im_cols [MONO_IMPLMAP_FLAGS];
+		import = mono_metadata_string_heap (image, im_cols [MONO_IMPLMAP_NAME]);
+		scope_token = mono_metadata_decode_row_col (mr, im_cols [MONO_IMPLMAP_SCOPE] - 1, MONO_MODULEREF_NAME);
+		orig_scope = mono_metadata_string_heap (image, scope_token);
+	}
 
 	mono_dllmap_lookup (image, orig_scope, import, &new_scope, &import);
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
 			"DllImport attempting to load: '%s'.", new_scope);
+
+	if (exc_class) {
+		*exc_class = NULL;
+		*exc_arg = NULL;
+	}
 
 #ifndef PLATFORM_WIN32
 	/*
@@ -616,17 +629,27 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 	 * Try loading the module using a variety of names
 	 */
 	for (i = 0; i < 2; ++i) {
-		if (i == 0)
+		switch (i) {
+		case 0:
 			/* Try the original name */
 			file_name = g_strdup (new_scope);
-		else {
+			break;
+		case 1:
 			/* Try trimming the .dll extension */
 			if (strstr (new_scope, ".dll") == (new_scope + strlen (new_scope) - 4)) {
 				file_name = g_strdup (new_scope);
 				file_name [strlen (new_scope) - 4] = '\0';
 			}
 			else
-				break;
+				continue;
+			break;
+		default:
+			if (strstr (new_scope, "lib") != new_scope) {
+				file_name = g_strdup_printf ("lib%s", new_scope);
+			}
+			else
+				continue;
+			break;
 		}
 
 		if (!gmodule) {
@@ -712,6 +735,21 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 			       
 			break;					
 		}
+
+#ifdef PLATFORM_WIN32
+		/* Try the stdcall mangled name */
+		if (!method->addr) {
+			/* FIX: Compute this correctly */
+			mangled_name = g_strdup_printf ("%s@%d", import, method->signature->param_count * sizeof (gpointer));
+			g_module_symbol (gmodule, mangled_name, &method->addr); 
+			g_free (mangled_name);
+		}
+		if (!method->addr) {
+			mangled_name = g_strdup_printf ("_%s@%d", import, method->signature->param_count * sizeof (gpointer));
+			g_module_symbol (gmodule, mangled_name, &method->addr); 
+			g_free (mangled_name);
+		}
+#endif
 	}
 
 	if (!method->addr) {

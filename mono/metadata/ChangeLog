@@ -1,3 +1,246 @@
+2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.c: Avoid overwriting values in the loaded_images_hash when an
+	assembly is loaded multiple times. Fixes #61152.
+
+	* metadata.c (mono_metadata_parse_type_full): Fix parsing of custom
+	modifiers.
+	
+	* appdomain.c (ves_icall_System_AppDomain_ExecuteAssembly): Fix 
+	argument of mono_get_exception_file_not_found.
+
+	* assembly.c (mono_assembly_names_equal): Compare the cultures as well,
+	so multiple satellite assemblies for the same name can be loaded.
+	Fixes #68259.
+
+	* appdomain.c (mono_domain_assembly_preload): Actually return the loaded assembly, 
+	not NULL.
+
+	* icall.c (ves_icall_type_is_subtype_of): Fix this for byref types.
+	(ves_icall_type_is_assignable_from): Ditto. Fixes #68582.
+	
+	* gc.c (finalize_domain_objects): Call GC_invoke_finalizers () so
+	pending finalizers are not invoked after the appdomain has been 
+	unloaded. Fixes #67862.
+
+2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (abort_appdomain_thread): Fix unref errors.
+
+2004-10-07  Jackson Harper  <jackson@ximian.com>
+
+	* culture-info-tables.h: regenerate file.
+
+2004-10-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Try the dllname prefixed with
+	'lib' too. Fixes #63130.
+
+2004-10-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* threadpool.c: the ares hashtable needs a critical section around it.
+	this prevents some nasty segfaults
+
+2004-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threads.c: don't call mono_thread_detach() in start_wrapper(),
+	avoiding a possible hang in GetCurrentThreadId(0). Fixes bug #65379.
+
+2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (method_encode_code): Align method headers properly.
+	Fixes #66025.
+
+2004-09-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: reuse allocated slots in the queue.
+
+2004-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
+	(mono_domain_set): allow setting a domain that is being unloaded.
+	(mono_domain_unload): invoke the DomainUnload callbacks in the domain
+	being unloaded.
+
+2004-09-18  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c, debug-mono-symfile.c: Merged my locking changes
+	from HEAD.
+
+2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Add support for stdcall name
+	mangling.
+
+2004-09-16  Lluis Sanchez Gual  <lluis@novell.com>
+ 
+	* locales.c: nullify the ICU_collator member of CompareInfo when it is
+	  finalized. There where random SIGSEVs at program termination, when
+	  an object being finalized was trying to do a string comparison and
+	  the current culture was already finalized.
+ 
+2004-09-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (ves_icall_System_AppDomain_createDomain): Load all
+	assemblies from the parent. Fixes #65665.
+
+2004-09-14  Lluis Sanchez Gual  <lluis@novell.com>
+ 
+	* object.c: Added a "done" flag to TypeInitializationLock. This avoids
+ 	false deadlock checks in class initialization.
+ 
+2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h reflection.c loader.c: Allow dynamic construction of
+	pinvoke methods. Fixes #65571.
+
+2004-09-08  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* object.c: In mono_message_invoke, fill the output parameter array after
+	  calling the managed method (it was done before the call). This fixes
+	  bug #59299.
+
+2004-09-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.c (mono_image_close): Applied patch from 
+	vasantha.paulraj@honeywell.com (Vasantha selvi). Fix crash when an
+	assembly is loaded multiple times from data.
+	
+	* image.c (mono_image_open): Fix warning.
+
+2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_create_runtime_class): Initialize
+	klass->nested_classes. Fixes #61224.
+
+2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_param_get_objects): Initialize the default value
+	with DBNull.Value, not null. Fixes #62123.
+
+2004-09-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Remove FIXME and
+	throw an exception with a cute explanation.
+
+2004-09-06  Dick Porter  <dick@ximian.com>
+
+	* process.c (ves_icall_System_Diagnostics_Process_Start_internal):
+	Close the new process's thread handle, as we don't use it.  The
+	handle stays around forever otherwise.
+
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: provide more information when loading an assembly fails.
+
+2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: don't expect the development fam package to be
+	installed.  If HAVE_KQUEUE return mode 3 to use the new kqueue
+	watcher. Patch by Geoff Norton.
+
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_alloc): Return a valid pointer on size 0
+	as well.
+
+2004-08-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* gc.c: actually enable paolo's patch to make GC warnings
+	use the trace api.
+
+2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
+ 
+ 	* metadata.c (mono_metadata_parse_type): Alloc pinned, byref and
+ 	custom modifiers to be in any order. Fixes #61990.
+
+Thu Aug 5 17:11:44 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix to deal with object[] arrays in custom ctors
+	(bug #62550).
+
+Tue Aug 3 17:54:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: make GC warning messages use the trace API, they are just
+	noise to most of the users.
+
+Tue Aug 3 16:40:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, object.h: mono_gc_handle_*() interface and
+	AddrOfPinnedObject fixes. GC handle support even without GC.
+
+Fri Jul 30 16:49:05 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: always create an object if null is passed
+	to Invoke() where a valuetype is expected.
+
+2004-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: hack to build correctly the private bin path on windows.
+	Fixes bug #61991.
+
+2004-07-28  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_RecvFrom_internal): Check
+	returned sockaddr size before creating the remote address object.
+	Patch by Nick Vaughan (dev@6wardlaw.freeserve.co.uk), fixes bug
+	61608.
+
+2004-07-28  Dick Porter  <dick@ximian.com>
+
+	* locales.c (string_invariant_compare_char): Fix invariant char
+	compares between upper and lower cases.  Fixes bug 61458.
+
+Tue Jul 27 15:58:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* debug-mono-symfile.c: fix one more endianess issue, from a patch
+	by Geoff Norton (<gnorton@customerdna.com>).
+
+Tue Jul 27 15:47:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fix class loads for pointer types (typeof(int) !=
+	typeof(int*)).
+
+2004-07-24  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_get_type_info): Only write a class
+	layout entry if we actually have a size or a packing size.
+
+2004-07-13  Peter Williams  <peter@newton.cx>
+ 
+ 	* process.c (complete_path): Make sure we don't attempt to execute
+ 	directories.
+  
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* debug-helpers.c: undo my previous patch and fixed the real issue in
+	../mini/exceptions-x86.c
+
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* debug-helpers.c: prevent SIGSEGV. It happened running xsp on monodoc
+	when no HOME env. variable was set and a NullRef was thrown in a .cctor
+	called from other .cctors.
+
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* locales.c (ves_icall_System_String_InternalReplace_Str_Comp):
+	Don't do any more processing if the matched length was 0.  It was
+	increasing the size of the string before.  Fixes bug 61167.
+
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* socket-io.h:
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal):
+	Add support for SO_PEERCRED if its available.
+
+2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
+
+      * marshal.c: Fix managed->native stringbuilder marshalling. Implement
+      marshalling of stringbuilder arrays. Fixes #59900.
+
 2004-06-29  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_add_method): Protect the whole function
@@ -10913,4 +11156,3 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
-

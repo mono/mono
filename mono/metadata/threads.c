@@ -243,11 +243,8 @@ static guint32 start_wrapper(void *data)
 	mono_thread_push_appdomain_ref (mono_domain_get ());
 
 	thread_adjust_static_data (thread);
-#ifndef PLATFORM_WIN32
 #ifdef DEBUG
 	g_message (G_GNUC_PRETTY_FUNCTION "start_wrapper for %d\n", thread->tid);
-#endif
-	pthread_cleanup_push ((void (*) (void *)) mono_thread_detach, thread);
 #endif
 
 	start_func (this);
@@ -273,8 +270,6 @@ static guint32 start_wrapper(void *data)
 	TlsSetValue (current_object_key, NULL);
 	
 	thread_cleanup (thread);
-#else
-	pthread_cleanup_pop (1);
 #endif
 
 	return(0);
@@ -1520,10 +1515,14 @@ abort_appdomain_thread (gpointer key, gpointer value, gpointer user_data)
 
 	if (mono_thread_has_appdomain_ref (thread, domain)) {
 		/* printf ("ABORTING THREAD %p BECAUSE IT REFERENCES DOMAIN %s.\n", thread, domain->friendly_name); */
+		HANDLE handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
+		if (handle == NULL)
+			return;
+
 		ves_icall_System_Threading_Thread_Abort (thread, NULL);
 
 		if(data->wait.num<MAXIMUM_WAIT_OBJECTS) {
-			data->wait.handles [data->wait.num] = thread->handle;
+			data->wait.handles [data->wait.num] = handle;
 			data->wait.threads [data->wait.num] = thread;
 			data->wait.num++;
 		} else {
