@@ -1,3 +1,7 @@
+2002-03-26  Dick Porter  <dick@ximian.com>
+
+	* makefile (linux): Abandon the build if any of the subdir makes fail
+
 2002-03-07  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile: Change order of build so corlib is built before nunit since

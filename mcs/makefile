@@ -9,7 +9,7 @@ windows:
 
 linux:
 	for i in $(DIRS); do 			\
-		(cd $$i; make linux)		\
+		(cd $$i; make linux) || exit 1;	\
 	done
 
 test:
