@@ -34,7 +34,6 @@ namespace System.Data.OleDb
 		internal OleDbDataReader (OleDbCommand command, ArrayList results) 
 		{
 			this.command = command;
-			this.command.Connection.DataReader = this;
 			open = true;
 			if (results != null)
 				gdaResults = results;
@@ -132,8 +131,6 @@ namespace System.Data.OleDb
 			open = false;
 			currentResult = -1;
 			currentRow = -1;
-
-			this.command.Connection.DataReader = null;
 		}
 
 		~OleDbDataReader ()

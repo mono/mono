@@ -234,8 +234,6 @@ namespace System.Data.OleDb
 			if (connection.State == ConnectionState.Closed)
 				throw new InvalidOperationException ("State == Closed");
 			// FIXME: a third check is mentioned in .NET docs
-			if (connection.DataReader != null)
-				throw new InvalidOperationException ("DataReader != null");
 
 			IntPtr gdaConnection = connection.GdaConnection;
 			IntPtr gdaParameterList = parameters.GdaParameterList;
@@ -264,8 +262,6 @@ namespace System.Data.OleDb
 
 			if (connection.State != ConnectionState.Open)
 				throw new InvalidOperationException ("State != Open");
-			if (connection.DataReader != null)
-				throw new InvalidOperationException ("DataReader != null");
 
 			this.behavior = behavior;
 
@@ -303,9 +299,6 @@ namespace System.Data.OleDb
 		
 		public object ExecuteScalar ()
 		{
-			if (connection.DataReader != null)
-				throw new InvalidOperationException ("DataReader != null");
-			
 			SetupGdaCommand ();
 			OleDbDataReader reader = ExecuteReader ();
 			if (reader == null) {

@@ -62,27 +62,45 @@ namespace System.Data.OleDb
 		#region Properties
 
 		public OleDbCommand DeleteCommand {
-			get { return deleteCommand; }
-			set { deleteCommand = value; }
+			get {
+				return deleteCommand;
+			}
+			set {
+				deleteCommand = value;
+			}
 		}
 
 		public OleDbCommand InsertCommand {
-			get { return insertCommand; }
-			set { insertCommand = value; }
+			get {
+				return insertCommand;
+			}
+			set {
+				insertCommand = value;
+			}
 		}
 
 		public OleDbCommand SelectCommand {
-			get { return selectCommand; }
-			set { selectCommand = value; }
+			get {
+				return selectCommand;
+			}
+			set {
+				selectCommand = value;
+			}
 		}
 
 		public OleDbCommand UpdateCommand {
-			get { return updateCommand; }
-			set { updateCommand = value; }
+			get {
+				return updateCommand;
+			}
+			set {
+				updateCommand = value;
+			}
 		}
 
 		IDbCommand IDbDataAdapter.DeleteCommand {
-			get { return DeleteCommand; }
+			get {
+				return DeleteCommand;
+			}
 			set { 
 				if (!(value is OleDbCommand))
 					throw new ArgumentException ();
@@ -91,7 +109,9 @@ namespace System.Data.OleDb
 		}
 
 		IDbCommand IDbDataAdapter.InsertCommand {
-			get { return InsertCommand; }
+			get {
+				return InsertCommand;
+			}
 			set { 
 				if (!(value is OleDbCommand))
 					throw new ArgumentException ();
@@ -100,7 +120,9 @@ namespace System.Data.OleDb
 		}
 
 		IDbCommand IDbDataAdapter.SelectCommand {
-			get { return SelectCommand; }
+			get {
+				return SelectCommand;
+			}
 			set { 
 				if (!(value is OleDbCommand))
 					throw new ArgumentException ();
@@ -109,17 +131,27 @@ namespace System.Data.OleDb
 		}
 
 		MissingMappingAction IDataAdapter.MissingMappingAction {
-			get { return missingMappingAction; }
-			set { missingMappingAction = value; }
+			get {
+				return missingMappingAction;
+			}
+			set {
+				missingMappingAction = value;
+			}
 		}
 
 		MissingSchemaAction IDataAdapter.MissingSchemaAction {
-			get { return missingSchemaAction; }
-			set { missingSchemaAction = value; }
+			get {
+				return missingSchemaAction;
+			}
+			set {
+				missingSchemaAction = value;
+			}
 		}
 		
 		IDbCommand IDbDataAdapter.UpdateCommand {
-			get { return UpdateCommand; }
+			get {
+				return UpdateCommand;
+			}
 			set { 
 				if (!(value is OleDbCommand))
 					throw new ArgumentException ();
@@ -128,23 +160,107 @@ namespace System.Data.OleDb
 		}
 
 		ITableMappingCollection IDataAdapter.TableMappings {
-			get { return TableMappings; }
+			get {
+				return TableMappings;
+			}
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+		public int Fill (DataTable dataTable, object ADODBRecordSet)
 		{
-			return new OleDbRowUpdatedEventArgs (dataRow, command, statementType, tableMapping);
+			throw new NotImplementedException ();
 		}
 
-		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+		public int Fill (DataSet dataSet, object ADODBRecordSet, string srcTable)
 		{
-			return new OleDbRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
+			throw new NotImplementedException ();
 		}
 
+		public override int Fill (DataSet dataSet)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override int Fill (DataTable dataTable, IDataReader dataReader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override int Fill (DataTable dataTable,
+					     IDbCommand command,
+					     CommandBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override int Fill (DataSet dataSet,
+					     string srcTable,
+					     IDataReader dataReader,
+					     int startRecord,
+					     int maxRecords)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override int Fill (DataSet dataSet,
+					     int startRecord,
+					     int maxRecords,
+					     string srcTable,
+					     IDbCommand command,
+					     CommandBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override DataTable[] FillSchema (DataSet dataSet,
+							SchemaType schemaType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override DataTable FillSchema (DataTable dataTable,
+							 SchemaType schemaType,
+							 IDbCommand command,
+							 CommandBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override DataTable[] FillSchema (DataSet dataSet,
+							   SchemaType schemaType,
+							   IDbCommand command,
+							   string srcTable,
+							   CommandBehavior behavior)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow,
+									      IDbCommand command,
+									      StatementType statementType,
+									      DataTableMapping tableMapping)
+		{
+			return new OleDbRowUpdatedEventArgs (dataRow, command,
+							     statementType, tableMapping);
+		}
+
+		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow,
+										IDbCommand command,
+										StatementType statementType,
+										DataTableMapping tableMapping)
+		{
+			return new OleDbRowUpdatingEventArgs (dataRow, command,
+							      statementType, tableMapping);
+		}
+
+		public override IDataParameter[] GetFillParameters ()
+		{
+			throw new NotImplementedException ();
+		}
+		
 		protected override void OnRowUpdated (RowUpdatedEventArgs value)
 		{
 			OleDbRowUpdatedEventHandler handler = (OleDbRowUpdatedEventHandler) Events[EventRowUpdated];
@@ -157,6 +273,17 @@ namespace System.Data.OleDb
 			OleDbRowUpdatingEventHandler handler = (OleDbRowUpdatingEventHandler) Events[EventRowUpdated];
 			if ((handler != null) && (value is OleDbRowUpdatingEventArgs))
 				handler (this, (OleDbRowUpdatingEventArgs) value);
+		}
+
+		public override int Update (DataSet dataSet)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override int Update (DataRow[] dataRows,
+					       DataTableMapping tableMapping)
+		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods

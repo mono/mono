@@ -21,7 +21,6 @@ namespace System.Data.OleDb
 
 		string connectionString;
 		int connectionTimeout;
-		OleDbDataReader dataReader;
 		IntPtr gdaConnection;
 
 		#endregion
@@ -34,7 +33,6 @@ namespace System.Data.OleDb
 			gdaConnection = IntPtr.Zero;
 			connectionTimeout = 15;
 			connectionString = null;
-			dataReader = null;
 		}
 
 		public OleDbConnection (string connectionString) : this ()
@@ -123,16 +121,6 @@ namespace System.Data.OleDb
 				return gdaConnection;
 			}
 		}
-
-		internal OleDbDataReader DataReader
-	        {
-			get {
-				return dataReader;
-			}
-			set {
-				dataReader = value;
-			}
-		}
 		
 		#endregion // Properties
 	
@@ -181,14 +169,11 @@ namespace System.Data.OleDb
 				libgda.gda_connection_close (gdaConnection);
 				gdaConnection = IntPtr.Zero;
 			}
-
-			dataReader = null;
 		}
 
 		public OleDbCommand CreateCommand ()
 		{
-			if (State == ConnectionState.Open &&
-			    DataReader == null)
+			if (State == ConnectionState.Open)
 				return new OleDbCommand (null, this);
 
 			return null;

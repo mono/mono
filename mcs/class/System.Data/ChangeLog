@@ -1,3 +1,14 @@
+2002-10-27  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.OleDb/OleDbDataAdapter.cs (Fill, FillSchema,
+	GetFillParameters, Update): added overloaded methods.
+
+	* System.Data.OleDb/OleDbCommand.cs:
+	* System.Data.OleDb/OleDbDataReader.cs:
+	* System.Data.OleDb/OleDbConnection.cs: removed limitation of one
+	data adapter at a time. Mono's version can open as many as you want,
+	for free.
+
 2002-10-25  Tim Coleman (tim@timcoleman.com)
 	* System.Data.SqlClient/SqlConnectionPool.cs:
 		New class added
