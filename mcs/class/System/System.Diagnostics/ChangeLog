@@ -1,3 +1,7 @@
+2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ICollectData.cs: Added missing attribute
+
 2003-07-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* SRDescriptionAttribute.cs: Moved to System directory
@@ -311,34 +315,4 @@
 		support
 	* DefaultTraceListener.cs: new file; the default trace listener
 
-2002-01-17  Miguel de Icaza  <miguel@ximian.com>
-
-	* TraceListenerCollection.cs: Remove Warnings.
-
-2002-01-06  Ravi Pratap  <ravi@ximian.com>
-
-	* Switch.cs, TraceListenerCollection.cs : Decorate incomplete bits
-	with the MonoTODO attribute.
-
-2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
-	* Added Debug.cs to the build.
-2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
-	* Added preliminary TraceListenerCollection.cs to the build.
-2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
-	* Added TraceListener.cs, TextWriterTraceListener.cs, and
-	DefaultTraceListener.cs to the build and moved them into the
-	proper assembly.
-2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
-	* Added DiagnosticsConfigurationHandler.cs to the build.
-
-2001-09-09  Nick Drochak <ndrochak@gol.com>
-
-	* BooleanSwitch.cs: Make this class use it's parent class's features.  Namely, use SwitchSetting
-		so that we can get OnSwitchSettingChanged() to fire for free.
-
-2001-09-09  Nick Drochak <ndrochak@gol.com>
-
-	* ChangeLog: added this file
-	
-	* Switch.cs: call OnSwitchSettingChanged() when the switch setting is, yes you gessed it, changed.
-	
+2002-01-17  Miguel de Icaza  <miguel@ximian.com>	* TraceListenerCollection.cs: Remove Warnings.2002-01-06  Ravi Pratap  <ravi@ximian.com>	* Switch.cs, TraceListenerCollection.cs : Decorate incomplete bits	with the MonoTODO attribute.2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>	* Added Debug.cs to the build.2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>	* Added preliminary TraceListenerCollection.cs to the build.2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>	* Added TraceListener.cs, TextWriterTraceListener.cs, and	DefaultTraceListener.cs to the build and moved them into the	proper assembly.2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>	* Added DiagnosticsConfigurationHandler.cs to the build.2001-09-09  Nick Drochak <ndrochak@gol.com>	* BooleanSwitch.cs: Make this class use it's parent class's features.  Namely, use SwitchSetting		so that we can get OnSwitchSettingChanged() to fire for free.2001-09-09  Nick Drochak <ndrochak@gol.com>	* ChangeLog: added this file		* Switch.cs: call OnSwitchSettingChanged() when the switch setting is, yes you gessed it, changed.	

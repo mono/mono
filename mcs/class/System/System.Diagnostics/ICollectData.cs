@@ -11,8 +11,10 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace System.Diagnostics {
+namespace System.Diagnostics
+{
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid("73386977-D6FD-11D2-BED5-00C04F79E3AE")]
 	public interface ICollectData {
 		void CloseData ();
 		void CollectData (
@@ -23,4 +25,3 @@ namespace System.Diagnostics {
 			out IntPtr res);
 	}
 }
-
