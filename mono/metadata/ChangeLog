@@ -1,3 +1,7 @@
+2003-06-12  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): support reference
+	return types
 
 Wed Jun 11 18:32:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
