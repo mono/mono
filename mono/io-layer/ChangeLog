@@ -1,3 +1,10 @@
+2004-06-16  Dick Porter  <dick@ximian.com>
+
+	* timed-thread.c: Call the thread cleanup exit routine before taking
+	the join mutex, because this could deadlock if another thread tries
+	to join in the meantime.  This fixes the hang-at-exit problem seen
+	on macos.
+
 2004-06-03  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* threads.c: Implemented SleepEx.
