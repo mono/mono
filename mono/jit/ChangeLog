@@ -1,3 +1,9 @@
+2002-09-06  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (debug_update_il_offsets): Fixed a memory corruption bug.
+	If you were getting random crashes when using the JIT with debugging
+	turned on, this fixes it.
+
 2002-09-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (arch_emit_epilogue): use pop instead of mov
