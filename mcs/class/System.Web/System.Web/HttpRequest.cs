@@ -222,6 +222,7 @@ namespace System.Web {
 				Encoding enc = ContentEncoding;
 				string data = enc.GetString (arrData);
 				_oFormData = new HttpValueCollection (data, true, enc);
+				return;
 			}
 			if (!ContentType.StartsWith ("multipart/form-data")) {
 				if (contentType.Length > 0)
