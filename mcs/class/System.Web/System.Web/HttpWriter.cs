@@ -104,7 +104,7 @@ namespace System.Web
 		{
 			FlushBuffers();
 
-			int l = _OutputStream.Length;
+			int l = (int)_OutputStream.Length;
 			if (l > 0) {
 				byte [] arrContent = _OutputStream.ToArray ();
 				Handler.SendResponseFromMemory (arrContent, l);
