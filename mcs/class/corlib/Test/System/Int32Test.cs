@@ -49,8 +49,17 @@ public class Int32Test : TestCase
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
 
 		// We can't initialize this until we set the culture.
+		
+		string decimals = new String ('0', NumberFormatInfo.CurrentInfo.NumberDecimalDigits);
+		string perPattern = new string[] {"n %","n%","%n"} [NumberFormatInfo.CurrentInfo.PercentPositivePattern];
+		
 		Results1 [0] = "("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,648.00)";
+		Results1 [3] = "-2147483648." + decimals;
+		Results1 [5] = "-2,147,483,648." + decimals;
+		Results1 [6] = perPattern.Replace ("n","-214,748,364,800.00");
+		
 		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,647.00000";
+		Results2 [6] = perPattern.Replace ("n","214,748,364,700.00000");
 	}
 
 	protected override void TearDown()

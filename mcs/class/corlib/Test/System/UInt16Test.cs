@@ -49,8 +49,16 @@ public class UInt16Test : TestCase
 		// Set culture to en-US and don't let the user override.
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
 
-		Results1 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00";
-		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"65,535.00000";
+		string decimals = new String ('0', NumberFormatInfo.CurrentInfo.NumberDecimalDigits);
+		string perPattern = new string[] {"n %","n%","%n"} [NumberFormatInfo.CurrentInfo.PercentPositivePattern];
+		
+		Results1 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol + "0.00";
+		Results1 [3] = "0." + decimals;
+		Results1 [5] = "0." + decimals;
+		Results1 [6] = perPattern.Replace ("n","0.00");
+		
+		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol + "65,535.00000";
+		Results2 [6] = perPattern.Replace ("n","6,553,500.00000");
 	}
 
 	protected override void TearDown()
@@ -165,6 +173,7 @@ public class UInt16Test : TestCase
 		AssertEquals("A3", MyString3, MyUInt16_3.ToString());
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
+			Console.WriteLine ("d:" + NumberFormatInfo.CurrentInfo.NumberDecimalDigits);
 			AssertEquals("A4:"+i.ToString(), Results1[i], MyUInt16_2.ToString(Formats1[i]));
 			AssertEquals("A5:"+i.ToString(), Results2[i], MyUInt16_3.ToString(Formats2[i]));
 		}

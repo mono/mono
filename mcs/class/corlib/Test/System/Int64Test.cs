@@ -74,8 +74,18 @@ public class Int64Test : TestCase
 		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
 		string csym = NumberFormatInfo.CurrentInfo.CurrencySymbol;
 		string csuffix = (cdd > 0 ? "." : "").PadRight(cdd + (cdd > 0 ? 1 : 0), '0');
+		
+		string decimals = new String ('0', NumberFormatInfo.CurrentInfo.NumberDecimalDigits);
+		string perPattern = new string[] {"n %","n%","%n"} [NumberFormatInfo.CurrentInfo.PercentPositivePattern];
+		
 		Results1[0] = "(" + csym + "9,223,372,036,854,775,808" + csuffix + ")";
+		Results1[3] = "-9223372036854775808." + decimals;
+		Results1[5] = "-9,223,372,036,854,775,808." + decimals;
+		Results1[6] = perPattern.Replace ("n","-922,337,203,685,477,580,800.00");
+		
 		Results2[0] = csym + "9,223,372,036,854,775,807.00000";
+		Results2[6] = perPattern.Replace ("n","922,337,203,685,477,580,700.00000");
+		
 		NfiUser = new NumberFormatInfo();
 		NfiUser.CurrencyDecimalDigits = 3;
 		NfiUser.CurrencyDecimalSeparator = ":";

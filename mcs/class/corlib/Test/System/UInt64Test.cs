@@ -52,8 +52,17 @@ public class UInt64Test : TestCase
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
 
 		// We can't initialize this until we set the culture.
-		Results1 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00";
-		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"18,446,744,073,709,551,615.00000";
+		
+		string decimals = new String ('0', NumberFormatInfo.CurrentInfo.NumberDecimalDigits);
+		string perPattern = new string[] {"n %","n%","%n"} [NumberFormatInfo.CurrentInfo.PercentPositivePattern];
+		
+		Results1 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol + "0.00";
+		Results1 [3] = "0." + decimals;
+		Results1 [5] = "0." + decimals;
+		Results1 [6] = perPattern.Replace ("n","0.00");
+		
+		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol + "18,446,744,073,709,551,615.00000";
+		Results2 [6] = perPattern.Replace ("n","1,844,674,407,370,955,161,500.00000");
 	}
 
 	protected override void TearDown()

@@ -49,8 +49,17 @@ public class UInt32Test : TestCase
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
 
 		// We can't initialize this until we set the culture.
-		Results1 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00";
-		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"4,294,967,295.00000";
+		
+		string decimals = new String ('0', NumberFormatInfo.CurrentInfo.NumberDecimalDigits);
+		string perPattern = new string[] {"n %","n%","%n"} [NumberFormatInfo.CurrentInfo.PercentPositivePattern];
+		
+		Results1 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol + "0.00";
+		Results1 [3] = "0." + decimals;
+		Results1 [5] = "0." + decimals;
+		Results1 [6] = perPattern.Replace ("n","0.00");
+		
+		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol + "4,294,967,295.00000";
+		Results2 [6] = perPattern.Replace ("n","429,496,729,500.00000");
 	}
 
 	protected override void TearDown()

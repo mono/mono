@@ -69,17 +69,22 @@ public class ByteTest : Assertion
 				Results2[0] = "255" + sep + "00000 " + csym;
 				break;
 		}
+		
 		sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+		string decimals = new String ('0', NumberFormatInfo.CurrentInfo.NumberDecimalDigits);
+		string perPattern = new string[] {"n %","n%","%n"} [NumberFormatInfo.CurrentInfo.PercentPositivePattern];
+		
 		Results1[2] = "0" + sep + "000000e+000";
-		Results1[3] = "0" + sep + "00";
-		Results1[5] = "0" + sep + "00";
-		Results1[6] = "0" + sep + "00 %";
+		Results1[3] = "0" + sep + decimals;
+		Results1[5] = "0" + sep + decimals;
+		Results1[6] = perPattern.Replace ("n","0" + sep + "00");
+		
 		Results2[2] = "2" + sep + "55000e+002";
 		Results2[3] = "255" + sep + "00000";
 		Results2[3] = "255" + sep + "00000";
 		Results2[5] = "255" + sep + "00000";
 		string gsep = NumberFormatInfo.CurrentInfo.NumberGroupSeparator;
-		Results2[6] = "25" + gsep + "500" + sep + "00000 %";
+		Results2[6] = perPattern.Replace ("n","25" + gsep + "500" + sep + "00000");
 	}
 
 	public void TestMinMax()
