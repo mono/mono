@@ -31,6 +31,8 @@ using System.Collections;
 using System.Resources;
 using System.IO;
 using System.Xml;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Resources
 {
@@ -149,8 +151,20 @@ namespace System.Resources
 			while (reader.Read ()) {
 				if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, "data", true) == 0) {
 					string n = get_attr (reader, "name");
+					string t = get_attr (reader, "type");
+					string mt = get_attr (reader, "mimetype");
 					if (n != null) {
-						string v = get_value (reader, "value");
+						object v = null;
+						string val = get_value (reader, "value");
+						if (mt != null && t != null) {
+							TypeConverter c = TypeDescriptor.GetConverter (Type.GetType (t));
+							v = c.ConvertFrom (Convert.FromBase64String (val));
+						} else if (t != null) {
+							TypeConverter c = TypeDescriptor.GetConverter (Type.GetType (t));
+							v = c.ConvertFromString (val);
+						} else { 
+							v = val;
+						}
 						hasht [n] = v;
 					}
 				}

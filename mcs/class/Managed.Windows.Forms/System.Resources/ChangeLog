@@ -1,3 +1,9 @@
+2005-02-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* ResXResourceReader.cs: Implement the ability to convert the
+	MS Base64 encoded objects.  Implement the ability to convert objects
+	to their type rather than just to string.
+
 2004-11-08 14:28  pbartok
 
 	* ResXResourceReader.cs:
