@@ -1,10 +1,26 @@
 DIRS=jay mcs class nunit nunit/src/NUnitConsole
+DIST=monocharge-`date -u +%Y%m%d`
 
 #nant doesn't work yet
 
 default: all
 
-all clean install:
+all install:
 	for i in $(DIRS) ; do \
 		(cd $$i; $(MAKE) -f makefile.gnu $@) || exit 1; \
 	done
+
+clean:
+	-rm monocharge-*.tar.gz
+	for i in $(DIRS) ; do \
+		(cd $$i; $(MAKE) -f makefile.gnu $@) || exit 1; \
+	done
+
+dist: all
+	mkdir $(DIST)
+	for i in $(DIRS) ; do \
+		(cd $$i; $(MAKE) -f makefile.gnu install prefix=$(PWD)/$(DIST)) || exit 1; \
+	done
+	tar -c $(DIST) | gzip > $(DIST).tar.gz
+	rm -rf $(DIST)
+

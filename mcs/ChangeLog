@@ -1,7 +1,8 @@
 2002-07-23  Alp Toker  <alp@atoker.com>
 
 	* makefile.gnu: Added an install target (which sets permissions and
-	respects prefix) and fixed a few other makefile issues.
+	respects prefix) and a dist target which produces a tarball. Also
+	fixed a few other makefile issues.
 
 2002-07-22  Peter Williams  <peterw@ximian.com>
 
