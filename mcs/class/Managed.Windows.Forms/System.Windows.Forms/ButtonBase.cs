@@ -23,6 +23,9 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.11  2004/10/13 20:12:47  pbartok
+// - Added the Redraw on Resize that got dropped in the last rev
+//
 // Revision 1.10  2004/10/05 04:56:11  jackson
 // Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
 //
@@ -158,6 +161,9 @@ namespace System.Windows.Forms {
 			ForeColorChanged+=new EventHandler(RedrawEvent);
 			BackColorChanged+=new System.EventHandler(RedrawEvent);
 			FontChanged+=new EventHandler(RedrawEvent);
+			SizeChanged+=new EventHandler(RedrawEvent);
+
+			SetStyle (ControlStyles.ResizeRedraw, true);
 		}
 		#endregion	// Public Constructors
 
