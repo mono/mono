@@ -719,6 +719,8 @@ namespace Mono.CSharp {
 								SetImplementationFlags (
 									MethodImplAttributes.InternalCall |
 									MethodImplAttributes.Runtime);
+							else
+								((MethodBuilder) builder).SetCustomAttribute (cb);
 						} else if (attr_type != TypeManager.dllimport_type){
 							((MethodBuilder) builder).SetCustomAttribute (cb);
 						}
