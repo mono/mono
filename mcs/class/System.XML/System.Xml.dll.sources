@@ -16,6 +16,7 @@ Mono.Xml.XPath/KeyPattern.cs
 Mono.Xml.XPath/LocationPathPattern.cs
 Mono.Xml.XPath/Pattern.cs
 Mono.Xml.XPath/UnionPattern.cs
+Mono.Xml.XPath/XPathEditableDocument.cs
 Mono.Xml.XPath/XPathNavigatorReader.cs
 Mono.Xml.Xsl.Operations/XslApplyImports.cs
 Mono.Xml.Xsl.Operations/XslApplyTemplates.cs
