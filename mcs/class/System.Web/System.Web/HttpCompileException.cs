@@ -7,7 +7,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using System.CodeDom;
+using System.CodeDom.Compiler;
 
 namespace System.Web {
 	public sealed class HttpCompileException : HttpException {
