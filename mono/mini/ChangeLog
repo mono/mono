@@ -1,5 +1,7 @@
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* iltests.il: Add new localloc test.
+
 	* mini-amd64.c: Handle large stack allocations the same way as on
 	windows if stack overflow handling is working.
 	
