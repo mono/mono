@@ -50,6 +50,7 @@ System.ComponentModel\PropertyChangedEventHandler.cs
 System.ComponentModel\PropertyDescriptor.cs
 System.ComponentModel\PropertyDescriptorCollection.cs
 System.ComponentModel\TypeConverter.cs
+System.ComponentModel\WarningException.cs
 System.ComponentModel\Win32Exception.cs
 System.Configuration\ConfigurationException.cs
 System.Configuration\ConfigurationSettings.cs
