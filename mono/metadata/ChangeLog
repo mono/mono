@@ -1,3 +1,8 @@
+2002-07-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c:
+	(search_method): don't display debug message. 
+
 2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_type_stack_size): removed temporary fix for new gcc
