@@ -1,3 +1,9 @@
+2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object-internals.h (MonoStackFrame): Sync with managed object layout.
+
+	* appdomain.c: Bump corlib version.
+
 2005-03-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gc-internal.h boehm-gc.c null-gc.c: Add mono_gc_is_gc_thread () API
