@@ -1,4 +1,8 @@
 
+Sat May 1 16:56:10 EDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c: trampoline fixes.
+
 Fri Apr 30 15:54:26 EDT 2004	Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: fixed typos.
