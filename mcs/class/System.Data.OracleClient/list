@@ -1,3 +1,9 @@
 System.Data.OracleClient/OciGlue.cs
 System.Data.OracleClient/OracleConnection.cs
 System.Data.OracleClient/OracleCommand.cs
+System.Data.OracleClient/OracleDataReader.cs
+System.Data.OracleClient/OracleParameter.cs
+System.Data.OracleClient/OracleParameterCollection.cs
+System.Data.OracleClient/OracleString.cs
+System.Data.OracleClient/OracleTransaction.cs
+System.Data.OracleClient/OracleType.cs

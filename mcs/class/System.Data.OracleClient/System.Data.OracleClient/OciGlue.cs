@@ -47,29 +47,38 @@ namespace System.Data.OracleClient.OCI {
 		// http://download-west.oracle.com/docs/cd/A87861_01/NT817EE/index.htm
 		// from oracle/ora81/oci/include/oci.h
 
-		[DllImport("ociglue")]
+		[DllImport ("ociglue")]
+		public static extern Int32 OciGlue_BeginTransaction (UInt32 connection_handle);
+
+		[DllImport ("ociglue")]
+		public static extern Int32 OciGlue_CommitTransaction (UInt32 connection_handle);
+
+		[DllImport ("ociglue")]
+		public static extern Int32 OciGlue_RollbackTransaction (UInt32 connection_handle);
+
+		[DllImport ("ociglue")]
 		public static extern IntPtr OciGlue_Connect (out Int32 status,
 			out UInt32 ociGlueConnectionHandle, out uint errcode, 
 			string database, string username, string password);
 
-		[DllImport("ociglue")]
+		[DllImport ("ociglue")]
 		public static extern Int32 OciGlue_Disconnect (UInt32 connection_handle);
 
-		[DllImport("ociglue")]
+		[DllImport ("ociglue")]
 		public static extern Int32 OciGlue_PrepareAndExecuteNonQuerySimple (
 			UInt32 ociGlueConnectionHandle,
 			string sqlstmt, out int found);
 
-		[DllImport("ociglue")]
+		[DllImport ("ociglue")]
 		public static extern UInt32 OciGlue_ConnectionCount();
 
-		[DllImport("ociglue")]
+		[DllImport ("ociglue")]
 		public static extern IntPtr OciGlue_CheckError (Int32 status, UInt32 connection_handle);
 
-		[DllImport("ociglue")]
+		[DllImport ("ociglue")]
 		public static extern void OciGlue_Free (IntPtr obj);
 
-		public string CheckError(Int32 status) {
+		public string CheckError (Int32 status) {
 			IntPtr intptrMsg = IntPtr.Zero;
 			string strMsg = "";
 			string msg = "";
@@ -123,6 +132,57 @@ namespace System.Data.OracleClient.OCI {
 				throw new Exception("Error: Unable to connect: " + error);
 			}		
 						
+			return status;
+		}
+
+		public Int32 BeginTransaction () 
+		{
+			Int32 status = 0;
+			string msg = "";
+
+			Console.WriteLine ("OciGlue_BeginTransaction");
+			Console.WriteLine ("  Handle: " + ociGlueConnectionHandle);
+			status = OciGlue.OciGlue_BeginTransaction (ociGlueConnectionHandle);
+
+			if (status != 0) {
+				msg = CheckStatus (status);
+				throw new Exception (msg);
+			}
+
+			return status;
+		}
+
+		public Int32 CommitTransaction () 
+		{
+			Int32 status = 0;
+			string msg = "";
+
+			Console.WriteLine ("OciGlue_CommitTransaction");
+			Console.WriteLine ("  Handle: " + ociGlueConnectionHandle);
+			status = OciGlue.OciGlue_CommitTransaction (ociGlueConnectionHandle);
+
+			if (status != 0) {
+				msg = CheckStatus (status);
+				throw new Exception (msg);
+			}
+
+			return status;
+		}
+
+		public Int32 RollbackTransaction () 
+		{
+			Int32 status = 0;
+			string msg = "";
+
+			Console.WriteLine ("OciGlue_RollbackTransaction");
+			Console.WriteLine ("  Handle: " + ociGlueConnectionHandle);
+			status = OciGlue.OciGlue_RollbackTransaction (ociGlueConnectionHandle);
+
+			if (status != 0) {
+				msg = CheckStatus (status);
+				throw new Exception (msg);
+			}
+
 			return status;
 		}
 

@@ -1,3 +1,21 @@
+2003-02-10  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OracleDataReader.cs:
+	* System.Data.OracleClient/OracleParameter.cs:
+	* System.Data.OracleClient/OracleParameterCollection.cs:
+	* System.Data.OracleClient/OracleString.cs:
+	* System.Data.OracleClient/OracleTransaction.cs:
+	* System.Data.OracleClient/OracleType.cs:
+		Added some implementation of these required objects.
+	* list:
+		Add new files to the build.
+	* System.Data.OracleClient/OciGlue.cs:
+	* System.Data.OracleClient/ociglue.c:
+	* System.Data.OracleClient/ociglue.h:
+		Add transaction logic.
+	* System.Data.OracleClient/OracleCommand.cs:
+	* System.Data.OracleClient/OracleConnection.cs:
+		Add some more implementation
+	
 2003-02-08  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient/OciGlueLib_BCC_win32.make:
 	* System.Data.OracleClient/OciGlueLib_MSVC_win32.make:

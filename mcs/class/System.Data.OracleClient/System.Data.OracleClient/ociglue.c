@@ -57,6 +57,7 @@ text *OciGlue_Connect (sword *status, ub4 *connection_handle, sb4 *errcode,
 	oci_glue_handle->srvhp	= (OCIServer *) 0;
 	oci_glue_handle->svchp	= (OCISvcCtx *) 0;
 	oci_glue_handle->stmthp	= (OCIStmt *) 0;
+	oci_glue_handle->txnhp	= (OCITrans *) 0;
 
 	conlist = g_slist_append (conlist, oci_glue_handle);
 
@@ -184,54 +185,192 @@ text *OciGlue_Connect (sword *status, ub4 *connection_handle, sb4 *errcode,
 	return errbuf;
 }
 
-sword OciGlue_PrepareAndExecuteNonQuerySimple (ub4 connection_handle,
-									text *sqlstmt, ub4 *found)
+sword OciGlue_BeginTransaction (ub4 connection_handle)
+{
+	sword status = 0;
+	oci_glue_connection_t *oci_glue_handle;
+	oci_glue_handle = find_connection (connection_handle);
+
+	if(!oci_glue_handle)
+		return -1;
+
+	/* Allocate transaction handle */
+
+	status = OCIHandleAlloc ((dvoid *) oci_glue_handle->envhp,
+			(dvoid **) &(oci_glue_handle->txnhp),
+			(ub4) OCI_HTYPE_TRANS,
+			(size_t) 0,
+			(dvoid **) 0);
+	if (status != 0) 
+		return status;
+
+	/* Attach the transaction to the service context */
+	status = OCIAttrSet ((dvoid *) oci_glue_handle->svchp,
+			OCI_HTYPE_SVCCTX,
+			(dvoid *) oci_glue_handle->txnhp,
+			0,
+			OCI_ATTR_TRANS,
+			oci_glue_handle->errhp);
+
+	if (status != 0) {
+		OCIHandleFree ((dvoid *) oci_glue_handle->txnhp, OCI_HTYPE_TRANS);
+		return status;
+	}
+
+	/* Start the transaction */
+	status = OCITransStart (oci_glue_handle->svchp,
+			oci_glue_handle->errhp,
+			60,
+			OCI_TRANS_NEW);
+
+	if (status != 0) {
+		OCIHandleFree ((dvoid *) oci_glue_handle->txnhp, OCI_HTYPE_TRANS);
+		return status;
+	}
+
+	return status;
+}
+
+sword OciGlue_CommitTransaction (ub4 connection_handle)
+{
+	sword status = 0;
+	oci_glue_connection_t *oci_glue_handle;
+	oci_glue_handle = find_connection (connection_handle);
+
+	if(!oci_glue_handle)
+		return -1;
+
+	/* Attach the transaction to the service context */
+	status = OCIAttrSet ((dvoid *) oci_glue_handle->svchp,
+			OCI_HTYPE_SVCCTX,
+			(dvoid *) oci_glue_handle->txnhp,
+			0,
+			OCI_ATTR_TRANS,
+			oci_glue_handle->errhp);
+
+	if (status != 0)
+		return status;
+
+	status = OCITransPrepare (oci_glue_handle->svchp,
+			oci_glue_handle->errhp,
+			(ub4) 0);
+
+	if (status != 0)
+		return status;
+
+	status = OCITransCommit (oci_glue_handle->svchp,
+			oci_glue_handle->errhp,
+			OCI_DEFAULT);
+
+	if (status != 0)
+		return status;
+
+	OCIHandleFree ((dvoid *) oci_glue_handle->txnhp, OCI_HTYPE_TRANS);
+
+	return status;
+}
+
+
+sword OciGlue_RollbackTransaction (ub4 connection_handle)
+{
+	sword status = 0;
+	oci_glue_connection_t *oci_glue_handle;
+	oci_glue_handle = find_connection (connection_handle);
+
+	if(!oci_glue_handle)
+		return -1;
+
+	/* Attach the transaction to the service context */
+	status = OCIAttrSet ((dvoid *) oci_glue_handle->svchp,
+			OCI_HTYPE_SVCCTX,
+			(dvoid *) oci_glue_handle->txnhp,
+			0,
+			OCI_ATTR_TRANS,
+			oci_glue_handle->errhp);
+
+	if (status != 0)
+		return status;
+
+	status = OCITransRollback (oci_glue_handle->svchp,
+			oci_glue_handle->errhp,
+			OCI_DEFAULT);
+
+	if (status != 0)
+		return status;
+
+	OCIHandleFree ((dvoid *) oci_glue_handle->txnhp, OCI_HTYPE_TRANS);
+
+	return status;
+}
+
+
+sword OciGlue_PrepareAndExecuteNonQuerySimple (ub4 connection_handle, text *sqlstmt, ub4 *found)
 {
 	sword status = 0;
 	oci_glue_connection_t *oci_glue_handle;
 	void *node;
 	GSList *con_node;
 		
-	if(!conlist)
+	if (!conlist)
 		return -1;
-
-	if(connection_handle == 0)
+	if (connection_handle == 0)
 		return -2;
-
-	if(!found)
+	if (!found)
 		return -1;
 
 	*found = 0;
 
 	oci_glue_handle = find_connection (connection_handle);
 
-	if(!oci_glue_handle)
+	if (!oci_glue_handle)
 		return -1;
 	else
 		*found = oci_glue_handle->connection_handle;
 
-	if(!(oci_glue_handle->stmthp)) {
-		status = OCIHandleAlloc((dvoid *) (oci_glue_handle->envhp), 
-						(dvoid **) &(oci_glue_handle->stmthp),
-			            (ub4)OCI_HTYPE_STMT, (CONST size_t) 0, (dvoid **) 0);
+	if (oci_glue_handle->txnhp) {
+		/* Attach a transaction */
+		status = OCIAttrSet ((dvoid *) oci_glue_handle->svchp,
+				OCI_HTYPE_SVCCTX,
+				(dvoid *) oci_glue_handle->txnhp,
+				0,
+				OCI_ATTR_TRANS,
+				oci_glue_handle->errhp);
+
+		if (status != 0)
+			return status;
+	}
+
+	if (!(oci_glue_handle->stmthp)) {
+		status = OCIHandleAlloc ((dvoid *) oci_glue_handle->envhp, 
+				(dvoid **) &(oci_glue_handle->stmthp),
+				(ub4) OCI_HTYPE_STMT, 
+				(CONST size_t) 0, 
+				(dvoid **) 0);
 
 		if(status != 0)
 			return status;
 	}
-	
-	status = OCIStmtPrepare((oci_glue_handle->stmthp), 
-						oci_glue_handle->errhp, 
-						(CONST OraText *)sqlstmt, (ub4)strlen(sqlstmt),
-                    (ub4) OCI_NTV_SYNTAX, (ub4) OCI_DEFAULT);
 
-	if(status != 0)
+	/* Prepare the statement for execution */
+	status = OCIStmtPrepare ((oci_glue_handle->stmthp), 
+				oci_glue_handle->errhp, 
+				(CONST OraText *)sqlstmt, 
+				(ub4) strlen (sqlstmt),
+				(ub4) OCI_NTV_SYNTAX, 
+				(ub4) OCI_DEFAULT);
+
+	if (status != 0)
 		return status;
 
-	status = OCIStmtExecute(oci_glue_handle->svchp, 
-						oci_glue_handle->stmthp, 
-						oci_glue_handle->errhp, 
-						(ub4) 1, (ub4) 0, 
-               (CONST OCISnapshot *) NULL, (OCISnapshot *) NULL, OCI_DEFAULT);
+	/* Execute the statement */
+	status = OCIStmtExecute (oci_glue_handle->svchp, 
+				oci_glue_handle->stmthp, 
+				oci_glue_handle->errhp, 
+				(ub4) 1,
+				(ub4) 0, 
+				(CONST OCISnapshot *) NULL, 
+				(OCISnapshot *) NULL, 
+				OCI_DEFAULT);
 
 	return status;
 }

@@ -40,11 +40,15 @@ struct _oci_glue_connection_t
 	OCIServer *srvhp;
 	OCISvcCtx *svchp;
 	OCIStmt *stmthp;
+	OCITrans *txnhp;
 };
 
 typedef struct _oci_glue_connection_t oci_glue_connection_t;
 
 text *OciGlue_Connect (sword *status, ub4 *connection_handle, sb4 *errcode, char *database, char *username, char *password);
+sword OciGlue_BeginTransaction ();
+sword OciGlue_CommitTransaction ();
+sword OciGlue_RollbackTransaction ();
 sword OciGlue_PrepareAndExecuteNonQuerySimple (ub4 connection_handle, text *sqlstmt, ub4 *found);
 sword OciGlue_Disconnect (ub4 connection_handle);
 guint OciGlue_ConnectionCount ();

@@ -7,9 +7,12 @@
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient
 //
-// Author: Daniel Morgan <danmorg@sc.rr.com>
+// Authors: 
+//    Daniel Morgan <danmorg@sc.rr.com>
+//    Tim Coleman <tim@timcoleman.com>
 //
 // Copyright (C) Daniel Morgan, 2002
+// Copyright (C) Tim Coleman, 2003
 //
 // Original source code for setting ConnectionString 
 // by Tim Coleman <tim@timcoleman.com>
@@ -22,6 +25,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient.OCI;
 using System.Text;
@@ -35,12 +39,20 @@ namespace System.Data.OracleClient
 		public string Database;
 	}
 
-	public class OracleConnection 
+	public class OracleConnection : Component, ICloneable, IDbConnection
 	{
-		private	OciGlue oci;
-		private ConnectionState state;
-		private OracleConnectionInfo conInfo;
-		private string connectionString = "";
+		#region Fields
+
+		OciGlue oci;
+		ConnectionState state;
+		OracleConnectionInfo conInfo;
+		OracleTransaction transaction = null;
+		string connectionString = "";
+		OracleDataReader dataReader = null;
+
+		#endregion // Fields
+
+		#region Constructors
 
 		public OracleConnection () 
 		{
@@ -48,9 +60,126 @@ namespace System.Data.OracleClient
 			oci = new OciGlue ();
 		}
 
-		public OracleConnection (string connectionString) : this() 
+		public OracleConnection (string connectionString) 
+			: this() 
 		{
 			this.connectionString = connectionString;
+		}
+
+		#endregion // Constructors
+
+		#region Properties
+
+		// only for DEBUG purposes - not part of MS.NET 1.1 OracleClient
+		public static uint ConnectionCount {
+			get {
+				uint count = OciGlue.OciGlue_ConnectionCount();
+				return count;
+			}
+		}
+
+		int IDbConnection.ConnectionTimeout {
+			[MonoTODO]
+			get { return -1; }
+		}
+
+		string IDbConnection.Database {
+			[MonoTODO]
+			get { return String.Empty; }
+		}
+
+		internal OracleDataReader DataReader {
+			get { return dataReader; }
+			set { dataReader = value; }
+		}
+
+		public ConnectionState State {
+			get { return state; }
+		}
+
+		public string ConnectionString {
+			get { return connectionString; }
+			set { SetConnectionString (value); }
+		}
+
+		internal OciGlue Oci {
+			get { return oci; }
+		}
+
+		internal OracleTransaction Transaction {
+			get { return transaction; }
+			set { transaction = value; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
+
+		public OracleTransaction BeginTransaction ()
+		{
+			return BeginTransaction (IsolationLevel.ReadCommitted);
+		}
+
+		public OracleTransaction BeginTransaction (IsolationLevel il)
+		{
+			Int32 status;
+
+			if (state == ConnectionState.Closed)
+				throw new InvalidOperationException ("The connection is not open.");
+
+			if (transaction != null)
+				throw new InvalidOperationException ("OracleConnection does not support parallel transactions.");
+
+			status = oci.BeginTransaction ();
+			if(status != 0)
+				throw new Exception("Error: Unable to connect: " + 
+					status.ToString() + 
+					": " +
+					oci.CheckError(status));
+			else
+				transaction = new OracleTransaction (this, il);
+
+			return transaction;
+		}
+
+		[MonoTODO]
+		void IDbConnection.ChangeDatabase (string databaseName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public OracleCommand CreateCommand ()
+		{
+			OracleCommand command = new OracleCommand ();
+			command.Connection = this;
+			return command;
+		}
+
+		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		IDbTransaction IDbConnection.BeginTransaction ()
+		{
+			return BeginTransaction ();
+		}
+
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel iso)
+		{
+			return BeginTransaction (iso);
+		}
+
+		IDbCommand IDbConnection.CreateCommand ()
+		{
+			return CreateCommand ();
+		}
+
+		void IDisposable.Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		public void Open () 
@@ -78,38 +207,6 @@ namespace System.Data.OracleClient
 					oci.CheckError(status));
 		}
 
-		// only for DEBUG purposes - not part of MS.NET 1.1 OracleClient
-		public static uint ConnectionCount 
-		{
-			get {
-				uint count = OciGlue.OciGlue_ConnectionCount();
-				return count;
-			}
-		}
-
-		public ConnectionState State 
-		{
-			get {
-				return state;
-			}
-		}
-
-		public string ConnectionString 
-		{
-			get {
-				return connectionString;
-			}
-			set {
-				SetConnectionString(value);
-			}
-		}
-
-		internal OciGlue Oci 
-		{
-			get {
-				return oci;
-			}
-		}
 
 		void SetConnectionString (string connectionString) 
 		{
@@ -194,5 +291,7 @@ namespace System.Data.OracleClient
 				}
 			}
 		}
+
+		#endregion // Methods
 	}
 }
