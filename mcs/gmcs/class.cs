@@ -222,7 +222,7 @@ namespace Mono.CSharp {
 				{
 					flags = f;
 
-					ret_type = o.OperatorMethod.GetReturnType ();
+					ret_type = o.OperatorMethod.ReturnType;
 					Type [] pt = o.OperatorMethod.ParameterTypes;
 					type1 = pt [0];
 					type2 = pt [1];
@@ -383,16 +383,16 @@ namespace Mono.CSharp {
 		MemberCoreArrayList delegates;
 		
 		// Holds the list of constructors
-		MemberCoreArrayList instance_constructors;
+		protected MemberCoreArrayList instance_constructors;
 
 		// Holds the list of fields
 		MemberCoreArrayList fields;
 
 		// Holds a list of fields that have initializers
-		ArrayList initialized_fields;
+		protected ArrayList initialized_fields;
 
 		// Holds a list of static fields that have initializers
-		ArrayList initialized_static_fields;
+		protected ArrayList initialized_static_fields;
 
 		// Holds the list of constants
 		MemberCoreArrayList constants;
@@ -424,8 +424,8 @@ namespace Mono.CSharp {
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
-		Constructor default_constructor;
-		Constructor default_static_constructor;
+		protected Constructor default_constructor;
+		protected Constructor default_static_constructor;
 
 		//
 		// Whether we have seen a static constructor for this class or not
@@ -441,8 +441,8 @@ namespace Mono.CSharp {
 		// This one is computed after we can distinguish interfaces
 		// from classes from the arraylist `type_bases' 
 		//
-		string     base_class_name;
-		TypeExpr   parent_type;
+		string base_class_name;
+		protected TypeExpr parent_type;
 
 		ArrayList type_bases;
 
@@ -450,7 +450,7 @@ namespace Mono.CSharp {
 		bool members_defined_ok;
 
 		// The interfaces we implement.
-		Type[] ifaces;
+		protected Type[] ifaces;
 
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
@@ -981,47 +981,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		//
-		// Defines the default constructors
-		//
-		void DefineDefaultConstructor (bool is_static)
-		{
-			Constructor c;
-
-			// The default constructor is public
-			// If the class is abstract, the default constructor is protected
-			// The default static constructor is private
-
-			int mods = Modifiers.PUBLIC;
-			if (is_static)
-				mods = Modifiers.STATIC | Modifiers.PRIVATE;
-			else if ((ModFlags & Modifiers.ABSTRACT) != 0)
-				mods = Modifiers.PROTECTED;
-
-			c = new Constructor (this, Basename, mods, Parameters.EmptyReadOnlyParameters,
-					     new ConstructorBaseInitializer (
-						     null, Parameters.EmptyReadOnlyParameters,
-						     Location),
-					     Location);
-			
-			AddConstructor (c);
-			
-			c.Block = new ToplevelBlock (null, Location);
-			
-		}
-
-		public void ReportStructInitializedInstanceError ()
-		{
-			string n = TypeBuilder.FullName;
-			
-			foreach (Field f in initialized_fields){
-				Report.Error (
-					573, Location,
-					"`" + n + "." + f.Name + "': can not have " +
-					"instance field initializers in structs");
-			}
-		}
-
 		/// <remarks>
 		///  The pending methods that need to be implemented
 		//   (interfaces or abstract methods)
@@ -1184,15 +1143,13 @@ namespace Mono.CSharp {
 				}
 
 				if (parent.IsSealed){
-					string detail = "";
-  					
-					if (parent.IsValueType)
-						detail = " (a class can not inherit from a struct/enum)";
-					
-					Report.Error (509, "class `"+ Name +
-						      "': Cannot inherit from sealed class `"+
-						      parent.Name + "'" + detail);
 					error = true;
+					Report.SymbolRelatedToPreviousError (parent.Type);
+					if (parent.Type.IsAbstract) {
+						Report.Error (709, Location, "'{0}': Cannot derive from static class", GetSignatureForError ());
+					} else {
+						Report.Error (509, Location, "'{0}': Cannot derive from sealed class", GetSignatureForError ());
+					}
 					return null;
 				}
 
@@ -1321,24 +1278,31 @@ namespace Mono.CSharp {
 
 			TypeAttributes type_attributes = TypeAttr;
 
-			if (IsTopLevel){
-				if (TypeManager.NamespaceClash (Name, Location)) {
-					error = true;
-					return null;
-				}
+			try {
+				if (IsTopLevel){
+					if (TypeManager.NamespaceClash (Name, Location)) {
+						error = true;
+						return null;
+					}
 
-				ModuleBuilder builder = CodeGen.Module.Builder;
-				TypeBuilder = builder.DefineType (
-					Name, type_attributes, null, null);
-			} else {
-				TypeBuilder builder = Parent.DefineType ();
-				if (builder == null) {
-					error = true;
-					return null;
-				}
+					ModuleBuilder builder = CodeGen.Module.Builder;
+					TypeBuilder = builder.DefineType (
+						Name, type_attributes, null, null);
+				} else {
+					TypeBuilder builder = Parent.DefineType ();
+					if (builder == null) {
+						error = true;
+						return null;
+					}
 				
-				TypeBuilder = builder.DefineNestedType (
-					MemberName.Basename, type_attributes, null, null);
+					TypeBuilder = builder.DefineNestedType (
+						MemberName.Basename, type_attributes,
+						null, null);
+				}
+			}
+			catch (ArgumentException) {
+				Report.RuntimeMissingSupport ("static classes");
+				return null;
 			}
 
 			TypeManager.AddUserType (Name, TypeBuilder, this);
@@ -1517,6 +1481,11 @@ namespace Mono.CSharp {
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
 		}
 
+		protected virtual void DefineDefaultConstructor ()
+		{
+			// Nothing to do
+		}
+
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
@@ -1568,37 +1537,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (constants != null)
-				constants.DefineContainerMembers ();
+			DefineContainerMembers (constants);
+			DefineContainerMembers (fields);
 
-			if (fields != null)
-				fields.DefineContainerMembers ();
-
-			if ((Kind == Kind.Class) && !(this is ClassPart)){
-				if (instance_constructors == null){
-					if (default_constructor == null)
-						DefineDefaultConstructor (false);
-				}
-
-				if (initialized_static_fields != null &&
-				    default_static_constructor == null)
-					DefineDefaultConstructor (true);
-			}
-
-			if (Kind == Kind.Struct){
-				//
-				// Structs can not have initialized instance
-				// fields
-				//
-				if (initialized_static_fields != null &&
-				    default_static_constructor == null)
-					DefineDefaultConstructor (true);
-
-				if (initialized_fields != null)
-					ReportStructInitializedInstanceError ();
-			}
-
-			Pending = GetPendingImplementations ();
+			DefineDefaultConstructor ();
 
 			if (parts != null) {
 				foreach (ClassPart part in parts) {
@@ -1610,32 +1552,18 @@ namespace Mono.CSharp {
 			//
 			// Constructors are not in the defined_names array
 			//
-			if (instance_constructors != null)
-				instance_constructors.DefineContainerMembers ();
-		
+			DefineContainerMembers (instance_constructors);
+
 			if (default_static_constructor != null)
 				default_static_constructor.Define ();
 
-			if (methods != null)
-				methods.DefineContainerMembers ();
-
-			if (properties != null)
-				properties.DefineContainerMembers ();
-
-			if (events != null)
-				events.DefineContainerMembers ();
-
-			if (indexers != null)
-				indexers.DefineContainerMembers ();
-
-			if (operators != null)
-				operators.DefineContainerMembers ();
-
-			if (enums != null)
-				enums.DefineContainerMembers ();
-			
-			if (delegates != null)
-				delegates.DefineContainerMembers ();
+			DefineContainerMembers (methods);
+			DefineContainerMembers (properties);
+			DefineContainerMembers (events);
+			DefineContainerMembers (indexers);
+			DefineContainerMembers (operators);
+			DefineContainerMembers (enums);
+			DefineContainerMembers (delegates);
 
 			if (CurrentType != null) {
 				GenericType = CurrentType.ResolveType (ec);
@@ -1667,6 +1595,12 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		protected virtual void DefineContainerMembers (MemberCoreArrayList mcal)
+		{
+			if (mcal != null)
+				mcal.DefineContainerMembers ();
 		}
 
 		public override bool Define ()
@@ -2831,6 +2765,40 @@ namespace Mono.CSharp {
 			return PendingImplementation.GetPendingImplementations (this);
 		}
 
+		//
+		// Defines the default constructors
+		//
+		protected void DefineDefaultConstructor (bool is_static)
+		{
+			Constructor c;
+
+			// The default constructor is public
+			// If the class is abstract, the default constructor is protected
+			// The default static constructor is private
+
+			int mods = Modifiers.PUBLIC;
+			if (is_static)
+				mods = Modifiers.STATIC | Modifiers.PRIVATE;
+			else if ((ModFlags & Modifiers.ABSTRACT) != 0)
+				mods = Modifiers.PROTECTED;
+
+			c = new Constructor (this, Basename, mods, Parameters.EmptyReadOnlyParameters,
+					     new ConstructorBaseInitializer (
+						     null, Parameters.EmptyReadOnlyParameters,
+						     Location),
+					     Location);
+			
+			AddConstructor (c);
+			
+			c.Block = new ToplevelBlock (null, Location);
+			
+		}
+
+		protected override void DefineDefaultConstructor ()
+		{
+			Pending = PendingImplementation.GetPendingImplementations (this);
+		}
+
 		protected override void VerifyMembers (EmitContext ec) 
 		{
 			if (Fields != null) {
@@ -2866,6 +2834,90 @@ namespace Mono.CSharp {
 				hasExplicitLayout = true;
 
 			base.ApplyAttributeBuilder (a, cb);
+		}
+	}
+
+	/// <summary>
+	/// Class handles static classes declaration
+	/// </summary>
+	public sealed class StaticClass: Class {
+		public StaticClass (NamespaceEntry ns, TypeContainer parent, MemberName name,
+				    int mod, Attributes attrs, Location l)
+			: base (ns, parent, name, mod & ~Modifiers.STATIC, attrs, l)
+		{
+			if (RootContext.Version == LanguageVersion.ISO_1) {
+				Report.FeatureIsNotStandardized ("static classes");
+				Environment.Exit (1);
+			}
+		}
+
+		// Only static fields are allowed
+		protected override void DefineDefaultConstructor ()
+		{
+			if (initialized_static_fields != null &&
+				default_static_constructor == null)
+				DefineDefaultConstructor (true);
+		}
+
+		protected override void DefineContainerMembers (MemberCoreArrayList list)
+		{
+			if (list == null)
+				return;
+
+			foreach (MemberCore m in list) {
+				if (m is Operator) {
+					Report.Error (715, m.Location, "'{0}': static classes cannot contain user-defined operators", m.GetSignatureForError (this));
+					continue;
+				}
+
+				if ((m.ModFlags & Modifiers.STATIC) != 0)
+					continue;
+
+				if (m is Constructor) {
+					Report.Error (710, m.Location, "'{0}': Static classes cannot have instance constructors", GetSignatureForError ());
+					continue;
+				}
+
+				if (m is Destructor) {
+					Report.Error (711, m.Location, "'{0}': Static class cannot contain destructor", GetSignatureForError ());
+					continue;
+				}
+				Report.Error (708, m.Location, "'{0}': cannot declare instance members in a static class", m.GetSignatureForError (this));
+			}
+
+			base.DefineContainerMembers (list);
+		}
+
+		public override TypeBuilder DefineType()
+		{
+			TypeBuilder tb = base.DefineType ();
+			if (tb == null)
+				return null;
+
+			if (parent_type != null) {
+				Report.Error (
+					713, Location,
+					"Static class '{0}' cannot derive from type '{1}'. " +
+					"Static classes must derive from object",
+					GetSignatureForError (), parent_type);
+				return null;
+			}
+
+			if (ifaces != null) {
+				foreach (Type t in ifaces)
+					Report.SymbolRelatedToPreviousError (t);
+				Report.Error (
+					714, Location,
+					"'{0}': static classes cannot implement interfaces",
+					GetSignatureForError ());
+			}
+			return tb;
+		}
+
+		public override TypeAttributes TypeAttr {
+			get {
+				return base.TypeAttr | TypeAttributes.Abstract | TypeAttributes.Sealed;
+			}
 		}
 	}
 
@@ -2925,6 +2977,17 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override void DefineDefaultConstructor ()
+		{
+			if (instance_constructors == null && default_constructor == null)
+				DefineDefaultConstructor (false);
+
+			if (initialized_static_fields != null && default_static_constructor == null)
+				DefineDefaultConstructor (true);
+
+			base.DefineDefaultConstructor ();
+		}
+
 		public override void Register ()
 		{
 			CheckDef (Parent.AddClass (this), Name, Location);
@@ -2976,6 +3039,24 @@ namespace Mono.CSharp {
 			get {
 				return AttributeTargets.Struct;
 			}
+		}
+
+		protected override void DefineDefaultConstructor ()
+		{
+			//
+			// Structs can not have initialized instance
+			// fields
+			//
+			if (initialized_static_fields != null &&
+				default_static_constructor == null)
+				DefineDefaultConstructor (true);
+
+			if (initialized_fields != null) {
+				foreach (Field f in initialized_fields)
+					Report.Error (573, f.Location, "'{0}': cannot have instance field initializers in structs", f.GetSignatureForError ());
+			}
+
+			base.DefineDefaultConstructor ();
 		}
 
 		public override void Register ()
@@ -3331,6 +3412,12 @@ namespace Mono.CSharp {
 				"member `" + name + "'");
 		}
 
+		protected static string Error722 {
+			get {
+				return "'{0}': static types cannot be used as return types";
+			}
+		}
+
 		/// <summary>
 		/// For custom member duplication search in a container
 		/// </summary>
@@ -3659,16 +3746,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		//
-		// Returns the `System.Type' for the ReturnType of this
-		// function.  Provides a nice cache.  (used between semantic analysis
-		// and actual code generation
-		//
-		public Type GetReturnType ()
-		{
-			return MemberType;
-		}
-
 		public override string GetSignatureForError()
 		{
 			return TypeManager.CSharpSignature (MethodBuilder);
@@ -3789,6 +3866,11 @@ namespace Mono.CSharp {
 					if (IsDuplicateImplementation (m))
 						return false;
 				}
+			}
+
+			if (MemberType.IsAbstract && MemberType.IsSealed) {
+				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
+				return false;
 			}
 
 			return true;
@@ -3931,12 +4013,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Type ReturnType {
-			get {
-				return MemberType;
-			}
-		}
-
 		public string MethodName {
 			get {
 				return ShortName;
@@ -4010,6 +4086,13 @@ namespace Mono.CSharp {
 				return GenericMethod;
 			}
 		}
+
+		public Type ReturnType {
+			get {
+				return MemberType;
+			}
+		}
+
 		#endregion
 	}
 
@@ -4514,13 +4597,13 @@ namespace Mono.CSharp {
 			get {
 				return ShortName;
 			}
-			}
+		}
 			
 		public Type ReturnType {
 			get {
 				return MemberType;
-					}
-				}
+			}
+		}
 
 		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 		{
@@ -4777,7 +4860,7 @@ namespace Mono.CSharp {
 				if (member is Indexer) {
 					container.Pending.ImplementIndexer (
 						member.InterfaceType, builder, method.ReturnType,
-						ParameterTypes, true);
+						ParameterTypes, member.IsExplicitImpl);
 				} else
 					container.Pending.ImplementMethod (
 						member.InterfaceType, name, method.ReturnType,
@@ -5205,12 +5288,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		/// <summary>
-		/// Use this method when MethodBuilder is null
-		/// </summary>
-		public virtual string GetSignatureForError (TypeContainer tc)
+		public override string GetSignatureForError (TypeContainer tc)
 		{
-			return String.Concat (tc.Name, '.', Name);
+			return String.Concat (tc.Name, '.', base.GetSignatureForError (tc));
 		}
 
 		protected override bool VerifyClsCompliance(DeclSpace ds)
@@ -5864,8 +5944,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			ec = new EmitContext (Parent, Location, null, MemberType, ModFlags);
+			if (MemberType.IsAbstract && MemberType.IsSealed) {
+				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
+				return false;
+			}
 
+			ec = new EmitContext (Parent, Location, null, MemberType, ModFlags);
 			return true;
 		}
 
@@ -6874,7 +6958,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError(TypeContainer tc)
 		{
-			return String.Concat (tc.Name, ".this[", TypeManager.CSharpName (ParameterTypes [0]), ']');
+			return String.Concat (tc.Name, ".this[", Parameters.FixedParameters [0].TypeName.ToString (), ']');
 		}
 	}
 
@@ -6957,12 +7041,6 @@ namespace Mono.CSharp {
 			Block = block;
 		}
 
-		string Prototype (TypeContainer container)
-		{
-			return container.Name + ".operator " + OperatorType + " (" + FirstArgType + "," +
-				SecondArgType + ")";
-		}
-
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb) 
 		{
 			OperatorMethod.ApplyAttributeBuilder (a, cb);
@@ -6993,7 +7071,7 @@ namespace Mono.CSharp {
 				Report.Error (
 					558, Location, 
 					"User defined operators `" +
-					Prototype (Parent) +
+					GetSignatureForError (Parent) +
 					"' must be declared static and public");
 				return false;
 			}
@@ -7022,7 +7100,7 @@ namespace Mono.CSharp {
 
 			Type [] param_types = OperatorMethod.ParameterTypes;
 			Type declaring_type = OperatorMethod.MethodData.DeclaringType;
-			Type return_type = OperatorMethod.GetReturnType ();
+			Type return_type = OperatorMethod.ReturnType;
 			Type first_arg_type = param_types [0];
 
 			// Rules for conversion operators
@@ -7190,19 +7268,27 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override string GetSignatureForError(TypeContainer tc)
+		public override string GetSignatureForError (TypeContainer tc)
 		{
-			return ToString ();
+			StringBuilder sb = new StringBuilder ();
+			sb.AppendFormat ("{0}.operator {1} {2}({3}", tc.Name, GetName (OperatorType), ReturnType.ToString (), TypeManager.CSharpName (FirstArgType.Type));
+			
+			if (SecondArgType != null) {
+				sb.Append (",");
+				sb.Append (TypeManager.CSharpName (SecondArgType.Type));
+			}
+			sb.Append (")");
+			return sb.ToString ();
 		}
 
-		public override string GetSignatureForError()
+		public override string GetSignatureForError ()
 		{
 			return ToString ();
 		}
 		
 		public override string ToString ()
 		{
-			Type return_type = OperatorMethod.GetReturnType();
+			Type return_type = OperatorMethod.ReturnType;
 			Type [] param_types = OperatorMethod.ParameterTypes;
 			
 			if (SecondArgType == null)

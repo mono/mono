@@ -75,6 +75,11 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		public static void FeatureIsNotStandardized (string feature)
+		{
+			Report.Error (1644, "Feature '{0}' cannot be used because it is not part of the standardized ISO C# language specification", feature);
+		}
+		
 		public static string FriendlyStackTrace (Exception e)
 		{
 			return FriendlyStackTrace (new StackTrace (e, true));
@@ -121,6 +126,11 @@ namespace Mono.CSharp {
 			Console.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
 		}                
 
+		static public void RuntimeMissingSupport (string feature) 
+		{
+			Report.Error (-88, "Your .NET Runtime does not support '{0}'. Please use the latest Mono runtime instead.");
+		}
+
 		/// <summary>
                 /// In most error cases is very useful to have information about symbol that caused the error.
                 /// Call this method before you call Report.Error when it makes sense.
@@ -163,12 +173,16 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (Type type)
 		{
+			DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
+			if (temp_ds == null)
 			SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
+			else 
+				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));
 		}
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)
 		{
-			related_symbols.Add (String.Format ("{0}: ('{1}' name of symbol related to previous ", loc, symbol));
+			related_symbols.Add (String.Format ("{0}: '{1}' (name of symbol related to previous ", loc, symbol));
 		}
 
 		static public void RealError (string msg)
@@ -177,7 +191,7 @@ namespace Mono.CSharp {
 			Console.WriteLine (msg);
 
 			foreach (string s in related_symbols)
-				Console.WriteLine (s);
+				Console.WriteLine (s + "error)");
 			related_symbols.Clear ();
 
 			if (Stacktrace)
@@ -230,7 +244,7 @@ namespace Mono.CSharp {
 				Warnings++;
 
 				foreach (string s in related_symbols)
-					Console.WriteLine (s);
+					Console.WriteLine (s + "warning)");
 				related_symbols.Clear ();
 
 				Check (code);

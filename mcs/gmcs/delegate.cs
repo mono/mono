@@ -684,6 +684,7 @@ namespace Mono.CSharp {
 		protected MethodBase constructor_method;
 		protected MethodBase delegate_method;
 		protected MethodGroupExpr method_group;
+		protected Expression delegate_instance_expression;
 
 		public DelegateCreation () {}
 
@@ -718,11 +719,10 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (method_group.InstanceExpression == null ||
-			    delegate_method.IsStatic)
+			if (delegate_instance_expression == null || delegate_method.IsStatic)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
-				method_group.InstanceExpression.Emit (ec);
+				delegate_instance_expression.Emit (ec);
 			
 			if (delegate_method.IsVirtual && !method_group.IsBase) {
 				ec.ig.Emit (OpCodes.Dup);
@@ -788,26 +788,26 @@ namespace Mono.CSharp {
 				}
 			}
 			
-				if (mg.InstanceExpression != null)
-				mg.InstanceExpression = mg.InstanceExpression.Resolve (ec);
+			if (mg.InstanceExpression != null)
+				delegate_instance_expression = mg.InstanceExpression.Resolve (ec);
 			else if (ec.IsStatic) {
 				if (!delegate_method.IsStatic) {
-							Report.Error (120, loc,
-								      "An object reference is required for the non-static method " +
-								      delegate_method.Name);
-							return null;
-						}
-				mg.InstanceExpression = null;
-					} else
-				mg.InstanceExpression = ec.GetThis (loc);
+					Report.Error (120, loc,
+						      "An object reference is required for the non-static method " +
+						      delegate_method.Name);
+					return null;
+				}
+				delegate_instance_expression = null;
+			} else
+				delegate_instance_expression = ec.GetThis (loc);
 
-			if (mg.InstanceExpression != null && mg.InstanceExpression.Type.IsValueType)
-				mg.InstanceExpression = new BoxedCast (mg.InstanceExpression);
-				
+			if (delegate_instance_expression != null && delegate_instance_expression.Type.IsValueType)
+				delegate_instance_expression = new BoxedCast (mg.InstanceExpression);
+
 			method_group = mg;
-				eclass = ExprClass.Value;
-				return this;
-			}
+			eclass = ExprClass.Value;
+			return this;
+		}
 	}
 
 	//
@@ -898,7 +898,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 				
-			method_group.InstanceExpression = e;
+			delegate_instance_expression = e;
 			delegate_method = method_group.Methods [0];
 			
 			eclass = ExprClass.Value;

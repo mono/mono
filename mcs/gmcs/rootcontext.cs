@@ -16,6 +16,12 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
+	public enum LanguageVersion
+	{
+		Default	= 0,
+		ISO_1	= 1
+	}
+
 	public class RootContext {
 
 		//
@@ -66,7 +72,10 @@ namespace Mono.CSharp {
 		//
 		// If set, enable C# version 2 features
 		//
+		[Obsolete ("Please use LanguageVersion enum insted")]
 		public static bool V2 = true;
+
+		public static LanguageVersion Version = LanguageVersion.Default;
 
 		//
 		// We keep strongname related info here because

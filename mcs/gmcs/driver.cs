@@ -223,6 +223,7 @@ namespace Mono.CSharp
 				"   -g                 Generate debugging information\n" +
 				"   -keycontainer:NAME The key pair container used to strongname the assembly\n" +
 				"   -keyfile:FILE      The strongname key file used to strongname the assembly\n" +
+				"   -langversion:TEXT  Specifies language version modes: ISO-1 or Default" + Environment.NewLine +
 				"   -lib:PATH1,PATH2   Adds the paths to the assembly link path\n" +
 				"   -main:class        Specified the class that contains the entry point\n" +
 				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
@@ -1264,9 +1265,24 @@ namespace Mono.CSharp
 
 			case "/v2":
 			case "/2":
+				Console.WriteLine ("The compiler option -2 is obsolete. Please use /langversion instead");
 				SetupV2 ();
 				return true;
 				
+			case "/langversion":
+				switch (value.ToLower (CultureInfo.InvariantCulture)) {
+					case "iso-1":
+						RootContext.Version = LanguageVersion.ISO_1;
+						return true;
+
+					case "default":
+						SetupV2 ();
+						return true;
+				}
+				Report.Error (1617, "Invalid option '{0}' for /langversion; must be ISO-1 or Default", value);
+				Environment.Exit (1);
+				return false;
+
 			case "/codepage":
 				int cp = -1;
 

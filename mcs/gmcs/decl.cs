@@ -280,6 +280,14 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		/// Use this method when MethodBuilder is null
+		/// </summary>
+		public virtual string GetSignatureForError (TypeContainer tc)
+		{
+			return Name;
+		}
+
+		/// <summary>
 		/// Base Emit method. This is also entry point for CLS-Compliant verification.
 		/// </summary>
 		public virtual void Emit ()
@@ -421,6 +429,7 @@ namespace Mono.CSharp {
 				if (HasClsCompliantAttribute) {
 					Report.Error (3014, Location, "'{0}' cannot be marked as CLS-compliant because the assembly does not have a CLSCompliant attribute", GetSignatureForError ());
 				}
+				return false;
 			}
 
 			int index = Name.LastIndexOf ('.');

@@ -491,7 +491,7 @@ namespace Mono.CSharp {
 			else if (TypeManager.IsEnumType (t)){
 				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
 				if (real_type == t)
-					real_type = real_type.UnderlyingSystemType;
+					real_type = System.Enum.GetUnderlyingType (real_type);
 
 				Constant e = Constantify (v, real_type);
 
@@ -2905,7 +2905,7 @@ namespace Mono.CSharp {
 			ObsoleteAttribute oa;
 			FieldBase f = TypeManager.GetField (FieldInfo);
 			if (f != null) {
-				oa = f.GetObsoleteAttribute (ec.DeclSpace);
+				oa = f.GetObsoleteAttribute (f.Parent);
 				if (oa != null)
 					AttributeTester.Report_ObsoleteMessage (oa, f.GetSignatureForError (), loc);
 				// To be sure that type is external because we do not register generated fields

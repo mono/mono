@@ -1,3 +1,111 @@
+2004-09-03  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #61128.
+	* expression.cs (BetterConversion): Don't allow either conversion 
+	to be null.  Remove redundant implicit conversion test when 'q ==
+	null' -- when this function is invoked, we already know that the
+	implicit conversion exists.
+	(BetterFunction): Assume that 'best' is non-null.  Remove
+	redundant reimplementation of IsApplicable when 'best' is null.
+	(IsParamsMethodApplicable, IsApplicable): Add new parameter for
+	number of arguments.
+	(IsAncestralType): Extract from OverloadResolve.
+	(OverloadResolve): Make robust to the MethodGroupExpr being
+	unsorted.  Implement all the logic of Section 14.5.5.1, and
+	support overloading of methods from multiple applicable types.
+	Clean up logic somewhat.  Don't pass null methods to BetterFunction.
+
+	* report.cs (SymbolRelatedToPreviousError): Cleanup output.
+	(RealError, Warning): Append type of report to related symbol.
+
+2004-09-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* enum.cs: Fixed CLS-Compliance checks for enum members.
+	Error tests cs3008-8.cs, cs3014-8.cs
+
+2004-09-02  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #62342, #63102
+	* class.cs: ImplementIndexer uses member.IsExplicitImpl
+	like ImplementMethod.
+
+2004-09-02  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.GetAttributeArgumentExpression):
+	Fixed bug #65170.
+
+2004-09-02  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Using.EmitLocalVariableDeclFinally): Use
+	TypeManager.GetArgumentTypes() rather than calling GetParameters()
+	on the MethodBase.
+
+2004-09-01  Marek Safar  <marek.safar@seznam.cz>
+
+	C# 2.0 Static classes implemented
+
+	* class.cs (TypeContainer): instance_constructors,
+	initialized_fields, initialized_static_fields,
+	default_constructor, base_inteface_types are protected to be
+	accessible from StaticClass.
+	(TypeContainer.DefineDefaultConstructor): New virtual method
+	for custom default constructor generating
+	(StaticClass): New class to handle "Static classes" feature.
+
+	* cs-parser.jay: Handle static keyword on class like instance
+	of StaticClass.
+
+	* driver.cs: Added "/langversion" command line switch with two
+	options (iso-1, default).
+
+2004-08-31  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (FieldExpr.Resolve): Fixed bug #64689.
+
+2004-08-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs: Style.
+
+2004-08-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* delegate.cs: Add seperate instance expr field for miguel.
+
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* PointerArithmetic (Resolve): make sure we are not doing
+	pointer arith on void*. Also, make sure we are resolved
+	by not setting eclass until resolve.
+
+	All callers: Make sure that PointerArithmetic gets resolved.
+
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ArrayCreation (LookupType): If the type does not resolve 
+	to an array, give an error.
+
+2004-08-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* statement.cs (Try.Resolve): Fixed bug #64222
+
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(TC.OperatorArrayList.OperatorEntry.CheckPairedOperators): Don't
+	crash here.	
+
+2004-08-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (Constantify): Get underlying type via
+	System.Enum.GetUnderlyingType to avoid StackOverflow on the
+	Windows in special cases.
+
+2004-08-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs (GetAddMethod): Used GetAddMethod (true)
+	for obtaining also private methods.
+	(GetRemoveMethod): Used GetRemoveMethod (true)
+	for obtaining also private methods.
+
 2004-09-02  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Using.EmitLocalVariableDeclFinally): Use

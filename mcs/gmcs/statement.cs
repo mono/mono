@@ -1022,6 +1022,10 @@ namespace Mono.CSharp {
 			if (VariableType == null)
 				return false;
 
+			if (VariableType.IsAbstract && VariableType.IsSealed) {
+				Report.Error (723, Location, "Cannot declare variable of static type '{0}'", TypeManager.CSharpName (VariableType));
+				return false;
+			}
 // TODO: breaks the build
 //			if (VariableType.IsPointer && !ec.InUnsafe)
 //				Expression.UnsafeError (Location);
@@ -3370,7 +3374,7 @@ namespace Mono.CSharp {
 
 				Type resolvedType = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
-					if (resolvedType.IsSubclassOf (prevCatches [ii])) {
+					if (resolvedType == prevCatches [ii] || resolvedType.IsSubclassOf (prevCatches [ii])) {
 						Report.Error (160, c.loc, "A previous catch clause already catches all exceptions of this or a super type '{0}'", prevCatches [ii].FullName);
 						return false;
 					}
