@@ -60,7 +60,7 @@ namespace System
 			{
 				// FIXME: we may need to quote, but any sane person
 				// should use GetCommandLineArgs () instead.
-				return String.Join ("", GetCommandLineArgs ());
+				return String.Join (" ", GetCommandLineArgs ());
 			}
 		}
 

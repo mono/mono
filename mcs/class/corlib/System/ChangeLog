@@ -1,4 +1,7 @@
+2002-05-22  Lawrence Pit  <loz@cable.a2000.nl>
 
+	* Environment.cs: CommandLine missed spaces between arguments
+	
 Tue May 21 17:25:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoCustomAttrs.cs: handle inherit argument.
