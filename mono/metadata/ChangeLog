@@ -1,3 +1,9 @@
+2003-09-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* profiler.c (mono_profiler_load): Added '-time' and '-alloc' options
+	to the built-in profiler to turn off time and allocation profiling
+	respectively.
+
 2003-09-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* profiler.c (mono_profiler_coverage_alloc): Use NULL instead of
