@@ -1,4 +1,9 @@
 
+Thu Apr 15 15:36:40 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mono-config.c: also load the .config file in the directory
+	where the assembly was found.
+
 Thu Apr 15 14:24:49 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: load per-assembly config files.
