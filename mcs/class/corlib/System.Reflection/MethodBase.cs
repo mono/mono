@@ -31,6 +31,19 @@ namespace System.Reflection {
 
 		public abstract ParameterInfo[] GetParameters();
 		
+		//
+		// This is a quick version for our own use. We should override
+		// it where possible so that it does not allocate an array.
+		//
+		internal virtual int GetParameterCount ()
+		{
+			ParameterInfo [] pi = GetParameters ();
+			if (pi == null)
+				return 0;
+			
+			return pi.Length;
+		}
+		
 #if NET_1_2
 		virtual
 #endif
