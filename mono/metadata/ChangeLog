@@ -1,3 +1,11 @@
+
+Tue Jun 11 13:21:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: handle modules (no assembly table). Split
+	loading references in its own function.
+	* class.c: handle moduleref resolution scope.
+	* image.c, image.h: cache module name in image.
+
 2002-06-07  Martin Baulig  <martin@gnome.org>
 
 	* reflection.c (mono_image_get_type_info): Only add a class layout entry
