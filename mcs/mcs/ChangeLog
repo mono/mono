@@ -1,3 +1,9 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs: Prefer the corlib system version when looking for
+	assemblies in the GAC. This is still a hack, but its a better hack
+	now.
+	
 2004-04-29  Marek Safar  <marek.safar@seznam.cz>
 
 	* decl.cs, enum.cs: Improved error 3005 reporting.
