@@ -1,3 +1,7 @@
+2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_type_blittable): OBJECT is not blittable. Fixes #47842.
+
 2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-x86.c (x86_class_init_trampoline): Make code patching thread
