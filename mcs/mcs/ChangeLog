@@ -1,3 +1,10 @@
+2002-11-14  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (PropertyBase.CheckBase): Make this work for multiple
+	indexers.  Fixes the first part of bug #33089.
+	(MethodSignature.InheritableMemberSignatureCompare): Added support
+	for properties.
+
 2002-11-13  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (Attribute.Resolve): Catch the

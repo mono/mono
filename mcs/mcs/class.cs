@@ -3538,6 +3538,20 @@ namespace Mono.CSharp {
 				ms = base_ms = new MethodSignature (Name, null, ParameterTypes);
 			}
 
+			//
+			// Verify if the parent has a type with the same name, and then
+			// check whether we have to create a new slot for it or not.
+			//
+			Type ptype = parent.TypeBuilder.BaseType;
+
+			// ptype is only null for System.Object while compiling corlib.
+			if (ptype == null) {
+				if ((ModFlags & Modifiers.NEW) != 0)
+					WarningNotHiding (parent);
+
+				return true;
+			}
+
 			MemberList props_this;
 
 			props_this = TypeContainer.FindMembers (
@@ -3554,54 +3568,49 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			//
-			// Pull either the get or the set method from this property, and use
-			// that as our reference method.  The following two variables are computed:
-			//
-			Type property_type = null;
-			MethodInfo reference = null;
-			
-			MemberInfo [] group;
+			MemberList mi_props;
 
-			group = TypeManager.MemberLookup (
-				parent.TypeBuilder, parent.TypeBuilder.BaseType, MemberTypes.Method,
-				BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic,
-				"get_" + ms.Name);
+			mi_props = TypeContainer.FindMembers (
+				ptype, MemberTypes.Property,
+				BindingFlags.NonPublic | BindingFlags.Public |
+				BindingFlags.Instance | BindingFlags.Static,
+				MethodSignature.inheritable_method_signature_filter, base_ms);
 
-			if (group == null || group.Length == 0){
-				group = TypeManager.MemberLookup (
-					parent.TypeBuilder, parent.TypeBuilder.BaseType, MemberTypes.Method,
-					BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic,
-					"set_" + ms.Name);
+			if (mi_props.Count > 0){
+				PropertyInfo parent_property = (PropertyInfo) mi_props [0];
+				string name = parent_property.DeclaringType.Name + "." +
+					parent_property.Name;
 
-				if (group != null && group.Length > 0){
-					reference = (MethodInfo) group [0];
-					if (reference is MethodBuilder)
-						property_type = TypeManager.LookupParametersByBuilder (reference).ParameterType (0);
-					else 
-						property_type = reference.GetParameters () [0].ParameterType;
-				}
-			} else {
-				reference = (MethodInfo) group [0];
-				property_type = reference.ReturnType;
-			}
+				MethodInfo get, set, parent_method;
+				get = parent_property.GetGetMethod ();
+				set = parent_property.GetSetMethod ();
 
-			if (reference != null){
-				string name = reference.DeclaringType.Name + "." + report_name;
+				if (get != null)
+					parent_method = get;
+				else if (set != null)
+					parent_method = set;
+				else
+					throw new Exception ("Internal error!");
 
-				if (!CheckMethodAgainstBase (parent, flags, reference, name))
+				if (!CheckMethodAgainstBase (parent, flags, parent_method, name))
 					return false;
 
-				if (((ModFlags & Modifiers.NEW) == 0) && (property_type != MemberType)) {
-					Report.Error (508, Location, parent.MakeName (Name) + ": cannot " +
-						      "change return type when overriding inherited " +
-						      "member `" + reference.DeclaringType + "." + ms.Name + "'");
-					return false;
+				if ((ModFlags & Modifiers.NEW) == 0) {
+					Type parent_type = TypeManager.TypeToCoreType (
+						parent_property.PropertyType);
+
+					if (parent_type != MemberType) {
+						Report.Error (
+							508, parent.MakeName (Name) + ": cannot " +
+							"change return type when overriding " +
+							"inherited member " + name);
+						return false;
+					}
 				}
 			} else {
 				if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (parent);
-				
+
 				if ((ModFlags & Modifiers.OVERRIDE) != 0){
 					if (this is Indexer)
 						Report.Error (115, Location,
@@ -4670,27 +4679,36 @@ namespace Mono.CSharp {
 		// 
 		static bool InheritableMemberSignatureCompare (MemberInfo m, object filter_criteria)
 		{
-		        if (MemberSignatureCompare (m, filter_criteria)){
-				MethodInfo mi = (MethodInfo) m;
-				MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
+		        if (!MemberSignatureCompare (m, filter_criteria))
+				return false;
 
-				// If only accessible to the current class.
-				if (prot == MethodAttributes.Private)
+			MethodInfo mi;
+			PropertyInfo pi = m as PropertyInfo;
+
+			if (pi != null) {
+				mi = pi.GetGetMethod ();
+				if (mi == null)
+					mi = pi.GetSetMethod ();
+			} else
+				mi = m as MethodInfo;
+
+			MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
+
+			// If only accessible to the current class.
+			if (prot == MethodAttributes.Private)
+				return false;
+
+			// If only accessible to the defining assembly or 
+			if (prot == MethodAttributes.FamANDAssem ||
+			    prot == MethodAttributes.Assembly){
+				if (m.DeclaringType.Assembly == CodeGen.AssemblyBuilder)
+					return true;
+				else
 					return false;
-
-				// If only accessible to the defining assembly or 
-				if (prot == MethodAttributes.FamANDAssem ||
-				    prot == MethodAttributes.Assembly){
-					if (m.DeclaringType.Assembly == CodeGen.AssemblyBuilder)
-						return true;
-					else
-						return false;
-				}
-
-				// Anything else (FamOrAssembly and Public) is fine
-				return true;
 			}
-			return false;
+
+			// Anything else (FamOrAssembly and Public) is fine
+			return true;
 		}
 	}
 }
