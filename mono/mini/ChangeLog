@@ -1,3 +1,6 @@
+2004-06-03 Massimiliano Mantione <massi@ximian.com>
+	* cpu-pentium.md basic-float.cs Fixed bug on fpu spills (see bug 54467),
+	and added relevant test case.
 
 Mon May 31 19:41:46 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
