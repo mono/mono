@@ -29,10 +29,15 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace Microsoft.JScript {
 
 	public class ObjectPrototype : JSObject	{
+
+		internal ObjectPrototype ()
+		{
+		}
 
 		public static ObjectConstructor constructor {
 			get { return ObjectConstructor.Ctr; }
@@ -41,7 +46,11 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_hasOwnProperty)]
 		public static bool hasOwnProperty (object thisObj, object name)
 		{
-			throw new NotImplementedException ();
+			if (thisObj == null || name == null)
+				return false;
+			Type type = thisObj.GetType ();
+			FieldInfo res = type.GetField (Convert.ToString (name));
+			return res == null;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_isPrototypeOf)]
@@ -65,7 +74,10 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_toString)]
 		public static string toString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			if (thisObj is JSObject)
+				return "[object " + ((JSObject) thisObj).ClassName + "]";
+			else
+				throw new NotImplementedException ();
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_valueOf)]

@@ -1,5 +1,6 @@
 2005-01-05  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* ObjectPrototype.cs: Add internal ctr. Implement hasOwnProperty.
 	* ObjectConstructor.cs: implemented CreateInstance.
 	* expression.cs (emit_create_instance): add Boolean case.
 	* Try.cs, Statement.cs (EmitStms), Literal.cs
