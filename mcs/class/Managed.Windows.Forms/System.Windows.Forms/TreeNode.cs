@@ -140,9 +140,9 @@ namespace System.Windows.Forms {
 			get { return bounds; }
 		}
 
-                internal Rectangle PlusMinusBounds {
-                        get { return plus_minus_bounds; }
-                }
+		internal Rectangle PlusMinusBounds {
+			get { return plus_minus_bounds; }
+		}
 
 		public bool Checked {
 			get { return check; }
@@ -318,6 +318,9 @@ namespace System.Windows.Forms {
 		public void Collapse ()
 		{
 			if (!is_expanded)
+				return;
+
+			if (tree_view != null && tree_view.root_node == this)
 				return;
 
 			bool cancel = false;

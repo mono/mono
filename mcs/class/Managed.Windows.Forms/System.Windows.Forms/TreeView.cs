@@ -257,6 +257,12 @@ namespace System.Windows.Forms {
 				if (value == checkboxes)
 					return;
 				checkboxes = value;
+
+				// Match a "bug" in the MS implementation where disabling checkboxes
+				// collapses the entire tree, but enabling them does not affect the
+				// state of the tree.
+				if (!checkboxes)
+					CollapseAll ();
 				Refresh ();
 			}
 		}
@@ -606,12 +612,23 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void DrawNodeCheckBox (TreeNode node, int x, int y)
+		{
+			int offset = (ItemHeight - 10) / 2;
+			DeviceContext.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, y + 0.5F + offset, 10, 10);
+		}
+
 		private void DrawNodeLines (TreeNode node, Pen dash, int x, int y, int middle, int item_height, int node_count)
 		{
-			int xadjust = 9;
+			int ladjust = 9; // left adjust
+			int radjust = 0; // right adjust
+
 			if (node_count > 0 && show_plus_minus)
-				xadjust = 13;
-			DeviceContext.DrawLine (dash, x - indent + xadjust, middle, x, middle);
+				ladjust = 13;
+			if (checkboxes)
+				radjust = 3;
+			
+			DeviceContext.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
 
 			int ly = 0;
 			if (node.PrevNode != null) {
@@ -676,10 +693,16 @@ namespace System.Windows.Forms {
 				x += indent - 5; 
 			}
 
+			int ox = x;
+
+			if (checkboxes) {
+				DrawNodeCheckBox (node, x, y);
+				ox += 14;
+			}
+
 			if (show_lines)
 				DrawNodeLines (node, dash, x, y, middle, item_height, _n_count);
 
-			int ox = x;
 			if (ImageList != null) {
 				if (visible)
 					DrawNodeImage (node, x, y);

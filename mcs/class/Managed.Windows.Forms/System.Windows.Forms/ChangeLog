@@ -1,3 +1,9 @@
+2004-12-30  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Draw checkbox boxes when checkboxes are enabled.
+	* TreeNode.cs: When collapsing make sure to never collapse the
+	root node.
+
 2004-12-29  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Align lines to the bottom of plus minus boxes properly.
