@@ -1,3 +1,11 @@
+2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Renamed aptc to allowpartiallytrustedcallers.
+	* mini.c: Check for p/invoke method when generating code. If a
+	p/invoke method, or it's class, isn't decorated with [Suppress
+	UnmanagedCodeSecurity] then generate code to call System.Security.
+	UnmanagedDemand (only if the security manager is active).
+
 2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-amd64.c (create_specific_trampoline): Revert parts of the 
