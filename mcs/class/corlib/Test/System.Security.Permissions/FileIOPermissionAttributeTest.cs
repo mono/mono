@@ -327,6 +327,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+		[Category("NotDotNet")]
 		public void NonC14NPath ()
 		{
 			string filename = Path.Combine (Path.GetTempPath (), "test");

@@ -335,7 +335,7 @@ namespace MonoTests.System.Runtime.Remoting
 			otResult = notreentrant.TestCallback ();
 		}
 		
-		[Test]
+		[Test, Ignore("Fails on MSDotNet 1.1.4322")]
 		public void TestMonitorWait ()
 		{
 			Thread tr = new Thread (new ThreadStart (DoMonitorPulse));

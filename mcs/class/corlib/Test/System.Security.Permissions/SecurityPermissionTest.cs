@@ -1,4 +1,4 @@
-﻿//
+//
 // SecurityPermissionTest.cs - NUnit Test Cases for SecurityPermission
 //
 // Author:
@@ -36,6 +36,7 @@ using System.Diagnostics;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
+	[Category("NotDotNet")]
 	public class SecurityPermissionTest {
 
 		static SecurityPermissionFlag [] AllFlags = {

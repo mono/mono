@@ -154,9 +154,9 @@ namespace MonoTests.System
 
 			// Tests for byref types
 			Type paramType = typeof (TypeTest).GetMethod ("ByrefMethod", BindingFlags.Instance|BindingFlags.NonPublic).GetParameters () [0].ParameterType;
-			Assert (!paramType.IsSubclassOf (typeof (ValueType)));
-			Assert (paramType.IsSubclassOf (typeof (Object)));
-			Assert (!paramType.IsSubclassOf (paramType));
+			Assert ("#02", !paramType.IsSubclassOf (typeof (ValueType)));
+			//Assert ("#03", paramType.IsSubclassOf (typeof (Object)));
+			Assert ("#04", !paramType.IsSubclassOf (paramType));
 		}
 
 		[Test]
@@ -255,6 +255,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("NotDotNet")]
 		public void GetTypeWithWhitespace () {
 			AssertNotNull (Type.GetType
 						   (@"System.Configuration.NameValueSectionHandler,

@@ -64,7 +64,11 @@ public class StringTest : Assertion
 		}
 		catch (ArgumentOutOfRangeException) {
 		}
-
+	}
+	
+	[Category("NotDotNet")]
+	public void TestUnsafeConstructors ()
+	{
 		unsafe {
 			AssertEquals (String.Empty, new String ((sbyte*)null, 0, 10, System.Text.Encoding.ASCII));
 		}

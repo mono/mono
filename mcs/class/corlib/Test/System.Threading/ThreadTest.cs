@@ -259,6 +259,7 @@ namespace MonoTests.System.Threading {
 			AssertEquals("#21 Apartment State Changed when not needed",before,after);
 		}
 
+		[Category("NotDotNet")]
 		public void TestApartmentState()
 		{
 			C2Test test1 = new C2Test();
@@ -499,6 +500,7 @@ namespace MonoTests.System.Threading {
 		
 		int counter = 0;
 		
+		[Category("NotDotNet")]
 		public void TestSuspend ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
@@ -522,6 +524,7 @@ namespace MonoTests.System.Threading {
 			CheckIsNotRunning ("t6", t);
 		}
 		
+		[Category("NotDotNet")]
 		public void TestSuspendAbort ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));

@@ -197,7 +197,7 @@ namespace MonoTests.System {
 				Fail();
 			}
 			catch (Exception e) {
-				AssertEquals("#A34", typeof(ArgumentException), e.GetType());
+				AssertEquals("#A34", typeof(InvalidCastException), e.GetType());
 			}
 
 		}		
@@ -475,7 +475,7 @@ namespace MonoTests.System {
 			AssertEquals("#F07", '@', Convert.ToChar("@"));
 			AssertEquals("#F08", 'K', Convert.ToChar((ushort)75));
 			AssertEquals("#F09", '=', Convert.ToChar((uint)61));
-			// AssertEquals("#F10", 'È', Convert.ToChar((ulong)200));
+			// AssertEquals("#F10", 'E', Convert.ToChar((ulong)200));
 			AssertEquals("#F11", '{', Convert.ToChar((object)trySByte, ci));
 			AssertEquals("#F12", 'o', Convert.ToChar(tryStr.Substring(1,1), ci));
 			
@@ -3491,7 +3491,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidCastException))]
+		[ExpectedException (typeof (NullReferenceException))]
 		public void ChangeTypeNullToValuetype ()
 		{
 			Convert.ChangeType (null, typeof (int));

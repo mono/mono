@@ -148,6 +148,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category("NotDotNet")]
 		public void CreateDomain_StringEvidence ()
 		{
 			Evidence e = new Evidence ();
@@ -182,6 +183,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category("NotDotNet")]
 		public void CreateDomain_StringEvidenceAppDomainSetup ()
 		{
 			Evidence e = new Evidence ();
@@ -225,6 +227,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category("NotDotNet")]
 		public void CreateDomain_StringEvidenceAppDomainSetupNull ()
 		{
 			Evidence e = new Evidence ();

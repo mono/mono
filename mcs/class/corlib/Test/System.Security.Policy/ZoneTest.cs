@@ -208,7 +208,6 @@ namespace MonoTests.System.Security.Policy {
 		string[] intranetUrls = {
 			"file://mono/index.html",	// file:// isn't supported as a site
 			"FILE://MONO/INDEX.HTML",
-			Path.DirectorySeparatorChar + "mono" + Path.DirectorySeparatorChar + "index.html",
 		};
 
 		[Test]
@@ -227,6 +226,7 @@ namespace MonoTests.System.Security.Policy {
 			"http://*.go-mono.com",
 			"http://www.go-mono.com:8080/index.html",
 			"mono://unknown/protocol",
+			Path.DirectorySeparatorChar + "mono" + Path.DirectorySeparatorChar + "index.html",
 		};
 
 		[Test]

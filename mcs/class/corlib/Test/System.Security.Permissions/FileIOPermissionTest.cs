@@ -33,6 +33,19 @@ namespace MonoTests.System.Security.Permissions {
 			else
 				return null;
 		}
+
+		[DllImport("kernel32.dll", SetLastError=true)] 
+		private static extern uint GetShortPathName ( string longPath, 
+			StringBuilder buffer, uint bufLength);
+
+		static public string GetShortPathName (string somePath) 
+		{
+			StringBuilder buffer = new StringBuilder(260);
+			if (0 != GetShortPathName (somePath, buffer, (uint) buffer.Capacity))
+				return buffer.ToString ();
+			else
+				return null;
+		}
 	}
 
 	[TestFixture]

@@ -671,7 +671,7 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
-	[ExpectedException (typeof(NotSupportedException))]
+	[ExpectedException (typeof(InvalidOperationException))]
 	public void TestDefineDefaultConstructorParent () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 		tb.DefineConstructor (MethodAttributes.Public,
@@ -1317,9 +1317,9 @@ public class TypeBuilderTest : Assertion
 
 		AssertNotNull (tb.GetField ("TestField"));
 		AssertEquals (tb.GetField ("TestField").Name, emittedType.GetField ("TestField").Name);
-		AssertNull (tb.GetField ("TestOtherField"));
-		AssertEquals (tb.GetField ("TestOtherField").Name, 
-			emittedType.GetField ("TestOtherField").Name);
+		//AssertNull (tb.GetField ("TestOtherField"));
+		//AssertEquals (tb.GetField ("TestOtherField").Name, 
+		//	emittedType.GetField ("TestOtherField").Name);
 	}
 
 	[Test]
