@@ -2,8 +2,8 @@ topdir = ../..
 
 LIBRARY = ../lib/System.dll
 
-LIB_FLAGS = -r corlib -r System.Xml -r mscorlib -r System.Xml
-#-r System.Drawing
+LIB_LIST = list.unix
+LIB_FLAGS = -r corlib -r System.Xml -r mscorlib
 
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=\
@@ -14,6 +14,7 @@ SOURCES_EXCLUDE=\
 	./System.Diagnostics/Performance*.cs	\
 	./System.Diagnostics/Counter*.cs	\
 	./System.Diagnostics/InstanceData*.cs
+
 
 export MONO_PATH_PREFIX = ../lib:
 

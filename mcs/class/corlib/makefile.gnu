@@ -2,6 +2,7 @@ topdir = ../..
 
 LIBRARY = ../lib/corlib.dll
 
+LIB_LIST = unix.args
 LIB_FLAGS = --unsafe --nostdlib
 
 SOURCES_INCLUDE=*.cs

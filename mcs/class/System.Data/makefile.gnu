@@ -2,6 +2,7 @@ topdir = ../..
 
 LIBRARY = ../lib/System.Data.dll
 
+LIB_LIST = list
 LIB_FLAGS = -r corlib -r System -r System.Xml
 
 SOURCES_INCLUDE=*.cs
