@@ -1,7 +1,7 @@
 2005-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* monoresgen.cs: s/monoresgen/resgen/. Open the destination file with
-	FileMode.Truncate, just in case it exists. Fixes bug #52105.
+	FileMode.Create. Fixes bug #52105.
 
 2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
