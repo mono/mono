@@ -91,7 +91,7 @@ namespace System.Reflection.Emit {
 							return f.FieldType;
 					}
 				}
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException (String.Format ("typebuilder: {0}", this));
 			}
 		}
 
@@ -131,9 +131,16 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void AddInterfaceImplementation( Type interfaceType) {
-			throw new NotImplementedException ();
+			if (interfaces != null) {
+				Type[] ifnew = new Type [interfaces.Length + 1];
+				interfaces.CopyTo (ifnew, 0);
+				ifnew [interfaces.Length] = interfaceType;
+				interfaces = ifnew;
+			} else {
+				interfaces = new Type [1];
+				interfaces [0] = interfaceType;
+			}
 		}
 
 		[MonoTODO]
