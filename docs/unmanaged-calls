@@ -6,11 +6,16 @@ More about PInvoke and Internal calls
 PInvoke stands for Platform Invoke. It is possible to call functions contained
 in native shared libraries, for example you can declare:
 
-	[DllImport("cygwin1.dll", EntryPoint="puts", CharSet=CharSet.Ansi)]
+	[DllImport("cygwin1.dll", EntryPoint="puts"]
 	public static extern int puts (string name);
 
 If you then call "puts(...)" it invokes the native "puts" functions in
-"cygwin1.dll"
+"cygwin1.dll". It is also possible to specify several marshalling attributes
+for the arguments, for example you can specify that they puts() function expect
+ts the string in Ansi encoding by setting the CharSet attribute field:
+
+	[DllImport("cygwin1.dll", EntryPoint="puts", CharSet=CharSet.Ansi)]
+	public static extern int puts (string name);
 
 2.) What are internal calls
 
@@ -24,6 +29,10 @@ our array implementation:
 
 If you call this GetRank() function it invokes
 ves_icall_System_Array_GetRank() inside the mono runtime.
+
+If you write your own runtime environment you can add internal calls with
+mono_add_internal_call(). 
+
 
 2.) Runtime considerations
 
@@ -62,7 +71,7 @@ PInvoke calls, which takes care of argument marshalling and LMF save/restore.
 
 3.) When/how does the runtime call unmanaged internal calls
 
-We don't need to convert and arguments, so we need only take care of the LMF
+We don't need to convert any arguments, so we need only take care of the LMF
 structure. 
 
 - LDFTN, CALLI, Delegate::Invoke, Delegate::BeginInvoke: We must generate
@@ -110,13 +119,14 @@ ves_icall_puts (MonoLMF lmf, MonoString *string);
 But this depends somehow on the calling conventions, and I don't know if that
 works on all plattforms? 
 
+
 4.) What is stored in the LMF
 
 - all caller saved registers (since we can trust unmanaged code)
 - the instruction pointer of the last managed instruction
 - a MonoMethod pointer for the unmanaged function
 - the address of the thread local lfm_addr pointer (to avoid another call to
-  arch_get_lmf_addr when restoring LMF
+  arch_get_lmf_addr when restoring LMF)
 
 The LMF is allocated on the stack, so we also know the stack position for
 stack unwinding. 
