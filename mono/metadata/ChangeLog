@@ -1,5 +1,14 @@
 2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (resolution_scope_from_image): Hack to work to work with
+	dynamic assemblies.
+
+	* reflection.c (mono_image_typedef_or_ref): renamed to ..._aux and 
+	added a 'force_ref' argument to force this function to allways return 
+	a TypeRef. This is needed by mono_image_get_memberref_token ().
+	
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
 	* reflection.c (mono_image_get_type_info): interfaces really don't have
 	a parent.
 
