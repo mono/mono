@@ -15,7 +15,7 @@ VERIFY=../tools/verifier.exe
 TEST_SOURCES = \
 	test-1   test-2   test-3   test-4   test-5   test-6   test-7   test-8   test-9   test-10 \
 	test-11  test-12  test-13  test-14  test-15  test-16  test-17  test-18  test-19  test-20 \
-	test-21  test-22  test-23  test-24  test-25  test-26  test-27  test-28  test-29  test-30 \
+	test-21  test-22  test-23  test-24  test-25  test-26  test-27  		test-29  test-30 \
 	test-31  test-32  test-33  test-34  test-35  test-36  test-37  test-38  test-39  test-40 \
 	test-41  test-42  test-43  test-44           test-46  test-47  test-48  test-49  \
 	test-51  test-52           test-54  test-55  test-56  test-57  	        test-59  test-60 \
@@ -32,8 +32,11 @@ TEST_SOURCES = \
 	test-161 test-162 test-163 test-164 test-165 test-166 test-167 test-168 test-169 test-170 \
 		 test-172 test-173 test-174 test-175 test-176 test-177 	        test-179 test-180 \
 	test-181 test-182 test-183 test-184 test-185 test-186 test-187 test-188          test-190 \
-	test-191 test-192 test-193 test-194
+	test-191 test-192 test-193 test-194 test-195
 
+
+DLL_SOURCES = \
+	dll-1
 
 # 
 # NOTE: Slot test-178 is free, turns out it was an unsafe test.
@@ -89,7 +92,7 @@ test-unsafe:
 	done
 
 # Compiled (previously) with mono, run with mono jit
-test-jit:
+test-jit: 
 	@for i in $(TEST_SOURCES:.cs=.exe); do \
 		echo -n "Running jit $$i ... "; \
 		if $(RUNTIME) ./$$i.exe > /dev/null; then \
@@ -116,7 +119,7 @@ test-windows:
 	done
 
 # Compile with mono, run with mono jit
-test-compiler-mono:
+test-compiler-mono: multi
 	@rm -f *.exe; \
 	for i in $(TEST_SOURCES); do \
 		echo -n "Running $$i ... "; \
@@ -195,3 +198,7 @@ clean:
 	rm *.out
 	rm casts.cs
 
+multi: 
+	$(MCS2) -target:library dll-1.cs
+	$(MCS2) -r:dll-1.dll prog-1.cs -out:prog-1.exe
+	mono ./prog-1.exe
