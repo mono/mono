@@ -1,3 +1,18 @@
+2004-11-23  Ben Maurer  <bmaurer@ximian.com>
+
+	* MonoSymbolFile.cs (CreateSymbolFile): Take a filestream to
+	write to. Do not return a byte array.
+
+	(MyMemoryStream): Unused now.
+
+	* MonoSymbolWriter.cs: Take advantage of the api change above.
+
+	Overall, this prevents us from having to allocate the debug file
+	in ram. For corlib, the debug file is about 1.5 mb. So it takes up
+	over 3 mb (you must write it in chunks then get the big array)
+
+	With the file stream, it takes up 4 kb or so for the buffer.
+
 2004-10-20  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolFile.cs (MonoSymbolFile.Write): Sort the method table

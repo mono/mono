@@ -175,7 +175,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			current_method.EndBlock (endOffset);
 		}
 
-		protected byte[] CreateOutput (Guid guid)
+		public void WriteSymbolFile (Guid guid)
 		{
 			foreach (SourceMethod method in methods) {
 				method.SourceFile.Entry.DefineMethod (
@@ -185,15 +185,8 @@ namespace Mono.CompilerServices.SymbolWriter
 					method.Method.NamespaceID);
 			}
 
-			return file.CreateSymbolFile (guid);
-		}
-
-		public void WriteSymbolFile (Guid guid)
-		{
-			using (FileStream stream = new FileStream (
-				       filename, FileMode.Create, FileAccess.Write)) {
-				byte[] data = CreateOutput (guid);
-				stream.Write (data, 0, data.Length);
+			using (FileStream fs = new FileStream (filename, FileMode.Create, FileAccess.Write)) {
+				file.CreateSymbolFile (guid, fs);
 			}
 		}
 
