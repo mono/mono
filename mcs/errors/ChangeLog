@@ -1,5 +1,9 @@
 2004-09-14  Martin Baulig  <martin@ximian.com>
 
+	* gmcs-expect-no-error, gmcs-expect-wrong-error: Updated.
+
+2004-09-14  Martin Baulig  <martin@ximian.com>
+
 	* Makefile: Put the old Makefile back.
 
 2004-09-14  Raja R Harinath  <rharinath@novell.com>

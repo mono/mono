@@ -17,7 +17,6 @@ cs0069.cs
 cs0079.cs
 cs0108-2.cs
 cs0111-2.cs
-cs0111-3.cs
 cs0111-4.cs
 cs0116-2.cs
 cs0118.cs
@@ -26,11 +25,7 @@ cs0128.cs
 cs0143.cs
 cs0149.cs
 cs0173.cs
-cs0173-2.cs
 cs0186-2.cs
-cs0192.cs
-cs0198.cs
-cs0199.cs
 cs0200.cs
 cs0201.cs
 cs0202.cs
@@ -40,16 +35,10 @@ cs0230.cs
 cs0231.cs
 cs0234.cs
 cs0239.cs
-cs0241.cs
-cs0244.cs
-cs0245.cs
-cs0248.cs
 cs0249.cs
-cs0250.cs
 cs0428.cs
 cs0504.cs
 cs0505.cs
-cs0516.cs
 cs0524.cs
 cs0525.cs
 cs0526.cs
@@ -70,7 +59,6 @@ cs0558.cs
 cs0559.cs
 cs0560.cs
 cs0561.cs
-cs0564.cs
 cs0567.cs
 cs0590.cs
 cs0610.cs
@@ -108,10 +96,8 @@ cs8217.cs
 cs0182-2.cs #64221
 
 cs0066-2.cs
-cs0102-10.cs
 cs0108-3.cs
 cs0111-10.cs
-cs0111-9.cs
 cs0117-4.cs
 cs0119.cs
 cs0162.cs
@@ -130,23 +116,17 @@ cs0531-2.cs
 cs0548-2.cs
 cs0548-3.cs
 cs0548-4.cs
-cs0564-2.cs
 cs0590-2.cs
 cs0610-3.cs
 cs0620-2.cs
 cs0620.cs
-cs0631.cs
 cs0636-2.cs
 cs0637-2.cs
 cs0637.cs
-cs0641.cs
 cs0647-2.cs
 cs0650.cs
 cs0652.cs
-cs0653.cs
-cs0674.cs
 cs0681.cs
-cs0685.cs
 cs1013.cs
 cs1016.cs
 cs1031.cs
@@ -168,19 +148,17 @@ cs3005-19.cs
 #
 # These bugs are new in gmcs
 #
-cs0071-2.cs
-cs0071.cs
-cs0111-8.cs
 cs0146-2.cs
 cs1540-2.cs
 cs1540-4.cs
 cs1540.cs
-cs0111-11.cs
 cs0111-12.cs
 cs0111-13.cs
 cs0111-14.cs
-cs1691.cs
-cs1692.cs
 cs0712.cs
-cs0619-37.cs
 cs0214-6.cs
+cs0056.cs
+cs0591.cs
+cs0715.cs
+
+
