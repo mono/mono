@@ -1,3 +1,12 @@
+
+Tue Oct 2 20:33:48 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, reflection.h, reflection.c: move here the reflection related 
+	stuff and implement a few more bits.
+	* icall.c: a field needs to be dereferenced twice. Do not use the same
+	name for two variables in the same scope.
+	* image.c, image.h: cleanups.
+
 2001-10-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_metadata_init): bug fix: compute the right size
