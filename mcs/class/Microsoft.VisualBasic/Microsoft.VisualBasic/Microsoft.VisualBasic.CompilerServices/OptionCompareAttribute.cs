@@ -8,11 +8,12 @@
 // (C) 2002 Ximian Inc.
 //
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.VisualBasic.CompilerServices {
 	[MonoTODO]
-	[ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)] 
+	[EditorBrowsable(EditorBrowsableState.Never)] 
 	[AttributeUsage(AttributeTargets.Parameter)] 
 	[StructLayoutAttribute(LayoutKind.Auto)] 
 	sealed public class OptionCompareAttribute : Attribute {
