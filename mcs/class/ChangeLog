@@ -1,3 +1,7 @@
+2003-03-31 Martin Willemoes Hansen
+
+	* Stubed System.Drawing.Design
+
 2003-03-31  Alan Tam <Tam@SiuLung.com>
 
 	* makefile.gnu: Added System.Design to build
