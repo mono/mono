@@ -1,3 +1,8 @@
+2003-02-08  Pedro Martíenz Juliá  <yoros@wanadoo.es>
+
+	* Math.cs: Fix a few methods (like Round) and add with comments the
+	new methods: BigMul and DivRem that were in ECMA specs.
+
 2003-02-07  Patrik Torstensson
 
 	* Exception.cs: Fixed formating
