@@ -9,3 +9,4 @@
 ./System.Runtime.Remoting.Channels/SoapServerFormatterSinkProvider.cs
 ./System.Runtime.Remoting.Channels.Tcp/TcpChannel.cs
 ./System.Runtime.Remoting.Channels.Tcp/TcpClientChannel.cs
+./System.Runtime.Remoting.Channels.Tcp/TcpServerChannel.cs
