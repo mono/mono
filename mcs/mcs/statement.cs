@@ -2053,8 +2053,6 @@ namespace Mono.CSharp {
 			if ((child.Type != FlowBranchingType.LOOP_BLOCK) &&
 			    (child.Type != FlowBranchingType.SWITCH_SECTION))
 				MayLeaveLoop |= child.MayLeaveLoop;
-			else
-				MayLeaveLoop = false;
 
 			return returns;
  		}
