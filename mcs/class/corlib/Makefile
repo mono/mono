@@ -45,11 +45,12 @@ reslib = $(topdir)/class/lib/$(PROFILE)/corlib_res.dll
 cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
 
 $(plattestlib).sources: corlib_test.dll.sources $(plattestlib).excludes
-	sort corlib_test.dll.sources $(plattestlib).excludes | uniq -u >$@
+	cat corlib_test.dll.sources $(plattestlib).excludes | sort | uniq -u >$@
 
 ifndef PLATFORM_MONO_NATIVE
 test_lib = $(plattestlib)
 test_against = $(PLATFORM_CORLIB)
+HAVE_CS_TESTS = $(plattestlib).sources
 endif
 TEST_MCS_FLAGS = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe
 
@@ -132,7 +133,7 @@ $(cmplib): $(cmp_makefrag) $(cmp_response)
 
 $(cmp_response): $(response) corlib_cmp.dll.excludes
 	@echo Creating $@ ...
-	@sort corlib_cmp.dll.excludes $< |uniq -u | $(post_process) >$@
+	@cat corlib_cmp.dll.excludes $< | sort | uniq -u | $(post_process) >$@
 
 $(cmp_makefrag): $(cmp_response)
 	@echo Creating $@ ...
@@ -157,7 +158,7 @@ $(reslib): $(res_makefrag) $(res_response)
 
 $(res_response): $(sourcefile) corlib_res.dll.excludes
 	@echo Creating $@ ...
-	@sort corlib_res.dll.excludes $(sourcefile) |uniq -u | $(post_process) >$@
+	@cat corlib_res.dll.excludes $(sourcefile) | sort | uniq -u | $(post_process) >$@
 
 # warning: embedded tab in the 'echo touch' line
 $(res_makefrag): $(res_response)
