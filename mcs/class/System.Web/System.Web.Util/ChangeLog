@@ -1,3 +1,7 @@
+2004-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: make reduce not to throw an exception for '../'. Fixes
+	bug #52599.
 
 2003-12-03  Jackson Harper <jackson@ximian.com>
 

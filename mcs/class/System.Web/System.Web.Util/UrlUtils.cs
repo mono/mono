@@ -135,11 +135,11 @@ namespace System.Web.Util
 				return Reduce (basePath + slash + relPath);
 			}
 
-			if (basePath == null || basePath == "") {
+			if (basePath == null || basePath == "")
 				basePath = HttpRuntime.AppDomainAppVirtualPath;
-				if (basePath.Length <= 1)
-					basePath = String.Empty;
-			}
+
+			if (basePath.Length <= 1)
+				basePath = String.Empty;
 
 			return Reduce (basePath + "/" + relPath);
 		}
@@ -241,12 +241,16 @@ namespace System.Web.Util
 			int end = parts.Length;
 			for (int i = 0; i < end; i++) {
 				string current = parts [i];
-				if (current == "" || current == ".")
+				if (current == "" || current == "." )
 					continue;
 
 				if (current == "..") {
-					if (result.Count == 0)
+					if (result.Count == 0) {
+						if (i == 1) // see bug 52599
+							continue;
+
 						throw new HttpException ("Invalid path.");
+					}
 
 					result.RemoveAt (result.Count - 1);
 					continue;
