@@ -44,6 +44,7 @@ namespace Mono.Document.Library {
 			get {return types;}
 		}
 
+		//Type level tags
 		private void ParseDoc ()
 		{
 			while(xtr.Read ()) {
@@ -55,14 +56,9 @@ namespace Mono.Document.Library {
 							type.IsClass = true;
 							ParseType (type);
 							continue;
-						case "structure":
+						case "delegate":
 							type = new DocType ();
-							type.IsStructure = true;
-							ParseType (type);
-							continue;
-						case "interface":
-							type = new DocType ();
-							type.IsInterface = true;
+							type.IsDelegate = true;
 							ParseType (type);
 							continue;
 						case "enum":
@@ -70,9 +66,14 @@ namespace Mono.Document.Library {
 							type.IsEnum = true;
 							ParseType (type);
 							continue;
-						case "delegate":
+						case "interface":
 							type = new DocType ();
-							type.IsDelegate = true;
+							type.IsInterface = true;
+							ParseType (type);
+							continue;
+						case "structure":
+							type = new DocType ();
+							type.IsStructure = true;
 							ParseType (type);
 							continue;
 						default:
@@ -97,47 +98,48 @@ namespace Mono.Document.Library {
 			types.Add (type);
 		}
 
+		//Member level tags
 		private void ParseTypeBody (DocType type)
 		{
 			while(xtr.Read ()) {
 				DocMember member;
 				if (
 					xtr.Name == "class"
-					|| xtr.Name == "structure"
-					|| xtr.Name == "interface"
-					|| xtr.Name == "enum"
 					|| xtr.Name == "delegate"
+					|| xtr.Name == "enum"
+					|| xtr.Name == "interface"
+					|| xtr.Name == "structure"
 				) return;
 				switch (xtr.Name) {
 					case "constructor":
 						member = new DocMember();
-						member.IsCtor = true;
-						type.AddCtor (ParseMember (member));
+						member.IsConstructor = true;
+						type.AddConstructor (ParseMember (member));
 						continue;
-					case "method":
+					case "event":
 						member = new DocMember();
-						member.IsMethod = true;
-						type.AddMethod (ParseMember (member));
+						member.IsEvent = true;
+						type.AddEvent (ParseMember (member));
 						continue;
 					case "field":
 						member = new DocMember();
 						member.IsField = true;
 						type.AddField (ParseMember (member));
 						continue;
+					case "method":
+						member = new DocMember();
+						member.IsMethod = true;
+						type.AddMethod (ParseMember (member));
+						continue;
+					case "operator":
+						member = new DocMember();
+						member.IsOperator = true;
+						type.AddOperator (ParseMember (member));
+						continue;
 					case "property":
 						member = new DocMember();
 						member.IsProperty = true;
 						type.AddProperty (ParseMember (member));
-						continue;
-					case "dtor":
-						member = new DocMember();
-						member.IsDtor = true;
-						type.AddDtor (ParseMember (member));
-						continue;
-					case "event":
-						member = new DocMember();
-						member.IsEvent = true;
-						type.AddEvent (ParseMember (member));
 						continue;
 					case "summary":
 						if (xtr.NodeType != XmlNodeType.EndElement && xtr.Depth == 2) {
@@ -152,6 +154,30 @@ namespace Mono.Document.Library {
 							xtr.Read ();
 							if (document != null) {
 								document.Remarks = xtr.Value;
+							}
+						}
+						continue;
+					case "seealso":
+						if (xtr.NodeType != XmlNodeType.EndElement && xtr.Depth == 2) {
+							xtr.Read ();
+							if (document != null) {
+								//document.AddSeeAlso (xtr.Value);
+							}
+						}
+						continue;
+					case "param":
+						if (xtr.NodeType != XmlNodeType.EndElement && xtr.Depth == 2) {
+							xtr.Read ();
+							if (document != null) {
+								//document.AddParam (xtr.Value);
+							}
+						}
+						continue;
+					case "member":
+						if (xtr.NodeType != XmlNodeType.EndElement && xtr.Depth == 2) {
+							xtr.Read ();
+							if (document != null) {
+								//document.AddEnumMember (xtr.Value);
 							}
 						}
 						continue;

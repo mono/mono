@@ -12,18 +12,26 @@ namespace Mono.Document.Library {
 	public class DocType : IComparable {
 
 		string name, _namespace, fileroot, language, summary, remarks;
-		bool isClass, isInterface, isEnum, isStructure, isDelegate, isNested = false;
-		ArrayList enums, ctors, dtors, methods, properties, fields, events;
+		bool isClass, isDelegate, isEnum, isInterface, isStructure, isNested = false;
+		ArrayList classes, delegates, enums, interfaces, structures, constructors,
+		events, fields, methods, operators, properties, seealsos, _params, members;
 
 		public DocType ()
 		{
+			classes = new ArrayList ();
+			delegates = new ArrayList ();
 			enums = new ArrayList ();
-			ctors = new ArrayList ();
-			dtors = new ArrayList ();
-			methods = new ArrayList ();
-			properties = new ArrayList ();
-			fields = new ArrayList ();
+			interfaces  = new ArrayList ();
+			structures = new ArrayList ();
+			constructors = new ArrayList ();
 			events = new ArrayList ();
+			fields = new ArrayList ();
+			methods = new ArrayList ();
+			operators = new ArrayList ();
+			properties = new ArrayList ();
+			seealsos = new ArrayList ();
+			_params = new ArrayList ();
+			members = new ArrayList ();
 		}
 
 		public int CompareTo (Object value)
@@ -46,13 +54,13 @@ namespace Mono.Document.Library {
 		{
 			if (type.IsClass)
 				return 5;
-			else if (type.IsStructure)
-				return 4;
-			else if (type.IsInterface)
-				return 3;
-			else if (type.IsEnum)
-				return 2;
 			else if (type.IsDelegate)
+				return 4;
+			else if (type.IsEnum)
+				return 3;
+			else if (type.IsInterface)
+				return 2;
+			else if (type.IsStructure)
 				return 1;
 			else
 				return 0;
@@ -60,43 +68,110 @@ namespace Mono.Document.Library {
 
 		public void Sort ()
 		{
+			classes.Sort ();
+			delegates.Sort ();
 			enums.Sort ();
-			ctors.Sort ();
-			dtors.Sort ();
-			methods.Sort ();
-			properties.Sort ();
-			fields.Sort ();
+			interfaces.Sort ();
+			structures.Sort ();
+			constructors.Sort ();
 			events.Sort ();
-		}
-
-		public void AddCtor (DocMember member)
-		{
-			ctors.Add (member);
-		}
-
-		public void AddDtor (DocMember member)
-		{
-			dtors.Add (member);
-		}
-
-		public void AddMethod (DocMember member)
-		{
-			methods.Add (member);
+			fields.Sort ();
+			methods.Sort ();
+			operators.Sort ();
+			properties.Sort ();
 		}
 		
-		public void AddProperty (DocMember member)
+		public void AddClass (DocType type)
 		{
-			properties.Add (member);
+			classes.Add (type);
+		}
+
+		public void AddDelegate (DocType type)
+		{
+			delegates.Add (type);
+		}
+
+		public void AddEnum (DocType type)
+		{
+			enums.Add (type);
+		}
+
+		public void AddInterface (DocType type)
+		{
+			interfaces.Add (type);
+		}
+
+		public void AddStructure (DocType type)
+		{
+			structures.Add (type);
+		}
+
+		public void AddConstructor (DocMember member)
+		{
+			constructors.Add (member);
+		}
+
+		public void AddEvent (DocMember member)
+		{
+			events.Add (member);
 		}
 
 		public void AddField (DocMember member)
 		{
 			fields.Add (member);
 		}
-		
-		public void AddEvent (DocMember member)
+
+		public void AddMethod (DocMember member)
 		{
-			events.Add (member);
+			methods.Add (member);
+		}
+
+		public void AddOperator (DocMember member)
+		{
+			operators.Add (member);
+		}
+
+		public void AddProperty (DocMember member)
+		{
+			properties.Add (member);
+		}
+
+		public void AddSeeAlso (DocSeeAlso see)
+		{
+			seealsos.Add (see);
+		}
+
+		public void AddParam (DocParam param)
+		{
+			_params.Add (param);
+		}
+
+		public void AddEnumMember (DocEnumMember member)
+		{
+			members.Add (member);
+		}
+
+		//Meta Information
+		public bool IsNested
+		{
+			get {return isNested;}
+			set {isNested = value;}
+		}
+
+		public string Type
+		{
+			get {
+				if (IsClass)
+					return "class";
+				else if (IsDelegate)
+					return "delegate";
+				else if (IsEnum)
+					return "enum";
+				else if (IsInterface)
+					return "interface";
+				else
+					return "structure";
+			}
 		}
 
 		public string Name
@@ -155,16 +230,28 @@ namespace Mono.Document.Library {
 			set {remarks = value;}
 		}
 
-		public bool IsInterface
-		{
-			get {return isInterface;}
-			set {isInterface = value;}
-		}
-
 		public bool IsClass
 		{
 			get {return isClass;}
 			set {isClass = value;}
+		}
+
+		public bool IsDelegate
+		{
+			get {return isDelegate;}
+			set {isDelegate = value;}
+		}
+
+		public bool IsEnum
+		{
+			get {return isEnum;}
+			set {isEnum = value;}
+		}
+
+		public bool IsInterface
+		{
+			get {return isInterface;}
+			set {isInterface = value;}
 		}
 
 		public bool IsStructure
@@ -173,38 +260,15 @@ namespace Mono.Document.Library {
 			set {isStructure = value;}
 		}
 		
-		public bool IsEnum
+		//Type level lists
+		public ArrayList Classes
 		{
-			get {return isEnum;}
-			set {isEnum = value;}
+			get {return classes;}
 		}
 
-		public bool IsDelegate
+		public ArrayList Delegates
 		{
-			get {return isDelegate;}
-			set {isDelegate = value;}
-		}
-		
-		public bool IsNested
-		{
-			get {return isNested;}
-			set {isNested = value;}
-		}
-
-		public string Type
-		{
-			get {
-				if (IsClass)
-					return "class";
-				else if (IsStructure)
-					return "structure";
-				else if (IsInterface)
-					return "interface";
-				else if (IsEnum)
-					return "emum";
-				else
-					return "delegate";
-			}
+			get {return delegates;}
 		}
 
 		public ArrayList Enums
@@ -212,34 +276,60 @@ namespace Mono.Document.Library {
 			get {return enums;}
 		}
 
-		public ArrayList Ctors
+		public ArrayList Interfaces
 		{
-			get {return ctors;}
+			get {return interfaces;}
 		}
 
-		public ArrayList Dtors
+		public ArrayList Structures
 		{
-			get {return dtors;}
+			get {return structures;}
 		}
-		
+
+		//Member level lists
+		public ArrayList Constructors
+		{
+			get {return constructors;}
+		}
+
+		public ArrayList Events
+		{
+			get {return events;}
+		}
+
+		public ArrayList Fields
+		{
+			get {return fields;}
+		}
+
 		public ArrayList Methods
 		{
 			get {return methods;}
 		}
-		
+
+		public ArrayList Operators
+		{
+			get {return operators;}
+		}
+
 		public ArrayList Properties
 		{
 			get {return properties;}
 		}
 		
-		public ArrayList Fields
+		public ArrayList SeeAlsos
 		{
-			get {return fields;}
+			get {return seealsos;}
 		}
 		
-		public ArrayList Events
+		public ArrayList Params
 		{
-			get {return events;}
+			get {return _params;}
+		}
+		
+		public ArrayList EnumMembers
+		{
+			get {return members;}
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace Mono.Document.Library {
 
 		string name, args, fullargs;
 		ArrayList _params;
-		bool isCtor, isDtor, isMethod, isField, isProperty, isEvent = false;
+		bool isConstructor, isEvent, isField, isMethod, isOperator, isProperty = false;
 
 		public DocMember ()
 		{
@@ -63,22 +63,16 @@ namespace Mono.Document.Library {
 			get {return name+" "+args;}
 		}
 		
-		public bool IsCtor
+		public bool IsConstructor
 		{
-			get {return isCtor;}
-			set {isCtor = value;}
+			get {return isConstructor;}
+			set {isConstructor = value;}
 		}
 
-		public bool IsDtor
+		public bool IsEvent
 		{
-			get {return isDtor;}
-			set {isDtor = value;}
-		}
-
-		public bool IsMethod
-		{
-			get {return isMethod;}
-			set {isMethod = value;}
+			get {return isEvent;}
+			set {isEvent = value;}
 		}
 
 		public bool IsField
@@ -87,16 +81,22 @@ namespace Mono.Document.Library {
 			set {isField = value;}
 		}
 
+		public bool IsMethod
+		{
+			get {return isMethod;}
+			set {isMethod = value;}
+		}
+
+		public bool IsOperator
+		{
+			get {return isOperator;}
+			set {isOperator = value;}
+		}
+
 		public bool IsProperty
 		{
 			get {return isProperty;}
 			set {isProperty = value;}
-		}
-		
-		public bool IsEvent
-		{
-			get {return isEvent;}
-			set {isEvent = value;}
 		}
 	}
 }
