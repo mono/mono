@@ -561,7 +561,7 @@ namespace Mono.CSharp
 
 		static void TestWarningConflict ()
 		{
-			if (Report.Warnings == 0 && Report.WarningsAreErrors) {
+			if (RootContext.WarningLevel == 0 && Report.WarningsAreErrors) {
 				Report.Error (1901, "Conflicting options specified: Warning level 0; Treat warnings as errors");
 				Environment.Exit (1);
 			}

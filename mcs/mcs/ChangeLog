@@ -1,3 +1,8 @@
+2003-11-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Applied patch from gert.driesen@pandora.be (Gert Driesen) 
+	which fixes the -warnaserror command line option.
+	
 2003-11-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* cfold.cs (DoNumericPromotions): During constant folding of
