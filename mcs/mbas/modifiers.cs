@@ -42,33 +42,35 @@ namespace Mono.MonoBASIC {
 			
 			switch (i) {
 			case Modifiers.NEW:
-				s = "new"; break;
+				s = "overloads"; break;
 			case Modifiers.PUBLIC:
 				s = "public"; break;
 			case Modifiers.PROTECTED:
 				s = "protected"; break;
 			case Modifiers.INTERNAL:
-				s = "internal"; break;
+				s = "friend"; break;
 			case Modifiers.PRIVATE:
 				s = "private"; break;
 			case Modifiers.ABSTRACT:
-				s = "abstract"; break;
+				s = "mustinherit"; break;
 			case Modifiers.SEALED:
-				s = "sealed"; break;
+				s = "notinheritable"; break;
 			case Modifiers.STATIC:
-				s = "static"; break;
+				s = "shared"; break;
 			case Modifiers.READONLY:
 				s = "readonly"; break;
 			case Modifiers.VIRTUAL:
-				s = "virtual"; break;
+				s = "overridable"; break;
 			case Modifiers.OVERRIDE:
-				s = "override"; break;
+				s = "overrides"; break;
 			case Modifiers.EXTERN:
 				s = "extern"; break;
 			case Modifiers.VOLATILE:
 				s = "volatile"; break;
 			case Modifiers.SHADOWS:
 				s = "shadows"; break;
+			case Modifiers.NONVIRTUAL:
+				s = "notoveridable"; break;
 			}
 
 			return s;
