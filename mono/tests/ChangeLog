@@ -1,3 +1,7 @@
+2004-05-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (PLATFORM_DISABLED_TESTS): Reenable thread abort test.
+
 2004-05-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal9.cs marshal10.cs: Fix custom marshalling tests.
