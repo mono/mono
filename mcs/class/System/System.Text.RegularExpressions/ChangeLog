@@ -4,6 +4,20 @@
 	* compiler.cs:
 	* interpreter.cs:
 	* parser.cs:
+	* syntax.cs:
+	Patch by Eric Durand Tremblay.
+	1) Capture inner group when named.
+	2) Resolved parse error caused by not capturing inner group
+	3) Resolved incorrect capture group
+	4) Now, not capturing anything when unnamed ( correct behavior)
+
+
+2004-04-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* arch.cs:
+	* compiler.cs:
+	* interpreter.cs:
+	* parser.cs:
 	* syntax.cs: converted to unix line endings.
 
 2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>

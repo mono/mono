@@ -1,5 +1,15 @@
 2004-04-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Test/System.Text.RegularExpressions/PerlTrials.cs:
+	Patch by Eric Durand Tremblay with tests.
+	1) Capture inner group when named.
+	2) Resolved parse error caused by not capturing inner group
+	3) Resolved incorrect capture group
+	4) Now, not capturing anything when unnamed ( correct behavior)
+
+
+2004-04-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* PerlTrials.cs: unix line endings.
 
 2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>

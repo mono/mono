@@ -319,7 +319,11 @@ namespace System.Text.RegularExpressions.Syntax {
 		public override void Compile (ICompiler cmp, bool reverse) {
 			// can't invoke Group.Compile from here :(
 			// so I'll just repeat the code
-		
+			
+			LinkRef tail = cmp.NewLink ();
+
+			cmp.EmitBalanceStart (this.Number, balance.Number, this.IsNamed,  tail);
+
 			int count = Expressions.Count;
 			for (int i = 0; i < count; ++ i) {
 				Expression e;
@@ -331,7 +335,8 @@ namespace System.Text.RegularExpressions.Syntax {
 				e.Compile (cmp, reverse);
 			}
 
-			cmp.EmitBalance (this.Number, balance.Number);
+			cmp.EmitBalance ();
+			cmp.ResolveLink(tail);
 		}
 
 		private CapturingGroup balance;

@@ -980,11 +980,31 @@ namespace MonoTests.System.Text.RegularExpressions {
 			new RegexTrial (@"((\3|b)\2(a)x)+", RegexOptions.RightToLeft, "aaxabxbaxbbx", "Fail."),
 			new RegexTrial (@"((\3|b)\2(a)x)+", RegexOptions.RightToLeft, "aaaxabaxbaaxbbax", "Fail."),
 			new RegexTrial (@"((\3|b)\2(a)){2,}", RegexOptions.RightToLeft, "bbaababbabaaaaabbaaaabba", "Fail."),
+		    
+			              
+                        new RegexTrial (@"\((?>[^()]+|\((?<depth>)|\)(?<-depth>))*(?(depth)(?!))\)", RegexOptions.None, "((a(b))c)", 
+                            "Pass. Group[0]=(0,9) Group[1]="),
+                        new RegexTrial (@"^\((?>[^()]+|\((?<depth>)|\)(?<-depth>))*(?(depth)(?!))\)$", RegexOptions.None, "((a(b))c)", 
+                            "Pass. Group[0]=(0,9) Group[1]="),
+                        new RegexTrial (@"^\((?>[^()]+|\((?<depth>)|\)(?<-depth>))*(?(depth)(?!))\)$", RegexOptions.None, "((a(b))c", "Fail."), 
 
-			
-			
-			new RegexTrial (@"b", RegexOptions.RightToLeft, "babaaa", "Pass. Group[0]=(2,1)")
-			
-		};
+                        new RegexTrial (@"^\((?>[^()]+|\((?<depth>)|\)(?<-depth>))*(?(depth)(?!))\)$", RegexOptions.None, "())", "Fail."), 
+
+
+                        new RegexTrial (@"(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))", RegexOptions.None, "((a(b))c)", 
+                            "Pass. Group[0]=(0,9) Group[1]=(0,9) Group[2]=(0,1)(1,2)(3,2) Group[3]=(5,1)(6,2)(8,1) Group[4]= Group[5]=(4,1)(2,4)(1,7)"),
+                        new RegexTrial (@"^(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))$", RegexOptions.None, "((a(b))c)", 
+                            "Pass. Group[0]=(0,9) Group[1]=(0,9) Group[2]=(0,1)(1,2)(3,2) Group[3]=(5,1)(6,2)(8,1) Group[4]= Group[5]=(4,1)(2,4)(1,7)"),
+                        new RegexTrial (@"(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))", RegexOptions.None, "x(a((b)))b)x", 
+                            "Pass. Group[0]=(1,9) Group[1]=(1,9) Group[2]=(1,2)(3,1)(4,2) Group[3]=(6,1)(7,1)(8,2) Group[4]= Group[5]=(5,1)(4,3)(2,6)"),
+                        new RegexTrial (@"(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))", RegexOptions.None, "x((a((b)))x", 
+                            "Pass. Group[0]=(2,9) Group[1]=(2,9) Group[2]=(2,2)(4,1)(5,2) Group[3]=(7,1)(8,1)(9,2) Group[4]= Group[5]=(6,1)(5,3)(3,6)"),
+                        new RegexTrial (@"^(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))$", RegexOptions.None, "((a(b))c","Fail."),
+                        new RegexTrial (@"^(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))$", RegexOptions.None, "((a(b))c))","Fail."),
+                        new RegexTrial (@"^(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))$", RegexOptions.None, ")(","Fail."),
+                        new RegexTrial (@"^(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))$", RegexOptions.None, "((a((b))c)","Fail."),
+
+    			new RegexTrial (@"b", RegexOptions.RightToLeft, "babaaa", "Pass. Group[0]=(2,1)")
+               };
 	}
 }

@@ -36,7 +36,8 @@ namespace System.Text.RegularExpressions {
 		void EmitPosition (Position pos);
 		void EmitOpen (int gid);
 		void EmitClose (int gid);
-		void EmitBalance (int gid, int balance);
+		void EmitBalanceStart(int gid, int balance, bool capture,  LinkRef tail);
+		void EmitBalance ();
 		void EmitReference (int gid, bool ignore, bool reverse);
 
 		// constructs
@@ -187,10 +188,19 @@ namespace System.Text.RegularExpressions {
 			Emit ((ushort)gid);
 		}
 
-		public void EmitBalance (int gid, int balance) {
-			Emit (OpCode.Balance);
+	       
+
+		public void EmitBalanceStart (int gid, int balance, bool capture, LinkRef tail) {
+			BeginLink (tail);
+			Emit (OpCode.BalanceStart);
 			Emit ((ushort)gid);
 			Emit ((ushort)balance);
+			Emit ((ushort)(capture ? 1 : 0));
+			EmitLink (tail);
+		}
+
+		public void EmitBalance () {
+			Emit (OpCode.Balance);
 		}
 
 		public void EmitReference (int gid, bool ignore, bool reverse) {

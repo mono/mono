@@ -34,6 +34,7 @@ namespace System.Text.RegularExpressions {
 		Open,			// open group
 		Close,			// close group
 		Balance,		// balance groups
+		BalanceStart,           //track balance group length
 
 		// control flow
 

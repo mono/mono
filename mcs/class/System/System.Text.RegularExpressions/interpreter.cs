@@ -324,9 +324,26 @@ namespace System.Text.RegularExpressions {
 					break;
 				}
 
-				case OpCode.Balance: {
-					Balance (program[pc + 1], program[pc + 2], ptr);
+			        case OpCode.BalanceStart: {
+
+					int start = ptr; //point before the balancing group
+					
+					if (!Eval (Mode.Match, ref ptr, pc + 5))
+						goto Fail;
+					
+					
+					
+					if(!Balance (program[pc + 1], program[pc + 2], (program[pc + 3] == 1 ? true : false) , start)) {
+						goto Fail;
+					}
+
+					
+					pc += program[pc + 4];
 					break;
+				}
+
+				case OpCode.Balance: {
+					goto Pass;
 				}
 
 				case OpCode.IfDefined: {
@@ -809,19 +826,27 @@ namespace System.Text.RegularExpressions {
 		}
 
 		private void Close (int gid, int ptr) {
-			marks [groups [gid]].End = ptr;
+	       		marks [groups [gid]].End = ptr;
 		}
 
-		private void Balance (int gid, int balance_gid, int ptr) {
+		private bool Balance (int gid, int balance_gid, bool capture, int ptr) {
 			int b = groups [balance_gid];
-			Debug.Assert (marks [b].IsDefined, "Regex", "Balancing group not closed");
 
-			if (gid > 0) {
+			if(b == -1 || marks[b].Index < 0) {
+				//Group not previously matched
+				return false;
+			}
+
+			Debug.Assert (marks [b].IsDefined, "Regex", "Balancng group not closed");
+
+			if (gid > 0 && capture){ 
 				Open (gid, marks [b].Index + marks [b].Length);
 				Close (gid, ptr);
 			}
 
-			groups [balance_gid] = marks [b].Previous;
+			groups [balance_gid] = marks[b].Previous;
+
+			return true;
 		}
 
 		private int Checkpoint () {

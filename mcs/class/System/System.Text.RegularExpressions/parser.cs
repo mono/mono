@@ -451,8 +451,14 @@ namespace System.Text.RegularExpressions.Syntax {
 					++ ptr;
 					BalancingGroup bal = new BalancingGroup ();
 					bal.Name = name;
-					caps.Add (bal);
+					
+					if(bal.IsNamed) {
+						caps.Add (bal);
+					}
+
 					refs.Add (bal, balance_name);
+
+					ParseGroup (bal, options, null);
 
 					return bal;
 				}
