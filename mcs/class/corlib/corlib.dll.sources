@@ -175,6 +175,7 @@ System/RuntimeArgumentHandle.cs
 System/RuntimeFieldHandle.cs
 System/RuntimeMethodHandle.cs
 System/RuntimeTypeHandle.cs
+System/ModuleHandle.cs
 System/SByte.cs
 System/SerializableAttribute.cs
 System/Single.cs
