@@ -120,15 +120,16 @@ namespace Microsoft.CSharp {
 
 			for (int i=0; i<source_text.Length; i++) {
 				string temp_path = Path.GetTempFileName ();
-				StreamWriter writer = new StreamWriter (temp_path);
+				StreamWriter writer = null;
 				try {
+					writer = new StreamWriter (temp_path);
 					writer.WriteLine (String.Format ("#line 1 \"{0}\"", 
 						source_name[i]));
 					writer.Write (source_text[i]);
 				} catch {
-
 				} finally {
-					writer.Close ();
+					if (writer != null)
+						writer.Close ();
 				}
 				temp_file_list.Add (temp_path);
 			}
