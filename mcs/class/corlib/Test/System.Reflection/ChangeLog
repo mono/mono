@@ -1,3 +1,7 @@
+2003-05-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleTest.cs: New file.
+
 2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AssemblyTest.cs: New file.
