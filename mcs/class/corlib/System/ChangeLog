@@ -1,3 +1,7 @@
+2001-08-02  Bob Smith  <bob@thestuff.net>
+
+        * Random.cs: Implemented. Needs testing.
+
 2001-08-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* IServiceProvider.cs, EventHandler.cs: New files.
