@@ -1,5 +1,12 @@
 2005-02-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c (amd64_magic_trampoline): Disable the method_ptr
+	patching stuff, since delegates use jump trampolines so there is
+	no caller.
+
+	* tramp-amd64.c (create_trampoline_code): Pass NULL as 'code' in 
+	jump trampolines.
+	
 	* tramp-amd64.c: Fix build.
 
 	* mini-x86.c tramp-x86.c: Moved get_vtable_slot_addr into mini-x86.c and rename
