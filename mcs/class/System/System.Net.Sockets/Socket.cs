@@ -334,12 +334,6 @@ namespace System.Net.Sockets
 
 		public static void Select(IList read_list, IList write_list,
 					  IList err_list, int time_us) {
-			if(read_list==null &&
-			   write_list==null &&
-			   err_list==null) {
-				throw new ArgumentNullException();
-			}
-
 			int read_count = 0, write_count = 0, err_count = 0;
 			Socket[] read_arr = null;
 			Socket[] write_arr = null;
@@ -363,6 +357,11 @@ namespace System.Net.Sockets
 			if (err_count != 0)
 				err_arr=new Socket[err_count];
 			
+			if(read_count == 0 && write_count == 0 && err_count == 0) {
+				throw new ArgumentNullException ("read_list, write_list, err_list",
+								 "All the lists are null or empty.");
+			}
+
 			int i;
 
 			if (read_count != 0) {

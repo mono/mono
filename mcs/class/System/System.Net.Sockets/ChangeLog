@@ -1,3 +1,8 @@
+2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: throw ArgumentNullException if all the list are null OR
+	empty. Fixes bug #59632.
+
 2004-05-21	Patrik Torstensson <totte@hiddenpeaks.com>
 
 	* TcpListener.cs: Fixes a lot of the problems with remoting nunit tests.
