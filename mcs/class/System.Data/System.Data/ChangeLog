@@ -1,3 +1,10 @@
+2004-03-25 Lluis Sanchez Gual <lluis@ximian.com>
+
+	* DataSet.cs: In WriteXml (string filename, XmlWriteMode mode), close the
+	  stream after writing the dataset. This fixes bug #52581.
+	  Also added several writer.Close into finally blocks, so writers are properly
+	  closed in case of an exception.
+
 2004-03-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Constraint.cs: DO NOT USE the consts scheme if types can be referenced directly!

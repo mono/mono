@@ -603,9 +603,13 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
-			WriteXml (writer);
 			
-			writer.Close ();
+			try {
+				WriteXml (writer);
+			}
+			finally {
+				writer.Close ();
+			}
 		}
 
 		public void WriteXml (TextWriter writer)
@@ -624,7 +628,13 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (filename, null);
 			writer.Formatting = Formatting.Indented;
-			WriteXml (writer, mode, true);
+			
+			try {
+				WriteXml (writer, mode, true);
+			}
+			finally {
+				writer.Close ();
+			}
 		}
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
@@ -657,9 +667,13 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
-			WriteXml (writer, mode, writePI);
 			
-			writer.Close ();
+			try {
+				WriteXml (writer, mode, writePI);
+			}
+			finally {
+				writer.Close ();
+			}
 		}
 
 		internal void WriteXml (TextWriter writer, XmlWriteMode mode, bool writePI)
@@ -688,7 +702,6 @@ namespace System.Data {
 			 ********************************************************/
 			if (Namespace == null || Namespace.Length == 0)
 				WriteAttributeString (writer, mode, null, null, "xmlns", Namespace);
-			
 			
 			if (mode == XmlWriteMode.WriteSchema) {
 				DoWriteXmlSchema (writer);
@@ -719,7 +732,12 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
-			WriteXmlSchema (writer);
+			try {
+				WriteXmlSchema (writer);
+			}
+			finally {
+				writer.Close ();
+			}
 		}
 
 		public void WriteXmlSchema (TextWriter writer)
@@ -748,7 +766,12 @@ namespace System.Data {
 		public void ReadXmlSchema (string str)
 		{
 			XmlReader reader = new XmlTextReader (str);
-			ReadXmlSchema (reader);
+			try {
+				ReadXmlSchema (reader);
+			}
+			finally {
+				reader.Close ();
+			}
 		}
 
 		public void ReadXmlSchema (TextReader treader)
@@ -770,7 +793,13 @@ namespace System.Data {
 
 		public XmlReadMode ReadXml (string str)
 		{
-			return ReadXml (new XmlTextReader (str));
+			XmlTextReader reader = new XmlTextReader (str);
+			try {
+				return ReadXml (reader);
+			}
+			finally {
+				reader.Close ();
+			}
 		}
 
 		public XmlReadMode ReadXml (TextReader reader)
@@ -854,7 +883,13 @@ namespace System.Data {
 
 		public XmlReadMode ReadXml (string str, XmlReadMode mode)
 		{
-			return ReadXml (new XmlTextReader (str), mode);
+			XmlTextReader reader = new XmlTextReader (str);
+			try {
+				return ReadXml (reader, mode);
+			}
+			finally {
+				reader.Close ();
+			}
 		}
 
 		public XmlReadMode ReadXml (TextReader reader, XmlReadMode mode)
