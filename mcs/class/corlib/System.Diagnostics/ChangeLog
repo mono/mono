@@ -1,3 +1,5 @@
+2002-01-04  John R. Hicks  <angryjohn69@nc.rr.com>
+	* Added Debugger.cs to the build.
 2001-09-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* Moved BooleanSwitch, Switch, TraceLevel and TraceSwitch to the
