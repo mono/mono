@@ -1413,7 +1413,7 @@ namespace Mono.Math {
 						// aDP = destination for bits
 						uint* mP = mm, aSP = a, aDP = a;
 
-						ulong c = (ulong)u_i * (ulong)*(mP++) + *(aSP++);
+						ulong c = (ulong)u_i * ((ulong)*(mP++)) + *(aSP++);
 						c >>= 32;
 						uint j = 1;
 
