@@ -168,14 +168,7 @@ namespace System.IO {
 					(DateTime.Now - data.DisabledTime).TotalSeconds > 5);
 			}
 
-			DoFiles (data, data.Directory, data.FileMask, dispatch);
-			if (!data.IncludeSubdirs)
-				return false;
-
-			foreach (string directory in Directory.GetDirectories (data.Directory)) {
-				DoFiles (data, directory, data.FileMask, dispatch);
-			}
-
+			DoFiles (data, data.Directory, dispatch);
 			return false;
 		}
 
@@ -192,9 +185,21 @@ namespace System.IO {
 			}
 		}
 
-		void DoFiles (DefaultWatcherData data, string directory, string filemask, bool dispatch)
+		void DoFiles (DefaultWatcherData data, string directory, bool dispatch)
 		{
-			string [] files = Directory.GetFiles (directory, filemask);
+			bool direxists = Directory.Exists (directory);
+			if (direxists && data.IncludeSubdirs) {
+				foreach (string d in Directory.GetDirectories (directory))
+					DoFiles (data, d, dispatch);
+			}
+
+			string [] files = null;
+			if (direxists) {
+				files = Directory.GetFileSystemEntries (directory, data.FileMask);
+			} else {
+				files = new string [0];
+			}
+
 			/* Set all as untested */
 			foreach (string filename in data.Files.Keys) {
 				FileData fd = (FileData) data.Files [filename];
