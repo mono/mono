@@ -1,10 +1,16 @@
 2003-07-25  Piers Haken	<piersh@friskit.com>
 
-	* Expressioncs: implement ExprFilter.Evaluate
+	* Iterator.cs: add setter for NamespaceManager
+	* XPathNavigator.cs: propagate NamespaceManager from context on Evaluate
+	* Expression.cs: fix func/var exception strings
 
 2003-07-25  Piers Haken	<piersh@friskit.com>
 
-	* Expressioncs: implement ExprVariable.Evaluate
+	* Expression.cs: implement ExprFilter.Evaluate
+
+2003-07-25  Piers Haken	<piersh@friskit.com>
+
+	* Expression.cs: implement ExprVariable.Evaluate
 
 2003-07-24  Ben Maurer <bmaurer@users.sourceforge.net>
 	

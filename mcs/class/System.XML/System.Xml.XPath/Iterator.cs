@@ -28,7 +28,11 @@ namespace System.Xml.XPath
 			_nsm = nsm;
 		}
 
-		public XmlNamespaceManager NamespaceManager { get { return _nsm; } }
+		public XmlNamespaceManager NamespaceManager
+		{
+			get { return _nsm; }
+			set { _nsm = value; }
+		}
 		
 		public override string ToString ()
 		{

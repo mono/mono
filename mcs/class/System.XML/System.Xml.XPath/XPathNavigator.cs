@@ -81,10 +81,12 @@ namespace System.Xml.XPath
 
 		public virtual object Evaluate (XPathExpression expr, XPathNodeIterator context)
 		{
+			BaseIterator iterContext = (BaseIterator) context;
 			CompiledExpression cexpr = (CompiledExpression) expr;
 			if (context == null)
 				context = new NullIterator (this, cexpr.NamespaceManager);
-			return cexpr.Evaluate ((BaseIterator) context);
+			iterContext.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.Evaluate (iterContext);
 		}
 
 		public abstract string GetAttribute (string localName, string namespaceURI);

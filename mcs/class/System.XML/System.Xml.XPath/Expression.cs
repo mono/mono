@@ -922,7 +922,7 @@ namespace System.Xml.XPath
 			//if (context == null)
 			//	var = DefaultContext.ResolveVariable (_name.Namespace, _name.Name);
 			if (var == null)
-				throw new XPathException ("variable "+_name.Namespace+":"+_name.Name+" not found");
+				throw new XPathException ("variable "+_name.ToString ()+" not found");
 			return var.VariableType;
 		}
 		public override object Evaluate (BaseIterator iter)
@@ -934,7 +934,7 @@ namespace System.Xml.XPath
 			//if (context == null)
 			//	var = DefaultContext.ResolveVariable (_name.Namespace, _name.Name);
 			if (var == null)
-				throw new XPathException ("variable "+_name.Namespace+":"+_name.Name+" not found");
+				throw new XPathException ("variable "+_name.ToString ()+" not found");
 			return var.Evaluate (context);
 		}
 	}
@@ -991,7 +991,7 @@ namespace System.Xml.XPath
 			if (func == null)
 				func = DefaultContext.ResolveFunction (_name.Namespace, _name.Name, GetArgTypes (iter));
 			if (func == null)
-				throw new XPathException ("function "+_name.Namespace+":"+_name.Name+" not found");
+				throw new XPathException ("function "+_name.ToString ()+" not found");
 			return func.ReturnType;
 		}
 		private XPathResultType [] GetArgTypes (BaseIterator iter)
@@ -1029,7 +1029,7 @@ namespace System.Xml.XPath
 				func = context.ResolveFunction (_name.Namespace, _name.Name, rgTypes);
 			}
 			if (func == null)
-				throw new XPathException ("function "+_name.Namespace+":"+_name.Name+" not found");
+				throw new XPathException ("function "+_name.ToString ()+" not found");
 
 			object [] rgArgs = new object [_args.Count];
 			if (func.Maxargs != 0)
