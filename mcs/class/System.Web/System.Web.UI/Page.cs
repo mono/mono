@@ -295,14 +295,9 @@ public class Page : TemplateControl, IHttpHandler
 		return coll;
 	}
 	
-	[MonoTODO]
 	public string GetPostBackClientEvent (Control control, string argument)
 	{
-		// Don't throw the exception. keep going
-		//throw new NotImplementedException ();
-		StringBuilder result = new StringBuilder ();
-		result.AppendFormat ("GetPostBackClientEvent ('{0}', '{1}')", control.ID, argument);
-		return result.ToString ();
+		return GetPostBackEventReference (control, argument);
 	}
 
 	public string GetPostBackClientHyperlink (Control control, string argument)
