@@ -25,8 +25,12 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Drawing.Design;
 
 namespace System.Data.OracleClient {
+	[DefaultEvent ("RowUpdated")]
+	[Designer ("Microsoft.VSDesigner.Data.VS.OracleDataAdapterDesigner, " + Consts.AssemblyMicrosoft_VSDesigner)]
+	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.OracleDataAdapterToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	public sealed class OracleDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
 		#region Fields
@@ -68,21 +72,29 @@ namespace System.Data.OracleClient {
 
 		#region Properties
 
+		[DefaultValue (null)]
+		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public OracleCommand DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
 		}
 
+		[DefaultValue (null)]
+		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public OracleCommand InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
 		}
 
+		[DefaultValue (null)]
+		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public OracleCommand SelectCommand {
 			get { return selectCommand; }
 			set { selectCommand = value; }
 		}
 
+		[DefaultValue (null)]
+		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public OracleCommand UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
@@ -142,17 +154,6 @@ namespace System.Data.OracleClient {
 		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
 			return new OracleRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
-		}
-
-		protected override void Dispose (bool disposing)
-		{
-			if (!disposed) {
-				if (disposing) {
-					// Release managed resources
-				}
-				// Release unmanaged resources
-				disposed = true;
-			}
 		}
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 

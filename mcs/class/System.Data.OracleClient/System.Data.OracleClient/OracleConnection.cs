@@ -28,6 +28,8 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient.Oci;
+using System.Drawing.Design;
+using System.EnterpriseServices;
 using System.Text;
 
 namespace System.Data.OracleClient 
@@ -39,7 +41,8 @@ namespace System.Data.OracleClient
 		public string Database;
 	}
 
-	public class OracleConnection : Component, ICloneable, IDbConnection
+	[DefaultEvent ("InfoMessage")]
+	public sealed class OracleConnection : Component, ICloneable, IDbConnection
 	{
 		#region Fields
 
@@ -97,13 +100,36 @@ namespace System.Data.OracleClient
 			get { return oci.ServiceContext; }
 		}
 
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public string DataSource {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ConnectionState State {
 			get { return state; }
 		}
 
+		[DefaultValue ("")]
+		[RecommendedAsConfigurable (true)]
+		[RefreshProperties (RefreshProperties.All)]
+		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleConnectionStringEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public string ConnectionString {
 			get { return connectionString; }
 			set { SetConnectionString (value); }
+		}
+
+		[MonoTODO]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public string ServerVersion {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		internal OciGlue Oci {
@@ -180,6 +206,18 @@ namespace System.Data.OracleClient
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
+		}
+
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+
+		[MonoTODO]
+		public void EnlistDistributedTransaction (ITransaction distributedTransaction)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public void Open () 
@@ -283,5 +321,8 @@ namespace System.Data.OracleClient
 		}
 
 		#endregion // Methods
+
+		public event OracleInfoMessageEventHandler InfoMessage;
+		public event StateChangeEventHandler StateChange;
 	}
 }

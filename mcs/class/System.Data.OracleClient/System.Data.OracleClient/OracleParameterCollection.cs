@@ -20,9 +20,13 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient.Oci;
+using System.Drawing.Design;
+using System.Reflection;
 
 namespace System.Data.OracleClient {
-	public class OracleParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
+	[ListBindable (false)]
+	[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
+	public sealed class OracleParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
 	{
 		#region Fields
 
@@ -125,8 +129,8 @@ namespace System.Data.OracleClient {
 		{
 			if (!(value is OracleParameter))
 				throw new InvalidCastException ("The parameter was not an OracleParameter.");
-                        Add ((OracleParameter) value);
-                        return IndexOf (value);
+			Add ((OracleParameter) value);
+			return IndexOf (value);
 		}
 
 		public OracleParameter Add (OracleParameter value)
@@ -135,7 +139,7 @@ namespace System.Data.OracleClient {
 				throw new ArgumentException ("The OracleParameter specified in the value parameter is already added to this or another OracleParameterCollection.");
 			value.Container = this;
 			list.Add (value);
-                        return value;
+			return value;
 		}
 
 		public OracleParameter Add (string parameterName, object value)

@@ -20,9 +20,11 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient.Oci;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient {
+	[TypeConverter (typeof(OracleParameter.OracleParameterConverter))]
 	public sealed class OracleParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 	{
 		#region Fields
@@ -98,46 +100,63 @@ namespace System.Data.OracleClient {
 			set { container = value; }
 		}
 
+		[Browsable (false)]
+		[RefreshProperties (RefreshProperties.All)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbType DbType {
 			get { return dbType; }
 			set { SetDbType (value); }
 		}
 
+		[DefaultValue (ParameterDirection.Input)]
+		[RefreshProperties (RefreshProperties.All)]
 		public ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
 
+		[Browsable (false)]
+		[DesignOnly (true)]
+		[DefaultValue (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public bool IsNullable {
 			get { return isNullable; }
 			set { isNullable = value; }
 		}
 
+		[DefaultValue (0)]
+		[Browsable (false)]
 		public int Offset {
 			get { return offset; }
 			set { offset = value; }
 		}
 
+		[DefaultValue (OracleType.VarChar)]
+		[RefreshProperties (RefreshProperties.All)]
 		public OracleType OracleType {
 			get { return oracleType; }
 			set { SetOracleType (value); }
 		}
 		
+		[DefaultValue ("")]
 		public string ParameterName {
 			get { return name; }
 			set { name = value; }
 		}
 
+		[DefaultValue (0)]
 		public byte Precision {
 			get { return precision; }
 			set { /* NO EFFECT*/ }
 		}
 
+		[DefaultValue (0)]
 		public byte Scale {
 			get { return scale; }
 			set { /* NO EFFECT*/ }
 		}
 
+		[DefaultValue (0)]
 		public int Size {
 			get { return size; }
 			set { 
@@ -146,16 +165,21 @@ namespace System.Data.OracleClient {
 			}
 		}
 
+		[DefaultValue ("")]
 		public string SourceColumn {
 			get { return srcColumn; }
 			set { srcColumn = value; }
 		}
 
+		[DefaultValue (DataRowVersion.Current)]
 		public DataRowVersion SourceVersion {
 			get { return srcVersion; }
 			set { srcVersion = value; }
 		}
 
+		[DefaultValue (null)]
+		[RefreshProperties (RefreshProperties.All)]
+		[TypeConverter (typeof(StringConverter))]
 		public object Value {
 			get { return this.value; }
 			set { this.value = value; }
@@ -275,7 +299,7 @@ namespace System.Data.OracleClient {
 			return value.ToString ().Length;
 		}
 
-		public void SetDbType (DbType type)
+		private void SetDbType (DbType type)
 		{
 			string exception = String.Format ("No mapping exists from DbType {0} to a known OracleType.", type);
 			switch (type) {
@@ -344,7 +368,7 @@ namespace System.Data.OracleClient {
 
 		}
 
-		public void SetOracleType (OracleType type)
+		private void SetOracleType (OracleType type)
 		{
 			string exception = String.Format ("No mapping exists from OracleType {0} to a known DbType.", type);
 			switch (type) {
@@ -437,5 +461,24 @@ namespace System.Data.OracleClient {
 		}
 
 		#endregion // Methods
+
+		internal sealed class OracleParameterConverter : ExpandableObjectConverter
+		{
+			public OracleParameterConverter ()
+			{
+			}
+
+			[MonoTODO]
+			public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+			{
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }

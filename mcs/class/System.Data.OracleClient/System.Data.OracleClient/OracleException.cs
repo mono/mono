@@ -17,8 +17,10 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 
 namespace System.Data.OracleClient {
+	[Serializable]
 	public sealed class OracleException : SystemException
 	{
 		#region Fields
@@ -34,6 +36,12 @@ namespace System.Data.OracleClient {
 		{
 			this.code = code;
 			this.message = message;
+		}
+
+		private OracleException (SerializationInfo si, StreamingContext sc) : base(si, sc)
+		{
+			message = si.GetString ("message");
+			code = si.GetInt32 ("source");
 		}
 
 		#endregion // Constructors

@@ -21,9 +21,12 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient.Oci;
+using System.Drawing.Design;
 
 namespace System.Data.OracleClient {
-	public class OracleCommand : Component, ICloneable, IDbCommand
+	[Designer ("Microsoft.VSDesigner.Data.VS.OracleCommandDesigner, " + Consts.AssemblyMicrosoft_VSDesigner)]
+	[ToolboxItem (true)]
+	public sealed class OracleCommand : Component, ICloneable, IDbCommand
 	{
 		#region Fields
 
@@ -68,28 +71,38 @@ namespace System.Data.OracleClient {
 			UpdatedRowSource = UpdateRowSource.Both;
 			DesignTimeVisible = false;
 
-                        parameters = new OracleParameterCollection (this);
+			parameters = new OracleParameterCollection (this);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		[DefaultValue ("")]
+		[RefreshProperties (RefreshProperties.All)]
+		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleCommandTextEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public string CommandText {
 			get { return commandText; }
 			set { commandText = value; }
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
+		[DefaultValue (CommandType.Text)]
 		public CommandType CommandType {
 			get { return commandType; }
 			set { commandType = value; }
 		}
 
+		[DefaultValue (null)]
+		[Editor ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public OracleConnection Connection {
 			get { return connection; }
 			set { connection = value; }
 		}
 
+		[DefaultValue (true)]
+		[Browsable (false)]
+		[DesignOnly (true)]
 		public bool DesignTimeVisible {
 			get { return designTimeVisible; }
 			set { designTimeVisible = value; }
@@ -108,6 +121,8 @@ namespace System.Data.OracleClient {
 			set { }
 		}
 
+		[Editor ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
+		[DefaultValue (null)]
 		IDbConnection IDbCommand.Connection {
 			get { return Connection; }
 			set { 
@@ -130,15 +145,19 @@ namespace System.Data.OracleClient {
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public OracleParameterCollection Parameters {
 			get { return parameters; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public OracleTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
 		}
 
+		[DefaultValue (UpdateRowSource.Both)]
 		public UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
 			set { updatedRowSource = value; }
@@ -266,7 +285,7 @@ namespace System.Data.OracleClient {
 		}
 
 		[MonoTODO]
-		public object ExecuteOracleScalar (out OracleString rowid)
+		public object ExecuteOracleScalar ()
 		{
 			throw new NotImplementedException ();
 		}

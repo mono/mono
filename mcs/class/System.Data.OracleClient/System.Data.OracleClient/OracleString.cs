@@ -77,24 +77,31 @@ namespace System.Data.OracleClient
 				return this.value.CompareTo (((OracleString) value).Value);
 		}
 
+		[MonoTODO]
+		public static OracleBoolean GreaterThan (OracleString x, OracleString y)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static OracleBoolean GreaterThanOrEqual (OracleString x, OracleString y)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static OracleBoolean LessThan (OracleString x, OracleString y)
 		{
-			return (!x.notNull || !y.notNull) ?
-				OracleBoolean.Null :
-				new OracleBoolean (String.Compare (x.value, y.value, false, CultureInfo.InvariantCulture) < 0);
+			return (x < y);
 		}
 
 		public static OracleBoolean LessThanOrEqual (OracleString x, OracleString y)
 		{
-			return (!x.notNull || !y.notNull) ?
-				OracleBoolean.Null : new OracleBoolean (String.Compare (x.value, y.value, false, CultureInfo.InvariantCulture) <= 0);
+			return (x <= y);
 		}
 
 		public static OracleString Concat (OracleString x, OracleString y)
 		{
-			return (x.notNull && y.notNull) ?
-				new OracleString (x.value + y.value) :
-				Null;
+			return x + y;
 		}
 
 		public override int GetHashCode ()
@@ -117,14 +124,12 @@ namespace System.Data.OracleClient
 
 		public static OracleBoolean Equals (OracleString x, OracleString y)
 		{
-			return (!x.notNull || !y.notNull) ?
-				OracleBoolean.Null : new OracleBoolean (x.value == y.value);
+			return (x == y);
 		}
 
 		public static OracleBoolean NotEquals (OracleString x, OracleString y)
 		{
-			return (!x.notNull || !y.notNull) ?
-				OracleBoolean.Null : x.value != y.value;
+			return (x != y);
 		}
 
 		public override string ToString ()
@@ -133,5 +138,63 @@ namespace System.Data.OracleClient
 		}
 
 		#endregion // Methods
+
+		#region Operators
+
+		public static OracleString operator + (OracleString x, OracleString y)
+		{
+			return (x.notNull && y.notNull) ?
+				new OracleString (x.value + y.value) :
+				Null;
+		}
+
+		public static OracleBoolean operator == (OracleString x, OracleString y)
+		{
+			return (!x.notNull || !y.notNull) ?
+				OracleBoolean.Null : new OracleBoolean (x.value == y.value);
+		}
+
+		public static explicit operator string (OracleString x)
+		{
+			return x.Value;
+		}
+
+		[MonoTODO]
+		public static OracleBoolean operator > (OracleString x, OracleString y)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static OracleBoolean operator >= (OracleString x, OracleString y)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static implicit operator OracleString (string s)
+		{
+			return new OracleString (s);
+		}
+
+		public static OracleBoolean operator != (OracleString x, OracleString y)
+		{
+			return (!x.notNull || !y.notNull) ?
+				OracleBoolean.Null : x.value != y.value;
+		}
+
+		public static OracleBoolean operator < (OracleString x, OracleString y)
+		{
+			return (!x.notNull || !y.notNull) ?
+				OracleBoolean.Null :
+				new OracleBoolean (String.Compare (x.value, y.value, false, CultureInfo.InvariantCulture) < 0);
+		}
+
+		public static OracleBoolean operator <= (OracleString x, OracleString y)
+		{
+			return (!x.notNull || !y.notNull) ?
+				OracleBoolean.Null : new OracleBoolean (String.Compare (x.value, y.value, false, CultureInfo.InvariantCulture) <= 0);
+		}
+
+		#endregion // Operators
 	}
 }

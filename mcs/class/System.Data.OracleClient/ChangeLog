@@ -1,3 +1,25 @@
+2004-06-19  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Makefile: added references to System.EnterpriseServices and
+	System.Drawing assemblies
+	* System.Data.OracleClient.dll: added Assembly/Consts.cs and
+	System.Data.OracleClient/OracleMonthSpan.cs
+	* OracleCommand.cs: added missing attributes, marked class sealed,
+	fixed signature of ExecuteOracleScalar method
+	* OracleCommandBuilder.cs: added missing attributes
+	* OracleConnection.cs: marked class sealed, added missing attributes,
+	stubbed missing propertie, methods and events
+	* OracleDataAdapter.cs: added missing attributes, removed extra
+	stubbed Dispose method
+	* OracleDataReader.cs: stubbed missing methods
+	* OracleDataTime.cs: fixed signature and implementation of operator
+	* OracleException.cs: marked serializable, added serialization ctor
+	* OracleParameter.cs: added missing attributes, marked extra methods
+	private
+	* OracleParameterCollection.cs: marked class sealed, added missing
+	attributes
+	* OracleString.cs: added missing methods, added missing operators
+
 2004-05-27	Joerg Rosenkranz <joergr@voelcker.com>
 
 	* System.Data.OracleClient/OracleCommandBuilder.cs:

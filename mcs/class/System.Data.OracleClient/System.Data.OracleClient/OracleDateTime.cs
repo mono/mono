@@ -235,9 +235,9 @@ namespace System.Data.OracleClient {
 			return x.Value;
 		}
 
-		public static explicit operator OracleDateTime (DateTime x)
+		public static explicit operator OracleDateTime (string x)
 		{
-			return new OracleDateTime (x);
+			return new OracleDateTime (DateTime.Parse (x));
 		}
 
 		#endregion // Operators and Type Conversions

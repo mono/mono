@@ -42,7 +42,6 @@ namespace System.Data.OracleClient
 
 		#region Properties
 
-		[DataSysDescriptionAttribute ("The DataAdapter for which to automatically generate OracleCommands")]
 		[DefaultValue (null)]
 		public OracleDataAdapter DataAdapter {
 			get {
@@ -54,7 +53,6 @@ namespace System.Data.OracleClient
 		}
 
 		[BrowsableAttribute (false)]
-		[DataSysDescriptionAttribute ("The prefix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public string QuotePrefix {
 			get {
@@ -66,8 +64,7 @@ namespace System.Data.OracleClient
 		}
 
 		[BrowsableAttribute (false)]
-                [DataSysDescriptionAttribute ("The suffix string wrapped around sql objects")]
-                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public string QuoteSuffix {
 			get {
 				return quoteSuffix;

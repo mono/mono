@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Locale.cs
+Assembly/Consts.cs
 System.Data.OracleClient.Oci/OciAttributeType.cs
 System.Data.OracleClient.Oci/OciBindHandle.cs
 System.Data.OracleClient.Oci/OciCalls.cs
@@ -44,6 +45,7 @@ System.Data.OracleClient/OracleInfoMessageEventArgs.cs
 System.Data.OracleClient/OracleInfoMessageEventHandler.cs
 System.Data.OracleClient/OracleLob.cs
 System.Data.OracleClient/OracleLobOpenMode.cs
+System.Data.OracleClient/OracleMonthSpan.cs
 System.Data.OracleClient/OracleNumber.cs
 System.Data.OracleClient/OracleParameterCollection.cs
 System.Data.OracleClient/OracleParameter.cs

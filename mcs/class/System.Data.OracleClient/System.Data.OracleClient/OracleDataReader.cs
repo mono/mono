@@ -305,6 +305,42 @@ namespace System.Data.OracleClient {
 			return new OracleNumber ((decimal) GetValue (i));
 		}
 
+		[MonoTODO]
+		public OracleDateTime GetOracleDateTime (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public OracleMonthSpan GetOracleMonthSpan (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public OracleString GetOracleString (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public object GetOracleValue (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public int GetOracleValues (object[] values)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public OracleTimeSpan GetOracleTimeSpan (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public int GetOrdinal (string name)
 		{
 			int i;
