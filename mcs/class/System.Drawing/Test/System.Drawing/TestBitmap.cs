@@ -109,8 +109,7 @@ namespace MonoTests.System.Drawing{
 			Rectangle rect = new Rectangle(0,0,50,50);						
 			Bitmap	bmp = new Bitmap(sInFile);			
 			
-			Bitmap bmpNew = bmp.Clone (rect, PixelFormat.Format32bppArgb);			
-			bmpNew.Save(sOutFile);							
+			Bitmap bmpNew = bmp.Clone (rect, PixelFormat.Format32bppArgb);									
 			
 			Color colororg0 = bmp.GetPixel(0,0);		
 			Color colororg50 = bmp.GetPixel(49,49);					
