@@ -1,3 +1,7 @@
+2004/06/10  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* typemanager.cs : GetPertinentStandardModules receives the array now with params modifier to help usage
+	* ecore.cs : correcting lookup of semi-qualified standard modules members - A little better but not there yet
+
 2004-06-10 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Grammar added for RemoveHandler statement
 

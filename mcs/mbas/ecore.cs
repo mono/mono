@@ -3708,15 +3708,30 @@ namespace Mono.MonoBASIC {
 // #52067 - Start - Trying to solve
 
 			if (e == null) {
-				string[] NamespacesInScope = RootContext.SourceBeingCompiled.GetNamespacesInScope(ec.DeclSpace.Namespace.Name);
+				
 				ArrayList lookups = new ArrayList();
 				ArrayList typelookups = new ArrayList();
 				
+				int split = Name.LastIndexOf('.');
+				if (split != -1) {
+					String nameSpacePart = Name.Substring(0, split);
+					String memberNamePart = Name.Substring(split + 1);
+					foreach(Type type in TypeManager.GetPertinentStandardModules(nameSpacePart)) {
+						e = MemberLookup(ec, type, memberNamePart, loc);
+						if (e != null) {
+							lookups.Add(e);
+							typelookups.Add(type);
+						}
+					}
+				}
+				
+				string[] NamespacesInScope = RootContext.SourceBeingCompiled.GetNamespacesInScope(ec.DeclSpace.Namespace.Name);
 				foreach(Type type in TypeManager.GetPertinentStandardModules(NamespacesInScope)) {
 					e = MemberLookup(ec, type, Name, loc);
-					if (e != null)  
+					if (e != null) {
 						lookups.Add(e);
 						typelookups.Add(type);
+					}
 				}
 				if (lookups.Count == 1) { 
 					e = (Expression)lookups[0];

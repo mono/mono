@@ -25,7 +25,7 @@ Module WriteOK
         Console.WriteLine("OK!") ' Simple comments
 		WriteOK2.[Sub]()
 		IO.WriteLine("OK! ""via"" aliased name") ' from alias
-		Console.WriteLine(Microsoft.VisualBasic.Strings.Right("123",1))
+		Console.WriteLine(Right("123",1))
 		nodim = 1 ' test for explicit
         Console.WriteLine("nodim {0}" + _
 			Constants.vbCRLF + "octalLit {1}" + _
@@ -41,9 +41,8 @@ Module WriteOK
 		ModuleSub("Unqualified") 
 		
 		Another.WriteOK6.ModuleSub("Qualified") 
-		' Another.ModuleSub("SemiQualified") ' FIXME
+		Another.ModuleSub("SemiQualified")
 		Another.Indirector.WriteIt()
-
 
 		Console.WriteLine(Strings.ChrW(64))
 

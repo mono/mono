@@ -490,7 +490,7 @@ public class TypeManager {
 		if (split > 0)
 			name = name.Substring(split+1);
 		n [top] = new StandardModule(module.Namespace.Name, name); 
-		//Console.WriteLine("Standard Module added:" + module.Name + " [" + n [top] + "]");
+		// Console.WriteLine("Standard Module added: " + n [top]);
 		standardModules = n;
 	}
 
@@ -509,7 +509,6 @@ public class TypeManager {
 					standardModules.CopyTo (n, 0);
 				n [top] = new StandardModule(type.Namespace, type.Name) ;
 				standardModules = n;
-
 				return;
 			}
         }
@@ -518,12 +517,12 @@ public class TypeManager {
 	//
 	// 
 	//
-	public static Type[] GetPertinentStandardModules(string[] namespaces)
+	public static Type[] GetPertinentStandardModules(params string[] namespaces)
 	{
 		ArrayList list = new ArrayList();
 		foreach(string Namespace in namespaces)
 		{ 
-			for(int i = 0; i < standardModules.Length; i++)
+			for(int i = 0; i < standardModules.Length; i++) {
 				if (standardModules[i].Namespace == Namespace) {
 					string name = standardModules[i].ToString();
 					Type t = LookupType(name);
@@ -534,6 +533,7 @@ public class TypeManager {
 						list.Add(t);
 					}
 				}
+			}
 		}
 		return (Type[])list.ToArray(typeof(Type));
 	}
