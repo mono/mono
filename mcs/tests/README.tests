@@ -13,6 +13,10 @@ Test cases listed by Category:
 
   verify-1.cs verify-2.cs
 
+* Indexers and Properties
+
+  test-148.cs
+
 Test cases listed by Number:
 ============================
 
@@ -24,6 +28,10 @@ unsinged branch targets.
 test-147.cs
 -----------
 Testing `new' modifier.
+
+test-148.cs
+-----------
+Testing the `IndexerName' attribute in interface indexers.
 
 verify-1.cs
 -----------

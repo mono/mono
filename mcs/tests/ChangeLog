@@ -1,3 +1,7 @@
+2002-07-23  Martin Baulig  <martin@gnome.org>
+
+	* test-148.cs: New test.
+
 2002-07-22  Martin Baulig  <martin@gnome.org>
 
 	* verify-2.cs: New test.
