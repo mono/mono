@@ -1353,6 +1353,11 @@ namespace Mono.CSharp
 					
 					while ((c = getChar ()) != -1){
 						if (c == '"'){
+							if (allow_keyword_as_ident && peekChar () == '"'){
+								s.Append ((char) c);
+								getChar ();
+								continue;
+							} 
 							allow_keyword_as_ident = false;
 							val = s.ToString ();
 							return Token.LITERAL_STRING;

@@ -1,5 +1,8 @@
 2002-02-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs: Add support for the quote-escape-sequence in
+	the verbatim-string-literal
+
 	* support.cs (InternalParameters.ParameterModifier): handle null
 	fixed parameters.
 	(InternalParameters.ParameterType): ditto.
