@@ -36,11 +36,10 @@ endif
 DISTFILES = $(sourcefile) $(EXTRA_DISTFILES)
 
 dist-local: dist-default
-	cat $(sourcefile) |xargs -n 20 \
-	    $(SHELL) -c 'for f in $$* ; do \
-	        dest=`dirname $(distdir)/$$f` ; \
-	        $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
-	    done' dollar0
+	for f in `cat $(sourcefile)` ; do \
+	    dest=`dirname $(distdir)/$$f` ; \
+	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
+	done
 
 # Changing makefile probably means changing the
 # sources, so let's be safe and add a Makefile dep

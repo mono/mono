@@ -60,12 +60,11 @@ DISTFILES = $(sourcefile) $(test_sourcefile) \
 # see $(topdir)/build/library.make for explanation of what's going on
 # here.
 
-dist-local: dist-default $(test_response)
-	cat $(sourcefile) $(test_response) |xargs -n 20 \
-	    $(SHELL) -c 'for f in $$* ; do \
-	        dest=`dirname $(distdir)/$$f` ; \
-	        $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
-	    done' dollar0
+dist-local: dist-default
+	for f in `cat $(sourcefile)` `cat $(test_sourcefile) |sed -e 's,^\(.\),Test/\1,'` ; do \
+	    dest=`dirname $(distdir)/$$f` ; \
+	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
+	done
 
 # plain ol corlib
 

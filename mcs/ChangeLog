@@ -1,3 +1,10 @@
+2003-07-18  Peter Williams  <peter@newton.cx>
+
+	* build/library.make (dist-local): Fancy make dist magic gives
+	way to boring old 'for'.
+
+	* build/executable.make (dist-local): Ditto.
+
 2003-07-17  Peter Williams  <peter@newton.cx>
 
 	* build/profiles/default.make: Actually fix this. Use the platform

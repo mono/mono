@@ -56,23 +56,17 @@ endif
 
 DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
 
-# just in case you ever wanted to know how to copy a list of 800
-# files without excessively long commandlines...
-#
-# We need dollar0 because $(SHELL) -c interprets arguments as 
-#
-#  $(SHELL) -c 'the script' $0 $1 $2 ....
-#
-# Ideally we wouldn't use $(test_response) (it'd be nice to make dist
-# with an unbuilt tree), but the -include lines generate the makefrags
-# anyway, so we might as well use them.
+ifdef NO_TEST
+TEST_FILES = 
+else
+TEST_FILES = `cat $(test_sourcefile) |sed -e 's,^\(.\),Test/\1,'`
+endif
 
-dist-local: dist-default $(test_response)
-	cat $(sourcefile) $(test_response) |xargs -n 20 \
-	    $(SHELL) -c 'for f in $$* ; do \
-	        dest=`dirname $(distdir)/$$f` ; \
-	        $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
-	    done' dollar0
+dist-local: dist-default
+	for f in `cat $(sourcefile)` $(TEST_FILES) ; do \
+	    dest=`dirname $(distdir)/$$f` ; \
+	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
+	done
 
 # Fun with dependency tracking
 
