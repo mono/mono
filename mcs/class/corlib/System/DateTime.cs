@@ -700,6 +700,26 @@ namespace System
 					pos += num + 1;
 					num = 0;
 					continue;
+				} else if (chars[pos] == '"') {
+					num = 1;
+					while (pos+num < len) {
+						if (chars[pos+num] == '"')
+							break;
+
+						if (s.Length == 0)
+							return false;
+						if (s[0] != chars[pos+num])
+							return false;
+						s = s.Substring (1);
+
+						num++;
+					}
+					if (pos+num > len)
+						return false;
+
+					pos += num + 1;
+					num = 0;
+					continue;
 				} else if (chars[pos] == '\\') {
 					if (pos+1 >= len)
 						return false;
@@ -736,6 +756,8 @@ namespace System
 							   next_char == 's' ||
 							   next_char == 'f' ||
 							   next_char == 'z' ||
+							   next_char == '"' ||
+							   next_char == '\'' ||
 							   Char.IsDigit (next_char));
 				} else {
 					next_not_digit = true;

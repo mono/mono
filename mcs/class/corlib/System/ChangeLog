@@ -1,3 +1,9 @@
+2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DateTime.cs: allow double quotes in the formats. Don't set
+	next_not_digit to true in presence of single or double quotes. Patch by
+	Martin Probst.
+
 2004-05-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomainSetup.cs (InitAppDomainSetup): This one returns void.
