@@ -1,3 +1,7 @@
+2003-05-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c (finalizer_thread): Work around a GC bug.
+
 2003-05-07  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (emit_struct_conv): allow unions
