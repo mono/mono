@@ -229,11 +229,12 @@ namespace Mono.WebServices
 		///	Generate code for the specified ServiceDescription.
 		/// </summary>
 		///
-		public void GenerateCode (ArrayList descriptions, ArrayList schemas)
+		public bool GenerateCode (ArrayList descriptions, ArrayList schemas)
 		{
 			// FIXME iterate over each serviceDescription.Services?
 			CodeNamespace codeNamespace = GetCodeNamespace();
 			CodeCompileUnit codeUnit = new CodeCompileUnit();
+			bool hasWarnings = false;
 			
 			codeUnit.Namespaces.Add(codeNamespace);
 
@@ -263,10 +264,13 @@ namespace Mono.WebServices
 					Console.WriteLine ("WARNING: At least one binding is of an unsupported type and has been ignored");
 				if ((warnings & ServiceDescriptionImportWarnings.UnsupportedOperationsIgnored) > 0)
 					Console.WriteLine ("WARNING: At least one operation is of an unsupported type and has been ignored");
+				hasWarnings = true;
 			}
 			
 			string serviceName = ((ServiceDescription)descriptions[0]).Services[0].Name;
 			WriteCodeUnit(codeUnit, serviceName);
+			
+			return hasWarnings;
 		}
 		
 		///
@@ -343,9 +347,9 @@ namespace Mono.WebServices
 	///
 	public class Driver
 	{
-		const string ProductId = "WSDL proxy generator v0.1";
+		const string ProductId = "Mono Web Services Description Language Utility";
 		const string UsageMessage = 
-			"wsdl [options] {path | URL} \n"
+			"wsdl [options] {path | URL} \n\n"
 			+ "   -appsettingurlkey:key        (short -urlkey)\n"
 			+ "   -appsettingbaseurl:baseurl   (short -baseurl)\n"
 			+ "   -domain:domain (short -d)    Domain of username for server authentication\n"
@@ -363,7 +367,7 @@ namespace Mono.WebServices
 			+ "   -username:username           Username used to contact server (short -u)\n"
 			+ "   -?                           Display this message\n"
 			+ "\n"
-			+ "Options can be of the forms  -option, --option or /option";
+			+ "Options can be of the forms  -option, --option or /option\n";
 		
 		DocumentRetriever retriever = null;
 		SourceGenerator generator = null;
@@ -524,7 +528,7 @@ namespace Mono.WebServices
 		///	 - report errors
 		/// </summary>
 		///
-		void Run(string[] args)
+		int Run(string[] args)
 		{
 			try
 			{
@@ -540,7 +544,7 @@ namespace Mono.WebServices
 				if (help || !hasURL)
 				{
 					Console.WriteLine(UsageMessage);
-					return;
+					return 0;
 				}
 				
 				// fetch the document
@@ -556,13 +560,17 @@ namespace Mono.WebServices
 				}
 				
 				// generate the code
-				generator.GenerateCode (descriptions, schemas);
+				if (generator.GenerateCode (descriptions, schemas))
+					return 1;
+				else
+					return 0;
 			}
 			catch (Exception exception)
 			{
 				Console.WriteLine("Error: {0}", exception.Message);
 				// FIXME: surpress this except for when debug is enabled
 				//Console.WriteLine("Stack:\n {0}", exception.StackTrace);
+				return 2;
 			}
 		}
 		
@@ -597,10 +605,10 @@ namespace Mono.WebServices
 		///	Application entry point.
 		/// </summary>
 		///
-		public static void Main(string[] args)
+		public static int Main(string[] args)
 		{
 			Driver d = new Driver();
-			d.Run(args);
+			return d.Run(args);
 		}
 	}
 }

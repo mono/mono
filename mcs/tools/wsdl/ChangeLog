@@ -1,3 +1,7 @@
+2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs: Return error codes.
+
 2003-12-03  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoWSDL.cs: Added support for VB.
