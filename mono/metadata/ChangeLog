@@ -1,3 +1,15 @@
+2003-03-27  Zoltan Varga  <vargaz@freemail.h>
+
+	* reflection.h (MonoReflectionDynamicAssembly): track changes in
+	the layout of the class.
+
+	* reflection.c (alloc_table): double the size on overflow to avoid
+	unnecessary copying.
+
+	* reflection.h reflection.c: If AssemblyBuilderAccess is Run, then
+	avoid filling out metadata tables and blobs. Also set mb->ilgen to
+	null so it can be garbage collected.
+	
 2003-03-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_get_type): Return the resolved type
