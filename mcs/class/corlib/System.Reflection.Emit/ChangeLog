@@ -1,5 +1,14 @@
 2002-03-23  Martin Baulig  <martin@gnome.org>
 
+	* SignatureHelper.cs (GetFieldSignatureHelper, GetLocalSignatureHelper):
+	Implemented.
+
+	* LocalBuilder.cs (LocalBuilder): This internal constructor now takes
+	a ModuleBuilder argument instead of a ISymbolWriter one.
+	(SetLocalSymInfo): Create and pass type signature to DefineLocalVariable.
+
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
 	* ILGenerator.cs (BeginScope, EndScope): Implemented.
 
 2002-03-20  Martin Baulig  <martin@gnome.org>

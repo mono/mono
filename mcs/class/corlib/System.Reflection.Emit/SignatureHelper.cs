@@ -17,34 +17,98 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	public sealed class SignatureHelper {
-		public static SignatureHelper GetFieldSigHelper (Module mod) {
-			return null;
+		internal enum SignatureHelperType {
+			HELPER_FIELD,
+			HELPER_LOCAL,
+			HELPER_METHOD,
+			HELPER_PROPERTY
 		}
-		public static SignatureHelper GetLocalVarSigHelper( Module mod) {
-			return null;
+
+		private ModuleBuilder module;
+		private Type[] arguments;
+		private SignatureHelperType type;
+
+		internal SignatureHelper (ModuleBuilder module, SignatureHelperType type)
+		{
+			this.type = type;
+			this.module = module;
 		}
-		public static SignatureHelper GetMethodSigHelper( Module mod, CallingConventions callingConvention, Type returnType) {
-			return null;
+
+		public static SignatureHelper GetFieldSigHelper (Module mod)
+		{
+			if (!(mod is ModuleBuilder))
+				throw new NotImplementedException ();
+
+			return new SignatureHelper ((ModuleBuilder) mod, SignatureHelperType.HELPER_FIELD);
 		}
-		public static SignatureHelper GetMethodSigHelper( Module mod, Type returnType, Type[] parameterTypes) {
-			return null;
+		public static SignatureHelper GetLocalVarSigHelper (Module mod)
+		{
+			if (!(mod is ModuleBuilder))
+				throw new NotImplementedException ();
+
+			return new SignatureHelper ((ModuleBuilder) mod, SignatureHelperType.HELPER_LOCAL);
 		}
-		public static SignatureHelper GetPropertySigHelper( Module mod, Type returnType, Type[] parameterTypes) {
-			return null;
+		[MonoTODO]
+		public static SignatureHelper GetMethodSigHelper( Module mod, CallingConventions callingConvention, Type returnType)
+		{
+			throw new NotImplementedException ();
 		}
-		public void AddArgument( Type clsArgument) {
+		[MonoTODO]
+		public static SignatureHelper GetMethodSigHelper( Module mod, Type returnType, Type[] parameterTypes)
+		{
+			throw new NotImplementedException ();
 		}
-		public void AddSentinel() {
+		[MonoTODO]
+		public static SignatureHelper GetPropertySigHelper( Module mod, Type returnType, Type[] parameterTypes)
+		{
+			throw new NotImplementedException ();
 		}
-		public override bool Equals( object obj) {
-			return false;
+		public void AddArgument (Type clsArgument)
+		{
+			if (arguments != null) {
+				Type[] new_a = new Type [arguments.Length + 1];
+				System.Array.Copy (arguments, new_a, arguments.Length);
+				new_a [arguments.Length] = clsArgument;
+				arguments = new_a;
+			} else {
+				arguments = new Type [1];
+				arguments [0] = clsArgument;
+			}
 		}
-		public override int GetHashCode() {
-			return 0;
+		[MonoTODO]
+		public void AddSentinel ()
+		{
+			throw new NotImplementedException ();
 		}
-		public byte[] GetSignature() {
-			return null;
+		[MonoTODO]
+		public override bool Equals (object obj)
+		{
+			throw new NotImplementedException ();
 		}
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern byte[] get_signature_local ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern byte[] get_signature_field ();
+
+		public byte[] GetSignature ()
+		{
+			switch (type) {
+			case SignatureHelperType.HELPER_LOCAL:
+				return get_signature_local ();
+			case SignatureHelperType.HELPER_FIELD:
+				return get_signature_field ();
+			default:
+				throw new NotImplementedException ();
+			}
+		}
+
 		public override string ToString() {
 			return "SignatureHelper";
 		}

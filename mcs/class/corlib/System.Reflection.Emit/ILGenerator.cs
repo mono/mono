@@ -303,7 +303,7 @@ namespace System.Reflection.Emit {
 				scopes.Push (sym_writer.OpenScope (code_len));
 		}
 		public virtual LocalBuilder DeclareLocal (Type localType) {
-			LocalBuilder res = new LocalBuilder (sym_writer, localType);
+			LocalBuilder res = new LocalBuilder (module, localType);
 			if (locals != null) {
 				LocalBuilder[] new_l = new LocalBuilder [locals.Length + 1];
 				System.Array.Copy (locals, new_l, locals.Length);
