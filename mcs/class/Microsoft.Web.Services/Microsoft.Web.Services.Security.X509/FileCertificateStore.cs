@@ -19,7 +19,8 @@ namespace Microsoft.Web.Services.Security.X509 {
 		private X509CertificateStore.StoreLocation _location;
 		private IntPtr _handle;
 
-		public FileCertificateStore (X509CertificateStore.StoreLocation location, string storeName, X509CertificateStore.StoreOpenFlags flags) {
+		public FileCertificateStore (X509CertificateStore.StoreLocation location, string storeName, X509CertificateStore.StoreOpenFlags flags) 
+		{
 			_location = location;
 			_storeName = storeName;
 			_flags = flags;
@@ -29,7 +30,8 @@ namespace Microsoft.Web.Services.Security.X509 {
 			get { return (IntPtr) 0; }
 		}
 
-		public X509CertificateCollection GetCollection () {
+		public X509CertificateCollection GetCollection () 
+		{
 			if (_spc == null) {
 				_spc = SoftwarePublisherCertificate.CreateFromFile (_storeName);
 			}
@@ -40,5 +42,7 @@ namespace Microsoft.Web.Services.Security.X509 {
 			}
 			return coll;
 		}
+
+		public void Close () {}
 	}
 }
