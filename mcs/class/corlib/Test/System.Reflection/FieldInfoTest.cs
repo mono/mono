@@ -37,6 +37,12 @@ using NUnit.Framework;
 namespace MonoTests.System.Reflection
 {
 
+[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
+public class Class1 {
+	[FieldOffset (32)]
+	public int i;
+}
+
 [TestFixture]
 public class FieldInfoTest : Assertion
 {
@@ -49,6 +55,9 @@ public class FieldInfoTest : Assertion
 		Type t = typeof (FieldInfoTest);
 
 		AssertEquals (1, t.GetField ("i").GetCustomAttributes (typeof (NonSerializedAttribute), true).Length);
+
+		FieldOffsetAttribute attr = (FieldOffsetAttribute)(typeof (Class1).GetField ("i").GetCustomAttributes (true) [0]);
+		AssertEquals (32, attr.Value);
 	}
 #endif
 }		
