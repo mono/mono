@@ -52,28 +52,33 @@ namespace Mono.Tools
 			}
 			
 			switch (args[0]) {
-				case "/?":
-				case "--help":
-					ShowHelp (true);
-					return 0;
-				case "/i":
-				case "--install":
-					return InstallAssembly (remainder_args);
-				case "/l":
-				case "--ls":
-					return ListAssemblies (remainder_args);
-				case "/u":
-				case "--uninstall":
-					return UninstallAssemblies (remainder_args);
-				case "/il":
-				case "--install-from-list":
-					return InstallAssembliesFromList (remainder_args);
-				case "/ul":
-				case "--uninstall-from-list":
-					return UninstallAssembliesFromList (remainder_args);
-				default:
-					ShowHelp (false);
-					break;
+			case "/?":
+			case "--help":
+				ShowHelp (true);
+				return 0;
+			case "-i":
+			case "/i":
+			case "--install":
+				return InstallAssembly (remainder_args);
+			case "/l":
+			case "-l":
+			case "--ls":
+				return ListAssemblies (remainder_args);
+			case "/u":
+			case "-u":
+			case "--uninstall":
+				return UninstallAssemblies (remainder_args);
+			case "/il":
+			case "-il":
+			case "--install-from-list":
+				return InstallAssembliesFromList (remainder_args);
+			case "/ul":
+			case "-ul":
+			case "--uninstall-from-list":
+				return UninstallAssembliesFromList (remainder_args);
+			default:
+				ShowHelp (false);
+				break;
 			}
 
 			return 1;
@@ -264,15 +269,27 @@ namespace Mono.Tools
 
 			bool force = false;
 
-			if(args.Length >= 2 && (args[1] == "/f" || args[1] == "--force"))
-				force = true;
-                        if (args.Length == 4 && (args [2] == "/prefix"))
-                                gac_path = args [3];
-		
+			for (int idx = 1; idx < args.Length; idx++){
+				switch (args [idx]){
+				case "-f":
+				case "/f":
+				case "--force":
+					force = true;
+					break;
+
+				case "/root":
+				case "-root":
+					if (idx + 1 < args.Length){
+						gac_path = Path.Combine (args [3], Path.Combine ("lib", Path.Combine ("mono", "gac")));
+					}
+					break;
+				}
+			}
+			
 			string version_token = an.Version + "_" +
 				an.CultureInfo.Name.ToLower (CultureInfo.InvariantCulture) +
 				"_" + GetStringToken (an.GetPublicKeyToken ());
-                        
+
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
 
 			if (File.Exists (fullPath + an.Name + ".dll") && force == false) {
@@ -335,21 +352,21 @@ namespace Mono.Tools
 
 			sb.Append ("Usage: gacutil.exe <commands> [ <options> ]\n");
 			sb.Append ("Commands:\n");
-			sb.Append ("  /i <assembly_path> [ /f ]\n");
+			sb.Append ("  -i <assembly_path> [ -f ] [ -root ROOTDIR]\n");
 			if (detailed == false) {
 				sb.Append ("    Installs an assembly into the global assembly cache\n");
 			} else {
-				sb.Append ("    Installs an assembly to the global assembly cache. <assembly_path> is the\n     name of the file that contains the assembly manifest.                    \n     Example: /i myDll.dll\n");
+				sb.Append ("    Installs an assembly to the global assembly cache. <assembly_path> is the\n     name of the file that contains the assembly manifest.                    \n     Example: -i myDll.dll\n");
 			}
 
 			sb.Append ("\n");
 
-			sb.Append ("  /il <assembly_path_list_file> [ /f ]\n");
+			sb.Append ("  -il <assembly_path_list_file> [ -f ]\n");
 			if (detailed == false) {
 				sb.Append ("    Installs one or more assemblies into the global assembly cache\n");
 			} else {
 				sb.Append ("    Installs on or more assemblies to the global assembly cache.              \n    <assembly_list_file is the path to a text file that contains a list of    \n    assembly manifest file paths. Individual paths in the text file must be   \n    separated by a newline.\n");
-				sb.Append ("    Example: /il MyAssemblyList\n");
+				sb.Append ("    Example: -il MyAssemblyList\n");
 				sb.Append ("      MyAssemblyList content:\n");
 				sb.Append ("      Mydll.dll\n");
 				sb.Append ("      Mydll2.dll\n");
@@ -407,12 +424,12 @@ namespace Mono.Tools
 				sb.Append ("\n");
 				sb.Append ("\n");
 				sb.Append ("Note, mono's gacutil also supports these unix like aliases for its commands:\n");
-				sb.Append ("  /i  -> --install\n");
-				sb.Append ("  /il -> --install-from-list\n");
-				sb.Append ("  /u  -> --uninstall\n");
-				sb.Append ("  /ul -> --uninstall-from-list\n");
-				sb.Append ("  /l  -> --ls\n");
-				sb.Append ("  /f  -> --force\n");
+				sb.Append ("  -i  -> --install\n");
+				sb.Append ("  -il -> --install-from-list\n");
+				sb.Append ("  -u  -> --uninstall\n");
+				sb.Append ("  -ul -> --uninstall-from-list\n");
+				sb.Append ("  -l  -> --ls\n");
+				sb.Append ("  -f  -> --force\n");
 				sb.Append ("\n");
 				sb.Append ("Mono also allows a User Assembly Cache, this cache can be accessed by passing\n/user as the first argument to gacutil.exe\n");
 			}

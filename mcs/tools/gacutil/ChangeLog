@@ -1,3 +1,8 @@
+2004-04-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* gacutil.cs: Rename /prefix with /libdir,  Append mono/gac to
+	that. 
+
 2004-04-30  Jackson Harper  <jackson@ximian.com>
 
 	* gacutil.cs: Install config files.
