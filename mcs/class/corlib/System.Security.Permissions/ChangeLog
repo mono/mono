@@ -1,5 +1,23 @@
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DataProtectionPermission.cs: New permission for NET_2_0. Use common
+	permission template.
+	* DataProtectionPermissionAttribute.cs: New security attribute for 
+	NET_2_0.
+	* DataProtectionPermissionFlags.cs: New flags for NET_2_0.
+	* HostProtectionAttribute.cs: New security attribute for NET_2_0.
+	* HostProtectionPermission.cs: New internal permission for NET_2_0. 
+	Use common permission template.
+	* KeyContainerPermission.cs: New permission for NET_2_0. Use common
+	permission template.
+	* KeyContainerPermissionAccessEntry.cs: New class for NET_2_0.
+	* KeyContainerPermissionAccessEntryCollection.cs: New for NET_2_0.
+	* KeyContainerPermissionAccessEntryEnumerator.cs: New for NET_2_0.
+	* KeyContainerPermissionAttribute.cs: New security attrib for NET_2_0.
+	* KeyContainerPermissionFlags.cs: New flags for NET_2_0.
+
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* EnvironmentPermission.cs: Updated to use the common template.
 	* FileDialogPermission.cs: Updated to use the common template.
 	* PublisherIdentityPermission.cs: Updated to use the common template.
