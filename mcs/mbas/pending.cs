@@ -169,12 +169,12 @@ namespace Mono.MonoBASIC {
 				abstract_methods.CopyTo (pending_implementations [i].methods, 0);
 				pending_implementations [i].found = new bool [count];
 				pending_implementations [i].args = new Type [count][];
-				pending_implementations [i].type = type_builder;
+				pending_implementations [i].type = type_builder.BaseType;
 				
 				int j = 0;
 				foreach (MemberInfo m in abstract_methods){
 					MethodInfo mi = (MethodInfo) m;
-					
+
 					Type [] types = TypeManager.GetArgumentTypes (mi);
 					
 					pending_implementations [i].args [j] = types;
@@ -246,7 +246,7 @@ namespace Mono.MonoBASIC {
 			int total = icount +  (implementing_abstract ? 1 : 0);
 			if (total == 0)
 				return null;
-
+			
 			return new PendingImplementation (container, ifaces, abstract_methods, total);
 		}
 
@@ -261,12 +261,12 @@ namespace Mono.MonoBASIC {
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
-		public MethodInfo IsInterfaceMethod (Type t, string name, Type ret_type, Type [] args)
+		public MethodInfo IsAbstractMethod (Type t, string name, Type ret_type, Type [] args)
 		{
 			return InterfaceMethod (t, name, ret_type, args, Operation.Lookup, null);
 		}
 
-		public MethodInfo IsInterfaceIndexer (Type t, Type ret_type, Type [] args)
+		public MethodInfo IsAbstractIndexer (Type t, Type ret_type, Type [] args)
 		{
 			return InterfaceMethod (t, null, ret_type, args, Operation.Lookup, null);
 		}
@@ -311,7 +311,7 @@ namespace Mono.MonoBASIC {
 			foreach (TypeAndMethods tm in pending_implementations){
 				if (!(t == null || tm.type == t))
 					continue;
-				
+
 				int i = 0;
 				foreach (MethodInfo m in tm.methods){
 					if (m == null){

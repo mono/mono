@@ -687,7 +687,7 @@ namespace Mono.MonoBASIC {
 			//
 			count = bases.Count;
 
-			if (is_class){
+			if (is_class && (!(this is Interface))){
 				Expression name = (Expression) bases [0];
 				name = ResolveTypeExpr (name, false, Location);
 
@@ -729,7 +729,6 @@ namespace Mono.MonoBASIC {
 				Expression resolved = ResolveTypeExpr (name, false, Location);
 				bases [i] = resolved;
 				Type t = resolved.Type;
-                
 				if (t == null){
 					error = true;
 					return null;
@@ -774,6 +773,7 @@ namespace Mono.MonoBASIC {
 				ifaces [j] = t;
 			}
 
+			//return ifaces;
 			return TypeManager.ExpandInterfaces (ifaces);
 		}
 		
@@ -808,7 +808,6 @@ namespace Mono.MonoBASIC {
 			}
 			
 			ifaces = GetClassBases (is_class, out parent, out error); 
-			
 			if (error)
 				return null;
 
@@ -1133,7 +1132,6 @@ namespace Mono.MonoBASIC {
 			}
 
 			Pending = PendingImplementation.GetPendingImplementations (this);
-			
 			//
 			// Constructors are not in the defined_names array
 			//
@@ -3117,6 +3115,20 @@ namespace Mono.MonoBASIC {
 			method_name = name;
 			impl_method_name = name;
 
+			if ((member.ModFlags & Modifiers.OVERRIDE) != 0) {
+				if (parent.Pending == null)
+					implementing = null;
+				else if (member is Indexer)
+					implementing = parent.Pending.IsAbstractIndexer (
+						(Type) parent.TypeBuilder.BaseType, ReturnType, ParameterTypes);
+				else
+					implementing = parent.Pending.IsAbstractMethod (
+						(Type) parent.TypeBuilder.BaseType, name, ReturnType, ParameterTypes);
+				
+				if (implementing != null)
+					IsImplementing = true;
+			}
+
 			if (member.Implements != null) {
 				implementing_list = new ArrayList();
 
@@ -3131,10 +3143,10 @@ namespace Mono.MonoBASIC {
 						impl_method_name = name;
 
 					if (member is Indexer)
-						implementing = parent.Pending.IsInterfaceIndexer (
+						implementing = parent.Pending.IsAbstractIndexer (
 							(Type) member.InterfaceTypes[++pos] , ReturnType, ParameterTypes);
 					else
-						implementing = parent.Pending.IsInterfaceMethod (
+						implementing = parent.Pending.IsAbstractMethod (
 							(Type) member.InterfaceTypes[++pos], impl_method_name, ReturnType, ParameterTypes);
 
 					if (implementing == null) {
@@ -3146,13 +3158,13 @@ namespace Mono.MonoBASIC {
 					implementing_list.Add (implementing);
 					IsImplementing = true;
 				}
-			}
+			} 
 
 			//
 			// For implicit implementations, make sure we are public, for
 			// explicit implementations, make sure we are private.
 			//
-			if (IsImplementing){
+			//if (IsImplementing){
 				//
 				// Setting null inside this block will trigger a more
 				// verbose error reporting for missing interface implementations
@@ -3179,7 +3191,7 @@ namespace Mono.MonoBASIC {
 						implementing = null;
 					}
 				}*/
-			}
+			//}
 			
 			//
 			// If implementing is still valid, set flags
@@ -3223,24 +3235,43 @@ namespace Mono.MonoBASIC {
 
 			if (IsImplementing) {
 				//
-				// clear the pending implemntation flag
+				// implement abstract methods from abstract classes
 				//
-				pos = 0;
-				foreach (MethodInfo Impl in implementing_list) {
-					if (member is Indexer) {
+				if ((member.ModFlags & Modifiers.OVERRIDE) != 0) {
+					if (member is Indexer)
 						parent.Pending.ImplementIndexer (
-							(Type) member.InterfaceTypes[pos++], 
+							(Type) parent.TypeBuilder.BaseType, 
 							builder, ReturnType,
 							ParameterTypes, true);
-					} else
+					else
 						parent.Pending.ImplementMethod (
-							(Type) member.InterfaceTypes[pos++], 
-							Impl.Name, ReturnType,
+							(Type) parent.TypeBuilder.BaseType, 
+							name, ReturnType,
 							ParameterTypes, member.IsExplicitImpl);
-
-					parent.TypeBuilder.DefineMethodOverride (
-						builder, Impl);
 				}
+				
+				//
+				// implement abstract methods of interfaces
+				//
+				if (member.Implements != null)	{
+					pos = 0;
+					foreach (MethodInfo Impl in implementing_list)	{
+						if (member is Indexer)
+							parent.Pending.ImplementIndexer (
+								(Type) member.InterfaceTypes[pos++], 
+								builder, ReturnType,
+								ParameterTypes, true);
+						else
+							parent.Pending.ImplementMethod (
+								(Type) member.InterfaceTypes[pos++], 
+								Impl.Name, ReturnType,
+								ParameterTypes, member.IsExplicitImpl);
+
+						parent.TypeBuilder.DefineMethodOverride (
+							builder, Impl);
+					}
+				}
+				
 			}
 
 			if (!TypeManager.RegisterMethod (builder, ParameterInfo, ParameterTypes)) {
