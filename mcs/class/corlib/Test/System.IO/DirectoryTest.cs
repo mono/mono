@@ -1127,7 +1127,7 @@ public class DirectoryTest : Assertion {
 	{
 		DirectoryInfo info;
 
-                info = Directory.GetParent ("/");
+		info = Directory.GetParent (Path.GetPathRoot (Path.GetTempPath ()));
 		AssertEquals (null, info);
 	}
 	
