@@ -258,7 +258,7 @@ namespace System.Drawing.Imaging
 			}
 			
 			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
-				ColorAdjustType.Brush, false, (uint) map.Length, clrmap);
+				ColorAdjustType.Brush, true, (uint) map.Length, clrmap);
 				
 			Marshal.FreeHGlobal (clrmap);   
 			
@@ -375,7 +375,7 @@ namespace System.Drawing.Imaging
 			}
 			
 			Status status = GDIPlus.GdipSetImageAttributesRemapTable (nativeImageAttr, 
-				type, false, (uint) map.Length, clrmap);
+				type, true, (uint) map.Length, clrmap);
 				
 			Marshal.FreeHGlobal (clrmap);   
 			

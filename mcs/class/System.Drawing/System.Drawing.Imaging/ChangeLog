@@ -1,3 +1,7 @@
+2004-05-18 Jordi Mas i Hernadez <jordi@ximian.com>
+	* ImageAttributes.cs: SetBrushRemapTable and SetRemapTable were
+	passing bad parameters to GDI+ causing them not to work 
+
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* EncoderParameterValueType.cs: fix Windows build (CSC), 
