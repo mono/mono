@@ -147,6 +147,8 @@ namespace System.Data.Common {
 
 		public bool Contains (object value) 
 		{
+			if  (!(value is DataColumnMapping))
+				throw new InvalidCastException("Object is not of type DataColumnMapping");
 			return (list.Contains (value));
 		}
 
@@ -157,7 +159,7 @@ namespace System.Data.Common {
 
 		public void CopyTo (Array array, int index) 
 		{
-			((DataColumn[])(list.ToArray())).CopyTo (array, index);
+		 	(list.ToArray()).CopyTo(array,index);
 		}
 
 		public DataColumnMapping GetByDataSetColumn (string value) 
@@ -224,13 +226,20 @@ namespace System.Data.Common {
 
 		public void Remove (object value) 
 		{
-			sourceColumns.Remove(((DataColumnMapping)value).SourceColumn);
+			int index = list.IndexOf (value);
+      			sourceColumns.Remove(((DataColumnMapping)value).SourceColumn);
 			dataSetColumns.Remove(((DataColumnMapping)value).DataSetColumn);
+			if (( index < 0 ) || (index >=list.Count))
+                                    throw new ArgumentException("There is no such element in collection.");
+
 			list.Remove (value);
 		}
 
 		public void RemoveAt (int index) 
 		{
+			if (( index < 0 ) || (index >=list.Count))
+                                    throw new IndexOutOfRangeException("There is no element in collection.");
+
 			Remove (list[index]);
 		}
 
