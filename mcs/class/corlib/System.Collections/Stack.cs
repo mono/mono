@@ -32,21 +32,21 @@ namespace System.Collections {
 
 		public Stack () : this (16) {}
 
-		public Stack(ICollection collection) : this (collection == null ? 16 : collection.Count) {
-			if (collection == null)
-				throw new ArgumentNullException("collection");
+		public Stack(ICollection col) : this (col == null ? 16 : col.Count) {
+			if (col == null)
+				throw new ArgumentNullException("col");
 			
-			current = collection.Count - 1;
-			count = collection.Count;
+			current = col.Count - 1;
+			count = col.Count;
 
-			collection.CopyTo(contents, 0);
+			col.CopyTo(contents, 0);
 		}
 
-		public Stack (int c) {
-			if (c < 0)
-				throw new ArgumentOutOfRangeException ("c");
+		public Stack (int initialCapacity) {
+			if (initialCapacity < 0)
+				throw new ArgumentOutOfRangeException ("initialCapacity");
 			
-			capacity = Math.Max (c, 16);
+			capacity = Math.Max (initialCapacity, 16);
 			contents = new object[capacity];
 		}
 
@@ -191,11 +191,11 @@ namespace System.Collections {
 
 		public virtual void CopyTo (Array array, int index) {
 			if (array == null) {
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("array");
 			}
 
 			if (index < 0) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException("index");
 			}
 
 			if (array.Rank > 1 || 

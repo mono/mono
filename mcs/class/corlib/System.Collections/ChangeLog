@@ -1,3 +1,8 @@
+2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Stack.cs: Applied patch from Carlos A. Barcenilla to fix minor
+	bugs (#50755).
+
 2003-11-03  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SortedList.cs: Added [Serializable] to Slot class. This fixes bug #50484.
