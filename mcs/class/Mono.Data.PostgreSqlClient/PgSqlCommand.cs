@@ -703,6 +703,8 @@ namespace System.Data.SqlClient {
 
 		internal void BuildTableSchema (IntPtr pgResult) 
 		{
+			pg_result = pgResult;
+
 			dataTableSchema = new DataTable ();
 			dataTableSchema.Columns.Add ("ColumnName", typeof (string));
 			dataTableSchema.Columns.Add ("ColumnOrdinal", typeof (int));
@@ -715,7 +717,7 @@ namespace System.Data.SqlClient {
 			dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
 			dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
 			dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
-			dataTableSchema.Columns.Add ("DataType", typeof (System.Type));
+			dataTableSchema.Columns.Add ("DataType", typeof (string));
 			dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
 			dataTableSchema.Columns.Add ("ProviderType", typeof (string));
 			dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
@@ -727,13 +729,17 @@ namespace System.Data.SqlClient {
 			dataTableSchema.Columns.Add ("IsLong", typeof (bool));
 			dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
 
-			int fieldCount = PostgresLibrary.PQnfields (pgResult);
+			fieldCount = PostgresLibrary.PQnfields (pgResult);
+			rowCount = PostgresLibrary.PQntuples(pgResult);
+			pgtypes = new string[fieldCount];
+
 			DataRow schemaRow;
 			int oid;
 			string pgType;
 			DbType dbType;
+			Type typ;
+			DataColumn schemaCol;
 			
-
 			for (int i = 0; i < fieldCount; i += 1 )
 			{
 				oid = PostgresLibrary.PQftype (pgResult, i);
@@ -751,9 +757,16 @@ namespace System.Data.SqlClient {
 				schemaRow["BaseSchemaName"] = ""; // ? tim
 				schemaRow["BaseTableName"]  = ""; // ? tim
 				
+				Console.WriteLine("Calling OidToTypname...");
 				pgType = PostgresHelper.OidToTypname (oid, con.Types);
+				pgtypes[i] = pgType;
+
+				Console.WriteLine("Calling TypnameToSqlDbType...");
 				dbType = PostgresHelper.TypnameToSqlDbType (pgType);
-				//schemaRow["DataType"] = PostgresHelper.DbTypeToSystemType (dbType); ??? this gives a bad cast.
+				
+				Console.WriteLine("Calling DbTypeToSystemType...");
+				typ = PostgresHelper.DbTypeToSystemType (dbType);
+				schemaRow["DataType"] = typ.ToString();
 
 				schemaRow["AllowDBNull"] = false; // ? tim
 				schemaRow["ProviderType"] = ""; // ? tim

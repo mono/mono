@@ -1,3 +1,8 @@
+2002-05-22  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/SqlCommand.cs: more work on 
+	building the schema table
+
 2002-05-22  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlClient/SqlCommand.cs: preliminary work
 	on getting the schema table correctly built.
