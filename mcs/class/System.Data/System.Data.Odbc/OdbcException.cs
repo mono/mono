@@ -16,11 +16,10 @@ using System.Runtime.Serialization;
 
 namespace System.Data.Odbc
 {
-	public class OdbcException : SystemException 
+	public sealed class OdbcException : SystemException 
 	{
 		OdbcErrorCollection col;
-
-
+
 		internal OdbcException(OdbcError Error) : base (Error.Message)
 		{
 			col=new OdbcErrorCollection();
@@ -52,13 +51,22 @@ namespace System.Data.Odbc
 			}
 		}
 
-
+		public override string Message 	{
+			get { 
+				
+				return  col[0].Message;
+			     }
+		}	
+		
 		#region Methods
 
-		[MonoTODO]
 		public override void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			if (si == null)
+				throw new ArgumentNullException ("si");
+
+			si.AddValue ("col", col);
+			base.GetObjectData (si, context);
 		}
 
 		#endregion // Methods
