@@ -1,3 +1,8 @@
+2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* IntPtrStream.cs: Add a 'Closed' event. Also throw exceptions after
+	the stream is closed.
+
 2004-01-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* FileStream.cs: Locking from bug #32344 removed. This is not

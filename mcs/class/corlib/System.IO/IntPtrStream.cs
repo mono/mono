@@ -21,6 +21,9 @@ namespace System.IO {
 		unsafe byte *base_address;
 		int size;
 		int position;
+		bool closed;
+
+		public event EventHandler Closed;
 		
 		public IntPtrStream (IntPtr base_address, int size)
 		{
@@ -82,6 +85,9 @@ namespace System.IO {
 				throw new ArgumentException ("offset+count",
 							      "The size of the buffer is less than offset + count.");
 
+			if (closed)
+				throw new ObjectDisposedException ("Stream has been closed");
+
 			if (position >= size || count == 0)
 				return 0;
 
@@ -100,6 +106,9 @@ namespace System.IO {
 			if (position >= size)
 				return -1;
 
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+
 			unsafe {
 				return base_address [position++];
 			}
@@ -110,6 +119,9 @@ namespace System.IO {
 			// It's funny that they don't throw this exception for < Int32.MinValue
 			if (offset > (long) Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("Offset out of range. " + offset);
+
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
 
 			int ref_point;
 			switch (loc) {
@@ -160,6 +172,14 @@ namespace System.IO {
 		
 		public override void Flush ()
 		{
+		}
+
+		public override void Close ()
+		{
+			closed = true;
+
+			if (Closed != null)
+				Closed (this, null);
 		}
 	}
 }
