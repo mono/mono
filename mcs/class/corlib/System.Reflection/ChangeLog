@@ -1,5 +1,12 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* MethodBase.cs (MethodBase.Mono_IsInflatedMethod): New public
+	virtual property.
+	(MethodBase.HasGenericParameters): Use the "official" behavior
+	here, ie. return false if we're not a generic method.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* MethodBase.cs: Moved the generics stuff here, made it virtual
 	where neccessary and use the correct API.
 

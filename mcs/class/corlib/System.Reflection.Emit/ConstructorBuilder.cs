@@ -216,6 +216,12 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_1_2
+		public override bool Mono_IsInflatedMethod {
+			get {
+				return false;
+			}
+		}
+
 		public override bool HasGenericParameters {
 			get {
 				return false;

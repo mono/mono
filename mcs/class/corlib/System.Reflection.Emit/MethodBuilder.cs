@@ -332,6 +332,12 @@ namespace System.Reflection.Emit {
 			generic_params [index].SetConstraints (constraints);
 		}
 
+		public override bool Mono_IsInflatedMethod {
+			get {
+				return false;
+			}
+		}
+
 		public override bool HasGenericParameters {
 			get {
 				return generic_params != null;

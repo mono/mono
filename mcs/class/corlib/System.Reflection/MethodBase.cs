@@ -157,6 +157,12 @@ namespace System.Reflection {
 			throw new NotSupportedException ();
 		}
 
+		public virtual bool Mono_IsInflatedMethod {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+
 		public virtual bool HasGenericParameters {
 			get {
 				throw new NotSupportedException ();

@@ -193,6 +193,11 @@ namespace System.Reflection {
 			return res;
 		}
 
+		public override extern bool Mono_IsInflatedMethod {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
+
 		public override extern bool HasGenericParameters {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
@@ -297,6 +302,23 @@ namespace System.Reflection {
 		}
 
 #if NET_1_2
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern MethodInfo GetGenericMethodDefinition_impl ();
+
+		public override MethodInfo GetGenericMethodDefinition ()
+		{
+			MethodInfo res = GetGenericMethodDefinition_impl ();
+			if (res == null)
+				throw new InvalidOperationException ();
+
+			return res;
+		}
+
+		public override extern bool Mono_IsInflatedMethod {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
+
 		public override bool HasGenericParameters {
 			get {
 				return false;
