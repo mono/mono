@@ -29,10 +29,14 @@
 
 #if NET_2_0
 
+using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
+using System;
 
 namespace System.Web.UI.WebControls.WebParts
 {
+	[TypeConverterAttribute ("System.Web.UI.WebControls.WebParts.WebPartVerbConverter, System.Web")]
 	public class WebPartVerb : IStateManager
 	{
 		private string clientClickHandler;
@@ -111,25 +115,42 @@ namespace System.Web.UI.WebControls.WebParts
 			throw new NotImplementedException ();
 		}
 
+		[WebSysDescriptionAttribute ("Denotes verb is checked or not."),
+		DefaultValueAttribute (false),
+		NotifyParentPropertyAttribute (true) ]
 		public virtual bool Checked {
 			get { return isChecked; }
 			set { isChecked = value; }
 		}
 
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden),
+		 BrowsableAttribute (false)]
 		public string ClientClickHandler {
 			get { return clientClickHandler; }
 		}
 
+		[LocalizableAttribute (true),
+		 WebSysDescriptionAttribute ("Gives descriptive information about the verb"),
+		 NotifyParentPropertyAttribute (true)]
+		 //WebSysDefaultValueAttribute (string.Empty)]			
 		public virtual string Description {
 			get { return description; }
 			set { description = value; }
 		}
 
+		[NotifyParentPropertyAttribute (true),
+		 DefaultValueAttribute (true),
+		 WebSysDescriptionAttribute ("Determines whether verb is enabled.")]			
 		public virtual bool Enabled {
 			get { return enabled; }
 			set { enabled = value; }
 		}
 
+		[WebSysDescriptionAttribute ("Denotes URL of the image to be displayed for the verb"),
+		 EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design", 
+				"System.Drawing.Design.UITypeEditor, System.Drawing"),
+		 LocalizableAttribute (true), NotifyParentPropertyAttribute (true)]
+		//UrlPropertyAttribute, DefaultValueAttribute (String.Empty)
 		public string ImageUrl {
 			get { return imageUrl; }
 			set { imageUrl = value; }
@@ -139,11 +160,18 @@ namespace System.Web.UI.WebControls.WebParts
 			get { throw new NotImplementedException (); }
 		}
 
-		public WebPartEventHandler ServerClickHandler {
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden),
+		 BrowsableAttribute (false)]
+		public WebPartEventHandler ServerClickHandler
+		{
 			get { return serverClickHandler; }
 		}
 
-		public virtual string Text {
+		[WebSysDescriptionAttribute ("Denotes text to be displayed for the verb"),
+		 LocalizableAttribute (true), NotifyParentPropertyAttribute (true)]
+		//DefaultValueAttribute (String.Empty)
+		public virtual string Text
+		{
 			get { return text; }
 			set { text = value; }
 		}
@@ -152,7 +180,11 @@ namespace System.Web.UI.WebControls.WebParts
 			get { return stateBag; }
 		}
 
-		public bool Visible {
+		[DefaultValueAttribute (true),
+		 WebSysDescriptionAttribute ("Denotes whether the verb is visible"),
+		 LocalizableAttribute (true), NotifyParentPropertyAttribute (true)]
+		public bool Visible
+		{
 			get { return visible; }
 			set { visible = value; }
 		}

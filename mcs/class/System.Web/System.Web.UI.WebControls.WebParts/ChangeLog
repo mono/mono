@@ -1,5 +1,9 @@
 2004-09-29  Sanjay Gupta <gsanjay@novell.com>
 
+	* WebPartVerb.cs: Added attributes.
+
+2004-09-29  Sanjay Gupta <gsanjay@novell.com>
+
 	* ConnectionPoint.cs: Initial implementation.
 	* ConsumerConnectionPoint.cs:
 	* ProviderConnectionPoint.cs: Added stubs.
