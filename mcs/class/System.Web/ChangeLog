@@ -1,3 +1,16 @@
+2005-02-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/BoundField.cs
+		System.Web.UI.WebControls/CompositeDataBoundControl.cs
+		System.Web.UI.WebControls/DataControlFieldCollection.cs
+		System.Web.UI.WebControls/GridView.cs
+		System.Web.UI.WebControls/GridViewRow.cs
+		System.Web.UI.WebControls/GridViewRowCollection.cs
+		System.Web.UI.WebControls/PagerSettings.cs
+		System.Web.UI.WebControls/XmlDataSourceNodeDescriptor.cs
+		System.Web.UI.WebControls/XmlDataSourcePropertyDescriptor.cs
+
 2005-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Web_test.dll.sources: Added new unit tests for

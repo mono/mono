@@ -250,6 +250,7 @@ System.Web.UI.WebControls/BaseDataList.cs
 System.Web.UI.WebControls/BaseValidator.cs
 System.Web.UI.WebControls/BorderStyle.cs
 System.Web.UI.WebControls/BoundColumn.cs
+System.Web.UI.WebControls/BoundField.cs
 System.Web.UI.WebControls/BulletStyle.cs
 System.Web.UI.WebControls/BulletedList.cs
 System.Web.UI.WebControls/BulletedListDisplayMode.cs
@@ -274,6 +275,7 @@ System.Web.UI.WebControls/CommandEventArgs.cs
 System.Web.UI.WebControls/CommandEventHandler.cs
 System.Web.UI.WebControls/CompareValidator.cs
 System.Web.UI.WebControls/CompositeControl.cs
+System.Web.UI.WebControls/CompositeDataBoundControl.cs
 System.Web.UI.WebControls/ContentDirection.cs
 System.Web.UI.WebControls/ControlParameter.cs
 System.Web.UI.WebControls/ControlPropertyNameConverter.cs
@@ -284,6 +286,7 @@ System.Web.UI.WebControls/CustomValidator.cs
 System.Web.UI.WebControls/DataBoundControl.cs
 System.Web.UI.WebControls/DataControlCellType.cs
 System.Web.UI.WebControls/DataControlField.cs
+System.Web.UI.WebControls/DataControlFieldCollection.cs
 System.Web.UI.WebControls/DataControlFieldCell.cs
 System.Web.UI.WebControls/DataControlRowState.cs
 System.Web.UI.WebControls/DataControlRowType.cs
@@ -364,6 +367,7 @@ System.Web.UI.WebControls/FormViewUpdatedEventHandler.cs
 System.Web.UI.WebControls/FormViewUpdateEventArgs.cs
 System.Web.UI.WebControls/FormViewUpdateEventHandler.cs
 System.Web.UI.WebControls/GridLines.cs
+System.Web.UI.WebControls/GridView.cs
 System.Web.UI.WebControls/GridViewCancelEditEventArgs.cs
 System.Web.UI.WebControls/GridViewCancelEditEventHandler.cs
 System.Web.UI.WebControls/GridViewDeletedEventArgs.cs
@@ -374,6 +378,8 @@ System.Web.UI.WebControls/GridViewEditEventArgs.cs
 System.Web.UI.WebControls/GridViewEditEventHandler.cs
 System.Web.UI.WebControls/GridViewPageEventArgs.cs
 System.Web.UI.WebControls/GridViewPageEventHandler.cs
+System.Web.UI.WebControls/GridViewRow.cs
+System.Web.UI.WebControls/GridViewRowCollection.cs
 System.Web.UI.WebControls/GridViewSelectEventArgs.cs
 System.Web.UI.WebControls/GridViewSelectEventHandler.cs
 System.Web.UI.WebControls/GridViewSortEventArgs.cs
@@ -450,6 +456,7 @@ System.Web.UI.WebControls/PagedDataSource.cs
 System.Web.UI.WebControls/PagerButtons.cs
 System.Web.UI.WebControls/PagerMode.cs
 System.Web.UI.WebControls/PagerPosition.cs
+System.Web.UI.WebControls/PagerSettings.cs
 System.Web.UI.WebControls/Panel.cs
 System.Web.UI.WebControls/Parameter.cs
 System.Web.UI.WebControls/ParameterCollection.cs
@@ -547,6 +554,8 @@ System.Web.UI.WebControls/WizardStepType.cs
 System.Web.UI.WebControls/Xml.cs
 System.Web.UI.WebControls/XmlBuilder.cs
 System.Web.UI.WebControls/XmlDataSource.cs
+System.Web.UI.WebControls/XmlDataSourceNodeDescriptor.cs
+System.Web.UI.WebControls/XmlDataSourcePropertyDescriptor.cs
 System.Web.UI.WebControls/XmlDataSourceView.cs
 System.Web.UI.WebControls/XmlHierarchicalDataSourceView.cs
 System.Web.UI.WebControls/XmlHierarchicalEnumerable.cs
