@@ -36,27 +36,37 @@ namespace Microsoft.JScript {
 
 	public class JSObject : ScriptObject, IEnumerable, IExpando {
 
+		ChainHash ext;
+
 		public JSObject ()
-		{}
+		{
+			ext = new ChainHash (10);
+		}
 
 		public FieldInfo AddField (string name)
 		{
-			throw new NotImplementedException ();
+			JSFieldInfo fi = new JSFieldInfo (name);
+			ext.Insert (name, fi);
+			return fi;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			throw new NotImplementedException ();
+			return ext.GetEnumerator ();
 		}
 
 		PropertyInfo IExpando.AddProperty (string name)
 		{
-			throw new NotImplementedException ();
+			JSPropertyInfo pi = new JSPropertyInfo (name);
+			ext.Insert (name, pi);
+			return pi;
 		}
 		
 		MethodInfo IExpando.AddMethod (String name, Delegate method)
 		{
-			throw new NotImplementedException ();
+			JSMethodInfo minfo = new JSMethodInfo (name, method.Method);
+			ext.Insert (name, minfo);
+			return minfo;
 		}
 
 		public override MemberInfo [] GetMember (string name, BindingFlags bindFlags)
@@ -66,7 +76,16 @@ namespace Microsoft.JScript {
 
 		public override MemberInfo [] GetMembers (BindingFlags bindFlags)
 		{
-			throw new NotImplementedException ();
+			MemberInfo [] members;
+			IEnumerator enumerator = ext.GetEnumerator ();
+			ArrayList tmp = new ArrayList ();
+
+			while (enumerator.MoveNext ())
+				tmp.Add (((Node) enumerator.Current).Element);
+			
+			members = new MemberInfo [tmp.Count];
+			tmp.CopyTo (members);
+			return members;
 		}
 
 		public void SetMemberValue2 (string name, Object value)
@@ -76,7 +95,7 @@ namespace Microsoft.JScript {
 
 		void IExpando.RemoveMember (MemberInfo m)
 		{
-			throw new NotImplementedException ();
+			ext.Delete (m);
 		}
 
 		public override string ToString ()

@@ -1,3 +1,12 @@
+2004-12-06  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* MemberInfoList.cs: added internal classes Node, ListIter,
+	ChainHash and implement MemberInfoList.
+	* JSObject.cs: implement AddField, AddProperty, AddMethod,
+	GetMembers, RemoveMember, GetEnumerator, add ChainHash's ext
+	field.
+	
+
 2004-11-30  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* *Prototype.cs: return constructor.
