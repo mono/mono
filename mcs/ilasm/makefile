@@ -6,6 +6,7 @@ prefix = /usr
 
 SOURCES = 				\
 	Driver.cs			\
+	AssemblyInfo.cs			\
 	codegen/Class.cs		\
 	codegen/CodeGen.cs		\
 	codegen/InstrBase.cs		\

@@ -1,4 +1,10 @@
-2003-002-08 Jackson Harper <jackson@latitudegeo.com>
+2003-02-27 Jackson Harper <jackson@latitudegeo.com>
+
+	* AssemblyInfo.cs: Add file
+	* makefile: Add AssemblyInfo to build
+	* makefile.gnu: Add AssemblyInfo to build
+
+2003-02-08 Jackson Harper <jackson@latitudegeo.com>
 
 	* makefile: Add TypeManager.cs to build
 	* makefile.gnu: Add TypeManager.cs to build
