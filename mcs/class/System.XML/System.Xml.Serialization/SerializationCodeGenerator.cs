@@ -2528,7 +2528,8 @@ namespace System.Xml.Serialization
 				XmlQualifiedName qn = (XmlQualifiedName)ob;
 				return "new XmlQualifiedName (" + GetLiteral(qn.Name) + "," + GetLiteral(qn.Namespace) + ")";
 			}
-			else return (ob is IFormattable) ? ((IFormattable) ob).ToString (null, CultureInfo.InvariantCulture) : ob.ToString ();
+			if (ob is Enum) return ob.GetType () + "." + ob;
+			return (ob is IFormattable) ? ((IFormattable) ob).ToString (null, CultureInfo.InvariantCulture) : ob.ToString ();
 		}
 		
 		void WriteLineInd (string code)
