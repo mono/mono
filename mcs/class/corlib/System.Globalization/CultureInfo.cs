@@ -83,7 +83,8 @@ namespace System.Globalization
 		[NonSerialized]
 		private Calendar [] optional_calendars;
 				
-		int m_dataItem;	// MS.NET serializes this.
+		int m_dataItem;		// MS.NET serializes this.
+		Calendar calendar;	// MS.NET serializes this.
 		
 		// Deserialized instances will set this to false
 		[NonSerialized]
@@ -596,7 +597,7 @@ namespace System.Globalization
 			ConstructCalendars ();
 		}
 
-		public CultureInfo (string name) : this (name, false) {}
+		public CultureInfo (string name) : this (name, true) {}
 
 		// This is used when creating by specific name and creating by
 		// current locale so we can initialize the object without

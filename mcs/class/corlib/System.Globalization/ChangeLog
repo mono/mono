@@ -1,3 +1,9 @@
+2005-02-09  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CultureInfo.cs: Added field needed for serialization
+	interoperability with MS.NET. Also fixed default value for
+	the constructor.
+
 2005-01-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NumberFormatInfo.cs : allow zero length sizes. patch by Kazuki
