@@ -1,3 +1,7 @@
+2003-04-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DateTime.cs: fixed bug #40910.
+
 2003-04-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* Console.cs: Make stderr, stdout and stdin use synchronized

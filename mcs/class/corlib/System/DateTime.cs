@@ -523,7 +523,7 @@ namespace System
 
 			if (!leadingzero) {
 				int real_digits = 0;
-				for (i = 0; i < s.Length; i++) {
+				for (i = 0; i < s.Length && i < digits; i++) {
 					if (!Char.IsDigit (s[i]))
 						break;
 
@@ -715,6 +715,7 @@ namespace System
 				case 'y':
 					if (year != -1)
 						return false;
+
 					if (num == 0) {
 						year = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
 						year += (year < 30) ? 2000 : 1900;
