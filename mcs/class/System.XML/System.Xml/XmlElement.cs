@@ -91,7 +91,9 @@ namespace System.Xml
 				// I hope there are any well-performance logic...
 				XmlNameTable nt = this.OwnerDocument.NameTable;
 				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
-				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, XmlLang, this.XmlSpace);
+				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr,
+					OwnerDocument.DocumentType != null ? OwnerDocument.DocumentType.DTD : null,
+					BaseURI, XmlLang, XmlSpace, null);
 				XmlTextReader xmlReader = new XmlTextReader (value, XmlNodeType.Element, ctx);
 
 				do {

@@ -92,7 +92,9 @@ namespace System.Xml
 			set {
 				RemoveAll ();
 				XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
-				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr, XmlLang, this.XmlSpace);
+				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr,
+					OwnerDocument.DocumentType != null ? OwnerDocument.DocumentType.DTD : null,
+					BaseURI, XmlLang, XmlSpace, null);
 				XmlTextReader xtr = new XmlTextReader (value, XmlNodeType.Attribute, ctx);
 				OwnerDocument.ReadAttributeNodeValue (xtr, this);
 			}

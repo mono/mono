@@ -38,6 +38,8 @@ namespace Mono.Xml
 		public string SystemId;
 		
 		public string InternalSubset;
+
+		public bool InternalSubsetHasPEReference;
 		
 		public string ResolveEntity (string name)
 		{
@@ -556,6 +558,7 @@ namespace Mono.Xml
 		public string NotationName;
 		// FIXME: should have more complex value than simple string
 		public string EntityValue;
+		public bool IsInternalSubset;
 
 		internal DTDEntityDeclaration () {}
 	}

@@ -24,14 +24,17 @@ namespace System.Xml
 		ReadState state = ReadState.Initial;
 		int depth;
 		bool isEndElement;
-		bool isEndEntity;
 		bool nextIsEndElement;	// used for ReadString()
 		bool alreadyRead;
 		StringBuilder valueBuilder = new StringBuilder ();
 		XmlNamespaceManager defaultNsmgr;
+		Stack entityReaderStack = new Stack ();
+		XmlTextReader entityReader;
 
 		private XmlNode ownerElement {
 			get {
+				if (current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute)
+					return ((XmlAttribute) current.ParentNode).OwnerElement;
 				return (current.NodeType == XmlNodeType.Attribute) ? ((XmlAttribute)current).OwnerElement : current;
 			}
 		}
@@ -57,6 +60,10 @@ namespace System.Xml
 
 		public override int AttributeCount {
 			get {
+				if (entityReader != null)
+					return entityReader.ReadState == ReadState.Interactive ?
+						entityReader.AttributeCount : 0;
+
 				if (isEndElement || current == null || current.Attributes == null)
 					return 0;
 				return ownerElement.Attributes.Count;
@@ -64,22 +71,30 @@ namespace System.Xml
 		}
 
 		public override string BaseURI {
-			get { 
+			get {
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.BaseURI;
+
 				if (current == null)
 					return String.Empty;
 				return current.BaseURI;
 			}
 		}
 
-		[MonoTODO("wait for XML resolver")]
+		[MonoTODO]	// Is it really true always?
 		public override bool CanResolveEntity {
 			get {
-				throw new NotImplementedException ();
+				return true;
 			}
 		}
 
 		public override int Depth {
-			get { return depth; }
+			get {
+				if (entityReader != null && entityReader.ReadState == ReadState.Interactive)
+					return entityReader.Depth + depth + 1;
+
+				return depth;
+			}
 		}
 
 		public override bool EOF {
@@ -91,6 +106,10 @@ namespace System.Xml
 
 		public override bool HasAttributes {
 			get {
+				if (entityReader != null)
+					return entityReader.ReadState == ReadState.Interactive ?
+					      entityReader.HasAttributes : false;
+
 				if (isEndElement || current == null)
 					return false;
 
@@ -104,6 +123,10 @@ namespace System.Xml
 
 		public override bool HasValue {
 			get {
+				if (entityReader != null)
+					return entityReader.ReadState == ReadState.Interactive ?
+						entityReader.IsDefault : false;
+
 				if (current == null)
 					return false;
 
@@ -124,6 +147,10 @@ namespace System.Xml
 		[MonoTODO("waiting for DTD implementation")]
 		public override bool IsDefault {
 			get {
+				if (entityReader != null)
+					return entityReader.ReadState == ReadState.Interactive ?
+						entityReader.IsDefault : false;
+
 				if (current == null)
 					return false;
 
@@ -138,6 +165,10 @@ namespace System.Xml
 
 		public override bool IsEmptyElement {
 			get {
+				if (entityReader != null)
+					return entityReader.ReadState == ReadState.Interactive ?
+						entityReader.IsDefault : false;
+
 				if (current == null)
 					return false;
 
@@ -149,102 +180,22 @@ namespace System.Xml
 		}
 
 		public override string this [int i] {
-			get {
-				// This is MS.NET bug which returns attributes in spite of EndElement.
-				if (isEndElement || current == null)
-					return null;
-
-				if (NodeType == XmlNodeType.XmlDeclaration) {
-					XmlDeclaration decl = current as XmlDeclaration;
-					switch (i) {
-					case 0:
-						return decl.Version;
-					case 1:
-						if (decl.Encoding != String.Empty)
-							return decl.Encoding;
-						else if (decl.Standalone != String.Empty)
-							return decl.Standalone;
-						else
-							throw new ArgumentOutOfRangeException ("Index out of range.");
-					case 2:
-						if (decl.Encoding != String.Empty && decl.Standalone != null)
-							return decl.Standalone;
-						else
-							throw new ArgumentOutOfRangeException ("Index out of range.");
-					}
-				}
-
-				if (i < 0 || i > AttributeCount)
-					throw new ArgumentOutOfRangeException ("Index out of range.");
-
-				return ownerElement.Attributes [i].Value;
-			}
-		}
-
-		private string GetXmlDeclarationAttribute (string name)
-		{
-			XmlDeclaration decl = current as XmlDeclaration;
-			switch (name) {
-			case "version":
-				return decl.Version;
-			case "encoding":
-				return decl.Encoding;
-			case "standalone":
-				return decl.Standalone;
-			}
-			return null;
-		}
-
-		private string GetDocumentTypeAttribute (string name)
-		{
-			XmlDocumentType doctype = current as XmlDocumentType;
-			switch (name) {
-			case "PUBLIC":
-				return doctype.PublicId;
-			case "SYSTEM":
-				return doctype.SystemId;
-			}
-			return null;
+			get { return GetAttribute (i); }
 		}
 
 		public override string this [string name] {
-			get {
-				// This is MS.NET bug which returns attributes in spite of EndElement.
-				if (isEndElement || current == null)
-					return null;
-
-				if (NodeType == XmlNodeType.XmlDeclaration)
-					return GetXmlDeclarationAttribute (name);
-				else if (NodeType == XmlNodeType.DocumentType)
-					return GetDocumentTypeAttribute (name);
-
-				XmlAttribute attr = ownerElement.Attributes [name];
-				if (attr == null)
-					return null;
-				else
-					return attr.Value;
-			}
+			get { return GetAttribute (name); }
 		}
 
 		public override string this [string name, string namespaceURI] {
-			get {
-				// This is MS.NET bug which returns attributes in spite of EndElement.
-				if (isEndElement || current == null)
-					return null;
-
-				if (NodeType == XmlNodeType.XmlDeclaration)
-					return GetXmlDeclarationAttribute (name);
-
-				XmlAttribute attr = ownerElement.Attributes [name, namespaceURI];
-				if (attr == null)
-					return null;	// In fact MS.NET returns null instead of String.Empty.
-				else
-					return attr.Value;
-			}
+			get { return GetAttribute (name, namespaceURI); }
 		}
 
 		public override string LocalName {
 			get {
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.LocalName;
+
 				if (current == null)
 					return String.Empty;
 
@@ -264,6 +215,9 @@ namespace System.Xml
 
 		public override string Name {
 			get {
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.Name;
+
 				if (current == null)
 					return String.Empty;
 
@@ -283,6 +237,9 @@ namespace System.Xml
 
 		public override string NamespaceURI {
 			get {
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.NamespaceURI;
+
 				if (current == null)
 					return String.Empty;
 
@@ -296,6 +253,16 @@ namespace System.Xml
 
 		public override XmlNodeType NodeType {
 			get {
+				if (entityReader != null)
+					switch (entityReader.ReadState) {
+					case ReadState.Interactive:
+						return entityReader.NodeType;
+					case ReadState.Initial:
+						return XmlNodeType.EntityReference;
+					case ReadState.EndOfFile:
+						return XmlNodeType.EndEntity;
+					}
+
 				if (current == null)
 					return XmlNodeType.None;
 
@@ -305,6 +272,9 @@ namespace System.Xml
 
 		public override string Prefix {
 			get { 
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.Prefix;
+
 				if (current == null)
 					return String.Empty;
 
@@ -313,7 +283,12 @@ namespace System.Xml
 		}
 
 		public override char QuoteChar {
-			get { return '"'; }
+			get {
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.QuoteChar;
+
+				return '"';
+			}
 		}
 
 		public override ReadState ReadState {
@@ -322,6 +297,9 @@ namespace System.Xml
 
 		public override string Value {
 			get {
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.Value;
+
 				if (NodeType == XmlNodeType.DocumentType)
 					return ((XmlDocumentType) current).InternalSubset;
 				else
@@ -331,6 +309,9 @@ namespace System.Xml
 
 		public override string XmlLang {
 			get {
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.XmlLang;
+
 				if (current == null)
 					return String.Empty;
 
@@ -340,6 +321,9 @@ namespace System.Xml
 
 		public override XmlSpace XmlSpace {
 			get {
+				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+					return entityReader.XmlSpace;
+
 				if (current == null)
 					return XmlSpace.None;
 
@@ -350,29 +334,155 @@ namespace System.Xml
 
 		#region Methods
 
+		// If current entityReference is a child of an attribute,
+		// then MoveToAttribute simply means that we no more need this entity reader.
+		// Otherwise, this invokation means that
+		// it is expected to move to resolved (maybe) element's attribute.
+		//
+		// This rule applies to many methods like MoveTo*Attribute().
+		private bool CheckAndResetEntityReaderOnMoveToAttribute ()
+		{
+			if (entityReader == null)
+				return false;
+
+			if (current != null && current.ParentNode != null &&
+				current.ParentNode.NodeType == XmlNodeType.Attribute) {
+				entityReader.Close ();
+				entityReader = entityReaderStack.Count > 0 ?
+					entityReaderStack.Pop () as XmlTextReader : null;
+				return true;
+			}
+			else
+				return false;
+		}
+
 		public override void Close ()
 		{
+			if (entityReader != null)
+				entityReader.Close ();
+			while (entityReaderStack.Count > 0)
+				((XmlTextReader) entityReaderStack.Pop ()).Close ();
+
 			current = null;
 			state = ReadState.Closed;
 		}
 
 		public override string GetAttribute (int attributeIndex)
 		{
-			return this [attributeIndex];
+			if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+				return entityReader.GetAttribute (attributeIndex);
+
+			if (NodeType == XmlNodeType.XmlDeclaration) {
+				XmlDeclaration decl = current as XmlDeclaration;
+				if (attributeIndex == 0)
+					return decl.Version;
+				else if (attributeIndex == 1) {
+					if (decl.Encoding != String.Empty)
+						return decl.Encoding;
+					else if (decl.Standalone != String.Empty)
+						return decl.Standalone;
+				}
+				else if (attributeIndex == 2 &&
+						decl.Encoding != String.Empty && decl.Standalone != null)
+					return decl.Standalone;
+				throw new ArgumentOutOfRangeException ("Index out of range.");
+			} else if (NodeType == XmlNodeType.DocumentType) {
+				XmlDocumentType doctype = current as XmlDocumentType;
+				if (attributeIndex == 0) {
+					if (doctype.PublicId != "")
+						return doctype.PublicId;
+					else if (doctype.SystemId != "")
+						return doctype.SystemId;
+				} else if (attributeIndex == 1)
+					if (doctype.PublicId == "" && doctype.SystemId != "")
+						return doctype.SystemId;
+				throw new ArgumentOutOfRangeException ("Index out of range.");
+			}
+
+			// This is MS.NET bug which returns attributes in spite of EndElement.
+			if (isEndElement || current == null)
+				return null;
+
+			if (attributeIndex < 0 || attributeIndex > AttributeCount)
+				throw new ArgumentOutOfRangeException ("Index out of range.");
+
+			return ownerElement.Attributes [attributeIndex].Value;
 		}
 
 		public override string GetAttribute (string name)
 		{
-			return this [name];
+			if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+				return entityReader.GetAttribute (name);
+
+			// This is MS.NET bug which returns attributes in spite of EndElement.
+			if (isEndElement || current == null)
+				return null;
+
+			if (NodeType == XmlNodeType.XmlDeclaration)
+				return GetXmlDeclarationAttribute (name);
+			else if (NodeType == XmlNodeType.DocumentType)
+				return GetDocumentTypeAttribute (name);
+
+			XmlAttribute attr = ownerElement.Attributes [name];
+			if (attr == null)
+				return null;
+			else
+				return attr.Value;
 		}
 
 		public override string GetAttribute (string name, string namespaceURI)
 		{
-			return this [name, namespaceURI];
+			if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+				return entityReader.GetAttribute (name, namespaceURI);
+
+			// This is MS.NET bug which returns attributes in spite of EndElement.
+			if (isEndElement || current == null)
+				return null;
+
+			if (NodeType == XmlNodeType.XmlDeclaration)
+				return GetXmlDeclarationAttribute (name);
+			else if (NodeType == XmlNodeType.DocumentType)
+				return GetDocumentTypeAttribute (name);
+
+			XmlAttribute attr = ownerElement.Attributes [name, namespaceURI];
+			if (attr == null)
+				return null;	// In fact MS.NET returns null instead of String.Empty.
+			else
+				return attr.Value;
+		}
+
+		private string GetXmlDeclarationAttribute (string name)
+		{
+			XmlDeclaration decl = current as XmlDeclaration;
+			switch (name) {
+			case "version":
+				return decl.Version;
+			case "encoding":
+				// This is MS.NET bug that XmlNodeReturns in case of string.empty.
+				return decl.Encoding != String.Empty ? decl.Encoding : null;
+			case "standalone":
+				return decl.Standalone;
+			}
+			return null;
+		}
+
+		private string GetDocumentTypeAttribute (string name)
+		{
+			XmlDocumentType doctype = current as XmlDocumentType;
+			switch (name) {
+			case "PUBLIC":
+				return doctype.PublicId;
+			case "SYSTEM":
+				return doctype.SystemId;
+			}
+			return null;
 		}
 
 		public override string LookupNamespace (string prefix)
 		{
+			if (entityReader != null && entityReader.ReadState != ReadState.Initial)
+				return entityReader.LookupNamespace (prefix);
+
 			if (current == null)
 				return null;
 
@@ -400,6 +510,14 @@ namespace System.Xml
 
 		public override void MoveToAttribute (int attributeIndex)
 		{
+			if (entityReader != null) {
+				if (!this.CheckAndResetEntityReaderOnMoveToAttribute ()) {
+					entityReader.MoveToAttribute (attributeIndex);
+					return;
+				}
+				// And in case of abondoning entityReader, go on...
+			}
+
 			if (isEndElement || attributeIndex < 0 || attributeIndex > AttributeCount)
 				throw new ArgumentOutOfRangeException ();
 			
@@ -409,6 +527,12 @@ namespace System.Xml
 
 		public override bool MoveToAttribute (string name)
 		{
+			if (entityReader != null) {
+				if (!this.CheckAndResetEntityReaderOnMoveToAttribute ())
+					return entityReader.MoveToAttribute (name);
+				// And in case of abondoning entityReader, go on...
+			}
+
 			if (isEndElement || current == null)
 				return false;
 			XmlNode tmpCurrent = current;
@@ -428,6 +552,12 @@ namespace System.Xml
 
 		public override bool MoveToAttribute (string name, string namespaceURI)
 		{
+			if (entityReader != null) {
+				if (!this.CheckAndResetEntityReaderOnMoveToAttribute ())
+					return entityReader.MoveToAttribute (name, namespaceURI);
+				// And in case of abondoning entityReader, go on...
+			}
+
 			if (isEndElement || current == null)
 				return false;
 
@@ -450,6 +580,12 @@ namespace System.Xml
 
 		public override bool MoveToElement ()
 		{
+			if (entityReader != null) {
+				if (!this.CheckAndResetEntityReaderOnMoveToAttribute ())
+					return entityReader.MoveToElement ();
+				// And in case of abondoning entityReader, go on...
+			}
+
 			if (current == null)
 				return false;
 			if (current.NodeType == XmlNodeType.Attribute) {
@@ -461,6 +597,12 @@ namespace System.Xml
 
 		public override bool MoveToFirstAttribute ()
 		{
+			if (entityReader != null) {
+				if (!this.CheckAndResetEntityReaderOnMoveToAttribute ())
+					return entityReader.MoveToFirstAttribute ();
+				// And in case of abondoning entityReader, go on...
+			}
+
 			if (current == null)
 				return false;
 
@@ -475,6 +617,12 @@ namespace System.Xml
 
 		public override bool MoveToNextAttribute ()
 		{
+			if (entityReader != null) {
+				if (!this.CheckAndResetEntityReaderOnMoveToAttribute ())
+					return entityReader.MoveToNextAttribute ();
+				// And in case of abondoning entityReader, go on...
+			}
+
 			if (current == null)
 				return false;
 
@@ -529,6 +677,23 @@ namespace System.Xml
 			if (EOF)
 				return false;
 
+			this.CheckAndResetEntityReaderOnMoveToAttribute ();
+			if (entityReader != null) {
+				// Read finalizes entity reader.
+				switch (entityReader.ReadState) {
+				case ReadState.Interactive:
+				case ReadState.Initial:
+					// If it is ended, then other properties/methods will take care.
+					entityReader.Read ();
+					return true;
+				default:
+					entityReader = entityReaderStack.Count > 0 ?
+						entityReaderStack.Pop () as XmlTextReader : null;
+					return Read ();
+				}
+				// and go on ...
+			}
+
 			if (ReadState == ReadState.Initial) {
 				current = startNode;
 				state = ReadState.Interactive;
@@ -545,7 +710,6 @@ namespace System.Xml
 			}
 
 			MoveToElement ();
-			isEndEntity = false;
 
 			if (IsEmptyElement || isEndElement) {
 				// Then go up and move to next.
@@ -594,6 +758,20 @@ namespace System.Xml
 
 		public override bool ReadAttributeValue ()
 		{
+			if (entityReader != null) {
+				switch (entityReader.ReadState) {
+				case ReadState.Interactive:
+				case ReadState.Initial:
+					// If it is ended, then other properties/methods will take care.
+					return entityReader.ReadAttributeValue ();
+				default:
+					entityReader = entityReaderStack.Count > 0 ?
+						entityReaderStack.Pop () as XmlTextReader : null;
+					// and go on ...
+					return ReadAttributeValue ();
+				}
+			}
+
 			if (current.NodeType == XmlNodeType.Attribute) {
 				current = current.FirstChild;
 				return current != null;
@@ -609,6 +787,15 @@ namespace System.Xml
 		// Its traversal behavior is almost same as Read().
 		public override string ReadInnerXml ()
 		{
+			if (entityReader != null) {
+				if (entityReader.EOF) {
+					entityReader = entityReaderStack.Count > 0 ?
+						entityReaderStack.Pop () as XmlTextReader : null;
+					return ReadInnerXml ();
+				} else
+					return entityReader.ReadInnerXml ();
+			}
+
 			if (this.state != ReadState.Interactive)
 				return String.Empty;
 
@@ -646,6 +833,15 @@ namespace System.Xml
 		// Its traversal behavior is almost same as Read().
 		public override string ReadOuterXml ()
 		{
+			if (entityReader != null) {
+				if (entityReader.EOF) {
+					entityReader = entityReaderStack.Count > 0 ?
+						entityReaderStack.Pop () as XmlTextReader : null;
+					return ReadOuterXml ();
+				} else
+					return entityReader.ReadOuterXml ();
+			}
+
 			if (NodeType == XmlNodeType.EndElement)
 				return String.Empty;
 			XmlNode initial = current;
@@ -672,15 +868,35 @@ namespace System.Xml
 			return ReadStringInternal ();
 		}
 
-		[MonoTODO]
 		public override void ResolveEntity ()
 		{
-			throw new NotImplementedException ();
-//			if (current.NodeType != XmlNodeType.EntityReference)
-//				throw new InvalidOperationException ("The current node is not an Entity Reference");
+			if (NodeType != XmlNodeType.EntityReference)
+				throw new InvalidOperationException ("The current node is not an Entity Reference");
+			XmlEntity entity = document.DocumentType != null ?
+				document.DocumentType.Entities.GetNamedItem (Name) as XmlEntity : null;
+
+			// MS.NET seems simply ignoring undeclared entity reference ;-(
+			string replacementText =
+				(entity != null) ? entity.InnerText : String.Empty;
+
+			XmlNodeType xmlReaderNodeType = 
+				(current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute) ?
+				XmlNodeType.Attribute : XmlNodeType.Element;
+
+			XmlParserContext ctx = null;
+			if (entityReader != null) {
+				entityReaderStack.Push (entityReader);
+				ctx = entityReader.GetInternalParserContext ();
+			}
+			if (ctx == null) {
+				ctx = new XmlParserContext (document.NameTable,
+					current.ConstructNamespaceManager (),
+					document.DocumentType.DTD,
+					BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
+			}
+			entityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
 		}
 
-		[MonoTODO("test it.")]
 		public override void Skip ()
 		{
 			// Why is this overriden? Such skipping might raise

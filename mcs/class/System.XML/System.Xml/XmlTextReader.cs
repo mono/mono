@@ -353,6 +353,11 @@ namespace System.Xml
 			return -1;
 		}
 
+		internal XmlParserContext GetInternalParserContext ()
+		{
+			return parserContext;
+		}
+
 		public override string GetAttribute (string localName, string namespaceURI)
 		{
 			int idx = this.GetIndexOfQualifiedAttribute (localName, namespaceURI);
@@ -770,6 +775,7 @@ namespace System.Xml
 		// Parameter entity placeholder
 		private Hashtable parameterEntities;
 		private int dtdIncludeSect;
+		private bool isIntSubset;
 
 		// State machine attribute.
 		//	XmlDeclaration: after the first node.
@@ -1618,7 +1624,9 @@ namespace System.Xml
 				intSubsetStartLine = this.LineNumber;
 				intSubsetStartColumn = this.LinePosition;
 				int startPos = currentTag.Length;
+				isIntSubset = true;
 				ReadInternalSubset ();
+				isIntSubset = false;
 				int endPos = currentTag.Length - 1;
 				parserContext.InternalSubset = currentTag.ToString (startPos, endPos - startPos);
 			}
@@ -1640,13 +1648,13 @@ namespace System.Xml
 				);
 		}
 
-		internal void GenerateDTDObjectModel (string name, string publicId,
+		internal DTDObjectModel GenerateDTDObjectModel (string name, string publicId,
 			string systemId, string internalSubset)
 		{
-			GenerateDTDObjectModel (name, publicId, systemId, internalSubset, 0, 0);
+			return GenerateDTDObjectModel (name, publicId, systemId, internalSubset, 0, 0);
 		}
 
-		internal void GenerateDTDObjectModel (string name, string publicId,
+		internal DTDObjectModel GenerateDTDObjectModel (string name, string publicId,
 			string systemId, string internalSubset, int intSubsetStartLine, int intSubsetStartColumn)
 		{
 			// now compile DTD
@@ -1675,6 +1683,7 @@ namespace System.Xml
 				PopParserInput ();
 			}
 
+			return DTD;
 		}
 
 		private void PushParserInput (string url)
@@ -1884,6 +1893,9 @@ namespace System.Xml
 				nodeType = XmlNodeType.None;
 				break;
 			case '%':
+				// It affects on entity references' well-formedness
+				if (isIntSubset)
+					DTD.InternalSubsetHasPEReference = true;
 				TryExpandPERef ();
 				break;
 			case '<':
@@ -2282,6 +2294,7 @@ namespace System.Xml
 		private DTDEntityDeclaration ReadEntityDecl ()
 		{
 			DTDEntityDeclaration decl = new DTDEntityDeclaration ();
+			decl.IsInternalSubset = isIntSubset;
 			decl.Name = ReadName ();
 			SkipWhitespace ();
 			TryExpandPERef ();

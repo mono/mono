@@ -24,7 +24,7 @@ namespace System.Xml
 		// Properties
 		[MonoTODO]
 		public override string BaseURI {
-			get { throw new NotImplementedException (); }
+			get { return base.BaseURI; }
 		}
 
 		public override bool IsReadOnly {

@@ -10,6 +10,7 @@
 //
 using System.Collections;
 using System.Text;
+using Mono.Xml;
 
 namespace System.Xml
 {
@@ -74,11 +75,11 @@ namespace System.Xml
 			this (
 				nt,
 				nsMgr,
-				null,
-				null,
-				null,
-				null,
-				null,
+				docTypeName,
+				pubId,
+				sysId,
+				internalSubset,
+				baseURI,
 				xmlLang,
 				xmlSpace,
 				null
@@ -97,6 +98,26 @@ namespace System.Xml
 			string xmlLang,
 			XmlSpace xmlSpace,
 			Encoding enc)
+			: this (
+				nt,
+				nsMgr,
+				(docTypeName != null && docTypeName != String.Empty) ?
+					new XmlTextReader ("", nt).GenerateDTDObjectModel (
+						docTypeName, pubId, sysId, internalSubset) : null,
+				baseURI,
+				xmlLang,
+				xmlSpace,
+				enc)
+		{
+		}
+
+		internal XmlParserContext (XmlNameTable nt,
+			XmlNamespaceManager nsMgr,
+			DTDObjectModel dtd,
+			string baseURI,
+			string xmlLang,
+			XmlSpace xmlSpace,
+			Encoding enc)
 		{
 			if (nt == null)
 				this.nameTable = nsMgr.NameTable;
@@ -104,10 +125,13 @@ namespace System.Xml
 				this.NameTable = nt;
 
 			this.namespaceManager = nsMgr;
-			this.docTypeName = docTypeName;
-			this.publicID = pubId;
-			this.systemID = sysId;
-			this.internalSubset = internalSubset;
+			if (dtd != null) {
+				this.docTypeName = dtd.Name;
+				this.publicID = dtd.PublicId;
+				this.systemID = dtd.SystemId;
+				this.internalSubset = dtd.InternalSubset;
+				this.dtd = dtd;
+			}
 			this.encoding = enc;
 
 			baseURIStack = new Stack ();
@@ -134,6 +158,7 @@ namespace System.Xml
 		private Stack baseURIStack;
 		private Stack xmlLangStack;
 		private Stack xmlSpaceStack;
+		private DTDObjectModel dtd;
 
 		#endregion
 
@@ -145,8 +170,12 @@ namespace System.Xml
 		}
 
 		public string DocTypeName {
-			get { return docTypeName; }
+			get { return docTypeName != null ? docTypeName : dtd != null ? dtd.Name : null; }
 			set { docTypeName = value; }
+		}
+
+		internal DTDObjectModel Dtd {
+			get { return dtd; }
 		}
 
 		public Encoding Encoding {
@@ -155,7 +184,7 @@ namespace System.Xml
 		}
 
 		public string InternalSubset {
-			get { return internalSubset; }
+			get { return internalSubset != null ? internalSubset : dtd != null ? dtd.InternalSubset : null; }
 			set { internalSubset = value; }
 		}
 
@@ -170,12 +199,12 @@ namespace System.Xml
 		}
 
 		public string PublicId {
-			get { return publicID; }
+			get { return publicID != null ? publicID : dtd != null ? dtd.PublicId : null; }
 			set { publicID = value; }
 		}
 
 		public string SystemId {
-			get { return systemID; }
+			get { return systemID != null ? systemID : dtd != null ? dtd.SystemId : null; }
 			set { systemID = value; }
 		}
 

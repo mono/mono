@@ -1,3 +1,30 @@
+2003-07-31  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlParserContext.cs,
+	  XmlAttribute.cs,
+	  XmlElement.cs : Added internal Dtd and new internal XmlParserContext
+	  .ctor() that takes DTDObjectModel. And then rewrote classes which 
+	  uses DTD information. Changed DocTypeName, InternalSubset, PublicId
+	  and SystemId to use DTDObjectModel.
+	* DTDObjectModel.cs :
+	  Added DTDObjectModel.InternalSubsetHasPEReference.
+	  Added DTDEntityDeclaration.IsInternalSubset.
+	* XmlTextReader.cs :
+	  Added internal GetInternalParserContext (to build entity reader).
+	  Added private isIntSubset to check if the DTD subset is internal or
+	  external, which might affect well-formedness constraints.
+	  Changed GenerateDTDObjectModel to return the resulting DTD model.
+
+	* XmlEntityReference.cs : implemented BaseURI.
+	* XmlNodeReader.cs :
+	  - Implemented ResolveEntity() and CanResolveEntity(). In fact
+	    it leads too many changes on almost all methods and properties,
+	    since they now must be aware of entityReader.
+	  - fixed ownerElement that might be used to return from attribute 
+	    value to the element through parent attribtues.
+	  - Now changed indexer to call GetAttribute() and moved actual logic
+	    to the matching GetAttribute() methods.
+
 2003-07-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNode.cs : fixed internal ConstructNamespaceManager() for InnerXml
