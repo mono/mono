@@ -14,6 +14,7 @@ DIRS =	corlib				\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.Configuration.Install 	\
 	Mono.CSharp.Debugger		\
+	Mono.Data.MySql			\
 	Mono.PEToolkit			\
 	Microsoft.VisualBasic
 
