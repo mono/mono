@@ -1,0 +1,15 @@
+2002-03-19  Martin Baulig  <martin@gnome.org>
+
+	This is an implementation of the System.Diagnostics.SymbolStore.SymbolWriter
+	interface. It's still work in progress and not yet used anywhere.
+
+	There is some preliminary documentation in the source files and some more
+	docu in the README and README.relocation-table files.
+
+	* IMonoSymbolWriter.cs: New file.
+	* MonoDwarfFileWriter.cs: New file.
+	* MonoSymbolDocumentWriter.cs: New file.
+	* MonoSymbolWriter.cs: New file.
+
+	* README, README.relocation-table: Documentation.
+
