@@ -1,5 +1,8 @@
 2003-08-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am (BUILT_SOURCES): Fix compilation on platforms without
+	a JIT. Patch by Bernie Solomon (bernard@ugsolutions.com).
+
 	* mini.c jit-icalls.c tramp-x86.c tramp-ppc.c tramp-sparc.c: Get rid of
 	metadata_section.
 
