@@ -1,0 +1,9 @@
+2003-09-02  Duncan Mak  <duncan@ximian.com>
+
+	* Microsoft.Web.Services/Soap.cs:
+	* Microsoft.Web.Services/IXmlElement.cs: Implemented. 
+
+2003-09-02  Daniel Kornhauser  <dkor@alum.mit.edu>
+
+	* Microsoft.Web.Services: All Exceptions in this assembly
+	implemented.

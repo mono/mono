@@ -1,0 +1,16 @@
+Microsoft.Web.Services/SoapEnvelope.cs
+Microsoft.Web.Services/SoapFormatException.cs
+Microsoft.Web.Services/TODOAttribute.cs
+Microsoft.Web.Services/IXmlElement.cs
+Microsoft.Web.Services/Soap.cs
+Microsoft.Web.Services.Timestamp/TimestampFormatException.cs
+Microsoft.Web.Services.Referral/ReferralException.cs
+Microsoft.Web.Services.Policy/PolicyEnforcementException.cs
+Microsoft.Web.Services.Messaging/ISoapFormatter.cs
+Microsoft.Web.Services.Messaging/ISoapTransport.cs
+Microsoft.Web.Services.Messaging/SoapPort.cs
+Microsoft.Web.Services.Messaging/SoapReceiver.cs
+Microsoft.Web.Services.Dime/DimeFormatException.cs
+Microsoft.Web.Services.Dime/TypeFormatEnum.cs
+Microsoft.Web.Services.Addressing/AddressingFormatException.cs
+Microsoft.Web.Services.Routing/RoutingFormatException.cs
