@@ -346,7 +346,7 @@ namespace System.Security.Cryptography.Xml {
 			signature.LoadXml (value);
 		}
 
-#if ! USE_VERSION_1_0
+#if ! NET_1_0
 		private XmlResolver xmlResolver;
 
 		[MonoTODO("property not (yet) used in class")]

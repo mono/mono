@@ -1,3 +1,8 @@
+2003-06-11  Sebastien Pouliot <spouliot@motus.com>
+
+	* SignedXml.cs: Changed USE_VERSION_1_0 for NET_1_0.
+	* Transform.cs: Changed USE_VERSION_1_0 for NET_1_0.
+
 2003-05-25  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* XmlSignature.cs: Changed string "RetrievalElement" to "RetrievalMethod"
