@@ -1476,9 +1476,9 @@ namespace System
 
 		// TODO Implement me
 		[MonoTODO]
-		public System.DateTime ToDateTime(IFormatProvider provider)
+		System.DateTime IConvertible.ToDateTime(IFormatProvider provider)
 		{
-			return new System.DateTime(true,this.ticks);
+			return new System.DateTime (true,this.ticks);
 		} 
 		
 		decimal IConvertible.ToDecimal(IFormatProvider provider)

@@ -65,38 +65,18 @@ namespace System
 		}
 
 		/// <summary>
-		/// Return true if obj equals this object
-		/// </summary>
-		public override bool Equals(object obj)
-		{
-			//Check for null and compare run-time types.
-			if (obj == null || GetType() != obj.GetType()) return false;
-			OperatingSystem os = (OperatingSystem)obj;
-			return (itsPlatform == os.itsPlatform) && 
-				(os.itsVersion.Equals(itsVersion));
-		}
-
-		/// <summary>
-		/// Return hash code
-		/// </summary>
-		public override int GetHashCode()
-		{	// this leave us enuf for 256 unique platforms which should suffice for a good while
-			return ((int)itsPlatform << 24) | itsVersion.GetHashCode() >> 8;
-		}
-
-		/// <summary>
 		/// Return a string reprentation of this instance
 		/// </summary>
 		public override string ToString()
 		{
 			string str;
 			
-			switch(itsPlatform)
+			switch((int) itsPlatform)
 			{
-			case System.PlatformID.Win32NT: str = "Microsoft Windows NT"; break;
-			case System.PlatformID.Win32S: str = "Microsoft Win32S";  break;
-			case System.PlatformID.Win32Windows: str = "Microsoft Windows 98"; break;
-			case System.PlatformID.Unix: str = "Unix"; break;
+			case (int) System.PlatformID.Win32NT: str = "Microsoft Windows NT"; break;
+			case (int) System.PlatformID.Win32S: str = "Microsoft Win32S";  break;
+			case (int) System.PlatformID.Win32Windows: str = "Microsoft Windows 98"; break;
+			case 128 /* PlatformID.Unix */: str = "Unix"; break;
 			default: str = Locale.GetText ("<unknown>"); break;
 			}
 

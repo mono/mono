@@ -704,6 +704,34 @@ namespace System {
 			return Concat (s1, s2, s3);
 		}
 
+		public static String Concat (Object obj1, Object obj2, Object obj3, Object obj4)
+		{
+			string s1, s2, s3, s4;
+
+			if (obj1 == null)
+				s1 = String.Empty;
+			else
+				s1 = obj1.ToString ();
+    
+			if (obj2 == null)
+				s2 = String.Empty;
+			else
+				s2 = obj2.ToString ();
+    
+			if (obj3 == null)
+				s3 = String.Empty;
+			else
+				s3 = obj3.ToString ();
+
+			if (obj4 == null)
+				s4 = String.Empty;
+			else
+				s4 = obj4.ToString ();
+			
+			return Concat (s1, s2, s3, s4);
+			
+		}
+
 		public static String Concat(String s1, String s2)
 		{
 			if (s1 == null) {

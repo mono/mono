@@ -230,7 +230,12 @@ namespace System.Diagnostics {
                         
                         return result;
                 }
-                
+
+		//
+		// These are not on the Framework
+		//
+#if false
+		
                 public override bool Equals(Object obj) {
                         if ((obj == null) || (!(obj is StackTrace))) {
                                 return false;
@@ -254,6 +259,7 @@ namespace System.Diagnostics {
                 public override int GetHashCode() {
                         return FrameCount;
                 }
+#endif
                 
                 /// <summary>
                 ///   Converts single stack frame to string to be used in

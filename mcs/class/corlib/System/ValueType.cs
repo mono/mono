@@ -47,6 +47,6 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static bool InternalEquals (object o1, object o2);
+		internal extern static bool InternalEquals (object o1, object o2);
 	}
 }

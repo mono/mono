@@ -48,7 +48,7 @@ namespace System {
 		}
 #endif
 
-		public override object DynamicInvokeImpl( object[] args )
+		internal override object DynamicInvokeImpl( object[] args )
 		{
 			if ( prev != null )
 				prev.DynamicInvokeImpl( args );

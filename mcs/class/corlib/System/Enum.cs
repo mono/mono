@@ -51,6 +51,9 @@ namespace System {
 	[Serializable]
 	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable {
 
+		internal Enum () {
+		}
+		
 		// IConvertible methods Start -->
 
 		[CLSCompliant(false)]
@@ -122,7 +125,7 @@ namespace System {
 		}
 		
     		[CLSCompliant(false)]
-		public ushort ToUInt16 (IFormatProvider provider)
+		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return Convert.ToUInt16 (get_value (), provider);
 		}

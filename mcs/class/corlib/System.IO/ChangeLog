@@ -1,3 +1,7 @@
+2003-11-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* Directory.cs: Adjust for missing PlatformID.Unix.
+
 2003-10-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* StreamReader.cs: Add checks for disposed stream from bug report

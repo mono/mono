@@ -267,6 +267,10 @@ namespace System.Diagnostics {
                                 + ":" + GetFileColumnNumber();
                 }
                 
+		//
+		// These are not on the Framework
+		//
+#if false
                 public override bool Equals(Object obj) {
                         if ((obj == null) || (!(obj is StackFrame))) {
                                 return false;
@@ -305,6 +309,7 @@ namespace System.Diagnostics {
                 public override int GetHashCode() {
                         return GetFileLineNumber();
                 }
+#endif
                 
                 /// <summary>
                 ///   Checks whether two objects are equal.

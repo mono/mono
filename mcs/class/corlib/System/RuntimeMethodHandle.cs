@@ -39,7 +39,7 @@ namespace System {
                 }
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		public static extern IntPtr GetFunctionPointer (IntPtr m);
+		static extern IntPtr GetFunctionPointer (IntPtr m);
 		
 		public IntPtr GetFunctionPointer ()
 		{

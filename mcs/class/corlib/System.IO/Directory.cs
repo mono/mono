@@ -210,7 +210,7 @@ namespace System.IO
 		public static string[] GetLogicalDrives ()
 		{ 
 			//FIXME: Hardcoded Paths
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			if ((int)Environment.OSVersion.Platform == 128)
 				return new string[] { "/" };
 			else
 				return new string [] { "A:\\", "C:\\" };

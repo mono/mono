@@ -1,3 +1,26 @@
+2003-11-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* PlatformID.cs: Remove Unix platform, we cant expose constants
+	that are not in the framework.
+
+	* OperatingSystem.cs: Adjust for the breakage.
+
+	* RuntimeMethodHandle.cs: Fix signature.
+
+	* Double.cs: Fix signature of TryParse.
+
+	* String.cs (Concat (object, object, object, object)): Add missing method.
+
+	* OperatingSystem.cs: Removed Equals, GetHashCode, they were not
+	in the .NET Framework.
+
+	* Enum.cs: Hide constructor.  
+
+	Fix ToUint16 to be explicitly implemented.
+
+	* Console.cs: Add couple of extra missing methods (Write and
+	WriteLine overloaded)
+
 2003-11-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* AppDomain.cs, Activator.cs: New unimplmented entry points from

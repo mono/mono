@@ -17,21 +17,15 @@ namespace System {
 	/// </summary>
 	public enum PlatformID {
 
-		/// <summary>
-		/// </summary>
 		Win32S = 0,
 
-		/// <summary>
-		/// </summary>
 		Win32Windows = 1,
 
-		/// <summary>
-		/// </summary>
 		Win32NT = 2,
 
-		/// <summary>
-		/// </summary>
-		Unix = 128
+		// We can not expose this to userland, since it would break bin compat
+		
+		// Unix = 128
 	} // PlatformID
 
 } // System

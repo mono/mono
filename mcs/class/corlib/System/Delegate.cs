@@ -182,7 +182,7 @@ namespace System {
 			return DynamicInvokeImpl (args);
 		}
 
-		public virtual object DynamicInvokeImpl (object[] args)
+		internal virtual object DynamicInvokeImpl (object[] args)
 		{
 			if (Method == null){
 				Type[] mtypes = new Type [args.Length];

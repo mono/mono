@@ -317,7 +317,7 @@ namespace System {
 		public static bool TryParse (string s,
 					     NumberStyles style,
 					     IFormatProvider provider,
-					     ref double result)
+					     out double result)
 		{
 			try {
 				result = Parse (s, style, provider);

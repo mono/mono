@@ -201,6 +201,12 @@ namespace System {
 		{
 			stdout.Write (format, arg0, arg1, arg2);
 		}
+
+		[CLSCompliant(false)]
+                public static void Write (string format, object arg0, object arg1, object arg2, object arg3)
+		{
+			stdout.Write (String.Format (format, arg0, arg1, arg2, arg3));
+		}
                 
                 public static void WriteLine ()
 		{
@@ -311,6 +317,12 @@ namespace System {
 			stdout.WriteLine();
 		}
 
+		[CLSCompliant(false)]
+                public static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3)
+		{
+			stdout.WriteLine (String.Format (format, arg0, arg1, arg2, arg3));
+		}
+		
 		public static int Read ()
 		{
 			return stdin.Read ();
