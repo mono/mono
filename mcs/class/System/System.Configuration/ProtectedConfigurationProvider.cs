@@ -27,6 +27,7 @@
 //
 
 #if NET_2_0
+#if XML_DEP
 using System.Xml;
 
 namespace System.Configuration
@@ -42,4 +43,5 @@ namespace System.Configuration
                 public abstract XmlNode Encrypt (XmlNode node);
         }
 }
+#endif
 #endif

@@ -1,6 +1,9 @@
 2004-08-11  Duncan Mak  <duncan@ximian.com>
 
-	* ProtectedConfigurationProvider.cs:
+	* ProtectedConfigurationProvider.cs: Use XML_DEP.
+
+2004-08-11  Duncan Mak  <duncan@ximian.com>	
+
 	* ProviderBase.cs: Implemented.
 
 	* ConfigurationPropertyAttribute.cs: Implemented attribute.
