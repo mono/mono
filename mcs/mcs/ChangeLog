@@ -1,3 +1,7 @@
+2005-02-05  John Luke  <john.luke@gmail.com>
+
+	* driver.cs: remove duplicate -doc line in Usage ()
+
 2005-02-04  Raja R Harinath  <rharinath@novell.com>
 
 	* location.cs (Location.AddFile): Fix CS2002 error report.
