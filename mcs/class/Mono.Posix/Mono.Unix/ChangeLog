@@ -1,3 +1,8 @@
+2005-01-03  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: Update endfsent() and setfsent() declarations, as these must
+	  now be implemented in MonoPosixHelper.
+
 2005-01-01  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs, Syscall.cs: Minimize duplicate declarations of

@@ -1250,7 +1250,8 @@ namespace Mono.Unix {
 			}
 		}
 
-		[DllImport (LIBC, SetLastError=true)]
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_endfsent")]
 		public static extern void endfsent ();
 
 		[DllImport (MPH, SetLastError=true,
@@ -1298,7 +1299,8 @@ namespace Mono.Unix {
 			return fs;
 		}
 
-		[DllImport (LIBC, SetLastError=true)]
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_setfsent")]
 		public static extern int setfsent ();
 
 		#endregion
