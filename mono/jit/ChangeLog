@@ -1,3 +1,8 @@
+
+Fri Mar 29 16:00:27 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86.brg: kill pointer arithmetric.
+
 2002-03-28  Martin Baulig  <martin@gnome.org>
 
 	* jit.c (mono_debug_insert_breakpoint): New global variable.
