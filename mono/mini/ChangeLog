@@ -1,3 +1,9 @@
+2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c: Move JIT icall handling to icall.c. Replace usage of
+	CEE_MONO_PROC<x> with CEE_MONO_ICALL. Move registration of marshalling
+	related icalls to marshal.c.
+
 2004-07-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-ops.h: Add OP_SAVE_LMF and OP_RESTORE_LMF.
