@@ -1740,7 +1740,7 @@ namespace System {
 			} else {
 				// Value is not IConvertible
 				throw new ArgumentException (Locale.GetText (
-					"Value is not a convertible object"));
+					"Value is not a convertible object: "+ value.GetType().ToString()+" to "+conversionType.ToString()));
 			}
 		}
 	}

@@ -1,3 +1,8 @@
+
+Wed Feb 13 21:50:13 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Int32.cs: implement IConvertible interface.
+	
 2002-02-12  Duncan Mak  <duncan@ximian.com>
 
 	* TimeZone.cs: Implemented and added to CVS.
