@@ -1,3 +1,9 @@
+2002-07-26  Tim Coleman <tim@timcoleman.com>
+	* ServiceDescription.cs:
+		Changed the creation of the XmlSerializer after 
+		consulting the System.Xml.Serialization namespace
+		and trying to serialize a document.  Now works somewhat!
+
 2002-07-25  Tim Coleman <tim@timcoleman.com>
 	* OperationMessageCollection.cs:
 		Some implementation of this class after consulting a

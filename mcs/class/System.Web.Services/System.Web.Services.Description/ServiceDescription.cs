@@ -33,10 +33,7 @@ namespace System.Web.Services.Description {
 		ServiceCollection services;
 		string targetNamespace;
 		Types types;
-
 		static XmlSerializer serializer;
-		static SoapReflectionImporter importer;
-		static XmlTypeMapping mapping;
 
 
 		#endregion // Fields
@@ -45,11 +42,9 @@ namespace System.Web.Services.Description {
 
 		static ServiceDescription ()
 		{
-			importer = new SoapReflectionImporter ();
-			mapping = importer.ImportTypeMapping (typeof (ServiceDescription));
-			serializer = new XmlSerializer (mapping);
+			serializer = new XmlSerializer (typeof (ServiceDescription, Namespace);
 		}
-	
+
 		public ServiceDescription ()
 		{
 			bindings = new BindingCollection (this);
@@ -60,9 +55,6 @@ namespace System.Web.Services.Description {
 			portTypes = new PortTypeCollection (this);
 			retrievalUrl = String.Empty;
 
-			SoapReflectionImporter importer = new SoapReflectionImporter ();
-			XmlTypeMapping mapping = importer.ImportTypeMapping (typeof (ServiceDescription));
-			serializer = new XmlSerializer (mapping);
 
 			serviceDescriptions = null;
 			services = new ServiceCollection (this);
