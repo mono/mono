@@ -508,6 +508,15 @@ namespace System.Net
 			GetResponseCallback cb = (GetResponseCallback) async.AsyncDelegate;
 			WebResponse webResponse = cb.EndInvoke(asyncResult);
 			asyncResponding = false;
+			if (webResponse != null) {
+				HttpStatusCode code = ((HttpWebResponse) webResponse).StatusCode;
+				if (code >= HttpStatusCode.MultipleChoices) {
+					string msg = String.Format ("The remote server returned an error: " +
+								    "({0}) {1}", (int) code, code);
+					throw new WebException (msg);
+				}
+			}
+			
 			return webResponse;
 		}
 		

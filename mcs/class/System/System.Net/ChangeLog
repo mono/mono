@@ -1,3 +1,7 @@
+2003-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: throw an exception is the response code is >= 300.
+
 2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: implemented IDisposable, make the request stream
