@@ -1,3 +1,6 @@
+2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg (CALL_REG): Add 64 bit versions of call_reg rules.
 
 Fri Jul 30 15:49:26 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
