@@ -1,5 +1,7 @@
 2004-02-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ops.h inssel-sparc.brg cpu-sparc.md mini-sparc.h mini-sparc.c tramp-sparc.c exceptions-sparc.c: Sparc port, part I.
+
 	* basic-calls.cs basic-float.cs basic-long.cs objects.cs: New regression tests.
 
 Tue Feb 17 21:41:20 CET 2004 Paolo Molaro <lupus@ximian.com>
