@@ -1,3 +1,8 @@
+2003-04-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ArrayList.cs: patch from bernard@ugsolutions.com (Bernie Solomon)
+	that fixes bug #41684.
+
 2003-04-15 Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* CaseInsensitiveComparerTest.cs: Fixed Compare Method (now works

@@ -738,7 +738,7 @@ namespace System.Collections {
 			if (index > this.count - 1) {
 				throw new ArgumentException();
 			}
-			if (index + count > this.count - 1) {
+			if (index + count > this.count) {
 				throw new ArgumentException();
 			}
 		}
