@@ -46,13 +46,12 @@ namespace Mono.Xml.Xsl.Operations {
 		XmlNamespaceManager nsm;
 		
 		XslOperation value;
-		XPathNavigator nav;
 
 		public XslAttribute (Compiler c) : base (c) {}
 		
 		protected override void Compile (Compiler c)
 		{
-			nav = c.Input.Clone ();
+			XPathNavigator nav = c.Input.Clone ();
 			
 			name = c.ParseAvtAttribute ("name");
 			if (name == null)
@@ -127,18 +126,6 @@ namespace Mono.Xml.Xsl.Operations {
 					nmsp = q.Namespace;
 				} else
 					nm = XslNameUtil.LocalNameOf (nm);
-			}
-
-			if (nmsp != String.Empty && prefix == String.Empty) {
-				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
-					do {
-						if (nav.Value == nmsp) {
-							prefix = nav.Name;
-							break;
-						}
-					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
-					nav.MoveToParent ();
-				}
 			}
 
 			if (prefix == "xmlns")

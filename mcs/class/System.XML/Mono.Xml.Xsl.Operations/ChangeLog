@@ -1,5 +1,9 @@
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslAttribute.cs : It does not have to probe prefix at run time.
+
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslLiteralElement.cs,
 	  XslCopy.cs : Now that exclude-element-prefixes and extension-
 	  element-prefixes are handled in GetNamespacesToCopy(), we could
