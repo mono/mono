@@ -50,43 +50,6 @@ namespace System.Windows.Forms {
 		//  --- Public Properties
 		//
 
-		[MonoTODO]
-		public override Color BackColor {
-			get {
-				//FIXME:
-
-				throw new NotImplementedException();
-			}
-			set {
-				//FIXME:
-				throw new NotImplementedException();
-			}
-		}
-
-		[MonoTODO]
-		public override Image BackgroundImage {
-			get {
-				//FIXME:
-				throw new NotImplementedException();
-			}
-			set {
-				//FIXME:
-				throw new NotImplementedException();
-			}
-		}
-
-		[MonoTODO]
-		public override Color ForeColor {
-			get {
-				//FIXME:
-				throw new NotImplementedException();
-			}
-			set {
-				//FIXME:
-				base.ForeColor = value;
-			}
-		}
-
 
 		[MonoTODO]
 		public int LargeChange {

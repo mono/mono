@@ -42,6 +42,8 @@ namespace demo
 			this.vScrollBar1.Size = new Size(24, 200);
 			this.vScrollBar1.TabIndex = 0;
 			this.vScrollBar1.ValueChanged += new EventHandler(this.vScrollBar1_ValueChanged);
+			this.vScrollBar1.ForeColor = Color.Brown;
+			this.vScrollBar1.BackColor = Color.Brown;
 
 			this.hScrollBar1.Location = new System.Drawing.Point(50, 60);
 			this.hScrollBar1.Maximum = 200;

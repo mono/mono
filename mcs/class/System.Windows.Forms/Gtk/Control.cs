@@ -339,7 +339,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException();
 			}
 			set {
-				throw new NotImplementedException();
+				this.widget.ModifyFg (Gtk.StateType.Normal, new Gdk.Color (value));
 			}
 		}
 
@@ -359,7 +359,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException();
 			}
 			set {
-				throw new NotImplementedException();
+				this.widget.ModifyBg (Gtk.StateType.Normal, new Gdk.Color (value));
 			}
 		}
 
