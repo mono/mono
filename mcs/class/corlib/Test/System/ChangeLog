@@ -1,3 +1,7 @@
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* EnumTest.cs: tests from bug #41522 by Richar Lee.
+
 2003-04-23  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayTest.cs: Disambiguate overloads now in .NET 1.1.

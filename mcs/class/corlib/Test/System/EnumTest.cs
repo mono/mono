@@ -761,6 +761,44 @@ public class EnumTest : TestCase
 		}
 	}
 
+	enum E {
+		Aa=0,
+		Bb=1,
+		Cc=2,
+		Dd=3,
+	}
+	
+	[Flags]
+	enum E2 {
+		Aa,
+		Bb,
+		Cc,
+		Dd,
+	}
+	
+	[Test]
+	public void FlagTest ()
+	{
+		int [] evalues = new int [4] {0,1,2,3};
+		E [] e = new E [4] {E.Aa, E.Bb, E.Cc, E.Dd};
+		
+		for (int i = 0; i < 4; ++i) {
+			Assertion.AssertEquals ("#" + i,
+				e [i].ToString (),
+				Enum.Format (typeof (E), evalues [i], "f"));
+		}
+	}
+
+
+	[Test]
+	public void FlagTest2 () {
+		int invalidValue = 1000;
+		
+		Assertion.AssertEquals ("#01",
+				invalidValue.ToString (),
+				Enum.Format (typeof (E2), invalidValue, "g"));
+	}
+
 	// TODO - ToString with IFormatProviders
 }
 }
