@@ -75,6 +75,16 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		throw new NotImplementedException ();
 	}
 
+	public static Image FromStream (Stream stream)
+	{
+		return new Bitmap (stream);
+	}
+	
+	public static Image FromStream (Stream stream, bool useECM)
+	{
+		return new Bitmap (stream, useECM);
+	}
+	
 	internal BitmapData Decode (Stream streamIn) 
 	{
 		Stream stream = streamIn;

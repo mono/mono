@@ -330,9 +330,9 @@ namespace System.Drawing {
  		[DllImport("gdiplus.dll")]
  		internal static extern Status GdipGraphicsClear(IntPtr graphics, int argb); 		
  		[DllImport("gdiplus.dll")]
- 		internal static extern Status GdipDrawClosedCurve(IntPtr graphics, IntPtr pen, PointF [] points, int  count);
+ 		internal static extern Status GdipDrawClosedCurve(IntPtr graphics, IntPtr pen, PointF [] points, int count, float tension);
 		[DllImport("gdiplus.dll")]
- 		internal static extern Status GdipDrawClosedCurveI(IntPtr graphics, IntPtr pen, Point [] points, int  count); 		
+ 		internal static extern Status GdipDrawClosedCurveI(IntPtr graphics, IntPtr pen, Point [] points, int count, float tension); 		
  		[DllImport("gdiplus.dll")]
  		internal static extern Status GdipDrawClosedCurve2(IntPtr graphics, IntPtr pen, PointF [] points, int count, float tension);
  		[DllImport("gdiplus.dll")]
