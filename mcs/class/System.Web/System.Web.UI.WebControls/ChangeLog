@@ -1,3 +1,9 @@
+2004-07-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseValidator.cs: in Validate(), when the control is not visible or
+	enabled, return inmediately after setting IsValid to true. Fixes bug
+	#61831.
+
 2004-07-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: s/HasChildren/HasControls()/.
