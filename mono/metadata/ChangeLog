@@ -1,3 +1,11 @@
+
+Wed Apr 24 18:22:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h, image.c: check if a type implemenst a destructor.
+	Use the proper key for array class lookups.
+	* icall.c: register the icalls in the System.GC class.
+	* gc.c, gc.h: GC-related functions and icalls.
+
 2002-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c:
