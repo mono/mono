@@ -1,3 +1,8 @@
+2003-08-20  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* MethodCall.cs: Changed exception text to match MS.NET (more or less).
+	* AsyncResult.cs: Added new fields to store async calls results.
+
 2003-08-17  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* MethodCall.cs: Throw the right exception if the target object is not

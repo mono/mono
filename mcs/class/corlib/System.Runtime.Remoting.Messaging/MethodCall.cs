@@ -264,7 +264,7 @@ namespace System.Runtime.Remoting.Messaging {
 			if (_uri != null)
 			{
 				Type type = RemotingServices.GetServerTypeForUri (_uri);
-				if (type == null) throw new RemotingException ("No receiver for uri " + _uri);
+				if (type == null) throw new RemotingException ("Requested service not found. No receiver for uri " + _uri);
 
 				if (CanCastTo (_typeName, type))
 				{
