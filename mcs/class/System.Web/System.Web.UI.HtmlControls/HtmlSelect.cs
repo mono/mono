@@ -88,7 +88,7 @@ namespace System.Web.UI.HtmlControls{
 					Items.Capacity = rdsCollection.Count;
 
 				bool valid = false;
-				if (text.Length >= 0 && value.Length >= 0)
+				if (text.Length > 0 && value.Length > 0)
 					valid = true;
 
 				foreach (object current in resolvedDataSource) {

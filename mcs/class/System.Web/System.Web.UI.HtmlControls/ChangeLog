@@ -1,3 +1,8 @@
+2003-11-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlSelect.cs: don't add items without data. Patch by Alon Gazit
+	<along@mainsoft.com>. Fixes bug #51377.
+
 2003-11-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlInputRadioButton.cs: initialize event indexer. Patch by Alon Gazit
