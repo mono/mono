@@ -74,7 +74,9 @@ namespace System.Security.Cryptography.Xml
 		{
 			XslTransform xsl = new XslTransform ();
 			XmlDocument doc = new XmlDocument ();
+#if ! NET_1_0
 			doc.XmlResolver = GetResolver ();
+#endif
 			foreach (XmlNode n in xnl)
 				doc.AppendChild (doc.ImportNode (n, true));
 			xsl.Load (doc);

@@ -171,7 +171,9 @@ namespace System.Security.Cryptography.Xml
 			// possible input: Stream, XmlDocument, and XmlNodeList
 			if (obj is Stream) {
 				doc = new XmlDocument ();
+#if ! NET_1_0
 				doc.XmlResolver = GetResolver ();
+#endif
 				doc.Load (obj as Stream);
 			}
 			else if (obj is XmlDocument) {
@@ -179,7 +181,9 @@ namespace System.Security.Cryptography.Xml
 			}
 			else if (obj is XmlNodeList) {
 				doc = new XmlDocument ();
+#if ! NET_1_0
 				doc.XmlResolver = GetResolver ();
+#endif
 				foreach (XmlNode xn in (obj as XmlNodeList))  {
 					XmlNode importedNode = doc.ImportNode (xn, true);
 					doc.AppendChild (importedNode);
