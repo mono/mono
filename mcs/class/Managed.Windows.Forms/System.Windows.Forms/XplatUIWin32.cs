@@ -23,9 +23,16 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.40 $
+// $Revision: 1.41 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.41  2004/10/18 05:17:32  pbartok
+// - Removed VirtualKeys to XplatUIStructs
+// - Implemented SetTopMost method
+// - Implemented EnableWindow method
+// - Bugfix in ScreenToClient()
+// - Bugfixes in ClientToScreen()
+//
 // Revision 1.40  2004/10/13 20:18:21  pbartok
 // - Added code to destroy a window
 //
@@ -331,107 +338,6 @@ namespace System.Windows.Forms {
 			SWP_SHOWWINDOW			= 0x0040
 		}
 
-		internal enum VirtualKeys {
-			VK_LBUTTON		= 0x01,
-			VK_RBUTTON              = 0x02,
-			VK_CANCEL		= 0x03,
-			VK_MBUTTON              = 0x04,
-			VK_XBUTTON1             = 0x05,
-			VK_XBUTTON2             = 0x06,
-			VK_BACK			= 0x08,
-			VK_TAB			= 0x09,
-			VK_CLEAR		= 0x0C,
-			VK_RETURN		= 0x0D,
-			VK_SHIFT		= 0x10,
-			VK_CONTROL		= 0x11,
-			VK_MENU			= 0x12,
-			VK_CAPITAL		= 0x14,
-			VK_ESCAPE		= 0x1B,
-			VK_SPACE		= 0x20,
-			VK_PRIOR		= 0x21,
-			VK_NEXT			= 0x22,
-			VK_END			= 0x23,
-			VK_HOME			= 0x24,
-			VK_LEFT			= 0x25,
-			VK_UP			= 0x26,
-			VK_RIGHT		= 0x27,
-			VK_DOWN			= 0x28,
-			VK_SELECT		= 0x29,
-			VK_EXECUTE		= 0x2B,
-			VK_SNAPSHOT		= 0x2C,
-			VK_HELP			= 0x2F,
-			VK_0			= 0x30,
-			VK_1			= 0x31,
-			VK_2			= 0x32,
-			VK_3			= 0x33,
-			VK_4			= 0x34,
-			VK_5			= 0x35,
-			VK_6			= 0x36,
-			VK_7			= 0x37,
-			VK_8			= 0x38,
-			VK_9			= 0x39,
-			VK_A			= 0x41,
-			VK_B			= 0x42,
-			VK_C			= 0x43,
-			VK_D			= 0x44,
-			VK_E			= 0x45,
-			VK_F			= 0x46,
-			VK_G			= 0x47,
-			VK_H			= 0x48,
-			VK_I			= 0x49,
-			VK_J			= 0x4A,
-			VK_K			= 0x4B,
-			VK_L			= 0x4C,
-			VK_M			= 0x4D,
-			VK_N			= 0x4E,
-			VK_O			= 0x4F,
-			VK_P			= 0x50,
-			VK_Q			= 0x51,
-			VK_R			= 0x52,
-			VK_S			= 0x53,
-			VK_T			= 0x54,
-			VK_U			= 0x55,
-			VK_V			= 0x56,
-			VK_W			= 0x57,
-			VK_X			= 0x58,
-			VK_Y			= 0x59,
-			VK_Z			= 0x5A,
-			VK_NUMPAD0		= 0x60,
-			VK_NUMPAD1		= 0x61,
-			VK_NUMPAD2		= 0x62,
-			VK_NUMPAD3		= 0x63,
-			VK_NUMPAD4		= 0x64,
-			VK_NUMPAD5		= 0x65,
-			VK_NUMPAD6		= 0x66,
-			VK_NUMPAD7		= 0x67,
-			VK_NUMPAD8		= 0x68,
-			VK_NUMPAD9		= 0x69,
-			VK_MULTIPLY		= 0x6A,
-			VK_ADD			= 0x6B,
-			VK_SEPARATOR		= 0x6C,
-			VK_SUBTRACT		= 0x6D,
-			VK_DECIMAL		= 0x6E,
-			VK_DIVIDE		= 0x6F,
-			VK_ATTN			= 0xF6,
-			VK_CRSEL		= 0xF7,
-			VK_EXSEL		= 0xF8,
-			VK_EREOF		= 0xF9,
-			VK_PLAY			= 0xFA,  
-			VK_ZOOM			= 0xFB,
-			VK_NONAME		= 0xFC,
-			VK_PA1			= 0xFD,
-			VK_OEM_CLEAR		= 0xFE,
-			VK_LWIN			= 0x5B,
-			VK_RWIN			= 0x5C,
-			VK_APPS			= 0x5D,   
-			VK_LSHIFT		= 0xA0,   
-			VK_RSHIFT		= 0xA1,   
-			VK_LCONTROL		= 0xA2,   
-			VK_RCONTROL		= 0xA3,   
-			VK_LMENU		= 0xA4,   
-			VK_RMENU		= 0xA5
-		}
-
 		internal enum GetSysColorIndex {
 			COLOR_SCROLLBAR			=0,
 			COLOR_BACKGROUND		=1,
@@ -568,7 +474,7 @@ namespace System.Windows.Forms {
 				Win32MessageBox(IntPtr.Zero, "Could not register the "+XplatUI.DefaultClassName+" window class, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
 			}
 
-			FosterParent=Win32CreateWindow(0, "Static", "Foster Parent Window", (int)WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			FosterParent=Win32CreateWindow(0, "static", "Foster Parent Window", (int)WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (FosterParent==IntPtr.Zero) {
 				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
@@ -709,7 +615,7 @@ namespace System.Windows.Forms {
 
 			ParentHandle=cp.Parent;
 
-			if ((ParentHandle==IntPtr.Zero) && (cp.Style & (int)WindowStyles.WS_CHILD)!=0) {
+			if ((ParentHandle==IntPtr.Zero) && (cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
 				// We need to use our foster parent window until this poor child gets it's parent assigned
 				ParentHandle=FosterParent;
 			}
@@ -1008,6 +914,16 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		internal override bool SetTopmost(IntPtr hWnd, bool Enabled) {
+			if (Enabled) {
+				Win32SetWindowPos(hWnd, SetWindowPosZOrder.HWND_TOPMOST, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
+				return true;
+			} else {
+				Win32SetWindowPos(hWnd, SetWindowPosZOrder.HWND_NOTOPMOST, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
+				return true;
+			}
+		}
+
 		internal override bool Text(IntPtr handle, string text) {
 			Win32SetWindowText(handle, text);
 			return true;
@@ -1088,9 +1004,13 @@ namespace System.Windows.Forms {
 			Win32SetCursorPos(x, y);
 		}
 
-internal static void EnableWindow(IntPtr handle, bool Enabled) {
-	Win32EnableWindow(handle, Enabled);
-}
+		internal override void EnableWindow(IntPtr handle, bool Enable) {
+			Win32EnableWindow(handle, Enable);
+		}
+
+		internal override void SetModal(IntPtr handle, bool Modal) {
+			// we do nothing on Win32; Application.cs simulates modal dialogs by disabling all toplevel windows
+		}
 
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
 			POINT	pt;
@@ -1107,7 +1027,7 @@ internal static void EnableWindow(IntPtr handle, bool Enabled) {
 
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y)
 		{
-			POINT pnt;			
+			POINT pnt = new POINT();			
 
 			pnt.x = x;
 			pnt.y = y;
@@ -1118,11 +1038,19 @@ internal static void EnableWindow(IntPtr handle, bool Enabled) {
 		}
 
 		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y) {
-			POINT pnt;			
+			IntPtr	parent;
+			POINT	pnt = new POINT();			
 
 			pnt.x = x;
 			pnt.y = y;
-			Win32ClientToScreen(handle, ref pnt);
+
+			parent = Win32GetParent(handle);
+
+			if (parent != IntPtr.Zero) {
+				Win32ClientToScreen(parent, ref pnt);
+			} else {
+				Win32ClientToScreen(handle, ref pnt);
+			}
 
 			x = pnt.x;
 			y = pnt.y;
@@ -1215,6 +1143,9 @@ internal static void EnableWindow(IntPtr handle, bool Enabled) {
 
 		[DllImport ("user32.dll", EntryPoint="DefWindowProcA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32DefWindowProc(IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
+
+		[DllImport ("user32.dll", EntryPoint="DefDlgProcA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32DefDlgProc(IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
 
 		[DllImport ("user32.dll", EntryPoint="PostQuitMessage", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32PostQuitMessage(int nExitCode);
