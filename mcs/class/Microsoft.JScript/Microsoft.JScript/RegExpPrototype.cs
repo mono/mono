@@ -42,7 +42,7 @@ namespace Microsoft.JScript {
 
 
 		public static RegExpConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return RegExpConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_exec)]

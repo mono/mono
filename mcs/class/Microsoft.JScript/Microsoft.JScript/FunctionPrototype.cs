@@ -48,7 +48,7 @@ namespace Microsoft.JScript {
 
 
 		public static FunctionConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return FunctionConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Function_toString)]

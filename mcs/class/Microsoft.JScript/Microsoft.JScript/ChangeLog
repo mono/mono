@@ -1,3 +1,7 @@
+2004-11-30  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* *Prototype.cs: return constructor.
+
 2004-11-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* GlobalObject.cs: return the different kinds of object's

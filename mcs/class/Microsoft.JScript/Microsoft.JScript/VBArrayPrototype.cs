@@ -36,7 +36,7 @@ namespace Microsoft.JScript {
 	public class VBArrayPrototype : JSObject {
 
 		public static VBArrayConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return VBArrayConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.VBArray_dimensions)]

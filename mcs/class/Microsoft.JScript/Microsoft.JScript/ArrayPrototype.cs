@@ -44,7 +44,7 @@ namespace Microsoft.JScript {
 
 
 		public static ArrayConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return ArrayConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_join)]

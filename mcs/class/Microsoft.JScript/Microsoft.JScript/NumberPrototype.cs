@@ -35,7 +35,7 @@ namespace Microsoft.JScript {
 	public class NumberPrototype : NumberObject {
 
 		public static NumberConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return NumberConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toExponential)]

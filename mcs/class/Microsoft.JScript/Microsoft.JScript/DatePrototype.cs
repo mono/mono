@@ -40,7 +40,7 @@ namespace Microsoft.JScript {
 		}
 
 		public static DateConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return DateConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getDate)]

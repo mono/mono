@@ -79,7 +79,7 @@ namespace Microsoft.JScript {
 
 
 		public static StringConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return StringConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_fixed)]

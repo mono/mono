@@ -35,7 +35,7 @@ namespace Microsoft.JScript {
 	public class ObjectPrototype : JSObject	{
 
 		public static ObjectConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return ObjectConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_hasOwnProperty)]

@@ -33,7 +33,7 @@ namespace Microsoft.JScript {
 
 	public class FunctionConstructor : ScriptFunction  {
 
-		internal FunctionConstructor Ctr = new FunctionConstructor ();
+		internal static FunctionConstructor Ctr = new FunctionConstructor ();
 
 		internal FunctionConstructor ()
 		{
