@@ -248,10 +248,10 @@ namespace System.IO
 				copied += n;
 				count -= n;
 
+				FlushBuffer ();
+
 				if (count == 0)
 					break;
-
-				FlushBuffer ();
 
 				if (count > buf_size) {
 					// shortcut for long writes

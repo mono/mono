@@ -1,3 +1,7 @@
+2003-02-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FileStream.cs (Write): flush after writing the last segment as well.
+
 2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringReader.cs:
