@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 using System.Collections;
 
 namespace System.Diagnostics {
-	[DefaultEvent ("Exited"), DefaultProperty ("StartInfo"), DesignerCategory ("Component")]
+	[DefaultEvent ("Exited"), DefaultProperty ("StartInfo")]
 	#if (NET_1_0)
 		[Designer ("System.Diagnostics.Design.ProcessDesigner, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
 	#endif
@@ -469,7 +469,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[DefaultValue (null), Browsable (false)]
 		[MonitoringDescription ("The object that is used to synchronize event handler calls for this process.")]
 		public ISynchronizeInvoke SynchronizingObject {
 			get {

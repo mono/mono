@@ -18,7 +18,7 @@ namespace System.Diagnostics {
 
 	[Serializable]
 	[MonoTODO("Just stubbed out")]
-	[ToolboxItem (""), DesignTimeVisible (false), DesignerCategory ("Category")]
+	[ToolboxItem (""), DesignTimeVisible (false)]
 	public sealed class EventLogEntry : Component, ISerializable {
 
 		[MonoTODO]

@@ -17,7 +17,7 @@ using System.ComponentModel.Design;
 namespace System.Diagnostics {
 
 	[MonoTODO("This class is just stubbed out")]
-	[DefaultEvent ("EntryWritten"), DesignerCategory ("Category"), InstallerType (typeof (EventLogInstaller))]
+	[DefaultEvent ("EntryWritten"), InstallerType (typeof (EventLogInstaller))]
 	#if (NET_1_0)
 		[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, Microsoft.VisualStudio, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
 	#endif

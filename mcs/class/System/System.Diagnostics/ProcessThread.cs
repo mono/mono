@@ -13,7 +13,6 @@ using System.ComponentModel.Design;
 
 namespace System.Diagnostics 
 {
-	[DesignerCategory ("Component")]
 	#if (NET_1_0)
 		[Designer ("System.Diagnostics.Design.ProcessThreadDesigner, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
 	#endif
@@ -54,7 +53,7 @@ namespace System.Diagnostics
 
 		[MonoTODO]
 		[Browsable (false)]
-		int IdealProcessor {
+		public int IdealProcessor {
 			set {
 			}
 		}
@@ -89,7 +88,7 @@ namespace System.Diagnostics
 
 		[MonoTODO]
 		[Browsable (false)]
-		IntPtr ProcessorAffinity {
+		public IntPtr ProcessorAffinity {
 			set {
 			}
 		}

@@ -1,3 +1,12 @@
+2003-07-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* EventLog.cs: Removed unneccesary attribute according to corecompare
+	* EventLogEntry.cs: Removed unneccesary attribute according to corecompare
+	* Process.cs: Removed unneccesary attributes according to corecompare, added attribute
+	* ProcessModule.cs: Removed unneccesary attribute according to corecompare
+	* ProcessStartInfo.cs: Removed unneccesary attribute according to corecompare
+	* ProcessThread.cs: Removed unneccesary attribute according to corecompare, fixed signature
+
 2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* InstanceDataCollectionCollection.cs: Corrected wrong signature
