@@ -26,6 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
+// $Revision: 1.2 $
+// $Modtime: $
+// $Log: ScrollBar.cs,v $
+// Revision 1.2  2004/07/26 17:42:03  jordi
+// Theme support
+//
 
 // NOT COMPLETE
 
@@ -38,218 +44,6 @@ using System.Timers;
 
 namespace System.Windows.Forms 
 {	
-	
-	/* Scroll bar Theme painter class*/
-	internal class ThemePainter 
-	{		
-		static private Color light = Color.FromArgb (255, 255, 255, 255);
-		static private Color shadow = Color.FromArgb (255, 172, 168, 153);
-		static private Color disabled = Color.FromArgb (255, 172, 168, 153);
-		static private Color dark = Color.FromArgb (255, 113, 111, 100);
-		static private Color main = Color.FromArgb (255, 236, 233, 216);
-		static private Color lighttop = Color.FromArgb (255, 241, 239, 226);					
-		static private SolidBrush br_lighttop = new SolidBrush (lighttop);
-		static private SolidBrush br_light = new SolidBrush (light);
-		static private SolidBrush br_shadow = new SolidBrush (shadow);
-		static private SolidBrush br_main = new SolidBrush (main);
-		static private SolidBrush br_dark = new SolidBrush (dark);		
-		static private Pen pen_shadow = new Pen (shadow);
-		static private HatchBrush br_backgr = new HatchBrush (HatchStyle.Percent50, light, main);
-		static private Pen pen_arrow = new Pen (Color.Black);
-		static private Pen pen_disabled = new Pen (disabled);
-		static private SolidBrush br_arrow = new SolidBrush (Color.Black);
-		static private SolidBrush br_disabled = new SolidBrush (disabled);		
-		static private int scrollbutton_height = 17;
-		static private int scrollbutton_width = 17;
-		
-		static public int ScrollButtonHeight {
-			get { return scrollbutton_height; }			
-		}
-		
-		static public int ScrollButtonWidth {
-			get { return scrollbutton_width; }			
-		}
-		
-		/* Generic button */
-		static public void drawButton (Graphics dc, Rectangle area, ButtonState state)
-		{			
-			if ((state & ButtonState.Pushed) == ButtonState.Pushed) {
-								
-				dc.FillRectangle (br_main, area.X + 1, 
-					area.Y + 1, area.Width - 2 , area.Height - 2);					
-				
-				dc.DrawRectangle (pen_shadow, area.X, 
-					area.Y, area.Width, area.Height);					
-			}
-			
-			if (state == ButtonState.Normal) {
-			
-				dc.FillRectangle (br_lighttop, area.X, area.Y, area.Width, 1);
-				dc.FillRectangle (br_light, area.X, area.Y + 1, area.Width - 1, 1);
-				dc.FillRectangle (br_light, area.X, area.Y + 2, 1,
-					area.Height - 2 - 1);
-				
-				dc.FillRectangle (br_shadow, area.X, area.Y + area.Height - 1, 
-					area.Width - 1, 1);
-									
-				dc.FillRectangle (br_dark, area.X, area.Y + area.Height, 
-					area.Width, 1);
-					
-				dc.FillRectangle (br_shadow, area.X + area.Width - 1, 
-					area.Y + 1, 1, area.Height);
-					
-				dc.FillRectangle (br_dark, area.X + area.Width, 
-					area.Y, 1, area.Height);
-				
-				dc.FillRectangle (br_main, area.X + 1, 
-					area.Y + 2, area.Width - 2, area.Height - 3);					
-			}
-		}		
-		
-		/* Scroll button: regular button + direction arrow */		
-		static public void drawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state, bool enabled)
-		{
-			drawButton (dc, area, state);
-			
-			/* Paint arrows */	
-			switch (type) {
-			case ScrollButton.Up:
-			{			
-				int x = area.X +  (area.Width / 2) - 4;
-				int y = area.Y + 9;
-				
-				for (int i = 0; i < 3; i++)
-					if (enabled)
-						dc.DrawLine (pen_arrow, x + i, y - i, x + i + 6 - 2*i, y - i);	
-					else
-						dc.DrawLine (pen_disabled, x + i, y - i, x + i + 6 - 2*i, y - i);	
-					
-				if (enabled)
-					dc.FillRectangle (br_arrow, x + 3, area.Y + 6, 1, 1);					
-				else
-					dc.FillRectangle (br_disabled, x + 3, area.Y + 6, 1, 1);					
-					
-				break;
-			}
-			case ScrollButton.Down:
-			{			
-				int x = area.X +  (area.Width / 2) - 4;
-				int y = area.Y + 5;
-				
-				for (int i = 4; i != 0; i--)
-					if (enabled)
-						dc.DrawLine (pen_arrow, x + i, y + i, x + i + 8 - 2*i, y + i);	
-					else
-						dc.DrawLine (pen_disabled, x + i, y + i, x + i + 8 - 2*i, y + i);						
-					
-				if (enabled)
-					dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);					
-				else					
-					dc.FillRectangle (br_disabled, x + 4, y + 4, 1, 1);					
-					
-				break;
-			}			
-			
-			case ScrollButton.Left:
-			{			
-				int y = area.Y +  (area.Height / 2) - 4;
-				int x = area.X + 9;
-				
-				for (int i = 0; i < 3; i++)
-					if (enabled)
-						dc.DrawLine (pen_arrow, x - i, y + i, x - i, y + i + 6 - 2*i);	
-					else
-						dc.DrawLine (pen_disabled, x - i, y + i, x - i, y + i + 6 - 2*i);	
-					
-				if (enabled)
-					dc.FillRectangle (br_arrow, x - 3, y + 3, 1, 1);					
-				else
-					dc.FillRectangle (br_disabled, x - 3, y + 3, 1, 1);					
-					
-				break;
-			}
-			
-			case ScrollButton.Right:
-			{			
-				int y = area.Y +  (area.Height / 2) - 4;
-				int x = area.X + 5;
-				
-				for (int i = 4; i != 0; i--)
-					if (enabled)
-						dc.DrawLine (pen_arrow, x + i, y + i, x + i, y + i + 8 - 2*i);	
-					else
-						dc.DrawLine (pen_disabled, x + i, y + i, x + i, y + i + 8 - 2*i);	
-					
-				if (enabled)
-					dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);					
-				else
-					dc.FillRectangle (br_disabled, x + 3, y + 3, 1, 1);
-					
-				break;
-			}
-			
-			default:
-				break;
-			
-			}
-		}	
-		
-		/* Paint a complete ScrollBar and all its components */
-		static  public void drawScrollBar (Graphics dc, Rectangle area, Rectangle thumb_pos,
-			ref Rectangle first_arrow_area, ref Rectangle second_arrow_area,
-			ButtonState first_arrow, ButtonState second_arrow,
-			bool enabled, bool vertical)
-		{			
-			//Console.WriteLine ("ThumPos: " + thumb_pos);
-			
-			if (vertical) {
-				scrollbutton_width = area.Width;
-				
-				first_arrow_area.X = first_arrow_area. Y = 0;
-				first_arrow_area.Width = scrollbutton_width;
-				first_arrow_area.Height = scrollbutton_height;				
-				
-				second_arrow_area.X = 0;
-				second_arrow_area.Y = area.Height - scrollbutton_height;
-				second_arrow_area.Width = scrollbutton_width;
-				second_arrow_area.Height = scrollbutton_height;				
-				
-				/* Buttons */
-				drawScrollButton (dc, first_arrow_area, ScrollButton.Up, first_arrow, enabled);
-				drawScrollButton (dc, second_arrow_area, ScrollButton.Down, second_arrow, enabled);		
-				
-				/* Background */
-				dc.FillRectangle (br_backgr, 0,  scrollbutton_height, area.Width, 
-					area.Height - (scrollbutton_height * 2));			
-
-			}
-			else {
-				
-				scrollbutton_height = area.Height;
-				first_arrow_area.X = first_arrow_area. Y = 0;
-				first_arrow_area.Width = scrollbutton_width;
-				first_arrow_area.Height = scrollbutton_height;
-				
-				second_arrow_area.Y = 0;
-				second_arrow_area.X = area.Width - scrollbutton_width;
-				second_arrow_area.Width = scrollbutton_width;
-				second_arrow_area.Height = scrollbutton_height;
-				
-				
-				/* Buttons */
-				drawScrollButton (dc, first_arrow_area, ScrollButton.Left, first_arrow, enabled);
-				drawScrollButton (dc, second_arrow_area, ScrollButton.Right, second_arrow, enabled);		
-								
-				/* Background */
-				dc.FillRectangle (br_backgr, scrollbutton_width, 0, area.Width - (scrollbutton_width * 2),
-				 	area.Height);			
-			}			
-				
-			/* Thumbail */	
-			if (enabled)
-				drawButton (dc, thumb_pos, ButtonState.Normal);					
-		}		
-	}
 	
 	public class ScrollBar : Control 
 	{		
@@ -453,12 +247,12 @@ throw new NotImplementedException(); }
 		
 		private void draw()
 		{					
-			ThemePainter.drawScrollBar (dc_mem, paint_area, thumb_pos,
+			ThemeEngine.Current.DrawScrollBar (dc_mem, paint_area, thumb_pos,
 				ref first_arrow_area, ref second_arrow_area,
-				firstbutton_state, secondbutton_state, Enabled,	vert);										
+				firstbutton_state, secondbutton_state, 
+				ref scrollbutton_width, ref scrollbutton_height,
+				Enabled, vert);
 			
-			scrollbutton_height = ThemePainter.ScrollButtonHeight;
-			scrollbutton_width = ThemePainter.ScrollButtonWidth;			
 		}
 				
 		private void CalcThumbArea ()
@@ -528,12 +322,12 @@ throw new NotImplementedException(); }
 		*/		
 		protected override void CreateHandle()
 		{	
-			Console.WriteLine ("CreateHandle()");			
+			//Console.WriteLine ("CreateHandle()");			
 			
 			base.CreateHandle();	// Let control.cs create the underlying Window							
 			
-			scrollbutton_height = ThemePainter.ScrollButtonHeight;
-			scrollbutton_width = ThemePainter.ScrollButtonWidth;
+			scrollbutton_height = 17;
+			scrollbutton_width = 17;
 						
 			/* Area for double buffering */
 			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);	
@@ -564,7 +358,7 @@ throw new NotImplementedException(); }
 		
     		protected override void OnClick (EventArgs e)
     		{
-    			Console.WriteLine ("On click");    			
+    			//Console.WriteLine ("On click");    			
     		}
     		
     		private void UpdatePos (int newPos, bool update_trumbpos)

@@ -116,6 +116,10 @@ System.Windows.Forms/MessageBoxButtons.cs
 System.Windows.Forms/MessageBoxDefaultButton.cs
 System.Windows.Forms/MessageBoxIcon.cs
 System.Windows.Forms/MessageBoxOptions.cs
+System.Windows.Forms/ITheme.cs
+System.Windows.Forms/ThemeEngine.cs
+System.Windows.Forms/ThemeWin32Classic.cs
+
 
 
 

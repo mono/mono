@@ -23,9 +23,12 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ProgressBar.cs,v $
+// Revision 1.5  2004/07/26 17:42:03  jordi
+// Theme support
+//
 // Revision 1.4  2004/07/09 20:13:05  miguel
 // Spelling
 //
@@ -53,46 +56,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms 
-{
-	/* Scroll bar Theme painter class*/
-	#region ThemePainter support
-	internal class ThemePainter_ProgressBar 
-	{
-		static private Color shadow = Color.FromArgb (255, 172, 168, 153);
-		static private Color light = Color.FromArgb (255, 255, 255, 255);		
-		static private SolidBrush br_shadow = new SolidBrush (shadow);
-		static private SolidBrush br_light = new SolidBrush (light);
-		private static SolidBrush br_main = new SolidBrush (Color.FromArgb (255, 236, 233, 216));
-		private static SolidBrush br_bar = new SolidBrush (Color.FromArgb (255, 49, 106, 197));			
-		private static int space_betweenblocks = 2;
-		
-		/* Draw a progress bar */
-		static public void DrawProgressBar (Graphics dc, Rectangle area, 
-						    Rectangle client_area, int barpos_pixels, int block_width)
-		{	
-			int increment = block_width + space_betweenblocks;
-			int x = client_area.X;
-			
-			/* Background*/
-			dc.FillRectangle (br_main, area);				
-			
-			/* Draw background*/
-
-			while ((x - client_area.X) < barpos_pixels) {            		        
-				dc.FillRectangle (br_bar, x, client_area.Y, block_width, client_area.Height);
-				x  = x + increment;
-			}			
-            		
-			/* Draw border */
-			dc.FillRectangle (br_shadow, area.X, area.Y, area.Width, 1);
-			dc.FillRectangle (br_shadow, area.X, area.Y, 1, area.Height);
-			dc.FillRectangle (br_light, area.X, area.Y + area.Height - 1, area.Width, 1);
-			dc.FillRectangle (br_light, area.X + area.Width - 1, area.Y, 1, area.Height);
-		}
-
-	}
-	#endregion	// ThemePainter support
-
+{	
 	public sealed class ProgressBar : Control 
 	{	
 		#region Local Variables
@@ -285,7 +249,7 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("draw Max {0} Min {1} Value {2}", 
 			//	Maximum, Minimum, Value);
 					
-			ThemePainter_ProgressBar.DrawProgressBar (dc_mem, paint_area, client_area, barpos_pixels,
+			ThemeEngine.Current.DrawProgressBar (dc_mem, paint_area, client_area, barpos_pixels,
 				block_width);
 		}
 		
