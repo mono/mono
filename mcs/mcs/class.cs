@@ -1249,15 +1249,20 @@ namespace Mono.CSharp {
 			}
 
 			if ((mt & MemberTypes.Event) != 0) {
-				if (events != null)
+				if (events != null) {
 				        foreach (Event e in events) {
-						if ((e.ModFlags & modflags) == 0)
+						// Always return public events, even if only queried
+						// for non-public ones.  This is broken, but that's how
+						// it works in the MS runtime.
+						if (((bf & BindingFlags.NonPublic) == 0) &&
+						    ((e.ModFlags & Modifiers.PUBLIC) == 0))
 							continue;
 
 						MemberInfo eb = e.EventBuilder;
 						if (eb != null && filter (eb, criteria) == true)
 						        members.Add (e.EventBuilder);
 					}
+				}
 			}
 			
 			if ((mt & MemberTypes.Property) != 0){

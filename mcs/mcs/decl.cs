@@ -894,10 +894,14 @@ namespace Mono.CSharp {
 			AddMembers (MemberTypes.Property, container);
 			// Nested types and events are returned by both Static and Instance
 			// searches.
-			AddMembers (MemberTypes.NestedType | MemberTypes.Event,
-				    BindingFlags.Public, container);
-			AddMembers (MemberTypes.NestedType | MemberTypes.Event,
-				    BindingFlags.NonPublic, container);
+			AddMembers (MemberTypes.NestedType,
+				    BindingFlags.Static | BindingFlags.Public, container);
+			AddMembers (MemberTypes.NestedType,
+				    BindingFlags.Static | BindingFlags.NonPublic, container);
+			// Type.GetEvents() doesn't distinguish between BindingFlags.Public and
+			// BindingFlags.NonPublic.
+			AddMembers (MemberTypes.Event,
+				    BindingFlags.Static | BindingFlags.NonPublic, container);
 		}
 
 		void AddMembers (MemberTypes mt, IMemberContainer container)
@@ -983,23 +987,25 @@ namespace Mono.CSharp {
 
 			if ((mt & MemberTypes.Constructor) != 0)
 				type |= EntryType.Constructor;
-			if ((mt & MemberTypes.Event) != 0)
-				type |= EntryType.Event;
 			if ((mt & MemberTypes.Field) != 0)
 				type |= EntryType.Field;
 			if ((mt & MemberTypes.Method) != 0)
 				type |= EntryType.Method;
 			if ((mt & MemberTypes.Property) != 0)
 				type |= EntryType.Property;
+			// Nested types are returned by static and instance searches.
 			if ((mt & MemberTypes.NestedType) != 0)
-				type |= EntryType.NestedType;
+				type |= EntryType.NestedType | EntryType.Static | EntryType.Instance;
+			// Events are returned by static and instance searches and we don't make
+			// a difference between public/non-public.
+			if ((mt & MemberTypes.Event) != 0)
+				type |= EntryType.Event | EntryType.Static | EntryType.Instance |
+					EntryType.Public | EntryType.NonPublic;
 
 			if ((bf & BindingFlags.Instance) != 0)
 				type |= EntryType.Instance;
 			if ((bf & BindingFlags.Static) != 0)
 				type |= EntryType.Static;
-			if ((bf & (BindingFlags.Instance | BindingFlags.Static)) == 0)
-				type |= EntryType.Instance | EntryType.Static;
 			if ((bf & BindingFlags.Public) != 0)
 				type |= EntryType.Public;
 			if ((bf & BindingFlags.NonPublic) != 0)
