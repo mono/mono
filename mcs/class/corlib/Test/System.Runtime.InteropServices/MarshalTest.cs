@@ -97,7 +97,14 @@ namespace MonoTests.System.Runtime.InteropServices
 			AssertEquals (Marshal.PtrToStringUni (IntPtr.Zero, 0), String.Empty);
 		}
 
+		[Test]
+		public unsafe void UnsafeAddrOfPinnedArrayElement () {
+			short[] sarr = new short [5];
+			sarr [2] = 3;
 
+			IntPtr ptr = Marshal.UnsafeAddrOfPinnedArrayElement (sarr, 2);
+			AssertEquals (3, *(short*)ptr.ToPointer ());
+		}
 	}
 }
 

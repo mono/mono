@@ -1,3 +1,7 @@
+2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MarshalTest.cs: Add test for UnsafeAddrOfPinnedArrayElement.
+
 2004-04-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MarshalTest.cs: New tests for PtrTo* methods and null.
