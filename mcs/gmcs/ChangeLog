@@ -1,5 +1,8 @@
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.InferType): Removed the hack for
+	MethodCore.MayUnify().	
+
 	* typemanager.cs (TypeManager.MayBecomeEqualGenericTypes): Make
 	this actually work.
 
