@@ -1,3 +1,8 @@
+2005-03-07  Martin Baulig  <martin@ximian.com>
+
+	* gen-130.cs, gen-131.cs, gen-132.cs, gen-133.cs, gen-134.cs: New
+	test cases for Nullable Types.  Thanks a lot to Peter Sestoft :-)
+
 2005-03-04  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (TEST_HARNESS_EXTRAS): Add test-353-2.cs.
