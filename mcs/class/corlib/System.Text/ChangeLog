@@ -1,3 +1,8 @@
+
+Mon Jun 3 12:58:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ASCIIEncoding.cs: fixed handling of 0 bytecount.
+
 2002-05-19  Martin Baulig  <martin@gnome.org>
 
 	* Encoder.cs (IConvEncoder.GetByteCount, IConvEncoder.GetBytes):

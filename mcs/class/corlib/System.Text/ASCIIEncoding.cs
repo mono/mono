@@ -110,7 +110,7 @@ namespace System.Text {
 
 			if ((byteIndex < 0) || (charIndex < 0) || (byteCount < 0) ||
 			    ((byteIndex + byteCount) > bytes.Length) ||
-			    (charIndex >= chars.Length))
+			    (charIndex + byteCount > chars.Length))
 				throw new ArgumentOutOfRangeException ();
 
 			if ((chars.Length - charIndex) < byteCount)
@@ -154,7 +154,7 @@ namespace System.Text {
 			if (bytes == null) 
 				throw new ArgumentNullException ();
 
-			if ((byteIndex < 0) || (byteCount <= 0) || 
+			if ((byteIndex < 0) || (byteCount < 0) || 
 			    ((byteIndex + byteCount) > bytes.Length))
 				throw new ArgumentOutOfRangeException ();
 
