@@ -1,3 +1,11 @@
+2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Environment_get_HasShutdownStarted): 
+	Reenable call to mono_runtime_is_shutting_down ().
+
+	* appdomain.c (mono_runtime_is_shutting_down): New helper function to
+	determine if the runtime is shutting down.
+
 2003-12-16  Jackson Harper <jackson@ximian.com>
 
 	* icall.c: comment out call to mono_runtime_is_shutting_down to
