@@ -1,3 +1,8 @@
+2004-04-02  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* PasswordDeriveBytesTest.cs: Add ToInt32LE so
+	it works on big endian machines.
+
 2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FromBase64Transform.cs: Two new unit tests showing that the 

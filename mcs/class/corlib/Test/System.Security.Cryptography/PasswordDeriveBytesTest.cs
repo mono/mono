@@ -26,6 +26,11 @@ public class PasswordDeriveBytesTest : TestCase {
 
 	static byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
 
+	static int ToInt32LE(byte [] bytes, int offset)
+	{
+		return (bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset + 1] << 8) | bytes[offset];
+	}
+
 	// generate the key up to HashSize and reset between operations
 	public void ShortRun(string msg, PasswordDeriveBytes pd, byte[] finalKey)
 	{
@@ -65,7 +70,7 @@ public class PasswordDeriveBytesTest : TestCase {
 		msg += ", hash=" + hashname;
 		msg += ", iter=" + iterations;
 		msg += ", get=" + getbytes + "]";
-		AssertEquals (msg, lastFourBytes, BitConverter.ToInt32 (key, key.Length - 4));
+		AssertEquals (msg, lastFourBytes, ToInt32LE (key, key.Length - 4));
 	}
 
 	public void TestTooShort () 
@@ -88,7 +93,7 @@ public class PasswordDeriveBytesTest : TestCase {
 		
 		// this should work (we check the last four devired bytes to be sure)
 		byte[] key = pd.GetBytes (size);
-		AssertEquals ("Last 4 bytes", lastFourBytes, BitConverter.ToInt32 (key, size - 4));
+		AssertEquals ("Last 4 bytes", lastFourBytes, ToInt32LE (key, size - 4));
 
 		// but we can't get another byte from it!
 		try {
