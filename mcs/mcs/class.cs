@@ -2469,9 +2469,9 @@ namespace Mono.CSharp {
 
 			CallingConventions cc = GetCallingConvention (container is Class);
 
-			MethodData = new MethodData (this, null, MemberType, ParameterTypes,
-						     ParameterInfo, cc, OptAttributes,
-						     ModFlags, flags, true);
+			MethodData = new MethodData (container, this, null, MemberType,
+						     ParameterTypes, ParameterInfo, cc,
+						     OptAttributes, ModFlags, flags, true);
 
 			if (!MethodData.Define (container))
 				return false;
@@ -2847,6 +2847,7 @@ namespace Mono.CSharp {
 		//
 		// Protected data.
 		//
+		protected DeclSpace ds;
 		protected MemberBase member;
 		protected int modifiers;
 		protected MethodAttributes flags;
@@ -2864,11 +2865,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public MethodData (MemberBase member, string name, Type return_type,
+		public MethodData (DeclSpace ds, MemberBase member, string name, Type return_type,
 				   Type [] parameter_types, InternalParameters parameters,
 				   CallingConventions cc, Attributes opt_attrs,
 				   int modifiers, MethodAttributes flags, bool is_method)
 		{
+			this.ds = ds;
 			this.member = member;
 			this.accessor_name = name;
 			this.ReturnType = return_type;
@@ -3187,7 +3189,7 @@ namespace Mono.CSharp {
 				}
 				
 				EmitContext ec = new EmitContext (
-					container, Location, null, ReturnType, modifiers);
+					container, ds, Location, null, ReturnType, modifiers, false);
 				
 				builder = dllimport_attribute.DefinePInvokeMethod (
 					ec, container.TypeBuilder, method_name, flags,
@@ -3249,7 +3251,7 @@ namespace Mono.CSharp {
 			else
 				ig = null;
 
-			ec = new EmitContext (container, Location, ig, ReturnType, modifiers);
+			ec = new EmitContext (container, ds, Location, ig, ReturnType, modifiers, false);
 
 			if (OptAttributes != null)
 				Attribute.ApplyAttributes (ec, builder, kind, OptAttributes);
@@ -4109,7 +4111,7 @@ namespace Mono.CSharp {
 				InternalParameters ip = new InternalParameters (
 					container, Parameters.EmptyReadOnlyParameters);
 
-				GetData = new MethodData (this, "get", MemberType,
+				GetData = new MethodData (container, this, "get", MemberType,
 							  parameters, ip, CallingConventions.Standard,
 							  Get.OptAttributes, ModFlags, flags, false);
 
@@ -4128,7 +4130,7 @@ namespace Mono.CSharp {
 				InternalParameters ip = new InternalParameters (
 					container, new Parameters (parms, null, Location));
 
-				SetData = new MethodData (this, "set", TypeManager.void_type,
+				SetData = new MethodData (container, this, "set", TypeManager.void_type,
 							  parameters, ip, CallingConventions.Standard,
 							  Set.OptAttributes, ModFlags, flags, false);
 
@@ -4378,7 +4380,7 @@ namespace Mono.CSharp {
 			//
 			// Now define the accessors
 			//
-			AddData = new MethodData (this, "add", TypeManager.void_type,
+			AddData = new MethodData (container, this, "add", TypeManager.void_type,
 						  parameter_types, ip, CallingConventions.Standard,
 						  (Add != null) ? Add.OptAttributes : null,
 						  ModFlags, flags | m_attr, false);
@@ -4389,7 +4391,7 @@ namespace Mono.CSharp {
 			AddBuilder = AddData.MethodBuilder;
 			AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
 
-			RemoveData = new MethodData (this, "remove", TypeManager.void_type,
+			RemoveData = new MethodData (container, this, "remove", TypeManager.void_type,
 						     parameter_types, ip, CallingConventions.Standard,
 						     (Remove != null) ? Remove.OptAttributes : null,
 						     ModFlags, flags | m_attr, false);
@@ -4558,7 +4560,7 @@ namespace Mono.CSharp {
 			if (Get != null){
                                 InternalParameters ip = new InternalParameters (container, Parameters);
 
-				GetData = new MethodData (this, "get", MemberType,
+				GetData = new MethodData (container, this, "get", MemberType,
 							  ParameterTypes, ip, CallingConventions.Standard,
 							  Get.OptAttributes, ModFlags, flags, false);
 
@@ -4603,7 +4605,7 @@ namespace Mono.CSharp {
 				
 				InternalParameters ip = new InternalParameters (container, set_formal_params);
 
-				SetData = new MethodData (this, "set", TypeManager.void_type,
+				SetData = new MethodData (container, this, "set", TypeManager.void_type,
 							  set_pars, ip, CallingConventions.Standard,
 							  Set.OptAttributes, ModFlags, flags, false);
 
