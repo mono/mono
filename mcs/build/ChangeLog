@@ -1,3 +1,8 @@
+2005-02-15  Raja R Harinath  <rharinath@novell.com>
+
+	* platforms/win32.make (RESGEN): Point to in-tree version of
+	resgen.exe.  The .NET 1.1 SDK doesn't appear to come with one.
+
 2005-02-10  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (DISTFILES): Add $(btest_sourcefile).

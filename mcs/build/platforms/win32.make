@@ -11,7 +11,7 @@ PLATFORM_CORLIB = mscorlib.dll
 EXTERNAL_MCS = csc.exe
 EXTERNAL_MBAS = vbc.exe
 EXTERNAL_RUNTIME =
-RESGEN = resgen.exe
+RESGEN = $(topdir)/tools/resgen/resgen.exe
 
 PLATFORM_MAKE_CORLIB_CMP = yes
 PLATFORM_CHANGE_SEPARATOR_CMD=tr '/' '\\\\'
