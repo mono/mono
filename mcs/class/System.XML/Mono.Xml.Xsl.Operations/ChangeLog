@@ -1,3 +1,8 @@
+2005-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCopy.cs, XslCopyOf.cs : copy namespace nodes in the 
+	  transformation input == not limited to "local" namespace nodes.
+
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslNumber.cs : maybe I had better explain why I needed own Round().

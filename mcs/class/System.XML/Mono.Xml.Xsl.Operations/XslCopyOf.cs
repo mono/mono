@@ -61,11 +61,11 @@ namespace Mono.Xml.Xsl.Operations {
 				p.PushElementState (nav.LocalName, nav.NamespaceURI, false);
 				outputter.WriteStartElement (nav.Prefix, nav.LocalName, nav.NamespaceURI);
 				
-				if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local))
+				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml))
 				{
 					do {
 						outputter.WriteNamespaceDecl (nav.Name, nav.Value);
-					} while (nav.MoveToNextNamespace (XPathNamespaceScope.Local));
+					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 					nav.MoveToParent ();
 				}
 				

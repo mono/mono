@@ -91,10 +91,10 @@ namespace Mono.Xml.Xsl.Operations {
 					foreach (XmlQualifiedName s in useAttributeSets)
 						p.ResolveAttributeSet (s).Evaluate (p);
 
-				if (p.CurrentNode.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
+				if (p.CurrentNode.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 					do {
 						p.Out.WriteNamespaceDecl (p.CurrentNode.LocalName, p.CurrentNode.Value);
-					} while (p.CurrentNode.MoveToNextNamespace (XPathNamespaceScope.Local));
+					} while (p.CurrentNode.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 					p.CurrentNode.MoveToParent ();
 				}
 			
