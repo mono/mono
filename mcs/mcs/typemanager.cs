@@ -675,8 +675,9 @@ public class TypeManager {
 			foreach (Assembly a in assemblies){
 				foreach (Type t in a.GetTypes ()){
 					string ns = t.Namespace;
-					
-					if (ns == "")
+
+					// t.Namespace returns null for <PrivateImplDetails>
+					if (ns == ""|| ns == null)
 						continue;
 					if (namespaces_hash.Contains (ns))
 						continue;
