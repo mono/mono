@@ -779,10 +779,6 @@ namespace Mono.CSharp
 			getChar ();
 			while ((d = peekChar ()) != -1){
 				if (is_hex (d)){
-					if (number_pos == 16){
-						Report.Error (1021, Location, "Integral constant too large");
-						return Token.ERROR;
-					}
 					number_builder [number_pos++] = (char) d;
 					getChar ();
 				} else
@@ -790,10 +786,18 @@ namespace Mono.CSharp
 			}
 			
 			string s = new String (number_builder, 0, number_pos);
-			if (number_pos <= 8)
-				ul = System.UInt32.Parse (s, NumberStyles.HexNumber);
-			else
-				ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
+			try {
+				if (number_pos <= 8)
+					ul = System.UInt32.Parse (s, NumberStyles.HexNumber);
+				else
+					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
+			} catch (OverflowException){
+				error_details = "Integral constant is too large";
+				Report.Error (1021, Location, error_details);
+				val = 0ul;
+				return Token.LITERAL_INTEGER;
+			}
+			
 			return integer_type_suffix (ul, peekChar ());
 		}
 

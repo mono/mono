@@ -98,14 +98,11 @@ namespace Mono.CSharp {
 				// operand is of type sbyte, short or int, the operands are
 				// converted to type long.
 				//
-				Constant match, other;
-				if (left is UIntConstant){
+				Constant other;
+				if (left is UIntConstant)
 					other = right;
-					match = left;
-				} else {
+				else
 					other = left;
-					match = right;
-				}
 
 				// Nothing to do.
 				if (other is UIntConstant)
@@ -118,8 +115,8 @@ namespace Mono.CSharp {
 							left = new UIntConstant ((uint) ic.Value);
 						else
 							right = new UIntConstant ((uint) ic.Value);
+						return;
 					}
-					return;
 				}
 				
 				if (other is SByteConstant || other is ShortConstant || ic != null){
@@ -970,7 +967,7 @@ namespace Mono.CSharp {
 						((StringConstant) right).Value);
 					
 				}
-				
+
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;

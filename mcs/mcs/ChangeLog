@@ -1,3 +1,13 @@
+2003-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* cfold.cs (IntConstant to UIntConstant mapping): Only return if
+	we actually did transform the other operand, otherwise fall back
+	to the common codepath that casts to long.
+
+	* cs-tokenizer.cs: Use the same code pattern as the int case.
+	Maybe I should do the parsing myself, and avoid depending on the
+	Parse routines to get this done.
+
 2003-11-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Apply fix from l_m@pacbell.net (Laurent Morichetti),  
