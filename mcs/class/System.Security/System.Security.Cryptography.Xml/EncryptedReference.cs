@@ -53,9 +53,9 @@ namespace System.Security.Cryptography.Xml {
 			get { return cacheValid; }
 		}
 
-		[MonoTODO]
 		protected string ReferenceType {
 			get { return referenceType; }
+			set { referenceType = value; }
 		}
 
 		public TransformChain TransformChain {
@@ -84,11 +84,72 @@ namespace System.Security.Cryptography.Xml {
 
 		internal virtual XmlElement GetXml (XmlDocument document)
 		{
-			return document.CreateElement ("", "");
+			XmlElement xel = document.CreateElement (ReferenceType, EncryptedXml.XmlEncNamespaceUrl);
+
+			xel.SetAttribute (XmlEncryption.AttributeNames.URI, Uri);
+
+                        if (TransformChain != null && TransformChain.Count > 0) {
+                                XmlElement xtr = document.CreateElement (XmlEncryption.ElementNames.Transforms, EncryptedXml.XmlEncNamespaceUrl);
+                                foreach (Transform t in TransformChain)
+                                        xtr.AppendChild (document.ImportNode (t.GetXml (), true));
+                                xel.AppendChild (xtr);
+                        }
+
+			return xel;
 		}
 
+		[MonoTODO ("Make compliant.")]
 		public virtual void LoadXml (XmlElement value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if ((value.LocalName != XmlEncryption.ElementNames.CipherReference) || (value.NamespaceURI != EncryptedXml.XmlEncNamespaceUrl))
+				throw new CryptographicException ("Malformed CipherReference element.");
+			else {
+				Uri = null;
+				TransformChain = new TransformChain ();
+
+				foreach (XmlNode n in value.ChildNodes) {
+					if (n is XmlWhitespace)
+						continue;
+
+					switch (n.LocalName) {
+					case XmlEncryption.ElementNames.Transforms:
+						foreach (XmlNode xn in ((XmlElement) n).GetElementsByTagName (XmlSignature.ElementNames.Transform, XmlSignature.NamespaceURI)) {
+							Transform t = null;
+							switch (((XmlElement) xn).Attributes [XmlSignature.AttributeNames.Algorithm].Value) {
+							case XmlSignature.AlgorithmNamespaces.XmlDsigBase64Transform:
+								t = new XmlDsigBase64Transform ();
+								break;
+							case XmlSignature.AlgorithmNamespaces.XmlDsigC14NTransform:
+								t = new XmlDsigC14NTransform ();
+								break;
+							case XmlSignature.AlgorithmNamespaces.XmlDsigC14NWithCommentsTransform:
+								t = new XmlDsigC14NWithCommentsTransform ();
+								break;
+							case XmlSignature.AlgorithmNamespaces.XmlDsigEnvelopedSignatureTransform:
+								t = new XmlDsigEnvelopedSignatureTransform ();
+								break;
+							case XmlSignature.AlgorithmNamespaces.XmlDsigXPathTransform:
+								t = new XmlDsigXPathTransform ();
+								break;
+							case XmlSignature.AlgorithmNamespaces.XmlDsigXsltTransform:
+								t = new XmlDsigXsltTransform ();
+								break;
+							default:
+								continue;
+							}
+
+							t.LoadInnerXml (((XmlElement) xn).ChildNodes);
+							TransformChain.Add (t);
+						}
+						break;
+					}
+				}
+
+				if (value.HasAttribute (XmlEncryption.AttributeNames.URI))
+					Uri = value.Attributes [XmlEncryption.AttributeNames.URI].Value;
+			}
 		}
 
 		#endregion // Methods

@@ -42,12 +42,12 @@ namespace System.Security.Cryptography.Xml {
 
 		internal override XmlElement GetXml (XmlDocument document)
 		{
-			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.CipherReference, XmlEncryption.NamespaceURI);
+			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.CipherReference, EncryptedXml.XmlEncNamespaceUrl);
 
 			xel.SetAttribute (XmlEncryption.AttributeNames.URI, Uri);
 
 			if (TransformChain != null && TransformChain.Count > 0) {
-				XmlElement xtr = document.CreateElement (XmlEncryption.ElementNames.Transforms, XmlEncryption.NamespaceURI);
+				XmlElement xtr = document.CreateElement (XmlEncryption.ElementNames.Transforms, EncryptedXml.XmlEncNamespaceUrl);
 				foreach (Transform t in TransformChain) 
 					xtr.AppendChild (document.ImportNode (t.GetXml (), true));
 				xel.AppendChild (xtr);
@@ -60,7 +60,7 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-			if ((value.LocalName != XmlEncryption.ElementNames.CipherReference) || (value.NamespaceURI != XmlEncryption.NamespaceURI))
+			if ((value.LocalName != XmlEncryption.ElementNames.CipherReference) || (value.NamespaceURI != EncryptedXml.XmlEncNamespaceUrl))
 				throw new CryptographicException ("Malformed CipherReference element.");
 			else {
 				Uri = null;

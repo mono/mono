@@ -1,3 +1,16 @@
+2004-02-10  Tim Coleman <tim@timcoleman.com>
+	* DataReference.cs EncryptedKey.cs EncryptedXml.cs
+	* KeyInfoEncryptedKey.cs KeyReference.cs ReferenceList.cs
+	* X509IssuerSerial.cs XmlDecryptionTransform.cs:
+		Add new classes for Xml Encryption in 1.2
+	* CipherData.cs CipherReference.cs EncryptedData.cs
+	* EncryptedReference.cs EncryptionMethod.cs EncryptionProperty.cs :
+		Change NamespaceURI reference to EncryptedXml class.
+		Make compliant with 1.2
+	* XmlEncryption.cs:
+		Add new entity names.
+
+
 2004-02-07  Tim Coleman <tim@timcoleman.com>
 	* CipherData.cs CipherReference.cs EncryptedData.cs
 	* EncryptedReference.cs EncryptedType.cs EncryptionMethod.cs

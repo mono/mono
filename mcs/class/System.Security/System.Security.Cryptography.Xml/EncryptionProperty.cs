@@ -61,7 +61,7 @@ namespace System.Security.Cryptography.Xml {
 
 		internal XmlElement GetXml (XmlDocument document)
 		{
-			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.EncryptionProperty, XmlEncryption.NamespaceURI);
+			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.EncryptionProperty, EncryptedXml.XmlEncNamespaceUrl);
 
 			if (Id != null)
 				xel.SetAttribute (XmlEncryption.AttributeNames.Id, Id);
@@ -76,7 +76,7 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if ((value.LocalName != XmlEncryption.ElementNames.EncryptionProperty) || (value.NamespaceURI != XmlEncryption.NamespaceURI))
+			if ((value.LocalName != XmlEncryption.ElementNames.EncryptionProperty) || (value.NamespaceURI != EncryptedXml.XmlEncNamespaceUrl))
 				throw new CryptographicException ("Malformed EncryptionProperty element.");
 			else {	
 				if (value.HasAttribute (XmlEncryption.AttributeNames.Id))

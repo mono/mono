@@ -62,10 +62,10 @@ namespace System.Security.Cryptography.Xml {
 
 		internal XmlElement GetXml (XmlDocument document)
 		{
-			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.EncryptionMethod, XmlEncryption.NamespaceURI);
+			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.EncryptionMethod, EncryptedXml.XmlEncNamespaceUrl);
 
 			if (KeySize != 0) {
-				XmlElement xks = document.CreateElement (XmlEncryption.ElementNames.KeySize, XmlEncryption.NamespaceURI);
+				XmlElement xks = document.CreateElement (XmlEncryption.ElementNames.KeySize, EncryptedXml.XmlEncNamespaceUrl);
 				xks.InnerText = String.Format ("{0}", keySize);
 				xel.AppendChild (xks);
 			}
@@ -79,7 +79,7 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-			if ((value.LocalName != XmlEncryption.ElementNames.EncryptionMethod) || (value.NamespaceURI != XmlEncryption.NamespaceURI))
+			if ((value.LocalName != XmlEncryption.ElementNames.EncryptionMethod) || (value.NamespaceURI != EncryptedXml.XmlEncNamespaceUrl))
 				throw new CryptographicException ("Malformed EncryptionMethod element.");
 			else {
 				KeyAlgorithm = null;

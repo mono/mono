@@ -75,12 +75,12 @@ namespace System.Security.Cryptography.Xml {
 			if (CipherReference == null && CipherValue == null)
 				throw new CryptographicException ("A Cipher Data element should have either a CipherValue or a CipherReference element.");
 
-			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.CipherData, XmlEncryption.NamespaceURI);
+			XmlElement xel = document.CreateElement (XmlEncryption.ElementNames.CipherData, EncryptedXml.XmlEncNamespaceUrl);
 			if (CipherReference != null) 
 				xel.AppendChild (document.ImportNode (cipherReference.GetXml (), true));
 
 			if (CipherValue != null) {
-				XmlElement xcv = document.CreateElement (XmlEncryption.ElementNames.CipherValue, XmlEncryption.NamespaceURI);
+				XmlElement xcv = document.CreateElement (XmlEncryption.ElementNames.CipherValue, EncryptedXml.XmlEncNamespaceUrl);
 				StreamReader reader = new StreamReader (new CryptoStream (new MemoryStream (cipherValue), new ToBase64Transform (), CryptoStreamMode.Read));
 				xcv.InnerText = reader.ReadToEnd ();
 				reader.Close ();
@@ -97,7 +97,7 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if ((value.LocalName != XmlEncryption.ElementNames.CipherData) || (value.NamespaceURI != XmlEncryption.NamespaceURI)) 
+			if ((value.LocalName != XmlEncryption.ElementNames.CipherData) || (value.NamespaceURI != EncryptedXml.XmlEncNamespaceUrl)) 
 				throw new CryptographicException ("Malformed Cipher Data element.");
 			else {
 				foreach (XmlNode n in value.ChildNodes) {

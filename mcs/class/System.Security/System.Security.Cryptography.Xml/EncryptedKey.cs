@@ -1,6 +1,6 @@
 //
-// EncryptedData.cs - EncryptedData implementation for XML Encryption
-// http://www.w3.org/2001/04/xmlenc#sec-EncryptedData
+// EncryptedKey.cs - EncryptedKey implementation for XML Encryption
+// http://www.w3.org/2001/04/xmlenc#sec-EncryptedKey
 //
 // Author:
 //      Tim Coleman (tim@timcoleman.com)
@@ -12,18 +12,58 @@
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
-	public sealed class EncryptedData : EncryptedType {
+	public sealed class EncryptedKey : EncryptedType {
+
+		#region Fields
+
+		string carriedKeyName;
+		string recipient;
+		ReferenceList referenceList;
+
+		#endregion // Fields
 
 		#region Constructors
 
-		public EncryptedData ()
+		public EncryptedKey ()
 			: base ()
 		{
+			CarriedKeyName = null;
+			Recipient = null;
+			ReferenceList = new ReferenceList ();
 		}
 
 		#endregion // Constructors
 
+		#region Properties
+
+		public string CarriedKeyName {
+			get { return carriedKeyName; }
+			set { carriedKeyName = value; }
+		}
+
+		public string Recipient {
+			get { return recipient; }
+			set { recipient = value; }
+		}
+
+		public ReferenceList ReferenceList {
+			get { return referenceList; }
+			set { referenceList = value; }
+		}
+
+		#endregion // Properties
+
 		#region Methods
+
+		public void AddReference (DataReference dataReference)
+		{
+			ReferenceList.Add (dataReference);
+		}
+
+		public void AddReference (KeyReference keyReference)
+		{
+			ReferenceList.Add (keyReference);
+		}
 
 		public override XmlElement GetXml ()
 		{
@@ -51,6 +91,19 @@ namespace System.Security.Cryptography.Xml {
 				xel.AppendChild (xep);
 			}
 
+			if (ReferenceList.Count > 0) {
+				XmlElement xrl = document.CreateElement (XmlEncryption.ElementNames.ReferenceList, EncryptedXml.XmlEncNamespaceUrl);
+				foreach (EncryptedReference er in ReferenceList) 
+					xrl.AppendChild (er.GetXml (document));
+				xel.AppendChild (xrl);
+			}
+
+			if (CarriedKeyName != null) {
+				XmlElement xck = document.CreateElement (XmlEncryption.ElementNames.CarriedKeyName, EncryptedXml.XmlEncNamespaceUrl);
+				xck.InnerText = CarriedKeyName;
+				xel.AppendChild (xck);
+			}
+
 			if (Id != null)
 				xel.SetAttribute (XmlEncryption.AttributeNames.Id, Id);
 			if (Type != null)
@@ -59,6 +112,8 @@ namespace System.Security.Cryptography.Xml {
 				xel.SetAttribute (XmlEncryption.AttributeNames.MimeType, MimeType);
 			if (Encoding != null)
 				xel.SetAttribute (XmlEncryption.AttributeNames.Encoding, Encoding);
+			if (Recipient != null)
+				xel.SetAttribute (XmlEncryption.AttributeNames.Recipient, Recipient);
 			return xel;
 		}
 
@@ -67,18 +122,21 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if ((value.LocalName != XmlEncryption.ElementNames.EncryptedData) || (value.NamespaceURI != EncryptedXml.XmlEncNamespaceUrl))
-				throw new CryptographicException ("Malformed EncryptedData element.");
+			if ((value.LocalName != XmlEncryption.ElementNames.EncryptedKey) || (value.NamespaceURI != EncryptedXml.XmlEncNamespaceUrl))
+				throw new CryptographicException ("Malformed EncryptedKey element.");
 			else {
 				EncryptionMethod = null;
 				KeyInfo keyInfo = null;
 				CipherData cipherData = null;
 				EncryptionMethod = null;
 				EncryptionProperties = new EncryptionProperties ();
+				ReferenceList = new ReferenceList ();
+				CarriedKeyName = null;
 				Id = null;
 				Type = null;
 				MimeType = null;
 				Encoding = null;
+				Recipient = null;
 
 				foreach (XmlNode n in value.ChildNodes) {
 					if (n is XmlWhitespace)
@@ -101,6 +159,28 @@ namespace System.Security.Cryptography.Xml {
 						foreach (XmlElement element in ((XmlElement) n).GetElementsByTagName (XmlEncryption.ElementNames.EncryptionProperty, EncryptedXml.XmlEncNamespaceUrl))
 							EncryptionProperties.Add (new EncryptionProperty (element));
 						break;
+					case XmlEncryption.ElementNames.ReferenceList:
+						foreach (XmlNode r in ((XmlElement) n).ChildNodes) {
+							if (child is XmlWhitespace) 
+								continue;
+
+							switch (child.LocalName) {
+							case XmlEncryption.ElementNames.DataReference:
+								DataReference dr = new DataReference ();
+								dr.LoadXml ((XmlElement) r);
+								AddReference (dr);
+								break;
+							case XmlEncryption.ElementNames.KeyReference:
+								KeyReference kr = new KeyReference ();
+								kr.LoadXml ((XmlElement) r);
+								AddReference (kr);
+								break;
+							}
+						}
+						break;
+					case XmlEncryption.ElementNames.CarriedKeyName:
+						CarriedKeyName = ((XmlElement) n).InnerText;
+						break;
 					}
 				}
 
@@ -112,6 +192,8 @@ namespace System.Security.Cryptography.Xml {
 					MimeType = value.Attributes [XmlEncryption.AttributeNames.MimeType].Value;
 				if (value.HasAttribute (XmlEncryption.AttributeNames.Encoding))
 					Encoding = value.Attributes [XmlEncryption.AttributeNames.Encoding].Value;
+				if (value.HasAttribute (XmlEncryption.AttributeNames.Recipient))
+					Encoding = value.Attributes [XmlEncryption.AttributeNames.Recipient].Value;
 			}
 		}
 
