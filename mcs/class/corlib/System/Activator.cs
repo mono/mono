@@ -172,15 +172,11 @@ namespace System
 			for (int i = 0; i < length; ++i) {
 				atypes [i] = args [i].GetType ();
 			}
-			//FIXME: when GetConstructor works with this parameter list, use it
-			//ConstructorInfo ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
-			ConstructorInfo ctor = type.GetConstructor (atypes);
+			ConstructorInfo ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
 			if (ctor == null)
 				return null;
 
-			//FIXME: when Invoke allows this parameter list, use it
-			//return ctor.Invoke (args, bindingAttr, binder, args, culture);
-			return ctor.Invoke (args);
+			return ctor.Invoke (bindingAttr, binder, args, culture);
 		}
 
 		public static object CreateInstance (Type type, bool nonPublic)
