@@ -69,80 +69,92 @@ namespace Microsoft.JScript
 		public const int LITERAL_static = 39;
 		public const int LITERAL_throw = 40;
 		public const int LITERAL_try = 41;
-		public const int LITERAL_catch = 42;
-		public const int LITERAL_finally = 43;
-		public const int LITERAL_var = 44;
-		public const int MULTIPLICATION_ASSIGN = 45;
-		public const int DIVISION_ASSIGN = 46;
-		public const int REMAINDER_ASSIGN = 47;
-		public const int ADDITION_ASSIGN = 48;
-		public const int SUBSTRACTION_ASSIGN = 49;
-		public const int SIGNED_LEFT_SHIFT_ASSIGN = 50;
-		public const int SIGNED_RIGHT_SHIFT_ASSIGN = 51;
-		public const int UNSIGNED_RIGHT_SHIFT_ASSIGN = 52;
-		public const int BITWISE_AND_ASSIGN = 53;
-		public const int BITWISE_XOR_ASSIGN = 54;
-		public const int BITWISE_OR_ASSIGN = 55;
-		public const int CONDITIONAL = 56;
-		public const int LOGICAL_OR = 57;
-		public const int LOGICAL_AND = 58;
-		public const int BITWISE_OR = 59;
-		public const int BITWISE_XOR = 60;
-		public const int BITWISE_AND = 61;
-		public const int EQUALS = 62;
-		public const int DOES_NOT_EQUALS = 63;
-		public const int STRICT_EQUALS = 64;
-		public const int STRICT_DOES_NOT_EQUALS = 65;
-		public const int L_THAN = 66;
-		public const int G_THAN = 67;
-		public const int LE_THAN = 68;
-		public const int GE_THAN = 69;
-		public const int LITERAL_instanceof = 70;
-		public const int SIGNED_RIGHT_SHIFT = 71;
-		public const int SIGNED_LEFT_SHIFT = 72;
-		public const int PLUS = 73;
-		public const int MINUS = 74;
-		public const int TIMES = 75;
-		public const int DIVISION = 76;
-		public const int REMAINDER = 77;
-		public const int LITERAL_delete = 78;
-		public const int LITERAL_void = 79;
-		public const int LITERAL_typeof = 80;
-		public const int INCREMENT = 81;
-		public const int DECREMENT = 82;
-		public const int BITWISE_NOT = 83;
-		public const int LOGICAL_NOT = 84;
-		public const int LITERAL_new = 85;
-		public const int LSQUARE = 86;
-		public const int RSQUARE = 87;
-		public const int DOT = 88;
-		public const int THIS = 89;
-		public const int STRING_LITERAL = 90;
-		public const int LITERAL_true = 91;
-		public const int LITERAL_false = 92;
-		public const int LITERAL_null = 93;
-		public const int DECIMAL_LITERAL = 94;
-		public const int HEX_INTEGER_LITERAL = 95;
-		public const int LITERAL_public = 96;
-		public const int LITERAL_private = 97;
-		public const int LITERAL_protected = 98;
-		public const int LITERAL_internal = 99;
-		public const int LITERAL_expando = 100;
-		public const int LITERAL_abstract = 101;
-		public const int LITERAL_final = 102;
-		public const int LITERAL_hide = 103;
-		public const int LITERAL_override = 104;
-		public const int TAB = 105;
-		public const int VERTICAL_TAB = 106;
-		public const int FORM_FEED = 107;
-		public const int SPACE = 108;
-		public const int NO_BREAK_SPACE = 109;
-		public const int LINE_FEED = 110;
-		public const int CARRIGE_RETURN = 111;
-		public const int LINE_SEPARATOR = 112;
-		public const int PARAGRAPH_SEPARATOR = 113;
-		public const int UNSIGNED_RIGHT_SHIFT = 114;
-		public const int SL_COMMENT = 115;
+		public const int CC_ON = 42;
+		public const int COND_SET = 43;
+		public const int COND_DEBUG = 44;
+		public const int LITERAL_on = 45;
+		public const int LITERAL_off = 46;
+		public const int COND_POSITION = 47;
+		public const int LITERAL_end = 48;
+		public const int LITERAL_file = 49;
+		public const int STRING_LITERAL = 50;
+		public const int LITERAL_catch = 51;
+		public const int LITERAL_finally = 52;
+		public const int LITERAL_var = 53;
+		public const int MULTIPLICATION_ASSIGN = 54;
+		public const int DIVISION_ASSIGN = 55;
+		public const int REMAINDER_ASSIGN = 56;
+		public const int ADDITION_ASSIGN = 57;
+		public const int SUBSTRACTION_ASSIGN = 58;
+		public const int SIGNED_LEFT_SHIFT_ASSIGN = 59;
+		public const int SIGNED_RIGHT_SHIFT_ASSIGN = 60;
+		public const int UNSIGNED_RIGHT_SHIFT_ASSIGN = 61;
+		public const int BITWISE_AND_ASSIGN = 62;
+		public const int BITWISE_XOR_ASSIGN = 63;
+		public const int BITWISE_OR_ASSIGN = 64;
+		public const int CONDITIONAL = 65;
+		public const int LOGICAL_OR = 66;
+		public const int LOGICAL_AND = 67;
+		public const int BITWISE_OR = 68;
+		public const int BITWISE_XOR = 69;
+		public const int BITWISE_AND = 70;
+		public const int EQUALS = 71;
+		public const int DOES_NOT_EQUALS = 72;
+		public const int STRICT_EQUALS = 73;
+		public const int STRICT_DOES_NOT_EQUALS = 74;
+		public const int L_THAN = 75;
+		public const int G_THAN = 76;
+		public const int LE_THAN = 77;
+		public const int GE_THAN = 78;
+		public const int LITERAL_instanceof = 79;
+		public const int SIGNED_RIGHT_SHIFT = 80;
+		public const int SIGNED_LEFT_SHIFT = 81;
+		public const int PLUS = 82;
+		public const int MINUS = 83;
+		public const int TIMES = 84;
+		public const int DIVISION = 85;
+		public const int REMAINDER = 86;
+		public const int LITERAL_delete = 87;
+		public const int LITERAL_void = 88;
+		public const int LITERAL_typeof = 89;
+		public const int INCREMENT = 90;
+		public const int DECREMENT = 91;
+		public const int BITWISE_NOT = 92;
+		public const int LOGICAL_NOT = 93;
+		public const int LITERAL_new = 94;
+		public const int LSQUARE = 95;
+		public const int RSQUARE = 96;
+		public const int DOT = 97;
+		public const int THIS = 98;
+		public const int LITERAL_true = 99;
+		public const int LITERAL_false = 100;
+		public const int LITERAL_null = 101;
+		public const int DECIMAL_LITERAL = 102;
+		public const int HEX_INTEGER_LITERAL = 103;
+		public const int LITERAL_public = 104;
+		public const int LITERAL_private = 105;
+		public const int LITERAL_protected = 106;
+		public const int LITERAL_internal = 107;
+		public const int LITERAL_expando = 108;
+		public const int LITERAL_abstract = 109;
+		public const int LITERAL_final = 110;
+		public const int LITERAL_hide = 111;
+		public const int LITERAL_override = 112;
+		public const int TAB = 113;
+		public const int VERTICAL_TAB = 114;
+		public const int FORM_FEED = 115;
+		public const int SPACE = 116;
+		public const int NO_BREAK_SPACE = 117;
+		public const int LINE_FEED = 118;
+		public const int CARRIGE_RETURN = 119;
+		public const int LINE_SEPARATOR = 120;
+		public const int PARAGRAPH_SEPARATOR = 121;
+		public const int UNSIGNED_RIGHT_SHIFT = 122;
+		public const int COND_IF = 123;
+		public const int COND_ELIF = 124;
+		public const int COND_ELSE = 125;
+		public const int COND_END = 126;
+		public const int SL_COMMENT = 127;
 		
 		public JScriptLexer(Stream ins) : this(new ByteBuffer(ins))
 		{
@@ -171,48 +183,52 @@ namespace Microsoft.JScript
 			literals.Add("for", 27);
 			literals.Add("class", 14);
 			literals.Add("get", 18);
-			literals.Add("final", 102);
-			literals.Add("internal", 99);
-			literals.Add("false", 92);
+			literals.Add("final", 110);
+			literals.Add("internal", 107);
+			literals.Add("false", 100);
 			literals.Add("debugger", 20);
-			literals.Add("true", 91);
+			literals.Add("true", 99);
 			literals.Add("try", 41);
-			literals.Add("finally", 43);
-			literals.Add("void", 79);
-			literals.Add("typeof", 80);
+			literals.Add("finally", 52);
+			literals.Add("void", 88);
+			literals.Add("typeof", 89);
 			literals.Add("import", 23);
-			literals.Add("instanceof", 70);
-			literals.Add("private", 97);
-			literals.Add("override", 104);
-			literals.Add("expando", 100);
+			literals.Add("instanceof", 79);
+			literals.Add("private", 105);
+			literals.Add("on", 45);
+			literals.Add("end", 48);
+			literals.Add("override", 112);
+			literals.Add("expando", 108);
 			literals.Add("set", 19);
 			literals.Add("throw", 40);
 			literals.Add("implements", 16);
 			literals.Add("continue", 29);
 			literals.Add("do", 25);
+			literals.Add("off", 46);
 			literals.Add("in", 28);
-			literals.Add("null", 93);
+			literals.Add("null", 101);
 			literals.Add("extends", 15);
 			literals.Add("function", 4);
 			literals.Add("enum", 38);
 			literals.Add("static", 39);
 			literals.Add("while", 26);
 			literals.Add("const", 11);
-			literals.Add("abstract", 101);
-			literals.Add("hide", 103);
-			literals.Add("protected", 98);
+			literals.Add("abstract", 109);
+			literals.Add("hide", 111);
+			literals.Add("protected", 106);
 			literals.Add("break", 30);
-			literals.Add("new", 85);
+			literals.Add("new", 94);
 			literals.Add("return", 32);
-			literals.Add("delete", 78);
+			literals.Add("delete", 87);
 			literals.Add("if", 21);
 			literals.Add("default", 37);
+			literals.Add("file", 49);
 			literals.Add("super", 34);
-			literals.Add("public", 96);
+			literals.Add("public", 104);
 			literals.Add("package", 31);
 			literals.Add("else", 22);
-			literals.Add("var", 44);
-			literals.Add("catch", 42);
+			literals.Add("var", 53);
+			literals.Add("catch", 51);
 			literals.Add("with", 33);
 		}
 		
@@ -387,6 +403,14 @@ tryAgain:
 								mUNSIGNED_RIGHT_SHIFT_ASSIGN(true);
 								theRetToken = returnToken_;
 							}
+							else if ((LA(1)=='@') && (LA(2)=='e') && (LA(3)=='l') && (LA(4)=='i')) {
+								mCOND_ELIF(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='@') && (LA(2)=='e') && (LA(3)=='l') && (LA(4)=='s')) {
+								mCOND_ELSE(true);
+								theRetToken = returnToken_;
+							}
 							else if ((LA(1)=='=') && (LA(2)=='=') && (LA(3)=='=')) {
 								mSTRICT_EQUALS(true);
 								theRetToken = returnToken_;
@@ -405,6 +429,10 @@ tryAgain:
 							}
 							else if ((LA(1)=='>') && (LA(2)=='>') && (LA(3)=='=')) {
 								mSIGNED_RIGHT_SHIFT_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='@') && (LA(2)=='e') && (LA(3)=='n')) {
+								mCOND_END(true);
 								theRetToken = returnToken_;
 							}
 							else if ((LA(1)=='<') && (LA(2)=='=')) {
@@ -477,6 +505,26 @@ tryAgain:
 							}
 							else if ((LA(1)=='/') && (LA(2)=='=')) {
 								mDIVISION_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='@') && (LA(2)=='s')) {
+								mCOND_SET(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='@') && (LA(2)=='d')) {
+								mCOND_DEBUG(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='@') && (LA(2)=='p')) {
+								mCOND_POSITION(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='@') && (LA(2)=='i')) {
+								mCOND_IF(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='@') && (LA(2)=='c')) {
+								mCC_ON(true);
 								theRetToken = returnToken_;
 							}
 							else if ((LA(1)=='0') && (LA(2)=='x')) {
@@ -1369,6 +1417,118 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
+	public void mCOND_SET(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = COND_SET;
+		
+		match("@set");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mCOND_DEBUG(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = COND_DEBUG;
+		
+		match("@debug");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mCOND_POSITION(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = COND_POSITION;
+		
+		match("@position");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mCOND_IF(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = COND_IF;
+		
+		match("@if");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mCOND_ELIF(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = COND_ELIF;
+		
+		match("@elif");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mCOND_ELSE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = COND_ELSE;
+		
+		match("@else");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mCOND_END(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = COND_END;
+		
+		match("@end");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mCC_ON(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = CC_ON;
+		
+		match("@cc_on");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
 	public void mDECIMAL_LITERAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
@@ -1398,11 +1558,11 @@ tryAgain:
 						}
 						else
 						{
-							goto _loop235_breakloop;
+							goto _loop251_breakloop;
 						}
 						
 					}
-_loop235_breakloop:					;
+_loop251_breakloop:					;
 				}    // ( ... )*
 				break;
 			}
@@ -1425,11 +1585,11 @@ _loop235_breakloop:					;
 						}
 						else
 						{
-							goto _loop238_breakloop;
+							goto _loop254_breakloop;
 						}
 						
 					}
-_loop238_breakloop:					;
+_loop254_breakloop:					;
 				}    // ( ... )*
 			}
 			else {
@@ -1485,7 +1645,7 @@ _loop238_breakloop:					;
 						 }
 					}
 					{ // ( ... )+
-					int _cnt244=0;
+					int _cnt260=0;
 					for (;;)
 					{
 						if (((LA(1) >= '0' && LA(1) <= '9')))
@@ -1494,12 +1654,12 @@ _loop238_breakloop:					;
 						}
 						else
 						{
-							if (_cnt244 >= 1) { goto _loop244_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+							if (_cnt260 >= 1) { goto _loop260_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 						}
 						
-						_cnt244++;
+						_cnt260++;
 					}
-_loop244_breakloop:					;
+_loop260_breakloop:					;
 					}    // ( ... )+
 				}
 			}
@@ -1523,7 +1683,7 @@ _loop244_breakloop:					;
 		match('0');
 		match('x');
 		{ // ( ... )+
-		int _cnt247=0;
+		int _cnt263=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -1549,12 +1709,12 @@ _loop244_breakloop:					;
 			}
 			default:
 			{
-				if (_cnt247 >= 1) { goto _loop247_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt263 >= 1) { goto _loop263_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt247++;
+			_cnt263++;
 		}
-_loop247_breakloop:		;
+_loop263_breakloop:		;
 		}    // ( ... )+
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
@@ -1574,7 +1734,7 @@ _loop247_breakloop:		;
 		match('"');
 		text.Length = _saveIndex;
 		{ // ( ... )+
-		int _cnt250=0;
+		int _cnt266=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -1608,12 +1768,12 @@ _loop247_breakloop:		;
 			}
 			default:
 			{
-				if (_cnt250 >= 1) { goto _loop250_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt266 >= 1) { goto _loop266_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt250++;
+			_cnt266++;
 		}
-_loop250_breakloop:		;
+_loop266_breakloop:		;
 		}    // ( ... )+
 		_saveIndex = text.Length;
 		match('"');
@@ -1698,11 +1858,11 @@ _loop250_breakloop:		;
 				}
 				default:
 				{
-					goto _loop254_breakloop;
+					goto _loop270_breakloop;
 				}
 				 }
 			}
-_loop254_breakloop:			;
+_loop270_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -1730,11 +1890,11 @@ _loop254_breakloop:			;
 				}
 				else
 				{
-					goto _loop258_breakloop;
+					goto _loop274_breakloop;
 				}
 				
 			}
-_loop258_breakloop:			;
+_loop274_breakloop:			;
 		}    // ( ... )*
 		_ttype = Token.SKIP; newline ();
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))

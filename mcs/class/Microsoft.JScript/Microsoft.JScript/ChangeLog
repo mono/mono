@@ -1,4 +1,14 @@
+2003-07-09  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+	* jscript-lexer-parser.g: Added conditional_compilation_directive,
+	which is the beginning of our support for conditional compilation
+	statements and directives in our parser. Added
+	cc_on_statement, and some lexer rules for getting the needed
+	tokens (COND_SET, COND_DEBUG, COND_POSITION, COND_POSITION,
+	COND_IF, COND_ELIF, COND_ELSE, COND_END and CC_ON.
+
+
 2003-07-03  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
 	* jscript-lexer-parser.g: Changed the format of copyright notice.
 
 	This changes will allow the support

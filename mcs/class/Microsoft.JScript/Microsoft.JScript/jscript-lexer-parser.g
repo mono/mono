@@ -44,6 +44,8 @@ source_element returns [AST ast]
     |
 	fd = global_function_declaration
 	{ ast = fd; }
+    |
+	conditional_compilation_directive		
     ;
 
 
@@ -57,6 +59,7 @@ global_function_declaration returns [FunctionDeclaration fd]
    	LBRACE (function_body [fd.funcBody] | ) RBRACE
        ;
 
+	
 // Statement, see section 12 from Ecma-262, page 61.
 statement returns [Statement stm]
 { 
@@ -102,6 +105,8 @@ statement returns [Statement stm]
 	labelled_statement
     |
 	try_statement
+    |
+	cc_on_statement	    
     ;
 
 
@@ -282,6 +287,18 @@ try_statement
     : 
 	"try" block ((catch_exp (finally_exp | )) | finally_exp)
     ;
+
+
+cc_on_statement: CC_ON ;
+
+
+// FIXME: more options left to implement
+conditional_compilation_directive:
+	COND_SET ((COND_DEBUG LPAREN ("on" | "off") RPAREN)
+		 |(COND_POSITION LPAREN ("end" | 
+					("file" ASSIGNMENT STRING_LITERAL | ))
+				 RPAREN))
+	;
 
 
 // NOTE: I call it catch_exp, to avoid confusion on antlr.
@@ -800,6 +817,22 @@ BITWISE_XOR_ASSIGN: "^=" ;
 DIVISION: '/' ;
 
 DIVISION_ASSIGN: "/=" ;
+
+COND_SET: "@set" ;
+ 
+COND_DEBUG: "@debug" ;
+
+COND_POSITION: "@position" ;
+
+COND_IF: "@if" ;
+
+COND_ELIF: "@elif" ;
+
+COND_ELSE: "@else" ;
+
+COND_END: "@end" ;
+
+CC_ON: "@cc_on" ;
 
 
 // literals
