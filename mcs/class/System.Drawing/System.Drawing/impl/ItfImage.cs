@@ -60,6 +60,8 @@ internal interface IImage : IDisposable {
 	
 	void RotateFlip (RotateFlipType rotateFlipType);
 
+	InternalImageInfo ConvertToInternalImageInfo();
+
 	void Save (string filename);
 
 	void Save(Stream stream, ImageFormat format);
@@ -111,8 +113,8 @@ internal interface IImage : IDisposable {
 		get ;
 	}
 	
-	//PropertyItem[] PropertyItems {get;}
-	//ImageFormat RawFormat {get;}
+	PropertyItem[] PropertyItems {get;}
+	ImageFormat RawFormat {get;}
 
 	Size Size {
 		get ;
