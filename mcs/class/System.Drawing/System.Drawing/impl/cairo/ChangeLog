@@ -1,5 +1,10 @@
 2003-08-24  Duncan Mak  <duncan@ximian.com> 		
 
+	* Cairo.cs: Make all references to the enums (Cairo.Foo) be just
+	Foo. This should (hopefully) fix the build on Windows.
+
+2003-08-24  Duncan Mak  <duncan@ximian.com>
+
 	Initial checkin of System.Drawing.XrImpl ported to use Cairo.
 
 	* Graphics.cs (DrawCurve):
