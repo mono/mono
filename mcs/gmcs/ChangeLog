@@ -1,3 +1,7 @@
+2004-09-14  Martin Baulig  <martin@ximian.com>
+
+	* genericparser.cs: Removed.
+
 2004-09-13  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MethodCore.CheckBase): Fix bug #65757.
