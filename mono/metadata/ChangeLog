@@ -1,3 +1,7 @@
+2004-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: fixed WSAGetLastError_internal name.
+
 2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (mono_thread_attach): Allow this to be called multiple
