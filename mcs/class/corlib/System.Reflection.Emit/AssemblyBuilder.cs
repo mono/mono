@@ -19,6 +19,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
+using Mono.Security;
 using Mono.Security.Cryptography;
 
 namespace System.Reflection.Emit {
@@ -421,13 +422,15 @@ namespace System.Reflection.Emit {
 			pekind = fileKind;
 		}
 
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) 
+		{
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
 
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			byte[] data;
 			int len, pos;
+			Mono.Security.StrongName sn;
 			if (attrname == "System.Reflection.AssemblyVersionAttribute") {
 				data = customBuilder.Data;
 				pos = 2;
@@ -448,7 +451,8 @@ namespace System.Reflection.Emit {
 					// this will import public or private/public keys
 					RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
 					// and export only the public part
-					public_key = CryptoConvert.ToCapiPublicKeyBlob (rsa);
+					sn = new Mono.Security.StrongName (rsa);
+					public_key = sn.PublicKey;
 				}
 				return;
 			} else if (attrname == "System.Reflection.AssemblyKeyNameAttribute") {
@@ -461,7 +465,8 @@ namespace System.Reflection.Emit {
 				CspParameters csparam = new CspParameters ();
 				csparam.KeyContainerName = key_name;
 				RSA rsacsp = new RSACryptoServiceProvider (csparam);
-				public_key = CryptoConvert.ToCapiPublicKeyBlob (rsacsp);
+				sn = new Mono.Security.StrongName (rsacsp);
+				public_key = sn.PublicKey;
 				return;
 			} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
 				data = customBuilder.Data;

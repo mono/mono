@@ -1,3 +1,8 @@
+2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AssemblyBuilder.cs (SetCustomAttribute): Changed PK extraction to
+	use Mono.Security.StrongName (#49785).
+
 2003-10-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (SetCustomAttribute): Extract the public key from
