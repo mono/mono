@@ -1,6 +1,8 @@
+Module M
+End Module
+
 Module ModuleTest
-	System.Console.WriteLine("If you read this, then there is something wrong!!")
 	Sub Main()
-		
+		Module M = new Module		
 	End Sub
 End Module
