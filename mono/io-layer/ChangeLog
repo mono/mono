@@ -1,3 +1,6 @@
+2002-04-25  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* io.c: unitialized pointer in GetCurrentDirectory.
 
 Sat Apr 20 13:37:39 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
