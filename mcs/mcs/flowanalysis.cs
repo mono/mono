@@ -377,8 +377,6 @@ namespace Mono.CSharp
 			default:
 				throw new ArgumentException ();
 			}
-
-			return b;
 		}
 
 		// <summary>
