@@ -1,3 +1,12 @@
+2004-01-12  Patrik Torstensson
+
+	* object.h (MonoStringBuilder) : Changed layout to support our
+	new stringbuilder class.
+	* marshal.c: Change marshalling to support the new layout of 
+	string builder.
+	* appdomain.c: increased version number because new layout of
+	string builder.
+
 2004-01-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (ves_icall_System_AppDomain_LoadAssembly): Receive the
