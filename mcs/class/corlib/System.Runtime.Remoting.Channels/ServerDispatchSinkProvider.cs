@@ -17,11 +17,8 @@ namespace System.Runtime.Remoting.Channels
 		{
 		}
 
-		[MonoTODO]
-		public ServerDispatchSinkProvider (IDictionary properties,
-						   ICollection providerData)
-	        {
-			throw new NotImplementedException ();
+		public ServerDispatchSinkProvider (IDictionary properties, ICollection providerData)
+	    {
 		}
 
 		public IServerChannelSinkProvider Next

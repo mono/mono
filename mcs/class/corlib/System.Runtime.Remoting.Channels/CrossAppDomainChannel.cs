@@ -244,9 +244,18 @@ namespace System.Runtime.Remoting.Channels
 	    	return retMessage;
 		}
 
-		public virtual IMessageCtrl AsyncProcessMessage(IMessage reqMsg, IMessageSink replySink) 
+		public virtual IMessageCtrl AsyncProcessMessage (IMessage reqMsg, IMessageSink replySink) 
 		{
-			throw new NotSupportedException();
+			AsyncRequest req = new AsyncRequest (reqMsg, replySink);
+			ThreadPool.QueueUserWorkItem (new WaitCallback (SendAsyncMessage), req);
+			return null;
+		}
+		
+		public void SendAsyncMessage (object data)
+		{
+			AsyncRequest req = (AsyncRequest)data;
+			IMessage response = SyncProcessMessage (req.MsgRequest);
+			req.ReplySink.SyncProcessMessage (response);
 		}
 		
 		public IMessageSink NextSink { get { return null; } }
@@ -301,6 +310,18 @@ namespace System.Runtime.Remoting.Channels
 			mem.Position = 0;
 
 			return serializer.Deserialize (mem);
+		}
+	}
+	
+	internal class AsyncRequest
+	{
+		internal IMessageSink ReplySink;
+		internal IMessage MsgRequest;
+		
+		public AsyncRequest (IMessage msgRequest, IMessageSink replySink)
+		{
+			ReplySink = replySink;
+			MsgRequest = msgRequest;
 		}
 	}
 
