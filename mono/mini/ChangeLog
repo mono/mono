@@ -1,5 +1,8 @@
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c tramp-x86.c tramp-sparc.c: Updated after changes to
+	mono_lookup_pinvoke_call.
+
 	* mini-x86.c: Under windows, the default pinvoke calling convention is
 	stdcall. Fixes #52834.
 
