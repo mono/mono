@@ -1092,9 +1092,7 @@ namespace Mono.CSharp {
 
 			if ((mt & MemberTypes.Field) != 0) {
 				if (fields != null) {
-					Console.WriteLine ("came here though" + criteria + "--" + mt);
 					foreach (Field f in fields) {
-						Console.WriteLine ("came here " + f.Name);
 						if ((f.ModFlags & Modifiers.PRIVATE) != 0)
 							if (!priv)
 								continue;
