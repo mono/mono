@@ -1,3 +1,8 @@
+2003-12-14  Alon Gazit <along@mainsoft.com>
+	* HtmlInputButton.cs: The problem was in RenderAttributes().
+	Before adding the script to the HTML, the number of Validators should 
+	be checked. fixes bug #52158.
+
 2003-12-07  Alon Gazit <along@mainsoft.com>
 	* HtmlTableCell.cs: fixing a typo in NoWrap property. 
 
