@@ -1,3 +1,10 @@
+Optimization ideas
+------------------
+
+	Currently when we build a type cache, it contains private members,
+	internal members, and internal protected members;   We should trim
+	these out, as it shows up on the profile.
+
 Anonymous Methods
 -----------------
 
