@@ -1,3 +1,7 @@
+2005-04-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NtlmClient.cs: fix typo in assembly name.
+
 2005-03-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: we don't need to trigger the next queued request
