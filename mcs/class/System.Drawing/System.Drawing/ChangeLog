@@ -1,4 +1,7 @@
-﻿2004-02-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+2004-02-10  Jordi Mas i Hernandez <jordi@ximian.com>
+	* graphics.cs: fixes parameters for DrawStrings functions
+
+2004-02-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* SRDescriptionAttribute.cs: Added and implemented
 	* ToolboxBitmapAttribute.cs: Implemented a few members

@@ -19,7 +19,7 @@ namespace System.Drawing {
 	/// <summary>
 	/// GDI+ API Functions
 	/// </summary>
-	public class GDIPlus {
+	internal class GDIPlus {
 		
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;

@@ -600,29 +600,25 @@ namespace System.Drawing
 		{			
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);			 
 		}
-
-		[MonoTODO("This ignores the font")]
+		
 		public void DrawString (string s, Font font, Brush brush, PointF point)
 		{
 			RectangleF rc = new RectangleF (point.X, point.Y, 0, 0);
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref rc, IntPtr.Zero, brush.nativeObject);
 		}
-
-		[MonoTODO ("This ignores the font and format")]
+		
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format)
 		{
 			RectangleF rc = new RectangleF (point.X, point.Y, 0, 0);
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref rc, IntPtr.Zero, brush.nativeObject);
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref rc, format.NativeObject, brush.nativeObject);
 		}
-
-		[MonoTODO ("This ignores the font and the format")]
+		
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref layoutRectangle, 
-			IntPtr.Zero, brush.nativeObject);
+				format.NativeObject, brush.nativeObject);
 		}
 
-		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
 			Console.WriteLine ("DrawString!");
