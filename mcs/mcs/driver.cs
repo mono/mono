@@ -155,9 +155,9 @@ namespace CSC
 		// </summary>
 		public Driver (string [] args)
 		{
-			Stream output_stream = Console.OpenStandardOutput ();
 			ITreeDump generator = null;
 			int errors = 0, i;
+			string output_file = null;
 
 			context = new RootContext ();
 			references = new ArrayList ();
@@ -190,7 +190,7 @@ namespace CSC
 					
 					if (arg.StartsWith ("-o")){
 						try {
-							output_stream = File.Create (args [++i]);
+							output_file = args [++i];
 						} catch (Exception){
 							error ("Could not write to `"+args [i]);
 							error_count++;
@@ -222,20 +222,21 @@ namespace CSC
 
 				errors += parse (context.Tree, arg);
 			}
-			if (errors > 0)
+			if (errors > 0){
 				error ("// Parsing failed");
-			else
-				notice ("// Parsing successful");				
+				return;
+			} else
+				notice ("// Parsing successful");
 
 			//
 			// Load assemblies required
 			//
 			errors += LoadReferences ();
 
-			if (errors > 0)
+			if (errors > 0){
 				error ("// Could not load one or more assemblies");
-			else
-				notice ("// Assemblies loaded");
+				return;
+			}
 
 
 			//
@@ -246,22 +247,48 @@ namespace CSC
 			// move to the new tree. 
 			//
 			if (generator != null){
+				if (output_file == null){
+					error ("Error: no output file specified");
+					return;
+				}
+
+				Stream output_stream = File.Create (output_file);
 				StreamWriter output = new StreamWriter (output_stream);
 				
 				errors += generator.Dump (context.Tree, output);
 
-				if (errors > 0)
+				if (errors > 0){
 					error ("// Compilation failed");
-				else
+					return;
+				} else
 					notice ("// Compilation successful");
 
 				output.Flush ();
 				output.Close ();
 			} 
 
+			
 			error_count = errors;
+
+			//
+			// Quick hack
+			//
+			if (output_file == null)
+				output_file = "a.exe";
+
+			context.CodeGen = new CilCodeGen (output_file, output_file);
+
+			//
+			// The second pass of the compiler
+			//
+			context.ResolveInterfaceBases ();
+			context.ResolveClassBases ();
+
+			context.CodeGen.Save (output_file);
 		}
 
 	}
 }
+
+
 

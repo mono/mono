@@ -40,5 +40,9 @@ public class CilCodeGen {
 			return module_builder;
 		}
 	}
-	
+
+	public void Save (string name)
+	{
+		assembly_builder.Save (name);
+	}
 }

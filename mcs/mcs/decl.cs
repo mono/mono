@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection.Emit;
 
 namespace CIR {
 
@@ -22,6 +23,12 @@ namespace CIR {
 	// </summary>
 	
 	public abstract class DeclSpace {
+		// <summary>
+		//   this points to the actual definition that is being
+		//   created with System.Reflection.Emit
+		// </summary>
+		TypeBuilder definition;
+		
 		string name, basename;
 		
 		// <summary>
@@ -119,6 +126,16 @@ namespace CIR {
 
 			set {
 				in_transit = value;
+			}
+		}
+
+		public TypeBuilder Definition {
+			get {
+				return definition;
+			}
+
+			set {
+				definition = value;
 			}
 		}
 	}

@@ -34,23 +34,48 @@ namespace CIR
 		TypeContainer root_types;
 
 		// <summary>
-		//   This maps source defined types that are defined
-		//   in the source code to their object holders (Class, Struct, 
-		//   Interface) and that have not yet been made into real
-		//   types. 
+		//   Keeps track of the interfaces defined in the source code
 		// </summary>
-		Hashtable source_types;
+		ArrayList ifaces;
+
+		// <summary>
+		//   Keeps track of the structs defined in the source code
+		// </summary>
+		ArrayList structs;
+
+		// <summary>
+		//   Keeps track of the classes defined in the source code
+		// </summary>
+		ArrayList classes;
 
 		public Tree ()
 		{
 			root_types = new TypeContainer (null, "");
-			source_types = new Hashtable ();
 		}
 
 
-		public void RecordType (string name, DeclSpace decl)
+		public void RecordInterface (string name, Interface iface)
 		{
-			source_types.Add (name, decl);
+			if (ifaces == null)
+				ifaces = new ArrayList ();
+
+			ifaces.Add (iface);
+		}
+		
+		public void RecordStruct (string name, Struct s)
+		{
+			if (structs == null)
+				structs = new ArrayList ();
+
+			structs.Add (s);
+		}
+		
+		public void RecordClass (string name, Class c)
+		{
+			if (classes == null)
+				classes = new ArrayList ();
+
+			classes.Add (c);
 		}
 		
 		public TypeContainer Types {
@@ -59,5 +84,22 @@ namespace CIR
 			}
 		}
 
+		public ArrayList Interfaces {
+			get {
+				return ifaces;
+			}
+		}
+
+		public ArrayList Classes {
+			get {
+				return classes;
+			}
+		}
+
+		public ArrayList Structs {
+			get {
+				return structs;
+			}
+		}
 	}
 }

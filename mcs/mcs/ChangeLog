@@ -1,3 +1,25 @@
+2001-08-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* tree.cs: Removed RecordType, added RecordClass, RecordStruct and
+	RecordInterface instead.
+
+	* cs-parser.jay: Updated to reflect changes above.
+
+	* decl.cs (Definition): Keep track of the TypeBuilder type that
+	represents this type here.  Not sure we will use it in the long
+	run, but wont hurt for now.
+
+	* driver.cs: Smaller changes to accomodate the new code.
+
+	Call ResolveInterfaceBases, Call ResolveClassBases, Save assembly
+	when done. 
+
+	* rootcontext.cs (CreateInterface):  New method, used to create
+	the System.TypeBuilder type for interfaces.
+	(ResolveInterfaces): new entry point to resolve the interface
+	hierarchy. 
+	(CodeGen): Property, used to keep track of the code generator.
+
 2001-07-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Add a second production for delegate_declaration
