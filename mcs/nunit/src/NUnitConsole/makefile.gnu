@@ -1,3 +1,4 @@
+topdir = ../../..
 PROGRAM = NUnitConsole_mono.exe
 
 PROGRAM_LIST = list.unix
@@ -8,6 +9,6 @@ PROGRAM_FLAGS =	\
 
 include ../../../class/executable.make
 
-MCS = mcs
+MCS = mono $(topdir)/mcs/mcs.exe
 MCS_FLAGS = --target exe --noconfig
 
