@@ -4005,7 +4005,6 @@ namespace CIR {
 			
 		public override Expression DoResolve (EmitContext ec)
 		{
-			bool IsDelegate = false;
 			//
 			// First, resolve the expression that is used to
 			// trigger the invocation
@@ -4029,15 +4028,15 @@ namespace CIR {
 			if (!(expr is MethodGroupExpr)) {
 				Type expr_type = expr.Type;
 
-				if (expr_type == null){
-					IsDelegate = TypeManager.IsDelegateType (expr_type);
+				if (expr_type != null){
+					bool IsDelegate = TypeManager.IsDelegateType (expr_type);
 					if (IsDelegate)
 						return (new DelegateInvocation (
 							this.expr, Arguments, Location)).Resolve (ec);
 				}
 			}
-			
-			if (!(this.expr is MethodGroupExpr)){
+
+			if (!(expr is MethodGroupExpr)){
 				report118 (Location, this.expr, "method group");
 				return null;
 			}

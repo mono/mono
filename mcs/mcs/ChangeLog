@@ -1,3 +1,8 @@
+2001-10-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Fix bug I introduced lsat night that broke
+	Delegates. 
+	
 2001-10-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation::DoResolve): Catch SimpleNames that
