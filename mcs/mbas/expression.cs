@@ -3971,6 +3971,8 @@ namespace Mono.CSharp {
 			// First, resolve the expression that is used to
 			// trigger the invocation
 			//
+			Expression expr_to_return = null;
+
 			if (expr is BaseAccess)
 				is_base = true;
 
@@ -3978,57 +3980,74 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			if (!(expr is MethodGroupExpr)) {
+			if (!(expr is MethodGroupExpr)) 
+			{
 				Type expr_type = expr.Type;
 
-				if (expr_type != null){
+				if (expr_type != null)
+				{
 					bool IsDelegate = TypeManager.IsDelegateType (expr_type);
 					if (IsDelegate)
 						return (new DelegateInvocation (
 							this.expr, Arguments, loc)).Resolve (ec);
 				}
 			}
-
+			/*
 			if (!(expr is MethodGroupExpr)){
 				expr.Error118 (ResolveFlags.MethodGroup);
 				return null;
 			}
-
+			*/
 			//
 			// Next, evaluate all the expressions in the argument list
 			//
-			if (Arguments != null){
-				foreach (Argument a in Arguments){
+			if (Arguments != null)
+			{
+				foreach (Argument a in Arguments)
+				{
 					if (!a.Resolve (ec, loc))
 						return null;
 				}
 			}
 
-			MethodGroupExpr mg = (MethodGroupExpr) expr;
-			method = OverloadResolve (ec, mg, Arguments, loc);
+			if (expr is MethodGroupExpr) 
+			{
+				MethodGroupExpr mg = (MethodGroupExpr) expr;
+				method = OverloadResolve (ec, mg, Arguments, loc);
 
-			if (method == null){
-				Error (-6,
-				       "Could not find any applicable function for this argument list");
-				return null;
-			}
-
-			MethodInfo mi = method as MethodInfo;
-			if (mi != null) {
-				type = TypeManager.TypeToCoreType (mi.ReturnType);
-				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
-					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
-			}
-
-			if (type.IsPointer){
-				if (!ec.InUnsafe){
-					UnsafeError (loc);
+				if (method == null)
+				{
+					Error (-6,
+						"Could not find any applicable function for this argument list");
 					return null;
 				}
+
+				MethodInfo mi = method as MethodInfo;
+				if (mi != null) 
+				{
+					type = TypeManager.TypeToCoreType (mi.ReturnType);
+					if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
+						SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
+				}
+
+				if (type.IsPointer)
+				{
+					if (!ec.InUnsafe)
+					{
+						UnsafeError (loc);
+						return null;
+					}
+				}
+				expr_to_return = this;
 			}
-			
+
+			if (expr is PropertyExpr) 
+			{
+				expr_to_return = ((PropertyExpr) expr).DoResolve (ec);
+			}
+
 			eclass = ExprClass.Value;
-			return this;
+			return expr_to_return;
 		}
 
 		// <summary>
