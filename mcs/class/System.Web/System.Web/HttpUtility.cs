@@ -829,7 +829,7 @@ namespace System.Web {
 		}
 
 #if NET_1_1
-		public string UrlPathEncode (string s)
+		public static string UrlPathEncode (string s)
 		{
 			if (s == null)
 				return null;
