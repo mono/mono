@@ -83,7 +83,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if ((methodFlags & MethodFlags.PrimitiveArguments) > 0)
 			{
 				writer.Write ((uint)call.Args.Length);
-				for (int n=0; n<call.InArgCount; n++)
+				for (int n=0; n<call.ArgCount; n++)
 				{
 					object arg = call.GetArg(n);
 					if (arg != null) {

@@ -1,3 +1,8 @@
+2003-07-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+    * MessageFormatter.cs: WriteMethodCall(): It must write all parameters,
+      including ref and out.
+
 2003-07-24  Lluis Sanchez Gual <lluis@ximian.com>
 
     * ObjectReader.cs, ObjectWriter.cs, BinaryCommon.cs: Fixed bug #45970.
