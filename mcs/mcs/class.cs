@@ -6284,12 +6284,15 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				if (first_arg_type.IsSubclassOf (return_type) ||
-				    return_type.IsSubclassOf (first_arg_type)){
-					Report.Error (
-						-10, Location,
-						"User-defined conversion cannot convert between types " +
-						"that derive from each other");
+				if (first_arg_type.IsSubclassOf (return_type)
+					|| return_type.IsSubclassOf (first_arg_type)){
+					if (declaring_type.IsSubclassOf (return_type)) {
+						// '{0}' : user defined conversion to/from base class
+						Report.Error_T (553, Location, GetSignatureForError ());
+						return false;
+					}
+					// '{0}' : user defined conversion to/from derived class
+					Report.Error_T (554, Location, GetSignatureForError ());
 					return false;
 				}
 			} else if (SecondArgType == null) {
@@ -6413,7 +6416,12 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError(TypeContainer tc)
 		{
-			return Prototype (tc);
+			return ToString ();
+		}
+
+		public override string GetSignatureForError()
+		{
+			return ToString ();
 		}
 		
 		public override string ToString ()
