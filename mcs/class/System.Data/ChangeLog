@@ -1,4 +1,10 @@
 2002-05-13  Tim Coleman
+	* System.Data.build:
+		include SqlDataAdapter, SqlRowUpdatedEventArgs,
+		SqlRowUpdatingEventArgs, SqlRowUpdatedEventHandler,
+		SqlRowUpdatingEventHandler in the build.
+
+2002-05-13  Tim Coleman
 	* System.Data.Common/DbDataAdapter.cs:
 		More implementation.
 	* System.Data.Common/DataAdapter.cs:

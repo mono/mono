@@ -21,13 +21,8 @@
 				<excludes name="System.Data/DataTableRelationCollection.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="System.Data.Common/DbDataPermission.cs"/>
-				<excludes name="System.Data.SqlClient/SqlDataAdapter.cs"/>
 				<excludes name="System.Data.SqlClient/SqlInfoMessageEventArgs.cs"/>
-				<excludes name="System.Data.SqlClient/SqlRowUpdatingEventArgs.cs"/>
-				<excludes name="System.Data.SqlClient/SqlRowUpdatedEventArgs.cs"/>
 				<excludes name="System.Data.SqlClient/SqlInfoMessageEventHandler.cs"/>
-				<excludes name="System.Data.SqlClient/SqlRowUpdatingEventHandler.cs"/>
-				<excludes name="System.Data.SqlClient/SqlRowUpdatedEventHandler.cs"/>
 				<excludes name="System.Data.SqlClient/SqlClientPermission.cs"/>
 				<excludes name="System.Data.SqlClient/SqlClientPermissionAttribute.cs"/>
 				<excludes name="System.Data.SqlClient/SqlCommandBuilder.cs"/>
