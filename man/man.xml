@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<manpages>
+<manpage name="Mono" page="mono.1" />
+<manpage name="Mint" page="mono.1" />
+<manpage name="Mcs" page="mcs.1" />
+<manpage name="Ilasm" page="ilasm.1" />
+<manpage name="Monodis" page="mono.1" />
+<manpage name="Cilc" page="cilc.1" />
+<manpage name="Sql#" page="sqlsharp.1" />
+<manpage name="SecUtil" page="secutil.1" />
+<manpage name="MonoStyle" page="monostyle.1" />
+
+</manpages>
