@@ -4,9 +4,12 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe
+linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe
 #linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
 
+monostyle.exe: monostyle.cs
+	$(CSC) $(CSCFLAGS) monostyle.cs
+	
 GenerateDelegate.exe: GenerateDelegate.cs
 	$(CSC) $(CSCFLAGS) /out:$@ $<
 
