@@ -212,7 +212,7 @@ namespace System.Net.Sockets
 					try {
 						result.Sock.Connect (result.EndPoint);
 					} catch (SocketException se) {
-						if (result.Sock.blocking || se.ErrorCode != 10036) {
+						if (result.Sock.blocking || se.ErrorCode != 10035) {
 							result.Complete (se);
 							return;
 						}
@@ -715,7 +715,7 @@ namespace System.Net.Sockets
 			int error;
 			IntPtr sock=Accept_internal(socket, out error);
 
-			if (!blocking && error == 10036) {
+			if (!blocking && error == 10035) {
 				Poll (-1, SelectMode.SelectRead);
 				sock = Accept_internal (socket, out error);
 			}
@@ -959,7 +959,7 @@ namespace System.Net.Sockets
 			
 			SocketAddress serial = remote_end.Serialize ();
 			Connect_internal(socket, serial, out error);
-			if (!blocking && error == 10036) {
+			if (!blocking && error == 10035) {
 				Poll (-1, SelectMode.SelectWrite);
 				Connect_internal (socket, serial, out error);
 			}

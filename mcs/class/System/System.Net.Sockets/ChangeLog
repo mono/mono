@@ -1,3 +1,8 @@
+2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: wrong error code in connect and accept. EWOULDBLOCK is
+	10035. Fixes bug #60563.
+
 2004-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: fixed Accept for non-blocking sockets.
