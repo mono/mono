@@ -1,3 +1,10 @@
+//
+// System.Runtime.InteropServices.MarshalAsAttribute.cs
+//
+// Author:
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+
 using System;
 
 namespace System.Runtime.InteropServices {
@@ -12,6 +19,7 @@ namespace System.Runtime.InteropServices {
 		public VarEnum SafeArraySubType;
 		public int SizeConst;
 		public short SizeParamIndex;
+		public Type SafeArrayUserDefinedSubType;
 
 		public MarshalAsAttribute (short unmanagedType) {
 			utype = (UnmanagedType)unmanagedType;

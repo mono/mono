@@ -8,11 +8,13 @@
 
 using System.Runtime.CompilerServices;
 using System;
+using System.Security;
 using System.Reflection;
 using System.Threading;
 
 namespace System.Runtime.InteropServices
 {
+	[SuppressUnmanagedCodeSecurity ()]
 	public sealed class Marshal
 	{
 		/* fields */
@@ -390,7 +392,7 @@ namespace System.Runtime.InteropServices
 		public extern static long ReadInt64 (IntPtr ptr, int ofs);
 
 		[MonoTODO]
-		public static long ReadInt64(object ptr, int ofs) {
+		public static long ReadInt64([In] object ptr, int ofs) {
 			throw new NotImplementedException ();
 		}
 
@@ -402,7 +404,7 @@ namespace System.Runtime.InteropServices
 		public extern static IntPtr ReadIntPtr (IntPtr ptr, int ofs);
 
 		[MonoTODO]
-		public static IntPtr ReadIntPtr(object ptr, int ofs) {
+		public static IntPtr ReadIntPtr([In] object ptr, int ofs) {
 			throw new NotImplementedException ();
 		}
 
@@ -532,7 +534,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt64 (IntPtr ptr, int ofs, long val);
 
 		[MonoTODO]
-		public static void WriteInt64(object ptr, int ofs, long val) {
+		public static void WriteInt64([In] object ptr, int ofs, long val) {
 			throw new NotImplementedException ();
 		}
 
@@ -544,7 +546,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteIntPtr (IntPtr ptr, int ofs, IntPtr val);
 
 		[MonoTODO]
-		public static void WriteIntPtr(object ptr, int ofs, IntPtr val) {
+		public static void WriteIntPtr([In] object ptr, int ofs, IntPtr val) {
 			throw new NotImplementedException ();
 		}
 

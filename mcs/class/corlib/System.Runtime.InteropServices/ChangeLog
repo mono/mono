@@ -1,3 +1,15 @@
+2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* BestFitMappingAttribute.cs: Signature fix
+	* Marshal.cs: Add attribute, fix signatures
+	* MarshalAsAttribute.cs: Add head, add entry
+	* DllImportAttribute.cs: Added v1.1 entries
+	* TypeLibConverter.cs: Added, stubbed
+	* RegistrationServices.cs: Added, stubbed
+	* ExtensibleClassFactory.cs: Added, stubbed
+	* ErrorWrapper.cs: Added, implemented
+	* CurrencyWrapper.cs: Added, implemented
+
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* IRegistrationServices.cs:

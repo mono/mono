@@ -1,5 +1,5 @@
 //
-// System.Runtime.InteropServices/DllImportAttribute.cs
+// System.Runtime.InteropServices.DllImportAttribute.cs
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
@@ -20,6 +20,14 @@ namespace System.Runtime.InteropServices {
 		public bool ExactSpelling;
 		public bool PreserveSig;
 		public bool SetLastError;
+
+#if (NET_1_1)
+
+		public bool BestFitMapping;
+		public bool ThrowOnUnmappableChar;
+
+#endif
+
 		private string Dll;
 		
 		public string Value {

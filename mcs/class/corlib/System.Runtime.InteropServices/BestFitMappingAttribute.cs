@@ -12,7 +12,7 @@ namespace System.Runtime.InteropServices {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
 	[Serializable]
-	public class BestFitMappingAttribute : Attribute {
+	public sealed class BestFitMappingAttribute : Attribute {
 		bool bfm;
 		
 		public BestFitMappingAttribute (bool bfm)
