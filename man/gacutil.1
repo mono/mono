@@ -1,0 +1,28 @@
+.TH "gacutil" 1
+.SH NAME
+gacutil \- Mono Global Assembly Cache Utility
+.SH SYNOPSIS
+.B gacutil
+<commands> [ <options> ]
+.SH DESCRIPTION
+gacutil in the Mono Global Assembly Cache Utility. This utility allows
+you to install, remove and list Assemblies in the Global Assembly Cache.
+.SH OPTIONS
+.TP
+.B \//i <assembly_path> [ /f ]
+Installs an assembly into the global assembly cache.
+.TP
+.B \//il <assembly_path_list_file> [ /f ]
+Installs one or more assemblies into the global assembly cache
+.TP
+.B \//u <assembly_display_name>
+Uninstalls an assembly from the global assembly cache
+.TP
+.B \//ul <assembly_display_name_list_file>
+Uninstalls one or more assemblies from the global assembly cache
+.TP
+.B \//l
+List the global assembly cache
+.TP
+.B \//?
+Displays a detailed help screen
