@@ -1,4 +1,10 @@
 
+Tue May 20 17:19:14 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-x86.c: since the magic trampoline for jumps
+	can't patch the code directly, we do it as soon as the
+	method gets compiled.
+
 Tue May 20 16:02:52 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c, mini.h: introduce a new patching method
