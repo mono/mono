@@ -1,3 +1,9 @@
+2004-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvertTest.cs: Added test case where a strongname key pair
+	(RSA 1024 bits) was truncated in the last parameter (D) (i.e. the 
+	private key) but saved by the use of CRT (Chinese Remainder Theorem).
+
 2004-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvertTest.cs: Added test case where the public key structure
