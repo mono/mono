@@ -510,7 +510,6 @@ namespace Mono.CSharp.Debugger
 
 		int file_offset;
 		string name;
-		string full_name;
 
 		public readonly int Index;
 		public readonly SourceFileEntry SourceFile;
@@ -529,10 +528,6 @@ namespace Mono.CSharp.Debugger
 
 		public string Name {
 			get { return name; }
-		}
-
-		public string FullName {
-			get { return full_name; }
 		}
 
 		public MethodBase MethodBase {
@@ -562,7 +557,6 @@ namespace Mono.CSharp.Debugger
 			LocalNamesAmbiguous = reader.ReadInt32 () != 0;
 
 			name = file.ReadString (NameOffset);
-			full_name = file.ReadString (FullNameOffset);
 
 			SourceFile = file.GetSourceFile (SourceFileIndex);
 
@@ -647,27 +641,6 @@ namespace Mono.CSharp.Debugger
 			if (parameters == null)
 				parameters = new ParameterInfo [0];
 			
-			if (parameters.Length == 0)
-				full_name = method.DeclaringType.FullName + "." + method.Name + "()";
-			else if (parameters.Length == 1)
-				full_name = method.DeclaringType.FullName + "." + method.Name + "(" + parameters [0].ParameterType.FullName +  ")";
-			else if (parameters.Length == 2)
-				full_name = method.DeclaringType.FullName + "." + method.Name + "(" + parameters [0].ParameterType.FullName + "," + parameters [1].ParameterType.FullName + ")";
-			else {
-				StringBuilder sb = new StringBuilder ();
-				sb.Append (method.DeclaringType.FullName);
-				sb.Append (".");
-				sb.Append (method.Name);
-				sb.Append ("(");
-				for (int i = 0; i < parameters.Length; i++) {
-					if (i > 0)
-						sb.Append (",");
-					sb.Append (parameters [i].ParameterType.FullName);
-				}
-				sb.Append (")");
-				full_name = sb.ToString ();
-			}
-
 			name = method.Name;
 			
 			NumParameters = parameters.Length;
@@ -758,9 +731,6 @@ namespace Mono.CSharp.Debugger
 			NameOffset = (int) bw.BaseStream.Position;
 			file.WriteString (bw, name);
 
-			FullNameOffset = (int) bw.BaseStream.Position;
-			file.WriteString (bw, full_name);
-
 			TypeIndexTableOffset = (int) bw.BaseStream.Position;
 
 			for (int i = 0; i < NumParameters; i++)
@@ -811,9 +781,9 @@ namespace Mono.CSharp.Debugger
 
 		public override string ToString ()
 		{
-			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {7}:{8}:{9}:{10} - {5} - {6}]",
+			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {7}:{8}:{9}:{10} - {5}]",
 					      Index, Token, SourceFileIndex, StartRow, EndRow,
-					      SourceFile, FullName, ClassTypeIndex, NumParameters,
+					      SourceFile, ClassTypeIndex, NumParameters,
 					      NumLocals, NumLineNumbers);
 		}
 	}

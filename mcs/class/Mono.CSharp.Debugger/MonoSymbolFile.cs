@@ -396,8 +396,6 @@ namespace Mono.CSharp.Debugger
 		Hashtable source_file_hash;
 
 		Hashtable method_token_hash;
-		Hashtable method_name_hash;
-		Hashtable method_full_name_hash;
 		Hashtable source_name_hash;
 
 		protected MonoSymbolFile (Assembly assembly, Stream stream)
@@ -574,63 +572,6 @@ namespace Mono.CSharp.Debugger
 			}
 
 			throw new MonoSymbolFileException ("Internal error.");
-		}
-
-		public int FindMethod (string full_name)
-		{
-			if (reader == null)
-				throw new InvalidOperationException ();
-
-			if (method_full_name_hash == null) {
-				method_full_name_hash = new Hashtable ();
-
-				for (int i = 0; i < ot.MethodCount; i++) {
-					MethodIndexEntry ie = GetMethodIndexEntry (i + 1);
-					string name = ReadString (ie.FullNameOffset);
-
-					method_full_name_hash.Add (name, i + 1);
-				}
-			}
-
-			object value = method_full_name_hash [full_name];
-			if (value == null)
-				return -1;
-			return (int) value;
-		}
-
-		public int[] MethodLookup (string query)
-		{
-			if (reader == null)
-				throw new InvalidOperationException ();
-
-			ArrayList list;
-			if (method_name_hash == null) {
-				method_name_hash = new Hashtable ();
-
-				for (int i = 0; i < ot.MethodCount; i++) {
-					MethodIndexEntry ie = GetMethodIndexEntry (i + 1);
-					string full_name = ReadString (ie.FullNameOffset);
-
-					int pos = full_name.IndexOf ('(');
-					string name = full_name.Substring (0, pos);
-
-					list = method_name_hash [name] as ArrayList;
-					if (list == null) {
-						list = new ArrayList ();
-						method_name_hash.Add (name, list);
-					}
-
-					list.Add (i + 1);
-				}
-			}
-
-			list = method_name_hash [query] as ArrayList;
-			if (list == null)
-				return new int [0];
-
-			int[] retval = new int [list.Count];
-			list.CopyTo (retval, 0);
-			return retval;
 		}
 
 		public int FindSource (string file_name)
