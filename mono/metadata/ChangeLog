@@ -1,4 +1,9 @@
 
+Mon Jan 17 19:22:39 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c, loader.c, class-internals.h, reflection.c:
+	store the emthod data for a wrapper in an array instead of a list.
+
 Mon Jan 17 18:48:53 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: change the code to allocate memory more
