@@ -219,7 +219,7 @@ namespace System.Web.UI
                         {
                                 //TODO: Some Naming container methods here. What are they? Why arnt they declared?
                                 //Note: Nuked the old stuff here. Was total crap. :)
-                                throw new NotImplementedException();
+                                return ID;
                         }
                 }
                 public virtual bool Visible
@@ -533,7 +533,7 @@ namespace System.Web.UI
                 [MonoTODO]
                 public string ResolveUrl(string relativeUrl)
                 {
-                	throw new NotImplementedException();
+                	return relativeUrl;
                 }
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
                 {

@@ -25,7 +25,7 @@ namespace System.Web.UI.HtmlControls{
 			if(handler != null) handler.Invoke(this, e);
 		}
 		
-		protected new void RenderAttributes(HtmlTextWriter writer){
+		protected override void RenderAttributes(HtmlTextWriter writer){
 			if ( Events[EventServerClick] != null){
 				Attributes.Remove("href");
 				base.RenderAttributes(writer);
@@ -33,7 +33,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 			else{
 				PreProcessRelativeReference(writer,"href");
-				RenderAttributes(writer);
+				base.RenderAttributes(writer);
 			}
 		}
 		

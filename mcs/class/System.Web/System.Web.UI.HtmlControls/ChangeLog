@@ -1,3 +1,18 @@
+2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlAnchor.cs:
+	(RenderAttributes): new -> override and fixed little bug that made
+	it cause an stack overflow.
+
+	* HtmlContainerControl.cs: reformatted and added tag and attributes 
+	rendering.
+
+	* HtmlGenericControl.cs: removed TagName, which is already in 
+	HtmlControl.
+
+	* HtmlTable.cs:
+	(RenderEndTag): new -> override.
+
 2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.UI.HtmlControls/HtmlForm.cs:

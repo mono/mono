@@ -1,5 +1,12 @@
 2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Control.cs: don't throw exception in ControlID. By now, it returns ID.
+
+	* Page.cs: 
+	(ProcessRequest): implemented.
+
+2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* System.Web.UI/Page.cs: finished stubbing out. Implemented some
 	methods.
 

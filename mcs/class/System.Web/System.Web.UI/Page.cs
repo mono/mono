@@ -339,7 +339,12 @@ public class Page : TemplateControl, IHttpHandler
 	
 	public void ProcessRequest (HttpContext context)
 	{
-		throw new NotImplementedException ();
+		FrameworkInitialize ();
+		_context = context;
+		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
+		
+		foreach (Control ctrl in Controls)
+			ctrl.RenderControl (output);
 	}
 
 	protected virtual void RaisePostBackEvent (IPostBackEventHandler sourceControl, string eventArgument)

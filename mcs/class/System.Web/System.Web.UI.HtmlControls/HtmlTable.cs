@@ -26,7 +26,7 @@ namespace System.Web.UI.HtmlControls{
 			writer.Indent = writer.Indent - 1;
 		}
 		
-		protected new void RenderEndTag(HtmlTextWriter writer){
+		protected override void RenderEndTag(HtmlTextWriter writer){
 			base.RenderEndTag(writer);
 			writer.WriteLine();
 		}

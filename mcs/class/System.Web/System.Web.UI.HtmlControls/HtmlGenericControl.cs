@@ -19,14 +19,5 @@
 			
 			public HtmlGenericControl(string tag): base(tag){}
 			
-			public new string TagName {
-				get
-				{
-					return _tagName;
-				}
-				set{
-					_tagName = value;
-				}
-			}
 		}
 	}
