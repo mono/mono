@@ -1,3 +1,8 @@
+2005-02-03  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlDateTime.cs : Parse : try with local culture first, then try
+	with invariant culture if it fails.
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* SqlNullValueException.cs: fixed serialization

@@ -236,7 +236,19 @@ namespace System.Data.SqlTypes
 
 		public static SqlDateTime Parse (string s)
 		{
-			return new SqlDateTime (DateTime.Parse (s));
+                        if (s == null)
+                                throw new ArgumentNullException ("Argument cannot be null");
+
+                        // try parsing in local culture
+                        DateTimeFormatInfo fmtInfo = DateTimeFormatInfo.CurrentInfo;
+                        try {
+                                return new SqlDateTime (DateTime.Parse (s, fmtInfo));
+                        } catch (Exception e) {
+                                // try parsing in invariant culture
+                                return new SqlDateTime (DateTime.Parse (s, CultureInfo.InvariantCulture));
+                        }
+                        throw new FormatException (String.Format ("String {0} is not recognized as "+
+                                                                  " valid DateTime.", s));
 		}
 
 		public SqlString ToSqlString ()
