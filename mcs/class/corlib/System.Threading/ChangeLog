@@ -1,3 +1,9 @@
+2003-10-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Thread.cs: Added ResetDataStoreStatus and RestoreDataStoreStatus
+	  methods. They are used in CrossAppDomainChannel to save and restore
+	  thread's local data when switching between domains.
+
 2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ManualResetEvent.cs: added check for disposed.

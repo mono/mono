@@ -95,6 +95,16 @@ namespace System.Threading
 
 			return(slothash);
 		}
+		
+		internal static object ResetDataStoreStatus () {
+			Hashtable slothash=SlotHash_lookup();
+			SlotHash_store(null);
+			return slothash;
+		}
+
+		internal static void RestoreDataStoreStatus (object data) {
+			SlotHash_store((Hashtable)data);
+		}
 
 		public static LocalDataStoreSlot AllocateDataSlot() {
 			LocalDataStoreSlot slot = new LocalDataStoreSlot();
