@@ -1,3 +1,8 @@
+2003-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataSet.cs, XmlDataLoader.cs : Table name should be encoded before
+	  they take shape of xml. This fixed bug #52240
+
 2003-12-16  Tim Coleman <tim@timcoleman.com>
 	* KeyRestrictionBehavior.cs:
 		New stubs added for .NET 1.2

@@ -647,7 +647,7 @@ namespace System.Data {
 				writer.WriteStartDocument (true);
 
 			 ((XmlTextWriter)writer).Formatting = Formatting.Indented;
-			WriteStartElement (writer, mode, Namespace, Prefix, DataSetName);
+			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
 			
 			if (mode == XmlWriteMode.WriteSchema)
 			{
@@ -1112,7 +1112,7 @@ namespace System.Data {
 			schema.AttributeFormDefault = XmlSchemaForm.Qualified;
 
 			XmlSchemaElement elem = new XmlSchemaElement ();
-			elem.Name = DataSetName;
+			elem.Name = XmlConvert.EncodeName (DataSetName);
 
 			XmlDocument doc = new XmlDocument ();
 

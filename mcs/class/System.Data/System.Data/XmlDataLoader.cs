@@ -81,7 +81,7 @@ namespace System.Data
 			
 			// first element is the DataSet.
 			XmlElement elem = doc.DocumentElement;
-			DSet.DataSetName = elem.LocalName;
+			DSet.DataSetName = XmlConvert.DecodeName (elem.LocalName);
 
 			// get the Namespace of the DataSet.
 			if (elem.HasAttribute("xmlns"))
