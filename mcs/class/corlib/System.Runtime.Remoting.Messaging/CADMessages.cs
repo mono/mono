@@ -224,7 +224,7 @@ namespace System.Runtime.Remoting.Messaging {
 				case TypeCode.UInt16: return (UInt16)arg;
 				case TypeCode.UInt32: return (UInt32)arg;
 				case TypeCode.UInt64: return (UInt64)arg;
-				case TypeCode.String: string.Copy ((string) arg);
+				case TypeCode.String: return string.Copy ((string) arg);
 				case TypeCode.DateTime: return new DateTime (((DateTime)arg).Ticks);
 				default:
 					if (arg is TimeSpan) return new TimeSpan (((TimeSpan)arg).Ticks);
