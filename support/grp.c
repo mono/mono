@@ -179,6 +179,10 @@ Mono_Posix_Syscall_getgrnam_r (const char *name,
 	} while ((r = getgrnam_r (name, &_grbuf, buf, buflen, gbufp)) && 
 			recheck_range (r));
 
+	/* On Solaris, this function returns 0 even if the entry was not found */
+	if (r == 0 && !(*gbufp))
+		r = errno = ENOENT;
+
 	if (r == 0 && copy_group (gbuf, &_grbuf) == -1)
 		r = errno = ENOMEM;
 	free (buf);
@@ -217,6 +221,10 @@ Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 		errno = 0;
 	} while ((r = getgrgid_r (gid, &_grbuf, buf, buflen, gbufp)) && 
 			recheck_range (r));
+
+	/* On Solaris, this function returns 0 even if the entry was not found */
+	if (r == 0 && !(*gbufp))
+		r = errno = ENOENT;
 
 	if (r == 0 && copy_group (gbuf, &_grbuf) == -1)
 		r = errno = ENOMEM;
