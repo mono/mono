@@ -1,3 +1,7 @@
+2002-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigurationSettings.cs: removed type loading hack no longer needed.
+
 2002-12-14  Jonathan Pryor <jonpryor@vt.edu>
 
 	* ConfigurationSettings.cs: Allow configuration sections to be removed.

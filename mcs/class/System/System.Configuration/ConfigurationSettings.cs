@@ -13,7 +13,6 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.XPath;
@@ -186,17 +185,7 @@ namespace System.Configuration
 			if (o is IConfigurationSectionHandler)
 				return (IConfigurationSectionHandler) o;
 
-			string [] typeInfo = ((string) o).Split (',');
-			Type t;
-			
-			// Hack. Type.GetType should be enough
-			if (typeInfo.Length > 1) {
-				Assembly ass = Assembly.Load (typeInfo [1].Trim ());
-				t = ass.GetType (typeInfo [0].Trim ());
-			} else {
-				t = Type.GetType (typeInfo [0]);
-			}
-			
+			Type t = Type.GetType ((string) o);
 			if (t == null)
 				throw new ConfigurationException ("Cannot get Type for " + o);
 
