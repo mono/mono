@@ -93,7 +93,7 @@ namespace demo2
 		}
 		
 		private void menuItem4_Click(object sender, EventArgs e){
-			MessageBox.Show("You clicked Start");
+			MessageBox.Show("You clicked Stop");
 		}
 
 	}

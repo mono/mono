@@ -67,7 +67,8 @@ namespace System.Windows.Forms{
 		
 		private void CreateMenuItem (){
 			if (check1 != 1) {
-				file_item = new Gtk.MenuItem(text);			
+				file_item = new Gtk.MenuItem(text);	
+				ConnectToClick();
 				file_item.Show();
 			}
 			else{
@@ -94,6 +95,7 @@ namespace System.Windows.Forms{
 			set{
 				if (check1 != 1){  
 					file_item = new Gtk.CheckMenuItem(text);
+					ConnectToClick();
 					file_item.Show();
 					check1 = 1;
 				}
@@ -104,11 +106,26 @@ namespace System.Windows.Forms{
 
 		private void CreateCheckMenu () {
 			file_item = new Gtk.CheckMenuItem(text);
+			
 			file_item.Show();
 			((Gtk.CheckMenuItem)file_item).Active = blChecked;
 			check1 = 1;
 		}
+		
+		public new event EventHandler Click;
+		
+		internal protected void OnClick (object o, EventArgs args)
+		{
+			if (Click != null)
+				Click (this, args);
+		}
+		
+		internal protected void ConnectToClick ()
+		{
+			this.file_item.Activated += new EventHandler (OnClick);
+		}
 
+		
 	}
 
 }

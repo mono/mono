@@ -121,7 +121,7 @@ namespace System.Windows.Forms {
 
 		public override string ToString()
 		{	
-			 //replace with value, if implmeted as properity.
+			 //replace with value, if implmeted as property.
 			return Value.ToString();
 		}
 
