@@ -1,5 +1,16 @@
 2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* support.cs: Rewrite DoubleHash to use its own impl. Is faster
+	than the hashtable in a hashtable version
+
+	* decl.cs: Right now, whenever we try to lookup a type inside a namespace,
+	we always end up concating a string. This results in a huge perf
+	loss, because many strings have to be tracked by the GC. In this
+	patch, we first use a hashtable that works with two keys, so that
+	the strings do not need to be concat'ed.
+
+2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Makefile: Add a new target `do-time' that does a quick and simple
 	profile, leaving easy to parse output.
 

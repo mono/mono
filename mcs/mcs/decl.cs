@@ -560,7 +560,7 @@ namespace Mono.CSharp {
 			return (int) level >= (int) level2;
 		}
 		
-		static DoubleHash dh = new DoubleHash ();
+		static DoubleHash dh = new DoubleHash (1000);
 
 		Type LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
@@ -571,7 +571,7 @@ namespace Mono.CSharp {
 			error = false;
 
 			if (dh.Lookup (ns, name, out r))
-				t = (Type) r;
+				return (Type) r;
 			else {
 				if (ns != ""){
 					if (Namespace.IsNamespace (ns)){
@@ -583,8 +583,10 @@ namespace Mono.CSharp {
 					t = TypeManager.LookupType (name);
 			}
 			
-			if (t != null)
+			if (t != null) {
+				dh.Insert (ns, name, t);
 				return t;
+			}
 
 			//
 			// In case we are fed a composite name, normalize it.
@@ -596,15 +598,18 @@ namespace Mono.CSharp {
 			}
 			
 			parent = RootContext.Tree.LookupByNamespace (ns, name);
-			if (parent == null)
+			if (parent == null) {
+				dh.Insert (ns, name, null);
 				return null;
+			}
 
 			t = parent.DefineType ();
-			dh.Insert (ns, name, t);
 			if (t == null){
 				error = true;
 				return null;
 			}
+			
+			dh.Insert (ns, name, t);
 			return t;
 		}
 
