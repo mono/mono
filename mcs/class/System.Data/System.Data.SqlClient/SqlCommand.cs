@@ -324,8 +324,10 @@ namespace System.Data.SqlClient {
 				}
 				index += 1;
 			}
+			if (declarations.Length > 0)
+				declarations.Append ('\n');
 
-			return String.Format ("{0}\n{1}{2} {3}\n{4}", declarations.ToString (), set.ToString (), procedure, parms.ToString (), outParms.ToString ());
+			return String.Format ("{0}{1}{2} {3}\n{4}", declarations.ToString (), set.ToString (), procedure, parms.ToString (), outParms.ToString ());
 		}
 
 		public void Cancel () 
@@ -469,7 +471,7 @@ namespace System.Data.SqlClient {
 					return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
 				case SqlDbType.Bit :
 					if (parameter.Value.GetType () == typeof (bool))
-						return (((bool) parameter.Value) ? "1" : "0");
+						return (((bool) parameter.Value) ? "0x1" : "0x0");
 					return parameter.Value.ToString ();
 				default:
 					return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));

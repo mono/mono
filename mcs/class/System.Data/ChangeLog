@@ -1,3 +1,14 @@
+2002-11-14  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlCommand.cs:
+		Slight reformatting of Bit values and sql statements
+	* System.Data.SqlClient/SqlDataReader.cs:
+		Implement RecordsAffected
+		Complete SchemaTable
+	* System.Data.SqlClient/SqlParameter.cs:
+		Propertly support Char/NChar
+	* System.Data.SqlClient/SqlXmlTextReader.cs:
+		Add Close () to the Dispose () method
+
 2002-11-13  Tim Coleman <tim@timcoleman.com>
 	* Test/SqlTest.cs:
 		New class added for testing SqlClient

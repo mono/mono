@@ -49,8 +49,10 @@ namespace System.Data.SqlClient {
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
-				if (disposing) 
+				if (disposing) {
+					Close ();
 					((IDisposable) reader).Dispose ();
+				}
 				disposed = true;
 			}
 		}

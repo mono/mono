@@ -28,8 +28,8 @@ namespace System.Data.SqlClient {
 
 		int fieldCount;
 		bool isClosed;
-		int recordsAffected;
 		bool moreResults;
+		bool isSelect;
 
 		int resultsRead;
 		int rowsRead;
@@ -46,12 +46,14 @@ namespace System.Data.SqlClient {
 
 		internal SqlDataReader (SqlCommand command)
 		{
-			schemaTable = ConstructSchemaTable ();
-			this.resultsRead = 0;
 			this.command = command;
-			this.fieldCount = 0;
-			this.isClosed = false;
-			this.recordsAffected = -1;
+
+			schemaTable = ConstructSchemaTable ();
+			resultsRead = 0;
+			fieldCount = 0;
+			isClosed = false;
+			isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
+			command.Tds.RecordsAffected = 0;
 
 			NextResult ();
 		}
@@ -81,8 +83,12 @@ namespace System.Data.SqlClient {
 		}
 	
 		public int RecordsAffected {
-			[MonoTODO ("Make sure this gets set correctly.")]
-			get { return recordsAffected; }
+			get { 
+				if (isSelect) 
+					return -1;
+				else
+					return command.Tds.RecordsAffected; 
+			}
 		}
 
 		#endregion // Properties
@@ -308,22 +314,32 @@ namespace System.Data.SqlClient {
 			foreach (TdsSchemaInfo schema in command.Tds.Schema) {
 				DataRow row = schemaTable.NewRow ();
 
-				// set default values
-				row ["AllowDBNull"] = true;
-				row ["BaseCatalogName"] = DBNull.Value;
-				row ["BaseColumnName"] = DBNull.Value;
-				row ["BaseSchemaName"] = DBNull.Value;
-				row ["BaseTableName"] = DBNull.Value;
-				row ["ColumnName"] = DBNull.Value;
-				row ["IsAutoIncrement"] = false;
-				row ["IsHidden"] = false;
-				row ["IsLong"] = false;
-				row ["IsRowVersion"] = false;
-				row ["IsUnique"] = false;
-				row ["NumericPrecision"] = DBNull.Value;
-				row ["NumericScale"] = DBNull.Value;
+				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
+				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize"); 
+				row ["ColumnOrdinal"]		= GetSchemaValue (schema, "ColumnOrdinal");
+				row ["NumericPrecision"]	= GetSchemaValue (schema, "NumericPrecision");
+				row ["NumericScale"]		= GetSchemaValue (schema, "NumericScale");
+				row ["IsUnique"]		= GetSchemaValue (schema, "IsUnique");
+				row ["IsKey"]			= GetSchemaValue (schema, "IsKey");
+				row ["BaseServerName"]		= GetSchemaValue (schema, "BaseServerName");
+				row ["BaseCatalogName"]		= GetSchemaValue (schema, "BaseCatalogName");
+				row ["BaseColumnName"]		= GetSchemaValue (schema, "BaseColumnName");
+				row ["BaseSchemaName"]		= GetSchemaValue (schema, "BaseSchemaName");
+				row ["BaseTableName"]		= GetSchemaValue (schema, "BaseTableName");
+				row ["AllowDBNull"]		= GetSchemaValue (schema, "AllowDBNull");
+				row ["IsAliased"]		= GetSchemaValue (schema, "IsAliased");
+				row ["IsExpression"]		= GetSchemaValue (schema, "IsExpression");
+				row ["IsIdentity"]		= GetSchemaValue (schema, "IsIdentity");
+				row ["IsAutoIncrement"]		= GetSchemaValue (schema, "IsAutoIncrement");
+				row ["IsRowVersion"]		= GetSchemaValue (schema, "IsRowVersion");
+				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
+				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
 
-				switch (schema.ColumnType) {
+				// We don't always get the base column name.
+				if (row ["BaseColumnName"] == DBNull.Value)
+					row ["BaseColumnName"] = row ["ColumnName"];
+
+				switch ((TdsColumnType) schema ["ColumnType"]) {
 					case TdsColumnType.Image :
 						dataTypeNames.Add ("image");
 						row ["ProviderType"] = (int) SqlDbType.Image;
@@ -341,6 +357,7 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("uniqueidentifier");
 						row ["ProviderType"] = (int) SqlDbType.UniqueIdentifier;
 						row ["DataType"] = typeof (Guid);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.VarBinary :
 					case TdsColumnType.BigVarBinary :
@@ -354,12 +371,14 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("int");
 						row ["ProviderType"] = (int) SqlDbType.Int;
 						row ["DataType"] = typeof (int);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.VarChar :
 					case TdsColumnType.BigVarChar :
 						dataTypeNames.Add ("varchar");
 						row ["ProviderType"] = (int) SqlDbType.VarChar;
 						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.Binary :
 					case TdsColumnType.BigBinary :
@@ -373,22 +392,26 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("char");
 						row ["ProviderType"] = (int) SqlDbType.Char;
 						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.Int1 :
 						dataTypeNames.Add ("tinyint");
 						row ["ProviderType"] = (int) SqlDbType.TinyInt;
 						row ["DataType"] = typeof (byte);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.Bit :
 					case TdsColumnType.BitN :
 						dataTypeNames.Add ("bit");
 						row ["ProviderType"] = (int) SqlDbType.Bit;
 						row ["DataType"] = typeof (bool);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.Int2 :
 						dataTypeNames.Add ("smallint");
 						row ["ProviderType"] = (int) SqlDbType.SmallInt;
 						row ["DataType"] = typeof (short);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.DateTime4 :
 					case TdsColumnType.DateTime :
@@ -396,6 +419,7 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("datetime");
 						row ["ProviderType"] = (int) SqlDbType.DateTime;
 						row ["DataType"] = typeof (DateTime);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.Real :
 						dataTypeNames.Add ("real");
@@ -408,12 +432,14 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("money");
 						row ["ProviderType"] = (int) SqlDbType.Money;
 						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.Float8 :
 					case TdsColumnType.FloatN :
 						dataTypeNames.Add ("float");
 						row ["ProviderType"] = (int) SqlDbType.Float;
 						row ["DataType"] = typeof (double);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.NText :
 						dataTypeNames.Add ("ntext");
@@ -425,54 +451,34 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("nvarchar");
 						row ["ProviderType"] = (int) SqlDbType.NVarChar;
 						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.Decimal :
 					case TdsColumnType.Numeric :
 						dataTypeNames.Add ("decimal");
 						row ["ProviderType"] = (int) SqlDbType.Decimal;
 						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.NChar :
 						dataTypeNames.Add ("nchar");
-						row ["ProviderType"] = (int) SqlDbType.Char;
+						row ["ProviderType"] = (int) SqlDbType.NChar;
 						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.SmallMoney :
 						dataTypeNames.Add ("smallmoney");
 						row ["ProviderType"] = (int) SqlDbType.SmallMoney;
 						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
 						break;
 					default :
 						dataTypeNames.Add ("variant");
 						row ["ProviderType"] = (int) SqlDbType.Variant;
 						row ["DataType"] = typeof (object);
+						row ["IsLong"] = false;
 						break;
 				}
-
-
-				// load schema values
-				row ["ColumnOrdinal"] = schema.ColumnOrdinal;
-				row ["ColumnSize"] = schema.ColumnSize;
-				row ["AllowDBNull"] = schema.AllowDBNull;
-				row ["IsExpression"] = schema.IsExpression;
-				row ["IsIdentity"] = schema.IsIdentity;
-				row ["IsReadOnly"] = schema.IsReadOnly;
-				row ["IsKey"] = schema.IsKey;
-
-				if (schema.BaseColumnName != null)
-					row ["BaseColumnName"] = schema.BaseColumnName;
-
-				if (schema.ColumnName != null)
-					row ["ColumnName"] = schema.ColumnName;
-
-				if (schema.BaseTableName != null)
-					row ["BaseTableName"] = schema.BaseTableName;
-
-				if (schema.NumericScale != 0)
-					row ["NumericPrecision"] = schema.NumericPrecision;
-
-				if (schema.NumericScale == 0)
-					row ["NumericScale"] = schema.NumericScale;
 
 				schemaTable.Rows.Add (row);
 
@@ -480,6 +486,13 @@ namespace System.Data.SqlClient {
 			}
 			return schemaTable;
 		}		
+
+		private static object GetSchemaValue (TdsSchemaInfo schema, object key)
+		{
+			if (schema.ContainsKey (key) && schema [key] != null)
+				return schema [key];
+			return DBNull.Value;
+		}
 
 		public SqlBinary GetSqlBinary (int i)
 		{
@@ -637,6 +650,13 @@ namespace System.Data.SqlClient {
 		public int GetValues (object[] values)
 		{
 			int len = values.Length;
+			int bigDecimalIndex = command.Tds.ColumnValues.BigDecimalIndex;
+
+			// If a four-byte decimal is stored, then we can't convert to
+			// a native type.  Throw an OverflowException.
+			if (bigDecimalIndex >= 0 && bigDecimalIndex < len)
+				throw new OverflowException ();
+
 			command.Tds.ColumnValues.CopyTo (0, values, 0, len);
 			return (len > FieldCount ? len : FieldCount);
 		}

@@ -249,14 +249,22 @@ namespace System.Data.SqlClient {
 
 			switch (dbtype) {
 			case SqlDbType.Image :
-			case SqlDbType.NVarChar :
 			case SqlDbType.VarBinary :
+			case SqlDbType.NVarChar :
 			case SqlDbType.VarChar :
 				if (!sizeSet || size == 0)
 					throw new InvalidOperationException ("All variable length parameters must have an explicitly set non-zero size.");
 				result.Append ("(");
 				result.Append (size.ToString ());
 				result.Append (")");
+				break;
+			case SqlDbType.NChar :
+			case SqlDbType.Char :
+				if (size > 0) {
+					result.Append ("(");
+					result.Append (size.ToString ());
+					result.Append (")");
+				}
 				break;
 			case SqlDbType.Decimal :
 			case SqlDbType.Money :
