@@ -39,7 +39,7 @@ using Commons.Xml.Relaxng.Derivative;
 using Commons.Xml.Relaxng.Rnc;
 
 #if NET_2_0
-using NSResoler = System.Xml.IXmlNamespaceResolver;
+using NSResolver = System.Xml.IXmlNamespaceResolver;
 #else
 using NSResolver = System.Xml.XmlNamespaceManager;
 #endif

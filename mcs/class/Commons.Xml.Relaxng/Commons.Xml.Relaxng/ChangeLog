@@ -1,5 +1,9 @@
 2005-01-26  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngPattern.cs : fixed 2.0 typo.
+
+2005-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngGrammar.cs, RelaxngPattern.cs, RelaxngNameClass.cs :
 	  added RelaxngPattern.WriteCompact(TextWriter) and all internal 
 	  WriteRnc() overrides.
