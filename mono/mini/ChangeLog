@@ -1,5 +1,8 @@
 2004-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.h mini-sparc.c inssel-sparc.brg exceptions-sparc.c 
+	cpu-sparc.md: Add exception handling support + other fixes.
+
 	* driver.c: Print --help output to stdout. Fixes #55261. Also fix
 	typed GC detection in --version.
 
