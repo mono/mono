@@ -11,18 +11,122 @@ a list of things where you can start helping with:
 
 2) Runtime support.
 
-- URGENT: Implement the classes: Plus (focus on EvaluatePlus method),
-  Equality (focus on EvaluateEquality method), Relational (focus on
-  EvaluateRelational method), NumericBinary (focus on
-  EvaluateNumericBinary), NumericUnary (focus on EvaluateUnary).
+Object system hierarchy:
 
-- The building block for this is the VsaEngine, and of particular
-interest are the classes:
+IReflect
+	IEnumerable
+	IExpando
+	ScriptObject
+		JSObject
+			ArrayObject
+				ArrayPrototype
+					LenientArrayPrototype
+				ArrayWrapper
+				RegExpMatch
 
-	 - GlobalScope (which is the implementation of the so called
-	   'Global Object' at the spec.
-	 - ScriptObject
-	 - ScriptFunction
+			BooleanObject
+				BooleanPrototype
+					LenientBooleanPrototype
+
+			DateObject
+				DatePrototype
+					LenientDatePrototype
+
+			EnumeratorObject
+
+			EnumeratorPrototype
+				LenientEnumeratorPrototype
+
+			ErrorObject
+				EvalErrorObject
+				RangeErrorObject
+				ReferenceErrorObject
+				SyntaxErrorObject
+				TypeErrorObject
+				URIErrorObject
+
+			ErrorPrototype
+				LenientErrorPrototy
+pe
+
+			JSPrototypeObject
+
+			MathObject
+				LenientMathObject
+
+			NumberObject
+				NumberPrototype
+					LenientNumberPrototype
+
+			ObjectPrototype
+				LenientObjectPrototype
+
+			RegExpObject
+			RegExpPrototype
+				LenientRegExpPrototype
+
+			ScriptFunction
+				ActiveXObjectConstructor
+				ArrayConstructor
+				BooleanConstructor
+				Closure
+
+				DateConstructor
+					LenientDateConstructor
+
+				EnumeratorConstructor
+				ErrorConstructor
+				FunctionConstructor
+				FunctionObject
+				FunctionWrapper
+
+				FunctionPrototype
+					LenientFunctionPrototype
+
+				NumberConstructor
+				ObjectConstructor
+				RegExpConstructor
+				StringConstructor
+					LenientStringConstructor
+				VBArrayConstructor				
+
+			StringObject
+				StringPrototype
+					LenientStringPrototype
+
+			VBArrayObject
+
+			VBArrayPrototype
+				LenientVBArrayPrototype
+
+	IActivationObject
+		ActivationObject
+			BlockScope
+			GlobalScope
+		StackFrame
+
+		TypeReflector
+	TypedArray
+
+GlobalObject
+	LenientGlobalObject
+
+ConstructorInfo
+	JSConstructor
+
+FieldInfo
+	JSField
+		JSVariableField
+			JSLocalField
+	JSFieldInfo
+
+MethodInfo
+	JSMethodInfo
+
+PropertyInfo
+	JSPropertyInfo
+
+
 
 Thanks!
 
