@@ -39,6 +39,11 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using Mono.Xml.XPath;
 
+//using InternalBuilder = Mono.Xml.XPath.DTMXPathDocumentBuilder;
+//using InternalDocument = Mono.Xml.XPath.DTMXPathDocument;
+using InternalBuilder = Mono.Xml.XPath.DTMXPathDocumentBuilder2;
+using InternalDocument = Mono.Xml.XPath.DTMXPathDocument2;
+
 namespace System.Xml.XPath
 {
 #if NET_2_0obsolete
@@ -60,7 +65,7 @@ namespace System.Xml.XPath
 		}
 
 		XPathDocument2Editable editable;
-		DTMXPathDocument dtm;
+		InternalDocument dtm;
 
 		XmlSchemaSet schemas;
 
@@ -168,7 +173,7 @@ namespace System.Xml.XPath
 			if (useEditable)
 				InitializeEditable (reader, space, acceptChangesOnLoad);
 			else
-				dtm = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
+				dtm = new InternalBuilder (reader, space).CreateDocument ();
 		}
 
 		private void InitializeEditable (XmlReader reader, XmlSpace space, bool acceptChangesOnLoad)
@@ -416,7 +421,7 @@ namespace System.Xml.XPath
 
 	public class XPathDocument : IXPathNavigable
 	{
-		DTMXPathDocument document;
+		IXPathNavigable document;
 
 		public XPathDocument (Stream stream)
 		{
@@ -462,12 +467,12 @@ namespace System.Xml.XPath
 
 		private void Initialize (XmlReader reader, XmlSpace space)
 		{
-			document = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
+			document = new InternalBuilder (reader, space).CreateDocument ();
 		}
 
 		private void Initialize (XmlReader reader, XmlSpace space, bool acceptChangesOnLoad)
 		{
-			document = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
+			document = new InternalBuilder (reader, space).CreateDocument ();
 		}
 
 		public XPathNavigator CreateNavigator ()
