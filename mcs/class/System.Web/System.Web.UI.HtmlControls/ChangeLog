@@ -1,3 +1,8 @@
+2005-02-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HtmlForm.cs: Register the form in the page, so the page knows
+	which is the main form.
+
 2005-02-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HtmlHead.cs: Method name fix.

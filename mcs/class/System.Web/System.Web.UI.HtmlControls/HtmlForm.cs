@@ -89,6 +89,9 @@ namespace System.Web.UI.HtmlControls{
 		protected override void OnInit(EventArgs e){
 			base.OnInit(e);
 			Page.RegisterViewStateHandler();
+#if NET_2_0
+			Page.RegisterForm (this);
+#endif
 		}
 		
 		internal string Action {
