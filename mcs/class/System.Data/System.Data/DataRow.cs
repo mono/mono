@@ -37,6 +37,7 @@ namespace System.Data {
 		private DataRowState rowState;
 		internal int xmlRowID = 0;
 		internal bool _nullConstraintViolation;
+		private string _nullConstraintMessage;
 		private bool editing = false;
 		private bool _hasParentCollection;
 
@@ -181,12 +182,12 @@ namespace System.Data {
 			get {
 				if (columnIndex < 0 || columnIndex > _table.Columns.Count)
 					throw new IndexOutOfRangeException ();
-				// Non-existent version
-				if (rowState == DataRowState.Detached && version == DataRowVersion.Current || !HasVersion (version))
-					throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
 				// Accessing deleted rows
 				if (rowState == DataRowState.Deleted && version != DataRowVersion.Original)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
+				// Non-existent version
+				if (rowState == DataRowState.Detached && version == DataRowVersion.Current || !HasVersion (version))
+					throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
 				switch (version) {
 				case DataRowVersion.Default:
 					if (editing || rowState == DataRowState.Detached)
@@ -210,6 +211,10 @@ namespace System.Data {
 		[MonoTODO]
 		public object[] ItemArray {
 			get { 
+				// Accessing deleted rows
+				if (rowState == DataRowState.Deleted)
+					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
+				
 				return current; 
 			}
 			set {
@@ -260,21 +265,12 @@ namespace System.Data {
 				{
 					if (!col.AllowDBNull)
 					{
-						if (!this._table._duringDataLoad)
-						{
-							throw new NoNullAllowedException ();
-						}
-						else 
-						{
-							//Constraint violations during data load is raise in DataTable EndLoad
-							this._nullConstraintViolation = true;
-							
-						}
+						//Constraint violations during data load is raise in DataTable EndLoad
+						this._nullConstraintViolation = true;
+						_nullConstraintMessage = "Column '" + col.ColumnName + "' does not allow nulls.";
 					}
 
-					newval= DBNull.Value;
-					
-				
+					newval = DBNull.Value;
 				}
 			}		
 			else if (v == DBNull.Value) 
@@ -282,18 +278,12 @@ namespace System.Data {
 				
 				if (!col.AllowDBNull)
 				{
-					if (!this._table._duringDataLoad)
-					{
-						throw new NoNullAllowedException ();
-					}
-					else 
-					{
-						//Constraint violations during data load is raise in DataTable EndLoad
-						this._nullConstraintViolation = true;
-							
-					}
+					//Constraint violations during data load is raise in DataTable EndLoad
+					this._nullConstraintViolation = true;
+					_nullConstraintMessage = "Column '" + col.ColumnName + "' does not allow nulls.";
 				}
-				newval= DBNull.Value;
+				
+				newval = DBNull.Value;
 			}
 			else 
 			{	
@@ -303,69 +293,71 @@ namespace System.Data {
 				{
 					TypeCode typeCode = Type.GetTypeCode(cType);
 					switch(typeCode) {
-					case TypeCode.Boolean :
-						v = Convert.ToBoolean (v);
-						break;
-					case TypeCode.Byte  :
-						v = Convert.ToByte (v);
-						break;
-					case TypeCode.Char  :
-						v = Convert.ToChar (v);
-						break;
-					case TypeCode.DateTime  :
-						v = Convert.ToDateTime (v);
-						break;
-					case TypeCode.Decimal  :
-						v = Convert.ToDecimal (v);
-						break;
-					case TypeCode.Double  :
-						v = Convert.ToDouble (v);
-						break;
-					case TypeCode.Int16  :
-						v = Convert.ToInt16 (v);
-						break;
-					case TypeCode.Int32  :
-						v = Convert.ToInt32 (v);
-						break;
-					case TypeCode.Int64  :
-						v = Convert.ToInt64 (v);
-						break;
-					case TypeCode.SByte  :
-						v = Convert.ToSByte (v);
-						break;
-					case TypeCode.Single  :
-						v = Convert.ToSingle (v);
-						break;
-					case TypeCode.String  :
-						v = Convert.ToString (v);
-						break;
-					case TypeCode.UInt16  :
-						v = Convert.ToUInt16 (v);
-						break;
-					case TypeCode.UInt32  :
-						v = Convert.ToUInt32 (v);
-						break;
-					case TypeCode.UInt64  :
-						v = Convert.ToUInt64 (v);
-						break;
-					default :
-					switch(cType.ToString()) {
-						case "System.TimeSpan" :
-							v = (System.TimeSpan) v;
+						case TypeCode.Boolean :
+							v = Convert.ToBoolean (v);
 							break;
-						case "System.Type" :
-							v = (System.Type) v;
+						case TypeCode.Byte  :
+							v = Convert.ToByte (v);
 							break;
-						case "System.Object" :
-							//v = (System.Object) v;
+						case TypeCode.Char  :
+							v = Convert.ToChar (v);
 							break;
-						default:
-							// FIXME: is exception correct?
-							throw new InvalidCastException("Type not supported.");
+						case TypeCode.DateTime  :
+							v = Convert.ToDateTime (v);
+							break;
+						case TypeCode.Decimal  :
+							v = Convert.ToDecimal (v);
+							break;
+						case TypeCode.Double  :
+							v = Convert.ToDouble (v);
+							break;
+						case TypeCode.Int16  :
+							v = Convert.ToInt16 (v);
+							break;
+						case TypeCode.Int32  :
+							v = Convert.ToInt32 (v);
+							break;
+						case TypeCode.Int64  :
+							v = Convert.ToInt64 (v);
+							break;
+						case TypeCode.SByte  :
+							v = Convert.ToSByte (v);
+							break;
+						case TypeCode.Single  :
+							v = Convert.ToSingle (v);
+							break;
+						case TypeCode.String  :
+							v = Convert.ToString (v);
+							break;
+						case TypeCode.UInt16  :
+							v = Convert.ToUInt16 (v);
+							break;
+						case TypeCode.UInt32  :
+							v = Convert.ToUInt32 (v);
+							break;
+						case TypeCode.UInt64  :
+							v = Convert.ToUInt64 (v);
+							break;
+						default :
+								
+						switch(cType.ToString()) {
+							case "System.TimeSpan" :
+								v = (System.TimeSpan) v;
+								break;
+							case "System.Type" :
+								v = (System.Type) v;
+								break;
+							case "System.Object" :
+								//v = (System.Object) v;
+								break;
+							default:
+								if (!cType.IsArray)
+									throw new InvalidCastException("Type not supported.");
+								break;
+						}
+							break;
 					}
-						break;
-				}
-				vType = v.GetType();
+					vType = v.GetType();
 				}
 				newval = v;
 				if(col.AutoIncrement == true) {
@@ -376,6 +368,7 @@ namespace System.Data {
 			col.DataHasBeenSet = true;
 			return newval;
 		}
+
 
 		/// <summary>
 		/// Gets or sets the custom error description for a row.
@@ -640,9 +633,12 @@ namespace System.Data {
 		[MonoTODO]
 		public void EndEdit () 
 		{
-			editing = false;
 			if (rowState == DataRowState.Detached)
+			{
+				editing = false;
 				return;
+			}
+
 			if (HasVersion (DataRowVersion.Proposed))
 			{
 				_table.ChangingDataRow(this, DataRowAction.Change);
@@ -653,11 +649,12 @@ namespace System.Data {
 				//and ForeignKeys.
 				try
 				{
-					if (_table.DataSet == null || _table.DataSet.EnforceConstraints)
+					if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad)
 						_table.Rows.ValidateDataRowInternal(this);
 				}
 				catch (Exception e)
 				{
+					editing = false;
 					proposed = null;
 					throw e;
 				}
@@ -665,6 +662,7 @@ namespace System.Data {
 				CheckChildRows(DataRowAction.Change);
 				current = proposed;
 				proposed = null;
+				editing = false;
 				_table.ChangedDataRow(this, DataRowAction.Change);
 			}
 		}
@@ -1201,6 +1199,19 @@ namespace System.Data {
 			set
 			{
 				_hasParentCollection = value;
+			}
+		}
+
+		internal void CheckNullConstraints()
+		{
+			if (_nullConstraintViolation)
+			{
+				for (int i = 0; i < proposed.Length; i++)
+				{
+					if (this[i] == DBNull.Value && !_table.Columns[i].AllowDBNull)
+						throw new NoNullAllowedException(_nullConstraintMessage);
+				}
+				_nullConstraintViolation = false;
 			}
 		}
 

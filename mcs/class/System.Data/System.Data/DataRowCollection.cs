@@ -276,6 +276,8 @@ namespace System.Data
 		[MonoTODO]
 		internal void ValidateDataRowInternal(DataRow row)
 		{
+			//first check for null violations.
+			row.CheckNullConstraints();
 			//FIXME: this validates constraints in the order they appear
 			//in the collection. Most probably we need to do it in a 
 			//specific order like unique/primary keys first, then Foreignkeys, etc

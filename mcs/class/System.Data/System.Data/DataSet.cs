@@ -82,6 +82,14 @@ namespace System.Data {
 				}
 
 				caseSensitive = value; 
+				if (!caseSensitive)
+				{
+					foreach (DataTable table in Tables)
+					{
+						foreach (Constraint c in table.Constraints)
+							c.AssertConstraint();
+					}
+				}
 			}
 		}
 
@@ -107,7 +115,20 @@ namespace System.Data {
 		[DefaultValue (true)]
 		public bool EnforceConstraints {
 			get { return enforceConstraints; } 
-			set { enforceConstraints = value; }
+			set { 
+				if (value != enforceConstraints)
+				{
+					enforceConstraints = value; 
+					if (value)
+					{
+						foreach (DataTable table in Tables)
+						{
+							foreach (Constraint c in table.Constraints)
+								c.AssertConstraint();
+						}
+					}
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -791,12 +812,10 @@ namespace System.Data {
 		#region ISupportInitialize methods
 		public void BeginInit ()
 		{
-			throw new NotImplementedException ();
 		}
 		
 		public void EndInit ()
 		{
-			throw new NotImplementedException ();
 		}
 		#endregion
 

@@ -137,6 +137,8 @@ namespace System.Data {
 							}
 						}
 						
+						if (nullsFound)
+							throw new DataException("Column '" + ColumnName + "' has null values in it.");
 						//TODO: Validate no null values exist
 						//do we also check different versions of the row??
 					}
