@@ -29,9 +29,16 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.48 $
+// $Revision: 1.49 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.49  2004/08/23 21:22:53  pbartok
+// - Added InitLayout() method
+// - Added code to properly perform layout when Anchor or Dock property is
+//   changed
+// - Changed 'interpretation' of ResumeLayout. MS seems to have a LAMESPEC,
+//   tried to do it in a way that makes sense
+//
 // Revision 1.48  2004/08/23 19:55:08  pbartok
 // - Properly fixed Jordi's last fix
 // - Now uses Cursor's Position property instead of calling XplatUI directly
@@ -242,6 +249,7 @@ namespace System.Windows.Forms
 		internal Size			client_size;		// size of the client area (window excluding decorations)
 		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
 		internal ImeMode		ime_mode = ImeMode.Inherit;
+		internal bool			layout_pending;		// true if our parent needs to re-layout us
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -548,6 +556,7 @@ namespace System.Windows.Forms
 			is_disposed = false;
 			is_enabled = true;
 			is_entered = false;
+			layout_pending = false;
 			causes_validation = true;
 			has_focus = false;
 			layout_suspended = 0;		
@@ -706,6 +715,10 @@ namespace System.Windows.Forms
 
 			set {
 				anchor_style=value;
+
+				if (parent != null) {
+					parent.PerformLayout(this, "Parent");
+				}
 			}
 		}
 
@@ -929,6 +942,11 @@ namespace System.Windows.Forms
 					return;
 
 				dock_style = value;
+
+				if (parent != null) {
+					parent.PerformLayout(this, "Parent");
+				}
+
 				OnDockChanged(EventArgs.Empty);
 			}
 		}
@@ -1029,6 +1047,8 @@ namespace System.Windows.Forms
 					}
 
 					XplatUI.SetParent(Handle, value.Handle);
+
+					InitLayout();
 				}
 			}
 		}
@@ -1453,11 +1473,11 @@ namespace System.Windows.Forms
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
 			if (layout_suspended>0) {
+				layout_pending = true;
 				return;
 			}
 
-			// Prevent recursion
-			//in_layout=true;
+			layout_pending = false;
 
 			// Prevent us from getting messed up
 			layout_suspended++;
@@ -1592,14 +1612,17 @@ namespace System.Windows.Forms
 			ResumeLayout (true);
 		}
 
-		public void ResumeLayout(bool peformLayout) 
+		public void ResumeLayout(bool performLayout) 
 		{
 			layout_suspended--;
 			
-			if (layout_suspended > 0 || peformLayout == false)
+			if (layout_suspended > 0) {
 				return;
+			}
 
-			PerformLayout();
+			if (performLayout || layout_pending) {
+				PerformLayout();
+			}
 		}
 
 		
@@ -1820,6 +1843,12 @@ namespace System.Windows.Forms
 				if (window != null) {
 					window.DestroyHandle();
 				}
+			}
+		}
+
+		protected virtual void InitLayout() {
+			if (parent != null) {
+				parent.PerformLayout(this, "parent");
 			}
 		}
 
@@ -2215,7 +2244,9 @@ namespace System.Windows.Forms
 
 			PerformLayout(this, "bounds");
 
-			// Do we need to let our parent regenerate it's layout thing since we resized?
+			if (parent != null) {
+				parent.PerformLayout();
+			}
 		}
 
 		protected virtual void OnRightToLeftChanged(EventArgs e) {
