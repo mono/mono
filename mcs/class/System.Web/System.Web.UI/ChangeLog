@@ -1,3 +1,8 @@
+2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ObjectStateFormatter.cs: use ObjectFormatter methods instead of
+	calling a protected method of another object.
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ObjectStateFormatter.cs : csc build fix. Protected Read()/Write()
