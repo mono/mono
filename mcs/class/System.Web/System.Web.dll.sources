@@ -483,3 +483,10 @@ System.Web.UI/StateManagedCollection.cs
 System.Web.UI/KeyedList.cs
 System.Web.UI/KeyedListEnumerator.cs
 System.Web.UI/ObjectStateFormatter.cs
+System.Web.UI.WebControls/SqlDataSource.cs
+System.Web.UI.WebControls/SqlDataSourceCommandEventArgs.cs
+System.Web.UI.WebControls/SqlDataSourceCommandEventHandler.cs
+System.Web.UI.WebControls/SqlDataSourceStatusEventArgs.cs
+System.Web.UI.WebControls/SqlDataSourceStatusEventHandler.cs
+System.Web.UI.WebControls/SqlDataSourceView.cs
+System.Web.UI.WebControls/SqlDataSourceMode.cs
