@@ -34,8 +34,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("MONO CLI")]
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 
-// FIXME Already defined in System.IntPtr.cs - probably should be moved here
-//[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(true)]
 [assembly: AssemblyDefaultAlias("mscorlib.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
