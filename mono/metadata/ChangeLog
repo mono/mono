@@ -1,3 +1,7 @@
+2002-06-25  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (class_compute_field_layout): compute class->blittable attribute.
+
 2002-07-09  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Make the thread cleaning up cope with threads that

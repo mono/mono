@@ -1,3 +1,11 @@
+2002-07-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_emit_prologue): added code to save LMF
+
+2002-07-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (LOCALLOC): added fix from Zoltan Varga (for bug #27396) 
+
 2002-07-05  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_add_method): Fix a bug in the `begin_scope' and
