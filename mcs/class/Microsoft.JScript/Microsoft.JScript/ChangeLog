@@ -1,3 +1,68 @@
+2003-06-09  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Added the Visit method to classes: AST, ArrayLiteral, ASTList,
+	Block, DebugBreak, Eval, ForIn, FunctionDeclaration,
+	FunctionExpression, Import, Package, ScriptBlock, Throw, Try,
+	With, 
+	
+	That method will be the driver that will allow classes
+	that implement the Visitor interface do a walk through the AST's
+	elements, in particular the Semantic Analizer and the Code
+	Generator. Every class that inherits from AST will have a Visit
+	method, that method will receive a Visitor and a object as
+	parameters, the only thing that it'll do is letting the Visitor
+	call the respective method VisitX, where X is the name of the
+	currently visited class.
+	
+	* ASTList.cs:Added constructor, Add, Visit, ToString  methods.
+
+	* FunctionDeclaration.cs: Added constructor, Visit and ToString
+	methods.
+	
+	* jscript-lexer-parser.g: Added a ASTList as a parameter to the
+	program (the main entry of the parser). Also added as parameters: 
+		- An AST to source_element.
+		- A Statement to statement.
+		- A VariableStatement to variable_statement.
+		- A VariableStatement to variable_declaration_list.
+		- A FormalParamerList by formal_parameter_list.
+		- A ASTList by function_body.
+	
+	And now some rules return objects:
+		- A VariableDeclaration by variable_declaration.
+		- A Functiondeclaration by function_declaration.
+
+	* driver.cs: Added the construction of the AST of the EcmaScript
+	program.
+
+	* Visitor.cs: Added this file. It's the visitor interface. 
+
+	* VariableDeclaration.cs: Added this class, it's the AST
+	representation of a variable declaration.
+
+	* Statement.cs: Added this file. It's the logical representation
+	of a Statement.
+
+	* VariableStatement.cs: Added this class. It's the AST
+	representation of a chain of variable declarations.
+	
+	* FormalParameterList.cs: The function declaration needs to store
+	its parameter, we will put them on this class.
+
+	* SemanticAnalizer.cs: Added this class. I'll use the Visitor pattern in order to
+	implement the semantic analysis and code generation
+	phases. SemanticAnalizer and CodeGenerator will implement the
+	Visitor interface, they will walk a program's
+	AST tree and do their respective work.
+
+	* IdentificationTable.cs: Added this class. The SymbolTable will be used
+	by the SemanticAnalyzer in order to keep track of the variable
+	declaration encountered, etc..
+
+	* SymbolTable.cs: A simple hashtable but for commodity i'll call
+	it this way.
+
+	
 2003-05-03  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g:
