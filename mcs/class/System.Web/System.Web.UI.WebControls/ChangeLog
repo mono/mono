@@ -1,11 +1,32 @@
+2003-10-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-2002-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
+	* Calendar.cs: apply the calendar style to the new Table, not to itself.
+	Fixes #49406.
+
+	* CheckBox.cs: render the hidden fields if AutoPostBack.
+
+	* Style.cs: don't render empty width/height. Small improvement in
+	CopyFrom.
+
+	* Table.cs: fixed condition for border width.
+
+	* TableStyle.cs:
+	(CopyFrom): always call the base class to copy other attributes. Fixes
+	bug #49408. Don't render empty 'rules' attribute.
+
+	* WebControl.cs: track viewstate when enabled. Don't overwrite source
+	control attributes in CopyBaseAttributes.
+
+	* ChangeLog: fixed dates.
+
+
+2003-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* WebControl.cs         : Attributes { get; }       - Is Complete.
 	* ValidationSummary.cs  : AddAttributesToRender(HtmlTextWriter)
 	                                                    - Completed.
 
-2002-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
+2003-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* BaseValidator.cs      : DetermineRenderUplevel()  - Completed.
 	                        : RegisterValidatorCommonScript()

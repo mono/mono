@@ -711,7 +711,7 @@ namespace System.Web.UI.WebControls
 			calTable.ID = ID;
 			calTable.CopyBaseAttributes(this);
 			if(ControlStyleCreated)
-				ApplyStyle(ControlStyle);
+				calTable.ApplyStyle(ControlStyle);
 			calTable.Width = Width;
 			calTable.Height = Height;
 			calTable.CellSpacing = CellSpacing;
@@ -895,10 +895,12 @@ namespace System.Web.UI.WebControls
 
 				for (int weekDay = 0; weekDay < 7; weekDay++) {
 					string dayString = currentDay.Day.ToString ();
+					DayOfWeek dow = currentDay.DayOfWeek;
 					CalendarDay calDay =
 						new CalendarDay (
 								currentDay,
-								weekDay < 2,
+								dow == DayOfWeek.Sunday ||
+								dow == DayOfWeek.Saturday,
 								currentDay == TodaysDate, 
 								selectedDates.Contains (currentDay),
 								globCal.GetMonth (currentDay) != month,

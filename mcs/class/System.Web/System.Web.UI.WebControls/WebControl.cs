@@ -206,8 +206,11 @@ namespace System.Web.UI.WebControls
 				return true;
 			}
 			set {
-				if (enabled != value)
+				if (enabled != value) {
 					ViewState ["Enabled"] = value;
+					if (IsTrackingViewState)
+						EnableViewState = true;
+				}
 
 				enabled = value;
 			}
@@ -329,9 +332,8 @@ namespace System.Web.UI.WebControls
 			Enabled    = controlSrc.Enabled;
 			ToolTip    = controlSrc.ToolTip;
 			TabIndex   = controlSrc.TabIndex;
-			attributes = controlSrc.Attributes;
 			AttributeCollection otherAtt = controlSrc.Attributes;
-			foreach (string key in controlSrc.Attributes.Keys)
+			foreach (string key in otherAtt.Keys)
 				Attributes [key] = otherAtt [key];
 		}
 

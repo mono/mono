@@ -301,10 +301,10 @@ namespace System.Web.UI.WebControls
 				writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize,
 							Font.Size.ToString (CultureInfo.InvariantCulture));
 
-			if(Font.Bold)
+			if (Font.Bold)
 				writer.AddStyleAttribute (HtmlTextWriterStyle.FontWeight, "bold");
 
-			if(Font.Italic)
+			if (Font.Italic)
 				writer.AddStyleAttribute (HtmlTextWriterStyle.FontStyle, "italic");
 
 			string textDecoration = String.Empty;
@@ -323,14 +323,16 @@ namespace System.Web.UI.WebControls
 			Unit u = Unit.Empty;
 			if (IsSet (HEIGHT)) {
 				u = (Unit) ViewState ["Height"];
-				writer.AddStyleAttribute (HtmlTextWriterStyle.Height,
-							u.ToString (CultureInfo.InvariantCulture));
+				if (!u.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.Height,
+								u.ToString (CultureInfo.InvariantCulture));
 			}
 
 			if (IsSet (WIDTH)) {
 				u = (Unit) ViewState ["Width"];
-				writer.AddStyleAttribute (HtmlTextWriterStyle.Width,
-							u.ToString (CultureInfo.InvariantCulture));
+				if (!u.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.Width,
+								u.ToString (CultureInfo.InvariantCulture));
 			}
 		}
 
@@ -340,28 +342,28 @@ namespace System.Web.UI.WebControls
 				return;
 
 			Font.CopyFrom (source.Font);
-			if (source.Height != Unit.Empty)
+			if (source.IsSet (HEIGHT))
 				Height = source.Height;
 
-			if (source.Width != Unit.Empty)
+			if (source.IsSet (WIDTH))
 				Width = source.Width;
 
-			if (source.BorderColor != Color.Empty)
+			if (source.IsSet (BORDERCOLOR))
 				BorderColor = source.BorderColor;
 
-			if (source.BorderWidth != Unit.Empty)
+			if (source.IsSet (BORDERWIDTH))
 				BorderWidth = source.BorderWidth;
 
-			if (source.BorderStyle != BorderStyle.NotSet)
+			if (source.IsSet (BORDERSTYLE))
 				BorderStyle = source.BorderStyle;
 
-			if (source.BackColor != Color.Empty)
+			if (source.IsSet (BACKCOLOR))
 				BackColor = source.BackColor;
 
-			if (source.CssClass != String.Empty)
+			if (source.IsSet (CSSCLASS))
 				CssClass = source.CssClass;
 
-			if (source.ForeColor != Color.Empty)
+			if (source.IsSet (FORECOLOR))
 				ForeColor = source.ForeColor;
 
 		}

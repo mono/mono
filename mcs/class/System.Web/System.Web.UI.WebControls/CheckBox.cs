@@ -118,8 +118,11 @@ namespace System.Web.UI.WebControls
 		
 		protected override void OnPreRender(EventArgs e)
 		{
-			if (Page != null && Enabled)
+			if (Page != null && Enabled) {
 				Page.RegisterRequiresPostBack (this);
+				if (AutoPostBack)
+					Page.RequiresPostBackScript ();
+			}
 
 			if (!SaveCheckedViewState)
 				ViewState.SetItemDirty ("Checked", false);

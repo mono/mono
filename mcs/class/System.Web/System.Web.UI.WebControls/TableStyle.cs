@@ -159,36 +159,34 @@ namespace System.Web.UI.WebControls
 				case GridLines.Both:       gd = "all";
 				                           break;
 			}
-			writer.AddAttribute(HtmlTextWriterAttribute.Rules, gd);
+			if (gd != "")
+				writer.AddAttribute(HtmlTextWriterAttribute.Rules, gd);
 		}
 
 		public override void CopyFrom(Style s)
 		{
-			if(s != null && s is TableStyle && !s.IsEmpty)
-			{
-				base.CopyFrom(s);
-				TableStyle from = (TableStyle)s;
-				if(from.IsSet(HOR_ALIGN))
-				{
-					HorizontalAlign = from.HorizontalAlign;
-				}
-				if(from.IsSet(IMAGE_URL))
-				{
-					BackImageUrl = from.BackImageUrl;
-				}
-				if(from.IsSet(CELL_PADD))
-				{
-					CellPadding = from.CellPadding;
-				}
-				if(from.IsSet(CELL_SPAC))
-				{
-					CellSpacing = from.CellSpacing;
-				}
-				if(from.IsSet(GRID_LINE))
-				{
-					GridLines = from.GridLines;
-				}
-			}
+			if (s == null || s.IsEmpty)
+				return;
+
+			base.CopyFrom (s);
+			TableStyle from = s as TableStyle;
+			if (from == null)
+				return;
+
+			if (from.IsSet (HOR_ALIGN))
+				HorizontalAlign = from.HorizontalAlign;
+
+			if (from.IsSet (IMAGE_URL))
+				BackImageUrl = from.BackImageUrl;
+
+			if (from.IsSet (CELL_PADD))
+				CellPadding = from.CellPadding;
+
+			if (from.IsSet (CELL_SPAC))
+				CellSpacing = from.CellSpacing;
+
+			if (from.IsSet (GRID_LINE))
+				GridLines = from.GridLines;
 		}
 
 		public override void MergeWith(Style s)
