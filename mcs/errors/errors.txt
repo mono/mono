@@ -51,3 +51,6 @@ numbers to match the Microsoft numbers:
 -18	Do not know how to generate debugging information for this platform.
 
 -19     Can not find required utility function in the core libraries.
+
+-20	Cannot find attribute type Blah (maybe you forgot to set the 
+	usage using the AttributeUsage attribute ?).
