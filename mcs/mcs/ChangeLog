@@ -1,5 +1,10 @@
 2004-09-15  Marek Safar  <marek.safar@seznam.cz>
 
+	Fixed bug #65766
+	* const.cs: Explicitly set constant as static.
+
+2004-09-15  Marek Safar  <marek.safar@seznam.cz>
+
 	Fixed bug #64226
 	* cs-parser.jay: Add error 1017 report.
 
