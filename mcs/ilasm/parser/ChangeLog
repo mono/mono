@@ -1,5 +1,9 @@
 2003-03-13 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Set MaxStack, clean up some typos
+
+2003-03-13 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Set entrypoint 
 
 2003-03-11 Jackson Harper <jackson@latitudegeo.com>

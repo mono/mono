@@ -131,7 +131,7 @@ namespace Mono.ILASM {
 %token D_LOCALE
 %token D_LOCALS
 %token D_MANIFESTRES
-%token D_MAXSTCCK
+%token D_MAXSTACK
 %token D_METHOD
 %token D_MIME
 %token D_MODULE
@@ -711,7 +711,7 @@ methodHead              : D_METHOD methAttr callConv type_ref methodName
 				codegen.AddMethod ((MethAttr) $2, (ImplAttr) $9, (CallConv) $3, (string) $5, 
 					(TypeRef) $4, param_array, typeref_array, null);
 			}
-			| methodHeadPart1 methAttr callConv paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS methodName OPEN_PARENS sigArgs0 CLOSE_PARENS implAttr OPEN_BRACE
+			| D_METHOD methAttr callConv paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS methodName OPEN_PARENS sigArgs0 CLOSE_PARENS implAttr OPEN_BRACE
 			;
 
 
@@ -821,6 +821,9 @@ localsHead              : D_LOCALS
 methodDecl              : D_EMITBYTE int32 
 			| sehBlock 
 			| D_MAXSTACK int32 
+			  {
+				codegen.CurrentMethod.SetMaxStack ((int) $2);
+			  }
 			| localsHead OPEN_PARENS sigArgs0 CLOSE_PARENS 
 			| localsHead K_INIT OPEN_PARENS named_arg_list CLOSE_PARENS  
 				{
@@ -1115,7 +1118,7 @@ sigArg                  : ELLIPSIS
 			| paramAttr type id { $$ = String.Format ("{0} {1}", $2, $3); }
 			| paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS 
 			| paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS id 
-sint			;
+			;
 			
 
 dottedName		: id DOT id	{$$ = ($1 as string) + "." + ($3 as string);}
