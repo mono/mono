@@ -17,31 +17,81 @@ namespace System.Threading
 		private static extern bool WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
 		
 		public static bool WaitAll(WaitHandle[] waitHandles) {
+			if(waitHandles.Length>64) {
+				throw new NotSupportedException("Too many handles");
+			}
+			for(int i=0; i<waitHandles.Length; i++) {
+				if(waitHandles[i]==null) {
+					throw new ArgumentNullException("null handle");
+				}
+			}
+			
 			return(WaitAll_internal(waitHandles, 0, false));
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles,
 					   int millisecondsTimeout,
 					   bool exitContext) {
+			if(waitHandles.Length>64) {
+				throw new NotSupportedException("Too many handles");
+			}
+			for(int i=0; i<waitHandles.Length; i++) {
+				if(waitHandles[i]==null) {
+					throw new ArgumentNullException("null handle");
+				}
+			}
+			
 			return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles,
 					   TimeSpan timeout,
 					   bool exitContext) {
+			if(timeout.Milliseconds < 0 ||
+			   timeout.Milliseconds > Int32.MaxValue) {
+				throw new ArgumentOutOfRangeException("Timeout out of range");
+			}
+			if(waitHandles.Length>64) {
+				throw new NotSupportedException("Too many handles");
+			}
+			for(int i=0; i<waitHandles.Length; i++) {
+				if(waitHandles[i]==null) {
+					throw new ArgumentNullException("null handle");
+				}
+			}
+			
 			return(WaitAll_internal(waitHandles, timeout.Milliseconds, exitContext));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int WaitAny_internal(WaitHandle[] handles, int ms, bool exitContext);
 
+		// LAMESPEC: Doesn't specify how to signal failures
 		public static int WaitAny(WaitHandle[] waitHandles) {
+			if(waitHandles.Length>64) {
+				throw new NotSupportedException("Too many handles");
+			}
+			for(int i=0; i<waitHandles.Length; i++) {
+				if(waitHandles[i]==null) {
+					throw new ArgumentNullException("null handle");
+				}
+			}
+			
 			return(WaitAny_internal(waitHandles, 0, false));
 		}
 
 		public static int WaitAny(WaitHandle[] waitHandles,
 					  int millisecondsTimeout,
 					  bool exitContext) {
+			if(waitHandles.Length>64) {
+				throw new NotSupportedException("Too many handles");
+			}
+			for(int i=0; i<waitHandles.Length; i++) {
+				if(waitHandles[i]==null) {
+					throw new ArgumentNullException("null handle");
+				}
+			}
+			
 			return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
 		}
 
@@ -51,6 +101,15 @@ namespace System.Threading
 			   timeout.Milliseconds > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
+			if(waitHandles.Length>64) {
+				throw new NotSupportedException("Too many handles");
+			}
+			for(int i=0; i<waitHandles.Length; i++) {
+				if(waitHandles[i]==null) {
+					throw new ArgumentNullException("null handle");
+				}
+			}
+			
 			return(WaitAny_internal(waitHandles, timeout.Milliseconds, exitContext));
 		}
 
