@@ -1,3 +1,7 @@
+2004-05-03 Lluis Sanches Gual  <lluis@ximian.com>
+
+	* Consts.cs: Added.
+
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* AssemblyInfo.cs: Set version number correctly for the bootstrap
