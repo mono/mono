@@ -1,6 +1,6 @@
 /**
  * Namespace: System.Web.UI.WebControls
- * Delegate:  AdCreatedEventHandler
+ * Delegate:  DayRenderEventHandler
  * 
  * Author:  Gaurav Vaish
  * Contact: <gvaish@iitk.ac.in>
@@ -11,5 +11,5 @@
 
 namespace System.Web.UI.WebControls
 {
-	public delegate void AdCreatedEventHandler(object sender, AdCreatedEventArgs e);
+	public delegate void DayRenderEventHandler(object sender, DayRenderEventArgs e);
 }

@@ -44,6 +44,7 @@ namespace System.Web.UI.WebControls
 
 			alternatingItemTemplate = null;
 			editItemTemplate        = null;
+			footerTemplate          = null;
 			
 			extractTemplateRows = false;
 		}
@@ -92,12 +93,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		//TODO: To implement the following functions found in the DataList abstract class
-		/*
-		 * PrepareControlHierarchy()
-		 * CreateControlHeirarchy(bool)
-		 */
-		 
 		public virtual ITemplate EditItemTemplate
 		{
 			get
@@ -139,6 +134,30 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				footerTemplate = value;
+			}
+		}
+		
+		//TODO: To implement the following functions found in the BaseDataList abstract class
+		/*
+		 * PrepareControlHierarchy()
+		 * CreateControlHeirarchy(bool)
+		 */
+		 
+		public void CreateControlHierarchy(bool create)
+		{
+			//TODO: THE LOST WORLD
+			// Put here to get compilation going
+		}
+		
+		//Impemented methods/properties of IRepeatInfoUser
+		//TODO: Check all these implementations are valid or a total absurd
+		public bool HasFooter
+		{
+			get
+			{
+				if(footerTemplate!=null)
+					return true;
+				return false;
 			}
 		}
 	}
