@@ -4,8 +4,6 @@
 	1540 in typemanager.cs, as it has problems when accessing
 	protected methods from a parent class (see test-174.cs). 
 
-	Notice that 1540 is still caught elsewhere.
-
 	* attribute.cs (Attribute.ValidateGuid): new method.
 	(Attribute.Resolve): Use above.
 
