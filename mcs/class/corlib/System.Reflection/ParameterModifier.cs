@@ -32,16 +32,20 @@
 using System;
 
 namespace System.Reflection {
+	[Serializable]
 	public struct ParameterModifier {
-		private bool[] data;
+		private bool[] _byref;
 		
-		public ParameterModifier (int paramaterCount) {
-			data = new bool [paramaterCount];
+		public ParameterModifier (int parameterCount) {
+			if (parameterCount <= 0)
+				throw new ArgumentException ("Must specify one or more parameters.");
+
+			_byref = new bool[parameterCount];
 		}
 
 		public bool this [int index] {
-			get {return data [index];} 
-			set {data [index] = value;}
+			get {return _byref [index];} 
+			set {_byref [index] = value;}
 		}
 
 	}

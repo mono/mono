@@ -1,3 +1,9 @@
+2004-06-17  Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* ParameterModifier.cs: marked serializable, renamed field to match
+	MS.NET, throw ArgumentException when parameter count is less than or
+	equal to zero
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AssemblyName.cs: added TODO for serialization
