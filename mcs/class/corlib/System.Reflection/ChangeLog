@@ -1,3 +1,8 @@
+2002-12-30  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* AssemblyName.cs: Fixed null cultureinfo in FullName (as reported by 
+	Zoltan).
+
 2002-12-23  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* AssemblyName.cs: GetPublicKey now return an empty array (not null)

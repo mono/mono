@@ -92,10 +92,10 @@ namespace System.Reflection {
 				fname.Append (", Version=");
 				fname.Append (Version.ToString ());
 				fname.Append (", Culture=");
-				if (CultureInfo.LCID == CultureInfo.InvariantCulture.LCID)
+				if ((cultureinfo == null) || (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID))
 					fname.Append ("neutral");
 				else
-					fname.Append (CultureInfo.ToString ()); // ???
+					fname.Append (cultureinfo.ToString ()); // ???
 				if (keypair == null)
 					fname.Append (", PublicKeyToken=null");
 				// TODO
