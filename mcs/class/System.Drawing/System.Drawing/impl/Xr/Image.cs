@@ -27,6 +27,7 @@ namespace System.Drawing {
 			internal System.Drawing.XrImpl.Graphics selectedIntoGraphics_ = null;
 			internal Size  size;
 			internal PixelFormat format;
+			protected ImageFormat imageFormat_;
 			
 			// constructor
 			public Image () {}
@@ -123,150 +124,23 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 
-			#region 
-			struct BITMAPFILEHEADER {        // File info header
-				public ushort bfType;      // Specifies the type of file. This member must be BM.
-				public uint bfSize;      // Specifies the size of the file, in bytes.
-				public ushort bfReserved1; // Reserved; must be set to zero.
-				public ushort bfReserved2; // Reserved; must be set to zero.
-				public uint bfOffBits;   // Specifies the byte offset from the BITMAPFILEHEADER
-				// structure to the actual bitmap data in the file.
+			protected InternalImageInfo createdFrom_ = null;
+			public InternalImageInfo ConvertToInternalImageInfo() {
+				if (createdFrom_ == null) {
+					createdFrom_ = new InternalImageInfo();
+					createdFrom_.Size = size;
+					createdFrom_.Format = format;
+					IntPtr memptr = GDK.gdk_pixbuf_get_pixels(nativeObject_);
+					int rowSize = (format == PixelFormat.Format32bppArgb) ? 4 * size.Width: 3 * size.Width;
+					int totalSize = rowSize * size.Height;
+					createdFrom_.Stride = rowSize;
+					createdFrom_.RawImageBytes = new byte[totalSize];
+					Marshal.Copy( memptr, createdFrom_.RawImageBytes, 0, totalSize);
+				}
+				return createdFrom_;
 			}
-			struct BITMAPINFOHEADER {        // bitmap info header
-				public uint   biSize;
-				public int    biWidth;
-				public int    biHeight;
-				public ushort biPlanes;
-				public ushort biBitCount;
-				public uint   biCompression;
-				public uint   biSizeImage;
-				public int    biXPelsPerMeter;
-				public int    biYPelsPerMeter;
-				public uint   biClrUsed;
-				public uint   biClrImportant;
-			}
-
-			struct RGBQUAD {
-				public byte rgbBlue;
-				public byte rgbGreen;
-				public byte rgbRed;
-				public byte rgbReserved;
-			}
-			
-			struct BITMAPINFO {              // bitmap info
-				public BITMAPINFOHEADER bitmapinfoheader;
-				public RGBQUAD[] colorpalette;
-			}
-			
-			// I do not think pinning is needed execpt for when locked
-			// Is layout packed attribute needed here?
-			struct bitmapstruct {
-				//placed in a struct to keep all 3 (4 including the color table) contugious in memory.)
-				public BITMAPFILEHEADER fileheader;     //File info header
-				//bitmapinfo includes the color table
-				public BITMAPINFO       info;           //bitmap info
-				public byte[,]          bits;           //Actual bitmap bits
-			}
-			const int BI_RGB = 0;                   //? 0 is from example;
-			#endregion
-
 			public void Save (string filename) {
-				FileStream fs = new FileStream(filename, FileMode.Create);
-				
-				int rowSize = (format == PixelFormat.Format32bppArgb) ? 4 * size.Width: 3 * size.Width;
-				int totalSize = rowSize * size.Height;
-				
-				// store bitmap header
-				bitmapstruct bitmap = new bitmapstruct();
-				
-				// Init BITMAPFILEHANDLE
-				// document I am working from says tyoe must allways be "BM",
-				// the example has this set to 19778.
-				// TODO: verify magic number 19778 for "BM" bfType
-				bitmap.fileheader.bfType = 19778;
-				// TODO: is this the correct file size?
-				bitmap.fileheader.bfSize = (uint)
-					//bitmap
-					totalSize
-					//add color table, 0 for now
-					+ 0
-					// add header
-					+ 60;
-				bitmap.fileheader.bfReserved1 = 0;
-				bitmap.fileheader.bfReserved2 = 0;
-				// bfOffBits is bytes offset between start of bitmap (bimapfileheader)
-				// and start of actual data bits.
-				// Example puts it at 118 including 64 bytes of color table.
-				// I count 124. What is right?
-				// Also I force 32 bit color for first pass, so for now there is no color table (24 bit or greater)
-				// TODO: verify magic number 124 for bfOffBits
-				// TODO: Could also be sizeof(fileheader and bitmapinfo)
-				bitmap.fileheader.bfOffBits = 60; //14 * 4 for ints + 2 * 2 for words.
-
-				// Init BITMAPINFO HEADER
-				// TODO: document on bitmaps shows only 1, 4, 8, 24 as valid pixel depths
-				// TODO; MS's document says 32ppARGB is 32 bits per pixle, the default.
-
-				bitmap.info.bitmapinfoheader.biBitCount = (format == PixelFormat.Format32bppArgb) ? (ushort)32: (ushort)24;
-				// biclrused is the number of colors in the bitmap that are actualy used
-				// in the bitmap. 0 means all. default to this.
-				// TODO: As far as I know, it is fine to leave this as 0, but
-				// TODO: that it would be better to do an actual count.
-				// TODO: If we open an already created bitmap, we could in a later 
-				// TODO: version store that.
-				bitmap.info.bitmapinfoheader.biClrUsed = 0;
-				// biclrused is the number of colors in the bitmap that are importiant
-				// in the bitmap. 0 means all. default to this.
-				// TODO: As far as I know, it is fine to leave this as 0,
-				// TODO: If we open an already created bitmap, we could in a later 
-				// TODO: version store that.
-				// In a new bitmap, I do not know how we would know which colors are importiant.
-				bitmap.info.bitmapinfoheader.biClrImportant = 0;
-				// Options are BI_RGB for none, BI_RLE8 for 8 bit color ,BI_RLE4 for 4 bit color
-				// Only supprt BI_RGB for now;
-				// TODO: add definition for BI_***
-				// TODO: correctly set biSizeImage before supporting compression.
-				bitmap.info.bitmapinfoheader.biCompression = BI_RGB;
-				bitmap.info.bitmapinfoheader.biHeight = size.Height;
-				bitmap.info.bitmapinfoheader.biWidth = size.Width;
-				// TODO: add support for more planes
-				bitmap.info.bitmapinfoheader.biPlanes = 1;
-				// TODO: replace 40 with a sizeof() call
-				bitmap.info.bitmapinfoheader.biSize = 40;// size of this structure.
-				// TODO: correctly set biSizeImage so compression can be supported.
-				bitmap.info.bitmapinfoheader.biSizeImage = 0; //0 is allowed for BI_RGB (no compression)
-				// The example uses 0 for pels per meter, so do I.
-				// TODO: support pels per meter
-				bitmap.info.bitmapinfoheader.biXPelsPerMeter = 0;
-				bitmap.info.bitmapinfoheader.biYPelsPerMeter = 0;
-				
-				BinaryWriter bw = new BinaryWriter(fs);
-				bw.Write(bitmap.fileheader.bfType);
-				bw.Write(bitmap.fileheader.bfSize);
-				bw.Write(bitmap.fileheader.bfReserved1);
-				bw.Write(bitmap.fileheader.bfReserved2);
-				bw.Write(bitmap.fileheader.bfOffBits);
-
-				bw.Write(bitmap.info.bitmapinfoheader.biSize);
-				bw.Write(bitmap.info.bitmapinfoheader.biWidth);
-				bw.Write(bitmap.info.bitmapinfoheader.biHeight);
-				bw.Write(bitmap.info.bitmapinfoheader.biPlanes);
-				bw.Write(bitmap.info.bitmapinfoheader.biBitCount);
-				bw.Write(bitmap.info.bitmapinfoheader.biCompression);
-				bw.Write(bitmap.info.bitmapinfoheader.biSizeImage);
-				bw.Write(bitmap.info.bitmapinfoheader.biXPelsPerMeter);
-				bw.Write(bitmap.info.bitmapinfoheader.biYPelsPerMeter);
-				bw.Write(bitmap.info.bitmapinfoheader.biClrUsed);
-				bw.Write(bitmap.info.bitmapinfoheader.biClrImportant);
-				
-				// store bitmap bytes
-				IntPtr memptr = GDK.gdk_pixbuf_get_pixels(nativeObject_);
-				byte[] buffer = new byte[totalSize];
-				Marshal.Copy( memptr, buffer, 0, totalSize);
-				fs.Write(buffer, 0, totalSize);
-				
-				fs.Flush();
-				fs.Close();				
+				throw new NotImplementedException();
 			}
 	
 			[MonoTODO]

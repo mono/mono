@@ -94,15 +94,21 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 				//this.original = original;
 			}
-			//FIXME: This uses GTK
-			public Bitmap(Stream stream) {
-				throw new NotImplementedException ();
+			
+			void InitFromStream( Stream stream) {
+				InternalImageInfo info = System.Drawing.Image.Decode(stream);
+				if (info != null) {
+					createdFrom_ = info;
+					size = info.Size;
+					imageFormat_ = info.RawFormat;
+				}
+			}
+			
+			public Bitmap(Stream stream) : this(stream, false){
 			}
 
 
-			public Bitmap (string filename) {
-				throw new NotImplementedException ();
-				//this.filename = filename;
+			public Bitmap (string filename) : this(filename, false){
 			}
 
 			public Bitmap (Image original, Size newSize) {
@@ -112,15 +118,13 @@ namespace System.Drawing {
 			}
 
 			public Bitmap (Stream stream, bool useIcm) {
-				throw new NotImplementedException ();
-				//this.stream = stream;
-				//this.useIcm = useIcm;
+				InitFromStream(stream);
 			}
 
 			public Bitmap (string filename, bool useIcm) {
-				throw new NotImplementedException ();
-				//this.filename = filename;
-				//this.useIcm = useIcm;
+				FileStream file = new FileStream(filename, FileMode.Open);
+				InitFromStream(file);
+				file.Close();
 			}
 
 			public Bitmap (Type type, string resource) {
