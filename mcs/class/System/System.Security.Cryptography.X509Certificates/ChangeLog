@@ -1,3 +1,9 @@
+2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CertificateCollection.cs: Fixed Contains which works by value
+	(i.e. not by object reference). Fixed Remove for null and unexisting
+	elements.
+
 2003-03-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509CertificateCollection.cs: Fixed bugs in AddRange

@@ -5,9 +5,12 @@
 //	Lawrence Pit (loz@cable.a2000.nl)
 //	Sebastien Pouliot (spouliot@motus.com)
 //
+// Copyright (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Security.Cryptography;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -15,7 +18,9 @@ namespace System.Security.Cryptography.X509Certificates {
 [Serializable]
 public class X509CertificateCollection : CollectionBase, IEnumerable {
 	
-	public X509CertificateCollection () {}
+	public X509CertificateCollection ()
+	{
+	}
 	
 	public X509CertificateCollection (X509Certificate [] value) 
 	{
@@ -64,9 +69,17 @@ public class X509CertificateCollection : CollectionBase, IEnumerable {
 	
 	public bool Contains (X509Certificate value) 
 	{
-		return InnerList.Contains (value);
-	}
+		if (value == null)
+			return false;
 
+		byte[] hash = value.GetCertHash ();
+		for (int i=0; i < InnerList.Count; i++) {
+			X509Certificate x509 = (X509Certificate) InnerList [i];
+			if (Compare (x509.GetCertHash (), hash))
+				return true;
+		}
+		return false;
+	}
 
 	public void CopyTo (X509Certificate[] array, int index)
 	{
@@ -100,7 +113,31 @@ public class X509CertificateCollection : CollectionBase, IEnumerable {
 	
 	public void Remove (X509Certificate value)
 	{
+		if (value == null)
+			throw new ArgumentNullException ("value");
+		if (IndexOf (value) == -1) {
+			throw new ArgumentException ("value", 
+				Locale.GetText ("Not part of the collection."));
+		}
+
 		InnerList.Remove (value);
+	}
+
+	// private stuff
+
+	private bool Compare (byte[] array1, byte[] array2) 
+	{
+		if ((array1 == null) && (array2 == null))
+			return true;
+		if ((array1 == null) || (array2 == null))
+			return false;
+		if (array1.Length != array2.Length)
+			return false;
+		for (int i=0; i < array1.Length; i++) {
+			if (array1 [i] != array2 [i])
+				return false;
+		}
+		return true;
 	}
 
 	// Inner Class
