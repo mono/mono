@@ -1,5 +1,5 @@
 //
-// System.Web.SiteMapProviderCollection
+// System.Web.SiteMapProvider
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
@@ -29,37 +29,31 @@
 //
 
 #if NET_2_0
-using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
-using System.Configuration.Provider;
-using System.Web.UI;
 
-namespace System.Web {
-	public class SiteMapProviderCollection : ProviderCollection
+using System;
+
+namespace System.Web
+{
+	public delegate SiteMapNode SiteMapResolveEventHandler (object sender, SiteMapResolveEventArgs e);
+	
+	public class SiteMapResolveEventArgs : EventArgs
 	{
-		public SiteMapProviderCollection () {}
+		HttpContext _context;
+		SiteMapProvider _provider;
 		
-		public override void Add (ProviderBase provider)
+		public SiteMapResolveEventArgs (HttpContext context, SiteMapProvider provider)
 		{
-			if (provider == null)
-				throw new ArgumentNullException ("provider");
-			if ((provider as SiteMapProvider) == null)
-				throw new InvalidOperationException(String.Format ("{0} must implement {1} to act as a site map provider", provider.GetType (), typeof (SiteMapProvider)));
-			
-			base.Add (provider);
+			_context = context;
+			_provider = provider;
 		}
 		
-		public virtual void AddArray (ProviderBase[] providerArray)
-		{			
-			foreach (ProviderBase p in providerArray) {
-				if (this [p.Name] != null)
-					throw new ArgumentException ("Duplicate site map providers");
-				Add (p);
-			}
+		public HttpContext Context {
+			get { return _context; }
 		}
 		
-		public new SiteMapProvider this [string name] { get { return (SiteMapProvider) base [name]; } }
+		public SiteMapProvider Provider {
+			get { return _provider; }
+		}
 	}
 }
 #endif

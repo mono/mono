@@ -36,6 +36,11 @@ using System.Configuration.Provider;
 
 namespace System.Web {
 	public sealed class SiteMap {
+	
+		internal SiteMap ()
+		{
+		}
+		
 		[MonoTODO ("Get everything from the config")]
 		private static void Init ()
 		{
@@ -46,8 +51,8 @@ namespace System.Web {
 						provider = new XmlSiteMapProvider ();
 						NameValueCollection attributes = new NameValueCollection ();
 						attributes.Add ("siteMapFile", "app.sitemap");
-						((IProvider)provider).Initialize ("AspNetXmlSiteMapProvider", attributes);
-						providers.Add ((IProvider)provider);
+						((ProviderBase)provider).Initialize ("AspNetXmlSiteMapProvider", attributes);
+						providers.Add ((ProviderBase)provider);
 					}
 				}
 			}
@@ -60,7 +65,7 @@ namespace System.Web {
 			get { return Provider.RootNode; }
 		}
 		
-		public static ISiteMapProvider Provider {
+		public static SiteMapProvider Provider {
 			get {
 				Init ();
 				return provider;
@@ -73,7 +78,7 @@ namespace System.Web {
 			}
 		}
 		
-		static ISiteMapProvider provider;
+		static SiteMapProvider provider;
 		static SiteMapProviderCollection providers;
 		static object locker = new object ();
 	}

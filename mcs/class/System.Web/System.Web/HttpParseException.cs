@@ -28,38 +28,82 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.Serialization;
+
 namespace System.Web {
-	public sealed class HttpParseException : HttpException {
 
-		#region Fields
-		
-		string fileName;
+#if NET_2_0
+	[Serializable]
+#endif
+	public class HttpParseException : HttpException {
+
 		int line;
+		string virtualPath;
+		
+#if NET_2_0
+		ParserErrorCollection errors = new ParserErrorCollection ();
+#endif
 
-		#endregion // Fields
-
-		#region Constructors
-
-		[MonoTODO ("Figure out what to do with this.")]
-		internal HttpParseException (string message, Exception innerException, string sourceCode, string fileName, int line)
-			: base (message, innerException)
+		internal HttpParseException (string message, string virtualPath, int line)
+			: base (message)
 		{
-			this.fileName = fileName;
+			this.virtualPath = virtualPath;
 			this.line = line;
 		}
 
-		#endregion // Constructors
+#if NET_2_0
 
-		#region Properties
+		public HttpParseException (): this ("External component has thrown an exception")
+		{
+		}
 
+		public HttpParseException (string message)
+			: base (message)
+		{
+			errors.Add (new ParserError (message, null, 0));
+		}
+		
+		public HttpParseException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+			errors.Add (new ParserError (message, null, 0));
+		}
+
+		public HttpParseException (string message, Exception innerException, string virtualPath, string sourceCode, int line)
+			: base (message, innerException)
+		{
+			this.virtualPath = virtualPath;
+			this.line = line;
+			errors.Add (new ParserError (message, virtualPath, line));
+		}
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext ctx)
+		{
+			base.GetObjectData (info, ctx);
+			info.AddValue ("_virtualPath", virtualPath);
+			info.AddValue ("_parserErrors", errors);
+			info.AddValue ("_line", line);
+		}
+#endif
+
+		[MonoTODO]
 		public string FileName {
-			get { return fileName; }
+			get { return virtualPath; }
 		}
 
 		public int Line {
 			get { return line; }
 		}
-
-		#endregion // Properties
+		
+#if NET_2_0
+		public string VirtualPath {
+			get { return virtualPath; }
+		}
+		
+		public ParserErrorCollection ParserErrors {
+			get { return errors; }
+		}
+#endif
 	}
 }
+

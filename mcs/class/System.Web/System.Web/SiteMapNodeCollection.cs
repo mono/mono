@@ -121,6 +121,14 @@ namespace System.Web {
 			get { return (SiteMapNode) this.List [index]; }
 			set { this.List [index] = value; }
 		}
+		
+		public virtual bool IsFixedSize {
+			get { return List.IsFixedSize; }
+		}
+
+		public virtual bool IsReadOnly {
+			get { return List.IsReadOnly; }
+		}
 
 		private class ReadOnlySiteMapNodeCollection : SiteMapNodeCollection {
 			
@@ -131,6 +139,7 @@ namespace System.Web {
 			protected override void OnInsert (int index, object value) { throw new NotSupportedException ("Readonly collection"); }
 			protected override void OnRemove (int index, object value) { throw new NotSupportedException ("Readonly collection"); }
 			protected override void OnSet (int index, object oldValue, object newValue) { throw new NotSupportedException ("Readonly collection"); }
+			public override bool IsReadOnly { get { return true; } }
 		}
 		 
 	}

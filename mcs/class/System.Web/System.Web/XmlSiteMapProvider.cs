@@ -115,8 +115,8 @@ namespace System.Web {
 					}
 				}
 				
-				SiteMapNode node = new SiteMapNode (this, url, title, description,
-					ArrayList.ReadOnly (keywordsList), ArrayList.ReadOnly (rolesList),
+				SiteMapNode node = new SiteMapNode (this, null, url, title, description,
+					/*ArrayList.ReadOnly (keywordsList), */ArrayList.ReadOnly (rolesList), null,
 					null); // TODO what do they want for attributes
 				
 				foreach (XmlNode child in xmlNode.ChildNodes) {

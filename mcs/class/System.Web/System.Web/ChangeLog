@@ -1,3 +1,16 @@
+2004-11-18 Lluis Sanchez Gual <lluis@novell.com>
+
+	* SiteMapNodeCollection.cs: Added missing properties.
+	* HttpParseException.cs: Added 2.0 methods and properties.
+	* SiteMapNode.cs: Added missing methods and properties.
+	* SiteMapProvider.cs, XmlSiteMapProvider.cs, 
+	SiteMapProviderCollection.cs: IProvider does not exist any
+	more, it is now	ProviderBase.
+	* ISiteMapProvider.cs: Deleted.
+	* ParserErrorCollection.cs, ParserError.cs, SiteMapResolveEventArgs.cs:
+	  Implemented.
+	* SiteMap.cs: Minor fixes.	
+
 2004-11-15 Lluis Sanchez Gual <lluis@novell.com>
 
 	* SiteMapProviderCollection.cs: Fixed warning.

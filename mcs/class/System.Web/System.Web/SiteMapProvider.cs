@@ -37,7 +37,9 @@ using System.Web.Util;
 using System.Globalization;
 
 namespace System.Web {
-	public abstract class SiteMapProvider : ISiteMapProvider, IProvider {
+	public abstract class SiteMapProvider : ProviderBase {
+		
+		bool enableLocalization;
 		
 		public void AddNode (SiteMapNode node)
 		{
@@ -186,9 +188,8 @@ namespace System.Web {
 			}
 		}
 
-		public virtual void Initialize (string name, NameValueCollection attributes)
+		public override void Initialize (string name, NameValueCollection attributes)
 		{ 
-			this.name = name;
 			if (attributes != null)
 				description = attributes ["description"];
 		
@@ -215,24 +216,19 @@ namespace System.Web {
 			get { return description != null ? description : "SiteMapProvider"; }
 		}
 		
-		string name;
-		public virtual string Name {
-			get { return name; }
-		}
-		
-		ISiteMapProvider parentProvider;
-		public virtual ISiteMapProvider ParentProvider {
+		SiteMapProvider parentProvider;
+		public virtual SiteMapProvider ParentProvider {
 			get { return parentProvider; }
 			set { parentProvider = value; }
 		}
 		
-		ISiteMapProvider rootProviderCache;
-		public virtual ISiteMapProvider RootProvider {
+		SiteMapProvider rootProviderCache;
+		public virtual SiteMapProvider RootProvider {
 			get {
 				if (rootProviderCache == null) {
 					lock (this) {
 						if (rootProviderCache == null) {
-							ISiteMapProvider current = this;
+							SiteMapProvider current = this;
 							while (current.ParentProvider != null)
 								current = current.ParentProvider;
 							
@@ -242,6 +238,11 @@ namespace System.Web {
 				}
 				return rootProviderCache;
 			}
+		}
+		
+		public bool EnableLocalization {
+			get { return enableLocalization; }
+			set { enableLocalization = value; }
 		}
 
 		public abstract SiteMapNode BuildSiteMap ();

@@ -1,10 +1,10 @@
-//
-// System.Web.ISiteMapProvider
+// 
+// System.Web.ParserError.cs
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -29,16 +29,41 @@
 //
 
 #if NET_2_0
+
+using System.Runtime.Serialization;
+
 namespace System.Web {
-	public interface ISiteMapProvider {
-		SiteMapNode FindSiteMapNode (string rawUrl);
-		SiteMapNodeCollection GetChildNodes (SiteMapNode node);
-		SiteMapNode GetParentNode (SiteMapNode node);
-		SiteMapNode CurrentNode { get; }
-		ISiteMapProvider ParentProvider { get; set; }
-		SiteMapNode RootNode { get; }
-		ISiteMapProvider RootProvider { get; }
+
+	[Serializable]
+	public sealed class ParserError
+	{
+		string _errorText;
+		string _virtualPath;
+		int _line;
+
+		public ParserError ()
+		{
+		}
+
+		public ParserError (string errorText, string virtualPath, int line)
+		{
+			_errorText = errorText;
+			_virtualPath = virtualPath;
+			_line = line;
+		}
+
+		public string ErrorText {
+			get { return _errorText; }
+		}
+		
+		public string VirtualPath {
+			get { return _virtualPath; }
+		}
+
+		public int Line {
+			get { return _line; }
+		}
 	}
 }
-#endif
 
+#endif
