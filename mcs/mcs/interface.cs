@@ -299,6 +299,9 @@ namespace Mono.CSharp {
 		//
 		void PopulateMethod (TypeContainer parent, DeclSpace decl_space, InterfaceMethod im)
 		{
+			if (im.ReturnType == null)
+				return;
+
 			Type return_type = im.ReturnType.Type;
 			if (return_type == null)
 				return_type = this.ResolveType (im.ReturnType, false, im.Location);

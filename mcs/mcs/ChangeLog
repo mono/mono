@@ -1,3 +1,8 @@
+2004-02-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* interface.cs (PopulateMethod): Fixed crash when interface method
+	returns not existing type (error test cs0246-3.cs).
+
 2004-02-02  Ravi Pratap M <ravi@ximian.com>
 
 	* cs-parser.jay (interface_accessors): Re-write actions to also
