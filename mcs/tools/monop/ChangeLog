@@ -1,3 +1,7 @@
+2004-11-11  Ben Maurer  <bmaurer@ximian.com>
+
+	* outline.cs: Remove `public virtual' for interface methods.
+
 2004-11-08  Ben Maurer  <bmaurer@ximian.com>
 
 	* outline.cs: If a type is in the namespace that we

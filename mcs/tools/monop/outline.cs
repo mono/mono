@@ -294,6 +294,10 @@ public class Outline {
 
 	static string GetMethodVisibility (MethodBase m)
 	{
+		// itnerfaces have no modifiers here
+		if (m.DeclaringType.IsInterface)
+			return "";
+		
 		if (m.IsPublic)   return "public ";
 		if (m.IsFamily)   return "protected ";
 		if (m.IsPrivate)  return "private ";
@@ -307,7 +311,8 @@ public class Outline {
 		if (method.IsStatic)
 			return "static ";
 	
-		if (method.IsVirtual)
+		// all interface methods are "virtual" but we don't say that in c#
+		if (method.IsVirtual && !method.DeclaringType.IsInterface)
 			return ((method.Attributes & MethodAttributes.NewSlot) != 0) ?
 				"virtual " :
 				"override ";
