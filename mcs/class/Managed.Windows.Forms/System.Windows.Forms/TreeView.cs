@@ -948,11 +948,13 @@ namespace System.Windows.Forms {
 			if (node == null)
 				return;
 			if (IsTextArea (node, e.X)) {
+				TreeNode old_selected = selected_node;
 				selected_node = node;
-				Console.WriteLine ("selected node");
 				if (selected_node != focused_node) {
 					select_mmove = true;
-					Refresh ();
+					Rectangle invalid = (old_selected == null ? Rectangle.Empty : old_selected.Bounds);
+					invalid = Rectangle.Union (invalid, selected_node.Bounds);
+					Invalidate (invalid);
 				}
 			} else if (node.PlusMinusBounds.Contains (e.X, e.Y)) {
 				node.Toggle ();
