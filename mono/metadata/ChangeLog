@@ -1,3 +1,12 @@
+2002-02-16  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* socket-io.c (convert_sockopt_level_and_name): If the system
+	doesn't define SOL_IP or SOL_TCP, get them by hand using
+	getprotobyname() and caching the values (because this could be a
+	slow operation).
+	(ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal):
+	Don't attempt to add or drop memberships unless the system
+	supports it.
 
 Fri Feb 15 18:15:44 CET 2002 Paolo Molaro <lupus@ximian.com>
 
