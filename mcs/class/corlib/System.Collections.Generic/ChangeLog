@@ -1,0 +1,5 @@
+2003-11-06  Martin Baulig  <martin@ximian.com>
+
+	* ICollection.cs, IList.cs, IEnumerator.cs, IEnumerable.cs:
+	Started to implement the System.Collections.Generic classes.
+
