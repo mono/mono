@@ -667,7 +667,7 @@ namespace System.Xml.Schema
                                                 schema.blockDefault = XmlSchemaUtil.ReadDerivationAttribute(reader,out ex, "blockDefault",
 							XmlSchemaUtil.ElementBlockAllowed);
                                                 if(ex != null)
-                                                        warn(h, ex.Message, ex);
+                                                        error (h, ex.Message, ex);
                                                 break;
                                         case "elementFormDefault":
                                                 schema.elementFormDefault = XmlSchemaUtil.ReadFormAttribute(reader, out ex);
@@ -678,7 +678,7 @@ namespace System.Xml.Schema
                                                 schema.finalDefault = XmlSchemaUtil.ReadDerivationAttribute(reader, out ex, "finalDefault",
 							XmlSchemaUtil.FinalAllowed);
                                                 if(ex != null)
-                                                        warn(h, ex.Message , ex);
+                                                        error (h, ex.Message , ex);
                                                 break;
                                         case "id":
                                                 schema.id = reader.Value;

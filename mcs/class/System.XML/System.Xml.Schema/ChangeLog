@@ -1,5 +1,10 @@
 2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs, XmlSchemaComplexType.cs, XmlSchemaElement.cs :
+	  Invalid attribute should raise an error, not a warning.
+
+2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaObject.cs : Fixed error() not to set severity as Warning.
 	* ValidationHandler.cs,
 	  XmlSchemaSet.cs,

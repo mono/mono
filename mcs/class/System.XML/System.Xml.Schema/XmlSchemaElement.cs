@@ -323,7 +323,7 @@ namespace System.Xml.Schema
 				{
 //					if((final & ~allfinal) != 0)
 					if ((final | XmlSchemaUtil.FinalAllowed) != XmlSchemaUtil.FinalAllowed)
-						warn(h,"some values for final are invalid in this context");
+						error (h,"some values for final are invalid in this context");
 					finalResolved = final & allfinal;
 				}
 
@@ -467,7 +467,7 @@ namespace System.Xml.Schema
 				break;
 			default:
 				if ((block | XmlSchemaUtil.ElementBlockAllowed) != XmlSchemaUtil.ElementBlockAllowed)
-					warn(h,"Some of the values for block are invalid in this context");
+					error (h,"Some of the values for block are invalid in this context");
 				blockResolved = block;
 				break;
 			}
@@ -874,7 +874,7 @@ namespace System.Xml.Schema
 					element.block = XmlSchemaUtil.ReadDerivationAttribute(reader,out innerex, "block",
 						XmlSchemaUtil.ElementBlockAllowed);
 					if(innerex != null)
-						warn(h,"some invalid values for block attribute were found",innerex);
+						error (h,"some invalid values for block attribute were found",innerex);
 				}
 				else if(reader.Name == "default")
 				{
@@ -885,7 +885,7 @@ namespace System.Xml.Schema
 					element.Final = XmlSchemaUtil.ReadDerivationAttribute(reader,out innerex, "final",
 						XmlSchemaUtil.FinalAllowed);
 					if(innerex != null)
-						warn(h,"some invalid values for final attribute were found",innerex);
+						error (h,"some invalid values for final attribute were found",innerex);
 				}
 				else if(reader.Name == "fixed")
 				{

@@ -961,14 +961,14 @@ namespace System.Xml.Schema
 					ctype.block = XmlSchemaUtil.ReadDerivationAttribute(reader,out innerex, "block",
 						XmlSchemaUtil.ComplexTypeBlockAllowed);
 					if(innerex != null)
-						warn(h,"some invalid values for block attribute were found",innerex);
+						error (h,"some invalid values for block attribute were found",innerex);
 				}
 				else if(reader.Name == "final")
 				{
 					ctype.Final = XmlSchemaUtil.ReadDerivationAttribute(reader,out innerex, "final",
 						XmlSchemaUtil.FinalAllowed);
 					if(innerex != null)
-						warn(h,"some invalid values for final attribute were found",innerex);
+						error (h,"some invalid values for final attribute were found",innerex);
 				}
 				else if(reader.Name == "id")
 				{
