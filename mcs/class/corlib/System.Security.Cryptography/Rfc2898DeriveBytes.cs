@@ -19,9 +19,13 @@ namespace System.Security.Cryptography {
 	public class Rfc2898DeriveBytes : DeriveBytes {
 
 		private const int defaultIterations = 1000;
+
 		private int _iteration;
 		private byte[] _salt;
 		private HMACSHA1 _hmac;
+		private byte[] _buffer;
+		private int _pos;
+		private int _f;
 
 		// constructors
 
@@ -103,27 +107,42 @@ namespace System.Security.Cryptography {
 
 		public override byte[] GetBytes (int cb) 
 		{
+			if (cb < 1)
+				throw new ArgumentOutOfRangeException ("cb");
+
 			int l = cb / 20;	// HMACSHA1 == 160 bits == 20 bytes
 			int r = cb % 20;	// remainder
 			if (r != 0)
 				l++;		// rounding up
 
 			byte[] result = new byte [cb];
-			int pos = 0;
+			int rpos = 0;
+			if (_pos > 0) {
+				int count = Math.Min (20 - _pos, cb);
+				Buffer.BlockCopy (_buffer, _pos, result, 0, count);
+				if (count >= cb)
+					return result;
+				_pos = 0;
+				rpos = 20 - cb;
+				r = cb - rpos;
+			}
 
-			for (int i=0; i < l; i++) {
-				byte[] t =  F (_salt, _iteration, l);
-				int count = ((i == l - 1) ? r : 20);
-				Buffer.BlockCopy (t, 0, result, pos, count);
-				pos += count;
+			for (int i=1; i <= l; i++) {
+				_buffer = F (_salt, _iteration, ++_f);
+				int count = ((i == l) ? r : 20);
+				Buffer.BlockCopy (_buffer, _pos, result, rpos, count);
+				rpos += _pos + count;
+				_pos = ((count == 20) ? 0 : count);
 			}
 
 			return result;
 		}
 		
-		[MonoTODO]
 		public override void Reset () 
 		{
+			_buffer = null;
+			_pos = 0;
+			_f = 0;
 		}
 	} 
 }

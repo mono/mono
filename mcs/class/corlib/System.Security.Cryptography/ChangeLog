@@ -1,5 +1,7 @@
 2003-11-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* Rfc2898DeriveBytes.cs: Now handle resets and keys longer than 160 
+	bits (HMACSHA1 block size). Removed TODO.
 	* SymmetricAlgorithm.cs: Fixed decryption when inputOffset > 0.
 	[#50826].
 
