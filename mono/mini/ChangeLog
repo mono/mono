@@ -1,3 +1,9 @@
+2004-07-29  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* cpu-sparc.md: conv_i8 fix for 64bits
+
+	* mini-sparc.c: add cases for OP_IXXX codes for 64bits
+
 2004-07-29  Ben Maurer  <bmaurer@ximian.com>
 	
 	* cpu-pentium.md, mini-x86.c, inssel-x86.brg, mini-ops.h:
