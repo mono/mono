@@ -1,3 +1,7 @@
+2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Int32.cs AppDomain.cs: Fix warnings.
+
 2005-02-10  Marek Safar  <marek.safar@seznam.cz>
 
 	* IServiceProvider.cs: Is not ComVisible.

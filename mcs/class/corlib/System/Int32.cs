@@ -324,7 +324,6 @@ namespace System {
 			bool negative = false;
 			bool foundSign = false;
 			bool foundCurrency = false;
-			bool foundExponent = false;
 
 			// Pre-number stuff
 			if (AllowParentheses && s [pos] == '(') {

@@ -876,6 +876,13 @@ namespace System
 
 		public event UnhandledExceptionEventHandler UnhandledException;
 
+		/* Avoid warnings for events used only by the runtime */
+		private void DummyUse () {
+			ProcessExit += (EventHandler)null;
+			ResourceResolve += (ResolveEventHandler)null;
+			UnhandledException += (UnhandledExceptionEventHandler)null;
+		}
+
 #if NET_2_0
 		private ActivationContext _activation;
 		private ApplicationIdentity _applicationIdentity;
