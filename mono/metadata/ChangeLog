@@ -1,3 +1,8 @@
+
+Tue Jan 28 18:55:19 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: provide more callers information.
+
 2003-01-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): generate valid IL code
