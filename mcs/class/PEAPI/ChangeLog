@@ -1,3 +1,9 @@
+2004-02-18  Jackson Harper <jackson@ximian.com>
+
+	* PEAPI.cs: Add a class for creating instances of class refs, this
+	is used for setting the class or valuetype of a types instance so the class
+	reference isn't modified. Allows things like 'valuetype [mscorlib]System.Object'.
+	
 2003-11-18 Jackson Harper <jackson@ximian.com>
 
 	* PEAPI.cs: If the data length for a methods seh section is

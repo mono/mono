@@ -95,6 +95,25 @@ namespace PEAPI
     public TypeSignatureException(string msg) : base(msg) { }
   }
 
+                   public class ClassRefInst : Type {
+
+                          private Class type;
+                          private bool is_value;
+
+            public ClassRefInst (Class type, bool is_value) : base (0x12) {
+                    this.type = type;
+                    this.is_value = is_value;
+                    if (is_value)
+                            typeIndex = 0x11;
+                    tabIx = MDTable.TypeSpec;
+            }
+
+            internal sealed override void TypeSig(MemoryStream str) {
+                    str.WriteByte (GetTypeIndex());
+                    MetaData.CompressNum (type.TypeDefOrRefToken(), str);
+            }
+    }
+                  
   public class MVar : Type {
 
             private int index;
