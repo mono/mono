@@ -293,7 +293,7 @@ namespace Mono.CSharp
 
 			GenerateExpression( statement.Expression );
 
-			output.Write( ";" );
+			output.WriteLine ( ";" );
 		}
 
 		protected override void GenerateConditionStatement( CodeConditionStatement statement )
@@ -463,7 +463,7 @@ namespace Mono.CSharp
 		
 		protected override void GenerateSnippetMember( CodeSnippetTypeMember member )
 		{
-			Output.Write( "<GenerateSnippetMember>" );
+			Output.Write (member.Text);
 		}
 		
 		protected override void GenerateEntryPointMethod( CodeEntryPointMethod method, 
@@ -522,7 +522,7 @@ namespace Mono.CSharp
 
 			MemberAttributes attributes = property.Attributes;
 			OutputMemberAccessModifier( attributes );
-			OutputFieldScopeModifier( attributes );
+			OutputMemberScopeModifier( attributes );
 
 			OutputTypeNamePair( property.Type, property.Name );
 			output.WriteLine (" {");
@@ -534,10 +534,9 @@ namespace Mono.CSharp
 				++Indent;
 
 				GenerateStatements (property.GetStatements);
-				output.WriteLine ();
 
-				output.WriteLine ("}");
 				--Indent;
+				output.WriteLine ("}");
 			}
 			
 			if (property.HasSet)
@@ -546,10 +545,9 @@ namespace Mono.CSharp
 				++Indent;
 
 				GenerateStatements (property.SetStatements);
-				output.WriteLine ();
 
-				output.WriteLine ("}");
 				--Indent;
+				output.WriteLine ("}");
 			}
 
 			--Indent;

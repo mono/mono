@@ -1,3 +1,8 @@
+2003-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeMemberProperty.cs: fixed HasGet and HasSet to actually generate
+	code for the property.
+	
 2002-10-11  Ravi Pratap  <ravi@ximian.com>
 
 	* CodeMethodInvokeExpression.cs : Fix second constructor so that

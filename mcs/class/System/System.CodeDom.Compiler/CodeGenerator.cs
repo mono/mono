@@ -4,8 +4,9 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Daniel Stodden (stodden@in.tum.de)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2001 Ximian, Inc.
+// (C) 2001-2003 Ximian, Inc.
 //
 
 using System.CodeDom;
@@ -124,6 +125,7 @@ namespace System.CodeDom.Compiler {
 		//
 		protected virtual void ContinueOnNewLine( string st )
 		{
+			output.WriteLine (st);
 		}
 
 		/*
@@ -140,63 +142,13 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GenerateBinaryOperatorExpression (CodeBinaryOperatorExpression e)
 		{
-			GenerateExpression( e.Left );
-			
-			switch ( e.Operator ) {
-			case CodeBinaryOperatorType.Add:
-				output.Write( " + " );
-				break;
-			case CodeBinaryOperatorType.Assign:
-				output.Write( " = " );
-				break;
-			case CodeBinaryOperatorType.BitwiseAnd:
-				output.Write( " & " );
-				break;
-			case CodeBinaryOperatorType.BitwiseOr:
-				output.Write( " | " );
-				break;
-			case CodeBinaryOperatorType.BooleanAnd:
-				output.Write( " && " );
-				break;
-			case CodeBinaryOperatorType.BooleanOr:
-				output.Write( " || " );
-				break;
-			case CodeBinaryOperatorType.Divide:
-				output.Write( " / " );
-				break;
-			case CodeBinaryOperatorType.GreaterThan:
-				output.Write( " > " );
-				break;
-			case CodeBinaryOperatorType.GreaterThanOrEqual:
-				output.Write( " >= " );
-				break;
-			case CodeBinaryOperatorType.IdentityEquality:
-				output.Write( " == " );
-				break;
-			case CodeBinaryOperatorType.IdentityInequality:
-				output.Write( " != " );
-				break;
-			case CodeBinaryOperatorType.LessThan:
-				output.Write( " < " );
-				break;
-			case CodeBinaryOperatorType.LessThanOrEqual:
-				output.Write( " <= " );
-				break;
-			case CodeBinaryOperatorType.Modulus:
-				output.Write( " % " );
-				break;
-			case CodeBinaryOperatorType.Multiply:
-				output.Write( " * " );
-				break;
-			case CodeBinaryOperatorType.Subtract:
-				output.Write( " - " );
-				break;
-			case CodeBinaryOperatorType.ValueEquality:
-				output.Write( " == " );
-				break;
-			}
-
-			GenerateExpression( e.Right );
+			output.Write ('(');
+			GenerateExpression (e.Left);
+			output.Write (' ');
+			OutputOperator (e.Operator);
+			output.Write (' ');
+			GenerateExpression (e.Right);
+			output.Write (')');
 		}
 
 		protected abstract void GenerateCastExpression (CodeCastExpression e);
@@ -418,7 +370,8 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GenerateParameterDeclarationExpression (CodeParameterDeclarationExpression e)
 		{
-			OutputAttributeDeclarations( e.CustomAttributes );
+			if (e.CustomAttributes != null && e.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations( e.CustomAttributes );
 			OutputDirection( e.Direction );
 			OutputType( e.Type );
 			output.Write( ' ' );
@@ -613,7 +566,7 @@ namespace System.CodeDom.Compiler {
 		{
 			switch ( direction ) {
 			case FieldDirection.In:
-				output.Write( "in " );
+				//output.Write( "in " );
 				break;
 			case FieldDirection.Out:
 				output.Write( "out " );
@@ -669,6 +622,7 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void OutputIdentifier( string ident )
 		{
+			output.Write (ident);
 		}
 
 		protected virtual void OutputMemberAccessModifier( MemberAttributes attributes )
@@ -705,7 +659,7 @@ namespace System.CodeDom.Compiler {
 				output.Write( "abstract " );
 				break;
 			case MemberAttributes.Final:
-				output.Write( "sealed " );
+				// Do nothing
 				break;
 			case MemberAttributes.Static:
 				output.Write( "static " );
@@ -734,10 +688,71 @@ namespace System.CodeDom.Compiler {
 				
 		protected virtual void OutputOperator( CodeBinaryOperatorType op )
 		{
+			switch (op) {
+			case CodeBinaryOperatorType.Add:
+				output.Write ("+");
+				break;
+			case CodeBinaryOperatorType.Subtract:
+				output.Write ("-");
+				break;
+			case CodeBinaryOperatorType.Multiply:
+				output.Write ("*");
+				break;
+			case CodeBinaryOperatorType.Divide:
+				output.Write ("/");
+				break;
+			case CodeBinaryOperatorType.Modulus:
+				output.Write ("%");
+				break;
+			case CodeBinaryOperatorType.Assign:
+				output.Write ("=");
+				break;
+			case CodeBinaryOperatorType.IdentityInequality:
+				output.Write ("!=");
+				break;
+			case CodeBinaryOperatorType.IdentityEquality:
+				output.Write ("==");
+				break;
+			case CodeBinaryOperatorType.ValueEquality:
+				output.Write ("==");
+				break;
+			case CodeBinaryOperatorType.BitwiseOr:
+				output.Write ("|");
+				break;
+			case CodeBinaryOperatorType.BitwiseAnd:
+				output.Write ("&");
+				break;
+			case CodeBinaryOperatorType.BooleanOr:
+				output.Write ("||");
+				break;
+			case CodeBinaryOperatorType.BooleanAnd:
+				output.Write ("&&");
+				break;
+			case CodeBinaryOperatorType.LessThan:
+				output.Write ("<");
+				break;
+			case CodeBinaryOperatorType.LessThanOrEqual:
+				output.Write ("<=");
+				break;
+			case CodeBinaryOperatorType.GreaterThan:
+				output.Write (">");
+				break;
+			case CodeBinaryOperatorType.GreaterThanOrEqual:
+				output.Write (">=");
+				break;
+			}
 		}
 
 		protected virtual void OutputParameters( CodeParameterDeclarationExpressionCollection parameters )
 		{
+			bool first = true;
+			foreach (CodeParameterDeclarationExpression expr in parameters) {
+				GenerateExpression (expr);
+				if (first)
+					first = false;
+				else
+					output.Write (", ");
+			}
 		}
 
 		protected abstract void OutputType( CodeTypeReference t );
@@ -863,7 +878,14 @@ namespace System.CodeDom.Compiler {
 
 			GenerateTypeStart( type );
 
-			foreach ( CodeTypeMember member in type.Members ) {
+			CodeTypeMember [] members = new CodeTypeMember [type.Members.Count];
+			type.Members.CopyTo (members, 0);
+			Array.Sort (members, CodeTypeMemberComparer.Default);
+			
+			// WARNING: if anything is missing in the foreach loop and you add it, add the type in
+			// its corresponding place in CodeTypeMemberComparer class (below)
+
+			foreach ( CodeTypeMember member in members ) {
 
 				CodeTypeMember prevMember = this.currentMember;
 				this.currentMember = member;
@@ -955,5 +977,39 @@ namespace System.CodeDom.Compiler {
 		{
 			ValidateIdentifier( value );
 		}
+
+
+		class CodeTypeMemberComparer : IComparer
+		{
+			private CodeTypeMemberComparer () {}
+
+			static CodeTypeMemberComparer instance = new CodeTypeMemberComparer ();
+			
+			// The position in the array determines the order in which those
+			// kind of CodeTypeMembers are generated. Less is more ;-)
+			static Type [] memberTypes = {  typeof (CodeMemberField),
+							typeof (CodeSnippetTypeMember),
+							typeof (CodeTypeConstructor),
+							typeof (CodeConstructor),
+							typeof (CodeMemberProperty),
+							typeof (CodeMemberEvent),
+							typeof (CodeMemberMethod),
+							typeof (CodeTypeDeclaration),
+							typeof (CodeEntryPointMethod)
+						};
+
+			public IComparer Default {
+				get { return instance; }
+			}
+			
+			int IComparer.Compare (object x, object y)
+			{
+				int xindex = Array.IndexOf (memberTypes, x.GetType ());
+				int yindex = Array.IndexOf (memberTypes, y.GetType ());
+
+				return xindex - yindex;
+			}
+		}
+		
 	}
 }

@@ -1,3 +1,9 @@
+2003-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeGenerator.cs: more fixes and sorted the output.
+	
+	* IndentedTextWriter.cs: don't output tabs in WriteLine ().
+
 2003-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeGenerator.cs:

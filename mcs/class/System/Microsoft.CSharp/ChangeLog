@@ -1,3 +1,8 @@
+2003-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeGenerator.cs: implemented GenerateSnippetMember and some
+	little fixes.
+
 2003-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeGenerator.cs: beautified conditional statements. Implemented

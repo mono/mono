@@ -47,19 +47,24 @@ namespace System.CodeDom
 
 		public bool HasGet {
 			get {
-				return hasGet;
+				return (hasGet || (getStatements != null && getStatements.Count > 0));
 			}
 			set {
 				hasGet = value;
+				if (!hasGet && getStatements != null)
+					getStatements.Clear ();
+					
 			}
 		}
 		
 		public bool HasSet {
 			get {
-				return hasSet;
+				return (hasSet || (setStatements != null && setStatements.Count > 0));
 			}
 			set {
 				hasSet = value;
+				if (!hasSet && setStatements != null)
+					setStatements.Clear ();
 			}
 		}
 
