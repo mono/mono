@@ -36,6 +36,7 @@ namespace MonoTests.System.Runtime.Remoting
 
 		public override object TypeId
 		{
+
 			get { return "ContextHook"; }
 		}
 

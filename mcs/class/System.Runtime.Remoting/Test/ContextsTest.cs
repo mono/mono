@@ -28,6 +28,7 @@ namespace MonoTests.System.Runtime.Remoting
 		[TestFixtureSetUp]
 		public void Run()
 		{
+			CallSeq.CommonDomainId = 1;
 			Context.RegisterDynamicProperty (new DynProperty("global"), null, null);
 
 			ch = new TcpChannel(0);
@@ -38,7 +39,8 @@ namespace MonoTests.System.Runtime.Remoting
 		public void End ()
 		{
 			Context.UnregisterDynamicProperty ("global", null, null);
-			ChannelServices.UnregisterChannel (ch);
+			if (ch != null)
+				ChannelServices.UnregisterChannel (ch);
 		}
 
 		[Test]
@@ -57,6 +59,8 @@ namespace MonoTests.System.Runtime.Remoting
 		[Test]
 		public void TestNewContext ()
 		{
+			try
+			{
 			CallSeq.Init("TestNewContext");
 			CallSeq.Add (">> TestNewContext");
 			object[] at = new object[] { new ContextHookAttribute ("1",true)};
@@ -66,35 +70,42 @@ namespace MonoTests.System.Runtime.Remoting
 			RunTestObject (list);
 			CallSeq.Add ("<< TestNewContext");
 			CallSeq.Check (Checks.seqNewContext,1);
+			}
+			catch (Exception eX)
+			{
+				Console.WriteLine (eX);
+			}
 		}
 
 		[Test]
 		public void TestRemoteContext ()
 		{
-			try
-			{
 			AppDomain domain = AppDomain.CreateDomain ("test");
 			DomainServer server = (DomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.System.Runtime.Remoting.DomainServer");
+			try
+			{
+				CallSeq.Init("TestRemoteContext");
+				CallSeq.Add (">> TestRemoteContext");
+				object[] at = new object[] { new ContextHookAttribute ("1",true), new UrlAttribute ("tcp://localhost:1122")};
+				CallSeq.Add (">> Creating instance");
+				ServerList list = (ServerList) Activator.CreateInstance (typeof (ServerList),null,at);
+				CallSeq.Add ("<< Creating instance");
+				RunTestObject (list);
+				CallSeq.Add ("<< TestRemoteContext");
+				CallSeq.Check (Checks.seqRemoteContext,1);
 
-			CallSeq.Init("TestRemoteContext");
-			CallSeq.Add (">> TestRemoteContext");
-			object[] at = new object[] { new ContextHookAttribute ("1",true), new UrlAttribute ("tcp://localhost:1122")};
-			CallSeq.Add (">> Creating instance");
-			ServerList list = (ServerList) Activator.CreateInstance (typeof (ServerList),null,at);
-			CallSeq.Add ("<< Creating instance");
-			RunTestObject (list);
-			CallSeq.Add ("<< TestRemoteContext");
-			CallSeq.Check (Checks.seqRemoteContext,1);
-
-			CallSeq.Init ("TestRemoteContext Server");
-			CallSeq.Seq = server.GetRemoteSeq ();
-			CallSeq.Check (Checks.seqRemoteContext,2);
-			server.Stop ();
+				CallSeq.Init ("TestRemoteContext Server");
+				CallSeq.Seq = server.GetRemoteSeq ();
+				CallSeq.Check (Checks.seqRemoteContext,2);
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine (ex);
 				throw ex;
+			}
+			finally
+			{
+				server.Stop ();
 			}
 //			AppDomain.Unload (domain);
 		}
@@ -179,7 +190,7 @@ namespace MonoTests.System.Runtime.Remoting
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine (ex.ToString());
+			//	Console.WriteLine (ex.ToString());
 				throw;
 			}
 		}
@@ -190,7 +201,8 @@ namespace MonoTests.System.Runtime.Remoting
 		TcpChannel ch;
 		
 		public DomainServer()
-		{			
+		{
+			CallSeq.CommonDomainId = 2;
 			try
 			{
 				ch = new TcpChannel(1122);
@@ -213,7 +225,8 @@ namespace MonoTests.System.Runtime.Remoting
 
 		public void Stop ()
 		{
-			ChannelServices.UnregisterChannel (ch);
+			if (ch != null)
+				ChannelServices.UnregisterChannel (ch);
 		}
 	}
 
@@ -618,6 +631,7 @@ namespace MonoTests.System.Runtime.Remoting
 				"339 (d1,c1) <-> global DynamicSink Finish ProcessItems client:False",
 				"340 (d1,c0) <-> global DynamicSink Finish ProcessItems client:True",
 				"341 (d1,c0) <-> defcontext DynamicSink Finish ProcessItems client:True",
+
 				"342 (d1,c0) <-- EnvoySink(1.d1) SyncProcessMessage ProcessItems",
 				"343 (d1,c0) <-- EnvoySink(x.d1) SyncProcessMessage ProcessItems",
 				"344 (d1,c0) <-> proxy DynamicSink Finish ProcessItems client:True",
@@ -732,6 +746,7 @@ namespace MonoTests.System.Runtime.Remoting
 				"034 (d1,c0) <-> defcontext DynamicSink Finish FieldSetter client:True",
 				"035 (d1,c0) <-- EnvoySink(1.d1) SyncProcessMessage FieldSetter",
 				"036 (d1,c0) <-- EnvoySink(x.d1) SyncProcessMessage FieldSetter",
+
 				"037 (d1,c0) <-- EnvoySink(x.d2) SyncProcessMessage FieldSetter",
 
 				"038 (d1,c0) <-> proxy DynamicSink Finish FieldSetter client:True",

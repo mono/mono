@@ -23,7 +23,7 @@ namespace MonoTests.System.Runtime.Remoting
 	public abstract class BaseCallTest : Assertion
 	{
 		IChannelSender chs;
-		string remoteUri;
+		string[] remoteUris;
 		CallsDomainServer server;
 		int remoteDomId;
 
@@ -47,29 +47,30 @@ namespace MonoTests.System.Runtime.Remoting
 
 			AppDomain domain = AppDomain.CreateDomain ("testdomain");
 			server = (CallsDomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.System.Runtime.Remoting.CallsDomainServer");
-			remoteUri = server.Start (cm);
+			remoteUris = server.Start (cm);
 			return server.GetDomId ();
 		}
 		
 		protected virtual void ShutdownServer ()
 		{
 			server.Stop ();
-			ChannelServices.UnregisterChannel (chs);
+			if (chs != null)
+				ChannelServices.UnregisterChannel (chs);
 		}
 
 		protected virtual RemoteObject CreateRemoteInstance ()
 		{
-			return (RemoteObject) Activator.GetObject (typeof(RemoteObject), remoteUri);
+			return (RemoteObject) Activator.GetObject (typeof(RemoteObject), remoteUris[0]);
 		}
 
 		protected virtual AbstractRemoteObject CreateRemoteAbstract ()
 		{
-			return (AbstractRemoteObject) Activator.GetObject (typeof(AbstractRemoteObject), remoteUri);
+			return (AbstractRemoteObject) Activator.GetObject (typeof(AbstractRemoteObject), remoteUris[1]);
 		}
 
 		protected virtual IRemoteObject CreateRemoteInterface ()
 		{
-			return (IRemoteObject) Activator.GetObject (typeof(IRemoteObject), remoteUri);
+			return (IRemoteObject) Activator.GetObject (typeof(IRemoteObject), remoteUris[2]);
 		}
 
 		public InstanceSurrogate InternalGetInstanceSurrogate ()
@@ -287,14 +288,20 @@ namespace MonoTests.System.Runtime.Remoting
 	{
 		IChannelReceiver ch;
 
-		public string Start(ChannelManager cm)
+		public string[] Start(ChannelManager cm)
 		{
 			try
 			{
 				ch = cm.CreateServerChannel ();
 				ChannelServices.RegisterChannel ((IChannel)ch);
-				RemotingConfiguration.RegisterWellKnownServiceType (typeof (RemoteObject), "test", WellKnownObjectMode.SingleCall);
-				return ch.GetUrlsForUri ("test")[0];
+				RemotingConfiguration.RegisterWellKnownServiceType (typeof (RemoteObject), "test1", WellKnownObjectMode.SingleCall);
+				RemotingConfiguration.RegisterWellKnownServiceType (typeof (RemoteObject), "test2", WellKnownObjectMode.SingleCall);
+				RemotingConfiguration.RegisterWellKnownServiceType (typeof (RemoteObject), "test3", WellKnownObjectMode.SingleCall);
+				string[] uris = new string[3];
+				uris[0] = ch.GetUrlsForUri ("test1")[0];
+				uris[1] = ch.GetUrlsForUri ("test2")[0];
+				uris[2] = ch.GetUrlsForUri ("test3")[0];
+				return uris;
 			}
 			catch (Exception ex)
 			{
@@ -305,7 +312,8 @@ namespace MonoTests.System.Runtime.Remoting
 
 		public void Stop ()
 		{
-			ChannelServices.UnregisterChannel (ch);
+			if (ch != null)
+				ChannelServices.UnregisterChannel (ch);
 		}
 
 		public int GetDomId ()

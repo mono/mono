@@ -20,6 +20,7 @@ namespace MonoTests.System.Runtime.Remoting
 		static int writePos = 0;
 		static string name = "";
 		static ArrayList contexts = new ArrayList ();
+		static int domId = 1;
 
 		public static void Add (string msg)
 		{
@@ -46,11 +47,8 @@ namespace MonoTests.System.Runtime.Remoting
 
 		public static int CommonDomainId
 		{
-			get
-			{
-				if (Thread.GetDomainID() != 1) return 2;
-				else return 1;
-			}
+			get { return domId; }
+			set { domId = value; }
 		}
 
 		public static void Init (string str)

@@ -41,6 +41,15 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 	}
 
+	[TestFixture]
+	public class HttpDelegateCallTest : DelegateCallTest
+	{
+		public override ChannelManager CreateChannelManager ()
+		{
+			return new HttpChannelManager ();
+		}
+	}
+
 	[Serializable]
 	public class HttpChannelManager : ChannelManager
 	{

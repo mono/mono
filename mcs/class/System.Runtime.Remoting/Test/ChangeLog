@@ -1,4 +1,15 @@
-2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
+2003-08-22  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BaseCalls.cs: Create 3 test remote objects, one for each kind of access,
+	  to avoid reuse of client proxies.
+	* CallSeq.cs: Now, "domain ID" is set manually.
+	* ContextsTest.cs: Added initialization of common domain id. Other small fixes.
+	* ReflectionCalls.cs: Get the method for the invoke for the correct type.
+	  GetType() for a proxy to interface always return MarshalByRefObject.
+	* TcpCalls.cs, HttpCalls.cs: Added delegate tests.
+	* DelegateCalls.cs: New test suite for calls using delegates.
+
+2003-08-20  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* AsyncCalls.cs, BaseCalls.cs, HttpCalls.cs, ReflectionCalls.cs, SyncCalls.cs,
 	  TcpCalls.cs: new test suite for remoting. It tests sync calls, async calls
