@@ -24,6 +24,13 @@ namespace MonoTests.System.Data
 			AssertEquals (label + ".TableCount", tableCount, ds.Tables.Count);
 		}
 
+		public void AssertDataSet (string label, DataSet ds, string name, int tableCount, int relCount)
+		{
+			AssertEquals (label + ".DataSetName", name, ds.DataSetName);
+			AssertEquals (label + ".TableCount", tableCount, ds.Tables.Count);
+			AssertEquals (label + ".RelationCount", relCount, ds.Relations.Count);
+		}
+
 		public void AssertDataTable (string label, DataTable dt, string name, int columnCount, int rowCount)
 		{
 			AssertEquals (label + ".TableName", name, dt.TableName);

@@ -1,5 +1,13 @@
 2004-04-19  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Added DataSetInferXmlSchemaTest.cs.
+	* DataSetReadXmlTest.cs : Fixed test bogus. When ReadMode is
+	  InferSchema, it should not load any data rows.
+	* DataSetAssertion.cs : Added AssertDataSet() overroad that takes 
+	  relation count.
+
+2004-04-19  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Added missing ChangeLog entry.
 	* ConstraintCollectionTest.cs :
 	  Ignore some tests that should fail (They also fail under MS.NET).
