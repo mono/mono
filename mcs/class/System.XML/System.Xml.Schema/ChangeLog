@@ -1,3 +1,8 @@
+2004-01-15  Jackson Harper <jackson@ximian.com>
+
+	* XmlSchemaContent.cs: Make actualBaseSchemaType protected (fixes
+	build).
+	
 2004-01-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaComplexContentExtension.cs,
