@@ -27,8 +27,8 @@ namespace System.Web.UI {
 		string tagName;
 		string id;
 		IDictionary attribs;
-		int line;
-		string fileName;
+		protected int line;
+		protected string fileName;
 		bool childrenAsProperties;
 		bool isIParserAccessor;
 		bool hasAspCode;

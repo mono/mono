@@ -1,5 +1,13 @@
 2003-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ControlBuilder.cs: line and fileName are protected now.
+
+	* CodeBuilder.cs: base class for the next 2 files.
+	* CodeRenderBuilder.cs: builder for code render.
+	* DataBindingBuilder.cs: builder for data binding.
+
+2003-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ITagNameToTypeMapper.cs: made it internal.
 
 	* ObjectTagBuilder.cs: builder for <object runat="server"> tag.
