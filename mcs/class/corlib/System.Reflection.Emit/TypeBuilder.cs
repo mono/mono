@@ -1274,7 +1274,7 @@ namespace System.Reflection.Emit {
 
 		public override bool ContainsGenericParameters {
 			get {
-				throw new NotImplementedException ();
+				return generic_params != null;
 			}
 		}
 
