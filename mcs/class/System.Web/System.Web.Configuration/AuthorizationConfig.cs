@@ -93,12 +93,9 @@ namespace System.Web.Configuration
 				if (data.Verbs != null && !data.CheckVerb (verb))
 					continue;
 
-				if (data.Users != null && !data.CheckUser (user.Identity.Name))
-					continue;
-				else if (data.Roles != null && !data.CheckRole (user))
-					continue;
-
-				return data.Allow;
+				if ((data.Users !=null && data.CheckUser(user.Identity.Name)) ||
+				    (data.Roles != null && data.CheckRole(user)))
+					return data.Allow;
 			}
 			
 			if (parent != null)
