@@ -22,8 +22,11 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
+//	TODO:
+//		- Merge menus
+//		- MDI integration
+//		- ShortCut navigation
 //
-
 // NOT COMPLETE
 
 using System.Collections;
@@ -35,10 +38,12 @@ namespace System.Windows.Forms
 	{
 		internal MenuItemCollection menu_items;
 		internal IntPtr menu_handle = IntPtr.Zero;
+		internal bool is_dirty = true;
+		internal bool creating = false;
 
 		public const int FindHandle = 0;
 		public const int FindShortcut = 1;
-		
+
  		protected Menu (MenuItem[] items)
 		{
 			menu_items = new MenuItemCollection (this);
@@ -51,15 +56,21 @@ namespace System.Windows.Forms
 		#region Public Properties
 		public IntPtr Handle {
 			get {
+				if (is_dirty && creating == false) {
+					Dispose (true);
+				}
+
 				if (menu_handle == IntPtr.Zero) {
+					Console.WriteLine ("Create Handle");
 					menu_handle = CreateMenuHandle ();
 					CreateItems ();
+					is_dirty = false;
 				}
 
 				return menu_handle;
 			}
 		}
-		
+
 		public virtual bool IsParent {
 			get {
 				if (menu_items != null && menu_items.Count > 0)
@@ -68,31 +79,45 @@ namespace System.Windows.Forms
 					return false;
 			}
 		}
-		
+
 		public MenuItem MdiListItem {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-		
+
 		public MenuItemCollection MenuItems {
 			get { return menu_items; }
 		}
 
 		#endregion Public Properties
 
+		#region Private Properties
+
+		internal bool IsDirty {
+			get { return is_dirty; }
+			set { is_dirty = value; }
+		}
+
+		#endregion Private Properties
+
 		#region Public Methods
-			
+
 		protected void CloneMenu (Menu menuSrc)
 		{
-			throw new NotImplementedException ();
+			Dispose (true);
+
+			menu_items = new MenuItemCollection (this);
+
+			for (int i = 0; i < menuSrc.MenuItems.Count ; i++)
+				menu_items.Add (menuSrc.MenuItems [i]);
 		}
-		
+
 		protected virtual IntPtr CreateMenuHandle ()
 		{
 			IntPtr menu;
-			menu  = MenuAPI.CreatePopupMenu ();
-			Console.WriteLine ("Menu.CreateMenuHandle:" + menu);
+
+			menu = MenuAPI.CreatePopupMenu ();
 			return menu;
 		}
 
@@ -101,9 +126,10 @@ namespace System.Windows.Forms
 			if (disposing) {
 				if (menu_handle != IntPtr.Zero)
 					MenuAPI.DestroyMenu (menu_handle);
+					menu_handle = IntPtr.Zero;
 			}
 		}
-		
+
 		public MenuItem FindMenuItem (int type, IntPtr value)
 		{
 			throw new NotImplementedException ();
@@ -113,34 +139,38 @@ namespace System.Windows.Forms
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		public ContextMenu GetContextMenu ()
 		{
-			throw new NotImplementedException ();
+			if (this is ContextMenu)
+				return (ContextMenu) this;
+			else
+				return null;
 		}
-		
+
 		public MainMenu GetMainMenu ()
 		{
 			if (this is MainMenu)
 				return (MainMenu) this;
-			else 
+			else
 				return null;
 		}
-		
+
 		public virtual void MergeMenu (Menu menuSrc)
 		{
-			throw new NotImplementedException ();
+			if (menuSrc == this)
+				throw new ArgumentException ("The menu cannot be merged with itself");
+
 		}
 
 		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData)
 		{
-			return false;			
+			return false;
 		}
 
 		public override string ToString ()
-		{			
+		{
 			return base.ToString ();
-						
 		}
 
 		#endregion Public Methods
@@ -149,13 +179,12 @@ namespace System.Windows.Forms
 
 		protected void CreateItems ()
 		{
-			Console.WriteLine ("Menu.CreateItems:" + menu_items.Count);
+			creating = true;
 
-			for (int i = 0; i < menu_items.Count; i++) 
+			for (int i = 0; i < menu_items.Count; i++)
 				menu_items[i].Create ();
-				
-			Console.WriteLine ("End Menu.CreateItems:" + menu_items.Count);
 
+			creating = false;
 		}
 
 		#endregion Private Methods
@@ -164,7 +193,7 @@ namespace System.Windows.Forms
 		{
 			private Menu owner;
 			private ArrayList items = new ArrayList ();
-			
+
 			public MenuItemCollection (Menu owner)
 			{
 				this.owner = owner;
@@ -193,12 +222,17 @@ namespace System.Windows.Forms
 			}
 
 			public MenuItem this [int index] {
-				get { return (MenuItem) items[index]; }
+				get {
+					if (index < 0 || index >= Count)
+						throw new ArgumentOutOfRangeException ("Index of out range");
+
+					return (MenuItem) items[index];
+				}
 			}
 
 			object IList.this[int index] {
 				get { return items[index]; }
-				set { items[index] = value; }
+				set { throw new NotSupportedException (); }
 			}
 
 			#endregion Public Properties
@@ -208,29 +242,56 @@ namespace System.Windows.Forms
 			public virtual int Add (MenuItem mi)
 			{
 				mi.parent_menu = owner;
+				mi.Index = items.Count;
 				items.Add (mi);
-				
+
+				owner.IsDirty = true;
 				return items.Count - 1;
 			}
 
 			public virtual MenuItem Add (string s)
 			{
-				throw new NotImplementedException ();
+				MenuItem item = new MenuItem (s);
+				Add (item);
+				return item;
 			}
 
 			public virtual int Add (int index, MenuItem mi)
 			{
-				throw new NotImplementedException ();
+				if (index < 0 || index >= Count)
+					throw new ArgumentOutOfRangeException ("Index of out range");
+
+				ArrayList new_items = new ArrayList (Count + 1);
+
+				for (int i = 0; i < index; i++)
+					new_items.Add (items[i]);
+
+				new_items.Add (mi);
+
+				for (int i = index; i < Count; i++)
+					new_items.Add (items[i]);
+
+				items = new_items;
+				UpdateItemsIndices ();
+				owner.IsDirty = true;
+
+				return index;
 			}
 
 			public virtual MenuItem Add (string s, EventHandler e)
 			{
-				throw new NotImplementedException ();
+				MenuItem item = new MenuItem (s, e);
+				Add (item);
+
+				return item;
 			}
 
 			public virtual MenuItem Add (string s, MenuItem[] items)
 			{
-				throw new NotImplementedException ();
+				MenuItem item = new MenuItem (s, items);
+				Add (item);
+
+				return item;
 			}
 
 			public virtual void AddRange (MenuItem[] items)
@@ -240,29 +301,29 @@ namespace System.Windows.Forms
 
 				foreach (MenuItem mi in items)
 					Add (mi);
-
 			}
 
 			public virtual void Clear ()
 			{
 				items.Clear ();
+				owner.IsDirty = true;
 			}
 
 			public bool Contains (MenuItem value)
 			{
 				return items.Contains (value);
 			}
-			
+
 			public virtual void CopyTo (Array dest, int index)
 			{
-				throw new NotImplementedException ();	
+				items.CopyTo (dest, index);
 			}
-			
+
 			public virtual IEnumerator GetEnumerator ()
 			{
 				return items.GetEnumerator ();
 			}
-			
+
 			int IList.Add (object value)
 			{
 				return Add ((MenuItem)value);
@@ -280,12 +341,12 @@ namespace System.Windows.Forms
 
 			void IList.Insert (int index, object value)
 			{
-				throw new NotImplementedException ();
+				Add (index, (MenuItem) value);
 			}
 
 			void IList.Remove (object value)
 			{
-				throw new NotImplementedException ();
+				Remove ((MenuItem) value);
 			}
 
 			public int IndexOf (MenuItem value)
@@ -295,15 +356,31 @@ namespace System.Windows.Forms
 
 			public virtual void Remove (MenuItem item)
 			{
-				throw new NotImplementedException ();
+				RemoveAt (item.Index);
 			}
-			
+
 			public virtual void RemoveAt (int index)
 			{
-				throw new NotImplementedException ();
+				if (index < 0 || index >= Count)
+					throw new ArgumentOutOfRangeException ("Index of out range");
+
+				items.RemoveAt (index);
+
+				UpdateItemsIndices ();
+				owner.IsDirty = true;
 			}
 
 			#endregion Public Methods
+
+			#region Private Methods
+
+			private void UpdateItemsIndices ()
+			{
+				for (int i = 0; i < Count; i++)	// Recalculate indeces
+					((MenuItem)items[i]).Index = i;
+			}
+
+			#endregion Private Methods
 		}
 	}
 }

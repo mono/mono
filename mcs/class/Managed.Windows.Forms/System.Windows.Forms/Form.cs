@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.20 $
+// $Revision: 1.21 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.21  2004/11/04 14:47:58  jordi
+// collection completion, drawing issues, missing features
+//
 // Revision 1.20  2004/10/29 15:55:26  jordi
 // Menu key navigation, itemcollection completion, menu fixes
 //
@@ -214,6 +217,7 @@ namespace System.Windows.Forms {
 					int menu_height;
 
 					menu_height = MenuAPI.MenuBarCalcSize(DeviceContext, owner.Menu.menu_handle, ClientSize.Width);
+					Invalidate (new Rectangle (0, 0, ClientSize.Width, menu_height));					
 					owner.SetBoundsCore(0, menu_height, ClientSize.Width, ClientSize.Height-menu_height, BoundsSpecified.All);
 				}
 			}

@@ -54,9 +54,11 @@ namespace System.Windows.Forms
 
 		#region Public Methods
 			
-		public virtual MainMenu CloneMenu()
+		public virtual MainMenu CloneMenu ()
 		{
-			throw new NotImplementedException ();
+			MainMenu new_menu = new MainMenu ();
+			new_menu.CloneMenu (this);
+			return new_menu;
 		}
 		
 		protected override IntPtr CreateMenuHandle ()
@@ -66,7 +68,7 @@ namespace System.Windows.Forms
 
 		protected void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			base.Dispose (disposing);
 		}
 
 		public Form GetForm ()
@@ -96,7 +98,7 @@ namespace System.Windows.Forms
 		}
 		
 		internal void OnMouseMove (Form window, MouseEventArgs e)
-		{
+		{			
 			MenuAPI.TrackBarMouseEvent (Handle, window, e, MenuAPI.MenuMouseEvent.Move);
 		}
 		
