@@ -29,11 +29,10 @@ namespace XsltTest
 		static XsltTest ()
 		{
 			skipTargets = new ArrayList (new string [] {
-"Keys__91834",
-"Keys__91835",
 "Keys__91836",
 "Keys__91859",
-"Keys_PerfRepro3"
+"Keys_PerfRepro2",
+"Keys_PerfRepro3",
 			}); 
 		}
 
@@ -204,6 +203,7 @@ FileMatch:
 		static void RunTest (XmlElement scenario, string path, string stylesheetBase)
 		{
 			stylesheetBase = scenario.SelectSingleNode ("input-file[@role='principal-stylesheet']").InnerText;
+			string id = scenario.ParentNode.Attributes ["id"].Value;
 			string stylesheet = path + stylesheetBase;
 			string srcxml = path + scenario.SelectSingleNode ("input-file[@role='principal-data']").InnerText;
 			XmlNode outputNode = scenario.SelectSingleNode ("output-file[@role='principal']");
@@ -217,7 +217,7 @@ FileMatch:
 
 			XslTransform trans = new XslTransform ();
 
-			if (explicitTarget != null && stylesheetBase.IndexOf (explicitTarget) < 0)
+			if (explicitTarget != null && id.IndexOf (explicitTarget) < 0)
 				return;
 			if (skipTargets.Contains (stylesheetBase))
 				return;

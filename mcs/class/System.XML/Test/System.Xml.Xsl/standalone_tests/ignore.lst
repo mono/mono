@@ -42,6 +42,9 @@ mdocs_mdocs18
 
 namespace_namespace20
 
+Output__84432
+Output__84433
+
 output_output03
 output_output06
 output_output08
@@ -98,8 +101,15 @@ Text_modified78309
 Text_modified78311
 Text_DoeWithCdataInText
 
-XSLTFunctions_84049
-XSLTFunctions_84050
+XSLTFunctions__84049
+XSLTFunctions__84050
+XSLTFunctions_Bug76054
+XSLTFunctions_Bug76984
 XSLTFunctions_BooleanFunction
-XSLTFunctions_ElementAvailFunctionTrue
+XSLTFunctions_DocumentFuncWithEmptyArg
+XSLTFunctions_DocumentInUnion
+XSLTFunctions_DocumentInUnionWithDuplicateNodes
+XSLTFunctions_DocumentFunctionNoArg
+XSLTFunctions_ElementAvailFunctionTrueTest
+XSLTFunctions_specialCharInPattern
 

@@ -11,9 +11,6 @@ namespace simpleTests
 	{
 		static ArrayList excludedTests = new ArrayList (new string [] {
 "Keys_PerfRepro3",
-"Keys__91834",
-"Keys__91835",
-"Keys__91836",
 });
 
 		static void Process (string id, string path, string data,
@@ -31,14 +28,22 @@ namespace simpleTests
 			else
 				Directory.SetCurrentDirectory (Path.Combine ("MSFT_Conformance_Tests", path));
 
+#if NET_2_0
+			XslCompiledTransform xslt = new XslCompiledTransform();
+#else
 			XslTransform xslt = new XslTransform();
+#endif
 			StreamWriter strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);
 			XmlTextWriter wr = new XmlTextWriter (strWr);
 			try {
 				XmlDocument xml = new XmlDocument();
 				xml.Load (data);
 				xslt.Load (stylesheet);
+#if NET_2_0
+				xslt.Transform (xml, null, wr);
+#else
 				xslt.Transform (xml, null, wr, null);
+#endif
 			} catch(Exception x) {
 				strWr.Close();
 				strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);

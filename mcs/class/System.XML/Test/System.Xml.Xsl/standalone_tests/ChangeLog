@@ -1,3 +1,9 @@
+2005-03-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* xslttest.cs,
+	  alltest.cs : reduced some key exclusions (fixed some).
+	* ignore.lst : updated ignored cases.
+
 2005-03-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* ignore.lst : still more ignored cases.
