@@ -90,7 +90,12 @@ namespace System.Net {
                         if (address == null) {
                                 throw new ArgumentNullException();
                         }
-                        
+
+						// Undocumented MS behavior: when called with IF_ANY,
+						// this should return the local host
+						if (address.Equals ("0.0.0.0"))
+							return GetHostByAddress ("127.0.0.1");
+
                         string h_name;
                         string[] h_aliases, h_addrlist;
                         
@@ -108,7 +113,7 @@ namespace System.Net {
                 public static IPHostEntry GetHostByName(string hostName) {
                         if (hostName == null)
                                 throw new ArgumentNullException();
-                        
+
                         string h_name;
                         string[] h_aliases, h_addrlist;
                         
