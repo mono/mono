@@ -141,6 +141,14 @@ namespace System.Xml.XPath
 		{
 			return (double) arg0.EvaluateNodeSet (iter).Count;
 		}
+		
+		public override bool EvaluateBoolean (BaseIterator iter)
+		{
+			if (arg0.GetReturnType (iter) == XPathResultType.NodeSet)
+				return arg0.EvaluateBoolean (iter);
+			
+			return arg0.EvaluateNodeSet (iter).MoveNext ();
+		}
 	}
 
 

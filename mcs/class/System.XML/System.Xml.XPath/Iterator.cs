@@ -485,11 +485,13 @@ namespace System.Xml.XPath
 		protected BaseIterator _iter;
 		protected Expression _pred;
 		protected int _pos;
+		protected XPathResultType resType;
 
 		public PredicateIterator (BaseIterator iter, Expression pred) : base (iter)
 		{
 			_iter = iter;
 			_pred = pred;
+			resType = pred.GetReturnType (iter);
 		}
 
 		protected PredicateIterator (PredicateIterator other) : base (other)
@@ -497,6 +499,7 @@ namespace System.Xml.XPath
 			_iter = (BaseIterator) other._iter.Clone ();
 			_pred = other._pred;
 			_pos = other._pos;
+			resType = other.resType;
 		}
 		public override XPathNodeIterator Clone () { return new PredicateIterator (this); }
 
@@ -505,14 +508,28 @@ namespace System.Xml.XPath
 			while (_iter.MoveNext ())
 			{
 				bool fTrue = true;
-				object result = _pred.Evaluate ((BaseIterator) _iter.Clone ());
-				if (result is double)
-				{
-					if ((double) result != _iter.CurrentPosition)
-						continue;
+				
+				switch (resType) {
+					case XPathResultType.Number:
+						if (_pred.EvaluateNumber (_iter) != _iter.CurrentPosition)
+							continue;
+						break;
+					case XPathResultType.Any: {
+						object result = _pred.Evaluate (_iter);
+						if (result is double)
+						{
+							if ((double) result != _iter.CurrentPosition)
+								continue;
+						}
+						else if (!XPathFunctions.ToBoolean (result))
+							continue;
+					}
+						break;
+					default:
+						if (!_pred.EvaluateBoolean (_iter))
+							continue;
+						break;
 				}
-				else if (!XPathFunctions.ToBoolean (result))
-					continue;
 
 				_pos ++;
 				return true;

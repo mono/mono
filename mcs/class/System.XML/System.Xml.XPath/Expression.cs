@@ -328,7 +328,7 @@ namespace System.Xml.XPath
 		public virtual XPathResultType GetReturnType (BaseIterator iter) { return ReturnType; }
 		public abstract object Evaluate (BaseIterator iter);
 
-		public BaseIterator EvaluateNodeSet (BaseIterator iter)
+		public virtual BaseIterator EvaluateNodeSet (BaseIterator iter)
 		{
 			XPathResultType type = GetReturnType (iter);
 			if (type == XPathResultType.NodeSet ||
@@ -354,7 +354,7 @@ namespace System.Xml.XPath
 			throw new XPathException ("invalid node type: "+obj.GetType ().ToString ());
 		}
 		[MonoTODO]
-		public double EvaluateNumber (BaseIterator iter)
+		public virtual double EvaluateNumber (BaseIterator iter)
 		{
 			object result;
 			XPathResultType type = GetReturnType (iter);
@@ -384,7 +384,7 @@ namespace System.Xml.XPath
 			}
 		}
 		[MonoTODO]
-		public string EvaluateString (BaseIterator iter)
+		public virtual string EvaluateString (BaseIterator iter)
 		{
 			object result = Evaluate (iter);
 			XPathResultType type = GetReturnType (iter);
@@ -410,7 +410,7 @@ namespace System.Xml.XPath
 			}
 		}
 		[MonoTODO]
-		public bool EvaluateBoolean (BaseIterator iter)
+		public virtual bool EvaluateBoolean (BaseIterator iter)
 		{
 			object result = Evaluate (iter);
 			XPathResultType type = GetReturnType (iter);
@@ -473,13 +473,17 @@ namespace System.Xml.XPath
 	{
 		public ExprBoolean (Expression left, Expression right) : base (left, right) {}
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+		public override object Evaluate (BaseIterator iter)
+		{
+			return EvaluateBoolean (iter);
+		}
 	}
 
 	internal class ExprOR : ExprBoolean
 	{
 		public ExprOR (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "or"; }}
-		public override object Evaluate (BaseIterator iter)
+		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			if (_left.EvaluateBoolean (iter))
 				return true;
@@ -491,7 +495,7 @@ namespace System.Xml.XPath
 	{
 		public ExprAND (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "and"; }}
-		public override object Evaluate (BaseIterator iter)
+		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			if (!_left.EvaluateBoolean (iter))
 				return false;
@@ -503,7 +507,7 @@ namespace System.Xml.XPath
 	{
 		public EqualityExpr (Expression left, Expression right) : base (left, right) {}
 		[MonoTODO]
-		public override object Evaluate (BaseIterator iter)
+		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			XPathResultType typeL = _left.GetReturnType (iter);
 			XPathResultType typeR = _right.GetReturnType (iter);
@@ -605,7 +609,7 @@ namespace System.Xml.XPath
 	{
 		public RelationalExpr (Expression left, Expression right) : base (left, right) {}
 		[MonoTODO]
-		public override object Evaluate (BaseIterator iter)
+		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			XPathResultType typeL = _left.GetReturnType (iter);
 			XPathResultType typeR = _right.GetReturnType (iter);
@@ -724,13 +728,18 @@ namespace System.Xml.XPath
 	{
 		public ExprNumeric (Expression left, Expression right) : base (left, right) {}
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			return EvaluateNumber (iter);
+		}
 	}
 
 	internal class ExprPLUS : ExprNumeric
 	{
 		public ExprPLUS (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "+"; }}
-		public override object Evaluate (BaseIterator iter)
+		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) + _right.EvaluateNumber (iter);
 		}
@@ -740,7 +749,7 @@ namespace System.Xml.XPath
 	{
 		public ExprMINUS (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "-"; }}
-		public override object Evaluate (BaseIterator iter)
+		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) - _right.EvaluateNumber (iter);
 		}
@@ -750,7 +759,7 @@ namespace System.Xml.XPath
 	{
 		public ExprMULT (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "*"; }}
-		public override object Evaluate (BaseIterator iter)
+		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) * _right.EvaluateNumber (iter);
 		}
@@ -760,7 +769,7 @@ namespace System.Xml.XPath
 	{
 		public ExprDIV (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return " div "; }}
-		public override object Evaluate (BaseIterator iter)
+		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) / _right.EvaluateNumber (iter);
 		}
@@ -771,7 +780,7 @@ namespace System.Xml.XPath
 		public ExprMOD (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "%"; }}
 		[MonoTODO]
-		public override object Evaluate (BaseIterator iter)
+		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) % _right.EvaluateNumber (iter);	// TODO: spec?
 		}
@@ -787,6 +796,11 @@ namespace System.Xml.XPath
 		public override String ToString () { return "- " + _expr.ToString (); }
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 		public override object Evaluate (BaseIterator iter)
+		{
+			return - _expr.EvaluateNumber (iter);
+		}
+		
+		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return - _expr.EvaluateNumber (iter);
 		}
@@ -1163,6 +1177,11 @@ namespace System.Xml.XPath
 		{
 			return _value;
 		}
+		
+		public override double EvaluateNumber (BaseIterator iter)
+		{
+			return _value;
+		}
 	}
 
 	internal class ExprLiteral : Expression
@@ -1175,6 +1194,11 @@ namespace System.Xml.XPath
 		public override String ToString () { return "'" + _value + "'"; }
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		public override object Evaluate (BaseIterator iter)
+		{
+			return _value;
+		}
+		
+		public override string EvaluateString (BaseIterator iter)
 		{
 			return _value;
 		}
