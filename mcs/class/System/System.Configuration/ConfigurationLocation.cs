@@ -26,7 +26,7 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
+#if NET_2_0 && XML_DEP
 
 namespace System.Configuration {
 
