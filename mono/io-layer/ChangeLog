@@ -1,3 +1,9 @@
+2004-07-08  Dick Porter  <dick@ximian.com>
+
+	* io.c (file_seek): If there is a high 32bit offset part, make
+	sure the low part isn't sign-extended.  Set error codes when
+	returning failure.  Fixes bug 61131.
+
 2004-07-06  Dick Porter  <dick@ximian.com>
 
 	* io.c (file_setfiletime): Check for underflow when converting to
