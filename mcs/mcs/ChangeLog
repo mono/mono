@@ -34,20 +34,6 @@
 	* statement.cs
 	(Catch): Derived from Statement.
 
-2004-05-31  Marek Safar  <marek.safar@seznam.cz>
-
-	* attribute.cs
-	(GetConditionalAttributeValue): New method. Returns
-	condition of ConditionalAttribute.
-	(SearchMulti): New method.  Returns all attributes of type 't'.
-	Use it when attribute is AllowMultiple = true.
-
-	* class.cs
-	(Method.IsExcluded): Implemented. Returns true if method has conditional
-	attribute and the conditions is not defined (method is excluded).
-	(IMethodData): Extended interface for ConditionalAttribute support.
-	(PropertyMethod.IsExcluded): Implemented.
-
 2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* decl.cs: If possible, use lookuptypedirect here. We can only do
