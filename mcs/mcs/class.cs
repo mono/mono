@@ -1315,6 +1315,10 @@ namespace CIR {
 				foreach (Property p in properties)
 					p.Emit (this);
 
+			if (indexers != null)
+				foreach (Indexer ix in indexers)
+					ix.Emit (this);
+			
 			if (pending_implementations != null)
 				VerifyPendingMethods ();
 
@@ -1326,7 +1330,12 @@ namespace CIR {
 
 		public void CloseType ()
 		{
-			TypeBuilder.CreateType ();
+			try {
+				TypeBuilder.CreateType ();
+			} catch (InvalidOperationException e){
+				Console.WriteLine ("Exception while creating class: " + TypeBuilder.Name);
+				Console.WriteLine ("Message:" + e.Message);
+			}
 			
 			foreach (TypeContainer tc in Types)
 				tc.CloseType ();
@@ -2257,7 +2266,7 @@ namespace CIR {
 				PropertyAttributes.RTSpecialName |
 				PropertyAttributes.SpecialName;
 			
-			Type IndexerType = parent.LookupType (Type, false);
+			IndexerType = parent.LookupType (Type, false);
 			Type [] parameters = FormalParameters.GetParameterInfo (parent);
 
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (

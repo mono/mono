@@ -1462,6 +1462,8 @@ namespace CIR {
 			//
 			if (source_type.IsInterface && target_type.IsInterface){
 
+				Type [] ifaces = source_type.GetInterfaces ();
+
 				if (TypeManager.ImplementsInterface (source_type, target_type))
 					return null;
 				else
@@ -2797,11 +2799,11 @@ namespace CIR {
 			if (left.Type == null)
 				throw new Exception (
 					"Resolve returned non null, but did not set the type! (" +
-					left + ")");
+					left + ") at Line: " + loc.Row);
 			if (right.Type == null)
 				throw new Exception (
 					"Resolve returned non null, but did not set the type! (" +
-					right + ")");
+					right + ") at Line: "+ loc.Row);
 
 			eclass = ExprClass.Value;
 
@@ -3270,37 +3272,6 @@ namespace CIR {
 			Error (103, Location, "The name `" + Name +
 			       "' does not exist in the class `" +
 			       ec.TypeContainer.Name + "'");
-		}
-	}
-
-	public class LocalTemporary : Expression, IStackStore, IMemoryLocation {
-		LocalBuilder builder;
-		
-		public LocalTemporary (EmitContext ec, Type t)
-		{
-			type = t;
-			eclass = ExprClass.Value;
-			builder = ec.GetTemporaryStorage (t);
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldloc, builder); 
-		}
-
-		public void Store (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Stloc, builder);
-		}
-
-		public void AddressOf (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldloca, builder);
 		}
 	}
 	
@@ -4800,14 +4771,13 @@ namespace CIR {
 	//   This is not an LValue because we need to re-write the expression, we
 	//   can not take data from the stack and store it.  
 	// </summary>
-	public class PropertyExpr : ExpressionStatement {
+	public class PropertyExpr : ExpressionStatement, IAssignMethod {
 		public readonly PropertyInfo PropertyInfo;
 		public readonly bool IsStatic;
 		MethodInfo [] Accessors;
 		Location loc;
 		
 		Expression instance_expr;
-		Expression value;
 		
 		public PropertyExpr (PropertyInfo pi, Location l)
 		{
@@ -4827,23 +4797,6 @@ namespace CIR {
 				Accessors = new MethodInfo [2];
 			
 			type = pi.PropertyType;
-		}
-
-		//
-		// Controls the Value of the PropertyExpr.  If the value
-		// is null, then the property is being used in a `read' mode.
-		// otherwise the property is used in assignment mode.
-		//
-		// The value is set to a fully resolved type by assign.
-		//
-		public Expression Value {
-			get {
-				return value;
-			}
-
-			set {
-				this.value = value;
-			}
 		}
 
 		//
@@ -4886,23 +4839,26 @@ namespace CIR {
 
 		override public void Emit (EmitContext ec)
 		{
-			if (value == null)
-				Invocation.EmitCall (ec, IsStatic, instance_expr, Accessors [0], null);
-			else {
-				Argument arg = new Argument (value, Argument.AType.Expression);
-				ArrayList args = new ArrayList ();
+			Invocation.EmitCall (ec, IsStatic, instance_expr, Accessors [0], null);
+			
+		}
 
-				args.Add (arg);
-				Invocation.EmitCall (ec, IsStatic, instance_expr, Accessors [1], args);
-			}
+		//
+		// Implements the IAssignMethod interface for assignments
+		//
+		public void EmitAssign (EmitContext ec, Expression source)
+		{
+			Argument arg = new Argument (source, Argument.AType.Expression);
+			ArrayList args = new ArrayList ();
+
+			args.Add (arg);
+			Invocation.EmitCall (ec, IsStatic, instance_expr, Accessors [1], args);
 		}
 
 		override public void EmitStatement (EmitContext ec)
 		{
 			Emit (ec);
-			if (value == null){
-				ec.ig.Emit (OpCodes.Pop);
-			}
+			ec.ig.Emit (OpCodes.Pop);
 		}
 	}
 
@@ -5169,7 +5125,7 @@ namespace CIR {
 		}
 	}
 	
-	public class IndexerAccess : Expression {
+	public class IndexerAccess : Expression, IAssignMethod {
 		//
 		// Points to our "data" repository
 		//
@@ -5228,12 +5184,6 @@ namespace CIR {
 				ilist = Indexers.GetIndexersForType (
 					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
 
-			Console.WriteLine ("ilist = " + ilist);
-			if (ilist != null){
-				Console.WriteLine ("ilist.setters = " + ilist.setters);
-				if (ilist.setters != null)
-					Console.WriteLine ("count = " + ilist.setters.Count);
-			}
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
 				set_arguments = (ArrayList) ea.Arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
@@ -5259,9 +5209,14 @@ namespace CIR {
 			Invocation.EmitCall (ec, false, ea.Expr, get, ea.Arguments);
 		}
 
-		public void EmitSet (EmitContext ec, Expression expr)
+		//
+		// source is ignored, because we already have a copy of it from the
+		// LValue resolution and we have already constructed a pre-cached
+		// version of the arguments (ea.set_arguments);
+		//
+		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			throw new Exception ("Implement me!");
+			Invocation.EmitCall (ec, false, ea.Expr, set, set_arguments);
 		}
 	}
 	

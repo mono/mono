@@ -1,5 +1,5 @@
 //
-// assign.cs: Assignment representation for the IL tree.
+// assign.cs: Assignments.
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -11,6 +11,66 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace CIR {
+
+	// <remarks>
+	//   This interface is implemented by Expressions whose values can not
+	//   store the result on the top of the stack.
+	//
+	//   Expressions implementing this (Properties and Indexers) would
+	//   perform an assignment of the Expression "source" into its final
+	//   location.
+	//
+	//   No values on the top of the stack are expected to be left by
+	//   invoking this method.
+	// </remarks>
+	public interface IAssignMethod {
+		void EmitAssign (EmitContext ec, Expression source);
+	}
+
+	// <remarks>
+	//   The LocalTemporary class is used to hold temporary values of a given
+	//   type to "simulate" the expression semantics on property and indexer
+	//   access whose return values are void.
+	//
+	//   The local temporary is used to alter the normal flow of code generation
+	//   basically it creates a local variable, and its emit instruction generates
+	//   code to access this value, return its address or save its value.
+	// </remarks>
+	public class LocalTemporary : Expression, IStackStore, IMemoryLocation {
+		LocalBuilder builder;
+		
+		public LocalTemporary (EmitContext ec, Type t)
+		{
+			type = t;
+			eclass = ExprClass.Value;
+			builder = ec.GetTemporaryStorage (t);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldloc, builder); 
+		}
+
+		public void Store (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Stloc, builder);
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldloca, builder);
+		}
+	}
+
+	// <remarks>
+	//   The Assign node takes care of assigning the value of source into
+	//   the expression represented by target. 
+	// </remarks>
 	public class Assign : ExpressionStatement {
 		Expression target, source;
 		Location l;
@@ -129,29 +189,12 @@ namespace CIR {
 					ig.Emit (OpCodes.Dup);
 
 				((IStackStore) target).Store (ec);
-			} else if (eclass == ExprClass.PropertyAccess){
-				PropertyExpr pe = (PropertyExpr) target;
-
-				if (is_statement){
-					pe.Value = source;
-					pe.Emit (ec);
-				} else {
-					LocalTemporary tempo;
-					
-					tempo = new LocalTemporary (ec, source.Type);
-
-					pe.Value = tempo;
-					source.Emit (ec);
-					tempo.Store (ec);
-					target.Emit (ec);
-
-					tempo.Emit (ec);
-				}
-			} else if (eclass == ExprClass.IndexerAccess){
-				IndexerAccess ia = (IndexerAccess) target;
-
+			} else if (eclass == ExprClass.PropertyAccess ||
+				   eclass == ExprClass.IndexerAccess){
+				IAssignMethod am = (IAssignMethod) target;
+				
 				if (is_statement)
-					ia.EmitSet (ec, source);
+					am.EmitAssign (ec, source);
 				else {
 					LocalTemporary tempo;
 					
@@ -159,11 +202,10 @@ namespace CIR {
 
 					source.Emit (ec);
 					tempo.Store (ec);
-					ia.EmitSet (ec, source);
-
+					am.EmitAssign (ec, source);
 					tempo.Emit (ec);
 				}
-			}
+			} 
 		}
 		
 		public override void Emit (EmitContext ec)

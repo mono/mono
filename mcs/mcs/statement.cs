@@ -264,6 +264,7 @@ namespace CIR {
 		public Return (Expression expr, Location l)
 		{
 			Expr = expr;
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)

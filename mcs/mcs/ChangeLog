@@ -1,3 +1,15 @@
+2001-10-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer::Emit): Emit code for indexers.
+
+	* assign.cs (IAssignMethod): New interface implemented by Indexers
+	and Properties for handling assignment.
+
+	(Assign::Emit): Simplify and reuse code. 
+	
+	* expression.cs (IndexerAccess, PropertyExpr): Implement
+	IAssignMethod, clean up old code. 
+
 2001-10-22  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (ImplementsInterface): New method to determine if a type
@@ -29,6 +41,7 @@
 	inherited from an interface, we need to set the MethodAttributes.Final flag too. 
 	Also set MethodAttributes.NewSlot and MethodAttributes.HideBySig.
 	
+>>>>>>> 1.142
 2001-10-21  Ravi Pratap  <ravi@ximian.com>
 
 	* interface.cs (FindMembers): Implement to work around S.R.E

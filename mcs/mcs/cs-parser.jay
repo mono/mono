@@ -61,10 +61,11 @@ namespace CIR
 
 		// <summary>
 		//   Using during property parsing to describe the implicit
-		//   value parameter that is passed to the "set" accesor
-		//   method
+		//   value parameter that is passed to the "set" and "get"accesor
+		//   methods (properties and indexers).
 		// </summary>
-		Parameter [] implicit_value_parameters;
+		string     implicit_value_parameter_type;
+		Parameters indexer_parameters;
 
 		// <summary>
 		//   Used to determine if we are parsing the get/set pair
@@ -822,13 +823,9 @@ property_declaration
 	  type member_name
 	  OPEN_BRACE 
 	  {
-		Parameter implicit_value_parameter;
-		implicit_value_parameter = new Parameter ((string) $3, "value", Parameter.Modifier.NONE, null);
+		implicit_value_parameter_type = (string) $3;
 
 		lexer.properties = true;
-		
-		implicit_value_parameters = new Parameter [1];
-		implicit_value_parameters [0] = implicit_value_parameter;
 	  }
 	  accessor_declarations 
 	  {
@@ -849,7 +846,7 @@ property_declaration
 		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block, (Attributes) $1);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name);
-		implicit_value_parameters = null;
+		implicit_value_parameter_type = null;
 	  }
 	;
 
@@ -879,8 +876,10 @@ get_accessor_declaration
 	  {
 		// If this is not the case, then current_local_parameters has already
 		// been set in indexer_declaration
-		  if (parsing_indexer == false)
-			  current_local_parameters = new Parameters (implicit_value_parameters, null);
+		if (parsing_indexer == false)
+			current_local_parameters = null;
+		else 
+			current_local_parameters = indexer_parameters;
 
 		
 	  }
@@ -894,8 +893,24 @@ get_accessor_declaration
 set_accessor_declaration
 	: opt_attributes SET 
 	  {
-		  if (parsing_indexer == false)  
-			  current_local_parameters = new Parameters (implicit_value_parameters, null);
+		Parameter [] args;
+		Parameter implicit_value_parameter = new Parameter (
+			implicit_value_parameter_type, "value", 
+			Parameter.Modifier.NONE, null);
+
+		if (parsing_indexer == false) {
+			args  = new Parameter [1];
+			args [0] = implicit_value_parameter;
+		} else {
+			Parameter [] fp = indexer_parameters.FixedParameters;
+			int count = fp.Length;
+
+			args = new Parameter [count + 1];
+	
+			fp.CopyTo (args, 0);
+			args [count] = implicit_value_parameter;
+		}
+		current_local_parameters = new Parameters (args, null);
 	  }
 	  accessor_body
 	  {
@@ -1300,11 +1315,13 @@ indexer_declaration
 	  OPEN_BRACE 
 	  {
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
-		  
+
+		implicit_value_parameter_type = decl.type;
+		
 		lexer.properties = true;
 		parsing_indexer  = true;
 		
-		current_local_parameters = decl.param_list;
+		indexer_parameters = decl.param_list;
 	  }
           accessor_declarations 
 	  {
@@ -1336,6 +1353,8 @@ indexer_declaration
 		current_container.AddIndexer (indexer);
 		
 		current_local_parameters = null;
+		implicit_value_parameter_type = null;
+		indexer_parameters = null;
 	  }
 	;
 
