@@ -981,14 +981,15 @@ namespace System.Net
 			}
 		}
 
-		internal void SetResponseError (WebExceptionStatus status, Exception e)
+		internal void SetResponseError (WebExceptionStatus status, Exception e, string where)
 		{
 			WebAsyncResult r = asyncRead;
 			if (r == null)
 				r = asyncWrite;
 
 			if (r != null) {
-				WebException wexc = new WebException ("Error getting response stream: " + status, e, status, null); 
+				string msg = String.Format ("Error getting response stream ({0}): {1}", where, status);
+				WebException wexc = new WebException (msg, e, status, null); 
 				r.SetCompleted (false, wexc);
 				r.DoCallback ();
 				asyncRead = null;
