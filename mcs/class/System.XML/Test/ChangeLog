@@ -1,3 +1,7 @@
+2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* System.XML_linux_test.args : added XmlConvertTests.cs
+
 2003-04-14  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile.gnu: library location has changed.
