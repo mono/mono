@@ -13,7 +13,7 @@ namespace System.Web.UI.HtmlControls{
 	[DefaultEvent("ServerClick")]
 	public class HtmlAnchor : HtmlContainerControl, IPostBackEventHandler{
 		
-		private static readonly object EventServerClick;
+		private static readonly object EventServerClick = new object ();
 		
 		static HtmlAnchor(){
 			EventServerClick = new Object();

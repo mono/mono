@@ -20,7 +20,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		private int _cachedSelectedIndex;
 		private object _dataSource;
-		private static readonly object EventServerChange;
+		private static readonly object EventServerChange = new object ();
 		private ListItemCollection _items;
 		
 		public HtmlSelect():base("select"){
@@ -35,23 +35,25 @@ namespace System.Web.UI.HtmlControls{
 			throw new HttpException("HtmlSelect cannot have children of Type " + obj.GetType().Name);
 		}
 		
-		protected virtual void ClearSelection(){
-			for (int i =0; i<= Items.Count; i++){
-				Items[i].Selected = false;
-			}
+		protected virtual void ClearSelection()
+		{
+			foreach (ListItem item in Items)
+				item.Selected = false;
 		}
 		
 		protected override ControlCollection CreateControlCollection(){
 			return new EmptyControlCollection(this);
 		}
 		
-		protected override void LoadViewState(object savedState){
-			if (savedState != null){
+		protected override void LoadViewState(object savedState)
+		{
+			if (savedState != null) {
 				Triplet state = (Triplet) savedState;
-				LoadViewState(state.First);
-				Items.LoadViewState(state.Second);
-				object thirdState = state.Third;
-				if (thirdState != null) Select((int[]) thirdState);
+				base.LoadViewState (state.First);
+				Items.LoadViewState (state.Second);
+				object indices = state.Third;
+				if (indices != null)
+					Select ((int[]) indices);
 			}
 		}
 		
@@ -149,15 +151,18 @@ namespace System.Web.UI.HtmlControls{
 			writer.Indent = writer.Indent - 1;
 		}
 		
-		protected override object SaveViewState(){
-			object itemsViewState = SaveViewState();
-			object third = null;
-			if (Events[EventServerChange] != null && !Disabled && Visible){
-				third = SelectedIndices;
-			}
-			if (third != null && base.SaveViewState() != null && itemsViewState != null){
-				return new Triplet(itemsViewState, base.SaveViewState(), third);
-			}
+		protected override object SaveViewState ()
+		{
+			object baseViewState = base.SaveViewState ();
+			object itemsViewState = Items.SaveViewState ();
+			object indices = null;
+
+			if (Events[EventServerChange] != null || !Disabled || Visible)
+				indices = SelectedIndices;
+
+			if (indices != null || baseViewState != null || itemsViewState != null)
+				return new Triplet (baseViewState, itemsViewState, indices);
+
 			return null;
 		}
 		
@@ -176,8 +181,8 @@ namespace System.Web.UI.HtmlControls{
 							NameValueCollection postCollection)
 		{
 			//get the posted selectedIndices[]
-			string[] postedValueColl = postCollection.GetValues(postDataKey);
-			bool valid = false;
+			string [] postedValueColl = postCollection.GetValues(postDataKey);
+			bool changed = false;
 			if (postedValueColl != null){
 				if (!Multiple){
 					//single selection
@@ -186,7 +191,7 @@ namespace System.Web.UI.HtmlControls{
 					if (postedValue != SelectedIndex){
 						//set the SelectedIndex
 						SelectedIndex = postedValue;
-						valid = true;
+						changed = true;
 					}
 				}
 				else{
@@ -200,19 +205,19 @@ namespace System.Web.UI.HtmlControls{
 					if( postedValueCount == SelectedIndices.Length)
 						for (int i = 0; i <= postedValueCount; i++)
 							if(arr[i] == SelectedIndices[i])
-								valid = true;
+								changed = true;
 					else
-						valid = true;
+						changed = true;
 					//commit the posted Values
-					if(valid)
+					if(changed)
 						Select(arr);
 				}
 			}
 			else if (SelectedIndex != -1){
 				SelectedIndex = -1;
-				valid = true;
+				changed = true;
 			}
-			return valid;
+			return changed;
 		}
 		
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
@@ -222,7 +227,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		//starts tracking changes to the viewstate
 		protected override void TrackViewState(){
-			TrackViewState();
+			base.TrackViewState();
 			Items.TrackViewState();
 		}
 		
@@ -351,8 +356,10 @@ namespace System.Web.UI.HtmlControls{
 					_cachedSelectedIndex = value;
 					return;
 				}
-				else if (value < -1 || value >= Items.Count) 
+
+				if (value < -1 || value >= Items.Count) 
 					throw new ArgumentOutOfRangeException();
+
 				ClearSelection();
 				if (value >= 0) 
 					Items[value].Selected = true;
@@ -363,15 +370,15 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				int[] indices = new int[3];
 				int indicesCount = 0;
-				for(int i=0; i <= Items.Count; i++){
-					if(Items[i].Selected){
+				for(int i=0; i < Items.Count; i++){
+					if (Items[i].Selected){
 						if( indicesCount == (int) indices.Length){
 							int[] temp = new int[indicesCount + indicesCount];
 							indices.CopyTo(temp,0);
 							indices = temp;
 						}
-						indicesCount++;
 						indices[indicesCount] = i;
+						indicesCount++;
 					}
 				}
 				int[] arr = new int[indicesCount];
@@ -393,10 +400,10 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public string Value{
+		public string Value {
 			get{
 				int selectedIndex = SelectedIndex;
-				if (selectedIndex >=0 && selectedIndex <= Items.Count){
+				if (selectedIndex >=0 && selectedIndex < Items.Count){
 					return Items[selectedIndex].Value;
 				}
 				return String.Empty;

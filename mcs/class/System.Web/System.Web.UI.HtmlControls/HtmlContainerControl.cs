@@ -1,13 +1,16 @@
 //
 // System.Web.UI.HtmlControls.HtmlContainerControl.cs
 //
-// Author
-//   Bob Smith <bob@thestuff.net>
+// Authors:
+// 	Bob Smith <bob@thestuff.net>
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Bob Smith
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 
@@ -33,45 +36,55 @@ namespace System.Web.UI.HtmlControls
 {
 	public abstract class HtmlContainerControl : HtmlControl{
 		
-		private string _innerHtml = String.Empty;
-		private string _innerText = String.Empty;
-		private bool _doText = false;
-		private bool _doChildren = true;
+		public HtmlContainerControl () : this ("span") {}
 		
-		public HtmlContainerControl() : base(){}
-		
-		public HtmlContainerControl(string tag) : base(tag) {}
+		public HtmlContainerControl (string tag) : base(tag) {}
 		
 		public virtual string InnerHtml
 		{
-			get { return _innerHtml; }
+			get {
+				if (Controls.Count == 0)
+					return String.Empty;
+
+				bool is_literal = true;
+				StringBuilder text = new StringBuilder ();
+				foreach (Control ctrl in Controls) {
+					LiteralControl lc = ctrl as LiteralControl;
+					if (lc == null) {
+						is_literal = false;
+						break;
+					}
+					text.Append (lc.Text);
+				}
+					
+				if (!is_literal)
+					throw new HttpException ("There is no literal content!");
+
+				return text.ToString ();
+			}
+
 			set {
-				_innerHtml = value;
-				_doText = false;
-				_doChildren = false;
+				Controls.Clear ();
+				Controls.Add (new LiteralControl (value));
+				ViewState ["innerhtml"] = value;
 			}
 		}
 		
 		public virtual string InnerText
 		{
-			get { return _innerText; }
+			get {
+				return InnerHtml; //FIXME: decode it
+			}
+
 			set {
-				_innerText = value;
-				_doText = true;
-				_doChildren = false;
+				InnerHtml = value; //FIXME: encode it
 			}
 		}
 		
-		protected override void Render(HtmlTextWriter writer)
+		protected override void Render (HtmlTextWriter writer)
 		{
-			base.Render (writer);
-			if (_doChildren)
-				RenderChildren(writer);
-			else if (_doText)
-				writer.Write (HttpUtility.HtmlEncode (_innerText));
-			else
-				writer.Write (_innerHtml);
-
+			RenderBeginTag (writer);
+			RenderChildren (writer);
 			RenderEndTag (writer);
 		}
 
@@ -80,10 +93,25 @@ namespace System.Web.UI.HtmlControls
 			writer.WriteEndTag (TagName);
 		}
 
+		protected override void RenderAttributes (HtmlTextWriter writer)
+		{
+			ViewState.Remove ("innerhtml");
+			base.RenderAttributes (writer);
+		}
+
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new ControlCollection (this);
 		}
 
+		protected override void LoadViewState (object savedState)
+		{
+			if (savedState != null) {
+				base.LoadViewState (savedState);
+				string inner = ViewState ["innerhtml"] as string;
+				if (inner != null)
+					InnerHtml = inner;
+			}
+		}
 	}
 }

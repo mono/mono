@@ -15,7 +15,7 @@ namespace System.Web.UI.HtmlControls{
 	[DefaultEvent("ServerChange")]
 	public class HtmlInputHidden : HtmlInputControl, IPostBackDataHandler{
 		
-		private static readonly object EventServerChange;
+		private static readonly object EventServerChange = new object ();
 		
 		public HtmlInputHidden () : base ("hidden")
 		{

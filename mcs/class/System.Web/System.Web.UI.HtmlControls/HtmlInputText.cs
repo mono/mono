@@ -16,7 +16,7 @@ namespace System.Web.UI.HtmlControls{
 	[ValidationProperty("Value")]
 	public class HtmlInputText : HtmlInputControl, IPostBackDataHandler{
 		
-		private static readonly object EventServerChange;
+		private static readonly object EventServerChange = new object ();
 		
 		public HtmlInputText(string type):base(type){}
 		public HtmlInputText():base("text"){}

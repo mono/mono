@@ -15,7 +15,7 @@ namespace System.Web.UI.HtmlControls{
 	[DefaultEvent("ServerClick")]
 	public class HtmlInputImage : HtmlInputControl, IPostBackEventHandler, IPostBackDataHandler{
 		
-		private static readonly object EventServerClick;
+		private static readonly object EventServerClick = new object ();
 		private int _x, _y;
 		
 		public HtmlInputImage(): base("image"){}

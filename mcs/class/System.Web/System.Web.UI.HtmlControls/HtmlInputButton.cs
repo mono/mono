@@ -14,7 +14,7 @@ namespace System.Web.UI.HtmlControls{
 	[DefaultEvent("ServerClick")]
 	public class HtmlInputButton : HtmlInputControl, IPostBackEventHandler{
 		
-		private static readonly object EventServerClick;
+		private static readonly object EventServerClick = new object ();
 		
 		public HtmlInputButton(): base ("button")
 		{

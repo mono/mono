@@ -22,11 +22,11 @@ namespace System.Web.UI.HtmlControls{
 		private AttributeCollection _attributes = new AttributeCollection(new StateBag(true));
 		private bool _disabled = false;
 		
-		public HtmlControl(){}
+		public HtmlControl() : this ("span") {}
 		
 		public HtmlControl(string tag)
 		{
-			if(tag != null && tag != String.Empty) _tagName = tag;
+			_tagName = tag;
 		}
 		
 		protected override ControlCollection CreateControlCollection ()
@@ -106,6 +106,13 @@ namespace System.Web.UI.HtmlControls{
 		public virtual string TagName
 		{
 			get { return _tagName; }
+		}
+
+		protected override bool ViewStateIgnoresCase 
+		{
+			get {
+				return true;
+			}
 		}
 	}
 }

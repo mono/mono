@@ -13,7 +13,7 @@ namespace System.Web.UI.HtmlControls{
 	[DefaultEvent("ServerClick")]
 	public class HtmlButton : HtmlContainerControl, IPostBackEventHandler{
 		
-		private static readonly object EventServerClick;
+		private static readonly object EventServerClick = new object ();
 		
 		//Checked
 		static HtmlButton(){
