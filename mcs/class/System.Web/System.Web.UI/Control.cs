@@ -143,7 +143,7 @@ namespace System.Web.UI
                         }
                 }
 
-		[DefaultValue (true), WebCategory ("Behaviour")]
+		[DefaultValue (true), WebCategory ("Behavior")]
 		[WebSysDescription ("An Identification of the control that is rendered.")]
 #if NET_2_0
 		[Themeable (true)]
@@ -277,7 +277,7 @@ namespace System.Web.UI
                         }
                 }
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Behaviour")]
+		[DefaultValue (true), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("Visiblity state of the control.")]
 #if NET_2_0
 		[Localizable (true)]		

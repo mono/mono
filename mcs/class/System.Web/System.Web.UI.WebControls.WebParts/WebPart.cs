@@ -187,7 +187,7 @@ namespace System.Web.UI.WebControls.WebParts
 		[DefaultValueAttribute (String.Empty),
 		EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design",
 				"System.Drawing.Design.UITypeEditor, System.Drawing"),
-		WebCategoryAttribute ("Behaviour of the Web Part"),
+		WebCategoryAttribute ("Behavior of the Web Part"),
 		WebSysDescriptionAttribute ("Specifies URL of page, containing additional information about this WebPart.")]
 		//UrlPropertyAttribute, PersonalizableAttribute
 		string IWebPart.TitleUrl { 
