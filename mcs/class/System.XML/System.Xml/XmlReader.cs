@@ -723,14 +723,6 @@ namespace System.Xml
 			return false;
 		}
 
-		public virtual object ReadAsObject (Type type)
-		{
-			if (NodeType != XmlNodeType.Element)
-				throw new InvalidOperationException ("ReadAsObject() can be called only when the node is an element.");
-			XmlSerializer ser = new XmlSerializer (type);
-			return ser.Deserialize (this);
-		}
-
 		[MonoTODO]
 		public virtual XmlReader ReadSubtree ()
 		{

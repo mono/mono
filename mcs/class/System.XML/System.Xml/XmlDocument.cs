@@ -817,15 +817,6 @@ namespace System.Xml
 
 			case XmlNodeType.DocumentType:
 				DTDObjectModel dtd = null;
-				XmlTextReader xtReader = reader as XmlTextReader;
-				if (xtReader != null)
-					dtd = xtReader.DTD;
-				XmlNodeReader xnReader = reader as XmlNodeReader;
-				if (xnReader != null)
-					dtd = xnReader.GetInternalParserContext ().Dtd;
-				XmlValidatingReader xvReader = reader as XmlValidatingReader;
-				if (xvReader != null)
-					dtd = xvReader.GetInternalParserContext ().Dtd;
 				IHasXmlParserContext ctxReader = reader as IHasXmlParserContext;
 				if (ctxReader != null)
 					dtd = ctxReader.ParserContext.Dtd;

@@ -533,12 +533,6 @@ namespace System.Xml
 
 #if NET_2_0
 		[MonoTODO]
-		public virtual void WriteFromObject (object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public virtual void WriteValue (bool value)
 		{
 			WriteString (XQueryConvert.BooleanToString (value));

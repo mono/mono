@@ -34,13 +34,14 @@ using System;
 using System.Collections;
 using System.Xml;
 using System.Text;
+using Mono.Xml;
 
 namespace System.Xml
 {
 #if NET_2_0
-	public class XmlNodeReader : XmlReader, IXmlNamespaceResolver
+	public class XmlNodeReader : XmlReader, IHasXmlParserContext, IXmlNamespaceResolver
 #else
-	public class XmlNodeReader : XmlReader
+	public class XmlNodeReader : XmlReader, IHasXmlParserContext
 #endif
 	{
 		XmlDocument document;
@@ -54,7 +55,7 @@ namespace System.Xml
 		StringBuilder valueBuilder = new StringBuilder ();
 		XmlNamespaceManager defaultNsmgr;
 		Stack entityReaderStack = new Stack ();
-		XmlTextReader entityReader;
+		XmlReader entityReader;
 
 		private XmlNode ownerLinkedNode {
 			get {
@@ -531,15 +532,16 @@ namespace System.Xml
 			return null;
 		}
 
-		internal XmlParserContext GetInternalParserContext ()
-		{
-			if (entityReader != null)
-				return entityReader.GetInternalParserContext ();
-			else
-				return new XmlParserContext (document.NameTable,
-					current.ConstructNamespaceManager (),
-					document.DocumentType != null ? document.DocumentType.DTD : null,
-					current.BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
+		XmlParserContext IHasXmlParserContext.ParserContext {
+			get {
+				if (entityReader != null)
+					return ((IHasXmlParserContext) entityReader).ParserContext;
+				else
+					return new XmlParserContext (document.NameTable,
+						current.ConstructNamespaceManager (),
+						document.DocumentType != null ? document.DocumentType.DTD : null,
+						current.BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
+			}
 		}
 
 #if NET_2_0
@@ -1040,7 +1042,7 @@ namespace System.Xml
 			XmlParserContext ctx = null;
 			if (entityReader != null) {
 				entityReaderStack.Push (entityReader);
-				ctx = entityReader.GetInternalParserContext ();
+				ctx = ((IHasXmlParserContext) entityReader).ParserContext;
 			}
 			if (ctx == null) {
 				ctx = new XmlParserContext (document.NameTable,
@@ -1048,9 +1050,10 @@ namespace System.Xml
 					document.DocumentType != null ? document.DocumentType.DTD : null,
 					BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
 			}
-			entityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
-			entityReader.XmlResolver = document.Resolver;
-			entityReader.SkipTextDeclaration ();
+			XmlTextReader xtr = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
+			xtr.XmlResolver = document.Resolver;
+			xtr.SkipTextDeclaration ();
+			entityReader = xtr;
 		}
 
 		public override void Skip ()

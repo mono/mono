@@ -50,9 +50,9 @@ namespace System.Xml
 {
 #if NET_2_0
 	public class XmlTextReader : XmlReader,
-		IXmlLineInfo, IXmlNamespaceResolver
+		IXmlLineInfo, IXmlNamespaceResolver, IHasXmlParserContext
 #else
-	public class XmlTextReader : XmlReader, IXmlLineInfo
+	public class XmlTextReader : XmlReader, IXmlLineInfo, IHasXmlParserContext
 #endif
 	{
 		#region Constructors
@@ -216,6 +216,8 @@ namespace System.Xml
 			get { return cursorToken.IsEmptyElement; }
 		}
 
+#if NET_2_0
+#else
 		public override string this [int i] {
 			get { return GetAttribute (i); }
 		}
@@ -227,6 +229,7 @@ namespace System.Xml
 		public override string this [string localName, string namespaceName] {
 			get { return GetAttribute (localName, namespaceName); }
 		}
+#endif
 
 		public int LineNumber {
 			get {
@@ -371,9 +374,8 @@ namespace System.Xml
 			return -1;
 		}
 
-		internal XmlParserContext GetInternalParserContext ()
-		{
-			return parserContext;
+		XmlParserContext IHasXmlParserContext.ParserContext {
+			get { return parserContext; }
 		}
 
 		public override string GetAttribute (string localName, string namespaceURI)

@@ -42,9 +42,9 @@ namespace System.Xml
 #if NET_2_0
 	[Obsolete("Use XmlReader created by XmlReader.Create() method using"
 		+ " appropriate XmlReaderSettings instead.")]
-	public class XmlValidatingReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver
+	public class XmlValidatingReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver, IHasXmlParserContext
 #else
-	public class XmlValidatingReader : XmlReader, IXmlLineInfo
+	public class XmlValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext
 #endif
 	{
 
@@ -146,6 +146,8 @@ namespace System.Xml
 			get { return validatingReader == null ? false : validatingReader.IsEmptyElement; }
 		}
 
+#if NET_2_0
+#else
 		public override string this [int i] { 
 			get {
 				if (validatingReader == null)
@@ -161,6 +163,7 @@ namespace System.Xml
 		public override string this [string localName, string namespaceName] { 
 			get { return validatingReader == null ? null : validatingReader [localName, namespaceName]; }
 		}
+#endif
 
 #if NET_2_0
 		public int LineNumber {
@@ -370,16 +373,14 @@ namespace System.Xml
 			return this [localName, namespaceName];
 		}
 
-		internal XmlParserContext GetInternalParserContext ()
-		{
-			return dtdReader != null ?
-				dtdReader.ParserContext : null;
+		XmlParserContext IHasXmlParserContext.ParserContext {
+			get { return dtdReader != null ? dtdReader.ParserContext : null; }
 		}
 
 #if NET_2_0
 		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
-			return GetInternalParserContext ().NamespaceManager.GetNamespacesInScope (scope);
+			return ((IHasXmlParserContext) this).ParserContext.NamespaceManager.GetNamespacesInScope (scope);
 		}
 #endif
 
