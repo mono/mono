@@ -1,3 +1,10 @@
+2003-10-06  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Web.Services.dll.sources: Added 
+		System.Web.Services.Description/HttpGetProtocolImporter.cs
+		System.Web.Services.Description/HttpPostProtocolImporter.cs
+		System.Web.Services.Description/HttpSimpleProtocolImporter.cs
+
 2003-10-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* System.Web.Services.dll.sources: Added 
