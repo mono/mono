@@ -121,7 +121,7 @@ namespace Mono.Data.MySql {
 		[MonoTODO]
 		public void ChangeDatabase (string databaseName) {
 			dbname = databaseName;
-			Console.WriteLine("MySql Selecting Database: " + dbname + "...");
+			//Console.WriteLine("MySql Selecting Database: " + dbname + "...");
 			Console.Out.Flush();
 			int sdb = MySql.SelectDb(mysqlInitStruct, dbname);
 			if (sdb != 0) {
@@ -296,7 +296,7 @@ namespace Mono.Data.MySql {
 				*/
 				conState = ConnectionState.Closed;
 				MySql.Close(mysqlInitStruct);
-				// MySql.ThreadEnd();
+				MySql.ThreadEnd();
 				mysqlConn = IntPtr.Zero;
 			}
 		}

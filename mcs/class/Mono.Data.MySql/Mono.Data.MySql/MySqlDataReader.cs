@@ -36,13 +36,14 @@ namespace Mono.Data.MySql {
 
 		// field meta data
 		string[] fieldName;
-		int[] fieldType;
+		int[] fieldType; // MySQL data type
+		DbType[] fieldDbType; // DbType translated from MySQL type
 		uint[] fieldLength;
 		uint[] fieldMaxLength;
 		uint[] fieldFlags;
 		// field data value
 		private object[] dataValue;
-				
+						
 		private bool open = false;
 
 		private int recordsAffected = -1; 
@@ -125,25 +126,6 @@ namespace Mono.Data.MySql {
 				dataTableSchema.Columns.Add ("IsLong", typeof (bool));
 				dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
 
-				// TODO: for CommandBehavior.SingleRow
-				//       use IRow, otherwise, IRowset
-				if(numFields > 0)
-					if((cmdBehavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow)
-						numFields = 1;
-
-				// TODO: for CommandBehavior.SchemaInfo
-				if((cmdBehavior & CommandBehavior.SchemaOnly) == CommandBehavior.SchemaOnly)
-					numFields = 0;
-
-				// TODO: for CommandBehavior.SingleResult
-				if((cmdBehavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult)
-					if(currentQuery > 0)
-						numFields = 0;
-
-				// TODO: for CommandBehavior.SequentialAccess - used for reading Large OBjects
-				//if((cmdBehavior & CommandBehavior.SequentialAccess) == CommandBehavior.SequentialAccess) {
-				//}
-
 				DataRow schemaRow;
 				DbType dbType;
 				Type typ;
@@ -155,7 +137,7 @@ namespace Mono.Data.MySql {
 					schemaRow["ColumnName"] = fieldName[i];
 					schemaRow["ColumnOrdinal"] = i + 1;
 					
-					schemaRow["ColumnSize"] = (int) fieldLength[i];
+					schemaRow["ColumnSize"] = (int) fieldMaxLength[i];
 					schemaRow["NumericPrecision"] = 0;
 					schemaRow["NumericScale"] = 0;
 					// TODO: need to get KeyInfo
@@ -176,9 +158,9 @@ namespace Mono.Data.MySql {
 					// do translation from MySQL type 
 					// to .NET Type and then convert the result
 					// to a string
-					enum_field_types fieldEnum;
+					MySqlEnumFieldTypes fieldEnum;
 					
-					fieldEnum = (enum_field_types) fieldType[i];
+					fieldEnum = (MySqlEnumFieldTypes) fieldType[i];
 					dbType = MySqlHelper.MySqlTypeToDbType(fieldEnum);
 					typ = MySqlHelper.DbTypeToSystemType (dbType);
 					string st = typ.ToString();
@@ -253,7 +235,9 @@ namespace Mono.Data.MySql {
 				fieldLength = new uint[numFields];
 				fieldMaxLength = new uint[numFields];
 				fieldFlags = new uint[numFields];
-				
+
+				fieldDbType = new DbType[numFields];
+								
 				// marshal each meta data field
 				// into field* arrays
 				for (int i = 0; i < numFields; i++) {
@@ -268,7 +252,29 @@ namespace Mono.Data.MySql {
 					fieldLength[i] = marshField.Length;
 					fieldMaxLength[i] = marshField.MaxLength;
 					fieldFlags[i] = marshField.Flags;
+
+					fieldDbType[i] = MySqlHelper.MySqlTypeToDbType((MySqlEnumFieldTypes)fieldType[i]);
 				}
+
+				// TODO: for CommandBehavior.SingleRow
+				//       use IRow, otherwise, IRowset
+				if(numFields > 0)
+					if((cmdBehavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow)
+						numFields = 1;
+
+				// TODO: for CommandBehavior.SchemaInfo
+				if((cmdBehavior & CommandBehavior.SchemaOnly) == CommandBehavior.SchemaOnly)
+					numFields = 0;
+
+				// TODO: for CommandBehavior.SingleResult
+				if((cmdBehavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult)
+					if(currentQuery > 0)
+						numFields = 0;
+
+				// TODO: for CommandBehavior.SequentialAccess - used for reading Large OBjects
+				//if((cmdBehavior & CommandBehavior.SequentialAccess) == CommandBehavior.SequentialAccess) {
+				//}
+
 			}
 			return resultReturned;
 		}
@@ -293,10 +299,12 @@ namespace Mono.Data.MySql {
 				}
 				else {
 					for (int i = 0; i < numFields; i++) {
-						dataValue[i] = cmd.GetColumnData(row, i);
-						// maybe some tranlation needs to be
-						// done from the native MySql c type
+						// marshal column data value
+						string objValue = cmd.GetColumnData(row, i);
+						
+						// tranlate from native MySql c type
 						// to a .NET type here
+						dataValue[i] = MySqlHelper.ConvertDbTypeToSystem (fieldDbType[i], objValue);
 					}
 				}
 				return true;
@@ -337,7 +345,7 @@ namespace Mono.Data.MySql {
 
 		[MonoTODO]
 		public string GetDataTypeName(int i) {
-			throw new NotImplementedException ();
+			return MySqlHelper.GetMySqlTypeName((MySqlEnumFieldTypes)fieldType[i]);
 		}
 
 		[MonoTODO]
@@ -357,11 +365,11 @@ namespace Mono.Data.MySql {
 
 		[MonoTODO]
 		public Type GetFieldType(int i) {
-			enum_field_types fieldEnum;
+			MySqlEnumFieldTypes fieldEnum;
 			DbType dbType;
 			Type typ;
 
-			fieldEnum = (enum_field_types) fieldType[i];		
+			fieldEnum = (MySqlEnumFieldTypes) fieldType[i];		
 			dbType = MySqlHelper.MySqlTypeToDbType(fieldEnum);
 			typ = MySqlHelper.DbTypeToSystemType (dbType);
 

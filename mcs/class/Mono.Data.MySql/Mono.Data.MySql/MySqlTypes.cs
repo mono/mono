@@ -11,10 +11,13 @@
 //
 
 using System;
+using System.Collections;
 using System.Data;
+using System.Data.Common;
+using System.Text;
 
 namespace Mono.Data.MySql {
-	internal enum enum_field_types { 
+	internal enum MySqlEnumFieldTypes { 
 		FIELD_TYPE_DECIMAL, 
 		FIELD_TYPE_TINY,
 		FIELD_TYPE_SHORT,  
@@ -41,72 +44,153 @@ namespace Mono.Data.MySql {
 	}
 
 	sealed internal class MySqlHelper {
-		
-		public static DbType MySqlTypeToDbType(enum_field_types mysqlFieldType) {
+
+		public static string GetMySqlTypeName(MySqlEnumFieldTypes mysqlFieldType) {
+
+			string typeName;
+
+			switch(mysqlFieldType) {
+			case MySqlEnumFieldTypes.FIELD_TYPE_DECIMAL: 
+				typeName = "decimal";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_TINY: 
+				typeName = "tiny";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_SHORT: 
+				typeName = "short";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_LONG: 
+				typeName = "long";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_FLOAT: 
+				typeName = "float";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_DOUBLE: 
+				typeName = "double";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_NULL: 
+				typeName = "null";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_TIMESTAMP: 
+				typeName = "timestamp";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_LONGLONG: 
+				typeName = "longlong";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_INT24: 
+				typeName = "int24";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_DATE: 
+				typeName = "date";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_TIME: 
+				typeName = "time";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_DATETIME: 
+				typeName = "datetime";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_YEAR: 
+				typeName = "year";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_NEWDATE: 
+				typeName = "newdate";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_ENUM: 
+				typeName = "enum";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_SET: 
+				typeName = "set";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_TINY_BLOB: 
+				typeName = "tinyblob";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_MEDIUM_BLOB: 
+				typeName = "mediumblob";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_LONG_BLOB: 
+				typeName = "longblob";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_BLOB: 
+				typeName = "blob";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_VAR_STRING: 
+				typeName = "varchar";
+				break;
+			case MySqlEnumFieldTypes.FIELD_TYPE_STRING: 
+				typeName = "char";
+				break;
+			default:
+				typeName = "text";
+				break;
+			}
+			return typeName;
+		}
+
+		public static DbType MySqlTypeToDbType(MySqlEnumFieldTypes mysqlFieldType) {
 			DbType dbType;
 
 			// FIXME: verify these translation are correct
 
 			switch(mysqlFieldType) {
-			case enum_field_types.FIELD_TYPE_DECIMAL: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_DECIMAL: 
 				dbType = DbType.Decimal;
 				break;
-			case enum_field_types.FIELD_TYPE_TINY: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_TINY: 
 				dbType = DbType.Int16;
 				break;
-			case enum_field_types.FIELD_TYPE_SHORT: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_SHORT: 
 				dbType = DbType.Int16;
 				break;
-			case enum_field_types.FIELD_TYPE_LONG: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_LONG: 
 				dbType = DbType.Int32;
 				break;
-			case enum_field_types.FIELD_TYPE_FLOAT: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_FLOAT: 
 				dbType = DbType.Single;
 				break;
-			case enum_field_types.FIELD_TYPE_DOUBLE: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_DOUBLE: 
 				dbType = DbType.Double;
 				break;
-			case enum_field_types.FIELD_TYPE_NULL: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_NULL: 
 				dbType = DbType.String;
 				break;
-			case enum_field_types.FIELD_TYPE_TIMESTAMP: 
-				dbType = DbType.DateTime;
+			case MySqlEnumFieldTypes.FIELD_TYPE_TIMESTAMP: 
+				dbType = DbType.String;
 				break;
-			case enum_field_types.FIELD_TYPE_LONGLONG: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_LONGLONG: 
 				dbType = DbType.Int64;
 				break;
-			case enum_field_types.FIELD_TYPE_INT24: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_INT24: 
 				dbType = DbType.Int64;
 				break;
-			case enum_field_types.FIELD_TYPE_DATE: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_DATE: 
 				dbType = DbType.Date;
 				break;
-			case enum_field_types.FIELD_TYPE_TIME: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_TIME: 
 				dbType = DbType.Time;
 				break;
-			case enum_field_types.FIELD_TYPE_DATETIME: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_DATETIME: 
 				dbType = DbType.DateTime;
 				break;
-			case enum_field_types.FIELD_TYPE_YEAR: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_YEAR: 
 				dbType = DbType.Int16;
 				break;
-			case enum_field_types.FIELD_TYPE_NEWDATE: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_NEWDATE: 
 				dbType = DbType.Date;
 				break;
-			case enum_field_types.FIELD_TYPE_ENUM: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_ENUM: 
 				dbType = DbType.Int32;
 				break;
-			case enum_field_types.FIELD_TYPE_SET: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_SET: 
 				dbType = DbType.String;
 				break;
-			case enum_field_types.FIELD_TYPE_TINY_BLOB: 
-			case enum_field_types.FIELD_TYPE_MEDIUM_BLOB: 
-			case enum_field_types.FIELD_TYPE_LONG_BLOB: 
-			case enum_field_types.FIELD_TYPE_BLOB: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_TINY_BLOB: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_MEDIUM_BLOB: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_LONG_BLOB: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_BLOB: 
 				dbType = DbType.Binary;
 				break;
-			case enum_field_types.FIELD_TYPE_VAR_STRING: 
-			case enum_field_types.FIELD_TYPE_STRING: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_VAR_STRING: 
+			case MySqlEnumFieldTypes.FIELD_TYPE_STRING: 
 				dbType = DbType.String;
 				break;
 			default:
@@ -159,5 +243,228 @@ namespace Mono.Data.MySql {
 			return typ;
 		}
 
+		// Converts data value from database to .NET System type.
+		public static object ConvertDbTypeToSystem (DbType typ, String myValue) {
+			object obj = null;
+
+			//Console.WriteLine("DEBUG: ConvertDbTypeToSystem: " + myValue);
+			
+			if(myValue == null) {
+				return DBNull.Value;
+			}
+			else if(myValue.Equals("")) {
+				return DBNull.Value;
+			}		
+
+			// Date, Time, and DateTime 
+			// are parsed based on ISO format
+			// "YYYY-MM-DD hh:mi:ss"
+
+			switch(typ) {
+			case DbType.String:
+				obj = String.Copy(myValue); 
+				break;
+			case DbType.Boolean:
+				obj = myValue.Equals("t");
+				break;
+			case DbType.Int16:
+				obj = Int16.Parse(myValue);
+				break;
+			case DbType.Int32:
+				obj = Int32.Parse(myValue);
+				break;
+			case DbType.Int64:
+				obj = Int64.Parse(myValue);
+				break;
+			case DbType.Decimal:
+				obj = Decimal.Parse(myValue);
+				break;
+			case DbType.Single:
+				obj = Single.Parse(myValue);
+				break;
+			case DbType.Double:
+				obj = Double.Parse(myValue);
+				break;
+			case DbType.Date:
+				String[] sd = myValue.Split(new Char[] {'-'});
+				obj = new DateTime(
+					Int32.Parse(sd[0]), Int32.Parse(sd[1]), Int32.Parse(sd[2]),
+					0,0,0);
+				break;
+			case DbType.Time:
+				String[] st = myValue.Split(new Char[] {':'});
+				obj = new DateTime(0001,01,01,
+					Int32.Parse(st[0]),Int32.Parse(st[1]),Int32.Parse(st[2]));
+				break;
+			case DbType.DateTime:
+				Int32 YYYY,MM,DD,hh,mi,ss;
+				YYYY = Int32.Parse(myValue.Substring(0,4));
+				MM = Int32.Parse(myValue.Substring(5,2));
+				DD = Int32.Parse(myValue.Substring(8,2));
+				hh = Int32.Parse(myValue.Substring(11,2));
+				mi = Int32.Parse(myValue.Substring(14,2));
+				ss = Int32.Parse(myValue.Substring(17,2));
+				obj = new DateTime(YYYY,MM,DD,hh,mi,ss,0);
+				break;
+			default:
+				obj = String.Copy(myValue);
+				break;
+			}
+
+			return obj;
+		}
+
+		// Convert a .NET System value type (Int32, String, Boolean, etc)
+		// to a string that can be included within a SQL statement.
+		// This is to methods provides the parameters support
+		// for the MySQL .NET Data provider
+		public static string ObjectToString(DbType dbtype, object obj) {
+			
+			// TODO: how do we handle a NULL?
+			//if(isNull == true)
+			//	return "NULL";
+
+			string s;
+
+			// Date, Time, and DateTime are expressed in ISO format
+			// which is "YYYY-MM-DD hh:mm:ss.ms";
+			DateTime dt;
+			StringBuilder sb;
+
+			const string zero = "0";
+
+			switch(dbtype) {
+			case DbType.String:
+				s = "'" + obj + "'";
+				break;
+			case DbType.Boolean:
+				if((bool)obj == true)
+					s = "'t'";
+				else
+					s = "'f'";
+				break;
+			case DbType.Int16:
+				s = obj.ToString();
+				break;
+			case DbType.Int32:
+				s = obj.ToString();
+				break;
+			case DbType.Int64:
+				s = obj.ToString();
+				break;
+			case DbType.Decimal:
+				s = obj.ToString();
+				break;
+			case DbType.Single:
+				s = obj.ToString();
+				break;
+			case DbType.Double:
+				s = obj.ToString();
+				break;
+			case DbType.Date:
+				dt = (DateTime) obj;
+				sb = new StringBuilder();
+				sb.Append('\'');
+				// year
+				if(dt.Year < 10)
+					sb.Append("000" + dt.Year);
+				else if(dt.Year < 100)
+					sb.Append("00" + dt.Year);
+				else if(dt.Year < 1000)
+					sb.Append("0" + dt.Year);
+				else
+					sb.Append(dt.Year);
+				sb.Append("-");
+				// month
+				if(dt.Month < 10)
+					sb.Append(zero + dt.Month);
+				else
+					sb.Append(dt.Month);
+				sb.Append("-");
+				// day
+				if(dt.Day < 10)
+					sb.Append(zero + dt.Day);
+				else
+					sb.Append(dt.Day);
+				sb.Append('\'');
+				s = sb.ToString();
+				break;
+			case DbType.Time:
+				dt = (DateTime) obj;
+				sb = new StringBuilder();
+				sb.Append('\'');
+				// hour
+				if(dt.Hour < 10)
+					sb.Append(zero + dt.Hour);
+				else
+					sb.Append(dt.Hour);
+				sb.Append(":");
+				// minute
+				if(dt.Minute < 10)
+					sb.Append(zero + dt.Minute);
+				else
+					sb.Append(dt.Minute);
+				sb.Append(":");
+				// second
+				if(dt.Second < 10)
+					sb.Append(zero + dt.Second);
+				else
+					sb.Append(dt.Second);
+				sb.Append('\'');
+				s = sb.ToString();
+				break;
+			case DbType.DateTime:
+				dt = (DateTime) obj;
+				sb = new StringBuilder();
+				sb.Append('\'');
+				// year
+				if(dt.Year < 10)
+					sb.Append("000" + dt.Year);
+				else if(dt.Year < 100)
+					sb.Append("00" + dt.Year);
+				else if(dt.Year < 1000)
+					sb.Append("0" + dt.Year);
+				else
+					sb.Append(dt.Year);
+				sb.Append("-");
+				// month
+				if(dt.Month < 10)
+					sb.Append(zero + dt.Month);
+				else
+					sb.Append(dt.Month);
+				sb.Append("-");
+				// day
+				if(dt.Day < 10)
+					sb.Append(zero + dt.Day);
+				else
+					sb.Append(dt.Day);
+				sb.Append(" ");
+				// hour
+				if(dt.Hour < 10)
+					sb.Append(zero + dt.Hour);
+				else
+					sb.Append(dt.Hour);
+				sb.Append(":");
+				// minute
+				if(dt.Minute < 10)
+					sb.Append(zero + dt.Minute);
+				else
+					sb.Append(dt.Minute);
+				sb.Append(":");
+				// second
+				if(dt.Second < 10)
+					sb.Append(zero + dt.Second);
+				else
+					sb.Append(dt.Second);
+				sb.Append('\'');
+				s = sb.ToString();
+				break;
+			default:
+				// default to DbType.String
+				s = "'" + obj + "'";
+				break;
+			}
+			return s;	
+		}
 	}
 }

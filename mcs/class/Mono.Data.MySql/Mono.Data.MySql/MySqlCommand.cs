@@ -181,6 +181,7 @@ namespace Mono.Data.MySql {
 				typeof(MySqlMarshalledField));
 			string fieldName = fd.Name;
 			int fieldType = fd.FieldType; 
+			DbType fieldDbType = MySqlHelper.MySqlTypeToDbType((MySqlEnumFieldTypes)fieldType);
 
 			//Console.WriteLine("*** DEBUG: MySql FieldType: " + fieldType);
 						
@@ -191,7 +192,8 @@ namespace Mono.Data.MySql {
 			}
 			else {
 				// only get first column/first row
-				obj = GetColumnData(row, 0);
+				string objValue = GetColumnData(row, 0);
+				obj = MySqlHelper.ConvertDbTypeToSystem (fieldDbType, objValue);
 			}
 			MySql.FreeResult(res);
 

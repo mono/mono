@@ -1,3 +1,11 @@
+2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql/MySqlCommand.cs:
+	* Mono.Data.MySql/MySqlConnection.cs:
+	* Mono.Data.MySql/MySqlDataReader.cs:
+	* Mono.Data.MySql/MySqlTypes.cs: modifed -
+	handle MySQL types to .NET types and some fixes
+
 2002-10-12  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Test/MySqlTest.cs: added file - to do
