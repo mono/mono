@@ -43,6 +43,7 @@ secutil: secutil.in
 sqlsharp: sqlsharp.in
 xsd: xsd.in
 wsdl: wsdl.in
+wsdl2: wsdl2.in
 al: al.in
 genxs: genxs.in
 disco: disco.in
