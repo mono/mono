@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ScrollableControl.cs,v $
+// Revision 1.4  2004/09/09 03:01:35  ravindra
+// Removed unreachable code.
+//
 // Revision 1.3  2004/08/12 15:25:49  jordi
 // calls ctrlbase instead of exeception
 //
@@ -226,7 +229,6 @@ namespace System.Windows.Forms {
 		public override Rectangle DisplayRectangle {
 			get {
 				return base.DisplayRectangle;
-				throw new NotImplementedException();
 			}
 		}
 
@@ -283,14 +285,10 @@ namespace System.Windows.Forms {
 
 		protected override void OnLayout(LayoutEventArgs levent) {
 			base.OnLayout(levent);
-			return;
-			throw new NotImplementedException();
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e) {
-base.OnMouseWheel(e);
-return;
-			throw new NotImplementedException();
+			base.OnMouseWheel(e);
 		}
 
 		protected override void OnVisibleChanged(EventArgs e) {
