@@ -442,7 +442,7 @@ namespace Mono.CSharp {
 		// from classes from the arraylist `type_bases' 
 		//
 		string base_class_name;
-		protected TypeExpr parent_type;
+		TypeExpr parent_type;
 
 		ArrayList type_bases;
 
@@ -451,6 +451,7 @@ namespace Mono.CSharp {
 
 		// The interfaces we implement.
 		protected Type[] ifaces;
+		protected Type ptype;
 
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
@@ -1393,7 +1394,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Type ptype;
 			ConstructedType constructed = parent_type as ConstructedType;
 			if ((constructed == null) && (parent_type != null))
 				ptype = parent_type.ResolveType (ec);
@@ -2913,12 +2913,12 @@ namespace Mono.CSharp {
 			if (tb == null)
 				return null;
 
-			if (parent_type != null) {
+			if ((ptype != null) && (ptype != TypeManager.object_type)) {
 				Report.Error (
 					713, Location,
 					"Static class '{0}' cannot derive from type '{1}'. " +
 					"Static classes must derive from object",
-					GetSignatureForError (), parent_type);
+					GetSignatureForError (), ptype);
 				return null;
 			}
 
