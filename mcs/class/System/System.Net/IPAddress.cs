@@ -8,6 +8,9 @@
 //
 
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
+
+using System;
 
 namespace System.Net {
 
@@ -18,41 +21,97 @@ namespace System.Net {
 	public class IPAddress {
 		// Don't change the name of this field without also
 		// changing socket-io.c in the runtime
+		// This will stored in network order
 		private long address;
 
 		public static readonly IPAddress Any=new IPAddress(0);
 		public static readonly IPAddress Broadcast=new IPAddress(0xffffffff);
 		public static readonly IPAddress Loopback=new IPAddress(0x7f000001);
 		public static readonly IPAddress None=new IPAddress(0xffffffff);
-		
-		[MonoTODO("Figure out host endian")]
+
+		private static bool isLittleEndian;
+
+		[StructLayout(LayoutKind.Explicit)]
+		private struct EndianTest
+		{
+			[FieldOffset (0)] public byte b0;
+			[FieldOffset (0)] public short s0;
+		}
+
+		static IPAddress ()
+		{
+			EndianTest typeEndian = new EndianTest ();
+			typeEndian.s0 = 1;
+			isLittleEndian = typeEndian.b0 == 1;
+		}
+
+		private static short SwapShort (short number)
+		{
+			return (short) ( ((number >> 8) & 0xFF) + ((number << 8) & 0xFF00) );
+		}
+
+		private static int SwapInt (int number)
+		{
+			byte b0 = (byte) ((number >> 24) & 0xFF);
+			byte b1 = (byte) ((number >> 16) & 0xFF);
+			byte b2 = (byte) ((number >> 8) & 0xFF);
+			byte b3 = (byte) (number & 0xFF);
+			return b0 + (b1 << 8) + (b2 << 16) + (b3 << 24);
+		}
+
+		private static long SwapLong (long number)
+		{
+			byte b0 = (byte) ((number >> 56) & 0xFF);
+			byte b1 = (byte) ((number >> 48) & 0xFF);
+			byte b2 = (byte) ((number >> 40) & 0xFF);
+			byte b3 = (byte) ((number >> 32) & 0xFF);
+			byte b4 = (byte) ((number >> 24) & 0xFF);
+			byte b5 = (byte) ((number >> 16) & 0xFF);
+			byte b6 = (byte) ((number >> 8) & 0xFF);
+			byte b7 = (byte) (number & 0xFF);
+			return b0 + (b1 << 8) + (b2 << 16) + (b3 << 24) + (b4 << 32) + (b5 << 40) + (b6 << 48) + (b7 << 56);
+		}
+
 		public static short HostToNetworkOrder(short host) {
-			return(host);
+			if (!isLittleEndian)
+				return(host);
+
+			return SwapShort (host);
 		}
 
-		[MonoTODO("Figure out host endian")]
 		public static int HostToNetworkOrder(int host) {
-			return(host);
+			if (!isLittleEndian)
+				return(host);
+
+			return SwapInt (host);
 		}
 		
-		[MonoTODO("Figure out host endian")]
 		public static long HostToNetworkOrder(long host) {
-			return(host);
+			if (!isLittleEndian)
+				return(host);
+
+			return SwapLong (host);
 		}
 
-		[MonoTODO("Figure out host endian")]
 		public static short NetworkToHostOrder(short network) {
-			return(network);
+			if (!isLittleEndian)
+				return(network);
+
+			return SwapShort (network);
 		}
 
-		[MonoTODO("Figure out host endian")]
 		public static int NetworkToHostOrder(int network) {
-			return(network);
+			if (!isLittleEndian)
+				return(network);
+
+			return SwapInt (network);
 		}
 
-		[MonoTODO("Figure out host endian")]
 		public static long NetworkToHostOrder(long network) {
-			return(network);
+			if (!isLittleEndian)
+				return(network);
+
+			return SwapLong (network);
 		}
 		
 		/// <summary>
@@ -60,31 +119,65 @@ namespace System.Net {
 		/// </summary>
 		public IPAddress (long addr)
 		{
-			address = addr;
+			Address = addr;
 		}
 
 		public static IPAddress Parse(string ip)
 		{
-			if(ip==null) {
+			if(ip == null)
 				throw new ArgumentNullException("null ip string");
+
+			int pos = 0;
+			int ndots = 0;
+			char current;
+			bool prevDigit = false;
+
+			while (pos < ip.Length) {
+				current  = ip [pos++];
+				if (Char.IsDigit (current))
+					prevDigit = true;
+				else
+				if (current == '.') {
+					// No more than 3 dots. Doesn't allow ending with a dot.
+					if (++ndots > 3 || pos == ip.Length || prevDigit == false)
+						throw new FormatException ("the string is not a valid ip");
+
+					prevDigit = false;
+				}
+				else if (!Char.IsDigit (current)) {
+					if (!Char.IsWhiteSpace (current))
+						throw new FormatException ("the string is not a valid ip");
+
+					// The same as MS does
+					if (pos == 1) 
+						return new IPAddress (0);
+
+					break;
+				}
 			}
 
-			string[] ips = ip.Split (new char[] {'.'});
-			int i;
+			if (ndots != 3)
+				throw new FormatException ("the string is not a valid ip");
+
+
 			long a = 0;
+			string [] ips = ip.Split (new char [] {'.'});
+			for (int i = 0; i < ips.Length; i++)
+				a = (a << 8) |  (Byte.Parse(ips [i]));
 
-			for (i = 0; i < ips.Length; i++)
-				a = (a << 8) |  (UInt16.Parse(ips [i]));
-
-			return(new IPAddress(a));
+			return (new IPAddress (a));
 		}
 		
 		public long Address {
 			get {
-				return(address);
+				return (NetworkToHostOrder (address));
 			}
 			set {
-				address=value;
+			if (value < 0 || value > 0x00000000FFFFFFFF)
+				throw new ArgumentOutOfRangeException (
+					"the address must be between 0 and 0xFFFFFFFF");
+
+				address = HostToNetworkOrder (value);
 			}
 		}
 
@@ -97,12 +190,14 @@ namespace System.Net {
 		
 		/// <summary>
 		///   Used to tell whether an address is a loopback.
+		///   All IP addresses of the form 127.X.Y.Z, where X, Y, and Z are in 
+		///   the range 0-255, are loopback addresses.
 		/// </summary>
 		/// <param name="addr">Address to compare</param>
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
-			return addr.Equals(Loopback);
+			return (addr.address & 0xFF) == 127;
 		}
 
 		/// <summary>
@@ -119,10 +214,11 @@ namespace System.Net {
 		/// </summary>
 		static string ToString (long addr)
 		{
-			return  ((addr >> 24) & 0xff).ToString () + "." +
-				((addr >> 16) & 0xff).ToString () + "." +
+			// addr is in network order
+			return  (addr & 0xff).ToString () + "." +
 				((addr >> 8) & 0xff).ToString () + "." +
-				(addr & 0xff).ToString ();
+				((addr >> 16) & 0xff).ToString () + "." +
+				((addr >> 24) & 0xff).ToString ();
 		}
 
 		/// <returns>
