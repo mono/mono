@@ -44,14 +44,14 @@ namespace System.Drawing {
 		{
 			image_size = new Size(width, height);
 			pixel_format = format;
-			int bpp = GetPixelFormatSize (format);
+			int bpp = 32;
 			int stride = ((bpp * width) / 8);
 			stride = (stride + 3) & ~3;
 			int bmp_size = stride * height;
 			
-			IntPtr buffer = Marshal.AllocHGlobal (bmp_size);
+			buffer = Marshal.AllocHGlobal (bmp_size);
 			int bmp = 0;
-			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, buffer, out bmp);
+			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, PixelFormat.Format32bppArgb, buffer, out bmp);
 			if (s != Status.Ok)
 				throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
 			nativeObject = (IntPtr)bmp;

@@ -33,6 +33,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public Image ()
 	{
 		pixel_format = PixelFormat.Format32bppArgb;
+		colorPalette = new ColorPalette();
 	}
 
 	private Image (SerializationInfo info, StreamingContext context)
@@ -223,11 +224,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 				continue;
 			if (!(this is Bitmap))
 				continue;
-			
-			BitmapData bitmap_data = ((Bitmap)this).LockBits (new Rectangle (new Point (0,0), Size),
-									  ImageLockMode.ReadOnly, PixelFormat);
-			encoder.encode(this, stream, bitmap_data);
-			((Bitmap)this).UnlockBits (bitmap_data);
+			encoder.encode(this, stream);
 			break;
 		}
 	}

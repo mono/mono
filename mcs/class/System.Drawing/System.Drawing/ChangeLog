@@ -1,3 +1,7 @@
+2003-10-25  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs
+	* Image.cs 			small fixes
+	
 2003-10-25  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Image.cs : renamed 'pallete' to 'colorPallete' for CLS compliance.
