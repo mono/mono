@@ -520,7 +520,7 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
 		internal static extern Status GdipMeasureString(IntPtr graphics, string str, int length, IntPtr font,
     		 ref RectangleF layoutRect, IntPtr stringFormat, out RectangleF boundingBox, out int codepointsFitted,
-    				out int linesFilled);
+    				out int linesFilled);          
 		
 		// Bitmap functions
 		[DllImport("gdiplus.dll")]
@@ -987,8 +987,18 @@ namespace System.Drawing {
 		internal static extern Status GdipSetStringFormatHotkeyPrefix(IntPtr format, HotkeyPrefix hotkeyPrefix);
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetStringFormatHotkeyPrefix(IntPtr format, out HotkeyPrefix hotkeyPrefix);
-		
-		//ImgaeCodecInfo functions
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipSetStringFormatTabStops(IntPtr format, float firstTabOffset, int count, float[] tabStops);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipGetStringFormatDigitSubstitution(IntPtr format, int language, out StringDigitSubstitute substitute);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipSetStringFormatDigitSubstitution(IntPtr format, int language, StringDigitSubstitute substitute);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipGetStringFormatTabStopCount(IntPtr format, out int count);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipGetStringFormatTabStops(IntPtr format, int count, out float firstTabOffset, out float[] tabStops);
+                		
+		//ImageCodecInfo functions
 		[DllImport("gdiplus.dll")]
 		static internal extern void GetImageDecodersSize ( out uint decoderNums, out uint arraySize );
 		[DllImport("gdiplus.dll")]

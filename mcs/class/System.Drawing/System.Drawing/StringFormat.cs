@@ -21,10 +21,11 @@ namespace System.Drawing
 	{
 		private static StringFormat genericDefault;
 		IntPtr nativeStrFmt = IntPtr.Zero;
+                int language = GDIPlus.LANG_NEUTRAL;
 		
 		public StringFormat()
 		{						   
-			Status status = GDIPlus.GdipCreateStringFormat (0, GDIPlus.LANG_NEUTRAL, out nativeStrFmt);        			
+			Status status = GDIPlus.GdipCreateStringFormat (0, language, out nativeStrFmt);        			
 			
 			if (status != Status.Ok)
 				throw new ArgumentException ("Could not allocate string format: " + status);
@@ -73,98 +74,108 @@ namespace System.Drawing
 		
 		public StringAlignment Alignment {
 			get {
-					StringAlignment align;
-					GDIPlus.GdipGetStringFormatAlign (nativeStrFmt, out align);
+                                StringAlignment align;
+				GDIPlus.GdipGetStringFormatAlign (nativeStrFmt, out align);
         			return align;
 			}
 
 			set {					
-					GDIPlus.GdipSetStringFormatAlign (nativeStrFmt, value);				
+				GDIPlus.GdipSetStringFormatAlign (nativeStrFmt, value);				
 			}
 		}
 
 		public StringAlignment LineAlignment {
 			get {
-					StringAlignment align;
-					GDIPlus.GdipGetStringFormatLineAlign (nativeStrFmt, out align);        
-					return align;
+				StringAlignment align;
+				GDIPlus.GdipGetStringFormatLineAlign (nativeStrFmt, out align);        
+                                return align;
 			}
 
 			set {				
-					GDIPlus.GdipSetStringFormatLineAlign (nativeStrFmt, value);
-			}
+				GDIPlus.GdipSetStringFormatLineAlign (nativeStrFmt, value);
+        		}
 		}
 
 		public StringFormatFlags FormatFlags {
 			get {				
-					StringFormatFlags flags;
-					
-					GDIPlus.GdipGetStringFormatFlags (nativeStrFmt, out flags);
+				StringFormatFlags flags;					
+				GDIPlus.GdipGetStringFormatFlags (nativeStrFmt, out flags);
         			return flags;			
 			}
 
 			set {
-					GDIPlus.GdipSetStringFormatFlags (nativeStrFmt, value);					
+				GDIPlus.GdipSetStringFormatFlags (nativeStrFmt, value);					
 			}
 		}
 
 		public HotkeyPrefix HotkeyPrefix {
 			get {				
-					HotkeyPrefix hotkeyPrefix;
-					GDIPlus.GdipGetStringFormatHotkeyPrefix (nativeStrFmt, out hotkeyPrefix);           
-        			return hotkeyPrefix;
+				HotkeyPrefix hotkeyPrefix;
+				GDIPlus.GdipGetStringFormatHotkeyPrefix (nativeStrFmt, out hotkeyPrefix);           
+               			return hotkeyPrefix;
 			}
 
 			set {
-								
-					GDIPlus.GdipSetStringFormatHotkeyPrefix (nativeStrFmt, value);
+							
+				GDIPlus.GdipSetStringFormatHotkeyPrefix (nativeStrFmt, value);
 			}
 		}
 
-		public void SetMeasurableCharacterRanges (CharacterRange [] range)
-		{
-				
-		}
 
 		public StringTrimming Trimming {
 			get {
-					StringTrimming trimming;
-					GDIPlus.GdipGetStringFormatTrimming (nativeStrFmt, out trimming);
+				StringTrimming trimming;
+				GDIPlus.GdipGetStringFormatTrimming (nativeStrFmt, out trimming);
         			return trimming;
 			}
 
 			set {
-					GDIPlus.GdipSetStringFormatTrimming (nativeStrFmt, value);        
+				GDIPlus.GdipSetStringFormatTrimming (nativeStrFmt, value);        
 			}
 		}
 
 		public static StringFormat GenericDefault {
 			get {
-					IntPtr ptr;
+				IntPtr ptr;
+				
+				Status status = GDIPlus.GdipStringFormatGetGenericDefault (out ptr);        
 					
-					Status status = GDIPlus.GdipStringFormatGetGenericDefault (out ptr);        
-					
-					if (status != Status.Ok)
-						throw new ArgumentException ("Could not allocate string format: " + status);
+				if (status != Status.Ok)
+					throw new ArgumentException ("Could not allocate string format: " + status);
 						
-					return new StringFormat (ptr);
+				return new StringFormat (ptr);
 			}
 		}
 
 		
 		public static StringFormat GenericTypographic {
 			get {
-					IntPtr ptr;
+				IntPtr ptr;
 					
-					Status status = GDIPlus.GdipStringFormatGetGenericTypographic (out ptr);        
+				Status status = GDIPlus.GdipStringFormatGetGenericTypographic (out ptr);        
 					
-					if (status != Status.Ok)
-						throw new ArgumentException ("Could not allocate string format: " + status);
+				if (status != Status.Ok)
+					throw new ArgumentException ("Could not allocate string format: " + status);
 						
-					return new StringFormat (ptr);				
+				return new StringFormat (ptr);				
 			}
 		}
 
+                public StringDigitSubstitute  DigitSubstitutionMethod  {
+			get {
+                                StringDigitSubstitute substitute;
+                                
+                                GDIPlus.GdipGetStringFormatDigitSubstitution(nativeStrFmt, language, out substitute);
+                                return substitute;     
+			}
+		}
+
+
+
+      		public void SetMeasurableCharacterRanges (CharacterRange [] range)
+		{
+
+		}
 	
 		public object Clone()
 		{
@@ -175,22 +186,46 @@ namespace System.Drawing
 			if (status != Status.Ok)
 				throw new ArgumentException ("Could not allocate string format: " + status);
 			
-			return new StringFormat (native);
+	        	return new StringFormat (native);
 		}
 
-		public override string ToString ()
+		public override string ToString()
 		{
 			return "[StringFormat, FormatFlags=" + this.FormatFlags.ToString() + "]";
 		}
 		
-		internal IntPtr NativeObject{            
+		internal IntPtr NativeObject
+                {            
 			get{
-					return nativeStrFmt;
+				return nativeStrFmt;
 			}
 			set	{
-					nativeStrFmt = value;
+				nativeStrFmt = value;
 			}
 		}
-		
+
+                public void SetTabStops(float firstTabOffset, float[] tabStops)
+                {
+                        GDIPlus.GdipSetStringFormatTabStops(nativeStrFmt, firstTabOffset, tabStops.Length, tabStops);
+                }
+
+                public void SetDigitSubstitution(int language,  StringDigitSubstitute substitute)
+                {
+                        GDIPlus.GdipSetStringFormatDigitSubstitution(nativeStrFmt, language, substitute);
+                }
+
+                public float[] GetTabStops(out float firstTabOffset)
+                {
+                        int count = 0;
+                        firstTabOffset = 0;
+                        
+                        GDIPlus.GdipGetStringFormatTabStopCount(nativeStrFmt, out count);
+                        if (count==0) return null;
+
+                        float[] tabStops = new float[count];                        
+                        GDIPlus.GdipGetStringFormatTabStops(nativeStrFmt, count, out firstTabOffset, out tabStops);
+                        return tabStops;                        
+                }
+
 	}
 }
