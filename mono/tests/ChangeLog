@@ -1,3 +1,7 @@
+2004-10-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs: Add test for prefixing 'lib' to dll names.
+
 2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.cs: Add test for GetFunctionPointerForDelegate.
