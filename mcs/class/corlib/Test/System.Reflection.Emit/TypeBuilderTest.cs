@@ -1780,7 +1780,7 @@ public class TypeBuilderTest : Assertion
 		//Assert (tb.IsAssignableFrom (typeof (IDisposable)));
 
 		// bug #73469
-		//Assert (typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
+		Assert (typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
 	}
 }
 }
