@@ -1,3 +1,7 @@
+2004-12-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c (mono_gc_init): Add a '\n' to the valgrind warning.
+
 2004-12-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* icall.c: Added an internal call to retrieve the position and length
