@@ -226,6 +226,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlInputStream.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlLinkedNode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

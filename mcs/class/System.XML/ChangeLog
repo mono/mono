@@ -1,3 +1,7 @@
+2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlInputStream.cs to list.unix and Mono.System.Xml.csproj.
+
 2003-01-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* updated Mono.System.Xml.csproj. (patch by David B. Bitton)
