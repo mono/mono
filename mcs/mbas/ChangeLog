@@ -1,4 +1,7 @@
-﻿2004-08-13 Rob Tillie <Rob.Tillie@student.tul.edu>
+2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: Trivial bug fixing to get test InterfaceB.vb going
+
+2004-08-13 Rob Tillie <Rob.Tillie@student.tul.edu>
 	* ecore.cs: added runtime conversion from string to DateTime (fixes test 13329).
 	
 2004-08-13 Anirban Bhattacharjee <banirban@novell.com>

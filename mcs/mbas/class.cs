@@ -3575,11 +3575,14 @@ namespace Mono.MonoBASIC {
 						return false;
 
 					InterfaceTypes.Add (InterfaceType);
+					Type[] tbases = parent.TypeBuilder.GetInterfaces();
 
-					ArrayList bases = parent.Bases;
-					if (bases != null) {
-						foreach (Expression tbase in bases)	{
-							string bname = tbase.ToString();
+				    if (tbases.Length != 0)	{
+						ArrayList bases = new ArrayList();
+						TypeManager.ExpandAllInterfaces (tbases, ref bases);
+
+						foreach (Type tbase in bases) {
+							string bname = tbase.Name;
 							if (bname.LastIndexOf(".") != -1)
 								bname = bname.Substring(bname.LastIndexOf("."));
 
