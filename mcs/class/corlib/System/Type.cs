@@ -952,8 +952,10 @@ namespace System {
 			return res;
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern Type IsGenericTypeDefinition ();
+		public extern bool IsGenericInstance {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type BindGenericParameters (Type gt, Type [] types);

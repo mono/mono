@@ -1,3 +1,9 @@
+2003-09-25  Martin Baulig  <martin@ximian.com>
+
+	* Type.cs (Type.IsGenericTypeDefinition): Removed this method
+	since it was identical to GetGenericTypeDefinition().
+	(Type.IsGenericInstance): New property.
+
 2003-09-24  Duncan Mak  <duncan@ximian.com>
 
 	* Math.cs (Abs): Fix double Locale.GetText bug reported by
