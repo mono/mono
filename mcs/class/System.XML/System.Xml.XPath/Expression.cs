@@ -369,7 +369,6 @@ namespace System.Xml.XPath
 			get { return false; }
 		}
 
-		[MonoTODO]
 		public virtual double EvaluateNumber (BaseIterator iter)
 		{
 			object result;
@@ -394,12 +393,14 @@ namespace System.Xml.XPath
 				case XPathResultType.NodeSet:
 					return XPathFunctions.ToNumber (EvaluateString (iter));
 				case XPathResultType.String:
-					return XPathFunctions.ToNumber ((string) result);	// TODO: spec? convert string to number
+					return XPathFunctions.ToNumber ((string) result);
+				case XPathResultType.Navigator:
+					return XPathFunctions.ToNumber (((XPathNavigator) (result)).Value);
 				default:
-					throw new XPathException ("invalid node type"); // TODO: handle other types
+					throw new XPathException ("invalid node type");
 			}
 		}
-		[MonoTODO]
+
 		public virtual string EvaluateString (BaseIterator iter)
 		{
 			object result = Evaluate (iter);
@@ -409,7 +410,7 @@ namespace System.Xml.XPath
 			switch (type)
 			{
 				case XPathResultType.Number:
-					return (string) XmlConvert.ToString ((double)result);	// TODO: spec? convert number to string
+					return (string) XmlConvert.ToString ((double)result);
 				case XPathResultType.Boolean:
 					return ((bool) result) ? "true" : "false";
 				case XPathResultType.String:
@@ -421,11 +422,13 @@ namespace System.Xml.XPath
 						return "";
 					return iterResult.Current.Value;
 				}
+				case XPathResultType.Navigator:
+					return ((XPathNavigator) result).Value;
 				default:
-					throw new XPathException ("invalid node type"); // TODO: handle other types
+					throw new XPathException ("invalid node type");
 			}
 		}
-		[MonoTODO]
+
 		public virtual bool EvaluateBoolean (BaseIterator iter)
 		{
 			object result = Evaluate (iter);
@@ -448,8 +451,10 @@ namespace System.Xml.XPath
 					BaseIterator iterResult = (BaseIterator) result;
 					return (iterResult != null && iterResult.MoveNext ());
 				}
+				case XPathResultType.Navigator:
+					return ((string) ((XPathNavigator) result).Value).Length != 0;
 				default:
-					throw new XPathException ("invalid node type"); // TODO: handle other types
+					throw new XPathException ("invalid node type");
 			}
 		}
 		public object EvaluateAs (BaseIterator iter, XPathResultType type)
@@ -550,7 +555,8 @@ namespace System.Xml.XPath
 		{
 			this.trueVal = trueVal;
 		}
-		[MonoTODO]
+
+		[MonoTODO ("Avoid extraneous evaluation")]
 		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			XPathResultType typeL = _left.GetReturnType (iter);
@@ -640,13 +646,12 @@ namespace System.Xml.XPath
 	internal abstract class RelationalExpr : ExprBoolean
 	{
 		public RelationalExpr (Expression left, Expression right) : base (left, right) {}
-		[MonoTODO]
+		[MonoTODO ("Avoid extraneous evaluation.")]
 		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			XPathResultType typeL = _left.GetReturnType (iter);
 			XPathResultType typeR = _right.GetReturnType (iter);
 
-			// TODO: avoid double evaluations
 			if (typeL == XPathResultType.Any)
 				typeL = GetReturnType (_left.Evaluate (iter));
 			if (typeR == XPathResultType.Any)
@@ -811,10 +816,10 @@ namespace System.Xml.XPath
 	{
 		public ExprMOD (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "%"; }}
-		[MonoTODO]
+
 		public override double EvaluateNumber (BaseIterator iter)
 		{
-			return _left.EvaluateNumber (iter) % _right.EvaluateNumber (iter);	// TODO: spec?
+			return _left.EvaluateNumber (iter) % _right.EvaluateNumber (iter);
 		}
 	}
 
@@ -1125,7 +1130,7 @@ namespace System.Xml.XPath
 		{
 			this.type = type;
 		}
-		[MonoTODO]
+		[MonoTODO ("Better description.")]
 		public NodeTypeTest (Axes axis, XPathNodeType type, String param) : base (axis)
 		{
 			this.type = type;
@@ -1235,14 +1240,12 @@ namespace System.Xml.XPath
 				if (resolvedName)
 					strURI1 = _name.Namespace;
 				else
-					strURI1 = nsm.LookupNamespace (_name.Namespace);	// TODO: check to see if this returns null or ""
+					strURI1 = nsm.LookupNamespace (_name.Namespace);
 				if (strURI1 == null)
 					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}
 
 			string strURI = nav.NamespaceURI;
-			if (strURI == null && strURI1 == "")	// TODO: remove when bug #26855 fixed
-				return true;
 
 			// test the prefixes
 			return strURI1 == nav.NamespaceURI;

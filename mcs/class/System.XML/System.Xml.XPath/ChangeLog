@@ -1,3 +1,13 @@
+2004-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultContext.cs : Removed MonoTODO. done.
+	* Expression.cs : handle XPathResultType.Navigator in some places and
+	  removed MonoTODO. Mark MonoTODO with explicit comments (though they
+	  are mostly pointing out possibilities of optimization).
+	  Removed extra check that depended on the old bugs.
+	* XPathResultType.cs : Fixed .Navigator that had the same value as
+	  .String.
+
 2004-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Parser.jay : made class internal.

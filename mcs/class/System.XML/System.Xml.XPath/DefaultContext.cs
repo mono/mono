@@ -58,7 +58,6 @@ namespace System.Xml.XPath
 			return iter != null && iter.MoveNext ();
 		}
 
-		[MonoTODO]
 		public static string ToString (object arg)
 		{
 			if (arg == null)
@@ -78,7 +77,7 @@ namespace System.Xml.XPath
 			}
 			throw new ArgumentException ();
 		}
-		[MonoTODO]
+
 		public static double ToNumber (object arg)
 		{
 			if (arg == null)
