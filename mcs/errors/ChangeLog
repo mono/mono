@@ -1,3 +1,7 @@
+2004-04-05  Martin Baulig  <martin@ximian.com>
+
+	* gmcs-expect-wrong-error: New file.
+
 2004-04-05 Marek Safar <marek.safar@seznam.cz>
 
 	* cs3009-3.cs: New error test.
