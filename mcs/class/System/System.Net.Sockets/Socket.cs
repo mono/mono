@@ -929,11 +929,15 @@ namespace System.Net.Sockets
 
 			int error;
 			
-			Connect_internal(socket, remote_end.Serialize(), out error);
-
-			if (error != 0) {
-				throw new SocketException (error);
+			SocketAddress serial = remote_end.Serialize ();
+			Connect_internal(socket, serial, out error);
+			if (!blocking && error == 10036) {
+				Poll (-1, SelectMode.SelectWrite);
+				Connect_internal (socket, serial, out error);
 			}
+
+			if (error != 0)
+				throw new SocketException (error);
 			
 			connected=true;
 		}
