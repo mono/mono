@@ -1,3 +1,7 @@
+2003-03-15 Daniel Morgan <danmorg@sc.rr.com>
+
+	* PEAPI.build: added file for windows build
+
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: (ImplAttr) Add Optil implementation flag (not supported 
