@@ -193,8 +193,8 @@ namespace System.Data.Odbc
 		}
 
 		[MonoTODO]
-		 [EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		public OdbcDataReader GetData (int ordinal)
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		public IDataReader GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}

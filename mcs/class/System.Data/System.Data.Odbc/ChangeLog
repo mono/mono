@@ -1,3 +1,8 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* OdbcDataReader.cs: changed GetData method to return IDataReader
+	to match MS.NET
+
 2004-06-09  Sureshkumar T (tsureshkumar@novell.com)
         * OdbcDataReader.cs: Removed checking of currentRow in GetName
           method
