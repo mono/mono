@@ -13,63 +13,22 @@ namespace Microsoft.CSharp {
 
 	public class CompilerError {
   
-		private ErrorLevel level = ErrorLevel.None;
-		private string message = null;
-		private string file = null;
-		private int number = 0;
-		private int column = 0;
-		private int line = 0;
+		public ErrorLevel ErrorLevel;
+		public string ErrorMessage;
+		public string SourceFile;
+		public int ErrorNumber;
+		public int SourceColumn;
+		public int SourceLine;
 
-  		public CompilerError()
+  		public CompilerError ()
     		{
+			ErrorLevel = ErrorLevel.None;
+			ErrorMessage = String.Empty;
+			SourceFile = String.Empty;
+			ErrorNumber = 0;
+			SourceColumn = 0;
+			SourceLine = 0;
     		}
-
-		~CompilerError()
-		{
-			message = null;
-			file = null;
-		}
-
-
-		//
-		// Public Properties
-		//
-
-		public ErrorLevel ErrorLevel {
-			get { return level; }
-			set { level = value; }
-		}
-
-		public string ErrorMessage {
-			get {
-				return (null == message ? String.Empty : message);
-			}
-			set {
-				message = value;
-			}
-		}
-
-		public int ErrorNumber {
-			get { return number; }
-			set { number = value; }
-		}
-
-		public int SourceColumn {
-			get { return column; }
-			set { column = value; }      
-		}
-
-		public string SourceFile {
-			get { 
-				return (null == file ? String.Empty : file);
-			}
-			set { file = value; }
-  		}
-
-		public int SourceLine {
-			get { return line; }
-			set { line = value; }
-		}
 
 		//
 		// Public Methods
@@ -91,6 +50,7 @@ namespace Microsoft.CSharp {
 			
 			return builder.ToString ();
 		}
+
 
 		//
 		// Private Properties

@@ -1,3 +1,7 @@
+2003-02-23 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs: Use fields not properties, and remove unneeded finalizer
+
 2002-12-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* CompilerError.cs ErrorLevel.cs: Moved ErrorLevel enum into its own file
