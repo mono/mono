@@ -1,5 +1,10 @@
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataRow.cs : (set_Item) RowNotInTableExeption check should be done
+	  regardless of index existence.
+
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTable.cs : use new IExpression.EvalBoolean() to avoid extraneous
 	  boxing.
 

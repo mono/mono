@@ -977,6 +977,20 @@ namespace MonoTests.System.Data
 		            		
         
     		}
-		
+
+		[Test]
+		[ExpectedException (typeof (RowNotInTableException))]
+		public void DetachedRowItemException ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col");
+			dt.Rows.Add ((new object [] {"val"}));
+
+			DataRow dr = dt.NewRow ();
+			AssertEquals (DataRowState.Detached, dr.RowState);
+			dr.CancelEdit ();
+			AssertEquals (DataRowState.Detached, dr.RowState);
+			object o = dr ["col"];
+		}
 	}
 }

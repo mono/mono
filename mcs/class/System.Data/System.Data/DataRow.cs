@@ -250,15 +250,15 @@ namespace System.Data {
 					object o = column.CompiledExpression.Eval (this);
 					return Convert.ChangeType (o, column.DataType);
 				}
+
+				if (rowState == DataRowState.Detached && version == DataRowVersion.Default && _proposed < 0)
+					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				
 				int recordIndex = IndexFromVersion(version);
 
 				if (recordIndex >= 0) {
 					return column[recordIndex];
 				}
-
-				if (rowState == DataRowState.Detached && version == DataRowVersion.Default && _proposed < 0)
-					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				
 				throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
 			}

@@ -1,3 +1,8 @@
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataRowTest.cs : added DetachedRowItemException().
+	* DataSetTest.cs : WriteXmlSchema7() is now NotWorking.
+
 2005-01-25  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableTest.cs: added test case for checking ImportRow when

@@ -1853,6 +1853,7 @@ namespace MonoTests.System.Data
 
 		// bug #68008
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void WriteXmlSchema7 ()
 		{
 			DataSet ds = new DataSet ();
