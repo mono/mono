@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.11  2004/08/22 19:34:22  jackson
+// Update the position through the Value property so the OnValueChanged event is raised.
+//
 // Revision 1.10  2004/08/21 20:22:21  pbartok
 // - Replaced direct XplatUI calls with their Control counterpart
 //
@@ -390,24 +393,26 @@ namespace System.Windows.Forms
     		private void UpdatePos (int newPos, bool update_trumbpos)
     		{    	
     			int old = position;
-    					
+			int pos;		
+
     			if (newPos < minimum)
-    				position = minimum;
+    				pos = minimum;
     			else
     				if (newPos > maximum)
-    					position = maximum;    			
+    					pos = maximum;    			
     					else
-    						position = newPos;
+    						pos = newPos;
     			    			
 			if (update_trumbpos) 
 				if (vert)
-					UpdateThumbPos (thumb_area.Y + (int)(((float)(position - Minimum)) * pixel_per_pos), false);
+					UpdateThumbPos (thumb_area.Y + (int)(((float)(pos - Minimum)) * pixel_per_pos), false);
 				else
-					UpdateThumbPos (thumb_area.X + (int)(((float)(position - Minimum)) * pixel_per_pos), false);
+					UpdateThumbPos (thumb_area.X + (int)(((float)(pos - Minimum)) * pixel_per_pos), false);
 
-			if (position != old) // Fire event
-				fire_Scroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
-			
+			Value = pos;
+			if (pos != old) // Fire event
+				fire_Scroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, pos));
+                        
     		}	
     		
     		private void UpdateThumbPos (int pixel, bool update_value)
