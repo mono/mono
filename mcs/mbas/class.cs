@@ -113,7 +113,8 @@ namespace Mono.MonoBASIC {
 		// from classes from the arraylist `type_bases' 
 		//
 		string     base_class_name;
-
+		public Type base_class_type;
+		
 		ArrayList type_bases;
 
 		// Information in the case we are an attribute type
@@ -156,12 +157,6 @@ namespace Mono.MonoBASIC {
 			base_class_name = null;
 			
 			//Console.WriteLine ("New class " + name + " inside " + n);
-		}
-
-		public override AttributeTargets AttributeTargets {
-			get {
-				throw new NotSupportedException ();
-			}
 		}
 
 		public AdditionResult AddConstant (Const constant)
@@ -435,7 +430,28 @@ namespace Mono.MonoBASIC {
 
 			interface_order.Add (iface);
 		}
-		
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.default_member_type) {
+				/*
+				if (Indexers != null) {
+					Report.Error (646, a.Location,
+						      "Cannot specify the DefaultMember attribute on" +
+						      " a type containing an indexer");
+					return;
+				}
+				*/
+			}
+			
+			base.ApplyAttributeBuilder (a, cb);
+		} 
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+
 		public ArrayList Types {
 			get {
 				return types;
@@ -771,7 +787,6 @@ namespace Mono.MonoBASIC {
 		//
 		public override TypeBuilder DefineType ()
 		{
-			Type parent;
 			bool error;
 			bool is_class;
 
@@ -796,21 +811,21 @@ namespace Mono.MonoBASIC {
 					"Class declared as 'MustInherit' cannot be declared as 'NotInheritable'");
 			}
 			
-			ifaces = GetClassBases (is_class, out parent, out error); 
+			ifaces = GetClassBases (is_class, out base_class_type, out error); 
 			if (error)
 				return null;
 
 			if (this is Interface)
-				parent = null;
+				base_class_type = null;
 
-			if (is_class && parent != null){
-				if (parent == TypeManager.enum_type ||
-				    (parent == TypeManager.value_type && RootContext.StdLib) ||
-				    parent == TypeManager.delegate_type ||
-				    parent == TypeManager.array_type){
+			if (is_class && base_class_type != null){
+				if (base_class_type == TypeManager.enum_type ||
+				    (base_class_type == TypeManager.value_type && RootContext.StdLib) ||
+				    base_class_type == TypeManager.delegate_type ||
+				    base_class_type == TypeManager.array_type){
 					Report.Error (
 						644, Location, "`" + Name + "' cannot inherit from " +
-						"special class `" + TypeManager.MonoBASIC_Name (parent) + "'");
+						"special class `" + TypeManager.MonoBASIC_Name (base_class_type) + "'");
 					return null;
 				}
 			}
@@ -841,16 +856,15 @@ namespace Mono.MonoBASIC {
 			
 			TypeAttributes type_attributes = TypeAttr;
 
-			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 				TypeBuilder = builder.DefineType (
-					Name, type_attributes, parent, ifaces);
+					Name, type_attributes, base_class_type, ifaces);
 				
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
 				TypeBuilder = builder.DefineNestedType (
-					Basename, type_attributes, parent, ifaces);
+					Basename, type_attributes, base_class_type, ifaces);
 			}
 				
 			if (!is_class)
@@ -880,9 +894,9 @@ namespace Mono.MonoBASIC {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
 
-			if ((parent != null) &&
-			    (parent == TypeManager.attribute_type ||
-			     parent.IsSubclassOf (TypeManager.attribute_type))) {
+			if ((base_class_type != null) &&
+			    (base_class_type == TypeManager.attribute_type ||
+			     base_class_type.IsSubclassOf (TypeManager.attribute_type))) {
 				RootContext.RegisterAttribute (this);
 			} else
 				RootContext.RegisterOrder (this); 
@@ -1549,9 +1563,10 @@ namespace Mono.MonoBASIC {
 			if (Pending != null)
 				if (Pending.VerifyPendingMethods ())
 					return;
-			
-			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
 
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this);
+			
 			//
 			// Check for internal or private fields that were never assigned
 			//
@@ -1587,7 +1602,7 @@ namespace Mono.MonoBASIC {
 //				foreach (TypeContainer tc in types)
 //					tc.Emit ();
 		}
-		
+
 		public override void CloseType ()
 		{
 			try {
@@ -1981,6 +1996,18 @@ namespace Mono.MonoBASIC {
 			get {
 				return AttributeTargets.Class;
 			}
+		}
+
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.UsageAttribute != null) {
+				if (base_class_type != TypeManager.attribute_type && !base_class_type.IsSubclassOf (TypeManager.attribute_type) &&
+					TypeBuilder.FullName != "System.Attribute") {
+					Report.Error (641, a.Location, "Attribute '" + a.Name + "' is only valid on classes derived from System.Attribute");
+				}
+				AttributeUsage = a.UsageAttribute;
+			} 
+			base.ApplyAttributeBuilder (a, cb);
 		}
 
 		//
@@ -2456,6 +2483,11 @@ namespace Mono.MonoBASIC {
 		{
 			MethodData.Emit (parent, Block, this);
 		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			throw new Exception ("FIXME: I am just a placeholder implementation");
+		}
 	}
 
 	public abstract class ConstructorInitializer {
@@ -2603,6 +2635,11 @@ namespace Mono.MonoBASIC {
 			: base (null, mod, AllowedModifiers, name, null, args, l)
 		{
 			Initializer = init;
+		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			ConstructorBuilder.SetCustomAttribute (cb);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -2757,7 +2794,8 @@ namespace Mono.MonoBASIC {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				parent.EmitFieldInitializers (ec);
 
-			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes, Location);
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this);
 
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
@@ -3740,8 +3778,15 @@ namespace Mono.MonoBASIC {
 			EmitContext ec = new EmitContext (tc, Location, null,
 							  FieldBuilder.FieldType, ModFlags);
 
-			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes, Location);
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this);
 		}
+		
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			FieldBuilder.SetCustomAttribute (cb);
+		}
+		
 	}
 
 	//
@@ -3768,6 +3813,11 @@ namespace Mono.MonoBASIC {
 		public MethodData GetData, SetData;
 
 		protected EmitContext ec;
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			PropertyBuilder.SetCustomAttribute (cb);
+		}
 
 		public override AttributeTargets AttributeTargets {
 			get {
@@ -3957,7 +4007,7 @@ namespace Mono.MonoBASIC {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
-		    Modifiers.UNSAFE |
+		    	Modifiers.UNSAFE |
 			Modifiers.EXTERN |
 			Modifiers.VIRTUAL |
 			Modifiers.NONVIRTUAL |
@@ -4132,8 +4182,8 @@ namespace Mono.MonoBASIC {
 			// put the attribute
 			//
 			
-			if (PropertyBuilder != null)
-				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
+			if (PropertyBuilder != null && OptAttributes != null)
+				OptAttributes.Emit (ec, this);
 			
 			if (GetData != null) 
 			{
@@ -4324,6 +4374,11 @@ namespace Mono.MonoBASIC {
 			Implements = impl_what;
 		}
 
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			EventBuilder.SetCustomAttribute (cb);
+		}
+
 		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Event;
@@ -4440,7 +4495,9 @@ namespace Mono.MonoBASIC {
 			EmitContext ec;
 
 			ec = new EmitContext (tc, Location, null, MemberType, ModFlags);
-			Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes, Location);
+
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this);
 
 			if (Add != null)
 				AddData.Emit (tc, Add.Block, Add);

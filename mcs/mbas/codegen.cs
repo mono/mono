@@ -750,26 +750,17 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
-// 		public virtual void Emit (TypeContainer tc) 
-// 		{
-// 			if (OptAttributes == null)
-// 				return;
-// 			EmitContext ec = new EmitContext (tc, Location.Null, null, null, 0, false);
-// 			OptAttributes.Emit (ec, this);
-//  		}
-                
-// 		protected Attribute GetClsCompliantAttribute ()
-// 		{
-// 			if (OptAttributes == null)
-// 				return null;
+ 		public virtual void Emit (TypeContainer tc) 
+ 		{
+ 			if (OptAttributes == null)
+ 				return;
+ 			EmitContext ec = new EmitContext (tc, Location.Null, null, null, 0, false);
 
-// 			EmitContext temp_ec = new EmitContext (new RootTypes (), Mono.CSharp.Location.Null, null, null, 0, false);
-// 			Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
-// 			if (a != null) {
-// 				a.Resolve (temp_ec);
-// 			}
-// 			return a;
-// 		}
+			if (OptAttributes != null)
+	 			OptAttributes.Emit (ec, this);
+  		}
+		
+		
 	}
 
 	public class AssemblyClass: CommonAssemblyModulClass 
@@ -782,10 +773,16 @@ namespace Mono.MonoBASIC {
 			}
 		}
 		
-// 		public override void Emit (TypeContainer tc)
-// 		{
-// 			base.Emit (tc);
-// 		}
+ 		public override void Emit (TypeContainer tc)
+ 		{
+ 			base.Emit (tc);
+ 		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
+		{
+			Builder.SetCustomAttribute (customBuilder);
+		}
+
 	}
 	
 	public class ModuleClass: CommonAssemblyModulClass 
@@ -795,11 +792,21 @@ namespace Mono.MonoBASIC {
 		public ModuleClass ()
 		{
 		}
+
+ 		public override void Emit (TypeContainer tc)
+ 		{
+ 			base.Emit (tc);
+ 		}
 	
 		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Module;
 			}
+		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
+		{
+			Builder.SetCustomAttribute (customBuilder);
 		}
 	}
 }

@@ -1,3 +1,21 @@
+2004-11-10  Jambunathan K  <kjambunathan@novell.com>
+	* attribute.cs: 1) Replaced the static method
+	Attribute.GetValidPlaces() with an equivalent instance method
+	Attribute.GetValidTargets() 2) Added new methods Attributes.Emit
+	() and Attribute.Emit(). 3) Migrated functionality of
+	ApplyAttributes to ApplyAttributeBuilder of respective classes.
+
+	* class.cs, decl.cs, codegen.cs, const.cs, parameter.cs :
+	Implemented ApplyAttributeBuilder() in the following classes:
+	TypeContainer, Constructor, Field, Property, Event, DeclSpace,
+	AssemblyClass, ModuleClass, Const, Method, Parameter.
+	
+	* codegen.cs: Implemented Emit() in the following classes:
+	AssemblyClass and ModuleClass.
+
+	The ApplyAttributeBuilder() is currently just a placeholder for
+	future code that is yet to come.
+
 2004-11-09  Jambunathan K  <kjambunathan@novell.com>
 	* class.cs: Coalesced the functionality of Property and
 	PropertyBase in to Property class and removed the class

@@ -59,6 +59,11 @@ namespace Mono.MonoBASIC {
 			ParameterInitializer = pi;
 			IsOptional = false;
 		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			throw new Exception ("FIXME: I am just a placeholder implementation");
+		}
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Expression pi, bool opt)
 			: base (attrs)

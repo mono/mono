@@ -283,5 +283,11 @@ namespace Mono.MonoBASIC {
 			
 			return;
 		}
+		
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			FieldBuilder.SetCustomAttribute (cb);
+		}
+		
 	}
 }

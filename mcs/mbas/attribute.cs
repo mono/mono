@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -43,7 +44,11 @@ namespace Mono.MonoBASIC {
 				attributes = value;
 			}
 		}
-		
+
+		/// <summary>
+		/// Use member-specific procedure to apply attribute @a in @cb to the entity being built in @builder
+		/// </summary>
+		public abstract void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb);
 		/// <summary>
 		/// Returns one AttributeTarget for this element.
 		/// </summary>
@@ -54,7 +59,7 @@ namespace Mono.MonoBASIC {
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
-		Location Location;
+		public Location Location;
 
 		public Type Type;
 
@@ -370,10 +375,10 @@ namespace Mono.MonoBASIC {
 			return cb;
 		}
 
-		static string GetValidPlaces (Attribute attr)
+		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = attr.GetAttributeUsage ().ValidOn;
+			AttributeTargets targets = GetAttributeUsage ().ValidOn;
 			
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
@@ -426,7 +431,7 @@ namespace Mono.MonoBASIC {
 			Report.Error (
 				592, loc, "Attribute '" + a.Name +
 				"' is not valid on this declaration type. " +
-				"It is valid on " + GetValidPlaces (a) + "declarations only.");
+				"It is valid on " + a.GetValidTargets () + "declarations only.");
 		}
 
 		public static bool CheckAttribute (Attribute a, object element)
@@ -637,6 +642,25 @@ namespace Mono.MonoBASIC {
 			return ((StringConstant) arg.Expr).Value;
 		}
 
+		
+		/// <summary>
+		/// Emit attribute for Attributable symbol
+		/// </summary>
+		public void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
+		{
+			CustomAttributeBuilder cb = Resolve (ec);
+			if (cb == null)
+				return;
+		
+			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
+			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
+				Report.Error (592, Location, "Attribute" + Name + "is not valid on this declaration type. It is valid on " + GetValidTargets () + " declarations only.");
+				return;
+			}
+		
+			ias.ApplyAttributeBuilder (this, cb);
+		}
+
 		//
 		// Applies the attributes to the `builder'.
 		//							    		
@@ -665,58 +689,12 @@ namespace Mono.MonoBASIC {
 					} else if (a.Type != TypeManager.dllimport_type){
 							((MethodBuilder) builder).SetCustomAttribute (cb);
 					}
-				} else if (kind is Constructor) {
-						((ConstructorBuilder) builder).SetCustomAttribute (cb);
-				} else if (kind is Field) {
-						((FieldBuilder) builder).SetCustomAttribute (cb);
-				} else if (kind is Property /* || kind is Indexer */) {
-						((PropertyBuilder) builder).SetCustomAttribute (cb);
-				} else if (kind is Event) {
-						((MyEventBuilder) builder).SetCustomAttribute (cb);
 				} else if (kind is ParameterBuilder) {
 					if (a.Type == TypeManager.marshal_as_attr_type) {
 						UnmanagedMarshal marshal = UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
 						((ParameterBuilder) builder).SetMarshal (marshal);
 					} else 
 						((ParameterBuilder) builder).SetCustomAttribute (cb);
-				} else if (kind is Enum) {
-					((TypeBuilder) builder).SetCustomAttribute (cb); 
-				} else if (kind is TypeContainer) {
-					TypeContainer tc = (TypeContainer) kind;
-						
-					if (a.UsageAttribute != null) {
-						tc.AttributeUsage = a.UsageAttribute;
-					} else if (a.Type == TypeManager.default_member_type) {
-						/*
-						if (tc.Indexers != null) {
-							Report.Error (646, loc, "Cannot specify the DefaultMember attribute on" + " a type containing an indexer");
-							return;
-						}
-						*/
-						
-					} else {
-						if (!CheckAttribute (a, kind)) {
-							Error_AttributeNotValidForElement (a, loc);
-								return;
-						}
-					}
-
-					try {
-						((TypeBuilder) builder).SetCustomAttribute (cb);
-					} catch (System.ArgumentException) {
-						Report.Warning (-21, loc, 	"The CharSet named property on StructLayout\n"+"\tdoes not work correctly on Microsoft.NET\n"+"\tYou might want to remove the CharSet declaration\n"+"\tor compile using the Mono runtime instead of the\n"+"\tMicrosoft .NET runtime");
-					}
-				} else if (kind is Interface) {
-					Interface iface = (Interface) kind;
-					if (!CheckAttribute (a, kind)) {
-						Error_AttributeNotValidForElement (a, loc);
-						return;
-					}
-					((TypeBuilder) builder).SetCustomAttribute (cb);
-				} else if (kind is AssemblyBuilder){
-					((AssemblyBuilder) builder).SetCustomAttribute (cb);
-				} else if (kind is ModuleBuilder) {
-					((ModuleBuilder) builder).SetCustomAttribute (cb);
 				} else if (kind is FieldBuilder) {
 					((FieldBuilder) builder).SetCustomAttribute (cb);
 				} else
@@ -877,12 +855,12 @@ namespace Mono.MonoBASIC {
 			Attrs.AddRange (attrs);
 		}
 
-// 		public void Emit (EmitContext ec, Attributable ias)
-// 		{
-// 			ListDictionary ld = new ListDictionary ();
+ 		public void Emit (EmitContext ec, Attributable ias)
+ 		{
+ 			ListDictionary ld = new ListDictionary ();
 	
-// 			foreach (Attribute a in Attrs)
-// 				a.Emit (ec, ias, ld);
-// 		}
+ 			foreach (Attribute a in Attrs)
+ 				a.Emit (ec, ias, ld);
+ 		}
 	}
 }
