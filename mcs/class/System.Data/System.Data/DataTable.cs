@@ -65,7 +65,7 @@ namespace System.Data
 			_caseSensitive = false;
 			_displayExpression = null;
 			_primaryKey = null;
-			rows = new DataRowCollection ();
+			rows = new DataRowCollection (this);
 			
 			// FIXME: temporaily commented DataTableRelationCollection
 			// _childRelations = new DataTableRelationCollection();

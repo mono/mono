@@ -10,8 +10,10 @@
 //
 // Author:
 //   Daniel Morgan
+//   Tim Coleman
 //
 // (C) Ximian, Inc. 2002
+// (C) Copyright 2002 Tim Coleman
 //
 
 using System;
@@ -26,41 +28,60 @@ namespace System.Data
 	/// to represent a collection of 
 	/// relations, tables, rows, columns, and constraints
 	/// </summary>
-	public class InternalDataCollectionBase : ICollection, IEnumerable {
 
-		// Fields
-		private ArrayList list;
-		private bool readOnly = false;
-		private bool synchronized = false; 
+	public class InternalDataCollectionBase : ICollection, IEnumerable 
+	{
+		#region Fields
 
-		// Constructor
+		protected ArrayList list;
+		protected bool readOnly = false;
+		protected bool synchronized = false; 
+
+		#endregion
+
+		#region Constructors
+
 		[MonoTODO]
-		public InternalDataCollectionBase() {
-			// FIXME: TODO
+		public InternalDataCollectionBase() 
+		{
 			list = new ArrayList();
 		}
-		
+
+		#endregion
+
+		#region Properties
+	
+		/// <summary>
+		/// Gets the total number of elements in a collection.
+		/// </summary>
 		public virtual int Count {
-			[MonoTODO]
-			get {
-				return list.Count;
-			}
+			get { return list.Count; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the InternalDataCollectionBase is read-only.
+		/// </summary>
 		public bool IsReadOnly {
-			[MonoTODO]
-			get {
-				return readOnly;
-			}
+			get { return readOnly; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the InternalDataCollectionBase is synchronized.
+		/// </summary>
 		public bool IsSynchronized {
-			[MonoTODO]
-			get {
-				return synchronized;
-			}
+			get { return synchronized; }
 		}
 
+		/// <summary>
+		/// Gets the items of the collection as a list.
+		/// </summary>
+		protected virtual ArrayList List {
+			get { return list; }
+		}
+
+		/// <summary>
+		/// Gets an object that can be used to synchronize the collection.
+		/// </summary>
 		public object SyncRoot {
 			[MonoTODO]
 			get {
@@ -69,28 +90,29 @@ namespace System.Data
 			}
 		}
 
-		protected virtual ArrayList List {
-			[MonoTODO]
-			get {
-				return list;
-			}
+
+		#endregion
+
+		#region Methods
+
+		/// <summary>
+		/// Copies all the elements in the current InternalDataCollectionBase to a one-
+		/// dimensional Array, starting at the specified InternalDataCollectionBase index.
+		/// </summary>
+		public void CopyTo(Array ar, int index) 
+		{
+			list.CopyTo (ar, index);
+
 		}
 
-		[MonoTODO]
-		public void CopyTo(Array ar, int index) {
-
+		/// <summary>
+		/// Gets an IEnumerator for the collection.
+		/// </summary>
+		public IEnumerator GetEnumerator() 
+		{
+			return list.GetEnumerator ();
 		}
 
-		[MonoTODO]
-		public IEnumerator GetEnumerator() {
-			throw new NotImplementedException ();
-		}
-
-		//[MonoTODO]
-		//~InternalDataCollectionBase() {
-                //
-		//}
-
+		#endregion
 	}
-
 }

@@ -20,7 +20,7 @@ namespace System.Data.Common
 	{
 		#region Fields
 
-		public const string DefaultSourceTableName = "default";
+		public const string DefaultSourceTableName = "Table";
 
 		protected IDbCommand selectCommand;
 		protected IDbCommand insertCommand;
@@ -70,7 +70,7 @@ namespace System.Data.Common
 
                 public override int Fill (DataSet dataSet)
                 {
-			return Fill (dataSet, "Table", selectCommand.ExecuteReader (), 0, 0);
+			return Fill (dataSet, DefaultSourceTableName, selectCommand.ExecuteReader (), 0, 0);
                 }
 
 		public int Fill (DataTable dataTable) 
@@ -140,7 +140,7 @@ namespace System.Data.Common
                                         dataSet.Tables.Add (table);
                                 }
 
-                                DataRow thisRow;
+                                DataRow row;
                                 object[] itemArray = new object[dataReader.FieldCount];
 
                                 while (dataReader.Read () && !(maxRecords > 0 && changeCount > maxRecords && srcTable == tableName))
@@ -150,11 +150,10 @@ namespace System.Data.Common
 
                                         // append rows to the end of the current table.
                                         dataReader.GetValues (itemArray);
-                                        thisRow = table.NewRow ();
-                                        thisRow.ItemArray = itemArray;
-					table.Rows.Add (thisRow);
+					row = table.Rows.Add (itemArray);
 					
-					if (AcceptChangesDuringFill) thisRow.AcceptChanges ();
+					if (AcceptChangesDuringFill) 
+						row.AcceptChanges ();
 
                                         changeCount += 1;
                                 }
