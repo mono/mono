@@ -1,3 +1,12 @@
+2004-12-14  Patrik Torstensson  <patrik.torstensson@gmail.com>
+
+	* mini-x86.c, cpu-pentium.md, inssel-x86.brg: Fixed bug
+	with add function when used from Inc/dec atomic 
+	functions. Re-enabled optimization on x86.
+	* mini-ops.h: renamed atomic_add functions to
+	allow _add to match the Interlocked::Add and
+	_add_next to match Interlocked::Inc/Dec.
+
 2004-12-15  Massimiliano Mantione  <massi@ximian.com>
 
 	* mini.c: Fixed a subtle bug in mono_method_to_ir, about the
