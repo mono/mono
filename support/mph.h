@@ -32,10 +32,6 @@
 #include <stdint.h>             /* for SIZE_MAX */
 #endif
 
-#if __APPLE__ || __BSD__
-#define MPH_ON_BSD
-#endif
-
 typedef    gint64 mph_blkcnt_t;
 typedef    gint64 mph_blksize_t;
 typedef   guint64 mph_dev_t;

@@ -169,6 +169,7 @@ Mono_Posix_Syscall_gethostid (void)
 	return gethostid ();
 }
 
+#ifdef HAVE_SETHOSTID
 gint32
 Mono_Posix_Syscall_sethostid (gint64 hostid)
 {
@@ -180,6 +181,7 @@ Mono_Posix_Syscall_sethostid (gint64 hostid)
 	return sethostid ((long) hostid);
 #endif
 }
+#endif /* def HAVE_SETHOSTID */
 
 gint32
 Mono_Posix_Syscall_getdomainname (char *name, mph_size_t len)

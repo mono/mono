@@ -18,6 +18,7 @@
 
 G_BEGIN_DECLS
 
+#ifdef HAVE_POSIX_MADVISE
 gint32
 Mono_Posix_Syscall_posix_madvise (void *addr, mph_size_t len, gint32 advice)
 {
@@ -28,6 +29,7 @@ Mono_Posix_Syscall_posix_madvise (void *addr, mph_size_t len, gint32 advice)
 
 	return posix_madvise (addr, (size_t) len, advice);
 }
+#endif /* def HAVE_POSIX_MADVISE */
 
 G_END_DECLS
 
