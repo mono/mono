@@ -1,4 +1,8 @@
 2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
+	* Added TraceListener.cs, TextWriterTraceListener.cs, and
+	DefaultTraceListener.cs to the build and moved them into the
+	proper assembly.
+2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
 	* Added DiagnosticsConfigurationHandler.cs to the build.
 
 2001-09-09  Nick Drochak <ndrochak@gol.com>
