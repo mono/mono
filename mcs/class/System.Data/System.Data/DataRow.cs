@@ -435,7 +435,7 @@ namespace System.Data {
 				rowState = DataRowState.Unchanged;
 				break;
 			case DataRowState.Deleted:
-				_table.Rows.Remove (this);
+				_table.Rows.RemoveInternal (this);
 				break;
 			case DataRowState.Detached:
 				throw new RowNotInTableException("Cannot perform this operation on a row not in the table.");
@@ -493,20 +493,20 @@ namespace System.Data {
 		[MonoTODO]
 		public void Delete () 
 		{
+			_table.DeletingDataRow(this, DataRowAction.Delete);
 			switch (rowState) {
 			case DataRowState.Added:
-				Table.Rows.Remove (this);
+				Table.Rows.RemoveInternal (this);
 				break;
 			case DataRowState.Deleted:
 				throw new DeletedRowInaccessibleException ();
 			default:
-				_table.DeletingDataRow(this, DataRowAction.Delete);
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
 				rowState = DataRowState.Deleted;
-				_table.DeletedDataRow(this, DataRowAction.Delete);
 				break;
 			}
+			_table.DeletedDataRow(this, DataRowAction.Delete);
 		}
 
 		// check the child rows of this row before deleting the row.
@@ -973,7 +973,7 @@ namespace System.Data {
 				switch (rowState)
 				{
 					case DataRowState.Added:
-						_table.Rows.Remove (this);
+						_table.Rows.RemoveInternal (this);
 						break;
 					case DataRowState.Modified:
 						rowState = DataRowState.Unchanged;
@@ -991,7 +991,7 @@ namespace System.Data {
 				// if so: FIXME ;)
 				
 				if ((rowState & DataRowState.Added) > 0)
-					_table.Rows.Remove (this);
+					_table.Rows.RemoveInternal (this);
 			}
 		}
 

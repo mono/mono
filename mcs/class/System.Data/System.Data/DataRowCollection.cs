@@ -242,6 +242,20 @@ namespace System.Data
 		}
 
 		/// <summary>
+		/// Removes the specified DataRow from the internal list. Used by DataRow to commit the removing.
+		/// </summary>
+		internal void RemoveInternal (DataRow row) {
+			if (row == null) {
+				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
+			}
+			int index = list.IndexOf(row);
+			if (index < 0) {
+				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
+			}
+			list.RemoveAt(index);
+		}
+
+		/// <summary>
 		/// Removes the specified DataRow from the collection.
 		/// </summary>
 		public void Remove (DataRow row) 
@@ -251,9 +265,8 @@ namespace System.Data
 			int index = list.IndexOf(row);
 			if (index < 0)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
-			table.DeletingDataRow(row, DataRowAction.Delete);
-			list.RemoveAt(index);
-			table.DeletedDataRow(row, DataRowAction.Delete);
+			row.Delete();
+			row.AcceptChanges();
 		}
 
 		/// <summary>
@@ -264,9 +277,8 @@ namespace System.Data
 			if (index < 0 || index >= list.Count)
 				throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
 			DataRow row = (DataRow)list [index];
-			table.DeletingDataRow(row, DataRowAction.Delete);
-			list.RemoveAt(index);
-			table.DeletedDataRow(row, DataRowAction.Delete);
+			row.Delete();
+			row.AcceptChanges();
 		}
 
 		///<summary>

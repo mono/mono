@@ -1,5 +1,14 @@
 2003-11-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
+	* DataRow.cs: Use RemoveInternal instead of Remove because the last
+	one uses Delete and AcceptChanges.
+
+	* DataRowCollection.cs: When removing, Delete and AcceptChanges
+	method from the row are called. Added an internal method that will
+	be used by DataRow to "physically" remove the row from the list.
+
+2003-11-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
 	* DataRowCollection.cs: To follow the specification: Remove and
 	RemoveAt should remove the row. But needed to call DeletingDataRow
 	to prepare the deleting.
