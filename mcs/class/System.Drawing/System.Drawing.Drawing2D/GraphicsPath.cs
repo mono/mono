@@ -39,8 +39,8 @@ namespace System.Drawing.Drawing2D
                 
                 public GraphicsPath (Point[] pts, byte[] types)
                 {
-                        Status status = GDIPlus.GdipCreatePath2 (
-                                ConvertPoints (pts), types, pts.Length, FillMode.Alternate, out nativePath);
+                        Status status = GDIPlus.GdipCreatePath2I (
+                                pts, types, pts.Length, FillMode.Alternate, out nativePath);
                         GDIPlus.CheckStatus (status);
                 }
                 
@@ -52,26 +52,15 @@ namespace System.Drawing.Drawing2D
                 
 		public GraphicsPath (Point[] pts, byte[] types, FillMode fillMode)
 		{
-                        Status status = GDIPlus.GdipCreatePath2 (
-                                ConvertPoints (pts), types, pts.Length, fillMode, out nativePath);
+                        Status status = GDIPlus.GdipCreatePath2I (
+                                pts, types, pts.Length, fillMode, out nativePath);
                         GDIPlus.CheckStatus (status);
                 }
 
-		public GraphicsPath(PointF[] pts, byte[] types, FillMode fillMode)
+		public GraphicsPath (PointF[] pts, byte[] types, FillMode fillMode)
 		{
                         Status status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, fillMode, out nativePath);
                         GDIPlus.CheckStatus (status);
-                }
-
-                PointF [] ConvertPoints (Point [] pt)
-                {
-                        int length = pt.Length;                        
-                        PointF [] pf = new PointF [length];
-
-                        for (int i = 0; i < length; i++)
-                                pf [i] = pt [i];
-
-                        return pf;
                 }
 	
                 public object Clone ()
@@ -353,7 +342,7 @@ namespace System.Drawing.Drawing2D
 
                 public void AddPie (int x, int y, int width, int height, float startAngle, float sweepAngle)
                 {
-                        Status status = GDIPlus.GdipAddPathPie (nativePath, x, y, width, height, startAngle, sweepAngle);
+                        Status status = GDIPlus.GdipAddPathPieI (nativePath, x, y, width, height, startAngle, sweepAngle);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
@@ -538,210 +527,241 @@ namespace System.Drawing.Drawing2D
                 	throw new NotImplementedException ();
                 }  	
                 
-                [MonoTODO]
 		public void ClearMarkers()               
 		{
-                	throw new NotImplementedException ();
-                }  	
+                	Status s = GDIPlus.GdipClearPathMarkers (nativePath);
+
+                        GDIPlus.CheckStatus (s);
+                }
                 
-                [MonoTODO]
 		public void CloseAllFigures()
 		{
-                	throw new NotImplementedException ();
+                	Status s = GDIPlus.GdipClosePathFigures (nativePath);
+
+                        GDIPlus.CheckStatus (s);
                 }  	
                 
-		[MonoTODO]
 		public void CloseFigure()
 		{
-                	throw new NotImplementedException ();
+                	Status s = GDIPlus.GdipClosePathFigure (nativePath);
+
+                        GDIPlus.CheckStatus (s);
                 } 
 
-                [MonoTODO]
                 public void Flatten ()
                 {
-                	throw new NotImplementedException ();
+                        // 1/4 is the FlatnessDefault as defined in GdiPlusEnums.h
+                	Flatten (null, 1.0f / 4.0f); 
                 }  	
   
-  		[MonoTODO]
 		public void Flatten (Matrix matrix)
 		{
-                	throw new NotImplementedException ();
-                }  	
+                	Flatten (matrix, 1.0f / 4.0f);
+                }
 		
-		[MonoTODO]
 		public void Flatten (Matrix matrix, float flatness)
 		{
-                	throw new NotImplementedException ();
+                	Status status = GDIPlus.GdipFlattenPath (nativePath, matrix.nativeMatrix, flatness);
+
+                        GDIPlus.CheckStatus (status);
                 }  		
                 
-                [MonoTODO]
                 public RectangleF GetBounds ()
                 {
-                	throw new NotImplementedException ();
+                	return GetBounds (null, null);
                 }  		
-                
-                [MonoTODO]
+
                 public RectangleF GetBounds (Matrix matrix)
                 {
-                	throw new NotImplementedException ();
-                }  		
-                
+                	return GetBounds (matrix, null);
+                }
+
                 [MonoTODO]
                 public RectangleF GetBounds (Matrix matrix, Pen pen)
                 {
-                	throw new NotImplementedException ();
-                }  		
-		
-		[MonoTODO]
-		public bool IsOutlineVisible (Point point,  Pen pen)
+                        RectangleF retval;
+                        IntPtr m = (matrix == null) ? null : matrix.nativeMatrix;
+                        IntPtr p = (pen == null) ? null : pen.nativeObject;
+                        
+                        Status s = GDIPlus.GdipGetPathWorldBounds (nativePath, out retval, m, p);
+
+                        GDIPlus.CheckStatus (s);
+
+                        return retval;
+                }
+                		
+		public bool IsOutlineVisible (Point point, Pen pen)
 		{
-                	throw new NotImplementedException ();
+                        return IsOutlineVisible (point.X, point.Y, pen, null);
                 }  		
 		
-		[MonoTODO]
-		public bool IsOutlineVisible (PointF point,  Pen pen)
+		public bool IsOutlineVisible (PointF point, Pen pen)
 		{
-                	throw new NotImplementedException ();
-                }  		
+                	return IsOutlineVisible (point.X, point.Y, pen, null);
+                } 
 		
-		[MonoTODO]
 		public bool IsOutlineVisible (int x, int y, Pen pen)
 		{
-                	throw new NotImplementedException ();
-                }  		
-		
-		[MonoTODO]
-		public bool IsOutlineVisible (Point pt, Pen pen, Graphics graphics)
-		{
-                	throw new NotImplementedException ();
-                }  		
-		
-		[MonoTODO]
-		public bool IsOutlineVisible (PointF pt, Pen pen, Graphics graphics)
-		{
-                	throw new NotImplementedException ();
-                }  		
-		
-		[MonoTODO]
+                        return IsOutlineVisible (x, y, pen, null);
+                }
+
 		public bool IsOutlineVisible (float x, float y, Pen pen)
 		{
-                	throw new NotImplementedException ();
+                	return IsOutlineVisible (x, y, pen, null);
                 }  		
 		
+		public bool IsOutlineVisible (Point pt, Pen pen, Graphics graphics)
+		{
+                	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
+                }  		
+		
+		public bool IsOutlineVisible (PointF pt, Pen pen, Graphics graphics)
+		{
+                	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
+                }  		
+				
 		[MonoTODO]
 		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
 		{
-                	throw new NotImplementedException ();
+                        bool result;
+                        IntPtr g = (graphics == null) ? null : graphics.nativeObject;
+                        
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, g, out result);
+                        GDIPlus.CheckStatus (s);
+
+                        return result;
                 }  		
 		
 		[MonoTODO]
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{
-                	throw new NotImplementedException ();
+                        bool result;
+                        IntPtr g = (graphics == null) ? null : graphics.nativeObject;
+                        
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, g, out result);
+                        GDIPlus.CheckStatus (s);
+
+                        return result;
                 }  		
                 
-                [MonoTODO]
                 public bool IsVisible (Point point)
                 {
-                	throw new NotImplementedException ();
+                	return IsVisible (point.X, point.Y, null);
                 }  		
                 
-                [MonoTODO]
                 public bool IsVisible (PointF point)
                 {
-                	throw new NotImplementedException ();
+                	return IsVisible (point.X, point.Y, null);
                 }  		
                 
-                [MonoTODO]
                 public bool IsVisible (int x, int y)
                 {
-                	throw new NotImplementedException ();
-                }  		
-                
-                [MonoTODO]
-                public bool IsVisible (Point pt, Graphics graphics)
-                {
-                	throw new NotImplementedException ();
-                }  		
-                
-                [MonoTODO]
-                public bool IsVisible (PointF pt, Graphics graphics)
-                {
-                	throw new NotImplementedException ();
-                }  		
-                
-                [MonoTODO]
+                	return IsVisible (x, y, null);
+                }
+
                 public bool IsVisible (float x, float y)
                 {
-                	throw new NotImplementedException ();
+                	return IsVisible (x, y, null);
+                }  		                
+                
+                public bool IsVisible (Point pt, Graphics graphics)
+                {
+                	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                 
+                public bool IsVisible (PointF pt, Graphics graphics)
+                {
+                	return IsVisible (pt.X, pt.Y, graphics);
+                }  		
+                                
                 [MonoTODO]
                 public bool IsVisible (int x, int y, Graphics graphics)
                 {
-                	throw new NotImplementedException ();
+                        bool retval;
+
+                	IntPtr g = (graphics == null) ? null : graphics.nativeObject;
+
+                        Status s = GDIPlus.GdipIsVisiblePathPointI (nativePath, x, y, g, out retval);
+
+                        GDIPlus.CheckStatus (s);
+
+                        return retval;
                 }  		
                 
                 [MonoTODO]
                 public bool IsVisible (float x, float y, Graphics graphics)
                 {
-                	throw new NotImplementedException ();
+                        bool retval;
+
+                	IntPtr g = (graphics == null) ? null : graphics.nativeObject;
+
+                        Status s = GDIPlus.GdipIsVisiblePathPoint (nativePath, x, y, g, out retval);
+
+                        GDIPlus.CheckStatus (s);
+
+                        return retval;
                 }  		
                 
-                [MonoTODO]
-                public void SetMarkers()
+                public void SetMarker ()
                 {
-                	throw new NotImplementedException ();
+                	Status s = GDIPlus.GdipSetPathMarker (nativePath);
+
+                        GDIPlus.CheckStatus (s);
                 }
                 
-                [MonoTODO]
                 public void StartFigure()
                 {
-                	throw new NotImplementedException ();
+                	Status s = GDIPlus.GdipStartPathFigure (nativePath);
+
+                        GDIPlus.CheckStatus (s);
                 }  		
                 
-                [MonoTODO]
-                public void Warp (PointF[] destPoints,  RectangleF srcRect)
+                public void Warp (PointF[] destPoints, RectangleF srcRect)
                 {
-                	throw new NotImplementedException ();
+                	Warp (destPoints, srcRect, null, WarpMode.Perspective, 1.0f / 4.0f);
                 }  		
 
-		[MonoTODO]
-		public void Warp (PointF[] destPoints, RectangleF srcRect,  Matrix matrix)
+		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix)
 		{
-                	throw new NotImplementedException ();
+                	Warp (destPoints, srcRect, matrix, WarpMode.Perspective, 1.0f / 4.0f);
                 }  		
 
-		[MonoTODO]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
 		{
-                	throw new NotImplementedException ();
+                	Warp (destPoints, srcRect, matrix, warpMode, 1.0f / 4.0f);
                 }  		
 
 		[MonoTODO]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix,  WarpMode warpMode, float flatness)
 		{
-                	throw new NotImplementedException ();
-                }  		                
+                	IntPtr m = (matrix == null) ? null : matrix.nativeMatrix;
+
+                        Status s = GDIPlus.GdipWarpPath (nativePath, m, destPoints, destPoints.Length,
+                                        srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, warpMode, flatness);
+
+                        GDIPlus.CheckStatus (s);
+                }
                 
-                [MonoTODO]
                 public void Widen (Pen pen)
 		{
-                	throw new NotImplementedException ();
+                	Widen (pen, null, 1.0f / 4.0f);
                 }  		
                 
-		[MonoTODO]
-		public void Widen (Pen pen,  Matrix matrix)
+		public void Widen (Pen pen, Matrix matrix)
 		{	
-                	throw new NotImplementedException ();
+                	Widen (pen, matrix, 1.0f / 4.0f);
                 }  		
                 
 		[MonoTODO]
 		public void Widen (Pen pen, Matrix matrix, float flatness)
                 {
-                	throw new NotImplementedException ();
-                }  		            
+                        IntPtr p = (pen == null) ? null : pen.nativeObject;
+                	IntPtr m = (matrix == null) ? null : matrix.nativeMatrix;
 
+                        Status s = GDIPlus.GdipWidenPath (nativePath, p, m, flatness);
+
+                        GDIPlus.CheckStatus (s);
+                } 
         }
 }
 

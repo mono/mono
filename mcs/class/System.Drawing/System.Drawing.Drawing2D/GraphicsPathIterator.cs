@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2002/3 Ximian, Inc
 //
@@ -12,19 +13,23 @@ namespace System.Drawing.Drawing2D
 {
 	public sealed class GraphicsPathIterator : MarshalByRefObject, IDisposable
 	{
-
 		GraphicsPath path;
 		
 		// Constructors
-		public GraphicsPathIterator(GraphicsPath path) {
+		public GraphicsPathIterator (GraphicsPath path)
+                {
 			this.path = path;
 		}
 
 		//Public Properites
-		[MonoTODO]
 		public int Count {
 			get {
-				throw new NotImplementedException ();
+                                int count;
+
+                                Status status = GDIPlus.GdipGetPointCount (path.nativePath, out count);
+                                GDIPlus.CheckStatus (status);                      	
+
+                                return count;
 			}
 		}
 
