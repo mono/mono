@@ -91,8 +91,8 @@ namespace System.Web.Mail {
 	
 	    smtp.WriteHeaders( headers );
 	    
-	    // send the mail body
-	    smtp.WriteLine( msg.Body );
+	    // send the mail body FIXME
+	    smtp.WriteBytes( msg.BodyEncoding.GetBytes( msg.Body ) );
 
 	}
 	
@@ -121,8 +121,11 @@ namespace System.Web.Mail {
 	    partHeaders[ "Content-Type" ] = "text/plain";
 		
 	    smtp.WriteHeaders( partHeaders );
-	    		
-	    smtp.WriteLine( msg.Body );
+	    	
+	  
+	    // FIXME: probably need to use QP or Base64 on everything higher
+	    // then 8-bit .. like utf-16
+	    smtp.WriteBytes( msg.BodyEncoding.GetBytes( msg.Body )  );
 
 	    smtp.WriteBoundary( boundary );
 	    

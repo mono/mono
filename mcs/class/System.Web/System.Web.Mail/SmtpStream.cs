@@ -20,6 +20,7 @@ namespace System.Web.Mail {
 	    encoding = new ASCIIEncoding();
 	}
 	
+	
 	public SmtpResponse LastResponse {
 	    get { return lastResponse; }
 	}
@@ -85,8 +86,9 @@ namespace System.Web.Mail {
 	
 	}
 	
+	// single dot by itself
 	public void WriteDataEndTag() {
-	    command = ".";
+	    command = "\r\n.";
 	    WriteLine( command );
 	    ReadResponse();
 	    CheckForStatusCode( 250 );
@@ -116,6 +118,12 @@ namespace System.Web.Mail {
 		throw new SmtpException( msg ); 
 					
 	    }
+	}
+	
+	
+	// write buffer's bytes to the stream
+	public void WriteBytes( byte[] buffer ) {
+	    stream.Write( buffer , 0 , buffer.Length );
 	}
 	
 	// writes a formatted line to the server
