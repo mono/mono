@@ -2116,7 +2116,7 @@ namespace Mono.MonoBASIC {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
-					if (r == TypeManager.date_type) {
+					if (r == TypeManager.date_type || r == TypeManager.char_type) {
 						right = ConvertImplicit (ec, right, l, loc);
 						if (right == null){
 							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
@@ -2149,7 +2149,7 @@ namespace Mono.MonoBASIC {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
-					if (l == TypeManager.date_type) {
+					if (l == TypeManager.date_type || l == TypeManager.char_type) {
 						left = ConvertImplicit (ec, left, r, loc);
 						if (left == null){
 							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);

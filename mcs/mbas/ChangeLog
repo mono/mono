@@ -1,3 +1,6 @@
+2005-02-15 Manjula GHM <mmanjula@novell.com>
+	* expression.cs: Fixed concat of string and char using '+" operator 
+
 2005-02-14 Manjula GHM <mmanjula@novell.com>
 	* ecore.cs :
 		 Fixed all String to char conversions
