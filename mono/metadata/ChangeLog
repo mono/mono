@@ -1,3 +1,6 @@
+2002-02-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* unicode.c (iconv_convert): fix big endian problem.
 
 Fri Feb 1 16:13:20 CET 2002 Paolo Molaro <lupus@ximian.com>
 
