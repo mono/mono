@@ -105,6 +105,7 @@ namespace System.Reflection.Emit {
 		private RefEmitPermissionSet[] permissions_refused;
 		PortableExecutableKind peKind;
 		ImageFileMachine machine;
+		bool corlib_internal;
 		#endregion
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
@@ -148,7 +149,7 @@ namespace System.Reflection.Emit {
 				}
 			}
 
-			CorlibInternal = corlib_internal;
+			this.corlib_internal = corlib_internal;
 
 			basic_init (this);
 		}

@@ -1,5 +1,7 @@
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyBuilder.cs: Move corlib_internal field here from Assembly.
+	
 	* AssemblyBuilder.cs: Add corlib_internal to the ctor parameters.
 
 2004-12-06  Ben Maurer  <bmaurer@ximian.com>
