@@ -119,9 +119,13 @@ namespace System.IO
 					mode != FileMode.CreateNew && !File.Exists (name))
 				throw new FileNotFoundException ("Could not find file \"" + name + "\".");
 
-			if (mode == FileMode.CreateNew &&
-					!Directory.Exists (Path.GetFullPath (Path.GetDirectoryName (name))))
-				throw new DirectoryNotFoundException ("Could not find a part of the path \"" + name + "\".");
+			if (mode == FileMode.CreateNew) {
+				string dname = Path.GetDirectoryName (name);
+				string fp = null; ;
+				if (dname != "" && !Directory.Exists ((fp = Path.GetFullPath (dname))))
+					throw new DirectoryNotFoundException ("Could not find a part of " +
+									"the path \"" + fp + "\".");
+			}
 
 			this.name = name;
 

@@ -47,7 +47,7 @@ namespace System.IO
 				return new UnauthorizedAccessException (message);
 
 			case MonoIOError.ERROR_FILE_EXISTS:
-				message = String.Format ("Could not create directory \"{0}\". File already exists.", path);
+				message = String.Format ("Could not create file \"{0}\". File already exists.", path);
 				return new IOException (message);
 
 			default:

@@ -1,3 +1,10 @@
+2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: (.ctor) Path.DirectoryName can be empty and make
+	Path.GetFullPath crash. Fixed it.
+
+	* MonoIO.cs: fixed typo.
+
 2004-02-13  Jackson Harper  <jackson@ximian.com>
 
 	* FileStream.cs: Throw some more exceptions for invalid
