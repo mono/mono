@@ -1,3 +1,9 @@
+
+Fri Feb 1 16:13:20 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: add asserts if we are ever going to scribble over memory.
+	* socket-io.c: not all systems have AF_IRDA defined.
+
 2002-01-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (class_compute_field_layout): do not consider static

@@ -1,3 +1,8 @@
+
+Fri Feb 1 16:03:00 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c, ppc/tramp.c: implement mono_method_pointer_get ().
+
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* x86/tramp.c (mono_create_trampoline): Do not try to create a

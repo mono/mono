@@ -1,3 +1,9 @@
+
+Fri Feb 1 16:03:53 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: exception fixes. Use mono_method_pointer_get ()
+	to easy porting to other archs. Some support for overflow detection.
+
 2002-01-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c, jit.c (main): install runtime_exec_main handler
