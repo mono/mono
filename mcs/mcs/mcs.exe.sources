@@ -31,4 +31,7 @@ support.cs
 typemanager.cs
 symbolwriter.cs
 tree.cs
-CryptoConvert.cs
+../class/Mono.CSharp.Debugger/MonoSymbolFile.cs
+../class/Mono.CSharp.Debugger/MonoSymbolTable.cs
+../class/Mono.CSharp.Debugger/MonoSymbolWriter.cs
+../class/corlib/Mono.Security.Cryptography/CryptoConvert.cs

@@ -124,6 +124,7 @@
                 />
                 <File
                     RelPath = "CryptoConvert.cs"
+                    Link = "..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -194,6 +195,24 @@
                 />
                 <File
                     RelPath = "modifiers.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MonoSymbolFile.cs"
+                    Link = "..\class\Mono.CSharp.Debugger\MonoSymbolFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MonoSymbolTable.cs"
+                    Link = "..\class\Mono.CSharp.Debugger\MonoSymbolTable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MonoSymbolWriter.cs"
+                    Link = "..\class\Mono.CSharp.Debugger\MonoSymbolWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

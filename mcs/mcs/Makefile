@@ -4,11 +4,6 @@ include ../build/rules.make
 
 BUILT_SOURCES = cs-parser.cs
 
-EXTRA_SOURCES = \
-	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolFile.cs	\
-	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolTable.cs	\
-	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolWriter.cs
-
 EXTRA_DISTFILES = \
 	compiler.csproj		\
 	compiler.doc		\
@@ -40,10 +35,10 @@ btest: mcs2.exe mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
 mcs2.exe: mcs.exe
-	$(TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+	$(TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 mcs3.exe: mcs2.exe
-	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 wc:
 	wc -l $(BUILT_SOURCES) `cat $(sourcefile)`

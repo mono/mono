@@ -1,3 +1,10 @@
+2004-08-05  Marek Safar  <marek.safar@seznam.cz>
+
+	* mcs.exe.sources: $(EXTRA_SOURCES) are now here to avoid
+	multi platforms problem.
+
+	* compiler.csproj: Included shared files.
+
 2004-08-04  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug 60333, 55971 in the more general way
