@@ -1,3 +1,9 @@
+2002-08-13  Rodrigo Moya <rodrigo@ximian.com>
+
+	* SoapClientFormatterSink.cs:
+	* SoapServerFormatterSinkProvider.cs:
+	* SinkProviderData.cs: new classes.
+
 2002-08-10  Rodrigo Moya <rodrigo@ximian.com>
 
 	* CommonTransportKeys.cs:

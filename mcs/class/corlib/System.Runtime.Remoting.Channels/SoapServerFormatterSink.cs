@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Channels.BinaryServerFormatterSink.cs
+// System.Runtime.Remoting.Channels.SoapServerFormatterSink.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
 //
