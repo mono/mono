@@ -1,3 +1,7 @@
+2005-01-28  Nick Drochak <ndrochak@ieee.org>
+
+	* ResourceReaderTest.cs: Not sure about a zero-byte length file.
+
 2004-08-29  Nick Drochak <ndrochak@ieee.org>
 
 	* ResourceReaderTest.cs: Make tests pass (correct path to resources)

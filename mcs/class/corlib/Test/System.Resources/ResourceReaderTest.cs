@@ -28,9 +28,9 @@ namespace MonoTests.System.Resources {
 			char ds = Path.DirectorySeparatorChar;
 			if (ds == '/') {
 				FileInfo code_base = new FileInfo (Assembly.GetExecutingAssembly ().Location);
-				string base_path = code_base.Directory.FullName + ds + "Test" + ds + "resources" + ds;
-				m_ResourceFile = base_path + "MyResources.resources";
-				m_BadResourceFile = base_path + "Empty.resources";
+				string base_path = Path.Combine (code_base.Directory.FullName, Path.Combine ("Test", "resources"));
+				m_ResourceFile = Path.Combine (base_path, "MyResources.resources");
+				m_BadResourceFile = Path.Combine (base_path, "Empty.resources");
 			} else {
 				m_ResourceFile = Path.Combine ("Test", Path.Combine ("resources","MyResources.resources"));
 				m_BadResourceFile = "resources" + ds + "Empty.resources";
@@ -62,9 +62,11 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
+		[Ignore("Not covered in the docs, not sure what the correct behavior should be for this")]
 		[ExpectedException (typeof (DirectoryNotFoundException))]
 		public void ConstructorString_Bad () 
 		{
+			Assert (File.Exists (m_BadResourceFile));
 			ResourceReader r = new ResourceReader(m_BadResourceFile);
 		}
 
