@@ -1,3 +1,7 @@
+2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added System.Security/SecurityFrame.cs to the build.
+
 2004-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib_test.dll.sources : added TextWriterTest.cs.

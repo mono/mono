@@ -886,6 +886,7 @@ System.Security/SecureString.cs
 System.Security/SecurityContext.cs
 System.Security/SecurityContextSwitcher.cs
 System.Security/SecurityElement.cs
+System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
 System.Security/SecurityZone.cs
