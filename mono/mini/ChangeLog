@@ -1,3 +1,8 @@
+
+Mon Jan 10 05:20:49 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: better icache flush for smp.
+
 2005-01-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (emit_move_return_value): Fix memory leak.
