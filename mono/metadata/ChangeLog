@@ -1,4 +1,8 @@
-2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
+2002-04-23	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* threads.c: fixed bug in the double interlocked functions
+
+2002-04-22	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* threads.c: implemented all of the new interlocked icalls.
 	* string-icalls.c: fix a bug in insert.
