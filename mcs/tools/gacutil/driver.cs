@@ -355,8 +355,11 @@ namespace Mono.Tools {
 			DirectoryInfo gacinfo = new DirectoryInfo (gacdir);
 			foreach (DirectoryInfo parent in gacinfo.GetDirectories ()) {
 				foreach (DirectoryInfo dir in parent.GetDirectories ()) {
-					WriteLine (AsmbNameFromVersionString (parent.Name, dir.Name));
-					count++;
+					string asmb = Path.Combine (Path.Combine (parent.FullName, dir.Name), parent.Name) + ".dll";
+					if (File.Exists (asmb)) {
+						WriteLine (AsmbNameFromVersionString (parent.Name, dir.Name));
+						count++;
+					}
 				}
 			}
 			WriteLine ("Number of items = " + count);
@@ -385,9 +388,12 @@ namespace Mono.Tools {
 
 			int count = 0;
 			foreach (string dir in dir_list) {
-				WriteLine (AsmbNameFromVersionString ((string) asm_info ["assembly"],
-						new DirectoryInfo (dir).Name));
-				count++;
+				string asmb = Path.Combine (dir, (string) asm_info ["assembly"]) + ".dll";
+				if (File.Exists (asmb)) {
+					WriteLine (AsmbNameFromVersionString ((string) asm_info ["assembly"],
+								   new DirectoryInfo (dir).Name));
+					count++;
+				}
 			}
 			WriteLine ("Number of items = " + count);
 		}

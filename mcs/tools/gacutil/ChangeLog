@@ -1,3 +1,10 @@
+2005-01-11  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs: Make sure the actual assembly file exists when
+	listing assemblies. Some packages don't remove the entire
+	directory so we get existing directories without assemblies in
+	them.
+
 2004-12-08  Raja R Harinath  <rharinath@novell.com>
 
 	* driver.cs (Symlink): Pass additional parameter: the name of the
