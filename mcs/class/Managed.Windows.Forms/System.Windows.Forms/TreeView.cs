@@ -602,7 +602,7 @@ namespace System.Windows.Forms {
 		{
 			node.UpdatePlusMinusBounds (x, middle - 4, 8, 8);
 
-			DeviceContext.DrawRectangle (SystemPens.ControlDark, node.plus_minus_bounds);
+			DeviceContext.DrawRectangle (SystemPens.ControlDark, node.PlusMinusBounds);
 
 			if (node.IsExpanded) {
 				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
@@ -615,7 +615,20 @@ namespace System.Windows.Forms {
 		private void DrawNodeCheckBox (TreeNode node, int x, int y)
 		{
 			int offset = (ItemHeight - 10) / 2;
-			DeviceContext.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, y + 0.5F + offset, 10, 10);
+
+			node.UpdateCheckBoxBounds (x + 3, y + offset, 10, 10);
+
+			DeviceContext.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, y + 0.5F + offset, 11, 11);
+
+			if (node.Checked) {
+				Pen check_pen = new Pen (Color.Black, 1);
+
+				DeviceContext.DrawLine (check_pen, x + 6, y + offset + 5, x + 8, y + offset + 8);
+				DeviceContext.DrawLine (check_pen, x + 6, y + offset + 6, x + 8, y + offset + 9);
+
+				DeviceContext.DrawLine (check_pen, x + 7, y + offset + 8, x + 13, y + offset + 3);
+				DeviceContext.DrawLine (check_pen, x + 7, y + offset + 9, x + 13, y + offset + 4);
+			}
 		}
 
 		private void DrawNodeLines (TreeNode node, Pen dash, int x, int y, int middle, int item_height, int node_count)
@@ -827,6 +840,10 @@ namespace System.Windows.Forms {
 				TreeNode node = (TreeNode) walk.Current;
 				if (node.PlusMinusBounds.Contains (e.X, e.Y)) {
 					node.Toggle ();
+					break;
+				}
+				if (node.CheckBoxBounds.Contains (e.X, e.Y)) {
+					node.Checked = !node.Checked;
 					break;
 				}
 			}

@@ -1,3 +1,9 @@
+2005-01-02  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Draw checkmarks, handle detecting check mark clicks
+	* TreeNode.cs: Add a bounding box for the checkbox, refresh the
+	tree when a check is changed. TODO: Only refresh the checked node.
+
 2004-12-30  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Draw checkbox boxes when checkboxes are enabled.
