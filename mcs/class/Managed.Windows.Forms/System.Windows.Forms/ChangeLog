@@ -1,5 +1,12 @@
 2005-02-26  Peter Bartok  <pbartok@novell.com>
 
+	* Control.cs: 
+	  - Now calling OnHandleDestroyed from DestroyHandle()
+	    instead of Dispose()
+	  - Removed bogus call to controls.Remove() from DestroyHandle()
+
+2005-02-26  Peter Bartok  <pbartok@novell.com>
+
 	* Control.cs: Properly destroy child windows when our handle is 
 	  destroyed
 

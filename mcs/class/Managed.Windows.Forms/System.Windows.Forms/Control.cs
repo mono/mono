@@ -601,7 +601,6 @@ namespace System.Windows.Forms
 			}
 
 			DestroyHandle();
-			OnHandleDestroyed(EventArgs.Empty);
 			controls.Remove(this);
 		}
 		#endregion 	// Public Constructors
@@ -2577,10 +2576,6 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void DestroyHandle() {
 			if (IsHandleCreated) {
-				if (Handle != IntPtr.Zero) {
-					controls.Remove(Handle);
-				}
-
 				// Destroy our children before we destroy ourselves, to prevent them from
 				// being implictly (without us knowing) destroyed
 				for (int i=0; i < child_controls.Count; i++) {
@@ -2591,6 +2586,7 @@ namespace System.Windows.Forms
 				if (window != null) {
 					window.DestroyHandle();
 				}
+				OnHandleDestroyed(EventArgs.Empty);
 			}
 		}
 
