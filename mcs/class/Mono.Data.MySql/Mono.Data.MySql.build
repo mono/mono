@@ -24,15 +24,8 @@
 				<excludes name="Mono.Data.MySql/MySqlClientPermission.cs"/>
 				<excludes name="Mono.Data.MySql/MySqlClientPermissionAttribute.cs"/>
 				<excludes name="Mono.Data.MySql/MySqlCommandBuilder.cs"/>
-				<excludes name="Mono.Data.MySql/MySqlDataAdapter.cs"/>
 				<excludes name="Mono.Data.MySql/MySqlInfoMessageEventArgs.cs"/>
 				<excludes name="Mono.Data.MySql/MySqlInfoMessageEventHandler.cs"/>
-				<excludes name="Mono.Data.MySql/MySqlParameter.cs"/>
-				<excludes name="Mono.Data.MySql/MySqlParameterCollection.cs"/>
-				<excludes name="Mono.Data.MySql/MySqlRowUpdatedEventArgs.cs"/>
-				<excludes name="Mono.Data.MySql/MySqlRowUpdatedEventHandler.cs"/>
-				<excludes name="Mono.Data.MySql/MySqlRowUpdatingEventArgs.cs"/>
-				<excludes name="Mono.Data.MySql/MySqlRowUpdatingEventHandler.cs"/>
 				
 			</sources>
 			<references>

@@ -30,8 +30,8 @@ namespace Mono.Data.MySql {
 		private MySqlTransaction trans = null;
 		private CommandType cmdType = CommandType.Text;
 		private bool designTime = false;
-		//private MySqlParameterCollection parmCollection = new 
-		//	MySqlParameterCollection();
+		private MySqlParameterCollection parmCollection = new 
+			MySqlParameterCollection();
 
 		// MySqlDataReader state data for ExecuteReader()
 		//private MySqlDataReader dataReader = null;
@@ -41,7 +41,7 @@ namespace Mono.Data.MySql {
 
 		private bool disposed = false;
 
-		//private ParmUtil parmUtil = null;
+		private const char bindChar = ':';
 		
 		#endregion // Fields
 
@@ -80,17 +80,14 @@ namespace Mono.Data.MySql {
 		// FIXME: is this the correct way to return a stronger type?
 		[MonoTODO]
 		IDbDataParameter IDbCommand.CreateParameter () {
-			//return CreateParameter ();
-			return null;
+			return CreateParameter ();
 		}
-
-		/*
+		
 		[MonoTODO]
 		public MySqlParameter CreateParameter () {
 			return new MySqlParameter ();
 		}
-		*/
-
+		
 		public int ExecuteNonQuery () {	
 			int rowsAffected = -1;
 			
@@ -149,7 +146,14 @@ namespace Mono.Data.MySql {
 
 			currentQuery++;
 			if(currentQuery < commands.Length) {
-				string query = commands[currentQuery];
+				string query = "";
+
+				// don't execute empty queries
+				while((query = commands[currentQuery]).Equals("")) {
+					currentQuery++;
+					if(currentQuery >= commands.Length)
+						return IntPtr.Zero;
+				}
 				mysqlResult = ExecuteSQL (query);
 				result = true; // has result
 			}
@@ -171,7 +175,8 @@ namespace Mono.Data.MySql {
 				typeof(MySqlMarshalledField));
 			string fieldName = fd.Name;
 			int fieldType = fd.FieldType; 
-			DbType fieldDbType = MySqlHelper.MySqlTypeToDbType((MySqlEnumFieldTypes)fieldType);
+			MySqlEnumFieldTypes mysqlFieldType = (MySqlEnumFieldTypes) fieldType;
+			DbType fieldDbType = MySqlHelper.MySqlTypeToDbType(mysqlFieldType);
 						
 			IntPtr row;
 			row = MySql.FetchRow(res);
@@ -182,7 +187,7 @@ namespace Mono.Data.MySql {
 			else {
 				// only get first column/first row
 				string objValue = GetColumnData(row, 0);
-				obj = MySqlHelper.ConvertDbTypeToSystem (fieldDbType, objValue);
+				obj = MySqlHelper.ConvertDbTypeToSystem (mysqlFieldType, fieldDbType, objValue);
 				row = IntPtr.Zero;
 			}
 			MySql.FreeResult(res);
@@ -212,8 +217,10 @@ namespace Mono.Data.MySql {
 			if (sql.Equals (String.Empty)) 
 				throw new InvalidOperationException(
 					"CommandText is Empty");
+
+			string query = TweakQuery(sql);
 			
-			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
+			int rcq = MySql.Query(conn.NativeMySqlInitStruct, query);
 			if (rcq != 0) {
 				msg = 
 					"MySql Error: " + 
@@ -227,8 +234,136 @@ namespace Mono.Data.MySql {
 			return result;
 		}
 
+		string TweakQuery(string query) {
+			string statement = "";
+			
+			switch(cmdType) {
+			case CommandType.Text:
+				statement = ReplaceParameterPlaceholders (query);
+				break;
+			case CommandType.StoredProcedure:
+				string sParmList = GetStoredProcParmList ();
+				statement = "SELECT " + query + "(" + sParmList + ")";
+				break;
+			case CommandType.TableDirect:
+				statement = 
+					"SELECT * FROM " + query;
+				break;
+			}
+			return statement;
+		}
+
+		string GetStoredProcParmList () {
+			StringBuilder s = new StringBuilder();
+
+			int addedCount = 0;
+			for(int p = 0; p < parmCollection.Count; p++) {
+				MySqlParameter prm = parmCollection[p];
+				if(prm.Direction == ParameterDirection.Input) {
+					string strObj = MySqlHelper.
+						ObjectToString(prm.DbType, 
+						prm.Value);
+					if(addedCount > 0)
+						s.Append(",");
+					s.Append(strObj);
+					addedCount++;
+				}
+			}
+			return s.ToString();
+		}
+
+		// TODO: this only supports input parameters,
+		//       need support for output, input/output,
+		//       and return parameters
+		//       As far as I know, MySQL does not support
+		//       parameters so the parameters support in this
+		//       provider is just a search and replace.
+		string ReplaceParameterPlaceholders (string query) {
+			
+			string resultSql = "";
+
+			StringBuilder result = new StringBuilder();
+			char[] chars = sql.ToCharArray();
+			bool bStringConstFound = false;
+
+			for(int i = 0; i < chars.Length; i++) {
+				if(chars[i] == '\'') {
+					if(bStringConstFound == true)
+						bStringConstFound = false;
+					else
+						bStringConstFound = true;
+
+					result.Append(chars[i]);
+				}
+				else if(chars[i] == bindChar && 
+					bStringConstFound == false) {
+
+					StringBuilder parm = new StringBuilder();
+					i++;
+					while(i <= chars.Length) {
+						char ch;
+						if(i == chars.Length)
+							ch = ' '; // a space
+						else
+							ch = chars[i];
+
+						if(Char.IsLetterOrDigit(ch)) {
+							parm.Append(ch);
+						}
+						else {
+							string p = parm.ToString();
+							bool found = BindReplace(result, p);
+
+							if(found == true)
+								break;
+							else {						
+								// *** Error Handling
+								Console.WriteLine("Error: parameter not found: " + p);
+								return "";
+							}
+						}
+						i++;
+					}
+					i--;
+				}
+				else 
+					result.Append(chars[i]);
+			}
+			
+			resultSql = result.ToString();
+			return resultSql;
+		}
+
+		bool BindReplace (StringBuilder result, string p) {
+			// bind variable
+			bool found = false;
+
+			if(parmCollection.Contains(p) == true) {
+				// parameter found
+				MySqlParameter prm = parmCollection[p];
+
+				// convert object to string and place
+				// into SQL
+				if(prm.Direction == ParameterDirection.Input) {
+					string strObj = MySqlHelper.
+						ObjectToString(prm.DbType, 
+						prm.Value);
+					result.Append(strObj);
+				}
+				else
+					result.Append(bindChar + p);
+
+				found = true;
+			}
+			return found;
+		}
+
 		[MonoTODO]
 		public XmlReader ExecuteXmlReader () {
+			//MySqlDataReader dataReader = ExecuteReader ();
+			//MySqlXmlTextReader textReader = new MySqlXmlTextReader (dataReader);
+			//XmlReader xmlReader = new XmlTextReader (textReader);
+			//return xmlReader;
 			throw new NotImplementedException ();
 		}
 
@@ -292,8 +427,6 @@ namespace Mono.Data.MySql {
 			}
 		}
 
-		// FIXME: for property Connection, is this the correct
-		//        way to handle a return of a stronger type?
 		IDbConnection IDbCommand.Connection {
 			get { 
 				return Connection;
@@ -338,23 +471,18 @@ namespace Mono.Data.MySql {
 			}
 		}
 
-		// FIXME; for property Parameters, is this the correct
-		//        way to handle a stronger return type?
 		IDataParameterCollection IDbCommand.Parameters	{
 			get { 
-				//return Parameters;
-				return null;
+				return Parameters;
 			}
 		}
 
-		//public MySqlParameterCollection Parameters {
-		//	get { 
-		//		return parmCollection;
-		//	}
-		//}
+		public MySqlParameterCollection Parameters {
+			get { 
+				return parmCollection;
+			}
+		}
 
-		// FIXME: for property Transaction, is this the correct
-		//        way to handle a return of a stronger type?
 		IDbTransaction IDbCommand.Transaction 	{
 			get { 
 				return Transaction;

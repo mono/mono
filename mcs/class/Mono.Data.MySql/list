@@ -14,4 +14,6 @@ Mono.Data.MySql/MySqlRowUpdatedEventArgs.cs
 Mono.Data.MySql/MySqlRowUpdatedEventHandler.cs
 Mono.Data.MySql/MySqlRowUpdatingEventArgs.cs
 Mono.Data.MySql/MySqlRowUpdatingEventHandler.cs
+Mono.Data.MySql/MySqlParameter.cs
+Mono.Data.MySql/MySqlParameterCollection.cs
 

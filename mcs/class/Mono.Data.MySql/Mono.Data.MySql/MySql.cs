@@ -22,31 +22,11 @@
 // at http://www.opensource.org/licenses/mit-license.html
 //
 
-// Things to do:
-// =============
-//
-// TODO: more functions in the MySQL C Client API
-//       (libmysqlclient.so on linux and libmySQL.dll on cygwin)
-//       need to be added here as C# pinvoke methods.
-//       Other data structures may need to be added as well.
-//
-
 namespace Mono.Data.MySql {
 	using System;
 	using System.Security;
 	using System.Runtime.InteropServices;
 
-	///<remarks>
-	///<para>
-	/// MySql P/Invoke implementation
-	/// Brad Merrill
-	/// 3-Mar-2002
-	///</para>
-	///<para>
-	/// This is an incomplete implementation of the mysql C api,
-	/// but sufficient to run the Test sample application.
-	///</para>
-	///</remarks>
 	internal sealed class MySql {
 		///<value>protocol version</value>
 		public static readonly uint ProtocolVersion = 10;
@@ -88,7 +68,7 @@ namespace Mono.Data.MySql {
 
 		///<summary>Selects a database</summary>
 		///<returns>Zero for success.  Non-zero if an error occurred.</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="mysql_select_db", ExactSpelling=true)]
@@ -101,7 +81,7 @@ namespace Mono.Data.MySql {
 
 		///<summary>Executes a SQL query specified as a string</summary>
 		///<returns>number of rows changed, -1 if zero</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="mysql_query", ExactSpelling=true)]
@@ -109,65 +89,65 @@ namespace Mono.Data.MySql {
 
 		///<summary>Retrieves a complete result set to the client</summary>
 		///<returns>An IntPtr result structure with the results. IntPtr.Zero if an error occurred.</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 EntryPoint="mysql_store_result", ExactSpelling=true)]
 		public static extern IntPtr StoreResult(IntPtr conn);
 
 		///<returns>Returns the number of rows in a result set</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 EntryPoint="mysql_num_rows", ExactSpelling=true)]
 		public static extern int NumRows(IntPtr r);
 
 		///<returns>Returns the number of columns in a result set</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 EntryPoint="mysql_num_fields", ExactSpelling=true)]
 		public static extern int NumFields(IntPtr r);
 
 		///<returns>Returns an IntPtr to all field structures</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 EntryPoint="mysql_fetch_field", ExactSpelling=true)]
 		public static extern IntPtr FetchField(IntPtr r);
 
 		///<summary>Retrieves the next row of a result set</summary>
 		///<returns>An IntPtr structure for the next row. IntPtr.Zero if there are no more rows to retrieve or if an error occurred.</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 EntryPoint="mysql_fetch_row", ExactSpelling=true)]
 		public static extern IntPtr FetchRow(IntPtr r);
 
 		///<summary>Frees the memory allocated for a result set by <see cref="StoreResult"/></summary>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 EntryPoint="mysql_free_result", ExactSpelling=true)]
 		public static extern void FreeResult(IntPtr r);
 
 		///<returns>Returns a string that represents the client library version</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="mysql_get_client_info", ExactSpelling=true)]
 		public static extern string GetClientInfo();
 
 		///<returns></returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="mysql_get_host_info", ExactSpelling=true)]
 		public static extern string GetHostInfo(IntPtr db);
 
 		///<returns>A string describing the type of connection in use, including the server host name.</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="mysql_get_server_info", ExactSpelling=true)]
 		public static extern string GetServerInfo(IntPtr db);
 
 		///<returns>A string describing the server status. null if an error occurred.</returns>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="mysql_stat", ExactSpelling=true)]
@@ -184,7 +164,7 @@ namespace Mono.Data.MySql {
 		/// A IntPtr result set for success.  IntPtr.Zero if an error
 		/// occurred.
 		///</returns> 
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 EntryPoint="mysql_list_processes", ExactSpelling=true)]
 		public static extern IntPtr ListProcesses(IntPtr db);
@@ -205,7 +185,7 @@ namespace Mono.Data.MySql {
 		/// You must free the result set with <see cref="FreeResult"/>.
 		///</para>
 		///</summary>
-		//[SuppressUnmanagedCodeSecurity]
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 EntryPoint="mysql_list_tables", ExactSpelling=true)]
 		public static extern IntPtr ListTables(IntPtr db, [In] string wild);
@@ -220,6 +200,7 @@ namespace Mono.Data.MySql {
 		///<returns>
 		/// A string that describes the error.  An empty string if no error occurred.
 		///</returns>
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="mysql_error", ExactSpelling=true)]
@@ -237,6 +218,7 @@ namespace Mono.Data.MySql {
 		/// library!
 		///</para>
 		///</summary>
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="my_thread_end", ExactSpelling=true)]
@@ -251,6 +233,7 @@ namespace Mono.Data.MySql {
 		/// This is automatically called by <see cref="Init"/>.
 		///</para>
 		///</summary>
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
 			 EntryPoint="my_thread_init", ExactSpelling=true)]

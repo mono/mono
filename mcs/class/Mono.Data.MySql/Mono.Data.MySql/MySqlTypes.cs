@@ -46,7 +46,7 @@ namespace Mono.Data.MySql {
 	sealed internal class MySqlHelper {
 
 		public static string GetMySqlTypeName(MySqlEnumFieldTypes mysqlFieldType) {
-
+			
 			string typeName;
 
 			switch(mysqlFieldType) {
@@ -244,17 +244,27 @@ namespace Mono.Data.MySql {
 		}
 
 		// Converts data value from database to .NET System type.
-		public static object ConvertDbTypeToSystem (DbType typ, String myValue) {
+		public static object ConvertDbTypeToSystem (MySqlEnumFieldTypes mysqlFieldType, 
+						DbType typ, String myValue) {
+
 			object obj = null;
 
 			//Console.WriteLine("DEBUG: ConvertDbTypeToSystem: " + myValue);
 			
+			// FIXME: how do you handle NULL and "" for MySQL correctly?
 			if(myValue == null) {
 				return DBNull.Value;
 			}
 			else if(myValue.Equals("")) {
 				return DBNull.Value;
 			}		
+
+			switch(mysqlFieldType) {
+				case MySqlEnumFieldTypes.FIELD_TYPE_TIMESTAMP: 
+					if(myValue.Equals("00000000000000"))
+						return DBNull.Value;
+				break;
+			}
 
 			// Date, Time, and DateTime 
 			// are parsed based on ISO format
@@ -314,17 +324,70 @@ namespace Mono.Data.MySql {
 			return obj;
 		}
 
+		// FIXME: handle NULLs correctly in MySQL
+		public static string DBNullObjectToString(DbType dbtype) {
+
+			string s = "";
+
+			const string NullString = "''";
+			const string Null = "NULL";
+		
+			switch(dbtype) {
+			case DbType.String:
+				s = NullString;
+				break;
+			case DbType.Boolean:
+				s = NullString;
+				break;
+			case DbType.Int16:
+				s = Null;
+				break;
+			case DbType.Int32:
+				s = Null;
+				break;
+			case DbType.Int64:
+				s = Null;
+				break;
+			case DbType.Decimal:
+				s = Null;
+				break;
+			case DbType.Single:
+				s = Null;
+				break;
+			case DbType.Double:
+				s = Null;
+				break;
+			case DbType.Date:
+				s = NullString;
+				break;
+			case DbType.Time:
+				s = NullString;
+				break;
+			case DbType.DateTime:
+				s = NullString;
+				break;
+			default:
+				// default to DbType.String
+				s = NullString;
+				break;
+			}
+
+			return s;
+		}
+
 		// Convert a .NET System value type (Int32, String, Boolean, etc)
 		// to a string that can be included within a SQL statement.
 		// This is to methods provides the parameters support
 		// for the MySQL .NET Data provider
 		public static string ObjectToString(DbType dbtype, object obj) {
 			
-			// TODO: how do we handle a NULL?
-			//if(isNull == true)
-			//	return "NULL";
+			string s = "";
 
-			string s;
+			// FIXME: how do we handle NULLs?
+			//        code is untested
+			if(obj.Equals(DBNull.Value)) {
+				return DBNullObjectToString(dbtype);
+			}
 
 			// Date, Time, and DateTime are expressed in ISO format
 			// which is "YYYY-MM-DD hh:mm:ss.ms";

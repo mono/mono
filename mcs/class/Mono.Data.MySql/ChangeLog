@@ -1,3 +1,38 @@
+2002-11-13  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql/MySqlParameter.cs
+	* Mono.Data.MySql/MySqlParameterCollection.cs: added
+	simple input parameters support.  AFAIK, MySQL does not
+	support parameters, so this is just a search and replace
+	
+	* Test/TestParameters.cs: add file to test Parameters
+	
+	* Test/TestDataAdapter.cs: add file to test MySqlDataAdapter
+	
+	* Mono.Data.MySql.build: added files to windows build
+	
+	* list: added files to linux build
+	
+	* Mono.Data.MySql/MySql.cs: make sure all 
+	DllImport attributes
+	also have the SuppressUnmanagedCodeSecurity attribute
+	
+	* Mono.Data.MySql/MySqlCommand.cs: add support for
+	input parameters, don't execute empty queries,
+	and support of CommandTypes of StoredProcedure and TableDirect
+	
+	* Mono.Data.MySql/MySqlConnection.cs: borrowed Tim Coleman's 
+	code from SqlConnection to handle connection 
+	parameters correctly
+	
+	* Mono.Data.MySql/MySqlTypes.cs
+	* Mono.Data.MySql/MySqlDataReader.cs: started support 
+	for NULL values.
+	
+	* Test/MySqlTest.cs: test for NULL values, stored procedures, 
+	executing a non-query via ExecuteReader(), new connection 
+	string functionality, and exception handling
+
 2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.MySql/MySqlDataAdapter.cs

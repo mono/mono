@@ -83,7 +83,7 @@ namespace Mono.Data.MySql
 
 		#endregion // Public Methods
 
-		#region Internal Methods to Mono.Data.MySqlTransaction Assembly
+		#region Internal Methods to Mono.Data.MySql Assembly
 
 		internal void Begin()
 		{

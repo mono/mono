@@ -78,7 +78,34 @@ namespace Test.Mono.Data.MySql {
 				"mediumtext_value MEDIUMTEXT," +
 				"longtext_value LONGTEXT," +
 				"enum_value ENUM('dog','cat','bird','fish')," +
-				"set_value SET('value1','value2','value3','value4') " +
+				"set_value SET('value1','value2','value3','value4'), " +
+				"null_tinyint_value TINYINT," +
+				"null_smallint_value SMALLINT," +
+				"null_mediumint_value MEDIUMINT," +
+				"null_int_value INT," +
+				"null_integer_value INTEGER," +
+				"null_bigint_value BIGINT," + 
+				"null_real_value REAL," + 
+				"null_double_value DOUBLE," + 
+				"null_float_value FLOAT," +
+				"null_decimal_value DECIMAL(8,2)," + 
+				"null_numeric_value NUMERIC(15,2)," + 
+				"null_char_value CHAR(2)," + 
+				"null_varchar_value VARCHAR(5)," + 
+				"null_date_value DATE," + 
+				"null_time_value TIME," +
+				"null_timestamp_value TIMESTAMP," +
+				"null_datetime_value DATETIME," +
+				"null_tinyblob_value TINYBLOB," +
+				"null_blob_value BLOB," +
+				"null_mediumblob_value MEDIUMBLOB," +
+				"null_longblob_value LONGBLOB," +
+				"null_tinytext_value TINYTEXT," +
+				"null_text_value TEXT," +
+				"null_mediumtext_value MEDIUMTEXT," +
+				"null_longtext_value LONGTEXT," +
+				"null_enum_value ENUM('dog','cat','bird','fish')," +
+				"null_set_value SET('value1','value2','value3','value4') " +
 				") ";
 	
 			int rowsAffected;
@@ -248,7 +275,7 @@ namespace Test.Mono.Data.MySql {
 
 			// This is a SQL Command, not a Query
 			selectCommand.CommandText = 
-				"SET DATESTYLE TO 'ISO'";
+				"SET AUTOCOMMIT=0";
 
 			reader = selectCommand.ExecuteReader ();
 
@@ -320,11 +347,10 @@ namespace Test.Mono.Data.MySql {
 					
 				for(c = 0; c < rdr.FieldCount; c++) {
 					// column meta data 
-					DataRow dr = dt.Rows[c];
 					metadataValue = 
 						"    Col " + 
 						c + ": " + 
-						dr["ColumnName"].ToString();
+						rdr.GetName(c);
 						
 					// column data
 					if(rdr.IsDBNull(c) == true)
@@ -354,32 +380,32 @@ namespace Test.Mono.Data.MySql {
 			}
 			else {
 				do {
-					DataTable dt = rdr.GetSchemaTable();
-					if(rdr.RecordsAffected != -1) {
+					results++;
+					if(rdr.FieldCount > 0) {
+						// Results for
+						// SQL SELECT Queries
+						// have RecordsAffected = -1
+						// and GetSchemaTable() returns a reference to a DataTable
+						DataTable dt = rdr.GetSchemaTable();
+						Console.WriteLine("Result is from a SELECT SQL Query.  Records Affected: " + rdr.RecordsAffected);
+						
+						Console.WriteLine("Result Set " + results + "...");
+
+						ReadResult(rdr, dt);
+					}
+					if(rdr.RecordsAffected >= 0) {
 						// Results for 
 						// SQL INSERT, UPDATE, DELETE Commands 
 						// have RecordsAffected >= 0
 						Console.WriteLine("Result is from a SQL Command (INSERT,UPDATE,DELETE).  Records Affected: " + rdr.RecordsAffected);
 					}
-					else if(dt == null)
+					else {
 						// Results for
 						// SQL Commands not INSERT, UPDATE, nor DELETE
 						// have RecordsAffected == -1
 						// and GetSchemaTable() returns a null reference
 						Console.WriteLine("Result is from a SQL Command not (INSERT,UPDATE,DELETE).   Records Affected: " + rdr.RecordsAffected);
-					else {
-						// Results for
-						// SQL SELECT Queries
-						// have RecordsAffected = -1
-						// and GetSchemaTable() returns a reference to a DataTable
-						Console.WriteLine("Result is from a SELECT SQL Query.  Records Affected: " + rdr.RecordsAffected);
-		
-						results++;
-						Console.WriteLine("Result Set " + results + "...");
-
-						ReadResult(rdr, dt);
 					}
-
 				} while(rdr.NextResult());
 				Console.WriteLine("Total Result sets: " + results);
 			
@@ -397,78 +423,77 @@ namespace Test.Mono.Data.MySql {
 
 			/* Drops the mono_mysql_test table. */
 			
-			// Console.WriteLine ("\t\tDrop table: ");
-			// try {
+			Console.WriteLine ("\t\tDrop table: ");
+			try {
 				DropTable (cnc);
-			//	Console.WriteLine ("OK");
-			// }
-			// catch (MySqlException e) {
-			//	Console.WriteLine("Error (don't worry about this one)" + e);
-			// }
-			//
-			
-			// try {
-			/* Creates a table with all supported data types */
-			Console.WriteLine ("\t\tCreate table with all supported types: ");
-			CreateTable (cnc);
-			Console.WriteLine ("OK");
+				Console.WriteLine ("OK");
+			}
+			catch (MySqlException e) {
+				Console.WriteLine("Error (don't worry about this one)" + e);
+			}
+						
+			try {
+				/* Creates a table with all supported data types */
+				Console.WriteLine ("\t\tCreate table with all supported types: ");
+				CreateTable (cnc);
+				Console.WriteLine ("OK");
 				
-			/* Inserts values */
-			Console.WriteLine ("\t\tInsert values for all known types: ");
-			InsertData (cnc);
-			Console.WriteLine ("OK");
+				/* Inserts values */
+				Console.WriteLine ("\t\tInsert values for all known types: ");
+				InsertData (cnc);
+				Console.WriteLine ("OK");
 
-			/* Update values */
-			Console.WriteLine ("\t\tUpdate values: ");
-			UpdateData (cnc);
-			Console.WriteLine ("OK");
+				/* Update values */
+				Console.WriteLine ("\t\tUpdate values: ");
+				UpdateData (cnc);
+				Console.WriteLine ("OK");
 
-			/* Inserts values */
-			Console.WriteLine ("\t\tInsert values for all known types: ");
-			InsertData (cnc);
-			Console.WriteLine ("OK");			
+				/* Inserts values */
+				Console.WriteLine ("\t\tInsert values for all known types: ");
+				InsertData (cnc);
+				Console.WriteLine ("OK");			
 
-			/* Select aggregates */
-			SelectAggregate (cnc, "count(*)");
-			SelectAggregate (cnc, "avg(int_value)");
-			SelectAggregate (cnc, "min(char_value)");
-			SelectAggregate (cnc, "max(integer_value)");
-			SelectAggregate (cnc, "sum(double_value)");
+				/* Select aggregates */
+				SelectAggregate (cnc, "count(*)");
+				SelectAggregate (cnc, "avg(int_value)");
+				SelectAggregate (cnc, "min(char_value)");
+				SelectAggregate (cnc, "max(integer_value)");
+				SelectAggregate (cnc, "sum(double_value)");
 
-			/* Select values */
-			Console.WriteLine ("\t\tSelect values from the database: ");
-			reader = SelectData (cnc);
-			ReadData(reader);
+				/* Select values */
+				Console.WriteLine ("\t\tSelect values from the database: ");
+				reader = SelectData (cnc);
+				ReadData(reader);
 
-			/* SQL Command via ExecuteReader/MySqlDataReader */
-			/* Command is not INSERT, UPDATE, or DELETE */
-			//Console.WriteLine("\t\tCall ExecuteReader with a SQL Command. (Not INSERT,UPDATE,DELETE).");
-			//reader = SelectDataUsingCommand(cnc);
-			//ReadData(reader);
+				/* SQL Command via ExecuteReader/MySqlDataReader */
+				/* Command is not INSERT, UPDATE, or DELETE */
+				Console.WriteLine("\t\tCall ExecuteReader with a SQL Command. (Not INSERT,UPDATE,DELETE).");
+				reader = SelectDataUsingCommand(cnc);
+				ReadData(reader);
 
-			/* SQL Command via ExecuteReader/MySqlDataReader */
-			/* Command is INSERT, UPDATE, or DELETE */
-			Console.WriteLine("\t\tCall ExecuteReader with a SQL Command. (Is INSERT,UPDATE,DELETE).");
-			reader = SelectDataUsingInsertCommand(cnc);
-			ReadData(reader);
+				/* SQL Command via ExecuteReader/MySqlDataReader */
+				/* Command is INSERT, UPDATE, or DELETE */
+				Console.WriteLine("\t\tCall ExecuteReader with a SQL Command. (Is INSERT,UPDATE,DELETE).");
+				reader = SelectDataUsingInsertCommand(cnc);
+				ReadData(reader);
 
-			// Call a Stored Procedure named Version()
-			// Console.WriteLine("\t\tCalling stored procedure version()");
-			// object obj = CallStoredProcedure(cnc);
-			// Console.WriteLine("Result: " + obj);
+				// Call a Stored Procedure named Version()
+				Console.WriteLine("\t\tCalling stored procedure version()");
+				object obj = CallStoredProcedure(cnc);
+				Console.WriteLine("Result: " + obj);
 
-			// Console.WriteLine("Database Server Version: " + 
-			//	((MySqlConnection)cnc).ServerVersion);
+				Console.WriteLine("Database Server Version: " + 
+					((MySqlConnection)cnc).ServerVersion);
 
-			/* Clean up */
-			Console.WriteLine ("Clean up...");
-			Console.WriteLine ("\t\tDrop table...");
-			//DropTable (cnc);
-			Console.WriteLine("OK");
-			// }
-			// catch(Exception e) {
-			//	Console.WriteLine("Exception caught: " + e);
-			// }
+				/* Clean up */
+				//Console.WriteLine ("Clean up...");
+				//Console.WriteLine ("\t\tDrop table...");
+				//DropTable (cnc);
+				//Console.WriteLine("OK");
+			}
+			catch(Exception e) {
+				Console.WriteLine("Exception caught: " + e);
+			}
 		}
 
 		[STAThread]
@@ -476,6 +501,10 @@ namespace Test.Mono.Data.MySql {
 
 			MySqlConnection dbconn = new MySqlConnection ();
 			
+			// ConnectionString can be:
+			//   "Server=localhost;Database=test;User ID=someuser;Password=somepass"
+			// or it could be:
+			//   "host=localhost;dbname=test;user=someuser;passwd=somepass"
 			string connectionString = 
 				"dbname=test;";
 			dbconn.ConnectionString =  connectionString;

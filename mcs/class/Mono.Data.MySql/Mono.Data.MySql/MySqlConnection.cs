@@ -3,12 +3,15 @@
 //
 // Author:
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Daniel Morgan 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -271,9 +274,6 @@ namespace Mono.Data.MySql {
 			conState = ConnectionState.Open;
 
 			versionString = GetDatabaseServerVersion();
-
-			// May need to set DateTime format to ISO
-			// "YYYY-MM-DD hh:mi:ss.ms"
 		}
 
 		private string GetDatabaseServerVersion() {
@@ -299,113 +299,115 @@ namespace Mono.Data.MySql {
 			}
 		}
 
-		private void SetConnectionString (string connectionString) {
-
+		void SetConnectionString (string connectionString) {
 			this.connectionString = connectionString;
-			mysqlConnectionString = ConvertStringToMySql (
-				connectionString);
-		}
-
-		private String ConvertStringToMySql (String 
-			oleDbConnectionString) {
-			StringBuilder mysqlConnection = 
-				new StringBuilder();
-			string result;
-			string[] connectionParameters;
-
-			char[] semicolon = new Char[1];
-			semicolon[0] = ';';
 			
-			// FIXME: what is the max number of value pairs 
-			//        can there be for the OLE DB 
-			//	  connnection string? what about libgda max?
-			//        what about postgres max?
+			connectionString += ";";
+			NameValueCollection parameters = new NameValueCollection ();
 
-			// FIXME: currently assuming value pairs are like:
-			//        "key1=value1;key2=value2;key3=value3"
-			//        Need to deal with values that have
-			//        single or double quotes.  And error 
-			//        handling of that too.
-			//        "key1=value1;key2='value2';key=\"value3\""
+			if (connectionString == String.Empty)
+				return;
 
-			// FIXME: put the connection parameters 
-			//        from the connection
-			//        string into a 
-			//        Hashtable (System.Collections)
-			//        instead of using private variables 
-			//        to store them
-			connectionParameters = oleDbConnectionString.
-				Split (semicolon);
-			foreach (string sParameter in connectionParameters) {
-				if(sParameter.Length > 0) {
-					BreakConnectionParameter (sParameter);
-					mysqlConnection.
-						Append (sParameter + 
-						" ");
+			bool inQuote = false;
+			bool inDQuote = false;
+
+			string name = String.Empty;
+			string value = String.Empty;
+			StringBuilder sb = new StringBuilder ();
+
+			foreach (char c in connectionString) {
+				switch (c) {
+				case '\'':
+					inQuote = !inQuote;
+					break;
+				case '"' :
+					inDQuote = !inDQuote;
+					break;
+				case ';' :
+					if (!inDQuote && !inQuote) {
+						if (name != String.Empty && name != null) {
+							value = sb.ToString ();
+							parameters [name.ToUpper ().Trim ()] = value.Trim ();
+						}
+						name = String.Empty;
+						value = String.Empty;
+						sb = new StringBuilder ();
+					}
+					else
+						sb.Append (c);
+					break;
+				case '=' :
+					if (!inDQuote && !inQuote) {
+						name = sb.ToString ();
+						sb = new StringBuilder ();
+					}
+					else
+						sb.Append (c);
+					break;
+				default:
+					sb.Append (c);
+					break;
 				}
 			}
-			result = mysqlConnection.ToString ();
-			return result;
+
+			SetProperties (parameters);
 		}
 
-		private bool BreakConnectionParameter (String sParameter) {	
-			bool addParm = true;
-			int index;
+		private void SetProperties (NameValueCollection parameters) {
 
-			index = sParameter.IndexOf ("=");
-			if (index > 0) {	
-				string parmKey, parmValue;
+			StringBuilder connectionStr = new StringBuilder();
 
-				// separate string "key=value" to 
-				// string "key" and "value"
-				parmKey = sParameter.Substring (0, index);
-				parmValue = sParameter.Substring (index + 1,
-					sParameter.Length - index - 1);
+			string value;
+			foreach (string name in parameters) {
+				value = parameters[name];
 
-				/*
-				 * string host
-				 * string user
-				 * string passwd
-				 * string dbname
-				 * unit port
-				 * string socketName
-				 * unit flags (can be multiple)
-				 */ 
-				switch(parmKey.ToLower()) {
-				case "port":
-					port = UInt32.Parse(parmValue);
+				bool found = true;
+				switch (name) {
+				case "PORT" :
+					port = UInt32.Parse(value);
 					break;
-
-				case "host":
+				case "DATA SOURCE" :
+				case "SERVER" :
+				case "HOST" :
 					// set DataSource property
-					host = parmValue;
+					host = value;
 					break;
-
-				case "dbname":
+				case "INITIAL CATALOG" :
+				case "DATABASE" :
+				case "DBNAME" :
 					// set Database property
-					dbname = parmValue;
+					dbname = value;
 					break;
-
-				case "user":
-					user = parmValue;
+				case "PASSWORD" :
+				case "PWD" :
+				case "PASSWD" :
+					passwd = value;
 					break;
-
-				case "passwd":
-					passwd = parmValue;
+				case "USER ID" :
+				case "UID" :
+				case "USER" :
+					user = value;
 					break;
-
-				case "socketName":
-					socketName = parmValue;
+				case "SOCKETNAME":
+					socketName = value;
 					break;
-
+				case "FLAGS" :
+					// FIXME: how to get these flags and
+					//        and pass to MySQL?
+					//        flags is a bitfield
+					flags = UInt32.Parse(value);
+					break;
 				default:
-					string msg = "Connection Parameter " + 
-						parmKey + 
-						" not supported or is invalid";
-					throw new NotImplementedException(msg);
+					found = false;
+					// FIXME: throw exception?
+					break;
+				}
+				if (found == true) {
+					string valuePair = name + "=" + value;					
+					connectionStr.Append (valuePair + " ");
 				}
 			}
-			return addParm;
+			this.mysqlConnectionString = connectionStr.ToString ();
 		}
 
 		private MySqlTransaction TransactionBegin () {
