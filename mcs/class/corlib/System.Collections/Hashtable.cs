@@ -284,7 +284,12 @@ namespace System.Collections {
 
 		public virtual Object this [Object key] {
 			get {
-				return GetImpl (key);
+				int i = Find (key);
+	
+				if (i >= 0)
+					return table [i].value;
+				
+				return null;
 			}
 			set {
 				PutImpl (key, value, true);
@@ -541,17 +546,6 @@ namespace System.Collections {
 			this.table = table;
 			AdjustThreshold ();
 		}
-
-		private Object GetImpl (Object key)
-		{
-			int i = Find (key);
-
-			if (i >= 0)
-				return table [i].value;
-			else
-				return null;
-		}
-
 
 		private int Find (Object key)
 		{
@@ -1042,11 +1036,11 @@ namespace System.Collections {
 
 			public override Object this [Object key] {
 				get {
-					return host.GetImpl (key);
+					return host [key];
 				}
 				set {
 					lock (host.SyncRoot) {
-						host.PutImpl (key, value, true);
+						host [key] = value;
 					}
 				}
 			}
@@ -1074,7 +1068,7 @@ namespace System.Collections {
 			public override void Add (Object key, Object value)
 			{
 				lock (host.SyncRoot) {
-					host.PutImpl (key, value, false);
+					host.Add (key, value);
 				}
 			}
 
