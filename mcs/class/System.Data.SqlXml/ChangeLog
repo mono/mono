@@ -1,3 +1,8 @@
+2003-12-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* System.Data.SqlXml.dll.sources: Added System.Xml classes.
+	* Makefile : added reference to System.dll
+
 2003-12-14  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlXml.dll.sources:
 		Remove some files from System.Xml.Query that

@@ -8,6 +8,10 @@ System.Data.SqlXml/XmlBulkLoadException.cs
 System.Data.SqlXml/XmlRowsetAdapter.cs
 System.Data.SqlXml/XmlRowsetAdapterException.cs
 System.Data.SqlXml/FillStatus.cs
+System.Xml/UpdateEventHandler.cs
+System.Xml/XmlAdapter.cs
+System.Xml/XmlDataSourceResolver.cs
+System.Xml/XmlUpdateEventArgs.cs
 System.Xml.Query/SqlQueryOptions.cs
 System.Xml.Query/SqlQueryPlan.cs
 System.Xml.Query/XmlViewSchema.cs

@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Data.SqlXml.dll
-LIB_MCS_FLAGS = /r:$(corlib),System.Data.dll,System.Xml.dll
+LIB_MCS_FLAGS = /r:$(corlib),System.dll,System.Data.dll,System.Xml.dll
 NO_TEST = yes
 
 EXTRA_DISTFILES =
