@@ -567,27 +567,27 @@ namespace System.Globalization
 		}
 
 		// LAMESPEC: this is not in ECMA specs
-		[MonoTODO ("Currently we does not support multiple patterns for other than invariant")]
+		[MonoTODO ("We need more culture data in locale-builder")]
 		public string[] GetAllDateTimePatterns (char format)
 		{
 			string [] list;
 			switch (format) {
 			// Date
 			case 'D':
-				if (_LongDatePatterns != null)
+				if (_LongDatePatterns != null && _LongDatePatterns.Length > 0)
 					return _LongDatePatterns.Clone () as string [];
 				return new string [] {LongDatePattern};
 			case 'd':
-				if (_ShortDatePatterns != null)
+				if (_ShortDatePatterns != null && _ShortDatePatterns.Length > 0)
 					return _ShortDatePatterns.Clone () as string [];
 				return new string [] {ShortDatePattern};
 			// Time
 			case 'T':
-				if (_LongTimePatterns != null)
+				if (_LongTimePatterns != null && _LongTimePatterns.Length > 0)
 					return _LongTimePatterns.Clone () as string [];
 				return new string [] {LongTimePattern};
 			case 't':
-				if (_ShortTimePatterns != null)
+				if (_ShortTimePatterns != null && _ShortTimePatterns.Length > 0)
 					return _ShortTimePatterns.Clone () as string [];
 				return new string [] {ShortTimePattern};
 			// {Short|Long}Date + {Short|Long}Time
@@ -595,12 +595,12 @@ namespace System.Globalization
 			// combination of the Date patterns and Time patterns.
 			case 'G':
 				list = PopulateCombinedList (_ShortDatePatterns, _LongTimePatterns);
-				if (list != null)
+				if (list != null && list.Length > 0)
 					return list;
 				return new string [] {ShortDatePattern + ' ' + LongTimePattern};
 			case 'g':
 				list = PopulateCombinedList (_ShortDatePatterns, _ShortTimePatterns);
-				if (list != null)
+				if (list != null && list.Length > 0)
 					return list;
 				return new string [] {ShortDatePattern + ' ' + ShortTimePattern};
 			// The 'U' pattern strings are always the same as 'F'.
@@ -608,24 +608,24 @@ namespace System.Globalization
 			case 'U':
 			case 'F':
 				list = PopulateCombinedList (_LongDatePatterns, _LongTimePatterns);
-				if (list != null)
+				if (list != null && list.Length > 0)
 					return list;
 				return new string [] {LongDatePattern + ' ' + LongTimePattern};
 			case 'f':
 				list = PopulateCombinedList (_LongDatePatterns, _ShortTimePatterns);
-				if (list != null)
+				if (list != null && list.Length > 0)
 					return list;
 				return new string [] {LongDatePattern + ' ' + ShortTimePattern};
 			// MonthDay
 			case 'm':
 			case 'M':
-				if (_MonthDayPatterns != null)
+				if (_MonthDayPatterns != null && _MonthDayPatterns.Length > 0)
 					return _MonthDayPatterns.Clone () as string [];
 				return new string [] {MonthDayPattern};
 			// YearMonth
 			case 'Y':
 			case 'y':
-				if (_YearMonthPatterns != null)
+				if (_YearMonthPatterns != null && _YearMonthPatterns.Length > 0)
 					return _YearMonthPatterns.Clone () as string [];
 				return new string [] {YearMonthPattern};
 			// RFC1123

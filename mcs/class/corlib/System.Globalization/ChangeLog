@@ -1,3 +1,8 @@
+2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeFormatInfo.cs : check if pattern array is empty or not. Now
+	  icall fills them as possible empty list.
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DateTimeFormatInfo.cs: added TODO for serialization
