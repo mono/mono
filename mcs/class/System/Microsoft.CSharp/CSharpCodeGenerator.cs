@@ -849,6 +849,8 @@ namespace Mono.CSharp
 
 		protected override string CreateEscapedIdentifier (string value)
 		{
+			if (value == null)
+				throw new NullReferenceException ("Argument identifier is null.");
 			return GetSafeName (value);
 		}
 

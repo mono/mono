@@ -1,3 +1,8 @@
+2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeGenerator.cs :
+	  Check null argument in CreateValidIdentifier().
+
 2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeGenerator.cs : Fix for tests. Check type names in
