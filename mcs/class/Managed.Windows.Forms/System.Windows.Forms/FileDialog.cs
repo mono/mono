@@ -1217,13 +1217,132 @@ namespace System.Windows.Forms
 			
 			internal class ButtonPanel : Panel
 			{
+				internal class PopupButton : Control
+				{
+					internal enum PopupButtonState
+					{ Normal, Down, Up}
+					
+					private Image image = null;
+					private PopupButtonState popupButtonState = PopupButtonState.Normal;
+					private StringFormat text_format = new StringFormat();
+					
+					public PopupButton( )
+					{
+						text_format.Alignment = StringAlignment.Center;
+						text_format.LineAlignment = StringAlignment.Far;
+						
+						SetStyle( ControlStyles.DoubleBuffer, true );
+						SetStyle( ControlStyles.AllPaintingInWmPaint, true );
+						SetStyle( ControlStyles.UserPaint, true );
+					}
+					
+					public Image Image
+					{
+						set
+						{
+							image = value;
+							Refresh( );
+						}
+						
+						get
+						{
+							return image;
+						}
+					}
+					
+					public PopupButtonState ButtonState
+					{
+						set
+						{
+							popupButtonState = value;
+							Refresh( );
+						}
+						
+						get
+						{
+							return popupButtonState;
+						}
+					}
+					
+					protected override void OnPaint( PaintEventArgs pe )
+					{
+						Draw( pe );
+						
+						base.OnPaint( pe );
+					}
+					
+					private void Draw( PaintEventArgs pe )
+					{
+						Graphics gr = pe.Graphics;
+						
+						gr.FillRectangle( new SolidBrush( BackColor ), ClientRectangle );
+						
+						// draw image
+						if ( image != null )
+						{
+							int i_x = ( ClientSize.Width - image.Width ) / 2;
+							int i_y = 4;
+							gr.DrawImage( image, i_x, i_y );
+						}
+						
+						if ( Text != String.Empty )
+						{
+							Rectangle text_rect = Rectangle.Inflate( ClientRectangle, -4, -4 );
+							
+							gr.DrawString( Text, Font, new SolidBrush( ForeColor ), text_rect, text_format );
+						}
+						
+						switch ( popupButtonState )
+						{
+							case PopupButtonState.Up:
+								gr.DrawLine( new Pen( Color.White ), 0, 0, ClientSize.Width - 1, 0 );
+								gr.DrawLine( new Pen( Color.White ), 0, 0, 0, ClientSize.Height - 1 );
+								gr.DrawLine( new Pen( Color.Black ), ClientSize.Width - 1, 0, ClientSize.Width - 1, ClientSize.Height - 1 );
+								gr.DrawLine( new Pen( Color.Black ), 0, ClientSize.Height - 1, ClientSize.Width - 1, ClientSize.Height - 1 );
+								break;
+								
+							case PopupButtonState.Down:
+								gr.DrawLine( new Pen( Color.Black ), 0, 0, ClientSize.Width - 1, 0 );
+								gr.DrawLine( new Pen( Color.Black ), 0, 0, 0, ClientSize.Height - 1 );
+								gr.DrawLine( new Pen( Color.White ), ClientSize.Width - 1, 0, ClientSize.Width - 1, ClientSize.Height - 1 );
+								gr.DrawLine( new Pen( Color.White ), 0, ClientSize.Height - 1, ClientSize.Width - 1, ClientSize.Height - 1 );
+								break;
+						}
+					}
+					
+					protected override void OnMouseEnter( EventArgs e )
+					{
+						if ( popupButtonState != PopupButtonState.Down )
+							popupButtonState = PopupButtonState.Up;
+						Refresh( );
+						base.OnMouseEnter( e );
+					}
+					
+					protected override void OnMouseLeave( EventArgs e )
+					{
+						if ( popupButtonState != PopupButtonState.Down )
+							popupButtonState = PopupButtonState.Normal;
+						Refresh( );
+						base.OnMouseLeave( e );
+					}
+					
+					protected override void OnClick( EventArgs e )
+					{
+						popupButtonState = PopupButtonState.Down;
+						Refresh( );
+						base.OnClick( e );
+					}
+				}
+				
 				private FileDialogPanel fileDialogPanel;
 				
-				private Button lastOpenButton;
-				private Button desktopButton;
-				private Button homeButton;
-				private Button workplaceButton;
-				private Button networkButton;
+				private PopupButton lastOpenButton;
+				private PopupButton desktopButton;
+				private PopupButton homeButton;
+				private PopupButton workplaceButton;
+				private PopupButton networkButton;
+				
+				private PopupButton lastPopupButton = null;
 				
 				private ImageList imageList = new ImageList();
 				
@@ -1245,59 +1364,49 @@ namespace System.Windows.Forms
 					imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
 					imageList.TransparentColor = Color.Transparent;
 					
-					lastOpenButton = new Button( );
-					desktopButton = new Button( );
-					homeButton = new Button( );
-					workplaceButton = new Button( );
-					networkButton = new Button( );
+					lastOpenButton = new PopupButton( );
+					desktopButton = new PopupButton( );
+					homeButton = new PopupButton( );
+					workplaceButton = new PopupButton( );
+					networkButton = new PopupButton( );
 					
-					lastOpenButton.Image = imageList.Images[ 0 ];
-					lastOpenButton.ImageAlign = ContentAlignment.TopCenter;
-					lastOpenButton.TextAlign = ContentAlignment.BottomCenter;
-					lastOpenButton.ForeColor = Color.White;
-					lastOpenButton.FlatStyle = FlatStyle.Popup;
 					lastOpenButton.Size = new Size( 82, 64 );
-					lastOpenButton.Location = new Point( 0, 2 );
+					lastOpenButton.Image = imageList.Images[ 0 ];
+					lastOpenButton.BackColor = BackColor;
+					lastOpenButton.ForeColor = Color.White;
+					lastOpenButton.Location = new Point( 2, 2 );
 					lastOpenButton.Text = "Last Open";
 					lastOpenButton.Click += new EventHandler( OnClickButton );
 					
 					desktopButton.Image = imageList.Images[ 1 ];
-					desktopButton.ImageAlign = ContentAlignment.TopCenter;
-					desktopButton.TextAlign = ContentAlignment.BottomCenter;
+					desktopButton.BackColor = BackColor;
 					desktopButton.ForeColor = Color.White;
-					desktopButton.FlatStyle = FlatStyle.Popup;
 					desktopButton.Size = new Size( 82, 64 );
-					desktopButton.Location = new Point( 0, 66 );
+					desktopButton.Location = new Point( 2, 66 );
 					desktopButton.Text = "Desktop";
 					desktopButton.Click += new EventHandler( OnClickButton );
 					
 					homeButton.Image = imageList.Images[ 2 ];
-					homeButton.ImageAlign = ContentAlignment.TopCenter;
-					homeButton.TextAlign = ContentAlignment.BottomCenter;
+					homeButton.BackColor = BackColor;
 					homeButton.ForeColor = Color.White;
-					homeButton.FlatStyle = FlatStyle.Popup;
 					homeButton.Size = new Size( 82, 64 );
-					homeButton.Location = new Point( 0, 130 );
+					homeButton.Location = new Point( 2, 130 );
 					homeButton.Text = "Home";
 					homeButton.Click += new EventHandler( OnClickButton );
 					
 					workplaceButton.Image = imageList.Images[ 3 ];
-					workplaceButton.ImageAlign = ContentAlignment.TopCenter;
-					workplaceButton.TextAlign = ContentAlignment.BottomCenter;
+					workplaceButton.BackColor = BackColor;
 					workplaceButton.ForeColor = Color.White;
-					workplaceButton.FlatStyle = FlatStyle.Popup;
 					workplaceButton.Size = new Size( 82, 64 );
-					workplaceButton.Location = new Point( 0, 194 );
+					workplaceButton.Location = new Point( 2, 194 );
 					workplaceButton.Text = "Workplace";
 					workplaceButton.Click += new EventHandler( OnClickButton );
 					
 					networkButton.Image = imageList.Images[ 4 ];
-					networkButton.ImageAlign = ContentAlignment.TopCenter;
-					networkButton.TextAlign = ContentAlignment.BottomCenter;
+					networkButton.BackColor = BackColor;
 					networkButton.ForeColor = Color.White;
-					networkButton.FlatStyle = FlatStyle.Popup;
 					networkButton.Size = new Size( 82, 64 );
-					networkButton.Location = new Point( 0, 258 );
+					networkButton.Location = new Point( 2, 258 );
 					networkButton.Text = "Network";
 					networkButton.Click += new EventHandler( OnClickButton );
 					
@@ -1310,6 +1419,10 @@ namespace System.Windows.Forms
 				
 				void OnClickButton( object sender, EventArgs e )
 				{
+					if ( lastPopupButton != null )
+						lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
+					lastPopupButton = sender as PopupButton;
+					
 					if ( sender == lastOpenButton )
 					{
 						

@@ -1,14 +1,18 @@
+2005-03-31  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* FileDialog.cs: Added simple PopupButton class for ButtonPanel
+
 2005-03-29  Peter Bartok  <pbartok@novell.com>
 
 	* Application.cs:
 	  - Properly implemented CompanyName property
-	  - Fixed LocalUserAppDataPath and UserAppDataPath, now properly 
-	    returns a path that includes CompanyName, ProductName and 
+	  - Fixed LocalUserAppDataPath and UserAppDataPath, now properly
+	    returns a path that includes CompanyName, ProductName and
 	    Version (fixes bug #70330)
 
 2005-03-29  Stefan Buehler  <sbuehler@gmx.ch>
 
-	* TabPage.cs: Don't use Owner.DisplayRectangle unless owner is valid, 
+	* TabPage.cs: Don't use Owner.DisplayRectangle unless owner is valid,
 	  fixes bug #72588.
 
 2005-03-28  Alexander Olk  <xenomorph2@onlinehome.de>
