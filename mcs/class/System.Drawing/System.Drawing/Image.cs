@@ -195,16 +195,17 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		throw new NotImplementedException ();				
 	}
 	
-	[MonoTODO]	
+	
 	public void RemovePropertyItem (int propid)
 	{		
-		throw new NotImplementedException ();
-	}
+		Status status = GDIPlus.GdipRemovePropertyItem (nativeObject, propid);
+		GDIPlus.CheckStatus (status);					
+	}	
 	
-	[MonoTODO]	
 	public void RotateFlip (RotateFlipType rotateFlipType)
-	{		
-		throw new NotImplementedException ();
+	{			
+		Status status = GDIPlus.GdipImageRotateFlip (nativeObject, rotateFlipType);
+		GDIPlus.CheckStatus (status);				
 	}
 
 	public void Save (string filename)

@@ -1,3 +1,6 @@
+2004-04-22 Jordi Mas i Hernandez <jordi@ximian.com>
+	* Image.cs: added RotateFlip and RemovePropertyItem calls
+	
 2004-04-22  Ravindra <rkumar@novell.com>
 
 	* RectangleConverter.cs: Implemented. Also changed file format
