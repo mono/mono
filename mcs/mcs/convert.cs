@@ -97,7 +97,7 @@ namespace Mono.CSharp {
 			// from the null type to any reference-type.
 			if (expr_type == TypeManager.null_type){
 				if (target_type.IsPointer)
-					return NullPointer.Null;
+					return new EmptyCast (expr, target_type);
 					
 				if (!target_type.IsValueType)
 					return new NullCast (expr, target_type);
@@ -198,6 +198,16 @@ namespace Mono.CSharp {
 				
 			// from any class-type S to any interface-type T.
 			if (target_type.IsInterface) {
+				if (target_type != TypeManager.iconvertible_type &&
+				    expr_type.IsValueType && (expr is Constant) &&
+				    !(expr is IntLiteral || expr is BoolLiteral ||
+				      expr is FloatLiteral || expr is DoubleLiteral ||
+				      expr is LongLiteral || expr is CharLiteral ||
+				      expr is StringLiteral || expr is DecimalLiteral ||
+				      expr is UIntLiteral || expr is ULongLiteral)) {
+					return false;
+				}
+				
 				if (TypeManager.ImplementsInterface (expr_type, target_type))
 					return true;
 			}
@@ -245,9 +255,13 @@ namespace Mono.CSharp {
 					return true;
 				
 			// from the null type to any reference-type.
-			if (expr_type == TypeManager.null_type && !target_type.IsValueType && !TypeManager.IsEnumType (target_type))
-				return true;
-				
+			if (expr_type == TypeManager.null_type){
+				if (target_type.IsPointer)
+					return true;
+			
+				if (!target_type.IsValueType)
+					return true;
+			}
 			return false;
 		}
 
