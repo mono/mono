@@ -1,3 +1,10 @@
+2002-07-26  Tim Coleman <tim@timcoleman.com>
+	* XmlSerializer.cs:
+		The constructor now looks for an XmlRootAttribute attribute
+		if one is not passed in.  Various changes to make it emit
+		proper XML, such as handling an element without a namespace
+		prefix, and using WriteEndDocument where it should be.
+
 2002-07-24  Tim Coleman <tim@timcoleman.com>
 	* CodeIdentifier.cs:
 	* IXmlSerializable.cs:

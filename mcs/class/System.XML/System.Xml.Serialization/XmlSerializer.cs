@@ -52,7 +52,8 @@ namespace System.Xml.Serialization
 
 		public XmlSerializer (Type type, string defaultNamespace)
 			: this(type, null, null, null, defaultNamespace)
-		{}
+		{
+		}
 
 		public XmlSerializer (Type type, Type[] extraTypes)
 			: this(type, null, extraTypes, null, null)
@@ -80,8 +81,14 @@ namespace System.Xml.Serialization
 			this.overrides = overrides;
 
 			this.extraTypes = (extraTypes == null ? new Type[0] : extraTypes);
-			
-			this.rootAttribute	= root;
+		
+			if (root != null)
+				this.rootAttribute	= root;
+			else {
+				object[] attributes = type.GetCustomAttributes (typeof (XmlRootAttribute), false);
+				if (attributes.Length > 0)
+					this.rootAttribute = (XmlRootAttribute) attributes[0];
+			}
 			
 			this.defaultNamespace = defaultNamespace;
 
@@ -160,6 +167,12 @@ namespace System.Xml.Serialization
 
 		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
 		{	
+
+			Type objType = o.GetType();
+			string rootName = objType.Name;
+			string rootNs	= String.Empty;
+			string rootPrefix = String.Empty;
+
 			if(namespaces == null)
 			{
 				namespaces = new XmlSerializerNamespaces();
@@ -170,9 +183,6 @@ namespace System.Xml.Serialization
 				namespaces.Add("xsi", System.Xml.Schema.XmlSchema.InstanceNamespace);
 			}
 
-			Type objType = o.GetType();
-			string rootName = objType.Name;
-			string rootNs	= null;
 			XmlSerializerNamespaces nss = new XmlSerializerNamespaces();
 			XmlQualifiedName[] qnames;
 
@@ -195,6 +205,10 @@ namespace System.Xml.Serialization
 					rootName = attrs.XmlRoot.ElementName;
 				rootNs	= attrs.XmlRoot.Namespace;
 			}
+
+			if(namespaces.GetPrefix(rootNs) != null)
+				rootPrefix = namespaces.GetPrefix (rootNs);
+
 
 			//XMLNS attributes in the Root
 			XmlAttributes XnsAttrs = (XmlAttributes)((object[])typeTable[objType])[1];
@@ -225,8 +239,8 @@ namespace System.Xml.Serialization
 				}
 			}
 
-			if(namespaces.GetPrefix(rootNs) != null)
-				writer.WriteStartElement(namespaces.GetPrefix(rootNs),rootName, rootNs);
+
+			writer.WriteStartElement(rootPrefix,rootName, rootNs);
 
 			qnames = nss.ToArray();
 			foreach(XmlQualifiedName qname in qnames)
@@ -237,8 +251,11 @@ namespace System.Xml.Serialization
 				}
 			}
 
+			if (rootPrefix == String.Empty && rootNs != String.Empty && rootNs != null)
+				writer.WriteAttributeString(String.Empty, "xmlns", null, rootNs);
+
 			SerializeMembers(writer, o, true);//, namespaces);
-			writer.WriteEndElement();
+			writer.WriteEndDocument();
 		}
 
 		private void SerializeMembers ( XmlWriter writer, object o, bool isRoot)
@@ -247,6 +264,7 @@ namespace System.Xml.Serialization
 			XmlAttributes XnsAttrs = (XmlAttributes)((object[])typeTable[objType])[1];
 			ArrayList attrList = (ArrayList)((object[])typeTable[objType])[2];
 			ArrayList elemList = (ArrayList)((object[])typeTable[objType])[3];
+
 
 			if(!isRoot && XnsAttrs != null)
 			{
