@@ -1,3 +1,8 @@
+2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (method_encode_code): Align method headers properly.
+	Fixes #66025.
+
 2004-09-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: reuse allocated slots in the queue.
