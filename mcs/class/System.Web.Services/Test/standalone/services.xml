@@ -2910,4 +2910,22 @@
     </protocols>
     <clientTest>false</clientTest>
   </service>
+  <service>
+    <wsdl>http://www.quisque.com/fr/chasses/blasons/search.asmx?WSDL</wsdl>
+    <name>searchTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://survey.rila.net/SurveyService/SurveyService.asmx?wsdl</wsdl>
+    <name>SurveyServiceTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
 </services>

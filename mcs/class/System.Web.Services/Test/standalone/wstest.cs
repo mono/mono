@@ -223,8 +223,6 @@ public class Driver
 			}
 		}
 		
-		Console.WriteLine (loc + " - " + sd.ServerType);
-		
 		ArrayList bins = GetBindingTypes (doc);
 		sd.Protocols = (string[]) bins.ToArray(typeof(string));
 		return sd;
