@@ -39,6 +39,8 @@ System.Windows.Forms/ColumnClickEventArgs.cs
 System.Windows.Forms/ColumnClickEventHandler.cs
 System.Windows.Forms/ColumnHeader.cs
 System.Windows.Forms/ColumnHeaderStyle.cs
+System.Windows.Forms/ComboBox.cs
+System.Windows.Forms/ComboBoxStyle.cs
 System.Windows.Forms/CommonDialog.cs
 System.Windows.Forms/ContainerControl.cs
 System.Windows.Forms/ContextMenu.cs
