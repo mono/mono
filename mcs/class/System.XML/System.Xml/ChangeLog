@@ -1,3 +1,9 @@
+2003-12-11  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentNavigator.cs : Fixed MoveToNextAttribute (and 
+	  MoveToNextNamespace) that might result in NullReferenceException.
+	  patch by Sanjay Gupta. This fixed bug #51941 (and possibly #51415)
+
 2003-12-07  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlUrlResolver.cs : Update with recent System.Uri change. This fixes

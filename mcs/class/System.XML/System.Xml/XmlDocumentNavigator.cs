@@ -401,6 +401,9 @@ namespace System.Xml
 			// Find current attribute.
 			int pos = 0;
 			XmlElement owner = ((XmlAttribute) node).OwnerElement;
+			if (owner == null)
+				return false;
+
 			int count = owner.Attributes.Count;
 			for(; pos < count; pos++)
 				if (owner.Attributes [pos] == node)
@@ -431,6 +434,9 @@ namespace System.Xml
 			// Get current attribute's position.
 			int pos = 0;
 			XmlElement owner = ((XmlAttribute) nsNode).OwnerElement;
+			if (owner == null)
+				return false;
+
 			int count = owner.Attributes.Count;
 			for(; pos < count; pos++)
 				if (owner.Attributes [pos] == nsNode)
