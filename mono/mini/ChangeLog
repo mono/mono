@@ -1,3 +1,8 @@
+2004-10-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (genmdesc_LDADD): Don't link this against libmetadata
+	to speed up rebuilds.
+
 2004-10-04  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* mini-s390.c: Minor fix to OP_OR_IMM.
