@@ -1,0 +1,4 @@
+2003-03-31	Alan Tam <Tam@SiuLung.com
+
+	* CollectionEditor.cs: Fixed compilation errors.
+	* ComponentDesigner.cs: Fixed compilation errors.

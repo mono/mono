@@ -122,37 +122,43 @@ namespace System.ComponentModel.Design
 		}
 
 		[MonoTODO]
-		protected virtual void PostFilterAttributes (IDictionary attributes)
+		// LAMESPEC: Spec says protected but cannot compile
+		public virtual void PostFilterAttributes (IDictionary attributes)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual void PostFilterEvents (IDictionary events)
+		// LAMESPEC: Spec says protected but cannot compile
+		public virtual void PostFilterEvents (IDictionary events)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual void PostFilterProperties (IDictionary properties)
+		// LAMESPEC: Spec says protected but cannot compile
+		public virtual void PostFilterProperties (IDictionary properties)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual void PreFilterAttributes (IDictionary attributes)
+		// LAMESPEC: Spec says protected but cannot compile
+		public virtual void PreFilterAttributes (IDictionary attributes)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual void PreFilterEvents (IDictionary events)
+		// LAMESPEC: Spec says protected but cannot compile
+		public virtual void PreFilterEvents (IDictionary events)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual void PreFilterProperties (IDictionary properties)
+		// LAMESPEC: Spec says protected but cannot compile
+		public virtual void PreFilterProperties (IDictionary properties)
 		{
 			throw new NotImplementedException();
 		}

@@ -128,7 +128,7 @@ namespace System.ComponentModel.Design
 		}
 
 		[MonoTODO]
-		public object EditValue (ITypeDescriptorContext context,
+		public override object EditValue (ITypeDescriptorContext context,
 						  IServiceProvider provider,
 						  object value)
 		{
@@ -136,21 +136,8 @@ namespace System.ComponentModel.Design
 		}
 
 		[MonoTODO]
-		public object EditValue (IServiceProvider provider,
-					 object value)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public UITypeEditorEditStyle GetEditStyle (
+		public override UITypeEditorEditStyle GetEditStyle (
 						      ITypeDescriptorContext context)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public UITypeEditorEditStyle GetEditStyle()
 		{
 			throw new NotImplementedException();
 		}
