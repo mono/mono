@@ -40,7 +40,7 @@ namespace Microsoft.Web.Services.Addressing
 		{
 		}
 
-		public new void GetXmlAny (XmlDocument document, XmlElement element)
+		protected override void GetXmlAny (XmlDocument document, XmlElement element)
 		{
 			if(document == null) {
 				throw new ArgumentNullException ("document");
@@ -66,7 +66,7 @@ namespace Microsoft.Web.Services.Addressing
 			base.GetXmlAny (document, element);
 		}
 
-		public new void LoadXmlAny (XmlElement element)
+		protected override void LoadXmlAny (XmlElement element)
 		{
 			if(element == null) {
 				throw new ArgumentNullException ("element");
