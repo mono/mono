@@ -1,3 +1,9 @@
+2004-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Return an empty Evidence collection to avoid 
+	NullReferenceException from calling code (as this is never
+	null with MS implementation). See bugzilla #53548.
+
 2004-05-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs: Add stub for LoadFrom.

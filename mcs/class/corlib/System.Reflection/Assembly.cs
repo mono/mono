@@ -5,6 +5,7 @@
 //   Paolo Molaro (lupus@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -96,10 +97,9 @@ namespace System.Reflection {
 			get;
 		}
 
+		[MonoTODO ("CAS related - post Mono 1.0 (see #53548)")]
 		public virtual Evidence Evidence {
-			get {
-				return null;
-			}
+			get { return new Evidence (); }
 		}
 
 		public bool GlobalAssemblyCache {
