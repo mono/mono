@@ -1,5 +1,13 @@
 2004-04-22  Marek Safar  <marek.safar@seznam.cz>
 
+	* decl.cs (FindMemberToOverride): Fix wrong warning for case when
+        derived class hides via 'new' keyword field from base class (test-242.cs).
+        TODO: Handle this in the more general way.
+        
+	* class.cs (CheckBase): Ditto.
+
+2004-04-22  Marek Safar  <marek.safar@seznam.cz>
+
 	* decl.cs (caching_flags): New member for storing cached values
 	as bit flags.
 	(MemberCore.Flags): New enum where bit flags for caching_flags

@@ -1725,21 +1725,56 @@ namespace Mono.CSharp {
 			for (int i = applicable.Count - 1; i >= 0; i--) {
 				CacheEntry entry = (CacheEntry) applicable [i];
 				
-				if ((entry.EntryType & (is_property ? EntryType.Property : EntryType.Method)) == 0)
+				if ((entry.EntryType & (is_property ? (EntryType.Property | EntryType.Field) : EntryType.Method)) == 0)
 					continue;
 
 				PropertyInfo pi = null;
 				MethodInfo mi = null;
-				Type [] cmpAttrs;
+				FieldInfo fi = null;
+				Type [] cmpAttrs = null;
 				
 				if (is_property) {
-					pi = (PropertyInfo) entry.Member;
-					cmpAttrs = TypeManager.GetArgumentTypes (pi);
+					if ((entry.EntryType & EntryType.Field) != 0) {
+						fi = (FieldInfo)entry.Member;
+
+						// TODO: For this case we ignore member type
+						//fb = TypeManager.GetField (fi);
+						//cmpAttrs = new Type[] { fb.MemberType };
+					} else {
+						pi = (PropertyInfo) entry.Member;
+						cmpAttrs = TypeManager.GetArgumentTypes (pi);
+					}
 				} else {
 					mi = (MethodInfo) entry.Member;
 					cmpAttrs = TypeManager.GetArgumentTypes (mi);
 				}
-				
+
+				if (fi != null) {
+					// TODO: Almost duplicate !
+					// Check visibility
+					switch (fi.Attributes & FieldAttributes.FieldAccessMask) {
+						case FieldAttributes.Private:
+							//
+							// A private method is Ok if we are a nested subtype.
+							// The spec actually is not very clear about this, see bug 52458.
+							//
+							if (invocationType != entry.Container.Type &
+								TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
+								continue;
+
+							break;
+						case FieldAttributes.FamANDAssem:
+						case FieldAttributes.Assembly:
+							//
+							// Check for assembly methods
+							//
+							if (mi.DeclaringType.Assembly != CodeGen.Assembly.Builder)
+								continue;
+							break;
+					}
+					return entry.Member;
+				}
+
 				//
 				// Check the arguments
 				//
