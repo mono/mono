@@ -313,7 +313,7 @@ namespace System.Xml.XPath
 		{
 			if (!MoveToAttribute (localName, namespaceURI))
 				return String.Empty;
-			string value = nav.Value;
+			string value = Value;
 			MoveToParent ();
 			return value;
 		}
@@ -322,7 +322,7 @@ namespace System.Xml.XPath
 		{
 			if (!MoveToNamespace (name))
 				return String.Empty;
-			string value = nav.Value;
+			string value = Value;
 			MoveToParent ();
 			return value;
 		}
