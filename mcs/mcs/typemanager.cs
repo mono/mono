@@ -690,6 +690,7 @@ public class TypeManager {
 	struct CriteriaKey {
 		public MemberTypes mt;
 		public BindingFlags bf;
+		public MemberFilter filter;
 	}
 	
 	static Hashtable criteria_cache = new PtrHashtable ();
@@ -707,7 +708,8 @@ public class TypeManager {
 		
 		ck.mt = mt;
 		ck.bf = bf;
-
+		ck.filter = filter;
+		
 		if (criteria_hash != null){
 			type_hash = (Hashtable) criteria_hash [t];
 
