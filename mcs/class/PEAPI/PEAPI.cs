@@ -954,6 +954,10 @@ namespace PEAPI
     uint codeSize = 0, exceptSize = 0;
     bool tinyFormat, fatExceptionFormat = false;
 
+    public uint Offset {
+	get { return offset; }
+    }	
+
     internal CILInstructions(MetaData md) {
       metaData = md;
     }

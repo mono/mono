@@ -1,3 +1,7 @@
+2004-07-27  Martin Baulig  <martin@ximian.com>
+
+	* PEAPI.cs (CILInstructions.Offset): New public property.
+
 2004-07-23  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: Make the type index modifiable so ClassRefInsts will
