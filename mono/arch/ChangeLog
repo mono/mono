@@ -1,3 +1,8 @@
+
+Fri Jul 19 14:18:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: fix float loads. Simple delegate marshaling fix.
+
 2002-07-08  Radek Doulik  <rodo@ximian.com>
 
 	* ppc/tramp.c: marshaling for SZARRAY
