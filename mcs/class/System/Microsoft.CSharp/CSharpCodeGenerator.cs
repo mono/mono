@@ -236,8 +236,12 @@ namespace Mono.CSharp
 
 		protected override void GeneratePropertyReferenceExpression( CodePropertyReferenceExpression expression )
 		{
-			GenerateMemberReferenceExpression( expression.TargetObject,
-							   expression.PropertyName );
+			CodeExpression targetObject = expression.TargetObject;
+			if ( targetObject != null ) {
+				GenerateExpression( targetObject );
+				Output.Write( '.' );
+			}
+			Output.Write( GetSafeName (expression.PropertyName ) );
 		}
 
 		protected override void GeneratePropertySetValueReferenceExpression( CodePropertySetValueReferenceExpression expression )
@@ -773,8 +777,10 @@ namespace Mono.CSharp
 		
 		private void GenerateMemberReferenceExpression( CodeExpression targetObject, string memberName )
 		{
-			GenerateExpression( targetObject );
-			Output.Write( '.' );
+			if (targetObject != null ) {
+				GenerateExpression( targetObject );
+				Output.Write( '.' );
+			}
 			Output.Write( GetSafeName (memberName) );
 		}
 			
