@@ -49,15 +49,11 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ColorDialog( ) : base()
 		{
-			form.ClientSize = new Size( 448, 300 );
-			
 			form.Text = "Color";
 			
-			form.Size = new Size( 221, 300 );
+			form.Size = new Size( 221, 332 ); // 300
 			
 			colorDialogPanel = new ColorDialogPanel( this );
-			
-			form.Controls.Add( colorDialogPanel );
 		}
 		#endregion	// Public Constructors
 		
@@ -90,7 +86,7 @@ namespace System.Windows.Forms
 		}
 		
 		// Currently AnyColor internally is always true
-		// Does really anybody use 256 or less colors ???
+		// Does really anybody still use 256 or less colors ???
 		// Naw, cairo only supports 24bit anyway - pdb
 		[DefaultValue(false)]
 		public virtual bool AnyColor
@@ -202,6 +198,8 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{
+			form.Controls.Add( colorDialogPanel );
+			
 			if ( customColors != null )
 				colorDialogPanel.BaseColorControl.SetCustomColors( );
 			
@@ -286,27 +284,27 @@ namespace System.Windows.Forms
 				satTextBox.Location = new Point( 324, 225 );
 				satTextBox.Size = new Size( 27, 21 );
 				satTextBox.TabIndex = 15;
-				hueTextBox.TextAlign = HorizontalAlignment.Right;
+				satTextBox.TextAlign = HorizontalAlignment.Right;
 				// greenTextBox
 				greenTextBox.Location = new Point( 404, 225 );
 				greenTextBox.Size = new Size( 27, 21 );
 				greenTextBox.TabIndex = 18;
-				hueTextBox.TextAlign = HorizontalAlignment.Right;
+				greenTextBox.TextAlign = HorizontalAlignment.Right;
 				// briTextBox
 				briTextBox.Location = new Point( 324, 247 );
 				briTextBox.Size = new Size( 27, 21 );
 				briTextBox.TabIndex = 16;
-				hueTextBox.TextAlign = HorizontalAlignment.Right;
+				briTextBox.TextAlign = HorizontalAlignment.Right;
 				// blueTextBox
 				blueTextBox.Location = new Point( 404, 247 );
 				blueTextBox.Size = new Size( 27, 21 );
 				blueTextBox.TabIndex = 19;
-				hueTextBox.TextAlign = HorizontalAlignment.Right;
+				blueTextBox.TextAlign = HorizontalAlignment.Right;
 				// redTextBox
 				redTextBox.Location = new Point( 404, 203 );
 				redTextBox.Size = new Size( 27, 21 );
 				redTextBox.TabIndex = 17;
-				hueTextBox.TextAlign = HorizontalAlignment.Right;
+				redTextBox.TextAlign = HorizontalAlignment.Right;
 				
 				// redLabel
 				redLabel.FlatStyle = FlatStyle.System;
@@ -331,7 +329,7 @@ namespace System.Windows.Forms
 				greenLabel.TextAlign = ContentAlignment.MiddleRight;
 				// colorBaseLabel
 				colorBaseLabel.Location = new Point( 228, 247 );
-				colorBaseLabel.Size = new Size( 60, 12 );
+				colorBaseLabel.Size = new Size( 60, 25 );
 				colorBaseLabel.TabIndex = 28;
 				colorBaseLabel.Text = "Color|Base";
 				colorBaseLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -390,7 +388,7 @@ namespace System.Windows.Forms
 				
 				// baseColorControl
 				baseColorControl.Location = new Point( 3, 7 );
-				baseColorControl.Size = new Size( 212, 226 );
+				baseColorControl.Size = new Size( 212, 230 );
 				baseColorControl.TabIndex = 13;
 				// colorMatrixControl
 				colorMatrixControl.BackColor = SystemColors.Control;
@@ -413,15 +411,7 @@ namespace System.Windows.Forms
 				selectedColorPanel.Size = new Size( 60, 44 );
 				selectedColorPanel.TabIndex = 10;
 				
-				ClientSize = new Size( 448, 300 );
-				Controls.Add( colorBaseLabel );
-				Controls.Add( greenLabel );
-				Controls.Add( blueLabel );
-				Controls.Add( redLabel );
-				Controls.Add( briLabel );
-				Controls.Add( hueLabel );
-				Controls.Add( satLabel );
-				
+				ClientSize = new Size( 448, 332 ); // 300
 				Controls.Add( hueTextBox );
 				Controls.Add( satTextBox );
 				Controls.Add( briTextBox );
@@ -439,6 +429,14 @@ namespace System.Windows.Forms
 				Controls.Add( colorMatrixControl );
 				Controls.Add( brightnessControl );
 				Controls.Add( triangleControl );
+				
+				Controls.Add( colorBaseLabel );
+				Controls.Add( greenLabel );
+				Controls.Add( blueLabel );
+				Controls.Add( redLabel );
+				Controls.Add( briLabel );
+				Controls.Add( hueLabel );
+				Controls.Add( satLabel );
 				
 				Controls.Add( selectedColorPanel );
 				
@@ -471,8 +469,6 @@ namespace System.Windows.Forms
 				okButton.Click += new EventHandler( OnClickOkButton );
 							
 				SetStyle( ControlStyles.DoubleBuffer, true );
-				SetStyle( ControlStyles.AllPaintingInWmPaint, true );
-				SetStyle( ControlStyles.UserPaint, true );
 			}
 			
 			public Panel SelectedColorPanel
@@ -633,11 +629,13 @@ namespace System.Windows.Forms
 			
 			void OnClickCancelButton( object sender, EventArgs e )
 			{
+				colorDialog.form.Controls.Remove(this);
 				colorDialog.form.DialogResult = DialogResult.Cancel;
 			}
 			
 			void OnClickOkButton( object sender, EventArgs e )
 			{
+				colorDialog.form.Controls.Remove(this);
 				colorDialog.form.DialogResult = DialogResult.OK;
 			}
 			
@@ -654,7 +652,7 @@ namespace System.Windows.Forms
 				
 				colorMatrixControl.ColorToShow = baseColorControl.ColorToShow;
 				
-				colorDialog.form.Size = new Size( 448, 300 );
+				colorDialog.form.ClientSize = new Size( 448, 332 );
 			}
 			
 			void OnButtonAddColours( object sender, EventArgs e )
@@ -1532,7 +1530,6 @@ namespace System.Windows.Forms
 			{
 				// this could be optimized.
 				// with the current implementation there are some dots left on the corner of the panels when removing the rectangles
-				// FIXME: One line below the bottom userColorPanels doesn't get painted
 				if ( previousSelectedBaseColourPanel != null && panelSelected )
 				{
 					ControlPaint.DrawBorder(
