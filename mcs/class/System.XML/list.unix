@@ -2,7 +2,9 @@ Mono.Xml.XPath/DTMXPathDocument.cs
 Mono.Xml.XPath/DTMXPathDocumentBuilder.cs
 Mono.Xml.XPath/DTMXPathNavigator.cs
 System.Xml/IHasXmlNode.cs
+System.Xml/DTDAutomata.cs
 System.Xml/DTDObjectModel.cs
+System.Xml/DTDValidatingReader.cs
 System.Xml/EntityHandling.cs
 System.Xml/Formatting.cs
 System.Xml/IXmlLineInfo.cs
@@ -88,6 +90,7 @@ System.Xml.Xsl/XsltArgumentList.cs
 System.Xml.Xsl/XsltCompileException.cs
 System.Xml.Xsl/XsltContext.cs
 System.Xml.Xsl/XsltException.cs
+System.Xml.Schema/BuiltInDatatype.cs
 System.Xml.Schema/ValidationEventArgs.cs
 System.Xml.Schema/XmlSchema.cs
 System.Xml.Schema/XmlSchemaAll.cs
