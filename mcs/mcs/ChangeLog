@@ -1,5 +1,11 @@
 2002-11-16  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (MemberCache.AddMethods): Use BindingFlags.FlattenHierarchy
+	when looking up static methods to make this work on Windows.
+	Fixes #33773.
+
+2002-11-16  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (PropertyExpr.VerifyAssignable): Check whether we have
 	a setter rather than using PropertyInfo.CanWrite.
 

@@ -989,8 +989,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		void AddMethods (Type type)
 		{
-			AddMethods (BindingFlags.Static | BindingFlags.Public, type);
-			AddMethods (BindingFlags.Static | BindingFlags.NonPublic, type);
+			AddMethods (BindingFlags.Static | BindingFlags.Public |
+				    BindingFlags.FlattenHierarchy, type);
+			AddMethods (BindingFlags.Static | BindingFlags.NonPublic |
+				    BindingFlags.FlattenHierarchy, type);
 			AddMethods (BindingFlags.Instance | BindingFlags.Public, type);
 			AddMethods (BindingFlags.Instance | BindingFlags.NonPublic, type);
 		}
