@@ -114,7 +114,10 @@ namespace System.IO
 			// TODO: demand permissions
 
 			MonoIOError error;
-			
+
+  			if (!MonoIO.ExistsDirectory (Path.GetDirectoryName (name), out error))
+  				throw new DirectoryNotFoundException (Path.GetDirectoryName (name));
+
 			this.handle = MonoIO.Open (name, mode, access, share,
 						   out error);
 			if (handle == MonoIO.InvalidHandle) {
