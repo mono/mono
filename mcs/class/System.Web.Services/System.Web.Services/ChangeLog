@@ -1,3 +1,9 @@
+2004-08-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* WebService.cs: Get the HttpContext from the HttpContext.Current, do not
+	  wait to be set with SetContext. In this way the context is available
+	  in the web service constructor.
+
 2004-07-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* WebServiceBindingAttribute.cs, WsiClaims.cs: Added missing attributes.
