@@ -244,7 +244,8 @@ namespace System.Collections
       // But the MS implementation seems to do a deep copy.
       return new BitArray((Int32 [])m_array.Clone(), m_length);
     }
-    
+
+    [TODO]	 
     public void CopyTo(Array array, int index)
     {
       if (array == null)

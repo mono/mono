@@ -203,9 +203,7 @@ namespace System.Collections {
 				if (index < 0) {
 					throw new ArgumentOutOfRangeException ("index < 0");
 				}
-				// FIXME -- should setting an index implicitly extend the array?
-				// the docs aren't clear -- I'm assuming not, since the exception
-				// is listed for both get and set
+
 				if (index >= count) {
 					throw new ArgumentOutOfRangeException ("index out of range");
 				}
@@ -289,6 +287,7 @@ namespace System.Collections {
 			System.Array.Copy (dataArray, 0, array, arrayIndex, count);
 		}
 
+		[TODO]
 		public virtual void CopyTo (int index, Array array,
 					    int arrayIndex, int count) {
 			// FIXME: check count...
@@ -491,6 +490,7 @@ namespace System.Collections {
 			return outArray;
 		}
 
+		[TODO]
 		public virtual void TrimToSize () {
 			// FIXME: implement this
 		}

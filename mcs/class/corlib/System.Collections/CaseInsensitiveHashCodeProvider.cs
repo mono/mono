@@ -61,6 +61,7 @@ namespace System.Collections {
 		// IHashCodeProvider
 		//
 
+		[TODO]
 		public virtual int GetHashCode (object obj)
 		{
 			if (obj == null) {

@@ -19,6 +19,7 @@ using System.Collections;
 
 namespace System.Collections {
 
+	[TODO]
 	public class Hashtable : IDictionary, ICollection, 
 	                         IEnumerable, ICloneable
 	{
@@ -391,11 +392,13 @@ namespace System.Collections {
 		}
 
 
+		[TODO]
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {}
 
-		// TODO: public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {}
-		// TODO: public virtual void OnDeserialization (object sender);
+		[TODO]
+		public virtual void OnDeserialization (object sender);
 
-
+		[TODO]
 		public override string ToString ()
 		{
 			// FIXME: What's it supposed to do?

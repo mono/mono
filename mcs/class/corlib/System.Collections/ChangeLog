@@ -1,4 +1,16 @@
+2002-01-04  Ravi Pratap  <ravi@ximian.com>
 
+	* ArrayList.cs : Setting an index does not implicitly
+	extend the arraylist : remove FIXME.
+
+	Decorate incomplete elements with the TODO attribute.
+
+	* BitArray.cs : Insert TODO attributes where appropriate.
+
+	* CaseInsensitiveHashcodeProvider.cs: Ditto.
+
+	* Hashtable.cs, SortedList.cs : Ditto.
+	
 Thu Dec 13 20:17:08 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* ArrayList.cs: implemented AddRange(), CopyTo().

@@ -794,6 +794,7 @@ namespace System.Collections {
 			}
 
 
+			[TODO]
 			public virtual object this [int index] {
 				get {
 					return host.GetByIndex (index);
