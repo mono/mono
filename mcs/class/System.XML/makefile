@@ -1,3 +1,5 @@
+DIRS=System.Xml
+
 all:
 	@echo "You must use 'make windows' or 'make unix'."
 	@echo "'make unix' is broken for now."
@@ -9,6 +11,6 @@ unix:
 	@echo "'make unix' is broken for now."
 
 make-list:
-	cat common.src windows.src > list
-
-test: $(PLATFORM)
+	for i in $(DIRS); do						\
+		cat $$i/common.src $$i/windows.src | sed "s/^/$$i\\\\/";	\
+	done > list

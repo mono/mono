@@ -6,7 +6,6 @@ ArithmeticException.cs
 Array.cs
 ArrayTypeMismatchException.cs
 Boolean.cs
-BitArray.cs
 Convert.cs
 DivideByZeroException.cs
 DuplicateWaitObjectException.cs

@@ -33,7 +33,7 @@ namespace System.Collections {
 
 		bool Contains (object key);
 
-		IDictionaryEnumerator GetEnumerator ();
+		new IDictionaryEnumerator GetEnumerator ();
 
 		void Remove (object key);
 	}

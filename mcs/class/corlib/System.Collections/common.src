@@ -1,4 +1,5 @@
 ArrayList.cs
+BitArray.cs
 Hashtable.cs
 ICollection.cs
 IComparer.cs
