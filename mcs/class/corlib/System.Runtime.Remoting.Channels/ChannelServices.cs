@@ -254,7 +254,7 @@ namespace System.Runtime.Remoting.Channels
 				{
 					IChannel regc = (IChannel) registeredChannels[n];
 					
-					if (regc.ChannelName == chnl.ChannelName)
+					if (regc.ChannelName == chnl.ChannelName && chnl.ChannelName != "")
 						throw new RemotingException ("Channel " + regc.ChannelName + " already registered");
 						
 					if (regc.ChannelPriority < chnl.ChannelPriority && pos==-1)
