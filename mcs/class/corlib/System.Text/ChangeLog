@@ -1,3 +1,10 @@
+2001-10-29  Nick Drochak  <ndrochak@gol.com>
+
+	* StringBuilder.cs: Throw exceptions when constructor paramter(s) are
+		invalid. Just like MS does (as best as I can tell).
+
+	Tests for these exceptions are now added to the unit tests as well.
+
 2001-10-25  Nick Drochak  <ndrochak@gol.com>
 
 	* StringBuilder.cs: Throw exception if they try to make a StringBuilder

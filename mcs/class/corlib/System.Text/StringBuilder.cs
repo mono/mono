@@ -22,58 +22,72 @@ namespace System.Text {
 		private char[] sString;
 		private int sMaxCapacity = Int32.MaxValue;
 
-		public StringBuilder(string str, int startIndex, int length, int capacity) {
+		public StringBuilder(string value, int startIndex, int length, int capacity) {
+			// first, check the parameters and throw appropriate exceptions if needed
+			if(null==value) {
+				throw new System.ArgumentNullException("value");
+			}
+
+			// make sure startIndex is zero or positive
+			if(startIndex < 0) {
+				throw new System.ArgumentOutOfRangeException("startIndex", startIndex, "StartIndex cannot be less than zero.");
+			}
+
+			// make sure length is zero or positive
+			if(length < 0) {
+				throw new System.ArgumentOutOfRangeException("length", length, "Length cannot be less than zero.");
+			}
+
+			// make sure startIndex and length give a valid substring of value
+			if(startIndex + (length -1) > (value.Length - 1) ) {
+				throw new System.ArgumentOutOfRangeException("startIndex", startIndex, "StartIndex and length must refer to a location within the string.");
+			}
+			
 			// the capacity must be at least as big as the default capacity
-			// LAMESPEC: what to do if capacity is too small to hold the substring?
-			// For now, truncate the substring to "capacity" characters
 			sCapacity = Math.Max(capacity, defaultCapacity);
+
+			// LAMESPEC: what to do if capacity is too small to hold the substring?
+			// Like the MS implementation, double the capacity until it is large enough
+			while (sCapacity < length) {
+				// However, take care not to double if that would make the number
+				// larger than what an int can hold
+				if (sCapacity <= Int32.MaxValue / 2) {
+					sCapacity *= 2;
+				}
+				else{
+					sCapacity = Int32.MaxValue;
+				}
+			}
+
 			sString = new char[sCapacity];
+			sLength = length;
 
-			// LAMESPEC: what to do if startIndex is too big?  Throw an exception?  Which one?
-			// For now, if the startIndex is beyond the end of the string, create an empty StringBuilder
-			// Also, if str is null, then create an empty StringBuilder
-			if (null == str || startIndex > str.Length - 1) 
-			{
-				sLength = 0;
-			}
-			else
-			{
-				// LAMESPEC: what if the length specified would take us past the end of the string?
-				// For now, copy to the end of the string
-				// First find out how many characters we can actually copy
-				sLength = Math.Min(length, str.Length - startIndex);
-				// Then limit the length to the capacity if necessary.  See LAMESPEC above.
-				sLength = Math.Min(sLength, capacity);
-			}
-
-			// if the length is not going to be zero, then we have to copy some characters
+			// if the length is not zero, then we have to copy some characters
 			if (sLength > 0) {
 				// Copy the correct number of characters into the internal array
-				char[] tString = str.ToCharArray(startIndex, sLength);
+				char[] tString = value.ToCharArray(startIndex, sLength);
 				Array.Copy( tString, sString, sLength);
 			}
 		}
 
-		public StringBuilder() : this(null, 0, 0, 0) {}
+		public StringBuilder() : this(String.Empty, 0, 0, 0) {}
 
-		public StringBuilder( int capacity ) : this(null, 0, 0, capacity) {}
+		public StringBuilder( int capacity ) : this("", 0, 0, capacity) {}
 
-		public StringBuilder( int capacity, int maxCapacity ) : this(null, 0, 0, capacity) {
-			if(capacity > maxCapacity) 
-			{
+		public StringBuilder( int capacity, int maxCapacity ) : this("", 0, 0, capacity) {
+			if(capacity > maxCapacity) {
 				throw new System.ArgumentOutOfRangeException("capacity", "Capacity exceeds maximum capacity.");
 			}
 			sMaxCapacity = maxCapacity;
 		}
 
-		public StringBuilder( string str ) : this(str, 0, str.Length, str.Length) {}
+		public StringBuilder( string value ) : this(value, 0, value == null ? 0 : value.Length, value == null? 0 : value.Length) {
+		}
 	
-		public StringBuilder( string str, int capacity) : this(str, 0, str.Length, capacity) {}
+		public StringBuilder( string value, int capacity) : this(value, 0, value.Length, capacity) {}
 	
-		public int MaxCapacity 
-		{
-			get 
-			{
+		public int MaxCapacity {
+			get {
 				// TODO: Need to look at the memory of the system to return a useful value here
 				return sMaxCapacity;
 			}
@@ -103,7 +117,7 @@ namespace System.Text {
 			}
 
 			set {
-				if( value < 0 || value > Int32.MaxValue) {
+				if( value < 0 || value > MaxCapacity) {
 					throw new ArgumentOutOfRangeException();
 				} else {
 					if( value < sLength ) {
@@ -171,7 +185,7 @@ namespace System.Text {
 		public int EnsureCapacity( int capacity ) {
 			if( capacity < 0 ) {
 				throw new ArgumentOutOfRangeException( 
-									"Capacity must be greater than 0." );
+					"Capacity must be greater than 0." );
 			}
 
 			if( capacity <= sCapacity ) {
@@ -196,10 +210,10 @@ namespace System.Text {
 			}
 
 			// Copy everything after the 'removed' part to the start 
-						// of the removed part and truncate the sLength
+			// of the removed part and truncate the sLength
 
 			Array.Copy( sString, startIndex + length, sString, 
-							startIndex, length );
+				startIndex, length );
 
 			sLength -= length;
 			return this;
@@ -207,7 +221,7 @@ namespace System.Text {
 
 		public StringBuilder Replace( char oldChar, char newChar ) {
 		
-				return Replace( oldChar, newChar, 0, sLength);
+			return Replace( oldChar, newChar, 0, sLength);
 		}
 
 		public StringBuilder Replace( char oldChar, char newChar, int startIndex, int count ) {
@@ -235,7 +249,7 @@ namespace System.Text {
 
 			if( oldValue == null ) { 
 				throw new ArgumentNullException(
-									"The old value cannot be null.");
+					"The old value cannot be null.");
 			}
 
 			if( startIndex < 0 || count < 0 || startIndex + count > sLength ) {
@@ -244,7 +258,7 @@ namespace System.Text {
 
 			if( oldValue.Length == 0 ) {
 				throw new ArgumentException(
-									"The old value cannot be zero length.");
+					"The old value cannot be zero length.");
 			}
 
 			int nextIndex = startIndex; // Where to start the next search
@@ -254,27 +268,27 @@ namespace System.Text {
 				nextIndex = startString.IndexOf( oldValue, lastIndex);				  
 				if( nextIndex != -1 ) {
 					// The MS implementation won't replace a substring 
-										// if that substring goes over the "count"
-										// boundary, so we'll make sure the behaviour 
-										// here is the same.
+					// if that substring goes over the "count"
+					// boundary, so we'll make sure the behaviour 
+					// here is the same.
 
 					if( nextIndex + oldValue.Length <= startIndex + count ) {
 
 						// Add everything to the left of the old 
-												// string
+						// string
 						newStringB.Append( startString.Substring( lastIndex, nextIndex - lastIndex ) );
 	
 						// Add the replacement string
 						newStringB.Append( newValue );
 						
 						// Set the next start point to the 
-												// end of the last match
+						// end of the last match
 						lastIndex = nextIndex + oldValue.Length;
 					} else {
 						// We're past the "count" we're supposed to replace within
 						nextIndex = -1;
 						newStringB.Append( 
-													startString.Substring( lastIndex ) );
+							startString.Substring( lastIndex ) );
 					}
 
 				} else {
@@ -292,7 +306,7 @@ namespace System.Text {
 		}
 
 		      
-		    /* The Append Methods */
+		/* The Append Methods */
 
 		// TODO: Currently most of these methods convert the 
 		// parameter to a CharArray (via a String) and then pass
@@ -406,7 +420,7 @@ namespace System.Text {
 		public StringBuilder Append( char[] value, int startIndex, int charCount ) {
 
 			if( (charCount < 0 || startIndex < 0) || 
-					( charCount + startIndex > value.Length ) ) {
+				( charCount + startIndex > value.Length ) ) {
 				throw new ArgumentOutOfRangeException();
 			}
 			
@@ -426,7 +440,7 @@ namespace System.Text {
 
 		public StringBuilder Append( string value, int startIndex, int count ) {
 			if( (count < 0 || startIndex < 0) || 
-							( startIndex + count > value.Length ) ) { 
+				( startIndex + count > value.Length ) ) { 
 				throw new ArgumentOutOfRangeException();
 			}
 
@@ -444,7 +458,7 @@ namespace System.Text {
 		}
 
 		public StringBuilder AppendFormat( IFormatProvider provider, string format,
-								params object[] args ) {
+			params object[] args ) {
 			// TODO: Implement
 			return this;
 		}
@@ -536,7 +550,7 @@ namespace System.Text {
 		}
 
 		public StringBuilder Insert( int index, float value ) {
-		return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString().ToCharArray() );
 		}
 
 		public StringBuilder Insert( int index, ushort value ) {
@@ -559,7 +573,7 @@ namespace System.Text {
 			if( value != null ) {
 				if( value != "" ) {
 					for( int insertCount = 0; insertCount < count; 
-											insertCount++ ) {
+						insertCount++ ) {
 						Insert( index, value.ToCharArray() );	   
 					}
 				}
@@ -568,7 +582,7 @@ namespace System.Text {
 		}
 
 		public StringBuilder Insert( int index, char[] value, int startIndex, 
-					int charCount ) {
+			int charCount ) {
 
 			if( value != null ) {
 				if( charCount < 0 || startIndex < 0 || startIndex + charCount > value.Length ) {

@@ -75,19 +75,92 @@ public class StringBuilderTest : TestCase {
 		public void TestConstructor4() 
 		{
 			// check for exception in ctor that specifies the capacity & maxCapacity
-			try 
-			{
+			try {
 				sb = new StringBuilder(9999, 15);
 			}
-			catch (ArgumentOutOfRangeException e)
-			{
+			catch (ArgumentOutOfRangeException) {
 				return;
 			}
 			// if we didn't catch an exception, then we have a problem Houston.
 			NUnit.Framework.Assertion.Fail("Capacity exeeds MaxCapacity");
 		}
 
-        public void TestAppend() {
+	public void TestConstructor5() {
+		// check for exception in ctor that prevents null 'value'
+		try {
+			String someString = null;
+			sb = new StringBuilder(someString);
+		}
+		catch (ArgumentNullException) {
+			return;
+		}
+		// if we didn't catch an exception, then we have a problem Houston.
+		NUnit.Framework.Assertion.Fail("Value not allowed to be null.");
+	}
+
+	public void TestConstructor6() {
+		// check for exception in ctor that prevents startIndex less than zero
+		try {
+			String someString = "someString";
+			sb = new StringBuilder(someString, -1, 3, 18);
+		}
+		catch (ArgumentOutOfRangeException) {
+			return;
+		}
+		// if we didn't catch an exception, then we have a problem Houston.
+		NUnit.Framework.Assertion.Fail("StartIndex not allowed to be less than zero.");
+	}
+
+	public void TestConstructor7() {
+		// check for exception in ctor that prevents length less than zero
+		try {
+			String someString = "someString";
+			sb = new StringBuilder(someString, 2, -222, 18);
+		}
+		catch (ArgumentOutOfRangeException) {
+			return;
+		}
+		// if we didn't catch an exception, then we have a problem Houston.
+		NUnit.Framework.Assertion.Fail("Length not allowed to be less than zero.");
+	}
+
+	public void TestConstructor8() {
+		// check for exception in ctor that ensures substring is contained in given string
+		// check that startIndex is not too big
+		try {
+			String someString = "someString";
+			sb = new StringBuilder(someString, 10000, 4, 18);
+		}
+		catch (ArgumentOutOfRangeException) {
+			return;
+		}
+		// if we didn't catch an exception, then we have a problem Houston.
+		NUnit.Framework.Assertion.Fail("StartIndex and length must refer to a location within the string.");
+	}
+
+	public void TestConstructor9() {
+		// check for exception in ctor that ensures substring is contained in given string
+		// check that length doesn't go beyond end of string
+		try {
+			String someString = "someString";
+			sb = new StringBuilder(someString, 4, 4000, 18);
+		}
+		catch (ArgumentOutOfRangeException) {
+			return;
+		}
+		// if we didn't catch an exception, then we have a problem Houston.
+		NUnit.Framework.Assertion.Fail("StartIndex and length must refer to a location within the string.");
+	}
+
+	public void TestConstructor10() {
+		// check that substring is taken properly and made into a StringBuilder
+		String someString = "someString";
+		sb = new StringBuilder(someString, 4, 6, 18);
+		string expected = "String";
+		AssertEquals( expected, sb.ToString());
+	}
+
+	public void TestAppend() {
                 StringBuilder sb = new StringBuilder( "Foo" );
                 sb.Append( "Two" );
                 string expected = "FooTwo";
