@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.69 $
+// $Revision: 1.70 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.70  2004/10/18 04:16:29  pbartok
+// - Fixed/implemented flat list of controls
+//
 // Revision 1.69  2004/10/13 02:57:36  pbartok
 // - Fix from John BouAntoun: Raise ForeColorChanged event when text color is
 //   changed
@@ -376,7 +379,7 @@ namespace System.Windows.Forms
 		internal Size prev_size;
 
 		// to be categorized...
-		static internal Hashtable	controls;		// All of the applications controls, in a flat list
+		static internal ArrayList	controls = new ArrayList();		// All of the applications controls, in a flat list
 		internal ControlCollection	child_controls;		// our children
 		internal Control		parent;			// our parent control
 		internal AccessibleObject	accessibility_object;	// object that contains accessibility information about our control
@@ -494,8 +497,8 @@ namespace System.Windows.Forms
 
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
 			#region	ControlCollection Local Variables
-			private ArrayList	list;
-			private Control		owner;
+			internal ArrayList	list;
+			internal Control	owner;
 			#endregion	// ControlCollection Local Variables
 
 			#region ControlCollection Public Constructor
@@ -732,9 +735,8 @@ namespace System.Windows.Forms
 		
 		#region Public Constructors
 		public Control() {			
-
 			creator_thread = Thread.CurrentThread;
-			controls = new Hashtable();
+
 			child_controls = CreateControlsInstance();
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
@@ -746,7 +748,7 @@ namespace System.Windows.Forms
 			prev_size = Size.Empty;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
-			is_visible = true;
+			is_visible = false;
 			is_captured = false;
 			is_disposed = false;
 			is_enabled = true;
@@ -804,6 +806,7 @@ namespace System.Windows.Forms
 			}
 
 			DestroyHandle();
+			controls.Remove(this);
 		}
 		#endregion 	// Public Constructors
 
@@ -1700,7 +1703,7 @@ namespace System.Windows.Forms
 
 				create_params.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
 
-				if (is_visible) {
+				if (Visible) {
 					create_params.Style |= (int)WindowStyles.WS_VISIBLE;
 				}
 
@@ -2235,7 +2238,7 @@ namespace System.Windows.Forms
 
 			if (window.Handle!=IntPtr.Zero) {
 				if (!controls.Contains(window.Handle)) {
-					controls.Add(window.Handle, this);
+					controls.Add(this);
 				}
 
 				creator_thread = Thread.CurrentThread;
