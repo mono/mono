@@ -1,3 +1,11 @@
+2003-09-27 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Fix pinvoke attributes, zero a methods RVA if it has
+	pinvoke info. This isn't entirely correct because native unmanaged
+	methods can have pinvoke info and not have 0 RVAs PEAPI can't
+	handle native unmanged code though. Expose the ModuleClass so
+	'global' items can be referenced like this '<Module>'::foo.
+	
 2003-09-21 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: sigh, sometimes it is best to calculate variables

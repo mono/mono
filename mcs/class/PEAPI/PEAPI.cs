@@ -564,9 +564,9 @@ namespace PEAPI
   /// <summary>
   /// Attributes for .pinvokeimpl method declarations
   /// </summary>
-  public enum PInvokeAttr { ansi = 2, unicode = 4, autochar = 6, 
-    platformapi = 0x100, cdecl = 0x200, stdcall = 0x300, thiscall = 0x400,
-    fastcall = 0x500 }
+  public enum PInvokeAttr { nomangle = 1, ansi = 2, unicode = 4, autochar = 6,
+                            lasterr = 0x0040, winapi = 0x0100, cdecl = 0x0200,
+                            stdcall = 0x0300, thiscall = 0x0400, fastcall = 0x0500 }
 
   /// <summary>
   /// Implementation attributes for a method
@@ -5260,7 +5260,8 @@ if (rsrc != null)
     }
 
     internal bool ZeroRva () {
-        return ((methFlags & (ushort)MethAttr.Abstract) != 0);
+        return (((methFlags & (ushort)MethAttr.Abstract) != 0) ||
+                        (pinvokeImpl != null)); // TODO: Not entirely true but works for now
     }
 
     internal sealed override uint GetCodedIx(CIx code) {
@@ -5927,6 +5928,11 @@ if (rsrc != null)
       metaData.AddToTable(MDTable.Module,thisMod);
     }
  
+
+    public ClassDef ModuleClass {
+            get { return moduleClass; }
+    }
+
     /// <summary>
     /// Set the subsystem (.subsystem) (Default is Windows Console mode)
     /// </summary>
