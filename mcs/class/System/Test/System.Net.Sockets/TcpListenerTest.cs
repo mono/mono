@@ -28,23 +28,29 @@ namespace MonoTests.System.Net.Sockets {
 		[Test]
 		public void TcpListener()
 		{
-			// listen with a new listener
+			// listen with a new listener (IPv4 is the default)
 			TcpListener inListener = new TcpListener(1234);
 			inListener.Start();
 			
 
 			// connect to it from a new socket
-			Socket outSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream,
-				ProtocolType.IP);
 			IPHostEntry hostent = Dns.GetHostByAddress("127.0.0.1");
-			IPEndPoint remote = new IPEndPoint(hostent.AddressList[0], 1234);
-			outSock.Connect(remote);
+			Socket outSock;
 
+			foreach(IPAddress address in hostent.AddressList) {
+				if(address.AddressFamily == AddressFamily.InterNetwork) {
+					/// Only keep IPv4 addresses, our Server is in IPv4 only mode.
+					outSock = new Socket(address.AddressFamily, SocketType.Stream,
+						ProtocolType.IP);
+					IPEndPoint remote = new IPEndPoint(address, 1234);
+					outSock.Connect(remote);
+					break;
+				}
+			}
 			
 			// make sure the connection arrives
 			Assertion.Assert(inListener.Pending());
 			Socket inSock = inListener.AcceptSocket();
-
 
 			// now send some data and see if it comes out the other end
 			const int len = 1024;
