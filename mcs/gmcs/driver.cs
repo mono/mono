@@ -14,6 +14,7 @@ namespace Mono.CSharp
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Collections;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Text;
 	using System.Globalization;
@@ -191,6 +192,19 @@ namespace Mono.CSharp
 			}
 		}
 		
+		static void OtherFlags ()
+		{
+			Console.WriteLine (
+				"Other flags in the compiler\n" +
+				"   --fatal            Makes errors fatal\n" +
+				"   --parse            Only parses the source file\n" +
+				"   --stacktrace       Shows stack trace at error location\n" +
+				"   --timestamp        Displays time stamps of various compiler events\n" +
+				"   -2                 Enables experimental C# features\n" +
+				"   -v                 Verbose parsing (for debugging the parser)\n" + 
+				"   --mcs-debug X      Sets MCS debugging level to X\n");
+		}
+		
 		static void Usage ()
 		{
 			Console.WriteLine (
@@ -206,7 +220,6 @@ namespace Mono.CSharp
 				"   -delaysign[+|-]    Only insert the public key into the assembly (no signing)\n" +
 				"   -doc:FILE          XML Documentation file to generate\n" + 
 				"   -g                 Generate debugging information\n" +
-				"   --fatal            Makes errors fatal\n" +
 				"   -keycontainer:NAME The key pair container used to strongname the assembly\n" +
 				"   -keyfile:FILE      The strongname key file used to strongname the assembly\n" +
 				"   -lib:PATH1,PATH2   Adds the paths to the assembly link path\n" +
@@ -215,26 +228,22 @@ namespace Mono.CSharp
 				"   -nostdlib[+|-]     Does not load core libraries\n" +
 				"   -nowarn:W1[,W2]    Disables one or more warnings\n" + 
 				"   -out:FNAME         Specifies output file\n" +
-				"   --parse            Only parses the source file\n" +
+				"   -pkg:P1[,Pn]       References packages P1..Pn\n" + 
 				"   --expect-error X   Expect that error X will be encountered\n" +
 				"   -recurse:SPEC      Recursively compiles the files in SPEC ([dir]/file)\n" + 
 				"   -reference:ASS     References the specified assembly (-r:ASS)\n" +
-				"   --stacktrace       Shows stack trace at error location\n" +
 				"   -target:KIND       Specifies the target (KIND is one of: exe, winexe,\n" +
 				"                      library, module), (short: /t:)\n" +
-				"   --timestamp        Displays time stamps of various compiler events\n" +
 				"   -unsafe[+|-]       Allows unsafe code\n" +
 				"   -warnaserror[+|-]  Treat warnings as errors\n" +
 				"   -warn:LEVEL        Sets warning level (the highest is 4, the default is 2)\n" +
-				"   -v                 Verbose parsing (for debugging the parser)\n" +
-				"   -2                 Enables experimental C# features\n" +
+				"   -help2             Show other help flags\n" + 
 				"\n" +
 				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource\n" +
 				"   -resource:FILE[,ID]     Embed FILE as a resource\n" +
 				"   -win32res:FILE          Specifies Win32 resource file (.res)\n" +
 				"   -win32icon:FILE         Use this icon for the output\n" +
-				"   --mcs-debug X      Sets MCS debugging level to X\n" +
                                 "   @file              Read response file for more options\n\n" +
 				"Options can be of the form -option or /option");
 		}
@@ -989,6 +998,49 @@ namespace Mono.CSharp
 				resources.Add (value);
 				return true;
 				
+			case "/pkg": {
+				string packages;
+
+				if (value == ""){
+					Usage ();
+					Environment.Exit (1);
+				}
+				packages = String.Join (" ", value.Split (new Char [] { ';', ',', '\n', '\r'}));
+				
+				ProcessStartInfo pi = new ProcessStartInfo ();
+				pi.FileName = "pkg-config";
+				pi.RedirectStandardOutput = true;
+				pi.UseShellExecute = false;
+				pi.Arguments = "--libs " + packages;
+				Process p = null;
+				try {
+					p = Process.Start (pi);
+				} catch (Exception e) {
+					Report.Error (-27, "Couldn't run pkg-config: " + e.Message);
+					Environment.Exit (1);
+				}
+
+				if (p.StandardOutput == null){
+					Report.Warning (-27, "Specified package did not return any information");
+					return true;
+				}
+				string pkgout = p.StandardOutput.ReadToEnd ();
+				p.WaitForExit ();
+				if (p.ExitCode != 0) {
+					Report.Error (-27, "Error running pkg-config. Check the above output.");
+					Environment.Exit (1);
+				}
+
+				if (pkgout != null){
+					string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
+						Split (new Char [] { ' ', '\t'});
+					args = AddArgs (args, xargs);
+				}
+				
+				p.Close ();
+				return true;
+			}
+				
 			case "/res":
 			case "/resource":
 				if (value == ""){
@@ -1156,6 +1208,11 @@ namespace Mono.CSharp
 				load_default_config = false;
 				return true;
 
+			case "/help2":
+				OtherFlags ();
+				Environment.Exit(0);
+				return true;
+				
 			case "/help":
 			case "/?":
 				Usage ();
@@ -1240,6 +1297,17 @@ namespace Mono.CSharp
 			return false;
 		}
 		
+		static string [] AddArgs (string [] args, string [] extra_args)
+		{
+			string [] new_args;
+
+			new_args = new string [extra_args.Length + args.Length];
+			args.CopyTo (new_args, 0);
+			extra_args.CopyTo (new_args, args.Length);
+
+			return new_args;
+		}
+		
 		/// <summary>
 		///    Parses the arguments, and drives the compilation
 		///    process.
@@ -1278,12 +1346,13 @@ namespace Mono.CSharp
 			// path.
 			//
 
-			int argc = args.Length;
-			for (i = 0; i < argc; i++){
+			for (i = 0; i < args.Length; i++){
 				string arg = args [i];
+				if (arg == "")
+					continue;
 
 				if (arg.StartsWith ("@")){
-					string [] new_args, extra_args;
+					string [] extra_args;
 					string response_file = arg.Substring (1);
 
 					if (response_file_list == null)
@@ -1305,11 +1374,7 @@ namespace Mono.CSharp
 						return false;
 					}
 
-					new_args = new string [extra_args.Length + argc];
-					args.CopyTo (new_args, 0);
-					extra_args.CopyTo (new_args, argc);
-					args = new_args;
-					argc = new_args.Length;
+					args = AddArgs (args, extra_args);
 					continue;
 				}
 

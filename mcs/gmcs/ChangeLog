@@ -1,3 +1,9 @@
+2004-05-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Add -pkg handling.
+
+	From Gonzalo: UseShelLExecute=false
+
 2004-05-12  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs:
