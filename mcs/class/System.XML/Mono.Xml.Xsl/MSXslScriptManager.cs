@@ -33,7 +33,10 @@ namespace Mono.Xml.Xsl {
 		{
 			MSXslScript s = new MSXslScript (c.Input, c.Evidence, scripts.Count);
 			this.evidence = c.Evidence;
-			scripts.Add (c.Input.GetNamespace (s.ImplementsPrefix), s.Compile ());
+			string ns = c.Input.GetNamespace (s.ImplementsPrefix);
+			if (ns == null)
+				throw new XsltCompileException ("Specified prefix for msxsl:script was not found: " + s.ImplementsPrefix, null, c.Input);
+			scripts.Add (ns, s.Compile ());
 		}
 		
 		enum ScriptingLanguage {

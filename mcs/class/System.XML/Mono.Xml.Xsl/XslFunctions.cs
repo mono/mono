@@ -217,7 +217,7 @@ namespace Mono.Xml.Xsl
 			XmlResolver r = p.Resolver;
 			
 			Uri uriBase = null;
-			if (! object.ReferenceEquals (baseUri, VoidBaseUriFlag))
+			if (! object.ReferenceEquals (baseUri, VoidBaseUriFlag) && baseUri != String.Empty)
 				uriBase = r.ResolveUri (null, baseUri);
 				
 			return r.ResolveUri (uriBase, thisUri);

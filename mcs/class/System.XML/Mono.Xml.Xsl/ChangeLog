@@ -1,3 +1,13 @@
+2004-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Compiler.cs : When BaseURI is an empty string, it should not try to
+	  create Uri instance. This will fix bug #56832, but not sure.
+	* XslFunctions.cs : for XsltDocument.Resolve(), did the same.
+	* HtmlEmitter.cs : Environment.NewLine was incorrectly used (it 
+	  should be the TextReader's NewLine).
+	* MSXslScriptManager.cs : Should raise an error when the prefix which
+	  was specified by "implements-prefix" was not found.
+
 2004-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ScriptCompilerInfo.cs : #line directive now holds dummy filename

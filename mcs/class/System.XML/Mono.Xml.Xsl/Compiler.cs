@@ -172,7 +172,8 @@ namespace Mono.Xml.Xsl
 		public void PushInputDocument (string url)
 		{
 			// todo: detect recursion
-			Uri absUri = res.ResolveUri (new Uri (Input.BaseURI), url);
+			Uri baseUriObj = (Input.BaseURI == String.Empty) ? null : new Uri (Input.BaseURI);
+			Uri absUri = res.ResolveUri (baseUriObj, url);
 			using (Stream s = (Stream)res.GetEntity (absUri, null, typeof(Stream)))
 			{
 

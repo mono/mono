@@ -139,7 +139,7 @@ namespace Mono.Xml.Xsl
 			case "TD":
 			case "TH":
 			case "TR":
-				writer.Write (Environment.NewLine);
+				writer.Write (writer.NewLine);
 				int count = elementNameStack.Count;
 				for (int i = 0; i < count; i++)
 					writer.Write ("  ");
