@@ -16,129 +16,12 @@ using System.CodeDom.Compiler;
 using System.IO;
 using System.Net;
 using System.Web.Services.Description;
+using System.Web.Services.Discovery;
 
 using Microsoft.CSharp;
 
 namespace Mono.WebServices
 {
-	///
-	/// <summary>
-	///	Document retriever.
-	///
-	///	By extanciating this class, and setting URL and the optional Username, Password and Domain
-	///	properties, the Document property can be used to retrieve the document at the specified 
-	///	address.
-	///
-	///	If none of Username, Password or Domain are specified the DocumentRetriever attempts
-	///	to fetch the document without providing any authentication credentials. If at least one of 
-	///	these values is provided, then the retrieval process is attempted with an authentication
-	///	
-	/// </summary>
-	///	
-	internal class DocumentRetriever
-	{
-		string url	= null;
-		string domain	= null;
-		string password = null;
-		string username = null;
-		
-		ArrayList readLocations = new ArrayList ();
-		
-		///
-		/// <summary>
-		///	Set the URL from which the document will be retrieved.
-		/// </summary>
-		///
-		public string URL
-		{
-			set 
-			{
-				if (url != null)
-					throw new Exception("Too many document sources");
-				
-				url = value;
-			}
-			get
-			{
-				return url;
-			}
-		}
-		
-		///
-		/// <summary>
-		///	Specify the username to be used.
-		/// </summary>
-		///
-		public string Username
-		{
-			set { username = value; }
-		}
-		
-		///
-		/// <summary/>
-		///
-		public string Password
-		{
-			set { password = value; }
-		}
-		
-		///
-		/// <summary/>
-		///
-		public string Domain
-		{
-			set { domain = value; }
-		}
-		
-		///
-		/// <summary>
-		///	This property returns the document found at the DocumentRetriever's URL.
-		/// </summary>
-		///
-		public Stream GetStream ()
-		{
-			return GetStream (url);
-		}
-		
-		public Stream GetStream (string documentUrl)
-		{
-			WebClient webClient = new WebClient();
-			
-			if (username != null || password != null || domain != null)
-			{
-				NetworkCredential credentials = new NetworkCredential();
-				
-				if (username != null)
-					credentials.UserName = username;
-				
-				if (password != null)
-					credentials.Password = password;
-				
-				if (domain != null)
-					credentials.Domain = domain;
-				
-				webClient.Credentials = credentials;
-			}
-			
-			readLocations.Add (documentUrl);
-
-			try
-			{
-				Console.WriteLine ("Fetching " + documentUrl);
-				return webClient.OpenRead (documentUrl);
-			}
-			catch (Exception ex)
-			{
-				throw new Exception ("Could not read document from url " + documentUrl + ". " + ex.Message);
-			}
-		}
-		
-		public bool AlreadyDownloaded (string documentUrl)
-		{
-			return readLocations.Contains (documentUrl);
-		}
-	}
-	
 	///
 	/// <summary>
 	///	Source code generator.
@@ -354,27 +237,31 @@ namespace Mono.WebServices
 		const string ProductId = "Mono Web Services Description Language Utility";
 		const string UsageMessage = 
 			"wsdl [options] {path | URL} \n\n"
-			+ "   -appsettingurlkey:key        (short -urlkey)\n"
-			+ "   -appsettingbaseurl:baseurl   (short -baseurl)\n"
-			+ "   -domain:domain (short -d)    Domain of username for server authentication\n"
-			+ "   -language:language           Language of generated code. Allowed CS\n"
-			+ "                                (default) (short -l)\n"
-			+ "   -namespace:ns                The namespace of the generated code, default\n"
-			+ "                                NS if none (short -n)\n"
-			+ "   -nologo                      Surpress the startup logo\n"
-			+ "   -out:filename                The target file for generated code \n"
-			+ "                                (short -o)\n"
-			+ "   -password:pwd                Password used to contact server (short -p)\n"
-			+ "   -protocol:protocol           Protocol to implement. Allowed: Soap \n"
-			+ "                                (default), HttpGet, HttpPost\n"
+			+ "   -d, -domain:domain           Domain of username for server authentication.\n"
+			+ "   -l, -language:language       Language of generated code. Allowed CS (default)\n"
+			+ "                                and VB.\n"
+			+ "   -n, -namespace:ns            The namespace of the generated code, default\n"
+			+ "                                namespace if none.\n"
+			+ "   -nologo                      Surpress the startup logo.\n"
+			+ "   -o, -out:filename            The target file for generated code.\n"
+			+ "   -p, -password:pwd            Password used to contact the server.\n"
+			+ "   -protocol:protocol           Protocol to implement. Allowed: Soap (default),\n"
+			+ "                                HttpGet or HttpPost.\n"
 			+ "   -server                      Generate server instead of client proxy code.\n"
-			+ "   -username:username           Username used to contact server (short -u)\n"
-			+ "   -sample:[binding/]operation  Display a sample SOAP request and response\n"
+			+ "   -u, -username:username       Username used to contact the server.\n"
+			+ "   -proxy:url                   Address of the proxy.\n"
+			+ "   -pu, -proxyusername:username Username used to contact the proxy.\n"
+			+ "   -pp, -proxypassword:pwd      Password used to contact the proxy.\n"
+			+ "   -pd, -proxydomain:domain     Domain of username for proxy authentication.\n"
+			+ "   -urlkey, -appsettingurlkey:key Configuration key that contains the default\n"
+			+ "                                url for the generated WS proxy.\n"
+			+ "   -baseurl, -appsettingbaseurl:url Base url to use when constructing the\n"
+			+ "                                service url.\n"
+			+ "   -sample:[binding/]operation  Display a sample SOAP request and response.\n"
 			+ "   -?                           Display this message\n"
 			+ "\n"
 			+ "Options can be of the forms  -option, --option or /option\n";
 		
-		DocumentRetriever retriever = null;
 		SourceGenerator generator = null;
 		
 		ArrayList descriptions = new ArrayList ();
@@ -385,12 +272,15 @@ namespace Mono.WebServices
 		bool hasURL = false;
 		string sampleSoap = null;
 		
-		// FIXME implement these options
-		// (are they are usable by the System.Net.WebProxy class???)
-		string proxy = null;
+		string proxyAddress = null;
 		string proxyDomain = null;
 		string proxyPassword = null;
 		string proxyUsername = null;
+		string username;
+		string password;
+		string domain;
+		
+		string url;
 
 		///
 		/// <summary>
@@ -399,7 +289,6 @@ namespace Mono.WebServices
 		///
 		Driver()
 		{
-			retriever = new DocumentRetriever();
 			generator = new SourceGenerator();
 			generator.ApplicationSignature = ProductId;
 		}
@@ -424,7 +313,7 @@ namespace Mono.WebServices
 			else
 			{
 				hasURL = true;
-				retriever.URL = argument;
+				url = argument;
 				return;
 			}
 			
@@ -457,7 +346,7 @@ namespace Mono.WebServices
 
 				case "d":
 				case "domain":
-				    retriever.Domain = value;
+				    domain = value;
 				    break;
 
 				case "l":
@@ -481,7 +370,7 @@ namespace Mono.WebServices
 
 				case "p":
 				case "password":
-				    retriever.Password = value;
+				    password = value;
 				    break;
 
 				case "protocol":
@@ -489,7 +378,7 @@ namespace Mono.WebServices
 				    break;
 
 				case "proxy":
-				    proxy = value;
+				    proxyAddress = value;
 				    break;
 
 				case "proxydomain":
@@ -513,7 +402,7 @@ namespace Mono.WebServices
 
 				case "u":
 				case "username":
-				    retriever.Username = value;
+				    username = value;
 				    break;
 					
 				case "sample":
@@ -527,6 +416,49 @@ namespace Mono.WebServices
 				default:
 				    throw new Exception("Unknown option " + option);
 			}
+		}
+		
+		DiscoveryClientProtocol CreateClient ()
+		{
+			DiscoveryClientProtocol dcc = new DiscoveryClientProtocol ();
+			
+			if (username != null || password != null || domain != null)
+			{
+				NetworkCredential credentials = new NetworkCredential();
+				
+				if (username != null)
+					credentials.UserName = username;
+				
+				if (password != null)
+					credentials.Password = password;
+				
+				if (domain != null)
+					credentials.Domain = domain;
+				
+				dcc.Credentials = credentials;
+			}
+			
+			if (proxyAddress != null)
+			{
+				WebProxy proxy = new WebProxy (proxyAddress);
+				if (proxyUsername != null || proxyPassword != null || proxyDomain != null)
+				{
+					NetworkCredential credentials = new NetworkCredential();
+					
+					if (proxyUsername != null)
+						credentials.UserName = proxyUsername;
+					
+					if (proxyPassword != null)
+						credentials.Password = proxyPassword;
+					
+					if (proxyDomain != null)
+						credentials.Domain = proxyDomain;
+					
+					proxy.Credentials = credentials;
+				}
+			}			
+			
+			return dcc;
 		}
 
 		///
@@ -557,17 +489,21 @@ namespace Mono.WebServices
 					return 0;
 				}
 				
-				// fetch the document
-				using (Stream stream = retriever.GetStream ())
+				DiscoveryClientProtocol dcc = CreateClient ();
+								
+				dcc.DiscoverAny (url);
+				dcc.ResolveAll ();
+				
+				foreach (object doc in dcc.Documents.Values)
 				{
-					// import the document as a ServiceDescription
-					XmlTextReader xtr = new XmlTextReader (stream);
-					xtr.MoveToContent ();
-					if (xtr.LocalName != "definitions") throw new Exception ("The document at '" + retriever.URL + "' is not a valid WSDL document");
-					ServiceDescription serviceDescription = ServiceDescription.Read (xtr);
-					xtr.Close ();
-					ReadDocuments (serviceDescription);
+					if (doc is ServiceDescription)
+						descriptions.Add ((ServiceDescription)doc);
+					else if (doc is XmlSchema)
+						schemas.Add ((XmlSchema)doc);
 				}
+				
+				if (descriptions.Count == 0)
+					throw new Exception ("No WSDL document was found at the url " + url);
 				
 				if (sampleSoap != null)
 				{
@@ -589,33 +525,7 @@ namespace Mono.WebServices
 				return 2;
 			}
 		}
-		
-		void ReadDocuments (ServiceDescription serviceDescription)
-		{
-			descriptions.Add (serviceDescription);
-			
-			foreach (Import import in serviceDescription.Imports)
-			{
-				if (retriever.AlreadyDownloaded (import.Location)) continue;
-				using (Stream stream = retriever.GetStream (import.Location))
-				{
-					XmlTextReader reader = new XmlTextReader (stream);
-					reader.MoveToContent ();
-					
-					if (reader.LocalName == "definitions")
-					{
-						ServiceDescription desc = ServiceDescription.Read (reader);
-						ReadDocuments (desc);
-					}
-					else
-					{
-						XmlSchema schema = XmlSchema.Read (reader, null);
-						schemas.Add (schema);
-					}
-				}
-			}
-		}
-		
+				
 		///
 		/// <summary>
 		///	Application entry point.
