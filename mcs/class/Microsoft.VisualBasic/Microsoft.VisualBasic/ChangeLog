@@ -1,3 +1,8 @@
+2004-06-16 Sachin Kumar <skumar1@novell.com>
+	Java code converted from Mainsoft	
+	* SpcInfo.cs
+	* TabInfo.cs
+
 2004-06-15 Sachin Kumar <skumar1@novell.com>
 	* Conversion.cs: Implemented few type conversion methods
 
