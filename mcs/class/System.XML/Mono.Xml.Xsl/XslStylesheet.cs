@@ -327,7 +327,7 @@ namespace Mono.Xml.Xsl {
 					break;
 				
 				case "namespace-alias":
-					namespaceAliases.Add ((string) c.GetAttribute ("stylesheet-prefix", ""), (string) c.GetAttribute ("result-prefix", ""));
+					namespaceAliases.Set ((string) c.GetAttribute ("stylesheet-prefix", ""), (string) c.GetAttribute ("result-prefix", ""));
 					break;
 				
 				case "attribute-set":
