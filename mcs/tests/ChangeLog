@@ -1,3 +1,9 @@
+2004-04-22  Marek Safar <marek.safar@seznam.cz>
+
+	* Makefile: Add support for custom test compiler options.
+        
+	* test-242.cs: New test.
+
 2004-04-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-compiler-jit-real): Create a test result log file
