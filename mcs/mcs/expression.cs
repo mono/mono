@@ -263,10 +263,10 @@ namespace Mono.CSharp {
 			
 			op_name = oper_names [(int) oper];
 
-			mg = MemberLookup (ec, expr_type, op_name, false, loc);
+			mg = MemberLookup (ec, expr_type, op_name, loc);
 			
 			if (mg == null && expr_type.BaseType != null)
-				mg = MemberLookup (ec, expr_type.BaseType, op_name, false, loc);
+				mg = MemberLookup (ec, expr_type.BaseType, op_name, loc);
 			
 			if (mg != null) {
 				Expression e = StaticCallExpr.MakeSimpleCall (
@@ -562,10 +562,10 @@ namespace Mono.CSharp {
 			else 
 				op_name = "op_Decrement";
 
-			mg = MemberLookup (ec, expr_type, op_name, false, loc);
+			mg = MemberLookup (ec, expr_type, op_name, loc);
 
 			if (mg == null && expr_type.BaseType != null)
-				mg = MemberLookup (ec, expr_type.BaseType, op_name, false, loc);
+				mg = MemberLookup (ec, expr_type.BaseType, op_name, loc);
 			
 			if (mg != null) {
 				method = StaticCallExpr.MakeSimpleCall (
@@ -1462,13 +1462,13 @@ namespace Mono.CSharp {
 			
 			string op = "op_" + oper;
 
-			left_expr = MemberLookup (ec, l, op, false, loc);
+			left_expr = MemberLookup (ec, l, op, loc);
 			if (left_expr == null && l.BaseType != null)
-				left_expr = MemberLookup (ec, l.BaseType, op, false, loc);
+				left_expr = MemberLookup (ec, l.BaseType, op, loc);
 			
-			right_expr = MemberLookup (ec, r, op, false, loc);
+			right_expr = MemberLookup (ec, r, op, loc);
 			if (right_expr == null && r.BaseType != null)
-				right_expr = MemberLookup (ec, r.BaseType, op, false, loc);
+				right_expr = MemberLookup (ec, r.BaseType, op, loc);
 			
 			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
 			
@@ -3220,7 +3220,7 @@ namespace Mono.CSharp {
 			//
 			if (expr is BaseAccess)
 				is_base = true;
-			
+
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
@@ -3507,8 +3507,7 @@ namespace Mono.CSharp {
 				return this;
 			
 			Expression ml;
-			ml = MemberLookup (ec, type, ".ctor", false,
-					   MemberTypes.Constructor, AllBindingFlags, loc);
+			ml = MemberLookup (ec, type, ".ctor", MemberTypes.Constructor, AllBindingFlags, loc);
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
@@ -3883,7 +3882,7 @@ namespace Mono.CSharp {
 
 				Expression ml;
 				
-				ml = MemberLookup (ec, type, ".ctor", false, MemberTypes.Constructor,
+				ml = MemberLookup (ec, type, ".ctor", MemberTypes.Constructor,
 						   AllBindingFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)){
@@ -4394,7 +4393,6 @@ namespace Mono.CSharp {
 				      "type name instead");
 		}
 
-#if USE_OLD
 		static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Location loc)
 		{
 			if (left_original == null)
@@ -4481,7 +4479,7 @@ namespace Mono.CSharp {
 					
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
 						Expression enum_member = MemberLookup (
-							ec, decl_type, "value__", false, loc); 
+							ec, decl_type, "value__", loc); 
 
 						Enum en = TypeManager.LookupEnum (decl_type);
 
@@ -4556,8 +4554,9 @@ namespace Mono.CSharp {
 				// a FieldExpr
 				//
 
-				Expression ml = MemberLookup (ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
-							      true, MemberTypes.Event, AllBindingFlags, loc);
+				Expression ml = MemberLookup (
+					ec, ec.TypeContainer.TypeBuilder,
+					ee.EventInfo.Name, MemberTypes.Event, AllBindingFlags, loc);
 
 				if (ml != null) {
 					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
@@ -4656,7 +4655,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			member_lookup = MemberLookup (ec, expr_type, Identifier, false, loc);
+			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
 
 			if (member_lookup == null)
 				return null;
@@ -4664,223 +4663,6 @@ namespace Mono.CSharp {
 			return ResolveMemberAccess (ec, member_lookup, expr, loc, original);
 		}
 
-#else
-
-		bla bla bla
-		//
-		// This code is more conformant to the spec (it follows it step by step),
-		// but it has not been tested yet, and there is nothing here that is not
-		// caught by the above code.  But it might be a better foundation to improve
-		// on in the future
-		//
-		public ResolveTypeMemberAccess (EmitContext ec, Expression member_lookup,
-						Expression left, Location loc)
-		{
-			if (member_lookup is TypeExpr){
-				member_lookup.Resolve (ec);
-				return member_lookup;
-			}
-			
-			if (member_lookup is MethodGroupExpr){
-				if (!mg.RemoveStaticMethods ()){
-					SimpleName.Error120 (loc, mg.Methods [0].Name); 
-					return null;
-				}
-				
-				return member_lookup;
-			}
-			
-			if (member_lookup is PropertyExpr){
-				PropertyExpr pe = (PropertyExpr) member_lookup;
-					
-					if (!pe.IsStatic){
-						SimpleName.Error120 (loc, pe.PropertyInfo.Name);
-						return null;
-					}
-					return pe;
-			}
-			
-			if (member_lookup is FieldExpr){
-				FieldExpr fe = (FieldExpr) member_lookup;
-				FieldInfo fi = fe.FieldInfo;
-				
-				if (fi is FieldBuilder) {
-					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
-					
-					if (c != null) {
-						object o = c.LookupConstantValue (ec);
-						return Constantify (o, fi.FieldType);
-					}
-				}
-				
-				if (fi.IsLiteral) {
-					Type t = fi.FieldType;
-					Type decl_type = fi.DeclaringType;
-					object o;
-					
-					if (fi is FieldBuilder)
-						o = TypeManager.GetValue ((FieldBuilder) fi);
-					else
-						o = fi.GetValue (fi);
-					
-					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
-						Expression enum_member = MemberLookup (
-							ec, decl_type, "value__",
-							false, loc); 
-						
-						Enum en = TypeManager.LookupEnum (decl_type);
-						
-						Constant c;
-						if (en != null)
-							c = Constantify (o, en.UnderlyingType);
-						else 
-							c = Constantify (o, enum_member.Type);
-						
-						return new EnumConstant (c, decl_type);
-					}
-					
-					Expression exp = Constantify (o, t);
-					
-					return exp;
-				}
-
-				if (!fe.FieldInfo.IsStatic){
-					error176 (loc, fe.FieldInfo.Name);
-					return null;
-				}
-				return member_lookup;
-			}
-
-			if (member_lookup is EventExpr){
-
-				EventExpr ee = (EventExpr) member_lookup;
-				
-				//
-				// If the event is local to this class, we transform ourselves into
-				// a FieldExpr
-				//
-
-				Expression ml = MemberLookup (
-					ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
-					true, MemberTypes.Event, AllBindingFlags, loc);
-
-				if (ml != null) {
-					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
-
-					ml = ExprClassFromMemberInfo (ec, mi, loc);
-					
-					if (ml == null) {
-						Report.Error (-200, loc, "Internal error!!");
-						return null;
-					}
-
-					return ResolveMemberAccess (ec, ml, left, loc);
-				}
-
-				if (!ee.IsStatic) {
-					SimpleName.Error120 (loc, ee.EventInfo.Name);
-					return null;
-				}
-				
-				return ee;
-			}
-
-			Console.WriteLine ("Left is: " + left);
-			Report.Error (-100, loc, "Support for [" + member_lookup + "] is not present yet");
-			Environment.Exit (0);
-
-			return null;
-		}
-		
-		public ResolveInstanceMemberAccess (EmitContext ec, Expression member_lookup,
-						    Expression left, Location loc)
-		{
-			if (member_lookup is MethodGroupExpr){
-				//
-				// Instance.MethodGroup
-				//
-				if (!mg.RemoveStaticMethods ()){
-					error176 (loc, mg.Methods [0].Name);
-					return null;
-				}
-				
-				mg.InstanceExpression = left;
-					
-				return member_lookup;
-			}
-
-			if (member_lookup is PropertyExpr){
-				PropertyExpr pe = (PropertyExpr) member_lookup;
-
-				if (pe.IsStatic){
-					error176 (loc, pe.PropertyInfo.Name);
-					return null;
-				}
-				pe.InstanceExpression = left;
-				
-				return pe;
-			}
-
-			Type left_type = left.type;
-
-			if (left_type.IsValueType){
-			} else {
-				
-			}
-		}
-		
-		public override Expression DoResolve (EmitContext ec)
-		{
-			//
-			// We are the sole users of ResolveWithSimpleName (ie, the only
-			// ones that can cope with it
-			//
-			expr = expr.ResolveWithSimpleName (ec);
-
-			if (expr == null)
-				return null;
-
-			if (expr is SimpleName){
-				SimpleName child_expr = (SimpleName) expr;
-				
-				expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
-
-				return expr.ResolveWithSimpleName (ec);
-			}
-
-			//
-			// Handle enums here when they are in transit.
-			// Note that we cannot afford to hit MemberLookup in this case because
-			// it will fail to find any members at all (Why?)
-			//
-
-			Type expr_type = expr.Type;
-			if (expr_type.IsSubclassOf (TypeManager.enum_type)) {
-				
-				Enum en = TypeManager.LookupEnum (expr_type);
-				
-				if (en != null) {
-					object value = en.LookupEnumValue (ec, Identifier, loc);
-
-					if (value == null)
-						return null;
-					
-					Constant c = Constantify (value, en.UnderlyingType);
-					return new EnumConstant (c, expr_type);
-				}
-			}
-
-			member_lookup = MemberLookup (ec, expr.Type, Identifier, false, loc);
-
-			if (member_lookup == null)
-				return null;
-
-			if (expr is TypeExpr)
-				return ResolveTypeMemberAccess (ec, member_lookup, expr, loc);
-			else
-				return ResolveInstanceMemberAccess (ec, member_lookup, expr, loc);
-		}
-#endif
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should not happen");
@@ -5451,7 +5233,7 @@ namespace Mono.CSharp {
 			Type base_type = current_type.BaseType;
 			Expression e;
 			
-			member_lookup = MemberLookup (ec, base_type, member, false, loc);
+			member_lookup = MemberLookup (ec, base_type, member, loc);
 			if (member_lookup == null)
 				return null;
 
@@ -5497,7 +5279,7 @@ namespace Mono.CSharp {
 			Type base_type = current_type.BaseType;
 			Expression member_lookup;
 
-			member_lookup = MemberLookup (ec, base_type, "get_Item", false, loc);
+			member_lookup = MemberLookup (ec, base_type, "get_Item", loc);
 			if (member_lookup == null)
 				return null;
 

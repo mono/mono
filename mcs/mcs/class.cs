@@ -2271,7 +2271,7 @@ namespace Mono.CSharp {
 				t = ec.TypeContainer.TypeBuilder;
 			
 			parent_constructor_group = Expression.MemberLookup (
-				ec, t, ".ctor", true,
+				ec, t, ".ctor", 
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance, location);
 			

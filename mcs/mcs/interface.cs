@@ -690,7 +690,7 @@ namespace Mono.CSharp {
 			EmitContext ec = new EmitContext (parent, loc, null, null, flags);
 
 			Expression ml = Expression.MemberLookup (ec, TypeManager.default_member_type,
-								 ".ctor", false, MemberTypes.Constructor,
+								 ".ctor", MemberTypes.Constructor,
 								 BindingFlags.Public | BindingFlags.Instance,
 								 Location.Null);
 			

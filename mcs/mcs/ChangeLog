@@ -1,3 +1,15 @@
+2002-01-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (Expression.MemberLookup): instead of taking a
+	parameter `same_type' that was used to tell whether we could
+	access private members we compute our containing type from the
+	EmitContext.
+
+	Updated all the source files to use this.
+
+	* codegen.cs (EmitContext): Compute ContainerType ahead of time,
+	because it is referenced by MemberLookup very often. 
+
 2002-01-09  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (IndexerPropertyName): If we have a TypeBuilder, use

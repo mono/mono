@@ -109,6 +109,12 @@ namespace Mono.CSharp {
 		public Type ReturnType;
 
 		/// <summary>
+		///   Points to the Type (extracted from the TypeContainer) that
+		///   declares this body of code
+		/// </summary>
+		public Type ContainerType;
+		
+		/// <summary>
 		///   Whether this is generating code for a constructor
 		/// </summary>
 		public bool IsConstructor;
@@ -164,6 +170,7 @@ namespace Mono.CSharp {
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
+			ContainerType = parent.TypeBuilder;
 			loc = l;
 
 			if (ReturnType == TypeManager.void_type)

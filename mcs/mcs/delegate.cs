@@ -247,7 +247,8 @@ namespace Mono.CSharp {
 		{
 			ParameterData pd = Invocation.GetParameterData (mb);
 
-			Expression ml = Expression.MemberLookup (ec, delegate_type, "Invoke", false, loc);
+			Expression ml = Expression.MemberLookup (
+				ec, delegate_type, "Invoke", loc);
 
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
@@ -307,7 +308,8 @@ namespace Mono.CSharp {
 			else
 				arg_count = args.Count;
 
-			Expression ml = Expression.MemberLookup (ec, delegate_type, "Invoke", false, loc);
+			Expression ml = Expression.MemberLookup (
+				ec, delegate_type, "Invoke", loc);
 			
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
@@ -362,7 +364,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool VerifyDelegate (EmitContext ec, Type delegate_type, Type probe_type, Location loc)
 		{
-			Expression ml = Expression.MemberLookup (ec, delegate_type, "Invoke", false, loc);
+			Expression ml = Expression.MemberLookup (
+				ec, delegate_type, "Invoke", loc);
 			
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
@@ -372,7 +375,8 @@ namespace Mono.CSharp {
 			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
 			ParameterData pd = Invocation.GetParameterData (mb);
 
-			Expression probe_ml = Expression.MemberLookup (ec, delegate_type, "Invoke", false, loc);
+			Expression probe_ml = Expression.MemberLookup (
+				ec, delegate_type, "Invoke", loc);
 			
 			if (!(probe_ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
@@ -519,7 +523,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Expression ml = Expression.MemberLookup (ec, type, ".ctor", false, Location);
+			Expression ml = Expression.MemberLookup (
+				ec, type, ".ctor", Location);
 
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, Location, "Internal error : Could not find delegate constructor!");
@@ -582,10 +587,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Expression invoke_method = Expression.MemberLookup (ec, e_type, "Invoke", false,
-									    MemberTypes.Method,
-									    Expression.AllBindingFlags,
-									    Location);
+			Expression invoke_method = Expression.MemberLookup (
+				ec, e_type, "Invoke", MemberTypes.Method,
+				Expression.AllBindingFlags, Location);
 
 			if (invoke_method == null) {
 				Report.Error (-200, Location, "Internal error ! COuld not find Invoke method!");
@@ -646,7 +650,7 @@ namespace Mono.CSharp {
 			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, Location))
 				return null;
 
-			Expression ml = Expression.MemberLookup (ec, del_type, "Invoke", false, Location);
+			Expression ml = Expression.MemberLookup (ec, del_type, "Invoke", Location);
 			
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, Location, "Internal error : could not find Invoke method!");

@@ -368,9 +368,6 @@ namespace Mono.CSharp {
 		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
 		//
-		// FIXME: We need to cope with access permissions here, or this wont
-		// work!
-		//
 		// This code could use some optimizations, but we need to do some
 		// measurements.  For example, we could use a delegate to `flag' when
 		// something can not any longer be a method-group (because it is something
@@ -395,11 +392,13 @@ namespace Mono.CSharp {
 		//
 		// FIXME: Potential optimization, have a static ArrayList
 		//
+
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
-						       bool same_type, MemberTypes mt,
-						       BindingFlags bf, Location loc)
+						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			if (same_type)
+			Type source_type = ec.ContainerType;
+			
+			if (source_type == t || source_type.IsSubclassOf (t))
 				bf |= BindingFlags.NonPublic;
 
 			//
@@ -473,12 +472,42 @@ namespace Mono.CSharp {
 			BindingFlags.Static |
 			BindingFlags.Instance;
 
-		public static Expression MemberLookup (EmitContext ec, Type t, string name,
-						       bool same_type, Location loc)
+		public static Expression MemberLookup (EmitContext ec, Type t, string name, Location loc)
 		{
-			return MemberLookup (ec, t, name, same_type, AllMemberTypes, AllBindingFlags, loc);
+			return MemberLookup (ec, t, name, AllMemberTypes, AllBindingFlags, loc);
 		}
 
+		/// <summary>
+		///   This is a wrapper for MemberLookup that is not used to "probe", but
+		///   to find a final definition.  If the final definition is not found, we
+		///   look for private members and display a useful debugging message if we
+		///   find it.
+		/// </summary>
+		public static Expression MemberLookupFinal (EmitContext ec, Type t, string name, 
+							    Location loc)
+		{
+			Expression e;
+
+			e = MemberLookup (ec, t, name, AllMemberTypes, AllBindingFlags, loc);
+
+			if (e != null)
+				return e;
+			
+			e = MemberLookup (ec, t, name, AllMemberTypes,
+					  AllBindingFlags | BindingFlags.NonPublic, loc);
+			if (e == null){
+				Report.Error (
+					117, loc, "`" + t + "' does not contain a definition " +
+					"for `" + name + "'");
+			} else {
+				Report.Error (
+					122, loc, "`" + t + "." + name +
+					"' is inaccessible due to its protection level");
+			}
+			
+			return null;
+		}
+		
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
@@ -1024,15 +1053,15 @@ namespace Mono.CSharp {
 			else
 				op_name = "op_Implicit";
 			
-			mg1 = MemberLookup (ec, source_type, op_name, false, loc);
+			mg1 = MemberLookup (ec, source_type, op_name, loc);
 
 			if (source_type.BaseType != null)
-				mg2 = MemberLookup (ec, source_type.BaseType, op_name, false, loc);
+				mg2 = MemberLookup (ec, source_type.BaseType, op_name, loc);
 			
-			mg3 = MemberLookup (ec, target, op_name, false, loc);
+			mg3 = MemberLookup (ec, target, op_name, loc);
 
 			if (target.BaseType != null)
-				mg4 = MemberLookup (ec, target.BaseType, op_name, false, loc);
+				mg4 = MemberLookup (ec, target.BaseType, op_name, loc);
 
 			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2);
 			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4);
@@ -1045,15 +1074,15 @@ namespace Mono.CSharp {
 
 				op_name = "op_Explicit";
 				
-				mg5 = MemberLookup (ec, source_type, op_name, false, loc);
+				mg5 = MemberLookup (ec, source_type, op_name, loc);
 
 				if (source_type.BaseType != null)
-					mg6 = MemberLookup (ec, source_type.BaseType, op_name, false, loc);
+					mg6 = MemberLookup (ec, source_type.BaseType, op_name, loc);
 				
-				mg7 = MemberLookup (ec, target, op_name, false, loc);
+				mg7 = MemberLookup (ec, target, op_name, loc);
 				
 				if (target.BaseType != null)
-					mg8 = MemberLookup (ec, target.BaseType, op_name, false, loc);
+					mg8 = MemberLookup (ec, target.BaseType, op_name, loc);
 				
 				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6);
 				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8);
@@ -2712,7 +2741,7 @@ namespace Mono.CSharp {
 			//
 			// Stage 2: Lookup members 
 			//
-			e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, true, Location);
+			e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, Location);
 			if (e == null){
 				//
 				// Stage 3: Lookup symbol in the various namespaces. 
@@ -2793,7 +2822,7 @@ namespace Mono.CSharp {
 
 				Expression ml = MemberLookup (
 					ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
-					true, MemberTypes.Event, AllBindingFlags, Location);
+					MemberTypes.Event, AllBindingFlags, Location);
 
 				if (ml != null) {
 					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);

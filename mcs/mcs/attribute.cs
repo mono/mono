@@ -136,7 +136,7 @@ namespace Mono.CSharp {
 			ArrayList prop_infos  = new ArrayList ();
 			ArrayList field_values = new ArrayList ();
 			ArrayList prop_values = new ArrayList ();
-
+			
 			for (i = 0; i < named_args.Count; i++) {
 				DictionaryEntry de = (DictionaryEntry) named_args [i];
 				string member_name = (string) de.Key;
@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 					return null;
 
 				Expression member = Expression.MemberLookup (
-					ec, Type, member_name, false,
+					ec, Type, member_name,
 					MemberTypes.Field | MemberTypes.Property,
 					BindingFlags.Public | BindingFlags.Instance,
 					Location);
@@ -206,7 +206,7 @@ namespace Mono.CSharp {
 			}
 			
 			Expression mg = Expression.MemberLookup (
-				ec, Type, ".ctor", false, MemberTypes.Constructor,
+				ec, Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance, Location);
 
 			if (mg == null) {
@@ -531,7 +531,7 @@ namespace Mono.CSharp {
 			bool exact_spelling = false;
 			bool set_last_err = false;
 			string entry_point = null;
-			
+
 			for (int i = 0; i < named_args.Count; i++) {
 
 				DictionaryEntry de = (DictionaryEntry) named_args [i];
@@ -542,10 +542,11 @@ namespace Mono.CSharp {
 				if (!a.Resolve (ec, Location))
 					return null;
 
-				Expression member = Expression.MemberLookup (ec, Type, member_name, false,
-									     MemberTypes.Field | MemberTypes.Property,
-									     BindingFlags.Public | BindingFlags.Instance,
-									     Location);
+				Expression member = Expression.MemberLookup (
+					ec, Type, member_name, 
+					MemberTypes.Field | MemberTypes.Property,
+					BindingFlags.Public | BindingFlags.Instance,
+					Location);
 
 				if (member == null || !(member is FieldExpr)) {
 					error617 (member_name);
