@@ -297,7 +297,7 @@ namespace System {
 		public extern Assembly [] GetAssemblies ();
 
 		[MonoTODO]
-		public object GetDate (string name)
+		public object GetData (string name)
 		{
 			throw new NotImplementedException ();			
 		}
