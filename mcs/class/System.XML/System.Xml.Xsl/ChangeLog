@@ -1,3 +1,10 @@
+2003-07-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslTransform.cs: Use the new XslTransformImpl class
+	* XslTransformImpl.cs: An abstract class for Xsl transforms
+	* UnmanagedXslTransform.cs: Contains the code that was in
+	XslTransform.cs
+
 2003-07-27  Piers Haken	<piersh@friskit.com>
 
 	* XsltArgumentList.cs:

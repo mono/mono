@@ -1,3 +1,7 @@
+2003-07-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* System.Xml.dll.sources: Add new files
+
 2003-07-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Mono.System.XML.csproj : caught up with current library.
