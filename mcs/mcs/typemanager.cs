@@ -88,6 +88,7 @@ public class TypeManager {
 	static public MethodInfo delegate_combine_delegate_delegate;
 	static public MethodInfo delegate_remove_delegate_delegate;
 	static public MethodInfo int_get_offset_to_string_data;
+	static public MethodInfo int_array_get_length;
 	
 	//
 	// The attribute constructors.
@@ -569,6 +570,8 @@ public class TypeManager {
 			idisposable_type, "Dispose", void_arg);
 		int_get_offset_to_string_data = GetMethod (
 			runtime_helpers_type, "get_OffsetToStringData", void_arg);
+		int_array_get_length = GetMethod (
+			array_type, "get_Length", void_arg);
 		
 		//
 		// object arguments

@@ -1,3 +1,12 @@
+2002-04-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (PropertyExpr): Optimize calls to Array::get_Length on
+	single-dimension arrays as using the ldlen opcode.  
+
+	Daniel Lewis discovered this optimization.  
+
+	* typemanager.cs: Add signature for System.Array::get_Length
+
 2002-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* statement.cs: report the error when the foreach does not apply to an

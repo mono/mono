@@ -3660,7 +3660,22 @@ namespace Mono.CSharp {
 
 		override public void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, Accessors [0], null);
+			MethodInfo method = Accessors [0];
+
+			//
+			// Special case: length of single dimension array is turned into ldlen
+			//
+			if (method == TypeManager.int_array_get_length){
+				Type iet = instance_expr.Type;
+
+				if (iet.GetArrayRank () == 1){
+					instance_expr.Emit (ec);
+					ec.ig.Emit (OpCodes.Ldlen);
+					return;
+				}
+			}
+
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, method, null);
 			
 		}
 
