@@ -41,8 +41,58 @@ public class PKCS1MaskGenerationMethodTest : TestCase
 		AllTests.AssertEquals (msg, array1, array2);
 	}
 
+	public void TestProperties () 
+	{
+		// default value
+		AssertEquals ("PKCS1MaskGenerationMethod HashName(default)", "SHA1", pkcs1.HashName);
+		// return to default
+		pkcs1.HashName = null;
+		AssertEquals ("PKCS1MaskGenerationMethod HashName(null)", "SHA1", pkcs1.HashName);
+		// bad hash accepted
+		pkcs1.HashName = "SHA2";
+		AssertEquals ("PKCS1MaskGenerationMethod HashName(bad)", "SHA2", pkcs1.HashName);
+		// tostring
+		AssertEquals ("PKCS1MaskGenerationMethod ToString()", "System.Security.Cryptography.PKCS1MaskGenerationMethod", pkcs1.ToString ());
+	}
+
+	public void TestEmptyMask () 
+	{
+		// pretty much useless but supported
+		byte[] random = { 0x01 };
+		byte[] mask = pkcs1.GenerateMask (random, 0);
+		AssertEquals ("PKCS1MaskGenerationMethod Empty Mask", 0, mask.Length);
+	}
+
+	public void TestBadParameters () 
+	{
+		try {
+			byte[] mask = pkcs1.GenerateMask (null, 10);
+			Fail ("Expecting NullReferenceException but none");
+		}
+		catch (NullReferenceException) {
+			// do nothing, this is what we expect
+		}
+		catch (Exception e) {
+			Fail ("Expecting NullReferenceException but got: " + e.ToString ());
+		}
+
+		byte[] random = { 0x01 };
+		try {
+			byte[] mask = pkcs1.GenerateMask (random, -1);
+			Fail ("Expecting OverflowException but none");
+		}
+		catch (OverflowException) {
+			// do nothing, this is what we expect
+		}
+		catch (Exception e) {
+			Fail ("Expecting OverflowException but got: " + e.ToString ());
+		}
+	}
+
 	// test part of PKCS#1 v.2.1 test vector
-	public void TestPKCS1v21TestVector ()
+	// FIXME: Commented as we are now compatible with MS implementation 
+	// (i.e. not with the PKCS#1 specification).
+/*	public void TestPKCS1v21TestVector ()
 	{
 		pkcs1.HashName = "SHA1";
 		
@@ -77,7 +127,7 @@ public class PKCS1MaskGenerationMethodTest : TestCase
 		byte[] seedMask = pkcs1.GenerateMask (maskedDB, seed.Length);
 		byte[] expectedSeedMask = { 0x41, 0x87, 0x0b, 0x5a, 0xb0, 0x29, 0xe6, 0x57, 0xd9, 0x57, 0x50, 0xb5, 0x4c, 0x28, 0x3c, 0x08, 0x72, 0x5d, 0xbe, 0xa9 };
 		AssertEquals ("PKCS1MaskGenerationMethod 2", expectedSeedMask, seedMask);
-	}
+	}*/
 
 }
 

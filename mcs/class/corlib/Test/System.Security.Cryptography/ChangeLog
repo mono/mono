@@ -1,3 +1,14 @@
+2002-10-19  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: Renabled most tests after commenting all code causing a 
+	cyclic dependency (corlib->System.Xml->corlib). Some tests will fail 
+	until commented code is replaced.
+	* SymmetricAlgorithm.cs: New (189) generated test cases for all default
+	algorithm implementation, all cipher modes, all padding modes, all key
+	sizes, all block sizes, feedback...
+	* PKCS1MaskGenerationMethodTest.cs: Commented vector test. Added new 
+	tests to check for various exceptions
+
 2002-10-16  Nick Drochak  <ndrochak@gol.com>
 
 	* CryptoConfigTest.cs (TestCreateFromName): Disable tests for

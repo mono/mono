@@ -48,7 +48,7 @@ namespace MonoTests.System.Security.Cryptography {
                         {
                                 TestSuite suite =  new TestSuite ();
                                 suite.AddTest (SymmetricAlgorithmTest.Suite);
-//				suite.AddTest (AsymmetricAlgorithmTest.Suite); 
+				suite.AddTest (AsymmetricAlgorithmTest.Suite); 
                         	suite.AddTest (RNGCryptoServiceProviderTest.Suite);
 				suite.AddTest (FromBase64TransformTest.Suite);
 				suite.AddTest (RijndaelManagedTest.Suite);
@@ -56,13 +56,15 @@ namespace MonoTests.System.Security.Cryptography {
 				suite.AddTest (RC2Test.Suite);
 				suite.AddTest (CryptoConfigTest.Suite);
 //				suite.AddTest (DSATest.Suite);
-//				suite.AddTest (RSATest.Suite);
+				suite.AddTest (RSATest.Suite);
                                 suite.AddTest (RandomNumberGeneratorTest.Suite);
                                 suite.AddTest (HashAlgorithmTest.Suite);
                                 suite.AddTest (SHA1Test.Suite);
                                 suite.AddTest (SHA1CryptoServiceProviderTest.Suite);
 				suite.AddTest (KeyedHashAlgorithmTest.Suite);
 				suite.AddTest (HMACSHA1Test.Suite);
+				suite.AddTest (PKCS1MaskGenerationMethodTest.Suite);
+				suite.AddTest (RijndaelTest.Suite);
                                 return suite;
                         }
                 }
