@@ -1,5 +1,21 @@
 2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_image_get_type_info): interfaces really don't have
+	a parent.
+
+	* reflection.c (mono_image_basic_init): fill out missing fields of
+	image structure.
+
+	* reflection.c (mono_image_basic_init): Invoke assembly load hooks for 
+	dynamic assemblies. This is required so dynamic assemblies show up in
+	AppDomain.GetAssemblies (), emit an AssembyLoadEvent, gets searched by
+	Type::GetType() etc. This is consistent with MS behaviour.
+
+	* image.c image.h reflection.c: add newly created classes to the name 
+	cache so mono_class_get () will find them.	
+
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
 	First part of changes to get IKVM.NET running under mono.
 	
 	* appdomain.h, appdomain.c: added new function 
