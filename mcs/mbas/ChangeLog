@@ -1,3 +1,7 @@
+2005-03-24 Manjula GHM <mmanjula@novell.com>
+        * statement.cs: Fix bug in 'Exit Function'
+
+
 2005-23-03 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* AssemblyInfo.cs: Some more diligent authors
 	* ecore.cs, cfold.cs, delegate.cs: remove warnings-causing code 

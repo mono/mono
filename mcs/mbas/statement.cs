@@ -1097,8 +1097,11 @@ namespace Mono.MonoBASIC {
 						ec.HasReturnLabel = true;
 					}
 					ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-				} else
+				} else {
+					ec.ig.Emit (OpCodes.Ldloc_0);
 					ec.ig.Emit (OpCodes.Ret);
+
+				}
 
 				return true; 
 			}
