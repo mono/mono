@@ -1,3 +1,19 @@
+2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc-internal.h gc.c: Add mono_gc_out_of_memory () function. Register
+	this function with Boehm as the oom handler, so we don't have to check
+	the result of GC_malloc.
+
+	* object.c: Remove checks for oom.
+
+	* object.h object.c (mono_class_get_allocation_ftn): New function to
+	return the icall which can be used to allocate an instance of a given
+	class. 
+
+	* object.c: Handle common allocation requests using GC_gcj_fast_malloc.
+
+	* class-internals.h: Add 'enabled' field.
+
 2004-08-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* domain.c (mono_init_internal): Call MONO_GC_PRE_INIT ().
