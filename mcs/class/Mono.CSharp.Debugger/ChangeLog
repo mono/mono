@@ -1,5 +1,11 @@
 2003-02-18  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolTable.cs (MethodIndexEntry): New public struct.
+
+	* MonoSymbolFile.cs (MonoSymbolFile.GetMethodByToken): New method.
+
+2003-02-18  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolFile.cs (MonoSymbolFile.Assembly): New public property.
 
 	* MonoSymbolTable.cs (MethodEntry.MethodBase): New public property.

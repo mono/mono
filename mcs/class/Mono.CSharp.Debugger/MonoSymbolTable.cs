@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 31;
+		public const int  Version = 32;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int TotalFileSize;
@@ -183,7 +183,7 @@ namespace Mono.CSharp.Debugger
 		int namespace_count, nstable_offset;
 		bool creating;
 
-		internal static int Size {
+		public static int Size {
 			get { return 24; }
 		}
 
@@ -324,11 +324,8 @@ namespace Mono.CSharp.Debugger
 			EndRow = reader.ReadInt32 ();
 		}
 
-		public static int Size
-		{
-			get {
-				return 16;
-			}
+		public static int Size {
+			get { return 16; }
 		}
 
 		internal void Write (BinaryWriter bw)
@@ -358,6 +355,44 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
+	public struct MethodIndexEntry
+	{
+		public readonly int FileOffset;
+		public readonly int FullNameOffset;
+		public readonly int Token;
+
+		public static int Size {
+			get { return 12; }
+		}
+
+		public MethodIndexEntry (int offset, int name_offset, int token)
+		{
+			this.FileOffset = offset;
+			this.FullNameOffset = name_offset;
+			this.Token = token;
+		}
+
+		internal MethodIndexEntry (BinaryReader reader)
+		{
+			FileOffset = reader.ReadInt32 ();
+			FullNameOffset = reader.ReadInt32 ();
+			Token = reader.ReadInt32 ();
+		}
+
+		internal void Write (BinaryWriter bw)
+		{
+			bw.Write (FileOffset);
+			bw.Write (FullNameOffset);
+			bw.Write (Token);
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("MethodIndexEntry ({0}:{1}:{2:x})",
+					      FileOffset, FullNameOffset, Token);
+		}
+	}
+
 	public class MethodEntry
 	{
 		#region This is actually written to the symbol file
@@ -382,6 +417,7 @@ namespace Mono.CSharp.Debugger
 		int file_offset;
 		string name;
 		string full_name;
+		MethodIndexEntry index_entry;
 
 		public readonly SourceFileEntry SourceFile;
 		public readonly LineNumberEntry[] LineNumbers;
@@ -392,11 +428,8 @@ namespace Mono.CSharp.Debugger
 
 		public readonly MonoSymbolFile SymbolFile;
 
-		public static int Size
-		{
-			get {
-				return 52;
-			}
+		public static int Size {
+			get { return 52; }
 		}
 
 		public string Name {
@@ -589,6 +622,8 @@ namespace Mono.CSharp.Debugger
 
 			file_offset = (int) bw.BaseStream.Position;
 
+			index_entry = new MethodIndexEntry (file_offset, FullNameOffset, Token);
+
 			bw.Write (SourceFileIndex);
 			bw.Write (Token);
 			bw.Write (StartRow);
@@ -609,8 +644,7 @@ namespace Mono.CSharp.Debugger
 
 		internal void WriteIndex (BinaryWriter bw)
 		{
-			bw.Write (file_offset);
-			bw.Write (FullNameOffset);
+			index_entry.Write (bw);
 		}
 
 		public override string ToString ()

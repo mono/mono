@@ -321,6 +321,7 @@ namespace Mono.CSharp.Debugger
 		Hashtable method_hash;
 		Hashtable source_file_hash;
 
+		Hashtable method_token_hash;
 		Hashtable method_name_hash;
 		Hashtable source_name_hash;
 
@@ -407,6 +408,38 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		public MethodIndexEntry GetMethodIndexEntry (int index)
+		{
+			int old_pos = (int) reader.BaseStream.Position;
+			reader.BaseStream.Position = ot.MethodTableOffset +
+				MethodIndexEntry.Size * (index - 1);
+			MethodIndexEntry ie = new MethodIndexEntry (reader);
+			reader.BaseStream.Position = old_pos;
+			return ie;
+		}
+
+		public MethodEntry GetMethodByToken (int token)
+		{
+			if (reader == null)
+				throw new InvalidOperationException ();
+
+			if (method_token_hash == null) {
+				method_token_hash = new Hashtable ();
+
+				for (int i = 0; i < MethodCount; i++) {
+					MethodIndexEntry ie = GetMethodIndexEntry (i);
+
+					method_token_hash.Add (ie.Token, i);
+				}
+			}
+
+			object value = method_token_hash [token];
+			if (value == null)
+				return null;
+
+			return GetMethod ((int) value);
+		}
+
 		public MethodEntry GetMethod (int index)
 		{
 			if ((index < 1) || (index > ot.MethodCount))
@@ -418,8 +451,8 @@ namespace Mono.CSharp.Debugger
 			if (entry != null)
 				return entry;
 
-			reader.BaseStream.Position = ot.MethodTableOffset + 8 * (index - 1);
-			reader.BaseStream.Position = reader.ReadInt32 ();
+			MethodIndexEntry ie = GetMethodIndexEntry (index);
+			reader.BaseStream.Position = ie.FileOffset;
 
 			entry = new MethodEntry (this, reader, index);
 			method_hash.Add (index, entry);
@@ -469,11 +502,8 @@ namespace Mono.CSharp.Debugger
 				method_name_hash = new Hashtable ();
 
 				for (int i = 0; i < ot.MethodCount; i++) {
-					reader.BaseStream.Position = ot.MethodTableOffset + 8 * i;
-
-					int offset = reader.ReadInt32 ();
-					int name_offset = reader.ReadInt32 ();
-					string name = ReadString (name_offset);
+					MethodIndexEntry ie = GetMethodIndexEntry (i);
+					string name = ReadString (ie.FullNameOffset);
 
 					method_name_hash.Add (name, i + 1);
 				}
