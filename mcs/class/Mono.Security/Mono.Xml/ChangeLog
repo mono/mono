@@ -1,3 +1,8 @@
+2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MiniParser.cs: In synch with corlib version. Removed all level 4 
+	compilation warnings.
+
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MiniParser.cs: New. Copy from corlib internal class. Required for

@@ -4,7 +4,9 @@
 // Authors:
 //	Sergey Chaban
 //
-
+// Copyright (c) 2001, 2002 Wild West Software
+// Copyright (c) 2002 Sergey Chaban
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,30 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-/*
- * Copyright (c) 2001, 2002 Wild West Software
- * Copyright (c) 2002 Sergey Chaban
- * 
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
- * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 using System;
 using System.Text;
 using System.Collections;
@@ -57,10 +35,10 @@ using System.Globalization;
 
 namespace Mono.Xml {
 
-[CLSCompliant(false)] 
 #if INSIDE_CORLIB
 	internal
 #else
+        [CLSCompliant(false)]    
 	public
 #endif
 class MiniParser {
@@ -355,7 +333,6 @@ class MiniParser {
 
 		while (true) {
 			++this.col;
-			int prevCh = currCh;
 
 			currCh = reader.Read();
 
@@ -582,7 +559,6 @@ class MiniParser {
 
 						int pos = 0;
 						int entIdx = 0xF;
-						int pred = 0;
 						int predShift = 0;
 
 						int sbLen = sbChars.Length;
@@ -602,11 +578,11 @@ class MiniParser {
 							pos = 0xF;
 							if (lBr != 0xF && currCh == entityRefChars[lBr]) {
 								if (lPred < 0xE) entIdx = lPred;
-								pred = lPred;
+//								pred = lPred;
 								predShift = 12; // left
 							} else if (rBr != 0xF && currCh == entityRefChars[rBr]) {
 								if (rPred < 0xE) entIdx = rPred;
-								pred = rPred;
+//								pred = rPred;
 								predShift = 8; // right
 							} else if (currCh == ';') {
 								if (entIdx != 0xF
