@@ -70,5 +70,18 @@ namespace System.Web.UI.MobileControls
 				throw new NotImplementedException();
 			}
 		}
+
+		[MonoTODO]
+		public MobileControl Control
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
 	}
 }

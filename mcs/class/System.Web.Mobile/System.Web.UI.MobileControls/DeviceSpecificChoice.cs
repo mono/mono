@@ -184,5 +184,13 @@ namespace System.Web.UI.MobileControls
 		{
 			throw new NotImplementedException();
 		}
+
+		public bool HasTemplates
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
 	}
 }

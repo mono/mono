@@ -1,4 +1,12 @@
 
+2003-04-03	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* DeviceSpecific.cs      : Almost done.
+	* DeviceSpecificChoice.cs: HasTemplates { get; } - Subbed.
+	* Style.cs               : Control      { get; } - Stubbed.
+	* MobileControl.cs       : FindClosestTemplateControl()
+	                                                 - Stubbed.
+
 2003-02-23	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* CustomValidator.cs     : Completed.

@@ -302,5 +302,10 @@ namespace System.Web.UI.MobileControls
 				enablePagination = value;
 			}
 		}
+
+		internal TemplateControl FindClosestTemplateControl()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
