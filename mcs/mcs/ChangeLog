@@ -1,5 +1,13 @@
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
+	Applying a patch from Benjamin Jemlich <pcgod@gmx.net>.
+
+	* statement.cs (Using.EmitLocalVariableDecls): Use
+	TypeManager.idisposable_type, not typeof (IDisposable).
+	(Foreach.EmitCollectionForeach): Added support for valuetypes.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (Event.Define): Don't emit the field and don't set
 	RTSpecialName and SpecialName for events on interfaces.  Fixes
 	#57703.	

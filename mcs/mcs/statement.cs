@@ -3412,7 +3412,7 @@ namespace Mono.CSharp {
 					converted_vars [i].Emit (ec);
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				} else {
-					Expression ml = Expression.MemberLookup(ec, typeof(IDisposable), var.Type, "Dispose", Mono.CSharp.Location.Null);
+					Expression ml = Expression.MemberLookup(ec, TypeManager.idisposable_type, var.Type, "Dispose", Mono.CSharp.Location.Null);
 
 					if (!(ml is MethodGroupExpr)) {
 						var.Emit (ec);
@@ -3910,11 +3910,18 @@ namespace Mono.CSharp {
 				if (expr is IMemoryLocation){
 					IMemoryLocation ml = (IMemoryLocation) expr;
 
-					ml.AddressOf (ec, AddressOp.Load);
+					Expression ml1 = Expression.MemberLookup(ec, TypeManager.ienumerator_type, expr.Type, "GetEnumerator", Mono.CSharp.Location.Null);
+
+					if (!(ml1 is MethodGroupExpr)) {
+						expr.Emit(ec);
+						ec.ig.Emit(OpCodes.Box, expr.Type);
+					} else {
+						ml.AddressOf (ec, AddressOp.Load);
+					}
 				} else
 					throw new Exception ("Expr " + expr + " of type " + expr.Type +
 							     " does not implement IMemoryLocation");
-				ig.Emit (OpCodes.Call, hm.get_enumerator);
+				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
 			} else {
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
