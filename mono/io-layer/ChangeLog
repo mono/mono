@@ -1,5 +1,10 @@
 2002-07-12  Dick Porter  <dick@ximian.com>
 
+	* io.c (convert_from_flags): Fixed misunderstanding wrt fcntl
+	flags.  Fixes bug 27633.
+
+2002-07-12  Dick Porter  <dick@ximian.com>
+
 	* wapi-private.h:
 	* handles.c:
 	* daemon.c: Use size of sockaddr_un.sun_path from config.h
