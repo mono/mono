@@ -71,7 +71,46 @@ namespace NpgsqlTypes
         // From include/utils/datetime.h. Thanks to Carlos Guzman Alvarez
         private static readonly DateTime postgresEpoch = new DateTime(2000, 1, 1);
 
+        private static readonly string[] DateFormats = new String[] 
+	{
+          "yyyy-MM-dd",
+	};
 
+        private static readonly string[] TimeFormats = new String[]
+	{
+          "HH:mm:ss.ffffff",
+          "HH:mm:ss.fffff",	
+          "HH:mm:ss.ffff",
+          "HH:mm:ss.fff",
+          "HH:mm:ss.ff",
+          "HH:mm:ss.f",
+          "HH:mm:ss",
+          "HH:mm:ss.ffffffzz",
+          "HH:mm:ss.fffffzz",	
+          "HH:mm:ss.ffffzz",
+          "HH:mm:ss.fffzz",
+          "HH:mm:ss.ffzz",
+          "HH:mm:ss.fzz",
+          "HH:mm:sszz"
+	};
+
+        private static readonly string[] DateTimeFormats = new String[] 
+	{
+          "yyyy-MM-dd HH:mm:ss.ffffff",
+          "yyyy-MM-dd HH:mm:ss.fffff",	
+          "yyyy-MM-dd HH:mm:ss.ffff",
+          "yyyy-MM-dd HH:mm:ss.fff",
+          "yyyy-MM-dd HH:mm:ss.ff",
+          "yyyy-MM-dd HH:mm:ss.f",
+          "yyyy-MM-dd HH:mm:ss",
+          "yyyy-MM-dd HH:mm:ss.ffffffzz",
+          "yyyy-MM-dd HH:mm:ss.fffffzz",	
+          "yyyy-MM-dd HH:mm:ss.ffffzz",
+          "yyyy-MM-dd HH:mm:ss.fffzz",
+          "yyyy-MM-dd HH:mm:ss.ffzz",
+          "yyyy-MM-dd HH:mm:ss.fzz",
+          "yyyy-MM-dd HH:mm:sszz"
+	};
 
         public static String GetBackendTypeNameFromDbType(DbType dbType)
         {
@@ -248,20 +287,20 @@ namespace NpgsqlTypes
 
                 // Get the date time parsed in all expected formats for timestamp.
                 return DateTime.ParseExact(data,
-                                           new String[] {"yyyy-MM-dd HH:mm:ss.ffffff", "yyyy-MM-dd HH:mm:ss.fffff", "yyyy-MM-dd HH:mm:ss.ffff", "yyyy-MM-dd HH:mm:ss.fff", "yyyy-MM-dd HH:mm:ss.ff", "yyyy-MM-dd HH:mm:ss.f", "yyyy-MM-dd HH:mm:ss"},
+                                           DateTimeFormats,
                                            DateTimeFormatInfo.InvariantInfo,
                                            DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
 
             case DbType.Date:
                 return DateTime.ParseExact(data,
-                                           "yyyy-MM-dd",
+                                           DateFormats,
                                            DateTimeFormatInfo.InvariantInfo,
                                            DateTimeStyles.AllowWhiteSpaces);
 
             case DbType.Time:
 
                 return DateTime.ParseExact(data,
-                                           new String[] {"HH:mm:ss.ffff", "HH:mm:ss.fff", "HH:mm:ss.ff", "HH:mm:ss.f", "HH:mm:ss"},
+                                           TimeFormats,
                                            DateTimeFormatInfo.InvariantInfo,
                                            DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
 
