@@ -90,6 +90,7 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0
+		[CLSCompliant(false)]
 		public ModuleHandle ModuleHandle {
 			get {
 				return new ModuleHandle (_impl);

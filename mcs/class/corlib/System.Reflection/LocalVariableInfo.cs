@@ -41,6 +41,9 @@ namespace System.Reflection {
 		int local_index;
 		#endregion
 
+		internal LocalVariableInfo () {
+		}
+
 		public virtual bool IsPinned {
 			get {
 				return is_pinned;

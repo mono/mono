@@ -42,7 +42,7 @@ namespace System.Reflection
 		protected string NameImpl;
 		protected int PositionImpl;
 		protected ParameterAttributes AttrsImpl;
-		protected UnmanagedMarshal marshalAs;
+		private UnmanagedMarshal marshalAs;
 
 		protected ParameterInfo () {
 		}

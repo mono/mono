@@ -47,6 +47,9 @@ namespace System.Reflection {
 		int max_stack;
 		#endregion
 
+		internal MethodBody () {
+		}
+
 		public IList<ExceptionHandlingClause> ExceptionHandlingClauses {
 			get {
 				return Array.AsReadOnly<ExceptionHandlingClause> (clauses);

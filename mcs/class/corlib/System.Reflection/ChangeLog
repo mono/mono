@@ -1,5 +1,15 @@
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* PropertyInfo.cs (OptionalCustomModifiers): Add [MonoTODO].
+
+	* PropertyInfo.cs: Add stub for GetConstantValue ().	
+
+	* ParameterInfo.cs (marshalAs): Make this private.
+
+	* Module.cs (ModuleHandle): Add [CLSCompliant(false)].
+
+	* LocalVariableInfo.cs MethodBody.cs: Disable default constructor.
+
 	* ExceptionHandlingClause.cs: Disable default constructor.
 
 2004-09-27  Zoltan Varga  <vargaz@freemail.hu>

@@ -97,6 +97,7 @@ namespace System.Reflection {
 		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
+		[MonoTODO]
 		public virtual Type[] OptionalCustomModifiers {
 			get {
 				throw new NotImplementedException ();
@@ -109,6 +110,11 @@ namespace System.Reflection {
 				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoTODO]
+		public virtual object GetConstantValue () {
+			throw new NotImplementedException ();
+		}		
 #endif
 	}
 }
