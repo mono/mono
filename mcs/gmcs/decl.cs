@@ -487,8 +487,9 @@ namespace Mono.CSharp {
 
 			case TypeAttributes.NestedPrivate:
 				string check_type_name = check_type.FullName;
-				string type_name = tb.FullName;
-				
+				string type_name = CurrentType != null ?
+					CurrentType.Name : tb.FullName;
+
 				int cio = check_type_name.LastIndexOf ('+');
 				string container = check_type_name.Substring (0, cio);
 
