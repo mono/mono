@@ -1,3 +1,11 @@
+2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* AsyncResult.cs: Added async_callback field and fixed the callback call.
+	I thought that async_delegate was the callback, but it is not, it is the
+	delegate upon which the async call was invoked. This fixes bug #53020.
+	* StackBuilderSink.cs: If the target object is a proxy, make the call
+	using the Invoke method of the real proxy.
+
 2003-12-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ConstructionResponse.cs: Added constructor for exception response.

@@ -9,6 +9,7 @@
 using System;
 using System.Threading;
 using System.Reflection;
+using System.Runtime.Remoting.Proxies;
 
 namespace System.Runtime.Remoting.Messaging
 {
@@ -17,10 +18,13 @@ namespace System.Runtime.Remoting.Messaging
 	internal class StackBuilderSink: IMessageSink
 	{
 		MarshalByRefObject _target;
+		RealProxy _rp;
 
 		public StackBuilderSink (MarshalByRefObject obj)
 		{
 			_target = obj;
+			if (RemotingServices.IsTransparentProxy (obj))
+				_rp = RemotingServices.GetRealProxy (obj);
 		}
 
 		public IMessage SyncProcessMessage (IMessage msg)
@@ -28,7 +32,8 @@ namespace System.Runtime.Remoting.Messaging
 			CheckParameters (msg);
 
 			// Makes the real call to the object
-			return RemotingServices.InternalExecuteMessage (_target, (IMethodCallMessage)msg);
+			if (_rp != null) return _rp.Invoke (msg);
+			else return RemotingServices.InternalExecuteMessage (_target, (IMethodCallMessage)msg);
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
@@ -45,7 +50,11 @@ namespace System.Runtime.Remoting.Messaging
 			IMessageSink replySink = (IMessageSink)parms[1];
 			
 			CheckParameters (msg);
-			IMessage res = RemotingServices.InternalExecuteMessage (_target, msg);
+			
+			IMessage res;
+			if (_rp != null) res = _rp.Invoke (msg);
+			else res = RemotingServices.InternalExecuteMessage (_target, (IMethodCallMessage)msg);
+			res = RemotingServices.InternalExecuteMessage (_target, msg);
 			
 			replySink.SyncProcessMessage (res);
 		}

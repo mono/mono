@@ -25,6 +25,7 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 	bool sync_completed;
 	bool completed;
 	bool endinvoke_called;
+	object async_callback;
 	MonoMethodMessage call_message;
 	IMessageCtrl message_ctrl;
 	IMessage reply_message;
@@ -118,9 +119,9 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 		completed = true;
 		NativeEventCalls.SetEvent_internal (handle.Handle);
 		
-		if (async_delegate != null)
+		if (async_callback != null)
 		{
-			AsyncCallback ac = (AsyncCallback) async_delegate;
+			AsyncCallback ac = (AsyncCallback) async_callback;
 			ac (this);
 		}
 
