@@ -84,7 +84,7 @@ namespace System.Reflection.Emit {
 		}
 		
 		public override MethodInfo GetBaseDefinition() {
-			return null;
+			return this;
 		}
 		public override MethodImplAttributes GetMethodImplementationFlags() {
 			return iattrs;

@@ -1,9 +1,12 @@
 // System.MonoCustomAttrs.cs
 // Hooks into the runtime to get custom attributes for reflection handles
 //
-// Paolo Molaro (lupus@ximian.com)
+// Authors:
+// 	Paolo Molaro (lupus@ximian.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2002 Ximian, Inc.
+// (c) 2002,2003 Ximian, Inc. (http://www.ximian.com)
+//
 
 using System;
 using System.Reflection;
@@ -18,8 +21,9 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern object[] GetCustomAttributes (ICustomAttributeProvider obj);
 
-		private static object[] from_cache (ICustomAttributeProvider obj) {
-			object[] res = (object[])handle_to_attrs [obj];
+		private static object[] from_cache (ICustomAttributeProvider obj)
+		{
+			object[] res = (object []) handle_to_attrs [obj];
 			if (res != null)
 				return res;
 			res = GetCustomAttributes (obj);
@@ -27,58 +31,106 @@ namespace System {
 			return res;
 		}
 
-		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit) {
+		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)
+		{
+			if (obj == null)
+				return new object [0]; //FIXME: Should i throw an exception here?
+
 			object[] r;
 			object[] res = from_cache (obj);
 			// shortcut
-			if (res.Length == 1 && (res[0].GetType () == attributeType || res[0].GetType().IsSubclassOf(attributeType))) {
-				r = (object[])Array.CreateInstance (attributeType, 1);
-				r [0] = res [0];
+			if (res.Length == 1) {
+				if (attributeType.IsAssignableFrom (res[0].GetType ())) {
+					r = new object [] {res [0]};
+				} else {
+					r = new object [0];
+				}
 				return r;
 			}
+
 			ArrayList a = new ArrayList ();
-			Type btype = obj as Type;
+			ICustomAttributeProvider btype = obj;
 			do {
-				foreach (object attr in res) {
-					if (attributeType.Equals (attr.GetType ()) || attr.GetType().IsSubclassOf(attributeType))
+				foreach (object attr in res)
+					if (attributeType.IsAssignableFrom (attr.GetType ()))
 						a.Add (attr);
-				}
-				if (btype != null && ((btype = btype.BaseType) != null)) {
+
+				if ((btype = GetBase (btype)) != null)
 					res = from_cache (btype);
-				} else {
-					break;
-				}
-			} while (inherit && btype != null && ((btype = btype.BaseType) != null));
-			r = (object[])Array.CreateInstance (attributeType, a.Count);
-			a.CopyTo (r);
-			return r;
+			} while (inherit && btype != null);
+
+			return (object []) a.ToArray (attributeType);
 		}
 
-		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, bool inherit) {
-			Type btype = obj as Type;
-			if (!inherit || btype == null) {
-				return (Object[])from_cache (obj).Clone ();
-			} else {
-				ArrayList a = new ArrayList ();
-				a.AddRange (from_cache (obj));
-				while ((btype = btype.BaseType) != null) {
-					a.AddRange (from_cache (btype));
-				}
-				Attribute[] r = new Attribute [a.Count];
-				a.CopyTo (r);
-				return (object[])r;
-			}
+		internal static object [] GetCustomAttributes (ICustomAttributeProvider obj, bool inherit)
+		{
+			if (obj == null)
+				return new object [0]; //FIXME: Should i throw an exception here?
+
+			if (!inherit)
+				return (object []) from_cache (obj).Clone ();
+
+			ArrayList a = new ArrayList ();
+			ICustomAttributeProvider btype = obj;
+			a.AddRange (from_cache (btype));
+			while ((btype = GetBase (btype)) != null)
+				a.AddRange (from_cache (btype));
+
+			return (object []) a.ToArray (typeof (Attribute));
 		}
-		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit) {
+
+		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
+		{
 			object[] res = from_cache (obj);
 			foreach (object attr in res) {
 				if (attributeType.Equals (attr.GetType ()))
 					return true;
 			}
-			Type btype = obj as Type;
-			if (inherit && (btype != null) && ((btype = btype.BaseType) != null))
+
+			ICustomAttributeProvider btype = GetBase (obj);
+			if (inherit && (btype != null))
 				return IsDefined (btype, attributeType, inherit);
+
 			return false;
+		}
+
+		// Handles Type, MonoProperty and MonoMethod.
+		// The runtime has also cases for MonoEvent, MonoField, Assembly and ParameterInfo,
+		// but for those we return null here.
+		static ICustomAttributeProvider GetBase (ICustomAttributeProvider obj)
+		{
+			if (obj == null)
+				return null;
+
+			Type t = obj.GetType ();
+			if (t == typeof (Type))
+				return t.BaseType;
+
+			MethodInfo method = null;
+			if (t == typeof (MonoProperty)) {
+				MonoProperty prop = (MonoProperty) obj;
+				method = prop.GetGetMethod ();
+				if (method == null)
+					method = prop.GetSetMethod ();
+			} else if (t == typeof (MonoMethod)) {
+				method = (MethodInfo) obj; 
+			}
+
+			/**
+			 * ParameterInfo -> null
+			 * Assembly -> null
+			 * MonoEvent -> null
+			 * MonoField -> null
+			 */
+			if (method == null || !method.IsVirtual)
+				return null;
+
+			MethodInfo baseMethod = method.GetBaseDefinition ();
+			if (baseMethod == method)
+				return null;
+
+			return baseMethod;
 		}
 	}
 }
+

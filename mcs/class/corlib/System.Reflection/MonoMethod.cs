@@ -41,10 +41,14 @@ namespace System.Reflection {
 		string name;
 		Type reftype;
 		
-		[MonoTODO]
-		public override MethodInfo GetBaseDefinition() {
-			return this; /* FIXME */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern MonoMethod get_base_definition (MonoMethod method);
+
+		public override MethodInfo GetBaseDefinition ()
+		{
+			return get_base_definition (this);
 		}
+
 		public override Type ReturnType {
 			get {
 				MonoMethodInfo info;
