@@ -1,3 +1,9 @@
+2003-10-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CADMessages.cs: added smuggeling argument support for some instances
+	  of MarshalByRefObject. This should make the cross-appdomain channel 
+	  even faster. Some other minor fixes.
+
 2003-10-07  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CADMessages.cs: improved argument smuggeling. Now it supports strings,

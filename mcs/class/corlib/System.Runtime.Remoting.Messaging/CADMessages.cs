@@ -27,15 +27,30 @@ namespace System.Runtime.Remoting.Messaging {
 	}
 	
 	internal class CADObjRef {
-		public ObjRef objref;
+		ObjRef objref;
+		public int SourceDomain;
 
-		public CADObjRef (ObjRef o) {
-			this.objref = o;
+		public CADObjRef (ObjRef o, int sourceDomain) {
+			objref = o;
+			SourceDomain = sourceDomain;
+		}
+		
+		public string TypeName {
+			get { return objref.TypeInfo.TypeName; }
+		}
+		
+		public string URI {
+			get { return objref.URI; }
 		}
 	}
 
 	internal class CADMessageBase {
 
+		protected object [] _args;
+		protected byte [] _serializedArgs = null;
+		protected int _propertyCount = 0;
+		protected CADArgHolder _callContext;
+		
 		// Helper to marshal properties
 		internal static int MarshalProperties (IDictionary dict, ref ArrayList args) {
 			IDictionary serDict = dict;
@@ -93,29 +108,25 @@ namespace System.Runtime.Remoting.Messaging {
 
 		// Checks an argument if it's possible to pass without marshalling and
 		// if not it will be added to arguments to be serialized
-		protected static object MarshalArgument (object arg, ref ArrayList args) {
+		protected object MarshalArgument (object arg, ref ArrayList args) {
 			if (null == arg)
 				return null;
 
 			if (IsPossibleToIgnoreMarshal (arg))
 				return arg;
 
-/*			FIXME
-			IsPossibleToCAD always return false.
-			Avoid unneeded marshalling until IsPossibleToCAD is fixed
-			
 			MarshalByRefObject mbr = arg as MarshalByRefObject;
-			if (null != mbr) {
-				if (!RemotingServices.IsTransparentProxy(mbr) || RemotingServices.GetRealProxy(mbr) is RemotingProxy) {
+			if (null != mbr)
+			{
+				if (RemotingServices.IsTransparentProxy(mbr)) {
+					// We don't deal with this case yet
+				}
+				else {
 					ObjRef objRef = RemotingServices.Marshal(mbr);
-					
-					// we should check if we can move this..
-					if (objRef.IsPossibleToCAD ()) {
-						return new CADObjRef(new ObjRef(objRef, true));
-					}
+					return new CADObjRef(objRef, System.Threading.Thread.GetDomainID());
 				}
 			}
-*/
+
 			if (null == args)
 				args = new ArrayList();
 			
@@ -125,7 +136,7 @@ namespace System.Runtime.Remoting.Messaging {
 			return new CADArgHolder(args.Count - 1);
 		}
 
-		protected static object UnmarshalArgument (object arg, ArrayList args) {
+		protected object UnmarshalArgument (object arg, ArrayList args) {
 			if (arg == null) return null;
 			
 			// Check if argument is an holder (then we know that it's a serialized argument)
@@ -136,10 +147,16 @@ namespace System.Runtime.Remoting.Messaging {
 
 			CADObjRef objref = arg as CADObjRef;
 			if (null != objref) {
-				return objref.objref.GetRealObject (new StreamingContext (StreamingContextStates.Other));
+				string typeName = new string (objref.TypeName.ToCharArray());
+				string uri = new string (objref.URI.ToCharArray());
+				int domid = objref.SourceDomain;
+				
+				ChannelInfo cinfo = new ChannelInfo (new CrossAppDomainData (domid));
+				ObjRef localRef = new ObjRef (typeName, uri, cinfo);
+				return RemotingServices.Unmarshal (localRef);
 			}
 			
-			if (arg.GetType().IsArray)
+			if (arg is Array)
 			{
 				Array argb = (Array)arg;
 				Array argn;
@@ -194,7 +211,7 @@ namespace System.Runtime.Remoting.Messaging {
 			throw new NotSupportedException ("Parameter of type " + arg.GetType () + " cannot be unmarshalled");
 		}
 
-		internal static object [] MarshalArguments (object [] arguments, ref ArrayList args) {
+		internal object [] MarshalArguments (object [] arguments, ref ArrayList args) {
 			object [] marshalledArgs = new object [arguments.Length];
 
 			int total = arguments.Length;
@@ -204,7 +221,7 @@ namespace System.Runtime.Remoting.Messaging {
 			return marshalledArgs;
 		}
 
-		internal static object [] UnmarshalArguments (object [] arguments, ArrayList args) {
+		internal object [] UnmarshalArguments (object [] arguments, ArrayList args) {
 			object [] unmarshalledArgs = new object [arguments.Length];
 
 			int total = arguments.Length;
@@ -220,14 +237,8 @@ namespace System.Runtime.Remoting.Messaging {
 		string _uri;
 		string _methodName;
 		string _typeName;
-		object [] _args;
-
-		byte [] _serializedArgs = null;
 
 		CADArgHolder _methodSignature;
-		CADArgHolder _callContext;
-
-		int _propertyCount = 0;
 
 		internal string TypeName {
 			get {
@@ -279,7 +290,7 @@ namespace System.Runtime.Remoting.Messaging {
 			// todo: save callcontext
 
 			if (null != serializeList) {
-				MemoryStream stm = CADSerializer.SerializeObject (serializeList);
+				MemoryStream stm = CADSerializer.SerializeObject (serializeList.ToArray());
 				_serializedArgs = stm.GetBuffer();
 			}
 		}
@@ -288,7 +299,8 @@ namespace System.Runtime.Remoting.Messaging {
 			ArrayList ret = null;
 
 			if (null != _serializedArgs) {
-				ret = (ArrayList) CADSerializer.DeserializeObject (new MemoryStream (_serializedArgs));
+				object[] oret = (object[]) CADSerializer.DeserializeObject (new MemoryStream (_serializedArgs));
+				ret = new ArrayList (oret);
 				_serializedArgs = null;
 			}
 
@@ -315,15 +327,8 @@ namespace System.Runtime.Remoting.Messaging {
 	
 	// Used when passing a IMethodReturnMessage between appdomains
 	internal class CADMethodReturnMessage : CADMessageBase {
-		object [] _args;
 		object _returnValue;
-
-		byte [] _serializedArgs = null;
-
 		CADArgHolder _exception = null;
-		CADArgHolder _callContext;
-
-		int _propertyCount = 0;
 
 		static internal CADMethodReturnMessage Create (IMessage callMsg) {
 			IMethodReturnMessage msg = callMsg as IMethodReturnMessage;
@@ -352,7 +357,7 @@ namespace System.Runtime.Remoting.Messaging {
 			// todo: save callcontext
 
 			if (null != serializeList) {
-				MemoryStream stm = CADSerializer.SerializeObject (serializeList);
+				MemoryStream stm = CADSerializer.SerializeObject (serializeList.ToArray());
 				_serializedArgs = stm.GetBuffer();
 			}
 		}
@@ -361,7 +366,8 @@ namespace System.Runtime.Remoting.Messaging {
 			ArrayList ret = null;
 
 			if (null != _serializedArgs) {
-				ret = (ArrayList) CADSerializer.DeserializeObject (new MemoryStream (_serializedArgs));
+				object[] oret = (object[]) CADSerializer.DeserializeObject (new MemoryStream (_serializedArgs));
+				ret = new ArrayList (oret);
 				_serializedArgs = null;
 			}
 
