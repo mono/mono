@@ -1,3 +1,7 @@
+2002-05-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* *.c: code cleanups - tried to separate architecture dependent things. 
+
 2002-05-23  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_open): Don't call mono_debug_add_image().
