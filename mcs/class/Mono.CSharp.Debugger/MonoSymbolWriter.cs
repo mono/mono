@@ -461,7 +461,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected SourceMethod current_method = null;
+		private SourceMethod current_method = null;
 		private string assembly_filename = null;
 		private string output_filename = null;
 

@@ -32,7 +32,7 @@ namespace Mono.CSharp.Debugger
 			bw.Write (OffsetTable.Magic);
 			bw.Write (OffsetTable.Version);
 
-			OffsetTable ot;
+			OffsetTable ot = new OffsetTable ();
 
 			//
 			// Offsets of file sections; we must write this after we're done
@@ -45,7 +45,6 @@ namespace Mono.CSharp.Debugger
 			// Write source file table.
 			//
 			Hashtable sources = new Hashtable ();
-			int source_idx = 0;
 
 			ot.source_table_offset = (int) bw.BaseStream.Position;
 			foreach (ISourceFile source in symwriter.Sources) {
