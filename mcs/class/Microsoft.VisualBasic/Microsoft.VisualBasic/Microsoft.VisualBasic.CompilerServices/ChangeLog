@@ -1,0 +1,3 @@
+2004-01-22  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Utils.cs:
+		First Try Implementation for CopyArray(): NET_1_1-aware
