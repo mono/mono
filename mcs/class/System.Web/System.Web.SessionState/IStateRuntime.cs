@@ -8,15 +8,19 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Web.SessionState
 {
+	[Guid ("7297744b-e188-40bf-b7e9-56698d25cf44")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IStateRuntime
 	{
-		void ProcessRequest (IntPtr tracker, int verb,
-			string uri, int exclusive, int timeout,
-			int lockCookieExists, int lockCookie,
-			int contentLength, IntPtr content);
+		void ProcessRequest (
+			[In] IntPtr tracker, [In] int verb,
+			[In] string uri, [In] int exclusive, [In] int timeout,
+			[In] int lockCookieExists, [In] int lockCookie,
+			[In] int contentLength, [In] IntPtr content);
 
 		void StopProcessing ();
 	}

@@ -82,7 +82,7 @@ namespace System.Web.SessionState
 			}
 		}
 
-		public void OnBeginRequest (object o, EventArgs args)
+		void OnBeginRequest (object o, EventArgs args)
 		{
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
