@@ -134,7 +134,7 @@ Integration
 
 
 Provider Factoros (target: mono 1.2 PROFILE=net_2_0)
-===============================
+====================================================
 
 * Create Configuration Class
 	DbProviderFactoriesConfigurationHandler - done
@@ -147,6 +147,9 @@ Provider Factoros (target: mono 1.2 PROFILE=net_2_0)
 	fails as new configuration API is not yet implemented in
 	System.dll.
 
+	A temporary handler ConnectionStringSectionHandler is
+available in System.Data.dll.
+
 * Create Base class
 	DbProviderFactories - done
 	DbProviderFactory - done
@@ -156,6 +159,8 @@ Provider Factoros (target: mono 1.2 PROFILE=net_2_0)
 	
 * Create Factory classes & methods for Providers.
 	Factory methods for SqlClient - done.
+	Factory methods for Odbc provider - done.
+	Factory methods for OleDb provider
 
 ** DbConnectionStringBuilder - done (not added to sources list).
 	This uses Generic.Collections.Dictionary, which has not yet
