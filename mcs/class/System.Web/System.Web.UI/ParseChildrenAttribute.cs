@@ -41,7 +41,7 @@ namespace System.Web.UI {
 		public static readonly ParseChildrenAttribute Default = new ParseChildrenAttribute ();
 		
 #if NET_2_0
-		Type childType;
+		Type childType = typeof(System.Web.UI.Control);
 #endif
 
 		// LAMESPEC
