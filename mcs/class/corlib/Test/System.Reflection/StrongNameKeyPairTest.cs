@@ -31,7 +31,7 @@ public class StrongNameKeyPairTest : Assertion {
 	private StrongNameKeyPair snpk;
 
 	[TearDown]
-	void CleanUp () 
+	public void TearDown () 
 	{
 		try {
 			if (File.Exists ("test.snk"))
