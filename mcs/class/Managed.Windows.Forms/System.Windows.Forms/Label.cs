@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms
 {
 	[DefaultProperty("Text")]
-	[Designer ("System.Windows.Forms.Design.LabelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.LabelDesigner, " + Consts.AssemblySystem_Design, (string)null)]
 	public class Label : Control
     	{
     		private bool autosize;

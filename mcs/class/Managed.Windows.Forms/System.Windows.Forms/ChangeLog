@@ -1,5 +1,37 @@
 2005-02-16  Peter Bartok  <pbartok@novell.com>
 
+	* ImeMode.cs: Added missing attributes
+	* Menu.cs: Fixed attribute
+	* GroupBox.cs: Fixed attribute
+	* Label.cs: Fixed attribute
+	* ColorDialog.cs (RunDialog): Removed TODO attribute
+	* ComboBox.cs: Fixed attributes
+	* ListControl.cs: Added missing attributes
+	* PropertyGrid.cs: Fixed attributes
+	* Control.cs: Fixed attributes
+	* ListViewItem.cs: Added TypeConverter attribute
+	* NotifyIcon.cs: Fixed attributes
+	* ListView.cs: Fixed attributes
+	* ButtonBase.cs: Fixed attribute
+	* ImageList.cs: Added missing attributes
+	* ContainerControl.cs: Fixed signature
+	* CheckedListBox.cs: Fixed attribute; added missing attributes
+	* Panel.cs: Fixed attributes
+	* PropertyTabChangedEventArgs.cs: Added missing attribute
+	* PropertyValueChangedEventArgs.cs: Added missing attribute
+	* Binding.cs: Fixed attribute
+	* ListViewItemConverter: Implemented ListViewSubItemConverter class
+	* ListBox.cs: Fixed attribute; added missing attributes;
+	* ScrollableControl.cs: Added missing attributes
+	* PictureBox.cs: Added missing attributes; implemented missing property
+	* DateTimePicker.cs: Added missing attributes
+	* Theme.cs (ToolWindowCaptionHeight): Fixed type
+	* MonthCalendar.cs: Fixed attributes
+	* StatusBarPanel.cs: Added missing attributes
+	* SystemInformation.cs (ToolWindowCaptionHeight): Fixed type
+
+2005-02-16  Peter Bartok  <pbartok@novell.com>
+
 	* TextBoxBase.cs: The previous method to enforce height yet remember
 	  the requested high was less than ideal, this is an attempt to do
 	  it better.

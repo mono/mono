@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -32,6 +32,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace System.Windows.Forms {
+	[DefaultProperty("Images")]
+	[Designer("System.Windows.Forms.Design.ImageListDesigner, " + Consts.AssemblySystem_Design)]
+	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
+	[TypeConverter("System.Windows.Forms.ImageListConverter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	public sealed class ImageList : System.ComponentModel.Component {
 		#region Local Variables
 		private ColorDepth		color_depth;
@@ -43,6 +47,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Sub-classes
+		[Editor("System.Windows.Forms.Design.ImageCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public sealed class ImageCollection : IList, ICollection, IEnumerable {
 			#region	ImageCollection Local Variables
 			private ImageList	owner;
@@ -57,6 +62,7 @@ namespace System.Windows.Forms {
 			#endregion	// ImageCollection Private Constructor
 
 			#region	ImageCollection Public Instance Properties
+			[Browsable(false)]
 			public int Count {
 				get {
 					return list.Count;
@@ -75,6 +81,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			[Browsable(false)]
+			[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 			public Image this[int index] {
 				get {
 					if (index<0 || index>=list.Count) {
@@ -349,6 +357,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+		[DefaultValue(ColorDepth.Depth8Bit)]
 		public ColorDepth ColorDepth {
 			get {
 				return this.color_depth;
@@ -360,6 +369,9 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO("Determine if we support HBITMAP handles, this would involve XplatUI")]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IntPtr Handle {
 			get {
 				if (RecreateHandle!=null) RecreateHandle(this, EventArgs.Empty);
@@ -368,18 +380,25 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO("Determine if we support HBITMAP handles, this would involve XplatUI")]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool HandleCreated {
 			get {
 				return false;
 			}
 		}
 
+		[DefaultValue(null)]
+		[MergableProperty(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ImageCollection Images {
 			get {
 				return this.image_collection;
 			}
 		}
 
+		[Localizable(true)]
 		public Size ImageSize {
 			get {
 				return this.size;
@@ -393,6 +412,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DefaultValue(null)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public ImageListStreamer ImageStream {
 			get {
 				return image_stream;
@@ -448,6 +470,8 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public event EventHandler RecreateHandle;
 		#endregion	// Events
 	}

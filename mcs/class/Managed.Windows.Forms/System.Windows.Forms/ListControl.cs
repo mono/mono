@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -54,12 +54,18 @@ namespace System.Windows.Forms
 		//protected CurrencyManager DataManager {
 		//get {throw new NotImplementedException (); };
 		//}
-	
+
+		[DefaultValue(null)]
+		[RefreshProperties(RefreshProperties.Repaint)]
+		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public object DataSource {
 			get {throw new NotImplementedException (); }
 			set {throw new NotImplementedException (); }
 		}
 		
+		[DefaultValue("")]
+		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[TypeConverter("System.Windows.Forms.Design.DataMemberFieldConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public string DisplayMember {
 			get { return display_member; } 
 			set { display_member = value; }
@@ -70,12 +76,17 @@ namespace System.Windows.Forms
 			set;
 		}
 
-		
+		[Bindable(BindableSupport.Yes)]
+		[Browsable(false)]
+		[DefaultValue(null)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public object SelectedValue {
 			get {throw new NotImplementedException (); }                     
 			set {throw new NotImplementedException (); }
 		}
 
+		[DefaultValue("")]
+		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public string ValueMember  {
 			get {throw new NotImplementedException (); }
 			set {throw new NotImplementedException (); }

@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[DefaultProperty("BorderStyle")]
 	[DefaultEvent("Paint")]
-	[Designer ("System.Windows.Forms.Design.PanelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.PanelDesigner, " + Consts.AssemblySystem_Design, (string)null)]
 	public class Panel : ScrollableControl {
 		#region	Constructors & Destructors
 		public Panel () {
@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors & Destructors
 
 		#region Public Instance Properties
-		[DefaultValue(null)]
+		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
 		public BorderStyle BorderStyle {
 			get { return border_style; }

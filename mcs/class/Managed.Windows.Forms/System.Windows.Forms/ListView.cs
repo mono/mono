@@ -43,8 +43,7 @@ namespace System.Windows.Forms
 {
 	[DefaultEvent ("SelectedIndexChanged")]
 	[DefaultProperty ("Items")]
-	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design,
-		   typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design, (string)null)]
 	public class ListView : Control
 	{
 		private ItemActivation activation = ItemActivation.Standard;
@@ -378,7 +377,7 @@ namespace System.Windows.Forms
 			set { label_edit = value; }
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue (true)]
 		[Localizable (true)]
 		public bool LabelWrap {
 			get { return label_wrap; }

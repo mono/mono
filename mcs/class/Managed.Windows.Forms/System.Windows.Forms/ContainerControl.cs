@@ -118,7 +118,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		public bool ActivateControl(Control control) {
+		bool IContainerControl.ActivateControl(Control control) {
 			return Select(control);
 		}
 		#endregion	// Public Instance Methods

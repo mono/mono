@@ -353,9 +353,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public virtual Size ToolWindowCaptionHeight {
+		public virtual int ToolWindowCaptionHeight {
 			get {
-				return new Size(16, 16);
+				return 16;
 			}
 		}
 

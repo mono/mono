@@ -40,7 +40,7 @@ namespace System.Windows.Forms
 
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedIndexChanged")]
-	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, (string)null)]
 	public class ComboBox : ListControl
 	{
 		private DrawMode draw_mode;
@@ -338,7 +338,7 @@ namespace System.Windows.Forms
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
-		[Editor ("System.Windows.Forms.Design.ListContolStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]		
+		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]		
 		public ComboBox.ObjectCollection Items {
 			get { return items; }
 		}
@@ -355,7 +355,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (32767)]
+		[DefaultValue (0)]
 		[Localizable (true)]
 		public int MaxLength {
 			get { return max_length; }
@@ -434,7 +434,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		[Localizable (true)]
+		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SelectedText {
 			get {
@@ -507,7 +507,7 @@ namespace System.Windows.Forms
     		}
 
 		[Bindable (true)]
-		[Browsable (true)]
+		[Localizable (true)]
 		public override string Text {
 			get { 
 				if (SelectedItem != null) 
@@ -1104,6 +1104,8 @@ namespace System.Windows.Forms
 				get { return false; }
 			}
 
+			[Browsable (false)]
+			[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 			public virtual object this [int index] {
 				get {
 					if (index < 0 || index >= Count)

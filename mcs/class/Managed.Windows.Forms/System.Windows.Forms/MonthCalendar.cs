@@ -37,7 +37,7 @@ using System.Windows.Forms;
 namespace System.Windows.Forms {
 	[DefaultProperty("SelectionRange")]
 	[DefaultEvent("DateChanged")]
-	[Designer ("System.Windows.Forms.Design.MonthCalendarDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.MonthCalendarDesigner, " + Consts.AssemblySystem_Design, (string)null)]
 	public class MonthCalendar : Control {
 		#region Local variables
 		DateTime []		annually_bolded_dates;
@@ -177,7 +177,7 @@ namespace System.Windows.Forms {
 		}
 		
 		// called when this control is added to date time picker
-		public MonthCalendar (DateTimePicker owner) : this () {	
+		internal MonthCalendar (DateTimePicker owner) : this () {	
 			this.owner = owner;
 			this.is_visible = false;
 			this.Size = this.DefaultSize;

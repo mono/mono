@@ -26,10 +26,12 @@
 // COMPLETE
 
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
+	[ComVisible(true)]
 	public class PropertyValueChangedEventArgs : EventArgs
 	{
 		#region	Local Variables

@@ -43,7 +43,7 @@ namespace System.Windows.Forms
 {
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedIndexChanged")]
-	[Designer ("System.Windows.Forms.Design.ListBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.ListBoxDesigner, " + Consts.AssemblySystem_Design, (string)null)]
 	public class ListBox : ListControl
 	{
 		public const int DefaultItemHeight = 13;
@@ -387,7 +387,7 @@ namespace System.Windows.Forms
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
-		[Editor ("System.Windows.Forms.Design.ListContolStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Windows.Forms.Design.ListControlStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public ObjectCollection Items {
 			get { return items; }
 		}
@@ -1853,6 +1853,8 @@ namespace System.Windows.Forms
 				get { return false; }
 			}
 
+			[Browsable(false)]
+			[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 			public virtual object this [int index] {
 				get {
 					if (index < 0 || index >= Count)
@@ -2210,6 +2212,8 @@ namespace System.Windows.Forms
 				get { return true; }
 			}
 
+			[Browsable(false)]
+			[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 			public virtual object this [int index] {
 				get {
 					if (index < 0 || index >= Count)

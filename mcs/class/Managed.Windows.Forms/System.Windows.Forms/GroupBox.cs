@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 {
 	[DefaultProperty("Text")]
 	[DefaultEvent("Enter")]
-	[Designer ("System.Windows.Forms.Design.GroupBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.GroupBoxDesigner, " + Consts.AssemblySystem_Design, (string)null)]
 	public class GroupBox : Control
 	{
 		private FlatStyle flat_style;

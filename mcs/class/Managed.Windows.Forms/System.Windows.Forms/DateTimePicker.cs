@@ -33,9 +33,13 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace System.Windows.Forms {
+	[DefaultEvent("ValueChanged")]
+	[DefaultProperty("Value")]
+	[Designer("System.Windows.Forms.Design.DateTimePickerDesigner, " + Consts.AssemblySystem_Design)]
 	public class DateTimePicker : Control {
 
 		#region Public variables
@@ -117,6 +121,8 @@ namespace System.Windows.Forms {
 		#region public properties
 		
 		// no reason why this is overridden
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Color BackColor {
 			set {
 				base.BackColor = value;
@@ -127,6 +133,8 @@ namespace System.Windows.Forms {
 		}
 		
 		// no reason why this is overridden
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			set {
 				base.BackgroundImage = value;
@@ -135,7 +143,9 @@ namespace System.Windows.Forms {
 				return base.BackgroundImage;
 			}
 		}
-		
+
+		[AmbientValue(null)]
+		[Localizable(true)]
 		public Font CalendarFont {
 			set {
 				month_calendar.Font = value;
@@ -191,6 +201,8 @@ namespace System.Windows.Forms {
 		}
 		
 		// when checked the value is grayed out
+		[Bindable(true)]
+		[DefaultValue(true)]
 		public bool Checked {
 			set {
 				if (is_checked != value) {
@@ -205,6 +217,8 @@ namespace System.Windows.Forms {
 		}
 		
 		// the custom format string to format this control with
+		[DefaultValue(null)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public string CustomFormat {
 			set {
 				if (custom_format != value) {
@@ -221,6 +235,8 @@ namespace System.Windows.Forms {
 		}
 		
 		// which side the drop down is to be aligned on
+		[DefaultValue(LeftRightAlignment.Left)]
+		[Localizable(true)]
 		public LeftRightAlignment DropDownAlign {
 			set {
 				if (drop_down_align != value) {
@@ -231,7 +247,9 @@ namespace System.Windows.Forms {
 				return drop_down_align;
 			}
 		}
-		
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color ForeColor {
 			set {
 				base.ForeColor = value;
@@ -242,6 +260,7 @@ namespace System.Windows.Forms {
 		}
 		
 		// the format of the date time picker text, default is long
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public DateTimePickerFormat Format {
 			set {
 				if (format != value) {
@@ -305,6 +324,8 @@ namespace System.Windows.Forms {
 		}
 		
 		// the prefered height to draw this control using current font
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int PreferredHeight {
 			get {
 				return this.Font.Height + 7;
@@ -312,6 +333,7 @@ namespace System.Windows.Forms {
 		}
 		
 		// whether or not the check box is shown
+		[DefaultValue(false)]
 		public bool ShowCheckBox {
 			set {
 				if (show_check_box != value) {
@@ -326,6 +348,7 @@ namespace System.Windows.Forms {
 		}
 		
 		// if true show the updown control, else popup the monthcalendar
+		[DefaultValue(false)]
 		public bool ShowUpDown {
 			set {
 				if (show_up_down != value) {
@@ -338,7 +361,10 @@ namespace System.Windows.Forms {
 				return show_up_down;
 			}
 		}
-		
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Text {
 			set {
 				DateTime parsed_value = DateTime.Parse (value);
@@ -350,7 +376,9 @@ namespace System.Windows.Forms {
 				return text;
 			}
 		}	
-		
+
+		[Bindable(true)]
+		[RefreshProperties(RefreshProperties.All)]
 		public DateTime Value {
 			set {
 				if (date_value != value) {

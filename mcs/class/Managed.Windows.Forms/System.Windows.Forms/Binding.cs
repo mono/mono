@@ -59,7 +59,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[DefaultValue("")]
+		[DefaultValue(null)]
 		public Control Control {
 			get {
 				return this.control;

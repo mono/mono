@@ -27,8 +27,12 @@
 
 
 using System;
+using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
+using System.Drawing;
 using System.Globalization;
+using System.Reflection;
 
 namespace System.Windows.Forms
 {
@@ -39,10 +43,11 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 
 		#region Public Instance Methods
-		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
-		{
-			if (destinationType == typeof (string))
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType) {
+			if (destinationType == typeof (string)) {
 				return true;
+			}
+
 			return base.CanConvertTo (context, destinationType);
 		}
 
@@ -50,10 +55,42 @@ namespace System.Windows.Forms
 						  CultureInfo culture, object value,
 						  Type destinationType)
 		{
-			if (destinationType == typeof (string))
+			if (destinationType == typeof (string)) {
 				return value.ToString ();
-			else
+			} else {
 				return base.ConvertTo (context, culture, value, destinationType);
+			}
+		}
+		#endregion	// Public Instance Methods
+	}
+
+	internal class ListViewSubItemConverter : ExpandableObjectConverter {
+		#region	Public Instance Methods
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType) {
+			if (destinationType == typeof(InstanceDescriptor)) {
+				return true;
+			} else {
+				return base.CanConvertTo(context, destinationType);
+			}
+		}
+
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) {
+			if (destinationType == typeof(InstanceDescriptor) && value is ListViewItem.ListViewSubItem) {
+				ConstructorInfo			constructor_info;
+				Type[]				type;
+				ListViewItem.ListViewSubItem	sub_item;
+
+				sub_item = (ListViewItem.ListViewSubItem)value;
+				type = new Type[] { typeof(ListViewItem), typeof(string), typeof(Color), typeof(Color), typeof(Font)};
+
+				constructor_info = typeof(ListViewItem.ListViewSubItem).GetConstructor(type);
+				if (constructor_info != null) {
+					object[] arguments = new object[] {sub_item.Text, sub_item.ForeColor, sub_item.BackColor, sub_item.Font};
+					return new InstanceDescriptor(constructor_info, (ICollection) arguments, true);
+				}
+
+			}
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 		#endregion	// Public Instance Methods
 	}

@@ -33,23 +33,23 @@
 // COMPLETE 
 
 using System;
-using System.Drawing;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
 using System.Collections;
 using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 
 
 namespace System.Windows.Forms
 {
-	[ComVisible(true)]
-	[Designer("System.Windows.Forms.Design.ContolDesigner, System.Design")]
+	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design)]
 	[DefaultProperty("Text")]
 	[DefaultEvent("Click")]
-	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, System.Design", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design")]
+	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
         {
@@ -145,6 +145,7 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Public Classes
+		[ComVisible(true)]
 		public class ControlAccessibleObject : AccessibleObject {			
 			#region ControlAccessibleObject Local Variables
 			private Control	owner;
@@ -236,6 +237,8 @@ namespace System.Windows.Forms
 			#endregion	// ControlAccessibleObject Public Instance Methods
 		}
 
+		[DesignerSerializer("System.Windows.Forms.Design.ControlCollectionCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
+		[ListBindable(false)]
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
 			#region	ControlCollection Local Variables
 			internal ArrayList	list;
@@ -956,7 +959,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable(true)]
-		[DefaultValue("")]
+		[DefaultValue(null)]
 		public string AccessibleDescription {
 			get {
 				return AccessibilityObject.description;
@@ -968,7 +971,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable(true)]
-		[DefaultValue("")]
+		[DefaultValue(null)]
 		public string AccessibleName {
 			get {
 				return AccessibilityObject.Name;
@@ -979,7 +982,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue("")]
+		[DefaultValue(AccessibleRole.Default)]
 		public AccessibleRole AccessibleRole {
 			get {
 				return AccessibilityObject.role;
@@ -1753,7 +1756,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Top {
@@ -3078,6 +3081,7 @@ namespace System.Windows.Forms
 			XplatUI.SetWindowStyle(window.Handle, CreateParams);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateZOrder() {
 			int	children;
 #if not

@@ -538,7 +538,7 @@ namespace System.Windows.Forms
 		[DesignTimeVisible (false)]
 		[Serializable]
 		[ToolboxItem (false)]
-		//[TypeConverter (typeof (ListViewSubItemConverter))]
+		[TypeConverter (typeof(ListViewSubItemConverter))]
 		public class ListViewSubItem
 		{
 			private Color back_color;

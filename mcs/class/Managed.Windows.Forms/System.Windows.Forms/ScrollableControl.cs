@@ -28,9 +28,11 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 
 namespace System.Windows.Forms {
+	[Designer ("System.Windows.Forms.Design.ScrollableControlDesigner, " + Consts.AssemblySystem_Design, (string)null)]
 	public class ScrollableControl : Control {
 		#region Local Variables
 		private bool			auto_vscroll;
@@ -47,6 +49,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		[MonoTODO("Need to use the edge values when performing the layout")]
+		[TypeConverter(typeof(ScrollableControl.DockPaddingEdgesConverter))]
 		#region Subclass DockPaddingEdges
 		public class DockPaddingEdges : ICloneable {
 			#region DockPaddingEdges Local Variables
@@ -68,6 +71,7 @@ namespace System.Windows.Forms {
 			#endregion	// DockPaddingEdges Constructor
 
 			#region DockPaddingEdges Public Instance Properties
+			[RefreshProperties(RefreshProperties.All)]
 			public int All {
 				get {
 					return all;
@@ -82,6 +86,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			[RefreshProperties(RefreshProperties.All)]
 			public int Bottom {
 				get {
 					return bottom;
@@ -93,6 +98,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			[RefreshProperties(RefreshProperties.All)]
 			public int Left {
 				get {
 					return left;
@@ -104,6 +110,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			[RefreshProperties(RefreshProperties.All)]
 			public int Right {
 				get {
 					return right;
@@ -115,6 +122,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			[RefreshProperties(RefreshProperties.All)]
 			public int Top {
 				get {
 					return top;
@@ -208,6 +216,8 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Static Fields
 
 		#region Public Instance Properties
+		[DefaultValue(false)]
+		[Localizable(true)]
 		public virtual bool AutoScroll {
 			get {
 				return	auto_scroll;
@@ -222,6 +232,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
 		public Size AutoScrollMargin {
 			get {
 				return auto_scroll_margin;
@@ -240,6 +251,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
 		public Size AutoScrollMinSize {
 			get {
 				return auto_scroll_min_size;
@@ -250,6 +262,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Point AutoScrollPosition {
 			get {
 				return auto_scroll_position;
@@ -283,6 +297,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[Localizable(true)]
 		public DockPaddingEdges DockPadding {
 			get {
 				return dock_padding;
@@ -290,9 +306,9 @@ namespace System.Windows.Forms {
 
 			// DockPadding is documented as 'get' only ( http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemWindowsFormsScrollableControlClassAutoScrollTopic.asp )
 			// but Microsoft's on that pageexamples show 'set' usage
-			set {
-				dock_padding = value;
-			}
+//			set {
+//				dock_padding = value;
+//			}
 		}
 		#endregion	// Public Instance Properties
 
@@ -347,21 +363,26 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void AdjustFormScrollbars(bool displayScrollbars) {
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected bool GetScrollState(int bit) {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnLayout(LayoutEventArgs levent) {
 			base.OnLayout(levent);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnMouseWheel(MouseEventArgs e) {
 			base.OnMouseWheel(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnVisibleChanged(EventArgs e) {
 			base.OnVisibleChanged(e);
 		}
@@ -378,6 +399,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 			base.WndProc(ref m);
 		}

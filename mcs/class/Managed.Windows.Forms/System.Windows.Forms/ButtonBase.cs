@@ -174,7 +174,7 @@ namespace System.Windows.Forms {
 
 		[Localizable(true)]
 		[DefaultValue(-1)]
-		[Editor("System.Windows.Forms.Design.ImageIndexEditor, System.Design", typeof(System.Drawing.Design.UITypeEditor))]
+		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[TypeConverter(typeof(ImageIndexConverter))]
 		public int ImageIndex {
 			get {

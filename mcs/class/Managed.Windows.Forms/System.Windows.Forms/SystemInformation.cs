@@ -343,7 +343,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Size ToolWindowCaptionHeight {
+		public static int ToolWindowCaptionHeight {
 			get {
 				return ThemeEngine.Current.ToolWindowCaptionHeight;
 			}

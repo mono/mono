@@ -85,7 +85,7 @@ namespace System.Windows.Forms
 		{
 			line_color = SystemColors.ScrollBar;
 			browsable_attributes = new AttributeCollection(new Attribute[] {});
-			commands_visible_if_available = true;
+			commands_visible_if_available = false;
 			property_sort = PropertySort.CategorizedAlphabetical;
 
 			property_grid_view = new PropertyGridView(this);
@@ -200,8 +200,8 @@ namespace System.Windows.Forms
 		#region Public Instance Properties
 
 		[BrowsableAttribute(false)]
-		[EditorBrowsableAttribute()]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public AttributeCollection BrowsableAttributes
 		{
 			get {
@@ -233,7 +233,7 @@ namespace System.Windows.Forms
 
 
 		[BrowsableAttribute(false)]
-		[EditorBrowsableAttribute()]
+		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
 		public virtual bool CanShowCommands 
 		{
 			get {
@@ -241,7 +241,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		public Color CommandsBackColor 
 		{
 			get {
@@ -256,7 +255,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		public Color CommandsForeColor 
 		{
 			get {
@@ -271,9 +269,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
-		[BrowsableAttribute(true)]
-		[EditorBrowsableAttribute()]
+		[BrowsableAttribute(false)]
+		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
 		public virtual bool CommandsVisible 
 		{
 			get {
@@ -281,8 +278,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		public virtual bool CommandsVisibleIfAvailable 
 		{
 			get {
@@ -298,8 +294,8 @@ namespace System.Windows.Forms
 		}
 
 		[BrowsableAttribute(false)]
-		[EditorBrowsableAttribute()]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Point ContextMenuDefaultLocation
 		{
 			get {
@@ -307,7 +303,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		public Color HelpBackColor
 		{
 			get
@@ -325,7 +320,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		public Color HelpForeColor
 		{
 			get {
@@ -341,7 +335,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		[DefaultValue(true)]
 		[Localizable(true)]
 		public virtual bool HelpVisible
@@ -359,7 +352,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		public bool LargeButtons
 		{
 			get {
@@ -375,7 +367,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		public Color LineColor
 		{
 			get {
@@ -391,7 +382,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		[DefaultValue(PropertySort.CategorizedAlphabetical)]
 		public PropertySort PropertySort
 		{
@@ -413,8 +403,8 @@ namespace System.Windows.Forms
 		}
 
 		[BrowsableAttribute(false)]
-		[EditorBrowsableAttribute()]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public PropertyTabCollection PropertyTabs
 		{
 			get {
@@ -423,8 +413,8 @@ namespace System.Windows.Forms
 		}
 
 		[BrowsableAttribute(false)]
-		[EditorBrowsableAttribute()]
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public GridItem SelectedGridItem
 		{
 			get {
@@ -444,7 +434,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Behavior")]
 		public object SelectedObject
 		{
 			get {
@@ -491,7 +480,6 @@ namespace System.Windows.Forms
 		}
 
 
-		[CategoryAttribute("Appearance")]
 		[DefaultValue(true)]
 		public virtual bool ToolbarVisible 
 		{
@@ -508,7 +496,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		public Color ViewBackColor
 		{
 			get {
@@ -524,7 +511,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[CategoryAttribute("Appearance")]
 		public Color ViewForeColor
 		{
 			get {

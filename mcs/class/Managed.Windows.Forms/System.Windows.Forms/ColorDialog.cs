@@ -195,7 +195,6 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Properties
 		
 		#region Protected Instance Methods
-		[MonoTODO]
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{
 			form.Controls.Add( colorDialogPanel );
