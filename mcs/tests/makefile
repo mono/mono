@@ -19,6 +19,8 @@ UNSAFE_SOURCES = \
 TEST_NOPASS = \
 	test-29 test-38 
 
+all: test-compiler test-unsafe
+
 test-compiler:
 	-rm *.exe
 	for i in $(TEST_SOURCES); do \
