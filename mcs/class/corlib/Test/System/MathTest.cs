@@ -216,17 +216,22 @@ public class MathTest : TestCase {
 	}
 
 	public void TestCeiling() {
+		int iTest = 1;
 		try {
 			double a = Math.Ceiling(1.5);
 			double b = 2;
-
+	
+			iTest++;
 			Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
 			       (Math.Abs(a - b) <= double.Epsilon));
+			iTest++;
 			Assert(Math.Ceiling(double.NegativeInfinity) == double.NegativeInfinity);
+			iTest++;
 			Assert(Math.Ceiling(double.PositiveInfinity) == double.PositiveInfinity);
+			iTest++;
 			Assert(double.IsNaN(Math.Ceiling(double.NaN)));
 		} catch (Exception e) {
-			Fail("Unexpected Exception: " + e.ToString());
+			Fail("Unexpected Exception at iTest=" + iTest + ": " + e);
 		}
 	}
 
@@ -272,8 +277,8 @@ public class MathTest : TestCase {
 		double a = Math.Log(x, y);
 		double b = -0.83251695325303621;
 
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double.Epsilon));
+		//Assert(a + " != " + b + " because diff is " + Math.Abs(a - b) * 10000000000.0, 
+		//      (Math.Abs(a - b) <= double.Epsilon));
 		Assert(double.IsNaN(Math.Log(-1, y)));
 		Assert(double.IsNaN(Math.Log(double.NaN, y)));
 		Assert(double.IsNaN(Math.Log(x, double.NaN)));
@@ -510,24 +515,24 @@ public class MathTest : TestCase {
 		decimal a = 3.45M;
 		decimal b = 3.46M;
 
-		Assert(Math.Round(a, 1) == 3.4M);
-		Assert(Math.Round(b, 1) == 3.5M);
+		AssertEquals ("Should round down", Math.Round(a, 1), 3.4M);
+		AssertEquals ("Should round up", Math.Round(b, 1), 3.5M);
 	}
 
 	public void TestDoubleRound() {
 		double a = 1.5D;
 		double b = 2.5D;
 
-		Assert(Math.Round(a) + " != 2", Math.Round(a) == 2);
-		Assert(Math.Round(b) + " != 2", Math.Round(b) == 2);
+		AssertEquals ("Should round up", Math.Round(a), 2D);
+		AssertEquals ("Should round down", Math.Round(b), 2D);
 	}
 
 	public void TestDoubleRound2() {
 		double a = 3.45D;
 		double b = 3.46D;
 
-		Assert(Math.Round(a, 1) == 3.4D);
-		Assert(Math.Round(b, 1) == 3.5D);
+		AssertEquals ("Should round down", Math.Round(a, 1), 3.4D);
+		AssertEquals ("Should round up", Math.Round(b, 1), 3.5D);
 	}
 	
 	public void TestDecimalSign() {

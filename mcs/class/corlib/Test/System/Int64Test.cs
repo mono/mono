@@ -303,16 +303,31 @@ public class Int64Test : TestCase
     {
         string s;
         long v;
-
-        s = val1.ToString("c", NfiUser);
-        AssertEquals("Currency value type 1 is not what we want to try to parse", sval1UserCur1, s);
-        v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
-        Assert(v == val1);
+	int iTest = 1;
+	try {
+		s = val1.ToString("c", NfiUser);
+		iTest++;
+		AssertEquals("Currency value type 1 is not what we want to try to parse", sval1UserCur1, s);
+		iTest++;
+		v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
+		iTest++;
+		Assert(v == val1);
+	} catch (Exception e) {
+		Fail ("1 Unexpected exception at iTest = " + iTest + ":e = " + e);
+	}
    
-        s = val2.ToString("c", NfiUser);
-        AssertEquals("Currency value type 1 is not what we want to try to parse", sval2UserCur1, s);
-        v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
-        Assert(v == val2);
+	iTest = 1;
+	try {
+		s = val2.ToString("c", NfiUser);
+		iTest++;
+		AssertEquals("Currency value type 1 is not what we want to try to parse", sval2UserCur1, s);
+		iTest++;
+		v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
+		iTest++;
+		Assert(v == val2);
+	} catch (Exception e) {
+		Fail ("2 Unexpected exception at iTest = " + iTest + ":e = " + e);
+	}
     }
 
     public void TestUserPercent()
