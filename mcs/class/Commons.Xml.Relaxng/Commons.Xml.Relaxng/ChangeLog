@@ -1,3 +1,9 @@
+2005-03-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdDatatypeProvider.cs : quick hack to workaround not to be rejected 
+	  under MS.NET because of NOTATION type (thus, NOTATION type is not
+	  available in this provider).
+
 2005-03-01  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngReader.cs : there was two public namespace constant. One

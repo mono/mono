@@ -61,7 +61,7 @@ namespace Commons.Xml.Relaxng.XmlSchema
 				"NMTOKEN", "NMTOKENS",
 				"Name", "NCName",
 				"ID", "IDREF", "IDREFS",
-				"ENTITY", "ENTITIES", "NOTATION",
+				"ENTITY", "ENTITIES", //"NOTATION",
 				"decimal", 
 				"integer", "long", "int", "short", "byte",
 				"nonPositiveInteger", "negativeInteger",
