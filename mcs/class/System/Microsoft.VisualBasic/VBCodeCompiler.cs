@@ -161,7 +161,7 @@ namespace Microsoft.VisualBasic
 				args.AppendFormat ("/warnaserror ");
 
 			if (options.WarningLevel != -1)
-				args.AppendFormat ("/warn:{0} ", options.WarningLevel);
+				args.AppendFormat ("/wlevel:{0} ", options.WarningLevel);
 
 			if (options.OutputAssembly == null)
 				options.OutputAssembly = GetTempFileNameWithExtension ("dll");
