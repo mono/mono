@@ -1,3 +1,8 @@
+2005-02-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeDescriptor.cs: fixed bug #71601.  GetConverter should handle
+	TypeConverter derived classes that take a Type argument.
+
 2005-01-27  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* DateTimeConverter.cs, CultureInfoConverter.cs, DecimalConverter.cs,

@@ -341,6 +341,28 @@ namespace MonoTests.System.ComponentModel
 			Assert ("t6.2", col.Find ("AnotherProperty", true) == null);
 		}
 
+		[TypeConverter (typeof (TestConverter))]
+		class TestConverterClass {
+		}
+
+		class TestConverter : TypeConverter {
+			public Type Type;
+
+			public TestConverter (Type type)
+			{
+				this.Type = type;
+			}
+		}
+
+		[Test]
+		public void TestConverterCtorWithArgument ()
+		{
+			TypeConverter t = TypeDescriptor.GetConverter (typeof (TestConverterClass));
+			Assert ("#01", null != t.GetType ());
+			AssertEquals ("#02", typeof (TestConverter), t.GetType ());
+			TestConverter converter = (TestConverter) t;
+			AssertEquals ("#03", typeof (TestConverterClass), converter.Type);
+		}
 	}
 }
 

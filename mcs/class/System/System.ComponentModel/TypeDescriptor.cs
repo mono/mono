@@ -259,10 +259,22 @@ public sealed class TypeDescriptor
 		if (t == null)
 			t = FindConverterType (type);
 
-		if (t != null)
-			return (TypeConverter) Activator.CreateInstance (t);
-		else
-			return new ReferenceConverter (type);    // Default?
+		if (t != null) {
+			Exception exc = null;
+			try {
+				return (TypeConverter) Activator.CreateInstance (t);
+			} catch (MissingMethodException e) {
+				exc = e;
+			}
+
+			try {
+				return (TypeConverter) Activator.CreateInstance (t, new object [] {type});
+			} catch (MissingMethodException e) {
+				throw exc;
+			}
+		}
+
+		return new ReferenceConverter (type);    // Default?
 	}
 
 	private static Type FindConverterType (Type type)
