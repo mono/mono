@@ -219,22 +219,13 @@ namespace Microsoft.VisualBasic
                 		
                 	
                 }
-                
                 [MonoTODO("Needs testing")]
                 public static void FileClose (params System.Int32[] FileNumbers) 
                 { 
                 	int bucle=0;
                 	if (FileNumbers.Length  == 0)
                 	{
-                		for(bucle=0;bucle<255;bucle++)
-                		{
-                			if (FHandle[bucle]!=null)
-                				try
-                				{
-                					FHandle[bucle].Close();	
-                				}
-                				catch (Exception e) {e.GetType (); FHandle[bucle]=null ;}
-                		}
+                		Microsoft.VisualBasic.FileSystem.Reset();
                 	}
                 	else
                 	{
@@ -255,11 +246,10 @@ namespace Microsoft.VisualBasic
                 					throw new System.IO.IOException (FileNumbers[bucle].ToString() + " Does not exist",52);
                 			}
                 			else
-                				throw new System.IO.IOException (FileNumbers[bucle].ToString() + " Does not exist",52); 
+                				throw new System.IO.IOException (FileNumbers[bucle].ToString() + " Does not exist",52);
                 		}
                 	}
-                }
-                
+                }                
                 [MonoTODO]
                 public static void FileGetObject (System.Int32 FileNumber, ref System.Object Value, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber) { throw new NotImplementedException (); }
                 [MonoTODO]
@@ -325,29 +315,430 @@ namespace Microsoft.VisualBasic
                 public static void PrintLine (System.Int32 FileNumber, params System.Object[] Output) { throw new NotImplementedException (); }
                 [MonoTODO]
                 public static void Input (System.Int32 FileNumber, ref System.Object Value) { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static void Input (System.Int32 FileNumber, ref System.Boolean Value) { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static void Input (System.Int32 FileNumber, ref System.Byte Value) { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static void Input (System.Int32 FileNumber, ref System.Int16 Value) { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static void Input (System.Int32 FileNumber, ref System.Int32 Value) { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static void Input (System.Int32 FileNumber, ref System.Int64 Value) { throw new NotImplementedException (); }
+		[MonoTODO("Needs Testing")]
+                public static void Input (System.Int32 FileNumber, ref System.Boolean Value)
+		{
+			string buffer="";
+			InternalInputExceptions(FileNumber);
+			buffer=InternalInput(FileNumber,3);
+			if (buffer=="True")
+				Value=true;
+			else
+				Value=false;
+		}
+                [MonoTODO("Needs Testing")]
+                public static void Input (System.Int32 FileNumber, ref System.Byte Value)
+		{
+			string buffer="";
+			InternalInputExceptions(FileNumber);
+			buffer=InternalInput(FileNumber,1);
+			if (buffer[0]=='-')
+				throw new System.OverflowException();
+			Value=0;
+			for (int addnumber=0; addnumber < buffer.Length;addnumber++)
+			{
+				checked	{
+					Value*=10;
+					Value += Byte.Parse(buffer.Substring(addnumber,1));
+
+				}
+			}
+		}
+                [MonoTODO("Needs Testing")]
+		public static void Input (System.Int32 FileNumber, ref System.Int16 Value)
+		{
+			string buffer="";
+			System.Int16 factor=1;
+			InternalInputExceptions(FileNumber);
+			buffer=InternalInput(FileNumber,1);
+			if (buffer[0]=='-')
+			{
+				factor=-1;
+				buffer=buffer.Substring(1);
+			}
+			Value=0;
+			for (int addnumber=0; addnumber < buffer.Length;addnumber++)
+			{
+				checked	{
+					Value*=10;
+					Value += Int16.Parse(buffer.Substring(addnumber,1));
+
+				}
+			}
+			Value*=factor;
+
+		}
+                [MonoTODO("Needs Testing")]
+                public static void Input (System.Int32 FileNumber, ref System.Int32 Value)
+		{
+			string buffer="";
+			int factor=1;
+			InternalInputExceptions(FileNumber);
+			buffer=InternalInput(FileNumber,1);
+			if (buffer[0]=='-')
+			{
+				factor=-1;
+				buffer=buffer.Substring(1);
+			}
+			Value=0;
+			for (int addnumber=0; addnumber < buffer.Length;addnumber++)
+			{
+				checked	{
+					Value*=10;
+					Value += Int32.Parse(buffer.Substring(addnumber,1));
+
+				}
+			}
+			Value*=factor;
+
+		}
+                [MonoTODO("Needs Testing")]
+                public static void Input (System.Int32 FileNumber, ref System.Int64 Value)
+		{
+			string buffer="";
+			int factor=1;
+			InternalInputExceptions(FileNumber);
+			buffer=InternalInput(FileNumber,1);
+			if (buffer[0]=='-')
+			{
+				factor=-1;
+				buffer=buffer.Substring(1);
+			}
+			Value=0;
+			for (int addnumber=0; addnumber < buffer.Length;addnumber++)
+			{
+				checked	{
+					Value*=10;
+					Value += Int64.Parse(buffer.Substring(addnumber,1));
+
+				}
+			}
+			Value*=factor;
+
+		}
                 [MonoTODO]
                 public static void Input (System.Int32 FileNumber, ref System.Char Value) { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static void Input (System.Int32 FileNumber, ref System.Single Value) { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static void Input (System.Int32 FileNumber, ref System.Double Value) { throw new NotImplementedException (); }
+                [MonoTODO("Needs Testing")]
+                public static void Input (System.Int32 FileNumber, ref System.Single Value)
+		{
+			System.Single DecimalValue=0;
+			string buffer="";
+			int factor=1;
+			string BufDecimal="";
+			InternalInputExceptions(FileNumber);
+			buffer=InternalInput(FileNumber,2);
+			if (buffer[0]=='-')
+			{
+				factor=-1;
+				buffer=buffer.Substring(1);
+			}
+			if ( buffer.IndexOf(".")>=0)
+			{
+				if ( buffer.IndexOf(".") < (buffer.Length -1) )
+					BufDecimal=buffer.Substring(buffer.IndexOf(".")+1);
+				if ( buffer.IndexOf(".") > 0)
+					buffer=buffer.Substring(0,buffer.IndexOf("."));
+				else
+					buffer="";
+
+			}
+			Value=0;
+			if ( BufDecimal.Length > 0)
+			{
+				for (int addnumber=BufDecimal.Length-1; addnumber >=0;addnumber--)
+				{
+					checked	{
+						DecimalValue += System.Single.Parse(BufDecimal.Substring(addnumber,1));
+						DecimalValue /= 10;
+
+					}
+				}
+			}
+			if (buffer.Length >0)
+			{
+				for (int addnumber=0; addnumber < buffer.Length;addnumber++)
+				{
+					checked	{
+						Value*=10;
+						Value += System.Single.Parse(buffer.Substring(addnumber,1));
+
+					}
+				}
+			}
+			Value+=DecimalValue;
+		}
+                [MonoTODO("Needs Testing")]
+                public static void Input (System.Int32 FileNumber, ref System.Double Value)
+		{
+			double DecimalValue=0;
+			string buffer="";
+			int factor=1;
+			string BufDecimal="";
+			InternalInputExceptions(FileNumber);
+			buffer=InternalInput(FileNumber,2);
+			if (buffer[0]=='-')
+			{
+				factor=-1;
+				buffer=buffer.Substring(1);
+			}
+			if ( buffer.IndexOf(".")>=0)
+			{
+				if ( buffer.IndexOf(".") < (buffer.Length -1) )
+					BufDecimal=buffer.Substring(buffer.IndexOf(".")+1);
+				if ( buffer.IndexOf(".") > 0)
+					buffer=buffer.Substring(0,buffer.IndexOf("."));
+				else
+					buffer="";
+
+			}
+			Value=0;
+			if ( BufDecimal.Length > 0)
+			{
+				for (int addnumber=BufDecimal.Length-1; addnumber >=0;addnumber--)
+				{
+					checked	{
+						DecimalValue += Double.Parse(BufDecimal.Substring(addnumber,1));
+						DecimalValue /= 10;
+
+					}
+				}
+			}
+			if (buffer.Length >0)
+			{
+				for (int addnumber=0; addnumber < buffer.Length;addnumber++)
+				{
+					checked	{
+						Value*=10;
+						Value += Double.Parse(buffer.Substring(addnumber,1));
+
+					}
+				}
+			}
+			Value+=DecimalValue;
+		}
                 [MonoTODO]
                 public static void Input (System.Int32 FileNumber, ref System.Decimal Value) { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static void Input (System.Int32 FileNumber, ref System.String Value) { throw new NotImplementedException (); }
+                [MonoTODO("Needs Testing")]
+                public static void Input (System.Int32 FileNumber, ref System.String Value)
+		{
+			string buffer="";
+			InternalInputExceptions(FileNumber);
+			Value=InternalInput(FileNumber,0);
+		}
                 [MonoTODO]
                 public static void Input (System.Int32 FileNumber, ref System.DateTime Value) { throw new NotImplementedException (); }
-                 [MonoTODO("Needs Testing")]
+		private static void InternalInputExceptions(System.Int32 FileNumber)
+		{
+			if ( FileNumber < 0 || FileNumber > 255 )
+				throw new System.ArgumentException("File Number is not valid");
+			if ( FHandle[FileNumber - 1] == null)
+				throw new System.ArgumentException("File Number is not valid");
+			if ( FMode[FileNumber - 1] != OpenMode.Input && FMode[FileNumber-1] != OpenMode.Binary )
+				throw new System.IO.IOException("File Mode is invalid");
+			if ( FHandle[FileNumber - 1].Position == FHandle[FileNumber - 1].Length)
+				throw new System.IO.EndOfStreamException();
+		}
+		private static string InternalInput(System.Int32 FileNumber,int DataType)
+		{
+
+			// DataType : an additional filter
+			// to know if conversion is possible
+			// 0 --> string
+			// 1 --> To a numeric (integer) value
+			// 2 --> To a numeric (not integer) value
+			// 3 -->  To Boolean
+			bool found=false;
+			bool firstzone=true;
+			bool literal=false;
+			bool MyOK=true;
+			bool DecimalFound=false;
+			bool SignFound=false;
+			string retval="";
+			string retval2="";
+			byte[] BufByte=new byte[1];
+			while ( !found && ( FHandle[FileNumber-1].Position < FHandle[FileNumber-1].Length ))
+			{
+				FHandle[FileNumber-1].Read (BufByte,0,1);
+				switch ((char)BufByte[0])
+				{
+					case ' ':
+						if (literal)
+							retval+=" ";
+						else {
+							if (!firstzone && (DataType==1 || DataType==2))
+								found=true;
+							else
+								retval+=" ";
+						}
+						break;
+					case '\t':
+						if (literal) retval+="\t";
+						else if (!firstzone) found=true;
+						break;
+					case '"':
+						retval+="\"";
+						if (literal) literal=!literal;
+						else
+						{
+							if (!firstzone)	found=true;
+							else			literal=!literal;
+						}
+						break;
+					case ',':
+						if (!literal) found=true;
+						else retval+=",";
+						break;
+					case '\x0d':
+						if (!literal)
+						{
+							found=true;
+							if (FHandle[FileNumber - 1].Length > FHandle[FileNumber - 1].Position )
+							{
+								FHandle[FileNumber - 1].Read (BufByte,0,1);
+								if (BufByte[0] != 10 )
+									FHandle[FileNumber - 1].Seek (-1,SeekOrigin.Current );
+							}
+
+						}
+						else {	retval+="\x0d";	}
+						break;
+					case '\x0a':
+						if (literal) retval+="\x0a";
+						break;
+					default:
+						firstzone=false;
+						retval+=((char)BufByte[0]).ToString();
+						break;
+				}
+			}
+			switch (DataType)
+			{
+				case 0:
+					retval=retval.Trim();
+					if (retval.Substring(0,1)=="\"")
+					{
+						if (retval.Length > 1)	retval=retval.Substring (1);
+						else retval="";
+					}
+					if (retval.Length >=1)
+					{
+						if (retval.Substring (retval.Length -1 ,1)=="\"")
+						{
+							if (retval.Length > 1)	retval=retval.Substring (0,retval.Length -1);
+							else retval="";
+						}
+					}
+					retval2=retval;
+					break;
+				case 1:
+				case 2:
+					retval=retval.Trim();
+					for (int myloop=0; (myloop<retval.Length) && MyOK ;myloop++)
+						switch(retval[myloop])
+						{
+							case '+':
+							case '-':
+								if (myloop==0 || myloop == (retval.Length -1))
+								{
+									if (!SignFound)
+									{
+										retval2=retval[myloop].ToString() + retval2;
+										SignFound=true;
+									}
+									else
+										MyOK=false;
+								}
+								else
+									MyOK=false;
+								break;
+							case '0': case '1': case '2': case '3': case '4':
+							case '5': case '6': case '7': case '8': case '9':
+								retval2+=retval.Substring (myloop,1);
+								break;
+							case '.':
+								if (DataType==2)
+								{
+									if (!DecimalFound)
+									{
+										retval2+="." ;
+										DecimalFound=true;
+									}
+									else
+										MyOK=false;
+								}
+								break;
+							default:
+								MyOK=false;
+								break;
+						}
+					if (MyOK && (retval2.Length >=1 ) )
+					{
+						if (retval2[retval2.Length-1]=='.' )
+						{
+							if (retval2.Length >1)
+								retval2=retval2.Substring (0,retval2.Length -1);
+							else
+								MyOK=false;
+						}
+					}
+					else
+						MyOK=false;
+					break;
+				case 3:
+					retval=retval.Trim();
+					retval2="False";
+					retval=retval.Trim();
+					if (retval=="#TRUE#" || retval=="#FALSE#" ||
+						retval.ToUpper() =="TRUE" || retval.ToUpper() =="FALSE" ||
+						retval.ToUpper() == "\"TRUE\"" || retval.ToUpper() == "\"FALSE\"")
+					{
+						if (retval=="#TRUE#" || retval.ToUpper() == "TRUE" || retval.ToUpper () == "\"TRUE\"")
+							retval2="True";
+					}
+					else
+					{
+						if (retval.Substring(0,1)=="\"")
+						{
+							if (retval.Length > 1)	retval=retval.Substring (1);
+							else retval="";
+						}
+						if (retval.Length >=1)
+						{
+							if (retval.Substring (retval.Length -1 ,1)=="\"")
+							{
+								if (retval.Length > 1)	retval=retval.Substring (0,retval.Length -1);
+								else retval="";
+							}
+						}
+						for (int myloop=0; (myloop<retval.Length) && MyOK ;myloop++)
+							switch(retval[myloop])
+							{
+								case '0':
+									break;
+								case '1': case '2': case '3': case '4':	case '5':
+								case '6': case '7': case '8': case '9':
+									retval2="True";
+									break;
+								case '.': break;
+								case '-':
+									if ( (myloop!=0) && (myloop!=retval.Length-1) )
+										MyOK=false;
+									break;
+								default:
+									MyOK=false;
+									break;
+							}
+					}
+					break;
+			}
+			if (MyOK)
+			{
+				return retval2;
+			}
+			else // TODO : string explaining cast exception
+				throw new System.InvalidCastException();
+		}
+                [MonoTODO("Needs Testing")]
                 public static void Write (System.Int32 FileNumber, params System.Object[] Output) 
 		{
 			string MyBuf=null;
@@ -451,9 +842,9 @@ namespace Microsoft.VisualBasic
 				case "System.Double":
 				case "System.Decimal":
 					string buf= (Argument.ToString()) ;
-					if ( buf.IndexOf(System.Globalization.NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator)>=0)
-						retval=buf.Substring(0, buf.IndexOf(System.Globalization.NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator)) 
-						+ "." + buf.Substring(1+buf.IndexOf(System.Globalization.NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator));
+					if ( buf.IndexOf(",")>=0)
+						retval=buf.Substring(0, buf.IndexOf(",")) 
+						+ "." + buf.Substring(1+buf.IndexOf(","));
 	 				break;
 				case "System.Exception":
 					retval=((Exception)Argument).ToString();
@@ -606,8 +997,22 @@ namespace Microsoft.VisualBasic
                 		throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
                		return FMode[FileNumber - 1];
                 }
-                [MonoTODO]
-                public static void Reset () { throw new NotImplementedException (); }
+                [MonoTODO("Needs Testing")]
+                public static void Reset ()
+		{
+			for(int bucle=0;bucle<255;bucle++)
+                	{
+                		if (FHandle[bucle]!=null)
+                			try
+                			{
+                				FHandle[bucle].Close();	
+                			}
+                			catch (Exception e) 
+					{ 
+						FHandle[bucle]=null ;
+					}
+                	}
+		}
                 [MonoTODO("Needs Testing")]
                 public static void Rename (System.String OldPath, System.String NewPath) 
 		{
