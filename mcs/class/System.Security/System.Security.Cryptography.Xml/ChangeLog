@@ -1,3 +1,8 @@
+2004-03-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDsigXPathTransform.cs : implemented GetOutput() (with some 
+	  internal XPath context classes).
+
 2004-03-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDsigXsltTransform.cs : LoadInnerXml() should just load stylesheet

@@ -5,41 +5,47 @@
 //
 // Author:
 //	Sebastien Pouliot <sebastien@ximian.com>
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2004 Novell (http://www.novell.com)
 //
 
+using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
+using System.Xml.Xsl;
 
-namespace System.Security.Cryptography.Xml {
+namespace System.Security.Cryptography.Xml 
+{
 
 	// www.w3.org/TR/xmldsig-core/
 	// see Section 6.6.3 of the XMLDSIG specification
-	[MonoTODO]
-	public class XmlDsigXPathTransform : Transform {
+	public class XmlDsigXPathTransform : Transform 
+	{
 
-		private Type[] input;
-		private Type[] output;
+		private Type [] input;
+		private Type [] output;
 		private XmlNodeList xpath;
 		private XmlDocument doc;
+		private XsltContext ctx;
 
 		public XmlDsigXPathTransform () 
 		{
 			Algorithm = "http://www.w3.org/TR/1999/REC-xpath-19991116";
 		}
 
-		public override Type[] InputTypes {
+		public override Type [] InputTypes {
 			get {
 				if (input == null) {
 					lock (this) {
 						// this way the result is cached if called multiple time
 						input = new Type [3];
-						input[0] = typeof (System.IO.Stream);
-						input[1] = typeof (System.Xml.XmlDocument);
-						input[2] = typeof (System.Xml.XmlNodeList);
+						input [0] = typeof (System.IO.Stream);
+						input [1] = typeof (System.Xml.XmlDocument);
+						input [2] = typeof (System.Xml.XmlNodeList);
 					}
 				}
 				return input;
@@ -52,7 +58,7 @@ namespace System.Security.Cryptography.Xml {
 					lock (this) {
 						// this way the result is cached if called multiple time
 						output = new Type [1];
-						output[0] = typeof (System.Xml.XmlNodeList);
+						output [0] = typeof (System.Xml.XmlNodeList);
 					}
 				}
 				return output;
@@ -63,26 +69,34 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (xpath == null) {
 				// default value
-				XmlDocument doc = new XmlDocument ();
-				doc.LoadXml ("<XPath xmlns=\"" + XmlSignature.NamespaceURI + "\"></XPath>");
-				xpath = doc.ChildNodes;
+				XmlDocument xpdoc = new XmlDocument ();
+				xpdoc.LoadXml ("<XPath xmlns=\"" + XmlSignature.NamespaceURI + "\"></XPath>");
+				xpath = xpdoc.ChildNodes;
 			}
 			return xpath;
 		}
-		
+
+		[MonoTODO ("Evaluation of extension function here() results in different from MS.NET (is MS.NET really correct??).")]
 		public override object GetOutput () 
 		{
-			// note: this will throw a NullReferenceException if 
-			// doc is null - just like MS implementation does
-			if ((xpath == null) || (xpath.Count < 1)) {
-				// can't create an XmlNodeList
-				XmlDocument xd = new XmlDocument ();
-				return xd.ChildNodes;
+			if (xpath == null)
+				return new XmlDsigNodeList (new ArrayList ());
+
+			// evaluate every time since input or xpath might have changed.
+			string x = null;
+			for (int i = 0; i < xpath.Count; i++) {
+				switch (xpath [i].NodeType) {
+				case XmlNodeType.Text:
+				case XmlNodeType.CDATA:
+				case XmlNodeType.Element:
+					x += xpath [i].InnerText;
+					break;
+				}
 			}
-			return doc.ChildNodes;
-//* I know it doesn't make a lot of sense - but this is what the MS framework
-//* returns - I must miss something really bad
-//*			return doc.DocumentElement.SelectNodes (xpath [0].InnerXml);
+
+			return doc.SelectNodes (x, ctx);
+			ctx = new XmlDsigXPathContext (doc);
+			return EvaluateMatch (doc, x);
 		}
 
 		public override object GetOutput (Type type) 
@@ -90,6 +104,52 @@ namespace System.Security.Cryptography.Xml {
 			if (type != typeof (XmlNodeList))
 				throw new ArgumentException ("type");
 			return GetOutput ();
+		}
+
+		private XmlDsigNodeList EvaluateMatch (XmlNode n, string xpath)
+		{
+			ArrayList al = new ArrayList ();
+			// Strictly to say, document node is explicitly
+			// excluded by W3C spec (context node is initialized
+			// to the document root and XPath expression is
+			// "//. | //@* | //namespace::*)
+			XPathNavigator nav = n.CreateNavigator ();
+			XPathExpression exp = nav.Compile (xpath);
+			exp.SetContext (ctx);
+			EvaluateMatch (n, exp, al);
+			return new XmlDsigNodeList (al);
+		}
+
+		private void EvaluateMatch (XmlNode n, XPathExpression exp, ArrayList al)
+		{
+			if (NodeMatches (n, exp))
+				al.Add (n);
+			if (n.Attributes != null)
+				for (int i = 0; i < n.Attributes.Count; i++)
+					EvaluateMatch (n.Attributes [i], exp, al);
+			for (int i = 0; i < n.ChildNodes.Count; i++)
+				EvaluateMatch (n.ChildNodes [i], exp, al);
+		}
+
+		private bool NodeMatches (XmlNode n, XPathExpression exp)
+		{
+			// This looks waste of memory since it creates 
+			// XPathNavigator every time, but even if we use
+			//  XPathNodeIterator.Current, it also clones every time.
+			object ret = n.CreateNavigator ().Evaluate (exp);
+			if (ret is bool)
+				return (bool) ret;
+			if (ret is double) {
+				double d = (double) ret;
+				return !(d == 0.0 || d == double.NaN);
+			}
+			if (ret is string)
+				return ((string) ret).Length > 0;
+			if (ret is XPathNodeIterator) {
+				XPathNodeIterator retiter = (XPathNodeIterator) ret;
+				return retiter.Count > 0;
+			}
+			return false;
 		}
 
 		public override void LoadInnerXml (XmlNodeList nodeList) 
@@ -117,6 +177,116 @@ namespace System.Security.Cryptography.Xml {
 					XmlNode importedNode = doc.ImportNode (xn, true);
 					doc.AppendChild (importedNode);
 				}
+			}
+		}
+
+		// Internal classes to support XPath extension function here()
+
+		internal class XmlDsigXPathContext : XsltContext
+		{
+			XmlDsigXPathFunctionHere here;
+			public XmlDsigXPathContext (XmlNode node)
+			{
+				here = new XmlDsigXPathFunctionHere (node);
+			}
+
+			public override IXsltContextFunction ResolveFunction (
+				string prefix, string name, XPathResultType [] argType)
+			{
+				// Here MS.NET incorrectly allows arbitrary
+				// name e.g. "heretic()".
+				if (name == "here" &&
+					prefix == String.Empty &&
+					argType.Length == 0)
+					return here;
+				else
+					return null; // ????
+			}
+
+			public override bool Whitespace {
+				get { return true; }
+			}
+
+			public override bool PreserveWhitespace (XPathNavigator node)
+			{
+				return true;
+			}
+
+			public override int CompareDocument (string s1, string s2)
+			{
+				return String.Compare (s1, s2);
+			}
+
+			public override IXsltContextVariable ResolveVariable (string prefix, string name)
+			{
+				throw new InvalidOperationException ();
+			}
+		}
+
+		internal class XmlDsigXPathFunctionHere : IXsltContextFunction
+		{
+			// Static
+
+			static XPathResultType [] types;
+			static XmlDsigXPathFunctionHere ()
+			{
+				types = new XPathResultType [0];
+			}
+
+			// Instance
+
+			XPathNodeIterator xpathNode;
+
+			public XmlDsigXPathFunctionHere (XmlNode node)
+			{
+				xpathNode = node.CreateNavigator ().Select (".");
+			}
+
+			public XPathResultType [] ArgTypes {
+				get { return types; }
+			}
+		
+			public int Maxargs { get { return 0; } }
+		
+			public int Minargs { get { return 0; } }
+		
+			public XPathResultType ReturnType {
+				get { return XPathResultType.NodeSet; }
+			}
+
+			public object Invoke (XsltContext ctx, object [] args, XPathNavigator docContext)
+			{
+				if (args.Length != 0)
+					throw new ArgumentException ("Not allowed arguments for function here().", "args");
+
+				return xpathNode.Clone ();
+			}
+		}
+
+		// Copied from XmlNodeArrayList.cs
+		internal class XmlDsigNodeList : XmlNodeList
+		{
+			ArrayList _rgNodes;
+
+			public XmlDsigNodeList (ArrayList rgNodes)
+			{
+				_rgNodes = rgNodes;
+			}
+
+			public override int Count { get { return _rgNodes.Count; } }
+
+			public override IEnumerator GetEnumerator ()
+			{
+				return _rgNodes.GetEnumerator ();
+			}
+
+			public override XmlNode Item (int index)
+			{
+				// Return null if index is out of range. by  DOM design.
+				if (index < 0 || _rgNodes.Count <= index)
+					return null;
+
+				return (XmlNode) _rgNodes [index];
 			}
 		}
 	}
