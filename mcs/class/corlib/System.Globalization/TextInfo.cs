@@ -4,14 +4,16 @@
 // Author:
 //	Dick Porter (dick@ximian.com)
 // 	Duncan Mak (duncan@ximian.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002 Ximian, Inc.
+// (C) 2005 Novell, Inc.
 //
 // TODO:
 //   Missing the various code page mappings.
 //   Missing the OnDeserialization implementation.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -145,26 +147,68 @@ namespace System.Globalization {
 		{
 			if(str == null)
 				throw new ArgumentNullException("string is null");
-			
-			Text.StringBuilder s = new Text.StringBuilder ();
-			bool space_seen = true;
-				
-			for (int i = 0; i < str.Length; i ++){
-				char c = str [i];
-				if (Char.IsLetter (c)){
-					if (space_seen)
-						s.Append (Char.ToUpper (c, ci));
-					else
-						s.Append (Char.ToLower (c, ci));
-					space_seen = false;
-				} else {
-					s.Append (c);
-					if (Char.IsWhiteSpace (c))
-						space_seen = true;
+
+			StringBuilder sb = null;
+			int i = 0;
+			int start = 0;
+			while (i < str.Length) {
+				if (!Char.IsLetter (str [i++]))
+					continue;
+				i--;
+				char t = ToTitleCase (str [i]);
+				bool capitalize = true;
+				if (t == str [i]) {
+					capitalize = false;
+					bool allTitle = true;
+					// if the word is all titlecase,
+					// then don't capitalize it.
+					int saved = i;
+					while (++i < str.Length) {
+						if (Char.IsWhiteSpace (str [i]))
+							break;
+						t = ToTitleCase (str [i]);
+						if (t != str [i]) {
+							allTitle = false;
+							break;
+						}
+					}
+					if (allTitle)
+						continue;
+					i = saved;
+
+					// still check if all remaining
+					// characters are lowercase,
+					// where we don't have to modify
+					// the source word.
+					while (++i < str.Length) {
+						if (Char.IsWhiteSpace (str [i]))
+							break;
+						if (ToLower (str [i]) != str [i]) {
+							capitalize = true;
+							i = saved;
+							break;
+						}
+					}
+				}
+
+				if (capitalize) {
+					if (sb == null)
+						sb = new StringBuilder (str.Length);
+					sb.Append (str, start, i - start);
+					sb.Append (ToTitleCase (str [i]));
+					start = i + 1;
+					while (++i < str.Length) {
+						if (Char.IsWhiteSpace (str [i]))
+							break;
+						sb.Append (ToLower (str [i]));
+					}
+					start = i;
 				}
 			}
+			if (sb != null)
+				sb.Append (str, start, str.Length - start);
 
-			return s.ToString ();
+			return sb != null ? sb.ToString () : str;
 		}
 
 		// Only Azeri and Turkish have their own special cases.
@@ -262,6 +306,33 @@ namespace System.Globalization {
 			return Char.ToUpperInvariant (c);
 		}
 
+		private char ToTitleCase (char c)
+		{
+			// Handle some Latin characters.
+			switch (c) {
+			case '\u01c4':
+			case '\u01c5':
+			case '\u01c6':
+				return '\u01c5';
+			case '\u01c7':
+			case '\u01c8':
+			case '\u01c9':
+				return '\u01c8';
+			case '\u01ca':
+			case '\u01cb':
+			case '\u01cc':
+				return '\u01cb';
+			case '\u01f1':
+			case '\u01f2':
+			case '\u01f3':
+				return '\u01f2';
+			}
+			if ('\u2170' <= c && c <= '\u217f' || // Roman numbers
+				'\u24d0' <= c && c <= '\u24e9')
+				return c;
+			return ToUpper (c);
+		}
+
 		public virtual string ToLower (string s)
 		{
 			// In ICU (3.2) there are a few cases that one single
@@ -293,13 +364,13 @@ namespace System.Globalization {
 				if (s [i] != convert (s [i])) {
 					if (sb == null)
 						sb = new StringBuilder (s.Length);
-					sb.Append (s.Substring (start, i - start));
+					sb.Append (s, start, i - start);
 					sb.Append (convert (s [i]));
 					start = i + 1;
 				}
 			}
 			if (sb != null && start < s.Length)
-				sb.Append (s.Substring (start));
+				sb.Append (s, start, s.Length - start);
 			return sb == null ? s : sb.ToString ();
 		}
 

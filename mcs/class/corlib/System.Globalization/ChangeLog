@@ -1,3 +1,10 @@
+2005-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextInfo.cs : Fixed ToTitleCase() so that
+	  - handle some titlecase characters in Latin ang Greek.
+	  - it keeps "all title case" word as is ("ABC" does not become "Abc").
+	  - it can handle such string like "1ABc".
+
 2005-04-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextInfo.cs : implemented culture sensitive ToLower() and ToUpper()

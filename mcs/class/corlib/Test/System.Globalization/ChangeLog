@@ -1,3 +1,7 @@
+2005-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextInfoTest.cs : added further ToTitleCase() tests.
+
 2004-10-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* TextInfoTest.cs: Fix up migster's type
