@@ -948,7 +948,7 @@ namespace System.Data {
 		
 		protected virtual System.Xml.Schema.XmlSchema GetSchemaSerializable ()
 		{
-			return BuildSchema ();
+			return null;
 		}
 		
 		protected virtual void ReadXmlSerializable (XmlReader reader)
@@ -1530,7 +1530,7 @@ namespace System.Data {
 
 		private void DoWriteXmlSchema (XmlWriter writer)
 		{
-			GetSchemaSerializable ().Write (writer);
+			BuildSchema ().Write (writer);
 		}
 		
 		///<summary>

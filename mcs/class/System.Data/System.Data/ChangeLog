@@ -1,3 +1,8 @@
+2004-02-04 Eran Domb <erand@mainsoft.com>
+	
+	* DataSet.cs : GetSchemaSerializable() return null and not BuildSchema().
+	DoWriteXmlSchema calls BuildSchema ().
+
 2004-02-04 Lluis Sanchez Gual <lluis@ximian.com>
 
 	* DataRow.cs: Added SetOriginalValue(), which is used to set the original
