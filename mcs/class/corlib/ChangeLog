@@ -1,3 +1,9 @@
+2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Moved SymmetricTransform class from System.
+	Security.Cryptography (SymmetricAlgorithm) to Mono.Security.
+	Cryptography.
+
 2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added KeyPairPersistance class, in Mono.

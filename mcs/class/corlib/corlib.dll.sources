@@ -23,6 +23,7 @@ Mono.Security.Cryptography/KeyPairPersistence.cs
 Mono.Security.Cryptography/PKCS1.cs
 Mono.Security.Cryptography/HMACAlgorithm.cs
 Mono.Security.Cryptography/MACAlgorithm.cs
+Mono.Security.Cryptography/SymmetricTransform.cs
 Mono.Security.Cryptography/RSAManaged.cs
 Mono.Security.X509/ITrustAnchors.cs
 Mono.Security.X509/TestAnchors.cs
