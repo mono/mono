@@ -1,4 +1,7 @@
 2003-10-20 Jordi Mas i Hernàndez <jmas@softcatala.org>
+	* Application.cs added a default form to show unhandled exceptions 
+	
+2003-10-20 Jordi Mas i Hernàndez <jmas@softcatala.org>
 	* Initial PrintDialog.cs implementation
 	
 2003-10-16 Jordi Mas i Hernàndez <jmas@softcatala.org>

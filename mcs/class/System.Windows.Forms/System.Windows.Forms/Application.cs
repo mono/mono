@@ -37,6 +37,7 @@ namespace System.Windows.Forms
 		static private bool messageLoopStopRequest = false;
 		static private  ArrayList messageFilters = new ArrayList ();
 		static private string safeTopLevelCaptionFormat;
+		static private bool showingException = false;
 
 
 		private Application(){//For signiture compatablity. Prevents the auto creation of public constructor
@@ -233,15 +234,62 @@ namespace System.Windows.Forms
 	
 		[MonoTODO]
 		public static void OnThreadException (Exception t) 
-		{
-			//FIXME:
-			if( Application.ThreadException != null) 
-			{
+		{			
+			
+			if(Application.ThreadException != null) 
 				Application.ThreadException(null, new ThreadExceptionEventArgs(t));
+			else{							
+				
+				if (!showingException)	{
+					
+					showingException = true;
+				
+					Form	excepForm = new Form();
+					excepForm.ClientSize = new System.Drawing.Size(400, 250);				
+					
+					TextBox txtLabel = new TextBox();		
+					txtLabel.Location = new System.Drawing.Point(30, 30);					
+					txtLabel.ReadOnly = true;					
+					txtLabel.Multiline = true;
+					txtLabel.Size = new System.Drawing.Size(310, 50);		 
+					txtLabel.Text = "The application has produced an exception. Press 'Continue' if you want the application to try to continue its execution";										
+					excepForm.Controls.Add(txtLabel); 					
+					
+					TextBox txtError = new TextBox();		
+					txtError.Location = new System.Drawing.Point(30, 110);					
+					txtError.ReadOnly = true;					
+					txtLabel.Multiline = true;
+					txtError.Size = new System.Drawing.Size(310, 50);		
+					txtError.Text = t.Message;										
+					excepForm.Controls.Add(txtError);
+					
+					StackButton stackbtn = new StackButton(t);		
+					stackbtn.Location = new System.Drawing.Point(30, 200);					
+					stackbtn.Size = new System.Drawing.Size(100, 30);		
+					stackbtn.Text = "Stack Trace";										
+					excepForm.Controls.Add(stackbtn); 
+					
+					ContinueButton continuebtn = new ContinueButton(excepForm);		
+					continuebtn.Location = new System.Drawing.Point(160, 200);					
+					continuebtn.Size = new System.Drawing.Size(100, 30);		
+					continuebtn.Text = "Continue";										
+					excepForm.Controls.Add(continuebtn);    		    	    												
+					
+					QuitButton quitbtn = new QuitButton();		
+					quitbtn.Location = new System.Drawing.Point(290, 200);					
+					quitbtn.Size = new System.Drawing.Size(100, 30);		
+					quitbtn.Text = "Quit";										
+					excepForm.Controls.Add(quitbtn);    		    	    												
+					
+					excepForm.ShowDialog();							
+					showingException = false;
+				}							
+				
 			}
 			
 		}
-	
+		
+		
 		public static void RemoveMessageFilter (IMessageFilter value)
 		{
 			messageFilters.Remove (value);
@@ -365,6 +413,46 @@ namespace System.Windows.Forms
 		public static event EventHandler Idle;
 		public static event ThreadExceptionEventHandler ThreadException;
 		public static event EventHandler ThreadExit;
+		
+		
+		// StackButton
+		internal class StackButton : System.Windows.Forms.Button{
+				
+				private Exception excep = null;			
+				
+				public StackButton(Exception t) : base(){
+					excep = t;					
+				}				
+				
+				protected override void OnClick(EventArgs e) 	{	
+					MessageBox.Show(excep.StackTrace, "Stack Trace");
+				}
+		}
+		
+		// QuitButton
+		internal class QuitButton : System.Windows.Forms.Button{								
+				
+				public QuitButton() : base(){}				
+				
+				protected override void OnClick(EventArgs e) 	{	
+					Application.ExitThread();
+					Application.Exit();
+				}
+		}
+		
+		// ContinueButton
+		internal class ContinueButton : System.Windows.Forms.Button{								
+		
+				private Form form = null;
+				
+				public ContinueButton(Form frm) : base(){form=frm;}				
+				
+				protected override void OnClick(EventArgs e) 	{	
+					form.Close();
+				}
+		}
+
+
 	}
 }
 
