@@ -1,3 +1,8 @@
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
+	* */makefile (NANT): Use a variable `NANT' so the user can override it with
+	`make NANT=/usr/local/bin/NAnt.exe'.
+
 2002-05-09  Daniel Morgan <danmorg@sc.rr.com>
 
 	* AUTHORS: add me to class libraries list
