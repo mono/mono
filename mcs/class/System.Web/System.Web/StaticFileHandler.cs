@@ -47,7 +47,7 @@ namespace System.Web
 				response.WriteFile (fileName);
 				response.ContentType = MimeTypes.GetMimeType (fileName);
 			} catch (Exception e) {
-				throw new HttpException (401, "Forbidden");
+				throw new HttpException (403, "Forbidden");
 			}
 		}
 

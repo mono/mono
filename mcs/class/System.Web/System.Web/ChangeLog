@@ -1,3 +1,13 @@
+2003-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: quick way of checking that the path is within the
+	root for the application. Thanks to Johannes for reporting.
+	
+	* HttpRuntime.cs: use the status code from teh exception when it'ss a
+	HttpException.
+
+	* StaticFileHandler.cs: forbidden is 403.
+
 2003-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpServerUtility.cs: fixed path and query. Path by Rich Alimi

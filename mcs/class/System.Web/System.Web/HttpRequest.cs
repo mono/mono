@@ -504,6 +504,11 @@ namespace System.Web {
 			get {
 				if (null == _sFilePath && null != _WorkerRequest) {
 					_sFilePath = _WorkerRequest.GetFilePath();
+					try {
+						_sFilePath = UrlUtils.Reduce (_sFilePath);
+					} catch (Exception e) {
+						throw new HttpException (403, "Forbidden");
+					}
 				}
 
 				return _sFilePath;
@@ -714,8 +719,9 @@ namespace System.Web {
 					if (rewritten)
 						_sPathTranslated = _WorkerRequest.GetFilePathTranslated ();
 
+					string verifyPath = _WorkerRequest.MapPath (FilePath);
 					if (null == _sPathTranslated)
-						_sPathTranslated = _WorkerRequest.MapPath (FilePath);
+						_sPathTranslated = verifyPath;
 				}
 
 				return _sPathTranslated;
