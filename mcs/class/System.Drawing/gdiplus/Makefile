@@ -29,8 +29,8 @@ local_objs = bitmap.o \
 all-local: $(gdiplus)
 
 clean-local:
-	rm *.o
-	rm $(gdiplus)
+	rm -f *.o
+	rm -f $(gdiplus)
 	
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
