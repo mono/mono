@@ -16,6 +16,7 @@ using System.Threading;
 
 namespace MonoTests.System.IO
 {
+	[TestFixture]
 	public class FileTest : Assertion
 	{
 		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
@@ -379,6 +380,19 @@ namespace MonoTests.System.IO
 			File.Move (TempFolder + Path.DirectorySeparatorChar + "bar", TempFolder + Path.DirectorySeparatorChar + "baz");
 			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "bar should not exist", !File.Exists (TempFolder + Path.DirectorySeparatorChar + "bar"));
 			Assert ("File " + TempFolder + Path.DirectorySeparatorChar + "baz should exist", File.Exists (TempFolder + Path.DirectorySeparatorChar + "baz"));
+
+			// Test moving of directories
+			string dir = Path.Combine (TempFolder, "dir");
+			string dir2 = Path.Combine (TempFolder, "dir2");
+			string dir_foo = Path.Combine (dir, "foo");
+			string dir2_foo = Path.Combine (dir2, "foo");
+
+			Directory.CreateDirectory (dir);
+			File.Create (dir_foo);
+			File.Move (dir, dir2);
+			Assert (!Directory.Exists (dir));
+			Assert (Directory.Exists (dir2));
+			Assert (File.Exists (dir2_foo));
 		}
 
 		[Test]

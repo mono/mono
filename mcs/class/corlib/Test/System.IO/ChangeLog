@@ -1,3 +1,7 @@
+2003-05-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FileTest.cs: Added tests for moving directories.
+
 2003/05/20  Nick Drochak <ndrochak@gol.com>
 
 	* FileTest.cs:
