@@ -1,3 +1,8 @@
+2004-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SiteTest.cs: New. Unit tests for Site.
+	* SiteMembershipConditionTest.cs: New. Implemented.
+
 2004-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* EvidenceTest.cs: Upgraded tests to NUnit2. Added new tests.
