@@ -83,6 +83,7 @@ namespace System.Web.UI.WebControls {
 				
 		public IEnumerable Select (DataSourceSelectArguments arguments)
 		{
+			
 			return ExecuteSelect (arguments);
 		}
 
@@ -97,10 +98,27 @@ namespace System.Web.UI.WebControls {
 						DataSourceSelectArguments arguments)
 		{
 			command = new SqlCommand (this.SelectCommand, connection);
+			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (command);
+			OnSelecting (cmdEventArgs);
 			connection.Open ();
 			SqlDataReader reader = command.ExecuteReader ();
-			//return reader.GetEnumerator ();
-			throw new NotImplementedException ("SqlDataReader doesnt implements GetEnumerator method yet");
+			int resultCount =0;
+			/*while (reader.Read ())
+				resultCount++;
+			Console.WriteLine ("reader returned "+resultCount);*/
+			IEnumerable enums = null; 
+			Exception exception = null;
+			try {
+				//enums = reader.GetEnumerator();
+				throw new NotImplementedException ("SqlDataReader doesnt implements GetEnumerator method yet");
+			} catch (Exception e) {
+				exception = e;
+			}
+			SqlDataSourceStatusEventArgs statusEventArgs = 
+				new SqlDataSourceStatusEventArgs (command, reader.RecordsAffected, exception);
+			OnSelected (statusEventArgs);
+			return enums;
+			
 		}
 
 		public int Update(IDictionary keys, IDictionary values,
