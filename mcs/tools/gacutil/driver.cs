@@ -260,11 +260,14 @@ namespace Mono.Tools {
 					WriteLine ("ERROR: Could not create package dir file.");
 					Environment.Exit (1);
 				}
-				Symlink (Path.Combine (link_path, asmb_file), ref_path);
+				if (Path.DirectorySeparatorChar == '/') {
+					symlink ("../gac/" + an.Name + "/" + version_token + "/" + asmb_file, ref_path);
+				} else {
+					File.Copy (Path.Combine (link_path, asmb_file), ref_path);
+				}
 
 				WriteLine ("Package exported to: " + ref_path + " -> " +
 						Path.Combine (link_path, asmb_file));
-
 			}
 
 			WriteLine ("{0} installed into the gac ({1})", an.Name, gacdir);
@@ -548,14 +551,6 @@ namespace Mono.Tools {
 				break;
 			}
 			return c;	 
-		}
-
-		private static void Symlink (string oldpath, string newpath) {
-			if (Path.DirectorySeparatorChar == '/') {
-				symlink (oldpath, newpath);
-			} else {
-				File.Copy (oldpath, newpath);
-			}
 		}
 
 		[DllImport ("libc", SetLastError=true)]

@@ -1,3 +1,7 @@
+2005-01-13  Mike Kestner  <mkestner@novell.com>
+
+	* driver.cs: use relative symlinks in package links.
+
 2004-06-15  Jackson Harper  <jackson@ximian.com>
 
 	* driver.cs: Ensure that the -gacdir ends with /lib if it does not
