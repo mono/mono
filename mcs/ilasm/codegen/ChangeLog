@@ -1,5 +1,11 @@
 2003-03-13 Jackson Harper <jackson@latitudegeo.com>
 
+	* CodeGen.cs: Add code buffer for il instructions when a new method is added.
+	* InstrTable.cs: New file, this is a table of all the instructions (just simple 
+	instructions right now)
+
+2003-03-13 Jackson Harper <jackson@latitudegeo.com>
+
 	* CodeGen.cs: Set current method when a new method is added.
 
 2003-03-12 Jackson Harper <jackson@latitudegeo.com>

@@ -24,6 +24,7 @@ namespace Mono.ILASM {
 		private string current_namespace;
 		private ClassDef current_class;
 		private MethodDef current_method;
+		private CILInstructions code_buffer;
 		
 		private ClassTable class_table;
 		private ExternTable extern_table;
@@ -54,6 +55,10 @@ namespace Mono.ILASM {
 			set { current_method = value; }
 		}
 
+		public CILInstructions CodeBuffer {
+			get { return code_buffer; }	
+		}
+
 		public ClassTable ClassTable {
 			get { return class_table; }
 		}
@@ -79,6 +84,7 @@ namespace Mono.ILASM {
 			MethodTable method_table = class_table.GetMethodTable (current_class.Name, location);
 			current_method = method_table.AddDefinition (method_attr, impl_attr, call_conv, name, 
 				return_type, param_list, param_type_list, location);
+			code_buffer = current_method.CreateCodeBuffer ();
 		}
 	}
 
