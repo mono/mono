@@ -39,6 +39,11 @@ SOURCES = 				\
         codegen/ExternMethodRef.cs      \
         codegen/MethodRef.cs            \
         codegen/GlobalMethodRef.cs      \
+        codegen/IFieldRef.cs            \
+        codegen/ExternFieldRef.cs       \
+        codegen/GlobalFieldRef.cs       \
+        codegen/FieldRef.cs             \
+        codegen/FieldInstr.cs           \
         parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
