@@ -1,3 +1,18 @@
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* CodeIdentifiers.cs:
+	* SoapCodeExporter.cs:
+	* SoapSchemaExporter.cs:
+	* XmlCodeExporter.cs:
+	* XmlMemberMapping.cs:
+	* XmlMembersMapping.cs:
+	* XmlReflectionImporter.cs:
+	* XmlReflectionMember.cs:
+	* XmlSchemaExporter.cs:
+	* XmlSchemaImporter.cs:
+	* XmlSchemas.cs: 
+		New stubbs added to aid in the linux build of
+		System.Web.Services.
+
 2002-07-05  Ajay kumar Dwivedi <adwiv@yahoo.com>
 	
 	* XmlSeriailizer: Serialize method can serialize XmlSchema perfectly.
