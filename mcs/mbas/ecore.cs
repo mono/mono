@@ -323,11 +323,9 @@ namespace Mono.CSharp {
 						ec.ContainerType, ec.ContainerType, AllMemberTypes,
 						AllBindingFlags | BindingFlags.NonPublic, s.Name);
 					if (lookup != null)
-						Error (122, "`" + s.Name + "' " +
-						       "is inaccessible because of its protection level");
+						Error (122, "'" + s.Name + "' is inaccessible because of its protection level");
 					else
-						Error (103, "The name `" + s.Name + "' could not be " +
-						       "found in `" + ec.DeclSpace.Name + "'");
+						Error (103, "The name '" + s.Name + "' could not be found in '" + ec.DeclSpace.Name + "'");
 					return null;
 				}
 
@@ -407,10 +405,7 @@ namespace Mono.CSharp {
 				if (e is SimpleName){
 					SimpleName s = (SimpleName) e;
 
-					Report.Error (
-						103, loc,
-						"The name `" + s.Name + "' could not be found in `" +
-						ec.DeclSpace.Name + "'");
+					Report.Error ( 103, loc,"The name '" + s.Name + "' could not be found in '" + ec.DeclSpace.Name + "'");
 					return null;
 				}
 
@@ -3711,13 +3706,10 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			//
-			// If this is ever reached, then we failed to
-			// find the name as a namespace
+			// If this is ever reached, then we failed to find the name as a namespace
 			//
 
-			Error (103, "The name `" + Name +
-			       "' does not exist in the class `" +
-			       ec.DeclSpace.Name + "'");
+			Error (103, "The name '" + Name + "' does not exist in the class '" + ec.DeclSpace.Name + "'");
 		}
 
 		public override string ToString ()

@@ -15,7 +15,8 @@ Module WriteOK
 		IO.WriteLine("OK! via aliased name") ' from alias
 		nodim = 1 ' test for explicit
         Console.WriteLine(nodim)
-		'WriteOK5.ModuleSub()
+		WriteOK5.ModuleSub() ' 122
+		ModuleSub() ' 103
     End Sub
 
 End Module

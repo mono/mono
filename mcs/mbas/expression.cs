@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 		{
 			Error (
 				23, "Operator " + OperName (Oper) +
-				" cannot be applied to operand of type `" +
+				" cannot be applied to operand of type '" +
 				TypeManager.CSharpName (t) + "'");
 		}
 
@@ -189,7 +189,7 @@ namespace Mono.CSharp {
 
 		// <summary>
 		//   This routine will attempt to simplify the unary expression when the
-		//   argument is a constant.  The result is returned in `result' and the
+		//   argument is a constant.  The result is returned in 'result' and the
 		//   function returns true or false depending on whether a reduction
 		//   was performed or not
 		// </summary>
@@ -445,7 +445,7 @@ namespace Mono.CSharp {
 
 				if (expr_type == TypeManager.uint64_type){
 					//
-					// FIXME: Handle exception of `long value'
+					// FIXME: Handle exception of 'long value'
 					// -92233720368547758087 (-2^63) to be wrote as
 					// decimal integer literal.
 					//
@@ -538,7 +538,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   This will emit the child expression for `ec' avoiding the logical
+		///   This will emit the child expression for 'ec' avoiding the logical
 		///   not.  The parent will take care of changing brfalse/brtrue
 		/// </summary>
 		public void EmitLogicalNot (EmitContext ec)
@@ -658,7 +658,7 @@ namespace Mono.CSharp {
 	/// classes (indexers require temporary access;  overloaded require method)
 	///
 	/// Maybe we should have classes PreIncrement, PostIncrement, PreDecrement,
-	/// PostDecrement, that way we could save the `Mode' byte as well.  
+	/// PostDecrement, that way we could save the 'Mode' byte as well.  
 	/// </remarks>
 	public class UnaryMutator : ExpressionStatement {
 		public enum Mode : byte {
@@ -691,12 +691,12 @@ namespace Mono.CSharp {
 		{
 			Error (
 				23, "Operator " + OperName (mode) + 
-				" cannot be applied to operand of type `" +
+				" cannot be applied to operand of type '" +
 				TypeManager.CSharpName (t) + "'");
 		}
 
 		/// <summary>
-		///   Returns whether an object of type `t' can be incremented
+		///   Returns whether an object of type 't' can be incremented
 		///   or decremented with add/sub (ie, basically whether we can
 		///   use pre-post incr-decr operations on it, but it is not a
 		///   System.Decimal, which we require operator overloading to catch)
@@ -948,11 +948,11 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   Base class for the `Is' and `As' classes. 
+	///   Base class for the 'Is' and 'As' classes. 
 	/// </summary>
 	///
 	/// <remarks>
-	///   FIXME: Split this in two, and we get to save the `Operator' Oper
+	///   FIXME: Split this in two, and we get to save the 'Operator' Oper
 	///   size. 
 	/// </remarks>
 	public abstract class Probe : Expression {
@@ -987,7 +987,7 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   Implementation of the `is' operator.
+	///   Implementation of the 'is' operator.
 	/// </summary>
 	public class Is : Probe {
 		public Is (Expression expr, Expression probe_type, Location l)
@@ -1018,7 +1018,7 @@ namespace Mono.CSharp {
 				IntConstant.EmitInt (ig, 1);
 				return;
 			case Action.LeaveOnStack:
-				// the `e != null' rule.
+				// the 'e != null' rule.
 				return;
 			case Action.Probe:
 				ig.Emit (OpCodes.Isinst, probe_type);
@@ -1073,13 +1073,13 @@ namespace Mono.CSharp {
 				if (warning_always_matches)
 					Warning (
 						183,
-						"The expression is always of type `" +
+						"The expression is always of type '" +
 						TypeManager.CSharpName (probe_type) + "'");
 				else if (warning_never_matches){
 					if (!(probe_type.IsInterface || expr.Type.IsInterface))
 						Warning (
 							184,
-							"The expression is never of type `" +
+							"The expression is never of type '" +
 							TypeManager.CSharpName (probe_type) + "'");
 				}
 			}
@@ -1089,7 +1089,7 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   Implementation of the `as' operator.
+	///   Implementation of the 'as' operator.
 	/// </summary>
 	public class As : Probe {
 		public As (Expression expr, Expression probe_type, Location l)
@@ -1112,8 +1112,8 @@ namespace Mono.CSharp {
 		static void Error_CannotConvertType (Type source, Type target, Location loc)
 		{
 			Report.Error (
-				39, loc, "as operator can not convert from `" +
-				TypeManager.CSharpName (source) + "' to `" +
+				39, loc, "as operator can not convert from '" +
+				TypeManager.CSharpName (source) + "' to '" +
 				TypeManager.CSharpName (target) + "'");
 		}
 		
@@ -1645,10 +1645,10 @@ namespace Mono.CSharp {
 		public static void Error_OperatorAmbiguous (Location loc, Operator oper, Type l, Type r)
 		{
 			Report.Error (
-				34, loc, "Operator `" + OperName (oper) 
-				+ "' is ambiguous on operands of type `"
+				34, loc, "Operator '" + OperName (oper) 
+				+ "' is ambiguous on operands of type '"
 				+ TypeManager.CSharpName (l) + "' "
-				+ "and `" + TypeManager.CSharpName (r)
+				+ "and '" + TypeManager.CSharpName (r)
 				+ "'");
 		}
 
@@ -1813,8 +1813,8 @@ namespace Mono.CSharp {
 		static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
 		{
 			Report.Error (19, loc,
-			       "Operator " + name + " cannot be applied to operands of type `" +
-			       TypeManager.CSharpName (l) + "' and `" +
+			       "Operator " + name + " cannot be applied to operands of type '" +
+			       TypeManager.CSharpName (l) + "' and '" +
 			       TypeManager.CSharpName (r) + "'");
 		}
 		
@@ -2302,7 +2302,7 @@ namespace Mono.CSharp {
 		///   context of a conditional bool expression.  This function will return
 		///   false if it is was possible to use EmitBranchable, or true if it was.
 		///
-		///   The expression's code is generated, and we will generate a branch to `target'
+		///   The expression's code is generated, and we will generate a branch to 'target'
 		///   if the resulting expression value is equal to isTrue
 		/// </remarks>
 		public bool EmitBranchable (EmitContext ec, Label target, bool onTrue)
@@ -2610,7 +2610,7 @@ namespace Mono.CSharp {
 		bool is_add;
 
 		//
-		// We assume that `l' is always a pointer
+		// We assume that 'l' is always a pointer
 		//
 		public PointerArithmetic (bool is_addition, Expression l, Expression r, Type t,
 					  Location loc)
@@ -2752,8 +2752,8 @@ namespace Mono.CSharp {
 					if (ConvertImplicit (ec, falseExpr, true_type, loc) != null){
 						Error (172,
 						       "Can not compute type of conditional expression " +
-						       "as `" + TypeManager.CSharpName (trueExpr.Type) +
-						       "' and `" + TypeManager.CSharpName (falseExpr.Type) +
+						       "as '" + TypeManager.CSharpName (trueExpr.Type) +
+						       "' and '" + TypeManager.CSharpName (falseExpr.Type) +
 						       "' convert implicitly to each other");
 						return null;
 					}
@@ -2765,8 +2765,8 @@ namespace Mono.CSharp {
 				} else {
 					Error (173, "The type of the conditional expression can " +
 					       "not be computed because there is no implicit conversion" +
-					       " from `" + TypeManager.CSharpName (trueExpr.Type) + "'" +
-					       " and `" + TypeManager.CSharpName (falseExpr.Type) + "'");
+					       " from '" + TypeManager.CSharpName (trueExpr.Type) + "'" +
+					       " and '" + TypeManager.CSharpName (falseExpr.Type) + "'");
 					return null;
 				}
 			}
@@ -2816,7 +2816,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 		}
 
-		// Setting `is_readonly' to false will allow you to create a writable
+		// Setting 'is_readonly' to false will allow you to create a writable
 		// reference to a read-only variable.  This is used by foreach and using.
 		public LocalVariableReference (Block block, string name, Location l,
 					       VariableInfo variable_info, bool is_readonly)
@@ -2897,7 +2897,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (is_readonly){
-				Error (1604, "cannot assign to `" + Name + "' because it is readonly");
+				Error (1604, "cannot assign to '" + Name + "' because it is readonly");
 				return null;
 			}
 			
@@ -2960,7 +2960,7 @@ namespace Mono.CSharp {
 
 			if (!ec.CurrentBranching.IsParameterAssigned (idx)) {
 				Report.Error (165, loc,
-					      "Use of unassigned local variable `" + name + "'");
+					      "Use of unassigned local variable '" + name + "'");
 				return false;
 			}
 
@@ -2977,7 +2977,7 @@ namespace Mono.CSharp {
 
 			if (!ec.CurrentBranching.IsParameterAssigned (idx, field_name)) {
 				Report.Error (170, loc,
-					      "Use of possibly unassigned field `" + field_name + "'");
+					      "Use of possibly unassigned field '" + field_name + "'");
 				return false;
 			}
 
@@ -3171,7 +3171,7 @@ namespace Mono.CSharp {
 
 		/// <summary>
 		///   Returns the Parameters (a ParameterData interface) for the
-		///   Method `mb'
+		///   Method 'mb'
 		/// </summary>
 		public static ParameterData GetParameterData (MethodBase mb)
 		{
@@ -3234,7 +3234,7 @@ namespace Mono.CSharp {
 			// An implicit constant expression conversion permits the following
 			// conversions:
 			//
-			//    * A constant-expression of type `int' can be converted to type
+			//    * A constant-expression of type 'int' can be converted to type
 			//      sbyte, byute, short, ushort, uint, ulong provided the value of
 			//      of the expression is withing the range of the destination type.
 			//
@@ -4136,7 +4136,7 @@ namespace Mono.CSharp {
 		/// 
 		///   The MethodBase argument might be null if the
 		///   emission of the arguments is known not to contain
-		///   a `params' field (for example in constructors or other routines
+		///   a 'params' field (for example in constructors or other routines
 		///   that keep their arguments in this structure)
 		/// </summary>
 		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments)
@@ -4193,7 +4193,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <remarks>
-		///   is_base tells whether we want to force the use of the `call'
+		///   is_base tells whether we want to force the use of the 'call'
 		///   opcode instead of using callvirt.  Call is required to call
 		///   a specific method, while callvirt will always use the most
 		///   recent method in the vtable.
@@ -4244,7 +4244,7 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// This checks the `ConditionalAttribute' on the method, and the
+			// This checks the 'ConditionalAttribute' on the method, and the
 			// ObsoleteAttribute
 			//
 			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method, loc);
@@ -4445,7 +4445,7 @@ namespace Mono.CSharp {
 			// To enable this, look into:
 			// test-34 and test-89 and self bootstrapping.
 			//
-			// For instance, we can avoid a copy by using `newobj'
+			// For instance, we can avoid a copy by using 'newobj'
 			// instead of Call + Push-temp on value types.
 //			value_target = MyEmptyExpression;
 		}
@@ -4608,7 +4608,7 @@ namespace Mono.CSharp {
 
 		//
 		// The list of Argument types.
-		// This is used to construct the `newarray' or constructor signature
+		// This is used to construct the 'newarray' or constructor signature
 		//
 		ArrayList arguments;
 
@@ -4828,7 +4828,7 @@ namespace Mono.CSharp {
 		}
 		
 		//
-		// Converts `source' to an int, uint, long or ulong.
+		// Converts 'source' to an int, uint, long or ulong.
 		//
 		Expression ExpressionToArrayArgument (EmitContext ec, Expression source)
 		{
@@ -4882,7 +4882,7 @@ namespace Mono.CSharp {
 			StringBuilder array_qualifier = new StringBuilder (rank);
 
 			//
-			// `In the first form allocates an array instace of the type that results
+			// 'In the first form allocates an array instace of the type that results
 			// from deleting each of the individual expression from the expression list'
 			//
 			if (num_arguments > 0) {
@@ -5327,7 +5327,7 @@ namespace Mono.CSharp {
 	}
 	
 	/// <summary>
-	///   Represents the `this' construct
+	///   Represents the 'this' construct
 	/// </summary>
 	public class This : Expression, IAssignMethod, IMemoryLocation, IVariable {
 
@@ -5398,7 +5398,7 @@ namespace Mono.CSharp {
 				vi.SetAssigned (ec);
 			
 			if (ec.TypeContainer is Class){
-				Error (1604, "Cannot assign to `this'");
+				Error (1604, "Cannot assign to 'this'");
 				return null;
 			}
 
@@ -5437,7 +5437,7 @@ namespace Mono.CSharp {
 			//
 			// consider: struct X { int val; int P { set { val = value; }}}
 			//
-			// Yes, this looks very bad. Look at `NOTAS' for
+			// Yes, this looks very bad. Look at 'NOTAS' for
 			// an explanation.
 			// ec.ig.Emit (OpCodes.Ldarga_S, (byte) 0);
 		}
@@ -5548,7 +5548,7 @@ namespace Mono.CSharp {
 
 		static void error176 (Location loc, string name)
 		{
-			Report.Error (176, loc, "Static member `" +
+			Report.Error (176, loc, "Static member '" +
 				      name + "' cannot be accessed " +
 				      "with an instance reference, qualify with a " +
 				      "type name instead");
@@ -5577,13 +5577,13 @@ namespace Mono.CSharp {
 		{
 			bool left_is_type, left_is_explicit;
 
-			// If `left' is null, then we're called from SimpleNameResolve and this is
+			// If 'left' is null, then we're called from SimpleNameResolve and this is
 			// a member in the currently defining class.
 			if (left == null) {
 				left_is_type = ec.IsStatic || ec.IsFieldInitializer;
 				left_is_explicit = false;
 
-				// Implicitly default to `this' unless we're static.
+				// Implicitly default to 'this' unless we're static.
 				if (!ec.IsStatic && !ec.IsFieldInitializer && !ec.InEnumContext)
 					left = ec.This;
 			} else {
@@ -5805,18 +5805,19 @@ namespace Mono.CSharp {
 			}
 
 			if (expr_type.IsPointer){
-				Error (23, "The `.' operator can not be applied to pointer operands (" +
+				Error (23, "The '.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
 				return null;
 			}
 
 			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
 
-			if (member_lookup == null){
+			if (member_lookup == null)
+			{
 				// Error has already been reported.
 				if (errors < Report.Errors)
 					return null;
-
+				
 				//
 				// Try looking the member up from the same type, if we find
 				// it, we know that the error was due to limited visibility
@@ -5824,37 +5825,38 @@ namespace Mono.CSharp {
 				object lookup = TypeManager.MemberLookup (
 					expr_type, expr_type, AllMemberTypes, AllBindingFlags |
 					BindingFlags.NonPublic, Identifier);
+					
 				if (lookup == null)
-					Error (117, "`" + expr_type + "' does not contain a " +
-					       "definition for `" + Identifier + "'");
-				else if ((expr_type != ec.ContainerType) &&
-					 ec.ContainerType.IsSubclassOf (expr_type)){
+					Error (117, "'" + expr_type + "' does not contain a definition for '" + Identifier + "'");
+				else
+				{
+					if ((expr_type != ec.ContainerType) &&
+						 ec.ContainerType.IsSubclassOf (expr_type))
+					{
 
-					// Although a derived class can access protected members of
-					// its base class it cannot do so through an instance of the
-					// base class (CS1540).  If the expr_type is a parent of the
-					// ec.ContainerType and the lookup succeeds with the latter one,
-					// then we are in this situation.
+						// Although a derived class can access protected members of
+						// its base class it cannot do so through an instance of the
+						// base class (CS1540).  If the expr_type is a parent of the
+						// ec.ContainerType and the lookup succeeds with the latter one,
+						// then we are in this situation.
 
-					lookup = TypeManager.MemberLookup (
-						ec.ContainerType, ec.ContainerType, AllMemberTypes,
-						AllBindingFlags, Identifier);
+						lookup = TypeManager.MemberLookup(
+									ec.ContainerType, ec.ContainerType, AllMemberTypes, 
+									AllBindingFlags, Identifier);
 
-					if (lookup != null)
-						Error (1540, "Cannot access protected member `" +
+						if (lookup != null)
+							Error (1540, "Cannot access protected member '" +
 						       expr_type + "." + Identifier + "' " +
-						       "via a qualifier of type `" +
-						       TypeManager.CSharpName (expr_type) + "'; the " +
-						       "qualifier must be of type `" +
-						       TypeManager.CSharpName (ec.ContainerType) + "' " +
+						       "via a qualifier of type '" + TypeManager.CSharpName (expr_type) + "'; the " +
+						       "qualifier must be of type '" + TypeManager.CSharpName (ec.ContainerType) + "' " +
 						       "(or derived from it)");
-					else
-						Error (122, "`" + expr_type + "." + Identifier + "' " +
+						else
+							Error (122, "'" + expr_type + "." + Identifier + "' " +
 						       "is inaccessible because of its protection level");
-				} else
-					Error (122, "`" + expr_type + "." + Identifier + "' " +
+					} else
+						Error (122, "'" + expr_type + "." + Identifier + "' " +
 					       "is inaccessible because of its protection level");
-					      
+				}  
 				return null;
 			}
 
@@ -5907,6 +5909,8 @@ namespace Mono.CSharp {
 		}
 	}
 
+	
+	
 	/// <summary>
 	///   Implements checked expressions
 	/// </summary>
@@ -6175,7 +6179,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///    Emits the right opcode to load an object of Type `t'
+		///    Emits the right opcode to load an object of Type 't'
 		///    from an array of T
 		/// </summary>
 		static public void EmitLoadOpcode (ILGenerator ig, Type type)
@@ -6210,7 +6214,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///    Emits the right opcode to store an object of Type `t'
+		///    Emits the right opcode to store an object of Type 't'
 		///    from an array of T.  
 		/// </summary>
 		static public void EmitStoreOpcode (ILGenerator ig, Type t)
@@ -6507,7 +6511,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Error (21, loc,
-				      "Type `" + TypeManager.CSharpName (lookup_type) +
+				      "Type '" + TypeManager.CSharpName (lookup_type) +
 				      "' does not have any indexers defined");
 			return null;
 		}
@@ -6559,7 +6563,7 @@ namespace Mono.CSharp {
 				return null;
 
 			//
-			// Step 1: Query for all `Item' *properties*.  Notice
+			// Step 1: Query for all 'Item' *properties*.  Notice
 			// that the actual methods are pointed from here.
 			//
 			// This is a group of properties, piles of them.  
@@ -6577,7 +6581,7 @@ namespace Mono.CSharp {
 
 			if (get == null){
 				Error (154, "indexer can not be used in this context, because " +
-				       "it lacks a `get' accessor");
+				       "it lacks a 'get' accessor");
 				return null;
 			}
 
@@ -6612,7 +6616,7 @@ namespace Mono.CSharp {
 			
 			if (set == null){
 				Error (200, "indexer X.this [" + TypeManager.CSharpName (right_type) +
-				       "] lacks a `set' accessor");
+				       "] lacks a 'set' accessor");
 				return null;
 			}
 
@@ -6670,7 +6674,7 @@ namespace Mono.CSharp {
 			if (member_lookup == null) {
 				Error (117,
 					      TypeManager.CSharpName (base_type) + " does not " +
-					      "contain a definition for `" + member + "'");
+					      "contain a definition for '" + member + "'");
 				return null;
 			}
 
@@ -6734,7 +6738,7 @@ namespace Mono.CSharp {
 	///   we only care about the side effect conversions to be performed
 	///
 	///   This is also now used as a placeholder where a no-action expression
-	///   is needed (the `New' class).
+	///   is needed (the 'New' class).
 	/// </summary>
 	public class EmptyExpression : Expression {
 		public EmptyExpression ()
@@ -6959,7 +6963,7 @@ namespace Mono.CSharp {
 	}
 	
 	//
-	// Implements the `stackalloc' keyword
+	// Implements the 'stackalloc' keyword
 	//
 	public class StackAlloc : Expression {
 		Type otype;

@@ -190,9 +190,7 @@ namespace Mono.CSharp {
 			AdditionResult res;
 			
 			if ((res = IsValid (c.Basename)) != AdditionResult.Success)
-				return res;
-				
-	
+				return res;			
 					
 			DefineName (c.Name, c);
 			types.Add (c);
