@@ -92,6 +92,8 @@ namespace System.IO {
                         // HOWEVER, the MS implementation returns the rest of the string if no \r and/or \n is found
                         // in the string
 
+			if (nextChar == source.Length)
+				return null;
 
 			int nextCR = source.IndexOf( '\r', nextChar );
                         int nextLF = source.IndexOf( '\n', nextChar );
@@ -99,8 +101,6 @@ namespace System.IO {
                         if( nextCR == -1 && nextLF == -1 ) {
                                 return ReadToEnd();
                         }
-
-                        if( nextChar > sourceLength ) return null;
 
                         int readTo;
 
