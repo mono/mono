@@ -19,6 +19,7 @@
 // FIXME: How do you specify a native int in C#?  I am going to have to do some figuring out
 //
 
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System
@@ -37,6 +38,11 @@ namespace System
 
 		public IntPtr (long i64)
 		{
+			if (((i64 > Int32.MaxValue) || (i64 < Int32.MinValue)) && (IntPtr.Size < 8)) {
+				throw new OverflowException (
+					Locale.GetText ("This isn't a 64bits machine."));
+			}
+
 			value = (void *) i64;
 		}
 

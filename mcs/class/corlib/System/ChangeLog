@@ -1,3 +1,8 @@
+2004-05-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IntPtr.cs: We now only accept 32bits values in the long constructor
+	unless we're on a 64 bits machine.
+
 2004-05-22  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs: The file was mostly in DOS endings already, for the
