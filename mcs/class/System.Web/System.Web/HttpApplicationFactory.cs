@@ -28,31 +28,11 @@ namespace System.Web {
 		static private int	_appMaxFreePublicInstances = 32;
 
 		private HttpApplicationState _state;
-		static Hashtable appEventNames;
 
 		static IHttpHandler custApplication;
 
 		static private HttpApplicationFactory s_Factory = new HttpApplicationFactory();
 
-		static HttpApplicationFactory ()
-		{
-			appEventNames = new Hashtable ();
-			appEventNames.Add ("Application_BeginRequest", null);
-			appEventNames.Add ("Application_AuthenticateRequest", null);
-			appEventNames.Add ("Application_AuthorizeRequest", null);
-			appEventNames.Add ("Application_ResolveRequestCache", null);
-			appEventNames.Add ("Application_AcquireRequestState", null);
-			appEventNames.Add ("Application_PreRequestHandlerExecute", null);
-			appEventNames.Add ("Application_PostRequestHandlerExecute", null);
-			appEventNames.Add ("Application_ReleaseRequestState", null);
-			appEventNames.Add ("Application_UpdateRequestCache", null);
-			appEventNames.Add ("Application_EndRequest", null);
-			appEventNames.Add ("Application_PreSendRequestHeaders", null);
-			appEventNames.Add ("Application_PreSendRequestContent", null);
-			appEventNames.Add ("Application_Disposed", null);
-			appEventNames.Add ("Application_Error", null);
-		}
-		
 		public HttpApplicationFactory() {
 			_appInitialized = false;
 			_appFiredEnd = false;
@@ -99,18 +79,23 @@ namespace System.Web {
 			    pi [1].ParameterType != typeof (EventArgs))
 				return false;
 			
-			return appEventNames.ContainsKey (m.Name);
+			return true;
 		}
 
 		static void AddEvent (MethodInfo method, Hashtable appTypeEventHandlers)
 		{
-			string name = method.Name;
-			ArrayList list;
-			list = appTypeEventHandlers [name] as ArrayList;
-			if (list == null) {
-				list = new ArrayList ();
-				appTypeEventHandlers [name] = list;
+			string name = method.Name.Replace ("_On", "_");
+			if (appTypeEventHandlers [name] == null) {
+				appTypeEventHandlers [name] = method;
+				return;
 			}
+			
+			ArrayList list;
+			if (appTypeEventHandlers [name] is MethodInfo)
+				list = new ArrayList ();
+			else
+				list = appTypeEventHandlers [name] as ArrayList;
+
 			list.Add (method);
 		}
 		
@@ -146,35 +131,34 @@ namespace System.Web {
 			return appTypeEventHandlers;
 		}
 
-		void FireEvents (string method_name, object state_context, object [] args)
+		static void FireEvents (string method_name, object target, object [] args)
 		{
-			/*
-			if (methods == null || methods.Count == 0)
+			Hashtable possibleEvents = GetApplicationTypeEvents ((HttpApplication) target);
+			MethodInfo method = possibleEvents [method_name] as MethodInfo;
+			if (possibleEvents [method_name] == null)
 				return;
 
-			foreach (MethodInfo method in methods)
-				method.Invoke (this, args);
-			*/
+			method.Invoke (target, args);
 		}
 		
-		void FireOnAppStart (HttpContext context)
+		internal static void FireOnAppStart (HttpApplication app)
 		{
-			FireEvents ("Application_OnStart", context, new object [] {this, EventArgs.Empty});
+			FireEvents ("Application_Start", app, new object [] {app, EventArgs.Empty});
 		}
 
 		void FireOnAppEnd ()
 		{
-			FireEvents ("Application_OnEnd", null, new object [] {this, EventArgs.Empty});
+		//	FireEvents ("Application_End", this, new object [] {this, EventArgs.Empty});
 		}
 
 		void FireOnSessionStart (HttpSessionState state, object source, EventArgs args)
 		{
-			FireEvents ("Session_OnStart", state, new object [] {source, args});
+		//	FireEvents ("Session_Start", state, new object [] {source, EventArgs.Empty});
 		}
 		
 		void FireOnSessionEnd (HttpSessionState state, object source, EventArgs args)
 		{
-			FireEvents ("Session_OnEnd", state, new object [] {source, args});
+		//	FireEvents ("Session_End", state, new object [] {source, args});
 		}
 	
 		private void InitializeFactory(HttpContext context) {
@@ -183,7 +167,6 @@ namespace System.Web {
 			_appFilename = GetAppFilename(context);
 
 			CompileApp(context);
-			FireOnAppStart(context);
 		}
 
 		private void Dispose() {
@@ -237,27 +220,45 @@ namespace System.Web {
 
 		internal static void AttachEvents (HttpApplication app)
 		{
-			Type appType = app.GetType ();
-			Hashtable appTypeEventHandlers = GetApplicationTypeEvents (app);
-			foreach (string key in appTypeEventHandlers.Keys) {
-				if (key == "Application_OnStart" || key == "Application_OnEnd" ||
-				    key == "Session_OnStart"     || key == "Session_OnEnd")
-				    continue;
-
+			Hashtable possibleEvents = GetApplicationTypeEvents (app);
+			foreach (string key in possibleEvents.Keys) {
+				Console.WriteLine ("Tengo: {0}", key);
 				int pos = key.IndexOf ('_');
 				if (pos == -1 || key.Length <= pos + 1)
 					continue;
 
-				EventInfo evt = appType.GetEvent (key.Substring (pos + 1));
+				string moduleName = key.Substring (0, pos);
+				object target;
+				if (moduleName == "Application")
+					target = app;
+				else
+					target = app.Modules [moduleName];
+
+				if (target == null)
+					continue;
+				
+				Type targetType = target.GetType ();
+
+				string eventName = key.Substring (pos + 1);
+				EventInfo evt = targetType.GetEvent (eventName);
 				if (evt == null)
 					continue;
 			
-				ArrayList list = appTypeEventHandlers [key] as ArrayList;
-				if (list == null || list.Count == 0)
+				string usualName = moduleName + "_" + eventName;
+				object methodData = possibleEvents [usualName];
+				if (methodData == null)
 					continue;
 
+				Console.WriteLine ("Attaching: {0} {1}", key, moduleName + ":" + eventName);
+				if (methodData is MethodInfo) {
+					MethodInfo method = (MethodInfo) methodData;
+					evt.AddEventHandler (target, Delegate.CreateDelegate (typeof (EventHandler), method));
+					continue;
+				}
+
+				ArrayList list = (ArrayList) methodData;
 				foreach (MethodInfo method in list)
-					evt.AddEventHandler (app, Delegate.CreateDelegate (typeof (EventHandler), method));
+					evt.AddEventHandler (target, Delegate.CreateDelegate (typeof (EventHandler), method));
 			}
 		}
 
@@ -308,14 +309,6 @@ namespace System.Web {
 
 		internal static void EndApplication() {
 			s_Factory.Dispose();
-		}
-
-		internal static void StartSession(HttpSessionState state, object source, EventArgs args) {
-			s_Factory.FireOnSessionStart(state, source, args);
-		}
-
-		static void EndSession(HttpSessionState state, object source, EventArgs args) {
-			s_Factory.FireOnSessionEnd(state, source, args);
 		}
 
 		public static void SetCustomApplication (IHttpHandler customApplication)

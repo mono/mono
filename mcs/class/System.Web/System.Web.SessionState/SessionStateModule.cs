@@ -81,6 +81,8 @@ namespace System.Web.SessionState
 			// simply fake it.
 			HttpAsyncResult result=new HttpAsyncResult (cb,this);
 			result.Complete (true, o, null);
+			if (Start != null)
+				Start (this, args);
 
 			return result;
 		}
@@ -89,6 +91,12 @@ namespace System.Web.SessionState
 		{
 		}
 
+		internal void OnEnd ()
+		{
+			if (End != null)
+				End (this, EventArgs.Empty);
+		}
+		
 		public event EventHandler Start;
 		public event EventHandler End;
 	}

@@ -846,6 +846,7 @@ namespace System.Web
 			// Initialize all IHttpModule(s)
 			InitModules ();
 			HttpApplicationFactory.AttachEvents (this);
+			HttpApplicationFactory.FireOnAppStart (this);
 
 			// Initialize custom application
 			_InPreRequestResponseMode = true;

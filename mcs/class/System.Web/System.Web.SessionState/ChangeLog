@@ -1,3 +1,8 @@
+2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionStateModule.cs: fire application start and session start/end
+	events.
+
 2003-03-31  Stefan Görling <stefan@gorling.se>
 
 	* HttpSessionState.cs:

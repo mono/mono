@@ -1,3 +1,9 @@
+2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs:
+	* HttpApplicationFactory.cs: fire application start and session
+	start/end events.
+
 2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpException.cs: encode as HTML the inner exception that
