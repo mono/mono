@@ -593,7 +593,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			catch (WebException ex)
 			{
 				httpWebResponse = ex.Response as HttpWebResponse;
-				if (httpWebResponse == null) throw ex;
+				if (httpWebResponse == null || httpWebResponse.StatusCode == HttpStatusCode.InternalServerError) throw ex;
 			}
 
 			ReceiveResponse (httpWebResponse, out responseHeaders, out responseStream);

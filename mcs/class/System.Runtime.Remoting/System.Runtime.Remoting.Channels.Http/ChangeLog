@@ -1,3 +1,8 @@
+2004-09-27  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpClientChannel.cs: Throw an http exception if the response is a 500,
+	  don't try to deserialize the exception.
+
 2004-05-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpServerChannel.cs: Default port is 0.
