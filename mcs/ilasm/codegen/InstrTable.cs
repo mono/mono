@@ -166,6 +166,8 @@ namespace Mono.ILASM {
                         inst_table["sub.ovf"] = new ILToken (Token.INSTR_NONE, Op.sub_ovf);
                         inst_table["sub.ovf.un"] = new ILToken (Token.INSTR_NONE, Op.sub_ovf_un);
                         inst_table["endfinally"] = new ILToken (Token.INSTR_NONE, Op.endfinally);
+                        // endfault is really just an alias for endfinally
+                        inst_table["endfault"] = new ILToken (Token.INSTR_NONE, Op.endfinally);
                         inst_table["stind.i"] = new ILToken (Token.INSTR_NONE, Op.stind_i);
                         inst_table["conv.u"] = new ILToken (Token.INSTR_NONE, Op.conv_u);
                         inst_table["arglist"] = new ILToken (Token.INSTR_NONE, Op.arglist);

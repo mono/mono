@@ -1,3 +1,8 @@
+2003-09-16 Jackson Harper <jackson@latitudegeo.com>
+
+	* InstrTable.cs: endfault instruction (which is just endfinally
+	with a costume on).
+	
 2003-09-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* FinallyBlock.cs: The sad thing is how long it took me to realize
