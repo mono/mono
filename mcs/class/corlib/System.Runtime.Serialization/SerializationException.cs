@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 
 namespace System.Runtime.Serialization {
 
@@ -29,6 +30,10 @@ namespace System.Runtime.Serialization {
 		{
 		}
 
-
+		public SerializationException (SerializationInfo info,
+					       StreamingContext context)
+			: base (info, context)
+		{
+		}
 	}
 }

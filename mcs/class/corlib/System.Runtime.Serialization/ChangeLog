@@ -1,3 +1,7 @@
+2002-04-12  Duncan Mak  <duncan@ximian.com>
+
+	* SerializationException.cs: Added missing constructor for serialization.
+
 2002-03-12  Duncan Mak  <duncan@ximian.com>
 
 	* IFormatter.cs: Fix the return type of the Serialize method.
