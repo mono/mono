@@ -584,7 +584,6 @@ namespace System.Net
 				initialMethod = method;
 				if (haveRequest) {
 					if (writeStream != null) {
-						Monitor.Exit (this);
 						asyncWrite.SetCompleted (true, writeStream);
 						asyncWrite.DoCallback ();
 						return asyncWrite;
