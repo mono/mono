@@ -237,12 +237,49 @@ namespace System.Xml.Serialization
 	internal class ListMap: ObjectMap
 	{
 		XmlTypeMapElementInfoList _itemInfo;
+		bool _gotNestedMapping;
+		XmlTypeMapping _nestedArrayMapping;
+
+		public bool IsMultiArray
+		{
+			get
+			{
+				return (NestedArrayMapping != null);
+			}
+		}
+
+		public XmlTypeMapping NestedArrayMapping
+		{
+			get
+			{
+				if (_gotNestedMapping) return _nestedArrayMapping;
+				_gotNestedMapping = true;
+
+				_nestedArrayMapping = ((XmlTypeMapElementInfo)_itemInfo[0]).MappedType;
+
+				if (_nestedArrayMapping == null) return null;
+				
+				if (_nestedArrayMapping.TypeData.SchemaType != SchemaTypes.Array) {
+					_nestedArrayMapping = null; return null;
+				}
+
+				foreach (XmlTypeMapElementInfo elem in _itemInfo)
+					if (elem.MappedType != _nestedArrayMapping) {
+						_nestedArrayMapping = null;
+						return null;
+					}
+
+				return _nestedArrayMapping;
+			}
+		}
 
 		public XmlTypeMapElementInfoList ItemInfo
 		{
 			get { return _itemInfo; }
 			set { _itemInfo = value; }
 		}
+
+
 
 		public XmlTypeMapElementInfo FindElement (object memberValue)
 		{

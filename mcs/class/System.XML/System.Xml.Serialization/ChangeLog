@@ -1,3 +1,11 @@
+2003-07-30  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TypeData.cs: Added new constructor and variables to allow the creation of
+	  a TypeData without a Type. Added ListItemTypeData property.
+	* XmlTypeMapping.cs: Added property for checking if a ListMap represents an
+	  array of arrays. Added also a property to get the nested array map.
+	* XmlCodeExporter.cs: First implementation of code exporter.
+
 2003-07-22  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TypeTranslator.cs: Added new primitive types: NMTOKEN and NCName.

@@ -20,11 +20,16 @@ namespace System.Xml.Serialization
 		string elementName;
 		SchemaTypes sType;
 		Type listItemType;
+		string typeName;
+		string fullTypeName;
+		TypeData listItemTypeData;
 
 		public TypeData (Type type, string elementName, bool isPrimitive)
 		{
 			this.type = type;
 			this.elementName = elementName;
+			this.typeName = type.Name;
+			this.fullTypeName = type.FullName;
 
 			if (isPrimitive)
 				sType = SchemaTypes.Primitive;
@@ -43,10 +48,19 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		public TypeData (string typeName, string fullTypeName, string xmlType, SchemaTypes schemaType, TypeData listItemTypeData)
+		{
+			this.elementName = xmlType;
+			this.typeName = typeName;
+			this.fullTypeName = fullTypeName;
+			this.listItemTypeData = listItemTypeData;
+			this.sType = schemaType;
+		}
+
 		public string TypeName
 		{
 			get {
-				return type.Name;
+				return typeName;
 			}
 		}
 				
@@ -68,7 +82,7 @@ namespace System.Xml.Serialization
 		{
 			get {
 //				return type.FullName.Replace ('+', '.');
-				return type.FullName;
+				return fullTypeName;
 			}
 		}
 
@@ -95,10 +109,23 @@ namespace System.Xml.Serialization
 			}
 		}
 
+
+		public TypeData ListItemTypeData
+		{
+			get
+			{
+				if (listItemTypeData == null && type != null)
+					listItemTypeData = TypeTranslator.GetTypeData (ListItemType);
+				return listItemTypeData;
+			}
+		}
+		
 		public Type ListItemType
 		{
 			get
 			{
+				if (type == null) throw new InvalidOperationException ("Property ListItemType is not supported for custom types");
+
 				if (listItemType != null) return listItemType;
 
 				if (SchemaType != SchemaTypes.Array)
