@@ -1,3 +1,9 @@
+2003-12-07 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Tokenizer.cs : Removed some TODOs. (trivial ;-)
+	* Iterator.cs : ParensIterator can inherit from BaseIterator.
+	  SlashIterator copy .ctor() always failed to clone. This fixes Count.
+
 2003-12-03 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Expression.cs : XPathSorters.Compare() should compare document

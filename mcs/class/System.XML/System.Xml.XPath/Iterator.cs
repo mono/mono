@@ -171,7 +171,7 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class ParensIterator : SimpleIterator
+	internal class ParensIterator : BaseIterator
 	{
 		BaseIterator _iter;
 		public ParensIterator (BaseIterator iter) : base (iter) 
@@ -192,6 +192,8 @@ namespace System.Xml.XPath
 		public override int CurrentPosition { get { return _iter.CurrentPosition; } }
 
 		public override bool RequireSorting { get { return _iter.RequireSorting; } }
+
+		public override int Count { get { return _iter.Count; } }
 	}
 
 	internal class ParentIterator : SimpleIterator
@@ -469,7 +471,6 @@ namespace System.Xml.XPath
 
 		public override XPathNodeIterator Clone () { return new DescendantIterator (this); }
 
-		[MonoTODO]
 		public override bool MoveNext ()
 		{
 			if (_finished)
@@ -489,7 +490,7 @@ namespace System.Xml.XPath
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
-					throw new XPathException ("unexpected depth");	// TODO: better message
+					throw new XPathException ("There seems some bugs on the XPathNavigator implementation class.");
 				_depth --;
 			}
 			_finished = true;
@@ -513,7 +514,6 @@ namespace System.Xml.XPath
 
 		public override XPathNodeIterator Clone () { return new DescendantOrSelfIterator (this); }
 
-		[MonoTODO]
 		public override bool MoveNext ()
 		{
 			if (_finished)
@@ -539,7 +539,7 @@ namespace System.Xml.XPath
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
-					throw new XPathException ("unexpected depth");	// TODO: better message
+					throw new XPathException ("There seems some bugs on the XPathNavigator implementation class.");
 				_depth --;
 			}
 			_finished = true;
@@ -847,9 +847,8 @@ namespace System.Xml.XPath
 			if (other._navStore != null)
 				_navStore = (ArrayList) other._navStore.Clone ();
 			_finished = other._finished;
-			if (_nextIterRight != null)
+			if (other._nextIterRight != null)
 				_nextIterRight = (BaseIterator) other._nextIterRight.Clone ();
-//			_nextIterRight = other._nextIterRight;
 		}
 		public override XPathNodeIterator Clone () { return new SlashIterator (this); }
 

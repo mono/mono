@@ -7,6 +7,7 @@
 // (C) 2002 Piers Haken
 //
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Collections;
@@ -104,7 +105,6 @@ namespace System.Xml.XPath
 			return true;
 		}
 
-		[MonoTODO]
 		private int ParseNumber ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -112,14 +112,14 @@ namespace System.Xml.XPath
 			while (IsDigit (Peek ()))
 				sb.Append ((char) GetChar ());
 
-			// TODO: doesn't handle '3.' error case
+			// don't handle '3.' as an error case (it is not. XPath 3.7 syntax [30])
 			if (Peek () == '.')
 			{
 				sb.Append ((char) GetChar ());
 				while (IsDigit (Peek ()))
 					sb.Append ((char) GetChar ());
 			}
-			m_objToken = Double.Parse (sb.ToString ());
+			m_objToken = Double.Parse (sb.ToString (), NumberFormatInfo.InvariantInfo);
 			return Token.NUMBER;
 		}
 
