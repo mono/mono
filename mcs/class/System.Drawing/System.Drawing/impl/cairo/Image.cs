@@ -233,15 +233,15 @@ namespace System.Drawing.Cairo {
 			}
 		}
 	
-		[MonoTODO]
 		PropertyItem [] IImage.PropertyItems {
+			[MonoTODO]
 			get {
 				throw new NotImplementedException();
 			}
 		}
 
-		[MonoTODO]
 		ImageFormat IImage.RawFormat {
+			[MonoTODO]
 			get {
 				return imageFormat;
 			}
