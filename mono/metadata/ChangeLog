@@ -1,3 +1,8 @@
+2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* file-io.c:
+	* socket-io.c: added check for sys/aio.h.
+
 2004-04-28  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Don't abort a thread thats already aborting, when

@@ -1,5 +1,10 @@
 2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* io.c:
+	* sockets.c: added check for sys/aio.h.
+
+2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* error.[ch]: added _wapi_get_win32_file_error...
 	* io.c: ... which was _wapi_get_win32_error here.
 	* sockets.c: rename the function calls here too.
