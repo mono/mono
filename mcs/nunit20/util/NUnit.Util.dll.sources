@@ -1,3 +1,4 @@
+./AssemblyInfo.cs
 ./AssemblyList.cs
 ./AssemblyListItem.cs
 ./CommandLineOptions.cs
