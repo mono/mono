@@ -1,3 +1,7 @@
+2004-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* appdomain.c, profiler.c, threads.c: use __thread
+
 2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c threads.c: Call GC_CreateThread on windows.
