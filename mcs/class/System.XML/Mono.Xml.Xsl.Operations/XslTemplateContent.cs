@@ -53,7 +53,8 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslChoose (c));
 							break;
 						case "comment":
-							throw new NotImplementedException ();
+							content.Add (new XslComment (c));
+							break;
 						case "copy":
 							content.Add (new XslCopy (c));
 							break;
@@ -76,7 +77,8 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslMessage(c));
 							break;
 						case "number":
-							throw new NotImplementedException ();
+							content.Add (new XslNumber(c));
+							break;
 						case "processing-instruction":
 							content.Add (new XslProcessingInstruction(c));
 							break;

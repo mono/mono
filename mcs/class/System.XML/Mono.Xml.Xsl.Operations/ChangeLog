@@ -1,5 +1,15 @@
 2003-08-14 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XslApplyTemplates.cs,
+	  XslCallTemplate.cs : Should accept other than element content such
+	  as comment and PI.
+	* XslNumber.cs : In Compile(), 'value' might not exist. (Think about 
+	  it later if how it should be.)
+	* XslTemplateContent.cs : "comment" and "number" support. (I know they
+	  are still incomplete.)
+
+2003-08-14 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* Added XslComment.cs.
 
 2003-08-05 Ben Maurer  <bmaurer@users.sourceforge.net>

@@ -64,7 +64,7 @@ namespace Mono.Xml.Xsl.Operations {
 			from = c.CompilePattern (c.GetAttribute ("from"));
 			value = c.CompileExpression (c.GetAttribute ("value"));
 			
-			if (value.ReturnType != XPathResultType.Number && value.ReturnType != XPathResultType.Any)
+			if (value != null && value.ReturnType != XPathResultType.Number && value.ReturnType != XPathResultType.Any)
 				throw new Exception ("The expression for attribute 'value' must return a number");
 			
 			format = c.ParseAvtAttribute ("format");

@@ -31,22 +31,32 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			if (c.Input.MoveToFirstChild ()) {
 				do {
-					if (c.Input.NamespaceURI != XsltNamespace)
-						throw new Exception ("unexptected element"); // TODO: fwd compat
-					
-					switch (c.Input.LocalName)
-					{
-						case "with-param":
-							withParams.Add (new XslVariableInformation (c));
-							break;
-							
-						case "sort":
-							if (select == null)
-								select = c.CompileExpression ("*");
-							c.AddSort (select, new Sort (c));
-							break;
-						default:
-							throw new Exception ("unexptected element"); // todo forwards compat
+					switch (c.Input.NodeType) {
+					case XPathNodeType.Comment:
+					case XPathNodeType.ProcessingInstruction:
+					case XPathNodeType.Whitespace:
+						continue;
+					case XPathNodeType.Element:
+						if (c.Input.NamespaceURI != XsltNamespace)
+							throw new Exception ("unexptected element"); // TODO: fwd compat
+						
+						switch (c.Input.LocalName)
+						{
+							case "with-param":
+								withParams.Add (new XslVariableInformation (c));
+								break;
+								
+							case "sort":
+								if (select == null)
+									select = c.CompileExpression ("*");
+								c.AddSort (select, new Sort (c));
+								break;
+							default:
+								throw new Exception ("unexptected element"); // todo forwards compat
+						}
+						break;
+					default:
+						throw new Exception ("unexpected node type " + c.Input.NodeType);	// todo forwards compat
 					}
 				} while (c.Input.MoveToNext ());
 				c.Input.MoveToParent ();
