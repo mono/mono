@@ -266,6 +266,11 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_1_2
+		public override Type[] GetGenericArguments ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		public override bool HasGenericArguments {
 			get {
 				throw new NotImplementedException ();

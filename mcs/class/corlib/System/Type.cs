@@ -927,8 +927,7 @@ namespace System {
 		}
 
 #if NET_1_2
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern Type [] GetGenericArguments ();
+		public abstract Type[] GetGenericArguments ();
 
 		public abstract bool HasGenericArguments {
 			get;

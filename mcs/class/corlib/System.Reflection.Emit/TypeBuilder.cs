@@ -1263,6 +1263,14 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_1_2
+		public override Type[] GetGenericArguments ()
+		{
+			if (generic_params != null)
+				return generic_params;
+
+			throw new InvalidOperationException ();
+		}
+
 		public override Type GetGenericTypeDefinition ()
 		{
 			setup_generic_class (this);

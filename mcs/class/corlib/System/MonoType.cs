@@ -495,6 +495,9 @@ namespace System
 		}
 
 #if NET_1_2
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override Type [] GetGenericArguments ();
+
 		public extern override bool HasGenericArguments {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;

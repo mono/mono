@@ -294,6 +294,11 @@ namespace System.Reflection.Emit
 			throw not_supported ();
 		}
 
+		public override Type[] GetGenericArguments ()
+		{
+			throw not_supported ();
+		}
+
 		public override Type GetGenericTypeDefinition ()
 		{
 			throw not_supported ();
