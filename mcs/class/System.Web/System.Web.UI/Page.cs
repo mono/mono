@@ -50,6 +50,7 @@ public class Page : TemplateControl, IHttpHandler
 	private bool renderingForm;
 	private object _savedViewState;
 	private ArrayList _requiresPostBack;
+	private ArrayList _requiresPostBackCopy;
 	private ArrayList requiresPostDataChanged;
 	private IPostBackEventHandler requiresRaiseEvent;
 	private NameValueCollection secondPostData;
@@ -511,6 +512,9 @@ public class Page : TemplateControl, IHttpHandler
 		if (data == null)
 			return;
 
+		if (_requiresPostBackCopy == null && _requiresPostBack != null)
+			_requiresPostBackCopy = (ArrayList) _requiresPostBack.Clone ();
+
 		Hashtable used = new Hashtable ();
 		foreach (string id in data.AllKeys){
 			if (id == "__VIEWSTATE" || id == postEventSourceID || id == postEventArgumentID)
@@ -541,8 +545,8 @@ public class Page : TemplateControl, IHttpHandler
 					if (requiresPostDataChanged == null)
 						requiresPostDataChanged = new ArrayList ();
 					requiresPostDataChanged.Add (pbdh);
-					if (_requiresPostBack != null)
-						_requiresPostBack.Remove (ctrl.ID);
+					if (_requiresPostBackCopy != null)
+						_requiresPostBackCopy.Remove (ctrl.UniqueID);
 				}
 			} else if (!second) {
 				if (secondPostData == null)
@@ -551,14 +555,14 @@ public class Page : TemplateControl, IHttpHandler
 			}
 		}
 
-		if (_requiresPostBack != null) {
-			string [] handlers = (string []) _requiresPostBack.ToArray (typeof (string));
+		if (_requiresPostBackCopy != null && _requiresPostBackCopy.Count > 0) {
+			string [] handlers = (string []) _requiresPostBackCopy.ToArray (typeof (string));
 			foreach (string id in handlers) {
 				IPostBackDataHandler pbdh = FindControl (id) as IPostBackDataHandler;
 				if (pbdh == null)
 					continue;
 			
-				_requiresPostBack.Remove (id);
+				_requiresPostBackCopy.Remove (id);
 				if (pbdh.LoadPostData (id, data)) {
 					if (requiresPostDataChanged == null)
 						requiresPostDataChanged = new ArrayList ();
@@ -566,9 +570,6 @@ public class Page : TemplateControl, IHttpHandler
 					requiresPostDataChanged.Add (pbdh);
 				}
 			}
-			
-			if (_requiresPostBack.Count == 0)
-				_requiresPostBack = null;
 		}
 	}
 
@@ -702,7 +703,7 @@ public class Page : TemplateControl, IHttpHandler
 		if (_requiresPostBack == null)
 			_requiresPostBack = new ArrayList ();
 
-		_requiresPostBack.Add (control.ID);
+		_requiresPostBack.Add (control.UniqueID);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
