@@ -8,12 +8,12 @@
 
 namespace System
 {
-     [AttributeUsage (AttributeTargets.Field)]
+	[AttributeUsage (AttributeTargets.Field)]
 	public class ThreadStaticAttribute : Attribute
 	{
-		   // Constructors
-		   public ThreadStaticAttribute () : base ()
-		   {
-		   }
+		// Constructors
+		public ThreadStaticAttribute () : base ()
+		{
+		}
 	}
 }

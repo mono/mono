@@ -9,19 +9,19 @@
 
 namespace System.Resources
 {
-	   [AttributeUsage (AttributeTargets.Assembly)]
-	   public sealed class SatelliteContractVersionAttribute : Attribute
-	   {
-			 private Version ver; 
-
-			 // Constructor
-			 public SatelliteContractVersionAttribute (string version)
-			 {
-				    ver = new Version(version);
-			 }
-			 public string Version
-			 {
-				    get { return ver.ToString(); }
-			 }
-	   }
+	[AttributeUsage (AttributeTargets.Assembly)]
+	public sealed class SatelliteContractVersionAttribute : Attribute
+	{
+		private Version ver; 
+		
+		// Constructor
+		public SatelliteContractVersionAttribute (string version)
+		{
+				ver = new Version(version);
+		}
+		public string Version
+		{
+				get { return ver.ToString(); }
+		}
+	}
 }

@@ -13,31 +13,31 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-	   [Serializable]
-	   public class TypeUnloadedException : SystemException
-	   {
-			 // Constructors
-			 public TypeUnloadedException ()
-				    : base (Locale.GetText ("Cannot access an unloaded class."))
-			 {
-			 }
-
-			 public TypeUnloadedException (string message)
-				    : base (message)
-			 {
-			 }
-			 
-			 public TypeUnloadedException (SerializationInfo info,
-				    StreamingContext context)
-				    : base (info, context)
-			 {
-			 }
-
-			 public TypeUnloadedException (string message, Exception innerException)
-				    :base (message, innerException)
-			 {
-			 }
-				    
-	   }
+	[Serializable]
+	public class TypeUnloadedException : SystemException
+	{
+		// Constructors
+		public TypeUnloadedException ()
+			: base (Locale.GetText ("Cannot access an unloaded class."))
+			{
+			}
+		
+		public TypeUnloadedException (string message)
+			: base (message)
+			{
+			}
+		
+		public TypeUnloadedException (SerializationInfo info,
+					      StreamingContext context)
+			: base (info, context)
+			{
+			}
+		
+		public TypeUnloadedException (string message, Exception innerException)
+			:base (message, innerException)
+			{
+			}
+		
+	}
 }
 

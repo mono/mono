@@ -10,7 +10,7 @@ namespace System {
 	     // Fields
 		protected string ClassName;
 		protected string MemberName;
-	     protected byte[] Signature;
+		protected byte[] Signature;
 		   
 
 		// Constructors

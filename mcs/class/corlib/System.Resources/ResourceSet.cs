@@ -12,117 +12,116 @@ using System.IO;
 
 namespace System.Resources
 {
-	   [Serializable]
-	   public class ResourceSet : IDisposable
-	   {
+	[Serializable]
+	public class ResourceSet : IDisposable
+	{
+		
+		protected IResourceReader Reader;
+		protected Hashtable Table;
+		
+		// Constructors
+		protected ResourceSet () {}
+		protected ResourceSet (IResourceReader reader)
+		{
+			if (reader == null)
+				throw new ArgumentNullException ("The reader is null.");
+			Reader = reader;
+		}
 
-			 protected IResourceReader Reader;
-			 protected Hashtable Table;
+		protected ResourceSet (Stream stream)
+		{
+			Reader = new ResourceReader (stream);
+		 }
+		 
+		 protected ResourceSet (String fileName)
+		 {
+			 Reader = new ResourceReader (fileName);
+		 }
+
+		 public virtual void Close ()
+		 {
+			    Dispose (true);
+		 }
+
+		 public void Dispose()
+		 {
+			 Dispose (true);
+		 }
 			 
-			 // Constructors
-			 protected ResourceSet () {}
-			 protected ResourceSet (IResourceReader reader)
-			 {
-				    if (reader == null)
-						  throw new ArgumentNullException ("The reader is null.");
-				    Reader = reader;
-			 }
-
-			 protected ResourceSet (Stream stream)
-			 {
-				    Reader = new ResourceReader (stream);
-			 }
+		public void Dispose (bool disposing)
+		{
+			if (disposing) {
+				Reader = null;
+				Table = null;
+			} 
+		}
 			 
-			 protected ResourceSet (String fileName)
-			 {
-				    Reader = new ResourceReader (fileName);
-			 }
+		 public virtual Type GetDefaultReader ()
+		 {
+			 return (typeof (ResourceReader));
+		 } 
+		 public virtual Type GetDefaultWriter ()
+		 {
+			 return (typeof (ResourceWriter));
+		 }
 
-			 public virtual void Close ()
-			 {
-				    Dispose (true);
-			 }
+		 public virtual object GetObject (string name)
+		 {
+			 if (name == null)
+				 throw new ArgumentNullException ("The name parameter is null.");
+			 if (Reader == null)
+				 throw new InvalidOperationException ("The ResourceSet has been closed.");
+			 if (Table == null) {
+				 ReadResources ();
+				 return Table[name];
+			 } else 
+				 return Table[name];
+		 }
+		public virtual object GetObject (string name, bool ignoreCase)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("The name parameter is null.");
+			if (Reader == null)
+				throw new InvalidOperationException ("ResourceSet has been closed.");
+			if (Table == null)
+				ReadResources ();
+			if (ignoreCase) {
+				foreach (DictionaryEntry de in Table) {
+					string key = (string) de.Key;
+					if (String.Compare (key, name, true) == 0)
+						return de.Value;
+				}
+				return null;
+			} else
+				return Table[name];
+		}
 
-			 public void Dispose()
-			 {
-				    Dispose (true);
-			 }
-			 
-			 public void Dispose (bool disposing)
-			 {
-				    if (disposing) {
-						  Reader = null;
-						  Table = null;
-				    } 
-			 }
-			 
-			 public virtual Type GetDefaultReader ()
-			 {
-				    return (typeof (ResourceReader));
-			 } 
-			 public virtual Type GetDefaultWriter ()
-			 {
-				    return (typeof (ResourceWriter));
-			 }
+		public virtual string GetString (string name)
+		{
+				Object o = GetObject (name);
+				if (o is string)
+					return (string) o;
+				return null;
+		}
 
-			 public virtual object GetObject (string name)
-			 {
-				    if (name == null)
-						  throw new ArgumentNullException ("The name parameter is null.");
-				    if (Reader == null)
-						  throw new InvalidOperationException ("The ResourceSet has been closed.");
-				    if (Table == null) {
-						  ReadResources ();
-						  return Table[name];
-				    } else 
-						  return Table[name];
-			 }
-			 public virtual object GetObject (string name, bool ignoreCase)
-			 {
-				    if (name == null)
-						  throw new ArgumentNullException ("The name parameter is null.");
-				    if (Reader == null)
-						  throw new InvalidOperationException ("ResourceSet has been closed.");
-				    if (Table == null)
-						  ReadResources ();
-				    if (ignoreCase) {
-						  foreach (DictionaryEntry de in Table) {
-								string key = (string) de.Key;
-								if (String.Compare (key, name, true) == 0)
-									   return de.Value;
-						  }
-						  return null;
-				    } else
-						  return Table[name];
-			 }
-
-			 public virtual string GetString (string name)
-			 {
-				    Object o = GetObject (name);
-				    if (o is string)
-						  return (string) o;
-				    return null;
-			 }
-
-			 public virtual string GetString (string name, bool ignoreCase)
-			 {
-				    Object o = GetObject (name, ignoreCase);
-				    if (o is string)
-						  return (string) o;
-				    return null;
-			 }
-
-			 public virtual void ReadResources ()
-			 {
-				    IDictionaryEnumerator i = Reader.GetEnumerator();
-
-				    if (Table == null)
-						  Table = new Hashtable ();
-				    i.Reset ();
-
-				    while (i.MoveNext ()) 
-						  Table.Add (i.Key, i.Value);
-			 }
-	   }
+		public virtual string GetString (string name, bool ignoreCase)
+		 {
+			 Object o = GetObject (name, ignoreCase);
+			 if (o is string)
+				 return (string) o;
+			 return null;
+		 }
+		
+		public virtual void ReadResources ()
+		{
+			IDictionaryEnumerator i = Reader.GetEnumerator();
+			
+			if (Table == null)
+				Table = new Hashtable ();
+			i.Reset ();
+			
+			while (i.MoveNext ()) 
+				Table.Add (i.Key, i.Value);
+		}
+	}
 }
-

@@ -1,3 +1,7 @@
+2002-01-20  Duncan Mak  <duncan@ximian.com>
+
+	* Files I commited recently: Fixed indentation style.
+
 2002-01-20 Nick Drochak  <ndrochak@gol.com>
 
 	* SerializableAttribute.cs: this attrib can be used on enums, structs, 

@@ -13,30 +13,30 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-	   [Serializable]
-	   public class PlatformNotSupportedException : SystemException
-	   {
-			 // Constructors
-			 public PlatformNotSupportedException ()
-				    : base (Locale.GetText ("This platform is not supported."))
-			 {
-			 }
-
-			 public PlatformNotSupportedException (string message)
-				    : base (message)
-			 {
-			 }
-			 
-			 public PlatformNotSupportedException (SerializationInfo info,
-				    StreamingContext context)
-				    : base (info, context)
-			 {
-			 }
-
-			 public PlatformNotSupportedException (string message, Exception innerException)
-				    :base (message, innerException)
-			 {
-			 }
-				    
-	   }
+	[Serializable]
+	public class PlatformNotSupportedException : SystemException
+	{
+		// Constructors
+		public PlatformNotSupportedException ()
+			: base (Locale.GetText ("This platform is not supported."))
+			{
+			}
+		
+		public PlatformNotSupportedException (string message)
+			: base (message)
+			{
+			}
+		
+		public PlatformNotSupportedException (SerializationInfo info,
+						      StreamingContext context)
+			: base (info, context)
+			{
+			}
+		
+		public PlatformNotSupportedException (string message, Exception innerException)
+			:base (message, innerException)
+			{
+			}
+		
+	}
 }

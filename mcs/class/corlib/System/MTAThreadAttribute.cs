@@ -8,12 +8,12 @@
 
 namespace System
 {
-     [AttributeUsage (AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method)]
 	public class MTAThreadAttribute : Attribute
 	{
-		   // Constructors
-		   public MTAThreadAttribute () : base ()
-		   {
-		   }
+		// Constructors
+		public MTAThreadAttribute () : base ()
+		{
+		}
 	}
 }

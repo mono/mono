@@ -9,20 +9,20 @@
 
 namespace System.Resources
 {
-	   [AttributeUsage (AttributeTargets.Assembly)]
-	   public sealed class NeutralResourcesLanguageAttribute : Attribute
-	   {
-
-			 string culture;
-
-			 // Constructors
-			 public NeutralResourcesLanguageAttribute (string cultureName)
-			 {
-				    culture = cultureName;
-			 }
-			 public string CultureName
-			 {
-				    get { return culture; }
-			 }
-	   }
+	[AttributeUsage (AttributeTargets.Assembly)]
+	public sealed class NeutralResourcesLanguageAttribute : Attribute
+	{
+		
+		string culture;
+		
+		// Constructors
+		public NeutralResourcesLanguageAttribute (string cultureName)
+		{
+				culture = cultureName;
+		}
+		public string CultureName
+		{
+				get { return culture; }
+		}
+	}
 }

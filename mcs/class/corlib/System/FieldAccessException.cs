@@ -13,30 +13,30 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-	   [Serializable]
-	   public class FieldAccessException : SystemException
-	   {
-			 // Constructors
-			 public FieldAccessException ()
-				    : base (Locale.GetText ("Attempt to access a private/protected field failed."))
-			 {
-			 }
-
-			 public FieldAccessException (string message)
-				    : base (message)
-			 {
-			 }
-			 
-			 public FieldAccessException (SerializationInfo info,
-				    StreamingContext context)
-				    : base (info, context)
-			 {
-			 }
-
-			 public FieldAccessException (string message, Exception innerException)
-				    :base (message, innerException)
-			 {
-			 }
-				    
-	   }
+	[Serializable]
+	public class FieldAccessException : SystemException
+	{
+		// Constructors
+		public FieldAccessException ()
+			: base (Locale.GetText ("Attempt to access a private/protected field failed."))
+			{
+			}
+		
+		public FieldAccessException (string message)
+			: base (message)
+			{
+			}
+		
+		public FieldAccessException (SerializationInfo info,
+					     StreamingContext context)
+			: base (info, context)
+			{
+			}
+		
+		public FieldAccessException (string message, Exception innerException)
+			:base (message, innerException)
+			{
+			}
+		
+	}
 }

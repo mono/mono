@@ -13,29 +13,29 @@ using System.Runtime.Serialization;
 namespace System.Resources
 {
 
-	   public class MissingManifestResourceException: Exception
-	   {
-			 private string param;
-
-			 // Constructors
-			 public MissingManifestResourceException ()
-				    : base (Locale.GetText ("The assembly does not contain the resources for the required culture."))
-				    {
-				    }
-									
-			 public MissingManifestResourceException (string message)
-				    :base (message)
-				    {
-				    }
-
-			 public MissingManifestResourceException (SerializationInfo info, StreamingContext context)
+	public class MissingManifestResourceException: Exception
+	{
+		private string param;
+		
+		// Constructors
+		public MissingManifestResourceException ()
+			: base (Locale.GetText ("The assembly does not contain the resources for the required culture."))
+			{
+			}
+		
+		public MissingManifestResourceException (string message)
+			:base (message)
+			{
+			}
+		
+		public MissingManifestResourceException (SerializationInfo info, StreamingContext context)
 				    :base (info, context)
-				    {
-				    }
-
-			 public MissingManifestResourceException (String message, Exception e)
-				    :base (message, e)
-				    {
-				    }
-	   }
+			{
+			}
+		
+		public MissingManifestResourceException (String message, Exception e)
+			:base (message, e)
+			{
+			}
+	}
 }

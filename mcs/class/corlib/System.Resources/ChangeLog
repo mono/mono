@@ -1,3 +1,7 @@
+2002-01-19  Duncan Mak  <duncan@ximian.com>
+
+	* *.cs: Fixed indentation. There was a stupid bug in my .emacs file.
+
 2002-1-17  Duncan Mak  <duncan@duncan@ximian.com>
 
 	* ResourceSet.cs: Implemented GetObject (string, bool) and GetString

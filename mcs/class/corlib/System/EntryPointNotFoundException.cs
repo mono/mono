@@ -13,30 +13,30 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-	   [Serializable]
-	   public class EntryPointNotFoundException : SystemException
-	   {
-			 // Constructors
-			 public EntryPointNotFoundException ()
-				    : base (Locale.GetText ("Cannot load class because of missing entry method."))
-			 {
-			 }
-
-			 public EntryPointNotFoundException (string message)
-				    : base (message)
-			 {
-			 }
-			 
-			 protected EntryPointNotFoundException (SerializationInfo info,
-				    StreamingContext context)
-				    : base (info, context)
-			 {
-			 }
-
-			 public EntryPointNotFoundException (string message, Exception innerException)
-				    :base (message, innerException)
-			 {
-			 }
-				    
-	   }
+	[Serializable]
+	public class EntryPointNotFoundException : SystemException
+	{
+		// Constructors
+		public EntryPointNotFoundException ()
+			: base (Locale.GetText ("Cannot load class because of missing entry method."))
+			{
+			}
+		
+		public EntryPointNotFoundException (string message)
+			: base (message)
+			{
+			}
+		
+		protected EntryPointNotFoundException (SerializationInfo info,
+						       StreamingContext context)
+			: base (info, context)
+			{
+			}
+		
+		public EntryPointNotFoundException (string message, Exception innerException)
+			:base (message, innerException)
+			{
+			}
+		
+	}
 }

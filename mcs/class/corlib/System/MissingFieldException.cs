@@ -13,33 +13,33 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-	   [Serializable]
-	   public class MissingFieldException : MissingMemberException
-	   {
-			 // Constructors
-			 public MissingFieldException ()
-				    : base (Locale.GetText ("Field does not exist."))
-			 {
-			 }
-
-			 public MissingFieldException (string message)
-				    : base (message)
-			 {
-			 }
-			 
-			 protected MissingFieldException (SerializationInfo info,
-				    StreamingContext context)
-				    : base (info, context)
-			 {
-			 }
-
-			 public MissingFieldException (string message, Exception innerException)
-				    :base (message, innerException)
-			 {
-			 }
-
-			 public MissingFieldException (string className, string fieldName)
-			 {
-			 }
-	   }
+	[Serializable]
+	public class MissingFieldException : MissingMemberException
+	{
+		// Constructors
+		public MissingFieldException ()
+			: base (Locale.GetText ("Field does not exist."))
+			{
+			}
+		
+		public MissingFieldException (string message)
+			: base (message)
+			{
+			}
+		
+		protected MissingFieldException (SerializationInfo info,
+						 StreamingContext context)
+			: base (info, context)
+			{
+			}
+		
+		public MissingFieldException (string message, Exception innerException)
+			:base (message, innerException)
+			{
+			}
+		
+		public MissingFieldException (string className, string fieldName)
+			{
+			}
+	}
 }

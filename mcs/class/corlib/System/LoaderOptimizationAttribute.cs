@@ -8,27 +8,27 @@
 
 namespace System
 {
-     [AttributeUsage (AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method)]
 	public class LoaderOptimizationAttribute : Attribute
 	{
-		   private LoaderOptimization lo;
+		private LoaderOptimization lo;
+		
+                // Constructors
+		public LoaderOptimizationAttribute (byte value) 
+		{
+			lo = (LoaderOptimization) value;
+		}
 
-// Constructors
-		   public LoaderOptimizationAttribute (byte value) 
-		   {
-				 lo = (LoaderOptimization) value;
-		   }
+		public LoaderOptimizationAttribute (LoaderOptimization value)
+		{
+			lo = value;
+		}
 
-		   public LoaderOptimizationAttribute (LoaderOptimization value)
-		   {
-				 lo = value;
-		   }
-
-		   // Properties
-		   public LoaderOptimization Value
-		   {
-				 get { return lo; }
-		   }
+		// Properties
+		public LoaderOptimization Value
+		{
+				get { return lo; }
+		}
 		   
 	}
 }

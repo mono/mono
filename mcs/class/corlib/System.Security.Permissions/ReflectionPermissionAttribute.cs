@@ -11,49 +11,49 @@ using System.Security.Permissions;
 
 namespace System.Security.Permissions
 {
-	   [AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
-					AttributeTargets.Struct | AttributeTargets.Constructor |
-					AttributeTargets.Method)]
-	   [Serializable]
-	   public sealed class ReflectionPermissionAttribute : CodeAccessSecurityAttribute
-	   {
-			 //Constructor
-			 public ReflectionPermissionAttribute (SecurityAction action) : base (action) {}
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
+			 AttributeTargets.Struct | AttributeTargets.Constructor |
+			 AttributeTargets.Method)]
+	[Serializable]
+	public sealed class ReflectionPermissionAttribute : CodeAccessSecurityAttribute
+	{
+		//Constructor
+		public ReflectionPermissionAttribute (SecurityAction action) : base (action) {}
+		
+		// Properties
+		[MonoTODO]
+		public ReflectionPermissionFlag Flags
+		{
+			get { return 0; }
+			set {}
+		}
+		
+		[MonoTODO]
+		public bool MemberAccess
+		{
+			get { return false; }
+			set {}
+		}
+		
+		[MonoTODO]				    
+		public bool ReflectionEmit
+		{
+			get { return false; }
+			set {}
+		}  
 
-			 // Properties
-			 [MonoTODO]
-			 public ReflectionPermissionFlag Flags
-      		 {
-				    get { return 0; }
-				    set {}
-			 }
+		[MonoTODO]
+		public bool TypeInformation
+		{
+			get { return false; }
+			set {}
+		}
 			 
-			 [MonoTODO]
-			 public bool MemberAccess
-			 {
-				    get { return false; }
-				    set {}
-			 }
-
-			 [MonoTODO]				    
-			 public bool ReflectionEmit
-			 {
-				    get { return false; }
-				    set {}
-			 }  
-
-			 [MonoTODO]
-			 public bool TypeInformation
-			 {
-				    get { return false; }
-				    set {}
-			 }
-			 
-			 // Methods
-			 [MonoTODO]
-			 public override IPermission CreatePermission ()
-			 {
-				    return null;
-			 }
-	   }
+		// Methods
+		[MonoTODO]
+		public override IPermission CreatePermission ()
+		{
+			return null;
+		}
+	}
 }

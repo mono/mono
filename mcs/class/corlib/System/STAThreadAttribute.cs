@@ -8,12 +8,12 @@
 
 namespace System
 {
-     [AttributeUsage (AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method)]
 	public class STAThreadAttribute : Attribute
 	{
 		   // Constructors
-		   public STAThreadAttribute () : base ()
-		   {
-		   }
+		public STAThreadAttribute () : base ()
+		{
+		}
 	}
 }

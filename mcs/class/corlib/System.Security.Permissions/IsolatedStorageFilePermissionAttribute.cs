@@ -12,20 +12,20 @@ using System.Security.Permissions;
 namespace System.Security.Permissions
 {
 
-	   [AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
-					AttributeTargets.Struct | AttributeTargets.Constructor |
-					AttributeTargets.Method)]
-	   [Serializable]
-	   public sealed class IsolatedStorageFilePermissionAttribute : IsolatedStoragePermissionAttribute
-	   {
-			 // Constructor
-			 public IsolatedStorageFilePermissionAttribute (SecurityAction action) : base (action) {}
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
+			 AttributeTargets.Struct | AttributeTargets.Constructor |
+			 AttributeTargets.Method)]
+	[Serializable]
+	public sealed class IsolatedStorageFilePermissionAttribute : IsolatedStoragePermissionAttribute
+	{
+		// Constructor
+		public IsolatedStorageFilePermissionAttribute (SecurityAction action) : base (action) {}
 
-			 // Methods
-			 [MonoTODO]
-			 public override IPermission CreatePermission ()
-			 {
-				    return null;
-			 }
-	   }
+		// Methods
+		[MonoTODO]
+		public override IPermission CreatePermission ()
+		{
+			return null;
+		}
+	}
 }
