@@ -1,3 +1,7 @@
+2003-05-18 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Add methods to allow methods to be added to arrays.
+		
 2003-05-11 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: The class size in class layout metadata table is a

@@ -100,13 +100,34 @@ namespace PEAPI
 	/// </summary>
 	public abstract class Array : Type
 	{
+
     protected Type elemType;
+                protected MetaData metaData;
+                protected string cnameSpace, cname;
 
     internal Array(Type eType, byte TypeId) : base(TypeId) {
       elemType = eType;
 			tabIx = MDTable.TypeSpec;
     }
 
+    internal Array(Class eClass, MetaData md, string nameSpace, string name,
+                    byte TypeId) : base(TypeId) {
+            elemType = eClass;
+            tabIx = MDTable.TypeSpec;
+            metaData = md;
+            cnameSpace = nameSpace;
+            cname = name;
+    }
+
+      public Method AddMethod(string name, Type retType, Type[] pars) {
+
+              if (metaData == null || cnameSpace == null || cname == null)
+                      throw new Exception ("Methods cannot be added to arrays not created with the Class.GetArray* methods.");
+              Method meth = new MethodRef (GetTypeSpec (metaData), name, retType, pars, false, null);
+              metaData.AddToTable(MDTable.MemberRef,meth);
+
+              return meth;
+      }
  
 	}
 
@@ -123,12 +144,17 @@ namespace PEAPI
     /// <param name="elementType">the type of the array elements</param>
     public ZeroBasedArray(Type elementType) : base (elementType,0x1D) { }
 
+    public ZeroBasedArray(Class elementClass, MetaData md,
+                    string nameSpace, string name) : base (elementClass, md, nameSpace, name, 0x1D) { }
+
     internal sealed override void TypeSig(MemoryStream str) {
       str.WriteByte(typeIndex);
       elemType.TypeSig(str); 
     }
 
   }
+
+
   /**************************************************************************/           
 
   /// <summary>
@@ -150,6 +176,17 @@ namespace PEAPI
     /// <param name="upBounds">upper bounds of dimensions</param>
     public BoundArray(Type elementType, uint dimensions, int[] loBounds, 
       int[] upBounds) : base (elementType,0x14) {
+      numDims = dimensions;
+      lowerBounds = loBounds;
+      sizes = new int[loBounds.Length];
+      for (int i=0; i < loBounds.Length; i++) {
+        sizes[i] = upBounds[i] - loBounds[i] + 1;
+      }
+    }
+
+    internal BoundArray(Class elementClass, MetaData md, string nameSpace, string name,
+                    uint dimensions, int[] loBounds,
+                    int[] upBounds) : base (elementClass,md, nameSpace, name, 0x14) {
       numDims = dimensions;
       lowerBounds = loBounds;
       sizes = new int[loBounds.Length];
@@ -1545,27 +1582,32 @@ namespace PEAPI
     protected int row = 0;
     protected string name, nameSpace;
     protected uint nameIx, nameSpaceIx;
- 
+                protected MetaData _metaData;
 		internal Class(string nameSpaceName, string className, MetaData md)
                                                               : base(0x12) {
       nameSpace = nameSpaceName;
       name = className;
       nameIx = md.AddToStringsHeap(name);
       nameSpaceIx = md.AddToStringsHeap(nameSpace);
+      _metaData = md;
     }
 
-	public string Name {
-		get { 
-			if (nameSpace != null &&
-			   nameSpace != String.Empty) {
-				return nameSpace + "." + name;
-			}
-			return name;
-		}
-	}
     internal Class(uint nsIx, uint nIx) : base(0x12) {
       nameSpaceIx = nsIx;
       nameIx = nIx;
+    }
+
+    public BoundArray GetBoundArray (uint dimensions, int[] loBounds,
+                    int[] upBounds) {
+            BoundArray bound_array = new BoundArray (this, _metaData, nameSpace,
+                            name, dimensions, loBounds, upBounds);
+            return bound_array;
+    }
+
+    public ZeroBasedArray GetZeroBasedArray () {
+            ZeroBasedArray array = new ZeroBasedArray (this, _metaData,
+                            nameSpace, name);
+            return array;
     }
 
     internal virtual uint TypeDefOrRefToken() { return 0; }
@@ -1581,7 +1623,6 @@ namespace PEAPI
     internal override MetaDataElement GetTypeSpec(MetaData md) {
       return this;
     }
-
 	}
   /**************************************************************************/  
   // This Class produces entries in the TypeDef table of the MetaData 
