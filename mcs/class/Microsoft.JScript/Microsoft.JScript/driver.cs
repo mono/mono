@@ -8,11 +8,6 @@
 //
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Reflection.Emit;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Microsoft.JScript {
 
@@ -32,6 +27,8 @@ namespace Microsoft.JScript {
 			ScriptBlock prog_tree = parser.Parse ();
 
 			Console.WriteLine (prog_tree.ToString ());
+
+			CodeGenerator.Run (args [0], prog_tree);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// CodeGenerator.cs: The actual IL code generator for JScript .Net programs.
+// CodeGenerator.cs
 //
 // Author:
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
@@ -10,331 +10,86 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
-using Microsoft.JScript.Vsa;
+using System.Threading;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
-	internal sealed class CodeGenerator {
+	internal class EmitContext {
 
-		internal AssemblyName assemblyName;
-		internal AssemblyBuilder assemblyBuilder;
-		internal ModuleBuilder moduleBuilder;
-		internal TypeBuilder typeBuilder;
-		internal ILGenerator ilGen;
+		internal TypeBuilder type_builder;
 
-		internal string MODULE_NAME = "JScript Module";
-		internal string GLOBAL_SCOPE = "Microsoft.JScript.GlobalScope";
-	
-		internal CodeGenerator (string assemName, AssemblyBuilderAccess access)
+		internal EmitContext (TypeBuilder type)
 		{
-			assemblyName = new AssemblyName ();
-			assemblyName.Name = assemName;
+			type_builder = type;
+		}
+	}
 
-			AppDomain appDomain = AppDomain.CurrentDomain;
-			
-			this.assemblyBuilder = appDomain.DefineDynamicAssembly (assemblyName, 
-										access);
+	public class CodeGenerator {
 
-			this.moduleBuilder = assemblyBuilder.DefineDynamicModule (MODULE_NAME,
-										  assemblyName.Name + ".exe", false);
+		private static string MODULE = "JScript Module";
+
+		internal static string mod_name;
+		internal static AppDomain app_domain;
+		internal static AssemblyName assembly_name;
+		internal static AssemblyBuilder assembly_builder;
+		internal static ModuleBuilder module_builder;
+
+		internal static void Init (string file_name)
+		{
+			app_domain = Thread.GetDomain ();
+
+			assembly_name = new AssemblyName ();
+			assembly_name.Name =  trim_extension (file_name);
+
+			mod_name = MODULE;
+
+			assembly_builder = app_domain.DefineDynamicAssembly (
+					     assembly_name,
+					     AssemblyBuilderAccess.RunAndSave);
+
+			module_builder = assembly_builder.DefineDynamicModule (
+						mod_name,
+						assembly_name.Name + ".exe", 
+						false);
 		}
 
-
-		internal void EmitJScript0Type ()
+ 		internal static string trim_extension (string file_name)
 		{
-			this.typeBuilder = moduleBuilder.DefineType ("JScript 0",
-								     TypeAttributes.Class |
-								     TypeAttributes.Public);
+			int index = file_name.IndexOf ('.');
 
-			this.typeBuilder.SetParent (typeof (Microsoft.JScript.GlobalScope));
-
-			CustomAttributeBuilder attr;
-			Type t = typeof (CompilerGlobalScopeAttribute);
-			attr = new CustomAttributeBuilder (t.GetConstructor (new Type [] {}), 
-									     new object [] {});
-			this.typeBuilder.SetCustomAttribute (attr);
+			if (index < 0)
+				return file_name;
+			else
+				return file_name.Substring (0, index);
 		}
 
-
-		internal void EmitJScript0Cons ()
+		internal static void Save (string target_name)
 		{
-			ConstructorBuilder consBuilder;
-
-			consBuilder = typeBuilder.DefineConstructor (MethodAttributes.Public,
-							             CallingConventions.Standard,
-								     new Type [] {typeof (Microsoft.JScript.GlobalScope)});
-
-			this.ilGen = consBuilder.GetILGenerator ();
-
-			this.ilGen.Emit (OpCodes.Ldarg_0);
-			this.ilGen.Emit (OpCodes.Ldarg_1);
-			this.ilGen.Emit (OpCodes.Dup);
-			this.ilGen.Emit (OpCodes.Ldfld, 
-					 typeof (Microsoft.JScript.ScriptObject).GetField ("engine"));
-			this.ilGen.Emit (OpCodes.Call,
-					 typeof (Microsoft.JScript.GlobalScope).GetConstructor (new Type [] {typeof (Microsoft.JScript.GlobalScope), typeof (Microsoft.JScript.Vsa.VsaEngine)}));
-			this.ilGen.Emit (OpCodes.Ret);
+			assembly_builder.Save (target_name);
 		}
 
-
-		private void EmitJScript0GlobalCode (ASTList program)
+		internal static void Emit (AST prog)
 		{
-			MethodBuilder methodBuilder;
-			methodBuilder = this.typeBuilder.DefineMethod ("Global Code",
-									MethodAttributes.Public, 
-									typeof (object), 
-									null);
-                        
-			this.ilGen = methodBuilder.GetILGenerator ();
-                        
-			this.ilGen.Emit (OpCodes.Ldarg_0);
+			if (prog == null)
+				return;
 
-			this.ilGen.Emit (OpCodes.Ldfld,
-					 typeof (Microsoft.JScript.ScriptObject).GetField ("engine"));
-                
-			this.ilGen.Emit (OpCodes.Ldarg_0);
+			TypeBuilder type_builder;
+			type_builder = module_builder.DefineType ("JScript 0");
 
-			this.ilGen.Emit (OpCodes.Call, 
-					 typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("PushScriptObject", new Type [] {typeof (Microsoft.JScript.ScriptObject)}));
+			EmitContext ec = new EmitContext (type_builder);
 
+			prog.Emit (ec);
 
-			// program.Visit (this, null);
-			
-			
-			this.ilGen.Emit (OpCodes.Ldsfld, 
-					 typeof (Microsoft.JScript.Empty).GetField ("Value"));
-
-			this.ilGen.Emit (OpCodes.Ldarg_0);
-
-			this.ilGen.Emit (OpCodes.Ldfld, 
-					 typeof (Microsoft.JScript.ScriptObject).GetField ("engine"));
-
-			this.ilGen.Emit (OpCodes.Call,
-					typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("PopScriptObject"));
-
-			this.ilGen.Emit (OpCodes.Pop);
-			this.ilGen.Emit (OpCodes.Ret);                       
-                }
-
-
-
-	
-		public void EmitJScript0 (ASTList program)
-		{
-			this.EmitJScript0Type ();
-			this.EmitJScript0Cons ();
-			this.EmitJScript0GlobalCode (program);
-			
-			this.typeBuilder.CreateType ();
-		}					
-									    
-
-		//
-		// JScript Main class construction
-		//
-
-		private void EmitJScriptMainType ()
-                {
-			this.typeBuilder = moduleBuilder.DefineType ("JScript Main", 
-								TypeAttributes.Public);
-
-			this.typeBuilder.SetParent (typeof (System.Object));
-                }
-
-
-                private void EmitJScriptMainCons ()
-                {
-                        ConstructorBuilder consBuilder;
-                        consBuilder = typeBuilder.DefineConstructor (MethodAttributes.Public, 
-								      CallingConventions.Standard,
-                                                                      new Type [] {});
-
-			this.ilGen = consBuilder.GetILGenerator ();
-			this.ilGen.Emit (OpCodes.Ldarg_0);
-			this.ilGen.Emit (OpCodes.Call, 
-                                         typeof (Object).GetConstructor (new Type [] {}));
-			this.ilGen.Emit (OpCodes.Ret);
-                }
-                        
-
-                private void EmitJScriptMainFunction ()
-                {
-			MethodBuilder methodBuilder;
-			methodBuilder = typeBuilder.DefineMethod ("Main", 
-								   MethodAttributes.Public | 
-								   MethodAttributes.Static, 
-								   typeof (void),
-								   new Type [] {typeof (String [])});
-                        
-                        methodBuilder.SetCustomAttribute (new CustomAttributeBuilder 
-                                                          (typeof (STAThreadAttribute).GetConstructor (new Type [] {}),
-                                                           new object [] {}));
-
-
-                        this.ilGen = methodBuilder.GetILGenerator ();
-
-                        // declare local vars
-                        this.ilGen.DeclareLocal (typeof (Microsoft.JScript.GlobalScope));
-
-                        this.ilGen.Emit (OpCodes.Ldc_I4_1);
-                        this.ilGen.Emit (OpCodes.Ldc_I4_1);
-                        this.ilGen.Emit (OpCodes.Newarr, typeof (string));
-                        this.ilGen.Emit (OpCodes.Dup);
-                        this.ilGen.Emit (OpCodes.Ldc_I4_0);
-                        this.ilGen.Emit (OpCodes.Ldstr,
-                                         "mscorlib, Version=1.0.3300.0, Culture=neutral, Pub" + "licKeyToken=b77a5c561934e089");
-                        this.ilGen.Emit (OpCodes.Stelem_Ref);
-                        this.ilGen.Emit (OpCodes.Call,
-                                         typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod  ("CreateEngineAndGetGlobalScope", new Type [] {typeof (bool), typeof (string [])}));
-                        
-                        this.ilGen.Emit (OpCodes.Stloc_0);
-                        this.ilGen.Emit (OpCodes.Ldloc_0);
-                        
-
-                        this.ilGen.Emit (OpCodes.Newobj,
-                                         assemblyBuilder.GetType ("JScript 0").GetConstructor (new Type [] {typeof (Microsoft.JScript.GlobalScope)})); 
-
-                        this.ilGen.Emit (OpCodes.Call, assemblyBuilder.GetType ("JScript 0").GetMethod ("Global Code", new Type [] {}));
-
-                        this.ilGen.Emit (OpCodes.Pop);
-                        this.ilGen.Emit (OpCodes.Ret);
-
-                        this.assemblyBuilder.SetEntryPoint (methodBuilder);
-
-                }                        
-
-                public void EmitJScriptMain ()
-                {                        
-                        this.EmitJScriptMainType ();
-                        this.EmitJScriptMainCons ();
-                        this.EmitJScriptMainFunction ();
-
-                        Type t2 = this.typeBuilder.CreateType ();
-                }
-
-
-
-
-		// 
-		// Visitor methods, that Emit IL OpCodes for each type of 
-		// language constructs.
-		//
-
-		public object VisitASTList (ASTList prog, object obj)
-		{
-			int size = prog.elems.Count;
-
-			// for (int i = 0; i < size; i++)
-				// ((AST) prog.elems [i]).Visit (this, obj);
-
-			return null;
+			ec.type_builder.CreateType ();
 		}
 
-
-		public object VisitVariableDeclaration (VariableDeclaration decl, 
-							object args)
+		public static void Run (string file_name, AST prog)
 		{
-			throw new NotImplementedException ();
-		}
+			CodeGenerator.Init (file_name);
+			CodeGenerator.Emit (prog);
 
-
-		public object VisitFunctionDeclaration (FunctionDeclaration decl,
-							object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-		
-		public object VisitBlock (Block b, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-		
-		public object VisitEval (Eval e, object args)
-		{	
-			throw new NotImplementedException ();
-		}
-
-		
-		public object VisitForIn (ForIn forIn, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitFunctionExpression (FunctionExpression fexp,	
-						       object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitImport (Import imp, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitPackage (Package pkg, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitScriptBlock (ScriptBlock sblock, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitThrow (Throw t, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitTry (Try t, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitWith (With w, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitPrint (Print p, object args)
-		{
-			StringLiteral sl = p.Exp as StringLiteral;
-
-			// sl.Visit (this, args);
-
-			this.ilGen.Emit (OpCodes.Call,
-					 typeof (Microsoft.JScript.ScriptStream).GetMethod ("WriteLine", new Type [] {typeof (string)}));
-
-			return null;
-		}
-
-
-		//
-		// Literals
-		//
-
-		public object VisitArrayLiteral (ArrayLiteral al, object args)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		public object VisitStringLiteral (StringLiteral sl, object args)
-		{
-			this.ilGen.Emit (OpCodes.Ldstr, sl.Str);
-
-			return null;
-		}
+			CodeGenerator.Save (trim_extension (file_name) + 
+					    ".exe");
+		}	
 	}
 }

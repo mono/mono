@@ -37,5 +37,13 @@ namespace Microsoft.JScript {
 
 			return sb.ToString ();
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			int i, size = Elements.Count;
+
+			for (i = 0; i < size; i++)
+				((AST) Elements [i]).Emit (ec);
+		}						
 	}
 }

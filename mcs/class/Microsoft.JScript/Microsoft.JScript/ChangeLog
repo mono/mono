@@ -1,3 +1,20 @@
+2003-10-24  cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* ast.cs: Added 'virtual' Emit method (I might change it to be
+	abstract, but I would have to added to all classes that derive
+	from it. I'll do it later)
+	* Block.cs: Added Emit method.
+	* CodeGnerator.cs: Restructured it (not based on the Visitor pattern
+	anymore) - still missing some methods, ut on the way. A nice
+	hacking weekend coming. Added EmitContext class.
+	* ScriptBlock.cs: Added Emit method.
+	* VariableDeclaration.cs: Changed type field from string to
+	Type. Added Emit method.
+	* VariableStatement.cs: Added Emit method.
+	* driver.cs: Added CodeGeneration phase (only simple var
+	declarations support it. More coming soon).
+
+
 2003-10-22  cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* statement.cs: added Return class.
@@ -90,12 +107,12 @@
 	x = factorial (4); 
 	print (x);
 
-	As you can see, it's not the classical factorial function
+	As you can see, it's not the classic factorial function
 	definition, I still have to make some tricks like storing the
 	result from the recursive call and then multiply. But this new
 	grammar it's easier to alter than the old one. Also we got support
 	for for-in statements, for statements, global expressions, support
-	for object accesors or better known as the "dot" operator. Too
+	for object accesors or better known as the "dot" operator. Two
 	rules are on the eye: left_hand_size_expr and call_expr, in order
 	to finish the parsing grammar and fix the bugs.
 

@@ -9,5 +9,9 @@
 namespace Microsoft.JScript {
 
 	public abstract class AST {
+
+		internal virtual void Emit (EmitContext ec)
+		{
+		}
 	}
 }

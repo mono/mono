@@ -7,20 +7,26 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
+using System;
 using System.Text;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
 	public class VariableDeclaration : Statement {
 
 		private string id;
-		private string type;
+		private Type type;
 		private AST val;
 
-		internal VariableDeclaration (string id, string type, AST init)
+		internal VariableDeclaration (string id, string t, AST init)
 		{
 			this.id = id;
-			this.type = type;
+
+			if (t == null)
+				this.type = typeof (System.Object);
+			
 			this.val = init;
 		}
 
@@ -31,7 +37,7 @@ namespace Microsoft.JScript {
 		}
 
 		
-		public string Type {
+		public Type Type {
 			get { return type; }
 			set { type = value; }
 		}
@@ -43,9 +49,22 @@ namespace Microsoft.JScript {
 
 			sb.Append (Id);
 			sb.Append (" = ");
-			sb.Append (val.ToString ());
+
+			if (val != null)
+				sb.Append (val.ToString ());
 
 			return sb.ToString ();
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			FieldBuilder field;
+			TypeBuilder type  = ec.type_builder;
+
+			field = type.DefineField (id, Type,
+						  FieldAttributes.Public |
+						  FieldAttributes.Static);
+						  
 		}
 	}
 }

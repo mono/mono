@@ -37,5 +37,13 @@ namespace Microsoft.JScript {
 
 			return sb.ToString ();
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			int i, size = var_decls.Count;
+
+			for (i = 0; i < size; i++)
+				((VariableDeclaration) var_decls [i]).Emit (ec);
+		}
 	}
 }

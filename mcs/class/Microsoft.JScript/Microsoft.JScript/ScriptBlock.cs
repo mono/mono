@@ -26,5 +26,10 @@ namespace Microsoft.JScript {
 		{
 			return src_elems.ToString ();
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			src_elems.Emit (ec);
+		}
 	}
 }
