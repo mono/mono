@@ -280,17 +280,26 @@ namespace System.Xml.XPath
 	internal class DescendantOrSelfIterator : SimpleIterator
 	{
 		protected int _depth;
+		private bool _finished;
+
 		public DescendantOrSelfIterator (BaseIterator iter) : base (iter) {}
+
 		protected DescendantOrSelfIterator (DescendantOrSelfIterator other) : base (other)
 		{
 			_depth = other._depth;
 		}
+
 		public override XPathNodeIterator Clone () { return new DescendantOrSelfIterator (this); }
+
 		[MonoTODO]
 		public override bool MoveNext ()
 		{
+			if (_finished)
+				return false;
+
 			if (_pos == 0)
 			{
+				// self
 				_pos ++;
 				return true;
 			}
@@ -311,6 +320,7 @@ namespace System.Xml.XPath
 					throw new XPathException ("unexpected depth");	// TODO: better message
 				_depth --;
 			}
+			_finished = true;
 			return false;
 		}
 	}
@@ -637,20 +647,20 @@ namespace System.Xml.XPath
 
 	internal class UnionIterator : BaseIterator
 	{
-		protected ArrayList _rgNodes;
 		protected BaseIterator _left, _right;
-		protected int _pos;
+		private int _pos;
+		private bool keepLeft;
+		private bool keepRight;
+		private bool useRight;
 
 		public UnionIterator (BaseIterator iter, BaseIterator left, BaseIterator right) : base (iter)
 		{
-			_rgNodes = new ArrayList ();
 			_left = left;
 			_right = right;
 		}
 
 		protected UnionIterator (UnionIterator other) : base (other)
 		{
-			_rgNodes = (ArrayList) other._rgNodes.Clone ();
 			_left = other._left;
 			_right = other._right;
 			_pos = other._pos;
@@ -659,43 +669,51 @@ namespace System.Xml.XPath
 
 		public override bool MoveNext ()
 		{
-			if (_left.MoveNext ())
-			{
-				_rgNodes.Add (_left.Current.Clone ());
-				_pos ++;
+			if (!keepLeft)
+				keepLeft = _left.MoveNext ();
+			if (!keepRight)
+				keepRight = _right.MoveNext ();
+
+			if (!keepLeft && !keepRight)
+				return false;
+
+			_pos ++;
+			if (!keepRight) {
+				keepLeft = useRight = false;
+				return true;
+			} else if (!keepLeft) {
+				keepRight = false;
+				useRight = true;
 				return true;
 			}
 
-			while (_right.MoveNext ())
-			{
-				XPathNavigator navRight = _right.Current;
-				bool fFound = false;
-				foreach (XPathNavigator navLeft in _rgNodes)
-				{
-					if (navLeft.IsSamePosition (navRight))
-					{
-						fFound = true;
-						break;
-					}
-				}
-				if (!fFound)
-				{
-					_pos ++;
-					return true;
-				}
+			switch (_left.Current.ComparePosition (_right.Current)) {
+			case XmlNodeOrder.Same:
+				// consume both. i.e. don't output duplicate result.
+				keepLeft = keepRight = false;
+				useRight = true;
+				return true;
+			case XmlNodeOrder.Before:
+				keepLeft = useRight = false;
+				return true;
+			case XmlNodeOrder.After:
+				keepRight = false;
+				useRight = true;
+				return true;
+			default:
+				throw new InvalidOperationException ("Should not happen.");
 			}
-			return false;
 		}
 		public override XPathNavigator Current
 		{
 			get
 			{
-				if (_pos < _rgNodes.Count)
-					throw new XPathException ("bug in UnionOperator");	// TODO: better exception
-				if (_pos == _rgNodes.Count)
-					return _left.Current;
-				else
+				if (_pos == 0)
+					return null;
+				if (useRight)
 					return _right.Current;
+				else
+					return _left.Current;
 			}
 		}
 		public override int CurrentPosition { get { return _pos; }}

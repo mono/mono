@@ -1,3 +1,8 @@
+2003-10-13  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Iterator.cs : Fixed UnionIterator who ignores document order.
+	  Fixed SlashIterator whose MoveNext() should finish at its end.
+
 2003-09-27 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Iterator.cs, Expression.cs, XPathNavigator.cs: In AxisIterator
