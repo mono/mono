@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.43 $
+// $Revision: 1.44 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.44  2004/08/21 20:53:13  pbartok
+// - Updated to match new GrabWindow signature
+//
 // Revision 1.43  2004/08/21 19:32:15  pbartok
 // - Implemented Created property
 //
@@ -800,7 +803,7 @@ namespace System.Windows.Forms
 				if (this.IsHandleCreated) {
 					if (value && !is_captured) {
 						is_captured = true;
-						XplatUI.GrabWindow(this.window.Handle);
+						XplatUI.GrabWindow(this.window.Handle, IntPtr.Zero);
 					} else if (!value && is_captured) {
 						XplatUI.ReleaseWindow(this.window.Handle);
 						is_captured = false;
