@@ -1,5 +1,10 @@
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Don't allow
+	`void[]' (CS1547).
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (LocalInfo.Resolve): Check whether the type is not
 	void (CS1547).
 

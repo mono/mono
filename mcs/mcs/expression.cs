@@ -8151,6 +8151,12 @@ namespace Mono.CSharp {
 			if (ltype == null)
 				return null;
 
+			if ((ltype == TypeManager.void_type) && (dim != "*")) {
+				Report.Error (1547, Location,
+					      "Keyword 'void' cannot be used in this context");
+				return null;
+			}
+
 			//
 			// ltype.Fullname is already fully qualified, so we can skip
 			// a lot of probes, and go directly to TypeManager.LookupType
