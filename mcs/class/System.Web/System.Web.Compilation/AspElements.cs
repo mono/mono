@@ -202,15 +202,21 @@ namespace System.Web.Compilation
 		
 		public override string ToString ()
 		{
-			string ret = "";
+			StringBuilder result = new StringBuilder ();
 			string value;
 			foreach (string key in Keys){
-				value = (string) this [key];
-				value = value == null ? "" : value;
-				ret += key + "=" + value + " ";
+				result.Append (key);
+				value = this [key] as string;
+				if (value != null)
+					result.AppendFormat ("=\"{0}\"", value);
+
+				result.Append (' ');
 			}
 
-			return ret;
+			if (result.Length > 0 && result [result.Length - 1] == ' ')
+				result.Length--;
+				
+			return result.ToString ();
 		}
 	}
 
@@ -288,18 +294,12 @@ namespace System.Web.Compilation
 				plain.Append (tag);
 				if (attributes != null){
 					plain.Append (' ');
-					foreach (string key in attributes.Keys){
-						plain.Append (key);
-						if (attributes [key] != null){
-							plain.Append ("=\"");
-							plain.Append ((string) attributes [key]);
-							plain.Append ("\" ");
-						}
-					}
+					plain.Append (attributes.ToString ());
 				}
 				
 				if (self_closing)
 					plain.Append ('/');
+
 				plain.Append ('>');
 				return plain.ToString ();
 			}
