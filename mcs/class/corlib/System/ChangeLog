@@ -1,3 +1,20 @@
+2004-11-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* IntegerFormatter.cs: Avoid .ToCharArray, it was being used in
+	places where there was no reason for it. Also, allocate buffers
+	using stackalloc. This avoids the cost of allocating a char []
+	buffer in the gc. Also did some minor style changes.
+
+	This gives a huge reduction in memory allocation for integer formatting.
+	often you see something like:
+
+	665 KB System.IntegerFormatter::FormatGeneral(long,int,NumberFormatInfo,bool,int)
+	    463 KB    11710 System.Char[]
+	    201 KB    11710 System.String
+
+	This patch removes the char [] part. (it also removes the
+	tochararray, which accounts for even more.
+
 2004-11-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* Single.cs, Double.cs (GetHashCode): Better hashcode impl

@@ -113,22 +113,22 @@ using System.Globalization;
 
 namespace System {
 
-	internal sealed class IntegerFormatter {
+	unsafe class IntegerFormatter {
 
-		private const int maxByteLength = 4;
-		private const int maxShortLength = 6;
-		private const int maxIntLength = 12;
-		private const int maxLongLength = 22;
+		const int maxByteLength = 4;
+		const int maxShortLength = 6;
+		const int maxIntLength = 12;
+		const int maxLongLength = 22;
 
-		private static readonly char[] digitLowerTable =
+		static readonly char [] digitLowerTable =
 		{ '0', '1', '2', '3', '4', '5', '6', '7', 
 		  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-		private static readonly char[] digitUpperTable =
+		static readonly char [] digitUpperTable =
 		{ '0', '1', '2', '3', '4', '5', '6', '7', 
 		  '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-		private static bool ParseFormat (string format, out char specifier,  out int precision, out bool custom)
+		static bool ParseFormat (string format, out char specifier,  out int precision, out bool custom)
 		{		 		 
 			precision = -1;
 			specifier = '\0';
@@ -139,23 +139,21 @@ namespace System {
 			if (length < 1)
 				return false;
 			
-			char[] chars = format.ToCharArray ();
-			specifier = chars[0];
+			specifier = format [0];
 
-			if (Char.IsLetter(specifier) && length <= 3) {
-				switch (length){
+			if (Char.IsLetter (specifier)) {
+				switch (length) {
 				case 1:
 					return true;
 				case 2:
-					if (Char.IsDigit(chars[1])) {
-						precision = chars[1] - '0';
+					if (Char.IsDigit (format [1])) {
+						precision = format [1] - '0';
 						return true;
 					}
 					break;
 				case 3:
-					if (Char.IsDigit(chars[1]) && Char.IsDigit(chars[2])) {
-						precision = chars[1] - '0';
-						precision = precision * 10 + chars[2] - '0';
+					if (Char.IsDigit (format [1]) && Char.IsDigit (format [2])) {
+						precision = ((format [1] - '0') * 10) + format[2] - '0';
 						return true;
 					}
 					break;
@@ -307,14 +305,14 @@ namespace System {
 		//  I have them commented out in the large switch statement
 		//
 
-		private static string FormatCurrency (long value, int precision, NumberFormatInfo nfi, int maxLength)
+		static string FormatCurrency (long value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int i, j, k;
 			bool negative = (value < 0);
 
-			char[] groupSeparator = nfi.CurrencyGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.CurrencyDecimalSeparator.ToCharArray ();
-			char[] currencySymbol = nfi.CurrencySymbol.ToCharArray ();
+			string groupSeparator = nfi.CurrencyGroupSeparator;
+			string decimalSeparator = nfi.CurrencyDecimalSeparator;
+			string currencySymbol = nfi.CurrencySymbol;
 			int[] groupSizes = nfi.CurrencyGroupSizes;
 			int pattern = negative ? nfi.CurrencyNegativePattern : nfi.CurrencyPositivePattern;
 			int symbolLength = currencySymbol.Length;
@@ -322,7 +320,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;	     
 			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			int position = size;
 
 			// set up the pattern from IFormattible
@@ -568,13 +566,13 @@ namespace System {
 			return new string (buffy, position, (size - position));
 		}
 
-		private static string FormatCurrency (ulong value, int precision, NumberFormatInfo nfi, int maxLength) 
+		static string FormatCurrency (ulong value, int precision, NumberFormatInfo nfi, int maxLength) 
 		{
 			int i, j, k;
 
-			char[] groupSeparator = nfi.CurrencyGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.CurrencyDecimalSeparator.ToCharArray ();
-			char[] currencySymbol = nfi.CurrencySymbol.ToCharArray ();
+			string groupSeparator = nfi.CurrencyGroupSeparator;
+			string decimalSeparator = nfi.CurrencyDecimalSeparator;
+			string currencySymbol = nfi.CurrencySymbol;
 			int[] groupSizes = nfi.CurrencyGroupSizes;
 			int pattern = nfi.CurrencyPositivePattern;
 			int symbolLength = currencySymbol.Length;
@@ -582,7 +580,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;	     
 			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			int position = size;
 
 			// set up the pattern from IFormattible, no negative
@@ -680,7 +678,7 @@ namespace System {
 		internal static string FormatDecimal (long value, int precision, int maxLength)
 		{
 			int size = (precision > 0) ? (maxLength + precision) : maxLength;
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			int position = size;
 			bool negative = (value < 0);
 
@@ -712,7 +710,7 @@ namespace System {
 		internal static string FormatDecimal (ulong value, int precision, int maxLength)
 		{
 			int size = (precision > 0) ? (maxLength + precision) : maxLength;
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			int position = size;
 
 			// get our value into a buffer from right to left
@@ -755,12 +753,12 @@ namespace System {
 		// have a positive exponential.
 		//
 		
-		private static string FormatExponential (long value, int precision, bool upper, int maxLength)
+		static string FormatExponential (long value, int precision, bool upper, int maxLength)
 		{
 			bool negative = (value < 0);
 			int padding = (precision >= 0) ? precision : 6;
-			char[] buffy = new char[(padding + 8)];
-			char[] tmp = new char [maxLength];
+			char* buffy = stackalloc char [(padding + 8)];
+			char* tmp = stackalloc char [maxLength];
 			int exponent = 0, position = maxLength;
 			int exp = 0, idx = 0;
 			ulong pow = 10;
@@ -848,8 +846,8 @@ namespace System {
 		private static string FormatExponential (ulong value, int precision, bool upper, int maxLength)
 		{
 			int padding = (precision >= 0) ? precision : 6;
-			char[] buffy = new char[(padding + 8)];
-			char[] tmp = new char [maxLength];
+			char* buffy = stackalloc char [(padding + 8)];
+			char* tmp = stackalloc char [maxLength];
 			int exponent = 0, position = maxLength;
 			int exp = 0, idx = 0;
 			ulong pow = 10;
@@ -938,10 +936,10 @@ namespace System {
 		// plop a . down, then go for our number. 
 		//
 
-		private static string FormatFixedPoint (long value, int precision, NumberFormatInfo nfi, int maxLength)
+		static string FormatFixedPoint (long value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int padding = (precision >= 0) ? (precision + maxLength) : (nfi.NumberDecimalDigits + maxLength);
-			char[] buffy = new char[padding];
+			char* buffy = stackalloc char [padding];
 			int position = padding;
 			bool negative = (value < 0);
 			
@@ -973,10 +971,10 @@ namespace System {
 		}
 
 
-		private static string FormatFixedPoint (ulong value, int precision, NumberFormatInfo nfi, int maxLength)
+		static string FormatFixedPoint (ulong value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int padding = (precision >= 0) ? (precision + maxLength) : (nfi.NumberDecimalDigits + maxLength);
-			char[] buffy = new char[padding];
+			char* buffy = stackalloc char [padding];
 			int position = padding;
 
 			// fill up w/ precision # of 0's
@@ -1043,7 +1041,7 @@ namespace System {
 		internal static string FormatGeneral (long value, int precision, NumberFormatInfo nfi, bool upper, int maxLength) 
 		{
 			bool negative = (value < 0);
-			char[] tmp = new char [maxLength];
+			char* tmp = stackalloc char [maxLength];
 			int exponent = 0;
 			int position = maxLength;
 
@@ -1106,11 +1104,9 @@ namespace System {
 			tmp[--position] = digitLowerTable[number];
 
 			// finally, make our final buffer, at least precision + 6 for 'E+XX' and '-'
-			// and reuse pow for size
 			idx = position;
 			position = 0;
-			pow = (ulong)precision + 6;
-			char[] buffy = new char[pow];
+			char* buffy = stackalloc char [precision + 6];
 
 			if (negative)
 				buffy[position++] = '-';
@@ -1148,7 +1144,7 @@ namespace System {
 
 		internal static string FormatGeneral (ulong value, int precision, NumberFormatInfo nfi, bool upper, int maxLength)
 		{
-			char[] tmp = new char [maxLength];
+			char* tmp = stackalloc char [maxLength];
 			int exponent = 0;
 			int position = maxLength;
 			ulong number = value;
@@ -1199,11 +1195,9 @@ namespace System {
 			tmp[--position] = digitLowerTable[number];
 
 			// finally, make our final buffer, at least precision + 6 for 'E+XX' and '-'
-			// and reuse pow for size
 			idx = position;
 			position = 0;
-			pow = (ulong)precision + 6;
-			char[] buffy = new char[pow];
+			char* buffy = stackalloc char [precision + 6];
 
 			buffy[position++] = tmp[idx++];
 			buffy[position] = '.';
@@ -1270,18 +1264,18 @@ namespace System {
 		// and a spot for decimal separator.
 		//
 
-		private static string FormatNumber (long value, int precision, NumberFormatInfo nfi, int maxLength) 
+		static string FormatNumber (long value, int precision, NumberFormatInfo nfi, int maxLength) 
 		{
 			int i, j, k;
-			char[] groupSeparator = nfi.NumberGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.NumberDecimalSeparator.ToCharArray ();
+			string groupSeparator = nfi.NumberGroupSeparator;
+			string decimalSeparator = nfi.NumberDecimalSeparator;
 			int[] groupSizes = nfi.NumberGroupSizes;
 
 			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
 			int pattern = nfi.NumberNegativePattern;
 			int size = maxLength + (maxLength * groupSeparator.Length) + padding +
 			decimalSeparator.Length + 4;
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			int position = size;
 			bool negative = (value < 0);
 			
@@ -1380,17 +1374,17 @@ namespace System {
 			return new string (buffy, position, (size - position));
 		}
 
-		private static string FormatNumber (ulong value, int precision, NumberFormatInfo nfi, int maxLength)
+		static string FormatNumber (ulong value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int i, j, k;
-			char[] groupSeparator = nfi.NumberGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.NumberDecimalSeparator.ToCharArray ();
+			string groupSeparator = nfi.NumberGroupSeparator;
+			string decimalSeparator = nfi.NumberDecimalSeparator;
 			int[] groupSizes = nfi.NumberGroupSizes;
 
 			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
 			int size = maxLength + (maxLength * groupSeparator.Length) + padding +
 			decimalSeparator.Length + 2;
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			int position = size;
 			
 			// right pad it w/ precision 0's
@@ -1454,14 +1448,14 @@ namespace System {
 		//  I have them commented out in the switch statement
 		//
 
-		private static string FormatPercent (long value, int precision, NumberFormatInfo nfi, int maxLength)
+		static string FormatPercent (long value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int i, j, k;
 			bool negative = (value < 0);
 
-			char[] groupSeparator = nfi.PercentGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.PercentDecimalSeparator.ToCharArray ();
-			char[] percentSymbol = nfi.PercentSymbol.ToCharArray ();
+			string groupSeparator = nfi.PercentGroupSeparator;
+			string decimalSeparator = nfi.PercentDecimalSeparator;
+			string percentSymbol = nfi.PercentSymbol;
 			int[] groupSizes = nfi.PercentGroupSizes;
 			int pattern = negative ? nfi.PercentNegativePattern : nfi.PercentPositivePattern;
 			int symbolLength = percentSymbol.Length;
@@ -1469,7 +1463,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.PercentDecimalDigits;	     
 			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			int position = size;
 
 			// set up the pattern from IFormattible
@@ -1614,13 +1608,13 @@ namespace System {
 			return new string (buffy, position, (size - position));
 		}
 
-		private static string FormatPercent (ulong value, int precision, NumberFormatInfo nfi, int maxLength) 
+		static string FormatPercent (ulong value, int precision, NumberFormatInfo nfi, int maxLength) 
 		{
 			int i, j, k;
 
-			char[] groupSeparator = nfi.PercentGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.PercentDecimalSeparator.ToCharArray ();
-			char[] percentSymbol = nfi.PercentSymbol.ToCharArray ();
+			string groupSeparator = nfi.PercentGroupSeparator;
+			string decimalSeparator = nfi.PercentDecimalSeparator;
+			string percentSymbol = nfi.PercentSymbol;
 			int[] groupSizes = nfi.PercentGroupSizes;
 			int pattern = nfi.PercentPositivePattern;
 			int symbolLength = percentSymbol.Length;
@@ -1628,7 +1622,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.PercentDecimalDigits;	     
 			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			int position = size;
 
 			// set up the pattern from IFormattible
@@ -1731,11 +1725,11 @@ namespace System {
 		// which will loop forever when you hit -1;
 		//
 
-		private static string FormatHexadecimal (long value, int precision, bool upper, int maxLength, int integerSize)
+		static string FormatHexadecimal (long value, int precision, bool upper, int maxLength, int integerSize)
 		{
 			if (precision < 0) precision = 0;
 			int size = maxLength + precision;
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
 			const long mask = (1 << 4) - 1;
@@ -1758,11 +1752,11 @@ namespace System {
 			return new string(buffy, position, (size - position));
 		}
 
-		private static string FormatHexadecimal (ulong value, int precision, bool upper, int maxLength)
+		static string FormatHexadecimal (ulong value, int precision, bool upper, int maxLength)
 		{			
 			if (precision < 0) precision = 0;
 			int size = maxLength + precision;
-			char[] buffy = new char[size];
+			char* buffy = stackalloc char [size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
 			const ulong mask = (1 << 4) - 1;
@@ -1786,7 +1780,7 @@ namespace System {
 
 		// ============ Format Custom ============ //
 
-		private static string FormatCustom (string format, long number, NumberFormatInfo nfi, int maxLength)
+		static string FormatCustom (string format, long number, NumberFormatInfo nfi, int maxLength)
 		{
 			string strnum = FormatGeneral (number, -1, nfi, true, maxLength);
 			FormatParse fp = new FormatParse (format, nfi);
@@ -1794,7 +1788,7 @@ namespace System {
 			return fp.FormatNumber (strnum, sign);
 		}
 
-		private static string FormatCustom (string format, ulong number, NumberFormatInfo nfi, int maxLength)
+		static string FormatCustom (string format, ulong number, NumberFormatInfo nfi, int maxLength)
 		{
 			string strnum = FormatGeneral (number, -1, nfi, true, maxLength);
 			FormatParse fp = new FormatParse (format, nfi);
