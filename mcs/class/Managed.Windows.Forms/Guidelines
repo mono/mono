@@ -1,5 +1,5 @@
-		Guidelines for hacking SWF
-		==========================
+                Guidelines for hacking SWF
+                ==========================
 
 This document describes some of the minimal coding guidelines
 to be followed while hacking the new SWF implementation. These
@@ -8,12 +8,12 @@ guidelines are for the sake of consistency.
 1. Please refer to the design document of SWF to understand the
    implementation.
 
-2. Please follow the general coding style described for Mono project.
-   /cvs/mono/docs/README (location ??)
+2. Please follow the general coding style described for the Mono
+   project (/cvs/mcs/class/README).
 
 3. Method stubbing is highly discouraged. It's recommended to submit
    an implemented method instead of just the signature. If you have
-   to stub a property or method, please use the [MonoTODO("what")]
+   to stub a property or method, please use the [MonoTODO ("what")]
    attribute to document what still needs to be done.
 
 4. When you implement the drawing method for a control in a theme, it
@@ -33,11 +33,11 @@ guidelines are for the sake of consistency.
 
    A typical OnPaint will look like this:
 
-      protected override void OnPaint(PaintEventArgs pevent) {
-         pevent.Graphics.DrawImage(this.ImageBuffer, 
-                                   pevent.ClipRectangle, 
-                                   pevent.ClipRectangle, 
-                                   GraphicsUnit.Pixel);
+      protected override void OnPaint (PaintEventArgs pevent) {
+         pevent.Graphics.DrawImage (this.ImageBuffer, 
+                                    pevent.ClipRectangle, 
+                                    pevent.ClipRectangle, 
+                                    GraphicsUnit.Pixel);
       }
 
    The ImageBuffer bitmap is supposed to contain the representation
@@ -46,12 +46,12 @@ guidelines are for the sake of consistency.
       public Color RectColor {
          set {
             sb.Color = value;
-            Redraw();
+            Redraw ();
          }
       }
 	
-      internal void Redraw() {
-   			this.DeviceContext.FillRectangle(sb, this.ClientRectangle);
+      internal void Redraw () {
+          this.DeviceContext.FillRectangle (sb, this.ClientRectangle);
       }
 
 

@@ -15,12 +15,12 @@ The new implementation of SWF is based on drivers providing access to
 the native windowing system of the host OS. The old implementation was
 based on Wine library. The motivation for new implementation comes from
 the problems faced with the Wine approach:
-- Wine was missing features that .Net provided over Win32; to add those
+- Wine was missing features that .NET provided over Win32; to add those
   features we would have had to write the controls managed anyway
 - Installation became much more difficult due to the Wine dependencies
   and the relatively akward way we had to initialize Wine.
 
-The new implementation takes advantage of WIN32 APIs on Windows and
+The new implementation takes advantage of Win32 APIs on Windows and
 emulates the same on Linux using X11 for window management and events.
 Following gives a high level idea of the new implementation of SWF.
 
@@ -43,14 +43,14 @@ implementation. For drawing the controls System.Drawing library is used.
 ==========
 
 The new design of SWF makes porting of the library to Linux/Windows/Mac
-very easy. All the controls in SWF inherit from Control class and most
-of the painting operations are done using ControlPaint class. 
-At the low, XplatUI class provides the abstraction over the underlying
-window management library. It contains a XplatUIDriver for providing the
-window management. XplatUIDriver is an abstract class which is implemented
-by XplatX11 and XplatWin32 classes respectively for Linux/Mac and Windows
-platforms. Support for any new platform can be added simply by implementing
-XplatUIDriver for the new platform.
+very easy.
+All the controls in SWF inherit from Control class and most of the painting
+operations are done using ControlPaint class. At the low level, XplatUI class
+provides the abstraction over the underlying window management system. It
+contains a XplatUIDriver for providing the window management. XplatUIDriver
+is an abstract class which is implemented by XplatX11 and XplatWin32 classes
+respectively for Linux/Mac and Windows platforms. Support for any new platform
+can be added simply by implementing XplatUIDriver for the new platform.
 
 
 2a. Double Buffering:
@@ -60,7 +60,7 @@ For drawing controls double buffering used, so that a better performance
 can be achieved. Every controls maintains a bitmap image of itself. This
 image is used for painting the screen when a paint event is raised. When
 a control property changes the look of the control, it redraws the bitmap
-image. [See the guidelines document]
+image. [Please see the guidelines document]
 
 
 2b. Themes:
