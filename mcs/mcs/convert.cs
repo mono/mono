@@ -472,6 +472,7 @@ namespace Mono.CSharp {
 			if (expr_type == target_type)
 				return true;
 
+
 			// First numeric conversions 
 
 			if (expr_type == TypeManager.sbyte_type){
@@ -578,6 +579,20 @@ namespace Mono.CSharp {
 					return true;
 			}	
 			
+			if (expr.eclass == ExprClass.MethodGroup){
+				if (TypeManager.IsDelegateType (target_type) && RootContext.Version != LanguageVersion.ISO_1){
+					MethodGroupExpr mg = expr as MethodGroupExpr;
+					if (mg != null){
+						//
+						// This should not happen frequently, so we can create an object
+						// to test compatibility
+						//
+						Expression c = ImplicitDelegateCreation.Create (ec, mg, target_type, Location.Null);
+						return c != null;
+					}
+				}
+			}
+			
 			if (ImplicitReferenceConversionExists (expr, target_type))
 				return true;
 
@@ -656,7 +671,7 @@ namespace Mono.CSharp {
 				if (conv != null)
 					return true;
 			}
-			
+
 			return false;
 		}
 
