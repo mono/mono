@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.UICuesEventArgs
+// System.Windows.Forms.UpDownBase
 //
 // Author:
 //	 stubbed out by Stefan Warnke (StefanW@POBox.com)
@@ -313,7 +313,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 
 			//FIXME shoould this be (ref message m)??
-		protected override void WndProc(Message m) { // .NET V1.1 Beta
+		protected virtual void WndProc(Message m) { // .NET V1.1 Beta
 			throw new NotImplementedException ();
 		}
 		

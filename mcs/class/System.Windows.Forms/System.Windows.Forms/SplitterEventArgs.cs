@@ -36,6 +36,7 @@ namespace System.Windows.Forms {
 		}
 
 		#region Public Properties
+
 		[ComVisible(true)]
 		public int SplitX {
 			get {
@@ -45,6 +46,7 @@ namespace System.Windows.Forms {
 				splitx = value;
 			}
 		}
+
 		[ComVisible(true)]
 		public int SplitY {
 			get {
@@ -54,12 +56,14 @@ namespace System.Windows.Forms {
 				splity = value;
 			}
 		}
+
 		[ComVisible(true)]
 		public int X {
 			get {
 				return x;
 			}
 		}
+
 		[ComVisible(true)]
 		public int Y {
 			get {
@@ -68,81 +72,5 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
-		#region Public Methods
-
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two SplitterEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	SplitX, SplitY, X, Y Property
-		///	of the two SplitterEventArgs.
-		/// </remarks>
-		public static bool operator == (SplitterEventArgs SplitterEventArgsA, SplitterEventArgs SplitterEventArgsB) 
-		{
-			return (SplitterEventArgsA.SplitX == SplitterEventArgsB.SplitX) && (SplitterEventArgsA.SplitY == SplitterEventArgsB.SplitY) && (SplitterEventArgsA.X == SplitterEventArgsB.X) && (SplitterEventArgsA.Y == SplitterEventArgsB.Y);
-		}
-		
-		/// <summary>
-		///	Inequality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two SplitterEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	SplitX, SplitY, X, Y Property
-		///	of the two SplitterEventArgs.
-		/// </remarks>
-		public static bool operator != (SplitterEventArgs SplitterEventArgsA, SplitterEventArgs SplitterEventArgsB) 
-		{
-			return (SplitterEventArgsA.SplitX != SplitterEventArgsB.SplitX) || (SplitterEventArgsA.SplitY != SplitterEventArgsB.SplitY) || (SplitterEventArgsA.X != SplitterEventArgsB.X) || (SplitterEventArgsA.Y != SplitterEventArgsB.Y);
-		}
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this
-		///	UICuesEventArgs and another
-		///	object.
-		/// </remarks>
-		public override bool Equals (object obj) 
-		{
-			if (!(obj is SplitterEventArgs))return false;
-			return (this == (SplitterEventArgs) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME: add class specific stuff;
-			return base.GetHashCode();
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the SplitterEventArgs as a string.
-		/// </remarks>
-		[MonoTODO]
-		public override string ToString () 
-		{
-			//FIXME: add class specific stuff;
-			return base.ToString();
-		}
-
-		#endregion
 	}
 }

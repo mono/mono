@@ -14,7 +14,6 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 
 	// <summary>
-	// Just a template.
 	// </summary>
 
     public class QueryContinueDragEventArgs : EventArgs {
@@ -38,6 +37,7 @@ namespace System.Windows.Forms {
 		}
 
 		#region Public Properties
+
 		[ComVisible(true)]
 		public DragAction Action {
 			get {
@@ -47,12 +47,14 @@ namespace System.Windows.Forms {
 				action = value;
 			}
 		}
+
 		[ComVisible(true)] 
 		public bool EscapePressed {
 			get {
 				return escapepressed;
 			}
 		}
+
 		[ComVisible(true)]
 		public int KeyState {
 			get {
@@ -61,82 +63,5 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
-		#region Public Methods
-
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two QueryContinueDragEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	keystate, escaperessed and action Property
-		///	of the two QueryContinueDragEventArgs.
-		/// </remarks>
-		public static bool operator == (QueryContinueDragEventArgs QueryContinueDragEventArgsA, QueryContinueDragEventArgs QueryContinueDragEventArgsB) 
-		{
-			return ((QueryContinueDragEventArgsA.EscapePressed == QueryContinueDragEventArgsB.EscapePressed) && (QueryContinueDragEventArgsA.KeyState == QueryContinueDragEventArgsB.KeyState) && (QueryContinueDragEventArgsA.Action == QueryContinueDragEventArgsB.Action));
-		}
-		
-		/// <summary>
-		///	Inequality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two ScrollEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	newvalue and type Property
-		///	of the two ScrollEventArgs.
-		/// </remarks>
-		public static bool operator != (QueryContinueDragEventArgs QueryContinueDragEventArgsA, QueryContinueDragEventArgs QueryContinueDragEventArgsB) 
-		{
-			return ((QueryContinueDragEventArgsA.EscapePressed != QueryContinueDragEventArgsB.EscapePressed) || (QueryContinueDragEventArgsA.KeyState != QueryContinueDragEventArgsB.KeyState) || (QueryContinueDragEventArgsA.Action != QueryContinueDragEventArgsB.Action));
-		}
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this
-		///	QueryContinueDragEventArgs and another
-		///	object.
-		/// </remarks>
-		public override bool Equals (object obj) 
-		{
-			if (!(obj is QueryContinueDragEventArgs))return false;
-			return (this == (QueryContinueDragEventArgs) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME: add class specific stuff;
-			return base.GetHashCode();
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the object as a string.
-		/// </remarks>
-		[MonoTODO]
-		public override string ToString () 
-		{
-			//FIXME: add class specific stuff;
-			return base.ToString();
-		}
-
-
-		#endregion
 	}
 }

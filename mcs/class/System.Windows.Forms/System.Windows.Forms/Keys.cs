@@ -14,6 +14,9 @@ namespace System.Windows.Forms {
 	//TODO:
 	//Values not yet implmented
 	/// </summary>
+	///
+	[Flags]
+	[Serializable]
 	public enum Keys {
 		A = 65,
 		Add = 107,

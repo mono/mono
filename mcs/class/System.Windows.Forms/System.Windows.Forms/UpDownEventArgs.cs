@@ -14,6 +14,16 @@ namespace System.Windows.Forms {
 	/// Summary description for UpDownEventArgs.
 	/// </summary>
 	public class UpDownEventArgs : EventArgs {
+		private int buttonID;
 
+		public UpDownEventArgs(int buttonPushed){
+			buttonID = buttonPushed;
+		}
+
+		public int ButtonID {
+			get {
+				return buttonID;
+			}
+		}
 	}
 }

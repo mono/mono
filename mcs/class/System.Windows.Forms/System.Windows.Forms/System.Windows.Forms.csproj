@@ -3,7 +3,7 @@
         ProjectType = "Local"
         ProductVersion = "7.0.9466"
         SchemaVersion = "1.0"
-        ProjectGuid = "{E432273C-2550-4642-866B-3FD63BE785EB}"
+        ProjectGuid = "{E0B52BB7-B244-4724-9A63-9616B6FAA5E8}"
     >
         <Build>
             <Settings
@@ -60,31 +60,41 @@
                 <Reference
                     Name = "System"
                     AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.dll"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.dll"
                 />
                 <Reference
                     Name = "System.Data"
                     AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
                 />
                 <Reference
                     Name = "System.XML"
                     AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
                 <Reference
                     Name = "System.Drawing"
                     AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll"
                 />
                 <Reference
                     Name = "Accessibility"
                     AssemblyName = "Accessibility"
-                    HintPath = "..\..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\Accessibility.dll"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\Accessibility.dll"
+                />
+                <Reference
+                    Name = "System.Runtime.Remoting"
+                    AssemblyName = "System.Runtime.Remoting"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Runtime.Remoting.dll"
+                />
+                <Reference
+                    Name = "System.Drawing.Design"
+                    AssemblyName = "System.Drawing.Design"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.Design.dll"
                 />
                 <Reference
                     Name = "System.Windows.Forms.Design"
-                    Project = "{EF89E643-02F5-4E97-9353-3C92F209EB47}"
+                    Project = "{A38C110F-63F4-4B53-A67E-9A46681C768E}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
@@ -258,7 +268,7 @@
                 />
                 <File
                     RelPath = "CheckedListBox.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -295,11 +305,6 @@
                     RelPath = "ColumnHeader.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ColumnHeader.resx"
-                    DependentUpon = "ColumnHeader.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "ColumnHeaderStyle.cs"
@@ -435,6 +440,11 @@
                     RelPath = "DataGridColumnStyle.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DataGridColumnStyle.resx"
+                    DependentUpon = "DataGridColumnStyle.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "DataGridLineStyle.cs"
@@ -584,6 +594,11 @@
                 <File
                     RelPath = "FlatStyle.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FolderBrowserDialog.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File

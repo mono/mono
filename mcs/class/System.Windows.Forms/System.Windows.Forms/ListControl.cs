@@ -239,6 +239,12 @@ namespace System.Windows.Forms {
 		}		
 		
 		[MonoTODO]
+		protected virtual void OnSelectedValueChanged(EventArgs e){
+			throw new NotImplementedException ();
+		}
+
+		
+		[MonoTODO]
 		protected override void OnBindingContextChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();

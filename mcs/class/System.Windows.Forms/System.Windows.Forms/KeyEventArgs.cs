@@ -22,23 +22,15 @@ namespace System.Windows.Forms {
 		#region Fields
 		
 		private Keys keydata;
-		private Keys keycode;			
-		private Keys modifiers;
-
-		private bool alt = false;
-		private bool control = false;
 		private bool handled = false;
-		private bool shift = false;
-		
-		private int keyvalue = -1;
-		
+
 		#endregion
 		//
 		//  --- Constructor
 		//
 		public KeyEventArgs (Keys keyData)
 		{
-			keydata = keyData;
+			this.keydata = keyData;
 		}
 
 		#region Public Properties
@@ -47,7 +39,7 @@ namespace System.Windows.Forms {
 		public virtual bool Alt 
 		{
 			get {
-				return alt;
+				return (keydata == Keys.Alt);
 			}
 		}
 		
@@ -55,7 +47,7 @@ namespace System.Windows.Forms {
 		public bool Control 
 		{
 			get {
-				return control;
+				return (keydata == Keys.Control);
 			}
 		}
 		
@@ -74,7 +66,7 @@ namespace System.Windows.Forms {
 		public Keys KeyCode 
 		{
 			get {
-				return keycode;
+				return keydata & Keys.KeyCode;
 			}
 		}
 		
@@ -90,7 +82,7 @@ namespace System.Windows.Forms {
 		public int KeyValue 
 		{
 			get {
-				return keyvalue;
+				return Convert.ToInt32(keydata);
 			}
 		}
 		
@@ -98,7 +90,11 @@ namespace System.Windows.Forms {
 		public Keys Modifiers 
 		{
 			get {
-				return modifiers;
+				Keys returnKeys = new Keys();
+				if(keydata == Keys.Alt)returnKeys = Keys.Alt;
+				if(keydata == Keys.Control)returnKeys = returnKeys | Keys.Control;
+				if(keydata == Keys.Shift)returnKeys = returnKeys | Keys.Shift;
+				return returnKeys;
 			}
 		}
 		
@@ -106,103 +102,10 @@ namespace System.Windows.Forms {
 		public bool Shift 
 		{
 			get {
-				return shift;
+				return (keydata == Keys.Shift);
 			}
 		}
 		#endregion
 
-		#region Public Methods
-
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two KeyEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	alt, control, handled, keycode, keydata, keyvalue, modifiers, shift Property
-		///	of the two KeyEventArgs.
-		/// </remarks>
-		public static bool operator == (KeyEventArgs KeyEventArgsA, KeyEventArgs KeyEventArgsB) 
-		{
-			return (KeyEventArgsA.Alt == KeyEventArgsB.Alt) &&
-				   (KeyEventArgsA.Control == KeyEventArgsB.Control) &&
-				   (KeyEventArgsA.Handled == KeyEventArgsB.Handled) &&
-				   (KeyEventArgsA.KeyCode == KeyEventArgsB.KeyCode) &&
-				   (KeyEventArgsA.KeyData == KeyEventArgsB.KeyData) &&
-				   (KeyEventArgsA.KeyValue == KeyEventArgsB.KeyValue) &&
-				   (KeyEventArgsA.Modifiers == KeyEventArgsB.Modifiers) &&
-				   (KeyEventArgsA.Shift == KeyEventArgsB.Shift);
-
-		}
-		
-		/// <summary>
-		///	Inequality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two KeyEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	alt, control, handled, keycode, keydata, keyvalue, modifiers, shift Property
-		///	of the two KeyEventArgs.
-		/// </remarks>
-		public static bool operator != (KeyEventArgs KeyEventArgsA, KeyEventArgs KeyEventArgsB) 
-		{
-			return (KeyEventArgsA.Alt != KeyEventArgsB.Alt) ||
-				(KeyEventArgsA.Control != KeyEventArgsB.Control) ||
-				(KeyEventArgsA.Handled != KeyEventArgsB.Handled) ||
-				(KeyEventArgsA.KeyCode != KeyEventArgsB.KeyCode) ||
-				(KeyEventArgsA.KeyData != KeyEventArgsB.KeyData) ||
-				(KeyEventArgsA.KeyValue != KeyEventArgsB.KeyValue) ||
-				(KeyEventArgsA.Modifiers != KeyEventArgsB.Modifiers) ||
-				(KeyEventArgsA.Shift != KeyEventArgsB.Shift);
-
-		}
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this
-		///	KeyEventArgs and another
-		///	object.
-		/// </remarks>
-		public override bool Equals (object obj) 
-		{
-			if (!(obj is KeyEventArgs))return false;
-			return (this == (KeyEventArgs) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME: add class specific stuff;
-			return base.GetHashCode();
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the object as a string.
-		/// </remarks>
-		[MonoTODO]
-		public override string ToString () 
-		{
-			//FIXME: add class specific stuff;
-			return base.ToString() + " KeyEventArgs";
-		}
-
-
-		#endregion
 	}
 }

@@ -12,7 +12,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -29,10 +28,12 @@ namespace System.Windows.Forms {
 			//
 			//  --- Constructor
 			//
+
 			public NodeLabelEditEventArgs(TreeNode node)
 			{
 				this.node = node;
 			}
+
 			public NodeLabelEditEventArgs(TreeNode node, string label)
 			{
 				this.node = node;
@@ -49,12 +50,14 @@ namespace System.Windows.Forms {
 					canceledit = value;
 				}
 			}
+
 			public string Label 
 			{
 				get {
 					return label;
 				}
 			}
+
 			public TreeNode Node {
 				get {
 					return node;
@@ -62,83 +65,5 @@ namespace System.Windows.Forms {
 			}
 
 			#endregion
-
-			#region Public Methods
-
-			/// <summary>
-			///	Equality Operator
-			/// </summary>
-			///
-			/// <remarks>
-			///	Compares two NodeLabelEditEventArgs objects.
-			///	The return value is based on the equivalence of
-			///	label, Node and CancelEdit Property
-			///	of the two NodeLabelEditEventArgs.
-			/// </remarks>
-			public static bool operator == (NodeLabelEditEventArgs NodeLabelEditEventArgsA, NodeLabelEditEventArgs NodeLabelEditEventArgsB) 
-			{
-				return (NodeLabelEditEventArgsA.Label == NodeLabelEditEventArgsB.Label) && (NodeLabelEditEventArgsA.Node == NodeLabelEditEventArgsB.Node) && (NodeLabelEditEventArgsA.CancelEdit == NodeLabelEditEventArgsB.CancelEdit);
-			}
-		
-			/// <summary>
-			///	Inequality Operator
-			/// </summary>
-			///
-			/// <remarks>
-			///	Compares two NodeLabelEditEventArgs objects.
-			///	The return value is based on the equivalence of
-			///	label, Node and CancelEdit Property
-			///	of the two NodeLabelEditEventArgs.
-			/// </remarks>
-			public static bool operator != (NodeLabelEditEventArgs NodeLabelEditEventArgsA, NodeLabelEditEventArgs NodeLabelEditEventArgsB) 
-			{
-				return (NodeLabelEditEventArgsA.Label != NodeLabelEditEventArgsB.Label) || (NodeLabelEditEventArgsA.Node != NodeLabelEditEventArgsB.Node) || (NodeLabelEditEventArgsA.CancelEdit != NodeLabelEditEventArgsB.CancelEdit);
-			}
-
-			/// <summary>
-			///	Equals Method
-			/// </summary>
-			///
-			/// <remarks>
-			///	Checks equivalence of this
-			///	PropertyTabChangedEventArgs and another
-			///	object.
-			/// </remarks>
-			public override bool Equals (object obj) 
-			{
-				if (!(obj is NodeLabelEditEventArgs))return false;
-				return (this == (NodeLabelEditEventArgs) obj);
-			}
-
-			/// <summary>
-			///	GetHashCode Method
-			/// </summary>
-			///
-			/// <remarks>
-			///	Calculates a hashing value.
-			/// </remarks>
-			[MonoTODO]
-			public override int GetHashCode () 
-			{
-				//FIXME: add class specific stuff;
-				return base.GetHashCode();
-			}
-
-			/// <summary>
-			///	ToString Method
-			/// </summary>
-			///
-			/// <remarks>
-			///	Formats the object as a string.
-			/// </remarks>
-			[MonoTODO]
-			public override string ToString () 
-			{
-				//FIXME: add class specific stuff;
-				return base.ToString();
-			}
-
-		#endregion
-
 	 }
 }

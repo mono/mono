@@ -12,7 +12,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -35,17 +34,20 @@ namespace System.Windows.Forms {
 		}
 		
 		#region Public Properties
+
 		public CheckState CurrentValue 
 		{
 			get {
 				return currentcheckvalue;
 			}
 		}
+
 		public int Index {
 			get {
 				return index;
 			}
 		}
+
 		public CheckState NewValue {
 			get {
 				return newcheckvalue;
@@ -54,90 +56,6 @@ namespace System.Windows.Forms {
 				newcheckvalue = value;
 			}
 		}
-		#endregion
-
-		#region Public Methods
-
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two ItemCheckEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	CurrentValue, Index, NewValue and end Property
-		///	of the two ItemCheckEventArgs.
-		/// </remarks>
-		public static bool operator == (ItemCheckEventArgs ItemCheckEventArgsA, ItemCheckEventArgs ItemCheckEventArgsB) 
-		{
-			return (ItemCheckEventArgsA.CurrentValue == ItemCheckEventArgsB.CurrentValue) && 
-				   (ItemCheckEventArgsA.Index == ItemCheckEventArgsB.Index) && 
-				   (ItemCheckEventArgsA.NewValue == ItemCheckEventArgsB.NewValue);
-
-		}
-		
-		/// <summary>
-		///	Inequality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two ItemCheckEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	CurrentValue, Index, NewValue and end Property
-		///	of the two ItemCheckEventArgs.
-		/// </remarks>
-		public static bool operator != (ItemCheckEventArgs ItemCheckEventArgsA, ItemCheckEventArgs ItemCheckEventArgsB) 
-		{
-			return (ItemCheckEventArgsA.CurrentValue != ItemCheckEventArgsB.CurrentValue) || 
-				(ItemCheckEventArgsA.Index != ItemCheckEventArgsB.Index) || 
-				(ItemCheckEventArgsA.NewValue != ItemCheckEventArgsB.NewValue);
-
-		}
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this
-		///	ItemCheckEventArgs and another
-		///	object.
-		/// </remarks>
-		public override bool Equals (object obj) 
-		{
-			if (!(obj is ItemCheckEventArgs))return false;
-			return (this == (ItemCheckEventArgs) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME: add class specific stuff;
-			return base.GetHashCode();
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the object as a string.
-		/// </remarks>
-		[MonoTODO]
-		public override string ToString () 
-		{
-			//FIXME: add class specific stuff;
-			return base.ToString() + " ItemCheckEventArgs";
-		}
-
-
 		#endregion
 	}
 }

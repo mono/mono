@@ -106,7 +106,7 @@ namespace System.Windows.Forms {
 			 }
 		 }
 		 [MonoTODO]
-		 protected override int SelectionLength {
+		 public override int SelectionLength {
 			 get {
 				 throw new NotImplementedException ();
 			 }
@@ -134,7 +134,8 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		//[Lame Spec] spec says this should be virtural
-		protected override void OnTextAlignChanged(EventArgs e)
+		//Spec was right!
+		protected virtual void OnTextAlignChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}

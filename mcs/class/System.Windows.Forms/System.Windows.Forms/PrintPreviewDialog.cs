@@ -240,7 +240,7 @@ namespace System.Windows.Forms {
 			set { helpButton=value; }
 		}
 		
-		public Icon Icon {
+		public new Icon Icon {
 			get { return icon; }
 			set { icon=value; }
 		}

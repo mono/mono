@@ -14,7 +14,6 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -30,12 +29,14 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
+
 		public QueryAccessibilityHelpEventArgs() 
 		{
 			this.helpkeyword = "";
 			this.helpnamespace = "";
 			this.helpstring = "";
 		}
+
 		public QueryAccessibilityHelpEventArgs(string helpNamespace, string helpString, string helpKeyword) {
 			this.helpkeyword = helpKeyword;
 			this.helpnamespace = helpNamespace;
@@ -44,6 +45,7 @@ namespace System.Windows.Forms {
 
 
 		#region Public Properties
+
 		[ComVisible(true)] 
 		public string HelpKeyword {
 			get {
@@ -53,6 +55,7 @@ namespace System.Windows.Forms {
 				helpkeyword = value;
 			}
 		}
+
 		[ComVisible(true)] 
 		public string HelpNamespace {
 			get {
@@ -62,6 +65,7 @@ namespace System.Windows.Forms {
 				helpnamespace = value;
 			}
 		}
+
 		[ComVisible(true)] 
 		public string HelpString {
 			get {
@@ -72,85 +76,5 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion
-
-		#region Public Methods
-
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two QueryAccessibilityHelpEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	helpkeyword, helpnamespace and helpstring Property
-		///	of the two QueryAccessibilityHelpEventArgs.
-		/// </remarks>
-		public static bool operator == (QueryAccessibilityHelpEventArgs QueryAccessibilityHelpEventArgsA, QueryAccessibilityHelpEventArgs QueryAccessibilityHelpEventArgsB) 
-		{
-			return ((QueryAccessibilityHelpEventArgsA.HelpKeyword == QueryAccessibilityHelpEventArgsB.HelpKeyword) && (QueryAccessibilityHelpEventArgsA.HelpNamespace == QueryAccessibilityHelpEventArgsB.HelpNamespace) && (QueryAccessibilityHelpEventArgsA.HelpString == QueryAccessibilityHelpEventArgsB.HelpString));
-		}
-		
-		/// <summary>
-		///	Inequality Operator
-		/// </summary>
-		///
-		/// <remarks>
-		///	Compares two QueryAccessibilityHelpEventArgs objects.
-		///	The return value is based on the equivalence of
-		///	helpkeyword, helpnamespace and helpstring Property
-		///	of the two QueryAccessibilityHelpEventArgs.
-		/// </remarks>
-		public static bool operator != (QueryAccessibilityHelpEventArgs QueryAccessibilityHelpEventArgsA, QueryAccessibilityHelpEventArgs QueryAccessibilityHelpEventArgsB) 
-		{
-			return ((QueryAccessibilityHelpEventArgsA.HelpKeyword != QueryAccessibilityHelpEventArgsB.HelpKeyword) || (QueryAccessibilityHelpEventArgsA.HelpNamespace != QueryAccessibilityHelpEventArgsB.HelpNamespace) || (QueryAccessibilityHelpEventArgsA.HelpString != QueryAccessibilityHelpEventArgsB.HelpString));
-		}
-
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this
-		///	QueryAccessibilityHelpEventArgs and another
-		///	object.
-		/// </remarks>
-		public override bool Equals (object obj) 
-		{
-			if (!(obj is QueryAccessibilityHelpEventArgs))return false;
-			return (this == (QueryAccessibilityHelpEventArgs) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME: add class specific stuff;
-			return base.GetHashCode();
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the object as a string.
-		/// </remarks>
-		[MonoTODO]
-		public override string ToString () 
-		{
-			//FIXME: add class specific stuff;
-			return base.ToString();
-		}
-
-
-		#endregion
-
 	}
 }

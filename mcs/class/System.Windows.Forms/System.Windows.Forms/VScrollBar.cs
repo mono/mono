@@ -13,31 +13,43 @@ namespace System.Windows.Forms {
 
 	public class VScrollBar : ScrollBar {
 
+		private RightToLeft rightToLeft;
 		// --- Properties ---
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-
-			get { throw new NotImplementedException(); }
+			get {
+				CreateParams cp = base.CreateParams;
+				//Modify cp before returning it.
+				return cp;
+			}
 		}
 
 		[MonoTODO]
 		protected override Size DefaultSize {
-
-			get { throw new NotImplementedException(); }
+			get {
+				//Set to Microsoft Default
+				return new Size(16,80);
+			}
 		}
 
 		[MonoTODO]
 		public override RightToLeft RightToLeft {
 
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get {
+				return rightToLeft;
+			}
+			set {
+				rightToLeft = value;
+				//FixMe: invalidate to force redraw.
+				//Invalidate();
+			}
 		}
 
 		// --- Constructor ---
 		[MonoTODO]
 		public VScrollBar()
 		{
-			throw new NotImplementedException();
+			rightToLeft = RightToLeft.Inherit;
 		}
 	}
 }

@@ -23,7 +23,7 @@ using System.ComponentModel;
 		[MonoTODO]
 		public TreeNodeConverter()
 		{
-			throw new NotImplementedException ();
+			//
 		}
 		
 		// --- Public Methods
@@ -31,12 +31,15 @@ using System.ComponentModel;
 		[MonoTODO]
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			//FIXME: return types that we can convert to
+			return false;
 		}
 		[MonoTODO]
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			throw new NotImplementedException ();
+			//FIXME: Implment our own conversion
+			//return base.CanConvertTo(context, culture, value, destinationType);
 		}
 	}
 }
