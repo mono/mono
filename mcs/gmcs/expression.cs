@@ -4984,7 +4984,7 @@ namespace Mono.CSharp {
 
 		static bool InferType (Type pt, Type at, ref Type[] infered)
 		{
-			if (pt.IsGenericParameter) {
+			if (pt.IsGenericParameter && (pt.DeclaringMethod != null)) {
 				int pos = pt.GenericParameterPosition;
 
 				if (infered [pos] == null) {

@@ -1,3 +1,8 @@
+2004-08-12  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.InferType): We can only infer method
+	type parameters.  Fixes #62647.
+
 2004-08-11  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineType): Create the TypeBuilder
