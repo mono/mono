@@ -1,0 +1,11 @@
+2002-06-20  Alejandro Sánchez Acosta <raciel@es.gnu.org>
+
+	* IPropertyValueUIService.cs: Added
+
+	* PropertyValueItem.cs: Added
+
+	* PropertyValueUIHandler.cs: Added
+
+	* PropertyValueUIItemInvokeHandler.cs: Added
+
+	* ChangeLog: new file.
