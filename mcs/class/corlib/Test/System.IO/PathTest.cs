@@ -432,20 +432,20 @@ namespace MonoTests.System.IO
 		public void TestGetFullPath2 ()
 		{
 			if (Windows) {
-				AssertEquals ("GetFullPath w#01", "z:\\", Path.GetFullPath ("z:"));
-				AssertEquals ("GetFullPath w#02", "c:\\abc\\def", Path.GetFullPath ("c:\\abc\\def"));
-				Assert ("GetFullPath w#03", Path.GetFullPath ("\\").EndsWith ("\\"));
+				AssertEquals ("GetFullPath w#01", @"Z:\", Path.GetFullPath ("z:"));
+				AssertEquals ("GetFullPath w#02", @"c:\abc\def", Path.GetFullPath (@"c:\abc\def"));
+				Assert ("GetFullPath w#03", Path.GetFullPath (@"\").EndsWith (@"\"));
 				// "\\\\" is not allowed
-				Assert ("GetFullPath w#05", Path.GetFullPath ("/").EndsWith ("\\"));
+				Assert ("GetFullPath w#05", Path.GetFullPath ("/").EndsWith (@"\"));
 				// "//" is not allowed
-				Assert ("GetFullPath w#07", Path.GetFullPath ("readme.txt").EndsWith ("\\readme.txt"));
-				Assert ("GetFullPath w#08", Path.GetFullPath ("c").EndsWith ("\\c"));
-				Assert ("GetFullPath w#09", Path.GetFullPath ("abc\\def").EndsWith ("abc\\def"));
-				Assert ("GetFullPath w#10", Path.GetFullPath ("\\abc\\def").EndsWith ("\\abc\\def"));
-				AssertEquals ("GetFullPath w#11", "\\\\abc\\def", Path.GetFullPath ("\\\\abc\\def"));
-				AssertEquals ("GetFullPath w#12", "\\abc\\def", Path.GetFullPath ("abc//def"));
-				AssertEquals ("GetFullPath w#13", "\\", Path.GetFullPath ("/abc/def"));
-				AssertEquals ("GetFullPath w#14", "\\\\abc\\def", Path.GetFullPath ("//abc/def"));
+				Assert ("GetFullPath w#07", Path.GetFullPath ("readme.txt").EndsWith (@"\readme.txt"));
+				Assert ("GetFullPath w#08", Path.GetFullPath ("c").EndsWith (@"\c"));
+				Assert ("GetFullPath w#09", Path.GetFullPath (@"abc\def").EndsWith (@"abc\def"));
+				Assert ("GetFullPath w#10", Path.GetFullPath (@"\abc\def").EndsWith (@"\abc\def"));
+				AssertEquals ("GetFullPath w#11", @"\\abc\def", Path.GetFullPath (@"\\abc\def"));
+				AssertEquals ("GetFullPath w#12", Directory.GetCurrentDirectory () + @"\abc\def", Path.GetFullPath (@"abc//def"));
+				AssertEquals ("GetFullPath w#13", Directory.GetCurrentDirectory ().Substring (0,2) + @"\abc\def", Path.GetFullPath ("/abc/def"));
+				AssertEquals ("GetFullPath w#14", @"\\abc\def", Path.GetFullPath ("//abc/def"));
 			}
 		}
 

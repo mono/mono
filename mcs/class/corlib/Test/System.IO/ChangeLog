@@ -1,3 +1,9 @@
+2003-12-19  Nick Drochak <ndrochak@gol.com>
+
+	* PathTest.cs: Make tests pass on .NET 1.1.  Probably still
+	need to handle different directory and volume separators for
+	other OS's.
+
 2003-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
         * PathTest.cs :
