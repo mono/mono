@@ -21,8 +21,6 @@
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
 				<excludes name="System.CodeDom/Code-X-Collection.cs"/>
-				<excludes name="System.Net/IAuthenticationModule.cs"/>
-				<excludes name="System.Net/AuthenticationManager.cs"/>
 			</sources>
 		</csc>
 		<copy file="../lib/System.dll" tofile="Test/System.dll"/>
