@@ -1,5 +1,8 @@
 2005-01-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* metadata.c (mono_metadata_compute_size): Fix size calculation of
+	HasSematics encoded fields.
+	
 	* metadata.c (mono_type_to_unmanaged): Improve error message for 
 	invalid string marshalling.
 
