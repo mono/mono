@@ -1473,7 +1473,7 @@ namespace nist_dom.fundamental
 			string returnedValue = "";
 			System.Xml.XmlNode testNode = null;
 			System.Xml.XmlCharacterData testNodeData = null;
-			string expectedValue = util.INDEX_SIZE_ERR;
+			string expectedValue = "System.ArgumentOutOfRangeException";//util.INDEX_SIZE_ERR;
 
 			testResults results = new testResults("Core0026C");
 			try
@@ -1495,7 +1495,7 @@ namespace nist_dom.fundamental
 				}
 				catch(System.Exception ex) 
 				{
-					computedValue = ex.Message; 
+					computedValue = ex.GetType ().FullName; 
 				}
 			}
 			catch(System.Exception ex)
