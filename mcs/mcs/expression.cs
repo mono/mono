@@ -6863,14 +6863,16 @@ namespace Mono.CSharp {
 			while (lookup_type != null) {
 				ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
 				if (ilist != null) {
-					foreach (object o in ilist.getters) {
-						AllGetters.Add(o);
+					found_any = true;
+					if (ilist.getters != null) {
+						foreach (object o in ilist.getters) {
+							AllGetters.Add(o);
+						}
 					}
 				}
 				lookup_type = lookup_type.BaseType;
 			}
 			if (AllGetters.Count > 0) {
-				found_any = true;
 				found_any_getters = true;
 				get = (MethodInfo) Invocation.OverloadResolve (
 					ec, new MethodGroupExpr (AllGetters, loc), arguments, loc);
@@ -6915,6 +6917,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			ArrayList AllSetters = new ArrayList();
 			if (!CommonResolve (ec))
 				return null;
 
@@ -6924,28 +6927,23 @@ namespace Mono.CSharp {
 			Type lookup_type = indexer_type;
 			while (lookup_type != null) {
 				ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
-
-				if (ilist == null) {
-					lookup_type = lookup_type.BaseType;
-					continue;
+				if (ilist != null) {
+					found_any = true;
+					if (ilist.setters != null) {
+						foreach (object o in ilist.setters) {
+							AllSetters.Add(o);
+						}
+					}
 				}
-
-				found_any = true;
-
-				if (ilist.setters != null && ilist.setters.Count > 0) {
-					found_any_setters = true;
-
-					set_arguments = (ArrayList) arguments.Clone ();
-					set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
-					set = (MethodInfo) Invocation.OverloadResolve (
-						ec, new MethodGroupExpr (ilist.setters, loc), set_arguments, loc);
-
-					if (set != null)
-						break;
-				}
-
-
 				lookup_type = lookup_type.BaseType;
+			}
+			if (AllSetters.Count > 0) {
+				found_any_setters = true;
+				set_arguments = (ArrayList) arguments.Clone ();
+				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
+				set = (MethodInfo) Invocation.OverloadResolve (
+					ec, new MethodGroupExpr (AllSetters, loc),
+					set_arguments, loc);
 			}
 
 			if (!found_any) {
