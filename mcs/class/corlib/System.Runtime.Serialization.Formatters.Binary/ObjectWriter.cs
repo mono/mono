@@ -76,14 +76,22 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public void WriteQueuedObjects (BinaryWriter writer)
 		{
+
 			while (_pendingObjects.Count > 0)
-				WriteObjectInstance (writer, _pendingObjects.Dequeue());
+				WriteObjectInstance (writer, _pendingObjects.Dequeue(), false);
 		}
 
-		public void WriteObjectInstance (BinaryWriter writer, object obj)
+		public void WriteObjectInstance (BinaryWriter writer, object obj, bool isValueObject)
 		{
 			bool firstTime;
-			long id = _idGenerator.GetId (obj, out firstTime);
+			long id;
+
+			// If the object is a value type (not boxed) then there is no need
+			// to register it in the id generator, because it won't have other
+			// references to it
+
+			if (isValueObject) id = _idGenerator.NextId;
+			else id = _idGenerator.GetId (obj, out firstTime);
 
 			if (obj.GetType() == typeof(string)) {
 				WriteString (writer, id, (string)obj);
@@ -295,6 +303,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			metadata.Types = types;
 			metadata.Names = names;
+
 			metadata.CustomSerialization = false;
 		}
 
@@ -469,6 +478,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		private void WriteObjectReference (BinaryWriter writer, long id)
 		{
+
 			writer.Write ((byte) BinaryElement.ObjectReference);
 			writer.Write ((int)id);
 		}
@@ -492,7 +502,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			else if (valueType.IsValueType)
 			{
 				// Value types are written embedded in the containing object
-				WriteObjectInstance (writer, val);
+				WriteObjectInstance (writer, val, true);
 			}
 			else if (val.GetType() == typeof(string))
 			{
@@ -500,7 +510,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				bool firstTime;
 				long id = _idGenerator.GetId (val, out firstTime);
 
-				if (firstTime) WriteObjectInstance (writer, val);
+				if (firstTime) WriteObjectInstance (writer, val, false);
 				else WriteObjectReference (writer, id);
 			}			
 			else

@@ -1,3 +1,11 @@
+2003-07-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+    * ObjectReader.cs: Keep MemberInfo members in type's metadata object, so it is
+      not necessary to query them for every object.
+    * ObjectWriter.cs: If the value being serialized is a value type (not boxed)
+      then there is no need to register it in the ObjectIDGenerator, because it is
+      not possible to have two references to the same value type object.
+
 2003-05-13  Lluis Sanchez Gual <lluis@ideary.com>
 
     * ObjectReader.cs: Changed signature of ReadObjectGraph, so now it returns the

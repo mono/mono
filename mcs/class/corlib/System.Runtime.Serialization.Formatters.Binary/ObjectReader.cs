@@ -36,6 +36,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			public Type Type;
 			public Type[] MemberTypes;
 			public string[] MemberNames;
+			public MemberInfo[] MemberInfos;
 			public int FieldCount;
 			public bool NeedsSerializationInfo;
 		}
@@ -78,6 +79,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (element == BinaryElement.End)
 			{
 				_manager.DoFixups();
+
 				_manager.RaiseDeserializationEvent();
 				return false;
 			}
@@ -130,6 +132,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					info = null;
 					ReadGenericArray (reader, out objectId, out value);
 					break;
+
 
 				case BinaryElement.BoxedPrimitiveTypeValue:
 					value = ReadBoxedPrimitiveTypeValue (reader);
@@ -214,8 +217,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			objectInstance = FormatterServices.GetUninitializedObject (metadata.Type);
 			info = metadata.NeedsSerializationInfo ? new SerializationInfo(metadata.Type, new FormatterConverter()) : null;
 
-			for (int n=0; n<metadata.FieldCount; n++)
-				ReadValue (reader, objectInstance, objectId, info, metadata.MemberTypes[n], metadata.MemberNames[n], null);
+   			if (metadata.MemberNames != null)
+				for (int n=0; n<metadata.FieldCount; n++)
+					ReadValue (reader, objectInstance, objectId, info, metadata.MemberTypes[n], metadata.MemberNames[n], null, null);
+			else
+				for (int n=0; n<metadata.FieldCount; n++)
+					ReadValue (reader, objectInstance, objectId, info, metadata.MemberTypes[n], metadata.MemberInfos[n].Name, metadata.MemberInfos[n], null);
 		}
 
 		private void RegisterObject (long objectId, object objectInstance, SerializationInfo info, long parentObjectId, MemberInfo parentObjectMemeber, int[] indices)
@@ -272,7 +279,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			bool end = false;
 			while (!end)
 			{
-				ReadValue (reader, array, objectId, null, elementType, null, indices);
+				ReadValue (reader, array, objectId, null, elementType, null, null, indices);
 
 				for (int dim = array.Rank-1; dim >= 0; dim--)
 				{
@@ -331,7 +338,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			for (int n = 0; n < length; n++)
 			{
 				indices[0] = n;
-				ReadValue (reader, array, objectId, null, elementType, null, indices);
+				ReadValue (reader, array, objectId, null, elementType, null, null, indices);
 				n = indices[0];
 			}
 			val = array;
@@ -392,6 +399,18 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					throw new SerializationException("Serializable objects must be marked with the Serializable attribute");
 
 				metadata.NeedsSerializationInfo = (metadata.Type.GetInterface ("ISerializable") != null);
+				if (!metadata.NeedsSerializationInfo)
+				{
+					metadata.MemberInfos = new MemberInfo [fieldCount];
+					for (int n=0; n<fieldCount; n++)
+					{
+						MemberInfo[] members = metadata.Type.GetMember (names[n], MemberTypes.Field | MemberTypes.Property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+						if (members.Length > 1) throw new SerializationException ("There are two public members named \"" + names[n] + "\" in the class hirearchy of " + metadata.Type.FullName);
+						if (members.Length == 0) throw new SerializationException ("Field \"" + names[n] + "\" not found in class " + metadata.Type.FullName);
+						metadata.MemberInfos [n] = members[0];
+					}
+					metadata.MemberNames = null;	// Info now in MemberInfos
+				}
 			}
 
 			// Registers the type's metadata so it can be reused later if
@@ -404,7 +423,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		}
 
 
-		private void ReadValue (BinaryReader reader, object parentObject, long parentObjectId, SerializationInfo info, Type valueType, string fieldName, int[] indices)
+		private void ReadValue (BinaryReader reader, object parentObject, long parentObjectId, SerializationInfo info, Type valueType, string fieldName, MemberInfo memberInfo, int[] indices)
 		{
 			// Reads a value from the stream and assigns it to the member of an object
 
@@ -413,7 +432,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (BinaryCommon.IsPrimitive (valueType))
 			{
 				val = ReadPrimitiveTypeValue (reader, valueType);
-				SetObjectValue (parentObject, fieldName, info, val, valueType, indices);
+				SetObjectValue (parentObject, fieldName, memberInfo, info, val, valueType, indices);
 				return;
 			}
 
@@ -425,7 +444,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			{
 				// Just read the id of the referred object and record a fixup
 				long childObjectId = (long) reader.ReadUInt32();
-				RecordFixup (parentObjectId, childObjectId, parentObject, info, fieldName, indices);
+				RecordFixup (parentObjectId, childObjectId, parentObject, info, fieldName, memberInfo, indices);
 				return;
 			}
 
@@ -452,24 +471,24 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			{
 				if (val.GetType().IsValueType)
 				{
-					RecordFixup (parentObjectId, objectId, parentObject, info, fieldName, indices);
+					RecordFixup (parentObjectId, objectId, parentObject, info, fieldName, memberInfo, indices);
 					hasFixup = true;
 				}
 
 				// Register the value
 
 				if (info == null && !parentObject.GetType().IsArray)
-					RegisterObject (objectId, val, objectInfo, parentObjectId, GetObjectMember(parentObject, fieldName), null);
+					RegisterObject (objectId, val, objectInfo, parentObjectId, memberInfo, null);
 				else
 					RegisterObject (objectId, val, objectInfo, parentObjectId, null, indices);
 			}
 			// Assign the value to the parent object, unless there is a fixup
 			
 			if (!hasFixup) 
-				SetObjectValue (parentObject, fieldName, info, val, valueType, indices);
+				SetObjectValue (parentObject, fieldName, memberInfo, info, val, valueType, indices);
 		}
 
-		private void SetObjectValue (object parentObject, string fieldName, SerializationInfo info, object value, Type valueType, int[] indices)
+		private void SetObjectValue (object parentObject, string fieldName, MemberInfo memberInfo, SerializationInfo info, object value, Type valueType, int[] indices)
 		{
 			if (value is IObjectReference)
 				value = ((IObjectReference)value).GetRealObject (_context);
@@ -490,15 +509,14 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				info.AddValue (fieldName, value, valueType);
 			}
 			else {
-				MemberInfo member = GetObjectMember(parentObject, fieldName);
-				if (member is FieldInfo)
-					((FieldInfo)member).SetValue (parentObject, value);
+				if (memberInfo is FieldInfo)
+					((FieldInfo)memberInfo).SetValue (parentObject, value);
 				else
-					((PropertyInfo)member).SetValue (parentObject, value, null);
+					((PropertyInfo)memberInfo).SetValue (parentObject, value, null);
 			}
 		}
 
-		private void RecordFixup (long parentObjectId, long childObjectId, object parentObject, SerializationInfo info, string fieldName, int[] indices)
+		private void RecordFixup (long parentObjectId, long childObjectId, object parentObject, SerializationInfo info, string fieldName, MemberInfo memberInfo, int[] indices)
 		{
 			if (info != null) {
 				_manager.RecordDelayedFixup (parentObjectId, fieldName, childObjectId);
@@ -510,16 +528,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					_manager.RecordArrayElementFixup (parentObjectId, (int[])indices.Clone(), childObjectId);
 			}
 			else {
-				_manager.RecordFixup (parentObjectId, GetObjectMember(parentObject, fieldName), childObjectId);
+				_manager.RecordFixup (parentObjectId, memberInfo, childObjectId);
 			}
-		}
-
-		private MemberInfo GetObjectMember (object parentObject, string fieldName)
-		{
-			MemberInfo[] members = parentObject.GetType().GetMember (fieldName, MemberTypes.Field | MemberTypes.Property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-			if (members.Length > 1) throw new SerializationException ("There are two public members named \"" + fieldName + "\" in the class hirearchy of " + parentObject.GetType().FullName);
-			if (members.Length == 0) throw new SerializationException ("Field \"" + fieldName + "\" not found in class " + parentObject.GetType().FullName);
-			return members[0];
 		}
 
 		private Type GetDeserializationType (long assemblyId, string className)
