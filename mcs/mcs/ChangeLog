@@ -1,3 +1,8 @@
+2002-06-27  Martin Baulig  <martin@gnome.org>
+
+	* statement.cs (Switch.TableSwitchEmit): Make this work with empty
+	switch blocks which contain nothing but a default clause.
+
 2002-06-26  Andrew  <adb@tardis.ed.ac.uk>
 
        * ../errors/cs1501-3.cs: Added new test for struct ctr typechecks.

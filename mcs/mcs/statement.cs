@@ -1699,13 +1699,15 @@ namespace Mono.CSharp {
 
 			// fill the key lists
 			int iBlockCurr = 0;
-			kbCurr = (KeyBlock) rgKeyBlocks [0];
-			foreach (object key in rgKeys)
-			{
-				bool fNextBlock = (key is UInt64) ? (ulong) key > (ulong) kbCurr.nLast : Convert.ToInt64 (key) > kbCurr.nLast;
-				if (fNextBlock)
-					kbCurr = (KeyBlock) rgKeyBlocks [++iBlockCurr];
-				kbCurr.rgKeys.Add (key);
+			if (rgKeyBlocks.Count > 0) {
+				kbCurr = (KeyBlock) rgKeyBlocks [0];
+				foreach (object key in rgKeys)
+				{
+					bool fNextBlock = (key is UInt64) ? (ulong) key > (ulong) kbCurr.nLast : Convert.ToInt64 (key) > kbCurr.nLast;
+					if (fNextBlock)
+						kbCurr = (KeyBlock) rgKeyBlocks [++iBlockCurr];
+					kbCurr.rgKeys.Add (key);
+				}
 			}
 
 			// sort the blocks so we can tackle the largest ones first
@@ -1714,8 +1716,11 @@ namespace Mono.CSharp {
 			// okay now we can start...
 			ILGenerator ig = ec.ig;
 			Label lblEnd = ig.DefineLabel ();	// at the end ;-)
-			Label lblDefault = new Label ();
-			Type typeKeys = rgKeys [0].GetType ();	// used for conversions
+			Label lblDefault = ig.DefineLabel ();
+
+			Type typeKeys;
+			if (rgKeys.Length > 0)
+				typeKeys = rgKeys [0].GetType ();	// used for conversions
 
 			for (int iBlock = rgKeyBlocks.Count - 1; iBlock >= 0; --iBlock)
 			{
