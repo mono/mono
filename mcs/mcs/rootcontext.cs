@@ -676,6 +676,11 @@ namespace Mono.CSharp {
 		//
 		static public MethodInfo EntryPoint;
 
+                //
+                // Track the location of the entry point.
+                //
+                static public Location EntryPointLocation;
+
 		//
 		// These are used to generate unique names on the structs and fields.
 		//

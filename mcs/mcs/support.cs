@@ -140,7 +140,7 @@ namespace Mono.CSharp {
 
 		public string ParameterDesc (int pos)
 		{
-			string tmp = null;
+			string tmp = String.Empty;
 			Parameter p;
 
 			if (pos >= parameters.FixedParameters.Length)

@@ -1,3 +1,24 @@
+2002-04-22  Lawrence Pit <loz@cable.a2000.nl>
+
+	* class.cs:
+	  - added method Report28 (warning: program has more than one entry point)
+	  - added method IsEntryPoint, implements paragraph 10.1 of the spec
+	  - modified method Method.Define, the part at the end of the method
+
+	* rootcontext.cs: added static public Location EntryPointLocation;
+	  
+	* ../errors/cs0028.cs : Add test case for the above warning.		  
+
+	* typemanager.cs:
+	  - modified method CSharpName to allow arrays of primitive type to
+	    be printed nicely (e.g. instead of System.Int32[][] it now prints
+	    int[][])
+	  - added method CSharpSignature: returns the signature of a method
+	    in string format to be used in reporting errors, warnings, etc.
+
+	* support.cs: InternalParameters.ParameterDesc variable tmp initialized
+	with String.Empty.
+	
 2002-04-26  Ravi Pratap  <ravi@ximian.com>
 
 	* delegate.cs (Define): Fix extremely silly bug where I was

@@ -846,8 +846,7 @@ namespace Mono.CSharp
 				RootContext.BootCorlib_PopulateCoreTypes ();
 			RootContext.PopulateTypes ();
 			
-			if (RootContext.StdLib)
-				TypeManager.InitCodeHelpers ();
+			TypeManager.InitCodeHelpers ();
 				
 			if (Report.Errors > 0){
 				error ("Compilation failed");

@@ -2110,15 +2110,48 @@ namespace Mono.CSharp {
 			return type_return_type;
 		}
 
-		void DuplicatEntryPoint (MethodInfo b)
-		{
-			Report.Error (
-				17, Location,
-				"Program `" + CodeGen.FileName +
-				"'  has more than one entry point defined: `" +
-				b.DeclaringType.Name + "." + b.Name + "'");
-		}
-		
+                void DuplicateEntryPoint (MethodInfo b, Location location)
+                {
+                        Report.Error (
+                                17, location,
+                                "Program `" + CodeGen.FileName +
+                                "'  has more than one entry point defined: `" +
+                                TypeManager.CSharpSignature(b) + "'");
+                }
+
+                void Report28 (MethodInfo b)
+                {
+			if (RootContext.WarningLevel < 4) 
+				return;
+				
+                        Report.Warning (
+                                28, Location,
+                                "`" + TypeManager.CSharpSignature(b) +
+                                "' has the wrong signature to be an entry point");
+                }
+
+                public bool IsEntryPoint (MethodBuilder b, InternalParameters pinfo)
+                {
+                        if (b.ReturnType != TypeManager.void_type &&
+                            b.ReturnType != TypeManager.int32_type)
+                                return false;
+
+                        if (pinfo.Count == 0)
+                                return true;
+
+                        if (pinfo.Count > 1)
+                                return false;
+
+                        Type t = pinfo.ParameterType(0);
+                        if (t.IsArray &&
+                            (t.GetArrayRank() == 1) &&
+                            (t.GetElementType() == TypeManager.string_type) &&
+                            (pinfo.ParameterModifier(0) == Parameter.Modifier.NONE))
+                                return true;
+                        else
+                                return false;
+                }	
+
 		//
 		// Creates the type
 		//
@@ -2352,23 +2385,20 @@ namespace Mono.CSharp {
 			//
 			// This is used to track the Entry Point,
 			//
-			// FIXME: Allow pluggable entry point, check arguments, etc.
-			//
 			if (Name == "Main" &&
 			    ((ModFlags & Modifiers.STATIC) != 0) && 
 			    (RootContext.MainClass == null ||
 			     RootContext.MainClass == parent.TypeBuilder.FullName)){
-				if (RootContext.EntryPoint != null){
-					DuplicatEntryPoint (MethodBuilder);
-					DuplicatEntryPoint (RootContext.EntryPoint);
-				} else 
-					RootContext.EntryPoint = MethodBuilder;
-				
-				//
-				// FIXME: Verify that the method signature
-				// is valid for an entry point, and report
-				// error 28 if not.
-				//
+                                if (IsEntryPoint (MethodBuilder, ParameterInfo)) {
+                                        if (RootContext.EntryPoint == null) {
+                                                RootContext.EntryPoint = MethodBuilder;
+                                                RootContext.EntryPointLocation = Location;
+                                        } else {
+                                                DuplicateEntryPoint (RootContext.EntryPoint, RootContext.EntryPointLocation);
+                                                DuplicateEntryPoint (MethodBuilder, Location);
+                                        }
+                                } else                                 	
+                               	        Report28(MethodBuilder);
 			}
 
 			return true;

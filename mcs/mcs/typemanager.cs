@@ -371,43 +371,70 @@ public class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
+                string ar = String.Empty;
+
+                if (t.IsArray) {
+                        for (int i = 0; i < t.GetArrayRank(); i++)
+                                ar += "[]";
+                        t = t.GetElementType();
+
+                }
+
 		if (t == int32_type)
-			return "int";
+			return "int" + ar;
 		else if (t == uint32_type)
-			return "uint";
+			return "uint" + ar;
 		else if (t == int64_type)
-			return "long";
+			return "long" + ar;
 		else if (t == uint64_type)
-			return "ulong";
+			return "ulong" + ar;
 		else if (t == float_type)
-			return "float";
+			return "float" + ar;
 		else if (t == double_type)
-			return "double";
+			return "double" + ar;
 		else if (t == char_type)
-			return "char";
+			return "char" + ar;
 		else if (t == short_type)
-			return "short";
+			return "short" + ar;
 		else if (t == decimal_type)
-			return "decimal";
+			return "decimal" + ar;
 		else if (t == bool_type)
-			return "bool";
+			return "bool" + ar;
 		else if (t == sbyte_type)
-			return "sbyte";
+			return "sbyte" + ar;
 		else if (t == byte_type)
-			return "byte";
+			return "byte" + ar;
 		else if (t == short_type)
-			return "short";
+			return "short" + ar;
 		else if (t == ushort_type)
-			return "ushort";
+			return "ushort" + ar;
 		else if (t == string_type)
-			return "string";
+			return "string" + ar;
 		else if (t == object_type)
-			return "object";
+			return "object" + ar;
 		else if (t == void_type)
 			return "void";
 		else
-			return t.FullName;
+			return t.FullName + ar;
 	}
+
+        /// <summary>
+        ///   Returns the signature of the method
+        /// </summary>
+        static public string CSharpSignature (MethodBase mb)
+        {
+                string sig = "(";
+                InternalParameters iparams = LookupParametersByBuilder(mb);
+                for (int i = 0; i < iparams.Count; i++) {
+                        if (i > 0) {
+                                sig += ", ";
+                        }
+                        sig += iparams.ParameterDesc(i);
+                }
+                sig += ")";
+
+                return mb.DeclaringType.Name + "." + mb.Name + sig;
+        }
 
 	/// <summary>
 	///   Looks up a type, and aborts if it is not found.  This is used
