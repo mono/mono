@@ -1,3 +1,6 @@
+2004-06-12  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c: Comment out a debugging g_message().
 
 Sat Jun 12 14:15:02 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
