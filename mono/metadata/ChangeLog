@@ -1,5 +1,7 @@
 2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* threads.c (mono_thread_has_appdomain_ref): Make this public.
+
 	* assembly.c (mono_assembly_open_from_bundle): Fix warning.
 
 	* reflection.c: Fix some memory leaks.
