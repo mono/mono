@@ -1,3 +1,8 @@
+2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBox.cs: added ItemHeight and DrawMode properties. Fixes the build
+	in unix.
+
   2002-10-29  DennisHayes <dennish@raytek.com>	
 
 	* AmbientProperties.cs

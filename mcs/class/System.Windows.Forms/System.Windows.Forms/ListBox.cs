@@ -148,6 +148,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO]
+		public virtual DrawMode DrawMode {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public virtual int ItemHeight {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
 		//
 		//  --- Public Methods
 		//
