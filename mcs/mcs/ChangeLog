@@ -1,3 +1,10 @@
+2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-parser.jay : handle doc comments on implicit/explicit operators.
+	  Some operator comments were suppressed.
+	* doc.cs : Implicit/explicit operator name in doc comments are like
+	  "op_Explicit(type)~returnType", so added suffix handling.
+
 2004-12-07  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs

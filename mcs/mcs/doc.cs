@@ -650,7 +650,17 @@ namespace Mono.CSharp {
 				paramSpec += ")";
 
 			string name = mc is Constructor ? "#ctor" : mc.Name;
-			return String.Concat (mc.DocCommentHeader, ds.Name, ".", name, paramSpec);
+			string suffix = String.Empty;
+			Operator op = mc as Operator;
+			if (op != null) {
+				switch (op.OperatorType) {
+				case Operator.OpType.Implicit:
+				case Operator.OpType.Explicit:
+					suffix = "~" + op.OperatorMethodBuilder.ReturnType.FullName.Replace ('+', '.');
+					break;
+				}
+			}
+			return String.Concat (mc.DocCommentHeader, ds.Name, ".", name, paramSpec, suffix);
 		}
 
 		//

@@ -1611,8 +1611,10 @@ operator_declaration
 			new Parameters (param_list, null, decl.location),
 			(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
-		if (RootContext.Documentation != null)
-			op.DocComment = ConsumeStoredComment ();
+		if (RootContext.Documentation != null) {
+			op.DocComment = tmpComment;
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
 
 		if (SimpleIteratorContainer.Simple.Yields)
 			op.SetYields ();
@@ -1651,7 +1653,7 @@ operator_declarator
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.Allowed;
+			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
 		$$ = new OperatorDeclaration (op, (Expression) $1, type, (string) $6,
@@ -1677,7 +1679,7 @@ operator_declarator
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.Allowed;
+			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 	       
 	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (Expression) $1, 
@@ -1724,6 +1726,11 @@ conversion_operator_declarator
 
 		current_local_parameters = new Parameters (pars, null, lexer.Location);  
 		  
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.NotAllowed;
+		}
+
 		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, (Expression) $5, (string) $6,
 					      null, null, lexer.Location);
 	  }
@@ -1735,6 +1742,11 @@ conversion_operator_declarator
 
 		current_local_parameters = new Parameters (pars, null, lexer.Location);  
 		  
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.NotAllowed;
+		}
+
 		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, (Expression) $5, (string) $6,
 					      null, null, lexer.Location);
 	  }
