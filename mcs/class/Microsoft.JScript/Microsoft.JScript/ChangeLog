@@ -1,3 +1,7 @@
+2004-09-21  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* FunctionDeclaration.cs: check for parent being a ScriptBlock.
+
 2004-09-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs: added semantic analysis for accessing fields on

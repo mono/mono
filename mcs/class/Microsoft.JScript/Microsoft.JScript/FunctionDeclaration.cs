@@ -84,10 +84,12 @@ namespace Microsoft.JScript {
 			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, 
 									  func_obj.return_type,
 									  func_obj.params_types ());
+			TypeManager.AddMethod (name, method_builder);
+			
 			set_custom_attr (method_builder);
 			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,
 							      method_builder.GetILGenerator ());
-			if (parent == null)
+			if (parent == null || parent.GetType () == typeof (ScriptBlock))
 				type.DefineField (name, typeof (Microsoft.JScript.ScriptFunction),
 						  FieldAttributes.Public | FieldAttributes.Static);
 			else
@@ -119,7 +121,7 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
 			ig.Emit (OpCodes.Call, typeof (FunctionDeclaration).GetMethod ("JScriptFunctionDeclaration"));
 
-			if (parent == null)				
+			if (parent == null || parent.GetType () == typeof (ScriptBlock))
 				ig.Emit (OpCodes.Stsfld, t.GetField (name));
 			else					
 				ig.Emit (OpCodes.Stloc, local_func);	
@@ -130,6 +132,16 @@ namespace Microsoft.JScript {
 			DictionaryEntry e;
 			object v;		      
 			int n;
+
+
+
+
+
+
+
+
+
+
 
 			if (locals == null)
 				n = 0;
