@@ -2041,7 +2041,7 @@ namespace Mono.Xml.XPath2
 			throw new InvalidOperationException ("XQuery internal error. Should not happen.");
 		}
 
-		public SequenceType StaticType {
+		public override SequenceType StaticType {
 			get { throw new InvalidOperationException ("XQuery internal error. Should not happen."); }
 		}
 

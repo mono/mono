@@ -444,8 +444,8 @@ namespace Mono.Xml.XPath2
 		{
 			if (iter != null && iter.MoveNext ())
 				return true;
-			for (; currentExprIndex < expr.Count; currentExprIndex++) {
-				iter = expr [currentExprIndex].Evaluate (contextSequence);
+			while (currentExprIndex < expr.Count) {
+				iter = expr [currentExprIndex++].Evaluate (contextSequence);
 				if (iter.MoveNext ())
 					return true;
 			}

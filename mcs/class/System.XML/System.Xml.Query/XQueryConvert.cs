@@ -325,6 +325,12 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		public static string DateTimeToString (DateTime value)
+		{
+			return XmlConvert.ToString (value);
+		}
+
+		[MonoTODO]
 		public static string DayTimeDurationToDuration (TimeSpan value)
 		{
 			return XmlConvert.ToString (value);

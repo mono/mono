@@ -1,3 +1,19 @@
+2004-08-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SequenceType.cs : added ToRuntimeType().
+	* XPath2Expression.cs : override is required.
+	* XPathSequence.cs : fixed ExprSequenceIterator.MoveNext() that caused
+	  infinite loop.
+	* XQueryCompileContext.cs : CultureInfo was missing.
+	* XQueryContext.cs : CurrentContext must be created after setting
+	  currentSequence.
+	* XQueryConvert.cs : DateTimeToString() was missing.
+	* XQueryFunction.cs : convert parameters to runtime type before 
+	  being used in Invoke(). Use function's ReturnType to create typed
+	  atomic.
+	* XQueryParser.jay : create XQueryFunctionArgumentList instance
+	  for function calls that does not have parameters.
+
 2004-08-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SequenceType.cs, XPath2Expression.cs, XQueryASTCompiler.cs,

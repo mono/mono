@@ -67,14 +67,15 @@ namespace Mono.Xml.XPath2
 			currentWriter = writer;
 			this.extDocResolver = resolver;
 
-			currentContext = new XQueryContext (this);
-
 			namespaceManager = new XmlNamespaceManager (ctx.NameTable);
 			foreach (DictionaryEntry de in ctx.NSResolver.GetNamespacesInScope (XmlNamespaceScope.ExcludeXml))
 				namespaceManager.AddNamespace (de.Key.ToString (), de.Value.ToString ());
 			namespaceManager.PushScope ();
 
-			this.currentSequence = new SingleItemIterator (input, currentContext);
+			currentSequence = new SingleItemIterator (input, currentContext);
+			currentSequence.MoveNext ();
+
+			currentContext = new XQueryContext (this, currentSequence);
 		}
 
 		public bool Initialized {
@@ -121,6 +122,8 @@ namespace Mono.Xml.XPath2
 
 		public void PushCurrentSequence (XPathSequence sequence)
 		{
+			if (sequence == null)
+				throw new ArgumentNullException ();
 #if SEEMS_CONTEXT_FOR_CURRENT_REQURED
 			contextStack.Push (currentContext);
 			currentsequence = sequence;
@@ -138,6 +141,8 @@ namespace Mono.Xml.XPath2
 #else
 			currentSequence = contextSequenceStack.Pop ();
 #endif
+			if (currentSequence == null)
+				throw new SystemException ("XQuery error: should not happen.");
 		}
 
 		// FIXME: According to the spec 3.8.1, variales bindings in
@@ -173,10 +178,16 @@ namespace Mono.Xml.XPath2
 		XPathSequence currentSequence;
 
 		internal XQueryContext (XQueryContextManager manager)
+			: this (manager, manager.CurrentContext.CurrentSequence)
+		{
+		}
+
+		internal XQueryContext (XQueryContextManager manager, XPathSequence currentSequence)
 		{
 			contextManager = manager;
-			if (manager.Initialized) // this condition is not filled on initial creation.
-				currentSequence = manager.CurrentContext.currentSequence;
+//			if (manager.Initialized) // this condition is not filled on initial creation.
+//				currentSequence = manager.CurrentContext.currentSequence;
+			this.currentSequence = currentSequence;
 			currentVariables = (Hashtable) manager.LocalVariables.Clone ();
 		}
 

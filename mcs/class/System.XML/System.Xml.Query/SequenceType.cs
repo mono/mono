@@ -287,6 +287,18 @@ namespace Mono.Xml.XPath2
 		{
 			throw new NotImplementedException ();
 		}
+
+		public object ToRuntimeType (XPathSequence seq)
+		{
+			// FIXME: handle ZeroOrMore|OneOrMore
+//			switch (occurence) {
+//			case Occurence.One:
+//			case Occurence.Optional:
+				XPathAtomicValue av = ExprSingle.Atomize (seq);
+				return av != null ? av.TypedValue : null;
+//			}
+//			return seq;
+		}
 	}
 
 	public enum Occurence

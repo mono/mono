@@ -860,8 +860,11 @@ OccurenceIndicator // returns Occurence
 	}
 	;
 
-OptionalParamList
+OptionalParamList // returns XQueryFunctionArgumentList
 	: // empty
+	{
+		$$ = new XQueryFunctionArgumentList ();
+	}
 	| ParamList
 	;
 

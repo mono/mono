@@ -240,13 +240,13 @@ namespace Mono.Xml.XPath2
 		{
 			object [] instParams = new object [args.Count];
 			for (int i = 0; i < args.Count; i++)
-				instParams [i] = args [i].Evaluate (iter);
+				instParams [i] = Args [i].Type.ToRuntimeType (args [i].Evaluate (iter));
 			object o = Invoke (iter.Context, instParams, iter.Context.CurrentItem);
 			if (o is XPathSequence)
 				return (XPathSequence) o;
 			XPathItem item = o as XPathItem;
 			if (item == null)
-				item = new XPathAtomicValue (o, SequenceType.Create (o.GetType ()).SchemaType);
+				item = new XPathAtomicValue (o, ReturnType.SchemaType);
 			return new SingleItemIterator (item, iter);
 		}
 	}
@@ -297,7 +297,7 @@ namespace Mono.Xml.XPath2
 			throw new NotImplementedException ("Not supported");
 		}
 
-		public virtual XPathSequence Evaluate (XPathSequence iter, ExprSequence args)
+		public override XPathSequence Evaluate (XPathSequence iter, ExprSequence args)
 		{
 			for (int i = 0; i < Args.Length; i++)
 				iter.Context.PushVariable (Args [i].Name, args [i].Evaluate (iter));
