@@ -3,12 +3,15 @@ thisdir = class
 MONO_POSIX := Mono.Posix
 MONO_CSHARP_DEBUGGER := Mono.CSharp.Debugger
 
-net_2_0_bootstrap_SUBDIRS := \
+bootstrap_dirs := \
 	corlib 					\
 	System					\
 	System.XML				\
 	System					\
 	$(MONO_CSHARP_DEBUGGER)
+
+net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs)
+net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 
 include ../build/rules.make
 
