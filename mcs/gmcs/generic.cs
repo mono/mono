@@ -1756,6 +1756,22 @@ namespace Mono.CSharp {
 				return t.GetGenericArguments ();
 		}
 
+		//
+		// Whether `array' is an array of T and `enumerator' is `IEnumerable<T>'.
+		// For instance "string[]" -> "IEnumerable<string>".
+		//
+		public static bool IsIEnumerable (Type array, Type enumerator)
+		{
+			if (!array.IsArray || !enumerator.IsGenericInstance)
+				return false;
+
+			if (enumerator.GetGenericTypeDefinition () != generic_ienumerable_type)
+				return false;
+
+			Type[] args = GetTypeArguments (enumerator);
+			return args [0] == GetElementType (array);
+		}
+
 		public static bool IsEqual (Type a, Type b)
 		{
 			if (a.Equals (b))

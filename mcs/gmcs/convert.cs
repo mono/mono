@@ -234,7 +234,7 @@ namespace Mono.CSharp {
 				else
 					return null;
 			}
-				
+
 			// from an array-type S to an array-type of type T
 			if (expr_type.IsArray && target_type.IsArray) {
 				if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
@@ -257,7 +257,11 @@ namespace Mono.CSharp {
 			// from an array-type to System.Array
 			if (expr_type.IsArray && target_type == TypeManager.array_type)
 				return new EmptyCast (expr, target_type);
-				
+
+			// from an array-type of type T to IEnumerable<T>
+			if (expr_type.IsArray && TypeManager.IsIEnumerable (expr_type, target_type))
+				return new EmptyCast (expr, target_type);
+
 			// from any delegate type to System.Delegate
 			if ((expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)) &&
 			    target_type == TypeManager.delegate_type)
@@ -346,7 +350,11 @@ namespace Mono.CSharp {
 			// from an array-type to System.Array
 			if (expr_type.IsArray && (target_type == TypeManager.array_type))
 				return true;
-				
+
+			// from an array-type of type T to IEnumerable<T>
+			if (expr_type.IsArray && TypeManager.IsIEnumerable (expr_type, target_type))
+				return true;
+
 			// from any delegate type to System.Delegate
 			if ((expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)) &&
 			    target_type == TypeManager.delegate_type)

@@ -1,3 +1,10 @@
+2005-03-17  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeMananager.IsIEnumerable): New public method.
+
+	* convert.cs (Convert.ImplicitReferenceConversion(Exists)): Allow
+	converting from an array-type of T to `IEnumerable<T>'.
+
 2005-03-16  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Nullable.Unwrap): Implement IAssignMethod.
