@@ -28,7 +28,7 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE;NUNIT_LEAKAGE_TEST"
+                    DefineConstants = "DEBUG;TRACE;StronglyNamedAssembly"
                     DocumentationFile = "bin\Debug\nunit.framework.xml"
                     DebugSymbols = "true"
                     FileAlignment = "4096"
@@ -109,12 +109,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ConsoleWriter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "EventListener.cs"
+                    RelPath = "CategoryAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -124,7 +119,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ExpectedExceptionTestCase.cs"
+                    RelPath = "ExplicitAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -134,86 +129,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "InvalidFixture.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "InvalidSuiteException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "InvalidTestFixtureException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ITest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "LongLivingMarshalByRefObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NormalTestCase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NoTestFixturesException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NotRunnableTestCase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NullListener.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NunitException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "OldTestCase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "RemoteTestRunner.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Results.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Results.xsx"
-                    DependentUpon = "Results.xsd"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "ResultSummarizer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ResultVisitor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "RootTestSuite.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -223,26 +139,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "StackTraceFilter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "StringTextWriter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "SuiteAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Summary.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "SummaryVisitor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -252,42 +149,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TemplateTestCase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Test.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestAssembly.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "TestAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestCase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestCaseBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestCaseResult.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestDomain.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -303,40 +165,6 @@
                 />
                 <File
                     RelPath = "TestFixtureTearDownAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestResult.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestSuite.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestSuiteBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestSuiteResult.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Transform.resx"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "WarningSuite.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "XmlResultVisitor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

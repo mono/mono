@@ -39,11 +39,17 @@ namespace NUnit.Framework
 	[Obsolete("use TestFixture attribute instead of inheritance",false)]
 	public class TestCase : Assertion
 	{
+		/// <summary>
+		/// SetUp method
+		/// </summary>
 		[SetUp]
 		[Obsolete("use SetUp attribute instead of naming convention",false)]
 		protected virtual void SetUp()
 		{}
 
+		/// <summary>
+		/// TearDown method
+		/// </summary>
 		[TearDown]
 		[Obsolete("use TearDown attribute instead of naming convention",false)]
 		protected virtual void TearDown()

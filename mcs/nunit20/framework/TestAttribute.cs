@@ -57,6 +57,9 @@ namespace NUnit.Framework
 	{
 		private string description;
 
+		/// <summary>
+		/// Descriptive text for this test
+		/// </summary>
 		public string Description
 		{
 			get { return description; }

@@ -33,8 +33,27 @@ using System.ComponentModel;
 
 namespace NUnit.Framework
 {
+	/// <summary>
+	/// A set of Assert methods
+	/// </summary>
 	public class Assert
 	{
+		private static int counter = 0;
+		
+		/// <summary>
+		/// Gets the number of assertions executed so far and 
+		/// resets the counter to zero.
+		/// </summary>
+		public static int Counter
+		{
+			get
+			{
+				int cnt = counter;
+				counter = 0;
+				return cnt;
+			}
+		}
+
 		/// <summary>
 		/// A private constructor disallows any instances of this object. 
 		/// </summary>
@@ -49,6 +68,7 @@ namespace NUnit.Framework
 		/// <param name="condition">The evaluated condition</param>
 		static public void IsTrue(bool condition, string message) 
 		{
+			++counter;
 			if (!condition)
 				Assert.Fail(message);
 		}
@@ -71,6 +91,7 @@ namespace NUnit.Framework
 		/// <param name="condition">The evaluated condition</param>
 		static public void IsFalse(bool condition, string message) 
 		{
+			++counter;
 			if (condition)
 				Assert.Fail(message);
 		}
@@ -99,6 +120,7 @@ namespace NUnit.Framework
 		static public void AreEqual(double expected, 
 			double actual, double delta, string message) 
 		{
+			++counter;
 			// handle infinity specially since subtracting two infinite values gives 
 			// NaN and the following test fails
 			if (double.IsInfinity(expected)) 
@@ -139,6 +161,7 @@ namespace NUnit.Framework
 		static public void AreEqual(float expected, 
 			float actual, float delta, string message) 
 		{
+			++counter;
 			// handle infinity specially since subtracting two infinite values gives 
 			// NaN and the following test fails
 			if (float.IsInfinity(expected)) 
@@ -175,6 +198,7 @@ namespace NUnit.Framework
 		/// <param name="actual">The actual value</param>
 		static public void AreEqual(decimal expected, decimal actual, string message) 
 		{
+			++counter;
 			if(!(expected == actual))
 				Assert.FailNotEquals(expected, actual, message);
 		}
@@ -201,6 +225,7 @@ namespace NUnit.Framework
 		/// <param name="actual">The actual value</param>
 		static public void AreEqual(int expected, int actual, string message) 
 		{
+			++counter;
 			if(!(expected == actual))
 				Assert.FailNotEquals(expected, actual, message);
 		}
@@ -223,18 +248,38 @@ namespace NUnit.Framework
 		/// Verifies that two objects are equal.  Two objects are considered
 		/// equal if both are null, or if both have the same value.  All
 		/// non-numeric types are compared by using the <c>Equals</c> method.
-		/// If they are not equal an <see cref="AssertionFailedError"/> is thrown.
+		/// Arrays are compared by comparing each element using the same rules.
+		/// If they are not equal an <see cref="AssertionException"/> is thrown.
 		/// </summary>
 		/// <param name="expected">The value that is expected</param>
 		/// <param name="actual">The actual value</param>
 		/// <param name="message">The message to display if objects are not equal</param>
 		static public void AreEqual(Object expected, Object actual, string message)
 		{
+			++counter;
+
 			if (expected == null && actual == null) return;
 
 			if (expected != null && actual != null)
 			{
-				if(ObjectsEqual( expected, actual ))
+				object[] aExpected = expected as object[];
+				object[] aActual = actual as object[];
+
+				if (aExpected != null && aActual != null )
+				{
+					int iLength = Math.Min( aExpected.Length, aActual.Length );
+					for( int i = 0; i < iLength; i++ )
+						if ( !ObjectsEqual( aExpected[i], aActual[i] ) )
+						{
+							Assert.FailArraysNotEqual(i, aExpected, aActual, message );
+						}
+
+					if ( aExpected.Length != aActual.Length )
+						Assert.FailArraysNotEqual( iLength, aExpected, aActual, message );
+					
+					return;
+				}
+				else if(ObjectsEqual( expected, actual ))
 				{
 					return;
 				}
@@ -246,7 +291,7 @@ namespace NUnit.Framework
 		/// Verifies that two objects are equal.  Two objects are considered
 		/// equal if both are null, or if both have the same value.  All
 		/// non-numeric types are compared by using the <c>Equals</c> method.
-		/// If they are not equal an <see cref="AssertionFailedError"/> is thrown.
+		/// If they are not equal an <see cref="AssertionException"/> is thrown.
 		/// </summary>
 		/// <param name="expected">The value that is expected</param>
 		/// <param name="actual">The actual value</param>
@@ -400,6 +445,7 @@ namespace NUnit.Framework
 		/// <param name="actual">The actual object</param>
 		static public void AreSame(Object expected, Object actual, string message)
 		{
+			++counter;
 			if (object.ReferenceEquals(expected, actual)) return;
 
 			Assert.FailNotSame(expected, actual, message);
@@ -448,6 +494,23 @@ namespace NUnit.Framework
 		{
 			Assert.Fail( 
 				AssertionFailureMessage.FormatMessageForFailNotEquals( 
+				expected, 
+				actual, 
+				message));
+		}
+    
+		/// <summary>
+		/// This method is called when two arrays have been compared and found to be
+		/// different. This prints a nice message to the screen. 
+		/// </summary>
+		/// <param name="message">The message that is to be printed prior to the comparison failure</param>
+		/// <param name="expected">The expected array</param>
+		/// <param name="actual">The actual array</param>
+		static private void FailArraysNotEqual(int index, Object[] expected, Object[] actual, string message) 
+		{
+			Assert.Fail( 
+				AssertionFailureMessage.FormatMessageForFailArraysNotEqual( 
+				index,
 				expected, 
 				actual, 
 				message));

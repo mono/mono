@@ -39,11 +39,18 @@ namespace NUnit.Framework
 	{
 		private string reason;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="reason"></param>
 		public IgnoreAttribute(string reason)
 		{
 			this.reason = reason;
 		}
 
+		/// <summary>
+		/// The reason for ignoring a test
+		/// </summary>
 		public string Reason
 		{
 			get { return reason; }

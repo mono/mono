@@ -31,6 +31,9 @@ namespace NUnit.Framework
 {
 	using System;
 
+	/// <summary>
+	/// TestFixtureSetUpAttribute
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
 	public class TestFixtureSetUpAttribute : Attribute
 	{

@@ -41,23 +41,38 @@ namespace NUnit.Framework
 		private Type expectedException;
 		private string expectedMessage;
 
+		/// <summary>
+		/// Constructor for a given type of exception
+		/// </summary>
+		/// <param name="exceptionType"></param>
 		public ExpectedExceptionAttribute(Type exceptionType)
 		{
 			expectedException = exceptionType;
 		}
 
+		/// <summary>
+		/// Constructor for a given type of exception and expected message text
+		/// </summary>
+		/// <param name="exceptionType"></param>
+		/// <param name="expectedMessage"></param>
 		public ExpectedExceptionAttribute(Type exceptionType, string expectedMessage)
 		{
 			expectedException = exceptionType;
 			this.expectedMessage = expectedMessage;
 		}
 
+		/// <summary>
+		/// The expected exception type
+		/// </summary>
 		public Type ExceptionType 
 		{
 			get{ return expectedException; }
 			set{ expectedException = value; }
 		}
 
+		/// <summary>
+		/// The expected message
+		/// </summary>
 		public string ExpectedMessage 
 		{
 			get { return expectedMessage; }
