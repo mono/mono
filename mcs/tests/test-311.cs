@@ -34,6 +34,13 @@ public class Program {
 	private bool DenyMethod () {
 		return false;
 	}
+	
+	[SiteIdentityPermission (SecurityAction.PermitOnly)]
+	[PermissionSet (SecurityAction.PermitOnly, Unrestricted=true)]
+	[PermissionSet (SecurityAction.PermitOnly, Unrestricted=false)]
+	public void Test2 ()
+	{
+	}
 
 	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlEvidence, UnmanagedCode=true)]
 	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.AllFlags, UnmanagedCode=true)]
@@ -52,6 +59,9 @@ public class Program {
 		if (program.GetMethod ("Main").GetCustomAttributes (true).Length != 0)
 			return 4;
 
+		if (program.GetMethod ("Test2").GetCustomAttributes (true).Length != 0)
+			return 5;		
+		
 		Console.WriteLine (Message);
 		return 0;
 	}
