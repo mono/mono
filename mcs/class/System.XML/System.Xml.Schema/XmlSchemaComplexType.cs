@@ -518,6 +518,8 @@ namespace System.Xml.Schema
 				// base
 				if (baseTypeName == XmlSchemaComplexType.AnyTypeName)
 					baseComplexType = XmlSchemaComplexType.AnyType;
+				else if (baseTypeName.Namespace == XmlSchema.Namespace)
+					error (h, "Referenced base schema type is XML Schema datatype.");
 				else if (baseComplexType == null && !schema.IsNamespaceAbsent (baseTypeName.Namespace))
 					error (h, "Referenced base schema type " + baseTypeName + " was not complex type or not found in the corresponding schema.");
 			}
@@ -548,6 +550,8 @@ namespace System.Xml.Schema
 				if (baseComplexType == null) {
 					// Basically it is an error. Considering ValidationEventHandler.
 				}
+				else if (baseComplexType.resolvedContentType == XmlSchemaContentType.TextOnly)
+					error (h, "Content of the base complex type is Text-only.");
 				else if (baseComplexType.ContentTypeParticle == XmlSchemaParticle.Empty
 					|| baseComplexType == XmlSchemaComplexType.AnyType)
 					contentTypeParticle = cce.Particle;
@@ -603,7 +607,7 @@ namespace System.Xml.Schema
 					baseAnyAttribute = baseComplexType.AttributeWildcard;
 				if (baseAnyAttribute != null && localAnyAttribute != null)
 					// 1.3 attribute wildcard subset. (=> 3.10.6)
-					baseAnyAttribute.ValidateWildcardSubset (localAnyAttribute, h, schema);
+					localAnyAttribute.ValidateWildcardSubset (baseAnyAttribute, h, schema);
 
 				// FIXME: Check 3.4.2 Complex Type Definition with complex content Schema Component
 				// and its {attribute uses} and {attribute wildcard}
@@ -654,7 +658,7 @@ namespace System.Xml.Schema
 					localAnyAttribute = scr.AnyAttribute;
 					if (localAnyAttribute != null && baseAnyAttribute != null)
 						// 1.3 attribute wildcard subset. (=> 3.10.6)
-						baseAnyAttribute.ValidateWildcardSubset (localAnyAttribute, h, schema);
+						localAnyAttribute.ValidateWildcardSubset (baseAnyAttribute, h, schema);
 					// TODO: 3.4.6 :: 5.1. Beware that There is an errata for 5.1!!
 					// http://www.w3.org/2001/05/xmlschema-errata#Errata1
 
@@ -830,7 +834,51 @@ namespace System.Xml.Schema
 				error (h, "Prohibited derivation by restriction by base schema type.");
 				return;
 			}
-			// TODO: 2. - 4.
+
+			// 2.
+			foreach (XmlSchemaAttribute attr in this.AttributeUses) {
+				XmlSchemaAttribute baseAttr = baseType.AttributeUses [attr.QualifiedName] as XmlSchemaAttribute;
+				if (baseAttr != null) {
+					// 2.1
+					// 2.1.1
+					if (baseAttr.ValidatedUse != XmlSchemaUse.Optional && attr.ValidatedUse != XmlSchemaUse.Required)
+						error (h, "Invalid attribute derivation by restriction was found for " + attr.QualifiedName + " .");
+					// 2.1.2
+					XmlSchemaSimpleType attrSimpleType = attr.AttributeType as XmlSchemaSimpleType;
+					XmlSchemaSimpleType baseAttrSimpleType = baseAttr.AttributeType as XmlSchemaSimpleType;
+					bool typeError = false;
+					if (attrSimpleType != null)
+						attrSimpleType.ValidateDerivationValid (baseAttrSimpleType, null, h, schema);
+					else if (attrSimpleType == null && baseAttrSimpleType != null)
+						typeError = true;
+					else {
+						Type t1 = attr.AttributeType.GetType ();
+						Type t2 = baseAttr.AttributeType.GetType ();
+						if (t1 != t2 && t1.IsSubclassOf (t2))
+							typeError = true;
+					}
+					if (typeError)
+						error (h, "Invalid attribute derivation by restriction because of its type: " + attr.QualifiedName + " .");
+					// 2.1.3
+					if (baseAttr.ValidatedFixedValue != null && attr.ValidatedFixedValue != baseAttr.ValidatedFixedValue)
+						error (h, "Invalid attribute derivation by restriction because of its fixed value constraint: " + attr.QualifiedName + " .");
+				} else {
+					// 2.2
+					if (baseType.AttributeWildcard != null)
+						if (!baseType.AttributeWildcard.ValidateWildcardAllowsNamespaceName (
+							attr.QualifiedName.Namespace, schema) &&
+							!schema.IsNamespaceAbsent (attr.QualifiedName.Namespace))
+							error (h, "Invalid attribute derivation by restriction was found for " + attr.QualifiedName + " .");
+				}
+			}
+			// I think 3. is considered in 2.
+			// 4.
+			if (this.AttributeWildcard != null) {
+				if (baseType.AttributeWildcard == null)
+					error (h, "Invalid attribute derivation by restriction because of attribute wildcard.");
+				else
+					AttributeWildcard.ValidateWildcardSubset (baseType.AttributeWildcard, h, schema);
+			}
 
 			// 5.
 			if (contentTypeParticle == XmlSchemaParticle.Empty) {
@@ -842,8 +890,9 @@ namespace System.Xml.Schema
 			} else {
 				// 5.3 => 3.9.6 Particle Valid (Restriction)
 				if (baseType.ContentTypeParticle != null) {
-					contentTypeParticle.ActualParticle.ValidateDerivationByRestriction (
-						baseType.ContentTypeParticle.ActualParticle, h, schema);
+					if (!contentTypeParticle.ActualParticle.ParticleEquals (baseType.ContentTypeParticle.ActualParticle))
+						contentTypeParticle.ActualParticle.ValidateDerivationByRestriction (
+							baseType.ContentTypeParticle.ActualParticle, h, schema);
 				}
 			}
 		}

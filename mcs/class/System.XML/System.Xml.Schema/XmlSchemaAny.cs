@@ -133,6 +133,27 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
+		internal override bool ParticleEquals (XmlSchemaParticle other)
+		{
+			XmlSchemaAny any = other as XmlSchemaAny;
+			if (any == null)
+				return false;
+			if (this.HasValueAny != any.HasValueAny ||
+				this.HasValueLocal != any.HasValueLocal ||
+				this.HasValueOther != any.HasValueOther ||
+				this.HasValueTargetNamespace != any.HasValueTargetNamespace ||
+				this.ResolvedProcessContents != any.ResolvedProcessContents ||
+				this.ValidatedMaxOccurs != any.ValidatedMaxOccurs ||
+				this.ValidatedMinOccurs != any.ValidatedMinOccurs ||
+				this.ResolvedNamespaces.Count != any.ResolvedNamespaces.Count)
+				return false;
+			for (int i = 0; i < ResolvedNamespaces.Count; i++)
+				if (ResolvedNamespaces [i] != any.ResolvedNamespaces [i])
+					return false;
+			return true;
+		}
+
+
 		// 3.8.6. Attribute Wildcard Intersection
 		// Only try to examine if their intersection is expressible, and
 		// returns if the result is empty.
@@ -145,7 +166,14 @@ namespace System.Xml.Schema
 		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle, 
 			ValidationEventHandler h, XmlSchema schema)
 		{
-			// TODO
+			XmlSchemaAny baseAny = baseParticle as XmlSchemaAny;
+			if (baseAny == null) {
+				error (h, "Invalid particle derivation by restriction was found.");
+				return;
+			}
+			// 3.9.6 Particle Derivation OK (Any:Any - NSSubset)
+			this.ValidateOccurenceRangeOK (baseParticle, h, schema);
+			wildcard.ValidateWildcardSubset (baseAny.wildcard, h, schema);
 		}
 
 

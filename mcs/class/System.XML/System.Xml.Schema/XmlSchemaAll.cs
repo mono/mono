@@ -18,7 +18,6 @@ namespace System.Xml.Schema
 	public class XmlSchemaAll : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
-		private XmlSchemaObjectCollection compiledItems;
 		private static string xmlname = "all";
 		private bool emptiable;
 
@@ -32,10 +31,7 @@ namespace System.Xml.Schema
 		{
 			get{ return items; }
 		}
-		internal XmlSchemaObjectCollection CompiledItems 
-		{
-			get{ return compiledItems; }
-		}
+
 		internal bool Emptiable
 		{
 			get { return emptiable; }
@@ -94,13 +90,13 @@ namespace System.Xml.Schema
 				error (h, "-all- group is limited to be content of a model group, or that of a complex type with maxOccurs to be 1.");
 
 			emptiable = true;
-			compiledItems = new XmlSchemaObjectCollection ();
+			CompiledItems.Clear ();
 			foreach (XmlSchemaElement obj in Items) {
 				errorCount += obj.Validate (h, schema);
 				if (obj.ValidatedMaxOccurs != 0 &&
 					obj.ValidatedMaxOccurs != 1)
 					error (h, "MaxOccurs of a particle inside -all- compositor must be either 0 or 1.");
-				compiledItems.Add (obj);
+				CompiledItems.Add (obj);
 				if (obj.MinOccurs > 0)
 					emptiable = false;
 			}

@@ -79,7 +79,6 @@ namespace System.Xml.Schema
 		/// The other attributeGroup has type XmlSchemaAttributeGroupRef.
 		///  1. Name must be present
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// FIXME: Even if it was already compiled, it should check recursion.
@@ -130,7 +129,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))

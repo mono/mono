@@ -104,6 +104,11 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
+		internal override bool ParticleEquals (XmlSchemaParticle other)
+		{
+			return ActualParticle.ParticleEquals (other.ActualParticle);
+		}
+
 		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
 			ValidationEventHandler h, XmlSchema schema)
 		{

@@ -18,7 +18,6 @@ namespace System.Xml.Schema
 	public class XmlSchemaChoice : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
-		private XmlSchemaObjectCollection compiledItems;
 		private static string xmlname = "choice";
 		private decimal minEffectiveTotalRange = -1;
 
@@ -36,10 +35,19 @@ namespace System.Xml.Schema
 		{
 			get{ return items; }
 		}
-		internal XmlSchemaObjectCollection CompiledItems 
-		{
-			get{ return compiledItems; }
+
+		/*
+		internal override XmlSchemaParticle ActualParticle {
+			get {
+				if (this.ValidatedMinOccurs == 1 &&
+					this.ValidatedMaxOccurs == 1 &&
+					CompiledItems.Count == 1)
+					return ((XmlSchemaParticle) CompiledItems [0]).ActualParticle;
+				else
+					return this;
+			}
 		}
+		*/
 
 		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
@@ -74,10 +82,10 @@ namespace System.Xml.Schema
 			if (IsValidated (schema.CompilationId))
 				return errorCount;
 
-			compiledItems = new XmlSchemaObjectCollection ();
+			CompiledItems.Clear ();
 			foreach (XmlSchemaObject obj in Items) {
 				errorCount += obj.Validate (h, schema);
-				compiledItems.Add (obj);
+				CompiledItems.Add (obj);
 			}
 
 			ValidationId = schema.ValidationId;

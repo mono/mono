@@ -599,6 +599,40 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
+		internal override bool ParticleEquals (XmlSchemaParticle other)
+		{
+			XmlSchemaElement element = other as XmlSchemaElement;
+			if (element == null)
+				return false;
+			if (this.ValidatedMaxOccurs != element.ValidatedMaxOccurs ||
+				this.ValidatedMinOccurs != element.ValidatedMinOccurs)
+				return false;
+			if (this.QualifiedName != element.QualifiedName ||
+				this.ElementType != element.ElementType ||
+				this.Constraints.Count != element.Constraints.Count)
+				return false;
+			for (int i = 0; i < this.Constraints.Count; i++) {
+				XmlSchemaIdentityConstraint c1 = Constraints [i] as XmlSchemaIdentityConstraint;
+				XmlSchemaIdentityConstraint c2 = element.Constraints [i] as XmlSchemaIdentityConstraint;
+				if (c1.QualifiedName != c2.QualifiedName ||
+					c1.Selector.XPath != c2.Selector.XPath ||
+					c1.Fields.Count != c2.Fields.Count)
+					return false;
+				for (int f = 0; f < c1.Fields.Count; f++) {
+					XmlSchemaXPath f1 = c1.Fields [f] as XmlSchemaXPath;
+					XmlSchemaXPath f2 = c2.Fields [f] as XmlSchemaXPath;
+					if (f1.XPath != f2.XPath)
+						return false;
+				}
+			}
+			if (this.BlockResolved != element.BlockResolved ||
+				this.FinalResolved != element.FinalResolved ||
+				this.ValidatedDefaultValue != element.ValidatedDefaultValue ||
+				this.ValidatedFixedValue != element.ValidatedFixedValue)
+				return false;
+			return true;
+		}
+
 		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
 			ValidationEventHandler h, XmlSchema schema)
 		{

@@ -18,7 +18,6 @@ namespace System.Xml.Schema
 	public class XmlSchemaSequence : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
-		private XmlSchemaObjectCollection compiledItems;
 		private static string xmlname = "sequence";
 
 		public XmlSchemaSequence()
@@ -34,10 +33,6 @@ namespace System.Xml.Schema
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }
-		}
-		internal XmlSchemaObjectCollection CompiledItems 
-		{
-			get{ return compiledItems; }
 		}
 
 		[MonoTODO]
@@ -73,10 +68,10 @@ namespace System.Xml.Schema
 			if (IsValidated (schema.CompilationId))
 				return errorCount;
 
-			compiledItems = new XmlSchemaObjectCollection ();
+			CompiledItems.Clear ();
 			foreach (XmlSchemaObject obj in Items) {
 				errorCount += obj.Validate (h, schema);
-				compiledItems.Add (obj);
+				CompiledItems.Add (obj);
 			}
 
 			ValidationId = schema.ValidationId;
@@ -100,15 +95,15 @@ namespace System.Xml.Schema
 
 				// FIXME: What is the correct "order preserving" mapping?
 				int baseIndex = 0;
-				for (int i = 0; i < this.Items.Count; i++) {
-					XmlSchemaParticle pd = Items [i] as XmlSchemaParticle;
+				for (int i = 0; i < this.CompiledItems.Count; i++) {
+					XmlSchemaParticle pd = this.CompiledItems [i] as XmlSchemaParticle;
 					if (seq.Items.Count > baseIndex) {
-						XmlSchemaParticle pb = seq.Items [baseIndex] as XmlSchemaParticle;
+						XmlSchemaParticle pb = seq.CompiledItems [baseIndex] as XmlSchemaParticle;
 						pd.ActualParticle.ValidateDerivationByRestriction (pb.ActualParticle, h, schema);
 						baseIndex++;
 					}
 					else
-						error (h, "Invalid choice derivation by extension was found.");
+						error (h, "Invalid sequence derivation by extension was found.");
 				}
 
 				return;

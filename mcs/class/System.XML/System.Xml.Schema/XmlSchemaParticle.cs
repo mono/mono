@@ -198,12 +198,20 @@ namespace System.Xml.Schema
 		// See http://www.thaiopensource.com/relaxng/simplify.html
 		internal abstract void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema);
 
+		internal abstract bool ParticleEquals (XmlSchemaParticle other);
+
 		#region Internal Class
 		public class XmlSchemaParticleEmpty : XmlSchemaParticle
 		{
 			internal XmlSchemaParticleEmpty ()
 			{
 			}
+
+			internal override bool ParticleEquals (XmlSchemaParticle other)
+			{
+				return other == this || other is XmlSchemaParticleEmpty;
+			}
+
 
 			internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
 				ValidationEventHandler h, XmlSchema schema)

@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaAnyAttribute.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -77,7 +82,6 @@ namespace System.Xml.Schema
 		///		a) ##any or ##other
 		///		b) list of anyURI and ##targetNamespace and ##local
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -103,7 +107,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			return errorCount;
@@ -113,45 +116,13 @@ namespace System.Xml.Schema
 		internal void ValidateWildcardSubset (XmlSchemaAnyAttribute other,
 			ValidationEventHandler h, XmlSchema schema)
 		{
-			wildcard.ValidateWildcardSubset (other, h, schema);
+			wildcard.ValidateWildcardSubset (other.wildcard, h, schema);
 
-			/*
-			// 1.
-			if (this.hasValueAny)
-				return;
-			if (this.hasValueOther) {
-				if (other.hasValueOther) {
-					// 2.1 and 2.2
-					if (this.targetNamespace == other.targetNamespace ||
-						other.targetNamespace == null || other.targetNamespace == "")
-						return;
-				}
-				// 3.2.2
-				else if (this.targetNamespace == null || targetNamespace == String.Empty)
-					return;
-				else {
-					foreach (string ns in other.resolvedNamespaces)
-						if (ns == this.targetNamespace) {
-							error (h, "Invalid wildcard subset was found.");
-							return;
-						}
-				}
-			} else {
-				// 3.1
-				if (!this.hasValueLocal && other.hasValueLocal) {
-					error (h, "Invalid wildcard subset was found.");
-				} else if (other.resolvedNamespaces.Count == 0)
-					return;
-				else {
-					ArrayList al = new ArrayList (this.resolvedNamespaces);
-					foreach (string ns in other.resolvedNamespaces)
-						if (!al.Contains (ns)) {
-							error (h, "Invalid wildcard subset was found.");
-							return;
-						}
-				}
-			}
-			*/
+		}
+
+		internal bool ValidateWildcardAllowsNamespaceName (string ns, XmlSchema schema)
+		{
+			return wildcard.ValidateWildcardAllowsNamespaceName (ns, null, schema, false);
 		}
 
 		//<anyAttribute

@@ -30,6 +30,7 @@ namespace System.Xml.Schema
 		private XmlSchemaSimpleType schemaType;
 		private XmlQualifiedName schemaTypeName;
 		private XmlSchemaUse use;
+		private XmlSchemaUse validatedUse;
 		//Compilation fields
 		internal bool ParentIsSchema = false;
 		private XmlSchemaAttribute referencedAttribute;
@@ -152,6 +153,10 @@ namespace System.Xml.Schema
 		{
 			// FixedValue can be overriden in case of ref.
 			get { return validatedFixedValue; }
+		}
+		internal XmlSchemaUse ValidatedUse
+		{
+			get { return validatedUse; }
 		}
 
 		#endregion
@@ -382,6 +387,10 @@ namespace System.Xml.Schema
 					}
 				}
 			}
+			if (Use == XmlSchemaUse.None)
+				validatedUse = XmlSchemaUse.Optional;
+			else
+				validatedUse = Use;
 
 			ValidationId = schema.ValidationId;
 			return errorCount;

@@ -35,7 +35,6 @@ namespace System.Xml.Schema
 		/// 1. ref must be present
 		/// 2. The element must be empty. ?? FIXME: Is this correct or annotation is permitted?
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -57,7 +56,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			return errorCount;
