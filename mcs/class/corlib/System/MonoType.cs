@@ -1,11 +1,14 @@
 //
 // System.MonoType
 //
-// Sean MacIsaac (macisaac@ximian.com)
-// Paolo Molaro (lupus@ximian.com)
-// Patrik Torstensson (patrik.torstensson@labs2.com)
+// Authors: 
+// 	Sean MacIsaac (macisaac@ximian.com)
+// 	Paolo Molaro (lupus@ximian.com)
+// 	Patrik Torstensson (patrik.torstensson@labs2.com)
+//	Gonzalo Paniagua (gonzalo@ximian.com)
 //
-// (C) 2001 Ximian, Inc.
+// (c) 2001-2003 Ximian, Inc.
+// (c) 2003,2004 Novell, Inc. (http://www.novell.com)
 //
 
 using System.Reflection;
@@ -214,50 +217,24 @@ namespace System
 			return GetPropertiesByName (null, bindingAttr, false, this);
 		}
 
-		[MonoTODO]
 		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr,
 								 Binder binder, Type returnType,
 								 Type[] types,
 								 ParameterModifier[] modifiers)
 		{
-			// fixme: needs to use the binder, and send the modifiers to that binder
-			if (null == name || types == null)
-				throw new ArgumentNullException ();
-			
-			PropertyInfo ret = null;
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
 			PropertyInfo [] props = GetPropertiesByName (name, bindingAttr, ignoreCase, this);
+			int count = props.Length;
+			if (count == 0)
+				return null;
+			
+			if (count == 1 && (types == null || types.Length == 0)) 
+				return props [0];
 
-			foreach (PropertyInfo info in props) {
-				if (returnType != null && info.PropertyType != returnType)
-						continue;
-
-				if (types.Length > 0) {
-					ParameterInfo[] parameterInfo = info.GetIndexParameters ();
-
-					if (parameterInfo.Length != types.Length)
-						continue;
-
-					int i;
-					bool match = true;
-
-					for (i = 0; i < types.Length; i ++)
-						if (parameterInfo [i].ParameterType != types [i]) {
-							match = false;
-							break;
-						}
-
-					if (!match)
-						continue;
-				}
-
-				if (null != ret)
-					throw new AmbiguousMatchException();
-
-				ret = info;
-			}
-
-			return ret;
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			
+			return binder.SelectProperty (bindingAttr, props, returnType, types, modifiers);
 		}
 
 		protected override bool HasElementTypeImpl ()

@@ -1,3 +1,7 @@
+2004-02-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoType.cs: use the binder in GetPropertyImpl.
+
 2004-02-22  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Math.cs: MonoStyled, replaced space with tabs,
