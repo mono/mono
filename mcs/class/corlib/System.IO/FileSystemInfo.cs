@@ -67,6 +67,16 @@ namespace System.IO {
 			}
 		}
 
+		public DateTime CreationTimeUtc {
+			get {
+				return CreationTime.ToUniversalTime ();
+			}
+
+			set {
+				CreationTime = value.ToLocalTime ();
+			}
+		}
+
 		public DateTime LastAccessTime {
 			get {
 				Refresh (false);
@@ -85,6 +95,17 @@ namespace System.IO {
 			}
 		}
 
+		public DateTime LastAccessTimeUtc {
+			get {
+				Refresh (false);
+				return LastAccessTime.ToUniversalTime ();
+			}
+
+			set {
+				LastAccessTime = value.ToLocalTime ();
+			}
+		}
+
 		public DateTime LastWriteTime {
 			get {
 				Refresh (false);
@@ -99,6 +120,17 @@ namespace System.IO {
 				if (!MonoIO.SetFileTime (FullName, -1, -1,
 							 filetime, out error))
 					throw MonoIO.GetException (error);
+			}
+		}
+
+		public DateTime LastWriteTimeUtc {
+			get {
+				Refresh (false);
+				return LastWriteTime.ToUniversalTime ();
+			}
+
+			set {
+				LastWriteTime = value.ToLocalTime ();
 			}
 		}
 
