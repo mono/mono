@@ -83,7 +83,7 @@ endif
 ifeq ($(PLATFORM), win32)
 GACDIR = `cygpath -w $(DESTDIR)$(prefix)/lib`
 else
-GACDIR = $(DESTDIR)$(prefix)/lib`
+GACDIR = $(DESTDIR)$(prefix)/lib
 endif
 
 all-local: $(the_lib)
