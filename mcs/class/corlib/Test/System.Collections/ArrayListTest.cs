@@ -1474,6 +1474,23 @@ public class ArrayListTest : TestCase {
 			AssertEquals("Should be sorted", 'e', al1[4]);
 			AssertEquals("Should be sorted", 'f', al1[5]);
 		}
+                {
+                	ArrayList al1 = new ArrayList ();
+                	al1.Add (null);                	
+	              	al1.Add (null);                	
+                	al1.Add (32);
+                	al1.Add (33);
+               		al1.Add (null);                	
+	              	al1.Add (null);                	
+
+                	al1.Sort ();
+                	AssertEquals ("Should be null", null, al1 [0]);
+                	AssertEquals ("Should be 2. null", null, al1 [1]);
+                	AssertEquals ("Should be 3. null", null, al1 [2]);
+                	AssertEquals ("Should be 4. null", null, al1 [3]);                	
+                	AssertEquals ("Should be 32", 32, al1 [4]);
+                	AssertEquals ("Should be 33", 33, al1 [5]);
+                }
 	}
 
 	// TODO - Sort with IComparers
