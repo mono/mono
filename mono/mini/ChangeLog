@@ -1,3 +1,6 @@
+2004-02-23  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_get_method): Set `gmethod->generic_inst'.
 
 Sun Feb 22 22:25:19 CET 2004 Paolo Molaro <lupus@ximian.com>
 
