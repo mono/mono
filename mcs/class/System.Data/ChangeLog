@@ -1,3 +1,8 @@
+2002-12-04  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Xml/XmlDataDocument.cs: Now this works in both ways,
+	DataSet <--> XmlDataDocument.cs at some level at least.
+	
 2002-12-02  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Xml/XmlDataDocument.cs : some fixes and some imlemented 

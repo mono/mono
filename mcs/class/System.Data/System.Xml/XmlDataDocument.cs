@@ -41,11 +41,16 @@ namespace System.Xml {
 		#region Constructors
 
 		public XmlDataDocument() {
-			dataSet = new DataSet();			
+			dataSet = new DataSet();
+			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
+			//this.NodeChanging += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
+			//this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
+			//this.NodeRemoved += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
 		}
 
 		public XmlDataDocument(DataSet dataset) {
 			this.dataSet = dataset;
+			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
 		}
 
 		#endregion // Constructors
@@ -213,6 +218,7 @@ namespace System.Xml {
 
 			do {
 
+
 				// Find right table from tablecollection
 				for (int i = 0; i < DataSet.Tables.Count && dt == null; i++) {
 
@@ -288,6 +294,47 @@ namespace System.Xml {
 		
 		#region DataSet event handlers
 
+		// this changed datatable values when some of xmldocument elements is changed
+		private void OnXmlDataColumnChanged (object sender, XmlNodeChangedEventArgs args)
+		{
+			int i = 0;
+			XPathNavigator nodeNavigator = args.Node.CreateNavigator ();
+			int c = GetElementsByTagName (args.Node.Name).Count;
+
+			// FIXME: I dont know which way it should be but this work on linux.
+			// could be also GetElementsByTagName (args.OldParent.Name) []
+			XmlNodeList nodeList = GetElementsByTagName (args.Node.Name);
+			
+
+			bool isSame = false;
+			
+			// Find right row		       			
+			while ((i < c) && !isSame ) {
+
+				XPathNavigator docNavigator = nodeList [i].CreateNavigator ();
+				isSame = docNavigator.IsSamePosition (nodeNavigator);
+				docNavigator = nodeList [i].CreateNavigator ();
+				i++;
+			} 
+			
+			// if there wasnt such row it is just added and we dont need to care about it
+			if (!isSame) 
+				return;
+
+			// now we know rownum
+			int xmlrowid = (int)dataRowIDList [i];
+		       
+			DataTable dt = DataSet.Tables [args.OldParent.Name];			       
+			foreach (DataRow r in dt.Rows) {
+				if (xmlrowid == r.XmlRowID) {
+					
+					// change value only when have to.
+					if ((string)r [args.Node.Name] != (string)args.Node.InnerText)
+						r [args.Node.Name] = args.Node.InnerText;
+				}
+			}			
+		}
+
 		[MonoTODO]
 		private void OnDataTableColumnChanged(object sender, 
 							     DataColumnChangeEventArgs eventArgs)
@@ -299,8 +346,6 @@ namespace System.Xml {
 			// TODO: Here should be some kind of error checking.
 			GetElementsByTagName (eventArgs.Column.ToString ()) [dataRowIDList.IndexOf (
 				eventArgs.Row.XmlRowID)].InnerText = (string)eventArgs.ProposedValue;
-			
-			
 		}
 	
 		[MonoTODO]
@@ -384,7 +429,6 @@ namespace System.Xml {
 					child.InnerText = (string)row [rowValue++];
 				
 			}
-			
 		}
 
 		#endregion // DataSet event handlers
