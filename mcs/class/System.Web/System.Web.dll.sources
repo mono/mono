@@ -264,6 +264,7 @@ System.Web.UI.WebControls/CalendarDay.cs
 System.Web.UI.WebControls/CalendarSelectionMode.cs
 System.Web.UI.WebControls/CheckBox.cs
 System.Web.UI.WebControls/CheckBoxList.cs
+System.Web.UI.WebControls/CollectionDataSource.cs
 System.Web.UI.WebControls/Content.cs
 System.Web.UI.WebControls/ContentControlBuilder.cs
 System.Web.UI.WebControls/ContentPlaceHolder.cs
