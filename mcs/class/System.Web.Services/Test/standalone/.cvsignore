@@ -1,0 +1,16 @@
+*.dll
+*.mdb
+TestResult.xml
+WsdlTestResult.xml
+client.sources
+error
+proxies
+proxies.diff.xml
+proxies.mono.xml
+proxies.net.xml
+proxies.sources
+proxy-gen-error.xml
+semantic.cache
+serviceStatus.xml
+somefile
+wsdlcache

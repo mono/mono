@@ -1,3 +1,8 @@
+2004-11-08  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (test-clients): Refer to 'nunit-console.exe' in
+	profile-specific directory.
+
 2004-09-29  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Makefile: Remove error directory on every run.

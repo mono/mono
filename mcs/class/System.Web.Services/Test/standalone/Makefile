@@ -7,7 +7,7 @@ proxies: proxies.dll
 
 wstest.exe: wstest.cs
 	$(MCS) wstest.cs /r:System.Web.Services.dll
-	
+
 clean:
 	rm -f *.dll *.exe *~ *.pdb
 	rm -rf proxies
@@ -40,7 +40,7 @@ cls:
 pack:
 	tar --gzip -cf wsdlfiles.tar.gz wsdlcache
 	gzip proxies.net.xml
-	
+
 winbase:
 	csc wstest.cs
 	rm -rf wsdl
@@ -50,7 +50,7 @@ winbase:
 	wstest.exe gp
 	csc /r:System.Web.Services.dll /r:System.Data /target:library -out:proxies.dll @proxies.sources
 	mono ../../../../tools/corcompare/mono-api-info.exe proxies.net.dll > proxies.net.xml
-	
+
 test-wsdl: tools
 	rm -rf error/*
 	rm -rf wsdlcache
@@ -65,16 +65,18 @@ test-wsdl: tools
 	mono wstest.exe msfix proxies.net.xml
 	mono ../../../../tools/corcompare/mono-api-diff.exe proxies.net.xml proxies.mono.xml > proxies.diff.xml
 	mono wstest.exe checkdiff proxies.diff.xml
-	
+
 test-clients: tests
 	rm -f somefile && touch somefile
 	(tail -f somefile | xsp --root server)&
 	sleep 2
-	-mono ../../../lib/nunit-console.exe System.Web.Services-standalone_test.dll
+	-harness=../../../lib/default/nunit-console.exe; \
+	if test -f $$harness; then :; else harness=../../../lib/nunit-console.exe; fi; \
+	mono $$harness System.Web.Services-standalone_test.dll
 	echo "" >> somefile
 
 test: test-wsdl test-clients
-	
+
 respage:
 	mono transform.exe proxies.diff.xml ../../../../tools/corcompare/mono-api.xsl > proxies.data.html
 	cat header.html proxies.data.html > proxies.html
