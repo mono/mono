@@ -1,0 +1,4 @@
+2005-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngInference.cs,
+	  RelaxngInferenceDesign.txt : new files.
