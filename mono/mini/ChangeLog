@@ -1,4 +1,10 @@
 
+Sat Apr 26 11:55:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, Makefile.am: make distcheck works (partially from
+	a patch by Richard Lee <r.h.lee@attbi.com>).
+	* regset.c, regset.h: removed, they are unused.
+
 2003-04-25  Dick Porter  <dick@ximian.com>
 
 	* driver.c: Usage reports the name as 'mono' not 'mini'
