@@ -1,3 +1,18 @@
+2003-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.h class.c (mono_class_is_subclass_of): New function.
+	
+	* icall.c (ves_icall_System_Array_FastCopy): Added optimized copy
+	routines for most common case (calls from ArrayList::ToArray).
+
+	* icall.c (ves_icall_System_Environment_Exit): Call profiler shutdown 
+	routine so programs which call Environment::Exit() can be profiled.
+
+	* icall.c (ves_icall_System_Reflection_FieldInfo_internal_from_handle): 
+	Added MONO_ARCH_SAVE_REGS.
+
+	* icall.c (ves_icall_type_is_subtype_of): Use new function.
+
 2003-03-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* blob.h: Add a couple of new MonoType types definitions.
