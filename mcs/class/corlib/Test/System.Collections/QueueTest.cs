@@ -14,7 +14,7 @@ using System;
 using System.Collections;
 using NUnit.Framework;
 
-namespace Testsuite.System.Collections {
+namespace MonoTests.System.Collections {
 
 	public class QueueTest : TestCase {
 
