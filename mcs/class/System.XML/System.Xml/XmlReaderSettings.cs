@@ -168,6 +168,11 @@ namespace System.Xml
 			}
 		}
 
+		internal void SetSchemas (XmlSchemaSet schemas)
+		{
+			this.schemas = schemas;
+		}
+
 		public XsValidationFlags ValidationFlags {
 			get { return validationFlags; }
 			set { validationFlags = value; }

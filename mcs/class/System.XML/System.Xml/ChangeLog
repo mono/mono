@@ -1,3 +1,15 @@
+2004-12-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : ReadElementContentAsBinHex() was calling ..AsBase64().
+	* XmlValidatingReader.cs : In set_EntityHandling(), set that property
+	  of DTDValidatingReader.
+	* XmlNodeReader2.cs,
+	  XmlNodeReaderImpl.cs : added simplified implementation that splits
+	  entity handling and anything else.
+	* XQueryConvert.cs : implemented ShouldCheckValueFacets().
+	  Use Convert class instead of simple casts (check range).
+	* XmlReaderSettings.cs : added SetSchemas() for XPathNavigator.
+
 2004-12-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlParserContext.cs : all the string properties must not be set as

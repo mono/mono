@@ -1028,7 +1028,7 @@ namespace System.Xml
 			byte [] buffer, int offset, int length)
 		{
 			CheckSupport ();
-			return binary.ReadElementContentAsBase64 (
+			return binary.ReadElementContentAsBinHex (
 				buffer, offset, length);
 		}
 #endif

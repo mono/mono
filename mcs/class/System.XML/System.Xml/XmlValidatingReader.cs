@@ -121,7 +121,11 @@ namespace System.Xml
 
 		public EntityHandling EntityHandling {
 			get { return entityHandling; }
-			set { entityHandling = value; }
+			set {
+				entityHandling = value;
+				if (dtdReader != null)
+					dtdReader.EntityHandling = value;
+			}
 		}
 
 		public override bool EOF { 
