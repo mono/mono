@@ -1,5 +1,8 @@
 2003-10-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* arrays.cs (test_0_newarr_emulation): Add new regression test for
+	#30073.
+
 	* mini.c: Decompose the NEWARR instruction before decomposing its
 	arguments. Fixes #30073.
 
