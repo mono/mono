@@ -14,18 +14,22 @@ namespace System
 	[Serializable]
 	public class SystemException : Exception
 	{
+		const int Result = unchecked ((int)0x80131501);
+
 		// Constructors
 		public SystemException ()
 			: base (Locale.GetText ("A system exception has occurred."))
 		{
+			HResult = Result;
 		}
 
 		public SystemException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
-		protected SystemException(SerializationInfo info, StreamingContext context)
+		protected SystemException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
@@ -33,6 +37,7 @@ namespace System
 		public SystemException (string message, Exception inner)
 			: base (message, inner)
 		{
+			HResult = Result;
 		}
 	}
 }

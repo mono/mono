@@ -1,46 +1,50 @@
 //
 // System.TypeLoadException.cs
 //
-// Author:
+// Authors:
 //   Sean MacIsaac (macisaac@ximian.com)
 //   Duncan Mak  (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class TypeLoadException : SystemException {
-
+	public class TypeLoadException : SystemException
+	{
+		const int Result = unchecked ((int)0x80131522);
+		
 		// Fields
 		private string msg;
 		private string type;
 
-                // Constructors
+		// Constructors
 		public TypeLoadException ()
 			: base (Locale.GetText ("A type load exception has occurred."))
 		{
+			HResult = Result;
 		}
 
 		public TypeLoadException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		public TypeLoadException (string message, Exception inner)
 			: base (message, inner)
 		{
+			HResult = Result;
 		}
 
 		protected TypeLoadException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			if (info == null)
-				throw new ArgumentNullException ("info is null.");
+				throw new ArgumentNullException ("info");
 
 			type = info.GetString ("TypeLoadClassName");
 		}
@@ -71,7 +75,7 @@ namespace System {
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
-				throw new ArgumentNullException ("info is null.");
+				throw new ArgumentNullException ("info");
 
 			base.GetObjectData (info, context);
 			info.AddValue ("TypeLoadClassName", type, typeof (string)); 

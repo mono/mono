@@ -1,5 +1,11 @@
 2004-03-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* SystemException.cs: Exceptions set the HResult
+	* TypeLoadException.cs: Exceptions set the HResult, fixed wrong exception usage
+	* SByte.cs: Implemented two missing methods, fix wrong parameters for ArgumentNullException
+
+2004-03-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* TypedReference.cs
 	* TypeLoadException.cs
 	* TypeInitializationException.cs

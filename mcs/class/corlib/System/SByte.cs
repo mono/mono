@@ -60,7 +60,7 @@ namespace System
 			bool digits_seen = false;
 
 			if (s == null)
-				throw new ArgumentNullException (Locale.GetText ("s is null"));
+				throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -77,12 +77,12 @@ namespace System
 			c = s [i];
 			if (c == '+')
 				i++;
-			else if (c == '-'){
+			else if (c == '-') {
 				neg = true;
 				i++;
 			}
 
-			for (; i < len; i++){
+			for (; i < len; i++) {
 				c = s [i];
 
 				if (c >= '0' && c <= '9') {
@@ -179,7 +179,7 @@ namespace System
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return System.Convert.ToDateTime (value);
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
@@ -220,7 +220,7 @@ namespace System
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return System.Convert.ToType (value, conversionType, provider);
 		}
 
 		[CLSCompliant (false)]
