@@ -60,9 +60,8 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-		public override EventInfo[] GetEvents (BindingFlags bindingAttr) {
-			return new EventInfo [0];
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override EventInfo[] GetEvents (BindingFlags bindingAttr);
 
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
 			//FIXME

@@ -1,3 +1,9 @@
+
+Thu Mar 7 17:16:06 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: make GetEvents() an internal call.
+	* MulticastDelegate.cs: copy the passed in array.
+
 2002-03-06  Martin Baulig  <martin@gnome.org>
 
 	* Array.cs (Copy): Use FastCopy when appropriate and do correct

@@ -31,7 +31,7 @@ namespace System {
 		private MulticastDelegate (Type target_type, string method, Delegate [] list)
 			: base (target_type, method)
 		{
-			invocation_list = list;
+			invocation_list = (Delegate[])list.Clone ();
 		}
 		
 #if NOTYET
