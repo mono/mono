@@ -1574,12 +1574,17 @@ namespace System.Xml.Serialization
 					{
 						if (!readByOrder)
 							WriteLine (readFlag[info.Member.Index] + " = true;");
-						if (_format == SerializationFormat.Encoded && info.MultiReferenceType) 
+						if (_format == SerializationFormat.Encoded) 
 						{
 							string val = GetObTempVar ();
 							RegisterReferencingMap (info.MappedType);
 							WriteLine ("object " + val + " = ReadReferencingElement (out fixup.Ids[" + info.Member.Index + "]);");
-							WriteLineInd ("if (fixup.Ids[" + info.Member.Index + "] == null) {");	// already read
+							
+							if (info.MultiReferenceType)
+								WriteLineInd ("if (fixup.Ids[" + info.Member.Index + "] == null) {");	// already read
+							else
+								WriteLineInd ("if (" + val + " != null) {");	// null value
+								
 							GenerateSetMemberValue (info.Member, ob, GetCast (info.Member.TypeData,val), isValueList);
 							WriteLineUni ("}");
 						}

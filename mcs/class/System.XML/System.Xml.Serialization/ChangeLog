@@ -1,3 +1,9 @@
+2004-05-26  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs:
+	  In encoded format, primitive types can be null. Read them using
+	  ReadReferencingElement, that already checks for the null tag.
+
 2004-05-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializationReader.cs: Check for empty element when reading an array

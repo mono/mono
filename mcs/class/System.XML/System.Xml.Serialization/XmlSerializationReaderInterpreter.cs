@@ -368,10 +368,14 @@ namespace System.Xml.Serialization
 						{
 							object val;
 							readFlag[info.Member.Index] = true;
-							if (_format == SerializationFormat.Encoded && info.MultiReferenceType) 
+							if (_format == SerializationFormat.Encoded)
 							{
 								val = ReadReferencingElement (out fixup.Ids[info.Member.Index]);
-								if (fixup.Ids[info.Member.Index] == null)	// already read
+								if (info.MultiReferenceType) {
+									if (fixup.Ids[info.Member.Index] == null)	// already read
+										SetMemberValue (info.Member, ob, val, isValueList);
+								}
+								else if (val != null)
 									SetMemberValue (info.Member, ob, val, isValueList);
 							}
 							else 
