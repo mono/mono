@@ -1,3 +1,9 @@
+
+Sat Jan 22 09:35:19 EST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-ppc.h, mini-ppc.c: updated to use out of line
+	basic blocks, reduced intrinsic exception throwing code size.
+
 2005-01-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.c (mini_usage): Reorder the usage screen.
