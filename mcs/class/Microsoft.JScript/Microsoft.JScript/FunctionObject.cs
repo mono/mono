@@ -22,11 +22,11 @@ namespace Microsoft.JScript {
 		internal Type return_type;
 		internal FormalParameterList parameters;
 		internal Block body;
+		internal AST parent; 
 
-		internal FunctionObject (string name,
+		internal FunctionObject (AST parent, string name,
 					 FormalParameterList p,
-					 string ret_type,
-					 Block body)
+					 string ret_type, Block body)
 		{
 			//
 			// FIXME: 
@@ -36,6 +36,7 @@ namespace Microsoft.JScript {
 			//
 			this.attr = MethodAttributes.Public | MethodAttributes.Static;
 
+			this.parent = parent;
 			this.name = name;
 			this.parameters = p;
 
@@ -44,7 +45,7 @@ namespace Microsoft.JScript {
 			// FIXME: Must check that return_type it's a valid type,
 			// and assign that to 'return_type' field.
 			//
-			this.return_type = typeof (Object);
+			this.return_type = typeof (void);
 
 			this.body = body;
 		}
@@ -52,7 +53,7 @@ namespace Microsoft.JScript {
 		internal FunctionObject ()
 		{
 			this.parameters = new FormalParameterList ();
-			this.body = new Block ();
+			this.body = new Block (parent);
 		}
 
 		public override string ToString ()
@@ -81,7 +82,8 @@ namespace Microsoft.JScript {
 		internal Type [] params_types ()
 		{
 			if (parameters == null)
-				return new Type [] {};
+				return 
+					new Type [] {typeof (Object), typeof (Microsoft.JScript.Vsa.VsaEngine)};
 			else {
 				int i, size;
 				ArrayList p = parameters.ids;

@@ -8,15 +8,18 @@
 
 using System.Collections;
 using System.Text;
+using System;
 
 namespace Microsoft.JScript {
 
 	public class Block : AST {
 
 		internal ArrayList Elements;
+		internal AST parent;
 
-		internal Block ()
+		internal Block (AST parent)
 		{
+			this.parent = parent;
 			Elements = new ArrayList ();
 		}
 

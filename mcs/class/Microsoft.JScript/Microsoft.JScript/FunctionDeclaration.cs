@@ -19,12 +19,12 @@ namespace Microsoft.JScript {
 
 		internal FunctionObject Function;
 
-		internal FunctionDeclaration (string name, 
+		internal FunctionDeclaration (AST parent, string name, 
 					      FormalParameterList p,
 					      string return_type,
 					      Block body)
 		{
-			Function = new FunctionObject (name, p, 
+			Function = new FunctionObject (parent, name, p, 
 						       return_type, body);
 		}
 
@@ -49,25 +49,41 @@ namespace Microsoft.JScript {
 			return Function.ToString ();
 		}
 
+		internal string get_composite_name ()
+		{
+			string parent_name, full_name;
+			FunctionDeclaration p = Function.parent as FunctionDeclaration;
+
+			if (p.Function.parent != null)
+				parent_name = p.get_composite_name ();
+			else parent_name = p.Function.name;
+
+			full_name = parent_name + "." + Function.name;
+
+			return full_name;
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
-			TypeBuilder type;
+			TypeBuilder type = ec.type_builder;
 			MethodBuilder method;
+			string name;
 
-			string name = Function.name;
+			if (Function.parent == null) {
+				name = Function.name;
+				type.DefineField (name, typeof (Microsoft.JScript.ScriptFunction),
+						  FieldAttributes.Public | FieldAttributes.Static);
 
-			type = ec.type_builder;
-
-			type.DefineField (name, 
-					  typeof (Microsoft.JScript.ScriptFunction),
-					  FieldAttributes.Public |
-					  FieldAttributes.Static);
+			} else 
+				name = get_composite_name ();
 
 			method = type.DefineMethod (name, Function.attr, 
 						    Function.return_type,
 						    Function.params_types ());
-
+			
 			ec.ig = method.GetILGenerator ();
+
+			Function.body.Emit (ec);
 		}
 
 		internal override bool Resolve (IdentificationTable context)
