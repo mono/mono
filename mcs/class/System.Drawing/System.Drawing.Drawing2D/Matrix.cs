@@ -9,6 +9,7 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
 {
@@ -110,10 +111,25 @@ namespace System.Drawing.Drawing2D
         
         ~Matrix() {}
         
+        [StructLayout(LayoutKind.Explicit)]
+        internal struct BitConverter 
+        {
+            [FieldOffset(0)] public float f;
+            [FieldOffset(0)] public int i;
+        }
+        
         public override int GetHashCode()
         {
-            // TODO: find a better hash function than det(M)
-            return (int)(m[0] * m[3] - m[2] * m[1]);
+            BitConverter b;
+            // compiler is not smart
+            b.i = 0;
+            int h = 0;
+            for (int i = 0; i < 6; i++) 
+            {
+                b.f = m[i];
+                h ^= b.i >> i;
+            }
+            return h;
         }
         
         public void Invert()
@@ -406,7 +422,8 @@ namespace System.Drawing.Drawing2D
             // TODO
         }
         
-        /* some simple test (TODO: remove)
+        // some simple test (TODO: remove)
+        /*
         public static void Main()
         {
             PointF[] p = {new PointF(1.0f, 2.0f)};
@@ -422,7 +439,14 @@ namespace System.Drawing.Drawing2D
             m.Invert();
             m.TransformPoints(p);
             Console.WriteLine("(" + p[0].X + " " + p[0].Y + ")");
+            
+            Matrix a = new Matrix(1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+            Matrix b = new Matrix(2.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f);
+            
+            Console.WriteLine("h(a) = " + a.GetHashCode());
+            Console.WriteLine("h(b) = " + b.GetHashCode());
         }
         */
+        
     }
 }
