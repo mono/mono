@@ -6,14 +6,34 @@ namespace System.Data.OleDb.Test
 	public class TestOleDb
 	{
 		private OleDbConnection m_cnc;
-		
+
 		private TestOleDb ()
 		{
+			OleDbCommand cmd;
+			
 			m_cnc = new OleDbConnection ("PostgreSQL");
 			m_cnc.Open ();
+
+			Console.WriteLine ("Creating temporary table...");
+			cmd = new OleDbCommand ("CREATE TABLE mono_test_table ( name varchar(25), email varchar(50))", m_cnc);
+			cmd.ExecuteNonQuery ();
+			InsertRow ("Mike Smith", "mike@smiths.com");
+			InsertRow ("Julie Andrews", "julie@hollywood.com");
+			InsertRow ("Michael Jordan", "michael@bulls.com");
 		}
 
-		void DisplayRow (IDataReader reader)
+		void InsertRow (string name, string email)
+		{
+			OleDbCommand cmd;
+
+			Console.WriteLine ("Inserting record " + name + "/" + email);
+			cmd = new OleDbCommand ("INSERT INTO mono_test_table (name, email) VALUES ('" +
+						name + "', '" + email +"')", m_cnc);
+			cmd.ExecuteNonQuery ();
+
+		}
+		
+		void DisplayRow (OleDbDataReader reader)
 		{
 			for (int i = 0; i < reader.FieldCount; i++) {
 				Console.WriteLine (" " + reader.GetDataTypeName (i) + ": " +
@@ -24,11 +44,11 @@ namespace System.Data.OleDb.Test
 		void TestDataReader ()
 		{
 			int i = 0;
-			string sql = "SELECT * FROM pg_tables";
+			string sql = "SELECT * FROM mono_test_table";
 			
-			Console.WriteLine ("Executing command...");
+			Console.WriteLine ("Executing SELECT command...");
 			OleDbCommand cmd = new OleDbCommand (sql, m_cnc);
-			IDataReader reader = cmd.ExecuteReader ();
+			OleDbDataReader reader = cmd.ExecuteReader ();
 
 			Console.WriteLine (" Recordset description:");
 			for (i = 0; i < reader.FieldCount; i++) {
@@ -44,8 +64,19 @@ namespace System.Data.OleDb.Test
 			}
 		}
 
+		void TestTransaction ()
+		{
+			Console.WriteLine ("Starting transaction...");
+			OleDbTransaction xaction = m_cnc.BeginTransaction ();
+
+			Console.WriteLine ("Aborting transaction...");
+			xaction.Rollback ();
+		}
+		
 		void Close ()
 		{
+			OleDbCommand cmd = new OleDbCommand ("DROP TABLE mono_test_table", m_cnc);
+			cmd.ExecuteNonQuery ();
 			m_cnc.Close ();
 		}
 
@@ -54,6 +85,7 @@ namespace System.Data.OleDb.Test
 			try {
 				TestOleDb test = new TestOleDb ();
 				test.TestDataReader ();
+				test.TestTransaction ();
 				test.Close ();
 			} catch (Exception e) {
 				Console.WriteLine ("An error has occured: {0}", e.ToString ());

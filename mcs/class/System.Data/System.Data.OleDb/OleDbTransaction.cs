@@ -58,15 +58,21 @@ namespace System.Data.OleDb
 		#region Properties
 
 		public OleDbConnection Connection {
-			get { return connection; }
+			get {
+				return connection;
+			}
 		}
 
 		IDbConnection IDbTransaction.Connection {
-			get { return connection; }
+			get {
+				return connection;
+			}
 		}
 		
 		public IsolationLevel IsolationLevel {
-			get { return isolationLevel; }
+			get {
+				return isolationLevel;
+			}
 		}
 
 		#endregion // Properties
@@ -85,7 +91,8 @@ namespace System.Data.OleDb
 
 		public void Commit ()
 		{
-			if (!libgda.gda_connection_commit_transaction (connection.GdaConnection, gdaTransaction))
+			if (!libgda.gda_connection_commit_transaction (connection.GdaConnection,
+								       gdaTransaction))
 				throw new InvalidOperationException ();
 		}
 
@@ -102,7 +109,8 @@ namespace System.Data.OleDb
 
 		public void Rollback ()
 	        {
-			if (!libgda.gda_connection_rollback_transaction (connection.GdaConnection, gdaTransaction))
+			if (!libgda.gda_connection_rollback_transaction (connection.GdaConnection,
+									 gdaTransaction))
 				throw new InvalidOperationException ();
 		}
 
