@@ -17,7 +17,6 @@ namespace System.Security.Cryptography
 	internal class RSAHandler : MiniParser.IHandler {
 
 		private RSAParameters rsa;
-		private bool unknown;
 		private byte[] temp;
 
 		public RSAHandler () 
@@ -93,7 +92,7 @@ namespace System.Security.Cryptography
 		public abstract RSAParameters ExportParameters (bool include);
 		public abstract void ImportParameters (RSAParameters parameters);
 
-		protected void ZeroizePrivateKey (RSAParameters parameters)
+		internal void ZeroizePrivateKey (RSAParameters parameters)
 		{
 			if (parameters.P != null)
 				Array.Clear(parameters.P, 0, parameters.P.Length);

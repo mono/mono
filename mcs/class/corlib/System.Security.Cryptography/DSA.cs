@@ -104,7 +104,7 @@ namespace System.Security.Cryptography
 		
 		public abstract DSAParameters ExportParameters (bool includePrivateParameters);
 
-		protected void ZeroizePrivateKey (DSAParameters parameters)
+		internal void ZeroizePrivateKey (DSAParameters parameters)
 		{
 			if (parameters.X != null)
 				Array.Clear (parameters.X, 0, parameters.X.Length);

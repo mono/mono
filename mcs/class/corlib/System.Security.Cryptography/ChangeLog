@@ -1,3 +1,16 @@
+2002-12-31  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsymmetricAlgorithm.cs: Removed ValidKeySize (method only present
+	in SymmetricAlgorithm).
+	* DSA.cs: Change ZeroizePrivateKey from protected to internal.
+	* DSACryptoServiceProvider.cs: Added some case where we need to check 
+	for keypairGenerated.
+	* RSA.cs: Change ZeroizePrivateKey from protected to internal.
+	* RSACryptoServiceProvider.cs: Key were never generated with the default
+	(no parameter) constructor. Now checks for keypairGenerated in methods.
+	* SignatureDescription.cs: Added CreateDeformatter in RSAPKCS1SHA1-
+	SignatureDescription to please corcompare (it just call it's ancestor).
+
 2002-12-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStream.cs: Implemented core. Not sure about many details - 

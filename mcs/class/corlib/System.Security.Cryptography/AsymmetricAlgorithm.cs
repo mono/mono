@@ -114,15 +114,6 @@ namespace System.Security.Cryptography {
 		}
 		
 		/// <summary>
-		/// Checks wether the given keyLength is valid for the current algorithm
-		/// </summary>
-		/// <param name="bitLength">the given keyLength</param>
-		public bool ValidKeySize (int bitLength) 
-		{
-			return IsLegalKeySize (LegalKeySizesValue, bitLength);
-		}
-		
-		/// <summary>
 		/// Creates the default implementation of the default asymmetric algorithm (RSA).
 		/// </summary>
 		public static AsymmetricAlgorithm Create () 

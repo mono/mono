@@ -60,7 +60,6 @@ public sealed class RSACryptoServiceProvider : RSA {
 
 	// FIXME: We currently dont link with MS CAPI. Anyway this makes
 	// only sense in Windows - what do we do elsewhere ?
-	// Note: Microsoft RSA CSP can do between 512 and 16384 bits keypair
 	public RSACryptoServiceProvider (int dwKeySize, CspParameters parameters) 
 	{
 		Common (parameters);
@@ -152,6 +151,7 @@ public sealed class RSACryptoServiceProvider : RSA {
 		get { return n.bitCount(); }
 	}
 
+	[MonoTODO("Persistance")]
 	public bool PersistKeyInCsp {
 		get { return false;  }
 		set { throw new NotSupportedException (); }
@@ -180,6 +180,11 @@ public sealed class RSACryptoServiceProvider : RSA {
 	// Using this method to decrypt data IS dangerous (and very slow).
 	public override byte[] DecryptValue (byte[] rgb) 
 	{
+		// it would be stupid to decrypt data with a newly
+		// generated keypair - so we return false
+		if (!keypairGenerated)
+			return null;
+
 		BigInteger input = new BigInteger (rgb);
 		BigInteger output = input.modPow (d, n);
 		return output.getBytes ();
@@ -205,6 +210,9 @@ public sealed class RSACryptoServiceProvider : RSA {
 	// Using this method to encrypt data IS dangerous (and very slow).
 	public override byte[] EncryptValue (byte[] rgb) 
 	{
+		if (!keypairGenerated)
+			GenerateKeyPair (1024);
+
 		// TODO: With CRT
 		// without CRT
 		BigInteger input = new BigInteger (rgb);
@@ -216,6 +224,9 @@ public sealed class RSACryptoServiceProvider : RSA {
 	{
 		if ((includePrivateParameters) && (!privateKeyExportable))
 			throw new CryptographicException ("cannot export private key");
+		if (!keypairGenerated)
+			GenerateKeyPair (1024);
+
 		RSAParameters param = new RSAParameters();
 		param.Exponent = e.getBytes ();
 		param.Modulus = n.getBytes ();
@@ -235,6 +246,7 @@ public sealed class RSACryptoServiceProvider : RSA {
 		// if missing "mandatory" parameters
 		if ((parameters.Exponent == null) || (parameters.Modulus == null))
 			throw new CryptographicException ();
+
 		e = new BigInteger (parameters.Exponent);
 		n = new BigInteger (parameters.Modulus);
 		// only if the private key is present
@@ -250,6 +262,9 @@ public sealed class RSACryptoServiceProvider : RSA {
 			p = new BigInteger (parameters.P);
 		if (parameters.Q != null)
 			q = new BigInteger (parameters.Q);
+		
+		// we now have a keypair
+		keypairGenerated = true;
 	}
 
 	private HashAlgorithm GetHash (object halg) 
@@ -311,6 +326,9 @@ public sealed class RSACryptoServiceProvider : RSA {
 		if (rgbHash == null)
 			throw new ArgumentNullException ();
 
+		if (!keypairGenerated)
+			GenerateKeyPair (1024);
+
 		ValidateHash (str, rgbHash.Length);
 
 		return PKCS1.Sign_v15 (this, str, rgbHash);
@@ -328,6 +346,11 @@ public sealed class RSACryptoServiceProvider : RSA {
 	{
 		if ((rgbHash == null) || (rgbSignature == null))
 			throw new ArgumentNullException ();
+
+		// it would be stupid to verify a signature with a newly
+		// generated keypair - so we return false
+		if (!keypairGenerated)
+			return false;
 
 		ValidateHash (str, rgbHash.Length);
 

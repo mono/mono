@@ -406,6 +406,9 @@ public class DSACryptoServiceProvider : DSA {
 	{
 		if ((includePrivateParameters) && (!privateKeyExportable))
 			throw new CryptographicException ("cannot export private key");
+		if (!keypairGenerated)
+			Generate (1024);
+
 		DSAParameters param = new DSAParameters();
 		// all parameters must be in multiple of 4 bytes arrays
 		// this isn't (generally) a problem for most of the parameters
@@ -429,6 +432,7 @@ public class DSACryptoServiceProvider : DSA {
 		// if missing "mandatory" parameters
 		if ((parameters.P == null) || (parameters.Q == null) || (parameters.G == null) || (parameters.Y == null))
 			throw new CryptographicException ();
+
 		p = new BigInteger (parameters.P);
 		q = new BigInteger (parameters.Q);
 		g = new BigInteger (parameters.G);
@@ -450,6 +454,7 @@ public class DSACryptoServiceProvider : DSA {
 		}
 		else
 			seed = new BigInteger (0);
+
 		// we now have a keypair
 		keypairGenerated = true;
 	}

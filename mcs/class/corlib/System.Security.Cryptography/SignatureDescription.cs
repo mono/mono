@@ -124,6 +124,12 @@ internal class RSAPKCS1SHA1SignatureDescription : SignatureDescription {
 		FormatterAlgorithm = "System.Security.Cryptography.RSAPKCS1SignatureFormatter";		
 		KeyAlgorithm = "System.Security.Cryptography.RSACryptoServiceProvider";		
 	}
+
+	public override AsymmetricSignatureDeformatter CreateDeformatter (AsymmetricAlgorithm key) 
+	{
+		// just to please corcompare
+		return base.CreateDeformatter (key);
+	}
 }
 	
 } // System.Security.Cryptography
