@@ -29,27 +29,49 @@ using System.Windows.Forms;
 
 namespace Mono.Doc.Gui
 {
-	public class AssemblyTreeLoader
+	public abstract class AssemblyTreeLoader
 	{
-		// this class cannot be instantiated
-		private AssemblyTreeLoader()
+		public static void LoadNode(TreeNode node, Assembly assem)
 		{
-		}
-
-		public static void LoadTree(TreeView tree, string fileName)
-		{
-			Assembly assem = AssemblyLoader.Load(fileName);
-
-			tree.ImageList = AssemblyTreeImages.List;
-
 			// create root element
 			TreeNode root           = new TreeNode(assem.GetName().Name + " Assembly");
-			root.ImageIndex         = AssemblyTreeImages.AssemblyClosed;
-			root.SelectedImageIndex = AssemblyTreeImages.AssemblyClosed;
+			root.ImageIndex         = AssemblyTreeImages.AssemblyOpen;
+			root.SelectedImageIndex = AssemblyTreeImages.AssemblyOpen;
+			root.Tag                = "A:" + assem.GetName().Name;
 
-			tree.Nodes.Add(root);
+			node.Nodes.Add(root);
 
 			// dictionary of namespaces
+			Hashtable namespaces = new Hashtable();
+
+			// TODO: abstract this type loading, as some assemblies have tricky types (via Adam)
+			foreach (Type t in assem.GetTypes())
+			{
+				// TODO: this is overly simple, and should be configurable
+				if (t.IsPublic)
+				{
+					TreeNode nsNode = (TreeNode) namespaces[t.Namespace];
+
+					if (nsNode == null)
+					{
+						nsNode                    = new TreeNode(t.Namespace);
+						nsNode.ImageIndex         = AssemblyTreeImages.Namespace;
+						nsNode.SelectedImageIndex = AssemblyTreeImages.Namespace;
+						nsNode.Tag                = "N:" + t.Namespace;
+						namespaces[t.Namespace]   = nsNode;
+
+						// TODO: create type node here
+					}
+				}
+			}
+
+			// add sorted namespace nodes to root
+			foreach (string nsName in new SortedStringValues(namespaces.Keys))
+			{
+				root.Nodes.Add((TreeNode) namespaces[nsName]);
+			}
+
+/*			// dictionary of namespaces
 			Hashtable namespaces = new Hashtable();
 
 			foreach (Type t in assem.GetTypes())
@@ -83,8 +105,10 @@ namespace Mono.Doc.Gui
 			}
 			
 			root.Expand();
+			*/
 		}
 
+		/*
 		private static TreeNode GetNodeForType(Type t)
 		{
 			string nodeName   = t.Name + " ";
@@ -188,6 +212,63 @@ namespace Mono.Doc.Gui
 			// TODO: create nodes for properties
 
 			return eNode;
+		}*/
+	}
+
+	// With a tip o'the hat to Eric Gunnerson ;-)
+	class SortedStringValues : IEnumerable
+	{
+		private IEnumerable enumerable;
+
+		public SortedStringValues(IEnumerable enumerable)
+		{
+			this.enumerable = enumerable;
+		}
+
+		internal class SortedStringValuesEnumerator : IEnumerator
+		{
+			private ArrayList   items = new ArrayList();
+			private int         current;
+
+			internal SortedStringValuesEnumerator(IEnumerator enumerator)
+			{
+				while (enumerator.MoveNext())
+				{
+					items.Add(enumerator.Current.ToString());
+				}
+
+				IDisposable disposable = enumerator as IDisposable;
+
+				if (disposable != null)
+				{
+					disposable.Dispose();
+				}
+
+				items.Sort();
+				current = -1;
+			}
+
+			public void Reset()
+			{
+				current = -1;
+			}
+
+			public bool MoveNext()
+			{
+				if (++current == items.Count) return false;
+
+				return true;
+			}
+
+			public object Current
+			{
+				get { return items[current]; }
+			}
+		}
+
+		public IEnumerator GetEnumerator()
+		{
+			return new SortedStringValuesEnumerator(enumerable.GetEnumerator());
 		}
 	}
 }

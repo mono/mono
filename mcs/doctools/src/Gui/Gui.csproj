@@ -15,7 +15,7 @@
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
-                OutputType = "WinExe"
+                OutputType = "Exe"
                 RootNamespace = "Mono.Doc.Gui"
                 StartupObject = "Mono.Doc.Gui.GuiDriver"
             >
@@ -82,6 +82,11 @@
                     AssemblyName = "System.Data"
                     HintPath = "D:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
                 />
+                <Reference
+                    Name = "System.XML"
+                    AssemblyName = "System.Xml"
+                    HintPath = "D:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -105,6 +110,16 @@
                     RelPath = "AssemblyTreeLoader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditPropertyForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditPropertyForm.resx"
+                    DependentUpon = "EditPropertyForm.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GenericEditorForm.cs"
@@ -139,6 +154,16 @@
                 <File
                     RelPath = "MainForm.resx"
                     DependentUpon = "MainForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "ProjectOptionsForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ProjectOptionsForm.resx"
+                    DependentUpon = "ProjectOptionsForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

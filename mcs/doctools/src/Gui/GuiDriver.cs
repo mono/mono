@@ -26,17 +26,12 @@ using System.Windows.Forms;
 
 namespace Mono.Doc.Gui
 {
-	public sealed class GuiDriver
+	public abstract class GuiDriver
 	{
-		// Cannot instantiate this class
-		private GuiDriver()
-		{
-		}
-
 		[STAThread]
-		static void Main() 
+		public static void Main(string[] args) 
 		{
-			Application.Run(new MainForm());
+			Application.Run(new MainForm((args.Length > 0) ? args[0] : null));
 		}
 	}
 }
