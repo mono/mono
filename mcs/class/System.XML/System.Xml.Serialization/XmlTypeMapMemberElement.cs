@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Xml.Serialization
 {
@@ -47,7 +48,8 @@ namespace System.Xml.Serialization
 				return (XmlTypeMapElementInfo) _elementInfo[0];
 			else if (_choiceMember != null)
 			{
-				string choiceValue = GetValue (ob, _choiceMember).ToString();
+				object value = GetValue (ob, _choiceMember);
+				string choiceValue = value is IFormattable ? ((IFormattable) value).ToString (null, CultureInfo.InvariantCulture) : value.ToString();
 				foreach (XmlTypeMapElementInfo elem in _elementInfo)
 					if (elem.ChoiceValue == choiceValue) return elem;
 			}

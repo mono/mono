@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Xml.Serialization
 {
@@ -154,7 +155,7 @@ namespace System.Xml.Serialization
 
 		public static string GetArrayName (string elemName)
 		{
-			return "ArrayOf" + Char.ToUpper (elemName [0]) + elemName.Substring (1);
+			return "ArrayOf" + Char.ToUpper (elemName [0], CultureInfo.InvariantCulture) + elemName.Substring (1);
 		}
 		
 		public static string GetArrayName (string elemName, int dimensions)

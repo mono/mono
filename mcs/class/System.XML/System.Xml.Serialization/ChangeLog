@@ -1,3 +1,15 @@
+2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeIdentifier.cs, CodeIdentifiers.cs, MapCodeGenerator.cs,
+	  SerializationCodeGenerator.cs, SerializationSource.cs,
+	  TypeTranslator.cs, XmlAttributeOverrides.cs, XmlCustomFormatter.cs,
+	  XmlSerializationReader.cs, XmlSerializationWriter.cs,
+	  XmlSerializer.cs, XmlTypeMapMemberElement.cs, XmlTypeMapping.cs
+	  : Globalization fixes.
+	    In XmlCustomFormatter.GenerateToXmlString() time was not
+	    generated correctly.
+	    Replaced all CRLF XmlAttributeOverrides.cs into LF.
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XmlSerializationWriter.cs: changed signature of protected method

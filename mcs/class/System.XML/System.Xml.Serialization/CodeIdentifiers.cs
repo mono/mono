@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Xml.Serialization {
 	public class CodeIdentifiers {
@@ -81,7 +82,7 @@ namespace System.Xml.Serialization {
 			int i = 1;
 
 			while (IsInUse (uniqueIdentifier)) {
-				uniqueIdentifier = String.Format ("{0}{1}", identifier, i.ToString ());
+				uniqueIdentifier = String.Format (CultureInfo.InvariantCulture, "{0}{1}", identifier, i);
 				i += 1;
 			}
 

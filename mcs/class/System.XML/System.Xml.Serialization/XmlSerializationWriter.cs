@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -194,7 +195,7 @@ namespace System.Xml.Serialization {
 
 			bool firstTime;
 			long lid = idGenerator.GetId (o, out firstTime);
-			return String.Format ("id{0}", lid);
+			return String.Format (CultureInfo.InvariantCulture, "id{0}", lid);
 		}
 
 		
@@ -212,7 +213,7 @@ namespace System.Xml.Serialization {
 			string prefix = Writer.LookupPrefix (ns);
 			if (prefix == null) 
 			{
-				prefix = String.Format ("q{0}", ++qnameCount);
+				prefix = String.Format (CultureInfo.InvariantCulture, "q{0}", ++qnameCount);
 				WriteAttribute ("xmlns", prefix, null, ns);
 			}
 			return prefix;

@@ -11,6 +11,7 @@
 using System.Xml;
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Xml.Serialization
 {
@@ -590,7 +591,7 @@ namespace System.Xml.Serialization
 			foreach (EnumMapMember mem in _members)
 				if (mem.EnumName == enumName) return mem.XmlName;
 			
-			return Convert.ToInt64(enumValue).ToString();
+			return Convert.ToInt64(enumValue).ToString(CultureInfo.InvariantCulture);
 		}
 
 		public string GetEnumName (string xmlName)

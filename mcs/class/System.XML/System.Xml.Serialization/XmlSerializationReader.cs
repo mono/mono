@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -216,7 +217,7 @@ namespace System.Xml.Serialization {
 
 		protected Exception CreateInvalidCastException (Type type, object value)
 		{
-			string message = String.Format ("Cannot assign object of type {0} to an object of " +
+			string message = String.Format (CultureInfo.InvariantCulture, "Cannot assign object of type {0} to an object of " +
 							"type {1}.", value.GetType (), type);
 			return new InvalidCastException (message);
 		}
@@ -495,7 +496,7 @@ namespace System.Xml.Serialization {
 			int i = qn.Name.LastIndexOf ('[');
 			string dim = qn.Name.Substring (i);
 			string itemType = qn.Name.Substring (0,i);
-			int count = Int32.Parse (dim.Substring (1, dim.Length - 2));
+			int count = Int32.Parse (dim.Substring (1, dim.Length - 2), CultureInfo.InvariantCulture);
 
 			Array list;
 

@@ -8,6 +8,7 @@
 //
 
 using System.Collections;
+using System.Globalization;
 using System.Text;
 
 namespace System.Xml.Serialization 
@@ -141,7 +142,7 @@ namespace System.Xml.Serialization
 			this.literalFormat = literalFormat;
 			
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (members.Length.ToString());
+			sb.Append (members.Length.ToString(CultureInfo.InvariantCulture));
 			foreach (XmlReflectionMember mem in members)
 				mem.AddKeyHash (sb);
 				
@@ -178,7 +179,7 @@ namespace System.Xml.Serialization
 		{
 			if (val != def) {
 				sb.Append (n.ToString());
-				sb.Append (val.Length.ToString());
+				sb.Append (val.Length.ToString(CultureInfo.InvariantCulture));
 				sb.Append (val);
 			}
 		}
@@ -198,14 +199,14 @@ namespace System.Xml.Serialization
 		{
 			if (val != def) {
 				sb.Append (n.ToString());
-				sb.Append (val.ToString());
+				sb.Append (val.ToString(CultureInfo.InvariantCulture));
 			}
 		}
 		
 		public static void AddField (StringBuilder sb, int n, Type val)
 		{
 			if (val != null) {
-				sb.Append (n.ToString());
+				sb.Append (n.ToString(CultureInfo.InvariantCulture));
 				sb.Append (val.ToString());
 			}
 		}

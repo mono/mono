@@ -9,6 +9,7 @@
 
 using System.CodeDom;
 using System.Collections;
+using System.Globalization;
 using System.Xml.Schema;
 
 namespace System.Xml.Serialization {
@@ -527,8 +528,9 @@ namespace System.Xml.Serialization {
 				// It must be an enumeration defined in the schema.
 				if (typeData.SchemaType != SchemaTypes.Enum) 
 					throw new InvalidOperationException ("Type " + typeData.TypeName + " not supported");
-					
-				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeData.FullTypeName), defaultValue.ToString());
+
+				IFormattable defaultValueFormattable = defaultValue as IFormattable;
+				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeData.FullTypeName), defaultValueFormattable != null ? defaultValueFormattable.ToString(null, CultureInfo.InvariantCulture) : defaultValue.ToString ());
 				CodeAttributeArgument arg = new CodeAttributeArgument (fref);
 				AddCustomAttribute (codeField, "System.ComponentModel.DefaultValue", arg);
 				codeField.InitExpression = fref;

@@ -29,13 +29,13 @@ namespace System.Xml.Serialization {
 			if (value == null) return null;
 			StringBuilder output = new StringBuilder ();
 			foreach (byte val in value)
-				output.Append (val.ToString ("X2"));
+				output.Append (val.ToString ("X2", CultureInfo.InvariantCulture));
 			return output.ToString ();
 		}
 
 		internal static string FromChar (char value)
 		{
-			return ((int) value).ToString ();
+			return ((int) value).ToString (CultureInfo.InvariantCulture);
 		}
 
 		internal static string FromDate (DateTime value)
@@ -175,7 +175,7 @@ namespace System.Xml.Serialization {
 				case "unsignedLong": return XmlConvert.ToString ((UInt64)value);
 				case "guid": return XmlConvert.ToString ((Guid)value);
 				case "base64Binary": return Convert.ToBase64String ((byte[])value);
-				default: return value.ToString ();
+			default: return value is IFormattable ? ((IFormattable) value).ToString (null, CultureInfo.InvariantCulture) : value.ToString ();
 			}
 		}
 
@@ -216,21 +216,21 @@ namespace System.Xml.Serialization {
 			switch (type.XmlType)
 			{
 				case "boolean": return "(" + value + "?\"true\":\"false\")";
-				case "unsignedByte": return value + ".ToString()";
-				case "char": return "((int)(" + value + ")).ToString()";
+				case "unsignedByte": return value + ".ToString(CultureInfo.InvariantCulture)";
+				case "char": return "((int)(" + value + ")).ToString(CultureInfo.InvariantCulture)";
 				case "dateTime": return value + ".ToString(\"yyyy-MM-ddTHH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture)";
 				case "date": return value + ".ToString(\"yyyy-MM-dd\", CultureInfo.InvariantCulture)";
-				case "time": return value + ".ToString(\"HH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture";
+				case "time": return value + ".ToString(\"HH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture)";
 				case "decimal": return "XmlConvert.ToString (" + value + ")";
 				case "double": return "XmlConvert.ToString (" + value + ")";
-				case "short": return value + ".ToString()";
-				case "int": return value + ".ToString()";
-				case "long": return value + ".ToString()";
-				case "byte": return value + ".ToString()";
+				case "short": return value + ".ToString(CultureInfo.InvariantCulture)";
+				case "int": return value + ".ToString(CultureInfo.InvariantCulture)";
+				case "long": return value + ".ToString(CultureInfo.InvariantCulture)";
+				case "byte": return value + ".ToString(CultureInfo.InvariantCulture)";
 				case "float": return "XmlConvert.ToString (" + value + ")";
-				case "unsignedShort": return value + ".ToString()";
-				case "unsignedInt": return value + ".ToString()";
-				case "unsignedLong": return value + ".ToString()";
+				case "unsignedShort": return value + ".ToString(CultureInfo.InvariantCulture)";
+				case "unsignedInt": return value + ".ToString(CultureInfo.InvariantCulture)";
+				case "unsignedLong": return value + ".ToString(CultureInfo.InvariantCulture)";
 				case "guid": return "XmlConvert.ToString (" + value + ")";
 				case "base64Binary": return "Convert.ToBase64String (" + value + ")";
 				case "NMTOKEN":
@@ -253,21 +253,21 @@ namespace System.Xml.Serialization {
 			switch (type.XmlType)
 			{
 				case "boolean": return "XmlConvert.ToBoolean (" + value + ")";
-				case "unsignedByte": return "byte.Parse(" + value + ")";
-				case "char": return "(char)Int32.Parse (" + value + ")";
+				case "unsignedByte": return "byte.Parse (" + value + ", CultureInfo.InvariantCulture)";
+				case "char": return "(char)Int32.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "dateTime": return "XmlConvert.ToDateTime (" + value + ")";
-				case "date": return "DateTime.ParseExact (" + value + ", \"yyyy-MM-dd\", null)";
-				case "time": return "DateTime.ParseExact (" + value + ", \"HH:mm:ss.fffffffzzz\", null)";
-				case "decimal": return "Decimal.Parse (" + value + ")";
+				case "date": return "DateTime.ParseExact (" + value + ", \"yyyy-MM-dd\", CultureInfo.InvariantCulture)";
+				case "time": return "DateTime.ParseExact (" + value + ", \"HH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture)";
+				case "decimal": return "Decimal.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "double": return "XmlConvert.ToDouble (" + value + ")";
-				case "short": return "Int16.Parse (" + value + ")";
-				case "int": return "Int32.Parse (" + value + ")";
-				case "long": return "Int64.Parse (" + value + ")";
-				case "byte": return "SByte.Parse (" + value + ")";
-				case "float": return "XmlConvert.ToSingle (" + value + ")";
-				case "unsignedShort": return "UInt16.Parse (" + value + ")";
-				case "unsignedInt": return "UInt32.Parse (" + value + ")";
-				case "unsignedLong": return "UInt64.Parse (" + value + ")";
+				case "short": return "Int16.Parse (" + value + ", CultureInfo.InvariantCulture)";
+				case "int": return "Int32.Parse (" + value + ", CultureInfo.InvariantCulture)";
+				case "long": return "Int64.Parse (" + value + ", CultureInfo.InvariantCulture)";
+				case "byte": return "SByte.Parse (" + value + ", CultureInfo.InvariantCulture)";
+				case "float": return "XmlConvert.ToSingle (" + value + ", CultureInfo.InvariantCulture)";
+				case "unsignedShort": return "UInt16.Parse (" + value + ", CultureInfo.InvariantCulture)";
+				case "unsignedInt": return "UInt32.Parse (" + value + ", CultureInfo.InvariantCulture)";
+				case "unsignedLong": return "UInt64.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "guid": return "XmlConvert.ToGuid (" + value + ")";
 				case "base64Binary": return "Convert.FromBase64String (" + value + ")";
 				default: return value;

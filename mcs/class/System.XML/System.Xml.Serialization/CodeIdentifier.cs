@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Xml.Serialization {
 	public class CodeIdentifier {
@@ -19,13 +20,13 @@ namespace System.Xml.Serialization {
 		public static string MakeCamel (string identifier)
 		{
 			string validIdentifier = MakeValid (identifier);
-			return (Char.ToLower (validIdentifier[0]) + validIdentifier.Substring (1));
+			return (Char.ToLower (validIdentifier[0], CultureInfo.InvariantCulture) + validIdentifier.Substring (1));
 		}
 
 		public static string MakePascal (string identifier)
 		{
 			string validIdentifier = MakeValid (identifier);
-			return (Char.ToUpper (validIdentifier[0]) + validIdentifier.Substring (1));
+			return (Char.ToUpper (validIdentifier[0], CultureInfo.InvariantCulture) + validIdentifier.Substring (1));
 		}
 
 		public static string MakeValid (string identifier)

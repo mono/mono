@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Xml.Serialization
 {
@@ -369,7 +370,7 @@ namespace System.Xml.Serialization
 				Unindent ();
 			}
 			else
-				WriteLine ("default: return ((long)val).ToString();");
+				WriteLine ("default: return ((long)val).ToString(CultureInfo.InvariantCulture);");
 			
 			WriteLineUni ("}");
 			
@@ -2003,7 +2004,7 @@ namespace System.Xml.Serialization
 			}
 			WriteLineInd ("default:");
 			WriteLineInd ("try {");
-			WriteLine ("return (" + typeMap.TypeFullName + ") Int64.Parse (" + val + ");");
+			WriteLine ("return (" + typeMap.TypeFullName + ") Int64.Parse (" + val + ", CultureInfo.InvariantCulture);");
 			WriteLineUni ("}");
 			WriteLineInd ("catch {");
 			WriteLine ("throw CreateUnknownConstantException (" + val + ", typeof(" + typeMap.TypeFullName + "));");
@@ -2347,7 +2348,7 @@ namespace System.Xml.Serialization
 				XmlQualifiedName qn = (XmlQualifiedName)ob;
 				return "new XmlQualifiedName (" + GetLiteral(qn.Name) + "," + GetLiteral(qn.Namespace) + ")";
 			}
-			else return ob.ToString ();
+			else return (ob is IFormattable) ? ((IFormattable) ob).ToString (null, CultureInfo.InvariantCulture) : ob.ToString ();
 		}
 		
 		void WriteLineInd (string code)

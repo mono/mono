@@ -10,6 +10,7 @@
 using System;
 using System.Threading;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -77,10 +78,10 @@ namespace System.Xml.Serialization
 				generationThreshold = 50;
 				backgroundGeneration = true;
 			}
-			else if (th.ToLower() == "no") 
+			else if (th.ToLower(CultureInfo.InvariantCulture) == "no") 
 				generationThreshold = -1;
 			else {
-				generationThreshold = int.Parse (th);
+				generationThreshold = int.Parse (th, CultureInfo.InvariantCulture);
 				backgroundGeneration = (generationThreshold != 0);
 				if (generationThreshold < 1) generationThreshold = 1;
 			}

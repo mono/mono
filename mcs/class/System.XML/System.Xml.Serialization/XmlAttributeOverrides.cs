@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Xml.Serialization
 {
@@ -62,7 +63,8 @@ namespace System.Xml.Serialization
 			foreach (DictionaryEntry entry in overrides)
 			{
 				XmlAttributes val = (XmlAttributes) entry.Value;
-				sb.Append (entry.Key.ToString()).Append(' ');
+				IFormattable keyFormattable = entry.Key as IFormattable;
+				sb.Append (keyFormattable != null ? keyFormattable.ToString (null, CultureInfo.InvariantCulture) : entry.Key.ToString()).Append(' ');
 				val.AddKeyHash (sb);
 			}
 			sb.Append ("|");
