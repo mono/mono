@@ -161,10 +161,10 @@ namespace System.Security.Cryptography.Xml {
 						break;
 					case XmlEncryption.ElementNames.ReferenceList:
 						foreach (XmlNode r in ((XmlElement) n).ChildNodes) {
-							if (child is XmlWhitespace) 
+							if (r is XmlWhitespace) 
 								continue;
 
-							switch (child.LocalName) {
+							switch (r.LocalName) {
 							case XmlEncryption.ElementNames.DataReference:
 								DataReference dr = new DataReference ();
 								dr.LoadXml ((XmlElement) r);

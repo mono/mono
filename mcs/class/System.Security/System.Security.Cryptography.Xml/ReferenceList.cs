@@ -105,11 +105,6 @@ namespace System.Security.Cryptography.Xml {
 			list.Insert (index, value);
 		}
 
-		public EncryptedReference Item (int index) 
-		{
-			return (EncryptedReference) list [index];
-		}
-
 		public void Remove (object value)
 		{
 			list.Remove (value);
