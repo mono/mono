@@ -3,11 +3,17 @@ Imports System
 Module M
 	Delegate Sub SD()
 	sub f()
+		System.Console.WriteLine("s called")
 	End sub
 
 	Public Delegate Function SF(a as integer) as Integer
 	Public Function f1(a as integer) as Integer
+		System.Console.WriteLine("f1 called")
 		return a
+	End Function
+
+	Public Function TD(d as SD) as Integer
+		d.Invoke()
 	End Function
 
 	Sub Main()
@@ -29,6 +35,7 @@ Module M
          		Throw new System.Exception ("#A1, Unexpected result")
                 end if
 
+		TD(AddressOf f)
 		
 	End Sub
 End Module

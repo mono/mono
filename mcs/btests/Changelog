@@ -1,3 +1,6 @@
+2004-07-18 Anirban Bhattacharjee <banirban@novell.com>
+	* DelegateA.vb: The test for passing AddressOf operator in method parameter is added.
+
 2004-06-11 Anirban Bhattacharjee <banirban@novell.com>
 	* Makefile: Removed inclusion of rules.make from Makefile for two reasons :
                 - This Makefile as of now has no dependency on rules.make what so ever
