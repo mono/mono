@@ -387,14 +387,14 @@ namespace System.Web.UI
 			control._parent = this;
 			control._page = _page;
 
-			if (_isNamingContainer) {
-				control._namingContainer = this;
+			if (NamingContainer != null) {
+				control._namingContainer = _namingContainer;
 				if (control.AutoID == true && control._userId == null)
-					control._userId =  GetDefaultName () + "a";
+					control._userId =  _namingContainer.GetDefaultName () + "a";
 			}
 
 			if (inited)
-				control.InitRecursive (_isNamingContainer ? this : null);
+				control.InitRecursive (_namingContainer);
 
 			if (loaded)
 				control.LoadRecursive ();

@@ -1,3 +1,10 @@
+2003-02-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(AddedControl): fixed default id assignation when the sequence of
+	AddedControl until it's included in the page or one of its controls
+	does not pass through a naming container.
+
 2003-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: give different default names depending on the place where
