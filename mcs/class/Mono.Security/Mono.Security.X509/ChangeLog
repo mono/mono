@@ -1,3 +1,8 @@
+2004-12-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Directly use the MD2 class when compiled in 
+	Mono.Security.dll assembly (even if not configured in machine.config).
+
 2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs: Fixed all level 4 compilation warnings.

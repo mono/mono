@@ -265,7 +265,11 @@ namespace Mono.Security.X509 {
 					switch (m_signaturealgo) {
 						case "1.2.840.113549.1.1.2":	// MD2 with RSA encryption 
 							// maybe someone installed MD2 ?
+#if INSIDE_CORLIB
 							hash = HashAlgorithm.Create ("MD2");
+#else
+							hash = Mono.Security.Cryptography.MD2.Create ();
+#endif
 							break;
 						case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
 							hash = MD5.Create ();
