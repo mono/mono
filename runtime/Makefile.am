@@ -56,8 +56,7 @@ assemblies_DATA =	\
 	System.Web.dll						\
 	System.Web.Services.dll					\
 	System.Windows.Forms.dll				\
-	System.Xml.dll						\
-	libgdiplus.dll.so
+	System.Xml.dll
 
 monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe ilasm.exe cilc.exe xsd.exe wsdl.exe genxs.exe al.exe disco.exe sqlsharp.exe signcode.exe chktrust.exe soapsuds.exe
 
