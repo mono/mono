@@ -1,3 +1,7 @@
+2004-03-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs pinvoke12.cs: Merge pinvoke12.cs into pinvoke2.cs.
+
 2004-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* many-locals.cs: Add tests for locals with large stack frame offsets.
