@@ -1,5 +1,7 @@
 2004-09-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-amd64.brg: Remove leftover 32 bit rule.
+
 	* mini-amd64.c (mono_arch_instrument_prolog): Fix tracing support.
 
 2004-09-04  Zoltan Varga  <vargaz@freemail.hu>
