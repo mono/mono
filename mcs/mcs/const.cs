@@ -149,7 +149,8 @@ namespace Mono.CSharp {
 				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
 					Expr = ch_expr.Expr;
 				else {
-					Report.Error (150, Location, "A constant value is expected");
+					if (errors == Report.Errors)
+						Report.Error (150, Location, "A constant value is expected");
 					return null;
 				}
 			}
