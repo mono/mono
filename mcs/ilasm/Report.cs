@@ -27,16 +27,6 @@ namespace Mono.ILASM {
                         get { return error_count; }
                 }
 
-                public void Mark ()
-                {
-                        mark_count = error_count;
-                }
-
-                public bool ErrorSinceMark ()
-                {
-                        return (error_count > mark_count);
-                }
-
                 public void AssembleFile (string file, string listing,
                                           string target, string output)
                 {
@@ -44,11 +34,10 @@ namespace Mono.ILASM {
                                            GetListing (listing), target, output);
                 }
 
-                public void Error (int num, string message, Location location)
+                public void Error (string message)
                 {
                         error_count++;
-                        Console.WriteLine ("{0} Error {1}: {2}",
-                                                num, location, message);
+                        Console.WriteLine ("Error: " + message);
                 }
 
                 private string GetListing (string listing)

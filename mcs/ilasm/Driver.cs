@@ -65,7 +65,7 @@ namespace Mono.ILASM {
                                                 Usage ();
                                         if (output_file == null)
                                                 output_file = CreateOutputFile ();
-                                        codegen = new CodeGen (output_file, target == Target.Dll, true);
+                                        codegen = new CodeGen (output_file, target == Target.Dll, true, report);
                                         foreach (string file_path in il_file_list)
                                                 ProcessFile (file_path);
                                         if (scan_only)

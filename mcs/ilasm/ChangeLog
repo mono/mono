@@ -1,3 +1,9 @@
+2003-09-21 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Give codegen a report object
+	* Report.cs: Remove silly methods that wouldnt have worked. Errors
+	are just string messages.
+	
 2003-08-14 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Report entry for each il file processed
