@@ -1864,6 +1864,10 @@ namespace Mono.CSharp {
 					return e;
 			}
 
+			if (type.IsPointer && !ec.InUnsafe) {
+				UnsafeError (loc);
+				return null;
+			}
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
 			return expr;
 		}
@@ -5343,8 +5347,20 @@ namespace Mono.CSharp {
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
 				type = TypeManager.TypeToCoreType (mi.ReturnType);
-				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
+				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null)) {
 					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
+					return null;
+				}
+
+				Expression iexpr = mg.InstanceExpression;
+				if (mi.IsStatic && (iexpr != null) && !(iexpr is This)) {
+					if (mg.IdenticalTypeName)
+						mg.InstanceExpression = null;
+					else {
+						MemberAccess.error176 (loc, mi.Name);
+						return null;
+					}
+				}
 			}
 
 			if (type.IsPointer){
@@ -5514,12 +5530,17 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// This checks the `ConditionalAttribute' on the method, and the
-			// ObsoleteAttribute
+			// This checks ObsoleteAttribute on the method and on the declaring type
 			//
-			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method, loc);
-			if ((flags & TypeManager.MethodFlags.IsObsoleteError) != 0)
-				return;
+			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
+			if (oa != null)
+				AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
+
+
+			//
+			// This checks the `ConditionalAttribute' on the method
+			//
+			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method);
 			if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
 				return;
 			
@@ -7109,7 +7130,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static void error176 (Location loc, string name)
+		public static void error176 (Location loc, string name)
 		{
 			Report.Error (176, loc, "Static member `" +
 				      name + "' cannot be accessed " +
@@ -7239,6 +7260,7 @@ namespace Mono.CSharp {
 						// accessors and private field etc so there's no need
 						// to transform ourselves.
 						//
+						ee.InstanceExpression = left;
 						return ee;
 					}
 
@@ -7252,15 +7274,17 @@ namespace Mono.CSharp {
 					if (!left_is_explicit)
 						left = null;
 					
+					ee.InstanceExpression = left;
+
 					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
 			}
 
 			if (member_lookup is IMemberExpr) {
 				IMemberExpr me = (IMemberExpr) member_lookup;
+				MethodGroupExpr mg = me as MethodGroupExpr;
 
 				if (left_is_type){
-					MethodGroupExpr mg = me as MethodGroupExpr;
 					if ((mg != null) && left_is_explicit && left.Type.IsInterface)
 						mg.IsExplicitImpl = left_is_explicit;
 
@@ -7304,6 +7328,9 @@ namespace Mono.CSharp {
 							return null;
 						}
 					}
+
+					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, loc))
+						mg.IdenticalTypeName = true;
 
 					me.InstanceExpression = left;
 				}
@@ -7357,8 +7384,7 @@ namespace Mono.CSharp {
 				expr_type = ((TypeExpr) expr).ResolveType (ec);
 
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
-					Error (122, "`" + expr_type + "' " +
-					       "is inaccessible because of its protection level");
+					Report.Error_T (122, loc, expr_type);
 					return null;
 				}
 

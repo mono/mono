@@ -294,8 +294,8 @@ namespace Mono.CSharp
 
 compilation_unit
         : outer_declarations opt_EOF
-        | outer_declarations attribute_sections opt_EOF
-        | attribute_sections opt_EOF
+        | outer_declarations global_attributes opt_EOF
+        | global_attributes opt_EOF
 	| opt_EOF /* allow empty files */
         ;
 	
@@ -464,6 +464,15 @@ type_declaration
 // Attributes 17.2
 //
 
+global_attributes
+	: attribute_sections
+{
+	if ($1 != null)
+		CodeGen.Assembly.AddAttributes (((Attributes)$1).Attrs);
+
+	$$ = $1;
+}
+
 opt_attributes
         : /* empty */
 	  {
@@ -491,11 +500,6 @@ attribute_sections
 				CodeGen.Assembly.AddAttributes (sect);
 			$$ = null;
 			} else {
-
-				// Because we don't know if target should be on assembly or type
-				// we add it to both. This leads error CS0657 is reported twice
-				// for this case but it is better than mistification.
-				CodeGen.Assembly.AddAttributes (sect);
 				$$ = new Attributes (sect);
 		}
 		} else {
@@ -589,8 +593,7 @@ attribute
 		//
 		// Attributes need a string, not an expression: generic types will fail here.
 		//
-		if (current_attr_target == "assembly" || current_attr_target == "module"
-			|| (global_attrs_enabled && current_attr_target == null))
+		if (current_attr_target == "assembly" || current_attr_target == "module")
 			$$ = new GlobalAttribute (current_container, current_attr_target,
 						  ((Expression) $1).ToString (),
 						  (ArrayList) $3, (Location) $2);

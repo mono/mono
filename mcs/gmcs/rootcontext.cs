@@ -487,13 +487,13 @@ namespace Mono.CSharp {
 		}
 
 		static TypeExpr NamespaceLookup (DeclSpace ds, string name,
-						 int num_type_args, Location loc)
+						 int num_type_args, bool silent, Location loc)
 		{
 			//
 			// Try in the current namespace and all its implicit parents
 			//
 			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				IAlias result = ns.Lookup (ds, name, num_type_args, loc);
+				IAlias result = ns.Lookup (ds, name, num_type_args, silent, loc);
 
 				if (result == null)
 					continue;
@@ -528,8 +528,6 @@ namespace Mono.CSharp {
 
 			if (ds.Cache.Contains (name)){
 				t = (TypeExpr) ds.Cache [name];
-				if (t != null)
-					return t;
 			} else {
 				//
 				// For the case the type we are looking for is nested within this one
@@ -556,17 +554,14 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds, name, num_type_params, loc);
-				if (t != null){
-					ds.Cache [name] = t;
-					return t;
-				}
+				t = NamespaceLookup (ds, name, num_type_params, silent, loc);
+				ds.Cache [name] = t;
 			}
 
-			if (!silent)
+			if (t == null && !silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");
 			
-			return null;
+			return t;
 		}
 
 		// <summary>

@@ -112,13 +112,22 @@ namespace Mono.CSharp {
 
 				// from any class-type S to any interface-type T.
 				if (target_type.IsInterface) {
+ 					if (target_type != TypeManager.iconvertible_type &&
+					    expr_type.IsValueType && (expr is Constant) &&
+					    !(expr is IntLiteral || expr is BoolLiteral ||
+					      expr is FloatLiteral || expr is DoubleLiteral ||
+					      expr is LongLiteral || expr is CharLiteral ||
+					      expr is StringLiteral || expr is DecimalLiteral ||
+					      expr is UIntLiteral || expr is ULongLiteral)) {
+ 						return null;
+ 					}
+
 					if (TypeManager.ImplementsInterface (expr_type, target_type)){
 						if (expr_type.IsGenericParameter)
 							return new BoxedCast (expr, target_type);
 						else if (expr_type.IsClass)
 							return new EmptyCast (expr, target_type);
-						else if (TypeManager.IsValueType (expr_type) ||
-							 TypeManager.IsEnumType (expr_type))
+						else if (TypeManager.IsValueType (expr_type))
 							return new BoxedCast (expr, target_type);
 						else
 							return new EmptyCast (expr, target_type);

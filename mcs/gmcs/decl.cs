@@ -13,6 +13,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Globalization;
 using System.Reflection.Emit;
 using System.Reflection;
 
@@ -321,6 +322,37 @@ namespace Mono.CSharp {
 
 			Expression.UnsafeError (Location);
 			return false;
+		}
+
+		/// <summary>
+		/// Returns instance of ObsoleteAttribute for this MemberCore
+		/// </summary>
+		public ObsoleteAttribute GetObsoleteAttribute (DeclSpace ds)
+		{
+			// ((flags & (Flags.Obsolete_Undetected | Flags.Obsolete)) == 0) is slower, but why ?
+			if ((caching_flags & Flags.Obsolete_Undetected) == 0 && (caching_flags & Flags.Obsolete) == 0) {
+				return null;
+			}
+
+			caching_flags &= ~Flags.Obsolete_Undetected;
+
+			if (OptAttributes == null)
+				return null;
+
+			// TODO: remove this allocation
+			EmitContext ec = new EmitContext (ds.Parent, ds, ds.Location,
+				null, null, ds.ModFlags, false);
+
+			Attribute obsolete_attr = OptAttributes.Search (TypeManager.obsolete_attribute_type, ec);
+			if (obsolete_attr == null)
+				return null;
+
+			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ds);
+			if (obsolete == null)
+				return null;
+
+			caching_flags |= Flags.Obsolete;
+			return obsolete;
 		}
 
 		/// <summary>
@@ -779,8 +811,7 @@ namespace Mono.CSharp {
 		public Type ResolveType (TypeExpr d, Location loc)
 		{
 			if (!d.CheckAccessLevel (this)) {
-				Report.	Error (122, loc,  "`" + d.Name + "' " +
-				       "is inaccessible because of its protection level");
+				Report.Error_T (122, loc, d.Name);
 				return null;
 			}
 
@@ -1249,6 +1280,19 @@ namespace Mono.CSharp {
 				if (t != null)
 					return t;
 
+				if (name.IndexOf ('.') > 0)
+					continue;
+
+				IAlias alias_value = ns.LookupAlias (name);
+				if (alias_value != null) {
+					t = LookupInterfaceOrClass ("", alias_value.Name, out error);
+					if (error)
+						return null;
+
+					if (t != null)
+						return t;
+				}
+
 				//
 				// Now check the using clause list
 				//
@@ -1363,7 +1407,7 @@ namespace Mono.CSharp {
 					if (l != type_name.Length)
 						continue;
 
-					if (String.Compare (Name, type_name, true) == 0 && 
+					if (String.Compare (Name, type_name, true, CultureInfo.InvariantCulture) == 0 && 
 						AttributeTester.IsClsCompliant (TypeManager.all_imported_types [type_name] as Type)) {
 						Report.SymbolRelatedToPreviousError ((Type)TypeManager.all_imported_types [type_name]);
 						return false;
@@ -1376,7 +1420,7 @@ namespace Mono.CSharp {
 				if (l != name.Length)
 					continue;
 
-				if (String.Compare (Name, name, true) == 0) { 
+				if (String.Compare (Name, name, true, CultureInfo.InvariantCulture) == 0) { 
 
 					if (Name == name)
 						continue;

@@ -111,6 +111,7 @@ namespace Mono.CSharp {
 		// from classes from the arraylist `type_bases' 
 		//
 		string     base_class_name;
+		public Type base_classs_type;
 
 		ArrayList type_bases;
 
@@ -2896,6 +2897,7 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
 		ReturnParameter return_attributes;
+		bool should_ignore;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -3122,6 +3124,8 @@ namespace Mono.CSharp {
 			if (!MethodData.Define (container))
 				return false;
 
+			should_ignore = MethodData.ShouldIgnore ();
+
 			//
 			// Setup iterator if we are one
 			//
@@ -3226,12 +3230,21 @@ namespace Mono.CSharp {
 			return new EmitContext (tc, ds, Location, ig, ReturnType, ModFlags, false);
 		}
 
+		public ObsoleteAttribute GetObsoleteAttribute ()
+		{
+			return GetObsoleteAttribute (ds);
+		}
+
+		public bool ShouldIgnore ()
+		{
+			return should_ignore;
+		}
 		#endregion
 	}
 
 	public abstract class ConstructorInitializer {
 		ArrayList argument_list;
-		ConstructorInfo parent_constructor;
+		protected ConstructorInfo parent_constructor;
 		Parameters parameters;
 		Location loc;
 		
@@ -3327,6 +3340,66 @@ namespace Mono.CSharp {
 					Invocation.EmitCall (ec, true, false, ec.GetThis (loc), parent_constructor, argument_list, loc);
 			}
 		}
+
+		/// <summary>
+		/// Method search for base ctor. (We do not cache it).
+		/// </summary>
+		Constructor GetOverloadedConstructor (TypeContainer tc)
+		{
+			if (tc.InstanceConstructors == null)
+				return null;
+
+			foreach (Constructor c in tc.InstanceConstructors) {
+				if (Arguments == null) {
+					if (c.ParameterTypes.Length == 0)
+						return c;
+
+					continue;
+				}
+
+				bool ok = true;
+
+				int count = c.ParameterInfo.Count;
+				if ((count > 0) &&
+				    c.ParameterInfo.ParameterModifier (count - 1) == Parameter.Modifier.PARAMS) {
+					for (int i = 0; i < count-1; i++)
+						if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type) {
+							ok = false;
+							break;
+						}
+				} else {
+					if (c.ParameterTypes.Length != Arguments.Count)
+						continue;
+
+					for (int i = 0; i < Arguments.Count; ++i)
+						if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type) {
+							ok = false;
+							break;
+						}
+				}
+
+				if (!ok)
+					continue;
+
+				return c;
+			}
+
+			throw new InternalErrorException ();
+		}
+
+		//TODO: implement caching when it will be necessary
+		public virtual void CheckObsoleteAttribute (TypeContainer tc, Location loc)
+		{
+			Constructor ctor = GetOverloadedConstructor (tc);
+			if (ctor == null)
+				return;
+
+			ObsoleteAttribute oa = ctor.GetObsoleteAttribute (tc);
+			if (oa == null)
+				return;
+
+			AttributeTester.Report_ObsoleteMessage (oa, ctor.GetSignatureForError (), loc);
+		}
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
@@ -3334,6 +3407,24 @@ namespace Mono.CSharp {
 			base (argument_list, pars, l)
 		{
 		}
+
+		public override void CheckObsoleteAttribute(TypeContainer tc, Location loc) {
+			if (parent_constructor == null)
+				return;
+
+			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.base_classs_type);
+			if (type_ds == null) {
+				ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (parent_constructor);
+
+				if (oa != null)
+					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (parent_constructor), loc);
+
+				return;
+			}
+
+			base.CheckObsoleteAttribute (type_ds, loc);
+		}
+
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
@@ -3563,8 +3654,10 @@ namespace Mono.CSharp {
 						container.EmitFieldInitializers (ec);
 				}
 			}
-			if (Initializer != null)
+			if (Initializer != null) {
+				Initializer.CheckObsoleteAttribute (container, Location);
 				Initializer.Emit (ec);
+			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				container.EmitFieldInitializers (ec);
@@ -3670,6 +3763,8 @@ namespace Mono.CSharp {
 		Block Block { get; }
 
 		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
+		ObsoleteAttribute GetObsoleteAttribute ();
+		bool ShouldIgnore ();
 	}
 
 	//
@@ -3745,8 +3840,6 @@ namespace Mono.CSharp {
 		// Attributes.
 		//
 		Attribute dllimport_attribute = null;
-		string obsolete = null;
-		bool obsolete_error = false;
 
 		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method,
 						     EmitContext ec)
@@ -3758,9 +3851,6 @@ namespace Mono.CSharp {
 				Type attr_type = a.ResolveType (ec, true);
 				if (attr_type == TypeManager.conditional_attribute_type) {
 					if (!ApplyConditionalAttribute (a))
-						return false;
-				} else if (attr_type == TypeManager.obsolete_attribute_type) {
-					if (!ApplyObsoleteAttribute (a))
 						return false;
 				} else if (attr_type == TypeManager.dllimport_type) {
 					if (!is_method) {
@@ -3791,20 +3881,6 @@ namespace Mono.CSharp {
 			flags |= MethodAttributes.PinvokeImpl;
 			dllimport_attribute = a;
 			return true;
-		}
-
-		//
-		// Applies the `Obsolete' attribute to the method.
-		//
-		protected virtual bool ApplyObsoleteAttribute (Attribute a)
-		{
-			if (obsolete != null) {
-				Report.Error (579, method.Location, "Duplicate `Obsolete' attribute");
-				return false;
-			}
-
-			obsolete = a.Obsolete_GetObsoleteMessage (out obsolete_error);
-			return obsolete != null;
 		}
 
 		//
@@ -3869,13 +3945,13 @@ namespace Mono.CSharp {
 		//
 		// Checks whether this method should be ignored due to its Conditional attributes.
 		//
-		bool ShouldIgnore (Location loc)
+		public bool ShouldIgnore ()
 		{
 			// When we're overriding a virtual method, we implicitly inherit the
 			// Conditional attributes from our parent.
 			if (member.ParentMethod != null) {
 				TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (
-					member.ParentMethod, loc);
+					member.ParentMethod);
 
 				if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
 					return true;
@@ -3892,33 +3968,6 @@ namespace Mono.CSharp {
 				}
 			}
 			return false;
-		}
-
-		//
-		// Returns the TypeManager.MethodFlags for this method.
-		// This emits an error 619 / warning 618 if the method is obsolete.
-		// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
-		//
-		public virtual TypeManager.MethodFlags GetMethodFlags (Location loc)
-		{
-			TypeManager.MethodFlags flags = 0;
-
-			if (obsolete != null) {
-				if (obsolete_error) {
-					Report.Error (619, loc, "Method `" + member.Name +
-						      "' is obsolete: `" + obsolete + "'");
-					return TypeManager.MethodFlags.IsObsoleteError;
-				} else
-					Report.Warning (618, loc, "Method `" + member.Name +
-							"' is obsolete: `" + obsolete + "'");
-
-				flags |= TypeManager.MethodFlags.IsObsolete;
-			}
-
-			if (ShouldIgnore (loc))
-				flags |= TypeManager.MethodFlags.ShouldIgnore;
-
-			return flags;
 		}
 
 		public bool Define (TypeContainer container)
@@ -4094,7 +4143,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			TypeManager.AddMethod (builder, this);
+			TypeManager.AddMethod (builder, method);
 
 			return true;
 		}
@@ -4797,22 +4846,22 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer container)
 		{
-			Type t = container.ResolveType (Type, false, Location);
+			MemberType = container.ResolveType (Type, false, Location);
 			
-			if (t == null)
+			if (MemberType == null)
 				return false;
 
 			CheckBase (container);
 			
-			if (!container.AsAccessible (t, ModFlags)) {
+			if (!container.AsAccessible (MemberType, ModFlags)) {
 				Report.Error (52, Location,
 					      "Inconsistent accessibility: field type `" +
-					      TypeManager.CSharpName (t) + "' is less " +
+					      TypeManager.CSharpName (MemberType) + "' is less " +
 					      "accessible than field `" + Name + "'");
 				return false;
 			}
 
-			if (t.IsPointer && !UnsafeOK (container))
+			if (MemberType.IsPointer && !UnsafeOK (container))
 				return false;
 			
 			if (RootContext.WarningLevel > 1){
@@ -4829,11 +4878,11 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.VOLATILE) != 0){
-				if (!t.IsClass){
-					Type vt = t;
+				if (!MemberType.IsClass){
+					Type vt = MemberType;
 					
 					if (TypeManager.IsEnumType (vt))
-						vt = TypeManager.EnumToUnderlying (t);
+						vt = TypeManager.EnumToUnderlying (MemberType);
 
 					if (!((vt == TypeManager.bool_type) ||
 					      (vt == TypeManager.sbyte_type) ||
@@ -4865,8 +4914,8 @@ namespace Mono.CSharp {
 
 			if (container is Struct && 
 			    ((fa & FieldAttributes.Static) == 0) &&
-			    t == container.TypeBuilder &&
-			    !TypeManager.IsBuiltinType (t)){
+			    MemberType == container.TypeBuilder &&
+			    !TypeManager.IsBuiltinType (MemberType)){
 				Report.Error (523, Location, "Struct member `" + container.Name + "." + Name + 
 					      "' causes a cycle in the structure layout");
 				return false;
@@ -4874,7 +4923,7 @@ namespace Mono.CSharp {
 
 			try {
 			FieldBuilder = container.TypeBuilder.DefineField (
-				Name, t, Modifiers.FieldAttr (ModFlags));
+					Name, MemberType, Modifiers.FieldAttr (ModFlags));
 
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}
@@ -5115,6 +5164,15 @@ namespace Mono.CSharp {
 				return new EmitContext (tc, method.ds, method.Location, ig, ReturnType, method.ModFlags, false);
 			}
 
+			public ObsoleteAttribute GetObsoleteAttribute ()
+			{
+				return method.GetObsoleteAttribute (method.ds);
+			}
+
+			bool IMethodData.ShouldIgnore ()
+			{
+				return method_data.ShouldIgnore ();
+			}
 			#endregion
 		}
 
@@ -5837,6 +5895,16 @@ namespace Mono.CSharp {
 				return new EmitContext (tc, method.ds, Location, ig, ReturnType, method.ModFlags, false);
 			}
 
+			public ObsoleteAttribute GetObsoleteAttribute ()
+			{
+				return method.GetObsoleteAttribute (method.ds);
+			}
+
+			bool IMethodData.ShouldIgnore ()
+			{
+				return method_data.ShouldIgnore ();
+			}
+
 			public abstract string MethodName { get; }
 
 			#endregion
@@ -6317,7 +6385,7 @@ namespace Mono.CSharp {
 		public string MethodName;
 		public Method OperatorMethod;
 
-		static string[] attribute_targets = new string [] { "param" };
+		static string[] attribute_targets = new string [] { "method", "return" };
 
 		public Operator (OpType type, Expression ret_type, int mod_flags,
 				 Expression arg1type, string arg1name,

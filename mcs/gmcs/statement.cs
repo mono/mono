@@ -998,10 +998,10 @@ namespace Mono.CSharp {
 			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo);
 		}
 
-		public bool Resolve (DeclSpace decl)
+		public bool Resolve (EmitContext ec)
 		{
 			if (VariableType == null)
-				VariableType = decl.ResolveType (Type, false, Location);
+				VariableType = ec.DeclSpace.ResolveType (Type, false, Location);
 
 			if (VariableType == TypeManager.void_type) {
 				Report.Error (1547, Location,
@@ -1011,6 +1011,10 @@ namespace Mono.CSharp {
 
 			if (VariableType == null)
 				return false;
+
+// TODO: breaks the build
+//			if (VariableType.IsPointer && !ec.InUnsafe)
+//				Expression.UnsafeError (Location);
 
 			return true;
 		}
@@ -1604,7 +1608,7 @@ namespace Mono.CSharp {
 			LocalInfo[] locals;
 			if (variables != null) {
 				foreach (LocalInfo li in variables.Values)
-					li.Resolve (ec.DeclSpace);
+					li.Resolve (ec);
 
 				locals = new LocalInfo [variables.Count];
 				variables.Values.CopyTo (locals, 0);

@@ -119,6 +119,9 @@ namespace Mono.CSharp {
 		//
 		public static Constant ChangeType (Location loc, Constant expr, Type type)
 		{
+			if (type == TypeManager.object_type)
+				return expr;
+
 			bool fail;
 
 			// from the null type to any reference-type.
@@ -216,15 +219,20 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			Expression real_expr = Expr;
+
 			Constant ce = Expr as Constant;
 			if (ce == null){
 				UnCheckedExpr un_expr = Expr as UnCheckedExpr;
 				CheckedExpr ch_expr = Expr as CheckedExpr;
+				EmptyCast ec_expr = Expr as EmptyCast;
 
 				if ((un_expr != null) && (un_expr.Expr is Constant))
 					Expr = un_expr.Expr;
 				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
 					Expr = ch_expr.Expr;
+				else if ((ec_expr != null) && (ec_expr.Child is Constant))
+					Expr = ec_expr.Child;
 				else if (Expr is ArrayCreation) {
 					ArrayCreation ac = (ArrayCreation) Expr;
 
@@ -240,9 +248,11 @@ namespace Mono.CSharp {
 					value = null;
 					return false;
 				}
+
+				ce = Expr as Constant;
 			}
 
-			if (type != ce.Type) {
+			if (type != real_expr.Type) {
 				ce = ChangeType (Location, ce, type);
 				if (ce == null){
 					value = null;

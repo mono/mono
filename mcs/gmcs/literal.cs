@@ -74,6 +74,11 @@ namespace Mono.CSharp {
 			Null = new NullPointer ();
 		}
 		
+		private NullPointer ()
+		{
+			type = TypeManager.object_type;
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;

@@ -1,3 +1,200 @@
+2004-05-30  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Ben Maurer.
+
+	* rootcontext.cs (RootContext.LookupType): Cache negative results.	
+
+2004-05-29  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (IMethodData.ShouldIgnore): New method.
+
+	* typemanager.cs (TypeManager.MethodFlags): Don't take a
+	`Location' argument, we don't need it anywhere.  Use
+	`IMethodData.ShouldIgnore ()' instead of
+	`MethodData.GetMethodFlags ()'.
+	(TypeManager.AddMethod): Removed.
+	(TypeManager.AddMethod2): Renamed to AddMethod.
+
+2004-05-29  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Benjamin Jemlich <pcgod@gmx.net>.
+
+	* convert.cs (Convert.ImplicitReferenceConversion): If we're
+	converting from a class type S to an interface type and we already
+	have an object on the stack, don't box it again.  Fixes #52578.
+
+2004-05-29  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (ConstructorInitializer.GetOverloadedConstructor):
+	Added support for `params' parameters.  Fixes #59267.
+
+2004-05-29  Martin Baulig  <martin@ximian.com>
+
+	* literal.cs (NullPointer): Provide a private .ctor which sets
+	`type' to TypeManager.object_type.  Fixes #59048.
+
+2004-05-29  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (MemberAccess.ResolveMemberAccess): If we're an
+	EventExpr, set `ee.InstanceExpression = left'.  Fixes #59188.
+
+	* ecore.cs (EventExpr.instance_expr): Make the field private.
+
+2004-05-26  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #50080 & cs0214-2.cs
+	* expression.cs (Cast.DoResolve): Check unsafe context here.
+        
+	* statement.cs (Resolve.DoResolve): Likewise.
+
+2004-05-26  Martin Baulig  <martin@ximian.com>
+
+	* namespace.cs (NamespaceEntry.Lookup): Added `bool silent'.
+
+	* rootcontext.cs (RootContext.NamespaceLookup): Added `bool silent'.
+	(RootContext.LookupType): Pass down the `silent' flag.
+
+2004-05-25  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs
+	(MethodGroupExpr.IdenticalTypeName): New public property.
+	(Invocation.DoResolve): Don't report a CS0176 if the "instance"
+	expression actually refers to a type.
+
+2004-05-25  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.DoResolve): Applied Ben Maurer's patch
+	for #56176 and made it actually work.
+
+2004-05-25  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.CacheTemporaries): Make this virtual.
+	(FieldExpr, PropertyExpr): Override and implement
+	CacheTemporaries.  Fixes #52279.
+
+2004-05-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* location.cs: In the new compiler listing a file twice is a
+	warning, not an error.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
+	* enum.cs (Enum.DefineType): For the `BaseType' to be a
+	TypeLookupExpression; otherwise, report a CS1008.  Fixes #58571.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.FindType): Try doing an alias lookup before
+	walking the `using' list.  Fixes #53921.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
+	* const.cs (Const.LookupConstantValue): Added support for
+	EmptyCast's; fixes #55251.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Renamed to
+	DoSimpleNameResolve() and provide a SimpleNameResolve() wrapper
+	which does the CS0135 check.  The reason is that we first need to
+	check whether the variable actually exists.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MemberBase.DoDefine): Use DeclSpace.FindType() rather
+	than RootContext.LookupType() to find the explicit interface
+	type.  Fixes #58584.
+
+2004-05-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Simplify.  Use executable.make.
+	* mcs.exe.sources: New file.  List of sources of mcs.exe.
+
+2004-05-24  Anders Carlsson  <andersca@gnome.org>
+
+	* decl.cs:
+	* enum.cs:
+	Use the invariant culture when doing String.Compare for CLS case
+	sensitivity.
+	
+2004-05-23  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.FindType): Only check the `using' list if we
+	don't have any dots.  Fixes #52622, added cs0246-8.cs.
+
+	* namespace.cs (NamespaceEntry.Lookup): Likewise.
+
+2004-05-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (MemberBase.Define): Reuse MemberType member for 
+	resolved type. Other methods can use it too.
+
+2004-05-23  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Only report a CS0135 if
+	the variable also exists in the current block (otherwise, we need
+	to report a CS0103).  Fixes #58670.
+
+2004-05-23  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (Reachability.Reachable): Compute this
+	on-the-fly rather than storing it as a field.
+
+2004-05-23  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (Reachability.And): Manually compute the
+	resulting `barrier' from the reachability.	
+       
+2004-05-23  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #57835
+	* attribute.cs (AttributeTester.GetMethodObsoleteAttribute): Returns
+	instance of ObsoleteAttribute when symbol is obsolete.
+
+	* class.cs
+	(IMethodData): Extended interface for ObsoleteAttribute support.
+
+2004-05-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs: Fix bug #55970
+
+2004-05-22  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #52705
+	* attribute.cs
+	(GetObsoleteAttribute): New method. Creates the instance of
+	ObsoleteAttribute.
+	(AttributeTester.GetMemberObsoleteAttribute): Returns instance of
+	ObsoleteAttribute when member is obsolete.
+	(AttributeTester.Report_ObsoleteMessage): Common method for
+	Obsolete error/warning reporting.
+
+	* class.cs
+	(TypeContainer.base_classs_type): New member for storing parent type.
+
+	* decl.cs
+	(MemberCore.GetObsoleteAttribute): Returns instance of ObsoleteAttribute
+	for this MemberCore.
+
+2004-05-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs, const.cs: Fix bug #58590
+
+2004-05-21  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.MergeTopBlock): Don't check for
+	out parameters if the end of the method is unreachable.  Fixes
+	#58098.	
+
+2004-05-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* codegen.cs, cs-parser.jay: Removed SetAttributes method.
+	Hari was right, why extra method.
+
+2004-05-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs, cs-parser.jay: Fix errors/cs0579-7.cs.
+
 2004-05-20  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs: Convert this file to Unix mode - like the original
