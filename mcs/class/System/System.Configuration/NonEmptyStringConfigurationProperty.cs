@@ -70,3 +70,4 @@ namespace System.Configuration
 	}
 }
 #endif
+#endif
