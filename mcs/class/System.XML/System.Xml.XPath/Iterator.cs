@@ -157,8 +157,8 @@ namespace System.Xml.XPath
 				_iter = (BaseIterator) other._iter.Clone ();
 			else
 				_nav = other._nav.Clone ();
-			if (other._current != null)
-				_current = other._current.Clone ();
+//			if (other._current != null)
+//				_current = other._current.Clone ();
 		}
 		public SimpleIterator (XPathNavigator nav, NSResolver nsm) : base (nsm)
 		{
@@ -178,7 +178,12 @@ namespace System.Xml.XPath
 	{
 		public SelfIterator (BaseIterator iter) : base (iter) {}
 		public SelfIterator (XPathNavigator nav, NSResolver nsm) : base (nav, nsm) {}
-		protected SelfIterator (SelfIterator other, bool clone) : base (other, true) {}
+		protected SelfIterator (SelfIterator other, bool clone) : base (other, true) 
+		{
+			if (other._current != null)
+				_current = _nav;
+		}
+
 		public override XPathNodeIterator Clone () { return new SelfIterator (this, true); }
 		public override bool MoveNextCore ()
 		{
@@ -233,7 +238,11 @@ namespace System.Xml.XPath
 	internal class ParentIterator : SimpleIterator
 	{
 		public ParentIterator (BaseIterator iter) : base (iter) {}
-		private ParentIterator (ParentIterator other) : base (other, true) {}
+		private ParentIterator (ParentIterator other) : base (other, true)
+		{
+			if (other._current != null)
+				_current = _nav;
+		}
 		public ParentIterator (XPathNavigator nav, NSResolver nsm) : base (nav, nsm) {}
 		public override XPathNodeIterator Clone () { return new ParentIterator (this); }
 		public override bool MoveNextCore ()
