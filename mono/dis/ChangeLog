@@ -1,3 +1,6 @@
+2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* get.c: closes bug #30814. Thanks to Zoltan Varga.
 
 Mon Sep 16 18:49:55 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
