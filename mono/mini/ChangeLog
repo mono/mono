@@ -1,3 +1,7 @@
+2004-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-sparc.brg: Fix register allocation in some rules.
+
 2004-03-28  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mmono_method_to_ir): In CEE_STELEM, do a handle_stobj()
