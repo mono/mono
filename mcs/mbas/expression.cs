@@ -5573,7 +5573,7 @@ namespace Mono.MonoBASIC {
 		{
 			if (!ec.InUnsafe) {
 				Error (233, "Sizeof may only be used in an unsafe context " +
-				       "(consider using System.Runtime.InteropServices.Marshal.Sizeof");
+				       "(consider using System.Runtime.InteropServices.Marshal.SizeOf");
 				return null;
 			}
 				

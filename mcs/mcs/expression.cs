@@ -6843,7 +6843,7 @@ namespace Mono.CSharp {
 			if (!ec.InUnsafe) {
 				Report.Error (
 					233, loc, "Sizeof may only be used in an unsafe context " +
-					"(consider using System.Runtime.InteropServices.Marshal.Sizeof");
+					"(consider using System.Runtime.InteropServices.Marshal.SizeOf");
 				return null;
 			}
 				
