@@ -1,3 +1,8 @@
+
+Fri Jan 11 20:06:22 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: implement stloc, ldloc, ldloca.
+
 2002-01-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): fixed calculation of last_instr
