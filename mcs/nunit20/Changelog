@@ -1,3 +1,7 @@
+2003-01-12  Nick Drochak  <ndrochak@gol.com>
+
+	* TestResult.xml: Generated result file. Shouldn't be in CVS.
+
 2002-12-15  Nick Drochak  <ndrochak@gol.com>
 
 	* nunit.build: Don't delete Transform.resources now, we don't generate
