@@ -290,5 +290,17 @@ namespace System.Reflection.Emit {
 
 			return symbol_writer.DefineDocument (url, language, languageVendor, documentType);
 		}
+
+		public override Type [] GetTypes ()
+		{
+			if (types == null)
+				return new TypeBuilder [0];
+
+			int n = types.Length;
+			TypeBuilder [] copy = new TypeBuilder [n];
+			Array.Copy (types, copy, n);
+
+			return copy;
+		}
 	}
 }

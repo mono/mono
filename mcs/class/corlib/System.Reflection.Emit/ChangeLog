@@ -1,3 +1,6 @@
+2002-09-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* ModuleBuilder.cs (GetTypes): Implement.
 
 Tue Sep 10 12:12:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
