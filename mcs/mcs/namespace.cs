@@ -248,10 +248,9 @@ namespace Mono.CSharp {
 					return resolved as Namespace;
 
 				DeclSpace root = RootContext.Tree.Types;
-				NamespaceEntry orig_ns = root.NamespaceEntry;
 				root.NamespaceEntry = NamespaceEntry;
 				resolved = Name.ResolveAsTypeStep (root.EmitContext);
-				root.NamespaceEntry = orig_ns;
+				root.NamespaceEntry = null;
 
 				return resolved as Namespace;
 			}

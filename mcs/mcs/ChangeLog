@@ -1,5 +1,9 @@
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
 
+	* namespace.cs (UsingEntry.Resolve): Undo change below.
+
+2005-02-21  Raja R Harinath  <rharinath@novell.com>
+
 	Fix #72756.
 	* ecore.cs (Expression.MemberLookupFailed): Add argument to
 	disable the error message when the extended MemberLookup also
