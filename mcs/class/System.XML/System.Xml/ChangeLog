@@ -1,3 +1,13 @@
+2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttributeCollection.cs : Remove() should throw an exception when
+	  target attribute is not included in the collection.
+	* XmlDocument.cs : ImportNode() should reject null node.
+	* XmlNode.cs : Fixed type of exception for invalid insertion.
+	  It should throw an exception not only when the owner document of the
+	  reference element is different but its parent element is different.
+	  Some error message improvement.
+
 2004-03-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : ReadInnerXml() incorrectly tried to get output xml.

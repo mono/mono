@@ -133,6 +133,8 @@ namespace System.Xml
 				throw new ArgumentException ("Specified node is null.");
 			if (node.OwnerDocument != ownerDocument)
 				throw new ArgumentException ("Specified node is in a different document.");
+			if (node.OwnerElement != this.ownerElement)
+				throw new ArgumentException ("The specified attribute is not contained in the element.");
 
 			XmlAttribute retAttr = null;
 			for (int i = 0; i < Nodes.Count; i++) {

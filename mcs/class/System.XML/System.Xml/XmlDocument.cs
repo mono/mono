@@ -487,6 +487,9 @@ namespace System.Xml
 
 		public virtual XmlNode ImportNode (XmlNode node, bool deep)
 		{
+			if (node == null)
+				throw new NullReferenceException ("Null node cannot be imported.");
+
 			switch (node.NodeType) {
 			case XmlNodeType.Attribute:
 				XmlAttribute srcAtt = node as XmlAttribute;

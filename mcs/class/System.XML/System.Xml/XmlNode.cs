@@ -457,13 +457,13 @@ namespace System.Xml
 
 		private void CheckNodeInsertion (XmlNode newChild, XmlNode refChild)
 		{
-			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
+			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument) this : OwnerDocument;
 
 			if (NodeType != XmlNodeType.Element &&
 			    NodeType != XmlNodeType.Attribute &&
 			    NodeType != XmlNodeType.Document &&
 			    NodeType != XmlNodeType.DocumentFragment)
-				throw new InvalidOperationException (String.Format ("current node {0} is not allowed to have any children.", NodeType));
+				throw new InvalidOperationException (String.Format ("Node cannot be appended to current node " + NodeType + "."));
 
 			switch (NodeType) {
 			case XmlNodeType.Attribute:
@@ -472,7 +472,7 @@ namespace System.Xml
 				case XmlNodeType.EntityReference:
 					break;
 				default:
-					throw new ArgumentException (String.Format (
+					throw new InvalidOperationException (String.Format (
 						"Cannot insert specified type of node {0} as a child of this node {0}.", 
 						newChild.NodeType, NodeType));
 				}
@@ -485,19 +485,21 @@ namespace System.Xml
 				case XmlNodeType.Entity:
 				case XmlNodeType.Notation:
 				case XmlNodeType.XmlDeclaration:
-					throw new ArgumentException ("Cannot insert specified type of node as a child of this node.");
+					throw new InvalidOperationException ("Cannot insert specified type of node as a child of this node.");
 				}
 				break;
 			}
 
 			if (IsReadOnly)
-				throw new ArgumentException ("The specified node is readonly.");
+				throw new InvalidOperationException ("The node is readonly.");
 
 			if (newChild.OwnerDocument != ownerDoc)
 				throw new ArgumentException ("Can't append a node created by another document.");
 
-			if (refChild != null && newChild.OwnerDocument != refChild.OwnerDocument)
-					throw new ArgumentException ("argument nodes are on the different documents.");
+			if (refChild != null) {
+				if (refChild.ParentNode != this)
+					throw new ArgumentException ("The reference node is not a child of this node.");
+			}
 
 			if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement))
 				throw new XmlException ("multiple document element not allowed.");
@@ -597,7 +599,7 @@ namespace System.Xml
 				NodeType != XmlNodeType.Element && 
 				NodeType != XmlNodeType.Document && 
 				NodeType != XmlNodeType.DocumentFragment)
-				throw new ArgumentException (String.Format ("This {0} node cannot remove child.", NodeType));
+				throw new ArgumentException (String.Format ("This {0} node cannot remove its child.", NodeType));
 
 			if (IsReadOnly)
 				throw new ArgumentException (String.Format ("This {0} node is read only.", NodeType));
@@ -607,7 +609,7 @@ namespace System.Xml
 		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 			if(oldChild.ParentNode != this)
-				throw new XmlException ("specified child is not child of this node.");
+				throw new XmlException ("The node to be removed is not a child of this node.");
 
 			if (checkNodeType)
 				ownerDoc.onNodeRemoving (oldChild, oldChild.ParentNode);
@@ -649,7 +651,7 @@ namespace System.Xml
 		public virtual XmlNode ReplaceChild (XmlNode newChild, XmlNode oldChild)
 		{
 			if(oldChild.ParentNode != this)
-				throw new InvalidOperationException ("oldChild is not a child of this node.");
+				throw new InvalidOperationException ("The node to be removed is not a child of this node.");
 			
 			if (newChild == this || IsAncestor (newChild))
 				throw new ArgumentException("Cannot insert a node or any ancestor of that node as a child of itself.");
