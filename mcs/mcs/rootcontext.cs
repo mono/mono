@@ -556,7 +556,7 @@ namespace Mono.CSharp {
 				}
 				
 				t = NamespaceLookup (ds, name, loc);
-				if (!silent)
+				if (!silent || t != null)
 					ds.Cache [name] = t;
 			}
 
