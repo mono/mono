@@ -1,3 +1,8 @@
+2002-12-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriterTests.cs (TestAttributeNamespacesXmlnsXmlns):
+		fixed bug in the testcase (in relation to JD Conley's patch).
+
 2002-12-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDeclarationTests.cs (TestValueProperty):

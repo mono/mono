@@ -87,10 +87,9 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
+				Fail ("any prefix which name starts from \"xml\" must not be allowed.");
 			} 
-			catch (Exception e) {
-				Fail ("Unexpected Exception thrown" + e);
-			}
+ 			catch (ArgumentException e) {}
 		}
 
 		public void TestAttributeWriteAttributeString ()
