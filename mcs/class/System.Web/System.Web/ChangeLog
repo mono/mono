@@ -1,5 +1,9 @@
 2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* HttpModuleCollection.cs (GetKey): Recursion, again!
+
+2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* HttpClientCertificate.cs (ValidUntil): recursion!
 
 2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>

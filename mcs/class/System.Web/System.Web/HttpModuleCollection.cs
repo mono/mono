@@ -45,7 +45,7 @@ namespace System.Web {
       }
 
       public string GetKey(int index) {
-         return GetKey(index);
+         return BaseGetKey(index);
       }
       
       public string [] AllKeys {
