@@ -15,7 +15,7 @@ namespace System.Xml.Serialization
 	/// Summary description for SoapIncludeAttribute.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
-		 AttributeTargets.Method)]
+		 AttributeTargets.Method, AllowMultiple=true)]
 	public class SoapIncludeAttribute : Attribute
 	{
 		private Type type;
