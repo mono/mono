@@ -1,3 +1,7 @@
+2004-08-07 Bernie Solomon <bernard@ugsolutions.com>
+	* GetType.vb:
+	* Test.sources: add a test for GetType
+
 2004-08-06 Bernie Solomon <bernard@Ugsolutions.com>
 
 	* Dll1.vb:
