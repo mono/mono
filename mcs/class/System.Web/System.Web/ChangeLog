@@ -1,3 +1,8 @@
+2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* WebCategoryAttribute.cs: Implemented localization
+	* WebSysDescriptionAttribute.cs: Implemented localization
+
 2003-07-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntime.cs: also clear the headers that may have been set upon

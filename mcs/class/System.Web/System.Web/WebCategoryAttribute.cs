@@ -1,15 +1,13 @@
-/**
- * Namespace: System.Web
- * Class:     WebCategoryAttribute
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  95%
- *
- * (C) Gaurav Vaish (2002)
- */
+//
+// System.Web.WebCategoryAttribute.cs
+//
+// Authors:
+//   Gaurav Vaish (gvaish@iitk.ac.in)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Gaurav Vaish (2002)
+// (C) 2003 Andreas Nahr
+//
 
 using System;
 using System.ComponentModel;
@@ -19,20 +17,14 @@ namespace System.Web
 	[AttributeUsage(AttributeTargets.All)]
 	internal sealed class WebCategoryAttribute : CategoryAttribute
 	{
-		public WebCategoryAttribute(string category) : base(category)
+		public WebCategoryAttribute (string category)
+			: base (category)
 		{
 		}
 
-		[MonoTODO]
-		protected override string GetLocalizedString(string value)
+		protected override string GetLocalizedString (string value)
 		{
-			string retVal = base.GetLocalizedString(value);
-			if(retVal == null)
-			{
-				throw new NotImplementedException();
-				//retVal = "Category_" + something I don't know how to get!
-			}
-			return retVal;
+			return Locale.GetText (value);
 		}
 	}
 }
