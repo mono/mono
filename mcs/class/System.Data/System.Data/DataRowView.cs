@@ -96,16 +96,17 @@ namespace System.Data
 			isEdit = false;
 		}
 
-		[MonoTODO]
 		public DataView CreateChildView (DataRelation relation)
 		{
-			throw new NotImplementedException ();
+			if (relation == null)
+				throw new ArgumentException ("The relation is not parented to the table.");
+			return new DataView (relation.ChildTable);
 		}
 
-		[MonoTODO]
 		public DataView CreateChildView (string name)
 		{
-			throw new NotImplementedException ();
+			return CreateChildView (
+				dataRow.Table.ChildRelations [name]);
 		}
 
 		[MonoTODO]

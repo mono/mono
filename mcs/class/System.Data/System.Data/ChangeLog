@@ -1,5 +1,9 @@
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataRowView.cs : implemented CreateChildView().
+
+2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTable.cs, DataView.cs :
 	  Optimized DataView to compile only once RowFilter and Sort when 
 	  those properties are set. To make it possible, extracted 

@@ -1,5 +1,9 @@
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataRowViewTest.cs : added new file.
+
+2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSetReadXmlSchemaTest.cs : test labels were ambiguous.
 	* DataViewTest.cs : indentation was heavily broken.
 

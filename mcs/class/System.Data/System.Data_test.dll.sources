@@ -20,6 +20,7 @@ System.Data/DataColumnTest.cs
 System.Data/DataRelationTest.cs
 System.Data/DataRowCollectionTest.cs
 System.Data/DataRowTest.cs
+System.Data/DataRowViewTest.cs
 System.Data/DataSetAssertion.cs
 System.Data/DataSetTest.cs
 System.Data/DataSetReadXmlTest.cs
