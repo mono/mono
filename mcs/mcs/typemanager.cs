@@ -1669,15 +1669,13 @@ public class TypeManager {
 	///   for anything which is dynamic, and we need this in a number of places,
 	///   we register this information here, and use it afterwards.
 	/// </remarks>
-	static public bool RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
+	static public void RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
 	{
 		if (args == null)
 			args = NoTypes;
 				
 		method_arguments.Add (mb, args);
 		method_internal_params.Add (mb, ip);
-		
-		return true;
 	}
 	
 	static public InternalParameters LookupParametersByBuilder (MethodBase mb)
@@ -1793,17 +1791,14 @@ public class TypeManager {
 	
 	static Hashtable events;
 
-	static public bool RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)
+	static public void RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)
 	{
 		if (events == null)
 			events = new Hashtable ();
 
-		if (events.Contains (eb))
-			return false;
-
-		events.Add (eb, new Pair (add, remove));
-
-		return true;
+		if (!events.Contains (eb)) {
+			events.Add (eb, new Pair (add, remove));
+		}
 	}
 
 	static public MethodInfo GetAddMethod (EventInfo ei)

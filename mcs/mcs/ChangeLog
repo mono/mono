@@ -1,3 +1,37 @@
+2004-09-04  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed #56986, #63631, #65231
+
+	* class.cs: (TypeContainer.AddToMemberContainer): New method,
+	adds member to name container.
+	(TypeContainer.AddToTypeContainer): New method, adds type to
+	name container.
+	(AddConstant, AddEnum, AddClassOrStruct, AddDelegate, AddMethod,
+	AddConstructor, AddInterface, AddField, AddProperty, AddEvent,
+	AddOperator): Simplified by reusing AddToMemberContainer.
+	(TypeContainer.UserDefinedStaticConstructor): Changed to property
+	instead of field.
+	(Method.CheckForDuplications): Fixed implementation to test all
+	possibilities.
+	(MemberBase): Detection whether member is explicit interface
+	implementation is now in constructor.
+	(MemberBase.UpdateMemberName): Handles IndexerName.
+	(Accessor): Changed to keep also location information.
+	(AbstractPropertyEventMethod): Is derived from MemberCore.
+	(AbstractPropertyEventMethod.IsDummy): Says whether accessor
+	will be emited or not.
+	(PropertyBase.AreAccessorsDuplicateImplementation):
+	Tests whether accessors are not in collision with some method.
+	(Operator): Is derived from MethodCore to simplify common
+	operations.
+
+	* decl.cs (Flags.TestMethodDuplication): Test for duplication
+	must be performed.
+	(DeclSpace.AddToContainer): Adds the member to defined_names
+	table. It tests for duplications and enclosing name conflicts.
+
+	* enum.cs (EnumMember): Clean up to reuse the base structures
+
 2004-09-03  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in

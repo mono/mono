@@ -153,8 +153,8 @@ namespace Mono.CSharp {
 				}
 
 				string name = String.Concat (temp_ds.Name, ".", mi.Name);
-				MemberCore mc = temp_ds.GetDefinition (name) as MemberCore;
-				SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
+				MemberCore mc = temp_ds.GetDefinition (name);
+				SymbolRelatedToPreviousError (mc);
 			}
 		}
 

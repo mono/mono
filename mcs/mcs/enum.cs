@@ -22,12 +22,14 @@ namespace Mono.CSharp {
 
 		Enum parent_enum;
 		public FieldBuilder builder;
+		internal readonly Expression Type;
 
-		public EnumMember (Enum parent_enum, string name, Location loc, Attributes attrs):
+		public EnumMember (Enum parent_enum, Expression expr, string name, Location loc, Attributes attrs):
 			base (null, name, attrs, loc)
 		{
 			this.parent_enum = parent_enum;
 			this.ModFlags = parent_enum.ModFlags;
+			this.Type = expr;
 		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
@@ -66,6 +68,8 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
+			base.Emit ();
+
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this); 
 
@@ -124,7 +128,6 @@ namespace Mono.CSharp {
 		public Type UnderlyingType;
 
 		Hashtable member_to_location;
-		Hashtable member_to_attributes;
 
 		//
 		// This is for members that have been defined
@@ -137,9 +140,6 @@ namespace Mono.CSharp {
 		Hashtable in_transit;
 		
 		ArrayList field_builders;
-
-
-		Hashtable name_to_member;
 		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -161,38 +161,27 @@ namespace Mono.CSharp {
 			member_to_value = new Hashtable ();
 			in_transit = new Hashtable ();
 			field_builders = new ArrayList ();
-
-			name_to_member = new Hashtable ();
 		}
 
 		/// <summary>
 		///   Adds @name to the enumeration space, with @expr
 		///   being its definition.  
 		/// </summary>
-		public AdditionResult AddEnumMember (string name, Expression expr, Location loc,
-						     Attributes opt_attrs)
+		public void AddEnumMember (string name, Expression expr, Location loc, Attributes opt_attrs)
 		{
-			if (defined_names.Contains (name))
-				return AdditionResult.NameExists;
-
 			if (name == "value__") {
 				Report.Error (76, loc, "An item in an enumeration can't have an identifier `value__'");
-				return AdditionResult.Error;
+				return;
 			}
 
-			DefineName (name, expr);
+			EnumMember em = new EnumMember (this, expr, name, loc, opt_attrs);
+			if (!AddToContainer (em, false, name, ""))
+				return;
 
+
+			// TODO: can be almost deleted
 			ordered_enums.Add (name);
 			member_to_location.Add (name, loc);
-
-			if (member_to_attributes == null)
-				member_to_attributes = new Hashtable ();
-
-			member_to_attributes.Add (name, opt_attrs);
-
-			name_to_member.Add (name, new EnumMember (this, name, loc, opt_attrs));
-			
-			return AdditionResult.Success;
 		}
 
 		//
@@ -611,7 +600,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			EnumMember em = name_to_member [name] as EnumMember;
+			EnumMember em = (EnumMember) defined_names [name];
 			em.DefineMember (TypeBuilder);
 
 			bool fail;
@@ -671,7 +660,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					EnumMember em = name_to_member [name] as EnumMember;
+					EnumMember em = (EnumMember) defined_names [name];
 
 					em.DefineMember (TypeBuilder);
 					FieldBuilder fb = em.builder;
@@ -712,7 +701,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (ec, this);
 			}
 
-			foreach (EnumMember em in name_to_member.Values) {
+			foreach (EnumMember em in defined_names.Values) {
 				em.Emit (ec);
 			}
 
@@ -725,13 +714,13 @@ namespace Mono.CSharp {
  			foreach (string name in ordered_enums) {
  				string locase = name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
  				if (!ht.Contains (locase)) {
- 					ht.Add (locase, name_to_member [name]);
+ 					ht.Add (locase, defined_names [name]);
  					continue;
  				}
  
- 				EnumMember conflict = (EnumMember)ht [locase];
+ 				MemberCore conflict = (MemberCore)ht [locase];
  				Report.SymbolRelatedToPreviousError (conflict);
- 				conflict = (EnumMember)name_to_member [name];
+ 				conflict = GetDefinition (name);
  				Report.Error (3005, conflict.Location, "Identifier '{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
   			}
   		}
@@ -796,7 +785,7 @@ namespace Mono.CSharp {
 		// indexer
 		public Expression this [string name] {
 			get {
-				return (Expression) defined_names [name];
+				return ((EnumMember) defined_names [name]).Type;
 			}
 		}
 
@@ -824,7 +813,7 @@ namespace Mono.CSharp {
 			if (oa != null)
 				return oa;
 
-			EnumMember em = (EnumMember)name_to_member [identifier];
+			EnumMember em = (EnumMember)defined_names [identifier];
 			oa = em.GetObsoleteAttribute (ec);
 
 			if (oa == null)
