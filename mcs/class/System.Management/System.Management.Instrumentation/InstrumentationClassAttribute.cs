@@ -11,32 +11,34 @@ namespace System.Management.Instrumentation
 {
 	[AttributeUsage(AttributeTargets.Class | 
 			AttributeTargets.Struct)]
-        public class InstrumentationClassAttribute : Attribute {
-		
-		[MonoTODO]
-		public InstrumentationClassAttribute()
+	public class InstrumentationClassAttribute : Attribute {
+		public InstrumentationClassAttribute (InstrumentationType instrumentationType)
 		{
+			_instrumentationType = instrumentationType;
+		}
+
+		public InstrumentationClassAttribute (InstrumentationType instrumentationType, string managedBaseClassName)
+		{
+			_instrumentationType = instrumentationType;
+			_managedBaseClassName = managedBaseClassName;
 		}
 
 		public InstrumentationType InstrumentationType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get {
+				return _instrumentationType;
+			}
 		}
 
 		public string ManagedBaseClassName {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get {
+				if (_managedBaseClassName == null || _managedBaseClassName.Length == 0)
+					return null;
+
+				return _managedBaseClassName;
+			}
 		}
 
-		[MonoTODO]
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~InstrumentationClassAttribute()
-		{
-		}
+		private InstrumentationType _instrumentationType;
+		private string _managedBaseClassName;
 	}
 }

@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace System.Management.Instrumentation
 {
-        public class Instrumentation {
+	public class Instrumentation {
 
 		[MonoTODO]
 		public Instrumentation()
@@ -38,26 +38,21 @@ namespace System.Management.Instrumentation
 
 		[MonoTODO]
 		public static void RegisterAssembly (Assembly assemblyToRegister) 
-                {
+		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
 		public static void Revoke (object instanceData)
-	        {
+		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
 		public static void SetBatchSize (Type instrumentationClass, 
 						 int batchSize)
-	        {
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~Instrumentation()
 		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -9,23 +9,19 @@
 
 namespace System.Management.Instrumentation
 {
-        public abstract class Instance : IInstance {
+	[InstrumentationClass (InstrumentationType.Instance)]
+	public abstract class Instance : IInstance {
 		bool published;
 
+		[MonoTODO]
+		protected Instance ()
+		{
+		}
+
+		[IgnoreMember]
 		public bool Published {
 			get { return published; }
 			set { published = value; }
-		}
-
-		[MonoTODO]
-		protected Instance()
-		{
-
-		}
-
-		[MonoTODO]
-		~Instance()
-		{
 		}
 	}
 }

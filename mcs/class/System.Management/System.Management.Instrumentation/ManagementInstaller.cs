@@ -12,8 +12,7 @@ using System.Collections;
 
 namespace System.Management.Instrumentation
 {
-        public class ManagementInstaller : Installer {
-		
+	public class ManagementInstaller : Installer {
 		[MonoTODO]
 		public ManagementInstaller()
 		{
@@ -32,7 +31,7 @@ namespace System.Management.Instrumentation
 
 		[MonoTODO]
 		public override void Install (IDictionary savedState)
-	        {
+		{
 			throw new NotImplementedException();
 		}
 
@@ -46,11 +45,6 @@ namespace System.Management.Instrumentation
 		public override void Uninstall (IDictionary savedState)
 		{
 			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ManagementInstaller()
-		{
 		}
 	}
 }

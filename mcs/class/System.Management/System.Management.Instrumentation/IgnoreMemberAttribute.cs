@@ -9,25 +9,12 @@
 
 namespace System.Management.Instrumentation
 {
-
-        [AttributeUsage (AttributeTargets.Method | 
+	[AttributeUsage (AttributeTargets.Method | 
 			 AttributeTargets.Property | 
 			 AttributeTargets.Field)]
-        public class IgnoreMemberAttribute : Attribute {
-
+	public class IgnoreMemberAttribute : Attribute {
 		[MonoTODO]
 		public IgnoreMemberAttribute() 
-		{
-		}
-
-		[MonoTODO]
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~IgnoreMemberAttribute()
 		{
 		}
 	}

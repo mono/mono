@@ -15,21 +15,17 @@ namespace System.Management.Instrumentation
 			AttributeTargets.Property |
 			AttributeTargets.Field)]
         public class ManagedNameAttribute : Attribute {
-		
-		[MonoTODO]
-		public ManagedNameAttribute()
+		public ManagedNameAttribute (string name)
 		{
-		}
-		
-		[MonoTODO]
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
+			_name = name;
 		}
 
-		[MonoTODO]
-		~ManagedNameAttribute()
-		{
+		public string Name {
+			get {
+				return _name;
+			}
 		}
+
+		private string _name;
 	}
 }

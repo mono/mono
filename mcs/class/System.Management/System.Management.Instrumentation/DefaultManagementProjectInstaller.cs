@@ -11,15 +11,9 @@ using System.Configuration.Install;
 
 namespace System.Management.Instrumentation
 {
-        public class DefaultManagementProjectInstaller : Installer {
-
+	public class DefaultManagementProjectInstaller : Installer {
 		[MonoTODO]
 		public DefaultManagementProjectInstaller()
-		{
-		}
-
-		[MonoTODO]
-		~DefaultManagementProjectInstaller()
 		{
 		}
 	}

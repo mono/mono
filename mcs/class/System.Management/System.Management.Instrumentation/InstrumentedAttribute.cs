@@ -10,10 +10,20 @@
 namespace System.Management.Instrumentation
 {
 	[AttributeUsage(AttributeTargets.Assembly)]
-        public class InstrumentedAttribute : Attribute {
+	public class InstrumentedAttribute : Attribute {
 		
 		[MonoTODO]
 		public InstrumentedAttribute()
+		{
+		}
+
+		[MonoTODO]
+		public InstrumentedAttribute (string namespaceName) : this(namespaceName, null)
+		{
+		}
+
+		[MonoTODO]
+		public InstrumentedAttribute (string namespaceName, string securityDescriptor)
 		{
 		}
 
@@ -25,17 +35,6 @@ namespace System.Management.Instrumentation
 		public string SecurityDescriptor {
 			[MonoTODO]
 			get { throw new NotImplementedException(); }
-		}
-
-		[MonoTODO]
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~InstrumentedAttribute()
-		{
 		}
 	}
 }

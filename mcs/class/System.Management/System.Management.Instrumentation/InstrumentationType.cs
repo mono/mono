@@ -9,11 +9,10 @@
 
 namespace System.Management.Instrumentation
 {
-	[Serializable]
         public enum InstrumentationType
         {
-                Abstract,
-                Event,
-                Instance,
+                Abstract = 2,
+                Event = 1, 
+                Instance = 0,
         }
 }
