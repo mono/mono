@@ -1,3 +1,9 @@
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
+	* GenericTypeParameterBuilder.cs
+	(Mono_SetReferenceTypeConstraint): New public method.
+	(Mono_SetValueTypeConstraint): New public method.
+
 2004-04-07  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* MethodBuilder.cs, TypeBuilder.cs: always have 

@@ -26,6 +26,8 @@ namespace System.Reflection.Emit
 		private Type base_type;
 		private Type[] iface_constraints;
 		private bool has_ctor_constraint;
+		private bool has_reference_type;
+		private bool has_value_type;
 	#endregion
 
 		public void SetBaseTypeConstraint (Type base_type_constraint)
@@ -41,6 +43,16 @@ namespace System.Reflection.Emit
 		public void Mono_SetConstructorConstraint ()
 		{
 			has_ctor_constraint = true;
+		}
+
+		public void Mono_SetReferenceTypeConstraint ()
+		{
+			has_reference_type = true;
+		}
+
+		public void Mono_SetValueTypeConstraint ()
+		{
+			has_value_type = true;
 		}
 
 		internal GenericTypeParameterBuilder (TypeBuilder tbuilder,
