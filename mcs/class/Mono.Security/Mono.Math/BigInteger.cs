@@ -12,7 +12,6 @@
 //
 // Copyright (c) 2002 Chew Keong TAN
 // All rights reserved.
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -1021,7 +1020,7 @@ namespace Mono.Math {
 
 				r2.Normalize ();
 
-				if (r2 < x) {
+				if (r2 <= x) {
 					Kernel.MinusEq (x, r2);
 				} else {
 					BigInteger val = new BigInteger (Sign.Positive, kPlusOne + 1);
