@@ -1,3 +1,8 @@
+2005-02-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HttpContext.cs: Added internal property to keep a reference to
+	the last accessed page. Page uses this to implement PreviousPage.
+
 2005-02-02  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ProcessModelInfo.cs: Fixed warning.

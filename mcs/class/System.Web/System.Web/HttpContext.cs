@@ -64,6 +64,10 @@ namespace System.Web
 		object configTimeout;
 		string errorPage;
 		IPrincipal user;
+		
+#if NET_2_0
+		private System.Web.UI.Page lastPage;
+#endif
 
 		public HttpContext (HttpRequest Request, HttpResponse Response)
 		{
@@ -414,6 +418,14 @@ namespace System.Web
 			Request.SetPathInfo (pathInfo);
 		}
 #endif
+
+#if NET_2_0
+		internal System.Web.UI.Page LastPage {
+			get { return lastPage; }
+			set { lastPage = value; }
+		}
+#endif
+
 	}
 }
 
