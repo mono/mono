@@ -768,7 +768,8 @@ namespace Mono.CSharp {
 					return;
 				}
 				
-				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]);
+				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor,
+											new object [0]);
 				CodeGen.ModuleBuilder.SetCustomAttribute (cb);
 			}
 		}

@@ -1,3 +1,9 @@
+2002-11-13  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (Attribute.Resolve): Catch the
+	NullReferenceException and report it since it isn't supposed to
+	happen. 
+	
 2002-11-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.EmitBranchable): Also handle the cases for

@@ -317,6 +317,8 @@ namespace Mono.CSharp {
 				// 
 				// Don't know what to do here
 				//
+				Report.Warning (
+				        -100, Location, "NullReferenceException while trying to create attribute. Something's wrong!");
 			} catch {
 				//
 				// Sample:
