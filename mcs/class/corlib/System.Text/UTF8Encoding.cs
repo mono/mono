@@ -303,7 +303,6 @@ public class UTF8Encoding : Encoding
 		while (charCount > 0) {
 			// Fetch the next UTF-16 character pair value.
 			ch = s[charIndex++];
-			--charCount;
 			if (ch >= '\uD800' && ch <= '\uDBFF' && charCount > 1) {
 				// This may be the start of a surrogate pair.
 				pair = (uint)(s[charIndex]);
@@ -319,6 +318,7 @@ public class UTF8Encoding : Encoding
 			} else {
 				pair = (uint)ch;
 			}
+			--charCount;
 
 			// Encode the character pair value.
 			if (pair < (uint)0x0080) {
