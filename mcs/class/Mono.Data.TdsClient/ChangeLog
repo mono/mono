@@ -1,7 +1,7 @@
 2002-11-15  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.TdsClient.Internal/Tds.cs:
-		Add support for UniqueIdentifier (GUID)
-		types
+		Add support for UniqueIdentifier (GUID),
+		Money types
 
 2002-11-14  Tim Coleman <tim@timcoleman.com>
 	* list:

@@ -657,7 +657,7 @@ namespace Mono.Data.TdsClient.Internal {
 		private object GetMoneyValue (TdsColumnType type)
 		{
 			int len;
-			object result;
+			object result = null;
 
 			switch (type) {
 			case TdsColumnType.SmallMoney :
@@ -674,13 +674,31 @@ namespace Mono.Data.TdsClient.Internal {
 				return null;
 			}
 
-			if (len == 0)
-				result = null;
-			else {
-				throw new NotImplementedException ();
+			long rawValue = 0;
+
+			switch (len) {
+			case 4:
+				rawValue = comm.GetTdsInt ();
+				break;
+			case 8:
+				byte[] bits = new byte[8];
+				bits[4] = comm.GetByte ();
+				bits[5] = comm.GetByte ();
+				bits[6] = comm.GetByte ();
+				bits[7] = comm.GetByte ();
+				bits[0] = comm.GetByte ();
+				bits[1] = comm.GetByte ();
+				bits[2] = comm.GetByte ();
+				bits[3] = comm.GetByte ();
+				rawValue = BitConverter.ToInt64 (bits, 0);
+				break;
+			default:
+				return null;
 			}
 
-			return result;
+			result = new Decimal (rawValue);
+
+			return (((decimal) result) / 10000);
 		}
 
 		private object GetStringValue (bool wideChars, bool outputParam)
