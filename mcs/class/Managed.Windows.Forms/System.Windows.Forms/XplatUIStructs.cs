@@ -680,5 +680,11 @@ namespace System.Windows.Forms {
 		internal uint		dwContextId;
 		internal POINT		MousePos;
 	}
+
+	internal enum PeekMessageFlags {
+		PM_NOREMOVE			= 0x00000000,
+		PM_REMOVE			= 0x00000001,
+		PM_NOYIELD			= 0x00000002
+	}
 }
 

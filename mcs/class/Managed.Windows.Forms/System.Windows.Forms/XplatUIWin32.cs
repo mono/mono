@@ -163,12 +163,6 @@ namespace System.Windows.Forms {
 			CS_IME				= 0x00010000
 		}
 
-		internal enum PeekMessageFlags {
-			PM_NOREMOVE			= 0x00000000,
-			PM_REMOVE			= 0x00000001,
-			PM_NOYIELD			= 0x00000002
-		}
-
 		internal enum SetWindowPosZOrder {
 			HWND_TOP			= 0,
 			HWND_BOTTOM			= 1,
@@ -574,6 +568,11 @@ namespace System.Windows.Forms {
 					return;
 				}
 			}
+		}
+
+		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
+			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (IntPtr)cp.Style);
+			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (IntPtr)cp.ExStyle);
 		}
 
 		internal override void RefreshWindow(IntPtr handle) {			

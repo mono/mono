@@ -267,8 +267,10 @@ namespace System.Windows.Forms
 					}
 					value.tab_index = use;
 				}
+
 				list.Add (value);
 				value.Parent = owner;
+				owner.UpdateZOrder();
 			}
 			
 			public virtual void AddRange (Control[] controls)
@@ -340,6 +342,7 @@ namespace System.Windows.Forms
 
 			public virtual void Remove(Control value) {
 				list.Remove(value);
+				owner.UpdateZOrder();
 			}
 
 			public void RemoveAt(int index) {
@@ -348,6 +351,7 @@ namespace System.Windows.Forms
 				}
 
 				list.RemoveAt(index);
+				owner.UpdateZOrder();
 			}
 
 			public void SetChildIndex(Control child, int newIndex) {
@@ -369,6 +373,7 @@ namespace System.Windows.Forms
 				} else {
 					list.Insert(newIndex, child);
 				}
+				owner.UpdateZOrder();
 			}
 			#endregion // ControlCollection Private Instance Methods
 
@@ -1740,7 +1745,18 @@ namespace System.Windows.Forms
 		}
 
 		public Control GetNextControl(Control ctl, bool forward) {
-			return ctl;
+			// If we're not a container we don't play
+			if ( !(this is IContainerControl) || !ctl.GetStyle(ControlStyles.ContainerControl)) {
+				return null;
+			}
+
+			// If ctl is not contained by this, we start at the first child of this
+			if (!this.Contains(ctl)) {
+				ctl = this;
+			}
+
+			// We walk the list of controls, starting at ctl, stepping into children as we encounter them
+			return null;
 		}
 
 		public void Hide() {
@@ -2528,6 +2544,37 @@ namespace System.Windows.Forms
 
 			this.client_size.Width=clientWidth;
 			this.client_size.Height=clientHeight;
+		}
+
+		protected void UpdateStyles() {
+			if (!IsHandleCreated) {
+				return;
+			}
+
+			XplatUI.SetWindowStyle(window.Handle, CreateParams);
+		}
+
+		protected void UpdateZOrder() {
+			int	children;
+			Control	ctl;
+
+#if not
+			if (parent == null) {
+				return;
+			}
+
+			ctl = parent;
+
+			children = ctl.child_controls.Count;
+			for (int i = 1; i < children; i++ ) {
+				XplatUI.SetZOrder(ctl.child_controls[i].window.Handle, ctl.child_controls[i-1].window.Handle, false, false); 
+			}
+#else
+			children = child_controls.Count;
+			for (int i = 1; i < children; i++ ) {
+				XplatUI.SetZOrder(child_controls[i].window.Handle, child_controls[i-1].window.Handle, false, false); 
+			}
+#endif
 		}
 
 		[MonoTODO]

@@ -191,6 +191,10 @@ namespace System.Windows.Forms {
 			driver.SetWindowState(handle, state);
 		}
 
+		internal static void SetWindowStyle(IntPtr handle, CreateParams cp) {
+			driver.SetWindowStyle(handle, cp);
+		}
+
 		internal static void RefreshWindow(IntPtr handle) {
 			driver.RefreshWindow(handle);
 		}

@@ -98,6 +98,8 @@ namespace System.Windows.Forms {
 		internal abstract FormWindowState GetWindowState(IntPtr handle);
 		internal abstract void SetWindowState(IntPtr handle, FormWindowState state);
 
+		internal abstract void SetWindowStyle(IntPtr handle, CreateParams cp);
+
 		internal abstract bool GetText(IntPtr handle, out string text);
 		internal abstract bool Text(IntPtr handle, string text);
 		internal abstract bool SetVisible(IntPtr handle, bool visible);

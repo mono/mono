@@ -349,6 +349,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
+			// Reapply style and exstyle to the window
+			throw new NotImplementedException();
+		}
+
 		internal override void RefreshWindow(IntPtr handle) {
 			HIRect r = new HIRect ();
 			CheckError (HIViewGetFrame (handle, ref r), "HIViewGetFrame ()");

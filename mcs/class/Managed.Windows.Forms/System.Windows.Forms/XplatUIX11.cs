@@ -706,6 +706,82 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
+			MotifWmHints		mwmHints;
+			IntPtr[]		atoms;
+			int			atom_count;
+
+			// Set the appropriate window manager hints
+			if (((cp.Style & ((int)WindowStyles.WS_POPUP)) != 0)  && (GetParent(handle) != IntPtr.Zero)) {
+				XSetTransientForHint(DisplayHandle, handle, GetParent(handle));
+			}
+
+			MotifFunctions functions = 0;
+			MotifDecorations decorations = 0;
+			mwmHints = new MotifWmHints();
+			mwmHints.flags = (IntPtr)(MotifFlags.Functions | MotifFlags.Decorations);
+			mwmHints.functions = (IntPtr)0;
+			mwmHints.decorations = (IntPtr)0;
+				
+			if ((cp.Style & ((int)WindowStyles.WS_CAPTION)) != 0) {
+				functions |= MotifFunctions.Move;
+				decorations |= MotifDecorations.Title | MotifDecorations.Menu;
+			}
+
+			if ((cp.Style & ((int)WindowStyles.WS_THICKFRAME)) != 0) {
+				functions |= MotifFunctions.Move | MotifFunctions.Resize;
+				decorations |= MotifDecorations.Border | MotifDecorations.ResizeH;
+			}
+
+			if ((cp.Style & ((int)WindowStyles.WS_MINIMIZEBOX)) != 0) {
+				functions |= MotifFunctions.Minimize;
+				decorations |= MotifDecorations.Minimize;
+			}
+
+			if ((cp.Style & ((int)WindowStyles.WS_MAXIMIZEBOX)) != 0) {
+				functions |= MotifFunctions.Maximize;
+				decorations |= MotifDecorations.Maximize;
+			}
+
+			if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
+				functions |= MotifFunctions.Close;
+			}
+
+			if ((cp.ExStyle & ((int)WindowStyles.WS_EX_DLGMODALFRAME)) != 0) {
+				decorations |= MotifDecorations.Border;
+			}
+
+			if ((cp.Style & ((int)WindowStyles.WS_DLGFRAME)) != 0) {
+				decorations |= MotifDecorations.Border;
+			}
+
+			if ((cp.Style & ((int)WindowStyles.WS_BORDER)) != 0) {
+				decorations |= MotifDecorations.Border;
+			}
+
+			if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+				functions = 0;
+				decorations = 0;
+			}
+
+			mwmHints.functions = (IntPtr)functions;
+			mwmHints.decorations = (IntPtr)decorations;
+
+			XChangeProperty(DisplayHandle, handle, mwm_hints, mwm_hints, 32, PropertyMode.Replace, ref mwmHints, 5);
+
+			atoms = new IntPtr[8];
+			atom_count = 0;
+
+			if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+				atoms[atom_count++] = (IntPtr)wm_state_above;
+				atoms[atom_count++] = (IntPtr)wm_no_taskbar;
+			}
+			// Should we use SendNetWMMessage here?
+			XChangeProperty(DisplayHandle, handle, net_wm_state, atom, 32, PropertyMode.Replace, ref atoms, atom_count);
+
+			XSelectInput(DisplayHandle, handle, SelectInputMask);
+		}
+
 		internal override void RefreshWindow(IntPtr handle) {
 			XEvent	xevent = new XEvent();
 			IntPtr	root;
@@ -887,7 +963,7 @@ namespace System.Windows.Forms {
 
 		internal override void DoEvents () {
 			MSG msg = new MSG ();
-			while (PeekMessage(ref msg, IntPtr.Zero, 0, 0, 0)) {
+			while (PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
 				if (msg.message == Msg.WM_PAINT) {
 					TranslateMessage (ref msg);
 					DispatchMessage (ref msg);
@@ -895,9 +971,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Obey flags; currently we always PM_REMOVE")]
+		[MonoTODO("Implement PM_NOREMOVE flag")]
 		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			bool	 pending;
+
+			if ((flags & (uint)PeekMessageFlags.PM_REMOVE) == 0) {
+				throw new NotImplementedException("PeekMessage PM_NOREMOVE is not implemented yet");
+			}
 
 			pending = false;
 			if (message_queue.Count > 0) {
@@ -1410,7 +1490,8 @@ namespace System.Windows.Forms {
 
 				values.sibling = AfterhWnd;
 				values.stack_mode = StackMode.Below;
-				XConfigureWindow(DisplayHandle, hWnd, ChangeWindowFlags.CWStackMode, ref values);
+
+				XConfigureWindow(DisplayHandle, hWnd, ChangeWindowFlags.CWStackMode | ChangeWindowFlags.CWSibling, ref values);
 			} else {
 				XLowerWindow(DisplayHandle, hWnd);
 				return true;
