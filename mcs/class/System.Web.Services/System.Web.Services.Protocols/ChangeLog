@@ -1,3 +1,14 @@
+2002-08-06  Tim Coleman <tim@timcoleman.com>
+        * ServerProtocol.cs:
+                Add new class as implied by class statuc page.
+                SoapServerProtocol is derived from this.
+        * SoapServerProtocol.cs:
+                Change base class to ServerProtocol.  Add some
+		properties shown by class status page.
+        * SoapClientMethod.cs:
+                This class should not be sealed.  Add some
+		fields shown by the class status page.
+
 2002-07-25  Tim Coleman <tim@timcoleman.com>
 	* SoapClientMethod.cs:
 	* SoapServerProtocol.cs:

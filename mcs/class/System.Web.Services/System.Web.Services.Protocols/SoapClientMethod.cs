@@ -8,9 +8,20 @@
 //
 
 using System.Web.Services;
+using System.Web.Services.Description;
 
 namespace System.Web.Services.Protocols {
 	[MonoTODO ("Determine what this class does.")]
-	internal sealed class SoapClientMethod {
+	internal class SoapClientMethod {
+
+		#region Fields
+
+		public string action;
+		public LogicalMethodInfo methodInfo;
+		public bool oneWay;
+		public bool rpc;
+		public SoapBindingUse use;
+
+		#endregion // Fields
 	}
 }
