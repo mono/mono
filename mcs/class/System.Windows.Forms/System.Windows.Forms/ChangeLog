@@ -1,4 +1,9 @@
     2002-12-3  DennisHayes <dennish@raytek.com>	
+	* *.cs
+	* switched to unix style line terminiators
+
+
+    2002-12-3  DennisHayes <dennish@raytek.com>	
 
 	* 140 files changed. replaced throw notimplmenteds with FIXME:s, removed dead code,
 	* corrected

@@ -897,7 +897,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			[MonoTODO]
+			//[MonoTODO]
 			object IList.this[int index]{
 				get{
 					throw new NotImplementedException ();
