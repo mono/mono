@@ -133,7 +133,8 @@ namespace MonoTests.System.Text {
 
 			byte[] data214 = { 0xF0, 0x90, 0x80, 0x80 };
 			s = utf8.GetString (data214);
-			AssertEquals ("4 bytes (U-00010000)", 55296, s [0]);
+			AssertEquals ("4 bytes (U-00010000)-0", 55296, s [0]);
+			AssertEquals ("4 bytes (U-00010000)-1", 56320, s [1]);
 			AssertEquals ("Reconverted-4", BitConverter.ToString (data214), BitConverter.ToString (utf8.GetBytes (s)));
 		}
 
