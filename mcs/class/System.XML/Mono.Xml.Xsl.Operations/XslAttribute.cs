@@ -113,11 +113,15 @@ namespace Mono.Xml.Xsl.Operations {
 				nm = nm.Substring (colonAt + 1, nm.Length - colonAt - 1);
 
 				// global attribute
-				if (nmsp == null) {
-					QName q = XslNameUtil.FromString (nm, nsDecls);
-					nm = q.Name;
-					nmsp = q.Namespace;
-				} else
+				if (nmsp == String.Empty &&
+					prefix == XmlNamespaceManager.PrefixXml)
+					nmsp = XmlNamespaceManager.XmlnsXml;
+				else if (nmsp == String.Empty) {
+					nmsp = (string) nsDecls [prefix];
+					if (nmsp == null)
+						nmsp = String.Empty;
+				}
+				else
 					nm = XslNameUtil.LocalNameOf (nm);
 			}
 

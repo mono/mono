@@ -1,3 +1,8 @@
+2005-03-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslAttribute.cs : In Evaluate(), name strings are not computed as
+	  expected especially when they are bound to non-empty namespace.
+
 2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslLiteralElement.cs : literal attributes should also consider
