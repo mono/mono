@@ -1,3 +1,8 @@
+2004-05-11  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* mini.c: In the thread abort signal handler, if the thread is in the
+	process of being stoped, don't throw the Abort exception, just stop the
+	thread.
 
 Tue May 11 12:15:24 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
