@@ -81,27 +81,39 @@ class MonoP {
 		return t;
 	}
 	
-	static string SearchTypes (string name)
+	static string SearchTypes (string name, ref Type retval, out int count)
 	{
 		StringBuilder sb = new StringBuilder ();
+		Type current = null;
+		count = 0;
 
-		foreach (string asm in GetKnownAssemblyNames ()) {
-			Assembly a = GetAssembly (asm, false);
-
+		string [] assemblies = GetKnownAssemblyNames ();
+		for (int i = 0; i < assemblies.Length; i++) {
+			Assembly a = GetAssembly (assemblies [i], false);
 			if (a == null)
 				continue;
 
-			foreach (Type t in a.GetTypes ()) {
-				if (t.Name == name)
+			Type [] types = a.GetTypes ();
+			for (int j = 0; j < types.Length; j++) {
+				Type t = types [j];
+				if (t.IsPublic == false)
+					continue;
+				
+				if (t.Name == name || t.Name.ToLower ().IndexOf (name.ToLower ()) > 0) {
+					current = t;
+					count ++;
 					sb.Append (t.FullName + " from " + a.Location + "\n");
-
-				if (t.Name.ToLower ().IndexOf (name.ToLower ()) > 0)
-					sb.Append (t.FullName + " from " + a.Location + "\n");
+				}
 			}
 		}
 
-		if (sb.Length == 0) 
+		if (count == 0) 
 			return null;
+
+		if (count == 1) {
+			retval = current;
+			return String.Empty;
+		}
 		
 		return sb.ToString ();
 	}
@@ -320,16 +332,22 @@ class MonoP {
 		string message = null;
 		string tname = args [i];
 		Type t = null;
+		int count;
 
 		if (search){
-			string matches = SearchTypes (tname);
+			string matches = SearchTypes (tname, ref t, out count);
 
-			if (matches != null) {
-				Console.WriteLine ("The follow types match:");
+			if (count == 0)
+				goto notfound;
+
+			if (count == 1)
+				goto found;
+			
+			if (count > 1){
+				Console.WriteLine ("Found " + count + " types that match:");
 				Console.WriteLine (matches);
 				return;
-			} else
-				goto notfound;
+			}
 		}
 			
 		t = GetType (tname);
@@ -377,7 +395,7 @@ class MonoP {
 		//
 		// This gets us nice buffering
 		//
-		StreamWriter sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);
+		StreamWriter sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);				
 		new Outline (t, sw).OutlineType (default_flags);
 		sw.Flush ();
 
