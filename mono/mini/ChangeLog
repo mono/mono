@@ -1,3 +1,7 @@
+2004-08-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (read_tls_offset_from_method): Add another case.
+	
 2004-08-25  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* inssel.brg (mini_emit_memcpy): use 
