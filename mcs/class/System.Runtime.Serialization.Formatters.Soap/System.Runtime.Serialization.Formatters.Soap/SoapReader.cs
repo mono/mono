@@ -10,6 +10,8 @@ namespace System.Runtime.Serialization.Formatters.Soap
 	internal class SoapReader
 	{
 		/******const section******/
+		const string xmlns_SOAP_ENC	= "http://schemas.xmlsoap.org/soap/encoding/";
+		const string xmlns_SOAP_ENV	= "http://schemas.xmlsoap.org/soap/envelope/";
 
 		const string cSoapRef           = "href";
 		const string cObjectRef         = "ref-";
@@ -65,7 +67,7 @@ namespace System.Runtime.Serialization.Formatters.Soap
 		public string ReadReferenceFullNameFromXml(string RefereneId)
 		{
 			string RefId= cObjectRef + RefereneId;
-			XmlNodeList NodeList = FXmlDoc.DocumentElement.GetElementsByTagName("SOAP-ENV:Body").Item(0).ChildNodes;
+			XmlNodeList NodeList = FXmlDoc.DocumentElement.GetElementsByTagName("Body", xmlns_SOAP_ENV).Item(0).ChildNodes;
 			bool Continue= true;
 			int index= 0;
 			string Result= "";
@@ -457,7 +459,7 @@ namespace System.Runtime.Serialization.Formatters.Soap
 		/**Assemblies reader**/
 		public string GetAssemblyNameFromId(int id)
 		{		  
-			XmlNodeList ObjList= ((XmlElement)FXmlDoc.DocumentElement.GetElementsByTagName("SOAP-ENV:Body").Item(0)).ChildNodes;
+			XmlNodeList ObjList= ((XmlElement)FXmlDoc.DocumentElement.GetElementsByTagName("Body", xmlns_SOAP_ENV).Item(0)).ChildNodes;
 			bool Continue= true;
 			int index= 0;
 			string AssemblyName= "";
@@ -479,7 +481,7 @@ namespace System.Runtime.Serialization.Formatters.Soap
 
 		private string GetReferenceNameFromId(int id, ref XmlElement RefElement)
 		{
-			XmlNodeList ObjList= ((XmlElement)FXmlDoc.DocumentElement.GetElementsByTagName("SOAP-ENV:Body").Item(0)).ChildNodes;
+			XmlNodeList ObjList= ((XmlElement)FXmlDoc.DocumentElement.GetElementsByTagName("Body", xmlns_SOAP_ENV).Item(0)).ChildNodes;
 			bool Continue= true;
 			int index= 0;
 			string Result= "";
@@ -536,7 +538,7 @@ namespace System.Runtime.Serialization.Formatters.Soap
 		public XmlElement GetCurrentElement(string ElementName, string ElementId)
 		{
 			string RefId= cObjectRef + ElementId;
-			XmlNodeList NodeList = ((XmlElement)FXmlDoc.DocumentElement.GetElementsByTagName("SOAP-ENV:Body").Item(0)).GetElementsByTagName(ElementName);
+			XmlNodeList NodeList = ((XmlElement)FXmlDoc.DocumentElement.GetElementsByTagName("Body", xmlns_SOAP_ENV).Item(0)).GetElementsByTagName(ElementName);
 			bool Continue= true;
 			int index= 0;
 			string Result= "";

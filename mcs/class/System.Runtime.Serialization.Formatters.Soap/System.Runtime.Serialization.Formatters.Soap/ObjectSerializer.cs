@@ -1,6 +1,6 @@
 /****************************************************/
 /*ObjectSerializer class implementation             */
-/*Author: Jesús M. Rodríguez de la Vega             */
+/*Author: Jes·s M. Rodr­guez de la Vega             */
 /*gsus@brujula.net                                  */
 /****************************************************/
 
@@ -9,6 +9,7 @@ using System.IO;
 using System.Xml;
 using System.Reflection;
 using System.Collections;
+using System.Text;
 
 namespace System.Runtime.Serialization.Formatters.Soap
 {
@@ -17,15 +18,18 @@ namespace System.Runtime.Serialization.Formatters.Soap
 		/*******const's section******/		
 		const string cStringType       = "System.String";
 		const string startxmlns        = "xmlns:a";
-		const string startdoc          =  "<SOAP-ENV:Envelope " + 
+		const string startdoc_start    =  "<SOAP-ENV:Envelope " + 
 			"xmlns:xsi= \"http://www.w3.org/2001/XMLSchema-instance\""  + " " + 
 			"xmlns:xsd= \"http://www.w3.org/2001/XMLSchema\""            + " " + 
 			"xmlns:SOAP-ENC= \"http://schemas.xmlsoap.org/soap/encoding/\""  + " " + 
 			"xmlns:SOAP-ENV= \"http://schemas.xmlsoap.org/soap/envelope/\""  + " " + 
-			"SOAP-ENV:encodingStyle= \"http://schemas.xmlsoap.org/soap/encoding/\">" + " " + 
-			"<SOAP-ENV:Body>"    + " " + 
-			"</SOAP-ENV:Body>"   + " " + 
+			"SOAP-ENV:encodingStyle= \"http://schemas.xmlsoap.org/soap/encoding/\"" + " ";
+		const string startdoc_middle = ">" + " " + 
+			"<SOAP-ENV:Body>";
+		const string startdoc_end      =  "</SOAP-ENV:Body>"   + " " + 
 			"</SOAP-ENV:Envelope>";
+		const string xmlns_SOAP_ENC	= "http://schemas.xmlsoap.org/soap/encoding/";
+		const string xmlns_SOAP_ENV	= "http://schemas.xmlsoap.org/soap/envelope/";
 		const string xmlnsassem         = "http://schemas.microsoft.com/clr/nsassem/";
 		const string xmlns              = "http://schemas.microsoft.com/clr/ns/";
 		const string basicassembly      = "mscorlib";
@@ -45,18 +49,21 @@ namespace System.Runtime.Serialization.Formatters.Soap
 		public  ArrayList XmlObjectList; //the list of the xml representation of all objects 			    
 		private ArrayList FObjectList;   //the listof  the object been seralized
 		private SoapWriter ObjectWrt;
-		private string FCurrentXml;// the object's xml representation 
 		/******method's section******/
-		private void AddAssemblyToXml(string assemns)
+		private string ConcatAssembliesToXml()
 		{
-			XmlDocument xmldoc = new XmlDocument();			
-			xmldoc.LoadXml(FCurrentXml);
-			XmlElement RootElemt = xmldoc.DocumentElement;
-			string xmlns = startxmlns + AssemblyList.Count.ToString();
-			XmlAttribute NewAttr= xmldoc.CreateAttribute(xmlns);
-			RootElemt.SetAttributeNode(NewAttr);
-			RootElemt.SetAttribute(xmlns, assemns);
-			FCurrentXml= xmldoc.InnerXml;
+		  StringBuilder bld = new StringBuilder ();
+		  for (int inx = 1; inx <= AssemblyList.Count; inx++)
+		    {
+			string xmlns = startxmlns + inx.ToString();
+			string assemns = AssemblyList[inx - 1] as string;
+
+			bld.Append (xmlns);
+			bld.Append ("='");
+			bld.Append (assemns);
+			bld.Append ("'");
+		    }
+		  return bld.ToString();
 		}
 
 		private int AddAssembly(string assname, string nespname)			
@@ -71,7 +78,6 @@ namespace System.Runtime.Serialization.Formatters.Soap
 			if(Result< 0)	
 			{
 				Result= AssemblyList.Add(XmlAssNs);	 			  
-				AddAssemblyToXml(XmlAssNs);
 			}
 			return Result;
 		}
@@ -343,7 +349,6 @@ namespace System.Runtime.Serialization.Formatters.Soap
 
 		public void BeginWrite() //writes the basic elements of a soap message
 		{
-			FCurrentXml = startdoc;			
 		}
 
 		public ObjectSerializer(Stream store) //assign the current stream
@@ -361,13 +366,22 @@ namespace System.Runtime.Serialization.Formatters.Soap
 			AssemblyList.Clear();
 			XmlObjectList.Clear();			
 			FObjectList.Clear();			
-			FCurrentXml= "";
 		}
 
 		public void Serialize(object graph)
 		{ 			
 			SerializeObject(graph, 0); 
-			ObjectWrt.WriteObjectListToXml(FCurrentXml, FCurrentStream);                                                                                                                                                              
+	  		String FCurrentXml = 
+			    startdoc_start + 
+			    ConcatAssembliesToXml() +
+			    startdoc_middle +
+			    ObjectWrt.ConcatenateObjectList () +
+			    startdoc_end;
+			XmlDocument XmlDoc = new XmlDocument();
+			XmlDoc.LoadXml (FCurrentXml);
+			UTF8Encoding enc = new UTF8Encoding (false, true);
+			byte [] bytes = enc.GetBytes (XmlDoc.InnerXml);
+			FCurrentStream.Write (bytes, 0, bytes.Length);
 			CleatLists();
 		}
 	}

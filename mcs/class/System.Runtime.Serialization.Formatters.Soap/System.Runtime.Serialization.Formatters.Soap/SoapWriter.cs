@@ -1,6 +1,6 @@
 /****************************************************/
 /*SoapWritter class implementation                  */
-/*Author: Jesús M. Rodríguez de la Vega             */
+/*Author: Jes·s M. Rodr­guez de la Vega             */
 /*gsus@brujula.net                                  */
 /****************************************************/
 
@@ -17,7 +17,10 @@ namespace System.Runtime.Serialization.Formatters.Soap
 		{		
 			/******const section******/
 			const string cNullObject     = "xsi:null=\"1\"/";
-			const string cSoapEnv        = "SOAP-ENV:Body";
+			const string cSoapEnv        = "Body";
+			const string xmlns_SOAP_ENC	= "http://schemas.xmlsoap.org/soap/encoding/";
+			const string xmlns_SOAP_ENV	= "http://schemas.xmlsoap.org/soap/envelope/";
+			
 			const string cStartTag       = "<";
 			const string cEndTag         = ">";
 			const string cNumber         = "#";
@@ -37,7 +40,7 @@ namespace System.Runtime.Serialization.Formatters.Soap
 			public ArrayList FXmlObjectList;
 			public  int FReferenceNumber;
 			/******method's section******/
-			private string ConcatenateObjectList()
+			public string ConcatenateObjectList()
 			{
 				string XmlResult= "";
 				object[] XmlList= FXmlObjectList.ToArray();
@@ -160,18 +163,6 @@ namespace System.Runtime.Serialization.Formatters.Soap
 			public void WriteStructTypeToXml(string StructName)
 			{
 			}		
-
-			public void WriteObjectListToXml(string SoapDoc, Stream SoapStream)
-			{
-				string XmlResult= ConcatenateObjectList();
-				XmlDocument XmlDoc= new XmlDocument();
-				XmlDoc.LoadXml(SoapDoc);			
-				XmlNode XNode= XmlDoc.DocumentElement.GetElementsByTagName(cSoapEnv).Item(0);
-				XNode.InnerXml= XmlResult;
-				StreamWriter SoapWrt= new StreamWriter(SoapStream);
-				SoapWrt.Write(XmlDoc.InnerXml);
-				SoapWrt.Close();				
-			}
 
 			public string GenerateSchemaArrayType(string ArrayType, int ArrayLength, int AssemblyIndex)
 			{

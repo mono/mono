@@ -13,6 +13,9 @@ namespace System.Runtime.Serialization.Formatters.Soap
 		const string basicassembly      = "mscorlib";
 		const string xmlnsassem         = "http://schemas.microsoft.com/clr/nsassem/";
 		const string xmlns              = "http://schemas.microsoft.com/clr/ns/";				
+		const string xmlns_SOAP_ENC	= "http://schemas.xmlsoap.org/soap/encoding/";
+		const string xmlns_SOAP_ENV	= "http://schemas.xmlsoap.org/soap/envelope/";
+
 		const string cTarget            = "Target";
 		const string cDelegatesClass    = "System.MulticastDelegate";
 		const string cMethodName        = "MethodName";
@@ -410,7 +413,7 @@ namespace System.Runtime.Serialization.Formatters.Soap
 
 		private string GetMainAssemblyFullNameFromXml(out string AssemblyName)
 		{
-			XmlNode SoapEnvNode= FXmlDoc.DocumentElement.GetElementsByTagName("SOAP-ENV:Body").Item(0);
+			XmlNode SoapEnvNode= FXmlDoc.DocumentElement.GetElementsByTagName("Body", xmlns_SOAP_ENV).Item(0);
 			XmlNode MainObjectNode= SoapEnvNode.ChildNodes.Item(0);	
 			int StartIndex= MainObjectNode.Name.IndexOf(":");
 			string ClassName= MainObjectNode.Name.Substring(StartIndex + 1, MainObjectNode.Name.Length - StartIndex - 1);		
