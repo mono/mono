@@ -1,3 +1,8 @@
+2004-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDataInferenceLoader.cs : It was not always filling relation
+	  child table information correctly. This fixes bug #60742.
+
 2004-06-23 Umadevi S <sumadevi@novell.com>
 	* UniqueConstraint.cs :changed a ifdef true to ifdef NET_1_1
 

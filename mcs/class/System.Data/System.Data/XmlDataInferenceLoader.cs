@@ -410,7 +410,16 @@ namespace System.Data
 				map = new TableMapping (tableName, ns);
 				map.ParentTable = parent;
 				tables.Add (map);
-				if (parent != null)
+			}
+			if (parent != null) {
+				bool shouldAdd = true;
+				foreach (TableMapping child in parent.ChildTables) {
+					if (child.Table.TableName == tableName) {
+						shouldAdd = false;
+						break;
+					}
+				}
+				if (shouldAdd)
 					parent.ChildTables.Add (map);
 			}
 			return map;
