@@ -1,16 +1,14 @@
-// WriteState.cs
+// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// This code was automatically generated from
-// ECMA CLI XML Library Specification.
-// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
-// Created: Wed, 5 Sep 2001 06:31:40 UTC
-// Source file: AllTypes.xml
-// URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
+// System.Xml.WriteState
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Author:
+//   Daniel Weber (daniel-weber@austin.rr.com)
+//
+// (C) 2001 Daniel Weber
 
-
-namespace System.Xml {
+namespace System.Xml 
+{
 
 
 	/// <summary>
@@ -18,28 +16,38 @@ namespace System.Xml {
 	public enum WriteState {
 
 		/// <summary>
+		/// A write method has not been called.
 		/// </summary>
 		Start = 0,
 
 		/// <summary>
+		/// The prolog is being written.
 		/// </summary>
 		Prolog = 1,
 
 		/// <summary>
+		/// An element start tag is being written.
 		/// </summary>
 		Element = 2,
 
 		/// <summary>
+		/// An attribute is being written.
 		/// </summary>
 		Attribute = 3,
 
 		/// <summary>
+		/// Element content is being written.
 		/// </summary>
 		Content = 4,
 
 		/// <summary>
+		/// The close method has been called.
 		/// </summary>
 		Closed = 5,
-	} // WriteState
 
-} // System.Xml
+
+
+
+
+	} 
+}
