@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.36 $
+// $Revision: 1.37 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.37  2004/09/09 08:28:11  pbartok
+// - Improve disabled string look
+//
 // Revision 1.36  2004/09/09 03:03:49  ravindra
 // PictureBox would not draw a null image to avoid crash.
 //
@@ -1006,12 +1009,12 @@ namespace System.Windows.Forms
 		{
 			SolidBrush	brush;
 
-			brush=new SolidBrush(ControlPaint.Light(color, 25));
+			brush=new SolidBrush(ControlPaint.Light(color, 95));
 
 			layoutRectangle.Offset(1.0f, 1.0f);
 			graphics.DrawString(s, font, brush, layoutRectangle, format);
 
-			brush.Color=ControlPaint.Dark(color, 35);
+			brush.Color=ControlPaint.Light(color, 50);
 			layoutRectangle.Offset(-1.0f, -1.0f);
 			graphics.DrawString(s, font, brush, layoutRectangle, format);
 
