@@ -1047,7 +1047,6 @@ namespace nunit.linkedlists.hashed
 			}
 
 
-#if FIXME
 			[Test]
 			public void Map()
 			{
@@ -1066,7 +1065,6 @@ namespace nunit.linkedlists.hashed
 				for (int i = 0; i < 4; i++)
 					Assert.AreEqual("<<" + (i + 1) + ">>", r[i]);
 			}
-#endif
 
 
 			[Test]
