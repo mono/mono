@@ -2608,13 +2608,19 @@ anonymous_method_expression
 		current_local_parameters = (Parameters)$2;
 		create_toplevel_block = true;
 	  } block {
-		create_toplevel_block = false;
-		if (!RootContext.V2){
-			Report.Error (-213, lexer.Location, "Anonymous methods are only supported in V2");
+		if (true){
+			Report.Error (-213, lexer.Location, "Anonymous methods are not supported in this branch");
 			$$ = null;
-		} else 
-			$$ = new AnonymousMethod ((Parameters) $2, (Block) $4, lexer.Location);
-		current_local_parameters = (Parameters) oob_stack.Pop ();
+		} else {
+			create_toplevel_block = false;
+			Report.Error (-213, lexer.Location, "Anonymous methods are only supported in V2");
+			if (!RootContext.V2){
+				Report.Error (-213, lexer.Location, "Anonymous methods are only supported in V2");
+				$$ = null;
+			} else 
+				$$ = new AnonymousMethod ((Parameters) $2, (Block) $4, lexer.Location);
+			current_local_parameters = (Parameters) oob_stack.Pop ();
+		}
 	  }
 	;
 
