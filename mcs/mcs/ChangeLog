@@ -1,5 +1,11 @@
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Block.LookupLabel): Also lookup in implicit child blocks.
+	(Block.AddLabel): Call DoLookupLabel() to only search in the
+	current block.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
 	* cfold.cs (ConstantFold.BinaryFold): Added special support for
 	comparing StringConstants and NullLiterals in Equality and Inequality.
 

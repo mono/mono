@@ -1225,7 +1225,7 @@ namespace Mono.CSharp {
 
 			Block cur = this;
 			while (cur != null) {
-				if (cur.LookupLabel (name) != null) {
+				if (cur.DoLookupLabel (name) != null) {
 					Report.Error (
 						140, loc, "The label '{0}' is a duplicate",
 						name);
@@ -1239,7 +1239,7 @@ namespace Mono.CSharp {
 			}
 
 			while (cur != null) {
-				if (cur.LookupLabel (name) != null) {
+				if (cur.DoLookupLabel (name) != null) {
 					Report.Error (
 						158, loc,
 						"The label '{0}' shadows another label " +
@@ -1250,7 +1250,7 @@ namespace Mono.CSharp {
 
 				if (children != null) {
 					foreach (Block b in children) {
-						LabeledStatement s = b.LookupLabel (name);
+						LabeledStatement s = b.DoLookupLabel (name);
 						if (s == null)
 							continue;
 
@@ -1277,25 +1277,30 @@ namespace Mono.CSharp {
 
 		public LabeledStatement LookupLabel (string name)
 		{
-			Hashtable l = new Hashtable ();
-			
-			return LookupLabel (name, l);
-		}
+			LabeledStatement s = DoLookupLabel (name);
+			if (s != null)
+				return s;
 
-		//
-		// Lookups a label in the current block, parents and children.
-		// It skips during child recurssion on `source'
-		//
-		LabeledStatement LookupLabel (string name, Hashtable seen)
-		{
-			if (switch_block != null)
-				return switch_block.LookupLabel (name, seen);
-
-			if (seen [this] != null)
+			if (children == null)
 				return null;
 
-			seen [this] = this;
-			
+			foreach (Block child in children) {
+				if (!child.Implicit)
+					continue;
+
+				s = child.LookupLabel (name);
+				if (s != null)
+					return s;
+			}
+
+			return null;
+		}
+
+		LabeledStatement DoLookupLabel (string name)
+		{
+			if (switch_block != null)
+				return switch_block.LookupLabel (name);
+
 			if (labels != null)
 				if (labels.Contains (name))
 					return ((LabeledStatement) labels [name]);
