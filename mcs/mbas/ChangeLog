@@ -1,3 +1,8 @@
+2005-03-09 Manjula GHM <mmanjula@novell.com>
+	*mb-parser.jay :
+	*expression.cs :
+		Support 'Is' Expression
+
 2005-03-08 Satya Sudha K <ksathyasudha@novell.com>
 	* ecore.cs      : Included Decimal -> Single/double conversions in 'WideningConversionExists' method
 	* expression.cs : Fixed the behaviour of some Unary operators

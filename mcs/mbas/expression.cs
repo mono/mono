@@ -1002,7 +1002,7 @@ namespace Mono.MonoBASIC {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			probe_type = ec.DeclSpace.ResolveType (ProbeType, false, loc);
+			 probe_type = ec.DeclSpace.ResolveType (ProbeType, false, loc);
 
 			if (probe_type == null)
 				return null;
@@ -1013,6 +1013,7 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
+	
 	/// <summary>
 	///   Implementation of the 'is' operator.
 	/// </summary>
@@ -1114,6 +1115,7 @@ namespace Mono.MonoBASIC {
 			return this;
 		}				
 	}
+
 
 	/// <summary>
 	///   Implementation of the 'as' operator.
@@ -1771,6 +1773,7 @@ namespace Mono.MonoBASIC {
 			BitwiseOr,
 			LogicalAnd,
 			LogicalOr,
+			Is,
 			TOP
 		}
 
@@ -1811,6 +1814,7 @@ namespace Mono.MonoBASIC {
 			oper_names [(int) Operator.ExclusiveOr] = "op_ExclusiveOr";
 			oper_names [(int) Operator.LogicalOr] = "op_LogicalOr";
 			oper_names [(int) Operator.LogicalAnd] = "op_LogicalAnd";
+			oper_names [(int) Operator.Is] = "op_Is";
 		}
 
 		public Binary (Operator oper, Expression left, Expression right, Location loc)
@@ -1893,6 +1897,8 @@ namespace Mono.MonoBASIC {
 				return "Or";
 			case Operator.LogicalAnd:
 				return "And";
+			case Operator.Is:
+				return "Is";
 			}
 
 			return oper.ToString ();
@@ -2162,7 +2168,9 @@ namespace Mono.MonoBASIC {
 				l = left.Type;
 				r = right.Type;
 
+
 				if (l == TypeManager.object_type && r == TypeManager.object_type) {
+	
 					string fqn = null;
 					switch (oper) {
 					case Operator.Addition :
@@ -2205,6 +2213,11 @@ namespace Mono.MonoBASIC {
 						break;
 					case Operator.RightShift:
 						fqn = "ObjectType.ShiftRightObj";
+						break;
+					case Operator.Is:
+						eclass = ExprClass.Value;
+						type = TypeManager.bool_type;
+						return this;
 						break;
 					}
 			
@@ -2675,7 +2688,8 @@ namespace Mono.MonoBASIC {
 			} else if (!(oper == Operator.LessThan ||
 				      oper == Operator.GreaterThan ||
 				      oper == Operator.LessThanOrEqual ||
-				      oper == Operator.GreaterThanOrEqual))
+				      oper == Operator.GreaterThanOrEqual ||
+				      oper == Operator.Is))
 				return false;
 			
 
@@ -2751,6 +2765,13 @@ namespace Mono.MonoBASIC {
 						ig.Emit (OpCodes.Blt_Un, target);
 					else
 						ig.Emit (OpCodes.Blt, target);
+				break;
+
+			case Operator.Is:
+				if (onTrue)
+					ig.Emit (OpCodes.Beq, target); //Check this
+				else
+					ig.Emit (OpCodes.Bne_Un_S, target);
 				break;
 
 			default:
@@ -2882,6 +2903,7 @@ namespace Mono.MonoBASIC {
 				break;
 
 			case Operator.Equality:
+			case Operator.Is:
 				opcode = OpCodes.Ceq;
 				break;
 

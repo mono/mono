@@ -4573,8 +4573,7 @@ relational_expression
 	  }
 	| relational_expression IS shift_expression
 	  {
-	  	//FIXME: Should be a different op for reference equality but allows tests to use Is
-		$$ = new Binary (Binary.Operator.Equality,
+		$$ = new Binary (Binary.Operator.Is,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| TYPEOF shift_expression IS type
