@@ -1,3 +1,7 @@
+2001-08-24  Nick Drochak  <ndrochak@gol.com>
+
+	* SerializationInfo.cs: Added all the public methods so that the compile would not break
+
 2001-07-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* SerializationInfo.cs: New file.
