@@ -37,6 +37,7 @@ using System.IO;
 using System.Net;
 using System.Xml;
 using Commons.Xml.Relaxng.Derivative;
+using Commons.Xml.Relaxng.Rnc;
 
 namespace Commons.Xml.Relaxng
 {
@@ -112,6 +113,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteAnyName (this);
+		}
+
 		internal override RdpNameClass Compile (RelaxngGrammar g)
 		{
 			if (except != null) {
@@ -158,6 +164,11 @@ namespace Commons.Xml.Relaxng
 			if (except != null)
 				except.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteNsName (this);
 		}
 
 		internal override RdpNameClass Compile (RelaxngGrammar g)
@@ -221,6 +232,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteName (this);
+		}
+
 		internal override RdpNameClass Compile (RelaxngGrammar g)
 		{
 			return new RdpName (ncname, ns);
@@ -251,6 +267,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngNameClass nc in Children)
 				nc.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteNameChoice (this);
 		}
 
 		internal override RdpNameClass Compile (RelaxngGrammar g)
@@ -292,6 +313,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngNameClass nc in Names)
 				nc.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteNameExcept (this);
 		}
 
 		internal RdpNameClass Compile (RelaxngGrammar g)

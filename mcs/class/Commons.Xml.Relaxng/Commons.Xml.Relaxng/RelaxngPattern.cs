@@ -36,6 +36,13 @@ using System.Collections;
 using System.IO;
 using System.Xml;
 using Commons.Xml.Relaxng.Derivative;
+using Commons.Xml.Relaxng.Rnc;
+
+#if NET_2_0
+using NSResoler = System.Xml.IXmlNamespaceResolver;
+#else
+using NSResolver = System.Xml.XmlNamespaceManager;
+#endif
 
 namespace Commons.Xml.Relaxng
 {
@@ -66,7 +73,9 @@ namespace Commons.Xml.Relaxng
 			set { baseUri = value; }
 		}
 
-		public abstract void Write (XmlWriter write);
+		public abstract void Write (XmlWriter writer);
+
+		internal abstract void WriteRnc (RncWriter writer);
 	}
 
 	public abstract class RelaxngSingleContentPattern : RelaxngPattern
@@ -177,6 +186,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteStart (this);
+		}
+
 		internal RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			return p.Compile (grammar);
@@ -216,6 +230,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngPattern p in Patterns)
 				p.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteDefine (this);
 		}
 
 		internal RdpPattern Compile (RelaxngGrammar grammar)
@@ -284,6 +303,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngDiv div in Divs)
 				div.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteInclude (this);
 		}
 
 		// compile into div
@@ -399,6 +423,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteDiv (this);
+		}
+
 		internal void Compile (RelaxngGrammar grammar)
 		{
 			foreach (RelaxngDiv div in divs)
@@ -481,6 +510,15 @@ namespace Commons.Xml.Relaxng
 			this.IsCompiled = true;
 		}
 
+		public void WriteCompact (TextWriter writer)
+		{
+			WriteRnc (new RncWriter (writer));
+		}
+
+		public void WriteCompact (TextWriter writer, NSResolver res)
+		{
+			WriteRnc (new RncWriter (writer, res));
+		}
 
 		// Internal
 		internal XmlResolver Resolver {
@@ -577,6 +615,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteNotAllowed (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			return RdpNotAllowed.Instance;
@@ -604,6 +647,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteEmpty (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			return RdpEmpty.Instance;
@@ -629,6 +677,11 @@ namespace Commons.Xml.Relaxng
 		{
 			writer.WriteStartElement ("", "text", RelaxngGrammar.NamespaceURI);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteText (this);
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -703,6 +756,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteData (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 //			RdpParamList rdpl = new RdpParamList ();
@@ -758,6 +816,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteValue (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -787,6 +850,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngPattern p in Patterns)
 				p.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteList (this);
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -826,6 +894,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngPattern p in Patterns)
 				p.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteElement (this);
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -873,6 +946,11 @@ namespace Commons.Xml.Relaxng
 			if (p != null)
 				p.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteAttribute (this);
 		}
 
 		private void checkInvalidAttrNameClass (RdpNameClass nc)
@@ -1027,6 +1105,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteRef (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			// Important!! This compile method only generates stub.
@@ -1062,6 +1145,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteStartElement ("", "parentRef", RelaxngGrammar.NamespaceURI);
 			writer.WriteAttributeString ("name", name);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteParentRef (this);
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -1104,6 +1192,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteStartElement ("", "externalRef", RelaxngGrammar.NamespaceURI);
 			writer.WriteAttributeString ("href", Href);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteExternalRef (this);
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -1157,6 +1250,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteOneOrMore (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -1180,6 +1278,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngPattern p in Patterns)
 				p.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteZeroOrMore (this);
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -1209,6 +1312,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteOptional (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -1233,6 +1341,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngPattern p in Patterns)
 				p.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteMixed (this);
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -1260,6 +1373,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteChoice (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -1285,6 +1403,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteEndElement ();
 		}
 
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteGroup (this);
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -1308,6 +1431,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngPattern p in Patterns)
 				p.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteInterleave (this);
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -1348,6 +1476,11 @@ namespace Commons.Xml.Relaxng
 			writer.WriteAttributeString ("name", name);
 			writer.WriteString (Value);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteParam (this);
 		}
 
 		internal RdpParam Compile (RelaxngGrammar grammar)
@@ -1402,6 +1535,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngPattern p in Patterns)
 				p.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteDataExcept (this);
 		}
 	}
 

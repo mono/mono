@@ -36,6 +36,7 @@ using System.IO;
 using System.Net;
 using System.Xml;
 using Commons.Xml.Relaxng.Derivative;
+using Commons.Xml.Relaxng.Rnc;
 
 namespace Commons.Xml.Relaxng
 {
@@ -140,6 +141,11 @@ namespace Commons.Xml.Relaxng
 			foreach (RelaxngDiv div in Divs)
 				div.Write (writer);
 			writer.WriteEndElement ();
+		}
+
+		internal override void WriteRnc (RncWriter writer)
+		{
+			writer.WriteGrammar (this);
 		}
 
 		internal Hashtable IncludedUris {
