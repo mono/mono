@@ -1,3 +1,11 @@
+2002-11-20  Dick Porter  <dick@ximian.com>
+
+	* timed-thread.c (_wapi_timed_thread_attach): Attached threads
+	need to store their data structure too.
+
+	* threads.c: Make sure the threading data is initialised wherever
+	it is needed
+
 2002-11-15  Dick Porter  <dick@ximian.com>
 
 	* timed-thread.c: Removed unneeded parameters in

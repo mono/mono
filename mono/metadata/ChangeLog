@@ -1,3 +1,6 @@
+2002-11-20  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_init): Set the main thread's handle
 
 Tue Nov 19 14:15:34 CET 2002 Paolo Molaro <lupus@ximian.com>
 
