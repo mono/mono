@@ -140,7 +140,6 @@ namespace System.Data
 		/// <summary>
 		/// Gets the row specified by the primary key value.
 		/// </summary>
-		[MonoTODO]
 		public DataRow Find (object key) 
 		{
 			if (table.PrimaryKey.Length == 0)
@@ -173,14 +172,12 @@ namespace System.Data
 				}
 			}
 						
-			// FIXME: is the correct value null?
 			return null;
 		}
 
 		/// <summary>
 		/// Gets the row containing the specified primary key values.
 		/// </summary>
-		[MonoTODO]
 		public DataRow Find (object[] keys) 
 		{
 			if (table.PrimaryKey.Length == 0)
@@ -226,7 +223,6 @@ namespace System.Data
 				}
 			}
 						
-			// FIXME: is the correct value null?
 			return null;
 		}
 
