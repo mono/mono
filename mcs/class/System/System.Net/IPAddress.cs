@@ -3,16 +3,17 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Lawrence Pit (loz@cable.a2000.nl)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 //
 // Note: the address is stored in host order
 
+using System;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-
-using System;
 
 namespace System.Net {
 
@@ -108,50 +109,52 @@ namespace System.Net {
 			Address = addr;
 		}
 
-		public static IPAddress Parse(string ip)
+		public static IPAddress Parse (string ip)
 		{
-			if(ip == null)
-				throw new ArgumentNullException("null ip string");
+			if (ip == null)
+				throw new ArgumentNullException ("null ip string");
+				
+			if (ip.Length == 0 || ip [0] == ' ')
+				return new IPAddress (0);
+				
+			int pos = ip.IndexOf (' ');
+			if (pos != -1)
+				ip = ip.Substring (0, pos);				
+			else if (ip [ip.Length - 1] == '.')
+				throw new FormatException ("An invalid IP address was specified");
 
-			int pos = 0;
-			int ndots = 0;
-			char current;
-			bool prevDigit = false;
-
-			while (pos < ip.Length) {
-				current  = ip [pos++];
-				if (Char.IsDigit (current))
-					prevDigit = true;
-				else
-				if (current == '.') {
-					// No more than 3 dots. Doesn't allow ending with a dot.
-					if (++ndots > 3 || pos == ip.Length || prevDigit == false)
-						throw new FormatException ("the string is not a valid ip");
-
-					prevDigit = false;
-				}
-				else if (!Char.IsDigit (current)) {
-					if (!Char.IsWhiteSpace (current))
-						throw new FormatException ("the string is not a valid ip");
-
-					// The same as MS does
-					if (pos == 1) 
-						return new IPAddress (0);
-
-					break;
-				}
-			}
-
-			if (ndots != 3)
-				throw new FormatException ("the string is not a valid ip");
-
-
-			long a = 0;
 			string [] ips = ip.Split (new char [] {'.'});
+			if (ips.Length > 4)
+				throw new FormatException ("An invalid IP address was specified");
+			
 			// Make the number in network order
-			for (int i = ips.Length - 1; i >= 0; i--)
-				a = (a << 8) |  (Byte.Parse(ips [i]));
-			return (new IPAddress (a));
+			try {
+				long a = 0;
+				byte val = 0;
+				for (int i = 0; i < ips.Length; i++) {
+					string subnet = ips [i];
+					if ((3 <= subnet.Length && subnet.Length <= 4) &&
+					    (subnet [0] == '0') &&
+					    (subnet [1] == 'x' || subnet [2] == 'X')) {
+						if (subnet.Length == 3)
+							val = (byte) Uri.FromHex (subnet [2]);
+						else 
+							val = (byte) ((Uri.FromHex (subnet [2]) << 4) | Uri.FromHex (subnet [3]));
+					} else if (subnet.Length == 0)
+						val = 0;
+					else 
+						val = Byte.Parse (subnet, NumberStyles.None);
+
+					if (ips.Length < 4 && i == (ips.Length - 1)) 
+						i = 3;
+
+					a |= (long) val << (i << 3);
+				}
+
+				return (new IPAddress (a));
+			} catch (Exception) {
+				throw new FormatException ("An invalid IP address was specified");
+			}
 		}
 		
 		public long Address {

@@ -89,6 +89,9 @@ public class IPAddressTest : TestCase
 		ip = IPAddress.Parse ("0xff.0x7f.0x20.0x01");
 		Assert ("Parse #1b", ip.ToString () == "255.127.32.1");
 
+		ip = IPAddress.Parse ("0xff.0x7f.0x20.0xf");
+		Assert ("Parse #1c", ip.ToString () == "255.127.32.15");
+
 		ip = IPAddress.Parse ("0.0.0.0");
 		AssertEquals ("Parse #2", ip, IPAddress.Any);
 
@@ -102,7 +105,6 @@ public class IPAddressTest : TestCase
 		ip = IPAddress.Parse ("12.1.1.3 ");
 		AssertEquals ("Parse #6", IPAddress.Parse ("12.1.1.3"), ip);
 
-		// These have a strange behavior !?
 		ip = IPAddress.Parse (" 12.1.1.1");
 		AssertEquals ("Parse #7", IPAddress.Parse ("0.0.0.0"), ip);
 
@@ -116,10 +118,10 @@ public class IPAddressTest : TestCase
 		AssertEquals ("Parse #10", IPAddress.Parse ("12.1.0.7"), ip);
 
 		ip = IPAddress.Parse ("12.1.8. ");
-		AssertEquals ("Parse #10", IPAddress.Parse ("12.1.8.0"), ip);
+		AssertEquals ("Parse #11", IPAddress.Parse ("12.1.8.0"), ip);
 
 		ip = IPAddress.Parse ("12");
-		AssertEquals ("Parse #11", IPAddress.Parse ("0.0.0.12"), ip);	
+		AssertEquals ("Parse #12", IPAddress.Parse ("0.0.0.12"), ip);	
 
 		ip = IPAddress.Parse ("12.1 foo.1.2.3.4.5.bar");
 		AssertEquals ("Parse #13", IPAddress.Parse ("12.0.0.1"), ip);			
@@ -129,12 +131,17 @@ public class IPAddressTest : TestCase
 
 		ip = IPAddress.Parse ("12.. .");
 		AssertEquals ("Parse #15", IPAddress.Parse ("12.0.0.0"), ip);			
+
+		ip = IPAddress.Parse (" ");
+		AssertEquals ("Parse #16", IPAddress.Parse ("0.0.0.0"), ip);			
+
+		ip = IPAddress.Parse (" foo");
+		AssertEquals ("Parse #17", IPAddress.Parse ("0.0.0.0"), ip);			
 	}
 
 	public void TestParseWrong ()
 	{
 		IPAddress ip = IPAddress.None;
-
 		try {
 			ip = IPAddress.Parse ("12.+1.1.4");
                         Fail("Should raise a FormatException #1");
@@ -171,12 +178,12 @@ public class IPAddressTest : TestCase
 			ip = IPAddress.Parse ("12.");
 			Fail ("ParseWrong #5: Should raise a FormatException");
 		} catch (FormatException) {}
-		
+
 		try {
 			ip = IPAddress.Parse ("12.1.2.");
 			Fail ("ParseWrong #6: Should raise a FormatException");
 		} catch (FormatException) {}		
-		
+
 		try {
 			ip = IPAddress.Parse ("12...");
 			Fail ("ParseWrong #7: Should raise a FormatException");
