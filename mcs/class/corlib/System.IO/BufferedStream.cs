@@ -26,9 +26,11 @@ namespace System.IO {
 			if (buffer_size < 0)
 				throw new ArgumentOutOfRangeException ();
 			
-			// if stream is closed this throws an exception FIXME: better way?
-			{
-			long l = stream.Position;
+			// There are stream classes that don't support Positioning.
+			if (stream.CanSeek) {
+				// if stream is closed this throws an exception
+				// FIXME: better way?
+				long l = stream.Position;
 			}
 			
 			m_stream = stream;

@@ -1,3 +1,9 @@
+2003-04-24  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* BufferedStream.cs: Test if it's possible to seek in a Stream
+	before access to Position. This prevents the exception thrown when
+	the stream is System.Net.Sockets.NetworkStream.
+
 2003-04-22  Ville Palo <vi64pa@kolumbus.fi>
 
 	* Directory.cs: clean up --> performance improvment. Some exceptions
