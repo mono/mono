@@ -1,5 +1,9 @@
 2003-04-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs: Cosmetic changes.  Renamed `TypeContainer parent' to
+	`TypeContainer container', because I kept getting confused when I
+	was debugging this code.
+
 	* expression.cs (Indexers): Instead of tracking getters/setters,
 	we now track them in parallel.  We create one arraylist less, but
 	most importantly it is possible now for the LValue code to find a
