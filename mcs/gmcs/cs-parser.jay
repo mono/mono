@@ -1973,32 +1973,55 @@ enum_member_declaration
 delegate_declaration
 	: opt_attributes
 	  opt_modifiers
-	  DELEGATE type	  
-	  IDENTIFIER OPEN_PARENS 
-	  opt_formal_parameter_list
-	  CLOSE_PARENS 
+	  DELEGATE type
+	  namespace_or_type_name
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
+	  opt_type_parameter_constraints_clauses
+	  {
+		lexer.ConstraintsParsing = false;
+	  }
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
-		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
-					     (int) $2, MakeName ((string) $5), (Parameters) $7, 
+		MemberName name = (MemberName) $5;
+
+		Delegate del = new Delegate (current_namespace, current_container,
+					     (Expression) $4, (int) $2, name, (Parameters) $7,
 					     (Attributes) $1, l);
-		  
+
+		if (name.TypeArguments != null) {
+			CheckDef (del.SetParameterInfo (name.TypeArguments, (ArrayList) $9), name.Name, lexer.Location);
+		}
+
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }	
 	| opt_attributes
 	  opt_modifiers
 	  DELEGATE VOID	  
-	  IDENTIFIER OPEN_PARENS 
-	  opt_formal_parameter_list
-	  CLOSE_PARENS 
+	  namespace_or_type_name
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
+	  opt_type_parameter_constraints_clauses
+	  {
+		lexer.ConstraintsParsing = false;
+	  }
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
+		MemberName name = (MemberName) $5;
 		Delegate del = new Delegate (
 			current_namespace, current_container,
-			TypeManager.system_void_expr, (int) $2, MakeName ((string) $5), 
+			TypeManager.system_void_expr, (int) $2, name,
 			(Parameters) $7, (Attributes) $1, l);
+
+		if (name.TypeArguments != null) {
+			CheckDef (del.SetParameterInfo (name.TypeArguments, (ArrayList) $9), name.Name, lexer.Location);
+		}
 
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }

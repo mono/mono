@@ -1,3 +1,4 @@
+// -*- coding: dos -*-
 //
 // delegate.cs: Delegate Handler
 //
@@ -33,6 +34,8 @@ namespace Mono.CSharp {
 		
 		Type [] param_types;
 		Type ret_type;
+
+		MemberName MemberName;
 		
 		Expression instance_expr;
 		MethodBase delegate_method;
@@ -46,22 +49,30 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
  		public Delegate (NamespaceEntry ns, TypeContainer parent, Expression type,
-				 int mod_flags, string name, Parameters param_list,
+				 int mod_flags, MemberName name, Parameters param_list,
 				 Attributes attrs, Location l)
-			: base (ns, parent, name, attrs, l)
+			: base (ns, parent, name.GetMemberName (), attrs, l)
 
 		{
 			this.ReturnType = type;
+			this.MemberName = name;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PRIVATE, l);
-			Parameters      = param_list;		}
+			Parameters      = param_list;
+		}
 
 		public override TypeBuilder DefineType ()
 		{
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					if (!type_param.Resolve (this))
+						return null;
+			}
+			
 			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel) |
 				TypeAttributes.Class | TypeAttributes.Sealed;
 
@@ -83,6 +94,14 @@ namespace Mono.CSharp {
 
 			TypeManager.AddDelegateType (Name, TypeBuilder, this);
 
+			if (IsGeneric) {
+				CurrentType = new ConstructedType (
+					Name, TypeParameters, Location);
+
+				foreach (TypeParameter type_param in TypeParameters)
+					type_param.Define (TypeBuilder);
+			}
+
 			return TypeBuilder;
 		}
 
@@ -99,6 +118,11 @@ namespace Mono.CSharp {
 			Attributes cattr;
 			EmitContext ec = new EmitContext (this, this, Location, null,
 							  null, ModFlags, false);
+
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					type_param.DefineType (ec, TypeBuilder);
+			}
 
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
@@ -740,7 +764,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Argument a = (Argument) Arguments [0];
-			
+
 			Expression invoke_method = Expression.MemberLookup (
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);

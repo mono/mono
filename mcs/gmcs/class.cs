@@ -4961,8 +4961,8 @@ namespace Mono.CSharp {
 					      "': abstract event can not have an initializer");
 				return false;
 			}
-			
-			if (!MemberType.IsSubclassOf (TypeManager.delegate_type)) {
+
+			if (!TypeManager.IsDelegateType (MemberType)) {
 				Report.Error (66, Location, "'" + container.Name + "." + Name +
 					      "' : event must be of a delegate type");
 				return false;

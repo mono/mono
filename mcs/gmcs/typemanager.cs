@@ -1415,6 +1415,9 @@ public class TypeManager {
 
 	public static bool IsDelegateType (Type t)
 	{
+		if (t.IsGenericInstance)
+			t = t.GetGenericTypeDefinition ();
+
 		if (t.IsSubclassOf (TypeManager.delegate_type))
 			return true;
 		else
@@ -2481,7 +2484,7 @@ public class TypeManager {
 	static public MethodFlags GetMethodFlags (MethodBase mb, Location loc)
 	{
 		MethodFlags flags = 0;
-		
+
 		if (mb.DeclaringType is TypeBuilder){
 			MethodData method = (MethodData) builder_to_method [mb];
 			if (method == null) {
@@ -2493,13 +2496,11 @@ public class TypeManager {
 			return method.GetMethodFlags (loc);
 		}
 
-#if FIXME
-		if (mb.IsInflatedGeneric) {
+		if (mb.HasGenericParameters) {
 			MethodBase generic = mb.GetGenericMethodDefinition ();
 
 			return GetMethodFlags (generic, loc);
 		}
-#endif
 
 		object [] attrs = mb.GetCustomAttributes (true);
 		foreach (object ta in attrs){
