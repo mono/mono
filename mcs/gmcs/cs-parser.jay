@@ -40,7 +40,6 @@ namespace Mono.CSharp
 		///   Current block is used to add statements as we find
 		///   them.  
 		/// </summary>
-
 		Block      current_block;
 
 		/// <summary>
@@ -347,9 +346,8 @@ namespace_declaration
 	: opt_attributes NAMESPACE namespace_or_type_name
 	{
 		if ($1 != null) {
-			Report.Error(1518, Lexer.Location,
-				     "Attributes cannot be applied to namespaces. " +
-				     "Expected class, delegate, enum, interface, or struct");
+			Report.Error(1518, Lexer.Location, "Attributes cannot be applied to namespaces."
+					+ " Expected class, delegate, enum, interface, or struct");
 		}
 
 		MemberName name = (MemberName) $3;
@@ -482,7 +480,7 @@ global_attributes
 }
 
 opt_attributes
-        : /* empty */
+	: /* empty */ 
 	  {
 		global_attrs_enabled = false;
 		$$ = null;
@@ -492,7 +490,7 @@ opt_attributes
 		global_attrs_enabled = false;
 		$$ = $1;
 	  }
-        ;
+    ;
  
 
 attribute_sections
@@ -503,16 +501,16 @@ attribute_sections
 		if (global_attrs_enabled) {
 			if (current_attr_target == "module") {
 				CodeGen.Module.AddAttributes (sect);
-			$$ = null;
+				$$ = null;
 			} else if (current_attr_target == "assembly") {
 				CodeGen.Assembly.AddAttributes (sect);
-			$$ = null;
+				$$ = null;
 			} else {
 				$$ = new Attributes (sect);
-		}
+			}
 		} else {
 			$$ = new Attributes (sect);
-          }
+		}		
 		current_attr_target = null;
       }
 	| attribute_sections attribute_section
@@ -532,13 +530,13 @@ attribute_sections
 					attrs = new Attributes (sect);
 				else
 					attrs.AddAttributes (sect);			
-		}
+			}
 		} else {
 			if (attrs == null)
 				attrs = new Attributes (sect);
 			else
 				attrs.AddAttributes (sect);
-		}
+		}		
 		$$ = attrs;
 		current_attr_target = null;
 	  }
@@ -845,15 +843,15 @@ constant_declarators
 	  {
 		ArrayList constants = new ArrayList (4);
 		if ($1 != null)
-		constants.Add ($1);
+			constants.Add ($1);
 		$$ = constants;
 	  }
 	| constant_declarators COMMA constant_declarator
 	  {
 		if ($3 != null) {
-		ArrayList constants = (ArrayList) $1;
-		constants.Add ($3);
-	  }
+			ArrayList constants = (ArrayList) $1;
+			constants.Add ($3);
+		}
 	  }
 	;
 
@@ -1057,7 +1055,6 @@ method_header
 				     lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
-
 		$$ = method;
 	  }
 	| opt_attributes
@@ -1159,6 +1156,16 @@ fixed_parameter
 		CheckIdentifierToken (yyToken);
 		$$ = null;
 	  }
+	| opt_attributes
+	  opt_parameter_modifier
+	  type
+	  IDENTIFIER
+	  ASSIGN
+	  constant_expression
+	   {
+		 Report.Error (241, lexer.Location, "Default parameter specifiers are not permitted");
+		 $$ = null;
+	   }
 	;
 
 opt_parameter_modifier
@@ -1555,7 +1562,7 @@ operator_declaration
 			param_list[1] = new Parameter (decl.arg2type, decl.arg2name, Parameter.Modifier.NONE, null);
 
 		Operator op = new Operator (
-			current_class, decl.optype, decl.ret_type, (int) $2,
+			current_class, decl.optype, decl.ret_type, (int) $2, 
 			new Parameters (param_list, null, decl.location),
 			(Block) $5, (Attributes) $1, decl.location);
 
@@ -1824,10 +1831,10 @@ event_declaration
 
 			MemberName name = new MemberName (var.identifier);
 
-			Event e = new EventField (current_class, (Expression) $4, (int) $2,
-						  false, name,
-						  var.expression_or_array_initializer,
-						  (Attributes) $1, lexer.Location);
+			Event e = new EventField (
+				current_class, (Expression) $4, (int) $2, false, name,
+				var.expression_or_array_initializer, (Attributes) $1,
+				lexer.Location);
 
 			current_container.AddEvent (e);
 				       
@@ -1854,20 +1861,29 @@ event_declaration
 			Report.Error (65, lexer.Location, "Event must have both add and remove accesors");
 			$$ = null;
 		} else {
-		Pair pair = (Pair) $8;
+			Pair pair = (Pair) $8;
+			
+			MemberName name = (MemberName) $5;
 
-		MemberName name = (MemberName) $5;
-		if (name.TypeArguments != null)
-			syntax_error (lexer.Location, "an event can't have type arguments");
+			if (name.TypeArguments != null)
+				syntax_error (lexer.Location, "an event can't have type arguments");
 
-		Event e = new EventProperty (current_class, (Expression) $4, (int) $2,
-					     false, name, null, (Attributes) $1,
-					     (Accessor) pair.First, (Accessor) pair.Second,
-					     loc);
-		
-		current_container.AddEvent (e);
-		implicit_value_parameter_type = null;
+			Event e = new EventProperty (
+				current_class, (Expression) $4, (int) $2, false, name, null,
+				(Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second,
+				loc);
+			
+			current_container.AddEvent (e);
+			implicit_value_parameter_type = null;
+		}
 	  }
+	| opt_attributes opt_modifiers EVENT type namespace_or_type_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS block {
+		MemberName mn = (MemberName) $5;
+
+		if (mn.Left != null)
+			Report.Error (71, lexer.Location, "Explicit implementation of events requires property syntax");
+		else 
+			Report.Error (71, lexer.Location, "Event declaration should use property syntax");
 	  }
 	;
 
@@ -2200,6 +2216,7 @@ type
 	| pointer_type	  
 	;
 
+
 pointer_type
 	: type STAR
 	  {
@@ -2500,7 +2517,7 @@ element_access
 		// Foo.Bar.Blah i;
 		// SimpleName is when you have
 		// Blah i;
-
+		  
 		Expression expr = (Expression) $1;  
 		if (expr is ComposedCast){
 			$$ = new ComposedCast (expr, (string) $2, lexer.Location);
@@ -4136,11 +4153,13 @@ fixed_statement
 	  type fixed_pointer_declarators 
 	  CLOSE_PARENS 
 	  {
-		Block assign_block = new Block (current_block, Block.Flags.Implicit);
 		ArrayList list = (ArrayList) $4;
 		Expression type = (Expression) $3;
 		Location l = lexer.Location;
 		int top = list.Count;
+
+		Block assign_block = new Block (current_block);
+		current_block = assign_block;
 
 		for (int i = 0; i < top; i++){
 			Pair p = (Pair) list [i];
@@ -4155,32 +4174,40 @@ fixed_statement
 			p.First = v;
 			list [i] = p;
 		}
-		current_block.AddStatement (assign_block);
-		current_block = assign_block;
-		oob_stack.Push (assign_block);
+
 		oob_stack.Push (l);
 	  }
 	  embedded_statement 
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		oob_stack.Pop ();
 
-		$$ = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
+		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
+
+		if (RootContext.WarningLevel >= 3){
+			if ($7 == EmptyStatement.Value)
+				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
+		}
+
+		current_block.AddStatement (f);
+		while (current_block.Implicit)
+			current_block = current_block.Parent;
+		$$ = current_block;
+		current_block = current_block.Parent;
 	  }
 	;
 
 fixed_pointer_declarators
 	: fixed_pointer_declarator	{ 
-	   	ArrayList declarators = new ArrayList (4); 
+	   	ArrayList declarators = new ArrayList (4);
 	   	if ($1 != null)
-		declarators.Add ($1);
+			declarators.Add ($1);
 		$$ = declarators;
 	  }
 	| fixed_pointer_declarators COMMA fixed_pointer_declarator
 	  {
 		ArrayList declarators = (ArrayList) $1;
 		if ($3 != null)
-		declarators.Add ($3);
+			declarators.Add ($3);
 		$$ = declarators;
 	  }
 	;
