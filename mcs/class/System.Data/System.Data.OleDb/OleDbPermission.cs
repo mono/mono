@@ -32,70 +32,59 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Data;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Data.OleDb
-{
+namespace System.Data.OleDb {
+
 	[Serializable]
-	public sealed class OleDbPermission : DBDataPermission
-	{
+	public sealed class OleDbPermission : DBDataPermission {
+
 		#region Constructors
 
-		[MonoTODO]
 #if NET_1_1
                 [Obsolete ("use OleDbPermission(PermissionState.None)", true)]
 #endif
-
-		public OleDbPermission () : base (PermissionState.None)
+		public OleDbPermission ()
+			: base (PermissionState.None)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public OleDbPermission (PermissionState state)
 			: base (state)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 #if NET_1_1
                 [Obsolete ("use OleDbPermission(PermissionState.None)", true)]
 #endif
 		public OleDbPermission (PermissionState state, bool allowBlankPassword)
-			: base (state, allowBlankPassword, true)
+			: base (state, allowBlankPassword)
 		{
-			throw new NotImplementedException ();
+		}
+
+		// required for Copy method
+		internal OleDbPermission (DBDataPermission permission)
+			: base (permission)
+		{
 		}
 
 		#endregion
 
 		#region Properties
-
-		public string Provider {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
-		}
-
 		#endregion
 
 		#region Methods
 
-		[MonoTODO]
 		public override IPermission Copy ()
 		{
-			throw new NotImplementedException ();
+			return new OleDbPermission (this);
 		}
 
 		[MonoTODO]
 		public override void FromXml (SecurityElement securityElement)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

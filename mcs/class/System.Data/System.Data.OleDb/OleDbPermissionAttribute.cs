@@ -2,14 +2,12 @@
 // System.Data.OleDb.OleDbPermissionAttribute
 //
 // Authors:
-//   Rodrigo Moya (rodrigo@ximian.com)
-//   Tim Coleman (tim@timcoleman.com)
+//	Rodrigo Moya (rodrigo@ximian.com)
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Rodrigo Moya, 2002
 // Copyright (C) Tim Coleman, 2002
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,24 +30,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Data;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Data.OleDb
-{
+namespace System.Data.OleDb {
+
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
 			AttributeTargets.Struct | AttributeTargets.Constructor |
 			AttributeTargets.Method, AllowMultiple=true,
 			Inherited=false)]
 	[Serializable]
-	public sealed class OleDbPermissionAttribute : DBDataPermissionAttribute
-	{
+	public sealed class OleDbPermissionAttribute : DBDataPermissionAttribute {
 
 		#region Constructors 
 
-		[MonoTODO]
 		public OleDbPermissionAttribute (SecurityAction action) 
 			: base (action)
 		{
@@ -58,27 +53,19 @@ namespace System.Data.OleDb
 		#endregion
 
 		#region Properties
-
-		[MonoTODO]
-		public string Provider {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException (); 
-			}
-			[MonoTODO]
-			set {
-				throw new NotImplementedException (); 
-			}
-		}
-
 		#endregion
 
 		#region Methods
 
-		[MonoTODO]
 		public override IPermission CreatePermission () 
 		{
-			throw new NotImplementedException ();
+			if (base.Unrestricted) {
+				return new OleDbPermission (PermissionState.Unrestricted);
+			}
+
+			OleDbPermission p = new OleDbPermission (PermissionState.None, this.AllowBlankPassword);
+			p.Add (this.ConnectionString, this.KeyRestrictions, this.KeyRestrictionBehavior);
+			return p;
 		}
 
 		#endregion

@@ -1,3 +1,8 @@
+2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OleDbPermission.cs: Mostly completed (needs tests).
+	* OleDbPermissionAttribute.cs: Completed.
+
 2004-06-16  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* OleDbError.cs: fixed serialization compatibility with MS.NET
