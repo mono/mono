@@ -4,7 +4,7 @@ TEST_DIR= Test
 LIBRARY = $(topdir)/class/lib/Mono.Security.dll
 
 LIB_LIST = list.unix
-LIB_FLAGS = -r mscorlib
+LIB_FLAGS = /r:System.dll
 
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=\
