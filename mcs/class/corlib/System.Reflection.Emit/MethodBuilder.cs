@@ -121,7 +121,7 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 		public ILGenerator GetILGenerator () {
-			return GetILGenerator (256);
+			return GetILGenerator (64);
 		}
 		public ILGenerator GetILGenerator (int size) {
 			ilgen = new ILGenerator (this, size);

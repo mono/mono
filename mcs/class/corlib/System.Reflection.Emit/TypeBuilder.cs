@@ -37,6 +37,7 @@ namespace System.Reflection.Emit {
 	private int class_size;
 	private PackingSize packing_size;
 	private Type created;
+	string fullname;
 
 	public const int UnspecifiedTypeSize = 0;
 
@@ -54,7 +55,7 @@ namespace System.Reflection.Emit {
 			this.parent = null;
 			this.attrs = attr;
 			this.class_size = -1;
-			this.tname = "<Module>";
+			fullname = this.tname = "<Module>";
 			this.nspace = "";
 			pmodule = mb;
 			setup_internal_class (this);
@@ -82,6 +83,7 @@ namespace System.Reflection.Emit {
 			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (this, 0x02, true);
 			setup_internal_class (this);
+			fullname = GetFullName ();
 		}
 
 		public override Assembly Assembly {
@@ -89,7 +91,7 @@ namespace System.Reflection.Emit {
 		}
 		public override string AssemblyQualifiedName {
 			get {
-				return FullName + ", " + Assembly.ToString();
+				return fullname + ", " + Assembly.ToString();
 			}
 		}
 		public override Type BaseType {
@@ -110,13 +112,17 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		string GetFullName () {
+			if (nesting_type != null)
+				return String.Concat (nesting_type.FullName, "+", tname);
+			if ((nspace != null) && (nspace.Length > 0))
+				return String.Concat (nspace, ".", tname);
+			return tname;
+		}
+	
 		public override string FullName {
 			get {
-				if (nesting_type != null)
-					return String.Concat (nesting_type.FullName, "+", tname);
-				if ((nspace != null) && (nspace.Length > 0))
-					return String.Concat (nspace, ".", tname);
-				return tname;
+				return fullname;
 			}
 		}
 	
@@ -190,6 +196,7 @@ namespace System.Reflection.Emit {
 		private TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
 			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packsize, typesize);
 			res.nesting_type = this;
+			res.fullname = res.GetFullName ();
 			if (subtypes != null) {
 				TypeBuilder[] new_types = new TypeBuilder [subtypes.Length + 1];
 				System.Array.Copy (subtypes, new_types, subtypes.Length);

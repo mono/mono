@@ -138,16 +138,15 @@ namespace System.Reflection.Emit {
 
 		internal ILGenerator (MethodBase mb, int size) {
 			if (size < 0)
-				size = 256;
+				size = 128;
 			code_len = 0;
 			code = new byte [size];
 			mbuilder = mb;
 			cur_stack = max_stack = 0;
 			num_fixups = num_labels = 0;
-			label_to_addr = new int [16];
-			fixups = new LabelFixup [16];
-			token_fixups = new ILTokenInfo [16];
-			scopes = new Stack ();
+			label_to_addr = new int [8];
+			fixups = new LabelFixup [8];
+			token_fixups = new ILTokenInfo [8];
 			num_token_fixups = 0;
 			if (mb is MethodBuilder) {
 				module = (ModuleBuilder)((MethodBuilder)mb).TypeBuilder.Module;
@@ -310,8 +309,11 @@ namespace System.Reflection.Emit {
 			ex_handlers [cur_block].AddFinally (code_len);
 		}
 		public virtual void BeginScope () {
-			if (sym_writer != null)
+			if (sym_writer != null) {
+				if (scopes == null)
+					scopes = new Stack ();
 				scopes.Push (sym_writer.OpenScope (code_len));
+			}
 		}
 		public LocalBuilder DeclareLocal (Type localType) {
 			LocalBuilder res = new LocalBuilder (module, localType, this);
@@ -589,6 +591,8 @@ namespace System.Reflection.Emit {
 		public virtual void EndScope () {
 			if (sym_writer != null) {
 				sym_writer.CloseScope (code_len);
+				if (scopes == null)
+					throw new InvalidOperationException ();
 				scopes.Pop ();
 			}
 		}

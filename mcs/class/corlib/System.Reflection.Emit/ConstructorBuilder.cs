@@ -107,7 +107,7 @@ namespace System.Reflection.Emit {
 		public override object [] GetCustomAttributes (Type attribute_type, bool inherit) {return null;}
 
 		public ILGenerator GetILGenerator () {
-			return GetILGenerator (256);
+			return GetILGenerator (64);
 		}
 		internal ILGenerator GetILGenerator (int size) {
 			ilgen = new ILGenerator (this, size);

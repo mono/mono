@@ -1,4 +1,9 @@
 
+Fri Jan 10 16:03:30 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs, MethodBuilder.cs, TypeBuilder.cs,
+	ConstructorBuilder.cs: some tweaks to reduce memory usage.
+
 Thu Jan 2 18:46:09 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* ModuleBuilder.cs, TypeBuilder.cs: support global fields and methods.
