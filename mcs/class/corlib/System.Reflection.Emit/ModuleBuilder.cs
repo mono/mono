@@ -408,6 +408,8 @@ namespace System.Reflection.Emit {
 			if (transient)
 				return;
 
+			build_metadata (this);
+
 			if (symbol_writer != null) {
 				string res_name;
 				if (is_main)
@@ -417,8 +419,6 @@ namespace System.Reflection.Emit {
 				byte[] data = symbol_writer.CreateSymbolFile (assemblyb);
 				assemblyb.EmbedResource (res_name, data, ResourceAttributes.Public);
 			}
-
-			build_metadata (this);
 
 			string fileName = fqname;
 			if (assemblyb.AssemblyDir != null)

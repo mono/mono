@@ -1,3 +1,8 @@
+2003-11-06  Martin Baulig  <martin@ximian.com>
+
+	* ModuleBuilder.cs (ModuleBuilder.Save): Call `build_metadata'
+	before writing the symbol file.
+
 2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (.ctor): Initialize the 'dir' field to something
