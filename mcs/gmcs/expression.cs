@@ -4032,7 +4032,7 @@ namespace Mono.CSharp {
 		{
 			ConstructedType ctype = Expr as ConstructedType;
 			if (ctype != null)
-				Expr = ctype.GetMemberAccess (ec);
+				Expr = ctype.GetSimpleName (ec);
 
 			// FIXME: csc doesn't report any error if you try to use `ref' or
 			//        `out' in a delegate creation expression.
@@ -5304,7 +5304,7 @@ namespace Mono.CSharp {
 				is_base = true;
 
 			if (expr is ConstructedType)
-				expr = ((ConstructedType) expr).GetMemberAccess (ec);
+				expr = ((ConstructedType) expr).GetSimpleName (ec);
 
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
@@ -7430,54 +7430,7 @@ namespace Mono.CSharp {
 				if (mg == null)
 					throw new InternalErrorException ();
 
-				if (args.Resolve (ec) == false)
-					return null;
-
-				Type[] atypes = args.Arguments;
-
-				int first_count = 0;
-				MethodInfo first = null;
-
-				ArrayList list = new ArrayList ();
-				foreach (MethodBase mb in mg.Methods) {
-					MethodInfo mi = mb as MethodInfo;
-					if ((mi == null) || !mi.HasGenericParameters)
-						continue;
-
-					Type[] gen_params = mi.GetGenericArguments ();
-
-					if (first == null) {
-						first = mi;
-						first_count = gen_params.Length;
-					}
-
-					if (gen_params.Length != atypes.Length)
-						continue;
-
-					list.Add (mi.BindGenericParameters (atypes));
-				}
-
-				if (list.Count > 0) {
-					MethodGroupExpr new_mg = new MethodGroupExpr (
-						list, mg.Location);
-					new_mg.InstanceExpression = mg.InstanceExpression;
-					new_mg.HasTypeArguments = true;
-					return new_mg;
-				}
-
-				string name = expr_type + "." + Identifier;
-
-				if (first != null)
-					Report.Error (
-						305, loc, "Using the generic method `{0}' " +
-						"requires {1} type arguments", name,
-						first_count);
-				else
-					Report.Error (
-						308, loc, "The non-generic method `{0}' " +
-						"cannot be used with type arguments", name);
-
-				return null;
+				return mg.ResolveGeneric (ec, args);
 			}
 
 			// The following DoResolve/DoResolveLValue will do the definite assignment

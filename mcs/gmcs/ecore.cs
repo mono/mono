@@ -1947,6 +1947,7 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public class SimpleName : Expression {
 		public string Name;
+		public readonly TypeArguments Arguments;
 
 		//
 		// If true, then we are a simple name, not composed with a ".
@@ -1963,6 +1964,14 @@ namespace Mono.CSharp {
 		public SimpleName (string name, Location l)
 		{
 			Name = name;
+			loc = l;
+			is_base = true;
+		}
+
+		public SimpleName (string name, TypeArguments args, Location l)
+		{
+			Name = name;
+			Arguments = args;
 			loc = l;
 			is_base = true;
 		}
@@ -2199,6 +2208,14 @@ namespace Mono.CSharp {
 				IMemberExpr me = e as IMemberExpr;
 				if (me == null)
 					return e;
+
+				if (Arguments != null) {
+					MethodGroupExpr mg = me as MethodGroupExpr;
+					if (mg == null)
+						return null;
+
+					return mg.ResolveGeneric (ec, Arguments);
+				}
 
 				// This fails if ResolveMemberAccess() was unable to decide whether
 				// it's a field or a type of the same name.
@@ -2693,6 +2710,55 @@ namespace Mono.CSharp {
 		public bool RemoveStaticMethods ()
 		{
 			return RemoveMethods (false);
+		}
+
+		public Expression ResolveGeneric (EmitContext ec, TypeArguments args)
+		{
+			if (args.Resolve (ec) == false)
+				return null;
+
+			Type[] atypes = args.Arguments;
+
+			int first_count = 0;
+			MethodInfo first = null;
+
+			ArrayList list = new ArrayList ();
+			foreach (MethodBase mb in Methods) {
+				MethodInfo mi = mb as MethodInfo;
+				if ((mi == null) || !mi.HasGenericParameters)
+					continue;
+
+				Type[] gen_params = mi.GetGenericArguments ();
+
+				if (first == null) {
+					first = mi;
+					first_count = gen_params.Length;
+				}
+
+				if (gen_params.Length != atypes.Length)
+					continue;
+
+				list.Add (mi.BindGenericParameters (atypes));
+			}
+
+			if (list.Count > 0) {
+				MethodGroupExpr new_mg = new MethodGroupExpr (list, Location);
+				new_mg.InstanceExpression = InstanceExpression;
+				new_mg.HasTypeArguments = true;
+				return new_mg;
+			}
+
+			if (first != null)
+				Report.Error (
+					305, loc, "Using the generic method `{0}' " +
+					"requires {1} type arguments", Name,
+					first_count);
+			else
+				Report.Error (
+					308, loc, "The non-generic method `{0}' " +
+					"cannot be used with type arguments", Name);
+
+			return null;
 		}
 	}
 

@@ -1,3 +1,19 @@
+2004-06-03  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.GetMemberAccess): Renamed to
+	GetSimpleName() and return a SimpleName.
+
+	* ecore.cs (SimpleName.Arguments): New public field.
+	(SimpleName): Added overloaded ctor which takes an additional
+	TypeArguments argument.
+	(SimpleName.SimpleNameResolve): Added support for generic methods.
+	(MethodGroupExpr.ResolveGeneric): New public method.  The code was
+	formerly in MemberAccess.DoResolve(), but we also need it in
+	SimpleNameResolve().
+
+	* expression.cs (MemberAccess.DoResolve): Use the new
+	MethodGroupExpr.ResolveGeneric().	
+
 2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* decl.cs: If possible, use lookuptypedirect here. We can only do
