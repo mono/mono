@@ -1,5 +1,12 @@
 2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c (mono_bounded_array_class_get): New function which takes
+	a 'bounded' bool argument to distinguish vectors from one dimensional
+	arrays.
+
+	* icall.c (ves_icall_System_Array_CreateInstanceImpl): Call 
+	bounded_array_class_get if the array has bounds.
+
 	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): 
 	Search modules loaded using AssemblyBuilder:AddModule as well.
 
