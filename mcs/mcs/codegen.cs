@@ -816,14 +816,10 @@ namespace Mono.CSharp {
 				Attributes attrs = (Attributes) de.Value;
 				temp_ec.TypeContainer.NamespaceEntry = ns;
 
-				foreach (AttributeSection attr_section in attrs.AttributeSections) {
-					foreach (Attribute a in attr_section.Attributes) {
-						Type attributeType = RootContext.LookupType (temp_ec.DeclSpace, Attributes.GetAttributeFullName (a.Name), true, Location.Null);
-						if (attributeType == TypeManager.cls_compliant_attribute_type) {
-							a.Resolve (temp_ec);
-							return a;
-						}
-					}
+				Attribute a = attrs.Search (TypeManager.cls_compliant_attribute_type, temp_ec.DeclSpace);
+				if (a != null) {
+					a.Resolve (temp_ec);
+					return a;
 				}
 			}
 			return null;

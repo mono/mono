@@ -112,9 +112,9 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-                ///   Tries to resolve the type of the attribute. Flags an error if it can't.
+                ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
                 /// </summary>
-		private Type CheckAttributeType (DeclSpace ds) {
+		private Type CheckAttributeType (DeclSpace ds, bool complain) {
 			Type t1 = RootContext.LookupType (ds, Name, true, Location);
 
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
@@ -147,17 +147,18 @@ namespace Mono.CSharp {
 				Report.Error (616, Location, err0616);
 				return null;
 			}
-			
-			Report.Error (
-				246, Location, "Could not find attribute '" + Name + "' (are you" +
-				" missing a using directive or an assembly reference ?)");
+
+			if (complain)
+				Report.Error (246, Location, 
+					      "Could not find attribute '" + Name 
+					      + "' (are you missing a using directive or an assembly reference ?)");
 			return null;
 		}
 
-		public Type ResolveType (DeclSpace ds)
+		public Type ResolveType (DeclSpace ds, bool complain)
 		{
 			if (Type == null)
-				Type = CheckAttributeType (ds);
+				Type = CheckAttributeType (ds, complain);
 			return Type;
 		}
 
@@ -206,9 +207,18 @@ namespace Mono.CSharp {
 		
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			ResolveType (ec.DeclSpace);
-			if (Type == null)
+			Type oldType = Type;
+			
+			// Sanity check.
+			Type = CheckAttributeType (ec.DeclSpace, true);
+			if (oldType == null && Type == null)
 				return null;
+			if (oldType != null && oldType != Type) {
+				Report.Error (-6, Location,
+					      "Attribute {0} resolved to different types at different times: {1} vs. {2}",
+					      Name, oldType, Type);
+				return null;
+			}
 
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
@@ -674,7 +684,7 @@ namespace Mono.CSharp {
 					continue;
 
 				foreach (Attribute a in asec.Attributes){
-					if (a.ResolveType (ec.DeclSpace) == null)
+					if (a.ResolveType (ec.DeclSpace, true) == null)
 						return null;
 					
 					if (a.Type != TypeManager.indexer_name_type)
@@ -1020,7 +1030,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ResolveType (ec.DeclSpace);
+			ResolveType (ec.DeclSpace, true);
 			if (Type == null)
 				return null;
 			
@@ -1195,45 +1205,25 @@ namespace Mono.CSharp {
 				AttributeSections.Add (a);
 		}
 
-		public bool Contains (Type t)
+		public Attribute Search (Type t, DeclSpace ds)
 		{
 			foreach (AttributeSection attr_section in AttributeSections){
 				foreach (Attribute a in attr_section.Attributes){
-					if (a.Type == t)
-						return true;
-				}
-			}
-                        
-			return false;
-		}
-
-		public Attribute GetClsCompliantAttribute (DeclSpace ds)
-		{
-			foreach (AttributeSection attr_section in AttributeSections) {
-				foreach (Attribute a in attr_section.Attributes) {
-
-					// Unfortunately, we have also attributes that has not been resolved yet.
-					// We need to simulate part of ApplyAttribute method.
-					if (a.Type == null) {
-						Type attr_type = RootContext.LookupType (ds, GetAttributeFullName (a.Name), true, a.Location);
-						if (attr_type == TypeManager.cls_compliant_attribute_type)
-							return a;
-
-						continue;
-					}
-
-					if (a.Type == TypeManager.cls_compliant_attribute_type)
+					if (a.ResolveType (ds, false) == t)
 						return a;
 				}
 			}
 			return null;
 		}
 
-		public static string GetAttributeFullName (string name)
+		public bool Contains (Type t, DeclSpace ds)
 		{
-			if (name.EndsWith ("Attribute"))
-				return name;
-			return name + "Attribute";
+                        return Search (t, ds) != null;
+		}
+
+		public Attribute GetClsCompliantAttribute (DeclSpace ds)
+		{
+			return Search (TypeManager.cls_compliant_attribute_type, ds);
 		}
 	}
 

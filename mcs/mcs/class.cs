@@ -2641,7 +2641,7 @@ namespace Mono.CSharp {
 						Attribute.ApplyAttributes (ec, pb, p[i], attr);
 
 						if (par_attr == ParameterAttributes.Out){
-							if (attr.Contains (TypeManager.in_attribute_type))
+							if (attr.Contains (TypeManager.in_attribute_type, ec.DeclSpace))
 								Report.Error (36, loc,
                                                                     "Can not use [In] attribute on out parameter");
 						}
@@ -3508,7 +3508,7 @@ namespace Mono.CSharp {
 					continue;
 					
 				foreach (Attribute a in asec.Attributes) {
-					Type attr_type = a.ResolveType (ds);
+					Type attr_type = a.ResolveType (ds, true);
 					if (attr_type == TypeManager.conditional_attribute_type) {
 						if (!ApplyConditionalAttribute (a))
 							return false;
