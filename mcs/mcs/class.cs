@@ -3383,14 +3383,22 @@ namespace Mono.CSharp {
 				method = TypeManager.delegate_combine_delegate_delegate;
 			else
 				method = TypeManager.delegate_remove_delegate_delegate;
-			
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, (FieldInfo) FieldBuilder);
-			ig.Emit (OpCodes.Ldarg_1);
-			ig.Emit (OpCodes.Call, method);
-			ig.Emit (OpCodes.Castclass, MemberType);
-			ig.Emit (OpCodes.Stfld, (FieldInfo) FieldBuilder);
+
+			if ((ModFlags & Modifiers.STATIC) != 0) {
+				ig.Emit (OpCodes.Ldsfld, (FieldInfo) FieldBuilder);
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Call, method);
+				ig.Emit (OpCodes.Castclass, MemberType);
+				ig.Emit (OpCodes.Stsfld, (FieldInfo) FieldBuilder);
+			} else {
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, (FieldInfo) FieldBuilder);
+				ig.Emit (OpCodes.Ldarg_1);
+				ig.Emit (OpCodes.Call, method);
+				ig.Emit (OpCodes.Castclass, MemberType);
+				ig.Emit (OpCodes.Stfld, (FieldInfo) FieldBuilder);
+			}
 			ig.Emit (OpCodes.Ret);
 		}
 

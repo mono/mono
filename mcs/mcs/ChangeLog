@@ -1,5 +1,10 @@
 2002-08-01  Martin Baulig  <martin@gnome.org>
 
+	* class.cs (Event.EmitDefaultMethod): Make this work with static
+	events.  Fixes #28311, added verify-3.cs.
+
+2002-08-01  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (ForeachHelperMethods): Added `enumerator_type' and
 	`is_disposable' fields.
 	(Foreach.GetEnumeratorFilter): Set `hm.enumerator_type' and
