@@ -1,4 +1,7 @@
-2004-05-26  Umadevi S <sumadevi@novell.com.
+2004-05-27 Umadevi S <sumadevi@novell.com>
+	* Corrected small typos in DataTableCollectionTest & DataRelationCollectionTest
+
+2004-05-26  Umadevi S <sumadevi@novell.com>
 	* Added files DataTableCollectionTest and DataRelationCollectionTest
 
 2004-05-19  Atsushi Enomoto <atsushi@ximian.com>

@@ -305,7 +305,7 @@ namespace MonoTests.System.Data
 			}
 			catch (Exception e)
 			{
-				AssertEquals ("test#5", typeof(IndexOutOfRangeException), e.GetType());
+				AssertEquals ("test#5", typeof(ArgumentOutOfRangeException), e.GetType());
 			}
 
 			
@@ -342,7 +342,7 @@ namespace MonoTests.System.Data
 			catch(Exception e)
 			{
 				AssertEquals ("test#3", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#4", "There is no row at position -1.", e.Message);
+				AssertEquals ("test#4", "There is no row at position 101.",e.Message);
 			}
 			
 			drcol.RemoveAt (1);
@@ -351,7 +351,7 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#6", false, drcol.Contains(dr1.RelationName));
 		}
 		
-		[Test]
+		//[Test]
 		public void ToStringTest()
 		{
 			DataRelationCollection drcol = _dataset.Relations;

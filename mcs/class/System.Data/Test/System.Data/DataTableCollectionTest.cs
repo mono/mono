@@ -321,7 +321,7 @@ namespace MonoTests.System.Data
 			catch(Exception e)
 			{
 				AssertEquals ("test#3", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#4", "There is no row at position -1.", e.Message);
+				AssertEquals ("test#4", "There is no row at position 101.", e.Message);
 			}
 			tbcol.RemoveAt (1);
 			AssertEquals ("test#5", 1, tbcol.Count);
