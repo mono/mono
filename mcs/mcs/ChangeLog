@@ -1,3 +1,10 @@
+2002-07-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (MemberAccess.ResolveMemberAccess): Since we can
+	not catch the Error_ObjectRefRequired in SimpleName (as it is
+	possible to have a class/instance variable name that later gets
+	deambiguated), we have to check this here. 	
+
 2002-07-10  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (TypeContainer.GetFieldFromEvent): Move away from here,

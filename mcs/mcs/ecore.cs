@@ -3085,7 +3085,7 @@ namespace Mono.CSharp {
 			Location = l;
 		}
 
-		public static void Error120 (Location l, string name)
+		public static void Error_ObjectRefRequired (Location l, string name)
 		{
 			Report.Error (
 				120, l,
@@ -3103,25 +3103,25 @@ namespace Mono.CSharp {
 				FieldInfo fi = ((FieldExpr) e).FieldInfo;
 				
 				if (!fi.IsStatic){
-					Error120 (Location, Name);
+					Error_ObjectRefRequired (Location, Name);
 					return null;
 				}
 			} else if (e is MethodGroupExpr){
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
 				if (!mg.RemoveInstanceMethods ()){
-					Error120 (Location, mg.Methods [0].Name);
+					Error_ObjectRefRequired (Location, mg.Methods [0].Name);
 					return null;
 				}
 				return e;
 			} else if (e is PropertyExpr){
 				if (!((PropertyExpr) e).IsStatic){
-					Error120 (Location, Name);
+					Error_ObjectRefRequired (Location, Name);
 					return null;
 				}
 			} else if (e is EventExpr) {
 				if (!((EventExpr) e).IsStatic) {
-					Error120 (Location, Name);
+					Error_ObjectRefRequired (Location, Name);
 					return null;
 				}
 			}
@@ -3267,7 +3267,7 @@ namespace Mono.CSharp {
 				
 				if (ec.IsStatic){
 					if (!allow_static && !fi.IsStatic){
-						Error120 (Location, Name);
+						Error_ObjectRefRequired (Location, Name);
 						return null;
 					}
 				} else {

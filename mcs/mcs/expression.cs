@@ -5067,7 +5067,7 @@ namespace Mono.CSharp {
 				//
 				if (left is TypeExpr){
 					if (!mg.RemoveInstanceMethods ()){
-						SimpleName.Error120 (loc, mg.Methods [0].Name); 
+						SimpleName.Error_ObjectRefRequired (loc, mg.Methods [0].Name); 
 						return null;
 					}
 
@@ -5093,7 +5093,7 @@ namespace Mono.CSharp {
 				if (!mg.RemoveStaticMethods ()){
 					if (IdenticalNameAndTypeName (ec, left_original, loc)){
 						if (!mg.RemoveInstanceMethods ()){
-							SimpleName.Error120 (loc, mg.Methods [0].Name);
+							SimpleName.Error_ObjectRefRequired (loc, mg.Methods [0].Name);
 							return null;
 						}
 						return member_lookup;
@@ -5181,6 +5181,23 @@ namespace Mono.CSharp {
 						error176 (loc, fe.FieldInfo.Name);
 						return null;
 					}
+
+					//
+					// Since we can not check for instance objects in SimpleName,
+					// becaue of the rule that allows types and variables to share
+					// the name (as long as they can be de-ambiguated later, see 
+					// IdenticalNameAndTypeName), we have to check whether left 
+					// is an instance variable in a static context
+					//
+
+					if (ec.IsStatic && left is FieldExpr){
+						FieldExpr fexp = (FieldExpr) left;
+
+						if (!fexp.FieldInfo.IsStatic){
+							SimpleName.Error_ObjectRefRequired (loc, fexp.FieldInfo.Name);
+							return null;
+						}
+					}
 					fe.InstanceExpression = left;
 
 					return fe;
@@ -5192,7 +5209,7 @@ namespace Mono.CSharp {
 
 				if (left is TypeExpr){
 					if (!pe.IsStatic){
-						SimpleName.Error120 (loc, pe.PropertyInfo.Name);
+						SimpleName.Error_ObjectRefRequired (loc, pe.PropertyInfo.Name);
 						return null;
 					}
 					return pe;
@@ -5246,7 +5263,7 @@ namespace Mono.CSharp {
 
 				if (left is TypeExpr) {
 					if (!ee.IsStatic) {
-						SimpleName.Error120 (loc, ee.EventInfo.Name);
+						SimpleName.Error_ObjectRefRequired (loc, ee.EventInfo.Name);
 						return null;
 					}
 
