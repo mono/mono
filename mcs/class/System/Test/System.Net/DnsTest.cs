@@ -9,7 +9,7 @@
 // 
 // This test assumes the following:
 // 1) The following Internet sites exist:
-//        www.go-mono.com with IP address 64.14.94.132
+//        www.go-mono.com with IP address 64.14.94.188
 //        info.diku.dk with IP address 130.225.96.4
 // 2) The following DNS name does not exist:
 //        www.hopefullydoesnotexist.dk
@@ -28,7 +28,7 @@ namespace MonoTests.System.Net {
 public class DnsTest : Assertion {
         
         private String site1Name = "www.go-mono.com",
-                site1Dot = "64.14.94.132",
+                site1Dot = "64.14.94.188",
                 site2Name = "info.diku.dk",
                 site2Dot = "130.225.96.4",
                 noneExistingSite = "www.hopefullydoesnotexist.dk";

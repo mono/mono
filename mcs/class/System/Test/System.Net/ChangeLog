@@ -1,3 +1,7 @@
+2004-10-10 David Sheldon <dave-mono@earth.li>
+
+  * DnsTest.cs: Updated IP for www.go-mono.com. 
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsPermissionAttributeTest.cs: New. Unit tests for DnsPermissionAttr.
