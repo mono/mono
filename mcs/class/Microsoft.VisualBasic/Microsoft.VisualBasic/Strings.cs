@@ -8,10 +8,12 @@
 //   Daniel Campos (danielcampos@netcourrier.com)
 //   Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //   Jochen Wezel (jwezel@compumaster.de)
+//   Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian Inc.
 //     2002 Tipic, Inc. (http://www.tipic.com)
 //     2003 CompuMaster GmbH (http://www.compumaster.de)
+//     2004 Novell
 //
 
 using System;
@@ -609,7 +611,6 @@ namespace Microsoft.VisualBasic
 		[MonoTODO]
 		public static int InStrRev(string StringCheck, 
 			string StringMatch, 
-			string String2, 
 			[Optional]
 			[DefaultValue(-1)] 
 			int Start,
@@ -807,12 +808,16 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
-		public static int Len(string Expression) 
-		{
-			return Expression.Length; //length of the string
+		//[MonoTODO("Needs testing")]
+		//public static int Len(string Expression) 
+		//{
+		//	return Expression.Length; //length of the string
+		//}
+		public static int Len(string Expression) {
+			if (Expression == null)return 0;
+			return Expression.Length;
 		}
-		
+
 		/// <summary>
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>

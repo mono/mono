@@ -1,3 +1,9 @@
+2004-04-17	Dennis Hayes <dennish@raytek.com>
+	Removed extra parameter from StrCmp
+	added check for null to Len(string)
+	
+	* Strings.cs
+
 2004-03-27  Duncan Mak  <duncan@ximian.com>
 
 	* ForEachEnum.cs:
