@@ -1,3 +1,14 @@
+2002-04-13  Martin Baulig  <martin@gnome.org>
+
+	* IMonoSymbolWriter.cs (ISourceBlock): Added `Blocks' property and `AddBlock'
+	method to support nested blocks.
+
+	* MonoSymbolWriter.cs: Correctly handle nested blocks.
+
+	* MonoDwarfFileWriter.cs (DieMember): Provide info for all fields, not just for
+	public ones; also added DW_AT_accessibility.
+	(DieVariable): Reflected latest debug-symfile.c changes.
+
 2002-04-12  Martin Baulig  <martin@gnome.org>
 
 	* gdb-variable-scopes.patch: A patch for GDB (against the latest CVS version)

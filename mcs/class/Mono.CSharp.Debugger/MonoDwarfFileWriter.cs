@@ -32,6 +32,7 @@ namespace Mono.CSharp.Debugger
 		protected string symbol_file = null;
 
 		public bool timestamps = true;
+		public bool use_gnu_extensions = false;
 
 		// Write a generic file which contains no machine dependant stuff but
 		// only function and type declarations.
@@ -275,7 +276,6 @@ namespace Mono.CSharp.Debugger
 				LNE_set_address		= 2,
 				LNE_define_file		= 3
 			};
-
 
 			public ISourceFile[] Sources {
 				get {
@@ -522,17 +522,20 @@ namespace Mono.CSharp.Debugger
 			AT_low_pc		= 0x11,
 			AT_high_pc		= 0x12,
 			AT_language		= 0x13,
+			AT_string_length	= 0x19,
 			AT_const_value		= 0x1c,
 			AT_lower_bound		= 0x22,
 			AT_producer		= 0x25,
 			AT_start_scope		= 0x2c,
 			AT_upper_bound		= 0x2f,
+			AT_accessibility	= 0x32,
 			AT_artificial		= 0x34,
 			AT_data_member_location	= 0x38,
 			AT_declaration		= 0x3c,
 			AT_encoding		= 0x3e,
 			AT_external		= 0x3f,
 			AT_type			= 0x49,
+			AT_data_location	= 0x50,
 			AT_end_scope		= 0x2121
 		}
 
@@ -544,13 +547,14 @@ namespace Mono.CSharp.Debugger
 			FORM_string		= 0x08,
 			FORM_data1		= 0x0b,
 			FORM_flag		= 0x0c,
+			FORM_sdata		= 0x0d,
+			FORM_udata		= 0x0f,
 			FORM_ref4		= 0x13
-
 		}
 
 		public enum DW_LANG {
 			LANG_C_plus_plus	= 0x04,
-			LANG_C_sharp		= LANG_C_plus_plus
+			LANG_C_sharp		= 0x9001
 		}
 
 		public enum DW_OP {
@@ -569,6 +573,12 @@ namespace Mono.CSharp.Debugger
 			OP_plus_uconst		= 0x23,
 			OP_fbreg		= 0x91,
 		}
+
+		public enum DW_ACCESS {
+			ACCESS_public		= 1,
+			ACCESS_protected	= 2,
+			ACCESS_private		= 3
+		};
 
 		protected enum MRI_string {
 			offset_length		= 0x00,
@@ -762,7 +772,7 @@ namespace Mono.CSharp.Debugger
 				AbbrevEntry[] entries = {
 					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
 					new AbbrevEntry (DW_AT.AT_producer, DW_FORM.FORM_string),
-					new AbbrevEntry (DW_AT.AT_language, DW_FORM.FORM_data1),
+					new AbbrevEntry (DW_AT.AT_language, DW_FORM.FORM_udata),
 					new AbbrevEntry (DW_AT.AT_stmt_list, DW_FORM.FORM_ref4)
 				};
 				AbbrevDeclaration decl = new AbbrevDeclaration (
@@ -855,7 +865,10 @@ namespace Mono.CSharp.Debugger
 			{
 				aw.WriteString (CompileUnit.SourceFile);
 				aw.WriteString (CompileUnit.ProducerID);
-				aw.WriteUInt8 ((int) DW_LANG.LANG_C_sharp);
+				if (dw.use_gnu_extensions)
+					aw.WriteULeb128 ((int) DW_LANG.LANG_C_sharp);
+				else
+					aw.WriteULeb128 ((int) DW_LANG.LANG_C_plus_plus);
 				aw.WriteAbsoluteOffset (LineNumberEngine.ReferenceIndex);
 			}
 		}
@@ -1314,17 +1327,31 @@ namespace Mono.CSharp.Debugger
 			protected Die[] field_type_dies;
 			protected Die[] field_dies;
 
+			protected const BindingFlags FieldBindingFlags =
+				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
+				BindingFlags.Instance;
+
 			public override void RegisterDependencyTypes ()
 			{
-				fields = type.GetFields ();
+				fields = type.GetFields (FieldBindingFlags);
 				field_type_dies = new Die [fields.Length];
 				field_dies = new Die [fields.Length];
 
 				for (int i = 0; i < fields.Length; i++) {
 					Type field_type = fields [i].FieldType;
 					field_type_dies [i] = DieCompileUnit.RegisterType (field_type);
+
+					DW_ACCESS access;
+					if (fields [i].IsPublic)
+						access = DW_ACCESS.ACCESS_public;
+					else if (fields [i].IsPrivate)
+						access = DW_ACCESS.ACCESS_private;
+					else
+						access = DW_ACCESS.ACCESS_protected;
+
 					field_dies [i] = new DieMember (this, type, fields [i].Name,
-									i, field_type_dies [i]);
+									i, field_type_dies [i],
+									access);
 				}
 			}
 
@@ -1400,20 +1427,26 @@ namespace Mono.CSharp.Debugger
 
 		public class DieStringType : DieStructureType
 		{
-
 			public override void RegisterDependencyTypes ()
 			{
 				Die length_die = DieCompileUnit.RegisterType (typeof (int));
 				new DieMember (this, typeof (MonoString), "Length",
 					       (int) MRI_string.offset_length, length_die);
 
-				Die vector_die = new DieArrayType (DieCompileUnit, typeof (char), 1);
-				new DieSubRangeType (vector_die, typeof (int), 0, -1);
+				if (dw.use_gnu_extensions) {
+					Die string_die = new DieInternalString (DieCompileUnit);
 
-				Die vector_ptr_die = new DieInternalPointer (DieCompileUnit, vector_die);
+					new DieMember (this, typeof (MonoString), "String",
+						       (int) MRI_string.offset_vector, string_die);
+				} else {
+					Die vector_die = new DieArrayType (DieCompileUnit, typeof (char), 1);
+					new DieSubRangeType (vector_die, typeof (int), 0, -1);
 
-				new DieMember (this, typeof (MonoString), "Vector",
-					       (int) MRI_string.offset_vector, vector_ptr_die);
+					Die ptr_die = new DieInternalPointer (DieCompileUnit, vector_die);
+
+					new DieMember (this, typeof (MonoString), "Vector",
+						       (int) MRI_string.offset_vector, ptr_die);
+				}
 			}
 
 			public DieStringType (DieCompileUnit parent_die, Type type)
@@ -1421,6 +1454,41 @@ namespace Mono.CSharp.Debugger
 			{ }
 		}
 
+		public class DieInternalString : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieInternalString ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_string_length, DW_FORM.FORM_data4),
+					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data4),
+					new AbbrevEntry (DW_AT.AT_data_location, DW_FORM.FORM_data4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_string_type, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			public DieInternalString (Die parent_die)
+				: base (parent_die, my_abbrev_id)
+			{ }
+
+			public override void DoEmit ()
+			{
+				dw.AddRelocEntry_TypeFieldOffset (typeof (MonoArray),
+								  (int) MRI_array.offset_max_length);
+				aw.WriteInt32 (0);
+				dw.AddRelocEntry_TypeFieldSize (typeof (MonoArray),
+								(int) MRI_array.offset_max_length);
+				aw.WriteInt32 (0);
+				dw.AddRelocEntry_TypeFieldOffset (typeof (MonoArray),
+								  (int) MRI_array.offset_vector);
+				aw.WriteInt32 (0);
+			}
+		}
 
 		protected class DieInternalArray : Die
 		{
@@ -1585,6 +1653,7 @@ namespace Mono.CSharp.Debugger
 				AbbrevEntry[] entries = {
 					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
 					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_accessibility, DW_FORM.FORM_data1),
 					new AbbrevEntry (DW_AT.AT_data_member_location, DW_FORM.FORM_block4)
 				};
 
@@ -1598,21 +1667,30 @@ namespace Mono.CSharp.Debugger
 			protected string name;
 			protected int index;
 			protected Die type_die;
+			protected DW_ACCESS access;
 
 			public DieMember (Die parent_die, Type parent_type, string name, int index,
-					  Die type_die)
+					  Die type_die, DW_ACCESS access)
 				: base (parent_die, my_abbrev_id)
 			{
 				this.name = name;
 				this.index = index;
 				this.parent_type = parent_type;
 				this.type_die = type_die;
+				this.access = access;
 			}
+
+			public DieMember (Die parent_die, Type parent_type, string name, int index,
+					  Die type_die)
+				: this (parent_die, parent_type, name, index, type_die,
+					DW_ACCESS.ACCESS_public)
+			{ }
 
 			public override void DoEmit ()
 			{
 				aw.WriteString (name);
 				DieCompileUnit.WriteRelativeDieReference (type_die);
+				aw.WriteUInt8 ((int) access);
 
 				object end_index = aw.StartSubsectionWithSize ();
 				aw.WriteUInt8 ((int) DW_OP.OP_const4u);
@@ -1790,11 +1868,8 @@ namespace Mono.CSharp.Debugger
 			protected override void DoEmitLocation ()
 			{
 				object end_index = aw.StartSubsectionWithSize ();
-				// This looks a bit strange, but OP_fbreg takes a sleb128
-				// agument and we can't fields of variable size.
-				aw.WriteUInt8 ((int) DW_OP.OP_fbreg);
-				aw.WriteSLeb128 (0);
-				aw.WriteUInt8 ((int) DW_OP.OP_const4s);
+				// These relocation entries expect a location description
+				// of exactly 8 bytes.
 				switch (vtype) {
 				case VariableType.VARIABLE_LOCAL:
 					dw.AddRelocEntry (RelocEntryType.LOCAL_VARIABLE,
@@ -1809,6 +1884,11 @@ namespace Mono.CSharp.Debugger
 							  method.Token, 0);
 					break;
 				}
+				// This looks a bit strange, but OP_fbreg takes a sleb128
+				// agument and we can't fields of variable size.
+				aw.WriteUInt8 ((int) DW_OP.OP_fbreg);
+				aw.WriteSLeb128 (0);
+				aw.WriteUInt8 ((int) DW_OP.OP_const4s);
 				aw.WriteInt32 (0);
 				aw.WriteUInt8 ((int) DW_OP.OP_plus);
 				aw.EndSubsection (end_index);
@@ -1825,7 +1905,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected const int reloc_table_version = 8;
+		protected const int reloc_table_version = 9;
 
 		protected enum Section {
 			DEBUG_INFO		= 0x01,
@@ -1913,7 +1993,10 @@ namespace Mono.CSharp.Debugger
 			MONO_ARRAY_BOUNDS_SIZEOF	= 0x0d,
 			MONO_ARRAY_BOUNDS_OFFSET	= 0x0e,
 			VARIABLE_START_SCOPE		= 0x0f,
-			VARIABLE_END_SCOPE		= 0x10
+			VARIABLE_END_SCOPE		= 0x10,
+			MONO_STRING_FIELDSIZE		= 0x11,
+			MONO_ARRAY_FIELDSIZE		= 0x12,
+			TYPE_FIELD_FIELDSIZE		= 0x13
 		}
 
 		protected class RelocEntry {
@@ -2048,6 +2131,16 @@ namespace Mono.CSharp.Debugger
 				AddRelocEntry (RelocEntryType.TYPE_FIELD_OFFSET, type, index);
 		}
 
+		protected void AddRelocEntry_TypeFieldSize (Type type, int index)
+		{
+			if (type.Equals (typeof (MonoString)))
+				AddRelocEntry (RelocEntryType.MONO_STRING_FIELDSIZE, index);
+			else if (type.Equals (typeof (MonoArray)))
+				AddRelocEntry (RelocEntryType.MONO_ARRAY_FIELDSIZE, index);
+			else
+				AddRelocEntry (RelocEntryType.TYPE_FIELD_FIELDSIZE, type, index);
+		}
+
 		//
 		// Mono relocation table. See the README.relocation-table file in this
 		// directory for a detailed description of the file format.
@@ -2082,6 +2175,7 @@ namespace Mono.CSharp.Debugger
 				case RelocEntryType.TYPE_FIELD_OFFSET:
 				case RelocEntryType.VARIABLE_START_SCOPE:
 				case RelocEntryType.VARIABLE_END_SCOPE:
+				case RelocEntryType.TYPE_FIELD_FIELDSIZE:
 					aw.WriteUInt32 (entry.Token);
 					aw.WriteUInt32 (entry.Original);
 					break;
@@ -2092,6 +2186,8 @@ namespace Mono.CSharp.Debugger
 				case RelocEntryType.MONO_STRING_OFFSET:
 				case RelocEntryType.MONO_ARRAY_OFFSET:
 				case RelocEntryType.MONO_ARRAY_BOUNDS_OFFSET:
+				case RelocEntryType.MONO_STRING_FIELDSIZE:
+				case RelocEntryType.MONO_ARRAY_FIELDSIZE:
 					aw.WriteUInt32 (entry.Token);
 					break;
 				}

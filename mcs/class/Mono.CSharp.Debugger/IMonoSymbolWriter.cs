@@ -86,6 +86,12 @@ namespace Mono.CSharp.Debugger
 
 		void AddLocal (ILocalVariable local);
 
+		ISourceBlock[] Blocks {
+			get;
+		}
+
+		void AddBlock (ISourceBlock block);
+
 		ISourceLine Start {
 			get;
 		}

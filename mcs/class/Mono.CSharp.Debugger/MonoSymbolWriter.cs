@@ -93,6 +93,7 @@ namespace Mono.CSharp.Debugger
 			}
 
 			private readonly ISourceMethod _method;
+			private ArrayList _blocks = new ArrayList ();
 			internal ISourceLine _start;
 			internal ISourceLine _end;
 
@@ -102,6 +103,19 @@ namespace Mono.CSharp.Debugger
 				get {
 					return _method;
 				}
+			}
+
+			public ISourceBlock[] Blocks {
+				get {
+					ISourceBlock[] retval = new ISourceBlock [_blocks.Count];
+					_blocks.CopyTo (retval);
+					return retval;
+				}
+			}
+
+			public void AddBlock (ISourceBlock block)
+			{
+				_blocks.Add (block);
 			}
 
 			public ISourceLine Start {
@@ -306,7 +320,14 @@ namespace Mono.CSharp.Debugger
 				SourceBlock block = (SourceBlock) _block_stack.Pop ();
 
 				block._end = new SourceLine (endOffset);
-				_blocks.Add (block);
+
+				if (_block_stack.Count > 0) {
+					ISourceBlock parent = (ISourceBlock) _block_stack.Peek ();
+
+					parent.AddBlock (block);
+				} else
+					_blocks.Add (block);
+
 				_block_hash.Add (block.ID, block);
 			}
 
@@ -617,6 +638,9 @@ namespace Mono.CSharp.Debugger
 
 			foreach (ILocalVariable local in block.Locals)
 				WriteLocal (die, local);
+
+			foreach (ISourceBlock subblock in block.Blocks)
+				WriteBlock (die, subblock);
 		}
 
 		protected void WriteMethod (DwarfFileWriter.DieCompileUnit parent_die, ISourceMethod method)
