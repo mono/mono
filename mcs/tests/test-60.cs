@@ -3,7 +3,7 @@
 //
 #define TEST
 
-#region"dunno"
+#region "dunno"
 #endregion
 
 #if FLAG_FALSE
@@ -47,7 +47,7 @@
 class X {
 	static int Main ()
 	{
-#if(TEST)
+#if (TEST)
 		ns5.Y y = new ns5.Y ();
 
 		y.Run ();
