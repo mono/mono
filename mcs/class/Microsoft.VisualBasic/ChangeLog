@@ -1,5 +1,7 @@
-2004-06-28  Raja R Harinath  <rharinath@novell.com>
+2004-07-05   Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Strings.cs: corrected 3 long-standing errors as detected by our nunit tests
 
+2004-06-28  Raja R Harinath  <rharinath@novell.com>
 	* Makefile ($(TXT_RESOURCES) $(RESX_RESOURCES)): Use $(RESGEN).
 
 2004-06-23  Jambunathan K  <kjambunathan@novell.com>
