@@ -1,5 +1,10 @@
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (mono_image_get_generic_field_token): Use the
+	`handleref' cache here.
+
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
 	* reflection.h (MonoDynamicImage): Added `GHashTable *typespec'.
 
 	* reflection.c (create_generic_typespec): Use the `typespec' hash
