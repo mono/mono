@@ -1,5 +1,8 @@
 2002-04-03  Dietmar Maurer  <dietmar@ximian.com>
 
+	* debug-symfile.h: use char* instead of gpointer to avoid
+	unnecessary casts.
+
 	* appdomain.c (mono_jit_info_table_find): use char* instead of gpointer
 
 	* icall.c (ves_icall_InternalExecute): impl. FielSetter
