@@ -1,4 +1,9 @@
-2002-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
+2002-10-23  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SymmetricAlgorithm.cs: Fixed CFB mode (do encryption while decrypting!)
+	* TripleDESCryptoServiceProvider.cs: Ajusted for CFB.
+
+2002-10-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RjindaelManaged.cs: Fixed decryption for 192 and 256 bit block size
 

@@ -78,7 +78,8 @@ internal class TripleDESTransform : SymmetricTransform {
 		else
 			Array.Copy (key, 16, key3, 0, 8);
 
-		if (encryption) {
+		// note: some modes (like CFB) requires encryption when decrypting
+		if ((encryption) || (algo.Mode == CipherMode.CFB)) {
 			E1 = new DESTransform (des, true, key1, iv);
 			D2 = new DESTransform (des, false, key2, iv);
 			E3 = new DESTransform (des, true, key3, iv);

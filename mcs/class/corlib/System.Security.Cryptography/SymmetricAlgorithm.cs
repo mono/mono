@@ -28,6 +28,7 @@ namespace System.Security.Cryptography {
 		private byte[] temp;
 		private byte[] temp2;
 		private int FeedBackByte;
+		private int FeedBackIter;
 		private bool m_disposed = false;
 
 		public SymmetricTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] rgbIV) 
@@ -39,6 +40,7 @@ namespace System.Security.Cryptography {
 			Array.Copy (rgbIV, 0, temp, 0, BlockSizeByte);
 			temp2 = new byte [BlockSizeByte];
 			FeedBackByte = (algo.FeedbackSize >> 3);
+			FeedBackIter = (int) BlockSizeByte / FeedBackByte;
 		}
 
 		~SymmetricTransform () 
@@ -133,18 +135,31 @@ namespace System.Security.Cryptography {
 		// Cipher-FeedBack (CFB)
 		protected virtual void CFB (byte[] input, byte[] output) 
 		{
-		        ECB (temp, temp2);
-
 			if (encrypt) {
-				for (int i = 0; i < BlockSizeByte; i++)
-					output[i] = (byte)(temp2[i] ^ input[i]);
-				Array.Copy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-				Array.Copy (output, 0, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+				for (int x = 0; x < FeedBackIter; x++) {
+					// temp is first initialized with the IV
+					ECB (temp, temp2);
+
+					for (int i = 0; i < FeedBackByte; i++)
+						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
+					Array.Copy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
+					Array.Copy (output, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+				}
 			}
 			else {
-				Array.Copy (input, 0, temp, 0, BlockSizeByte);
-				for (int i = 0; i < BlockSizeByte; i++)
-					output[i] = (byte)(temp2[i] ^ input[i]);
+				for (int x = 0; x < FeedBackIter; x++) {
+					// we do not really decrypt this data!
+					encrypt = true;
+					// temp is first initialized with the IV
+					ECB (temp, temp2);
+					encrypt = false;
+
+					Array.Copy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
+					Array.Copy (input, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+					for (int i = 0; i < FeedBackByte; i++)
+						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
+//						output[i + x] = (byte)(temp2[BlockSizeByte - x - i - 1] ^ input[i + x]);
+				}
 			}
 		}
 
