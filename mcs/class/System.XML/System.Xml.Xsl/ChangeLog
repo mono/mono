@@ -1,3 +1,7 @@
+2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XslTransform.cs: flush the writers when done. Fixes bug #42040.
+
 2003-03-10  Alan Tam <Tam@SiuLung.com>
 
 	* XslTransform.cs: Fixed a bug when no args is passed

@@ -349,6 +349,7 @@ namespace System.Xml.Xsl
 			xmlFreeDoc (inputDoc);
 			Cleanup ();
 			output.Write (transform);
+			output.Flush ();
 		}
 
 		// Transforms the XML data in the XPathNavigator using
@@ -358,6 +359,7 @@ namespace System.Xml.Xsl
 			StringWriter writer = new UTF8StringWriter ();
 			Transform (input, args, writer);
 			output.WriteRaw (writer.GetStringBuilder ().ToString ());
+			output.Flush ();
 		}
 
 		static void Save (XmlReader rdr, TextWriter baseWriter)
