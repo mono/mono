@@ -75,10 +75,14 @@ all-local: $(corlib)
 
 install-local: $(corlib) $(makefrag)
 	@if test $(PROFILE) = "net_2_0" ; then \
+		echo $(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
 		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
+		echo $(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
 		$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
 	else \
+		echo $(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
 		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
+		echo $(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib ; \
 		$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib ; \
 	fi
 
