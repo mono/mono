@@ -10,6 +10,7 @@ using System.Web.UI;
 using System.Globalization;
 
 namespace System.Web.UI.HtmlControls{
+	[ControlBuilder (typeof (HtmlControlBuilder))]
 	public class HtmlImage : HtmlControl{
 		
 		public HtmlImage(): base("img"){}

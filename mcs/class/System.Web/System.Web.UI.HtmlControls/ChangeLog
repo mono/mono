@@ -1,3 +1,13 @@
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlImage.cs:
+	* HtmlInputControl.cs:
+	* HtmlSelect.cs: added control builder attribute.
+
+	* HtmlSelectBuilder.cs: builder for HtmlSelect.
+
+	* HtmlControlBuilder.cs: common builder for all HtmlControls.
+
 2003-01-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlControl.cs: _tagName is now internal.

@@ -11,7 +11,7 @@ using System.Globalization;
 
 namespace System.Web.UI.HtmlControls
 {
-	
+	[ControlBuilder (typeof (HtmlControlBuilder))]
 	public abstract class HtmlInputControl : HtmlControl
 	{
 		

@@ -14,6 +14,7 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[ControlBuilder (typeof (HtmlSelectBuilder))]
 	[DefaultEvent("ServerChange")]
 	[ValidationProperty("Value")]
 	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler{
