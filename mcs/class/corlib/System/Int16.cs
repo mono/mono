@@ -32,7 +32,13 @@ using System.Globalization;
 namespace System {
 	
 	[Serializable]
-	public struct Int16 : IComparable, IFormattable, IConvertible {
+	public struct Int16 : IFormattable, IConvertible,
+#if NET_2_0
+		IComparable, IComparable<Int16>
+#else
+		IComparable
+#endif
+	{
 
 		public const short MaxValue =  32767;
 		public const short MinValue = -32768;
@@ -68,6 +74,23 @@ namespace System {
 		{
 			return m_value;
 		}
+
+#if NET_2_0
+		public int CompareTo (short value)
+		{
+			if (m_value == value)
+				return 0;
+			if (m_value > value)
+				return 1;
+			else
+				return -1;
+		}
+
+		public bool Equals (short value)
+		{
+			return value == m_value;
+		}
+#endif
 
 		public static short Parse (string s)
 		{

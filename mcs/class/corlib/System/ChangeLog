@@ -1,3 +1,8 @@
+2004-07-17  Martin Baulig  <martin@ximian.com>
+
+	* Byte.cs, Int16.cs, Int32.cs, Int64.cs, SByte.cs, String.cs,
+	UInt16.cs, UInt32.cs, UInt64.cs: Implement IComparable<T>.	
+
 2004-07-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ActivationContext.cs: New class in Fx 2.0. Required for 

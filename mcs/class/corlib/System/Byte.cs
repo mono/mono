@@ -35,7 +35,12 @@ using System.Globalization;
 namespace System
 {
 	[Serializable]
-	public struct Byte : IComparable, IFormattable, IConvertible
+	public struct Byte : IFormattable, IConvertible,
+#if NET_2_0
+		IComparable, IComparable<Byte>
+#else
+		IComparable
+#endif
 	{
 		public const byte MinValue = 0;
 		public const byte MaxValue = 255;
@@ -72,6 +77,23 @@ namespace System
 		{
 			return m_value;
 		}
+
+#if NET_2_0
+		public int CompareTo (byte value)
+		{
+			if (m_value == value)
+				return 0;
+			if (m_value > value)
+				return 1;
+			else
+				return -1;
+		}
+
+		public bool Equals (byte value)
+		{
+			return value == m_value;
+		}
+#endif
 
 		public static byte Parse (string s)
 		{

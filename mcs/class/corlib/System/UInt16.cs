@@ -33,7 +33,12 @@ namespace System
 {
 	[Serializable]
 	[CLSCompliant (false)]
-	public struct UInt16 : IComparable, IFormattable, IConvertible
+	public struct UInt16 : IFormattable, IConvertible,
+#if NET_2_0
+		IComparable, IComparable<UInt16>
+#else
+		IComparable
+#endif
 	{
 		public const ushort MaxValue = 0xffff;
 		public const ushort MinValue = 0;
@@ -63,6 +68,23 @@ namespace System
 		{
 			return m_value;
 		}
+
+#if NET_2_0
+		public int CompareTo (ushort value)
+		{
+			if (m_value == value)
+				return 0;
+			if (m_value > value)
+				return 1;
+			else
+				return -1;
+		}
+
+		public bool Equals (ushort value)
+		{
+			return value == m_value;
+		}
+#endif
 
 		[CLSCompliant(false)]
 		public static ushort Parse (string s)

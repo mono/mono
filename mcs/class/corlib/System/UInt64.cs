@@ -34,7 +34,12 @@ namespace System
 {
 	[Serializable]
 	[CLSCompliant (false)]
-	public struct UInt64 : IComparable, IFormattable, IConvertible
+	public struct UInt64 : IFormattable, IConvertible,
+#if NET_2_0
+		IComparable, IComparable<UInt64>
+#else
+		IComparable
+#endif
 	{
 		public const ulong MaxValue = 0xffffffffffffffff;
 		public const ulong MinValue = 0;
@@ -70,6 +75,23 @@ namespace System
 		{
 			return (int)(m_value & 0xffffffff) ^ (int)(m_value >> 32);
 		}
+
+#if NET_2_0
+		public int CompareTo (ulong value)
+		{
+			if (m_value == value)
+				return 0;
+			if (m_value > value)
+				return 1;
+			else
+				return -1;
+		}
+
+		public bool Equals (ulong value)
+		{
+			return value == m_value;
+		}
+#endif
 
 		[CLSCompliant (false)]
 		public static ulong Parse (string s)

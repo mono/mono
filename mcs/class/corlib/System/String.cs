@@ -39,7 +39,12 @@ using System.Runtime.CompilerServices;
 namespace System
 {
 	[Serializable]
-	public sealed class String : IConvertible, IComparable, ICloneable, IEnumerable
+	public sealed class String : IConvertible, ICloneable, IEnumerable,
+#if NET_2_0
+		IComparable, IComparable<String>
+#else
+		IComparable
+#endif
 	{
 		[NonSerialized] private int length;
 		[NonSerialized] private char start_char;

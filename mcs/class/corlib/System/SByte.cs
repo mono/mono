@@ -33,7 +33,12 @@ namespace System
 {
 	[CLSCompliant(false)]
 	[Serializable]
-	public struct SByte : IComparable, IFormattable, IConvertible
+	public struct SByte : IFormattable, IConvertible,
+#if NET_2_0
+		IComparable, IComparable<SByte>
+#else
+		IComparable
+#endif
 	{
 		public const sbyte MinValue = -128;
 		public const sbyte MaxValue = 127;
@@ -69,6 +74,23 @@ namespace System
 		{
 			return m_value;
 		}
+
+#if NET_2_0
+		public int CompareTo (sbyte value)
+		{
+			if (m_value == value)
+				return 0;
+			if (m_value > value)
+				return 1;
+			else
+				return -1;
+		}
+
+		public bool Equals (sbyte value)
+		{
+			return value == m_value;
+		}
+#endif
 
 		[CLSCompliant(false)]
 		public static sbyte Parse (string s)

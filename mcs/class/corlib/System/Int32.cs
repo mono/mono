@@ -33,7 +33,13 @@ using System.Threading;
 namespace System {
 	
 	[Serializable]
-	public struct Int32 : IComparable, IFormattable, IConvertible {
+	public struct Int32 : IFormattable, IConvertible,
+#if NET_2_0
+		IComparable, IComparable<Int32>
+#else
+		IComparable
+#endif
+	{
 
 		public const int MaxValue = 0x7fffffff;
 		public const int MinValue = -2147483648;
@@ -70,6 +76,23 @@ namespace System {
 		{
 			return m_value;
 		}
+
+#if NET_2_0
+		public int CompareTo (int value)
+		{
+			if (m_value == value)
+				return 0;
+			if (m_value > value)
+				return 1;
+			else
+				return -1;
+		}
+
+		public bool Equals (int value)
+		{
+			return value == m_value;
+		}
+#endif
 
 		public static int Parse (string s)
 		{
