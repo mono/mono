@@ -50,4 +50,3 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyVersion("0.6.0.0")]
 
 [assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("../ICSharpCode.SharpZipLib.key")]
