@@ -28,47 +28,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class NumberPrototype : NumberObject
-	{
+namespace Microsoft.JScript {
+
+	public class NumberPrototype : NumberObject {
+
 		public static NumberConstructor constructor {
 			get { throw new NotImplementedException (); }
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toExponential)]
 		public static string toExponential (object thisObj, object fractionDigits)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toFixed)]
 		public static string toFixed (object thisObj, double fractionDigits)
 		{
 			throw new NotImplementedException ();
 		}
 
-
-		public static string toLocalString (object thisObj)
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toLocaleString)]
+		public static string toLocaleString (object thisObj)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toPrecision)]
 		public static string toPrecision (object thisObj, object precision)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toString)]
 		public static string toString (object thisObj, object radix)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_valueOf)]
 		public static object valueOf (object thisObj)
 		{
 			throw new NotImplementedException ();
