@@ -643,6 +643,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader {
+			get { return "T:"; }
+		}
+
 		protected override void VerifyObsoleteAttribute()
 		{
 			CheckUsageOfObsoleteAttribute (ret_type);

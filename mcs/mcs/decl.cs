@@ -7,6 +7,7 @@
 // Licensed under the terms of the GNU GPL
 //
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
+// (C) 2004 Novell, Inc
 //
 // TODO: Move the method verification stuff from the class.cs and interface.cs here
 //
@@ -16,6 +17,7 @@ using System.Collections;
 using System.Globalization;
 using System.Reflection.Emit;
 using System.Reflection;
+using System.Xml;
 
 namespace Mono.CSharp {
 
@@ -137,6 +139,17 @@ namespace Mono.CSharp {
 		///   Location where this declaration happens
 		/// </summary>
 		public readonly Location Location;
+
+		/// <summary>
+		///   XML documentation comment
+		/// </summary>
+		public string DocComment;
+
+		/// <summary>
+		///   Represents header string for documentation comment 
+		///   for each member types.
+		/// </summary>
+		public abstract string DocCommentHeader { get; }
 
 		[Flags]
 		public enum Flags {
@@ -292,7 +305,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns true when MemberCore is exposed from assembly.
 		/// </summary>
-		protected bool IsExposedFromAssembly (DeclSpace ds)
+		public bool IsExposedFromAssembly (DeclSpace ds)
 		{
 			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 				return false;
@@ -364,6 +377,34 @@ namespace Mono.CSharp {
 
 		protected abstract void VerifyObsoleteAttribute ();
 
+		//
+		// Raised (and passed an XmlElement that contains the comment)
+		// when GenerateDocComment is writing documentation expectedly.
+		//
+		internal virtual void OnGenerateDocComment (DeclSpace ds, XmlElement intermediateNode)
+		{
+		}
+
+		//
+		// Returns a string that represents the signature for this 
+		// member which should be used in XML documentation.
+		//
+		public virtual string GetDocCommentName (DeclSpace ds)
+		{
+			if (ds == null || this is DeclSpace)
+				return DocCommentHeader + Name;
+			else
+				return String.Concat (DocCommentHeader, ds.Name, ".", Name);
+		}
+
+		//
+		// Generates xml doc comments (if any), and if required,
+		// handle warning report.
+		//
+		internal virtual void GenerateDocComment (DeclSpace ds)
+		{
+			DocUtil.GenerateDocComment (this, ds);
+		}
 	}
 
 	/// <summary>
@@ -1326,7 +1367,7 @@ namespace Mono.CSharp {
 			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				hash [it.Key] = ((ArrayList) it.Value).Clone ();
-                        }
+			 }
                                 
 			return hash;
 		}

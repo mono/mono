@@ -14,6 +14,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
+using System.Xml;
 
 namespace Mono.CSharp {
 
@@ -100,13 +101,17 @@ namespace Mono.CSharp {
 		protected override void VerifyObsoleteAttribute()
 		{
 		}
+
+		public override string DocCommentHeader {
+			get { return "F:"; }
+		}
 	}
 
 	/// <summary>
 	///   Enumeration container
 	/// </summary>
 	public class Enum : DeclSpace {
-		ArrayList ordered_enums;
+		public ArrayList ordered_enums;
 		
 		public Expression BaseType;
 		
@@ -152,7 +157,7 @@ namespace Mono.CSharp {
 		///   Adds @name to the enumeration space, with @expr
 		///   being its definition.  
 		/// </summary>
-		public void AddEnumMember (string name, Expression expr, Location loc, Attributes opt_attrs)
+		public void AddEnumMember (string name, Expression expr, Location loc, Attributes opt_attrs, string documentation)
 		{
 			if (name == "value__") {
 				Report.Error (76, loc, "An item in an enumeration can't have an identifier `value__'");
@@ -160,6 +165,7 @@ namespace Mono.CSharp {
 			}
 
 			EnumMember em = new EnumMember (this, expr, name, loc, opt_attrs);
+			em.DocComment = documentation;
 			if (!AddToContainer (em, false, name, ""))
 				return;
 
@@ -783,6 +789,22 @@ namespace Mono.CSharp {
 		protected override void VerifyObsoleteAttribute()
 		{
 			// UnderlyingType is never obsolete
+		}
+
+		//
+		// Generates xml doc comments (if any), and if required,
+		// handle warning report.
+		//
+		internal override void GenerateDocComment (DeclSpace ds)
+		{
+			DocUtil.GenerateEnumDocComment (this, ds);
+		}
+
+		//
+		//   Represents header string for documentation comment.
+		//
+		public override string DocCommentHeader {
+			get { return "T:"; }
 		}
 	}
 }

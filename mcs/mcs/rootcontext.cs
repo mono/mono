@@ -7,12 +7,14 @@
 // Licensed under the terms of the GNU GPL
 //
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
+// (C) 2004 Novell, Inc
 
 using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
+using System.Xml;
 
 namespace Mono.CSharp {
 
@@ -78,6 +80,11 @@ namespace Mono.CSharp {
 		public static string StrongNameKeyFile;
 		public static string StrongNameKeyContainer;
 		public static bool StrongNameDelaySign = false;
+
+		//
+		// If set, enable XML documentation generation
+		//
+		public static Documentation Documentation;
 
 		//
 		// Constructor

@@ -12,6 +12,7 @@ constant.cs
 convert.cs
 decl.cs
 delegate.cs
+doc.cs
 enum.cs
 ecore.cs
 expression.cs

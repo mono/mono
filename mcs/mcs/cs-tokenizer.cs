@@ -7,6 +7,7 @@
 // Licensed under the terms of the GNU GPL
 //
 // (C) 2001, 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2004 Novell, Inc
 //
 
 /*
@@ -40,6 +41,17 @@ namespace Mono.CSharp
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_assembly = false;
+
+		//
+		// XML documentation buffer. The save point is used to divide
+		// comments on types and comments on members.
+		//
+		StringBuilder xml_comment_buffer;
+
+		//
+		// See comment on XmlCommentState enumeration.
+		//
+		XmlCommentState xmlDocState = XmlCommentState.Allowed;
 
 		//
 		// Whether tokens have been seen on this line
@@ -132,6 +144,18 @@ namespace Mono.CSharp
 				handle_remove_add = value;
 			}
 		}
+
+		public XmlCommentState doc_state {
+			get { return xmlDocState; }
+			set {
+				if (value == XmlCommentState.Allowed) {
+					check_incorrect_doc_comment ();
+					consume_doc_comment ();
+				}
+				xmlDocState = value;
+			}
+		}
+
 		
 		//
 		// Class variables
@@ -362,6 +386,8 @@ namespace Mono.CSharp
 					define (def);
 			}
 
+			xml_comment_buffer = new StringBuilder ();
+
 			//
 			// FIXME: This could be `Location.Push' but we have to
 			// find out why the MS compiler allows this
@@ -411,6 +437,9 @@ namespace Mono.CSharp
 			case '}':
 				return Token.CLOSE_BRACE;
 			case '[':
+				// To block doccomment inside attribute declaration.
+				if (doc_state == XmlCommentState.Allowed)
+					doc_state = XmlCommentState.NotAllowed;
 				return Token.OPEN_BRACKET;
 			case ']':
 				return Token.CLOSE_BRACKET;
@@ -1741,6 +1770,15 @@ namespace Mono.CSharp
 		{
 			int res = consume_identifier (s, false);
 
+			if (doc_state == XmlCommentState.Allowed)
+				doc_state = XmlCommentState.NotAllowed;
+			switch (res) {
+			case Token.USING:
+			case Token.NAMESPACE:
+				check_incorrect_doc_comment ();
+				break;
+			}
+
 			if (res == Token.PARTIAL) {
 				// Save current position and parse next token.
 				int old = reader.Position;
@@ -1862,6 +1900,17 @@ namespace Mono.CSharp
 				
 					if (d == '/'){
 						getChar ();
+						if (RootContext.Documentation != null && peekChar () == '/') {
+							getChar ();
+							// Allow only ///ws.
+							// Don't allow ////.
+							if ((d = peekChar ()) == ' ' || d == '\t') {
+								if (doc_state == XmlCommentState.Allowed)
+									handle_one_line_xml_comment ();
+								else if (doc_state == XmlCommentState.NotAllowed)
+									warn_incorrect_doc_comment ();
+							}
+						}
 						while ((d = getChar ()) != -1 && (d != '\n') && d != '\r')
 							col++;
 						if (d == '\n'){
@@ -1874,6 +1923,25 @@ namespace Mono.CSharp
 						continue;
 					} else if (d == '*'){
 						getChar ();
+						bool docAppend = false;
+						if (RootContext.Documentation != null && peekChar () == '*') {
+							getChar ();
+							// But when it is /**/, just do nothing.
+							if (peekChar () == '/') {
+								getChar ();
+								continue;
+							}
+							if (doc_state == XmlCommentState.Allowed)
+								docAppend = true;
+							else if (doc_state == XmlCommentState.NotAllowed)
+								warn_incorrect_doc_comment ();
+						}
+
+						int currentCommentStart = 0;
+						if (docAppend) {
+							currentCommentStart = xml_comment_buffer.Length;
+							xml_comment_buffer.Append (Environment.NewLine);
+						}
 
 						while ((d = getChar ()) != -1){
 							if (d == '*' && peekChar () == '/'){
@@ -1881,6 +1949,9 @@ namespace Mono.CSharp
 								col++;
 								break;
 							}
+							if (docAppend)
+								xml_comment_buffer.Append ((char) d);
+							
 							if (d == '\n'){
 								line++;
 								ref_line++;
@@ -1889,6 +1960,8 @@ namespace Mono.CSharp
 								tokens_seen = false;
 							}
 						}
+						if (docAppend)
+							update_formatted_doc_comment (currentCommentStart);
 						continue;
 					}
 					goto is_punct_label;
@@ -2037,6 +2110,91 @@ namespace Mono.CSharp
 			return Token.EOF;
 		}
 
+		//
+		// Handles one line xml comment
+		//
+		private void handle_one_line_xml_comment ()
+		{
+			int c;
+			while ((c = peekChar ()) == ' ')
+				getChar (); // skip heading whitespaces.
+			while ((c = peekChar ()) != -1 && c != '\n' && c != '\r') {
+				col++;
+				xml_comment_buffer.Append ((char) getChar ());
+			}
+			if (c == '\r' || c == '\n')
+				xml_comment_buffer.Append (Environment.NewLine);
+		}
+
+		//
+		// Remove heading "*" in Javadoc-like xml documentation.
+		//
+		private void update_formatted_doc_comment (int currentCommentStart)
+		{
+			int length = xml_comment_buffer.Length - currentCommentStart;
+			string [] lines = xml_comment_buffer.ToString (
+				currentCommentStart,
+				length).Replace ("\r", "").Split ('\n');
+			// The first line starts with /**, thus it is not target
+			// for the format check.
+			for (int i = 1; i < lines.Length; i++) {
+				string s = lines [i];
+				int idx = s.IndexOf ('*');
+				string head = null;
+				if (idx < 0) {
+					if (i < lines.Length - 1)
+						return;
+					head = s;
+				}
+				else
+					head = s.Substring (0, idx);
+				foreach (char c in head)
+					if (c != ' ')
+						return;
+				lines [i] = s.Substring (idx + 1);
+			}
+			xml_comment_buffer.Remove (currentCommentStart, length);
+			xml_comment_buffer.Insert (
+				currentCommentStart,
+				String.Join (Environment.NewLine, lines));
+		}
+
+		//
+		// Checks if there was incorrect doc comments and raise
+		// warnings.
+		//
+		public void check_incorrect_doc_comment ()
+		{
+			if (xml_comment_buffer.Length > 0)
+				warn_incorrect_doc_comment ();
+		}
+
+		//
+		// Raises a warning when tokenizer found incorrect doccomment
+		// markup.
+		//
+		private void warn_incorrect_doc_comment ()
+		{
+			doc_state = XmlCommentState.Error;
+			// in csc, it is 'XML comment is not placed on a valid 
+			// language element'. But that does not make sense.
+			Report.Warning (1587, 2, Location, "XML comment is placed on an invalid language element which can not accept it.");
+		}
+
+		//
+		// Consumes the saved xml comment lines (if any)
+		// as for current target member or type.
+		//
+		public string consume_doc_comment ()
+		{
+			if (xml_comment_buffer.Length > 0) {
+				string ret = xml_comment_buffer.ToString ();
+				xml_comment_buffer.Length = 0;
+				return ret;
+			}
+			return null;
+		}
+
 		public void cleanup ()
 		{
 			if (ifstack != null && ifstack.Count >= 1) {
@@ -2048,5 +2206,19 @@ namespace Mono.CSharp
 			}
 				
 		}
+	}
+
+	//
+	// Indicates whether it accepts XML documentation or not.
+	//
+	public enum XmlCommentState {
+		// comment is allowed in this state.
+		Allowed,
+		// comment is not allowed in this state.
+		NotAllowed,
+		// once comments appeared when it is NotAllowed, then the
+		// state is changed to it, until the state is changed to
+		// .Allowed.
+		Error
 	}
 }
