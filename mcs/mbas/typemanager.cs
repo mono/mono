@@ -37,6 +37,7 @@ public class TypeManager {
 	static public Type char_ptr_type;
 	static public Type short_type;
 	static public Type decimal_type;
+	static public Type date_type;
 	static public Type bool_type;
 	static public Type sbyte_type;
 	static public Type byte_type;
@@ -89,6 +90,7 @@ public class TypeManager {
 	static public Expression system_int32_expr, system_uint32_expr;
 	static public Expression system_int64_expr, system_uint64_expr;
 	static public Expression system_char_expr, system_void_expr;
+	static public Expression system_date_expr;
 	static public Expression system_asynccallback_expr;
 	static public Expression system_iasyncresult_expr;
 
@@ -144,6 +146,7 @@ public class TypeManager {
 	//
 	static public ConstructorInfo cons_param_array_attribute;
 	static public ConstructorInfo void_decimal_ctor_five_args;
+	static public ConstructorInfo void_datetime_ctor_ticks_arg;
 	static public ConstructorInfo unverifiable_code_ctor;
 	
 	// <remarks>
@@ -285,6 +288,7 @@ public class TypeManager {
 		system_uint64_expr  = new TypeLookupExpression ("System.UInt64");
 		system_char_expr    = new TypeLookupExpression ("System.Char");
 		system_void_expr    = new TypeLookupExpression ("System.Void");
+		system_date_expr    = new TypeLookupExpression ("System.DateTime");
 		system_asynccallback_expr = new TypeLookupExpression ("System.AsyncCallback");
 		system_iasyncresult_expr = new TypeLookupExpression ("System.IAsyncResult");
 	}
@@ -587,7 +591,7 @@ public class TypeManager {
 			@"^System\." +
 			@"(Int32|UInt32|Int16|Uint16|Int64|UInt64|" +
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
-			@"Boolean|String|Void)" +
+			@"Boolean|String|Void|DateTime)" +
 			@"(\W+|\b)", 
 			new MatchEvaluator (MonoBASIC_NameMatch));
 	}	
@@ -603,7 +607,8 @@ public class TypeManager {
 		Replace ("int64", "long").
 		Replace ("uint64", "ulong").
 		Replace ("single", "float").
-		Replace ("boolean", "bool")
+		Replace ("boolean", "bool").
+		Replace ("datetime", "date")
 		+ match.Groups [2].Captures [0].Value;
 	}
 
@@ -747,6 +752,7 @@ public class TypeManager {
 
 		array_type    = CoreLookupType ("System.Array");
 		void_type     = CoreLookupType ("System.Void");
+		date_type	  = CoreLookupType ("System.DateTime");
 		type_type     = CoreLookupType ("System.Type");
 
 		runtime_field_handle_type = CoreLookupType ("System.RuntimeFieldHandle");
@@ -925,6 +931,10 @@ public class TypeManager {
 		void_decimal_ctor_five_args = GetConstructor (
 			decimal_type, dec_arg);
 		
+		// DateTime constructor
+		Type [] ticks_arg = { int64_type };
+		void_datetime_ctor_ticks_arg = GetConstructor ( date_type, ticks_arg);
+		
 		//
 		// Attributes
 		//
@@ -1071,7 +1081,8 @@ public class TypeManager {
 		if (t == object_type || t == string_type || t == int32_type || t == uint32_type ||
 		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
 		    t == char_type || t == short_type || t == decimal_type || t == bool_type ||
-		    t == sbyte_type || t == byte_type || t == ushort_type || t == void_type)
+		    t == sbyte_type || t == byte_type || t == ushort_type || t == void_type ||
+			t == date_type)
 			return true;
 		else
 			return false;
@@ -1679,6 +1690,8 @@ public class TypeManager {
 			return TypeManager.uint64_type;
 		case TypeCode.String:
 			return TypeManager.string_type;
+		case TypeCode.DateTime:
+			return TypeManager.date_type;
 		default:
 			if (t == typeof (void))
 				return TypeManager.void_type;

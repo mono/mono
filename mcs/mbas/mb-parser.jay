@@ -196,7 +196,7 @@ namespace Mono.MonoBASIC
 %token CSNG
 %token CSTR
 %token CTYPE
-//%token DATE
+%token DATE
 %token DECIMAL	
 %token DECLARE
 %token DEFAULT	
@@ -357,6 +357,7 @@ namespace Mono.MonoBASIC
 %token LITERAL_DECIMAL           "decimal literal"
 %token LITERAL_CHARACTER         "character literal"
 %token LITERAL_STRING            "string literal"
+%token LITERAL_DATE              "datetime literal"
 
 %token IDENTIFIER
 
@@ -3057,9 +3058,10 @@ literal
 	: boolean_literal
 	| integer_literal
 	| real_literal
+	| LITERAL_DATE			{ $$ = new DateLiteral ((DateTime)lexer.Value); }
 	| LITERAL_CHARACTER     { $$ = new CharLiteral ((char) lexer.Value); }
 	| LITERAL_STRING        { $$ = new StringLiteral ((string) lexer.Value); }
-	| NOTHING			{ $$ = NullLiteral.Null; }
+	| NOTHING				{ $$ = NullLiteral.Null; }
 	;
 
 real_literal
@@ -3289,7 +3291,7 @@ cast_operator
 	: CBOOL		{ $$ = TypeManager.system_boolean_expr; 	}
 	| CBYTE		{ $$ = TypeManager.system_byte_expr;	 	}
 	| CCHAR		{ $$ = TypeManager.system_char_expr; 		}
-	| CDATE		{ $$ = TypeManager.system_decimal_expr; 	} //FIXME
+	| CDATE		{ $$ = TypeManager.system_date_expr;	 	}
 	| CDBL		{ $$ = TypeManager.system_double_expr; 		}
 	| CDEC		{ $$ = TypeManager.system_decimal_expr; 	}
 	| CINT		{ $$ = TypeManager.system_int32_expr; 		}
@@ -3567,6 +3569,7 @@ builtin_types
 	| DECIMAL	{ $$ = TypeManager.system_decimal_expr; }
 	| SINGLE	{ $$ = TypeManager.system_single_expr; }
 	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
+	| DATE		{ $$ = TypeManager.system_date_expr; }
 	| integral_type
 	;
 
@@ -4058,7 +4061,7 @@ static bool AlwaysAccept (MemberInfo m, object filterCriteria) {
 
 private void ReportError9998()
 {
-	Report.Error (9998, lexer.Location, "This construct is only available in MonoBASIC extended syntax.");
+	Report.Error (29998, lexer.Location, "This construct is only available in MonoBASIC extended syntax.");
 }
 
 protected override int parse ()
@@ -4092,7 +4095,7 @@ protected override int parse ()
 	} 
 	catch (Exception e)
 	{
-		Report.Error (9999, lexer.Location, lexer.location + "\nParsing error in " + lexer.ref_name + "\n" + e.ToString());
+		Report.Error (29999, lexer.Location, lexer.location + "\nParsing error in " + lexer.ref_name + "\n" + e.ToString());
 	}
 	
 	return Report.Errors;

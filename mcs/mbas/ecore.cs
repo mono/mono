@@ -1040,7 +1040,7 @@ namespace Mono.MonoBASIC {
 		{
 			Type expr_type = expr.Type;
 
-			if (expr_type == TypeManager.void_type)
+			if (expr_type == null || expr_type == TypeManager.void_type)
 				return false;
 			
 			if (expr_type == target_type)

@@ -89,7 +89,7 @@ namespace Mono.MonoBASIC
 		//
 		// Values for the associated token returned
 		//
-		System.Text.StringBuilder number;
+		StringBuilder number;
 		int putback_char;
 		Object val;
 		
@@ -154,7 +154,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("csng", Token.CSNG);
 			keywords.Add ("cstr", Token.CSTR);
 			keywords.Add ("ctype", Token.CTYPE);
-			//keywords.Add ("date", Token.DATE);
+			keywords.Add ("date", Token.DATE);
 			keywords.Add ("decimal", Token.DECIMAL);
 			keywords.Add ("declare", Token.DECLARE);
 			keywords.Add ("default", Token.DEFAULT);
@@ -567,7 +567,7 @@ namespace Mono.MonoBASIC
 
 		long hex_digits ()
 		{
-			System.Text.StringBuilder hexNumber = new System.Text.StringBuilder ();
+			StringBuilder hexNumber = new StringBuilder ();
 			
 			int d;
 
@@ -625,7 +625,7 @@ namespace Mono.MonoBASIC
 		int is_number (int c)
 		{
 			bool is_real = false;
-			number = new System.Text.StringBuilder ();
+			number = new StringBuilder ();
 			int type;
 
 			number.Length = 0;
@@ -770,7 +770,7 @@ namespace Mono.MonoBASIC
 
 		private string GetIdentifier(int c)
 		{
-			System.Text.StringBuilder id = new System.Text.StringBuilder ();
+			StringBuilder id = new StringBuilder ();
 
 			id.Append ((char) c);
 				
@@ -871,47 +871,68 @@ namespace Mono.MonoBASIC
 					return is_number (c);
 				}
 
-				if (c == '#' && !tokens_seen)
+				if (c == '#')
 				{
-					bool cont = true;
-					
-				start_again:
-					
-					cont = handle_preprocessing_directive (cont);
-
-					if (cont)
+					if (!tokens_seen)
 					{
-						col = 0;
-						continue;
-					}
-					col = 1;
-
-					bool skipping = false;
-					for (;(c = getChar ()) != -1; col++)
-					{
-						if (IsEOL(c))
+						bool cont = true;
+						
+					start_again:
+						
+						cont = handle_preprocessing_directive (cont);
+	
+						if (cont)
 						{
 							col = 0;
-							line++;
-							ref_line++;
-							skipping = false;
-						} 
-						else if (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0)
 							continue;
-						else if (c != '#')
+						}
+						col = 1;
+	
+						bool skipping = false;
+						for (;(c = getChar ()) != -1; col++)
 						{
-							skipping = true;
-							continue;
-						}	
-						if (c == '#' && !skipping)
-							goto start_again;
+							if (IsEOL(c))
+							{
+								col = 0;
+								line++;
+								ref_line++;
+								skipping = false;
+							} 
+							else if (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0)
+								continue;
+							else if (c != '#')
+							{
+								skipping = true;
+								continue;
+							}	
+							if (c == '#' && !skipping)
+								goto start_again;
+						}
+						tokens_seen = false;
+						if (c == -1)
+							Report.Error (1027, Location, "#endif/#endregion expected");
+						continue;
+					} else { // date-time literal
+						StringBuilder sb = new StringBuilder();
+						for (;(c = getChar ()) != -1; col++)
+						{
+							if (c == '#')
+							{
+								val = ParseDateLiteral(sb);
+								return Token.LITERAL_DATE;
+							}
+							if (IsEOL(c))
+							{
+								col = 0;
+								line++;
+								ref_line++;
+								break;
+							} 
+							sb.Append((char)c);
+						}
+						return Token.ERROR;
 					}
-					tokens_seen = false;
-					if (c == -1)
-						Report.Error (1027, Location, "#endif/#endregion expected");
-					continue;
 				}
-				
 				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
 					if (doread){
 						getChar ();
@@ -923,7 +944,7 @@ namespace Mono.MonoBASIC
 				
 				// Treat string literals
 				if (is_doublequote(c)){
-					System.Text.StringBuilder s = new System.Text.StringBuilder ();
+					StringBuilder s = new StringBuilder ();
 
 					tokens_seen = true;
 
@@ -981,6 +1002,28 @@ namespace Mono.MonoBASIC
 			return Token.EOF;
 		}
 
+		static IFormatProvider enUSculture = new CultureInfo("en-US", true);
+
+		private DateTime ParseDateLiteral(StringBuilder value)
+		{
+			try
+			{
+	  			return DateTime.Parse(value.ToString(),
+            	           		  	  enUSculture,
+        	                   	  	  DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
+ 			}
+	 		catch (FormatException fe)
+ 			{
+				Report.Error (1, Location, "Invalid date literal");		//TODO: What is the correct error number and message?
+ 			}
+	 		catch (Exception e)
+ 			{
+				Report.Error (1, Location, "Error parsing date literal");	//TODO: What is the correct error number and message?
+ 			}
+			return new DateTime();
+		}
+ 
+
 		public void cleanup ()
 		{
 /* borrowed from mcs - have to work it to have preprocessing in mbas
@@ -1004,7 +1047,7 @@ namespace Mono.MonoBASIC
 			Location.Push (fname);
 		}
 
-		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
+		static StringBuilder static_cmd_arg = new StringBuilder ();
 		
 		void get_cmd_arg (out string cmd, out string arg)
 		{

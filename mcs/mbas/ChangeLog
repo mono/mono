@@ -1,3 +1,8 @@
+2003/12/06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* ecore.cs : problems trying to implicit convert OMITTED arguments, solved
+	* mb-tokenizer.cs, mb-parser.jay, typemanager.cs : support for the date primitive type and date literals
+	* testmbas/WriteOK.vb: testing date type and date literal
+
 2003/11/12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs : /imports option now is implemented
 	* mb-parser.jay: support for pre-imported namespaces (the default Microsoft.VisualBasic and those from /imports)

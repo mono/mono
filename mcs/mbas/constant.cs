@@ -969,4 +969,31 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
+	public class DateConstant : Constant {
+		public readonly DateTime Value;
+
+		public DateConstant (DateTime s)
+		{
+			type = TypeManager.date_type;
+			eclass = ExprClass.Value;
+			Value = s;
+		}
+
+		override public string AsString ()
+		{
+			return "#" + Value.ToString() + "#";
+		}
+
+		public override object GetValue ()
+		{
+			return Value;
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldc_I8, Value.Ticks);
+			ec.ig.Emit (OpCodes.Newobj, TypeManager.void_datetime_ctor_ticks_arg);
+		}
+	}
+
 }

@@ -18,6 +18,8 @@ Module WriteOK
 		
 		dim charLit as char = "?"c
 		
+		dim dateLit as date = #10/23/2003#
+		
         REM Testing old-fashioned comments
         Console.WriteLine("OK!") ' Simple comments
 		WriteOK2.[Sub]()
@@ -29,8 +31,9 @@ Module WriteOK
 			Constants.vbCRLF + "singleLit {3}" + _ 
 			Constants.vbCRLF + "doubleLit {4}" + _ 
 			Constants.vbCRLF + "decimalLit {5}" +  _ 
-			Constants.vbCRLF + "charLit {6}", _ 
-			nodim, octalLit, hexLit, singleLit, doubleLit, decimalLit, charLit)
+			Constants.vbCRLF + "charLit {6}" +  _ 
+			Constants.vbCRLF + "dateLit {7}", _ 
+			nodim, octalLit, hexLit, singleLit, doubleLit, decimalLit, charLit, dateLit)
 		Console.WriteLine(123.ToString("g"))
 		WriteOK5.ModuleSub() ' 122
 		' ModuleSub() ' 103

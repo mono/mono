@@ -196,4 +196,17 @@ namespace Mono.MonoBASIC {
 			return this;
 		}
 	}
+	
+	public class DateLiteral : DateConstant {
+		public DateLiteral (DateTime s) : base (s)
+		{
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = TypeManager.date_type;
+
+			return this;
+		}
+	}
 }
