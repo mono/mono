@@ -37,7 +37,7 @@ class Z {
 				       
 		if (y.B () != 2)
 			return 1;
-		if (y.A != 2)
+		if (y.A != 3)
 			return 2;
 		if (x.A != 1)
 			return 3;
