@@ -91,7 +91,7 @@ namespace System.Reflection.Emit {
 		}
 		public override string AssemblyQualifiedName {
 			get {
-				return fullname + ", " + Assembly.ToString();
+				return fullname + ", " + Assembly.GetName().FullName;
 			}
 		}
 		public override Type BaseType {
@@ -100,15 +100,19 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public override Type DeclaringType {get {return nesting_type;}}
+
+		[MonoTODO]
 		public override Type UnderlyingSystemType {
 			get {
+				// This should return the type itself for non-enum types but 
+				// that breaks mcs.
 				if (fields != null) {
 					foreach (FieldBuilder f in fields) {
 						if ((f.Attributes & FieldAttributes.Static) == 0)
 							return f.FieldType;
 					}
 				}
-				throw new InvalidOperationException (String.Format ("typebuilder: {0}", this));
+				throw new InvalidOperationException ("Underlying type information on enumeration is not specified.");
 			}
 		}
 
@@ -127,7 +131,9 @@ namespace System.Reflection.Emit {
 		}
 	
 		public override Guid GUID {
-			get {return Guid.Empty;}
+			get {
+			    throw not_supported ();
+			}
 		}
 
 		public override Module Module {
@@ -142,6 +148,9 @@ namespace System.Reflection.Emit {
 		public PackingSize PackingSize {
 			get {return packing_size;}
 		}
+		public int Size {
+			get { return class_size; }
+		}
 		public override Type ReflectedType {get {return nesting_type;}}
 		public override MemberTypes MemberType { 
 			get {return MemberTypes.TypeInfo;}
@@ -153,7 +162,17 @@ namespace System.Reflection.Emit {
 		}
 
 		public void AddInterfaceImplementation( Type interfaceType) {
+			if (interfaceType == null)
+				throw new ArgumentNullException ("interfaceType");
+			if (is_created)
+				throw not_after_created ();
+
 			if (interfaces != null) {
+				// Check for duplicates
+				foreach (Type t in interfaces)
+					if (t == interfaceType)
+						return;
+
 				Type[] ifnew = new Type [interfaces.Length + 1];
 				interfaces.CopyTo (ifnew, 0);
 				ifnew [interfaces.Length] = interfaceType;
@@ -170,19 +189,17 @@ namespace System.Reflection.Emit {
 		}
 
 		public override bool IsDefined( Type attributeType, bool inherit) {
-			return false;
+			throw not_supported ();
 		}
 		public override object[] GetCustomAttributes(bool inherit) {
-			return null;
+			throw not_supported ();
 		}
 		public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-			return null;
+			throw not_supported ();
 		}
 
-		[MonoTODO]
 		public TypeBuilder DefineNestedType (string name) {
-			// FIXME: LAMESPEC: what other attributes should we use here as default?
-			return DefineNestedType (name, TypeAttributes.Public, pmodule.assemblyb.corlib_object_type, null);
+			return DefineNestedType (name, TypeAttributes.NestedPrivate, pmodule.assemblyb.corlib_object_type, null);
 		}
 
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr) {
@@ -194,6 +211,18 @@ namespace System.Reflection.Emit {
 		}
 
 		private TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
+			check_name ("name", name);
+			// Visibility must be NestedXXX
+			/* This breaks mcs
+			if (((attrs & TypeAttributes.VisibilityMask) == TypeAttributes.Public) ||
+				((attrs & TypeAttributes.VisibilityMask) == TypeAttributes.NotPublic))
+				throw new ArgumentException ("attr", "Bad type flags for nested type.");
+			*/
+			if (interfaces != null)
+				foreach (Type iface in interfaces)
+					if (iface == null)
+						throw new ArgumentNullException ("interfaces");
+
 			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packsize, typesize);
 			res.nesting_type = this;
 			res.fullname = res.GetFullName ();
@@ -223,6 +252,8 @@ namespace System.Reflection.Emit {
 		}
 
 		public ConstructorBuilder DefineConstructor( MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
+			if (is_created)
+				throw not_after_created ();
 			ConstructorBuilder cb = new ConstructorBuilder (this, attributes, callingConvention, parameterTypes);
 			if (ctors != null) {
 				ConstructorBuilder[] new_ctors = new ConstructorBuilder [ctors.Length+1];
@@ -257,12 +288,30 @@ namespace System.Reflection.Emit {
 		}
 
 		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
+			check_name ("name", name);
+			if (is_created)
+				throw not_after_created ();
+			if (IsInterface && (
+				!((attributes & MethodAttributes.Abstract) != 0) || 
+				!((attributes & MethodAttributes.Virtual) != 0)))
+				throw new ArgumentException ("attributes", "Interface method must be abstract and virtual.");
+
 			MethodBuilder res = new MethodBuilder (this, name, attributes, callingConvention, returnType, parameterTypes);
 			append_method (res);
 			return res;
 		}
 
 		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet) {
+			check_name ("name", name);
+			check_name ("dllName", dllName);
+			check_name ("entryName", entryName);
+			if ((attributes & MethodAttributes.Abstract) != 0)
+				throw new ArgumentException ("attributes", "PInvoke methods must be static and native and cannot be abstract.");
+			if (IsInterface)
+				throw new ArgumentException ("PInvoke methods cannot exist on interfaces.");		
+			if (is_created)
+				throw not_after_created ();
+
 			MethodBuilder res = new MethodBuilder (this, name, attributes, callingConvention, returnType, parameterTypes,
 				dllName, entryName, nativeCallConv, nativeCharSet);
 			append_method (res);
@@ -275,6 +324,13 @@ namespace System.Reflection.Emit {
 		}
 
 		public void DefineMethodOverride( MethodInfo methodInfoBody, MethodInfo methodInfoDeclaration) {
+			if (methodInfoBody == null)
+				throw new ArgumentNullException ("methodInfoBody");
+			if (methodInfoDeclaration == null)
+				throw new ArgumentNullException ("methodInfoDeclaration");
+			if (is_created)
+				throw not_after_created ();
+
 			if (methodInfoBody is MethodBuilder) {
 				MethodBuilder mb = (MethodBuilder)methodInfoBody;
 				mb.set_override (methodInfoDeclaration);
@@ -282,6 +338,12 @@ namespace System.Reflection.Emit {
 		}
 
 		public FieldBuilder DefineField( string fieldName, Type type, FieldAttributes attributes) {
+			check_name ("fieldName", fieldName);
+			if (type == typeof (void))
+				throw new ArgumentException ("type",  "Bad field type in defining field.");
+			if (is_created)
+				throw not_after_created ();
+
 			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes);
 			if (fields != null) {
 				FieldBuilder[] new_fields = new FieldBuilder [fields.Length+1];
@@ -297,6 +359,14 @@ namespace System.Reflection.Emit {
 		}
 
 		public PropertyBuilder DefineProperty( string name, PropertyAttributes attributes, Type returnType, Type[] parameterTypes) {
+			check_name ("name", name);
+			if (parameterTypes != null)
+				foreach (Type param in parameterTypes)
+					if (param == null)
+						throw new ArgumentNullException ("parameterTypes");
+			if (is_created)
+				throw not_after_created ();
+
 			PropertyBuilder res = new PropertyBuilder (this, name, attributes, returnType, parameterTypes);
 
 			if (properties != null) {
@@ -313,6 +383,9 @@ namespace System.Reflection.Emit {
 
 		[MonoTODO]
 		public ConstructorBuilder DefineTypeInitializer() {
+			if (is_created)
+				throw not_after_created ();
+
 			throw new NotImplementedException ();
 		}
 
@@ -321,10 +394,8 @@ namespace System.Reflection.Emit {
 		
 		public Type CreateType() {
 			/* handle nesting_type */
-			if (created != null) {
-				string err="type already created: " + created.ToString();
-				throw new InvalidOperationException (err);
-			}
+			if (is_created)
+				throw not_after_created ();
 			if (methods != null) {
 				foreach (MethodBuilder method in methods) {
 					method.fixup ();
@@ -377,10 +448,15 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		public override Type GetElementType () { return null; }
+		public override Type GetElementType () { 
+			throw not_supported ();
+		}
 
 		[MonoTODO]
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
 			throw new NotImplementedException ();
 		}
 
@@ -390,7 +466,9 @@ namespace System.Reflection.Emit {
 
 		[MonoTODO]
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
-			//FIXME
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
 			throw new NotImplementedException ();
 		}
 
@@ -432,6 +510,9 @@ namespace System.Reflection.Emit {
 
 		[MonoTODO]
 		public override Type GetInterface (string name, bool ignoreCase) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
 			throw new NotImplementedException ();
 		}
 		
@@ -495,7 +576,9 @@ namespace System.Reflection.Emit {
 		
 		[MonoTODO]
 		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
-			// FIXME
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
 			throw new NotImplementedException ();
 		}
 
@@ -572,13 +655,14 @@ namespace System.Reflection.Emit {
 		}
 
 		protected override bool HasElementTypeImpl () {
-			return IsArrayImpl() || IsByRefImpl() || IsPointerImpl ();
+			// According to the MSDN docs, this is supported for TypeBuilders,
+			// but in reality, it is not
+			throw not_supported ();
+			//			return IsArrayImpl() || IsByRefImpl() || IsPointerImpl ();
 		}
 
-		[MonoTODO]
 		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
-			// FIXME
-			throw new NotImplementedException ();
+			throw not_supported ();
 		}
 
 		protected override bool IsArrayImpl () {
@@ -605,9 +689,16 @@ namespace System.Reflection.Emit {
 				this != pmodule.assemblyb.corlib_enum_type);
 		}
 		
-		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }
+		public override RuntimeTypeHandle TypeHandle { 
+			get { 
+				throw not_supported (); 
+			} 
+		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (customBuilder == null)
+				throw new ArgumentNullException ("customBuilder");
+
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.InteropServices.StructLayoutAttribute") {
 				byte[] data = customBuilder.Data;
@@ -692,6 +783,12 @@ namespace System.Reflection.Emit {
 		}
 
 		public EventBuilder DefineEvent( string name, EventAttributes attributes, Type eventtype) {
+			check_name ("name", name);
+			if (eventtype == null)
+				throw new ArgumentNullException ("eventtype");
+			if (is_created)
+				throw not_after_created ();
+
 			EventBuilder res = new EventBuilder (this, name, attributes, eventtype);
 			if (events != null) {
 				EventBuilder[] new_events = new EventBuilder [events.Length+1];
@@ -708,6 +805,14 @@ namespace System.Reflection.Emit {
 		static int InitializedDataCount = 0;
 		
 		public FieldBuilder DefineInitializedData( string name, byte[] data, FieldAttributes attributes) {
+			check_name ("name", name);
+			if (data == null)
+				throw new ArgumentNullException ("data");
+			if ((data.Length == 0) || (data.Length > 0x3f0000))
+				throw new ArgumentException ("data", "Data size must be > 0 and < 0x3f0000");
+			if (is_created)
+				throw not_after_created ();
+
 			TypeBuilder datablobtype = DefineNestedType ("$ArrayType$"+InitializedDataCount.ToString(),
 				TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
 				pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, data.Length);
@@ -722,6 +827,12 @@ namespace System.Reflection.Emit {
 
 		[MonoTODO]
 		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
+			check_name ("name", name);
+			if ((size <= 0) || (size > 0x3f0000))
+				throw new ArgumentException ("data", "Data size must be > 0 and < 0x3f0000");
+			if (is_created)
+				throw not_after_created ();
+
 			throw new NotImplementedException ();
 		}
 
@@ -731,6 +842,11 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public void SetParent (Type parentType) {
+			if (parentType == null)
+				throw new ArgumentNullException ("parentType");
+			if (is_created)
+				throw not_after_created ();
+
 			parent = parentType;
 		}
 		internal int get_next_table_index (object obj, int table, bool inc) {
@@ -749,6 +865,23 @@ namespace System.Reflection.Emit {
 			get {
 				return created != null;
 			}
+		}
+
+		private Exception not_supported () {
+			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
+		}
+
+		private Exception not_after_created () {
+			return new InvalidOperationException ("Unable to change after type has been created.");
+		}
+
+		private void check_name (string argName, string name) {
+			if (name == null)
+				throw new ArgumentNullException (argName);
+			if (name == "")
+				throw new ArgumentException (argName, "Empty name is not legal.");
+			if (name.IndexOf ((char)0) != -1)
+				throw new ArgumentException (argName, "Illegal name.");
 		}
 	}
 }

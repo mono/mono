@@ -1,3 +1,13 @@
+2003-02-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs:
+	- Added basic error checking to all methods according to the MSDN docs.
+	- fixed AssemblyQualifiedName.
+	- implemented 'Size'.
+	- modified a lot of methods to throw NotSupportedException, to comply
+	  with MS.NET.
+	- changes tested by running a full bootstrap.
+
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
 	* AssemblyBuilder.cs (AssemblyBuilder.methods): Removed.  This was
