@@ -1,3 +1,8 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Consts.cs (UnmanageType_80) [BOOTSTRAP_WITH_OLDLIB]: Update to
+	changed name of bootstrap-only constant.
+
 2004-09-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* Locale.cs: Added overload that calls String.Format.

@@ -1,3 +1,9 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* UnmanagedType.cs (mono_bootstrap_NativeTypeMax): Rename from
+	__mono_bootstrap_NativeTypeMax.  CSC doesn't like
+	[CLSCompliant(false)] on enum member.
+
 2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Marshal.cs: Implement GetDelegateForFunctionPointer.
