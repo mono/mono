@@ -79,7 +79,8 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/ilasm/ilasm.exe . || cp $(monobinsdir)/ilasm.exe .
 	-cp $(top_srcdir)/../mcs/tools/cilc/cilc.exe . || cp $(monobinsdir)/cilc.exe .
 	-cp $(top_srcdir)/../mcs/tools/mono-xsd/xsd.exe . || cp $(monobinsdir)/xsd.exe .
-
+	-cp $(top_srcdir)/../mcs/tools/wsdl/wsdl.exe . || cp $(monobinsdir)/wsdl.exe .
+        
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
 		if test ! -s $(srcdir)/$$i; then echo $$i is empty && exit 1; fi	\
