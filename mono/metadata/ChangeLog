@@ -1,3 +1,10 @@
+
+Sat Mar 1 15:32:56 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: export mono_image_load_references ().
+	* class.c: handle function pointers. mono_class_from_name() now
+	supports nested type names directly.
+
 2003-02-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h reflection.c: Encode already created dynamic methods 
