@@ -84,7 +84,7 @@ namespace System.Web.UI {
 			if (controls == null) {
 				controls = new Control [5];
 			} else if (controls.Length < count + 1) {
-				int n = controls.Length == 5 ? 4 : 2;
+				int n = controls.Length == 5 ? 3 : 2;
 				Control [] newControls = new Control [controls.Length * n];
 				Array.Copy (controls, 0, newControls, 0, controls.Length);
 				controls = newControls;
@@ -184,8 +184,11 @@ namespace System.Web.UI {
 
 			version++;
 			Control ctrl = controls [index];
-			Array.Copy (controls, index + 1, controls, index, count - index);
 			count--;
+			if (count - index > 0)
+				Array.Copy (controls, index + 1, controls, index, count - index);
+
+			controls [count] = null;
 			owner.RemovedControl (ctrl);
 		}
 
