@@ -181,7 +181,8 @@ public class UInt32Test : TestCase
 			TestNumber++;
 			AssertEquals(MyString3, MyUInt32_3.ToString());
 		} catch (Exception e) {
-			Fail("TestToString: Failed on TestNumber=" + TestNumber);
+			Fail("TestToString: Failed on TestNumber=" + TestNumber 
+				+ " with exception: " + e.ToString());
 		}
 
 		//test ToString(string format)
