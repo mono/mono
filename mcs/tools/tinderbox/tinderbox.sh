@@ -40,7 +40,7 @@ DELAY_CHECK_BROKEN=5m		# wait while verifying the build is broken
 DELAY_STILL_BROKEN=3m		# wait while waiting for fix
 DELAY_BROKEN=5m				# wait after notification sent
 
-FILTER_LOG="sed -e 's/^in <0x[0-9a-z]*>//' -e 's/:[0-9]*): WARNING \*\*:/): WARNING **/' -e 's/^\[[0-9][0-9]*:[0-9][0-9]*\] - .*//' -e 's/^[0-9][0-9]* - Member cache//' -e 's/^[0-9][0-9]* - Misc counter//' -e 's/: [0-9]* Trace\/breakpoint/ : Trace\/breakpoint/'"
+FILTER_LOG="sed -e 's/^in <0x[0-9a-z]*>//' -e 's/:[0-9]*): WARNING \*\*:/): WARNING **/' -e 's/^\[[0-9][0-9]*:[0-9][0-9]*\] - .*//' -e 's/^[0-9][0-9]* - Member cache//' -e 's/^[0-9][0-9]* - Misc counter//' -e 's/: [0-9]* Trace\/breakpoint/ : Trace\/breakpoint/' -e 's/Needed to allocate blacklisted block at 0x[0-9a-f]*//'"
 
 function fatal ()
 {
