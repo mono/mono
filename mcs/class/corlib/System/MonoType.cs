@@ -476,7 +476,9 @@ namespace System
 
 		public override MemberTypes MemberType {
 			get {
-				return MemberTypes.TypeInfo;
+				MonoTypeInfo info;
+				get_type_info (_impl, out info);
+				return info.nested_in == null? MemberTypes.TypeInfo: MemberTypes.NestedType;
 			}
 		}
 
