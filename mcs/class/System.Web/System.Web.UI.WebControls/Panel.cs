@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Align, TypeDescriptor.GetConverter(typeof(HorizontalAlign)).ConvertToString(HorizontalAlign));
 			}
-			if(Wrap)
+			if(!Wrap)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Nowrap, "nowrap");
 			}
