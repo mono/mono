@@ -1,5 +1,15 @@
 2003-02-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (New.DoResolve): Add a guard against double
+	resolution of an expression.  
+
+	The New DoResolve might be called twice when initializing field
+	expressions (see EmitFieldInitializers, the call to
+	GetInitializerExpression will perform a resolve on the expression,
+	and later the assign will trigger another resolution
+
+	This leads to bugs (#37014)
+
 	* delegate.cs: The signature for EndInvoke should contain any ref
 	or out parameters as well.  We were not doing this in the past. 
 

@@ -4806,9 +4806,20 @@ namespace Mono.CSharp {
 			// instead of Call + Push-temp on value types.
 //			value_target = MyEmptyExpression;
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
+			//
+			// The New DoResolve might be called twice when initializing field
+			// expressions (see EmitFieldInitializers, the call to
+			// GetInitializerExpression will perform a resolve on the expression,
+			// and later the assign will trigger another resolution
+			//
+			// This leads to bugs (#37014)
+			//
+			if (type != null)
+				return this;
+			
 			type = ec.DeclSpace.ResolveType (RequestedType, false, loc);
 			
 			if (type == null)
