@@ -48,8 +48,6 @@ namespace System.Runtime.Remoting.Messaging {
 
 			foreach (SerializationEntry entry in info)
 				InitMethodProperty ((string)entry.Name, entry.Value);
-
-			ResolveMethod ();
 		}
 
 		internal MethodCall (CADMethodCallMessage msg) 
