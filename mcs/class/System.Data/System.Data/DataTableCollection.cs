@@ -44,7 +44,7 @@ namespace System.Data {
 		public DataTable this[string name] {
 			get { 
 				foreach (DataTable dt in list) {
-					if (DataTable.TableName == name)
+					if (dt.TableName == name)
 						return dt;
 				}
 				
@@ -68,7 +68,7 @@ namespace System.Data {
 		public virtual void Add (DataTable table) 
 		{
 			list.Add (table);
-			table.dataSet = dataSet;						
+			table.dataSet = dataSet;
 		}
 
 		public virtual DataTable Add (string name) 
