@@ -1,3 +1,7 @@
+2003-01-08  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: Fixed setting blocking mode to true (fixes bug 36388)
+
 2002-12-11  Juli Mallett  <jmallett@FreeBSD.org>
 
 	* daemon.c, handles-private.h, handles.c, wapi-private.h:
