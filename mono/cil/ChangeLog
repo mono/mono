@@ -1,3 +1,12 @@
+2004-07-30  Duncan Mak  <duncan@ximian.com>
+
+	* cil-opcodes.xml: Added OperandType information to each of the
+	public opcodes with the new "type" attribute. Removed mono_func_*
+	from the opcodes and updated the "o2" attribute for the mono_*
+	opcodes to match the values in the existing opcode.def. Added
+	"mono_save_lmf" and mono_restore_lmf", which were listed in
+	opcode.def, but not in the XML file.
+	
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* opcode.def: Remove CEE_MONO_FUNC and related opcodes, replace them
