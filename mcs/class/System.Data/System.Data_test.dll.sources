@@ -34,3 +34,4 @@ System.Data/DataRelationCollectionTest.cs
 System.Data/DataTableCollectionTest.cs
 System.Data.Common/DataColumnMappingCollectionTest.cs
 System.Data.Common/DataTableMappingCollectionTest.cs
+System.Data.SqlClient/SqlConnectionTest.cs

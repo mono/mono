@@ -1,3 +1,7 @@
+2004-08-19 Gert Driesen <drieseng@users.sourceforge.net>
+	* Added System.Data.SqlClient/SqlConnectionTest.cs to 
+	System.Data_test.dll.sources
+
 2004-07-14 Umadevi S <sumadevi@novell.com>
 	* Added System.Data.SqlTypes/StorageState.cs to System.data.dll.sources
 
