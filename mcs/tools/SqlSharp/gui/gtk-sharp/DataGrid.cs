@@ -53,7 +53,7 @@ namespace Gtk.Controls
 		}
 	}
 
-	public class DataGrid : VBox 
+	public class DataGrid : VBox
 	{
 		private ListStore store = null;
 		private TreeView treeView = null;

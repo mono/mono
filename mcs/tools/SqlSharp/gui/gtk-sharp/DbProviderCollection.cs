@@ -1,14 +1,22 @@
 //
 // DbProviderCollection.cs
 //
+// Author:
+//     Daniel Morgan <danmorg@sc.rr.com>
+//
+// (C)Copyright 2002 by Daniel Morgan
+//
+// To be included with Mono as a SQL query tool licensed under the GPL license.
+//
 
-namespace Mono.Data.SqlSharp.Gui.GtkSharp {
+namespace Mono.Data.SqlSharp.Gui.GtkSharp 
+{
 	using System;
 	using System.Data;
 	using System.Collections;
 
-	public class DbProviderCollection : MarshalByRefObject, IList, ICollection, IEnumerable {
-		
+	public class DbProviderCollection : MarshalByRefObject, IList, ICollection, IEnumerable 
+	{	
 		#region Fields
 
 		ArrayList list = new ArrayList ();
@@ -17,7 +25,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 		#region Constructors
 
-		public DbProviderCollection () {
+		public DbProviderCollection () 
+		{
 		}
 
 		#endregion // Constructors
@@ -25,7 +34,9 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		#region Properties
 
 		public DbProvider this[int index] {
-			get { return (DbProvider) list[index]; }
+			get { 
+				return (DbProvider) list[index]; 
+			}
 		}
 
 		public DbProvider this[string key] {
@@ -52,62 +63,81 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		}
 
 		public int Count {
-			get { return list.Count; }
+			get { 
+				return list.Count; 
+			}
 		}
 
 		public bool IsFixedSize {
-			get { return false; }
+			get { 
+				return false; 
+			}
 		}
 
 		public bool IsReadOnly {
-			get { return true; }
+			get { 
+				return true; 
+			}
 		}
 
 		public bool IsSynchronized {
-			get { return false; }
+			get { 
+				return false; 
+			}
 		}
 
 		public object SyncRoot {
-			get { throw new InvalidOperationException (); }
+			get { 
+				throw new InvalidOperationException (); 
+			}
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		public int Add (object o) {
+		public int Add (object o) 
+		{
 			return list.Add ((DbProvider) o);
 		}
 
-		public void Clear () {
+		public void Clear () 
+		{
 			list.Clear ();
 		}
 
-		public bool Contains (object o) {
+		public bool Contains (object o) 
+		{
 			return list.Contains ((DbProvider) o);
 		}
 
-		public void CopyTo (Array array, int index) {
+		public void CopyTo (Array array, int index) 
+		{
 			list.CopyTo (array, index);
 		}
 
-		public IEnumerator GetEnumerator () {
+		public IEnumerator GetEnumerator () 
+		{
 			return list.GetEnumerator ();
 		}
 
-		public int IndexOf (object o) {
+		public int IndexOf (object o) 
+		{
 			return list.IndexOf ((DbProvider) o);
 		}
 
-		public void Insert (int index, object o) {
+		public void Insert (int index, object o) 
+		{
 			list.Insert (index, (DbProvider) o);
 		}
 
-		public void Remove (object o) {
+		public void Remove (object o) 
+		{
 			list.Remove ((DbProvider) o);
 		}
 
-		public void RemoveAt (int index) {
+		public void RemoveAt (int index) 
+		{
 			list.RemoveAt (index);
 		}
 

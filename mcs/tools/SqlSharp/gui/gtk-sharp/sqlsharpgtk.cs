@@ -1,11 +1,6 @@
 //
-// SqlSharpGtk - SQL# GUI for GTK# - SQL Query and Configuration tool for 
+// SqlSharpGtk - Mono SQL# For GTK# - SQL Query and Configuration tool for 
 //               Mono.Data providers
-//
-//               Based on SQL# CLI (Command Line Interface)
-//               and the ConsoleGtk widget in MonoLOGO (by Rachel Hestilow),
-//               the GnomeDbSqlEditor, GnomeDbBrowser, GnomeDbGrid widgets 
-//               and others in GnomeDb.
 //
 // Author:
 //     Daniel Morgan <danmorg@sc.rr.com>
@@ -15,7 +10,12 @@
 // To be included with Mono as a SQL query tool licensed under the GPL license.
 //
 
-namespace Mono.Data.SqlSharp.Gui.GtkSharp {
+namespace Mono.Data.SqlSharp.Gui.GtkSharp 
+{
+	using Gtk;
+	using GtkSharp;
+	using SqlEditorSharp;
+
 	using System;
 	using System.Collections;
 	using System.Data;
@@ -26,9 +26,6 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System.Drawing;
 	using System.Text;
 	using System.IO;
-	using Gtk;
-	using GtkSharp;
-	using SqlEditorSharp;
 	using System.Reflection;
 	using System.Runtime.Remoting;
 	using System.Diagnostics;
@@ -37,24 +34,44 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 	using Gtk.Controls;
 
-	public enum OutputResults {
+	public enum OutputResults 
+	{
 		TextView,
 		DataGrid
 	}
 
-	public class SqlSharpGtk {
-		// these will be moved once a SqlSharpWindow has been created
+	public enum ExecuteOutputType 
+	{
+		Normal,
+		XmlFile,
+		HtmlFile,
+		CsvFile
+	}
+
+	public class EditorTab 
+	{
+		public SqlEditorSharp editor;
+		public Label label;
+		public string filename;
+		public string basefilename;
+		public int page;
+	}
+
+	public class SqlSharpGtk 
+	{
+		static int SqlWindowCount = 0;
+
 		private IDbConnection conn = null;
 		public DbProvider dbProvider = null;
 		private Type connectionType = null;
 		private Type adapterType = null;
 		public Assembly providerAssembly = null;
-		public string connectionString = "";
+		public string connectionString = "";	
 		
-		private SqlEditorSharp editor;
-		private string filename = "";
 		private Statusbar statusBar;
 		private Toolbar toolbar;
+
+		int lastUnknownFile = 0;
 
 		// OutputResults
 		private VBox outbox;
@@ -73,20 +90,27 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		private OutputResults outputResults;
 
 		public DbProviderCollection providerList;
+		Notebook sourceFileNotebook;
+		Notebook resultsNotebook;
+		ArrayList editorTabs = new ArrayList();
 
-		public SqlSharpGtk () {
+		public SqlSharpGtk () 
+		{
 			CreateGui ();
+			SqlWindowCount ++;
 			LoadProviders ();
 		}
 
-		public void Show () {
+		public void Show () 
+		{
 			win.ShowAll ();
 		}
 
-		public void CreateGui() {
-
+		public void CreateGui() 
+		{
 			win = new Gtk.Window (ApplicationName);
-			win.DeleteEvent += new DeleteEventHandler (OnWindow_Delete);
+			win.DeleteEvent += new 
+				DeleteEventHandler (OnWindow_Delete);
 			win.BorderWidth = 4;
 			win.DefaultSize = new Size (450, 300);
 			
@@ -106,12 +130,16 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			vbox.PackStart (paned, true, true, 0);
 
 			// SQL Editor (top TextView panel)
-			editor = new SqlEditorSharp ();
-			paned.Add1 (editor);
+			sourceFileNotebook = new Notebook();
+			sourceFileNotebook.Scrollable = true;
+			NewEditorTab();
+			paned.Add1 (sourceFileNotebook);
+			sourceFileNotebook.SwitchPage += new 
+				SwitchPageHandler(OnEditorTabSwitched);
 
 			// bottom panel
-			outbox = CreateOutputResultsGui ();
-			paned.Add2 (outbox);
+			resultsNotebook = CreateOutputResultsGui ();
+			paned.Add2 (resultsNotebook);
 
 			statusBar = new Statusbar ();
 			vbox.PackEnd (statusBar, false, false, 0);
@@ -120,65 +148,98 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			ToggleResultsOutput ();
 		}
 
-		// bottom panel
-		VBox CreateOutputResultsGui () {
-			VBox outputVBox = new VBox (false, 4);	
-		
-			// Output Results (bottom TextView)
-			swin = CreateOutputResultsTextView ();
-			outputVBox.Add (swin);
-						
-			// Output Results (bottom DataGrid)
-			grid = CreateOutputResultsDataGrid ();
-						
-			return outputVBox;
+		EditorTab NewEditorTab () 
+		{
+			SqlEditorSharp editor;
+			editor = new SqlEditorSharp ();
+			editor.View.Show ();
+			lastUnknownFile ++;
+			string unknownFile = "Unknown" + 
+				lastUnknownFile.ToString() + ".sql";
+			Label label = new Label(unknownFile);
+			label.Show();
+			sourceFileNotebook.AppendPage(editor, label);
+			sourceFileNotebook.ShowAll ();
+			sourceFileNotebook.ResizeChildren ();
+
+			sourceFileNotebook.CurrentPage = -1;
+			
+			EditorTab tab = new EditorTab();
+			tab.editor = editor;
+			tab.label = label;
+			tab.filename = "";
+			tab.basefilename = unknownFile;
+			tab.page = sourceFileNotebook.CurrentPage;
+			editorTabs.Add(tab);
+			editor.Tab = tab;
+			UpdateTitleBar(tab);
+
+			return tab;
 		}
 
-		DataGrid CreateOutputResultsDataGrid () {
+		// bottom panel
+		Notebook CreateOutputResultsGui () 
+		{
+			Label label;
+			Notebook results = new Notebook();
+			results.TabPos = PositionType.Bottom;
+			
+			grid = CreateOutputResultsDataGrid ();
+			grid.Show();
+			label = new Label("Grid");
+			results.AppendPage(grid, label);	
+
+			swin = CreateOutputResultsTextView ();
+			swin.Show();
+			label = new Label("Log");
+			results.AppendPage(swin, label);
+			
+			sourceFileNotebook.ShowAll ();
+			sourceFileNotebook.ResizeChildren ();
+
+			return results;
+
+		}
+
+		DataGrid CreateOutputResultsDataGrid () 
+		{
 			return new DataGrid ();
 		}
 
-		ScrolledWindow CreateOutputResultsTextView () {
+		ScrolledWindow CreateOutputResultsTextView () 
+		{
 			ScrolledWindow sw;
 			sw = new ScrolledWindow (
 				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0), 
 				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 			sw.HscrollbarPolicy = Gtk.PolicyType.Automatic;
 			sw.VscrollbarPolicy = Gtk.PolicyType.Automatic;
-			sw.ShadowType = Gtk.ShadowType.In;
+			sw.ShadowType = Gtk.ShadowType.In;		
 			
-			// create text tag table for font "courier"
-			// to be applied to the output TextView
-			TextTagTable textTagTable = new TextTagTable ();
-			textTag = new TextTag ("normaltext");
-			textTag.Family = "courier";
-			textTag.Foreground = "black";
-			textTagTable.Add (textTag);
-
-			buf = new TextBuffer (textTagTable);
-			textView = new TextView (buf);
+			textView = new TextView ();
+			buf = textView.Buffer;
 			textView.Editable = false;
+			textView.ModifyFont (Pango.FontDescription.FromString ("courier new"));
 			sw.Add (textView);		
 
 			return sw;
 		}
 
-		Toolbar CreateToolbar () {
+		Toolbar CreateToolbar () 
+		{
 			Toolbar toolbar = new Toolbar ();
+
+			toolbar.ToolbarStyle = ToolbarStyle.Icons;
 
 			toolbar.AppendItem ("Execute", 
 				"Execute SQL Commands.", String.Empty,
 				new Gtk.Image (Stock.Execute, IconSize.SmallToolbar),
 				new Gtk.SignalFunc (OnToolbar_Execute));	
-
-			toolbar.AppendItem ("Output", 
+			
+			toolbar.AppendItem ("DataGrid", 
 				"Toggle Results to DataGrid or TextView", String.Empty,
 				new Gtk.Image (Stock.GoDown, IconSize.SmallToolbar),
 				new Gtk.SignalFunc (OnToolbar_ToggleResultsOutput));	
-
-			toolbar.AppendSpace ();		
-
-			toolbar.ToolbarStyle = ToolbarStyle.BothHoriz;
 
 			return toolbar;
 		}
@@ -186,7 +247,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		// TODO: use the ProviderFactory in Mono.Data 
 		//       to load providers
 		//       instead of what's below
-		public void LoadProviders () {
+		public void LoadProviders () 
+		{
 			providerList = new DbProviderCollection ();
 			
 			providerList.Add (new DbProvider (
@@ -247,15 +309,23 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				false ));
 		}
 		
-		public MenuBar CreateMenuBar () {
-
+		public MenuBar CreateMenuBar () 
+		{
 			MenuBar menuBar = new MenuBar ();
 			Menu menu;
+			Menu submenu;
 			MenuItem item;
 			MenuItem barItem;
+			MenuItem subitem;
 
 			// File menu
 			menu = new Menu ();
+
+			item = new MenuItem ("New SQL# _Window");
+			item.Activated += new EventHandler (OnMenu_FileNewSqlWindow);
+			menu.Append (item);
+
+			menu.Append (new SeparatorMenuItem ());
 
 			item = new MenuItem ("_New");
 			item.Activated += new EventHandler (OnMenu_FileNew);
@@ -271,6 +341,28 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 			item = new MenuItem ("Save _As...");
 			item.Activated += new EventHandler (OnMenu_FileSaveAs);
+			menu.Append (item);
+
+			item = new MenuItem ("Close");
+			item.Activated += new EventHandler (OnMenu_FileClose);
+			menu.Append (item);
+
+			menu.Append (new SeparatorMenuItem ());
+
+			// TODO: submenu Save Output
+			submenu = new Menu ();
+			subitem = new MenuItem ("CSV - Comma Separated Values");
+			//subitem.Activated += new EventHandler (OnMenu_FileSaveOutput_CSV);
+			submenu.Append(subitem);
+			subitem = new MenuItem ("TAB - Tab Separated Values");
+			//subitem.Activated += new EventHandler (OnMenu_FileSaveOutput_TAB);
+			submenu.Append(subitem);
+			subitem = new MenuItem ("XML");
+			//subitem.Activated += new EventHandler (OnMenu_FileSaveOutput_XML);
+			submenu.Append(subitem);
+
+			item = new MenuItem ("Save _Output...");
+			item.Submenu = submenu;
 			menu.Append (item);
 
 			menu.Append (new SeparatorMenuItem ());
@@ -305,6 +397,18 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			item.Activated += new EventHandler (OnMenu_CommandExecute);
 			menu.Append (item);
 
+			item = new MenuItem ("_Execute With Output to XML");
+			item.Activated += new EventHandler (OnMenu_CommandExecuteXML);
+			menu.Append (item);
+
+			item = new MenuItem ("_Execute With Output to CSV");
+			item.Activated += new EventHandler (OnMenu_CommandExecuteCSV);
+			menu.Append (item);
+
+			item = new MenuItem ("_Execute With Output to HTML");
+			item.Activated += new EventHandler (OnMenu_CommandExecuteHTML);
+			menu.Append (item);
+
 			barItem = new MenuItem ("_Command");
 			barItem.Submenu = menu;
 			menuBar.Append (barItem);
@@ -312,47 +416,37 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return menuBar;
 		}
 
-		void AppendText (string text) {
+		void AppendText (string text) 
+		{
 			AppendText (buf, text);
 		}
 
-		// WriteLine() to output text to bottom TextView
-		// for displaying result sets and messages
-		public void AppendText (TextBuffer buffer, string text)	{
-		
+		public void AppendTextWithoutScroll (TextBuffer buffer, string text) 
+		{
 			TextIter iter;
-			int char_count = 0;
-
-			// if text not empty, output text
-			if (!text.Equals ("")) {				
-				char_count = buffer.CharCount;
-				char_count = Math.Max (0, char_count - 1);
-				buffer.GetIterAtOffset (out iter, char_count);
+			text = text.Replace("\0","");
+			buffer.MoveMark(buf.InsertMark, buffer.EndIter);
+			if (text.Equals ("") == false) {				
+				iter = buffer.EndIter;
 				buffer.Insert (iter, text, -1);
 			}
-			// output a new line
-			char_count = buffer.CharCount;
-			char_count = Math.Max (0, char_count - 1);
-			buffer.GetIterAtOffset (out iter, char_count);
+			iter = buffer.EndIter;
 			buffer.Insert (iter, "\n", -1);
+		}
 
-			// format text to "courier" font family
-			TextIter start_iter, end_iter;
-			buffer.GetIterAtOffset (out start_iter, 0);
-			char_count = buffer.CharCount;
-			char_count = Math.Max (0, char_count - 1);
-			buffer.GetIterAtOffset (out end_iter, char_count);
-			buffer.ApplyTagByName ("normaltext", start_iter, end_iter);
-
-			// scroll text into view
-			TextMark mark;
-			mark = buf.InsertMark;
-			textView.ScrollMarkOnscreen (mark);
+		// WriteLine() to output text to bottom TextView
+		// for displaying result sets and logging messages
+		public void AppendText (TextBuffer buffer, string text) 
+		{
+			AppendTextWithoutScroll(buffer,text);
+			while (Application.EventsPending ()) 
+				Application.RunIteration ();
+			textView.ScrollToMark (buf.InsertMark, 0.4, true, 0.0, 1.0);
 		}
 
 		public bool LoadExternalProvider (string strProviderAssembly,
-			string providerConnectionClass) {
-			
+						string providerConnectionClass) 
+		{		
 			try {
 				SqlSharpGtk.DebugWriteLine ("Loading external provider...");
 				providerAssembly = null;
@@ -373,78 +467,86 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return true;
 		}
 
-		static void OnWindow_Delete (object o, DeleteEventArgs args) {
-			Application.Quit ();
-		}
-
-		static void OnExit (Gtk.Object o) {
-			Application.Quit ();
-		}
-
-		void OnMenu_FileNew (object o, EventArgs args) {
-			// TODO: instead of Clearing the editor,
-			//       open a new editor window
-			//       or we could open another editor window
-			//       in a tabbed box
-
-			TextBuffer buf = editor.Buffer;
-			if(buf.Modified == true) {
-				// FIXME: Gtk.MessageDialog not working
-				Console.WriteLine("Gtk.MessageDialog not working.");
-				Console.Out.Flush();
-				string msg = "Editor modified!  Are you sure you want to clear?";
-				MessageDialog msgbox = new MessageDialog (
-					win, 
-					DialogFlags.Modal, 
-					MessageType.Question, 
-					ButtonsType.OkCancel,
-					msg);
-				int response = msgbox.Run();
-				msgbox = null;
-				ResponseType responseType = (ResponseType) response;
-				if(responseType == ResponseType.Ok) {
-					editor.Clear();
-					filename = "";
+		void QuitApplication() 
+		{
+			if(conn != null)
+				if(conn.State == ConnectionState.Open) {
+					Console.WriteLine("Closing connection...");
+					conn.Close();
+					conn = null;
+					Console.WriteLine("Connection closed.");
 				}
+
+			if(grid.DataSource != null) {
+				grid.Clear ();
+				grid.DataSource = null;
+				grid.DataMember = "";
+				grid = null;
+			}
+
+			SqlWindowCount --;
+			if(SqlWindowCount == 0)
+				Application.Quit ();
+			else
+				win.Destroy ();
+		}
+
+		void UpdateTitleBar(EditorTab tab) 
+		{
+			string title = "";
+			if(tab != null) {
+				if(tab.filename.Equals(""))
+					title = tab.label.Text + " - " + ApplicationName;
+				else
+					title = tab.filename + " - " + ApplicationName;
 			}
 			else {
-				editor.Clear();
-				filename = "";
+				title = ApplicationName;
 			}
+			win.Title = title;
 		}
 
-		void OnMenu_FileOpen (object o, EventArgs args) {
-			TextBuffer buf = editor.Buffer;
-			if(buf.Modified == true) {
-				// FIXME: Gtk.MessageDialog not working
-				Console.WriteLine("Gtk.MessageDialog not working.");
-				Console.Out.Flush();
-				string msg = "Editor modified!  Are you sure you want to open?";
-				MessageDialog msgbox = new MessageDialog (
-					win, 
-					DialogFlags.Modal, 
-					MessageType.Question, 
-					ButtonsType.OkCancel,
-					msg);
-				int response = msgbox.Run();
-				msgbox = null;
-				ResponseType responseType = (ResponseType) response;
-				if(responseType == ResponseType.Ok) {
-					FileSelectionDialog openFileDialog = 
-						new FileSelectionDialog ("Open File",
-						new FileSelectionEventHandler (OnOpenFile));
-				}
-			}
-			else {
-				FileSelectionDialog openFileDialog = 
-					new FileSelectionDialog ("Open File",
-					new FileSelectionEventHandler (OnOpenFile));
-			}
+		void OnEditorTabSwitched (object o, SwitchPageArgs args) 
+		{
+			int page = (int) args.PageNum;
+			EditorTab tab = FindEditorTab(page);
+			UpdateTitleBar (tab);
 		}
 
-		void OnOpenFile (object o, FileSelectionEventArgs args) {
+		void OnWindow_Delete (object o, DeleteEventArgs args) 
+		{
+			QuitApplication();
+		}
+
+		void OnExit (Gtk.Object o) 
+		{
+			QuitApplication();
+		}
+
+		void OnMenu_FileNewSqlWindow (object o, EventArgs args) 
+		{
+			SqlSharpGtk sqlSharp = new SqlSharpGtk ();
+			sqlSharp.Show ();
+		}
+
+		void OnMenu_FileNew (object o, EventArgs args) 
+		{
+			NewEditorTab();
+			sourceFileNotebook.CurrentPage = -1;
+		}
+
+		void OnMenu_FileOpen (object o, EventArgs args) 
+		{
+			FileSelectionDialog openFileDialog = 
+				new FileSelectionDialog ("Open File",
+				new FileSelectionEventHandler (OnOpenFile));
+		}
+
+		void OnOpenFile (object o, FileSelectionEventArgs args) 
+		{
+			EditorTab etab = NewEditorTab();
 			try {
-				editor.LoadFromFile (args.Filename);
+				etab.editor.LoadFromFile (args.Filename);
 			}
 			catch(Exception openFileException) {
 				Error("Error: Could not open file: \n" + 
@@ -453,24 +555,50 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 					openFileException.Message);
 				return;
 			}
-			filename = args.Filename;
-			TextBuffer buf = editor.Buffer;
+			TextBuffer buf = etab.editor.Buffer;
 			buf.Modified = false;
+			string basefile = Path.GetFileName (args.Filename);
+			etab.label.Text = basefile;
+			etab.basefilename = basefile;
+			etab.filename = args.Filename;
+			sourceFileNotebook.CurrentPage = -1;
+			UpdateTitleBar(etab);
 		}
 
-		void OnMenu_FileSave (object o, EventArgs args) {
-			if(filename.Equals(""))
+		EditorTab FindEditorTab (int searchPage) 
+		{
+			EditorTab tab = null;
+			for (int t = 0; t < editorTabs.Count; t++) {
+				tab = (EditorTab) editorTabs[t];
+				if (tab.page == searchPage)
+					return tab;
+			}
+			return tab;
+		}
+
+		void OnMenu_FileSave (object o, EventArgs args) 
+		{
+			int page = sourceFileNotebook.CurrentPage;
+			EditorTab tab = FindEditorTab(page);
+
+			if(tab.filename.Equals(""))
 				SaveAs();
-			else
-				SaveFile(filename);
+			else {
+				SaveFile(tab.filename);
+				tab.label.Text = tab.basefilename;
+			}
 		}
 
-		void SaveFile (string filename) {
+		void SaveFile (string filename) 
+		{
+			int page = sourceFileNotebook.CurrentPage;
+			EditorTab etab = FindEditorTab(page);
+
 			try {
 				// FIXME: if file exists, ask if you want to 
 				//        overwrite.   currently, it overwrites
 				//        without asking.
-				editor.SaveToFile (filename);
+				etab.editor.SaveToFile (filename);
 			} catch(Exception saveFileException) {
 				Error("Error: Could not open file: \n" + 
 					filename + 
@@ -478,37 +606,91 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 					saveFileException.Message);
 				return;
 			}
-			TextBuffer buf = editor.Buffer;
+			TextBuffer buf = etab.editor.Buffer;
 			buf.Modified = false;
 		}
 
-		void OnMenu_FileSaveAs (object o, EventArgs args) {
+		void OnMenu_FileSaveAs (object o, EventArgs args) 
+		{
 			SaveAs();
 		}
 
-		void SaveAs() {
+		void SaveAs() 
+		{
 			FileSelectionDialog openFileDialog = 
 				new FileSelectionDialog ("File Save As",
 				new FileSelectionEventHandler (OnSaveAsFile));
 		}
 
-		void OnSaveAsFile (object o, FileSelectionEventArgs args) {
-			Console.WriteLine("Save As File: " + args.Filename);
+		void OnSaveAsFile (object o, FileSelectionEventArgs args) 
+		{
+			int page = sourceFileNotebook.CurrentPage;
+			EditorTab etab = FindEditorTab(page);
+
 			SaveFile(args.Filename);
-			filename = args.Filename;
+
+			string basefile = Path.GetFileName (args.Filename);
+			etab.label.Text = basefile;
+			etab.basefilename = basefile;
+			etab.filename = args.Filename;
+			UpdateTitleBar(etab);
 		}
 
-		void OnMenu_FileExit (object o, EventArgs args) {
-			Application.Quit ();
+		void OnMenu_FileClose (object o, EventArgs args) 
+		{
+			CloseEditor();
 		}
 
-		void OnMenu_SessionConnect (object o, EventArgs args) {
-			
+		void OnCloseEditor (object obj, EventArgs args) 
+		{
+			CloseEditor();
+		}
+
+		void CloseEditor () 
+		{
+			int page = sourceFileNotebook.CurrentPage;
+			SqlEditorSharp sqlEditor;
+			sqlEditor = (SqlEditorSharp) sourceFileNotebook.GetNthPage(page);
+			TextBuffer buffer = sqlEditor.Buffer;
+			if(buffer.Modified) {
+				// TODO: if text modified, 
+				// ask if user wants to save
+				// before closing.
+				// use MessageDialog to prompt
+				RemoveEditorTab (sqlEditor.Tab, page);
+			}
+			else {
+				RemoveEditorTab (sqlEditor.Tab, page);
+			}
+			sqlEditor = null;
+			buffer = null;
+		}
+
+		void RemoveEditorTab (EditorTab tab, int page) 
+		{
+			tab.editor.Clear();
+			tab.editor.Tab = null;
+			tab.editor = null;
+			tab.label = null;
+			editorTabs.Remove(tab);
+			sourceFileNotebook.RemovePage (page);
+			sourceFileNotebook.QueueDraw();
+			tab = null;
+		}
+
+		void OnMenu_FileExit (object o, EventArgs args) 
+		{
+			QuitApplication ();
+		}
+
+		void OnMenu_SessionConnect (object o, EventArgs args) 
+		{	
 			LoginDialog login = new LoginDialog (this);
 			login = null;
 		}
 
-		void OnMenu_SessionDisconnect (object o, EventArgs args) {
+		void OnMenu_SessionDisconnect (object o, EventArgs args) 
+		{
 			AppendText(buf, "Disconnecting...");
 			try {
 				conn.Close ();
@@ -523,35 +705,38 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			AppendText (buf, "Disconnected.");
 		}
 
-		void OnToolbar_ToggleResultsOutput () {
+		void OnToolbar_ToggleResultsOutput () 
+		{
 			ToggleResultsOutput ();
 		}
 
-		void ToggleResultsOutput () {
+		void ToggleResultsOutput () 
+		{
 			if (outputResults == OutputResults.TextView) {
 				outputResults = OutputResults.DataGrid;
-				outbox.Remove (swin);		
-				outbox.Add (grid);
 			}
 			else if (outputResults == OutputResults.DataGrid) {
 				outputResults = OutputResults.TextView;
-				outbox.Remove (grid);
-				outbox.Add (swin);
 			}
-			outbox.ShowAll ();
-			outbox.ResizeChildren ();
 		}
 
-		public void OnToolbar_Execute () {
-			ExecuteSQL ();
+		public void OnToolbar_Execute () 
+		{
+			ExecuteSQL (ExecuteOutputType.Normal, "");
 		}
 
 		// Execute SQL Commands
-		void ExecuteSQL () {
+		void ExecuteSQL (ExecuteOutputType outputType, string filename) 
+		{		
 			if (conn == null) {
 				AppendText (buf, "Error: Not Connected.");
 				return;
 			}
+
+			DataTable schemaTable = null;
+
+			int page = sourceFileNotebook.CurrentPage;
+			EditorTab tab = FindEditorTab(page);
 
 			string msg = "";
 			string sql = "";	
@@ -571,14 +756,12 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			SqlSharpGtk.DebugWriteLine ("get text from SQL editor...");
 
 			// get text from SQL editor
-			try {
-				int char_count = 0;
+			try {				
 				TextIter start_iter, end_iter;
 				TextBuffer exeBuff;
-				exeBuff = editor.Buffer;
-				exeBuff.GetIterAtOffset(out start_iter, 0);
-				char_count = exeBuff.CharCount;
-				exeBuff.GetIterAtOffset(out end_iter, char_count);
+				exeBuff = tab.editor.Buffer;
+				start_iter = exeBuff.StartIter;
+				end_iter = exeBuff.EndIter;
 				sql = exeBuff.GetText(start_iter, end_iter, false);
 			}
 			catch (Exception et) {
@@ -599,7 +782,11 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			IDataReader reader = null;
 			SqlSharpGtk.DebugWriteLine ("Executing SQL: " + sql);
 			
-			if (outputResults == OutputResults.TextView) {
+			if ((outputResults == OutputResults.TextView && 
+				outputType == ExecuteOutputType.Normal) ||
+				outputType == ExecuteOutputType.HtmlFile ||
+				outputType == ExecuteOutputType.CsvFile) {
+
 				try {
 					reader = cmd.ExecuteReader ();
 				}
@@ -616,32 +803,228 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			}
 
 			try {
-				if (outputResults == OutputResults.TextView) {
+				if (outputResults == OutputResults.TextView && 
+					outputType == ExecuteOutputType.Normal) {
+
 					DisplayData (reader);
+					// clean up
 					reader.Close ();
+					reader.Dispose ();
+					reader = null;
 				}
-				else if(outputResults == OutputResults.DataGrid) {
+				else if(outputType == ExecuteOutputType.HtmlFile) {
+					schemaTable = reader.GetSchemaTable();
+					if(schemaTable != null && reader.FieldCount > 0) {
+						OutputDataToHtmlFile(reader, schemaTable, filename);
+					}
+					else {
+						AppendText("Command executed.");
+					}
+					// clean up
+					reader.Close ();
+					reader.Dispose ();
+					reader = null;
+				}
+				else if(outputType == ExecuteOutputType.CsvFile) {
+					schemaTable = reader.GetSchemaTable();
+					if(schemaTable != null && reader.FieldCount > 0) {
+						OutputDataToCsvFile(reader, schemaTable, filename);
+					}
+					else {
+						AppendText("Command executed.");
+					}
+					// clean up
+					reader.Close ();
+					reader.Dispose ();
+					reader = null;
+				}
+				else {
 					DataTable dataTable = LoadDataTable (cmd);
-					AppendText("set DataGrid.DataSource to DataTable...");
-					grid.DataSource = dataTable;
-					AppendText("DataBind...");
-					grid.DataBind ();
+					switch(outputType) {
+					case ExecuteOutputType.Normal:
+						AppendText("set DataGrid.DataSource to DataTable...");
+						grid.DataSource = dataTable;
+						AppendText("DataBind...");
+						grid.DataBind ();
+						AppendText("Clean up...");
+						// clean up
+						grid.DataSource = null;
+						break;
+					case ExecuteOutputType.XmlFile:
+						AppendText("Create DataSet...");
+						DataSet dataSet = new DataSet();
+						AppendText("Add DataTable to DataSet's DataTableCollection...");
+						dataSet.Tables.Add(dataTable);
+						AppendText("Write DataSet to XML file: " + 
+							filename);
+						dataSet.WriteXml(filename);
+						AppendText("Clean up...");
+						dataSet = null;
+						break;
+					}
+					// clean up
+					dataTable.Clear();
+					dataTable.Dispose();
+					dataTable = null;
 					AppendText("Done.");
+					cmd.Dispose();
+					cmd = null;
 				}
-				cmd = null;
-			} 
+			}
 			catch (Exception e) {
 				msg = "Error Displaying Data: " + e.Message;
 				Error (msg);
 			}
 		}
 
-		void OnMenu_CommandExecute (object o, EventArgs args) {
-			ExecuteSQL ();
+		public void OutputDataToHtmlFile(IDataReader rdr, DataTable dt, string file) 
+		{     		
+			AppendText("Outputting results to HTML file " + file + "...");
+			StreamWriter outputFilestream = null;
+			try {
+				outputFilestream = new StreamWriter(file);
+			}
+			catch(Exception e) {
+				Error("Error: Unable to setup output results file. " + 
+					e.Message);
+				return;
+			}
+
+			StringBuilder strHtml = new StringBuilder();
+
+			strHtml.Append("<html>\n<head><title>");
+			strHtml.Append("Results");
+			strHtml.Append("</title></head>\n");
+			strHtml.Append("<body>\n");
+			strHtml.Append("<h1>Results</h1>\n");
+			strHtml.Append("\t<table border=1>\n");
+		
+			outputFilestream.WriteLine(strHtml.ToString());
+
+			strHtml = null;
+			strHtml = new StringBuilder();
+
+			strHtml.Append("\t\t<tr>\n");
+			for (int c = 0; c < rdr.FieldCount; c++) {
+				strHtml.Append("\t\t\t<td><b>");
+				string sColumnName = rdr.GetName(c);
+				strHtml.Append(sColumnName);
+				strHtml.Append("</b></td>\n");
+			}
+			strHtml.Append("\t\t</tr>\n");
+			outputFilestream.WriteLine(strHtml.ToString());
+			strHtml = null;
+
+			int col = 0;
+			string dataValue = "";
+			
+			while(rdr.Read()) {
+				strHtml = new StringBuilder();
+
+				strHtml.Append("\t\t<tr>\n");
+				for(col = 0; col < rdr.FieldCount; col++) {
+						
+					// column data
+					if(rdr.IsDBNull(col) == true)
+						dataValue = "NULL";
+					else {
+						object obj = rdr.GetValue(col);
+						dataValue = obj.ToString();
+					}
+					strHtml.Append("\t\t\t<td>");
+					strHtml.Append(dataValue);
+					strHtml.Append("</td>\n");
+				}
+				strHtml.Append("\t\t</tr>\n");
+				outputFilestream.WriteLine(strHtml.ToString());
+				strHtml = null;
+			}
+			outputFilestream.WriteLine("\t</table>\n</body>\n</html>\n");
+			strHtml = null;
+			outputFilestream.Close();
+			outputFilestream = null;
+			AppendText("Outputting file done.");
 		}
 
-		public void DisplayResult (IDataReader reader, DataTable schemaTable) {
+		public void OutputDataToCsvFile(IDataReader rdr, DataTable dt, string file) 
+		{     		
+			AppendText("Outputting results to CSV file " + file + "...");
+			StreamWriter outputFilestream = null;
+			try {
+				outputFilestream = new StreamWriter(file);
+			}
+			catch(Exception e) {
+				Error("Error: Unable to setup output results file. " + 
+					e.Message);
+				return;
+			}
 
+			StringBuilder strCsv = null;
+
+			int col = 0;
+			string dataValue = "";
+			
+			while(rdr.Read()) {
+				strCsv = new StringBuilder();
+				
+				for(col = 0; col < rdr.FieldCount; col++) {
+					if(col > 0)
+						strCsv.Append(",");
+
+					// column data
+					if(rdr.IsDBNull(col) == true)
+						dataValue = "\"\"";
+					else {
+						object obj = rdr.GetValue(col);
+						dataValue = "\"" + obj.ToString() + "\"";
+					}
+					strCsv.Append(dataValue);
+				}
+				outputFilestream.WriteLine(strCsv.ToString());
+				strCsv = null;
+			}
+			strCsv = null;
+			outputFilestream.Close();
+			outputFilestream = null;
+			AppendText("Outputting file done.");
+		}
+
+		void OnMenu_CommandExecute (object o, EventArgs args) 
+		{
+			ExecuteSQL (ExecuteOutputType.Normal, "");
+		}
+
+		void OnMenu_CommandExecuteXML (object o, EventArgs args) 
+		{
+			ExecuteAndSaveResultsToFile (ExecuteOutputType.XmlFile);
+		}
+
+		void OnMenu_CommandExecuteCSV (object o, EventArgs args) 
+		{
+			ExecuteAndSaveResultsToFile (ExecuteOutputType.CsvFile);
+		}
+
+		void OnMenu_CommandExecuteHTML (object o, EventArgs args) 
+		{
+			ExecuteAndSaveResultsToFile (ExecuteOutputType.HtmlFile);
+		}
+
+		ExecuteOutputType outType;
+		void ExecuteAndSaveResultsToFile(ExecuteOutputType oType) 
+		{
+			outType = oType;
+			FileSelectionDialog openFileDialog = 
+				new FileSelectionDialog ("Results File Save As",
+				new FileSelectionEventHandler (OnSaveExeOutFile));
+		}
+
+		void OnSaveExeOutFile (object o, FileSelectionEventArgs args) 
+		{
+			ExecuteSQL (outType, args.Filename);
+		}
+
+		public void DisplayResult (IDataReader reader, DataTable schemaTable) 
+		{
 			const string zero = "0";
 			StringBuilder column = null;
 			StringBuilder line = null;
@@ -699,11 +1082,6 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 						columnSize = 5;
 						break;
 					}
-
-					//if(provider.Equals("POSTGRESQL") ||
-					//	provider.Equals("MYSQL"))
-					//if(dataTypeName.Equals("text"))				
-					//	columnSize = 32; // text will be truncated to 32
 
 					hdrLen = Math.Max (columnHeader.Length, columnSize);
 
@@ -770,11 +1148,6 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 							columnSize = 5;
 							break;
 						}
-
-						//if(provider.Equals("POSTGRESQL") ||
-						//	provider.Equals("MYSQL"))
-						//if(dataTypeName.Equals("text"))				
-						//	columnSize = 32; // text will be truncated to 32
 
 						columnSize = Math.Max(colhdr.Length, columnSize);
 
@@ -857,30 +1230,26 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 						}
 						columnSize = Math.Max (columnSize, dataLen);
 					
-						// spacing
-						spacingChar = ' ';										
-						if(columnSize < colhdr.Length) {
-							spacing = colhdr.Length - columnSize;
-							column.Append(spacingChar, spacing);
-						}
 						if(dataLen < columnSize) {
-							spacing = columnSize - dataLen;
-							column.Append(spacingChar, spacing);
 							switch(dataType) {
+							case "System.Byte":
+							case "System.SByte":
 							case "System.Int16":
+							case "System.UInt16":
 							case "System.Int32":
+							case "System.UInt32":
 							case "System.Int64":
+							case "System.UInt64":
 							case "System.Single":
 							case "System.Double":
 							case "System.Decimal":
-								outData = column.ToString() + 
-									dataValue;
+								outData = dataValue.PadLeft(columnSize);
 								break;
 							default:
-								outData = dataValue + 
-									column.ToString();
+								outData = dataValue.PadRight(columnSize);
 								break;
 							}
+							outData = outData + " ";
 						}
 						else
 							outData = dataValue;
@@ -899,10 +1268,11 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			}
 		
 			OutputLine ("\nRows retrieved: " + numRows.ToString());
+			AppendText("");
 		}
 
-		public void DisplayData(IDataReader reader) {
-
+		public void DisplayData(IDataReader reader) 
+		{
 			bool another = false;
 			DataTable schemaTable = null;
 			int ResultSet = 0;
@@ -910,7 +1280,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			OutputLine ("Display any result sets...");
 			
 			do {
-				// by Default, SqlDataReader has the 
+				// by Default, data reader has the 
 				// first Result set if any
 
 				ResultSet++;
@@ -966,13 +1336,15 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 		// used for outputting message, but if silent is set,
 		// don't display
-		public void OutputLine(string line) {
+		public void OutputLine(string line) 
+		{
 			//if(silent == false)
 			OutputData(line);
 		}
 
 		// used for outputting the header columns of a result
-		public void OutputHeader(string line) {
+		public void OutputHeader(string line) 
+		{
 			//if(showHeader == true)
 			OutputData(line);
 		}
@@ -980,21 +1352,24 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		// OutputData() - used for outputting data
 		//  if an output filename is set, then the data will
 		//  go to a file; otherwise, it will go to the Console.
-		public void OutputData(string line) {
+		public void OutputData(string line) 
+		{
 			//if(outputFilestream == null)
 			//	Console.WriteLine(line);
 			//else
 			//	outputFilestream.WriteLine(line);
-			AppendText(buf,line);
+			AppendTextWithoutScroll(buf,line);
 		}
 
-		public void Error(string message) {
+		public void Error(string message) 
+		{
 			Console.WriteLine(message);
 			Console.Out.Flush();
 			AppendText(buf, message);
 		}
 
-		bool OpenInternalProvider () {
+		bool OpenInternalProvider () 
+		{
 			string msg;
 
 			string providerKey = dbProvider.Key;
@@ -1040,7 +1415,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return true;
 		}
 
-		bool OpenExternalProvider() {
+		bool OpenExternalProvider() 
+		{
 			bool success = false;
 			string msg;
 
@@ -1059,9 +1435,10 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return success;
 		}
 
-		public System.Object CreateDbDataAdapter (IDbCommand cmd) {
+		public DbDataAdapter CreateDbDataAdapter (IDbCommand cmd) 
+		{
 			string msg = "";
-			System.Object dbAdapter = null;
+			DbDataAdapter dbAdapter = null;
 			if (dbProvider.InternalProvider == true) {
 				dbAdapter = CreateInternalDataAdapter (cmd);
 			}
@@ -1071,10 +1448,10 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return dbAdapter;
 		}
 
-		public System.Object CreateInternalDataAdapter (IDbCommand cmd) 
+		public DbDataAdapter CreateInternalDataAdapter (IDbCommand cmd) 
 		{		
 			string msg = "";
-			System.Object dbAdapter = null;
+			DbDataAdapter dbAdapter = null;
 			string providerKey = dbProvider.Key;
 			switch (providerKey.ToUpper ()) {
 			case "SQLCLIENT":
@@ -1115,7 +1492,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return dbAdapter;
 		}
 
-		public System.Object CreateExternalDataAdapter (string adapterClass, IDbCommand cmd) {
+		public DbDataAdapter CreateExternalDataAdapter (string adapterClass, IDbCommand cmd) 
+		{
 			adapterType = providerAssembly.GetType (adapterClass);
 			System.Object ad = Activator.CreateInstance (adapterType);
 
@@ -1123,18 +1501,13 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			PropertyInfo prop = adapterType.GetProperty("SelectCommand");
 			prop.SetValue (ad, cmd, null);
 
-			return ad;
+			return (DbDataAdapter) ad;
 		}
 
-		public DataTable LoadDataTable (IDbCommand dbcmd) {
+		public DataTable LoadDataTable (IDbCommand dbcmd) 
+		{
 			AppendText("Create DbDataAdapter...");
-			System.Object ack = CreateDbDataAdapter (dbcmd);
-			
-			DbDataAdapter adapter;
-			adapter = (DbDataAdapter) ack;
-			
-			IDbDataAdapter a;
-			a = (IDbDataAdapter) ack;		
+			DbDataAdapter adapter = CreateDbDataAdapter (dbcmd);
 
 			AppendText("Create DataTable...");
 			DataTable dataTable = new DataTable ();
@@ -1142,11 +1515,15 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			AppendText("Fill data into DataTable via DbDataAdapter...");
 			adapter.Fill (dataTable);
 
+			adapter.Dispose();
+			adapter = null;
+
 			AppendText("Return DataTable...");
 			return dataTable;
 		}
 
-		public bool OpenDataSource () {
+		public bool OpenDataSource () 
+		{
 			string msg;
 			bool gotClass = false;
 			
@@ -1192,14 +1569,16 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return true;
 		}
 
-		public static void DebugWriteLine (string text) {
+		public static void DebugWriteLine (string text) 
+		{
 #if DEBUG
 			Console.WriteLine (text);
 			Console.Out.Flush ();
 #endif // DEBUG
 		}
 
-		public static int Main (string[] args) {		
+		public static int Main (string[] args) 
+		{		
 			Application.Init ();
 			SqlSharpGtk sqlSharp = new SqlSharpGtk ();
 			sqlSharp.Show ();			

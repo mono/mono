@@ -12,10 +12,9 @@
 // SqlEditorSharp falls under the GPL license and is included
 // in SQL# For GTK#.  SQL# For GTK# is a database query tool for Mono.
 //
-//#define DEBUG
 
-namespace SqlEditorSharp {
-
+namespace SqlEditorSharp 
+{
 	using System;
 	using Gtk;
 	using Gdk;
@@ -30,8 +29,8 @@ namespace SqlEditorSharp {
 	/// <summary> SqlEditor Class</summary>
 	/// <remarks>
 	/// </remarks>
-	public class SqlEditorSharp : Gtk.VBox {
-
+	public class SqlEditorSharp : Gtk.VBox 
+	{
 		// Fields
 
 		// text tags for TextTagTable in TextBuffer
@@ -54,11 +53,12 @@ namespace SqlEditorSharp {
 		private ScrolledWindow scroll;
 		private TextView sqlTextView;
 		private TextBuffer sqlTextBuffer;
+		private EditorTab tab = null;
 
 		// Constructors
 
-		public SqlEditorSharp() : base(false, 4) {
-			 
+		public SqlEditorSharp() : base(false, 4) 
+		{		 
 			scroll = new ScrolledWindow (
 				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0), 
 				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
@@ -144,9 +144,23 @@ namespace SqlEditorSharp {
 			}
 		}
 
+		public EditorTab Tab {
+			get {
+				return tab;
+			}
+			set {
+				tab = value;
+			}
+
+		}
+
 		// Private Methods
 
-		void OnTextChanged (object o, EventArgs args) {
+		void OnTextChanged (object o, EventArgs args) 
+		{
+			if(tab != null)
+				tab.label.Text = tab.basefilename + " *";
+
 			SqlSharpGtk.DebugWriteLine ("[[[[[ Syntax Hi-Light Text BEGIN ]]]]]");
 
 			if (use_hi_lighting == true)
@@ -155,8 +169,8 @@ namespace SqlEditorSharp {
 			SqlSharpGtk.DebugWriteLine ("[[[[[ Syntax Hi-Light Text END   ]]]]]\n");
 		}
 
-		void SyntaxHiLightText () {
-			
+		void SyntaxHiLightText () 
+		{
 			TextIter start_iter, end_iter, 
 				iter, insert_iter;
 			TextIter match_start1, match_end1, 
@@ -379,10 +393,10 @@ namespace SqlEditorSharp {
 		}
 
 		void LookForSingleQuotesAndWords (ref TextIter start_iter, 
-			string text, int char_count,
-			ref int start_word, ref int single_quotes, 
-			ref int start_con, ref int end_con) {
-
+					string text, int char_count,
+					ref int start_word, ref int single_quotes, 
+					ref int start_con, ref int end_con) 
+		{
 			TextIter match_start1, match_end1;
 			int i;
 			char ch;
@@ -483,8 +497,8 @@ namespace SqlEditorSharp {
 		}
 
 		void ApplyTag ( TextTag apply_tag, TextTag remove_tag,
-			TextIter start_iter, TextIter end_iter ) {
-
+				TextIter start_iter, TextIter end_iter ) 
+		{
 #if DEBUG
 			DebugText(start_iter, end_iter, "ApplyTag() " + 
 				"remove: " + remove_tag.Name + 
@@ -500,12 +514,11 @@ namespace SqlEditorSharp {
 				start_iter, end_iter);
 		}
 
-		void ApplyTagOffsets (
-
-			TextIter start_iter, 
-			int start_offset, int end_offset, 
-			TextTag apply_tag,
-			TextTag remove_tag ) {
+		void ApplyTagOffsets (TextIter start_iter, 
+				int start_offset, int end_offset, 
+				TextTag apply_tag,
+				TextTag remove_tag) 
+		{
 			TextIter begin_iter, end_iter;
 	
 			begin_iter = start_iter;
@@ -530,7 +543,8 @@ namespace SqlEditorSharp {
 		}
 
 		/* is word a SQL keyword? */
-		bool IsTextSQL (string text, int begin, int end) {
+		bool IsTextSQL (string text, int begin, int end) 
+		{
 			string keyword = "";
 
 			int i;
@@ -588,7 +602,8 @@ namespace SqlEditorSharp {
 		// does the character at offset in the GtkTextIter has
 		// this text tag applied?
 		bool CharHasTag(TextIter iter, 
-			TextTag tag, int char_offset_in_line) {
+				TextTag tag, int char_offset_in_line) 
+		{
 
 			TextIter offset_iter;
 
@@ -598,14 +613,16 @@ namespace SqlEditorSharp {
 			return offset_iter.HasTag (tag);
 		}
 
-		public void Clear() {
+		public void Clear() 
+		{
 			TextIter start, end;
 			start = sqlTextBuffer.StartIter;
 			end = sqlTextBuffer.EndIter;
 			sqlTextBuffer.Delete(start,end);
 		}
 
-		public void LoadFromFile(string inFilename) {
+		public void LoadFromFile(string inFilename) 
+		{
 			StreamReader sr = new StreamReader(inFilename);
 			Clear();
 			string NextLine;
@@ -619,7 +636,8 @@ namespace SqlEditorSharp {
 			sr.Close();
 		}
 
-		public void SaveToFile(string outFilename) {
+		public void SaveToFile(string outFilename) 
+		{
 			TextIter start_iter, iter;
 			string text;
 			StreamWriter sw = null;
@@ -639,7 +657,8 @@ namespace SqlEditorSharp {
 		}
 
 		void DebugText (TextIter iter_start, TextIter iter_end,
-			string debugMessage) {
+				string debugMessage) 
+		{
 
 #if DEBUG
 			string text = sqlTextBuffer.GetText (

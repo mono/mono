@@ -1,3 +1,25 @@
+2002-12-30  Daniel Morgan <danmorg@sc.rr.com>
+
+	* LoginDialog.cs
+	* DbProviderCollection.cs
+	* DbProvider.cs
+	* DataGrid.cs: save as Unix (LF) and format based on
+	Mono style
+	
+	* SqlEditorSharp.cs: SQL editor will be used in a
+	notebook, keep track of that tab.  Also, when text changed,
+	update the notebook tab to indicate text changed.  Save as
+	Unix (LF) and monostyle format
+	
+	* sqlsharpgtk.cs: add a notebook where each tab represents a SQL editor where
+	the selected tab could be opend or saved to a file or execute against the
+	database.  The full filename of the selected editor tab is displayed in the title
+	bar.  The tab gets an asterisk if the user changes the text in that text buffer.
+	Add a second notebook for the results to be a DataGrid or a TextView
+	to log messages.  Add new menu items for execute and saving to 
+	a HTML, XML, and CSV (Comma Separated Values) files.  Menu item New brings up a new
+	editor tab.  Add menu item New SQL# Window to open a new SQL# window. 
+
 2002-12-12  Daniel Morgan <danmorg@sc.rr.com>
 
 	* makefile.gnu

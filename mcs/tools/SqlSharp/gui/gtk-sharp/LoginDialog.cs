@@ -7,9 +7,9 @@
 //
 // To be included with Mono as a SQL query tool licensed under the GPL license.
 //
-//#define DEBUG
 
-namespace Mono.Data.SqlSharp.Gui.GtkSharp {
+namespace Mono.Data.SqlSharp.Gui.GtkSharp 
+{
 	using System;
 	using System.Collections;
 	using System.Data;
@@ -23,8 +23,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System.Runtime.Remoting;
 	using System.Diagnostics;
 
-	public class LoginDialog {
-		
+	public class LoginDialog 
+	{	
 		Dialog dialog;
 		Entry connection_entry;
 		Entry provider_entry;
@@ -32,13 +32,14 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		OptionMenu providerOptionMenu;
 		int providerSelected = 0;
 
-		public LoginDialog(SqlSharpGtk sqlSharpGtk) { 
+		public LoginDialog(SqlSharpGtk sqlSharpGtk) 
+		{ 
 			sqlSharp = sqlSharpGtk;
 			CreateGui();
 		}
 
-		public void CreateGui() {
-
+		public void CreateGui() 
+		{
 			dialog = new Dialog ();
 			dialog.Title = "Login";
 			dialog.BorderWidth = 3;
@@ -87,8 +88,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			dialog.ShowAll ();
 		}
 
-		public OptionMenu CreateProviderOptionMenu() {
-
+		public OptionMenu CreateProviderOptionMenu() 
+		{
 			OptionMenu optionMenu = new OptionMenu();
 			
 			Menu providerMenu = new Menu ();
@@ -114,12 +115,14 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return optionMenu;
 		}
 
-		void provider_changed_cb (object o, EventArgs args) {
+		void provider_changed_cb (object o, EventArgs args) 
+		{
 			if(providerOptionMenu != null)
 				providerSelected = providerOptionMenu.History;
 		}
 
-		void Connect_Action (object o, EventArgs args) {
+		void Connect_Action (object o, EventArgs args) 
+		{
 			try {
 				sqlSharp.dbProvider = null;
 				sqlSharp.dbProvider = sqlSharp.providerList[providerSelected];
@@ -138,7 +141,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			dialog = null;
 		}
 
-		void Dialog_Cancel (object o, EventArgs args) {
+		void Dialog_Cancel (object o, EventArgs args) 
+		{
 			dialog.Destroy ();
 			dialog = null;
 		}

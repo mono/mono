@@ -9,12 +9,13 @@
 // To be included with Mono as a SQL query tool licensed under the GPL license.
 //
 
-namespace Mono.Data.SqlSharp.Gui.GtkSharp {
+namespace Mono.Data.SqlSharp.Gui.GtkSharp 
+{
 	using System;
 	using System.Data;
 
-	public class DbProvider {
-
+	public class DbProvider 
+	{
 		string key;  // unique key to identify this provider - SYBASE
 		string name; // description of provider - Sybase SQL Server
 		string assembly; // assembly file - Mono.Data.SybaseClient
@@ -64,9 +65,9 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		}
 
 		public DbProvider(string key, string name, string assembly,
-			string connectionClass, string adapterClass, 
-			bool internalProvider) {
-
+				string connectionClass, string adapterClass, 
+				bool internalProvider) 
+		{
 			this.key = key;
 			this.name = name;
 			this.assembly = assembly;
