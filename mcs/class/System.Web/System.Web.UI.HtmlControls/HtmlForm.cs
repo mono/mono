@@ -54,6 +54,7 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		protected override void Render(HtmlTextWriter output){
+			/*** Disabled smart navigation. We have no scripts - Gonzalo
 			if (Page.SmartNavigation == false){
 				base.Render (output);
 				return;
@@ -70,6 +71,7 @@ namespace System.Web.UI.HtmlControls{
 			if (browserCap.MinorVersion < 0.5 && browserCap.MajorVersion != 5)
 				Page.RegisterClientScriptFile("SmartNavIncludeScript","JScript","SmartNavIE5.js");
 			else if (Page.IsPostBack) Page.RegisterClientScriptFile("SmartNavIncludeScript","JScript","SmartNav.js");
+			*/
 			base.Render(output);
 		}
 		
