@@ -1,3 +1,9 @@
+
+Tue Feb 10 17:03:04 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, loader.c: icall cleanup: we save quite a bit of memory
+	(both static and runtime) and reduce startup time.
+
 2004-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Throw an exception on
