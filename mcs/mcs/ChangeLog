@@ -1,3 +1,9 @@
+
+Tue Mar 26 21:14:36 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* driver.cs: allow compilation of files that start with '/'.
+	Add a default case when checking the argument of --target.
+
 2002-03-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* interface.cs: Implement the same search algorithm for types in

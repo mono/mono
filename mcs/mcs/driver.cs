@@ -514,7 +514,7 @@ namespace Mono.CSharp
 				// Prepare to recurse
 				//
 				
-				if (parsing_options && (arg.StartsWith ("-") || arg.StartsWith ("/"))){
+				if (parsing_options && (arg.StartsWith ("-"))){
 					switch (arg){
 					case "-v":
 						yacc_verbose = true;
@@ -632,6 +632,9 @@ namespace Mono.CSharp
 							target = Target.Module;
 							target_ext = ".dll";
 							break;
+						default:
+							Usage (true);
+							return;
 						}
 						continue;
 
