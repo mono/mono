@@ -521,7 +521,7 @@ namespace Mono.Tools.LocaleBuilder {
 							ci.NumberFormatEntry.NumberGroupSizes [i] = pat.Length;
 						}
 					} else {
-						ci.NumberFormatEntry.NumberGroupSizes = new int [1] { 0 };
+						ci.NumberFormatEntry.NumberGroupSizes = new int [1] { 3 };
 					}
 
 					if (pos_neg [1].StartsWith ("(") && pos_neg [1].EndsWith (")")) {
@@ -590,7 +590,7 @@ namespace Mono.Tools.LocaleBuilder {
 						ci.NumberFormatEntry.PercentGroupSizes [i] = pat.Length;
 					}
 				} else {
-					ci.NumberFormatEntry.PercentGroupSizes = new int [1] { 0 };
+					ci.NumberFormatEntry.PercentGroupSizes = new int [1] { 3 };
 				}
 			}
 		}
@@ -631,7 +631,7 @@ namespace Mono.Tools.LocaleBuilder {
 							ci.NumberFormatEntry.CurrencyGroupSizes [i] = pat.Length;
 						}
 					} else {
-						ci.NumberFormatEntry.CurrencyGroupSizes = new int [1] { 0 };
+						ci.NumberFormatEntry.CurrencyGroupSizes = new int [1] { 3 };
 					}
 
 					if (pos_neg [1].StartsWith ("(\u00a4 ") && pos_neg [1].EndsWith (")")) {
