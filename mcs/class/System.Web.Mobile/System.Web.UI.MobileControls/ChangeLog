@@ -1,4 +1,8 @@
 
+2003-04-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* Style.cs               : Implements interfaces now.
+
 2003-04-07	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* MobileListItem.cs      : Completed.

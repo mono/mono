@@ -9,12 +9,13 @@
  */
 
 using System.Drawing;
+using System.Web.UI;
 using System.Web.Mobile;
 
 namespace System.Web.UI.MobileControls
 {
-	public class Style //: IParserAttribute, ITemplateable, IStateManager,
-	                   //    ICloneable
+	public class Style : IParserAccessor, ITemplateable, IStateManager,
+	                     ICloneable
 	{
 		private BooleanOption bold      = BooleanOption.NotSet;
 		private BooleanOption italic    = BooleanOption.NotSet;
@@ -26,11 +27,14 @@ namespace System.Web.UI.MobileControls
 		private Wrapping      wrapping  = Wrapping.NotSet;
 
 		private bool marked = false;
+		private bool checkedStyleRef = false;
 
 		private MobileControl  control = null;
 		private DeviceSpecific deviceSpecific;
 		private FontInfo       font;
 		private Style          referredStyle;
+
+		private StateBag state;
 
 		public Style()
 		{
@@ -197,6 +201,79 @@ namespace System.Web.UI.MobileControls
 			{
 				this.control = value;
 			}
+		}
+
+		protected internal StateBag State
+		{
+			get
+			{
+				if(this.state == null)
+				{
+					this.state = new StateBag();
+					if(((IStateManager)this).IsTrackingViewState)
+					{
+						((IStateManager)state).TrackViewState();
+					}
+				}
+				return this.state;
+			}
+		}
+
+		internal void Refresh()
+		{
+			this.referredStyle = null;
+			this.checkedStyleRef = false;
+		}
+
+		void IParserAccessor.AddParsedSubObject(object obj)
+		{
+			if(obj is DeviceSpecific)
+			{
+				DeviceSpecific ds = (DeviceSpecific) obj;
+				if(this.DeviceSpecific == null)
+					this.DeviceSpecific = ds;
+				else
+				{
+					throw new ArgumentException("MobileControl" +
+					                            "_NoMultipleDeviceSpecifics");
+				}
+			}
+		}
+
+		void IStateManager.LoadViewState(object state)
+		{
+			if(state != null)
+			{
+				this.Refresh();
+				((IStateManager)State).LoadViewState(state);
+			}
+		}
+
+		object IStateManager.SaveViewState()
+		{
+			if(this.state != null)
+			{
+				return ((IStateManager)state).SaveViewState();
+			}
+			return null;
+		}
+
+		bool IStateManager.IsTrackingViewState
+		{
+			get
+			{
+				return this.marked;
+			}
+		}
+
+		void IStateManager.TrackViewState()
+		{
+			this.marked = true;
+		}
+		
+		public object Clone()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
