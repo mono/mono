@@ -1,3 +1,8 @@
+
+Tue Jul 29 18:07:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* socket-io.c: ipv6 portability fixes from Felix Ortga (guile@lared.es).
+
 2003-07-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* icall.c: Add new MemCopy internalcall.
