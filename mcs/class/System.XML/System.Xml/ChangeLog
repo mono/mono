@@ -1,3 +1,7 @@
+2003-11-17  Jackson Harper  <jackson@ximian.com>
+
+	* XPathEditor.cs: .net 1.2 only
+	
 2003-11-17  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* AsyncXmlTextWriter.cs, IXPathChangeNavigator.cs, IXPathEditor.cs,

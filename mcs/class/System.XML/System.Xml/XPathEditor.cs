@@ -6,6 +6,9 @@
 //
 // (C)2003 Atsushi Enomoto
 //
+
+#if NET_1_2
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -69,3 +72,5 @@ namespace System.Xml
 		public abstract void SetValue (string text);
 	}
 }
+
+#endif
