@@ -588,6 +588,9 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
+			if (declaration.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations( declaration.CustomAttributes );
+
 			TypeAttributes attributes = declaration.TypeAttributes;
 			OutputTypeAttributes( attributes,
 					      declaration.IsStruct,
