@@ -1,3 +1,8 @@
+2001-07-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* get.c (dis_stringify_type): return "void" if !type
+	(dis_stringify_type): print type* instead of *type
+
 Thu Jul 26 13:22:28 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c, dump.c, get.c, main.c: updates to match changes in metadata.

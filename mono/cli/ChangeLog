@@ -1,3 +1,8 @@
+2001-07-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* loader.c (ves_map_ffi_type): impl.
+	(fill_pinvoke_info): impl.
+
 Fri Jul 27 11:46:09 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: implemented lookup of methods in a different MonoImage

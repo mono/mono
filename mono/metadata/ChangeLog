@@ -1,3 +1,8 @@
+2001-07-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_metadata_free_type): added check for type !=
+	NULL (void) before calling mono_metadata_free_type()
+
 Thu Jul 26 19:11:19 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.h, row_indexes.h: added header with enumerations to use
