@@ -8,7 +8,7 @@
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
 
-#if NET_2_0 | BOOTSTRAP_NET_2_0
+#if BOOTSTRAP_NET_2_0//NET_2_0 | BOOTSTRAP_NET_2_0
 
 using System;
 using System.Reflection;

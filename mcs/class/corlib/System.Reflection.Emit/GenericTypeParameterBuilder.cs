@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-#if NET_2_0 | BOOTSTRAP_NET_2_0
+#if BOOTSTRAP_NET_2_0//NET_2_0 | BOOTSTRAP_NET_2_0
 namespace System.Reflection.Emit
 {
 	public sealed class GenericTypeParameterBuilder : Type
