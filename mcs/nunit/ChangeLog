@@ -7,6 +7,9 @@
 	NUnitBase.dll which just contains the source files which are needed
 	to run the tests on Linux.
 
+	* RunTests.cs: This is a simple test runner which is used when we
+	run the tests on Linux. It is linked into UNitBase.dll.
+
 	* makefile: Just call NAnt here.
 
 	* NUnitGUI.exe, NUnitTests.dll: Removed binaries.
