@@ -563,11 +563,21 @@ namespace Mono.Math {
 
 		public static bool operator == (BigInteger bi1, BigInteger bi2)
 		{
+			// we need to compare with null
+			if ((bi1 as object) == (bi2 as object))
+				return true;
+			if (null == bi1 || null == bi2)
+				return false;
 			return Kernel.Compare (bi1, bi2) == 0;
 		}
 
 		public static bool operator != (BigInteger bi1, BigInteger bi2)
 		{
+			// we need to compare with null
+			if ((bi1 as object) == (bi2 as object))
+				return false;
+			if (null == bi1 || null == bi2)
+				return true;
 			return Kernel.Compare (bi1, bi2) != 0;
 		}
 
@@ -644,6 +654,12 @@ namespace Mono.Math {
 			// Check for zero
 			if (length == 0)
 				length++;
+		}
+
+		public void Clear () 
+		{
+			for (int i=0; i < length; i++)
+				data [i] = 0x00;
 		}
 
 		#endregion

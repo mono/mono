@@ -1,3 +1,9 @@
+2003-06-11  Sebastien Pouliot <spouliot@motus.com>
+
+	* BigInteger.cs: Added Clear to zeroize big integers and code to allow
+	compares with null (because operators == and != are re-defined). Note:
+	The class may still leak some private info in temp arrays (thanks Ben).
+
 2003-04-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* BigInteger.cs: New, much faster, version by Ben Maurer. 
