@@ -1,3 +1,9 @@
+2005-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MsxslScriptTests.cs : actually it was not testing stylesheet.
+	* XslTransformTests.cs : marked MSXslNodeSetRejectsNodeSet() as
+	  NotDotNet.
+
 2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* MsxslScriptTests.cs : Namespace are required (found on fixing

@@ -148,9 +148,10 @@ namespace MonoTests.System.Xml.Xsl
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		// Actually MS.NET here throws XsltException, but Mono returns
-		// XPathException (since XPath evaluation engine generally catches
-		// (should catch) this kind of error. It is implementation 
+		// XPathException (since XPath evaluation engine generally
+		// catches (should catch) static error. It is implementation 
 		// dependent matter.
 		[ExpectedException (typeof (XPathException))]
 		public void MSXslNodeSetRejectsNodeSet ()

@@ -59,43 +59,39 @@ namespace MonoTests.System.Xml.Xsl
   </xsl:template>
 </xsl:stylesheet>";
 
-		string cs1 = @"<msxsl:script language='C#' implements-prefix='user' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+		string cs1 = @"<msxsl:script language='C#' implements-prefix='user'>
     <![CDATA[
-        string PadRight( string str, int padding) {
+        public string PadRight( string str, int padding) {
             return str.PadRight(padding);
         }
-    ]]>
-    </msxsl:script>";
-		string cs2 = @"<msxsl:script language='C#' implements-prefix='user' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
-     <![CDATA[
-     public double circumference(double radius){
-       double pi = 3.14;
-       double circ = pi*radius*2;
-       return circ;
-     }
+        public double circumference(double radius){
+           double pi = 3.14;
+           double circ = pi*radius*2;
+           return circ;
+        }
       ]]>
    </msxsl:script>";
-		string vb1 = @"<msxsl:script language='VB' implements-prefix='user' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+		string vb1 = @"<msxsl:script language='VB' implements-prefix='user'>
      <![CDATA[
      public function circumference(radius as double) as double
        dim pi as double = 3.14
        dim circ as double = pi*radius*2
        return circ
      end function
-        public function greet () as string
-                return " + "\"Hey! you should not depend on proprietary scripting!!\"" + @"
-        end function
+     public function PadRight(str as string, padding as integer) as string
+            return str.PadRight(padding)
+     end function
       ]]>
    </msxsl:script>";
-		string js1 = @"<msxsl:script language='JScript' implements-prefix='user' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+		string js1 = @"<msxsl:script language='JScript' implements-prefix='user'>
      <![CDATA[
      function circumference(radius : double) : double {
        var pi : double = 3.14;
        var circ : double = pi*radius*2;
        return circ;
      }
-     function greet () : String {
-        return " + "\"Hey! you should not depend on proprietary scripting!!\"" + @";
+     function PadRight(str : String, padding : int) {
+       return str.PadRight(padding);
      }
       ]]>
    </msxsl:script>";
@@ -112,11 +108,8 @@ namespace MonoTests.System.Xml.Xsl
 		[Test]
 		public void TestCSharp ()
 		{
-			XmlTextReader xr = new XmlTextReader (cs1, XmlNodeType.Document, null);
-			xslt.Load (xr);
-			xslt.Transform (doc.CreateNavigator (), null, new XmlTextWriter (new StringWriter ()));
-
-			xr = new XmlTextReader (cs2, XmlNodeType.Document, null);
+			string style = xslstring.Replace ("***** rewrite here *****", cs1);
+			XmlTextReader xr = new XmlTextReader (style, XmlNodeType.Document, null);
 			xslt.Load (xr);
 			xslt.Transform (doc.CreateNavigator (), null, new XmlTextWriter (new StringWriter ()));
 		}
@@ -124,7 +117,8 @@ namespace MonoTests.System.Xml.Xsl
 		[Test]
 		public void TestVB ()
 		{
-			XmlTextReader xr = new XmlTextReader (vb1, XmlNodeType.Document, null);
+			string style = xslstring.Replace ("***** rewrite here *****", vb1);
+			XmlTextReader xr = new XmlTextReader (style, XmlNodeType.Document, null);
 			xslt.Load (xr);
 			xslt.Transform (doc.CreateNavigator (), null, new XmlTextWriter (new StringWriter ()));
 		}
@@ -132,13 +126,14 @@ namespace MonoTests.System.Xml.Xsl
 		[Test]
 		public void TestJScript ()
 		{
-			XmlTextReader xr = new XmlTextReader (js1, XmlNodeType.Document, null);
+			string style = xslstring.Replace ("***** rewrite here *****", js1);
+			XmlTextReader xr = new XmlTextReader (style, XmlNodeType.Document, null);
 			xslt.Load (xr);
 			xslt.Transform (doc.CreateNavigator (), null, new XmlTextWriter (new StringWriter ()));
 		}
 
 		[Test]
-		[ExpectedException (typeof (XsltCompileException))]
+		[ExpectedException (typeof (XsltException))]
 		public void InvalidScript ()
 		{
 			string script = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:user='urn:my-scripts'
