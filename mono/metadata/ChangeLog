@@ -14,6 +14,8 @@
 	(fix pinvoke12.exe)
 	(mono_marshal_get_struct_to_ptr): generate valid IL code
 	(mono_marshal_get_ptr_to_struct): generate valid IL code
+	(*): correctly set sig->pinvoke, we need to memdup the signature
+	to do that
 
 Tue Jan 28 22:57:57 CET 2003 Paolo Molaro <lupus@ximian.com>
 
