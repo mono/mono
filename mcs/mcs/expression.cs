@@ -6724,6 +6724,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (typearg.IsPointer && !ec.InUnsafe){
+				UnsafeError (loc);
+				return null;
+			}
 			CheckObsoleteAttribute (typearg);
 
 			type = TypeManager.type_type;
