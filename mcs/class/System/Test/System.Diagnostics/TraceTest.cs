@@ -49,7 +49,7 @@ namespace MonoTests.System.Diagnostics {
 
 		protected override void TearDown ()
 		{
-			Trace.Listeners.Add (new DefaultTraceListener ());
+			// Trace.Listeners.Add (new DefaultTraceListener ());
 			Trace.Listeners.Remove (listener);
 		}
 
@@ -59,6 +59,7 @@ namespace MonoTests.System.Diagnostics {
 			}
 		}
 
+		// Make sure that when we get the output we expect....
 		public void TestTracing ()
 		{
 			string value =  
@@ -71,6 +72,7 @@ namespace MonoTests.System.Diagnostics {
 			AssertEquals ("#Tr01", value, buffer.ToString ());
 		}
 
+		// Make sure we get the output we expect in the presence of indenting...
 		public void TestIndent ()
 		{
 			Console.Error.WriteLine ("TraceTest.TestIndent");
@@ -89,6 +91,65 @@ namespace MonoTests.System.Diagnostics {
 
 			AssertEquals ("#In01", value, buffer.ToString());
 		}
+
+		// Make sure that TraceListener properties (IndentLevel, IndentSize) are
+		// modified when the corresponding Trace properties are changed.
+		public void TestAddedTraceListenerProperties ()
+		{
+			TraceListener t1 = new TextWriterTraceListener (Console.Out);
+			TraceListener t2 = new TextWriterTraceListener (Console.Error);
+			Trace.Listeners.Add(t1);
+			Trace.Listeners.Add(t2);
+
+			const int ExpectedSize = 5;
+			const int ExpectedLevel = 2;
+
+			Trace.IndentSize = ExpectedSize;
+			Trace.IndentLevel = ExpectedLevel;
+
+			foreach (TraceListener t in Trace.Listeners) {
+				string ids = "#TATLP-S-" + t.Name;
+				string idl = "#TATLP-L-" + t.Name;
+				AssertEquals (ids, ExpectedSize, t.IndentSize);
+				AssertEquals (idl, ExpectedLevel, t.IndentLevel);
+			}
+
+			Trace.Listeners.Remove(t1);
+			Trace.Listeners.Remove(t2);
+		}
+
+		// Make sure that the TraceListener properties (IndentLevel, IndentSize)
+		// are properly modified when the TraceListener is added to the
+		// collection.
+		public void TestListeners_Add_Values()
+		{
+			const int ExpectedLevel = 5;
+			const int ExpectedSize = 3;
+			Trace.IndentLevel = ExpectedLevel;
+			Trace.IndentSize = ExpectedSize;
+			TraceListener tl = new TextWriterTraceListener(Console.Out);
+
+			tl.IndentLevel = 2*ExpectedLevel;
+			tl.IndentSize = 2*ExpectedSize;
+
+			Trace.Listeners.Add(tl);
+
+			// Assert that the listener we added has been set to the correct indent
+			// level.
+			AssertEquals ("#LATL-L", ExpectedLevel, tl.IndentLevel);
+			AssertEquals ("#LATL-S", ExpectedSize, tl.IndentSize);
+
+			// Assert that all listeners in the collection have the same level.
+			foreach (TraceListener t in Trace.Listeners)
+			{
+				string idl = "#LATL-L:" + t.Name;
+				string ids = "#LATL-S:" + t.Name;
+				AssertEquals(idl, ExpectedLevel, t.IndentLevel);
+				AssertEquals(ids, ExpectedSize, t.IndentSize);
+			}
+		}
+
+		// IndentSize, IndentLevel are thread-static
 	}
 }
 

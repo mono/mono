@@ -1,3 +1,6 @@
+2002-06-16  Jonathan Pryor  <jonpryor@vt.edu>
+	* TraceTest.cs: Added additional test cases.
+
 2002-04-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* TraceTest.cs: Removed extraneous output; renamed test case so that NUnit
