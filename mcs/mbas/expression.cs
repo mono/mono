@@ -3629,6 +3629,7 @@ namespace Mono.MonoBASIC {
 			}
 			int pd_count = pd.Count;
 
+
 			// Validate argument count
 			if (po_count == 0) {
 				if (arg_count != pd.Count)
@@ -3638,7 +3639,6 @@ namespace Mono.MonoBASIC {
 				if ((arg_count < ps_count) || (arg_count > pd_count))
 					return false;	
 			}       
-			
 			if (arg_count > 0) {
 				for (int i = arg_count; i > 0 ; ) {
 					i--;
@@ -3652,8 +3652,9 @@ namespace Mono.MonoBASIC {
 					else {
 						param_type = pd.ParameterType (i);
 						Parameter.Modifier mod;
-						if (ps != null) {
-							Parameter p = (Parameter) ps.FixedParameters[i];
+						//if (ps != null) {
+						if (pd.Count != 0) {
+							//Parameter p = (Parameter) ps.FixedParameters[i];
 							bool IsDelegate = TypeManager.IsDelegateType (param_type);
 
 							if (IsDelegate)	{	
@@ -3681,7 +3682,8 @@ namespace Mono.MonoBASIC {
 									return false;
 							}
 
-							mod = p.ModFlags;
+							//mod = p.ModFlags;
+							mod = pd.ParameterModifier (i);
 						} else
 							mod = pd.ParameterModifier (i);
 
