@@ -1,3 +1,8 @@
+2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* EnumBuilder.cs: Call setup_enum_type () in the constructor. Fixes
+	#62237.
+
 2004-08-07  Jackson Harper  <jackson@ximian.com>
 
 	* AssemblyBuilder.cs: "neutral" culture is invariant culture

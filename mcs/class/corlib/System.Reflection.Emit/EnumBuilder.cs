@@ -51,6 +51,7 @@ namespace System.Reflection.Emit {
 			_underlyingType = underlyingType;
 			_underlyingField = _tb.DefineField ("value__", underlyingType,
 				(FieldAttributes.SpecialName | FieldAttributes.Private));
+			setup_enum_type (_tb);
 		}
 
 		public override Assembly Assembly {
@@ -140,7 +141,6 @@ namespace System.Reflection.Emit {
 		public Type CreateType ()
 		{
 			Type res = _tb.CreateType ();
-			setup_enum_type (res);
 			return res;
 		}
 
