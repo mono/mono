@@ -1,3 +1,9 @@
+2004-08-19  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_count_signalled_handles): Fix thinko
+	introduced with the fd offset stuff: unlock handles properly when
+	backing off.  Fixes the monologue hang at exit.
+
 2004-08-18  Dick Porter  <dick@ximian.com>
 
 	* sockets.c: 
