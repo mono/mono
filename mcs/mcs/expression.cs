@@ -5739,6 +5739,42 @@ namespace Mono.CSharp {
 //			value_target = MyEmptyExpression;
 		}
 
+
+		/// <summary>
+		/// Converts complex core type syntax like 'new int ()' to simple constant
+		/// </summary>
+		Expression Constantify (Type t)
+		{
+			if (t == TypeManager.int32_type)
+				return new IntConstant (0);
+			if (t == TypeManager.uint32_type)
+				return new UIntConstant (0);
+			if (t == TypeManager.int64_type)
+				return new LongConstant (0);
+			if (t == TypeManager.uint64_type)
+				return new ULongConstant (0);
+			if (t == TypeManager.float_type)
+				return new FloatConstant (0);
+			if (t == TypeManager.double_type)
+				return new DoubleConstant (0);
+			if (t == TypeManager.short_type)
+				return new ShortConstant (0);
+			if (t == TypeManager.ushort_type)
+				return new UShortConstant (0);
+			if (t == TypeManager.sbyte_type)
+				return new SByteConstant (0);
+			if (t == TypeManager.byte_type)
+				return new ByteConstant (0);
+			if (t == TypeManager.char_type)
+				return new CharConstant ('\0');
+			if (t == TypeManager.bool_type)
+				return new BoolConstant (false);
+			if (t == TypeManager.decimal_type)
+				return new DecimalConstant (0);
+
+			return null;
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -5760,6 +5796,12 @@ namespace Mono.CSharp {
 				return null;
 
 			type = texpr.ResolveType (ec);
+
+			if (Arguments == null) {
+				Expression c = Constantify (type);
+				if (c != null)
+					return c;
+			}
 			
 			CheckObsoleteAttribute (type);
 
