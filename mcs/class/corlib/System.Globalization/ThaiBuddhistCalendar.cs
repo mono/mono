@@ -1,4 +1,4 @@
-// JulianCalendar.cs
+// ThaiBuddhistCalendar.cs
 //
 // (C) Ulrich Kunitz 2002
 //
@@ -8,55 +8,68 @@ namespace System.Globalization {
 using System;
 
 /// <summary>
-/// This is the Julian calendar.
+/// This is the ThaiBudhist calendar. It differs from the Gegorian calendar
+/// only in the year counting.
 /// </summary>
 /// <remarks>
-/// <para>The Julian calendar supports only the Common Era from
-/// January 1, 1 (Gregorian) to December 31, 9999 (Gregorian).
-/// </para>
 /// <para>The implementation uses the
 /// <see cref="N:CalendricalCalculations"/> namespace.
 /// </para>
 /// </remarks>
 [Serializable]
-public class JulianCalendar : Calendar {
+public class ThaiBuddhistCalendar : Calendar {
+	/// <summary>
+	/// Static protected field storing the
+	/// <see cref="T:CalendricalCalculations.GregorianEraHandler"/>.
+	/// </summary>
+	protected static readonly CCGregorianEraHandler M_EraHandler;
+
+	/// <value>
+	/// The standard era for this calendar.
+	/// </value>
+	public const int ThaiBuddhistEra = 1;
+	
+	/// <summary>
+	/// Static constructor, who creates and initializes
+	/// <see cref="F:M_EraHandler"/>.
+	/// </summary>
+	static ThaiBuddhistCalendar() {
+		M_EraHandler = new CCGregorianEraHandler();
+		M_EraHandler.appendEra(ThaiBuddhistEra,
+			CCGregorianCalendar.fixed_from_dmy(1, 1, -542));
+	}
+
 	/// <summary>
 	/// Default constructor.
 	/// </summary>
-	public JulianCalendar() {
-		M_AbbrEraNames = new string[] {"C.E."};
-		M_EraNames = new string[] {"Common Era"};
+	public ThaiBuddhistCalendar() {
+		M_AbbrEraNames = new string[] {"T.B.C.E."};
+		M_EraNames = new string[] {"ThaiBuddhist current era"};
 		if (M_TwoDigitYearMax == 99)
-			M_TwoDigitYearMax = 2029;
+			M_TwoDigitYearMax = 2572;
 	}
-		
-	/// <summary>
-	/// The era number for the Common Era (C.E.) or Anno Domini (A.D.)
-	/// respective.
-	/// </summary>
-	public const int JulianEra = 1;
 
-	/// <value>Overridden. Gives the eras supported by the Julian
+	/// <value>Overridden. Gives the eras supported by the
 	/// calendar as an array of integers.
 	/// </value>
 	public override int[] Eras {
 		get {
-			return new int[] { JulianEra }; 
+			return (int[])M_EraHandler.Eras.Clone();
 		}
 	}
 
 	/// <summary>
 	/// A protected method checking the era number.
 	/// </summary>
-	/// <param name="era">The era number.</param>
+	/// <param name="era">The era number as reference. It is set
+	/// to <see cref="F:CurrentEra"/>, if the input value is 0.</param>
 	/// <exception name="T:System.ArgumentException">
-	/// The exception is thrown if the era is not equal
-	/// <see cref="M:JulianEra"/>.
+	/// The exception is thrown if the era is not supported by the class.
 	/// </exception>
 	protected void M_CheckEra(ref int era) {
 		if (era == CurrentEra)
-			era = JulianEra;
-		if (era != JulianEra)
+			era = ThaiBuddhistEra;
+		if (!M_EraHandler.ValidEra(era))
 			throw new ArgumentException("Era value was not valid.");
 	}
 
@@ -65,18 +78,30 @@ public class JulianCalendar : Calendar {
 	/// </summary>
 	/// <param name="year">An integer representing the calendar year.
 	/// </param>
-	/// <param name="era">The era number.</param>
-	/// <exception cref="T:System.ArgumentException">
-	/// The exception is thrown if the era is not equal
-	/// <see cref="M:JulianEra"/>.
+	/// <param name="era">The era number as reference.</param>
+	/// <exception name="T:System.ArgumentException">
+	/// The exception is thrown if the era is not supported by the class.
 	/// </exception>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the calendar year is outside of
-	/// the allowed range.
+	/// the supported range.
+	/// </exception>
+	protected int M_CheckYEG(int year, ref int era) {
+		M_CheckEra(ref era);
+		return M_EraHandler.GregorianYear(year, era);
+	}
+
+	/// <summary>
+	/// Checks whether the year is the era is valid, if era = CurrentEra
+	/// the right value is set.
+	/// </summary>
+	/// <param name="year">The year to check.</param>
+	/// <param name="era">The era to check.</Param>
+	/// <exception cref="T:ArgumentOutOfRangeException">
+	/// The exception will be thrown, if the year is not valid.
 	/// </exception>
 	protected override void M_CheckYE(int year, ref int era) {
-		M_CheckEra(ref era);
-		M_ArgumentInRange("year", year, 1, 9999);
+		M_CheckYEG(year, ref era);
 	}
 
 	/// <summary>
@@ -87,20 +112,20 @@ public class JulianCalendar : Calendar {
 	/// </param>
 	/// <param name="month">An integer giving the calendar month.
 	/// </param>
-	/// <param name="era">The era number.</param>
-	/// <exception cref="T:System.ArgumentException">
-	/// The exception is thrown if the era is not equal
-	/// <see cref="M:JulianEra"/>.
+	/// <param name="era">The era number as reference.</param>
+	/// <exception name="T:System.ArgumentException">
+	/// The exception is thrown if the era is not supported by the class.
 	/// </exception>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the calendar year or month is
-	/// outside of the allowed range.
+	/// outside of the supported range.
 	/// </exception>
-	protected void M_CheckYME(int year, int month, ref int era) {
-		M_CheckYE(year, ref era);
+	protected int M_CheckYMEG(int year, int month, ref int era) {
+		int gregorianYear = M_CheckYEG(year, ref era);
 		if (month < 1 || month > 12)
 			throw new ArgumentOutOfRangeException("month",
 				"Month must be between one and twelve.");
+		return gregorianYear;
 	}
 
 	/// <summary>
@@ -113,27 +138,24 @@ public class JulianCalendar : Calendar {
 	/// </param>
 	/// <param name="day">An integer giving the calendar day.
 	/// </param>
-	/// <param name="era">The era number.</param>
-	/// <exception cref="T:System.ArgumentException">
-	/// The exception is thrown if the era is not equal
-	/// <see cref="M:JulianEra"/>.
+	/// <param name="era">The era number as reference.</param>
+	/// <exception name="T:System.ArgumentException">
+	/// The exception is thrown if the era is not supported by the class.
 	/// </exception>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
 	/// The exception is thrown if the calendar year, month, or day is
-	/// outside of the allowed range.
+	/// outside of the supported range.
 	/// </exception>
-	protected void M_CheckYMDE(int year, int month, int day, ref int era)
+	protected int M_CheckYMDEG(int year, int month, int day, ref int era)
 	{
-		M_CheckYME(year, month, ref era);
+		int gregorianYear = M_CheckYMEG(year, month, ref era);
 		M_ArgumentInRange("day", day, 1,
 			GetDaysInMonth(year, month, era));
-		if (year == 9999 && ((month == 10 && day > 19) || month > 10))
-			throw new ArgumentOutOfRangeException(
-				"The maximum Julian date is 19. 10. 9999.");
+		return gregorianYear;
 	}
 
 	/// <summary>
-	/// Overridden. Adds months to a given date.
+	/// Overrideden. Adds months to a given date.
 	/// </summary>
 	/// <param name="time">The
 	/// <see cref="T:System.DateTime"/> to which to add
@@ -144,14 +166,7 @@ public class JulianCalendar : Calendar {
 	/// results from adding <paramref name="months"/> to the specified
 	/// DateTime.</returns>
 	public override DateTime AddMonths(DateTime time, int months) {
-		int rd = CCFixed.FromDateTime(time);
-		int day, month, year;
-		CCJulianCalendar.dmy_from_fixed(
-			out day, out month, out year, rd);
-		month += months;
-		rd = CCJulianCalendar.fixed_from_dmy(day, month, year);
-		DateTime t = CCFixed.ToDateTime(rd);
-		return t.Add(time.TimeOfDay);
+		return CCGregorianCalendar.AddMonths(time, months);
 	}
 
 	/// <summary>
@@ -166,18 +181,11 @@ public class JulianCalendar : Calendar {
 	/// results from adding <paramref name="years"/> to the specified
 	/// DateTime.</returns>
 	public override DateTime AddYears(DateTime time, int years) {
-		int rd = CCFixed.FromDateTime(time);
-		int day, month, year;
-		CCJulianCalendar.dmy_from_fixed(
-			out day, out month, out year, rd);
-		year += years;
-		rd = CCJulianCalendar.fixed_from_dmy(day, month, year);
-		DateTime t = CCFixed.ToDateTime(rd);
-		return t.Add(time.TimeOfDay);
+		return CCGregorianCalendar.AddYears(time, years);
 	}
 		
 	/// <summary>
-	/// Overridden. Gets the day of the month from
+	/// Overriden. Gets the day of the month from
 	/// <paramref name="time"/>.
 	/// </summary>
 	/// <param name="time">The
@@ -187,12 +195,11 @@ public class JulianCalendar : Calendar {
 	/// <returns>An integer giving the day of months, starting with 1.
 	/// </returns>
 	public override int GetDayOfMonth(DateTime time) {
-		int rd = CCFixed.FromDateTime(time);
-		return CCJulianCalendar.day_from_fixed(rd);
+		return CCGregorianCalendar.GetDayOfMonth(time);
 	}
 
 	/// <summary>
-	/// Overridden. Gets the day of the week from the specified date.
+	/// Overriden. Gets the day of the week from the specified date.
 	/// </summary>
 	/// <param name="time">The
 	/// <see cref="T:System.DateTime"/> that specifies a
@@ -215,10 +222,7 @@ public class JulianCalendar : Calendar {
 	/// <returns>An integer representing the day of the year,
 	/// starting with 1.</returns>
 	public override int GetDayOfYear(DateTime time) {
-		int rd = CCFixed.FromDateTime(time);
-		int year = CCJulianCalendar.year_from_fixed(rd);
-		int rd1_1 = CCJulianCalendar.fixed_from_dmy(1, 1, year);
-		return rd - rd1_1 + 1;
+		return CCGregorianCalendar.GetDayOfYear(time);
 	}
 
 	/// <summary>
@@ -229,7 +233,7 @@ public class JulianCalendar : Calendar {
 	/// </param>
 	/// <param name="month">An integer that gives the month, starting
 	/// with 1.</param>
-	/// <param name="era">An intger that gives the era of the specified
+	/// <param name="era">An integer that gives the era of the specified
 	/// year.</param>
 	/// <returns>An integer that gives the number of days of the
 	/// specified month.</returns>
@@ -239,10 +243,8 @@ public class JulianCalendar : Calendar {
 	/// the allowed range.
 	/// </exception>
 	public override int GetDaysInMonth(int year, int month, int era) {
-		M_CheckYME(year, month, ref era);
-		int rd1 = CCJulianCalendar.fixed_from_dmy(1, month, year);
-		int rd2 = CCJulianCalendar.fixed_from_dmy(1, month+1, year);
-		return rd2 - rd1;
+		int gregorianYear = M_CheckYMEG(year, month, ref era);
+		return CCGregorianCalendar.GetDaysInMonth(gregorianYear, month);
 	}
 
 	/// <summary>
@@ -257,15 +259,13 @@ public class JulianCalendar : Calendar {
 	/// specified year.</returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeExceiption">
 	/// The exception is thrown, if
-	/// <paramref name="year"/> is outside the allowed range.
+	/// <paramref name="year"/> or <paramref name="era"/> are outside the
+	/// allowed range.
 	/// </exception>
 	public override int GetDaysInYear(int year, int era) {
-		M_CheckYE(year, ref era);
-		int rd1 = CCJulianCalendar.fixed_from_dmy(1, 1, year);
-		int rd2 = CCJulianCalendar.fixed_from_dmy(1, 1, year+1);
-		return rd2 - rd1;
+		int gregorianYear = M_CheckYEG(year, ref era);
+		return CCGregorianCalendar.GetDaysInYear(gregorianYear);
 	}
-		
 
 	/// <summary>
 	/// Overridden. Gives the era of the specified date.
@@ -277,8 +277,10 @@ public class JulianCalendar : Calendar {
 	/// <returns>An integer representing the era of the calendar.
 	/// </returns>
 	public override int GetEra(DateTime time) {
-		// should change, if more than one era is supported
-		return JulianEra;
+		int rd = CCFixed.FromDateTime(time);
+		int era;
+		M_EraHandler.EraYear(out era, rd);
+		return era;
 	}
 
 	/// <summary>
@@ -292,8 +294,7 @@ public class JulianCalendar : Calendar {
 	/// <returns>An integer representing the month, 
 	/// starting with 1.</returns>
 	public override int GetMonth(DateTime time) {
-		int rd = CCFixed.FromDateTime(time);
-		return CCJulianCalendar.month_from_fixed(rd);
+		return CCGregorianCalendar.GetMonth(time);
 	}
 
 	/// <summary>
@@ -326,7 +327,8 @@ public class JulianCalendar : Calendar {
 	/// starting with 1.</returns>
 	public override int GetYear(DateTime time) {
 		int rd = CCFixed.FromDateTime(time);
-		return CCJulianCalendar.year_from_fixed(rd);
+		int era;
+		return M_EraHandler.EraYear(out era, rd);
 	}
 
 	/// <summary>
@@ -351,8 +353,8 @@ public class JulianCalendar : Calendar {
 	/// </exception>
 	public override bool IsLeapDay(int year, int month, int day, int era)
 	{
-		M_CheckYMDE(year, month, day, ref era);
-		return IsLeapYear(year) && month == 2 && day == 29;
+		int gregorianYear = M_CheckYMDEG(year, month, day, ref era);
+		return CCGregorianCalendar.IsLeapDay(gregorianYear, month, day);
 	}
 
 	/// <summary>
@@ -374,7 +376,7 @@ public class JulianCalendar : Calendar {
 	/// valid.
 	/// </exception>
 	public override bool IsLeapMonth(int year, int month, int era) {
-		M_CheckYME(year, month, ref era);
+		M_CheckYMEG(year, month, ref era);
 		return false;
 	}
 
@@ -395,8 +397,8 @@ public class JulianCalendar : Calendar {
 	/// valid.
 	/// </exception>
 	public override bool IsLeapYear(int year, int era) {
-		M_CheckYE(year, ref era);
-		return CCJulianCalendar.is_leap_year(year);
+		int gregorianYear = M_CheckYEG(year, ref era);
+		return CCGregorianCalendar.is_leap_year(gregorianYear);
 	}
 
 	/// <summary>
@@ -421,7 +423,7 @@ public class JulianCalendar : Calendar {
 	/// </param>
 	/// <param name="era">An integer that specifies the era.
 	/// </param>
-	/// <returns>
+	/// <returns>A
 	/// <see cref="T:system.DateTime"/> representig the date and time.
 	/// </returns>
 	/// <exception cref="T:System.ArgumentOutOfRangeException">
@@ -432,12 +434,12 @@ public class JulianCalendar : Calendar {
 		int hour, int minute, int second, int milliseconds,
 		int era)
 	{
-		M_CheckYMDE(year, month, day, ref era);
+		int gregorianYear = M_CheckYMDEG(year, month, day, ref era);
 		M_CheckHMSM(hour, minute, second, milliseconds);
-		int rd = CCJulianCalendar.fixed_from_dmy(day, month, year);
-		return CCFixed.ToDateTime(rd,
+		return CCGregorianCalendar.ToDateTime(
+			gregorianYear, month, day,
 			hour, minute, second, milliseconds);
 	}
-} // class JulianCalendar
+} // class ThaiBuddhistCalendar
 	
 } // namespace System.Globalization
