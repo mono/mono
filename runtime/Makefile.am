@@ -6,7 +6,7 @@ SUBDIRS = . net_1_1 net_2_0
 
 mcs_topdir=$(top_srcdir)/../mcs
 
-dist_monobins_DATA = \
+monobins_DATA = \
 	mcs.exe 				\
 	mbas.exe				\
 	monoresgen.exe				\
@@ -31,6 +31,8 @@ dist_monobins_DATA = \
 	gmcs.exe				\
 	sn.exe
 
+EXTRA_DIST= $(monobins_DATA)
+
 #
 # Keep in sync with mono/mono/metadata/Makefile.am
 #
@@ -40,7 +42,7 @@ else
 monobinsdir = $(bindir)
 endif
 
-$(dist_monobins_DATA):
+$(monobins_DATA):
 	@case "$@" in \
 	mcs.exe)                 d=mcs                          ;; \
 	mbas.exe)                d=mbas                         ;; \

@@ -67,9 +67,9 @@ gac_assemblies_list = \
 gac_assemblies = $(gac_assemblies_list:=.dll)
 
 corlibdir = $(libdir)
-dist_corlib_DATA = mscorlib.dll
+corlib_DATA = mscorlib.dll
 
-EXTRA_DIST = $(gac_assemblies)
+EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
 
 CLEANFILES = $(EXTRA_DIST)
 
