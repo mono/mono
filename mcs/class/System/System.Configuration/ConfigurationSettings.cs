@@ -185,9 +185,9 @@ namespace System.Configuration
 		ConfigurationData parent;
 		Hashtable factories;
 		string fileName;
-		object removedMark = new object ();
-		object groupMark = new object ();
-                object emptyMark = new object ();
+		static object removedMark = new object ();
+		static object groupMark = new object ();
+                static object emptyMark = new object ();
                 FileWatcherCache fileCache = null;
 
                 private FileWatcherCache FileCache {
@@ -474,7 +474,7 @@ namespace System.Configuration
 				value = configSection + '/' + value;
 
 			object o = LookForFactory (value);
-			if (o != null && o != removedMark)
+			if (o != null && o != removedMark && o != groupMark)
 				ThrowException ("Already have a factory for " + value, reader);
 
 			factories [value] = groupMark;

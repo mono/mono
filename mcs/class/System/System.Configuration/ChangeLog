@@ -1,3 +1,10 @@
+2003-11-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ConfigurationSettings.cs: make the *Mark objects static
+	because they need to be comparable across instances.
+	(ReadSectionGroup): You can add an element to a group declared
+	in the parent config files (MS.net's QuickStarts do this).
+
 2003-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: don't handle null or non-existent file in
