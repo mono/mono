@@ -125,7 +125,6 @@ namespace System.Data {
 				this.Add (table);
 		}
 
-		[MonoTODO]
 		public bool CanRemove (DataTable table) 
 		{
 			return CanRemove(table, false);

@@ -165,6 +165,8 @@ namespace System.Data {
 
 		private string MakeName(int index)
 		{
+			// FIXME: This is problem if the user wants to add a column later on with
+			// Name as say "Column1" after we have added a default name of Column1 to th			    // to the first column that got added (without a name)
 			return String.Concat("Column", index.ToString());
 		}
 
@@ -172,7 +174,6 @@ namespace System.Data {
 		/// Creates and adds the specified DataColumn object to the DataColumnCollection.
 		/// </summary>
 		/// <param name="column">The DataColumn to add.</param>
-		[MonoTODO]
 		public void Add(DataColumn column)
 		{
 
@@ -188,7 +189,7 @@ namespace System.Data {
 //				throw new DuplicateNameException("A DataColumn named '" + column.ColumnName + "' already belongs to this DataTable.");
 
 			if (column.Table != null)
-				throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to another DataTable.");
+				throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to this or another DataTable.");
 
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 
@@ -418,7 +419,7 @@ namespace System.Data {
 		{
 			if (columnFromName.Contains(name))
 				return true;
-
+			
 			return (IndexOf(name, false) != -1);
 		}
 
@@ -479,7 +480,6 @@ namespace System.Data {
 
 			if (!Contains(column.ColumnName))
 				throw new ArgumentException ("Cannot remove a column that doesn't belong to this table.");
-
 			//TODO: can remove first with exceptions
 			//and OnChanging Event
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
@@ -494,7 +494,7 @@ namespace System.Data {
 				this[i].SetOrdinal( i );
 			}
 			
-			if(parentTable != null)
+			if (parentTable != null)
 				parentTable.OnRemoveColumn(column);
 
 			if (column.AutoIncrement)
@@ -511,10 +511,11 @@ namespace System.Data {
 		public void Remove(string name)
 		{
 			DataColumn column = this[name];
-			
+			String parentTableString;
 			if (column == null)
-				throw new ArgumentException ("Column '" + name + "' does not belong to table " + parentTable == null ? "" : parentTable.TableName + ".");
-
+			{
+				parentTableString = parentTable == null ? "" : parentTable.TableName;				    throw new ArgumentException ("Column '"+ name +"' does not belong to table "+ parentTableString + ".");
+			}
 			Remove(column);
 		}
 

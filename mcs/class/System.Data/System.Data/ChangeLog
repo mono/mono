@@ -1,3 +1,7 @@
+2004-04-30  Umadevi S  <sumadevi@novell.com>
+	* DataColumnCollection.cs : Fixed nunit test errors, removed TODOs
+	* DataTableCollection.cs  : Tested and removed TODO
+	* TypedDataSetGeneratorException.cs : Fixed a couple of TODOs	
 2004-04-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRow.cs : My previous patch unintentionally reverted Boris patch.
