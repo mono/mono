@@ -567,10 +567,11 @@ public class UTF8Encoding : Encoding
 									break;
 								}
 								if (overlong) {
-									throw new ArgumentException
-										(_("Overlong"), leftBits.ToString ());
+									if (throwOnInvalid)
+										throw new ArgumentException (_("Overlong"), leftBits.ToString ());
 								}
-								chars[posn++] = (char)leftBits;
+								else
+									chars[posn++] = (char)leftBits;
 							}
 						} else if (leftBits < (uint)0x110000) {
 							if ((posn + 2) > length) {
