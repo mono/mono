@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.57 $
+// $Revision: 1.58 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.58  2004/09/02 22:24:50  pbartok
+// - Added sanity check to creation of double buffer bitmap
+//
 // Revision 1.57  2004/09/02 20:26:21  pbartok
 // - Added missing Control.ControlAccessibleObject class
 // - Started to implement Select()ion mechanisms, still very incomplete
@@ -1414,6 +1417,14 @@ namespace System.Windows.Forms
 				dc_mem.Dispose ();
 			if (bmp_mem != null)
 				bmp_mem.Dispose ();
+
+			if (width < 1) {
+				width = 1;
+			}
+
+			if (height < 1) {
+				height = 1;
+			}
 
 			bmp_mem = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			dc_mem = Graphics.FromImage (bmp_mem);
