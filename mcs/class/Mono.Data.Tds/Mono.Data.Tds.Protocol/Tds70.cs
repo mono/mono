@@ -45,7 +45,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		private string BuildParameters ()
 		{
-			if (Parameters == null || parameters.Count == 0)
+			if (Parameters == null || Parameters.Count == 0)
 				return String.Empty;
 
 			StringBuilder result = new StringBuilder ();
