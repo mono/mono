@@ -1,3 +1,9 @@
+2002-01-09  Nick Drochak  <ndrochak@gol.com>
+	
+	* Environment.cs: Comment out Security attribute and put a MonoTODO
+	there as a reminder.  We need mcs magic to handle security attributes in
+	corlib.
+
 2002-01-07  Duco Fijma <duco@lorentz.xs4all.nl>
 	* Created IAppDomainSetup.cs
 

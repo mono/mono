@@ -79,7 +79,8 @@ namespace System
 			{
 				return _os.GetCurrentDirectory();
 			}
-			[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+			[MonoTODO("disabled because of compile error. Need mcs magic.")]
+			//[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 			set
 			{
 				_os.SetCurrentDirectory(value);
