@@ -779,6 +779,51 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override void PrepareControlHierarchy()
 		{
+			if(Controls.Count > 0)
+			{
+				Table display = (Table)Controls[0];
+				display.CopyBaseAttributes(this);
+				if(ControlStyleCreated)
+				{
+					display.ApplyStyle(ControlStyle);
+				} else
+				{
+					display.GridLines   = GridLines.Both;
+					display.CellSpacing = 0;
+				}
+				TableRowCollection rows = display.Rows;
+				if(rows.Count > 0)
+				{
+					int              nCols = Columns.Count;
+					DataGridColumn[] cols = new DataGridColumn[nCols];
+					Style            displayStyle;
+					int              counter;
+					if(nCols > 0)
+					{
+						Columns.CopyTo(cols, 0);
+					}
+					displayStyle = null;
+					if(alternatingItemStyle != null)
+					{
+						displayStyle = new TableItemStyle();
+						displayStyle.CopyFrom(itemStyle);
+						displayStyle.CopyFrom(alternatingItemStyle);
+					} else
+					{
+						displayStyle = itemStyle;
+					}
+					for(counter = 0; counter < rows.Count; counter++)
+					{
+						PrepareControlHierarchyForItem((DataGridItem) rows[counter]);
+					}
+					throw new NotImplementedException();
+				}
+			}
+		}
+
+		[MonoTODO("Private_Prepare_Control_Hierarchy_For_Item")]
+		private void PrepareControlHierarchyForItem(DataGridItem item)
+		{
 			throw new NotImplementedException();
 		}
 

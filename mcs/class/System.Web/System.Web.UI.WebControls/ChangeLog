@@ -1,4 +1,10 @@
 
+2002-08-06      Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* DataGrid.cs                 - Wokring on PrepareControlHierarchy()
+	                              - Added private method
+	                     PrepareControlHierarchyForItem()
+
 2002-08-05      Gaurav Vaish <gvaish_mono@lycos.com>
 
 	* DataGrid.cs                 - Completed method
