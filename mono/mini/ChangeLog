@@ -1,3 +1,8 @@
+2005-01-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* *: MonoMethod->signature might be NULL now. You *MUST* use
+        mono_method_signature.
+
 2005-01-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.c (compile_all_methods_thread_main): Compile the methods

@@ -1,3 +1,14 @@
+2005-01-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* loader.c (mono_method_signature): Make this method lazy
+	(mono_get_method_from_token): Don't computate the signature here.
+
+	Doing this saves quite a bit of memory. I got 90 kb on starting up
+	monodoc. It should also save some disk reads on startup.
+
+	* *: MonoMethod->signature might be NULL now. You *MUST* use
+	mono_method_signature.
+
 2005-01-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_runtime_get_main_args): Return an array from the
