@@ -1,3 +1,8 @@
+2004-04-09  David Sheldon <dave-mono@earth.li>
+
+    * Convert.cs: Allow + signs in strings for ToInt32, and
+	- if it is base 10.
+
 2004-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Nullable.cs : usingdecl should also be conditional.

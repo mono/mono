@@ -1299,7 +1299,7 @@ namespace MonoTests.System
 				AssertEquals("#K25", typeof(InvalidCastException), e.GetType());
 			}
 
-			try {			    
+			try {				
 				Convert.ToInt32((decimal)tryMax);
 				Fail();
 			}
@@ -2014,7 +2014,7 @@ namespace MonoTests.System
 			}			
 		}
 
-        public void TestToUInt16() {
+		public void TestToUInt16() {
 			AssertEquals("#P01", (ushort)0, Convert.ToUInt16(boolFalse));
 			AssertEquals("#P02", (ushort)1, Convert.ToUInt16(boolTrue));
 			AssertEquals("#P03", (ushort)0, Convert.ToUInt16(tryByte));
@@ -2222,6 +2222,43 @@ namespace MonoTests.System
 			}
 		}
 
+		public void TestSignedToInt() {
+		  //  String cannot contain a minus sign if the base is not 10.
+		  // But can if it is ten, and + is allowed everywhere.
+		  AssertEquals("Signed0", -1, Convert.ToInt32 ("-1", 10));
+		  AssertEquals("Signed1", 1, Convert.ToInt32 ("+1", 10));
+		  AssertEquals("Signed2", 1, Convert.ToInt32 ("+1", 2));
+		  AssertEquals("Signed3", 1, Convert.ToInt32 ("+1", 8));
+		  AssertEquals("Signed4", 1, Convert.ToInt32 ("+1", 16));
+		  
+		  try {
+			Convert.ToInt32("-1", 2);
+			Fail();
+		  }
+		  catch (Exception e) {
+			//AssertEquals("Signed5", typeof (ArgumentException), e.GetType());
+		    // Do we care what sort of exception it is?
+		  }
+		  try {
+			Convert.ToInt32("-1", 8);
+			Fail();
+		  }
+		  catch (Exception e) {
+			//AssertEquals("Signed6", typeof (ArgumentException), e.GetType());
+		    // Do we care what sort of exception it is?
+		  }
+		  try {
+			Convert.ToInt32("-1", 16);
+			Fail();
+		  }
+		  catch (Exception e) {
+			//AssertEquals("Signed7", typeof (ArgumentException), e.GetType());
+		    // Do we care what sort of exception it is?
+		  }
+
+
+		}
+	
 		public void TestToUInt32() {
 			AssertEquals("#Q01", (uint)1, Convert.ToUInt32(boolTrue));
 			AssertEquals("#Q02", (uint)0, Convert.ToUInt32(boolFalse));
@@ -2616,14 +2653,19 @@ namespace MonoTests.System
 		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void TestInvalidBase64() {
-		  string brokenB64 = "AB~";
+		  // This has to be a multiple of 4 characters, otherwise you 
+		  // are testing something else. Ideally one will become a byte
+		  // > 128
+		  //
+		  // This test is designed to see what happens with invalid bytes
+		  string brokenB64 = "AB~\u00a3";
 		  Convert.FromBase64String(brokenB64);
 		}
 
 		
 		public void TestToBase64CharArray() {
 			byte[] byteArr = {33, 127, 255, 109, 170, 54};
-			//						   0    1    2    3    4    5    6    7
+			//						   0	1	 2	  3    4	5	 6	  7
 			char[] expectedCharArr = {'I', 'X', '/', '/', 'b', 'a', 'o', '2'};
 			char[] result = new Char[8];
 			
@@ -2847,46 +2889,46 @@ namespace MonoTests.System
 			AssertEquals ("CharArray-IgnoreCharsAfter-Ignored", 15, data.Length);
 		}
 
-                public void TestConvertFromNull() {
-                	
-                	AssertEquals ("#W1", false, Convert.ToBoolean (null as object));
-	               	AssertEquals ("#W2", 0, Convert.ToByte (null as object));
-                	AssertEquals ("#W3", 0, Convert.ToChar (null as object));
-                	AssertEquals ("#W4", new DateTime (1,1,1,0,0,0), Convert.ToDateTime (null as object));
-                	AssertEquals ("#W5", 0, Convert.ToDecimal (null as object));
-                	AssertEquals ("#W6", 0, Convert.ToDouble (null as object));
-                	AssertEquals ("#W7", 0, Convert.ToInt16 (null as object));
-                	AssertEquals ("#W8", 0, Convert.ToInt32 (null as object));
-                	AssertEquals ("#W9", 0, Convert.ToInt64 (null as object));
-                	AssertEquals ("#W10", 0, Convert.ToSByte (null as object));
-                	AssertEquals ("#W11", 0, Convert.ToSingle (null as object));
-                	AssertEquals ("#W12", "", Convert.ToString (null as object));
-                	AssertEquals ("#W13", 0, Convert.ToUInt16 (null as object));
-                	AssertEquals ("#W14", 0, Convert.ToUInt32 (null as object));
-                	AssertEquals ("#W15", 0, Convert.ToUInt64 (null as object));
-                	AssertEquals ("#W16", false, Convert.ToBoolean (null as string));
-	               	AssertEquals ("#W17", 0, Convert.ToByte (null as string));
+				public void TestConvertFromNull() {
+					
+					AssertEquals ("#W1", false, Convert.ToBoolean (null as object));
+					AssertEquals ("#W2", 0, Convert.ToByte (null as object));
+					AssertEquals ("#W3", 0, Convert.ToChar (null as object));
+					AssertEquals ("#W4", new DateTime (1,1,1,0,0,0), Convert.ToDateTime (null as object));
+					AssertEquals ("#W5", 0, Convert.ToDecimal (null as object));
+					AssertEquals ("#W6", 0, Convert.ToDouble (null as object));
+					AssertEquals ("#W7", 0, Convert.ToInt16 (null as object));
+					AssertEquals ("#W8", 0, Convert.ToInt32 (null as object));
+					AssertEquals ("#W9", 0, Convert.ToInt64 (null as object));
+					AssertEquals ("#W10", 0, Convert.ToSByte (null as object));
+					AssertEquals ("#W11", 0, Convert.ToSingle (null as object));
+					AssertEquals ("#W12", "", Convert.ToString (null as object));
+					AssertEquals ("#W13", 0, Convert.ToUInt16 (null as object));
+					AssertEquals ("#W14", 0, Convert.ToUInt32 (null as object));
+					AssertEquals ("#W15", 0, Convert.ToUInt64 (null as object));
+					AssertEquals ("#W16", false, Convert.ToBoolean (null as string));
+					AssertEquals ("#W17", 0, Convert.ToByte (null as string));
 
-                	try {
-                		Convert.ToChar (null as string);
-                		Fail ();
-                	} catch (Exception e) {
-                		AssertEquals ("#W18", typeof (ArgumentNullException), e.GetType ());                		
-                	}
-                	
-                	AssertEquals ("#W19", new DateTime (1,1,1,0,0,0), Convert.ToDateTime (null as string));
-                	AssertEquals ("#W20", 0, Convert.ToDecimal (null as string));
-                	AssertEquals ("#W21", 0, Convert.ToDouble (null as string));
-                	AssertEquals ("#W22", 0, Convert.ToInt16 (null as string));
-                	AssertEquals ("#W23", 0, Convert.ToInt32 (null as string));
-                	AssertEquals ("#W24", 0, Convert.ToInt64 (null as string));
-                	AssertEquals ("#W25", 0, Convert.ToSByte (null as string));
-                	AssertEquals ("#W26", 0, Convert.ToSingle (null as string));
-                	AssertEquals ("#W27", null, Convert.ToString (null as string));
-                	AssertEquals ("#W28", 0, Convert.ToUInt16 (null as string));
-                	AssertEquals ("#W29", 0, Convert.ToUInt32 (null as string));
-                	AssertEquals ("#W30", 0, Convert.ToUInt64 (null as string));                	
-                }
+					try {
+						Convert.ToChar (null as string);
+						Fail ();
+					} catch (Exception e) {
+						AssertEquals ("#W18", typeof (ArgumentNullException), e.GetType ());						
+					}
+					
+					AssertEquals ("#W19", new DateTime (1,1,1,0,0,0), Convert.ToDateTime (null as string));
+					AssertEquals ("#W20", 0, Convert.ToDecimal (null as string));
+					AssertEquals ("#W21", 0, Convert.ToDouble (null as string));
+					AssertEquals ("#W22", 0, Convert.ToInt16 (null as string));
+					AssertEquals ("#W23", 0, Convert.ToInt32 (null as string));
+					AssertEquals ("#W24", 0, Convert.ToInt64 (null as string));
+					AssertEquals ("#W25", 0, Convert.ToSByte (null as string));
+					AssertEquals ("#W26", 0, Convert.ToSingle (null as string));
+					AssertEquals ("#W27", null, Convert.ToString (null as string));
+					AssertEquals ("#W28", 0, Convert.ToUInt16 (null as string));
+					AssertEquals ("#W29", 0, Convert.ToUInt32 (null as string));
+					AssertEquals ("#W30", 0, Convert.ToUInt64 (null as string));					
+				}
 
 	}
 }

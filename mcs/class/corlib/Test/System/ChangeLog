@@ -1,3 +1,8 @@
+2004-04-09 David Sheldon <dave-mono@earth.li>
+ 
+    * ConvertTest.cs: Tests for Convert.ToInt32(string, base), with
+	signs on the strings.
+
 2004-04-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeTest.cs: enumerated the tests.

@@ -2355,7 +2355,23 @@ namespace System {
 			int result = 0;
 			int digitValue;
 
-			foreach (char c in value) {
+			int i=0; 
+			int len = value.Length;
+			bool negative = false;
+
+			
+			if (fromBase == 10) {
+				if (value[i] == '-') {
+					negative = true;
+					i++;
+				}
+			}
+			if (value[i] == '+') {
+				i++;
+			}
+
+			while(i<len) {
+				char c = value[i++];
 				if (Char.IsNumber (c))
 					digitValue = c - '0';
 				else if (Char.IsLetter (c))
@@ -2370,13 +2386,19 @@ namespace System {
 				chars ++;
 			}
 
+
 			if (chars == 0)
 				throw new FormatException ("Could not find any digits.");
 
 			if (result > Int32.MaxValue || result < Int32.MinValue)
 				throw new OverflowException ("There is an overflow.");
 			
+			if (negative) {
+			  return -result;
+			}
+			else {
 			return result;
+		}
 		}
 
 		private static long ConvertFromBase64 (string value, int fromBase)
