@@ -97,6 +97,11 @@ namespace System.Web.UI.WebControls
 			{
 				return currentPageIndex;
 			}
+
+			set
+			{
+				currentPageIndex = value;
+			}
 		}
 
 		public IEnumerable DataSource
