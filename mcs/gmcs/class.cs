@@ -2680,7 +2680,8 @@ namespace Mono.CSharp {
 
 			MethodData = new MethodData (ds, this, null, MemberType,
 						     ParameterTypes, ParameterInfo, cc,
-						     OptAttributes, ModFlags, flags, true, mb);
+						     OptAttributes, ModFlags, flags, true,
+						     mb, GenericMethod);
 
 			if (!MethodData.Define (container))
 				return false;
@@ -3049,6 +3050,7 @@ namespace Mono.CSharp {
 		//
 		public readonly Type ReturnType;
 		public readonly Type[] ParameterTypes;
+		public readonly GenericMethod GenericMethod;
 		public readonly InternalParameters ParameterInfo;
 		public readonly CallingConventions CallingConventions;
 		public readonly Attributes OptAttributes;
@@ -3072,6 +3074,7 @@ namespace Mono.CSharp {
 		//
 		// It can either hold a string with the condition, or an arraylist of conditions.
 		object conditionals;
+		EmitContext ec;
 
 		MethodBuilder builder = null;
 		public MethodBuilder MethodBuilder {
@@ -3104,11 +3107,12 @@ namespace Mono.CSharp {
 				   Type [] parameter_types, InternalParameters parameters,
 				   CallingConventions cc, Attributes opt_attrs,
 				   int modifiers, MethodAttributes flags, bool is_method,
-				   MethodBuilder builder)
+				   MethodBuilder builder, GenericMethod generic)
 			: this (ds, member, name, return_type, parameter_types, parameters,
 				cc, opt_attrs, modifiers, flags, is_method)
 		{
 			this.builder = builder;
+			this.GenericMethod = generic;
 		}
 
 		//
@@ -3402,6 +3406,9 @@ namespace Mono.CSharp {
 				IsImplementing = true;
 			}
 
+			ec = new EmitContext (
+				container, ds, Location, null, ReturnType, modifiers, false);
+
 			//
 			// Create the MethodBuilder for the method
 			//
@@ -3412,10 +3419,6 @@ namespace Mono.CSharp {
 						      "a method marked 'static' and 'extern'.");
 					return false;
 				}
-				
-				EmitContext ec = new EmitContext (
-					container, ds, Location, null, ReturnType, modifiers, false);
-				
 				builder = dllimport_attribute.DefinePInvokeMethod (
 					ec, container.TypeBuilder, method_name, flags,
 					ReturnType, ParameterTypes);
@@ -3430,6 +3433,11 @@ namespace Mono.CSharp {
 
 			if (builder == null)
 				return false;
+
+			if (GenericMethod != null) {
+				if (!GenericMethod.DefineType (ec, builder))
+					return false;
+			}
 
 			if ((modifiers & Modifiers.UNSAFE) != 0)
 				builder.InitLocals = false;

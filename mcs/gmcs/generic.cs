@@ -536,6 +536,14 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public bool DefineType (EmitContext ec, MethodBuilder mb)
+		{
+			for (int i = 0; i < TypeParameters.Length; i++)
+				TypeParameters [i].DefineType (ec, mb);
+
+			return true;
+		}
+
 		public override bool DefineMembers (TypeContainer parent)
 		{
 			return true;
