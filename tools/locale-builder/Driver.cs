@@ -82,7 +82,7 @@ namespace Mono.Tools.LocaleBuilder {
 
                         LookupCurrencyTypes ();
 
-			foreach (string file in Directory.GetFiles ("locales")) {
+			foreach (string file in Directory.GetFiles ("locales", "*.xml")) {
 				string fn = Path.GetFileNameWithoutExtension (file);
 				if (locales_regex == null || locales_regex.IsMatch (fn)) {
 					ParseLocale (fn);
