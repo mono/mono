@@ -2065,7 +2065,9 @@ element_access
 		// Blah i;
 		  
 		Expression expr = (Expression) $1;  
-		if (!(expr is SimpleName || expr is MemberAccess)) {
+		if (expr is ComposedCast){
+			$$ = new ComposedCast (expr, (string) $2, lexer.Location);
+		} else if (!(expr is SimpleName || expr is MemberAccess)){
 			Error_ExpectingTypeName (lexer.Location, expr);
 			$$ = TypeManager.system_object_expr;
 		} else {
@@ -2073,7 +2075,7 @@ element_access
 			// So we extract the string corresponding to the SimpleName
 			// or MemberAccess
 			// 
-			$$ = new SimpleName (GetQualifiedIdentifier (expr) + (string) $2, lexer.Location);
+			$$ = new ComposedCast (expr, (string) $2, lexer.Location);
 		}
 	  }
 	;
@@ -2808,7 +2810,7 @@ local_variable_type
 		// Blah i;
 		  
 		Expression expr = (Expression) $1;  
-		if (!(expr is SimpleName || expr is MemberAccess)) {
+		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast)) {
 			Error_ExpectingTypeName (lexer.Location, expr);
 			$$ = null;
 		} else {
@@ -2816,6 +2818,7 @@ local_variable_type
 			// So we extract the string corresponding to the SimpleName
 			// or MemberAccess
 			// 
+
 			if ((string) $2 == "")
 				$$ = $1;
 			else
@@ -2837,7 +2840,7 @@ local_variable_pointer_type
 		Expression expr = (Expression) $1;  
 		Location l = lexer.Location;
 
-		if (!(expr is SimpleName || expr is MemberAccess)) {
+		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast)) {
 			Error_ExpectingTypeName (l, expr);
 
 			$$ = null;
@@ -3753,6 +3756,7 @@ Expression DecomposeQI (string name, Location loc)
 //  This is necessary because local_variable_type admits primary_expression
 //  as the type of the variable. So we do some extra checking
 // </summary>
+#if false
 string GetQualifiedIdentifier (Expression expr)
 {
 	if (expr is SimpleName)
@@ -3763,6 +3767,7 @@ string GetQualifiedIdentifier (Expression expr)
 		throw new Exception ("Expr has to be either SimpleName or MemberAccess! (" + expr + ")");
 	
 }
+#endif
 
 Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)
 {

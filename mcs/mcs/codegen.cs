@@ -450,8 +450,11 @@ namespace Mono.CSharp {
 				} catch {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
 					Console.WriteLine ("   Block that caused the problem begin at: " + loc);
-					Console.WriteLine ("                     Block being compiled: [{0},{1}]",
-							   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
+					
+					if (CurrentBlock != null){
+						Console.WriteLine ("                     Block being compiled: [{0},{1}]",
+								   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
+					}
 					throw;
 				}
 			}
