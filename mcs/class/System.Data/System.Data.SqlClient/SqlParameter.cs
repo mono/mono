@@ -5,6 +5,7 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Diego Caravana (diego@toth.it)
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
@@ -146,8 +147,17 @@ namespace System.Data.SqlClient {
 			get { return direction; }
 			set { 
 				direction = value; 
-				if (direction == ParameterDirection.Output)
+				switch( direction ) {
+					case ParameterDirection.Output:
 					MetaParameter.Direction = TdsParameterDirection.Output;
+						break;
+					case ParameterDirection.InputOutput:
+						MetaParameter.Direction = TdsParameterDirection.InputOutput;
+						break;
+					case ParameterDirection.ReturnValue:
+						MetaParameter.Direction = TdsParameterDirection.ReturnValue;
+						break;
+				}
 			}
 		}
 

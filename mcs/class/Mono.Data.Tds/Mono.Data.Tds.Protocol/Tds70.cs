@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Diego Caravana (diego@toth.it)
 //
 // Copyright (C) 2002 Tim Coleman
 //
@@ -51,9 +52,14 @@ namespace Mono.Data.Tds.Protocol {
 
 			StringBuilder result = new StringBuilder ();
 			foreach (TdsMetaParameter p in Parameters) {
+				if (p.Direction != TdsParameterDirection.ReturnValue) {
 				if (result.Length > 0)
 					result.Append (", ");
+					if (p.Direction == TdsParameterDirection.InputOutput)
+						result.Append (String.Format("{0}={0} output", p.ParameterName));
+					else
 				result.Append (FormatParameter (p));
+			}
 			}
 			return result.ToString ();
 		}
@@ -78,28 +84,42 @@ namespace Mono.Data.Tds.Protocol {
 
 		private string BuildProcedureCall (string procedure)
 		{
+			string exec = String.Empty;
+
 			StringBuilder declare = new StringBuilder ();
 			StringBuilder select = new StringBuilder ();
 			StringBuilder set = new StringBuilder ();
+			
 			int count = 0;
 			if (Parameters != null) {
 				foreach (TdsMetaParameter p in Parameters) {
-					if (p.Direction == TdsParameterDirection.Output) {
-						declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
+					if (p.Direction != TdsParameterDirection.Input) {
+
 						if (count == 0)
 							select.Append ("select ");
 						else
 							select.Append (", ");
-							
-						set.Append (String.Format ("set {0}=NULL\n", p.ParameterName));
 						select.Append (p.ParameterName);
+							
+						declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
+
+						if (p.Direction != TdsParameterDirection.ReturnValue) {
+							if( p.Direction == TdsParameterDirection.InputOutput )
+								set.Append (String.Format ("set {0}\n", FormatParameter(p)));
+							else
+						set.Append (String.Format ("set {0}=NULL\n", p.ParameterName));
+						}
+					
 						count += 1;
+					}
+					
+					if (p.Direction == TdsParameterDirection.ReturnValue) {
+						exec = p.ParameterName + "=";
 					}
 				}
 			}
-			string exec = String.Empty;
-			if (count > 0)
-				exec = "exec ";
+			if (count > 0 || exec.Length > 0)
+				exec = "exec " + exec;
 
 			return String.Format ("{0}{1}{2}{3} {4}\n{5}", declare.ToString (), set.ToString (), exec, procedure, BuildParameters (), select.ToString ());	
 		}

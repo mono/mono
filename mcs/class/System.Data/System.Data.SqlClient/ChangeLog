@@ -1,3 +1,17 @@
+2003-10-03  Diego Caravana  <diego@toth.it>
+
+	* SqlCommand.cs: no change.
+
+	* SqlConnection.cs (Close): Added checks for null instance
+	variables.
+
+	* SqlParameter.cs (Direction): Now handles parameters of type
+	ReturnValue and InputOutput.
+
+	* SqlParameterCollection.cs (IndexOf(string)): Search for
+	SqlParameter object in list is done by obtaining ParameterName
+	attribute, not directly through list.IndexOf().
+	
 2003-08-22  Duncan Mak  <duncan@ximian.com>
 
 	* SqlCommand.cs (ExecuteNonQuery): Return

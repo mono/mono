@@ -6,6 +6,7 @@
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
 //   Phillip Jerkins (Phillip.Jerkins@morgankeegan.com)
+//   Diego Caravana (diego@toth.it)
 //
 // Copyright (C) Ximian, Inc 2002
 // Copyright (C) Daniel Morgan 2002, 2003
@@ -256,18 +257,20 @@ namespace System.Data.SqlClient {
 				transaction.Rollback ();
 
 			if (dataReader != null || xmlReader != null) {
-				tds.SkipToEnd ();
+				if(tds != null) tds.SkipToEnd ();
 				dataReader = null;
 				xmlReader = null;
 			}
 
 			if (pooling)
-				pool.ReleaseConnection (tds);
+				if(pool != null) pool.ReleaseConnection (tds);
 			else
-				tds.Disconnect ();
+				if(tds != null) tds.Disconnect ();
 
+			if(tds != null) {
 			tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
 			tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
+			}
 
 			ChangeState (ConnectionState.Closed);
 		}

@@ -5,6 +5,7 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Diego Caravana (diego@toth.it)
 //
 // (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
@@ -187,7 +188,13 @@ namespace System.Data.SqlClient {
 		
 		public int IndexOf (string parameterName)
 		{
-			return list.IndexOf (parameterName);
+			int i=0;
+			for( ; i < list.Count; i++ ) {
+				if (((SqlParameter )list[i]).ParameterName.Equals (parameterName))
+					break;
+			}
+
+			return i;
 		}
 
 		public void Insert (int index, object value)

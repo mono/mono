@@ -5,6 +5,7 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Diego Caravana (diego@toth.it)
 //
 // (C) Ximian, Inc 2002 http://www.ximian.com/
 // (C) Daniel Morgan, 2002
@@ -307,6 +308,7 @@ namespace System.Data.SqlClient {
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
+
 			Connection.DataReader = new SqlDataReader (this);
 			return Connection.DataReader;
 		}
@@ -350,6 +352,7 @@ namespace System.Data.SqlClient {
 			IList list = Connection.Tds.OutputParameters;
 
 			if (list != null && list.Count > 0) {
+
 				int index = 0;
 				foreach (SqlParameter parameter in parameters) {
 					if (parameter.Direction != ParameterDirection.Input) {
