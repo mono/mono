@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.30 $
+// $Revision: 1.31 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.31  2004/08/24 17:17:27  pbartok
+// - Implemented SetTimer() and KillTimer()
+//
 // Revision 1.30  2004/08/24 11:29:44  jackson
 // Move timers to the driver level. On X they are queued by the driver and checked on idle.
 //
@@ -155,6 +158,7 @@ namespace System.Windows.Forms {
 
 		internal static bool		themes_enabled;
 		private static Hashtable	handle_data;
+		private ArrayList		timer_list;
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -515,6 +519,7 @@ namespace System.Windows.Forms {
 			}
 
 			handle_data = new Hashtable ();
+			timer_list = new ArrayList ();
 		}
 		#endregion	// Constructor & Destructor
 
@@ -913,6 +918,12 @@ namespace System.Windows.Forms {
 					msg.message=Msg.WM_MOUSE_LEAVE;
 					break;
 				}
+
+				case Msg.WM_TIMER: {
+					Timer timer = (Timer) timer_list [(int)msg.wParam];
+					timer.FireTick();
+					break;
+				}
 			}
 
 			return result;
@@ -1025,12 +1036,27 @@ namespace System.Windows.Forms {
 
 		internal override void SetTimer (Timer timer)
 		{
-			throw new NotImplementedException ();
+			int	index;
+
+			lock (timer_list) {
+				index = timer_list.Add (timer);
+			}
+
+			Win32SetTimer(FosterParent, index, (uint)timer.Interval, IntPtr.Zero);
 		}
 
 		internal override void KillTimer (Timer timer)
 		{
-			throw new NotImplementedException ();
+			int	index;
+
+			index = timer_list.IndexOf(timer);
+			if (index != -1) {
+				Win32KillTimer(FosterParent, index);
+
+				lock (timer_list) {
+					timer_list.Remove (timer);
+				}
+			}
 		}
 
 		// Santa's little helper
@@ -1168,6 +1194,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetDesktopWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetDesktopWindow();
+
+		[DllImport ("user32.dll", EntryPoint="SetTimer", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32SetTimer(IntPtr hwnd, int nIDEvent, uint uElapse, IntPtr timerProc);
+
+		[DllImport ("user32.dll", EntryPoint="KillTimer", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32KillTimer(IntPtr hwnd, int nIDEvent);
 		#endregion
 
 	}
