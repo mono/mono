@@ -1,3 +1,8 @@
+2004-06-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimeSpanTest.cs: Added tests for overflow checking and parsing
+	only days (LAMESPEC).
+
 2004-06-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimeSpanTest.cs: Added tests for exceptions in FromXXX methods

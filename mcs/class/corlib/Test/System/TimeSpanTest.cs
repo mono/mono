@@ -35,6 +35,41 @@ public class TimeSpanTest : Assertion {
 		AssertEquals ("A6", "1.01:00:00", t1.ToString ());
         }
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void DaysOverflow () 
+	{
+		int days = (int) (Int64.MaxValue / TimeSpan.TicksPerDay) + 1;
+		TimeSpan ts = new TimeSpan (days, 0, 0, 0, 0);
+	}
+
+	[Test]
+	public void TemporaryOverflow () 
+	{
+		// calculating part of this results in overflow (days)
+		// but the negative hours, minutes, seconds & ms correct this
+		int days = (int) (Int64.MaxValue / TimeSpan.TicksPerDay) + 1;
+		TimeSpan ts = new TimeSpan (days, Int32.MinValue, Int32.MinValue, Int32.MinValue, Int32.MinValue);
+		AssertEquals ("Ticks", 9201876488683520000, ts.Ticks);
+	}
+
+	[Test]
+	public void NoOverflowInHoursMinsSecondsMS () 
+	{
+		TimeSpan ts = new TimeSpan (0, Int32.MaxValue, Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
+		AssertEquals ("Ticks", 21496274706470000, ts.Ticks);
+	}
+
+	[Test]
+	public void NegativeTimeSpan () 
+	{
+		TimeSpan ts = new TimeSpan (-23, -59, -59);
+		AssertEquals ("Hours", -23, ts.Hours);
+		AssertEquals ("Minutes", -59, ts.Minutes);
+		AssertEquals ("Seconds", -59, ts.Seconds);
+		AssertEquals ("Ticks", -863990000000, ts.Ticks);
+	}
+
 	public void TestProperties ()
 	{
 		TimeSpan t1 = new TimeSpan (1,2,3,4,5);
@@ -400,6 +435,14 @@ public class TimeSpanTest : Assertion {
 		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
 
 		ParseHelper (" 1:2:3:12345678 ", true, false, "dontcare"); 
+	}
+
+	// LAMESPEC: timespan in documentation is wrong - hh:mm:ss isn't mandatory
+	[Test]
+	public void Parse_Days_WithoutColon () 
+	{
+		TimeSpan ts = TimeSpan.Parse ("1");
+		AssertEquals ("Days", 1, ts.Days);
 	}
 
 	public void TestSubstract ()
