@@ -3787,8 +3787,13 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "START OF TRY BLOCK", Block.StartLocation);
 
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
+
 			if (!Block.Resolve (ec))
 				ok = false;
+
+			ec.InTry = old_in_try;
 
 			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
 
@@ -3806,8 +3811,13 @@ namespace Mono.CSharp {
 					vi.Number = -1;
 				}
 
+				bool old_in_catch = ec.InCatch;
+				ec.InCatch = true;
+
 				if (!c.Resolve (ec))
 					ok = false;
+
+				ec.InCatch = old_in_catch;
 
 				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
 
@@ -3821,8 +3831,13 @@ namespace Mono.CSharp {
 				ec.CurrentBranching.CreateSibling ();
 				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
 
+				bool old_in_catch = ec.InCatch;
+				ec.InCatch = true;
+
 				if (!General.Resolve (ec))
 					ok = false;
+
+				ec.InCatch = old_in_catch;
 
 				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
 
@@ -3835,9 +3850,15 @@ namespace Mono.CSharp {
 			ec.CurrentBranching.CreateSiblingForFinally ();
 			Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
 
-			if (Fini != null)
+			if (Fini != null) {
+				bool old_in_finally = ec.InFinally;
+				ec.InFinally = true;
+
 				if (!Fini.Resolve (ec))
 					ok = false;
+
+				ec.InFinally = old_in_finally;
+			}
 
 			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
 

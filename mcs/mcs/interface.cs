@@ -642,8 +642,11 @@ namespace Mono.CSharp {
 		{
 			Type t = FindType (name);
 
-			if (t == null)
+			if (t == null) {
+				Report.Error (246, Location, "The type or namespace `" + name +
+					      "' could not be found");
 				return null;
+			}
 			
 			if (t.IsInterface)
 				return t;

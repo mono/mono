@@ -1,5 +1,14 @@
 2002-08-05  Martin Baulig  <martin@gnome.org>
 
+	* assign.cs (Assign.DoResolve): Check whether the source
+	expression is a value or variable.
+
+	* statement.cs (Try.Resolve): Set ec.InTry/InCatch/InFinally
+	while resolving the corresponding blocks.
+
+	* interface.cs (Interface.GetInterfaceTypeByName): Actually report
+	an error, don't silently return null.
+
 	* statement.cs (Block.AddVariable): Do the error reporting here
 	and distinguish between CS0128 and CS0136.
 	(Block.DoResolve): Report all unused labels (warning CS0164).

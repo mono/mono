@@ -6642,7 +6642,7 @@ namespace Mono.CSharp {
 					      "stackalloc can not be used in a catch or finally block");
 				return null;
 			}
-			
+
 			otype = ec.DeclSpace.ResolveType (t, false, loc);
 
 			if (otype == null)
