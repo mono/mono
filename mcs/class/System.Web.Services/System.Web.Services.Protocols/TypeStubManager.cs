@@ -394,11 +394,6 @@ namespace System.Web.Services.Protocols {
 				if (tm != null)
 					return tm;
 
-				tm = (LogicalTypeInfo) type_to_manager [t];
-
-				if (tm != null)
-					return tm;
-					
 				tm = new LogicalTypeInfo (t);
 				type_to_manager [t] = tm;
 

@@ -1,3 +1,9 @@
+2004-12-09  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TypeStubManager.cs: Removed redundat hastable access.
+	* SoapHttpClientProtocol.cs: Accept responses with ContentLength==0.
+	This fixes bug #70310.
+
 2004-12-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SoapHttpClientProtocol.cs: dispose the StreamReader that wraps the
