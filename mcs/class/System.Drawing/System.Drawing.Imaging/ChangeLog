@@ -1,0 +1,5 @@
+2002-04-14  Christian Meyer  <Christian.Meyer@cs.tum.edu>
+
+	* ChangeLog: created.
+	* Metafile.cs: Added. Wrote some ctors. No impl done, yet.
+
