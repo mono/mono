@@ -35,7 +35,11 @@ namespace Mono.Tools.LocaleBuilder {
                 public string TimeSeparator;
                 public string YearMonthPattern;
                 public int [] OptionalCalendars = new int [5];
-                
+                public ArrayList ShortDatePatterns = new ArrayList (14);
+                public ArrayList LongDatePatterns = new ArrayList (8);
+                public ArrayList ShortTimePatterns = new ArrayList (5);
+                public ArrayList LongTimePatterns = new ArrayList (6);
+
                 public int Row;
 
                 public void AppendTableRow (StringBuilder builder)
@@ -69,8 +73,31 @@ namespace Mono.Tools.LocaleBuilder {
                         builder.Append (FirstDayOfWeek + ", ");
                         
                         builder.Append ("\"" + EncodeString (DateSeparator) + "\", ");
-                        builder.Append ("\"" + EncodeString (TimeSeparator) + "\"");
+                        builder.Append ("\"" + EncodeString (TimeSeparator) + "\", ");
 
+                        AppendPatterns (builder, ShortDatePatterns);
+                        builder.Append (',');
+                        AppendPatterns (builder, LongDatePatterns);
+                        builder.Append (',');
+                        AppendPatterns (builder, ShortTimePatterns);
+                        builder.Append (',');
+                        AppendPatterns (builder, LongTimePatterns);
+
+                        builder.Append ('}');
+                }
+
+                private void AppendPatterns (StringBuilder builder, ArrayList al)
+                {
+                        string [] patterns = al.ToArray (typeof (string)) as string [];
+                        builder.Append ('{');
+                        for (int i = 0; i < patterns.Length; i++) {
+                                string s = EncodeString (patterns [i]);
+                                builder.Append ('\"');
+                                builder.Append (s);
+                                builder.Append ('\"');
+                                if (i + 1 < patterns.Length)
+                                        builder.Append (',');
+                        }
                         builder.Append ('}');
                 }
 

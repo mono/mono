@@ -416,21 +416,41 @@ namespace Mono.Tools.LocaleBuilder {
 				ni2 = (XPathNodeIterator) ni.Current.Evaluate ("dateFormats/dateFormatLength");
 				while (ni2.MoveNext ()) {
 					XPathNavigator df_nav = ni2.Current;
+					XPathNodeIterator p = df_nav.Select ("dateFormat/pattern");
+					string value = "";
+					if (p.MoveNext ())
+						value = p.Current.Value;
+					XPathNodeIterator ext = null;
 					switch (df_nav.GetAttribute ("type", String.Empty)) {
                                         case "full":
-                                                ParseFullDateFormat (df, df_nav.Value);
+                                                ParseFullDateFormat (df, value);
                                                 break;
 					case "long":
-						df.LongDatePattern = df_nav.Value;
+						df.LongDatePattern = value;
+						ext = df_nav.Select ("extraPatterns/pattern");
+						if (ext.MoveNext ()) {
+							df.LongDatePatterns.Clear ();
+							do {
+								df.LongDatePatterns.Add (ext.Current.Value);
+							} while (ext.MoveNext ());
+						}
 						break;
 					case "short":
-						df.ShortDatePattern = df_nav.Value;
+						df.ShortDatePattern = value;
+						ext = df_nav.Select ("extraPatterns/pattern");
+						if (ext.MoveNext ()) {
+							df.ShortDatePatterns.Clear ();
+							do {
+								df.ShortDatePatterns.Add (ext.Current.Value);
+							} while (ext.MoveNext ());
+						}
+
 						break;
                                         case "year_month":
-                                                df.YearMonthPattern = df_nav.Value;
+                                                df.YearMonthPattern = value;
                                                 break;
                                         case "month_day":
-                                                df.MonthDayPattern = df_nav.Value;
+                                                df.MonthDayPattern = value;
                                                 break;
 					}
 				}
@@ -438,12 +458,31 @@ namespace Mono.Tools.LocaleBuilder {
 				ni2 = (XPathNodeIterator) ni.Current.Evaluate ("timeFormats/timeFormatLength");
 				while (ni2.MoveNext ()) {
 					XPathNavigator df_nav = ni2.Current;
+					XPathNodeIterator p = df_nav.Select ("timeFormat/pattern");
+					string value = "";
+					if (p.MoveNext ())
+						value = p.Current.Value;
+					XPathNodeIterator ext = null;
 					switch (df_nav.GetAttribute ("type", String.Empty)) {
 					case "long":
-						df.LongTimePattern = df_nav.Value.Replace ('a', 't');
+						df.LongTimePattern = value.Replace ('a', 't');
+						ext = df_nav.Select ("extraPatterns/pattern");
+						if (ext.MoveNext ()) {
+							df.LongTimePatterns.Clear ();
+							do {
+								df.LongTimePatterns.Add (ext.Current.Value);
+							} while (ext.MoveNext ());
+						}
 						break;
 					case "short":
-						df.ShortTimePattern = df_nav.Value.Replace ('a', 't');
+						df.ShortTimePattern = value.Replace ('a', 't');
+						ext = df_nav.Select ("extraPatterns/pattern");
+						if (ext.MoveNext ()) {
+							df.ShortTimePatterns.Clear ();
+							do {
+								df.ShortTimePatterns.Add (ext.Current.Value);
+							} while (ext.MoveNext ());
+						}
 						break;
 					}
 				}
