@@ -144,6 +144,9 @@ namespace System.Drawing {
 				case Status.NotImplemented:
 					throw new NotImplementedException ("Feature not implemented.");
 
+				case Status.WrongState:
+					throw new ArgumentException ("Properties not set properly.");
+
 				default:
 					throw new Exception ("Unknown Error.");
 			}
@@ -368,13 +371,25 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipCreateLineBrushFromRectWithAngle (ref RectangleF rect, int color1, int color2, float angle, bool isAngleScaleable, WrapMode wrapMode, out IntPtr brush);
 		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetLineBlendCount (IntPtr brush, out int count);
+		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineBlend (IntPtr brush, float [] blend, float [] positions, int count);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetLineBlend (IntPtr brush, float [] blend, float [] positions, int count);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineGammaCorrection (IntPtr brush, bool useGammaCorrection);
 		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetLineGammaCorrection (IntPtr brush, out bool useGammaCorrection);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetLinePresetBlendCount (IntPtr brush, out int count);
+		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLinePresetBlend (IntPtr brush, int [] blend, float [] positions, int count);
 		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetLinePresetBlend (IntPtr brush, int [] blend, float [] positions, int count);
+		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineColors (IntPtr brush, int color1, int color2);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetLineColors (IntPtr brush, int [] colors);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetLineRectI (IntPtr brush, out Rectangle rect);
 		[DllImport("gdiplus.dll")]
@@ -382,7 +397,11 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineTransform (IntPtr brush, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetLineTransform (IntPtr brush, out IntPtr matrix);
+		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineWrapMode (IntPtr brush, WrapMode wrapMode);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetLineWrapMode (IntPtr brush, out WrapMode wrapMode);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineLinearBlend (IntPtr brush, float focus, float scale);
 		[DllImport("gdiplus.dll")]
