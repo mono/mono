@@ -1,5 +1,10 @@
 2005-03-07  Jackson Harper  <jackson@ximian.com>
 
+	* Binding.cs: Push data pushes from data -> property. Check if the
+	property is readonly when attempting to	set it.
+
+2005-03-07  Jackson Harper  <jackson@ximian.com>
+
 	* Binding.cs: Format and parse data correctly. Use ASsignableFrom
 	instead of IsSubclassOf. Pulling data now sets the value on the
 	control.

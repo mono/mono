@@ -150,7 +150,9 @@ namespace System.Windows.Forms {
 
 		internal void PushData ()
 		{
-			SetControlValue (data);
+			data = prop_desc.GetValue (control);
+			data = FormatData (data);
+			SetPropertyValue (data);
 		}
 
 		internal void PullData ()
@@ -179,6 +181,14 @@ namespace System.Windows.Forms {
 		private void SetControlValue (object data)
 		{
 			prop_desc.SetValue (control, data);
+		}
+
+		private void SetPropertyValue (object data)
+		{
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
+			if (pd.IsReadOnly)
+				return;
+			pd.SetValue (manager.Current, data);
 		}
 
 		private void CurrentChangedHandler ()
