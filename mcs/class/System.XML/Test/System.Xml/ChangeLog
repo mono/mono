@@ -1,3 +1,8 @@
+2004-09-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReaderTests.cs : added ProhibitDtd().
+	* XmlWriterTests.cs : added WriteNodeError().
+
 2004-06-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSecureResolverTests.cs : Just [Ignore] EmptyEvidenceDeniedAccess.

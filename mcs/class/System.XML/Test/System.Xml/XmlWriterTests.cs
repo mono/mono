@@ -117,6 +117,20 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void WriteNodeError ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<root>", XmlNodeType.Document, null);
+			xtr.Read ();
+			try {
+				xtr.Read ();
+			} catch (XmlException ex) {
+			}
+			XmlTextWriter xtw = new XmlTextWriter (new StringWriter ());
+			xtw.WriteNode (xtr, false);
+		}
+
+		[Test]
 		public void WriteSurrogateCharEntity ()
 		{
 			setupWriter ();

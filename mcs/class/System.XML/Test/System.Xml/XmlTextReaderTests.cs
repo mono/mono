@@ -826,5 +826,17 @@ namespace MonoTests.System.Xml
 			xtr.Namespaces = false;
 			xtr.Read ();
 		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ProhibitDtd ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<!DOCTYPE root []><root/>", XmlNodeType.Document, null);
+			xtr.ProhibitDtd = true;
+			while (!xtr.EOF)
+				xtr.Read ();
+		}
+#endif
 	}
 }
