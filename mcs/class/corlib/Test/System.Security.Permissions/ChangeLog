@@ -5,7 +5,10 @@
 	permissions inside corlib.
 	* UIPermissionTest.cs: New. Unit tests for UIPermission.
 	* UIPermissionAttributeTest.cs: Added unit tests to check the behavior
-	of using invliad enums for properties (no checks).
+	of using invalid enums for properties (no checks).
+	* ZoneIdentityPermissionAttributeTest.cs: Added unit tests to check 
+	the behavior of using invliad enums for properties (no checks).
+	* ZoneIdentityPermissionTest.cs: Added new unit tests for XML decoding.
 
 2003-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 

@@ -229,5 +229,83 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermission b = new SecurityPermission (PermissionState.None);
 			a.Union (b);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FromXml_Null ()
+		{
+			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
+			zip.FromXml (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromXml_WrongTag ()
+		{
+			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
+			SecurityElement se = zip.ToXml ();
+			se.Tag = "IMono"; // instead of IPermission
+			zip.FromXml (se);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromXml_WrongTagCase ()
+		{
+			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
+			SecurityElement se = zip.ToXml ();
+			se.Tag = "IPERMISSION"; // instead of IPermission
+			zip.FromXml (se);
+		}
+
+		[Test]
+		public void FromXml_WrongClass ()
+		{
+			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
+			SecurityElement se = zip.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", "Wrong" + se.Attribute ("class"));
+			w.AddAttribute ("version", se.Attribute ("version"));
+			zip.FromXml (w);
+			// doesn't care of the class name at that stage
+			// anyway the class has already be created so...
+		}
+
+		[Test]
+		public void FromXml_NoClass ()
+		{
+			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
+			SecurityElement se = zip.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("version", se.Attribute ("version"));
+			zip.FromXml (w);
+			// doesn't even care of the class attribute presence
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromXml_WrongVersion ()
+		{
+			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
+			SecurityElement se = zip.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			w.AddAttribute ("version", "2");
+			zip.FromXml (w);
+		}
+
+		[Test]
+		public void FromXml_NoVersion ()
+		{
+			ZoneIdentityPermission zip = new ZoneIdentityPermission (PermissionState.None);
+			SecurityElement se = zip.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			zip.FromXml (w);
+		}
 	}
 }
