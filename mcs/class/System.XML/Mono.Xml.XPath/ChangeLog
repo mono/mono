@@ -1,5 +1,9 @@
 2003-11-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* KeyPattern.cs : Matches() should iterate candidate keys to the end.
+
+2003-11-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* IdPattern.cs,
 	  KeyPattern.cs : Implemented Matches(), overrode DefaultPriority,
 	  modified inheritance.

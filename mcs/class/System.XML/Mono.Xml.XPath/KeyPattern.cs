@@ -40,10 +40,10 @@ namespace Mono.Xml.XPath {
 			XsltCompiledContext xctx = ctx as XsltCompiledContext;
 			XslKey xslkey = xctx.Processor.CompiledStyle.Keys [keyName] as XslKey;
 			XPathNodeIterator iter = key.EvaluateNodeSet (new SelfIterator (node, ctx));
-			if (iter.MoveNext ())
-				return iter.Current.IsSamePosition (node);
-			else
-				return false;
+			while (iter.MoveNext ())
+				if (iter.Current.IsSamePosition (node))
+					return true;
+			return false;
 		}
 
 		public override double DefaultPriority { get { return 0.5; } }
