@@ -1,4 +1,13 @@
 
+Mon Feb 11 19:43:51 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* exception.h, exception.c: added TypeLoadException.
+	* object.h, object.c: added mono_array_clone ().
+	* icall.c: handle throwOnError in AssemblyGetType().
+	Added Array.Clone().
+	* opcode.h, opcode.c: use a single value for the opcode val.
+	Compile fix for non-gcc compilers.
+
 Fri Feb 8 12:26:37 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* opcodes.c, opcodes.h: export interesting info about opcodes.
