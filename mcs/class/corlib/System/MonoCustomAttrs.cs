@@ -40,8 +40,14 @@ namespace System
 {
 	internal class MonoCustomAttrs
 	{
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		internal static readonly bool pseudoAttrs = true;
+#else
+		internal static readonly bool pseudoAttrs = false;
+#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object[] GetCustomAttributes (ICustomAttributeProvider obj);
+		internal static extern object[] GetCustomAttributesInternal (ICustomAttributeProvider obj, bool pseudoAttrs);
 
 		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
 								Type attributeType,
@@ -68,7 +74,7 @@ namespace System
 				throw new ArgumentNullException ("obj");
 
 			object[] r;
-			object[] res = GetCustomAttributes (obj);
+			object[] res = GetCustomAttributesInternal (obj, pseudoAttrs);
 			// shortcut
 			if (!inherit && res.Length == 1)
 			{
@@ -162,7 +168,7 @@ namespace System
 				if ((btype = GetBase (btype)) != null)
 				{
 					inheritanceLevel++;
-					res = GetCustomAttributes (btype);
+					res = GetCustomAttributesInternal (btype, pseudoAttrs);
 				}
 			} while (inherit && btype != null);
 
@@ -188,14 +194,14 @@ namespace System
 				throw new ArgumentNullException ("obj");
 
 			if (!inherit)
-				return (object[]) GetCustomAttributes (obj).Clone ();
+				return (object[]) GetCustomAttributesInternal (obj, pseudoAttrs).Clone ();
 
 			return GetCustomAttributes (obj, null, inherit);
 		}
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
-			object [] res = GetCustomAttributes (obj);
+			object [] res = GetCustomAttributesInternal (obj, pseudoAttrs);
 			foreach (object attr in res)
 				if (attributeType.Equals (attr.GetType ()))
 					return true;
