@@ -89,7 +89,7 @@ namespace System {
 		///
 		/// <remarks>
 		///   
-		int IComparable.CompareTo (object obj)
+		public int CompareTo (object obj)
 		{
 			if (obj == null)
 				return 1;
@@ -191,6 +191,5 @@ namespace System {
 			// fixme: consider format
 			return GetName (enumType, value);
 		}
-
 	}
 }

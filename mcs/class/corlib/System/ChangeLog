@@ -1,5 +1,7 @@
 2002-03-01  Martin Baulig  <martin@gnome.org>
 
+	* Enum.cs (CompareTo): Correctly override this method from IComparable.
+
 	* Console.cs (setIn, setOut, setError): It's called SetIn, SetOut, SetError.
 
 2002-02-28  Martin Baulig  <martin@gnome.org>
