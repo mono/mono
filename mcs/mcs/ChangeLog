@@ -1,3 +1,7 @@
+2002-10-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* parameter.cs (Resolve): Do not allow void as a parameter type.
+
 2002-10-06  Martin Baulig  <martin@gnome.org>
 
 	* statemenc.cs (FlowBranching.SetParameterAssigned): Don't crash
