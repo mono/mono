@@ -1,3 +1,11 @@
+2004-07-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: moved loading of the ssl stream Type to its own
+	method. Don't create a new ssl stream if we're reusing the connection.
+
+	* WebConnectionStream.cs: ensure the number of bytes copied in ReadAll
+	is the expected even if the dta from the server has extra bytes.
+
 2004-07-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs:
