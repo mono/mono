@@ -83,8 +83,7 @@ namespace Commons.Xml.Relaxng.Derivative
 				provider = RelaxngMergedProvider.DefaultProvider;
 			datatype = provider.GetDatatype (localName, ns, parameters);
 			if (datatype == null) {
-				throw new RelaxngException ("Invalid datatype was found.");
-//				datatype = RelaxngString.Instance;
+				throw new RelaxngException (String.Format ("Invalid datatype was found for namespace '{0}' and local name '{1}'", ns, localName));
 			}
 		}
 
@@ -109,113 +108,5 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 	}
 
-	/*
-
-	///
-	/// ChildNode Classes
-	///
-	public abstract class RdpChildNode
-	{
-		// Strip
-		public virtual bool IsNonWhitespaceText {
-			get { return false; }
-		}
-	}
-
-	public class RdpTextChild : RdpChildNode
-	{
-		public RdpTextChild (string text)
-		{
-			this.text = text;
-		}
-
-		string text;
-		public string Text {
-			get { return text; }
-		}
-
-		public override bool IsNonWhitespaceText {
-			get { return RdpUtil.Whitespace (text); }
-		}
-	}
-
-	public class RdpElementChild : RdpChildNode
-	{
-		public RdpElementChild (string name, string ns, RdpContext ctx, RdpAttributes attributes, RdpChildNodes childNodes)
-		{
-			this.name = name;
-			this.ns = ns;
-			this.ctx = ctx;
-			this.attributes = attributes;
-			this.childNodes = childNodes;
-		}
-
-		string name;
-		public string LocalName {
-			get { return name; }
-		}
-
-		string ns;
-		public string NamespaceURI {
-			get { return ns; }
-		}
-
-		RdpContext ctx;
-		public RdpContext Context {
-			get { return ctx; }
-		}
-
-		RdpAttributes attributes;
-		public RdpAttributes Attributes {
-			get { return attributes; }
-		}
-
-		RdpChildNodes childNodes;
-		public RdpChildNodes ChildNodes {
-			get { return childNodes; }
-		}
-	}
-	*/
-
-	/*
-	public class RdpChildNodes : ArrayList
-	{
-		public RdpChildNodes () : base ()
-		{
-		}
-	}
-
-	public class RdpAttributes : ArrayList
-	{
-		public RdpAttributes () : base ()
-		{
-		}
-	}
-
-	public class RdpAttributeNode : RdpChildNode
-	{
-		public RdpAttributeNode (string name, string ns, string value) : base ()
-		{
-			this.name = name;
-			this.ns = ns;
-			this.value = value;
-		}
-
-		string value;
-		public string Value {
-			get { return value; }
-		}
-
-		string name;
-		public string LocalName {
-			get { return name; }
-		}
-
-		string ns;
-		public string NamespaceURI {
-			get { return ns; }
-		}
-	}
-	*/
 }
 

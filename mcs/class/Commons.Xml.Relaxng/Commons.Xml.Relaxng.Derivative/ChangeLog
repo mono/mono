@@ -1,4 +1,8 @@
-2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+2005-02-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpObjects.cs : provide error type name. removed commented code block.
+
+2005-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs : MakeOneOrMore() did not always set up internal table.
 
