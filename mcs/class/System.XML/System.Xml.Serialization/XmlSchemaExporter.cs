@@ -684,9 +684,22 @@ namespace System.Xml.Serialization {
 		
 		string GetMapKey (XmlTypeMapping map)
 		{
-			return map.TypeData.FullTypeName + " " + map.XmlType + " " + map.XmlTypeNamespace;
+			// Don't use type name for array types, since we can have different
+			// classes that represent the same array type (for example
+			// StringCollection and string[]).
+			
+			if (map.TypeData.IsListType)
+				return GetArrayKeyName (map.TypeData) + " " + map.XmlType + " " + map.XmlTypeNamespace;
+			else
+				return map.TypeData.FullTypeName + " " + map.XmlType + " " + map.XmlTypeNamespace;
 		}
-
+		
+		string GetArrayKeyName (TypeData td)
+		{
+			TypeData etd = td.ListItemTypeData;
+			return "*arrayof*" + (etd.IsListType ? GetArrayKeyName (etd) : etd.FullTypeName);
+		}
+		
 		void CompileSchemas ()
 		{
 //			foreach (XmlSchema sc in schemas)

@@ -1,3 +1,10 @@
+2004-04-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSchemaExporter.cs: When checking if a map has been exported or not,
+	  don't use type name for array types, since we can have different classes 
+	  that represent the same array type (for example StringCollection and 
+	  string[]).
+
 2004-04-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TypeTranslator.cs, XmlCustomFormatter.cs: Removed map from Uri to anyUri,
