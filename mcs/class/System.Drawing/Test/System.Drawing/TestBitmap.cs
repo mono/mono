@@ -27,7 +27,7 @@ namespace MonoTests.System.Drawing{
 		
 		}
 			
-		//[Test]
+		[Test]
 		public void TestPixels() 
 		{		
 			// Tests GetSetPixel/SetPixel			
@@ -55,9 +55,9 @@ namespace MonoTests.System.Drawing{
 			sRslt = Path.GetFullPath (sSub);
 				
 			if (Directory.Exists(sRslt) == 	false) 
-				sRslt = Path.GetFullPath ("Test/System.Drawing/") + sSub;				
+				sRslt = "Test/System.Drawing/" + sSub;				
 			
-			Console.WriteLine(sRslt);	
+			Console.WriteLine("outdir: " + sRslt);	
 			return sRslt;
 		}
 		
@@ -75,7 +75,7 @@ namespace MonoTests.System.Drawing{
 			return sRslt;
 		}
 		
-		//[Test]
+		[Test]
 		public void BitmapLoadAndSave() 
 		{				
 			string sOutFile =  getOutSubDir() + "linerect.bmp";
@@ -121,8 +121,8 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (Color.Black.B, color.B);										
 		}
 		
-		//[Test]
-		public void Clone ()
+		[Test]
+		public void Clone()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
 			string sOutFile =  getOutSubDir() + "clone24.bmp";			
@@ -141,6 +141,30 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (colororg0, colornew0);											
 			AssertEquals (colororg50, colornew50);				
 		}	
+		
+		/* Check bitmap features on a know 24-bits bitmap*/
+		[Test]
+		public void BitmapFeatures()
+		{
+			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
+			Bitmap	bmp = new Bitmap(sInFile);						
+			RectangleF rect;
+			GraphicsUnit unit = GraphicsUnit.World;
+			
+			rect = bmp.GetBounds(ref unit);
+			
+			AssertEquals (PixelFormat.Format24bppRgb, bmp.PixelFormat);
+			AssertEquals (173, bmp.Width);
+			AssertEquals (183, bmp.Height);		
+			
+			AssertEquals (0, rect.X);
+			AssertEquals (0, rect.Y);		
+			AssertEquals (173, rect.Width);
+			AssertEquals (183, rect.Height);					
+			
+			AssertEquals (173, bmp.Size.Width);
+			AssertEquals (183, bmp.Size.Height);					
+		}
 	
 	}
 }

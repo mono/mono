@@ -666,7 +666,7 @@ namespace System.Drawing {
 		internal static extern Status GdipImageGetFrameDimensionsList ( IntPtr image, [Out] Guid [] dimensionIDs, uint count );
  
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageHeight ( IntPtr image, out uint height );
+		internal static extern Status GdipGetImageHeight (IntPtr image, out int height);
 												   
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageHorizontalResolution ( IntPtr image, out float resolution );
@@ -705,7 +705,7 @@ namespace System.Drawing {
 		internal static extern Status GdipGetImageVerticalResolution ( IntPtr image, out float resolution );
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageWidth ( IntPtr image, out uint width);
+		internal static extern Status GdipGetImageWidth ( IntPtr image, out int width);
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageBounds ( IntPtr image, out RectangleF source, ref GraphicsUnit unit );

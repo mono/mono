@@ -38,7 +38,6 @@ namespace System.Drawing {
 		public Bitmap (int width, int height, Graphics g)
 		{
 			raw_format = ImageFormat.Bmp;
-			image_size = new Size(width, height);
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
 			if (s != Status.Ok)
@@ -51,7 +50,6 @@ namespace System.Drawing {
 		public Bitmap (int width, int height, PixelFormat format)
 		{
 			raw_format = ImageFormat.Bmp;
-			image_size = new Size(width, height);			
 			int bpp = GetPixelFormatSize (format);
 			int stride = ((bpp * width) / 8);
 			stride = (stride + 3) & ~3;
@@ -84,15 +82,13 @@ namespace System.Drawing {
 		}
 		
 		internal Bitmap (int width, int height, PixelFormat pixel, IntPtr bmp)
-		{
-			image_size = new Size(width, height);			
+		{			
 			nativeObject = (IntPtr)bmp;			
 			raw_format = ImageFormat.Bmp;
 		}
 		
 		internal Bitmap (float width, float height, PixelFormat pixel, IntPtr bmp)
-		{
-			image_size = new Size((int)width, (int)height);			
+		{			
 			nativeObject = (IntPtr)bmp;			
 			raw_format = ImageFormat.Bmp;
 		}
@@ -104,7 +100,7 @@ namespace System.Drawing {
 				if (nativeObject!=IntPtr.Zero) Dispose();
 				
 				Bitmap bmpOriginal = (Bitmap) original;
-				image_size = bmpOriginal.Size;				
+				
 				IntPtr bmp;
 				Status s = GDIPlus.GdipCloneBitmapAreaI (0, 0, newSize.Width, newSize.Height, bmpOriginal.PixelFormat, bmpOriginal.nativeObject, out bmp);
 				if (s != Status.Ok)
@@ -122,9 +118,8 @@ namespace System.Drawing {
 			
 			BitmapData bd = Decode (stream);
 			if (bd == null)
-				throw new ArgumentException ("Stream could not be decoded");
+				throw new ArgumentException ("Stream could not be decoded");	
 			
-			image_size = new Size (bd.Width, bd.Height);			
 
 			IntPtr bmp;			
 			Console.WriteLine ("Stride: {0} ", bd.Stride);
@@ -182,7 +177,7 @@ namespace System.Drawing {
 				
 			nativeObject = (IntPtr)bmp;						 
 			raw_format = ImageFormat.Bmp;
-			image_size = new Size(width, height);
+			
 		}
 
 		private Bitmap (SerializationInfo info, StreamingContext context)

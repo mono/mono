@@ -25,8 +25,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 {
 	public delegate bool GetThumbnailImageAbort();
 	
-	internal IntPtr nativeObject = IntPtr.Zero;
-	protected Size image_size;	
+	internal IntPtr nativeObject = IntPtr.Zero;	
 	protected ColorPalette colorPalette;
 	protected ImageFormat raw_format;
 	
@@ -36,13 +35,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		colorPalette = new ColorPalette();
 	}
 	
-
+	[MonoTODO]	
 	private Image (SerializationInfo info, StreamingContext context)
 	{
 		
 	}
 	
-
+	[MonoTODO]	
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
 	}
@@ -190,11 +189,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return ((pixfmt & PixelFormat.Extended) != 0);
 	}
 
-	// non-static
-	[MonoTODO]	
+	// non-static	
 	public RectangleF GetBounds (ref GraphicsUnit pageUnit)
-	{		
-		throw new NotImplementedException ();
+	{	
+		RectangleF source;			
+		
+		Status status = GDIPlus.GdipGetImageBounds (nativeObject, out source, ref pageUnit);
+		GDIPlus.CheckStatus (status);		
+		
+		return source;
 	}
 	
 	[MonoTODO]	
@@ -329,7 +332,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public int Height {
 		get {
-			return image_size.Height;
+			int height;			
+			Status status = GDIPlus.GdipGetImageHeight (nativeObject, out height);		
+			GDIPlus.CheckStatus (status);			
+			
+			return height;
 		}
 	}
 	
@@ -337,7 +344,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		get {
 			float resolution;
 			
-			GDIPlus.GdipGetImageHorizontalResolution (nativeObject, out resolution);			
+			Status status = GDIPlus.GdipGetImageHorizontalResolution (nativeObject, out resolution);			
+			GDIPlus.CheckStatus (status);			
+			
 			return resolution;
 		}
 	}
@@ -353,10 +362,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
-	[MonoTODO]	
+	
 	public SizeF PhysicalDimension {
 		get {
-			throw new NotImplementedException ();
+			float width,  height;
+			
+			Status status = GDIPlus.GdipGetImageDimension (nativeObject, out width, out height);		
+			GDIPlus.CheckStatus (status);			
+			
+			return new SizeF(width,  height);
 		}
 	}
 	
@@ -399,7 +413,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public Size Size {
 		get {
-			return image_size;
+			return new Size(Width, Height);
 		}
 	}
 	
@@ -414,7 +428,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public int Width {
 		get {
-			return image_size.Width;
+			int width;			
+			Status status = GDIPlus.GdipGetImageWidth (nativeObject, out width);		
+			GDIPlus.CheckStatus (status);			
+			
+			return width;
 		}
 	}
 	

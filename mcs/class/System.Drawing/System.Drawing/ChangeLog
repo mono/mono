@@ -1,3 +1,8 @@
+2004-03-30  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Bitmap.cs: remove redundant data already present at Image.cs
+	* Image.cs: use GDI+ functions to get image details
+	* StringFormat.cs: missing constructor and property
+
 2004-03-24  Jordi Mas i Hernandez <jordi@ximian.com>
 	* FontFamily.cs: added missing members and style clean
 	* Graphics.cs: fixed signature of DrawArc and DrawPie
