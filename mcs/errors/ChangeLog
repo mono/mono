@@ -1,6 +1,8 @@
 2004-03-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* cs1510-2.cs: test for 56016.
+	* cs0154-2.cs: test for 55780.
+	* cs0246-6.cs: test for 55770.
 
 2004-03-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
