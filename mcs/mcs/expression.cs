@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 			return oper.ToString ();
 		}
 
-		static string [] oper_names;
+		public static readonly string [] oper_names;
 
 		static Unary ()
 		{
@@ -1737,8 +1737,8 @@ namespace Mono.CSharp {
 		bool DelegateOperation;
 
 		// This must be kept in sync with Operator!!!
-		static string [] oper_names;
-
+		public static readonly string [] oper_names;
+		
 		static Binary ()
 		{
 			oper_names = new string [(int) Operator.TOP];
@@ -4415,7 +4415,7 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -4488,9 +4488,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((method.Attributes & MethodAttributes.SpecialName) != 0){
-				string name = method.Name;
-
-				if (name.StartsWith ("get_") || name.StartsWith ("set_") || name.StartsWith ("op_"))
+				if (TypeManager.IsSpecialMethod (method))
 					Report.Error (571, loc, method.Name + ": can not call operator or accessor");
 			}
 			

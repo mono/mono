@@ -1,3 +1,10 @@
+2003-02-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (IsSpecialMethod): The correct way of figuring
+	out if a method is special is to see if it is declared in a
+	property or event, or whether it is one of the predefined operator
+	names.   This should fix correctly #36804.
+
 2003-02-15  Miguel de Icaza  <miguel@ximian.com>
 
 	The goal here is to remove the dependency on EmptyCast.Peel ().
