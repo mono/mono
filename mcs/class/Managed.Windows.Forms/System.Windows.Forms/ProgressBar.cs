@@ -23,9 +23,19 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ProgressBar.cs,v $
+// Revision 1.2  2004/07/09 17:17:46  miguel
+// 2004-07-09  Miguel de Icaza  <miguel@ximian.com>
+//
+// 	* ProgressBar.cs: Fixed spelling for `block'
+//
+// 	drawProgressBar: renamed to `DrawProgressBar' to follow the coding
+// 	style guidelines.
+//
+// 	Avoid using the += on rect.X, that exposed a bug in the compiler.
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -48,24 +58,22 @@ namespace System.Windows.Forms
 		static private SolidBrush br_light = new SolidBrush (light);
 		private static SolidBrush br_main = new SolidBrush (Color.FromArgb (255, 236, 233, 216));
 		private static SolidBrush br_bar = new SolidBrush (Color.FromArgb (255, 49, 106, 197));			
-		private static int space_betweenblocs = 2;
+		private static int space_betweenblocks = 2;
 		
 		/* Draw a progress bar */
-		static public void drawProgressBar (Graphics dc, Rectangle area, 
-			Rectangle client_area, int barpos_pixels, int bloc_width)
+		static public void DrawProgressBar (Graphics dc, Rectangle area, 
+						    Rectangle client_area, int barpos_pixels, int block_width)
 		{	
+			Rectangle rect = new Rectangle (client_area.X, client_area.Y, block_width, client_area.Height);	
+			int increment = block_width + space_betweenblocks;
 			
-			Rectangle rect = new Rectangle (client_area.X, client_area.Y,
-				bloc_width, client_area.Height);	
-				
 			/* Background*/
 			dc.FillRectangle (br_main, area);				
 			
 			/* Draw background*/
-			while ((rect.X - client_area.X) < barpos_pixels) {            		        
-            		        
+			while ((rect.X - client_area.X) < barpos_pixels) {
                 		dc.FillRectangle (br_bar, rect);
-                		rect.X  += rect.Width + space_betweenblocs;
+                		rect.X  = rect.X + increment;
             		}			
             		
             		/* Draw border */
@@ -260,18 +268,18 @@ namespace System.Windows.Forms
 		
 		private void draw ()
 		{	
-			int bloc_width, barpos_pixels;			
+			int block_width, barpos_pixels;			
 			int steps = (Maximum - Minimum) / step;			
 			
-			bloc_width = ((client_area.Height) * 2 ) / 3;			
+			block_width = ((client_area.Height) * 2 ) / 3;			
 			barpos_pixels = ((Value - Minimum) * client_area.Width) / (Maximum - Minimum);									
 			
-			//Console.WriteLine ("draw bloc witdh:{0} barpos: {1}", bloc_width, barpos_pixels);
+			//Console.WriteLine ("draw block witdh:{0} barpos: {1}", block_width, barpos_pixels);
 			//Console.WriteLine ("draw Max {0} Min {1} Value {2}", 
 			//	Maximum, Minimum, Value);
 					
-			ThemePainter_ProgressBar.drawProgressBar (dc_mem, paint_area, client_area, barpos_pixels,
-				bloc_width);
+			ThemePainter_ProgressBar.DrawProgressBar (dc_mem, paint_area, client_area, barpos_pixels,
+				block_width);
 		}
 		
 				
