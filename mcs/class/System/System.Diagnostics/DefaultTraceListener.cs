@@ -1,98 +1,129 @@
 //
 // System.Diagnostics.DefaultTraceListener.cs
 //
-// Author:
-//	John R. Hicks (angryjohn69@nc.rr.com)
+// Authors:
+//   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2001
+// Comments from John R. Hicks <angryjohn69@nc.rr.com> original
+// implementation.
 //
-using System;
+// (C) 2002 Jonathan Pryor
+//
 
-namespace System.Diagnostics
-{
-	/// <summary>
-	/// Provides the default output methods and behavior for tracing.
-	/// </summary>
-	/// <remarks>
-	/// Since there is no debugging API ala Win32 on Mono, <see cref="System.Console.Out">
-	/// Console.Out</see> is being used as the default output method.
-	/// </remarks>
-	public class DefaultTraceListener : TraceListener
-	{	
-		private string logFileName;
-		
-		public DefaultTraceListener() : base("Default")
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+
+using System.Diagnostics;
+
+namespace System.Diagnostics {
+
+ 	/// <summary>
+ 	/// Provides the default output methods and behavior for tracing.
+ 	/// </summary>
+ 	/// <remarks>
+ 	/// Since there is no debugging API ala Win32 on Mono, 
+  /// <see cref="System.Console.Out">
+ 	/// Console.Out</see> is being used as the default output method.
+	/// 
+  /// <para>This needs help, as MSDN specifies that GUI widgets be used 
+  /// for certain features.  The short-term solution is to just send output to
+  /// OutputDebugString.</para>
+ 	/// </remarks>
+	[ComVisible(false)]
+	public class DefaultTraceListener : TraceListener {
+
+		public DefaultTraceListener () : base ("Default")
 		{
-			logFileName = "";
 		}
-		
-		/// <summary>
-		/// Gets or sets name of a log file to write trace or debug messages to.
-		/// </summary>
-		/// <value>
-		/// The name of a log file to write trace or debug messages to.
-		/// </value>
-		public String LogFileName
-		{
-			get
-			{
-				return logFileName;
-			}
-			set
-			{
-				logFileName = value;
-			}
+
+		[MonoTODO]
+		public bool AssertUiEnabled {
+			get {return false;}
+			set {/* ignore */}
 		}
-		
-		/// <summary>
-		/// Emits or displays a message and a stack trace for an assertion that 
-		/// always fails.
-		/// </summary>
-		/// <param name="message">
-		/// The message to emit or display.
-		/// </param>
-		public override void Fail(string message)
-		{
-			Console.Out.WriteLine(message);
-			new StackTrace().ToString();
+
+ 		/// <summary>
+ 		/// Gets or sets name of a log file to write trace or debug messages to.
+ 		/// </summary>
+ 		/// <value>
+ 		/// The name of a log file to write trace or debug messages to.
+ 		/// </value>
+		[MonoTODO]
+		public string LogFileName {
+			get {return "";}
+			set {/* ignore */}
 		}
-		
-		/// <summary>
-		/// Emits or displays detailed messages and a stack trace
-		/// for an assertion that always fails.
-		/// </summary>
-		/// <param name="message">
-		/// The message to emit or display
-		/// </param>
-		/// <param name="detailMessage">
-		/// The detailed message to emit or display.
-		/// </param>
-		public override void Fail(string message, string detailMessage)
+
+ 		/// <summary>
+ 		/// Emits or displays a message and a stack trace for an assertion that 
+ 		/// always fails.
+ 		/// </summary>
+ 		/// <param name="message">
+ 		/// The message to emit or display.
+ 		/// </param>
+    public override void Fail (string message)
+    {
+      base.Fail (message);
+      WriteLine (new StackTrace().ToString());
+    }
+
+ 		/// <summary>
+ 		/// Emits or displays detailed messages and a stack trace
+ 		/// for an assertion that always fails.
+ 		/// </summary>
+ 		/// <param name="message">
+ 		/// The message to emit or display
+ 		/// </param>
+ 		/// <param name="detailMessage">
+ 		/// The detailed message to emit or display.
+ 		/// </param>
+ 		public override void Fail(string message, string detailMessage)
+ 		{
+      base.Fail (message, detailMessage);
+      WriteLine (new StackTrace().ToString());
+ 		}
+
+		#if USE_NATIVE_WIN32_OUTPUT_DEBUG_STRING
+
+      [DllImport ("kernel32.dll")]
+      private extern static void OutputDebugString (string message);
+
+		#else
+
+      private static void OutputDebugString (string message)
+      {
+        Console.Write ("**ods** " + message);
+      }
+
+		#endif
+
+ 		/// <summary>
+ 		/// Writes the output to the Console
+ 		/// </summary>
+ 		/// <param name="message">
+ 		/// The message to write
+ 		/// </param>
+		public override void Write (string message)
 		{
-			Console.Out.WriteLine(message + ": " + detailMessage);
-			new StackTrace().ToString();
+			if (NeedIndent)
+				WriteIndent ();
+			OutputDebugString (message);
 		}
-		
-		/// <summary>
-		/// Writes the output to the Console
-		/// </summary>
-		/// <param name="message">
-		/// The message to write
-		/// </param>
-		public override void Write(string message)
+
+ 		/// <summary>
+ 		/// Writes the output to the Console, followed by a newline
+ 		/// </summary>
+ 		/// <param name="message">
+ 		/// The message to write
+ 		/// </param>
+		public override void WriteLine (string message)
 		{
-			Console.Out.Write(message);
-		}
-		
-		/// <summary>
-		/// Writes the output to the Console, followed by a newline
-		/// </summary>
-		/// <param name="message">
-		/// The message to write
-		/// </param>
-		public override void WriteLine(string message)
-		{
-			Console.Out.WriteLine(message);
+			if (NeedIndent)
+				WriteIndent ();
+			OutputDebugString (message + Environment.NewLine);
+			NeedIndent = true;
 		}
 	}
 }
+

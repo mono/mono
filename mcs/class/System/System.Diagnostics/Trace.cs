@@ -1,5 +1,5 @@
 //
-// System.Diagnostics.Debug.cs
+// System.Diagnostics.Trace.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -18,7 +18,7 @@ namespace System.Diagnostics {
 	/// <summary>
 	/// Provides a set of methods to help debug code
 	/// </summary>
-	public sealed class Debug {
+	public sealed class Trace {
 
 		/// <summary>
 		/// Gets or sets value indicating whether Flush should
@@ -56,7 +56,7 @@ namespace System.Diagnostics {
 		/// Checks for a condition, and prints a stack trace
 		/// if the condition is false.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Assert (bool condition)
 		{
 			TraceImpl.Assert (condition);
@@ -66,7 +66,7 @@ namespace System.Diagnostics {
 		/// Checks for a condition, and displays a message if the condition
 		/// is false.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Assert (bool condition, string message)
 		{
 			TraceImpl.Assert (condition, message);
@@ -76,7 +76,7 @@ namespace System.Diagnostics {
 		/// Checks for a condtion, and displays a message and a detailed message
 		/// string if the condition is false.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Assert (bool condition, string message, 
 			string detailMessage)
 		{
@@ -86,7 +86,7 @@ namespace System.Diagnostics {
 		/// <summary>
 		/// Closes the Debug buffer
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Close ()
 		{
 			TraceImpl.Close ();
@@ -95,7 +95,7 @@ namespace System.Diagnostics {
 		/// <summary>
 		/// Emits the specified error message.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Fail (string message)
 		{
 			TraceImpl.Fail (message);
@@ -104,7 +104,7 @@ namespace System.Diagnostics {
 		/// <summary>
 		/// Emits the specified error message and detailed error message.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Fail (string message, string detailMessage)
 		{
 			TraceImpl.Fail (message, detailMessage);
@@ -113,7 +113,7 @@ namespace System.Diagnostics {
 		/// <summary>
 		/// Flushes the listeners
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Flush ()
 		{
 			TraceImpl.Flush ();
@@ -122,7 +122,7 @@ namespace System.Diagnostics {
 		/// <summary>
 		/// Increments the indent level
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Indent ()
 		{
 			TraceImpl.Indent ();
@@ -131,7 +131,7 @@ namespace System.Diagnostics {
 		/// <summary>
 		/// Decrements the indent level
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Unindent ()
 		{
 			TraceImpl.Unindent ();
@@ -141,7 +141,7 @@ namespace System.Diagnostics {
 		/// Writes the value of the specified object's ToString method
 		/// to the listeners.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Write (object value)
 		{
 			TraceImpl.Write (value);
@@ -151,7 +151,7 @@ namespace System.Diagnostics {
 		/// Writes the specified message to each listener in the Listeners 
 		/// collection.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Write (string message)
 		{
 			TraceImpl.Write (message);
@@ -161,7 +161,7 @@ namespace System.Diagnostics {
 		/// Writes the category name and value of the specified object's
 		/// ToString method to each listener in the Listeners collection.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Write (object value, string category)
 		{
 			TraceImpl.Write (value, category);
@@ -171,7 +171,7 @@ namespace System.Diagnostics {
 		/// Writes the category name and the specified message
 		/// to each listener in the Listeners collection.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void Write (string message, string category)
 		{
 			TraceImpl.Write (message, category);
@@ -181,7 +181,7 @@ namespace System.Diagnostics {
 		/// Writes the value of the specified object's ToString method
 		/// to each of the listeners if the condition is true.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteIf (bool condition, object value)
 		{
 			TraceImpl.WriteIf (condition, value);
@@ -191,7 +191,7 @@ namespace System.Diagnostics {
 		/// Writes the specified message to each of the listeners
 		/// if the specified condition is true.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteIf (bool condition, string message)
 		{
 			TraceImpl.WriteIf (condition, message);
@@ -201,7 +201,7 @@ namespace System.Diagnostics {
 		/// Writes the value of the specified object's ToString message
 		/// and category to each of the listeners if the condition is true.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteIf (bool condition, object value, 
 			string category)
 		{
@@ -212,7 +212,7 @@ namespace System.Diagnostics {
 		/// Writes the category and specified message to each listener
 		/// if the specified condition is true.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteIf (bool condition, string message, 
 			string category)
 		{
@@ -223,7 +223,7 @@ namespace System.Diagnostics {
 		/// Writes the value of the object's ToString method,
 		/// followed by a line terminator, to each listener.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteLine (object value)
 		{
 			TraceImpl.WriteLine (value);
@@ -233,7 +233,7 @@ namespace System.Diagnostics {
 		/// Writes the specified message, followed by a line terminator,
 		/// to each listener.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteLine (string message)
 		{
 			TraceImpl.WriteLine (message);
@@ -243,7 +243,7 @@ namespace System.Diagnostics {
 		/// Writes the value of the specified object's ToString method,
 		/// along with a category, followed by a line terminator, to each listener.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteLine (object value, string category)
 		{
 			TraceImpl.WriteLine (value, category);
@@ -253,7 +253,7 @@ namespace System.Diagnostics {
 		/// Writes the specified category and message, followed by a line 
 		/// terminator, to each listener.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteLine (string message, string category)
 		{
 			TraceImpl.WriteLine (message, category);
@@ -263,7 +263,7 @@ namespace System.Diagnostics {
 		/// Writes the value of the object's ToString method
 		/// to each listener if the specified condition is true.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteLineIf (bool condition, object value)
 		{
 			TraceImpl.WriteLineIf (condition, value);
@@ -273,7 +273,7 @@ namespace System.Diagnostics {
 		/// Writes the specified message to each listener
 		/// if the specified condition is true.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteLineIf (bool condition, string message)
 		{
 			TraceImpl.WriteLineIf (condition, message);
@@ -283,7 +283,7 @@ namespace System.Diagnostics {
 		/// Writes the value of the object's ToString method, and a category
 		/// to each listener if the specified condition is true.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteLineIf (bool condition, object value, 
 			string category)
 		{
@@ -294,7 +294,7 @@ namespace System.Diagnostics {
 		/// Writes the specified category and message to each listener, followed 
 		/// by a line terminator, if the specified condition is true.
 		/// </summary>
-		[Conditional("DEBUG")]
+		[Conditional("TRACE")]
 		public static void WriteLineIf (bool condition, string message, 
 			string category)
 		{

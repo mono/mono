@@ -1,81 +1,80 @@
 //
 // System.Diagnostics.TraceListenerCollection.cs
 //
-// Author: John R. Hicks <angryjohn69@nc.rr.com>
+// Authors:
+//   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2001
+// Comments from John R. Hicks <angryjohn69@nc.rr.com> original
+// implementation.
 //
+// (C) 2002 Jonathan Pryor
+//
+
+
 using System;
 using System.Collections;
+using System.Diagnostics;
+using System.Globalization;
 
-namespace System.Diagnostics
-{
-	
+namespace System.Diagnostics {
+
 	/// <summary>
 	/// Provides a list of TraceListener objects.
 	/// </summary>
-	public class TraceListenerCollection : IList, ICollection,
-		IEnumerable
-	{
-		private int count;
-		private bool isReadOnly;
-		private bool isFixedSize;
-		private bool isSynchronized;
-		private ArrayList listeners;
-		
-		/// <summary>
-		/// Gets the first TraceListener in the list with the
-		/// specified name.
-		/// </summary>
-		public TraceListener this[string name]
+	public class TraceListenerCollection : IList, ICollection, IEnumerable {
+
+		private ArrayList listeners = new ArrayList ();
+
+		public TraceListenerCollection ()
 		{
-			get
-			{
-				int index = listeners.IndexOf(name);
-				return (TraceListener)listeners[index];
-			}
+			Add (new DefaultTraceListener ());
 		}
-		
-		public object this[int index]
-		{
-			get
-			{
-				return listeners[index];
-			}
-			set
-			{
-				listeners[index] = value;
-			}
-		}
-		
-		internal TraceListenerCollection()
-		{
-			count = 0;
-			isReadOnly = false;
-			isFixedSize = false;
-			isSynchronized = false;
-			listeners = new ArrayList();
-			listeners.Add(new DefaultTraceListener());
-		}
-		
+
 		/// <summary>
 		/// Returns the number of items in the list
 		/// </summary>
 		/// <value>
 		/// The number of items
 		/// </value>
-		public int Count
-		{
-			get
-			{
-				return count;
-			}
-			set
-			{
-				count = value;
+		public int Count{
+			get {return listeners.Count;}
+		}
+
+		/// <summary>
+		/// Gets the first TraceListener in the list with the
+		/// specified name.
+		/// </summary>
+		public TraceListener this [string name] {
+			get {
+				foreach (TraceListener listener in listeners) {
+					if (listener.Name == name)
+						return listener;
+				}
+				return null;
 			}
 		}
-		
+
+		public object this [int index] {
+			get {return listeners[index];}
+			set {listeners[index] = value;}
+		}
+
+		bool ICollection.IsSynchronized {
+			get {return listeners.IsSynchronized;}
+		}
+
+		object ICollection.SyncRoot {
+			get {return listeners.SyncRoot;}
+		}
+
+		bool IList.IsFixedSize {
+			get {return listeners.IsFixedSize;}
+		}
+
+		bool IList.IsReadOnly {
+			get {return listeners.IsReadOnly;}
+		}
+
 		/// <summary>
 		/// Adds a TraceListener to the list.
 		/// </summary>
@@ -85,46 +84,41 @@ namespace System.Diagnostics
 		/// <return>
 		/// The position in the list where the listener was inserted.
 		/// </return>
-		public int Add(object listener)
+		public int Add (TraceListener listener)
 		{
-			return listeners.Add(listener);
+			return listeners.Add (listener);
 		}
-		
+
 		/// <summary>
 		/// Adds an array of TraceListeners to the list.
 		/// </summary>
 		/// <param name="value">
 		/// Array of TraceListeners to add
 		/// </param>
-		public void AddRange(TraceListener[] value)
+		public void AddRange (TraceListener[] value)
 		{
-			listeners.AddRange(value);
+			listeners.AddRange (value);
 		}
-		
+
 		/// <summary>
 		/// Adds the contents of another TraceListenerCollection to this one.
 		/// </summary>
 		/// <param name="value">
 		/// The TraceListenerCollection to copy values from.
 		/// </param>
-		[MonoTODO]
-		public void AddRange(TraceListenerCollection value)
+		public void AddRange (TraceListenerCollection value)
 		{
-			// TODO: use an iterator to copy the objects.
-			for(int i = 0; i < value.count; i++)
-			{
-				listeners.Add(value[i]);
-			}
+			listeners.AddRange (value.listeners);
 		}
-		
+
 		/// <summary>
 		/// Clears all listeners from the list.
 		/// </summary>
-		public void Clear()
+		public void Clear ()
 		{
-			listeners.Clear();
+			listeners.Clear ();
 		}
-		
+
 		/// <summary>
 		/// Checks to see if the list contains the specified listener
 		/// </summary>
@@ -134,11 +128,11 @@ namespace System.Diagnostics
 		/// <return>
 		/// true if list contains listener; false otherwise.
 		/// </return>
-		public bool Contains(object listener)
+		public bool Contains (TraceListener listener)
 		{
-			return listeners.Contains(listener);
+			return listeners.Contains (listener);
 		}
-		
+
 		/// <summary>
 		/// Copies a section of the current TraceListenerCollection to
 		/// the specified array at the specified index.
@@ -149,27 +143,65 @@ namespace System.Diagnostics
 		/// <param name="index">
 		/// Starting index of copy
 		/// </param>
-		[MonoTODO]
-		public void CopyTo(Array listeners, int index)
+		public void CopyTo (TraceListener[] listeners, int index)
 		{
-			try {
-				this.listeners.CopyTo(listeners, index);
-			} catch {
-				
-			}
+			listeners.CopyTo (listeners, index);
 		}
-		
+
 		/// <summary>
 		/// Returns an enumerator for the list of listeners.
 		/// </summary>
 		/// <return>
 		/// List Enumerator of type IEnumerator.
 		/// </return>
-		public IEnumerator GetEnumerator()
+		public IEnumerator GetEnumerator ()
 		{
-			return listeners.GetEnumerator();
+			return listeners.GetEnumerator ();
 		}
-		
+
+		void ICollection.CopyTo (Array array, int index)
+		{
+			listeners.CopyTo (array, index);
+		}
+
+		int IList.Add (object value)
+		{
+			if (value is TraceListener)
+				return listeners.Add (value);
+			throw new NotSupportedException (Locale.GetText (
+				"You can only add TraceListener objects to the collection"));
+		}
+
+		bool IList.Contains (object value)
+		{
+			if (value is TraceListener)
+				return listeners.Contains (value);
+			return false;
+		}
+
+		int IList.IndexOf (object value)
+		{
+			if (value is TraceListener)
+				return listeners.IndexOf (value);
+			return -1;
+		}
+
+		void IList.Insert (int index, object value)
+		{
+			if (value is TraceListener) {
+				listeners.Insert (index, value);
+				return;
+			}
+			throw new NotSupportedException (Locale.GetText (
+				"You can only insert TraceListener objects into the collection"));
+		}
+
+		void IList.Remove (object value)
+		{
+			if (value is TraceListener)
+				listeners.Remove (value);
+		}
+
 		/// <summary>
 		/// Gets the index of the specified listener.
 		/// </summary>
@@ -179,13 +211,11 @@ namespace System.Diagnostics
 		/// <return>
 		/// The index of the listener in the list, if it exists.
 		/// </return>
-		[MonoTODO]
-		public int IndexOf(object listener)
+		public int IndexOf (TraceListener listener)
 		{
-			// TODO: we may have to add in some type-checking here.
-			return listeners.IndexOf(listener);
+			return listeners.IndexOf (listener);
 		}
-		
+
 		/// <summary>
 		/// Inserts the specified listener into the list at the specified index.
 		/// </summary>
@@ -195,96 +225,57 @@ namespace System.Diagnostics
 		/// <param name="listener">
 		/// The TraceListener to insert into the list.
 		/// </param>
-		public void Insert(int index, object listener)
+		public void Insert (int index, TraceListener listener)
 		{
-			listeners.Insert(index, listener);
+			listeners.Insert (index, listener);
 		}
-		
+
 		/// <summary>
-		/// Removes the listener with the specified name from the list, if it exists.
+		/// Removes the listener with the specified name from the list, if it 
+		/// exists.
 		/// </summary>
 		/// <param name="name">
 		/// Name of listener to remove
 		/// </param>
-		[MonoTODO]
-		public void Remove(object name)
+		public void Remove (string name)
 		{
-			try {
-				// TODO: may use an enumerator here.
-				for(int i = 0; i < listeners.Count; i++)
-				{
-					TraceListener listener = (TraceListener) listeners[i];
-					if(listener == null)
-						continue;
-					if(listener.Name.Equals(name))
-						listeners.Remove(listener);
+			TraceListener found = null;
+
+			foreach (TraceListener listener in listeners) {
+				if (listener.Name == name) {
+					found = listener;
+					break;
 				}
-			} catch {
-				throw new ArgumentException("Listener is not in list.");
 			}
+
+			if (found != null)
+				listeners.Remove (found);
+			else
+				throw new ArgumentException (Locale.GetText (
+					"TraceListener " + name + " was not in the collection"));
 		}
-		
+
 		/// <summary>
 		/// Removes the specified listener from the list
 		/// </summary>
 		/// <param name="listener">
 		/// The listener to remove.
 		/// </param>
-		public void Remove(TraceListener listener)
+		public void Remove (TraceListener listener)
 		{
-			listeners.Remove(listener);
+			listeners.Remove (listener);
 		}
-		
+
 		/// <summary>
 		/// Removes the listener at the specified index.
 		/// </summary>
 		/// <param name="index">
 		/// Location of the listener to remove.
 		/// </param>
-		public void RemoveAt(int index)
+		public void RemoveAt (int index)
 		{
-			try {
-				listeners.RemoveAt(index);
-			} catch(Exception e) {
-				throw new ArgumentOutOfRangeException(e.ToString());
-			}
-		}
-		
-		~TraceListenerCollection()
-		{
-			listeners = null;
-		}
-		
-		public bool IsReadOnly
-		{
-			get
-			{
-				return isReadOnly;
-			}
-		}
-		
-		public bool IsFixedSize
-		{
-			get
-			{
-				return isFixedSize;
-			}
-		}
-		
-		public object SyncRoot
-		{
-			get
-			{
-				return this;
-			}
-		}
-		
-		public bool IsSynchronized
-		{
-			get
-			{
-				return isSynchronized;
-			}
+			listeners.RemoveAt (index);
 		}
 	}
 }
+
