@@ -1,3 +1,8 @@
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
+	* makefile.gnu, list.unix: Added makefile.gnu for self-hosting
+	GNU/Linux build.
+
 2002-03-08  Nick Drochak  <ndrochak@gol.com>
 
 	* nunit.build: exclude all the obsolete stuff, and prevent csc from
