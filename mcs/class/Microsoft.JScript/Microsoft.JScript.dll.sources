@@ -55,6 +55,7 @@ Microsoft.JScript/FunctionWrapper.cs
 Microsoft.JScript/GlobalObject.cs
 Microsoft.JScript/Globals.cs
 Microsoft.JScript/GlobalScope.cs
+Microsoft.JScript/IdentificationTable.cs
 Microsoft.JScript/IActivationObject.cs
 Microsoft.JScript/IRedirectOutput.cs
 Microsoft.JScript/IVsaScriptScope.cs
@@ -128,6 +129,7 @@ Microsoft.JScript/ScriptBlock.cs
 Microsoft.JScript/ScriptFunction.cs
 Microsoft.JScript/ScriptObject.cs
 Microsoft.JScript/ScriptStream.cs
+Microsoft.JScript/SemanticAnalizer.cs
 Microsoft.JScript/SimpleHashtable.cs
 Microsoft.JScript/StackFrame.cs
 Microsoft.JScript/Statement.cs
@@ -137,6 +139,7 @@ Microsoft.JScript/StringLiteral.cs
 Microsoft.JScript/StringObject.cs
 Microsoft.JScript/StringPrototype.cs
 Microsoft.JScript/SuperTypeMembersSorter.cs
+Microsoft.JScript/SymbolTable.cs
 Microsoft.JScript/SyntaxErrorObject.cs
 Microsoft.JScript/TODOAttribute.cs
 Microsoft.JScript/Throw.cs

@@ -1,3 +1,8 @@
+2003-11-03    <cesar@ciencias.unam.mx>
+
+	*  Microsoft.JScript.dll.sources: Added IdentificationTable.cs,
+	SemanticAnalizer.cs and SymbolTable.cs to the build.
+
 2003-09-29    <cesar@ciencias.unam.mx>
 	
 	* Makefile: Set TEST_MCS_FLAGS.
