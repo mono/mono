@@ -35,7 +35,7 @@ clean-local:
 
 dist-local: dist-default
 
-test-local run-test-local:
+test-local run-test-local run-test-ondotnet-local:
 
 jay: $(sources:.c=.o)
 	$(CCOMPILE) -o $@ $^
