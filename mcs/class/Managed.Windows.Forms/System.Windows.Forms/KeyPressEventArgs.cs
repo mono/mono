@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: KeyPressEventArgs.cs,v $
+// Revision 1.2  2004/10/02 19:06:40  pbartok
+// - Fixed access level for constructor
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -39,7 +42,7 @@ namespace System.Windows.Forms {
 		private bool	event_handled;
 
 		#region Public Constructors
-		KeyPressEventArgs(char keyChar) {
+		public KeyPressEventArgs(char keyChar) {
 			this.key_char=keyChar;
 			this.event_handled=false;
 		}
