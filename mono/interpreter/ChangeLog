@@ -1,3 +1,10 @@
+2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (mono_create_method_pointer): New function which contains
+	the arch independent part of method wrapper creation. Add a cache
+	for the wrapper code, since Delegate::Equals depends on the wrapper
+	address being constant for a method. Fixes #50366.
+
 2003-10-30  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c: (ves_exec_method_with_context)
