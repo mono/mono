@@ -17,6 +17,7 @@ using System.Data;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Threading;
+using System.Text;
 
 namespace MonoTests.System.Data
 {
@@ -1165,6 +1166,28 @@ namespace MonoTests.System.Data
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (sw);
 			AssertEquals (xml, sw.ToString ());
+		}
+
+		[Test]
+		public void WriteXmlToStream ()
+		{
+			string xml = "<set><table1><col1>sample text</col1><col2/></table1><table2 attr='value'><col3>sample text 2</col3></table2></set>";
+			DataSet ds = new DataSet ();
+			ds.ReadXml (new StringReader (xml));
+			MemoryStream ms = new MemoryStream ();
+			ds.WriteXml (ms);
+			MemoryStream ms2 = new MemoryStream (ms.ToArray ());
+			StreamReader sr = new StreamReader (ms2, Encoding.UTF8);
+			string result = @"<set>
+  <table1>
+    <col1>sample text</col1>
+    <col2 />
+  </table1>
+  <table2 attr=""value"">
+    <col3>sample text 2</col3>
+  </table2>
+</set>";
+			AssertEquals (result, sr.ReadToEnd ());
 		}
         }
 }
