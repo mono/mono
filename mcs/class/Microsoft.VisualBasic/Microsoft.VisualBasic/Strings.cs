@@ -40,10 +40,10 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
 		[MonoTODO]
-		public static int Asc(char Char) 
+		public static int Asc(char String) 
 		{
 			//FIXME: Check the docs, it says something about Locales, DBCS, etc.
-			return (int)Char;
+			return (int)String;
 		}
 
 
@@ -51,15 +51,13 @@ namespace Microsoft.VisualBasic
 		/// Returns an Integer value representing the character code corresponding to a character.
 		/// </summary>
 		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
-		[MonoTODO]
-		public static int Asc(string String) 
+		[MonoTODO("Needs testing")]
+		public static int Asc(string String)
 		{
 			if ((String == null) || (String.Length < 1))
 				throw new ArgumentException("Length of argument 'String' must be at least one.", "String");
 
-			//FIXME: Check the docs, it says something about Locales, DBCS, etc.
-			return (int) String.ToCharArray(0, 1)[0];
-			//why? check http://bugzilla.ximian.com/show_bug.cgi?id=23540
+			return Asc(String[0]);
 		}
 
 
@@ -92,8 +90,8 @@ namespace Microsoft.VisualBasic
 			 * of the culture and code page settings for the current thread.
 			 */
 			if ((String == null) || (String.Length == 0))
-				throw new ArgumentException("Length of argument 'String' must be at leasr one.", "String");
-			return (int) String.ToCharArray(0, 1)[0];
+				throw new ArgumentException("Length of argument 'String' must be at least one.", "String");
+			return AscW(String[0]);
 
 		}
 
@@ -1143,7 +1141,7 @@ namespace Microsoft.VisualBasic
 			if ((Character == null) || (Character.Length == 0))
 				throw new ArgumentNullException("Character", "Length of argument 'Character' must be greater than zero.");
 
-			return new string(Character.ToCharArray()[0], Number);
+			return new string(Character[0], Number);
 		}
 
 		/// <summary>
@@ -1184,28 +1182,22 @@ namespace Microsoft.VisualBasic
 		/// Returns a string in which the character order of a specified string is reversed.
 		/// </summary>
 		/// <param name="Expression">Required. String expression whose characters are to be reversed. If Expression is a zero-length string (""), a zero-length string is returned.</param>
+		[MonoTODO("Needs testing")]
 		public static string StrReverse(string Expression)
 		{
-			// patched by Daniel Campos 
-			// danielcampos@myway.com
-			if (Expression != null)
-			{
-				if ( Expression.Length>0)
-				{
-					int counter=0;
-					char[] buf=new char[Expression.Length];
-
-					for (int backwardsCounter=Expression.Length - 1;
-					backwardsCounter>=0;
-					backwardsCounter--)
-						buf[counter++]=Expression[backwardsCounter];
-					return new string(buf);
-				}
-				else
-					return String.Empty;
-			}
-			else
+			// Patched by Daniel Campos (danielcampos@myway.com)
+			// Simplified by Rafael Teixeira (2003-12-02)
+			if (Expression == null || Expression.Length < 1)
 				return String.Empty;
+			else {
+				int length = Expression.Length;
+				char[] buf = new char[length];
+				int counter = 0;
+				int backwards = length - 1;
+				while (counter < length)
+					buf[counter++] = Expression[backwards--];
+				return new string(buf);
+			}
 		}
 
 		/// <summary>
