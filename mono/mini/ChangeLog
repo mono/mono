@@ -1,3 +1,7 @@
+2005-02-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* trace.c (get_token): Improve error checking.
+
 2005-02-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jit-icalls.c (mono_ldvirtfn): Explicitly check for a NULL obj here.
