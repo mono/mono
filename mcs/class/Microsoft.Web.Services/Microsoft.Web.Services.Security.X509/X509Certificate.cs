@@ -21,9 +21,9 @@ namespace Microsoft.Web.Services.Security.X509 {
 	public sealed class X509Certificate : System.Security.Cryptography.X509Certificates.X509Certificate, IDisposable {
 
 		// do not includes: KeyUsage.keyEncipherment and KeyUsage.keyAgreement (see "OWN.cer")
-		private static KeyUsage[] dataEncryption = new KeyUsage [3] { KeyUsage.dataEncipherment, KeyUsage.decipherOnly, KeyUsage.encipherOnly };
+		private static KeyUsages[] dataEncryption = new KeyUsages [3] { KeyUsages.dataEncipherment, KeyUsages.decipherOnly, KeyUsages.encipherOnly };
 		// do not includes KeyUsage.cRLSign, KeyUsage.keyCertSign
-		private static KeyUsage[] digitalSignature = new KeyUsage [2] { KeyUsage.digitalSignature, KeyUsage.nonRepudiation };
+		private static KeyUsages[] digitalSignature = new KeyUsages [2] { KeyUsages.digitalSignature, KeyUsages.nonRepudiation };
 
 		private MX.X509Certificate x509;
 		private bool m_disposed;
@@ -92,13 +92,13 @@ namespace Microsoft.Web.Services.Security.X509 {
 
 		// Just KeyUsage or also ExtendedKeyUsage ?
 		// it doesn't seems to interpret NetscapeCertType
-		private bool Supports (KeyUsage[] usages) 
+		private bool Supports (KeyUsages[] usages) 
 		{
 			// X.509 KeyUsage
 			MX.X509Extension extn = x509.Extensions ["2.5.29.15"];
 			if (extn != null) {
 				KeyUsageExtension keyUsage = new KeyUsageExtension (extn);
-				foreach (KeyUsage usage in usages) {
+				foreach (KeyUsages usage in usages) {
 					if (keyUsage.Support (usage))
 						return true;
 				}
@@ -108,7 +108,7 @@ namespace Microsoft.Web.Services.Security.X509 {
 			extn = x509.Extensions ["2.5.29.2"];
 			if (extn != null) {
 				KeyAttributesExtension keyAttr = new KeyAttributesExtension (extn);
-				foreach (KeyUsage usage in usages) {
+				foreach (KeyUsages usage in usages) {
 					if (keyAttr.Support (usage))
 						return true;
 				}
