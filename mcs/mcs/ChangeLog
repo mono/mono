@@ -1,5 +1,10 @@
 2003-06-24  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: Report error 21 if the user is trying to index a
+	System.Array.
+
+	* driver.cs: Add an error message, suggested by the bug report.
+
 	* class.cs (TypeContainer.Emit): Only call EmitFieldInitializers
 	if we do not have a ": this ()" constructor initializer.  Fixes 45149
 

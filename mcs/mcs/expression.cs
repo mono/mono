@@ -6635,6 +6635,11 @@ namespace Mono.CSharp {
 			//
 			Type t = Expr.Type;
 
+			if (t == TypeManager.array_type){
+				Report.Error (21, loc, "Cannot use indexer on System.Array");
+				return null;
+			}
+			
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).Resolve (ec);
 			else if (t.IsPointer)
