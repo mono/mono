@@ -7,14 +7,10 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Key generation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,6 +34,7 @@
 
 using System;
 using System.Security.Cryptography;
+using System.Text;
 
 using Mono.Math;
 
@@ -61,6 +58,7 @@ namespace Mono.Security.Cryptography {
 		private const int defaultKeySize = 1024;
 
 		private bool isCRTpossible = false;
+		private bool keyBlinding = true;
 		private bool keypairGenerated = false;
 		private bool m_disposed = false;
 
@@ -79,9 +77,9 @@ namespace Mono.Security.Cryptography {
 
 		public RSAManaged (int keySize) 
 		{
-			KeySizeValue = keySize;
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (384, 16384, 8);
+			base.KeySize = keySize;
 		}
 
 		~RSAManaged () 
@@ -164,7 +162,7 @@ namespace Mono.Security.Cryptography {
 		}
 
 		// note: this property will exist in RSACryptoServiceProvider in
-		// version 1.2 of the framework
+		// version 2.0 of the framework
 		public bool PublicOnly {
 			get { return ((d == null) || (n == null)); }
 		}
@@ -183,6 +181,16 @@ namespace Mono.Security.Cryptography {
 				GenerateKeyPair ();
 
 			BigInteger input = new BigInteger (rgb);
+			BigInteger r = null;
+
+			// we use key blinding (by default) against timing attacks
+			if (keyBlinding) {
+				// x = (r^e * g) mod n 
+				// *new* random number (so it's timing is also random)
+				r = BigInteger.GenerateRandom (n.BitCount ());
+				input = r.ModPow (e, n) * input % n;
+			}
+
 			BigInteger output;
 			// decrypt (which uses the private key) can be 
 			// optimized by using CRT (Chinese Remainder Theorem)
@@ -196,20 +204,26 @@ namespace Mono.Security.Cryptography {
 					// thanks to benm!
 					h = p - ((m2 - m1) * qInv % p);
 					output = m2 + q * h;
-				}
-				else {
+				} else {
 					// h = (m1 - m2) * qInv mod p
 					h = (m1 - m2) * qInv % p;
 					// m = m2 + q * h;
 					output = m2 + q * h;
 				}
-			}
-			else {
+			} else {
 				// m = c^d mod n
 				output = input.ModPow (d, n);
 			}
+
+			if (keyBlinding) {
+				// Complete blinding
+				// x^e / r mod n
+				output = output * r.ModInverse (n) % n;
+				r.Clear ();
+			}
+
 			byte[] result = output.GetBytes ();
-			// zeroize value
+			// zeroize values
 			input.Clear ();	
 			output.Clear ();
 			return result;
@@ -245,7 +259,7 @@ namespace Mono.Security.Cryptography {
 			param.Modulus = n.GetBytes ();
 			if (includePrivateParameters) {
 				// some parameters are required for exporting the private key
-				if ((d == null) || (p == null) || (q == null))
+				if (d == null)
 					throw new CryptographicException ("Missing private key");
 				param.D = d.GetBytes ();
 				// hack for bugzilla #57941 where D wasn't provided
@@ -254,11 +268,11 @@ namespace Mono.Security.Cryptography {
 					Buffer.BlockCopy (param.D, 0, normalizedD, (normalizedD.Length - param.D.Length), param.D.Length);
 					param.D = normalizedD;
 				}
-				param.P = p.GetBytes ();
-				param.Q = q.GetBytes ();
 				// but CRT parameters are optionals
-				if ((dp != null) && (dq != null) && (qInv != null)) {
+				if ((p != null) && (q != null) && (dp != null) && (dq != null) && (qInv != null)) {
 					// and we include them only if we have them all
+					param.P = p.GetBytes ();
+					param.Q = q.GetBytes ();
 					param.DP = dp.GetBytes ();
 					param.DQ = dq.GetBytes ();
 					param.InverseQ = qInv.GetBytes ();
@@ -348,5 +362,98 @@ namespace Mono.Security.Cryptography {
 		public delegate void KeyGeneratedEventHandler (object sender, EventArgs e);
 
 		public event KeyGeneratedEventHandler KeyGenerated;
+
+		public override string ToXmlString (bool includePrivateParameters) 
+		{
+			StringBuilder sb = new StringBuilder ();
+			RSAParameters rsaParams = ExportParameters (includePrivateParameters);
+			try {
+				sb.Append ("<RSAKeyValue>");
+				
+				sb.Append ("<Modulus>");
+				sb.Append (Convert.ToBase64String (rsaParams.Modulus));
+				sb.Append ("</Modulus>");
+
+				sb.Append ("<Exponent>");
+				sb.Append (Convert.ToBase64String (rsaParams.Exponent));
+				sb.Append ("</Exponent>");
+
+				if (includePrivateParameters) {
+					if (rsaParams.P != null) {
+						sb.Append ("<P>");
+						sb.Append (Convert.ToBase64String (rsaParams.P));
+						sb.Append ("</P>");
+					}
+					if (rsaParams.Q != null) {
+						sb.Append ("<Q>");
+						sb.Append (Convert.ToBase64String (rsaParams.Q));
+						sb.Append ("</Q>");
+					}
+					if (rsaParams.DP != null) {
+						sb.Append ("<DP>");
+						sb.Append (Convert.ToBase64String (rsaParams.DP));
+						sb.Append ("</DP>");
+					}
+					if (rsaParams.DQ != null) {
+						sb.Append ("<DQ>");
+						sb.Append (Convert.ToBase64String (rsaParams.DQ));
+						sb.Append ("</DQ>");
+					}
+					if (rsaParams.InverseQ != null) {
+						sb.Append ("<InverseQ>");
+						sb.Append (Convert.ToBase64String (rsaParams.InverseQ));
+						sb.Append ("</InverseQ>");
+					}
+					sb.Append ("<D>");
+					sb.Append (Convert.ToBase64String (rsaParams.D));
+					sb.Append ("</D>");
+				}
+				
+				sb.Append ("</RSAKeyValue>");
+			}
+			catch {
+				if (rsaParams.P != null)
+					Array.Clear (rsaParams.P, 0, rsaParams.P.Length);
+				if (rsaParams.Q != null)
+					Array.Clear (rsaParams.Q, 0, rsaParams.Q.Length);
+				if (rsaParams.DP != null)
+					Array.Clear (rsaParams.DP, 0, rsaParams.DP.Length);
+				if (rsaParams.DQ != null)
+					Array.Clear (rsaParams.DQ, 0, rsaParams.DQ.Length);
+				if (rsaParams.InverseQ != null)
+					Array.Clear (rsaParams.InverseQ, 0, rsaParams.InverseQ.Length);
+				if (rsaParams.D != null)
+					Array.Clear (rsaParams.D, 0, rsaParams.D.Length);
+				throw;
+			}
+			
+			return sb.ToString ();
+		}
+
+		// internal for Mono 1.0.x in order to preserve public contract
+		// they are public for Mono 1.1.x (for 1.2) as the API isn't froze ATM
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		bool UseKeyBlinding {
+			get { return keyBlinding; }
+			// you REALLY shoudn't touch this (true is fine ;-)
+			set { keyBlinding = value; }
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		bool IsCrtPossible {
+			// either the key pair isn't generated (and will be 
+			// generated with CRT parameters) or CRT is (or isn't)
+			// possible (in case the key was imported)
+			get { return (!keypairGenerated || isCRTpossible); }
+		}
 	}
 }
