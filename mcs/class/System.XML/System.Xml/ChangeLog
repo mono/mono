@@ -1,5 +1,10 @@
 2002-08-22  Jason Diamond <jason@injektilo.org>
 
+	* XmlElement.cs: Correction to previous GetElementsByTagName patch
+	courtesy of Matt Hunter <xrkune@tconl.com>.
+
+2002-08-22  Jason Diamond <jason@injektilo.org>
+
 	* XmlDocument.cs, XmlElement.cs: Added implementation of namepsace
 	qualified GetElementsByTagName courtesy of Matt Hunter 
 	<xrkune@tconl.com>.

@@ -187,6 +187,13 @@ namespace System.Xml
 			}
 		}
 
+		public virtual XmlNodeList GetElementsByTagName (string localName, string namespaceURI)
+		{
+			ArrayList nodeArrayList = new ArrayList ();
+			this.searchNodesRecursively (this, localName, namespaceURI, nodeArrayList);
+			return new XmlNodeArrayList (nodeArrayList);
+		}
+
 		[MonoTODO]
 		public virtual bool HasAttribute (string name)
 		{

@@ -150,7 +150,10 @@ namespace MonoTests.System.Xml
 			MemoryStream memoryStream = new MemoryStream (Encoding.UTF8.GetBytes (xml));
 			document = new XmlDocument ();
 			document.Load (memoryStream);
-			XmlNodeList bookList = document.GetElementsByTagName ("book");
+			XmlNodeList libraryList = document.GetElementsByTagName ("library");
+			XmlNode xmlNode = libraryList.Item (0);
+			XmlElement xmlElement = xmlNode as XmlElement;
+			XmlNodeList bookList = xmlElement.GetElementsByTagName ("book");
 			AssertEquals ("GetElementsByTagName (string) returned incorrect count.", 4, bookList.Count);
 		}
 
@@ -173,7 +176,10 @@ namespace MonoTests.System.Xml
 			MemoryStream memoryStream = new MemoryStream (Encoding.UTF8.GetBytes (xml.ToString ()));
 			document = new XmlDocument ();
 			document.Load (memoryStream);
-			XmlNodeList bookList = document.GetElementsByTagName ("book", "http://www.foo.com");
+			XmlNodeList libraryList = document.GetElementsByTagName ("library");
+			XmlNode xmlNode = libraryList.Item (0);
+			XmlElement xmlElement = xmlNode as XmlElement;
+			XmlNodeList bookList = xmlElement.GetElementsByTagName ("book", "http://www.foo.com");
 			AssertEquals ("GetElementsByTagName (string, uri) returned incorrect count.", 1, bookList.Count);
 		}
 
