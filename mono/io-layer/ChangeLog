@@ -1,3 +1,28 @@
+2004-05-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* daemon-messages.c: Retry if the communication with the daemon is
+	  interrupted by a signal.
+	* io.c, sockets.c: Check for EINTR in every syscall that can be interrumped. 
+	  Only return an error in this case if there is something in the apc queue
+	  (which means that it is an interruption requested by the "user").
+	* processes.c: Use WaitForSingleObjectEx. No need to pass "alertable" as
+	  true since the wait is small.
+	* shared.c: Retry write calls when interrumped by a signal.
+	* timed-thread.h, timed-thread.c: added _wapi_thread_apc_pending, which
+	  returns TRUE if there are pending asynchronous calls (APC) for the
+	  provided thread. Also added _wapi_thread_dispatch_apc_queue which calls
+	  the enqueued APCs. Defined a new struct ApcInfo that holds information
+	  about an enqueued APC.
+	* thread-private.h, threads.c: Implemented QueueUserAPC (which does the same
+	  as in win32),_wapi_thread_apc_pending and _wapi_thread_dispatch_apc_queue. 
+	  These last two methods call the corresponding apc methods in 
+	  thread-private using the provided thread handle.
+	* threads.h: Added QueueUserAPC.
+	* uglify.h: Added WapiApcProc (needed by QueueUserAPC).
+	* wait.c, wait.h: Changed WaitForSingleObject to WaitForSingleObjectEx, and
+	  WaitForMultipleObjects to WaitForMultipleObjectsEx. Implemented support
+	  for APCs in those two methods and also in SleepEx.
+
 2004-05-17  Dick Porter  <dick@ximian.com>
 
 	* io.c (CopyFile): Speed up.  Fixes bug 57859.
