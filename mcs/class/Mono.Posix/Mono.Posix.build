@@ -8,6 +8,7 @@
 	<target name="build">
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/Mono.Posix.dll" debug="${debug}">
+			<arg value="/unsafe"/>
 			<arg value="/noconfig"/>
 			<arg value="/r:System.dll"/>
 			<sources>
