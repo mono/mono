@@ -420,6 +420,15 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Seek_Disposed () 
+		{
+			MemoryStream ms = new MemoryStream ();
+			ms.Close ();
+			ms.Seek (0, SeekOrigin.Begin);
+		}
+
+		[Test]
 		public void SetLength ()
 		{
 			MemoryStream ms = new MemoryStream ();

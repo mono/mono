@@ -535,5 +535,43 @@ public class BufferedStreamTest : Assertion {
 		AssertEquals ("test#01", 9, stream.Position);		
 		AssertEquals ("test#02", 9, stream.ReadByte ());		
 	 }
+
+	[Test]
+	public void PositionAfterSetLength () 
+	{
+		BufferedStream stream = new BufferedStream (new MemoryStream ());
+		stream.SetLength (32);
+		stream.Position = 32;
+		stream.SetLength (16);
+		AssertEquals ("Position==16", 16, stream.Position);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void SetLength_Disposed ()
+	{
+		BufferedStream stream = new BufferedStream (new MemoryStream ());
+		stream.Close ();
+		stream.SetLength (16);
+	}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void Seek_ClosedMemoryStream ()
+	{
+		MemoryStream ms = new MemoryStream ();
+		BufferedStream stream = new BufferedStream (ms);
+		ms.Close ();
+		stream.Seek (0, SeekOrigin.Begin);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void Seek_ClosedBufferedStream ()
+	{
+		BufferedStream stream = new BufferedStream (new MemoryStream ());
+		stream.Close ();
+		stream.Seek (0, SeekOrigin.Begin);
+	}
 }
 }

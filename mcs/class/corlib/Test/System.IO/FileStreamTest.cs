@@ -817,6 +817,18 @@ namespace MonoTests.System.IO
 				stream.Write (new byte[0], 1, Int32.MaxValue);
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Seek_InvalidSeekOrigin () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read)) {
+				stream.Seek (0, (SeekOrigin) (-1));
+			}
+		}
         }
 }
 

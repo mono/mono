@@ -1,3 +1,10 @@
+2004-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BufferedStreamTest.cs: Added tests for Position after SetLength, 
+	SetLength after Close and Seek logic exception handling.
+	* FileStream.cs: Added test for invalid SeekOrigin in Seek.
+	* MemoryStream.cs: Added test for Seek after Close.
+
 2004-05-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BinaryReader.cs: Added new cases to check exceptions thrown by Read
