@@ -1,5 +1,10 @@
 2004-10-12  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (mono_reflection_bind_generic_parameters): Small
+	fix, correctly retrieve our parent from a generic instance.
+
+2004-10-12  Martin Baulig  <martin@ximian.com>
+
 	* metadata.c (mono_metadata_generic_param_equal): We always have
 	an owner.
 
