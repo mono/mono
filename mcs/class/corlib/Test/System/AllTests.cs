@@ -35,6 +35,7 @@ namespace MonoTests.System {
                                 suite.AddTest (Int16Test.Suite);
                                 suite.AddTest (Int32Test.Suite);
                                 suite.AddTest (Int64Test.Suite);
+                                suite.AddTest (IntegerFormatterTest.Suite);
 				suite.AddTest (MathTest.Suite);
                                 suite.AddTest (ObjectTest.Suite);
                                 suite.AddTest (RandomTest.Suite);

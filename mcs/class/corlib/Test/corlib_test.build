@@ -28,7 +28,6 @@
 			<sources>
 				<includes name="**/*.cs"/>
 				<excludes name="TheTests.cs"/>
-				<excludes name="System/IntegerFormatterTest.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
@@ -40,7 +39,6 @@
 			<sources>
 				<includes name="**/*.cs"/>
 				<excludes name="System.Collections/StackTest.cs"/>
-				<excludes name="System/IntegerFormatterTest.cs"/>
 				<excludes name="**/AllTests.cs"/>
 				<excludes name="**/MartinTests.cs"/>
 			</sources>
@@ -76,7 +74,7 @@
 
 	<target name="test" depends="assemblies">
 
-		<!--<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/>-->
+		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/>
 
 		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_reference.dll" failonerror="false"/>
 	</target>

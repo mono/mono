@@ -1,3 +1,13 @@
+2002-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* corlib_test.build: don't exclude IntegerFormatterTest.
+
+	* System/AllTests.cs: added IntegerFormatterTest suite.
+
+	* System/IntegerFormatterTest.cs: totally reworked to use NUnit. Right
+	now it fails cause I haven't implemented Parse () methods yet. With
+	corlib_reference.dll runs ok.
+
 2002/03/28  Nick Drochak <ndrochak@gol.com>
 
 	* corlib_test.build: Re-exclude it in a couple of places where it was
