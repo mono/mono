@@ -8,21 +8,11 @@
 //
 
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
+using System.Web;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
 	public class SoapHttpClientProtocol : HttpWebClientProtocol {
-
-		#region Fields
-
-		bool allowAutoRedirect;
-		X509CertificateCollection clientCertificates;
-		CookieContainer cookieContainer;
-		IWebProxy proxy;
-		string userAgent;
-
-		#endregion
 
 		#region Constructors
 
@@ -52,10 +42,9 @@ namespace System.Web.Services.Protocols {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override WebRequest GetWebRequest (Uri uri)
 		{
-			throw new NotImplementedException ();
+			return WebRequest.Create (uri);
 		}
 
 		[MonoTODO]

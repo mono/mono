@@ -12,6 +12,12 @@ using System.Web.Services;
 namespace System.Web.Services.Protocols {
 	public abstract class HttpSimpleClientProtocol : HttpWebClientProtocol {
 
+		#region Fields
+
+		IAsyncResult result;
+
+		#endregion // Fields
+
 		#region Constructors
 
 		protected HttpSimpleClientProtocol () 
@@ -31,6 +37,8 @@ namespace System.Web.Services.Protocols {
 		[MonoTODO]
 		protected object EndInvoke (IAsyncResult asyncResult)
 		{
+			if (asyncResult != result)
+				throw new ArgumentException ("asyncResult is not the return value from BeginInvoke");
 			throw new NotImplementedException ();
 		}
 

@@ -23,10 +23,13 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		protected override WebRequest GetWebRequest (Uri uri)
 		{
-			throw new NotImplementedException ();
+			if (uri == null)
+				throw new InvalidOperationException ("The uri parameter is null.");
+			if (uri.ToString () == String.Empty)
+				throw new InvalidOperationException ("The uri parameter has a length of zero.");
+			return WebRequest.Create (uri);
 		}
 
 		#endregion // Methods

@@ -7,9 +7,11 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System;
 using System.ComponentModel;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
@@ -33,7 +35,7 @@ namespace System.Web.Services.Protocols {
 			clientCertificates = new X509CertificateCollection ();
 			cookieContainer = null;
 			proxy = null; // FIXME
-			userAgent = "Mono Web Services Client Protocol 1.0.1234.0"; // FIXME
+			userAgent = String.Format ("Mono Web Services Client Protocol {0}", Environment.Version);
 		}
 		
 		#endregion // Constructors
@@ -78,22 +80,23 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		protected override WebRequest GetWebRequest (Uri uri)
 		{
-			throw new NotImplementedException ();
+			if (null == uri)
+				throw new InvalidOperationException ("The uri parameter is a null reference.");
+			return WebRequest.Create (uri);
 		}
 
-		[MonoTODO]
 		protected override WebResponse GetWebResponse (WebRequest request)
 		{
-			throw new NotImplementedException ();
+			return request.GetResponse ();
 		}
 
-		[MonoTODO]
 		protected override WebResponse GetWebResponse (WebRequest request, IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+                        IAsyncResult ar = request.BeginGetResponse (null, null);
+                        ar.AsyncWaitHandle.WaitOne ();
+                        return request.EndGetResponse (result);
 		}
 
 		#endregion // Methods

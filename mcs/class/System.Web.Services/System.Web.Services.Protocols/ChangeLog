@@ -1,4 +1,26 @@
 2002-07-23  Tim Coleman <tim@timcoleman.com>
+	* HttpGetClientProtocol.cs:
+	* HttpPostClientProtocol.cs
+		Implemented the GetWebRequest method
+	* HttpSimpleClientProtocol:
+		Some implementation of the EndInvoke method
+	* HttpWebClientProtocol.cs:
+		Set the UserAgent string appropriately
+		Implemented the GetWebRequest method
+		Implemented the GetWebResponse methods
+	* SoapHttpClientProtocol.cs:
+		Removed unused fields
+		Implemented the GetWebRequest method
+	* SoapMessage.cs:
+		Implemented the EnsureStage method
+	* WebClientProtocol.cs:
+		Added a static constructor to construct the cache
+		Implemented the Abort method
+		Implemented the AddToCache, GetFromCache methods
+		Implemented the GetWebRequest method
+		Implemented the GetWebResponse methods
+
+2002-07-23  Tim Coleman <tim@timcoleman.com>
 	* LogicalMethodTypes.cs:
 	* SoapHeaderDirection.cs:
 	* SoapMessageStage.cs:

@@ -7,9 +7,11 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
@@ -23,10 +25,17 @@ namespace System.Web.Services.Protocols {
 		Encoding requestEncoding;
 		int timeout;
 		string url;
+		bool abort;
+		static HybridDictionary cache;
 
 		#endregion
 
 		#region Constructors
+
+		static WebClientProtocol ()
+		{
+			cache = new HybridDictionary ();
+		}
 
 		protected WebClientProtocol () 
 		{
@@ -36,6 +45,7 @@ namespace System.Web.Services.Protocols {
 			requestEncoding = null;
 			timeout = 100000;
 			url = String.Empty;
+			abort = false;
 		}
 		
 		#endregion // Constructors
@@ -88,40 +98,41 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		public virtual void Abort ()
 		{
-			throw new NotImplementedException ();
+			abort = true;
 		}
 
-		[MonoTODO]
 		protected static void AddToCache (Type type, object value)
 		{
-			throw new NotImplementedException ();
+			cache [type] = value;
 		}
 
-		[MonoTODO]
 		protected static object GetFromCache (Type type)
 		{
-			throw new NotImplementedException ();
+			return cache [type];
 		}
 
-		[MonoTODO]
 		protected virtual WebRequest GetWebRequest (Uri uri)
 		{
-			throw new NotImplementedException ();
+			return WebRequest.Create (uri);
 		}
 
-		[MonoTODO]
 		protected virtual WebResponse GetWebResponse (WebRequest request)
 		{
-			throw new NotImplementedException ();
+			if (abort)
+				throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
+			return request.GetResponse ();
 		}
 
-		[MonoTODO]
 		protected virtual WebResponse GetWebResponse (WebRequest request, IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (abort)
+				throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
+
+			IAsyncResult ar = request.BeginGetResponse (null, null);
+			ar.AsyncWaitHandle.WaitOne ();
+			return request.EndGetResponse (result);
 		}
 
 		#endregion // Methods

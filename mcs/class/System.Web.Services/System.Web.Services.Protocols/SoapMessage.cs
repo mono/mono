@@ -69,10 +69,10 @@ namespace System.Web.Services.Protocols {
 		protected abstract void EnsureInStage ();
 		protected abstract void EnsureOutStage ();
 
-		[MonoTODO]
 		protected void EnsureStage (SoapMessageStage stage) 
 		{
-			throw new NotImplementedException ();
+			if ((((int) stage) & ((int) Stage)) == 0)
+				throw new InvalidOperationException ("The current SoapMessageStage is not the asserted stage or stages.");
 		}
 
 		[MonoTODO]
