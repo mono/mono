@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Herve Poussineau (hpoussineau@fr.st)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,15 +15,19 @@ namespace System.Drawing.Printing {
 	/// </summary>
 	public class PrintPageEventArgs : EventArgs {
 		bool cancel;
-		//Graphics graphics;
+		Graphics graphics;
 		bool hasmorePages;
-		//Rectangle marginBounds;
-		//Rectangle pageBounds;
+		Rectangle marginBounds;
+		Rectangle pageBounds;
 		PageSettings pageSettings;
 
-//		public PrintPageEventArgs(Graphics graphics, rectangle marginBounds,
-//			Rectangle pageBounds, PageSettings pageSettings) {
-//		}
+		public PrintPageEventArgs(Graphics graphics, Rectangle marginBounds,
+			Rectangle pageBounds, PageSettings pageSettings) {
+			this.graphics = graphics;
+			this.marginBounds = marginBounds;
+			this.pageBounds = pageBounds;
+			this.pageSettings = pageSettings;
+		}
 		public bool Cancel {
 			get{
 				return cancel;
@@ -31,45 +36,39 @@ namespace System.Drawing.Printing {
 				cancel = value;
 			}
 		}
-//		public Graphics Graphics {
-//			get{
-//				return graphics;
-//			}
-//			set{
-//				graphics = value;
-//			}
-//		}
-		public bool HasMorePages {
+		public Graphics Graphics {
 			get{
-				return HasMorePages;
-			}
-			set{
-				HasMorePages = value;
+				return graphics;
 			}
 		}
-//		public Rectangle MarginBounds {
-//			get{
-//                return marginBounds;
-//			}
-//			set{
-//				marginBounds = value;
-//			}
-//		}
-//		public Rectangle PageBounds {
-//			get{
-//				return pageBounds;
-//			}
-//			set{
-//				pageBounds = value;
-//			}
-//		}
+		public bool HasMorePages {
+			get{
+				return hasmorePages;
+			}
+			set{
+				hasmorePages = value;
+			}
+		}
+		public Rectangle MarginBounds {
+			get{
+                return marginBounds;
+			}
+		}
+		public Rectangle PageBounds {
+			get{
+				return pageBounds;
+			}
+		}
 		public PageSettings PageSettings {
 			get{
 				return pageSettings;
 			}
-			set{
-				pageSettings = value;
-			}
+		}
+		
+		// used in PrintDocument.Print()
+		internal void SetGraphics(Graphics g)
+		{
+			graphics = g;
 		}
 }
 }

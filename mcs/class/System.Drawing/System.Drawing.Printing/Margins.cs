@@ -13,7 +13,7 @@ namespace System.Drawing.Printing {
 	/// Summary description for Margins.
 	/// </summary>
 
-	public class Margins {// : IClonable {
+	public class Margins : ICloneable {
 		/// <summary>
 		/// left margin in hundredths of an inch
 		/// </summary>
@@ -88,6 +88,17 @@ namespace System.Drawing.Printing {
 			set{
 				bottom = value;
 			}
+		}
+		
+		public object Clone()
+		{
+			return new Margins(this.Left, this.Right, this.Top, this.Bottom);
+		}
+		
+		public override string ToString()
+		{
+			string ret = "[Margins Left={0} Right={1} Top={2} Bottom={3}]";
+			return String.Format(ret, this.Left, this.Right, this.Top, this.Bottom);
 		}
 	}
 }

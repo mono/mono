@@ -3,10 +3,13 @@
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Herve Poussineau (hpoussineau@fr.st)
 //
 // (C) 2002 Ximian, Inc
 //
 using System;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.Drawing.Printing
 {
@@ -14,29 +17,28 @@ namespace System.Drawing.Printing
 	/// Summary description for PrintingPermissionAttribute.
 	/// </summary>
 	/// 
-	//[AttributeUsage(AttributeTargets.All)]
-	public sealed class PrintingPermissionAttribute //: CodeAccessSecurityAttribute
+	[AttributeUsage(AttributeTargets.All)]
+	public sealed class PrintingPermissionAttribute : CodeAccessSecurityAttribute
 	{
-//		[MonoTODO]
-//		[AttributeUsage(AttributeTargets.All)]
-//		public PrintingPermissionAttribute(SecurityAction action)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		[AttributeUsage(AttributeTargets.All)]
-//		public PrintingPermissionLevel Level {
-//			get{
-//				throw new NotImplementedException ();
-//			}
-//			set{
-//				throw new NotImplementedException ();
-//			}
-//		}
-//		[MonoTODO]
-//		[AttributeUsage(AttributeTargets.All)]
-//		public override IPermission CreatePermission(){
-//			throw new NotImplementedException ();
-//		}
+		private PrintingPermissionLevel _Level;
+		
+		public PrintingPermissionAttribute(SecurityAction action) : base(action)
+		{
+			// seems to always assign PrintingPermissionLevel.NoPrinting ...
+			Level = PrintingPermissionLevel.NoPrinting;
+		}
+		
+		public PrintingPermissionLevel Level {
+			get{
+				return _Level;
+			}
+			set{
+				_Level = value;
+			}
+		}
+		
+		public override IPermission CreatePermission(){
+			return new PrintingPermission(this.Level);
+		}
 	}
 }

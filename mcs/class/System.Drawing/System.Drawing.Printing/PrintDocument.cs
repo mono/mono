@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Herve Poussineau (hpoussineau@fr.st)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -12,16 +13,23 @@ namespace System.Drawing.Printing {
 	/// <summary>
 	/// Summary description for PrintDocument.
 	/// </summary>
-	public class PrintDocument{// : Component {
+	public class PrintDocument : System.ComponentModel.Component {
 		private PageSettings defaultpagesettings;
+		private PrinterSettings printersettings;
+		private PrintController printcontroller;
 		private string documentname;
-		private bool originAtMargins; // .NET V1.1 Beta
+#if !(NET_1_0)
+		private bool originAtMargins = false; // .NET V1.1 Beta
+#endif
 
-		//[MonoTODO]
 		public PrintDocument() {
-			//FIXME: do we need to init defaultpagesetting, or does pagesettings do that?
-			documentname = "Document"; //offical default.
+			documentname = "document"; //offical default.
+			defaultpagesettings = new PageSettings(); // use default values of default printer
+			printersettings = new PrinterSettings(); // use default values
+			printcontroller = new StandardPrintController();
 		}
+		
+// properties
 		public PageSettings DefaultPageSettings{
 			get{
 				return defaultpagesettings;
@@ -33,7 +41,6 @@ namespace System.Drawing.Printing {
 		/// <summary>
 		/// Name of the document, not the file!
 		/// </summary>
-
 		public string DocumentName{
 			get{
 				return documentname;
@@ -42,25 +49,23 @@ namespace System.Drawing.Printing {
 				documentname = value;
 			}
 		}
-		[MonoTODO]
 		public PrintController PrintController{
 			get{
-				throw new NotImplementedException ();				
+				return printcontroller;
 			}
 			set{
-				throw new NotImplementedException ();
+				printcontroller = value;
 			}
 		}
-		[MonoTODO]
 		public PrinterSettings PrinterSettings{
 			get{
-				throw new NotImplementedException ();				
+				return printersettings;
 			}
 			set{
-				throw new NotImplementedException ();
+				printersettings = value;
 			}
 		}
-		[MonoTODO]
+#if !(NET_1_0)
 		public bool OriginAtMargins{// .NET V1.1 Beta
 			get{
 				return originAtMargins;
@@ -69,37 +74,77 @@ namespace System.Drawing.Printing {
 				originAtMargins = value;
 			}
 		}
+#endif
+
+// methods
 		public void Print(){
-			throw new NotImplementedException ();
+			PrintEventArgs printArgs = new PrintEventArgs();
+			this.OnBeginPrint(printArgs);
+			if (printArgs.Cancel)
+				return;
+			PrintController.OnStartPrint(this, printArgs);
+			if (printArgs.Cancel)
+				return;
+			
+			// while there is more pages
+			PrintPageEventArgs printPageArgs;
+			do
+			{
+				PageSettings pageSettings = DefaultPageSettings.Clone() as PageSettings;
+				this.OnQueryPageSettings(new QueryPageSettingsEventArgs(pageSettings));
+				
+				printPageArgs = new PrintPageEventArgs(
+						null,
+						pageSettings.Bounds,
+						new Rectangle(0, 0, pageSettings.PaperSize.Width, pageSettings.PaperSize.Height),
+						pageSettings);
+				Graphics g = PrintController.OnStartPage(this, printPageArgs);
+				// assign Graphics in printPageArgs
+				printPageArgs.SetGraphics(g);
+				
+				if (!printPageArgs.Cancel)
+					this.OnPrintPage(printPageArgs);
+				
+				PrintController.OnEndPage(this, printPageArgs);
+				if (printPageArgs.Cancel)
+					break;
+			} while (printPageArgs.HasMorePages);
+			
+			this.OnEndPrint(printArgs);
+			PrintController.OnEndPrint(this, printArgs);
 		}
 		public override string ToString(){
-			throw new NotImplementedException ();
+			return "[PrintDocument " + this.DocumentName + "]";
 		}
-		[MonoTODO]
+		
+// events
 		protected virtual void OnBeginPrint(PrintEventArgs e){
 			//fire the event
+			if (BeginPrint != null)
+				BeginPrint(this, e);
 		}
-		[MonoTODO]
+		
 		protected virtual void OnEndPrint(PrintEventArgs e){
 			//fire the event
+			if (EndPrint != null)
+				EndPrint(this, e);
 		}
-		[MonoTODO]
-		protected virtual void OnPrintPage(PrintEventArgs e){
+		
+		protected virtual void OnPrintPage(PrintPageEventArgs e){
 			//fire the event
+			if (PrintPage != null)
+				PrintPage(this, e);
 		}
-		[MonoTODO]
-		protected virtual void OnQueryPageSettings(PrintEventArgs e){
+		
+		protected virtual void OnQueryPageSettings(QueryPageSettingsEventArgs e){
 			//fire the event
+			if (QuerypageSettings != null)
+				QuerypageSettings(this, e);
 		}
-		[MonoTODO]
-		protected virtual void OnBeginPaint(PrintEventArgs e){
-			//fire the event
-		}
+		
 		public event PrintEventHandler BeginPrint;
 		public event PrintEventHandler EndPrint;
-		public event PrintEventHandler PrintPage;
-		public event PrintEventHandler QuerypageSettings;
-
-
+		public event PrintPageEventHandler PrintPage;
+		public event QueryPageSettingsEventHandler QuerypageSettings;
 	}
 }

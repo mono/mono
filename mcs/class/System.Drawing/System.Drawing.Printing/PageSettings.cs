@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Herve Poussineau (hpoussineau@fr.st)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -13,110 +14,151 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PageSettings.
 	/// </summary>
-	public class PageSettings {//: IClonable
-		//[MonoTODO]
-		public PageSettings()
+	public class PageSettings : ICloneable
+	{
+		bool _Color;
+		bool _Landscape;
+		Margins _Margins = new Margins(100, 100, 100, 100); // default margin: 1 inch for all margins
+		PaperSize _PaperSize;
+		PaperSource _PaperSource;
+		PrinterResolution _PrinterResolution;
+		PrinterSettings _PrinterSettings;
+		
+		public PageSettings() : this(new PrinterSettings())
 		{
-			throw new NotImplementedException ();
+		}
+		
+		public PageSettings(PrinterSettings printerSettings)
+		{
+			PrinterSettings = printerSettings;
+			
+			Color = printerSettings.DefaultPageSettings.Color;
+			Landscape = printerSettings.DefaultPageSettings.Landscape;
+			PaperSize = printerSettings.DefaultPageSettings.PaperSize;
+			PaperSource = printerSettings.DefaultPageSettings.PaperSource;
+			PrinterResolution = printerSettings.DefaultPageSettings.PrinterResolution;
+		}
+		
+		// used by PrinterSettings.DefaultPageSettings
+		internal PageSettings(PrinterSettings printerSettings, bool color, bool landscape, PaperSize paperSize, PaperSource paperSource, PrinterResolution printerResolution)
+		{
+			PrinterSettings = printerSettings;
+			
+			Color = color;
+			Landscape = landscape;
+			PaperSize = paperSize;
+			PaperSource = paperSource;
+			PrinterResolution = printerResolution;
 		}
 //props
-		//[MonoTODO]
-//		public Rectangle Bounds{
-//			get{
-//				throw new NotImplementedException ();
-//			}
-//			set{
-//				throw new NotImplementedException ();
-//			}
-//		}
-		[MonoTODO]
+		public Rectangle Bounds{
+			get{
+				int width = this.PaperSize.Width;
+				int height = this.PaperSize.Height;
+				
+				width -= this.Margins.Left + this.Margins.Right;
+				height -= this.Margins.Top + this.Margins.Bottom;
+				
+				if (this.Landscape) {
+					// swap width and height
+					int tmp = width;
+					width = height;
+					height = tmp;
+				}
+				return new Rectangle(0, 0, width, height);
+			}
+		}
+		
 		public bool Color{
 			get{
-				throw new NotImplementedException ();
+				return _Color;
 			}
 			set{
-				throw new NotImplementedException ();
+				_Color = value;
 			}
 		}
-
-		[MonoTODO]
+		
 		public bool Landscape {
 			get{
-				throw new NotImplementedException ();
+				return _Landscape;
 			}
 			set{
-				throw new NotImplementedException ();
+				_Landscape = value;
 			}
 		}
-		[MonoTODO]
+		
 		public Margins Margins{
 			get{
-				throw new NotImplementedException ();
+				return _Margins;
 			}
 			set{
-				throw new NotImplementedException ();
+				_Margins = value;
 			}
 		}
-		[MonoTODO]
+		
 		public PaperSize PaperSize{
 			get{
-				throw new NotImplementedException ();
+				return _PaperSize;
 			}
 			set{
-				throw new NotImplementedException ();
+				_PaperSize = value;
 			}
 		}
-		[MonoTODO]
+		
 		public PaperSource PaperSource{
 			get{
-				throw new NotImplementedException ();
+				return _PaperSource;
 			}
 			set{
-				throw new NotImplementedException ();
+				_PaperSource = value;
 			}
 		}
-		[MonoTODO]
+		
 		public PrinterResolution PrinterResolution{
 			get{
-				throw new NotImplementedException ();
+				return _PrinterResolution;
 			}
 			set{
-				throw new NotImplementedException ();
+				_PrinterResolution = value;
 			}
 		}
-		//[MonoTODO]
-//		public PrinterSetting PrinterSetting{
-//			get{
-//				throw new NotImplementedException ();
-//			}
-//			set{
-//				throw new NotImplementedException ();
-//			}
-//		}
+		
+		public PrinterSettings PrinterSettings{
+			get{
+				return _PrinterSettings;
+			}
+			set{
+				_PrinterSettings = value;
+			}
+		}
 		//[ComVisible(false)]
-		[MonoTODO]
 		public object Clone(){
-			throw new NotImplementedException ();
+			return new PageSettings(this.PrinterSettings);
 		}
 
 		//[ComVisible(false)]
-		[MonoTODO]
-		public void CopyToHdevmode(IntPtr hdevmode){
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO("PageSettings.CopyToHdevmode")]
+		//public void CopyToHdevmode(IntPtr hdevmode){
+		//	throw new NotImplementedException ();
+		//}
 
 		//[ComVisible(false)]
-		[MonoTODO]
-		public void SetHdevmode(IntPtr hdevmode){
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO("PageSettings.SetHdevmode")]
+		//public void SetHdevmode(IntPtr hdevmode){
+		//	throw new NotImplementedException ();
+		//}
 	
 		//[ComVisible(false)]
-		[MonoTODO]
 		public override string ToString(){
-			//FIXME:  //THIS is wrong! This method is to be overridden!
-			return base.ToString();
+			string ret = "[PageSettings: Color={0}";
+			ret += ", Landscape={1}";
+			ret += ", Margins={2}";
+			ret += ", PaperSize={3}";
+			ret += ", PaperSource={4}";
+			ret += ", PrinterResolution={5}";
+			ret += "]";
+			
+			return String.Format(ret, this.Color, this.Landscape, this.Margins, this.PaperSize, this.PaperSource, this.PrinterResolution);
 		}
-
 	}
 }

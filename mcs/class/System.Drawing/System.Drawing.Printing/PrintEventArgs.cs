@@ -13,7 +13,7 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PrintEventArgs.
 	/// </summary>
-	public class PrintEventArgs //: CancelEventArgs
+	public class PrintEventArgs : System.ComponentModel.CancelEventArgs
 	{
 		public PrintEventArgs()
 		{

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Herve Poussineau (hpoussineau@fr.st)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -15,19 +16,28 @@ namespace System.Drawing.Printing
 	/// </summary>
 	public class PaperSource
 	{
-		[MonoTODO]
+		PaperSourceKind _Kind;
+		string _SourceName;
+		
+		// NOTE:how to construct this class?
+		// I have added a constructor, but I am not sure of me...
+		internal PaperSource(string sourceName, PaperSourceKind kind)
+		{
+			_SourceName = sourceName;
+			_Kind = kind;
+		}
+		
 		public PaperSourceKind Kind{
 			get {
-			throw new NotImplementedException ();			}
+			return _Kind; }
 		}
-		[MonoTODO]
 		public string SourceName{
 			get {
-			throw new NotImplementedException ();			}
+			return _SourceName; }
 		}
-		[MonoTODO]
 		public override string ToString(){
-			return SourceName;
+			string ret = "[PaperSource {0} Kind={1}]";
+			return String.Format(ret, this.SourceName, this.Kind);
 		}
 	}
 }

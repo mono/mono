@@ -15,28 +15,14 @@ namespace System.Drawing.Printing
 	/// </summary>
 	public abstract class PrintController
 	{
-		public PrintController()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-
-		[MonoTODO]
 		public virtual void OnEndPage(PrintDocument document, PrintPageEventArgs e){
-			throw new NotImplementedException ();
 		}
-		[MonoTODO]
 		public virtual void OnStartPrint(PrintDocument document, PrintEventArgs e){
-			throw new NotImplementedException ();
 		}
-		[MonoTODO]
 		public virtual void OnEndPrint(PrintDocument document, PrintEventArgs e){
-			throw new NotImplementedException ();
 		}
-		//[MonoTODO]
 		public virtual Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
-			throw new NotImplementedException ();
+			throw new NotImplementedException();
 		}
 	}
 }
