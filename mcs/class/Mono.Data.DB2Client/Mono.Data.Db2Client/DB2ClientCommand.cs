@@ -66,6 +66,24 @@ namespace DB2ClientCS
 		{
 		}
 		#endregion
+		#region SelfDescribe property
+		///
+		/// Property dictates whether or not any paramter markers will get their describe info
+		/// from the database, or if the user will supply the information
+		/// 
+		bool selfDescribe = false;
+		public bool SelfDescribe
+		{
+			get 
+			{
+				return selfDescribe;
+			}
+			set 
+			{
+				selfDescribe = value;
+			}
+		}
+		#endregion
 		#region CommandText property
 		///
 		///The query;  If it gets set, reset the prepared property
@@ -150,11 +168,12 @@ namespace DB2ClientCS
 			}
 		}
 		#endregion
+
 		#region Transaction property
-		///
-		/// The transaction this command is associated with
-		/// 
-		public IDbTransaction Transaction
+			///
+			/// The transaction this command is associated with
+			/// 
+			public IDbTransaction Transaction
 		{
 			get
 			{
@@ -260,7 +279,7 @@ namespace DB2ClientCS
 				reader = new DB2ClientDataReader(db2Conn, this);
 			}
 			else
-				reader = new DB2ClientDataReader(db2Conn, this, prepared);
+				reader = new DB2ClientDataReader(db2Conn, this, true);
 
 			return reader;
 
@@ -280,11 +299,12 @@ namespace DB2ClientCS
 		}
 		#endregion
 
-		#region Prepare
+
+		#region Prepare ()
 		///
-		/// Prepare.  
+		/// Prepare a statement against the database
 		/// 
-		public void Prepare()
+		public void Prepare ()
 		{
 			DB2ClientUtils util = new DB2ClientUtils();
 			short sqlRet = 0;
@@ -295,6 +315,11 @@ namespace DB2ClientCS
 			short i=1;
 			foreach ( DB2ClientParameter param in parameters) 
 			{
+				if (selfDescribe) 
+				{
+					sqlRet = param.Describe(this.hwndStmt, i);
+					util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "Error binding parameter in DB2ClientCommand: ");
+				}
 				sqlRet = param.Bind(this.hwndStmt, i);
 				util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "Error binding parameter in DB2ClientCommand: ");
 				i++;
