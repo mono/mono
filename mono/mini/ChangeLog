@@ -1,3 +1,12 @@
+2004-09-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-exceptions.c (mono_find_jit_info): Refactor common code from
+	mono_arch_find_jit_info functions into a new function. Fix a memory
+	leak.
+
+	* exceptions-x86.c exceptions-amd64.c exceptions-sparc.c: Remove
+	refactored code.
+	
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions.cs inssel-long32.brg: Handle the OP_LCONV_TO_OVF_I2 case
