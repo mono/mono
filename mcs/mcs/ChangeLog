@@ -1,5 +1,32 @@
 2003-04-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* iterators.cs (PopulateProxy): Rename our internal fields to
+	<XXX>.  
+	Create a <THIS> field if we are an instance method, so we can
+	reference our parent container variables.
+	(MapVariable): Called back from the EmitContext code to enter a
+	new variable to field mapping into the proxy class (we just create
+	a FieldBuilder).
+
+	* expression.cs
+	(LocalVariableReference.{Emit,EmitAssign,AddressOf}): Add support
+	for using the remapped locals to fields.
+
+	I placed the code here, because that gives the same semantics to
+	local variables, and only changes the Emit code.
+
+	* statement.cs (Fixed.Resolve): it is not allowed to have fixed
+	statements inside iterators.
+	(VariableInfo): Add a FieldBuilder for the cases when we are
+	remapping local variables to fields in a proxy class
+
+	* ecore.cs (SimpleNameResolve): Avoid testing two times for
+	current_block != null.
+
+	* statement.cs (Swithc.SimpleSwitchEmit): Removed code that did
+	not cope with strings, as it has been moved to the
+	TableSwitchEmit.  Fixed bug in switch generation.
+
 	* expression.cs (New.DoResolve): Provide more context for the user
 	when reporting an error.
 

@@ -3657,18 +3657,19 @@ namespace Mono.CSharp {
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
 			Block current_block = ec.CurrentBlock;
-			if (current_block != null && current_block.GetVariableInfo (Name) != null){
-				LocalVariableReference var;
-
-				var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
-
-				if (right_side != null)
-					return var.ResolveLValue (ec, right_side);
-				else
-					return var.Resolve (ec);
-			}
-
 			if (current_block != null){
+				VariableInfo vi = current_block.GetVariableInfo (Name);
+				if (vi != null){
+					Expression var;
+					
+					var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+					
+					if (right_side != null)
+						return var.ResolveLValue (ec, right_side);
+					else
+						return var.Resolve (ec);
+				}
+
 				int idx = -1;
 				Parameter par = null;
 				Parameters pars = current_block.Parameters;
@@ -3686,7 +3687,7 @@ namespace Mono.CSharp {
 						return param.Resolve (ec);
 				}
 			}
-
+			
 			//
 			// Stage 2: Lookup members 
 			//
@@ -4258,7 +4259,7 @@ namespace Mono.CSharp {
 			}
 		}
 	}
-	
+
 	/// <summary>
 	///   Expression that evaluates to a Property.  The Assign class
 	///   might set the `Value' expression if we are in an assignment.

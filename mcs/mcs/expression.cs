@@ -3365,7 +3365,12 @@ namespace Mono.CSharp {
 			VariableInfo vi = VariableInfo;
 			ILGenerator ig = ec.ig;
 
-			ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
+			if (vi.LocalBuilder == null){
+				ec.EmitThis ();
+				ig.Emit (OpCodes.Ldfld, vi.FieldBuilder);
+			} else 
+				ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
+			
 			vi.Used = true;
 		}
 		
@@ -3376,16 +3381,26 @@ namespace Mono.CSharp {
 
 			vi.Assigned = true;
 
-			source.Emit (ec);
-			
-			ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+			if (vi.LocalBuilder == null){
+				ec.EmitThis ();
+				source.Emit (ec);
+				ig.Emit (OpCodes.Stfld, vi.FieldBuilder);
+			} else {
+				source.Emit (ec);
+				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+			}
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			VariableInfo vi = VariableInfo;
 
-			ec.ig.Emit (OpCodes.Ldloca, vi.LocalBuilder);
+			if (vi.LocalBuilder == null){
+				ec.EmitThis ();
+				ec.ig.Emit (OpCodes.Ldflda, vi.FieldBuilder);
+			} else
+				ec.ig.Emit (OpCodes.Ldloca, vi.LocalBuilder);
 		}
 	}
 

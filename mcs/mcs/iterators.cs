@@ -135,10 +135,23 @@ namespace Mono.CSharp {
 		MethodBuilder dispose_method;
 		MethodBuilder getenumerator_method;
 		PropertyBuilder current_property;
-		FieldBuilder pc_field;
-		FieldBuilder current_field;
 		ConstructorBuilder enumerator_proxy_constructor;
 		ConstructorBuilder enumerable_proxy_constructor;
+
+		//
+		// The PC for the state machine.
+		//
+		FieldBuilder pc_field;
+
+		//
+		// The value computed for Current
+		//
+		FieldBuilder current_field;
+
+		//
+		// Used to reference fields on the container class (instance methods)
+		//
+		public FieldBuilder this_field;
 
 		//
 		// The state as we generate the iterator
@@ -230,6 +243,15 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ret); 
 		}
 
+		// 
+		// Invoked when a local variable declaration needs to be mapped to
+		// a field in our proxy class
+		//
+		public FieldBuilder MapVariable (string name, Type t)
+		{
+			return enumerator_proxy_class.DefineField ("v" + name, t, FieldAttributes.Public);
+		}
+		
 		void Create_Reset ()
 		{
 			reset_method = enumerator_proxy_class.DefineMethod (
@@ -394,11 +416,17 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Call, TypeManager.object_ctor);
 			ig.Emit (OpCodes.Ret);
 		}
-	       
+
+		//
+		// Populates the Enumerator Proxy class
+		//
 		void PopulateProxy ()
 		{
 			pc_field = enumerator_proxy_class.DefineField ("PC", TypeManager.int32_type, FieldAttributes.Private);
 			current_field = enumerator_proxy_class.DefineField ("current", IteratorType, FieldAttributes.Private);
+			if ((modifiers & Modifiers.STATIC) == 0)
+				this_field = enumerator_proxy_class.DefineField ("THIS", container.TypeBuilder, FieldAttributes.Private);
+			
 			RootContext.RegisterHelperClass (enumerator_proxy_class);
 			
 			Create_MoveNext ();

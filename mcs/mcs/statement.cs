@@ -2392,7 +2392,17 @@ namespace Mono.CSharp {
 	
 	public class VariableInfo : IVariable {
 		public Expression Type;
+
+		//
+		// Most of the time a variable will be stored in a LocalBuilder
+		//
+		// But sometimes, it will be stored in a field.  The context of the field will
+		// be stored in the EmitContext
+		//
+		//
 		public LocalBuilder LocalBuilder;
+		public FieldBuilder FieldBuilder;
+		
 		public Type VariableType;
 		public readonly string Name;
 		public readonly Location Location;
@@ -3003,6 +3013,8 @@ namespace Mono.CSharp {
 
 			bool old_check_state = ec.ConstantCheckState;
 			ec.ConstantCheckState = (flags & Flags.Unchecked) == 0;
+			bool remap_locals = ec.RemapLocals;
+				
 			//
 			// Process this block variables
 			//
@@ -3025,8 +3037,11 @@ namespace Mono.CSharp {
 						if (!TypeManager.VerifyUnManaged (variable_type.GetElementType (), vi.Location))
 							continue;
 					}
-					
-					vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+
+					if (remap_locals)
+						vi.FieldBuilder = ec.MapVariable (name, vi.VariableType);
+					else
+						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 
 					if (constants == null)
 						continue;
@@ -3838,28 +3853,22 @@ namespace Mono.CSharp {
 			bool first_test = true;
 			bool pending_goto_end = false;
 			bool all_return = true;
-			bool is_string = false;
 			bool null_found;
 			
-			//
-			// Special processing for strings: we cant compare
-			// against null.
-			//
-			if (SwitchType == TypeManager.string_type){
-				ig.Emit (OpCodes.Ldloc, val);
-				is_string = true;
-				
-				if (Elements.Contains (NullLiteral.Null)){
-					ig.Emit (OpCodes.Brfalse, null_target);
-				} else
-					ig.Emit (OpCodes.Brfalse, default_target);
-
-				ig.Emit (OpCodes.Ldloc, val);
-				ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
-				ig.Emit (OpCodes.Stloc, val);
-			}
+			ig.Emit (OpCodes.Ldloc, val);
 			
-			foreach (SwitchSection ss in Sections){
+			if (Elements.Contains (NullLiteral.Null)){
+				ig.Emit (OpCodes.Brfalse, null_target);
+			} else
+				ig.Emit (OpCodes.Brfalse, default_target);
+			
+			ig.Emit (OpCodes.Ldloc, val);
+			ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
+			ig.Emit (OpCodes.Stloc, val);
+		
+			int section_count = Sections.Count;
+			for (int section = 0; section < section_count; section++){
+				SwitchSection ss = (SwitchSection) Sections [section];
 				Label sec_begin = ig.DefineLabel ();
 
 				if (pending_goto_end)
@@ -3867,7 +3876,8 @@ namespace Mono.CSharp {
 
 				int label_count = ss.Labels.Count;
 				null_found = false;
-				foreach (SwitchLabel sl in ss.Labels){
+				for (int label = 0; label < label_count; label++){
+					SwitchLabel sl = (SwitchLabel) ss.Labels [label];
 					ig.MarkLabel (sl.ILLabel);
 					
 					if (!first_test){
@@ -3890,29 +3900,20 @@ namespace Mono.CSharp {
 							continue;
 									      
 						}
-						if (is_string){
-							StringConstant str = (StringConstant) lit;
-
-							ig.Emit (OpCodes.Ldloc, val);
-							ig.Emit (OpCodes.Ldstr, str.Value);
-							if (label_count == 1)
+						StringConstant str = (StringConstant) lit;
+						
+						ig.Emit (OpCodes.Ldloc, val);
+						ig.Emit (OpCodes.Ldstr, str.Value);
+						if (label_count == 1)
+							ig.Emit (OpCodes.Bne_Un, next_test);
+						else {
+							if (label+1 == label_count)
 								ig.Emit (OpCodes.Bne_Un, next_test);
 							else
 								ig.Emit (OpCodes.Beq, sec_begin);
-						} else {
-							ig.Emit (OpCodes.Ldloc, val);
-							EmitObjectInteger (ig, lit);
-							ig.Emit (OpCodes.Ceq);
-							if (label_count == 1)
-								ig.Emit (OpCodes.Brfalse, next_test);
-							else
-								ig.Emit (OpCodes.Brtrue, sec_begin);
 						}
 					}
 				}
-				if (label_count != 1)
-					ig.Emit (OpCodes.Br, next_test);
-				
 				if (null_found)
 					ig.MarkLabel (null_target);
 				ig.MarkLabel (sec_begin);
@@ -3934,7 +3935,7 @@ namespace Mono.CSharp {
 			}
 			ig.MarkLabel (next_test);
 			ig.MarkLabel (end_of_switch);
-			
+
 			return all_return;
 		}
 
@@ -4223,6 +4224,11 @@ namespace Mono.CSharp {
 			if (expr_type == null)
 				return false;
 
+			if (ec.RemapLocals){
+				Report.Error (-210, loc, "Fixed statement not allowed in iterators");
+				return false;
+			}
+			
 			data = new FixedData [declarators.Count];
 
 			if (!expr_type.IsPointer){

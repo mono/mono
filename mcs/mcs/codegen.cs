@@ -223,6 +223,12 @@ namespace Mono.CSharp {
 		public bool InIterator;
 		
 		/// <summary>
+		///   Whether remapping of local variables is turned on.
+		///   Used by iterators and anonymous methods.
+		/// </summary>
+		public bool RemapLocals;
+
+		/// <summary>
 		///   Whether we are in a Catch block
 		/// </summary>
 		public bool InCatch;
@@ -273,6 +279,7 @@ namespace Mono.CSharp {
 			
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;
+			RemapLocals = InIterator;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
@@ -584,6 +591,33 @@ namespace Mono.CSharp {
 			}
 
 			return return_value;
+		}
+
+		//
+		// Creates a field `name' with the type `t' on the proxy class
+		//
+		public FieldBuilder MapVariable (string name, Type t)
+		{
+			if (InIterator){
+				return IteratorHandler.Current.MapVariable (name, t);
+			}
+
+			throw new Exception ("MapVariable for an unknown state");
+		}
+
+		//
+		// Emits the proper object to address fields on a remapped
+		// variable/parameter to field in anonymous-method/iterator proxy classes.
+		//
+		public void EmitThis ()
+		{
+			ig.Emit (OpCodes.Ldarg_0);
+			if (!IsStatic){
+				if (InIterator)
+					ig.Emit (OpCodes.Ldfld, IteratorHandler.Current.this_field);
+				else
+					throw new Exception ("EmitThis for an unknown state");
+			}
 		}
 
 		/// <summary>
