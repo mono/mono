@@ -2247,9 +2247,9 @@ namespace Mono.CSharp {
 					return e;
 
 				if (!me.IsStatic &&
-				    TypeManager.IsSubclassOrNestedChildOf (me.InstanceExpression.Type, me.DeclaringType) &&
+				    TypeManager.IsNestedFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
 				    me.InstanceExpression.Type != me.DeclaringType &&
-				    !TypeManager.IsSubclassOf (me.InstanceExpression.Type, me.DeclaringType) &&
+				    !TypeManager.IsFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
 				    (!intermediate || !MemberAccess.IdenticalNameAndTypeName (ec, this, e, loc))) {
 					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
 					       "outer type `" + me.DeclaringType + "' via nested type `" +
@@ -3314,7 +3314,7 @@ namespace Mono.CSharp {
 				Type declaring_type = mi.DeclaringType;
 					
 				if (invocation_type != declaring_type){
-					if (TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
+					if (TypeManager.IsNestedFamilyAccessible (invocation_type, mi.DeclaringType))
 						return mi;
 					else
 						return null;
@@ -3344,7 +3344,7 @@ namespace Mono.CSharp {
 
 			// Family and FamANDAssem require that we derive.
 			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
-				if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
+				if (!TypeManager.IsNestedFamilyAccessible (invocation_type, mi.DeclaringType))
 					return null;
 				else {
 					if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))

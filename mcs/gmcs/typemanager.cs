@@ -1871,6 +1871,18 @@ public class TypeManager {
 	public static bool IsSubclassOf (Type type, Type parent)
 	{
 		do {
+			if (type.Equals (parent))
+				return true;
+
+			type = type.BaseType;
+		} while (type != null);
+
+		return false;
+	}
+
+	public static bool IsFamilyAccessible (Type type, Type parent)
+	{
+		do {
 			if (IsEqualGenericInstance (type, parent))
 				return true;
 
@@ -1883,10 +1895,10 @@ public class TypeManager {
 	//
 	// Checks whether `type' is a subclass or nested child of `parent'.
 	//
-	public static bool IsSubclassOrNestedChildOf (Type type, Type parent)
+	public static bool IsNestedFamilyAccessible (Type type, Type parent)
 	{
 		do {
-			if (IsSubclassOf (type, parent))
+			if (IsFamilyAccessible (type, parent))
 				return true;
 
 			// Handle nested types.
@@ -2778,14 +2790,14 @@ public class TypeManager {
 				if (invocation_type == null)
 					return false;
 
-				if (!IsSubclassOrNestedChildOf (invocation_type, mb.DeclaringType))
+				if (!IsNestedFamilyAccessible (invocation_type, mb.DeclaringType))
 					return false;
 
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!mb.IsStatic && (qualifier_type != null) &&
 				    !IsEqualGenericInstance (invocation_type, qualifier_type) &&
-				    TypeManager.IsSubclassOf (invocation_type, qualifier_type) &&
+				    TypeManager.IsFamilyAccessible (invocation_type, qualifier_type) &&
 				    !TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
 					return false;
 
@@ -2829,14 +2841,14 @@ public class TypeManager {
 				if (invocation_type == null)
 					return false;
 
-				if (!IsSubclassOrNestedChildOf (invocation_type, fi.DeclaringType))
+				if (!IsNestedFamilyAccessible (invocation_type, fi.DeclaringType))
 					return false;
 
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!fi.IsStatic && (qualifier_type != null) &&
 				    !IsEqualGenericInstance (invocation_type, qualifier_type) &&
-				    TypeManager.IsSubclassOf (invocation_type, qualifier_type) &&
+				    TypeManager.IsFamilyAccessible (invocation_type, qualifier_type) &&
 				    !TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
 					return false;
 

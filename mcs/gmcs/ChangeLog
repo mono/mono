@@ -1,5 +1,15 @@
 2004-08-24  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs
+	(TypeManager.IsSubclassOf): Renamed to IsFamilyAccessible; use
+	this for accessibility checks.
+	(TypeManager.IsSubclassOrNestedChildOf): Renamed to
+	IsNestedFamilyAccessible.
+	(TypeManager.IsSubclassOf): New method, do what the name actually
+	says.	
+
+2004-08-24  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (MemberAccess.DoResolve): When resolving ourselves
 	as a SimpleName, include the generic arity.
 
