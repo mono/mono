@@ -46,7 +46,7 @@ namespace System.Drawing
 		
 		public override object Clone()
 		{
-			return new SolidBrush( color );
+			return new SolidBrush (color);
 		}
 		
 		protected override void Dispose (bool disposing)

@@ -231,7 +231,7 @@ namespace System.Drawing {
 		
 		public bool IsEmpty {
 			get {
-				return ((Width == 0) && (Height == 0));
+				return ((width == 0) && (height == 0));
 			}
 		}
 
@@ -295,7 +295,7 @@ namespace System.Drawing {
 		
 		public override int GetHashCode ()
 		{
-			return Width^Height;
+			return width^height;
 		}
 
 		/// <summary>
@@ -308,7 +308,7 @@ namespace System.Drawing {
 		
 		public override string ToString ()
 		{
-			return String.Format ("[{0},{1}]", Width, Height);
+			return String.Format ("{{Width={0}, Height={1}}}", width, height);
 		}
 
 	}

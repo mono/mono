@@ -1,3 +1,11 @@
+2004-01-23  Ravindra  <rkumar@novell.com>
+
+	* Point.cs: ToString modified.
+	* PointF.cs: ToString modified.
+	* Size.cs: ToString modified.
+	* SizeF.cs: ToString modified. ToPoint and ToSize methods
+	are added.
+
 2004-01-21  Jordi Mas i Hernàndez
 	* Bitmap.cs: Several new methods added.
 		

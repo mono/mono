@@ -235,6 +235,22 @@ namespace System.Drawing {
 			return (int) wd ^ (int) ht;
 		}
 
+		public PointF ToPointF ()
+		{
+			return new PointF (wd, ht);
+		}
+
+		public Size ToSize ()
+		{
+			int w, h;
+			checked {
+				w = (int) wd;
+				h = (int) ht;
+			}
+
+			return new Size (w, h);
+		}
+
 		/// <summary>
 		///	ToString Method
 		/// </summary>
@@ -245,8 +261,7 @@ namespace System.Drawing {
 		
 		public override string ToString ()
 		{
-			return String.Format ("[{0},{1}]", wd, ht);
+			return String.Format ("{{Width={0}, Height={1}}}", wd, ht);
 		}
-
 	}
 }
