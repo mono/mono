@@ -1,4 +1,8 @@
+2003-07-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* test-31.il: Added tests for static properties. Also made the code
+	for methods verifiable IL.
+		
 Fri Jul 25 12:27:24 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* generics-c.il, generics-b.il: add constructors and fix code.
