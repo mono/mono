@@ -69,7 +69,15 @@ Used for benchmarking.  The compiler will only parse its input files.
 Probes for the code to generate an error named `X' in line `L'.  This
 is only used by the test suite.
 .TP
-.I \-\- resource FILE
+.I \-\-recurse PATTERN
+Does recursive compilation using the specified pattern.  In Unix the
+shell will perform globbing, so you migth want to use it like this:
+.PP
+.nf
+		bash$ mcs --recurse '*.cs' 
+.fi
+.TP
+.I \-\-resource FILE
 Adds FILE as a resource of the resulting assembly.
 .TP
 .I \-\-target KIND
