@@ -1,5 +1,16 @@
 2002-06-25  Dick Porter  <dick@ximian.com>
 
+	* handles.c:
+	* handles-private.h:
+	* daemon-messages.h:
+	* daemon.c: Process forking and handle data management
+
+	* processes.h:
+	* process-private.h:
+	* processes.c: Process forking and other support functions
+
+2002-06-25  Dick Porter  <dick@ximian.com>
+
 	* versioninfo.h: PE resource decoding
 
 	* unicode.c (_wapi_unicode_to_utf8): g_utf16_to_utf8 doesnt need
