@@ -3,6 +3,7 @@
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
+//   Adam Treat (manyoso@yahoo.com)
 //
 // (C) 2001, 2002 Jason Diamond  http://injektilo.org/
 //
@@ -128,7 +129,10 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlTextReader (string xmlFragment, XmlNodeType fragType, XmlParserContext context)
 		{
-			throw new NotImplementedException ();
+			//Waiting for Validating reader for fragType rules.
+			parserContext = context;
+			Init ();
+			reader = new StringReader(xmlFragment);
 		}
 
 		#endregion
