@@ -1,3 +1,12 @@
+2004-11-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (MethodCore.CheckAccessModifiers): New helper routine
+	that factors the code to check access modifiers on override.  
+
+	(PropertyBase): Use the code here.
+
+	Patch from Lluis S'anchez, fixes bug #69361.
+
 2004-11-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* anonymous.cs (AnonymousMethod.Error_AddressOfCapturedVar): New

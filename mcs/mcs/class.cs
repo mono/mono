@@ -3113,58 +3113,9 @@ namespace Mono.CSharp {
 				MethodAttributes thisp = flags & MethodAttributes.MemberAccessMask;
 				MethodAttributes parentp = parent_method.Attributes & MethodAttributes.MemberAccessMask;
 
-				//
-				// special case for "protected internal"
-				//
-
-				if ((parentp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-					//
-					// when overriding protected internal, the method can be declared
-					// protected internal only within the same assembly
-					//
-
-					if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-						if (Parent.TypeBuilder.Assembly != parent_method.DeclaringType.Assembly){
-							//
-							// assemblies differ - report an error
-							//
-							
-							Error_CannotChangeAccessModifiers (Parent, parent_method, name);
-						    ok = false;
-						} else if (thisp != parentp) {
-							//
-							// same assembly, but other attributes differ - report an error
-							//
-							
-							Error_CannotChangeAccessModifiers (Parent, parent_method, name);
-							ok = false;
-						};
-					} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
-						//
-						// if it's not "protected internal", it must be "protected"
-						//
-
-						Error_CannotChangeAccessModifiers (Parent, parent_method, name);
-						ok = false;
-					} else if (Parent.TypeBuilder.Assembly == parent_method.DeclaringType.Assembly) {
-						//
-						// protected within the same assembly - an error
-						//
-						Error_CannotChangeAccessModifiers (Parent, parent_method, name);
-						ok = false;
-					} else if ((thisp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem)) != 
-						   (parentp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem))) {
-						//
-						// protected ok, but other attributes differ - report an error
-						//
-						Error_CannotChangeAccessModifiers (Parent, parent_method, name);
-						ok = false;
-					}
-				} else {
-					if (thisp != parentp){
-						Error_CannotChangeAccessModifiers (Parent, parent_method, name);
-						ok = false;
-					}
+				if (!CheckAccessModifiers (thisp, parentp, parent_method)) {
+					Error_CannotChangeAccessModifiers (Parent, parent_method, name);
+					ok = false;
 				}
 			}
 
@@ -3180,7 +3131,53 @@ namespace Mono.CSharp {
 
 			return ok;
 		}
+		
+		protected bool CheckAccessModifiers (MethodAttributes thisp, MethodAttributes parentp, MethodInfo base_method)
+		{
+			if ((parentp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
+				//
+				// when overriding protected internal, the method can be declared
+				// protected internal only within the same assembly
+				//
 
+				if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
+					if (Parent.TypeBuilder.Assembly != base_method.DeclaringType.Assembly){
+						//
+						// assemblies differ - report an error
+						//
+						
+						return false;
+					} else if (thisp != parentp) {
+						//
+						// same assembly, but other attributes differ - report an error
+						//
+						
+						return false;
+					};
+				} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
+					//
+					// if it's not "protected internal", it must be "protected"
+					//
+
+					return false;
+				} else if (Parent.TypeBuilder.Assembly == base_method.DeclaringType.Assembly) {
+					//
+					// protected within the same assembly - an error
+					//
+					return false;
+				} else if ((thisp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem)) != 
+					   (parentp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem))) {
+					//
+					// protected ok, but other attributes differ - report an error
+					//
+					return false;
+				}
+				return true;
+			} else {
+				return (thisp == parentp);
+			}
+		}
+		
 		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method, string name)
 		{
 			//
@@ -5927,8 +5924,7 @@ namespace Mono.CSharp {
 					MethodAttributes get_flags = Modifiers.MethodAttr (Get.ModFlags != 0 ? Get.ModFlags : ModFlags);
 					get_accessor_access = (get_accessor.Attributes & MethodAttributes.MemberAccessMask);
 
-					if (!Get.IsDummy && (get_accessor_access) != 
-						(get_flags & MethodAttributes.MemberAccessMask))
+					if (!Get.IsDummy && !CheckAccessModifiers (get_flags & MethodAttributes.MemberAccessMask, get_accessor_access, get_accessor))
 						Report.Error (507, Location, "'{0}' can't change the access modifiers when overriding inherited member '{1}'",
 								GetSignatureForError (), TypeManager.GetFullNameSignature (parent_property));
 				}
@@ -5937,8 +5933,7 @@ namespace Mono.CSharp {
 					MethodAttributes set_flags = Modifiers.MethodAttr (Set.ModFlags != 0 ? Set.ModFlags : ModFlags);
 					set_accessor_access = (set_accessor.Attributes & MethodAttributes.MemberAccessMask);
 
-					if (!Set.IsDummy & (set_accessor_access) !=
-						(set_flags & MethodAttributes.MemberAccessMask))
+					if (!Set.IsDummy && !CheckAccessModifiers (set_flags & MethodAttributes.MemberAccessMask, set_accessor_access, set_accessor))
 						Report.Error (507, Location, "'{0}' can't change the access modifiers when overriding inherited member '{1}'",
 								GetSignatureForError (container), TypeManager.GetFullNameSignature (parent_property));
 				}
