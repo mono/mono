@@ -1,4 +1,9 @@
 
+Thu Jan 9 16:17:00 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: handle global methods.
+	Compress blob entries.
+
 Thu Jan 9 15:54:53 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: fix compilation.
