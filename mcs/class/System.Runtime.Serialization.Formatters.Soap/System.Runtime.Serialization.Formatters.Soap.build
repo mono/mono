@@ -28,7 +28,7 @@
 		</csc>
 		<copy file="../lib/System.Runtime.Serialization.Formatters.Soap.dll" tofile="Test/System.Runtime.Serialization.Formatters.Soap.dll"/>
 		<!--copy file="../lib/System.Xml.dll" tofile="Test/System.Xml.dll"/-->
-		<nant basedir="Test" target="build"/>
+		<!--nant basedir="Test" target="build"/-->
 	</target>
 
 	<target name="test" depends="build">

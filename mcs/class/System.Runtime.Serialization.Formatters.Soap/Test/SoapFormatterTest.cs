@@ -1,8 +1,10 @@
 // project created on 09/05/2003 at 18:07
 using System;
 using System.Collections;
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.IO;
 using NUnit.Framework;
@@ -109,30 +111,40 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 	[TestFixture]
 	public class SoapFormatterTest
 	{
-		private SoapFormatterT _soapFormatter;
+		private SoapFormatter _soapFormatter;
+		private SoapFormatter _soapFormatterDeserializer;
+		private RemotingSurrogateSelector _surrogate;
 		
 		private object Serialize(object objGraph) {
 			MemoryStream stream = new MemoryStream();
+			Assertion.Assert(objGraph != null);
+			Assertion.Assert(stream != null);
+			_soapFormatter.SurrogateSelector = _surrogate;
 			_soapFormatter.Serialize(stream, objGraph);
 			
-			
+			stream.Position = 0;
+			StreamReader r = new StreamReader(stream);
+			Console.WriteLine(r.ReadToEnd());
 			stream.Position = 0;
 			
-			object objReturn = _soapFormatter.Deserialize(stream);
+			object objReturn = _soapFormatterDeserializer.Deserialize(stream);
 			Assertion.Assert(objReturn != null);
 			Assertion.AssertEquals("#Tests "+objGraph.GetType(), objGraph.GetType(), objReturn.GetType());
 			stream = new MemoryStream();
 			_soapFormatter.Serialize(stream, objReturn);
 			stream.Position = 0;
-			StreamReader r = new StreamReader(stream);
-			Console.WriteLine(r.ReadToEnd());
+//			StreamReader r = new StreamReader(stream);
+//			Console.WriteLine(r.ReadToEnd());
 			
 			return objReturn;
 		}
 		
 		[SetUp]
 		public void GetReady() {
-			_soapFormatter = new SoapFormatterT(new RemotingSurrogateSelector(), new StreamingContext(StreamingContextStates.All));
+			StreamingContext context = new StreamingContext(StreamingContextStates.All);
+			_surrogate = new RemotingSurrogateSelector();
+			_soapFormatter = new SoapFormatter(_surrogate, context);
+			_soapFormatterDeserializer = new SoapFormatter(null, context);
 		}
 		
 		[TearDown]
@@ -166,6 +178,16 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			objReturn = Serialize("");
 			objReturn = Serialize("hello world!");
 			Assertion.AssertEquals("#string", "hello world!", objReturn);
+			SoapMessage soapMsg = new SoapMessage();
+			soapMsg.Headers = new Header[0];
+			soapMsg.MethodName = "Equals";
+			soapMsg.ParamNames = new String[0];
+			soapMsg.ParamTypes = new Type[0];
+			soapMsg.ParamValues = new object[0];
+			soapMsg.XmlNameSpace = SoapServices.CodeXmlNamespaceForClrTypeNamespace("String", "System");
+			_soapFormatterDeserializer.TopObject = new SoapMessage();
+			objReturn = Serialize(soapMsg);
+			_soapFormatterDeserializer.TopObject = null;
 			SimpleObject obj = new SimpleObject("simple object", 1);
 			objReturn = Serialize(obj);
 			Assertion.AssertEquals("#SimpleObject", obj, objReturn);

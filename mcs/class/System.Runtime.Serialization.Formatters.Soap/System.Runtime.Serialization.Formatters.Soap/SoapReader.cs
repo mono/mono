@@ -14,10 +14,62 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Serialization.Formatters.Soap {
 	internal class SoapReader: ISoapReader {
 		public event ElementReadEventHandler ElementReadEvent;
+		private ISoapMessage _soapMessage;
+		private ISoapParser _parser;
+		
+		public ISoapMessage TopObject {
+			get { return _soapMessage; }
+			set { 
+				_soapMessage = value;
+				
+				// the first element of the SOAP stream
+				// should be a SOAP RPC
+				_parser.SoapElementReadEvent -= new SoapElementReadEventHandler(SoapElementRead);
+				_parser.SoapElementReadEvent += new SoapElementReadEventHandler(SoapRPCElementRead);
+			}
+		}
 		
 		public SoapReader(ISoapParser parser) {
 			// register the SoapElementReadEvent handler
-			parser.SoapElementReadEvent += new SoapElementReadEventHandler(SoapElementRead);
+			_parser = parser;
+			_parser.SoapElementReadEvent += new SoapElementReadEventHandler(SoapElementRead);
+		}
+		
+		public void SoapRPCElementRead(ISoapParser sender, SoapElementReadEventArgs e) {
+			_parser.SoapElementReadEvent += new SoapElementReadEventHandler(SoapElementRead);
+			_parser.SoapElementReadEvent -= new SoapElementReadEventHandler(SoapRPCElementRead);
+			
+			Queue elementQueue = e.ElementQueue;
+			Queue elementInfoQueue = new Queue();
+			SoapSerializationEntry root = (SoapSerializationEntry) elementQueue.Dequeue();
+			
+			// fill the SoapMessage members
+			// MethodName
+			//elementInfoQueue.Enqueue(new ElementInfo(typeof(string), "MethodName", rpcInfo.elementName, ElementType.Nothing, 0, 0);
+			_soapMessage.MethodName = root.elementName;
+			
+			// XmlNamespace
+			//elementInfoQueue.Enqueue(new ElementInfo(typeof(string), "XmlNamespace", rpcInfo.elementNamespace, ElementType.Nothing, 0, 0);
+			_soapMessage.XmlNameSpace = root.elementNamespace;
+			
+			// the root element is a SoapMessage
+			ElementInfo rpcInfo = new ElementInfo(typeof(SoapMessage), String.Empty, _soapMessage, ElementType.Id, 1, null);
+			
+			//todo: headers
+			
+			// add the function parameters to the queue
+			SoapSerializationEntry field;
+			ElementInfo fieldElementInfo;
+			while(elementQueue.Count > 0){
+				field = (SoapSerializationEntry) elementQueue.Dequeue();
+				fieldElementInfo = GetElementInfo(field);
+				elementInfoQueue.Enqueue(fieldElementInfo);
+			}
+
+			// raise the ElementReadEvent
+			ElementReadEvent(this,new ElementReadEventArgs(rpcInfo, elementInfoQueue));
+			
+			
 		}
 		
 		// called when SoapElementReadEvent is raized by the SoapParser object
@@ -28,9 +80,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			
 			ElementInfo rootInfo = GetElementInfo(root);
 			SoapSerializationEntry field;
+			ElementInfo fieldElementInfo;
 			while(elementQueue.Count > 0){
 				field = (SoapSerializationEntry) elementQueue.Dequeue();
-				elementInfoQueue.Enqueue(GetElementInfo(field));
+				fieldElementInfo = GetElementInfo(field);
+				elementInfoQueue.Enqueue(fieldElementInfo);
 			}
 
 			// raise the ElementReadEvent

@@ -68,7 +68,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				rtnObject = Type.GetType(typeNamespace+"."+mapping.TypeName);
 				
 				if(rtnObject == null) {
-					Assembly ass =Assembly.Load(typeNamespace);
+//					AssemblyName assName = new AssemblyName()
+//					assName.FullName = asse
+					Assembly ass =Assembly.Load(assemblyName);
 					if(ass != null) {
 						rtnObject = ass.GetType(typeNamespace+"."+mapping.TypeName, true);
 					}
@@ -85,6 +87,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			// the primitive type "System.String"
 			mapping =  new SoapTypeMapping(typeof(string), "string", true, false, false, true);
 			_mappingTable.Add(typeof(string),mapping);
+			_invertMappingTable.Add(mapping, typeof(string));
+			mapping =  new SoapTypeMapping(typeof(string), "string", "http://www.w3.org/2001/XMLSchema", true, false, false, true);
 			_invertMappingTable.Add(mapping, typeof(string));
 			
 			// the primitive type "System.Int16"
@@ -129,6 +133,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			mapping = new SoapTypeMapping(typeof(object), "anyType", "http://www.w3.org/2001/XMLSchema", false, false, false, true);
 			_mappingTable.Add(typeof(object), mapping);
 			_invertMappingTable.Add(mapping, typeof(object));
+			
+			mapping = new SoapTypeMapping(typeof(System.Runtime.Serialization.Formatters.SoapFault), "Fault", "http://schemas.xmlsoap.org/soap/envelope/", false, false, false, true);
+			_mappingTable.Add(typeof(System.Runtime.Serialization.Formatters.SoapFault), mapping);
+			_invertMappingTable.Add(mapping, typeof(System.Runtime.Serialization.Formatters.SoapFault));
 			
 			
 		}

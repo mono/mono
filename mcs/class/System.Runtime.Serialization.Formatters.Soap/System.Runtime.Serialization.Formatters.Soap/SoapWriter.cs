@@ -56,6 +56,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			// todo: manage the encoding
 			_xmlWriter = new XmlTextWriter(outStream, null);
 			_xmlWriter.Formatting = Formatting.Indented;
+			_xmlWriter.Indentation = 2;
 //			_xmlWriter.WriteComment("My serialization function");
 			_format = new CultureInfo("en-US");
 		}
@@ -64,7 +65,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 		
 		private SoapSerializationEntry FillEntry(Type defaultObjectType, object objValue) {
-//			SoapTypeMapping mapping = GetTagInfo((objValue != null)?objValue.GetType():defaultObjectType);
 			SoapTypeMapping mapping = GetTagInfo((objValue != null && defaultObjectType == typeof(object))?objValue.GetType():defaultObjectType);
 			
 			SoapSerializationEntry soapEntry = new SoapSerializationEntry();
@@ -89,6 +89,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				soapEntry.elementType = ElementType.Href;
 				soapEntry.i = (long) _objectIds[objValue];
 				soapEntry.WriteFullEndElement = false;
+				soapEntry.SpecifyEncoding = false;
 			}
 			else if(!mapping.CanBeValue){
 				id = GetNextId();
@@ -98,6 +99,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				_objectQueue.Enqueue(new EnqueuedObject(objValue, id));
 				_objectRefs[id] = objValue;
 				_objectIds[objValue] = id;
+				soapEntry.SpecifyEncoding = false;
 			} 
 			else if(mapping.NeedId){ 
 				id = GetNextId();
@@ -211,12 +213,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 		
 		public void WriteFields(SerializationInfo info) {
-		//	SoapTypeMapping mapping;
 			ICollection attributeList;
 			SoapSerializationEntry soapEntry;
 			
 			foreach(SerializationEntry entry in info){
-		//		mapping = GetTagInfo(entry.ObjectType);
 				soapEntry = FillEntry(entry.ObjectType, entry.Value);
 				
 				
@@ -336,7 +336,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 		
 		private void WriteSoapRPC(ISoapMessage soapMsg) {
-			throw new NotImplementedException();
 			
 			_xmlWriter.WriteStartElement("i2", soapMsg.MethodName, soapMsg.XmlNameSpace);
 			_xmlWriter.WriteAttributeString("id", null, "ref-"+_currentObjectId);
@@ -346,12 +345,16 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMsg.XmlNameSpace, out typeNamespace, out assemblyName);
 			
 			Type objType = Type.GetType(typeNamespace);
-			MethodInfo mthInfo = objType.GetMethod(soapMsg.MethodName);
-			
-			for(int i=0; i<soapMsg.ParamNames.Length; i++){
-				info.AddValue(soapMsg.ParamNames[i], soapMsg.ParamValues[i], soapMsg.ParamTypes[i]);
+			if(soapMsg.ParamNames != null) {
+				for(int i=0; i<soapMsg.ParamNames.Length; i++){
+					string name = soapMsg.ParamNames[i];
+					object objValue = soapMsg.ParamValues[i];
+					Type type = soapMsg.ParamTypes[i];
+					info.AddValue(name, objValue, type);
+				}
+				WriteFields(info);
 			}
-			WriteFields(info);
+			
 			
 			_xmlWriter.WriteEndElement();
 			

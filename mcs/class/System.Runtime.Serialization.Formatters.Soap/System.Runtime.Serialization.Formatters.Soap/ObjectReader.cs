@@ -9,6 +9,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 
 namespace System.Runtime.Serialization.Formatters.Soap {
@@ -44,6 +45,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			return Int64.MaxValue ^ ++_nonId;
 		}
 		
+		// sometimes, the root object doesn't have an id
+		// An id has to be created to register the object
+		// with the ObjectManager
+		// If the root object is a SoapMessage. It has to be handle
+		// in a different way
 		public void RootElementRead(ISoapReader sender, ElementReadEventArgs e) {
 			ElementReadEventArgs args = e;
 			sender.ElementReadEvent -= new ElementReadEventHandler(RootElementRead);
@@ -54,8 +60,30 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				_topObjectId = rootInfo._i;
 			}
 			args.RootElement = rootInfo;
-			ElementRead(sender, args);
+			if(rootInfo._type == typeof(SoapMessage)) RPCHandler(args);
+			else ElementRead(sender, args);
 
+		}
+		
+		private void RPCHandler(ElementReadEventArgs e) {
+			ElementInfo rpcInfo = e.RootElement;
+			SoapMessage soapMessage = (SoapMessage) rpcInfo._value;
+			
+			
+			// register the SoapMessage
+			_manager.RegisterObject(soapMessage, 1);
+			
+			int count = e.FieldsInfo.Count;
+			soapMessage.ParamNames = new string[count];
+			soapMessage.ParamTypes = new Type[count];
+			soapMessage.ParamValues = new object[count];
+			
+			long paramValuesId = GetNextId();
+			_manager.RegisterObject(soapMessage.ParamValues, paramValuesId);
+			soapMessage.ParamNames = FixupArrayItems(paramValuesId, e.FieldsInfo);
+			
+			
+			
 		}
 		
 		public void ElementRead(ISoapReader sender, ElementReadEventArgs e) {
@@ -74,7 +102,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_manager.RegisterObject(objRoot, rootInfo._i, serializationInfo);
 			
 			if(objRoot.GetType().IsArray){
-				FixupArrayItems(rootInfo._i, rootInfo._arrayDims, e.FieldsInfo);
+				FixupArrayItems(rootInfo._i, e.FieldsInfo);
 			}else {
 				FixupFields(rootInfo._i, objRoot, rootInfo._type, e.FieldsInfo, serializationInfo);
 			}
@@ -128,7 +156,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 							memberInfo.SetValue(objectToBeFixed, objValue, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, null);
 						}
 						_manager.RegisterObject(objValue, fieldInfo._i, null, objectToBeFixedId, memberInfo);
-//						_manager.DoFixups();
 						break;
 					case ElementType.Nothing:
 						if(serializationInfo != null) {
@@ -162,9 +189,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 		}
 		
-		private void FixupArrayItems(long arrayToBeFixedId, int[] arrayDims, ICollection arrayItemsInfo) {
+		private String[] FixupArrayItems(long arrayToBeFixedId, ICollection arrayItemsInfo) {
+			ArrayList arrayNames = new ArrayList(arrayItemsInfo.Count);
 			System.Array array = (System.Array) _manager.GetObject(arrayToBeFixedId);
-			if(array.Length == 0) return;
+//			if(array.Length == 0) return null;
 			int[] indices = new int[array.Rank];
 			for(int dim=array.Rank-1; dim>=0; dim--){
 				indices[dim] = array.GetLowerBound(dim);
@@ -175,6 +203,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			IEnumerator iEnum = arrayItemsInfo.GetEnumerator();
 			while(iEnum.MoveNext()) {
 				ElementInfo arrayItemInfo = (ElementInfo) iEnum.Current;
+				arrayNames.Add(arrayItemInfo._name);
 				specificElementType = (arrayItemInfo._type != null) ? arrayItemInfo._type : arrayElementType;
 				switch(arrayItemInfo._elementType) {
 					case ElementType.Href:
@@ -207,7 +236,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				}
 				bool end = FillIndices(array, ref indices);
 			}
-			
+			string[] aNames = (string[]) arrayNames.ToArray(typeof(string));
+			return aNames;
 		}
 		
 		private bool FillIndices(System.Array array, ref int[] indices) {

@@ -13,20 +13,20 @@
     <File name=".\SoapReader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\SoapTypeMapper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\SoapTypeMapping.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\ObjectManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ObjectManager.cs" subtype="Code" buildaction="Nothing" dependson="" data="" />
   </Contents>
   <References />
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="True" name="Debug">
     <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
     <Execution commandlineparameters="" consolepause="False" />
-    <Output directory="..\" assembly="Soap" />
+    <Output directory="..\..\..\..\..\..\..\..\Jim\SharpDevelop Projects\MySinks" assembly="Soap" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="True" name="Debug">
       <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="False" />
-      <Output directory="..\" assembly="Soap" />
+      <Output directory="..\..\..\..\..\..\..\..\Jim\SharpDevelop Projects\MySinks" assembly="Soap" />
     </Configuration>
     <Configuration runwithwarnings="True" name="Release">
       <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" includedebuginformation="False" optimize="True" unsafecodeallowed="True" generateoverflowchecks="False" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />

@@ -14,5 +14,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 	
 	internal interface ISoapReader {
 		event ElementReadEventHandler ElementReadEvent;
+		ISoapMessage TopObject {
+			get; set;
+		}
 	}
 }

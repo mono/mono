@@ -52,7 +52,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				}
 			}
 			ISerializable ser = objCurrent as ISerializable;
-			if(ser != null){
+			if(ser != null && _serializationInfo.MemberCount == 0){
 				ser.GetObjectData(_serializationInfo, _context);
 			}
 			if(_serializationInfo.MemberCount == 0) {
