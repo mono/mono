@@ -246,7 +246,7 @@ namespace Mono.MonoBASIC {
 
 		public static void Error_InvalidModifier (Location l, string name)
 		{
-			Report.Error (30233, l, "the modifier " + name + " is not valid for this item");
+			Report.Error (31089, l, "the modifier " + name + " is not valid for this item");
 		}
 	}
 }

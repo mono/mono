@@ -11,7 +11,6 @@ Module ExternalSourceDirective
 			Console.WriteLine("In a.aspx")
 			#End ExternalSource
 
-			Console.WriteLine(“In test.aspx”)
 			#End ExternalSource
 	End Sub
 End Module

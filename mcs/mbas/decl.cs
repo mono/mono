@@ -61,7 +61,7 @@ namespace Mono.MonoBASIC {
 			// FIXME: report the old/new permissions?
 			//
 			Report.Error (
-				507, Location, parent.MakeName (Name) +
+				30266, Location, parent.MakeName (Name) +
 				": can't change the access modifiers when overriding inherited " +
 				"member `" + name + "'");
 		}
@@ -89,7 +89,7 @@ namespace Mono.MonoBASIC {
 				}
 				else if (!(mb.IsAbstract || mb.IsVirtual)){
 					Report.Error (
-						31086, Location, parent.MakeName (Name) +
+						30268, Location, parent.MakeName (Name) +
 						": Cannot override inherited member `" +
 						name + "' because it is not " +
 						"declared as Overridable");

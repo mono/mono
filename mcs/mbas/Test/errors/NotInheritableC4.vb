@@ -4,7 +4,7 @@
 ' (C) 2003 Ximian, Inc.
 
 REM LineNo: 10
-REM ExpectedError: BC30397
+REM ExpectedError: BC31089
 REM ErrorMessage: 'NotInheritable' is not valid on an Interface declaration.
 
 NotInheritable Interface A

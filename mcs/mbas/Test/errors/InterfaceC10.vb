@@ -3,11 +3,8 @@
 '
 ' (C) 2003 Ximian, Inc.
 
-REM LineNo: 19
-REM ExpectedError: BC30149
-REM ErrorMessage: 'B' must implement 'Sub fun(a As Integer)' for interface 'A'.
 
-REM LineNo: 20
+REM LineNo: 17
 REM ExpectedError: BC30401
 REM ErrorMessage: 'Cfun' cannot implement 'fun' because there is no matching sub on interface 'A'.
 

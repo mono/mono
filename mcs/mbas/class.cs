@@ -823,7 +823,7 @@ namespace Mono.MonoBASIC {
 					"declared as 'Protected'");
 
 			if ((Parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
-				Report.Error (30435, Location,
+				Report.Error (31047, Location,
 					"'Type' inside a 'Structure' can not be " +
 					"declared as 'Protected'");
 			
@@ -1641,7 +1641,7 @@ namespace Mono.MonoBASIC {
 			if ((flags & Modifiers.PRIVATE) != 0){
 				if ((flags & vao) != 0){
 					Report.Error (
-						31408, loc, name +
+						30266, loc, name +
 						": Members marked as Overridable or Overrides can not be Private");
 					ok = false;
 				}
@@ -3331,7 +3331,7 @@ namespace Mono.MonoBASIC {
 						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than property `" + Name + "'");
 				else if (this is Method)
-					Report.Error (50, Location,
+					Report.Error (30508, Location,
 						      "Inconsistent accessibility: return type `" +
 						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than method `" + Name + "'");

@@ -1,4 +1,18 @@
 
+2005-02-07 Ritvik Mayank <mritvik@novell.com>
+	* InterfaceC11.vb
+	* ShadowsC3.vb
+	* MustInheritC6.vb
+	* InterfaceC6.vb
+	* NotInheritableC4.vb
+	* MustInheritC7.vb
+	* ExternalSourceDirectivesC3.vb
+	* AccessibilityC14.vb
+	* ShadowsC5.vb
+	* InterfaceC10.vb
+	* MustInheritC9.vb
+			removed the spurious errors.
+		
 2005-01-11 Manjula GHM <mmanjula@novell.com>
 	Added following files	
 	

@@ -2843,13 +2843,13 @@ namespace Mono.MonoBASIC {
 			VariableInfo vi = GetVariableInfo (name);
 			if (vi != null) {
 				if (vi.Block != ID)
-					Report.Error (136, l, "A local variable named `" + name + "' " +
+					Report.Error (30616, l, "A local variable named `" + name + "' " +
 						      "cannot be declared in this scope since it would " +
 						      "give a different meaning to `" + name + "', which " +
 						      "is already used in a `parent or current' scope to " +
 						      "denote something else");
 				else
-					Report.Error (128, l, "A local variable `" + name + "' is already " +
+					Report.Error (30290, l, "A local variable `" + name + "' is already " +
 						      "defined in this scope");
 				return null;
 			}
@@ -2867,7 +2867,7 @@ namespace Mono.MonoBASIC {
 				int idx = 0;
 				Parameter p = pars.GetParameterByName (name, out idx);
 				if (p != null) {
-					Report.Error (136, l, "A local variable named `" + name + "' " +
+					Report.Error (30616, l, "A local variable named `" + name + "' " +
 						      "cannot be declared in this scope since it would " +
 						      "give a different meaning to `" + name + "', which " +
 						      "is already used in a `parent or current' scope to " +

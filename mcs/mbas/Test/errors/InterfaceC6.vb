@@ -1,30 +1,14 @@
-REM LineNo: 34
-REM ExpectedError: BC30149
-REM ErrorMessage: 'C1' must implement 'Sub S(a As Integer, [b As Integer = 20])' for interface 'I'.
-
-REM LineNo: 35
+REM LineNo: 19 
 REM ExpectedError: BC30401
 REM ErrorMessage: 'S' cannot implement 'S' because there is no matching sub on interface 'I'.
 
-REM LineNo: 37
-REM ExpectedError: BC30300
-REM ErrorMessage: 'Public Sub S(ByRef a As Integer)' and 'Public Sub S(a As Integer, [b As Integer = 30])' cannot overload each other because they differ only by optional parameters.
-
-REM LineNo: 37
-REM ExpectedError: BC30345
-REM ErrorMessage: 'Public Sub S(ByRef a As Integer)' and 'Public Sub S(a As Integer, [b As Integer = 30])' cannot overload each other because they differ only by parameters declared 'ByRef' or 'ByVal'.
-
-REM LineNo: 37
+REM LineNo: 21 
 REM ExpectedError: BC30401
 REM ErrorMessage: 'S' cannot implement 'S' because there is no matching sub on interface 'I'.
 
-REM LineNo: 39
+REM LineNo: 303030 
 REM ExpectedError: BC30401
 REM ErrorMessage: 'S' cannot implement 'S' because there is no matching sub on interface 'I'.
-
-REM LineNo: 44
-REM ExpectedError: BC30583
-REM ErrorMessage: 'I.S' cannot be implemented more than once.
 
 Imports System
 Interface I

@@ -55,7 +55,7 @@ namespace Mono.MonoBASIC
 		{
 			if (decls.Contains (name)){
 				Report.Error (
-					101, ds.Location,
+					30179, ds.Location,
 					"There is already a definition for `" + name + "'");
 				DeclSpace other = (DeclSpace) decls [name];
 				Report.Error (0,

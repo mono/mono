@@ -141,7 +141,7 @@ namespace Mono.MonoBASIC {
 		void Error23 (Type t)
 		{
 			Error (
-				23, "Operator " + OperName (Oper) +
+				30311, "Operator " + OperName (Oper) +
 				" cannot be applied to operand of type '" +
 				TypeManager.MonoBASIC_Name (t) + "'");
 		}
@@ -689,7 +689,7 @@ namespace Mono.MonoBASIC {
 		void Error23 (Type t)
 		{
 			Error (
-				23, "Operator " + OperName (mode) + 
+				30311, "Operator " + OperName (mode) + 
 				" cannot be applied to operand of type '" +
 				TypeManager.MonoBASIC_Name (t) + "'");
 		}
@@ -5949,7 +5949,7 @@ namespace Mono.MonoBASIC {
 			}
 			
 			if (expr_type.IsPointer){
-				Error (23, "The '.' operator can not be applied to pointer operands (" +
+				Error (30311, "The '.' operator can not be applied to pointer operands (" +
 				       TypeManager.MonoBASIC_Name (expr_type) + ")");
 				return null;
 			}

@@ -1,3 +1,13 @@
+
+2005-02-07  Ritvik Mayank <mritvik@novell.com>
+	* modifiers.cs
+	* class.cs
+	* decl.cs
+	* expression.cs
+	* tree.cs
+	* statement.cs
+	            Changed for reflecting correct Error Number.
+
 2005-02-07  Manjula GHM  <mmanjula@novell.com>
 	* mb-parser.jay: Some more fixes related to displaying correct line number
 
