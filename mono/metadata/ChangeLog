@@ -1,6 +1,6 @@
 2003-05-13  Dietmar Maurer  <dietmar@ximian.com>
 
-	* class.c (mono_array_class_get): consider the serializable flags
+	* class.c (mono_array_class_get): always set the serializable flags
 
 2003-05-12  Dietmar Maurer  <dietmar@ximian.com>
 
