@@ -1,3 +1,7 @@
+
+2004-03-28  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+	* Npgsql/NpgsqlTransaction.cs: Fixed a bug where rollback was being called when disposing NpgsqlTransaction objects even when transaction was sucessfully commited. Fixes bug 725 in gborg. Thanks melkor (melkor@adinet.com.uy) for spotting that.
+
 2004-03-28  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 	* Npgsql/NpgsqlConnection.cs: Implemented IClonable interface in NpgsqlConnection class. Thanks Juliano Barbosa for pointing it out.
 

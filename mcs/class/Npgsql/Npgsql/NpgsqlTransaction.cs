@@ -131,10 +131,11 @@ namespace Npgsql
 
         private void Dispose(bool disposing)
         {
-            if(disposing == true && this._conn != null)
+            if(disposing && this._conn != null)
             {
                 this._disposing = true;
-                this.Rollback();
+                if (_conn.InTransaction)
+                    this.Rollback();
             }
         }
 
