@@ -530,6 +530,7 @@ namespace System.Reflection
 		private string name;
 		private int flags;
 		private Type[] constraints;
+		private bool has_ctor_constraint;
 		bool initialized;
 
 		[MonoTODO]
@@ -543,9 +544,10 @@ namespace System.Reflection
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void initialize ();
 
-		public void SetConstraints (Type[] constraints)
+		public void SetConstraints (Type[] constraints, bool has_ctor_constraint)
 		{
 			this.constraints = constraints;
+			this.has_ctor_constraint = has_ctor_constraint;
 			initialize ();
 		}
 
