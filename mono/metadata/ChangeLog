@@ -4,6 +4,11 @@
 	
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (ves_icall_Type_GetGenericArguments): Moved this icall
+	from System.Type to System.MonoType.
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* reflection.h
 	(MonoReflectionGenericParam): Added `has_reference_type' and
 	`has_value_type' fields.
