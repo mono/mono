@@ -1,3 +1,7 @@
+2003-03-13 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Set current method when a new method is added.
+
 2003-03-12 Jackson Harper <jackson@latitudegeo.com>
 
 	* ClassTable.cs: Add Method tables to Class tables, add method to get a 

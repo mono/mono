@@ -77,8 +77,8 @@ namespace Mono.ILASM {
 			TypeRef return_type, Param[] param_list, TypeRef[] param_type_list, Location location) 
 		{
 			MethodTable method_table = class_table.GetMethodTable (current_class.Name, location);
-			method_table.AddDefinition (method_attr, impl_attr, call_conv, name, return_type, 
-				param_list, param_type_list, location);
+			current_method = method_table.AddDefinition (method_attr, impl_attr, call_conv, name, 
+				return_type, param_list, param_type_list, location);
 		}
 	}
 
