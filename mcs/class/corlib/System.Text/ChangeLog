@@ -1,3 +1,7 @@
+2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Latin1Encoding.cs: added Serializable attribute.
+
 2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Encoding.cs: removed UnixConsoleEncoding.

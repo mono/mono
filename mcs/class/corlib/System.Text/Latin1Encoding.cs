@@ -28,6 +28,7 @@ namespace System.Text
 
 using System;
 
+[Serializable]
 internal class Latin1Encoding : Encoding
 {
 	// Magic number used by Windows for the ISO Latin1 code page.
