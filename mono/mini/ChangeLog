@@ -1,3 +1,8 @@
+
+Tue Mar 1 18:35:27 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: thread safety fixes.
+
 2005-02-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-amd64.c (amd64_magic_trampoline): Disable the method_ptr
