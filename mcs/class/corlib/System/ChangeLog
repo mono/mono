@@ -1,3 +1,8 @@
+2003-05-28  Ben Maurer <bmaurer@users.sourceforge.net>
+	
+	* Array.cs: Added better argument checking to Array.Sort ()
+	* DBNull.cs: Made the conversions throw like they do in MS.
+
 2003-05-24  Philip Van Hoof  <me@freax.org>
 
 	* Math.cs: Add the MS.NET 1.1 methods (BigMul, DivRem, DivRem).

@@ -703,20 +703,33 @@ namespace System
 
 		public static void Sort (Array keys, Array items, int index, int length, IComparer comparer)
 		{
+			if (keys == null)
+				throw new ArgumentNullException ();
+			
+			if (keys.Rank > 1 || (items != null && items.Rank > 1))
+				throw new RankException ();
+			
+			if (items != null && keys.GetLowerBound (0) != items.GetLowerBound (0))
+				throw new ArgumentException();
+			
+			if (index < keys.GetLowerBound (0))
+				throw new ArgumentOutOfRangeException("index");
+			
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length");
+			
+			if (keys.Length - (index + keys.GetLowerBound (0)) < length 
+				|| (items != null && index > items.Length - length))
+				throw new ArgumentException ();
+			
 			int low0 = index;
 			int high0 = index + length - 1;
 
-			qsort (keys, items, index, index + length - 1, comparer);
+			qsort (keys, items, low0, high0, comparer);
 		}
 
 		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
 		{
-			if (keys == null)
-				throw new ArgumentNullException ();
-
-			if (keys.Rank > 1 || (items != null && items.Rank > 1))
-				throw new RankException ();
-
 			if (low0 >= high0)
 				return;
 

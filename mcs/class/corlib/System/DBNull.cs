@@ -1,9 +1,12 @@
 //
-// System.DBNull.cs
+// DBNull.cs
 //
-// Author: Duncan Mak (duncan@ximian.com)
+// Authors:
+//	Duncan Mak (duncan@ximian.com)
+//	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
+// (C) 2003 Ben Maurer
 //
 
 using System.Runtime.Serialization;
@@ -30,94 +33,84 @@ namespace System
 			return TypeCode.DBNull;
 		}
 
-		[MonoTODO]
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			return false;
+			throw new InvalidCastException ();
 		}			
 
-		[MonoTODO]
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return Byte.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			return Char.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			return DateTime.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			return Decimal.MinValue;
+			throw new InvalidCastException ();
 		}
 		
-		[MonoTODO]
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			return Double.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return Int16.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return Int32.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return Int64.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
+		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return SByte.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			return Single.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
 		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return null;
+			if (type == typeof (string)) return String.Empty;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
+		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return UInt16.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
+		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return UInt32.MinValue;
+			throw new InvalidCastException ();
 		}
 
-		[MonoTODO]
+		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return UInt64.MinValue;
+			throw new InvalidCastException ();
 		}
 
 		public override string ToString ()
