@@ -1,3 +1,8 @@
+2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Exception.cs: Added Data property for NET_2_0 (required for new
+	unit tests).
+
 2005-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConsoleDriver.cs:

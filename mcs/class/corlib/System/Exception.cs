@@ -6,10 +6,7 @@
 //   Patrik Torstensson
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,11 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
+using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace System
 {
@@ -162,6 +160,20 @@ namespace System
 				return null;
 			}
 		}
+
+#if NET_2_0
+		private IDictionary _data;
+
+		public virtual IDictionary Data {
+			get {
+				if (_data == null) {
+					// default to empty dictionary
+					_data = (IDictionary) new Hashtable ();
+				}
+				return _data;
+			}
+		}
+#endif
 
 		public virtual Exception GetBaseException ()
 		{
