@@ -1,3 +1,9 @@
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.h (MONO_DEBUG_SYMBOL_FILE_VERSION): Increased to 5.
+
+	* debug-symfile.c: Added support for arguments and local variables.
+
 2002-03-23  Dick Porter  <dick@ximian.com>
 
 	* debug-symfile.c: Remove extraneous 'include <elf.h>' that wasn't
