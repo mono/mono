@@ -353,6 +353,7 @@ namespace Mono.CSharp {
 				"System.ParamArrayAttribute",
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
+				"System.Runtime.InteropServices.InAttribute"
 			};
 
 			// We must store them here before calling BootstrapCorlib_ResolveDelegate.
