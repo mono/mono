@@ -3325,6 +3325,13 @@ namespace Mono.CSharp {
 			if (MemberType == null)
 				return false;
 
+			if ((parent.ModFlags & Modifiers.SEALED) != 0){
+				if ((ModFlags & (Modifiers.VIRTUAL|Modifiers.ABSTRACT)) != 0){
+					Report.Error (549, Location, "Virtual method can not be contained in sealed class");
+					return false;
+				}
+			}
+			
 			// verify accessibility
 			if (!parent.AsAccessible (MemberType, ModFlags)) {
 				if (this is Property)

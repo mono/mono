@@ -1,3 +1,8 @@
+2003-01-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Handle error 549: do not allow virtual methods in
+	sealed classes. 
+
 2003-02-01 Jackson Harper <jackson@latitudegeo.com>
 
 	* decl.cs: Check access levels when resolving types
