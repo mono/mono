@@ -214,33 +214,22 @@ namespace System.Drawing.Imaging
 				throw new Exception ("Error calling GDIPlus.SetColorMatrix:" +status);                                                                                       
 		}
 		
-		void Dispose (bool disposing)
-		{
-			if (!disposing) return;
-			
-			Status status = GDIPlus.GdipDisposeImageAttributes(nativeImageAttr);
-			
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GDIPlus.GdipDisposeImageAttributes:" +status);
-			else
-				nativeImageAttr = IntPtr.Zero;
-		}
-
-
 		public void Dispose() 
 		{
+			if (nativeImageAttr != IntPtr.Zero) {
+				
+				Status status = GDIPlus.GdipDisposeImageAttributes(nativeImageAttr);
+				GDIPlus.CheckStatus (status);				
+				nativeImageAttr = IntPtr.Zero;
+			}			
 			
-			Dispose (true);
 			System.GC.SuppressFinalize (this);
 		}
 
 		~ImageAttributes() 
-		{
-			
-			Dispose (false);
-		}
-
-		
+		{			
+			Dispose ();
+		}		
 		
 		public object Clone()
 		{	

@@ -79,7 +79,7 @@ namespace System.Drawing.Imaging
 		[CLSCompliant(false)]
 		public ColorMatrix (float[][] matrix)
 		{			
-			color00 = matrix [0][1];
+			color00 = matrix [0][0];
 			color01 = matrix [0][1];
 			color02 = matrix [0][2];
 			color03 = matrix [0][3];

@@ -1,3 +1,8 @@
+2004-03-21 Jordi Mas i Hernadez <jordi@ximian.com>
+
+	* ColorMatrix.cs: fixes Matrix00 init 
+	* ImageAttributes.cs: fixes dispose method and signature
+
 2004-02-25 Jordi Mas i Hernadez <jordi@ximian.com>
 
 	* ColorMatrix.cs: rewritten to be able to marshall it properly
