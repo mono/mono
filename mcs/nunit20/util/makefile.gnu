@@ -7,14 +7,14 @@
 #
 
 topdir = ../..
-PROGRAM = $(topdir)/class/lib/NUnit.Util.dll
+LIBRARY = $(topdir)/class/lib/NUnit.Util.dll
 
-PROGRAM_LIST = list.unix
-PROGRAM_FLAGS =
+LIB_LIST = list.unix
+LIB_FLAGS =
 
-include $(topdir)/class/executable.make
+SOURCES_INCLUDE=*.cs
 
-RUNTIME=mono
-MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
-MCS_FLAGS = --target library -L $(topdir)/class/lib /r:NUnit.Framework.dll
+export MONO_PATH = $(topdir)/class/lib:
+
+include $(topdir)/class/library.make
 

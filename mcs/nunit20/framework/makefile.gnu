@@ -7,14 +7,16 @@
 #
 
 topdir = ../..
-PROGRAM = $(topdir)/class/lib/NUnit.Framework.dll
+LIBRARY= $(topdir)/class/lib/NUnit.Framework.dll
 
-PROGRAM_LIST = list.unix
-PROGRAM_FLAGS = /resource:Transform.resources,NUnit.Framework.Transform.resources
+LIB_LIST = list.unix
+LIB_FLAGS = /resource:Transform.resources,NUnit.Framework.Transform.resources \
+	    /r:System.Xml.dll \
+	    /r:System.dll
 
-include $(topdir)/class/executable.make
+SOURCES_INCLUDE=*.cs
 
-RUNTIME=mono
-MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
-MCS_FLAGS = --target library
+export MONO_PATH = $(topdir)/class/lib:
+
+include $(topdir)/class/library.make
 
