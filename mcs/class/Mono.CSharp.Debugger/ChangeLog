@@ -1,3 +1,7 @@
+2004-06-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LIBRARY_COMPILE): Only define for W32.
+
 2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile: build using mcs on windows.
