@@ -361,7 +361,7 @@ namespace System.Windows.Forms
 			base.Select (directed, forward);
 		}
 
-		public new void Select ()
+		public void Select ()
 		{
 			base.Select ();
 		}

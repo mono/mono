@@ -1,5 +1,10 @@
 2005-01-17  Jackson Harper  <jackson@ximian.com>
 
+	* NavigateEventArgs.cs: Fix base type.
+	* LinkLabel.cs: Sig fix
+	
+2005-01-17  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Only invalidate the effected nodes bounds when
 	selecting nodes.
 
