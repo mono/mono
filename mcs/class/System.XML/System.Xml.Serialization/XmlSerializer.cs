@@ -219,13 +219,33 @@ namespace System.Xml.Serialization {
 									 ref Object theObject,
 									 String		fieldName)
 		{
-			// Get the type
+			//Console.WriteLine("DeserializeField({0})", fieldName);
+
+			Type		 fieldType = null;
+			BindingFlags bindingFlags = 0;
+
+			// Get the type, first try a field.
 			FieldInfo fieldInfo	   = theObject.GetType().GetField(fieldName);
-			Type	  fieldType	   = fieldInfo.FieldType;
+			if (fieldInfo != null)
+			{
+				fieldType = fieldInfo.FieldType;
+				bindingFlags = BindingFlags.SetField;
+			}
+			else
+			{
+				// Is it a property?
+				PropertyInfo propInfo = theObject.GetType().GetProperty(fieldName);
+				if (propInfo != null)
+				{
+					fieldType = propInfo.PropertyType;
+					bindingFlags = BindingFlags.SetProperty;
+				}
+			}
+
 			Object	  value		   = null;
 			bool	  isEmptyField = xmlReader.IsEmptyElement;
 
-			//Console.WriteLine("DeserializeField({0} of type {1}", fieldName, fieldType);
+			//Console.WriteLine("DeserializeField({0} of type {1})", fieldName, fieldType);
 
 			if (fieldType.IsArray && fieldType != typeof(System.Byte[]))
 			{
@@ -236,13 +256,10 @@ namespace System.Xml.Serialization {
 				DeserializeArray(xmlReader, list, fieldType.GetElementType());
 				value = list.ToArray(fieldType.GetElementType());
 			}
-			else if (isEmptyField == true && fieldType.IsArray)
-			{
-				// Must be a byte array, just create an empty one.
-				value = new byte[0];
-			}
 			else if (isEmptyField == false && 
-					 (IsInbuiltType(fieldType) || fieldType.IsEnum || fieldType.IsArray))
+					 (IsInbuiltType(fieldType) || 
+                      fieldType.IsEnum || 
+                      fieldType.IsArray))
 			{
 				// Built in, set it.
 				while (xmlReader.Read())
@@ -272,6 +289,19 @@ namespace System.Xml.Serialization {
 					}
 				}
 			}
+			else if (isEmptyField == true)
+			{
+                if  (fieldType.IsArray)
+                {
+                    // Must be a byte array, just create an empty one.
+                    value = new byte[0];
+                }
+                else if (fieldType == typeof(string))
+                {
+                    // Create a new empty string.
+                    value = "";
+                }
+			}
 			else
 			{
 				//Console.WriteLine("Creating new {0}", fieldType);
@@ -287,7 +317,7 @@ namespace System.Xml.Serialization {
 
 			// Set the field value.
 			theObject.GetType().InvokeMember(fieldName,
-											 BindingFlags.SetField, 
+											 bindingFlags, 
 											 null,
 											 theObject, 
 											 new Object[] { value },

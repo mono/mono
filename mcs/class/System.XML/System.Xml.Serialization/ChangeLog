@@ -1,3 +1,8 @@
+2003-03-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* XmlSerializer.cs: Do not use Bubblesort, use ArrayList.Sort.
+	Kill Bublesort.
+
 2003-03-22  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSerializer.cs : patch by Sean Cier. Serialize() other than 
@@ -8,6 +13,7 @@
 	* XmlSerializer.cs : Serialize() don't write xmldecl when WriteState is
 	  not WriteState.Start, and never call WriteEndDocument().
 
+>>>>>>> 1.26
 2003-03-12  Elan Feingold <efeingold@mn.rr.com>
 
 	* XmlCustomFormatter.cs: Correct signature, Implement
