@@ -48,9 +48,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		bool has_ctor_constraint;
-		bool has_reference_type;
-		bool has_value_type;
+		GenericParameterAttributes attrs;
 		TypeExpr class_constraint;
 		ArrayList iface_constraints;
 		ArrayList type_param_constraints;
@@ -58,17 +56,13 @@ namespace Mono.CSharp {
 		Type class_constraint_type;
 		Type[] iface_constraint_types;
 
-		public bool HasConstructorConstraint {
-			get { return has_ctor_constraint; }
-		}
-
 		public bool Resolve (DeclSpace ds)
 		{
 			iface_constraints = new ArrayList ();
 			type_param_constraints = new ArrayList ();
 
 			foreach (object obj in constraints) {
-				if (has_ctor_constraint) {
+				if (HasConstructor) {
 					Report.Error (401, loc,
 						      "The new() constraint must be last.");
 					return false;
@@ -78,8 +72,8 @@ namespace Mono.CSharp {
 					SpecialConstraint sc = (SpecialConstraint) obj;
 
 					if (sc == SpecialConstraint.Constructor) {
-						if (!has_value_type) {
-							has_ctor_constraint = true;
+						if (!IsValueType) {
+							attrs |= GenericParameterAttributes.DefaultConstructorConstraint;
 							continue;
 						}
 
@@ -90,8 +84,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					if ((num_constraints > 0) || has_reference_type ||
-					    has_value_type) {
+					if ((num_constraints > 0) || IsReferenceType || IsValueType) {
 						Report.Error (449, loc,
 							      "The `class' or `struct' " +
 							      "constraint must be first");
@@ -99,9 +92,9 @@ namespace Mono.CSharp {
 					}
 
 					if (sc == SpecialConstraint.ReferenceType)
-						has_reference_type = true;
+						attrs |= GenericParameterAttributes.ReferenceTypeConstraint;
 					else
-						has_value_type = true;
+						attrs |= GenericParameterAttributes.ValueTypeConstraint;
 					continue;
 				}
 
@@ -120,7 +113,7 @@ namespace Mono.CSharp {
 						      "must come before any other constraints.",
 						      expr.Name, name);
 					return false;
-				} else if (has_reference_type || has_value_type) {
+				} else if (IsReferenceType || IsValueType) {
 					Report.Error (450, loc, "`{0}': cannot specify both " +
 						      "a constraint class and the `class' " +
 						      "or `struct' constraint.", expr.Name);
@@ -242,9 +235,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (has_reference_type)
+			if (IsReferenceType)
 				class_constraint_type = TypeManager.object_type;
-			else if (has_value_type)
+			else if (IsValueType)
 				class_constraint_type = TypeManager.value_type;
 
 			return true;
@@ -303,24 +296,19 @@ namespace Mono.CSharp {
 
 		public void Define (GenericTypeParameterBuilder type)
 		{
-			if (has_ctor_constraint)
-				type.Mono_SetConstructorConstraint ();
-			if (has_reference_type)
-				type.Mono_SetReferenceTypeConstraint ();
-			else if (has_value_type)
-				type.Mono_SetValueTypeConstraint ();
+			type.SetGenericParameterAttributes (attrs);
 		}
 
 		public bool HasConstructor {
-			get { return has_ctor_constraint; }
+			get { return (attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0; }
 		}
 
 		public bool IsReferenceType {
-			get { return has_reference_type; }
+			get { return (attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0; }
 		}
 
 		public bool IsValueType {
-			get { return has_value_type; }
+			get { return (attrs & GenericParameterAttributes.ValueTypeConstraint) != 0; }
 		}
 
 		public bool HasClassConstraint {
@@ -421,7 +409,7 @@ namespace Mono.CSharp {
 		public bool HasConstructorConstraint {
 			get {
 				if (constraints != null)
-					return constraints.HasConstructorConstraint;
+					return constraints.HasConstructor;
 
 				return false;
 			}
