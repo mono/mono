@@ -145,7 +145,8 @@ namespace Mono.CSharp {
 
 			FileName = output;
 			an = new AssemblyName ();
-			an.Name = TrimExt (Basename (name));
+			an.Name = Path.GetFileNameWithoutExtension (name);
+			
 			current_domain = AppDomain.CurrentDomain;
 			AssemblyBuilder = current_domain.DefineDynamicAssembly (
 				an, AssemblyBuilderAccess.RunAndSave, Dirname (name));
