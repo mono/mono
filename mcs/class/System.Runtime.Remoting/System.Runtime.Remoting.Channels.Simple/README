@@ -5,6 +5,12 @@ This Channel is just used as example to show people how to implement remoting
 Channels for mono. I tried to keep it as simple as possible, so it is not
 feature complete.
 
+Data Types:
+===========
+
+The channel wire format supports all basic data type. The formatter does not
+handle exceptions itself, instead it passes them to the transport sink.
+
 Overview
 ========
 

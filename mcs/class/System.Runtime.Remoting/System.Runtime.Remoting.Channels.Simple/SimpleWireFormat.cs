@@ -31,14 +31,12 @@ namespace System.Runtime.Remoting.Channels.Simple {
 			UInt16,
 			UInt32,
 			UInt64,
-			Exception,
 			NULL
 		}
 
 		public SimpleWireFormat ()
 		{
-		}
-		
+		}		
 
 		void SerializeObject (BinaryWriter writer, object obj)
 		{
@@ -61,18 +59,77 @@ namespace System.Runtime.Remoting.Channels.Simple {
 				return;
 			}		
 
+			if (type == typeof (long)) {
+				writer.Write ((byte)TypeId.Int64);
+				writer.Write ((long)obj);
+				return;
+			}		
+
+			if (type == typeof (uint)) {
+				writer.Write ((byte)TypeId.UInt32);
+				writer.Write ((uint)obj);
+				return;
+			}		
+
+			if (type == typeof (ulong)) {
+				writer.Write ((byte)TypeId.UInt64);
+				writer.Write ((ulong)obj);
+				return;
+			}		
+
 			if (type == typeof (bool)) {
 				writer.Write ((byte)TypeId.Boolean);
 				writer.Write ((bool)obj);
 				return;
 			}		
 
-			Exception e = obj as Exception;
-			if (e != null) {
-				writer.Write ((byte)TypeId.Exception);
-				writer.Write (e.Message);
+			if (type == typeof (byte)) {
+				writer.Write ((byte)TypeId.Byte);
+				writer.Write ((byte)obj);
 				return;
 			}		
+
+			if (type == typeof (sbyte)) {
+				writer.Write ((byte)TypeId.SByte);
+				writer.Write ((sbyte)obj);
+				return;
+			}		
+
+			if (type == typeof (char)) {
+				writer.Write ((byte)TypeId.Char);
+				writer.Write ((char)obj);
+				return;
+			}		
+
+			if (type == typeof (double)) {
+				writer.Write ((byte)TypeId.Double);
+				writer.Write ((double)obj);
+				return;
+			}		
+
+			if (type == typeof (Single)) {
+				writer.Write ((byte)TypeId.Single);
+				writer.Write ((Single)obj);
+				return;
+			}
+			
+			if (type == typeof (Int16)) {
+				writer.Write ((byte)TypeId.Int16);
+				writer.Write ((Int16)obj);
+				return;
+			}		
+
+			if (type == typeof (UInt16)) {
+				writer.Write ((byte)TypeId.UInt16);
+				writer.Write ((UInt16)obj);
+				return;
+			}		
+
+			if (type == typeof (Decimal)) {
+				writer.Write ((byte)TypeId.Decimal);
+				writer.Write ((Decimal)obj);
+				return;
+			}
 
 			throw new NotSupportedException (); 
 		}
@@ -92,12 +149,56 @@ namespace System.Runtime.Remoting.Channels.Simple {
 				return reader.ReadInt32 ();
 			}
 			
+			if (tid == TypeId.Int64) {
+				return reader.ReadInt64 ();
+			}
+			
+			if (tid == TypeId.UInt32) {
+				return reader.ReadUInt32 ();
+			}
+			
+			if (tid == TypeId.UInt64) {
+				return reader.ReadUInt64 ();
+			}
+			
 			if (tid == TypeId.Boolean) {
 				return reader.ReadBoolean ();
 			}
 			
-			if (tid == TypeId.Exception) {
-				return new RemotingException (reader.ReadString ());
+			if (tid == TypeId.Byte) {
+				return reader.ReadByte ();
+			}
+			
+			if (tid == TypeId.SByte) {
+				return reader.ReadSByte ();
+			}
+			
+			if (tid == TypeId.Char) {
+				return reader.ReadChar ();
+			}
+			
+			if (tid == TypeId.Double) {
+				return reader.ReadDouble ();
+			}
+			
+			if (tid == TypeId.Single) {
+				return reader.ReadSingle ();
+			}
+			
+			if (tid == TypeId.Byte) {
+				return reader.ReadByte ();
+			}
+			
+			if (tid == TypeId.Int16) {
+				return reader.ReadInt16 ();
+			}
+			
+			if (tid == TypeId.UInt16) {
+				return reader.ReadUInt16 ();
+			}
+			
+			if (tid == TypeId.Decimal) {
+				return reader.ReadDecimal ();
 			}
 			
 			throw new NotSupportedException (); 
@@ -133,12 +234,8 @@ namespace System.Runtime.Remoting.Channels.Simple {
 		{
 
 			BinaryReader reader = new BinaryReader (serializationStream);
-			
-		      
+
 			object return_value = DeserializeObject (reader);
-			Exception e = return_value as Exception;
-			if (e != null) 
-				return new ReturnMessage (e, request);
 			
 			int arg_count = reader.ReadInt32 ();
 			object [] out_args = new object [arg_count];
@@ -179,10 +276,10 @@ namespace System.Runtime.Remoting.Channels.Simple {
 			IMethodReturnMessage res = graph as IMethodReturnMessage;
 			if (res != null) {
 
-				if (res.Exception != null) {
-					SerializeObject (writer, res.Exception);
+				// this channel does not support serialization of exception,
+				// so we simply let the transport decide what to do
+				if (res.Exception != null)
 					return;
-				}
 				
 				SerializeObject (writer, res.ReturnValue);
 				writer.Write (res.OutArgCount);

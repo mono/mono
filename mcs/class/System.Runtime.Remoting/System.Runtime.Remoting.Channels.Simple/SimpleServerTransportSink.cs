@@ -78,8 +78,6 @@ namespace System.Runtime.Remoting.Channels.Simple
 				
 				TransportHeaders headers = new TransportHeaders ();
 				headers ["_requestUri"] = uri;
-				
-				Console.WriteLine ("ProcessMessageInternal " + uri);
 
 				IMessage resp_message;
 				ITransportHeaders resp_headers;
@@ -90,12 +88,18 @@ namespace System.Runtime.Remoting.Channels.Simple
 
 				switch (res) {
 				case ServerProcessing.Complete:
-					// send the response
-					SimpleMessageFormat.SendMessageStream (network_stream,
-									       (MemoryStream)resp_stream, 
-									       SimpleMessageFormat.MessageType.Response,
-									       null);
-					
+
+					Exception e = ((IMethodReturnMessage)resp_message).Exception;
+					if (e != null) {
+						// we handle exceptions in the transport channel
+						SimpleMessageFormat.SendExceptionMessage (network_stream, e.ToString ());
+					} else {
+						// send the response
+						SimpleMessageFormat.SendMessageStream (network_stream,
+										       (MemoryStream)resp_stream, 
+										       SimpleMessageFormat.MessageType.Response,
+										       null);
+					}
 					break;
 				case ServerProcessing.Async:
 				case ServerProcessing.OneWay:

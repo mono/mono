@@ -73,8 +73,6 @@ namespace System.Runtime.Remoting.Channels.Simple {
 
 			format.SerializeResponse (responseStream, responseMsg);
 			
-			responseStream.Position = 0;
-			
 			return ServerProcessing.Complete;
 		}
 	}
