@@ -25,6 +25,7 @@ namespace System.Web.Services.Configuration
 	
 	class WSConfig
 	{
+		static WSConfig instance;
 		WSProtocol protocols;
 		string wsdlHelpPage;
 		
@@ -73,9 +74,9 @@ namespace System.Web.Services.Configuration
 		}
 
 		// Methods to query/get configuration
-		public bool IsSupported (WSProtocol proto)
+		public static bool IsSupported (WSProtocol proto)
 		{
-			return (proto & WSProtocol.All) == proto;
+			return ((Instance.protocols & WSProtocol.All) == proto && (proto != 0) && (proto != WSProtocol.All));
 		}
 
 		// Properties
@@ -84,6 +85,22 @@ namespace System.Web.Services.Configuration
 			set { wsdlHelpPage = value; }
 		}
 
+		static public WSConfig Instance {
+			get {
+				//TODO: use HttpContext to get the configuration
+				if (instance != null)
+					return instance;
+
+				lock (typeof (WSConfig)) {
+					if (instance != null)
+						return instance;
+
+					instance = (WSConfig) ConfigurationSettings.GetConfig ("system.web/webServices");
+				}
+
+				return instance;
+			}
+		}
 	}
 	
 	class WebServicesConfigurationSectionHandler : IConfigurationSectionHandler
