@@ -1,3 +1,8 @@
+2003-01-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* marshal.c (emit_struct_conv): Handle MONO_TYPE_PTR as an
+	integer value
+
 2003-01-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* decimal.c: fixed bug #26056.
