@@ -252,7 +252,7 @@ namespace System.Xml
 			get { return cursorToken.Prefix; }
 		}
 
-#if NET_1_1
+#if NET_2_0
 
 		[MonoTODO ("Not documented in .NET SDK")]
 		public bool ProhibitDtd {
@@ -955,7 +955,7 @@ namespace System.Xml
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
 		private XmlResolver resolver = new XmlUrlResolver ();
 		private bool normalization = false;
-#if NET_1_1
+#if NET_2_0
 		private bool prohibitDtd = false;
 #endif
 
