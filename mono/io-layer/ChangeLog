@@ -1,3 +1,8 @@
+2003-10-09  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* threads.c: (CreateThread) use stacksize argument
+	if non-zero - change default for 64 bits to 4Mb
+
 2003-09-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* sockets.c: set last error when socket creation fails. This shed some
