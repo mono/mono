@@ -181,7 +181,6 @@ namespace Mono.CSharp {
 	// variable mapping.
 	//
 	public class VariableStorage {
-		ILGenerator ig;
 		FieldBuilder fb;
 		LocalBuilder local;
 		
@@ -194,16 +193,15 @@ namespace Mono.CSharp {
 				fb = ec.CurrentIterator.MapVariable ("s_", count.ToString (), t);
 			else
 				local = ec.ig.DeclareLocal (t);
-			ig = ec.ig;
 		}
 
-		public void EmitThis ()
+		public void EmitThis (ILGenerator ig)
 		{
 			if (fb != null)
 				ig.Emit (OpCodes.Ldarg_0);
 		}
 
-		public void EmitStore ()
+		public void EmitStore (ILGenerator ig)
 		{
 			if (fb == null)
 				ig.Emit (OpCodes.Stloc, local);
@@ -211,7 +209,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stfld, fb);
 		}
 
-		public void EmitLoad ()
+		public void EmitLoad (ILGenerator ig)
 		{
 			if (fb == null)
 				ig.Emit (OpCodes.Ldloc, local);
@@ -219,7 +217,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldfld, fb);
 		}
 
-		public void EmitLoadAddress ()
+		public void EmitLoadAddress (ILGenerator ig)
 		{
 			if (fb == null)
 				ig.Emit (OpCodes.Ldloca, local);
@@ -227,14 +225,14 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldflda, fb);
 		}
 		
-		public void EmitCall (MethodInfo mi)
+		public void EmitCall (ILGenerator ig, MethodInfo mi)
 		{
 			// FIXME : we should handle a call like tostring
 			// here, where boxing is needed. However, we will
 			// never encounter that with the current usage.
 			
 			bool value_type_call;
-			EmitThis ();
+			EmitThis (ig);
 			if (fb == null) {
 				value_type_call = local.LocalType.IsValueType;
 				

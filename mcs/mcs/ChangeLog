@@ -1,3 +1,12 @@
+2004-09-21  Martin Baulig  <martin@ximian.com>
+
+	* codegen.cs (VariableStorage): Don't store the ILGenerator here;
+	if we're used in an iterator, we may be called from different
+	methods.
+
+	* statement.cs (Foreach.EmitFinally): Only emit an `Endfinally' if
+	we actually have an exception block.
+
 2004-09-20  John Luke <jluke@cfl.rr.com>
 
 	* class.cs, cs-parser.jay: Improve the error report for 1520:

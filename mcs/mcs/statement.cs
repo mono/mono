@@ -4121,7 +4121,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			enumerator = new VariableStorage (ec, hm.enumerator_type);
-			enumerator.EmitThis ();
+			enumerator.EmitThis (ig);
 			//
 			// Instantiate the enumerator
 			//
@@ -4153,7 +4153,7 @@ namespace Mono.CSharp {
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
 			}
-			enumerator.EmitStore ();
+			enumerator.EmitStore (ig);
 
 			//
 			// Protect the code in a try/finalize block, so that
@@ -4166,13 +4166,13 @@ namespace Mono.CSharp {
 			
 			ig.MarkLabel (ec.LoopBegin);
 			
-			enumerator.EmitCall (hm.move_next);
+			enumerator.EmitCall (ig, hm.move_next);
 			
 			ig.Emit (OpCodes.Brfalse, end_try);
 			if (ec.InIterator)
 				ec.EmitThis ();
 			
-			enumerator.EmitCall (hm.get_current);
+			enumerator.EmitCall (ig, hm.get_current);
 
 			if (ec.InIterator){
 				conv.Emit (ec);
@@ -4202,30 +4202,36 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			if (hm.enumerator_type.IsValueType) {
-				enumerator.EmitThis ();
+				enumerator.EmitThis (ig);
 
 				MethodInfo mi = FetchMethodDispose (hm.enumerator_type);
 				if (mi != null) {
-					enumerator.EmitLoadAddress ();
+					enumerator.EmitLoadAddress (ig);
 					ig.Emit (OpCodes.Call, mi);
 				} else {
-					enumerator.EmitLoad ();
+					enumerator.EmitLoad (ig);
 					ig.Emit (OpCodes.Box, hm.enumerator_type);
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				}					
+				}
 			} else {
 				Label call_dispose = ig.DefineLabel ();
 
-				enumerator.EmitThis ();
-				enumerator.EmitLoad ();
+				enumerator.EmitThis (ig);
+				enumerator.EmitLoad (ig);
 				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Brtrue_S, call_dispose);
 				ig.Emit (OpCodes.Pop);
-				ig.Emit (OpCodes.Endfinally);
+
+				Label end_finally = ig.DefineLabel ();
+				ig.Emit (OpCodes.Br, end_finally);
 
 				ig.MarkLabel (call_dispose);
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				ig.MarkLabel (end_finally);
+
+				if (emit_finally)
+					ig.Emit (OpCodes.Endfinally);
 			}
 		}
 
@@ -4243,18 +4249,18 @@ namespace Mono.CSharp {
 			//
 			// Make our copy of the array
 			//
-			copy.EmitThis ();
+			copy.EmitThis (ig);
 			expr.Emit (ec);
-			copy.EmitStore ();
+			copy.EmitStore (ig);
 			
 			if (rank == 1){
 				VariableStorage counter = new VariableStorage (ec,TypeManager.int32_type);
 
 				Label loop, test;
 
-				counter.EmitThis ();
+				counter.EmitThis (ig);
 				ig.Emit (OpCodes.Ldc_I4_0);
-				counter.EmitStore ();
+				counter.EmitStore (ig);
 				test = ig.DefineLabel ();
 				ig.Emit (OpCodes.Br, test);
 
@@ -4264,10 +4270,10 @@ namespace Mono.CSharp {
 				if (ec.InIterator)
 					ec.EmitThis ();
 				
-				copy.EmitThis ();
-				copy.EmitLoad ();
-				counter.EmitThis ();
-				counter.EmitLoad ();
+				copy.EmitThis (ig);
+				copy.EmitLoad (ig);
+				counter.EmitThis (ig);
+				counter.EmitLoad (ig);
 
 				//
 				// Load the value, we load the value using the underlying type,
@@ -4283,18 +4289,18 @@ namespace Mono.CSharp {
 				statement.Emit (ec);
 
 				ig.MarkLabel (ec.LoopBegin);
-				counter.EmitThis ();
-				counter.EmitThis ();
-				counter.EmitLoad ();
+				counter.EmitThis (ig);
+				counter.EmitThis (ig);
+				counter.EmitLoad (ig);
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.Emit (OpCodes.Add);
-				counter.EmitStore ();
+				counter.EmitStore (ig);
 
 				ig.MarkLabel (test);
-				counter.EmitThis ();
-				counter.EmitLoad ();
-				copy.EmitThis ();
-				copy.EmitLoad ();
+				counter.EmitThis (ig);
+				counter.EmitLoad (ig);
+				copy.EmitThis (ig);
+				copy.EmitLoad (ig);
 				ig.Emit (OpCodes.Ldlen);
 				ig.Emit (OpCodes.Conv_I4);
 				ig.Emit (OpCodes.Blt, loop);
@@ -4313,30 +4319,30 @@ namespace Mono.CSharp {
 				}
 					
 				for (dim = 0; dim < rank; dim++){
-					dim_len [dim].EmitThis ();
-					copy.EmitThis ();
-					copy.EmitLoad ();
+					dim_len [dim].EmitThis (ig);
+					copy.EmitThis (ig);
+					copy.EmitLoad (ig);
 					IntLiteral.EmitInt (ig, dim);
 					ig.Emit (OpCodes.Callvirt, TypeManager.int_getlength_int);
-					dim_len [dim].EmitStore ();
+					dim_len [dim].EmitStore (ig);
 					
 				}
 
 				for (dim = 0; dim < rank; dim++){
-					dim_count [dim].EmitThis ();
+					dim_count [dim].EmitThis (ig);
 					ig.Emit (OpCodes.Ldc_I4_0);
-					dim_count [dim].EmitStore ();
+					dim_count [dim].EmitStore (ig);
 					ig.Emit (OpCodes.Br, test [dim]);
 					ig.MarkLabel (loop [dim]);
 				}
 
 				if (ec.InIterator)
 					ec.EmitThis ();
-				copy.EmitThis ();
-				copy.EmitLoad ();
+				copy.EmitThis (ig);
+				copy.EmitLoad (ig);
 				for (dim = 0; dim < rank; dim++){
-					dim_count [dim].EmitThis ();
-					dim_count [dim].EmitLoad ();
+					dim_count [dim].EmitThis (ig);
+					dim_count [dim].EmitLoad (ig);
 				}
 
 				//
@@ -4362,18 +4368,18 @@ namespace Mono.CSharp {
 				statement.Emit (ec);
 				ig.MarkLabel (ec.LoopBegin);
 				for (dim = rank - 1; dim >= 0; dim--){
-					dim_count [dim].EmitThis ();
-					dim_count [dim].EmitThis ();
-					dim_count [dim].EmitLoad ();
+					dim_count [dim].EmitThis (ig);
+					dim_count [dim].EmitThis (ig);
+					dim_count [dim].EmitLoad (ig);
 					ig.Emit (OpCodes.Ldc_I4_1);
 					ig.Emit (OpCodes.Add);
-					dim_count [dim].EmitStore ();
+					dim_count [dim].EmitStore (ig);
 
 					ig.MarkLabel (test [dim]);
-					dim_count [dim].EmitThis ();
-					dim_count [dim].EmitLoad ();
-					dim_len [dim].EmitThis ();
-					dim_len [dim].EmitLoad ();
+					dim_count [dim].EmitThis (ig);
+					dim_count [dim].EmitLoad (ig);
+					dim_len [dim].EmitThis (ig);
+					dim_len [dim].EmitLoad (ig);
 					ig.Emit (OpCodes.Blt, loop [dim]);
 				}
 			}
@@ -4385,7 +4391,7 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			
+
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
