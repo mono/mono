@@ -1,3 +1,8 @@
+2002-04-08  Nick Drochak  <ndrochak@gol.com>
+
+	* System.build: Build System.dll with mono's corlib.dll and 
+	System.Xml.dll.
+
 2002-01-23  Dick Porter  <dick@ximian.com>
 
 	* System.build: Start build System.Net.Sockets.Socket.cs,
