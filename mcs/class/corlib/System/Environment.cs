@@ -41,7 +41,7 @@ using System.Text;
 
 namespace System {
 
-#if NET_2_0
+#if NET_2_0_WAIT_TILL_FIX_IS_MERGED_INTO_GMCS
 	public static class Environment {
 #else
 	public sealed class Environment {
