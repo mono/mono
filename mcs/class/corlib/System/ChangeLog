@@ -1,3 +1,8 @@
+2003-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomainSetup.cs: remove the "file://" prefix from ApplicationBase
+	if it's present.
+
 2003-07-2  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* DateTime.cs: Fixed formatting of fractions of second.

@@ -39,10 +39,20 @@ namespace System {
 			InitAppDomainSetup (this);
 		}
 		
+		
+		static string GetAppBase (string appBase)
+		{
+			int len = appBase.Length;
+			if (len >= 8 && appBase.ToLower ().StartsWith ("file://"))
+				appBase = appBase.Substring (7);
+
+			return appBase;
+		}
+		
 		public string ApplicationBase {
 
 			get {
-				return application_base;
+				return GetAppBase (application_base);
 			}
 
 			set {
