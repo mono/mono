@@ -42,7 +42,7 @@ public sealed class StrongNamePublicKeyBlob {
 
 	static byte CharToByte (char c)
 	{
-		char ch = Char.ToLower (c);
+		char ch = Char.ToLowerInvariant (c);
 		
 		if (Char.IsDigit (ch))
 			return (byte) (ch - '0');
