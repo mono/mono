@@ -1,5 +1,11 @@
 2005-02-07  Geoff Norton  <gnorton@customerdna.com>
 
+	* XplatUIOSX.cs: Really fix working at resolutions not 1024x768.
+	Get the display size from the main displayid.  We currently dont 
+	support multiple display configurations.
+
+2005-02-07  Geoff Norton  <gnorton@customerdna.com>
+
 	* XplatUIOSX.cs: Ensure the window doesn't get stuck behind the statusbar.
 
 2005-02-07  Miguel de Icaza  <miguel@novell.com>

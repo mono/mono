@@ -311,7 +311,8 @@ namespace System.Windows.Forms {
 
 		internal override void GetDisplaySize(out Size size) {
 			// FIXME:
-			size = new Size (1024, 768);
+			HIRect bounds = CGDisplayBounds (CGMainDisplayID ());
+			size = new Size ((int)bounds.size.width, (int)bounds.size.height);
 		}
 
 		[MonoTODO]
@@ -1725,6 +1726,8 @@ DEBUG THIS:
 		internal extern static void ExitToShell ();
 		
 		#region Cursor imports
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static HIRect CGDisplayBounds (IntPtr displayID);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static IntPtr CGMainDisplayID ();
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
