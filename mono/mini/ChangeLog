@@ -1,4 +1,10 @@
+2004-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Disable inlining for methods containing
+	localloc. Fixes #69678.
+
+	* iltests.il (test_0_localloc_inline): Add regression test for #69678.
+	
 Fri Nov 19 14:54:07 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: adjust initial prolog size (bug #69691).
