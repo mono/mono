@@ -65,26 +65,21 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected override bool EvaluateIsValid()
+		protected override bool EvaluateIsValid ()
 		{
-			string ctrl = GetControlValidationValue(ControlToValidate);
-			bool   retVal = true;
-			if(ctrl == null || ctrl.Trim().Length == 0)
-			{
+			string ctrl = GetControlValidationValue (ControlToValidate);
+			if (ctrl == null || ctrl.Trim ().Length == 0)
 				return true;
-			}
-			try
-			{
-				Match match = Regex.Match(ctrl, ValidationExpression);
-				if(match.Success && match.Index > 0 && match.Length == ctrl.Length)
-				{
+
+			bool retVal;
+			try {
+				Match match = Regex.Match (ctrl, ValidationExpression);
+				if (match.Success && match.Index == 0) {
 					retVal = true;
-				} else
-				{
+				} else {
 					retVal = false;
 				}
-			} catch(Exception)
-			{
+			} catch (Exception) {
 				retVal = true;
 			}
 			return retVal;

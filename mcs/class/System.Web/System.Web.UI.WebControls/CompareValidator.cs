@@ -73,17 +73,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected override bool EvaluateIsValid()
+		protected override bool EvaluateIsValid ()
 		{
-			string ctrl = GetControlValidationValue(ControlToValidate);
-			if(ctrl != null && ctrl.Length > 0)
-			{
-				string cmp = (ControlToCompare.Length > 0 ?
-				              ControlToCompare : ValueToCompare);
-				return BaseCompareValidator.Compare(ctrl, cmp,
-				                                    Operator, Type);
+			string ctrl = GetControlValidationValue (ControlToValidate);
+			if (ctrl == null || ctrl.Length == 0)
+				return true;
+
+			string cmp;
+			if (ControlToCompare.Length > 0) {
+				cmp = GetControlValidationValue (ControlToCompare);
+			} else {
+				cmp = ValueToCompare;
 			}
-			return true;
+
+			return Compare (ctrl, cmp, Operator, Type);
 		}
 	}
 }

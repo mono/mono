@@ -1,5 +1,14 @@
 2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BaseValidator.cs: return an empty string in GetControlValidationValue
+	when GetValue returned null.
+
+	* CompareValidator.cs: fixed EvaluateIsValid.
+
+	* RegularExpressionValidator.cs: fixed EvaluateIsValid.
+
+2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Xml.cs: use MapPathSecure to get the path of the document.
 
 2002-12-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>

@@ -307,12 +307,14 @@ namespace System.Web.UI.WebControls
 				PropertyDescriptor pd = GetValidationProperty(ctrl);
 				if(pd != null)
 				{
-					object item = pd.GetValue(ctrl);
-					if(item is ListItem)
-					{
-						return ((ListItem)item).Value;
-					}
-					return item.ToString();
+					object item = pd.GetValue (ctrl);
+					if (item is ListItem)
+						return ((ListItem) item).Value;
+
+					if (item == null)
+						return String.Empty;
+
+					return item.ToString ();
 				}
 			}
 			return null;
