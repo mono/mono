@@ -241,6 +241,8 @@ System.ComponentModel/ParenthesizePropertyNameAttribute.cs
 System.ComponentModel/PropertyTabAttribute.cs
 System.ComponentModel/ProvidePropertyAttribute.cs
 System.ComponentModel/ReferenceConverter.cs
+System.ComponentModel/ReflectionEventDescriptor.cs
+System.ComponentModel/ReflectionPropertyDescriptor.cs
 System.ComponentModel/SByteConverter.cs
 System.ComponentModel/SingleConverter.cs
 System.ComponentModel/TimeSpanConverter.cs
