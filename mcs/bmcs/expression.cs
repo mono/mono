@@ -4273,7 +4273,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Invocation of methods or delegates.
 	/// </summary>
-	public class Invocation : ExpressionStatement {
+	public class Invocation : ExpressionStatement  {
 		public readonly ArrayList Arguments;
 
 		public Expression expr;
@@ -4293,6 +4293,12 @@ namespace Mono.CSharp {
 		// FIXME: only allow expr to be a method invocation or a
 		// delegate invocation (7.5.5)
 		//
+
+		protected Invocation ()
+		{
+			Arguments = new ArrayList ();
+		}
+		
 		public Invocation (Expression expr, ArrayList arguments, Location l)
 		{
 			this.expr = expr;
@@ -5619,6 +5625,34 @@ namespace Mono.CSharp {
 		}
 	}
 
+
+	/// <summary> 
+	/// ImplicitInvocation of methods or delegates. Used by the
+	/// VB.NET compiler specifically to emit calls to the
+	/// Microsoft.VisualBasic.CompilerServices helper routines
+	/// </summary>
+
+	public class ImplicitInvocation : Invocation
+	{
+		const string DEFAULT_NS_PREFIX = "Microsoft.VisualBasic.CompilerServices";
+		
+		public ImplicitInvocation (string klass, string method, Location l, params Expression [] exprs) 
+			: this (DEFAULT_NS_PREFIX, klass, method, l, exprs)
+		{
+		}
+
+		public ImplicitInvocation (string ns, string klass, string method, Location l, params Expression [] exprs)
+		{
+			string name = ns + "." + klass + "." + method;
+			this.expr = StringToExpression (name, l);
+		
+			foreach (Expression expr in exprs)
+				Arguments.Add (new Argument (expr, Argument.AType.Expression));
+
+			loc =l;
+		}
+	}
+	
 	public class InvocationOrCast : ExpressionStatement
 	{
 		Expression expr;
@@ -5757,7 +5791,12 @@ namespace Mono.CSharp {
 		Expression value_target;
 		bool value_target_set = false;
 		bool is_type_parameter = false;
-		
+
+		protected New ()
+		{
+			Arguments = new ArrayList ();
+		}
+
 		public New (Expression requested_type, ArrayList arguments, Location l)
 		{
 			RequestedType = requested_type;
@@ -6047,6 +6086,26 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 			
 			((IMemoryLocation) value_target).AddressOf (ec, Mode);
+		}
+	}
+
+	/// <summary> 
+	/// Implicit Creation of types. Used by the VB.NET compiler
+	/// (in the context of Type Conversions) to emit calls to the
+	/// appropriate constructors available in the core libraries.
+	/// </summary>
+
+	public class ImplicitNew : New
+	{
+		public ImplicitNew (string ns, string name, Location l, params Expression [] exprs)
+		{
+			name = ns + "." + name;
+			this.RequestedType= StringToExpression (name, l);
+		
+			foreach (Expression expr in exprs)
+				Arguments.Add (new Argument (expr, Argument.AType.Expression));
+
+			loc =l;
 		}
 	}
 

@@ -1335,6 +1335,42 @@ namespace Mono.CSharp {
 		{
 			Report.Error (248, loc, "Cannot create an array with a negative size");
 		}
+
+
+		/// <summary>
+		/// Converts a String to an equivalent SimpleName or a
+		/// MemberAccess expression
+		/// </summary>
+
+		public static Expression StringToExpression (string name, Location loc)
+		{
+			int pos;
+			string left;
+			string right;
+			
+			Expression expr = null;
+
+			pos = name.IndexOf('.');
+			while (pos != -1)
+			{
+				left = name.Substring (0, pos);
+				right = name.Substring (pos + 1);
+
+				if (expr == null)
+					expr = new SimpleName (left, loc);
+				else
+					expr = new MemberAccess (expr, left, loc);
+
+				name = right;
+				pos = name.IndexOf('.');
+			}
+
+			if (expr == null)
+				return new SimpleName (name, loc);
+			else
+				return new MemberAccess (expr, name, loc);
+
+		}
 		
 		//
 		// Converts `source' to an int, uint, long or ulong.

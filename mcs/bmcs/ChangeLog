@@ -1,5 +1,11 @@
 2005-02-28  Jambunathan K  <kjambunathan.devel@gmail.com>
 
+	* ecore.cs (StringToExpression):
+	* expression.cs (ImplicitInvocation, ImplicitNew): VB.NET specific
+	helper classes and methods.
+
+2005-02-28  Jambunathan K  <kjambunathan.devel@gmail.com>
+
 	* assign.cs, attribute.cs, cfold.cs, const.cs, constant.cs,
 	* convert.cs, ecore.cs, enum.cs, expression.cs, generic.cs,
 	* iterator.cs, statement.cs : Broadly, what C# spec terms as
