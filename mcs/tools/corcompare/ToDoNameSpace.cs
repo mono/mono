@@ -155,7 +155,7 @@ namespace Mono.Util.CorCompare {
 					}
 
 					// look at all the members of the type
-					foreach (MemberInfo mi in t.GetMembers()) {
+					foreach (MemberInfo mi in t.GetMembers(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public)) {
 						// see if any of them have the MonoTODO attrib
 						myAttributes = mi.GetCustomAttributes(false);
 						foreach (object o in myAttributes) {
@@ -180,8 +180,8 @@ namespace Mono.Util.CorCompare {
 				if (t.IsPublic && !IsMissingType(t)) {
 					bool addedIt = false;
 					index = -1;
-
-					foreach (MemberInfo mi in t.GetMembers()) {
+					
+					foreach (MemberInfo mi in t.GetMembers(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public)) {
 						if (t.Name == mi.DeclaringType.Name && IsMissingMember(mi, t.Name, existingTypes)) {
 							if (!addedIt) {
 								index = ToDoType.IndexOf(t, ToDoTypes);
@@ -218,7 +218,7 @@ namespace Mono.Util.CorCompare {
 		static bool IsMissingMember(MemberInfo mi, string typeName, Type[] typesToSearch) {
 			foreach (Type t in typesToSearch) {
 				if (t.Name == typeName) {
-					foreach (MemberInfo trialMI in t.GetMembers()) {
+					foreach (MemberInfo trialMI in t.GetMembers(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public)) {
 						if (mi.Name == trialMI.Name && mi.MemberType == trialMI.MemberType) {
 							if (mi.MemberType == MemberTypes.Method) {
 								if (IsParameterListEqual(((MethodInfo)mi).GetParameters(), ((MethodInfo)trialMI).GetParameters())) {

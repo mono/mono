@@ -106,8 +106,6 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 
-		int complete;
-
 		public ToDoType(Type t) : base(t) {
 		}
 
@@ -120,12 +118,6 @@ namespace Mono.Util.CorCompare {
 		public int ToDoCount {
 			get {
 				return todoMethodList.Count + todoPropertyList.Count;
-			}
-		}
-		
-		public int Complete {
-			get {
-				return complete;
 			}
 		}
 		
@@ -165,8 +157,7 @@ namespace Mono.Util.CorCompare {
 					todoNestedTypeList.Add(new ToDoNestedType(info));
 					break;
 				default:
-					break;
-					//throw new Exception("Didn't code todo member type: " + info.MemberType.ToString());
+					throw new Exception("Didn't code todo member type: " + info.MemberType.ToString());
 			}
 		}
 
@@ -191,8 +182,7 @@ namespace Mono.Util.CorCompare {
 					missingNestedTypeList.Add(new MissingNestedType(info));
 					break;
 				default:
-					break;
-					//throw new Exception("Didn't code missing member type: " + info.MemberType.ToString());
+					throw new Exception("Didn't code missing member type: " + info.MemberType.ToString());
 			}
 		}
 	}
