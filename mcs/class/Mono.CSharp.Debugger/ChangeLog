@@ -1,5 +1,9 @@
 2002-06-28  Martin Baulig  <martin@gnome.org>
 
+	* gdb-csharp-support.patch: Updated.
+
+2002-06-28  Martin Baulig  <martin@gnome.org>
+
 	* MonoDwarfFileWriter.cs: Use a TAG_string_type when we're using GNU extensions.
 	Make static struct/class fields actually work.  Provide a TAG_typedef for struct's
 	and classes.

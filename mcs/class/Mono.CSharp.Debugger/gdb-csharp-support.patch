@@ -46,8 +46,71 @@ diff -ru gdb-5.2.orig/gdb/defs.h gdb-5.2/gdb/defs.h
  enum precision_type
 diff -ru gdb-5.2.orig/gdb/dwarf2read.c gdb-5.2/gdb/dwarf2read.c
 --- gdb-5.2.orig/gdb/dwarf2read.c	Thu Feb 28 12:21:16 2002
-+++ gdb-5.2/gdb/dwarf2read.c	Thu May 30 22:32:57 2002
-@@ -3822,6 +3822,9 @@
++++ gdb-5.2/gdb/dwarf2read.c	Fri Jun 28 16:58:41 2002
+@@ -733,7 +733,8 @@
+ static void read_tag_volatile_type (struct die_info *, struct objfile *,
+ 				    const struct comp_unit_head *);
+ 
+-static void read_tag_string_type (struct die_info *, struct objfile *);
++static void read_tag_string_type (struct die_info *, struct objfile *,
++				  const struct comp_unit_head *);
+ 
+ static void read_subroutine_type (struct die_info *, struct objfile *,
+ 				  const struct comp_unit_head *);
+@@ -1520,7 +1521,7 @@
+       read_tag_reference_type (die, objfile, cu_header);
+       break;
+     case DW_TAG_string_type:
+-      read_tag_string_type (die, objfile);
++      read_tag_string_type (die, objfile, cu_header);
+       break;
+     case DW_TAG_base_type:
+       read_base_type (die, objfile);
+@@ -2766,7 +2767,8 @@
+    attribute to reference it.  */
+ 
+ static void
+-read_tag_string_type (struct die_info *die, struct objfile *objfile)
++read_tag_string_type (struct die_info *die, struct objfile *objfile,
++		      const struct comp_unit_head *cu_header)
+ {
+   struct type *type, *range_type, *index_type, *char_type;
+   struct attribute *attr;
+@@ -2777,6 +2779,33 @@
+       return;
+     }
+ 
++  if (cu_language == language_csharp_mono)
++    {
++      type = create_csharp_string_type (NULL, objfile);
++
++      attr = dwarf_attr (die, DW_AT_string_length);
++      if (attr)
++	{
++	  TYPE_CSHARP_ARRAY_LENGTH_OFFSET (type) = decode_locdesc (DW_BLOCK (attr), objfile, cu_header);
++	}
++
++      attr = dwarf_attr (die, DW_AT_byte_size);
++      if (attr)
++	{
++	  TYPE_CSHARP_ARRAY_LENGTH_BYTESIZE (type) = DW_UNSND (attr);
++	}
++
++      attr = dwarf_attr (die, DW_AT_data_location);
++      if (attr)
++	{
++	  TYPE_CSHARP_ARRAY_DATA_OFFSET (type) = decode_locdesc (DW_BLOCK (attr), objfile, cu_header);
++	}
++
++      die->type = type;
++      return;
++    }
++
++
+   attr = dwarf_attr (die, DW_AT_string_length);
+   if (attr)
+     {
+@@ -3822,6 +3851,9 @@
      case DW_LANG_Java:
        cu_language = language_java;
        break;
@@ -57,6 +120,164 @@ diff -ru gdb-5.2.orig/gdb/dwarf2read.c gdb-5.2/gdb/dwarf2read.c
      case DW_LANG_Ada83:
      case DW_LANG_Cobol74:
      case DW_LANG_Cobol85:
+@@ -4288,6 +4320,19 @@
+ 		add_symbol_to_list (sym, list_in_scope);
+ 	      break;
+ 	    }
++	  attr = dwarf_attr (die, DW_AT_start_scope);
++	  attr2 = dwarf_attr (die, DW_AT_end_scope);
++	  if (attr && attr2)
++	    {
++	      struct range_list *r = (struct range_list *)
++		obstack_alloc (&objfile->type_obstack,
++			       sizeof (struct range_list));
++
++	      r->start = DW_ADDR (attr);
++	      r->end = DW_ADDR (attr2);
++
++	      SYMBOL_RANGES (sym) = r;
++	    }
+ 	  attr = dwarf_attr (die, DW_AT_location);
+ 	  if (attr)
+ 	    {
+@@ -4701,7 +4746,7 @@
+       read_tag_volatile_type (die, objfile, cu_header);
+       break;
+     case DW_TAG_string_type:
+-      read_tag_string_type (die, objfile);
++      read_tag_string_type (die, objfile, cu_header);
+       break;
+     case DW_TAG_typedef:
+       read_typedef (die, objfile, cu_header);
+diff -ru gdb-5.2.orig/gdb/findvar.c gdb-5.2/gdb/findvar.c
+--- gdb-5.2.orig/gdb/findvar.c	Sun Feb 10 03:47:11 2002
++++ gdb-5.2/gdb/findvar.c	Fri May 31 01:14:10 2002
+@@ -411,9 +411,11 @@
+ read_var_value (register struct symbol *var, struct frame_info *frame)
+ {
+   register struct value *v;
++  register struct range_list *r;
+   struct type *type = SYMBOL_TYPE (var);
+   CORE_ADDR addr;
+   register int len;
++  int range_ok = 0;
+ 
+   v = allocate_value (type);
+   VALUE_LVAL (v) = lval_memory;	/* The most likely possibility.  */
+@@ -423,6 +425,23 @@
+ 
+   if (frame == NULL)
+     frame = selected_frame;
++
++  if (!SYMBOL_RANGES (var))
++    range_ok = 1;
++  else
++    {
++      for (r = SYMBOL_RANGES (var); r; r = r->next)
++	{
++	  if (r->start <= frame->pc && r->end >= frame->pc)
++	    {
++	      range_ok = 1;
++	      break;
++	    }
++	}
++    }
++
++  if (!range_ok)
++    return NULL;
+ 
+   switch (SYMBOL_CLASS (var))
+     {
+diff -ru gdb-5.2.orig/gdb/gdbtypes.c gdb-5.2/gdb/gdbtypes.c
+--- gdb-5.2.orig/gdb/gdbtypes.c	Fri Feb  8 18:34:33 2002
++++ gdb-5.2/gdb/gdbtypes.c	Fri Jun 28 16:04:55 2002
+@@ -748,6 +748,18 @@
+ }
+ 
+ struct type *
++create_csharp_string_type (struct type *result_type, struct objfile *objfile)
++{
++  result_type = alloc_type (objfile);
++  TYPE_CODE (result_type) = TYPE_CODE_CSHARP_STRING;
++
++  TYPE_CSHARP_ARRAY (result_type) = (struct csharp_array_type *)
++    TYPE_ALLOC (result_type, sizeof (struct csharp_array_type));
++
++  return (result_type);
++}
++
++struct type *
+ create_set_type (struct type *result_type, struct type *domain_type)
+ {
+   LONGEST low_bound, high_bound, bit_length;
+diff -ru gdb-5.2.orig/gdb/gdbtypes.h gdb-5.2/gdb/gdbtypes.h
+--- gdb-5.2.orig/gdb/gdbtypes.h	Sun Feb  3 23:57:56 2002
++++ gdb-5.2/gdb/gdbtypes.h	Fri Jun 28 16:55:22 2002
+@@ -130,7 +130,10 @@
+ 
+     TYPE_CODE_TYPEDEF,
+     TYPE_CODE_TEMPLATE,		/* C++ template */
+-    TYPE_CODE_TEMPLATE_ARG	/* C++ template arg */
++    TYPE_CODE_TEMPLATE_ARG,	/* C++ template arg */
++
++    TYPE_CODE_CSHARP_STRING,	/* C# string */
++    TYPE_CODE_CSHARP_ARRAY	/* C# array */
+ 
+   };
+ 
+@@ -471,6 +474,10 @@
+ 
+ 	struct cplus_struct_type *cplus_stuff;
+ 
++	/* CSHARP_ARRAY is for TYPE_CODE_CSHARP_ARRAY.  */
++
++	struct csharp_array_type *csharp_array;    
++
+ 	/* FLOATFORMAT is for TYPE_CODE_FLT.  It is a pointer to the
+            floatformat object that describes the floating-point value
+            that resides within the type.  */
+@@ -704,6 +711,18 @@
+      *localtype_ptr;
+   };
+ 
++/* C# language-specific information for TYPE_CODE_CSHARP_STRING and
++ * TYPE_CODE_CSHARP_ARRAY nodes.  */
++
++struct csharp_array_type
++  {
++    unsigned length_offset;
++
++    unsigned length_bytesize;
++
++    unsigned data_offset;
++  };
++
+ /* Struct used in computing virtual base list */
+ struct vbase
+   {
+@@ -844,6 +863,13 @@
+   (TYPE_CPLUS_SPECIFIC(thistype)->virtual_field_bits == NULL ? 0 \
+     : B_TST(TYPE_CPLUS_SPECIFIC(thistype)->virtual_field_bits, (n)))
+ 
++/* C# */
++
++#define TYPE_CSHARP_ARRAY(thistype) (thistype)->type_specific.csharp_array
++#define TYPE_CSHARP_ARRAY_LENGTH_OFFSET(thistype) TYPE_CSHARP_ARRAY(thistype)->length_offset
++#define TYPE_CSHARP_ARRAY_LENGTH_BYTESIZE(thistype) TYPE_CSHARP_ARRAY(thistype)->length_bytesize
++#define TYPE_CSHARP_ARRAY_DATA_OFFSET(thistype) TYPE_CSHARP_ARRAY(thistype)->data_offset
++
+ #define TYPE_FIELD_STATIC(thistype, n) ((thistype)->fields[n].bitsize < 0)
+ #define TYPE_FIELD_STATIC_HAS_ADDR(thistype, n) ((thistype)->fields[n].bitsize == -2)
+ #define TYPE_FIELD_STATIC_PHYSNAME(thistype, n) FIELD_PHYSNAME(TYPE_FIELD(thistype, n))
+@@ -1101,6 +1127,8 @@
+ 				       struct type *);
+ 
+ extern struct type *create_string_type (struct type *, struct type *);
++
++extern struct type *create_csharp_string_type (struct type *, struct objfile *);
+ 
+ extern struct type *create_set_type (struct type *, struct type *);
+ 
 diff -ru gdb-5.2.orig/gdb/language.c gdb-5.2/gdb/language.c
 --- gdb-5.2.orig/gdb/language.c	Wed Feb 13 19:49:30 2002
 +++ gdb-5.2/gdb/language.c	Thu May 30 22:32:57 2002
@@ -68,10 +289,79 @@ diff -ru gdb-5.2.orig/gdb/language.c gdb-5.2/gdb/language.c
        return TYPE_CODE (type) != TYPE_CODE_CHAR ? 0 : 1;
  
      case language_c:
+diff -ru gdb-5.2.orig/gdb/stack.c gdb-5.2/gdb/stack.c
+--- gdb-5.2.orig/gdb/stack.c	Thu Feb 14 08:24:54 2002
++++ gdb-5.2/gdb/stack.c	Fri May 31 01:13:24 2002
+@@ -1173,14 +1173,36 @@
+ 	case LOC_REGISTER:
+ 	case LOC_STATIC:
+ 	case LOC_BASEREG:
+-	  values_printed = 1;
+-	  for (j = 0; j < num_tabs; j++)
+-	    fputs_filtered ("\t", stream);
+-	  fputs_filtered (SYMBOL_SOURCE_NAME (sym), stream);
+-	  fputs_filtered (" = ", stream);
+-	  print_variable_value (sym, fi, stream);
+-	  fprintf_filtered (stream, "\n");
+-	  break;
++	  {
++	    struct range_list *r;
++	    int range_ok = 0;
++
++	    if (!SYMBOL_RANGES (sym))
++	      range_ok = 1;
++	    else
++	      {
++		for (r = SYMBOL_RANGES (sym); r; r = r->next)
++		  {
++		    if (r->start <= fi->pc && r->end >= fi->pc)
++		      {
++			range_ok = 1;
++			break;
++		      }
++		  }
++	      }
++
++	    if (range_ok)
++	      {
++		values_printed = 1;
++		for (j = 0; j < num_tabs; j++)
++		  fputs_filtered ("\t", stream);
++		fputs_filtered (SYMBOL_SOURCE_NAME (sym), stream);
++		fputs_filtered (" = ", stream);
++		print_variable_value (sym, fi, stream);
++		fprintf_filtered (stream, "\n");
++	      }
++	    break;
++	  }
+ 
+ 	default:
+ 	  /* Ignore symbols which are not locals.  */
+Only in gdb-5.2: i686-pc-linux-gnu
+diff -ru gdb-5.2.orig/include/elf/ChangeLog gdb-5.2/include/elf/ChangeLog
+--- gdb-5.2.orig/include/elf/ChangeLog	Wed Feb 13 19:14:48 2002
++++ gdb-5.2/include/elf/ChangeLog	Fri May 31 00:25:33 2002
+@@ -1,3 +1,7 @@
++2002-04-12  Martin Baulig  <martin@gnome.org>
++
++	* dwarf2.h (DW_AT_end_scope): Added as GNU extension.
++
+ 2002-02-13  Matt Fredette  <fredette@netbsd.org>
+ 
+ 	* m68k.h (EF_M68000): Define.
 diff -ru gdb-5.2.orig/include/elf/dwarf2.h gdb-5.2/include/elf/dwarf2.h
 --- gdb-5.2.orig/include/elf/dwarf2.h	Tue Jan 29 00:26:53 2002
-+++ gdb-5.2/include/elf/dwarf2.h	Thu May 30 22:32:57 2002
-@@ -675,7 +675,8 @@
++++ gdb-5.2/include/elf/dwarf2.h	Fri May 31 00:25:33 2002
+@@ -328,6 +328,8 @@
+     DW_AT_src_coords = 0x2104,
+     DW_AT_body_begin = 0x2105,
+     DW_AT_body_end   = 0x2106,
++    DW_AT_end_scope  = 0x2121,
++    
+     /* VMS Extensions.  */
+     DW_AT_VMS_rtnbeg_pd_address = 0x2201
+   };
+@@ -675,7 +677,8 @@
      DW_LANG_Ada95 = 0x000d,
      DW_LANG_Fortran95 = 0x000e,
      /* MIPS.  */

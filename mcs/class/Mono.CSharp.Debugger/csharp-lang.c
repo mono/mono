@@ -21,19 +21,23 @@
 #include "defs.h"
 #include "symtab.h"
 #include "gdbtypes.h"
+#include "gdbcore.h"
 #include "expression.h"
+#include "value.h"
+#include "demangle.h"
 #include "parser-defs.h"
 #include "language.h"
-#include "gdbtypes.h"
-#include "symtab.h"
 #include "symfile.h"
 #include "objfiles.h"
 #include "gdb_string.h"
-#include "value.h"
 #include "csharp-lang.h"
 #include "c-lang.h"
-#include "gdbcore.h"
+#include "annotate.h"
 #include <ctype.h>
+
+static void csharp_print_value_fields (struct type *type, char *valaddr, CORE_ADDR address,
+				       struct ui_file *stream, int format, int recurse,
+				       enum val_prettyprint pretty);
 
 /* Print the character C on STREAM as part of the contents of a literal
    string whose delimiter is QUOTER.  Note that that format for printing
@@ -84,37 +88,6 @@ csharp_value_print (struct value *val, struct ui_file *stream, int format,
   type = VALUE_TYPE (val);
   address = VALUE_ADDRESS (val) + VALUE_OFFSET (val);
 
-  /* If it's type String, print it */
-
-  if (TYPE_CODE (type) == TYPE_CODE_PTR
-      && TYPE_TARGET_TYPE (type)
-      && TYPE_TAG_NAME (TYPE_TARGET_TYPE (type))
-      && strcmp (TYPE_TAG_NAME (TYPE_TARGET_TYPE (type)), "MonoString") == 0
-      && (format == 0 || format == 's')
-      && address != 0
-      && value_as_address (val) != 0)
-    {
-      struct value *data_val;
-      CORE_ADDR data;
-      struct value *count_val;
-      unsigned long count;
-      struct value *mark;
-
-      mark = value_mark ();	/* Remember start of new values */
-
-      data_val = value_struct_elt (&val, NULL, "Chars", NULL, NULL);
-      data = VALUE_ADDRESS (data_val) + VALUE_OFFSET (data_val);
-
-      count_val = value_struct_elt (&val, NULL, "Length", NULL, NULL);
-      count = value_as_address (count_val);
-
-      value_free_to_mark (mark);	/* Release unnecessary values */
-
-      val_print_string (data, count, 2, stream);
-
-      return 0;
-    }
-
   return (val_print (type, VALUE_CONTENTS (val), 0, address,
 		     stream, format, 1, 0, pretty));
 }
@@ -146,12 +119,11 @@ csharp_val_print (struct type *type, char *valaddr, int embedded_offset,
   CHECK_TYPEDEF (type);
   switch (TYPE_CODE (type))
     {
-#if 0
     case TYPE_CODE_CSHARP_STRING:
-      addr = address + TYPE_CSHARP_STRING_LENGTH_OFFSET (type);
-      length = read_memory_integer (addr, TYPE_CSHARP_STRING_LENGTH_BYTESIZE (type));
+      addr = address + TYPE_CSHARP_ARRAY_LENGTH_OFFSET (type);
+      length = read_memory_integer (addr, TYPE_CSHARP_ARRAY_LENGTH_BYTESIZE (type));
 
-      addr = address + TYPE_CSHARP_STRING_DATA_OFFSET (type);
+      addr = address + TYPE_CSHARP_ARRAY_DATA_OFFSET (type);
 
       return val_print_string (addr, length, 2, stream);
 
@@ -161,23 +133,25 @@ csharp_val_print (struct type *type, char *valaddr, int embedded_offset,
 
       if (deref_ref && addr != 0)
 	{
-	  if (TYPE_CODE (target_type) == TYPE_CODE_CSHARP_STRING)
-	    return csharp_val_print (target_type, NULL, 0, addr, stream,
-				     format, deref_ref, recurse, pretty);
-	  else
-	    return 0;
-	}
+	  struct value *newval;
+	  int retval;
 
-      return c_val_print (type, valaddr, embedded_offset, address, stream,
-			  format, deref_ref, recurse, pretty);
-#endif
+	  newval = allocate_value (target_type);
+	  retval = csharp_val_print (target_type, (char *) newval, embedded_offset,
+				     addr, stream, format, deref_ref, recurse,
+				     pretty);
+	  release_value (newval);
+
+	  return retval;
+	}
+      break;
 
     default:
-      return c_val_print (type, valaddr, embedded_offset, address, stream,
-			  format, deref_ref, recurse, pretty);
+      break;
     }
 
-  return 0;
+  return c_val_print (type, valaddr, embedded_offset, address, stream,
+		      format, deref_ref, recurse, pretty);
 }
 
 /* Table mapping opcodes into strings for printing operators
