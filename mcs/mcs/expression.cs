@@ -4337,6 +4337,22 @@ namespace Mono.CSharp {
 			return method;
 		}
 
+		static void Error_InvalidArguments (Location loc, int idx, MethodBase method, Type delegate_type, string arg_sig, string par_desc)
+		{
+			if (delegate_type == null) 
+				Report.Error (1502, loc,
+					      "The best overloaded match for method '" +
+					      FullMethodDesc (method) +
+					      "' has some invalid arguments");
+			else
+				Report.Error (1594, loc,
+					      "Delegate '" + delegate_type.ToString () +
+					      "' has some invalid arguments.");
+			Report.Error (1503, loc,
+				      String.Format ("Argument {0}: Cannot convert from '{1}' to '{2}'",
+						     idx, arg_sig, par_desc));
+		}
+		
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
 							  int argument_count,
 							  MethodBase method, 
@@ -4351,33 +4367,37 @@ namespace Mono.CSharp {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
+				Parameter.Modifier pm = pd.ParameterModifier (j);
+				
+				if (pm == Parameter.Modifier.PARAMS){
+					if (chose_params_expanded)
+						parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
+				} else {
+					//
+					// Check modifiers
+					//
+					if (pd.ParameterModifier (j) != a.GetParameterModifier ()){
+						if (!Location.IsNull (loc))
+							Error_InvalidArguments (
+								loc, j, method, delegate_type,
+								Argument.FullDesc (a), pd.ParameterDesc (j));
+						return false;
+					}
+				}
 
-				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
-				    chose_params_expanded)
-					parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
-
+				//
+				// Check Type
+				//
 				if (a.Type != parameter_type){
 					Expression conv;
 					
 					conv = ConvertImplicit (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
-						if (!Location.IsNull (loc)) {
-							if (delegate_type == null) 
-								Report.Error (1502, loc,
-								       "The best overloaded match for method '" +
-								       FullMethodDesc (method) +
-								       "' has some invalid arguments");
-							else
-								Report.Error (1594, loc,
-									      "Delegate '" + delegate_type.ToString () +
-									      "' has some invalid arguments.");
-							Report.Error (1503, loc,
-							 "Argument " + (j+1) +
-							 ": Cannot convert from '" + Argument.FullDesc (a) 
-							 + "' to '" + pd.ParameterDesc (j) + "'");
-						}
-						
+						if (!Location.IsNull (loc)) 
+							Error_InvalidArguments (
+								loc, j, method, delegate_type,
+								Argument.FullDesc (a), pd.ParameterDesc (j));
 						return false;
 					}
 					

@@ -1,5 +1,8 @@
 2003-02-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Invocation.VerifyArgumentsCompat): Check for the
+	parameter modifiers as well.  Fixes bug 38606
+
 	* class.cs: Very sad.  Am backing out the speed up changes
 	introduced by the ArrayList -> Array in the TypeContainer, as they
 	were not actually that much faster, and introduced a bug (no error
