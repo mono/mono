@@ -1,3 +1,9 @@
+2002-02-27  Duncan Mak  <duncan@ximian.com>
+
+	* ExporterEventKind.cs:
+	* ITypeLibConverter.cs:
+	* ITypeLibImporterNotifySink.cs: Added to CVS for Kevin Winchester <kwin@ns.sympatico.ca>.
+
 2002-02-26  Duncan Mak  <duncan@ximian.com>
 
 	* ComInterfaceType.cs: Added to CVS.
