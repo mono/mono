@@ -254,8 +254,8 @@ namespace System.Windows.Forms{
 		internal static extern int SendMessage(IntPtr hWnd, RebarMessages msg, int wParam, ref REBARBANDINFO lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TVITEM lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
-		internal static extern void SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TVINSERTSTRUCT lParam);
+		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
+		internal static extern int SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TVINSERTSTRUCT lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TVSORTCB lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]

@@ -1240,15 +1240,34 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region TreeView Messages
-	public enum TreeViewMessages {
-		TV_FIRST			=  0x1100,
-		TVM_GETITEMRECT		= (TV_FIRST + 4),
-		TVM_SETIMAGELIST	= (TV_FIRST + 9),
-		TVM_HITTEST         = (TV_FIRST + 17),
-		TVM_SORTCHILDRENCB  = (TV_FIRST + 21),
-		TVM_GETITEMW		= (TV_FIRST + 62),
-		TVM_SETITEMW        = (TV_FIRST + 63),
-		TVM_INSERTITEMW     = (TV_FIRST + 50)
+	public enum TreeViewMessages : int {
+		TV_FIRST	    =  0x1100,
+		TVM_INSERTITEMA     =  ( TV_FIRST + 0 ),
+		TVM_DELETEITEM      =  ( TV_FIRST + 1 ),
+		TVM_EXPAND          =  ( TV_FIRST + 2 ),
+		TVM_GETITEMRECT	    =  ( TV_FIRST + 4 ),
+		TVM_GETCOUNT        =  ( TV_FIRST + 5 ),
+		TVM_GETINDENT       =  ( TV_FIRST + 6 ),
+		TVM_SETINDENT       =  ( TV_FIRST + 7 ),
+		TVM_GETIMAGELIST    =  ( TV_FIRST + 8 ),
+		TVM_SETIMAGELIST    =  ( TV_FIRST + 9 ),
+		TVM_GETNEXTITEM     =  ( TV_FIRST + 10 ),
+		TVM_SELECTITEM      =  ( TV_FIRST + 11 ),
+		TVM_GETITEMA        =  ( TV_FIRST + 12 ),
+		TVM_SETITEMA        =  ( TV_FIRST + 13 ),
+		TVM_EDITLABELA      =  ( TV_FIRST + 14 ),
+		TVM_GETEDITCONTROL  =  ( TV_FIRST + 15 ),
+		TVM_GETVISIBLECOUNT =  ( TV_FIRST + 16 ),
+		TVM_HITTEST         =  ( TV_FIRST + 17 ),
+		TVM_CREATEDRAGIMAGE =  ( TV_FIRST + 18 ),
+		TVM_SORTCHILDREN    =  ( TV_FIRST + 19 ),
+		TVM_ENSUREVISIBLE   =  ( TV_FIRST + 20 ),
+		TVM_SORTCHILDRENCB  =  ( TV_FIRST + 21 ),
+		TVM_SETBKCOLOR      =  ( TV_FIRST + 29 ),
+		TVM_SETTEXTCOLOR    =  ( TV_FIRST + 30 ),
+		TVM_GETITEMW	    =  ( TV_FIRST + 62 ),
+		TVM_SETITEMW        =  ( TV_FIRST + 63 ),
+		TVM_INSERTITEMW     =  ( TV_FIRST + 50 )
 	}
 	#endregion
 
@@ -1729,7 +1748,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region TreeViewItemInsertPosition
-	public enum TreeViewItemInsertPosition : long {
+	public enum TreeViewItemInsertPosition : uint {
 		TVI_ROOT                = 0xFFFF0000,
 		TVI_FIRST               = 0xFFFF0001,
 		TVI_LAST                = 0xFFFF0002,
@@ -1816,6 +1835,24 @@ namespace System.Windows.Forms{
 		TVIS_USERMASK           = 0xF000
 	}
 	#endregion
+
+	public enum TreeViewStyles : int {
+		TVS_HASBUTTONS          = 0x0001,
+		TVS_HASLINES            = 0x0002,
+		TVS_LINESATROOT         = 0x0004,
+		TVS_EDITLABELS          = 0x0008,
+		TVS_DISABLEDRAGDROP     = 0x0010,
+		TVS_SHOWSELALWAYS       = 0x0020,
+		TVS_RTLREADING          = 0x0040,
+		TVS_NOTOOLTIPS          = 0x0080,
+		TVS_CHECKBOXES          = 0x0100,
+		TVS_TRACKSELECT         = 0x0200,
+		TVS_SINGLEEXPAND        = 0x0400,
+		TVS_INFOTIP             = 0x0800,
+		TVS_FULLROWSELECT       = 0x1000,
+		TVS_NOSCROLL            = 0x2000,
+		TVS_NONEVENHEIGHT       = 0x4000
+	}
 
 	#region Windows System Objects
 	public enum SystemObject : long {

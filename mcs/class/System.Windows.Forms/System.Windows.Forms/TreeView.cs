@@ -4,10 +4,13 @@
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //	Dennis Hayes (dennish@raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
 using System.Drawing;
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -21,6 +24,17 @@ namespace System.Windows.Forms {
 		private int selectedImageIndex;
 		private TreeNodeCollection nodes;
 		private int indent;
+		private BorderStyle borderStyle;
+		private bool checkBoxes;
+		private bool fullRowSelect;
+		private bool hideSelection;
+		private bool hotTracking;
+		private bool showLines;
+		private bool showPlusMinus;
+		private bool showRootLines;
+		private ImageList imageList;
+		private bool sorted;
+		const int DefaultIndent = 19;
 		//
 		//  --- Public Constructors
 		//
@@ -30,131 +44,161 @@ namespace System.Windows.Forms {
 			imageIndex = 0;
 			selectedImageIndex = 0;
 			SubClassWndProc_ = true;
+			borderStyle = BorderStyle.Fixed3D;
+			checkBoxes = false;
+			fullRowSelect = false;
+			hideSelection = true;
+			hotTracking = false;
+			showLines = true;
+			showPlusMinus = true;
+			showRootLines = true;
+			sorted = false;
+			imageIndex = 0;
+			imageList = null;
+			indent = DefaultIndent;
 		}
 		
 		// --- Public Properties
 		
 		[MonoTODO]
 		public override Color BackColor {
-			get
-			{
-				//FIXME:
-				return base.BackColor;
-			}
-			set
-			{
-				//FIXME:
+			get { return base.BackColor; }
+			set {
 				base.BackColor = value;
+
+				if ( IsHandleCreated )
+					setBackColor ( );
 			}
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
-			get
-			{
-				//FIXME:
-				return base.BackgroundImage;
-			}
-			set
-			{
-				//FIXME:
-				base.BackgroundImage = value;
-			}
+			get { return base.BackgroundImage;  }
+			set { base.BackgroundImage = value; }
 		}
-		[MonoTODO]
+
 		public BorderStyle BorderStyle {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get {   return borderStyle; }
+			set {
+				if ( !Enum.IsDefined ( typeof(BorderStyle), value ) )
+					throw new InvalidEnumArgumentException( "BorderStyle",
+						(int)value,
+						typeof(BorderStyle));
+				
+				if ( borderStyle != value ) {
+					int oldStyle = getBorderStyle ( borderStyle );
+					int oldExStyle = getBorderExStyle ( borderStyle );
+					borderStyle = value;
+
+					if ( IsHandleCreated ) {
+						Win32.UpdateWindowStyle ( Handle, oldStyle, getBorderStyle ( borderStyle ) );
+						Win32.UpdateWindowExStyle ( Handle, oldExStyle, getBorderExStyle ( borderStyle ) );
+					}
+				}
 			}
 		}
 		[MonoTODO]
 		public bool CheckBoxes {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return checkBoxes; }
+			set {
+				checkBoxes = value;
+				RecreateHandle ( );
 			}
 		}
-		[MonoTODO]
+
 		public override Color ForeColor {
-			get
-			{
-				//FIXME:
-				return base.ForeColor;
-			}
-			set
-			{
-				//FIXME:
+			get { return base.ForeColor; }
+			set {
 				base.ForeColor = value;
+			
+				if ( IsHandleCreated )
+					setForeColor ( );
 			}
 		}
-		[MonoTODO]
+
 		public bool FullRowSelect {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return fullRowSelect; }
+			set {
+				if ( fullRowSelect != value ) {
+					int oldStyle = fullRowSelect ? (int)TreeViewStyles.TVS_FULLROWSELECT : 0;
+					fullRowSelect = value;
+						
+					if ( IsHandleCreated ) {
+						int newStyle = fullRowSelect ? (int)TreeViewStyles.TVS_FULLROWSELECT : 0;
+						Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					}
+				}
 			}
 		}
-		[MonoTODO]
+
 		public bool HideSelection {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return hideSelection; }
+			set {
+				if ( hideSelection != value ) {
+					int oldStyle = hideSelection ? 0 : (int)TreeViewStyles.TVS_SHOWSELALWAYS;
+					hideSelection = value;
+						
+					if ( IsHandleCreated ) {
+						int newStyle = hideSelection ? 0 : (int)TreeViewStyles.TVS_SHOWSELALWAYS;
+						Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					}
+				}
 			}
 		}
-		[MonoTODO]
+
 		public bool HotTracking {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return hotTracking; }
+			set {
+				if ( hotTracking != value ) {
+					int oldStyle = hotTracking ? (int)TreeViewStyles.TVS_TRACKSELECT : 0;
+					hotTracking = value;
+						
+					if ( IsHandleCreated ) {
+						int newStyle = hotTracking ? (int)TreeViewStyles.TVS_TRACKSELECT : 0;
+						Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					}
+				}
 			}
 		}
 		[MonoTODO]
 		public int ImageIndex {
-			get
-			{
-				return imageIndex;
-			}
-			set
-			{
-				//FIXME:
+			get { return imageIndex; }
+			set {
+				if ( imageIndex != value ) {
+					imageIndex = value;
+					RecreateHandle ( );
+				}
 			}
 		}
 		[MonoTODO]
 		public ImageList ImageList {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return imageList; }
+			set {
+				if ( imageList != value ) {
+					imageList = value;
+					if ( IsHandleCreated )
+						setImageList ( );
+				}
 			}
 		}
-		[MonoTODO]
+
 		public int Indent {
 			get { return indent; }
 			set {
-				indent = value;
+				if ( value < 0 )
+					throw new ArgumentException ( 
+						 string.Format ("'{0}' is not a valid value for 'Indent'.  'Indent' must be greater than or equal to 0.", value), "value");
+
+				if ( value > 32000 )
+					throw new ArgumentException ( 
+						string.Format ("'{0}' is not a valid value for 'Indent'. 'Indent' must be less than or equal to 32000.", value), "value" );
+
+				if ( indent != value ) {
+					indent = value;
+
+					if ( IsHandleCreated )
+						setIndent ( );
+				}
 			}
 		}
 		[MonoTODO]
@@ -183,7 +227,7 @@ namespace System.Windows.Forms {
 		public TreeNodeCollection Nodes {
 			get {
 				if ( nodes == null )
-					nodes = new TreeNodeCollection ( null );
+					nodes = new TreeNodeCollection ( null, this );
 				return nodes;
 			}
 		}
@@ -211,13 +255,12 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public int SelectedImageIndex {
-			get
-			{
-				return selectedImageIndex;
-			}
-			set
-			{
-				//FIXME:
+			get { return selectedImageIndex; }
+			set {
+				if ( selectedImageIndex != value ) {
+					selectedImageIndex = value;
+					RecreateHandle ( );
+				}
 			}
 		}
 		[MonoTODO]
@@ -231,61 +274,63 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
-		[MonoTODO]
+
 		public bool ShowLines {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return showLines;	}
+			set {
+				if ( showLines != value ) {
+					int oldStyle = showLines ? (int)TreeViewStyles.TVS_HASLINES : 0;
+					showLines = value;
+						
+					if ( IsHandleCreated ) {
+						int newStyle = showLines ? (int)TreeViewStyles.TVS_HASLINES : 0;
+						Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					}
+				}
 			}
 		}
-		[MonoTODO]
+
 		public bool ShowPlusMinus {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return showPlusMinus; }
+			set {
+				if ( showPlusMinus != value ) {
+					int oldStyle = showPlusMinus ? (int)TreeViewStyles.TVS_HASBUTTONS : 0;
+					showPlusMinus = value;
+						
+					if ( IsHandleCreated ) {
+						int newStyle = showPlusMinus ? (int)TreeViewStyles.TVS_HASBUTTONS : 0;
+						Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					}
+				}
 			}
 		}
-		[MonoTODO]
+
 		public bool ShowRootLines {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return showRootLines; }
+			set {
+				if ( showRootLines != value ) {
+					int oldStyle = showRootLines ? (int)TreeViewStyles.TVS_LINESATROOT : 0;
+					showRootLines = value;
+						
+					if ( IsHandleCreated ) {
+						int newStyle = showRootLines ? (int)TreeViewStyles.TVS_LINESATROOT : 0;
+						Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					}
+				}
 			}
 		}
 		[MonoTODO]
 		public bool Sorted {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return sorted; }
+			set {
+				sorted = value;
 			}
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
-			get {
-				//FIXME:
-				return base.Text;
-			}
-			set
-			{
-				//FIXME:
-				base.Text = value;
-			}
+			get { return base.Text;	 }
+			set { base.Text = value; }
 		}
 		[MonoTODO]
 		public TreeNode TopNode {
@@ -370,6 +415,31 @@ namespace System.Windows.Forms {
 
 				createParams.ClassName = Win32.TREEVIEW_CLASS;
 				createParams.Style |= (int) WindowStyles.WS_CHILD ;
+
+				createParams.Style   |= getBorderStyle   ( BorderStyle );
+				createParams.ExStyle |= getBorderExStyle ( BorderStyle );
+
+				if ( CheckBoxes )
+					createParams.Style |= (int) TreeViewStyles.TVS_CHECKBOXES;
+
+				if ( FullRowSelect )
+					createParams.Style |= (int) TreeViewStyles.TVS_FULLROWSELECT;
+
+				if ( ShowLines )
+					createParams.Style |= (int) TreeViewStyles.TVS_HASLINES;
+
+				if ( !HideSelection )
+					createParams.Style |= (int) TreeViewStyles.TVS_SHOWSELALWAYS;
+
+				if ( HotTracking )
+					createParams.Style |= (int) TreeViewStyles.TVS_TRACKSELECT;
+
+				if ( ShowPlusMinus )
+					createParams.Style |= (int) TreeViewStyles.TVS_HASBUTTONS;
+
+				if ( ShowRootLines )
+					createParams.Style |= (int) TreeViewStyles.TVS_LINESATROOT;
+
 				return createParams;
 			}		
 		}
@@ -385,6 +455,7 @@ namespace System.Windows.Forms {
 		{
 			initCommonControlsLibrary ( );
 			base.CreateHandle();
+			makeTree ( );
 		}
 
 
@@ -449,6 +520,14 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			base.OnHandleCreated(e);
+			
+			setImageList ( );
+			if ( BackColor != Control.DefaultBackColor )
+				setBackColor ( );
+			if ( ForeColor != Control.DefaultForeColor )
+				setForeColor ( );
+			if ( Indent != DefaultIndent )
+				setIndent ( );
 		}
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e)
@@ -485,12 +564,61 @@ namespace System.Windows.Forms {
 			CallControlWndProc( ref m );
 		}
 
-	    private void initCommonControlsLibrary ( ) {
-		    if ( !RecreatingHandle ) {
-			    INITCOMMONCONTROLSEX initEx = new INITCOMMONCONTROLSEX();
-			    initEx.dwICC = CommonControlInitFlags.ICC_TREEVIEW_CLASSES;
-			    Win32.InitCommonControlsEx(initEx);
-		    }
-	    }
+		private void initCommonControlsLibrary ( ) {
+			if ( !RecreatingHandle ) {
+				INITCOMMONCONTROLSEX initEx = new INITCOMMONCONTROLSEX();
+				initEx.dwICC = CommonControlInitFlags.ICC_TREEVIEW_CLASSES;
+				Win32.InitCommonControlsEx(initEx);
+			}
+		}
+
+		internal void makeTree ( )
+		{
+			IntPtr parent = IntPtr.Zero;
+			unchecked {
+				int intPtr = ( int ) TreeViewItemInsertPosition.TVI_ROOT;
+				parent = (IntPtr) intPtr;
+			}
+
+			foreach ( TreeNode node in Nodes )
+				node.makeTree ( parent );
+		}
+
+		private void setBackColor ( )
+		{
+			Win32.SendMessage ( Handle , (int)TreeViewMessages.TVM_SETBKCOLOR, 0, Win32.RGB( BackColor ) ) ;
+		}
+
+		private void setForeColor ( )
+		{
+			Win32.SendMessage ( Handle , (int)TreeViewMessages.TVM_SETTEXTCOLOR, 0, Win32.RGB( ForeColor ) ) ;
+		}
+
+		private int getBorderStyle ( BorderStyle style )
+		{
+			if ( style == BorderStyle.FixedSingle )
+				return (int) WindowStyles.WS_BORDER;
+
+			return 0;
+		}
+
+		private int getBorderExStyle ( BorderStyle style )
+		{
+			if ( style == BorderStyle.Fixed3D )
+				return (int) (int)WindowExStyles.WS_EX_CLIENTEDGE;
+
+			return 0;
+		}
+
+		private void setImageList ( )
+		{
+			int handle = ( ImageList != null ) ? ImageList.Handle.ToInt32 ( ) : 0 ;
+			Win32.SendMessage ( Handle , (int)TreeViewMessages.TVM_SETIMAGELIST, (int)TreeViewImageListFlags.TVSIL_NORMAL, handle ) ;
+		}
+
+		private void setIndent ( )
+		{
+			Win32.SendMessage ( Handle , (int)TreeViewMessages.TVM_SETINDENT, Indent, 0 ) ;
+		}
 	}
 }

@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -18,14 +19,27 @@ namespace System.Windows.Forms {
 
 		TreeNodeCollection children;
 		TreeNode           parent;
+		TreeView           treeView;
 		string             text;
-		
+		IntPtr             handle;
+		int                imageIndex;
+		int                selectedImageIndex;
+		bool               checked_;
+
 		[MonoTODO]
 		public TreeNode()
 		{
+			children = null;
+			parent   = null;
+			treeView = null;
+			text     = String.Empty;
+			handle   = IntPtr.Zero;
+			imageIndex = 0;
+			selectedImageIndex = 0;
+			checked_ = false;
 		}
 		[MonoTODO]
-		public TreeNode( string text )
+		public TreeNode( string text ) : this ( )
 		{
 			this.text = text;
 		}
@@ -38,11 +52,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public TreeNode( string text, int imageIndex, int selectedImageIndex ) : this ( text )
 		{
+			this.imageIndex = imageIndex;
+			this.selectedImageIndex = selectedImageIndex;
 		}
 
 		[MonoTODO]
 		public TreeNode( string text, int imageIndex, int selectedImageIndex, TreeNode[] children ) : this ( text, children )
 		{
+			this.imageIndex = imageIndex;
+			this.selectedImageIndex = selectedImageIndex;
 		}
 
 		// --- Public Properties
@@ -67,13 +85,11 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public bool Checked {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				return checked_;
 			}
-			set
-			{
-				throw new NotImplementedException ();
+			set {
+				checked_ = value;
 			}
 		}
 		[MonoTODO]
@@ -103,20 +119,21 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public IntPtr Handle {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				 if ( handle == IntPtr.Zero )
+					createNode ( );
+				 return handle; 
 			}
 		}
 		[MonoTODO]
 		public int ImageIndex {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( TreeView != null && TreeView.ImageIndex != 0 && imageIndex == 0 )
+					return TreeView.ImageIndex;
+				return imageIndex;
 			}
-			set
-			{
-				throw new NotImplementedException ();
+			set {
+				imageIndex = value;
 			}
 		}
 		[MonoTODO]
@@ -194,7 +211,7 @@ namespace System.Windows.Forms {
 		public TreeNodeCollection Nodes {
 			get {
 				if ( children == null )
-					children = new TreeNodeCollection ( this );
+					children = new TreeNodeCollection ( this, treeView );
 				return children;
 			}
 		}
@@ -218,13 +235,14 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public int SelectedImageIndex {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( TreeView != null && TreeView.SelectedImageIndex != 0 && selectedImageIndex == 0 )
+					return TreeView.SelectedImageIndex;
+
+				return selectedImageIndex;
 			}
-			set
-			{
-				//FIXME:
+			set {
+				selectedImageIndex = value;	
 			}
 		}
 		[MonoTODO]
@@ -245,12 +263,9 @@ namespace System.Windows.Forms {
 				text = value;
 			}
 		}
-		[MonoTODO]
+
 		public TreeView TreeView {
-			get
-			{
-				throw new NotImplementedException ();
-			}
+			get { return treeView; }
 		}
 		
 		// --- Public Methods
@@ -320,6 +335,58 @@ namespace System.Windows.Forms {
 		internal void setParent ( TreeNode parent )
 		{
 			this.parent = parent;
+		}
+			
+		internal void setHandle ( IntPtr hItem )
+		{
+			this.handle = hItem;
+		}
+
+		internal void setTreeView ( TreeView treeView )
+		{
+			this.treeView = treeView;
+			foreach ( TreeNode node in Nodes )
+				node.setTreeView ( treeView );
+		}
+
+		internal void makeTree ( IntPtr parent )
+		{
+			if ( handle == IntPtr.Zero )
+				handle = insertNode ( parent );
+
+			foreach ( TreeNode node in Nodes )
+				node.makeTree ( handle );
+		}
+
+		internal void createNode ( )
+		{
+			IntPtr parentHandle = IntPtr.Zero;
+
+			if ( Parent != null )
+				parentHandle = Parent.Handle;
+			else {
+				unchecked {
+					int intPtr = ( int ) TreeViewItemInsertPosition.TVI_ROOT;
+					parentHandle = (IntPtr) intPtr;
+				}
+			}
+
+			if ( parentHandle != IntPtr.Zero ) {
+				handle = insertNode ( parentHandle );
+			}
+		}
+
+		internal IntPtr insertNode (  IntPtr parent )
+		{
+			if ( TreeView != null ) {
+				TVINSERTSTRUCT insStruct = new TVINSERTSTRUCT ( );
+				insStruct.hParent = parent;
+
+				insStruct.item.mask = (uint) TreeViewItemFlags.TVIF_TEXT;
+				insStruct.item.pszText = Text;
+				return (IntPtr) Win32.SendMessage ( TreeView.Handle , TreeViewMessages.TVM_INSERTITEMA, 0, ref insStruct );
+			}
+			return IntPtr.Zero;
 		}
 	}
 }

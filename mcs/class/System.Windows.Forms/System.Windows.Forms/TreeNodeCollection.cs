@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -19,11 +20,13 @@ namespace System.Windows.Forms {
 
 		private TreeNode  owner;
 		private ArrayList list;
+		private TreeView  treeView;
 
-		internal TreeNodeCollection ( TreeNode owner )
+		internal TreeNodeCollection ( TreeNode owner, TreeView  treeView )
 		{
 			list = new ArrayList();
 			this.owner = owner;
+			this.treeView = treeView;
 		}
 		
 		public int Count {
@@ -60,7 +63,7 @@ namespace System.Windows.Forms {
 				throw new ArgumentException("Object already has a parent.", "node");
 
 			node.setParent( owner );
-
+			node.setTreeView ( treeView );
 			int index = list.Add( node );
 			return 	index;		
 		}

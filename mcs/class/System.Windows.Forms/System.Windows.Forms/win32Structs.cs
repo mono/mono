@@ -468,14 +468,14 @@ namespace System.Windows.Forms
 	#endregion
 
 	#region TVITEM
-	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	internal struct TVITEM 
 	{
-		internal	int      mask;
+		internal	uint      mask;
 		internal	IntPtr    hItem;
-		internal	int      state;
-		internal	int      stateMask;
-		internal	IntPtr    pszText;
+		internal	uint      state;
+		internal	uint      stateMask;
+		internal	string    pszText;
 		internal	int       cchTextMax;
 		internal	int       iImage;
 		internal	int       iSelectedImage;
@@ -641,9 +641,9 @@ namespace System.Windows.Forms
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
 	internal struct TVINSERTSTRUCT
 	{
-		internal int hParent;
-		internal int hInsertAfter;
-		internal TVITEM   item;
+		internal IntPtr hParent;
+		internal IntPtr hInsertAfter;
+		internal TVITEM item;
     }
 	#endregion
 

@@ -1,3 +1,8 @@
+2003-06-24 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* TreeNode.cs
+	* TreeNodeCollection.cs
+	* TreeView.cs : more implementation added
+
 2003-06-12 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Menu.cs
 	* ContextMenu.cs : create context menu using CreatePopupMenu function

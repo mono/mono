@@ -35,6 +35,7 @@ namespace System.Windows.Forms {
 		public TrackBar()
 		{
 		}
+		
 		//
 		// --- Public Properties
 		//
