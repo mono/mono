@@ -1,9 +1,21 @@
+2004-09-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* const.cs: Add more descriptive error report, tahnks to
+	Sebastien. 
+
 2004-09-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* ecore.cs (FieldExpr.DoResolveLValue): Fixed CS0198 report.
 
 2004-09-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: Apply patch from Ben: Remove dead code from
+	ArrayCreation, and remove the TurnintoConstant call in const.cs,
+	as that code just threw an exception anwyays.
+
+	* const.cs: Remove the call to the turnintoconstant, for details
+	see bug: #63144
+	
 	* literal.cs: The type of the null-literal is the null type;  So
 	we use a placeholder type (literal.cs:System.Null, defined here)
 	for it.

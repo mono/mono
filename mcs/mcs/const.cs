@@ -222,7 +222,9 @@ namespace Mono.CSharp {
 					Expr = ch_expr.Expr;
 				else if ((ec_expr != null) && (ec_expr.Child is Constant))
 					Expr = ec_expr.Child;
-				else {
+				else if (Expr is ArrayCreation){
+					Report.Error (133, Location, "Arrays can not be constant");
+				} else {
 					if (errors == Report.Errors)
 						Report.Error (150, Location, "A constant value is expected");
 					value = null;
