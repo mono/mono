@@ -151,7 +151,8 @@ namespace System.Xml.Schema
 		public XmlSchema Add (string targetNamespace, XmlReader reader)
 		{
 			XmlSchema schema = XmlSchema.Read (reader, handler);
-			if (targetNamespace != null)
+			if (targetNamespace != null
+				&& targetNamespace.Length > 0)
 				schema.TargetNamespace = targetNamespace;
 			Add (schema);
 			return schema;

@@ -1,5 +1,13 @@
 2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSet.cs : don't set TargetNamespace = "".
+
+2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaInferenceDesign.txt : added (incomplete though.)
+
+2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaValidationException.cs : added.
 
 2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
