@@ -4875,7 +4875,14 @@ namespace Mono.CSharp {
 		public Foreach (Expression type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
 		{
-			this.type = type;
+			if (type != null) {
+				this.type = type;
+			}
+			else
+			{
+				VariableInfo vi = var.VariableInfo;
+				this.type = vi.Type;
+			}
 			this.variable = var;
 			this.expr = expr;
 			statement = stmt;
