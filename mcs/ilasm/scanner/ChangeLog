@@ -1,6 +1,7 @@
 2003-08-10 Jackson Harper <jackson@latitudegeo.com>
 
-	* StringHelper.cs: If an escape is not valid just use the \ character.
+	* StringHelper.cs: If an escape is not valid just use the \
+	character. Fix bug where escape char was not getting set.
 		
 2003-08-03 Jackson Harper <jackson@latitudegeo.com>
 
