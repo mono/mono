@@ -1,3 +1,8 @@
+2003-11-18  Jackson Harper <jackson@ximian.com>
+
+	* MethodDef.cs: Add support for .zeroinit. This is just another
+	way of initializing locals.
+	
 2003-11-17  Jackson Harper <jackson@ximian.com>
 
 	* LdstrInstr.cs: Allow strings to be created as bytearrays.

@@ -38,6 +38,7 @@ namespace Mono.ILASM {
                 private ArrayList label_list;
                 private PEAPI.MethodDef methoddef;
                 private bool entry_point;
+                private bool zero_init;
                 private bool is_resolved;
                 private bool is_defined;
                 private ArrayList local_list;
@@ -70,6 +71,7 @@ namespace Mono.ILASM {
                         named_param_table = new Hashtable ();
 
                         entry_point = false;
+                        zero_init = false;
                         init_locals = false;
                         max_stack = -1;
                         pinvoke_info = false;
@@ -191,6 +193,11 @@ namespace Mono.ILASM {
                         entry_point = true;
                 }
 
+                public void ZeroInit ()
+                {
+                        zero_init = true;
+                }
+                
                 public void SetMaxStack (int max_stack)
                 {
                         this.max_stack = max_stack;
@@ -323,6 +330,9 @@ namespace Mono.ILASM {
                                 if (code_gen.Report.ErrorCount > ec)
                                         return;
 
+                                if (zero_init)
+                                        init_locals = true;
+                                
                                 methoddef.AddLocals (local_array, init_locals);
                         }
 
