@@ -1,3 +1,9 @@
+2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CallContext.cs: In CreateLogicalCallContext, added parameter which
+	specifies if an empty LogicalCallContext needs to be created if there are
+	no context values.
+
 2004-09-27  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MethodCallMessageWrapper.cs: The wrapper has to modify the wrapped

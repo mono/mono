@@ -77,16 +77,21 @@ namespace System.Runtime.Remoting.Messaging
 			Headers = headers;
 		}
 
-		internal static LogicalCallContext CreateLogicalCallContext ()
+		internal static LogicalCallContext CreateLogicalCallContext (bool createEmpty)
 		{
-			LogicalCallContext ctx = new LogicalCallContext ();
-			
-			if (datastore != null)
+			LogicalCallContext ctx = null;
+			if (datastore != null) {
 				foreach (DictionaryEntry entry in datastore)
-					if (entry.Value is ILogicalThreadAffinative)
+					if (entry.Value is ILogicalThreadAffinative) {
+						if (ctx == null) ctx = new LogicalCallContext ();
 						ctx.SetData ((string)entry.Key, entry.Value);
+					}
+			}
 
-			return ctx;
+			if (ctx == null && createEmpty)
+				return new LogicalCallContext ();
+			else
+				return ctx;
 		}
 
 		internal static object SetCurrentCallContext (LogicalCallContext ctx)
