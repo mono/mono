@@ -1,3 +1,9 @@
+2002-05-09  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data_test.build: exclude file TestDataColumn.cs
+	test.build files have two places where a file needs to
+	be excluded
+
 2002-05-06  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.SqlTypes.SqlInt32Test.cs: missing

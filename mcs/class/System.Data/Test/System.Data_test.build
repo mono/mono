@@ -45,6 +45,8 @@
 				<excludes name="TestSqlInsert.cs"/>
 				<excludes name="TestSqlIsolationLevel.cs"/>
 				<excludes name="PostgresTest.cs"/>
+				<excludes name="TestDataColumn.cs"/>
+
 
 			</sources>
 			<references basedir="..\..\..\nunit">
