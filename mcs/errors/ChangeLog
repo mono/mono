@@ -1,3 +1,7 @@
+2002-08-02  Martin Baulig  <martin@gnome.org>
+
+	* cs0155.cs, cs0155-2.cs: New tests.
+
 2002-07-06  Andrew Birkett  <adb@tardis.ed.ac.uk>
 
 	* cs1039.cs, cs1033.cs, cs1010.cs: New tests.
