@@ -46,6 +46,19 @@ This option is used to precompile the CIL code in the specified
 assembly to native code.  The generated code is stored in a file with
 the extension .so.  This file will be automatically picked up by the
 runtime when the assembly is executed.  
+.Sp 
+Ahead-of-Time compilation is most useful if you use it in combination
+with the -O=all,-shared flag which enables all of the optimizations in
+the code generator to be performed.  Some of those optimizations are
+not practical for Just-in-Time compilation since they might be very
+time consuming.
+.Sp
+Unlike the .NET Framework, Ahead-of-Time compilation will not generate
+domain independent code: it generates the same code that the
+Just-in-Time compiler would produce.   Since most applications use a
+single domain, this is fine.   If you want to optimize the generated
+code for use in multi-domain applications, consider using the
+-O=shared flag.
 .Sp
 This pre-compiles the methods, but the original assembly is still
 required to execute as this one contains the metadata and exception
