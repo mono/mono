@@ -1,3 +1,8 @@
+2004-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* locales.c: When creating the current culture use the $LANGs
+	specific culture. So DateTimeFormat and NumberFormat entries are created.
+	
 2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* string-icalls.{h,c} icalls.c: Add new icalls for Strcpy which take
