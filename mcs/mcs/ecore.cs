@@ -2875,6 +2875,10 @@ namespace Mono.CSharp {
 			this.child = child;
 		}
 
+		public Expression Child {
+			get { return child; }
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			// This should never be invoked, we are born in fully

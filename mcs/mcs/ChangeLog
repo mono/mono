@@ -1,5 +1,14 @@
 2002-11-17  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (EmptyCast.Child): New public property.
+
+	* statement.cs (SwitchLabel.ResolveAndReduce): Check whether the
+	label resolved to an EmptyCast.  Fixes #34162.
+	(GotoCase.Resolve): Likewise.
+	(Block.EmitMeta): Likewise.
+
+2002-11-17  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.BetterConversion): Prefer int over
 	uint; short over ushort; long over ulong for integer literals.
 	Use ImplicitConversionExists instead of StandardConversionExists
