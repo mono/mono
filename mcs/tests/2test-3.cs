@@ -10,6 +10,12 @@ class X {
 		foreach (int a in args)
 			yield a;
 	}
+
+	static IEnumerable GetMulti (int [,] args)
+	{
+		foreach (int a in args)
+			yield a;
+	}
 	
 	static int Main ()
 	{
@@ -18,8 +24,18 @@ class X {
 			Console.WriteLine ("Got: " + i);
 			total += i;
 		}
+
 		if (total != 6)
 			return 1;
+
+		total = 0;
+		foreach (int i in GetMulti (new int [,] { { 10, 20 }, { 30, 40}})){
+			Console.WriteLine ("Got: " + i);
+			total += i;
+		}
+		if (total != 100)
+			return 2;
+		
 		return 0;
 	}
 }
