@@ -21,7 +21,7 @@ namespace Microsoft.JScript {
 	}
 	
 	public class Unary : UnaryOp {
-		
+
 		internal Unary (AST parent, AST operand, JSToken oper)
 		{			
 			this.parent = parent;
@@ -380,10 +380,8 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			if (name == "print")
-				return SemanticAnalyser.print;
-			
+				return SemanticAnalyser.print;			
 			object bind = context.Contains (name);
-
 			if (bind == null)
 				throw new Exception ("variable not found: " +  name);
 			else
@@ -414,25 +412,44 @@ namespace Microsoft.JScript {
 			if (binding is FormalParam) {
 				FormalParam f = binding as FormalParam;
 				ig.Emit (OpCodes.Ldarg_S, f.pos);
-			} else if (binding is VariableDeclaration) {
-				VariableDeclaration bind = binding as VariableDeclaration;
-				FieldInfo field_info = bind.field_info;
-				LocalBuilder local_builder = bind.local_builder;
+			} else if (binding is VariableDeclaration || binding is Try) {
+				FieldInfo field_info = extract_field_info (binding);
+				LocalBuilder local_builder = extract_local_builder (binding);
 				
 				if (field_info != null) {
 					if (assign)
-						ig.Emit (OpCodes.Stsfld, bind.field_info);
+						ig.Emit (OpCodes.Stsfld, field_info);
 					else
-						ig.Emit (OpCodes.Ldsfld, bind.field_info);
+						ig.Emit (OpCodes.Ldsfld, field_info);
 				} else if (local_builder != null) {
 					if (assign)
-						ig.Emit (OpCodes.Stloc, bind.local_builder);
+						ig.Emit (OpCodes.Stloc, local_builder);
 					else
-						ig.Emit (OpCodes.Ldloc, bind.local_builder);
+						ig.Emit (OpCodes.Ldloc, local_builder);
 				}
 			} 
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
+		}
+
+		internal FieldInfo extract_field_info (AST a)
+		{
+			FieldInfo r = null;
+			if (a is VariableDeclaration)
+				r = ((VariableDeclaration) a).field_info;
+			else if (a is Try)
+				r = ((Try) a).field_info;
+			return r;
+		}
+		
+		internal LocalBuilder extract_local_builder (AST a)
+		{
+			LocalBuilder r = null;
+			if (a is VariableDeclaration)
+				r = ((VariableDeclaration) a).local_builder;
+			else if (a is Try)
+				r = ((Try) a).local_builder;
+			return r;
 		}
 	}
 
