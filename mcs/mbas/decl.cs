@@ -421,7 +421,7 @@ namespace Mono.CSharp {
 			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent){
-					Report.Error (246, loc, "Cannot find type '"+ e +"'");
+					Report.Error (246, loc, "Cannot find type `"+ e +"'");
 				}
 				return null;
 			}
@@ -444,7 +444,7 @@ namespace Mono.CSharp {
 			parent = (DeclSpace) RootContext.Tree.Decls [name];
 			if (parent == null)
 				return null;
-				
+			
 			t = parent.DefineType ();
 			if (t == null){
 				Report.Error (146, Location, "Class definition is circular: `"+name+"'");

@@ -22,6 +22,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -165,6 +166,21 @@ namespace Mono.CSharp {
 			Report.Error (70, l, "The event '" + ei.Name +
 				      "' can only appear on the left-side of a += or -= (except when" +
 				      " used from within the type '" + ei.DeclaringType + "')");
+		}
+
+		bool IsLateIndexSet(Expression target, EmitContext ec)
+		{
+			if (target is Invocation) 
+			{
+				Invocation i = (Invocation) target;
+				if (i.Expr is MethodGroupExpr) 
+				{
+					MethodGroupExpr mg = (MethodGroupExpr) i.Expr;
+					if (mg.Name == "LateIndexSet")
+						return true;
+				}
+			}
+			return false;
 		}
 
 		//
@@ -339,7 +355,13 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			
+			if (IsLateIndexSet(target, ec)) 
+			{
+				// then we must rewrite the whole expression, since 
+				// THIS assign is no longer valid/needed
+				Invocation i = (Invocation) target;
+				return i;
+			}
 			source = ConvertImplicitRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;

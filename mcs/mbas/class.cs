@@ -190,7 +190,9 @@ namespace Mono.CSharp {
 			AdditionResult res;
 			
 			if ((res = IsValid (c.Basename)) != AdditionResult.Success)
-				return res;			
+				return res;
+				
+	
 					
 			DefineName (c.Name, c);
 			types.Add (c);
@@ -1970,7 +1972,7 @@ namespace Mono.CSharp {
 			Modifiers.ABSTRACT |
 			Modifiers.SEALED |
 			Modifiers.UNSAFE;
-
+		
 		public Class (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (parent, name, l)
 		{
@@ -2467,17 +2469,17 @@ namespace Mono.CSharp {
 				loc);
 			
 			if (parent_constructor_group == null){
-				Report.Error (1501, loc,
-				       "Can not find a constructor for this argument list");
+				string s = String.Format ("'{0}': Can not find a constructor for this argument list", t);
+				Report.Error (1501, loc, s);
 				return false;
 			}
-			
+
 			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (ec, 
 				(MethodGroupExpr) parent_constructor_group, argument_list, loc);
 			
 			if (parent_constructor == null){
-				Report.Error (1501, loc,
-				       "Can not find a constructor for this argument list");
+				string s = String.Format ("'{0}': Can not find a constructor for this argument list", t);
+				Report.Error (1501, loc, s);
 				return false;
 			}
 			

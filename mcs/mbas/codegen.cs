@@ -310,6 +310,11 @@ namespace Mono.CSharp {
 		///  Whether we are inside an unsafe block
 		/// </summary>
 		public bool InUnsafe;
+		
+		/// <summary>
+		///  Whether we are inside an unsafe block
+		/// </summary>
+		public bool InvokingOwnOverload;		
 
 		/// <summary>
 		///   Location for this EmitContext
@@ -332,6 +337,8 @@ namespace Mono.CSharp {
 		///   we relax the rules
 		/// </summary>
 		public bool InEnumContext;
+		
+		public string BlockName;
 
 		protected Stack FlowStack;
 		
@@ -349,6 +356,8 @@ namespace Mono.CSharp {
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
+			BlockName = "";
+			InvokingOwnOverload = false;
 			
 			if (parent != null){
 				// Can only be null for the ResolveType contexts.
@@ -501,8 +510,8 @@ namespace Mono.CSharp {
 		{
 			bool has_ret = false;
 
-//			Console.WriteLine ("Emitting: " + loc);
-
+			//Console.WriteLine ("Emitting: '{0}", bname);
+			BlockName = bname;
 			if (CodeGen.SymbolWriter != null)
 				Mark (loc);
 

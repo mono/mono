@@ -726,11 +726,12 @@ namespace Mono.Languages
 					break;	
 				}	
 			}	
-			
-			Type t = TypeManager.LookupType(RootContext.RootNamespace + "." + RootContext.MainClass);
-			if (t != null) 
-				isForm = t.IsSubclassOf (TypeManager.LookupType("System.Windows.Forms.Form"));
-	
+			string mainclass = RootContext.RootNamespace + "." + RootContext.MainClass;
+			if (mainclass != ".") {
+				Type t = TypeManager.LookupType(mainclass);
+				if (t != null) 
+					isForm = t.IsSubclassOf (TypeManager.LookupType("System.Windows.Forms.Form"));
+			}
 			return (hasSWF && isForm);
 		}
 		

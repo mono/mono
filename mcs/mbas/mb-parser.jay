@@ -270,7 +270,7 @@ namespace Mono.MonoBASIC
 %token STEP
 %token STOP
 %token STRICT	
-%token STRING	
+%token STRING
 %token STRUCTURE
 %token SUB
 %token SUMMARY // MonoBASIC extension
@@ -777,7 +777,6 @@ class_declaration
 		string name;
 		
 		name = MakeName ((string) $2);
-
 		new_class = new Class (current_container, name, current_modifiers, 
 				       (Attributes) current_attributes, lexer.Location);
 
@@ -839,10 +838,10 @@ modifier
 	| SHARED		{ $$ = Modifiers.STATIC; }
 	| FRIEND		{ $$ = Modifiers.INTERNAL; }
 	| OVERRIDES 		{ $$ = Modifiers.OVERRIDE; }
-	| OVERRIDABLE		{ $$ = 0; }
+	| OVERRIDABLE		{ $$ = Modifiers.VIRTUAL; }
 	| NOTOVERRIDABLE	{ $$ = 0; }
 	| OVERLOADS		{ $$ = 0; }
-	| MUSTINHERIT		{ $$ = 0; }
+	| MUSTINHERIT		{ $$ = Modifiers.ABSTRACT; }
 	;
 
 module_declaration
@@ -950,7 +949,9 @@ class_member_declarator
 	|  property_declaration			
 	|  event_declaration	
 	|  withevents_declaration	/* This is a field but must be treated specially, see below */
-	|  type_declaration			
+	/*|  type_declaration  */
+	|  class_declaration		
+	|  enum_declaration		
 	;
 	
 	
@@ -973,14 +974,13 @@ must_override_sub_declaration
 	  		
 	  	if (current_container is Struct)
 	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
+	  	
+	  	current_modifiers |= Modifiers.ABSTRACT;
 	  			  	
 	  	Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $3,
 					    (Parameters) $5, null, null, lexer.Location);
 					    
-
-//		if (current_container is Class)	    
-//			((Class)current_container).MustOverride.Add (method);
-//		else
+		if (!(current_container is Class))
 			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");		
 			
 		// FIXME ASAP: This will crash the compiler at resolution time			
@@ -996,13 +996,13 @@ must_override_func_declaration
 	  		
 	  	if (current_container is Struct)
 	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
-	  			  	
+	  			
+		current_modifiers |= Modifiers.ABSTRACT;
+			  			  	
 	  	Method method = new Method ((Expression) $8, (int) current_modifiers, (string) $3,
 					    (Parameters) $5, null, null, lexer.Location);
 					    
-//		if (current_container is Class)	    
-//			((Class)current_container).MustOverride.Add (method);
-//		else
+		if (!(current_container is Class))
 			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");
 			
 		// FIXME ASAP: This will crash the compiler at resolution time			
@@ -1013,7 +1013,6 @@ must_override_func_declaration
 sub_declaration
 	: SUB identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_evt_handler opt_implement_clause EOL
 	  { 
-	  	
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
 
@@ -1103,10 +1102,13 @@ func_declaration
 		Method method = new Method ((Expression) $7, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, null, 
 					    (Expression) $7, lexer.Location);
-	
 		method.Block = end_block();
 		$$ = method;
-
+	/*Console.WriteLine ("Declaring Function '{0}' with {1} statements and {2} arguments", 
+				current_container.Name + "." + (string) $2, 
+				method.Block.statements.Count,
+				current_local_parameters.FixedParameters != null ? current_local_parameters.FixedParameters.Length : 0);
+*/
 	  }	  
 	;		
 
@@ -1191,12 +1193,15 @@ enum_declaration
 	  opt_enum_member_declarations
 	  { 
 		Location enum_location = lexer.Location;
-		Expression enum_type = ($3 == null) ? TypeManager.system_int32_expr : (Expression) $3;
 		string full_name = MakeName ((string) $2);
-		Mono.CSharp.Enum e = new Mono.CSharp.Enum (current_container, enum_type, (int) current_modifiers, full_name, 
-				   (Attributes) current_attributes, enum_location);
+		Expression enum_type = ($3 == null) ? TypeManager.system_int32_expr : (Expression) $3;
+		ArrayList enum_members = (ArrayList) $5;
 		
-		foreach (VariableDeclaration ev in (ArrayList) $5) {
+		Mono.CSharp.Enum e = new Mono.CSharp.Enum (current_container, enum_type, 
+					(int) current_modifiers, full_name, 
+				   	(Attributes) current_attributes, enum_location);
+		
+		foreach (VariableDeclaration ev in enum_members) {
 			Location loc = (Location) ev.Location;
 
 			CheckDef (e.AddEnumMember (ev.identifier, 
@@ -1376,6 +1381,13 @@ interface_property_declaration
 					    lexer.Location);
 	  }
 	;
+	
+opt_access_specifier
+	: /* empty */
+	| READONLY 	{ $$ = Modifiers.READONLY; }
+	| WRITEONLY	{ $$ = 0; }
+	| DEFAULT	{ $$ = 0; }
+	;	
 
 interface_event_declaration
 	: opt_attributes opt_new EVENT type identifier EOL
@@ -1386,12 +1398,12 @@ interface_event_declaration
 	;
 
 property_declaration
-	  : PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
+	  : opt_access_specifier PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
 	  {
-		get_implicit_value_parameter_type = (Expression) $5;
-		get_implicit_value_parameter_name = (string) $2;
+		get_implicit_value_parameter_type = (Expression) $6;
+		get_implicit_value_parameter_name = (string) $3;
 		
-		current_local_parameters = (Parameters) $3;
+		current_local_parameters = (Parameters) $4;
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
 			get_parameters = current_local_parameters.Copy (lexer.Location);
 			set_parameters = current_local_parameters.Copy (lexer.Location);
@@ -1411,7 +1423,7 @@ property_declaration
 		lexer.PropertyParsing = false;
 
 		Property prop;
-		Pair pair = (Pair) $9;
+		Pair pair = (Pair) $10;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
@@ -1421,9 +1433,9 @@ property_declaration
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;				
 			
-		prop = new Property ((Expression) $5, (string) $2, current_modifiers, get_block, set_block,
+		prop = new Property ((Expression) $6, (string) $3, current_modifiers, get_block, set_block,
 				     current_attributes, loc, set_implicit_value_parameter_name, 
-				     get_parameters, set_parameters, (Expression) $6);
+				     get_parameters, set_parameters, (Expression) $7);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		get_implicit_value_parameter_type = null;
@@ -1695,6 +1707,10 @@ constructor_declaration
 		c.ModFlags = (int) current_modifiers;
 		c.OptAttributes = current_attributes;
 		
+		// FIXME: This should happen at grammar level, but doing it
+		// triggers a lot of conflicts/problems.
+		c.Initializer = FixConstructorInitializer (ref c.Block.statements);
+
 		CheckDef (current_container.AddConstructor(c), c.Name, c.Location);
 		current_local_parameters = null;
 	  }
@@ -1912,39 +1928,41 @@ iteration_statement
 	;
 
 foreach_statement
-	: FOR EACH IDENTIFIER IN 
+	: FOR EACH identifier IN 
 	  {
 		oob_stack.Push (lexer.Location);
 	  }	  
 	  expression EOL
 	  {
-		oob_stack.Push (current_block);
-
-		Block foreach_block = new Block (current_block, true);
-		LocalVariableReference v = null;
+		
+		start_block();
+		Block foreach_block = current_block;
 		Location l = lexer.Location;		
-		v = new LocalVariableReference (foreach_block, (string) $3, l, null, false);
-		current_block = foreach_block;
+		LocalVariableReference v = null;
+		VariableInfo vi;
 
+		vi = foreach_block.GetVariableInfo ((string) $3);
+		if (vi != null) {
+			// Get a reference to this variable.
+			v = new LocalVariableReference (foreach_block, (string) $3, l, vi, false);
+		}
+	
 		oob_stack.Push (v);
-		oob_stack.Push (current_block);
 	  } 	  
 	  opt_statement_list
 	  NEXT opt_identifier
 	  {
-		Block foreach_block = (Block) oob_stack.Pop ();
+		Block foreach_block = current_block;
 		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
-		Block prev_block = (Block) oob_stack.Pop ();
+		Block prev_block = end_block();
 		Location l = (Location) oob_stack.Pop ();
 
-		current_block = prev_block;
-
+		Foreach f = null;
 		if (v != null) {
-			Foreach f = new Foreach (null, v, (Expression) $6, (Statement) $9, l);
-			foreach_block.AddStatement (f);
+			f = new Foreach (null, v, (Expression) $6, (Statement) $9, l);
 		}
-
-		$$ = foreach_block;
+		
+		$$ = f;
 	  }	  
 	;
 
@@ -1954,6 +1972,18 @@ try_statement
 	| try_catch_finally
 	;
 				
+try_header
+	: TRY EOL
+	  {   
+		start_block();  
+	  }
+	  opt_statement_list 
+	  opt_catch_clauses
+	  {
+	  	tmp_catch_clauses = (ArrayList) $5;
+	  }
+	;
+					
 try_catch
 	: try_header 
 	  END TRY
@@ -2004,19 +2034,7 @@ try_catch_finally
 		$$ = new Try ((Block) tmp_block, s, g, (Block) end_block(), lexer.Location);
 	
 	  }	
-	  ;	  
-	
-try_header
-	: TRY EOL
-	  {   
-		start_block();  
-	  }
-	  opt_statement_list 
-	  opt_catch_clauses
-	  {
-	  	tmp_catch_clauses = (ArrayList) $5;
-	  }
-	;	
+	  ;	  	
 
 opt_catch_clauses
 	: /* empty */  {  $$ = null;  }
@@ -2210,11 +2228,11 @@ selection_statement
 	;
 
 if_statement
-	: if_statement_open if_statement_rest
+	: if_statement_open opt_then if_statement_rest
 	  {
-		$$ = $2;
+		$$ = $3;
 	  }
-	| if_statement_open embedded_statement
+	| if_statement_open THEN embedded_statement
 	  {
 	  	Location l = (Location) oob_stack.Pop ();
 	  	$$ = new If ((Expression) tmp_expr, end_block(), l);
@@ -2222,7 +2240,7 @@ if_statement
 	;
 	
 if_statement_open
-	: IF boolean_expression THEN 
+	: IF boolean_expression 
 	  {
 	   	oob_stack.Push (lexer.Location);
 	   	start_block();
@@ -2230,6 +2248,11 @@ if_statement_open
 	  }
 	 ;
 
+opt_then
+	: /* empty */
+	| THEN
+	;
+	
 if_statement_rest
 	: EOL
 	  opt_statement_list
@@ -2402,11 +2425,19 @@ array_creation_expression
 	  {
 	  	New n = (New) $1;
 	  	string dims = "";
-	  	foreach (Argument a in n.Arguments) {
-	  		dims += (((IntLiteral)a.Expr).AsString() + ",");
-	  	}
-	  	dims = "[" + dims.Substring (0, dims.Length - 1) + "]";
-
+	  	
+	  	if (n.Arguments != null) {
+		  	foreach (Argument a in n.Arguments) {
+		  		if (a.Expr is EmptyExpression)
+		  			dims += ",";
+		  		else
+		  			dims += (((IntLiteral)a.Expr).AsString() + ",");
+		  	}
+			dims = "[" + dims.Substring (0, dims.Length - 1) + "]";
+		}
+		else
+			dims = "[]";
+			
 	  	Expression atype = n.RequestedType;
   	
 	  	if (VariableDeclaration.IndexesSpecified(dims)) {
@@ -2418,7 +2449,7 @@ array_creation_expression
 	  	else
 	  	{
 	  		//$$ = new ArrayCreation (atype, dims, (ArrayList) $2, lexer.Location); 
-	  		$$ = new ArrayCreation (atype, "", (ArrayList) $2, lexer.Location); 
+	  		$$ = new ArrayCreation (atype, dims, (ArrayList) $2, lexer.Location); 
 	  	}
 	  	//Console.WriteLine ("Creating a new array of type " + (atype.ToString()) + " with rank '" + dims + "'");
 	  }
@@ -2495,8 +2526,27 @@ variable_declarator
 	  	string varname = (string)$1;
 	  	string dims = "[]";
 	  	object varinit = $3;
-	  	Expression vartype = (Expression) $2;
+	  	Expression vartype;
 	  	
+	  	// Some checking is required for particularly weird declarations
+	  	if ($2 is Pair) {
+	  		vartype = (Expression) ((Pair) $2).First;
+	  		if ($3 != null && $3 is ArrayList)
+	  			Report.Error (205, "End of statement expected.");
+	  			
+			ArrayList args = (ArrayList) ((Pair) $2).Second;
+			if (VariableDeclaration.HasExplicitIndexes (args))	  
+				Report.Error (638, "Array bounds cannot appear in type specifiers.");	
+				
+			varname += "[";
+			if (args != null)
+				for (int x = 0; x < args.Count; x++)
+					varname += ",";
+				
+			varname += "]";							
+	  	}
+	  	else
+	  		vartype = (Expression) $2;
 	  	/*
 	  	   Check for a declaration like Dim a(2) or Dim a(2,3)
 	  	   If this is the case, we must generate an ArrayCreationExpression
@@ -2526,7 +2576,7 @@ variable_declarator
 			}
 		}
 	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
-	  	//Console.WriteLine ("varname: {0} - vartype: {1} - dims: {2}", varname, vartype, dims);
+	  	//Console.WriteLine ("varname: {0} - vartype: {1} - init: {2}", varname, vartype, varinit);
 	  }
 	;
 
@@ -2555,10 +2605,10 @@ opt_type_decl
 	  {
 	  	$$ = $1;
 	  }
-	| AS type OPEN_PARENS opt_argument_list CLOSE_PARENS 
+	| AS type OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-	  	Report.Error (30638, "Array bounds cannot appear in type specifiers");
-	  	$$ = null;
+	  	// Report.Error (30638, "Array bounds cannot appear in type specifiers");
+	  	$$ = new Pair ($2, $4);;
 	  }
 	| AS NEW type
 	  {
@@ -2754,8 +2804,9 @@ primary_expression
 	| invocation_expression
 	//| element_access
 	| this_access
-	//| base_access
+	| base_access
 	| new_expression
+	| cast_expression
 	;
 
 literal
@@ -2808,7 +2859,7 @@ member_access
 	  }
 	| primary_expression DOT NEW
 	  {
-		$$ = new MemberAccess ((Expression) $1, (string) "New", lexer.Location);
+		$$ = new MemberAccess ((Expression) $1, (string) ".ctor", lexer.Location);
 	  }	  
 	| predefined_type DOT identifier
 	  {
@@ -2828,18 +2879,20 @@ invocation_expression
 			Report.Error (1, l, "THIS IS CRAZY");
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
-	  }
-	| MYBASE DOT identifier OPEN_PARENS opt_argument_list CLOSE_PARENS
-	  {
-		BaseAccess ba = new BaseAccess ((string) $3, lexer.Location);
-		$$ = new Invocation ((Expression) ba, (ArrayList) $5, lexer.Location);
-	  }  
-	| MYBASE DOT NEW OPEN_PARENS opt_argument_list CLOSE_PARENS
-	  {
-		BaseAccess ba = new BaseAccess ("New", lexer.Location);
-		$$ = new Invocation ((Expression) ba, (ArrayList) $5, lexer.Location);
-	  }  	    
+//		Console.WriteLine ("Invocation: {0} with {1} arguments", $1, ($3 != null) ? ((ArrayList) $3).Count : 0);
+	  } 
 	;
+	
+base_access
+	: MYBASE DOT IDENTIFIER
+	  {
+		$$ = new BaseAccess ((string) $3, lexer.Location);
+	  }
+	| MYBASE DOT NEW
+	  {
+		$$ = new BaseAccess ("New", lexer.Location);
+	  }
+	;	
 
 opt_argument_list
 	: argument_list
@@ -2972,7 +3025,7 @@ unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
 	  }
-	| cast_expression
+	/*| cast_expression */
 	;
 
 cast_expression
@@ -2980,7 +3033,7 @@ cast_expression
 	  {
 		  $$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
 	  }  	
-	| CTYPE OPEN_PARENS expression COMMA expression CLOSE_PARENS
+	| CTYPE OPEN_PARENS expression COMMA type CLOSE_PARENS
 	  {
 		  $$ = new Cast ((Expression) $5, (Expression) $3, lexer.Location);
 	  } 	  	  	  
@@ -3107,6 +3160,11 @@ equality_expression
 		$$ = new Binary (Binary.Operator.Equality,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
+	| equality_expression OP_NE relational_expression
+	  {
+		$$ = new Binary (Binary.Operator.Inequality, 
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }	  
 	;
 
 and_expression
@@ -3154,6 +3212,34 @@ assignment_expression
 	  { 
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
+	| prefixed_unary_expression OP_MULT_ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Multiply, (Expression) $1, (Expression) $3, l);
+	  }
+	| prefixed_unary_expression OP_DIV_ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Division, (Expression) $1, (Expression) $3, l);
+	  }
+	| prefixed_unary_expression OP_ADD_ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Addition, (Expression) $1, (Expression) $3, l);
+	  }
+	| prefixed_unary_expression OP_SUB_ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, l);
+	  }	  
 	;
 
 constant_expression
@@ -3251,6 +3337,7 @@ integral_type
 	| SHORT		{ $$ = TypeManager.system_int16_expr; }
 	| LONG		{ $$ = TypeManager.system_int64_expr; }
 	| INTEGER	{ $$ = TypeManager.system_int32_expr; }
+	| CHAR		{ $$ = TypeManager.system_char_expr; }
 /*
 	| SBYTE		{ $$ = TypeManager.system_sbyte_expr; }
 	| UINT		{ $$ = TypeManager.system_uint32_expr; }
@@ -3486,7 +3573,21 @@ public class VariableDeclaration {
 				res = res + dims[x];
 		}				
 		return (res);
-	}		
+	}	
+	
+	public static bool HasExplicitIndexes (ArrayList a)
+	{
+		bool res = false;
+		
+		if (a != null) {
+			foreach (Expression e in a) 
+				if (!(e is EmptyExpression)) {
+					res = true;
+					break;
+				}
+		}			
+		return res;			
+	}
 	
 	public static ArrayList ParseIndexList (string dims)
 	{
@@ -3659,7 +3760,29 @@ private void RemoveHandler (Expression evt_definition, string handler_name)
 	RemoveHandler (current_block, evt_definition, handler_name);
 }
 
-
+private ConstructorInitializer FixConstructorInitializer (ref ArrayList s)
+{
+	ConstructorInitializer ci = null;
+	
+	if (s.Count > 0) {
+		if (s[0] is StatementExpression && ((StatementExpression) s[0]).expr is Invocation) {
+			Invocation i = (Invocation) ((StatementExpression) s[0]).expr;
+			
+			if (i.expr is BaseAccess) {
+				BaseAccess ba = (BaseAccess) i.expr;
+				if (ba.member == "New" || ba.member == ".ctor") {
+					ci = new ConstructorBaseInitializer (i.Arguments, current_local_parameters, lexer.Location);
+					s.Remove(0);
+				}
+			}
+			if (i.expr.ToString() == "Mono.CSharp.This..ctor") {
+				ci = new ConstructorThisInitializer (i.Arguments, current_local_parameters, lexer.Location); 
+				s.Remove(0);
+			}
+		}
+	}
+	return ci;
+}
 
 void Error_ExpectingTypeName (Location l, Expression expr)
 {

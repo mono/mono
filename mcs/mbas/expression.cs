@@ -3136,10 +3136,10 @@ namespace Mono.CSharp {
 	public class Invocation : ExpressionStatement {
 		public ArrayList Arguments;
 
-		Expression expr;
+		public Expression expr;
 		MethodBase method = null;
 		bool is_base;
-
+		bool is_left_hand; // Needed for late bound calls
 		static Hashtable method_parameter_cache;
 		static MemberFilter CompareName;
 
@@ -3977,6 +3977,12 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+	
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			this.is_left_hand = true;
+			return DoResolve (ec);
+		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -3985,14 +3991,23 @@ namespace Mono.CSharp {
 			// trigger the invocation
 			//
 			Expression expr_to_return = null;
-
+		
 			if (expr is BaseAccess)
 				is_base = true;
 
-			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			if ((ec.ReturnType != null) && (expr.ToString() == ec.BlockName)) {
+				ec.InvokingOwnOverload = true;
+				expr = expr.Resolve (ec, ResolveFlags.MethodGroup);
+				ec.InvokingOwnOverload = false;
+			}
+			else				
+			{
+				ec.InvokingOwnOverload = false;
+				expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			}	
 			if (expr == null)
 				return null;
-		
+
 			if (expr is Invocation) {
 				// FIXME Calls which return an Array are not resolved (here or in the grammar)
 				expr = expr.Resolve(ec);
@@ -4025,7 +4040,7 @@ namespace Mono.CSharp {
 						return null;				
 				}
 			}
-
+			
 			if (expr is MethodGroupExpr) 
 			{
 				MethodGroupExpr mg = (MethodGroupExpr) expr;
@@ -4083,18 +4098,50 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (expr is FieldExpr || expr is LocalVariableReference) {
-				// If we are here, expr must be an ArrayAccess
-				// FIXME: we should check dimensions, etc.
-				ArrayList idxs = new ArrayList();
-				foreach (Argument a in Arguments) 
-				{
-					idxs.Add (a.Expr);
+			if (expr is FieldExpr || expr is LocalVariableReference || expr is ParameterReference) {
+				if (expr.Type.IsArray) {
+					// If we are here, expr must be an ArrayAccess
+					ArrayList idxs = new ArrayList();
+					foreach (Argument a in Arguments)
+					{
+						idxs.Add (a.Expr);
+					}
+					ElementAccess ea = new ElementAccess (expr, idxs, expr.Location);
+					ArrayAccess aa = new ArrayAccess (ea, expr.Location);
+					expr_to_return = aa.DoResolve(ec);
+					expr_to_return.eclass = ExprClass.Variable;
 				}
-				ElementAccess ea = new ElementAccess (expr, idxs, expr.Location);
-				ArrayAccess aa = new ArrayAccess (ea, expr.Location);
-				expr_to_return = aa.DoResolve(ec);
-				expr_to_return.eclass = ExprClass.Variable;
+				else
+				{
+					// We can't resolve now, but we
+					// have to try to access the array with a call
+					// to LateIndexGet/Set in the runtime
+					Expression lig_call_expr;
+
+					if (!is_left_hand)
+						lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", Location.Null);
+					else
+						lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexSet", Location.Null);
+					Expression obj_type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", Location.Null);
+					ArrayList adims = new ArrayList();
+
+					ArrayList ainit = new ArrayList();
+					foreach (Argument a in Arguments)
+						ainit.Add ((Expression) a.Expr);
+
+					adims.Add ((Expression) new IntLiteral (Arguments.Count));
+
+					Expression oace = new ArrayCreation (obj_type, adims, "", ainit, Location.Null);
+
+					ArrayList args = new ArrayList();
+					args.Add (new Argument(expr, Argument.AType.Expression));
+					args.Add (new Argument(oace, Argument.AType.Expression));
+					args.Add (new Argument(NullLiteral.Null, Argument.AType.Expression));
+
+					Expression lig_call = new Invocation (lig_call_expr, args, Location.Null);
+					expr_to_return = lig_call.Resolve(ec);
+					expr_to_return.eclass = ExprClass.Variable;
+				}
 			}
 
 			return expr_to_return;
@@ -6118,7 +6165,7 @@ namespace Mono.CSharp {
 		ElementAccess ea;
 
 		LocalTemporary [] cached_locations;
-		
+
 		public ArrayAccess (ElementAccess ea_data, Location l)
 		{
 			ea = ea_data;
@@ -6140,35 +6187,35 @@ namespace Mono.CSharp {
 #endif
 
 			Type t = ea.Expr.Type;
-			
+/*
 			if (t == typeof (System.Object))
 			{
 				// We can't resolve now, but we
 				// have to try to access the array with a call
 				// to LateIndexGet in the runtime
-				
+
 				Expression lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", Location.Null);
 				Expression obj_type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", Location.Null);
 				ArrayList adims = new ArrayList();
-				
-				ArrayList ainit = new ArrayList(); 
+
+				ArrayList ainit = new ArrayList();
 				foreach (Argument a in ea.Arguments)
-					ainit.Add ((Expression) a.Expr);		
-						
+					ainit.Add ((Expression) a.Expr);
+
 				adims.Add ((Expression) new IntLiteral (ea.Arguments.Count));
-				
+
 				Expression oace = new ArrayCreation (obj_type, adims, "", ainit, Location.Null);
-				
+
 				ArrayList args = new ArrayList();
 				args.Add (new Argument(ea.Expr, Argument.AType.Expression));
 				args.Add (new Argument(oace, Argument.AType.Expression));
 				args.Add (new Argument(NullLiteral.Null, Argument.AType.Expression));
-				
+
 				Expression lig_call = new Invocation (lig_call_expr, args, Location.Null);
 				lig_call = lig_call.Resolve(ec);
 				return lig_call;
 			}
-						
+*/
 			if (t.GetArrayRank () != ea.Arguments.Count){
 				ea.Error (22,
 					  "Incorrect number of indexes for array " +
@@ -6674,7 +6721,7 @@ namespace Mono.CSharp {
 	///   The base operator for method names
 	/// </summary>
 	public class BaseAccess : Expression {
-		string member;
+		public string member;
 		
 		public BaseAccess (string member, Location l)
 		{

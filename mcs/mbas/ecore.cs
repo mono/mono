@@ -323,9 +323,11 @@ namespace Mono.CSharp {
 						ec.ContainerType, ec.ContainerType, AllMemberTypes,
 						AllBindingFlags | BindingFlags.NonPublic, s.Name);
 					if (lookup != null)
-						Error (122, "'" + s.Name + "' is inaccessible because of its protection level");
+						Error (122, "`" + s.Name + "' " +
+						       "is inaccessible because of its protection level");
 					else
-						Error (103, "The name '" + s.Name + "' could not be found in '" + ec.DeclSpace.Name + "'");
+						Error (103, "The name `" + s.Name + "' could not be " +
+						       "found in `" + ec.DeclSpace.Name + "'");
 					return null;
 				}
 
@@ -405,7 +407,10 @@ namespace Mono.CSharp {
 				if (e is SimpleName){
 					SimpleName s = (SimpleName) e;
 
-					Report.Error ( 103, loc,"The name '" + s.Name + "' could not be found in '" + ec.DeclSpace.Name + "'");
+					Report.Error (
+						103, loc,
+						"The name `" + s.Name + "' could not be found in `" +
+						ec.DeclSpace.Name + "'");
 					return null;
 				}
 
@@ -1651,7 +1656,7 @@ namespace Mono.CSharp {
 			TypeCode dest_type = Type.GetTypeCode (target_type);
 			TypeCode src_type = Type.GetTypeCode (expr_type);
 			Expression e = null;
-			
+
 			switch (dest_type) {
 				case TypeCode.String:
 					switch (src_type) {
@@ -2326,6 +2331,10 @@ namespace Mono.CSharp {
 				if (t != null)
 					return t;
 				
+				t = RuntimeConversion (ec, e, target_type, loc);
+				if (t != null)
+					return t;	
+								
 				Error_CannotConvertType (loc, expr_type, target_type);
 				return null;
 			}
@@ -2382,7 +2391,11 @@ namespace Mono.CSharp {
 			ne = ExplicitUserConversion (ec, expr, target_type, loc);
 			if (ne != null)
 				return ne;
-
+				
+			ne = RuntimeConversion (ec, expr, target_type, loc);
+			if (ne != null)
+				return ne;
+					
 			Error_CannotConvertType (loc, expr_type, target_type);
 			return null;
 		}
@@ -2405,6 +2418,10 @@ namespace Mono.CSharp {
 			ne = ConvertReferenceExplicit (expr, target_type);
 			if (ne != null)
 				return ne;
+
+			ne = RuntimeConversion (ec, expr, target_type, l);
+			if (ne != null)
+				return ne;				
 
 			Error_CannotConvertType (l, expr.Type, target_type);
 			return null;
@@ -3595,7 +3612,7 @@ namespace Mono.CSharp {
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
 			Block current_block = ec.CurrentBlock;
-			if (current_block != null && current_block.IsVariableDefined (Name)){
+			if (ec.InvokingOwnOverload == false && current_block != null && current_block.IsVariableDefined (Name)){
 				LocalVariableReference var;
 
 				var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
@@ -3706,10 +3723,13 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			//
-			// If this is ever reached, then we failed to find the name as a namespace
+			// If this is ever reached, then we failed to
+			// find the name as a namespace
 			//
 
-			Error (103, "The name '" + Name + "' does not exist in the class '" + ec.DeclSpace.Name + "'");
+			Error (103, "The name `" + Name +
+			       "' does not exist in the class `" +
+			       ec.DeclSpace.Name + "'");
 		}
 
 		public override string ToString ()

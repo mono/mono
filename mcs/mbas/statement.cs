@@ -592,7 +592,7 @@ namespace Mono.CSharp {
 	}
 	
 	public class StatementExpression : Statement {
-		Expression expr;
+		public Expression expr;
 		
 		public StatementExpression (ExpressionStatement expr, Location l)
 		{
@@ -2481,7 +2481,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
-		{
+		{/* FIXME: we shouldn't just skip this!!!
 			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsVariableAssigned (this))
 				return true;
 
@@ -2512,7 +2512,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
-
+*/
 			return true;
 		}
 
@@ -4889,7 +4889,7 @@ namespace Mono.CSharp {
 		}
 		
 		public override bool Resolve (EmitContext ec)
-		{
+		{       
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return false;
@@ -4946,7 +4946,7 @@ namespace Mono.CSharp {
 
 			if (variable.ResolveLValue (ec, empty) == null)
 				return false;
-
+			
 			if (!statement.Resolve (ec))
 				return false;
 

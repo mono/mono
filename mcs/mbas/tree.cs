@@ -45,7 +45,7 @@ namespace Mono.CSharp
 		
 		public Tree ()
 		{
-			root_types = new TypeContainer (null, "", Location.Null);
+			root_types = new TypeContainer (null, "", new Location (-1));
 
 			decls = new Hashtable ();
 			namespaces = new Hashtable ();

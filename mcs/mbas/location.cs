@@ -53,14 +53,12 @@ namespace Mono.CSharp {
 			module_base = global_count;
 		}
 		
-		public Location (int row, int col)
+		public Location (int row)
 		{
-			if (row < 0 || col <  0)
+			if (row < 0)
 				token = -1;
 			else {
-				if (col > 255)
-					col = 255;
-				token = module_base + (row << 8) + col;
+				token = module_base + row;
 				if (global_count < token)
 					global_count = token;
 			}
@@ -105,22 +103,7 @@ namespace Mono.CSharp {
 					if (token > b)
 						best = b;
 				}
-				return (token - best) >> 8;
-			}
-		}
-
-		public int Col {
-			get {
-				int best = 0;
-				
-				if (token < 0)
-					return 1;
-				
-				foreach (int b in list){
-					if (token > b)
-						best = b;
-				}
-				return (token - best) & 0xFF;
+				return token - best;
 			}
 		}
 

@@ -634,7 +634,7 @@ namespace Mono.CSharp {
 
 		//
 		// Applies the attributes to the `builder'.
-		//
+		//							    		
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs, Location loc)
 		{
