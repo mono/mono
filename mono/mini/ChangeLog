@@ -1,5 +1,7 @@
 2004-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_runtime_install_handlers): Fix build.
+
 	* mini.h (MonoJitTlsData): Add 'stack_size', 'signal_stack' and
 	'signal_stack_size' members.
 
