@@ -2,4 +2,5 @@
 
 	* AddressList.cs: Implemented.
 	* AttributedQName.cs: Implemented.
+	* PortType.cs: Implemented
 	* ChangeLog: Added.
