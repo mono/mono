@@ -1,3 +1,8 @@
+2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileIOPermissionTest.cs: Added a test case for a filename starting
+	with the "file://" scheme (which isn't valid).
+
 2005-02-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameIdentityPermissionTest.cs: Fixed some bad tests and 

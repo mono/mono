@@ -12,6 +12,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
@@ -368,6 +369,15 @@ namespace MonoTests.System.Security.Permissions {
 			AssertEquals ("Path.GetFileName(GetTempFileName)==Path.GetFileName(GetPathList[0])", Path.GetFileName (filename), Path.GetFileName (files [0]));
 			// note: this will fail on Linux as kernel32.dll isn't available
 			AssertEquals ("GetLongPathName(GetTempFileName)==GetPathList[0]", FilePathUtil.GetLongPathName (filename), files [0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FileUrl ()
+		{
+			// file://... isn't accepted
+			string filename = Assembly.GetExecutingAssembly ().CodeBase;
+			p = new FileIOPermission (FileIOPermissionAccess.Read, filename);
 		}
 	}
 }
