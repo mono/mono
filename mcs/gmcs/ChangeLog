@@ -1,3 +1,19 @@
+2004-01-22  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (namespace_or_type_name): Return an Expression,
+	not a QualifiedIdentifier.  This is what `type_name_expression'
+	was previously doing.
+	(type_name_expression): Removed; the code is now in
+	`namespace_or_type_name'.
+	(qualified_identifier): Removed, use `namespace_or_type_name'
+	instead.
+	(QualifiedIdentifier): Removed this class.	
+
+2004-01-22  Martin Baulig  <martin@ximian.com>
+
+	* namespace.cs (NamespaceEntry.UsingAlias): Take an Expression,
+	not a string as alias name.
+
 2004-01-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldInfo.AddressOf): Revert patch from previous
