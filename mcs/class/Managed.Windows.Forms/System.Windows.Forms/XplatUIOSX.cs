@@ -56,6 +56,8 @@ namespace System.Windows.Forms {
 		private static Hashtable view_backgrounds;
 		private static IntPtr grabWindow;
 		private static IntPtr fosterParent;
+		private static int title_bar_height;
+		private static int menu_bar_height;
 
 		private static OSXHover hover;
 		private static bool getmessage_ret;
@@ -231,6 +233,12 @@ namespace System.Windows.Forms {
 			IntPtr rect = IntPtr.Zero;
 			SetRect (ref rect, (short)0, (short)0, (short)0, (short)0);
 			CheckError (CreateNewWindow (WindowClass.kDocumentWindowClass, WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCloseBoxAttribute | WindowAttributes.kWindowFullZoomAttribute | WindowAttributes.kWindowCollapseBoxAttribute | WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowCompositingAttribute, ref rect, ref fosterParent), "CreateFosterParent ()");
+			Rect structRect = new Rect ();
+			Rect contentRect = new Rect ();
+			CheckError (GetWindowBounds (fosterParent, 32, ref structRect), "GetWindowBounds ()");
+			CheckError (GetWindowBounds (fosterParent, 33, ref contentRect), "GetWindowBounds ()");
+			title_bar_height = Math.Abs(structRect.top - contentRect.top);
+			menu_bar_height = GetMBarHeight ();
 			timer_list = new ArrayList ();
 
 			hover.interval = 500;
@@ -337,7 +345,7 @@ namespace System.Windows.Forms {
 				} else {
 					// This is a real root window too
 					if (cp.X < 1) cp.X = 0;
-					if (cp.Y < 1) cp.Y = 44;
+					if (cp.Y < 1) cp.Y = 0;
 					realWindow = true;
 				}
 			} else {
@@ -365,8 +373,9 @@ namespace System.Windows.Forms {
 					
 				IntPtr rect = IntPtr.Zero;
 				IntPtr viewHnd = IntPtr.Zero;
-				SetRect (ref rect, (short)cp.X, (short)cp.Y, (short)(cp.Width+cp.X), (short)(cp.Height+cp.Y));
+				SetRect (ref rect, (short)cp.X, (short)(cp.Y + menu_bar_height + title_bar_height), (short)(cp.Width+cp.X), (short)(cp.Height+cp.Y));
 				CheckError (CreateNewWindow (windowklass, attributes, ref rect, ref windowHnd), "CreateNewWindow ()");
+
 				CheckError (InstallEventHandler (GetWindowEventTarget (windowHnd), windowEventHandler, (uint)windowEvents.Length, windowEvents, windowHnd, IntPtr.Zero), "InstallEventHandler ()");
 				CheckError (HIViewFindByID (HIViewGetRoot (windowHnd), new HIViewID (OSXConstants.kEventClassWindow, 1), ref viewHnd), "HIViewFindByID ()");
 				parentHnd = viewHnd;
@@ -1724,6 +1733,8 @@ DEBUG THIS:
 		internal extern static void DisposeRgn (IntPtr rgn);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static void ExitToShell ();
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static short GetMBarHeight ();
 		
 		#region Cursor imports
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

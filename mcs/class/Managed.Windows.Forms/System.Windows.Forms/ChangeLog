@@ -1,3 +1,8 @@
+2005-02-07  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs: Detect the menu bar and title bar height from
+	the current theme.  Cache these on startup.
+
 2005-02-07  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollBar.cs: Give the correct clipping rect to the theme. Dirty
