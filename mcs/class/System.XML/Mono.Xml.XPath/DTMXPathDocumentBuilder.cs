@@ -19,37 +19,39 @@ namespace Mono.Xml.XPath
 	public class DTMXPathDocumentBuilder
 	{
 		public DTMXPathDocumentBuilder (string url)
-			: this (url, XmlSpace.None, false)
+			: this (url, XmlSpace.None, false, 100)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (string url, XmlSpace space)
-			: this (url, space, false)
+			: this (url, space, false, 100)
 		{
 		}
 
-		public DTMXPathDocumentBuilder (string url, XmlSpace space, bool supportID)
-			: this (new XmlTextReader (url), space, supportID)
+		public DTMXPathDocumentBuilder (string url, XmlSpace space, bool supportID, int defaultCapacity)
+			: this (new XmlTextReader (url), space, supportID, defaultCapacity)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader)
-			: this (reader, XmlSpace.None, false)
+			: this (reader, XmlSpace.None, false, 100)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space)
-			: this (reader, space, false)
+			: this (reader, space, false, 100)
 		{
 		}
 
-		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space, bool supportID)
+		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space, bool supportID, int defaultCapacity)
 		{
 			this.xmlReader = reader;
 			if (supportID)
 				this.validatingReader = reader as XmlValidatingReader;
+			lineInfo = reader as IXmlLineInfo;
 			this.xmlSpace = xmlSpace;
 			this.nameTable = reader.NameTable;
+			DefaultCapacity = defaultCapacity;
 			Compile ();
 		}
 		
@@ -58,6 +60,7 @@ namespace Mono.Xml.XPath
 		XmlValidatingReader validatingReader;
 		XmlSpace xmlSpace;
 		XmlNameTable nameTable;
+		IXmlLineInfo lineInfo;
 		int defaultCapacity = 100;
 		public int DefaultCapacity {
 			get { return defaultCapacity; }
@@ -86,7 +89,8 @@ namespace Mono.Xml.XPath
 		string [] value_ = new string [0];
 		string [] xmlLang_ = new string [0];
 		int [] namespaceNode_ = new int [0];
-		object [] schemaType_ = new object [0];
+		int [] nodeLineNumber_ = new int [0];
+		int [] nodeLinePosition_ = new int [0];
 
 		// Attribute
 		int [] ownerElement_ = new int [0];
@@ -96,6 +100,8 @@ namespace Mono.Xml.XPath
 		string [] attrNsUri_ = new string [0];
 		string [] attrValue_ = new string [0];
 		object [] attrSchemaType_ = new object [0];
+		int [] attrLineNumber_ = new int [0];
+		int [] attrLinePosition_ = new int [0];
 
 		// NamespaceNode
 		int [] nsDeclaredElement_ = new int [100];
@@ -131,7 +137,8 @@ namespace Mono.Xml.XPath
 				value_,
 				xmlLang_,
 				namespaceNode_,
-				schemaType_,
+				nodeLineNumber_,
+				nodeLinePosition_,
 
 				// Attribute
 				ownerElement_,
@@ -141,6 +148,8 @@ namespace Mono.Xml.XPath
 				attrNsUri_,
 				attrValue_,
 				attrSchemaType_,
+				attrLineNumber_,
+				attrLinePosition_,
 
 				// NamespaceNode
 				nsDeclaredElement_,
@@ -158,9 +167,9 @@ namespace Mono.Xml.XPath
 			// index 0 is dummy. No node (including Root) is assigned to this index
 			// So that we can easily compare index != 0 instead of index < 0.
 			// (Difference between jnz or jbe in 80x86.)
-			AddNode (0, 0, 0, 0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, null);
+			AddNode (0, 0, 0, 0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
 			nodeIndex++;
-			AddAttribute (0, null, null, null, null, null);
+			AddAttribute (0, null, null, null, null, null, 0, 0);
 			nextAttribute_ [0] = 0;
 			AddNsNode (0, null, null);
 			nsIndex++;
@@ -169,7 +178,7 @@ namespace Mono.Xml.XPath
 			nextNsNode_ [1] = 0;
 
 			// add root.
-			AddNode (0, 0, 0, 0, -1, 0, XPathNodeType.Root, xmlReader.BaseURI, false, "", "", "", "", "", 1, null);
+			AddNode (0, 0, 0, 0, -1, 0, XPathNodeType.Root, xmlReader.BaseURI, false, "", "", "", "", "", 1, 0, 0);
 
 			this.nodeIndex = 1;
 			this.requireFirstChildFill = true;
@@ -267,7 +276,8 @@ namespace Mono.Xml.XPath
 					value,
 					xmlReader.XmlLang,
 					nsIndex,
-					null);	// schemaType
+					lineInfo != null ? lineInfo.LineNumber : 0,
+					lineInfo != null ? lineInfo.LinePosition : 0);
 				// this code is tricky, but after ReadString() invokation,
 				// xmlReader is moved to next node!!
 				if (value == null)
@@ -311,7 +321,14 @@ namespace Mono.Xml.XPath
 					} else {
 						// add attribute node.
 						attributeIndex ++;
-						this.AddAttribute (nodeIndex, xmlReader.LocalName, xmlReader.NamespaceURI, xmlReader.Prefix != null ? xmlReader.Prefix : String.Empty, xmlReader.Value, null);
+						this.AddAttribute (nodeIndex,
+							xmlReader.LocalName,
+							xmlReader.NamespaceURI, 
+							xmlReader.Prefix != null ? xmlReader.Prefix : String.Empty, 
+							xmlReader.Value,
+							null, 
+							lineInfo != null ? lineInfo.LineNumber : 0,
+							lineInfo != null ? lineInfo.LinePosition : 0);
 						if (firstAttributeIndex == 0)
 							firstAttributeIndex = attributeIndex;
 						else
@@ -349,7 +366,8 @@ namespace Mono.Xml.XPath
 				"",	// Element has no internal value.
 				xmlReader.XmlLang,
 				nsIndex,
-				null);	// schemaType
+				lineInfo != null ? lineInfo.LineNumber : 0,
+				lineInfo != null ? lineInfo.LinePosition : 0);
 			if (!xmlReader.IsEmptyElement)
 				requireFirstChildFill = true;
 		}
@@ -407,7 +425,8 @@ namespace Mono.Xml.XPath
 			SetStringArrayLength (ref value_, size);
 			SetStringArrayLength (ref xmlLang_, size);
 			SetIntArrayLength (ref namespaceNode_, size);
-			SetObjectArrayLength (ref schemaType_, size);
+			SetIntArrayLength (ref nodeLineNumber_, size);
+			SetIntArrayLength (ref nodeLinePosition_, size);
 		}
 
 		private void SetAttributeArraysLength (int size)
@@ -419,6 +438,8 @@ namespace Mono.Xml.XPath
 			SetStringArrayLength (ref attrNsUri_, size);
 			SetStringArrayLength (ref attrValue_, size);
 			SetObjectArrayLength (ref attrSchemaType_, size);
+			SetIntArrayLength (ref attrLineNumber_, size);
+			SetIntArrayLength (ref attrLinePosition_, size);
 		}
 
 		private void SetNsArraysLength (int size)
@@ -430,7 +451,7 @@ namespace Mono.Xml.XPath
 		}
 
 		// Here followings are skipped: firstChild, nextSibling, 
-		public void AddNode (int parent, int firstAttribute, int attributeEnd, int previousSibling, int depth, int position, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, object schemaType)
+		public void AddNode (int parent, int firstAttribute, int attributeEnd, int previousSibling, int depth, int position, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
 		{
 			if (firstChild_.Length < nodeIndex + 1) {
 				if (firstChild_.Length >= defaultCapacity)
@@ -454,11 +475,12 @@ namespace Mono.Xml.XPath
 			value_ [nodeIndex] = value;
 			xmlLang_ [nodeIndex] = xmlLang;
 			namespaceNode_ [nodeIndex] = namespaceNode;
-			schemaType_ [nodeIndex] = schemaType;
+			nodeLineNumber_ [nodeIndex] = lineNumber;
+			nodeLinePosition_ [nodeIndex] = linePosition;
 		}
 
 		// Followings are skipped: nextAttribute,
-		public void AddAttribute (int ownerElement, string localName, string ns, string prefix, string value, object schemaType)
+		public void AddAttribute (int ownerElement, string localName, string ns, string prefix, string value, object schemaType, int lineNumber, int linePosition)
 		{
 			if (ownerElement_.Length < attributeIndex + 1) {
 				if (ownerElement_.Length >= defaultCapacity)
@@ -472,6 +494,8 @@ namespace Mono.Xml.XPath
 			attrPrefix_ [attributeIndex] = prefix;
 			attrValue_ [attributeIndex] = value;
 			attrSchemaType_ [attributeIndex] = schemaType;
+			attrLineNumber_ [attributeIndex] = lineNumber;
+			attrLinePosition_ [attributeIndex] = linePosition;
 		}
 
 		// Followings are skipped: nextNsNode (may be next attribute in the same element, or ancestors' nsNode)

@@ -1,3 +1,10 @@
+2003-09-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTMXPathNavigator.cs,
+	  DTMXPathDocument.cs,
+	  DTMXPathDocumentBuilder.cs : Added IXmlLineInfo support. Removed
+	  node's extraneous schemaType. Some code reformatting.
+
 2003-09-13 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Pattern.cs: Support static context.
