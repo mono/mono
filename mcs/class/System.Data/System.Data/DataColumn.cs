@@ -261,6 +261,9 @@ namespace System.Data {
 					return _caption;
 			}
 			set {
+				if (value == null)
+					value = String.Empty;
+					
 				_caption = value;
 			}
 		}
@@ -392,6 +395,10 @@ namespace System.Data {
    				}
 				expression = value;  
 			}
+		}
+		
+		internal IExpression CompiledExpression {
+			get { return compiledExpression; }
 		}
 
 		[Browsable (false)]

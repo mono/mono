@@ -1,3 +1,11 @@
+2004-03-31  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* DataColumn.cs : Setting Caption to null sets it to the empty string
+	(ms.net behaviour, testcase is in DataColumnTest).
+	
+	* DataRow.cs : Evaluate DataColumn.Expression when such a column's value is
+	requested.
+
 2004-03-30 Lluis Sanchez Gual <lluis@ximian.com>
 
 	* DataColumn.cs: In Expression setter, set the expression member even if 
