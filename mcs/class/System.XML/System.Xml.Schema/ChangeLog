@@ -1,3 +1,11 @@
+2005-01-25  Martin Baulig  <martin@ximian.com>
+
+	* XmlSchemaSet.cs (XmlSchemaSet.XmlResolver): Mark this as
+	not CLS-compliant to avoid a CS3025.
+
+	* XmlSchemaType.cs (XmlSchemaType.ValueConverter): Mark this as
+	not CLS-compliant to avoid a CS3025.
+
 2005-01-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchema.cs : XmlSchema.Write() should not write duplicating

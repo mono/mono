@@ -167,6 +167,7 @@ namespace System.Xml.Schema
 
 		[MonoTODO]
 		[XmlIgnore]
+		[CLSCompliant(false)]
 		public XmlValueConverter ValueConverter {
 			get {
 				return converter != null ?

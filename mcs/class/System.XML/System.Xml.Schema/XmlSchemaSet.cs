@@ -130,6 +130,7 @@ namespace System.Xml.Schema
 			}
 		}
 
+		[CLSCompliant(false)]
 		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
 #if NET_2_0
