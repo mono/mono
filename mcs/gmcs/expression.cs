@@ -4454,40 +4454,8 @@ namespace Mono.CSharp {
 			ParameterData candidate_pd = TypeManager.GetParameterData (candidate);
 			ParameterData best_pd = TypeManager.GetParameterData (best);
 		
-			int cand_count = candidate_pd.Count;
-
-			//
-			// If there is no best method, than this one
-			// is better, however, if we already found a
-			// best method, we cant tell. This happens
-			// if we have:
-			// 
-			//	interface IFoo {
-			//		void DoIt ();
-			//	}
-			//	
-			//	interface IBar {
-			//		void DoIt ();
-			//	}
-			//	
-			//	interface IFooBar : IFoo, IBar {}
-			//
-			// We cant tell if IFoo.DoIt is better than IBar.DoIt
-			//
-			// However, we have to consider that
-			// Trim (); is better than Trim (params char[] chars);
-                        //
-			if (cand_count == 0 && argument_count == 0)
-				return !candidate_params && best_params;
-
-			if ((candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS) &&
-			    (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.ARGLIST))
-				if (cand_count != argument_count)
-					return false;
-
 			bool better_at_least_one = false;
-			bool is_equal = true;
-
+			bool same = true;
 			for (int j = 0; j < argument_count; ++j) {
 				Argument a = (Argument) args [j];
 
@@ -4502,9 +4470,10 @@ namespace Mono.CSharp {
 					if (best_params)
 						bt = TypeManager.GetElementType (bt);
 
-				if (!ct.Equals (bt))
-					is_equal = false;
+				if (ct.Equals (bt))
+					continue;
 
+				same = false;
 				Type better = BetterConversion (ec, a, ct, bt, loc);
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
@@ -4517,28 +4486,48 @@ namespace Mono.CSharp {
 					better_at_least_one = true;
 			}
 
-                        //
-                        // If a method (in the normal form) with the
-                        // same signature as the expanded form of the
-                        // current best params method already exists,
-                        // the expanded form is not applicable so we
-                        // force it to select the candidate
-                        //
-                        if (!candidate_params && best_params && cand_count == argument_count)
-                                return true;
+			if (better_at_least_one)
+				return true;
+
+			if (!same)
+				return false;
 
 			//
 			// If two methods have equal parameter types, but
 			// only one of them is generic, the non-generic one wins.
 			//
-			if (is_equal) {
-				if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
-					return true;
-				else if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
-					return false;
+			if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
+				return true;
+			else if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
+				return false;
+
+			//
+			// Note that this is not just an optimization.  This handles the case
+			//
+			//   Add (float f1, float f2, float f3);
+			//   Add (params decimal [] foo);
+			//
+			// The call Add (3, 4, 5) should be ambiguous.  Without this check, the
+			// first candidate would've chosen as better.
+			//
+			if (candidate_params == best_params) {
+				//
+				// We need to handle the case of a virtual function and its override.
+				// The override is ignored during 'applicable_type' calculation.  However,
+				// it should be chosen over the base virtual function, especially when handling
+				// value types.
+				//
+				return IsAncestralType (best.DeclaringType, candidate.DeclaringType);
 			}
 
-			return better_at_least_one;
+			//
+			// This handles the following cases:
+			//
+			//   Trim () is better than Trim (params char[] chars)
+			//   Concat (string s1, string s2, string s3) is better than
+			//     Concat (string s1, params string [] srest)
+			//
+                        return !candidate_params && best_params;
 		}
 
 		public static string FullMethodDesc (MethodBase mb)
@@ -4881,6 +4870,15 @@ namespace Mono.CSharp {
 
 				candidates.Add (methods [i]);
 
+				//
+				// Methods marked 'override' don't take part in 'applicable_type'
+				// computation.
+				//
+				if (!me.IsBase &&
+				    methods [i].IsVirtual &&
+				    (methods [i].Attributes & MethodAttributes.NewSlot) == 0)
+					continue;
+
 				if (applicable_type == null)
 					applicable_type = decl_type;
 				else if (applicable_type != decl_type) {
@@ -4892,7 +4890,7 @@ namespace Mono.CSharp {
 
 			int candidate_top = candidates.Count;
 
-			if (candidate_top == 0) {
+			if (applicable_type == null) {
 				//
 				// Okay so we have failed to find anything so we
 				// return by providing info about the closest match
@@ -4965,11 +4963,12 @@ namespace Mono.CSharp {
 					int j = finalized; // where to put the next finalized candidate
 					int k = finalized; // where to put the next undiscarded candidate
 					for (int i = finalized; i < candidate_top; ++i) {
-						Type decl_type = ((MethodBase) candidates[i]).DeclaringType;
+						MethodBase candidate = (MethodBase) candidates [i];
+						Type decl_type = candidate.DeclaringType;
 
 						if (decl_type == applicable_type) {
-							candidates[k++] = candidates[j];
-							candidates[j++] = candidates[i];
+							candidates [k++] = candidates [j];
+							candidates [j++] = candidates [i];
 							continue;
 						}
 
@@ -4980,7 +4979,18 @@ namespace Mono.CSharp {
 						    IsAncestralType (decl_type, next_applicable_type))
 							continue;
 
-						candidates[k++] = candidates[i];
+						candidates [k++] = candidates [i];
+
+#if false
+						//
+						// Methods marked 'override' don't take part in 'applicable_type'
+						// computation.
+						//
+						if (!me.IsBase &&
+						    candidate.IsVirtual &&
+						    (candidate.Attributes & MethodAttributes.NewSlot) == 0)
+							continue;
+#endif
 
 						if (next_applicable_type == null ||
 						    IsAncestralType (next_applicable_type, decl_type))
@@ -4997,10 +5007,14 @@ namespace Mono.CSharp {
                         // Now we actually find the best method
                         //
 
-			method = (MethodBase) candidates[0];
+			method = (MethodBase) candidates [0];
 			method_params = candidate_to_form != null && candidate_to_form.Contains (method);
 			for (int ix = 1; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
+
+				if (candidate == method)
+					continue;
+
 				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
 
 				if (BetterFunction (ec, Arguments, arg_count, 

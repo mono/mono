@@ -1,3 +1,25 @@
+2005-02-10  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #52586, cs0121-4.cs.
+	* decl.cs (MemberCache.DeepCopy): Rename from SetupCache.  Take
+	and return a hashtable.
+	(MemberCache.ClearDeclaredOnly): New.
+	(MemberCache.MemberCache): Update to change.  Make a deep copy of
+	the method_hash of a base type too.
+	(MemberCache.AddMethods): Adapt to having a deep copy of the base
+	type methods.  Overwrite entries with the same MethodHandle so
+	that the ReflectedType is correct.  The process leaves in base
+	virtual functions and their overrides as distinct entries.
+	(CacheEntry): Now a class instead of a struct.  It shouldn't alter
+	matters since it was boxed in a ArrayList before.
+	(CacheEntry.Member, CacheEntry.EntryType): Remove 'readonly'
+	modifier.
+	* expression.cs (Invocation.BetterFunction): Simplify.  Handle the
+	case of a virtual function and its override (choose the overload
+	as better).
+	(Invocation.OverloadResolve): Avoid 'override' members during
+	'applicable_type' calculation.
+
 2005-02-09  Raja R Harinath  <rharinath@novell.com>
 
 	Combine two near-redundant caches.
