@@ -98,15 +98,36 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		}
 	}
 
+	internal class ReusableTcpClient : TcpClient
+	{
+		public ReusableTcpClient (string host, int port): base (host, port)
+		{
+		}
+		
+		public bool IsAlive
+		{
+			get
+			{
+				// This Poll will return true if there is data pending to
+				// be read. It prob. means that a client object using this
+				// connection got an exception and did not finish to read
+				// the data. It can also mean that the connection has been
+				// closed in the server. In both cases, the connection cannot
+				// be reused.
+				return !Client.Poll (0, SelectMode.SelectRead);
+			}
+		}
+	}
+
 	internal class TcpConnection
 	{
 		DateTime _controlTime;
 		Stream _stream;
-		TcpClient _client;
+		ReusableTcpClient _client;
 		HostConnectionPool _pool;
 		byte[] _buffer;
 
-		public TcpConnection (HostConnectionPool pool, TcpClient client)
+		public TcpConnection (HostConnectionPool pool, ReusableTcpClient client)
 		{
 			_pool = pool;
 			_client = client;
@@ -124,6 +145,11 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			get { return _controlTime; }
 			set { _controlTime = value; }
+		}
+
+		public bool IsAlive
+		{
+			get { return _client.IsAlive; }
 		}
 
 		// This is a "thread safe" buffer that can be used by 
@@ -172,8 +198,14 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					if (_pool.Count > 0) 
 					{
 						// There are available connections
+
 						connection = (TcpConnection)_pool[_pool.Count - 1];
 						_pool.RemoveAt(_pool.Count - 1);
+						if (!connection.IsAlive) {
+							CancelConnection (connection);
+							connection = null;
+							continue;
+						}
 					}
 
 					if (connection == null && _activeConnections < TcpConnectionPool.MaxOpenConnections)
@@ -201,7 +233,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			try
 			{
-				TcpClient client = new TcpClient(_host, _port);
+				ReusableTcpClient client = new ReusableTcpClient(_host, _port);
 				TcpConnection entry = new TcpConnection(this, client);
 				_activeConnections++;
 				return entry;

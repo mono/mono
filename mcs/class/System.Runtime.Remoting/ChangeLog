@@ -1,5 +1,10 @@
 2003-08-20  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* TcpConnectionPool.cs: Check if a connection is alive before reusing
+	  it. Added some properties to support this.
+
+2003-08-20  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* System.Runtime.Remoting_test.dll.sources: Added new test files.
 
 2003-08-18  Lluis Sanchez Gual <lluis@ximian.com>
