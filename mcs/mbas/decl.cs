@@ -542,7 +542,7 @@ namespace Mono.MonoBASIC {
 				//
 				// Now check the using clause list
 				//
-				ArrayList using_list = ns.UsingTable;
+				ICollection using_list = ns.UsingTable;
 				
 				if (using_list == null)
 					continue;

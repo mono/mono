@@ -1032,16 +1032,34 @@ namespace Mono.MonoBASIC {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (ec.InLoop == false && ec.Switch == null){
-				Report.Error (139, loc, "No enclosing loop or switch to continue to");
-				return false;
+			if (type != ExitType.SUB && type != ExitType.FUNCTION && type != ExitType.PROPERTY) {
+				if (ec.InLoop == false && ec.Switch == null){
+					Report.Error (139, loc, "No enclosing loop or switch to exit from");
+					return false;
+				}
+
+				if (ec.InTry || ec.InCatch)
+					ig.Emit (OpCodes.Leave, ec.LoopEnd);
+				else
+					ig.Emit (OpCodes.Br, ec.LoopEnd);
+			} else {			
+				if (ec.InFinally){
+					Report.Error (157,loc,"Control can not leave the body of the finally block");
+					return false;
+				}
+			
+				if (ec.InTry || ec.InCatch) {
+					if (!ec.HasReturnLabel) {
+						ec.ReturnLabel = ec.ig.DefineLabel ();
+						ec.HasReturnLabel = true;
+					}
+					ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
+				} else
+					ec.ig.Emit (OpCodes.Ret);
+
+				return true; 
 			}
-
-			if (ec.InTry || ec.InCatch)
-				ig.Emit (OpCodes.Leave, ec.LoopEnd);
-			else
-				ig.Emit (OpCodes.Br, ec.LoopEnd);
-
+			
 			return false;
 		}
 	}	

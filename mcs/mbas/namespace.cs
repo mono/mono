@@ -20,8 +20,9 @@ namespace Mono.MonoBASIC {
 		
 		Namespace parent;
 		string name;
-		ArrayList using_clauses;
+		Hashtable using_clauses;
 		Hashtable aliases;
+		
 		public bool DeclarationFound = false;
 
 		//
@@ -92,15 +93,15 @@ namespace Mono.MonoBASIC {
 			}
 
 			if (using_clauses == null)
-				using_clauses = new ArrayList ();
+				using_clauses = new CaseInsensitiveHashtable ();
 
 			UsingEntry ue = new UsingEntry (ns, loc);
-			using_clauses.Add (ue);
+			using_clauses [ns] = ue;
 		}
 
-		public ArrayList UsingTable {
+		public ICollection UsingTable {
 			get {
-				return using_clauses;
+				return using_clauses.Values;
 			}
 		}
 
@@ -142,11 +143,7 @@ namespace Mono.MonoBASIC {
 			int errors = 0;
 			
 			foreach (Namespace ns in all_namespaces){
-				ArrayList uses = ns.UsingTable;
-				if (uses == null)
-					continue;
-				
-				foreach (UsingEntry ue in uses){
+				foreach (UsingEntry ue in ns.UsingTable){
 					if (ue.Used)
 						continue;
 					unused.Add (ue);

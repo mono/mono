@@ -145,6 +145,14 @@ namespace Mono.Languages
 
 		[Option(-1, "References metadata from the specified {assembly}", 'r', "reference")]
 		public string AddedReference { set { references.Add(value); } }
+		
+		// support for the Compact Framework
+		//------------------------------------------------------------------
+		[Option("[NOT IMPLEMENTED YET]Sets the compiler to target the Compact Framework","netcf")]
+		public bool CompileForCompactFramework = false;
+		
+		[Option("[NOT IMPLEMENTED YET]Specifies the {path} to the location of mscorlib.dll and microsoft.visualbasic.dll", "sdkpath")]
+		public string SDKPath = null;
 
 		// resource options
 		//------------------------------------------------------------------

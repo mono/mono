@@ -35,6 +35,7 @@ namespace Mono.MonoBASIC
 		public int col = 1;
 		public int current_token = Token.EOL;
 		bool handle_get_set = false;
+		bool cant_have_a_type_character = false;
 
 		public int ExpandedTabsSize = 4; 
 
@@ -333,12 +334,15 @@ namespace Mono.MonoBASIC
 
 		int is_punct (char c, ref bool doread)
 		{
-			int idx = "{}[](),:;~+-*/%&|^!=<>?".IndexOf (c);
 			int d;
 			int t;
 
 			doread = false;
-
+			
+			error_details = c.ToString();
+			
+			d = peekChar ();
+			
 			switch (c){
 			case '[':
 				return Token.OPEN_BRACKET;
@@ -356,11 +360,46 @@ namespace Mono.MonoBASIC
 				return Token.COMMA;
 			case '?':
 				return Token.INTERR;
+			case '!':
+				if (is_identifier_start_character((char)d) || cant_have_a_type_character)
+					return Token.EXCLAMATION;
+				return Token.SINGLETYPECHAR;
+			case '$':
+				if (cant_have_a_type_character)
+					return Token.ERROR;
+				return Token.DOLAR_SIGN;
+			case '@':
+				if (cant_have_a_type_character)
+					return Token.ERROR;
+				return Token.AT_SIGN;
+			case '%':
+				if (cant_have_a_type_character)
+					return Token.ERROR;
+				return Token.PERCENT;
+			case '#':
+				if (!tokens_seen)
+				{
+					workout_preprocessing_directive();
+					return Token.NONE;
+				} 
+				if (cant_have_a_type_character)	
+					return ExtractDateTimeLiteral();
+				return Token.NUMBER_SIGN;
+			case '&':
+				if (!cant_have_a_type_character)
+					return Token.LONGTYPECHAR;
+				t = handle_integer_literal_in_other_bases(d);
+				if (t == Token.NONE) {
+					if (d == '=') {
+						doread = true;
+						t = Token.OP_CONCAT_ASSIGN;
+					} else 
+						t = Token.OP_CONCAT;
+				}
+				return t;			
 			}
 
-			d = peekChar ();
 			if (c == '+'){
-				
 				if (d == '+')
 					t = Token.OP_INC;
 				else if (d == '=')
@@ -370,17 +409,6 @@ namespace Mono.MonoBASIC
 				doread = true;
 				return t;
 			}
-			if (c == '&') {
-				t = handle_integer_literal_in_other_bases(d);
-				if (t == Token.NONE) {
-					if (d == '=') {
-						doread = true;
-						t = Token.OP_CONCAT_ASSIGN;
-					} else
-						return Token.OP_CONCAT;
-				}
-				return t;
-			}			
 			if (c == '-'){
 				if (d == '=')
 					t = Token.OP_SUB_ASSIGN;
@@ -436,6 +464,11 @@ namespace Mono.MonoBASIC
 					doread = true;
 					return Token.OP_LE;
 				}
+				if (d == '<')
+				{
+					doread = true;
+					return Token.OP_SHIFT_LEFT;
+				}
 				return Token.OP_LT;
 			}
 
@@ -444,8 +477,14 @@ namespace Mono.MonoBASIC
 					doread = true;
 					return Token.OP_GE;
 				}
+				if (d == '>')
+				{
+					doread = true;
+					return Token.OP_SHIFT_RIGHT;
+				}
 				return Token.OP_GT;
 			}
+			
 			if (c == ':'){
 				if (d == '='){
 					doread = true;
@@ -453,6 +492,7 @@ namespace Mono.MonoBASIC
 				}
 				return Token.COLON;
 			}			
+			
 			return Token.ERROR;
 		}
 
@@ -784,7 +824,9 @@ namespace Mono.MonoBASIC
 				else 
 					break;
 			}
-
+			
+			cant_have_a_type_character = false;
+			
 			return id.ToString ();
 		}
 
@@ -793,6 +835,11 @@ namespace Mono.MonoBASIC
 			return (currentChar == '"' || 
 					currentChar == 0x201C || // unicode left double-quote character
 					currentChar == 0x201D);  // unicode right double-quote character
+		}
+		
+		private bool is_whitespace(int c)
+		{
+			return (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0);
 		}
 		
 		private bool tokens_seen = false;
@@ -806,23 +853,33 @@ namespace Mono.MonoBASIC
 			val = null;
 			for (;(c = getChar ()) != -1; col++) {
 			
-				// Handle line comments.
-				if (c == '\'')
-					return Token.REM;
-					
 				// Handle line continuation character
 				if (c == '_') 
 				{
-					int d = getChar();
-					putback(d);
+					int d = peekChar();
 					if (!is_identifier_part_character((char)d)) {
 						while ((c = getChar ()) != -1 && !IsEOL(c)) {}
 						c = getChar ();			
 					}		
 				}
+
+				// white space
+				if (is_whitespace(c)) {
+					// expand tabs for location
+					if (c == '\t')
+						col = (((col + ExpandedTabsSize) / ExpandedTabsSize) * ExpandedTabsSize) - 1;
+					cant_have_a_type_character = true;
+					continue;
+				}
+				
+				// Handle line comments.
+				if (c == '\'')
+					return Token.REM;					
+				
 				// Handle EOL.
 				if (IsEOL(c))
 				{
+					cant_have_a_type_character = true;
 					line++;
 					ref_line++;
 					col = 0;
@@ -856,9 +913,16 @@ namespace Mono.MonoBASIC
 					return Token.IDENTIFIER;
 				}
 
+				// Treat string literals
+				if (is_doublequote(c)) {
+					cant_have_a_type_character = true;
+					return ExtractStringOrCharLiteral(c);
+				}
+			
 				// handle numeric literals
 				if (c == '.')
 				{
+					cant_have_a_type_character = true;
 					tokens_seen = true;
 					if (Char.IsDigit ((char) peekChar ()))
 						return is_number (c);
@@ -867,73 +931,17 @@ namespace Mono.MonoBASIC
 				
 				if (Char.IsDigit ((char) c))
 				{
+					cant_have_a_type_character = true;
 					tokens_seen = true;
 					return is_number (c);
 				}
 
-				if (c == '#')
-				{
-					if (!tokens_seen)
-					{
-						bool cont = true;
-						
-					start_again:
-						
-						cont = handle_preprocessing_directive (cont);
-	
-						if (cont)
-						{
-							col = 0;
-							continue;
-						}
-						col = 1;
-	
-						bool skipping = false;
-						for (;(c = getChar ()) != -1; col++)
-						{
-							if (IsEOL(c))
-							{
-								col = 0;
-								line++;
-								ref_line++;
-								skipping = false;
-							} 
-							else if (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0)
-								continue;
-							else if (c != '#')
-							{
-								skipping = true;
-								continue;
-							}	
-							if (c == '#' && !skipping)
-								goto start_again;
-						}
-						tokens_seen = false;
-						if (c == -1)
-							Report.Error (1027, Location, "#endif/#endregion expected");
+				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR) {
+					cant_have_a_type_character = true;
+
+					if (t == Token.NONE)
 						continue;
-					} else { // date-time literal
-						StringBuilder sb = new StringBuilder();
-						for (;(c = getChar ()) != -1; col++)
-						{
-							if (c == '#')
-							{
-								val = ParseDateLiteral(sb);
-								return Token.LITERAL_DATE;
-							}
-							if (IsEOL(c))
-							{
-								col = 0;
-								line++;
-								ref_line++;
-								break;
-							} 
-							sb.Append((char)c);
-						}
-						return Token.ERROR;
-					}
-				}
-				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
+						
 					if (doread){
 						getChar ();
 						col++;
@@ -942,57 +950,7 @@ namespace Mono.MonoBASIC
 					return t;
 				}
 				
-				// Treat string literals
-				if (is_doublequote(c)){
-					StringBuilder s = new StringBuilder ();
-
-					tokens_seen = true;
-
-					while ((c = getChar ()) != -1){
-						if (is_doublequote(c)){
-							if (is_doublequote(peekChar()))
-								getChar();
-							else {
-								//handle Char Literals
-								if (peekChar() == 'C' || peekChar() == 'c') {
-									getChar();
-									if (s.Length == 1) {
-										val = s[0];
-										return Token.LITERAL_CHARACTER;
-									} else {
-										val = "Incorrect length for a character literal";
-										return Token.ERROR;
-									}
-										
-								} else {
-									val = s.ToString ();
-									return Token.LITERAL_STRING;
-								}
-							}
-						}
-
-						if (IsEOL(c))
-							return Token.ERROR;
-							
-						s.Append ((char) c);
-					}
-					
-					return Token.ERROR;
-				}
-			
-				// expand tabs for location and ignore it as whitespace
-				if (c == '\t')
-				{
-					col = (((col + ExpandedTabsSize) / ExpandedTabsSize) * ExpandedTabsSize) - 1;
-					continue;
-				}
-
-				// white space
-				if (c == ' ' || c == '\f' || c == '\v')
-					continue;
-
 				error_details = ((char)c).ToString ();
-				
 				return Token.ERROR;
 			}
 
@@ -1002,6 +960,103 @@ namespace Mono.MonoBASIC
 			return Token.EOF;
 		}
 
+		private int ExtractDateTimeLiteral()
+		{
+			int c;
+			
+			StringBuilder sb = new StringBuilder();
+			for (;(c = getChar ()) != -1; col++)
+			{
+				if (c == '#') {
+					val = ParseDateLiteral(sb);
+					return Token.LITERAL_DATE;
+				}
+				if (IsEOL(c)) {
+					col = 0;
+					line++;
+					ref_line++;
+					break;
+				} 
+				sb.Append((char)c);
+			}
+			return Token.ERROR;
+		}
+		
+		private int ExtractStringOrCharLiteral(int c)
+		{
+			StringBuilder s = new StringBuilder ();
+
+			tokens_seen = true;
+
+			while ((c = getChar ()) != -1){
+				if (is_doublequote(c)){
+					if (is_doublequote(peekChar()))
+						getChar();
+					else {
+						//handle Char Literals
+						if (peekChar() == 'C' || peekChar() == 'c') {
+							getChar();
+							if (s.Length == 1) {
+								val = s[0];
+								return Token.LITERAL_CHARACTER;
+							} else {
+								val = "Incorrect length for a character literal";
+								return Token.ERROR;
+							}							
+						} else {
+							val = s.ToString ();
+							return Token.LITERAL_STRING;
+						}
+					}
+				}
+
+				if (IsEOL(c))
+					return Token.ERROR;
+							
+				s.Append ((char) c);
+			}
+					
+			return Token.ERROR;
+		}
+
+		private void workout_preprocessing_directive()
+		{
+			int c;
+			bool cont = true;
+						
+		start_again:
+						
+			cont = handle_preprocessing_directive (cont);
+	
+			if (cont) {
+				col = 0;
+				return;
+			}
+			col = 1;
+	
+			bool skipping = false;
+			for (;(c = getChar ()) != -1; col++) {
+				if (is_whitespace(c))
+					continue;
+				if (IsEOL(c)) {
+					col = 0;
+					line++;
+					ref_line++;
+					skipping = false;
+					continue;
+				} 
+				if (c != '#') {
+					skipping = true;
+					continue;
+				}	
+				if (c == '#' && !skipping)
+					goto start_again;
+			}
+			tokens_seen = false;
+			if (c == -1)
+				Report.Error (1027, Location, "#endif/#endregion expected");
+		}
+		
 		static IFormatProvider enUSculture = new CultureInfo("en-US", true);
 
 		private DateTime ParseDateLiteral(StringBuilder value)

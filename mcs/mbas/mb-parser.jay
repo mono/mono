@@ -325,21 +325,26 @@ namespace Mono.MonoBASIC
 %token OP_LT          "<"
 %token OP_GT          ">"
 %token STAR           "*"
-%token PERCENT        "%"
 %token DIV            "/"
 %token OP_EXP         "^"
 %token INTERR         "?"
 %token OP_IDIV        "\\"
 %token OP_CONCAT      "&"
-%token ATTR_ASSIGN ":="
+%token EXCLAMATION    "!"
+
+%token PERCENT        "%"
+%token LONGTYPECHAR   "&"
+%token AT_SIGN		  "@"
+%token SINGLETYPECHAR "!"
+%token NUMBER_SIGN    "#"
+%token DOLAR_SIGN     "$"
+
+%token ATTR_ASSIGN	  ":="
 
 /* MonoBASIC multi-character operators. */
 %token OP_LE                  "<="
 %token OP_GE                  ">="
-//%token OP_EQ                  "=="
 %token OP_NE                  "<>"
-//%token OP_AND                 "and"
-//%token OP_OR                  "or"
 %token OP_XOR                 "xor"
 //%token OP_MODULUS             //"mod"
 %token OP_MULT_ASSIGN         "*="
@@ -349,6 +354,10 @@ namespace Mono.MonoBASIC
 %token OP_SUB_ASSIGN          "-="
 %token OP_CONCAT_ASSIGN       "&="
 %token OP_EXP_ASSIGN          "^="
+
+/* VB.NET 2003 new bit-shift operators */
+%token OP_SHIFT_LEFT		  "<<"
+%token OP_SHIFT_RIGHT         ">>"
 
 /* Numbers */
 %token LITERAL_INTEGER           "int literal"
@@ -510,7 +519,22 @@ identifier
 	| EXPLICIT
 	| OFF
 	;
-	  
+
+type_character
+	: PERCENT 			{ $$ = TypeManager.system_int32_expr; }
+	| LONGTYPECHAR 		{ $$ = TypeManager.system_int64_expr; }
+	| AT_SIGN		 	{ $$ = TypeManager.system_decimal_expr; }
+	| SINGLETYPECHAR 	{ $$ = TypeManager.system_single_expr; }
+	| NUMBER_SIGN 		{ $$ = TypeManager.system_double_expr; }
+	| DOLAR_SIGN 		{ $$ = TypeManager.system_string_expr; }
+	;	
+	
+opt_type_character
+	: /* empty */		{ $$ = null; }
+	| type_character	{ $$ = $1; }
+	;
+	
+
 qualified_identifier
 	: identifier
 	| qualified_identifier DOT identifier 
@@ -518,6 +542,7 @@ qualified_identifier
 	    $$ = (($1).ToString ()) + "." + ($3.ToString ()); 
 	  }
 	;
+	
 opt_imports_directives
 	: /* empty */
 	| imports_directives
@@ -1061,14 +1086,14 @@ sub_declaration
 	;
 	
 func_declaration
-	: FUNCTION identifier 
+	: FUNCTION identifier opt_type_character
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_type_with_ranks opt_implement_clause EOL
 	  { 
 	  	
-	  	current_local_parameters = (Parameters) $4;
+	  	current_local_parameters = (Parameters) $5;
 		start_block(); 
 		
-		Expression ftype = ($6 == null) ? TypeManager.system_object_expr : (Expression) $6;
+		Expression ftype = ($7 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $7;
 
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
@@ -1082,17 +1107,13 @@ func_declaration
 	  opt_statement_list
 	  END FUNCTION EOL
 	  {
-	  	Expression ftype = ($6 == null) ? TypeManager.system_object_expr : (Expression) $6;
+		Expression ftype = ($7 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $7;
+
 		Method method = new Method ((Expression) ftype, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, null, 
 					    (Expression) ftype, lexer.Location);
 		method.Block = end_block();
 		$$ = method;
-	/*Console.WriteLine ("Declaring Function '{0}' with {1} statements and {2} arguments", 
-				current_container.Name + "." + (string) $2, 
-				method.Block.statements.Count,
-				current_local_parameters.FixedParameters != null ? current_local_parameters.FixedParameters.Length : 0);
-*/
 	  }	  
 	;		
 
@@ -1356,11 +1377,21 @@ interface_method_declaration
 		$$ = new InterfaceMethod (TypeManager.system_void_expr, (string) $2, false,
 					  (Parameters) $4, current_attributes, lexer.Location);
 	  }
-	| FUNCTION identifier
+	| FUNCTION identifier opt_type_character
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type
 	  {
+	  	if ($3 != null && $3 != $8)
+			Report.Error (-1, lexer.Location, "Type character conflicts with declared type."); // TODO: Correct error number and message text
+		
 		$$ = new InterfaceMethod (
-		 			  (Expression) $7, (string) $2, false, (Parameters) $4,
+		 			  (Expression) $8, (string) $2, false, (Parameters) $5,
+					  current_attributes, lexer.Location);
+	  }
+	| FUNCTION identifier type_character
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  {
+		$$ = new InterfaceMethod (
+		 			  (Expression) $3, (string) $2, false, (Parameters) $5,
 					  current_attributes, lexer.Location);
 	  }
 	;
@@ -1775,13 +1806,13 @@ fixed_parameters
 fixed_parameter
 	: opt_attributes
 	  opt_parameter_modifier
-	  identifier opt_rank_specifiers opt_type_spec opt_variable_initializer
+	  identifier opt_type_character opt_rank_specifiers opt_type_spec opt_variable_initializer
 	  {
 	  	Parameter.Modifier pm = (Parameter.Modifier)$2;
 	  	bool opt_parm = ((pm & Parameter.Modifier.OPTIONAL) != 0);
 	  	Expression ptype;
 	  	
-	  	if (opt_parm && ($6 == null))
+	  	if (opt_parm && ($7 == null))
 	  		Report.Error (999, "Optional parameters must have a default value");
 	  	
 	  	if (opt_parm) {
@@ -1791,16 +1822,16 @@ fixed_parameter
 	  			pm = Parameter.Modifier.NONE;	//FIXME: should take into account BYREF
 		}	
 		
-		if ($4 == null)
-			ptype = (Expression) $5;
-		else
-	  	{
-	  		//string t = ((Expression) $5).ToString() + (string) $4;
-	  		string t = ((Expression) $5).ToString() + VariableDeclaration.BuildRank ((ArrayList) $4);
+	  	if ($4 != null && $6 != null && $4 != $6)
+			Report.Error (-1, lexer.Location, "Type character conflicts with declared type."); // TODO: Correct error number and message text
+
+		ptype = (Expression)(($6 == null) ? (($4 == null) ? TypeManager.system_object_expr : $4) : $6);
+		if ($5 != null)	{
+	  		string t = ptype.ToString() + VariableDeclaration.BuildRank ((ArrayList) $5);
 	  		ptype = DecomposeQI (t, lexer.Location);
 	  	}			
 		$$ = new Parameter (ptype, (string) $3, pm,
-					(Attributes) $1, (Expression) $6, opt_parm);
+					(Attributes) $1, (Expression) $7, opt_parm);
 	  }
 	;
 	
@@ -2778,21 +2809,23 @@ variable_declarators
 	;
 
 variable_declarator
-	: variable_identifier opt_type_decl opt_variable_initializer
+	: identifier opt_type_character opt_array_name_modifier opt_type_decl opt_variable_initializer
 	  {
 	  	string varname = (string)$1;
-	  	object varinit = $3;
+	  	current_rank_specifiers = (ArrayList) $3;
+	  	object varinit = $5;
 	  	Expression vartype;
 	  	ArrayList a_dims = null;
 	  	
 	  	// Some checking is required for particularly weird declarations
 	  	// like Dim a As Integer(,)
-	  	if ($2 is Pair) {
-	  		vartype = (Expression) ((Pair) $2).First;
-	  		if ($3 != null && $3 is ArrayList)
+	  	if ($4 is Pair) {
+	  		vartype = (Expression) ((Pair) $4).First;
+			
+	  		if ($5 != null && $5 is ArrayList)
 	  			Report.Error (205, "End of statement expected.");
 	  			
-			ArrayList args = (ArrayList) ((Pair) $2).Second;
+			ArrayList args = (ArrayList) ((Pair) $4).Second;
 			if (VariableDeclaration.IndexesSpecifiedInRank (args))	  	  
 				Report.Error (638, "Array bounds cannot appear in type specifiers.");	
 	
@@ -2806,7 +2839,7 @@ variable_declarator
 			vartype = DecomposeQI(s_vartype, Location.Null);						
 	  	}
 	  	else
-	  		vartype = (Expression) $2;
+			vartype = ($4 == null) ? (($2 == null) ? TypeManager.system_object_expr : (Expression) $2 ) : (Expression) $4;
 	  		  		
 	  	/*
 	  	   Check for a declaration like Dim a(2) or Dim a(2,3)
@@ -2835,17 +2868,9 @@ variable_declarator
 			}
 		}
 	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
-	  	//Console.WriteLine ("varname: {0} - vartype: {1} - init: {2}", varname, vartype, varinit);
 	  }
 	;
 
-variable_identifier
-	: identifier opt_array_name_modifier 
-	  {
-	  	$$ = $1; 
-	  	current_rank_specifiers = (ArrayList) $2;
-	  }
-	;		
 		
 opt_type_spec
 	: /* empty */	
@@ -3225,27 +3250,7 @@ opt_expression
 	: /* empty */
 	| expression
 	;
-	
-expression_list
-	: expression
-	  {
-		ArrayList list = new ArrayList ();
-		list.Add ($1);
-		$$ = list;
-	  }
-	| expression_list COMMA expression
-	  {
-		ArrayList list = (ArrayList) $1;
-		list.Add ($3);
-		$$ = list;
-	  }
-	;
-
-opt_expression_list
-	: /*empty */ { $$ = null; }
-	| expression_list
-	;
-	
+		
 this_access
 	: ME
 	  {

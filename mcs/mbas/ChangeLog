@@ -1,3 +1,11 @@
+2003/12/23  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : added stubs for options "/netcf /sdkpath:path"
+	* namespace.cs, decl.cs, rootcontext.cs : use hashtable to avoid duplicate importation of namespaces 
+	  (especially between command-line option /imports and explicit Import clauses), what manifested itself as
+	  error messages for ambiguous names that where in truth identical
+	* statement.cs : trying to fix the 'exit' statement DoEmit, for "Exit Sub"
+	* mb-parser.jay, mb-tokenizer.cs : initial support for type_characters (dim az$ = dim az as string)
+
 2003/12/18  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* class.cs : case-sensitiveness when tracking the entry-point removed
 	* driver.cs : IsSWFApp would try to pass a null 'mainclass' to the hashtable indexer, throwing an exception
