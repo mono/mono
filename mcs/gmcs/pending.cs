@@ -363,7 +363,7 @@ namespace Mono.CSharp {
 					if ((name != null) && (need_proxy == null) && (name != m.Name))
 						continue;
 
-					if (!ret_type.IsAssignableFrom (m.ReturnType)){
+					if (!TypeManager.IsEqual (ret_type, m.ReturnType)){
 						if (!((ret_type == null && m.ReturnType == TypeManager.void_type) ||
 						      (m.ReturnType == null && ret_type == TypeManager.void_type)))
 							continue;
@@ -379,7 +379,7 @@ namespace Mono.CSharp {
 					bool fail = false;
 					
 					for (j = 0; j < top; j++){
-						if (!tm.args [i][j].IsAssignableFrom (args[j])){
+						if (!TypeManager.IsEqual (tm.args [i][j], args[j])){
 							fail = true;
 							break;
 						}

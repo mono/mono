@@ -1,5 +1,10 @@
 2004-03-10  Martin Baulig  <martin@ximian.com>
 
+	* pending.cs (Pending.InterfaceMethod): Use TypeManager.IsEqual()
+	instead of IsAssignableFrom.	
+
+2004-03-10  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (FieldExpr.ctor): Use TypeManager.TypeToCoreType().
 
 	* support.cs (ParameterData.HasArrayParameter): New property.
