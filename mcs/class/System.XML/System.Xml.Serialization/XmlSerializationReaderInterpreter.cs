@@ -99,7 +99,7 @@ namespace System.Xml.Serialization
 					{
 						if (Reader.IsEmptyElement) { Reader.Skip(); Reader.MoveToContent(); continue; }
 						Reader.ReadStartElement();
-						ReadMembers ((ClassMap)typeMap.ObjectMap, parameters, true);
+						ReadMembers ((ClassMap)typeMap.ObjectMap, parameters, true, false);
 						ReadEndElement();
 						break;
 					}
@@ -110,7 +110,7 @@ namespace System.Xml.Serialization
 				}
 			}
 			else
-				ReadMembers ((ClassMap)typeMap.ObjectMap, parameters, true);
+				ReadMembers ((ClassMap)typeMap.ObjectMap, parameters, true, true);
 
 			if (_format == SerializationFormat.Encoded)
 				ReadReferencedElements();
@@ -167,10 +167,10 @@ namespace System.Xml.Serialization
 
 		protected virtual void ReadClassInstanceMembers (XmlTypeMapping typeMap, object ob)
 		{
-			ReadMembers ((ClassMap) typeMap.ObjectMap, ob, false);
+			ReadMembers ((ClassMap) typeMap.ObjectMap, ob, false, false);
 		}
 
-		void ReadMembers (ClassMap map, object ob, bool isValueList)
+		void ReadMembers (ClassMap map, object ob, bool isValueList, bool readByOrder)
 		{
 			// A value list cannot have attributes
 
@@ -239,6 +239,15 @@ namespace System.Xml.Serialization
 			int[] indexes = null;
 			object[] flatLists = null;
 			Fixup fixup = null;
+			int ind = 0;
+			int maxInd;
+
+			if (readByOrder) {
+				if (map.ElementMembers != null) maxInd = map.ElementMembers.Count;
+				else maxInd = 0;
+			}
+			else
+				maxInd = int.MaxValue;
 
 			if (map.FlatLists != null) 
 			{
@@ -247,19 +256,20 @@ namespace System.Xml.Serialization
 				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
 					if (IsReadOnly (mem, ob, isValueList)) flatLists[mem.FlatArrayIndex] = mem.GetValue (ob);
 			}
-
-			if (_format == SerializationFormat.Encoded)
+			
+			if (_format == SerializationFormat.Encoded && map.ElementMembers != null)
 			{
 				FixupCallbackInfo info = new FixupCallbackInfo (this, map, isValueList);
 				fixup = new Fixup(ob, new XmlSerializationFixupCallback(info.FixupMembers), map.ElementMembers.Count);
 				AddFixup (fixup);
+				if (readByOrder) maxInd = map.ElementMembers.Count;
 			}
 
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && (ind < maxInd)) 
 			{
 				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
 				{
-					XmlTypeMapElementInfo info = map.GetElement (Reader.LocalName, Reader.NamespaceURI);
+					XmlTypeMapElementInfo info = !readByOrder ? map.GetElement (Reader.LocalName, Reader.NamespaceURI) : map.GetElement (ind++);
 					if (info != null && !readFlag[info.Member.Index] )
 					{
 						if (info.Member.GetType() == typeof (XmlTypeMapMemberList))

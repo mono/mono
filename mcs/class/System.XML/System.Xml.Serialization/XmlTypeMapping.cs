@@ -136,6 +136,7 @@ namespace System.Xml.Serialization
 		Hashtable _elements = new Hashtable ();
 		ArrayList _elementMembers;
 		Hashtable _attributeMembers;
+		XmlTypeMapElementInfo[] _elementsByIndex;
 		ArrayList _flatLists;
 		ArrayList _allMembers = new ArrayList ();
 		XmlTypeMapMemberAnyElement _defaultAnyElement;
@@ -218,6 +219,25 @@ namespace System.Xml.Serialization
 		{
 			if (_elements == null) return null;
 			return (XmlTypeMapElementInfo)_elements[name + "/" + ns];
+		}
+		
+		public XmlTypeMapElementInfo GetElement (int index)
+		{
+			if (_elements == null) return null;
+			
+			if (_elementsByIndex == null)
+			{
+				_elementsByIndex = new XmlTypeMapElementInfo [_elementMembers.Count];
+				foreach (XmlTypeMapMemberElement mem in _elementMembers)
+				{
+					if (mem.ElementInfo.Count != 1) 
+						throw new InvalidOperationException ("Read by order only possible for encoded/bare format");
+						
+					_elementsByIndex [mem.Index] = (XmlTypeMapElementInfo) mem.ElementInfo [0];
+				}
+			}
+			
+			return _elementsByIndex [index];
 		}
 		
 		public ICollection AllElementInfos

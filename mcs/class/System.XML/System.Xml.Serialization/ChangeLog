@@ -1,3 +1,13 @@
+2003-10-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* MapCodeGenerator.cs: New file. Moved here all code that is common
+	  between XmlCodeExporter and SoapCodeExporter.
+	* SoapCodeExporter.cs: Implemented.
+	* XmlCodeExporter.cs: Moved common code to MapCodeGenerator.
+	* XmlSerializationReaderInterpreter.cs: Fixed problem when reading
+	  encoded bare parameter list.
+	* XmlTypeMapping.cs: Added method for getting member element by index.
+
 2003-10-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchemas.cs : Implemented IsDataSet().
