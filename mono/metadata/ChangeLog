@@ -1,3 +1,12 @@
+
+Thu Feb 14 19:01:06 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata.h: added function to get packing and size info
+	of a typedef.
+	* reflection.h, reflection.c: handle field RVA data. Save info about
+	the table layout if needed. Assign typedef indexes to all the types
+	before dumping the info about them to avoid forward reference problems.
+
 2002-02-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* socket-io.c (convert_sockopt_level_and_name): ifdef
