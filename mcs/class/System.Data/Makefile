@@ -19,7 +19,7 @@ LIB_MCS_FLAGS = \
 	/r:System.EnterpriseServices.dll 	\
 	/r:Mono.Data.Tds.dll
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
 
 EXTRA_DISTFILES = \
 	TODO					\

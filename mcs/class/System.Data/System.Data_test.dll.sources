@@ -34,4 +34,8 @@ System.Data/DataRelationCollectionTest.cs
 System.Data/DataTableCollectionTest.cs
 System.Data.Common/DataColumnMappingCollectionTest.cs
 System.Data.Common/DataTableMappingCollectionTest.cs
+System.Data.Common/DBDataPermissionAttributeTest.cs
+System.Data.Odbc/OdbcPermissionAttributeTest.cs
+System.Data.OleDb/OleDbPermissionAttributeTest.cs
 System.Data.SqlClient/SqlConnectionTest.cs
+System.Data.SqlClient/SqlClientPermissionAttributeTest.cs

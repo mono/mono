@@ -1,3 +1,12 @@
+2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Added /nowarn:618 when compiling unit test assembly to 
+	remove nunit obsolete warnings.
+	* System.Data.dll.sources: Added System.Data.Common.DbConnectionOptions
+	(NET_2_0) and System.Data.Common/PermissionHelper to the build.
+	* System.Data_test.dll.sources: Added {DBData|Odbc|OleDb|SqlClient}
+	PermissionAttribute unit tests to the build.
+
 2004-08-25  Nick Drochak  <ndrochak@ieee.com>
 
 	* Makefile: Cut down the the build noise.

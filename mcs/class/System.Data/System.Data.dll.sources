@@ -145,6 +145,7 @@ System.Data.Common/DbCommand.cs
 System.Data.Common/DbCommandOptionalFeatures.cs
 System.Data.Common/DbCommandSet.cs
 System.Data.Common/DbConnection.cs
+System.Data.Common/DbConnectionOptions.cs
 System.Data.Common/DbConnectionString.cs
 System.Data.Common/DbDataAdapter.cs
 System.Data.Common/DbDataPermissionAttribute.cs
@@ -166,6 +167,7 @@ System.Data.Common/DbTransaction.cs
 System.Data.Common/FieldNameLookup.cs
 System.Data.Common/GroupByBehavior.cs
 System.Data.Common/IdentifierCase.cs
+System.Data.Common/PermissionHelper.cs
 System.Data.Common/RecordCache.cs
 System.Data.Common/RowUpdatedEventArgs.cs
 System.Data.Common/RowUpdatingEventArgs.cs
