@@ -16,8 +16,9 @@
 //     => No barfing, but parsing is incomplete.
 //        DTD nodes are not still created.
 //
-//   There's also no checking being done for either well-formedness
-//   or validity.
+//   There's also no checking being done for validity.
+//
+//   More checking should be done for well-formedness.
 //
 //   NameTables aren't being used everywhere yet.
 //
@@ -25,8 +26,6 @@
 //   strings being allocated.
 //
 //   Some of the MoveTo methods haven't been implemented yet.
-//
-//   LineNumber and LinePosition aren't being tracked.
 //
 //   xml:space, xml:lang, and xml:base aren't being tracked.
 //
@@ -307,7 +306,6 @@ namespace System.Xml
 			readState = ReadState.Closed;
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (int i)
 		{
 			if (i > attributes.Count)
@@ -355,10 +353,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		bool IXmlLineInfo.HasLineInfo ()
 		{
-			return false;
+			return true;
 		}
 
 		public override string LookupNamespace (string prefix)
@@ -481,7 +478,6 @@ namespace System.Xml
 			return more;
 		}
 
-		[MonoTODO("This method should consider entity references")]
 		public override bool ReadAttributeValue ()
 		{
 			// 'attributeString' holds real string value (without their
@@ -511,7 +507,7 @@ namespace System.Xml
 				attributeString =
 					value.Substring (1, value.Length - 2);
 
-			bool returnEntityReference = false;
+			returnEntityReference = false;
 			value = String.Empty;
 			int refPosition;
 			int loop = 0;
@@ -581,51 +577,63 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override string ReadInnerXml ()
 		{
-			// Still need a Well Formedness check.
-			// Will wait for Validating reader ;-)
-			if (NodeType == XmlNodeType.Attribute) {
-				return Value;
-			} else {
-   				saveToXmlBuffer = true;
-				string startname = this.Name;
-				string endname = string.Empty;
-				readState = ReadState.Interactive;
+			if (readState != ReadState.Interactive)
+				return String.Empty;
 
-				while (startname != endname) {
+			switch (NodeType) {
+			case XmlNodeType.Attribute:
+				return value.Substring (1, value.Length - 2);
+			case XmlNodeType.Element:
+				if (IsEmptyElement)
+					return String.Empty;
+
+				int startDepth = depth;
+
+				innerXmlBuilder.Length = 0;
+				do {
 					ReadContent ();
-					endname = this.Name;
-				}
+					if (NodeType != XmlNodeType.EndElement || depth + 1 > startDepth)
+						innerXmlBuilder.Append (currentTag);
+				} while (depth >= startDepth);
 
-				xmlBuffer.Replace (currentTag.ToString (), "");
-				saveToXmlBuffer = false;
-				string InnerXml = xmlBuffer.ToString ();
-				xmlBuffer.Length = 0;
-				return InnerXml;
+				string xml = innerXmlBuilder.ToString ();
+				innerXmlBuilder.Length = 0;
+				return xml;
+			case XmlNodeType.None:
+				// MS document is incorrect. Seems not to progress.
+				return String.Empty;
+			default:
+				Read ();
+				return String.Empty;
 			}
 		}
 
-		[MonoTODO]
 		public override string ReadOuterXml ()
 		{
-			if (NodeType == XmlNodeType.Attribute) {
-				return Name + "=\"" + Value.Replace ("\"", "&quot;") + "\"";
-			} else {
-   				saveToXmlBuffer = true;
-				xmlBuffer.Append (currentTag.ToString ());
-				int startDepth = Depth;
-				readState = ReadState.Interactive;
+			if (readState != ReadState.Interactive)
+				return String.Empty;
 
-				do {
-					ReadContent ();
-				} while (Depth > startDepth);
+			switch (NodeType) {
+			case XmlNodeType.Attribute:
+				// strictly incompatible with MS... (it holds spaces attribute between name, value and "=" char (very trivial).
+				return String.Format ("{0}={1}{2}{1}", Name, QuoteChar, ReadInnerXml ());
+			case XmlNodeType.Element:
+				bool isEmpty = IsEmptyElement;
+				string startTag = currentTag.ToString ();
+				string name = Name;
 
-				saveToXmlBuffer = false;
-				string OuterXml = xmlBuffer.ToString ();
-				xmlBuffer.Length = 0;
-				return OuterXml;
+				if (NodeType == XmlNodeType.Element && !isEmpty)
+					return String.Format ("{0}{1}</{2}>", startTag, ReadInnerXml (), name);
+				else
+					return currentTag.ToString ();
+			case XmlNodeType.None:
+				// MS document is incorrect. Seems not to progress.
+				return String.Empty;
+			default:
+				Read ();
+				return String.Empty;
 			}
 		}
 
@@ -671,6 +679,8 @@ namespace System.Xml
 
 			if (fragType == XmlNodeType.Attribute)
 				value = "''";
+			else if (fragType == XmlNodeType.DocumentFragment)
+				allowMultipleRoot = true;
 /*	for future use
 			switch(fragType)
 			{
@@ -705,6 +715,9 @@ namespace System.Xml
 		private bool depthDown;
 
 		private bool popScope;
+		private Stack elementStack;
+		private bool haveEnteredDocument;
+		private bool allowMultipleRoot = false;
 
 		private XmlNodeType nodeType;
 		private string name;
@@ -738,9 +751,7 @@ namespace System.Xml
 		private int valueCapacity;
 		private const int initialValueCapacity = 8192;
 
-		private StringBuilder xmlBuffer; // This is for Read(Inner|Outer)Xml
 		private StringBuilder currentTag; // A buffer for ReadContent for ReadOuterXml
-		private bool saveToXmlBuffer;
 		private int line = 1;
 		private int column = 1;
 		private bool has_peek;
@@ -749,7 +760,13 @@ namespace System.Xml
 
 		private string attributeString = String.Empty;
 		private int attributeValuePos;
+		// This should be only referenced(used) by ReadInnerXml(). Kind of flyweight pattern.
+		private StringBuilder innerXmlBuilder;
 
+		private XmlException ReaderError(string message)
+		{
+			return new XmlException(message, LineNumber, LinePosition);
+		}
 		private void Init ()
 		{
 			readState = ReadState.Initial;
@@ -758,6 +775,8 @@ namespace System.Xml
 			depthDown = false;
 
 			popScope = false;
+			elementStack = new Stack();
+			haveEnteredDocument = false;
 
 			nodeType = XmlNodeType.None;
 			name = String.Empty;
@@ -781,8 +800,8 @@ namespace System.Xml
 			valueLength = 0;
 			valueCapacity = initialValueCapacity;
 
-			xmlBuffer = new StringBuilder ();
 			currentTag = new StringBuilder ();
+			innerXmlBuilder = new StringBuilder ();
 		}
 
 		// Use this method rather than setting the properties
@@ -885,9 +904,6 @@ namespace System.Xml
 				column = 1;
 			} else {
 				column++;
-			}
-			if (saveToXmlBuffer) {
-				xmlBuffer.Append ((char) ch);
 			}
 			currentTag.Append ((char) ch);
 			return ch;
@@ -995,13 +1011,17 @@ namespace System.Xml
 			parserContext.NamespaceManager.PushScope ();
 
 			string name = ReadName ();
+			if (haveEnteredDocument && elementStack.Count == 0 && !allowMultipleRoot)
+				throw ReaderError("document has terminated, cannot open new element");
+
+			haveEnteredDocument = true;
 			SkipWhitespace ();
 
 			bool isEmptyElement = false;
 
 			ClearAttributes ();
 
-			if (XmlChar.IsFirstNameChar (PeekChar ()))
+			if (XmlConstructs.IsNameStart (PeekChar ()))
 				ReadAttributes ();
 
 			if (PeekChar () == '/') {
@@ -1010,6 +1030,8 @@ namespace System.Xml
 				depthDown = true;
 				popScope = true;
 			}
+			else
+				elementStack.Push(name);
 
 			Expect ('>');
 
@@ -1033,6 +1055,11 @@ namespace System.Xml
 		private void ReadEndTag ()
 		{
 			string name = ReadName ();
+			if (elementStack.Count == 0)
+				throw ReaderError("closing element without matching opening element");
+			if ((string)elementStack.Pop() != name)
+				throw ReaderError("unmatched closing element");
+
 			SkipWhitespace ();
 			Expect ('>');
 
@@ -1157,7 +1184,7 @@ namespace System.Xml
 					else if (ch >= 'a' && ch <= 'f')
 						value = (value << 4) + ch - 'a' + 10;
 					else
-						throw new XmlException (
+						throw ReaderError (
 							String.Format (
 								"invalid hexadecimal digit: {0} (#x{1:X})",
 								(char)ch,
@@ -1170,7 +1197,7 @@ namespace System.Xml
 					if (ch >= '0' && ch <= '9')
 						value = value * 10 + ch - '0';
 					else
-						throw new XmlException (
+						throw ReaderError (
 							String.Format (
 								"invalid decimal digit: {0} (#x{1:X})",
 								(char)ch,
@@ -1262,7 +1289,7 @@ namespace System.Xml
 			int quoteChar = ReadChar ();
 
 			if (quoteChar != '\'' && quoteChar != '\"')
-				throw new XmlException ("an attribute value was not quoted");
+				throw ReaderError ("an attribute value was not quoted");
 
 			AppendValueChar (quoteChar);
 
@@ -1272,9 +1299,9 @@ namespace System.Xml
 				switch (ch)
 				{
 				case '<':
-					throw new XmlException ("attribute values cannot contain '<'");
+					throw ReaderError ("attribute values cannot contain '<'");
 				case -1:
-					throw new XmlException ("unexpected end of file in an attribute value");
+					throw ReaderError ("unexpected end of file in an attribute value");
 				default:
 					AppendValueChar (ch);
 					break;
@@ -1364,7 +1391,7 @@ namespace System.Xml
 					ReadChar ();
 
 					if (PeekChar () != '>')
-						throw new XmlException ("comments cannot contain '--'");
+						throw ReaderError ("comments cannot contain '--'");
 
 					ReadChar ();
 					break;
@@ -1427,7 +1454,6 @@ namespace System.Xml
 			SkipWhitespace ();
 			doctypeName = ReadName ();
 			SkipWhitespace ();
-			xmlBuffer.Length = 0;
 			switch(PeekChar ())
 			{
 			case 'S':
@@ -1446,19 +1472,16 @@ namespace System.Xml
 			{
 				// read markupdecl etc. or end of decl
 				ReadChar ();
-				xmlBuffer.Length = 0;
-				saveToXmlBuffer = true;
+				int startPos = currentTag.Length;
 				do {
 					ReadDTDInternalSubset ();
-				} while(nodeType != XmlNodeType.None);
-				xmlBuffer.Remove (xmlBuffer.Length - 1, 1);	// cut off ']'
-				saveToXmlBuffer = false;
+				} while (nodeType != XmlNodeType.None);
+				int endPos = currentTag.Length - 1;
+				parserContext.InternalSubset = currentTag.ToString (startPos, endPos - startPos);
 			}
 			// end of DOCTYPE decl.
 			SkipWhitespace ();
 			Expect ('>');
-
-			parserContext.InternalSubset = xmlBuffer.ToString ();
 
 			// set properties for <!DOCTYPE> node
 			SetProperties (
@@ -1514,7 +1537,7 @@ namespace System.Xml
 							ReadElementDecl ();
 							break;
 						default:
-							throw new XmlException ("Syntax Error after '<!E' (ELEMENT or ENTITY must be found)");
+							throw ReaderError ("Syntax Error after '<!E' (ELEMENT or ENTITY must be found)");
 						}
 						break;
 					case 'A':
@@ -1526,15 +1549,15 @@ namespace System.Xml
 						ReadNotationDecl ();
 						break;
 					default:
-						throw new XmlException ("Syntax Error after '<!' characters.");
+						throw ReaderError ("Syntax Error after '<!' characters.");
 					}
 					break;
 				default:
-					throw new XmlException ("Syntax Error after '<' character.");
+					throw ReaderError ("Syntax Error after '<' character.");
 				}
 				break;
 			default:
-				throw new XmlException ("Syntax Error inside doctypedecl markup.");
+				throw ReaderError ("Syntax Error inside doctypedecl markup.");
 			}
 		}
 
@@ -1566,16 +1589,13 @@ namespace System.Xml
 				Expect ("SYSTEM");
 			SkipWhitespace ();
 			int quoteChar = ReadChar ();	// apos or quot
-			xmlBuffer.Length = 0;
-			saveToXmlBuffer = true;
+			int startPos = currentTag.Length;
 			int c = 0;
 			while(c != quoteChar) {
 				c = ReadChar ();
-				if(c < 0) throw new XmlException ("Unexpected end of stream in ExternalID.");
+				if(c < 0) throw ReaderError ("Unexpected end of stream in ExternalID.");
 			}
-			saveToXmlBuffer = false;
-			xmlBuffer.Remove (xmlBuffer.Length-1, 1);	// cut quoteChar
-			return xmlBuffer.ToString ();
+			return currentTag.ToString (startPos, currentTag.Length - 1 - startPos);
 		}
 
 		private string ReadPubidLiteral()
@@ -1583,34 +1603,31 @@ namespace System.Xml
 			Expect ("PUBLIC");
 			SkipWhitespace ();
 			int quoteChar = ReadChar ();
-			xmlBuffer.Length = 0;
-			saveToXmlBuffer = true;
+			int startPos = currentTag.Length;
 			int c = 0;
 			while(c != quoteChar)
 			{
 				c = ReadChar ();
-				if(c < 0) throw new XmlException ("Unexpected end of stream in ExternalID.");
-				if(c != quoteChar && !XmlChar.IsPubidChar (c))
-					throw new XmlException("character '" + (char)c + "' not allowed for PUBLIC ID");
+				if(c < 0) throw ReaderError ("Unexpected end of stream in ExternalID.");
+				if(c != quoteChar && !XmlConstructs.IsPubid (c))
+					throw ReaderError("character '" + (char)c + "' not allowed for PUBLIC ID");
 			}
 			ReadChar();	// skips quoteChar
-			xmlBuffer.Remove (xmlBuffer.Length-1, 1);	// cut quoteChar
-			saveToXmlBuffer = false;
-			return xmlBuffer.ToString ();
+			return currentTag.ToString (startPos, currentTag.Length - 1 - startPos);
 		}
 
 		// The reader is positioned on the first character
 		// of the name.
 		private string ReadName ()
 		{
-			if (!XmlChar.IsFirstNameChar (PeekChar ()))
-				throw new XmlException ("a name did not start with a legal character");
+			if (!XmlConstructs.IsNameStart (PeekChar ()))
+				throw ReaderError ("a name did not start with a legal character");
 
 			nameLength = 0;
 
 			AppendNameChar (ReadChar ());
 
-			while (XmlChar.IsNameChar (PeekChar ())) {
+			while (XmlConstructs.IsName (PeekChar ())) {
 				AppendNameChar (ReadChar ());
 			}
 
@@ -1624,7 +1641,7 @@ namespace System.Xml
 			int ch = ReadChar ();
 
 			if (ch != expected) {
-				throw new XmlException (
+				throw ReaderError (
 					String.Format (
 						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
 						(char)expected,
@@ -1645,7 +1662,7 @@ namespace System.Xml
 		private void SkipWhitespace ()
 		{
 			//FIXME: Should not skip if whitespaceHandling == WhiteSpaceHandling.None
-			while (XmlChar.IsWhitespace (PeekChar ()))
+			while (XmlConstructs.IsSpace (PeekChar ()))
 				ReadChar ();
 		}
 
@@ -1655,7 +1672,7 @@ namespace System.Xml
 			int ch = PeekChar ();
 			do {
 				AppendValueChar (ReadChar ());
-			} while ((ch = PeekChar ()) != -1 && XmlChar.IsWhitespace (ch));
+			} while ((ch = PeekChar ()) != -1 && XmlConstructs.IsSpace (ch));
 
 			if (ch != -1 && ch != '<')
 				ReadText (false);

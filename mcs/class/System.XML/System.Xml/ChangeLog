@@ -1,3 +1,27 @@
+2003-03-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentFragment.cs, XmlElement.cs :
+	  modified InnerXml (fragment type from Element to DocumentFragment).
+
+	* XmlElement.cs : fixed WriteTo() ns check.
+	* XmlNamespaceManager.cs : MS.NET allows Add() used two or more times.
+	* XmlNode.cs : fixed ConstructNamespaceManager().
+
+	* XmlConstructs.cs : added IsSpace, IsName, IsNameStart, IsNCName,
+	  IsPubid with an int arg.
+	* XmlReader.cs : changed to use XmlChar.cs (its role is as same as
+	  XmlConstructs.cs).
+	* XmlTextReader.cs :
+	  improved error messages with line info.
+	  / checking matching start and end tags.
+	  / prevents the apperance of multiple root elements. (patch by Erik)
+	  fixed and refactored ReadInnerXml() and ReadOuterXml()
+	  changed to use XmlChar.cs.
+
+	* XmlTextWriter.cs : changed to put element's xmlns at CloseStartTag ()
+	  (It will help c14n implementation.)
+	  / blocks multiple attribute output with element node.
+
 2003-02-28  Alan Tam <Tam@SiuLung.com>
 
 	* XmlConvert.cs: fixed the most ToXXX(string) and ToString(XXX)

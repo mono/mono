@@ -99,11 +99,11 @@ namespace System.Xml
 			if (s != null && s.Length > 0) {
 				char[] chars = s.ToCharArray ();
 
-				if (XmlChar.IsFirstNameChar (chars[0])) {
+				if (XmlConstructs.IsNameStart (chars[0])) {
 					int i = 1;
 					int n = chars.Length;
 
-					while (i < n && XmlChar.IsNameChar (chars[i]))
+					while (i < n && XmlConstructs.IsName (chars[i]))
 						++i;
 
 					result = i == n;
@@ -123,7 +123,7 @@ namespace System.Xml
 				int i = 0;
 				int n = chars.Length;
 
-				while (i < n && XmlChar.IsNameChar (chars[i]))
+				while (i < n && XmlConstructs.IsName (chars[i]))
 					++i;
 
 				result = i == n;

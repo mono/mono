@@ -94,7 +94,7 @@ namespace System.Xml
 				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, XmlLang, this.XmlSpace);
 				XmlTextReader xmlReader = OwnerDocument.ReusableReader;
 				xmlReader.SetReaderContext (String.Empty, ctx);
-				xmlReader.SetReaderFragment (new StringReader (value), XmlNodeType.Element);
+				xmlReader.SetReaderFragment (new StringReader (value), XmlNodeType.DocumentFragment);
 
 				do {
 					XmlNode n = OwnerDocument.ReadNode (xmlReader);
@@ -368,7 +368,7 @@ namespace System.Xml
 			// write namespace declarations(if not exist)
 			foreach(XmlNode attributeNode in Attributes) {
 				if(attributeNode.Prefix != null && attributeNode.Prefix != String.Empty &&
-					w.LookupPrefix(attributeNode.Prefix) != attributeNode.NamespaceURI &&
+					w.LookupPrefix(attributeNode.NamespaceURI) != attributeNode.Prefix &&
 					attributeNode.Prefix != "xmlns")
 					w.WriteAttributeString("xmlns", attributeNode.Prefix, "http://www.w3.org/2000/xmlns/", attributeNode.NamespaceURI);
 			}

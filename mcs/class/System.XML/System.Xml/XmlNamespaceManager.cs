@@ -65,10 +65,9 @@ namespace System.Xml
 			if (currentScope.Namespaces == null)
 				currentScope.Namespaces = new Hashtable ();
 
-			if (prefix == String.Empty)
-				currentScope.Namespaces [prefix] = nameTable.Add (uri);
-			else
-				currentScope.Namespaces.Add (nameTable.Add (prefix), nameTable.Add (uri));
+			if (prefix != String.Empty)
+				nameTable.Add (prefix);
+			currentScope.Namespaces [prefix] = nameTable.Add (uri);
 		}
 
 		public virtual IEnumerator GetEnumerator ()

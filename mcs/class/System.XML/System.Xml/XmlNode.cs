@@ -530,9 +530,12 @@ namespace System.Xml
 
 			while(el != null) {
 				foreach(XmlAttribute attr in el.Attributes) {
-					if(attr.Prefix == "xmlns" || (attr.Name == "xmlns" && attr.Prefix == String.Empty)) {
-						if(nsmgr.LookupNamespace (attr.LocalName) == null )
+					if(attr.Prefix == "xmlns") {
+						if (nsmgr.LookupNamespace (attr.LocalName) == null)
 							nsmgr.AddNamespace (attr.LocalName, attr.Value);
+					} else if(attr.Name == "xmlns") {
+						if(nsmgr.LookupNamespace (String.Empty) == null)
+							nsmgr.AddNamespace (String.Empty, attr.Value);
 					}
 				}
 				// When reached to document, then it will set null value :)

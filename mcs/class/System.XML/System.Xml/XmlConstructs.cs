@@ -364,6 +364,11 @@ namespace System.Xml
 			return (CHARS[c] & SPACE) != 0;
 		}
 
+		public static bool IsSpace(int c) 
+		{
+			return (CHARS[c] & SPACE) != 0;
+		}
+
 		/// <summary>
 		/// Returns true if the specified character is a valid name start
 		/// character as defined by production [5] in the XML 1.0 specification.
@@ -374,12 +379,22 @@ namespace System.Xml
 			return (CHARS[c] & NAME_START) != 0;
 		} 
 
+		public static bool IsNameStart(int c) 
+		{
+			return (CHARS[c] & NAME_START) != 0;
+		} 
+
 		/// <summary>
 		/// Returns true if the specified character is a valid name
 		/// character as defined by production [4] in the XML 1.0 specification.
 		/// </summary>
 		/// <param name="c">The character to check.</param>
 		public static bool IsName(char c) 
+		{
+			return (CHARS[c] & NAME) != 0;
+		} 
+
+		public static bool IsName(int c) 
 		{
 			return (CHARS[c] & NAME) != 0;
 		} 
@@ -408,12 +423,22 @@ namespace System.Xml
 			return (CHARS[c] & NCNAME) != 0;
 		} 
 
+		public static bool IsNCName(int c) 
+		{
+			return (CHARS[c] & NCNAME) != 0;
+		} 
+
 		/// <summary>
 		/// Returns true if the specified character is a valid Pubid
 		/// character as defined by production [13] in the XML 1.0 specification.
 		/// </summary>
 		/// <param name="c">The character to check</param>
 		public static bool IsPubid(char c) 
+		{
+			return (CHARS[c] & PUBID) != 0;
+		}
+
+		public static bool IsPubid(int c) 
 		{
 			return (CHARS[c] & PUBID) != 0;
 		}

@@ -43,6 +43,8 @@ namespace System.Xml
 		string openElementPrefix;
 		string openElementNS;
 		bool hasRoot = false;
+		Hashtable writtenAttributes = new Hashtable ();
+		bool checkMultipleAttributes = false;
 
 		#endregion
 
@@ -183,7 +185,12 @@ namespace System.Xml
 			// output namespace declaration if not exist.
 			string prefix = openElementPrefix;
 			string ns = openElementNS;
-			if (ns != null/* && LookupPrefix (ns) != prefix*/) 
+			openElementPrefix = null;
+			openElementNS = null;
+
+			// LAMESPEC: If prefix was already assigned another nsuri, then this element's nsuri goes away!
+
+			if (ns != null) 
 			{
 				string formatXmlns = String.Empty;
 				if (ns != String.Empty)
@@ -205,15 +212,16 @@ namespace System.Xml
 					else if (addDefaultNamespace)
 						formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
 				} 
-				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace (prefix) != String.Empty)) 
+				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace (prefix) != ns)) 
 				{
 					namespaceManager.AddNamespace (prefix, ns);
 					formatXmlns = String.Format (" xmlns={0}{0}", quoteChar);
 				}
-				if(formatXmlns != String.Empty)
-					w.Write(formatXmlns);
-				openElementPrefix = null;
-				openElementNS = null;
+				if(formatXmlns != String.Empty) {
+					string xmlns = formatXmlns.Trim ();
+					if (checkMultipleAttributes && !writtenAttributes.Contains (xmlns.Substring (0, xmlns.IndexOf ('='))))
+						w.Write(formatXmlns);
+				}
 			}
 		}
 
@@ -265,6 +273,8 @@ namespace System.Xml
 			ws = WriteState.Content;
 			openStartElement = false;
 			attributeWrittenForElement = false;
+			checkMultipleAttributes = false;
+			writtenAttributes.Clear ();
 		}
 
 		public override void Flush ()
@@ -500,8 +510,8 @@ namespace System.Xml
 			if ((prefix == "xml") && (localName == "space"))
 				openXmlSpace = true;
 
-			if ((prefix == "xmlns") && (localName == "xmlns"))
-				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.");
+			if ((prefix == "xmlns") && (localName.ToLower ().StartsWith ("xml")))
+				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML: " + prefix + ":" + localName);
 
 			CheckState ();
 
@@ -534,11 +544,25 @@ namespace System.Xml
 			if (openStartElement || attributeWrittenForElement)
 				formatSpace = " ";
 
+			// If already written, then break up.
+			if (checkMultipleAttributes &&
+				writtenAttributes.Contains (formatPrefix + localName))
+				return;
+
 			w.Write ("{0}{1}{2}={3}", formatSpace, formatPrefix, localName, quoteChar);
+			if (checkMultipleAttributes)
+				writtenAttributes.Add (formatPrefix + localName, formatPrefix + localName);
 
 			openAttribute = true;
 			attributeWrittenForElement = true;
 			ws = WriteState.Attribute;
+			if (prefix == String.Empty && localName == "xmlns") {
+				if (namespaceManager.LookupNamespace (prefix) == null)
+					namespaceManager.AddNamespace (prefix, ns);
+			} else if (prefix == "xmlns") {
+				if (namespaceManager.LookupNamespace (localName) == null)
+					namespaceManager.AddNamespace (localName, ns);
+			}
 		}
 
 		public override void WriteStartDocument ()
@@ -595,13 +619,14 @@ namespace System.Xml
 
 			CheckState ();
 			CloseStartElement ();
+			writtenAttributes.Clear ();
+			checkMultipleAttributes = true;
 			
 			if (prefix == null)
 				prefix = namespaceManager.LookupPrefix (ns);
 			if (prefix == null)
 				prefix = String.Empty;
 
-			string formatXmlns = "";
 			string formatPrefix = "";
 
 			if(ns != null) {
@@ -609,8 +634,7 @@ namespace System.Xml
 					formatPrefix = prefix + ":";
 			}
 
-			w.Write ("{0}<{1}{2}{3}", indentFormatting, formatPrefix, localName, formatXmlns);
-	
+			w.Write ("{0}<{1}{2}", indentFormatting, formatPrefix, localName);
 
 			openElements.Push (new XmlTextWriterOpenElement (formatPrefix + localName));
 			ws = WriteState.Element;
@@ -619,8 +643,6 @@ namespace System.Xml
 			openElementPrefix = prefix;
 
 			namespaceManager.PushScope ();
-//			if(ns != null)
-//				namespaceManager.AddNamespace (prefix, ns);
 			indentLevel++;
 		}
 

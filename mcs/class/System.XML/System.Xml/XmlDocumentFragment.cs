@@ -46,7 +46,7 @@ namespace System.Xml
 				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, XmlLang, this.XmlSpace);
 				XmlTextReader xmlReader = OwnerDocument.ReusableReader;
 				xmlReader.SetReaderContext (String.Empty, ctx);
-				xmlReader.SetReaderFragment (new StringReader (value), XmlNodeType.Element);
+				xmlReader.SetReaderFragment (new StringReader (value), XmlNodeType.DocumentFragment);
 
 				do {
 					XmlNode n = OwnerDocument.ReadNode (xmlReader);
