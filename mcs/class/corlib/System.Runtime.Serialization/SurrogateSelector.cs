@@ -44,7 +44,7 @@ namespace System.Runtime.Serialization
 
 			currentKey = type.FullName + "#" + context.ToString ();
 
-			if (Surrogates.ContainsKey (key))
+			if (Surrogates.ContainsKey (currentKey))
 				throw new ArgumentException ("A surrogate for " + type.FullName + " already exists.");
 
 			Bundle values = new Bundle (surrogate);
