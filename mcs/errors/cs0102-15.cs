@@ -1,5 +1,5 @@
-// cs111.cs : Class 'Test' already defines a member called 'add_XX' with the same parameter types
-// Line : 12
+// cs0102.cs: The class 'Test' already contains a definition for 'add_XX'
+// Line: 12
 
 public class Test
 {
@@ -11,6 +11,4 @@ public class Test
         
 	public void add_XX (MyEvent e) { return; }
 }
-
-
 
