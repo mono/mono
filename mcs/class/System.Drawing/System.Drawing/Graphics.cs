@@ -191,13 +191,13 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawEllipse (Pen pen, Rectangle rect)
 		{
-			DrawEllipse (pen, rect.X, rect.Y, rect.Height, rect.Width);
+			DrawEllipse (pen, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
 		[MonoTODO]
 		public void DrawEllipse (Pen pen, RectangleF rect)
 		{
-			DrawEllipse (pen, rect.X, rect.Y, rect.Height, rect.Width);
+			DrawEllipse (pen, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
 		public void DrawEllipse (Pen pen, int x, int y, int width, int height)
