@@ -1,3 +1,8 @@
+2004-12-20  Ben Maurer  <bmaurer@ximian.com>
+
+	* mini.c (mono_method_to_ir): In CEE_DUP, handle the dup / stloc
+	idiom.
+
 2004-12-19  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c (type_to_eval_stack_type): Make this handle the void type
