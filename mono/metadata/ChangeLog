@@ -1,3 +1,28 @@
+2004-05-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* appdomain.c, gc.c: Make use of the new WaitForSingleObjectEx.
+	* icall.c: Registered icalls for Suspend and Resume.
+	* locales.c: Beware, mono_monitor_try_enter can now be interrupted by
+	  Thread.Abort.
+	* monitor.c: Use WaitForSingleObjectEx. Added some interruption checkpoints.
+	* mono-debug-debugger.c: Use WaitForSingleObjectEx et al.
+	* process.c: Use WaitForSingleObjectEx.
+	* threadpool.c: Use WaitForSingleObjectEx. Added some interruption 
+	  checkpoints.
+	* threads.c, threads.h: Make use of new Ex wait methods. Improved
+	  implementation of Thread.Abort and Thread.ResetAbort icalls. Added icalls
+	  for Suspend and Resume. Added new mono_thread_stop, used for stoping
+	  background threads. Added basic support for Abort in Windows.
+	  Start new threads using a managed delegate invoke wrapper. This wrapper
+	  has an interruption checkpoint that is needed since an interruption
+	  can be requested before the thread leaves the unmanaged code that starts 
+	  the thread.
+	* marshal.c: Added interruption checkpoint after every native call, and
+	  also before managed calls for wrappers called from unmanaged code to
+	  go into managed code.
+	* object.h: Added new field in MonoThread to keep track of interruption
+	  requests.
+
 2004-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c: Insert SAVE_LMF and RESTORE_LMF opcodes around native
