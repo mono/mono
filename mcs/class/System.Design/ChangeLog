@@ -1,5 +1,14 @@
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 
+	* System.Design.dll.sources: remove DataBindingCollection
+	* System.Web.UI.Design/DataBindingCollection.cs: removed
+	* System.Web.UI.Design/WebControlToolboxItem.cs: fixed
+	public API
+	* System.Web.UI.Design/UrlBuilderOptions.cs: added Flags
+	attribute
+
+2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+
 	* System.Design.dll.sources: added IOleDragClient
 	* System.ComponentModel.Design/ComponentDesigner.cs: fixed 
 	public API

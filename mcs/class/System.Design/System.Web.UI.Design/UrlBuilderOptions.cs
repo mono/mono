@@ -7,12 +7,10 @@
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
-
 namespace System.Web.UI.Design {
-
+	[Flags]
 	public enum UrlBuilderOptions {
 		None,
 		NoAbsolute
 	}
 }
-
