@@ -320,7 +320,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void ArrangeIcons(ListViewAlignment align) {
+		public void ArrangeIcons(ListViewAlignment value) {
 			throw new NotImplementedException ();
 		}
 
@@ -359,11 +359,11 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public Rectangle RetItemRect(int index) {
+		public Rectangle GetItemRect(int index) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public Rectangle RetItemRect(int index, ItemBoundsPortion portion) {
+		public Rectangle GetItemRect(int index, ItemBoundsPortion portion) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
@@ -416,23 +416,31 @@ namespace System.Windows.Forms {
 		//
 		
 		[MonoTODO]
+		protected override void CreateHandle() {
+			//FIXME:
+		}
+
+		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) {
 			//FIXME:
 			return base.IsInputKey(keyData);
 		}
 
 		
+		[MonoTODO]
 		protected virtual void  OnAfterLabelEdit(LabelEditEventArgs e) {
-			
+			//FIXME:
 		}
 		
+		[MonoTODO]
 		protected virtual void  OnBeforeLabelEdit(LabelEditEventArgs e) {
-		
+			//FIXME:
 		}
 		
 		
+		[MonoTODO]
 		protected virtual void  OnColumnClick(ColumnClickEventArgs e) {
-		
+			//FIXME:
 		}
 
 		[MonoTODO]
@@ -453,25 +461,24 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
-		
-		protected virtual void  OnItemActivate(EventArgs ice) 	{
-			
+		protected virtual void  OnItemActivate(EventArgs e) 	{
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void  OnItemCheck(ItemCheckEventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void  OnItemDrag(ItemDragEventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
-		[MonoTODO]
-		protected virtual void  OnSelectedItemChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
+//		[MonoTODO]
+//		protected virtual void  OnSelectedItemChanged(EventArgs e) {
+//			//FIXME:
+//		}
 
 		[MonoTODO]
 		protected override void OnSystemColorsChanged(EventArgs e) {
@@ -485,7 +492,7 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		protected void UpdateExtendedStyles() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		

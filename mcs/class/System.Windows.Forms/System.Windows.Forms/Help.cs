@@ -28,12 +28,6 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 
-//		[MonoTODO]
-//		public static void ShowHelp(Control parent, string url, Point location)
-//		{
-//			//FIXME:
-//		}
-
 		[MonoTODO]
 		public static void ShowHelp(Control parent, string url, string keyword)
 		{
@@ -47,7 +41,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public static void ShowHelp(Control parent, string url, HelpNavigator navigator, object param)
+		public static void ShowHelp(Control parent, string url, HelpNavigator command, object param)
 		{
 			//FIXME:
 		}
@@ -57,5 +51,12 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 		}
+
+		[MonoTODO]
+		public static void ShowPopup(Control parent, string caption, Point location)
+		{
+			//FIXME:
+		}
+
 	 }
 }

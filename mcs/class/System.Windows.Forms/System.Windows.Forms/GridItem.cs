@@ -7,7 +7,7 @@
 //
 // (C) 2002/3 Ximian, Inc
 //
-
+using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -46,13 +46,14 @@ namespace System.Windows.Forms {
 		public abstract GridItem Parent {
 			get;
 		}
-		//public abstract PropertyDescriptor PropertyDescriptor {
-		//	get;
-		//}
+		public abstract PropertyDescriptor PropertyDescriptor {
+			get;
+		}
 		public abstract object Value {
 			get;
 		}
 
+		public abstract bool Select ();
 		//
 		// --- Protected Constructor
 		//

@@ -49,8 +49,8 @@ namespace System.Windows.Forms {
 		//
 		//	 --- Public Fields
 		//
-		public const int DefaultItemHeight = 500;//just guessing FIXME // = ??;
-		public const int NoMatches = 0 ;//just guessing FIXME // = ??;
+		public const int DefaultItemHeight = 13;//correct
+		public const int NoMatches = -1 ;//correct
 		
 
 		//

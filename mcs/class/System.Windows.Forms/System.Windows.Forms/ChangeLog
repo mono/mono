@@ -1,3 +1,15 @@
+2003-09-03  Dennis Hayes <dennish@raytek.com>
+
+	* GridColumnStylesCollection.cs
+	* ImageList.cs
+	* ImageListStreamer.cs
+	* GridItem.cs
+	* Help.cs
+	* ListBox.cs
+	* ListView.cs
+
+	*signiture corrections
+
 2003-10-01 Jordi Mas i Hernàndez <jmas@softcatala.org>
  	* Initial ListView control implementation
 

@@ -137,6 +137,12 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		public void Draw(Graphics g, int x, int y, int width, int height, int index)
+		{
+			//FIXME:
+		}
+
+		[MonoTODO]
 		public override string ToString()
 		{
 			//FIXME:

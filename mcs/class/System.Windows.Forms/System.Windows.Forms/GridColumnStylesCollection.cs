@@ -127,13 +127,13 @@ namespace System.Windows.Forms {
 //			}
 //		}
 //		
-//		[MonoTODO]
-//		public DataGridColumnStyle this[PropertyDescriptor propDesc]{
-//			get{
-//				throw new NotImplementedException ();
-//			}
-//		}
-//
+		[MonoTODO]
+		public DataGridColumnStyle this[PropertyDescriptor propDesc]{
+			get{
+				throw new NotImplementedException ();
+			}
+		}
+
 //		[MonoTODO]
 //		public DataGridColumnStyle this[string columnName]{
 //			get{
