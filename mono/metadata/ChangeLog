@@ -1,3 +1,6 @@
+2004-12-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (ves_icall_System_Threading_Thread_GetCachedCurrentCulture): Make this lock-less.
 
 Tue Dec 7 10:47:09 CET 2004 Paolo Molaro <lupus@ximian.com>
 
