@@ -26,4 +26,4 @@ test: $(LIBRARY) run_test
 .PHONY: run_test
 
 run_test:
-        -MONO_PATH=$(MONO_PATH) mono --debug $(NUNITCONSOLE) $(LIBRARY)
+	-MONO_PATH=$(MONO_PATH) mono --debug $(NUNITCONSOLE) $(LIBRARY)
