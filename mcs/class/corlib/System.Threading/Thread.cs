@@ -159,7 +159,7 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void ResetAbort_internal();
 
-		static void ResetAbort()
+		public static void ResetAbort()
 		{
 			Thread thread=CurrentThread;
 
