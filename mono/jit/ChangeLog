@@ -1,3 +1,8 @@
+2002-12-31  Martin Baulig  <martin@ximian.com>
+
+	* debug.c (MonoDebuggerSymbolFileTable): Added `global_symfile'
+	field to point to the MonoGlobalSymbolTable.
+
 2002-12-30  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (MonoDebuggerInfo): Put back `symbol_file_modified'.
