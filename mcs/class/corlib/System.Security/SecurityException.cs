@@ -50,7 +50,6 @@ namespace System.Security {
 		Type permissionType;
 		private string _granted;
 		private string _refused;
-#if NET_2_0
 		private SecurityAction _action;
 		private object _demanded;
 		private object _denyset;
@@ -61,7 +60,6 @@ namespace System.Security {
 		private MethodInfo _method;
 		private string _url;
 		private SecurityZone _zone;
-#endif
 
 		// Properties
 
@@ -198,7 +196,11 @@ namespace System.Security {
 		}
 
 #if NET_2_0
-		public SecurityException (string message, object deny, object permitOnly, MethodInfo method, 
+		public
+#else
+		internal
+#endif
+		SecurityException (string message, object deny, object permitOnly, MethodInfo method, 
 			object demanded, IPermission permThatFailed)
 			: base (message)
 		{
@@ -209,21 +211,27 @@ namespace System.Security {
 			_permfailed = permThatFailed;
 		}
 
-		public SecurityException (string message, AssemblyName assemblyName, PermissionSet grant, 
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		SecurityException (string message, AssemblyName assemblyName, PermissionSet grant, 
 			PermissionSet refused, MethodInfo method, SecurityAction action, object demanded, 
 			IPermission permThatFailed, Evidence evidence)
 			: base (message)
 		{
 			_assembly = assemblyName;
-			_granted = grant.ToString ();
-			_refused = refused.ToString ();
+			_granted = (grant == null) ? String.Empty : grant.ToString ();
+			_refused = (refused == null) ? String.Empty : refused.ToString ();
 			_method = method;
 			_action = action;
 			_demanded = demanded;
 			_permfailed = permThatFailed;
+			if (_permfailed != null)
+				permissionType = _permfailed.GetType ();
 			// FIXME ? evidence ?
 		}
-#endif
 
 		// Methods
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -236,27 +244,23 @@ namespace System.Security {
 		{
 			StringBuilder sb = new StringBuilder (base.ToString ());
 			if (permissionState != null) {
-				sb.Append (Environment.NewLine);
-				sb.Append ("State: ");
-				sb.Append (permissionState);
+				sb.AppendFormat ("{0}State: {1}", Environment.NewLine, permissionState);
 			}
 			if (permissionType != null) {
-				sb.Append (Environment.NewLine);
-				sb.Append ("Type: ");
-				sb.Append (permissionType.ToString ());
+				sb.AppendFormat ("{0}Type: {1}", Environment.NewLine, permissionType);
 			}
-#if NET_1_1
-			if (_granted != null) {
-				sb.Append (Environment.NewLine);
-				sb.Append ("Granted: ");
-				sb.Append (_granted.ToString ());
+			if ((_granted != null) && (_granted.Length > 0)) {
+				sb.AppendFormat ("{0}Granted: {1}", Environment.NewLine, _granted);
 			}
-			if (_refused != null) {
-				sb.Append (Environment.NewLine);
-				sb.Append ("Refused: ");
-				sb.Append (_refused.ToString ());
+			if ((_refused != null) && (_refused.Length > 0)) {
+				sb.AppendFormat ("{0}Refused: {1}", Environment.NewLine, _refused);
 			}
-#endif
+			if (_demanded != null) {
+				sb.AppendFormat ("{0}Demanded: {1}", Environment.NewLine, _demanded);
+			}
+			if (_permfailed != null) {
+				sb.AppendFormat ("{0}Failed Permission: {1}", Environment.NewLine, _permfailed);
+			}
 			return sb.ToString ();
 		}
 	}

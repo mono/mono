@@ -1,3 +1,8 @@
+2004-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityException.cs: Provide more details when a security exception
+	is raised (to help debugging).
+
 2004-09-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSet.cs: Updated to match latest unit tests, i.e. match
