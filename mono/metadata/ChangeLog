@@ -1,4 +1,9 @@
 
+Wed Mar 16 18:08:00 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.h, mono-config.c: added code to deal with bundled configs
+	for bundled assemblies.
+
 Wed Mar 16 16:34:38 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* *.c, private.h: cleanup, removing old private.h header file.
