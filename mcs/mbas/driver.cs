@@ -82,9 +82,6 @@ namespace Mono.Languages
 		[Option("[Mono] Allows unsafe code", "unsafe")]
 		public bool AllowUnsafeCode { set { RootContext.Unsafe = value; } }
 
-		[Option("[Mono] Set default context to checked", "checked")]
-		public bool Checked { set { RootContext.Checked = value; } }
-
 		[Option("[Mono] Debugger {arguments}", "debug-args")]
 		public WhatToDoNext SetDebugArgs(string args)
 		{
@@ -188,8 +185,9 @@ namespace Mono.Languages
 //		[Option("[NOT IMPLEMENTED YET]Enable optimizations", "optimize")]
 		public bool optimize = false;
 
-//		[Option("[NOT IMPLEMENTED YET]Remove integer checks. Default off.")]
-		public bool removeintchecks = false;
+		// TODO: handle VB.NET [+|-] boolean syntax
+		[Option("Remove integer checks. Default off.")]
+		public bool removeintchecks { set { RootContext.Checked = !value; } }
 
 		// TODO: handle VB.NET [+|-] boolean syntax
 		[Option("Emit debugging information", 'g', "debug")]
@@ -310,8 +308,6 @@ namespace Mono.Languages
 		[Option("[IGNORED]Emit compiler output in UTF8 character encoding")]
 		public bool utf8output;
 
-		// TODO : response file support
-		
 		ArrayList defines = new ArrayList();
 		ArrayList references = new ArrayList();
 		ArrayList soft_references = new ArrayList();
@@ -535,25 +531,6 @@ namespace Mono.Languages
 		{
 			Mono.MonoBASIC.Parser.ImportsList = new ArrayList();
 			Mono.MonoBASIC.Parser.ImportsList.Add("Microsoft.VisualBasic");
-		}
-
-
-		//
-		// Returns the directory where the system assemblies are installed
-		//
-		string GetSystemDir ()
-		{
-			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
-
-			foreach (Assembly a in assemblies){
-				string codebase = a.CodeBase;
-				if (codebase.EndsWith ("corlib.dll")){
-					return codebase.Substring (0, codebase.LastIndexOf ("/"));
-				}
-			}
-
-			Report.Error (-15, "Can not compute my system path");
-			return "";
 		}
 
 		//
@@ -1010,6 +987,9 @@ namespace Mono.Languages
 			SetupDefaultDefines();	
 			
 			SetupDefaultImports();
+
+			// Some defaults
+			RootContext.Checked = true;
 
 			ProcessArgs(args);
 			
