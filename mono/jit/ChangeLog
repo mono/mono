@@ -1,3 +1,8 @@
+2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* debug.c: allocate debug->source_files. Fixes GLib-CRITICAL upon
+	debugging clean up.
+
 2003-02-02  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (mono_debug_add_wrapper): Lookup the wrapper method in a
