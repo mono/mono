@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-class Mono {
+class MonoEmbed {
 	[MethodImplAttribute(MethodImplOptions.InternalCall)]
 	extern static string gimme();
 

@@ -63,7 +63,7 @@ main(int argc, char* argv[]) {
 	 * We add our special internal call, so that C# code
 	 * can call us back.
 	 */
-	mono_add_internal_call ("Mono::gimme", gimme);
+	mono_add_internal_call ("MonoEmbed::gimme", gimme);
 
 	main_args.domain=domain;
 	main_args.file=file;
