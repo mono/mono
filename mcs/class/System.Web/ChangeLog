@@ -1,3 +1,7 @@
+2004-06-08  Alon Gazit <along@mainsoft.com>
+
+	* System.Web.dll.sources: added ServerVariablesCollection.
+
 2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.dll.sources: removed CSCompiler.cs
