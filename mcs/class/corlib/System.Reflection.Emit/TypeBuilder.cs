@@ -744,5 +744,11 @@ namespace System.Reflection.Emit {
 
 			return created.GetInterfaceMap (interfaceType);
 		}
+
+		internal bool is_created {
+			get {
+				return created != null;
+			}
+		}
 	}
 }

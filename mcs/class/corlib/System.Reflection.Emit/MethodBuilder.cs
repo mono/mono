@@ -42,6 +42,10 @@ namespace System.Reflection.Emit {
 			this.attrs = attributes;
 			this.call_conv = callingConvention;
 			this.rtype = returnType;
+			// The MSDN docs does not specify this, but the MS MethodBuilder
+			// appends a HasThis flag if the method is not static
+			if ((attributes & MethodAttributes.Static) == 0)
+ 				this.call_conv |= CallingConventions.HasThis;
 			if (parameterTypes != null) {
 				this.parameters = new Type [parameterTypes.Length];
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
@@ -69,16 +73,26 @@ namespace System.Reflection.Emit {
 		internal TypeBuilder TypeBuilder {
 			get {return type;}
 		}
-		
+
+		public override RuntimeMethodHandle MethodHandle {
+			get {
+				throw NotSupported ();
+			}
+		}
+
 		public override Type ReturnType {get {return rtype;}}
 		public override Type ReflectedType {get {return type;}}
 		public override Type DeclaringType {get {return type;}}
 		public override string Name {get {return name;}}
-		public override RuntimeMethodHandle MethodHandle {get {return mhandle;}}
 		public override MethodAttributes Attributes {get {return attrs;}}
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
 			get {return null;}
 		}
+
+		public override CallingConventions CallingConvention { 
+			get { return call_conv; }
+		}
+
 		public MethodToken GetToken() {
 			return new MethodToken(0x06000000 | table_idx);
 		}
@@ -99,27 +113,50 @@ namespace System.Reflection.Emit {
 			}
 			return retval;
 		}
-		
-		public void CreateMethodBody( byte[] il, int count) {
-			code = new byte [count];
-			System.Array.Copy(il, code, count);
+
+		public Module GetModule () {
+			return type.Module;
 		}
+
+		public void CreateMethodBody( byte[] il, int count) {
+			if ((il != null) && ((count < 0) || (count >= il.Length)))
+				throw new ArgumentException ("Index was out of range.  Must be non-negative and less than the size of the collection.");
+
+			if ((code != null) || type.is_created)
+				throw new InvalidOperationException ("Type definition of the method is complete.");
+
+			if (il == null)
+				code = null;
+			else {
+				code = new byte [count];
+				System.Array.Copy(il, code, count);
+			}
+		}
+
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			return null;
+			throw NotSupported ();
 		}
 		public override bool IsDefined (Type attribute_type, bool inherit) {
-			return false;
+			throw NotSupported ();
 		}
 		public override object[] GetCustomAttributes( bool inherit) {
-			return null;
+			throw NotSupported ();
 		}
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
-			return null;
+			throw NotSupported ();
 		}
 		public ILGenerator GetILGenerator () {
 			return GetILGenerator (64);
 		}
+
 		public ILGenerator GetILGenerator (int size) {
+			if (((iattrs & MethodImplAttributes.CodeTypeMask) != 
+				 MethodImplAttributes.IL) ||
+				((iattrs & MethodImplAttributes.ManagedMask) != 
+				 MethodImplAttributes.Managed))
+				throw new InvalidOperationException ("Method body should not exist.");
+			if (ilgen != null)
+				return ilgen;
 			ilgen = new ILGenerator (this, size);
 			return ilgen;
 		}
@@ -127,6 +164,11 @@ namespace System.Reflection.Emit {
 		[MonoTODO]
 		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string strParamName)
 		{
+			if ((position < 1) || (position > parameters.Length))
+				throw new ArgumentOutOfRangeException ("position");
+
+			RejectIfCreated ();
+
 			ParameterBuilder pb = new ParameterBuilder (this, position, attributes, strParamName);
 			// check position
 			if (pinfo == null)
@@ -141,6 +183,8 @@ namespace System.Reflection.Emit {
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (customBuilder == null)
+				throw new ArgumentNullException ("customBuilder");
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.CompilerServices.MethodImplAttribute") {
 				byte[] data = customBuilder.Data;
@@ -161,9 +205,14 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			if (con == null)
+				throw new ArgumentNullException ("con");
+			if (binaryAttribute == null)
+				throw new ArgumentNullException ("binaryAttribute");
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 		public void SetImplementationFlags( MethodImplAttributes attributes) {
+			RejectIfCreated ();
 			iattrs = attributes;
 		}
 		internal override int get_next_table_index (object obj, int table, bool inc) {
@@ -172,6 +221,15 @@ namespace System.Reflection.Emit {
 
 		internal void set_override (MethodInfo mdecl) {
 			override_method = mdecl;
+		}
+
+		private void RejectIfCreated () {
+			if (type.is_created)
+				throw new InvalidOperationException ("Type definition of the method is complete.");
+		}
+
+		private Exception NotSupported () {
+			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 	}
 }

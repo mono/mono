@@ -1,3 +1,12 @@
+2003-02-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBuilder.cs: Added error checking to methods so they conform to
+	MSDN docs. Implemented 'GetModule' and 'CallingConvention' members. 
+	Some other tweaks to improve compatibility with MS .NET.
+
+	* TypeBuilder.cs: Added 'is_created' property which will be used for
+	checking 'type is already created' errors.
+
 2003-02-07  Martin Baulig  <martin@ximian.com>
 
 	* ModuleBuilder.cs (.ctor): Added `bool IsMainModule' argument.
