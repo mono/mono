@@ -1,3 +1,14 @@
+2004-03-10  Martin Baulig  <martin@ximian.com>
+
+	* class.h (MonoGenericMethod): Added `gpointer reflection_info'.
+
+	* reflection.c (inflate_mono_method): Added `MonoObject *obj'
+	argument and write it into the `reflection_info' field.
+
+	* icall.c
+	(ves_icall_MethodBase_GetGenericMethodDefinition): New interncall.
+	(ves_icall_MethodBase_get_HasGenericParameters): New interncall.
+
 2004-03-09  Jackson Harper  <jackson@ximian.com>
 
 	* char-conversions.h: use 8 bits for numeric data its all we need
