@@ -111,5 +111,6 @@ using System.Web.UI;
 [assembly: WebResource ("TreeView.js", "text/javascript")]
 [assembly: WebResource ("Menu.js", "text/javascript")]
 [assembly: WebResource ("callback.js", "text/javascript")]
+[assembly: WebResource ("webform.js", "text/javascript")]
 
 #endif

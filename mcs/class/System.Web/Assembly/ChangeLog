@@ -1,3 +1,7 @@
+2005-02-05  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AssemblyInfo.cs: Registered webform.js script.
+
 2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AssemblyInfo.cs: More resources.
