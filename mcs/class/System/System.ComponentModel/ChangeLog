@@ -1,5 +1,10 @@
 2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* TypeDescriptor.cs: Fix Info.GetDefaultEvent() so that it filters events
+	  properly.  This matches .NET 1.1 and fixes a test case.
+
+2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* TypeDescriptor.cs: Fix GetComponentName() so that it returns the type
 	  name if no Site is present.  This matches .NET 1.1 and fixes a test case.
 

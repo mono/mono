@@ -561,10 +561,20 @@ public sealed class TypeDescriptor
 			if (attr == null || attr.Name == null) 
 				_defaultEvent = null;
 			else {
-				EventInfo ei = _infoType.GetEvent (attr.Name);
-				if (ei == null)
-					throw new ArgumentException ("Event '" + attr.Name + "' not found in class " + _infoType);
-				_defaultEvent = new ReflectionEventDescriptor (ei);
+				// WTF? 
+				// In our test case (TypeDescriptorTest.TestGetDefaultEvent), we have
+				// a scenario where a custom filter adds the DefaultEventAttribute,
+				// but its FilterEvents method removes the event the
+				// DefaultEventAttribute applied to.  .NET accepts this and returns
+				// the *other* event defined in the class.
+				//
+				// Consequently, we know we have a DefaultEvent, but we need to check
+				// and ensure that the requested event is unfiltered.  If it is, just
+				// grab the first element in the collection.
+				EventDescriptorCollection events = GetEvents ();
+				_defaultEvent = events [attr.Name];
+				if (_defaultEvent == null && events.Count > 0)
+					_defaultEvent = events [0];
 			}
 			_gotDefaultEvent = true;
 			return _defaultEvent;
@@ -639,6 +649,7 @@ public sealed class TypeDescriptor
 					
 			if (_component.Site != null) 
 			{
+				Console.WriteLine ("filtering events...");
 				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) _component.Site.GetService (typeof(ITypeDescriptorFilterService));
 				cache = filter.FilterEvents (_component, t);
 			}
