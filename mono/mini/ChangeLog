@@ -1,5 +1,8 @@
 2004-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* cpu-pentium.md (localloc): Increase the size of the localloc 
+	instruction since it is a loop under Win32.
+
 	* debug-mini.c (record_line_number): Get rid of unneccesary memory
 	allocation.
 
