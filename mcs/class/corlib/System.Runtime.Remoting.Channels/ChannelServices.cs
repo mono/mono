@@ -190,20 +190,7 @@ namespace System.Runtime.Remoting.Channels
 			if (identity == null) return new ReturnMessage (new RemotingException ("No receiver for uri " + call.Uri), (IMethodCallMessage) msg);
 
 			RemotingServices.SetMessageTargetIdentity (msg, identity);
-
-			if (call.LogicalCallContext != null)
-				CallContext.SetCurrentCallContext (call.LogicalCallContext);
-
-			try
-			{
-				IMessage response = _crossContextSink.SyncProcessMessage (msg);
-				response.Properties ["__CallContext"] = CallContext.CreateLogicalCallContext ();
-				return response;
-			}
-			finally
-			{
-				CallContext.ResetCurrentCallContext ();
-			}
+			return _crossContextSink.SyncProcessMessage (msg);
 		}
 
 		public static void UnregisterChannel (IChannel chnl)

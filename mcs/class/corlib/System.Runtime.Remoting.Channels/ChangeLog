@@ -1,3 +1,7 @@
+2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ChannelServices.cs: Call context management moved to RemotingServices.
+
 2003-08-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ClientChannelSinkStack.cs: Implemented DispatchException.
@@ -174,4 +178,3 @@
 	* *.cs: Added all the interfaces in this namespace.
 
 	* ServerProcessing.cs: Added.
-
