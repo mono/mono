@@ -245,6 +245,7 @@ namespace Mono.CSharp {
 					return new ULongConstant (~ ((ULongConstant) e).Value);
 
 				Error23 (expr_type);
+				return null;
 			}
 			throw new Exception ("Can not constant fold");
 		}

@@ -73,9 +73,9 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public FloatConstant ToFloat (, Location loc)
+		public FloatConstant ToFloat (Location loc)
 		{
-			FloatConstant c = ConvertToFloat (implicit_conv);
+			FloatConstant c = ConvertToFloat ();
 
 			if (c == null)
 				Error_CannotConvertImplicit (loc, Type, TypeManager.float_type);
@@ -83,9 +83,9 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public ULongConstant ToULong (, Location loc)
+		public ULongConstant ToULong (Location loc)
 		{
-			ULongConstant c = ConvertToULong (implicit_conv);
+			ULongConstant c = ConvertToULong ();
 
 			if (c == null)
 				Error_CannotConvertImplicit (loc, Type, TypeManager.uint64_type);
@@ -93,9 +93,9 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public LongConstant ToLong (, Location loc)
+		public LongConstant ToLong (Location loc)
 		{
-			LongConstant c = ConvertToLong (implicit_conv);
+			LongConstant c = ConvertToLong ();
 
 			if (c == null)
 				Error_CannotConvertImplicit (loc, Type, TypeManager.int64_type);
@@ -103,9 +103,9 @@ namespace Mono.CSharp {
 			return c;
 		}
 		
-		public UIntConstant ToUInt (, Location loc)
+		public UIntConstant ToUInt (Location loc)
 		{
-			UIntConstant c = ConvertToUInt (implicit_conv);
+			UIntConstant c = ConvertToUInt ();
 
 			if (c == null)
 				Error_CannotConvertImplicit (loc, Type, TypeManager.uint32_type);
@@ -113,9 +113,9 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public IntConstant ToInt (, Location loc)
+		public IntConstant ToInt (Location loc)
 		{
-			IntConstant c = ConvertToInt (implicit_conv);
+			IntConstant c = ConvertToInt ();
 
 			if (c == null)
 				Error_CannotConvertImplicit (loc, Type, TypeManager.int32_type);

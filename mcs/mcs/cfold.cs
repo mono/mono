@@ -36,20 +36,20 @@ namespace Mono.CSharp {
 				// If either side is a double, convert the other to a double
 				//
 				if (!(left is DoubleConstant))
-					left = left.ToDouble (true, loc);
+					left = left.ToDouble (loc);
 
 				if (!(right is DoubleConstant))
-					right = right.ToDouble (true, loc);
+					right = right.ToDouble (loc);
 				return;
 			} else if (left is FloatConstant || right is FloatConstant) {
 				//
 				// If either side is a float, convert the other to a float
 				//
 				if (!(left is FloatConstant))
-					left = left.ToFloat (true, loc);
+					left = left.ToFloat (loc);
 
 				if (!(right is FloatConstant))
-					right = right.ToFloat (true, loc);
+					right = right.ToFloat (loc);
 				return;
 			} else if (left is ULongConstant || right is ULongConstant){
 				//
@@ -63,11 +63,11 @@ namespace Mono.CSharp {
 					other = right;
 					match = left;
 					if (!(right is ULongConstant))
-						right = right.ToULong (true, loc);
+						right = right.ToULong (loc);
 				} else {
 					other = left;
 					match = right;
-					left = left.ToULong (true, loc);
+					left = left.ToULong (loc);
 				}
 
 				if (other is SByteConstant || other is ShortConstant ||
@@ -84,9 +84,9 @@ namespace Mono.CSharp {
 				// to type long.
 				//
 				if (!(left is LongConstant))
-					left = left.ToLong (true, loc);
+					left = left.ToLong (loc);
 				else if (!(right is LongConstant))
-					right = right.ToLong (true, loc);
+					right = right.ToLong (loc);
 				return;
 			} else if (left is UIntConstant || right is UIntConstant){
 				//
@@ -95,18 +95,18 @@ namespace Mono.CSharp {
 				// converted to type long.
 				//
 				if (!(left is UIntConstant))
-					left = left.ToUInt (true, loc);
+					left = left.ToUInt (loc);
 				else if (!(right is UIntConstant))
-					right = right.ToUInt (true, loc);
+					right = right.ToUInt (loc);
 				return;
 			} else {
 				//
 				// Force conversions to int32
 				//
 				if (!(left is IntConstant))
-					left = left.ToInt (true, loc);
+					left = left.ToInt (loc);
 				if (!(right is IntConstant))
-					right = right.ToInt (true, loc);
+					right = right.ToInt (loc);
 			}
 			return;
 		}
@@ -680,7 +680,7 @@ namespace Mono.CSharp {
 				// There is no overflow checking on left shift
 				//
 			case Binary.Operator.LeftShift:
-				IntConstant ic = right.ToInt (true, loc);
+				IntConstant ic = right.ToInt (loc);
 				if (ic == null){
 					Binary.Error_OperatorCannotBeApplied (loc, "<<", lt, rt);
 					return null;
@@ -688,19 +688,19 @@ namespace Mono.CSharp {
 				int lshift_val = ic.Value;
 
 				IntConstant lic;
-				if ((lic = left.ConvertToInt (true)) != null)
+				if ((lic = left.ConvertToInt ()) != null)
 					return new IntConstant (lic.Value << lshift_val);
 
 				UIntConstant luic;
-				if ((luic = left.ConvertToUInt (true)) != null)
+				if ((luic = left.ConvertToUInt ()) != null)
 					return new UIntConstant (luic.Value << lshift_val);
 
 				LongConstant llc;
-				if ((llc = left.ConvertToLong (true)) != null)
+				if ((llc = left.ConvertToLong ()) != null)
 					return new LongConstant (llc.Value << lshift_val);
 
 				ULongConstant lulc;
-				if ((lulc = left.ConvertToULong (true)) != null)
+				if ((lulc = left.ConvertToULong ()) != null)
 					return new ULongConstant (lulc.Value << lshift_val);
 
 				Binary.Error_OperatorCannotBeApplied (loc, "<<", lt, rt);
@@ -710,7 +710,7 @@ namespace Mono.CSharp {
 				// There is no overflow checking on right shift
 				//
 			case Binary.Operator.RightShift:
-				IntConstant sic = right.ToInt (true, loc);
+				IntConstant sic = right.ToInt (loc);
 				if (sic == null){
 					Binary.Error_OperatorCannotBeApplied (loc, ">>", lt, rt);
 					return null;
@@ -718,19 +718,19 @@ namespace Mono.CSharp {
 				int rshift_val = sic.Value;
 
 				IntConstant ric;
-				if ((ric = left.ConvertToInt (true)) != null)
+				if ((ric = left.ConvertToInt ()) != null)
 					return new IntConstant (ric.Value >> rshift_val);
 
 				UIntConstant ruic;
-				if ((ruic = left.ConvertToUInt (true)) != null)
+				if ((ruic = left.ConvertToUInt ()) != null)
 					return new UIntConstant (ruic.Value >> rshift_val);
 
 				LongConstant rlc;
-				if ((rlc = left.ConvertToLong (true)) != null)
+				if ((rlc = left.ConvertToLong ()) != null)
 					return new LongConstant (rlc.Value >> rshift_val);
 
 				ULongConstant rulc;
-				if ((rulc = left.ConvertToULong (true)) != null)
+				if ((rulc = left.ConvertToULong ()) != null)
 					return new ULongConstant (rulc.Value >> rshift_val);
 
 				Binary.Error_OperatorCannotBeApplied (loc, ">>", lt, rt);

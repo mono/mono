@@ -2495,34 +2495,34 @@ namespace Mono.CSharp {
 			return Child.AsString ();
 		}
 
-		public override DoubleConstant ConvertToDouble (bool implicit_conv)
+		public override DoubleConstant ConvertToDouble ()
 		{
-			return Child.ConvertToDouble (implicit_conv);
+			return Child.ConvertToDouble ();
 		}
 
-		public override FloatConstant ConvertToFloat (bool implicit_conv)
+		public override FloatConstant ConvertToFloat ()
 		{
-			return Child.ConvertToFloat (implicit_conv);
+			return Child.ConvertToFloat ();
 		}
 
-		public override ULongConstant ConvertToULong (bool implicit_conv)
+		public override ULongConstant ConvertToULong ()
 		{
-			return Child.ConvertToULong (implicit_conv);
+			return Child.ConvertToULong ();
 		}
 
-		public override LongConstant ConvertToLong (bool implicit_conv)
+		public override LongConstant ConvertToLong ()
 		{
-			return Child.ConvertToLong (implicit_conv);
+			return Child.ConvertToLong ();
 		}
 
-		public override UIntConstant ConvertToUInt (bool implicit_conv)
+		public override UIntConstant ConvertToUInt ()
 		{
-			return Child.ConvertToUInt (implicit_conv);
+			return Child.ConvertToUInt ();
 		}
 
-		public override IntConstant ConvertToInt (bool implicit_conv)
+		public override IntConstant ConvertToInt ()
 		{
-			return Child.ConvertToInt (implicit_conv);
+			return Child.ConvertToInt ();
 		}
 	}
 
