@@ -353,7 +353,7 @@ namespace System.Text {
 		{
 			char [] chars = GetChars (bytes, index, count);
 
-                        return chars.ToString ();
+                        return new String (chars);
                 }
 
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
