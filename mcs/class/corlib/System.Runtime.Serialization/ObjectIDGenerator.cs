@@ -37,6 +37,7 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Serialization
 {
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class ObjectIDGenerator
 	{
 		// Private field

@@ -1,3 +1,7 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ObjectIDGenerator.cs: added TODO for serialization
+
 2004-06-09  Duncan Mak  <duncan@ximian.com>
 
 	* ObjectManager.cs (RegisterObject): Add checks for
