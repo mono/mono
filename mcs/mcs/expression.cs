@@ -235,8 +235,10 @@ namespace Mono.CSharp {
 					if (Reduce (ec, enum_constant.Child, out reduced)){
 						result = new EnumConstant ((Constant) reduced, enum_constant.Type);
 						return true;
-					} else
+					} else {
+						result = null;
 						return false;
+					}
 				}
 
 				if (expr_type == TypeManager.int32_type){
@@ -407,7 +409,7 @@ namespace Mono.CSharp {
 				// double  operator- (double d)
 				// decimal operator- (decimal d)
 				//
-				Expression e = null;
+				Expression expr = null;
 
 				//
 				// transform - - expr into expr
@@ -456,24 +458,24 @@ namespace Mono.CSharp {
 					return this;
 				}
 				
-				e = ConvertImplicit (ec, Expr, TypeManager.int32_type, loc);
-				if (e != null){
-					Expr = e;
-					type = e.Type;
+				expr = ConvertImplicit (ec, Expr, TypeManager.int32_type, loc);
+				if (expr != null){
+					Expr = expr;
+					type = expr.Type;
 					return this;
 				} 
 
-				e = ConvertImplicit (ec, Expr, TypeManager.int64_type, loc);
-				if (e != null){
-					Expr = e;
-					type = e.Type;
+				expr = ConvertImplicit (ec, Expr, TypeManager.int64_type, loc);
+				if (expr != null){
+					Expr = expr;
+					type = expr.Type;
 					return this;
 				}
 
-				e = ConvertImplicit (ec, Expr, TypeManager.double_type, loc);
-				if (e != null){
-					Expr = e;
-					type = e.Type;
+				expr = ConvertImplicit (ec, Expr, TypeManager.double_type, loc);
+				if (expr != null){
+					Expr = expr;
+					type = expr.Type;
 					return this;
 				}
 				
@@ -2996,10 +2998,10 @@ namespace Mono.CSharp {
 		public Parameter.Modifier GetParameterModifier ()
 		{
 			switch (ArgType) {
-			case ArgType.Out:
+			case AType.Out:
 				return Parameter.Modifier.OUT | Parameter.Modifier.ISBYREF;
 
-			case ArgType.Ref:
+			case AType.Ref:
 				return Parameter.Modifier.REF | Parameter.Modifier.ISBYREF;
 
 			default:
