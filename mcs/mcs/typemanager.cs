@@ -83,6 +83,7 @@ public class TypeManager {
 	static public Type indexer_name_type;
 	static public Type exception_type;
 	static public Type invalid_operation_exception_type;
+	static public Type not_supported_exception_type;
 	static public Type obsolete_attribute_type;
 	static public Type conditional_attribute_type;
 	static public Type in_attribute_type;
@@ -1092,6 +1093,7 @@ public class TypeManager {
 
 		exception_type        = CoreLookupType ("System.Exception");
 		invalid_operation_exception_type = CoreLookupType ("System.InvalidOperationException");
+		not_supported_exception_type = CoreLookupType ("System.NotSupportedException");
 
 		//
 		// Attribute types
