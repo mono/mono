@@ -1,3 +1,7 @@
+2004-08-25  Nick Drochak  <ndrochak@ieee.com>
+
+	* Makefile: Cut down the the build noise.
+
 2004-08-19 Gert Driesen <drieseng@users.sourceforge.net>
 	* Added System.Data.SqlClient/SqlConnectionTest.cs to 
 	System.Data_test.dll.sources
