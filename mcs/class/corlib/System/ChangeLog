@@ -1,3 +1,7 @@
+2002-09-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Activator.cs: little fix in CreateInstance (Type, bool).
+
 2002-09-19  Duncan Mak  <duncan@ximian.com>
 
 	* Array.cs (CopyTo): Revert back to 1.40, this is stopping

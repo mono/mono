@@ -185,7 +185,7 @@ namespace System
 				throw new ArgumentNullException ("type");
 				
 			ConstructorInfo ctor = type.GetConstructor (Type.EmptyTypes);
-			if (ctor.IsPublic && nonPublic == true)
+			if (!ctor.IsPublic && nonPublic == false)
 				return null;
 
 			if (ctor == null)
