@@ -1,4 +1,8 @@
 2001-11-04 Nick Drochak <ndrochak@gol.com>
+	* Queue.cs: Fixed small syntax errors that were preventing the compile.
+	I changed the build file to include Queue.cs as well.
+
+2001-11-04 Nick Drochak <ndrochak@gol.com>
 	* ArrayList.cs: Fixed "off by one" error when shifting left the array when
 	items are removed.
 

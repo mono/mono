@@ -17,7 +17,6 @@
 				<excludes name="Test/**"/>
 				<excludes name="Linux/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Collections/Queue.cs"/>
 			</sources>
 		</csc>
 		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
@@ -52,7 +51,6 @@
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Collections/Queue.cs"/>
 			</sources>
 		</csc>
 		<copy file="../lib/corlib.dll" tofile="Test/corlib_res.dll"/>
