@@ -1,3 +1,7 @@
+2005-04-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mph.h: Apply patch from the freebsd ports collection.
+
 2005-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* zlib_macros.c (create_z_stream): Explicitly check for older versions
