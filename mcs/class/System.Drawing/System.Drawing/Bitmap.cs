@@ -112,27 +112,38 @@ namespace System.Drawing {
 			}
 		}
 
+		void InitFromFile (string filename)
+		{
+			IntPtr imagePtr;
+			Status st = GDIPlus.GdipLoadImageFromFile (filename, out imagePtr);
+			GDIPlus.CheckStatus (st);
+			nativeObject = imagePtr;
+		}
+
 		void InitFromStream (Stream stream)
 		{
-			Console.WriteLine("Bitmap.InitFromStream");
-			
-			BitmapData bd = Decode (stream);
-			if (bd == null)
-				throw new ArgumentException ("Stream could not be decoded");	
-			
+			if (Environment.OSVersion.Platform == (PlatformID) 128) {
+				// Unix, with libgdiplus
+				// We use a custom API for this, because there's no easy way
+				// to get the Stream down to libgdiplus.  So, we wrap the stream
+				// with a set of delegates.
+				GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
+				IntPtr imagePtr;
 
-			IntPtr bmp;			
-			Console.WriteLine ("Stride: {0} ", bd.Stride);
-			Console.WriteLine ("Scan0: {0:x}" , (long) bd.Scan0);
-			
-			Status s = GDIPlus.GdipCreateBitmapFromScan0 (bd.Width, bd.Height, bd.Stride, bd.PixelFormat, bd.Scan0, out bmp);
-			if (s != Status.Ok)
-				throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
-				
-			Console.WriteLine ("Image is {0}", bmp);
-			nativeObject = (IntPtr)bmp;
-			
-			setGDIPalette();
+				Status st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetBytesDelegate,
+										     sh.SeekDelegate,
+										     out imagePtr);
+				GDIPlus.CheckStatus (st);
+				nativeObject = imagePtr;
+			} else {
+				// this is MS-land
+				// FIXME
+				// We can't call the native gdip functions here, because they expect
+				// a COM IStream interface.  So, a hack is to create a tmp file, read
+				// the stream, and then load from the tmp file.
+				// This is an ugly hack.
+				throw new NotImplementedException ("Bitmap.InitFromStream (win32)");
+			}
 		}
 		
 		public Bitmap (Stream stream, bool useIcm)
@@ -142,9 +153,7 @@ namespace System.Drawing {
 
 		public Bitmap (string filename, bool useIcm)
 		{
-			using (FileStream file = new FileStream(filename, FileMode.Open)){
-				InitFromStream (file);
-			}
+			InitFromFile (filename);
 		}
 
 		public Bitmap (Type type, string resource)

@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Drawing.Drawing2D;
@@ -16,12 +17,12 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 
 namespace System.Drawing {	
-	
-	
+
 	/// <summary>
 	/// GDI+ API Functions
 	/// </summary>
 	internal class GDIPlus {
+	
 		
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
@@ -852,7 +853,7 @@ namespace System.Drawing {
 		internal static extern Status GdipImageRotateFlip ( IntPtr image, RotateFlipType rotateFlipType );
 		
 		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
-		internal static extern Status GdipSaveImageToFile ( IntPtr image, [MarshalAs(UnmanagedType.LPWStr)] string filename, IntPtr encoderClsID, IntPtr encoderParameters );
+		internal static extern Status GdipSaveImageToFile ( IntPtr image, [MarshalAs(UnmanagedType.LPWStr)] string filename, byte[] encoderClsID, IntPtr encoderParameters ); // FIXME - should be ref Guid
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipSaveAdd ( IntPtr image, IntPtr encoderParameters );
@@ -1259,7 +1260,112 @@ namespace System.Drawing {
 		static internal extern void GetImageEncodersSize ( out uint encoderNums, out uint arraySize );
 		[DllImport("gdiplus.dll")]
 		static internal extern void GetImageEncoders ( uint encoderNums, uint arraySize, IntPtr encoders);
-		
+
+		//
+		// These are stuff that is unix-only
+		//
+
+
+		public delegate int StreamGetBytesDelegate (IntPtr buf, int bufsz, bool peek);
+		public delegate int StreamSeekDelegate (int offset, int whence);
+		public delegate int StreamPutBytesDelegate (IntPtr buf, int bufsz);
+
+		internal class GdiPlusStreamHelper {
+		  public Stream stream;
+		  public byte[] peekBytes;
+
+		  public GdiPlusStreamHelper (Stream s) { stream = s; }
+
+		  public int StreamGetBytesImpl (IntPtr buf, int bufsz, bool peek) {
+		    if (buf == IntPtr.Zero && peek)
+		      return -1;
+
+		    byte[] managedBuf = new byte[bufsz];
+		    int bytesReturn = 0;
+		    int bytesRead = 0;
+
+		    if (peekBytes != null) {
+		      if (bufsz < peekBytes.Length) {
+			// yeah, ok, get a real buffer then come back
+			return -1;
+		      }
+		      Marshal.Copy (peekBytes, 0, buf, peekBytes.Length);
+		      bytesReturn += peekBytes.Length;
+		      bufsz -= peekBytes.Length;
+		      peekBytes = null;
+		    }
+
+		    if (bufsz > 0) {
+		      try {
+			bytesRead = stream.Read (managedBuf, 0, bufsz);
+		      } catch (IOException ex) {
+			return -1;
+		      }
+			
+		      if (bytesRead > 0 && buf != IntPtr.Zero) {
+			Marshal.Copy (managedBuf, 0, (IntPtr) (buf.ToInt64() + bytesReturn), bytesRead);
+		      }
+
+		      if (peek) {
+			peekBytes = new byte[bytesRead];
+			Array.Copy (managedBuf, peekBytes, bytesRead);
+		      }
+		      
+		      bytesReturn += bytesRead;
+		    }
+
+		    return bytesReturn;
+		  }
+
+		  public StreamGetBytesDelegate GetBytesDelegate {
+		    get {
+		      if (stream.CanRead)
+			return new StreamGetBytesDelegate (StreamGetBytesImpl);
+		      return null;
+		    }
+		  }
+
+		  public int StreamSeekImpl (int offset, int whence) {
+		    if (whence == 0) {
+		      return (int) stream.Seek ((long) offset, SeekOrigin.Begin);
+		    } else if (whence == 1) {
+		      return (int) stream.Seek ((long) offset, SeekOrigin.Current);
+		    } else if (whence == 2) {
+		      return (int) stream.Seek ((long) offset, SeekOrigin.End);
+		    } else {
+		      return -1;
+		    }
+		  }
+
+		  public StreamSeekDelegate SeekDelegate {
+		    get {
+		      if (stream.CanSeek)
+			return new StreamSeekDelegate (StreamSeekImpl);
+		      return null;
+		    }
+		  }
+
+		  public int StreamPutBytesImpl (IntPtr buf, int bufsz) {
+		    byte[] managedBuf = new byte[bufsz];
+		    Marshal.Copy (buf, managedBuf, 0, bufsz);
+		    stream.Write (managedBuf, 0, bufsz);
+		    return bufsz;
+		  }
+
+		  public StreamPutBytesDelegate PutBytesDelegate {
+		    get {
+		      if (stream.CanWrite)
+			return new StreamPutBytesDelegate (StreamPutBytesImpl);
+		      return null;
+		    }
+		  }
+		}
+
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetBytesDelegate getBytes, StreamSeekDelegate doSeek, out IntPtr image);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamPutBytesDelegate putBytes, byte[] encoderClsID, IntPtr encoderParameters ); // clsid should be Guid
 		
 #endregion      
 	}               

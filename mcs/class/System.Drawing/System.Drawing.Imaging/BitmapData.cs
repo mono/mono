@@ -13,23 +13,21 @@ using System.IO;
 
 namespace System.Drawing.Imaging
 {
+	// MUST BE KEPT IN SYNC WITH gdip.h in libgdiplus!
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BitmapData {
 		internal int width, height, stride;
 		internal PixelFormat pixel_format;		
 		internal IntPtr address;
 		internal int reserved;
-		private	 bool bAllocated = false;
-		internal bool own_scan0;		
+		internal bool own_scan0;
 		
 		~BitmapData()
-		{			
-			if (bAllocated)
-				Marshal.FreeHGlobal(address);						
-		}
-		
-		internal bool Allocated {
-			set {bAllocated = value;}
+		{
+			if (address != IntPtr.Zero && own_scan0) {
+				GDIPlus.GdipFree (address);
+				address = IntPtr.Zero;
+			}
 		}
 		
 		public int Height {
@@ -79,13 +77,17 @@ namespace System.Drawing.Imaging
 			}
 
 			set {
-				
-				if (bAllocated)
-				{
-					Marshal.FreeHGlobal(address);				
-					bAllocated = false;
+				if (address == value)
+					return;
+
+				// FIXME -- do we really want to prevent the
+				// user from shooting themselves in the foot,
+				// if they want to?
+				if (address != IntPtr.Zero && own_scan0) {
+					GDIPlus.GdipFree (address);
+					address = IntPtr.Zero;
 				}
-				
+
 				address = value;
 			}
 		}
@@ -97,25 +99,6 @@ namespace System.Drawing.Imaging
 
 			set {
 				stride = value;
-			}
-		}
-		
-		internal unsafe void swap_red_blue_bytes () 
-		{
-			byte *start = (byte *) (void *) this.Scan0;
-			int stride = this.Stride;
-			for (int line = 0; line < this.Height; line++){
-				// Exchange red <=> blue bytes
-//				fixed (byte *pbuf = start) {
-					byte* curByte = start;
-					for (int i = 0; i < this.Width; i++) {
-						byte t = *(curByte+2);
-						*(curByte+2) = *curByte;
-						*curByte = t;
-						curByte += 3;
-					}
-//				}
-				start += stride;
 			}
 		}
 	}

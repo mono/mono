@@ -43,12 +43,6 @@ namespace System.Drawing.Imaging {
 		{
 		}
 
-		internal delegate void DecodeFromStream (Image image, Stream stream, BitmapData info);
-		internal DecodeFromStream decode;
-
-		internal delegate void EncodeToStream (Image image, Stream stream);
-		internal EncodeToStream encode;
-
 		// methods
 		[MonoTODO]
 		public static ImageCodecInfo[] GetImageDecoders() {

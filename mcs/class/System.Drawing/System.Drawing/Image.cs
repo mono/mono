@@ -79,42 +79,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{
 		return new Bitmap (stream, useECM);
 	}
-	
-	internal BitmapData Decode (Stream streamIn) 
-	{
-		Stream stream = streamIn;
-		BitmapData result = new BitmapData ();
-		if (!stream.CanSeek) {
-			// FIXME: if stream.CanSeek == false, copy to a MemoryStream and read nicely 
-		}
-		ImageCodecInfo[] availableDecoders = ImageCodecInfo.GetImageDecoders();
-		long pos = stream.Position;
-		ImageCodecInfo codecToUse = null;
-		foreach (ImageCodecInfo info in availableDecoders) {
-			for (int i = 0; i < info.SignaturePatterns.Length; i++) {
-				stream.Seek(pos, SeekOrigin.Begin);
-				bool codecFound = true;
-				for (int iPattern = 0; iPattern < info.SignaturePatterns[i].Length; iPattern++) {
-					byte pattern = (byte)stream.ReadByte();
-					pattern &= info.SignatureMasks[i][iPattern];
-					if (pattern != info.SignaturePatterns[i][iPattern]) {
-						codecFound = false;
-						break;
-					}
-				}
-				if (codecFound) {
-					codecToUse = info;
-					break;
-				}
-			}
-		}
-		stream.Seek (pos, SeekOrigin.Begin);
-		if (codecToUse != null && codecToUse.decode != null) {
-			codecToUse.decode (this, stream, result);
-		}
-		return result;
-	}
-	
+
 	public static int GetPixelFormatSize(PixelFormat pixfmt)
 	{
 		int result = 0;
@@ -249,57 +214,43 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void Save (Stream stream, ImageFormat format)
 	{
-		ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
-
-		foreach (ImageCodecInfo encoder in encoders) {
-			if (encoder.FormatID != format.Guid)
-				continue;
-			
-			if (encoder.encode == null)
-				continue;
-			if (!(this is Bitmap))
-				continue;
-			encoder.encode(this, stream);
-			break;
+		if (Environment.OSVersion.Platform == (PlatformID) 128) {
+			byte[] g = format.Guid.ToByteArray();
+			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
+			Status st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.PutBytesDelegate, g, IntPtr.Zero);
+		} else {
+			throw new NotImplementedException ("Image.Save(Stream) (win32)");
 		}
 	}
 
 	public void Save(string filename, ImageFormat format) 
 	{
-		FileStream fs = new FileStream (filename, FileMode.Create);
-		Save(fs, format);
-		fs.Flush();
-		fs.Close();
+		byte[] g = format.Guid.ToByteArray();
+		Status st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, g, IntPtr.Zero);
+		GDIPlus.CheckStatus (st);
 	}
 	
 	internal void setGDIPalette() 
 	{
-		IntPtr gdipalette;			
-		
+		IntPtr gdipalette;
+
 		gdipalette = colorPalette.getGDIPalette ();
-		
-		Status status = GDIPlus.GdipSetImagePalette (NativeObject, gdipalette);			
-		
-		if (status != Status.Ok)
-			Console.WriteLine("Error calling GDIPlus.GdipSetImagePalette");			
-			
-		Marshal.FreeHGlobal (gdipalette);           					
+		Status st = GDIPlus.GdipSetImagePalette (NativeObject, gdipalette);
+		Marshal.FreeHGlobal (gdipalette);
+
+		GDIPlus.CheckStatus (st);
 	}
 
-	[MonoTODO ("Ignoring EncoderParameters")]	
+	[MonoTODO ("Ignoring EncoderParameters")]
 	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
-		encoder.encode(this, stream);
+		Save (stream, new ImageFormat (encoder.Clsid));
 	}
 	
 	[MonoTODO ("Ignoring EncoderParameters")]	
 	public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
-		FileStream fs = new FileStream (filename, FileMode.Create);
-		encoder.encode(this, fs);
-		fs.Flush();
-		fs.Close();
-		
+		Save (filename, new ImageFormat (encoder.Clsid));
 	}
 	
 	[MonoTODO]	
