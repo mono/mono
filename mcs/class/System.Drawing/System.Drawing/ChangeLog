@@ -1,3 +1,7 @@
+2004-01-29  Sanjay Gupta <gsanjay@novell.com>
+	
+	* FontFamily.cs: Implemented few methods and a constructor
+
 2004-01-28  Sanjay Gupta <gsanjay@novell.com>
 
 	* gdipFunctions.cs: Added FontFamily and FontCollection functions.
