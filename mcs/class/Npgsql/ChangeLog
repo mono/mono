@@ -1,3 +1,5 @@
+2004-04-09  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+	* Npgsql/NpgsqlDataAdapter.cs: Fixed DataAdapter to raise the RowUpdating and RowUpdated events. This also fixes some issues in gborg 710 bug. This modification may have broken CommandBuilder support. Working on that.
 
 2004-03-28  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 	* Npgsql/NpgsqlTransaction.cs: Fixed a bug where rollback was being called when disposing NpgsqlTransaction objects even when transaction was sucessfully commited. Fixes bug 725 in gborg. Thanks melkor (melkor@adinet.com.uy) for spotting that.

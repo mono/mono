@@ -31,6 +31,21 @@ using System.Resources;
 
 namespace Npgsql
 {
+    /// <summary>
+    /// Represents the method that handles the <see cref="Npgsql.NpgsqlDataAdapter.RowUpdated">RowUpdated</see> events.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">A <see cref="Npgsql.NpgsqlRowUpdatedEventArgs">NpgsqlRowUpdatedEventArgs</see> that contains the event data.</param>
+    public delegate void RowUpdatedEventHandler(Object sender, NpgsqlRowUpdatedEventArgs e);
+    
+    /// <summary>
+    /// Represents the method that handles the <see cref="Npgsql.NpgsqlDataAdapter.RowUpdating">RowUpdating</see> events.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">A <see cref="Npgsql.NpgsqlRowUpdatingEventArgs">NpgsqlRowUpdatingEventArgs</see> that contains the event data.</param>
+    public delegate void RowUpdatingEventHandler(Object sender, NpgsqlRowUpdatingEventArgs e);
+    
+    
     public sealed class NpgsqlDataAdapter : DbDataAdapter, IDbDataAdapter
     {
 
@@ -43,6 +58,10 @@ namespace Npgsql
 
         // Log support
         private static readonly String CLASSNAME = "NpgsqlDataAdapter";
+        
+        
+        public event RowUpdatedEventHandler RowUpdated;
+        public event RowUpdatingEventHandler RowUpdating;        
 
         public NpgsqlDataAdapter()
         {}
@@ -92,6 +111,8 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "OnRowUpdated");
             //base.OnRowUpdated(value);
+            if ((RowUpdated != null) && (value is NpgsqlRowUpdatedEventArgs))
+                RowUpdated(this, (NpgsqlRowUpdatedEventArgs) value);
 
         }
 
@@ -100,17 +121,20 @@ namespace Npgsql
         )
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "OnRowUpdating");
-            switch (value.StatementType)
+            if ((RowUpdating != null) && (value is NpgsqlRowUpdatingEventArgs))
+                RowUpdating(this, (NpgsqlRowUpdatingEventArgs) value);
+                        
+            /*switch (value.StatementType)
             {
-            case StatementType.Insert:
-                value.Command = cmd_builder.GetInsertCommand(value.Row);
-                break;
-            case StatementType.Update:
-                value.Command = cmd_builder.GetUpdateCommand(value.Row);
-                break;
-            case StatementType.Delete:
-                value.Command = cmd_builder.GetDeleteCommand(value.Row);
-                break;
+                case StatementType.Insert:
+                    value.Command = cmd_builder.GetInsertCommand(value.Row);
+                    break;
+                case StatementType.Update:
+                    value.Command = cmd_builder.GetUpdateCommand(value.Row);
+                    break;
+                case StatementType.Delete:
+                    value.Command = cmd_builder.GetDeleteCommand(value.Row);
+                    break;
             }
             DataColumnMappingCollection columnMappings = value.TableMapping.ColumnMappings;
             foreach (IDataParameter parameter in value.Command.Parameters)
@@ -132,7 +156,8 @@ namespace Npgsql
                     rowVersion = DataRowVersion.Original;
                 parameter.Value = value.Row [dsColumnName, rowVersion];
             }
-            value.Row.AcceptChanges ();
+            value.Row.AcceptChanges ();*/
+            
         }
 
         ITableMappingCollection IDataAdapter.TableMappings
