@@ -498,7 +498,7 @@ namespace System.Xml.XPath
 	internal class ExprSLASH : NodeSet
 	{
 		protected Expression _left, _right;
-		public ExprSLASH (NodeSet left, NodeSet right)
+		public ExprSLASH (Expression left, NodeSet right)
 		{
 			_left = left;
 			_right = right;

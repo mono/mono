@@ -428,7 +428,8 @@ namespace System.Xml.XPath
 		protected SlashIterator (SlashIterator other) : base (other)
 		{
 			_iterLeft = (BaseIterator) other._iterLeft.Clone ();
-			_iterRight = (BaseIterator) other._iterRight.Clone ();
+			if (other._iterRight != null)
+				_iterRight = (BaseIterator) other._iterRight.Clone ();
 			_expr = other._expr;
 			_pos = other._pos;
 		}

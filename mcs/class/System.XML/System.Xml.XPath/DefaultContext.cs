@@ -218,7 +218,7 @@ namespace System.Xml.XPath
 	internal class XPathFunctionId : XPathFunction
 	{
 		private static char [] rgchWhitespace = {' ', '\t', '\r', '\n'};
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
 		public override int Minargs { get { return 1; }}
 		public override int Maxargs { get { return 1; }}
 		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any }; }}
