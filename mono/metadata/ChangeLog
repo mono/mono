@@ -1,3 +1,8 @@
+2003-10-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (setup_interface_offsets): If the class is an interface,
+	fill out its interface_offsets slot.
+
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: mark threadpool threads as background.
