@@ -1,3 +1,10 @@
+
+Fri Jul 19 18:45:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* emit-x86.c: temporary workaround for gcc bug.
+	* jit.h, jit.c, mono.c: move mono_jit_image to jit.c.
+	Don't include config.h in headers.
+
 2002-07-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: correctly align valuetype arguments on the stack
