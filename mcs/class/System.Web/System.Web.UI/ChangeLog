@@ -1,3 +1,9 @@
+2004-11-26 Lluis Sanchez Gual <lluis@novell.com>
+
+	* Page.cs: Moved code for managing client scripts to ClientScriptManager,
+	which is public in 2.0 and internal in 1.1.
+	* ClientScriptManager.cs: Implemented.
+
 2004-11-25 Sanjay Gupta <gsanjay@novell.com>
 
 	* DataSourceView.cs: Removed extra method.

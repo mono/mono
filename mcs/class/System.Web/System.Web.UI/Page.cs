@@ -73,15 +73,11 @@ public class Page : TemplateControl, IHttpHandler
 	private NameValueCollection secondPostData;
 	private bool requiresPostBackScript;
 	private bool postBackScriptRendered;
-	private Hashtable registeredArrayDeclares;
-	Hashtable clientScriptBlocks;
-	Hashtable startupScriptBlocks;
-	Hashtable hiddenFields;
-	internal Hashtable submitStatements;
 	bool handleViewState;
 	string viewStateUserKey;
 	NameValueCollection _requestValueCollection;
 	string clientTarget;
+	ClientScriptManager scriptManager = new ClientScriptManager ();
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
@@ -498,19 +494,13 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public bool IsClientScriptBlockRegistered (string key)
 	{
-		if (clientScriptBlocks == null)
-			return false;
-
-		return clientScriptBlocks.ContainsKey (key);
+		return scriptManager.IsClientScriptBlockRegistered (key);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public bool IsStartupScriptRegistered (string key)
 	{
-		if (startupScriptBlocks == null)
-			return false;
-
-		return startupScriptBlocks.ContainsKey (key);
+		return scriptManager.IsStartupScriptRegistered (key);
 	}
 
 	public string MapPath (string virtualPath)
@@ -540,28 +530,6 @@ public class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("</script>");
 	}
 
-	static void WriteScripts (HtmlTextWriter writer, Hashtable scripts)
-	{
-		if (scripts == null)
-			return;
-
-		foreach (string key in scripts.Values)
-			writer.WriteLine (key);
-	}
-	
-	void WriteHiddenFields (HtmlTextWriter writer)
-	{
-		if (hiddenFields == null)
-			return;
-
-		foreach (string key in hiddenFields.Keys) {
-			string value = hiddenFields [key] as string;
-			writer.WriteLine ("\n<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />", key, value);
-		}
-
-		hiddenFields = null;
-	}
-
 	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
 	{
 		if (renderingForm)
@@ -569,7 +537,7 @@ public class Page : TemplateControl, IHttpHandler
 
 		renderingForm = true;
 		writer.WriteLine ();
-		WriteHiddenFields (writer);
+		scriptManager.WriteHiddenFields (writer);
 		if (requiresPostBackScript) {
 			RenderPostBackScript (writer, formUniqueID);
 			postBackScriptRendered = true;
@@ -581,7 +549,7 @@ public class Page : TemplateControl, IHttpHandler
 			writer.WriteLine ("value=\"{0}\" />", vs);
 		}
 
-		WriteScripts (writer, clientScriptBlocks);
+		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
 	internal string GetViewStateString ()
@@ -596,36 +564,14 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
 	{
-		if (registeredArrayDeclares != null) {
-			writer.WriteLine();
-			writer.WriteLine("<script language=\"javascript\">");
-			writer.WriteLine("<!--");
-			IDictionaryEnumerator arrayEnum = registeredArrayDeclares.GetEnumerator();
-			while (arrayEnum.MoveNext()) {
-				writer.Write("\tvar ");
-				writer.Write(arrayEnum.Key);
-				writer.Write(" =  new Array(");
-				IEnumerator arrayListEnum = ((ArrayList) arrayEnum.Value).GetEnumerator();
-				bool isFirst = true;
-				while (arrayListEnum.MoveNext()) {
-					if (isFirst)
-						isFirst = false;
-					else
-						writer.Write(", ");
-					writer.Write(arrayListEnum.Current);
-				}
-				writer.WriteLine(");");
-			}
-			writer.WriteLine("// -->");
-			writer.WriteLine("</script>");
-			writer.WriteLine();
-		}
+		scriptManager.WriteArrayDeclares (writer);
 
 		if (!postBackScriptRendered && requiresPostBackScript)
 			RenderPostBackScript (writer, formUniqueID);
 
-		WriteHiddenFields (writer);
-		WriteScripts (writer, startupScriptBlocks);
+		scriptManager.WriteHiddenFields (writer);
+		scriptManager.WriteClientScriptIncludes (writer);
+		scriptManager.WriteStartupScriptBlocks (writer);
 		renderingForm = false;
 		postBackScriptRendered = false;
 	}
@@ -835,35 +781,19 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterArrayDeclaration (string arrayName, string arrayValue)
 	{
-		if (registeredArrayDeclares == null)
-			registeredArrayDeclares = new Hashtable();
-
-		if (!registeredArrayDeclares.ContainsKey (arrayName))
-			registeredArrayDeclares.Add (arrayName, new ArrayList());
-
-		((ArrayList) registeredArrayDeclares[arrayName]).Add(arrayValue);
+		scriptManager.RegisterArrayDeclaration (arrayName, arrayValue);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterClientScriptBlock (string key, string script)
 	{
-		if (IsClientScriptBlockRegistered (key))
-			return;
-
-		if (clientScriptBlocks == null)
-			clientScriptBlocks = new Hashtable ();
-
-		clientScriptBlocks.Add (key, script);
+		scriptManager.RegisterClientScriptBlock (key, script);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterHiddenField (string hiddenFieldName, string hiddenFieldInitialValue)
 	{
-		if (hiddenFields == null)
-			hiddenFields = new Hashtable ();
-
-		if (!hiddenFields.ContainsKey (hiddenFieldName))
-			hiddenFields.Add (hiddenFieldName, hiddenFieldInitialValue);
+		scriptManager.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
 	}
 
 	[MonoTODO("Used in HtmlForm")]
@@ -875,13 +805,7 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterOnSubmitStatement (string key, string script)
 	{
-		if (submitStatements == null)
-			submitStatements = new Hashtable ();
-
-		if (submitStatements.ContainsKey (key))
-			return;
-
-		submitStatements.Add (key, script);
+		scriptManager.RegisterOnSubmitStatement (key, script);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -902,13 +826,7 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterStartupScript (string key, string script)
 	{
-		if (IsStartupScriptRegistered (key))
-			return;
-
-		if (startupScriptBlocks == null)
-			startupScriptBlocks = new Hashtable ();
-
-		startupScriptBlocks.Add (key, script);
+		scriptManager.RegisterStartupScript (key, script);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -994,8 +912,17 @@ public class Page : TemplateControl, IHttpHandler
 			throw new HttpException ("Control '" + control.ClientID + " " + control.GetType () + 
 						 "' must be rendered within a HtmlForm");
 	}
-
+	
 	#endregion
+	
+	#if NET_2_0
+	public
+	#else
+	internal
+	#endif
+		ClientScriptManager ClientScript {
+		get { return scriptManager; }
+	}
 	
 	#if NET_2_0
 	public string GetWebResourceUrl(Type type, string resourceName)
