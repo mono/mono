@@ -1,5 +1,9 @@
 2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_MethodBase_GetMethodFromHandle): Rename to ...Internal.
+
+	* icall.c: Fix some warnings.
+
 	* threads.c (abort_appdomain_thread): Fix unref errors.
 	(mono_thread_current): Fix THREAD_DEBUG define.
 
