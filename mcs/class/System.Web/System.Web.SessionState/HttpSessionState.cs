@@ -62,7 +62,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 		get { return _state.Count; }
 	}
 
-	public bool IsAbandoned
+	internal bool IsAbandoned
 	{
 		get { return _abandoned; }
 	}

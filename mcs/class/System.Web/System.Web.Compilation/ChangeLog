@@ -1,5 +1,9 @@
 2002-08-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* PageCompiler.cs: fixed compilation.
+
+2002-08-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* PageCompiler.cs: generate C# file using AspGenerator.
 
 2002-08-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>

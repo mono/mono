@@ -1,3 +1,9 @@
+2002-08-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSessionState.cs: IsAbandoned is internal.
+	* SessionDictionary.cs: scope fixes.
+	* SessionStateModule.cs: added events.
+
 2002-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.SessionState/HttpSessionState.cs: 

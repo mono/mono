@@ -8,24 +8,28 @@
 //
 using System.Web;
 
-namespace System.Web.SessionState {
-public sealed class SessionStateModule : IHttpModule
+namespace System.Web.SessionState
 {
-	public SessionStateModule ()
+	public sealed class SessionStateModule : IHttpModule
 	{
-	}
+		public SessionStateModule ()
+		{
+		}
 
-	[MonoTODO()]
-	public void Dispose ()
-	{
-		throw new NotImplementedException ();
-	}
+		[MonoTODO()]
+		public void Dispose ()
+		{
+			throw new NotImplementedException ();
+		}
 
-	[MonoTODO()]
-	public void Init (HttpApplication app)
-	{
-		throw new NotImplementedException ();
+		[MonoTODO()]
+		public void Init (HttpApplication app)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public event EventHandler Start;
+		public event EventHandler End;
 	}
-}
 }
 

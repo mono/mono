@@ -70,7 +70,7 @@ internal class SessionDictionary : NameObjectCollectionBase
 		set { _dirty = value; }
 	}
 
-	object this [string s]
+	internal object this [string s]
 	{
 		get { return BaseGet (s); }
 		set {
@@ -79,7 +79,7 @@ internal class SessionDictionary : NameObjectCollectionBase
 		}
 	}
 
-	object this [int index]
+	public object this [int index]
 	{
 		get { return BaseGet (index); }
 		set {

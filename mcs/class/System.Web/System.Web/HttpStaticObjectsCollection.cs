@@ -14,26 +14,21 @@ namespace System.Web {
          return this[name];
       }
 
-      [MonoTODO()]
       public IEnumerator GetEnumerator() {
-         throw new NotImplementedException();
+         return _Objects.GetEnumerator ();
       }
       
       public void CopyTo(Array array, int index) {
-         IEnumerator Enum = GetEnumerator();
-         while (Enum.MoveNext()) {
-            array.SetValue(Enum.Current, ++index);
-         }
+	 _Objects.CopyTo (array, index);
       }   
 
       internal IDictionary GetObjects() {
          return _Objects;
       }
 
-      [MonoTODO()]
       public object this[string name] {
          get {
-            throw new NotImplementedException();
+            return _Objects [name];
          }
       }
 
