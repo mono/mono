@@ -6,6 +6,8 @@
 	    than one text control is used simultaneously.
 	  - Switched to use Hilight and HilightText brushes for text selection
 
+	* TextBoxBase.cs (PaintControl): Disabled AntiAliasing to improve looks
+
 2005-01-18  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs:

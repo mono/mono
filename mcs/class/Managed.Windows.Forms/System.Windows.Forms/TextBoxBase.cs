@@ -853,7 +853,7 @@ static int current;
 		private void PaintControl(PaintEventArgs pevent) {
 			// Fill background
 			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
-			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
+			//pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
 
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
