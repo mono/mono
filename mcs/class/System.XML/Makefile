@@ -25,6 +25,9 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/xsl/ChangeLog	\
 	Test/XmlFiles/ChangeLog
 
-CLEAN_FILES = Test/XmlFiles/xsl/result.xml
+System.Xml.XPath/Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
+	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $< >$@
+
+CLEAN_FILES = Test/XmlFiles/xsl/result.xml System.Xml.XPath/Parser.cs
 
 include ../../build/library.make
