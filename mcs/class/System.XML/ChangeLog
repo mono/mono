@@ -1,3 +1,9 @@
+2003-06-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added Mono.Xml.XPath directory.
+	* list.unix : added Mono.Xml.XPath's DTMXPathDocument.cs, 
+		DTMXPathDocumentBuilder.cs, DTMXPathNavigator.cs
+
 2003-06-16  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* added System.Xml.Serialization/XmlTypeMapMemberNamespaces.cs
