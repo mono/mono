@@ -1,5 +1,9 @@
 2003-11-27 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Array.cs: make the enumerator ICloneable
+
+2003-11-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Decimal.cs (ToXXX): Call Convert.ToXXX.
 
 2003-11-26  Zoltan Varga  <vargaz@freemail.hu>

@@ -1016,7 +1016,7 @@ namespace System
 			CopyTo (array, (int) index);
 		}
 #endif
-		internal class SimpleEnumerator : IEnumerator {
+		internal class SimpleEnumerator : IEnumerator, ICloneable {
 			Array enumeratee;
 			int currentpos;
 			int length;
@@ -1058,6 +1058,11 @@ namespace System
 
 			public void Reset() {
 				currentpos= -1;
+			}
+			
+			public object Clone ()
+			{
+				return MemberwiseClone ();
 			}
 		}
 	}
