@@ -645,17 +645,18 @@ namespace System.Drawing
 
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			Console.WriteLine ("DrawString!");
 			RectangleF rc = new RectangleF (x, y, 0, 0);
 			
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, 
 				ref rc, IntPtr.Zero, brush.nativeObject);			
 		}
 
-		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, float x, float y, StringFormat format)
 		{
-			//throw new NotImplementedException ();
+			RectangleF rc = new RectangleF (x, y, 0, 0);
+
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject,
+				ref rc, format.NativeObject, brush.nativeObject);
 		}
 
 		
