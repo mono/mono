@@ -12,6 +12,7 @@ using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
 using Mono.Security.Cryptography;
@@ -138,7 +139,17 @@ namespace Mono.CSharp {
 		{
 			try {
 				Assembly.Builder.Save (Basename (name));
-			} catch (System.IO.IOException io){
+			}
+			catch (COMException) {
+				if ((RootContext.StrongNameKeyFile == null) || (!RootContext.StrongNameDelaySign))
+					throw;
+
+				// FIXME: it seems Microsoft AssemblyBuilder doesn't like to delay sign assemblies 
+				Report.Error (1548, "Couldn't delay-sign the assembly with the '" +
+					RootContext.StrongNameKeyFile +
+					"', Use MCS with the Mono runtime or CSC to compile this assembly.");
+			}
+			catch (System.IO.IOException io) {
 				Report.Error (16, "Could not write to file `"+name+"', cause: " + io.Message);
 			}
 		}
@@ -922,17 +933,47 @@ namespace Mono.CSharp {
 					byte[] snkeypair = new byte [fs.Length];
 					fs.Read (snkeypair, 0, snkeypair.Length);
 
-					try {
-						// this will import public or private/public keys
-						RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
-						// only the public part must be supplied if signature is delayed
-						byte[] key = CryptoConvert.ToCapiKeyBlob (rsa, !RootContext.StrongNameDelaySign);
-						an.KeyPair = new StrongNameKeyPair (key);
+					if (RootContext.StrongNameDelaySign) {
+						// delayed signing - DO NOT include private key
+						try {
+							// check for possible ECMA key
+							if (snkeypair.Length == 16) {
+								// will be rejected if not "the" ECMA key
+								an.KeyPair = new StrongNameKeyPair (snkeypair);
+							}
+							else {
+								// take it, with or without, a private key
+								RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
+								// and make sure we only feed the public part to Sys.Ref
+								byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
+								an.KeyPair = new StrongNameKeyPair (publickey);
+							}
+						}
+						catch (Exception) {
+							Report.Error (1548, "Could not strongname the assembly. File `" +
+								RootContext.StrongNameKeyFile + "' incorrectly encoded.");
+							Environment.Exit (1);
+						}
 					}
-					catch (CryptographicException) {
-						Report.Error (1548, "Could not strongname the assembly. File `" +
-							RootContext.StrongNameKeyFile + "' incorrectly encoded.");
-						Environment.Exit (1);
+					else {
+						// no delay so we make sure we have the private key
+						try {
+							CryptoConvert.FromCapiPrivateKeyBlob (snkeypair);
+							an.KeyPair = new StrongNameKeyPair (snkeypair);
+						}
+						catch (CryptographicException) {
+							if (snkeypair.Length == 16) {
+								// error # is different for ECMA key
+								Report.Error (1606, "Could not strongname the assembly. " + 
+									"ECMA key can only be used to delay-sign assemblies");
+							}
+							else {
+								Report.Error (1548, "Could not strongname the assembly. File `" +
+									RootContext.StrongNameKeyFile +
+									"' doesn't have a private key.");
+							}
+							Environment.Exit (1);
+						}
 					}
 				}
 			}
