@@ -256,14 +256,14 @@ namespace Mono.Data.TdsClient.Internal {
 				}
 
 				int index = result.Add (new TdsSchemaInfo ());
-				result[index].NumericPrecision = precision;
-				result[index].NumericScale = scale;
-				result[index].ColumnSize = bufLength;
-				result[index].ColumnName = ColumnNames[index];
-				result[index].BaseTableName = tableName;
-				result[index].AllowDBNull = nullable;
-				result[index].IsReadOnly = !writable;
-				result[index].ColumnType = columnType;
+				result[index]["NumericPrecision"] = precision;
+				result[index]["NumericScale"] = scale;
+				result[index]["ColumnSize"] = bufLength;
+				result[index]["ColumnName"] = ColumnNames[index];
+				result[index]["BaseTableName"] = tableName;
+				result[index]["AllowDBNull"] = nullable;
+				result[index]["IsReadOnly"] = !writable;
+				result[index]["ColumnType"] = columnType;
 			}
 
 			//int skipLength = totalLength - bytesRead;

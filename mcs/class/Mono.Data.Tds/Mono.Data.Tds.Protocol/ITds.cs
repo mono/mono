@@ -44,6 +44,11 @@ namespace Mono.Data.TdsClient.Internal {
 			set;
 		}
 
+		int RecordsAffected {
+			get;
+			set;
+		}
+
 		#endregion // Properties
 
 		#region Methods

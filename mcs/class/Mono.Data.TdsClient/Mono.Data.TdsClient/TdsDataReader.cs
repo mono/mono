@@ -23,6 +23,10 @@ namespace Mono.Data.TdsClient {
 		bool hasRows;
 		bool isClosed;
 		int recordsAffected;
+		bool moreResults;
+
+		ArrayList dataTypeNames;
+		ArrayList dataTypes;
 
 		TdsCommand command;
 
@@ -249,20 +253,192 @@ namespace Mono.Data.TdsClient {
 		{
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
+
+			if (!moreResults)
+				return null;
+
 			fieldCount = 0;
 
-			foreach (TdsSchemaInfo schemaObject in command.Tds.Schema) {
-				DataRow schemaRow = schemaTable.NewRow ();
-				schemaRow ["BaseColumnName"] = schemaObject.BaseColumnName;
-				schemaRow ["ColumnName"] = schemaObject.ColumnName;
-				schemaRow ["ColumnOrdinal"] = schemaObject.ColumnOrdinal;
-				schemaRow ["BaseTableName"] = schemaObject.BaseTableName;
-				schemaRow ["AllowDBNull"] = schemaObject.AllowDBNull;
-				schemaRow ["IsReadOnly"] = schemaObject.IsReadOnly;
-				schemaTable.Rows.Add (schemaRow);
+			dataTypeNames = new ArrayList ();
+			dataTypes = new ArrayList ();
+
+			foreach (TdsSchemaInfo schema in command.Tds.Schema) {
+				DataRow row = schemaTable.NewRow ();
+
+				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
+				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize");
+				row ["ColumnOrdinal"]		= GetSchemaValue (schema, "ColumnOrdinal");
+				row ["NumericPrecision"]	= GetSchemaValue (schema, "NumericPrecision");
+				row ["NumericScale"]		= GetSchemaValue (schema, "NumericScale");
+				row ["IsUnique"]		= GetSchemaValue (schema, "IsUnique");
+				row ["IsKey"]			= GetSchemaValue (schema, "IsKey");
+				row ["BaseServerName"]		= GetSchemaValue (schema, "BaseServerName");
+				row ["BaseCatalogName"]		= GetSchemaValue (schema, "BaseCatalogName");
+				row ["BaseColumnName"]		= GetSchemaValue (schema, "BaseColumnName");
+				row ["BaseSchemaName"]		= GetSchemaValue (schema, "BaseSchemaName");
+				row ["BaseTableName"]		= GetSchemaValue (schema, "BaseTableName");
+				row ["AllowDBNull"]		= GetSchemaValue (schema, "AllowDBNull");
+				row ["IsAliased"]		= GetSchemaValue (schema, "IsAliased");
+				row ["IsExpression"]		= GetSchemaValue (schema, "IsExpression");
+				row ["IsIdentity"]		= GetSchemaValue (schema, "IsIdentity");
+				row ["IsAutoIncrement"]		= GetSchemaValue (schema, "IsAutoIncrement");
+				row ["IsRowVersion"]		= GetSchemaValue (schema, "IsRowVersion");
+				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
+				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
+
+				switch ((TdsColumnType) schema ["ColumnType"]) {
+				case TdsColumnType.Image :
+					dataTypeNames.Add ("image");
+					row ["ProviderType"] = (int) TdsType.Image;
+					row ["DataType"] = typeof (byte[]);
+					row ["IsLong"] = true;
+					break;
+				case TdsColumnType.Text :
+					dataTypes.Add (typeof (string));
+					dataTypeNames.Add ("text");
+					row ["ProviderType"] = (int) TdsType.Text;
+					row ["DataType"] = typeof (string);
+					row ["IsLong"] = true;
+					break;
+				case TdsColumnType.UniqueIdentifier :
+					dataTypeNames.Add ("uniqueidentifier");
+					row ["ProviderType"] = (int) TdsType.UniqueIdentifier;
+					row ["DataType"] = typeof (Guid);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.VarBinary :
+				case TdsColumnType.BigVarBinary :
+					dataTypeNames.Add ("varbinary");
+					row ["ProviderType"] = (int) TdsType.VarBinary;
+					row ["DataType"] = typeof (byte[]);
+					row ["IsLong"] = true;
+					break;
+				case TdsColumnType.IntN :
+				case TdsColumnType.Int4 :
+					dataTypeNames.Add ("int");
+					row ["ProviderType"] = (int) TdsType.Int;
+					row ["DataType"] = typeof (int);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.VarChar :
+				case TdsColumnType.BigVarChar :
+					dataTypeNames.Add ("varchar");
+					row ["ProviderType"] = (int) TdsType.VarChar;
+					row ["DataType"] = typeof (string);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.Binary :
+				case TdsColumnType.BigBinary :
+					dataTypeNames.Add ("binary");
+					row ["ProviderType"] = (int) TdsType.Binary;
+					row ["DataType"] = typeof (byte[]);
+					row ["IsLong"] = true;
+					break;
+				case TdsColumnType.Char :
+				case TdsColumnType.BigChar :
+					dataTypeNames.Add ("char");
+					row ["ProviderType"] = (int) TdsType.Char;
+					row ["DataType"] = typeof (string);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.Int1 :
+					dataTypeNames.Add ("tinyint");
+					row ["ProviderType"] = (int) TdsType.TinyInt;
+					row ["DataType"] = typeof (byte);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.Bit :
+				case TdsColumnType.BitN :
+					dataTypeNames.Add ("bit");
+					row ["ProviderType"] = (int) TdsType.Bit;
+					row ["DataType"] = typeof (bool);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.Int2 :
+					dataTypeNames.Add ("smallint");
+					row ["ProviderType"] = (int) TdsType.SmallInt;
+					row ["DataType"] = typeof (short);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.DateTime4 :
+				case TdsColumnType.DateTime :
+				case TdsColumnType.DateTimeN :
+					dataTypeNames.Add ("datetime");
+					row ["ProviderType"] = (int) TdsType.DateTime;
+					row ["DataType"] = typeof (DateTime);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.Real :
+					dataTypeNames.Add ("real");
+					row ["ProviderType"] = (int) TdsType.Real;
+					row ["DataType"] = typeof (float);
+					break;
+				case TdsColumnType.Money :
+				case TdsColumnType.MoneyN :
+				case TdsColumnType.Money4 :
+					dataTypeNames.Add ("money");
+					row ["ProviderType"] = (int) TdsType.Money;
+					row ["DataType"] = typeof (decimal);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.Float8 :
+				case TdsColumnType.FloatN :
+					dataTypeNames.Add ("float");
+					row ["ProviderType"] = (int) TdsType.Float;
+					row ["DataType"] = typeof (double);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.NText :
+					dataTypeNames.Add ("ntext");
+					row ["ProviderType"] = (int) TdsType.NText;
+					row ["DataType"] = typeof (string);
+					row ["IsLong"] = true;
+					break;
+				case TdsColumnType.NVarChar :
+					dataTypeNames.Add ("nvarchar");
+					row ["ProviderType"] = (int) TdsType.NVarChar;
+					row ["DataType"] = typeof (string);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.Decimal :
+				case TdsColumnType.Numeric :
+					dataTypeNames.Add ("decimal");
+					row ["ProviderType"] = (int) TdsType.Decimal;
+					row ["DataType"] = typeof (decimal);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.NChar :
+					dataTypeNames.Add ("nchar");
+					row ["ProviderType"] = (int) TdsType.Char;
+					row ["DataType"] = typeof (string);
+					row ["IsLong"] = false;
+					break;
+				case TdsColumnType.SmallMoney :
+					dataTypeNames.Add ("smallmoney");
+					row ["ProviderType"] = (int) TdsType.SmallMoney;
+					row ["DataType"] = typeof (decimal);
+					row ["IsLong"] = false;
+					break;
+				default :
+					dataTypeNames.Add ("variant");
+					row ["ProviderType"] = (int) TdsType.Variant;
+					row ["DataType"] = typeof (object);
+					row ["IsLong"] = false;
+					break;
+				}
+
+				schemaTable.Rows.Add (row);
+
 				fieldCount += 1;
 			}
 			return schemaTable;
+		}
+
+		private static object GetSchemaValue (TdsSchemaInfo schema, object key)
+		{
+			if (schema.ContainsKey (key) && schema [key] != null)
+				return schema [key];
+			return DBNull.Value;
 		}
 
 		public string GetString (int i)

@@ -215,7 +215,6 @@ namespace Mono.Data.TdsClient.Internal {
 				precision = 0;
 
 				int bufLength = -1;
-				//int dispSize = -1;
 				byte[] flagData = new byte[4];
 				for (int i = 0; i < 4; i += 1) {
 					flagData[i] = Comm.GetByte ();
@@ -257,19 +256,15 @@ namespace Mono.Data.TdsClient.Internal {
 				}
 
 				int index = result.Add (new TdsSchemaInfo ());
-				result[index].NumericPrecision = precision;
-				result[index].NumericScale = scale;
-				result[index].ColumnSize = bufLength;
-				result[index].ColumnName = ColumnNames[index];
-				result[index].ColumnType = columnType;
-				result[index].BaseTableName = tableName;
-				result[index].AllowDBNull = nullable;
-				result[index].IsReadOnly = !writable;
+				result[index]["NumericPrecision"] = precision;
+				result[index]["NumericScale"] = scale;
+				result[index]["ColumnSize"] = bufLength;
+				result[index]["ColumnName"] = ColumnNames[index];
+				result[index]["ColumnType"] = columnType;
+				result[index]["BaseTableName"] = tableName;
+				result[index]["AllowDBNull"] = nullable;
+				result[index]["IsReadOnly"] = !writable;
 			}
-
-			//int skipLength = totalLength - bytesRead;
-			//if (skipLength != 0)
-				//throw new TdsException ("skipping");
 
 			return result;
 		}

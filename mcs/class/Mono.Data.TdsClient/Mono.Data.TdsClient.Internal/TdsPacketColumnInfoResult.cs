@@ -44,7 +44,7 @@ namespace Mono.Data.TdsClient.Internal {
 		{
 			int index;
 			index = list.Add (schema);
-			schema.ColumnOrdinal = index;
+			schema["ColumnOrdinal"] = index;
 			return index;
 		}
 

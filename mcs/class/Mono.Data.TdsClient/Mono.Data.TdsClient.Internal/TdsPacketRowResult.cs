@@ -16,6 +16,7 @@ namespace Mono.Data.TdsClient.Internal {
 		#region Fields
 
 		ArrayList list;
+		int bigDecimalIndex;
 
 		#endregion // Fields
 
@@ -25,11 +26,17 @@ namespace Mono.Data.TdsClient.Internal {
 			: base (TdsPacketSubType.Row)
 		{
 			list = new ArrayList ();
+			bigDecimalIndex = -1;
 		}
 
 		#endregion // Constructors
 
 		#region Properties
+
+		public int BigDecimalIndex {
+			get { return bigDecimalIndex; }
+			set { bigDecimalIndex = value; }
+		}
 
 		public int Count {
 			get { return list.Count; }

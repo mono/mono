@@ -205,42 +205,49 @@ namespace Mono.Data.TdsClient.Internal {
 						columnType -= 128;
 				}
 
-				//int dispSize = -1;
-				int bufLength;
+				int columnSize;
 				string tableName = null;
 
 				if (IsBlobType (columnType)) {
-					bufLength = Comm.GetTdsInt ();
+					columnSize = Comm.GetTdsInt ();
 					tableName = Comm.GetString (Comm.GetTdsShort ());
 				}
+
 				else if (IsFixedSizeColumn (columnType))
-					bufLength = LookupBufferSize (columnType);
+					columnSize = LookupBufferSize (columnType);
 				else if (IsLargeType ((TdsColumnType) xColumnType))
-					bufLength = Comm.GetTdsShort ();
+					columnSize = Comm.GetTdsShort ();
 				else
-					bufLength = Comm.GetByte () & 0xff;
+					columnSize = Comm.GetByte () & 0xff;
 
 				byte precision = 0;
 				byte scale = 0;
 
-				if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
+				switch (columnType) {
+				case TdsColumnType.NText:
+				case TdsColumnType.NChar:
+				case TdsColumnType.NVarChar:
+					columnSize /= 2;
+					break;
+				case TdsColumnType.Decimal:
+				case TdsColumnType.Numeric:
 					precision = Comm.GetByte ();
 					scale = Comm.GetByte ();
+					break;
 				}
 
-				int colNameLength = Comm.GetByte ();
-				string columnName = Comm.GetString (colNameLength);
+				string columnName = Comm.GetString (Comm.GetByte ());
 
 				int index = result.Add (new TdsSchemaInfo ());
-				result[index].AllowDBNull = nullable;
-				result[index].ColumnName = columnName;
-				result[index].ColumnSize = bufLength;
-				result[index].ColumnType = columnType;
-				result[index].IsIdentity = isIdentity;
-				result[index].IsReadOnly = !writable;
-				result[index].NumericPrecision = precision;
-				result[index].NumericScale = scale;
-				result[index].BaseTableName = tableName;
+				result[index]["AllowDBNull"] = nullable;
+				result[index]["ColumnName"] = columnName;
+				result[index]["ColumnSize"] = columnSize;
+				result[index]["ColumnType"] = columnType;
+				result[index]["IsIdentity"] = isIdentity;
+				result[index]["IsReadOnly"] = !writable;
+				result[index]["NumericPrecision"] = precision;
+				result[index]["NumericScale"] = scale;
+				result[index]["BaseTableName"] = tableName;
 			}
 
 			return result;

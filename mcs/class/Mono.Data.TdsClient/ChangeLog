@@ -1,3 +1,23 @@
+2002-11-14  Tim Coleman <tim@timcoleman.com>
+	* list:
+	* Mono.Data.TdsClient/TdsType.cs:
+		Add this class
+	* Mono.Data.TdsClient/TdsDataReader.cs:
+		Add GetSchemaTable implementation
+	* Mono.Data.TdsClient.Internal/ITds.cs:
+		Add RecordsAffected
+	* Mono.Data.TdsClient.Internal/Tds.cs:
+		Add RecordsAffected
+		Fix handling of DateTime, decimal, and float types
+	* Mono.Data.TdsClient.Internal/Tds42.cs:
+	* Mono.Data.TdsClient.Internal/Tds50.cs:
+	* Mono.Data.TdsClient.Internal/Tds70.cs:
+	* Mono.Data.TdsClient.Internal/TdsPacketColumnInfoResult.cs:
+	* Mono.Data.TdsClient.Internal/TdsSchemaInfo.cs:
+		Change SchemaTable handling
+	* Mono.Data.TdsClient.Internal/TdsPacketRowResult.cs:
+		Add proper decimal handling
+
 2002-11-13  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.TdsClient.Internal/Tds.cs:
 		Fix GetStringValue, GetTextValue when handling NULL
