@@ -1,3 +1,10 @@
+2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Fixed some exceptions in NET_1_1 and added some 2.0
+	properties (required for compiling the new unit tests).
+	* PortableExecutableKind.cs: New. Flags for NET_2_0.
+	* ImageFileMachine.cs: New. (Rather limited) enum for NET_2_0.
+
 2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Get default evidences when no evidences have been 

@@ -196,9 +196,11 @@ namespace System.Reflection {
 			return res;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("true == not implemented")]
 		public virtual FileStream [] GetFiles (bool getResourceModules)
 		{
+			if (!getResourceModules)
+				return GetFiles ();
 			throw new NotImplementedException ();
 		}
 
@@ -206,6 +208,9 @@ namespace System.Reflection {
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("name");
+
 			string filename = (string)GetFilesInternal (name);
 			if (filename != null)
 				return new FileStream (filename, FileMode.Open, FileAccess.Read);
@@ -304,7 +309,8 @@ namespace System.Reflection {
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void FillName (Assembly ass, AssemblyName aname);
-		
+
+		[MonoTODO ("true == not supported")]
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -433,6 +439,9 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public static Assembly LoadWithPartialName (string partialName)
 		{
 			return LoadWithPartialName (partialName, null);
@@ -459,6 +468,9 @@ namespace System.Reflection {
 		 * ie System/// will throw an exception. However ////System will not as that is canocolized
 		 * out of the name.
 		 */
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
 			if (partialName == null)
@@ -522,7 +534,7 @@ namespace System.Reflection {
 				throw new ArgumentException ("Name can't be empty");
 
 			Module[] modules = GetModules (true);
-			foreach (Module module in GetModules (true)) {
+			foreach (Module module in modules) {
 				if (module.ScopeName == name)
 					return module;
 			}
@@ -608,6 +620,44 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Type MonoDebugger_GetType (Assembly assembly, int token);
+
+#if NET_2_0
+		[MonoTODO]
+		[ComVisible (false)]
+		public long HostContext {
+			get { return 0; }
+		}
+
+		[MonoTODO ("choice is rather limited")]
+		[ComVisible (false)]
+		public ImageFileMachine ImageFileMachine {
+			get { return ImageFileMachine.I386; }
+		}
+
+		[MonoTODO]
+		[ComVisible (false)]
+		public Module ManifestModule {
+			get { return null; }
+		}
+
+		[MonoTODO]
+		[ComVisible (false)]
+		public int MetadataToken {
+			get { return 0; }
+		}
+
+		[MonoTODO]
+		[ComVisible (false)]
+		public PortableExecutableKind PortableExecutableKind {
+			get { return PortableExecutableKind.ILOnly; }
+		}
+
+		[MonoTODO ("see ReflectionOnlyLoad")]
+		[ComVisible (false)]
+		public virtual bool ReflectionOnly {
+			get { return false; }
+		}
+#endif
 
 		// Code Access Security
 
