@@ -1,3 +1,12 @@
+2005-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ImplicitStandardConversionExists): Synchronize the
+	code with ImplicitStandardConversion to handle the implicit
+	conversion of method groups into valid delegate invocations. 
+
+	The problem is that in parameter handling we were using this code
+	path.  Fixes bug #64698
+
 2005-01-19  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-parser.jay: Fix several infelicities.
