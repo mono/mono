@@ -1,3 +1,7 @@
+2002-05-14  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* object.c, icall.c, gc.c: revert to address-based hashcode.
+
 2002-05-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* icall.c (mono_double_ParseImpl): Added ParseImpl method.
