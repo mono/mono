@@ -281,13 +281,13 @@ namespace Mono.CSharp {
 		{
 			AdditionResult res;
 			string name = field.Name;
-			
+
 			if ((res = IsValid (name)) != AdditionResult.Success)
 				return res;
-
+			
 			if (fields == null)
 				fields = new ArrayList ();
-
+			
 			fields.Add (field);
 			
 			if (field.Initializer != null){
@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
 				have_nonstatic_fields = true;
-			
+
 			DefineName (name, field);
 			return AdditionResult.Success;
 		}
@@ -428,6 +428,10 @@ namespace Mono.CSharp {
 		public ArrayList Fields {
 			get {
 				return fields;
+			}
+
+			set {
+				fields = value;
 			}
 		}
 
@@ -1085,10 +1089,12 @@ namespace Mono.CSharp {
 
 			if (filter == null)
 				filter = accepting_filter; 
-			
+
 			if ((mt & MemberTypes.Field) != 0) {
 				if (fields != null) {
+					Console.WriteLine ("came here though" + criteria + "--" + mt);
 					foreach (Field f in fields) {
+						Console.WriteLine ("came here " + f.Name);
 						if ((f.ModFlags & Modifiers.PRIVATE) != 0)
 							if (!priv)
 								continue;
@@ -1250,24 +1256,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public MemberInfo GetFieldFromEvent (EventExpr event_expr)
-		{
-			if (events == null)
-				return null;
-			
-			EventInfo ei = event_expr.EventInfo;
-
-			foreach (Event e in events) { 
-
-				if (e.FieldBuilder == null)
-					continue;
-				
-				if (Type.FilterName (e.FieldBuilder, ei.Name))
-					return e.FieldBuilder;
-			}
-
-			return null;
-		}
+		
 
 		public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 							 MemberFilter filter, object criteria)
@@ -3189,9 +3178,10 @@ namespace Mono.CSharp {
 
 			EventBuilder = new MyEventBuilder (parent.TypeBuilder, Name, e_attr, EventType);
 
-			if (Add == null && Remove == null){
-				FieldBuilder = parent.TypeBuilder.DefineField (
-					Name, EventType, FieldAttributes.Private);
+			if (Add == null && Remove == null) {
+ 				FieldBuilder = parent.TypeBuilder.DefineField (
+ 					Name, EventType, FieldAttributes.FamANDAssem);
+ 				TypeManager.RegisterPrivateFieldOfEvent ((EventInfo) EventBuilder, FieldBuilder);
 				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}
 			

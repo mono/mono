@@ -1057,6 +1057,26 @@ public class TypeManager {
 			return ei.GetAddMethod ();
 	}
 
+	static Hashtable priv_fields_events;
+
+	static public bool RegisterPrivateFieldOfEvent (EventInfo einfo, FieldBuilder builder)
+	{
+		if (priv_fields_events == null)
+			priv_fields_events = new Hashtable ();
+
+		if (priv_fields_events.Contains (einfo))
+			return false;
+
+		priv_fields_events.Add (einfo, builder);
+
+		return true;
+	}
+
+	static public MemberInfo GetPrivateFieldOfEvent (EventInfo ei)
+	{
+		return (MemberInfo) priv_fields_events [ei];
+	}
+	
 	static Hashtable properties;
 	
 	static public bool RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)

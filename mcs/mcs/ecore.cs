@@ -447,7 +447,14 @@ namespace Mono.CSharp {
 			}
 			
 			return null;
-		}			
+		}
+
+		static public MemberInfo GetFieldFromEvent (EventExpr event_expr)
+		{
+			EventInfo ei = event_expr.EventInfo;
+
+			return TypeManager.GetPrivateFieldOfEvent (ei);
+		}
 		
 		static EmptyExpression MyEmptyExpr;
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
@@ -3341,11 +3348,11 @@ namespace Mono.CSharp {
 				EventExpr ee = (EventExpr) e;
 
 				Expression ml = MemberLookup (
-					ec, ec.DeclSpace.TypeBuilder, ee.EventInfo.Name,
+					ec, ec.ContainerType, ee.EventInfo.Name,
 					MemberTypes.Event, AllBindingFlags, Location);
 
 				if (ml != null) {
-					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
+					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
 
 					if (mi == null) {
 						//
@@ -3389,6 +3396,8 @@ namespace Mono.CSharp {
 				return e;
 		}
 
+		
+		
 		public override void Emit (EmitContext ec)
 		{
 			//

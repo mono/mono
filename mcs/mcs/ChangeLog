@@ -1,3 +1,20 @@
+2002-07-10  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer.GetFieldFromEvent): Move away from here,
+	make static and put into Expression.
+
+	(Event.Define): Register the private field of the event with the 
+	TypeManager so that GetFieldFromEvent can get at it.
+
+	(TypeManager.RegisterPrivateFieldOfEvent): Implement to
+	keep track of the private field associated with an event which
+	has no accessors.
+
+	(TypeManager.GetPrivateFieldOfEvent): Implement to get at the
+	private field.
+
+	* ecore.cs (GetFieldFromEvent): RE-write to use the above methods.
+	
 2002-07-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.EmitBranchable): this routine emits the

@@ -5223,7 +5223,7 @@ namespace Mono.CSharp {
 					ee.EventInfo.Name, MemberTypes.Event, AllBindingFlags, loc);
 
 				if (ml != null) {
-					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
+					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
 
 					if (mi == null) {
 						//
