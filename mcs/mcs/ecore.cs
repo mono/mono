@@ -1346,7 +1346,6 @@ namespace Mono.CSharp {
 			if (most_specific_target == null) 
 				return null;
 			
-			Console.WriteLine ("S:T" + most_specific_source + ":" + most_specific_target);
 			int count = 0;
 
 			foreach (MethodBase mb in union.Methods){
@@ -3782,7 +3781,11 @@ namespace Mono.CSharp {
 			if (method == TypeManager.int_array_get_length){
 				Type iet = instance_expr.Type;
 
-				if (iet.GetArrayRank () == 1){
+				//
+				// System.Array.Length can be called, but the Type does not
+				// support invoking GetArrayRank, so test for that case first
+				//
+				if (iet == TypeManager.array_type || (iet.GetArrayRank () == 1)){
 					instance_expr.Emit (ec);
 					ec.ig.Emit (OpCodes.Ldlen);
 					return;

@@ -136,6 +136,12 @@ public class TypeManager {
 	static PtrHashtable builder_to_container;
 
 	// <remarks>
+	//   Tracks the interfaces implemented by typebuilders.  We only
+	//   enter those who do implement or or more interfaces
+	// </remarks>
+	static PtrHashtable builder_to_ifaces;
+
+	// <remarks>
 	//   Maps MethodBase.RuntimeTypeHandle to a Type array that contains
 	//   the arguments to the method
 	// </remarks>
@@ -231,25 +237,45 @@ public class TypeManager {
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
 		builder_to_container = new PtrHashtable ();
+		builder_to_ifaces = new PtrHashtable ();
 		
 		NoTypes = new Type [0];
 
 		signature_filter = new MemberFilter (SignatureFilter);
 	}
 
-	public static void AddUserType (string name, TypeBuilder t)
+	public static void AddUserType (string name, TypeBuilder t, Type [] ifaces)
 	{
 		try {
 			types.Add (name, t);
 			user_types.Add (t);
+			
+			if (ifaces != null)
+				builder_to_ifaces [t] = ifaces;
 		} catch {
+			Type prev = (Type) types [name];
+			TypeContainer tc = (TypeContainer) builder_to_container [prev];
+
 			Report.Error (-17, "The type `" + name + "' has already been defined");
+			if (tc == null){
+				Report.Error (-17, " it was defined in: (" + prev.Assembly.FullName);
+				return;
+			}
 		}
 	}
-	
-	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc)
+
+	//
+	// This entry point is used by types that we define under the covers
+	// 
+	public static void RegisterBuilder (TypeBuilder tb, Type [] ifaces)
 	{
-		AddUserType (name, t);
+		if (ifaces != null)
+		    builder_to_ifaces [tb] = ifaces;
+	}
+	
+	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc, Type [] ifaces)
+	{
+		AddUserType (name, t, ifaces);
 		builder_to_container.Add (t, tc);
 		typecontainers.Add (name, tc);
 	}
@@ -262,13 +288,16 @@ public class TypeManager {
 	
 	public static void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
+			if (name == "System.Diagnostics.Switch"){
+				Console.WriteLine ("Fuck4");
+			}
 		types.Add (name, t);
 		builder_to_enum.Add (t, en);
 	}
 
-	public static void AddUserInterface (string name, TypeBuilder t, Interface i)
+	public static void AddUserInterface (string name, TypeBuilder t, Interface i, Type [] ifaces)
 	{
-		AddUserType (name, t);
+		AddUserType (name, t, ifaces);
 		builder_to_interface.Add (t, i);
 	}
 
@@ -982,8 +1011,15 @@ public class TypeManager {
 		// will return all the interfaces implement by the type
 		// or its parents.
 		//
+		if (t.IsArray)
+			t = TypeManager.array_type;
 		do {
-			interfaces = t.GetInterfaces ();
+			interfaces = null;
+			
+			if (t is TypeBuilder)
+				interfaces = (Type []) builder_to_ifaces [t];
+			else
+				interfaces = t.GetInterfaces ();
 
 			for (int i = interfaces.Length; i > 0; ){
 				i--;

@@ -645,8 +645,8 @@ namespace Mono.CSharp {
 				TypeContainer tc = TypeManager.LookupTypeContainer (builder);
 				tc.RegisterOrder (this);
 			}
-			
-			TypeManager.AddUserInterface (Name, TypeBuilder, this);
+
+			TypeManager.AddUserInterface (Name, TypeBuilder, this, ifaces);
 			InTransit = false;
 			
 			return TypeBuilder;

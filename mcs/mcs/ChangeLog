@@ -1,5 +1,16 @@
 2002-05-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs: (RegisterBuilder): New function used to register
+	TypeBuilders that implement interfaces.  Since
+	TypeBuilder.GetInterfaces (as usual) does not work with lame
+	Reflection.Emit. 
+	(AddUserType): register interfaces.
+
+	(ImplementsInterface): Use the builder_to_ifaces hash if we are
+	dealing with TypeBuilder.  Also, arrays are showing up as
+	SymbolTypes, which are not TypeBuilders, but whose GetInterfaces
+	methods can not be invoked on them!
+
 	* ecore.cs (ExplicitReferenceConversionExists): Made public.
 	(ImplicitReferenceConversionExists): Split out from
 	StandardConversionExists. 
