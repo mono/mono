@@ -50,10 +50,12 @@ using System.Web.Util;
 namespace System.Web.UI
 {
 
+#if !NET_2_0
+[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
+#endif
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 [ToolboxItem (false)]
 [Designer ("System.Web.UI.Design.ControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
-[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 public class Page : TemplateControl, IHttpHandler
 {
 	private bool _viewState = true;
@@ -87,12 +89,15 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	private const string callbackArgumentID = "__CALLBACKARGUMENT";
 	private const string callbackSourceID = "__CALLBACKTARGET";
+	private const string previousPageID = "__PREVIOUSPAGE";
 	
 	IPageHeader htmlHeader;
 	
 	MasterPage masterPage;
 	string masterPageFile;
 	
+	Page previousPage;
+	bool isCrossPagePostBack;
 	ArrayList requireStateControls;
 #endif
 
@@ -114,16 +119,34 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+	public bool AspCompatMode
+	{
+		get { return false; }
+		set { throw new NotImplementedException (); }
+	}
+#else
 	protected bool AspCompatMode
 	{
 		set { throw new NotImplementedException (); }
 	}
+#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public bool Buffer
+	{
+		get { return Response.BufferOutput; }
+		set { Response.BufferOutput = value; }
+	}
+#else
 	protected bool Buffer
 	{
 		set { Response.BufferOutput = value; }
 	}
+#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -132,6 +155,9 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _context.Cache; }
 	}
 
+#if NET_2_0
+    [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+#endif
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false), DefaultValue ("")]
 	[WebSysDescription ("Value do override the automatic browser detection and force the page to use the specified browser.")]
@@ -146,16 +172,36 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public int CodePage
+	{
+		get { return Response.ContentEncoding.CodePage; }
+		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
+	}
+#else
 	protected int CodePage
 	{
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
+#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public string ContentType
+	{
+		get { return Response.ContentType; }
+		set { Response.ContentType = value; }
+	}
+#else
 	protected string ContentType
 	{
 		set { Response.ContentType = value; }
 	}
+#endif
 
 	protected override HttpContext Context
 	{
@@ -168,10 +214,20 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public string Culture
+	{
+		get { return Thread.CurrentThread.CurrentCulture.Name; }
+		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
+	}
+#else
 	protected string Culture
 	{
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
 	}
+#endif
 
 	[Browsable (false)]
 	public override bool EnableViewState
@@ -180,6 +236,10 @@ public class Page : TemplateControl, IHttpHandler
 		set { _viewState = value; }
 	}
 
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+#endif
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected bool EnableViewStateMac
 	{
@@ -200,6 +260,9 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
+#if NET_2_0
+	[Obsolete]
+#endif
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected ArrayList FileDependencies
 	{
@@ -238,9 +301,18 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public int LCID {
+		get { return Thread.CurrentThread.CurrentCulture.LCID; }
+		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
+	}
+#else
 	protected int LCID {
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
 	}
+#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -257,10 +329,20 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public string ResponseEncoding
+	{
+		get { return Response.ContentEncoding.WebName; }
+		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
+	}
+#else
 	protected string ResponseEncoding
 	{
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
+#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -285,6 +367,9 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
+#if NET_2_0
+    [FilterableAttribute (false)]
+#endif
 	[Browsable (false)]
 	public bool SmartNavigation
 	{
@@ -300,28 +385,66 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public bool TraceEnabled
+	{
+		get { return Trace.IsEnabled; }
+		set { Trace.IsEnabled = value; }
+	}
+#else
 	protected bool TraceEnabled
 	{
 		set { Trace.IsEnabled = value; }
 	}
+#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public TraceMode TraceModeValue
+	{
+		get { return Trace.TraceMode; }
+		set { Trace.TraceMode = value; }
+	}
+#else
 	protected TraceMode TraceModeValue
 	{
 		set { Trace.TraceMode = value; }
 	}
+#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+	public int TransactionMode
+	{
+		get { return _transactionMode; }
+		set { _transactionMode = value; }
+	}
+#else
 	protected int TransactionMode
 	{
 		set { _transactionMode = value; }
 	}
+#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+#if NET_2_0
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
+	public string UICulture
+	{
+		get { return Thread.CurrentThread.CurrentUICulture.Name; }
+		set { Thread.CurrentThread.CurrentUICulture = new CultureInfo (value); }
+	}
+#else
 	protected string UICulture
 	{
 		set { Thread.CurrentThread.CurrentUICulture = new CultureInfo (value); }
 	}
+#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -693,10 +816,23 @@ public class Page : TemplateControl, IHttpHandler
 			Thread.CurrentThread.CurrentUICulture = uiculture;
 		}
 	}
+	
+#if NET_2_0
+	internal void ProcessCrossPagePostBack (HttpContext context)
+	{
+		isCrossPagePostBack = true;
+		ProcessRequest (context);
+	}
+#endif
 
 	void InternalProcessRequest ()
 	{
 		_requestValueCollection = this.DeterminePostBackMode();
+
+#if NET_2_0
+		if (!IsCrossPagePostBack)
+			LoadPreviousPageReference ();
+#endif
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
 		Trace.Write ("aspx.page", "End Init");
@@ -717,6 +853,11 @@ public class Page : TemplateControl, IHttpHandler
 			ProcessPostData (_requestValueCollection, false);
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
+		
+#if NET_2_0
+		if (IsCrossPagePostBack)
+			return;
+#endif
 
 		LoadRecursive ();
 		if (IsPostBack) {
@@ -818,9 +959,8 @@ public class Page : TemplateControl, IHttpHandler
 	
 #if NET_2_0
 	[Obsolete]
-#else
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterArrayDeclaration (string arrayName, string arrayValue)
 	{
 		scriptManager.RegisterArrayDeclaration (arrayName, arrayValue);
@@ -828,9 +968,8 @@ public class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 	[Obsolete]
-#else
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterClientScriptBlock (string key, string script)
 	{
 		scriptManager.RegisterClientScriptBlock (key, script);
@@ -838,9 +977,8 @@ public class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 	[Obsolete]
-#else
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterHiddenField (string hiddenFieldName, string hiddenFieldInitialValue)
 	{
 		scriptManager.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
@@ -854,9 +992,8 @@ public class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 	[Obsolete]
-#else
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterOnSubmitStatement (string key, string script)
 	{
 		scriptManager.RegisterOnSubmitStatement (key, script);
@@ -879,9 +1016,8 @@ public class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 	[Obsolete]
-#else
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterStartupScript (string key, string script)
 	{
 		scriptManager.RegisterStartupScript (key, script);
@@ -1067,11 +1203,13 @@ public class Page : TemplateControl, IHttpHandler
 		return XPathBinder.Select (CurrentDataItem, xpathexpression);
 	}
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)
 	{
 		return GetCallbackEventReference (control, argument, clientCallback, context, null);
 	}
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context, string clientErrorCallback)
 	{
 		if (!ClientScript.IsClientScriptIncludeRegistered (typeof(Page), "callback"))
@@ -1080,8 +1218,49 @@ public class Page : TemplateControl, IHttpHandler
 		return string.Format ("WebForm_DoCallback ('{0}', {1}, {2}, {3}, {4})", control.UniqueID, argument, clientCallback, context, clientErrorCallback);
 	}
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	public string GetPostBackEventReference (PostBackOptions options)
+	{
+		if (!ClientScript.IsClientScriptIncludeRegistered (typeof(Page), "webform")) {
+			ClientScript.RegisterClientScriptInclude (typeof(Page), "webform", GetWebResourceUrl (typeof(Page), "webform.js"));
+		}
+		
+		if (options.ActionUrl != null)
+			ClientScript.RegisterHiddenField (previousPageID, _context.Request.FilePath);
+		
+		if (options.ClientSubmit || options.ActionUrl != null)
+			RequiresPostBackScript ();
+		
+		return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8})", 
+				options.RequiresJavaScriptProtocol ? "javascript:" : "",
+				ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID), 
+				ClientScriptManager.GetScriptLiteral (options.Argument),
+				ClientScriptManager.GetScriptLiteral (options.ActionUrl),
+				ClientScriptManager.GetScriptLiteral (options.AutoPostBack),
+				ClientScriptManager.GetScriptLiteral (options.PerformValidation),
+				ClientScriptManager.GetScriptLiteral (options.TrackFocus),
+				ClientScriptManager.GetScriptLiteral (options.ClientSubmit),
+				ClientScriptManager.GetScriptLiteral (options.ValidationGroup)
+			);
+	}
+	
+    [BrowsableAttribute (false)]
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	public Page PreviousPage {
+		get { return previousPage; }
+	}
+
+	
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
 	public bool IsCallback {
 		get { return _requestValueCollection != null && _requestValueCollection [callbackArgumentID] != null; }
+	}
+	
+    [BrowsableAttribute (false)]
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	public bool IsCrossPagePostBack {
+		get { return _requestValueCollection != null && isCrossPagePostBack; }
 	}
 	
 	string ProcessCallbackData ()
@@ -1097,7 +1276,9 @@ public class Page : TemplateControl, IHttpHandler
 		string callbackArgument = _requestValueCollection [callbackArgumentID];
 		return target.RaiseCallbackEvent (callbackArgument);
 	}
-	
+
+    [BrowsableAttribute (false)]
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public IPageHeader Header {
 		get { return htmlHeader; }
 	}
@@ -1107,11 +1288,14 @@ public class Page : TemplateControl, IHttpHandler
 		htmlHeader = header;
 	}
 	
+    [DefaultValueAttribute ("")]
 	public string MasterPageFile {
 		get { return masterPageFile; }
 		set { masterPageFile = value; masterPage = null; }
 	}
 	
+    [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+    [BrowsableAttribute (false)]
 	public MasterPage Master {
 		get {
 			if (masterPage == null)
@@ -1120,6 +1304,7 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 	
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterRequiresControlState (Control control)
 	{
 		if (requireStateControls == null) requireStateControls = new ArrayList ();
@@ -1150,6 +1335,21 @@ public class Page : TemplateControl, IHttpHandler
 			ctl.LoadControlState (state [n]);
 		}
 	}
+
+	void LoadPreviousPageReference ()
+	{
+		if (_requestValueCollection != null) {
+			string prevPage = _requestValueCollection [previousPageID];
+			if (prevPage != null) {
+				previousPage = (Page) PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
+				previousPage.ProcessCrossPagePostBack (_context);
+			} else {
+				previousPage = _context.LastPage;
+			}
+		}
+		_context.LastPage = this;
+	}
+
 
 	#endif
 }

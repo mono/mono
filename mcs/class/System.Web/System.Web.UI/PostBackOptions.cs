@@ -79,6 +79,7 @@ namespace System.Web.UI
 			set { argument = value; }
 		}
 
+		[MonoTODO ("Implement support for this in Page")]
 		public bool AutoPostBack {
 			get { return autoPostBack; }
 			set { autoPostBack = value; }
@@ -104,15 +105,29 @@ namespace System.Web.UI
 			set { control = value; }
 		}
 
+		[MonoTODO ("Implement support for this in Page")]
 		public bool TrackFocus {
 			get { return trackFocus; }
 			set { trackFocus = value; }
 		}
 
+		[MonoTODO ("Implement support for this in Page")]
 		public string ValidationGroup {
 			get { return validationGroup; }
 			set { validationGroup = value; }
-		}		
+		}
+		
+		// Returns true if some of these options must be handled by
+		// client script.
+		internal bool RequiresSpecialPostBack {
+			get { 
+				return actionUrl != "" || 
+						(validationGroup != "") || 
+						trackFocus || 
+						autoPostBack || 
+						argument != "";
+			}
+		}
 	}
 }
 

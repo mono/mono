@@ -1,3 +1,10 @@
+2005-02-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Page.cs: Implemented support for cross page postback. Implemented
+	support for postback with options. Fixed several method and property
+	signatures for 2.0.
+	* PostBackOptions.cs: Added some TODOs.
+
 2005-02-02  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ParseChildrenAttribute.cs: Set the correct default value for the
