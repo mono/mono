@@ -1,3 +1,7 @@
+2004-04-08  Jackson Harper  <jackson@ximian.com>
+
+	* ReaderWriterLock.cs: Fix tyop
+	
 2004-04-08  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ReaderWriterLock.cs: Changed some methods to private.

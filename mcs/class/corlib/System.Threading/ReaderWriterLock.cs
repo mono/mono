@@ -65,7 +65,7 @@ namespace System.Threading
 				try {
 					if (state < 0 || !writer_queue.IsEmpty) {
 						if (!Monitor.Wait (this, millisecondsTimeout))
-							throw new ApplicationException ("Timeout expited");
+							throw new ApplicationException ("Timeout expired");
 					}
 				}
 				finally {
