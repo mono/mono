@@ -1,4 +1,9 @@
 
+Tue Feb 12 14:08:47 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* hacks.h: check against redefining preprocessor symbol.
+	* interp.c: fix profile info to return more sensible results.
+
 Mon Feb 11 13:05:29 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: added "die on exception" command line argument.

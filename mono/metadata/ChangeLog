@@ -1,4 +1,8 @@
 
+Tue Feb 12 14:03:42 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fix thinko in mono_class_from_type().
+
 Mon Feb 11 19:43:51 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* exception.h, exception.c: added TypeLoadException.
