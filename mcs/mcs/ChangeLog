@@ -1,3 +1,50 @@
+2001-09-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (This::Emit): Implement. 
+	(This::Resolve): Implement.
+	(TypeOf:Resolve): Implement.
+	(Expression::ResolveSimpleName): Add an implicit this to instance
+	field references. 
+	(MemberAccess::Resolve): Deal with Parameters and Fields. 
+	Bind instance variable to Field expressions.
+	(FieldExpr::Instance): New field used to track the expression that
+	represents the object instance.
+	(FieldExpr::Resolve): Track potential errors from MemberLookup not
+	binding 
+	(FieldExpr::Emit): Implement.
+
+	* codegen.cs (EmitIf, EmitStatement, EmitBlock): Propagate whether
+	the last instruction contains a return opcode to avoid generating
+	the last `ret' instruction (this generates correct code, and it is
+	nice to pass the peverify output).
+
+	* class.cs (TypeContainer::EmitFieldInitializers): Implement field
+	initializer for static and instance variables.
+	(Constructor::Emit): Allow initializer to be null in the case of
+	static constructors.  Only emit initializer for instance
+	constructors. 
+
+	(TypeContainer::FindMembers): Return a null array if there are no
+	matches.
+
+	Also fix the code for the MemberTypes.Method branch, as it was not
+	scanning that for operators (or tried to access null variables before).
+
+	* assign.cs (Assign::Emit): Handle instance and static fields. 
+
+	* TODO: Updated.
+
+	* driver.cs: Stop compilation if there are parse errors.
+
+	* cs-parser.jay (constructor_declaration): Provide default base
+	initializer for non-static constructors.
+	(constructor_declarator): Do not provide a default base
+	initializers if none was specified.
+	Catch the fact that constructors should not have parameters.
+
+	* class.cs: Do not emit parent class initializers for static
+	constructors, that should be flagged as an error.
+
 2001-09-18  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (RegisterMethodBuilder): Remove : it's unnecessary.

@@ -159,7 +159,7 @@ namespace CIR {
 			BindingFlags.Instance;
 
 		public static Expression MemberLookup (RootContext rc, Type t, string name,
-							  bool same_type)
+						       bool same_type)
 		{
 			return MemberLookup (rc, t, name, same_type, AllMemberTypes, AllBindingsFlags);
 		}
@@ -1338,6 +1338,13 @@ namespace CIR {
 			if (e != null){
 				if (e is TypeExpr)
 					return e;
+				else if (e is FieldExpr){
+					FieldExpr fe = (FieldExpr) e;
+
+					if (!fe.FieldInfo.IsStatic)
+						fe.Instance = new This ();
+				}
+				
 				if ((tc.ModFlags & Modifiers.STATIC) != 0)
 					return MemberStaticCheck (r, e);
 				else
@@ -1828,15 +1835,21 @@ namespace CIR {
 		}
 	}
 
+	//
+	// Represents the `this' construct
+	//
 	public class This : Expression {
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
+			eclass = ExprClass.Variable;
+			type = tc.TypeBuilder;
+			
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			ec.ig.Emit (OpCodes.Ldarg_0);
 		}
 	}
 
@@ -1850,12 +1863,18 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
+			type = tc.LookupType (QueriedType, false);
+
+			if (type == null)
+				return null;
+			
+			eclass = ExprClass.Type;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			// FIXME: Implement.
 		}
 	}
 
@@ -1915,11 +1934,18 @@ namespace CIR {
 				// FIXME: This is a horrible way of detecting if it is
 				// an instance expression.  Figure out how to fix this.
 				//
-				Console.WriteLine ("FIXME: Horrible way of figuring if something is an isntance");
 
-				if (expr is LocalVariableReference)
+				if (expr is LocalVariableReference ||
+				    expr is ParameterReference ||
+				    expr is FieldExpr)
 					mg.InstanceExpression = expr;
 					
+				return member_lookup;
+			} else if (member_lookup is FieldExpr){
+				FieldExpr fe = (FieldExpr) member_lookup;
+
+				fe.Instance = expr;
+
 				return member_lookup;
 			} else
 				//
@@ -1927,7 +1953,7 @@ namespace CIR {
 				// ie, for a Property Access, it should like call it
 				// and stuff.
 
-				return null;
+				return member_lookup;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -2050,7 +2076,8 @@ namespace CIR {
 	// </summary>
 	public class FieldExpr : Expression {
 		public readonly FieldInfo FieldInfo;
-
+		public Expression Instance;
+			
 		public FieldExpr (FieldInfo fi)
 		{
 			FieldInfo = fi;
@@ -2060,13 +2087,32 @@ namespace CIR {
 
 		override public Expression Resolve (TypeContainer tc)
 		{
-			// We are born in resolved state. 
+			if (!FieldInfo.IsStatic){
+				if (Instance == null){
+					throw new Exception ("non-static FieldExpr without instance var\n" +
+							     "You have to assign the Instance variable\n" +
+							     "Of the FieldExpr to set this\n");
+				}
+
+				Instance = Instance.Resolve (tc);
+				if (Instance == null)
+					return null;
+				
+			}
 			return this;
 		}
 
 		override public void Emit (EmitContext ec)
 		{
-			// FIXME: Assert that this should not be reached?
+			ILGenerator ig = ec.ig;
+
+			if (FieldInfo.IsStatic)
+				ig.Emit (OpCodes.Ldsfld, FieldInfo);
+			else {
+				Instance.Emit (ec);
+				
+				ig.Emit (OpCodes.Ldfld, FieldInfo);
+			}
 		}
 	}
 	

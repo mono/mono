@@ -113,30 +113,40 @@ namespace CIR {
 			if (e != null)
 				e.Emit (this);     
 		}
-		
-		public void EmitIf (If s)
+
+		//
+		// Emits an If statement.  Returns true if the last opcode
+		// emitted was a ret opcode.
+		//
+		public bool EmitIf (If s)
 		{
 			Label false_target = ig.DefineLabel ();
 			Label end;
 			Statement false_stat = s.FalseStatement;
+			bool is_ret;
+			
+			Console.WriteLine ("Emitting IF");
 
 			if (!EmitBoolExpression (s.Expr))
-				return;
+				return false;
 			
+			Console.WriteLine ("Ok, so like the bool expression was emitted");
 			ig.Emit (OpCodes.Brfalse, false_target);
-			EmitStatement (s.TrueStatement);
+			is_ret = EmitStatement (s.TrueStatement);
 
 			if (false_stat != null){
 				end = ig.DefineLabel ();
 				ig.Emit (OpCodes.Br, end);
 			
 				ig.MarkLabel (false_target);
-				EmitStatement (s.FalseStatement);
+				is_ret = EmitStatement (s.FalseStatement);
 
 				if (false_stat != null)
 					ig.MarkLabel (end);
 			} else
 				ig.MarkLabel (false_target);
+
+			return is_ret;
 		}
 
 		public void EmitDo (Do s)
@@ -222,8 +232,13 @@ namespace CIR {
 			if (e != null)
 				e.Emit (this);
 		}
-		
-		void EmitStatement (Statement s)
+
+		//
+		// Emits the statemets `s'.
+		//
+		// Returns true if the statement had a `ret' opcode embedded
+		//
+		bool EmitStatement (Statement s)
 		{
 			// Console.WriteLine ("Emitting statement of type " + s.GetType ());
 			
@@ -235,39 +250,49 @@ namespace CIR {
 				EmitWhile ((While) s);
 			else if (s is For)
 				EmitFor ((For) s);
-			else if (s is Return)
+			else if (s is Return){
 				EmitReturn ((Return) s);
-			else if (s is Switch)
+				return true;
+			} else if (s is Switch)
 				EmitSwitch ((Switch) s);
 			else if (s is Checked)
 				EmitChecked ((Checked) s);
 			else if (s is Unchecked)
 				EmitUnChecked ((Unchecked) s);
 			else if (s is Block)
-				EmitBlock ((Block) s);
+				return EmitBlock ((Block) s);
 			else if (s is StatementExpression)
 				EmitStatementExpression ((StatementExpression) s);
 			else {
 				Console.WriteLine ("Unhandled Statement type: " +
 						   s.GetType ().ToString ());
 			}
+
+			return false;
 		}
 
-		void EmitBlock (Block block)
+		bool EmitBlock (Block block)
 		{
+			bool is_ret = false;
+			
 			foreach (Statement s in block.Statements){
-				EmitStatement (s);
+				is_ret = EmitStatement (s);
 			}
+
+			return is_ret;
 		}
 		
 		public void EmitTopBlock (Block block)
 		{
+			bool has_ret = false;
+			
 			if (block != null){
 				block.EmitMeta (parent, ig, block);
-				EmitBlock (block);
+				has_ret = EmitBlock (block);
 			}
-			
-			ig.Emit (OpCodes.Ret);
+
+			if (!has_ret)
+				ig.Emit (OpCodes.Ret);
 		}
 	}
 }

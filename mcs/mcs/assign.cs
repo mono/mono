@@ -99,13 +99,23 @@ namespace CIR {
 			if (fi.IsStatic)
 				ig.Emit (OpCodes.Stsfld, fi);
 			else
-				
 				ig.Emit (OpCodes.Stfld, fi);
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
 			if (target.ExprClass == ExprClass.Variable){
+
+				//
+				// If it is an instance field, load the this pointer
+				//
+				if (target is FieldExpr){
+					FieldExpr fe = (FieldExpr) target;
+					
+					if (!fe.FieldInfo.IsStatic)
+						ec.ig.Emit (OpCodes.Ldarg_0);
+				}
+						    
 				source.Emit (ec);
 
 				if (target is LocalVariableReference){

@@ -287,6 +287,9 @@ namespace CIR
 				return;
 			}
 
+			if (context.Report.Errors > 0)
+				return;
+			
 			if (parse_only)
 				return;
 			

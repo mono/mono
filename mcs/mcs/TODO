@@ -1,23 +1,11 @@
-* Handle duplicate methods and constructors in semantic analysis
-
 * Ordering
-
-	First define methods and operator overloads.
-
-	Do enumerations and constants.
-
-	Process function bodies
 
 	Can a constant_expression invoke overloaded operators?
 	Explicit user-defined conversions?
 
 * Visibility
 
-	I am not processing visibility yet.
-
-* Tokenizer
-
-	Propagate file/location to upper layers
+	I am not reporting errors on visibility yet.
 
 * Error handling
 
@@ -33,10 +21,6 @@
 
 * Known problems:
 
-  Can not parse try {} catch {}
-
-	Have not figured out why.
-
   Cast expressions
 
 	They should should use:
@@ -51,7 +35,6 @@
 		Array r = (string []) object
 
 	Wont be parsed.
-
   
 * Interfaces
 
@@ -71,5 +54,14 @@
 	I have not figured out why the Microsoft version puts an
 	`instance' attribute, and I am not generating this `instance' attribute.
 
+* Constructors
 
-	
+	Currently it calls the parent constructor before initializing fields.
+	It should do it the other way around.
+
+* Use of EmitBranchable
+
+	Currently I use brfalse/brtrue in the code for statements, instead of
+	using the EmitBranchable function that lives in Binary
+
+* 

@@ -229,7 +229,6 @@ namespace CIR {
 			if (is_static)
 				have_static_constructor = true;
 
-			Console.WriteLine ("Found a constructor for " + Name);
 			if (c.IsDefault ()) {
 				if (is_static)
 					default_static_constructor = c;
@@ -490,25 +489,44 @@ namespace CIR {
 		}
 
 		//
-		// Emits the class field initializers
-		//
-		public void EmitStaticFieldInitializers (ConstructorBuilder cb)
-		{
-			if (initialized_static_fields == null)
-				return;
-			
-			// FIXME: Implement
-		}
-
-		//
 		// Emits the instance field initializers
 		//
-		public void EmitFieldInitializers (ConstructorBuilder cb)
+		public bool EmitFieldInitializers (EmitContext ec, bool is_static)
 		{
-			if (initialized_fields == null)
-				return;
+			ArrayList fields;
+			ILGenerator ig = ec.ig;
 			
-			// FIXME: Implement
+			if (is_static)
+				fields = initialized_static_fields;
+			else
+				fields = initialized_fields;
+
+			if (fields == null)
+				return true;
+			
+			foreach (Field f in fields){
+				Object init = f.Initializer;
+
+				if (init is Expression){
+					Expression e = (Expression) init;
+
+					e = e.Resolve (this);
+					if (e == null)
+						return false;
+
+					if (!is_static)
+						ig.Emit (OpCodes.Ldarg_0);
+					
+					e.Emit (ec);
+
+					if (is_static)
+						ig.Emit (OpCodes.Stsfld, f.FieldBuilder);
+					else
+						ig.Emit (OpCodes.Stfld, f.FieldBuilder);
+				}
+			}
+
+			return true;
 		}
 
 		//
@@ -679,17 +697,20 @@ namespace CIR {
 				}
 			}
 			
-			if ((mt & MemberTypes.Method) != 0 && Methods != null) {
-				foreach (Method m in Methods) {
-					if (filter (m.MethodBuilder, criteria) == true)
-						members.Add (m.MethodBuilder);
+			if ((mt & MemberTypes.Method) != 0) {
+				if (Methods != null){
+					foreach (Method m in Methods) {
+						if (filter (m.MethodBuilder, criteria) == true)
+							members.Add (m.MethodBuilder);
+					}
 				}
 
-				foreach (Operator o in Operators) {
-					if (filter (o.OperatorMethodBuilder, criteria) == true)
-						members.Add (o.OperatorMethodBuilder);
+				if (Operators != null){
+					foreach (Operator o in Operators) {
+						if (filter (o.OperatorMethodBuilder, criteria) == true)
+							members.Add (o.OperatorMethodBuilder);
+					}
 				}
-				
 			}
 
 			// FIXME : This ain't right because EventBuilder is not a
@@ -724,10 +745,14 @@ namespace CIR {
 				}
 			}
 
-			MemberInfo [] mi = new MemberInfo [members.Count];
-			members.CopyTo (mi);
+			int count = members.Count;
+			if (count > 0){
+				MemberInfo [] mi = new MemberInfo [count];
+				members.CopyTo (mi);
+				return mi;
+			}
 
-			return mi;
+			return null;
 		}
 	}
 
@@ -1057,7 +1082,7 @@ namespace CIR {
 	
 	public class Constructor : MethodCore {
 		public ConstructorBuilder ConstructorBuilder;
-		public readonly ConstructorInitializer Initializer;
+		public ConstructorInitializer Initializer;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -1113,18 +1138,20 @@ namespace CIR {
 		//
 		public void Emit (TypeContainer parent)
 		{
-			if (!Initializer.Resolve (parent))
-				return;
+			if (Initializer != null)
+				if (!Initializer.Resolve (parent))
+					return;
 
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, ig);
 
-			Initializer.Emit (ec);
+			if ((ModFlags & Modifiers.STATIC) == 0)
+				Initializer.Emit (ec);
 			
-			if ((ModFlags & Modifiers.STATIC) != 0) 
-				parent.EmitStaticFieldInitializers (this.ConstructorBuilder);
-			else 
-				parent.EmitFieldInitializers (this.ConstructorBuilder);
+			if ((ModFlags & Modifiers.STATIC) != 0)
+				parent.EmitFieldInitializers (ec, true);
+			else
+				parent.EmitFieldInitializers (ec, false);
 
 			ec.EmitTopBlock (Block);
 		}

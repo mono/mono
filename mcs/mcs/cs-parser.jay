@@ -1154,6 +1154,19 @@ constructor_declaration
 				Location l = lexer.Location;
 				rc.Report.Error (515, l, "Access modifiers are not allowed on static constructors");
 			}
+
+			if (c.Initializer != null){
+				Location l = lexer.Location;
+				rc.Report.Error (514, l, "Static constructors can not have an explicit this or base constructor invocations");
+			}
+
+			if (!c.Parameters.Empty){
+				Location l = lexer.Location;
+				rc.Report.Error (103, l, "Static constructors should not have parameters");
+			}
+		} else {
+			if (c.Initializer == null)
+				c.Initializer = new ConstructorBaseInitializer (null);
 		}
 		CheckDef (current_container.AddConstructor (c), c.Name);
 
@@ -1166,14 +1179,7 @@ constructor_declarator
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  opt_constructor_initializer
 	  {
-		ConstructorInitializer i = null;
-
-		if ($5 == null)
-			i = new ConstructorBaseInitializer (null);
-		else 
-			i = (ConstructorInitializer) $5;
-
-		$$ = new Constructor ((string) $1, (Parameters) $3, i);
+		$$ = new Constructor ((string) $1, (Parameters) $3, (ConstructorInitializer) $5);
 	
 		current_local_parameters = (Parameters) $3;
 	  }
