@@ -11,6 +11,7 @@ using System.Collections;
 using System.Runtime.Serialization;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Globalization;
 
 namespace System.Runtime.Serialization.Formatters.Binary
 {
@@ -168,7 +169,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				{
 					gen.Emit (OpCodes.Ldarg_2);
 					gen.Emit (lload, localBuilder);
-					if (ftype == typeof(DateTime) || ftype == typeof(TimeSpan))
+					if (ftype == typeof(DateTime) || ftype == typeof(TimeSpan) || ftype == typeof(decimal))
 						gen.Emit (OpCodes.Ldflda, field);
 					else
 						gen.Emit (OpCodes.Ldfld, field);
@@ -300,7 +301,6 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				case TypeCode.Boolean:
 				case TypeCode.Byte:
 				case TypeCode.Char:
-				case TypeCode.Decimal:
 				case TypeCode.Double:
 				case TypeCode.Int16:
 				case TypeCode.Int32:
@@ -314,6 +314,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					EmitWrite (gen, type);
 					break;
 
+				case TypeCode.Decimal:
+					// writer.Write (val.ToString (CultureInfo.InvariantCulture));
+					gen.EmitCall (OpCodes.Call, typeof(CultureInfo).GetProperty("InvariantCulture").GetGetMethod(), null);
+					gen.EmitCall (OpCodes.Call, typeof(Decimal).GetMethod("ToString", new Type[] {typeof(IFormatProvider)}), null);
+					EmitWrite (gen, typeof(string));
+					break;
+					
 				case TypeCode.DateTime: 
 					gen.EmitCall (OpCodes.Call, typeof(DateTime).GetProperty("Ticks").GetGetMethod(), null);
 					EmitWrite (gen, typeof(long));

@@ -13,6 +13,7 @@ using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting.Messaging;
 using System.Reflection;
+using System.Globalization;
 
 namespace System.Runtime.Serialization.Formatters.Binary
 {
@@ -760,7 +761,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					break;
 
 				case TypeCode.Decimal:
-					writer.Write ((decimal) value);
+					writer.Write (((decimal) value).ToString (CultureInfo.InvariantCulture));
 					break;
 
 				case TypeCode.Double:

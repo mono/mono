@@ -14,6 +14,7 @@ using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
+using System.Globalization;
 
 namespace System.Runtime.Serialization.Formatters.Binary
 {
@@ -640,7 +641,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					return new DateTime (reader.ReadInt64());
 
 				case TypeCode.Decimal:
-					return reader.ReadDecimal();
+					return Decimal.Parse (reader.ReadString(), CultureInfo.InvariantCulture);
 
 				case TypeCode.Double:
 					return reader.ReadDouble();
