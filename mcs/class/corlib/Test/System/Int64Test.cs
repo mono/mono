@@ -31,9 +31,9 @@ public class Int64Test : TestCase
 	                                  "-9223372036854775808", "-9,223,372,036,854,775,808.00", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
 	private string[] Results2 = {"$9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
 	                                  "9.2234e+18", "9,223,372,036,854,775,807.00000", "922,337,203,685,477,580,700.00000 %", "7fffffffffffffff"};
-	private string[] ResultsNfi1 = {"($9,223,372,036,854,775,808.00)", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
-	                                  "-9223372036854775808", "(9,223,372,036,854,775,808.00)", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
-	private string[] ResultsNfi2 = {"$9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
+	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"9,223,372,036,854,775,808.00)", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
+	                                  "-9223372036854775808", "-9,223,372,036,854,775,808.00", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
+	private string[] ResultsNfi2 = {""+NumberFormatInfo.InvariantInfo.CurrencySymbol+"9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
 	                                  "9.2234e+18", "9,223,372,036,854,775,807.00000", "922,337,203,685,477,580,700.00000 %", "7fffffffffffffff"};
     private long[] vals
         = { 0, Int64.MaxValue, Int64.MinValue,
@@ -45,11 +45,11 @@ public class Int64Test : TestCase
     private const string sval1Test2 = "  -1234567   ";
     //private const string sval1Test3 = "  -12345,,,,67   "; // interesting: this case works on SDK Beta2, but the specification says nothing about this case
     private const string sval1Test4 = "  -12345 67   ";
-    private const string sval1Test5 = "  -$1,234567.00 ";
-    private const string sval1Test6 = "($1,234,567.00)";
-    private const string sval1Test7 = "(1,234,567.00)";
-    private const string sval1UserCur1 = "1234_5_67,000 XYZ-";
-    private const string sval2UserCur1 = "1234_5_67,000 XYZ";
+    private  string sval1Test5 = "  -"+NumberFormatInfo.InvariantInfo.CurrencySymbol+"1,234,567.00 ";
+    private  string sval1Test6 = "("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"1,234,567.00)";
+    private const string sval1Test7 = "-1,234,567.00";
+    private const string sval1UserCur1 = "1234/5/67:000 XYZ-";
+    private const string sval2UserCur1 = "1234/5/67:000 XYZ";
     private const string sval1UserPercent1 = "-%%%1~2~3~4~5~6~7~0~0;0";
     private const string sval2UserPercent1 = "%%%1~2~3~4~5~6~7~0~0;0";
     private const NumberStyles style1 =  NumberStyles.AllowLeadingWhite | NumberStyles.AllowLeadingSign
@@ -69,11 +69,11 @@ public class Int64Test : TestCase
     {
         NfiUser = new NumberFormatInfo();
         NfiUser.CurrencyDecimalDigits = 3;
-        NfiUser.CurrencyDecimalSeparator = ",";
-        NfiUser.CurrencyGroupSeparator = "_";
+        NfiUser.CurrencyDecimalSeparator = ":";
+        NfiUser.CurrencyGroupSeparator = "/";
         NfiUser.CurrencyGroupSizes = new int[] { 2,1,0 };
-        NfiUser.CurrencyNegativePattern = 10;
-        NfiUser.CurrencyPositivePattern = 3;
+        NfiUser.CurrencyNegativePattern = 10;  // n $-
+        NfiUser.CurrencyPositivePattern = 3;  // n $
         NfiUser.CurrencySymbol = "XYZ";
         NfiUser.PercentDecimalDigits = 1;
         NfiUser.PercentDecimalSeparator = ";";
@@ -166,9 +166,9 @@ public class Int64Test : TestCase
         long lv;
 
         lv = Int64.Parse(sval1Test1, style1, Nfi);
-        Assert(lv == val1);
+        AssertEquals("Long value should be equal for Test1", val1, lv);
 
-        try
+	try
         {
             lv = Int64.Parse(sval1Test1, Nfi);
             Fail("Should raise FormatException 1");
@@ -179,11 +179,11 @@ public class Int64Test : TestCase
         }
 
         lv = Int64.Parse(sval1Test2, style1, Nfi);
-        Assert(lv == val1);
+        AssertEquals("Value should be the same for Test2 with style1", val1, lv);
         lv = Int64.Parse(sval1Test2, Nfi);
-        Assert(lv == val1);
+        AssertEquals("Value should be the same for Test2 without style1", val1, lv);
 
-        try
+	try
         {
             lv = Int64.Parse(sval1Test4, style1, Nfi);
             Fail("Should raise FormatException 3");
@@ -194,69 +194,69 @@ public class Int64Test : TestCase
         }
 
         lv = Int64.Parse(sval1Test5, NumberStyles.Currency, Nfi);
-        Assert(lv == val1);
+        AssertEquals("Value should be the same for Test5 and currency style", val1, lv);
 
-		//test Parse(string s)
-		Assert(MyInt64_1 == Int64.Parse(MyString1));
-		Assert(MyInt64_2 == Int64.Parse(MyString2));
-		Assert(MyInt64_3 == Int64.Parse(MyString3));
-		try {
-			Int64.Parse(null);
-			Fail("Should raise a System.ArgumentNullException");
-		}
-		catch (Exception e) {
-			Assert(typeof(ArgumentNullException) == e.GetType());
-		}
-		try {
-			Int64.Parse("not-a-number");
-			Fail("Should raise a System.FormatException");
-		}
-		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
-		}
-		//test Parse(string s, NumberStyles style)
-		try {
-			double OverInt = (double)Int64.MaxValue + 1;
-			Int64.Parse(OverInt.ToString(), NumberStyles.Float);
-			Fail("Should raise a System.OverflowException");
-		}
-		catch (Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
-		}
-		try {
-			double OverInt = (double)Int64.MaxValue + 1;
-			Int64.Parse(OverInt.ToString(), NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
-		}
-		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
-		}
-		Assert(42 == Int64.Parse(" $42 ", NumberStyles.Currency));
-		try {
-			Int64.Parse("$42", NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
-		}
-		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
-		}
-		//test Parse(string s, IFormatProvider provider)
-		Assert(-42 == Int64.Parse(" -42 ", Nfi));
-		try {
-			Int64.Parse("%42", Nfi);
-			Fail("Should raise a System.FormatException");
-		}
-		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
-		}
-		//test Parse(string s, NumberStyles style, IFormatProvider provider)
-		Assert(16 == Int64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
-		try {
-			Int64.Parse("$42", NumberStyles.Integer, Nfi);
-			Fail("Should raise a System.FormatException");
-		}
-		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
-		}    
+	//test Parse(string s)
+	Assert(MyInt64_1 == Int64.Parse(MyString1));
+	Assert(MyInt64_2 == Int64.Parse(MyString2));
+	Assert(MyInt64_3 == Int64.Parse(MyString3));
+	try {
+		Int64.Parse(null);
+		Fail("Should raise a System.ArgumentNullException");
+	}
+	catch (Exception e) {
+		Assert(typeof(ArgumentNullException) == e.GetType());
+	}
+	try {
+		Int64.Parse("not-a-number");
+		Fail("Should raise a System.FormatException");
+	}
+	catch (Exception e) {
+		Assert(typeof(FormatException) == e.GetType());
+	}
+	//test Parse(string s, NumberStyles style)
+	try {
+		double OverInt = (double)Int64.MaxValue + 1;
+		Int64.Parse(OverInt.ToString(), NumberStyles.Float);
+		Fail("Should raise a System.OverflowException");
+	}
+	catch (Exception e) {
+		Assert(typeof(OverflowException) == e.GetType());
+	}
+	try {
+		double OverInt = (double)Int64.MaxValue + 1;
+		Int64.Parse(OverInt.ToString(), NumberStyles.Integer);
+		Fail("Should raise a System.FormatException");
+	}
+	catch (Exception e) {
+		Assert(typeof(FormatException) == e.GetType());
+	}
+	Assert(42 == Int64.Parse(" $42 ", NumberStyles.Currency));
+	try {
+		Int64.Parse("$42", NumberStyles.Integer);
+		Fail("Should raise a System.FormatException");
+	}
+	catch (Exception e) {
+		Assert(typeof(FormatException) == e.GetType());
+	}
+	//test Parse(string s, IFormatProvider provider)
+	Assert(-42 == Int64.Parse(" -42 ", Nfi));
+	try {
+		Int64.Parse("%42", Nfi);
+		Fail("Should raise a System.FormatException");
+	}
+	catch (Exception e) {
+		Assert(typeof(FormatException) == e.GetType());
+	}
+	//test Parse(string s, NumberStyles style, IFormatProvider provider)
+	Assert(16 == Int64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+	try {
+		Int64.Parse("$42", NumberStyles.Integer, Nfi);
+		Fail("Should raise a System.FormatException");
+	}
+	catch (Exception e) {
+		Assert(typeof(FormatException) == e.GetType());
+	}    
     }
 
     public void TestToString() 
@@ -264,32 +264,32 @@ public class Int64Test : TestCase
         string s;
 
         s = val1.ToString("c", Nfi);
-        Assert(s.Equals(sval1Test6));
+        Assert("val1 does not become sval1Test6", s.Equals(sval1Test6));
 
         s = val1.ToString("n", Nfi);
-        Assert(s.Equals(sval1Test7));
+        AssertEquals("val1 does not become sval1Test7", sval1Test7, s);
 
-		//test ToString()
-		Assert(String.Compare(MyString1, MyInt64_1.ToString()) == 0);
-		Assert(String.Compare(MyString2, MyInt64_2.ToString()) == 0);
-		Assert(String.Compare(MyString3, MyInt64_3.ToString()) == 0);
-		//test ToString(string format)
-		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(Results1[i], MyInt64_2.ToString(Formats1[i])) == 0);
-			Assert(String.Compare(Results2[i], MyInt64_3.ToString(Formats2[i])) == 0);
-		}
-		//test ToString(string format, IFormatProvider provider);
-		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(ResultsNfi1[i], MyInt64_2.ToString(Formats1[i], Nfi)) == 0);
-			Assert(String.Compare(ResultsNfi2[i], MyInt64_3.ToString(Formats2[i], Nfi)) == 0);
-		}
-		try {
-			MyInt64_1.ToString("z");
-			Fail("Should raise a System.FormatException");
-		}
-		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
-		}
+	//test ToString()
+	AssertEquals("MyInt64_1.ToString()", MyString1, MyInt64_1.ToString());
+	AssertEquals("MyInt64_2.ToString()", MyString2, MyInt64_2.ToString());
+	AssertEquals("MyInt64_3.ToString()", MyString3, MyInt64_3.ToString());
+	//test ToString(string format)
+	for (int i=0; i < Formats1.Length; i++) {
+		AssertEquals("MyInt64_2.ToString(Formats1["+i+"])", Results1[i], MyInt64_2.ToString(Formats1[i]));
+		AssertEquals("MyInt64_3.ToString(Formats2["+i+"])", Results2[i], MyInt64_3.ToString(Formats2[i]));
+	}
+	//test ToString(string format, IFormatProvider provider);
+	for (int i=0; i < Formats1.Length; i++) {
+		AssertEquals("MyInt64_2.ToString(Formats1["+i+"], Nfi)", ResultsNfi1[i], MyInt64_2.ToString(Formats1[i], Nfi));
+		AssertEquals("MyInt64_3.ToString(Formats2["+i+"], Nfi)", ResultsNfi2[i], MyInt64_3.ToString(Formats2[i], Nfi));
+	}
+	try {
+		MyInt64_1.ToString("z");
+		Fail("Should raise a System.FormatException");
+	}
+	catch (Exception e) {
+		AssertEquals("Exception is wrong type", typeof(FormatException), e.GetType());
+	}
     }
 
     public void TestUserCurrency()
@@ -298,12 +298,12 @@ public class Int64Test : TestCase
         long v;
 
         s = val1.ToString("c", NfiUser);
-        Assert(s.Equals(sval1UserCur1));
+        AssertEquals("Currency value type 1 is not what we want to try to parse", sval1UserCur1, s);
         v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
         Assert(v == val1);
    
         s = val2.ToString("c", NfiUser);
-        Assert(s.Equals(sval2UserCur1));
+        AssertEquals("Currency value type 1 is not what we want to try to parse", sval2UserCur1, s);
         v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
         Assert(v == val2);
     }

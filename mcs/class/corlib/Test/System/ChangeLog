@@ -1,3 +1,10 @@
+2002-02-11  Nick Drochak  <ndrochak@gol.com>
+
+	* Int64Test.cs: Various fixes to make tests work against the ms corlib.
+	Currency Symbol tests seem to be system dependant.  Not sure if this
+	will work on other systems, so please test it if you can. The most
+	disturbing one is negative numbers.  Should they be (n) or -n ?
+
 2002-02-10  Nick Drochak  <ndrochak@gol.com>
 
 	* AllTests.cs: Add Int64Test to the Suite
