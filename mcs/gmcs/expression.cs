@@ -4767,11 +4767,6 @@ namespace Mono.CSharp {
 					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
-                                                Console.WriteLine ("GAA: {0} {1} {2}",
-                                                                   pd.ParameterType (j),
-                                                                   pd.ParameterType (j).Assembly == CodeGen.AssemblyBuilder,
-                                                                   method.DeclaringType.Assembly == CodeGen.AssemblyBuilder);
-
 						if (!Location.IsNull (loc)) 
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
@@ -6529,7 +6524,8 @@ namespace Mono.CSharp {
 				((TypeParameterExpr)QueriedType).Error_CannotUseAsUnmanagedType (loc);
 				return null;
 			}
-			
+
+			type_queried = QueriedType.Type;
 			if (!TypeManager.IsUnmanagedType (type_queried)){
 				Report.Error (208, loc, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
 				return null;
