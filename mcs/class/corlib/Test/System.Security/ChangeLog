@@ -1,3 +1,8 @@
+2004-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SecurityManagerTest.cs: New. Added VERY minimal unit tests that I 
+	used to validate some behaviors.
+
 2004-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SecurityElementTest.cs: Added new tests, constructors and null 
