@@ -38,6 +38,7 @@ namespace System.Runtime.Remoting.Contexts
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class SynchronizationAttribute: ContextAttribute, IContributeClientContextSink, IContributeServerContextSink
 	{
 		public const int NOT_SUPPORTED = 1;

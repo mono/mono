@@ -1,3 +1,7 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SynchronizationAttribute.cs: added TODO for serialization
+
 2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* Context.cs: Added finalizer to match MS.NET
