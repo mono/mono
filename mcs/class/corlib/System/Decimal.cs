@@ -195,16 +195,17 @@ namespace System
             if (decimalIncr(ref d1, ref d2) == 0)
                 return d1;
             else
-                throw new OverflowException(Locale.GetText ("Overflow on adding decimal nummber"));
+                throw new OverflowException(Locale.GetText ("Overflow on adding decimal number"));
         }
 
         public static Decimal Subtract(Decimal d1, Decimal d2) 
         {
             d2.ss32 ^= SIGN_FLAG;
-            if (decimalIncr(ref d1, ref d2) == 0)
+	    int result = decimalIncr(ref d1, ref d2);
+            if (result == 0)
                 return d1;
             else
-                throw new OverflowException(Locale.GetText ("Overflow on subtracting decimal nummbers"));
+                throw new OverflowException(Locale.GetText ("Overflow on subtracting decimal numbers ("+result+")"));
         }
 
         public override int GetHashCode() 

@@ -1,3 +1,6 @@
+2002-04-04  Nick Drochak  <ndrochak@gol.com>
+
+	* Decimal.cs: Fix a couple of typos.
 
 Wed Apr 3 19:46:00 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
