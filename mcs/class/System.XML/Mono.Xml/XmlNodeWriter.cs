@@ -18,12 +18,12 @@ namespace Mono.Xml
 		}
 
 		// It should be public after some tests are done :-)
-		private XmlNodeWriter (bool isDocumentEntity)
+		public XmlNodeWriter (bool isDocumentEntity)
 		{
 			doc = new XmlDocument ();
 			state = XmlNodeType.None;
 			this.isDocumentEntity = isDocumentEntity;
-			if (isDocumentEntity)
+			if (!isDocumentEntity)
 				current = fragment = doc.CreateDocumentFragment ();
 		}
 
@@ -46,7 +46,7 @@ namespace Mono.Xml
 
 		// Properties
 		public XmlNode Document {
-			get { return isDocumentEntity ? (XmlNode)fragment : (XmlNode)doc; }
+			get { return isDocumentEntity ? (XmlNode)doc : (XmlNode)fragment; }
 		}
 
 		public override WriteState WriteState {
@@ -113,7 +113,7 @@ namespace Mono.Xml
 				throw new InvalidOperationException (String.Format ("Current state is not acceptable for {0}.", n.NodeType));
 
 			if (state != XmlNodeType.Element)
-				doc.AppendChild (n);
+				Document.AppendChild (n);
 			else if (attribute != null)
 				attribute.AppendChild (n);
 			else
@@ -198,7 +198,7 @@ namespace Mono.Xml
 
 			XmlElement el = doc.CreateElement (prefix, name, ns);
 			if (current == null) {
-				doc.AppendChild (el);
+				Document.AppendChild (el);
 				state = XmlNodeType.Element;
 			} else {
 				current.AppendChild (el);
@@ -229,10 +229,10 @@ namespace Mono.Xml
 			if (!forceFull && current.FirstChild == null)
 				((XmlElement) current).IsEmpty = true;
 
-			if (current.ParentNode == doc)
+			if (isDocumentEntity && current.ParentNode == doc)
 				state = XmlNodeType.EndElement;
 			else
-				current = current.ParentNode as XmlElement;
+				current = current.ParentNode;
 		}
 
 		// StartAttribute
