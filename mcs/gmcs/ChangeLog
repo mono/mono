@@ -1,5 +1,13 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.InferTypeArguments): Added overloaded
+	public version of this method.
+
+	* class.cs (MethodCore.IsDuplicateImplementation): Use
+	Invocation.InferTypeArguments() to check this.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* convert.cs: Use TypeManager.IsDelegateType() instead of
 	comparing types correctly.
 

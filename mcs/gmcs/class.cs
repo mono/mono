@@ -2563,14 +2563,22 @@ namespace Mono.CSharp {
 				return false;
 
 			bool equal = true;
-			bool may_unify = true;
+			bool may_unify;
+
+			Type[] infered_types = new Type [param_types.Length];
+			may_unify = Invocation.InferTypeArguments (
+				param_types, ParameterTypes, ref infered_types);
+
+			if (!may_unify) {
+				infered_types = new Type [param_types.Length];
+				may_unify = Invocation.InferTypeArguments (
+					ParameterTypes, param_types, ref infered_types);
+			}
 
 			for (int i = 0; i < param_types.Length; i++) {
 				Type a = param_types [i];
 				Type b = ParameterTypes [i];
 
-				if (!TypeManager.MayBecomeEqualGenericTypes (a, b))
-					may_unify = false;
 				if (a != b)
 					equal = false;
 			}

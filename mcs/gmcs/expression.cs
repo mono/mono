@@ -4904,6 +4904,13 @@ namespace Mono.CSharp {
 				int pos = pt.GenericParameterPosition;
 
 				if (infered [pos] == null) {
+					Type check = at;
+					while (check.IsArray)
+						check = check.GetElementType ();
+
+					if (pt.Equals (check))
+						return false;
+
 					infered [pos] = at;
 					return true;
 				}
@@ -4912,6 +4919,15 @@ namespace Mono.CSharp {
 					return false;
 
 				return true;
+			}
+
+			if (at.IsArray) {
+				if (!pt.IsArray ||
+				    (at.GetArrayRank () != pt.GetArrayRank ()))
+					return false;
+
+				return InferType (pt.GetElementType (), at.GetElementType (),
+						  ref infered);
 			}
 
 			if (pt.IsArray) {
@@ -5027,6 +5043,25 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public static bool InferTypeArguments (Type[] param_types, Type[] arg_types,
+						       ref Type[] infered_types)
+		{
+			for (int i = 0; i < arg_types.Length; i++) {
+				if (arg_types [i] == null)
+					continue;
+
+				if (!InferType (param_types [i], arg_types [i],
+						ref infered_types))
+					return false;
+			}
+
+			for (int i = 0; i < infered_types.Length; i++)
+				if (infered_types [i] == null)
+					return false;
+
+			return true;
+		}
+
 		static bool InferTypeArguments (EmitContext ec, ArrayList arguments,
 						ref MethodBase candidate)
 		{
@@ -5042,22 +5077,21 @@ namespace Mono.CSharp {
 			Type[] method_args = method.GetGenericArguments ();
 			Type[] infered_types = new Type [method_args.Length];
 
-			for (int i = 0; i < arguments.Count; i++) {
-				Argument a = (Argument) arguments [i];
+			Type[] param_types = new Type [pd.Count];
+			Type[] arg_types = new Type [pd.Count];
 
+			for (int i = 0; i < arguments.Count; i++) {
+				param_types [i] = pd.ParameterType (i);
+
+				Argument a = (Argument) arguments [i];
 				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
 					continue;
 
-				Type pt = pd.ParameterType (i);
-				Type at = a.Type;
-
-				if (!InferType (pt, at, ref infered_types))
-					return false;
+				arg_types [i] = a.Type;
 			}
 
-			for (int i = 0; i < infered_types.Length; i++)
-				if (infered_types [i] == null)
-					return false;
+			if (!InferTypeArguments (param_types, arg_types, ref infered_types))
+				return false;
 
 			candidate = method.BindGenericParameters (infered_types);
 			return true;
