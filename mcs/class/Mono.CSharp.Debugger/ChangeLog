@@ -1,5 +1,10 @@
 2002-03-19  Martin Baulig  <martin@gnome.org>
 
+	* IMonoSymbolWriter.cs (OpenMethod): Take a System.Reflection.MethodInfo, not
+	a string.
+
+2002-03-19  Martin Baulig  <martin@gnome.org>
+
 	This is an implementation of the System.Diagnostics.SymbolStore.SymbolWriter
 	interface. It's still work in progress and not yet used anywhere.
 

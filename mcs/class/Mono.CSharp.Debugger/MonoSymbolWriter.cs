@@ -26,37 +26,37 @@ namespace Mono.CSharp.Debugger
 		protected Hashtable methods = null;
 		protected Hashtable sources = null;
 
-		protected class SourceInfo
+		protected class MySourceInfo
 		{
-			private MethodInfo[] _methods;
+			private MyMethodInfo[] _methods;
 			public readonly string FileName;
 
-			public SourceInfo (string filename)
+			public MySourceInfo (string filename)
 			{
 				this.FileName = filename;
 
-				this._methods = new MethodInfo [0];
+				this._methods = new MyMethodInfo [0];
 			}
 
-			public MethodInfo[] GetMethods ()
+			public MyMethodInfo[] GetMethods ()
 			{
 				return _methods;
 			}
 
-			public void AddMethod (MethodInfo method)
+			public void AddMethod (MyMethodInfo method)
 			{
 				int i = _methods.Length;
-				MethodInfo[] new_m = new MethodInfo [i + 1];
+				MyMethodInfo[] new_m = new MyMethodInfo [i + 1];
 				Array.Copy (_methods, new_m, i);
 				new_m [i] = method;
 				_methods = new_m;
 			}
 		}
 
-		protected struct MethodInfo
+		protected struct MyMethodInfo
 		{
-			public MethodInfo (string name, SourceInfo source_file) {
-				this.Name = name;
+			public MyMethodInfo (MethodInfo method_info, MySourceInfo source_file) {
+				this.MethodInfo = method_info;
 				this.SourceFile = source_file;
 			}
 
@@ -65,8 +65,8 @@ namespace Mono.CSharp.Debugger
 			{
 			}
 
-			public readonly string Name;
-			public readonly SourceInfo SourceFile;
+			public readonly MethodInfo MethodInfo;
+			public readonly MySourceInfo SourceFile;
 		}
 
 		protected Object current_method = null;
@@ -176,24 +176,25 @@ namespace Mono.CSharp.Debugger
 		}
 
 		// This is documented in IMonoSymbolWriter.cs
-		public void OpenMethod (SymbolToken symbol_token, string name, string source_file)
+		public void OpenMethod (SymbolToken symbol_token, MethodInfo method_info,
+					string source_file)
 		{
 			int token = symbol_token.GetToken ();
-			SourceInfo source_info;
+			MySourceInfo source_info;
 
 			if (methods.ContainsKey (token))
 				methods.Remove (token);
 
 			if (sources.ContainsKey (source_file))
-				source_info = (SourceInfo) sources [source_file];
+				source_info = (MySourceInfo) sources [source_file];
 			else {
-				source_info = new SourceInfo (source_file);
+				source_info = new MySourceInfo (source_file);
 				sources.Add (source_file, source_info);
 			}
 
-			current_method = new MethodInfo (name, source_info);
+			current_method = new MyMethodInfo (method_info, source_info);
 
-			source_info.AddMethod ((MethodInfo) current_method);
+			source_info.AddMethod ((MyMethodInfo) current_method);
 
 			methods.Add (token, current_method);
 
@@ -216,7 +217,7 @@ namespace Mono.CSharp.Debugger
 				throw new NotSupportedException ("startDoc and endDoc must be the same");
 
 			if (current_method != null)
-				((MethodInfo) current_method).SetSourceRange (startLine, startColumn,
+				((MyMethodInfo) current_method).SetSourceRange (startLine, startColumn,
 									      endLine, endColumn);
 		}
 
@@ -256,16 +257,16 @@ namespace Mono.CSharp.Debugger
 		//
 		// MonoSymbolWriter implementation
 		//
-		protected void WriteMethod (DwarfFileWriter.DieCompileUnit parent_die, MethodInfo method)
+		protected void WriteMethod (DwarfFileWriter.DieCompileUnit parent_die, MyMethodInfo method)
 		{
-			Console.WriteLine ("WRITING METHOD: " + method.Name);
+			Console.WriteLine ("WRITING METHOD: " + method.MethodInfo.Name);
 
 			DwarfFileWriter.DieSubProgram die;
 
-			die = new DwarfFileWriter.DieSubProgram (parent_die, method.Name);
+			die = new DwarfFileWriter.DieSubProgram (parent_die, method.MethodInfo);
 		}
 
-		protected void WriteSource (DwarfFileWriter writer, SourceInfo source)
+		protected void WriteSource (DwarfFileWriter writer, MySourceInfo source)
 		{
 			Console.WriteLine ("WRITING SOURCE: " + source.FileName);
 
@@ -274,7 +275,7 @@ namespace Mono.CSharp.Debugger
 
 			DwarfFileWriter.DieCompileUnit die = new DwarfFileWriter.DieCompileUnit (compile_unit);
 
-			foreach (MethodInfo method in source.GetMethods ())
+			foreach (MyMethodInfo method in source.GetMethods ())
 				WriteMethod (die, method);
 		}
 
@@ -284,7 +285,7 @@ namespace Mono.CSharp.Debugger
 
 			DwarfFileWriter writer = new DwarfFileWriter (filename);
 
-			foreach (SourceInfo source in sources.Values)
+			foreach (MySourceInfo source in sources.Values)
 				WriteSource (writer, source);
 
 			writer.Close ();

@@ -30,7 +30,7 @@ namespace Mono.CSharp.Debugger
 
 		// Write a generic file which contains no machine dependant stuff but
 		// only function and type declarations.
-		protected readonly bool DoGeneric = true;
+		protected readonly bool DoGeneric = false;
 
 		//
 		// DwarfFileWriter public interface
@@ -90,11 +90,19 @@ namespace Mono.CSharp.Debugger
 			protected string source_file;
 			protected Die[] dies;
 
+			private static int next_ref_index = 0;
+
+			public readonly int ReferenceIndex;
+			public readonly string ReferenceLabel;
+
 			public CompileUnit (DwarfFileWriter dw, string source_file, Die[] dies)
 			{
 				this.dw = dw;
 				this.source_file = source_file;
 				this.dies = dies;
+
+				this.ReferenceIndex = ++next_ref_index;
+				this.ReferenceLabel = ".L_COMPILE_UNIT_" + this.ReferenceIndex;
 
 				dw.AddCompileUnit (this);
 			}
@@ -145,6 +153,8 @@ namespace Mono.CSharp.Debugger
 
 				dw.WriteSectionStart (Section.DEBUG_INFO);
 
+				dw.WriteLabel (ReferenceLabel);
+
 				start_index = dw.WriteAnonLabel ();
 
 				end_index = dw.WriteSectionSize ();
@@ -154,7 +164,7 @@ namespace Mono.CSharp.Debugger
 					dw.WriteUInt8 (4);
 				else {
 					dw.AddRelocEntry (RelocEntryType.TARGET_ADDRESS_SIZE);
-					dw.WriteUInt8 (0);
+					dw.WriteUInt8 (4);
 				}
 
 				if (dies != null)
@@ -264,6 +274,22 @@ namespace Mono.CSharp.Debugger
 				}
 			}
 
+			public override bool Equals (object o)
+			{
+				if (!(o is Die))
+					return false;
+
+				Console.WriteLine ("EQUALS: " + ((Die) o).ReferenceIndex + " " +
+						   ReferenceIndex);
+
+				return ((Die) o).ReferenceIndex == ReferenceIndex;
+			}
+
+			public override int GetHashCode ()
+			{
+				return ReferenceIndex;
+			}
+
 			//
 			// Write this die and all its children to the dwarf file.
 			//
@@ -307,7 +333,15 @@ namespace Mono.CSharp.Debugger
 			//
 			public virtual DieCompileUnit GetCompileUnit ()
 			{
-				return null;
+				Die die = this;
+
+				while (die.Parent != null)
+					die = die.Parent;
+
+				if (die is DieCompileUnit)
+					return (DieCompileUnit) die;
+				else
+					return null;
 			}
 		}
 
@@ -358,18 +392,17 @@ namespace Mono.CSharp.Debugger
 				return die;
 			}
 
-			public override DieCompileUnit GetCompileUnit ()
-			{
-				return this;
-			}
-
 			public void WriteRelativeDieReference (Die target_die)
 			{
-				if (target_die.GetCompileUnit () != this)
+				Console.WriteLine ("TEST 2: " + this + " " + target_die + " " +
+						   target_die.GetCompileUnit ());
+
+				if (!this.Equals (target_die.GetCompileUnit ()))
 					throw new ArgumentException ("Target die must be in the same "
 								     + "compile unit");
 
-				dw.WriteRelativeReference (ReferenceLabel, target_die.ReferenceLabel);
+				dw.WriteRelativeReference (compile_unit.ReferenceLabel,
+							   target_die.ReferenceLabel);
 			}
 
 			public void WriteTypeReference (Type type)
@@ -460,22 +493,22 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id_4 = RegisterAbbrevDeclaration (decl_4);
 			}
 
-			private static int get_abbrev_id (DieCompileUnit parent_die, Type ret_type)
+			private static int get_abbrev_id (DieCompileUnit parent_die,
+							  MethodInfo method_info)
 			{
 				if (parent_die.DoGeneric)
-					if (ret_type == typeof (void))
+					if (method_info.ReturnType == typeof (void))
 						return my_abbrev_id_3;
 					else
 						return my_abbrev_id_4;
 				else
-					if (ret_type == typeof (void))
+					if (method_info.ReturnType == typeof (void))
 						return my_abbrev_id_1;
 					else
 						return my_abbrev_id_2;
 			}
 
-			protected string name;
-			protected Type ret_type;
+			protected MethodInfo method_info;
 			protected DieCompileUnit comp_unit_die;
 
 			//
@@ -483,26 +516,16 @@ namespace Mono.CSharp.Debugger
 			// for method @name (which has a void return value) and add it
 			// to the @parent_die
 			//
-			public DieSubProgram (DieCompileUnit parent_die, string name)
-				: this (parent_die, name, typeof (void))
-			{ }
-
-			public DieSubProgram (DieCompileUnit parent_die,
-					      System.Reflection.MethodInfo method_info)
-				: this (parent_die, method_info.Name, method_info.ReturnType)
-			{ }
-
-			public DieSubProgram (DieCompileUnit parent_die, string name, Type ret_type)
-				: base (parent_die, get_abbrev_id (parent_die, ret_type))
+			public DieSubProgram (DieCompileUnit parent_die, MethodInfo method_info)
+				: base (parent_die, get_abbrev_id (parent_die, method_info))
 			{
-				this.name = name;
+				this.method_info = method_info;
 				this.comp_unit_die = parent_die;
-				ret_type = ret_type;
 			}
 
 			public override void DoEmit ()
 			{
-				dw.WriteString (name);
+				dw.WriteString (method_info.Name);
 				dw.WriteFlag (true);
 				if (dw.DoGeneric)
 					dw.WriteFlag (true);
@@ -512,10 +535,8 @@ namespace Mono.CSharp.Debugger
 					dw.AddRelocEntry (RelocEntryType.IL_OFFSET);
 					dw.WriteAddress (0);
 				}
-				if (ret_type != null) {
-					Die ret_type_die = comp_unit_die.RegisterType (ret_type);
-					comp_unit_die.WriteRelativeDieReference (ret_type_die);
-				}
+				if (method_info.ReturnType != typeof (void))
+					comp_unit_die.WriteTypeReference (method_info.ReturnType);
 			}
 		}
 

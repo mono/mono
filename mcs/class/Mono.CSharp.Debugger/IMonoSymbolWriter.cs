@@ -33,6 +33,6 @@ namespace Mono.CSharp.Debugger
 
 		// This is some kind of a hack - there isn't any way yet to get the
 		// method name and source file back from a token.
-		void OpenMethod (SymbolToken token, string name, string source_file);
+		void OpenMethod (SymbolToken token, MethodInfo method_info, string source_file);
 	}
 }
