@@ -1,12 +1,13 @@
 //
 // System.IO.TextReader
 //
-// Author: Marcin Szczepanski (marcins@zipworld.com.au)
-//
-// TODO: Implement the Thread Safe stuff
+// Authors:
+//   Marcin Szczepanski (marcins@zipworld.com.au)
+//   Miguel de Icaza (miguel@gnome.org)
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.IO {
 
@@ -55,7 +56,7 @@ namespace System.IO {
 			return i;
 		}
 		
-		public virtual int ReadBlock (char [] buffer, int index, int count)
+		public virtual int ReadBlock ([In, Out] char [] buffer, int index, int count)
 		{
 			int read_count = 0;
 			do {
@@ -77,11 +78,78 @@ namespace System.IO {
 			return String.Empty;
 		}
 
-		[MonoTODO]
-		public static TextReader Synchronized( TextReader reader )
+		public static TextReader Synchronized (TextReader reader)
 		{
-                        // TODO: Implement
-			return Null;
+			if (reader == null)
+				throw new ArgumentNullException ("reader is null");
+			if (reader is SynchronizedReader)
+				return reader;
+
+			return new SynchronizedReader (reader);
 		}	
+	}
+
+	//
+	// Synchronized Reader implementation, used internally.
+	//
+	[Serializable]
+	internal class SynchronizedReader : TextReader {
+		TextReader reader;
+		
+		public SynchronizedReader (TextReader reader)
+		{
+			this.reader = reader;
+		}
+
+		public override void Close ()
+		{
+			lock (this){
+				reader.Close ();
+			}
+		}
+
+		public override int Peek ()
+		{
+			lock (this){
+				return reader.Peek ();
+			}
+		}
+
+		public override int ReadBlock (char [] buffer, int index, int count)
+		{
+			lock (this){
+				return reader.ReadBlock (buffer, index, count);
+			}
+		}
+
+		public override string ReadLine ()
+		{
+			lock (this){
+				return reader.ReadLine ();
+			}
+		}
+
+		public override string ReadToEnd ()
+		{
+			lock (this){
+				return reader.ReadToEnd ();
+			}
+		}
+#region Read Methods
+		public override int Read ()
+		{
+			lock (this){
+				return reader.Read ();
+			}
+		}
+
+		public override int Read (char [] buffer, int index, int count)
+		{
+			lock (this){
+				return reader.Read (buffer, index, count);
+			}
+		}
+#endregion
+		
 	}
 }

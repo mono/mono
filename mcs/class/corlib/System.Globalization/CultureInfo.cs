@@ -34,7 +34,7 @@ namespace System.Globalization
 				if (invariant_culture_info != null)
 					return invariant_culture_info;
 				
-				invariant_culture_info = new CultureInfo (0x07f, false);
+				invariant_culture_info = new CultureInfo (0x7f, false);
 				invariant_culture_info.is_read_only = true;
 				
 				return invariant_culture_info;

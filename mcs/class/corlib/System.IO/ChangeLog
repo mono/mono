@@ -1,3 +1,9 @@
+2003-04-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* TextWriter.cs: Implemented Synchronized method.
+
+	* TextReader.cs: Implemented Synchronized method.
+
 2003-04-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* FileStream.cs (Read, ReadByte, Seek): throw

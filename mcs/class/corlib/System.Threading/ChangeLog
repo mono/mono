@@ -1,3 +1,8 @@
+2003-03-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* Thread.cs (CurrentCuluture): use the invaraint culture instead
+	of "" for the current_culture setting.
+
 2003-03-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Fix visibility of ResetAbort().

@@ -22,9 +22,14 @@ namespace System {
 		{
 			stderr = new StreamWriter (OpenStandardError (), Encoding.Default);
 			((StreamWriter)stderr).AutoFlush = true;
+			stderr = TextWriter.Synchronized (stderr);
+			
 			stdout = new StreamWriter (OpenStandardOutput (), Encoding.Default);
 			((StreamWriter)stdout).AutoFlush = true;
+			stdout = TextWriter.Synchronized (stdout);
+			
 			stdin  = new StreamReader (OpenStandardInput (), Encoding.Default);
+			stdin = TextReader.Synchronized (stdin);
 		}
 
 		private Console () {}

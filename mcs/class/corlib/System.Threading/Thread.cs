@@ -242,7 +242,7 @@ namespace System.Threading
 		public CultureInfo CurrentCulture {
 			get {
 				if (current_culture == null)
-					current_culture = new CultureInfo ("");
+					current_culture = CultureInfo.InvariantCulture;
 				return current_culture;
 			}
 			
