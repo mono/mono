@@ -1,3 +1,8 @@
+2002-04-29  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayListTest.cs (): Remove test on unsorted array.  Behavior is 
+	undefined according to docs. Re-added test that was commented out.
+
 2002-03-24  Duncan Mak  <duncan@ximian.com>
 
 	* SortedListTest.cs: Committed to CVS for Jaak Simm <jaaksimm@firm.ee>.

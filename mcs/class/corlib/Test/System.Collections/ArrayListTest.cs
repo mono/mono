@@ -275,36 +275,26 @@ public class ArrayListTest : TestCase {
 	}
 
 	public void TestBinarySearch() {
-		//{
-		//bool errorThrown = false;
-		//try {
-		//	ArrayList al1 = new ArrayList();
-		//	String[] s1 = {"This", "is", "a", "test"};
-		//	al1.AddRange(s1);
-		//	al1.BinarySearch(42);
-		//} catch (ArgumentException) {
-		//	errorThrown = true;
-		//}
-		//Assert("search-for-wrong-type error not thrown", 
-		//       errorThrown);
-		//}
+		{
+		bool errorThrown = false;
+		try {
+			ArrayList al1 = new ArrayList();
+			String[] s1 = {"This", "is", "a", "test"};
+			al1.AddRange(s1);
+			al1.BinarySearch(42);
+		} catch (ArgumentException) {
+			errorThrown = true;
+		}
+		Assert("search-for-wrong-type error not thrown", 
+		       errorThrown);
+		}
 		
-		{
-			char[] bad = {'d', 'a', 'd', 'a', 'c', 'a'};
-			ArrayList al1 = new ArrayList(bad);
-			AssertEquals("shouldn't find elem in badly-sorted array", -1, al1.BinarySearch('c'));
-		}
-		{
-			char[] bad = {'a', 'd', 'a', 'd', 'a', 'c', 'a'};
-			ArrayList al1 = new ArrayList(bad);
-			AssertEquals("shouldn't find elem in badly-sorted array", -2, al1.BinarySearch('c'));
-		}
 		{
 			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
 			ArrayList al1 = new ArrayList(arr);
-			Assert("couldn't find elem", 
+			Assert("couldn't find elem #1", 
 			       al1.BinarySearch('c') >= 3);
-			Assert("couldn't find elem", 
+			Assert("couldn't find elem #2", 
 			       al1.BinarySearch('c') < 6);
 		}
 		{
