@@ -1,5 +1,8 @@
 2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.h reflection.c: Use the new fields 'num_types', 
+	'num_fields' and 'num_methods' to track the number of types etc.
+
 	* verify.c (check_corlib): Check corlib version number.
 
 2003-12-07  Zoltan Varga  <vargaz@freemail.hu>
