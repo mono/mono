@@ -97,11 +97,12 @@ System.CodeDom.Compiler/CodeCompiler.cs
 System.CodeDom.Compiler/CodeDomProvider.cs
 System.CodeDom.Compiler/CodeGenerator.cs
 System.CodeDom.Compiler/CodeGeneratorOptions.cs
+System.CodeDom.Compiler/CodeParser.cs
 System.CodeDom.Compiler/CompilerErrorCollection.cs
 System.CodeDom.Compiler/CompilerError.cs
-System.CodeDom.Compiler/CompilerOptions.cs
 System.CodeDom.Compiler/CompilerParameters.cs
 System.CodeDom.Compiler/CompilerResults.cs
+System.CodeDom.Compiler/Executor.cs
 System.CodeDom.Compiler/GeneratorSupport.cs
 System.CodeDom.Compiler/ICodeCompiler.cs
 System.CodeDom.Compiler/ICodeGenerator.cs
