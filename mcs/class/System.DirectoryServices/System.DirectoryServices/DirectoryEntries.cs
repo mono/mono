@@ -62,11 +62,9 @@ namespace System.DirectoryServices
 				_Conn.Bind(_Buser,_Bpass);
 			}
 			catch(LdapException ex)			{
-				Console.WriteLine("Error:" + ex.LdapErrorMessage);
 				throw ex;
 			}
 			catch(Exception e)				{
-				Console.WriteLine("Error:" +  e.Message);
 				throw e;
 			}
 		}
@@ -75,7 +73,6 @@ namespace System.DirectoryServices
 		{
 			get										{
 				if( _Basedn == null)				{
-//					Console.WriteLine("Basepath:" + _Bpath);
 					LdapUrl lurl=new LdapUrl(_Bpath);
 					string bdn = lurl.getDN();
 					if( bdn != null)
@@ -153,7 +150,6 @@ namespace System.DirectoryServices
 		{
 			m_oValues= new ArrayList();
 			string[] attrs={"objectClass"};
-//			Console.WriteLine("BaseDN is:" + Basedn);
 			LdapSearchResults lsc= Conn.Search(	Basedn,
 												LdapConnection.SCOPE_ONE,
 												"objectClass=*",
@@ -170,7 +166,6 @@ namespace System.DirectoryServices
 					nextEntry = lsc.next();
 				}
 				catch(LdapException e) 		{
-					Console.WriteLine("Error: " + e.LdapErrorMessage);
 					// Exception is thrown, go for next entry
 					continue;
 				}
@@ -276,7 +271,6 @@ namespace System.DirectoryServices
 						cEntry.Path=curl.ToString();
 					}
 					catch(LdapException e) 			{
-						Console.WriteLine("Error: " + e.LdapErrorMessage);
 						// Exception is thrown, go for next entry
 						throw e;
 					}

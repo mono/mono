@@ -107,7 +107,6 @@ namespace System.DirectoryServices
 							if(Rproperties[attribute].Count==1)
 							{
 								String val = (String)Rproperties[attribute].Value;
-//							    Console.WriteLine("attribute:" + attribute + "value:" + val);
 								rpVal.Add(val);
 							}
 							else
@@ -115,7 +114,6 @@ namespace System.DirectoryServices
 								Object[] vals=(Object [])Rproperties[attribute].Value;
 //								String[] aStrVals= new String[_Entry.Properties[attribute].Count];
 								rpVal.AddRange(vals);
-//							    Console.WriteLine("attribute1:" + attribute + "value:" +vals[0]);
 							}
 							_Properties.Add(attribute,rpVal);
 					}
@@ -129,12 +127,14 @@ namespace System.DirectoryServices
 		{
 			InitBlock();
 			_Entry = entry;
+			_Path = entry.Path;
 		}
 
 		internal SearchResult(DirectoryEntry entry, PropertyCollection props)
 		{
 			InitBlock();
 			_Entry = entry;
+			_Path = entry.Path;
 			_Rproperties = props;
 		}
 		/// <summary>
