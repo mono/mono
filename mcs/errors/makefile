@@ -1,7 +1,7 @@
 #
 # Compile at the maximum warning level to probe for warnings
 #
-MCS=mono ../mcs/mcs.exe --wlevel 4 # for linux
+MCS=mono ../mcs/mcs.exe /nowarn:162 /nowarn:169 --wlevel 4 # for linux
 #MCS=../mcs/mcs.exe --wlevel 4 # for windows
 
 
