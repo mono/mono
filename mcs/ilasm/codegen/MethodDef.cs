@@ -438,7 +438,11 @@ namespace Mono.ILASM {
                 {
                         if (name == ".ctor" || name == ".cctor")
                                 meth_attr |= PEAPI.MethAttr.SpecialName | PEAPI.MethAttr.RTSpecialName;
+                        // If methods aren't flagged as static they are instance
+                        if ((PEAPI.MethAttr.Static & meth_attr) == 0)
+                                call_conv |= PEAPI.CallConv.Instance;
                 }
+
         }
 
 }

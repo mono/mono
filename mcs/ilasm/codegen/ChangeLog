@@ -1,3 +1,8 @@
+2003-07-25 Jackson Harper <jackson@latitudegeo.com>
+
+	* MEthodDef.cs: If methods do not have the static attribute give
+	them the instance calling convention.
+		
 2003-07-21 Jackson Harper <jackson@latitudegeo.com>
 
 	* MethodDef.cs: Do not decremint param count for vararg methods,
