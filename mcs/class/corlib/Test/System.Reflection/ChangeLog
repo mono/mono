@@ -1,0 +1,6 @@
+2002-12-08  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* AllTests.cs: Added test suites for AssemblyName and
+	StrongNameKeyPair.
+	* AssemblyNameTest.cs: New. Test suite for AssemblyName.
+	* StrongNameKeyPairTest.cs: New. Test suite for StrongNameKeyPair.
