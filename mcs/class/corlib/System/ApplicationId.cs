@@ -111,7 +111,7 @@ namespace System {
 
 		public override int GetHashCode ()
 		{
-			int code = _name.GetHashCode () ^ version.GetHashCode ();
+			int code = _name.GetHashCode () ^ _version.GetHashCode ();
 			for (int i=0; i < _token.Length; i++)
 				code ^= _token [i];
 /* not used in MS implementation (bug?)
