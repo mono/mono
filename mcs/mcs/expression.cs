@@ -3551,7 +3551,8 @@ namespace Mono.CSharp {
 			// If we are calling a params method with no arguments, special case it
 			//
 			if (arguments == null){
-				if (pd != null && pd.ParameterModifier (0) == Parameter.Modifier.PARAMS){
+				if (pd != null && pd.Count > 0 &&
+				    pd.ParameterModifier (0) == Parameter.Modifier.PARAMS){
 					ILGenerator ig = ec.ig;
 
 					IntConstant.EmitInt (ig, 0);

@@ -1,5 +1,8 @@
 2002-03-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Invocation.EmitArguments): Only probe for array
+	property if there is more than one argument.  Sorry about that.
+
 	* class.cs (Invocation.EmitArguments): Fix to emit arguments for
 	empty param arrays.
 	

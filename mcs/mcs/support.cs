@@ -76,10 +76,12 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			if (pos >= pi.Length - 1) 
+			int len = pi.Length;
+			
+			if (pos >= len - 1)
 				if (last_arg_is_params)
 					return Parameter.Modifier.PARAMS;
-
+			
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef)
 				return Parameter.Modifier.OUT;
