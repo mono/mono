@@ -267,10 +267,22 @@ public sealed class TypeDescriptor
 					primitive = primitive.BaseType;
 			}
 			
-			if (t != null)
-				return (TypeConverter) Activator.CreateInstance (t);
-			else
-				return null;
+			if (t != null) {
+				Exception exc = null;
+				try {
+					return (TypeConverter) Activator.CreateInstance (t);
+				} catch (MissingMethodException e) {
+					exc = e;
+				}
+
+				try {
+					return (TypeConverter) Activator.CreateInstance (t, new object [] {type});
+				} catch (MissingMethodException e) {
+					throw exc;
+				}
+			}
+
+			return null;
 		}
 	}
 
