@@ -22,6 +22,13 @@ class X
 		x = d ^= c;
 		Console.WriteLine (x);
 
+		// Implicit conversion with shift operators
+		short s = 5;
+                int i = 30000001;
+                s <<= i;
+                Console.WriteLine (s);
+		Console.WriteLine ("OK");
+
 		return 0;
 	}
 }
