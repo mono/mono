@@ -1,4 +1,8 @@
 
+Thu Jun 20 13:46:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: handle correctly multiple-nested types.
+
 Thu Jun 20 11:49:00 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* row-indexes.h: fix typos.
