@@ -1,3 +1,8 @@
+2005-02-10  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* DefaultWatcher.cs: Fix nullref exception when the object is disposed
+	without any watcher.
+
 2004-12-03  Geoff Norton  <gnorton@customerdna.com>
 
         * SearchPattern.cs:  Have IsMatch(string)

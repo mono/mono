@@ -117,6 +117,10 @@ namespace System.IO {
 		public void StopDispatching (FileSystemWatcher fsw)
 		{
 			DefaultWatcherData data;
+			lock (this) {
+				if (watches == null) return;
+			}
+			
 			lock (watches) {
 				data = (DefaultWatcherData) watches [fsw];
 				if (data != null) {
