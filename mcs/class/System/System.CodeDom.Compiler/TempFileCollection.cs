@@ -46,12 +46,7 @@ namespace System.CodeDom.Compiler
 
 					string random=new Random().Next(10000,99999).ToString();
 					
-					if(tempdir.EndsWith("\\") ||
-					   tempdir.EndsWith("/")) {
-						basepath=tempdir+random;
-					} else {
-						basepath=tempdir+"/"+random;
-					}
+					basepath = Path.Combine (tempdir, random);
 				}
 
 				return(basepath);

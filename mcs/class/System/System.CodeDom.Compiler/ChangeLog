@@ -1,3 +1,7 @@
+2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TempFileCollection.cs: fixed temp path in BaseDir.
+
 2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeGenerator.cs: fixed assembly level attribute generation.
