@@ -1,5 +1,5 @@
 //
-// System.Xml.XmlAttribute
+// System.Xml.XmlElement
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
