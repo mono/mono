@@ -31,94 +31,118 @@ namespace Microsoft.JScript
 	 {
 		public const int EOF = 1;
 		public const int NULL_TREE_LOOKAHEAD = 3;
-		public const int LBRACE = 4;
-		public const int RBRACE = 5;
-		public const int SEMI_COLON = 6;
-		public const int LITERAL_if = 7;
-		public const int LPAREN = 8;
-		public const int RPAREN = 9;
-		public const int LITERAL_else = 10;
-		public const int LITERAL_do = 11;
-		public const int LITERAL_while = 12;
-		public const int LITERAL_for = 13;
-		public const int LITERAL_in = 14;
-		public const int LITERAL_continue = 15;
-		public const int IDENTIFIER = 16;
-		public const int LITERAL_break = 17;
-		public const int LITERAL_return = 18;
-		public const int LITERAL_with = 19;
-		public const int LITERAL_switch = 20;
-		public const int LITERAL_case = 21;
-		public const int COLON = 22;
-		public const int LITERAL_default = 23;
-		public const int LITERAL_throw = 24;
-		public const int LITERAL_try = 25;
-		public const int LITERAL_catch = 26;
-		public const int LITERAL_finally = 27;
-		public const int LITERAL_var = 28;
-		public const int COMMA = 29;
-		public const int ASSIGNMENT = 30;
-		public const int MULTIPLICATION_ASSIGN = 31;
-		public const int DIVISION_ASSIGN = 32;
-		public const int REMAINDER_ASSIGN = 33;
-		public const int ADDITION_ASSIGN = 34;
-		public const int SUBSTRACTION_ASSIGN = 35;
-		public const int SIGNED_LEFT_SHIFT_ASSIGN = 36;
-		public const int SIGNED_RIGHT_SHIFT_ASSIGN = 37;
-		public const int UNSIGNED_RIGHT_SHIFT_ASSIGN = 38;
-		public const int BITWISE_AND_ASSIGN = 39;
-		public const int BITWISE_XOR_ASSIGN = 40;
-		public const int BITWISE_OR_ASSIGN = 41;
-		public const int CONDITIONAL = 42;
-		public const int LOGICAL_OR = 43;
-		public const int LOGICAL_AND = 44;
-		public const int BITWISE_OR = 45;
-		public const int BITWISE_XOR = 46;
-		public const int BITWISE_AND = 47;
-		public const int EQUALS = 48;
-		public const int DOES_NOT_EQUALS = 49;
-		public const int STRICT_EQUALS = 50;
-		public const int STRICT_DOES_NOT_EQUALS = 51;
-		public const int L_THAN = 52;
-		public const int G_THAN = 53;
-		public const int LE_THAN = 54;
-		public const int GE_THAN = 55;
-		public const int LITERAL_instanceof = 56;
-		public const int SIGNED_RIGHT_SHIFT = 57;
-		public const int SIGNED_LEFT_SHIFT = 58;
-		public const int PLUS = 59;
-		public const int MINUS = 60;
-		public const int TIMES = 61;
-		public const int DIVISION = 62;
-		public const int REMAINDER = 63;
-		public const int LITERAL_delete = 64;
-		public const int LITERAL_void = 65;
-		public const int LITERAL_typeof = 66;
-		public const int INCREMENT = 67;
-		public const int DECREMENT = 68;
-		public const int BITWISE_NOT = 69;
-		public const int LOGICAL_NOT = 70;
-		public const int LITERAL_new = 71;
-		public const int LSQUARE = 72;
-		public const int RSQUARE = 73;
-		public const int DOT = 74;
-		public const int THIS = 75;
-		public const int STRING_LITERAL = 76;
-		public const int LITERAL_function = 77;
-		public const int LITERAL_true = 78;
-		public const int LITERAL_false = 79;
-		public const int LITERAL_null = 80;
-		public const int TAB = 81;
-		public const int VERTICAL_TAB = 82;
-		public const int FORM_FEED = 83;
-		public const int SPACE = 84;
-		public const int NO_BREAK_SPACE = 85;
-		public const int LINE_FEED = 86;
-		public const int CARRIGE_RETURN = 87;
-		public const int LINE_SEPARATOR = 88;
-		public const int PARAGRAPH_SEPARATOR = 89;
-		public const int UNSIGNED_RIGHT_SHIFT = 90;
-		public const int SL_COMMENT = 91;
+		public const int LITERAL_function = 4;
+		public const int IDENTIFIER = 5;
+		public const int LPAREN = 6;
+		public const int RPAREN = 7;
+		public const int COLON = 8;
+		public const int LBRACE = 9;
+		public const int RBRACE = 10;
+		public const int LITERAL_const = 11;
+		public const int ASSIGNMENT = 12;
+		public const int SEMI_COLON = 13;
+		public const int LITERAL_class = 14;
+		public const int LITERAL_extends = 15;
+		public const int LITERAL_implements = 16;
+		public const int COMMA = 17;
+		public const int LITERAL_get = 18;
+		public const int LITERAL_set = 19;
+		public const int LITERAL_debugger = 20;
+		public const int LITERAL_if = 21;
+		public const int LITERAL_else = 22;
+		public const int LITERAL_import = 23;
+		public const int LITERAL_interface = 24;
+		public const int LITERAL_do = 25;
+		public const int LITERAL_while = 26;
+		public const int LITERAL_for = 27;
+		public const int LITERAL_in = 28;
+		public const int LITERAL_continue = 29;
+		public const int LITERAL_break = 30;
+		public const int LITERAL_package = 31;
+		public const int LITERAL_return = 32;
+		public const int LITERAL_with = 33;
+		public const int LITERAL_super = 34;
+		public const int LITERAL_switch = 35;
+		public const int LITERAL_case = 36;
+		public const int LITERAL_default = 37;
+		public const int LITERAL_enum = 38;
+		public const int LITERAL_static = 39;
+		public const int LITERAL_throw = 40;
+		public const int LITERAL_try = 41;
+		public const int LITERAL_catch = 42;
+		public const int LITERAL_finally = 43;
+		public const int LITERAL_var = 44;
+		public const int MULTIPLICATION_ASSIGN = 45;
+		public const int DIVISION_ASSIGN = 46;
+		public const int REMAINDER_ASSIGN = 47;
+		public const int ADDITION_ASSIGN = 48;
+		public const int SUBSTRACTION_ASSIGN = 49;
+		public const int SIGNED_LEFT_SHIFT_ASSIGN = 50;
+		public const int SIGNED_RIGHT_SHIFT_ASSIGN = 51;
+		public const int UNSIGNED_RIGHT_SHIFT_ASSIGN = 52;
+		public const int BITWISE_AND_ASSIGN = 53;
+		public const int BITWISE_XOR_ASSIGN = 54;
+		public const int BITWISE_OR_ASSIGN = 55;
+		public const int CONDITIONAL = 56;
+		public const int LOGICAL_OR = 57;
+		public const int LOGICAL_AND = 58;
+		public const int BITWISE_OR = 59;
+		public const int BITWISE_XOR = 60;
+		public const int BITWISE_AND = 61;
+		public const int EQUALS = 62;
+		public const int DOES_NOT_EQUALS = 63;
+		public const int STRICT_EQUALS = 64;
+		public const int STRICT_DOES_NOT_EQUALS = 65;
+		public const int L_THAN = 66;
+		public const int G_THAN = 67;
+		public const int LE_THAN = 68;
+		public const int GE_THAN = 69;
+		public const int LITERAL_instanceof = 70;
+		public const int SIGNED_RIGHT_SHIFT = 71;
+		public const int SIGNED_LEFT_SHIFT = 72;
+		public const int PLUS = 73;
+		public const int MINUS = 74;
+		public const int TIMES = 75;
+		public const int DIVISION = 76;
+		public const int REMAINDER = 77;
+		public const int LITERAL_delete = 78;
+		public const int LITERAL_void = 79;
+		public const int LITERAL_typeof = 80;
+		public const int INCREMENT = 81;
+		public const int DECREMENT = 82;
+		public const int BITWISE_NOT = 83;
+		public const int LOGICAL_NOT = 84;
+		public const int LITERAL_new = 85;
+		public const int LSQUARE = 86;
+		public const int RSQUARE = 87;
+		public const int DOT = 88;
+		public const int THIS = 89;
+		public const int STRING_LITERAL = 90;
+		public const int LITERAL_true = 91;
+		public const int LITERAL_false = 92;
+		public const int LITERAL_null = 93;
+		public const int DECIMAL_LITERAL = 94;
+		public const int HEX_INTEGER_LITERAL = 95;
+		public const int LITERAL_public = 96;
+		public const int LITERAL_private = 97;
+		public const int LITERAL_protected = 98;
+		public const int LITERAL_internal = 99;
+		public const int LITERAL_expando = 100;
+		public const int LITERAL_abstract = 101;
+		public const int LITERAL_final = 102;
+		public const int LITERAL_hide = 103;
+		public const int LITERAL_override = 104;
+		public const int TAB = 105;
+		public const int VERTICAL_TAB = 106;
+		public const int FORM_FEED = 107;
+		public const int SPACE = 108;
+		public const int NO_BREAK_SPACE = 109;
+		public const int LINE_FEED = 110;
+		public const int CARRIGE_RETURN = 111;
+		public const int LINE_SEPARATOR = 112;
+		public const int PARAGRAPH_SEPARATOR = 113;
+		public const int UNSIGNED_RIGHT_SHIFT = 114;
+		public const int SL_COMMENT = 115;
 		
 		public JScriptLexer(Stream ins) : this(new ByteBuffer(ins))
 		{
@@ -141,33 +165,55 @@ namespace Microsoft.JScript
 			caseSensitiveLiterals = true;
 			setCaseSensitive(true);
 			literals = new Hashtable();
-			literals.Add("switch", 20);
-			literals.Add("case", 21);
-			literals.Add("for", 13);
-			literals.Add("false", 79);
-			literals.Add("true", 78);
-			literals.Add("try", 25);
-			literals.Add("finally", 27);
-			literals.Add("void", 65);
-			literals.Add("typeof", 66);
-			literals.Add("instanceof", 56);
-			literals.Add("throw", 24);
-			literals.Add("continue", 15);
-			literals.Add("do", 11);
-			literals.Add("in", 14);
-			literals.Add("null", 80);
-			literals.Add("function", 77);
-			literals.Add("while", 12);
-			literals.Add("break", 17);
-			literals.Add("new", 71);
-			literals.Add("return", 18);
-			literals.Add("delete", 64);
-			literals.Add("if", 7);
-			literals.Add("default", 23);
-			literals.Add("else", 10);
-			literals.Add("var", 28);
-			literals.Add("catch", 26);
-			literals.Add("with", 19);
+			literals.Add("switch", 35);
+			literals.Add("case", 36);
+			literals.Add("interface", 24);
+			literals.Add("for", 27);
+			literals.Add("class", 14);
+			literals.Add("get", 18);
+			literals.Add("final", 102);
+			literals.Add("internal", 99);
+			literals.Add("false", 92);
+			literals.Add("debugger", 20);
+			literals.Add("true", 91);
+			literals.Add("try", 41);
+			literals.Add("finally", 43);
+			literals.Add("void", 79);
+			literals.Add("typeof", 80);
+			literals.Add("import", 23);
+			literals.Add("instanceof", 70);
+			literals.Add("private", 97);
+			literals.Add("override", 104);
+			literals.Add("expando", 100);
+			literals.Add("set", 19);
+			literals.Add("throw", 40);
+			literals.Add("implements", 16);
+			literals.Add("continue", 29);
+			literals.Add("do", 25);
+			literals.Add("in", 28);
+			literals.Add("null", 93);
+			literals.Add("extends", 15);
+			literals.Add("function", 4);
+			literals.Add("enum", 38);
+			literals.Add("static", 39);
+			literals.Add("while", 26);
+			literals.Add("const", 11);
+			literals.Add("abstract", 101);
+			literals.Add("hide", 103);
+			literals.Add("protected", 98);
+			literals.Add("break", 30);
+			literals.Add("new", 85);
+			literals.Add("return", 32);
+			literals.Add("delete", 78);
+			literals.Add("if", 21);
+			literals.Add("default", 37);
+			literals.Add("super", 34);
+			literals.Add("public", 96);
+			literals.Add("package", 31);
+			literals.Add("else", 22);
+			literals.Add("var", 44);
+			literals.Add("catch", 42);
+			literals.Add("with", 33);
 		}
 		
 		public new Token nextToken()			//throws TokenStreamException
@@ -433,6 +479,10 @@ tryAgain:
 								mDIVISION_ASSIGN(true);
 								theRetToken = returnToken_;
 							}
+							else if ((LA(1)=='0') && (LA(2)=='x')) {
+								mHEX_INTEGER_LITERAL(true);
+								theRetToken = returnToken_;
+							}
 							else if ((LA(1)=='/') && (LA(2)=='/')) {
 								mSL_COMMENT(true);
 								theRetToken = returnToken_;
@@ -483,6 +533,10 @@ tryAgain:
 							}
 							else if ((LA(1)=='/') && (true)) {
 								mDIVISION(true);
+								theRetToken = returnToken_;
+							}
+							else if (((LA(1) >= '0' && LA(1) <= '9')) && (true)) {
+								mDECIMAL_LITERAL(true);
 								theRetToken = returnToken_;
 							}
 						else
@@ -1315,6 +1369,201 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
+	public void mDECIMAL_LITERAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = DECIMAL_LITERAL;
+		
+		{
+			switch ( LA(1) )
+			{
+			case '0':
+			{
+				match('0');
+				break;
+			}
+			case '1':  case '2':  case '3':  case '4':
+			case '5':  case '6':  case '7':  case '8':
+			case '9':
+			{
+				{
+					matchRange('1','9');
+				}
+				{    // ( ... )*
+					for (;;)
+					{
+						if (((LA(1) >= '0' && LA(1) <= '9')))
+						{
+							matchRange('0','9');
+						}
+						else
+						{
+							goto _loop235_breakloop;
+						}
+						
+					}
+_loop235_breakloop:					;
+				}    // ( ... )*
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+			}
+			 }
+		}
+		{
+			if ((LA(1)=='.'))
+			{
+				mDOT(false);
+				{    // ( ... )*
+					for (;;)
+					{
+						if (((LA(1) >= '0' && LA(1) <= '9')))
+						{
+							matchRange('0','9');
+						}
+						else
+						{
+							goto _loop238_breakloop;
+						}
+						
+					}
+_loop238_breakloop:					;
+				}    // ( ... )*
+			}
+			else {
+			}
+			
+		}
+		{
+			if ((LA(1)=='E'||LA(1)=='e'))
+			{
+				{
+					switch ( LA(1) )
+					{
+					case 'e':
+					{
+						match('e');
+						break;
+					}
+					case 'E':
+					{
+						match('E');
+						break;
+					}
+					default:
+					{
+						throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+					}
+					 }
+				}
+				{
+					{
+						switch ( LA(1) )
+						{
+						case '+':
+						{
+							match('+');
+							break;
+						}
+						case '-':
+						{
+							match('-');
+							break;
+						}
+						case '0':  case '1':  case '2':  case '3':
+						case '4':  case '5':  case '6':  case '7':
+						case '8':  case '9':
+						{
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+						}
+						 }
+					}
+					{ // ( ... )+
+					int _cnt244=0;
+					for (;;)
+					{
+						if (((LA(1) >= '0' && LA(1) <= '9')))
+						{
+							matchRange('0','9');
+						}
+						else
+						{
+							if (_cnt244 >= 1) { goto _loop244_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+						}
+						
+						_cnt244++;
+					}
+_loop244_breakloop:					;
+					}    // ( ... )+
+				}
+			}
+			else {
+			}
+			
+		}
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mHEX_INTEGER_LITERAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = HEX_INTEGER_LITERAL;
+		
+		match('0');
+		match('x');
+		{ // ( ... )+
+		int _cnt247=0;
+		for (;;)
+		{
+			switch ( LA(1) )
+			{
+			case '0':  case '1':  case '2':  case '3':
+			case '4':  case '5':  case '6':  case '7':
+			case '8':  case '9':
+			{
+				matchRange('0','9');
+				break;
+			}
+			case 'a':  case 'b':  case 'c':  case 'd':
+			case 'e':  case 'f':
+			{
+				matchRange('a','f');
+				break;
+			}
+			case 'A':  case 'B':  case 'C':  case 'D':
+			case 'E':  case 'F':
+			{
+				matchRange('A','F');
+				break;
+			}
+			default:
+			{
+				if (_cnt247 >= 1) { goto _loop247_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+			}
+			break; }
+			_cnt247++;
+		}
+_loop247_breakloop:		;
+		}    // ( ... )+
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
 	public void mSTRING_LITERAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
@@ -1325,7 +1574,7 @@ tryAgain:
 		match('"');
 		text.Length = _saveIndex;
 		{ // ( ... )+
-		int _cnt178=0;
+		int _cnt250=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -1359,12 +1608,12 @@ tryAgain:
 			}
 			default:
 			{
-				if (_cnt178 >= 1) { goto _loop178_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt250 >= 1) { goto _loop250_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt178++;
+			_cnt250++;
 		}
-_loop178_breakloop:		;
+_loop250_breakloop:		;
 		}    // ( ... )+
 		_saveIndex = text.Length;
 		match('"');
@@ -1449,11 +1698,11 @@ _loop178_breakloop:		;
 				}
 				default:
 				{
-					goto _loop182_breakloop;
+					goto _loop254_breakloop;
 				}
 				 }
 			}
-_loop182_breakloop:			;
+_loop254_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -1481,11 +1730,11 @@ _loop182_breakloop:			;
 				}
 				else
 				{
-					goto _loop186_breakloop;
+					goto _loop258_breakloop;
 				}
 				
 			}
-_loop186_breakloop:			;
+_loop258_breakloop:			;
 		}    // ( ... )*
 		_ttype = Token.SKIP; newline ();
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
