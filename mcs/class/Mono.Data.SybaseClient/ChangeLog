@@ -1,3 +1,9 @@
+2004-04-05  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Mono.Data.SybaseClient.dll.sources: Removed SybaseConnectionPool.cs.
+	* Mono.Data.SybaseClient/SybaseConnection.cs: Use connection pool
+	  implemented in Mono.Data.Tds.
+
 2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Mono.Data.SybaseClient/SybaseDataReader.cs: Null values are now 

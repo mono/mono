@@ -2,7 +2,6 @@ Assembly/Locale.cs
 Mono.Data.SybaseClient/SybaseCommand.cs
 Mono.Data.SybaseClient/SybaseCommandBuilder.cs
 Mono.Data.SybaseClient/SybaseConnection.cs
-Mono.Data.SybaseClient/SybaseConnectionPool.cs
 Mono.Data.SybaseClient/SybaseDataAdapter.cs
 Mono.Data.SybaseClient/SybaseDataReader.cs
 Mono.Data.SybaseClient/SybaseError.cs

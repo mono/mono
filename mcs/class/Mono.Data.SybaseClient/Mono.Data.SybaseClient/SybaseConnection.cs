@@ -28,10 +28,10 @@ namespace Mono.Data.SybaseClient {
 		bool disposed = false;
 
 		// The set of SQL connection pools
-		static Hashtable SybaseConnectionPools = new Hashtable ();
+		static TdsConnectionPoolManager sybaseConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds50);
 
 		// The current connection pool
-		SybaseConnectionPool pool;
+		TdsConnectionPool pool;
 
 		// The connection string that identifies this connection
 		string connectionString = null;
@@ -295,13 +295,10 @@ namespace Mono.Data.SybaseClient {
 					tds = new Tds50 (serverName, port, PacketSize, ConnectionTimeout);
 				}
 				else {
-					pool = (SybaseConnectionPool) SybaseConnectionPools [connectionString];
-					if (pool == null) {
-						ParseDataSource (dataSource, out port, out serverName);
-						pool = new SybaseConnectionPool (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
-						SybaseConnectionPools [connectionString] = pool;
-					}
-					tds = pool.AllocateConnection ();
+					ParseDataSource (dataSource, out port, out serverName);
+ 					TdsConnectionInfo info = new TdsConnectionInfo (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
+					pool = sybaseConnectionPools.GetConnectionPool (connectionString, info);
+					tds = pool.GetConnection ();
 				}
 			}
 			catch (TdsTimeoutException e) {
@@ -312,9 +309,16 @@ namespace Mono.Data.SybaseClient {
 			tds.TdsInfoMessage += new TdsInternalInfoMessageEventHandler (MessageHandler);
 
 			if (!tds.IsConnected) {
-				tds.Connect (parms);
-				ChangeState (ConnectionState.Open);
-				ChangeDatabase (parms.Database);
+				try {
+					tds.Connect (parms);
+					ChangeState (ConnectionState.Open);
+					ChangeDatabase (parms.Database);
+				}
+				catch {
+					if (pooling)
+						pool.ReleaseConnection (tds);
+					throw;
+				}
 			}
 			else if (connectionReset) {
 				// tds.ExecuteNonQuery ("EXEC sp_reset_connection"); FIXME
