@@ -13,6 +13,7 @@ namespace System.Drawing {
 using System;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
+using System.Drawing.Imaging;
 
 [Serializable]
 //[ComVisible(true)]
@@ -171,11 +172,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
-//	public PixelFormat PixelFormat {
-//		get {
-//			throw new NotImplementedException ();
-//		}
-//	}
+	public PixelFormat PixelFormat {
+		get {
+			return implementation_.PixelFormat;
+		}
+	}
 	
 	public int[] PropertyIdList {
 		get {

@@ -41,27 +41,27 @@ namespace System.Drawing {
 			}
 
 			public IBitmap Bitmap(int width, int height, System.Drawing.Imaging.PixelFormat format) {
-				throw new NotImplementedException();
+				return new Bitmap(width, height, format);
 			}
 
 			public IBitmap Bitmap(System.Drawing.Image original, Size newSize){
-				throw new NotImplementedException();
+				return new Bitmap((System.Drawing.GTKImpl.Image)original.implementation_, newSize);
 			}
 
 			public IBitmap Bitmap(Stream stream, bool useIcm){
-				throw new NotImplementedException();
+				return new Bitmap(stream, useIcm);
 			}
 
 			public IBitmap Bitmap(string filename, bool useIcm){
-				throw new NotImplementedException();
+				return new Bitmap(filename, useIcm);
 			}
 
 			public IBitmap Bitmap(Type type, string resource){
-				throw new NotImplementedException();
+				return new Bitmap(type, resource);
 			}
 
 			public IBitmap Bitmap(int width, int height, int stride, System.Drawing.Imaging.PixelFormat format, IntPtr scan0){
-				throw new NotImplementedException();
+				return new Bitmap(width, height, stride, format, scan0);
 			}
 		}
 

@@ -26,27 +26,27 @@ namespace System.Drawing {
 			}
 
 			public IBitmap Bitmap(int width, int height, System.Drawing.Imaging.PixelFormat format) {
-				throw new NotImplementedException();
+				return new Bitmap(width, height, format);
 			}
 
 			public IBitmap Bitmap(System.Drawing.Image original, Size newSize){
-				throw new NotImplementedException();
+				return new Bitmap((System.Drawing.Win32Impl.Image)original.implementation_, newSize);
 			}
 
 			public IBitmap Bitmap(Stream stream, bool useIcm){
-				throw new NotImplementedException();
+				return new Bitmap(stream, useIcm);
 			}
 
 			public IBitmap Bitmap(string filename, bool useIcm){
-				throw new NotImplementedException();
+				return new Bitmap(filename, useIcm);
 			}
 
 			public IBitmap Bitmap(Type type, string resource){
-				throw new NotImplementedException();
+				return new Bitmap(type, resource);
 			}
 
 			public IBitmap Bitmap(int width, int height, int stride, System.Drawing.Imaging.PixelFormat format, IntPtr scan0){
-				throw new NotImplementedException();
+				return new Bitmap(width, height, stride, format, scan0);
 			}
 		}
 
@@ -66,17 +66,13 @@ namespace System.Drawing {
 				g.ReleaseHdc(hdc);
 			}
 
-			//		public Bitmap (int width, int heigth, PixelFormat format) {
-			//			if ((int)format != BI_RGB) {
-			//				throw new NotImplementedException ();
-			//			}
-			//			CommonInit (width, heigth);
-			//		}
-			//
-			//		public Bitmap (Image origial) {
-			//			throw new NotImplementedException ();
-			//			//this.original = original;
-			//		}
+			public Bitmap (int width, int heigth, System.Drawing.Imaging.PixelFormat format) {
+				throw new NotImplementedException ();
+			}
+			
+			public Bitmap (Image origial) {
+				throw new NotImplementedException ();
+			}
 
 			public Bitmap (Stream stream) 
 			{
@@ -127,15 +123,15 @@ namespace System.Drawing {
 			}
 
 
-			//		public Bitmap (int width, int height, int stride,
-			//			       PixelFormat format, IntPtr scan0) {
-			//			throw new NotImplementedException ();
+			public Bitmap (int width, int height, int stride,
+						       System.Drawing.Imaging.PixelFormat format, IntPtr scan0) {
+						throw new NotImplementedException ();
 			//			//this.width = width;
 			//			//this.heigth = heigth;
 			//			//this.stride = stride;
 			//			//this.format = format;
 			//			//this.scan0 = scan0;
-			//		}
+			}
 			#endregion
 			// methods
 			Color IBitmap.GetPixel (int x, int y) 

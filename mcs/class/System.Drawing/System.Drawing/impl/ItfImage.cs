@@ -11,6 +11,7 @@ namespace System.Drawing {
 using System;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
+using System.Drawing.Imaging;
 
 //[Serializable]
 //[ComVisible(true)]
@@ -101,11 +102,9 @@ internal interface IImage : IDisposable {
 		get ;
 	}
 	
-//	PixelFormat PixelFormat {
-//		get {
-//			throw new NotImplementedException ();
-//		}
-//	}
+	PixelFormat PixelFormat {
+		get ;
+	}
 	
 	int[] PropertyIdList {
 		get ;

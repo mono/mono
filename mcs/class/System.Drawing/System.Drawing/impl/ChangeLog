@@ -1,3 +1,6 @@
+2003-05-25  Alexandre Pigolkine <pigolkine@gmx.de>
+	* ItfImage.cs		PixelFormat property
+
 2003-04-26  Alexandre Pigolkine <pigolkine@gmx.de>
 	* ItfBitmap.cs
 	* ItfBrush.cs

@@ -1,3 +1,7 @@
+2003-05-26 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Factories.cs	analyse environment variable and machine.config to select implementation
+	* Image.cs		PixelFormat property added
+
 2003-04-30  Nick Drochak <ndrochak@gol.com>
 
 	* Factories.cs: Change weird characters that broke build on windows.
