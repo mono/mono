@@ -6,8 +6,6 @@
 // (C) Alejandro Sánchez Acosta
 //
 
-using System.Web.UI.Design;
-
 namespace System.ComponentModel.Design.Serialization
 {
 	public interface IDesignerSerializationProvider

@@ -1,5 +1,10 @@
 2003-03-29  Martin Willemoes Hansen <mwh@sysrq.dk>
 
+	* System.ComponentModel.Design.Serialization
+          Removed references to System.Web namespaces
+
+2003-03-29  Martin Willemoes Hansen <mwh@sysrq.dk>
+
 	* Stubed System.ComponentModel/LicenseContext.cs
 	* Stubed System.ComponentModel/LicenseUsageMode.cs
 	* Stubed rest of System.ComponentModel.Design
