@@ -334,21 +334,42 @@ namespace System.Web.Services.Description {
 			else return msg.Name;
 		}
 		
-		internal string GetServiceUrl (string location)
+		internal void GenerateServiceUrl (string location, CodeStatementCollection stms)
 		{
-			if (ImportInfo.AppSettingUrlKey == null || ImportInfo.AppSettingUrlKey == string.Empty)
-				return location;
+			if (ImportInfo.AppSettingUrlKey == null || ImportInfo.AppSettingUrlKey == string.Empty) {
+				if (location != null) {
+					CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
+					CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (location));
+					stms.Add (cas);
+				}
+			}
 			else
 			{
-				string url;
-				if (Style == ServiceDescriptionImportStyle.Server) throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
-				url = ConfigurationSettings.AppSettings [ImportInfo.AppSettingUrlKey];
-				if (ImportInfo.AppSettingBaseUrl != null && ImportInfo.AppSettingBaseUrl != string.Empty)
-					url += "/" + ImportInfo.AppSettingBaseUrl + "/" + location;
-				return url;
+				CodeExpression prop = new CodePropertyReferenceExpression (new CodeTypeReferenceExpression ("System.Configuration.ConfigurationSettings"), "AppSettings");
+				prop = new CodeIndexerExpression (prop, new CodePrimitiveExpression (ImportInfo.AppSettingUrlKey));
+				stms.Add (new CodeVariableDeclarationStatement (typeof(string), "urlSetting", prop));
+				
+				CodeExpression urlSetting = new CodeVariableReferenceExpression ("urlSetting");
+				CodeExpression thisUrl = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
+				
+				CodeStatement[] trueStms = new CodeStatement [1];
+				CodeExpression ce = urlSetting;
+				CodeExpression cond = new CodeBinaryOperatorExpression (urlSetting, CodeBinaryOperatorType.IdentityInequality, new CodePrimitiveExpression (null));
+				
+				if (ImportInfo.AppSettingBaseUrl != null)
+					ce = new CodeMethodInvokeExpression (new CodeTypeReferenceExpression (typeof(string)), "Concat", ce, new CodePrimitiveExpression (ImportInfo.AppSettingBaseUrl));
+				trueStms [0] = new CodeAssignStatement (thisUrl, ce);
+				
+				if (location != null) {
+					CodeStatement[] falseStms = new CodeStatement [1];
+					falseStms [0] = new CodeAssignStatement (thisUrl, new CodePrimitiveExpression (location));
+					stms.Add (new CodeConditionStatement (cond, trueStms, falseStms));
+				}
+				else
+					stms.Add (new CodeConditionStatement (cond, trueStms));
 			}
 		}
-
+		
 		void ClasifySchemas (ArrayList importInfo)
 		{
 			// I don't like this, but I could not find any other way of clasifying

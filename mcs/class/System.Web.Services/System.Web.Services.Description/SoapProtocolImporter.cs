@@ -110,7 +110,6 @@ namespace System.Web.Services.Description {
 			string location = null;			
 			SoapAddressBinding sab = (SoapAddressBinding) Port.Extensions.Find (typeof(SoapAddressBinding));
 			if (sab != null) location = sab.Location;
-			string url = GetServiceUrl (location); 
 
 			CodeTypeReference ctr = new CodeTypeReference ("System.Web.Services.Protocols.SoapHttpClientProtocol");
 			codeClass.BaseTypes.Add (ctr);
@@ -122,9 +121,7 @@ namespace System.Web.Services.Description {
 	
 			CodeConstructor cc = new CodeConstructor ();
 			cc.Attributes = MemberAttributes.Public;
-			CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
-			CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (url));
-			cc.Statements.Add (cas);
+			GenerateServiceUrl (location, cc.Statements);
 			codeClass.Members.Add (cc);
 			
 			memberIds = new CodeIdentifiers ();
