@@ -1,3 +1,9 @@
+
+Wed Dec 3 15:42:27 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* regalloc.c: complete memory leak fix by Laurent Morichetti
+	(l_m@pacbell.net).
+
 2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-x86.c (x86_class_init_trampoline): Avoid patching when running
