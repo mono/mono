@@ -192,6 +192,9 @@ namespace Mono.CSharp {
 			Report.Warning (code, loc, format, args);
 		}
 
+		// Not nice but we have broken hierarchy
+		public virtual void CheckMarshallByRefAccess (Type container) {}
+
 		/// <summary>
 		/// Tests presence of ObsoleteAttribute and report proper error
 		/// </summary>
@@ -2844,6 +2847,14 @@ namespace Mono.CSharp {
 		{
 			Emit (ec, false);
 		}
+
+		public override void CheckMarshallByRefAccess (Type container)
+		{
+			if (!container.IsSubclassOf (TypeManager.mbr_type) && DeclaringType.IsSubclassOf (TypeManager.mbr_type)) {
+				Report.SymbolRelatedToPreviousError (DeclaringType);
+				Report.Error (1690, loc, "Cannot call '{0}' method, property, or indexer because it is a value type member of a marshal-by-reference class", Name);
+			}
+		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
@@ -3100,6 +3111,8 @@ namespace Mono.CSharp {
 				instance_expr = instance_expr.DoResolve (ec);
 				if (instance_expr == null)
 					return false;
+
+				instance_expr.CheckMarshallByRefAccess (ec.ContainerType);
 			}
 
 			if (must_do_cs1540_check && (instance_expr != null)) {
@@ -3115,8 +3128,8 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
-
 			return true;
+
 		}
 		
 		override public Expression DoResolve (EmitContext ec)

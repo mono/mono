@@ -1,3 +1,14 @@
+2004-12-01  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #68790
+	* ecore.cs: CheckMarshallByRefAccess new virtual method for testing
+	MarshallByReference members access.
+
+	* expression.cs: Use CheckMarshallByRefAccess;
+	Better error CS0197 message.
+
+	* report.cs: Print whole related error message.
+
 2004-11-30  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (mcs.exe) [PROFILE=default]: Keep a copy of mcs.exe in
@@ -6,7 +17,7 @@
 2004-11-29  Marek Safar  <marek.safar@seznam.cz>
 
 	* class (GetClassBases): Better error 60 report.
-        (EventProperty): Disabled warning 67 detection.
+	(EventProperty): Disabled warning 67 detection.
 
 2004-11-29  Marek Safar  <marek.safar@seznam.cz>
 
