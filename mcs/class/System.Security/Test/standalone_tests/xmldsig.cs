@@ -214,6 +214,10 @@ DumpSignedXml (s);
 				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll cannot validate exclusive-c14n.");
 				continue;
 			}
+			if (fi.Name.IndexOf ("md5") >= 0) {
+				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll doesn't support HMAC-MD5.");
+				continue;
+			}
 			if (fi.Name.IndexOf ("hmac") >= 0) {
 				Symmetric (fi.FullName, key);
 			}
