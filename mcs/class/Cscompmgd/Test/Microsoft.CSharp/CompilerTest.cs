@@ -17,18 +17,9 @@ namespace MonoTests.Cscompmgd
 	[TestFixture]
 	public class CompilerTest : Assertion
 	{
-		Compiler compiler;
-
 		[SetUp]
 		public void GetReady ()
 		{
 		}
-
-		[Test]
-		public void constructor ()
-		{
-			compiler = new Compiler ();
-		}
-
 	}
 }
