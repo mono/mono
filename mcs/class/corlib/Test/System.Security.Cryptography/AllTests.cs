@@ -66,6 +66,12 @@ namespace MonoTests.System.Security.Cryptography {
 				suite.AddTest (PKCS1MaskGenerationMethodTest.Suite);
 				suite.AddTest (RijndaelTest.Suite);
 				suite.AddTest (PasswordDeriveBytesTest.Suite);
+				suite.AddTest (SHA256Test.Suite);
+				suite.AddTest (SHA256ManagedTest.Suite);
+				suite.AddTest (SHA384Test.Suite);
+//				suite.AddTest (SHA384ManagedTest.Suite);
+				suite.AddTest (SHA512Test.Suite);
+//				suite.AddTest (SHA512ManagedTest.Suite);
                                 return suite;
                         }
                 }
