@@ -1,4 +1,10 @@
 
+Tue Aug 28 15:54:45 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* main.c, dump.c, dump.h, get.c: added dump_table_interfaceimpl ().
+	Output info about interfaces when disassembling a type. Many small
+	changes to make the output correct assembler.
+
 Mon Aug 27 20:13:49 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c, get.c: some endian fixes.
