@@ -80,6 +80,15 @@ namespace MonoTests.System.Text.RegularExpressions
 			AssertEquals ("BR #01", false, m.Success);
 		}
 
+		[Test]
+		public void WhiteSpaceGroupped () // bug 71077
+		{
+			string s = "\n";
+			string p = @"[\s\S]";	// =Category.Any
+
+			AssertEquals ("WSG#1", true, Regex.IsMatch (s, p));
+		}
+
                 [Test]
                 public void RangeIgnoreCase() // bug 45976
                 {

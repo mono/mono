@@ -1,3 +1,7 @@
+2005-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* RegexBugs.cs: Add new test.
+
 2005-01-08  Nick Drochak  <ndrochak@ieee.org>
 
 	* RegexTest.cs: Make pass on MS.NET

@@ -1,3 +1,14 @@
+2005-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* syntax.cs: Applied patch from mei@work.email.ne.jp to fix bug
+	#71077.
+
+	* parser.cs: Turns out that \digit sequences are octal sequences
+	(no leading zero is needed);  And the three octal digit rule
+	applies to the leading zero as well.
+
+	This fixes the Unescape method.
+
 2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* regex.cs: use NextMatch to move on to the next match. Fixes bug

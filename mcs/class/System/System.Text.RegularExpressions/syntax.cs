@@ -887,7 +887,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			for (int i = 0; i < pos_cats.Length; ++ i) {
 				if (pos_cats[i]) {
 					if (neg_cats [i])
-						cmp.EmitCategory (Category.Any, negate, reverse);
+						cmp.EmitCategory (Category.AnySingleline, negate, reverse);
 					else
 						cmp.EmitCategory ((Category)i, negate, reverse);
 				} else if (neg_cats[i]) {
