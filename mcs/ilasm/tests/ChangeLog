@@ -1,3 +1,7 @@
+2003-03-16 Jackson Harper <jackson@latitudegeo.com>
+
+	* test-9.il: New test, test instaniating a class
+
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* test-8.il: New test, test creating a class that inherits from something other then System.Object
