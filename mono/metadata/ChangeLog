@@ -1,3 +1,9 @@
+2004-04-07  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* appdomain.c: (mono_runtime_init) move mono_thread_init
+	to before mono_object_new calls so critical sections
+	are initialized before use.
+
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
 	* icall.c
