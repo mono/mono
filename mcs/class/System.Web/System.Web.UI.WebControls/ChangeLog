@@ -1,4 +1,8 @@
-2003-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
+2004-09-07  Sanjay Gupta <gsanjay@novell.com>
+	
+	* Localize.cs: Added new class.
+
+2004-09-03  Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* CompositeControl.cs  : Completed
 	* Login.cs             : Initial implementation.
