@@ -497,8 +497,10 @@ System.Web.UI.WebControls/XmlHierarchicalDataSourceView.cs
 System.Web.UI.WebControls/XmlHierarchicalEnumerable.cs
 System.Web.UI.WebControls/XmlHierarchyData.cs
 System.Web.UI.WebControls.WebParts/ConnectionConsumerCallback.cs
+System.Web.UI.WebControls.WebParts/ConnectionPoint.cs
 System.Web.UI.WebControls.WebParts/ConnectionPointType.cs
 System.Web.UI.WebControls.WebParts/ConnectionProviderCallback.cs
+System.Web.UI.WebControls.WebParts/ConsumerConnectionPoint.cs
 System.Web.UI.WebControls.WebParts/IField.cs
 System.Web.UI.WebControls.WebParts/IFilter.cs
 System.Web.UI.WebControls.WebParts/IParameters.cs
@@ -515,6 +517,8 @@ System.Web.UI.WebControls.WebParts/Part.cs
 System.Web.UI.WebControls.WebParts/PartChromeState.cs
 System.Web.UI.WebControls.WebParts/PartChromeType.cs
 System.Web.UI.WebControls.WebParts/PersonalizationScope.cs
+System.Web.UI.WebControls.WebParts/ProviderConnectionPoint.cs
+System.Web.UI.WebControls.WebParts/TypeCollection.cs
 System.Web.UI.WebControls.WebParts/WebPart.cs
 System.Web.UI.WebControls.WebParts/WebPartAuthorizationEventArgs.cs
 System.Web.UI.WebControls.WebParts/WebPartAuthorizationEventHandler.cs
