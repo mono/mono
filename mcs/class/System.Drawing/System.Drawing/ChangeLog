@@ -1,3 +1,8 @@
+2004-07-30 Ravindra <rkumar@novell.com>
+
+	* Font.cs: Fixed Height property implementation and implemented
+	GetHeight method and its overloads.
+
 2004-07-29 Sanjay Gupta <gsanjay@novell.com>
 
 	* gdipFunctions.cs: Corrected signature of GdipGetPropertyItem

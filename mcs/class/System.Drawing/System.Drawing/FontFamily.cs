@@ -4,9 +4,8 @@
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Alexandre Pigolkine (pigolkine@gmx.de)
-// (C) 2002/2004 Ximian, Inc
 //
-
+// Copyright (C) 2002/2004 Ximian, Inc http://www.ximian.com
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
