@@ -1,3 +1,10 @@
+2004-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* liveness.c: Consider SSA stores as well as loads when making vars
+	volatile.
+
+	* exceptions.cs: New regression tests for register allocation.
+	
 2004-03-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* mini-ppc.c, tramp-ppc.c: Added lock for accessing the domain code manager.
