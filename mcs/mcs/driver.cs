@@ -157,7 +157,9 @@ namespace Mono.CSharp
 				"mcs [options] source-files\n" +
 				"   --about         About the Mono C# compiler\n" +
 				"   --checked       Set default context to checked\n" +
-				"   --define SYM    Defines the symbol SYM\n" + 
+				"   --define SYM    Defines the symbol SYM\n" +
+				"   --debug         Generate debugging information\n" + 
+				"   -g              Generate debugging information\n" +
 				"   --fatal         Makes errors fatal\n" +
 				"   -L PATH         Adds PATH to the assembly link path\n" +
 				"   --noconfig      Disables implicit references to assemblies\n" +
@@ -721,11 +723,7 @@ namespace Mono.CSharp
 						last_time = DateTime.Now;
 						continue;
 
-					case "--debug":
-						want_debugging_support = true;
-						continue;
-
-					case "-g":
+					case "--debug": case "-g":
 						want_debugging_support = true;
 						continue;
 

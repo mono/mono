@@ -47,6 +47,55 @@ namespace Mono.CSharp {
 		}
 
 		public string FileName;
+
+		//
+		// This routine initializes the Mono runtime SymbolWriter.
+		//
+		void InitMonoSymbolWriter (string basename)
+		{
+			string symbol_output = basename + "-debug.s";
+
+			//
+			// Mono's default symbol writer ignores the first and third argument
+			// of this method.
+			//
+			SymbolWriter.Initialize (new IntPtr (0), symbol_output, true);
+		}
+
+		//
+		// Initializes the symbol writer
+		//
+		void InitializeSymbolWriter (string basename)
+		{
+			SymbolWriter = module_builder.GetSymWriter ();
+
+			//
+			// If we got an ISymbolWriter instance, initialize it.
+			//
+			if (SymbolWriter == null)
+				return;
+			
+			//
+			// Due to lacking documentation about the first argument of the
+			// Initialize method, we cannot use Microsoft's default symbol
+			// writer yet.
+			//
+			// If we're using the mono symbol writer, the SymbolWriter object
+			// is of type MonoSymbolWriter - but that's defined in a dynamically
+			// loaded DLL - that's why we're doing a comparision based on the type
+			// name here instead of using `SymbolWriter is MonoSymbolWriter'.
+			//
+			switch (SymbolWriter.GetType ().Name){
+			case "MonoSymbolWriter":
+				InitMonoSymbolWriter (basename);
+				break;
+
+			default:
+				Report.Error (
+					-18, "Cannot generate debugging information on this platform");
+				break;
+			}
+		}
 		
 		public CodeGen (string name, string output, bool want_debugging_support)
 		{
@@ -66,35 +115,12 @@ namespace Mono.CSharp {
 			//
 			// If the third argument is true, the ModuleBuilder will dynamically
 			// load the default symbol writer.
+			//
 			module_builder = assembly_builder.DefineDynamicModule (
 				Basename (name), Basename (output), want_debugging_support);
 
-			// If we want debugging support, get the default symbol writer
-			// from the ModuleBuilder, it has already been dynamically loaded
-			// by the ModuleBuilder's constructor.
 			if (want_debugging_support)
-				SymbolWriter = module_builder.GetSymWriter ();
-
-			// If we got an ISymbolWriter instance, initialize it.
-			if (SymbolWriter != null) {
-				// Due to lacking documentation about the first argument of the
-				// Initialize method, we cannot use Microsoft's default symbol
-				// writer yet.
-				//
-				// If we're using the mono symbol writer, the SymbolWriter object
-				// is of type MonoSymbolWriter - but that's defined in a dynamically
-				// loaded DLL - that's why we're doing a comparision based on the type
-				// name here instead of using `SymbolWriter is MonoSymbolWriter'.
-				if (SymbolWriter.GetType ().Name != "MonoSymbolWriter")
-					Report.Error (16, "Cannot generate debugging information " +
-							"on this platform");
-
-				string symbol_output = an.Name + "-debug.s";
-
-				// Mono's default symbol writer ignores the first and third argument
-				// of this method.
-				SymbolWriter.Initialize (new IntPtr (0), symbol_output, true);
-			}
+				InitializeSymbolWriter (an.Name);
 		}
 
 		public AssemblyBuilder AssemblyBuilder {
