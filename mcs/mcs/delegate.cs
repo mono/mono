@@ -62,14 +62,14 @@ namespace Mono.CSharp {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
 				attr = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
-				TypeBuilder = builder.DefineType (Name, attr, TypeManager.delegate_type);
+				TypeBuilder = builder.DefineType (Name, attr, TypeManager.multicast_delegate_type);
 			} else {
 				TypeBuilder builder = (TypeBuilder) parent_builder;
 				attr = TypeAttributes.NestedPublic | TypeAttributes.Class |
 					TypeAttributes.Sealed;
 
 				TypeBuilder = builder.DefineNestedType (
-					Name, attr, TypeManager.delegate_type);
+					Name, attr, TypeManager.multicast_delegate_type);
 			}
 
 			RootContext.TypeManager.AddDelegateType (Name, TypeBuilder, this);

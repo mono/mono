@@ -2931,17 +2931,34 @@ namespace Mono.CSharp {
 	public class EventExpr : Expression {
 		public readonly EventInfo EventInfo;
 		Location loc;
+		public Expression InstanceExpression;
+
+		public readonly bool IsStatic;
 		
 		public EventExpr (EventInfo ei, Location loc)
 		{
 			EventInfo = ei;
 			this.loc = loc;
 			eclass = ExprClass.EventAccess;
+
+			MethodInfo add_accessor = TypeManager.GetAddMethod (ei);
+			MethodInfo remove_accessor = TypeManager.GetRemoveMethod (ei);
+			
+			if (add_accessor != null)
+				if (add_accessor.IsStatic)
+					IsStatic = true;
+
+			if (remove_accessor != null)
+				if (remove_accessor.IsStatic)
+					IsStatic = true;
 		}
 
 		override public Expression DoResolve (EmitContext ec)
 		{
 			// We are born in resolved state.
+
+			Console.WriteLine ("Came here");
+			type = EventInfo.EventHandlerType;
 			return this;
 		}
 

@@ -38,6 +38,7 @@ public class TypeManager {
 	static public Type ushort_type;
 	static public Type enum_type;
 	static public Type delegate_type;
+	static public Type multicast_delegate_type;
 	static public Type void_type;
 	static public Type enumeration_type;
 	static public Type array_type;
@@ -75,6 +76,8 @@ public class TypeManager {
 	static public MethodInfo void_monitor_exit_object;
 	static public MethodInfo void_initializearray_array_fieldhandle;
 	static public MethodInfo int_getlength_int;
+	static public MethodInfo delegate_combine_delegate_delegate;
+	static public MethodInfo delegate_remove_delegate_delegate;
 	
 	//
 	// The attribute constructors.
@@ -389,7 +392,10 @@ public class TypeManager {
 		decimal_type  = CoreLookupType ("System.Decimal");
 		bool_type     = CoreLookupType ("System.Boolean");
 		enum_type     = CoreLookupType ("System.Enum");
-		delegate_type = CoreLookupType ("System.MulticastDelegate");
+
+		multicast_delegate_type = CoreLookupType ("System.MulticastDelegate");
+		delegate_type           = CoreLookupType ("System.Delegate");
+
 		array_type    = CoreLookupType ("System.Array");
 		void_type     = CoreLookupType ("System.Void");
 		type_type     = CoreLookupType ("System.Type");
@@ -428,6 +434,13 @@ public class TypeManager {
 		Type [] runtime_type_handle = { runtime_handle_type };
 		system_type_get_type_from_handle = GetMethod (
 			type_type, "GetTypeFromHandle", runtime_type_handle);
+
+		Type [] delegate_delegate = { delegate_type, delegate_type };
+		delegate_combine_delegate_delegate = GetMethod (
+				delegate_type, "Combine", delegate_delegate);
+
+		delegate_remove_delegate_delegate = GetMethod (
+				delegate_type, "Remove", delegate_delegate);
 
 		//
 		// Void arguments
@@ -666,6 +679,40 @@ public class TypeManager {
 		return fields [fb];
 	}
 
+	static Hashtable events;
+
+	static public bool RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)
+	{
+		if (events == null)
+			events = new Hashtable ();
+
+		if (events.Contains (eb))
+			return false;
+
+		events.Add (eb, new Pair (add, remove));
+
+		return true;
+	}
+
+	static public MethodInfo GetAddMethod (EventInfo ei)
+	{
+		if (ei is MyEventBuilder) {
+			Pair pair = (Pair) events [ei];
+
+			return (MethodInfo) pair.First;
+		} else
+			return ei.GetAddMethod ();
+	}
+
+	static public MethodInfo GetRemoveMethod (EventInfo ei)
+	{
+		if (ei is MyEventBuilder) {
+			Pair pair = (Pair) events [ei];
+
+			return (MethodInfo) pair.Second;
+		} else
+			return ei.GetAddMethod ();
+	}
 
 	static Hashtable properties;
 	

@@ -4011,6 +4011,27 @@ namespace Mono.CSharp {
 					return pe;
 				}
 			}
+
+			if (member_lookup is EventExpr) {
+				EventExpr ee = (EventExpr) member_lookup;
+
+				if (left is TypeExpr) {
+					if (!ee.IsStatic) {
+						SimpleName.Error120 (loc, ee.EventInfo.Name);
+						return null;
+					}
+					return ee;
+				} else {
+					if (ee.IsStatic) {
+						error176 (loc, ee.EventInfo.Name);
+						return null;
+					}
+
+					ee.InstanceExpression = left;
+
+					return ee;
+				}
+			}
 			
 			Console.WriteLine ("Support for [" + member_lookup + "] is not present yet");
 			Environment.Exit (0);

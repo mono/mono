@@ -2878,7 +2878,7 @@ namespace Mono.CSharp {
 		MethodInfo raise, remove, add;
 
 		EventAttributes attributes;
-		Type declaring_type, reflected_type;
+		Type declaring_type, reflected_type, event_type;
 		string name;
 
 		public MyEventBuilder (TypeBuilder type_builder, string name, EventAttributes event_attr, Type event_type)
@@ -2895,6 +2895,7 @@ namespace Mono.CSharp {
 			
 			attributes = event_attr;
 			this.name = name;
+			this.event_type = event_type;
 		}
 		
 		//
@@ -2986,7 +2987,6 @@ namespace Mono.CSharp {
 				return reflected_type;
 			}
 		}
-		
 	}
 
 	public class Event : MemberCore {
@@ -3012,6 +3012,7 @@ namespace Mono.CSharp {
 
 		Type EventType;
 		MethodBuilder AddBuilder, RemoveBuilder;
+		FieldBuilder  FieldBuilder;
 
 		public Event (string type, string name, Object init, int flags, Block add_block,
 			      Block rem_block, Attributes attrs, Location loc)
@@ -3051,74 +3052,106 @@ namespace Mono.CSharp {
 			parameters [0] = EventType;
 
 			EventBuilder = new MyEventBuilder (parent.TypeBuilder, Name, e_attr, EventType);
+			FieldBuilder = parent.TypeBuilder.DefineField (Name, EventType, FieldAttributes.Private);
+
+			//
+			// Now define the accessors
+			//
 			
-			if (Add != null) {
-				AddBuilder = parent.TypeBuilder.DefineMethod (
-					"add_" + Name, m_attr, null, parameters);
-				AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
-				EventBuilder.SetAddOnMethod (AddBuilder);
-				//
-				// HACK because System.Reflection.Emit is lame
-				//
-				Parameter [] parms = new Parameter [1];
-				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
-				InternalParameters ip = new InternalParameters (
-					parent, new Parameters (parms, null, Location)); 
-				
-				if (!TypeManager.RegisterMethod (AddBuilder, ip, parameters)) {
-					Report.Error (111, Location,
-					       "Class `" + parent.Name + "' already contains a definition with the " +
-					       "same return value and parameter types for the " +
-					       "'add' method of event `" + Name + "'");
-					return false;
-				}
-			}
+			AddBuilder = parent.TypeBuilder.DefineMethod (
+							 "add_" + Name, m_attr, null, parameters);
+			AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
+			EventBuilder.SetAddOnMethod (AddBuilder);
 
-			if (Remove != null) {
-				RemoveBuilder = parent.TypeBuilder.DefineMethod (
-					"remove_" + Name, m_attr, null, parameters);
-				RemoveBuilder.DefineParameter (1, ParameterAttributes.None, "value");
-				EventBuilder.SetRemoveOnMethod (RemoveBuilder);
-
-				//
-				// HACK because System.Reflection.Emit is lame
-				//
-				Parameter [] parms = new Parameter [1];
-				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
-				InternalParameters ip = new InternalParameters (
-					parent, new Parameters (parms, null, Location));
-				
-				if (!TypeManager.RegisterMethod (RemoveBuilder, ip, parameters)) {
-					Report.Error (111, Location,	
-				       "Class `" + parent.Name + "' already contains a definition with the " +
-					       "same return value and parameter types for the " +
-					       "'remove' method of event `" + Name + "'");
-					return false;
-				}
+			//
+			// HACK because System.Reflection.Emit is lame
+			//
+			Parameter [] parms = new Parameter [1];
+			parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+			InternalParameters ip = new InternalParameters (
+						            parent, new Parameters (parms, null, Location)); 
+			
+			if (!TypeManager.RegisterMethod (AddBuilder, ip, parameters)) {
+				Report.Error (111, Location,
+					      "Class `" + parent.Name + "' already contains a definition with the " +
+					      "same return value and parameter types for the " +
+					      "'add' method of event `" + Name + "'");
+				return false;
 			}
+		
+			RemoveBuilder = parent.TypeBuilder.DefineMethod (
+							    "remove_" + Name, m_attr, null, parameters);
+			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, "value");
+			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
+
+			//
+			// HACK because System.Reflection.Emit is lame
+			//
+
+			if (!TypeManager.RegisterMethod (RemoveBuilder, ip, parameters)) {
+				Report.Error (111, Location,	
+					      "Class `" + parent.Name + "' already contains a definition with the " +
+					      "same return value and parameter types for the " +
+					      "'remove' method of event `" + Name + "'");
+				return false;
+			}
+			
+			if (!TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder)) {
+				Report.Error (111, Location,
+					"Class `" + parent.Name +
+					"' already contains a definition for the event `" +
+					Name + "'");
+				return false;
+			}
+			
 			return true;
+		}
+
+		void EmitDefaultMethod (EmitContext ec, bool is_add)
+		{
+			ILGenerator ig = ec.ig;
+			MethodInfo method = null;
+			
+			if (is_add)
+				method = TypeManager.delegate_combine_delegate_delegate;
+			else
+				method = TypeManager.delegate_remove_delegate_delegate;
+			
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, (FieldInfo) FieldBuilder);
+			ig.Emit (OpCodes.Ldarg_1);
+			ig.Emit (OpCodes.Call, method);
+			ig.Emit (OpCodes.Castclass, EventType);
+			ig.Emit (OpCodes.Stfld, (FieldInfo) FieldBuilder);
+			ig.Emit (OpCodes.Ret);
 		}
 
 		public void Emit (TypeContainer tc)
 		{
-			EmitContext ec = new EmitContext (tc, Location, null, EventType, ModFlags);
-
+			EmitContext ec;
 			ILGenerator ig;
-			
-			if (Add != null){
-				ig = AddBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
-				
+
+			ig = AddBuilder.GetILGenerator ();
+			ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
+
+			if (Add != null)
 				ec.EmitTopBlock (Add);
-			}
+			else
+				EmitDefaultMethod (ec, true);
 
-			if (Remove != null){
-				ig = RemoveBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
-				
+			ig = RemoveBuilder.GetILGenerator ();
+			ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
+			
+			if (Remove != null)
 				ec.EmitTopBlock (Remove);
-			}
+			else
+				EmitDefaultMethod (ec, false);
 
+			
+
+			ec = new EmitContext (tc, Location, null, EventType, ModFlags);
+			
 			if (OptAttributes == null)
 				return;
 			
