@@ -157,14 +157,9 @@ namespace System
 		/// <summary>
 		/// Get the number of milliseconds that have elapsed since the system was booted
 		/// </summary>
-		[MonoTODO]
-		public static int TickCount
-		{
-			get
-			{
-				return 0;
-				//return getTickCount();
-			}
+		public extern static int TickCount {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		/// <summary>
