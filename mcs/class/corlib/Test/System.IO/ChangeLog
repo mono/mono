@@ -1,3 +1,7 @@
+2003-01-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FileTest.cs: Added tests for GetCreationTime.
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2

@@ -423,5 +423,21 @@ namespace MonoTests.System.IO
 				Fail ("Unexpect exception caught: e=" + e.ToString());
 			}
 		}
+
+		public void TestGetCreationTime ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "baz";
+			FileStream stream = File.Create (path);
+			Assert ("GetCreationTime incorrect", (DateTime.Now - File.GetCreationTime (path)).TotalSeconds < 10);
+
+			// Test nonexistent files
+			string path2 = "resources" + Path.DirectorySeparatorChar + "filedoesnotexist";
+			try {
+				File.GetCreationTime (path2);
+				Fail ();
+			}
+			catch (Exception ex) {
+			}
+		}
 	}
 }
