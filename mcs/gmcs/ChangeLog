@@ -1,3 +1,7 @@
+2004-12-07  Martin Baulig  <martin@ximian.com>
+
+	* driver.cs: Call it "BETA SOFTWARE" :-)
+
 2004-12-06  Raja R Harinath  <rharinath@novell.com>
 
 	Fix crash on cs0657-17.cs.
