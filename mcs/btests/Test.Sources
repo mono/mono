@@ -110,6 +110,10 @@ AttributesC \
 AttributesD \
 QualifiedNames \
 Variables \
+VariablesA \
+VariablesB \
+VariablesC \
+ConstantA
 
 
 # All negetive test cases which should
@@ -217,7 +221,16 @@ AttributesC4 \
 AttributesC5 \
 AttributesC6 \
 ConstituentTypesC1 \
+ConstantC0 \
+ConstantC1 \
+ConstantC2 \
+ConstantC3 \
+ConstantC4 \
+ConstantC5 \
 VariablesC1 \
+VariablesC2 \
+VariablesC3 
+
 
 # All negetive test cases which should fail at
 # runtime goes here
