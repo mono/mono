@@ -1,3 +1,10 @@
+2003-07-25  Peter Williams <peter@newton.cx>
+
+	* rules.make (run-test): Make it depend on 'test-local'
+	then 'run-test-local' after 'run-test-recursive'. This way,
+	'make run-test' from the toplevel doesn't recurse through all
+	the directories doing a make test before we run anything.
+
 2003-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* rules.make: run-test depends now on 'test'.
