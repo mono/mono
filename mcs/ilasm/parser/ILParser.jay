@@ -604,9 +604,10 @@ methodHeadPart1         : D_METHOD
 			}
 			;
 
-methodHead              : methodHeadPart1 methAttr callConv paramAttr type methodName OPEN_PARENS sigArgs0 CLOSE_PARENS implAttr OPEN_BRACE 
+methodHead              : methodHeadPart1 methAttr callConv paramAttr type methodName OPEN_PARENS arg_list CLOSE_PARENS implAttr OPEN_BRACE 
 			{
 				method.SetMethodName ($6 as MethodName);
+				method.SetParamList ($8 as ArrayList);
 				method.CallConv = currentCallConv;
 				method.RetType = $5 as string;
 			}
