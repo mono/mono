@@ -1,3 +1,11 @@
+2003-02-23  Per Arneng <pt99par@student.bth.se>
+
+	* SmtpMail.cs: Send method now implemented (needs testing)
+	* SmtpClient.cs: Added to make Send work (internal class)
+	* SmtpException.cs: Added to make Send work (internal class)
+	* SmtpStream.cs: Added to make Send work (internal class)
+	* SmtpResponse.cs: Added to make Send work (internal class)
+	
 2002-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SmtpMail.cs: i don't wanna see that warning :-).
