@@ -20,7 +20,6 @@ namespace Mono.CSharp
 	using System.Text;
 	using System.Globalization;
 	using System.Xml;
-	using System.Diagnostics;
 
 	public enum Target {
 		Library, Exe, Module, WinExe
@@ -63,7 +62,6 @@ namespace Mono.CSharp
 		static bool timestamps = false;
 		static bool pause = false;
 		static bool show_counters = false;
-		public static bool parser_verbose = false;
 		
 		//
 		// Whether to load the initial config file (what CSC.RSP has by default)
