@@ -190,6 +190,15 @@ namespace System.Reflection {
 			return "Reflection.Module: " + name;
 		}
 
+		// Mono Extension: returns the GUID of this module
+		public Guid Mono_GetGuid ()
+		{
+			return new Guid (GetGuidInternal ());
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern string GetGuidInternal ();
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern Type GetGlobalType ();
 	}

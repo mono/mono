@@ -1,3 +1,8 @@
+2003-06-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Module.cs (Mono_GetGuid): New method to return the GUID of the
+	module.
+
 2003-05-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Module.cs: Implement GetField and its friends.
