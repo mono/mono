@@ -16,3 +16,6 @@ dist-hook:
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .
+
+push_dlls:
+	scp *.dll snapshot@mono-cvs.ximian.com:dlls
