@@ -1,3 +1,10 @@
+2004-11-26  John BouAntoun <jba-mono@optusnet.com.au>
+
+	* MonthCalendar.cs: 
+	  - Re-worked all bolded dates handling to match win32
+	* ThemeWin32Classic.cs:
+	  - Fixed rendering with bolded dates
+
 2004-11-25  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs, Theme.cs, ThemeWin32Classic.cs:	

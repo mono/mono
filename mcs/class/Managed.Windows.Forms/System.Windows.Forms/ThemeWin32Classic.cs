@@ -1713,7 +1713,7 @@ namespace System.Windows.Forms
 
 			// establish if it's a bolded font
 			Font font;
-			if (mc.all_bolded_dates != null && mc.all_bolded_dates.Contains (date)) {
+			if (mc.IsBoldedDate (date)) {
 				font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
 			} else {
 				font = mc.Font;

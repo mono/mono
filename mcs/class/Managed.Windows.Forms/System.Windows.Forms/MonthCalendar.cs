@@ -25,10 +25,8 @@
 //
 // REMAINING TODO:
 //	- get the date_cell_size and title_size to be pixel perfect match of SWF
-//	- show the month context menu
 //	- show the year spin control
 //	- at some res, single selection of a date is not filling properly
-//	- appears to be having issues filling the title background properly (using title_size.Width)
 
 using System;
 using System.Drawing;
@@ -40,16 +38,16 @@ namespace System.Windows.Forms {
 
 		#region Local variables
 
-		ArrayList 		annually_bolded_dates;
+		DateTime []		annually_bolded_dates;
 		Color 			back_color;
-		ArrayList 		bolded_dates;
+		DateTime []		bolded_dates;
 		Size 			calendar_dimensions;
 		Day 			first_day_of_week;
 		Color 			fore_color;
 		DateTime 		max_date;
 		int 			max_selection_count;
 		DateTime 		min_date;
-		ArrayList 		monthly_bolded_dates;
+		DateTime []		monthly_bolded_dates;
 		int 			scroll_change;
 		SelectionRange 		selection_range;
 		bool 			show_today;
@@ -64,7 +62,6 @@ namespace System.Windows.Forms {
 
 		// internal variables used
 		internal DateTime 		current_month;			// the month that is being displayed in top left corner of the grid		
-		internal ArrayList 		all_bolded_dates;		// all the bolded dates for the current month
 		internal int 			button_x_offset;
 		internal Size 			button_size;
 		internal Size			title_size;
@@ -78,6 +75,15 @@ namespace System.Windows.Forms {
 		internal bool 			is_shift_pressed;
 		internal DateTime		shift_select_start_date;
 		private Point			month_title_click_location;
+		
+		// arraylists used to store new dates
+		ArrayList 				added_bolded_dates;
+		ArrayList 				removed_bolded_dates;
+		ArrayList 				added_annually_bolded_dates;
+		ArrayList 				removed_annually_bolded_dates;
+		ArrayList 				added_monthly_bolded_dates;
+		ArrayList 				removed_monthly_bolded_dates;
+		
 		
 		#endregion	// Local variables
 
@@ -109,9 +115,16 @@ namespace System.Windows.Forms {
 			title_fore_color = SystemColors.ActiveCaptionText;			
 			today_date_set = false;
 			trailing_fore_color = Color.Gray;
-
+			
+			// initialise the arraylest for bolded dates
+			added_bolded_dates = new ArrayList ();
+			removed_bolded_dates = new ArrayList ();
+			added_annually_bolded_dates = new ArrayList ();
+			removed_annually_bolded_dates = new ArrayList ();
+			added_monthly_bolded_dates = new ArrayList ();
+			removed_monthly_bolded_dates = new ArrayList ();
+		
 			// intiailise internal variables used
-			all_bolded_dates = null;
 			button_x_offset = 5;
 			button_size = new Size (22, 17);
 			// default settings based on 8.25 pt San Serif Font
@@ -148,18 +161,14 @@ namespace System.Windows.Forms {
 		// dates to make bold on calendar annually (recurring)
 		public DateTime[] AnnuallyBoldedDates {
 			set {
-				if (annually_bolded_dates == null || (DateTime[]) annually_bolded_dates.ToArray (typeof (DateTime)) != value) {
-					annually_bolded_dates = new ArrayList (value);
-					UpdateBoldedDates ();
+				if (annually_bolded_dates == null || annually_bolded_dates != value) {
+					annually_bolded_dates = value;
+					this.UpdateBoldedDates ();
 					this.Invalidate ();
 				}
 			}
 			get {
-				if (annually_bolded_dates != null) {
-					return (DateTime[]) annually_bolded_dates.ToArray (typeof (DateTime));
-				} else {
-					return null;
-				}
+					return annually_bolded_dates;
 			}
 		}
 
@@ -180,19 +189,14 @@ namespace System.Windows.Forms {
 		// specific dates to make bold on calendar (non-recurring)
 		public DateTime[] BoldedDates {
 			set {
-				if (bolded_dates == null || (DateTime[]) bolded_dates.ToArray (typeof (DateTime)) != value) {
-					bolded_dates = new ArrayList (value);
-					UpdateBoldedDates ();
+				if (bolded_dates == null || bolded_dates != value) {
+					bolded_dates = value;
+					this.UpdateBoldedDates ();
 					this.Invalidate ();
 				}
 			}
 			get {
-				if (bolded_dates != null) {
-					return (DateTime[]) bolded_dates.ToArray (typeof (DateTime));
-				} else {
-					return null;
-				}
-
+					return bolded_dates;
 			}
 		}
 
@@ -324,22 +328,18 @@ namespace System.Windows.Forms {
 		// dates to make bold on calendar monthly (recurring)
 		public DateTime[] MonthlyBoldedDates {
 			set {
-				if (monthly_bolded_dates == null || (DateTime[]) monthly_bolded_dates.ToArray (typeof (DateTime)) != value) {
-					monthly_bolded_dates = new ArrayList (value);
-					UpdateBoldedDates ();
+				if (monthly_bolded_dates == null || monthly_bolded_dates != value) {
+					monthly_bolded_dates = value;
+					this.UpdateBoldedDates ();
 					this.Invalidate ();
 				}
 			}
 			get {
-				if (monthly_bolded_dates != null) {
-					return (DateTime[]) monthly_bolded_dates.ToArray (typeof (DateTime));
-				} else {
-					return null;
-				}
+					return monthly_bolded_dates;
 			}
 		}
 
-		// the maximum date allowed to be selected on this month calendar
+		// the ammount by which to scroll this calendar by
 		public int ScrollChange {
 			set {
 				if (value < 0 || value > 20000) {
@@ -616,17 +616,17 @@ namespace System.Windows.Forms {
 
 		// add a date to the anually bolded date arraylist
 		public void AddAnnuallyBoldedDate (DateTime date) {
-			annually_bolded_dates.Add (date);
+			added_annually_bolded_dates.Add (date.Date);
 		}
 
 		// add a date to the normal bolded date arraylist
 		public void AddBoldedDate (DateTime date) {
-			bolded_dates.Add (date);
+			added_bolded_dates.Add (date.Date);
 		}
 
 		// add a date to the anually monthly date arraylist
 		public void AddMonthlyBoldedDate (DateTime date) {
-			monthly_bolded_dates.Add (date);
+			added_monthly_bolded_dates.Add (date.Date);
 		}
 
 		// if visible = true, return only the dates of full months, else return all dates visible
@@ -782,58 +782,46 @@ namespace System.Windows.Forms {
 
 		// clears all the annually bolded dates
 		public void RemoveAllAnnuallyBoldedDates () {
-			if (annually_bolded_dates != null) {
-				annually_bolded_dates.Clear ();
-			}
+			annually_bolded_dates = null;
+			added_annually_bolded_dates.Clear ();
+			removed_annually_bolded_dates.Clear ();
 		}
 
 		// clears all the normal bolded dates
 		public void RemoveAllBoldedDates () {
-			if (bolded_dates != null) {
-				bolded_dates.Clear ();
-			}
+			bolded_dates = null;
+			added_bolded_dates.Clear ();
+			removed_bolded_dates.Clear ();
 		}
 
 		// clears all the monthly bolded dates
 		public void RemoveAllMonthlyBoldedDates () {
-			if (monthly_bolded_dates != null) {
-				monthly_bolded_dates.Clear ();
-			}
+			monthly_bolded_dates = null;
+			added_monthly_bolded_dates.Clear ();
+			removed_monthly_bolded_dates.Clear ();
 		}
 
 		// clears the specified annually bolded date (only compares day and month)
 		// only removes the first instance of the match
 		public void RemoveAnnuallyBoldedDate (DateTime date) {
-			if (annually_bolded_dates != null) {
-				foreach (DateTime bolded_date in annually_bolded_dates) {
-					if (bolded_date.Day == date.Day && bolded_date.Month == date.Month) {
-						annually_bolded_dates.Remove (bolded_date);
-						break;
-					}
-				}
+			if (!removed_annually_bolded_dates.Contains (date.Date)) {
+				removed_annually_bolded_dates.Add (date.Date);
 			}
 		}
 
 		// clears all the normal bolded date
 		// only removes the first instance of the match
 		public void RemoveBoldedDate (DateTime date) {
-			if (bolded_dates != null) {
-				int match = bolded_dates.IndexOf (date);
-				bolded_dates.Remove (match);
+			if (!removed_bolded_dates.Contains (date.Date)) {
+				removed_bolded_dates.Add (date.Date);
 			}
 		}
 
 		// clears the specified monthly bolded date (only compares day and month)
 		// only removes the first instance of the match
 		public void RemoveMonthlyBoldedDate (DateTime date) {
-			if (monthly_bolded_dates != null) {
-				foreach (DateTime bolded_date in monthly_bolded_dates) {
-					if (bolded_date.Day == date.Day && bolded_date.Month == date.Month) {
-						monthly_bolded_dates.Remove (bolded_date);
-						break;
-					}
-				}
-
+			if (!removed_monthly_bolded_dates.Contains (date.Date)) {
+				removed_monthly_bolded_dates.Add (date.Date);
 			}
 		}
 
@@ -844,7 +832,7 @@ namespace System.Windows.Forms {
 
 		// sets the currently selected date as date
 		public void SetDate (DateTime date) {
-			this.SetSelectionRange (date, date);
+			this.SetSelectionRange (date.Date, date.Date);
 		}
 
 		// utility method set the SelectionRange property using individual dates
@@ -855,44 +843,13 @@ namespace System.Windows.Forms {
 		public override string ToString () {
 			return this.GetType().Name + ", " + this.SelectionRange.ToString ();
 		}
-
+				
 		// usually called after an AddBoldedDate method is called
 		// formats monthly and daily bolded dates according to the current calendar year
 		public void UpdateBoldedDates () {
-			// clear array list
-			if (all_bolded_dates == null) {
-				all_bolded_dates = new ArrayList ();
-			} else {
-				all_bolded_dates.Clear ();
-			}
-
-			// set up all the dates
-			if (bolded_dates != null) {
-				all_bolded_dates.AddRange (bolded_dates);				
-			}
-			if (annually_bolded_dates != null) {
-				// adjust the year to be the currently visible one
-				foreach (DateTime date in annually_bolded_dates) {
-					DateTime new_date = new DateTime (CurrentMonth.Year, date.Month, date.Day);
-					if (!all_bolded_dates.Contains (new_date)) {
-						all_bolded_dates.Add (new_date);
-					}
-				}
-			}
-			if (monthly_bolded_dates != null) {
-				// add one instance of the monthly bolded date for each month
-				foreach (DateTime date in monthly_bolded_dates) {
-					for (int i=1; i <= 12; i++) {
-						DateTime new_date = new DateTime (CurrentMonth.Year, i, date.Day);
-						if (!all_bolded_dates.Contains (new_date)) {
-							all_bolded_dates.Add (new_date);
-						}
-					}
-				}
-			}
-
-			// sort the array list
-			all_bolded_dates.Sort();
+			UpdateDateArray (ref bolded_dates, added_bolded_dates, removed_bolded_dates);
+			UpdateDateArray (ref monthly_bolded_dates, added_monthly_bolded_dates, removed_monthly_bolded_dates);
+			UpdateDateArray (ref annually_bolded_dates, added_annually_bolded_dates, removed_annually_bolded_dates);
 		}
 
 		#endregion	// Public Instance Methods
@@ -1019,6 +976,71 @@ namespace System.Windows.Forms {
 		{
 			DateTime start = GetFirstDateInMonthGrid(month);
 			return start.AddDays ((7 * 6)-1);
+		}
+		
+		internal bool IsBoldedDate (DateTime date) {
+			// check bolded dates
+			if (bolded_dates != null && bolded_dates.Length > 0) {
+				foreach (DateTime bolded_date in bolded_dates) {
+					if (bolded_date.Date == date.Date) {
+						return true;
+					}
+				}
+			}
+			// check monthly dates
+			if (monthly_bolded_dates != null && monthly_bolded_dates.Length > 0) {
+				foreach (DateTime bolded_date in monthly_bolded_dates) {
+					if (bolded_date.Day == date.Day) {
+						return true;
+					}
+				}
+			}
+			// check yearly dates
+			if (annually_bolded_dates != null && annually_bolded_dates.Length > 0) {
+				foreach (DateTime bolded_date in annually_bolded_dates) {
+					if (bolded_date.Month == date.Month && bolded_date.Day == date.Day) {
+						return true;
+					}
+				}
+			}
+			
+			return false;  // no match
+		}
+		
+		// updates the specified bolded dates array with ones to add and ones to remove
+		private void UpdateDateArray (ref DateTime [] dates, ArrayList to_add, ArrayList to_remove) {
+			ArrayList list = new ArrayList ();
+			
+			// update normal bolded dates
+			if (dates != null) {
+				foreach (DateTime date in dates) {
+					list.Add (date.Date);
+				}
+			}
+			
+			// add new ones
+			foreach (DateTime date in to_add) {
+				if (!list.Contains (date.Date)) {
+					list.Add (date.Date);
+				}
+			}
+			to_add.Clear ();
+			
+			// remove ones to remove
+			foreach (DateTime date in to_remove) {
+				if (list.Contains (date.Date)) {
+					list.Remove (date.Date);
+				}
+			}
+			to_remove.Clear ();
+			// set up the array now 
+			if (list.Count > 0) {
+				dates = (DateTime []) list.ToArray (typeof (DateTime));
+				Array.Sort (dates);
+				list.Clear ();
+			} else {
+				dates = null;
+			}
 		}
 
 		// initialise the context menu
@@ -1309,8 +1331,6 @@ namespace System.Windows.Forms {
 
 		// raised by any key down events
 		private void KeyDownHandler (object sender, KeyEventArgs e) {
-System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
-
 			if (!is_shift_pressed && e.Shift) {
 				shift_select_start_date = SelectionStart;
 				is_shift_pressed = e.Shift;
@@ -1439,7 +1459,6 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 
 		// raised by any key up events
 		private void KeyUpHandler (object sender, KeyEventArgs e) {
-System.Console.WriteLine ("e.shift " + e.Shift);
 			is_shift_pressed = e.Shift ;
 			e.Handled = true;
 		}
