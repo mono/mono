@@ -1,7 +1,12 @@
+2004-11-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (EventField.ApplyAttributeBuilder): Fix error
+	test cs1667-5.cs.
+
 2004-11-19  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MemberBase.DoDefine): Fix error cs0508 report.
-    
+
 	* pending.cs (PendingImplementation): Grab only interfaces.
 
 2004-11-19  Marek Safar  <marek.safar@seznam.cz>
@@ -18,7 +23,7 @@
 2004-11-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (DoResolveBase): Fixed wrong warning for out
-        variables.
+	variables.
 
 2004-11-18  Martin Baulig  <martin@ximian.com>
 

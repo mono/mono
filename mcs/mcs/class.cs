@@ -5453,7 +5453,7 @@ namespace Mono.CSharp {
 		{
 			if (a.Type == TypeManager.cls_compliant_attribute_type || a.Type == TypeManager.obsolete_attribute_type ||
 					a.Type == TypeManager.conditional_attribute_type) {
-				Report.Error (1667, a.Location, "'{0}' is not valid on property or event accessors. It is valid on '{1}' declarations only", TypeManager.CSharpName (a.Type), a.GetValidTargets ());
+				Report.Error (1667, a.Location, "'{0}' is not valid on property or event accessors. It is valid on {1} declarations only", TypeManager.CSharpName (a.Type), a.GetValidTargets ());
 				return;
 			}
 
@@ -6280,8 +6280,8 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Target == AttributeTargets.Method) {
-				AddBuilder.SetCustomAttribute (cb);
-				RemoveBuilder.SetCustomAttribute (cb);
+				Add.ApplyAttributeBuilder (a, cb);
+				Remove.ApplyAttributeBuilder (a, cb);
 				return;
 			}
 
