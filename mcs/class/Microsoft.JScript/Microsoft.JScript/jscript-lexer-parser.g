@@ -7,6 +7,27 @@
 // (C) 2003, 2004, Cesar Lopez Nataren
 //
 
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 header {
 	using System.Collections;
 }
@@ -245,6 +266,7 @@ return_stm [AST parent] returns [AST r]
 }
 	: "return" (e = expr [parent] { r = new Return (parent, e); } | ) SEMI_COLON
 	;
+
 
 break_stm [AST parent] returns [AST b]
 {
@@ -943,22 +965,39 @@ primary_expr [AST parent] returns [AST prim_exp]
 	Expression e = null;
 }
 	: p:"this" { prim_exp = new This (); }
-//	| object_literal
+//	| l = object_literal [parent] { prim_exp = l; }
 	| id:IDENTIFIER 
 	  { 
 		Identifier ident = new Identifier (parent, id.getText ());
 		prim_exp = (AST) ident;
 	  }
 	| l = literal [parent] { prim_exp = l; }
-	| array_literal
+	| l = array_literal [parent] { prim_exp = l; }
 	| OPEN_PARENS e = expr [parent] { prim_exp = e; } CLOSE_PARENS
 	; 
 
-// object_literal
+// object_literal [AST parent] returns [ObjectLiteral obj_lit]
+// {
+// 	obj_lit = new ObjectLiteral (parent);
+// 	AST e = null;
+// 	ObjectLiteralItem item = null;
+// 	PropertyName pn = null;
+// }
 // 	: OPEN_BRACE 
-// 	   ((property_name COLON)=> property_name COLON assignment_expr [null] 
-// 	    (COMMA property_name COLON assignment_expr [null])*
-// 	   | (statement [null])*
+// 	   ((property_name COLON)=> pn = property_name COLON e = assignment_expr [obj_lit]
+// 	    { 
+// 		    item = new ObjectLiteralItem ();
+// 		    item.property_name = pn.Name; 
+// 		    item.exp = e; 
+// 		    obj_lit.Add (item); 
+// 	    } 
+// 	    (COMMA pn = property_name COLON e = assignment_expr [obj_lit] 
+// 	    { 
+// 		    item = new ObjectLiteralItem ();
+// 		    item.property_name = pn.Name;
+// 		    item.exp = e;
+// 		    obj_lit.Add (item); 
+// 	    })*
 // 	   )
 // 	  CLOSE_BRACE
 // 	;
@@ -990,12 +1029,36 @@ property_name_and_value_list
 	: (property_name COLON primary_expr [null])+
 	;
 
-property_name
-	: (IDENTIFIER | STRING_LITERAL | numeric_literal [null]) 
+property_name returns [PropertyName pn]
+{ pn = new PropertyName (); }
+	: (id:IDENTIFIER { pn.Name = id.getText (); } 
+	  |st:STRING_LITERAL { pn.Name = st.getText (); } 
+	  |numeric_literal [null] { pn.Name = string.Empty; }
+	  )
 	;
 
-array_literal
-	: OPEN_BRACKET (primary_expr [null] (COMMA primary_expr [null])* | ) CLOSE_BRACKET
+array_literal [AST parent] returns [ArrayLiteral array_lit]
+{
+	array_lit = new ArrayLiteral (parent);
+	AST e = null;
+	ASTList elems = ((ArrayLiteral) array_lit).elems;
+	int i = 0;
+}
+	: OPEN_BRACKET 
+		  (e = primary_expr [array_lit] 
+		  { if (e != null) { 
+			  elems.Add (e); 
+			  array_lit.size++;
+		    } 
+		  } (COMMA e = primary_expr [array_lit] 
+			   { 
+				  if (e != null) { 
+					  elems.Add (e); 
+					  array_lit.size++; 
+				  }
+			   }
+		    )* | ) 
+	  CLOSE_BRACKET
 	;	
 
 numeric_literal [AST parent] returns [NumericLiteral num_lit]
