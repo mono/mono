@@ -712,9 +712,8 @@ method_ref		: internal_method_ref
 
 external_method_ref	: type_ref external_type_ref DOUBLE_COLON name1 OPEN_PARENS arg_list CLOSE_PARENS
 			  {
-				TypeRef parent = (TypeRef) $1;
-				TypeRef extern_type = (TypeRef) $2;
-				ClassRef class_ref = (ClassRef) extern_type.Type;
+				TypeRef ret_type = (TypeRef)$1;
+				ClassRef parent = (ClassRef) ((TypeRef) $2).Type;
 				PEAPI.Type[] type_array;
 				if ($6 != null) {
 					ArrayList param_list = $6 as ArrayList;
@@ -727,7 +726,7 @@ external_method_ref	: type_ref external_type_ref DOUBLE_COLON name1 OPEN_PARENS 
 				} else {
 					type_array = new PEAPI.Type[0];
 				}	
-				$$ = class_ref.AddMethod ((string) $4, parent.Type, type_array);
+				$$ = parent.AddMethod ((string) $4, ret_type.Type, type_array);
 			  }
 			;  
 
