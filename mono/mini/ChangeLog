@@ -1,5 +1,7 @@
 2003-05-22  Dietmar Maurer  <dietmar@ximian.com>
 
+	* exceptions-x86.c (mono_arch_handle_exception): bug fix.
+
 	* mini-x86.c (mono_arch_output_basic_block): cleanup up exception code
 
 	* inssel-x86.brg: added OP_START_HANDLER, CEE_ENDFINALLY, OP_ENDFILTER

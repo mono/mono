@@ -62,16 +62,15 @@ to the local variables of the enclosing method. Its is possible that
 instructions inside those handlers modify the stack pointer, thus we save the
 stack pointer at the start of the handler, and restore it at the end. We have
 to use a "call" instruction to execute such finally handlers. This makes it
-also possible to execute them inside the stack unwinding code. Filters receives
-the exception object in ECX.
+also possible to execute them inside the stack unwinding code. The exception
+object for filters is passed in a local variable (cfg->exvar).
 
 throw: we first save all regs into a sigcontext struct (we pass the
 exception object in register ECX), and then call the stack unwinding
 code.
 
-catch handler: receives the exception object in ECX. They store that
-object into a local variable, so that rethrow can access the object.
-
+catch handler: catch hanlders are always called from the stack unwinding
+code. The exception object is passed in a local variable (cfg->exvar).
 
 gcc support for Exceptions
 ==========================
