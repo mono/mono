@@ -1,3 +1,8 @@
+2002-10-17  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_add_method): Make this actually work if we don't
+	have any lifetime information.
+
 2002-10-15  Martin Baulig  <martin@gnome.org>
 
 	* jit.cs (PUSH_TREE): Always set t->cli_addr here.
