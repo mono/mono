@@ -1,3 +1,11 @@
+2005-01-14  Jonathan Pryor (jonpryor@vt.edu)
+
+	* Makefile: Add test-recursive and clean-recursive targets.  Test-recursive
+	  creates a Syste_test_PROFILE.dll.config file, required for the Switch
+	  regression tests, and clean-recursive cleans up this file.
+	* System_test_default.dll.config, System_test.dll.config: Delete.  These are
+	  no longer necessary as the appropriate file is generated in test-recursive.
+
 2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.dll.sources: Added new file:

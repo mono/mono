@@ -45,6 +45,12 @@ endif
 
 include ../../build/library.make
 
+test-recursive: test-local Test/test-config-file
+	cp Test/test-config-file $(test_lib).config
+
+clean-recursive: clean-local
+	rm $(test_lib).config
+
 ifdef CYCLIC_DEP_FILE
 LIB_MCS_FLAGS += /define:XML_DEP /r:$(CYCLIC_DEP)
 $(the_lib): $(CYCLIC_DEP_FILE)
