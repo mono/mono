@@ -18,9 +18,6 @@ namespace Mono.CSharp.Debugger
 {
 	public class MonoSymbolTableWriter : IDisposable
 	{
-		public const long magic_id = 0x45e82623fd7fa614;
-		public const int  symbol_table_version = 16;
-
 		BinaryWriter bw;
 
 		public MonoSymbolTableWriter (string output_filename)
@@ -32,8 +29,8 @@ namespace Mono.CSharp.Debugger
 		public void WriteSymbolTable (IMonoSymbolWriter symwriter)
 		{
 			// Magic number and file version.
-			bw.Write (magic_id);
-			bw.Write (symbol_table_version);
+			bw.Write (OffsetTable.Magic);
+			bw.Write (OffsetTable.Version);
 
 			OffsetTable ot;
 
@@ -97,6 +94,7 @@ namespace Mono.CSharp.Debugger
 			//
 			// Write offset table
 			//
+			ot.total_file_size = (uint) bw.BaseStream.Position;
 			bw.Seek ((int) offset_table_offset, SeekOrigin.Begin);
 			ot.Write (bw);
 			bw.Seek (0, SeekOrigin.End);

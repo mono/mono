@@ -1,3 +1,8 @@
+2002-08-25  Martin Baulig  <martin@gnome.org>
+
+	* MonoSymbolTableReader.cs: New file.  This is the reader for the
+	new symbol file format.
+
 2002-08-24  Martin Baulig  <martin@gnome.org>
 
 	* MonoSymbolTable.cs, MonoSymbolTableWriter.cs: New files.  This
