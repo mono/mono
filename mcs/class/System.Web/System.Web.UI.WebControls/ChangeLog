@@ -1,3 +1,8 @@
+2004-08-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Xml.cs: use MapPath in DocumentSource and documentContent. Fixes
+	bug #62726.
+
 2004-08-10  Sanjay Gupta <gsanjay@novell.com>
 
 	* FormViewCommandEventArgs.cs:
