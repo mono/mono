@@ -18,7 +18,7 @@ namespace System.Xml.Serialization
 		string _namespace;
 		string _typeNamespace;
 
-		internal XmlMemberMapping (string memberName, XmlTypeMapMember mapMem)
+		internal XmlMemberMapping (string memberName, string defaultNamespace, XmlTypeMapMember mapMem, bool encodedFormat)
 		{
 			_mapMember = mapMem;
 			_memberName = memberName;
@@ -27,9 +27,18 @@ namespace System.Xml.Serialization
 			{
 				XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) ((XmlTypeMapMemberElement)mapMem).ElementInfo[0];
 				_elementName = info.ElementName;
-				_namespace = info.Namespace;
-				if (info.MappedType != null) _typeNamespace = info.MappedType.Namespace;
-				else _typeNamespace = "";
+				if (encodedFormat)
+				{
+					_namespace = defaultNamespace;
+					if (info.MappedType != null) _typeNamespace = "";
+					else _typeNamespace = info.DataTypeNamespace;
+				}
+				else
+				{
+					_namespace = info.Namespace;
+					if (info.MappedType != null) _typeNamespace = info.MappedType.Namespace;
+					else _typeNamespace = "";
+				}
 			}
 			else
 			{

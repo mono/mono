@@ -23,14 +23,13 @@ namespace System.Xml.Serialization
 
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
 		{
-			_exporter.ExportMembersMapping (xmlMembersMapping);
+			_exporter.ExportMembersMapping (xmlMembersMapping, false);
 		}
 
-		[MonoTODO]
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping,
 						  bool exportEnclosingType)
 		{
-			throw new NotImplementedException ();
+			_exporter.ExportMembersMapping (xmlMembersMapping, exportEnclosingType);
 		}
 
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)

@@ -77,7 +77,7 @@ namespace System.Xml.Serialization {
 			for (int n=0; n<members.Length; n++)
 			{
 				XmlTypeMapMember mapMem = CreateMapMember (members[n], ns);
-				mapping[n] = new XmlMemberMapping (members[n].MemberName, mapMem);
+				mapping[n] = new XmlMemberMapping (members[n].MemberName, ns, mapMem, false);
 			}
 			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, mapping);
 			mps.RelatedMaps = relatedMaps;

@@ -50,10 +50,15 @@ namespace System.Xml.Serialization {
 
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
 		{
+			ExportMembersMapping (xmlMembersMapping, true);
+		}
+		
+		internal void ExportMembersMapping (XmlMembersMapping xmlMembersMapping, bool exportEnclosingType)
+		{
 			XmlSchema schema = GetSchema (xmlMembersMapping.Namespace);
 			ClassMap cmap = (ClassMap) xmlMembersMapping.ObjectMap;
 
-			if (xmlMembersMapping.HasWrapperElement)
+			if (xmlMembersMapping.HasWrapperElement && exportEnclosingType)
 			{
 				XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 	
@@ -98,6 +103,10 @@ namespace System.Xml.Serialization {
 					}
 				}
 			}
+			
+			if (encodedFormat) 
+				ImportNamespace (schema, XmlSerializer.EncodingNamespace);
+				
 			CompileSchemas ();
 		}
 
@@ -113,7 +122,11 @@ namespace System.Xml.Serialization {
 			if (IsElementExported (xmlTypeMapping)) return;
 			
 			if (encodedFormat)
+			{
 				ExportClassSchema (xmlTypeMapping);
+				XmlSchema schema = GetSchema (xmlTypeMapping.XmlTypeNamespace);
+				ImportNamespace (schema, XmlSerializer.EncodingNamespace);
+			}
 			else
 			{
 				XmlSchema schema = GetSchema (xmlTypeMapping.Namespace);
@@ -126,6 +139,7 @@ namespace System.Xml.Serialization {
 				AddSchemaElement (schema.Items, schema, einfo, false);
 				SetElementExported (xmlTypeMapping);
 			}
+			
 			CompileSchemas ();
 		}
 
@@ -503,7 +517,8 @@ namespace System.Xml.Serialization {
 				XmlAttribute arrayType = Document.CreateAttribute ("arrayType", XmlSerializer.WsdlNamespace);
 				arrayType.Value = ns + (ns != "" ? ":" : "") + name;
 				at.UnhandledAttributes = new XmlAttribute [] { arrayType };
-				
+				ImportNamespace (schema, XmlSerializer.WsdlNamespace);
+			
 				XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) lmap.ItemInfo[0];
 				if (einfo.MappedType != null)
 				{

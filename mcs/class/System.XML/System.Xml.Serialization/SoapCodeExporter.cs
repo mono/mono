@@ -46,16 +46,23 @@ namespace System.Xml.Serialization {
 
 		#region Methods
 
-		[MonoTODO]
 		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlMemberMapping member)
 		{
-			throw new NotImplementedException ();
+			AddMappingMetadata (metadata, member, false);
 		}
 
-		[MonoTODO]
 		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlMemberMapping member, bool forceUseMemberName)
 		{
-			throw new NotImplementedException ();
+			TypeData memType = member.TypeMapMember.TypeData;
+			
+			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.SoapElement");
+			if (forceUseMemberName || (member.ElementName != member.MemberName))
+				att.Arguments.Add (new CodeAttributeArgument ("ElementName", new CodePrimitiveExpression(member.ElementName)));
+			if (!TypeTranslator.IsDefaultPrimitiveTpeData (memType))
+				att.Arguments.Add (new CodeAttributeArgument ("DataType", new CodePrimitiveExpression(member.TypeName)));
+				
+			if (att.Arguments.Count > 0) 
+				metadata.Add (att);
 		}
 
 		[MonoTODO]

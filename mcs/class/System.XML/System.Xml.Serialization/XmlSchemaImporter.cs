@@ -196,7 +196,7 @@ namespace System.Xml.Serialization {
 			int n = 0;
 			XmlMemberMapping[] mapping = new XmlMemberMapping [cmap.AllMembers.Count];
 			foreach (XmlTypeMapMember mapMem in cmap.AllMembers)
-				mapping[n++] = new XmlMemberMapping (mapMem.Name, mapMem);
+				mapping[n++] = new XmlMemberMapping (mapMem.Name, refer.Namespace, mapMem, encodedFormat);
 				
 			return mapping;
 		}
@@ -207,7 +207,7 @@ namespace System.Xml.Serialization {
 			mapMem.Name = name;
 			mapMem.TypeData = type;
 			mapMem.ElementInfo.Add (CreateElementInfo (ns, mapMem, name, type, true));
-			return new XmlMemberMapping (name, mapMem);
+			return new XmlMemberMapping (name, ns, mapMem, encodedFormat);
 		}
 		
 		[MonoTODO]

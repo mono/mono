@@ -1,3 +1,13 @@
+2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapCodeExporter.cs: Initial implementation of AddMappingMetadata().
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs, XmlSchemaImporter.cs: 
+	  in ImportMembersMapping, set pass the namespace to each XmlMemberMapping.
+	* SoapSchemaExporter.cs: Some fixes in ExportMembersMapping.
+	* XmlMemberMapping.cs: Fixed constructor. Now it takes the default namespace
+	  and whether it uses encoded or literal format.
+	* XmlSchemaExporter.cs: Little fixes.
+
 2003-10-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializationReader.cs. Fixed bug #49510. An array element doesn't
