@@ -156,5 +156,11 @@ namespace CIR {
 				return parameters.IsSynchronized;
 			}
 		}
+
+		public bool IsFixedSize {
+			get {
+				return false;
+			}
+		}
 	}
 }

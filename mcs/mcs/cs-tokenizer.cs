@@ -260,12 +260,12 @@ namespace CSC
 
 		bool is_identifier_start_character (char c)
 		{
-			return CharacterInfo.IsLetter (c) || c == '_' ;
+			return Char.IsLetter (c) || c == '_' ;
 		}
 
 		bool is_identifier_part_character (char c)
 		{
-			return (CharacterInfo.IsLetter (c) || CharacterInfo.IsDigit (c) || c == '_');
+			return (Char.IsLetter (c) || Char.IsDigit (c) || c == '_');
 		}
 
 		int is_punct (char c, ref bool doread)
@@ -441,7 +441,7 @@ namespace CSC
 				number.Append ((char) c);
 			
 			while ((d = peekChar ()) != -1){
-				if (CharacterInfo.IsDigit ((char)d)){
+				if (Char.IsDigit ((char)d)){
 					number.Append ((char) d);
 					getChar ();
 					seen_digits = true;
@@ -460,7 +460,7 @@ namespace CSC
 			while ((d = peekChar ()) != -1){
 				char e = Char.ToUpper ((char) d);
 				
-				if (CharacterInfo.IsDigit (e) ||
+				if (Char.IsDigit (e) ||
 				    (e >= 'A' && e <= 'F')){
 					number.Append ((char) e);
 					getChar ();
@@ -547,7 +547,7 @@ namespace CSC
 
 			number.Length = 0;
 
-			if (CharacterInfo.IsDigit ((char)c)){
+			if (Char.IsDigit ((char)c)){
 				if (peekChar () == 'x' || peekChar () == 'X'){
 					getChar ();
 					hex_digits (-1);
@@ -744,12 +744,12 @@ namespace CSC
 				}
 
 				if (c == '.'){
-					if (CharacterInfo.IsDigit ((char) peekChar ()))
+					if (Char.IsDigit ((char) peekChar ()))
 						return is_number (c);
 					return Token.DOT;
 				}
 				
-				if (CharacterInfo.IsDigit ((char) c))
+				if (Char.IsDigit ((char) c))
 					return is_number (c);
 
 				// Handle double-slash comments.
