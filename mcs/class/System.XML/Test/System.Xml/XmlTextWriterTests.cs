@@ -789,6 +789,42 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void WriteQualifiedNameNonDeclaredAttribute ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteStartAttribute ("a", "");
+			xtw.WriteQualifiedName ("attr", "urn:a");
+			xtw.WriteWhitespace (" ");
+			xtw.WriteQualifiedName ("attr", "urn:b");
+			xtw.WriteEndAttribute ();
+			xtw.WriteEndElement ();
+			string xml = sw.ToString ();
+			Assert ("foo", xml.IndexOf ("<foo ") >= 0);
+			Assert ("qnames", xml.IndexOf ("a='d1p1:attr d1p2:attr'") > 0);
+			Assert ("xmlns:a", xml.IndexOf (" xmlns:d1p1='urn:a'") > 0);
+			Assert ("xmlns:b", xml.IndexOf (" xmlns:d1p2='urn:b'") > 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WriteQualifiedNameNonDeclaredContent ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteQualifiedName ("abc", "urn:abc");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WriteQualifiedNameNonNCName ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("xmlns", "urn:default");
+			xtw.WriteStartElement ("child");
+			xtw.WriteStartAttribute ("a", "");
+			xtw.WriteQualifiedName ("x:def", "urn:def");
+		}
+
+		[Test]
 		public void WriteRaw ()
 		{
 			xtw.WriteRaw("&<>\"'");

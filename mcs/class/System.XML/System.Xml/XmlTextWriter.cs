@@ -703,11 +703,27 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteQualifiedName (string localName, string ns)
 		{
+			if (!XmlChar.IsNCName (localName))
+				throw new ArgumentException (String.Format ("Invalid local name '{0}'", localName));
+
 			CheckState ();
 			if (!openAttribute)
 				CloseStartElement ();
 
+			// WriteQualifiedName internal will reject such
+			// qname whose namespace is not declared.
+			string prefix = null;
+			if (openAttribute && LookupPrefix (ns) == null) {
+				prefix = CheckNewPrefix (true, null, ns);
+				namespaceManager.AddNamespace (prefix, ns);
+			}
+
 			WriteQualifiedNameInternal (localName, ns);
+
+			if (prefix != null) {
+				namespaceManager.RemoveNamespace (prefix, ns);
+				newAttributeNamespaces [prefix] = ns;
+			}
 		}
 
 		public override void WriteRaw (string data)
@@ -786,17 +802,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 						}
 					}
 
-			do {
-					if (createPrefix)
-						prefix = "d" + indentLevel + "p" + (++autoCreatedPrefixes);
-					createPrefix = false;
-					// check if prefix exists. If yes - check if namespace is the same.
-					if (newAttributeNamespaces [prefix] == null)
-						newAttributeNamespaces.Add (prefix, ns);
-					else if (!newAttributeNamespaces [prefix].Equals (ns))
-//						throw new ArgumentException ("Duplicate prefix with different namespace");
-						createPrefix = true;
-			} while (createPrefix);
+					prefix = CheckNewPrefix (createPrefix, prefix, ns);
 				}
 
 				if (prefix == String.Empty && ns != XmlnsNamespace)
@@ -832,6 +838,22 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				savedAttributePrefix = (prefix == "xmlns") ? localName : String.Empty;
 				savingAttributeValue = String.Empty;
 			}
+		}
+
+		private string CheckNewPrefix (bool createPrefix, string prefix, string ns)
+		{
+			do {
+				if (createPrefix)
+					prefix = "d" + indentLevel + "p" + (++autoCreatedPrefixes);
+				createPrefix = false;
+				// Check if prefix exists.
+				// If yes - check if namespace is the same.
+				if (newAttributeNamespaces [prefix] == null)
+					newAttributeNamespaces.Add (prefix, ns);
+				else if (!newAttributeNamespaces [prefix].Equals (ns))
+					createPrefix = true;
+			} while (createPrefix);
+			return prefix;
 		}
 
 		public override void WriteStartDocument ()

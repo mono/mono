@@ -1,3 +1,11 @@
+2005-03-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs : WriteQualifiedName() should check namespace validity
+	  (whether it is in scope or not).
+	* XmlTextWriter.cs : When WriteQualifiedName() is invoked inside
+	  attribute and no matching namespace declaration, create prefix
+	  on demand. Code reused from WriteStartAttribute().
+
 2005-03-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlValidatingReader.cs : create schema set on demand.

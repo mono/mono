@@ -378,6 +378,9 @@ namespace System.Xml
 #endif
 
 			string prefix = ns.Length > 0 ? LookupPrefix (ns) : String.Empty;
+			if (prefix == null)
+				throw new ArgumentException (String.Format ("Namespace '{0}' is not declared.", ns));
+
 			if (prefix != String.Empty) {
 				WriteString (prefix);
 				WriteString (":");
