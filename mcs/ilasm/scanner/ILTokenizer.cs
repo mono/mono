@@ -27,7 +27,6 @@ namespace Mono.ILASM {
 
                 private static readonly string idchars = "_$@?.";
 
-                private static Hashtable opcodes;
                 private static Hashtable keywords;
                 private static Hashtable directives;
 
@@ -41,7 +40,6 @@ namespace Mono.ILASM {
 
                 static ILTokenizer()
                 {
-                        opcodes = ILTables.Opcodes;
                         keywords = ILTables.Keywords;
                         directives = ILTables.Directives;
                 }

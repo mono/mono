@@ -1,5 +1,10 @@
 2004-06-10  Jackson Harper  <jackson@ximian.com>
 
+	* ILTables.cs: Remove opcodes, these are contained in codegen/IntrTable.cs
+	* ILTokenizer.cs: Dont refer to ILTables::Opcodes
+	
+2004-06-10  Jackson Harper  <jackson@ximian.com>
+
 	* ILTokenizingExpcetion.cs: New exception thrown by the tokenizer
 	if any tokenizing errors occur.
 	* ILTokenizer.cs:
