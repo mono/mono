@@ -1,3 +1,8 @@
+2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c (mono_type_size): Compute the size of TYPEDBYREF types
+	dynamically.
+
 2003-10-15  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_from_gen_param): Renamed to
