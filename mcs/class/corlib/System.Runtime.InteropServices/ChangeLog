@@ -1,3 +1,10 @@
+
+Wed Feb 16 16:20:56 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* GCHandle.cs: check the domain of an handle target is correct.
+	Make the unallocated value 0, since that is the default value
+	for valuetypes.
+
 2005-02-10  Marek Safar  <marek.safar@seznam.cz>
 
 	* TypeLibVarAttribute.cs,

@@ -64,7 +64,7 @@ namespace System.Runtime.InteropServices
 		{ 
 			get
 			{
-				return (handle != -1);
+				return (handle != 0);
 			}
 		}
 
@@ -104,7 +104,7 @@ namespace System.Runtime.InteropServices
 		public void Free()
 		{
 			FreeHandle(handle);
-			handle = -1;
+			handle = 0;
 		}
 		
 		public static explicit operator IntPtr (GCHandle value)
@@ -114,9 +114,14 @@ namespace System.Runtime.InteropServices
 		
 		public static explicit operator GCHandle(IntPtr value)
 		{
+			if (!CheckCurrentDomain ((int)value))
+				throw new ArgumentException ("GCHandle value belongs to a different domain");
 			return new GCHandle (value);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static bool CheckCurrentDomain (int handle);
+		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static object GetTarget(int handle);
 
