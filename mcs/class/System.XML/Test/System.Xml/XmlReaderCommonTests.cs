@@ -250,17 +250,21 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void ReadInnerXml ()
 		{
-			RunTest (xml4, new TestMethod (ReadInnerXml));
+			const string xml = "<root><foo>test of <b>mixed</b> string.</foo><bar /></root>";
+			RunTest (xml, new TestMethod (ReadInnerXml));
 		}
 
 		public void ReadInnerXml (XmlReader reader)
 		{
+			reader.Read ();
 			reader.Read ();
 			Assertion.AssertEquals ("initial.ReadState", ReadState.Interactive, reader.ReadState);
 			Assertion.AssertEquals ("initial.EOF", false, reader.EOF);
 			Assertion.AssertEquals ("initial.NodeType", XmlNodeType.Element, reader.NodeType);
 			string s = reader.ReadInnerXml ();
 			Assertion.AssertEquals ("read_all", "test of <b>mixed</b> string.", s);
+			Assertion.AssertEquals ("after.Name", "bar", reader.Name);
+			Assertion.AssertEquals ("after.NodeType", XmlNodeType.Element, reader.NodeType);
 		}
 
 
@@ -280,47 +284,6 @@ namespace MonoTests.System.Xml
 				XmlNodeType.Element, // nodeType
 				0, // depth
 				true, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertEndDocument (xmlReader);
-		}
-
-		[Test]
-		public void EmptyElementWithStartAndEndTag ()
-		{
-			string xml = "<foo></foo>";
-			RunTest (xml,
-				new TestMethod (EmptyElementWithStartAndEndTag));
-		}
-
-		public void EmptyElementWithStartAndEndTag (XmlReader xmlReader)
-		{
-			AssertStartDocument (xmlReader);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.Element, // nodeType
-				0, //depth
-				false, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.EndElement, // nodeType
-				0, //depth
-				false, // isEmptyElement
 				"foo", // name
 				String.Empty, // prefix
 				"foo", // localName
@@ -420,91 +383,6 @@ namespace MonoTests.System.Xml
 				String.Empty, // namespaceURI
 				"bar", // value
 				0 // attributeCount
-			);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.EndElement, // nodeType
-				0, //depth
-				false, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertEndDocument (xmlReader);
-		}
-
-		[Test]
-		public void EmptyElementWithAttribute ()
-		{
-			string xml = @"<foo bar=""baz""/>";
-			RunTest (xml, new TestMethod (EmptyElementWithAttribute));
-		}
-
-		public void EmptyElementWithAttribute (XmlReader xmlReader)
-		{
-			AssertStartDocument (xmlReader);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.Element, // nodeType
-				0, //depth
-				true, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				1 // attributeCount
-			);
-
-			AssertAttribute (
-				xmlReader, // xmlReader
-				"bar", // name
-				String.Empty, // prefix
-				"bar", // localName
-				String.Empty, // namespaceURI
-				"baz" // value
-			);
-
-			AssertEndDocument (xmlReader);
-		}
-
-		[Test]
-		public void StartAndEndTagWithAttribute ()
-		{
-			string xml = @"<foo bar='baz'></foo>";
-			RunTest (xml, new TestMethod (StartAndEndTagWithAttribute));
-		}
-
-		public void StartAndEndTagWithAttribute (XmlReader xmlReader)
-		{
-			AssertStartDocument (xmlReader);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.Element, // nodeType
-				0, //depth
-				false, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				1 // attributeCount
-			);
-
-			AssertAttribute (
-				xmlReader, // xmlReader
-				"bar", // name
-				String.Empty, // prefix
-				"bar", // localName
-				String.Empty, // namespaceURI
-				"baz" // value
 			);
 
 			AssertNode (

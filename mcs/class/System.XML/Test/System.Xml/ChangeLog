@@ -1,3 +1,13 @@
+2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttributeTests.cs : added WriteTo.
+	* XmlReaderCommonTests.cs,
+	  XmlTextReader.cs : fixed ReadInnerXml (check correct position.)
+	  Reverted EmptyElementWithStartAndEndTag, EmptyElementWithAttribute,
+	  and StartAndEndTagWithAttribute to XmlTextReaderTests.cs (because
+	  they requires IsEmptyElement = false, which is always true for
+	  XmlNodeReader).
+
 2003-04-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlReaderCommonTests.cs,

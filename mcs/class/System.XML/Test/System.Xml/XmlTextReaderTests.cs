@@ -109,6 +109,53 @@ namespace MonoTests.System.Xml
 			Assertion.AssertEquals ("ReadState is not ReadState.Cosed", ReadState.Closed, xmlReader.ReadState);
 		}
 
+		[Test]
+		public void StartAndEndTagWithAttribute ()
+		{
+			string xml = @"<foo bar='baz'></foo>";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
+				"baz" // value
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EndElement, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertEndDocument (xmlReader);
+		}
+
 		// expecting parser error
 		[Test]
 		public void EmptyElementWithBadName ()
@@ -126,6 +173,44 @@ namespace MonoTests.System.Xml
 			}
 
 			Assertion.Assert(caughtXmlException);
+		}
+
+		[Test]
+		public void EmptyElementWithStartAndEndTag ()
+		{
+			string xml = "<foo></foo>";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EndElement, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertEndDocument (xmlReader);
 		}
 
 		// checking parser
@@ -162,6 +247,40 @@ namespace MonoTests.System.Xml
 				String.Empty, // namespaceURI
 				String.Empty, // value
 				0 // attributeCount
+			);
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void EmptyElementWithAttribute ()
+		{
+			string xml = @"<foo bar=""baz""/>";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
+				"baz" // value
 			);
 
 			AssertEndDocument (xmlReader);
