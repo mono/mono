@@ -1,6 +1,6 @@
 2004-06-09  Raja R Harinath  <rharinath@novell.com>
 
-	* Makefile (HAVE_CYCLIC_DEP_FILE): New.  Used to detect if
+	* Makefile (CYCLIC_DEP_FILE): New.  Used to detect if
 	System.Xml.dll is present.
 	(SECOND_PASS): Remove.
 
