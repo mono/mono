@@ -1,3 +1,7 @@
+2003-05-14  Nick Drochak  <ndrochak@gol.com>
+
+	* UTF7EncodingTest.cs: added
+	* UTF8EncodingTest.cs: added
 
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
