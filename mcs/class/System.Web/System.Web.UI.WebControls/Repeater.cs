@@ -185,9 +185,9 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(items != null)
+				if(items == null)
 				{
-					if(itemsArrayList != null)
+					if(itemsArrayList == null)
 					{
 						EnsureChildControls();
 					}

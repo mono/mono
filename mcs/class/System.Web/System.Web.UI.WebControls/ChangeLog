@@ -1,3 +1,8 @@
+2003-08-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Repeater.cs: fix for Items property provided by yaronsh@mainsoft.com
+	(Yaron Shkop). Closes bug #48060.
+
 2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CheckBox.cs: in LoadPostData, only return
