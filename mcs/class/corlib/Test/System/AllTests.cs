@@ -21,9 +21,11 @@ namespace MonoTests.System {
                         {
                                 TestSuite suite =  new TestSuite();
                                 suite.AddTest(ArrayTest.Suite);
+				suite.AddTest(AttributeTest.Suite);
 				suite.AddTest(BitConverterTest.Suite);
 				suite.AddTest(BooleanTest.Suite);
                                 suite.AddTest(ByteTest.Suite);
+				suite.AddTest(CharEnumeratorTest.Suite);
                                 suite.AddTest(CharTest.Suite);
                                 suite.AddTest(ConsoleTest.Suite);
 				suite.AddTest(EnumTest.Suite);

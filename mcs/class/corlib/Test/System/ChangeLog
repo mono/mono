@@ -1,4 +1,9 @@
 2002-03-01  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* AttributeTest.cs: created, far from complete. 
+	* CharEnumeratorTest.cs: created. Contains just the basic case.
+	* AllTests.cs: added the two new tests above
+
+2002-03-01  Duco Fijma  <duco@lorentz.xs4all.nl>
 	* BitConverterTest.cs: added one test for bug fix made to BitConverter
 	* class.
 
