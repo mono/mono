@@ -201,7 +201,6 @@ namespace CIR
 			// path.
 			//
 			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
-			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
 			
 			for (i = 0; i < args.Length; i++){
 				string arg = args [i];
