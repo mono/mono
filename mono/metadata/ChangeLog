@@ -1,3 +1,11 @@
+2004-05-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* threadpool.c: Really wait for 500ms after the async call, even if the wait
+	  is interrumped.
+	* threads.c: In mono_thread_manage, call OpenThread to ref each handle
+	  before waiting for it, and call CloseHandle after the wait to unref it.
+	  This will make sure that handles are not disposed too early.
+
 2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c:
