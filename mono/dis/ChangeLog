@@ -1,3 +1,7 @@
+2003-10-21  Martin Baulig  <martin@ximian.com>
+
+	* get.c (get_typespec): Add MONO_TYPE_VAR and MONO_TYPE_MVAR.
+
 2003-10-18 Jackson Harper <jackson@ximian.com>
 
 	* dis-cil.c (get_encoded_user_string): use g_strescape instead of
