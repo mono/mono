@@ -1,5 +1,7 @@
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_runtime_free_method): Do not call mono_free_method.
+	
 	* object.c (mono_runtime_free_method): New function to free a dynamic
 	method.
 
