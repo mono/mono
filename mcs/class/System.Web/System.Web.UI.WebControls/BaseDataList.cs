@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  20%
+ * Status:  100%
  *
  * (C) Gaurav Vaish (2001)
  */
@@ -20,91 +20,109 @@ namespace System.Web.UI.WebControls
 {
 	public abstract class BaseDataList: WebControl
 	{
-
-		private int cellPadding = -1;
-		private int cellSpacing = 0;
-		private object dataSource = null;
-		private string dataKeyField = String.Empty;
-		private DataKeyCollection dataKeys;		// TODO: From where do get the values into it?
-		private string dataMember;
-		private GridLines gridLines;
-		private HorizontalAlign hAlign;
-
-		public BaseDataList()
+		private  static readonly object SelectedIndexChangedEvent = new object();
+		internal static string          ItemCountViewStateKey     = "_!ItemCount";
+		
+		private DataKeyCollection dataKeys;
+		private object            dataSource;
+		
+		public BaseDataList() : base();
 		{
-			// TODO Something
-			dataKeys = new DataKeyCollection(new ArrayList());
-			dataMember = String.Empty;
-			gridLines = GridLines.Both;
-			hAlign = HorizontalAlign.NotSet;
 		}
 
 		public static bool IsBindableType(Type type)
 		{
-			//TODO: To see what has to be here
-			if(type.IsPrimitive)
-			{
-				//Type.GetTypeFromHandle(new RuntimeTypeHandle());
-			}
-			return false; //for the time being, to be able to make it compile
+			if(type.IsPrimitive || type == typeof(string) || type == typeof(DateTime) || type == typeof(Decimal))
+				return true;
+			return false;
 		}
-
+		
+		public override void DataBind()
+		{
+			OnDataBinding(EventArgs.Empty);
+		}
+		
+		public event EventHandler SelectedIndexChanged
+		{
+			add
+			{
+				Events.AddHandler(SelectedIndexChangedEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler(SelectedIndexChangedEvent, value);
+			}
+		}
+		
 		public virtual int CellPadding
 		{
 			get
 			{
-				return cellPadding;
+				if(!ControlStyleCreated)
+					retrurn -1;
+				return ((TableStyle)ControlStyle).CellPadding;
 			}
 			set
 			{
-				cellPadding = value;
+				((TableStyle)ControlStyle).CellPadding = value;
 			}
 		}
-
+		
 		public virtual int CellSpacing
 		{
 			get
 			{
-				return cellSpacing;
+				if(!ControlStyleCreated)
+					retrurn -1;
+				return ((TableStyle)ControlStyle).CellSpacing;
 			}
 			set
 			{
-				cellSpacing = value;
+				((TableStyle)ControlStyle).CellSpacing = value;
 			}
 		}
-
+		
 		public virtual string DataKeyField
 		{
 			get
 			{
-				return dataKeyField;
+				object o = ViewState["DataKeyField"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				dataKeyField = value;
+				ViewState["DataKeyField"] = value;
 			}
 		}
-
+		
 		public DataKeyCollection DataKeys
 		{
 			get
 			{
+				if( !(dataKeys) )
+					dataKeys = new DataKeyCollection(DataKeysArray);
 				return dataKeys;
+				
 			}
 		}
-
+		
 		public string DataMember
 		{
 			get
 			{
-				return dataMember;
+				object o = ViewState["DataMember"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				dataMember = value;
+				ViewState["DataMember"] = value;
 			}
 		}
-
+		
 		public virtual object DataSource
 		{
 			get
@@ -113,7 +131,13 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				dataSource = value;
+				if( (value) && ( value is IListSource || value is IEnumerable) )
+				{
+					dataSource = value;
+				} else
+				{
+					throw new ArgumentException(HttpRuntime.FormatResourceString("Invalid_DataSource_Type", ID));
+				}
 			}
 		}
 
@@ -121,57 +145,86 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return gridLines;
+				if(ControlStyleCreated)
+					return ((TableStyle)ControlStyle).GridLines;
+				return GridLines.Both;
 			}
 			set
 			{
-				gridLines = value;
+				((TableStyle)ControlStyle).GridLines = value;
 			}
 		}
-
+		
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
 			{
-				return hAlign;
+				if(ControlStyleCreated)
+					return ((TableStyle)ControlStyle).HorizontalAlign;
+				return HorizontalAlign.NotSet;
 			}
 			set
 			{
-				hAlign = value;
+				((TableStyle)ControlStyle).HorizontalAlign = value;
 			}
 		}
-
-		public override void DataBind()
+		
+		protected ArrayList DataKeysArray
 		{
-			// TODO: have to write the implementation
-			// I am not sure of whether it will be of any use here since
-			// I am an abstract class, and have no identity of myself.
-			//dataBindEventArgs = EventArgs.Empty;
-			OnDataBinding(EventArgs.Empty);
-			throw new NotImplementedException();
+			get
+			{
+				object o = ViewState["DataKeys"];
+				if(o == null)
+				{
+					o = new ArrayList();
+					ViewState["DataKeys"] = o;
+				}
+				return (ArrayList)o;
+			}
 		}
-
-		//TODO: Check - where are the following abstract methods?
-		/*
-		 * CreateControlHierarchy(bool)
-		 * PrepareControlHierarchy()
-		*/
-
+		
 		protected override void AddParsedSubObject(object o)
 		{
-			// Preventing literal controls from being added as children: Do nothing here.
+			// Preventing literal controls from being added as children.
 		}
 
 		protected override void CreateChildControls()
 		{
 			Controls.Clear();
-			if(ViewState["_!ItemCount"]!=null)
+			if(ViewState[ItemCountViewStateKey]!=null)
 			{
 				CreateControlHierarchy(true);
 				ClearChildViewState();
 			}
 		}
-
+		
+		protected override void OnDataBinding(EventArgs e)
+		{
+			base.OnDataBinding(e);
+			Controls.Clear();
+			ClearChildViewState();
+			CreateControlHierarchy(true);
+			ChildControlsCreated = true;
+			TrackViewState();
+		}
+		
+		protected virtual void OnSelectedIndexChanged(EventArgs e)
+		{
+			if(Events != null)
+			{
+				EventHandler eh = (EventHandler)(Events[SelectedIndexChangedEvent]);
+				if(eh!=null)
+					eh(this, e);
+			}
+		}
+		
+		protected override void Render(HtmlTextWriter writer)
+		{
+			PrepareControlHierarchy();
+			base.RenderContents(writer);
+		}
+		
+		protected abstract void PrepareControlHierarchy();
 		protected abstract void CreateControlHierarchy(bool useDataSource);
 	}
 }

@@ -9,7 +9,7 @@ All Classes, Interfaces, Structures, Delegates and Enumerations
 * AdCreatedEventArgs
 * AdRotator
 * BaseCompareValidator
-& BaseDataList
+* BaseDataList
 & BaseValidator
 & BoundColumn
 & Button

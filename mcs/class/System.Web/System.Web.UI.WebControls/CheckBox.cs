@@ -130,26 +130,26 @@ namespace System.Web.UI.WebControls
 		protected virtual void OnCheckedChanged(EventArgs e)
 		{
 			if(Events!=null)
-				{
-					EventHandler eh = (EventHandler)(Events[CheckedChangedEvent]);
-					if(eh!=null)
-						eh(this, e);
-				}
+			{
+				EventHandler eh = (EventHandler)(Events[CheckedChangedEvent]);
+				if(eh!=null)
+					eh(this, e);
+			}
 		}
 		
 		protected override void OnPreRender(EventArgs e)
 		{
 			if(Page!=null)
+			{
+				if(Enabled)
 				{
-					if(Enabled)
-						{
-							Page.RegisterRequiresPostBack(this);
-						}
+					Page.RegisterRequiresPostBack(this);
 				}
-				if(SaveCheckedViewState)
-					{
-						ViewState.SetItemDirty("checked", false);
-					}
+			}
+			if(SaveCheckedViewState)
+			{
+				ViewState.SetItemDirty("checked", false);
+			}
 		}
 		
 		protected override void Render(HtmlTextWriter writer)
