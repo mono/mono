@@ -1,3 +1,8 @@
+2004-07-10   Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* OptionDetails.cs : ExtractParamName method called on constructor instead of code being called on demand (maybe too late)
+						 Fix for Bug 61188
+						 Handling exceptions on conversion of values, and giving a message a bit friendlier 
+
 2004-05-31   Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* OptionDetails.cs : ShortForm member now a string to favor some simplifications, fixes for Bug 58672
 	* OptionList.cs : Fixes for Bug 58672 and better handling for mixed-form options (linux/windows)

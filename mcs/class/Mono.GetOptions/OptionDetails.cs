@@ -62,34 +62,52 @@ namespace Mono.GetOptions
 		public ArrayList Values;
 		public System.Type ParameterType;
 		public string paramName = null;
+
+		private string ExtractParamName(string shortDescription)
+		{
+			int whereBegins = shortDescription.IndexOf("{");
+			if (whereBegins < 0)
+				paramName = "PARAM";
+			else {
+				int whereEnds = shortDescription.IndexOf("}");
+				if (whereEnds < whereBegins)
+					whereEnds = shortDescription.Length+1;
+						
+				paramName = shortDescription.Substring(whereBegins + 1, whereEnds - whereBegins - 1);
+				shortDescription = 
+					shortDescription.Substring(0, whereBegins) + 
+					paramName +
+					shortDescription.Substring(whereEnds + 1);
+			}
+			return shortDescription;
+		}
+
 		public string ParamName 
 		{
 			get 
 			{ 
-				if (paramName == null)
-				{
-					int whereBegins = ShortDescription.IndexOf("{");
-					if (whereBegins < 0)
-						paramName = "PARAM";
-					else
-					{
-						int whereEnds = ShortDescription.IndexOf("}");
-						if (whereEnds < whereBegins)
-							whereEnds = ShortDescription.Length+1;
-						
-						paramName = ShortDescription.Substring(whereBegins + 1, whereEnds - whereBegins - 1);
-						ShortDescription = 
-							ShortDescription.Substring(0, whereBegins) + 
-							paramName +
-							ShortDescription.Substring(whereEnds + 1);
-					}
-				}
 				return paramName;
 			}
 		}
 				
 		public static bool Verbose = false;
 		
+		public string DefaultForm
+		{
+			get {
+				string shortPrefix = "-";
+				string longPrefix = "--";
+				if(this.OptionBundle.ParsingMode == Mono.GetOptions.OptionsParsingMode.Windows) {
+					shortPrefix = "/";
+					longPrefix = "/";
+				} 
+				if (this.ShortForm != string.Empty)
+					return shortPrefix+this.ShortForm;
+				else
+					return longPrefix+this.LongForm;
+			}
+		}
+
 		public override string ToString()
 		{
 			string optionHelp;
@@ -149,9 +167,12 @@ namespace Mono.GetOptions
 		public OptionDetails(MemberInfo memberInfo, OptionAttribute option, Options optionBundle)
 		{
 			this.ShortForm = ("" + option.ShortForm).Trim();
-			this.LongForm = (option.LongForm == string.Empty)? memberInfo.Name:option.LongForm;
+			if (option.LongForm == null)
+				this.LongForm = string.Empty;
+			else
+				this.LongForm = (option.LongForm == string.Empty)? memberInfo.Name:option.LongForm;
 			this.AlternateForm = option.AlternateForm;
-			this.ShortDescription = option.ShortDescription;
+			this.ShortDescription = ExtractParamName(option.ShortDescription);
 			this.Occurs = 0;
 			this.OptionBundle = optionBundle; 
 			this.BooleanOption = false;
@@ -285,24 +306,31 @@ namespace Mono.GetOptions
 				if (Verbose)
 					Console.WriteLine("<" + this.LongForm + "> set to [" + parameter + "]");
 
-				if (Values != null && parameter != null)
-				{
-					convertedParameter = Convert.ChangeType(parameter, ParameterType.GetElementType());
+				if (Values != null && parameter != null) {
+					try {
+						convertedParameter = Convert.ChangeType(parameter, ParameterType.GetElementType());
+					} catch (Exception ex) {
+						Console.WriteLine(String.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option", parameter, ParameterType.GetElementType().Name, DefaultForm));						
+					}
 					Values.Add(convertedParameter);
 					continue;
 				}
 
-				if (parameter != null)
-					convertedParameter = Convert.ChangeType(parameter, ParameterType);
+				if (parameter != null) {	
+					try {
+						convertedParameter = Convert.ChangeType(parameter, ParameterType);
+					} catch (Exception ex) {
+						Console.WriteLine(String.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option", parameter, ParameterType.Name, DefaultForm));												
+						continue;
+					}
+				}
 
-				if (MemberInfo is FieldInfo)
-				{
+				if (MemberInfo is FieldInfo) {
 					((FieldInfo)MemberInfo).SetValue(OptionBundle, convertedParameter);
 					continue;
 				}
 
-				if (MemberInfo is PropertyInfo)
-				{
+				if (MemberInfo is PropertyInfo) {
 					((PropertyInfo)MemberInfo).SetValue(OptionBundle, convertedParameter, null);
 					continue;
 				}
