@@ -78,7 +78,12 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#else
+		[UrlProperty]
+#endif
+		[DefaultValue (""), WebCategory ("Appearance")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("An Url specifying the background image for the table.")]
 		public virtual string BackImageUrl
@@ -92,7 +97,38 @@ namespace System.Web.UI.WebControls
 			set { ((TableStyle) ControlStyle).BackImageUrl = value; }
 		}
 
-		[DefaultValue (-1), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+		[DefaultValue (""), WebCategory ("Accessibility")]
+		public virtual string Caption
+		{
+			get {
+				object o = ViewState ["Caption"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["Caption"] = value;
+			}
+		}
+
+		[DefaultValue (""), WebCategory ("Accessibility")]
+		public virtual TableCaptionAlign CaptionAlign
+		{
+			get {
+				object o = ViewState ["CaptionAlign"];
+				if(o != null) return (TableCaptionAlign) o;
+				return TableCaptionAlign.NotSet;
+			}
+			set {
+				ViewState ["CaptionAlign"] = value;
+			}
+		}
+#endif
+
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (-1), WebCategory ("Appearance")]
 		[WebSysDescription ("The space left around the borders within a cell.")]
 		public virtual int CellPadding
 		{
@@ -105,7 +141,10 @@ namespace System.Web.UI.WebControls
 			set { ((TableStyle) ControlStyle).CellPadding = value; }
 		}
 
-		[DefaultValue (-1), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (-1), WebCategory ("Appearance")]
 		[WebSysDescription ("The space left between cells.")]
 		public virtual int CellSpacing
 		{
@@ -118,7 +157,10 @@ namespace System.Web.UI.WebControls
 			set { ((TableStyle) ControlStyle).CellSpacing = value; }
 		}
 
-		[DefaultValue (typeof (GridLines), "None"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (GridLines), "None"), WebCategory ("Appearance")]
 		[WebSysDescription ("The type of grid that a table uses.")]
 		public virtual GridLines GridLines
 		{
@@ -131,7 +173,10 @@ namespace System.Web.UI.WebControls
 			set { ((TableStyle) ControlStyle).GridLines = value; }
 		}
 
-		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), WebCategory ("Layout")]
 		[WebSysDescription ("The horizonal alignment of the table.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{

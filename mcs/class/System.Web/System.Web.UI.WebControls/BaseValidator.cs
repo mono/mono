@@ -385,7 +385,7 @@ namespace System.Web.UI.WebControls
 		[MonoTODO("Damn_This_Is_Really_Frustrating___by_Gaurav")]
 		protected void RegisterValidatorCommonScript()
 		{
-			if(Page.IsClientScriptBlockRegistered("ValidatorIncludeScript"))
+			if(Page.ClientScript.IsClientScriptBlockRegistered("ValidatorIncludeScript"))
 				return;
 			
 			//string jsDirectory = System.Web.UI.Utils.GetScriptLocation(Context);
@@ -404,7 +404,7 @@ namespace System.Web.UI.WebControls
 			//I'm confused! This will make it work, at least on IE
 			string val = "document.all[\"" + ClientID;
 			val += "\"]";
-			Page.RegisterArrayDeclaration("Page_Validators", val);
+			Page.ClientScript.RegisterArrayDeclaration("Page_Validators", val);
 		}
 
 		[MonoTODO("Render_ing_always_left")]

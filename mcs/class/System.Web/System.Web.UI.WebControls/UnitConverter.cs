@@ -37,6 +37,8 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel.Design.Serialization;
+using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
@@ -52,6 +54,19 @@ namespace System.Web.UI.WebControls
 				return true;
 			return CanConvertFrom(context, sourceType);
 		}
+
+#if NET_2_0
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof (string))
+				return true;
+
+			if (destinationType == typeof (InstanceDescriptor))
+				return true;
+
+			return base.CanConvertTo (context, destinationType);
+		}
+#endif
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
@@ -80,6 +95,15 @@ namespace System.Web.UI.WebControls
 				}
 				return val.ToString(culture);
 			}
+
+#if NET_2_0
+			if (destinationType == typeof (InstanceDescriptor) && value is Unit) {
+				Unit s = (Unit) value;
+				MethodInfo met = typeof(Unit).GetMethod ("Parse", new Type[] {typeof(string)});
+				return new InstanceDescriptor (met, new object[] {s.ToString ()});
+			}
+#endif
+			
 			return ConvertTo(context, culture, value, destinationType);
 		}
 	}

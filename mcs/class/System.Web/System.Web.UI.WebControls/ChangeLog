@@ -1,3 +1,11 @@
+2005-01-28  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Table.cs: Added some 2.0 properties.
+	* FontUnitConverter.cs, UnitConverter.cs: Implemented conversion to
+	InstanceDescriptor.
+	* BaseValidator.cs: Fix warning.
+	* MultiView.cs, ViewCollection.cs, View.cs: Implemented.
+
 2005-01-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Menu.cs: Rendering fixes.
