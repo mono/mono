@@ -98,7 +98,7 @@ namespace Mono.CSharp {
 		//
 		// Whether we have seen a static constructor for this class or not
 		//
-		bool have_static_constructor = false;
+		public bool UserDefinedStaticConstructor = false;
 
 		//
 		// Whether we have at least one non-static field
@@ -257,7 +257,7 @@ namespace Mono.CSharp {
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
 			
 			if (is_static){
-				have_static_constructor = true;
+				UserDefinedStaticConstructor = true;
 				if (default_static_constructor != null)
 					return AdditionResult.MethodExists;
 
@@ -315,11 +315,6 @@ namespace Mono.CSharp {
 
 					initialized_static_fields.Add (field);
 
-					//
-					// We have not seen a static constructor,
-					// but we will provide static initialization of fields
-					//
-					have_static_constructor = true;
 				} else {
 					if (initialized_fields == null)
 						initialized_fields = new ArrayList ();
@@ -520,13 +515,7 @@ namespace Mono.CSharp {
 				return delegates;
 			}
 		}
-		
-		public bool HaveStaticConstructor {
-			get {
-				return have_static_constructor;
-			}
-		}
-		
+
 		public virtual TypeAttributes TypeAttr {
 			get {
 				return Modifiers.TypeAttr (ModFlags, this);
@@ -3460,14 +3449,14 @@ namespace Mono.CSharp {
                                                             ((MethodCore) member).Parameters,
                                                             OptAttributes,
                                                             Location);
-                        
+
+			SymbolWriter sw = CodeGen.SymbolWriter;
+			
 			//
 			// abstract or extern methods have no bodies
 			//
 			if ((modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
 				if (block == null) {
-					SymbolWriter sw = CodeGen.SymbolWriter;
-
 					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0) &&
 					    !Location.IsNull (Location) &&
 					    (Location.SymbolDocument != null)) {
@@ -3513,20 +3502,21 @@ namespace Mono.CSharp {
 			//
 			// FIXME: This code generates buggy code
 			//
-			if (member is Destructor)
-				EmitDestructor (ec, block);
-			else {
-				SymbolWriter sw = CodeGen.SymbolWriter;
+			if ((sw != null) && !Location.IsNull (Location) &&
+			    !Location.IsNull (block.EndLocation) &&
+			    (Location.SymbolDocument != null)) {
+				sw.OpenMethod (container, MethodBuilder, Location, block.EndLocation);
 
-				if ((sw != null) && !Location.IsNull (Location) &&
-				    !Location.IsNull (block.EndLocation) &&
-				    (Location.SymbolDocument != null)) {
-					sw.OpenMethod (container, MethodBuilder, Location, block.EndLocation);
-
+				if (member is Destructor)
+					EmitDestructor (ec, block);
+				else
 					ec.EmitTopBlock (block, ParameterInfo, Location);
 
-					sw.CloseMethod ();
-				} else
+				sw.CloseMethod ();
+			} else {
+				if (member is Destructor)
+					EmitDestructor (ec, block);
+				else
 					ec.EmitTopBlock (block, ParameterInfo, Location);
 			}
 		}

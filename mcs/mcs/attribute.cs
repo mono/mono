@@ -82,7 +82,7 @@ namespace Mono.CSharp {
 		private Type CheckAttributeType (EmitContext ec) {
 			Type t;
 			bool isattributeclass = true;
-			
+
 			t = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
 			if (t != null) {
 				isattributeclass = t.IsSubclassOf (TypeManager.attribute_type);

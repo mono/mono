@@ -1,3 +1,51 @@
+2004-03-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer.AddField): No longer set the
+	`HaveStaticConstructor' flag, now we call it
+	`UserDefineStaticConstructor' to diferentiate the slightly
+	semantic difference.
+
+	The situation is that we were not adding BeforeFieldInit (from
+	Modifiers.TypeAttr) to classes that could have it.
+	BeforeFieldInit should be set to classes that have no static
+	constructor. 
+
+	See:
+
+	http://www.yoda.arachsys.com/csharp/beforefieldinit.html
+
+	And most importantly Zoltan's comment:
+
+	http://bugzilla.ximian.com/show_bug.cgi?id=44229
+
+	"I think beforefieldinit means 'it's ok to initialize the type sometime 
+	 before its static fields are used', i.e. initialization does not need
+	 to be triggered by the first access to the type. Setting this flag
+	 helps the JIT to compile better code, since it can run the static
+	 constructor at JIT time, and does not need to generate code to call it
+	 (possibly lots of times) at runtime. Unfortunately, mcs does not set
+	 this flag for lots of classes like String. 
+	 
+	 csc sets this flag if the type does not have an explicit static 
+	 constructor. The reasoning seems to be that if there are only static
+	 initalizers for a type, and no static constructor, then the programmer
+	 does not care when this initialization happens, so beforefieldinit
+	 can be used.
+	 
+	 This bug prevents the AOT compiler from being usable, since it 
+	 generates so many calls to mono_runtime_class_init that the AOT code
+	 is much slower than the JITted code. The JITted code is faster, 
+	 because it does not generate these calls if the vtable is type is
+	 already initialized, which is true in the majority of cases. But the
+	 AOT compiler can't do this."
+
+2004-03-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (MethodData.Emit): Refactor the code so symbolic
+	information is generated for destructors;  For some reasons we
+	were taking a code path that did not generate symbolic information
+	before. 
+
 2004-03-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* class.cs: Create a Constructor.CheckBase method that

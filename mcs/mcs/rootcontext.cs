@@ -65,7 +65,7 @@ namespace Mono.CSharp {
 		//
 		// If set, enable C# version 2 features
 		//
-		public static bool V2;
+		public static bool V2 = true;
 		//
 		// Constructor
 		//

@@ -5129,7 +5129,6 @@ namespace Mono.CSharp {
 			}
 
 			EmitArguments (ec, method, Arguments);
-			
 			//
 			// If you have:
 			// this.DoFoo ();
