@@ -1,3 +1,13 @@
+2003-03-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
+	(set_domain_search_path): allow 'file://blah'. It's an invalid URI,
+	the right one is 'file:///blah', but MS allows it.
+	* assembly.c:
+	(mono_assembly_open): allow 'file://blah'
+
+	Fixes bug #40306. Thanks to Mitko Iliev (imitko@openlinksw.co.uk).
+
 2003-03-26  Aleksey Demakov <avd@openlinksw.com>
 
 	* socket-io.c: fixes bug #40310.
