@@ -121,3 +121,5 @@ the Microsoft C# compiler:
 -216    Can not use a type parameters as base class
 
 -217	Wrong number of type parameters
+
+-218	Invalid constraints clause
