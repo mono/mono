@@ -1,3 +1,8 @@
+2003-12-17  David Sheldon <dave-mono@earth.li>
+
+  * Added XmlSchemaBuiltInDatatypeTests.cs : Currently fails due to
+    bug 52274.    
+
 2003-12-14  David Sheldon <dave-mono@earth.li>
 
   * XmlSchemaLengthFacetTests.cs : Tests for non-integers failing 

@@ -1,3 +1,7 @@
+2003-12-17  David Sheldon <dave-mono@earth.li>
+
+  * System.Xml_test.dll.sources : Added XmlSchemaBuiltInDatatypeTests.cs
+
 2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* System.Xml.dll.sources :
