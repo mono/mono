@@ -1,3 +1,11 @@
+2004-08-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: removed initializations to null in .cctor. Prevent
+	other requests from avoiding the lock if they are received before the
+	configuration system is inited. Ensure that the queue manager is not
+	null before using it (it can be null while the first request is being
+	processed).
+
 2004-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpServerUtility.cs: ensure we have a full virtual path for the
