@@ -49,9 +49,6 @@ namespace Mono.CSharp
 		// Lookup paths
 		static ArrayList link_paths;
 
-		// Whether we want Yacc to output its progress
-		static bool yacc_verbose = false;
-
 		// Whether we want to only run the tokenizer
 		static bool tokenize = false;
 		
