@@ -1,8 +1,8 @@
 2001-12-30  Nick Drochak  <ndrochak@gol.com>
 
 	* PermissionSet.cs SecurityManager.cs: New Files
-	* CodeAccessPermission.cs: Skeleton code
-	* IPermission.cs: Make public and inherit from ISecurityEncodable like it should
+	* CodeAccessPermission.cs: Add Skeleton code
+	* IPermission.cs: Make public and inherit from ISecurityEncodable 
 	* ISecurityEncodable.cs: Make interface public
 	* ISecurityPolicyEncodable.cs: Ditto
 	* IStackWalk.cs: Ditto
