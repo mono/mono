@@ -1,3 +1,8 @@
+2003-10-22  Todd Berman <tberman@gentoo.org>
+
+	* RoutingOutputFilter.cs: Quick WSE2 hack for the To and Action fields,
+	still needs a lot of implementation.
+
 2003-09-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Path.cs: Constructors are internal and Clone is non virtual in WSE1
