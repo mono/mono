@@ -69,9 +69,9 @@ namespace System.Web.Configuration
 			if (attvalue != null)
 				config.Culture = GetCulture (section, "culture", attvalue);
 
-			attvalue = AttValue ("uiculture", section, true);
+			attvalue = AttValue ("uiCulture", section, true);
 			if (attvalue != null)
-				config.UICulture = GetCulture (section, "uiculture", attvalue);
+				config.UICulture = GetCulture (section, "uiCulture", attvalue);
 
 			if (section.Attributes == null || section.Attributes.Count != 0)
 				ThrowException ("Unknown attribute(s).", section);

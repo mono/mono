@@ -1,3 +1,8 @@
+2004-11-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationConfigurationHandler.cs: fixed stupid typo (uiculture ->
+	uiCulture). Closes bug #69524.
+
 2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AnonymousIdentificationSection.cs, AuthenticationSection.cs,
