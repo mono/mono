@@ -97,6 +97,10 @@ public class StringReaderTest : TestCase {
 		AssertEquals( 3, charsRead );
 		AssertEquals(  "Foo\0\0\0", new String( test ) );
 
+		/* Check that a new invocation on the empty reader will return 0 */
+		charsRead = reader.Read (test, 0, 6);
+		AssertEquals (0, charsRead);
+		
 	}
 
         public void TestReadEOL() {
