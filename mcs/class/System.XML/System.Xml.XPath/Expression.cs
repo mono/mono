@@ -348,7 +348,7 @@ namespace System.Xml.XPath
 					public XPathTextComparer (XmlSortOrder orderSort, XmlCaseOrder orderCase, string strLang)
 					{
 						_orderCase = orderCase;
-						_nMulCase = (orderCase == XmlCaseOrder.UpperFirst) ? -1 : 1;
+						_nMulCase = (orderCase == XmlCaseOrder.UpperFirst) ? 1 : -1;
 
 						_nMulSort = (orderSort == XmlSortOrder.Ascending) ? 1 : -1;
 

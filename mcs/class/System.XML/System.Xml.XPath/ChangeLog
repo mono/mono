@@ -1,5 +1,9 @@
 2004-02-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Expression.cs : xsl:sort case-order was not handled properly.
+
+2004-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Iterator.cs :
 	  In FollowingIterator, attribute and namespace nodes should be 
 	  considered to have following nodes. See XPath 1.0 section 5 (esp.
