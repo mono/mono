@@ -1,7 +1,15 @@
+2003-08-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (ves_exec_method): Implemented mul.ovf correctly for int32
+	and int64. Implement the conv.ovf opcodes for all argument types.
+
 2003-08-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (ves_exec_method): Handle non-valuetypes in CEE_STOBJ.
 	Fixes #46781.
+	(ves_exec_method): Added support for the synchronized flag to the
+	interpreter. Also fixed the CALLI opcode, and made exception handling
+	work though the managed-unmanaged barrier.
 
 Fri Jul 25 19:06:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
