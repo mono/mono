@@ -1,3 +1,9 @@
+2004-10-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (ves_icall_System_AppDomain_createDomain): Inherit
+	application base from the root domain if not set. Fixes #65641.
+	(mono_runtime_init): Fix warning.
+
 2004-10-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: call mono_thread_pool_init.
