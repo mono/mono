@@ -1,3 +1,8 @@
+2003-01-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (ves_icall_get_frame_info): skip one more frame and also
+	MONO_WRAPPER_RUNTIME_INVOKE wrappers
+
 2003-01-07  Dietmar Maurer  <dietmar@ximian.com>
 
 	* exception.c (ves_icall_get_frame_info): fix bug 36382
