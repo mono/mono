@@ -1,3 +1,10 @@
+
+Thu Sep 27 19:52:11 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, loader.c: warn and return NULL instead of erroring out.
+	* icall.c: added System.AppDomain::getCurDomain().
+	* loader.c: we don't need to lookup the typedef again for p/invoke calls.
+
 2001-09-25  Dick Porter  <dick@ximian.com>
 
 	* threads-pthread.h:
