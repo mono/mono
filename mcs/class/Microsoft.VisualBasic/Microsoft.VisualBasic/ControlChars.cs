@@ -7,7 +7,6 @@
 // (C) 2002 Chris J Breisch
 //
 namespace Microsoft.VisualBasic {
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
 	sealed public class ControlChars {
 		// Declarations
 		public const System.String CrLf = "\n\r";

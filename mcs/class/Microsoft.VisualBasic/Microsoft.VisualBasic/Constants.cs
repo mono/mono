@@ -8,7 +8,6 @@
 //
 namespace Microsoft.VisualBasic {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
 	sealed public class Constants {
 		// Declarations
 		public const System.Int32 vbObjectError = (System.Int32)(-2147221504);
