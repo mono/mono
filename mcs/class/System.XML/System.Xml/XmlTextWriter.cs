@@ -426,8 +426,6 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if ((text.EndsWith("-")) || (text.IndexOf("--") > 0)) {
 				throw new ArgumentException ();
 			}
-			if (ws != WriteState.Content && formatting == Formatting.Indented)
-				w.WriteLine ();
 
 			CheckState ();
 			CloseStartElement ();
