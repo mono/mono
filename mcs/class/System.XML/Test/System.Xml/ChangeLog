@@ -1,3 +1,11 @@
+2004-01-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttributeCollectionTests.cs :
+	  added InsertAfterReplacesInCorrectOrder().
+	* XmlUrlResolverTests.cs : fixed file path.
+	* XmlTextReaderTests.cs : fixed file path.
+	* XmlTextWriterTests.cs : added ElementXmlnsNeedEscape().
+
 2003-12-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentTests.cs, XmlElementTests.cs :

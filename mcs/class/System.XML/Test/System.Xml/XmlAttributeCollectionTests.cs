@@ -136,6 +136,34 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void InsertAfterReplacesInCorrectOrder ()
+		{
+			XmlDocument testDoc = new XmlDocument ();
+			XmlElement testElement = testDoc.CreateElement ("TestElement" );
+			testDoc.AppendChild (testElement);
+
+			XmlAttribute testAttr1 = testDoc.CreateAttribute ("TestAttribute1");
+			testAttr1.Value = "First attribute";
+			testElement.Attributes.Prepend (testAttr1);
+
+			XmlAttribute testAttr2 = testDoc.CreateAttribute ("TestAttribute2");
+			testAttr2.Value = "Second attribute";
+			testElement.Attributes.InsertAfter (testAttr2, testAttr1);
+
+			XmlAttribute testAttr3 = testDoc.CreateAttribute ("TestAttribute3");
+			testAttr3.Value = "Third attribute";
+			testElement.Attributes.InsertAfter (testAttr3, testAttr2);
+
+			XmlAttribute outOfOrder = testDoc.CreateAttribute ("TestAttribute2");
+			outOfOrder.Value = "Should still be second attribute";
+			testElement.Attributes.InsertAfter (outOfOrder, testElement.Attributes [0]);
+
+			AssertEquals ("First attribute", testElement.Attributes [0].Value);
+			AssertEquals ("Should still be second attribute", testElement.Attributes [1].Value);
+			AssertEquals ("Third attribute", testElement.Attributes [2].Value);
+		}
+
+		[Test]
 		public void Remove ()
 		{
 			XmlDocument xmlDoc = new XmlDocument ();

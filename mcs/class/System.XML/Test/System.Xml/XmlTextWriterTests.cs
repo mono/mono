@@ -364,6 +364,15 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void ElementXmlnsNeedEscape ()
+		{
+			xtw.WriteStartElement ("test", "foo", "'");
+			xtw.WriteEndElement ();
+			// MS.NET fails this case.
+			AssertEquals ("<test:foo xmlns:test='&apos;' />", StringWriterText);
+		}
+
+		[Test]
 		public void ElementEmpty ()
 		{
 			xtw.WriteStartElement ("foo");

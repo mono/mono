@@ -645,7 +645,7 @@ namespace MonoTests.System.Xml
 		public void ExternalDocument ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			doc.Load ("XmlFiles/nested-dtd-test.xml");
+			doc.Load ("Test/XmlFiles/nested-dtd-test.xml");
 		}
 
 		[Test]

@@ -27,7 +27,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void FileUri ()
 		{
-			Uri resolved = resolver.ResolveUri (null, "XmlFiles/xsd/xml.xsd");
+			Uri resolved = resolver.ResolveUri (null, "Test/XmlFiles/xsd/xml.xsd");
 			AssertEquals ("file", resolved.Scheme);
 			Stream s = resolver.GetEntity (resolved, null, typeof (Stream)) as Stream;
 		}
