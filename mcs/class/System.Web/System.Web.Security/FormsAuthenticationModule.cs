@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.IO;
 using System.Security.Principal;
 using System.Text;
 using System.Web;
@@ -49,6 +50,13 @@ namespace System.Web.Security
 			app.EndRequest += new EventHandler (OnEndRequest);
 		}
 
+		bool CheckIfSkip (string loginPath, string requestPath)
+		{
+			string realLogin = Path.GetDirectoryName (loginPath);
+			string realRequest = Path.GetDirectoryName (requestPath);
+			return (realLogin == realRequest);
+		}
+
 		void OnAuthenticateRequest (object sender, EventArgs args)
 		{
 			HttpApplication app = (HttpApplication) sender;
@@ -65,6 +73,8 @@ namespace System.Web.Security
 			string reqPath = context.Request.PhysicalPath;
 			string loginPath = context.Request.MapPath (loginPage);
 			context.SkipAuthorization = (reqPath == loginPath);
+			if (context.SkipAuthorization == false && loginPath != null && loginPath != "")
+				context.SkipAuthorization = CheckIfSkip (loginPath, reqPath);
 			
 			FormsAuthenticationEventArgs formArgs = new FormsAuthenticationEventArgs (context);
 			if (Authenticate != null)
