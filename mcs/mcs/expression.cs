@@ -680,10 +680,12 @@ namespace Mono.CSharp {
 		public readonly string ProbeType;
 		protected Expression expr;
 		protected Type probe_type;
-				
-		public Probe (Expression expr, string probe_type)
+		Location loc;
+		
+		public Probe (Expression expr, string probe_type, Location l)
 		{
 			ProbeType = probe_type;
+			loc = l;
 			this.expr = expr;
 		}
 
@@ -695,7 +697,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			probe_type = ec.TypeContainer.LookupType (ProbeType, false);
+			probe_type = RootContext.LookupType (ec.TypeContainer, ProbeType, false, loc);
 
 			if (probe_type == null)
 				return null;
@@ -710,8 +712,8 @@ namespace Mono.CSharp {
 	///   Implementation of the `is' operator.
 	/// </summary>
 	public class Is : Probe {
-		public Is (Expression expr, string probe_type)
-			: base (expr, probe_type)
+		public Is (Expression expr, string probe_type, Location l)
+			: base (expr, probe_type, l)
 		{
 		}
 
@@ -744,8 +746,8 @@ namespace Mono.CSharp {
 	///   Implementation of the `as' operator.
 	/// </summary>
 	public class As : Probe {
-		public As (Expression expr, string probe_type)
-			: base (expr, probe_type)
+		public As (Expression expr, string probe_type, Location l)
+			: base (expr, probe_type, l)
 		{
 		}
 
@@ -1263,9 +1265,6 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-
-				error19 ();
-				return null;
 			}
 
 			if (left == null || right == null)
@@ -1316,7 +1315,23 @@ namespace Mono.CSharp {
 				
 				return new StringLiteral (ls.Value + rs.Value);
 			}
+
+			if (left is EnumLiteral)
+				left = ((EnumLiteral) left).WidenToCompilerLiteral ();
+			if (right is EnumLiteral)
+				right = ((EnumLiteral) right).WidenToCompilerLiteral ();
 			
+			switch (oper){
+				case Operator.BitwiseOr:
+					if (left is IntLiteral && right is IntLiteral){
+						IntLiteral ll = (IntLiteral) left;
+						IntLiteral rl = (IntLiteral) right;
+						
+						return new IntLiteral (ll.Value | rl.Value).Resolve (ec);
+					}
+					break;
+			}
+					
 			return null;
 		}
 		
@@ -3059,7 +3074,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = ec.TypeContainer.LookupType (RequestedType, false);
+			type = RootContext.LookupType (ec.TypeContainer, RequestedType, false, loc);
 			
 			if (type == null)
 				return null;
@@ -3345,7 +3360,8 @@ namespace Mono.CSharp {
 					return true;
 			}
 			
-			underlying_type = ec.TypeContainer.LookupType (RequestedType, false);
+			underlying_type = RootContext.LookupType (
+				ec.TypeContainer, RequestedType, false, loc);
 			
 			//
 			// We use this to store all the date values in the order in which we
@@ -3402,9 +3418,10 @@ namespace Mono.CSharp {
 			string array_type = FormArrayType (RequestedType, arg_count, Rank);
 			string element_type = FormElementType (RequestedType, arg_count, Rank);
 
-			type = ec.TypeContainer.LookupType (array_type, false);
+			type = RootContext.LookupType (ec.TypeContainer, array_type, false, loc);
 			
-			array_element_type = ec.TypeContainer.LookupType (element_type, false);
+			array_element_type = RootContext.LookupType (
+				ec.TypeContainer, element_type, false, loc);
 			
 			if (type == null)
 				return null;
@@ -3790,15 +3807,18 @@ namespace Mono.CSharp {
 	public class TypeOf : Expression {
 		public readonly string QueriedType;
 		Type typearg;
+		Location loc;
 		
-		public TypeOf (string queried_type)
+		public TypeOf (string queried_type, Location l)
 		{
 			QueriedType = queried_type;
+			loc = l;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			typearg = ec.TypeContainer.LookupType (QueriedType, false);
+			typearg = RootContext.LookupType (
+				ec.TypeContainer, QueriedType, false, loc);
 
 			if (typearg == null)
 				return null;
@@ -4692,7 +4712,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			type = ec.TypeContainer.LookupType (left.Type.FullName + dim, false);
+			type = RootContext.LookupType (
+				ec.TypeContainer, left.Type.FullName + dim, false, loc);
 			if (type == null)
 				return null;
 

@@ -96,29 +96,11 @@ namespace Mono.CSharp {
 		public abstract bool Define (TypeContainer parent);
 	}
 
-	/// <summary>
-	///   Base class for structs, classes, enumerations and interfaces.  
-	/// </summary>
-	/// <remarks>
-	///   They all create new declaration spaces.  This
-	///   provides the common foundation for managing those name
-	///   spaces.
-	/// </remarks>
-	public abstract class DeclSpace : MemberCore {
-		/// <summary>
-		///   this points to the actual definition that is being
-		///   created with System.Reflection.Emit
-		/// </summary>
-		TypeBuilder definition;
+	//
+	// FIXME: This is temporary outside DeclSpace, because I have to fix a bug
+	// in MCS that makes it fail the lookup for the enum
+	//
 
-		//
-		// This is the namespace in which this typecontainer
-		// was declared.  We use this to resolve names.
-		//
-		public Namespace Namespace;
-
-		public string Basename;
-		
 		/// <summary>
 		///   The result value from adding an declaration into
 		///   a struct or a class
@@ -152,6 +134,29 @@ namespace Mono.CSharp {
 			NotAConstructor
 		}
 
+	/// <summary>
+	///   Base class for structs, classes, enumerations and interfaces.  
+	/// </summary>
+	/// <remarks>
+	///   They all create new declaration spaces.  This
+	///   provides the common foundation for managing those name
+	///   spaces.
+	/// </remarks>
+	public abstract class DeclSpace : MemberCore {
+		/// <summary>
+		///   this points to the actual definition that is being
+		///   created with System.Reflection.Emit
+		/// </summary>
+		TypeBuilder definition;
+
+		//
+		// This is the namespace in which this typecontainer
+		// was declared.  We use this to resolve names.
+		//
+		public Namespace Namespace;
+
+		public string Basename;
+		
 		/// <summary>
 		///   defined_names is used for toplevel objects
 		/// </summary>
@@ -214,12 +219,6 @@ namespace Mono.CSharp {
 				definition = value;
 			}
 		}
-
-		public Type LookupType (string name, bool silent)
-		{
-			return RootContext.LookupType (this, name, silent);
-		}
-
 	}
 }
 

@@ -213,10 +213,10 @@ namespace Mono.CSharp {
 		//
 		// Returns: Type or null if they type can not be found.
 		//
-		static public Type LookupType (DeclSpace ds, string name, bool silent)
+		static public Type LookupType (DeclSpace ds, string name, bool silent, Location loc)
 		{
 			Type t;
-			
+
 			t = TypeManager.LookupType (MakeFQN (ds.Namespace.Name, name));
 			if (t != null)
 				return t;
@@ -242,12 +242,12 @@ namespace Mono.CSharp {
 			}
 
 			// For the case the type we are looking for is nested within this one.
-			t = TypeManager.LookupType (ds.Name + "." + name);
+			t = TypeManager.LookupType (ds.Name + "+" + name);
 			if (t != null)
 				return t;
-			
+
 			if (!silent)
-				Report.Error (246, "Cannot find type `"+name+"'");
+				Report.Error (246, loc, "Cannot find type `"+name+"'");
 			
 			return null;
 		}
@@ -256,9 +256,9 @@ namespace Mono.CSharp {
 		//   This is the silent version of LookupType, you can use this
 		//   to `probe' for a type
 		// </summary>
-		static public Type LookupType (TypeContainer tc, string name)
+		static public Type LookupType (TypeContainer tc, string name, Location loc)
 		{
-			return LookupType (tc, name, true);
+			return LookupType (tc, name, true, loc);
 		}
 
 		static public bool IsNamespace (string name)

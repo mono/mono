@@ -279,7 +279,6 @@ using_alias_directive
 using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
-		Console.WriteLine (name + " using: " + current_namespace.Name + " => " + (string) $2);
 		current_namespace.Using ((string) $2);
           }
 	;
@@ -810,7 +809,7 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-	  	$$ = new Parameters (pars, null); 
+	  	$$ = new Parameters (pars, null, lexer.Location); 
 	  } 
 	| fixed_parameters COMMA parameter_array
 	  {
@@ -819,11 +818,11 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-		$$ = new Parameters (pars, (Parameter) $3); 
+		$$ = new Parameters (pars, (Parameter) $3, lexer.Location); 
 	  }
 	| parameter_array 
 	  {
-		$$ = new Parameters (null, (Parameter) $1);
+		$$ = new Parameters (null, (Parameter) $1, lexer.Location);
 	  }
 	;
 
@@ -972,7 +971,7 @@ set_accessor_declaration
 			fp.CopyTo (args, 0);
 			args [count] = implicit_value_parameter;
 		}
-		current_local_parameters = new Parameters (args, null);
+		current_local_parameters = new Parameters (args, null, lexer.Location);
 		lexer.PropertyParsing = false;
 	  }
 	  accessor_body
@@ -1097,13 +1096,15 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ((string) $3, (string) $4, (bool) $2, (Parameters) $6, (Attributes) $1);
+		$$ = new InterfaceMethod ((string) $3, (string) $4, (bool) $2, 
+					  (Parameters) $6, (Attributes) $1, lexer.Location);
 	  }
 	| opt_attributes opt_new VOID IDENTIFIER 
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ("System.Void", (string) $4, (bool) $2, (Parameters) $6, (Attributes) $1);
+		$$ = new InterfaceMethod ("System.Void", (string) $4, (bool) $2, (Parameters) $6, 
+					  (Attributes) $1, lexer.Location);
 	  }
 	;
 
@@ -1120,7 +1121,8 @@ interface_property_declaration
 	        int gs = (int) $7;
 
 		$$ = new InterfaceProperty ((string) $3, (string) $4, (bool) $2, 
-					    (gs & 1) == 1, (gs & 2) == 2, (Attributes) $1);
+					    (gs & 1) == 1, (gs & 2) == 2, (Attributes) $1,
+					    lexer.Location);
 	  }
 	;
 
@@ -1154,7 +1156,8 @@ interface_indexer_declaration
 	  	bool do_get = (a_flags & 1) == 1;
 		bool do_set = (a_flags & 2) == 2;
 
-		$$ = new InterfaceIndexer ((string) $3, (Parameters) $6, do_get, do_set, (bool) $2, (Attributes) $1);
+		$$ = new InterfaceIndexer ((string) $3, (Parameters) $6, do_get, do_set,
+					   (bool) $2, (Attributes) $1, lexer.Location);
 	  }
 	;
 
@@ -1190,7 +1193,7 @@ operator_declarator
 
 		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
 
-		current_local_parameters = new Parameters (pars, null);
+		current_local_parameters = new Parameters (pars, null, lexer.Location);
 
 		$$ = new OperatorDeclaration (op, (string) $1, (string) $5, (string) $6,
 					      null, null, lexer.Location);
@@ -1208,7 +1211,7 @@ operator_declarator
 	       pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
 	       pars [1] = new Parameter ((string) $8, (string) $9, Parameter.Modifier.NONE, null);
 
-	       current_local_parameters = new Parameters (pars, null);
+	       current_local_parameters = new Parameters (pars, null, lexer.Location);
 	       
 	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6,
 					     (string) $8, (string) $9, lexer.Location);
@@ -1251,7 +1254,7 @@ conversion_operator_declarator
 
 		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
 
-		current_local_parameters = new Parameters (pars, null);  
+		current_local_parameters = new Parameters (pars, null, lexer.Location);  
 		  
 		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (string) $3, (string) $5, (string) $6,
 					      null, null, lexer.Location);
@@ -1262,7 +1265,7 @@ conversion_operator_declarator
 
 		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
 
-		current_local_parameters = new Parameters (pars, null);  
+		current_local_parameters = new Parameters (pars, null, lexer.Location);  
 		  
 		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (string) $3, (string) $5, (string) $6,
 					      null, null, lexer.Location);
@@ -1348,9 +1351,11 @@ destructor_declaration
 		} else if (!(current_container is Class)){
 			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");
 		} else {
+			Location l = lexer.Location;
+
 			Method d = new Method (
 				"System.Void", 0, "Finalize", 
-				new Parameters (null, null), (Attributes) $1, lexer.Location);
+				new Parameters (null, null, l), (Attributes) $1, l);
 		  
 			d.Block = (Block) $6;
 			CheckDef (current_container.AddMethod (d), d.Name);
@@ -2017,7 +2022,7 @@ variable_initializer_list
 typeof_expression
 	: TYPEOF OPEN_PARENS type CLOSE_PARENS
 	  {
-		$$ = new TypeOf ((string) $3);
+		$$ = new TypeOf ((string) $3, lexer.Location);
 	  }
 	;
 
@@ -2185,11 +2190,11 @@ relational_expression
 	  }
 	| relational_expression IS type
 	  {
-		$$ = new Is ((Expression) $1, (string) $3);
+		$$ = new Is ((Expression) $1, (string) $3, lexer.Location);
 	  }
 	| relational_expression AS type
 	  {
-		$$ = new As ((Expression) $1, (string) $3);
+		$$ = new As ((Expression) $1, (string) $3, lexer.Location);
 	  }
 	;
 
@@ -2379,13 +2384,15 @@ class_declaration
 	  CLASS IDENTIFIER
 	  {
 		Class new_class;
-		string full_class_name = MakeName ((string) $4);
+		string name;
 
-		new_class = new Class (current_container, full_class_name, (int) $2, 
+		name = MakeName ((string) $4);
+
+		new_class = new Class (current_container, name, (int) $2, 
 				       (Attributes) $1, lexer.Location);
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
-		RootContext.Tree.RecordClass (full_class_name, new_class);
+		RootContext.Tree.RecordClass (name, new_class);
 	  }
 	  opt_class_base
 	  class_body 
@@ -3065,7 +3072,7 @@ catch_clause
 		}
 
 
-		$$ = new Catch (type, id , (Block) $4);
+		$$ = new Catch (type, id , (Block) $4, lexer.Location);
 	}
         ;
 
@@ -3266,15 +3273,15 @@ MakeName (string class_name)
 //   in the current declaration space
 // </summary>
 void 
-CheckDef (DeclSpace.AdditionResult result, string name)
+CheckDef (AdditionResult result, string name)
 {
-	if (result == DeclSpace.AdditionResult.Success)
+	if (result == AdditionResult.Success)
 		return;
 
 	Location l = lexer.Location;
 	
 	switch (result){
-	case DeclSpace.AdditionResult.NameExists:
+	case AdditionResult.NameExists:
 		Report.Error (102, l, "The namespace `" + current_container.Name + 
 				 "' already contains a definition for `"+
 				 name + "'");
@@ -3283,17 +3290,17 @@ CheckDef (DeclSpace.AdditionResult result, string name)
 
 //	NEED TO HANDLE THIS IN SEMANTIC ANALYSIS:
 //
-//  	case DeclSpace.AdditionResult.MethodDuplicated:
+//  	case AdditionResult.MethodDuplicated:
 //  		error (111, "Class `"+current_container.Name+
 //  			    "' already defines a member called '" + 
 //  			    name + "' with the same parameter types");
 //  		break;
 
-	case DeclSpace.AdditionResult.EnclosingClash:
+	case AdditionResult.EnclosingClash:
 		Report.Error (542, l, "Member names cannot be the same as their enclosing type");
 		break;
 		
-	case DeclSpace.AdditionResult.NotAConstructor:
+	case AdditionResult.NotAConstructor:
 		Report.Error (1520, l, "Class, struct, or interface method must have a return type");
 		break;
 	}
@@ -3304,7 +3311,7 @@ CheckDef (bool result, string name)
 {
 	if (result)
 		return;
-	CheckDef (DeclSpace.AdditionResult.NameExists, name);
+	CheckDef (AdditionResult.NameExists, name);
 }
 
 Expression

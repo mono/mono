@@ -54,7 +54,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override bool Define (TypeContainer parent)
 		{
-			type = parent.LookupType (ConstantType, true);
+			type = RootContext.LookupType (parent, ConstantType, true, Location);
 
 			if (type == null)
 				return false;
@@ -112,7 +112,7 @@ namespace Mono.CSharp {
 			}
 
 			ConstantValue = ((Literal) Expr).GetValue ();
-			
+
 			FieldBuilder.SetConstant (ConstantValue);
 
 			if (!TypeManager.RegisterField (FieldBuilder, ConstantValue))

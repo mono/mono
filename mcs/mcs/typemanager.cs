@@ -257,7 +257,7 @@ public class TypeManager {
 	public Type LookupType (string name)
 	{
 		Type t;
-
+		
 		//
 		// First lookup in user defined and cached values
 		//

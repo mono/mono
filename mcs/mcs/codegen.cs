@@ -188,7 +188,7 @@ namespace Mono.CSharp {
 				
 				if (Report.Errors == errors){
 					has_ret = block.Emit (this);
-					
+
 					if (Report.Errors == errors)
 						block.UsageWarning ();
 				}

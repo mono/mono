@@ -1,4 +1,30 @@
+2001-12-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Indexer.Define): Fix bug, we were setting both Get/Set
+	builders even if we were missing one.
+
+	* interface.cs, class.cs, enum.cs: When calling DefineNestedType
+	pass the Basename as our class name instead of the Name.  The
+	basename will be correctly composed for us.
+
+	* parameter.cs (Paramters): Now takes a Location argument.
+
+	* decl.cs (DeclSpace.LookupType): Removed convenience function and
+	make all the code call directly LookupType in RootContext and take
+	this chance to pass the Location information everywhere.
+
+	* Everywhere: pass Location information.
+
 2001-12-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Constructor.Define): Updated way of detecting the
+	length of the parameters.
+
+	(TypeContainer.DefineType): Use basename as the type name for
+	nested types.
+
+	(TypeContainer.Define): Do not recursively define types here, as
+	definition is taken care in order by the RootContext.
 
 	* tree.cs: Keep track of namespaces in a per-file basis.
 

@@ -45,8 +45,8 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Delegate (string type, int mod_flags, string name, Parameters param_list,
-				 Attributes attrs, Location loc)
-			: base (name, loc)
+				 Attributes attrs, Location l)
+			: base (name, l)
 		{
 			this.ReturnType = type;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
@@ -102,7 +102,7 @@ namespace Mono.CSharp {
 			Parameter [] fixed_pars = new Parameter [2];
 			fixed_pars [0] = new Parameter (null, null, Parameter.Modifier.NONE, null);
 			fixed_pars [1] = new Parameter (null, null, Parameter.Modifier.NONE, null);
-			Parameters const_parameters = new Parameters (fixed_pars, null);
+			Parameters const_parameters = new Parameters (fixed_pars, null, Location);
 			
 			TypeManager.RegisterMethod (
 				ConstructorBuilder,
@@ -126,7 +126,7 @@ namespace Mono.CSharp {
 				if (!TypeContainer.AsAccessible (partype, ModFlags))
 					return false;
 			
-  			ret_type = parent.LookupType (ReturnType, false);
+  			ret_type = RootContext.LookupType (parent, ReturnType, false, Location);
 			if (ret_type == null)
 				return false;
 
@@ -203,7 +203,7 @@ namespace Mono.CSharp {
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
 						    new InternalParameters (
 							    parent,
-							    new Parameters (async_params, null)),
+							    new Parameters (async_params, null, Location)),
 						    async_param_types);
 
 			//
@@ -227,7 +227,8 @@ namespace Mono.CSharp {
 
 			TypeManager.RegisterMethod (EndInvokeBuilder,
 						    new InternalParameters (
-							    parent, new Parameters (end_params, null)),
+							    parent,
+							    new Parameters (end_params, null, Location)),
 						    end_param_types);
 
 			return true;

@@ -277,7 +277,7 @@ namespace Mono.CSharp {
 		//
 		void PopulateMethod (InterfaceMethod im)
 		{
-			Type return_type = LookupType (im.ReturnType, false);
+			Type return_type = RootContext.LookupType (this, im.ReturnType, false, im.Location);
 			Type [] arg_types = im.ParameterTypes (this);
 			MethodBuilder mb;
 			Parameter [] p;
@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 		{
 			PropertyBuilder pb;
 			MethodBuilder get = null, set = null;
-			Type prop_type = LookupType (ip.Type, false);
+			Type prop_type = RootContext.LookupType (this, ip.Type, false, ip.Location);
 			Type [] setter_args = new Type [1];
 
 			if (prop_type == null)
@@ -373,7 +373,7 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (ip.Type, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ipp = new InternalParameters (
-					parent, new Parameters (parms, null));
+					parent, new Parameters (parms, null, Location.Null));
 					
 				if (!RegisterMethod (set, ipp, setter_args)) {
 					Error111 (ip);
@@ -402,7 +402,7 @@ namespace Mono.CSharp {
 		void PopulateIndexer (InterfaceIndexer ii)
 		{
 			PropertyBuilder pb;
-			Type prop_type = LookupType (ii.Type, false);
+			Type prop_type = RootContext.LookupType (this, ii.Type, false, ii.Location);
 			Type [] arg_types = ii.ParameterTypes (this);
 			Type [] value_arg_types;
 
@@ -636,7 +636,7 @@ namespace Mono.CSharp {
 			} else {
 				TypeBuilder builder = (TypeBuilder) parent_builder;
 
-				TypeBuilder = builder.DefineNestedType (Name,
+				TypeBuilder = builder.DefineNestedType (Basename,
 									TypeAttributes.Interface |
 									InterfaceAttr |
 									TypeAttributes.Abstract,
@@ -706,14 +706,17 @@ namespace Mono.CSharp {
 		public readonly bool HasGet;
 		public readonly string Type;
 		public readonly string type;
+		public readonly Location Location;
 		
 		public InterfaceProperty (string type, string name,
-					  bool is_new, bool has_get, bool has_set, Attributes attrs)
+					  bool is_new, bool has_get, bool has_set,
+					  Attributes attrs, Location loc)
 			: base (name, is_new, attrs)
 		{
 			Type = type;
 			HasGet = has_get;
 			HasSet = has_set;
+			Location = loc;
 		}
 	}
 
@@ -730,12 +733,15 @@ namespace Mono.CSharp {
 	public class InterfaceMethod : InterfaceMemberBase {
 		public readonly string     ReturnType;
 		public readonly Parameters Parameters;
+		public readonly Location Location;
 		
-		public InterfaceMethod (string return_type, string name, bool is_new, Parameters args, Attributes attrs)
+		public InterfaceMethod (string return_type, string name, bool is_new, Parameters args,
+					Attributes attrs, Location l)
 			: base (name, is_new, attrs)
 		{
 			this.ReturnType = return_type;
 			this.Parameters = args;
+			Location = l;
 		}
 
 		/// <summary>
@@ -743,7 +749,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string GetSignature (DeclSpace ds)
 		{
-			Type ret = ds.LookupType (ReturnType, false);
+			Type ret = RootContext.LookupType (ds, ReturnType, false, Location);
 			string args = Parameters.GetSignature (ds);
 
 			if ((ret == null) || (args == null))
@@ -762,15 +768,17 @@ namespace Mono.CSharp {
 		public readonly bool HasGet, HasSet;
 		public readonly Parameters Parameters;
 		public readonly string Type;
+		public readonly Location Location;
 		
-		public InterfaceIndexer (string type, Parameters args, bool do_get, bool do_set, bool is_new,
-					 Attributes attrs)
+		public InterfaceIndexer (string type, Parameters args, bool do_get, bool do_set,
+					 bool is_new, Attributes attrs, Location loc)
 			: base ("", is_new, attrs)
 		{
 			Type = type;
 			Parameters = args;
 			HasGet = do_get;
 			HasSet = do_set;
+			Location = loc;
 		}
 
 		public Type [] ParameterTypes (DeclSpace ds)

@@ -111,8 +111,10 @@ namespace Mono.CSharp {
 					attr |= TypeAttributes.NestedPublic;
 				else
 					attr |= TypeAttributes.NestedPrivate;
+
 				
-				EnumBuilder = builder.DefineNestedType (Name, attr, TypeManager.enum_type);
+				EnumBuilder = builder.DefineNestedType (
+					Basename, attr, TypeManager.enum_type);
 			}
 
 			EnumBuilder.DefineField ("value__", UnderlyingType,

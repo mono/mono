@@ -19,7 +19,6 @@ using System.Text;
 namespace Mono.CSharp {
 
 	public class Attribute {
-		
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
@@ -69,12 +68,13 @@ namespace Mono.CSharp {
 				name = Name + "Attribute";
 			else if (Name.LastIndexOf ("Attribute") == 0)
 				name = Name + "Attribute";
-			
-			Type = ec.TypeContainer.LookupType (name, false);
+
+			Type = RootContext.LookupType (ec.TypeContainer, name, false, Location);
 
 			if (Type == null) {
-				Report.Error (246, Location, "Could not find attribute '" + Name + "' (are you" +
-					      " missing a using directive or an assembly reference ?)");
+				Report.Error (
+					246, Location, "Could not find attribute '" + Name + "' (are you" +
+					" missing a using directive or an assembly reference ?)");
 				return null;
 			}
 
@@ -397,7 +397,7 @@ namespace Mono.CSharp {
 			else if (Name.LastIndexOf ("Attribute") == 0)
 				attr_name = Name + "Attribute";
 			
-			Type = ec.TypeContainer.LookupType (attr_name, false);
+			Type = RootContext.LookupType (ec.TypeContainer, attr_name, false, Location);
 
 			if (Type == null) {
 				Report.Error (246, Location, "Could not find attribute '" + Name + "' (are you" +

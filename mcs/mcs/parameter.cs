@@ -43,9 +43,9 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		public bool Resolve (DeclSpace ds)
+		public bool Resolve (DeclSpace ds, Location l)
 		{
-			ParameterType = ds.LookupType (TypeName, false);
+			ParameterType = RootContext.LookupType (ds, TypeName, false, l);
 			return ParameterType != null;
 		}
 
@@ -93,10 +93,10 @@ namespace Mono.CSharp {
 		///   Returns the signature for this parameter evaluating it on the
 		///   @tc context
 		/// </summary>
-		public string GetSignature (DeclSpace ds)
+		public string GetSignature (DeclSpace ds, Location loc)
 		{
 			if (ParameterType == null){
-				if (!Resolve (ds))
+				if (!Resolve (ds, loc))
 					return null;
 			}
 
@@ -112,13 +112,15 @@ namespace Mono.CSharp {
 		public readonly Parameter ArrayParameter;
 		string signature;
 		Type [] types;
+		Location loc;
 		
 		static Parameters empty_parameters;
 		
-		public Parameters (Parameter [] fixed_parameters, Parameter array_parameter)
+		public Parameters (Parameter [] fixed_parameters, Parameter array_parameter, Location l)
 		{
 			FixedParameters = fixed_parameters;
 			ArrayParameter  = array_parameter;
+			loc = l;
 		}
 
 		/// <summary>
@@ -128,7 +130,7 @@ namespace Mono.CSharp {
 		public static Parameters GetEmptyReadOnlyParameters ()
 		{
 			if (empty_parameters == null)
-				empty_parameters = new Parameters (null, null);
+				empty_parameters = new Parameters (null, null, Location.Null);
 			
 			return empty_parameters;
 		}
@@ -146,7 +148,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < FixedParameters.Length; i++){
 					Parameter par = FixedParameters [i];
 					
-					signature += par.GetSignature (ds);
+					signature += par.GetSignature (ds, loc);
 				}
 			}
 			//
@@ -235,7 +237,7 @@ namespace Mono.CSharp {
 			foreach (Parameter p in FixedParameters){
 				Type t = null;
 				
-				if (p.Resolve (ds))
+				if (p.Resolve (ds, loc))
 					t = p.ExternalType ();
 				
 				types [i] = t;
@@ -243,7 +245,7 @@ namespace Mono.CSharp {
 			}
 
 			if (extra > 0){
-				if (ArrayParameter.Resolve (ds))
+				if (ArrayParameter.Resolve (ds, loc))
 					types [i] = ArrayParameter.ExternalType ();
 			}
 

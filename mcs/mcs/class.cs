@@ -911,7 +911,7 @@ namespace Mono.CSharp {
 				// appended
 				//
 				if (!is_class && Fields == null)
-					TypeBuilder = builder.DefineNestedType (Name,
+					TypeBuilder = builder.DefineNestedType (Basename,
 										TypeAttr,
 										parent, 
 										PackingSize.Unspecified);
@@ -919,7 +919,7 @@ namespace Mono.CSharp {
 				//
 				// classes or structs with fields
 				//
-					TypeBuilder = builder.DefineNestedType (Name,
+					TypeBuilder = builder.DefineNestedType (Basename,
 										TypeAttr,
 										parent,
 										ifaces);
@@ -980,6 +980,11 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				if (defined_names [idx] is PropertyInfo &&
+				    ((mc.ModFlags & Modifiers.OVERRIDE) != 0)){
+					continue;
+				}
+				    
 #if WANT_TO_VERIFY_SIGNATURES_HERE
 				if (defined_names [idx] is MethodBase && mc is MethodCore){
 					MethodBase mb = (MethodBase) defined_names [idx];
@@ -1093,9 +1098,6 @@ namespace Mono.CSharp {
 			
 			if (delegates != null)
 				DefineMembers (delegates, defined_names);
-
-			if (types != null)
-				DefineMembers (types, defined_names);
 
 			return true;
 		}
@@ -1503,20 +1505,21 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (types != null)
-				foreach (TypeContainer tc in types)
-					tc.Emit ();
+//			if (types != null)
+//				foreach (TypeContainer tc in types)
+//					tc.Emit ();
 		}
 		
 		public void CloseType ()
 		{
+			TypeBuilder.CreateType ();
 			try {
-				TypeBuilder.CreateType ();
 			} catch (InvalidOperationException e){
 				Console.WriteLine ("Exception while creating class: " + TypeBuilder.Name);
-				Console.WriteLine ("Message:" + e.Message);
+				Console.WriteLine ("Message: " + e.Message);
 			}
 			
+
 			if (Types != null)
 				foreach (TypeContainer tc in Types)
 					tc.CloseType ();
@@ -1880,7 +1883,8 @@ namespace Mono.CSharp {
 		public Type GetReturnType (TypeContainer parent)
 		{
 			if (type_return_type == null)
-				type_return_type = parent.LookupType (ReturnType, false);
+				type_return_type = RootContext.LookupType (
+					parent, ReturnType, false, Location);
 			
 			return type_return_type;
 		}
@@ -1979,7 +1983,7 @@ namespace Mono.CSharp {
 				int pos = Name.LastIndexOf (".");
 				iface = Name.Substring (0, pos);
 
-				iface_type = parent.LookupType (iface, false);
+				iface_type = RootContext.LookupType (parent, iface, false, Location);
 				short_name = Name.Substring (pos + 1);
 
 				if (iface_type == null)
@@ -2334,7 +2338,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ca |= MethodAttributes.Static;
 			else {
-				if (parent is Struct && parameters == null){
+				if (parent is Struct && parameters.Length == 0){
 					Report.Error (
 						568, Location, 
 						"Structs can not contain explicit parameterless " +
@@ -2451,7 +2455,7 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer parent)
 		{
-			Type t = parent.LookupType (Type, false);
+			Type t = RootContext.LookupType (parent, Type, false, Location);
 
 			if (t == null)
 				return false;
@@ -2717,7 +2721,7 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ip = new InternalParameters (
-					parent, new Parameters (parms, null));
+					parent, new Parameters (parms, null, Location));
 
 				if (!TypeManager.RegisterMethod (SetBuilder, ip, parameters)) {
 					Report.Error (
@@ -2742,7 +2746,7 @@ namespace Mono.CSharp {
 				return false;
 
 			// Lookup Type, verify validity
-			PropertyType = parent.LookupType (Type, false);
+			PropertyType = RootContext.LookupType (parent, Type, false, Location);
 			if (PropertyType == null)
 				return false;
 
@@ -2760,7 +2764,7 @@ namespace Mono.CSharp {
 				int pos = Name.LastIndexOf (".");
 				string iface = Name.Substring (0, pos);
 
-				iface_type = parent.LookupType (iface, false);
+				iface_type = RootContext.LookupType (parent, iface, false, Location);
 				if (iface_type == null)
 					return false;
 
@@ -3029,7 +3033,7 @@ namespace Mono.CSharp {
 			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
 
-			EventType = parent.LookupType (Type, false);
+			EventType = RootContext.LookupType (parent, Type, false, Location);
 			if (EventType == null)
 				return false;
 
@@ -3059,7 +3063,7 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ip = new InternalParameters (
-					parent, new Parameters (parms, null)); 
+					parent, new Parameters (parms, null, Location)); 
 				
 				if (!TypeManager.RegisterMethod (AddBuilder, ip, parameters)) {
 					Report.Error (111, Location,
@@ -3082,7 +3086,7 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ip = new InternalParameters (
-					parent, new Parameters (parms, null));
+					parent, new Parameters (parms, null, Location));
 				
 				if (!TypeManager.RegisterMethod (RemoveBuilder, ip, parameters)) {
 					Report.Error (111, Location,	
@@ -3197,7 +3201,7 @@ namespace Mono.CSharp {
 				PropertyAttributes.SpecialName;
 			bool error = false;
 			
-			IndexerType = parent.LookupType (Type, false);
+			IndexerType = RootContext.LookupType (parent, Type, false, Location);
 			Type [] parameters = FormalParameters.GetParameterInfo (parent);
 
 			// Check if the return type and arguments were correct
@@ -3234,6 +3238,7 @@ namespace Mono.CSharp {
 						      "'get' indexer");
 					return false;
 				}
+				PropertyBuilder.SetGetMethod (GetBuilder);
 			}
 			
 			if (Set != null){
@@ -3249,7 +3254,7 @@ namespace Mono.CSharp {
 				fixed_parms.CopyTo (tmp, 0);
 				tmp [fixed_parms.Length] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
 
-				Parameters set_formal_params = new Parameters (tmp, null);
+				Parameters set_formal_params = new Parameters (tmp, null, Location);
 				
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 					"set_Item", attr, null, set_pars);
@@ -3262,11 +3267,9 @@ namespace Mono.CSharp {
 					       "'set' indexer");
 					return false;
 				}
+				PropertyBuilder.SetSetMethod (SetBuilder);
 			}
 
-			PropertyBuilder.SetGetMethod (GetBuilder);
-			PropertyBuilder.SetSetMethod (SetBuilder);
-			
 			Parameter [] p = FormalParameters.FixedParameters;
 
 			if (p != null) {
@@ -3450,7 +3453,7 @@ namespace Mono.CSharp {
 							       Parameter.Modifier.NONE, null);
 			
 			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
-						     new Parameters (param_list, null),
+						     new Parameters (param_list, null, Location),
 						     OptAttributes, Location.Null);
 			
 			OperatorMethod.Define (parent);

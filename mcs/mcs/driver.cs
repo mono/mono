@@ -95,7 +95,8 @@ namespace Mono.CSharp
 				"   --werror        Treat warnings as errors\n" +
 				"   --wlevel LEVEL  Sets warning level (the highest is 4, the default)\n" +
 				"   -r              References an assembly\n" +
-				"   -v              Verbose parsing (for debugging the parser)\n");
+				"   -v              Verbose parsing (for debugging the parser)\n" +
+                                "   @file           Read response file for more options");
 			if (is_error)
 				error_count++;
 		}

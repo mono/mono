@@ -2529,10 +2529,11 @@ namespace Mono.CSharp {
 				//
 				// Stage 3: Lookup symbol in the various namespaces. 
 				// 
+				DeclSpace ds = ec.TypeContainer;
 				Type t;
 				string alias_value;
 
-				if ((t = ec.TypeContainer.LookupType (Name, true)) != null)
+				if ((t = RootContext.LookupType (ds, Name, true, Location)) != null)
 					return new TypeExpr (t);
 
 				//
@@ -2545,7 +2546,8 @@ namespace Mono.CSharp {
 
 				if (Name.IndexOf ('.') == -1 && (alias_value = ec.TypeContainer.LookupAlias (Name)) != null) {
 					// System.Console.WriteLine (Name + " --> " + alias_value);
-					if ((t = ec.TypeContainer.LookupType (alias_value, true)) != null)
+					if ((t = RootContext.LookupType (ds, alias_value, true, Location))
+					    != null)
 						return new TypeExpr (t);
 
 					// we have alias value, but it isn't Type, so try if it's namespace
