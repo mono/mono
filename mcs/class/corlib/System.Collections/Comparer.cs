@@ -43,7 +43,7 @@ namespace System.Collections {
 		}
 
 #if NET_1_1
-		private Comparer (CultureInfo culture)
+		public Comparer (CultureInfo culture)
 		{
 			_culture = culture;
 		}
