@@ -18,7 +18,6 @@ namespace Mono.ILASM {
 		protected class ExternAssembly {
 			
 			public PEAPI.AssemblyRef AssemblyRef;
-			public Assembly Assembly;
 			
 			protected PEAPI.PEFile pefile;
 			protected Hashtable type_table;
@@ -29,7 +28,6 @@ namespace Mono.ILASM {
 				type_table = new Hashtable ();
 				this.pefile = pefile;
 				AssemblyRef = pefile.AddExternAssembly (name);
-				Assembly = Assembly.Load (asmb_name);
 			}
 
 			public PEAPI.Class GetType (string name_space, string name)
@@ -40,14 +38,6 @@ namespace Mono.ILASM {
 				
 				if (klass != null)
 					return klass;
-
-				// Make sure the type exists
-				Type type = Assembly.GetType (full_name);
-
-				if (type == null) {
-					throw new Exception (String.Format ("Assembly {0} " + 
-					" does not contain type {1}", AssemblyName.Name, full_name));
-				}
 
 				klass = AssemblyRef.AddClass (name_space, name);
 				type_table[full_name] = klass;
@@ -86,7 +76,6 @@ namespace Mono.ILASM {
 
 			if (ext_asmb == null)
 				throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
-			
 			
 			return ext_asmb.GetType (name_space, name);
 		}
