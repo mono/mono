@@ -1,13 +1,14 @@
 //
 // System.IO.MemoryStream 
 //
-// Author: Marcin Szczepanski (marcins@zipworld.com.au)
+// Author:	Marcin Szczepanski (marcins@zipworld.com.au)
+//		Patrik Torstensson
 //
 // TODO: Clarify some of the lamespec issues
 //
 
 namespace System.IO {
-		[Serializable]
+	[Serializable]
         public class MemoryStream : Stream {
                 private bool canRead;
                 private bool canSeek;
@@ -110,7 +111,7 @@ namespace System.IO {
                         internalBuffer = new byte[ count ];
                         capacity = count;
 
-                        Array.Copy( buffer, index, internalBuffer, 0, count );
+			Buffer.BlockCopyInternal (buffer, index, internalBuffer, 0, count);
 
                         allowGetBuffer = publicallyVisible;
                         expandable = false;                
@@ -148,7 +149,7 @@ namespace System.IO {
                                 }
 
                                 byte[] newBuffer = new byte[ value ];
-                                Array.Copy( internalBuffer, 0, newBuffer, 0, capacity );
+				Buffer.BlockCopyInternal (internalBuffer, 0, newBuffer, 0, capacity);
                                 capacity = value;
                         }
                 }
@@ -230,7 +231,7 @@ namespace System.IO {
                                 ReadTo = position + (long)count;
                         }
 
-                        Array.Copy( internalBuffer, (int)position, buffer, offset, (int)(ReadTo - position) );
+			Buffer.BlockCopyInternal (internalBuffer, (int)position, buffer, offset, (int)(ReadTo - position) );
 
                         int bytesRead = (int)(ReadTo - position);
 
@@ -319,10 +320,10 @@ namespace System.IO {
                         
                         if (value < internalBuffer.Length) {
                                 // truncate
-                                Array.Copy( internalBuffer, 0, newBuffer, 0, (int)value );                              
+				Buffer.BlockCopyInternal (internalBuffer, 0, newBuffer, 0, (int)value );
                         } else {
                                 // expand
-                                 Array.Copy( internalBuffer, 0, newBuffer, 0, internalBuffer.Length );
+				Buffer.BlockCopyInternal (internalBuffer, 0, newBuffer, 0, internalBuffer.Length );
                         }
                         internalBuffer = newBuffer;
                         capacity = (int)value;
@@ -332,7 +333,8 @@ namespace System.IO {
                 
                 public virtual byte[] ToArray() { 
                         byte[] outBuffer = new byte[capacity];
-                        Array.Copy( internalBuffer, 0, outBuffer, 0, capacity);
+			
+			Buffer.BlockCopyInternal (internalBuffer, 0, outBuffer, 0, capacity);
                         return outBuffer; 
                 }
 
@@ -364,7 +366,7 @@ namespace System.IO {
 			if( position + count >= internalBuffer.Length )
 				SetLength( position + count );
 
-                        Array.Copy( buffer, offset, internalBuffer, (int)position, count );
+			Buffer.BlockCopyInternal (buffer, offset, internalBuffer, (int)position, count);
                         position += count;
                 }
 

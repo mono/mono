@@ -1,3 +1,8 @@
+2003-01-31  Patrik Torstensson
+
+	* MemoryStream.cs: use BlockCopyInternal instead of Array.Copy, this is
+	the same way as MS does it (performance improvement)
+
 2003-01-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Directory.cs (GetFileSystemEntries): moved error handling to the
