@@ -76,6 +76,7 @@ void BuildOperationInfo ()
 	}
 
 	InputParamsRepeater.DataSource = InParams;
+	InputFormParamsRepeater.DataSource = InParams;
 	OutputParamsRepeater.DataSource = OutParams;
 }
 
@@ -190,6 +191,10 @@ class Parameter
 		.label { font-size: x-small; font-weight:bold; color:darkgray }
 		.paramTable { font-size: x-small }
 		.paramTable TR { background-color: gainsboro }
+		.paramFormTable { font-size: x-small; padding: 10px; background-color: gainsboro }
+		.paramFormTable TR { background-color: gainsboro }
+		.paramInput { border: solid 1px gray }
+		.button {border: solid 1px gray }
 		.smallSeparator { height:3px; overflow:hidden }
 		.panel { background-color:whitesmoke; border: solid 1px silver; border-top: solid 1px silver  }
 		A:link { color: black; }
@@ -243,7 +248,6 @@ class Parameter
 				<tr>
 				<td width="150"><%#DataBinder.Eval(Container.DataItem, "Name")%></td>
 				<td width="150"><%#DataBinder.Eval(Container.DataItem, "Type")%></td>
-<!--				<td><%#DataBinder.Eval(Container.DataItem, "Description")%></td>-->
 				</tr>
 			</itemtemplate>
 		</asp:repeater>
@@ -259,7 +263,6 @@ class Parameter
 				<tr>
 				<td width="150"><%#DataBinder.Eval(Container.DataItem, "Name")%></td>
 				<td width="150"><%#DataBinder.Eval(Container.DataItem, "Type")%></td>
-<!--				<td><%#DataBinder.Eval(Container.DataItem, "Description")%></td> -->
 				</tr>
 			</itemtemplate>
 		</asp:repeater>
@@ -268,6 +271,24 @@ class Parameter
 	<% } %>
 	<span class="label">Remarks</span>
 	<br><%#OperationDocumentation%>
+	<% if (true) { %>
+		<br><br>
+		<span class="label">Test</span><br>
+		Enter values for the parameters and click the 'Invoke' button to test this method:<br><br>
+		<form action="<%#PageName%>/<%#CurrentOperationName%>" method="POST">
+		<table class="paramFormTable" cellspacing="0" cellpadding="3">
+		<asp:repeater id="InputFormParamsRepeater" runat=server>
+			<itemtemplate>
+				<tr>
+				<td><%#DataBinder.Eval(Container.DataItem, "Name")%>:&nbsp;</td>
+				<td width="150"><input class="paramInput" type="text" size="20" name="<%#DataBinder.Eval(Container.DataItem, "Name")%>"></td>
+				</tr>
+			</itemtemplate>
+		</asp:repeater>
+		<tr><td></td><td><input class="button" type="submit" value="Invoke"></td></tr>
+		</table>
+		</form>
+	<% } %>
 <%}%>
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </td>
