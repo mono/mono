@@ -2,6 +2,8 @@ thisdir = nunit20/util
 SUBDIRS = 
 include ../../build/rules.make
 
+CLEAN_FILES = Transform.resources
+
 LIBRARY = NUnit.Util.dll
 LIBRARY_NAME = nunit.util.dll
 LIBRARY_SNK = $(topdir)/nunit.key
