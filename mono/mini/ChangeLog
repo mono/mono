@@ -1,5 +1,10 @@
 2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_local_regalloc): Fix bug in long register
+	allocation. Fixes #63085.
+
+	* basic-long.cs: Add new regression test.
+
 	* mini-amd64.c: Register allocator improvements.
 
 2004-08-21  Zoltan Varga  <vargaz@freemail.hu>
