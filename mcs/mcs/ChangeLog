@@ -1,5 +1,11 @@
 2002-12-22  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (FieldExpr.DoResolve): Instead of throwing an
+	exception, report error 120 `object reference required'.
+
+	* driver.cs: Add --pause option, used during to measure the size
+	of the process as it goes with --timestamp.
+
 	* expression.cs (Invocation.DoResolve): Do not allow methods with
 	SpecialName to be invoked.
 
