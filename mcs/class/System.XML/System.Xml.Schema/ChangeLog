@@ -1,3 +1,8 @@
+2005-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs : Write() should handle carefully output
+	  namespace/prefix mapping.
+
 2004-09-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs, SchemaDataValueType.cs :

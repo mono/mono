@@ -893,8 +893,6 @@ namespace System.Xml.Schema
 			XmlSerializerNamespaces nss = new XmlSerializerNamespaces ();
 
 			if (namespaceManager != null) {
-				if (nss == null)
-					nss = new XmlSerializerNamespaces ();
 				foreach (string name in namespaceManager) {
 					//xml and xmlns namespaces are added by default in namespaceManager.
 					//So we should ignore them
@@ -904,10 +902,21 @@ namespace System.Xml.Schema
 			}
 
 			if (Namespaces != null && Namespaces.Count > 0) {
-				nss.Add (String.Empty, XmlSchema.Namespace);
-				foreach (XmlQualifiedName qn in Namespaces.ToArray ()) {
+				XmlQualifiedName [] qnames = Namespaces.ToArray ();
+				foreach (XmlQualifiedName qn in qnames)
 					nss.Add (qn.Name, qn.Namespace);
+				string p = String.Empty;
+				bool loop = true;
+				for (int idx = 1; loop; idx++) {
+					loop = false;
+					foreach (XmlQualifiedName qn in qnames)
+						if (qn.Name == p) {
+							p = "q" + idx;
+							loop = true;
+							break;
+						}
 				}
+				nss.Add (p, XmlSchema.Namespace);
 			}
 
 			if (nss.Count == 0) {
