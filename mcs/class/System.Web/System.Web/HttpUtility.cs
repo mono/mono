@@ -598,7 +598,7 @@ namespace System.Web {
 			if (offset < 0 || offset >= len)
 				throw new ArgumentOutOfRangeException("offset");
 
-			if (count < 0 || offset < len - count)
+			if (count < 0 || count > len - offset)
 				throw new ArgumentOutOfRangeException("count");
 
 			MemoryStream result = new MemoryStream ();
