@@ -1,7 +1,15 @@
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlComment.cs, XmlNode.cs, XmlText.cs, XmlProcessingInstruction.cs,
+	  XmlEntityReference.cs, XmlSignificantWhitespace.cs, XmlAttribute.cs,
+	  XmlElement.cs, XmlEntity.cs, XmlCDataSection.cs :
+	  For those nodes that are created by Clone(), IsReadOnly is false.
+	  Patch by Konstantin Triger.
+
+2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocumentNavigator.cs : iteratedNames array could be fixed and
-	  performance got improved. Patch by Knstantin Triger.
+	  performance got improved. Patch by Konstantin Triger.
 
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 

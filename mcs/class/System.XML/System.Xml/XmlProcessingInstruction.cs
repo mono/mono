@@ -111,8 +111,6 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlNode n = new XmlProcessingInstruction (target, data, OwnerDocument);
-			if (IsReadOnly)
-				n.SetReadOnly ();
 			return n;
 		}
 

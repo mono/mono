@@ -76,8 +76,6 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlText newText = OwnerDocument.CreateTextNode(Data);
-			if (IsReadOnly)
-				newText.SetReadOnly ();
 			return newText;
 		}
 

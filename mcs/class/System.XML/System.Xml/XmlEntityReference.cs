@@ -122,7 +122,6 @@ namespace System.Xml
 				for (int i = 0; i < ent.ChildNodes.Count; i++)
 					InsertBefore (ent.ChildNodes [i].CloneNode (true), null, false, true);
 			}
-			SetReadOnly (this);
 		}
 	}
 }

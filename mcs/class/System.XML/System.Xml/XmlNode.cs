@@ -50,7 +50,6 @@ namespace System.Xml
 		XmlNode parentNode;
 		XmlLinkedNode lastLinkedChild;
 		XmlNodeListChildren childNodes;
-		bool isReadOnly;
 
 		#endregion
 
@@ -144,7 +143,30 @@ namespace System.Xml
 		}
 
 		public virtual bool IsReadOnly {
-			get { return isReadOnly; }
+			get 
+			{
+				XmlNode curNode = this;
+				do
+				{
+					switch (curNode.NodeType) 
+					{
+						case XmlNodeType.EntityReference:
+						case XmlNodeType.Entity:
+							return true;
+
+						case XmlNodeType.Attribute:
+							curNode = ((XmlAttribute)curNode).OwnerElement;
+							break;
+
+						default:
+							curNode = curNode.ParentNode;
+							break;
+					}
+				}
+				while (curNode != null) ;
+
+				return false;
+			}
 		}
 
 		[System.Runtime.CompilerServices.IndexerName("Item")]
@@ -759,21 +781,6 @@ namespace System.Xml
 			if (!iter.MoveNext ())
 				return null;
 			return ((IHasXmlNode) iter.Current).GetNode ();
-		}
-
-		internal static void SetReadOnly (XmlNode n)
-		{
-			if (n.Attributes != null)
-				for (int i = 0; i < n.Attributes.Count; i++)
-					SetReadOnly (n.Attributes [i]);
-			for (int i = 0; i < n.ChildNodes.Count; i++)
-				SetReadOnly (n.ChildNodes [i]);
-			n.isReadOnly = true;
-		}
-
-		internal void SetReadOnly ()
-		{
-			isReadOnly = true;
 		}
 
 		public virtual bool Supports (string feature, string version)

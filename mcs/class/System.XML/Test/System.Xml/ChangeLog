@@ -1,5 +1,10 @@
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNodeTests.cs : added Clone() of readonly node returns a node
+	  that is not readonly.
+
+2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttributeTests.cs : added nonNCName Prefix case.
 
 2005-02-24  Atsushi Enomoto <atsushi@ximian.com>

@@ -61,8 +61,6 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlNode n = new XmlCDataSection (Data, OwnerDocument); // CDATA nodes have no children.
-			if (IsReadOnly)
-				n.SetReadOnly ();
 			return n;
 		}
 

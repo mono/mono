@@ -72,8 +72,6 @@ namespace System.Xml
 		{
 			// discard deep because Comments have no children.
 			XmlNode n = new XmlComment(Value, OwnerDocument); 
-			if (IsReadOnly)
-				n.SetReadOnly ();
 			return n;
 		}
 

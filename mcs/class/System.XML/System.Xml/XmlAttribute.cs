@@ -260,8 +260,6 @@ namespace System.Xml
 					node.AppendChild (ChildNodes [i].CloneNode (deep));
 			}
 
-			if (IsReadOnly)
-				node.SetReadOnly ();
 			return node;
 		}
 

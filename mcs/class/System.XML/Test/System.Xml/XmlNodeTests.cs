@@ -445,5 +445,22 @@ namespace MonoTests.System.Xml
 			XmlAttribute attr = doc.CreateAttribute ("attr");
 			AssertEquals (String.Empty, attr.BaseURI);
 		}
+
+		[Test]
+		public void CloneReadonlyNode ()
+		{
+			// Clone() should return such node that is not readonly
+			string dtd = "<!DOCTYPE root ["
+				+ "<!ELEMENT root (#PCDATA|foo)*>"
+				+ "<!ELEMENT foo EMPTY>"
+				+ "<!ENTITY ent1 '<foo /><![CDATA[cdata]]>'>]>";
+			string xml = dtd + "<root>&ent1;</root>";
+
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XmlNode n = doc.DocumentElement.FirstChild.FirstChild;
+			Assert ("#1", n.IsReadOnly);
+			Assert ("#2", !n.CloneNode (true).IsReadOnly);
+		}
 	}
 }

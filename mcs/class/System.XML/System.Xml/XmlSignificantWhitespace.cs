@@ -73,8 +73,6 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlNode n = new XmlSignificantWhitespace (Data, OwnerDocument);
-			if (IsReadOnly)
-				n.SetReadOnly ();
 			return n;
 		}
 

@@ -167,8 +167,6 @@ namespace System.Xml
 				if(n == null) break;
 				InsertBefore (n, null, false, false);
 			} while (true);
-
-			SetReadOnly (this);
 		}
 		#endregion
 	}
