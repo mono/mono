@@ -283,7 +283,29 @@ namespace Mono.CSharp {
 				      (expr_type == TypeManager.int64_type) ||
 				      (expr_type == TypeManager.uint64_type) ||
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
-					Error23 (Expr.Type);
+					Expression e;
+
+					e = ConvertImplicit (ec, Expr, TypeManager.int32_type, loc);
+					if (e != null){
+						type = TypeManager.int32_type;
+						return this;
+					}
+					e = ConvertImplicit (ec, Expr, TypeManager.uint32_type, loc);
+					if (e != null){
+						type = TypeManager.uint32_type;
+						return this;
+					}
+					e = ConvertImplicit (ec, Expr, TypeManager.int64_type, loc);
+					if (e != null){
+						type = TypeManager.int64_type;
+						return this;
+					}
+					e = ConvertImplicit (ec, Expr, TypeManager.uint64_type, loc);
+					if (e != null){
+						type = TypeManager.uint64_type;
+						return this;
+					}
+					Error23 (expr_type);
 					return null;
 				}
 				type = expr_type;

@@ -1,5 +1,7 @@
 2002-04-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: Add implicit conversions to the operator ~.
+
 	* constant.cs (DecimalConstant.Emit): Emit decimal value.
 
 	* typemanager.cs: Locate the decimal constructor.
