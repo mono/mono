@@ -65,8 +65,13 @@ namespace MonoTests.System.Security {
 		{
 			// no exception is thrown
 			PermissionSet ps = new PermissionSet (null);
+#if NET_2_0
+			Assert ("PermissionStateNull.IsUnrestricted", !ps.IsUnrestricted ());
+			Assert ("PermissionStateNull.IsEmpty", ps.IsEmpty ());
+#else
 			Assert ("PermissionStateNull.IsUnrestricted", ps.IsUnrestricted ());
 			Assert ("PermissionStateNull.IsEmpty", !ps.IsEmpty ());
+#endif
 			Assert ("PermissionStateNull.IsReadOnly", !ps.IsReadOnly);
 			AssertEquals ("PermissionStateNull.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
 		}
@@ -138,8 +143,14 @@ namespace MonoTests.System.Security {
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			result = ps.AddPermission (zip);
 			AssertNotNull ("Add(ZoneIdentityPermission)", result);
+#if NET_2_0
+			// Identity permissions aren't added to unrestricted permission sets in 2.0
+			AssertEquals ("ZoneIdentityPermission", SecurityZone.NoZone, (result as ZoneIdentityPermission).SecurityZone);
+			AssertEquals ("1", 0, ps.Count);
+#else
 			AssertEquals ("ZoneIdentityPermission", zip.SecurityZone, (result as ZoneIdentityPermission).SecurityZone);
 			AssertEquals ("1", 1, ps.Count);
+#endif
 		}
 
 		[Test]
@@ -152,6 +163,20 @@ namespace MonoTests.System.Security {
 			AssertEquals ("SecurityPermission", SecurityPermissionFlag.AllFlags, (result as SecurityPermission).Flags);
 			AssertEquals ("1", 1, ps.Count);
 			Assert ("State", !ps.IsUnrestricted ());
+		}
+
+		[Test]
+		public void AddPermission_NoCopy ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			SecurityPermission sp1 = new SecurityPermission (SecurityPermissionFlag.ControlEvidence);
+			SecurityPermission result = (SecurityPermission)ps.AddPermission (sp1);
+			SecurityPermission entry = (SecurityPermission)ps.GetPermission (typeof (SecurityPermission));
+
+			// are they the same (reference) or different ?
+			sp1.Flags = SecurityPermissionFlag.AllFlags;
+
+			result.Flags = SecurityPermissionFlag.Assertion;
 		}
 
 		[Test]
@@ -305,7 +330,12 @@ namespace MonoTests.System.Security {
 			AssertNotNull ("2.Add", result);
 			copy = ps.Copy ();
 			Assert ("3.State", copy.IsUnrestricted ());
+#if NET_2_0
+			// Identity permissions aren't added to unrestricted permission sets in 2.0
+			AssertEquals ("3.Count", 0, copy.Count);
+#else
 			AssertEquals ("3.Count", 1, copy.Count);
+#endif
 		}
 
 		[Test]
@@ -643,8 +673,14 @@ namespace MonoTests.System.Security {
 			Compare ("UPS1 N UPS2", ups1.Intersect (ups2), true, 0);
 			Compare ("UPS2 N UPS1", ups2.Intersect (ups1), true, 0);
 			ups2.AddPermission (zip);
+#if NET_2_0
+			// Identity permissions aren't added to unrestricted permission sets in 2.0
+			Compare ("UPS1 N UPS2+ZIP", ups1.Intersect (ups2), true, 0);
+			Compare ("UPS2+ZIP N UPS1", ups2.Intersect (ups1), true, 0);
+#else
 			Compare ("UPS1 N UPS2+ZIP", ups1.Intersect (ups2), true, 1);
 			Compare ("UPS2+ZIP N UPS1", ups2.Intersect (ups1), true, 1);
+#endif
 		}
 
 		[Test]
@@ -663,7 +699,12 @@ namespace MonoTests.System.Security {
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			Assert ("Unrestricted.IsEmpty", !ps.IsEmpty ());
 			ps.AddPermission (new ZoneIdentityPermission (SecurityZone.NoZone));
+#if NET_2_0
+			// Identity permissions aren't added to unrestricted permission sets in 2.0
+			AssertEquals ("Count==0", 0, ps.Count);
+#else
 			AssertEquals ("Count==1", 1, ps.Count);
+#endif
 			Assert ("Zip.IsEmpty", !ps.IsEmpty ());	// yes empty!
 		}
 
@@ -727,7 +768,12 @@ namespace MonoTests.System.Security {
 			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
 
 			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
+#if NET_2_0
+			// as ZoneIdentityPermission isn't added UPS1Z == UPS2
+			Assert ("UPS1Z.IsSubset(UPS2)", ups1.IsSubsetOf (ups2));
+#else
 			Assert ("UPS1Z.IsSubset(UPS2)", !ups1.IsSubsetOf (ups2));
+#endif
 			Assert ("UPS2.IsSubset(UPS1Z)", ups2.IsSubsetOf (ups1));
 			ups2.AddPermission (zip);
 			Assert ("UPS1Z.IsSubset(UPS2Z)", ups1.IsSubsetOf (ups2));
@@ -765,7 +811,13 @@ namespace MonoTests.System.Security {
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			ps.AddPermission (zip);
 			ZoneIdentityPermission removed = (ZoneIdentityPermission)ps.RemovePermission (typeof (ZoneIdentityPermission));
+#if NET_2_0
+			// identity permissions aren't added to unrestricted permission sets
+			// so they cannot be removed later (hence the null)
+			AssertNull ("ZoneIdentityPermission", removed);
+#else
 			AssertNotNull ("ZoneIdentityPermission", removed);
+#endif
 		}
 
 		[Test]
@@ -816,8 +868,13 @@ namespace MonoTests.System.Security {
 			ZoneIdentityPermission zipr = (ZoneIdentityPermission)ps.SetPermission (zip);
 			AssertEquals ("ZoneIdentityPermission", 1, ps.Count);
 			AssertEquals ("SecurityZone", SecurityZone.MyComputer, zipr.SecurityZone);
+#if NET_2_0
+			// Adding a non unrestricted identity permission now results in 
+			// a permission set loosing it's unrestricted status
+			Assert ("State-Unrestricted-2", !ps.IsUnrestricted ());
+#else
 			Assert ("State-Unrestricted-2", ps.IsUnrestricted ());
-
+#endif
 			zip = new ZoneIdentityPermission (SecurityZone.Intranet);
 			zipr = (ZoneIdentityPermission)ps.SetPermission (zip);
 			AssertEquals ("ZoneIdentityPermission-2", 1, ps.Count);
@@ -912,15 +969,74 @@ namespace MonoTests.System.Security {
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
 			ups1.AddPermission (zip);
+#if NET_2_0
+			// Identity permissions aren't added to unrestricted permission sets in 2.0
+			Compare ("PS1 U Unrestricted", ps1.Union (ups1), true, 0);
+			Compare ("Unrestricted U PS1", ups1.Union (ps1), true, 0);
+			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
+			Compare ("UPS1 U UPS2", ups1.Union (ups1), true, 0);
+			Compare ("UPS2 U UPS1", ups2.Union (ups1), true, 0);
+			ups2.AddPermission (zip);
+			Compare ("UPS1 U UPS2+ZIP", ups1.Union (ups2), true, 0);
+			Compare ("UPS2+ZIP U UPS1", ups2.Union (ups1), true, 0);
+#else
 			Compare ("PS1 U Unrestricted", ps1.Union (ups1), true, 1);
 			Compare ("Unrestricted U PS1", ups1.Union (ps1), true, 1);
-
 			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
 			Compare ("UPS1 U UPS2", ups1.Union (ups1), true, 1);
 			Compare ("UPS2 U UPS1", ups2.Union (ups1), true, 1);
 			ups2.AddPermission (zip);
 			Compare ("UPS1 U UPS2+ZIP", ups1.Union (ups2), true, 1);
 			Compare ("UPS2+ZIP U UPS1", ups2.Union (ups1), true, 1);
+#endif
+		}
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ExecutionEngineException))]
+		public void RevertAssert_WithoutAssertion ()
+		{
+			PermissionSet.RevertAssert ();
+		}
+
+		[Test]
+		public void RevertAssert_WithAssertion ()
+		{
+			PermissionSet ups = new PermissionSet (PermissionState.Unrestricted);
+			ups.Assert ();
+			PermissionSet.RevertAssert ();
+		}
+#endif
+		[Test]
+		public void Assert_NonCasPermission ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.AddPermission (new PrincipalPermission (PermissionState.None));
+			Assert ("ContainsNonCodeAccessPermissions", ps.ContainsNonCodeAccessPermissions ());
+			AssertEquals ("Count", 1, ps.Count);
+			ps.Assert ();
+			// it's simply ignored
+		}
+
+		[Test]
+		public void Deny_NonCasPermission ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.AddPermission (new PrincipalPermission (PermissionState.None));
+			Assert ("ContainsNonCodeAccessPermissions", ps.ContainsNonCodeAccessPermissions ());
+			AssertEquals ("Count", 1, ps.Count);
+			ps.Deny ();
+			// it's simply ignored
+		}
+
+		[Test]
+		public void PermitOnly_NonCasPermission ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.AddPermission (new PrincipalPermission (PermissionState.None));
+			Assert ("ContainsNonCodeAccessPermissions", ps.ContainsNonCodeAccessPermissions ());
+			AssertEquals ("Count", 1, ps.Count);
+			ps.PermitOnly ();
+			// it's simply ignored
 		}
 	}
 }

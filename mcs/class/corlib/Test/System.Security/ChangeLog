@@ -1,3 +1,8 @@
+2005-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetTest.cs, SecurityManagerTest.cs: Adjusted unit tests so
+	they now execute without errors on 2.0 Dec CTP.
+
 2003-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetTest.cs: Fixed tests so they execute without errors on

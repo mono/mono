@@ -88,10 +88,23 @@ namespace MonoTests.System.Security {
 			Evidence e = new Evidence ();
 			e.AddHost (new Zone (zone));
 			PermissionSet ps = SecurityManager.ResolvePolicy (e);
-			Assert.IsTrue (ps.Count > 0, prefix + "Count");
+			// as 2.0 use Unrestricted for Identity permissions they have no need to be 
+			// kept in resolved permission set
+#if NET_2_0
+			Assert.IsTrue ((unrestricted || (ps.Count > 0)), prefix + "Count");
+#else
+			Assert.IsTrue ((ps.Count > 0), prefix + "Count");
+#endif
 			Assert.AreEqual (empty, ps.IsEmpty (), prefix + "IsEmpty");
 			Assert.AreEqual (unrestricted, ps.IsUnrestricted (), prefix + "IsUnrestricted");
+#if NET_2_0
+			if (unrestricted)
+				Assert.IsNull (ps.GetPermission (typeof (ZoneIdentityPermission)), prefix + "GetPermission(ZoneIdentityPermission)");
+			else
+				Assert.IsNotNull (ps.GetPermission (typeof (ZoneIdentityPermission)), prefix + "GetPermission(ZoneIdentityPermission)");
+#else
 			Assert.IsNotNull (ps.GetPermission (typeof (ZoneIdentityPermission)), prefix + "GetPermission(ZoneIdentityPermission)");
+#endif
 		}
 
 		[Test]
