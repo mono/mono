@@ -9,7 +9,7 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class PostOrPrefixOperator : UnaryOp {
 
@@ -18,6 +18,12 @@ namespace Microsoft.JScript.Tmp {
 			throw new NotImplementedException ();
 		}
 
+		internal PostOrPrefixOperator (AST parent, AST operand, JSToken oper)
+		{
+			this.parent = parent;
+			this.operand = operand;
+			this.oper = oper;
+		}
 
 		public object EvaluatePostOrPrefix (ref object v)
 		{
@@ -26,17 +32,29 @@ namespace Microsoft.JScript.Tmp {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			if (oper == JSToken.None)
+				return operand.Resolve (context);
+			else
+				throw new NotImplementedException ();
 		}
 
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
-			throw new NotImplementedException ();
+			if (oper == JSToken.None)
+				if (operand is Exp)
+					return ((Exp) operand).Resolve (context, no_effect);
+				else
+					return operand.Resolve (context);
+			else
+				throw new NotImplementedException ();
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (oper == JSToken.None)
+				operand.Emit (ec);
+			else
+				throw new NotImplementedException ();
 		}
 	}
 }
