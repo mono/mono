@@ -78,7 +78,7 @@ namespace System {
 	public sealed class Convert {
 
 		// Fields
-		public static readonly object DBNull;
+		public static readonly object DBNull = System.DBNull.Value;
 	
 		private Convert () {}
 
@@ -126,9 +126,7 @@ namespace System {
 
 		public static bool IsDBNull (object value)
 		{
-			TypeCode tc = Type.GetTypeCode (value.GetType ());
-			
-			if (tc == TypeCode.DBNull)
+			if (value is DBNull)
 				return true;
 			else
 				return false;
