@@ -1,3 +1,13 @@
+2004-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (lib_file): New autodetecting define.
+	(USE_BOOT_COMPILE, LIBRARY_COMPILE): Add support for using
+	bootstrap compiler.
+	(BUILT_SOURCES): Add ...XPath/Parser.cs.
+	(EXTRA_DISTFILES): Add ...Query/XQueryParser.jay.
+	(BOOTSTRAP_MCS) [PROFILE=net_2_0]: New.
+	* System.Xml.dll.sources: Remove ...XPath/Parser.cs.
+
 2004-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added DTMXPathDocument2.cs,

@@ -166,7 +166,6 @@ System.Xml.XPath/XPathComparer.cs
 System.Xml.XPath/DefaultContext.cs
 System.Xml.XPath/Expression.cs
 System.Xml.XPath/Iterator.cs
-System.Xml.XPath/Parser.cs
 System.Xml.XPath/Tokenizer.cs
 System.Xml.Xsl/IXsltContextFunction.cs
 System.Xml.Xsl/IXsltContextVariable.cs
