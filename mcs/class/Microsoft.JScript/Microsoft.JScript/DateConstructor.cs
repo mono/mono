@@ -42,6 +42,12 @@ namespace Microsoft.JScript {
 		const double MS_PER_MINUTE = SECONDS_PER_MINUTE * MS_PER_SECOND;
 		const double MS_PER_DAY = SECONDS_PER_DAY * MS_PER_SECOND;
 
+		internal static DateConstructor Ctr = new DateConstructor ();
+		
+		internal DateConstructor ()
+		{
+		}
+		
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new DateObject CreateInstance (params Object[] args)
 		{

@@ -33,6 +33,12 @@ namespace Microsoft.JScript {
 
 	public class EnumeratorConstructor : ScriptFunction {
 
+		internal static EnumeratorConstructor Ctr = new EnumeratorConstructor ();
+
+		internal EnumeratorConstructor ()
+		{
+		}
+
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
 		public new EnumeratorObject CreateInstance (params Object [] args)
 		{

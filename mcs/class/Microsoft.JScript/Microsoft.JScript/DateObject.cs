@@ -30,5 +30,12 @@
 namespace Microsoft.JScript {
 
 	public class DateObject : JSObject
-	{}
+	{
+		internal double ms;
+
+		internal DateObject (double ms)
+		{
+			this.ms = ms;
+		}
+	}
 }

@@ -33,6 +33,12 @@ namespace Microsoft.JScript {
 
 	public class FunctionConstructor : ScriptFunction  {
 
+		internal FunctionConstructor Ctr = new FunctionConstructor ();
+
+		internal FunctionConstructor ()
+		{
+		}
+
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
 		public new ScriptFunction CreateInstance (params Object [] args)
 		{

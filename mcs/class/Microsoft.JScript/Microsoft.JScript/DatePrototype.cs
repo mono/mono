@@ -34,6 +34,11 @@ namespace Microsoft.JScript {
 
 	public class DatePrototype : DateObject
 	{
+		internal DatePrototype ()
+			: base (0)
+		{
+		}
+
 		public static DateConstructor constructor {
 			get { throw new NotImplementedException (); }
 		}

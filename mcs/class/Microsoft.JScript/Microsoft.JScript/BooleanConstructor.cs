@@ -33,6 +33,12 @@ namespace Microsoft.JScript {
 
 	public class BooleanConstructor : ScriptFunction {
 
+		internal static BooleanConstructor Ctr = new BooleanConstructor ();
+
+		internal BooleanConstructor ()
+		{
+		}
+
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]	
 		public new BooleanObject CreateInstance (params Object [] args)
 		{

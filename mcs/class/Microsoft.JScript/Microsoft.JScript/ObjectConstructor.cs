@@ -33,6 +33,12 @@ namespace Microsoft.JScript {
 
 	public class ObjectConstructor : ScriptFunction {
 
+		internal static ObjectConstructor Ctr = new ObjectConstructor ();
+
+		internal ObjectConstructor ()
+		{
+		}
+
 		public JSObject ConstructObject ()
 		{
 			throw new NotImplementedException ();

@@ -39,15 +39,15 @@ namespace Microsoft.JScript {
 		public static readonly Empty undefined = null;
 
 		public static ActiveXObjectConstructor ActiveXObject {
-			get { throw new NotImplementedException (); }
+			get { return ActiveXObjectConstructor.Ctr; }
 		}
 
 		public static ArrayConstructor Array {
-			get { throw new NotImplementedException (); }
+			get { return ArrayConstructor.Ctr; }
 		}
 
 		public static BooleanConstructor Boolean {
-			get { throw new NotImplementedException (); }
+			get { return BooleanConstructor.Ctr; }
 		}
 
 		public static Type boolean {
@@ -69,7 +69,7 @@ namespace Microsoft.JScript {
 		}
 
 		public static DateConstructor Date {
-			get { throw new NotImplementedException (); }
+			get { return DateConstructor.Ctr; }
 		}
 
 		public static Type @decimal {
@@ -328,11 +328,11 @@ namespace Microsoft.JScript {
 		}
 
 		public static EnumeratorConstructor Enumerator {
-			get { throw new NotImplementedException (); }
+			get { return EnumeratorConstructor.Ctr; }
 		}
 
 		public static ErrorConstructor Error {
-			get { throw new NotImplementedException (); }
+			get { return ErrorConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_escape)]
@@ -348,7 +348,7 @@ namespace Microsoft.JScript {
 		}
 
 		public static ErrorConstructor EvalError {
-			get { throw new NotImplementedException (); }
+			get { return ErrorConstructor.EvalErrorCtr; }
 		}
 
 		public static Type @float {
@@ -390,11 +390,11 @@ namespace Microsoft.JScript {
 		}
 
 		public static NumberConstructor Number {
-			get { throw new NotImplementedException (); }
+			get { return NumberConstructor.Ctr; }
 		}
 
 		public static ObjectConstructor Object {
-			get { throw new NotImplementedException (); }
+			get { return ObjectConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_parseFloat)]
@@ -410,15 +410,15 @@ namespace Microsoft.JScript {
 		}
 
 		public static ErrorConstructor RangeError {
-			get { throw new NotImplementedException (); }
+			get { return ErrorConstructor.RangeErrorCtr; }
 		}
 
 		public static ErrorConstructor ReferenceError {
-			get { throw new NotImplementedException (); }
+			get { return ErrorConstructor.ReferenceErrorCtr; }
 		}
 
 		public static RegExpConstructor RegExp {
-			get { throw new NotImplementedException (); }
+			get { return RegExpConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_ScriptEngine)]
@@ -454,15 +454,15 @@ namespace Microsoft.JScript {
 		}
 
 		public static StringConstructor String {
-			get { throw new NotImplementedException (); }
+			get { return StringConstructor.Ctr; }
 		}
 
 		public static ErrorConstructor SyntaxError {
-			get { throw new NotImplementedException (); }
+			get { return ErrorConstructor.SyntaxErrorCtr; }
 		}
 
 		public static ErrorConstructor TypeError {
-			get { throw new NotImplementedException (); }
+			get { return ErrorConstructor.TypeErrorCtr; }
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_unescape)]
@@ -472,11 +472,11 @@ namespace Microsoft.JScript {
 		}
 
 		public static ErrorConstructor URIError {
-			get { throw new NotImplementedException (); }
+			get { return ErrorConstructor.URIErrorCtr; }
 		}
 
 		public static VBArrayConstructor VBArray {
-			get { throw new NotImplementedException (); }
+			get { return VBArrayConstructor.Ctr; }
 		}
 
 		public static Type @void {

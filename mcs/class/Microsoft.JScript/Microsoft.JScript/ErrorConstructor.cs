@@ -43,6 +43,24 @@ namespace Microsoft.JScript {
 
 	public class ErrorConstructor : ScriptFunction {
 
+		ErrorType error_type;
+		internal static ErrorConstructor Ctr = new ErrorConstructor ();
+		internal static ErrorConstructor EvalErrorCtr = new ErrorConstructor (ErrorType.EvalError);
+		internal static ErrorConstructor RangeErrorCtr = new ErrorConstructor (ErrorType.RangeError);
+		internal static ErrorConstructor ReferenceErrorCtr = new ErrorConstructor (ErrorType.ReferenceError);
+		internal static ErrorConstructor SyntaxErrorCtr = new ErrorConstructor (ErrorType.SyntaxError);
+		internal static ErrorConstructor TypeErrorCtr = new ErrorConstructor (ErrorType.TypeError);
+		internal static ErrorConstructor URIErrorCtr = new ErrorConstructor (ErrorType.URIError);
+
+		internal ErrorConstructor ()
+		{
+		}
+
+		internal ErrorConstructor (ErrorType errorType)
+		{
+			error_type = errorType;
+		}
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new ErrorObject CreateInstance (params Object [] args)
 		{

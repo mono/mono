@@ -32,6 +32,12 @@ namespace Microsoft.JScript {
 
 	public class ActiveXObjectConstructor : ScriptFunction {
 
+		internal static ActiveXObjectConstructor Ctr = new ActiveXObjectConstructor ();
+
+		internal ActiveXObjectConstructor ()
+		{
+		}
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new Object CreateInstance (params Object [] args)
 		{

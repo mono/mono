@@ -33,6 +33,12 @@ namespace Microsoft.JScript {
 
 	public class VBArrayConstructor : ScriptFunction {
 
+		internal static VBArrayConstructor Ctr = new VBArrayConstructor ();
+
+		internal VBArrayConstructor ()
+		{
+		}
+
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
 		public new Object CreateInstance (params Object [] args)
 		{

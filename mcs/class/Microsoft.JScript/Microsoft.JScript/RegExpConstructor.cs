@@ -33,6 +33,12 @@ namespace Microsoft.JScript {
 
 	public class RegExpConstructor : ScriptFunction {
 
+		internal static RegExpConstructor Ctr = new RegExpConstructor ();
+
+		internal RegExpConstructor ()
+		{
+		}
+
 		public Object Construct (string pattern, bool ignoreCase, bool global, bool multiLine)
 		{
 			throw new NotImplementedException ();

@@ -33,6 +33,12 @@ namespace Microsoft.JScript {
 
 	public class NumberConstructor : ScriptFunction {
 
+		internal static NumberConstructor Ctr = new NumberConstructor ();
+
+		internal NumberConstructor ()
+		{
+		}
+
 		public const double MAX_VALUE = Double.MaxValue;
 		public const double MIN_VALUE = Double.Epsilon;
 		public const double NaN = Double.NaN;

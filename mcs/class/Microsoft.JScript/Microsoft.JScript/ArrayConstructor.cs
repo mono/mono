@@ -33,6 +33,12 @@ namespace Microsoft.JScript {
 
 	public class ArrayConstructor : ScriptFunction {
 
+		internal static ArrayConstructor Ctr = new ArrayConstructor ();
+
+		internal ArrayConstructor ()
+		{
+		}
+
 		public ArrayObject ConstructArray (Object [] args)
 		{
 			throw new NotImplementedException ();

@@ -1,5 +1,19 @@
 2004-11-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* GlobalObject.cs: return the different kinds of object's
+	constructors.
+	* DateConstructor.cs, StringConstructor.cs, ObjectConstructor.cs,
+	NumberConstructor.cs, VBArrayConstructor.cs,
+	FunctionConstructor.cs, EnumeratorConstructor.cs,
+	BooleanConstructor.cs, ArrayConstructor.cs, RegExpConstructor.cs,
+	ActiveXObjectConstructor.cs : added default constructor and static
+	contructor field.  	
+	* ErrorConstructor.cs: added default and discriminatory ctrs. Let
+	us know which type of error we are.
+	* DateObject.cs: add field that hold the millisecond representation of date.
+	* JSError.cs, JScriptException.cs: back to Microsoft.JScript namespace.
+	* DatePrototype.cs: add default ctr.
+	
 	* MathObject.cs: implement its methods.
 
 2004-11-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>

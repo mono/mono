@@ -28,11 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using Microsoft.Vsa;
-	using System.Runtime.Serialization;
+using System;
+using Microsoft.Vsa;
+using System.Runtime.Serialization;
+
+namespace Microsoft.JScript {
 
 	[Serializable]
 	public class JScriptException : ApplicationException, IVsaError
