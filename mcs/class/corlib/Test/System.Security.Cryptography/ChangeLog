@@ -1,3 +1,8 @@
+2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSATest.cs: Added unit test for Counter == 0. Actualized test cases
+	for NET_2_0 now that we can inherit from DSA outside corlib.
+
 2005-01-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PasswordDeriveBytesTest.cs: Changed [Ignore] to [Category
