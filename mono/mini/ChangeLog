@@ -1,5 +1,10 @@
 2005-01-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions.cs basic-long.cs: Add test for checked ulong->int 
+	conversion.
+
+	* inssel-long.brg: Implement long_conv_to_ovf_i4_un. Fixes #71319.
+
 	* inssel-long.brg: Fix conv.ovf.i8 when run on an int32. Fixes
 	#71320.
 
