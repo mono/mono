@@ -130,7 +130,7 @@ namespace System.Web.Util
 						relPath = "";
 					} else if (rlength > 1 && relPath [1] == '/') {
 						relPath = relPath.Substring (2);
-						slash = "";
+						slash = "/";
 					}
 
 					return Reduce (HttpRuntime.AppDomainAppVirtualPath + slash + relPath);
