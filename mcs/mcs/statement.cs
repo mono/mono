@@ -1748,11 +1748,11 @@ namespace Mono.CSharp {
 			Type array_type = expr.Type;
 			Type element_type = array_type.GetElementType ();
 			Expression conv = null;
-			Expression empty = new EmptyExpression (var_type);
+			Expression empty = new EmptyExpression (element_type);
 			
 			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
 			if (conv == null)
-					return false;
+				return false;
 
 			int rank = array_type.GetArrayRank ();
 			ILGenerator ig = ec.ig;

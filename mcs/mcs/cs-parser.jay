@@ -3083,21 +3083,16 @@ lock_statement
 using_statement
 	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS 
 	  {
+		oob_stack.Push (lexer.Location);
 	  } 
 	  embedded_statement
 	  {
-		$$ = new Using ($3, (Statement) $6, lexer.Location);
+		$$ = new Using ($3, (Statement) $6, (Location) oob_stack.Pop ());
 	  }
 	; 
 
 resource_acquisition
 	: local_variable_declaration
-	  {
-		if ((Block) $1 != current_block){
-			current_block.AddStatement ((Statement) $1);
-			current_block = (Block) $1;
-		}
-	  }
 	| expression
 	;
 

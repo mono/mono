@@ -562,7 +562,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.int64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				
 				if (target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.double_type)
@@ -1201,135 +1200,135 @@ namespace Mono.CSharp {
 				// From sbyte to byte, ushort, uint, ulong, char
 				//
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U1);
 				if (target_type == TypeManager.ushort_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U2);
 				if (target_type == TypeManager.uint32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U4);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U8);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I1_CH);
 			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to sbyte and char
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U1_I1);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U1_CH);
 			} else if (expr_type == TypeManager.short_type){
 				//
 				// From short to sbyte, byte, ushort, uint, ulong, char
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I2_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U1);
 				if (target_type == TypeManager.ushort_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U2);
 				if (target_type == TypeManager.uint32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U4);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U8);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I2_CH);
 			} else if (expr_type == TypeManager.ushort_type){
 				//
 				// From ushort to sbyte, byte, short, char
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U2_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U2_U1);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U2_I2);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U2_CH);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to sbyte, byte, short, ushort, uint, ulong, char
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I4_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U1);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I4_I2);
 				if (target_type == TypeManager.ushort_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U2);
 				if (target_type == TypeManager.uint32_type)
-					return new EmptyCast (expr, target_type);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U4);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U8);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I4_CH);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to sbyte, byte, short, ushort, int, char
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U4_U1);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I2);
 				if (target_type == TypeManager.ushort_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U4_U2);
 				if (target_type == TypeManager.int32_type)
-					return new EmptyCast (expr, target_type);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I4);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U4_CH);
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long to sbyte, byte, short, ushort, int, uint, ulong, char
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U1);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I2);
 				if (target_type == TypeManager.ushort_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U2);
 				if (target_type == TypeManager.int32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I4);
 				if (target_type == TypeManager.uint32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U4);
 				if (target_type == TypeManager.uint64_type)
-					return new EmptyCast (expr, target_type);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U8);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_CH);
 			} else if (expr_type == TypeManager.uint64_type){
 				//
 				// From ulong to sbyte, byte, short, ushort, int, uint, long, char
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U1);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I2);
 				if (target_type == TypeManager.ushort_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U2);
 				if (target_type == TypeManager.int32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I4);
 				if (target_type == TypeManager.uint32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U4);
 				if (target_type == TypeManager.int64_type)
-					return new EmptyCast (expr, target_type);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I8);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_CH);
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to sbyte, byte, short
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.CH_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.CH_U1);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.CH_I2);
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// From float to sbyte, byte, short,
@@ -1337,23 +1336,23 @@ namespace Mono.CSharp {
 				// or decimal
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U1);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I2);
 				if (target_type == TypeManager.ushort_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U2);
 				if (target_type == TypeManager.int32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I4);
 				if (target_type == TypeManager.uint32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U4);
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I8);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U8);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R4_CH);
 				if (target_type == TypeManager.decimal_type)
 					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.double_type){
@@ -1363,25 +1362,25 @@ namespace Mono.CSharp {
 				// char, float or decimal
 				//
 				if (target_type == TypeManager.sbyte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I1);
 				if (target_type == TypeManager.byte_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U1);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I2);
 				if (target_type == TypeManager.ushort_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U2);
 				if (target_type == TypeManager.int32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I4);
 				if (target_type == TypeManager.uint32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U4);
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I8);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U8);
 				if (target_type == TypeManager.char_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_CH);
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_R4);
 				if (target_type == TypeManager.decimal_type)
 					return InternalTypeConstructor (ec, expr, target_type);
 			} 
@@ -2065,10 +2064,215 @@ namespace Mono.CSharp {
 	}
 	
 	/// <summary>
-	///   This kind of cast is used to encapsulate a child expression
-	///   that can be trivially converted to a target type using one or 
-	///   two opcodes.  The opcodes are passed as arguments.
+	///   This is used to perform explicit numeric conversions.
+	///
+	///   Explicit numeric conversions might trigger exceptions in a checked
+	///   context, so they should generate the conv.ovf opcodes instead of
+	///   conv opcodes.
 	/// </summary>
+	public class ConvCast : EmptyCast {
+		public enum Mode : byte {
+			I1_U1, I1_U2, I1_U4, I1_U8, I1_CH,
+			U1_I1, U1_CH,
+			I2_I1, I2_U1, I2_U2, I2_U4, I2_U8, I2_CH,
+			U2_I1, U2_U1, U2_I2, U2_CH,
+			I4_I1, I4_U1, I4_I2, I4_U2, I4_U4, I4_U8, I4_CH,
+			U4_I1, U4_U1, U4_I2, U4_U2, U4_I4, U4_CH,
+			I8_I1, I8_U1, I8_I2, I8_U2, I8_I4, I8_U4, I8_U8, I8_CH,
+			U8_I1, U8_U1, U8_I2, U8_U2, U8_I4, U8_U4, U8_I8, U8_CH,
+			CH_I1, CH_U1, CH_I2,
+			R4_I1, R4_U1, R4_I2, R4_U2, R4_I4, R4_U4, R4_I8, R4_U8, R4_CH,
+			R8_I1, R8_U1, R8_I2, R8_U2, R8_I4, R8_U4, R8_I8, R8_U8, R8_CH, R8_R4
+		}
+
+		Mode mode;
+		
+		public ConvCast (Expression child, Type return_type, Mode m)
+			: base (child, return_type)
+		{
+			mode = m;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			base.Emit (ec);
+
+			if (ec.CheckState){
+				switch (mode){
+				case Mode.I1_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
+				case Mode.I1_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+				case Mode.I1_U4: ig.Emit (OpCodes.Conv_Ovf_U4); break;
+				case Mode.I1_U8: ig.Emit (OpCodes.Conv_Ovf_U8); break;
+				case Mode.I1_CH: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+
+				case Mode.U1_I1: ig.Emit (OpCodes.Conv_Ovf_I1_Un); break;
+				case Mode.U1_CH: /* nothing */ break;
+
+				case Mode.I2_I1: ig.Emit (OpCodes.Conv_Ovf_I1); break;
+				case Mode.I2_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
+				case Mode.I2_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+				case Mode.I2_U4: ig.Emit (OpCodes.Conv_Ovf_U4); break;
+				case Mode.I2_U8: ig.Emit (OpCodes.Conv_Ovf_U8); break;
+				case Mode.I2_CH: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+
+				case Mode.U2_I1: ig.Emit (OpCodes.Conv_Ovf_I1_Un); break;
+				case Mode.U2_U1: ig.Emit (OpCodes.Conv_Ovf_U1_Un); break;
+				case Mode.U2_I2: ig.Emit (OpCodes.Conv_Ovf_I2_Un); break;
+				case Mode.U2_CH: /* nothing */ break;
+
+				case Mode.I4_I1: ig.Emit (OpCodes.Conv_Ovf_I1); break;
+				case Mode.I4_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
+				case Mode.I4_I2: ig.Emit (OpCodes.Conv_Ovf_I2); break;
+				case Mode.I4_U4: ig.Emit (OpCodes.Conv_Ovf_U4); break;
+				case Mode.I4_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+				case Mode.I4_U8: ig.Emit (OpCodes.Conv_Ovf_U8); break;
+				case Mode.I4_CH: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+
+				case Mode.U4_I1: ig.Emit (OpCodes.Conv_Ovf_I1_Un); break;
+				case Mode.U4_U1: ig.Emit (OpCodes.Conv_Ovf_U1_Un); break;
+				case Mode.U4_I2: ig.Emit (OpCodes.Conv_Ovf_I2_Un); break;
+				case Mode.U4_U2: ig.Emit (OpCodes.Conv_Ovf_U2_Un); break;
+				case Mode.U4_I4: ig.Emit (OpCodes.Conv_Ovf_I4_Un); break;
+				case Mode.U4_CH: ig.Emit (OpCodes.Conv_Ovf_U2_Un); break;
+
+				case Mode.I8_I1: ig.Emit (OpCodes.Conv_Ovf_I1); break;
+				case Mode.I8_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
+				case Mode.I8_I2: ig.Emit (OpCodes.Conv_Ovf_I2); break;
+				case Mode.I8_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+				case Mode.I8_I4: ig.Emit (OpCodes.Conv_Ovf_I4); break;
+				case Mode.I8_U4: ig.Emit (OpCodes.Conv_Ovf_U4); break;
+				case Mode.I8_U8: ig.Emit (OpCodes.Conv_Ovf_U8); break;
+				case Mode.I8_CH: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+
+				case Mode.U8_I1: ig.Emit (OpCodes.Conv_Ovf_I1_Un); break;
+				case Mode.U8_U1: ig.Emit (OpCodes.Conv_Ovf_U1_Un); break;
+				case Mode.U8_I2: ig.Emit (OpCodes.Conv_Ovf_I2_Un); break;
+				case Mode.U8_U2: ig.Emit (OpCodes.Conv_Ovf_U2_Un); break;
+				case Mode.U8_I4: ig.Emit (OpCodes.Conv_Ovf_I4_Un); break;
+				case Mode.U8_U4: ig.Emit (OpCodes.Conv_Ovf_U4_Un); break;
+				case Mode.U8_I8: ig.Emit (OpCodes.Conv_Ovf_I8_Un); break;
+				case Mode.U8_CH: ig.Emit (OpCodes.Conv_Ovf_U2_Un); break;
+
+				case Mode.CH_I1: ig.Emit (OpCodes.Conv_Ovf_I1_Un); break;
+				case Mode.CH_U1: ig.Emit (OpCodes.Conv_Ovf_U1_Un); break;
+				case Mode.CH_I2: ig.Emit (OpCodes.Conv_Ovf_I2_Un); break;
+
+				case Mode.R4_I1: ig.Emit (OpCodes.Conv_Ovf_I1); break;
+				case Mode.R4_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
+				case Mode.R4_I2: ig.Emit (OpCodes.Conv_Ovf_I2); break;
+				case Mode.R4_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+				case Mode.R4_I4: ig.Emit (OpCodes.Conv_Ovf_I4); break;
+				case Mode.R4_U4: ig.Emit (OpCodes.Conv_Ovf_U4); break;
+				case Mode.R4_I8: ig.Emit (OpCodes.Conv_Ovf_I8); break;
+				case Mode.R4_U8: ig.Emit (OpCodes.Conv_Ovf_U8); break;
+				case Mode.R4_CH: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+
+				case Mode.R8_I1: ig.Emit (OpCodes.Conv_Ovf_I1); break;
+				case Mode.R8_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
+				case Mode.R8_I2: ig.Emit (OpCodes.Conv_Ovf_I2); break;
+				case Mode.R8_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+				case Mode.R8_I4: ig.Emit (OpCodes.Conv_Ovf_I4); break;
+				case Mode.R8_U4: ig.Emit (OpCodes.Conv_Ovf_U4); break;
+				case Mode.R8_I8: ig.Emit (OpCodes.Conv_Ovf_I8); break;
+				case Mode.R8_U8: ig.Emit (OpCodes.Conv_Ovf_U8); break;
+				case Mode.R8_CH: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+				case Mode.R8_R4: ig.Emit (OpCodes.Conv_R4); break;
+				}
+			} else {
+				switch (mode){
+				case Mode.I1_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.I1_U2: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.I1_U4: ig.Emit (OpCodes.Conv_U4); break;
+				case Mode.I1_U8: ig.Emit (OpCodes.Conv_I8); break;
+				case Mode.I1_CH: ig.Emit (OpCodes.Conv_U2); break;
+
+				case Mode.U1_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.U1_CH: ig.Emit (OpCodes.Conv_U2); break;
+
+				case Mode.I2_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.I2_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.I2_U2: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.I2_U4: ig.Emit (OpCodes.Conv_U4); break;
+				case Mode.I2_U8: ig.Emit (OpCodes.Conv_I8); break;
+				case Mode.I2_CH: ig.Emit (OpCodes.Conv_U2); break;
+
+				case Mode.U2_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.U2_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.U2_I2: ig.Emit (OpCodes.Conv_I2); break;
+				case Mode.U2_CH: /* nothing */ break;
+
+				case Mode.I4_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.I4_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.I4_I2: ig.Emit (OpCodes.Conv_I2); break;
+				case Mode.I4_U4: /* nothing */ break;
+				case Mode.I4_U2: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.I4_U8: ig.Emit (OpCodes.Conv_I8); break;
+				case Mode.I4_CH: ig.Emit (OpCodes.Conv_U2); break;
+
+				case Mode.U4_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.U4_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.U4_I2: ig.Emit (OpCodes.Conv_I2); break;
+				case Mode.U4_U2: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.U4_I4: /* nothing */ break;
+				case Mode.U4_CH: ig.Emit (OpCodes.Conv_U2); break;
+
+				case Mode.I8_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.I8_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.I8_I2: ig.Emit (OpCodes.Conv_I2); break;
+				case Mode.I8_U2: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.I8_I4: ig.Emit (OpCodes.Conv_I4); break;
+				case Mode.I8_U4: ig.Emit (OpCodes.Conv_U4); break;
+				case Mode.I8_U8: /* nothing */ break;
+				case Mode.I8_CH: ig.Emit (OpCodes.Conv_U2); break;
+
+				case Mode.U8_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.U8_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.U8_I2: ig.Emit (OpCodes.Conv_I2); break;
+				case Mode.U8_U2: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.U8_I4: ig.Emit (OpCodes.Conv_I4); break;
+				case Mode.U8_U4: ig.Emit (OpCodes.Conv_U4); break;
+				case Mode.U8_I8: /* nothing */ break;
+				case Mode.U8_CH: ig.Emit (OpCodes.Conv_U2); break;
+
+				case Mode.CH_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.CH_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.CH_I2: ig.Emit (OpCodes.Conv_I2); break;
+
+				case Mode.R4_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.R4_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.R4_I2: ig.Emit (OpCodes.Conv_I2); break;
+				case Mode.R4_U2: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.R4_I4: ig.Emit (OpCodes.Conv_I4); break;
+				case Mode.R4_U4: ig.Emit (OpCodes.Conv_U4); break;
+				case Mode.R4_I8: ig.Emit (OpCodes.Conv_I8); break;
+				case Mode.R4_U8: ig.Emit (OpCodes.Conv_U8); break;
+				case Mode.R4_CH: ig.Emit (OpCodes.Conv_U2); break;
+
+				case Mode.R8_I1: ig.Emit (OpCodes.Conv_I1); break;
+				case Mode.R8_U1: ig.Emit (OpCodes.Conv_U1); break;
+				case Mode.R8_I2: ig.Emit (OpCodes.Conv_I2); break;
+				case Mode.R8_U2: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.R8_I4: ig.Emit (OpCodes.Conv_I4); break;
+				case Mode.R8_U4: ig.Emit (OpCodes.Conv_U4); break;
+				case Mode.R8_I8: ig.Emit (OpCodes.Conv_I8); break;
+				case Mode.R8_U8: ig.Emit (OpCodes.Conv_U8); break;
+				case Mode.R8_CH: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.R8_R4: ig.Emit (OpCodes.Conv_R4); break;
+				}
+			}
+		}
+	}
+	
 	public class OpcodeCast : EmptyCast {
 		OpCode op, op2;
 		bool second_valid;
@@ -2106,7 +2310,6 @@ namespace Mono.CSharp {
 			if (second_valid)
 				ec.ig.Emit (op2);
 		}			
-		
 	}
 
 	/// <summary>

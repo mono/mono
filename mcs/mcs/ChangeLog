@@ -1,3 +1,17 @@
+2001-12-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (ConvCast): new class used to encapsulate the various
+	explicit integer conversions that works in both checked and
+	unchecked contexts.
+
+	(Expression.ConvertNumericExplicit): Use new ConvCast class to
+	properly generate the overflow opcodes.
+
+2001-12-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: The correct type for the EmptyExpression is the
+	element_type, not the variable type.  Ravi pointed this out.
+
 2001-12-04  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Method::Define): Handle PInvoke methods specially
