@@ -1,3 +1,8 @@
+2003-11-16  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_is_open_constructed_type): Implemented the
+	MONO_TYPE_GENERICINST case.
+
 2003-11-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c (mono_assembly_fill_assembly_name): New function to
