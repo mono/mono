@@ -93,7 +93,7 @@ statement returns [AST stm]
 	| stm = continue_stm
 	| stm = break_stm
 	| return_stm
-	| with_stm
+	| stm = with_stm
 	| switch_stm
 	| throw_stm
 	| try_stm
@@ -140,8 +140,16 @@ case_clause
 	: "case" expr COLON statement_list
 	;
 
-with_stm
-	: "with" OPEN_PARENS expr CLOSE_PARENS statement
+with_stm returns [AST with]
+{
+	with = null;
+	AST exp, stm;
+	exp = stm = null;
+}
+	: "with" OPEN_PARENS exp = expr CLOSE_PARENS stm = statement
+	  {
+		  with = new With (exp, stm);  
+	  }	
 	;
 
 return_stm

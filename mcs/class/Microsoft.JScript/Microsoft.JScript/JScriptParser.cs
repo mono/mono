@@ -356,7 +356,7 @@ _loop4_breakloop:			;
 			}
 			case LITERAL_with:
 			{
-				with_stm();
+				stm=with_stm();
 				break;
 			}
 			case LITERAL_switch:
@@ -840,17 +840,30 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public void with_stm() //throws RecognitionException, TokenStreamException
+	public AST  with_stm() //throws RecognitionException, TokenStreamException
 {
+		AST with;
 		
 		traceIn("with_stm");
 		try { // debugging
 			
+				with = null;
+				AST exp, stm;
+				exp = stm = null;
+			
+			
 			match(LITERAL_with);
 			match(OPEN_PARENS);
-			expr();
+			exp=expr();
 			match(CLOSE_PARENS);
-			statement();
+			stm=statement();
+			if (0==inputState.guessing)
+			{
+				
+						  with = new With (exp, stm);  
+					
+			}
+			return with;
 		}
 		finally
 		{ // debugging

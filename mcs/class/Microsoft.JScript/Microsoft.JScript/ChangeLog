@@ -1,5 +1,10 @@
 2003-10-22  cesar lopez nataren <cesar@ciencias.unam.mx>
 
+	* With.cs: added constructor and ToString. Back to the non-tmp
+	namespace.
+
+	* jscript-parser-lexer.g: allow with_stm tree building.
+
 	* jscript-lexer-parser.g: changed the return type from if_stm from
 	'If' to AST. Added tree for continue_stm. Allowed building of
 	Break tree.
