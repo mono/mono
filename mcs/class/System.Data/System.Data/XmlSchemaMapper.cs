@@ -92,10 +92,9 @@ namespace System.Data {
 		{
 			XmlSchemaObject SchemaObject;
 			foreach (XmlSchemaObject TempObject in Choice.Items) {
-				
 				if ((SchemaObject = TempObject as XmlSchemaElement) != null)
 					ReadXmlSchemaElement ((XmlSchemaElement)SchemaObject, ElementType.ELEMENT_TABLE);
-			}				
+			}
 		}
 
 		private void ReadXmlSchemaElement (XmlSchemaElement Element)
@@ -114,7 +113,6 @@ namespace System.Data {
 			DataTable Table2 = null;
 
 			if (Attributes.Contains ("IsDataSet")) { // DataSet -elemt
-
 				if (String.Compare (Attributes ["IsDataSet"].ToString (), "true", true) == 0)
 					DSet.DataSetName = Element.Name;
 			}
@@ -144,7 +142,7 @@ namespace System.Data {
 				
 				if (ElType == ElementType.ELEMENT_TABLE){
 					ReadTable (Element);
-					// we have tp return else all child element of the tabel will be computed again.
+					// we have to return else all child element of the table will be computed again.
 					return;
 				}
 				else if (ElType == ElementType.ELEMENT_COLUMN && Table != null)
@@ -167,9 +165,13 @@ namespace System.Data {
 
 		private void ReadTable (XmlSchemaElement Element)
 		{
-			DataTable TempTable = new DataTable (Element.Name);
-			DSet.Tables.Add (TempTable);
-			ReadXmlSchemaType (Element.SchemaType, TempTable);			
+			DataTable TempTable = null;
+			// Add the table to the DataSet only if it is not already in there.
+			if (!DSet.Tables.Contains(Element.Name)) {
+				TempTable = new DataTable (Element.Name);
+				DSet.Tables.Add (TempTable);
+				ReadXmlSchemaType (Element.SchemaType, TempTable);
+			}			
 		}
 
 		private void ReadColumn (XmlSchemaElement Element, DataTable Table)
