@@ -296,7 +296,7 @@ namespace Mono.MonoBASIC
 			name = name.ToLower();
 
 			res = keywords.Contains(name);
-			if ((name == "get" || name == "set") && handle_get_set == false)
+			if ((name == "GET" || name == "SET") && handle_get_set == false)
 				return false;
 			return res;
 		}
