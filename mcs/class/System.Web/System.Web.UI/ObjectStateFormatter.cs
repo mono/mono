@@ -212,7 +212,7 @@ namespace System.Web.UI {
 				throw new Exception ();
 			}
 			
-			protected readonly byte PrimaryId, SecondaryId = -1, TertiaryId = -1;
+			protected readonly byte PrimaryId, SecondaryId = 255, TertiaryId = 255;
 			
 			protected abstract void Write (BinaryWriter w, object o, WriterContext ctx);
 			protected abstract object Read (byte token, BinaryReader r, ReaderContext ctx);
@@ -223,9 +223,9 @@ namespace System.Web.UI {
 			{
 				writeMap [Type] = this;
 				readMap [PrimaryId] = this;
-				if (SecondaryId != -1) {
+				if (SecondaryId != 255) {
 					readMap [SecondaryId] = this;
-					if (TertiaryId != -1)
+					if (TertiaryId != 255)
 						readMap [TertiaryId] = this;
 				}
 			}
