@@ -1182,7 +1182,7 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
-		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, ref int charactersFitted, ref int linesFilled)
+		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, out int charactersFitted, out int linesFilled)
 		{
 			throw new NotImplementedException ();
 		}
