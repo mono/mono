@@ -1,7 +1,8 @@
 2004-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: set the event in Close so that if the queue is
-	empty, we won't block forever on next request.
+	empty, we won't block forever on next request. The finalizer was
+	removed because we're not implementing IDisposable pattern here.
 
 2004-12-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
