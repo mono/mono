@@ -856,7 +856,7 @@ namespace System.Drawing {
 		internal static extern Status GdipImageRotateFlip ( IntPtr image, RotateFlipType rotateFlipType );
 		
 		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
-		internal static extern Status GdipSaveImageToFile ( IntPtr image, [MarshalAs(UnmanagedType.LPWStr)] string filename, byte[] encoderClsID, IntPtr encoderParameters ); // FIXME - should be ref Guid
+		internal static extern Status GdipSaveImageToFile ( IntPtr image, [MarshalAs(UnmanagedType.LPWStr)] string filename, Guid encoderClsID, IntPtr encoderParameters ); 
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipSaveAdd ( IntPtr image, IntPtr encoderParameters );
@@ -868,6 +868,25 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImage (IntPtr graphics, IntPtr image, float x, float y);
 		
+		/*******************************************************************************/
+		//This following functions are for *IX only as currently there is
+		//nothing known to me as to how to marshal guid's. (Sanjay)
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetImageRawFormat ( IntPtr image, out byte [] format );
+
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipImageGetFrameCount (IntPtr image, byte [] guidDimension, out int count );
+
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipImageSelectActiveFrame (IntPtr image, byte [] guidDimension, int frameIndex);
+				
+		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipSaveImageToFile (IntPtr image, [MarshalAs(UnmanagedType.LPWStr)] string filename, byte [] encoderClsID, IntPtr encoderParameters); 
+
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipImageGetFrameDimensionsList (IntPtr image, out byte [][] dimensionIDs, uint count);
+ 		
+		/*******************************************************************************/
 		
 		[DllImport("gdiplus.dll")]	
 		internal static extern Status GdipBeginContainer (IntPtr graphics,  RectangleF dstrect,

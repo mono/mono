@@ -349,67 +349,72 @@ namespace System.Drawing
 		{
 			Bitmap bmp;
 			if (imageData!=null){
-				
+				FileStream stream=null;
 				//select active icon from the iconDirEntry
-                		IconImage ii = imageData [this.id];
+				IconImage ii = imageData [this.id];
 				//MemoryStream stream = new MemoryStream ();
 				//UGLY HACK.....Hate to create a FileStream and then do writing and reading back
 				//but no other option as using MemoryStream causes the program to fail
 				//The Constructor for Bitmap which takes a memory stream some how
 				//fails everytime and i m not able to get the reason for that.
-				FileStream stream = new FileStream ("yajnas_temp.bmp", FileMode.CreateNew);
-				BinaryWriter writer = new BinaryWriter (stream);
+				try	{
+					stream = new FileStream ("yajnas_temp.bmp", FileMode.CreateNew);
+					BinaryWriter writer = new BinaryWriter (stream);
 				
-				//write bitmap file header
-				//start with writing signature
-				writer.Write ('B');
-				writer.Write ('M');
+					//write bitmap file header
+					//start with writing signature
+					writer.Write ('B');
+					writer.Write ('M');
 				
-				//now write file size
-				//file size is bitmapfileheader + bitmapinfo + colorpalette + image bits
-				//size of bitmapfileheader is 14 bytes, bitmapinfo is 40 bytes
-				uint offSet = (uint)(14+40+ ii.iconColors.Length* 4);
-				uint fileSize = (uint) (offSet + ii.iconXOR.Length);
-				writer.Write (fileSize);
-				
-				//write reserved words
-				ushort reserved12 = 0;
-				writer.Write (reserved12);
-				writer.Write (reserved12);
-				
-				//write offset
-				writer.Write (offSet);
-				
-				//now write bitmapfile header
-				BitmapInfoHeader bih = ii.iconHeader;
-				writer.Write (bih.biSize);
-				writer.Write (bih.biWidth);
-				writer.Write (bih.biHeight/2);
-				writer.Write (bih.biPlanes);
-				writer.Write (bih.biBitCount);
-				writer.Write (bih.biCompression);
-				writer.Write (bih.biSizeImage);
-				writer.Write (bih.biXPelsPerMeter);
-				writer.Write (bih.biYPelsPerMeter);
-				writer.Write (bih.biClrUsed);
-				writer.Write (bih.biClrImportant);
-				
-				//now write color table
-				int colCount = ii.iconColors.Length;
-				for (int j=0; j<colCount; j++)
-					writer.Write (ii.iconColors [j]);
+					//now write file size
+					//file size is bitmapfileheader + bitmapinfo + colorpalette + image bits
+					//size of bitmapfileheader is 14 bytes, bitmapinfo is 40 bytes
+					uint offSet = (uint)(14+40+ ii.iconColors.Length* 4);
+					uint fileSize = (uint) (offSet + ii.iconXOR.Length);
+					writer.Write (fileSize);
+					
+					//write reserved words
+					ushort reserved12 = 0;
+					writer.Write (reserved12);
+					writer.Write (reserved12);
+					
+					//write offset
+					writer.Write (offSet);
+					
+					//now write bitmapfile header
+					BitmapInfoHeader bih = ii.iconHeader;
+					writer.Write (bih.biSize);
+					writer.Write (bih.biWidth);
+					writer.Write (bih.biHeight/2);
+					writer.Write (bih.biPlanes);
+					writer.Write (bih.biBitCount);
+					writer.Write (bih.biCompression);
+					writer.Write (bih.biSizeImage);
+					writer.Write (bih.biXPelsPerMeter);
+					writer.Write (bih.biYPelsPerMeter);
+					writer.Write (bih.biClrUsed);
+					writer.Write (bih.biClrImportant);
+					
+					//now write color table
+					int colCount = ii.iconColors.Length;
+					for (int j=0; j<colCount; j++)
+						writer.Write (ii.iconColors [j]);
 
-				//now write image bits
-				writer.Write (ii.iconXOR);
+					//now write image bits
+					writer.Write (ii.iconXOR);
 
-				writer.Flush();
-				writer.Close();
-				stream.Close();
-				//create bitmap from stream and return
-				FileStream fs = new FileStream("yajnas_temp.bmp", FileMode.Open);
-				bmp = new Bitmap(fs);
-				fs.Close();
-				File.Delete("yajnas_temp.bmp");
+					writer.Flush();
+					writer.Close();
+					stream.Close();
+					//create bitmap from stream and return
+					bmp = new Bitmap("yajnas_temp.bmp");
+					File.Delete("yajnas_temp.bmp");
+				}catch (Exception e){
+					throw e;
+				}finally {
+					stream.Close();
+					File.Delete("yajnas_temp.bmp");
+				}
 			} else {
 				bmp = new Bitmap (32, 32);
 			}

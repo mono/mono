@@ -1,3 +1,11 @@
+2004-04-25  Sanjay Gupta  <gsanjay@novell.com>
+
+	* Bitmap.cs: Resolved a compile time error.
+	* Image.cs: Changed the implementation of few methods to progress
+	  with ImageAnimator class.
+	* gdipFunctions.cs: Added few linux only function calls.
+	* Icon.cs: Removed unused variable from code.
+
 2004-04-25  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* Graphics.cs, gdipFunctions.cs: Added CreateFromXDrawable_linux.

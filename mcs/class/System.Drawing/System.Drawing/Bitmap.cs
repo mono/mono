@@ -163,9 +163,12 @@ namespace System.Drawing {
 			
 		}
 
-		private Bitmap (SerializationInfo info, StreamingContext context) : base(info, context)
+		//The below function is not required. Call should resolve to base
+		//Moreover there is a problem with the declaration. Base class function
+		//is not declared as protected to access in descendent class
+		/*private Bitmap (SerializationInfo info, StreamingContext context) : base(info, context)
 		{
-		}
+		}*/
 
 		#endregion
 		// methods
