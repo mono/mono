@@ -1,3 +1,7 @@
+2003-07-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+    * ObjectReader.cs, ObjectWriter.cs, BinaryCommon.cs: Fixed bug #45970.
+
 2003-07-17  Lluis Sanchez Gual <lluis@ximian.com>
 
     * ObjectReader.cs: Keep MemberInfo members in type's metadata object, so it is

@@ -562,7 +562,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public static void WritePrimitiveValue (BinaryWriter writer, object value)
 		{
-			switch (Type.GetTypeCode (value.GetType()))
+			Type type = value.GetType();
+
+			switch (Type.GetTypeCode (type))
 			{
 				case TypeCode.Boolean:
 					writer.Write ((bool)value);
@@ -625,7 +627,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					break;
 
 				default:
-					throw new NotSupportedException ("Unsupported primitive type: " + value.GetType().FullName);
+					if (type == typeof (TimeSpan))
+						writer.Write (((TimeSpan)value).Ticks);
+					else
+						throw new NotSupportedException ("Unsupported primitive type: " + value.GetType().FullName);
+					break;
 			}
 		}
 

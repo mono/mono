@@ -23,6 +23,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			_typeCodesToType[(int)BinaryTypeCode.Boolean] = typeof (Boolean);
 			_typeCodesToType[(int)BinaryTypeCode.Byte] = typeof (Byte);
 			_typeCodesToType[(int)BinaryTypeCode.Char] = typeof (Char);
+			_typeCodesToType[(int)BinaryTypeCode.TimeSpan] = typeof (TimeSpan);
 			_typeCodesToType[(int)BinaryTypeCode.DateTime] = typeof (DateTime);
 			_typeCodesToType[(int)BinaryTypeCode.Decimal] = typeof (Decimal);
 			_typeCodesToType[(int)BinaryTypeCode.Double] = typeof (Double);
@@ -53,16 +54,23 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			_typeCodeMap[(int)TypeCode.UInt32] = (byte) BinaryTypeCode.UInt32;
 			_typeCodeMap[(int)TypeCode.UInt64] = (byte) BinaryTypeCode.UInt64;
 			_typeCodeMap[(int)TypeCode.String] = (byte) BinaryTypeCode.String;
+
+			// TimeStamp does not have a TypeCode, so it is managed as a special
+			// case in GetTypeCode()
 		}
 
 		public static bool IsPrimitive (Type type)
 		{
-			return type.IsPrimitive || type == typeof (DateTime) || type == typeof (Decimal);
+			return type.IsPrimitive || 
+				type == typeof (DateTime) || 
+				type == typeof (TimeSpan) || 
+				type == typeof (Decimal);
 		}
 
 		public static byte GetTypeCode (Type type)
 		{
-			return _typeCodeMap [(int)Type.GetTypeCode(type)];
+			if (type == typeof(TimeSpan)) return (byte) BinaryTypeCode.TimeSpan;
+			else return _typeCodeMap [(int)Type.GetTypeCode(type)];
 		}
 
 		public static Type GetTypeFromCode (int code)
@@ -151,6 +159,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		Int64 = 9,
 		SByte = 10,
 		Single = 11,
+		TimeSpan = 12,
 		DateTime = 13,
 		UInt16 = 14,
 		UInt32 = 15,

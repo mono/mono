@@ -602,8 +602,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					return reader.ReadChar();
 
 				case TypeCode.DateTime: 
-					long ticks = reader.ReadInt64();
-					return new DateTime (ticks);
+					return new DateTime (reader.ReadInt64());
 
 				case TypeCode.Decimal:
 					return reader.ReadDecimal();
@@ -639,7 +638,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					return reader.ReadString();
 
 				default:
-					throw new NotSupportedException ("Unsupported primitive type: " + type.FullName);
+					if (type == typeof(TimeSpan))
+						return new TimeSpan (reader.ReadInt64 ());
+					else
+						throw new NotSupportedException ("Unsupported primitive type: " + type.FullName);
 			}
 		}
 	}
