@@ -1,5 +1,9 @@
 2003-10-01  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* XmlSchema.cs : Forgot to update with previous files.
+
+2003-10-01  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* XmlSchemaAttribute.cs, XmlSchemaComplexType.cs, XmlSchemaElement.cs,
 	  XmlSchemaGroupRef.cs, XmlSchemaSimpleContentExtension.cs,
 	  XmlSchemaSimpleContentRestriction.cs, XmlSchemaSimpleTypeContent.cs,

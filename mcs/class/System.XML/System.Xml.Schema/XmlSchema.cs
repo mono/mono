@@ -532,6 +532,11 @@ namespace System.Xml.Schema
 			return new XmlUrlResolver ().ResolveUri (baseUri, relativeUri).ToString ();
 		}
 
+		internal bool IsNamespaceAbsent (string ns)
+		{
+			return this.schemas [ns] == null;
+		}
+
                 #endregion
 
                 [MonoTODO]
