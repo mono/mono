@@ -1,3 +1,8 @@
+Sun Jul 15 19:39:06 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata.h: decode local vars in method header
+	parse function. Change callers accordingly.
+
 Sun Jul 15 17:40:47 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.h, cil-coff.h: protect against multiple inclusion.
