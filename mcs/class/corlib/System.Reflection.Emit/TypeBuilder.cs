@@ -13,6 +13,8 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.Reflection.Emit {
 	public sealed class TypeBuilder : Type {
@@ -38,6 +40,9 @@ namespace System.Reflection.Emit {
 			return attrs;
 		}
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void setup_internal_class (TypeBuilder tb);
+		
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			int sep_index;
 			this.parent = parent;
@@ -58,9 +63,12 @@ namespace System.Reflection.Emit {
 			pmodule = mb;
 			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (0x02, true);
+			setup_internal_class (this);
 		}
 
-		public override Assembly Assembly {get {return null;}}
+		public override Assembly Assembly {
+			get {return pmodule.Assembly;}
+		}
 		public override string AssemblyQualifiedName {get {return null;}}
 		public override Type BaseType {get {return parent;}}
 		public override Type DeclaringType {get {return null;}}
@@ -95,6 +103,14 @@ namespace System.Reflection.Emit {
 		public override Type ReflectedType {get {return parent;}}
 		public override MemberTypes MemberType { 
 			get {return MemberTypes.TypeInfo;}
+		}
+
+		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
+			throw new NotImplementedException ();
+		}
+
+		public void AddInterfaceImplementation( Type interfaceType) {
+			throw new NotImplementedException ();
 		}
 
 		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
@@ -239,6 +255,10 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		public ConstructorBuilder DefineTypeInitializer() {
+			throw new NotImplementedException ();
+		}
+
 		public Type CreateType() {
 			if (methods != null) {
 				foreach (MethodBuilder method in methods) {
@@ -308,26 +328,31 @@ namespace System.Reflection.Emit {
 
 		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
 			// FIXME
+			throw new NotImplementedException ();
 			return null;
 		}
 		
 		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
 			// FIXME
+			throw new NotImplementedException ();
 			return null;
 		}
 
 		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
 			// FIXME
+			throw new NotImplementedException ();
 			return null;
 		}
 
 		public override PropertyInfo[] GetProperties( BindingFlags bindingAttr) {
 			// FIXME
+			throw new NotImplementedException ();
 			return null;
 		}
 		
 		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
 			// FIXME
+			throw new NotImplementedException ();
 			return null;
 		}
 
@@ -337,6 +362,7 @@ namespace System.Reflection.Emit {
 
 		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
 			// FIXME
+			throw new NotImplementedException ();
 			return null;
 		}
 
@@ -382,7 +408,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public EventBuilder DefineEvent( string name, EventAttributes attributes, Type eventtype) {
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		static int InitializedDataCount = 0;
@@ -401,6 +427,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
+			throw new NotImplementedException ();
 			return null;
 		}
 

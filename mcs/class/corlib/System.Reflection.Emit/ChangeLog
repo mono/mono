@@ -1,4 +1,14 @@
 
+Thu Feb 28 19:15:10 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: call into the runtime to init some basic
+	assembly stuff. Reserve slot 1 of typedef table for .<Module>.
+	* ModuleBuilder.cs: call into the runtime if we need to create a
+	modief type, such as arrays, byref etc.
+	* TypeBuilder.cs: call into the runtime to create the MonoClass
+	representation for the type. Throw exceptions with not implemented
+	stuff.
+
 Wed Feb 27 18:48:47 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ILGenerator.cs: fix nested exception blocks.

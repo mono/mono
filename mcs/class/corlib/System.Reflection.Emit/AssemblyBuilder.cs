@@ -26,8 +26,12 @@ namespace System.Reflection.Emit {
 		private CustomAttributeBuilder[] cattrs;
 		private int[] table_indexes;
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void basic_init (AssemblyBuilder ab);
+		
 		internal AssemblyBuilder (AssemblyName n, AssemblyBuilderAccess access) {
 			name = n.Name;
+			basic_init (this);
 		}
 
 		internal int get_next_table_index (int table, bool inc) {
@@ -35,6 +39,8 @@ namespace System.Reflection.Emit {
 				table_indexes = new int [64];
 				for (int i=0; i < 64; ++i)
 					table_indexes [i] = 1;
+				/* allow room for .<Module> in TypeDef table */
+				table_indexes [0x02] = 2;
 			}
 			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
 			if (inc)

@@ -11,6 +11,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
@@ -94,16 +95,36 @@ namespace System.Reflection.Emit {
 			}
 			return null;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern Type create_modified_type (TypeBuilder tb, int arrayrank, bool isbyref);
 		
 		public override Type GetType( string className, bool throwOnError, bool ignoreCase) {
 			int subt;
+			bool isbyref;
+			int arrayrank = 0;
 			TypeBuilder result = null;
 
 			if (types == null && throwOnError)
 				throw new TypeLoadException (className);
+
+			subt = className.IndexOf ('&');
+			if (subt >= 0) {
+				isbyref = true;
+				className = className.Substring (0, subt);
+			} else
+				isbyref = false;
+			subt = className.IndexOf ('[');
+			if (subt >= 0) {
+				arrayrank = 1;
+				// FIXME: support different ranks..
+				className = className.Substring (0, subt);
+			}
+			
 			subt = className.IndexOf ('+');
 			if (subt < 0) {
-				result = search_in_array (types, className, ignoreCase);
+				if (types != null)
+					result = search_in_array (types, className, ignoreCase);
 			} else {
 				string pname, rname;
 				pname = className.Substring (0, subt);
@@ -116,6 +137,8 @@ namespace System.Reflection.Emit {
 			}
 			if ((result == null) && throwOnError)
 				throw new TypeLoadException (className);
+			if (result != null && (isbyref || arrayrank > 0))
+				return create_modified_type (result, arrayrank, isbyref);
 			return result;
 		}
 
