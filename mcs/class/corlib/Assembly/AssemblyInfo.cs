@@ -27,8 +27,8 @@ using System.Runtime.InteropServices;
 	[assembly: TypeLibVersion(1, 10)]
 #endif
 
-[assembly: AssemblyTitle("corlib.dll")]
-[assembly: AssemblyDescription("corlib.dll")]
+[assembly: AssemblyTitle("mscorlib.dll")]
+[assembly: AssemblyDescription("mscorlib.dll")]
 [assembly: AssemblyConfiguration("Development version")]
 [assembly: AssemblyCompany("MONO development team")]
 [assembly: AssemblyProduct("MONO CLI")]
@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 
 // FIXME Already defined in System.IntPtr.cs - probably should be moved here
 //[assembly: CLSCompliant(true)]
-[assembly: AssemblyDefaultAlias("corlib.dll")]
+[assembly: AssemblyDefaultAlias("mscorlib.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
 

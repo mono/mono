@@ -1,3 +1,7 @@
+2003-11-12 Jackson Harper <jackson@ximian.com>
+
+	* AssemblyInfo.cs: Change assembly name to mscorlib
+	
 2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Locale.cs: Added
