@@ -1,9 +1,0 @@
-*.dll
-*.suo
-*.sln
-*.csproj.user
-bin
-obj
-.makefrag
-.response
-library-deps.stamp

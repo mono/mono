@@ -1,8 +1,0 @@
-2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
-
-	* BindingCollectionTest.cs ChangeLog DocumentableItemTest.cs 
-	  OperationCollectionTest.cs OperationMessageCollectionTest.cs 
-	  OperationMessageTest.cs PortTypeCollectionTest.cs PortTypeTest.cs 
-	  ServiceCollectionTest.cs ServiceDescriptionCollectionTest.cs 
-	  SoapBodyBindingTest.cs SoapOperationBindingTest.cs TypesTest.cs
-	  New test files by Erik LeBel.

@@ -1,4 +1,0 @@
-2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* MarshalTest.cs: added a few tests for Marshal.SizeOf.
-

@@ -1,5 +1,0 @@
-2003-12-14  Tim Coleman <tim@timcoleman.com>
-	* ChangeLog XmlCommand.cs XmlQueryArgumentList.cs
-	* XmlQueryCompileException.cs XmlQueryException.cs XsltProcessor.cs:
-		Move classes from the System.Data.SqlXml assembly where they
-		did not belong.

@@ -1,9 +1,0 @@
-2004-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* Makefile: handle win32 paths and copy Mono.Posix.dll to Mono.Posix
-	directory so that MS runtime finds it.
-
-2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* Check in.
-

@@ -1,5 +1,0 @@
-<element xmlns="http://relaxng.org/ns/structure/1.0" name="foo">
-	<element name='bar'>
-		<empty/>
-	</element>
-</element>

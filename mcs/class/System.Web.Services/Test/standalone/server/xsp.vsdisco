@@ -1,4 +1,0 @@
-<dynamicDiscovery xmlns="urn:schemas-dynamicdiscovery:disco.2000-03-17">
-  <exclude path="d2"/>
-  <exclude path="d1/d3"/>
-</dynamicDiscovery>

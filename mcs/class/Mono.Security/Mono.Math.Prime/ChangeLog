@@ -1,7 +1,0 @@
-2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* ConfidenceFactor.cs: New. Copied from corlib. Required for PKCS1 and
-	RSAManaged (which are required for TLS).
-	* PrimalityTests.cs: New. Copied from corlib. Required for PKCS1 and
-	RSAManaged (which are required for TLS).
-

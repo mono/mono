@@ -1,9 +1,0 @@
-2004-01-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
-
-	* ChangeLog: Added
-	* AssemblyInfo.cs: Removed
-	* DirectoryEntry.cs: Added attributes, fixed warning, stubbed missing
-	* DirectorySearcher.cs: Added attributes, stubbed missing
-	* DirectoryServicesPermissionAccess.cs: Added, implemented
-	* DSDescriptionAttribute.cs: Added, implemented
-	* DSDescriptionAttribute.cs, Added implemented

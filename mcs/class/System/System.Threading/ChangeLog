@@ -1,9 +1,0 @@
-2001-09-21  Dick Porter  <dick@ximian.com>
-
-	* ThreadExceptionEventArgs.cs: Implemented
-
-2001-09-13  Dick Porter  <dick@ximian.com>
-
-	* ThreadExceptionEventArgs.cs, ThreadExceptionEventHandler.cs:
-	More System.Threading stubs, in the System assembly.
-

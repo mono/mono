@@ -1,8 +1,0 @@
-2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
-	* Added UtilsTest.cs:
-		More tests (with bidimensional arrays) for Utils.CopyArray undocumented runtime function,
-		they are still failing tests
-
-2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
-	* Added UtilsTest.cs:
-		Initial tests for Utils.CopyArray undocumented runtime function

@@ -1,9 +1,0 @@
-corlib.dll
-corlib.pdb
-corlib_test.dll
-corlib_test.pdb
-corlib_plattest.dll
-corlib_plattest.pdb
-.makefrag
-.response
-library-deps.stamp

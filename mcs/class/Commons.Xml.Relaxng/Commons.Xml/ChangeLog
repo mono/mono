@@ -1,9 +1,0 @@
-2004-02-25  Atsushi Enomoto <atsushi@ximian.com>
-
-	* XmlDefaultReader.cs : Added support for IXmlLineInfo.
-
-2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
-
-	* Started.
-	* added ChangeLog, XmlDefaultReader.cs.
-

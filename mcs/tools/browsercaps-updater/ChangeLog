@@ -1,8 +1,0 @@
-2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* ChangeLog:
-	* Makefile:
-	* browsercaps-updater.exe.sources:
-	* BrowserCapsUpdater.cs: new tool to update browscap.ini file. For
-	those users who just can't wait for the next mono release.
-

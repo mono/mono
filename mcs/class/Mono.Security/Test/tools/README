@@ -1,7 +1,0 @@
-Here are some test tools for Mono.Security assembly.
-
-- tlstest
-	SSL3/TLS1 tool to securely download web pages.
-
-
-Sebastien Pouliot

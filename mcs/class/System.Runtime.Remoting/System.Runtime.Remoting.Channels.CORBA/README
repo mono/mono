@@ -1,5 +1,0 @@
-Warning: This is more or less a stub for a CORBA channel, its not CORBA
-compatible at all!
-
-We recently detected a runtime GC bug, so maybe you have to turn of GC in the
-runtime to run the examples in Test/*

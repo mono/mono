@@ -1,7 +1,0 @@
-function f ()
-{
-}
-
-function g ()
-{
-}

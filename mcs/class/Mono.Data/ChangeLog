@@ -1,6 +1,0 @@
-2003-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* ProviderSectionHandler.cs: use XPath to get the providers to avoid
-	getting an exception when there's whitespace, comments... Patch by Marco
-	Canini <marco.canini@fastwebnet.it>.
-

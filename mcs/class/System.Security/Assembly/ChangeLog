@@ -1,9 +1,0 @@
-2004-03-15  Sebastien Pouliot <sebastien@ximian.com>
-
-	* AssemblyInfo.cs: Reduce extra/missing in corcompare.
-
-2004-01-11  Sebastien Pouliot <spouliot@videotron.ca>
-
-	* AssemblyInfo.cs: New. Copied and ajusted from corlib.
-	* Locale.cs: New. Copied (verbatim) from corlib.
-	* ChangeLog: New.

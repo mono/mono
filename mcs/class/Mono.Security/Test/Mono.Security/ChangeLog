@@ -1,8 +1,0 @@
-2003-10-11  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* StrongNameTest.cs: Added tests for Hash, Sign and Verify.
-
-2003-03-08  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* StrongNameTest.cs: New. Unit tests for StrongNames.
-

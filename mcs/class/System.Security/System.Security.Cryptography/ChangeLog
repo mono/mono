@@ -1,6 +1,0 @@
-2003-11-06  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* AsnEncodedData.cs: New. Class to encapsulate ASN.1 data (.NET 1.2).
-	* Oid.cs: New. Class to encapsulate OIDs (.NET 1.2).
-	* OidCollection.cs: New. ICollection based class for OIDs (.NET 1.2).
-	* OidEnumerator.cs: New. IEnumerator based class for OIDs (.NET 1.2).

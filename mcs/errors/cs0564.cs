@@ -1,8 +1,0 @@
-// cs0564.cs: Overloaded shift operator must have the type of the first operand be the containing type, and the type of the second operand must be int
-// Line: 5
-
-class SampleClass {
-        public static int operator << (SampleClass value, SampleClass count) {
-                return 0;
-        }
-}

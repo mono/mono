@@ -1,5 +1,0 @@
-These are some standalone tests that should be compiled with:
-
-mcs source.cs /r:Microsoft.Web.Services.dll
-
-You need be using WSE2 as the default. you can do this by make DEFAULT_WSE2=1 install from inside the Microsoft.Web.Services directory.
