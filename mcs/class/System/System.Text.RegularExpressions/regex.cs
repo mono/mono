@@ -242,7 +242,7 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public string GroupNameFromNumber (int i) {
-			if (i >= group_count)
+			if (i > group_count)
 				return "";
 		
 			foreach (string name in mapping.Keys) {

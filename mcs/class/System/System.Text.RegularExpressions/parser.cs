@@ -136,7 +136,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				if (group.Name != null && !mapping.Contains (group.Name))
 					mapping.Add (group.Name, group.Number);
 				else
-					mapping.Add (i.ToString (), i);
+					mapping.Add (group.Number.ToString (), group.Number);
 			}
 
 			return mapping;
