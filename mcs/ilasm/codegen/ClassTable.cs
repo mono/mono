@@ -82,18 +82,32 @@ namespace Mono.ILASM {
 			return klass;
 		}
 
-		public void AddDefined (string full_name, Class klass, Location location)
+		public Class AddDefinition (string name_space, string name, 
+			TypeAttr attr, Location location) 
 		{
+			string full_name = String.Format ("{0}.{1}", name_space, name);
 			ClassTableItem item = table[full_name] as ClassTableItem;
 			
-			if (item == null) {
-				item = new ClassTableItem (klass, location);
-			} else if (item.Defined) {
-				throw new Exception (String.Format 
-					("Class: {0} defined in multiple locations.", full_name));
+			if ((item != null) && (item.Defined)) {
+				throw new Exception (String.Format ("Class: {0} defined in multiple locations.", 
+					full_name));
 			}
+			
+			Class klass = pefile.AddClass (attr, name_space, name);
+			AddDefined (full_name, klass, location);
 
+			return klass;
+		}
+
+		protected void AddDefined (string full_name, Class klass, Location location)
+		{
+			if (table.Contains (full_name))
+				return; 
+
+			ClassTableItem item = new ClassTableItem (klass, location);
 			item.Defined = true;
+
+			table[full_name] = item;
 		}
 
 		protected void AddReference (string full_name, Class klass, Location location)
