@@ -1,3 +1,7 @@
+2003-10-25  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Image.cs : renamed 'pallete' to 'colorPallete' for CLS compliance.
+
 2003-10-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* SystemBrushes.cs: Some more brushe3s.

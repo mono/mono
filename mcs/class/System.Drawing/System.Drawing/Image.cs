@@ -25,7 +25,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	internal IntPtr nativeObject = IntPtr.Zero;
 	protected Size image_size;
 	protected PixelFormat pixel_format;
-	protected ColorPalette palette;
+	protected ColorPalette colorPalette;
 
 	ImageFormat raw_format;
 	
@@ -274,10 +274,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public ColorPalette Palette {
 		get {
-			return palette;
+			return colorPalette;
 		}
 		set {
-			palette = value;
+			colorPalette = value;
 		}
 	}
 	
