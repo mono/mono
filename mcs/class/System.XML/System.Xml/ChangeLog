@@ -1,3 +1,13 @@
+2003-07-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttribute.cs : .ctor() shouldallow localName "xml" (not prefix)
+	  with http://www.w3.org/XML/1998/namespace.
+	* XmlEntity.cs : patch by Aleksey Sanin. InnerText is now supported.
+	* XmlNode.cs : InnerText should handle CDATA and whitespaces.
+	* XmlTextReader.cs : Should allow " (#PCDATA)* " in ReadContentSpec().
+	* XmlTextWriter.cs : Quick fix for accepting (and writing) same-named
+	  attributes (as MS.NET does). It isn't good way and I may change it.
+
 2003-07-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDObjectModel.cs : Added DTDEntityDeclarationCollection and

@@ -2074,6 +2074,8 @@ namespace System.Xml
 						Expect ('*');
 						model.Occurence = DTDOccurence.ZeroOrMore;
 					}
+					else if (PeekChar () == '*')
+						Expect ('*');
 				} else {
 					// Non-Mixed Contents
 					model.ChildModels.Add (ReadCP (decl));

@@ -43,9 +43,8 @@ namespace System.Xml
 			get {  return baseUri; }
 		}
 
-		[MonoTODO]
 		public override string InnerText {
-			get { throw new NotImplementedException (); }
+			get { return base.InnerText; }
 			set { throw new InvalidOperationException ("This operation is not supported."); }
 		}
 

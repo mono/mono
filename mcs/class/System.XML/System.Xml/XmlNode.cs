@@ -86,8 +86,14 @@ namespace System.Xml
 			XmlNode node = parent.FirstChild;
 
 			while (node != null) {
-				if (node.NodeType == XmlNodeType.Text)
-					builder.Append (node.Value);
+				switch (node.NodeType) {
+				case XmlNodeType.Text:
+				case XmlNodeType.CDATA:
+				case XmlNodeType.SignificantWhitespace:
+				case XmlNodeType.Whitespace:
+ 					builder.Append (node.Value);
+					break;
+				}
 				AppendChildValues (node, builder);
 				node = node.NextSibling;
 			}

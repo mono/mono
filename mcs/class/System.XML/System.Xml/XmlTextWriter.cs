@@ -598,9 +598,9 @@ namespace System.Xml
 				formatSpace = " ";
 
 			// If already written, then break up.
-			if (checkMultipleAttributes &&
-				writtenAttributes.Contains (formatPrefix + localName))
-				return;
+//			if (checkMultipleAttributes &&
+//				writtenAttributes.Contains (formatPrefix + localName))
+//				return;
 
 			w.Write ("{0}{1}{2}={3}", formatSpace, formatPrefix, localName, quoteChar);
 			if (checkMultipleAttributes)

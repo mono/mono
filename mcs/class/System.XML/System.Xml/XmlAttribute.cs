@@ -46,8 +46,7 @@ namespace System.Xml
 			if (prefix == "xmlns" || (prefix == "" && localName == "xmlns"))
 				if (namespaceURI != XmlNamespaceManager.XmlnsXmlns)
 					throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
-			else if (prefix == "xml" || (prefix == "" && localName == "xml"))
-				if (namespaceURI != XmlNamespaceManager.XmlnsXml)
+			else if (prefix == "xml" && namespaceURI != XmlNamespaceManager.XmlnsXml)
 					throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
 
 			// There are no means to identify the DOM is namespace-
