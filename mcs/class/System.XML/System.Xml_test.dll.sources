@@ -20,6 +20,8 @@ System.Xml/XmlNodeTests.cs
 System.Xml/XmlProcessingInstructionTests.cs
 System.Xml/XmlSecureResolverTests.cs
 System.Xml/XmlSignificantWhitespaceTests.cs
+System.Xml/XmlReaderCommonTests.cs
+System.Xml/XmlReaderSettingsTests.cs
 System.Xml/XmlTextReaderTests.cs
 System.Xml/XmlTextTests.cs
 System.Xml/XmlTextWriterTests.cs
@@ -41,6 +43,7 @@ System.Xml/nist_dom/fundamental/NamedNodeMap/NamedNodeMap.cs
 System.Xml/nist_dom/fundamental/NodeList/NodeList.cs
 System.Xml/nist_dom/fundamental/Text/Text.cs
 System.Xml.Schema/XmlSchemaTests.cs
+System.Xml.Schema/XmlSchemaSetTests.cs
 System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Serialization/ComplexDataStructure.cs
 System.Xml.Serialization/DeserializeTests.cs
