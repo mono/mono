@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
-<monodoc language="">
-    <interface name="System.Data.IDBConnection" assembly="System.Data">
-        <summary>TODO</summary>
-        <remarks>TODO</remarks>
-    </interface>
-</monodoc>

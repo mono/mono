@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
-<monodoc language="">
-    <enum name="System.Web.Caching.CacheItemRemovedReason" assembly="System.Web">
-        <summary>TODO</summary>
-        <remarks>TODO</remarks>
-        <member name="TODO" />
-    </enum>
-</monodoc>

@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
-<monodoc language="">
-    <delegate name="System.Web.UI.BuildTemplateMethod" assembly="System.Web">
-        <summary>TODO</summary>
-        <remarks>TODO</remarks>
-    </delegate>
-</monodoc>
