@@ -1,3 +1,7 @@
+2004-04-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* monosn.c: Add missing initialization calls.
+
 2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* locales.c:
