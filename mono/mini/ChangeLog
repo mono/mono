@@ -1,5 +1,7 @@
 2005-03-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* cpu-amd64.md (load_membase): Fix max length.
+
 	* mini-ops.h: Add OP_F<xx>_MEMBASE opcodes.
 
 	* inssel.brg: Add MONO_EMIT_BIALU_MEMBASE macro.
