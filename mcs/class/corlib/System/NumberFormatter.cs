@@ -1679,8 +1679,12 @@ namespace System
 				_defPrecision = 7;
 				_defMaxPrecision = _defPrecision + 2;
 
-				if (float.IsNaN (value) || float.IsInfinity (value))
-					throw new ArgumentException ();
+				if (float.IsNaN (value) || float.IsInfinity (value)) {
+					_NaN = float.IsNaN (value);
+					_infinity = float.IsInfinity (value);
+					_positive = value > 0;
+					return;
+				}
 
 				long bits = BitConverter.DoubleToInt64Bits (value);
 				_positive = (bits >= 0);
