@@ -1,3 +1,9 @@
+2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncTokenizer.cs :
+	  Handle hexadecimal escaping (\x{...}) and triple-quot/apos literals.
+	  Quote literal didn't handle '...' as expected.
+
 2005-03-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncParser.jay : fixed some cast error. Supply type name for "data".

@@ -44,6 +44,7 @@ namespace Commons.Xml.Relaxng.Rnc
 		int currentToken;
 		object tokenValue;
 		int peekChar;
+		string peekString;
 		bool isElement;
 		bool isLiteralNsUri;
 
@@ -92,10 +93,83 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		// private methods
 
+		private int ReadEscapedHexNumber ()
+		{
+			int i = source.Read ();
+			switch (i) {
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				return (i - '0') * 16 + ReadEscapedHexNumber ();
+			case 'A':
+			case 'B':
+			case 'C':
+			case 'D':
+			case 'E':
+			case 'F':
+				return (i - 'A' + 10) * 16 + ReadEscapedHexNumber ();
+			case 'a':
+			case 'b':
+			case 'c':
+			case 'd':
+			case 'e':
+			case 'f':
+				return (i - 'a' + 10) * 16 + ReadEscapedHexNumber ();
+			}
+			peekChar = i;
+			return 0;
+		}
+
+		private int ReadFromStream ()
+		{
+			int ret = source.Read ();
+			if (ret != '\\')
+				return ret;
+			ret = source.Read ();
+			switch (ret) {
+			case '\\':
+				return ret;
+			case 'x':
+				int tmp;
+				int xcount = 0;
+				do {
+					xcount++;
+					tmp = source.Read ();
+				} while (tmp == 'x');
+				if (tmp != '{') {
+					peekString = new string ('x', xcount);
+					if (tmp >= 0)
+						peekString += (char) tmp;
+					return '\\';
+				}
+				ret = ReadEscapedHexNumber ();
+				if (peekChar != '}')
+					break;
+				peekChar = 0;
+				return ret;
+			}
+			throw new RelaxngException ("Invalidly escaped token.");
+		}
+
 		private int PeekChar ()
 		{
-			if (peekChar == 0)
-				peekChar = source.Read ();
+			if (peekChar == 0) {
+				if (peekString != null) {
+					peekChar = peekString [0];
+					peekString = peekString.Length == 1 ?
+						null : peekString.Substring (1);
+				}
+				else
+					peekChar = ReadFromStream ();
+			}
+
 			return peekChar;
 		}
 
@@ -106,8 +180,13 @@ namespace Commons.Xml.Relaxng.Rnc
 				ret = peekChar;
 				peekChar = 0;
 			}
+			else if (peekString != null) {
+				ret = peekString [0];
+				peekString = peekString.Length == 1 ?
+					null : peekString.Substring (1);
+			}
 			else
-				ret = source.Read ();
+				ret = ReadFromStream ();
 
 			if (nextIncrementLine) {
 				line++;
@@ -146,8 +225,42 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		char [] nameBuffer = new char [30];
 
-		// TODO: parse three quoted
 		private string ReadQuoted (char quoteChar)
+		{
+			int index = 0;
+			bool loop = true;
+			while (loop) {
+				int c = ReadChar ();
+				switch (c) {
+				case -1:
+				case '\'':
+				case '\"':
+					if (quoteChar != c)
+						goto default;
+					loop = false;
+					break;
+				default:
+					if (c < 0)
+						throw new RelaxngException ("Unterminated quoted literal.");
+					AppendNameChar (c, ref index);
+					break;
+				}
+			}
+
+			return new string (nameBuffer, 0, index);
+		}
+
+		private void AppendNameChar (int c, ref int index)
+		{
+			if (nameBuffer.Length == index) {
+				char [] arr = new char [index * 2];
+				Array.Copy (nameBuffer, arr, index);
+				nameBuffer = arr;
+			}
+			nameBuffer [index++] = (char) c;
+		}
+
+		private string ReadTripleQuoted (char quoteChar)
 		{
 			int index = 0;
 			bool loop = true;
@@ -155,16 +268,30 @@ namespace Commons.Xml.Relaxng.Rnc
 				int c = ReadChar ();
 				switch (c) {
 				case -1:
+				case '\'':
 				case '\"':
-					loop = false;
+					// 1
+					if (quoteChar != c)
+						goto default;
+					// 2
+					if ((c = PeekChar ()) != quoteChar) {
+						AppendNameChar (quoteChar, ref index);
+						goto default;
+					}
+					ReadChar ();
+					// 3
+					if ((c = PeekChar ()) == quoteChar) {
+						ReadChar ();
+						loop = false;
+						break;
+					}
+					AppendNameChar (quoteChar, ref index);
+					AppendNameChar (quoteChar, ref index);
 					break;
 				default:
-					if (nameBuffer.Length == index) {
-						char [] arr = new char [index * 2];
-						Array.Copy (nameBuffer, arr, index);
-						nameBuffer = arr;
-					}
-					nameBuffer [index++] = (char) c;
+					if (c < 0)
+						throw new RelaxngException ("Unterminated triple-quoted literal.");
+					AppendNameChar (c, ref index);
 					break;
 				}
 			} while (loop);
@@ -324,7 +451,16 @@ namespace Commons.Xml.Relaxng.Rnc
 				return ParseToken ();
 			case '\'':
 			case '\"':
-				name = ReadQuoted ((char) c);
+				if (PeekChar () != c)
+					name = ReadQuoted ((char) c);
+				else {
+					ReadChar ();
+					if (PeekChar () == c) {
+						ReadChar ();
+						name = ReadTripleQuoted ((char) c);
+					} // else '' or ""
+					name = String.Empty;
+				}
 				tokenValue = name;
 				return Token.LiteralSegment;
 			default:
