@@ -42,6 +42,7 @@ namespace System.IO {
 		}
                 
                 protected TextWriter( IFormatProvider formatProvider ) {
+			CoreNewLine = System.Environment.NewLine.ToCharArray ();
                         internalFormatProvider = formatProvider;
                 }
 
