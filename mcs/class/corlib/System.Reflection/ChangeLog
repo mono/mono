@@ -1,4 +1,13 @@
+2002-01-04  Ravi Pratap  <ravi@ximian.com>
 
+	* Assembly.cs : Decorate missing bits with the MonoTODO
+	attribute.
+
+	* ConstructorInfo.cs, MonoMethod.cs, MonoProperty.cs, ParameterInfo.cs,
+	ReflectionTypeLoadException.cs : Ditto.
+
+	* FieldInfo.cs : Ditto.
+	
 Thu Jan 3 23:25:34 CET 2002 Paolo Molaro <lupus@ximian.com>
 	
 	* Assembly.cs: trow unimplemented exceptions.

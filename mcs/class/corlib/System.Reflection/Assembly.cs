@@ -154,22 +154,26 @@ namespace System.Reflection {
 		{
 			return GetName ().Name;
 		}
-		
+
+		[MonoTODO]
 		public static String CreateQualifiedName(String assemblyName, String typeName) 
 		{
 			return "FIXME: assembly";
 		}
 
+		[MonoTODO]
 		public static String nCreateQualifiedName(String assemblyName, String typeName)
 		{
 			return "FIXME: assembly";
 		}
 
+		[MonoTODO]
 		public static Assembly GetAssembly(Type type)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public Assembly GetSatelliteAssembly(CultureInfo culture)
 		{
 			throw new NotImplementedException ();

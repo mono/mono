@@ -53,6 +53,8 @@ namespace System.Reflection {
 				return (info.set_method != null);
 			}
 		}
+
+		[MonoTODO]
 		public override Type PropertyType {
 			get {
 				MonoPropertyInfo info;
@@ -87,6 +89,8 @@ namespace System.Reflection {
 				return info.name;
 			}
 		}
+
+		[MonoTODO]
 		public override MethodInfo[] GetAccessors( bool nonPublic) {
 			// FIXME: check nonPublic
 			MonoPropertyInfo info;
@@ -104,6 +108,8 @@ namespace System.Reflection {
 				res [n++] = info.get_method;
 			return res;
 		}
+
+		[MonoTODO]
 		public override MethodInfo GetGetMethod( bool nonPublic) {
 			// FIXME: check nonPublic
 			MonoPropertyInfo info;

@@ -35,7 +35,7 @@ namespace System.Reflection {
 	internal class MonoMethod : MethodInfo {
 		internal RuntimeMethodHandle mhandle;
 		
-		
+		[MonoTODO]
 		public override MethodInfo GetBaseDefinition() {
 			return this; /* FIXME */
 		}
@@ -59,7 +59,8 @@ namespace System.Reflection {
 		public override ParameterInfo[] GetParameters() {
 			return MonoMethodInfo.get_parameter_info (mhandle);
 		}
-		
+
+		[MonoTODO]
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
 			throw new NotImplementedException ();
 		}
@@ -162,15 +163,19 @@ namespace System.Reflection {
 				return info.name;
 			}
 		}
-		
+
+		[MonoTODO]
 		public override bool IsDefined (Type attribute_type, bool inherit) {
 			return false;
 		}
 
-		public override object[] GetCustomAttributes( bool inherit) {
+		[MonoTODO]
+		public override object[] GetCustomAttributes (bool inherit) {
 			return null;
 		}
-		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
+
+		[MonoTODO]
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit) {
 			return null;
 		}
 	}

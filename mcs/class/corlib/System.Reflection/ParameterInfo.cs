@@ -60,17 +60,21 @@ namespace System.Reflection
 			get {return PositionImpl;}
 		}
 
+		[MonoTODO]
 		public virtual object[] GetCustomAttributes (bool inherit)
 		{
 			// FIXME
 			return null;
 		}
 
+		[MonoTODO]
 		public virtual object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
 			// FIXME
 			return null;
 		}
+
+		[MonoTODO]
 		public virtual bool IsDefined( Type attributeType, bool inherit) {
 			// FIXME
 			return false;

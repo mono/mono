@@ -9,6 +9,7 @@ namespace System.Reflection
 	public sealed class ReflectionTypeLoadException : SystemException
 	{
 
+		[MonoTODO]
 		public Type[] Types {
 			get {
 				// FIXME
@@ -16,6 +17,7 @@ namespace System.Reflection
 			}
 		}
 
+		[MonoTODO]
 		public Exception[] LoaderExceptions {
 			get {
 				// FIXME
