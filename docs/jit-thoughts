@@ -47,6 +47,13 @@ can be transformed to:
 Please notice that the split trees use less registers than the original
 tree. 
 
+Triggering JIT compilation:
+===========================
+
+The current approach is to call functions indirectly. The address to call is
+stored in the MonoMethod structure. For each method we create a trampoline
+function. When called, this function does the JIT compilation and replaces the
+trampoline with the compiled method address.
 
 Register Allocation:
 ====================
