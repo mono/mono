@@ -13,12 +13,16 @@ namespace System.Resources
 	public sealed class NeutralResourcesLanguageAttribute : Attribute
 	{
 		
-		string culture;
+		private string culture;
 		
 		// Constructors
 		public NeutralResourcesLanguageAttribute (string cultureName)
 		{
-				culture = cultureName;
+			if(cultureName==null) {
+				throw new ArgumentNullException("culture is null");
+			}
+			
+			culture = cultureName;
 		}
 		public string CultureName
 		{

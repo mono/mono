@@ -1,10 +1,11 @@
 //
 // System.Resources.ResourceSet.cs
 //
-// Author:
+// Authors:
 //	Duncan Mak (duncan@ximian.com)
+//	Dick Porter (dick@ximian.com)
 //
-// (C) 2001 Ximian, Inc.		http://www.ximian.com
+// (C) 2001, 2002 Ximian, Inc.		http://www.ximian.com
 //
 
 using System.Collections;
@@ -21,6 +22,7 @@ namespace System.Resources
 
 		// Constructors
 		protected ResourceSet () {}
+
 		public ResourceSet (IResourceReader reader)
 		{
 			if (reader == null)
@@ -30,11 +32,23 @@ namespace System.Resources
 
 		public ResourceSet (Stream stream)
 		{
+			if(stream==null) {
+				throw new ArgumentNullException("stream is null");
+			}
+
+			if(!stream.CanRead) {
+				throw new ArgumentException("stream is not readable");
+			}
+			
 			Reader = new ResourceReader (stream);
 		}
 
 		public ResourceSet (String fileName)
 		{
+			if(fileName==null) {
+				throw new ArgumentNullException("filename is null");
+			}
+			
 			Reader = new ResourceReader (fileName);
 		}
 
@@ -51,9 +65,13 @@ namespace System.Resources
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing) {
-				Reader = null;
-				Table = null;
-			} 
+				if(Reader!=null) {
+					Reader.Close();
+				}
+			}
+
+			Reader = null;
+			Table = null;
 		}
 
 		public virtual Type GetDefaultReader ()
@@ -71,12 +89,14 @@ namespace System.Resources
 				throw new ArgumentNullException ("The name parameter is null.");
 			if (Reader == null)
 				throw new InvalidOperationException ("The ResourceSet has been closed.");
-			if (Table == null) {
+
+			if (Table == null) { 
 				ReadResources ();
-				return Table[name];
-			} else 
-				return Table[name];
+			}
+			
+			return(Table[name]);
 		}
+
 		public virtual object GetObject (string name, bool ignoreCase)
 		{
 			if (name == null)
@@ -85,6 +105,7 @@ namespace System.Resources
 				throw new InvalidOperationException ("ResourceSet has been closed.");
 			if (Table == null)
 				ReadResources ();
+
 			if (ignoreCase) {
 				foreach (DictionaryEntry de in Table) {
 					string key = (string) de.Key;
@@ -101,7 +122,7 @@ namespace System.Resources
 			Object o = GetObject (name);
 			if (o is string)
 				return (string) o;
-			return null;
+			throw new InvalidOperationException("Not a string");
 		}
 
 		public virtual string GetString (string name, bool ignoreCase)
@@ -109,7 +130,7 @@ namespace System.Resources
 			Object o = GetObject (name, ignoreCase);
 			if (o is string)
 				return (string) o;
-			return null;
+			throw new InvalidOperationException("Not a string");
 		}
 
 		protected virtual void ReadResources ()
