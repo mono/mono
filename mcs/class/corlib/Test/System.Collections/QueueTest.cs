@@ -92,7 +92,7 @@ namespace MonoTests.System.Collections {
 			e = q2.GetEnumerator ();
 			i = 50;
 			while (e.MoveNext ()) {
-				Assert (((int) e.Current) == i++);
+				AssertEquals (i, ((int) e.Current));
 				i++;
 			}
 			e = emptyQueue.GetEnumerator ();
@@ -104,15 +104,9 @@ namespace MonoTests.System.Collections {
 				e.MoveNext ();
 				q1.Enqueue (0);
 				e.MoveNext ();
-				Fail ("Should have thrown InvalidOperationException");
+				Fail ("#1 Should have thrown InvalidOperationException");
 			} catch	(InvalidOperationException) { }
 			e = q1.GetEnumerator ();
-			try {
-				e.MoveNext ();
-				q1.Enqueue (0);
-				object o = e.Current;
-				Fail ("Should have thrown InvalidOperationException");
-			} catch	(InvalidOperationException) { } 
 		}
 
 		public void TestClone () {

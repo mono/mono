@@ -53,7 +53,9 @@ namespace MonoTests.System.Runtime.Serialization
 		//
 		public void TestGetId2 ()
 		{
+			bool testBool1;
 			bool testBool2;
+			id = generator.GetId (obj1, out testBool1);
 			long testId1 = generator.GetId (obj1, out testBool2);
 
 			AssertEquals ("B1", testId1, id); // same object, same ID
@@ -65,7 +67,9 @@ namespace MonoTests.System.Runtime.Serialization
 		//
 		public void TestHasId1 ()
 		{
+			bool testBool1;
 			bool testBool3;
+			id = generator.GetId (obj1, out testBool1);
 			long testId2 = generator.HasId (obj1, out testBool3);
 
 			AssertEquals ("C1", false, testBool3); // this has been inserted before

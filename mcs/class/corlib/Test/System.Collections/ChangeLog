@@ -1,3 +1,8 @@
+2002-06-20  Nick Drochak  <ndrochak@gol.com>
+
+	* SortedListTest.cs: Make tests pass against ms.net.
+	* QueueTest.cs: Make tests pass against ms.net.
+
 2002-06-19  Nick Drochak  <ndrochak@gol.com>
 
 	* AllTests.cs: Sort names and include missing tests.

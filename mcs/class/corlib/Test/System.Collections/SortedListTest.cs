@@ -83,10 +83,9 @@ public class SortedListTest : TestCase {
 			d.Add(7987,"lkj");
 			temp1 = new SortedList(d);
 			Fail ("sl.constructor-3: does not throw InvalidCastException");
-		} catch (InvalidCastException) { // IS NOT THROWN as stated in MSDN
-			//Console.WriteLine("InvalidCastException Handler: {0}", e.ToString());
-		} catch (InvalidOperationException e) { // instead it throws this
-			Fail ("sl.constructor-3: [undocumented] InvalidOperationException Handler: e=" + e.ToString());
+		} catch (InvalidOperationException) {
+		} catch (Exception e) {
+			Fail ("Unexpected Exception throw: e=" + e);
 		}
 	}
 	
@@ -243,7 +242,7 @@ public class SortedListTest : TestCase {
 			AssertEquals("sl.Clear: should have one element",	2, sl1.Count);
 			sl1.Clear();
 			AssertEquals("sl.Clear: is not cleared",0, sl1.Count);
-			AssertEquals("sl.Clear: capacity is altered",10, sl1.Capacity);
+			AssertEquals("sl.Clear: capacity is altered",16, sl1.Capacity);
 		}
 	}
 
