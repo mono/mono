@@ -1604,7 +1604,7 @@ namespace System.Xml
 			}
 
 			Uri absUri = DTD.Resolver.ResolveUri (baseUri, url);
-			string absPath = absUri.ToString ();
+			string absPath = absUri != null ? absUri.ToString () : String.Empty;
 
 			foreach (XmlParserInput i in parserInputStack.ToArray ()) {
 				if (i.BaseURI == absPath)

@@ -578,7 +578,8 @@ namespace System.Xml.Schema
 			Uri baseUri = null;
 			if (this.SourceUri != null && this.SourceUri != String.Empty)
 				baseUri = new Uri (this.SourceUri);
-			return resolver.ResolveUri (baseUri, relativeUri).ToString ();
+			Uri abs = resolver.ResolveUri (baseUri, relativeUri);
+			return abs != null ? abs.ToString () : String.Empty;
 		}
 
 		internal bool IsNamespaceAbsent (string ns)

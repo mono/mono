@@ -1010,7 +1010,7 @@ namespace Mono.Xml
 			}
 
 			Uri absUri = resolver.ResolveUri (baseUri, SystemId);
-			string absPath = absUri.ToString ();
+			string absPath = absUri != null ? absUri.ToString () : String.Empty;
 			if (Root.ExternalResources.ContainsKey (absPath))
 				LiteralEntityValue = (string) Root.ExternalResources [absPath];
 			Stream s = null;

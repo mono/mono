@@ -195,10 +195,11 @@ namespace Mono.Xml.Xsl
 			// todo: detect recursion
 			Uri baseUriObj = (Input.BaseURI == String.Empty) ? null : new Uri (Input.BaseURI);
 			Uri absUri = res.ResolveUri (baseUriObj, url);
+			string absUriString = absUri != null ? absUri.ToString () : String.Empty;
 			using (Stream s = (Stream)res.GetEntity (absUri, null, typeof(Stream)))
 			{
 
-				XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (absUri.ToString (), s, nsMgr.NameTable));
+				XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (absUriString, s, nsMgr.NameTable));
 				vr.ValidationType = ValidationType.None;
 				XPathNavigator n = new XPathDocument (vr, XmlSpace.Preserve).CreateNavigator ();
 				vr.Close ();

@@ -1,3 +1,7 @@
+2004-12-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs : XmlResolver.ResolveUri() may return null.
+
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : ValidateElement() was not LAMESPEC. Added

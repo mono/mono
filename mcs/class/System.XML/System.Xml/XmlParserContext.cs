@@ -162,16 +162,16 @@ namespace System.Xml
 
 			this.namespaceManager = nsMgr != null ? nsMgr : new XmlNamespaceManager (nameTable);
 			if (dtd != null) {
-				this.docTypeName = dtd.Name;
-				this.publicID = dtd.PublicId;
-				this.systemID = dtd.SystemId;
-				this.internalSubset = dtd.InternalSubset;
+				this.DocTypeName = dtd.Name;
+				this.PublicId = dtd.PublicId;
+				this.SystemId = dtd.SystemId;
+				this.InternalSubset = dtd.InternalSubset;
 				this.dtd = dtd;
 			}
 			this.encoding = enc;
 
-			this.baseURI = baseURI;
-			this.xmlLang = xmlLang;
+			this.BaseURI = baseURI;
+			this.XmlLang = xmlLang;
 			this.xmlSpace = xmlSpace;
 
 			contextItems = new ArrayList ();
@@ -180,15 +180,15 @@ namespace System.Xml
 
 		#region Fields
 
-		private string baseURI;
-		private string docTypeName;
+		private string baseURI = String.Empty;
+		private string docTypeName = String.Empty;
 		private Encoding encoding;
-		private string internalSubset;
+		private string internalSubset = String.Empty;
 		private XmlNamespaceManager namespaceManager;
 		private XmlNameTable nameTable;
-		private string publicID;
-		private string systemID;
-		private string xmlLang;
+		private string publicID = String.Empty;
+		private string systemID = String.Empty;
+		private string xmlLang = String.Empty;
 		private XmlSpace xmlSpace;
 		private ArrayList contextItems;
 		private int contextItemCount;
@@ -200,12 +200,12 @@ namespace System.Xml
 
 		public string BaseURI {
 			get { return baseURI; }
-			set { baseURI = value; }
+			set { baseURI = value != null ? value : String.Empty; }
 		}
 
 		public string DocTypeName {
 			get { return docTypeName != null ? docTypeName : dtd != null ? dtd.Name : null; }
-			set { docTypeName = value; }
+			set { docTypeName = value != null ? value : String.Empty; }
 		}
 
 		internal DTDObjectModel Dtd {
@@ -220,7 +220,7 @@ namespace System.Xml
 
 		public string InternalSubset {
 			get { return internalSubset != null ? internalSubset : dtd != null ? dtd.InternalSubset : null; }
-			set { internalSubset = value; }
+			set { internalSubset = value != null ? value : String.Empty; }
 		}
 
 		public XmlNamespaceManager NamespaceManager {
@@ -235,17 +235,17 @@ namespace System.Xml
 
 		public string PublicId {
 			get { return publicID != null ? publicID : dtd != null ? dtd.PublicId : null; }
-			set { publicID = value; }
+			set { publicID = value != null ? value : String.Empty; }
 		}
 
 		public string SystemId {
 			get { return systemID != null ? systemID : dtd != null ? dtd.SystemId : null; }
-			set { systemID = value; }
+			set { systemID = value != null ? value : String.Empty; }
 		}
 
 		public string XmlLang {
 			get { return xmlLang; }
-			set { xmlLang = value; }
+			set { xmlLang = value != null ? value : String.Empty; }
 		}
 
 		public XmlSpace XmlSpace {

@@ -237,7 +237,8 @@ namespace Mono.Xml.Xsl
 //			Debug.WriteLine ("THIS: " + thisUri);
 //			Debug.WriteLine ("BASE: " + baseUri);
 			XmlResolver r = p.Resolver;
-			
+			if (r == null)
+				return null;
 			Uri uriBase = null;
 			if (! object.ReferenceEquals (baseUri, VoidBaseUriFlag) && baseUri != String.Empty)
 				uriBase = r.ResolveUri (null, baseUri);
@@ -254,7 +255,7 @@ namespace Mono.Xml.Xsl
 				Uri uri = Resolve (itr.Current.Value, baseUri != null ? baseUri : /*itr.Current.BaseURI*/doc.BaseURI, xsltContext.Processor);
 				if (!got.ContainsKey (uri)) {
 					got.Add (uri, null);
-					if (uri.ToString () == "") {
+					if (uri != null && uri.ToString () == "") {
 						XPathNavigator n = doc.Clone ();
 						n.MoveToRoot ();
 						list.Add (n);
@@ -270,7 +271,7 @@ namespace Mono.Xml.Xsl
 		{
 			Uri uri = Resolve (arg0, baseUri != null ? baseUri : doc.BaseURI, xsltContext.Processor);
 			XPathNavigator n;
-			if (uri.ToString () == "") {
+			if (uri != null && uri.ToString () == "") {
 				n = doc.Clone ();
 				n.MoveToRoot ();
 			} else

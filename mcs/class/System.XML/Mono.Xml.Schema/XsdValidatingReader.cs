@@ -215,6 +215,7 @@ namespace Mono.Xml.Schema
 
 		// It is used only for independent XmlReader use, not for XmlValidatingReader.
 #if NET_2_0
+		[Obsolete]
 		public override object ReadTypedValue ()
 #else
 		public object ReadTypedValue ()
@@ -1507,9 +1508,10 @@ namespace Mono.Xml.Schema
 		private XmlSchema ReadExternalSchema (string uri)
 		{
 			Uri absUri = resolver.ResolveUri ((BaseURI != "" ? new Uri (BaseURI) : null), uri);
+			string absUriString = absUri != null ? absUri.ToString () : String.Empty;
 			XmlTextReader xtr = null;
 			try {
-				xtr = new XmlTextReader (absUri.ToString (),
+				xtr = new XmlTextReader (absUriString,
 					(Stream) resolver.GetEntity (
 						absUri, null, typeof (Stream)),
 					NameTable);

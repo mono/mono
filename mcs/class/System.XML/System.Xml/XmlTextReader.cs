@@ -98,12 +98,13 @@ namespace System.Xml
 		public XmlTextReader (string url, XmlNameTable nt)
 		{
 			Uri uri = resolver.ResolveUri (null, url);
+			string uriString = uri != null ? uri.ToString () : String.Empty;
 			Stream s = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
 			XmlParserContext ctx = new XmlParserContext (nt,
 				new XmlNamespaceManager (nt),
 				String.Empty,
 				XmlSpace.None);
-			this.InitializeContext (uri.ToString(), ctx, new XmlStreamReader (s), XmlNodeType.Document);
+			this.InitializeContext (uriString, ctx, new XmlStreamReader (s), XmlNodeType.Document);
 		}
 
 		public XmlTextReader (TextReader input, XmlNameTable nt)
@@ -1307,32 +1308,41 @@ namespace System.Xml
 			}
 
 			for (int i = 0; i < attributeCount; i++) {
-				if (Object.ReferenceEquals (attributeTokens [i].Prefix, XmlNamespaceManager.PrefixXml)) {
-					string aname = attributeTokens [i].LocalName;
-					string value = attributeTokens [i].Value;
-					switch (aname) {
-					case "base":
-						if (this.resolver != null)
-							parserContext.BaseURI = resolver.ResolveUri (new Uri (BaseURI), value).ToString ();
-						else
-							parserContext.BaseURI = value;
-						break;
-					case "lang":
-						parserContext.XmlLang = value;
-						break;
-					case "space":
-						switch (value) {
-						case "preserve":
-							parserContext.XmlSpace = XmlSpace.Preserve;
-							break;
-						case "default":
-							parserContext.XmlSpace = XmlSpace.Default;
-							break;
-						default:
-							throw NotWFError (String.Format ("Invalid xml:space value: {0}", value));
-						}
-						break;
+				if (!Object.ReferenceEquals (attributeTokens [i].Prefix, XmlNamespaceManager.PrefixXml))
+					continue;
+				string aname = attributeTokens [i].LocalName;
+				string value = attributeTokens [i].Value;
+				switch (aname) {
+				case "base":
+					if (this.resolver != null) {
+						Uri buri =
+							BaseURI != String.Empty ?
+							new Uri (BaseURI) : null;
+						Uri uri = resolver.ResolveUri (
+							buri, value);
+						parserContext.BaseURI =
+							uri != null ?
+							uri.ToString () :
+							String.Empty;
 					}
+					else
+						parserContext.BaseURI = value;
+					break;
+				case "lang":
+					parserContext.XmlLang = value;
+					break;
+				case "space":
+					switch (value) {
+					case "preserve":
+						parserContext.XmlSpace = XmlSpace.Preserve;
+						break;
+					case "default":
+						parserContext.XmlSpace = XmlSpace.Default;
+						break;
+					default:
+						throw NotWFError (String.Format ("Invalid xml:space value: {0}", value));
+					}
+					break;
 				}
 			}
 

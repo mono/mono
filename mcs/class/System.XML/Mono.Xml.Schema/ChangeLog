@@ -1,3 +1,7 @@
+2004-12-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : XmlResolver.ResolveUri() may return null.
+
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : added ActualSchemaType to context type.
