@@ -19,21 +19,19 @@ using System.Runtime.InteropServices;
 #if (NET_1_0)
 	[assembly: AssemblyVersion ("1.0.3300.0")]
 	[assembly: SatelliteContractVersion ("1.0.3300.0")]
-#endif
-#if (NET_1_1)
+#elif (NET_1_1)
 	[assembly: AssemblyVersion ("1.0.5000.0")]
 	[assembly: SatelliteContractVersion ("1.0.5000.0")]
-#endif
-#if (NET_1_2)
+#elif (NET_1_2)
 	[assembly: AssemblyVersion ("1.2.3400.0")]
 	[assembly: SatelliteContractVersion ("1.2.3400.0")]
-	[assembly: AssemblyCompany ("MONO development team")]
-	[assembly: AssemblyCopyright ("(c) 2003-2004 Various Authors")]
-	[assembly: AssemblyDescription ("System.Security.dll")]
-	[assembly: AssemblyProduct ("MONO CLI")]
-	[assembly: AssemblyTitle ("System.Security.dll")]
 #endif
 
+[assembly: AssemblyCompany ("MONO development team")]
+[assembly: AssemblyCopyright ("(c) 2003-2004 Various Authors")]
+[assembly: AssemblyDescription ("System.Security.dll")]
+[assembly: AssemblyProduct ("MONO CLI")]
+[assembly: AssemblyTitle ("System.Security.dll")]
 [assembly: CLSCompliant (true)]
 [assembly: ComVisible (false)]
 [assembly: NeutralResourcesLanguage ("en-US")]
