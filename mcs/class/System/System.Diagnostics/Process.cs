@@ -875,6 +875,11 @@ namespace System.Diagnostics {
 			{
 				Handle = handle;
 			}
+
+			protected override void Dispose (bool explicitDisposing)
+			{
+				// Do nothing, we don't own the handle and we won't close it.
+			}
 		}
 	}
 }
