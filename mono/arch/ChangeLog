@@ -1,3 +1,8 @@
+
+Thu Dec 13 15:56:53 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h: x86_mov_memindex_imm() added.
+	
 2001-11-29  Radek Doulik  <rodo@ximian.com>
 
 	* ppc/tramp.c: use r12 which is volatile instead of non-volatile
