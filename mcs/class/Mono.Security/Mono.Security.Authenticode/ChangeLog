@@ -1,3 +1,8 @@
+2004-10-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs: Fixed case where Url is null (broken since
+	we switched from string to Uri). Now use "using" for FileStream.
+
 2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: In synch with corlib version. Fixed all 

@@ -186,10 +186,15 @@ namespace Mono.Security.Authenticode {
 
 			pkcs7.SignerInfo.Certificate = certs [0];
 			pkcs7.SignerInfo.Key = rsa;
-			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcSpOpusInfo, Opus (description, url.ToString ())));
+
+			ASN1 opus = null;
+			if (url == null)
+				Attribute (spcSpOpusInfo, Opus (description, null));
+			else
+				Attribute (spcSpOpusInfo, Opus (description, url.ToString ()));
+			pkcs7.SignerInfo.AuthenticatedAttributes.Add (opus);
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (contentType, ASN1Convert.FromOid (spcIndirectDataContext)));
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
-
 			pkcs7.GetASN1 (); // sign
 			return pkcs7.SignerInfo.Signature;
 		}
@@ -218,10 +223,13 @@ namespace Mono.Security.Authenticode {
 		public bool Sign (string fileName) 
 		{
 			string hashAlgorithm = "MD5";
-			FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-			byte[] file = new byte [fs.Length];
-			fs.Read (file, 0, file.Length);
-			fs.Close ();
+			byte[] file = null;
+
+			using (FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+				file = new byte [fs.Length];
+				fs.Read (file, 0, file.Length);
+				fs.Close ();
+			}
 
 			// MZ - DOS header
 			if (BitConverter.ToUInt16 (file, 0) != 0x5A4D)
@@ -277,42 +285,45 @@ namespace Mono.Security.Authenticode {
 			sign.Content.Add (pkcs7.ASN1);
 			authenticode = sign.ASN1;
 
-			// debug
-			fs = File.Open (fileName + ".sig", FileMode.Create, FileAccess.Write);
 			byte[] asn = authenticode.GetBytes ();
-			fs.Write (asn, 0, asn.Length);
-			fs.Close ();
+			// debug
+			if (Environment.GetEnvironmentVariable ("MONO_DEBUG") != null) {
+				using (FileStream fs = File.Open (fileName + ".sig", FileMode.Create, FileAccess.Write)) {
+					fs.Write (asn, 0, asn.Length);
+					fs.Close ();
+				}
+			}
 
 			File.Copy (fileName, fileName + ".bak", true);
 
-			fs = File.Open (fileName, FileMode.Create, FileAccess.Write);
-			// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
-			byte[] data = BitConverter.GetBytes (file.Length);
-			file [peOffset + 152] = data [0];
-			file [peOffset + 153] = data [1];
-			file [peOffset + 154] = data [2];
-			file [peOffset + 155] = data [3];
-			int size = asn.Length + 8;
-			// must be a multiple of 8 bytes
-			int addsize = (size % 8);
-			if (addsize > 0)
-				addsize = 8 - addsize;
-			size += addsize;
-			data = BitConverter.GetBytes (size);		// header
-			file [peOffset + 156] = data [0];
-			file [peOffset + 157] = data [1];
-			file [peOffset + 158] = data [2];
-			file [peOffset + 159] = data [3];
-			fs.Write (file, 0, file.Length);
-			fs.Write (data, 0, data.Length);		// length (again)
-			data = BitConverter.GetBytes (0x00020200);	// magic
-			fs.Write (data, 0, data.Length);
-			fs.Write (asn, 0, asn.Length);
-			// fill up
-			byte[] fillup = new byte [addsize];
-			fs.Write (fillup, 0, fillup.Length);
-			fs.Close ();
-
+			using (FileStream fs = File.Open (fileName, FileMode.Create, FileAccess.Write)) {
+				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
+				byte[] data = BitConverter.GetBytes (file.Length);
+				file [peOffset + 152] = data [0];
+				file [peOffset + 153] = data [1];
+				file [peOffset + 154] = data [2];
+				file [peOffset + 155] = data [3];
+				int size = asn.Length + 8;
+				// must be a multiple of 8 bytes
+				int addsize = (size % 8);
+				if (addsize > 0)
+					addsize = 8 - addsize;
+				size += addsize;
+				data = BitConverter.GetBytes (size);		// header
+				file [peOffset + 156] = data [0];
+				file [peOffset + 157] = data [1];
+				file [peOffset + 158] = data [2];
+				file [peOffset + 159] = data [3];
+				fs.Write (file, 0, file.Length);
+				fs.Write (data, 0, data.Length);		// length (again)
+				data = BitConverter.GetBytes (0x00020200);	// magic
+				fs.Write (data, 0, data.Length);
+				fs.Write (asn, 0, asn.Length);
+				// fill up
+				byte[] fillup = new byte [addsize];
+				fs.Write (fillup, 0, fillup.Length);
+				fs.Close ();
+			}
 			return true;
 		}
 
