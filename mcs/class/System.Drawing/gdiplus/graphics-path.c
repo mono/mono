@@ -1,4 +1,4 @@
-/*v
+/*
  * graphics-path.c
  * 
  * Author: Duncan Mak (duncan@ximian.com)
@@ -79,14 +79,13 @@ int_to_float (const GpPoint *pts, int count)
         return p;
 }
 
-static GpPointF
-new_point (float x, float y)
+static void
+append (GpPath *path, float x, float y, GpPathPointType type)
 {
-        GpPointF pt;
-        pt.X = x;
-        pt.Y = y;
-        
-        return pt;
+        byte t = (byte) type;
+        GpPointF pt = { x, y };
+        g_array_append_val (path->points, pt);
+        g_byte_array_append (path->types, &t, 1);
 }
 
 static void
@@ -98,11 +97,11 @@ append_point (GpPath *path, GpPointF pt, GpPathPointType type)
 }
 
 static void
-append_bezier (GpPath *path, GpPointF p1, GpPointF p2, GpPointF p3)
+append_bezier (GpPath *path, float x1, float y1, float x2, float y2, float x3, float y3)
 {
-        append_point (path, p1, PathPointTypeBezier3);
-        append_point (path, p2, PathPointTypeBezier3);
-        append_point (path, p3, PathPointTypeBezier3);
+        append (path, x1, y1, PathPointTypeBezier3);
+        append (path, x2, y2, PathPointTypeBezier3);
+        append (path, x3, y3, PathPointTypeBezier3);
 }
 
 GpStatus
@@ -273,7 +272,6 @@ GdipReversePath (GpPath *path)
         GArray *points = g_array_sized_new (FALSE, TRUE, sizeof (GpPointF), length);
         int i;
         for (i = length; i > 0; i--) {
-                /* XXX: is this correct? */
                 byte t = g_array_index (path->types, byte, i);
                 GpPointF pt = g_array_index (path->points, GpPointF, i);
                 
@@ -296,8 +294,10 @@ GdipGetPathLastPoint (GpPath *path, GpPointF *lastPoint)
 GpStatus
 GdipAddPathLine (GpPath *path, float x1, float y1, float x2, float y2)
 {
-        append_point (path, new_point (x1, y1), PathPointTypeStart);
-        append_point (path, new_point (x2, y2), PathPointTypeLine);
+        PointF p1 = { x1, y1 };
+        PointF p2 = { x2, y2 };        
+        append_point (path, p1, PathPointTypeStart);
+        append_point (path, p2, PathPointTypeLine);
 
         return Ok;
 }
@@ -337,22 +337,18 @@ GdipAddPathArc (GpPath *path, float x, float y,
         float cos_alpha = cos (alpha);
         float cos_beta = cos (beta);
 
-        GpPointF origin = new_point (cx + rx * cos_alpha, cy + ry * sin_alpha);
-        
-        GpPointF p1 = new_point (
-                cx + rx * (cos_alpha - bcp * sin_alpha),
-                cy + ry * (sin_alpha + bcp * cos_alpha));
-        
-        GpPointF p2 = new_point (
-                cx + rx * (cos_beta  + bcp * sin_beta),
-                cy + ry * (sin_beta  - bcp * cos_beta));
-        
-        GpPointF p3 = new_point (
-                cx + rx *  cos_beta,
-                cy + ry *  sin_beta);
+        append (path,
+                cx + rx * cos_alpha,
+                cy + ry * sin_alpha,
+                PathPointTypeStart);
 
-        append_point (path, origin, PathPointTypeStart);
-        append_bezier (path, p1, p2, p3);
+        append_bezier (path, 
+                       cx + rx * (cos_alpha - bcp * sin_alpha),
+                       cy + ry * (sin_alpha + bcp * cos_alpha),
+                       cx + rx * (cos_beta  + bcp * sin_beta),
+                       cy + ry * (sin_beta  - bcp * cos_beta),
+                       cx + rx *  cos_beta,
+                       cy + ry *  sin_beta);
 
         return Ok;
 }
@@ -362,11 +358,9 @@ GdipAddPathBezier (GpPath *path,
         float x1, float y1, float x2, float y2, 
         float x3, float y3, float x4, float y4)
 {
-        append_point (path, new_point (x1, x1), PathPointTypeStart);
-        append_bezier (path,
-                       new_point (x2, y2),
-                       new_point (x3, y3),
-                       new_point (x4, y4));
+        append (path, x1, y1, PathPointTypeStart);
+        append_bezier (path, x2, y2, x3, y3, x4, y4);
+        
         return Ok;
 }
 
@@ -419,10 +413,10 @@ GdipAddPathClosedCurve2 (GpPath *path, const GpPointF *points, int count, float 
 GpStatus
 GdipAddPathRectangle (GpPath *path, float x, float y, float width, float height)
 {
-        append_point (path, new_point (x, y), PathPointTypeLine);
-        append_point (path, new_point (x + width, y), PathPointTypeLine);
-        append_point (path, new_point (x + width, y + height), PathPointTypeLine);
-        append_point (path, new_point (x, y + height), PathPointTypeLine);
+        append (path, x, y, PathPointTypeLine);
+        append (path, x + width, y, PathPointTypeLine);
+        append (path, x + width, y + height, PathPointTypeLine);
+        append (path, x, y + height, PathPointTypeLine);
         
         return Ok;
 }
@@ -452,31 +446,31 @@ GdipAddPathEllipse (GpPath *path, float x, float y, float width, float height)
         double cy = y + ry;
 
         /* origin */
-        append_point (path, new_point (cx + rx, cy), PathPointTypeStart);
+        append (path, cx + rx, cy, PathPointTypeStart);
 
         /* quadrant I */
         append_bezier (path, 
-                       new_point (cx + rx, cy - C1 * ry), 
-                       new_point (cx + C1 * rx, cy - ry), 
-                       new_point (cx, cy - ry));
+                       cx + rx, cy - C1 * ry, 
+                       cx + C1 * rx, cy - ry, 
+                       cx, cy - ry);
 
         /* quadrant II */
         append_bezier (path,
-                       new_point (cx - C1 * rx, cy - ry), 
-                       new_point (cx - rx, cy - C1 * ry), 
-                       new_point (cx - rx, cy));
+                       cx - C1 * rx, cy - ry, 
+                       cx - rx, cy - C1 * ry, 
+                       cx - rx, cy);
 
         /* quadrant III */
         append_bezier (path,
-                       new_point (cx - rx, cy + C1 * ry), 
-                       new_point (cx - C1 * rx, cy + ry), 
-                       new_point (cx, cy + ry));
+                       cx - rx, cy + C1 * ry, 
+                       cx - C1 * rx, cy + ry, 
+                       cx, cy + ry);
 
         /* quadrant IV */
         append_bezier (path,
-                       new_point (cx + C1 * rx, cy + ry), 
-                       new_point (cx + rx, cy + C1 * ry), 
-                       new_point (cx + rx, cy));
+                       cx + C1 * rx, cy + ry, 
+                       cx + rx, cy + C1 * ry, 
+                       cx + rx, cy);
         
         return Ok;
 }
@@ -502,25 +496,24 @@ GdipAddPathPie (GpPath *path, float x, float y, float width, float height, float
         float cos_beta = cos (beta);
 
         /* move to center */
-        append_point (path, new_point (cx, cy), PathPointTypeStart);
+        append (path, cx, cy, PathPointTypeStart);
         
 
         /* draw pie edge */
-        append_point (path, 
-                      new_point (cx + rx * cos_alpha, cy + ry * sin_alpha),
-                      PathPointTypeLine);
+        append (path, cx + rx * cos_alpha, cy + ry * sin_alpha,
+                PathPointTypeLine);
 
         /* draw arc */
         append_bezier (path,
-                      new_point (cx + rx * (cos_alpha - bcp * sin_alpha),
-                                 cy + ry * (sin_alpha + bcp * cos_alpha)),
-                      new_point (cx + rx * (cos_beta  + bcp * sin_beta),
-                                 cy + ry * (sin_beta  - bcp * cos_beta)),
-                      new_point (cx + rx *  cos_beta,
-                                 cy + ry *  sin_beta));
+                       cx + rx * (cos_alpha - bcp * sin_alpha),
+                       cy + ry * (sin_alpha + bcp * cos_alpha),
+                       cx + rx * (cos_beta  + bcp * sin_beta),
+                       cy + ry * (sin_beta  - bcp * cos_beta),
+                       cx + rx *  cos_beta,
+                       cy + ry *  sin_beta);
         
         /* draw pie edge */
-        append_point (path, new_point (cx, cy), PathPointTypeLine);
+        append (path, cx, cy, PathPointTypeLine);
 
         return Ok;
 }
@@ -532,7 +525,7 @@ GdipAddPathPolygon (GpPath *path, const GpPointF *points, int count)
         GpPointF *tmp = (GpPointF *) points;
         
         append_point (path, *tmp, PathPointTypeStart);
-        points ++;
+        tmp ++;
 
         for (i = 1; i < count; i++, tmp++)
                 append_point (path, *tmp, PathPointTypeLine);
@@ -548,27 +541,30 @@ GdipAddPathPath (GpPath *path, GpPath *addingPath, bool connect)
         return NotImplemented;
 }
 
-/* GpStatus */
-/* GdipAddString (GpPath *path, const char *string, int length,  */
-/*                const GpFontFamily *family, int style, float emSize, const GpRectF *layoutRect, const GpStringFormat *format) */
-/* { */
-/*         /\* XXX: This one is really hard. They really translate a string in bezier points and what not *\/ */
-/*         return NotImplemented; */
-/* } */
+/* XXX: This one is really hard. They really translate a string into bezier points and what not */
+/*
+ * GpStatus 
+ * GdipAddString (GpPath *path, const char *string, int length, 
+ *                const GpFontFamily *family, int style, float emSize, const GpRectF *layoutRect, const GpStringFormat *format)
+ * { 
+ *         return NotImplemented; 
+ * }
+ */
 
-/* GpStatus */
-/* GdipAddString (GpPath *path, const char *string, int length,  */
-/*                const GpFontFamily *family, int style, float emSize, const GpRect *layoutRect, const GpStringFormat *format) */
-/* { */
-/*         /\* XXX: This one is really hard. They really translate a string in bezier points and what not *\/ */
-/*         return NotImplemented; */
-/* } */
+/*
+ * GpStatus
+ * GdipAddString (GpPath *path, const char *string, int length,
+ *                const GpFontFamily *family, int style, float emSize, const GpRect *layoutRect, const GpStringFormat *format)
+ * {
+ *          return NotImplemented;
+ * }
+ */
 
 GpStatus
 GdipAddPathLineI (GpPath *path, int x1, int y1, int x2, int y2)
 {
-        append_point (path, new_point (x1, y1), PathPointTypeStart);
-        append_point (path, new_point (x2, y2), PathPointTypeLine);
+        append (path, x1, y1, PathPointTypeStart);
+        append (path, x2, y2, PathPointTypeLine);
 
         return Ok;
 }
@@ -718,7 +714,7 @@ GpStatus
 GdipTransformPath (GpPath* path, GpMatrix *matrix)
 {
         PointF *points = g_array_to_array (path->points);
-        Status s =  GdipTransformMatrixPoints (matrix, points,path->count);
+        Status s = GdipTransformMatrixPoints (matrix, points, path->count);
 
         GdipFree (points);
 

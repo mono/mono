@@ -1,3 +1,17 @@
+2003-12-25  Duncan Mak  <duncan@ximian.com>
+
+	* graphics.c (DrawBezier, DrawBezierI): Well, it's pretty obvious
+	that the code was incorrect before. After Christmas, I'm gonna
+	hook up the GraphicsPath code and work on testing and making sure
+	this stuff is correct. I'm pretty sure, in a first pass, there are
+	lots of littles bugs waiting to be fixed.
+
+	* graphics-path.c (new_point): Removed, we now pack the point
+	inside the append functions.
+	(append): New function that takes the X, Y coordinates directly.
+	(append_bezier): Take coordinates instead of GpPointFs. Use the
+	new append function instead of append_point.
+
 2003-12-23  Duncan Mak  <duncan@ximian.com>
 
 	* graphics-path.c:

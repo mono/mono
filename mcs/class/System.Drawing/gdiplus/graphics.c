@@ -471,7 +471,7 @@ GdipDrawBeziers (GpGraphics *graphics, GpPen *pen,
         
         cairo_move_to (graphics->ct, points [0].X, points [0].Y);
 
-        for (i = 0; i < count; i += 3) {
+        for (i = 0; i < count - 3; i += 3) {
                 j = i + 1;
                 k = i + 2;
                 cairo_curve_to (graphics->ct,
@@ -498,7 +498,7 @@ GdipDrawBeziersI (GpGraphics *graphics, GpPen *pen,
 
         cairo_move_to (graphics->ct, points [0].X, points [0].Y);
 
-        for (i = 0; i < count; i += 3) {
+        for (i = 0; i < count - 3; i += 3) {
                 j = i + 1;
                 k = i + 2;
                 cairo_curve_to (graphics->ct,
