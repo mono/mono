@@ -1,5 +1,10 @@
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* marshal.c: Marshal.SizeOf throws an exception for AutoLayout. Fixes
+	bug #55385.
+
+2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* appdomain.c: upgraded corlib version.
 
 	* file-io.c: implemented new icalls: GetSupportsAIO, BeginRead
