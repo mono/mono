@@ -71,6 +71,7 @@ System.EnterpriseServices/TODOAttribute.cs
 System.EnterpriseServices/TransactionAttribute.cs
 System.EnterpriseServices/TransactionIsolationLevel.cs
 System.EnterpriseServices/TransactionOption.cs
+System.EnterpriseServices/TransactionStatus.cs
 System.EnterpriseServices/TransactionVote.cs
 System.EnterpriseServices/XACTTRANSINFO.cs
 System.EnterpriseServices.CompensatingResourceManager/ApplicationCrmEnabledAttribute.cs

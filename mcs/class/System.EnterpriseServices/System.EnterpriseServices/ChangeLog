@@ -1,5 +1,9 @@
 2004-05-12  Mike Kestner <mkestner@ximian.com>
 
+	* TransactionStatus.cs : impl
+
+2004-05-12  Mike Kestner <mkestner@ximian.com>
+
 	* Activity.cs : stub
 	* BindingOption.cs : impl
 	* InheritanceOption.cs : impl
