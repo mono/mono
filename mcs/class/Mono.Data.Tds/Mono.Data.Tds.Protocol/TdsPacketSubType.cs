@@ -12,7 +12,7 @@ namespace Mono.Data.TdsClient.Internal {
 		EnvChange = 0xe3,
 		Error = 0xaa,
 		Info = 0xab,
-		Msg50Token = 0xe5,
+		EED = 0xe5,
 		Param = 0xac,
 		LoginAck = 0xad,
 		ReturnStatus = 0x79,

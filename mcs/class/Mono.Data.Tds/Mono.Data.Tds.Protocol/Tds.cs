@@ -1049,23 +1049,34 @@ namespace Mono.Data.TdsClient.Internal {
 			int number = comm.GetTdsInt ();
 			byte state = comm.GetByte ();
 			byte theClass = comm.GetByte ();
-			string message = comm.GetString (comm.GetTdsShort ());
+			string message;
+			string server;
+			string procedure;
+			byte lineNumber;
+			string source;
+			bool isError = false;
 
+			if (subType == TdsPacketSubType.EED) {
+				isError = (theClass <= 10);
+				comm.Skip (comm.GetByte ()); // SQL State
+				comm.Skip (1);               // Status
+				comm.Skip (2);               // TranState
+			} else 
+				isError = (subType == TdsPacketSubType.Error);
 
-			string server = comm.GetString (comm.GetByte ());
+			message = comm.GetString (comm.GetTdsShort ());
+			server = comm.GetString (comm.GetByte ());
+			procedure = comm.GetString (comm.GetByte ());
+			lineNumber = comm.GetByte ();
+			source = String.Empty; // FIXME
 
-			if (subType != TdsPacketSubType.Info && subType != TdsPacketSubType.Error) 
-				return;
+			if (subType != TdsPacketSubType.EED)
+				comm.Skip (1);
 
-			string procedure = comm.GetString (comm.GetByte ());
-			byte lineNumber = comm.GetByte ();
-			string source = String.Empty; // FIXME
-
-			comm.GetByte ();
-			if (subType == TdsPacketSubType.Error)
-				OnTdsErrorMessage (CreateTdsErrorMessageEvent (theClass, lineNumber, message, number, procedure, server, source, state));
-			else
+			if (isError)
 				messages.Add (new TdsInternalError (theClass, lineNumber, message, number, procedure, server, source, state));
+			else
+				OnTdsErrorMessage (CreateTdsErrorMessageEvent (theClass, lineNumber, message, number, procedure, server, source, state));
 		}
 
 		private TdsPacketOutputParam ProcessOutputParam ()
@@ -1104,7 +1115,7 @@ namespace Mono.Data.TdsClient.Internal {
 				result = ProcessEnvChange ();
 				break;
 			case TdsPacketSubType.Info :
-			case TdsPacketSubType.Msg50Token :
+			case TdsPacketSubType.EED:
 			case TdsPacketSubType.Error :
 				ProcessMessage (subType);
 				break;

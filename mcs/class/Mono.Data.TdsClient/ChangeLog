@@ -1,3 +1,11 @@
+2002-11-18  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.TdsClient.Internal/Tds.cs:
+	* Mono.Data.TdsClient.Internal/Tds50.cs:
+	* Mono.Data.TdsClient.Internal/TdsComm.cs:
+	* Mono.Data.TdsClient.Internal/TdsPacketSubType.cs:
+	* Mono.Data.TdsClient.Internal/TdsPacketType.cs:
+		Sybase compatibility fixes.
+
 2002-11-15  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.TdsClient.Internal/Tds.cs:
 		Add support for UniqueIdentifier (GUID),

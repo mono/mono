@@ -196,9 +196,8 @@ namespace Mono.Data.TdsClient.Internal {
 				Append ((byte) (((byte) (l >> 8)) & 0xff));
 				Append ((byte) (((byte) (l >> 0)) & 0xff));
 			}
-			else {
+			else 
 				Append (BitConverter.GetBytes (l));
-			}
 		}
 
 		private void ConnectCallback (IAsyncResult ar)
