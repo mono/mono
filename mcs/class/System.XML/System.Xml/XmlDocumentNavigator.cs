@@ -63,7 +63,8 @@ namespace System.Xml
 
 		public override bool IsEmptyElement {
 			get {
-				return node.NodeType == XmlNodeType.Element && !HasChildren;
+				return node.NodeType == XmlNodeType.Element 
+					&& ((XmlElement) node).IsEmpty;
 			}
 		}
 
@@ -151,7 +152,7 @@ namespace System.Xml
 		public override string GetAttribute (string localName, string namespaceURI)
 		{
 			XmlElement el = Node as XmlElement;
-			return (el != null) ? el.GetAttribute (localName, namespaceURI) : String.Empty;
+			return el != null ? el.GetAttribute (localName, namespaceURI) : String.Empty;
 		}
 
 		public override string GetNamespace (string name)
@@ -199,7 +200,10 @@ namespace System.Xml
 		public override bool MoveToFirst ()
 		{
 			if (node.NodeType != XmlNodeType.Attribute && node.ParentNode != null) {
-				node = node.ParentNode.FirstChild;
+				MoveToParent ();
+				// Follow these 2 steps so that we can skip 
+				// some types of nodes .
+				MoveToFirstChild ();
 				return true;
 			}
 			return false;
@@ -269,10 +273,28 @@ namespace System.Xml
 		public override bool MoveToNext ()
 		{
 			if (node.NextSibling != null) {
-				node = node.NextSibling;
+				if (node.ParentNode != null && node.ParentNode.NodeType == XmlNodeType.Document) {
+					XmlNode n = node.NextSibling;
+					while (n != null) {
+						switch (n.NodeType) {
+						case XmlNodeType.DocumentType:
+						case XmlNodeType.XmlDeclaration:
+							n = n.NextSibling;
+							continue;
+						}
+						break;
+					}
+					if (n != null)
+						node = n;
+					else
+						return false;
+				}
+				else
+					node = node.NextSibling;
 				return true;
 			}
-			return false;
+			else
+				return false;
 		}
 
 		public override bool MoveToNextAttribute ()

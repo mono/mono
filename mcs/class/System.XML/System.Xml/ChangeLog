@@ -1,3 +1,16 @@
+2003-06-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentNavigator.cs : Fixed IsEmptyElement. It treats <foo></foo>
+	  as non-empty, and XmlElement's IsEmpty is designed as such.
+	  Fixed MoveToFirst() and MoveToNext() not to move to xmldecl nor 
+	  doctype node. 
+	* XmlNode.cs : Fixed XPathNodeType. It should throw an exception
+	  instead of returning undefined enum value.
+	  Modified some code comments.
+	* XmlWriter.cs : Fixed WriteNode () to use WriteFullEndElement() 
+	  when XmlReader's node is not at empty element or at EndElement. 
+	  Fixed XmlDeclaration's standalone check.
+
 2003-06-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReader.cs : removed CRLFs. Fixed private InitializeContext()

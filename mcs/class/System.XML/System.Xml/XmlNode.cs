@@ -166,7 +166,7 @@ namespace System.Xml
 
 		internal virtual XPathNodeType XPathNodeType {
 			get {
-				return (XPathNodeType) (-1);
+				throw new InvalidOperationException ();
 			}
 		}
 
@@ -177,7 +177,7 @@ namespace System.Xml
 
 				WriteTo (xtw);
 
-				return sw.GetStringBuilder ().ToString ();
+				return sw.ToString ();
 			}
 		}
 
@@ -290,8 +290,11 @@ namespace System.Xml
 		{
 			// I assume that insertAfter(n1, n2) equals to InsertBefore(n1, n2.PreviousSibling).
 
-			// I took this way because rather than calling InsertAfter() from InsertBefore()
-			//   because current implementation of 'NextSibling' looks faster than 'PreviousSibling'.
+			// I took this way because current implementation 
+			// Calling InsertAfter() from InsertBefore() is
+			// subsequently to use 'NextSibling' which is
+			// faster than 'PreviousSibling' (these children are 
+			// forward-only linked list).
 			XmlNode argNode = null;
 			if(refChild != null)
 				argNode = refChild.NextSibling;
@@ -515,10 +518,10 @@ namespace System.Xml
 			return ((XmlDocumentNavigator) iter.Current).Node;
 		}
 
-		internal void SetParentNode (XmlNode parent)
-		{
-			parentNode = parent;
-		}
+//		internal void SetParentNode (XmlNode parent)
+//		{
+//			parentNode = parent;
+//		}
 
 		[MonoTODO]
 		public virtual bool Supports (string feature, string version)

@@ -203,13 +203,13 @@ namespace System.Xml
 				WriteWhitespace (reader.Value);
 				break;
 			case XmlNodeType.EndElement:
-				WriteEndElement ();
+				WriteFullEndElement ();
 				break;
 			case XmlNodeType.EndEntity:
 				break;
 			case XmlNodeType.XmlDeclaration:
 				string st = reader.GetAttribute ("standalone");
-				if (st != String.Empty)
+				if (st != null && st != String.Empty)
                                         WriteStartDocument (st.ToLower () == "yes");
 				else
 					WriteStartDocument ();
