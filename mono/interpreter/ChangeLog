@@ -1,3 +1,8 @@
+
+Mon Aug 20 18:58:36 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fix buglet with the leave.s opcode.
+
 2001-08-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c: changed everything to support the new calling convention
