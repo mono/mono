@@ -60,6 +60,8 @@ namespace System.IO
 			if (name == "" || name.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
 
+			this.name = name;
+
 			// TODO: demand permissions
 
 			this.handle = MonoIO.Open (name, mode, access, share);
@@ -94,6 +96,12 @@ namespace System.IO
                                 return true;	// FIXME: false for pipes & streams
                         }
                 }
+
+		public string Name {
+			get {
+				return name; 
+			}
+		}
 
 		public override long Length {
 			get { return MonoIO.GetLength (handle); }
@@ -333,6 +341,7 @@ namespace System.IO
 		private int buf_offset;			// position of next byte
 		private bool buf_dirty;			// true if buffer has been written to
 		private long buf_start;			// location of buffer in file
+		private string name = "[Unknown]";	// name of file.
 
 		IntPtr handle;				// handle to underlying file
 	}

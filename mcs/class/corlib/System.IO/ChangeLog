@@ -1,3 +1,9 @@
+
+Fri Jul 26 15:45:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* FileStream.cs: patch from erik@bagfors.nu to add
+	Name property support.
+
 2002-07-20  Dick Porter  <dick@ximian.com>
 
 	* MonoIO.cs: Added icall to CreatePipe
