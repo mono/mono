@@ -8,23 +8,6 @@ Major tasks:
 
 	Implement base indexer access.
 
-MethodGroupExpr
-
-	These guys should only appear as part of an Invocation, so we
-	probably can afford to have a special callback:
-
-		Expression.ResolveAllowMemberGroups
-
-	This is only called by Invocation (or anyone that consumes 
-	MethodGroupExprs)
-
-	And the regular DoResolve and DoResolveLValue do emit the error
-	654 `Method referenced without argument list'.  
-
-	Otherwise, a resolution will return a MethodGroupExpr which is
-	not guaranteed to have set its `Expression.Type' to a non-null
-	value.
-
 readonly variables and ref/out
 	
 BUGS
@@ -135,11 +118,6 @@ PENDING TASKS
 
 * Merge test 89 and test-34
 
-* Constant Folding
-
-	Constant Folding does not take into account Enumerations, we should maybe
-	extract the underlying value, and constant fold on it.
-
 * Revisit
 
 	Primary-expression, as it has now been split into 
@@ -172,6 +150,9 @@ PENDING TASKS
 OPTIMIZATIONS
 -------------
 
+* There is too much unshared code between MemberAccess.Resolve and SimpleName
+  resolve.  
+ 
 * User Defined Conversions is doing way too many calls to do union sets that are not needed
 
 * Implement loop inversion for our loops
@@ -226,11 +207,6 @@ OPTIMIZATIONS
 	Write tests for the various reference conversions.  We have
 	test for all the numeric conversions.
 
-* Remove the tree dumper, cleanup `public readonly' 
-
-	And make all the stuff which is `public readonly' be private unless
-	required.
-
 * Optimizations
 
 	In Indexers and Properties, probably support an EmitWithDup
@@ -246,12 +222,6 @@ OPTIMIZATIONS
 
 * Add a cache for the various GetArrayMethod operations.
 
-* Optimization:
-
-	Do not use StatementCollections, use ArrayLists of Statements,
-	and then "copy" it out to arrays.  Then reuse the existing
-	Statement structures.
-
 * TypeManager.FindMembers:
 
 	Instead of having hundreds of builder_to_blah hash table, have
@@ -262,9 +232,6 @@ OPTIMIZATIONS
 
 	If the types are the same, there is no need to compute the unionset,
  	we can just use the list from one of the types.
-
-* Factor all the `DefineBlah' in Classes, Interfaces, Delegates, Enums into the
-  same thing, use an abstract interface.
 
 * Factor all the FindMembers in all the FindMembers providers.
 
@@ -298,18 +265,31 @@ RECOMMENDATIONS
 	Not sure that this grammar is correct, we might have to
 	resolve this during semantic analysis.
 
-
-* Try/Catch
-
-	Investigate what is  the right value to return  from `Emit' in
-	there (ie, for the `all code paths return')
-	
-
 * Optimizations
 
 	Only create one `This' instance per class, and reuse it.
 
 	Maybe keep a pool of constants/literals (zero, 1)?
+
+* Idea
+
+	MethodGroupExpr
+
+	These guys should only appear as part of an Invocation, so we
+	probably can afford to have a special callback:
+
+		Expression.ResolveAllowMemberGroups
+
+	This is only called by Invocation (or anyone that consumes 
+	MethodGroupExprs)
+
+	And the regular DoResolve and DoResolveLValue do emit the error
+	654 `Method referenced without argument list'.  
+
+	Otherwise, a resolution will return a MethodGroupExpr which is
+	not guaranteed to have set its `Expression.Type' to a non-null
+	value.
+
 
 ************
 Potential bug:

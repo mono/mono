@@ -92,7 +92,8 @@ namespace Mono.CSharp {
 			    UnderlyingType != TypeManager.sbyte_type) {
 				Report.Error (1008, Location,
 					      "Type byte, sbyte, short, ushort, int, uint, " +
-					      "long, or ulong expected");
+					      "long, or ulong expected (got: " +
+					      TypeManager.CSharpName (UnderlyingType) + ")");
 				return null;
 			}
 
@@ -280,7 +281,7 @@ namespace Mono.CSharp {
 					Report.Error (
 						1008, loc,
 						"Type byte, sbyte, short, ushort, int, uint, long, or " +
-						"ulong expected");
+						"ulong expected (have: " + val + ")");
 					return null;
 				}
 			}

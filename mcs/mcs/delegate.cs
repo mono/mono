@@ -90,7 +90,7 @@ namespace Mono.CSharp {
 			int i;
 
 			// FIXME: POSSIBLY make this static, as it is always constant
-			// 
+			//
 			Type [] const_arg_types = new Type [2];
 			const_arg_types [0] = TypeManager.object_type;
 			const_arg_types [1] = TypeManager.intptr_type;
@@ -165,10 +165,23 @@ namespace Mono.CSharp {
  								  ret_type,		     
  								  param_types);
 
-			for (i = 0 ; i < param_types.Length; i++) {
-				Parameter p = Parameters.FixedParameters [i];
-				string name = p.Name;
-				ParameterBuilder pb = InvokeBuilder.DefineParameter (i+1, p.Attributes, name); 
+			i = 0;
+			if (Parameters.FixedParameters != null){
+				int top = Parameters.FixedParameters.Length;
+				Parameter p;
+				
+				for (; i < top; i++) {
+					p = Parameters.FixedParameters [i];
+
+					InvokeBuilder.DefineParameter (
+						i+1, p.Attributes, p.Name);
+				}
+			}
+			if (Parameters.ArrayParameter != null){
+				Parameter p = Parameters.ArrayParameter;
+				
+				InvokeBuilder.DefineParameter (
+					i+1, p.Attributes, p.Name);
 			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
@@ -188,8 +201,8 @@ namespace Mono.CSharp {
 			async_param_types [params_num] = TypeManager.asynccallback_type;
 			async_param_types [params_num + 1] = TypeManager.object_type;
 
-			mattr = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual |
-				MethodAttributes.NewSlot;
+			mattr = MethodAttributes.Public | MethodAttributes.HideBySig |
+				MethodAttributes.Virtual | MethodAttributes.NewSlot;
 			
 			BeginInvokeBuilder = TypeBuilder.DefineMethod ("BeginInvoke",
 								       mattr,
@@ -197,21 +210,40 @@ namespace Mono.CSharp {
 								       TypeManager.iasyncresult_type,
 								       async_param_types);
 
-			for (i = 0 ; i < param_types.Length; i++) {
-				Parameter p = Parameters.FixedParameters [i];
-				string name = p.Name;
-				BeginInvokeBuilder.DefineParameter (i + 1, p.Attributes, name); 
+			i = 0;
+			if (Parameters.FixedParameters != null){
+				int top = Parameters.FixedParameters.Length;
+				Parameter p;
+				
+				for (i = 0 ; i < top; i++) {
+					p = Parameters.FixedParameters [i];
+
+					BeginInvokeBuilder.DefineParameter (
+						i+1, p.Attributes, p.Name);
+				}
 			}
-			
+			if (Parameters.ArrayParameter != null){
+				Parameter p = Parameters.ArrayParameter;
+				
+				BeginInvokeBuilder.DefineParameter (
+					i+1, p.Attributes, p.Name);
+				i++;
+			}
+
 			BeginInvokeBuilder.DefineParameter (i + 1, ParameterAttributes.None, "callback");
 			BeginInvokeBuilder.DefineParameter (i + 2, ParameterAttributes.None, "object");
 			
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			Parameter [] async_params = new Parameter [params_num + 2];
-			if (params_num > 0)
+			int n = 0;
+			if (Parameters.FixedParameters != null){
 				Parameters.FixedParameters.CopyTo (async_params, 0);
-
+				n = Parameters.FixedParameters.Length;
+			}
+			if (Parameters.ArrayParameter != null)
+				async_params [n] = Parameters.ArrayParameter;
+			
 			async_params [params_num] = new Parameter ("System.AsyncCallback", "callback",
 								   Parameter.Modifier.NONE, null);
 			async_params [params_num + 1] = new Parameter ("System.IAsyncResult", "object",

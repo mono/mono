@@ -465,6 +465,12 @@ namespace Mono.CSharp {
 					current_type = current_type.BaseType;
 
 					//
+					// Only do private searches on the current type,
+					// never in our parents.
+					//
+					// bf &= ~BindingFlags.NonPublic;
+					
+					//
 					// This happens with interfaces, they have a null
 					// basetype
 					//
@@ -3156,6 +3162,35 @@ namespace Mono.CSharp {
 					}
 				}
 
+				if (fi.IsLiteral) {
+					Type t = fi.FieldType;
+					Type decl_type = fi.DeclaringType;
+					object o;
+
+					if (fi is FieldBuilder)
+						o = TypeManager.GetValue ((FieldBuilder) fi);
+					else
+						o = fi.GetValue (fi);
+					
+					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
+						Expression enum_member = MemberLookup (
+							ec, decl_type, "value__", MemberTypes.Field,
+							AllBindingFlags, Location); 
+
+						Enum en = TypeManager.LookupEnum (decl_type);
+
+						Constant c;
+						if (en != null)
+							c = Constantify (o, en.UnderlyingType);
+						else 
+							c = Constantify (o, enum_member.Type);
+						
+						return new EnumConstant (c, decl_type);
+					}
+					
+					Expression exp = Constantify (o, t);
+				}
+					
 				return e;
 			} 				
 
@@ -3309,10 +3344,15 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		override public void Emit (EmitContext ec)
+		public void ReportUsageError ()
 		{
 			Report.Error (654, loc, "Method `" + Methods [0].DeclaringType + "." +
 				      Methods [0].Name + "()' is referenced without parentheses");
+		}
+
+		override public void Emit (EmitContext ec)
+		{
+			ReportUsageError ();
 		}
 
 		bool RemoveMethods (bool keep_static)

@@ -1169,13 +1169,19 @@ namespace Mono.CSharp {
 						  MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
+			bool priv = (bf & BindingFlags.NonPublic) != 0;
 
+			priv = true;
 			if (filter == null)
 				filter = accepting_filter; 
 			
 			if ((mt & MemberTypes.Field) != 0) {
 				if (fields != null) {
 					foreach (Field f in fields) {
+						if ((f.ModFlags & Modifiers.PRIVATE) != 0)
+							if (!priv)
+								continue;
+						
 						FieldBuilder fb = f.FieldBuilder;
 						if (filter (fb, criteria) == true)
 							members.Add (fb);
@@ -1184,6 +1190,10 @@ namespace Mono.CSharp {
 
 				if (constants != null) {
 					foreach (Const con in constants) {
+						if ((con.ModFlags & Modifiers.PRIVATE) != 0)
+							if (!priv)
+								continue;
+						
 						FieldBuilder fb = con.FieldBuilder;
 						if (filter (fb, criteria) == true)
 							members.Add (fb);
@@ -1194,6 +1204,10 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.Method) != 0) {
 				if (methods != null) {
 					foreach (Method m in methods) {
+						if ((m.ModFlags & Modifiers.PRIVATE) != 0)
+							if (!priv)
+								continue;
+						
 						MethodBuilder mb = m.MethodBuilder;
 
 						// If we are in transit, ignore
@@ -1210,6 +1224,10 @@ namespace Mono.CSharp {
 
 				if (operators != null){
 					foreach (Operator o in operators) {
+						if ((o.ModFlags & Modifiers.PRIVATE) != 0)
+							if (!priv)
+								continue;
+						
 						MethodBuilder ob = o.OperatorMethodBuilder;
 
 						if (filter (ob, criteria) == true)
@@ -1219,6 +1237,10 @@ namespace Mono.CSharp {
 
 				if (properties != null){
 					foreach (Property p in properties){
+						if ((p.ModFlags & Modifiers.PRIVATE) != 0)
+							if (!priv)
+								continue;
+						
 						MethodBuilder b;
 
 						b = p.GetBuilder;
@@ -1235,6 +1257,10 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.Event) != 0) {
 				if (events != null)
 				        foreach (Event e in events) {
+						if ((e.ModFlags & Modifiers.PRIVATE) != 0)
+							if (!priv)
+								continue;
+						
 						if (filter (e.EventBuilder, criteria) == true)
 						        members.Add (e.EventBuilder);
 					}
@@ -1243,6 +1269,10 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.Property) != 0){
 				if (properties != null)
 					foreach (Property p in properties) {
+						if ((p.ModFlags & Modifiers.PRIVATE) != 0)
+							if (!priv)
+								continue;
+					
 						if (filter (p.PropertyBuilder, criteria) == true) {
 							members.Add (p.PropertyBuilder);
 						}
@@ -1250,6 +1280,10 @@ namespace Mono.CSharp {
 
 				if (indexers != null)
 					foreach (Indexer ix in indexers) {
+						if ((ix.ModFlags & Modifiers.PRIVATE) != 0)
+							if (!priv)
+								continue;
+						
 						if (filter (ix.PropertyBuilder, criteria) == true) {
 							members.Add (ix.PropertyBuilder);
 						}
@@ -2799,8 +2833,10 @@ namespace Mono.CSharp {
 				MethodInfo reference = inherited_get == null ?
 					inherited_set : inherited_get;
 				
-				if (!CheckMethodAgainstBase (parent, flags, reference))
-					return false;
+				if (reference != null)
+					if (!CheckMethodAgainstBase (parent, flags, reference))
+						return false;
+				
 			} else {
 				if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (parent);

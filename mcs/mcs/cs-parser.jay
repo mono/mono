@@ -1058,7 +1058,7 @@ set_accessor_declaration
 
 accessor_body
 	: block 
-	| SEMICOLON		{ $$ = new Block (null); }
+	| SEMICOLON		{ $$ = null; }
 	;
 
 interface_declaration
@@ -3692,13 +3692,6 @@ SimpleLookup (string name, Location loc)
 	// as `expression' is allowed in argument_lists, which 
 	// do not exist inside a block.  
 	//
-#if BLAH
-	if (current_block != null){
-		if (current_block.IsVariableDefined (name)){
-			return new LocalVariableReference (current_block, name, loc);
-	        }
-	}
-#endif
 
 	if (current_local_parameters != null){
 		int idx;

@@ -1393,6 +1393,12 @@ namespace Mono.CSharp {
 			return oper.ToString ();
 		}
 
+		public override string ToString ()
+		{
+			return "operator " + OperName (oper) + "(" + left.ToString () + ", " +
+				right.ToString () + ")";
+		}
+		
 		Expression ForceConversion (EmitContext ec, Expression expr, Type target_type)
 		{
 			if (expr.Type == target_type)

@@ -1,3 +1,23 @@
+2002-04-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs (Delegate.Define): Correctly define the types in the
+	presence of fixed and array parameters.
+
+	* class.cs (TypeContainers.FindMembers): Use NonPublic flag while
+	doing FindMembers.
+
+	* ecore.cs (Expression.MemberLookup): Reset binding flags to not
+	include NonPublic after the first iteration.
+
+	* class.cs (Indexer.CheckBase): Only check if both parents are
+	non-null. 
+	
+	* cs-parser.jay (accessor_body): If empty, set to null.
+
+	* ecore.cs (SimpleName.SimpleNameResolve): We did not have the
+	same code path here to resolve constants names that we did have in
+	MemberAccess.DoResolve.  There is too much code duplicated here.
+
 2002-04-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs, makefile: Drop Statementcollection and just use ArrayLists
