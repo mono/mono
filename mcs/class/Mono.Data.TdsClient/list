@@ -9,7 +9,9 @@ Mono.Data.TdsClient/TdsParameter.cs
 Mono.Data.TdsClient/TdsParameterCollection.cs
 Mono.Data.TdsClient/TdsTransaction.cs
 Mono.Data.TdsClient/TODOAttribute.cs
+Mono.Data.TdsClient.Internal/ITds.cs
 Mono.Data.TdsClient.Internal/Tds.cs
+Mono.Data.TdsClient.Internal/Tds42.cs
 Mono.Data.TdsClient.Internal/TdsColumnType.cs
 Mono.Data.TdsClient.Internal/TdsComm.cs
 Mono.Data.TdsClient.Internal/TdsConnectionParameters.cs

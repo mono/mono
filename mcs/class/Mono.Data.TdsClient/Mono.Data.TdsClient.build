@@ -19,6 +19,9 @@
 			<arg value="/r:System.Data.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
+				<excludes name="Mono.Data.TdsClient.Internal/Tds50.cs"/>
+				<excludes name="Mono.Data.TdsClient.Internal/Tds70.cs"/>
+				<excludes name="Mono.Data.TdsClient.Internal/Tds80.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="Mono.Data.TdsClient/Test.cs"/>
 				

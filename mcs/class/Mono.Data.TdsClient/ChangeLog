@@ -1,3 +1,12 @@
+2002-10-23  Tim Coleman (tim@timcoleman.com)
+	* list:
+		Add new files to build
+	* Mono.Data.TdsClient.build:
+		Exclude Tds70.cs, Tds80.cs, Tds50.cs
+		Those should only be included with
+		the appropriate providers.
+	
+
 2002-10-22  Tim Coleman (tim@timcoleman.com)
 	* list:
 		Add TODOAttribute in both
