@@ -1,3 +1,12 @@
+2003-08-07  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* BuiltInDatatypes.cs : Fixed whitespace facet in XsdToken.
+	  Tokenized type of nmtokens and entities is string [].
+	* XmlSchema.cs : Changed IsCompile implementation a bit.
+	  Compile() should reset compiled contents.
+	* XmlSchemaDatatype.cs : Fixed collapsing Normalize().
+	* XmlSchemaObject.cs : added CompilationId initialization.
+
 2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSchema.cs: Set IsCompiled to true after compiling.

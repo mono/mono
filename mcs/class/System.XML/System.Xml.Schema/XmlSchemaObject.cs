@@ -25,6 +25,7 @@ namespace System.Xml.Schema
 		{
 			namespaces = new XmlSerializerNamespaces();
 			unhandledAttributeList = null;
+			CompilationId = Guid.Empty;
 		}
 
 		[XmlIgnore]

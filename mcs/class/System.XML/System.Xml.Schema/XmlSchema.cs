@@ -146,7 +146,7 @@ namespace System.Xml.Schema
                 [XmlIgnore]
                 public bool IsCompiled
                 {
-                        get{ return isCompiled;}
+                        get{ return this.CompilationId != Guid.Empty;}
                 }
 
                 [XmlIgnore]
@@ -269,6 +269,15 @@ namespace System.Xml.Schema
 			CompilationId = Guid.NewGuid ();
 			schemas = new XmlSchemaCollection ();
 			schemas.Add (this);
+
+			attributeGroups = new XmlSchemaObjectTable ();
+			attributes = new XmlSchemaObjectTable ();
+			elements = new XmlSchemaObjectTable ();
+			groups = new XmlSchemaObjectTable ();
+			missingElementTypeRefs.Clear ();
+			missingBaseSchemaTypeRefs.Clear ();
+			notations = new XmlSchemaObjectTable ();
+			schemaTypes = new XmlSchemaObjectTable ();
 
 			//1. Union and List are not allowed in block default
                         if(BlockDefault != XmlSchemaDerivationMethod.All)

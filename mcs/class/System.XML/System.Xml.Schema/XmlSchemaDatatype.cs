@@ -36,17 +36,27 @@ namespace System.Xml.Schema
 
 		char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
+		StringBuilder sb = new StringBuilder ();
 		internal string Normalize (string s)
 		{
 			switch (Whitespace) {
 			case XsdWhitespaceFacet.Collapse:
-				return String.Join (" ", s.Trim ().Split (wsChars));
+				string [] arr = s.Trim ().Split (wsChars);
+				foreach (string one in arr)
+					if (one != "") {
+						sb.Append (one);
+						sb.Append (" ");
+					}
+				string result = sb.ToString ();
+				sb.Length = 0;
+				return result.Trim ();
 			case XsdWhitespaceFacet.Replace:
-				StringBuilder sb = new StringBuilder (s);
+				sb.Length = 0;
+				sb.Append (s);
 				sb.Replace ('\r', ' ');
 				sb.Replace ('\n', ' ');
 				sb.Replace ('\t', ' ');
-				string result = sb.ToString ();
+				result = sb.ToString ();
 				sb.Length = 0;
 				return result;
 			default:
