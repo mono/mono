@@ -14,7 +14,6 @@
 //
 // To be included with Mono as a SQL query tool licensed under the GPL license.
 //
-//#define DEBUG
 
 namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System;
@@ -33,6 +32,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System.Reflection;
 	using System.Runtime.Remoting;
 	using System.Diagnostics;
+	
+	using Mono.GtkSharp.Goodies;
 
 	using Gtk.Controls;
 
@@ -50,7 +51,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		public Assembly providerAssembly = null;
 		public string connectionString = "";
 		
-		private SqlEditorSharp editor;	
+		private SqlEditorSharp editor;
+		private string filename = "";
 		private Statusbar statusBar;
 		private Toolbar toolbar;
 
@@ -64,24 +66,27 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		// OutputResults.DataGrid
 		private DataGrid grid;
 
-		private Window win;
+		private Gtk.Window win;
 
-		public readonly string ApplicationName = "SQL# For GTK#";
+		public static readonly string ApplicationName = "Mono SQL# For GTK#";
 
 		private OutputResults outputResults;
 
 		public DbProviderCollection providerList;
 
 		public SqlSharpGtk () {
-
 			CreateGui ();
 			LoadProviders ();
 		}
 
+		public void Show () {
+			win.ShowAll ();
+		}
+
 		public void CreateGui() {
 
-			win = new Window (ApplicationName);
-			win.DeleteEvent += new DeleteEventHandler (Window_Delete);
+			win = new Gtk.Window (ApplicationName);
+			win.DeleteEvent += new DeleteEventHandler (OnWindow_Delete);
 			win.BorderWidth = 4;
 			win.DefaultSize = new Size (450, 300);
 			
@@ -110,8 +115,6 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 			statusBar = new Statusbar ();
 			vbox.PackEnd (statusBar, false, false, 0);
-
-			win.ShowAll ();
 			
 			outputResults = OutputResults.TextView;
 			ToggleResultsOutput ();
@@ -166,12 +169,12 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			toolbar.AppendItem ("Execute", 
 				"Execute SQL Commands.", String.Empty,
 				new Gtk.Image (Stock.Execute, IconSize.SmallToolbar),
-				new Gtk.SignalFunc (execute_func));	
+				new Gtk.SignalFunc (OnToolbar_Execute));	
 
 			toolbar.AppendItem ("Output", 
 				"Toggle Results to DataGrid or TextView", String.Empty,
 				new Gtk.Image (Stock.GoDown, IconSize.SmallToolbar),
-				new Gtk.SignalFunc (toggle_results_output_func));	
+				new Gtk.SignalFunc (OnToolbar_ToggleResultsOutput));	
 
 			toolbar.AppendSpace ();		
 
@@ -180,6 +183,9 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return toolbar;
 		}
 
+		// TODO: use the ProviderFactory in Mono.Data 
+		//       to load providers
+		//       instead of what's below
 		public void LoadProviders () {
 			providerList = new DbProviderCollection ();
 			
@@ -240,38 +246,73 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				"Mono.Data.SybaseClient.SybaseDataAdapter",
 				false ));
 		}
-
+		
 		public MenuBar CreateMenuBar () {
 
-			MenuBar mb = new MenuBar ();
-			Menu file_menu = new Menu ();
+			MenuBar menuBar = new MenuBar ();
+			Menu menu;
+			MenuItem item;
+			MenuItem barItem;
 
-			MenuItem connect_item = new MenuItem ("Connect");
-			connect_item.Activated += new EventHandler (connect_cb);
-			file_menu.Append (connect_item);
+			// File menu
+			menu = new Menu ();
 
-			MenuItem disconnect_item = new MenuItem ("Disconnect");
-			disconnect_item.Activated += new EventHandler (disconnect_cb);
-			file_menu.Append (disconnect_item);
+			item = new MenuItem ("_New");
+			item.Activated += new EventHandler (OnMenu_FileNew);
+			menu.Append (item);
 
-			MenuItem execute_item = new MenuItem ("Execute");
-			execute_item.Activated += new EventHandler (execute_cb);
-			file_menu.Append (execute_item);
+			item = new MenuItem ("_Open...");
+			item.Activated += new EventHandler (OnMenu_FileOpen);
+			menu.Append (item);
 
-			MenuItem exit_item = new MenuItem ("Exit");
-			exit_item.Activated += new EventHandler (exit_cb);
-			file_menu.Append (exit_item);
+			item = new MenuItem ("_Save");
+			item.Activated += new EventHandler (OnMenu_FileSave);
+			menu.Append (item);
 
-			MenuItem file_item = new MenuItem ("File");
-			file_item.Submenu = file_menu;
-			mb.Append (file_item);
+			item = new MenuItem ("Save _As...");
+			item.Activated += new EventHandler (OnMenu_FileSaveAs);
+			menu.Append (item);
 
-			return mb;
+			menu.Append (new SeparatorMenuItem ());
+
+			item = new MenuItem ("E_xit");
+			item.Activated += new EventHandler (OnMenu_FileExit);
+			menu.Append (item);
+
+			barItem = new MenuItem ("_File");
+			barItem.Submenu = menu;
+			menuBar.Append (barItem);
+
+			// Session menu
+			menu = new Menu ();
+
+			item = new MenuItem ("_Connect");
+			item.Activated += new EventHandler (OnMenu_SessionConnect);
+			menu.Append (item);
+
+			item = new MenuItem ("_Disconnect");
+			item.Activated += new EventHandler (OnMenu_SessionDisconnect);
+			menu.Append (item);
+
+			barItem = new MenuItem ("_Session");
+			barItem.Submenu = menu;
+			menuBar.Append (barItem);
+
+			// Command menu
+			menu = new Menu ();
+
+			item = new MenuItem ("_Execute");
+			item.Activated += new EventHandler (OnMenu_CommandExecute);
+			menu.Append (item);
+
+			barItem = new MenuItem ("_Command");
+			barItem.Submenu = menu;
+			menuBar.Append (barItem);
+
+			return menuBar;
 		}
 
 		void AppendText (string text) {
-			Console.WriteLine (text);
-			Console.Out.Flush ();
 			AppendText (buf, text);
 		}
 
@@ -332,32 +373,149 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return true;
 		}
 
-		static void Window_Delete (object o, DeleteEventArgs args) {
+		static void OnWindow_Delete (object o, DeleteEventArgs args) {
 			Application.Quit ();
 		}
 
-		static void exit_func (Gtk.Object o) {
+		static void OnExit (Gtk.Object o) {
 			Application.Quit ();
 		}
 
-		static void exit_cb (object o, EventArgs args) {
+		void OnMenu_FileNew (object o, EventArgs args) {
+			// TODO: instead of Clearing the editor,
+			//       open a new editor window
+			//       or we could open another editor window
+			//       in a tabbed box
+
+			TextBuffer buf = editor.Buffer;
+			if(buf.Modified == true) {
+				// FIXME: Gtk.MessageDialog not working
+				Console.WriteLine("Gtk.MessageDialog not working.");
+				Console.Out.Flush();
+				string msg = "Editor modified!  Are you sure you want to clear?";
+				MessageDialog msgbox = new MessageDialog (
+					win, 
+					DialogFlags.Modal, 
+					MessageType.Question, 
+					ButtonsType.OkCancel,
+					msg);
+				int response = msgbox.Run();
+				msgbox = null;
+				ResponseType responseType = (ResponseType) response;
+				if(responseType == ResponseType.Ok) {
+					editor.Clear();
+					filename = "";
+				}
+			}
+			else {
+				editor.Clear();
+				filename = "";
+			}
+		}
+
+		void OnMenu_FileOpen (object o, EventArgs args) {
+			TextBuffer buf = editor.Buffer;
+			if(buf.Modified == true) {
+				// FIXME: Gtk.MessageDialog not working
+				Console.WriteLine("Gtk.MessageDialog not working.");
+				Console.Out.Flush();
+				string msg = "Editor modified!  Are you sure you want to open?";
+				MessageDialog msgbox = new MessageDialog (
+					win, 
+					DialogFlags.Modal, 
+					MessageType.Question, 
+					ButtonsType.OkCancel,
+					msg);
+				int response = msgbox.Run();
+				msgbox = null;
+				ResponseType responseType = (ResponseType) response;
+				if(responseType == ResponseType.Ok) {
+					FileSelectionDialog openFileDialog = 
+						new FileSelectionDialog ("Open File",
+						new FileSelectionEventHandler (OnOpenFile));
+				}
+			}
+			else {
+				FileSelectionDialog openFileDialog = 
+					new FileSelectionDialog ("Open File",
+					new FileSelectionEventHandler (OnOpenFile));
+			}
+		}
+
+		void OnOpenFile (object o, FileSelectionEventArgs args) {
+			try {
+				editor.LoadFromFile (args.Filename);
+			}
+			catch(Exception openFileException) {
+				Error("Error: Could not open file: \n" + 
+					args.Filename + 
+					"\n\nReason: " + 
+					openFileException.Message);
+				return;
+			}
+			filename = args.Filename;
+			TextBuffer buf = editor.Buffer;
+			buf.Modified = false;
+		}
+
+		void OnMenu_FileSave (object o, EventArgs args) {
+			if(filename.Equals(""))
+				SaveAs();
+			else
+				SaveFile(filename);
+		}
+
+		void SaveFile (string filename) {
+			try {
+				// FIXME: if file exists, ask if you want to 
+				//        overwrite.   currently, it overwrites
+				//        without asking.
+				editor.SaveToFile (filename);
+			} catch(Exception saveFileException) {
+				Error("Error: Could not open file: \n" + 
+					filename + 
+					"\n\nReason: " + 
+					saveFileException.Message);
+				return;
+			}
+			TextBuffer buf = editor.Buffer;
+			buf.Modified = false;
+		}
+
+		void OnMenu_FileSaveAs (object o, EventArgs args) {
+			SaveAs();
+		}
+
+		void SaveAs() {
+			FileSelectionDialog openFileDialog = 
+				new FileSelectionDialog ("File Save As",
+				new FileSelectionEventHandler (OnSaveAsFile));
+		}
+
+		void OnSaveAsFile (object o, FileSelectionEventArgs args) {
+			Console.WriteLine("Save As File: " + args.Filename);
+			SaveFile(args.Filename);
+			filename = args.Filename;
+		}
+
+		void OnMenu_FileExit (object o, EventArgs args) {
 			Application.Quit ();
 		}
 
-		void connect_cb (object o, EventArgs args) {
+		void OnMenu_SessionConnect (object o, EventArgs args) {
 			
 			LoginDialog login = new LoginDialog (this);
 			login = null;
 		}
 
-		void disconnect_cb (object o, EventArgs args) {
+		void OnMenu_SessionDisconnect (object o, EventArgs args) {
 			AppendText(buf, "Disconnecting...");
 			try {
 				conn.Close ();
 				conn = null;
 			}
 			catch (Exception e) {
-				Console.WriteLine ("Error: Unable to disconnect." + 
+				Error ("Error: Unable to disconnect." + 
 					e.Message);
 				conn = null;
 				return;
@@ -365,7 +523,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			AppendText (buf, "Disconnected.");
 		}
 
-		void toggle_results_output_func () {
+		void OnToolbar_ToggleResultsOutput () {
 			ToggleResultsOutput ();
 		}
 
@@ -384,7 +542,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			outbox.ResizeChildren ();
 		}
 
-		public void execute_func () {
+		public void OnToolbar_Execute () {
 			ExecuteSQL ();
 		}
 
@@ -478,7 +636,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			}
 		}
 
-		void execute_cb (object o, EventArgs args) {
+		void OnMenu_CommandExecute (object o, EventArgs args) {
 			ExecuteSQL ();
 		}
 
@@ -511,7 +669,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 					reader.FieldCount);
 			}
 			catch(Exception e){
-				Console.WriteLine ("Error: Unable to get FieldCount: " +
+				Error ("Error: Unable to get FieldCount: " +
 					e.Message);
 				return;
 			}
@@ -565,7 +723,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 					hdrUnderline.Append(" ");
 				}
 				catch(Exception e) {
-					Console.WriteLine("Error: Unable to display header: " +
+					Error ("Error: Unable to display header: " +
 						e.Message);
 					return;
 				}
@@ -761,13 +919,11 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				if (reader.FieldCount > 0) {
 					// SQL Query (SELECT)
 					// RecordsAffected -1 and DataTable has a reference
-					Console.WriteLine ("Get Schema Table...");
-					Console.Out.Flush ();
 					try {
 						schemaTable = reader.GetSchemaTable ();
 					}
 					catch (Exception es) {
-						Error("Error: Unable to get schema table: " + 
+						Error ("Error: Unable to get schema table: " + 
 							es.Message);
 						return;
 					}
@@ -915,8 +1071,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return dbAdapter;
 		}
 
-		public System.Object CreateInternalDataAdapter (IDbCommand cmd) {
-			AppendText("DEBUG: create internal DbDataAdapter...");
+		public System.Object CreateInternalDataAdapter (IDbCommand cmd) 
+		{		
 			string msg = "";
 			System.Object dbAdapter = null;
 			string providerKey = dbProvider.Key;
@@ -1043,12 +1199,11 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 #endif // DEBUG
 		}
 
-		public static int Main (string[] args) {
-
+		public static int Main (string[] args) {		
 			Application.Init ();
 			SqlSharpGtk sqlSharp = new SqlSharpGtk ();
+			sqlSharp.Show ();			
 			Application.Run ();
-
 			return 0;
 		}
 	}

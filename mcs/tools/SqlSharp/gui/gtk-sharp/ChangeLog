@@ -1,3 +1,23 @@
+2002-12-12  Daniel Morgan <danmorg@sc.rr.com>
+
+	* makefile.gnu: added file for linux build
+	
+	* win32.make: update file for windows build
+	
+	* DataGrid.cs: since SetColumnTypes has been fixed in GTK#,
+	update its use here
+	
+	* sqlsharpgtk.cs: change Console.WriteLine()s to Error()s or
+	get rid of the Console.WriteLine()s.  Created new menus Session
+	and Command and move some menu items.  Implement new menu items
+	File - New, Open, Save, and Save As
+	
+	* FileSelectionDialog.cs: added file
+	to make it easier to use the FileSelection dialog
+	
+	* SqlEditorSharp.cs: added public methods
+	LoadFromFile, SaveToFile, and Clear
+
 2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
 
 	* sqlsharpgtk.cs: fix dynamically creating DbDataAdapter

@@ -123,7 +123,7 @@ namespace Gtk.Controls
 			for (int col = 0; col < pdc.Count; col++) {
 				theTypes[col] = (int) TypeFundamentals.TypeString;
 			}
-			SetColumnTypes (theTypes);
+			store.SetColumnTypes (theTypes);
 
 			// FIXME: does not belong in this base method
 			int colndx = -1;
@@ -215,16 +215,6 @@ namespace Gtk.Controls
 				}
 				gridColumns = null;
 			}
-		}
-
-		// FIXME: temporarily here until ListStore.SetColumnTypes() is fixed
-		[DllImport ("libgtk-win32-2.0-0.dll")]
-		static extern void gtk_list_store_set_column_types (IntPtr raw, 
-						int n_columns, int[] types);
-
-		public void SetColumnTypes(int[] types) {
-			gtk_list_store_set_column_types (((IWrapper) store).Handle, 
-						types.Length, types);
 		}
 
 		// for DEBUG only

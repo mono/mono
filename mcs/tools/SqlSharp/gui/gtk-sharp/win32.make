@@ -7,30 +7,29 @@
 # (c)copyright 2002 Daniel Morgan 
 #
 
-# used for debugging
-DEBUG = -define:DEBUG
-# DEBUG =
-
 PROJECT = sqlsharpgtk.exe
 
 # Environment Variable CSHARPCOMPILER needs to be defined to use for your compiler
-# For example:
+# For example on Cygwin:
 # export CSHARPCOMPILER="mono f:/cygwin/home/DanielMorgan/mono/install/bin/mcs.exe"
+# For example on Linux:
+# export CSHARPCOMPILER=mcs
 
 # Environment Variable CLR_LIBS_PATH needs to be defined to find the CLR class libraries
-# For example:
-# export CLR_LIBS_PATH=f:/cygwin/home/DanielMorgan/mono/install/lib
+# For example on Cygwin:
+#      $ export CLR_LIBS_PATH="f:/cygwin/home/DanielMorgan/mono/install/lib"
+# For example on Linux:
+#      $ export CLR_LIBS_PATH="$HOME/mono/install/lib"
 
-GTK_SHARP_LIBS = -r $(CLR_LIBS_PATH)/glib-sharp.dll -r $(CLR_LIBS_PATH)/pango-sharp.dll -r $(CLR_LIBS_PATH)/atk-sharp.dll -r $(CLR_LIBS_PATH)/gtk-sharp.dll -r $(CLR_LIBS_PATH)/System.Drawing.dll
+GTK_SHARP_LIBS = -r glib-sharp.dll -r pango-sharp.dll -r atk-sharp.dll -r gtk-sharp.dll -r System.Drawing.dll
+SQLSHARP_GTK_LIBS = $(GTK_SHARP_LIBS) -r System.Data.dll
 
-SQLSHARP_GTK_LIBS = $(GTK_SHARP_LIBS) -r $(CLR_LIBS_PATH)/System.Data.dll
-
-MODULES = sqlsharpgtk.cs SqlEditorSharp.cs LoginDialog.cs DbProvider.cs DbProviderCollection.cs DataGrid.cs
+SOURCES = sqlsharpgtk.cs SqlEditorSharp.cs LoginDialog.cs DbProvider.cs DbProviderCollection.cs DataGrid.cs SplashScreen.cs FileSelectionDialog.cs
 
 all : $(PROJECT)
 
-$(PROJECT) : $(MODULES)
-	$(CSHARPCOMPILER) -o $(PROJECT) $(MODULES) $(SQLSHARP_GTK_LIBS) $(DEBUG) 
+$(PROJECT) : $(SOURCES)
+	$(CSHARPCOMPILER) -o $(PROJECT) $(SOURCES) -lib:$(CLR_LIBS_PATH) $(SQLSHARP_GTK_LIBS)
 
 clean:
 	rm *.exe

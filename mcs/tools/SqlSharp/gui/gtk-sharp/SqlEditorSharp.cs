@@ -598,6 +598,46 @@ namespace SqlEditorSharp {
 			return offset_iter.HasTag (tag);
 		}
 
+		public void Clear() {
+			TextIter start, end;
+			start = sqlTextBuffer.StartIter;
+			end = sqlTextBuffer.EndIter;
+			sqlTextBuffer.Delete(start,end);
+		}
+
+		public void LoadFromFile(string inFilename) {
+			StreamReader sr = new StreamReader(inFilename);
+			Clear();
+			string NextLine;
+			string line;
+			
+			while((NextLine = sr.ReadLine()) != null) {
+				line = NextLine + "\n";
+				sqlTextBuffer.Insert (sqlTextBuffer.EndIter, 
+					line, line.Length);
+			}
+			sr.Close();
+		}
+
+		public void SaveToFile(string outFilename) {
+			TextIter start_iter, iter;
+			string text;
+			StreamWriter sw = null;
+			
+			sw = new StreamWriter(outFilename);			
+			sqlTextBuffer.GetIterAtOffset (out iter, 0);
+			start_iter = iter;
+			while (iter.ForwardLine()) {
+				text = sqlTextBuffer.GetText(start_iter, iter, false);
+				sw.Write(text);
+				start_iter = iter;
+			}
+			text = sqlTextBuffer.GetText(start_iter, iter, false);
+			sw.Write(text);
+			sw.Close();
+			sw = null;
+		}
+
 		void DebugText (TextIter iter_start, TextIter iter_end,
 			string debugMessage) {
 
