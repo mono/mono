@@ -697,6 +697,26 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		/// Returns condition of ConditionalAttribute
+		/// </summary>
+		public string GetConditionalAttributeValue (DeclSpace ds)
+		{
+			if (pos_values == null) {
+				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
+
+				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
+				// But because a lot of attribute class code must be rewritten will be better to wait...
+				Resolve (ec);
+			}
+
+			// Some error occurred
+			if (pos_values [0] == null)
+				return null;
+
+			return (string)pos_values [0];
+		}
+
+		/// <summary>
 		/// Creates the instance of ObsoleteAttribute from this attribute instance
 		/// </summary>
 		public ObsoleteAttribute GetObsoleteAttribute (DeclSpace ds)
@@ -1114,6 +1134,20 @@ namespace Mono.CSharp {
 			return Search (t, ec, true);
 		}
 
+		/// <summary>
+		/// Returns all attributes of type 't'. Use it when attribute is AllowMultiple = true
+		/// </summary>
+		public Attribute[] SearchMulti (Type t, EmitContext ec)
+		{
+			ArrayList ar = new ArrayList ();
+
+			foreach (Attribute a in Attrs) {
+				if (a.ResolveType (ec, false) == t)
+					ar.Add (a);
+			}
+			return ar.ToArray (typeof (Attribute)) as Attribute[];
+		}
+
 		public void Emit (EmitContext ec, Attributable ias)
 		{
 			ListDictionary ld = new ListDictionary ();
@@ -1157,6 +1191,7 @@ namespace Mono.CSharp {
 	{
 		static PtrHashtable analyzed_types = new PtrHashtable ();
 		static PtrHashtable analyzed_member_obsolete = new PtrHashtable ();
+		static PtrHashtable analyzed_method_excluded = new PtrHashtable ();
 
 		private AttributeTester ()
 		{
@@ -1365,6 +1400,28 @@ namespace Mono.CSharp {
 				return;
 			}
 			Report.Warning_T (618, loc, member, oa.Message);
+		}
+
+		public static bool IsConditionalMethodExcluded (MethodBase mb)
+		{
+			object excluded = analyzed_method_excluded [mb];
+			if (excluded != null)
+				return excluded == TRUE ? true : false;
+			
+			ConditionalAttribute[] attrs = mb.GetCustomAttributes (TypeManager.conditional_attribute_type, true) as ConditionalAttribute[];
+			if (attrs.Length == 0) {
+				analyzed_method_excluded.Add (mb, FALSE);
+				return false;
+			}
+
+			foreach (ConditionalAttribute a in attrs) {
+				if (RootContext.AllDefines.Contains (a.ConditionString)) {
+					analyzed_method_excluded.Add (mb, FALSE);
+					return false;
+				}
+			}
+			analyzed_method_excluded.Add (mb, TRUE);
+			return true;
 		}
 	}
 }

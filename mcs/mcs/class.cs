@@ -2672,7 +2672,6 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
 		ReturnParameter return_attributes;
-		bool should_ignore;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -2887,8 +2886,6 @@ namespace Mono.CSharp {
 			if (!MethodData.Define (container))
 				return false;
 
-			should_ignore = MethodData.ShouldIgnore ();
-
 			//
 			// Setup iterator if we are one
 			//
@@ -2993,10 +2990,48 @@ namespace Mono.CSharp {
 			return GetObsoleteAttribute (ds);
 		}
 
-		public bool ShouldIgnore ()
+		/// <summary>
+		/// Returns true if method has conditional attribute and the conditions is not defined (method is excluded).
+		/// </summary>
+		public bool IsExcluded (EmitContext ec)
 		{
-			return should_ignore;
+			if ((caching_flags & Flags.Excluded_Undetected) == 0)
+				return (caching_flags & Flags.Excluded) != 0;
+
+			caching_flags &= ~Flags.Excluded_Undetected;
+
+			if (parent_method == null) {
+				if (OptAttributes == null)
+					return false;
+
+				Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type, ec);
+
+				foreach (Attribute a in attrs) {
+					string condition = a.GetConditionalAttributeValue (ds);
+					if (RootContext.AllDefines.Contains (condition))
+						return false;
+				}
+
+				caching_flags |= Flags.Excluded;
+				return true;
+			}
+
+			IMethodData md = TypeManager.GetMethod (parent_method);
+			if (md == null) {
+				if (AttributeTester.IsConditionalMethodExcluded (parent_method)) {
+					caching_flags |= Flags.Excluded;
+					return true;
+				}
+				return false;
+			}
+
+			if (md.IsExcluded (ec)) {
+				caching_flags |= Flags.Excluded;
+				return true;
+			}
+			return false;
 		}
+
 		#endregion
 	}
 
@@ -3520,7 +3555,7 @@ namespace Mono.CSharp {
 
 		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
 		ObsoleteAttribute GetObsoleteAttribute ();
-		bool ShouldIgnore ();
+		bool IsExcluded (EmitContext ec);
 	}
 
 	//
@@ -3548,10 +3583,6 @@ namespace Mono.CSharp {
 		protected MethodAttributes flags;
 		protected bool is_method;
 
-		//
-		// It can either hold a string with the condition, or an arraylist of conditions.
-		object conditionals;
-
 		MethodBuilder builder = null;
 		public MethodBuilder MethodBuilder {
 			get {
@@ -3567,7 +3598,6 @@ namespace Mono.CSharp {
 			this.modifiers = modifiers;
 			this.flags = flags;
 			this.is_method = is_method;
-			this.conditionals = null;
 
 			this.method = method;
 		}
@@ -3663,47 +3693,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			//
-			// The likelyhood that the conditional will be more than 1 is very slim
-			//
-			if (conditionals == null)
-				conditionals = condition;
-			else if (conditionals is string){
-				string s = (string) conditionals;
-				conditionals = new ArrayList ();
-				((ArrayList)conditionals).Add (s);
-			} else
-				((ArrayList)conditionals).Add (condition);
-
 			return true;
-		}
-
-		//
-		// Checks whether this method should be ignored due to its Conditional attributes.
-		//
-		public bool ShouldIgnore ()
-		{
-			// When we're overriding a virtual method, we implicitly inherit the
-			// Conditional attributes from our parent.
-			if (member.ParentMethod != null) {
-				TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (
-					member.ParentMethod);
-
-				if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
-					return true;
-			}
-
-			if (conditionals != null){
-				if (conditionals is string){
-					if (RootContext.AllDefines [conditionals] == null)
-						return true;
-				} else {
-					foreach (string condition in (ArrayList) conditionals)
-					if (RootContext.AllDefines [condition] == null)
-						return true;
-				}
-			}
-			return false;
 		}
 
 		public bool Define (TypeContainer container)
@@ -4878,10 +4868,11 @@ namespace Mono.CSharp {
 				return method.GetObsoleteAttribute (method.ds);
 			}
 
-			bool IMethodData.ShouldIgnore ()
+			public bool IsExcluded (EmitContext ec)
 			{
-				return method_data.ShouldIgnore ();
+				return false;
 			}
+
 			#endregion
 		}
 
@@ -5608,9 +5599,9 @@ namespace Mono.CSharp {
 				return method.GetObsoleteAttribute (method.ds);
 			}
 
-			bool IMethodData.ShouldIgnore ()
+			public bool IsExcluded (EmitContext ec)
 			{
-				return method_data.ShouldIgnore ();
+				return false;
 			}
 
 			public abstract string MethodName { get; }
