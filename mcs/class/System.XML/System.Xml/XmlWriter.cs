@@ -13,6 +13,12 @@ namespace System.Xml
 {
 	public abstract class XmlWriter
 	{
+		#region Fields
+
+		protected WriteState ws = WriteState.Start;
+
+		#endregion
+
 		#region Constructors
 
 		protected XmlWriter () { }
@@ -131,7 +137,7 @@ namespace System.Xml
 
 		public void WriteStartElement (string localName)
 		{
-			WriteStartElement ("", localName, "");
+			WriteStartElementInternal ("", localName, "");
 		}
 
 		public void WriteStartElement (string localName, string ns)
@@ -140,6 +146,8 @@ namespace System.Xml
 		}
 
 		public abstract void WriteStartElement (string prefix, string localName, string ns);
+
+		protected abstract void WriteStartElementInternal (string prefix, string localName, string ns);
 
 		public abstract void WriteString (string text);
 

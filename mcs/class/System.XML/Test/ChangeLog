@@ -1,5 +1,10 @@
 2002-03-23  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XmlTextWriterTests.cs: Tests for BaseStream,
+	Namespaces = false, and WriteState.
+
+2002-03-23  Kral Ferch <kral_ferch@hotmail.com>
+
 	* XmlTextWriterTests.cs: constructor tests with
 	different encodings to test that encoding gets suppressed
 	on xml declaration when null stream passed to constructor.

@@ -1,5 +1,12 @@
 2002-03-23  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XmlTextWriter.cs: Impls for BaseStream and
+	Namespaces and WriteState.
+	
+	* XmlWriter.cs: WriteState and WriteStartElementInternal.
+
+2002-03-23  Kral Ferch <kral_ferch@hotmail.com>
+
 	* XmlNodeListChildren.cs: made class internal
 	instead of public.  Shouldn't be visible outside
 	of System.Xml.

@@ -23,6 +23,7 @@ namespace System.Xml
 		protected bool openWriter = true;
 		protected bool openStartElement;
 		protected bool documentStarted = false;
+		protected bool namespaces = true;
 		protected Stack openElements = new Stack ();
 		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 		protected Formatting formatting = Formatting.None;
@@ -32,6 +33,7 @@ namespace System.Xml
 		protected char quoteChar = '\"';
 		protected int indentLevel = 0;
 		protected string indentFormatting;
+		protected Stream baseStream = null;
 
 		#endregion
 
@@ -40,6 +42,11 @@ namespace System.Xml
 		public XmlTextWriter (TextWriter w) : base ()
 		{
 			this.w = w;
+			
+			try {
+				baseStream = ((StreamWriter)w).BaseStream;
+			}
+			catch (Exception) { }
 		}
 
 		public XmlTextWriter (Stream w,	Encoding encoding) : base ()
@@ -50,20 +57,21 @@ namespace System.Xml
 			}
 
 			this.w = new StreamWriter(w, encoding);
+			baseStream = w;
 		}
 
 		public XmlTextWriter (string filename, Encoding encoding) : base ()
 		{
 			this.w = new StreamWriter(filename, false, encoding);
+			baseStream = ((StreamWriter)w).BaseStream;
 		}
 
 		#endregion
 
 		#region Properties
 
-		[MonoTODO]
 		public Stream BaseStream {
-			get { throw new NotImplementedException(); }
+			get { return baseStream; }
 		}
 
 
@@ -102,10 +110,14 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public bool Namespaces {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return namespaces; }
+			set {
+				if (ws != WriteState.Start)
+					throw new InvalidOperationException ("NotInWriteState.");
+				
+				namespaces = value;
+			}
 		}
 
 		[MonoTODO]
@@ -119,9 +131,8 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public override WriteState WriteState {
-			get { throw new NotImplementedException(); }
+			get { return ws; }
 		}
 		
 		[MonoTODO]
@@ -164,7 +175,7 @@ namespace System.Xml
 			}
 
 			w.Close();
-
+			ws = WriteState.Closed;
 			openWriter = false;
 		}
 
@@ -173,6 +184,7 @@ namespace System.Xml
 			if (openStartElement) 
 			{
 				w.Write(">");
+				ws = WriteState.Content;
 				openStartElement = false;
 			}
 		}
@@ -372,11 +384,27 @@ namespace System.Xml
 				encodingFormatting = " encoding=\"" + w.Encoding.HeaderName + "\"";
 
 			w.Write("<?xml version=\"1.0\"{0}{1}?>", encodingFormatting, standaloneFormatting);
+			ws = WriteState.Prolog;
 		}
 
 		public override void WriteStartElement (string prefix, string localName, string ns)
 		{
-			if ((prefix != String.Empty) && (ns == String.Empty))
+			if (!Namespaces && (((prefix != null) && (prefix != String.Empty))
+				|| ((ns != null) && (ns != String.Empty))))
+				throw new ArgumentException ("Cannot set the namespace if Namespaces is 'false'.");
+
+			WriteStartElementInternal (prefix, localName, ns);
+		}
+
+		protected override void WriteStartElementInternal (string prefix, string localName, string ns)
+		{
+			if (prefix == null)
+				prefix = String.Empty;
+
+			if (ns == null)
+				ns = String.Empty;
+
+			if ((prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
 				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
 
 			CheckState ();
@@ -408,6 +436,7 @@ namespace System.Xml
 			w.Write ("{0}<{1}{2}{3}", indentFormatting, formatPrefix, localName, formatXmlns);
 
 			openElements.Push (new XmlTextWriterOpenElement (formatPrefix + localName));
+			ws = WriteState.Element;
 			openStartElement = true;
 
 			namespaceManager.PushScope ();

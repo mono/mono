@@ -126,8 +126,10 @@ namespace Ximian.Mono.Tests
 			catch (ArgumentException) { }
 		}
 
-		public void TestConstructors ()
+		public void TestConstructorsAndBaseStream ()
 		{
+			Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (null, this.xtw.BaseStream));
+
 			MemoryStream ms;
 			StreamReader sr;
 			XmlTextWriter xtw;
@@ -139,6 +141,7 @@ namespace Ximian.Mono.Tests
 			ms.Seek (0, SeekOrigin.Begin);
 			sr = new StreamReader (ms);
 			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", sr.ReadToEnd ());
+			Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (ms, xtw.BaseStream));
 
 			ms = new MemoryStream ();
 			xtw = new XmlTextWriter (ms, new UnicodeEncoding ());
@@ -171,6 +174,7 @@ namespace Ximian.Mono.Tests
 			ms.Seek (0, SeekOrigin.Begin);
 			sr = new StreamReader (ms);
 			AssertEquals ("<?xml version=\"1.0\" standalone=\"yes\"?>", sr.ReadToEnd ());
+			Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (ms, xtw.BaseStream));
 		}
 
 		public void TestDocumentStart ()
@@ -253,33 +257,60 @@ namespace Ximian.Mono.Tests
 				sw.GetStringBuilder ().ToString ());
 		}
 
-		public void TestProcessingInstructionValid ()
+
+		// TODO: Need some tests for attributes with namespaces here...
+		public void saveTestNamespacesAttributesPassingInNamespaces ()
 		{
-			xtw.WriteProcessingInstruction("foo", "bar");
-			AssertEquals ("WriteProcessingInstruction had incorrect output.", "<?foo bar?>", sw.GetStringBuilder().ToString());
 		}
 
-		public void TestProcessingInstructionInvalid ()
+		public void TestNamespacesElementsPassingInNamespaces ()
 		{
+			xtw.Namespaces = false;
+
+			// These shouldn't throw any exceptions since they don't pass in
+			// a namespace.
+			xtw.WriteElementString ("foo", "bar");
+			xtw.WriteStartElement ("baz");
+			xtw.WriteStartElement ("quux", "");
+			xtw.WriteStartElement ("quuux", null);
+			xtw.WriteStartElement (null, "a", null);
+			xtw.WriteStartElement (null, "b", "");
+			xtw.WriteStartElement ("", "c", null);
+			xtw.WriteStartElement ("", "d", "");
+
+			AssertEquals ("<foo>bar</foo><baz><quux><quuux><a><b><c><d", sw.GetStringBuilder ().ToString ());
+
+			// These should throw ArgumentException because they pass in a
+			// namespace when Namespaces = false.
 			try {
-				xtw.WriteProcessingInstruction("fo?>o", "bar");
-				Fail("Should have thrown an ArgumentException.");
-			} catch (ArgumentException) { }
+				xtw.WriteElementString ("qux", "http://netsack.com/", String.Empty);
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
 
 			try {
-				xtw.WriteProcessingInstruction("foo", "ba?>r");
-				Fail("Should have thrown an ArgumentException.");
-			} catch (ArgumentException) { }
+				xtw.WriteStartElement ("foo", "http://netsack.com/");
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
 
 			try {
-				xtw.WriteProcessingInstruction("", "bar");
-				Fail("Should have thrown an ArgumentException.");
-			} catch (ArgumentException) { }
+				xtw.WriteStartElement ("foo", "bar", "http://netsack.com/");
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
 
 			try {
-				xtw.WriteProcessingInstruction(null, "bar");
-				Fail("Should have thrown an ArgumentException.");
-			} catch (ArgumentException) { }
+				xtw.WriteStartElement ("foo", "bar", null);
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteStartElement ("foo", "bar", "");
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteStartElement ("foo", "", "");
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
 		}
 
 		public void TestNamespacesNoNamespaceClearsDefaultNamespace ()
@@ -306,16 +337,68 @@ namespace Ximian.Mono.Tests
 				sw.GetStringBuilder ().ToString ());
 		}
 
-		public void TestNamespacesPrefixWithEmptyNamespace ()
+		public void TestNamespacesPrefixWithEmptyAndNullNamespace ()
 		{
 			try {
 				xtw.WriteStartElement ("foo", "bar", "");
 				Fail ("Should have thrown an ArgumentException.");
-			}
-			catch (ArgumentException e) {
-				AssertEquals ("Exception message is incorrect.",
-					"Cannot use a prefix with an empty namespace.", e.Message);
-			}
+			} catch (ArgumentException) {}
+
+			try 
+			{
+				xtw.WriteStartElement ("foo", "bar", null);
+				Fail ("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) {}
+		}
+
+		public void TestNamespacesSettingWhenWriteStateNotStart ()
+		{
+			xtw.WriteStartElement ("foo");
+			try 
+			{
+				xtw.Namespaces = false;
+				Fail ("Expected an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException) {}
+			AssertEquals (true, xtw.Namespaces);
+		}
+
+		public void TestProcessingInstructionValid ()
+		{
+			xtw.WriteProcessingInstruction("foo", "bar");
+			AssertEquals ("WriteProcessingInstruction had incorrect output.", "<?foo bar?>", sw.GetStringBuilder().ToString());
+		}
+
+		public void TestProcessingInstructionInvalid ()
+		{
+			try 
+			{
+				xtw.WriteProcessingInstruction("fo?>o", "bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+
+			try 
+			{
+				xtw.WriteProcessingInstruction("foo", "ba?>r");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+
+			try 
+			{
+				xtw.WriteProcessingInstruction("", "bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+
+			try 
+			{
+				xtw.WriteProcessingInstruction(null, "bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
 		}
 
 		public void TestQuoteCharInvalid ()
@@ -337,6 +420,19 @@ namespace Ximian.Mono.Tests
 				AssertEquals ("Exception message is incorrect.",
 					"There was no XML start tag open.", e.Message);
 			}
+		}
+
+		public void TestWriteState ()
+		{
+			AssertEquals (WriteState.Start, xtw.WriteState);
+			xtw.WriteStartDocument ();
+			AssertEquals (WriteState.Prolog, xtw.WriteState);
+			xtw.WriteStartElement ("root");
+			AssertEquals (WriteState.Element, xtw.WriteState);
+			xtw.WriteElementString ("foo", "bar");
+			AssertEquals (WriteState.Content, xtw.WriteState);
+			xtw.Close ();
+			AssertEquals (WriteState.Closed, xtw.WriteState);
 		}
 	}
 }
