@@ -1,4 +1,9 @@
 
+Wed Apr 10 16:07:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: quick implementation for opcodes needed by the new parse
+	routines in corlib.
+
 Tue Apr 9 13:08:26 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: make the interp thread-safe wrt the metadata lib.
