@@ -12,7 +12,7 @@ mono \- Mono ECMA-CLI Just in Time compiler.
 .B mono
 [\-\-help] [\-d] [\-\-debug-asm] [\-\-debug-forest] [\-\-trace-calls]
 [\-\-compile name] [\-\-ncompile num]  [\-\-noinline] [\-\-profile]
-[\-\-debug format] [\-\-debug-args args] [\-\-break name] [\-\-precompile name]
+[\-\-debug=[format]] [\-\-debug-args args] [\-\-break name] [\-\-precompile name]
 program.exe [arguments...]
 .SH DESCRIPTION
 The \fImono\fP program is a Just in Time compiler for ECMA CLI byte
@@ -61,8 +61,8 @@ the method will be compiled a thousand times.
 The following options are used to debug a JITed application.  They're
 only useful when running the JIT in a debugger:
 .TP
-.I "--debug format"
-Writes out debug information in the given format.
+.I "--debug=[format]"
+Writes out debug information in the given format or in the default format.
 See DEBUGGING FORMATS for details.
 .TP
 .I "--debug-args args"
