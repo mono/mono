@@ -15,16 +15,41 @@ namespace MonoTests.System.IO
 
 public class StreamWriterTest : TestCase
 {
+
+	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+	private string _codeFileName;
+	private string _thisCodeFileName;
+
+	public StreamWriterTest ()
+	{
+		if (Directory.Exists (TempFolder))
+			Directory.Delete (TempFolder, true);
+		Directory.CreateDirectory (TempFolder);
+		
+		_thisCodeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+		_codeFileName = TempFolder + "StreamWriterTest.temp";
+	}
+	
+	~StreamWriterTest ()
+	{
+		if (Directory.Exists (TempFolder))
+			Directory.Delete (TempFolder, true);
+	}
+
+
 	protected override void SetUp() 
 	{
+		if (!Directory.Exists (TempFolder))				
+			Directory.CreateDirectory (TempFolder);
+
+		if (!File.Exists (_thisCodeFileName)) 
+			File.Create (_thisCodeFileName).Close ();
 	}
 
 	protected override void TearDown() 
 	{
 	}
 
-	private string _codeFileName = "StreamWriterTest.temp";
-	private string _thisCodeFileName = "resources" + Path.DirectorySeparatorChar + "AFile.txt";
 
 	// TODO - ctors
 	public void TestCtor1() {
