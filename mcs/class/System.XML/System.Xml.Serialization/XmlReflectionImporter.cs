@@ -283,6 +283,8 @@ namespace System.Xml.Serialization {
 			TypeData typeData = TypeTranslator.GetTypeData (type);
 			ListMap obmap = new ListMap ();
 
+			ReflectionHelper.CheckSerializableType (type);
+			
 			if (atts == null) atts = new XmlAttributes();
 			Type itemType = typeData.ListItemType;
 

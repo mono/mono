@@ -1,3 +1,12 @@
+2003-10-20  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ReflectionHelper.cs: Added check in CheckSerializableType(). Interfaces
+	  can't be serialized. This fixes bug #49878.
+	* TypeData.cs: In ListItemType check that the collection has a valid
+	  Add method and report an error if not.
+	* XmlReflectionImporter.cs: Added CheckSerializableType check call when
+	  reflecting a collection.
+
 2003-10-18  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs: Support element references for enum values in

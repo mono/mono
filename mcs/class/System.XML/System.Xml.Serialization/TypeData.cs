@@ -126,7 +126,8 @@ namespace System.Xml.Serialization
 		{
 			get
 			{
-				if (type == null) throw new InvalidOperationException ("Property ListItemType is not supported for custom types");
+				if (type == null) 
+					throw new InvalidOperationException ("Property ListItemType is not supported for custom types");
 
 				if (listItemType != null) return listItemType;
 
@@ -137,11 +138,23 @@ namespace System.Xml.Serialization
 				else if (typeof(ICollection).IsAssignableFrom (type))
 				{
 					PropertyInfo prop = GetIndexerProperty (type);
-					if (prop == null) throw new InvalidOperationException ("You must implement a default accessor on " + type.FullName + " because it inherits from ICollection");
+					if (prop == null) 
+						throw new InvalidOperationException ("You must implement a default accessor on " + type.FullName + " because it inherits from ICollection");
+						
 					return prop.PropertyType;
 				}
 				else
-					return type.GetMethod ("Add").GetParameters()[0].ParameterType;
+				{
+					MethodInfo met = type.GetMethod ("Add");
+					if (met == null)
+						throw new InvalidOperationException ("The collection " + type.FullName + " must implement an Add method");
+
+					ParameterInfo[] pars = met.GetParameters();
+					if (pars.Length != 1)
+						throw new InvalidOperationException ("The Add method of the collection " + type.FullName + " must have only one parameter");
+					
+					return pars[0].ParameterType;
+				}
 
 				return listItemType;
 			}

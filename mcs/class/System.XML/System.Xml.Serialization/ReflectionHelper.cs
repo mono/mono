@@ -50,11 +50,15 @@ namespace System.Xml.Serialization
 			return new InvalidOperationException ("There was an error reflecting '" + map.TypeFullName + "': " + message);
 		}
 		
-		
 		public static void CheckSerializableType (Type type)
 		{
+			if (type.IsArray) return;
+			
 			if (type.GetConstructor (Type.EmptyTypes) == null && !type.IsAbstract && !type.IsValueType)
 				throw new InvalidOperationException (type.Name + " cannot be serialized because it does not have a default public constructor");
+				
+			if (type.IsInterface)
+				throw new InvalidOperationException (type.Name + " cannot be serialized because it is an interface");
 		}
 	}
 }
