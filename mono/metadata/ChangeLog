@@ -1,3 +1,9 @@
+2004-05-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* assembly.c (mono_assembly_load_references): Add a compatibility
+	hack to run old applications that might be still referencing the
+	3300-based assemblies, only do this for System.xxx.
+
 2004-05-01  Jackson Harper  <jackson@ximian.com>
 
 	* appdomain.c: If the culture is neutral we set it to "".
