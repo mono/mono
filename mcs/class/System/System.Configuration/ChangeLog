@@ -1,3 +1,12 @@
+2004-11-05  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Configuration.cs: Minor fixes.
+	* ConfigurationElement.cs: Added support for the different update modes.
+	* SectionGroupInfo.cs: Support loading the same configuration section
+	  from different files.
+	* SectionInfo.cs: Properly write back configuration data for which a
+	  section object has not been created.
+
 2004-11-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AppSettingsSection.cs, ConfigurationPropertyCollection.cs,

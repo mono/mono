@@ -201,9 +201,17 @@ namespace System.Configuration
 					ThrowException ("Unrecognized element: " + reader.Name, reader);
 					
 				cinfo.ReadConfig (cfg, reader);
-				if (HasChild (cinfo.Name))
-					ThrowException ("Already have a factory for " + name, reader);
-				AddChild (cinfo);
+				ConfigInfo actInfo = Groups [cinfo.Name];
+				if (actInfo == null) actInfo = Sections [cinfo.Name];
+				
+				if (actInfo != null) {
+					if (actInfo.GetType () != cinfo.GetType ())
+						ThrowException ("A section or section group named '" + cinfo.Name + "' already exists", reader);
+					// Make sure that this section is saved in this configuration file:
+					actInfo.FileName = cfg.FileName;
+				}
+				else
+					AddChild (cinfo);
 			}
 			
 			reader.ReadEndElement ();

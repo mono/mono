@@ -41,6 +41,7 @@ namespace System.Configuration
 	{
 		static Hashtable elementMaps = new Hashtable ();
 		Hashtable values;
+		string[] readProperties;
 		string rawXml;
 		bool modified;
 		ElementMap map;
@@ -123,10 +124,15 @@ namespace System.Configuration
 
 		public bool HasValue (string key)
 		{
+			if (values == null) return false;
 			ConfigurationProperty prop = map.Properties [key];
 			if (prop == null) return false;
-			if (values == null) return false;
 			return values.ContainsKey (prop);
+		}
+		
+		internal bool HasValues ()
+		{
+			return values != null && values.Count > 0;
 		}
 
 		[MonoTODO]
@@ -142,24 +148,84 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		protected internal virtual void Deserialize (
-				XmlReader reader, bool serialize_collection_key)
+		protected internal virtual void Deserialize (XmlReader reader, bool serializeCollectionKey)
 		{
-			throw new NotImplementedException ();
+			Hashtable readProps = new Hashtable ();
+			
+			reader.MoveToContent ();
+			if (!map.HasProperties) {
+				reader.Skip ();
+				return;
+			}
+			
+			while (reader.MoveToNextAttribute ())
+			{
+				ConfigurationProperty prop = map.Properties [reader.LocalName];
+				if (prop == null) {
+					if (!HandleUnrecognizedAttribute (reader.LocalName, reader.Value))
+						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
+					continue;
+				}
+				
+				if (readProps.Contains (prop))
+					throw new ConfigurationException ("The attribute '" + prop.Name + "' may only appear once in this element.");
+				
+				object val = prop.ConvertFromString (reader.Value);
+				if (!object.Equals (val, prop.DefaultValue))
+					this [prop] = val;
+				readProps [prop] = prop.Name;
+			}
+			
+			reader.MoveToElement ();
+			if (reader.IsEmptyElement) {
+				reader.Skip ();
+			}
+			else {
+				reader.ReadStartElement ();
+				reader.MoveToContent ();
+				
+				while (reader.NodeType != XmlNodeType.EndElement)
+				{
+					if (reader.NodeType != XmlNodeType.Element) {
+						reader.Skip ();
+						continue;
+					}
+					
+					ConfigurationProperty prop = map.Properties [reader.LocalName];
+					if (prop == null) {
+						if (!HandleUnrecognizedElement (reader.LocalName, reader))
+							throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
+						continue;
+					}
+					
+					if (!prop.IsElement)
+						throw new ConfigurationException ("Property '" + prop.Name + "' is not a ConfigurationElement.");
+					
+					if (readProps.Contains (prop))
+						throw new ConfigurationException ("The element <" + prop.Name + "> may only appear once in this section.");
+					
+					ConfigurationElement val = this [prop] as ConfigurationElement;
+					val.Deserialize (reader, serializeCollectionKey);
+					readProps [prop] = prop.Name;
+				}
+			}
+			
+			modified = false;
+				
+			if (readProps.Count > 0) {
+				readProperties = new string [readProps.Count];
+				readProps.Values.CopyTo ((object[])readProperties, 0);
+			}
 		}
 
-		[MonoTODO]
-		protected virtual bool HandleUnrecognizedAttribute (
-				string name, string value)
+		protected virtual bool HandleUnrecognizedAttribute (string name, string value)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
-		[MonoTODO]
-		protected virtual bool HandleUnrecognizedElement (
-				string element, XmlReader reader)
+		protected virtual bool HandleUnrecognizedElement (string element, XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		[MonoTODO]
@@ -176,60 +242,7 @@ namespace System.Configuration
 		[MonoTODO]
 		protected internal virtual void ReadXml (XmlReader reader, object context)
 		{
-			Hashtable readProps = new Hashtable ();
-			
-			reader.MoveToContent ();
-			if (!map.HasProperties) {
-				reader.Skip ();
-				return;
-			}
-			
-			while (reader.MoveToNextAttribute ())
-			{
-				ConfigurationProperty prop = map.Properties [reader.LocalName];
-				if (prop == null)
-					throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
-				
-				if (readProps.Contains (prop))
-					throw new ConfigurationException ("The attribute '" + prop.Name + "' may only appear once in this element.");
-				
-				object val = prop.ConvertFromString (reader.Value);
-				if (!object.Equals (val, prop.DefaultValue))
-					this [prop] = val;
-				readProps [prop] = prop;
-			}
-			
-			reader.MoveToElement ();
-			if (reader.IsEmptyElement) {
-				reader.Skip ();
-				return;
-			}
-			
-			reader.ReadStartElement ();
-			reader.MoveToContent ();
-			
-			while (reader.NodeType != XmlNodeType.EndElement)
-			{
-				if (reader.NodeType != XmlNodeType.Element) {
-					reader.Skip ();
-					continue;
-				}
-				
-				ConfigurationProperty prop = map.Properties [reader.LocalName];
-				if (prop == null)
-					throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
-				
-				if (!prop.IsElement)
-					throw new ConfigurationException ("Property '" + prop.Name + "' is not a ConfigurationElement.");
-				
-				if (readProps.Contains (prop))
-					throw new ConfigurationException ("The element <" + prop.Name + "> may only appear once in this section.");
-				
-				ConfigurationElement val = this [prop] as ConfigurationElement;
-				val.ReadXml (reader, context);
-				readProps [prop] = prop;
-			}
-			modified = false;
+			Deserialize (reader, false);
 		}
 
 		[MonoTODO]
@@ -275,7 +288,7 @@ namespace System.Configuration
 				if (!prop.IsElement) continue;
 				
 				ConfigurationElement val = entry.Value as ConfigurationElement;
-				if (val != null)
+				if (val != null && val.HasValues ())
 					val.SerializeToXmlElement (writer, prop.Name);
 			}
 			return true;
@@ -308,26 +321,38 @@ namespace System.Configuration
 			ElementMap map = source.map;
 			if (!map.HasProperties) return;
 			
-			foreach (ConfigurationProperty prop in map.Properties) {
-				if (source.HasValue (prop.Name)) {
-					object sourceValue = source [prop];
-					if (!parent.HasValue (prop.Name)) {
-						this [prop] = sourceValue;
-					}
-					else if (sourceValue != null) {
-						object parentValue = parent [prop];
-						if (parentValue != null && prop.IsElement) {
+			foreach (ConfigurationProperty prop in map.Properties)
+			{
+				if (!source.HasValue (prop.Name)) continue;
+				
+				object sourceValue = source [prop];
+				if 	(!parent.HasValue (prop.Name) || updateMode == ConfigurationUpdateMode.Full) {
+					this [prop] = sourceValue;
+					continue;
+				}
+				else if (sourceValue != null) {
+					object parentValue = parent [prop];
+					if (prop.IsElement) {
+						if (parentValue != null) {
 							ConfigurationElement copy = (ConfigurationElement) Activator.CreateInstance (prop.Type);
 							copy.UnMerge ((ConfigurationElement) sourceValue, (ConfigurationElement) parentValue, serializeCollectionKey, context, updateMode);
 							this [prop] = copy;
 						}
-						else {
-							if (!object.Equals (sourceValue, parentValue))
-								this [prop] = sourceValue;
-						}
+						else
+							this [prop] = sourceValue;
+					}
+					else {
+						if (!object.Equals (sourceValue, parentValue) || 
+							(updateMode == ConfigurationUpdateMode.Modified && source.IsReadFromConfig (prop.Name)))
+							this [prop] = sourceValue;
 					}
 				}
 			}
+		}
+		
+		bool IsReadFromConfig (string propName)
+		{
+			return readProperties != null && Array.IndexOf (readProperties, propName) != -1;
 		}
 
 		[MonoTODO]

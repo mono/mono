@@ -54,7 +54,7 @@ namespace System.Configuration
 		
 		public override bool HasDataContent (Configuration config)
 		{
-			return config.GetSectionInstance (this, false) != null;
+			return config.GetSectionInstance (this, false) != null || config.GetSectionXml (this) != null;
 		}
 		
 		public override bool HasConfigContent (Configuration cfg)
@@ -126,16 +126,26 @@ namespace System.Configuration
 		
 		public override void ReadData (Configuration config, XmlTextReader reader)
 		{
-			config.SetSectionData (this, reader.ReadOuterXml ());
+			config.SetSectionXml (this, reader.ReadOuterXml ());
 		}
 		
 		public override void WriteData (Configuration config, XmlWriter writer, ConfigurationUpdateMode mode)
 		{
+			string xml;
+			
 			ConfigurationSection section = config.GetSectionInstance (this, false);
 			if (section != null) {
 				ConfigurationSection parentSection = config.Parent != null ? config.Parent.GetSectionInstance (this, false) : null;
-				string xml = section.WriteXml (parentSection, config, Name, mode);
-				writer.WriteRaw (xml);
+				xml = section.WriteXml (parentSection, config, Name, mode);
+			}
+			else {
+				xml = config.GetSectionXml (this);
+			}
+			
+			if (xml != null) {
+				XmlTextReader tr = new XmlTextReader (new StringReader (xml));
+				writer.WriteNode (tr, true);
+				tr.Close ();
 			}
 		}
 #endif

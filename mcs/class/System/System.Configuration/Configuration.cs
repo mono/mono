@@ -251,9 +251,14 @@ namespace System.Configuration {
 			elementData [config] = sec;
 		}
 		
-		internal void SetSectionData (SectionInfo config, string data)
+		internal void SetSectionXml (SectionInfo config, string data)
 		{
 			elementData [config] = data;
+		}
+		
+		internal string GetSectionXml (SectionInfo config)
+		{
+			return elementData [config] as string;
 		}
 		
 		internal void CreateSection (SectionGroupInfo group, string name, ConfigurationSection sec)
@@ -287,7 +292,7 @@ namespace System.Configuration {
 		
 		public void Update ()
 		{
-			Update (ConfigurationUpdateMode.Full, true);
+			Update (ConfigurationUpdateMode.Modified, false);
 		}
 		
 		public void Update (ConfigurationUpdateMode mode)
@@ -295,7 +300,7 @@ namespace System.Configuration {
 			Update (mode, false);
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Detect if file has changed")]
 		public void Update (ConfigurationUpdateMode mode, bool forceUpdateAll)
 		{
 			XmlTextWriter tw = new XmlTextWriter (new StreamWriter (fileName));
