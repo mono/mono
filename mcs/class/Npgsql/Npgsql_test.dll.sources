@@ -1,2 +1,4 @@
 CommandTests.cs
 ConnectionTests.cs
+DataAdapterTests.cs
+DataReaderTests.cs
