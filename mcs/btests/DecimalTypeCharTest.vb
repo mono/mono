@@ -2,8 +2,8 @@ Module DecimalTypeCharTest
     Sub Main()
         Try
             Dim m As Decimal
-            m = f(20.2)
-            If m <> 20.2 Then
+            m = f(20.2D)
+            If m <> 20.2D Then
                 Throw New Exception("DecimalTypeCharTest: failed")
             End If
             Exit Sub
