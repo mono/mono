@@ -47,7 +47,7 @@ namespace System.Data.SqlTypes
 		public float Value { 
 			get { 
 				if (this.IsNull) 
-					throw new SqlNullValueException ("The property contains Null.");
+					throw new SqlNullValueException ();
 				else 
 					return value; 
 			}
@@ -62,10 +62,16 @@ namespace System.Data.SqlTypes
 			return (x + y);
 		}
 
-		[MonoTODO]
 		public int CompareTo (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SqlSingle))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlSingle"));
+			else if (value.IsNull)
+				return 1;
+			else
+				return value.CompareTo (value.Value);
 		}
 
 		public static SqlSingle Divide (SqlSingle x, SqlSingle y)
@@ -73,10 +79,12 @@ namespace System.Data.SqlTypes
 			return (x / y);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlSingle))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals (SqlSingle x, SqlSingle y)
@@ -172,16 +180,14 @@ namespace System.Data.SqlTypes
 		}
 
 
-		[MonoTODO]
 		public SqlString ToSqlString ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlString)this);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return value.ToString ();
 		}
 
 		public static SqlSingle operator + (SqlSingle x, SqlSingle y)

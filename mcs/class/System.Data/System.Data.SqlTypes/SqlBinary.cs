@@ -85,10 +85,12 @@ namespace System.Data.SqlTypes
 			return (x + y);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value) 
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlBinary))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals(SqlBinary x, SqlBinary y) 

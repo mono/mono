@@ -91,16 +91,24 @@ namespace System.Data.SqlTypes
 
 		#region Methods
 
-		[MonoTODO]
 		public int CompareTo (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SqlDateTime))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlDateTime"));
+			else if (value.IsNull)
+				return 1;
+			else
+				return value.CompareTo (value.Value);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlDateTime))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals (SqlDateTime x, SqlDateTime y)
@@ -147,12 +155,15 @@ namespace System.Data.SqlTypes
 
 		public SqlString ToSqlString ()
 		{
-			return new SqlString (value.ToString ());
+			return ((SqlString)this);
 		}
 
 		public override string ToString ()
 		{	
-			return value.ToString ();
+			if (this.IsNull)
+				return String.Empty;
+			else
+				return value.ToString ();
 		}
 	
 		[MonoTODO]	

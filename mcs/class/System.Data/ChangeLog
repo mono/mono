@@ -1,3 +1,22 @@
+2002-05-07  Tim Coleman <tim@timcoleman.com>
+	* INullable.cs:
+	* SqlBinary.cs:
+	* SqlBoolean.cs:
+	* SqlByte.cs:
+	* SqlCompareOptions.cs:
+	* SqlDateTime.cs:
+	* SqlDecimal.cs:
+	* SqlDouble.cs:
+	* SqlGuid.cs:
+	* SqlInt16.cs:
+	* SqlInt32.cs:
+	* SqlInt64.cs:
+	* SqlMoney.cs:
+	* SqlSingle.cs:
+	* SqlString.cs:
+		Implement CompareTo, Equals, and String conversions 
+		for many types
+
 2002-05-05  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Test/PostgresTest.cs: modified to run completely.  There

@@ -14,7 +14,8 @@ namespace System.Data.SqlTypes
 	public struct SqlGuid : INullable, IComparable
 	{
 		#region Fields
-		private Guid value;
+
+		Guid value;
 
 		public static readonly SqlGuid Null;
 
@@ -63,16 +64,24 @@ namespace System.Data.SqlTypes
 
 		#region Methods
 
-		[MonoTODO]
 		public int CompareTo (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SqlGuid))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlGuid"));
+			else if (value.IsNull)
+				return 1;
+			else
+				return value.CompareTo (value.Value);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlGuid))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals (SqlGuid x, SqlGuid y)
@@ -123,22 +132,22 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public SqlBinary ToSqlBinary ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlBinary)this);
 		}
 
-		[MonoTODO]
 		public SqlString ToSqlString ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlString)this);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			if (this.IsNull)
+				return String.Empty;
+			else
+				return value.ToString ();
 		}
 
 		public static SqlBoolean operator == (SqlGuid x, SqlGuid y)

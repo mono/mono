@@ -41,7 +41,7 @@ namespace System.Data.SqlTypes
 		public byte Value { 
 			get { 
 				if (this.IsNull) 
-					throw new SqlNullValueException ("The property contains Null.");
+					throw new SqlNullValueException ();
 				else 
 					return value; 
 			}
@@ -66,10 +66,16 @@ namespace System.Data.SqlTypes
 			return (x | y);
 		}
 
-		[MonoTODO]
 		public int CompareTo (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SqlByte))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlByte"));
+			else if (value.IsNull)
+				return 1;
+			else
+				return value.CompareTo (value.Value);
 		}
 
 		public static SqlByte Divide (SqlByte x, SqlByte y)
@@ -77,10 +83,12 @@ namespace System.Data.SqlTypes
 			return (x / y);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlByte))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals (SqlByte x, SqlByte y)
@@ -133,10 +141,9 @@ namespace System.Data.SqlTypes
 			return ~x;
 		}
 
-		[MonoTODO]
 		public static SqlByte Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SqlByte (s.ToByte ());
 		}
 
 		public static SqlByte Subtract (SqlByte x, SqlByte y)
@@ -184,16 +191,17 @@ namespace System.Data.SqlTypes
 			return ((SqlSingle)this);
 		}
 
-		[MonoTODO]
 		public SqlString ToSqlString ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlString)this);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			if (this.IsNull)
+				return String.Empty;
+			else
+				return value.ToString ();
 		}
 
 		public static SqlByte Xor (SqlByte x, SqlByte y)

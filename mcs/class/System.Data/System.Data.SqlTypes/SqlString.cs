@@ -145,7 +145,7 @@ namespace System.Data.SqlTypes
 		}
 
 		[MonoTODO]
-		public static CompareOptions CompareOptionsFromSqlCompareOptions ( SqlCompareOptions compareOptions) 
+		public static CompareOptions CompareOptionsFromSqlCompareOptions (SqlCompareOptions compareOptions) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -154,10 +154,16 @@ namespace System.Data.SqlTypes
 		// Comparison Methods
 		// **********************************
 
-		[MonoTODO]
 		public int CompareTo(object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SqlString))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlString"));
+			else if (value.IsNull)
+				return 1;
+			else
+				return value.CompareTo (value.Value);
 		}
 
 		public static SqlString Concat(SqlString x, SqlString y) 
@@ -165,10 +171,12 @@ namespace System.Data.SqlTypes
 			return (x + y);
 		}
 
-		[MonoTODO]
 		public override bool Equals(object value) 
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlGuid))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals(SqlString x, SqlString y) 
@@ -355,7 +363,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.ByteValue.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlByte x) 
@@ -363,7 +371,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlDateTime x) 
@@ -371,7 +379,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlDecimal x) 
@@ -379,7 +387,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlDouble x) 
@@ -387,7 +395,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlGuid x) 
@@ -395,7 +403,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlInt16 x) 
@@ -403,7 +411,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlInt32 x) 
@@ -411,7 +419,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlInt64 x) 
@@ -419,7 +427,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlMoney x) 
@@ -427,7 +435,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlSingle x) 
@@ -435,7 +443,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator string (SqlString x) 

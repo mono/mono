@@ -14,13 +14,11 @@ namespace System.Data.SqlTypes
 	public struct SqlDecimal : INullable, IComparable
 	{
 		#region Fields
+
 		private decimal value;
 
 		public static readonly byte MaxPrecision = 38; 
-
-		[MonoTODO]
-		public static readonly byte MaxScale;  // ????
-
+		public static readonly byte MaxScale = 28;
 		public static readonly SqlDecimal MaxValue = new SqlDecimal (79228162514264337593543950335.0);
 		public static readonly SqlDecimal MinValue = new SqlDecimal (-79228162514264337593543950335.0);
 		public static readonly SqlDecimal Null;
@@ -52,13 +50,13 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public SqlDecimal (byte bPrecision, byte bScale, bool fPositive, int[] bits)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public SqlDecimal (byte bPrecision, byte bScale, bool fPositive, int data1, int data2, int data3, int data4) 
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		#endregion
@@ -70,9 +68,13 @@ namespace System.Data.SqlTypes
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		public byte[] Data { 
-			get { throw new NotImplementedException (); }
+		public int[] Data { 
+			get { 
+				if (this.IsNull)
+					throw new SqlNullValueException ();
+				else
+					return Decimal.GetBits (value);
+			}
 		}
 
 		public bool IsNull { 
@@ -96,7 +98,7 @@ namespace System.Data.SqlTypes
 		public decimal Value { 
 			get { 
 				if (this.IsNull) 
-					throw new SqlNullValueException ("The property contains Null.");
+					throw new SqlNullValueException ();
 				else 
 					return value; 
 			}
@@ -129,10 +131,16 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		public int CompareTo (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SqlDecimal))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlDecimal"));
+			else if (value.IsNull)
+				return 1;
+			else
+				return value.CompareTo (value.Value);
 		}
 
 		[MonoTODO]
@@ -146,10 +154,12 @@ namespace System.Data.SqlTypes
 			return (x / y);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlDecimal))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals (SqlDecimal x, SqlDecimal y)
@@ -160,7 +170,7 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static SqlDecimal Floor (SqlDecimal n)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -273,16 +283,17 @@ namespace System.Data.SqlTypes
 			return ((SqlSingle)this);
 		}
 
-		[MonoTODO]
 		public SqlString ToSqlString ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlString)this);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			if (this.IsNull)
+				return String.Empty;
+			else
+				return value.ToString ();
 		}
 
 		[MonoTODO]

@@ -94,16 +94,24 @@ namespace System.Data.SqlTypes
 			return (x & y);
 		}
 
-		[MonoTODO]
 		public int CompareTo (object value) 
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SqlBoolean))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlBoolean"));
+			else if (value.IsNull)
+				return 1;
+			else
+				return value.CompareTo (value.ByteValue);
 		}
 
-		[MonoTODO]
 		public override bool Equals(object value) 
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlByte))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals(SqlBoolean x, SqlBoolean y) 

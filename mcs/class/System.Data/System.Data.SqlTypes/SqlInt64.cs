@@ -39,7 +39,6 @@ namespace System.Data.SqlTypes
 
 		#region Properties
 
-		[MonoTODO]
 		public bool IsNull { 
 			get { return (bool) (this == Null); }
 		}
@@ -47,7 +46,7 @@ namespace System.Data.SqlTypes
 		public long Value { 
 			get { 
 				if (this.IsNull) 
-					throw new SqlNullValueException ("The property contains Null.");
+					throw new SqlNullValueException ();
 				else 
 					return value; 
 			}
@@ -72,10 +71,16 @@ namespace System.Data.SqlTypes
 			return (x | y);
 		}
 
-		[MonoTODO]
 		public int CompareTo (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SqlInt64))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlInt64"));
+			else if (value.IsNull)
+				return 1;
+			else
+				return value.CompareTo (value.Value);
 		}
 
 		public static SqlInt64 Divide (SqlInt64 x, SqlInt64 y)
@@ -83,10 +88,12 @@ namespace System.Data.SqlTypes
 			return (x / y);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
-			throw new NotImplementedException ();
+			if (!(value is SqlInt64))
+				return false;
+			else
+				return (bool) (this == value);
 		}
 
 		public static SqlBoolean Equals (SqlInt64 x, SqlInt64 y)
@@ -191,16 +198,14 @@ namespace System.Data.SqlTypes
 			return ((SqlSingle)this);
 		}
 
-		[MonoTODO]
 		public SqlString ToSqlString ()
 		{
-			throw new NotImplementedException ();
+			return ((SqlString)this);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return value.ToString ();
 		}
 
 		public static SqlInt64 Xor (SqlInt64 x, SqlInt64 y)
