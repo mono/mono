@@ -236,8 +236,8 @@ namespace System.Data {
 
 			//When AddRange() occurs after BeginInit,
                         //it does not add any elements to the collection until EndInit is called.
-                        if (this.table.InitStatus == DataTable.initStatus.BeginInit){
-                                // Keep reference so that they can be added when EndInit() is called.
+			if (this.table.fInitInProgress) {
+				// Keep reference so that they can be added when EndInit() is called.
                                 _mostRecentConstraints = constraints;
                                 return;
                         }

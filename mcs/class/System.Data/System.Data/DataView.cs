@@ -397,6 +397,8 @@ namespace System.Data
 		[DataSysDescription ("Indicates the data returned by this DataView has somehow changed.")]
 		public event ListChangedEventHandler ListChanged;
 
+		[Browsable (false)]
+		[DataSysDescription ("DataViewIsOpenDescr")]
 		protected bool IsOpen {
 			[MonoTODO]
 			get {

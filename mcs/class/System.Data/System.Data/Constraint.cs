@@ -139,7 +139,7 @@ namespace System.Data {
 			}
 		}
 
-		protected internal void UpdateIndex (DataRow row)
+		internal void UpdateIndex (DataRow row)
 		{
 			if (row.RowState == DataRowState.Detached || row.RowState == DataRowState.Unchanged)
 				Index.Insert (new Node (row), DataRowVersion.Default);
@@ -165,7 +165,7 @@ namespace System.Data {
 			}
 		}
 
-		protected internal void RollbackIndex (DataRow row)
+		internal void RollbackIndex (DataRow row)
 		{
 			Node n = Index.Find(row, DataRowVersion.Default);
 			if ( n == null)

@@ -938,14 +938,6 @@ namespace System.Data {
 
 		#endregion // Public Events
 
-		#region Destructors
-
-		~DataSet ()
-		{
-		}
-
-		#endregion Destructors
-
 		#region IListSource methods
 		IList IListSource.GetList ()
 		{
@@ -1059,7 +1051,7 @@ namespace System.Data {
 		{
 		}
 
-		protected internal virtual void OnMergeFailed (MergeFailedEventArgs e)
+		internal virtual void OnMergeFailed (MergeFailedEventArgs e)
 		{
 			if (MergeFailed != null)
 				MergeFailed (this, e);

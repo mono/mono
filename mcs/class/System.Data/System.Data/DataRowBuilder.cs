@@ -44,7 +44,7 @@ namespace System.Data
 
 		#region Properties
 
-		protected internal DataTable Table {
+		internal DataTable Table {
 			get { return table; }
 		}
 

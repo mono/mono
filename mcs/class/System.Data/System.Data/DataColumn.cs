@@ -601,13 +601,24 @@ namespace System.Data {
 			unique = true;
 		}
 
-
 		[MonoTODO]
 		internal void AssertCanAddToCollection()
 		{
 			//Check if Default Value is set and AutoInc is set
 		}
-		
+
+		[MonoTODO]
+		protected internal void CheckNotAllowNull ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected void CheckUnique ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		protected internal virtual void 
 		OnPropertyChanging (PropertyChangedEventArgs pcevent) {

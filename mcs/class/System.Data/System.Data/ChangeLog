@@ -1,3 +1,18 @@
+2004-06-04  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Constraint.cs: marked methods internal to fix public API
+	* ConstraintCollection.cs: to fix public API, use 
+	DataTable.fInitInProgress to check whether initialization 
+	of DataTable is in progress
+	* DataColumn.cs: added stubs for missing methods
+	* DataRowBuilder.cs: marked Table property internal to
+	fix public API
+	* DataSet.cs: removed extra empty destructor, marked 
+	OnMergeFailed internal to fix public API
+	* DataTable.cs: use fInitInProgress field to hold init
+	status, to match MS.NET
+	* DataView.cs: added missing attributes on IsOpen
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : Use NameTable.Get() before calling LookupNamespace()
