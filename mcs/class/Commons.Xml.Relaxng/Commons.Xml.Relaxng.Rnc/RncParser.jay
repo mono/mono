@@ -1,0 +1,1178 @@
+%{
+//
+// RELAX NG Compact Syntax parser
+//
+// Author:
+//	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//
+// (C)2003 Atsushi Enomoto
+// (C)2004 Novell Inc.
+//
+
+using System;
+using System.Collections;
+using System.Collections.Specialized;
+using System.IO;
+using System.Xml;
+using Commons.Xml.Relaxng;
+
+namespace Commons.Xml.Relaxng.Rnc
+{
+
+	public class RncParser
+	{
+		XmlNamespaceManager nsmgr;
+		XmlNamespaceManager dtnsmgr;
+		string defaultNamespace;
+
+		RncTokenizer tokenizer;
+
+		public RncParser (XmlNameTable nameTable)
+		{
+			nsmgr = new XmlNamespaceManager (nameTable);
+			dtnsmgr = new XmlNamespaceManager (nameTable);
+		}
+
+		public int Line {
+			get { return tokenizer.Line; }
+		}
+
+		public int Column {
+			get { return tokenizer.Column; }
+		}
+
+		// note that this is different notion than that of xmlns.
+		public string DefaultNamespace {
+			get { return defaultNamespace; }
+		}
+
+		public RelaxngGrammar Parse (TextReader source)
+		{
+//			debug = new yydebug.yyDebugSimple ();
+			tokenizer = new RncTokenizer (source);
+			return (RelaxngGrammar) yyparse (tokenizer);
+		}
+
+
+		private void FillGrammarContent (IList source, IList starts, IList defines, IList divs, IList includes)
+		{
+			foreach (RelaxngElementBase elem in source) {
+				if (elem is RelaxngStart)
+					starts.Add (elem);
+				else if (elem is RelaxngDefine)
+					defines.Add (elem);
+				else if (elem is RelaxngDiv)
+					divs.Add (elem);
+				else if (elem is RelaxngInclude)
+					includes.Add (elem);
+				else
+					throw new InvalidOperationException ();
+			}
+		}
+
+		private RelaxngElementBase ApplyAnnotations (string annotation, RelaxngElementBase element)
+		{
+			// Do nothing as yet for annotation.
+			return element;
+		}
+
+		private IList ApplyAnnotationsGroup (string annotation, IList elements)
+		{
+			// Do nothing as yet for annotation.
+			return elements;
+		}
+
+		private IList ApplyAnnotationsChoice (string annotation, IList elements)
+		{
+			// Do nothing as yet for annotation.
+			return elements;
+		}
+
+		private XmlQualifiedName SplitQName (XmlNamespaceManager nsmgr, string name)
+		{
+			int colon = name.IndexOf (':');
+			if (colon < 0)
+				return new XmlQualifiedName (name, String.Empty);
+			string local = name.Substring (colon + 1);
+			string prefix = name.Substring (0, colon);
+			return new XmlQualifiedName (local, nsmgr.LookupNamespace (prefix));
+		}
+		
+		private RelaxngPatternList ConcatList (IList listL, IList listR)
+		{
+			RelaxngPatternList ret = listL as RelaxngPatternList;
+			if (ret != null) {
+				foreach (RelaxngPattern p in listR)
+					ret.Add (p);
+			} else {
+				ret = new RelaxngPatternList ();
+				foreach (RelaxngPattern p in listL)
+					ret.Add (p);
+				foreach (RelaxngPattern p in listR)
+					ret.Add (p);
+			}
+			return ret;
+		}
+
+		private void FillElementDefaultNS (RelaxngNameClass nc)
+		{
+			RelaxngName name = nc as RelaxngName;
+			if (name != null) {
+				if (name.Namespace == null)
+					name.Namespace = this.DefaultNamespace;
+				return;
+			}
+			RelaxngNameChoice choice = nc as RelaxngNameChoice;
+			if (choice != null) {
+				foreach (RelaxngNameClass c in choice.Children)
+					FillElementDefaultNS (c);
+			}
+		}
+
+		private void FillAttributeDefaultNS (RelaxngNameClass nc)
+		{
+			RelaxngName name = nc as RelaxngName;
+			if (name != null) {
+				if (name.Namespace == null)
+					name.Namespace = String.Empty;
+				return;
+			}
+			RelaxngNameChoice choice = nc as RelaxngNameChoice;
+			if (choice != null) {
+				foreach (RelaxngNameClass c in choice.Children)
+					FillAttributeDefaultNS (c);
+			}
+		}
+
+%}
+
+%token ERROR
+%token EOF
+
+%token KeywordAttribute "attribute"
+%token KeywordDefault //"default"
+%token KeywordDatatypes "datatypes"
+%token KeywordDiv "div"
+%token KeywordElement "element"
+%token KeywordEmpty "empty"
+%token KeywordExternal "external"
+%token KeywordGrammar "grammar"
+%token KeywordInclude "include"
+%token KeywordInherit "inherit"
+%token KeywordList "list"
+%token KeywordMixed "mixed"
+%token KeywordNamespace //"namespace"
+%token KeywordNotAllowed "notAllowed"
+%token KeywordParent "parent"
+%token KeywordStart "start"
+%token KeywordString //"string"
+%token KeywordText "text"
+%token KeywordToken "left"
+
+%token Equal "="
+%token Comma ","
+%token Tilde "~"
+%token OpenCurly "{"
+%token CloseCurly "}"
+%token OpenParen "("
+%token CloseParen ")"
+%token OpenBracket "["
+%token CloseBracket "]"
+%token Amp "&"
+%token Bar "|"
+%token Question "?"
+%token Asterisk "*"
+%token BackSlash "\\"
+%token Plus "+"
+%token Minus "-"
+%token OrEquals "|="
+%token AndEquals "&="
+%token TwoGreaters ">>"
+
+%token LiteralSegment
+%token NCNameButKeyword
+
+%token Documentation
+
+/* These tokens are parsed by RncTokenizer, since whitespaces between 
+   the particles are not allowed. */
+%token NCName
+%token CName
+%token NsName
+
+%start TopLevel
+
+%%
+
+
+	/* here Annotations is not specified in the spec!! */
+TopLevel
+	: Annotations TopLevelAfterAnnotations 
+	{
+		$$ = (RelaxngPattern) $2;
+	}
+	;
+
+	/* here Annotations is not specified in the spec!! */
+TopLevelAfterAnnotations
+	: Preamble TopLevelBody
+	{
+		$$ = (RelaxngPattern) $2;
+	}
+	;
+
+Preamble
+	: /* empty */
+	| Decl Preamble
+	;
+
+Decl
+	: KeywordNamespace NamespacePrefix Equal NamespaceURILiteral
+	{
+		// TODO: constraints
+		string prefix = (string) $2;
+		string ns = (string) $4;
+		if (prefix == "local")
+			nsmgr.AddNamespace (String.Empty, ns);
+		else
+			nsmgr.AddNamespace (prefix, ns);
+	}
+	| KeywordDefault KeywordNamespace Equal NamespaceURILiteral
+	{
+		// TODO: constraints
+		string ns = (string) $4;
+		defaultNamespace = ns;
+	}
+	| KeywordDefault KeywordNamespace NamespacePrefix Equal NamespaceURILiteral
+	{
+		// TODO: constraints
+		string prefix = (string) $3;
+		string ns = (string) $5;
+		defaultNamespace = ns;
+		nsmgr.AddNamespace (prefix, ns);
+	}
+	| KeywordDatatypes DatatypePrefix Equal Literal
+	{
+		// TODO: constraints
+		string prefix = (string) $2;
+		string ns = (string) $4;
+		dtnsmgr.AddNamespace (prefix, ns);
+	}
+	;
+
+NamespacePrefix
+	: IdentifierOrKeyword
+	;
+
+DatatypePrefix
+	: IdentifierOrKeyword
+	;
+
+NamespaceURILiteral
+	: Literal
+	| KeywordInherit
+	;
+
+TopLevelBody
+	: Pattern
+	{
+		// TODO: Constraint: single element
+		$$ = (RelaxngPattern) $1;
+	}
+	| Grammar
+	{
+		RelaxngGrammar g = new RelaxngGrammar ();
+		IList list = (IList) $1;
+		FillGrammarContent (list, g.Starts, g.Defines, g.Divs, g.Includes);
+		$$ = g;
+	}
+
+Grammar
+	: /* empty */
+	{
+		$$ = new ArrayList ();
+	}
+	| Member Grammar
+	{
+		ArrayList al = (ArrayList) $2;
+		al.Insert (0, $1);
+		$$ = al;
+	}
+	;
+
+Member
+	: AnnotatedComponent
+	| AnnotationElementNotKeyword
+	;
+
+AnnotatedComponent
+	: Annotations Component
+	{
+		$$ = ApplyAnnotations ((string) $1, (RelaxngElementBase) $2);
+	}
+	;
+
+Component
+	: Start
+	| Define
+	| Include
+	| Div
+	;
+
+Start
+	: KeywordStart AssignOp Pattern
+	{
+		RelaxngStart start = new RelaxngStart ();
+		start.Combine = (string) $2;
+		RelaxngPatternList list = (RelaxngPatternList) $3;
+		if (list.Count != 1)
+			throw new RelaxngException ("Start component must contain exact one pattern.");
+		start.Pattern = (RelaxngPattern) list [0];
+		$$ = start;
+	}
+
+Define
+	: Identifier AssignOp Pattern
+	{
+		RelaxngDefine def = new RelaxngDefine ();
+		def.Name = (string) $1;
+		def.Combine = (string) $2;
+		RelaxngPatternList list = (RelaxngPatternList) $3;
+		for (int i = 0; i < list.Count; i++)
+			def.Patterns.Add ((RelaxngPattern) list [i]);
+		$$ = def;
+	}
+	;
+
+AssignOp
+	: Equal
+	{
+		$$ = null;
+	}
+	| OrEquals
+	{
+		$$ = "choice";
+	}
+	| AndEquals
+	{
+		$$ = "interleave";
+	}
+	;
+
+Include
+	: KeywordInclude AnyURILiteral OptInherit OptIncludeBody
+	{
+		// FIXME: OptInherit is not handled properly.
+		RelaxngInclude include = new RelaxngInclude ();
+		include.Href = (string) $2;
+		include.NSContext = (string) $3;
+		FillGrammarContent ((IList) $4, include.Starts, include.Defines, include.Divs, null);
+		$$ = include;
+	}
+	;
+
+AnyURILiteral
+	: Literal
+	{
+		// Constraints: any URI
+		$$ = (string) $1;
+	}
+	;
+
+OptInherit /* FIXME: It is not handled properly. */
+	: /* empty */
+	{
+		// MakeNsAttribute (LookupDefault (environment));
+		$$ = nsmgr.DefaultNamespace;
+	}
+	| KeywordInherit Equal IdentifierOrKeyword
+	{
+		// MakeNsAttribute (LookupPrefix (environment, $3));
+		$$ = nsmgr.LookupPrefix ((string) $3);
+	}
+	;
+
+OptIncludeBody
+	: /* empty */
+	{
+		$$ = new ArrayList ();
+	}
+	| OpenCurly IncludeBody CloseCurly
+	{
+		$$ = $2;
+	}
+	;
+
+IncludeBody
+	: /* empty */
+	{
+		$$ = new ArrayList ();
+	}
+	| IncludeMember IncludeBody
+	{
+		ArrayList al = (ArrayList) $2;
+		al.Insert (0, $1);
+		$$ = al;
+	}
+	;
+
+IncludeMember
+	: AnnotatedIncludeComponent
+	| AnnotationElementNotKeyword
+	;
+
+AnnotatedIncludeComponent
+	: Annotations IncludeComponent
+	{
+		ApplyAnnotations ((string) $1, (RelaxngElementBase) $2);
+	}
+	;
+
+IncludeComponent
+	: Start
+	| Define
+	| IncludeDiv
+	;
+
+Div
+	: KeywordDiv OpenCurly Grammar CloseCurly
+	{
+		RelaxngDiv div = new RelaxngDiv ();
+		FillGrammarContent ((IList) $3, div.Starts, div.Defines, div.Divs, div.Includes);
+		$$ = div;
+	}
+	;
+
+IncludeDiv
+	: KeywordDiv OpenCurly IncludeBody CloseCurly
+	{
+		RelaxngDiv div = new RelaxngDiv ();
+		FillGrammarContent ((IList) $3, div.Starts, div.Defines, div.Divs, div.Includes);
+		$$ = div;
+	}
+	;
+
+Pattern
+	: InnerPattern
+	;
+
+InnerPattern
+	/* TODO: applyAnnotations() are omitted */
+	: InnerParticle
+	| ParticleChoice
+	{
+		RelaxngPatternList list = (RelaxngPatternList) $1;
+		RelaxngChoice choice = new RelaxngChoice ();
+		for (int i = 0; i < list.Count; i++)
+			choice.Patterns.Add (list [i]);
+		// This is said as to return Elements, while ApplyAnnotations() is said to return Element
+		RelaxngPatternList pl = new RelaxngPatternList ();
+		pl.Add (choice);
+		$$ = pl;
+	}
+	| ParticleGroup
+	{
+		RelaxngPatternList list = (RelaxngPatternList) $1;
+		RelaxngGroup group = new RelaxngGroup ();
+		for (int i = 0; i < list.Count; i++)
+			group.Patterns.Add (list [i]);
+		// This is said as to return Elements, while ApplyAnnotations() is said to return Element
+		RelaxngPatternList pl = new RelaxngPatternList ();
+		pl.Add (group);
+		$$ = pl;
+	}
+	| ParticleInterleave
+	{
+		RelaxngPatternList list = (RelaxngPatternList) $1;
+		RelaxngInterleave interleave = new RelaxngInterleave ();
+		for (int i = 0; i < list.Count; i++)
+			interleave.Patterns.Add (list [i]);
+		// This is said as to return Elements, while ApplyAnnotations() is said to return Element
+		RelaxngPatternList pl = new RelaxngPatternList ();
+		pl.Add (interleave);
+		$$ = pl;
+	}
+	| AnnotatedDataExcept
+	{
+		$$ = ApplyAnnotationsGroup (null, (RelaxngPatternList) $1);
+	}
+	;
+
+ParticleChoice
+	: Particle Bar Particle
+	{
+		$$ = ConcatList ((RelaxngPatternList) $1, (RelaxngPatternList) $3);
+	}
+	| Particle Bar ParticleChoice
+	{
+		$$ = ConcatList ((RelaxngPatternList) $1, (RelaxngPatternList) $3);
+	}
+	;
+
+ParticleGroup
+	: Particle Comma Particle
+	{
+		$$ = ConcatList ((RelaxngPatternList) $1, (RelaxngPatternList) $3);
+	}
+	| Particle Comma ParticleGroup
+	{
+		$$ = ConcatList ((RelaxngPatternList) $1, (RelaxngPatternList) $3);
+	}
+	;
+
+ParticleInterleave
+	: Particle Amp Particle
+	{
+		$$ = ConcatList ((RelaxngPatternList) $1, (RelaxngPatternList) $3);
+	}
+	| Particle Amp ParticleInterleave
+	{
+		$$ = ConcatList ((RelaxngPatternList) $1, (RelaxngPatternList) $3);
+	}
+	;
+
+Particle
+	: InnerParticle
+	;
+
+InnerParticle
+	: AnnotatedPrimary
+	{
+		$$ = ApplyAnnotationsGroup (null, (RelaxngPatternList) $1);
+	}
+	| RepeatedPrimary FollowAnnotations
+	{
+		// FIXME: annotations are not handled
+		RelaxngPattern p = (RelaxngPattern) $1;
+		RelaxngPatternList l = new RelaxngPatternList ();
+		l.Add (p);
+		$$ = l;
+	}
+	;
+
+RepeatedPrimary
+	: AnnotatedPrimary Asterisk
+	{
+		RelaxngZeroOrMore zom = new RelaxngZeroOrMore ();
+		foreach (RelaxngPattern p in (ICollection) $1)
+			zom.Patterns.Add (p);
+		$$ = zom;
+	}
+	| AnnotatedPrimary Plus
+	{
+		RelaxngOneOrMore oom = new RelaxngOneOrMore ();
+		foreach (RelaxngPattern p in (ICollection) $1)
+			oom.Patterns.Add (p);
+		$$ = oom;
+	}
+	| AnnotatedPrimary Question
+	{
+		RelaxngOptional opt = new RelaxngOptional ();
+		foreach (RelaxngPattern p in (ICollection) $1)
+			opt.Patterns.Add (p);
+		$$ = opt;
+	}
+	;
+
+AnnotatedPrimary
+	: LeadAnnotatedPrimary FollowAnnotations
+	{
+		// FIXME: handle followAnnotations
+		$$ = $1;
+	}
+	;
+
+AnnotatedDataExcept
+	: LeadAnnotatedDataExcept FollowAnnotations
+	{
+		// FIXME: handle followAnnotations
+		RelaxngPattern p = (RelaxngPattern) $1;
+		RelaxngPatternList l = new RelaxngPatternList ();
+		l.Add (p);
+		$$ = l;
+	}
+	;
+
+LeadAnnotatedDataExcept
+	: Annotations DataExcept
+	{
+		$$ = ApplyAnnotations ((string) $1, (RelaxngElementBase) $2);
+	}
+	;
+
+LeadAnnotatedPrimary
+	: Annotations Primary
+	{
+		// LAMESPEC: This should return Elements, while ApplyAnnotations() returns Element
+		RelaxngPatternList list = new RelaxngPatternList ();
+		list.Add ((RelaxngPattern) ApplyAnnotations ((string) $1, (RelaxngElementBase) $2));
+		$$ = list;
+	}
+	| Annotations OpenParen InnerPattern CloseParen
+	{
+		$$ = (RelaxngPatternList) $3;
+	}
+	;
+
+Primary
+	: KeywordElement NameClass OpenCurly Pattern CloseCurly
+	{
+		RelaxngNameClassList ncl = (RelaxngNameClassList) $2;
+		if (ncl == null || ncl.Count != 1)
+			throw new RelaxngException ("Incorrect name class specification.");
+
+		RelaxngElement el = new RelaxngElement ();
+		el.NameClass = ncl [0];
+		FillElementDefaultNS (el.NameClass);
+
+		foreach (RelaxngPattern p in (RelaxngPatternList) $4)
+			el.Patterns.Add (p);
+		$$ = el;
+	}
+	| KeywordAttribute NameClass OpenCurly Pattern CloseCurly
+	{
+		RelaxngNameClassList ncl = (RelaxngNameClassList) $2;
+		if (ncl == null || ncl.Count != 1)
+			throw new RelaxngException ("Incorrect name class specification.");
+
+		RelaxngAttribute attr = new RelaxngAttribute ();
+		attr.NameClass = ncl [0];
+		FillAttributeDefaultNS (attr.NameClass);
+		RelaxngPatternList list = (RelaxngPatternList) $4;
+		if (list.Count != 1)
+			throw new RelaxngException ("Attribute must contain exact one pattern.");
+		attr.Pattern = list [0];
+		$$ = attr;
+	}
+	| KeywordMixed OpenCurly Pattern CloseCurly
+	{
+		RelaxngMixed mixed = new RelaxngMixed ();
+		foreach (RelaxngPattern p in (RelaxngPatternList) $3)
+			mixed.Patterns.Add (p);
+		$$ = mixed;
+	}
+	| KeywordList OpenCurly Pattern CloseCurly
+	{
+		RelaxngList list = new RelaxngList ();
+		foreach (RelaxngPattern p in (RelaxngPatternList) $3)
+			list.Patterns.Add (p);
+		$$ = list;
+	}
+	| DatatypeName OptParams
+	{
+		RelaxngData data = new RelaxngData ();
+		XmlQualifiedName dtName = (XmlQualifiedName) $1;
+		data.DatatypeLibrary = dtName.Namespace;
+		data.Type = dtName.Name;
+		foreach (RelaxngParam p in (ICollection) $2)
+			data.ParamList.Add (p);
+
+		$$ = data;
+	}
+	| DatatypeName DatatypeValue
+	{
+		RelaxngValue value = new RelaxngValue ();
+		XmlQualifiedName dtName = (XmlQualifiedName) $1;
+		if (dtName.Namespace != RelaxngGrammar.NamespaceURI)
+			value.DatatypeLibrary = dtName.Namespace;
+		value.Type = dtName.Name;
+		value.Value = (string) $2;
+
+		$$ = value;
+	}
+	| DatatypeValue
+	{
+		RelaxngValue value = new RelaxngValue ();
+		value.Value = (string) $1;
+
+		// RELAX NG default type
+		value.Type = "string";
+		value.DatatypeLibrary = String.Empty;
+
+		$$ = value;
+	}
+	| KeywordEmpty
+	{
+		$$ = new RelaxngEmpty ();
+	}
+	| KeywordNotAllowed
+	{
+		$$ = new RelaxngNotAllowed ();
+	}
+	| KeywordText
+	{
+		$$ = new RelaxngText ();
+	}
+	| Ref
+	{
+		RelaxngRef r = new RelaxngRef ();
+		r.Name = (string) $1;
+		$$ = r;
+	}
+	| KeywordParent Ref
+	{
+		RelaxngParentRef pref = new RelaxngParentRef ();
+		pref.Name = (string) $2;
+		$$ = pref;
+	}
+	| KeywordGrammar OpenCurly Grammar CloseCurly
+	{
+		RelaxngGrammar g = new RelaxngGrammar ();
+		FillGrammarContent ((IList) $3, g.Starts, g.Defines, g.Divs, g.Includes);
+		$$ = g;
+	}
+	| KeywordExternal AnyURILiteral OptInherit
+	{
+		RelaxngExternalRef extref = new RelaxngExternalRef ();
+		extref.Href = (string) $2;
+		extref.NSContext = (string) $3;
+		$$ = extref;
+	}
+	;
+
+DataExcept
+	: DatatypeName OptParams Minus LeadAnnotatedPrimary
+	{
+		RelaxngData data = new RelaxngData ();
+		foreach (RelaxngParam p in (IList) $2)
+			data.ParamList.Add (p);
+		data.Except = new RelaxngExcept ();
+		foreach (RelaxngPattern p in (RelaxngPatternList) $4)
+			data.Except.Patterns.Add (p);
+		$$ = data;
+	}
+	;
+
+Ref
+	: Identifier
+	;
+
+DatatypeName
+	: CName
+	{
+		string cname = (string) $1;
+	/*
+		int colonAt = cname.IndexOf (':');
+		string local = cname.Substring (colonAt + 1);
+		string prefix = cname.Substring (0, colonAt);
+		string ns = dtnsmgr.LookupNamespace (prefix);
+		$$ = new XmlQualifiedName (local, ns);
+	*/
+		$$ = SplitQName (dtnsmgr, cname);
+	}
+	| KeywordString
+	{
+		$$ = new XmlQualifiedName ("string", String.Empty);
+	}
+	| KeywordToken
+	{
+		$$ = new XmlQualifiedName ("token", String.Empty);
+	}
+	;
+
+DatatypeValue
+	: Literal
+	;
+
+OptParams
+	: /* empty */
+	{
+		$$ = new RelaxngParamList ();
+	}
+	| OpenCurly Params CloseCurly
+	{
+		$$ = $2;
+	}
+	;
+
+Params
+	: /* empty */
+	{
+		$$ = new RelaxngParamList ();
+	}
+	| Param Params
+	{
+		RelaxngParamList al = (RelaxngParamList) $2;
+		al.Insert (0, (RelaxngParam) $1);
+		$$ = al;
+	}
+	;
+
+Param
+	: Annotations IdentifierOrKeyword Equal Literal
+	{
+		RelaxngParam prm = new RelaxngParam ();
+		prm.Name = (string) $2;
+		prm.Value = (string) $4;
+
+		$$ = ApplyAnnotations ((string) $1, prm);
+	}
+	;
+
+NameClass /* returns RelaxngNameClassList (of RelaxngNameClass) */
+	: InnerNameClass
+	{
+		$$ = $1;
+	}
+	;
+
+InnerNameClass /* returns RelaxngNameClassList */
+	: AnnotatedSimpleNameClass
+	{
+		$$ = ApplyAnnotationsChoice (null, (IList) $1);
+	}
+	| NameClassChoice
+	{
+		RelaxngNameChoice cho = new RelaxngNameChoice ();
+		IList list = (IList) $1;
+		for (int i = 0; i < list.Count; i++)
+			cho.Children.Add ((RelaxngNameClass) list [i]);
+		RelaxngNameClassList innerNameClasses = new RelaxngNameClassList ();
+		innerNameClasses.Add ((RelaxngNameClass) ApplyAnnotations (null, cho));
+		$$ = innerNameClasses;
+	}
+	| AnnotatedExceptNameClass
+	{
+		$$ = ApplyAnnotationsChoice (null, (IList) $1);
+	}
+	;
+
+NameClassChoice /* returns RelaxngNameClassList */
+	: AnnotatedSimpleNameClass Bar AnnotatedSimpleNameClass
+	{
+		// FIXME: handle isElem
+		IList l = (IList) $1;
+		IList r = (IList) $3;
+		for (int i = 0; i < r.Count; i++)
+			l.Add (r [i]);
+		$$ = l;
+	}
+	| AnnotatedSimpleNameClass Bar NameClassChoice
+	{
+		// FIXME: handle isElem
+		IList l = (IList) $1;
+		IList r = (IList) $3;
+		for (int i = 0; i < r.Count; i++)
+			l.Add (r [i]);
+		$$ = l;
+	}
+	;
+
+AnnotatedExceptNameClass /* returns RelaxngNameClassList */
+	: LeadAnnotatedExceptNameClass FollowAnnotations
+	{
+		RelaxngNameClass nc = (RelaxngNameClass) $1;
+		IList r = (IList) $2;
+		if (! (r is RelaxngNameClassList)) {
+			IList tmp = r;
+			r = new RelaxngNameClassList ();
+			if (tmp != null)
+				foreach (object o in tmp)
+					r.Add (o);
+		}
+		r.Insert (0, nc);
+		$$ = r;
+	}
+	;
+
+LeadAnnotatedExceptNameClass /* returns RelaxngNameClass */
+	: Annotations ExceptNameClass
+	{
+		$$ = ApplyAnnotations ((string) $1, (RelaxngElementBase) $2);
+	}
+	;
+
+AnnotatedSimpleNameClass /* returns RelaxngNameClassList */
+	: LeadAnnotatedSimpleNameClass FollowAnnotations
+	{
+		// FIXME: annotations
+		$$ = $1;
+	}
+	;
+
+LeadAnnotatedSimpleNameClass /* returns RelaxngNameClassList */
+	: Annotations SimpleNameClass
+	{
+		// FIXME: applyAnnotations
+		string anno = (string) $1;
+		RelaxngNameClass el = (RelaxngNameClass) $2;
+		RelaxngNameClassList ncl = new RelaxngNameClassList ();
+		ncl.Add (el);
+		$$ = ncl;
+	}
+	| Annotations OpenParen InnerNameClass CloseParen
+	{
+		$$ = $3;
+	}
+	;
+
+ExceptNameClass
+	: NsName Minus LeadAnnotatedSimpleNameClass
+	{
+		RelaxngNsName nsName = new RelaxngNsName ();
+		nsName.Namespace = nsmgr.LookupNamespace ((string) $1);
+		nsName.Except = new RelaxngExceptNameClass ();
+		foreach (RelaxngNameClass nc in (ICollection) $3)
+			nsName.Except.Names.Add (nc);
+		$$ = nsName;
+	}
+	| Asterisk Minus LeadAnnotatedSimpleNameClass
+	{
+		RelaxngAnyName anyName = new RelaxngAnyName ();
+		anyName.Except = new RelaxngExceptNameClass ();
+		foreach (RelaxngNameClass nc in (ICollection) $3)
+			anyName.Except.Names.Add (nc);
+		$$ = anyName;
+	}
+	;
+
+SimpleNameClass
+	: IdentifierOrKeyword
+	{
+		RelaxngName name = new RelaxngName ();
+		name.LocalName = (string) $1;
+		name.Namespace = null;
+		$$ = name;
+	}
+	| CName
+	{
+		string cname = (string) $1;
+//		int colonAt = cname.IndexOf (':');
+//		XmlQualifiedName qname = new XmlQualifiedName (cname.Substring (colonAt + 1), nsmgr.LookupNamespace (cname.Substring (0, colonAt - 1)));
+		XmlQualifiedName qname = SplitQName (nsmgr, cname);
+		RelaxngName name = new RelaxngName ();
+		name.LocalName = qname.Name;
+		name.Namespace = qname.Namespace;
+		$$ = name;
+	}
+	| NsName
+	{
+		RelaxngNsName nsName = new RelaxngNsName ();
+		nsName.Namespace = nsmgr.LookupNamespace ((string) $1);
+		$$ = nsName;
+	}
+	| Asterisk
+	{
+		$$ = new RelaxngAnyName ();
+	}
+	;
+
+FollowAnnotations
+	: /* empty */
+	{
+		$$ = null;
+	}
+	| TwoGreaters AnnotationElement FollowAnnotations
+	{
+		// FIXME: handle them
+		$$ = null;
+	}
+	;
+
+Annotations
+	: Documentations
+	{
+		$$ = $1;
+	}
+	| Documentations OpenCurly AnnotationAttributes AnnotationElements CloseCurly
+		// FIXME: needed to handle them?
+	{
+		$$ = ConcatList ((IList) $1, (IList) $4);
+	}
+	;
+
+AnnotationAttributes
+	: /* empty */
+	{
+		$$ = null;
+	}
+	| ForeignAttributeName Equal Literal AnnotationAttributes
+	{
+		// Constraint: duplicate attributes
+
+		// FIXME: do something
+		$$ = null;
+	}
+	;
+
+ForeignAttributeName
+	: PrefixedName
+	{
+		// Constraint: xmlns namespace URI
+		// Constraint: unqualified name
+		// Constraint: RELAX NG namespace URI
+
+		// do nothing
+//		$$ = $1;
+	}
+	;
+
+AnnotationElements
+	: /* empty */
+	| AnnotationElement AnnotationElements
+	;
+
+AnnotationElement
+	: ForeignElementName AnnotationAttributesContent
+	{
+		// do nothing
+//		$$ = Element ($1, $2);
+	}
+	;
+
+ForeignElementName
+	: /*IdentifierOrKeyword
+	{
+		$$ = new XmlQualifiedName ((string) $1, String.Empty);
+	}
+	|*/ PrefixedName
+	{
+		// Constraint: RELAX NG namespace URI
+		$$ = $1;
+	}
+	;
+
+AnnotationElementNotKeyword
+	: ForeignElementNameNotKeyword AnnotationAttributesContent
+	{
+		// do nothing
+//		$$ = Element ($1, $2);
+	}
+	;
+
+ForeignElementNameNotKeyword  /* LAMESPEC: unprefixed Identifier causes conflict */
+	: /*Identifier
+	{
+		$$ = new XmlQualifiedName ((string) $1, String.Empty);
+	}
+	|*/ PrefixedName
+	{
+		// Constraint: RELAX NG namespace URI
+		$$ = $1;
+	}
+	;
+
+AnnotationAttributesContent
+	: OpenBracket NestedAnnotationAttributes AnnotationContent CloseBracket
+	;
+
+NestedAnnotationAttributes
+	: /* empty */
+	| AnyAttributeName Equal Literal NestedAnnotationAttributes
+	{
+		// Constraint: duplicate attributes
+
+		// do nothing
+//		$$ = Attribute ($1, $2);
+	}
+
+AnyAttributeName
+	: IdentifierOrKeyword
+	| PrefixedName
+	{
+		// Constraint: xmlns namespace URI
+		$$ = $1;
+	}
+	;
+
+AnnotationContent
+	: /* empty */
+	| NestedAnnotationElement AnnotationContent
+	| Literal AnnotationContent
+	;
+
+NestedAnnotationElement
+	: AnyElementName AnnotationAttributesContent
+	{
+		// do nothing
+//		$$ = Element ($1, $2);
+	}
+	;
+
+AnyElementName
+	: IdentifierOrKeyword
+	{
+		$$ = new XmlQualifiedName ((string) $1, String.Empty);
+	}
+	| PrefixedName
+	;
+
+PrefixedName
+	: CName
+	{
+		// Constraint: annotation inherit
+		return SplitQName (nsmgr, (string) $1);
+	}
+	;
+
+Documentations
+	: /* empty */
+	| Documentation Documentations
+	{
+		// do nothing
+//		$$ = Element (DocumentationElementName (), Text ((string) $1), $2);
+	}
+	;
+
+IdentifierOrKeyword
+	: Identifier
+	{
+		$$ = $1;
+	}
+	| Keyword
+	{
+		$$ = $1;
+	}
+	;
+
+Keyword
+	: KeywordAttribute
+	| KeywordDefault
+	| KeywordDatatypes
+	| KeywordDiv
+	| KeywordElement
+	| KeywordEmpty
+	| KeywordExternal
+	| KeywordGrammar
+	| KeywordInclude
+	| KeywordInherit
+	| KeywordList
+	| KeywordMixed
+	| KeywordNamespace
+	| KeywordNotAllowed
+	| KeywordParent
+	| KeywordStart
+	| KeywordString
+	| KeywordText
+	| KeywordToken
+	;
+
+Literal
+	: LiteralSegment
+	{
+		$$ = $1;
+	}
+	| LiteralSegment Tilde Literal
+	{
+		$$ = (string) $1 + (string) $3;
+	}
+	;
+
+Identifier
+	: NCNameButKeyword
+	{
+		$$ = $1;
+	}
+	| BackSlash NCNameButKeyword
+	{
+		$$ = $2;
+	}
+	/* extended */
+	| BackSlash Keyword
+	{
+		$$ = $2;
+	}
+	;
+
+%%
+}
