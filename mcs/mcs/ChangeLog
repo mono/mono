@@ -1,3 +1,7 @@
+2002-02-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Be conservative on our command line handling.
+
 2002-02-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Fixed): Implement the last case of the Fixed

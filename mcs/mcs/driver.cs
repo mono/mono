@@ -535,10 +535,6 @@ namespace Mono.CSharp
 						timestamps = true;
 						last_time = DateTime.Now;
 						continue;
-						
-					default:
-						Usage (true);
-						return;
 					}
 				}
 

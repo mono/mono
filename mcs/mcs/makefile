@@ -50,6 +50,9 @@ mcs2.exe: mcs.exe
 mcs3.exe: mcs2.exe
 	./mcs2 --target exe --unsafe -o mcs3.exe $(COMPILER_SOURCES)
 
+mm:
+	mint ./mcs.exe --target exe -o mcs4.exe $(COMPILER_SOURCES)
+
 test: mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
