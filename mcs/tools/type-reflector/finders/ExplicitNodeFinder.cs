@@ -83,7 +83,7 @@ namespace Mono.TypeReflector
 			return count;
 		}
 
-		protected override void GetTypeChildren (NodeInfoCollection c, NodeInfo parent, Type type)
+		protected override void AddTypeChildren (NodeInfoCollection c, NodeInfo parent, Type type)
 		{
 			object instance = parent.ReflectionInstance;
 
@@ -230,7 +230,7 @@ namespace Mono.TypeReflector
 			}
 		}
 
-		protected override void GetFieldChildren (NodeInfoCollection c, NodeInfo parent, FieldInfo field)
+		protected override void AddFieldChildren (NodeInfoCollection c, NodeInfo parent, FieldInfo field)
 		{
 			Trace.WriteLineIf (info.Enabled, "Getting Field Children");
 			AddMemberChildren (parent, field, c);
@@ -293,7 +293,7 @@ namespace Mono.TypeReflector
 			}
 		}
 
-		protected override void GetParameterChildren (NodeInfoCollection c, NodeInfo parent, ParameterInfo pi)
+		protected override void AddParameterChildren (NodeInfoCollection c, NodeInfo parent, ParameterInfo pi)
 		{
 			// TODO: handle custom attributes...
 			// c.Add (new NodeInfo (parent, pi, customAttributes, NodeTypes.Other));
@@ -311,12 +311,12 @@ namespace Mono.TypeReflector
 			AddMembers (parent, pi, "Position", c);
 		}
 
-		protected override void GetConstructorChildren (NodeInfoCollection c, NodeInfo parent, ConstructorInfo node)
+		protected override void AddConstructorChildren (NodeInfoCollection c, NodeInfo parent, ConstructorInfo node)
 		{
 			AddMethodBaseChildren (parent, node, c);
 		}
 
-		protected override void GetEventChildren (NodeInfoCollection c, NodeInfo parent, EventInfo node)
+		protected override void AddEventChildren (NodeInfoCollection c, NodeInfo parent, EventInfo node)
 		{
 			AddMemberChildren (parent, node, c);
 			AddMembers (parent, node, "Attributes", c);
@@ -325,7 +325,7 @@ namespace Mono.TypeReflector
 			AddMembers (parent, node, "IsSpecialName", c);
 		}
 
-		protected override void GetMethodChildren (NodeInfoCollection c, NodeInfo parent, MethodInfo node)
+		protected override void AddMethodChildren (NodeInfoCollection c, NodeInfo parent, MethodInfo node)
 		{
 			AddMethodBaseChildren (parent, node, c);
 			AddMembers (parent, node, "ReturnType", c);
@@ -347,7 +347,7 @@ namespace Mono.TypeReflector
 			}
 		}
 
-		protected override void GetPropertyChildren (NodeInfoCollection c, NodeInfo parent, PropertyInfo node)
+		protected override void AddPropertyChildren (NodeInfoCollection c, NodeInfo parent, PropertyInfo node)
 		{
 			AddMemberChildren (parent, node, c);
 			AddMembers (parent, node, "Attributes", c);

@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 
 namespace Mono.TypeReflector
 {
-	internal class TypeReflectorOptions : ProgramOptions {
+	public class TypeReflectorOptions : ProgramOptions {
 
 		private static char onlyAssemblies      = 'A';
 		private static char addAssemblies       = 'a';
@@ -44,6 +44,7 @@ namespace Mono.TypeReflector
 		private static string version           = "version";
 		private static string formatter         = "formatter";
 		private static string finder            = "finder";
+		private static string displayer         = "displayer";
 		private static string maxDepth          = "max-depth";
 
 		public TypeReflectorOptions ()
@@ -111,21 +112,28 @@ namespace Mono.TypeReflector
 			AddOption (showAll,                 "show-all",
 				"Show everything except System.Type "+
 				"properties, inherited members, non-public "+
-				"members, and \"broken\" Mono attributes.");
+				"members, and \"broken\" Mono attributes.  " +
+        "Equivalent to -bcefimp.");
 			AddOption (flattenHierarchy,        "flatten-hierarchy",
 				"Static members of base types should be " + 
 				"displayed.");
 			StringBuilder formatterDescription = new StringBuilder ();
 			formatterDescription.Append ("Experimental.  Specify the output style touse.  Available values are:");
-			foreach (object o in Factories.FormatterFactory.Keys)
+			foreach (object o in Factories.Formatter.Keys)
 				formatterDescription.Append (string.Format ("\n{0}", o));
 			AddArgumentOption (formatter, formatterDescription.ToString(), "<formatter>");
 
 			StringBuilder finderDescription = new StringBuilder ();
 			finderDescription.Append ("Experimental.  Specify how nodes are found.  Available values are:");
-			foreach (object o  in Factories.FinderFactory.Keys)
+			foreach (object o in Factories.Finder.Keys)
 				finderDescription.Append (string.Format ("\n{0}", o));
 			AddArgumentOption (finder, finderDescription.ToString(), "<finder>");
+
+			StringBuilder displayerDescription = new StringBuilder ();
+			displayerDescription.Append ("Experimental.  Specify where output should be displayed.  Available values are:");
+			foreach (object o in Factories.Displayer.Keys)
+				displayerDescription.Append (string.Format ("\n{0}", o));
+			AddArgumentOption (displayer, displayerDescription.ToString(), "<displayer>");
 
 			AddOption (verboseOutput,           "verbose-output",
 				"Print the contents of all the public " + 
@@ -356,6 +364,15 @@ namespace Mono.TypeReflector
 			}
 		}
 
+		public string Displayer {
+			get {
+				string s = base.FoundOptionValue (displayer);
+				if (s == null)
+					return "console";
+				return s;
+			}
+		}
+
 		public override string OptionsHelp {
 			get {
 				StringBuilder sb = new StringBuilder ();
@@ -371,16 +388,19 @@ namespace Mono.TypeReflector
 				sb.Append (
 					"\n" + 
 					tg0.Group (
+						"<types> is interpreted as a regular expression.  As regular expression " + 
+						"meta-characters are seldom used in class names, specifying a type name " +
+						"looks for all types that have the specified type name as a substring.  " +
+            "To get a listing of all available types, pass '.' as the type.  (Since " +
+            "regular expressions are used, '.' will match any character, thus matching " +
+            "all possible types.)") +
+					"\n\n" +
+					tg0.Group (
 						"<assembly-list> is a `" + Path.PathSeparator + "'-delimited list.  " + 
 						"For example, `" + 
 						String.Format ("foo{0}bar{0}baz", 
 							Path.PathSeparator) + "' is a valid list.\n") +
-					"\n" +
-					tg0.Group (
-						"<types> is interpreted as a regular expression.  As regular expression " + 
-						"meta-characters are seldom used in class names, specifying a type name " +
-						"looks for all types that have the specified type name as a substring.") +
-					"\n\n"
+					"\n"
 					);
 				sb.Append (String.Format (
 					"Examples:\n" +

@@ -12,7 +12,7 @@ namespace Testing
 {
 	public interface IFoo {}
 	public interface IBar {}
-	public interface IBaz {}
+	public interface IBaz : IFoo, IBar {}
 
 	public delegate void FooEventHandler ();
 

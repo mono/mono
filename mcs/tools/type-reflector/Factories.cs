@@ -31,8 +31,17 @@ namespace Mono.TypeReflector
 			}
 		}
 
-		public static FinderTypeFactory FinderFactory = new FinderTypeFactory ();
-		public static FormatterTypeFactory FormatterFactory = new FormatterTypeFactory ();
+		public sealed class DisplayerTypeFactory : TypeFactory
+		{
+			public new ITypeDisplayer Create (object key)
+			{
+				return (ITypeDisplayer) base.Create (key);
+			}
+		}
+
+		public static FinderTypeFactory Finder = new FinderTypeFactory ();
+		public static FormatterTypeFactory Formatter = new FormatterTypeFactory ();
+		public static DisplayerTypeFactory Displayer = new DisplayerTypeFactory ();
 	}
 }
 

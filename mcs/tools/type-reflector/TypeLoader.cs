@@ -61,7 +61,6 @@ namespace Mono.TypeReflector
 
 		public TypeLoader (ICollection assemblies)
 		{
-			Console.WriteLine ("type-loader: " + info.Level);
 			this.assemblies = assemblies;
 		}
 
@@ -70,23 +69,34 @@ namespace Mono.TypeReflector
 			set {assemblies = value;}
 		}
 
-		public ICollection LoadTypes (string match)
+		public ICollection LoadTypes (IList match)
 		{
 			if (assemblies == null)
 				throw new ArgumentNullException ("Assemblies");
+			if (match == null || match.Count == 0)
+				throw new ArgumentNullException ("match");
+
+			StringBuilder regex = new StringBuilder ();
+			regex.Append (match[0]);
+			for (int i = 1; i < match.Count; ++i)
+				regex.AppendFormat ("|{0}", match[i]);
+
+			Regex re = new Regex (regex.ToString());
+
+			Trace.WriteLineIf (info.TraceInfo, 
+					string.Format ("using regex: '{0}'", regex.ToString()));
 
 			IList found = new ArrayList ();
 
 			foreach (string a in assemblies) {
-				LoadMatchingTypesFrom (a, match, found);
+				LoadMatchingTypesFrom (a, regex.ToString(), re, found);
 			}
 
 			return found;
 		}
 
-		private void LoadMatchingTypesFrom (string where, string match, IList types)
+		private void LoadMatchingTypesFrom (string where, string regex, Regex re, IList types)
 		{
-			Regex re = new Regex (match);
 			try {
 				Assembly a = Assembly.LoadFrom (where);
 				Type[] _types = a.GetTypes();
@@ -97,7 +107,7 @@ namespace Mono.TypeReflector
 			} catch (Exception e) {
 				Trace.WriteLineIf (info.TraceError, String.Format (
 					"Unable to load type regex `{0}' from `{1}'.",
-					match, where));
+					regex, where));
 				Trace.WriteLineIf (info.TraceError, e.ToString());
 			}
 		}
@@ -108,9 +118,9 @@ namespace Mono.TypeReflector
 			f = c = b = rt = n = false;
 			if (MatchFullName)
 				f = r.Match(t.FullName).Success;
-			if (MatchClassName)
+			else if (MatchClassName)
 				c = r.Match(t.Name).Success;
-			if (MatchNamespace)
+			else if (MatchNamespace)
 				n = r.Match(t.Namespace).Success;
 			if (MatchBase) {
 				b = (!MatchFullName ? false : r.Match (t.BaseType.FullName).Success) ||

@@ -52,22 +52,6 @@ namespace Mono.TypeReflector
 			get {return nodeInfo;}
 			set {nodeInfo = value;}
 		}
-
-		/*
-		public override string ToString ()
-		{
-			Console.Write ("(Description='{0}'", Description);
-			if (Children.Count > 0) {
-				Console.Write (" Children={{");
-				foreach (Node node in Children)
-					Console.Write (node);
-				Console.Write ("}}");
-			}
-			Console.Write (")");
-			return "foo!";
-			return new StackTrace().ToString();
-		}
-		 */
 	}
 
 	public class NodeCollection : CollectionBase {

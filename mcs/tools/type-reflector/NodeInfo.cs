@@ -133,6 +133,15 @@ namespace Mono.TypeReflector
 			get {return description;}
 			set {description = value;}
 		}
+
+		/*
+		public override string ToString ()
+		{
+			Console.WriteLine ("** (NodeInfo (parent {0}) (type {1}) (rObj {2}) (rIns {3}) (description {4}))",
+					parent, type, reflectionObject, reflectionInstance, description);
+			return base.ToString ();
+		}
+		 */
 	}
 
 	public sealed class NodeInfoCollection : CollectionBase {

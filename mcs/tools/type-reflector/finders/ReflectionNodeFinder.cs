@@ -53,7 +53,7 @@ namespace Mono.TypeReflector
 
 		private static readonly IComparer NameComparer = new MemberInfoNameComparer ();
 
-		protected override void GetTypeChildren (NodeInfoCollection c, NodeInfo parent, Type type)
+		protected override void AddTypeChildren (NodeInfoCollection c, NodeInfo parent, Type type)
 		{
 			foreach (MemberInfo mi in GetMembers (type)) {
 				AddNode (c, parent, mi, mi);
@@ -121,17 +121,17 @@ namespace Mono.TypeReflector
 			}
 		}
 
-		protected override void GetFieldChildren (NodeInfoCollection c, NodeInfo parent, FieldInfo field)
+		protected override void AddFieldChildren (NodeInfoCollection c, NodeInfo parent, FieldInfo field)
 		{
 			AddSubnodes (c, parent, field.GetType(), field);
 		}
 
-		protected override void GetConstructorChildren (NodeInfoCollection c, NodeInfo parent, ConstructorInfo ctor)
+		protected override void AddConstructorChildren (NodeInfoCollection c, NodeInfo parent, ConstructorInfo ctor)
 		{
 			GetMethodBaseChildren (c, parent, ctor);
 		}
 
-		protected override void GetMethodChildren (NodeInfoCollection c, NodeInfo parent, MethodInfo method)
+		protected override void AddMethodChildren (NodeInfoCollection c, NodeInfo parent, MethodInfo method)
 		{
 			GetMethodBaseChildren (c, parent, method);
 		}
@@ -141,25 +141,25 @@ namespace Mono.TypeReflector
 			AddSubnodes (c, parent, mb.GetType(), mb);
 		}
 
-		protected override void GetParameterChildren (NodeInfoCollection c, NodeInfo parent, ParameterInfo param)
+		protected override void AddParameterChildren (NodeInfoCollection c, NodeInfo parent, ParameterInfo param)
 		{
 			AddSubnodes (c, parent, param.GetType(), param);
 		}
 
-		protected override void GetPropertyChildren (NodeInfoCollection c, NodeInfo parent, PropertyInfo pi)
+		protected override void AddPropertyChildren (NodeInfoCollection c, NodeInfo parent, PropertyInfo pi)
 		{
 			AddSubnodes (c, parent, pi.GetType(), pi);
 		}
 
-		protected override void GetEventChildren (NodeInfoCollection c, NodeInfo parent, EventInfo e)
+		protected override void AddEventChildren (NodeInfoCollection c, NodeInfo parent, EventInfo e)
 		{
 			AddSubnodes (c, parent, e.GetType(), e);
 		}
 
-		protected override void GetReturnValueChildren (NodeInfoCollection c, NodeInfo parent)
+		protected override void AddReturnValueChildren (NodeInfoCollection c, NodeInfo parent)
 		{
 			if (parent.ReflectionObject != null)
-				GetTypeChildren (c, parent, (Type) parent.ReflectionObject);
+				AddTypeChildren (c, parent, (Type) parent.ReflectionObject);
 		}
 	}
 }

@@ -1,3 +1,5 @@
+Overview
+========
 ``type-reflector'' is a program similar in spirit to the .NET ``TypeFinder'' 
 SDK Sample.  As is often the case with Unix-style programs, it has more
 program options and more flexibility.
@@ -22,6 +24,7 @@ The other policy is the "formatter" policy, which dictates how a member is
 displayed.  There are currently two such policies:
   default - typically the result of .ToString() on the member reflection object
   csharp - attempts to display the member as if it were from C# source code.
+  vb - attempts to display the member as if it were from VB.NET source code.
 
 Finally, it shows (virtually) everything about a type that is available
 through the System.Reflection facility.  Everthing from the actual Attributes
@@ -29,4 +32,14 @@ specified for a member, to custom attributes, the reflected type, GUID, where
 it was declared...  This constitutes a great deal of information that isn't
 normally present without writing test programs to view the available
 information.
+
+GUI Support
+===========
+type-reflector has a prototype GUI using Gtk#.  To compile it, run:
+
+  make -f makefile.gnu gui
+
+To run it, pass ``--displayer=gtk'' on the command line:
+
+  type-reflector.exe --displayer-gtk .
 

@@ -5,12 +5,19 @@ INSTALL = /usr/bin/install
 
 MONO_TOOLS = monostyle.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./SqlSharp/sqlsharp.exe secutil.exe Cert2Spc.exe
 
+DIRS = type-reflector
+
 # tools commented here because they were unable to build under linux
 #MONO_TOOLS = monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/SqlSharpCli.exe
 
+all: tools
+	for i in $(DIRS) ; do \
+		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
+	done
+
 linx: $(MONO_TOOLS)
 
-all: $(MONO_TOOLS)
+tools: $(MONO_TOOLS)
 
 windows: $(MONO_TOOLS)
 
@@ -23,6 +30,9 @@ install: all
 	for i in $(MONO_TOOLS) ; do \
 		($(INSTALL) -m 755 $$i $(prefix)/bin/) || exit 1; \
 	done
+	for i in $(DIRS) ; do \
+		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
+	done
 
 monostyle.exe: monostyle.cs
 	$(CSC) $(CSCFLAGS) monostyle.cs
@@ -32,9 +42,6 @@ GenerateDelegate.exe: GenerateDelegate.cs
 
 verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
-
-./type-reflector/type-reflector.exe: dummy
-	(cd type-reflector; make CSC=$(CSC))
 
 ./SqlSharp/sqlsharp.exe: dummy
 	(cd SqlSharp; make CSC=$(CSC))
@@ -67,11 +74,13 @@ Cert2Spc.exe: cert2spc.cs ASN1.cs
 
 clean:
 	(cd corcompare; make clean)
-	(cd type-reflector; make clean)
 	(cd SqlSharp; make clean)
 	rm -f *.exe *.pdb *.dbg *.dll
 	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in
+	for i in $(DIRS) ; do \
+		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
+	done
 
 dummy:
 

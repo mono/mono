@@ -169,27 +169,6 @@ namespace Mono.TypeReflector
 		private bool verboseOutput = false;
 		private bool showMonoBroken = false;
 
-		// `ReflectionTypeDisplayer.PrintTypeProperties' is recursive, but refrains 
-    // from printing duplicates.  Despite duplicate removal, the output for 
-    // printing the Properties of System.Type is > 800K of text.
-		//
-		// 3 levels permits viewing Attribute values, but not the attributes of
-		// those attribute values.
-		//
-		// For example, 3 levels permits:
-		// 		class		System.Type                           {depth 0}
-		// 			Properties:                                 {depth 1}
-		// 				System.Reflection.MemberTypes MemberType  {depth 2}
-		// 					- CanRead=True                          {depth 3}
-		// 					- CanWrite=False                        {depth 3}
-		// 					...
-		private int maxDepth = 3;
-
-		public int MaxDepth {
-			get {return maxDepth;}
-			set {maxDepth = value;}
-		}
-
 		public bool ShowBase {
 			get {return showBase;}
 			set {showBase = value;}
@@ -287,92 +266,91 @@ namespace Mono.TypeReflector
 
 			// always handle NodeTypes.Type
 			if (root.NodeType == NodeTypes.Type)
-				GetTypeChildren (c, root, (Type) root.ReflectionObject);
+				AddTypeChildren (c, root, (Type) root.ReflectionObject);
 			else if (VerboseOutput) {
 				switch (root.NodeType) {
 					case NodeTypes.BaseType:
-						GetBaseTypeChildren (c, root, (Type) root.ReflectionObject);
+						AddBaseTypeChildren (c, root, (Type) root.ReflectionObject);
 						break;
 					case NodeTypes.Interface:
-						GetInterfaceChildren (c, root, (Type) root.ReflectionObject);
+						AddInterfaceChildren (c, root, (Type) root.ReflectionObject);
 						break;
 					case NodeTypes.Field:
-						GetFieldChildren (c, root, (FieldInfo) root.ReflectionObject);
+						AddFieldChildren (c, root, (FieldInfo) root.ReflectionObject);
 						break;
 					case NodeTypes.Constructor:
-						GetConstructorChildren (c, root, (ConstructorInfo) root.ReflectionObject);
+						AddConstructorChildren (c, root, (ConstructorInfo) root.ReflectionObject);
 						break;
 					case NodeTypes.Method:
-						GetMethodChildren (c, root, (MethodInfo) root.ReflectionObject);
+						AddMethodChildren (c, root, (MethodInfo) root.ReflectionObject);
 						break;
 					case NodeTypes.Parameter:
-						GetParameterChildren (c, root, (ParameterInfo) root.ReflectionObject);
+						AddParameterChildren (c, root, (ParameterInfo) root.ReflectionObject);
 						break;
 					case NodeTypes.Property:
-						GetPropertyChildren (c, root, (PropertyInfo) root.ReflectionObject);
+						AddPropertyChildren (c, root, (PropertyInfo) root.ReflectionObject);
 						break;
 					case NodeTypes.Event:
-						GetEventChildren (c, root, (EventInfo) root.ReflectionObject);
+						AddEventChildren (c, root, (EventInfo) root.ReflectionObject);
 						break;
 					case NodeTypes.ReturnValue:
-						GetReturnValueChildren (c, root);
+						AddReturnValueChildren (c, root);
 						break;
 					case NodeTypes.Other:
 					case NodeTypes.Alias:
-						GetOtherChildren (c, root);
+						AddOtherChildren (c, root);
 						break;
 					default:
-						GetUnhandledChildren (c, root);
+						AddUnhandledChildren (c, root);
 						break;
 				}
 			}
 			return c;
 		}
 
-		protected virtual void GetTypeChildren (NodeInfoCollection c, NodeInfo root, Type type)
+		protected virtual void AddTypeChildren (NodeInfoCollection c, NodeInfo root, Type type)
 		{
 		}
 
-		protected virtual void GetBaseTypeChildren (NodeInfoCollection c, NodeInfo root, Type baseType)
+		protected virtual void AddBaseTypeChildren (NodeInfoCollection c, NodeInfo root, Type baseType)
 		{
 		}
 
-		protected virtual void GetInterfaceChildren (NodeInfoCollection c, NodeInfo root, Type iface)
+		protected virtual void AddInterfaceChildren (NodeInfoCollection c, NodeInfo root, Type iface)
 		{
 		}
 
-		protected virtual void GetFieldChildren (NodeInfoCollection c, NodeInfo root, FieldInfo field)
-		{
-			Console.WriteLine ("** field children b");
-		}
-
-		protected virtual void GetConstructorChildren (NodeInfoCollection c, NodeInfo root, ConstructorInfo ctor)
+		protected virtual void AddFieldChildren (NodeInfoCollection c, NodeInfo root, FieldInfo field)
 		{
 		}
 
-		protected virtual void GetMethodChildren (NodeInfoCollection c, NodeInfo root, MethodInfo method)
+		protected virtual void AddConstructorChildren (NodeInfoCollection c, NodeInfo root, ConstructorInfo ctor)
 		{
 		}
 
-		protected virtual void GetParameterChildren (NodeInfoCollection c, NodeInfo root, ParameterInfo param)
+		protected virtual void AddMethodChildren (NodeInfoCollection c, NodeInfo root, MethodInfo method)
 		{
 		}
 
-		protected virtual void GetPropertyChildren (NodeInfoCollection c, NodeInfo root, PropertyInfo property)
+		protected virtual void AddParameterChildren (NodeInfoCollection c, NodeInfo root, ParameterInfo param)
 		{
 		}
 
-		protected virtual void GetEventChildren (NodeInfoCollection c, NodeInfo root, EventInfo e)
+		protected virtual void AddPropertyChildren (NodeInfoCollection c, NodeInfo root, PropertyInfo property)
 		{
 		}
 
-		protected virtual void GetReturnValueChildren (NodeInfoCollection c, NodeInfo root)
+		protected virtual void AddEventChildren (NodeInfoCollection c, NodeInfo root, EventInfo e)
+		{
+		}
+
+		protected virtual void AddReturnValueChildren (NodeInfoCollection c, NodeInfo root)
 		{
 			if (root.ReflectionObject != null)
-				GetTypeChildren (c, root, (Type) root.ReflectionObject);
+				AddTypeChildren (c, root, (Type) root.ReflectionObject);
 		}
 
-		protected virtual void GetOtherChildren (NodeInfoCollection c, NodeInfo root)
+		protected virtual void AddOtherChildren (NodeInfoCollection c, NodeInfo root)
 		{
 			if (root.Description is NodeGroup) {
 				NodeGroup g = (NodeGroup) root.Description;
@@ -380,7 +358,7 @@ namespace Mono.TypeReflector
 			}
 		}
 
-		protected virtual void GetUnhandledChildren (NodeInfoCollection c, NodeInfo root)
+		protected virtual void AddUnhandledChildren (NodeInfoCollection c, NodeInfo root)
 		{
 			c.Add (new NodeInfo (root, "Unhandled child: NodeType=" + root.NodeType));
 		}

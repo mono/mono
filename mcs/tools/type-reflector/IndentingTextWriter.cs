@@ -86,10 +86,21 @@ namespace Mono.TypeReflector
 
 		public override void Write (string value)
 		{
+      string[] lines = value.Split ('\n');
+      _Write (lines[0]);
+      if (lines.Length > 1) {
+        WriteLine ();
+        for (int i = 1; i != lines.Length; ++i)
+          _WriteLine (lines[i]);
+      }
+		}
+
+    private void _Write (string value)
+    {
 			if (NeedIndent)
 				WriteIndent ();
 			_writer.Write (value);
-		}
+    }
 
 		public override void WriteLine ()
 		{
@@ -101,13 +112,20 @@ namespace Mono.TypeReflector
 
 		public override void WriteLine (string value)
 		{
+      string[] lines = value.Split ('\n');
+      foreach (string s in lines)
+        _WriteLine (s);
+		}
+
+    private void _WriteLine (string value)
+    {
 			Trace.WriteLineIf (info.Enabled, String.Format(
 				"WriteLine: NeedIndent={0}", NeedIndent));
 			if (NeedIndent)
 				WriteIndent ();
 			_writer.WriteLine (value);
 			NeedIndent = true;
-		}
+    }
 	}
 
 	public class Indenter : IDisposable {

@@ -91,7 +91,7 @@ using System.Text.RegularExpressions;
 
 namespace Mono.TypeReflector
 {
-	internal class OptionException : Exception {
+	public class OptionException : Exception {
 
 		public char ShortForm;
 
@@ -112,7 +112,7 @@ namespace Mono.TypeReflector
 		}
 	}
 
-	internal class ProgramOptions {
+	public class ProgramOptions {
 
 		private class Option {
 			public char   ShortForm = '\0';

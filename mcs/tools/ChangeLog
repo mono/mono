@@ -1,3 +1,8 @@
+2002-12-31  Jonathan Pryor <jonpryor@vt.edu>
+
+  * makefile.gnu: Add support for DIRS to all, install targets.  This was done
+    so type-reflector's install target could be independent/self-contained.
+
 2002-12-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ASN1.cs: New. Classes to manipulate Abstract Syntax Notation 1

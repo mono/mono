@@ -1,0 +1,96 @@
+PROGRAM = type-reflector.exe
+
+PROGRAM_LIBS = 
+
+PROGRAM_FLAGS = /out:$(PROGRAM) /d:TRACE /d:DEBUG $(PROGRAM_LIBS)
+
+# For debugging
+# CSCFLAGS = /debug+ /debug:full
+CSCFLAGS = 
+
+MONO = mono
+
+PROGRAM_FILES =  \
+	ConsoleTypeDisplayer.cs \
+	CSharpNodeFormatter.cs \
+	DefaultNodeFormatter.cs \
+	ExplicitNodeFinder.cs \
+	Factories.cs \
+  GroupingNodeFinder.cs \
+	IndentingTextWriter.cs \
+	INodeFinder.cs \
+	INodeFormatter.cs \
+	ITypeDisplayer.cs \
+	LanguageNodeFormatter.cs \
+	Node.cs \
+	NodeFinder.cs \
+	NodeFormatter.cs \
+  NodeGrouper.cs \
+	NodeInfo.cs \
+	NodeTypes.cs \
+	ProgramOptions.cs \
+  ReflectionNodeFinder.cs \
+	TestTypes.cs \
+	TextFormatter.cs \
+	TypeDisplayer.cs \
+	TypeFactory.cs \
+	TypeLoader.cs \
+	TypeReflectorApp.cs \
+	TypeReflectorOptions.cs \
+	VBNodeFormatter.cs \
+
+GUI_GTK_FILES = \
+	gtk/GtkTypeDisplayer.cs \
+
+GUI_GTK_GLADE_FILE = gtk/type-reflector.glade
+
+GUI_GTK_FLAGS = /d:HAVE_GUI_GTK /resource:$(GUI_GTK_GLADE_FILE)
+
+GUI_GTK_LIBS = -r glib-sharp.dll -r pango-sharp.dll -r atk-sharp.dll -r gdk-sharp.dll -r gtk-sharp.dll -r System.Drawing -r glade-sharp.dll
+
+all: $(PROGRAM)
+
+$(PROGRAM) : $(PROGRAM_FILES)
+	$(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(PROGRAM_FILES) $(PROGRAM_LIBS)
+	chmod +x $(PROGRAM)
+
+gui: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE)
+	$(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(GUI_GTK_FLAGS) $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_LIBS)
+	chmod +x $(PROGRAM)
+
+test-run : $(PROGRAM)
+	$(MONO) $(PROGRAM) -A $(PROGRAM) $(ARGS)
+
+test-type : $(PROGRAM)
+	$(MONO) $(PROGRAM) -A $(PROGRAM) --max-depth=10000 $(ARGS) TestClass$$
+
+run : $(PROGRAM)
+	$(MONO) $(PROGRAM) $(ARGS)
+
+windows:
+	NAnt -buildfile:type-reflector.build
+
+linux: 
+	mcs @unix.args
+
+clean:
+	rm -f *.exe *.pdb *.dll *.dbg *~
+
+INSTALL_FILES = \
+	$(PROGRAM) \
+	$(PROGRAM).config \
+
+
+install: $(PROGRAM) $(PROGRAM).config
+	if test x$$prefix = x; then \
+		echo Usage is: make -f makefile.gnu install prefix=YOURPREFIX; \
+		exit 1; \
+	fi
+	mkdir -p $(prefix)/bin/
+	for i in $(INSTALL_FILES) ; do \
+		($(INSTALL) -m 755 $$i $(prefix)/bin/) || exit 1; \
+	done
+
+linecount:
+	wc -l $(PROGRAM_FILES) $(GUI_GTK_FILES)
+

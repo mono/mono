@@ -1,3 +1,51 @@
+2002-12-31  Jonathan Pryor <jonpryor@vt.edu>
+	* ConsoleTypeDisplayer.cs: New; Display reflection information to the console
+	* CSharpNodeFormatter.cs: Most formatting information was moved to
+	  LanguageNodeFormatter.cs (to permit sharing with the VBNodeFormatter)
+	* ExplicitNodeFinder.cs: Updates due to NodeFinder changes.
+	* Factories.cs: Add new "Displayer" factory, remove "Factory" from name of
+	  factory objects; the fact they're in a "Factories" class should be
+		sufficient.
+	* IndentingTextWriter.cs: Ensure that if a string sent to Write or WriteLine
+	  contains embedded newlines, that we indent the text after the newlines
+		appropriately.
+	* ITypeDisplayer.cs: New; Abstraction for displaying reflection information
+	* LanguageNodeFormatter.cs: Massive cleanup & Consolidation of features.
+	  Now works as a control class for generating Language-like output,
+		simplifying C# and VB.NET language formatting.
+	* Makefile: Most contents moved to `makefile.core'; just sets variables and
+	  forwards operation to `makefile.core'.
+	* Node.cs: Debugging ToString() implementation
+	* NodeFinder.cs: Change virtual Get* methods to Add* methods, as
+	  they're supposed to Add stuff to the Collection object passed as the first
+		paramter, not actually return ("get") anything; Removed `maxDepth', as
+		it's not used in the NodeFinder.
+	* NodeFormatter.cs: Move language-like attribute formatting to
+	  LanguageNodeFormatter; check that base type isn't null before accessing
+		its name; recent CVS snapshots have the base object of interfaces as the
+		null object (before it was System.Object); this may be a mono bug.
+	* NodeInfo.cs: Debugging ToString() implementation
+	* ProgramOptions.cs: Make classes public, not internal
+	* README: Updates
+	* ReflectionNodeFinder.cs: Updates due to NodeFinder changes.
+	* TestTypes.cs: More tests
+	* TypeDisplayer.cs: New; Helper implementation for ITypeDisplayer
+	* TypeFactory.cs: Trace/log the exception generated when creating a new
+	  object
+	* TypeLoader.cs: Take a list of types to search for, not just a single type.
+	  This simplifies looking for types, as we can do a single search for all
+		types, instead of separate searches for each type.  Also improves
+		performance.
+	* TypeReflectorApp.cs: New; Formerly ConsoleOutput.cs; sets things in motion
+	* TypeReflectorOptions.cs: Make public; Add --displayer argument
+	* VBNodeFormatter.cs: New; Displayer reflection information in VB.NET
+	* gtk: new directory for Gtk# front-end
+	* makefile.core: New; Common makefile rules shared between Makefile,
+	  makefile.gnu
+	* makefile.gnu: New; makefile used on Linux, used by tools/makefile.gnu for
+	  recursive makes.
+	* type-reflector.exe.config: Add new switch, sample listener
+
 2002-12-21  Jonathan Pryor <jonpryor@vt.edu>
 	* ConsoleOutput.cs: Use a Switch for trace messages.
 	* ExplicitNodeFinder.cs: Use a Switch for trace messages.

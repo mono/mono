@@ -15,6 +15,9 @@ namespace Mono.TypeReflector
 {
 	public class TypeFactory
 	{
+		private static BooleanSwitch info = new BooleanSwitch ("type-factory",
+				"Information about creating types.");
+
 		private IDictionary entries = new Hashtable ();
 
 		public void Add (object key, Type value)
@@ -38,11 +41,17 @@ namespace Mono.TypeReflector
 
 		public object Create (object key)
 		{
+			Type type = null;
 			try {
-				Type type = (Type) entries[key];
+				type = (Type) entries[key];
 				return CreateInstance (type);
 			}
-			catch {
+			catch (Exception e) {
+				Console.WriteLine ("TypeFactory trace: {0}", info.Enabled);
+				Console.WriteLine (
+						"Exception creating ({0}, {1}): {2}", key, type, e.ToString());
+				Trace.WriteLineIf (info.Enabled, string.Format (
+						"Exception creating ({0}, {1}): {2}", key, type, e.ToString()));
 				return null;
 			}
 		}
