@@ -1,3 +1,9 @@
+2004-04-16 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/TlsException.cs:
+
+		- Make it public until npgsql people can fix their sources.
+
 2004-04-15 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
