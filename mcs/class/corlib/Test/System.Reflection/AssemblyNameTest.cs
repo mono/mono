@@ -39,8 +39,8 @@ public class AssemblyNameTest {
 				}
 			}
 		}
-		msg += " -> Expected " + BitConverter.ToString (array1, 0);
-		msg += " is different than " + BitConverter.ToString (array2, 0);
+		msg += " -> Expected " + (array1.Length > 0 ? BitConverter.ToString (array1, 0) : "<empty>");
+		msg += " is different than " + (array2.Length > 0 ? BitConverter.ToString (array2, 0) : "<empty>");
 		Assert.IsTrue (a, msg);
 	}
 
@@ -334,18 +334,18 @@ public class AssemblyNameTest {
 		ms.Close ();
 
 		// compare orginal and deserialized assembly name
-		Assert.AreEqual (an.CodeBase, dsAssemblyName.CodeBase);
-		Assert.AreEqual (an.CultureInfo, dsAssemblyName.CultureInfo);
-		Assert.AreEqual (an.Flags, dsAssemblyName.Flags);
-		Assert.AreEqual (an.HashAlgorithm, dsAssemblyName.HashAlgorithm);
-		Assert.AreEqual (an.Name, dsAssemblyName.Name);
-		Assert.AreEqual (an.Version, dsAssemblyName.Version);
-		Assert.AreEqual (an.VersionCompatibility, dsAssemblyName.VersionCompatibility);
-		Assert.AreEqual (an.EscapedCodeBase, dsAssemblyName.EscapedCodeBase);
-		Assert.AreEqual (an.FullName, dsAssemblyName.FullName);
-		Assert.AreEqual (an.ToString (), dsAssemblyName.ToString ());
-		Assert.AreEqual (an.GetPublicKey (), dsAssemblyName.GetPublicKey ());
-		Assert.AreEqual (an.GetPublicKeyToken (), dsAssemblyName.GetPublicKeyToken ());
+		Assert.AreEqual (an.CodeBase, dsAssemblyName.CodeBase, "CodeBase");
+		Assert.AreEqual (an.CultureInfo, dsAssemblyName.CultureInfo, "CultureInfo");
+		Assert.AreEqual (an.Flags, dsAssemblyName.Flags, "Flags");
+		Assert.AreEqual (an.HashAlgorithm, dsAssemblyName.HashAlgorithm, "HashAlgorithm");
+		Assert.AreEqual (an.Name, dsAssemblyName.Name, "Name");
+		Assert.AreEqual (an.Version, dsAssemblyName.Version, "Version");
+		Assert.AreEqual (an.VersionCompatibility, dsAssemblyName.VersionCompatibility, "VersionCompatibility");
+		Assert.AreEqual (an.EscapedCodeBase, dsAssemblyName.EscapedCodeBase, "EscapedCodeBase");
+		Assert.AreEqual (an.FullName, dsAssemblyName.FullName, "FullName");
+		Assert.AreEqual (an.ToString (), dsAssemblyName.ToString (), "ToString");
+		AssertEqualsByteArrays ("PublicKey", an.GetPublicKey (), dsAssemblyName.GetPublicKey ());
+		AssertEqualsByteArrays ("PublicToken", an.GetPublicKeyToken (), dsAssemblyName.GetPublicKeyToken ());
 	}
 
 

@@ -1,3 +1,9 @@
+2004-06-10  Lluis Sanchez  <lluis@ximian.com>
+
+	* AssemblyNameTest.cs: AssertEqualsByteArrays(): don't crash if arrays are
+	  empty. TestSerialization(): Use AssertEqualsByteArrays to compare keys. 
+	  Added messages to the assertions.
+
 2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AssemblyNameTests.cs: added tests for AssemblyName.FullName 
