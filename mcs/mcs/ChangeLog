@@ -1,3 +1,13 @@
+2004-01-20  Miguel de Icaza  <miguel@ximian.com>
+
+	Merge a few bits from the Anonymous Method MCS tree.
+	
+	* statement.cs (ToplevelBlock): New class for toplevel methods,
+	will hold anonymous methods, lifted variables.
+
+	* cs-parser.jay: Create toplevel blocks for delegates and for
+	regular blocks of code. 
+
 2004-01-20  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Break.DoEmit): Set ec.NeedExplicitReturn; fixes #52427.

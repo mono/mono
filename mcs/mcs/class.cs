@@ -583,7 +583,7 @@ namespace Mono.CSharp {
 
 			AddConstructor (c);
 			
-			c.Block = new Block (null);
+			c.Block = new ToplevelBlock (null, Location);
 			
 		}
 
@@ -2680,7 +2680,7 @@ namespace Mono.CSharp {
 			Expression parent_constructor_group;
 			Type t;
 
-			ec.CurrentBlock = new Block (null, Block.Flags.Implicit, parameters);
+			ec.CurrentBlock = new ToplevelBlock (Block.Flags.Implicit, parameters, loc);
 
 			if (argument_list != null){
 				foreach (Argument a in argument_list){

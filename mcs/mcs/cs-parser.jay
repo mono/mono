@@ -36,53 +36,59 @@ namespace Mono.CSharp
 	
 		IIteratorContainer iterator_container;
 
-		// <summary>
-		//   Current block is used to add statements as we find
-		//   them.  
-		// </summary>
-
+		/// <summary>
+		///   Current block is used to add statements as we find
+		///   them.  
+		/// </summary>
 		Block      current_block;
 
-		// <summary>
-		//   Current interface is used by the various declaration
-		//   productions in the interface declaration to "add"
-		//   the interfaces as we find them.
-		// </summary>
+		/// <summary>
+                ///   If true, creates a toplevel block in the block production
+                ///   This is flagged by the delegate creation
+                /// </summary>
+                bool       create_toplevel_block;
+	
+                /// <summary>
+		/// <summary>
+		///   Current interface is used by the various declaration
+		///   productions in the interface declaration to "add"
+		///   the interfaces as we find them.
+		/// </summary>
 		Interface  current_interface;
 
-		// <summary>
-		//   This is used by the unary_expression code to resolve
-		//   a name against a parameter.  
-		// </summary>
+		/// <summary>
+		///   This is used by the unary_expression code to resolve
+		///   a name against a parameter.  
+		/// </summary>
 		Parameters current_local_parameters;
 
-		// <summary>
-		//   Using during property parsing to describe the implicit
-		//   value parameter that is passed to the "set" and "get"accesor
-		//   methods (properties and indexers).
-		// </summary>
+		/// <summary>
+		///   Using during property parsing to describe the implicit
+		///   value parameter that is passed to the "set" and "get"accesor
+		///   methods (properties and indexers).
+		/// </summary>
 		Expression implicit_value_parameter_type;
 		Parameters indexer_parameters;
 
-		// <summary>
-		//   Used to determine if we are parsing the get/set pair
-		//   of an indexer or a property
-		// </summmary>
+		/// <summary>
+		///   Used to determine if we are parsing the get/set pair
+		///   of an indexer or a property
+		/// </summmary>
 		bool  parsing_indexer;
 
-		//
-		// An out-of-band stack.
-		//
+		///
+		/// An out-of-band stack.
+		///
 		Stack oob_stack;
 
-		//
-		// Switch stack.
-		//
+		///
+		/// Switch stack.
+		///
 		Stack switch_stack;
 
-		//
-		// The current file.
-		//
+		///
+		/// The current file.
+		///
 		SourceFile file;
 %}
 
@@ -2444,7 +2450,9 @@ anonymous_method_expression
 	: DELEGATE opt_anonymous_method_signature {
 		oob_stack.Push (current_local_parameters);
 		current_local_parameters = (Parameters)$2;
+		create_toplevel_block = true;
 	  } block {
+		create_toplevel_block = false;
 		if (!RootContext.V2){
 			Report.Error (-213, lexer.Location, "Anonymous methods are only supported in V2");
 			$$ = null;
@@ -2913,8 +2921,12 @@ class_base
 block
 	: OPEN_BRACE 
 	  {
-		current_block = new Block (current_block, current_local_parameters,
-					   lexer.Location, Location.Null);
+		if (current_block == null || create_toplevel_block){
+			current_block = new ToplevelBlock (current_local_parameters, lexer.Location);
+		} else {
+			current_block = new Block (current_block, current_local_parameters,
+				lexer.Location, Location.Null);
+		}
 	  } 
 	  opt_statement_list CLOSE_BRACE 
 	  { 

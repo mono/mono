@@ -1066,6 +1066,9 @@ namespace Mono.CSharp {
 	///
 	///   Implicit blocks are used as labels or to introduce variable
 	///   declarations.
+	///
+	///   Top-level blocks derive from Block, and they are called ToplevelBlock
+	///   they contain extra information that is not necessary on normal blocks.
 	/// </remarks>
 	public class Block : Statement {
 		public readonly Block     Parent;
@@ -1803,6 +1806,20 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// 
+	public class ToplevelBlock : Block {
+		public ToplevelBlock (Parameters parameters, Location start) :
+			base (null, parameters, start, Location.Null)
+		{
+		}
+
+		public ToplevelBlock (Flags flags, Parameters parameters, Location start) :
+			base (null, flags, parameters, start, Location.Null)
+		{
+		}
+	}
+	
 	public class SwitchLabel {
 		Expression label;
 		object converted;
