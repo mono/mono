@@ -1441,13 +1441,14 @@ struct_member_declarator
 	;
 	
 event_declaration
-	: EVENT identifier AS type logical_end_of_line
+	: EVENT identifier AS type opt_implement_clause logical_end_of_line
 	  {
 	  	VariableDeclaration var = new VariableDeclaration ((string) $2, (Expression) $4, lexer.Location);
 
 		Event e = new Event ((Expression) $4, var.identifier, 
 				     null, current_modifiers, null, null, 
-				     current_attributes, lexer.Location);
+				     current_attributes, (Expression) $5,
+				     lexer.Location);
 
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 	  }
@@ -1467,7 +1468,8 @@ event_declaration
 		Event e = new Event (DecomposeQI (delName, lexer.Location),
 					 (string) $2, 
 				     null, current_modifiers, null, null, 
-				     current_attributes, lexer.Location);
+				     current_attributes, (Expression) $4, 
+				     lexer.Location);
 
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 	  }

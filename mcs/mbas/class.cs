@@ -4310,7 +4310,18 @@ namespace Mono.MonoBASIC {
 		{
 			Add = add;
 			Remove = remove;
+			Implements = null;
 		}
+
+		public Event (Expression type, string name, Object init, int mod, Accessor add,
+			Accessor remove, Attributes attrs, Expression impl_what, Location loc)
+			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
+		{
+			Add = add;
+			Remove = remove;
+			Implements = impl_what;
+		}
+		
 
 		public override bool Define (TypeContainer parent)
 		{
