@@ -1,0 +1,8 @@
+XmlChar.cs
+XmlNameTable.cs
+XmlNamespaceManager.cs
+XmlNodeType.cs
+XmlParserContext.cs
+XmlReader.cs
+XmlSpace.cs
+XmlTextReader.cs

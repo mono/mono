@@ -7,7 +7,7 @@ all:
 
 windows:
 	for i in $(DIRS); do				\
-		(cd $$i; CSC=$(CSC) make windows) 	\
+		(cd $$i; CSC=$(CSC) NUNIT_CONSOLE=NUnitConsole.exe PLATFORM=window make windows)\
 	done;
 
 unix:
