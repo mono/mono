@@ -1,3 +1,7 @@
+2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodInfoTest.cs: Add tests for GetMethodBody.
+
 2005-01-16  Nick Drochak  <ndrochak@ieee.org>
 
 	* AssemblyTest.cs: Try loading assembly from .NET tests and mono tests

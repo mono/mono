@@ -33,6 +33,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace MonoTests.System.Reflection
 {
 	[TestFixture]
@@ -90,6 +94,63 @@ namespace MonoTests.System.Reflection
 			if (a1 == 1)
 				a1 = 2;
 		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetMethodBody_Abstract () {
+			typeof (ICloneable).GetMethod ("Clone").GetMethodBody ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetMethodBody_Runtime () {
+			typeof (AsyncCallback).GetMethod ("Invoke").GetMethodBody ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetMethodBody_Pinvoke () {
+			typeof (MethodInfoTest).GetMethod ("dllImportMethod").GetMethodBody ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetMethodBody_Icall () {
+			foreach (MethodInfo mi in typeof (object).GetMethods (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance))
+				if ((mi.GetMethodImplementationFlags () & MethodImplAttributes.InternalCall) != 0)
+					mi.GetMethodBody ();
+		}
+
+		public static void locals_method () {
+			byte[] b = new byte [10];
+
+			unsafe {
+				/* This generates a pinned local */
+				fixed (byte *p = &b [0]) {
+				}
+			}
+		}
+
+		[Test]
+		public void GetMethodBody () {
+			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();
+
+			Assert (mb.InitLocals);
+			Assert (mb.LocalSignatureMetadataToken > 0);
+
+			IList<LocalVariableInfo> locals = mb.LocalVariables;
+
+			// This might break with different compilers etc.
+			AssertEquals (2, locals.Count);
+
+			Assert ((locals [0].LocalType == typeof (byte[])) || (locals [1].LocalType == typeof (byte[])));
+			if (locals [0].LocalType == typeof (byte[]))
+				AssertEquals (false, locals [0].IsPinned);
+			else
+				AssertEquals (false, locals [1].IsPinned);
+		}
+#endif
 	}
 }
 
