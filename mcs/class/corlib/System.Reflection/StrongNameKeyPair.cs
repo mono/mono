@@ -7,11 +7,7 @@
 //
 // (C) 2002 Kevin Winchester
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +31,7 @@
 
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
@@ -52,6 +49,10 @@ public class StrongNameKeyPair
 	[NonSerialized]
 	private RSA _rsa;
 
+	// note: we ask for UnmanagedCode because we do not want everyone
+	// to be able to generate strongnamed assemblies
+
+	[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 	public StrongNameKeyPair (byte[] keyPairArray) 
 	{
 		if (keyPairArray == null)
@@ -61,6 +62,7 @@ public class StrongNameKeyPair
 		GetRSA ();
 	}
 	
+	[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 	public StrongNameKeyPair (FileStream keyPairFile) 
 	{
 		if (keyPairFile == null)
@@ -72,6 +74,7 @@ public class StrongNameKeyPair
 		GetRSA ();
 	}
 	
+	[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 	public StrongNameKeyPair (string keyPairContainer) 
 	{
 		// named key container
