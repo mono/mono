@@ -1,12 +1,7 @@
-REM LineNo: 20
+REM LineNo: 15
 REM ExpectedError: BC30512
 REM ErrorMessage: Option Strict On disallows implicit conversions from 'Boolean' to 'Long'.
 
-REM LineNo: 20
-REM ExpectedError: BC30512
-REM ErrorMessage: Option Strict On disallows implicit conversions from 'Double' to 'Long'.
-
-' BC30512: Option Strict On disallows implicit conversions from 'Double' to 'Long'.
 
 Option Strict On
 
@@ -16,7 +11,7 @@ Module LogicalOperatorsC1
     Sub main()
 
         Dim a1 As Boolean = True
-        Dim b1 As Double = 10.02
+        Dim b1 As Long = 10S
         If a1 And b1 Then
             a1 = False
         End If
