@@ -119,13 +119,14 @@ namespace System.Data.Odbc
 				string colname;
 				short colname_size=0;
 				OdbcType DataType=OdbcType.Int;
-				short ColSize=0, DecDigits=0, Nullable=0;
-				libodbc.SQLDescribeCol(hstmt, Convert.ToUInt16(ordinal+1), 
-					colname_buffer, bufsize, ref colname_size, ref DataType, ref ColSize, 
+				short ColSize=0, DecDigits=0, Nullable=0, dt=0;
+				OdbcReturn ret=libodbc.SQLDescribeCol(hstmt, Convert.ToUInt16(ordinal+1), 
+					colname_buffer, bufsize, ref colname_size, ref dt, ref ColSize, 
 					ref DecDigits, ref Nullable);
+				libodbchelper.DisplayError("SQLDescribeCol",ret);
 				colname=System.Text.Encoding.Default.GetString(colname_buffer);
 				colname=colname.Replace((char) 0,' ').Trim();
-				OdbcColumn c=new OdbcColumn(colname, DataType);
+				OdbcColumn c=new OdbcColumn(colname, (OdbcType) dt);
 				c.AllowDBNull=(Nullable!=0);
 				c.Digits=DecDigits;
 				if (c.IsStringType)
@@ -304,6 +305,7 @@ namespace System.Data.Odbc
 				for (int i = 0; i < cols.Length; i += 1 ) 
 				{
 					OdbcColumn col=GetColumn(i);
+					//Console.WriteLine("{0}:{1}:{2}",col.ColumnName,col.DataType,col.OdbcType);
 
 					schemaRow = dataTableSchema.NewRow ();
 					dataTableSchema.Rows.Add (schemaRow);

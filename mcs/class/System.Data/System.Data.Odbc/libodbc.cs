@@ -103,7 +103,7 @@ namespace System.Data.Odbc
 		public static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcType TargetType, byte[] TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32.dll")]
-		public static extern OdbcReturn SQLDescribeCol(IntPtr StatementHandle, ushort ColumnNumber, byte[] ColumnName, short BufferLength, ref short NameLength, ref OdbcType DataType, ref short ColumnSize, ref short DecimalDigits, ref short Nullable);
+		public static extern OdbcReturn SQLDescribeCol(IntPtr StatementHandle, ushort ColumnNumber, byte[] ColumnName, short BufferLength, ref short NameLength, ref short DataType, ref short ColumnSize, ref short DecimalDigits, ref short Nullable);
 
 		[DllImport("odbc32.dll")]
 		public static extern OdbcReturn SQLFreeHandle(ushort HandleType, IntPtr SqlHandle);

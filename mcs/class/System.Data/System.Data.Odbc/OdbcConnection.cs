@@ -38,7 +38,7 @@ namespace System.Data.Odbc
 			ret=libodbc.SQLSetEnvAttr(henv, OdbcEnv.OdbcVersion, (IntPtr) 3 , 0); 
 			libodbchelper.DisplayError("SQLSetEnvAttr", ret);
 		
-			Console.WriteLine("ODBCInit Complete.");
+			//Console.WriteLine("ODBCInit Complete.");
 			connectionTimeout = 15;
 			connectionString = null;
 			dataReader = null;
