@@ -6,7 +6,7 @@ INSTALL = /usr/bin/install
 prefix = /usr
 
 SOURCES = 				\
-	Main.cs				\
+	Driver.cs			\
 	codegen/Class.cs		\
 	codegen/CodeGen.cs		\
 	codegen/InstrBase.cs		\
