@@ -5,10 +5,12 @@
 //   Gaurav Vaish (gvaish@iitk.ac.in)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sanjay Gupta (gsanjay@novell.com)
 //
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
 // (C) Gaurav Vaish (2002)
 // (C) 2003 Andreas Nahr
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -219,6 +221,10 @@ namespace System.Web.UI.WebControls
 		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebCategory("Behavior")]
 		[WebSysDescription("AdRotator_AdvertisementFile")]
+#if NET_2_0
+		[Localizable (true)]
+		[UrlProperty ()]
+#endif
 		public string AdvertisementFile {
 			get { return ((advertisementFile != null) ? advertisementFile : ""); }
 			set { advertisementFile = value; }
@@ -293,6 +299,7 @@ namespace System.Web.UI.WebControls
 			alternateText = acea.AlternateText;
 		}
 
+		[MonoTODO ("Update method with net 2.0 properties added for AdRotator class")]
 		protected override void Render (HtmlTextWriter writer)
 		{
 			HyperLink hLink = new HyperLink ();
@@ -322,6 +329,169 @@ namespace System.Web.UI.WebControls
 			adImage.RenderControl (writer);
 			hLink.RenderEndTag (writer);
 		}
+
+#if NET_2_0
+		AdType adType;
+		
+		[DefaultValueAttribute ("Banner")]
+		[WebCategoryAttribute ("Behavior")]
+		[WebSysDescriptionAttribute ("Advertisement of specific type is created by specified value")]
+		public AdType AdType {
+			get { return adType; }
+			set { adType = value; }
+		}
+
+		string alternateTextField;
+
+		[DefaultValueAttribute ("AlternateText")]
+		[WebCategoryAttribute ("Behavior")]
+		[WebSysDescriptionAttribute ("Alternate text is retrieved from the elmenet name specified.")]
+		//[VerificationAttribute ()]
+		public string AlternateTextField {
+			get { return alternateTextField; }
+			set { alternateTextField = value; }
+		}
+
+		bool countClicks;
+		
+		[DefaultValueAttribute (false)]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("On clicking an advertisement, click-through events should be counted.")]
+		public bool CountClicks {
+			get { return countClicks; }
+			set { countClicks = value; }
+		}
+
+		string counterGroup;
+		
+		[DefaultValueAttribute ("AdRotator")]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("Name of the group which takes care of counting.")]
+		public string CounterGroup {
+			get { return counterGroup; }
+			set { counterGroup = value; }
+		}
+
+		string counterName;
+
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("Name of the group which takes care of counting.")]
+		public string CounterName {
+			get { return counterName; }
+			set { counterName = value; }
+		}
+
+		bool countViews;
+		
+		[DefaultValueAttribute (false)]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("On creation of an advertisement, view events should be counted.")]
+		public bool CountViews {
+			get { return countViews; }
+			set { countViews = value; }
+		}
+
+		string imageUrlField;
+
+		[DefaultValueAttribute ("ImageUrl")]
+		[WebCategoryAttribute ("Behavior")]
+		[WebSysDescriptionAttribute ("Image URL is retrieved from the elmenet name specified.")]
+		public string ImageUrlField {
+			get { return imageUrlField; }
+			set { imageUrlField = value; }
+		}
+
+		string navigateUrlField;
+
+		[DefaultValueAttribute ("NavigateUrl")]
+		[WebCategoryAttribute ("Behavior")]
+		[WebSysDescriptionAttribute ("Advertisement Web page URL is retrieved from the elmenet name specified.")]
+		public string NavigateUrlField {
+			get { return navigateUrlField; }
+			set { navigateUrlField = value; }
+		}
+
+		int popFrequency;
+
+		[DefaultValueAttribute ("100")]
+		[WebCategoryAttribute ("Behavior")]
+		[WebSysDescriptionAttribute ("Frequency in percentage for creation of Popup or PopUnder advertisement.")]
+		public int PopFrequency {
+			get { return popFrequency; }
+			set { popFrequency = value; }
+		}
+
+		int popPositionLeft;
+
+		[DefaultValueAttribute ("-1")]
+		[WebCategoryAttribute ("Appearance")]
+		[WebSysDescriptionAttribute ("Specifies X-coordinate in pixels of Popunder or Popup advertisements top-left corner.")]
+		public int PopPositionLeft {
+			get { return popPositionLeft; }
+			set { popPositionLeft = value; }
+		}
+
+		int popPositionTop;
+
+		[DefaultValueAttribute ("-1")]
+		[WebCategoryAttribute ("Appearance")]
+		[WebSysDescriptionAttribute ("Specifies Y-coordinate in pixels of Popunder or Popup advertisements top-left corner.")]
+		public int PopPositionTop {
+			get { return popPositionTop; }
+			set { popPositionTop = value; }
+		}
+
+		int rowsPerDay;
+
+		[DefaultValueAttribute ("-1")]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("On a given day this many number of rows of data needs to be collected.")]
+		public int RowsPerDay {
+			get { return rowsPerDay; }
+			set { rowsPerDay = value; }
+		}
+ 
+		string siteCountersProvider;
+
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("Control uses the specified provider.")]
+		public string SiteCountersProvider {
+			get { return siteCountersProvider; }
+			set { siteCountersProvider = value; }
+		}
+
+		bool trackApplicationName;
+
+		[DefaultValueAttribute (true)]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("SiteCounters service tracks and stores the specified application name in a database.")]
+		public bool TrackApplicationName {
+			get { return trackApplicationName; }
+			set { trackApplicationName = value; }
+		}
+
+		bool trackNavigateUrl;
+
+		[DefaultValueAttribute (true)]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("SiteCounters service tracks and stores the destination URL of click through event in a database.")]
+		public bool TrackNavigateUrl {
+			get { return trackNavigateUrl; }
+			set { trackNavigateUrl = value; }
+		}
+
+		bool trackPageUrl;
+
+		[DefaultValueAttribute (true)]
+		[WebCategoryAttribute ("Site Counters")]
+		[WebSysDescriptionAttribute ("SiteCounters service tracks and stores the originating page URL in a database.")]
+		public bool TrackPageUrl {
+			get { return trackPageUrl; }
+			set { trackPageUrl = value; }
+		}
+#endif
 
 		class AdRecord
 		{
