@@ -1,5 +1,7 @@
 2004-03-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c: Update status.
+
 	* inssel-sparc.brg: Add some optimizations.
 
 	* inssel-sparc.brg mini-sparc.c: Rework branch instructions to allow
