@@ -43,8 +43,11 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("(c) Mike Krueger 2001-2002")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
+#if NET_2_0
+[assembly: AssemblyVersion("0.31.2.0")]
+#else
 [assembly: AssemblyVersion("0.31.0.0")]
+#endif
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("SharpZipLib.key")]
