@@ -271,10 +271,6 @@ namespace System.Web.Configuration
 		void SetChanged (object o, FileSystemEventArgs args)
 		{
 			lock (data) {
-				if (watcher.Filter == "*.config" &&
-				    String.Compare (Path.GetFileName (args.FullPath), "web.config", true) != 0)
-					return;
-				
 				cacheTable.Clear ();
 				data.Reset ();
 				if (args.ChangeType == WatcherChangeTypes.Created)
@@ -535,7 +531,7 @@ namespace System.Web.Configuration
 			XmlDocument doc = GetDocumentForSection (sectionName);
 			if (doc == null || doc.DocumentElement == null)
 				return parentConfig;
-			
+
 			return iconf.Create (parentConfig, fileName, doc.DocumentElement);
 		}
 
