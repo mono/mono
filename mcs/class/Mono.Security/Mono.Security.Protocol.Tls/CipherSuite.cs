@@ -30,6 +30,7 @@ using System.Security.Cryptography;
 using Mono.Security;
 using Mono.Security.Cryptography;
 using Mono.Security.X509;
+using M=Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -387,7 +388,7 @@ namespace Mono.Security.Protocol.Tls
 				iterations++;
 			}
 			
-			HMAC		hmac	= new HMAC(hashName, secret);
+			M.HMAC		hmac	= new M.HMAC(hashName, secret);
 			TlsStream	resMacs	= new TlsStream();
 			
 			byte[][] hmacs = new byte[iterations + 1][];
@@ -468,7 +469,7 @@ namespace Mono.Security.Protocol.Tls
 			encryptionCipher = encryptionAlgorithm.CreateEncryptor();
 
 			// Create the HMAC algorithm for the client
-			clientHMAC = new HMAC(hashName, context.ClientWriteMAC);
+			clientHMAC = new M.HMAC(hashName, context.ClientWriteMAC);
 		}
 
 		private void createDecryptionCipher()
@@ -503,7 +504,7 @@ namespace Mono.Security.Protocol.Tls
 			decryptionCipher = decryptionAlgorithm.CreateDecryptor();
 
 			// Create the HMAC algorithm for the server
-			serverHMAC = new HMAC(hashName, context.ServerWriteMAC);
+			serverHMAC = new M.HMAC(hashName, context.ServerWriteMAC);
 		}
 
 		#endregion
