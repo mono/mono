@@ -153,7 +153,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt32 Parse(string s) 
 		{
-			throw new NotImplementedException ();
+			return new SqlInt32 (Int32.Parse (s));
 		}
 
 		public static SqlInt32 Subtract(SqlInt32 x, SqlInt32 y) 
@@ -391,10 +391,9 @@ namespace System.Data.SqlTypes
 				return new SqlInt32 ((int)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt32(SqlString x) 
 		{
-			throw new NotImplementedException ();
+			return SqlInt32.Parse (x.Value);
 		}
 
 		public static implicit operator SqlInt32(int x) 

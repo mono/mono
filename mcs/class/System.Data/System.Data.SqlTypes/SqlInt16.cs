@@ -143,10 +143,9 @@ namespace System.Data.SqlTypes
 			return ~x;
 		}
 
-		[MonoTODO]
 		public static SqlInt16 Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SqlInt16 (Int16.Parse (s));
 		}
 
 		public static SqlInt16 Subtract (SqlInt16 x, SqlInt16 y)
@@ -371,10 +370,9 @@ namespace System.Data.SqlTypes
 				return new SqlInt16 ((short)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt16 (SqlString x)
 		{
-			throw new NotImplementedException ();
+			return SqlInt16.Parse (x.Value);
 		}
 
 		public static implicit operator SqlInt16 (short x)

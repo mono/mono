@@ -18,11 +18,9 @@ namespace System.Data.SqlTypes
 
 		long value;
 		
-		[MonoTODO]
-		public static readonly SqlInt64 MaxValue; // 2^63 - 1
-
-		[MonoTODO]
-		public static readonly SqlInt64 MinValue; // -2^63
+		
+		public static readonly SqlInt64 MaxValue = new SqlInt64 (9223372036854775807);
+		public static readonly SqlInt64 MinValue = new SqlInt64 (-9223372036854775808);
 
 		public static readonly SqlInt64 Null;
 		public static readonly SqlInt64 Zero = new SqlInt64 (0);
@@ -102,10 +100,9 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return (int)value;
+			return (int)(value & 0xffffffff) ^ (int)(value >> 32);
 		}
 
 		public static SqlBoolean GreaterThan (SqlInt64 x, SqlInt64 y)
@@ -148,10 +145,10 @@ namespace System.Data.SqlTypes
 			return ~x;
 		}
 
-		[MonoTODO]
+
 		public static SqlInt64 Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SqlInt64 (Int64.Parse (s));
 		}
 
 		public static SqlInt64 Subtract (SqlInt64 x, SqlInt64 y)
@@ -357,10 +354,9 @@ namespace System.Data.SqlTypes
 				return new SqlInt64 ((long)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlInt64 (SqlString x)
 		{
-			throw new NotImplementedException ();
+			return SqlInt64.Parse (x.Value);
 		}
 
 		public static implicit operator SqlInt64 (long x)

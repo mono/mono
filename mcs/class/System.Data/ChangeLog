@@ -1,3 +1,11 @@
+2002-10-23  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlByte.cs:
+	* System.Data.SqlTypes/SqlBoolean.cs:
+	* System.Data.SqlTypes/SqlInt16.cs:
+	* System.Data.SqlTypes/SqlInt32.cs:
+	* System.Data.SqlTypes/SqlInt64.cs: Finished. 
+		
 2002-10-21  Rodrigo Moya <rodrigo@ximian.com>
 
 	* list: removed libodbchelper.cs file, which has been removed.

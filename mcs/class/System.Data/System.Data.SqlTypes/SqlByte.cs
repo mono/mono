@@ -142,10 +142,9 @@ namespace System.Data.SqlTypes
 			return ~x;
 		}
 
-		[MonoTODO]
 		public static SqlByte Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SqlByte (Byte.Parse (s));
 		}
 
 		public static SqlByte Subtract (SqlByte x, SqlByte y)
@@ -373,10 +372,10 @@ namespace System.Data.SqlTypes
 				return new SqlByte ((byte)x.Value);
 		}
 
-		[MonoTODO]
+
 		public static explicit operator SqlByte (SqlString x)
 		{
-			throw new NotImplementedException ();
+			return SqlByte.Parse (x.Value);
 		}
 
 		public static implicit operator SqlByte (byte x)

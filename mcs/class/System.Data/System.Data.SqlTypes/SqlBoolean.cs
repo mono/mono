@@ -191,16 +191,24 @@ namespace System.Data.SqlTypes
 			return ((SqlSingle)this);
 		}
 
-		[MonoTODO]
 		public SqlString ToSqlString() 
 		{
-			throw new NotImplementedException ();
+			if (this.IsNull)
+				throw new SqlNullValueException ("The value is null");
+			if (this.IsTrue)
+				return new SqlString ("True");
+			else
+				return new SqlString ("False");
 		}
 
-		[MonoTODO]
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			if (this.IsNull)
+				throw new SqlNullValueException ("The value is null");
+			if (this.IsTrue)
+				return "True";
+			else
+				return "False";
 		}
 
 		// Bitwise exclusive-OR (XOR)
@@ -362,10 +370,9 @@ namespace System.Data.SqlTypes
 		}
 
 		// SqlString to SqlBoolean
-		[MonoTODO]
 		public static explicit operator SqlBoolean (SqlString x) 
 		{
-			throw new NotImplementedException ();
+			return SqlBoolean.Parse (x.Value);
 		}
 
 		// Boolean to SqlBoolean
