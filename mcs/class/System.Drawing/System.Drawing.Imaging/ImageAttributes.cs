@@ -14,7 +14,7 @@ namespace System.Drawing.Imaging
 	/// <summary>
 	/// Summary description for ImageAttributes.
 	/// </summary>
-	public sealed class ImageAttributes {
+	public sealed class ImageAttributes : IDisposable {
 		public ImageAttributes() {
 		}
 
@@ -25,6 +25,21 @@ namespace System.Drawing.Imaging
 		//Sets the color keys for all GDI+ objects
 		public void SetColorKey(Color colorLow, Color colorHigh){
 
+		}
+
+		public void SetColorMatrix(ColorMatrix colorMatrix) {
+			throw new NotImplementedException();
+		}
+
+		public void SetColorMatrix(ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag) {
+			throw new NotImplementedException();
+		}
+
+		public void SetColorMatrix(ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag, ColorAdjustType colorAdjustType) {
+			throw new NotImplementedException();
+		}
+
+		public void Dispose() {
 		}
 
 		~ImageAttributes() {
