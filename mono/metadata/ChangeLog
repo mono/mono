@@ -1,5 +1,9 @@
 2004-11-25  Martin Baulig  <martin@ximian.com>
 
+	* class.c (set_generic_param_owner): Fixed the loop.
+
+2004-11-25  Martin Baulig  <martin@ximian.com>
+
 	* object.c (mono_class_vtable): Don't create any JIT wrappers for
 	generic methods.
 
