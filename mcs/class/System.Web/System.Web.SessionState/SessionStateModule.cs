@@ -47,11 +47,10 @@ namespace System.Web.SessionState
 		ISessionHandler handler;
 		bool sessionForStaticFiles;
 		
-		private RandomNumberGenerator rng;
+		static RandomNumberGenerator rng = new RNGCryptoServiceProvider ();
 		
 		public SessionStateModule ()
 		{
-			rng = new RNGCryptoServiceProvider ();
 		}
 
 		internal RandomNumberGenerator Rng {
