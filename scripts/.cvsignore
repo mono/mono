@@ -1,4 +1,10 @@
 Makefile
 Makefile.in
-mcs
+cilc
+ilasm
 mbas
+mcs
+monoresgen
+secutil
+sqlsharp
+xsd
