@@ -1,3 +1,9 @@
+2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS1.cs: New. Copied from corlib. Required for RSAManaged.
+	* RSAManaged.cs: New. Copied from corlib. Required for TLS - some
+	parts (MD5SHA1) cannot work with the default RSACryptoServiceProvider.
+
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoTools.cs: New. Copied from corlib to offer the sames services
