@@ -6,14 +6,6 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
-//
 
 using System;
 using System.Web.Services.Protocols;
@@ -24,9 +16,11 @@ namespace Microsoft.Web.Services.Security {
 
 	public sealed class X509SecurityToken : BinarySecurityToken {
 
+		private const string vname = "X509v3";
 		private X509Certificate x509;
 
-		public X509SecurityToken (X509Certificate certificate) : base ((XmlElement)null)
+		public X509SecurityToken (X509Certificate certificate) 
+			: base (new XmlQualifiedName (vname, WSSecurity.NamespaceURI))
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -42,19 +36,18 @@ namespace Microsoft.Web.Services.Security {
 			get {
 				if (x509 == null)
 					throw new InvalidOperationException ("null certificate");
-
-				if (x509.SupportsDigitalSignature)
-					return new AuthenticationKey (x509.PublicKey);
-				else
+				if (!x509.SupportsDigitalSignature)
 					throw new InvalidOperationException ("not SupportsDigitalSignature");
+				return new AuthenticationKey (x509.PublicKey);
 			}
 		}
 
 		public X509Certificate Certificate {
 			get { return x509; }
 			set { 
-				if (value == null)
-					throw new ArgumentNullException ("value");
+// LAMESPEC			if (value == null)
+//					throw new ArgumentNullException ("value");
+// Note: this (probable bug) means we have to check for null everytime we use a certificate
 				x509 = value;
 			}
 		}
@@ -63,7 +56,7 @@ namespace Microsoft.Web.Services.Security {
 			get {
 				if (x509 == null)
 					throw new InvalidOperationException ("null certificate");
-				return new AsymmetricDecryptionKey (x509.PublicKey);
+				return new AsymmetricDecryptionKey (x509.Key);
 			}
 		}
 
@@ -76,7 +69,11 @@ namespace Microsoft.Web.Services.Security {
 		}
 
 		public override byte[] RawData {
-			get { return x509.GetRawCertData(); }
+			get { 
+				if (x509 == null)
+					return null;
+				return x509.GetRawCertData(); 
+			}
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ("value");
@@ -90,7 +87,7 @@ namespace Microsoft.Web.Services.Security {
 					throw new InvalidOperationException ("null certificate");
 				if (!x509.SupportsDigitalSignature)
 					throw new InvalidOperationException ("not SupportsDigitalSignature");
-				return new SignatureKey (x509.PublicKey);
+				return new SignatureKey (x509.Key);
 			}
 		}
 
@@ -110,18 +107,23 @@ namespace Microsoft.Web.Services.Security {
 			}
 		}
 
-		// TODO
 		public override XmlQualifiedName ValueType {
-			get { return base.ValueType; }
-			set { base.ValueType = value; }
+			get { return valueType; }
+			set {
+				if ((value.Name != vname) || (value.Namespace != WSSecurity.NamespaceURI))
+					throw new SecurityFormatException ("Invalid Qualified Name");
+				valueType = value; 
+			}
 		}
 
-		public override void Verify() 
+		public override void Verify ()
 		{
 			if (x509 == null)
 				throw new SecurityFault ("null certificate", null);
 			if (!x509.IsCurrent)
 				throw new SecurityFault ("certificate not current", null);
+			// more ???
+			// it's assumed valid if no exception is thrown
 		}
 	}
 }

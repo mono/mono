@@ -1,3 +1,9 @@
+2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* BinarySecurityToken.cs: Added support for GetXml/LoadXml
+	* SecurityToken.cs: Better support for WSE2
+	* X509SecurityToken.cs: Implemented most of the TODO.
+
 2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SecurityOutputFilter.cs: Added missing "1" to soap:mustUnderstand

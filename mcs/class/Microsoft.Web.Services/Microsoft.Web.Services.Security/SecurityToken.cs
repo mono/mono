@@ -6,21 +6,10 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
-//
 
 using System;
 using System.Security.Cryptography.Xml;
 using System.Xml;
-#if !WSE1
-using Microsoft.Web.Services.Xml;
-#endif
 
 namespace Microsoft.Web.Services.Security {
 
@@ -59,7 +48,18 @@ namespace Microsoft.Web.Services.Security {
 		public abstract XmlElement GetXml (XmlDocument document);
 
 		public abstract void LoadXml (XmlElement element);
+#if WSE1
+		public abstract void Verify ();
+#else
+		public abstract bool Equals (SecurityToken token);
 
-		public abstract void Verify();
+		public abstract override int GetHashCode ();
+
+		public abstract bool IsCurrent {get;}
+
+		public virtual IPrincipal Principal {get; set;}
+
+		public virtual TokenType TokenType {get;}
+#endif
 	}
 }
