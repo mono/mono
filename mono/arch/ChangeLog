@@ -1,3 +1,14 @@
+2004-03-29  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* amd64/tramp.c:
+	* arm/tramp.c:
+	* hppa/tramp.c:
+	* ppc/tramp.c:
+	* s390/tramp.c:
+	* sparc/tramp.c:
+	* x86/tramp.c:
+	remove child from MonoInvocation as it isn't used.
+
 2004-03-23  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* hppa/hppa-codegen.h: created
