@@ -1,3 +1,6 @@
+2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
+	* Added DiagnosticsConfigurationHandler.cs to the build.
+
 2001-09-09  Nick Drochak <ndrochak@gol.com>
 
 	* BooleanSwitch.cs: Make this class use it's parent class's features.  Namely, use SwitchSetting
