@@ -118,6 +118,30 @@ Debugging. Turns on verbose yacc parsing.
 Use this to stop option parsing, and allow option-looking parameters
 to be passed on the command line.
 .PP
+.SH SPECIAL DEFINES
+The 
+.B TRACE
+and
+.B DEBUG
+defines have a special meaning to the compiler.
+.PP
+By default calls to methods and properties in the
+System.Diagnostics.Trace class are not generated unless the TRACE
+symbol is defined (either through a "#define TRACE") in your source
+code, or by using the
+.I "--define TRACE"
+in the command line.
+.PP
+By default calls to methods and properties in the
+System.Diagnostics.Debug class are not generated unless the DEBUG
+symbol is defined (either through a "#define DEBUG") in your source
+code, or by using the
+.I "--define DEBUG"
+in the command line.
+.PP
+Note that the effect of defining TRACE and DEBUG is a global setting,
+even if they are only defined in a single file.
+.PP
 .SH DEBUGGING SUPPORT
 When use the "--debug" or "-g" flag, MCS will create an assembler file
 FILE-debug.s containing debugging information where FILE is the name of
