@@ -121,7 +121,7 @@ TEST_SOURCES_net_2_0 = \
 	gen-101 gen-102 gen-103 gen-104 gen-105 gen-106 gen-107 gen-108 gen-109 gen-110 \
 	gen-111 gen-112 gen-113 gen-114 gen-115 gen-116 gen-117 gen-118 gen-119 gen-120 \
 	gen-121 gen-122 gen-123 gen-124 gen-125         gen-127 gen-128 gen-129 gen-130 \
-	        gen-132 gen-133 gen-134 gen-135 gen-136 gen-137 gen-138 gen-139 gen-140 \
+	gen-131 gen-132 gen-133 gen-134 gen-135 gen-136 gen-137 gen-138 gen-139 gen-140 \
 	gen-141 gen-142
 
 # gen-72 fails after the runtime changes in r40305
