@@ -1,3 +1,7 @@
+2003-03-02 Jackson Harper <jackson@latitudegeo.com>
+
+	* mcs/class: Add PEAPI directory
+
 2003-02-22  Martin Baulig  <martin@ximian.com>
 
 	* library.make: Pass `MCS_FLAGS' to MCS.
