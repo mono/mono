@@ -1,5 +1,10 @@
 2002-05-24  Duncan Mak  <duncan@ximian.com>
 
+	* StateBag.cs (Item): Changed the visibility level of the this
+	[object] indexer.
+
+	Misc. formatting edits, fixing some bugs introduced by the indentation.
+
 	* DataBinder.cs (Eval)
 	(GetIndexedPropertyValue)
 	(GetPropertyValue): Fixed return types.

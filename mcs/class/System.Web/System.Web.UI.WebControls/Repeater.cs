@@ -248,7 +248,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(Events != null)
 			{
-				RepeaterCommandEventHandler rceh = (RepeaterCommandEventHandler)(ViewState[ItemCommandEvent]);
+				RepeaterCommandEventHandler rceh = (RepeaterCommandEventHandler)(((IDictionary) ViewState) [ItemCommandEvent]);
 				if(rceh != null)
 				{
 					rceh(this, e);
@@ -260,7 +260,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(Events != null)
 			{
-				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)(ViewState[ItemCreatedEvent]);
+				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)(((IDictionary) ViewState) [ItemCreatedEvent]);
 				if(rceh != null)
 				{
 					rceh(this, e);
@@ -272,7 +272,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(Events != null)
 			{
-				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)(ViewState[ItemDataBoundEvent]);
+				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)(((IDictionary) ViewState) [ItemDataBoundEvent]);
 				if(rceh != null)
 				{
 					rceh(this, e);
