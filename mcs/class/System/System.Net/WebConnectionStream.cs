@@ -152,11 +152,6 @@ namespace System.Net
 			if (size < 0 || offset < 0 || length < offset || length - offset < size)
 				throw new ArgumentOutOfRangeException ();
 
-			lock (this) {
-				pendingReads++;
-				pending.Reset ();
-			}
-			
 			WebAsyncResult result = new WebAsyncResult (cb, state, buffer, offset, size);
 			if (totalRead >= contentLength) {
 				result.SetCompleted (true, 0);
@@ -178,6 +173,11 @@ namespace System.Net
 					return result;
 				}
 				result.NBytes = copy;
+			}
+
+			lock (this) {
+				pendingReads++;
+				pending.Reset ();
 			}
 
 			result.InnerAsyncResult = cnc.BeginRead (buffer, offset, size, null, null);

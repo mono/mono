@@ -1,3 +1,8 @@
+2003-06-22  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* WebConnectionStream.cs: Only increment pendingReads if an asynchronous read
+	  is really needed.
+
 2003-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebHeaderCollection.cs: prevent duplication headers used niternally.
