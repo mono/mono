@@ -1,3 +1,8 @@
+2002/05/07  Nick Drochak <ndrochak@gol.com>
+
+	* AllTests.cs: Do not run the System.Net tests from here, they belong
+	in the System assembly tests.
+
 2002-04-27  Lawrence Pit <loz@cable.a2000.nl>
 
 	* System.Security/: added directory

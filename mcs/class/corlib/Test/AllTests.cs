@@ -27,7 +27,6 @@ namespace MonoTests {
                                 suite.AddTest(System.Security.AllTests.Suite);
                                 suite.AddTest(System.Security.Cryptography.AllTests.Suite);
                                 suite.AddTest(System.IO.AllTests.Suite);
-                                suite.AddTest(System.Net.AllTests.Suite);
                                 suite.AddTest(System.Text.AllTests.Suite);
                                 suite.AddTest(System.Security.Permissions.AllTests.Suite);
                                 suite.AddTest(System.Resources.AllTests.Suite);
