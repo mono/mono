@@ -110,7 +110,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="assemblies/assembly[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="assemblies/assembly">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">y</xsl:with-param>
@@ -129,7 +129,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="namespaces/namespace[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="namespaces/namespace">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">n</xsl:with-param>
@@ -161,12 +161,12 @@
 
 
 	<!-- class -->
-	<xsl:template match="classes/class[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="classes/class">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">c</xsl:with-param>
 			</xsl:call-template>
-			<xsl:if test="not(@presence)">
+			<xsl:if test="(@missing_total or @todo_total or @extra_total or @warning_total or @error) and not(@presence)">
 				<xsl:apply-templates select="attributes"/>
 				<xsl:apply-templates select="interfaces"/>
 				<xsl:apply-templates select="constructors"/>
@@ -418,7 +418,10 @@
 	<xsl:template name="status">
 		<xsl:if test="@complete and @complete != 0">
 			<SPAN class="st">
-				<img src="cm/sc.gif"/>: <xsl:value-of select="@complete"/>%
+				<img src="cm/sc.gif"/>
+				<xsl:text>: </xsl:text>
+				<xsl:value-of select="@complete"/>
+				<xsl:text>%</xsl:text>
 			</SPAN>
 		</xsl:if>
 		<xsl:if test="@todo_total">
@@ -463,7 +466,9 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="warnings/warning" mode="hover"> WARNING: <xsl:value-of select="@text"/>
+	<xsl:template match="warnings/warning" mode="hover">
+		<xsl:text>WARNING: </xsl:text>
+		<xsl:value-of select="@text"/>
 	</xsl:template>
 
 </xsl:stylesheet>
