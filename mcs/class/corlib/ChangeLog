@@ -1,3 +1,7 @@
+2003-06-22  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* unix.args: added System.Runtime.Remoting/SoapServices.cs
+
 2003-06-11  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* unix.args: added Mono.Security.Cryptography/DSAManaged.cs and

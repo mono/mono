@@ -501,6 +501,7 @@ System.Runtime.Remoting/RemotingTimeoutException.cs
 System.Runtime.Remoting/RemotingServices.cs
 System.Runtime.Remoting/ServerException.cs
 System.Runtime.Remoting/ServerIdentity.cs
+System.Runtime.Remoting/SoapServices.cs
 System.Runtime.Remoting/TypeEntry.cs
 System.Runtime.Remoting/TypeInfo.cs
 System.Runtime.Remoting/WellKnownObjectMode.cs
