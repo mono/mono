@@ -1,3 +1,5 @@
+./Assembly/AssemblyInfo.cs
+./Assembly/Locale.cs
 ./Mono.Math/BigInteger.cs
 ./Mono.Math.Prime/ConfidenceFactor.cs
 ./Mono.Math.Prime/PrimalityTests.cs
@@ -6,6 +8,7 @@
 ./Mono.Math.Prime.Generator/SequentialSearchPrimeGeneratorBase.cs
 ./Mono.Security/ASN1.cs
 ./Mono.Security/ASN1Convert.cs
+./Mono.Security/BitConverterLE.cs
 ./Mono.Security/PKCS7.cs
 ./Mono.Security/StrongName.cs
 ./Mono.Security.Authenticode/AuthenticodeBase.cs
