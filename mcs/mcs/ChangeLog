@@ -1,7 +1,7 @@
 2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* expression.cs: Make sure you cant call a static method
-	with an instance expression, bug #52587.
+	with an instance expression, bug #56174.
 
 2004-03-29  Miguel de Icaza  <miguel@ximian.com>
 
