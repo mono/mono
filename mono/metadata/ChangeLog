@@ -1,3 +1,11 @@
+2004-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_native_wrapper): Char arrays are 
+	implicitly marshalled as [Out]. Fixes #55450.
+
+	(mono_marshal_get_runtime_invoke): Zero out the result if there is
+	an exception.
+
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_from_generic_parameter): Use the actual
