@@ -11,8 +11,8 @@ namespace System.Web.Configuration {
 	/// </summary>
 	public enum FormsAuthPasswordFormat{
 		Clear, 
-		MD5, 
-		SHA1
+		SHA1,
+		MD5
 	}
 
 } //namespace System.Web.Configuration

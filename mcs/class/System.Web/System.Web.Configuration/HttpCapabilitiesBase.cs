@@ -14,7 +14,7 @@ namespace System.Web.Configuration {
 	
 public class HttpCapabilitiesBase
 {
-	protected Hashtable _capabilities;
+	Hashtable _capabilities;
 
 	public HttpCapabilitiesBase ()
 	{
@@ -29,6 +29,10 @@ public class HttpCapabilitiesBase
 	public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
 	{
 		throw new NotImplementedException ();
+	}
+
+	protected virtual void Init ()
+	{
 	}
 	
 }

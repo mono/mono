@@ -11,8 +11,8 @@ namespace System.Web.Configuration {
 	/// </summary>
 	public enum FormsProtectionEnum{
 		All, 
-		Encryption, 
 		None, 
+		Encryption, 
 		Validation
 	}
 

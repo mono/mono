@@ -11,7 +11,7 @@ namespace System.Web.Configuration
 	/// <summary>
 	/// Summary description for ClientTargetSectionHandler.
 	/// </summary>
-	public class ClientTargetSectionHandler: NameValueSectionHandler
+	class ClientTargetSectionHandler: NameValueSectionHandler
 	{
 		/// <summary>
 		///		ClientTargetSectionHandler Constructor

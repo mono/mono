@@ -10,10 +10,10 @@ namespace System.Web.Configuration {
 	/// Defines the AuthenticationMode for a Web Application.
 	/// </summary>
 	public enum AuthenticationMode{
-		Forms, 
 		None,
-		Passport, 
-		Windows
+		Windows,
+		Passport,
+		Forms
 	}
 
 } //namespace System.Web.Configuration
