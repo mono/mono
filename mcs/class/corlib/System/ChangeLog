@@ -1,3 +1,8 @@
+2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Delegate.cs: CreteDelegate (Type, MethodInfo) only supports static
+	methods under MS.
+
 2003-08-11  Duncan Mak  <duncan@ximian.com>
 
 	* Environment.cs (Version): Return the same numbers as the MS

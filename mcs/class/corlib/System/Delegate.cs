@@ -85,6 +85,9 @@ namespace System {
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type");
 
+			if (!info.IsStatic)
+				throw new ArgumentException ("The method should be static.", "info");
+
 			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
 			Type[] delargtypes = new Type [delargs.Length];
 			ParameterInfo[] args = info.GetParameters ();
