@@ -21,13 +21,17 @@ TEST_ARCHIVE = xslt-testsuite-03.ZIP
 XSLTTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults.zip
 MSTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults.zip
 
+all : xslttest.exe alltest.exe
+
 xslttest.exe : xslttest.cs $(TESTS) $(XSLTTEST_RESULTS)
+	$(MCS_RUNTIME) $(MCS) xslttest.cs
 
 alltest.exe : alltest.cs $(TESTS) $(MSTEST_RESULTS)
 	$(MCS_RUNTIME) $(MCS) alltest.cs
 
 $(TESTS) : $(TEST_ARCHIVE) simplify.xsl
 	unzip -n $(TEST_ARCHIVE)
+	patch testsuite/TESTS/catalog.xml catalog.diff
 	xsltproc simplify.xsl testsuite/TESTS/catalog.xml > testsuite/TESTS/catalog-out.xml
 
 $(XSLTTEST_RESULTS) : $(XSLTTEST_RESULTS_ARCHIVE)

@@ -1,3 +1,8 @@
+2005-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added patching step against buggy catalog.xml.
+	  Build both xslttest.exe and alltest.exe.
+
 2005-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile, xslttest.cs : Rewrote to be runnable against the latest
