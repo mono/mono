@@ -125,32 +125,9 @@ namespace Mono.Xml.XPath2
 
 		internal static SequenceType Create (Type cliType)
 		{
-			switch (Type.GetTypeCode (cliType)) {
-			case TypeCode.Int32:
-				return Int;
-			case TypeCode.Decimal:
-				return Decimal;
-			case TypeCode.Double:
-				return Double;
-			case TypeCode.Single:
-				return Single;
-			case TypeCode.Int64:
-				return Integer;
-			case TypeCode.Int16:
-				return Short;
-			case TypeCode.UInt16:
-				return UnsignedShort;
-			case TypeCode.UInt32:
-				return UnsignedInt;
-			case TypeCode.String:
-				return AtomicString;
-			case TypeCode.DateTime:
-				return DateTime;
-			case TypeCode.Boolean:
-				return Boolean;
-			case TypeCode.Object:
-				return AnyType;
-			}
+			// typed Array
+			if (cliType.IsArray)
+				return Create (XPathAtomicValue.XmlTypeCodeFromRuntimeType (cliType.GetElementType (), true), Occurence.ZeroOrMore);
 			if (cliType == typeof (XmlQualifiedName))
 				return QName;
 			if (cliType == typeof (XPathNavigator) || cliType.IsSubclassOf (typeof (XPathNavigator)))
@@ -159,10 +136,7 @@ namespace Mono.Xml.XPath2
 				return SingleAnyAtomic;
 			if (cliType == typeof (XPathItem))
 				return SingleItem;
-			// FIXME: typed Array
-			if (cliType.IsSubclassOf (typeof (ICollection)))
-				return AnyType;
-			throw new NotSupportedException (String.Format ("Specified type is not supported for {0}", cliType));
+			return Create (XPathAtomicValue.XmlTypeCodeFromRuntimeType (cliType, true), Occurence.One);
 		}
 
 		internal static SequenceType Create (XmlTypeCode typeCode, Occurence occurence)
@@ -221,11 +195,13 @@ namespace Mono.Xml.XPath2
 		private SequenceType (XmlSchemaType schemaType, Occurence occurence)
 		{
 			this.schemaType = schemaType;
+			this.itemType = ItemType.AnyItem;
 			this.occurence = occurence;
 		}
 
 		internal SequenceType (ItemType itemType, Occurence occurence)
 		{
+			this.schemaType = XmlSchemaComplexType.AnyType;
 			this.itemType = itemType;
 			this.occurence = occurence;
 		}
@@ -291,12 +267,16 @@ namespace Mono.Xml.XPath2
 		public object ToRuntimeType (XPathSequence seq)
 		{
 			// FIXME: handle ZeroOrMore|OneOrMore
-//			switch (occurence) {
-//			case Occurence.One:
-//			case Occurence.Optional:
+			switch (occurence) {
+			case Occurence.One:
+			case Occurence.Optional:
 				XPathAtomicValue av = ExprSingle.Atomize (seq);
 				return av != null ? av.TypedValue : null;
-//			}
+			}
+			ArrayList al = new ArrayList ();
+			while (seq.MoveNext ())
+				al.Add (seq.Current.TypedValue);
+			return al.ToArray (XPathAtomicValue.RuntimeTypeFromXmlTypeCode (schemaType.TypeCode));
 //			return seq;
 		}
 	}

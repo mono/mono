@@ -42,7 +42,7 @@ namespace Mono.Xml.XPath2
 	public class XQueryCompileOptions
 	{
 		public XQueryCompileOptions ()
-			: this (new NameTable (), CultureInfo.InvariantCulture)
+			: this (new NameTable (), null)
 		{
 		}
 
@@ -50,6 +50,8 @@ namespace Mono.Xml.XPath2
 		{
 			this.nameTable = nameTable;
 			this.defaultCollation = defaultCollation;
+			if (this.defaultCollation == null)
+				this.defaultCollation = CultureInfo.InvariantCulture;
 
 			knownCollections = new Hashtable ();
 		}

@@ -1104,22 +1104,22 @@ namespace Mono.Xml.XQuery.Parser
 		private decimal ReadDecimal (bool floatingPoint)
 		{
 			bufferIndex = 0;
+			bool cond = true;
 			do {
 				int c = PeekChar ();
 				if (c < 0) {
-					ReadChar ();
-					break;
+					cond = false;
 				}
 				// FIXME: more complex
-				if (Char.IsNumber ((char) c)) {
+				else if (Char.IsNumber ((char) c) || c == '.') {
 					ReadChar ();
 					AddValueChar ((char) c);
 					continue;
 				}
 				else
-					break;
-			} while (true);
-			string s = (floatingPoint ? "" : ".") + CreateValueString ();
+					cond = false;
+			} while (cond);
+			string s = (floatingPoint ? "." : "") + CreateValueString ();
 			return decimal.Parse (s);
 		}
 

@@ -1,3 +1,15 @@
+2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SequenceType.cs : moved type inference method to XPathAtomicValue.
+	  Use IsArray in runtime type inference. Initialize fields completely.
+	  Handle collection to runtime type for functions that takes array.
+	* XPath2Expression.cs : Add whitespaces on serializing XPath items.
+	  EBV != atomized boolean value. Add Atomize() for XPathItem (Atomize()
+	  for XPathSequence should be removed in the future).
+	  Replaced some ExprSequence to ExprSingle for optimization.
+	* XQueryFunctionCliImpl.cs : Fixed some return types.
+	* XQueryTokenizer.cs : Fixed weird ReadDecimal().
+
 2004-08-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SequenceType.cs : added ToRuntimeType().

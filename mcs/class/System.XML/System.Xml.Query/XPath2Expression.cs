@@ -121,8 +121,14 @@ namespace Mono.Xml.XPath2
 		{
 			XmlWriter w = iter.Context.Writer;
 			XPathSequence result = Evaluate (iter);
-			foreach (XPathItem item in result)
+			bool initial = true;
+			foreach (XPathItem item in result) {
+				if (initial)
+					initial = false;
+				else
+					w.WriteWhitespace (" ");
 				WriteXPathItem (item, w);
+			}
 		}
 
 		private void WriteXPathItem (XPathItem item, XmlWriter w)
@@ -134,11 +140,43 @@ namespace Mono.Xml.XPath2
 				w.WriteValue (item.Value);
 		}
 
-		// get EBV
+		// get EBV (fn:boolean())
 		public virtual bool EvaluateAsBoolean (XPathSequence iter)
 		{
-			XPathAtomicValue v = Atomize (Evaluate (iter));
-			return v != null ? v.ValueAsBoolean : false;
+			XPathSequence result = Evaluate (iter);
+			if (!result.MoveNext ())
+				return false;
+			XPathAtomicValue v = Atomize (result.Current);
+			if (result.MoveNext ())
+				return true;
+			switch (v.XmlType.TypeCode) {
+			case XmlTypeCode.Boolean:
+				return v.ValueAsBoolean;
+			case XmlTypeCode.String:
+			case XmlTypeCode.UntypedAtomic:
+				return v.Value != String.Empty;
+			case XmlTypeCode.Float:
+				return v.ValueAsSingle != Single.NaN && v.ValueAsSingle != 0.0;
+			case XmlTypeCode.Double:
+				return v.ValueAsDouble != Double.NaN && v.ValueAsSingle != 0.0;
+			case XmlTypeCode.Integer:
+			case XmlTypeCode.NonPositiveInteger:
+			case XmlTypeCode.NegativeInteger:
+			case XmlTypeCode.Long:
+			case XmlTypeCode.Int:
+			case XmlTypeCode.Short:
+			case XmlTypeCode.Byte:
+			case XmlTypeCode.UnsignedInt:
+			case XmlTypeCode.UnsignedShort:
+			case XmlTypeCode.UnsignedByte:
+				return v.ValueAsInt64 != 0;
+			case XmlTypeCode.NonNegativeInteger:
+			case XmlTypeCode.UnsignedLong:
+			case XmlTypeCode.PositiveInteger:
+				return (ulong) (v.ValueAs (typeof (ulong))) != 0;
+			}
+			// otherwise, return true
+			return true;
 		}
 
 		public virtual int EvaluateAsInt (XPathSequence iter)
@@ -151,6 +189,15 @@ namespace Mono.Xml.XPath2
 		{
 			XPathAtomicValue v = Atomize (Evaluate (iter));
 			return v != null ? v.Value : String.Empty;
+		}
+
+		public static XPathAtomicValue Atomize (XPathItem item)
+		{
+			XPathNavigator nav = item as XPathNavigator;
+			if (nav != null)
+				return new XPathAtomicValue (nav.TypedValue, nav.SchemaInfo.SchemaType);
+			else
+				return (XPathAtomicValue) item;
 		}
 
 		// FIXME: What if iter contains list value?
@@ -183,13 +230,13 @@ namespace Mono.Xml.XPath2
 		public FLWORExpr (ForLetClauseCollection forlet, ExprSequence whereClause, OrderSpecList orderBy, ExprSingle ret)
 		{
 			this.fl = forlet;
-			this.whereClause = whereClause;
+			this.whereClause = new ParenthesizedExpr (whereClause);
 			this.orderBy = orderBy;
 			this.ret = ret;
 		}
 
 		ForLetClauseCollection fl;
-		ExprSequence whereClause;
+		ExprSingle whereClause;
 		OrderSpecList orderBy;
 		ExprSingle ret;
 
@@ -197,7 +244,7 @@ namespace Mono.Xml.XPath2
 			get { return fl; }
 		}
 
-		public ExprSequence WhereClause {
+		public ExprSingle WhereClause {
 			get { return whereClause; }
 		}
 
@@ -236,8 +283,9 @@ namespace Mono.Xml.XPath2
 				}
 			}
 			if (WhereClause != null)
-				for (int i = 0; i < WhereClause.Count; i++)
-					WhereClause [i] = WhereClause [i].Compile (compiler);
+//				for (int i = 0; i < WhereClause.Count; i++)
+//					WhereClause [i] = WhereClause [i].Compile (compiler);
+				whereClause = whereClause.Compile (compiler);
 			if (OrderBy != null)
 				foreach (OrderSpec os in OrderBy)
 					os.Expression = os.Expression.Compile (compiler);
@@ -601,6 +649,10 @@ namespace Mono.Xml.XPath2
 
 		public TypeswitchExpr (ExprSequence switchExpr, CaseClauseList caseList, XmlQualifiedName defaultVarName, ExprSingle defaultReturn)
 		{
+			this.switchExpr = switchExpr;
+			this.caseList = caseList;
+			this.defaultVarName = defaultVarName;
+			this.defaultReturn = defaultReturn;
 		}
 
 		public ExprSequence SwitchExpr {
@@ -725,16 +777,16 @@ namespace Mono.Xml.XPath2
 	{
 		public IfExpr (ExprSequence condition, ExprSingle trueExpr, ExprSingle falseExpr)
 		{
-			this.condition = condition;
+			this.condition = new ParenthesizedExpr (condition);
 			this.trueExpr = trueExpr;
 			this.falseExpr = falseExpr;
 		}
 
-		ExprSequence condition;
+		ExprSingle condition;
 		ExprSingle trueExpr;
 		ExprSingle falseExpr;
 
-		public ExprSequence Condition {
+		public ExprSingle Condition {
 			get { return condition; }
 			set { condition = value; }
 		}
@@ -761,8 +813,9 @@ namespace Mono.Xml.XPath2
 
 		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
 		{
-			for (int i = 0; i < Condition.Count; i++)
-				Condition [i] = Condition [i].Compile (compiler);
+//			for (int i = 0; i < Condition.Count; i++)
+//				Condition [i] = Condition [i].Compile (compiler);
+			condition = condition.Compile (compiler);
 			// FIXME: check if condition is constant, and returns trueExpr or falseExpr
 			TrueExpr = TrueExpr.Compile (compiler);
 			FalseExpr = FalseExpr.Compile (compiler);
@@ -781,10 +834,12 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			foreach (ExprSingle expr in Condition) {
-				if (expr.EvaluateAsBoolean (iter))
-					return TrueExpr.Evaluate (iter);
-			}
+//			foreach (ExprSingle expr in Condition) {
+//				if (expr.EvaluateAsBoolean (iter))
+//					return TrueExpr.Evaluate (iter);
+//			}
+			if (condition.EvaluateAsBoolean (iter))
+				return TrueExpr.Evaluate (iter);
 			return FalseExpr.Evaluate (iter);
 		}
 #endregion

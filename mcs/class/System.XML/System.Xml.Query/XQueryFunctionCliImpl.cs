@@ -213,32 +213,37 @@ namespace Mono.Xml.XPath2
 			throw new NotImplementedException ();
 		}
 
-		public static object FnCompare (string s1, string s2)
+		public static int FnCompare (XQueryContext ctx, string s1, string s2)
 		{
-			return string.Compare (s1, s2);
+			return FnCompare (s1, s2, ctx.DefaultCollation);
 		}
 
-		public static object FnCompare (string s1, string s2, string collation)
+		public static int FnCompare (XQueryContext ctx, string s1, string s2, string collation)
 		{
-			throw new NotImplementedException ();
+			return FnCompare (s1, s2, ctx.GetCulture (collation));
 		}
 
-		public static object FnConcat (object o1, object o2)
+		private static int FnCompare (string s1, string s2, CultureInfo ci)
+		{
+			return ci.CompareInfo.Compare (s1, s2);
+		}
+
+		public static string FnConcat (object o1, object o2)
 		{
 			return String.Concat (o1, o2);
 		}
 
-		public static object FnStringJoin (string [] strings, string separator)
+		public static string FnStringJoin (string [] strings, string separator)
 		{
 			return String.Join (separator, strings);
 		}
 
-		public static object FnSubstring (string src, double loc)
+		public static string FnSubstring (string src, double loc)
 		{
 			return src.Substring ((int) loc);
 		}
 
-		public static object FnSubstring (string src, double loc, double length)
+		public static string FnSubstring (string src, double loc, double length)
 		{
 			return src.Substring ((int) loc, (int) length);
 		}
@@ -253,62 +258,62 @@ namespace Mono.Xml.XPath2
 			return s.Length;
 		}
 
-		public static object FnNormalizeSpace (XQueryContext ctx)
+		public static string FnNormalizeSpace (XQueryContext ctx)
 		{
 			return FnNormalizeSpace (FnString (ctx));
 		}
 
 		[MonoTODO]
-		public static object FnNormalizeSpace (string s)
+		public static string FnNormalizeSpace (string s)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static object FnNormalizeUnicode (string arg)
+		public static string FnNormalizeUnicode (string arg)
 		{
 			return FnNormalizeUnicode (arg, "NFC");
 		}
 
 		[MonoTODO]
-		public static object FnNormalizeUnicode (string arg, string normalizationForm)
+		public static string FnNormalizeUnicode (string arg, string normalizationForm)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static object FnUpperCase (string arg)
+		public static string FnUpperCase (string arg)
 		{
 			// FIXME: supply culture
 			return arg.ToUpper ();
 		}
 
-		public static object FnLowerCase (string arg)
+		public static string FnLowerCase (string arg)
 		{
 			// FIXME: supply culture
 			return arg.ToLower ();
 		}
 
-		public static object FnTranslate (string arg, string mapString, string transString)
+		public static string FnTranslate (string arg, string mapString, string transString)
 		{
 			return arg == null ? null : arg.Replace (mapString, transString);
 		}
 
 		[MonoTODO]
-		public static object FnEscapeUri (string uriPart, bool escapeReserved)
+		public static string FnEscapeUri (string uriPart, bool escapeReserved)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static object FnContains (XQueryContext ctx, string arg1, string arg2)
+		public static bool FnContains (XQueryContext ctx, string arg1, string arg2)
 		{
 			return FnContains (arg1, arg2, ctx.DefaultCollation);
 		}
 
-		public static object FnContains (XQueryContext ctx, string arg1, string arg2, string collation)
+		public static bool FnContains (XQueryContext ctx, string arg1, string arg2, string collation)
 		{
 			return FnContains (arg1, arg2, ctx.GetCulture (collation));
 		}
 
-		private static object FnContains (string arg1, string arg2, CultureInfo ci)
+		private static bool FnContains (string arg1, string arg2, CultureInfo ci)
 		{
 			if (arg1 == null)
 				arg1 = String.Empty;
