@@ -1,3 +1,7 @@
+2002-10-06  Martin Baulig  <martin@gnome.org>
+
+	* test-164.cs: Added a few more testcases here.
+
 2002-10-04  Martin Baulig  <martin@gnome.org>
 
 	* test-154.cs: Added testcase from bug #31546.

@@ -336,4 +336,58 @@ public class X
 
 		return res;
 	}
+
+	static int test23 (object obj, int a, out bool test) {
+		if (obj == null)
+			throw new ArgumentNullException ();
+
+		if (a == 5) {
+			test = false;
+			return 4;
+		} else {
+			test = true;
+			return 5;
+		}
+	}
+
+	static long test24 (int a) {
+		long b;
+
+		switch (a) {
+		case 0:
+			return 4;
+		}
+
+		if (a > 2) {
+			if (a == 5)
+				b = 4;
+			else if (a == 6)
+				b = 5;
+			else
+				return 7;
+
+			Console.WriteLine (b);
+			return b;
+		}
+
+		return 4;
+	}
+
+	static long test25 (int a) {
+		long b, c;
+
+		try {
+			b = 5;
+		} catch (NotSupportedException) {
+			throw new InvalidOperationException ();
+		}
+
+		try {
+			c = 5;
+		} catch {
+			throw new InvalidOperationException ();
+		}
+
+		return b + c;
+	}
 }
