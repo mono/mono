@@ -1,3 +1,8 @@
+2003-11-16 Jackson Harper <jackson@ximian.com>
+
+	* ILParser.jay: Handle string instructions that are given byte
+	arrays. This fixes bug #51039.
+	
 2003-10-28 Jackson Harper <jackson@ximian.com>
 
 	* ILParser.jay: Use the ExternTable to create external type

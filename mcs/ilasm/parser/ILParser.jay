@@ -24,9 +24,11 @@ namespace Mono.ILASM {
                 private string pinvoke_mod;
                 private string pinvoke_meth;
                 private PEAPI.PInvokeAttr pinvoke_attr;
-                
-		public ILParser (CodeGen codegen) {
+                private StreamReader stream;
+                                
+		public ILParser (CodeGen codegen, StreamReader stream) {
 			this.codegen = codegen;
+                        this.stream = stream;
 		}
 
 		public CodeGen CodeGen {
@@ -1950,8 +1952,20 @@ instr			: INSTR_NONE
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
                                         codegen.CurrentMethodDef.AddInstr (new LdstrInstr ((string) $2));
                           }
-			| INSTR_STRING K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
-			| INSTR_STRING K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS		// ****** ADDED
+			| INSTR_STRING K_BYTEARRAY ASSIGN OPEN_PARENS
+                          bytes CLOSE_PARENS
+                          {
+                                string str = stream.CurrentEncoding.GetString ((byte[]) $5);
+                                if ((MiscInstr) $1 == MiscInstr.ldstr)
+                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (str));
+                          }
+			| INSTR_STRING K_BYTEARRAY OPEN_PARENS bytes
+                          CLOSE_PARENS
+                          {
+                                string str = stream.CurrentEncoding.GetString ((byte[]) $4);
+                                if ((MiscInstr) $1 == MiscInstr.ldstr)
+                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (str));
+                          }
 			| INSTR_SIG call_conv type OPEN_PARENS type_list CLOSE_PARENS
                           {
                                 ArrayList arg_list = (ArrayList) $5;
