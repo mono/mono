@@ -2685,8 +2685,7 @@ namespace Mono.CSharp {
 				!Location.IsNull (Location) &&
 				!Location.IsNull (block.EndLocation)) {
 
-				MethodToken token = ConstructorBuilder.GetToken ();
-				sw.OpenMethod (token, Location, block.EndLocation);
+				sw.OpenMethod (parent, ConstructorBuilder, Location, block.EndLocation);
 
 				generate_debugging = true;
 			}
@@ -3118,8 +3117,7 @@ namespace Mono.CSharp {
 					SymbolWriter sw = CodeGen.SymbolWriter;
 
 					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0)) {
-						MethodToken token = MethodBuilder.GetToken ();
-						sw.OpenMethod (token, Location, Location);
+						sw.OpenMethod (parent, MethodBuilder, Location, Location);
 						sw.CloseMethod ();
 					}
 
@@ -3168,8 +3166,7 @@ namespace Mono.CSharp {
 
 				if ((sw != null) && !Location.IsNull (Location) &&
 				    !Location.IsNull (block.EndLocation)) {
-					MethodToken token = MethodBuilder.GetToken ();
-					sw.OpenMethod (token, Location, block.EndLocation);
+					sw.OpenMethod (parent, MethodBuilder, Location, block.EndLocation);
 
 					ec.EmitTopBlock (block, ParameterInfo, Location);
 

@@ -1,5 +1,21 @@
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
+	* namespace.cs (Namespace..ctor): Added SourceFile argument.
+	(Namespace.DefineNamespaces): New static public method; this is
+	called when we're compiling with debugging to add all namespaces
+	to the symbol file.
+
+	* tree.cs (Tree.RecordNamespace): Added SourceFile argument and
+	pass it to the Namespace's .ctor.
+
+	* symbolwriter.cs (SymbolWriter.OpenMethod): Added TypeContainer
+	and MethodBase arguments; pass the namespace ID to the symwriter;
+	pass the MethodBase instead of the token to the symwriter.
+	(SymbolWriter.DefineNamespace): New method to add a namespace to
+	the symbol file.
+
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
 	* symbolwriter.cs: New file.  This is a wrapper around
 	ISymbolWriter with a cleaner API.  We'll dynamically Invoke()
 	methods here in near future.
