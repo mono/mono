@@ -194,7 +194,7 @@ namespace System.IO {
                 
                 public override void Close() {
                         if( streamClosed ) {
-                                throw new IOException( "MemoryStream already closed" );
+                                return;
                         }
 
 			streamClosed = true;

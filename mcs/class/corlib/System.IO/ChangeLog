@@ -1,3 +1,8 @@
+2002-09-16  Nick Drochak  <ndrochak@gol.com>
+
+	* MemoryStream.cs (Close): Don't throw an exception if the stream
+	is already closed.
+
 2002-09-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* FileStream.cs (Dispose): Call FlushBuffer(), and not Flush, as
