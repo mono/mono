@@ -201,6 +201,7 @@ System.Security.Principal/WindowsPrincipalTest.cs
 System.Security/SecurityElementTest.cs
 System.Security/SecurityExceptionTest.cs
 System.Security/SecurityManagerTest.cs
+System/SingleTest.cs
 System/SingleFormatterTest.cs
 System/StringTest.cs
 System.Text/ASCIIEncodingTest.cs

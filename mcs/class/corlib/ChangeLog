@@ -1,3 +1,7 @@
+2004-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added SingleTest to the build.
+
 2005-05-18  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* corlib_test.dll.sources: added PropertyInfoTest
