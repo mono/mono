@@ -1,3 +1,8 @@
+2004-10-14 Anirban Bhattacharjee <banirban@novell.com>
+	* ForB.vb: Correction in test case
+	* ForC.vb: New test case
+	* Test.Sources: ForC.vb got included
+
 2004-10-15  Jambunathan K  <kjambunathan@novell.com>
 	* Audited existing negative test cases that emit multiple,
 	mutually independent error messages and splitted them in to

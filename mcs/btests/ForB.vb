@@ -1,15 +1,11 @@
-REM LineNo: 19
-REM ExpectedError: BC30064
-REM ErrorMessage: 'ReadOnly' variable cannot be target of an assignment.
-
 Imports System
 
 Module ForB
 
     Class C1
-        Public ReadOnly index As Integer = 0
+        Public index As Integer = 0
 
-        Sub New()
+        Sub x()
             For index = 0 To 2
                 Console.WriteLine(index)
             Next
@@ -19,6 +15,7 @@ Module ForB
 
     Sub main()
         Dim c As New C1()
+	c.x ()
         If c.index <> 3 Then
             Throw New Exception("#ForB1")
         End If
