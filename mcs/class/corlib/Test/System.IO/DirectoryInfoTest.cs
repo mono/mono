@@ -147,6 +147,20 @@ namespace MonoTests.System.IO
         	}
 
 		[Test]
+		public void CreateSubdirectory ()
+		{
+			string sub_path = Path.Combine ("test01", "test02");
+			try {
+				DirectoryInfo info = new DirectoryInfo (TempFolder);
+				info.CreateSubdirectory (sub_path);
+				Assert ("test#01", Directory.Exists (Path.Combine (TempFolder, sub_path)));
+			} finally {
+				DeleteDir (Path.Combine (TempFolder, sub_path));
+			}
+				
+		}
+
+		[Test]
 		public void Delete1 ()
 		{
             	string path = TempFolder + "/DIT.Delete1.Test";
