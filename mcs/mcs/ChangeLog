@@ -224,7 +224,6 @@ Mon Apr  8 06:29:03  2002 Piers Haken <piersh@friskit.com>
 	* ecore.cs (Expression.MemberLookup): On interfaces, lookup
 	members also on the parent interfaces recursively.
 
->>>>>>> 1.390
 2002-03-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* report.cs: Use new formats, since Gonzalo finished the missing
