@@ -1,3 +1,9 @@
+2004-02-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ObjectWriter.cs: Get the assembly of a member from the member's type, not
+	  from the type of the value, because that is the type written in the
+	  metadata section of the object.
+
 2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ObjectReader.cs: Field names can include the type name if the field

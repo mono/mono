@@ -163,11 +163,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			// If there are assemblies that where not registered before this object,
 			// write them now
 
-			foreach (object value in values)
+			foreach (Type type in metadata.Types)
 			{
-				if (value == null) continue;
-
-				Type memberType = value.GetType();
+				Type memberType = type;
 				while (memberType.IsArray) 
 					memberType = memberType.GetElementType();
 
