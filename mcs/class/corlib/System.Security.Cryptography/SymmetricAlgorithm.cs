@@ -234,7 +234,7 @@ namespace System.Security.Cryptography {
 		}
 		
 		/// <summary>
-		/// Creates the default implementation of the default symmetric algorithm (RC2).
+		/// Creates the default implementation of the default symmetric algorithm (Rijndael).
 		/// </summary>
 		public static SymmetricAlgorithm Create () {
 			return Rijndael.Create();

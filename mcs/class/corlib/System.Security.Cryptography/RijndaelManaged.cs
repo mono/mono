@@ -45,7 +45,7 @@ namespace System.Security.Cryptography {
 		/// </remarks>
 		[MonoTODO]
 		public override void GenerateKey() {
-			throw new System.NotImplementedException();
+			KeyValue = new byte[KeySizeValue / 8];
 		}
 		
 		/// <summary>

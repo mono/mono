@@ -13,7 +13,7 @@ namespace System.Security.Cryptography {
 	
 	[MonoTODO]
 	public abstract class Rijndael : SymmetricAlgorithm {
-		public static new Rijndael Create () { return null; }
+		public static new Rijndael Create () { return new RijndaelManaged(); }
 		public static new Rijndael Create (string alg) { return Create (); }
 		
 		public Rijndael () {
