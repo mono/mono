@@ -1,3 +1,13 @@
+2004-09-07  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Throw documented exceptions when getting stdin,
+	stdout or stderr and they haven't been redirected.  Check that
+	CreatePipe didn't fail, throw exceptions if it did.  Close
+	redirected streams when the process is disposed, rather than rely
+	on the GC disposing them later.  Makes timeline much happier,
+	because it could run out of file descriptors between GC
+	collections.
+
 2004-09-06  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Make Dispose() actually dispose things.
