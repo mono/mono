@@ -1,4 +1,9 @@
 
+Thu Dec 5 16:13:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: delete the critical section of a sync block,
+	spotted and fixed by tum@veridicus.com (Thong (Tum) Nguyen).
+
 Thu Dec 5 12:52:52 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* pedump.c, cil-coff.h, monosn.c: add strong name cli header flag.
