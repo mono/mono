@@ -1,3 +1,9 @@
+2003-11-15  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_bind_generic_parameters): If we're
+	a generic instance (instead of a generic type declaration) with
+	unbound generic parameters, bind them to our actual types.
+
 2003-11-14  Martin Baulig  <martin@ximian.com>
 
 	* reflection.h (MonoReflectionGenericInst): Added `MonoArray *interfaces'.
