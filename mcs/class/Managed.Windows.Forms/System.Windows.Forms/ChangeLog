@@ -1,5 +1,10 @@
 2004-12-09  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* Label.cs: autosize works in text change and removes unnecessary
+	invalidate
+
+2004-12-09  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* ThemeWin32Classic.cs, XplatUIOSX.cs, XplatUIWin32.cs:
 	remove warnings
 

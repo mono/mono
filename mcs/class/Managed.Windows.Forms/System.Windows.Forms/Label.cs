@@ -487,8 +487,9 @@ namespace System.Windows.Forms
 
     		protected override void OnTextChanged (EventArgs e)
     		{
-			base.OnTextChanged (e);
+			base.OnTextChanged (e);			
 			CalcPreferredWidth ();
+			CalcAutoSize ();
 			Refresh ();
     		}
 
@@ -531,16 +532,14 @@ namespace System.Windows.Forms
 
 		private void CalcAutoSize ()
     		{
-    			if (IsHandleCreated == false)
+    			if (IsHandleCreated == false || AutoSize == false)
     				return;
 
     			CalcPreferredWidth ();
     			CalcPreferredHeight ();
 
     		 	Width =  PreferredWidth;
-    		 	Height =  PreferredHeight;
-
-    		 	Invalidate ();
+    		 	Height =  PreferredHeight;    		 	
     		}
 
     		private void CalcPreferredHeight ()
