@@ -17,15 +17,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Text;
 
@@ -40,6 +41,7 @@ namespace System.Windows.Forms {
 		internal ContentAlignment	text_alignment;
 		private bool			is_default;
 		internal bool			is_pressed;
+		internal bool			enter_state;
 		internal bool			redraw;
 		internal StringFormat		text_format;
 		#endregion	// Local Variables
@@ -89,6 +91,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal virtual void HaveDoubleClick() {
+			// override me
+		}
+
 		private void RedrawEvent(object sender, System.EventArgs e) {
 			Redraw();
 		}
@@ -128,6 +134,8 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+		[Localizable(true)]
+		[DefaultValue(FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
 			get {
 				return flat_style;
@@ -139,6 +147,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		[Localizable(true)]
 		public Image Image {
 			get {
 				return image;
@@ -150,6 +159,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue(ContentAlignment.MiddleCenter)]
 		public ContentAlignment ImageAlign {
 			get {
 				return image_alignment;
@@ -161,6 +172,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue(-1)]
+		[Editor("System.Windows.Forms.Design.ImageIndexEditor, System.Design", typeof(System.Drawing.Design.UITypeEditor))]
+		[TypeConverter(typeof(ImageIndexConverter))]
 		public int ImageIndex {
 			get {
 				if (image_list==null) {
@@ -198,16 +213,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
 		public new ImeMode ImeMode {
 			get {
 				return ime_mode;
 			}
 
 			set {
-				ime_mode = value;
+				if (ime_mode != value) {
+					ime_mode = value;
+
+					if (ImeModeChanged != null) {
+						ImeModeChanged(this, EventArgs.Empty);
+					}
+				}
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue(ContentAlignment.MiddleCenter)]
 		public virtual ContentAlignment TextAlign {
 			get {
 				return text_alignment;
@@ -343,14 +367,21 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnKeyDown(KeyEventArgs kevent) {
-			if (is_enabled && (kevent.KeyData == Keys.Enter || kevent.KeyData == Keys.Space)) {
-				OnClick(EventArgs.Empty);
+			if (is_enabled && (kevent.KeyData == Keys.Space)) {
+				enter_state = is_entered;
+				is_entered = true;
+				OnMouseDown(new MouseEventArgs(MouseButtons.Left, 1, 2, 2, 0));
 				kevent.Handled=true;
 			}
 			base.OnKeyDown(kevent);
 		}
 
 		protected override void OnKeyUp(KeyEventArgs kevent) {
+			if (is_enabled && (kevent.KeyData == Keys.Space)) {
+				OnMouseUp(new MouseEventArgs(MouseButtons.Left, 1, 2, 2, 0));
+				is_entered = enter_state;
+				kevent.Handled=true;
+			}
 			base.OnKeyUp(kevent);
 		}
 
@@ -459,8 +490,28 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void WndProc(ref Message m) {
-			base.WndProc(ref m);
+			switch((Msg)m.Msg) {
+				case Msg.WM_LBUTTONDBLCLK: {
+					HaveDoubleClick();
+					break;
+				}
+
+				case Msg.WM_MBUTTONDBLCLK: {
+					HaveDoubleClick();
+					break;
+				}
+
+				case Msg.WM_RBUTTONDBLCLK: {
+					HaveDoubleClick();
+					break;
+				}
+			}
+			base.WndProc (ref m);
 		}
 		#endregion	// Public Instance Properties
+
+		#region	Events
+		public new event EventHandler ImeModeChanged;
+		#endregion	// Events
 	}
 }

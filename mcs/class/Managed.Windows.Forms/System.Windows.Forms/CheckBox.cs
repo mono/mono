@@ -27,9 +27,12 @@
 // COMPLETE
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Windows.Forms {
+	[DefaultProperty("Checked")]
+	[DefaultEvent("CheckedChanged")]
 	public class CheckBox : ButtonBase {
 		#region Local Variables
 		internal Appearance		appearance;
@@ -49,7 +52,22 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
+		#region	Internal Methods
+		internal override void Draw (PaintEventArgs pe) {
+			if (redraw) {
+				ThemeEngine.Current.DrawCheckBox (this.DeviceContext, this.ClientRectangle, this);
+				redraw = false;
+			}
+		}
+
+		internal override void HaveDoubleClick() {
+			if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
+		}
+		#endregion	// Internal Methods
+
 		#region Public Instance Properties
+		[DefaultValue(Appearance.Normal)]
+		[Localizable(true)]
 		public Appearance Appearance {
 			get {
 				return appearance;
@@ -66,6 +84,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool AutoCheck {
 			get {
 				return auto_check;
@@ -76,6 +95,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Bindable(true)]
+		[Localizable(true)]
+		[DefaultValue(ContentAlignment.MiddleLeft)]
 		public ContentAlignment CheckAlign {
 			get {
 				return check_alignment;
@@ -90,6 +112,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Bindable(true)]
+		[RefreshProperties(RefreshProperties.All)]
+		[DefaultValue(false)]
 		public bool Checked {
 			get {
 				if (check_state != CheckState.Unchecked) {
@@ -111,6 +136,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(CheckState.Unchecked)]
+		[RefreshProperties(RefreshProperties.All)]
+		[Bindable(true)]
 		public CheckState CheckState {
 			get {
 				return check_state;
@@ -132,6 +160,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(ContentAlignment.MiddleLeft)]
+		[Localizable(true)]
 		public override ContentAlignment TextAlign {
 			get {
 				return text_alignment;
@@ -146,6 +176,7 @@ namespace System.Windows.Forms {
 		}
 
 
+		[DefaultValue(false)]
 		public bool ThreeState {
 			get {
 				return three_state;
@@ -244,13 +275,8 @@ namespace System.Windows.Forms {
 		public event EventHandler	CheckStateChanged;
 		#endregion	// Events
 
-		#region	Internal drawing code
-		internal override void Draw (PaintEventArgs pe) {
-			if (redraw) {
-				ThemeEngine.Current.DrawCheckBox (this.DeviceContext, this.ClientRectangle, this);
-				redraw = false;
-			}
-		}
-		#endregion	// Internal drawing code
+		#region Events
+		public event EventHandler DoubleClick;
+		#endregion	// Events
 	}
 }

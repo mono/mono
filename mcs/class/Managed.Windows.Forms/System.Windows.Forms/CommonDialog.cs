@@ -26,7 +26,10 @@
 
 // NOT COMPLETE
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
+	[ToolboxItemFilter("System.Windows.Forms")]
 	public abstract class CommonDialog : System.ComponentModel.Component {
 		#region DialogForm
 		internal class DialogForm : Form {

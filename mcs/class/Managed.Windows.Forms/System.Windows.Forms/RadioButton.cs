@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -25,10 +25,15 @@
 
 // COMPLETE
 
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+	[ComVisible(true)]
+	[DefaultProperty("Checked")]
+	[DefaultEvent("CheckedChanged")]
 	public class RadioButton : ButtonBase {
 		#region Local Variables
 		internal Appearance		appearance;
@@ -126,9 +131,22 @@ namespace System.Windows.Forms {
 
 			this.TabStop = true;
 		}
+
+		internal override void HaveDoubleClick() {
+			if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
+		}
+
+		internal override void Draw (PaintEventArgs pe) {
+			if (redraw) {
+				ThemeEngine.Current.DrawRadioButton(this.DeviceContext, this.ClientRectangle, this);
+				redraw = false;
+			}
+		}
 		#endregion	// Private Methods
 
 		#region Public Instance Properties
+		[DefaultValue(Appearance.Normal)]
+		[Localizable(true)]
 		public Appearance Appearance {
 			get {
 				return appearance;
@@ -145,6 +163,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool AutoCheck {
 			get {
 				return auto_check;
@@ -155,6 +174,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Bindable(true)]
+		[Localizable(true)]
+		[DefaultValue(ContentAlignment.MiddleLeft)]
 		public ContentAlignment CheckAlign {
 			get {
 				return radiobutton_alignment;
@@ -169,6 +191,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool Checked {
 			get {
 				if (check_state != CheckState.Unchecked) {
@@ -191,6 +214,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(false)]
 		public new bool TabStop {
 			get {
 				return tab_stop;
@@ -201,6 +225,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(ContentAlignment.MiddleLeft)]
+		[Localizable(true)]
 		public override ContentAlignment TextAlign {
 			get {
 				return text_alignment;
@@ -255,6 +281,10 @@ namespace System.Windows.Forms {
 
 		protected override void OnClick(EventArgs e) {
 			if (auto_check) {
+				if (!Checked) {
+					Checked = true;
+				}
+			} else {
 				Checked = !Checked;
 			}
 		}
@@ -279,15 +309,7 @@ namespace System.Windows.Forms {
 		#region Events
 		public event EventHandler	AppearanceChanged;
 		public event EventHandler	CheckedChanged;
+		public event EventHandler	DoubleClick;
 		#endregion	// Events
-
-		#region Internal Drawing Code
-		internal override void Draw (PaintEventArgs pe) {
-			if (redraw) {
-				ThemeEngine.Current.DrawRadioButton(this.DeviceContext, this.ClientRectangle, this);
-				redraw = false;
-			}
-		}
-		#endregion	// Internal Drawing Code
 	}
 }

@@ -1,5 +1,28 @@
 2005-01-18  Peter Bartok  <pbartok@novell.com>
 
+	* Button.cs: Implemented DoubleClick event
+	* ButtonBase.cs:
+	  - Fixed keyboard handling to behave like MS, where the press of 
+	    Spacebar is equivalent to a mousedown, and the key release is 
+	    equivalent to mouseup. Now a spacebar push will give the same
+	    visual feedback like a mouse click.
+	  - Added missing attributes
+	  - Added ImeModeChanged event
+	  - Added support for generating DoubleClick event for derived classes
+	* CheckBox.cs:
+	  - Implemented DoubleClick event
+	  - Added missing attributes
+	* CommonDialog.cs: Added missing attribute
+	* ContextMenu.cs: Added missing attributes
+	* RadioButton.cs:
+	  - AutoChecked buttons do not allow to be unselected when clicked 
+	    (otherwise we might end up with no selected buttons in a group)
+	  - Added missing attributes
+	  - Implemented DoubleClickEvent
+	* ThreadExceptionDialog.cs: Enabled TextBox code
+
+2005-01-18  Peter Bartok  <pbartok@novell.com>
+
 	* Form.cs: Removed debug output
 	* Button.cs: Added support for DoubleClick method
 

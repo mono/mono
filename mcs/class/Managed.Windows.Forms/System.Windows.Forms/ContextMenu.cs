@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -25,13 +25,16 @@
 //
 
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 
 namespace System.Windows.Forms
 {
+	[DefaultEvent("Popup")]
 	public class ContextMenu : Menu
 	{
 		private RightToLeft right_to_left;
@@ -52,11 +55,14 @@ namespace System.Windows.Forms
 		}
 		 
 		#region Public Properties
+		[Localizable(true)]
 		public virtual RightToLeft RightToLeft {
 			get { return right_to_left; }
 			set { right_to_left = value; }
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Control SourceControl {
 			get { return src_control; }
 		}

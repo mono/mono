@@ -43,9 +43,7 @@ namespace System.Windows.Forms
 		private System.Windows.Forms.Button buttonDetails;
 		private System.Windows.Forms.Label labelException;
 		private System.Windows.Forms.Label label1;
-#if TEXTBOX
 		private System.Windows.Forms.TextBox textBoxDetails;
-#endif
 		private System.Windows.Forms.Label helpText;
 
 		private void InitializeComponent()
@@ -55,9 +53,7 @@ namespace System.Windows.Forms
 			this.buttonIgnore = new System.Windows.Forms.Button();
 			this.buttonDetails = new System.Windows.Forms.Button();
 			this.labelException = new System.Windows.Forms.Label();
-#if TEXTBOX
 			this.textBoxDetails = new System.Windows.Forms.TextBox();
-#endif
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -108,7 +104,6 @@ namespace System.Windows.Forms
 			// 
 			// textBoxDetails
 			// 
-#if TEXTBOX
 			this.textBoxDetails.Location = new System.Drawing.Point(8, 168);
 			this.textBoxDetails.Multiline = true;
 			this.textBoxDetails.Name = "textBoxDetails";
@@ -119,7 +114,6 @@ namespace System.Windows.Forms
 			this.textBoxDetails.TabStop = false;
 			this.textBoxDetails.Text = "";
 			this.textBoxDetails.WordWrap = false;
-#endif
 			// 
 			// label1
 			// 
@@ -136,9 +130,7 @@ namespace System.Windows.Forms
 			this.CancelButton = this.buttonAbort;
 			this.ClientSize = new System.Drawing.Size(428, 374);
 			this.Controls.Add(this.label1);
-#if TEXTBOX
 			this.Controls.Add(this.textBoxDetails);
-#endif
 			this.Controls.Add(this.labelException);
 			this.Controls.Add(this.buttonDetails);
 			this.Controls.Add(this.buttonIgnore);
@@ -189,9 +181,7 @@ namespace System.Windows.Forms
 				sb.AppendFormat ("Location:\t{0}" + Environment.NewLine, an.CodeBase);
 				sb.Append (Environment.NewLine);
 			}
-#if TEXTBOX
 			textBoxDetails.Text = sb.ToString ();
-#endif
 		}
 
 		void RefreshDetails ()

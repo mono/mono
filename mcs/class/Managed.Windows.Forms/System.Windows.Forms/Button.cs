@@ -45,6 +45,12 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
+		#region	Internal methods
+		internal override void HaveDoubleClick() {
+			if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
+		}
+		#endregion	// Internal methods
+
 		#region Public Instance Properties
 		[DefaultValue(DialogResult.None)]
 		public DialogResult DialogResult {		// IButtonControl
@@ -105,22 +111,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void WndProc(ref Message m) {
-			switch((Msg)m.Msg) {
-				case Msg.WM_LBUTTONDBLCLK: {
-					if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
-					break;
-				}
-
-				case Msg.WM_MBUTTONDBLCLK: {
-					if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
-					break;
-				}
-
-				case Msg.WM_RBUTTONDBLCLK: {
-					if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
-					break;
-				}
-			}
 			base.WndProc (ref m);
 		}
 		#endregion	// Protected Instance Methods
