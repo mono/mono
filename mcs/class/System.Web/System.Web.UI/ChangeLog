@@ -1,3 +1,7 @@
+2004-12-10 Lluis Sanchez Gual <lluis@novell.com>
+
+	* ClientScriptManager.cs: Added GetScriptLiteral helper method.
+	
 2004-12-02 Lluis Sanchez Gual <lluis@novell.com>
 
 	* Page.cs: Added support for callback events. Moved theform variable

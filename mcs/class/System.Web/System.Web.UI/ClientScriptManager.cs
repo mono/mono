@@ -268,5 +268,18 @@ namespace System.Web.UI
 				writer.WriteLine();
 			}
 		}
+		
+		internal static string GetScriptLiteral (object ob)
+		{
+			if (ob is string) {
+				string s = (string)ob;
+				s = s.Replace ("\"", "\\\"");
+				return "\"" + s + "\"";
+			} else if (ob is bool) {
+				return ob.ToString().ToLower();
+			} else {
+				return ob.ToString ();
+			}
+		}
 	}
 }
