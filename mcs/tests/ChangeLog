@@ -1,3 +1,7 @@
+2002-08-03  Martin Baulig  <martin@gnome.org>
+
+	* test-156.cs, error-2.cs: New tests.
+
 2002-08-02  Martin Baulig  <martin@gnome.org>
 
 	* makefile: Moved test-66.cs to TEST_NOPASS since there's currently
