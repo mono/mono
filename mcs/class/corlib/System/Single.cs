@@ -223,10 +223,8 @@ namespace System
 
 		public string ToString (string format, IFormatProvider provider)
 		{
-			if (provider is CultureInfo)
-				return SingleFormatter.NumberToString (format, ((CultureInfo) provider).NumberFormat, m_value);
-			else
-				return SingleFormatter.NumberToString (format, (NumberFormatInfo) provider, m_value);
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
+			return NumberFormatter.NumberToString (format, m_value, nfi);
 		}
 
 		// ============= IConvertible Methods ============ //

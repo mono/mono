@@ -1,3 +1,19 @@
+2005-02-26  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* NumberFormatter.cs: Improved performance and memory usage
+	when integer standard format.
+	* SByte.cs:
+	* Int16.cs:
+	* Int32.cs:
+	* Int64.cs:
+	* Byte.cs:
+	* UInt16.cs:
+	* UInt32.cs:
+	* UInt64.cs:
+	* Single.cs:
+	* Double.cs:
+	* TimeSpan.cs: Improved these directly call to NumberFormatter.
+
 2005-02-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TermInfoDriver.cs: set the xmit mode if available. Handle key input

@@ -550,12 +550,12 @@ namespace System {
 
 		public override string ToString ()
 		{
-			return IntegerFormatter.FormatGeneral(m_value, 0, null, true);
+			return NumberFormatter.FormatGeneral (new NumberFormatter.NumberStore (m_value));
 		}
 
 		public string ToString (IFormatProvider fp)
 		{
-			return ToString (null, fp);
+			return NumberFormatter.FormatGeneral (new NumberFormatter.NumberStore (m_value), fp);
 		}
 
 		public string ToString (string format)
@@ -566,12 +566,7 @@ namespace System {
 		public string ToString (string format, IFormatProvider fp )
 		{
 			NumberFormatInfo nfi = NumberFormatInfo.GetInstance( fp );
-			
-			// use "G" when format is null or String.Empty
-			if ((format == null) || (format.Length == 0))
-				format = "G";
-
-			return IntegerFormatter.NumberToString (format, nfi, m_value);
+			return NumberFormatter.NumberToString (format, m_value, nfi);
 		}
 
 		// =========== IConvertible Methods =========== //

@@ -423,8 +423,8 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			NumberFormatInfo nfi = fp != null ? fp.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo : null;
-			return DoubleFormatter.NumberToString (format, nfi, m_value);
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (fp);
+			return NumberFormatter.NumberToString (format, m_value, nfi);
 		}
 
 		// =========== IConvertible Methods =========== //

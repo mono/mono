@@ -367,12 +367,12 @@ namespace System
 
 		public override string ToString ()
 		{
-			return ToString (null, null);
+			return NumberFormatter.FormatGeneral (new NumberFormatter.NumberStore (m_value));
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			return ToString (null, provider);
+			return NumberFormatter.FormatGeneral (new NumberFormatter.NumberStore (m_value), provider);
 		}
 
 		public string ToString (string format)
@@ -383,12 +383,7 @@ namespace System
 		public string ToString (string format, IFormatProvider provider)
 		{
 			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
-
-			// use "G" when format is null or String.Empty
-			if ((format == null) || (format.Length == 0))
-				format = "G";
-
-			return IntegerFormatter.NumberToString (format, nfi, m_value);
+			return NumberFormatter.NumberToString (format, m_value, nfi);
 		}
 
 		// =========== IConvertible Methods =========== //

@@ -361,16 +361,17 @@ namespace System
 				sb.Append ('.');
 			}
 
-			sb.Append (IntegerFormatter.FormatDecimal (Math.Abs (Hours), 2, 4));
+			System.Globalization.NumberFormatInfo nfi = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
+			sb.Append (NumberFormatter.FormatDecimal (new NumberFormatter.NumberStore ((int)Math.Abs (Hours)), 2, nfi));
 			sb.Append (':');
-			sb.Append (IntegerFormatter.FormatDecimal (Math.Abs (Minutes), 2, 4));
+			sb.Append (NumberFormatter.FormatDecimal (new NumberFormatter.NumberStore ((int)Math.Abs (Minutes)), 2, nfi));
 			sb.Append (':');
-			sb.Append (IntegerFormatter.FormatDecimal (Math.Abs (Seconds), 2, 4));
+			sb.Append (NumberFormatter.FormatDecimal (new NumberFormatter.NumberStore ((int)Math.Abs (Seconds)), 2, nfi));
 
 			int fractional = (int) Math.Abs (_ticks % TicksPerSecond);
 			if (fractional != 0) {
 				sb.Append ('.');
-				sb.Append (IntegerFormatter.FormatDecimal (Math.Abs (fractional), 7, 4));
+				sb.Append (NumberFormatter.FormatDecimal (new NumberFormatter.NumberStore (fractional), 7, nfi));
 			}
 
 			return sb.ToString ();
