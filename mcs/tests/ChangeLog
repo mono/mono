@@ -1,5 +1,10 @@
 2004-11-09  Martin Baulig  <martin@ximian.com>
 
+	* gen-86.cs, gen-87.cs, gen-88.cs, gen-89.cs, gen-90.cs,
+	gen-91.cs, gen-92.cs, gen-93.cs, gen-94.cs, gen-96.cs: New tests.
+
+2004-11-09  Martin Baulig  <martin@ximian.com>
+
 	* test-315.cs: New test.
 
 2004-11-04  Raja R Harinath  <rharinath@novell.com>
