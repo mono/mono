@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (sebastien@ximian.com)
+//	Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 // (C) 2004 Novell (http://www.novell.com)
 //
 
@@ -88,6 +90,12 @@ public class CryptoConfig {
 	private const string defaultXPath = defaultNamespace + "Xml.XmlDsigXPathTransform" + xmlAssembly;
 	private const string defaultXslt = defaultNamespace + "Xml.XmlDsigXsltTransform" + xmlAssembly;
 	private const string defaultEnveloped = defaultNamespace + "Xml.XmlDsigEnvelopedSignatureTransform" + xmlAssembly;
+#if NET_2_0
+	private const string defaultXmlDecryption = defaultNamespace + "Xml.XmlDecryptionTransform" + xmlAssembly;
+	private const string defaultExcC14N = defaultNamespace + "Xml.XmlDsigExcC14NTransform" + xmlAssembly;
+	private const string defaultExcC14NWithComments = defaultNamespace + "Xml.XmlDsigExcC14NWithCommentsTransform" + xmlAssembly;
+#endif
+
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string defaultX509Data = defaultNamespace + "Xml.KeyInfoX509Data" + xmlAssembly;
 	private const string defaultKeyName = defaultNamespace + "Xml.KeyInfoName" + xmlAssembly;
@@ -164,6 +172,12 @@ public class CryptoConfig {
 	private const string urlXPath = "http://www.w3.org/TR/1999/REC-xpath-19991116";
 	private const string urlXslt = "http://www.w3.org/TR/1999/REC-xslt-19991116";
 	private const string urlEnveloped = urlXmlDsig + "enveloped-signature";		// no space
+#if NET_2_0
+	private const string urlXmlDecryption = "http://www.w3.org/2002/07/decrypt#XML";
+	private const string urlExcC14N = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
+	private const string urlExcC14NWithComments = "http://www.w3.org/2001/10/xml-exc-c14n#";
+#endif
+
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string urlX509Data = urlXmlDsig + " X509Data";			// space is required
 	private const string urlKeyName = urlXmlDsig + " KeyName";			// space is required
@@ -253,6 +267,11 @@ public class CryptoConfig {
 		algorithms.Add (urlXPath, defaultXPath);
 		algorithms.Add (urlXslt, defaultXslt);
 		algorithms.Add (urlEnveloped, defaultEnveloped);
+#if NET_2_0
+		algorithms.Add (urlExcC14N, defaultExcC14N);
+		algorithms.Add (urlExcC14NWithComments, defaultExcC14NWithComments);
+		algorithms.Add (urlXmlDecryption, defaultXmlDecryption);
+#endif
 		// LAMESPEC: only documentated in ".NET Framework Security" book
 		algorithms.Add (urlX509Data, defaultX509Data);
 		algorithms.Add (urlKeyName, defaultKeyName);

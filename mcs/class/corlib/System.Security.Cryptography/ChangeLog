@@ -1,3 +1,6 @@
+2004-09-03  Tim Coleman (tim@timcoleman.com)
+	* CryptoConfig.cs: Add new Xml cryptography class info.
+
 2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CspProviderFlags.cs: Fixed new enums values.
