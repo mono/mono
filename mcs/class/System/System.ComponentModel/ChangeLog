@@ -1,5 +1,7 @@
 2003-11-22  Miguel de Icaza  <miguel@ximian.com>
 
+	* PropertyDescriptorCollection.cs (Insert): Another one.
+
 	* PropertyTabAttribute.cs (Equals): Avoid recurssion
 
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>

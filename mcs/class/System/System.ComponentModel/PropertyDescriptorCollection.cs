@@ -114,7 +114,8 @@ namespace System.ComponentModel
 		}
 
 		public void Insert (int index, PropertyDescriptor value)
-		{            Insert (index, value);
+		{
+			properties.Insert (index, value);
 		}
 
 		void IList.Insert (int index, object value)
