@@ -6,7 +6,7 @@ WINE_LIB=/usr/lib/wine
 GLIB20_CFLAGS=`pkg-config --cflags glib-2.0` `pkg-config --cflags gmodule-2.0`
 GLIB20_LIBS=`pkg-config --libs glib-2.0` `pkg-config --libs gmodule-2.0`
 MONO_CFLAGS=`pkg-config --cflags mono`
-MONO_LIBS=`pkg-config --libs mono`
+MONO_LIBS=`pkg-config --libs monoold`
 COMPILE_OPTIONS=-g -O2 -Wall
 #COMPILE_OPTIONS=-gstabs+ -Wall
 
@@ -53,7 +53,7 @@ monostub.exe.tmp.o: monostub.o monosem.o monogc.o
 
 monostub.exe.spec.c: monostub.exe.tmp.o
 	winebuild -D -sym monostub.exe.tmp.o -o monostub.exe.spec.c \
-	-exe monostub.exe -mgui -L$(WINE_LIB) -lcomdlg32 -lshell32 \
+	--exe monostub.exe -mgui -L$(WINE_LIB) -lcomdlg32 -lshell32 \
 	-luser32 -lgdi32 -lkernel32
 
 monostub.exe.spec.o: monostub.exe.spec.c
@@ -61,7 +61,7 @@ monostub.exe.spec.o: monostub.exe.spec.c
 	-D_REENTRANT -DWINELIB -o monostub.exe.spec.o monostub.exe.spec.c
 
 monostub.exe.dbg.c: monostub.exe.spec.o
-	winebuild -o monostub.exe.dbg.c -debug -C. monostub.c
+	winebuild -o monostub.exe.dbg.c --debug -C. monostub.c
 
 monostub.exe.dbg.o: monostub.exe.dbg.c
 	gcc -c -I. -I. -I$(WINE_INCLUDE)  -g -O2 -I$(X11R6_INCLUDE) \
