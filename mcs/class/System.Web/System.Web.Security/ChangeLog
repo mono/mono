@@ -1,3 +1,8 @@
+2003-02-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlAuthorizationModule.cs: tell the application not to run any other
+	step apart from EndRequest.
+
 2003-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: implemented RedirectFromLoginPage and

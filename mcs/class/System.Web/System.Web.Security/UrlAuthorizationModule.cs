@@ -45,6 +45,7 @@ namespace System.Web.Security
 				
 				context.Response.StatusCode = 401;
 				context.Response.Write (e.GetHtmlErrorMessage ());
+				app.CompleteRequest ();
 			}
 		}
 	}
