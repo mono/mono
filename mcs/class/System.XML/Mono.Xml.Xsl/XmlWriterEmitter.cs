@@ -3,18 +3,23 @@
 //
 // Authors:
 //	Oleg Tkachenko (oleg@tkachenko.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //	
 // (C) 2003 Oleg Tkachenko
+// (C) 2004 Atsushi Enomoto
 //
 
 using System;
+using System.Text;
 using System.Xml;
 
-namespace Mono.Xml.Xsl {
+namespace Mono.Xml.Xsl 
+{
 	/// <summary>
 	/// Emitter, which emits result tree to a XmlWriter.
 	/// </summary>
-	public class XmlWriterEmitter : Emitter {
+	public class XmlWriterEmitter : Emitter 
+	{
 		XmlWriter writer;
 			
 		public XmlWriterEmitter (XmlWriter writer) {
@@ -23,17 +28,39 @@ namespace Mono.Xml.Xsl {
 
 		#region # Emitter's methods implementaion			
 		
-		public override void WriteStartDocument (StandaloneType standalone)
+		public override void WriteStartDocument (Encoding encoding, StandaloneType standalone)
 		{
+#if docent
 			if (standalone == StandaloneType.NONE)
 				writer.WriteStartDocument ();
 			else
 				writer.WriteStartDocument (standalone == StandaloneType.YES);
+#else
+			string standaloneStr = "";
+			switch (standalone) {
+			case StandaloneType.YES:
+				standaloneStr = " standalone=\"yes\"";
+				break;
+			case StandaloneType.NO:
+				standaloneStr = " standalone=\"no\"";
+				break;
+			}
+
+			if (encoding == null)
+				writer.WriteProcessingInstruction ("xml", "version=\"1.0\"" + standaloneStr);
+			else
+				writer.WriteProcessingInstruction ("xml", 
+					"version=\"1.0\" encoding=\"" 
+					+ encoding.WebName + "\"" 
+					+ standaloneStr);
+#endif
 		}
 		
 		public override void WriteEndDocument ()
 		{
+#if docent
 			writer.WriteEndDocument ();
+#endif
 		}
 
 		public override void WriteDocType (string type, string publicId, string systemId)

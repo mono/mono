@@ -3,11 +3,13 @@
 //
 // Authors:
 //	Oleg Tkachenko (oleg@tkachenko.com)
-//	
+//	Atsushi Enomoto (atsushi@ximian.com)
 // (C) 2003 Oleg Tkachenko
+// (C) 2004 Novell inc.
 //
 
 using System;
+using System.Text;
 
 namespace Mono.Xml.Xsl {
 	/// <summary>
@@ -17,7 +19,7 @@ namespace Mono.Xml.Xsl {
 	/// implementations may be supported either.
 	/// </summary>
 	public abstract class Emitter {
-		public abstract void WriteStartDocument (StandaloneType standalone);		
+		public abstract void WriteStartDocument (Encoding encoding, StandaloneType standalone);		
 		public abstract void WriteEndDocument ();						
 		public abstract void WriteDocType (string type, string publicId, string systemId);
 		public abstract void WriteStartElement (string prefix, string localName, string nsURI);

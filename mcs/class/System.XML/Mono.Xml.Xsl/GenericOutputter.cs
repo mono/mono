@@ -46,12 +46,16 @@ namespace Mono.Xml.Xsl
 		private Hashtable _currentNamespaceDecls;
 		//Name table
 		private NameTable _nt;
+		// Specified encoding (for TextWriter output)
+		Encoding _encoding;
 		//Determines whether xsl:copy can output attribute-sets or not.
-		bool canProcessAttributes;
-		bool insideCData;
+		bool _canProcessAttributes;
+		bool _insideCData;
+		bool _isVariable;
 
-		private GenericOutputter (Hashtable outputs)
+		private GenericOutputter (Hashtable outputs, Encoding encoding)
 		{
+			_encoding = encoding;
 			_outputs = outputs;
 			_currentOutput = (XslOutput)outputs [String.Empty];
 			_state = WriteState.Start;
@@ -62,15 +66,21 @@ namespace Mono.Xml.Xsl
 			_currentNamespaceDecls = new Hashtable ();
 		}
 
-		public GenericOutputter (XmlWriter writer, Hashtable outputs) 
-			: this (outputs)
+		public GenericOutputter (XmlWriter writer, Hashtable outputs, Encoding encoding) 
+			: this (writer, outputs, encoding, false)
+		{
+		}
+
+		internal GenericOutputter (XmlWriter writer, Hashtable outputs, Encoding encoding, bool isVariable)
+			: this (outputs, encoding)
 		{
 			_emitter = new XmlWriterEmitter (writer);
 			_state = writer.WriteState;
+			_isVariable = isVariable;
 		}
 
-		public GenericOutputter (TextWriter writer, Hashtable outputs)
-			: this (outputs)
+		public GenericOutputter (TextWriter writer, Hashtable outputs, Encoding encoding)
+			: this (outputs, encoding)
 		{
 			this.pendingTextWriter = writer;
 		}
@@ -143,15 +153,18 @@ namespace Mono.Xml.Xsl
 				//Attributes flushed, state is Content now				
 				_state = WriteState.Content;
 			}
-			canProcessAttributes = false;
+			_canProcessAttributes = false;
 		}
 
 		#region Outputter's methods implementation
 		
 		public override void WriteStartDocument ()
-		{			
+		{
+			if (_isVariable)
+				return;
+
 			if (!_currentOutput.OmitXmlDeclaration)
-				Emitter.WriteStartDocument (_currentOutput.Standalone);
+				Emitter.WriteStartDocument (_encoding != null ? _encoding : _currentOutput.Encoding, _currentOutput.Standalone);
 			
 			_state = WriteState.Prolog;
 		}
@@ -186,7 +199,7 @@ namespace Mono.Xml.Xsl
 			Emitter.WriteStartElement (prefix, localName, nsURI);
 			_state = WriteState.Element;						
 			pendingAttributesPos = 0;
-			canProcessAttributes = true;
+			_canProcessAttributes = true;
 		}
 
 		public override void WriteEndElement ()
@@ -282,7 +295,7 @@ namespace Mono.Xml.Xsl
 		public override void WriteString (string text)
 		{
 			CheckState ();
-			if (insideCData)
+			if (_insideCData)
 				Emitter.WriteCDataSection (text);
 			else
 				Emitter.WriteString (text);
@@ -315,14 +328,14 @@ namespace Mono.Xml.Xsl
 		}
 
 		public override bool CanProcessAttributes {
-			get { return canProcessAttributes; }
+			get { return _canProcessAttributes; }
 		}
 
 		public override WriteState WriteState { get { return _state; } }
 
 		public override bool InsideCDataSection {
-			get { return insideCData; }
-			set { insideCData = value; }
+			get { return _insideCData; }
+			set { _insideCData = value; }
 		}
 		#endregion
 	}

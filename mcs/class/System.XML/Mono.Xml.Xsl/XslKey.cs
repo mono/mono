@@ -48,7 +48,7 @@ namespace Mono.Xml.Xsl {
 			UsePattern.SetContext (nsmgr);
 			if (!nav.Matches (MatchPattern)) 
 				return false;
-			Debug.WriteLine ("? " + nav.Name);
+//			Debug.WriteLine ("? " + nav.Name);
 			switch (UsePattern.ReturnType)
 			{
 			case XPathResultType.NodeSet:

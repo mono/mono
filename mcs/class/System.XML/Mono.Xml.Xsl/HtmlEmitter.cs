@@ -19,7 +19,8 @@ using System.Xml;
 
 namespace Mono.Xml.Xsl
 {
-	public class HtmlEmitter : Emitter {
+	public class HtmlEmitter : Emitter
+	{
 		TextWriter writer;
 		Stack elementNameStack;
 		bool openElement;
@@ -37,8 +38,9 @@ namespace Mono.Xml.Xsl
 			outputEncoding = writer.Encoding == null ? output.Encoding : writer.Encoding;
 		}
 
-		public override void WriteStartDocument (StandaloneType standalone)
+		public override void WriteStartDocument (Encoding encoding, StandaloneType standalone)
 		{
+			// do nothing
 		}
 		
 		public override void WriteEndDocument ()

@@ -397,8 +397,8 @@ namespace Mono.Xml.Xsl.Functions {
 		
 		Uri Resolve (string thisUri, string baseUri, XslTransformProcessor p)
 		{
-			Debug.WriteLine ("THIS: " + thisUri);
-			Debug.WriteLine ("BASE: " + baseUri);
+//			Debug.WriteLine ("THIS: " + thisUri);
+//			Debug.WriteLine ("BASE: " + baseUri);
 			XmlResolver r = p.Resolver;
 			
 			Uri uriBase = null;

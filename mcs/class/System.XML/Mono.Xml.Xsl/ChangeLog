@@ -1,3 +1,20 @@
+2004-01-14 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriterEmitter.cs : It now uses WriteProcessingInstruction() to
+	  write XML declaration. It means that output supports non document
+	  entity. This fixes bug #52729.
+	* Emitter.cs, TextEmitter.cs, HtmlEmitter.cs, XmlWriterEmitter.cs :
+	  modified WriteStartDocument() signature to receive Encoding.
+	* GenericOutputter.cs : 
+	  - Added .ctor() which receives Encoding. (It is used for TextWriter 
+	    output to get actual encoding.)
+	  - Added .ctor() to take an boolean argument which indicates it is
+	    variable content or not. (When variable, it does not call 
+	    WriteStartDocument().)
+	* XslKey.cs,
+	  XsltCompiledContext.cs : comment out WriteLine().
+	* XslOutput.cs : set default encoding utf-16.
+
 2004-01-08  Nick Drochak <ndrochak@ieee.org>
 
 	* XsltCompiledContext.cs: Remove unused variable and unreachable code.

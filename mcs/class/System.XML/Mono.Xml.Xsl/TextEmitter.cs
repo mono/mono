@@ -3,18 +3,23 @@
 //
 // Authors:
 //	Oleg Tkachenko (oleg@tkachenko.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //	
 // (C) 2003 Oleg Tkachenko
+// (C) 2004 Atsushi Enomoto
 //
 
 using System;
 using System.IO;
+using System.Text;
 
-namespace Mono.Xml.Xsl {
+namespace Mono.Xml.Xsl 
+{
 	/// <summary>
 	/// Emitetr, which emits result tree according to "text" output method.
 	/// </summary>
-	public class TextEmitter : Emitter {
+	public class TextEmitter : Emitter 
+	{
 		TextWriter writer;
 			
 		public TextEmitter (TextWriter writer) {
@@ -23,7 +28,7 @@ namespace Mono.Xml.Xsl {
 
 		#region # Emitter's methods implementaion			
 		
-		public override void WriteStartDocument (StandaloneType standalone) {
+		public override void WriteStartDocument (Encoding encoding, StandaloneType standalone) {
 			//Do nothing
 		}
 		

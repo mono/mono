@@ -44,7 +44,7 @@ namespace Mono.Xml.Xsl
 		QName customMethod;
 		OutputMethod method = OutputMethod.Unknown; 
 		string version;
-		Encoding encoding = System.Text.Encoding.UTF8;
+		Encoding encoding = System.Text.Encoding.Unicode;
 		bool omitXmlDeclaration;
 		StandaloneType standalone = StandaloneType.NONE;
 		string doctypePublic;
