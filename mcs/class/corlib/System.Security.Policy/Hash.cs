@@ -5,6 +5,8 @@
 //
 
 using System;
+using System.IO;
+using System.Text;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
@@ -35,7 +37,7 @@ namespace System.Security.Policy {
 		public byte[] SHA1
 		{
 			get {
-				return GenerateHash (SHA1CryptoServiceProvider ());
+				return GenerateHash (new SHA1CryptoServiceProvider ());
 			}
 		}
 
