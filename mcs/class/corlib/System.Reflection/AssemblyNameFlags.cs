@@ -16,6 +16,7 @@ namespace System.Reflection {
 	/// <summary>
 	/// </summary>
 	[Flags]
+	[Serializable]
 	public enum AssemblyNameFlags {
 
 		/// <summary>
@@ -23,8 +24,10 @@ namespace System.Reflection {
 		None = 0,
 
 		/// <summary>
+		///  Not sure about the ECMA spec, but this is what is in mscorlib...
+		///  Perhaps this has changed since the beta.
 		/// </summary>
-		FullOriginator = 1,
+		PublicKey = 1,
 	} // AssemblyNameFlags
 
 } // System.Reflection

@@ -1,3 +1,6 @@
+2002-02-24 Nick Drochak  <ndrochak@gol.com>
+
+	* AssemblyNameFlags.cs: Use proper member name.  Thanks corcompare!
 
 Fri Feb 22 18:54:13 CET 2002 Paolo Molaro <lupus@ximian.com>
 
