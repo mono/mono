@@ -1,3 +1,6 @@
+2002-10-09  Nick Drochak  <ndrochak@gol.com>
+
+	* IntegerFormatter.cs: Suppress insignificant leading zeros
 
 Fri Sep 27 15:06:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

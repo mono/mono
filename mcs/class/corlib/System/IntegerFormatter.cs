@@ -1793,7 +1793,6 @@ namespace System {
 			char[] buffy = new char[padding];
 			int position = padding;
 			bool negative = (value < 0);
-			
 			// fill up w/ precision # of 0's
 			while (position > (maxIntLength - 1)) 
 				buffy[--position] = '0';
@@ -3689,11 +3688,13 @@ class FormatParse {
 	{
 		int tokidx = lastToken;
 		int type;
+		int leftMostZeroIdx = -1;
 
 		while (tokidx >= firstToken) {
 			type = sec.TokenTypes [tokidx];
 			if (type == PH_0 || type == PH_NUMBER) {
-				//FIXME: PH_NUMBER should also check for significant digits
+				if (type == PH_0)
+					leftMostZeroIdx = tokidx;
 				// Console.WriteLine ("group : {0}", group);
 				int i = sec.tokens [tokidx].Length - 1;
 				while (i >= 0) {
@@ -3706,6 +3707,7 @@ class FormatParse {
 						outputList.Add ((string) digits[digitIdx++].ToString ());
 					else
 						outputList.Add ("0");
+
 					i--;
 					if (insertComma)
 						group++;
@@ -3730,6 +3732,15 @@ class FormatParse {
 			tokidx--;
 		}
 
+		// Remove any insignificant zeros we might have at the end
+		// if we never saw any zeros in the format string, leftMostZeroIdx will be -1
+		if (leftMostZeroIdx < 0)
+			while (outputList[outputList.Count-1] == "0")
+				outputList.RemoveAt (outputList.Count-1);
+		else
+			while (leftMostZeroIdx-- > 0)
+				if (outputList[outputList.Count-1] == "0")
+					outputList.RemoveAt (outputList.Count-1);
 	}
 
 	private char [] AdjustDigits (string number, FormatSection sec)
