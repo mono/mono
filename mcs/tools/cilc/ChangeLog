@@ -1,3 +1,14 @@
+2004-12-10  Alp Toker  <alp@atoker.com>
+
+  * cilc.cs:
+	The generated makefile now optionally uses mkbundle to include the assembly
+	into the generated library (when 'bundle' is defined for make).
+	The assembly is automatically copied into the generated directory.
+	* README:
+	Update with details of the new bundle feature.
+	* Makefile:
+	We no longer need to copy the assembly to the generated directory manually.
+
 2004-12-09  Alp Toker  <alp@atoker.com>
 
 	* cilc.cs:

@@ -19,5 +19,16 @@ $ make run-test-local
 $ cd generated
 $ ./demo
 
+To make a redistributable shared object that includes the assembly, you can
+then:
+
+$ make clean
+$ make bundle=true
+$ rm *.dll
+$ ./demo
+
+Note that you must have Mono's mkbundle tool installed to use the bundle
+feature.
+
 -- 
 Alp Toker <alp@atoker.com>

@@ -22,7 +22,6 @@ run-cilc-test: cilc.exe Demo.dll
 	$(RUNTIME) cilc.exe Demo.dll generated
 	$(MAKE) -C generated
 	$(CCOMPILE) -Wall `pkg-config --cflags --libs glib-2.0 mono` -Igenerated -Lgenerated -ldemo demo.c -o generated/demo
-	cp Demo.dll generated
 
 Demo.dll: Test.cs
 	$(CSCOMPILE) /target:library /out:$@ $^

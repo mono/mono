@@ -59,26 +59,23 @@ public class cilc
 		dllname = Path.GetFileName (assembly);
 		AssemblyGen (a);
 
-		string soname = NsToFlat (Path.GetFileNameWithoutExtension (assembly)).ToLower ();
+		//we might not want to do this in future
+		File.Copy (dllname, target_dir + dllname);
 
-		//create a makefile
+		string soname = "lib" + NsToFlat (Path.GetFileNameWithoutExtension (assembly)).ToLower () + ".so";
+
+		//create the static makefile
 		CodeWriter makefile = new CodeWriter (target_dir + "Makefile");
-		makefile.Indenter = "\t";
-		makefile.WriteLine (@"OBJS = $(shell ls *.c | sed -e 's/\.c/.o/')");
-		makefile.WriteLine (@"CFLAGS = -static -fpic $(shell pkg-config --cflags glib-2.0 gobject-2.0 mono) -I.");
-		makefile.WriteLine ();
-		makefile.WriteLine ("all: lib" + soname + ".so");
-		makefile.WriteLine ();
-		makefile.WriteLine ("lib" + soname + ".so: $(OBJS)");
-		makefile.Indent ();
-		makefile.WriteLine ("gcc -Wall -fpic -shared `pkg-config --libs glib-2.0 gobject-2.0 mono` -lpthread $(OBJS) -o lib" + soname + ".so");
-		makefile.Outdent ();
-		makefile.WriteLine ();
-		makefile.WriteLine ("clean:");
-		makefile.Indent ();
-		makefile.WriteLine ("rm -rf core *~ *.o *.so");
-		makefile.Outdent ();
+		makefile.Write (static_makefile);
 		makefile.Close ();
+
+		//create makefile defs
+		CodeWriter makefile_defs = new CodeWriter (target_dir + "defs.mk");
+		makefile_defs.Indenter = "\t";
+		makefile_defs.WriteLine ("ASSEMBLY = " + assembly);
+		makefile_defs.WriteLine ("SONAME = " + soname);
+		makefile_defs.WriteLine (@"OBJS = $(shell ls *.c | sed -e 's/\.c/.o/')");
+		makefile_defs.Close ();
 
 		Console.WriteLine ();
 		MakeReport (registry_hits, "Type registry missed hits", 20);
@@ -160,12 +157,20 @@ public class cilc
 		Cindex.WriteLine ("#include <glib.h>");
 		Cindex.WriteLine ("#include <mono/jit/jit.h>");
 		Cindex.WriteLine ();
+		Cindex.WriteLine ("#ifdef CILC_BUNDLE");
+		Cindex.WriteLine ("#include \"bundle.h\"");
+		Cindex.WriteLine ("#endif");
+		Cindex.WriteLine ();
 
 		Cindex.WriteLine ("MonoDomain *" + NsToC (ns) + "_get_mono_domain (void)");
 		Cindex.WriteLine ("{");
 		Cindex.WriteLine ("static MonoDomain *domain = NULL;");
 		Cindex.WriteLine ("if (domain != NULL) return domain;");
 		Cindex.WriteLine ("domain = mono_jit_init (\"cilc\");");
+		Cindex.WriteLine ();
+		Cindex.WriteLine ("#ifdef CILC_BUNDLE");
+		Cindex.WriteLine ("mono_register_bundled_assemblies(bundled);");
+		Cindex.WriteLine ("#endif");
 		Cindex.WriteLine ();
 
 		Cindex.WriteLine ("return domain;");
@@ -175,6 +180,7 @@ public class cilc
 		Cindex.WriteLine ("MonoAssembly *" + NsToC (ns) + "_get_mono_assembly (void)");
 		Cindex.WriteLine ("{");
 		Cindex.WriteLine ("static MonoAssembly *assembly = NULL;");
+		Cindex.WriteLine ("if (assembly != NULL) return assembly;");
 		Cindex.WriteLine ("assembly = mono_domain_assembly_open (" + NsToC (ns) + "_get_mono_domain (), \"" + dllname + "\");");
 		Cindex.WriteLine ();
 
@@ -789,6 +795,36 @@ public class cilc
 
 		return o;
 	}
+
+	const string static_makefile =
+@"include defs.mk
+
+CFLAGS = -static -fpic $(shell pkg-config --cflags glib-2.0 gobject-2.0 mono) -I.
+
+ifdef bundle
+EXTRAOBJS = bundle.o
+CFLAGS += -DCILC_BUNDLE
+EXTRATARGETS = bundle.h
+endif
+
+all: $(SONAME)
+
+$(SONAME): $(EXTRAOBJS) $(OBJS)
+	gcc -Wall -fpic -shared `pkg-config --libs glib-2.0 gobject-2.0 mono` -lpthread $(EXTRAOBJS) $(OBJS) -o $(SONAME)
+
+$(OBJS): $(EXTRATARGETS)
+
+bundle.o bundle.h: $(ASSEMBLY)
+	mkbundle -c -o bundle.c.tmp -oo bundle.o $(ASSEMBLY)
+	rm -f xx*
+	csplit bundle.c.tmp /mono_main/
+	mv xx00 bundle.h
+	rm -f xx*
+	rm -f bundle.c.tmp
+
+clean:
+	rm -rf core *~ *.o *.so bundle.h
+";
 }
 
 class CodeWriter
