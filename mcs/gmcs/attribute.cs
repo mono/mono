@@ -936,7 +936,22 @@ namespace Mono.CSharp {
 						"\tor compile using the Mono runtime instead of the\n"+
 						"\tMicrosoft .NET runtime");
 						}
-						
+					} else if (kind is Delegate){
+						if (!CheckAttributeTarget (a, kind)) {
+							Error_AttributeNotValidForElement (a, loc);
+							return;
+						}
+						try {
+							((TypeBuilder) builder).SetCustomAttribute (cb);
+						} catch (System.ArgumentException e) {
+							Report.Warning (
+								-21, loc,
+						"The CharSet named property on StructLayout\n"+
+						"\tdoes not work correctly on Microsoft.NET\n"+
+						"\tYou might want to remove the CharSet declaration\n"+
+						"\tor compile using the Mono runtime instead of the\n"+
+						"\tMicrosoft .NET runtime");
+						}
 					} else if (kind is Interface) {
 						Interface iface = (Interface) kind;
 

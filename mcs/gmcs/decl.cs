@@ -194,7 +194,7 @@ namespace Mono.CSharp {
 			defined_names.Add (name, o);
 
 #if DEBUGME
-			int p = name.LastIndexOf (".");
+			int p = name.LastIndexOf ('.');
 			int l = name.Length;
 			length += l;
 			small += l -p;
@@ -410,7 +410,7 @@ namespace Mono.CSharp {
 				string check_type_name = check_type.FullName;
 				string type_name = TypeBuilder.FullName;
 				
-				int cio = check_type_name.LastIndexOf ("+");
+				int cio = check_type_name.LastIndexOf ('+');
 				string container = check_type_name.Substring (0, cio);
 
 				//
@@ -458,7 +458,7 @@ namespace Mono.CSharp {
 			string check_type_name = check_type.FullName;
 			string type_name = TypeBuilder.FullName;
 			
-			int cio = check_type_name.LastIndexOf ("+");
+			int cio = check_type_name.LastIndexOf ('+');
 			string container = check_type_name.Substring (0, cio);
 			
 			//

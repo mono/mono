@@ -245,7 +245,7 @@ namespace Mono.CSharp {
 			if (methods == null)
 				methods = new ArrayList ();
 
-			if (method.Name.IndexOf (".") != -1)
+			if (method.Name.IndexOf ('.') != -1)
 				methods.Insert (0, method);
 			else 
 				methods.Add (method);
@@ -357,7 +357,7 @@ namespace Mono.CSharp {
 			if (properties == null)
 				properties = new ArrayList ();
 
-			if (prop.Name.IndexOf (".") != -1)
+			if (prop.Name.IndexOf ('.') != -1)
 				properties.Insert (0, prop);
 			else
 				properties.Add (prop);
@@ -3744,8 +3744,8 @@ namespace Mono.CSharp {
 			//
 			// Check for explicit interface implementation
 			//
-			if ((ExplicitInterfaceName == null) && (Name.IndexOf (".") != -1)){
-				int pos = Name.LastIndexOf (".");
+			if ((ExplicitInterfaceName == null) && (Name.IndexOf ('.') != -1)){
+				int pos = Name.LastIndexOf ('.');
 
 				ExplicitInterfaceName = Name.Substring (0, pos);
 				ShortName = Name.Substring (pos + 1);

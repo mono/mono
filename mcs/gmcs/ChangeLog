@@ -1,7 +1,125 @@
+2003-11-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* typemanager.cs: Fix lookup of GetNamespaces.
+
+2003-11-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Removed redundant line.
+
+	* statement.cs (Block.Resolve, Block.Emit): Avoid foreach on
+	ArrayLists, use for loops with bounds.  
+
+	* flowanalysis.cs (FlowBranching.Merge): Avoid foreach on
+	arraylist.
+
+	* expression.cs (Invocation.OverloadResolve): Avoid foreach on
+	arraylists, use for loop with bounds.
+
+	The above three changes give us a 0.071 second performance
+	improvement out of 3.294 seconds down to 3.223.  On my machine
+	the above changes reduced the memory usage by 1,387 KB during
+	compiler bootstrap.
+
+	* cs-parser.jay (QualifiedIdentifier): New class used to represent
+	QualifiedIdentifiers.  Before we created a new string through
+	concatenation, and mostly later on, the result would be
+	manipulated by DecomposeQI through string manipulation.
+
+	This reduced the compiler memory usage for bootstrapping from
+	59380 KB to 59007 KB on my machine, 373 KB, and also reduced the
+	compile times in 0.05 seconds.
+
+2003-11-28  Dick Porter  <dick@ximian.com>
+
+	* support.cs: Do string compares with the Invariant culture.
+
+	* rootcontext.cs: 
+	* gen-treedump.cs: 
+	* expression.cs: 
+	* driver.cs: 
+	* decl.cs: 
+	* codegen.cs: 
+	* class.cs: Use the char forms of IndexOf and LastIndexOf, so that
+	the comparison is done with the Invariant culture.
+
+2003-11-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Foreach.TryType): Use DeclaredOnly to find the
+	GetEnumerator method.
+
+	(ProbeCollectionType): Iterate starting at the most specific type
+	upwards looking for a GetEnumerator
+
+	* expression.cs: Shift count can be up to 31 for int/uint and 63
+	for long/ulong.
+
+2003-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Block.LookupLabel): Also look for the label on the
+	children blocks.  Use a hash table to keep track of visited
+	nodes. 
+
+	* cfold.cs (IntConstant to UIntConstant mapping): Only return if
+	we actually did transform the other operand, otherwise fall back
+	to the common codepath that casts to long.
+
+	* cs-tokenizer.cs: Use the same code pattern as the int case.
+	Maybe I should do the parsing myself, and avoid depending on the
+	Parse routines to get this done.
+
+2003-11-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Apply fix from l_m@pacbell.net (Laurent Morichetti),  
+	which fixes bug 51347.  This time test it.
+	
+	* expression.cs: Make TypeOfVoid derive from TypeOf, so code in
+	attributes for example can not tell the difference between these.
+	The difference was only a syntax feature of the language. 
+
+	* attribute.cs: Apply attributes to delegates.
+
+	* delegate.cs: Call the apply attributes method.
+
+2003-11-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (TryImplicitIntConversion): One line bug fix: we were
+	comparing 0 vs Byte.MinValue, not the value
+
+	(ImplicitConversionRequired): When reporting a conversion error,
+	use error 31 to print out the constant error instead of the
+	simpler 29.
+
+	* expression.cs: Apply fix from l_m@pacbell.net (Laurent Morichetti),  
+	which fixes bug 51347.
+	
+2003-11-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Applied patch from gert.driesen@pandora.be (Gert Driesen) 
+	which fixes the -warnaserror command line option.
+	
+2003-11-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* cfold.cs (DoNumericPromotions): During constant folding of
+	additions on UIntConstant, special case intconstants with
+	IntConstants like we do on the expression binary operator. 
+
+2003-11-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ImplicitReferenceConversion): We were missing a case
+	(System.Enum are not value types or class types, so we need to
+	classify them separatedly).
+
+	* driver.cs: We do not support error 2007.
+
+2003-11-12 Jackson Harper <jackson@ximian.com>
+
+	* driver.cs: Use corlib.dll or mscorlib.dll when looking up the
+	system directory. Also use the full file name so users can
+	libraries names mscorlib-o-tron.dll in a non system dir.
+	
 2004-01-04  David Sheldon <dave-mono@earth.li>
 
-  * expression.cs: Added matching ")" to error message for 
-  CS0077
+	* expression.cs: Added matching ")" to error message for CS0077.
 
 2003-12-19  Martin Baulig  <martin@ximian.com>
 

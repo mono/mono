@@ -212,7 +212,7 @@ namespace Mono.CSharp
 				"   --timestamp        Displays time stamps of various compiler events\n" +
 				"   -unsafe[+|-]       Allows unsafe code\n" +
 				"   -warnaserror[+|-]  Treat warnings as errors\n" +
-				"   -warn:LEVEL        Sets warning level (the highest is 4, the default)\n" +
+				"   -warn:LEVEL        Sets warning level (the highest is 4, the default is 2)\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" +
 				"   -2                 Enables experimental C# features\n" +
 				"\n" +
@@ -390,7 +390,8 @@ namespace Mono.CSharp
 
 			foreach (Assembly a in assemblies){
 				string codebase = a.Location;
-				if (codebase.EndsWith ("corlib.dll")){
+                                string fn = System.IO.Path.GetFileName (codebase);
+				if (fn == "corlib.dll" || fn == "mscorlib.dll"){
 					return codebase.Substring (0, codebase.LastIndexOf (System.IO.Path.DirectorySeparatorChar));
 				}
 			}
@@ -404,7 +405,7 @@ namespace Mono.CSharp
 		//
 		static void SplitPathAndPattern (string spec, out string path, out string pattern)
 		{
-			int p = spec.LastIndexOf ("/");
+			int p = spec.LastIndexOf ('/');
 			if (p != -1){
 				//
 				// Windows does not like /file.cs, switch that to:
@@ -420,7 +421,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			p = spec.LastIndexOf ("\\");
+			p = spec.LastIndexOf ('\\');
 			if (p != -1){
 				path = spec.Substring (0, p);
 				pattern = spec.Substring (p + 1);
@@ -457,7 +458,7 @@ namespace Mono.CSharp
 			string path, pattern;
 
 			SplitPathAndPattern (spec, out path, out pattern);
-			if (pattern.IndexOf ("*") == -1){
+			if (pattern.IndexOf ('*') == -1){
 				ProcessFile (spec);
 				return;
 			}
@@ -553,8 +554,17 @@ namespace Mono.CSharp
 			if (level < 0 || level > 4){
 				Report.Error (1900, "Warning level must be 0 to 4");
 				Environment.Exit (1);
-			} else
-				RootContext.WarningLevel = level;
+			}
+			RootContext.WarningLevel = level;
+			TestWarningConflict ();
+		}
+
+		static void TestWarningConflict ()
+		{
+			if (RootContext.WarningLevel == 0 && Report.WarningsAreErrors) {
+				Report.Error (1901, "Conflicting options specified: Warning level 0; Treat warnings as errors");
+				Environment.Exit (1);
+			}
 		}
 
 		static void SetupV2 ()
@@ -743,6 +753,7 @@ namespace Mono.CSharp
 				
 			case "--werror":
 				Report.WarningsAreErrors = true;
+				TestWarningConflict();
 				return true;
 				
 			case "--nowarn":
@@ -825,7 +836,7 @@ namespace Mono.CSharp
 		//
 		static bool CSCParseOption (string option, ref string [] args, ref int i)
 		{
-			int idx = option.IndexOf (":");
+			int idx = option.IndexOf (':');
 			string arg, value;
 
 			if (idx == -1){
@@ -995,6 +1006,7 @@ namespace Mono.CSharp
 			case "/warnaserror":
 			case "/warnaserror+":
 				Report.WarningsAreErrors = true;
+				TestWarningConflict();
 				return true;
 
 			case "/warnaserror-":
@@ -1015,15 +1027,16 @@ namespace Mono.CSharp
 				
 				warns = value.Split (new Char [] {','});
 				foreach (string wc in warns){
-					int warn = 0;
-					
 					try {
-						warn = Int32.Parse (wc);
+						int warn = Int32.Parse (wc);
+						if (warn < 1) {
+							throw new ArgumentOutOfRangeException("warn");
+						}
+						Report.SetIgnoreWarning (warn);
 					} catch {
-						Usage ();
+						Report.Error (1904, String.Format("'{0}' is not a valid warning number", wc));
 						Environment.Exit (1);
 					}
-					Report.SetIgnoreWarning (warn);
 				}
 				return true;
 			}
@@ -1091,22 +1104,16 @@ namespace Mono.CSharp
 				
 				try {
 					cp = Int32.Parse (value);
-				} catch { }
-				
-				if (cp == -1){
-					Console.WriteLine ("Invalid code-page requested");
-					Usage ();
-				}
-
-				try {
 					encoding = Encoding.GetEncoding (cp);
 					using_default_encoder = false;
 				} catch {
-					Console.WriteLine ("Code page: {0} not supported", cp);
+					Report.Error (2016, String.Format("Code page '{0}' is invalid or not installed", cp));
+					Environment.Exit (1);
 				}
 				return true;
-
 			}
+			//Report.Error (2007, String.Format ("Unrecognized command-line option: '{0}'", option));
+			//Environment.Exit (1);
 			return false;
 		}
 		
@@ -1120,7 +1127,7 @@ namespace Mono.CSharp
 		///    now, needs to be turned into a real driver soon.
 		/// </remarks>
 		// [MonoTODO("Change error code for unknown argument to something reasonable")]
-		static bool MainDriver (string [] args)
+		internal static bool MainDriver (string [] args)
 		{
 			int i;
 			bool parsing_options = true;
@@ -1255,7 +1262,7 @@ namespace Mono.CSharp
 			// Quick hack
 			//
 			if (output_file == null){
-				int pos = first_source.LastIndexOf (".");
+				int pos = first_source.LastIndexOf ('.');
 
 				if (pos > 0)
 					output_file = first_source.Substring (0, pos) + target_ext;
@@ -1428,5 +1435,24 @@ namespace Mono.CSharp
 			return (Report.Errors == 0);
 		}
 
+	}
+
+	//
+	// This is the only public entry point
+	//
+	public class CompilerCallableEntryPoint : MarshalByRefObject {
+		static bool used = false;
+		
+		public bool InvokeCompiler (string [] args)
+		{
+			if (used)
+				Reset ();
+			bool ok = Driver.MainDriver (args);
+			return ok && Report.Errors == 0;
+		}
+
+		public void Reset ()
+		{
+		}
 	}
 }

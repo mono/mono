@@ -681,7 +681,7 @@ public class TypeManager {
 	/// </summary>
 	public static void ComputeNamespaces ()
 	{
-		MethodInfo assembly_get_namespaces = typeof (Assembly).GetMethod ("GetNamespaces");
+		MethodInfo assembly_get_namespaces = typeof (Assembly).GetMethod ("GetNamespaces", BindingFlags.Instance|BindingFlags.NonPublic);
 
 		//
 		// First add the assembly namespaces

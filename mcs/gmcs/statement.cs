@@ -1285,16 +1285,39 @@ namespace Mono.CSharp {
 
 		public LabeledStatement LookupLabel (string name)
 		{
-			if (switch_block != null)
-				return switch_block.LookupLabel (name);
+			Hashtable l = new Hashtable ();
+			
+			return LookupLabel (name, l);
+		}
 
-			if (labels != null){
+		//
+		// Lookups a label in the current block, parents and children.
+		// It skips during child recurssion on `source'
+		//
+		LabeledStatement LookupLabel (string name, Hashtable seen)
+		{
+			if (switch_block != null)
+				return switch_block.LookupLabel (name, seen);
+
+			if (seen [this] != null)
+				return null;
+
+			seen [this] = this;
+			
+			if (labels != null)
 				if (labels.Contains (name))
 					return ((LabeledStatement) labels [name]);
+
+			if (children != null){
+				foreach (Block b in children){
+					LabeledStatement s = b.LookupLabel (name, seen);
+					if (s != null)
+						return s;
+				}
 			}
 
 			if (Parent != null)
-				return Parent.LookupLabel (name);
+				return Parent.LookupLabel (name, seen);
 
 			return null;
 		}
@@ -1737,7 +1760,10 @@ namespace Mono.CSharp {
 			ArrayList new_statements = new ArrayList ();
 			bool unreachable = false, warning_shown = false;
 
- 			foreach (Statement s in statements){
+			int statement_count = statements.Count;
+			for (int ix = 0; ix < statement_count; ix++){
+				Statement s = (Statement) statements [ix];
+				
 				if (unreachable && !(s is LabeledStatement)) {
 					if (!warning_shown && !(s is EmptyStatement)) {
 						warning_shown = true;
@@ -1792,8 +1818,11 @@ namespace Mono.CSharp {
 		
 		protected override bool DoEmit (EmitContext ec)
 		{
-			foreach (Statement s in statements)
+			int statement_count = statements.Count;
+			for (int ix = 0; ix < statement_count; ix++){
+				Statement s = (Statement) statements [ix];
 				s.Emit (ec);
+			}
 
 			return (flags & Flags.HasRet) != 0;
 		}
@@ -3618,16 +3647,16 @@ namespace Mono.CSharp {
 		//
 		static MethodInfo FetchMethodGetCurrent (Type t)
 		{
-			MemberList move_next_list;
-			
-			move_next_list = TypeContainer.FindMembers (
+			MemberList get_current_list;
+
+			get_current_list = TypeContainer.FindMembers (
 				t, MemberTypes.Method,
 				BindingFlags.Public | BindingFlags.Instance,
 				Type.FilterName, "get_Current");
-			if (move_next_list.Count == 0)
+			if (get_current_list.Count == 0)
 				return null;
 
-			foreach (MemberInfo m in move_next_list){
+			foreach (MemberInfo m in get_current_list){
 				MethodInfo mi = (MethodInfo) m;
 				Type [] args;
 
@@ -3781,7 +3810,7 @@ namespace Mono.CSharp {
 			
 			mi = TypeContainer.FindMembers (t, MemberTypes.Method,
 							BindingFlags.Public | BindingFlags.NonPublic |
-							BindingFlags.Instance,
+							BindingFlags.Instance | BindingFlags.DeclaredOnly,
 							FilterEnumerator, hm);
 
 			if (mi.Count == 0)
@@ -3799,8 +3828,11 @@ namespace Mono.CSharp {
 		{
 			ForeachHelperMethods hm = new ForeachHelperMethods (ec);
 
-			if (TryType (t, hm))
-				return hm;
+			for (Type tt = t; tt != null && tt != TypeManager.object_type;){
+				if (TryType (tt, hm))
+					return hm;
+				tt = tt.BaseType;
+			}
 
 			//
 			// Now try to find the method in the interfaces

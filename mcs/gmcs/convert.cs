@@ -91,8 +91,11 @@ namespace Mono.CSharp {
 					if (TypeManager.ImplementsInterface (expr_type, target_type)){
 						if (expr_type.IsClass)
 							return new EmptyCast (expr, target_type);
-						else if (TypeManager.IsValueType (expr_type))
+						else if (TypeManager.IsValueType (expr_type) ||
+							 TypeManager.IsEnumType (expr_type))
 							return new BoxedCast (expr, target_type);
+						else
+							return new EmptyCast (expr, target_type);
 					}
 				}
 
@@ -167,9 +170,9 @@ namespace Mono.CSharp {
 				if (expr_type.IsClass || TypeManager.IsValueType (expr_type) ||
 				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return true;
-			} else if (expr_type.IsSubclassOf (target_type)) {
+			} else if (expr_type.IsSubclassOf (target_type)) 
 				return true;
-			} else {
+			else {
 				// Please remember that all code below actually comes
 				// from ImplicitReferenceConversion so make sure code remains in sync
 				
@@ -243,7 +246,7 @@ namespace Mono.CSharp {
 								    Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
-			
+
 			//
 			// Attempt to do the implicit constant expression conversions
 
@@ -1094,7 +1097,7 @@ namespace Mono.CSharp {
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
 					return new SByteConstant ((sbyte) value);
 			} else if (target_type == TypeManager.byte_type){
-				if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+				if (value >= Byte.MinValue && value <= Byte.MaxValue)
 					return new ByteConstant ((byte) value);
 			} else if (target_type == TypeManager.short_type){
 				if (value >= Int16.MinValue && value <= Int16.MaxValue)
@@ -1165,6 +1168,13 @@ namespace Mono.CSharp {
 					      "float type, use F suffix to create a float literal");
 			}
 
+			if (source is Constant){
+				Constant c = (Constant) source;
+
+				Expression.Error_ConstantValueCannotBeConverted (loc, c.AsString (), target_type);
+				return null;
+			}
+			
 			Error_CannotImplicitConversion (loc, source.Type, target_type);
 
 			return null;
@@ -1635,7 +1645,6 @@ namespace Mono.CSharp {
 				return new UnboxCast (expr, target_type);
 			}
 
-			
 			ne = ExplicitReferenceConversion (expr, target_type);
 			if (ne != null)
 				return ne;

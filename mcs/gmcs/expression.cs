@@ -1720,9 +1720,9 @@ namespace Mono.CSharp {
 			if (real_expr is DoubleConstant){
 				double v = ((DoubleConstant) real_expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type){
 					return new ByteConstant ((byte) v);
-				if (target_type == TypeManager.sbyte_type)
+				} if (target_type == TypeManager.sbyte_type)
 					return new SByteConstant ((sbyte) v);
 				if (target_type == TypeManager.short_type)
 					return new ShortConstant ((short) v);
@@ -2091,7 +2091,7 @@ namespace Mono.CSharp {
 				//
 				// If either operand is of type uint, and the other
 				// operand is of type sbyte, short or int, othe operands are
-				// converted to type long.
+				// converted to type long (unless we have an int constant).
 				//
 				Type other = null;
 				
@@ -2209,6 +2209,14 @@ namespace Mono.CSharp {
 				left = e;
 				type = e.Type;
 
+				if (type == TypeManager.int32_type || type == TypeManager.uint32_type){
+					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (31), loc);
+					right = right.DoResolve (ec);
+				} else {
+					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (63), loc);
+					right = right.DoResolve (ec);
+				}
+
 				return this;
 			}
 			Error_OperatorCannotBeApplied ();
@@ -2310,15 +2318,18 @@ namespace Mono.CSharp {
 							//
 							if (b.method == TypeManager.string_concat_string_string ||
 							     b.method == TypeManager.string_concat_string_string_string){
-								ArrayList bargs = b.Arguments;
-								int count = bargs.Count;
+								int count = b.Arguments.Count;
 								
 								if (count == 2){
+									ArrayList bargs = new ArrayList (3);
+									bargs.AddRange (b.Arguments);
 									bargs.Add (new Argument (right, Argument.AType.Expression));
 									return new BinaryMethod (
 										TypeManager.string_type,
 										TypeManager.string_concat_string_string_string, bargs);
 								} else if (count == 3){
+									ArrayList bargs = new ArrayList (4);
+									bargs.AddRange (b.Arguments);
 									bargs.Add (new Argument (right, Argument.AType.Expression));
 									return new BinaryMethod (
 										TypeManager.string_type,
@@ -2341,9 +2352,10 @@ namespace Mono.CSharp {
 					}
 
 					//
-					// Cascading concats will hold up to 4 arguments
+					// Cascading concats will hold up to 2 arguments, any extras will be
+					// reallocated above.
 					//
-					ArrayList args = new ArrayList (4);
+					ArrayList args = new ArrayList (2);
 					args.Add (new Argument (left, Argument.AType.Expression));
 					args.Add (new Argument (right, Argument.AType.Expression));
 
@@ -2658,8 +2670,9 @@ namespace Mono.CSharp {
 					      (l == TypeManager.short_type) ||
 					      (l == TypeManager.ushort_type) ||
 					      (l == TypeManager.int64_type) ||
-					      (l == TypeManager.uint64_type)))
+					      (l == TypeManager.uint64_type))){
 						type = l;
+					}
 				} else {
 					Error_OperatorCannotBeApplied ();
 					return null;
@@ -3007,7 +3020,8 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			bool isUnsigned = is_unsigned (left.Type);
-
+			IntConstant ic;
+			
 			switch (oper){
 			case Operator.Multiply:
 				if (ec.CheckState){
@@ -4549,7 +4563,8 @@ namespace Mono.CSharp {
                         }
 
                         bool found_applicable = false;
-			foreach (MethodBase candidate in me.Methods) {
+
+			foreach (MethodBase candidate in me.Methods){
                                 Type decl_type = candidate.DeclaringType;
 
                                 //
@@ -4584,7 +4599,10 @@ namespace Mono.CSharp {
                         //
                         // Now we actually find the best method
                         //
-                        foreach (MethodBase candidate in candidates) {
+			int candidate_top = candidates.Count;
+			for (int ix = 0; ix < candidate_top; ix++){
+				MethodBase candidate = (MethodBase) candidates [ix];
+				
                                 bool cand_params = (bool) candidate_to_form [candidate];
                                 bool method_params = false;
 				
@@ -4642,7 +4660,8 @@ namespace Mono.CSharp {
 			//
                         bool best_params = (bool) candidate_to_form [method];
 
-			foreach (MethodBase candidate in candidates){
+			for (int ix = 0; ix < candidate_top; ix++){
+				MethodBase candidate = (MethodBase) candidates [ix];
 
                                 if (candidate == method)
                                         continue;
@@ -5565,9 +5584,9 @@ namespace Mono.CSharp {
 			this.rank = rank;
 			loc = l;
 
-			//this.rank = rank.Substring (0, rank.LastIndexOf ("["));
+			//this.rank = rank.Substring (0, rank.LastIndexOf ('['));
 			//
-			//string tmp = rank.Substring (rank.LastIndexOf ("["));
+			//string tmp = rank.Substring (rank.LastIndexOf ('['));
 			//
 			//dimensions = tmp.Length - 1;
 			expect_initializers = true;
@@ -6424,13 +6443,13 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ldarg_0);
 		}
 	}
-	
+
 	/// <summary>
 	///   Implements the typeof operator
 	/// </summary>
 	public class TypeOf : Expression {
 		public readonly Expression QueriedType;
-		Type typearg;
+		protected Type typearg;
 		
 		public TypeOf (Expression queried_type, Location l)
 		{
@@ -6470,8 +6489,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the `typeof (void)' operator
 	/// </summary>
-	public class TypeOfVoid : Expression {
-		public TypeOfVoid (Location l)
+	public class TypeOfVoid : TypeOf {
+		public TypeOfVoid (Location l) : base (null, l)
 		{
 			loc = l;
 		}
@@ -6479,18 +6498,9 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.type_type;
+			typearg = TypeManager.void_type;
 			eclass = ExprClass.Type;
 			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldtoken, TypeManager.void_type);
-			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
-		}
-
-		public Type TypeArg { 
-			get { return TypeManager.void_type; }
 		}
 	}
 
