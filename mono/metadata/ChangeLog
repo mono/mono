@@ -1,4 +1,9 @@
 
+2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: added ves_icall_System_Activator_CreateInstanceInternal. Used
+	to get value types.
+	
 Thu Jan 9 19:43:11 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* object.c, profiler.h, profiler.c, profiler-private.h:
