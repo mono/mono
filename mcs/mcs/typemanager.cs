@@ -2919,7 +2919,7 @@ public sealed class TypeHandle : IMemberContainer {
 		}
 	}
 
-	public IMemberContainer Parent {
+	public IMemberContainer ParentContainer {
 		get {
 			return BaseType;
 		}

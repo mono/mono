@@ -1560,7 +1560,7 @@ namespace Mono.CSharp {
 
 		public MemberInfo FindMemberWithSameName (string name, bool ignore_methods)
 		{
-			return ((IMemberContainer)this).Parent.MemberCache.FindMemberWithSameName (name, ignore_methods, null);
+			return ParentContainer.MemberCache.FindMemberWithSameName (name, ignore_methods, null);
 		}
 
 		/// <summary>
@@ -2492,12 +2492,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		IMemberContainer IMemberContainer.Parent {
-			get {
-				return parent_container;
-			}
-		}
-
 		MemberCache IMemberContainer.MemberCache {
 			get {
 				return member_cache;
@@ -2515,7 +2509,11 @@ namespace Mono.CSharp {
 			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
 		}
 
-
+		public virtual IMemberContainer ParentContainer {
+			get {
+				return parent_container;
+			}
+		}
 	}
 
 	public class PartialContainer : TypeContainer {
@@ -2655,7 +2653,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class ClassPart : TypeContainer {
+	public class ClassPart : TypeContainer, IMemberContainer {
 		public readonly PartialContainer PartialContainer;
 		public readonly bool IsPartial;
 
@@ -2690,6 +2688,12 @@ namespace Mono.CSharp {
 		{
 			return PartialContainer.VerifyImplements (
 				interface_type, full, name, loc);
+		}
+
+		public override IMemberContainer ParentContainer {
+			get {
+				return PartialContainer.ParentContainer;
+			}
 		}
 	}
 
@@ -3009,7 +3013,7 @@ namespace Mono.CSharp {
 			}
 
 			// Is null for System.Object while compiling corlib and base interfaces
-			if (((IMemberContainer)Parent).Parent == null) {
+			if (Parent.ParentContainer == null) {
 				if ((ModFlags & Modifiers.NEW) != 0) {
 					Report.Warning (Message.CS0109_The_member_does_not_hide_an_inherited_member_new_keyword_is_not_required, Location, GetSignatureForError (Parent));
 				}
@@ -3611,7 +3615,7 @@ namespace Mono.CSharp {
 
 		protected override MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type)
 		{
-			MethodInfo mi = (MethodInfo)((IMemberContainer)container).Parent.MemberCache.FindMemberToOverride (
+			MethodInfo mi = (MethodInfo) container.ParentContainer.MemberCache.FindMemberToOverride (
 				container.TypeBuilder, Name, ParameterTypes, false);
 
 			if (mi == null)
@@ -5537,7 +5541,7 @@ namespace Mono.CSharp {
 
  		protected override MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type)
  		{
- 			PropertyInfo parent_property = ((IMemberContainer)container).Parent.MemberCache.FindMemberToOverride (
+ 			PropertyInfo parent_property = container.ParentContainer.MemberCache.FindMemberToOverride (
  				container.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
   
  			if (parent_property == null)

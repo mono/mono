@@ -1189,7 +1189,7 @@ namespace Mono.CSharp {
 		///   This is used when creating the member cache for a class to get all
 		///   members from the parent class.
 		/// </summary>
-		IMemberContainer Parent {
+		IMemberContainer ParentContainer {
 			get;
 		}
 
@@ -1258,13 +1258,13 @@ namespace Mono.CSharp {
 			if (Container.IsInterface) {
 				MemberCache parent;
 				
-				if (Container.Parent != null)
-					parent = Container.Parent.MemberCache;
+				if (Container.ParentContainer != null)
+					parent = Container.ParentContainer.MemberCache;
 				else
 					parent = TypeHandle.ObjectType.MemberCache;
 				member_hash = SetupCacheForInterface (parent);
-			} else if (Container.Parent != null)
-				member_hash = SetupCache (Container.Parent.MemberCache);
+			} else if (Container.ParentContainer != null)
+				member_hash = SetupCache (Container.ParentContainer.MemberCache);
 			else
 				member_hash = new Hashtable ();
 
