@@ -1,3 +1,7 @@
+2004-01-21 Atsushi Enomoto <atsushi@ximian.com>
+
+	* TypedDataSetGenerator.cs : Implemented GenerateIdName().
+
 2004-01-21 Eran Domb <erand@mainsoft.com>
 
 	* XmlDataLoader.cs (AddRowToTable) : Give thre new relation correct name.
