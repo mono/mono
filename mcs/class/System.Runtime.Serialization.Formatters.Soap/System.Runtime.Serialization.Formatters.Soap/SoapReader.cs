@@ -12,10 +12,16 @@ using System.Collections;
 using System.Runtime.Serialization;
 
 namespace System.Runtime.Serialization.Formatters.Soap {
-	internal class SoapReader: ISoapReader {
+	internal sealed class SoapReader: ISoapReader {
 		public event ElementReadEventHandler ElementReadEvent;
 		private ISoapMessage _soapMessage;
 		private ISoapParser _parser;
+		private SerializationBinder _binder;
+
+		public SerializationBinder Binder {
+			get { return _binder;}
+			set { _binder = value;}
+		}
 		
 		public ISoapMessage TopObject {
 			get { return _soapMessage; }
@@ -97,6 +103,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private ElementInfo GetElementInfo(SoapSerializationEntry entry) {
 			SoapTypeMapping mapping = new SoapTypeMapping(entry.elementName, entry.elementNamespace);
 			Type elementType = SoapTypeMapper.GetType(mapping);
+
+			if(elementType != null && _binder != null) {
+				elementType = _binder.BindToType(elementType.Name, elementType.Assembly.FullName);
+				if(elementType == null) throw new SerializationException();
+			}
 			
 			
 			long id = 0;

@@ -10,5 +10,4 @@ System.Runtime.Serialization.Formatters.Soap/SoapParser.cs
 System.Runtime.Serialization.Formatters.Soap/SoapReader.cs
 System.Runtime.Serialization.Formatters.Soap/SoapTypeMapper.cs
 System.Runtime.Serialization.Formatters.Soap/SoapTypeMapping.cs
-System.Runtime.Serialization.Formatters.Soap/SoapServices.cs
 System.Runtime.Serialization.Formatters.Soap/SoapFormatter.cs

@@ -13,7 +13,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 
 namespace System.Runtime.Serialization.Formatters.Soap {
-	internal class ObjectReader {
+	internal sealed class ObjectReader {
 		private object _topObject;
 		private ObjectManager _manager;
 		private ISurrogateSelector _surrogateSelector;
@@ -30,7 +30,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_context = context;
 			_manager = new ObjectManager(selector, context);
 		}
-		
+
 		public object TopObject {
 			get {
 //				_manager.RaiseDeserializationEvent();
@@ -118,7 +118,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			object returnObject;
 			if(objType == null){ 
 				return objValue;
-			}else if(objType != null && objValue != null){
+			}else if(objValue != null){
 				returnObject = (new FormatterConverter()).Convert(objValue, objType);
 			}else if(objType.IsArray){
 				returnObject = Array.CreateInstance(objType.GetElementType(), arrayDims);
@@ -148,13 +148,13 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 							RecordFixup(objectToBeFixedId, fieldInfo._name,  fieldInfo._i, memberInfo, serializationInfo);
 						break;
 					case ElementType.Id:
+						objValue = (fieldInfo._value != null)?fieldInfo._value:String.Empty;
 						memberInfo = objectToBeFixedType.GetField(fieldInfo._name, bindingFlags);
-						objValue = FillObject((memberInfo != null)?memberInfo.FieldType:null, fieldInfo._value);
-						if(objValue == null) throw new SerializationException("e1: outch");
-						RecordFixup(objectToBeFixedId, fieldInfo._name,  fieldInfo._i, memberInfo, serializationInfo);
 						if(serializationInfo == null) {
-							memberInfo.SetValue(objectToBeFixed, objValue, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, null);
+							memberInfo.SetValue(objectToBeFixed, objValue, bindingFlags, null, null);
 						}
+						else
+							RecordFixup(objectToBeFixedId, fieldInfo._name, fieldInfo._i, null, serializationInfo);
 						_manager.RegisterObject(objValue, fieldInfo._i, null, objectToBeFixedId, memberInfo);
 						break;
 					case ElementType.Nothing:

@@ -70,6 +70,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 								entry = null;
 								SoapElementReadEvent(this, new SoapElementReadEventArgs(elementQueue));
 							}
+							if(_xmlReader.Depth == 0 || _xmlReader.Name == "SOAP-ENV:Envelope") return;
 							break;
 						case XmlNodeType.Text:
 							entry.elementValue = _xmlReader.Value;
@@ -80,7 +81,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				}
 			}
 			finally {
-				if(_xmlReader != null) _xmlReader.Close();
+				//if(_xmlReader != null) _xmlReader.Close();
 			}
 		}
 		
