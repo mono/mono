@@ -231,7 +231,11 @@ namespace Mono.CSharp
 
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
-					string full_path = dir + "/" + assembly + ".dll";
+					string full_path;
+					if (assembly.EndsWith (".dll"))
+						full_path = dir + "/" + assembly;
+					else
+						full_path = dir + "/" + assembly + ".dll";
 
 					try {
 						a = Assembly.LoadFrom (full_path);
@@ -780,21 +784,31 @@ namespace Mono.CSharp
 					Console.WriteLine ("/recurse requires an argument");
 					Environment.Exit (1);
 				}
-				CompileFiles (args [++i], true); 
+				CompileFiles (value, true); 
 				return true;
 
 			case "/r":
 			case "/reference":
-				Console.WriteLine ("/r and /reference not supported, use -r which will give you MCS semantics");
-				Console.WriteLine ("this will be fixed shortly");
-				Environment.Exit (1);
+				if (value == ""){
+					Console.WriteLine ("/recurse requires an argument");
+					Environment.Exit (1);
+				}
+				references.Add (value);
 				return true;
 
-			case "/lib":
-				Console.WriteLine ("/lib is not  supported, use -L which will give you MCS semantics");
-				Console.WriteLine ("this will be fixed shortly");
-				Environment.Exit (1);
+			case "/lib": {
+				string [] libdirs;
+				
+				if (value = ""){
+					Usage ();	
+					Environment.Exit (1);
+				}
+
+				libdirs = value.Split (new Char [] { ',' });
+				foreach (string dir in libdirs)
+					link_paths.Add (dir);
 				return true;
+			}
 				
 			case "/debug":
 			case "/debug+":

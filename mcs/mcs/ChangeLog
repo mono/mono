@@ -1,6 +1,10 @@
 2002-07-11  Miguel de Icaza  <miguel@ximian.com>
 
-	* driver.cs: Add the System directory to the link path at the end,
+	* driver.cs (CSCParseOption): Finish the /r: and /lib: support.
+
+	(LoadAssembly): Do not add the dll if it is already specified
+	
+	(MainDriver): Add the System directory to the link path at the end,
 	after all the other -L arguments. 
 
 	* expression.cs (ArrayAccess.EmitLoadOpcode): I was using the
