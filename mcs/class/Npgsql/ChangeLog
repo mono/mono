@@ -1,3 +1,12 @@
+2003-10-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Makefile: changed reference from Lib/System.Security.Tls.dll to
+	System.Security.Tls because the last will be installed before and
+	separatelly.
+
+	* Lib: Removed Lib directory, moved System.Security.Tls.dll to
+	Mono.Security.Tls library directory.
+
 2003-10-15  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Makefile: fix building and the install objectives.
