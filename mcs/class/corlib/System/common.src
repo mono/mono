@@ -47,6 +47,9 @@ InvalidOperationException.cs
 InvalidProgramException.cs
 MarshalByRefObject.cs
 Math.cs
+MemberAccessException.cs
+MissingMemberException.cs
+MissingMethodException.cs
 MonoDummy.cs
 MulticastDelegate.cs
 MulticastNotSupportedException.cs

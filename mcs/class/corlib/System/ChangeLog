@@ -1,4 +1,9 @@
 
+Tue Sep 25 17:29:02 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* MissingMethodException.cs, MissingMemberException.cs,
+	MemberAccessException.cs: added.
+
 Tue Sep 25 16:46:43 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: don't access the string array out of bounds in LastIndexOf.
