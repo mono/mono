@@ -137,7 +137,7 @@ namespace Mono.CSharp {
 				ConstantValue = System.Enum.ToObject (
 					type, ConstantValue);
 			}
-			
+
 			FieldBuilder.SetConstant (ConstantValue);
 
 			if (!TypeManager.RegisterField (FieldBuilder, ConstantValue))
@@ -152,9 +152,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void EmitConstant (TypeContainer parent)
 		{
-			if (FieldBuilder == null)
-				return;
-			
 			EmitContext ec = new EmitContext (parent, Location, null, type, ModFlags);
 			LookupConstantValue (ec);
 			

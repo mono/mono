@@ -1,5 +1,5 @@
 //
-// typegen.cs: type generation 
+// typemanager.cs: C# type manager
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //
@@ -260,7 +260,7 @@ public class TypeManager {
 	public Type LookupType (string name)
 	{
 		Type t;
-		
+
 		//
 		// First lookup in user defined and cached values
 		//
@@ -484,8 +484,17 @@ public class TypeManager {
 		
 	}
 	
-	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+					  MemberFilter filter, object criteria)
 	{
+		//
+		// We have to take care of arrays specially, because GetType on
+		// a TypeBuilder array will return a Type, not a TypeBuilder,
+		// and we can not call FindMembers on this type.
+		//
+		if (t.IsSubclassOf (TypeManager.array_type))
+			return TypeManager.array_type.FindMembers (mt, bf, filter, criteria);
+		
 		if (!(t is TypeBuilder))
 		        return t.FindMembers (mt, bf, filter, criteria);
 

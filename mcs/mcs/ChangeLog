@@ -1,5 +1,21 @@
 2001-12-22  Miguel de Icaza  <miguel@ximian.com>
 
+	* codegen.cs (EmitTopBlock): Require a Location argument now.
+
+	* cs-parser.jay (constructor_declarator): We need to setup
+	current_local_parameters before we parse the
+	opt_constructor_initializer, to allow the variables to be bound
+	to the constructor arguments.
+
+	* rootcontext.cs (LookupType): First lookup nested classes in our
+	class and our parents before we go looking outside our class.
+
+	* expression.cs (ConstantFold): Extract/debox the values at the
+	beginnning. 
+
+	* rootcontext.cs (EmitCode): Resolve the constants first before we
+	resolve the types.  This is not really needed, but it helps debugging.
+
 	* statement.cs: report location.
 	
 	* cs-parser.jay: pass location to throw statement.

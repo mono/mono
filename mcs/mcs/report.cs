@@ -73,12 +73,10 @@ namespace Mono.CSharp {
 				throw new Exception (msg);
 		}
 
-		const string line_fmt = "{0}({1}) error CS{2:0000}: {3}";
-		const string noline_fmt = "{0} error CS{2:0000}: {3}";
-		
 		static public void Error (int code, Location l, string text)
 		{
-			string msg = String.Format (line_fmt, l.Name, l.Row, code, text);
+			string msg = String.Format (
+				"{0}({1}) error CS{2:0000}: {3}", l.Name, l.Row, code, text);
 
 			RealError (msg);
 			Check (code);
@@ -101,7 +99,9 @@ namespace Mono.CSharp {
 				else
 					row = l.Row.ToString ();
 				
-				Console.WriteLine (String.Format (line_fmt, l.Name,  row, code, text));
+				Console.WriteLine (String.Format (
+					"{0}({1}) warning CS{2:0000}: {3}",
+					l.Name,  row, code, text));
 				Warnings++;
 				Check (code);
 			}

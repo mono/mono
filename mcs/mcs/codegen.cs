@@ -177,7 +177,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public void EmitTopBlock (Block block)
+		public void EmitTopBlock (Block block, Location loc)
 		{
 			bool has_ret = false;
 			
@@ -195,7 +195,14 @@ namespace Mono.CSharp {
 			}
 
 			if (ReturnType != null && !has_ret){
-				Report.Error (161, Location.Null, "Not all code paths return a value");
+				//
+				// FIXME: we need full flow analysis to implement this
+				// correctly.
+				//
+				// Otherwise we report a non-existant error on cs-parser.cs
+				// yyparse routine
+				//
+				//Report.Error (161, loc, "Not all code paths return a value");
 				return;
 			}
 				

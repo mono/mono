@@ -217,9 +217,6 @@ namespace Mono.CSharp {
 
 		void Emit (EmitContext ec, bool is_statement)
 		{
-			ILGenerator ig = ec.ig;
-			ExprClass eclass = target.eclass;
-
 			//
 			// FIXME! We need a way to "probe" if the process can
 			// just use `dup' to propagate the result

@@ -366,9 +366,10 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
-			Console.WriteLine ("Attempting to goto to: " + target);
-			
-			return false;
+			// Console.WriteLine ("Attempting to goto to: " + target);
+
+			ec.ig.Emit (OpCodes.Nop);
+			return true;
 		}
 	}
 
@@ -476,7 +477,7 @@ namespace Mono.CSharp {
 
 			ec.ig.Emit (OpCodes.Throw);
 
-			return false;
+			return true;
 		}
 	}
 

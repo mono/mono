@@ -1572,28 +1572,19 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Expression ConstantFold (EmitContext ec)
 		{
-			if (left is StringConstant && right is StringConstant){
-				StringConstant ls = (StringConstant) left;
-				StringConstant rs = (StringConstant) right;
-				
-				return new StringConstant (ls.Value + rs.Value);
-			}
+			object l = ((Constant) left).GetValue ();
+			object r = ((Constant) right).GetValue ();
+			
+			if (l is string && r is string)
+				return new StringConstant ((string) l + (string) r);
 
 			Type result_type = null;
-			object l, r;
-			
+
 			//
 			// Enumerator folding
 			//
-			if (left.Type == right.Type && left is EnumConstant){
+			if (left.Type == right.Type && left is EnumConstant)
 				result_type = left.Type;
-
-				l = ((EnumConstant)left).GetPlainValue ();
-				r = ((EnumConstant)right).GetPlainValue ();
-			} else {
-				l = left;
-				r = right;
-			}
 
 			switch (oper){
 			case Operator.BitwiseOr:

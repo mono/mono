@@ -351,8 +351,8 @@ namespace_member_declarations
 namespace_member_declaration
 	: type_declaration
 	  {
-		int mod_flags = 0;
 		string name = "";
+		int mod_flags;
 
 		if ($1 is Class){
 			Class c = (Class) $1;
@@ -365,12 +365,10 @@ namespace_member_declaration
 		} else
 			break;
 
-		//
-		// We remove this error until we can 
-		//if ((mod_flags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
-		//	error (1527, "Namespace elements cant be explicitly " +
-		//	             "declared private or protected in `" + name + "'");
-		//}
+		if ((mod_flags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
+			error (1527, "Namespace elements cant be explicitly " +
+			             "declared private or protected in `" + name + "'");
+		}
 	  }
 	| namespace_declaration
 	;
@@ -1322,13 +1320,15 @@ constructor_declaration
 constructor_declarator
 	: IDENTIFIER 
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  {
+		oob_stack.Push (lexer.Location);
+
+		current_local_parameters = (Parameters) $3;
+	  }
 	  opt_constructor_initializer
 	  {
-		Location l = lexer.Location;
-
-		$$ = new Constructor ((string) $1, (Parameters) $3, (ConstructorInitializer) $5, l);
-	
-		current_local_parameters = (Parameters) $3;
+		Location l = (Location) oob_stack.Pop ();
+		$$ = new Constructor ((string) $1, (Parameters) $3, (ConstructorInitializer) $6, l);
 	  }
 	;
 
