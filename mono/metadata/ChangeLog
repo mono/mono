@@ -1,3 +1,15 @@
+2002-04-30  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* icall.c
+	(ves_icall_System_CurrentTimeZone_GetTimeZoneData): Fixed for
+	systems that use 'timezone' rather than tm.tm_gmtoff. Also, not
+	all systems have tm.tm_zone, so use strftime() with %Z to print
+	the timezone abreviation into a temp string.
+
+	* object.c (mono_ldstr): Fixed to use mono_string_chars() macro
+	rather than mono_array_addr() on a MonoString on Big Endian
+	machines.
+
 2002-04-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* string-icalls.c (ves_icall_System_String_InternalReplace_Str):
