@@ -110,9 +110,9 @@ namespace Mono.CSharp {
 		
 		static string MakeFQN (string nsn, string name)
 		{
-			string prefix = (nsn == "" ? "" : nsn + ".");
-
-			return prefix + name;
+			if (nsn == "")
+				return name;
+			return String.Concat (nsn, ".", name);
 		}
 		       
 		// <remarks>
