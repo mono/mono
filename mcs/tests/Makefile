@@ -157,7 +157,7 @@ test-unsafe-compiler-jit:
 #
 # Tests that require separate compilation
 #
-multi: multi-1 multi-2 multi-3 multi-5 ilasm
+multi: multi-1 multi-2 multi-3 multi-5 multi-6 ilasm
 	echo Multi-assembly test passes
 
 multi-1:
