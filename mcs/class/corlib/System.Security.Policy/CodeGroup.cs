@@ -123,8 +123,8 @@ namespace System.Security.Policy {
 			if (cg.Description != this.Description)
 				return false;
 
-			if (!cg.MembershipCondition.Equals (this.MembershipCondition))
-				return false;
+//			if (!cg.MembershipCondition.Equals ((IMembershipCondition)this.MembershipCondition))
+//				return false;
 
 			if (compareChildren) {
 				int childCount = cg.Children.Count;
