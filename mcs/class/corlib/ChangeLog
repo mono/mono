@@ -1,3 +1,8 @@
+2003-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* corlib.dll.sources: Added classes for Authenticode support.
+	* corlib_test.dll.sources: Added unit test for SPC certificates.
+
 2003-09-26  Pedro Martínez Julá  <yoros@wanadoo.es>
 
 	* corlib_test.dll.sources: Remove tests that generate compile
