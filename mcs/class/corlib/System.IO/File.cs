@@ -69,9 +69,9 @@ namespace System.IO
 		public static void Copy (string src, string dest, bool overwrite)
 		{	
 			if (src == null)
-				throw new ArgumentNullException (Locale.GetText ("src is null"));
+				throw new ArgumentNullException ("src");
 			if (dest == null)
-				throw new ArgumentNullException (Locale.GetText ("dest is null"));
+				throw new ArgumentNullException ("dest");
 			if (src.Trim () == "" || src.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException (Locale.GetText ("src is null"));
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
