@@ -55,7 +55,7 @@ TEST2_SOURCES = \
 	2test-1 2test-2 2test-3 2test-4 2test-5 2test-6
 
 UNSAFE_SOURCES = \
-	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5 unsafe-6 unsafe-7 unsafe-8 unsafe-9
+	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5 unsafe-6 unsafe-7 unsafe-8 unsafe-9 unsafe-10
 
 WINDOWS_SOURCES = \
 	test-50 test-67

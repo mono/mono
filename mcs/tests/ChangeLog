@@ -1,3 +1,7 @@
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* unsafe-10.cs: new test
+
 2004-08-03  Ben Maurer  <bmaurer@ximian.com>
 	
 	* test-283.cs:  for 62275.
