@@ -277,6 +277,7 @@ namespace System.Runtime.Serialization
 			return (UInt64) GetValue (name, typeof (System.UInt64));
 		}
 
+		/* used by the runtime */
 		private SerializationEntry [] get_entries ()
 		{
 			SerializationEntry [] res = new SerializationEntry [this.MemberCount];
