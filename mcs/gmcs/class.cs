@@ -655,11 +655,11 @@ namespace Mono.CSharp {
 				Location l = f.Location;
 				FieldExpr fe = new FieldExpr (f.FieldBuilder, l);
 				fe.InstanceExpression = instance_expr;
+				fe.IsFieldInitializer = true;
+
 				ExpressionStatement a = new Assign (fe, e, l);
 
-				ec.IsFieldInitializer = true;
 				a = a.ResolveStatement (ec);
-				ec.IsFieldInitializer = false;
 				if (a == null)
 					return false;
 

@@ -2814,6 +2814,7 @@ namespace Mono.CSharp {
 		
 		LocalTemporary temp;
 		bool prepared;
+		bool is_field_initializer;
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
@@ -2854,6 +2855,16 @@ namespace Mono.CSharp {
 
 			set {
 				instance_expr = value;
+			}
+		}
+
+		public bool IsFieldInitializer {
+			get {
+				return is_field_initializer;
+			}
+
+			set {
+				is_field_initializer = value;
 			}
 		}
 
@@ -2957,7 +2968,7 @@ namespace Mono.CSharp {
 					Report_AssignToReadonly (false);
 
 				Type ctype;
-				if (!ec.IsFieldInitializer &&
+				if (!is_field_initializer &&
 				    (ec.TypeContainer.CurrentType != null))
 					ctype = ec.TypeContainer.CurrentType.ResolveType (ec);
 				else
