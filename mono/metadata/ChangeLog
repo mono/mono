@@ -1,3 +1,7 @@
+2001-11-09  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am (pedump_LDADD): Don't need THREAD_LIBS any more
+
 2001-11-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_metadata_init): bug fix: compute the right slot

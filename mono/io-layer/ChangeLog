@@ -1,0 +1,7 @@
+2001-11-08  Dick Porter  <dick@ximian.com>
+
+	* Initial checkin.
+
+	This is a library emulating the win32 threading and IO API.
+
+

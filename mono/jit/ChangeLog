@@ -1,3 +1,7 @@
+2001-11-09  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am (testjit_LDADD): Don't need THREAD_LIBS any more
+
 2001-11-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* testjit.c (mono_analyze_stack): new BOX impl.
