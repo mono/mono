@@ -1,4 +1,10 @@
 
+Fri Dec 12 21:25:14 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-ppc.brg, mini-ppc.h, mini-ppc.c: support for passing 
+	structures by value. Misc fixes.
+	* objects.cs: more tests.
+
 Fri Dec 12 10:11:49 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: lconv.ovf.i implemented.
