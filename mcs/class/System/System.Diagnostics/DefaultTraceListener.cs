@@ -13,6 +13,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Diagnostics {
@@ -133,13 +134,13 @@ namespace System.Diagnostics {
 			WriteLine (new StackTrace().ToString());
 		}
 
-		[DllImport ("kernel32.dll", CharSet=CharSet.Auto)]
-		private extern static void OutputDebugStringW (string message);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void WriteWindowsDebugString (string message);
 
 		private void WriteDebugString (string message)
 		{
 			if (OnWin32)
-				OutputDebugStringW (message);
+				WriteWindowsDebugString (message);
 			else
 				WriteMonoTrace (message);
 		}
