@@ -164,6 +164,13 @@ namespace System.Data.Common
 			SetNull(index,false,isDbNull);
 		}
 
+		protected  bool CheckAndSetNull( int index, IDataRecord record, int field)
+		{
+			 bool isDbNull = record.IsDBNull(field);
+	    	         SetNull(index,false,isDbNull);
+			 return isDbNull;		
+		}
+
 		protected int CompareNulls(int index1, int index2)
 		{
 			bool null1 = IsNull(index1);
@@ -244,8 +251,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				SetValue(index,record.GetInt16(field));
-				base.SetItemFromDataRecord(index,record,field);
+				if (!CheckAndSetNull ( index, record,field))
+					SetValue(index,record.GetInt16(field));
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -356,8 +363,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				SetValue(index,record.GetInt32(field));
-				base.SetItemFromDataRecord(index,record,field);
+				if (!CheckAndSetNull ( index, record,field))
+                                        SetValue(index,record.GetInt32(field));
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -468,8 +475,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				SetValue(index,record.GetInt64(field));
-				base.SetItemFromDataRecord(index,record,field);
+				if (!CheckAndSetNull ( index, record,field))
+                                        SetValue(index,record.GetInt64(field));
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -571,8 +578,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				SetValue(index,record.GetFloat(field));
-				base.SetItemFromDataRecord(index,record,field);
+				if (!CheckAndSetNull ( index, record,field))
+                                        SetValue(index,record.GetFloat(field));
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -674,8 +681,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				SetValue(index,record.GetDouble(field));
-				base.SetItemFromDataRecord(index,record,field);
+				if (!CheckAndSetNull ( index, record,field))
+                                        SetValue(index,record.GetDouble(field));
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -777,8 +784,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				SetValue(index,record.GetByte(field));
-				base.SetItemFromDataRecord(index,record,field);
+				if (!CheckAndSetNull ( index, record,field))
+                                        SetValue(index,record.GetByte(field));
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -881,7 +888,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				SetValue(index,record.GetBoolean(field));
+				if (!CheckAndSetNull ( index, record,field))
+                                        SetValue(index,record.GetBoolean(field));
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -969,7 +977,7 @@ namespace System.Data.Common
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
 				// if exception thrown, it should be caught 
-				// in the  caller method
+				// in the  caller metho
 				SetValue(index,record.GetValue(field));
 				base.SetItemFromDataRecord(index,record,field);
 			}
@@ -1050,8 +1058,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				SetValue(index,record.GetString(field));
-				base.SetItemFromDataRecord(index,record,field);
+				if (!CheckAndSetNull ( index, record,field))
+                                        SetValue(index,record.GetString(field));
 			}
 
 			internal override int CompareValues(int index1, int index2)

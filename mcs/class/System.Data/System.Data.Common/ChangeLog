@@ -1,3 +1,7 @@
+2004-06-18 Umadevi S <sumadevi@novell.com>
+	* DataContainer.cs - CheckedforNull before calling the relavant setmethods in each of the 
+		SetItemForDataRecord method for all the classes.
+
 2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
 	* RecordCache.cs : Added CopyRecord mathod that copies single record from one table to another.
 
