@@ -1,3 +1,11 @@
+2003-09-29  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.GetMethodFlags): Added support for
+	inflated generic methods.
+
+	* generics.cs (ConstructedType): Distinguish between open and
+	closed constructed types; correctly resolve the arguments.
+
 2003-09-22  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType.ResolveAsTypeCheck): Check whether

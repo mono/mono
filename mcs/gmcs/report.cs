@@ -227,6 +227,8 @@ namespace Mono.CSharp {
 						sb.Append ("null");
 					else if (arg is ICollection)
 						sb.Append (PrintCollection ((ICollection) arg));
+					else if (arg is IntPtr)
+						sb.Append (String.Format ("IntPtr(0x{0:x})", ((IntPtr) arg).ToInt32 ()));
 					else
 						sb.Append (arg);
 				}
@@ -384,5 +386,9 @@ namespace Mono.CSharp {
 			: base (message)
 		{
 		}
+
+		public InternalErrorException (string format, params object[] args)
+			: this (String.Format (format, args))
+		{ }
 	}
 }

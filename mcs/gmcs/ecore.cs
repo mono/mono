@@ -1994,7 +1994,7 @@ namespace Mono.CSharp {
                                 TypeParameterExpr generic_type = ds.LookupGeneric (Name, loc);
                                  
                                 if (generic_type != null)
-                                        return generic_type;
+                                        return generic_type.ResolveAsTypeTerminal (ec);
                         }
 
 			//

@@ -2146,6 +2146,12 @@ public class TypeManager {
 			return method.GetMethodFlags (loc);
 		}
 
+		if (mb.IsInflatedGeneric) {
+			MethodBase generic = mb.GetGenericMethodDefinition ();
+
+			return GetMethodFlags (generic, loc);
+		}
+
 		object [] attrs = mb.GetCustomAttributes (true);
 		foreach (object ta in attrs){
 			if (!(ta is System.Attribute)){

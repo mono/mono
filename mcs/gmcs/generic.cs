@@ -7,8 +7,10 @@
 // (C) 2003 Ximian, Inc.
 //
 using System;
-using System.Collections;
+using System.Reflection;
 using System.Reflection.Emit;
+using System.Globalization;
+using System.Collections;
 using System.Text;
 	
 namespace Mono.CSharp {
@@ -196,6 +198,13 @@ namespace Mono.CSharp {
 			this.type_parameter = type_parameter;
 		}
 
+		public override Expression ResolveAsTypeStep (EmitContext ec)
+		{
+			type = type_parameter.Type;
+
+			return this;
+		}
+
 		public override string ToString ()
 		{
 			return "TypeParameterExpr[" + type_parameter.Name + "]";
@@ -209,6 +218,8 @@ namespace Mono.CSharp {
 
 	public class TypeArguments {
 		ArrayList args;
+		Type[] atypes;
+		bool has_type_args;
 		
 		public TypeArguments ()
 		{
@@ -222,11 +233,13 @@ namespace Mono.CSharp {
 
 		public Type[] Arguments {
 			get {
-				Type[] retval = new Type [args.Count];
-				for (int i = 0; i < args.Count; i++)
-					retval [i] = ((TypeExpr) args [i]).Type;
+				return atypes;
+			}
+		}
 
-				return retval;
+		public bool HasTypeArguments {
+			get {
+				return has_type_args;
 			}
 		}
 
@@ -250,12 +263,17 @@ namespace Mono.CSharp {
 		{
 			int count = args.Count;
 			bool ok = true;
+
+			atypes = new Type [count];
 			
 			for (int i = 0; i < count; i++){
 				Expression e = ((Expression)args [i]).ResolveAsTypeTerminal (ec);
 				if (e == null)
 					ok = false;
+				if (e is TypeParameterExpr)
+					has_type_args = true;
 				args [i] = e;
+				atypes [i] = e.Type;
 			}
 			return ok;
 		}
@@ -265,7 +283,7 @@ namespace Mono.CSharp {
 		Expression container_type;
 		string name, full_name;
 		TypeArguments args;
-		Type[] gen_params;
+		Type[] gen_params, atypes;
 		
 		public ConstructedType (string name, TypeArguments args, Location l)
 		{
@@ -334,15 +352,29 @@ namespace Mono.CSharp {
 			if (resolved == null)
 				return null;
 
-			Type gt = resolved.Type.GetGenericTypeDefinition ();
+			Type gt;
+			TypeBuilder tb = resolved.Type as TypeBuilder;
+			if (tb != null) {
+				TypeContainer tc = TypeManager.LookupTypeContainer (tb);
+
+				tb = tc.DefineType ();
+
+				gt = tb.GetGenericTypeDefinition ();
+			} else
+				gt = resolved.Type.GetGenericTypeDefinition ();
 
 			gen_params = gt.GetGenericParameters ();
-			if (args.Arguments.Length != gen_params.Length) {
-				Report.Error (-217, loc, "Generic type `" + gt.Name + "' takes " +
-					      gen_params.Length + " type parameters, but specified " +
-					      args.Arguments.Length + ".");
+			atypes = args.Arguments;
+
+			if (atypes.Length != gen_params.Length) {
+				Report.Error (-217, loc, "Generic type `{0}' takes {1} " +
+					      "type parameters, but specified {2}.", gt.Name,
+					      gen_params.Length, atypes.Length);
 				return null;
 			}
+
+			if (args.HasTypeArguments)
+				return new TypeExpr (gt, loc);
 
 			for (int i = 0; i < gen_params.Length; i++) {
 				if (!CheckConstraints (i))
