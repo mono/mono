@@ -1,3 +1,7 @@
+2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ChannelServices.cs: Removed some TODOs. Implemented AsyncDispatchMessage.
+
 2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ChannelServices.cs: Catch errors when creating configured channels.

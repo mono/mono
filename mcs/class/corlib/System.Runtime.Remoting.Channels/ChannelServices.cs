@@ -130,13 +130,6 @@ namespace System.Runtime.Remoting.Channels
 			}
 		}
 
-		[MonoTODO]
-		public static IMessageCtrl AsyncDispatchMessage (IMessage msg,
-								 IMessageSink replySink)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public static IServerChannelSink CreateServerChannelSinkChain (
 			IServerChannelSinkProvider provider, IChannelReceiver channel)
 	    {
@@ -148,13 +141,15 @@ namespace System.Runtime.Remoting.Channels
 			return  provider.CreateSink (channel);
 		}
 
-		[MonoTODO]
 		public static ServerProcessing DispatchMessage (
 			IServerChannelSinkStack sinkStack,
 			IMessage msg,
 			out IMessage replyMsg)
 		{
-			// TODO: Async processing
+			if (msg == null) throw new ArgumentNullException ("msg");
+			
+			// Async processing is not done here because there isn't any way
+			// to know if a message is to be dispatched sync or asynchronously.
 
 			replyMsg = SyncDispatchMessage (msg);
 
@@ -320,12 +315,31 @@ namespace System.Runtime.Remoting.Channels
 
 		public static IMessage SyncDispatchMessage (IMessage msg)
 		{
+			IMessage ret = CheckIncomingMessage (msg);
+			if (ret != null) return ret;
+			return _crossContextSink.SyncProcessMessage (msg);
+		}
+
+		public static IMessageCtrl AsyncDispatchMessage (IMessage msg, IMessageSink replySink)
+		{
+			IMessage ret = CheckIncomingMessage (msg);
+			if (ret != null) {
+				replySink.SyncProcessMessage (ret);
+				return null;
+			}
+			return _crossContextSink.AsyncProcessMessage (msg, replySink);		
+		}
+		
+		static ReturnMessage CheckIncomingMessage (IMessage msg)
+		{
 			IMethodMessage call = (IMethodMessage)msg;
-			ServerIdentity identity = RemotingServices.GetIdentityForUri(call.Uri) as ServerIdentity;
-			if (identity == null) return new ReturnMessage (new RemotingException ("No receiver for uri " + call.Uri), (IMethodCallMessage) msg);
+			ServerIdentity identity = RemotingServices.GetIdentityForUri (call.Uri) as ServerIdentity;
+
+			if (identity == null) 
+				return new ReturnMessage (new RemotingException ("No receiver for uri " + call.Uri), (IMethodCallMessage) msg);
 
 			RemotingServices.SetMessageTargetIdentity (msg, identity);
-			return _crossContextSink.SyncProcessMessage (msg);
+			return null;
 		}
 
 		public static void UnregisterChannel (IChannel chnl)
