@@ -101,7 +101,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			AssertEquals("RIC #11", true, Regex.IsMatch(str, @"[A-a]+", RegexOptions.IgnoreCase));
 			
 			str = "Ae";
-			AssertEquals("RIC #12", false, Regex.IsMatch(str, @"[A-a]+", RegexOptions.IgnoreCase));
+			Assert("RIC #12", Regex.IsMatch(str, @"[A-a]+", RegexOptions.IgnoreCase));
 
                 }
 	}
