@@ -12,5 +12,6 @@
 	<dllmap dll="libgdk_pixbuf-2.0-0.dll" target="libgdk_pixbuf-2.0.so" />
 	<dllmap dll="libgtk-win32-2.0-0.dll" target="libgtk-x11-2.0.so" />
 	<dllmap dll="libgtk-win32-2.0-0.dll" target="libgtk-x11-2.0.so" />
+	<dllmap dll="libglade-2.0-0.dll" target="libglade-2.0.so" />
 	<dllmap dll="oci" target="clntsh" />
 </configuration>
