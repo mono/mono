@@ -17,8 +17,12 @@
 	* SystemException.cs: Added [Serializable] attribute.
 
 	* Exception.cs: Added [Serializable] attribute, made properties
-	'Message', 'Source' and 'StackTrace' virtual methods, per 1.0 spec.
-		
+	'Message', 'Source' and 'StackTrace' virtual methods, per 1.0
+	spec.
+
+	* ContextStaticAttribute.cs: Added [Serializable] attribute and
+	put in the missing constructor.
+
 2002-01-18  Duncan Mak  <duncan@ximian.com>
 
 	* Environment.cs: Commented out references to

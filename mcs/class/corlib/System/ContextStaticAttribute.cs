@@ -1,5 +1,5 @@
 //
-// System.ContextStatic.cs
+// System.ContextStaticAttribute.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -17,9 +17,12 @@ namespace System {
 	///   
 	/// </remarks>
 	[AttributeUsage (AttributeTargets.Field)]
+	[Serializable]
 	public class ContextStaticAttribute : Attribute {
 
-		// No methods.
+		   public ContextStaticAttribute () : base ()
+		   {
+		   }
 		
 	}
 }
