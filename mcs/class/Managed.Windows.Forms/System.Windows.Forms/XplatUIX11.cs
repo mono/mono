@@ -325,7 +325,6 @@ namespace System.Windows.Forms {
 
 				XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
 				XFlush(DisplayHandle);
-
 			}
 		}
 
@@ -557,6 +556,16 @@ namespace System.Windows.Forms {
 
 		private void UpdateMessageQueue ()
 		{
+			lock (timer_list) {
+				for (int i = 0; i < timer_list.Count; i++) {
+					Timer timer = (Timer) timer_list [i];
+					if (timer.Enabled && timer.Expires <= DateTime.Now) {
+						timer.FireTick ();
+						timer.Update ();
+					}
+				}
+			}
+
 			while (XPending (DisplayHandle) > 0) {
 				XEvent xevent = new XEvent ();
 
@@ -574,16 +583,12 @@ namespace System.Windows.Forms {
 							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 				   
 					if (!data.HasExpose) {
-						lock (message_queue) {
-							message_queue.Enqueue (xevent);
-							data.HasExpose = true;
-						}
+						message_queue.Enqueue (xevent);
+						data.HasExpose = true;
 					}
 					break;
 				default:
-					lock (message_queue) {
-						message_queue.Enqueue (xevent);
-					}
+					message_queue.Enqueue (xevent);
 					break;
 				}
 			}
@@ -591,19 +596,6 @@ namespace System.Windows.Forms {
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			XEvent	xevent = new XEvent();
-
-			// TODO: By sorting this list we can optimize a lot. Also DateTime.Now is not
-			// the fastest thing in the world.
-			lock (timer_list) {
-				for (int i = 0; i < timer_list.Count; i++) {
-					Timer timer = (Timer) timer_list [i];
-					DateTime now = DateTime.Now;
-					if (timer.Enabled && timer.Expires <= now) {
-						timer.FireTick ();
-						timer.Update ();
-					}
-				}
-			}
 
 			lock (message_queue) {
 				if (message_queue.Count > 0) {
@@ -614,7 +606,7 @@ namespace System.Windows.Forms {
 						xevent = (XEvent) message_queue.Dequeue ();
 					} else {
 						msg.message = Msg.WM_ENTERIDLE;
-						return true; 
+						return true;
 					}
 				}
 			}
