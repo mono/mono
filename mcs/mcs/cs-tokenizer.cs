@@ -1074,6 +1074,7 @@ namespace Mono.CSharp
 					char [] quotes = { '\"' };
 					
 					ref_name = arg.Substring (pos). Trim (quotes);
+					Location.Push (ref_name);
 				} else {
 					ref_line = System.Int32.Parse (arg);
 				}
