@@ -1,5 +1,7 @@
 2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_class_get_allocation_ftn): Add marshalbyref case.
+
 	* gc-internal.h gc.c: Add mono_gc_out_of_memory () function. Register
 	this function with Boehm as the oom handler, so we don't have to check
 	the result of GC_malloc.
