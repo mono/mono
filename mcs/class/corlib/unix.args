@@ -753,6 +753,7 @@ System.Security.Permissions/RegistryPermissionAttribute.cs
 System.Security.Permissions/SecurityAction.cs
 System.Security.Permissions/SecurityAttribute.cs
 System.Security.Permissions/SecurityPermission.cs
+System.Security.Permissions/SecurityPermissionAttribute.cs
 System.Security.Permissions/SecurityPermissionFlag.cs
 System.Security.Permissions/SiteIdentityPermissionAttribute.cs
 System.Security.Permissions/StrongNameIdentityPermission.cs
