@@ -254,6 +254,7 @@ namespace System.Data
 		[DataSysDescription ("Indicates the table this DataView uses to get data.")]
 		[DefaultValue (null)]
 		[RefreshProperties (RefreshProperties.All)]
+		[TypeConverter (typeof (DataTableTypeConverter))]
 		public DataTable Table {
 			[MonoTODO]
 			get {
@@ -409,6 +410,8 @@ namespace System.Data
 		[DataSysDescription ("Indicates the data returned by this DataView has somehow changed.")]
 		public event ListChangedEventHandler ListChanged;
 
+		[Browsable (false)]
+		[DataSysDescription ("Indicates whether the view is open.")]
 		protected bool IsOpen {
 			[MonoTODO]
 			get {

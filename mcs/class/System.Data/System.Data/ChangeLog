@@ -1,3 +1,7 @@
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataView.cs : missing attributes.
+
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRowView.cs : implemented CreateChildView().
@@ -14,7 +18,7 @@
 
 	* DataColumn.cs : set_MaxLength is not allowed when it is mapped to
 	  SimpleContent. (However, it is weird but it never fails when we set
-	  ColumnMapping = MappingType.SimpleContent when we have MaxLength.)
+	  ColumnMapping = MappingType.SimpleContent when we fhave MaxLength.)
 
 2005-01-21  Atsushi Enomoto  <atsushi@ximian.com>
 
