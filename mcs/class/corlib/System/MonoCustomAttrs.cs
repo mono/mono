@@ -28,10 +28,14 @@ namespace System {
 		}
 
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit) {
+			object[] r;
 			object[] res = from_cache (obj);
 			// shortcut
-			if (res.Length == 1 && (res[0].GetType () == attributeType || res[0].GetType().IsSubclassOf(attributeType)))
-				return (object[])res.Clone ();
+			if (res.Length == 1 && (res[0].GetType () == attributeType || res[0].GetType().IsSubclassOf(attributeType))) {
+				r = (object[])Array.CreateInstance (attributeType, 1);
+				r [0] = res [0];
+				return r;
+			}
 			ArrayList a = new ArrayList ();
 			Type btype = obj as Type;
 			do {
@@ -45,7 +49,7 @@ namespace System {
 					break;
 				}
 			} while (inherit && btype != null && ((btype = btype.BaseType) != null));
-			Attribute[] r = new Attribute [a.Count];
+			r = (object[])Array.CreateInstance (attributeType, a.Count);
 			a.CopyTo (r);
 			return r;
 		}

@@ -1,4 +1,9 @@
 
+Fri Jan 3 16:18:27 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* MonoCustomAttrs.cs: create properly typed arrays when returning
+	arrays of attributes of a given type.
+
 Fri Jan 3 11:10:14 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* MonoType.cs: fixed MemberType property for nested types.
