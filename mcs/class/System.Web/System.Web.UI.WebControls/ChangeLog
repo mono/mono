@@ -1,3 +1,16 @@
+2002-09-12      Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* PagedDataSource.cs   - FirstIndexInPage : Fixed bug.
+	* DataGrid.cs          - CreateControlHierarchy(bool)
+	                            : working towards completion.
+	                       - ResolveDataSource(object, string)
+	                            : stubbed new method
+	                       - CreateItem(....)
+	                            : stubbed new method
+	                Well. It's almost done.
+	* DataGridTableInternal.cs
+	                       - Added new internal class.
+
 2002-08-28      Gaurav Vaish <gvaish_mono@lycos.com>
 
 	* DataSourceInternal.cs       - Added new class (internal).

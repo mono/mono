@@ -936,12 +936,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected override void CreateControlHierarchy(bool useDataSource)
 		{
-			IEnumerator pageSource;
+			IEnumerator pageSourceEnumerator;
 			int         itemCount;
-			int         dsItemCount;
 			ArrayList   dataKeys;
 			ArrayList   columns;
 			IEnumerable resolvedDS;
@@ -960,9 +958,8 @@ namespace System.Web.UI.WebControls
 			int         selIndex;
 
 			pagedDataSource = CreatePagedDataSource();
-			pageSource      = null;
+			pageSourceEnumerator  = null;
 			itemCount       = -1;
-			dsItemCount     = -1;
 			dataKeys        = DataKeysArray;
 			columns         = null;
 			if(itemsArrayList != null)
@@ -980,13 +977,264 @@ namespace System.Web.UI.WebControls
 				{
 					if(pagedDataSource.IsCustomPagingEnabled)
 					{
-						// I may need a dummy pagedDS
+						pagedDataSource.DataSource = new DataSourceInternal(itemCount);
+					} else
+					{
+						pagedDataSource.DataSource = new DataSourceInternal(pageDSCount);
 					}
+					pageSourceEnumerator = pagedDataSource.GetEnumerator();
+					columns              = CreateColumnSet(null, false);
+					itemsArrayList.Capacity = itemCount;
 				}
 			} else
 			{
-				//TODO: Use Data Source
+				dataKeys.Clear();
+				resolvedDS = ResolveDataSource(DataSource, DataMember);
+				if(resolvedDS != null)
+				{
+					collResolvedDS = (ICollection) resolvedDS;
+					if(pagedDataSource.IsPagingEnabled && !pagedDataSource.IsCustomPagingEnabled
+					   && collResolvedDS == null)
+					{
+						throw new HttpException(HttpRuntime.FormatResourceString("DataGrid_Missing_VirtualItemCount", ID));
+					}
+					pagedDataSource.DataSource = resolvedDS;
+					if(pagedDataSource.IsPagingEnabled && (pagedDataSource.CurrentPageIndex < 0 ||
+					                       pagedDataSource.CurrentPageIndex >= pagedDataSource.PageCount))
+					{
+						throw new HttpException(HttpRuntime.FormatResourceString("DataGrid_Invalid_Current_PageIndex", ID));
+					}
+					columns = CreateColumnSet(pagedDataSource, useDataSource);
+					if(storedDataValid)
+					{
+						pageSourceEnumerator = storedData;
+					} else
+					{
+						pageSourceEnumerator = pagedDataSource.GetEnumerator();
+					}
+					if(collResolvedDS != null)
+					{
+						pageDSCount         = pagedDataSource.Count;
+						dataKeys.Capacity   = pageDSCount;
+						itemsArrayList.Capacity = pageDSCount;
+					}
+				}
+				colCount = 0;
+				if(columns != null)
+					colCount = columns.Count;
+				int currentSourceIndex;
+				if(colCount > 0)
+				{
+					cols = new DataGridColumn[colCount];
+					columns.CopyTo(cols, 0);
+					foreach(DataGridColumn current in cols)
+					{
+						cols.Initialize();
+					}
+					deployTable = new DataGridTableInternal();
+					Controls.Add(deployTable);
+					deployRows = deployTable.Rows;
+
+					indexCounter = 0;
+					currentSourceIndex  = 0;
+					dkField = DataKeyField;
+
+					dsUse = (useDataSource) ? (dkField.Length > 0) : false;
+					pgEnabled = pagedDataSource.IsPagingEnabled;
+					editIndex = EditItemIndex;
+					selIndex  = SelectedIndex;
+					if(pgEnabled)
+					{
+						currentSourceIndex = pagedDataSource.FirstIndexInPage;
+						CreateItem(-1, -1, ListItemType.Pager, false, null,
+						           cols, deployRows, pagedDataSource);
+					}
+					itemCount = 0;
+					CreateItem(-1, -1, ListItemType.Header, useDataSource, null,
+					           cols, deployRows, null);
+					if(storedDataValid && storedDataFirst != null)
+					{
+						if(dsUse)
+						{
+							dataKeys.Add(DataBinder.GetPropertyValue(storedDataFirst, dkField));
+						}
+						deployType = ListItemType.Item;
+						if(indexCounter == editIndex)
+						{
+							deployType = ListItemType.EditItem;
+						} else if(indexCounter == selIndex)
+						{
+							deployType = ListItemType.SelectedItem;
+						}
+						itemsArrayList.Add(CreateItem(0, currentSourceIndex, deployType,
+						                              useDataSource, storedDataFirst,
+						                              cols, deployRows, null));
+						itemCount++;
+						indexCounter++;
+						currentSourceIndex++;
+						storedDataValid = false;
+						storedDataFirst = null;
+					}
+
+					while(pageSourceEnumerator.MoveNext())
+					{
+						object current = pageSourceEnumerator.Current;
+						if(dsUse)
+						{
+							dataKeys.Add(DataBinder.GetPropertyValue(current, dkField));
+						}
+						deployType = ListItemType.Item;
+						if(indexCounter == editIndex)
+						{
+							deployType = ListItemType.EditItem;
+						} else if(indexCounter == selIndex)
+						{
+							deployType = ListItemType.SelectedItem;
+						}
+						itemsArrayList.Add(CreateItem(indexCounter, currentSourceIndex,
+						                              deployType, useDataSource, current,
+						                              cols, deployRows, null));
+						itemCount++;
+						indexCounter++;
+						currentSourceIndex++;
+					}
+
+					if(pgEnabled)
+					{
+						CreateItem(-1, -1, ListItemType.Pager, false, null, cols, deployRows,
+						           pagedDataSource);
+					}
+				}
+
+				if(useDataSource)
+				{
+					if(pageSourceEnumerator != null)
+					{
+						ViewState["_DataGrid_ItemCount"] = itemCount;
+						if(pagedDataSource.IsPagingEnabled)
+						{
+							ViewState["PageCount"] = pagedDataSource.PageCount;
+							ViewState["DataGrid_DataSource_Count"] = pagedDataSource.DataSourceCount;
+						} else
+						{
+							ViewState["PageCount"] = 1;
+							ViewState["DataGrid_DataSource_Count"] = itemCount;
+						}
+					} else
+					{
+						ViewState["_DataGrid_ItemCount"] = -1;
+						ViewState["DataGrid_DataSource_Count"] = -1;
+						ViewState["PageCount"] = 0;
+					}
+				}
 			}
+			pagedDataSource = null;
+		}
+
+		private IEnumerable ResolveDataSource(object source, string member)
+		{
+			if(source != null && source is IListSource)
+			{
+				IListSource src = (IListSource)source;
+				IList list = src.GetList();
+				if(!src.ContainsListCollection)
+				{
+					return list;
+				}
+				if(list != null && list is ITypedList)
+				{
+					ITypedList tlist = (ITypedList)list;
+					PropertyDescriptorCollection pdc = tlist.GetItemProperties(new PropertyDescriptor[0]);
+					if(pdc != null && pdc.Count > 0)
+					{
+						PropertyDescriptor pd = null;
+						if(member != null && member.Length > 0)
+						{
+							pd = pdc.Find(member, true);
+						} else
+						{
+							pd = pdc[0];
+						}
+						if(pd != null)
+						{
+							object rv = pd.GetValue(list[0]);
+							if(rv != null && rv is IEnumerable)
+							{
+								return (IEnumerable)rv;
+							}
+						}
+						throw new HttpException(
+						      HttpRuntime.FormatResourceString("ListSource_Missing_DataMember", member));
+					}
+					throw new HttpException(
+					      HttpRuntime.FormatResourceString("ListSource_Without_DataMembers"));
+				}
+			}
+			if(source is IEnumerable)
+			{
+				return (IEnumerable)source;
+			}
+			return null;
+		}
+
+		[MonoTODO]
+		private DataGridItem CreateItem(int itemIndex, int dsIndex, ListItemType type,
+		                                bool bind, object item, DataGridColumn[] columns,
+		                                TableRowCollection rows, PagedDataSource dataSrc)
+
+		{
+			DataGridItem retVal;
+			DataGridItemEventArgs args;
+
+			retVal = CreateItem(itemIndex, dsIndex, type);
+			args = new DataGridItemEventArgs(retVal);
+
+			if(type != ListItemType.Pager)
+			{
+				InitializeItem(retVal, columns);
+				if(bind)
+				{
+					retVal.DataItem = item;
+				}
+				OnItemCreated(args);
+				rows.Add(retVal);
+				if(bind)
+				{
+					retVal.DataBind();
+					OnItemDataBound(args);
+					retVal.DataItem = null;
+				}
+			} else
+			{
+				InitializePager(retVal, columns);
+				OnItemCreated(args);
+				rows.Add(retVal);
+			}
+			return retVal;
+		}
+
+		protected virtual DataGridItem CreateItem(int itemIndex, int dataSourceIndex, ListItemType itemType)
+		{
+			return new DataGridItem(itemIndex, dataSourceIndex, itemType);
+		}
+
+		[MonoTODO]
+		protected virtual void InitializeItem(DataGridItem item, DataGridColumn[] columns)
+		{
+			TableCellCollection cells = item.Cells;
+			TableCell cCell;
+			
+			for(int i = 0; i < columns.Length; i++)
+			{
+				cCell = new TableCell();
+				columns[i].InitializeCell(cCell, i, item.ItemType);
+				cells.Add(cCell);
+			}
+		}
+
+		[MonoTODO]
+		protected virtual void InitializePager(DataGridItem item, DataGridColumn[] columns)
+		{
 			throw new NotImplementedException();
 		}
 
@@ -1051,7 +1299,6 @@ namespace System.Web.UI.WebControls
 			if(source != null)
 			{
 				ArrayList retVal = new ArrayList();
-				bool      flag   = true;
 				PropertyDescriptorCollection props = source.GetItemProperties(new PropertyDescriptor[0]);
 				Type      prop_type;
 				BoundColumn b_col;
@@ -1072,8 +1319,6 @@ namespace System.Web.UI.WebControls
 						IEnumerator en = source.GetEnumerator();
 						if(en.MoveNext())
 							fitem = en.Current;
-						else
-							flag = false;
 						if(fitem != null)
 						{
 							prop_type = fitem.GetType();

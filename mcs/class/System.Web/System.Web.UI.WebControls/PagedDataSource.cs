@@ -140,7 +140,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(dataSource != null && IsPagingEnabled && IsCustomPagingEnabled)
+				if(dataSource != null && IsPagingEnabled && !IsCustomPagingEnabled)
 				{
 					return (currentPageIndex * pageSize);
 				}
