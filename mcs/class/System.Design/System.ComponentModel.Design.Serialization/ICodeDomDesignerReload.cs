@@ -7,6 +7,7 @@
 //
 
 using System.CodeDom;
+using System.Web.UI.Design;
 
 namespace System.ComponentModel.Design.Serialization
 {
