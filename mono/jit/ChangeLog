@@ -1,3 +1,9 @@
+
+Thu Mar 21 17:35:48 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: inter strings before executing a method.
+	Do not intern command line arguments anymore.
+
 2002-03-21  Martin Baulig  <martin@gnome.org>
 
 	* debug.h (MonoDebugFormat): Added MONO_DEBUG_FORMAT_DWARF2_PLUS.

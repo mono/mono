@@ -1,4 +1,10 @@
 
+Thu Mar 21 17:32:46 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: intern strings before executing a method (and don't 
+	intern command line arguments anymore). Add sanity checks in alloca
+	use.
+
 Sat Mar 16 19:15:18 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: restore frame on return from unmanaged calls.
