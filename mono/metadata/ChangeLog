@@ -1,4 +1,8 @@
 
+Wed Sep 4 19:23:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: fix weakreferences.
+
 Wed Sep 4 13:59:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: added icall to get default codepage.
