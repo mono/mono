@@ -1,3 +1,17 @@
+2003-01-09  Jonathan Pryor <jonpryor@vt.edu>
+	* TypeReflectorApp.cs: Remove hard-coded factory initialization and #ifdef
+	  preprocessor use.  Factory information is located in
+	  type-reflector.exe.config now.  This removes dependence on the
+	  preprocessor, simplifies addition of new formatters/etc.  (For example, if
+	  you want to add a new formatter, you can just edit
+	  type-reflector.exe.config with the appropriate type.)
+	* makefile.core: 
+	  - Remove -d:SYMBOL compiler arguments for GUI support
+	  - Due to above, we can simplify GUI targets to use $(CSC_INVOKE).  (I
+	    would have done this before, but bug 36410 prevented this from working.)
+	* type-reflector.exe.config: Provide new sections to specify the displayers,
+	  finders, and formatters that can be used.
+
 2003-01-08  Jonathan Pryor <jonpryor@vt.edu>
 	* AssemblyInfo.cs: New; Assembly Information (version, etc.)
 	* DefaultNodeFormatter.cs: Use AddMethodReturnValue to invoke methods

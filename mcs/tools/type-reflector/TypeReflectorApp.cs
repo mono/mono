@@ -11,8 +11,9 @@
 
 using System;
 using System.Collections;
-using System.IO;
+using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -42,22 +43,32 @@ namespace Mono.TypeReflector
 
 		private static void InitFactories ()
 		{
-			Factories.Formatter.Add ("default", typeof (DefaultNodeFormatter));
-			Factories.Formatter.Add ("csharp", typeof (CSharpNodeFormatter));
-			Factories.Formatter.Add ("vb", typeof (VBNodeFormatter));
+			InitFactory ("displayers", Factories.Displayer);
+			InitFactory ("finders",    Factories.Finder);
+			InitFactory ("formatters", Factories.Formatter);
+		}
 
-			Factories.Finder.Add ("explicit", typeof (ExplicitNodeFinder));
-			Factories.Finder.Add ("reflection", typeof (ReflectionNodeFinder));
-
-			Factories.Displayer.Add ("console", typeof (ConsoleTypeDisplayer));
-
-#if HAVE_GUI_GTK
-			Factories.Displayer.Add ("gtk", typeof (GtkTypeDisplayer));
-#endif
-
-#if HAVE_GUI_SWF
-			Factories.Displayer.Add ("swf", typeof (SwfTypeDisplayer));
-#endif
+		private static void InitFactory (string section, TypeFactory factory)
+		{
+			try {
+				IDictionary d = (IDictionary) ConfigurationSettings.GetConfig (section);
+				foreach (DictionaryEntry de in d) {
+					try {
+						factory.Add (
+								de.Key.ToString(), 
+								Type.GetType (de.Value.ToString(), true));
+					}
+					catch (Exception e) {
+						Trace.WriteLineIf (console.Enabled, 
+								string.Format ("Error adding {0} ({1}): {2}",
+									de.Key, de.Value, e.Message));
+					}
+				}
+			}
+			catch {
+				Trace.WriteLineIf (console.Enabled, 
+						string.Format ("Unable to open section: {0}", section));
+			}
 		}
 
 		public static void Main (string[] args)
