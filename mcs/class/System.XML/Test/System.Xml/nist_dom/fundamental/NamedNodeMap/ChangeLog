@@ -1,5 +1,9 @@
 2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NamedNodeMap.cs : more NotDotNet.
+
+2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NamedNodeMap.cs : added Category("NotDotNet") for those tests that
 	  exposes MS bugs.
 

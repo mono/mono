@@ -1097,6 +1097,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
+	[Category ("NotDotNet")]
 	public void core0020M()
         {
             string computedValue= "";
