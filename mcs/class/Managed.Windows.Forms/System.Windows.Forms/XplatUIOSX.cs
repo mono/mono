@@ -377,6 +377,7 @@ namespace System.Windows.Forms {
 			CheckError (HIViewSetFrame (hWnd, ref r), "HIViewSetFrame ()");
 			if (parentHnd != IntPtr.Zero && parentHnd != hWnd) {
 				CheckError (HIViewAddSubview (parentHnd, hWnd), "HIViewAddSubview ()");
+				CheckError (HIViewPlaceInSuperviewAt (hWnd, cp.X, cp.Y), "HIPlaceInSuperviewAt ()");
 				if ((cp.Style & (int)(WindowStyles.WS_VISIBLE))!=0) {
 					CheckError (HIViewSetVisible (hWnd, true), "HIViewSetVisible ()");
 				} else {
@@ -455,8 +456,25 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
-			// Reapply style and exstyle to the window
-			throw new NotImplementedException();
+			if (view_window_mapping [handle] != null) {
+				WindowAttributes attributes = WindowAttributes.kWindowCompositingAttribute | WindowAttributes.kWindowStandardHandlerAttribute;
+				if ((cp.Style & ((int)WindowStyles.WS_MINIMIZEBOX)) != 0) { 
+					attributes |= WindowAttributes.kWindowCollapseBoxAttribute;
+				}
+				if ((cp.Style & ((int)WindowStyles.WS_MAXIMIZEBOX)) != 0) {
+					attributes |= WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowHorizontalZoomAttribute | WindowAttributes.kWindowVerticalZoomAttribute;
+				}
+				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
+					attributes |= WindowAttributes.kWindowCloseBoxAttribute;
+				}
+				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
+					attributes = WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCompositingAttribute;
+				}
+
+				WindowAttributes outAttributes = WindowAttributes.kWindowNoAttributes;
+				GetWindowAttributes ((IntPtr)view_window_mapping [handle], ref outAttributes);
+				ChangeWindowAttributes ((IntPtr)view_window_mapping [handle], attributes, outAttributes);
+			}
 		}
 
 #if obsolete
@@ -524,6 +542,7 @@ namespace System.Windows.Forms {
                 }
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
+Console.WriteLine ("Moving {0}: LOC: {1}x{2} SIZE: {3}x{4}", (int)handle, x, y, width, height);
 			if (view_window_mapping [handle] != null) {
 				if (x == 0 && y == 0) {
 					Rect bounds = new Rect ();
@@ -555,11 +574,13 @@ namespace System.Windows.Forms {
 			} else {
 				HIRect r = new HIRect ();
 				CheckError (HIViewGetFrame (handle, ref r), "HIViewGetFrame ()");
+
 				x = (int)r.origin.x;
 				y = (int)r.origin.y;
 				width = (int)r.size.width;
 				height = (int)r.size.height;
 
+Console.WriteLine ("CHILD WINDOW: {0}x{1}", x, y);
 			}
 			client_width = width;
 			client_height = height;
@@ -1501,6 +1522,11 @@ DEBUG THIS:
 				throw new Exception ("XplatUIOSX.cs::Carbon subsystem threw an error: " + result);
 		}
 
+		// Santa's little helper 
+		static void Where()
+		{
+			Console.WriteLine("Here: {0}", new StackTrace().ToString());
+		}
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewSetNeedsDisplayInRegion (IntPtr view, IntPtr rgn, bool needsDisplay);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -1631,6 +1657,10 @@ DEBUG THIS:
 		internal static extern void CollapseWindow (IntPtr hWnd, bool collapse);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void ZoomWindow (IntPtr hWnd, short partCode, bool front);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int GetWindowAttributes (IntPtr hWnd, ref WindowAttributes outAttributes);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int ChangeWindowAttributes (IntPtr hWnd, WindowAttributes inAttributes, WindowAttributes outAttributes);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowPort (IntPtr hWnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
