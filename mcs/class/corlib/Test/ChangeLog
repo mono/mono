@@ -2,6 +2,8 @@
 
 	* corlib_test.args: Added PropertyBuilderTest.cs.
 
+	* corlib_test.args: Added EventBuilderTest.cs.	
+
 2003-06-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* corlib_test.args: Added SingleFormatterTest.cs
