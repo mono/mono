@@ -45,8 +45,7 @@ namespace TestSystemDataSqlClient
 			connectionString = 
 				"host=localhost;" +
 				"dbname=test;" +
-				"user=danmorg;" +
-				"password=viewsonic";
+				"user=postgres";
 
 			insertStatement = 
 				"insert into sometable " +

@@ -1,6 +1,6 @@
 /* PostgresTest.cs - based on the postgres-test.c in libgda
  * 
- * Copyright (C) 1998-2002 The GNOME Foundation
+ * Copyright (C) 2002 Gonzalo Paniagua Javier
  * Copyright (C) 2002 Daniel Morgan
  *
  * ORIGINAL AUTHOR:
@@ -58,7 +58,20 @@ namespace TestSystemDataSqlClient {
 				"time_value time, " +
 				"date_value date, " +
 				"timestamp_value timestamp, " +
-				"null_value char(1) " +
+				"null_boolean_value boolean, " +
+				"null_int2_value smallint, " +
+				"null_int4_value integer, " +
+				"null_bigint_value bigint, " +
+				"null_float_value real, " + 
+				"null_double_value double precision, " +
+				"null_numeric_value numeric(15, 3), " +
+				"null_char_value char(50), " +
+				"null_varchar_value varchar(20), " +
+				"null_text_value text, " +
+				"null_point_value point, " +
+				"null_time_value time, " +
+				"null_date_value date, " +
+				"null_timestamp_value timestamp " +
 				")";			
 	
 			createCommand.ExecuteNonQuery ();
@@ -129,18 +142,34 @@ namespace TestSystemDataSqlClient {
 
 			selectCommand.CommandText = 
 				"select " +				
-					"boolean_value, " +
-					"int2_value, " +
-					"int4_value, " +
-					"bigint_value, " +
-					"float_value, " + 
-					"double_value, " +
-					"char_value, " +
-					"varchar_value, " +
-					"text_value, " +
-					"time_value, " +
-					"date_value, " +
-					"timestamp_value " +
+				"boolean_value, " +
+				"int2_value, " +
+				"int4_value, " +
+				"bigint_value, " +
+				"float_value, " + 
+				"double_value, " +
+				"numeric_value, " +
+				"char_value, " +
+				"varchar_value, " +
+				"text_value, " +
+				"point_value, " +
+				"time_value, " +
+				"date_value, " +
+				"timestamp_value, " +
+				"null_boolean_value, " +
+				"null_int2_value, " +
+				"null_int4_value, " +
+				"null_bigint_value, " +
+				"null_float_value, " + 
+				"null_double_value, " +
+				"null_numeric_value, " +
+				"null_char_value, " +
+				"null_varchar_value, " +
+				"null_text_value, " +
+				"null_point_value, " +
+				"null_time_value, " +
+				"null_date_value, " +
+				"null_timestamp_value " +
 				"from mono_postgres_test";
 
 			reader = selectCommand.ExecuteReader ();
@@ -227,7 +256,7 @@ namespace TestSystemDataSqlClient {
 
 				/* Select aggregates */
 				SelectAggregate (cnc, "count(*)");
-				// SelectAggregate (cnc, "avg(int4_value)");
+				//SelectAggregate (cnc, "avg(int4_value)");
 				SelectAggregate (cnc, "min(text_value)");
 				SelectAggregate (cnc, "max(int4_value)");
 				SelectAggregate (cnc, "sum(int4_value)");
@@ -257,16 +286,31 @@ namespace TestSystemDataSqlClient {
 				}
 
 				int nRows = 0;
+				string metadataValue;
+				string dataValue;
+				string output;
 				// Read and display the rows
 				while(reader.Read()) {
 					Console.WriteLine ("Row " + nRows + ":");
 					for(c = 0; c < reader.FieldCount; c++) {
-						Console.WriteLine (   
+						
+						// column meta data 
+						metadataValue = 
 							"    Col " + 
 							c + ": " + 
-							dt.Columns[c].ColumnName + 
-							": " +
-							reader.GetValue(c));
+							dt.Columns[c].ColumnName;
+						
+						// column data
+						if(reader.IsDBNull(c) == true)
+							dataValue = " is NULL";
+						else
+							dataValue = 
+								": " + 
+								reader.GetValue(c);
+					
+						// display column meta data and data
+						output = metadataValue + dataValue;					
+						Console.WriteLine(output);
 					}
 	
 					nRows++;

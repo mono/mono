@@ -32,9 +32,8 @@ namespace TestSystemDataSqlClient
 			connectionString = 
 				"host=localhost;" +
 				"dbname=test;" +
-				"user=danmorg;" +
-				"password=viewsonic";
-
+				"user=postgres";
+				
 			sql = 	"select tid, tdesc, aint4, abpchar " + 
 				"from sometable";
 			

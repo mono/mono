@@ -240,7 +240,7 @@ namespace System.Data.SqlClient {
 			
 			int oid;
 			types = new string[nFields];
-
+			
 			for(nCol = 0; nCol < nFields; nCol++) {						
 				
 				DbType dbType;

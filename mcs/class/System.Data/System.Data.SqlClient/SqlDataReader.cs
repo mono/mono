@@ -19,6 +19,10 @@
 //        Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 //
 
+// *** uncomment #define to get debug messages, comment for production ***
+//#define DEBUG_SqlDataReader
+
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -39,9 +43,13 @@ namespace System.Data.SqlClient {
 		private SqlCommand cmd;
 		private DataTable table;
 
-		private object[] fields;
+		// columns in a row
+		private object[] fields; // data value in a .NET type
 		private string[] types; // PostgreSQL Type
-		private bool[] isNull;
+		private bool[] isNull; // is NULL?
+		private int[] actualLength; // ActualLength of data
+		private DbType[] dbTypes; // DB data type
+		// actucalLength = -1 is variable-length
 				
 		private bool open = false;
 		IntPtr pgResult; // PGresult
@@ -91,40 +99,60 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public bool Read() {
-			string value;
-			fields = new object[cols]; // re-init row
-			DbType dbType;
-
+			string dataValue;
+			int c = 0;
+			
+			//Console.WriteLine("if current row: " + currentRow + " rows: " + rows); 
 			if(currentRow < rows - 1)  {
+				
+				//Console.WriteLine("currentRow++: ");
 				currentRow++;
-				int c;
+
+				//Console.WriteLine("re-init row --- cols: " + cols);
+
+				// re-init row
+				fields = new object[cols];
+				//dbTypes = new DbType[cols];
+				actualLength = new int[cols];
+				isNull = new bool[cols];
+			
 				for(c = 0; c < cols; c++) {
 
 					// get data value
-					value = PostgresLibrary.
+					dataValue = PostgresLibrary.
 						PQgetvalue(
 						pgResult,
 						currentRow, c);
 
-					int columnIsNull;
 					// is column NULL?
-					columnIsNull = PostgresLibrary.
-						PQgetisnull(pgResult,
-						currentRow, c);
+					//isNull[c] = PostgresLibrary.
+					//	PQgetisnull(pgResult,
+					//	currentRow, c);
 
-					int actualLength;
 					// get Actual Length
-					actualLength = PostgresLibrary.
+					actualLength[c] = PostgresLibrary.
 						PQgetlength(pgResult,
 						currentRow, c);
-						
+
+					DbType dbType;	
 					dbType = PostgresHelper.
 						TypnameToSqlDbType(types[c]);
 
-					fields[c] = PostgresHelper.
-						ConvertDbTypeToSystem (
+					if(dataValue == null) {
+						fields[c] = null;
+						isNull[c] = true;
+					}
+					else if(dataValue.Equals("")) {
+						fields[c] = null;
+						isNull[c] = true;
+					}
+					else {
+						isNull[c] = false;
+						fields[c] = PostgresHelper.
+							ConvertDbTypeToSystem (
 							dbType,
-							value);
+							dataValue);
+					}
 				}
 				return true;
 			}
@@ -162,12 +190,12 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public string GetDataTypeName(int i) {
-			throw new NotImplementedException ();
+			return types[i];
 		}
 
 		[MonoTODO]
 		public DateTime GetDateTime(int i) {
-			throw new NotImplementedException ();
+			return (DateTime) fields[i];
 		}
 
 		[MonoTODO]
@@ -182,7 +210,8 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public Type GetFieldType(int i) {
-			throw new NotImplementedException ();
+
+			return table.Columns[i].DataType;
 		}
 
 		[MonoTODO]
@@ -217,7 +246,27 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public int GetOrdinal(string name) {
-			throw new NotImplementedException ();
+			int i;
+			for(i = 0; i < cols; i ++) {
+				if(table.Columns[i].ColumnName.Equals(name)) {
+					return i;
+				}
+
+			}
+	
+			for(i = 0; i < cols; i++) {
+				string ta;
+				string n;
+						
+				ta = table.Columns[i].ColumnName.ToUpper();
+				n = name.ToUpper();
+						
+				if(ta.Equals(n)) {
+					return i;
+				}
+			}
+			
+			throw new MissingFieldException("Missing field: " + name);
 		}
 
 		[MonoTODO]
@@ -232,12 +281,14 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public int GetValues(object[] values) {
-			throw new NotImplementedException ();
+			
+			values = fields;
+			return fields.Length;
 		}
 
 		[MonoTODO]
 		public bool IsDBNull(int i) {
-			throw new NotImplementedException ();
+			return isNull[i];
 		}
 
 		[MonoTODO]

@@ -5,6 +5,8 @@
 // This is not meant to be used in Production, but as a
 // learning aid in coding class System.Data.SqlClient.SqlDataReader.
 //
+// Bits of code were borrowed from libgda.
+//
 // Author:
 //	Daniel Morgan <danmorg@sc.rr.com>
 //
@@ -22,6 +24,8 @@ namespace LearnToCreateSqlDataReader
 
 		public static object OidTypeToSystem (int oid, string value) {
 			object obj = null;
+
+			Console.WriteLine("===== oid: " + oid + " value: " + value);
 
 			switch(oid) {
 			case 1043: // varchar
@@ -242,20 +246,17 @@ namespace LearnToCreateSqlDataReader
 	public class ReadPostgresData
 	{
 
-		static void Test() {
+		static void Test(String sConnInfo) {
 			String errorMessage;
 
 			IntPtr pgConn;
-			String sConnInfo;
 			PostgresLibrary.ConnStatusType connStatus;
 
 			String sQuery;
 			IntPtr pgResult;
-
-			sConnInfo = "host=localhost dbname=test user=danmorg password=viewsonic";
 			
 			sQuery = 
-				"select tid, tdesc " +
+				"select tid, tdesc, aint4, abpchar " +
 				"from sometable ";
 		
 			pgConn = PostgresLibrary.PQconnectdb (sConnInfo);
@@ -267,10 +268,11 @@ namespace LearnToCreateSqlDataReader
 
 				Console.WriteLine("CONNECTION_OK");
 
+				Console.WriteLine("SQL: " + sQuery);
 				pgResult = PostgresLibrary.PQexec(pgConn, sQuery);
 
 				PostgresLibrary.ExecStatusType execStatus;
-
+			
 				execStatus = PostgresLibrary.
 					PQresultStatus (pgResult);
 
@@ -390,7 +392,7 @@ namespace LearnToCreateSqlDataReader
 			
 		}
 
-		public static object ExecuteScalar(string sql) {
+		public static object ExecuteScalar(string sConnInfo, string sQuery) {
 			object obj = null; // return
 
 			int nRow;
@@ -399,16 +401,10 @@ namespace LearnToCreateSqlDataReader
 			String errorMessage;
 
 			IntPtr pgConn;
-			String sConnInfo;
 			PostgresLibrary.ConnStatusType connStatus;
 
-			String sQuery;
 			IntPtr pgResult;
-
-			sConnInfo = "host=localhost dbname=test user=danmorg password=viewsonic";
-			
-			sQuery = sql;
-		
+					
 			pgConn = PostgresLibrary.PQconnectdb (sConnInfo);
 
 			connStatus = PostgresLibrary.PQstatus (pgConn);
@@ -483,6 +479,8 @@ namespace LearnToCreateSqlDataReader
 						columnIsNull = PostgresLibrary.
 							PQgetisnull(pgResult,
 							nRow, nCol);
+							
+		// isNull = *thevalue != '\0' ? FALSE : PQgetisnull (pg_res, rownum, i);
 
 						Console.WriteLine("Data is " + 
 							(columnIsNull == 0 ? "NOT NULL" : "NULL"));
@@ -528,20 +526,23 @@ namespace LearnToCreateSqlDataReader
 			return obj;
 		}
 
-		static void TestExecuteScalar() {
+		static void TestExecuteScalar(String connString) {
 			String selectStatement;
 
 			try {
 				selectStatement = 
 					"select count(*) " +
 					"from sometable";
-				Int64 myCount = (Int64) ExecuteScalar(selectStatement);
+
+				Int64 myCount = (Int64) ExecuteScalar(connString,
+					selectStatement);
 				Console.WriteLine("Count: " + myCount);
 
 				selectStatement = 
 					"select max(tdesc) " +
 					"from sometable";			
-				string myMax = (string) ExecuteScalar(selectStatement);
+				string myMax = (string) ExecuteScalar(connString,
+					selectStatement);
 				Console.WriteLine("Max: " + myMax);
 			}
 			catch(Exception e) {
@@ -553,9 +554,18 @@ namespace LearnToCreateSqlDataReader
 		[STAThread]
 		static void Main(string[] args)
 		{
-			// Test();
+			// PostgreSQL DBMS Connection String
+			// Notice how the parameters are separated with spaces
+			// An OLE-DB Connection String uses semicolons to
+			// separate parameters.
+			String sConnInfo = 
+				"host=localhost " +
+				"dbname=test " + 
+				"user=postgres";
 
-			// TestExecuteScalar();
+			Test(sConnInfo);
+
+			TestExecuteScalar(sConnInfo);
 
 			Type t;
 			int oid;

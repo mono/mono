@@ -15,7 +15,7 @@
 //
 
 // *** uncomment #define to get debug messages, comment for production ***
-// #define DEBUG_PostgresLibrary
+//#define DEBUG_PostgresLibrary
 
 using System;
 using System.Data;
@@ -243,27 +243,40 @@ namespace System.Data.SqlClient {
 			//        from PostgreSQL oid type
 			//        to .NET System.<type>
 
-			// TODO: need to handle a NULL for each type
+			// FIXME: need to handle a NULL for each type
 			//       maybe setting obj to System.DBNull.Value ?
 
-#if DEBUG_PostgresLibrary
-			Console.WriteLine("ConvertDbTypeToSystem typ: " + 
-				typ + "  value: " + value);
-#endif // DEBUG_PostgresLibrary
+//
+//			if(value == null) {
+//#if DEBUG_PostgresLibrary
+//				Console.WriteLine("column is NULL");
+//#endif // DEBUG_PostgresLibrary
+//				return null;
+//			}
+//			else if(value.Equals("")) {
+//#if DEBUG_PostgresLibrary
+//				Console.WriteLine("column has a NULL");
+//#endif // DEBUG_PostgresLibrary
+//
+//				return null;
+//			}
+//
+//#if DEBUG_PostgresLibrary
+//			Console.WriteLine("ConvertDbTypeToSystem typ: " + 
+//				typ + "  value: " + value);
+//#endif // DEBUG_PostgresLibrary
+//
 
 			// Date, Time, and DateTime 
 			// are parsed based on ISO format
-			// "YYYY-MM-DD hh:mi:ss:ms"
+			// "YYYY-MM-DD hh:mi:ss.ms"
 
 			switch(typ) {
 			case DbType.String:
 				obj = String.Copy(value); 
 				break;
 			case DbType.Boolean:
-				if(value.Equals("t"))
-					obj = Boolean.Parse("true");
-				else
-					obj = Boolean.Parse("false");
+				obj = value.Equals("t");
 				break;
 			case DbType.Int16:
 				obj = Int16.Parse(value);

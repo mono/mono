@@ -50,8 +50,7 @@ namespace TestSystemDataSqlClient
 			connectionString = 
 				"host=localhost;" +
 				"dbname=test;" +
-				"user=danmorg;" +
-				"password=viewsonic";
+				"user=postgres";
 			
 			try {
 				con = new SqlConnection(connectionString);

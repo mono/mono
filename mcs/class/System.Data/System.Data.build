@@ -38,11 +38,14 @@
 				<includes name="../lib/System.Xml.dll"/>
 			</references>
 		</csc>
+		<copy file="../lib/System.Data.dll" tofile="Test/System.Data.dll"/>
 	</target>
 	<target name="test" depends="build">
 		<nant basedir="Test" target="test"/>
 	</target>
 	<target name="clean">
 		<delete file="../lib/System.Data.dll" failonerror="false"/>
+		<delete file="Test/System.Data.dll" failonerror="false"/>
+
 	</target>
 </project>
