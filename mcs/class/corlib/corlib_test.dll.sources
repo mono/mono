@@ -170,8 +170,11 @@ System.Security.Permissions/FileDialogPermissionAttributeTest.cs
 System.Security.Permissions/FileDialogPermissionTest.cs
 System.Security.Permissions/FileIOPermissionAttributeTest.cs
 System.Security.Permissions/FileIOPermissionTest.cs
+System.Security.Permissions/GacIdentityPermissionAttributeTest.cs
+System.Security.Permissions/GacIdentityPermissionTest.cs
 System.Security.Permissions/IBuiltInPermissionTest.cs
 System.Security.Permissions/IsolatedStorageFilePermissionAttributeTest.cs
+System.Security.Permissions/IsolatedStorageFilePermissionTest.cs
 System.Security.Permissions/PermissionSetAttributeTest.cs
 System.Security.Permissions/PrincipalPermissionAttributeTest.cs
 System.Security.Permissions/PrincipalPermissionTest.cs
