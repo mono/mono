@@ -1,3 +1,8 @@
+2003-10-29 Jackson Harper <jackson@ximian.com>
+
+	* CheckBox.cs: Do not change the status of a checkbox when there
+	is no postback data. This fixes bug #49091.
+	
 2003-10-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* RadioButton.cs: Patch by Yaron Shkop. Enables disabling a
