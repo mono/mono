@@ -2,14 +2,12 @@
 // System.Data.Common.DbDataPermissionAttribute.cs
 //
 // Authors:
-//   Rodrigo Moya (rodrigo@ximian.com)
-//   Tim Coleman (tim@timcoleman.com)
+//	Rodrigo Moya (rodrigo@ximian.com)
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc
 // Copyright (C) Tim Coleman, 2002
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,24 +30,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.ComponentModel;
 using System.Security.Permissions;
 
 namespace System.Data.Common {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | 
 			 AttributeTargets.Struct | AttributeTargets.Constructor | 
-			 AttributeTargets.Method, AllowMultiple=true,
-			 Inherited=false)]
+			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
-	public abstract class DBDataPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public abstract class DBDataPermissionAttribute : CodeAccessSecurityAttribute {
 		#region Fields
 
-		SecurityAction securityAction;
 		bool allowBlankPassword;
+		string keyRestrictions;
 #if NET_1_1
 		KeyRestrictionBehavior keyRestrictionBehavior;
-		String 	connectionString;
+		string connectionString;
 #endif
 
 		#endregion // Fields
@@ -59,8 +56,6 @@ namespace System.Data.Common {
 		protected DBDataPermissionAttribute (SecurityAction action) 
 			: base (action) 
 		{
-			securityAction = action;
-			allowBlankPassword = false;
 		}
 
 		#endregion // Constructors
@@ -72,26 +67,34 @@ namespace System.Data.Common {
 			set { allowBlankPassword = value; }
 		}
 
-		[MonoTODO]
 		public string KeyRestrictions {
-			get { 
-				throw new NotImplementedException ();
-			}	
-			
-			set {
-				throw new NotImplementedException ();
+			get {
+				if (keyRestrictions == null)
+					return String.Empty;
+				return keyRestrictions;
 			}
+			set { keyRestrictions = value; }
 		}
 
 #if NET_1_1
-		public String ConnectionString {
-			get { return connectionString; }
+		public string ConnectionString {
+			get {
+				if (connectionString == null)
+					return String.Empty;
+				return connectionString;
+			}
 			set { connectionString = value; }
 		}
 
 		public KeyRestrictionBehavior KeyRestrictionBehavior {
 			get { return keyRestrictionBehavior; }
-			set { keyRestrictionBehavior = value; }
+			set {
+				if (!Enum.IsDefined (typeof (KeyRestrictionBehavior), value)) {
+					string msg = Locale.GetText ("Unknown value.");
+					throw new ArgumentOutOfRangeException ("KeyRestrictionBehavior", value, msg);
+				}
+				keyRestrictionBehavior = value;
+			}
 		}
 #endif
 
@@ -99,16 +102,18 @@ namespace System.Data.Common {
 
 		#region // Methods
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("configurable ? why is this in the attribute class ?")]
+		[EditorBrowsableAttribute (false)]
 		public bool ShouldSerializeConnectionString ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("configurable ? why is this in the attribute class ?")]
+		[EditorBrowsableAttribute (false)]
 		public bool ShouldSerializeKeyRestrictions ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 #endif
 		#endregion // Methods

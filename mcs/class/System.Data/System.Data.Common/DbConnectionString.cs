@@ -1,13 +1,11 @@
 //
 // System.Data.Common.DbConnectionString
 //
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2003
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -34,13 +32,14 @@
 
 using System.Collections;
 using System.Collections.Specialized;
-using System.Data;
 using System.Runtime.Serialization;
 using System.Text;
 
 namespace System.Data.Common {
-	public class DbConnectionString : ISerializable
-	{
+
+	[Obsolete ()]
+	public class DbConnectionString : DbConnectionOptions, ISerializable {
+
 		#region Fields
 
 		KeyRestrictionBehavior behavior;
@@ -85,28 +84,6 @@ namespace System.Data.Common {
 		}
 
 		[MonoTODO]
-		protected virtual string CacheConnectionString {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public bool IsEmpty {
-			get { throw new NotImplementedException (); }
-		}
-
-		public string this [string x] {
-			get { return options [x]; }
-		}
-
-		public ICollection Keys {
-			get { return options.Keys; }
-		}
-
-		public string NormalizedConnectionString {
-			get { return normalizedConnectionString; }
-		}
-
-		[MonoTODO]
 		public string Restrictions {
 			get { throw new NotImplementedException (); }
 		}
@@ -115,47 +92,7 @@ namespace System.Data.Common {
 
 		#region Methods
 
-		public static void AppendKeyValuePairBuilder (StringBuilder builder, string keyname, string keyvalue)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected void BuildConnectionString (StringBuilder builder, string[] withoutOptions, string insertValue)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public bool ContainsKey (string keyword)
-		{
-			return (options.Get (keyword) != null);
-		}
-
-		public bool ConvertValueToBoolean (string keyname, bool defaultvalue)
-		{
-			if (ContainsKey (keyname))
-				return Boolean.Parse (this [keyname].Trim ());
-			return defaultvalue;
-		}
-
-		public int ConvertValueToInt32 (string keyname, int defaultvalue)
-		{
-			if (ContainsKey (keyname))
-				return Int32.Parse (this [keyname].Trim ());
-			return defaultvalue;
-		}
-
-		public bool ConvertValueToIntegratedSecurity ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public string ConvertValueToString (string keyname, string defaultValue)
-		{
-			if (ContainsKey (keyname))
-				return this [keyname];
-			return defaultValue;
-		}
-
+		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
@@ -166,7 +103,7 @@ namespace System.Data.Common {
 			return keyname;
 		}
 
-		protected void ParseConnectionString (string connectionString)
+		internal void ParseConnectionString (string connectionString)
 		{
 			if (connectionString.Length == 0)
 				return;
@@ -261,23 +198,13 @@ namespace System.Data.Common {
 			normalizedConnectionString = normalized.ToString ();
 		}
 
+		[MonoTODO]
 		public virtual void PermissionDemand ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static string RemoveKeyValuePairs (string connectionString, string[] keynames)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public string UsersConnectionString (bool hisPasswordPwd)
-		{
-			throw new NotImplementedException ();
-		}
-
 		#endregion // Methods
-
 	}
 }
 

@@ -1,3 +1,14 @@
+2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DbConnectionOptions.cs: New class for Fx 2.0. Partial implementation
+	to support new methods in DBDataPermission.
+	* DbConnectionString.cs: Updated class to split from/inherit 
+	DbConnectionOptions class.
+	* DbDataPermission.cs: Implemented Add, Clear, Copy, ToXml methods and
+	completed constructors.
+	* DbDataPermissionAttribute.cs: Completed/fixed class.
+	* PermissionHelper.cs: Helper methods to create permission classes.
+
 2004-08-31 Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 	* DbDataAdapter.cs: Fix for out of memory exceptions when trying to fill a dataset with a query which doesn't return a resultset like insert, delete or update.
 

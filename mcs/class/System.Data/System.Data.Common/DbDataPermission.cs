@@ -1,15 +1,13 @@
 //
 // System.Data.Common.DbDataPermission.cs
 //
-// Author:
-//   Rodrigo Moya (rodrigo@ximian.com)
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+//	Rodrigo Moya (rodrigo@ximian.com)
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc
 // Copyright (C) Tim Coleman, 2002-2003
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,18 +30,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Data;
+using System.Collections;
 using System.Security;
 using System.Security.Permissions;
 
 namespace System.Data.Common {
+
 	[Serializable]
-	public abstract class DBDataPermission : CodeAccessPermission, IUnrestrictedPermission
-	{
+	public abstract class DBDataPermission : CodeAccessPermission, IUnrestrictedPermission {
+
 		#region Fields
 
-		bool allowBlankPassword;
-		PermissionState state;
+		private const int version = 1;
+
+		private bool allowBlankPassword;
+		private PermissionState state;
+		private Hashtable _connections;
 
 		#endregion // Fields
 
@@ -53,50 +55,63 @@ namespace System.Data.Common {
 		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
 #endif
 		protected DBDataPermission () 
-#if NET_2_0
 			: this (PermissionState.None)
-#else
-			: this (PermissionState.None, false)
-#endif
 		{
 		}
 
-		[MonoTODO]
 		protected DBDataPermission (DBDataPermission permission)
 		{
-			throw new NotImplementedException ();
+			if (permission == null)
+				throw new ArgumentNullException ("permission");
+
+			state = permission.state;
+			if (state != PermissionState.Unrestricted) {
+				allowBlankPassword = permission.allowBlankPassword;
+				_connections = (Hashtable) _connections.Clone ();
+			}
 		}
 
-		[MonoTODO]
 		protected DBDataPermission (DBDataPermissionAttribute permissionAttribute)
 		{
-			throw new NotImplementedException ();
+			if (permissionAttribute == null)
+				throw new ArgumentNullException ("permissionAttribute");
+
+			_connections = new Hashtable ();
+			if (permissionAttribute.Unrestricted) {
+				state = PermissionState.Unrestricted;
+			}
+			else {
+				state = PermissionState.None;
+				allowBlankPassword = permissionAttribute.AllowBlankPassword;
+				Add (permissionAttribute.ConnectionString, permissionAttribute.KeyRestrictions, 
+					permissionAttribute.KeyRestrictionBehavior);
+			}
 		}
 
 #if NET_2_0
 		[MonoTODO]
-		protected DBDataPermission (DbConnectionString constr)
+		protected DBDataPermission (DbConnectionOptions connectionOptions)
+			: this (PermissionState.None)
 		{
-			throw new NotImplementedException ();
+			// ignore null (i.e. no ArgumentNullException)
+			if (connectionOptions != null) {
+				throw new NotImplementedException ();
+			}
 		}
 #endif
 
 		protected DBDataPermission (PermissionState state) 
-			: this (state, false, false)
 		{
+			this.state = PermissionHelper.CheckPermissionState (state, true);
+			_connections = new Hashtable ();
 		}
 
 #if NET_2_0
 		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
 #endif
 		public DBDataPermission (PermissionState state, bool allowBlankPassword)
-			: this (state, allowBlankPassword, true)
+			: this (state)
 		{
-		}
-
-		internal DBDataPermission (PermissionState state, bool allowBlankPassword, bool dummyArg)
-		{
-			this.state = state;
 			this.allowBlankPassword = allowBlankPassword;
 		}
 
@@ -109,43 +124,40 @@ namespace System.Data.Common {
 			set { allowBlankPassword = value; }
 		}
 		
-		internal PermissionState State {
-			get { return state; }
-			set { state = value; }
-		}
-
 		#endregion // Properties
 
 		#region Methods
 
-#if NET_1_1
-		[MonoTODO]
+#if NET_2_0
 		public virtual void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
-			throw new NotImplementedException ();
+			state = PermissionState.None;
+			AddConnectionString (connectionString, restrictions, behavior, null, false);
 		}
-#endif
 
-#if NET_2_0
-		[MonoTODO]
-		protected void AddConnectionString (DbConnectionString constr)
+		[MonoTODO ("synonyms and useFirstKeyValue aren't supported")]
+		protected virtual void AddConnectionString (string connectionString, string restrictions, 
+			KeyRestrictionBehavior behavior, Hashtable synonyms, bool useFirstKeyValue)
 		{
-			throw new NotImplementedException ();
+			_connections [connectionString] = new object [2] { restrictions, connectionString };
+		}
+#elif NET_1_1
+		public virtual void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
+		{
+			state = PermissionState.None;
+			_connections [connectionString] = new object [2] { restrictions, connectionString };
 		}
 #endif
 
-		[MonoTODO]
 		protected void Clear ()
 		{
-			throw new NotImplementedException ();
+			_connections.Clear ();
 		}
 
 		public override IPermission Copy () 
 		{
-			DBDataPermission copy = CreateInstance ();
-			copy.AllowBlankPassword = this.allowBlankPassword;
-			copy.State = this.state;
-			return copy;
+			// call protected constructor
+			return (IPermission) Activator.CreateInstance (this.GetType (), new object [1] { this });
 		}
 
 		protected virtual DBDataPermission CreateInstance ()
@@ -156,7 +168,6 @@ namespace System.Data.Common {
 		[MonoTODO]
 		public override void FromXml (SecurityElement securityElement) 
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -177,23 +188,41 @@ namespace System.Data.Common {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		protected void SetConnectionString (DbConnectionString constr)
+		[MonoTODO ("DO NOT IMPLEMENT - will be removed")]
+		[Obsolete ("DO NOT IMPLEMENT - will be removed")]
+		protected void SetConnectionString (DbConnectionOptions constr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("DO NOT IMPLEMENT - will be removed")]
+		[Obsolete ("DO NOT IMPLEMENT - will be removed")]
 		public virtual void SetRestriction (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
 			throw new NotImplementedException ();
 		}
 #endif
 
-		[MonoTODO]
-		public override SecurityElement ToXml () 
+		public override SecurityElement ToXml ()
 		{
-			throw new NotImplementedException ();
+			SecurityElement se = PermissionHelper.Element (this.GetType (), version);
+			if (IsUnrestricted ()) {
+				se.AddAttribute ("Unrestricted", "true");
+			}
+			else {
+				// attribute is present for both True and False
+				se.AddAttribute ("AllowBlankPassword", allowBlankPassword.ToString ());
+				foreach (DictionaryEntry de in _connections) {
+					SecurityElement child = new SecurityElement ("add");
+					child.AddAttribute ("ConnectionString", (string) de.Key);
+					object[] restrictionsInfo = (object[]) de.Value;
+					child.AddAttribute ("KeyRestrictions", (string) restrictionsInfo [0]);
+					KeyRestrictionBehavior krb = (KeyRestrictionBehavior) restrictionsInfo [1];
+					child.AddAttribute ("KeyRestrictionBehavior", krb.ToString ());
+					se.AddChild (child);
+				}
+			}
+			return se;
 		}
 
 		[MonoTODO]
