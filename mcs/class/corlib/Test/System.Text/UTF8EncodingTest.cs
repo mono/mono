@@ -100,6 +100,24 @@ namespace MonoTests.System.Text {
                         Assertion.AssertEquals ("UTF #1", 200, UTF8enc.GetMaxByteCount(50));
                 }
 
+		// regression for bug #59648
+		[Test]
+		public void TestThrowOnInvalid ()
+		{
+			UTF8Encoding u = new UTF8Encoding (true, false);
+
+			byte[] data = new byte [] { 0xC0, 0xAF };
+			string s = u.GetString (data);
+			AssertEquals (0, s.Length);
+
+			data = new byte [] { 0x30, 0x31, 0xC0, 0xAF, 0x30, 0x32 };
+			s = u.GetString (data);
+			AssertEquals (4, s.Length);
+			AssertEquals (0x30, (int) s [0]);
+			AssertEquals (0x31, (int) s [1]);
+			AssertEquals (0x30, (int) s [2]);
+			AssertEquals (0x32, (int) s [3]);
+		}
 
 		// UTF8 decoding tests from http://www.cl.cam.ac.uk/~mgk25/
 
