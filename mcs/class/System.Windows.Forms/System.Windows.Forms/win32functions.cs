@@ -1116,6 +1116,14 @@ namespace System.Windows.Forms{
 		//
 		static Win32 ()
 		{
+			string new_mode = Environment.GetEnvironmentVariable ("SWF");
+			if (new_mode == null){
+				Console.WriteLine ("MonoWin32: Default path");
+				return;
+			} else {
+				Console.WriteLine ("MonoWin32: Initializing WineLib");
+			}
+				
 			string [] args = new string [1];
 			args [0] = "mono";
 			
