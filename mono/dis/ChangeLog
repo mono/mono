@@ -1,5 +1,13 @@
 2004-01-09  Jackson Harper  <jackson@ximian.com>
 
+	* monodis.1: Add --show-method-tokens switch
+	* get.c: When stringifying methods show the method token if the
+	show-method-tokens flag is set.
+	* get.h: Add show_method_tokens flag
+	* main.c: Add --show-method-tokens switch
+	
+2004-01-09  Jackson Harper  <jackson@ximian.com>
+
 	* monodis.1: Add typespec switch
 	
 2004-01-08  Jackson Harper  <jackson@ximian.com>
