@@ -1,3 +1,7 @@
+2005-01-31  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c: fix typo
+
 2005-01-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* *: MonoMethod->signature might be NULL now. You *MUST* use
