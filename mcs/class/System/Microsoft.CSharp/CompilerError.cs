@@ -12,10 +12,10 @@ using System.Text;
 namespace Microsoft.CSharp {
 
 	public enum ErrorLevel {
-		Error,
-		FatalError,
 		None,
 		Warning
+		Error,
+		FatalError,
 	}
 
 	public class CompilerError {
