@@ -47,7 +47,11 @@ namespace System.Windows.Forms {
 		private TabSizeMode size_mode;
 		private bool redraw;
 		private Rectangle display_rect;
-
+		private bool show_slider = false;
+		private ButtonState right_slider_state;
+		private ButtonState left_slider_state;
+		private int slider_pos = 0;
+		
 		public TabControl ()
 		{
 			tab_pages = new TabPageCollection (this);
@@ -56,6 +60,7 @@ namespace System.Windows.Forms {
 			item_size = ThemeEngine.Current.TabControlDefaultItemSize;
 
 			MouseDown += new MouseEventHandler (MouseDownHandler);
+			MouseUp += new MouseEventHandler (MouseUpHandler);
 			SizeChanged += new EventHandler (SizeChangedHandler);
 		}
 
@@ -241,6 +246,19 @@ namespace System.Windows.Forms {
 			set { base.Text = value; }
 		}
 
+		internal bool ShowSlider {
+			get { return show_slider; }
+			set { show_slider = value; }
+		}
+
+		internal ButtonState RightSliderState {
+			get { return right_slider_state; }
+		}
+
+		internal ButtonState LeftSliderState {
+			get { return left_slider_state; }
+		}
+
 		[MonoTODO ("Anything special need to be done?")]
 		protected override CreateParams CreateParams {
 			get {
@@ -350,8 +368,45 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private bool CanScrollRight {
+			get { return slider_pos != 0; }
+		}
+
+		private bool CanScrollLeft {
+			get {
+				Console.WriteLine (TabPages [TabCount - 1].TabBounds.Right + "	" + (ClientRectangle.Right - 40));
+				if (TabPages [TabCount - 1].TabBounds.Right > ClientRectangle.Right - 40)
+					return true;
+				return false;
+			}
+		}
+
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
+			if (ShowSlider) {
+				Rectangle right = new Rectangle (ClientRectangle.Right - 17, ClientRectangle.Top + 1, 17, 17);
+				Rectangle left = new Rectangle (ClientRectangle.Right - 34, ClientRectangle.Top + 1, 17, 17);
+				if (right.Contains (e.X, e.Y)) {
+					Console.WriteLine ("scroll right");
+					right_slider_state = ButtonState.Pushed;
+					if (CanScrollRight) {
+						slider_pos++;
+						SizeTabs (Width);
+					}
+					Refresh ();
+					return;
+				} else if (left.Contains (e.X, e.Y)) {
+					left_slider_state = ButtonState.Pushed;
+					if (CanScrollLeft) {
+						slider_pos--;
+						SizeTabs (Width);
+					}
+					Refresh ();
+					return;
+				}
+
+			}
+
 			int count = Controls.Count;
 			for (int i = 0; i<count; i++) {
 				if (!GetTabRect (i).Contains (e.X, e.Y))
@@ -359,6 +414,13 @@ namespace System.Windows.Forms {
 				SelectedIndex = i;
 				break;
 			}
+		}
+
+		private void MouseUpHandler (object sender, MouseEventArgs e)
+		{
+			left_slider_state = ButtonState.Normal;
+			right_slider_state = ButtonState.Normal;
+			Refresh ();
 		}
 
 		private void SizeChangedHandler (object sender, EventArgs e)
@@ -414,9 +476,6 @@ namespace System.Windows.Forms {
 
 				page.Row = 1;
 
-				if (!multiline)
-					continue;
-
 				if (SizeMode == TabSizeMode.Fixed) {
 					width = item_size.Width;
 				} else {
@@ -432,6 +491,8 @@ namespace System.Windows.Forms {
 						TabPages [j].Row++;
 					}
 					row_count++;
+				} else if (xpos + width > row_width) {
+					show_slider = true;
 				}
 
 				xpos += width + 1 + spacing.Width;
@@ -454,10 +515,11 @@ namespace System.Windows.Forms {
 
 		private void SizeTabs (int row_width)
 		{
-			int xpos = 4;
 			int ypos = 1;
 			int prev_row = 1;
 			Size spacing = TabSpacing;
+			int size = item_size.Width + 2 + (spacing.Width * 2);
+			int xpos = 4 + (slider_pos * size);
 
 			CalcTabRows (row_width);
 
@@ -474,13 +536,13 @@ namespace System.Windows.Forms {
 					width = MinimumTabWidth;
 
 				if (page.Row != prev_row) {
-					xpos = 4;
+					xpos = 4 + (slider_pos * size);
 				}
 
 				page.TabBounds = new Rectangle (xpos,
 						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
 						width, item_size.Height);
-				
+				Console.WriteLine ("setting bounds:   " + page.TabBounds);
 				if (i == SelectedIndex)
 					 ExpandSelected (page, xpos == 4 || xpos == row_width, row_width);
 

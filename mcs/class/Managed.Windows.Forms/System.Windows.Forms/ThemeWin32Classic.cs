@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.54 $
+// $Revision: 1.55 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.55  2004/11/03 18:52:14  jackson
+// Initial implementation of the scrolly widgerywoo
+//
 // Revision 1.54  2004/11/02 20:40:54  jackson
 // Move the row with the selected tab to the bottom
 //
@@ -1563,6 +1566,13 @@ namespace System.Windows.Forms
 
 			if (tab.SelectedIndex != -1) {
 				DrawTab (dc, tab.TabPages [tab.SelectedIndex], tab, tab.GetTabRect (tab.SelectedIndex), true);
+			}
+
+			if (tab.ShowSlider) {
+				Rectangle right = new Rectangle (area.Right - 17, area.Top + 1, 17, 17);
+				Rectangle left = new Rectangle (area.Right - 34, area.Top + 1, 17, 17);
+				CPDrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
+				CPDrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
 			}
 		}
 
