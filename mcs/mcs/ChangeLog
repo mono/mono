@@ -1,3 +1,12 @@
+2004-01-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FieldExpr.AddressOf): Fix generated IL for accessing
+	static read-only fields in ctors.
+
+	Applied patch from Benjamin Jemlich 
+
+	* expression.cs (UnaryMutator): Avoid leaking local variables. 
+	
 2004-01-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs (IsCastToken): Allow the various native types

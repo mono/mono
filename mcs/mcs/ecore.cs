@@ -2770,9 +2770,18 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (FieldInfo.IsStatic)
-				ig.Emit (OpCodes.Ldsflda, FieldInfo);
-			else {
+			if (FieldInfo.IsStatic) {
+				if (ec.IsConstructor && !ec.IsStatic) {
+					LocalBuilder local;
+
+					Emit (ec);
+					local = ig.DeclareLocal (type);
+					ig.Emit (OpCodes.Stloc, local);
+					ig.Emit (OpCodes.Ldloca, local);
+				} else {
+					ig.Emit (OpCodes.Ldsflda, FieldInfo);
+				}
+			} else {
 				//
 				// In the case of `This', we call the AddressOf method, which will
 				// only load the pointer, and not perform an Ldobj immediately after

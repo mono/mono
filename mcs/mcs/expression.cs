@@ -1046,6 +1046,8 @@ namespace Mono.CSharp {
 				ia.EmitAssign (ec, temp_storage);
 				break;
 			}
+
+			temp_storage.Release (ec);
 		}
 
 		public override void Emit (EmitContext ec)
