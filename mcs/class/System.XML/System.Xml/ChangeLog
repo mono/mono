@@ -1,3 +1,7 @@
+2004-02-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : Fixed bugzilla #54554 (incorrent end tag output).
+
 2004-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDAutomata.cs,

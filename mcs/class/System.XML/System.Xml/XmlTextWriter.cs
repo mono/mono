@@ -521,7 +521,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					w.Write ('>');
 					w.Write (indentFormatting);
 					w.Write ("</");
-					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElements.Count - 1];
+					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElementCount - 1];
 					if (el.Prefix != String.Empty) {
 						w.Write (el.Prefix);
 						w.Write (':');
@@ -531,14 +531,12 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				} else
 					w.Write (" />");
 
-//				openElements.RemoveAt (openElements.Count - 1);
 				openElementCount--;
 				openStartElement = false;
 			} else {
 				w.Write (indentFormatting);
 				w.Write ("</");
 				XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElementCount - 1];
-//				openElements.RemoveAt (openElements.Count - 1);
 				openElementCount--;
 				if (el.Prefix != String.Empty) {
 					w.Write (el.Prefix);
