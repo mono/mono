@@ -1,3 +1,9 @@
+2002-06-02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* copied methods MakeName and CheckDef from mcs\cs-parser.jay to GenericParser.cs 
+	  where they are inherited by mb-parser.jay/cs
+	* put some code on the Module rule in mb-parser.jay to at least generate a class in the assembly,
+	  if I jump over the entry-point check code, while debugging
+	
 2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* class Mono.MonoBASIC.Tokenizer now handles 
 		- all valid line-terminators (CR, LF, CRLF, LS and PS)

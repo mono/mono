@@ -45,6 +45,12 @@ namespace Mono.Languages
 		// Input stream to parse from.
 		protected System.IO.TextReader input;
 
+		// Current namespace definition
+		protected Namespace     current_namespace;
+
+		// Current typecontainer definition
+		protected TypeContainer current_container;
+
 		// ---------------------------------------------------
 		// What the descendants MUST reimplement
 
@@ -221,6 +227,77 @@ namespace Mono.Languages
 			
 			return errors;
 		}
+
+		// <summary>
+		//   Given the @class_name name, it creates a fully qualified name
+		//   based on the containing declaration space
+		// </summary>
+		protected string MakeName(string class_name)
+		{
+			string ns = current_namespace.Name;
+			string container_name = current_container.Name;
+
+			if (container_name == "")
+			{
+				if (ns != "")
+					return ns + "." + class_name;
+				else
+					return class_name;
+			} 
+			else
+				return container_name + "." + class_name;
+		}
+
+		// <summary>
+		//   Used to report back to the user the result of a declaration
+		//   in the current declaration space
+		// </summary>
+		protected void CheckDef (AdditionResult result, string name, Location l)
+		{
+			if (result == AdditionResult.Success)
+				return;
+
+			switch (result)
+			{
+				case AdditionResult.NameExists:
+					Report.Error (102, l, "The container '" + current_container.Name + 
+						"' already contains a definition for '"+
+						name + "'");
+					break;
+
+
+					//
+					// This is handled only for static Constructors, because
+					// in reality we handle these by the semantic analysis later
+					//
+				case AdditionResult.MethodExists:
+					Report.Error (
+						111, l, "Class `"+current_container.Name+
+						"' already defines a member called '" + 
+						name + "' with the same parameter types (more than one default constructor)");
+					break;
+
+				case AdditionResult.EnclosingClash:
+					Report.Error (542, l, "Member names cannot be the same as their enclosing type");
+					break;
+		
+				case AdditionResult.NotAConstructor:
+					Report.Error (1520, l, "Class, struct, or interface method must have a return type");
+					break;
+			}
+		}
+
+		// <summary>
+		//   Used to report back to the user the result of a declaration
+		//   in the current declaration space
+		// </summary>
+		protected void CheckDef (bool result, string name, Location l)
+		{
+			if (result)
+				return;
+			CheckDef (AdditionResult.NameExists, name, l);
+		}
+
 
 		/// <summary>
 		/// Emits error messages and increments a global count of them
