@@ -2,9 +2,10 @@
 // X520.cs: X.520 related stuff (attributes, RDN)
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -33,23 +34,28 @@ namespace Mono.Security.X509 {
 #if INSIDE_CORLIB
 	internal
 #else
-	public
+	public 
 #endif
 	class X520 {
 
 		public abstract class AttributeTypeAndValue {
-			protected string oid;
-			protected string attrValue;
+			private string oid;
+			private string attrValue;
 			private int upperBound;
-			private byte inputEncoding;
-			protected byte defaultEncoding;
+			private byte encoding;
 
-			public AttributeTypeAndValue (string oid, int upperBound)
+			protected AttributeTypeAndValue (string oid, int upperBound)
 			{
-				inputEncoding = 0xFF;
-				defaultEncoding = 0xFF;
 				this.oid = oid;
 				this.upperBound = upperBound;
+				this.encoding = 0xFF;
+			}
+
+			protected AttributeTypeAndValue (string oid, int upperBound, byte encoding) 
+			{
+				this.oid = oid;
+				this.upperBound = upperBound;
+				this.encoding = encoding;
 			}
 
 			public string Value {
@@ -61,11 +67,15 @@ namespace Mono.Security.X509 {
 				get { return GetASN1 (); }
 			}
 
-			public ASN1 GetASN1 (byte encoding) 
+			internal ASN1 GetASN1 (byte encoding) 
 			{
+				byte encode = encoding;
+				if (encode == 0xFF)
+					encode = SelectBestEncoding ();
+					
 				ASN1 asn1 = new ASN1 (0x30);
-				asn1.Add (ASN1Convert.FromOID (oid));
-				switch (encoding) {
+				asn1.Add (ASN1Convert.FromOid (oid));
+				switch (encode) {
 					case 0x13:
 						// PRINTABLESTRING
 						asn1.Add (new ASN1 (0x13, Encoding.ASCII.GetBytes (attrValue)));
@@ -78,13 +88,8 @@ namespace Mono.Security.X509 {
 				return asn1;
 			}
 
-			public ASN1 GetASN1 () 
+			internal ASN1 GetASN1 () 
 			{
-				byte encoding = inputEncoding;
-				if (encoding == 0xFF)
-					encoding = defaultEncoding;
-				if (encoding == 0xFF)
-					encoding = SelectBestEncoding ();
 				return GetASN1 (encoding);
 			}
 
@@ -110,32 +115,44 @@ namespace Mono.Security.X509 {
 
 		public class Name : AttributeTypeAndValue {
 
-			public Name () : base ("2.5.4.41", 32768) {}
+			public Name () : base ("2.5.4.41", 32768) 
+			{
+			}
 		}
 
 		public class CommonName : AttributeTypeAndValue {
 
-			public CommonName () : base ("2.5.4.3", 64) {}
+			public CommonName () : base ("2.5.4.3", 64) 
+			{
+			}
 		}
 
 		public class LocalityName : AttributeTypeAndValue {
 
-			public LocalityName () : base ("2.5.4.7", 128) {}
+			public LocalityName () : base ("2.5.4.7", 128)
+			{
+			}
 		}
 
 		public class StateOrProvinceName : AttributeTypeAndValue {
 
-			public StateOrProvinceName () : base ("2.5.4.8", 128) {}
+			public StateOrProvinceName () : base ("2.5.4.8", 128) 
+			{
+			}
 		}
 		 
 		public class OrganizationName : AttributeTypeAndValue {
 
-			public OrganizationName () : base ("2.5.4.10", 64) {}
+			public OrganizationName () : base ("2.5.4.10", 64)
+			{
+			}
 		}
 		 
 		public class OrganizationalUnitName : AttributeTypeAndValue {
 
-			public OrganizationalUnitName () : base ("2.5.4.11", 64) {}
+			public OrganizationalUnitName () : base ("2.5.4.11", 64)
+			{
+			}
 		}
 
 		/* -- Naming attributes of type X520Title
@@ -156,9 +173,9 @@ namespace Mono.Security.X509 {
 
 		public class CountryName : AttributeTypeAndValue {
 
-			public CountryName () : base ("2.5.4.6", 2) 
+			// (0x13) PRINTABLESTRING
+			public CountryName () : base ("2.5.4.6", 2, 0x13) 
 			{
-				defaultEncoding = 0x13; // PRINTABLESTRING
 			}
 		}
 	}

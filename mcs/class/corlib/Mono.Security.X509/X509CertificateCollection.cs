@@ -4,7 +4,7 @@
 //
 // Authors:
 //	Lawrence Pit (loz@cable.a2000.nl)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 
 using System;
@@ -16,11 +16,13 @@ namespace Mono.Security.X509 {
 #if INSIDE_CORLIB
 	internal
 #else
-	public
+	public 
 #endif
 	class X509CertificateCollection : CollectionBase, IEnumerable {
 		
-		public X509CertificateCollection () {}
+		public X509CertificateCollection () 
+		{
+		}
 		
 		public X509CertificateCollection (X509Certificate [] value) 
 		{
@@ -69,7 +71,7 @@ namespace Mono.Security.X509 {
 		
 		public bool Contains (X509Certificate value) 
 		{
-			return InnerList.Contains (value);
+			return (IndexOf (value) != -1);
 		}
 
 		public void CopyTo (X509Certificate[] array, int index)
@@ -94,7 +96,16 @@ namespace Mono.Security.X509 {
 		
 		public int IndexOf (X509Certificate value)
 		{
-			return InnerList.IndexOf (value);
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			byte[] hash = value.Hash;
+			for (int i=0; i < InnerList.Count; i++) {
+				X509Certificate x509 = (X509Certificate) InnerList [i];
+				if (Compare (x509.Hash, hash))
+					return i;
+			}
+			return -1;
 		}
 		
 		public void Insert (int index, X509Certificate value)
@@ -105,6 +116,23 @@ namespace Mono.Security.X509 {
 		public void Remove (X509Certificate value)
 		{
 			InnerList.Remove (value);
+		}
+
+		// private stuff
+
+		private bool Compare (byte[] array1, byte[] array2) 
+		{
+			if ((array1 == null) && (array2 == null))
+				return true;
+			if ((array1 == null) || (array2 == null))
+				return false;
+			if (array1.Length != array2.Length)
+				return false;
+			for (int i=0; i < array1.Length; i++) {
+				if (array1 [i] != array2 [i])
+					return false;
+			}
+			return true;
 		}
 
 		// Inner Class
@@ -154,4 +182,3 @@ namespace Mono.Security.X509 {
 		}		
 	}
 }
-

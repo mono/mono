@@ -2,9 +2,10 @@
 // X509Extensions.cs: Handles X.509 extensions.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -21,19 +22,17 @@ namespace Mono.Security.X509 {
 #if INSIDE_CORLIB
 	internal
 #else
-	public
+	public 
 #endif
-	class X509Extensions : ICollection, IEnumerable {
+	sealed class X509ExtensionCollection : CollectionBase, IEnumerable {
 
-		private ArrayList extensions;
 		private bool readOnly;
 
-		public X509Extensions ()
+		public X509ExtensionCollection () : base ()
 		{
-			extensions = new ArrayList ();
 		}
 
-		public X509Extensions (ASN1 asn1) : this ()
+		public X509ExtensionCollection (ASN1 asn1) : this ()
 		{
 			readOnly = true;
 			if (asn1 == null)
@@ -42,66 +41,137 @@ namespace Mono.Security.X509 {
 				throw new Exception ("Invalid extensions format");
 			for (int i=0; i < asn1.Count; i++) {
 				X509Extension extension = new X509Extension (asn1 [i]);
-				extensions.Add (extension);
+				InnerList.Add (extension);
 			}
 		}
 
-		// ICollection
-		public int Count {
-			get { return extensions.Count; }
-		}
-
-		// ICollection
-		public bool IsSynchronized {
-			get { return extensions.IsSynchronized; }
-		}
-
-		// ICollection
-		public object SyncRoot {
-			get { return extensions.SyncRoot; }
-		}
-
-		// ICollection
-		public void CopyTo (Array array, int index) 
+		public int Add (X509Extension extension) 
 		{
-			extensions.CopyTo (array, index);
+			if (extension == null)
+				throw new ArgumentNullException ("extension");
+			if (readOnly)
+				throw new NotSupportedException ("Extensions are read only");
+		
+			return InnerList.Add (extension);
 		}
 
-		// IEnumerable
-		public IEnumerator GetEnumerator () 
+		public void AddRange (X509Extension[] extension) 
 		{
-			return extensions.GetEnumerator ();
+			if (extension == null)
+				throw new ArgumentNullException ("extension");
+			if (readOnly)
+				throw new NotSupportedException ("Extensions are read only");
+
+			for (int i = 0; i < extension.Length; i++) 
+				InnerList.Add (extension [i]);
+		}
+	
+		public void AddRange (X509ExtensionCollection collection) 
+		{
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
+			if (readOnly)
+				throw new NotSupportedException ("Extensions are read only");
+
+			for (int i = 0; i < collection.InnerList.Count; i++) 
+				InnerList.Add (collection [i]);
+		}
+
+		public bool Contains (X509Extension extension) 
+		{
+			return (IndexOf (extension) != -1);
+		}
+
+		public bool Contains (string oid) 
+		{
+			return (IndexOf (oid) != -1);
+		}
+
+		public void CopyTo (X509Extension[] extensions, int index) 
+		{
+			if (extensions == null)
+				throw new ArgumentNullException ("extensions");
+
+			InnerList.CopyTo (extensions, index);
+		}
+
+		public int IndexOf (X509Extension extension) 
+		{
+			if (extension == null)
+				throw new ArgumentNullException ("extension");
+
+			for (int i=0; i < InnerList.Count; i++) {
+				X509Extension ex = (X509Extension) InnerList [i];
+				if (ex.Equals (extension))
+					return i;
+			}
+			return -1;
+		}
+
+		public int IndexOf (string oid) 
+		{
+			if (oid == null)
+				throw new ArgumentNullException ("oid");
+
+			for (int i=0; i < InnerList.Count; i++) {
+				X509Extension ex = (X509Extension) InnerList [i];
+				if (ex.Oid == oid)
+					return i;
+			}
+			return -1;
+		}
+
+		public void Insert (int index, X509Extension extension) 
+		{
+			if (extension == null)
+				throw new ArgumentNullException ("extension");
+
+			InnerList.Insert (index, extension);
+		}
+
+		public void Remove (X509Extension extension) 
+		{
+			if (extension == null)
+				throw new ArgumentNullException ("extension");
+
+			InnerList.Remove (extension);
+		}
+
+		public void Remove (string oid) 
+		{
+			if (oid == null)
+				throw new ArgumentNullException ("oid");
+
+			int index = IndexOf (oid);
+			if (index != -1)
+				InnerList.RemoveAt (index);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator () 
+		{
+			return InnerList.GetEnumerator ();
 		}
 
 		public X509Extension this [int index] {
-			get { return (X509Extension) extensions [index]; }
+			get { return (X509Extension) InnerList [index]; }
 		}
 
-		public X509Extension this [string index] {
-			get { 
-				for (int i=0; i < extensions.Count; i++) {
-					X509Extension extension = (X509Extension) extensions [i];
-					if (extension.OID == index)
-						return extension;
-				}
-				return null; 
+		public X509Extension this [string oid] {
+			get {
+				int index = IndexOf (oid);
+				if (index == -1)
+					return null;
+				return (X509Extension) InnerList [index];
 			}
-		}
-
-		public void Add (X509Extension extension) 
-		{
-			if (readOnly)
-				throw new NotSupportedException ("Extensions are read only");
-			extensions.Add (extension);
 		}
 
 		public byte[] GetBytes () 
 		{
-			if (extensions.Count < 1)
+			if (InnerList.Count < 1)
 				return null;
 			ASN1 sequence = new ASN1 (0x30);
-			for (int i=0; i < extensions.Count; i++) {
-				X509Extension x = (X509Extension) extensions [i];
+			for (int i=0; i < InnerList.Count; i++) {
+				X509Extension x = (X509Extension) InnerList [i];
 				sequence.Add (x.ASN1);
 			}
 			return sequence.GetBytes ();

@@ -2,12 +2,14 @@
 // X501Name.cs: X.501 Distinguished Names stuff 
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -30,9 +32,9 @@ namespace Mono.Security.X509 {
 #if INSIDE_CORLIB
 	internal
 #else
-	public
+	public 
 #endif
-	class X501 {
+	sealed class X501 {
 
 		static byte[] countryName = { 0x55, 0x04, 0x06 };
 		static byte[] organizationName = { 0x55, 0x04, 0x0A };
@@ -45,6 +47,10 @@ namespace Mono.Security.X509 {
 		static byte[] domainComponent = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x19 };
 		static byte[] userid = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x01 };
 		static byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
+
+		private X501 () 
+		{
+		}
 
 		static public string ToString (ASN1 seq) 
 		{
@@ -84,7 +90,7 @@ namespace Mono.Security.X509 {
 				else {
 					// unknown OID
 					sb.Append ("OID.");	// NOTE: Not present as RFC2253
-					sb.Append (ASN1Convert.ToOID (poid));
+					sb.Append (ASN1Convert.ToOid (poid));
 					sb.Append ("=");
 				}
 
@@ -119,9 +125,9 @@ namespace Mono.Security.X509 {
 			return sb.ToString ();
 		}
 
-		static private X520.AttributeTypeAndValue GetAttributeFromOID (string attributeType) 
+		static private X520.AttributeTypeAndValue GetAttributeFromOid (string attributeType) 
 		{
-			switch (attributeType.ToUpper ().Trim ()) {
+			switch (attributeType.ToUpper (CultureInfo.InvariantCulture).Trim ()) {
 				case "C":
 					return new X520.CountryName ();
 				case "O":
@@ -139,8 +145,6 @@ namespace Mono.Security.X509 {
 //					return streetAddress;
 				case "UID":
 //					return domainComponent;
-					return null;
-
 				default:
 					return null;
 			}
@@ -166,7 +170,7 @@ namespace Mono.Security.X509 {
 				// get value
 				string attributeValue = av.Substring (equal + 1);
 
-				X520.AttributeTypeAndValue atv = GetAttributeFromOID (attributeType);
+				X520.AttributeTypeAndValue atv = GetAttributeFromOid (attributeType);
 				atv.Value = attributeValue;
 				asn1.Add (new ASN1 (0x31, atv.GetBytes ()));
 

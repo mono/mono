@@ -1,3 +1,19 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X501Name.cs: In sync with Mono.Security.dll version.
+	* X509CRL.cs: New in corlib. In sync with Mono.Security.dll version.
+	* X509Certificate.cs: In sync with Mono.Security.dll version.
+	* X509CertificateCollection.cs: In sync with Mono.Security.dll version.
+	* X509Chain.cs: In sync with Mono.Security.dll version.
+	* X509ChainStatusFlag.cs: New in corlib. In sync with Mono.Security.dll
+	version.
+	* X509Extension.cs: In sync with Mono.Security.dll version.
+	* X509Extensions.cs: In sync with Mono.Security.dll version.
+	* X509Store.cs: New in corlib. In sync with Mono.Security.dll version.
+	* X509StoreManager.cs: New in corlib. In sync with Mono.Security.dll version.
+	* X509Stores.cs: New in corlib. In sync with Mono.Security.dll version.
+	* X520Attributes.cs: In sync with Mono.Security.dll version.
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* TrustAnchors.cs: Added a new trusted root, Thawte, for code signing.
