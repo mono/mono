@@ -31,6 +31,7 @@ namespace Mono.CSharp
 	public class Tokenizer : yyParser.yyInput
 	{
 		StreamReader reader;
+		public string file_name;
 		public string ref_name;
 		public int ref_line = 1;
 		public int line = 1;
@@ -331,6 +332,7 @@ namespace Mono.CSharp
 		public Tokenizer (StreamReader input, string fname, ArrayList defs)
 		{
 			this.ref_name = fname;
+			this.file_name = fname;
 			reader = input;
 			
 			putback_char = -1;
@@ -1058,7 +1060,9 @@ namespace Mono.CSharp
 				return false;
 
 			if (arg == "default"){
+				ref_name = file_name;
 				ref_line = line;
+				Location.Push (ref_name);
 				return true;
 			}
 			
