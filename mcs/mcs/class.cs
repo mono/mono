@@ -156,7 +156,7 @@ namespace Mono.CSharp {
 			string basename = constant.Name;
 			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (fullname)) != AdditionResult.Success)
+			if ((res = IsValid (basename, fullname)) != AdditionResult.Success)
 				return res;
 			
 			if (constants == null)
@@ -172,7 +172,7 @@ namespace Mono.CSharp {
 		{
 			AdditionResult res;
 
-			if ((res = IsValid (e.Basename)) != AdditionResult.Success)
+			if ((res = IsValid (e.Basename, e.Basename)) != AdditionResult.Success)
 				return res;
 
 			if (enums == null)
@@ -187,8 +187,9 @@ namespace Mono.CSharp {
 		public AdditionResult AddClass (Class c)
 		{
 			AdditionResult res;
-
-			if ((res = IsValid (c.Basename)) != AdditionResult.Success)
+			string name = c.Basename;
+			
+			if ((res = IsValid (name, name)) != AdditionResult.Success)
 				return res;
 
 			DefineName (c.Name, c);
@@ -200,8 +201,9 @@ namespace Mono.CSharp {
 		public AdditionResult AddStruct (Struct s)
 		{
 			AdditionResult res;
+			string name = s.Basename;
 			
-			if ((res = IsValid (s.Basename)) != AdditionResult.Success)
+			if ((res = IsValid (name, name)) != AdditionResult.Success)
 				return res;
 
 			DefineName (s.Name, s);
@@ -213,8 +215,9 @@ namespace Mono.CSharp {
 		public AdditionResult AddDelegate (Delegate d)
 		{
 			AdditionResult res;
-
-			if ((res = IsValid (d.Basename)) != AdditionResult.Success)
+			string name = d.Basename;
+			
+			if ((res = IsValid (name, name)) != AdditionResult.Success)
 				return res;
 
 			if (delegates == null)
@@ -288,8 +291,9 @@ namespace Mono.CSharp {
 		public AdditionResult AddInterface (Interface iface)
 		{
 			AdditionResult res;
-
-			if ((res = IsValid (iface.Basename)) != AdditionResult.Success)
+			string name = iface.Basename;
+			
+			if ((res = IsValid (name, name)) != AdditionResult.Success)
 				return res;
 			
 			if (interfaces == null)
@@ -306,7 +310,7 @@ namespace Mono.CSharp {
 			string basename = field.Name;
 			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (fullname)) != AdditionResult.Success)
+			if ((res = IsValid (basename, fullname)) != AdditionResult.Success)
 				return res;
 			
 			if (fields == null)
@@ -347,7 +351,7 @@ namespace Mono.CSharp {
 			string basename = prop.Name;
 			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (fullname)) != AdditionResult.Success)
+			if ((res = IsValid (basename, fullname)) != AdditionResult.Success)
 				return res;
 
 			if (properties == null)
@@ -368,7 +372,7 @@ namespace Mono.CSharp {
 			string basename = e.Name;
 			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (fullname)) != AdditionResult.Success)
+			if ((res = IsValid (basename, fullname)) != AdditionResult.Success)
 				return res;
 
 			if (events == null)

@@ -107,7 +107,7 @@ namespace Mono.CSharp {
 			AdditionResult res;
 			string name = iprop.Name;
 
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (name, name)) != AdditionResult.Success)
 				return res;
 
 			DefineName (name, iprop);
@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 			string name = ievent.Name;
 			AdditionResult res;
 			
-			if ((res = IsValid (name)) != AdditionResult.Success)
+			if ((res = IsValid (name, name)) != AdditionResult.Success)
 				return res;
 
 			DefineName (name, ievent);

@@ -297,9 +297,9 @@ namespace Mono.CSharp {
 		///   Returns a status code based purely on the name
 		///   of the member being added
 		/// </summary>
-		protected AdditionResult IsValid (string name)
+		protected AdditionResult IsValid (string basename, string name)
 		{
-			if (name == Basename)
+			if (basename == Basename)
 				return AdditionResult.EnclosingClash;
 
 			if (defined_names.Contains (name))

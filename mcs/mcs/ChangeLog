@@ -1,6 +1,13 @@
 2003-04-18  Miguel de Icaza  <miguel@ximian.com>
 
-	* class.cs (Method.CheckBase): Call parent.
+	* decl.cs (DeclSpace.IsValid): IsValid takes the short name and
+	fullname.  Short name is used to compare against container name.
+	Fullname is used to check against defined namespace names.
+	
+	* class.cs (AddProperty, AddField, AddClass, AddStruct, AddEnum,
+	AddDelegate, AddEvent): Pass new parameter to DeclSpace.IsValid
+
+	(Method.CheckBase): Call parent.
 	(MemberBase.CheckBase): Check for protected members on sealed
 	classes.
 	(PropertyBase.CheckBase): Call parent.

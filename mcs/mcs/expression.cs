@@ -404,9 +404,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (!expr_type.IsPointer){
-					Error (
-						193,
-						"The * or -> operator can only be applied to pointers");
+					Error (193, "The * or -> operator can only be applied to pointers");
 					return null;
 				}
 				
@@ -1078,16 +1076,13 @@ namespace Mono.CSharp {
 			
 			if (RootContext.WarningLevel >= 1){
 				if (warning_always_matches)
-					Warning (
-						183,
-						"The expression is always of type `" +
-						TypeManager.CSharpName (probe_type) + "'");
+					Warning (183, "The expression is always of type `" +
+						 TypeManager.CSharpName (probe_type) + "'");
 				else if (warning_never_matches){
 					if (!(probe_type.IsInterface || expr.Type.IsInterface))
-						Warning (
-							184,
-							"The expression is never of type `" +
-							TypeManager.CSharpName (probe_type) + "'");
+						Warning (184,
+							 "The expression is never of type `" +
+							 TypeManager.CSharpName (probe_type) + "'");
 				}
 			}
 
