@@ -615,7 +615,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Ignore ("http://bugzilla.ximian.com/show_bug.cgi?id=45066")]
+		[Ignore ("http://bugzilla.ximian.com/show_bug.cgi?id=45286")]
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void G22 () {

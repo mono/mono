@@ -1,6 +1,6 @@
 2003-06-23  Nick Drochak <ndrochak@gol.com>
 
-	* ConvertTest.cs: Ignore and report bug in bugzilla #45066.
+	* ConvertTest.cs: Ignore and report bug in bugzilla #45286.
 
 2003-06-23  Nick Drochak <ndrochak@gol.com>
 
