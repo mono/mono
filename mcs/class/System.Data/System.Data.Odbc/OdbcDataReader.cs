@@ -177,11 +177,13 @@ namespace System.Data.Odbc
 			open = false;
 			currentRow = -1;
 
-			if ((behavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
-				this.command.Connection.Close();
 			ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
+
+                        if ((behavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
+				this.command.Connection.Close();
+
 		}
 
 		~OdbcDataReader ()
