@@ -1,5 +1,7 @@
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (arith_overflow): Fix warning.
+
 	* reflection.c (mono_image_get_methodref_token): Do not emit unmanaged
 	calling conventions in method refs. Fixes #65352.
 
