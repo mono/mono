@@ -1,4 +1,9 @@
 
+Fri Jun 7 19:41:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, reflection.c: handle typerefs of nested types
+	(both on read and when writing files).
+
 Fri Jun 7 17:46:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: fix method signatures that tried to workaround the previous
