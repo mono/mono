@@ -10,7 +10,7 @@
 using System;
 using System.ComponentModel;
 
-namespace System.Data {
+namespace System.Data.Odbc {
 	[AttributeUsage (AttributeTargets.All)]
 	internal sealed class OdbcDescriptionAttribute : DescriptionAttribute
 	{

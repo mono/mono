@@ -18,7 +18,7 @@ using System.Data.Common;
 namespace System.Data.Odbc {
 	[DefaultEvent ("RowUpdated")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-        [ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
+	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
 	public sealed class OdbcDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
 		#region Fields
@@ -179,12 +179,7 @@ namespace System.Data.Odbc {
 
 		#region Events and Delegates
 
-		[DataCategory ("Update")]
-		[DataSysDescription ("Event triggered before every DataRow during Update.")]
 		public event OdbcRowUpdatedEventHandler RowUpdated;
-
-		[DataCategory ("Update")]
-		[DataSysDescription ("Event triggered after every DataRow during Update.")]
 		public event OdbcRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates
