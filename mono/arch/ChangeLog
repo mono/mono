@@ -1,3 +1,7 @@
+2002-08-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86/tramp.c (mono_create_trampoline): fixed stack_size bug
+
 2002-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86/tramp.c (mono_create_method_pointer): allocate space for
