@@ -1,3 +1,12 @@
+2004-06-06  Jambunathan K <kjambunathan@novell.com>
+	
+	* RegexTest.cs: 
+	* RegexBugs.cs: Added test case for exercising Regex.Unescape()
+	Added test cases for exercising \b as a word boundary operator
+	and as a character class in a regex. Refer bug #58256 for more 
+	information.
+
+	
 2004-06-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RegexBugs.cs: added CategoryAndNegated test.

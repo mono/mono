@@ -202,7 +202,15 @@ namespace MonoTests.System.Text.RegularExpressions
 			text = re.Replace (text, "{blue:&lt;$1}{maroon:$2}{blue:$3&gt;}");
 			AssertEquals ("#01", "{blue:&lt;}{maroon:?xml version=\"1.0\"?}{blue:&gt;}", text);
 		}
-		
+	
+		[Test]
+		public void BackSpace ()
+		{
+			string text = "Go, \bNo\bGo" ;
+			Regex re = new Regex(@"\b[\b]");
+			text = re.Replace(text, " ");
+			AssertEquals("#01", "Go, \bNo Go", text);
+		}
 	}
 }
 
