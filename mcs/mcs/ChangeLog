@@ -1,3 +1,9 @@
+2004-11-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* expression.cs (StringConcat): Handle being called twice,
+	as when we have a concat in a field init with more than two
+	ctors in the class
+
 2004-11-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Event.Define, Indexer.Define, Property.Define): Do not
