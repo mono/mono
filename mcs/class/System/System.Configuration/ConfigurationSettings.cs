@@ -293,8 +293,12 @@ namespace System.Configuration
 			string outerxml = pending [sectionPath [0]] as string;
 			if (outerxml == null)
 				return doc;
-			
-			doc.Load (fileName, outerxml);
+
+			StringReader reader = new StringReader (outerxml);
+			XmlTextReader rd = new XmlTextReader (reader);
+			rd.MoveToContent ();
+			doc.LoadSingleElement (fileName, rd);
+
 			return GetInnerDoc (doc, 0, sectionPath);
 		}
                 

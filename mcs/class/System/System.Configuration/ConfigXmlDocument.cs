@@ -65,17 +65,8 @@ namespace System.Configuration
 			LoadSingleElement (filename, rd);
 		}
 
-		public void Load (string filename, string xml)
-		{
-			fileName = filename;
-			reader = new XmlTextReader (new StringReader (xml), null);
-			Load (reader);
-			reader.Close ();
-		}
-
 		public void LoadSingleElement (string filename, XmlTextReader sourceReader)
 		{
-
 			fileName = filename;
 			lineNumber = sourceReader.LineNumber;
 			string xml = sourceReader.ReadOuterXml();
