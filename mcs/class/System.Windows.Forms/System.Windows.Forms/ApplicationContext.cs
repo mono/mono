@@ -1,24 +1,24 @@
-////
-//// System.Windows.Forms.ApplicationContext
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc 2002
-////
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Specifies the contextual information about an application thread.
-//	///
-//	/// ToDo note:
-//	///  - No methods are implemented
-//	/// </summary>
+// System.Windows.Forms.ApplicationContext
 //
-//	[MonoTODO]
-//	public class ApplicationContext
-//	{
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) Ximian, Inc 2002
+//
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Specifies the contextual information about an application thread.
+	///
+	/// ToDo note:
+	///  - No methods are implemented
+	/// </summary>
+
+	[MonoTODO]
+	public class ApplicationContext
+	{
 //		Form mainForm;
 //		
 //		// --- (public) Properties ---
@@ -80,5 +80,5 @@
 //			add { throw new NotImplementedException (); }
 //			remove { throw new NotImplementedException (); }
 //		}
-//	}
-//}
+	}
+}

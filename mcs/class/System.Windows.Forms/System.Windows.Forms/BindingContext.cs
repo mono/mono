@@ -1,21 +1,21 @@
-////
-//// System.Windows.Forms.BindingContext.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms
-//{
-//	public class BindingContext
-//	{
-//		/// <summary>
-//		/// Manages the collection of BindingManagerBase objects for any object that inherits from the Control class.
-//		/// </summary>
+// System.Windows.Forms.BindingContext.cs
 //
-//		// --- Constructor
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) 2002 Ximian, Inc
+//
+
+namespace System.Windows.Forms
+{
+	public class BindingContext
+	{
+		/// <summary>
+		/// Manages the collection of BindingManagerBase objects for any object that inherits from the Control class.
+		/// </summary>
+
+		// --- Constructor
 //		[MonoTODO]
 //		public BindingContext ()
 //		{
@@ -82,5 +82,5 @@
 //		// --- Public Events
 //		// Following events not stubbed out, because they are only supporting internal .NET Framework infrastructure
 //		// - public event CollectionChangeEventHandler CollectionChanged;
-//	}
-//}
+	}
+}

@@ -1,28 +1,28 @@
-////
-//// System.Windows.Forms.BindingsCollection.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System.Collections;
-//using System.ComponentModel;
+// System.Windows.Forms.BindingsCollection.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Represents a collection of Binding objects for a control.
-//	///
-//	/// ToDo note:
-//	///  - most methods are not implemented
-//	///  - those few that are implemented need checking
-//	/// </summary>
-//	
-//	[MonoTODO]
-//	public class BindingsCollection : BaseCollection
-//	{
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) 2002 Ximian, Inc
+//
+
+using System.Collections;
+using System.ComponentModel;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Represents a collection of Binding objects for a control.
+	///
+	/// ToDo note:
+	///  - most methods are not implemented
+	///  - those few that are implemented need checking
+	/// </summary>
+	
+	[MonoTODO]
+	public class BindingsCollection : BaseCollection
+	{
 //		#region Constructors
 //		protected internal BindingsCollection () {
 //		}
@@ -112,13 +112,7 @@
 //			else return false;
 //		}
 //		
-//		
-//		
 //		// public events
 //		public event CollectionChangeEventHandler CollectionChanged;
-//		
-//
-//
-//	}
-//}
-//
+	}
+}

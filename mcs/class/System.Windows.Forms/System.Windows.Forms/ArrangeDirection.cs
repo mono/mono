@@ -12,9 +12,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// </summary>
-	
-	//TODO: Add values for left and up
-	//[MonoTodo]
 	public enum ArrangeDirection {
 		Down = 4,
 		Left = 0,

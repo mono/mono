@@ -1,35 +1,32 @@
-////
-//// System.Windows.Forms.CommonDialog.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.ComponentModel;
+// System.Windows.Forms.CommonDialog.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Specifies the base class used for displaying dialog boxes on the screen.
-//	///
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public abstract class CommonDialog : Component
-//	{
-//		// private fields
-//		
-//		/// --- constructor ---
+// (C) Ximian, Inc., 2002
+//
+
+using System.ComponentModel;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Specifies the base class used for displaying dialog boxes on the screen.
+	///
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public abstract class CommonDialog : Component
+	{
+		// private fields
+		
+		/// --- constructor ---
 //		[MonoTODO]
 //		public CommonDialog() : base () {
 //		}
-//		
-//		
-//		
 //		
 //		/// --- Methods ---
 //		[MonoTODO]
@@ -63,10 +60,6 @@
 //			throw new NotImplementedException ();
 //		}
 //		
-//		
-//		
-//		
-//		
 //		/// events
 //		[MonoTODO]
 //		public event EventHandler HelpRequest {
@@ -77,5 +70,5 @@
 //				throw new NotImplementedException ();
 //			}
 //		}
-//	}
-//}
+	}
+}

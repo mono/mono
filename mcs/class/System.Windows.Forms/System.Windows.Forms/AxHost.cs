@@ -10,33 +10,33 @@
 //using System;
 //using System.ComponentModel;
 //using System.Drawing;
-//using System.Runtime.Serialization;
-//
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Wraps ActiveX controls and exposes them as fully featured Windows Forms controls.
-//	///
-//	/// ToDo note:
-//	///  - Nothing is implemented
-//	/// </summary>
-//	
-//	[MonoTODO]
-//	public abstract class AxHost : Control, ISupportInitialize,ICustomTypeDescriptor
-//	{
-//		/// --- Constructors ---
-//		/// Class AxHost does not have a constructor for non-internal purposes.
-//		/// Thus, no constructor is stubbed out.
-//		/// Here are the two AxHost constructors for supporting .NET Framework infrastructure:
-//		/// - AxHost(String clsid);
-//		/// - AxHost(string clsid,int flags);
-//		
-//		
-//		
-//		
-//		/// --- public Properties ---
-//		/// Properties supporting .NET framework, only. Not stubbed out:
-//		///  - public bool EditMode {get;}
+using System.Runtime.Serialization;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Wraps ActiveX controls and exposes them as fully featured Windows Forms controls.
+	///
+	/// ToDo note:
+	///  - Nothing is implemented
+	/// </summary>
+	
+	[MonoTODO]
+	public abstract class AxHost : Control, ISupportInitialize,ICustomTypeDescriptor
+	{
+		/// --- Constructors ---
+		/// Class AxHost does not have a constructor for non-internal purposes.
+		/// Thus, no constructor is stubbed out.
+		/// Here are the two AxHost constructors for supporting .NET Framework infrastructure:
+		/// - AxHost(String clsid);
+		/// - AxHost(string clsid,int flags);
+		
+		
+		
+		
+		/// --- public Properties ---
+		/// Properties supporting .NET framework, only. Not stubbed out:
+		///  - public bool EditMode {get;}
 //		[MonoTODO]
 //		public override Color BackColor {
 //			get { throw new NotImplementedException (); }
@@ -727,44 +727,39 @@
 //		}
 //		
 //		
-//		
-//		
-//		/// sub-class: AxHost.InvalidActiveXStateException
-//		/// <summary>
-//		/// The exception that is thrown when the ActiveX control is referenced while in an invalid state.
-//		/// </summary>
-//		[MonoTODO]
-//		public class InvalidActiveXStateException : Exception
-//		{
-//			/// --- methods ---
+		/// sub-class: AxHost.InvalidActiveXStateException
+		/// <summary>
+		/// The exception that is thrown when the ActiveX control is referenced while in an invalid state.
+		/// </summary>
+		[MonoTODO]
+		public class InvalidActiveXStateException : Exception
+		{
+			/// --- methods ---
 //			[MonoTODO]
 //			public override string ToString() {
 //				throw new NotImplementedException ();
 //			}
-//		}
-//		
-//		
-//		
-//		
-//		
-//		/// sub-class: AxHost.State
-//		/// <summary>
-//		/// Encapsulates the persisted state of an ActiveX control.
-//		///
-//		/// Note: the class does not contain any documented methods, just only those supporting .NET framework
-//		/// </summary>
-//		[MonoTODO]
-//		[Serializable]
-//		public class State : ISerializable {
-//			
-//			/// The classes only constructor is supporting .NET framework, and thus not stubbed out:
-//			/// - [Serializable] public AxHost.State(Stream ms,int storageType,bool manualUpdate,string licKey);
-//			
-//			/// --- Methods ---
-//			//[Serializable]
-//			void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//	}
-//}
+		}
+		
+		
+		/// sub-class: AxHost.State
+		/// <summary>
+		/// Encapsulates the persisted state of an ActiveX control.
+		///
+		/// Note: the class does not contain any documented methods, just only those supporting .NET framework
+		/// </summary>
+		[MonoTODO]
+		[Serializable]
+		public class State : ISerializable {
+			
+			/// The classes only constructor is supporting .NET framework, and thus not stubbed out:
+			/// - [Serializable] public AxHost.State(Stream ms,int storageType,bool manualUpdate,string licKey);
+			
+			/// --- Methods ---
+			//[Serializable]
+			void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
+				throw new NotImplementedException ();
+			}
+		}
+	}
+}

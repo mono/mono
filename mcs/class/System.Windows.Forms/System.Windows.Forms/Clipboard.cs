@@ -1,24 +1,24 @@
-////
-//// System.Windows.Forms.Clipboard.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Provides methods to place data on and retrieve data from the system Clipboard. This class cannot be inherited.
-//	///
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// System.Windows.Forms.Clipboard.cs
 //
-//	[MonoTODO]
-//	public sealed class Clipboard
-//	{
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) Ximian, Inc., 2002
+//
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Provides methods to place data on and retrieve data from the system Clipboard. This class cannot be inherited.
+	///
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public sealed class Clipboard
+	{
 //		// --- Methods ---
 //		[MonoTODO]
 //		public static IDataObject GetDataObject() {
@@ -34,5 +34,5 @@
 //		public static void SetDataObject(object data,bool copy) {
 //			throw new NotImplementedException ();
 //		}
-//	}
-//}
+	}
+}

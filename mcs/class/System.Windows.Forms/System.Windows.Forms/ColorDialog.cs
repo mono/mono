@@ -1,26 +1,26 @@
-////
-//// System.Windows.Forms.ColorDialog.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.Drawing;
+// System.Windows.Forms.ColorDialog.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Represents a common dialog box that displays available colors along with controls that allow the user to define custom colors.
-//	///
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public class ColorDialog : CommonDialog
-//	{
+// (C) Ximian, Inc., 2002
+//
+
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Represents a common dialog box that displays available colors along with controls that allow the user to define custom colors.
+	///
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public class ColorDialog : CommonDialog
+	{
 //		// private fields
 //		bool allowFullOpen;
 //		bool anyColor;
@@ -102,5 +102,5 @@
 //			throw new NotImplementedException ();
 //		}
 //		
-//	}
-//}
+	}
+}

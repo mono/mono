@@ -1,49 +1,59 @@
-////
-//// System.Windows.Forms.AmbientProperties
-////
-//// Author:
-////   Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc 2002
-////
 //
+// System.Windows.Forms.AmbientProperties
 //
-//using System;
-//using System.Drawing;
+// Author:
+//   Jaak Simm (jaaksimm@firm.ee)
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Provides ambient property values to top-level controls.
-//	/// </summary>
-//	
-//	public sealed class AmbientProperties
-//	{
-//		Color backcolor;
-//		Cursor cursor;
-//		Font font;
-//		Color forecolor;
-//		
+// (C) Ximian, Inc 2002
+//
+
+
+using System;
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Provides ambient property values to top-level controls.
+	/// </summary>
+	
+	public sealed class AmbientProperties
+	{
 //		
 //		// --- (public) Properties ---
 //		public Color BackColor {
-//			get { return backcolor; }
-//			set { backcolor = value; }
-//		}
+//			get {
+//				throw new NotImplementedException ();
+//			}
+//			set {
+//				throw new NotImplementedException ();
+//			}
 //	
 //		public Cursor Cursor {
-//			get { return cursor; }
-//			set { cursor = value; }
+//			get {
+//				throw new NotImplementedException ();
+//			}
+//			set {
+//				throw new NotImplementedException ();
+//			}
 //		}
 //	
 //		public Font Font {
-//			get { return font; }
-//			set { font = value; }
+//			get {
+//				throw new NotImplementedException (); 
+//			}
+//			set {
+//				throw new NotImplementedException (); 
+//			}
 //		}
 //	
 //		public Color Forecolor {
-//			get { return forecolor; }
-//			set { forecolor = value; }
+//			get { 
+//				throw new NotImplementedException (); 
+//			}
+//			set {
+//				throw new NotImplementedException (); 
+//			}
 //		}
 //		
 //		
@@ -51,11 +61,7 @@
 //		// --- Constructor ---
 //		public AmbientProperties()
 //		{
-//			// default values:
-//			this.backcolor=Color.Empty;
-//			this.cursor=null;
-//			this.font=null;
-//			this.forecolor=Color.Empty;
+//			//
 //		}
-//	}
-//}
+	}
+}

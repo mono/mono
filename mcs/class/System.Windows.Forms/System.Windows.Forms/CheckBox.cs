@@ -1,25 +1,25 @@
-////
-//// System.Windows.Forms.CheckBox.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.Drawing;
+// System.Windows.Forms.CheckBox.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Represents a Windows check box.
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public class CheckBox : ButtonBase
-//	{
+// (C) Ximian, Inc., 2002
+//
+
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Represents a Windows check box.
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public class CheckBox : ButtonBase
+	{
 //		// private fields
 //		Appearance appearance;
 //		bool autoCheck;
@@ -176,10 +176,7 @@
 //			}
 //		}
 //		
-//		
-//		
-//		
 //		/// --- public class CheckBox.CheckBoxAccessibleObject : ButtonBase.ButtonBaseAccessibleObject ---
 //		/// the class is not stubbed, cause it's only used for .NET framework
-//	}
-//}
+	}
+}

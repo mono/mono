@@ -1,34 +1,34 @@
-////
-//// System.Windows.Forms.AccessibleObject.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System;
-//using System.Reflection;
-//using System.Globalization;
-////using System.Windows.Forms.AccessibleObject.IAccessible;
-//using System.Drawing;
+// System.Windows.Forms.AccessibleObject.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Provides information that accessibility applications use to adjust an application's UI for users with impairments.
-//	///
-//	/// ToDo note:
-//	///  - Nothing is implemented
-//	///  - IAccessible members not stubbed out
-//	///  - MarshalByRefObject members not stubbed out
-//	/// MSDN gives little info on the members of IAccessible: "This member supports the .NET Framework infrastructure and is not intended to be used directly from your code."
-//	/// </summary>
-//	[MonoTODO]
-//	public class AccessibleObject : MarshalByRefObject, IReflect/*, [MonoTODO]: */,IAccessible
-//	{
-//		string name;
-//		
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) 2002 Ximian, Inc
+//
+
+using System;
+using System.Reflection;
+using System.Globalization;
+//using System.Windows.Forms.AccessibleObject.IAccessible;
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Provides information that accessibility applications use to adjust an application's UI for users with impairments.
+	///
+	/// ToDo note:
+	///  - Nothing is implemented
+	///  - IAccessible members not stubbed out
+	///  - MarshalByRefObject members not stubbed out
+	/// MSDN gives little info on the members of IAccessible: "This member supports the .NET Framework infrastructure and is not intended to be used directly from your code."
+	/// </summary>
+	[MonoTODO]
+	public class AccessibleObject : MarshalByRefObject, IReflect/*, [MonoTODO]: */,IAccessible
+	{
+		string name;
+		
 //		// --- Properties ---
 //		[MonoTODO]
 //		public virtual Rectangle Bounds
@@ -247,5 +247,5 @@
 //			...
 //		}
 //		*/
-//	}
-//}
+	}
+}

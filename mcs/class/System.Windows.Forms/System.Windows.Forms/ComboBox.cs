@@ -1,27 +1,27 @@
-////
-//// System.Windows.Forms.ComboBox.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.ComponentModel;
-//using System.Collections;
-//using System.Drawing;
+// System.Windows.Forms.ComboBox.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Represents a Windows combo box control.
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public class ComboBox : ListControl
-//	{
+// (C) Ximian, Inc., 2002
+//
+
+using System.ComponentModel;
+using System.Collections;
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Represents a Windows combo box control.
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public class ComboBox : ListControl
+	{
 //		// private fields
 //		DrawMode drawMode;
 //		ComboBoxStyle dropDownStyle;
@@ -539,5 +539,5 @@
 //				throw new NotImplementedException ();
 //			}
 //		}  // --- end of ComboBox.ObjectCollection ---
-//	}
-//}
+	}
+}

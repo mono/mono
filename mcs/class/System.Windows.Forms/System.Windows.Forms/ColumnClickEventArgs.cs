@@ -17,7 +17,7 @@ namespace System.Windows.Forms
 	{
 		private int column;
 		/// --- Constructor ---
-		protected ColumnClickEventArgs(int Column) : base() {
+		public ColumnClickEventArgs(int Column) : base() {
 			column = Column;
 		}
 		
@@ -29,7 +29,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// add. remove comment after modifing for this class
 		/// <summary>
 		///	Equality Operator
 		/// </summary>
@@ -94,8 +93,5 @@ namespace System.Windows.Forms
 		public override string ToString () {
 			return String.Format ("[{0}]", column);
 		}
-  
-		//end add. remove comment after modifing for this class
-
 	}
 }

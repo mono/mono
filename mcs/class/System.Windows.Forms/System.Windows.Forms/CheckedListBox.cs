@@ -1,26 +1,26 @@
-////
-//// System.Windows.Forms.CheckedListBox.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.Drawing;
-//using System.Collections;
+// System.Windows.Forms.CheckedListBox.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Displays a ListBox in which a check box is displayed to the left of each item.
-//	/// ToDo note:
-//	///  - nothing is implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public class CheckedListBox : ListBox
-//	{
+// (C) Ximian, Inc., 2002
+//
+
+using System.Drawing;
+using System.Collections;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Displays a ListBox in which a check box is displayed to the left of each item.
+	/// ToDo note:
+	///  - nothing is implemented
+	/// </summary>
+
+	[MonoTODO]
+	public class CheckedListBox : ListBox
+	{
 //		// private fields
 //		bool checkOnClick;
 //		bool threeDCheckBoxes;
@@ -450,5 +450,5 @@
 //			}
 //		}
 //		*/
-//	}
-//}
+	}
+}

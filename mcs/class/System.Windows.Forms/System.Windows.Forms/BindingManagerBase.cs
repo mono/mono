@@ -1,25 +1,25 @@
-////
-//// System.Windows.Forms.BindingManagerBase.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System.ComponentModel;
-//using System.Collections;
+// System.Windows.Forms.BindingManagerBase.cs
 //
-//namespace System.Windows.Forms
-//{
-//	[MonoTODO]
-//	public abstract class BindingManagerBase
-//	{
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//		/// <summary>
-//		/// Manages all Binding objects that are bound to the same data source and data member. This class is abstract.
-//		/// </summary>
+// (C) 2002 Ximian, Inc
 //
+
+using System.ComponentModel;
+using System.Collections;
+
+namespace System.Windows.Forms
+{
+	[MonoTODO]
+	public abstract class BindingManagerBase
+	{
+
+		/// <summary>
+		/// Manages all Binding objects that are bound to the same data source and data member. This class is abstract.
+		/// </summary>
+
 //		// --- Constructor
 //		[MonoTODO]
 //		public BindingManagerBase ()
@@ -120,5 +120,5 @@
 //			add { throw new NotImplementedException (); }
 //			remove { throw new NotImplementedException (); }
 //		}
-//	}
-//}
+	}
+}

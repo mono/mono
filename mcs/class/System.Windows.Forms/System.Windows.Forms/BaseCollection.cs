@@ -1,27 +1,27 @@
-////
-//// System.Windows.Forms.BaseCollection
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System;
-//using System.Collections;
+// System.Windows.Forms.BaseCollection
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Provides the base functionality for creating data-related collections in the System.Windows.Forms namespace.
-//	/// ToDo note:
-//	///  - Synchronization is not implemented
-//	///  - MarshalByRefObject members not stubbed out
-//	/// </summary>
-//	
-//	[MonoTODO]
-//	public class BaseCollection : MarshalByRefObject, ICollection, IEnumerable
-//	{
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) Ximian, Inc., 2002
+//
+
+using System;
+using System.Collections;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Provides the base functionality for creating data-related collections in the System.Windows.Forms namespace.
+	/// ToDo note:
+	///  - Synchronization is not implemented
+	///  - MarshalByRefObject members not stubbed out
+	/// </summary>
+	
+	[MonoTODO]
+	public class BaseCollection : MarshalByRefObject, ICollection, IEnumerable
+	{
 //		ArrayList list;
 //		
 //		
@@ -69,5 +69,5 @@
 //			return list.GetEnumerator();
 //		}
 //		
-//	}
-//}
+	}
+}

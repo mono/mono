@@ -1,26 +1,26 @@
-////
-//// System.Windows.Forms.Binding.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms
-//{
-//	public class Binding
-//	{
-//		/// <summary>
-//		/// Represents the simple binding between the property value of an object and the property value of a control.
-//		///
-//		/// ToDo note:
-//		///  - Nothing is implemented
-//		///  - MarshalByRefObject members not stubbed out
-//		/// </summary>
+// System.Windows.Forms.Binding.cs
 //
-//		// --- Constructor
-//		//
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//
+// (C) 2002 Ximian, Inc
+//
+
+namespace System.Windows.Forms
+{
+	public class Binding
+	{
+		/// <summary>
+		/// Represents the simple binding between the property value of an object and the property value of a control.
+		///
+		/// ToDo note:
+		///  - Nothing is implemented
+		///  - MarshalByRefObject members not stubbed out
+		/// </summary>
+
+		// --- Constructor
+		//
 //		public Binding(string propertyName,object dataSource,string dataMember)
 //		{
 //			throw new NotImplementedException ();
@@ -97,5 +97,5 @@
 //			add { throw new NotImplementedException (); }
 //			remove { throw new NotImplementedException (); }
 //		}
-//	}
-//}
+	}
+}

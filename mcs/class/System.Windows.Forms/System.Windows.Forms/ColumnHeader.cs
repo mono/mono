@@ -1,26 +1,26 @@
-////
-//// System.Windows.Forms.ColumnHeader.cs
-////
-//// Author:
-////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-////
-//// (C) Ximian, Inc., 2002
-////
 //
-//using System.ComponentModel;
+// System.Windows.Forms.ColumnHeader.cs
 //
-//namespace System.Windows.Forms
-//{
-//	/// <summary>
-//	/// Displays a single column header in a ListView control.
-//	///
-//	/// ToDo note:
-//	///  - no methods are implemented
-//	/// </summary>
+// Author:
+//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //
-//	[MonoTODO]
-//	public class ColumnHeader : Component, ICloneable
-//	{
+// (C) Ximian, Inc., 2002
+//
+
+using System.ComponentModel;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	/// Displays a single column header in a ListView control.
+	///
+	/// ToDo note:
+	///  - no methods are implemented
+	/// </summary>
+
+	[MonoTODO]
+	public class ColumnHeader : Component, ICloneable
+	{
 //		// private fields
 //		string text;
 //		HorizontalAlignment textAlign;
@@ -79,5 +79,5 @@
 //		public override string ToString() {
 //			throw new NotImplementedException ();
 //		}
-//	}
-//}
+	}
+}
