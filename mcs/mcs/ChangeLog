@@ -1,3 +1,14 @@
+2002-04-13  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (DefineType): Ensure that we do a proper check on
+	attribute types and also register it with the TypeManager.
+
+	(TypeContainer.Targets): The default for attribute types is
+	AttributeTargets.All.
+	
+	* attribute.cs (ApplyAttributes): Registering the attribute type
+	is done elsewhere, not when we discover we have a Usage attribute.
+
 2002-04-12  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (VerifyArgumentsCompat): Implement Miguel's suggestion

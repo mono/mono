@@ -495,9 +495,6 @@ namespace Mono.CSharp {
 							tc.AllowMultiple = a.AllowMultiple;
 							tc.Inherited = a.Inherited;
 							
-							TypeManager.RegisterAttrType (
-								(TypeBuilder) builder, tc);
-
 						} else if (a.Type == TypeManager.default_member_type) {
 							if (tc.Indexers != null) {
 								Report.Error (646, loc,

@@ -91,8 +91,8 @@ namespace Mono.CSharp {
 
 		// Information in the case we are an attribute type
 
-		public AttributeTargets Targets;
-		public bool AllowMultiple;
+		public AttributeTargets Targets = AttributeTargets.All;
+		public bool AllowMultiple = false;
 		public bool Inherited;
 		
 
@@ -927,9 +927,11 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this);
 
-			if (parent == TypeManager.attribute_type)
+			if (parent == TypeManager.attribute_type ||
+			    parent.IsSubclassOf (TypeManager.attribute_type)) {
 				RootContext.RegisterAttribute (this);
-			else
+				TypeManager.RegisterAttrType (TypeBuilder, this);
+			} else
 				RootContext.RegisterOrder (this); 
 				
 			if (Interfaces != null) {
