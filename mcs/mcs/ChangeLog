@@ -1,4 +1,9 @@
 
+Sat Jul 13 19:35:58 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ecore.cs: fix for valuetype static readonly fields: when 
+	initializing them, we need their address, not the address of a copy.
+
 Sat Jul 13 17:32:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* typemanager.cs: register also enum_type in corlib.

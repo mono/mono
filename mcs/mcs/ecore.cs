@@ -3778,14 +3778,18 @@ namespace Mono.CSharp {
 			// get the address of the copy.
 			//
 			if (FieldInfo.IsInitOnly){
-				LocalBuilder local;
+				if (ec.IsConstructor) {
+					ig.Emit (OpCodes.Ldsflda, FieldInfo);
+				} else {
+					LocalBuilder local;
 				
-				Emit (ec);
-				local = ig.DeclareLocal (type);
-				ig.Emit (OpCodes.Stloc, local);
-				ig.Emit (OpCodes.Ldloca, local);
+					Emit (ec);
+					local = ig.DeclareLocal (type);
+					ig.Emit (OpCodes.Stloc, local);
+					ig.Emit (OpCodes.Ldloca, local);
+				}
 				return;
-			} 
+			}
 
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
