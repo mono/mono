@@ -29,6 +29,9 @@ namespace System.Diagnostics {
 			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
 			public int tid;
+			public string [] envKeys;
+			public string [] envValues;
+			public bool useShellExecute;
 		};
 		
 		IntPtr process_handle;
@@ -659,6 +662,21 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException("File name has not been set");
 			}
 			
+			proc_info.useShellExecute = startInfo.UseShellExecute;
+			if (startInfo.HaveEnvVars) {
+				if (startInfo.UseShellExecute)
+					throw new InvalidOperationException ("UseShellExecute must be false in order " +
+									     "to use environment variables.");
+
+				string [] strs = new string [startInfo.EnvironmentVariables.Count];
+				startInfo.EnvironmentVariables.Keys.CopyTo (strs, 0);
+				proc_info.envKeys = strs;
+
+				strs = new string [startInfo.EnvironmentVariables.Count];
+				startInfo.EnvironmentVariables.Values.CopyTo (strs, 0);
+				proc_info.envValues = strs;
+			}
+
 			if(startInfo.RedirectStandardInput==true) {
 				ret=MonoIO.CreatePipe(out stdin_rd,
 						      out stdin_wr);

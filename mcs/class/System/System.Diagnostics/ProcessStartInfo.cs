@@ -8,8 +8,9 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.ComponentModel;
+using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace System.Diagnostics 
 {
@@ -29,6 +30,7 @@ namespace System.Diagnostics
 		private string verb = "";
 		private ProcessWindowStyle window_style = ProcessWindowStyle.Normal;
 		private string working_directory = "";
+		private ProcessStringDictionary envVars;
 
 		public ProcessStartInfo() 
 		{
@@ -75,8 +77,18 @@ namespace System.Diagnostics
 		[MonitoringDescription ("Environment variables used for this process.")]
 		public StringDictionary EnvironmentVariables {
 			get {
-				throw new NotImplementedException();
+				if (envVars == null) {
+					envVars = new ProcessStringDictionary ();
+					foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables ())
+						envVars.Add ((string) entry.Key, (string) entry.Value);
+				}
+
+				return envVars;
 			}
+		}
+		
+		internal bool HaveEnvVars {
+			get { return (envVars != null && envVars.Count > 0); }
 		}
 		
 		[DefaultValue (false)]
