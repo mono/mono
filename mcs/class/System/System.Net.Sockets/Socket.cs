@@ -133,8 +133,8 @@ namespace System.Net.Sockets
 
 			private void End() {
 				((ManualResetEvent)result.AsyncWaitHandle).Set();
-				callback(result);
 				result.IsCompleted=true;
+				callback(result);
 			}
 			
 			public void Accept() {
@@ -146,16 +146,60 @@ namespace System.Net.Sockets
 
 			public void Connect() {
 				lock(result) {
-					socket.Connect(endpoint);
-					End();
+					if (socket.Blocking) {
+						socket.Connect(endpoint);
+						End ();
+						return;
+					}
+
+					SocketException rethrow = null;
+					try {
+						socket.Connect (endpoint);
+					} catch (SocketException e) {
+						//WSAEINPROGRESS
+						if (e.NativeErrorCode != 10036)
+							throw;
+
+						socket.Poll (-1, SelectMode.SelectWrite);
+						try {
+							socket.Connect (endpoint);
+						} catch (SocketException e2) {
+							rethrow = e2;
+						}
+					}
+					End ();
+					if (rethrow != null)
+						throw rethrow;
 				}
 			}
 
 			public void Receive() {
 				lock(result) {
-					total=socket.Receive(buffer, offset,
-							     size, sockflags);
-					End();
+					if (socket.Blocking) {
+						total=socket.Receive(buffer, offset,
+								     size, sockflags);
+						End();
+						return;
+					}
+
+					SocketException rethrow = null;
+					try {
+						total = socket.Receive (buffer, offset, size, sockflags);
+					} catch (SocketException e) {
+						//WSAEWOULDBLOCK
+						if (e.NativeErrorCode != 10035)
+							throw;
+
+						socket.Poll (-1, SelectMode.SelectRead);
+						try {
+							total = socket.Receive (buffer, offset, size, sockflags);
+						} catch (SocketException e2) {
+							rethrow = e2;
+						}
+					}
+					End ();
+					if (rethrow != null)
+						throw rethrow;
 				}
 			}
 

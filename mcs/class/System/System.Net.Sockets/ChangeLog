@@ -1,3 +1,10 @@
+2003-02-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: make Worker.Connect and Receive work with non-blocking
+	sockets. May be Receive* and Send* in Worker need to do the same. I'll
+	wait for bug reports. Set IsCompleted to true before invoking the end
+	callback. Fixes bug #38136.
+
 2003-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NetworkStream.cs: the check for disposed should not be done in the
