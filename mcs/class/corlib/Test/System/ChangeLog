@@ -1,3 +1,9 @@
+2003-01-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* TimeZoneTest.cs: Added "Eastern Standard Time" to the test.
+	This won't be complete until all time zone are added (added a
+	Fail for unsupported TimeZones).
+
 2003-01-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ByteTest.cs: Updated Setup to support my Locale. Better but
