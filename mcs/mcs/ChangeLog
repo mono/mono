@@ -1,3 +1,8 @@
+2002-05-07  Ravi Pratap  <ravi@ximian.com>
+
+	* ecore.cs (GetConversionOperators): Do not pick up op_True operators
+	when we are in an explicit context.
+
 2002-05-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (StandardConversionExists): Augment with missing code:

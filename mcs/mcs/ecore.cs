@@ -1195,12 +1195,12 @@ namespace Mono.CSharp {
 			Expression mg1 = null, mg2 = null;
 			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
 			string op_name;
-			
-			// If we have a boolean type, we need to check for the True operator
 
+			//
 			// FIXME : How does the False operator come into the picture ?
-			// FIXME : This doesn't look complete and very correct !
-			if (target_type == TypeManager.bool_type)
+			// This doesn't look complete and very correct !
+			//
+			if (target_type == TypeManager.bool_type && !look_for_explicit)
 				op_name = "op_True";
 			else
 				op_name = "op_Implicit";
