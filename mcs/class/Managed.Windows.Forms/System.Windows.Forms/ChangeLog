@@ -1,3 +1,11 @@
+2005-02-04  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs: Respect the clipping rect when
+	drawing. Only fill the intersection of clips and rects so there
+	isn't a lot of large fills.
+	* ScrollBar.cs: Pass the correct clipping rect to the theme
+	engine. Remove some debug code.
+
 2005-02-05  John BouAntoun  <jba-mono@optusnet.com.au>
 	
 	* DateTimePicker.cs: 
