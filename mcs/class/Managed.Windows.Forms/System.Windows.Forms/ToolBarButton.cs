@@ -29,9 +29,12 @@
 //     - DropDownMenu
 //     - Adding a button to two toolbars
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ToolBarButton.cs,v $
+// Revision 1.6  2004/08/27 22:12:56  ravindra
+// Added TypeConverter attribute.
+//
 // Revision 1.5  2004/08/25 20:04:40  ravindra
 // Added the missing divider code and grip for ToolBar Control.
 //
@@ -150,7 +153,7 @@ namespace System.Windows.Forms
 		[DefaultValue (-1)]
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
-		//[TypeConverter (typeof (ImageIndexConverter)]
+		[TypeConverter (typeof (ImageIndexConverter))]
 		public int ImageIndex {
 			get { return imageIndex; }
 			set {
