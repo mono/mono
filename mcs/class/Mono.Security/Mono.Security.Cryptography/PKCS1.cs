@@ -253,8 +253,8 @@ namespace Mono.Security.Cryptography {
 		// RSAES-PKCS1-V1_5-DECRYPT (K, C)
 		public static byte[] Decrypt_v15 (RSA rsa, byte[] C) 
 		{
-			int size = rsa.KeySize / 8;
-			if ((size < 11) || (C.Length != size))
+			int size = rsa.KeySize >> 3; // div by 8
+			if ((size < 11) || (C.Length > size))
 				throw new CryptographicException ("decryption error");
 			byte[] c = OS2IP (C);
 			byte[] m = RSADP (rsa, c);
