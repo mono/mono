@@ -1,3 +1,8 @@
+2005-02-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (emit_marshal_ptr): Raise an exception if trying to pass
+	a pointer to a struct to unmanaged code. Fixes #72625.
+
 2005-02-16  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_open_image): Ignore dynamic images.
