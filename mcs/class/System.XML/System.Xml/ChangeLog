@@ -1,3 +1,8 @@
+2002-02-26  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDocumentType.cs: Added a few hacks here and there to
+	temporarily fix the "I broke the build issue".
+
 2002-02-25  Jason Diamond <jason@injektilo.org>
 
 	* XmlDocument.cs, XmlElement.cs, XmlNode.xs, XmlNodeList.cs,

@@ -8,7 +8,7 @@
 
 namespace System.Xml
 {
-	public class XmlDocumentType : XmlLinkedNode
+	public class XmlDocumentType  : XmlLinkedNode
 	{
 		// Fields
 		string name;            // name of the document type
@@ -17,10 +17,10 @@ namespace System.Xml
 		string internalSubset;  // value of the DTD internal subset
 		XmlDocument document;
 		
-		// Constructor			
+		// Constructor
 		protected internal XmlDocumentType (string name, string publicId, string systemId,
 						    string internalSubset, XmlDocument doc)
-			: base ()						    
+			: base (null)						    
 		{
 			this.name = name;
 			this.publicId = publicId;
