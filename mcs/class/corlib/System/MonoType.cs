@@ -19,6 +19,7 @@ namespace System
 		public string name_space;
 		public Type parent;
 		public Type etype;
+		public Type nested_in;
 		public Assembly assembly;
 		public TypeAttributes attrs;
 		public int rank;
@@ -330,9 +331,19 @@ namespace System
 			}
 		}
 
+		public override Type DeclaringType {
+			get {
+				MonoTypeInfo info;
+				get_type_info (_impl, out info);
+				return info.nested_in;
+			}
+		}
+
 		public override Type ReflectedType {
 			get {
-				return null;
+				MonoTypeInfo info;
+				get_type_info (_impl, out info);
+				return info.nested_in;
 			}
 		}
 

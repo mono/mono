@@ -95,7 +95,7 @@ namespace System {
 		/// </summary>
 		public override Type DeclaringType {
 			get {
-				return this;
+				return null;
 			}
 		}
 
@@ -322,7 +322,7 @@ namespace System {
 
 		public override Type ReflectedType {
 			get {
-				return this;
+				return null;
 			}
 		}
 
