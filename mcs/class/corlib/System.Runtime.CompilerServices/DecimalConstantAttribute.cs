@@ -32,7 +32,10 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	[Serializable] [CLSCompliant (false)]
+	[Serializable] 
+#if !NET_2_0
+	[CLSCompliant (false)]
+#endif
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter,
 			 Inherited=false)]
 	public sealed class DecimalConstantAttribute : Attribute

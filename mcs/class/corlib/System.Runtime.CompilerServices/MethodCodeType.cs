@@ -34,8 +34,7 @@
 
 namespace System.Runtime.CompilerServices
 {
-#if NET_2_0
-#else
+#if !NET_2_0
 [Flags] 
 #endif
 public enum MethodCodeType

@@ -1,5 +1,7 @@
 2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MethodImplOptions.cs MethodCodeType.cs RuntimeHelpers.cs DecimalConstantAttribute.cs: Add 2.0 stuff.
+
 	* CompilationRelaxationsAttribute.cs DecimalConstantAttribute.cs MethodCodeType.cs MethodImplOptions.cs NewConstraintAttribute.cs: Add 2.0 stuff.
 
 	* *.cs: Add new 2.0 classes.

@@ -79,5 +79,29 @@ namespace System.Runtime.CompilerServices
 		{
 			RunClassConstructor (type.Value);
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static void PrepareConstrainedRegions () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void PrepareDelegate (Delegate d) {
+			if (d == null)
+				throw new ArgumentNullException ("d");
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void PrepareMethod (RuntimeMethodHandle method) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation) {
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
