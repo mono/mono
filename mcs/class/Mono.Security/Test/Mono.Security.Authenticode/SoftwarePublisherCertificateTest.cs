@@ -14,6 +14,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 using Mono.Security.Authenticode;
+using MSX = Mono.Security.X509;
+
 using NUnit.Framework;
 
 namespace MonoTests.Mono.Security.Authenticode {
@@ -482,7 +484,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 			WriteBuffer (navy);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
 			SoftwarePublisherCertificate newspc = new SoftwarePublisherCertificate ();
-			foreach (X509Certificate x in spc.Certificates)
+			foreach (MSX.X509Certificate x in spc.Certificates)
 				newspc.Certificates.Add (x);
 			foreach (byte[] crl in spc.CRLs)
 				newspc.CRLs.Add (crl);
