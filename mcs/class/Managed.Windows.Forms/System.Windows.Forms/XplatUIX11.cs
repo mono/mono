@@ -50,7 +50,7 @@ namespace System.Windows.Forms {
 		private static bool		themes_enabled;
 
 		private static IntPtr		DisplayHandle;		// X11 handle to display
-		private static int		ScreenNum;		// Screen number used
+		private static int		screen_num;		// Screen number used
 		private static IntPtr		root_window;		// Handle of the root window for the screen/display
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static int		wm_protocols;		// X Atom
@@ -211,9 +211,6 @@ namespace System.Windows.Forms {
 
 				DisplayHandle=display_handle;
 
-				Screen = XDefaultScreenOfDisplay(DisplayHandle);
-				ScreenNum = XScreenNumberOfScreen(DisplayHandle, Screen);
-
 				// We need to tell System.Drawing our DisplayHandle. FromHdcInternal has
 				// been hacked to do this for us.
 				Graphics.FromHdcInternal (DisplayHandle);
@@ -222,15 +219,17 @@ namespace System.Windows.Forms {
 				key_state = Keys.None;
 				mouse_state = MouseButtons.None;
 				mouse_position = Point.Empty;
-				root_window = XRootWindow(display_handle, 0);
-				default_colormap = XDefaultColormap(display_handle, 0);
+				Screen = XDefaultScreenOfDisplay(DisplayHandle);
+				//screen_num = XScreenNumberOfScreen(DisplayHandle, Screen);
+				screen_num = 0;
+				root_window = XRootWindow(display_handle, screen_num);
+				default_colormap = XDefaultColormap(display_handle, screen_num);
 
 				// Create the foster parent
 				FosterParent=XCreateSimpleWindow(display_handle, root_window, 0, 0, 1, 1, 4, 0, 0);
 				if (FosterParent==IntPtr.Zero) {
 					Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 				}
-
 				// Prepare for shutdown
 				wm_protocols=XInternAtom(display_handle, "WM_PROTOCOLS", false);
 				wm_delete_window=XInternAtom(display_handle, "WM_DELETE_WINDOW", false);
@@ -377,18 +376,17 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
-			XColor	exact_color;
-			XColor	screen_color;
-			uint	cmap;
+			XColor	xcolor;
 
-			exact_color = new XColor();
-			screen_color = new XColor();
+			xcolor = new XColor();
 
-			XLookupColor(DisplayHandle, XDefaultColormap(DisplayHandle, ScreenNum), "rgb:"+color.R.ToString("x")+"/"+color.G.ToString("x")+"/"+color.B.ToString("x"), ref exact_color, ref screen_color);
-			XAllocColor(DisplayHandle, XDefaultColormap(DisplayHandle, ScreenNum), ref screen_color);
+			xcolor.red = (ushort)(color.R * 257);
+			xcolor.green = (ushort)(color.G * 257);
+			xcolor.blue = (ushort)(color.B * 257);
+			XAllocColor(DisplayHandle, default_colormap, ref xcolor);
 
 			lock (xlib_lock) {
-				XSetWindowBackground(DisplayHandle, handle, screen_color.pixel);
+				XSetWindowBackground(DisplayHandle, handle, xcolor.pixel);
 			}
 		}
 
