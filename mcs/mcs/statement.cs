@@ -4341,6 +4341,8 @@ namespace Mono.CSharp {
 
 			is_ret = statement.Emit (ec);
 
+			if (is_ret)
+				return is_ret;
 			//
 			// Clear the pinned variable
 			//
