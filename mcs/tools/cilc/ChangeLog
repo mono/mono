@@ -4,6 +4,8 @@
 	* Test.cs:
 	* demo.c:
 	First stab at return values, and associated updates to the demo.
+	Consider types registered ByVal but not in main registry as unregistered.
+	Mark out some more ByVal types.
 
 2004-12-11  Alp Toker  <alp@atoker.com>
 

@@ -32,6 +32,8 @@ public class cilc
 
 		RegisterByVal (typeof (uint));
 		RegisterByVal (typeof (int));
+		RegisterByVal (typeof (IntPtr));
+		RegisterByVal (typeof (bool));
 
 		if (args.Length == 1) {
 			SmartBind (args[0]);
@@ -824,7 +826,7 @@ public class cilc
 				return "GCallback ";
 		}
 
-		if (IsRegisteredByVal (t))
+		if (IsRegistered (t) && IsRegisteredByVal (t))
 			return CsTypeToFlat (t) + " ";
 
 		if (t == typeof (void))
