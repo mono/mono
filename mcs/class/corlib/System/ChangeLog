@@ -1,3 +1,12 @@
+2004-05-22  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs: The file was mostly in DOS endings already, for the
+	sake of consistency, converted it all to DOS endings.
+	(ToType): When value is null, immediately return null and don't
+	ever throw a NullReferenceException. When conversionType is null,
+	throw an InvalidCastException. Give a better error message when
+	attempting to convert to a DBNull as well.
+
 2004-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Fixed To... methods that needs to trunk the integer part

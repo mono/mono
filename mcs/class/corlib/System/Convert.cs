@@ -158,7 +158,7 @@ namespace System {
 		}
 		
 		public static int ToBase64CharArray (byte[] inArray, int offsetIn, int length, 
-		                                    char[] outArray, int offsetOut)
+						    char[] outArray, int offsetOut)
 		{
 			if (inArray == null)
 				throw new ArgumentNullException ("inArray");
@@ -2332,7 +2332,7 @@ namespace System {
 		public static object ChangeType (object value, TypeCode typeCode)
 		{
 			CultureInfo ci = CultureInfo.CurrentCulture;
-			Type conversionType = conversionTable [(int)typeCode];
+			Type conversionType = conversionTable [(int) typeCode];
 			NumberFormatInfo number = ci.NumberFormat;
 			return ToType (value, conversionType, number);
 		}
@@ -2490,29 +2490,29 @@ namespace System {
 				sb.Append ((char) (reminder + '0'));
 		}
 		
-                // Lookup table for the conversion ToType method. Order
+		// Lookup table for the conversion ToType method. Order
 		// is important! Used by ToType for comparing the target
 		// type, and uses hardcoded array indexes.
 		private static readonly Type[] conversionTable = {
 			// Valid ICovnertible Types
-			null,              //  0 empty
+			null,		    //	0 empty
 			typeof (object),   //  1 TypeCode.Object
 			typeof (DBNull),   //  2 TypeCode.DBNull
 			typeof (Boolean),  //  3 TypeCode.Boolean
-			typeof (Char),     //  4 TypeCode.Char
-			typeof (SByte),    //  5 TypeCode.SByte
-			typeof (Byte),     //  6 TypeCode.Byte
-			typeof (Int16),    //  7 TypeCode.Int16
+			typeof (Char),	   //  4 TypeCode.Char
+			typeof (SByte),	   //  5 TypeCode.SByte
+			typeof (Byte),	   //  6 TypeCode.Byte
+			typeof (Int16),	   //  7 TypeCode.Int16
 			typeof (UInt16),   //  8 TypeCode.UInt16
-			typeof (Int32),    //  9 TypeCode.Int32
+			typeof (Int32),	   //  9 TypeCode.Int32
 			typeof (UInt32),   // 10 TypeCode.UInt32
-			typeof (Int64),    // 11 TypeCode.Int64
+			typeof (Int64),	   // 11 TypeCode.Int64
 			typeof (UInt64),   // 12 TypeCode.UInt64
 			typeof (Single),   // 13 TypeCode.Single
 			typeof (Double),   // 14 TypeCode.Double
 			typeof (Decimal),  // 15 TypeCode.Decimal
 			typeof (DateTime), // 16 TypeCode.DateTime
-			null,              // 17 null.
+			null,		    // 17 null.
 			typeof (String),   // 18 TypeCode.String
 		};
 
@@ -2523,14 +2523,14 @@ namespace System {
 		internal static object ToType (object value, Type conversionType, 
 					       IFormatProvider provider) 
 		{
-			if (value == null && conversionType == null)
-				return null;
-			
 			if (value == null)
-				throw new NullReferenceException ("Value is null.");
+				return null;
 
-                        if (value.GetType () == conversionType)
-                                return value;
+			if (conversionType == null)
+				throw new InvalidCastException ("Cannot cast to destination type.");
+
+			if (value.GetType () == conversionType)
+				return value;
 			
 			if (value is IConvertible) {
 				IConvertible convertValue = (IConvertible) value;
@@ -2542,7 +2542,8 @@ namespace System {
 					return (object) value;
 					
 				else if (conversionType == conversionTable[2]) // 2 TypeCode.DBNull
-					throw new InvalidCastException ();     // It's not IConvertible
+					throw new InvalidCastException (
+						"Cannot cast to DBNull, it's not IConvertible");
 		  
 				else if (conversionType == conversionTable[3]) // 3 TypeCode.Boolean
 					return (object) convertValue.ToBoolean (provider);
