@@ -917,6 +917,156 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader ("<root/>", XmlNodeType.Document, null);
 			AssertNull (xtr.Settings);
 		}
+
+		// Copied from XmlValidatingReaderTests.cs
+		[Test]
+		public void ExpandEntity ()
+		{
+			string intSubset = "<!ELEMENT root (#PCDATA)><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'><!ENTITY ent 'entity string'>";
+			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			string xml = dtd + "<root foo='&ent;' bar='internal &ent; value'>&ent;</root>";
+			XmlTextReader dvr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			dvr.EntityHandling = EntityHandling.ExpandEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			AssertEquals ("entity string", dvr.Value);
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("internal entity string value", dvr.Value);
+			AssertEquals ("entity string", dvr.ReadString ());
+		}
+
+		[Test]
+		public void PreserveEntity ()
+		{
+			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'><!ENTITY ent 'entity string'>";
+			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			string xml = dtd + "<root foo='&ent;' bar='internal &ent; value' />";
+			XmlTextReader dvr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			// MS BUG: it returns "entity string", however, entity should not be exanded.
+			AssertEquals ("&ent;", dvr.Value);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (!dvr.ReadAttributeValue ());
+
+			// bar
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("internal &ent; value", dvr.Value);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals ("internal ", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals (" value", dvr.Value);
+
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ExpandEntityRejectsUndeclaredEntityAttr ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<!DOCTYPE root SYSTEM 'foo.dtd'><root attr='&rnt;'>&rnt;</root>", XmlNodeType.Document, null);
+			xtr.EntityHandling = EntityHandling.ExpandEntities;
+			xtr.XmlResolver = null;
+			xtr.Read ();
+			xtr.Read (); // attribute entity 'rnt' is undeclared
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ExpandEntityRejectsUndeclaredEntityContent ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<!DOCTYPE root SYSTEM 'foo.dtd'><root>&rnt;</root>", XmlNodeType.Document, null);
+			xtr.EntityHandling = EntityHandling.ExpandEntities;
+			xtr.XmlResolver = null;
+			xtr.Read ();
+			xtr.Read ();
+			xtr.Read (); // content entity 'rnt' is undeclared
+		}
+
+		// mostly copied from XmlValidatingReaderTests.
+		[Test]
+		public void ResolveEntity ()
+		{
+			string ent1 = "<!ENTITY ent 'entity string'>";
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent1 + ent2;
+			string xml = dtd + "<root>&ent;&ent2;</root>";
+			XmlTextReader dvr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();	// root
+			dvr.Read ();	// &ent;
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals (1, dvr.Depth);
+			dvr.ResolveEntity ();
+			// It is still entity reference.
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals (2, dvr.Depth);
+			AssertEquals ("entity string", dvr.Value);
+			dvr.Read ();
+			AssertEquals (XmlNodeType.EndEntity, dvr.NodeType);
+			AssertEquals (1, dvr.Depth);
+			AssertEquals ("", dvr.Value);
+
+			dvr.Read ();	// &ent2;
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals (1, dvr.Depth);
+			dvr.ResolveEntity ();
+			// It is still entity reference.
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			// It now became element node.
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals (2, dvr.Depth);
+		}
+
+		// mostly copied from XmlValidatingReaderTests.
+		[Test]
+		public void ResolveEntity2 ()
+		{
+			string ent1 = "<!ENTITY ent 'entity string'>";
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent1 + ent2;
+			string xml = dtd + "<root>&ent3;&ent2;</root>";
+			XmlTextReader dvr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();	// root
+			dvr.Read ();	// &ent3;
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			// ent3 does not exists in this dtd.
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			try {
+				dvr.ResolveEntity ();
+				Fail ("Attempt to resolve undeclared entity should fail.");
+			} catch (XmlException) {
+			}
+		}
 #endif
 	}
 }

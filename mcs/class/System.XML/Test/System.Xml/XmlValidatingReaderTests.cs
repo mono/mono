@@ -671,14 +671,24 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			dvr.Read ();	// &ent3;
 			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			// ent3 does not exists in this dtd.
+#if NET_2_0
+			// under .NET 2.0, an error is raised here.
+			// under .NET 1.1, the error is thrown on the next read.
+			try {
+				dvr.ResolveEntity ();
+				Fail ("Attempt to resolve undeclared entity should fail.");
+			} catch (XmlException) {
+			}
+#else
+			// ent3 does not exist in this dtd.
 			dvr.ResolveEntity ();
 			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
 			try {
 				dvr.Read ();
-				Fail ("Undeclared entity resolution should be failed.");
+				Fail ("Attempt to resolve undeclared entity should fail.");
 			} catch (XmlException) {
 			}
+#endif
 		}
 
 		[Test]
