@@ -88,15 +88,20 @@ namespace Microsoft.JScript {
 		}
 
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
-		{
+		{			
 			this.no_effect = no_effect;
-			return true;
+			return Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			ig.Emit (OpCodes.Ldc_I4, (int) val);
+			if (parent is Unary) {
+				Unary tmp = parent as Unary;
+				if (tmp.oper == JSToken.Minus)
+					ig.Emit (OpCodes.Ldc_I4, (int) (val * -1));
+			} else
+				ig.Emit (OpCodes.Ldc_I4, (int) val);
 			ig.Emit (OpCodes.Box, typeof (System.Int32));
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);

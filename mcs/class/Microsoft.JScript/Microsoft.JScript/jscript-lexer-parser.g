@@ -430,9 +430,10 @@ unary_expr [AST parent] returns [AST unary_exprn]
 	AST u_expr = null;
 }
 	: unary_exprn = postfix_expr [parent]
-	| op = unary_op u_expr = unary_expr [parent]
+	| op = unary_op u_expr = unary_expr [null]
 	  { 
-		  unary_exprn = new Unary (parent, u_expr, op); 
+		  unary_exprn = new Unary (parent, u_expr, op);
+		  u_expr.parent = unary_exprn; 
 	  }
 	;
 
