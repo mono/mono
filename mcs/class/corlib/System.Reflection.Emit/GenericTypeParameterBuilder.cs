@@ -25,6 +25,7 @@ namespace System.Reflection.Emit
 		private int index;
 		private Type base_type;
 		private Type[] iface_constraints;
+		private bool has_ctor_constraint;
 	#endregion
 
 		public void SetBaseTypeConstraint (Type base_type_constraint)
@@ -35,6 +36,11 @@ namespace System.Reflection.Emit
 		public void SetInterfaceConstraints (Type[] iface_constraints)
 		{
 			this.iface_constraints = iface_constraints;
+		}
+
+		public void Mono_SetConstructorConstraint ()
+		{
+			has_ctor_constraint = true;
 		}
 
 		internal GenericTypeParameterBuilder (TypeBuilder tbuilder,
@@ -184,7 +190,7 @@ namespace System.Reflection.Emit
 		{
 #warning "FIXME"
 			return false;
-			return base_type != null ? base_type.IsValueType : false;
+			// return base_type != null ? base_type.IsValueType : false;
 		}
 		
 		public override object InvokeMember (string name, BindingFlags invokeAttr,

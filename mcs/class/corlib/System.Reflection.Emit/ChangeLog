@@ -5,6 +5,11 @@
 
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* GenericTypeParameterBuilder.cs
+	(Mono_SetConstructorConstraint): New public method.	
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* GenericTypeParameterBuilder.cs: New file.
 
 	* TypeBuilder.cs (TypeBuilder.DefineGenericParameters): New public
