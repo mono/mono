@@ -70,7 +70,7 @@ namespace Mono.Xml.Xsl
 			: this (writer, outputs, encoding, false)
 		{
 		}
-
+                
 		internal GenericOutputter (XmlWriter writer, Hashtable outputs, Encoding encoding, bool isVariable)
 			: this (outputs, encoding)
 		{
@@ -85,6 +85,17 @@ namespace Mono.Xml.Xsl
 			this.pendingTextWriter = writer;
 		}
 
+                
+                internal GenericOutputter (TextWriter writer, Hashtable outputs)
+                        : this (writer, outputs, null)
+                {
+                }
+
+                internal GenericOutputter (XmlWriter writer, Hashtable outputs)
+                        : this (writer, outputs, null)
+                {
+                }
+                
 		private Emitter Emitter {
 			get {
 				if (_emitter == null)

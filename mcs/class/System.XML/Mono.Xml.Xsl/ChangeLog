@@ -1,3 +1,8 @@
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
+	* GenericOutputter.cs: Add constructors that do not take an
+	encoding to fix build.
+	
 2004-01-14 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriterEmitter.cs : It now uses WriteProcessingInstruction() to
