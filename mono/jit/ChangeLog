@@ -1,3 +1,26 @@
+2002-03-28  Martin Baulig  <martin@gnome.org>
+
+	* jit.h (MonoFlowGraph): Added `prologue_end' and `epilogue_start' fields.
+
+	* emit-x86.c (arch_compile_method): Set prologue_end and epilogue_start.
+
+	* debug-private.h (DebugMethodInfo): Renamed `frame_start_offset' to
+	`prologue_end_offset', added `epilogue_begin_offset' and `last_line'.
+
+	* debug.c (debug_generate_method_lines): Don't return if we don't have line
+	numbers, we still need to generate the IL offsets here. Emit line numbers
+	for `prologue_end_offset' (the first line of actual code) and 
+	`epilogue_begin_offset' (the line of the method's closing brace).
+	Don't crash if cfg->bblocks [i].forest is NULL.
+	(mono_debug_add_method): Don't crash if we don't have line numbers.
+	Initialize the newly added fields.
+
+	* debug-stabs.c: Record first and last line, emit filename info at the
+	beginning of the stab file, gdb ignores the types otherwise.
+
+	* debug-dwarf2.c: Use the new prologue_end_offset instead of guessing it;
+	emit line number info for the first and last line.
+
 2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* invoke.c (arch_create_delegate_trampoline): impl.
