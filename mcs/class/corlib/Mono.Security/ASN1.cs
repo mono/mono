@@ -11,7 +11,7 @@ using System;
 using System.Collections;
 using System.Security.Cryptography;
 
-namespace Mono.Security.ASN1 {
+namespace Mono.Security {
 
 // References:
 // a.	ITU ASN.1 standards (free download)
