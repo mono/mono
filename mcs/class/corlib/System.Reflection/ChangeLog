@@ -1,3 +1,7 @@
+2003-11-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoMethod.cs: Implement CallingConvention member.
+
 2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs (InternalGetType): Add a 'module' argument so this

@@ -22,6 +22,7 @@ namespace System.Reflection {
 		internal Type ret;
 		internal MethodAttributes attrs;
 		internal MethodImplAttributes iattrs;
+		internal CallingConventions callconv;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void get_method_info (IntPtr handle, out MonoMethodInfo info);
@@ -103,6 +104,14 @@ namespace System.Reflection {
 				MonoMethodInfo.get_method_info (mhandle, out info);
 				return info.attrs;
 			} 
+		}
+
+		public override CallingConventions CallingConvention { 
+			get {
+				MonoMethodInfo info;
+				MonoMethodInfo.get_method_info (mhandle, out info);
+				return info.callconv;
+			}
 		}
 		
 		public override Type ReflectedType {
@@ -215,6 +224,14 @@ namespace System.Reflection {
 				MonoMethodInfo.get_method_info (mhandle, out info);
 				return info.attrs;
 			} 
+		}
+
+		public override CallingConventions CallingConvention { 
+			get {
+				MonoMethodInfo info;
+				MonoMethodInfo.get_method_info (mhandle, out info);
+				return info.callconv;
+			}
 		}
 		
 		public override Type ReflectedType {
