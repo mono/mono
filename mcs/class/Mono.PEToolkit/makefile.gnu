@@ -56,8 +56,11 @@ SOURCES_EXCLUDE=
 
 #include $(topdir)/class/library.make
 
-mddump.exe:
+mddump.exe: all
 	mcs /out:mddump.exe /unsafe $(SOURCES_INCLUDE)
 
 clean:
 	rm -f mddump.exe
+
+include $(topdir)/class/library.make
+
