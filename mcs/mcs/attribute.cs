@@ -570,6 +570,7 @@ namespace Mono.CSharp {
 		//
 		public string Obsolete_GetObsoleteMessage (out bool is_error)
 		{
+			is_error = false;
 			//
 			// So we have an Obsolete, pull the data out.
 			//
@@ -597,8 +598,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 				is_error = ((BoolConstant) arg2.Expr).Value;
-			} else
-				is_error = false;
+			}
 
 			return ((StringConstant) arg.Expr).Value;
 		}
