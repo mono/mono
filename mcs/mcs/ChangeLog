@@ -1,3 +1,9 @@
+2005-03-04  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-tokenizer.cs (PreProcessPragma): Add warning 1633, 1635.
+	
+	* report.cs (warning_ignore_table): Made public.
+
 2005-03-04  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #73282.

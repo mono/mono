@@ -59,7 +59,7 @@ namespace Mono.CSharp {
 		//
 		// Keeps track of the warnings that we are ignoring
 		//
-		static Hashtable warning_ignore_table;
+		public static Hashtable warning_ignore_table;
 
 		static Hashtable warning_regions_table;
 
