@@ -1,5 +1,10 @@
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslTransformProcessor.cs: add support for resolving documents.
+	* XsltCompiledContext: add support for document () function.
+
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Outputter.cs, TextOutputter.cs, XmlOutputter.cs: Implement some
 	of the abstract methods in Outputter, making them call other
 	functions with default values, remove impl's in derived classes.
