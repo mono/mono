@@ -435,7 +435,7 @@ namespace System.Windows.Forms
 			private ContextMenu menueToolBarButtonContextMenu;
 			private ToolBarButton desktopToolBarButton;
 			private ToolBar smallButtonToolBar;
-			private ComboBox dirComboBox;
+			private DirComboBox dirComboBox;
 			private ToolBarButton lastUsedToolBarButton;
 			private ComboBox fileNameComboBox;
 			private ToolBarButton networkToolBarButton;
@@ -483,7 +483,7 @@ namespace System.Windows.Forms
 				networkToolBarButton = new ToolBarButton( );
 				fileNameComboBox = new ComboBox( );
 				lastUsedToolBarButton = new ToolBarButton( );
-				dirComboBox = new ComboBox( );
+				dirComboBox = new DirComboBox( this );
 				smallButtonToolBar = new ToolBar( );
 				desktopToolBarButton = new ToolBarButton( );
 				menueToolBarButton = new ToolBarButton( );
@@ -517,13 +517,6 @@ namespace System.Windows.Forms
 				searchSaveLabel.Text = fileDialog.SearchSaveLabelText;
 				searchSaveLabel.TextAlign = ContentAlignment.MiddleRight;
 				
-				// dirComboBox
-				dirComboBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Top | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
-				dirComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-				dirComboBox.Location = new Point( 99, 8 );
-				dirComboBox.Size = new Size( 260, 21 );
-				dirComboBox.TabIndex = 1;
-				
 				// fileListView
 				fileListView.Anchor = ( (AnchorStyles)( ( ( ( AnchorStyles.Top | AnchorStyles.Bottom ) | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
 				fileListView.Location = new Point( 99, 37 );
@@ -535,6 +528,13 @@ namespace System.Windows.Forms
 				fileListView.AllowColumnReorder = true;
 				fileListView.MultiSelect = false;
 				fileListView.TabIndex = 2;
+				
+				// dirComboBox
+				dirComboBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Top | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
+				dirComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+				dirComboBox.Location = new Point( 99, 8 );
+				dirComboBox.Size = new Size( 260, 21 );
+				dirComboBox.TabIndex = 1;
 				
 				// fileNameLabel
 				fileNameLabel.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Left ) ) );
@@ -653,13 +653,13 @@ namespace System.Windows.Forms
 				Controls.Add( cancelButton );
 				Controls.Add( openSaveButton );
 				Controls.Add( helpButton );
+				Controls.Add( fileListView );
 				Controls.Add( fileTypeLabel );
 				Controls.Add( fileNameLabel );
 				Controls.Add( fileTypeComboBox );
 				Controls.Add( fileNameComboBox );
 				Controls.Add( dirComboBox );
 				Controls.Add( searchSaveLabel );
-				Controls.Add( fileListView );
 				Controls.Add( buttonPanel );
 				
 				ResumeLayout( false );
@@ -668,6 +668,8 @@ namespace System.Windows.Forms
 					currentDirectoryName = Environment.CurrentDirectory;
 				
 				directoryInfo = new DirectoryInfo( currentDirectoryName );
+				
+				dirComboBox.CurrentPath = currentDirectoryName;
 				
 				fileListView.UpdateFileListView( );
 				
@@ -847,6 +849,8 @@ namespace System.Windows.Forms
 						
 						currentDirectoryName = directoryInfo.FullName;
 						
+						dirComboBox.CurrentPath = currentDirectoryName;
+						
 						fileListView.UpdateFileListView( );
 					}
 				}
@@ -856,6 +860,8 @@ namespace System.Windows.Forms
 					if ( directoryStack.Count != 0 )
 					{
 						PopDirectory( );
+						
+						dirComboBox.CurrentPath = currentDirectoryName;
 						
 						fileListView.UpdateFileListView( );
 					}
@@ -902,11 +908,8 @@ namespace System.Windows.Forms
 			
 			void OnKeyUpFileNameComboBox( object sender, KeyEventArgs e )
 			{
-				Console.WriteLine( "OnKeyUpFileNameComboBox" );
-				
 				if ( e.KeyCode == Keys.Enter )
 				{
-					Console.WriteLine( "OnKeyUpFileNameComboBox e.KeyCode =..." );
 					currentFileName = currentDirectoryName + fileNameComboBox.Text;
 					ForceDialogEnd( );
 				}
@@ -937,13 +940,16 @@ namespace System.Windows.Forms
 				fileListView.UpdateFileListView( );
 			}
 			
-			public void ChangeDirectory( string path )
+			public void ChangeDirectory( object sender, string path )
 			{
 				currentDirectoryName = path;
 				
 				PushDirectory( directoryInfo );
 				
 				directoryInfo = new DirectoryInfo( path );
+				
+				if ( sender != dirComboBox )
+					dirComboBox.CurrentPath = path;
 				
 				fileListView.UpdateFileListView( );
 			}
@@ -1137,7 +1143,7 @@ namespace System.Windows.Forms
 						
 						if ( fileStruct.attributes == FileAttributes.Directory )
 						{
-							fileDialogPanel.ChangeDirectory( fileStruct.fullname );
+							fileDialogPanel.ChangeDirectory( this, fileStruct.fullname );
 						}
 						else
 						{
@@ -1288,22 +1294,230 @@ namespace System.Windows.Forms
 					else
 					if ( sender == desktopButton )
 					{
-						fileDialogPanel.ChangeDirectory( Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) );
+						fileDialogPanel.ChangeDirectory( this, Environment.GetFolderPath( Environment.SpecialFolder.Desktop ) );
 					}
 					else
 					if ( sender == homeButton )
 					{
-						fileDialogPanel.ChangeDirectory( Environment.GetFolderPath( Environment.SpecialFolder.Personal ) );
+						fileDialogPanel.ChangeDirectory( this, Environment.GetFolderPath( Environment.SpecialFolder.Personal ) );
 					}
 					else
 					if ( sender == workplaceButton )
 					{
-//						fileDialogPanel.ChangeDirectory( Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) );
+//						fileDialogPanel.ChangeDirectory( this, Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) );
 					}
 					else
 					if ( sender == networkButton )
 					{
 						
+					}
+				}
+			}
+			
+			internal class DirComboBox : ComboBox
+			{
+				internal class DirComboBoxItem
+				{
+					private int imageIndex;
+					private string name;
+					private string path;
+					private int xPos;
+					
+					public DirComboBoxItem( int imageIndex, string name, string path, int xPos )
+					{
+						this.imageIndex = imageIndex;
+						this.name = name;
+						this.path = path;
+						this.XPos = xPos;
+					}
+					
+					public int ImageIndex
+					{
+						set
+						{
+							imageIndex = value;
+						}
+						
+						get
+						{
+							return imageIndex;
+						}
+					}
+					
+					public string Name
+					{
+						set
+						{
+							name = value;
+						}
+						
+						get
+						{
+							return name;
+						}
+					}
+					
+					public string Path
+					{
+						set
+						{
+							path = value;
+						}
+						
+						get
+						{
+							return path;
+						}
+					}
+					
+					public int XPos
+					{
+						set
+						{
+							xPos = value;
+						}
+						
+						get
+						{
+							return xPos;
+						}
+					}
+				}
+				
+				private FileDialogPanel fileDialogPanel;
+				
+				private ImageList imageList = new ImageList();
+				
+				private string currentPath;
+				
+				private bool firstTime = true;
+				
+				public DirComboBox( FileDialogPanel fileDialogPanel )
+				{
+					this.fileDialogPanel = fileDialogPanel;
+					
+					DrawMode = DrawMode.OwnerDrawFixed;
+					
+					imageList.ColorDepth = ColorDepth.Depth32Bit;
+					imageList.ImageSize = new Size( 16, 16 );
+					imageList.Images.Add( (Image)Locale.GetResource( "last_open" ) );
+					imageList.Images.Add( (Image)Locale.GetResource( "desktop" ) );
+					imageList.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
+					imageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
+					imageList.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
+					imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
+					imageList.TransparentColor = Color.Transparent;
+					
+					Items.AddRange( new object[] {
+									   new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
+									   new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
+								   }
+								   );
+				}
+				
+				public string CurrentPath
+				{
+					set
+					{
+						currentPath = value;
+						
+						ShowPath( );
+					}
+					get
+					{
+						return currentPath;
+					}
+				}
+				
+				private void ShowPath( )
+				{
+					DirectoryInfo di = new DirectoryInfo( currentPath );
+					
+					Stack dirStack = new Stack( );
+					
+					dirStack.Push( di );
+					
+					while ( di.Parent != null )
+					{
+						di = di.Parent;
+						dirStack.Push( di );
+					}
+					
+					BeginUpdate( );
+					
+					Items.Clear( );
+					
+					Items.AddRange( new object[] {
+									   new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
+									   new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
+								   }
+								   );
+					
+					int sel = -1;
+					
+					int xPos = -4;
+					
+					while ( dirStack.Count != 0 )
+					{
+						DirectoryInfo dii = (DirectoryInfo)dirStack.Pop( );
+						sel = Items.Add( new DirComboBoxItem( 3, dii.Name, dii.FullName, xPos + 4 ) );
+						xPos += 4;
+					}
+					
+					if ( sel != -1 )
+						SelectedIndex = sel;
+					
+					EndUpdate( );
+				}
+				
+				protected override void OnDrawItem( DrawItemEventArgs e )
+				{
+					if ( e.Index == -1 )
+						return;
+					
+					Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height, e.Graphics );
+					Graphics gr = Graphics.FromImage( bmp );
+					
+					DirComboBoxItem dcbi = Items[ e.Index ] as DirComboBoxItem;
+					
+					Color backColor = e.BackColor;
+					Color foreColor = e.ForeColor;
+					
+					int xPos = dcbi.XPos;
+					
+					// Bug in ComboBox !!!!!
+					// we never receive DrawItemState.ComboBoxEdit
+					if ( ( e.State & DrawItemState.ComboBoxEdit ) != 0 )
+						xPos = 0;
+					else
+					if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
+					{
+						backColor = Color.Blue;
+						foreColor = Color.White;
+					}
+					
+					gr.FillRectangle( new SolidBrush( backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );
+					
+					gr.DrawString( dcbi.Name, e.Font , new SolidBrush( foreColor ), new Point( 24 + xPos, ( bmp.Height - e.Font.Height ) / 2 ) );
+					gr.DrawImage( imageList.Images[ dcbi.ImageIndex ], new Rectangle( new Point( xPos + 2, 0 ), new Size( 16, 16 ) ) );
+					
+					e.Graphics.DrawImage( bmp, e.Bounds.X, e.Bounds.Y );
+				}
+				
+				protected override void OnSelectedIndexChanged( EventArgs e )
+				{
+					// do not call ChangeDirectory when invoked from FileDialogPanel ctor...
+					if ( firstTime )
+					{
+						firstTime = false;
+						return;
+					}
+					
+					if ( Items.Count > 0 )
+					{
+						DirComboBoxItem dcbi = Items[ SelectedIndex ] as DirComboBoxItem;
+						
+						fileDialogPanel.ChangeDirectory( this, dcbi.Path );
 					}
 				}
 			}
