@@ -1,3 +1,9 @@
+2002-08-19  Dick Porter  <dick@ximian.com>
+
+	* MonoType.cs: Add a space before the Assembly name in
+	AssemblyQualifiedName (needed for resource files so the MS runtime
+	can load types)
+
 2002-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomain.cs: parameter name when throwing ArgumentNullException.

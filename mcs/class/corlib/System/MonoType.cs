@@ -261,7 +261,7 @@ namespace System
 
 		public override string AssemblyQualifiedName {
 			get {
-				return getFullName () + "," + Assembly.ToString ();
+				return getFullName () + ", " + Assembly.ToString ();
 			}
 		}
 

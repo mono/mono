@@ -86,7 +86,7 @@ namespace System.Resources
 					}
 					
 					string set_class=reader.ReadString();
-					if(!set_class.StartsWith("System.Resources.RuntimeResourceSet")) {
+					if(!set_class.StartsWith(typeof(ResourceSet).FullName) && !set_class.StartsWith("System.Resources.RuntimeResourceSet")) {
 						throw new NotSupportedException("This .resources file requires set class " + set_class);
 					}
 				}

@@ -158,8 +158,11 @@ namespace System.IO {
 		}
 
 		public virtual void Write(string value) {
-			Write7BitEncodedInt(value.Length);
+			/* The length field is the byte count, not the
+			 * char count
+			 */
 			byte[] enc = m_encoding.GetBytes(value);
+			Write7BitEncodedInt(enc.Length);
 			OutStream.Write(enc, 0, enc.Length);
 		}
 
