@@ -1,3 +1,7 @@
+2005-02-18  Raja R Harinath  <rharinath@novell.com>
+
+	* AssemblyInfo.cs [BOOTSTRAP_WITH_OLDLIB]: Disable SecurityPermission.
+
 2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Add SkipVerification to assembly RequestMinimum
