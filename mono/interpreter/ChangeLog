@@ -1,3 +1,7 @@
+2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c: Update after appdomain changes.
+
 2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c - set large stack size on HP 64bit
