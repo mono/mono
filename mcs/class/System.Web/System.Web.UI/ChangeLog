@@ -1,3 +1,7 @@
+2004-01-15  Martin Willemoes Hansen  <mwh@sysrq.dk>
+
+	* HtmlTextWriter.cs: Fixed OutputTab routine to generate correct indention.
+
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: If we have a postback that wasn't sent through a

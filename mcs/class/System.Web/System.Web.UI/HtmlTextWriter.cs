@@ -412,7 +412,7 @@ protected virtual bool OnTagRender(string name, HtmlTextWriterTag key){
 
 protected virtual void OutputTabs(){
 	if (tabsPending) {
-		for(int i=0; i <= indentLevel; i++) {
+		for(int i=0; i < indentLevel; i++) {
 			writer.Write(tabString);
 		}
 		tabsPending = false;
