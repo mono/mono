@@ -622,6 +622,7 @@ System.Security.Cryptography/CryptographicException.cs
 System.Security.Cryptography/CryptographicUnexpectedOperationExcpetion.cs
 System.Security.Cryptography/CryptoStream.cs
 System.Security.Cryptography/CryptoStreamMode.cs
+System.Security.Cryptography/CryptoTools.cs
 System.Security.Cryptography/CspParameters.cs
 System.Security.Cryptography/CspProviderFlags.cs
 System.Security.Cryptography/DeriveBytes.cs
