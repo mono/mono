@@ -1,3 +1,7 @@
+2004-11-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* Image.cs: Add CheckStatus to SaveAdd.
+
 2004-11-22  Ravindra  <rkumar@novell.com>
 
 	* Graphics.cs: Fixed null values handling in all overloads of

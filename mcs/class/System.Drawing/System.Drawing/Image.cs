@@ -410,6 +410,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
 		st = GDIPlus.GdipSaveAdd (nativeObject, nativeEncoderParams);
 		Marshal.FreeHGlobal (nativeEncoderParams);
+		GDIPlus.CheckStatus (st);
 	}
 		
 	public void SaveAdd (Image image, EncoderParameters encoderParams)
@@ -419,6 +420,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
 		st = GDIPlus.GdipSaveAddImage (nativeObject, image.NativeObject, nativeEncoderParams);
 		Marshal.FreeHGlobal (nativeEncoderParams);
+		GDIPlus.CheckStatus (st);
 	}
 		
 	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)

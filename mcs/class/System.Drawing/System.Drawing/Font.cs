@@ -499,7 +499,7 @@ namespace System.Drawing
 		{
 			IntPtr newObject;
 			LOGFONTA o = (LOGFONTA)lf;
-			int l = GDIPlus.GdipCreateFontFromLogfontA (hdc, ref o, out newObject);
+			GDIPlus.GdipCreateFontFromLogfontA (hdc, ref o, out newObject);
 			return new Font (newObject, "Microsoft Sans Serif", FontStyle.Regular, 10);
 		}
 

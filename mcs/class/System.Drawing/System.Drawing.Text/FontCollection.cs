@@ -66,6 +66,7 @@ namespace System.Drawing.Text {
 				FontFamily[] families;
 				
 				status = GDIPlus.GdipGetFontCollectionFamilyCount (nativeFontCollection, out found);
+				GDIPlus.CheckStatus (status);
 				
 				int nSize =  Marshal.SizeOf (IntPtr.Zero);
 				IntPtr dest = Marshal.AllocHGlobal (nSize * found);           

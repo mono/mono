@@ -89,7 +89,7 @@ namespace System.Drawing
 		{
 			lock (this){
 				if (disposed == false) {
-					Status status = GDIPlus.GdipDeleteBrush (nativeObject);
+					GDIPlus.GdipDeleteBrush (nativeObject);
 					disposed = true;
 					nativeObject = IntPtr.Zero;
 				}

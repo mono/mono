@@ -67,7 +67,6 @@ namespace System.Drawing.Imaging {
 		{			
 			int decoderNums, arraySize, decoder_ptr, decoder_size;
 			IntPtr decoders;
-			ImageCodecInfo codecinfo = new ImageCodecInfo();
 			ImageCodecInfo[] result;
 			GdipImageCodecInfo gdipdecoder = new GdipImageCodecInfo();
 			Status status;
@@ -104,7 +103,6 @@ namespace System.Drawing.Imaging {
 		{
 			int encoderNums, arraySize, encoder_ptr, encoder_size;
 			IntPtr encoders;
-			ImageCodecInfo codecinfo = new ImageCodecInfo();
 			ImageCodecInfo[] result;
 			GdipImageCodecInfo gdipencoder = new GdipImageCodecInfo();
 			Status status;

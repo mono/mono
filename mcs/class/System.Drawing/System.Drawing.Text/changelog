@@ -1,3 +1,7 @@
+2004-11-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* Image.cs: Add CheckStatus to Families.
+
 2004-02-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* PrivateFontCollection.cs: Removed excess attributes

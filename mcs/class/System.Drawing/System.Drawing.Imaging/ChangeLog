@@ -1,3 +1,7 @@
+2004-11-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* ColorPalette.cs: Add CheckStatus to GetAdjustedPalette.
+
 2004-11-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* ColorPalette.cs: Add internal Clone method

@@ -260,7 +260,7 @@ namespace System.Drawing.Imaging
     				out colorPalette,  type);
     				
     			palette.setFromGDIPalette (colorPalette);
-			
+			GDIPlus.CheckStatus (status);
 		}		
 		
 		public void SetBrushRemapTable(ColorMap[] map)
