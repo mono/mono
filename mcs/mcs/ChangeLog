@@ -1,5 +1,9 @@
 2002-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* cs-parser.jay: reverted previous patch.
+
+2002-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* cs-parser.jay: fixed bug #22119.
 
 2002-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>

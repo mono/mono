@@ -2254,11 +2254,6 @@ unary_expression
 	  {
 		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
-	| OPEN_PARENS qualified_identifier CLOSE_PARENS expression
-	  {
-	  	SimpleName s = new SimpleName ((string) $2, lexer.Location);
-		$$ = new Cast ((Expression) s, (Expression) $4, lexer.Location);
-	  }
 	;
 
 	//
