@@ -13,12 +13,12 @@ namespace System.IO {
                 private StringBuilder internalString;
 		private bool disposed = false;
 
-                public StringWriter() {
-                        internalString = new StringBuilder();
+                public StringWriter() : this (new StringBuilder ()) {
+			
                 }
 
-                public StringWriter( IFormatProvider formatProvider ) {
-                        internalFormatProvider = formatProvider;
+                public StringWriter( IFormatProvider formatProvider ) : this (new StringBuilder (), formatProvider)  {
+
                 }
 
                 public StringWriter( StringBuilder sb ) : this (sb, null) {

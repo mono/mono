@@ -1,3 +1,8 @@
+2003-05-21  Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* StringWriter.cs: Fixed bug #43431: "StringWriter
+	.ctor(CultureInfo) does not create a new StringBuilder ()"
+	
 2003-05-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FileStream.cs (FlushBuffer): After a flush, the buffer is
