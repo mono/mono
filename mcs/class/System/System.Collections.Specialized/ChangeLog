@@ -2,6 +2,8 @@
 
 	* HybridDictionary.cs: Fixed Contains for null argument (again). Return
 	false when dictionary is empty or else throw an ArgumentNullException.
+	* NameObjectCollectionBase.cs: Now use IComparer to compare keys. This
+	completes a TODO and fix Remove in NameValueCollection.
 	* NameValueCollection.cs: Added missing Rank check in CopyTo (Array,
 	int).
 

@@ -454,11 +454,7 @@ namespace System.Collections.Specialized
 			return (m_ItemsContainer.Count>0);
 //			throw new Exception("Not implemented yet");
 		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		[MonoTODO]
+
 		protected void BaseRemove( string name )
 		{
 			int cnt = 0;
@@ -476,8 +472,7 @@ namespace System.Collections.Specialized
 			cnt = m_ItemsArray.Count;
 			for (int i=0 ; i< cnt; ){
 				key=BaseGetKey(i);
-				// TODO: consider case-sensivity 
-				if (String.Compare(key,name)==0){
+				if (m_comparer.Compare (key, name) == 0) {
 					m_ItemsArray.RemoveAt(i);
 					cnt--;
 				}
@@ -485,8 +480,8 @@ namespace System.Collections.Specialized
 					i++;
 				
 			}
-//			throw new Exception("Not implemented yet");
 		}
+
 		/// <summary>
 		/// 
 		/// </summary>
