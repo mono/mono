@@ -463,7 +463,7 @@ namespace Mono.CSharp {
 				else
 					return false;
 			} else if (element is Property || element is Indexer ||
-				   element is InterfaceProperty || element is InterfaceIndexer) {
+				   element is InterfaceProperty || element is InterfaceIndexer || element is Accessor) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
@@ -635,6 +635,8 @@ namespace Mono.CSharp {
 						((AssemblyBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ModuleBuilder) {
 						((ModuleBuilder) builder).SetCustomAttribute (cb);
+					} else if (kind is Accessor) {
+						((MethodBuilder) builder).SetCustomAttribute (cb);
 					} else
 						throw new Exception ("Unknown kind: " + kind);
 				}

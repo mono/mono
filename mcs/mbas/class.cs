@@ -2906,10 +2906,12 @@ namespace Mono.CSharp {
 		// Null if the accessor is empty, or a Block if not
 		//
 		public Block Block;
-
-		public Accessor (Block b)
+		public Attributes OptAttributes;
+		
+		public Accessor (Block b, Attributes attrs)
 		{
 			Block = b;
+			OptAttributes = attrs;
 		}
 	}
 			
@@ -3252,14 +3254,16 @@ namespace Mono.CSharp {
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, PropertyType, ModFlags);
-				
+
+				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
 				ec.EmitTopBlock (Get.Block, Location);
 			}
 
 			if (Set != null){
 				ig = SetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, null, ModFlags);
-				
+
+				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
 				ec.EmitTopBlock (Set.Block, Location);
 			}
 		}
@@ -3415,19 +3419,19 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.ABSTRACT;
 
-		public readonly Block     Add;
-		public readonly Block     Remove;
+		public readonly Accessor  Add;
+		public readonly Accessor  Remove;
 		public MyEventBuilder     EventBuilder;
 
 		Type EventType;
 		MethodBuilder AddBuilder, RemoveBuilder;
 		
-		public Event (string type, string name, Object init, int mod, Block add_block,
-			      Block rem_block, Attributes attrs, Location loc)
+		public Event (string type, string name, Object init, int mod, Accessor add,
+			      Accessor remove, Attributes attrs, Location loc)
 			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
 		{
-			Add = add_block;
-			Remove = rem_block;
+			Add = add;
+			Remove = remove;
 		}
 
 		public override bool Define (TypeContainer parent)
@@ -3550,17 +3554,19 @@ namespace Mono.CSharp {
 			ig = AddBuilder.GetILGenerator ();
 			ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
 
-			if (Add != null)
-				ec.EmitTopBlock (Add, Location);
-			else
+			if (Add != null) {
+				Attribute.ApplyAttributes (ec, AddBuilder, Add, Add.OptAttributes, Location);
+				ec.EmitTopBlock (Add.Block, Location);
+			} else
 				EmitDefaultMethod (ec, true);
 
 			ig = RemoveBuilder.GetILGenerator ();
 			ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
 			
-			if (Remove != null)
-				ec.EmitTopBlock (Remove, Location);
-			else
+			if (Remove != null) {
+				Attribute.ApplyAttributes (ec, RemoveBuilder, Remove, Remove.OptAttributes, Location);
+				ec.EmitTopBlock (Remove.Block, Location);
+			} else
 				EmitDefaultMethod (ec, false);
 
 			ec = new EmitContext (tc, Location, null, EventType, ModFlags);

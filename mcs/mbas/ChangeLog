@@ -1,4 +1,7 @@
 2002-06-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged class.cs, attribute.cs from mcs/mcs
+
+2002-06-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged class.cs, enum.cs, expression.cs, interface.cs, rootcontext.cs and typemanager.cs from mcs/mcs
 	* added module.cs (class Mono.MonoBASIC.Module - derived from Mono.CSharp.Class)
 	* added System.XML and Microsoft.VisualBasic to the default config (driver.cs)
