@@ -1,3 +1,7 @@
+2003-01-24  Martin Baulig  <martin@ximian.com>
+
+	* debug.c (mono_debug_io_layer): Disable this on Windows.
+
 2003-01-23  Dick Porter  <dick@ximian.com>
 
 	* mono.c: Use mono_runtime_exec_managed_code() to run all managed
