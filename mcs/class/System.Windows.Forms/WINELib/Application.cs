@@ -31,16 +31,16 @@ namespace System.Windows.Forms {
 
 	[MonoTODO]
 	public sealed class Application {
-
-		//[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		//extern static int GetInstance();
-
-		static private Form applicationForm;
+		static private ApplicationContext applicationContext = null;
+		static private bool messageLoopStarted = false;
+		static private bool messageLoopStopRequest = false;
+		private static ArrayList messageFilters = new ArrayList ();
 
 		// --- (public) Properties ---
-		[MonoTODO]
 		public static bool AllowQuit {
-			get { throw new NotImplementedException (); }
+			// according to docs return false if embbedded in a 
+			// browser, not (yet?) embedded in a browser
+			get { return true; } 
 		}
 	
 		[MonoTODO]
@@ -80,9 +80,8 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 	
-		[MonoTODO]
 		public static bool MessageLoop {
-			get { throw new NotImplementedException (); }
+			get { return messageLoopStarted; }
 		}
 	
 		[MonoTODO]
@@ -116,33 +115,29 @@ namespace System.Windows.Forms {
 		//public static RegistryKey UserAppDataRegistry {
 		//	get { throw new NotImplementedException (); }
 		//}
-		
-
-		private static ArrayList messageFilters = new ArrayList ();
 	
 		// --- Methods ---
-		[MonoTODO]
 		public static void AddMessageFilter (IMessageFilter value) 
 		{
 			messageFilters.Add (value);
 		}
 	
-		[MonoTODO]
 		public static void DoEvents () 
 		{
-			throw new NotImplementedException ();
+			Win32.MSG msg = new Win32.MSG();
+
+			while (Win32.PeekMessageA (ref msg, (IntPtr) 0,  0, 0,
+						   Win32.PM_REMOVE) != 0);
 		}
 	
-		[MonoTODO]
 		public static void Exit () 
 		{
-			throw new NotImplementedException ();
+			Win32.PostQuitMessage (0);
 		}
 	
-		[MonoTODO]
 		public static void ExitThread () 
 		{
-			throw new NotImplementedException ();
+			messageLoopStopRequest = true;
 		}
 	
 		[MonoTODO]
@@ -157,41 +152,78 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		public static void RemoveMessageFilter (IMessageFilter value)
 		{
 			messageFilters.Remove (value);
 		}
 
-		public static void Run ()
+		static private void ApplicationFormClosed (object o, EventArgs args)
 		{
-
+			Win32.PostQuitMessage (0);
 		}
 
-		[MonoTODO]
+		static public void Run ()
+		{
+			Win32.MSG msg = new Win32.MSG();
+
+			messageLoopStarted = true;
+
+			while (!messageLoopStopRequest && 
+			       Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
+
+				bool dispatchMessage = true;
+
+				Message message = new Message ();
+				message.HWnd = msg.hwnd;
+				message.Msg = (int) msg.message;
+				message.WParam = msg.wParam;
+				message.LParam = msg.lParam;
+
+				IEnumerator e = messageFilters.GetEnumerator();
+
+				while (e.MoveNext()) {
+					IMessageFilter filter = 
+					    (IMessageFilter) e.Current;
+
+					// if PreFilterMessage returns true
+					// the message should not be dispatched
+					if (filter.PreFilterMessage (ref message))
+						dispatchMessage = false;
+				}
+
+				if (dispatchMessage) {
+					Win32.TranslateMessage (ref msg);
+					Win32.DispatchMessageA (ref msg);
+				}
+
+				//if (Idle != null)
+					//Idle (null, new EventArgs());
+			}
+
+			//if (ApplicationExit != null)
+				//ApplicationExit (null, new EventArgs());
+		}
+
 		public static void Run (ApplicationContext context) 
 		{
-			throw new NotImplementedException ();
+			applicationContext = context;
+			applicationContext.MainForm.Show ();
+			applicationContext.MainForm.Closed += 
+			    new EventHandler (ApplicationFormClosed);
+			Run();
 		}
 
-		[MonoTODO]
 		//[TypeAttributes.BeforeFieldInit]
-		public static void Run (Form context)
+		public static void Run (Form form)
 		// Documents say this parameter name should be mainform, 
 		// but the verifier says context.
 		{
-			applicationForm = context;
-			int msg = 0;
-			context.Show ();
-
-			while (Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
-				Win32.TranslateMessage (ref msg);
-				Win32.DispatchMessageA (ref msg);
-			}
+			ApplicationContext context = new ApplicationContext (form);
+			Run (context);
 		}
 		
 		// --- Events ---
-//		public static event EventHandler ApplicationExit;		
+		public static event EventHandler ApplicationExit;
 		public static event EventHandler Idle;
 		public static event ThreadExceptionEventHandler ThreadException;
 		public static event EventHandler ThreadExit;

@@ -5,7 +5,8 @@ using System.Windows.Forms;
 
 public class NativeWindowTest : NativeWindow {
 
-	protected override void WndProc (ref Message m) {
+	protected override void WndProc (ref Message m) 
+	{
 		Console.WriteLine ("in NativeWindowTest WndProc");
 
 		m.Result = (IntPtr) 0;
@@ -48,7 +49,7 @@ public class NativeWindowTest : NativeWindow {
 		Console.WriteLine ("showing window");
 		Win32.ShowWindow (nw.Handle, (int) Win32.SW_SHOW);
 
-		int msg = 0;
+		Win32.MSG msg = new Win32.MSG();
 
 		while (Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
 			Win32.TranslateMessage (ref msg);

@@ -31,12 +31,6 @@ namespace System.Windows.Forms {
 
 		}
 		
-		void delete_cb (object o, EventArgs args)
-		{
-			if (Closed != null)
-				Closed (o, args);
-		}
-
 		//  --- Public Properties
 		//
 		[MonoTODO]
@@ -715,10 +709,10 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
-		protected virtual void  OnClosed (EventArgs e)
+		protected virtual void OnClosed (EventArgs e)
 		{
-
+			if (Closed != null)
+				Closed (this, e);
 		}
 
 		[MonoTODO]
@@ -868,7 +862,9 @@ namespace System.Windows.Forms {
 		//}
 
 		[MonoTODO]
-		protected override void SetBoundsCore (int x, int y,  int width,  int height,  BoundsSpecified specified)
+		protected override void SetBoundsCore (
+			int x, int y,  int width, int height,  
+			BoundsSpecified specified)
 		{
 			throw new NotImplementedException ();
 		}
@@ -878,6 +874,7 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void SetVisibleCore (bool value)
 		{

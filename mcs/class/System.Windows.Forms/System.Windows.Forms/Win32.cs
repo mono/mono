@@ -16,6 +16,22 @@ namespace System.Windows.Forms {
 	public class Win32 {
 
 		[StructLayout(LayoutKind.Sequential)]
+		public class POINT {
+			public long  x;
+			public long  y;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct MSG {
+			public IntPtr   hwnd;	 
+			public uint  message; 
+			public IntPtr wParam; 
+			public IntPtr lParam; 
+			public uint  time; 
+			public POINT  pt;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
 		public struct WNDCLASS {
 			public int style;
 			public WndProc lpfnWndProc;
@@ -68,16 +84,22 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall,CharSet = CharSet.Auto)]
-		public static extern int GetMessageA (ref int msg, int hwnd, 
+		public static extern int GetMessageA (ref MSG msg, int hwnd, 
 						      int msgFrom,  int msgTo);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
-		public static extern int  TranslateMessage (ref int msg);
+		public static extern int  TranslateMessage (ref MSG msg);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
-		public static extern int DispatchMessageA (ref int msg);
+		public static extern int DispatchMessageA (ref MSG msg);
+
+		[DllImport ("user32.dll", CallingConvention = 
+			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		public static extern int PeekMessageA (
+			ref MSG msg, IntPtr hWnd, uint wMsgFilterMin, 
+			uint wMsgFilterMax, uint wRemoveMsg);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall,
@@ -100,6 +122,12 @@ namespace System.Windows.Forms {
 		public extern static int SetWindowPos (
 			IntPtr hWnd, IntPtr hWndInsertAfter, 
 			int X, int Y, int cx, int cy, int uFlags);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern int MessageBoxA (
+			IntPtr hWnd, string pText, string pCaption, uint uType);
 
 		// Window Messages
 		public const uint WM_NULL                 = 0x0000;
@@ -456,5 +484,18 @@ namespace System.Windows.Forms {
 		public const uint CS_BYTEALIGNWINDOW  = 0x2000;
 		public const uint CS_GLOBALCLASS      = 0x4000;
 		public const uint CS_IME              = 0x00010000;
+
+		public const uint PM_NOREMOVE     = 0x0000;
+		public const uint PM_REMOVE       = 0x0001;
+		public const uint PM_NOYIELD      = 0x0002;
+
+
+		public const uint MB_OK                   = 0x00000000;
+		public const uint MB_OKCANCEL             = 0x00000001;
+		public const uint MB_ABORTRETRYIGNORE     = 0x00000002;
+		public const uint MB_YESNOCANCEL          = 0x00000003;
+		public const uint MB_YESNO                = 0x00000004;
+		public const uint MB_RETRYCANCEL          = 0x00000005;
+		public const uint MB_TYPEMASK             = 0x0000000F;
 	}
 }

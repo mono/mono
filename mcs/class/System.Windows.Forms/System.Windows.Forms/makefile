@@ -78,13 +78,18 @@ SOURCES = \
 	../System.Windows.Forms/QueryAccessibilityHelpEventArgs.cs \
 	../System.Windows.Forms/IMessageFilter.cs \
 	../System.Windows.Forms/ApplicationContext.cs \
+	../System.Windows.Forms/MessageBoxButtons.cs \
+	../System.Windows.Forms/MessageBoxIcon.cs \
+	../System.Windows.Forms/MessageBoxDefaultButton.cs \
+	../System.Windows.Forms/MessageBoxOptions.cs \
 	IContainerControl.cs \
 	Control.cs \
 	ScrollableControl.cs \
 	ContainerControl.cs \
 	Form.cs \
 	Application.cs \
-	NativeWindow.cs
+	NativeWindow.cs \
+	MessageBox.cs
 
 all:	monostub.exe.so System.Windows.Forms.dll NativeWindowTest.exe \
 	FormTest.exe Test.exe

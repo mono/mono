@@ -1,4 +1,18 @@
-2002-8-30  John Sohn  <jsohn@columbus.rr.com>
+2002-9-1   John Sohn <jsohn@columbus.rr.com>
+	* MessageBox.cs: added mostly complete implementation of the 
+	MessageBox class
+	* Application.cs: completed implementation of Run methods, implemented
+	message handler functionality
+	* Form.cs: implemented the Close event, allows the Application class to
+	receive notification for shutting down the application
+	* FormTest.cs: added additional functionality to test most methods
+	currently implemented in the Application and Form class
+	* NativeWindowTest.cs: fixed methods which received the MSG structure,
+	previously was using an integer type instead of the struct
+	* Win32.cs: added more Win32 imports and definitions
+	* makefile: added the MessageBox.cs class to the build
+
+2002-8-30  John Sohn <jsohn@columbus.rr.com>
 	* Application.cs: removed _ApplicationWndProc, we no longer need to 
 	have the WndProc callback in the stub application
 	* Control.cs: use new registered class, implemented WndProc 
