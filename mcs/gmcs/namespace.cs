@@ -365,12 +365,11 @@ namespace Mono.CSharp {
 			if (using_clauses == null)
 				using_clauses = new ArrayList ();
 
-			if (RootContext.WarningLevel >= 3) {
-				foreach (UsingEntry old_entry in using_clauses){
-					if (old_entry.Name == ns){
+			foreach (UsingEntry old_entry in using_clauses) {
+				if (old_entry.Name == ns) {
+					if (RootContext.WarningLevel >= 3)
 						Report.Warning (105, loc, "The using directive for '{0}' appeared previously in this namespace", ns);
 						return;
-					}
 				}
 			}
 			

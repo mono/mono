@@ -311,6 +311,12 @@ namespace Mono.CSharp {
 			VerifyClsCompliance (Parent);
 		}
 
+		public bool InUnsafe {
+			get {
+				return ((ModFlags & Modifiers.UNSAFE) != 0) || Parent.UnsafeContext;
+			}
+		}
+
 		// 
 		// Whehter is it ok to use an unsafe pointer in this type container
 		//
@@ -490,6 +496,13 @@ namespace Mono.CSharp {
 
 		readonly bool is_generic;
 		readonly int count_type_params;
+
+		// The emit context for toplevel objects.
+		protected EmitContext ec;
+		
+		public EmitContext EmitContext {
+			get { return ec; }
+		}
 
 		//
 		// Whether we are Generic
@@ -671,8 +684,9 @@ namespace Mono.CSharp {
 		}
 
 		// <summary>
-		//    Looks up the type, as parsed into the expression `e' 
+		//    Looks up the type, as parsed into the expression `e'.
 		// </summary>
+		//[Obsolete ("This method is going away soon")]
 		public Type ResolveType (Expression e, bool silent, Location loc)
 		{
 			TypeExpr d = ResolveTypeExpr (e, silent, loc);
@@ -718,7 +732,7 @@ namespace Mono.CSharp {
 
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
-		//    types. 
+		//    types.  This should only be used for resolving base types.
 		// </summary>
 		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
 		{
@@ -732,7 +746,7 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
+			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec, silent);
 
 			if ((d != null) && (d.eclass == ExprClass.Type))
 				return d;
@@ -742,7 +756,7 @@ namespace Mono.CSharp {
 
 			if (e is SimpleName){
 				SimpleName s = new SimpleName (((SimpleName) e).Name, loc);
-				d = s.ResolveAsTypeTerminal (type_resolve_ec);
+				d = s.ResolveAsTypeTerminal (type_resolve_ec, silent);
 
 				if ((d == null) || (d.Type == null)) {
 					Report.Error (246, loc, "Cannot find type `{0}'", e);
@@ -803,51 +817,36 @@ namespace Mono.CSharp {
 
 			case TypeAttributes.NotPublic:
 
- 				// In same cases is null.
- 				if (TypeBuilder == null)
- 					return true;
+				if (TypeBuilder == null)
+					// FIXME: TypeBuilder will be null when invoked by Class.GetNormalBases().
+					//        However, this is invoked again later -- so safe to return true.
+					//        May also be null when resolving top-level attributes.
+					return true;
 
-  				//
-  				// This test should probably use the declaringtype.
-  				//
+				//
+				// This test should probably use the declaringtype.
+				//
 				return check_type.Assembly == TypeBuilder.Assembly;
 
 			case TypeAttributes.NestedPublic:
 				return true;
 
 			case TypeAttributes.NestedPrivate:
-				string check_type_name = check_type.FullName;
-				string type_name = tb.FullName;
-
-				int cio = check_type_name.LastIndexOf ('+');
-				string container = check_type_name.Substring (0, cio);
-
-				//
-				// Check if the check_type is a nested class of the current type
-				//
-				if (check_type_name.StartsWith (type_name + "+")){
-					return true;
-				}
-				
-				if (type_name.StartsWith (container)){
-					return true;
-				}
-
-				return false;
+				return NestedAccessible (check_type);
 
 			case TypeAttributes.NestedFamily:
 				//
 				// Only accessible to methods in current type or any subtypes
 				//
-				return FamilyAccessible (tb, check_type);
+				return FamilyAccessible (check_type);
 
 			case TypeAttributes.NestedFamANDAssem:
 				return (check_type.Assembly == tb.Assembly) &&
-					FamilyAccessible (tb, check_type);
+					FamilyAccessible (check_type);
 
 			case TypeAttributes.NestedFamORAssem:
 				return (check_type.Assembly == tb.Assembly) ||
-					FamilyAccessible (tb, check_type);
+					FamilyAccessible (check_type);
 
 			case TypeAttributes.NestedAssembly:
 				return check_type.Assembly == tb.Assembly;
@@ -858,24 +857,32 @@ namespace Mono.CSharp {
 
 		}
 
-		protected bool FamilyAccessible (TypeBuilder tb, Type check_type)
+		protected bool NestedAccessible (Type check_type)
 		{
-			Type declaring = check_type.DeclaringType;
-			if (tb.IsSubclassOf (declaring))
-				return true;
-
 			string check_type_name = check_type.FullName;
 			
+			// At this point, we already know check_type is a nested class.
 			int cio = check_type_name.LastIndexOf ('+');
-			string container = check_type_name.Substring (0, cio);
 			
-			//
-			// Check if the check_type is a nested class of the current type
-			//
-			if (check_type_name.StartsWith (container + "+"))
+			// Ensure that the string 'container' has a '+' in it to avoid false matches
+			string container = check_type_name.Substring (0, cio + 1);
+
+			// Ensure that type_name ends with a '+' so that it can match 'container', if necessary
+			string type_name = TypeBuilder.FullName + "+";
+
+			// If the current class is nested inside the container of check_type,
+			// we can access check_type even if it is private or protected.
+			return type_name.StartsWith (container);
+		}
+
+		protected bool FamilyAccessible (Type check_type)
+		{
+			Type declaring = check_type.DeclaringType;
+			if (TypeBuilder == declaring ||
+			    TypeBuilder.IsSubclassOf (declaring))
 				return true;
 
-			return false;
+			return NestedAccessible (check_type);
 		}
 
 		// Access level of a type.
@@ -2287,7 +2294,7 @@ namespace Mono.CSharp {
  							// Does exist easier way how to detect indexer ?
  							if ((entry.EntryType & EntryType.Property) != 0) {
  								Type[] arg_types = TypeManager.GetArgumentTypes ((PropertyInfo)entry.Member);
- 								if (arg_types.Length == 1)
+ 								if (arg_types.Length > 0)
  									continue;
  							}
  						}

@@ -1195,7 +1195,7 @@ namespace Mono.CSharp {
 			int num_args;
 
 			SimpleName sn = new SimpleName (name, loc);
-			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
+			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec, true);
 			if ((resolved == null) || (resolved.Type == null)) {
 				Report.Error (246, loc,
 					      "The type or namespace name `{0}<...>' "+
@@ -1345,7 +1345,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool Define (MethodBuilder mb)
+		public bool Define (MethodBuilder mb, Type return_type)
 		{
 			if (!Define ())
 				return false;
@@ -1355,6 +1355,9 @@ namespace Mono.CSharp {
 			gen_params = mb.DefineGenericParameters (names);
 			for (int i = 0; i < TypeParameters.Length; i++)
 				TypeParameters [i].Define (gen_params [i]);
+
+			ec = new EmitContext (
+				this, this, Location, null, return_type, ModFlags, false);
 
 			return true;
 		}

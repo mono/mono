@@ -1,3 +1,194 @@
+2004-10-18  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Fixed.Resolve): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+	(Catch.Resolve): Likewise.
+	(Foreach.Resolve): Likewise.
+
+2004-10-18  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Cast.DoResolve): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+	(Probe.DoResolve): Likewise.
+	(ArrayCreation.LookupType): Likewise.
+	(TypeOf.DoResolve): Likewise.
+	(SizeOf.DoResolve): Likewise.
+
+2004-10-18  Raja R Harinath  <rharinath@novell.com>
+
+	* class.cs (FieldMember.DoDefine): Reset ec.InUnsafe after doing
+	the ResolveType.
+
+2004-10-17  John Luke  <john.luke@gmail.com>
+
+	* class.cs (Operator.GetSignatureForError): use CSharpName
+
+	* parameter.cs (Parameter.GetSignatureForError): Returns
+	correct name even if was not defined.
+
+2004-10-13  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #65816.
+	* class.cs (TypeContainer.EmitContext): New property.
+	(DefineNestedTypes): Create an emitcontext for each part.
+	(MethodCore.DoDefineParameters): Use container's emitcontext.
+	Pass type array to InternalParameters.
+	(MemberBase.DoDefine): Use container's emitcontext.
+	(FieldMember.Define): Likewise.
+	(Event.Define): Likewise.
+	(SetMethod.GetParameterInfo): Change argument to EmitContext.
+	Pass type array to InternalParameters.
+	(SetIndexerMethod.GetParameterInfo): Likewise.
+	(SetMethod.Define): Pass emitcontext to GetParameterInfo.
+	* delegate.cs (Define): Pass emitcontext to
+	ComputeAndDefineParameterTypes and GetParameterInfo.  Pass type
+	array to InternalParameters.
+	* expression.cs (ParameterReference.DoResolveBase): Pass
+	emitcontext to GetParameterInfo.
+	(ComposedCast.DoResolveAsTypeStep): Remove check on
+	ec.ResolvingTypeTree.
+	* parameter.cs (Parameter.Resolve): Change argument to
+	EmitContext.  Use ResolveAsTypeTerminal.
+	(Parameter.GetSignature): Change argument to EmitContext.
+	(Parameters.ComputeSignature): Likewise.
+	(Parameters.ComputeParameterTypes): Likewise.
+	(Parameters.GetParameterInfo): Likewise.
+	(Parameters.ComputeAndDefineParameterTypes): Likewise.
+	Re-use ComputeParameterTypes.  Set ec.ResolvingTypeTree.
+	* support.cs (InternalParameters..ctor): Remove variant that takes
+	a DeclSpace.
+	* typemanager.cs (system_intptr_expr): New.
+	(InitExpressionTypes): Initialize it.
+
+2004-10-12  Chris Toshok  <toshok@ximian.com>
+
+	* cs-parser.jay: fix location for try_statement and catch_clause.
+
+2004-10-18  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (FieldMember.Define): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+	(MemberBase.DoDefine): Likewise.
+
+	* expression.cs (New.DoResolve): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+	(ComposedCast.DoResolveAsTypeStep): Likewise.
+
+	* statement.cs (LocalInfo.Resolve): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+
+2004-10-07  Raja R Harinath  <rharinath@novell.com>
+
+	More DeclSpace.ResolveType avoidance.
+	* decl.cs (MemberCore.InUnsafe): New property.
+	* class.cs (MemberBase.DoDefine): Use ResolveAsTypeTerminal 
+	with newly created EmitContext.
+	(FieldMember.Define): Likewise.
+	* delegate.cs (Delegate.Define): Likewise.
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Lookup with alias
+	only if normal name-lookup fails.
+	(TypeExpr.DoResolve): Enable error-checking.
+	* expression.cs (ArrayCreation.DoResolve): Use ResolveAsTypeTerminal.
+	(SizeOf.DoResolve): Likewise.
+	(ComposedCast.DoResolveAsTypeStep): Likewise.
+	(StackAlloc.DoResolve): Likewise.
+	* statement.cs (Block.Flags): Add new flag 'Unsafe'.
+	(Block.Unsafe): New property.
+	(Block.EmitMeta): Set ec.InUnsafe as appropriate.
+	(Unsafe): Set 'unsafe' flag of contained block.
+	(LocalInfo.Resolve): Use ResolveAsTypeTerminal.
+	(Fixed.Resolve): Likewise.
+	(Catch.Resolve): Likewise.
+	(Using.ResolveLocalVariableDecls): Likewise.
+	(Foreach.Resolve): Likewise.
+
+2004-10-05  John Luke <john.luke@gmail.com>
+
+	* cs-parser.jay: add location to error CS0175
+
+2004-10-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (Expression.Constantity): Add support for turning null
+	into a constant.
+
+	* const.cs (Const.Define): Allow constants to be reference types
+	as long as the value is Null.
+
+2004-10-04  Juraj Skripsky  <js@hotfeet.ch>
+
+	* namespace.cs (NamespaceEntry.Using): No matter which warning
+	level is set, check if this namespace name has already been added.
+
+2004-10-03 Ben Maurer  <bmaurer@ximian.com>
+
+	* expression.cs: reftype [!=]= null should always use br[true,false].
+	# 67410
+
+2004-10-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #67108
+	* attribute.cs: Enum conversion moved to 
+	GetAttributeArgumentExpression to be applied to the all
+	expressions.
+
+2004-10-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #65833, test-300.cs, cs0122-5.cs, cs0122-6.cs.
+	* class.c (TypeContainer.DefineType): Flag error if
+	base types aren't accessible due to access permissions.
+	* decl.cs (DeclSpace.ResolveType): Move logic to
+	Expression.ResolveAsTypeTerminal.
+	(DeclSpace.ResolveTypeExpr): Thin layer over
+	Expression.ResolveAsTypeTerminal.
+	(DeclSpace.CheckAccessLevel, DeclSpace.FamilyAccess):
+	Refactor code into NestedAccess.  Use it.
+	(DeclSpace.NestedAccess): New.
+	* ecore.cs (Expression.ResolveAsTypeTerminal): Add new
+	argument to silence errors.  Check access permissions.
+	(TypeExpr.DoResolve, TypeExpr.ResolveType): Update.
+	* expression.cs (ProbeExpr.DoResolve): Use ResolveAsTypeTerminal.
+	(Cast.DoResolve): Likewise.
+	(New.DoResolve): Likewise.
+	(InvocationOrCast.DoResolve,ResolveStatement): Likewise.
+	(TypeOf.DoResolve): Likewise.
+
+	* expression.cs (Invocation.BetterConversion): Return the Type of
+	the better conversion.  Implement section 14.4.2.3 more faithfully.
+	(Invocation.BetterFunction): Make boolean.  Make correspondence to
+	section 14.4.2.2 explicit.
+	(Invocation.OverloadResolve): Update.
+	(Invocation): Remove is_base field.
+	(Invocation.DoResolve): Don't use is_base.  Use mg.IsBase.
+	(Invocation.Emit): Likewise.
+
+2004-09-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Reverted 642 warning fix.
+
+2004-09-23  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #66615
+	* decl.cs (FindMemberWithSameName): Indexer can have more than
+	1 argument.
+
+2004-09-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (LocalVariableReference.DoResolveLValue):
+	Do not report warning 219 for out values.
+	(EmptyExpression.Null): New member to avoid extra allocations.
+
+2004-09-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Fix wrong warning 642 report.
+
+	* cs-tokenizer.cs (CheckNextToken): New helper;
+	Inspect next character if is same as expected.
+
+2004-09-23  Martin Baulig  <martin@ximian.com>
+
+	* convert.cs (Convert.ImplicitReferenceConversion): Some code cleanup.
+	(Convert.ImplicitReferenceConversionExists): Likewise.
+
 2004-11-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (DISTFILES): Comment out a few missing files.

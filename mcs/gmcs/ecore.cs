@@ -272,9 +272,24 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public TypeExpr ResolveAsTypeTerminal (EmitContext ec)
+		public TypeExpr ResolveAsTypeTerminal (EmitContext ec, bool silent)
 		{
-			return ResolveAsTypeStep (ec) as TypeExpr;
+			int errors = Report.Errors;
+
+			TypeExpr te = ResolveAsTypeStep (ec) as TypeExpr;
+
+			if (te == null || te.eclass != ExprClass.Type) {
+				if (!silent && errors == Report.Errors)
+					Report.Error (246, Location, "Cannot find type '{0}'", ToString ());
+				return null;
+			}
+
+			if (!te.CheckAccessLevel (ec.DeclSpace)) {
+				Report.Error (122, Location, "'{0}' is inaccessible due to its protection level", te.Name);
+				return null;
+			}
+
+			return te;
 		}
 	       
 		/// <summary>
@@ -496,7 +511,9 @@ namespace Mono.CSharp {
 				Constant e = Constantify (v, real_type);
 
 				return new EnumConstant (e, t);
-			} else
+			} else if (v == null && !TypeManager.IsValueType (t))
+				return NullLiteral.Null;
+			else
 				throw new Exception ("Unknown type for constant (" + t +
 						     "), details: " + v);
 		}
@@ -2060,7 +2077,7 @@ namespace Mono.CSharp {
 
 			TypeParameterExpr generic_type = ds.LookupGeneric (Name, loc);
 			if (generic_type != null)
-				return generic_type.ResolveAsTypeTerminal (ec);
+				return generic_type.ResolveAsTypeTerminal (ec, false);
 
 			if (ec.ResolvingTypeTree){
 				int errors = Report.Errors;
@@ -2080,10 +2097,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			//
-			// First, the using aliases
-			//
-			if (alias_value != null){
+			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
+				return t;
+
+			if (alias_value != null) {
 				if (alias_value.IsType)
 					return alias_value.Type;
 				if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
@@ -2093,14 +2110,6 @@ namespace Mono.CSharp {
 				return new SimpleName (alias_value.Name, loc);
 			}
 
-			//
-			// Stage 2: Lookup up if we are an alias to a type
-			// or a namespace.
-			//
-
-			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-				return t;
-				
 			// No match, maybe our parent can compose us
 			// into something meaningful.
 			return this;
@@ -2322,7 +2331,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			return ResolveAsTypeTerminal (ec);
+			return ResolveAsTypeTerminal (ec, false);
 		}
 
 		override public void Emit (EmitContext ec)
@@ -2379,7 +2388,7 @@ namespace Mono.CSharp {
 
 		public virtual Type ResolveType (EmitContext ec)
 		{
-			TypeExpr t = ResolveAsTypeTerminal (ec);
+			TypeExpr t = ResolveAsTypeTerminal (ec, false);
 			if (t == null)
 				return null;
 
@@ -2532,7 +2541,7 @@ namespace Mono.CSharp {
 				}
 
 				ConstructedType ctype = new ConstructedType (type, args, loc);
-				return ctype.ResolveAsTypeTerminal (ec);
+				return ctype.ResolveAsTypeTerminal (ec, false);
 			} else if (num_args > 0) {
 				Report.Error (305, loc,
 					      "Using the generic type `{0}' " +
@@ -2546,7 +2555,7 @@ namespace Mono.CSharp {
 
 		public override Type ResolveType (EmitContext ec)
 		{
-			TypeExpr t = ResolveAsTypeTerminal (ec);
+			TypeExpr t = ResolveAsTypeTerminal (ec, false);
 			if (t == null)
 				return null;
 

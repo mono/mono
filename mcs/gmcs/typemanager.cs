@@ -121,6 +121,7 @@ public class TypeManager {
 	static public TypeExpr system_asynccallback_expr;
 	static public TypeExpr system_iasyncresult_expr;
 	static public TypeExpr system_valuetype_expr;
+	static public TypeExpr system_intptr_expr;
 
 	//
 	// This is only used when compiling corlib
@@ -361,6 +362,7 @@ public class TypeManager {
 		system_asynccallback_expr = new TypeLookupExpression ("System.AsyncCallback");
 		system_iasyncresult_expr = new TypeLookupExpression ("System.IAsyncResult");
 		system_valuetype_expr  = new TypeLookupExpression ("System.ValueType");
+		system_intptr_expr  = new TypeLookupExpression ("System.IntPtr");
 	}
 
 	static TypeManager ()
