@@ -1,3 +1,12 @@
+2001-09-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c (mono_compile_method): arguments on the runtime 
+	stack are at least 4 bytes
+
+	* x86.brg: partly implemented 8,16 bit integers
+
+	* testjit.c (get_address): mark basic blocks
+
 2001-09-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: added some rules to optimize code
