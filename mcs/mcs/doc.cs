@@ -275,6 +275,27 @@ namespace Mono.CSharp {
 				}
 			}
 			Type t = FindDocumentedTypeNonArray (mc, identifier, ds, cref);
+			// This step is required to make sure that the Type can
+			// lookup members. At least for events, non-created
+			// TypeBuilders cannot lookup members.
+			TypeBuilder tb = t as TypeBuilder;
+			if (tb != null) {
+#if NET_2_0
+				if (!tb.IsCreated ())
+					tb.CreateType ();
+#else
+				try {
+					// FIXME: in the future CreateType() got
+					// to throw exceptions, this line will
+					// become so slow. In such case, avoid
+					// exception by making use of some 
+					// methods that are known to not throw
+					// on "already created" TypeBuilders.
+					tb.CreateType ();
+				} catch (InvalidOperationException) {
+				}
+#endif
+			}
 			if (t != null && isArray)
 				t = Array.CreateInstance (t, 0).GetType ();
 			return t;
