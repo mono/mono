@@ -1,3 +1,8 @@
+2003-07-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* SqlDataReader.cs: Added extra information to the exceptions
+	thrown by all the GetXXXX methods.
+
 2003-03-15  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlConnection.cs: if Server in the ConnectionString

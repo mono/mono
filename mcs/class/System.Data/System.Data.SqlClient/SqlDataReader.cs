@@ -147,7 +147,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is bool))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (bool) value;
 		}
 
@@ -155,7 +155,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is byte))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (byte) value;
 		}
 
@@ -163,7 +163,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is byte []))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
 			return ((byte []) value).Length - dataIndex;
 		}
@@ -172,7 +172,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is char))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (char) value;
 		}
 
@@ -180,7 +180,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is char[]))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			Array.Copy ((char []) value, (int) dataIndex, buffer, bufferIndex, length);
 			return ((char []) value).Length - dataIndex;
 		}
@@ -200,7 +200,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is DateTime))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (DateTime) value;
 		}
 
@@ -208,7 +208,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is decimal))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (decimal) value;
 		}
 
@@ -216,7 +216,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is double))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (double) value;
 		}
 
@@ -229,7 +229,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is float))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (float) value;
 		}
 
@@ -237,7 +237,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is Guid))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (Guid) value;
 		}
 
@@ -245,7 +245,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is short))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (short) value;
 		}
 
@@ -253,7 +253,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is int))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (int) value;
 		}
 
@@ -261,7 +261,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is long))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (long) value;
 		}
 
@@ -502,7 +502,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlBoolean))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlBoolean) value;
 		}
 
@@ -510,7 +510,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlByte))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlByte) value;
 		}
 
@@ -518,7 +518,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlDateTime))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlDateTime) value;
 		}
 
@@ -526,7 +526,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlDecimal))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlDecimal) value;
 		}
 
@@ -534,7 +534,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlDouble))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlDouble) value;
 		}
 
@@ -542,7 +542,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlGuid))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlGuid) value;
 		}
 
@@ -550,7 +550,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlInt16))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlInt16) value;
 		}
 
@@ -558,7 +558,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlInt32))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlInt32) value;
 		}
 
@@ -566,7 +566,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlInt64))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlInt64) value;
 		}
 
@@ -574,7 +574,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlMoney))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlMoney) value;
 		}
 
@@ -582,7 +582,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlSingle))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlSingle) value;
 		}
 
@@ -590,7 +590,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetSqlValue (i);
 			if (!(value is SqlString))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (SqlString) value;
 		}
 
@@ -691,7 +691,7 @@ namespace System.Data.SqlClient {
 		{
 			object value = GetValue (i);
 			if (!(value is string))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 			return (string) value;
 		}
 
