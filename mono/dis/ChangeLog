@@ -1,3 +1,9 @@
+
+Mon Dec 6 13:31:48 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: add a --filter=filename option to load a file
+	with a list of types, fields, methods to disassemble.
+
 2004-12-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c: Rename compilercontrolled to privatescope
