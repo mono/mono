@@ -4,6 +4,8 @@
 	these are needed for sendmsg() and also for struct msghdr (at
 	least on Solaris). Solaris still won't build because struct msghdr
 	doesn't have msg_flags, msg_control, or msg_controllen members.
+	(CMSG_SPACE): Define for systems that don't have it.
+	(CMSG_LEN): Same.
 
 2002-07-20  Dick Porter  <dick@ximian.com>
 
