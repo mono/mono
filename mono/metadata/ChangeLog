@@ -1,4 +1,14 @@
 
+Tue Feb 8 18:12:27 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: cleaned up some code, allocate objects that are
+	pointer free with the atomic malloc variant. Allocate memory
+	for static data from the mempool if it's pointer-free.
+	Allocate the bounds array at the end of the array data, when needed.
+	* object-internals.h, object.h: move a private function in a private
+	header.
+	* class.c: handle missing case in tracking references in fields.
+
 Tue Feb 8 18:04:51 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class-internals.h: keep track if a type has
