@@ -1,3 +1,9 @@
+2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: don't add stuff in the private search path that is
+	above the application base. If application base is not set, there's
+	no private search path.
+
 2004-05-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): Add proper support for
