@@ -1,3 +1,8 @@
+2002-05-14  Radek Doulik  <rodo@ximian.com>
+
+	* interp.c: introduced new --noptr option to suppres pointer
+	address printing. I find this useful for comparing trace outputs
+	while porting to ppc
 
 Tue May 14 16:37:55 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
