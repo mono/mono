@@ -1,3 +1,8 @@
+2004-07-09  Peter Bartok <pbartok@novell.com>
+	* loader.c: winelib.exe.so error message is now only displayed if
+	MONO_DEBUG is set. To help us avoid questions when people are trying
+	out the new Managed.Windows.Forms.
+
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class-internals.h debug-helpers.c marshal.c: Add new wrapper types 
