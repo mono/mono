@@ -1,3 +1,15 @@
+2003-10-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (mono_threads_get_default_stacksize): New function to 
+	return the default stacksize.
+
+	* gc.c (mono_gc_cleanup): Use a separate event for waiting for the
+	termination of the finalizer thread, since the previous method had
+	race conditions. Fixes #49628.
+
+	* gc.c (mono_gc_init): Use the same stacksize for the finalizer thread
+	as for the other managed threads.
+
 2003-10-16  Martin Baulig  <martin@ximian.com>
 
 	* class.c (inflate_generic_signature): Copy `generic_param_count'.
