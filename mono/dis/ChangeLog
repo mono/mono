@@ -1,3 +1,7 @@
+2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* main.c: Output managed resources as well. Fixes #72033.
+
 2005-02-01  Raja R Harinath  <rharinath@novell.com>
 
 	* get.c (get_method_core): Use mono_method_signature (mh), not
