@@ -390,6 +390,10 @@ namespace System.Threading
 			}
 			
 			set {
+				if(thread_name!=null) {
+					throw new InvalidOperationException ("Thread.Name can only be set once.");
+				}
+				
 				thread_name=value;
 			}
 		}

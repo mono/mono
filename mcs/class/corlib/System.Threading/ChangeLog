@@ -1,3 +1,8 @@
+2003-12-02  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Throw InvalidOperationException if Thread.Name is
+	already set.
+
 2003-12-01  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Implement CurrentCulture and CurrentUICulture
