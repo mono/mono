@@ -1,3 +1,15 @@
+2004-03-03  Jackson Harper <jackson@ximian.com>
+
+	* Win32RegistryApi.cs: New file - pinvokes to the win32
+	registry. Patch  by Jose Cornado.
+	* IRegistryApi.cs: New file - Interface to a registry backend
+	(win32 on windows, no implementation on unix). This interface will
+	probably change when we write a Linux backend.
+	* Win32ResultCode.cs: New file - Win32 result codes needed to
+	check pinvoke. Patch by Jose Cornado.
+	* Registry.cs: Create the keys. Patch by Jose Cornado.
+	* RegistryKey.cs: Implement. Patch by Jose Cornado.
+	
 2003-12-27  Nick Drochak  <ndrochak@gol.com>
 
 	* RegistryKey.cs: Add some missing overloads.
