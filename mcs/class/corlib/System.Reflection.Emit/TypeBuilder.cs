@@ -1278,6 +1278,18 @@ namespace System.Reflection.Emit {
 			return FullName;
 		}
 
+		[MonoTODO]
+		public override bool IsAssignableFrom (Type c)
+		{
+			return base.IsAssignableFrom (c);
+		}
+
+		[MonoTODO]
+		public override bool IsInstanceOfType (object o)
+		{
+			return base.IsInstanceOfType (o);
+		}
+
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override Type[] GetGenericArguments ()
 		{
