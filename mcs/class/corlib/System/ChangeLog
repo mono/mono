@@ -1,3 +1,8 @@
+2003-05-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomainSetup.cs: Added new field which is used to notify the
+	runtime that the search path has changed.
+
 2003-05-18  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fixed NullReferenceException bug I've

@@ -28,6 +28,7 @@ namespace System {
 		string shadow_copy_directories;
 		string shadow_copy_files;
 		bool publisher_policy;
+		private bool path_changed;
 		private LoaderOptimization loader_optimization;
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -134,6 +135,7 @@ namespace System {
 
 			set {
 				private_bin_path = value;
+				path_changed = true;
 			}
 		}
 
@@ -145,6 +147,7 @@ namespace System {
 
 			set {
 				private_bin_path_probe = value;
+				path_changed = true;
 			}
 		}
 
