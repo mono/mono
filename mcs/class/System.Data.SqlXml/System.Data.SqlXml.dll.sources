@@ -1,4 +1,6 @@
 TODOAttribute.cs
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Data.SqlXml/DBObject.cs
 System.Data.SqlXml/DBObjectException.cs
 System.Data.SqlXml/RowFilledEventArgs.cs
