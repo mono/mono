@@ -1,3 +1,9 @@
+2004-11-17  Carlos Alberto Cortez <carlos@unixmexico.org>
+
+	* INullable.cs: New interface added.
+	* Nullable.cs: Methods added. Also a static Nullable class
+	containing static methods.
+	
 2004-11-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BitConverter.cs: Added support for special case when ToString is 
