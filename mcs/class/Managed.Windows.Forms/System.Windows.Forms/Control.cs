@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.71 $
+// $Revision: 1.72 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.72  2004/10/19 14:31:12  pbartok
+// - Added missing call to PreProcessMessage before calling OnXXXKey methods
+//
 // Revision 1.71  2004/10/18 06:27:39  ravindra
 // Default value of visible property must be true.
 //
@@ -2322,6 +2325,8 @@ namespace System.Windows.Forms
 		protected virtual bool ProcessKeyEventArgs (ref Message msg)
 		{
 			KeyEventArgs		key_event;
+
+			PreProcessMessage(ref msg);
 
 			switch (msg.Msg) {
 				case (int)Msg.WM_KEYDOWN: {
