@@ -1,4 +1,10 @@
 
+Sat May 4 14:03:21 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c, appdomain.h, assembly.c, assembly.h, image.h,
+	icall.c, reflection.h: separate assembly loading by pathname and by
+	assembly name. Use the MONO_PATH env var to search for assemblies.
+
 Thu May 2 17:56:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c, image.h: add some support for assemblies
