@@ -1,5 +1,13 @@
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
+	* IMonoSymbolWriter.cs (IMonoSymbolWriter): Added `Sources' and `Methods'
+	properties.
+
+	* MonoDwarfFileWriter.cs (WriteSymbolTable): New public method.  Moved the
+	code that writes the "mono_line_numbers" section here from the LineNumberEngine.
+
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
 	* IMonoSymbolWriter.cs (IVariable): Replaced Token with `ISourceMethod Method'.
 
 	* MonoSymbolWriter.cs (MonoSymbolWriter): The constructor now has an additional

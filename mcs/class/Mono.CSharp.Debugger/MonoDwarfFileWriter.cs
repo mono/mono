@@ -489,45 +489,6 @@ namespace Mono.CSharp.Debugger
 
 				aw.EndSubsection (end_index);
 				aw.WriteSectionEnd ();
-
-				dw.WriteSectionStart (Section.MONO_LINE_NUMBERS);
-				aw.WriteUInt16 (reloc_table_version);
-
-				object line_number_end_index = aw.StartSubsectionWithSize ();
-
-				Hashtable method_labels = new Hashtable ();
-
-				foreach (ISourceMethod method in Methods) {
-					if (method.Start == null || method.Start.Row == 0)
-						continue;
-
-					int label = aw.GetNextLabelIndex ();
-					aw.WriteUInt32 (method.Token);
-					aw.WriteUInt32 (LookupSource (method.SourceFile));
-					object string_length_index = aw.StartSubsectionWithSize ();
-					aw.WriteString (method.SourceFile.FileName);
-					aw.EndSubsection (string_length_index);
-					aw.WriteUInt32 (method.Start.Row);
-					aw.WriteAbsoluteOffset (label);
-
-					method_labels [method] = label;
-				}
-
-				aw.EndSubsection (line_number_end_index);
-
-				foreach (ISourceMethod method in method_labels.Keys) {
-					aw.WriteLabel ((int) method_labels [method]);
-
-					foreach (ISourceLine line in method.Lines) {
-						aw.WriteUInt32 (line.Row);
-						aw.WriteUInt32 (line.Offset);
-					}
-
-					aw.WriteUInt32 (0);
-					aw.WriteUInt32 (0);
-				}
-
-				aw.WriteSectionEnd ();
 			}
 		}
 
@@ -1901,7 +1862,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected const int reloc_table_version = 11;
+		protected const int reloc_table_version = 12;
 
 		protected enum Section {
 			DEBUG_INFO		= 0x01,
@@ -2242,6 +2203,60 @@ namespace Mono.CSharp.Debugger
 		{
 			aw.WriteSectionStart (GetSectionName (section));
 			current_section = section;
+		}
+
+		public void WriteSymbolTable (IMonoSymbolWriter symwriter)
+		{
+			WriteSectionStart (Section.MONO_LINE_NUMBERS);
+			aw.WriteUInt16 (reloc_table_version);
+
+			Hashtable sources = new Hashtable ();
+
+			foreach (ISourceFile source in symwriter.Sources) {
+				if (sources.ContainsKey (source))
+					continue;
+
+				sources.Add (source, aw.GetNextLabelIndex ());
+			}
+
+			object line_number_end_index = aw.StartSubsectionWithSize ();
+
+			Hashtable method_labels = new Hashtable ();
+
+			foreach (ISourceMethod method in symwriter.Methods) {
+				if (method.Start == null || method.Start.Row == 0)
+					continue;
+
+				int label = aw.GetNextLabelIndex ();
+				aw.WriteUInt32 (method.Token);
+				aw.WriteAbsoluteOffset ((int) sources [method.SourceFile]);
+				aw.WriteUInt32 (method.Start.Row);
+				aw.WriteAbsoluteOffset (label);
+
+				method_labels [method] = label;
+			}
+
+			aw.EndSubsection (line_number_end_index);
+
+			foreach (ISourceMethod method in method_labels.Keys) {
+				aw.WriteLabel ((int) method_labels [method]);
+
+				foreach (ISourceLine line in method.Lines) {
+					aw.WriteUInt32 (line.Row);
+					aw.WriteUInt32 (line.Offset);
+				}
+
+				aw.WriteUInt32 (0);
+				aw.WriteUInt32 (0);
+			}
+
+			foreach (ISourceFile source in sources.Keys) {
+				aw.WriteLabel ((int) sources [source]);
+
+				aw.WriteString (source.FileName);
+			}
+
+			aw.WriteSectionEnd ();
 		}
 	}
 

@@ -19,7 +19,15 @@ using System.IO;
 namespace Mono.CSharp.Debugger
 {
 	public interface IMonoSymbolWriter : ISymbolWriter
-	{ }
+	{
+		ISourceMethod[] Methods {
+			get;
+		}
+
+		ISourceFile[] Sources {
+			get;
+		}
+	}
 
 	public interface ISourceFile
 	{

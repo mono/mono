@@ -427,6 +427,22 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		public ISourceMethod[] Methods {
+			get {
+				ISourceMethod[] retval = new ISourceMethod [methods.Count];
+				methods.CopyTo (retval);
+				return retval;
+			}
+		}
+
+		public ISourceFile[] Sources {
+			get {
+				ISourceFile[] retval = new ISourceFile [sources.Count];
+				sources.Values.CopyTo (retval, 0);
+				return retval;
+			}
+		}
+
 		protected SourceMethod current_method = null;
 		private readonly string assembly_filename = null;
 
@@ -730,6 +746,8 @@ namespace Mono.CSharp.Debugger
 
 				WriteSource (writer, source);
 			}
+
+			writer.WriteSymbolTable (this);
 
 			writer.Close ();
 		}
