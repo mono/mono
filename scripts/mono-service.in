@@ -29,4 +29,4 @@ if test x$assembly = x; then
 fi
 
 export MONO_DISABLE_SHM=1
-exec @bindir@/@mono_interp@ @mono_one_instdir@/@exe_file@ "$args" </dev/null >& /dev/null &
+exec @bindir@/@mono_interp@ @mono_one_instdir@/@exe_file@ $args </dev/null >& /dev/null &
