@@ -1,3 +1,7 @@
+2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* .cvsignore : should be here ;-)
+
 2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	XmlArgumentList.cs : added (still required).
