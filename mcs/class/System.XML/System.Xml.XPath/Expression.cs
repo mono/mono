@@ -95,16 +95,16 @@ namespace System.Xml.XPath
 			if (_sorters != null)
 				return EvaluateNodeSet (iter);
 
-			try
-			{
+			try {
 				return _expr.Evaluate (iter);
 			}
-			catch (XPathException)
-			{
+			catch (XPathException) {
 				throw;
 			}
-			catch (Exception e)
-			{
+			catch (XsltException) {
+				throw;
+			}
+			catch (Exception e) {
 				throw new XPathException ("Error during evaluation", e);
 			}
 		}
