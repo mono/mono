@@ -153,10 +153,22 @@ namespace System
 							continue;
 
 					if (types.Length > 0) {
-						if (info.GetIndexParameters().Length != types.Length)
+						ParameterInfo[] parameterInfo = info.GetIndexParameters ();
+
+						if (parameterInfo.Length != types.Length)
 							continue;
-	
-						// fixme: compare parameters
+
+						int i;
+						bool match = true;
+
+						for (i = 0; i < types.Length; i ++)
+							if (parameterInfo [i].ParameterType != types [i]) {
+								match = false;
+								break;
+							}
+
+						if (!match)
+							continue;
 					}
 
 					if (null != ret)

@@ -1,3 +1,8 @@
+2002-08-06  Tim Coleman <tim@timcoleman.com>
+	* MonoType.cs: 
+		Fix bug #28582.  Now checks parameters for properties
+		in GetPropertyImpl.
+
 2002-08-04  Nick Drochak  <ndrochak@gol.com>
 
 	* Buffer.cs: Throw correct exception in GetByte() and SetByte().
