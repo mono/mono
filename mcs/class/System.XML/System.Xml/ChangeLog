@@ -1,3 +1,10 @@
+2003-05-28  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* XmlTextReader.cs : MoveToAttribute methods must set the enumerator to the right
+	  position, since MoveToNextAttribute may be called after it. 
+	  SetProperties(): attributes do not "inherit" the namespace.
+	* XmlDocument.cs: ReadNode(), ReadAttributeNode(): must keep the current reader position.
+
 2003-05-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* NameTable.cs : Add() sets the given name string interned.

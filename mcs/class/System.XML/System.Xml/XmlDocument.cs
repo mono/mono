@@ -657,6 +657,13 @@ namespace System.Xml
 				throw new InvalidOperationException (MakeReaderErrorMessage ("bad position to read attribute.", reader));
 			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 			ReadAttributeNodeValue (reader, attribute);
+
+			// Keep the current reader position
+			bool res;
+			if (attribute.NamespaceURI == string.Empty || attribute.NamespaceURI == null)
+				res = reader.MoveToAttribute (attribute.Name);
+			else 
+				res = reader.MoveToAttribute (attribute.LocalName, attribute.NamespaceURI);
 			return attribute;
 		}
 
@@ -805,7 +812,7 @@ namespace System.Xml
 						ignoredWhitespace = true;
 					break;
 				}
-				if (!reader.Read ())
+				if (!(newNode is XmlAttribute) && !reader.Read ())
 					break;
 			} while (ignoredWhitespace || reader.Depth > startDepth ||
 				(reader.Depth == startDepth && reader.NodeType == XmlNodeType.EndElement));

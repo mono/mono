@@ -373,6 +373,14 @@ namespace System.Xml
 			if (attributes == null || orderedAttributes.Count < i || i < 0)
 				throw new ArgumentOutOfRangeException ("attribute index out of range.");
 
+			if (orderedAttributesEnumerator == null) {
+				SaveProperties ();
+			}
+
+			orderedAttributesEnumerator = orderedAttributes.GetEnumerator ();
+			for (int n=0; n<=i; n++)
+				orderedAttributesEnumerator.MoveNext();
+
 			string name = orderedAttributes [i] as string;
 			string value = attributes [name] as string;
 			SetProperties (
@@ -395,9 +403,9 @@ namespace System.Xml
 
 			if (orderedAttributesEnumerator == null) {
 				SaveProperties ();
-				orderedAttributesEnumerator = orderedAttributes.GetEnumerator ();
 			}
 
+			orderedAttributesEnumerator = orderedAttributes.GetEnumerator ();
 			while (orderedAttributesEnumerator.MoveNext ()) {
 				if(name == orderedAttributesEnumerator.Current as string) {
 					match = true;
@@ -864,11 +872,15 @@ namespace System.Xml
 
 			switch (nodeType) {
 			case XmlNodeType.Attribute:
+				if (prefix == string.Empty) namespaceURI = string.Empty;
+				else namespaceURI = LookupNamespace (prefix);
+				if (localName == "xmlns" && prefix == "")
+					namespaceURI = "http://www.w3.org/2000/xmlns/";
+				break;
+
 			case XmlNodeType.Element:
 			case XmlNodeType.EndElement:
 				namespaceURI = LookupNamespace (prefix);
-				if (localName == "xmlns" && prefix == "")
-					namespaceURI = "http://www.w3.org/2000/xmlns/";
 				break;
 			default:
 				namespaceURI = "";
