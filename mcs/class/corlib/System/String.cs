@@ -985,6 +985,13 @@ namespace System {
 
 		public int LastIndexOf (string value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ();
+			if (value.length == 0)
+				return 0;
+			if (this.length == 0)
+				return -1;
+				
 			return LastIndexOf (value, this.length - 1, this.length);
 		}
 
