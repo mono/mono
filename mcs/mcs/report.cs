@@ -157,7 +157,7 @@ namespace Mono.CSharp {
                         }
                 }
 
-		public static int DebugFlags = 4;
+		public static int DebugFlags = 0;
 
 		[Conditional ("MCS_DEBUG")]
 		static public void Debug (string message, params object[] args)
