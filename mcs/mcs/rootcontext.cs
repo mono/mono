@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Holds /optimize option
 		/// </summary>
-		public static bool Optimize;
+		public static bool Optimize = true;
 
 		public static LanguageVersion Version = LanguageVersion.Default;
 
