@@ -1,3 +1,9 @@
+2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-ppc.c exceptions-x86.c exceptions-sparc.c 
+	tramp-x86.c tramp-ppc.c tramp-sparc.c: Applied patch from 
+	Max Horn (max@quendi.de). Fix file names in comments.
+
 2004-01-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ssa.c (mono_ssa_rename_vars): Allocate new_stack on the heap to
