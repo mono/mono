@@ -217,19 +217,6 @@ namespace System.Data.Common
 		public int Update (DataRow[] dataRows) 
 		{
 			throw new NotImplementedException ();
-			foreach (DataRow dataRow in dataRows) 
-			{
-				switch (dataRow.RowState)
-				{
-				case DataRowState.Added:
-					dataRow.AcceptChanges ();
-				case DataRowState.Deleted:
-					dataRow.AcceptChanges ();
-				case DataRowState.Modified:
-					dataRow.AcceptChanges ();
-				}
-
-			}
 		}
 
 		[MonoTODO]

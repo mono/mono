@@ -1,4 +1,8 @@
 2002-05-13  Tim Coleman
+	* System.Data.Common/DbDataAdapter.cs:
+		Modify to not break compile.
+
+2002-05-13  Tim Coleman
 	* System.Data.build:
 		include SqlDataAdapter, SqlRowUpdatedEventArgs,
 		SqlRowUpdatingEventArgs, SqlRowUpdatedEventHandler,
