@@ -1,3 +1,13 @@
+2001-09-25  Dick Porter  <dick@ximian.com>
+
+	* threads-pthread.h:
+	* threads-pthread.c: Implemented timed thread joining and added
+	System.Threading.Thread::Join_internal internal call
+
+	* icall.c: Added System.Threading.Thread::Join_internal internal call
+
+	* threads-dummy.h:
+	* threads-dummy.c: Dummy calls for System.Thread.Thread::Join_internal
 
 Mon Sep 24 18:56:59 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
