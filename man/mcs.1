@@ -70,6 +70,21 @@ resource.
 .I \-debug-
 Do not generate debugging information.
 .TP
+.I \-delaysign+
+Only embed the strongname public key into the assembly. The actual 
+signing must be done in a later stage using the SN tool. This is useful
+to protect the private key during development. Note that delay signing
+can only be done using a strongname key file (not a key container). The
+option is equivalent to including [assembly: AssemblyDelaySign (true)] 
+in your source code. Compiler option takes precedence over the 
+attributes.
+.TP
+.I \-delaysign-
+Default. Strongname (sign) the assembly using the strong name key file
+(or container). The option is equivalent to including [assembly: 
+AssemblyDelaySign (false)] in your source code. Compiler option takes
+precedence over the attributes.
+.TP
 .I \-\-expect-error X L
 The compiler will expect the code to generate an error 
 named `X' in line `L'.  This is only used by the test suite.
@@ -77,6 +92,21 @@ named `X' in line `L'.  This is only used by the test suite.
 .I \-\-fatal 
 This is used for debugging the compiler.  This makes the error emission
 generate an exception that can be caught by a debugger.
+.TP
+.I \-keyfile:KEYFILE
+Strongname (sign) the output assembly using the key pair present in 
+the specified strong name key file (snk). A full key pair is required
+by default (or when using delaysign-). A file containing only the
+public key can be used with delaysign+. The option is equivalent to 
+including [assembly: AssemblyKeyFile ("KEYFILE")] in your source code.
+Compiler option takes precedence over the attributes.
+.TP
+.I \-keycontainer:CONTAINER
+Strongname (sign) the output assembly using the key pair present in 
+the specified container. Note that delaysign+ is ignored when using 
+key containers. The option is equivalent to including [assembly: 
+AssemblyKeyName ("CONTAINER")] in your source code. Compiler option 
+takes precedence over the attributes.
 .TP
 .I \-\-stacktrace
 Generates a stack trace at the time the error is reported, useful for
@@ -220,7 +250,7 @@ Please read the accompanying `COPYING' file for details.  Alternative
 licenses are available from Ximian.
 .PP
 .SH SEE ALSO
-mono(1), mint(1)
+mono(1), mint(1), sn(1)
 .PP
 .SH BUGS
 To report bugs in the compiler, you can use `bug-buddy', or you can
