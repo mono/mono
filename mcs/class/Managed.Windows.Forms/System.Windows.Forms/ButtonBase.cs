@@ -23,6 +23,9 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.7  2004/09/01 02:07:37  pbartok
+// - Enabled display of strings
+//
 // Revision 1.6  2004/09/01 01:55:20  pbartok
 // - Removed the rather odd split between 'needs redraw' and redrawing
 // - Now handles the events that require regeneration (ambient properties and
@@ -224,9 +227,9 @@ namespace System.Windows.Forms {
 
 				if (is_enabled) {
 					SolidBrush	b = new SolidBrush(ThemeEngine.Current.ColorButtonText);
-					//this.DeviceContext.DrawString(text, this.Font, b, text_rect, text_format);
+					this.DeviceContext.DrawString(text, this.Font, b, text_rect, text_format);
 				} else {
-					//ThemeEngine.Current.DrawStringDisabled(this.DeviceContext, text, this.Font, ThemeEngine.Current.ColorButtonText, text_rect, text_format);
+					ThemeEngine.Current.DrawStringDisabled(this.DeviceContext, text, this.Font, ThemeEngine.Current.ColorButtonText, text_rect, text_format);
 				}
 			}
 			Refresh();
