@@ -30,7 +30,7 @@ namespace System.Xml.Schema
 			fractionDigits = 2048
 		};
  
-		internal protected static readonly Facet AllFacets = 
+		internal static readonly Facet AllFacets = 
 		                        Facet.length | Facet.minLength |  Facet.maxLength |
 					Facet.minExclusive | Facet.maxExclusive |
 					Facet.minInclusive | Facet.maxInclusive |
