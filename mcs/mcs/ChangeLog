@@ -1,5 +1,9 @@
 2004-11-02  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Event.Define, Indexer.Define, Property.Define): Do not
+	special case explicit implementations, we should always produce
+	the .property or .event declaration.
+	
 	* decl.cs (MemberName): Renamed GetFullName to GetPartialName
 	since it will not return correct data if people use this
 	unresolved in the presence of using statements (see test-313).

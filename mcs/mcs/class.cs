@@ -5972,18 +5972,16 @@ namespace Mono.CSharp {
 				prop_attr |= PropertyAttributes.RTSpecialName |
 					PropertyAttributes.SpecialName;
 
-			if (!IsExplicitImpl){
-				PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-					Name, prop_attr, MemberType, null);
+			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
+			     Name, prop_attr, MemberType, null);
+			
+			if (!Get.IsDummy)
+				PropertyBuilder.SetGetMethod (GetBuilder);
 				
-				if (!Get.IsDummy)
-					PropertyBuilder.SetGetMethod (GetBuilder);
-				
-				if (!Set.IsDummy)
-					PropertyBuilder.SetSetMethod (SetBuilder);
-
-				TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
-			}
+			if (!Set.IsDummy)
+				PropertyBuilder.SetSetMethod (SetBuilder);
+			
+			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
 			return true;
 		}
 
@@ -6470,26 +6468,21 @@ namespace Mono.CSharp {
 			if (RemoveBuilder == null)
 				return false;
 
-			if (!IsExplicitImpl){
-				EventBuilder = new MyEventBuilder (this,
-					Parent.TypeBuilder, Name, e_attr, MemberType);
-					
-				if (Add.Block == null && Remove.Block == null &&
-				    !IsInterface) {
-					FieldBuilder = Parent.TypeBuilder.DefineField (
-						Name, MemberType,
-						FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
-					TypeManager.RegisterPrivateFieldOfEvent (
-						(EventInfo) EventBuilder, FieldBuilder);
-					TypeManager.RegisterFieldBase (FieldBuilder, this);
-				}
+			EventBuilder = new MyEventBuilder (this, Parent.TypeBuilder, Name, e_attr, MemberType);
 			
-				EventBuilder.SetAddOnMethod (AddBuilder);
-				EventBuilder.SetRemoveOnMethod (RemoveBuilder);
-
-				TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder);
+			if (Add.Block == null && Remove.Block == null && !IsInterface) {
+				FieldBuilder = Parent.TypeBuilder.DefineField (
+					Name, MemberType,
+					FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
+				TypeManager.RegisterPrivateFieldOfEvent (
+					(EventInfo) EventBuilder, FieldBuilder);
+				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}
 			
+			EventBuilder.SetAddOnMethod (AddBuilder);
+			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
+
+			TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder);
 			return true;
 		}
 
@@ -6744,25 +6737,16 @@ namespace Mono.CSharp {
 				}
 			}
 
-			//
-			// Define the PropertyBuilder if one of the following conditions are met:
-			// a) we're not implementing an interface indexer.
-			// b) the indexer has a different IndexerName and this is no
-			//    explicit interface implementation.
-			//
-			if (!IsExplicitImpl) {
-				PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-					ShortName, prop_attr, MemberType, ParameterTypes);
+			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
+				ShortName, prop_attr, MemberType, ParameterTypes);
+			
+			if (!Get.IsDummy)
+				PropertyBuilder.SetGetMethod (GetBuilder);
 
-				if (!Get.IsDummy)
-					PropertyBuilder.SetGetMethod (GetBuilder);
-
-				if (!Set.IsDummy)
-					PropertyBuilder.SetSetMethod (SetBuilder);
+			if (!Set.IsDummy)
+				PropertyBuilder.SetSetMethod (SetBuilder);
 				
-				TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder,
-							     ParameterTypes);
-			}
+			TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder, ParameterTypes);
 
 			return true;
 		}
