@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.16  2004/08/25 19:20:13  jordi
+// small bug fix regarding bar position
+//
 // Revision 1.15  2004/08/24 18:37:02  jordi
 // fixes formmating, methods signature, and adds missing events
 //
@@ -323,6 +326,7 @@ namespace System.Windows.Forms
 					if (ValueChanged != null)
 						ValueChanged (this, EventArgs.Empty);
 
+					UpdatePos (Value, true);
 					Refresh ();
 				}
 			}
