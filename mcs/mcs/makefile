@@ -43,7 +43,7 @@ res:
 	echo --target exe -o mcs2.exe $(COMPILER_SOURCES) > response
 
 dum: cs-parser.cs
-	$(TIME) $(RUNTIME) ./mcs.exe --fatal --target exe -o mcs2.exe $(COMPILER_SOURCES)
+	$(TIME) $(RUNTIME) ./mcs.exe --target exe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs2.exe: mcs.exe
 	$(TIME) $(RUNTIME) ./mcs.exe $(XFLAGS) --target exe -o mcs2.exe $(COMPILER_SOURCES)
@@ -57,13 +57,13 @@ mm:
 	mint $(MINTFLAGS) ./mcs.exe $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
 
 mcs-mono2.exe: cs-parser.cs $(COMPILER_SOURCES)
-	mono mcs.exe --fatal --timestamp -o mcs-mono2.exe -g $(COMPILER_SOURCES)
+	mono mcs.exe --timestamp -o mcs-mono2.exe -g $(COMPILER_SOURCES)
 
 mcs-mono3.exe: cs-parser.cs $(COMPILER_SOURCES)
-	mono --debug mcs-mono2.exe --fatal --timestamp -o mcs-mono3.exe -g $(COMPILER_SOURCES)
+	mono --debug mcs-mono2.exe -o mcs-mono3.exe -g $(COMPILER_SOURCES)
 
 mcs-mono4.exe: cs-parser.cs $(COMPILER_SOURCES)
-	mono --debug mcs-mono3.exe --fatal --timestamp -o mcs-mono4.exe -g $(COMPILER_SOURCES)
+	mono --debug mcs-mono3.exe -o mcs-mono4.exe -g $(COMPILER_SOURCES)
 
 monomcs: cs-parser.cs
 	mcs $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)

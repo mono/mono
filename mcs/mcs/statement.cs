@@ -1246,8 +1246,9 @@ namespace Mono.CSharp {
 		
 		public override bool Emit (EmitContext ec)
 		{
-			bool is_ret = false;
+			bool is_ret = false, this_ret = false;
 			Block prev_block = ec.CurrentBlock;
+			bool warning_shown = false;
 			
 			ec.CurrentBlock = this;
 
@@ -1257,13 +1258,26 @@ namespace Mono.CSharp {
 				foreach (Statement s in statements) {
 					ec.Mark (s.loc);
 					
-					is_ret = s.Emit (ec);
+					if (is_ret && !warning_shown){
+						warning_shown = true;
+						Warning_DeadCodeFound (s.loc);
+					}
+					this_ret = s.Emit (ec);
+					if (this_ret)
+						is_ret = true;
 				}
 
 				ec.Mark (EndLocation); 
 			} else {
-				foreach (Statement s in statements)
-					is_ret = s.Emit (ec);
+				foreach (Statement s in statements){
+					if (is_ret && !warning_shown){
+						warning_shown = true;
+						Warning_DeadCodeFound (s.loc);
+					}
+					this_ret = s.Emit (ec);
+					if (this_ret)
+						is_ret = true;
+				}
 			}
 			
 			ec.CurrentBlock = prev_block;
@@ -2413,7 +2427,7 @@ namespace Mono.CSharp {
 		//
 		// specific, general and fini might all be null.
 		//
-		public Try (Block block, ArrayList specific, Catch general, Block fini)
+		public Try (Block block, ArrayList specific, Catch general, Block fini, Location l)
 		{
 			if (specific == null && general == null){
 				Console.WriteLine ("CIR.Try: Either specific or general have to be non-null");
@@ -2423,6 +2437,7 @@ namespace Mono.CSharp {
 			this.Specific = specific;
 			this.General = general;
 			this.Fini = fini;
+			loc = l;
 		}
 
 		public override bool Resolve (EmitContext ec)

@@ -1,3 +1,18 @@
+2002-07-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Try): Initialize the location.
+
+	* cs-parser.jay: pass location to Try.
+
+	* expression.cs (Unary.Reduce): Change the prototype to return
+	whether a constant fold could be performed or not.  The result is
+	returned in an out parameters.  In the case of Indirection and
+	AddressOf, we want to perform the full tests.
+
+2002-07-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Statement.Emit): Flag dead code.
+
 2002-07-27  Andrew Birkett  <andy@nobugs.org>
 
 	* expression.cs (Unary.Reduce): Handle AddressOf and Indirection.

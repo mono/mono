@@ -152,7 +152,7 @@ namespace Mono.CSharp {
 		///   FIXME: a minus constant -128 sbyte cant be turned into a
 		///   constant byte.
 		/// </remarks>
-		static Expression TryReduceNegative (Expression expr)
+		static Expression TryReduceNegative (Constant expr)
 		{
 			Expression e = null;
 			
@@ -186,26 +186,36 @@ namespace Mono.CSharp {
 				e = new IntConstant (-((UShortConstant) expr).Value);
 			return e;
 		}
-		
-		Expression Reduce (EmitContext ec, Expression e)
+
+		// <summary>
+		//   This routine will attempt to simplify the unary expression when the
+		//   argument is a constant.  The result is returned in `result' and the
+		//   function returns true or false depending on whether a reduction
+		//   was performed or not
+		// </summary>
+		bool Reduce (EmitContext ec, Constant e, out Expression result)
 		{
 			Type expr_type = e.Type;
 			
 			switch (Oper){
 			case Operator.UnaryPlus:
-				return e;
+				result = e;
+				return true;
 				
 			case Operator.UnaryNegation:
-				return TryReduceNegative (e);
+				result = TryReduceNegative (e);
+				return true;
 				
 			case Operator.LogicalNot:
 				if (expr_type != TypeManager.bool_type) {
+					result = null;
 					Error23 (expr_type);
-					return null;
+					return false;
 				}
 				
 				BoolConstant b = (BoolConstant) e;
-				return new BoolConstant (!(b.Value));
+				result = new BoolConstant (!(b.Value));
+				return true;
 				
 			case Operator.OnesComplement:
 				if (!((expr_type == TypeManager.int32_type) ||
@@ -213,35 +223,44 @@ namespace Mono.CSharp {
 				      (expr_type == TypeManager.int64_type) ||
 				      (expr_type == TypeManager.uint64_type) ||
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
+					result = null;
 					Error23 (expr_type);
-					return null;
+					return false;
 				}
 
 				if (e is EnumConstant){
 					EnumConstant enum_constant = (EnumConstant) e;
+					Expression reduced;
 					
-					Expression reduced = Reduce (ec, enum_constant.Child);
-
-					return new EnumConstant ((Constant) reduced, enum_constant.Type);
+					if (Reduce (ec, enum_constant.Child, out reduced)){
+						result = new EnumConstant ((Constant) reduced, enum_constant.Type);
+						return true;
+					} else
+						return false;
 				}
 
-				if (expr_type == TypeManager.int32_type)
-					return new IntConstant (~ ((IntConstant) e).Value);
-				if (expr_type == TypeManager.uint32_type)
-					return new UIntConstant (~ ((UIntConstant) e).Value);
-				if (expr_type == TypeManager.int64_type)
-					return new LongConstant (~ ((LongConstant) e).Value);
-				if (expr_type == TypeManager.uint64_type)
-					return new ULongConstant (~ ((ULongConstant) e).Value);
-
-				Error23 (expr_type);
-				return null;
+				if (expr_type == TypeManager.int32_type){
+					result = new IntConstant (~ ((IntConstant) e).Value);
+				} else if (expr_type == TypeManager.uint32_type){
+					result = new UIntConstant (~ ((UIntConstant) e).Value);
+				} else if (expr_type == TypeManager.int64_type){
+					result = new LongConstant (~ ((LongConstant) e).Value);
+				} else if (expr_type == TypeManager.uint64_type){
+					result = new ULongConstant (~ ((ULongConstant) e).Value);
+				} else {
+					result = null;
+					Error23 (expr_type);
+					return false;
+				}
+				return true;
 
 			case Operator.AddressOf:
-				return e;
+				result = this;
+				return false;
 
 			case Operator.Indirection:
-				return e;
+				result = this;
+				return false;
 			}
 			throw new Exception ("Can not constant fold: " + Oper.ToString());
 		}
@@ -281,10 +300,17 @@ namespace Mono.CSharp {
 			//
 			// Step 2: Default operations on CLI native types.
 			//
-			if (Expr is Constant)
-				return Reduce (ec, Expr);
 
-			if (Oper == Operator.LogicalNot){
+			// Attempt to use a constant folding operation.
+			if (Expr is Constant){
+				Expression result;
+				
+				if (Reduce (ec, (Constant) Expr, out result))
+					return result;
+			}
+
+			switch (Oper){
+			case Operator.LogicalNot:
 				if (expr_type != TypeManager.bool_type) {
 					Error23 (Expr.Type);
 					return null;
@@ -292,9 +318,8 @@ namespace Mono.CSharp {
 				
 				type = TypeManager.bool_type;
 				return this;
-			}
 
-			if (Oper == Operator.OnesComplement) {
+			case Operator.OnesComplement:
 				if (!((expr_type == TypeManager.int32_type) ||
 				      (expr_type == TypeManager.uint32_type) ||
 				      (expr_type == TypeManager.int64_type) ||
@@ -327,24 +352,61 @@ namespace Mono.CSharp {
 				}
 				type = expr_type;
 				return this;
-			}
 
-			if (Oper == Operator.UnaryPlus) {
+			case Operator.AddressOf:
+				if (Expr.eclass != ExprClass.Variable){
+					Error (211, loc, "Cannot take the address of non-variables");
+					return null;
+				}
+				
+				if (!ec.InUnsafe) {
+					UnsafeError (loc); 
+					return null;
+				}
+				
+				if (!TypeManager.VerifyUnManaged (Expr.Type, loc)){
+					return null;
+				}
+				
+				string ptr_type_name = Expr.Type.FullName + "*";
+				type = TypeManager.LookupType (ptr_type_name);
+				
+				return this;
+
+			case Operator.Indirection:
+				if (!ec.InUnsafe){
+					UnsafeError (loc);
+					return null;
+				}
+				
+				if (!expr_type.IsPointer){
+					Report.Error (
+						193, loc,
+						"The * or -> operator can only be applied to pointers");
+					return null;
+				}
+				
+				//
+				// We create an Indirection expression, because
+				// it can implement the IMemoryLocation.
+				// 
+				return new Indirection (Expr);
+			
+			case Operator.UnaryPlus:
 				//
 				// A plus in front of something is just a no-op, so return the child.
 				//
 				return Expr;
-			}
 
-			//
-			// Deals with -literals
-			// int     operator- (int x)
-			// long    operator- (long x)
-			// float   operator- (float f)
-			// double  operator- (double d)
-			// decimal operator- (decimal d)
-			//
-			if (Oper == Operator.UnaryNegation){
+			case Operator.UnaryNegation:
+				//
+				// Deals with -literals
+				// int     operator- (int x)
+				// long    operator- (long x)
+				// float   operator- (float f)
+				// double  operator- (double d)
+				// decimal operator- (decimal d)
+				//
 				Expression e = null;
 
 				//
@@ -352,7 +414,7 @@ namespace Mono.CSharp {
 				//
 				if (Expr is Unary){
 					Unary unary = (Unary) Expr;
-
+					
 					if (unary.Oper == Operator.UnaryNegation)
 						return unary.Expr;
 				}
@@ -414,52 +476,11 @@ namespace Mono.CSharp {
 					type = e.Type;
 					return this;
 				}
-
+				
 				Error23 (expr_type);
 				return null;
 			}
 
-			if (Oper == Operator.AddressOf){
-				if (Expr.eclass != ExprClass.Variable){
-					Error (211, loc, "Cannot take the address of non-variables");
-					return null;
-				}
-
-				if (!ec.InUnsafe) {
-					UnsafeError (loc); 
-					return null;
-				}
-
-				if (!TypeManager.VerifyUnManaged (Expr.Type, loc)){
-					return null;
-				}
-				
-				string ptr_type_name = Expr.Type.FullName + "*";
-				type = TypeManager.LookupType (ptr_type_name);
-				
-				return this;
-			}
-
-			if (Oper == Operator.Indirection){
-				if (!ec.InUnsafe){
-					UnsafeError (loc);
-					return null;
-				}
-
-				if (!expr_type.IsPointer){
-					Report.Error (
-						193, loc,
-						"The * or -> operator can only be applied to pointers");
-					return null;
-				}
-
-				//
-				// We create an Indirection expression, because
-				// it can implement the IMemoryLocation.
-				// 
-				return new Indirection (Expr);
-			}
-			
 			Error (187, loc, "No such operator '" + OperName (Oper) + "' defined for type '" +
 			       TypeManager.CSharpName (expr_type) + "'");
 			return null;
