@@ -17,6 +17,21 @@ using System.Reflection.Emit;
 namespace CIR {
 
 	public class Interface : DeclSpace {
+		const MethodAttributes interface_method_attributes =
+			MethodAttributes.Public |
+			MethodAttributes.Abstract |
+			MethodAttributes.HideBySig |
+			MethodAttributes.NewSlot |
+			MethodAttributes.Virtual;
+
+		const MethodAttributes property_attributes =
+			MethodAttributes.Public |
+			MethodAttributes.Abstract |
+			MethodAttributes.HideBySig |
+			MethodAttributes.NewSlot |
+			MethodAttributes.SpecialName |
+			MethodAttributes.Virtual;
+		
 		ArrayList bases;
 		int mod_flags;
 		
@@ -45,11 +60,6 @@ namespace CIR {
 
 		public Interface (TypeContainer parent, string name, int mod) : base (name)
 		{
-			defined_events = new Hashtable ();
-			defined_method_list = new ArrayList ();
-			defined_indexer_list = new ArrayList ();
-			defined_properties = new Hashtable ();
-
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PUBLIC);
 			this.parent = parent;
 		}
@@ -63,6 +73,9 @@ namespace CIR {
 				if (!(value is InterfaceMethod))
 					return AdditionResult.NameExists;
 			} 
+
+			if (defined_method_list == null)
+				defined_method_list = new ArrayList ();
 
 			defined_method_list.Add (imethod);
 			if (value == null)
@@ -81,6 +94,9 @@ namespace CIR {
 
 			DefineName (name, iprop);
 
+			if (defined_properties == null)
+				defined_properties = new Hashtable ();
+
 			defined_properties.Add (name, iprop);
 			return AdditionResult.Success;
 		}
@@ -95,19 +111,25 @@ namespace CIR {
 
 			DefineName (name, ievent);
 
+			if (defined_events == null)
+				defined_events = new Hashtable ();
+
 			defined_events.Add (name, ievent);
 			return AdditionResult.Success;
 		}
 
 		public bool AddIndexer (InterfaceIndexer iindexer)
 		{
+			if (defined_indexer_list == null)
+				defined_indexer_list = new ArrayList ();
+			
 			defined_indexer_list.Add (iindexer);
 			return true;
 		}
 		
-		public Hashtable InterfaceMethods {
+		public ArrayList InterfaceMethods {
 			get {
-				return null; // defined_methods;
+				return defined_method_list;
 			}
 		}
 
@@ -123,9 +145,9 @@ namespace CIR {
 			}
 		}
 
-		public Hashtable InterfaceIndexers {
+		public ArrayList InterfaceIndexers {
 			get {
-				return null; // defined_indexers;
+				return defined_indexer_list;
 			}
 		}
 
@@ -152,16 +174,95 @@ namespace CIR {
 				"Interface `" + Name + "' already contains a definition with the " +
 				"same return value and paramenter types for method `" + im.Name + "'");
 		}
-		
-		void PopulateMethods ()
+
+		//
+		// Populates the methods in the interface
+		//
+		void PopulateMethod (InterfaceMethod im)
 		{
-			foreach (InterfaceMethod im in defined_method_list){
-				Type ReturnType = parent.LookupType (im.ReturnType, true);
+			Type ReturnType = parent.LookupType (im.ReturnType, true);
+			Type [] ArgTypes = im.ParameterTypes (parent);
+			MethodBuilder mb;
+			Parameter [] p;
+			int i;
 			
-				TypeBuilder.DefineMethod (
-					im.Name, MethodAttributes.Public,
-					ReturnType, im.ParameterTypes (parent));
+			//
+			// Create the method
+			//
+			mb = TypeBuilder.DefineMethod (
+				im.Name, interface_method_attributes,
+				ReturnType, ArgTypes);
+			
+			//
+			// Define each type attribute (in/out/ref) and
+			// the argument names.
+			//
+			p = im.Parameters.FixedParameters;
+
+			for (i = 0; i < p.Length; i++)
+				mb.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
+
+			if (i != ArgTypes.Length)
+				Console.WriteLine ("Implement the type definition for params");
+		}
+
+		//
+		// Populates the properties in the interface
+		//
+		void PopulateProperty (InterfaceProperty ip)
+		{
+			PropertyBuilder pb;
+			MethodBuilder mb;
+			Type prop_type = parent.LookupType (ip.Type, true);
+			Type [] setter_args = new Type [1];
+
+			setter_args [0] = prop_type;
+
+			//
+			// FIXME: properties are missing the following
+			// flags: hidebysig newslot specialname
+			// 
+			pb = TypeBuilder.DefineProperty (
+				ip.Name, PropertyAttributes.None,
+				prop_type, null);
+
+			if (ip.HasGet){
+				mb = TypeBuilder.DefineMethod (
+					"get_" + ip.Name, property_attributes ,
+					prop_type, null);
+
+				pb.SetGetMethod (mb);
 			}
+
+			if (ip.HasSet){
+				setter_args [0] = prop_type;
+
+				mb = TypeBuilder.DefineMethod (
+					"set_" + ip.Name, interface_method_attributes,
+					null, setter_args);
+
+				mb.DefineParameter (1, ParameterAttributes.None, "value");
+				pb.SetSetMethod (mb);
+			}
+		}
+
+		//
+		// Populates the events in the interface
+		//
+		void PopulateEvent (InterfaceEvent ie)
+		{
+			//
+		        // FIXME: We need to do this after delegates have been
+			// declared or we declare them recursively.
+			//
+		}
+
+		//
+		// Populates the indexers in the interface
+		//
+		void PopulateIndexer (InterfaceIndexer ii)
+		{
+			
 		}
 
 		// <summary>
@@ -172,25 +273,27 @@ namespace CIR {
 		{
 			Hashtable methods = new Hashtable ();
 
-			//
-			// First check that all methods with the same name
-			// have a different signature.
-			//
-			foreach (InterfaceMethod im in defined_method_list){
-				string sig = im.GetSignature (parent);
-
-				//
-				// If there was an undefined Type on the signatures
-				// 
-				if (sig == null)
-					continue;
-
-				if (methods [sig] != null){
-					Error111 (im);
-					return false;
+			
+			if (defined_method_list != null){
+				foreach (InterfaceMethod im in defined_method_list){
+					string sig = im.GetSignature (parent);
+					
+					//
+					// If there was an undefined Type on the signatures
+					// 
+					if (sig == null)
+						continue;
+					
+					if (methods [sig] != null){
+						Error111 (im);
+						return false;
+					}
 				}
 			}
 
+			//
+			// FIXME: Here I should check i
+			// 
 			return true;
 		}
 
@@ -201,99 +304,72 @@ namespace CIR {
 		{
 			if (!SemanticAnalysis ())
 				return;
-			
-			PopulateMethods ();
+
+			if (defined_method_list != null){
+				foreach (InterfaceMethod im in defined_method_list)
+					PopulateMethod (im);
+			}
+
+			if (defined_properties != null){
+				foreach (DictionaryEntry de in defined_properties)
+					PopulateProperty ((InterfaceProperty) de.Value);
+			}
+
+			if (defined_events != null)
+				foreach (DictionaryEntry de in defined_events)
+					PopulateEvent ((InterfaceEvent) de.Value);
+
+			if (defined_indexer_list != null)
+				foreach (InterfaceIndexer ii in defined_indexer_list)
+					PopulateIndexer (ii);
 		}
 	}
 
 	public class InterfaceMemberBase {
-		string name;
-
-		public InterfaceMemberBase (string name)
-		{
-			this.name = name;
-		}
+		public readonly string Name;
+		public readonly bool IsNew;
 		
-		public string Name {
-			get {
-				return name;
-			}
+		public InterfaceMemberBase (string name, bool is_new)
+		{
+			Name = name;
+			IsNew = is_new;
 		}
 	}
 	
 	public class InterfaceProperty : InterfaceMemberBase {
-		bool has_get, has_set, is_new;
-		string type;
+		public readonly bool HasSet;
+		public readonly bool HasGet;
+		public readonly string Type;
+		public readonly string type;
 		
 		public InterfaceProperty (string type, string name,
 					  bool is_new, bool has_get, bool has_set)
-			: base (name)
+			: base (name, is_new)
 		{
-			this.type = type;
-			this.is_new = is_new;
-			this.has_get = has_get;
-			this.has_set = has_set;
-		}
-
-		public bool HasGet {
-			get {
-				return has_get;
-			}
-		}
-
-		public bool HasSet {
-			get {
-				return has_set;
-			}
-		}
-
-		public bool IsNew {
-			get {
-				return is_new;
-			}
-		}
-
-		public string Type {
-			get {
-				return type;
-			}
+			Type = type;
+			HasGet = has_get;
+			HasSet = has_set;
 		}
 	}
 
 	public class InterfaceEvent : InterfaceMemberBase {
-		string type;
-		bool is_new;
+		public readonly string Type;
 		
 		public InterfaceEvent (string type, string name, bool is_new)
-			: base (name)
+			: base (name, is_new)
 		{
-			this.type = type;
-			this.is_new = is_new;
-		}
-
-		public string Type {
-			get {
-				return type;
-			}
-		}
-
-		public bool IsNew {
-			get {
-				return is_new;
-			}
+			Type = type;
 		}
 	}
 	
 	public class InterfaceMethod : InterfaceMemberBase {
 		public readonly string     ReturnType;
-		public readonly bool       IsNew;
 		public readonly Parameters Parameters;
 		
 		public InterfaceMethod (string return_type, string name, bool is_new, Parameters args)
-			: base (name)
+			: base (name, is_new)
 		{
 			this.ReturnType = return_type;
-			this.IsNew = is_new;
 			this.Parameters = args;
 		}
 
@@ -313,54 +389,22 @@ namespace CIR {
 
 		public Type [] ParameterTypes (TypeContainer tc)
 		{
-			return Parameters.GetTypes (tc);
+			return Parameters.GetParameterInfo (tc);
 		}
-
 	}
 
 	public class InterfaceIndexer : InterfaceMemberBase {
-		bool do_get, do_set, is_new;
-		Parameters args;
-		string type;
+		public readonly bool HasGet, HasSet;
+		public readonly Parameters Parameters;
+		public readonly string Type;
 		
 		public InterfaceIndexer (string type, Parameters args, bool do_get, bool do_set, bool is_new)
-			: base ("")
+			: base ("", is_new)
 		{
-			this.type = type;
-			this.args = args;
-			this.do_get = do_get;
-			this.do_set = do_set;
-			this.is_new = is_new;
-		}
-
-		public string Type {
-			get {
-				return type;
-			}
-		}
-
-		public Parameters Parameters {
-			get {
-				return args;
-			}
-		}
-
-		public bool HasGet {
-			get {
-				return do_get;
-			}
-		}
-
-		public bool HasSet {
-			get {
-				return do_set;
-			}
-		}
-
-		public bool IsNew {
-			get {
-				return is_new;
-			}
+			Type = type;
+			Parameters = args;
+			HasGet = do_get;
+			HasSet = do_set;
 		}
 	}
 }

@@ -65,7 +65,7 @@ namespace CIR
 		//   value parameter that is passed to the "set" accesor
 		//   method
 		// </summary>
-		ParameterCollection implicit_value_parameters;
+		Parameter [] implicit_value_parameters;
 
 		// <summary>
 		//   Used to record all types defined
@@ -684,11 +684,21 @@ opt_formal_parameter_list
 formal_parameter_list
 	: fixed_parameters		
 	  { 
-	  	$$ = new Parameters ((ParameterCollection) $1, null); 
+		ArrayList pars_list = (ArrayList) $1;
+
+		Parameter [] pars = new Parameter [pars_list.Count];
+		pars_list.CopyTo (pars);
+
+	  	$$ = new Parameters (pars, null); 
 	  } 
 	| fixed_parameters COMMA parameter_array
 	  {
-		$$ = new Parameters ((ParameterCollection) $1, (Parameter) $3); 
+		ArrayList pars_list = (ArrayList) $1;
+
+		Parameter [] pars = new Parameter [pars_list.Count];
+		pars_list.CopyTo (pars);
+
+		$$ = new Parameters (pars, (Parameter) $3); 
 	  }
 	| parameter_array 
 	  {
@@ -699,14 +709,16 @@ formal_parameter_list
 fixed_parameters
 	: fixed_parameter	
 	  {
-		ParameterCollection pars = new ParameterCollection ();
-		pars.Add ((Parameter) $1);
+		ArrayList pars = new ArrayList ();
+
+		pars.Add ($1);
 		$$ = pars;
 	  }
 	| fixed_parameters COMMA fixed_parameter
 	  {
-		ParameterCollection pars = (ParameterCollection) $1;
-		pars.Add ((Parameter) $3);
+		ArrayList pars = (ArrayList) $1;
+
+		pars.Add ($3);
 		$$ = $1;
 	  }
 	;
@@ -755,8 +767,8 @@ property_declaration
 
 		lexer.properties = true;
 		
-		implicit_value_parameters = new ParameterCollection ();
-		implicit_value_parameters.Add (implicit_value_parameter);
+		implicit_value_parameters = new Parameter [1];
+		implicit_value_parameters [0] = implicit_value_parameter;
 	  }
 	  accessor_declarations 
 	  {

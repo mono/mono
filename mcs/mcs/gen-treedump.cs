@@ -392,15 +392,15 @@ namespace Generator {
 		
 		void GenerateParameters (Parameters pars)
 		{
-			ParameterCollection pfixed;
+			Parameter [] pfixed;
 			Parameter parray;
 
 			pfixed = pars.FixedParameters;
 
 			if (pfixed != null){
-				for (int i = 0; i < pfixed.Count; i++){
-					output (GetParameter ((Parameter) pfixed [i]));
-					if (i+1 != pfixed.Count)
+				for (int i = 0; i < pfixed.Length; i++){
+					output (GetParameter (pfixed [i]));
+					if (i+1 != pfixed.Length)
 						output (", ");
 				}
 			}

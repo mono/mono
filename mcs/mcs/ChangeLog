@@ -1,4 +1,36 @@
+2001-08-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs (InterfaceMemberBase): Now we track the new status
+	here.  
+
+	(PopulateProperty): Implement property population.  Woohoo!  Got
+	Methods and Properties going today. 
+
+	Removed all the properties for interfaces, and replaced them with
+	`public readonly' fields. 
+
+2001-08-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs (AddEvent, AddMethod, AddIndexer, AddProperty):
+	initialize their hashtables/arraylists only when they are needed
+	instead of doing this always.
+
+	* parameter.cs: Handle refs and out parameters.
+
+	* cs-parser.jay: Use an ArrayList to construct the arguments
+	instead of the ParameterCollection, and then cast that to a
+	Parameter[] array.
+
+	* parameter.cs: Drop the use of ParameterCollection and use
+	instead arrays of Parameters.
+
+	(GetParameterInfo): Use the Type, not the Name when resolving
+	types. 
+
 2001-08-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* parameter.cs: Eliminate the properties Name, Type and ModFlags,
+	and instead use public readonly fields.
 
 	* class.cs: Put back walking code for type containers.
 

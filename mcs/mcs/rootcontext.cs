@@ -58,7 +58,7 @@ namespace CIR {
 		
 		public RootContext ()
 		{
-			tree = new Tree (null);
+			tree = new Tree (this);
 			type_manager = new TypeManager ();
 			report = new Report ();
 
@@ -210,6 +210,8 @@ namespace CIR {
 			if (error)
 				return null;
 
+			// FIXME: use the actual accesibility here, not
+			// TypeAttributes.Public.
 			tb = mb.DefineType (name,
 					    TypeAttributes.Interface |
 					    TypeAttributes.Public |

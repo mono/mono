@@ -49,11 +49,13 @@ namespace CIR {
 
 		public TypeContainer (RootContext rc, TypeContainer parent, string name) : base (name)
 		{
+			string n;
 			types = new Hashtable ();
 			this.parent = parent;
 			RootContext = rc;
+
+			object a = rc.Report;
 			
-			string n;
 			if (parent == null)
 				n = "";
 			else
@@ -397,7 +399,6 @@ namespace CIR {
 
 		public Type LookupType (string name, bool silent)
 		{
-			Console.WriteLine ("Is type container null? " + (this == null).ToString ());
 			return RootContext.LookupType (this, name, silent);
 		}
 	}

@@ -8,16 +8,12 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 //
-// FIXME: We should deprecate ParameterCollection as it is mostly slow
-// to access (it uses an arraylist instead of a hashtable) and exposes
-// no method to quickly locate parameters by name.
-//
-// Look at the implementation for GetParameterByName for an example.
 //
 
 namespace CIR {
 
 	using System;
+	using System.Reflection;
 
 	public class Parameter {
 		public enum Modifier {
@@ -38,6 +34,23 @@ namespace CIR {
 			Type = type = type;
 		}
 
+		public ParameterAttributes Attributes {
+			get {
+				switch (ModFlags){
+				case Modifier.NONE:
+					return ParameterAttributes.None;
+				case Modifier.REF:
+					return ParameterAttributes.Retval;
+				case Modifier.OUT:
+					return ParameterAttributes.Out | ParameterAttributes.Retval;
+				case Modifier.PARAMS:
+					return 0;
+				}
+				
+				return ParameterAttributes.None;
+			}
+		}
+		
 		string ModSignature ()
 		{
 			switch (ModFlags){
@@ -70,46 +83,28 @@ namespace CIR {
 	}
 
 	public class Parameters {
-		ParameterCollection fixed_parameters;
-		Parameter array_parameter;
+		public readonly Parameter [] FixedParameters;
+		public readonly Parameter    ArrayParameter;
 		string signature;
 		
-		public Parameters (ParameterCollection fixed_parameters, Parameter array_parameter)
+		public Parameters (Parameter [] fixed_parameters, Parameter array_parameter)
 		{
-			this.fixed_parameters = fixed_parameters;
-			this.array_parameter = array_parameter;
-		}
-
-		// <summary>
-		//   Returns the fixed parameters element
-		// </summary>
-		public ParameterCollection FixedParameters {
-			get {
-				return fixed_parameters;
-			}
-		}
-
-		// <summary>
-		//   Returns the array parameter.
-		// </summary>
-		public Parameter ArrayParameter {
-			get {
-				return array_parameter;
-			}
+			FixedParameters = fixed_parameters;
+			ArrayParameter  = array_parameter;
 		}
 
 		public void ComputeSignature (TypeContainer tc)
 		{
 			signature = "";
-			if (fixed_parameters != null){
-				for (int i = 0; i < fixed_parameters.Count; i++){
-					Parameter par = (Parameter) fixed_parameters [i];
+			if (FixedParameters != null){
+				for (int i = 0; i < FixedParameters.Length; i++){
+					Parameter par = FixedParameters [i];
 					
 					signature += par.GetSignature (tc);
 				}
 			}
 			//
-			// Note: as per the spec, the `params' arguments (array_parameter)
+			// Note: as per the spec, the `params' arguments (ArrayParameter)
 			// are not used in the signature computation for a method
 			//
 		}
@@ -131,10 +126,10 @@ namespace CIR {
 		// </summary>
 		public Parameter GetParameterByName (string name)
 		{
-			if (fixed_parameters == null)
+			if (FixedParameters == null)
 				return null;
 
-			foreach (Parameter par in fixed_parameters)
+			foreach (Parameter par in FixedParameters)
 				if (par.Name == name)
 					return par;
 
@@ -144,14 +139,23 @@ namespace CIR {
 		// <summary>
 		//   Returns the argument types as an array
 		// </summary>
-		public Type [] GetTypes (TypeContainer tc)
+		public Type [] GetParameterInfo (TypeContainer tc)
 		{
-			int extra = (array_parameter != null) ? 1 : 0;
-			Type [] types = new Type [fixed_parameters.Count + extra];
+			Type [] types;
+			int extra = (ArrayParameter != null) ? 1 : 0;
 			int i = 0;
+			int pc = FixedParameters.Length + extra;
 			
-			foreach (Parameter p in fixed_parameters){
-				types [i++] = tc.LookupType (p.Name, false);
+			types = new Type [pc];
+				
+			foreach (Parameter p in FixedParameters){
+				Type t = tc.LookupType (p.Type, false);
+
+				if ((p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
+					t = Type.GetType (t.FullName + "&");
+				}
+				types [i] = t;
+				i++;
 			}
 
 			if (extra > 0)
