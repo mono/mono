@@ -1,3 +1,7 @@
+2003-05-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TempFileCollection.cs: fixed the build under windows.
+	
 2003-05-07  Ben Maurer <bmaurer@users.sourceforge.net>
 	* Uri.cs: Checked in code to fix bug #41998. Some
 	code from Ian MacLean.
