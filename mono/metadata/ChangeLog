@@ -1,3 +1,9 @@
+
+Wed Oct 30 19:37:32 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: create valid IL code in the filter clause:
+	the new JIT is less forgiving:-)
+
 2002-10-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: removed get_property internal call.
