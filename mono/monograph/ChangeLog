@@ -1,4 +1,10 @@
 
+Mon Mar 11 11:16:53 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: removed method signature and searching helpers
+	that are now provided in libmetadata. Added --control-flow option to
+	create a control flow graph of a method, with basic blocks etc.
+
 Wed Feb 20 17:53:59 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monograph.c: added -i option to create a graph of the types
