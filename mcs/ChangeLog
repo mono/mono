@@ -1,3 +1,10 @@
+2004-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DIST_ONLY_SUBDIRS): Add 'gmcs' since it is specially
+	handled by 'class/corlib/Makefile'.
+	(test-installed-compiler): Run compiler tests using the installed
+	compiler.
+
 2004-09-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (SUBDIRS): Allow to be overriden by $(TEST_SUBDIRS).

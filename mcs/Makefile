@@ -2,6 +2,9 @@ thisdir := .
 
 SUBDIRS := build jay mcs monoresgen class mbas nunit20 ilasm tools tests errors docs
 
+# 'gmcs' is specially built by rules inside class/corlib.
+DIST_ONLY_SUBDIRS := gmcs
+
 ifdef TEST_SUBDIRS
 SUBDIRS := $(TEST_SUBDIRS)
 endif
@@ -35,6 +38,10 @@ testcorlib:
 
 compiler-tests:
 	$(MAKE) TEST_SUBDIRS="tests errors" run-test-profiles
+
+test-installed-compiler:
+	$(MAKE) TEST_SUBDIRS="tests errors" PROFILE=default TEST_RUNTIME=mono MCS=mcs run-test
+	$(MAKE) TEST_SUBDIRS="tests errors" PROFILE=net_2_0 TEST_RUNTIME=mono MCS=gmcs run-test
 
 # Disting. We need to override $(distdir) here.
 
