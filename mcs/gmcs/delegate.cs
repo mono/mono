@@ -887,6 +887,9 @@ namespace Mono.CSharp {
 			
 			Expression e = a.Expr;
 
+			if (e is AnonymousMethod)
+				return e.DoResolve (ec);
+
 			MethodGroupExpr mg = e as MethodGroupExpr;
 			if (mg != null)
 				return ResolveMethodGroupExpr (ec, mg);

@@ -1,3 +1,18 @@
+2004-12-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (FieldBase): Use an unused bit field from the field to
+	encode the `has_offset' property from the FieldMember.  This saves
+	a couple of Ks on bootstrap compilation.
+
+	* delegate.cs (NewDelegate.DoResolve): If we have an anonymous
+	method as our child, return the AnonymousMethod resolved
+	expression.
+
+	* expression.cs (New.DoResolve): Allow return values from
+	NewDelegate to also include AnonymousMethods.
+
+	Fixes #70150.
+
 2004-11-29  Raja R Harinath  <rharinath@novell.com>
 
 	* decl.cs (MemberCore.MemberName): Remove readonly to fix an error

@@ -5357,7 +5357,8 @@ namespace Mono.CSharp {
 		[Flags]
 		public enum Status : byte {
 			ASSIGNED = 1,
-			USED = 2
+			USED = 2,
+			HAS_OFFSET = 4		// Used by FieldMember.
 		}
 
 		static string[] attribute_targets = new string [] { "field" };
@@ -5522,7 +5523,7 @@ namespace Mono.CSharp {
 
 	public abstract class FieldMember: FieldBase
 	{
-		bool has_field_offset = false;
+		
 
 		protected FieldMember (TypeContainer parent, Expression type, int mod,
 			int allowed_mod, MemberName name, object init, Attributes attrs, Location loc)
@@ -5534,7 +5535,7 @@ namespace Mono.CSharp {
 		{
 			if (a.Type == TypeManager.field_offset_attribute_type)
 			{
-				has_field_offset = true;
+				status |= Status.HAS_OFFSET;
 
 				if (!Parent.HasExplicitLayout) {
 					Report.Error (636, Location, "The FieldOffset attribute can only be placed on members of types marked with the StructLayout(LayoutKind.Explicit)");
@@ -5587,7 +5588,7 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-			if (Parent.HasExplicitLayout && !has_field_offset && (ModFlags & Modifiers.STATIC) == 0) {
+			if (Parent.HasExplicitLayout && ((status & Status.HAS_OFFSET) == 0) && (ModFlags & Modifiers.STATIC) == 0) {
 				Report.Error (625, Location, "'{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute.", GetSignatureForError ());
 			}
 
