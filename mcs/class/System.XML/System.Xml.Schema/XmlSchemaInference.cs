@@ -65,15 +65,16 @@ using Choice = System.Xml.Schema.XmlSchemaChoice;
 
 namespace System.Xml.Schema
 {
+	[MonoTODO ("merge primitive types; infer gYearMonth too; in some cases sequence should contain element whose minOccurs=0 (no obvious rules right now); reject some non-supported schema components")]
 	public class XmlSchemaInference
 	{
 		public enum InferenceOption {
+			Restricted,
 			Relaxed,
-			Rstricted
 		}
 
-		InferenceOption occurrence = InferenceOption.Rstricted;
-		InferenceOption typeInference = InferenceOption.Rstricted;
+		InferenceOption occurrence = InferenceOption.Restricted;
+		InferenceOption typeInference = InferenceOption.Restricted;
 
 		public XmlSchemaInference ()
 		{
@@ -94,7 +95,8 @@ namespace System.Xml.Schema
 			return InferSchema (xmlReader, new XmlSchemaSet ());
 		}
 
-		public XmlSchemaSet InferSchema (XmlReader xmlReader, XmlSchemaSet schemas)
+		public XmlSchemaSet InferSchema (XmlReader xmlReader,
+			XmlSchemaSet schemas)
 		{
 			return XsdInference.Process (xmlReader, schemas,
 				occurrence == InferenceOption.Relaxed,
@@ -104,7 +106,10 @@ namespace System.Xml.Schema
 
 	class XsdInference
 	{
-		public static XmlSchemaSet Process (XmlReader xmlReader, XmlSchemaSet schemas, bool laxOccurence, bool laxTypeInference)
+		public static XmlSchemaSet Process (XmlReader xmlReader, 
+			XmlSchemaSet schemas,
+			bool laxOccurence,
+			bool laxTypeInference)
 		{
 			XsdInference impl = new XsdInference (xmlReader,
 				schemas, laxOccurence, laxTypeInference);
@@ -135,7 +140,10 @@ namespace System.Xml.Schema
 		Hashtable newElements = new Hashtable ();
 		Hashtable newAttributes = new Hashtable ();
 
-		private XsdInference (XmlReader xmlReader, XmlSchemaSet schemas, bool laxOccurence, bool laxTypeInference)
+		private XsdInference (XmlReader xmlReader, 
+			XmlSchemaSet schemas, 
+			bool laxOccurence, 
+			bool laxTypeInference)
 		{
 			this.source = xmlReader;
 			this.schemas = schemas;
@@ -169,7 +177,8 @@ namespace System.Xml.Schema
 		{
 			if (schemas.Schemas (NamespaceXml).Count == 0)
 				// FIXME: do it from resources.
-				schemas.Add (NamespaceXml, "http://www.w3.org/2001/xml.xsd");
+				schemas.Add (NamespaceXml, 
+					"http://www.w3.org/2001/xml.xsd");
 		}
 
 		private void InferElement (Element el, string ns, bool isNew)
@@ -947,7 +956,8 @@ namespace System.Xml.Schema
 			}
 			try {
 				double dbl = XmlConvert.ToDouble (value);
-				if (float.MinValue <= dbl && dbl <= float.MaxValue)
+				if (float.MinValue <= dbl &&
+					dbl <= float.MaxValue)
 					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Float).QualifiedName;
 				else
 					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Double).QualifiedName;

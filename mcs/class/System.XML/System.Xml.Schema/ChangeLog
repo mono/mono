@@ -1,3 +1,9 @@
+2004-11-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaCollection.cs : obsolete.
+	* XmlSchemaInference.cs :
+	  Fixed typo in enum. It is still MonoTODO. Reformatted code a bit.
+
 2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSet.cs : don't set TargetNamespace = "".
