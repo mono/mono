@@ -139,12 +139,13 @@ namespace Mono.CSharp {
 		///   This is used to reuse a set of empty parameters, because they
 		///   are common
 		/// </summary>
-		public static Parameters GetEmptyReadOnlyParameters ()
-		{
-			if (empty_parameters == null)
-				empty_parameters = new Parameters (null, null, Location.Null);
+		public static Parameters EmptyReadOnlyParameters {
+			get {
+				if (empty_parameters == null)
+					empty_parameters = new Parameters (null, null, Location.Null);
 			
-			return empty_parameters;
+				return empty_parameters;
+			}
 		}
 		
 		public bool Empty {

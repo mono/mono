@@ -378,7 +378,7 @@ namespace Mono.CSharp {
 				//
 				Type [] null_types = null;
 				InternalParameters inp = new InternalParameters
-					(null_types, Parameters.GetEmptyReadOnlyParameters ());
+					(null_types, Parameters.EmptyReadOnlyParameters);
 				
 				if (!RegisterMethod (get, inp, null)) {
 					Error111 (ip);

@@ -876,7 +876,7 @@ method_body
 	;
 
 opt_formal_parameter_list
-	: /* empty */			{ $$ = Parameters.GetEmptyReadOnlyParameters (); }
+	: /* empty */			{ $$ = Parameters.EmptyReadOnlyParameters; }
 	| formal_parameter_list
 	;
 

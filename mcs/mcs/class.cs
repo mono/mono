@@ -1,7 +1,8 @@
 //
 // class.cs: Class and Struct handlers
 //
-// Author: Miguel de Icaza (miguel@gnu.org)
+// Authors: Miguel de Icaza (miguel@gnu.org)
+//          Martin Baulig (martin@gnome.org)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -555,7 +556,7 @@ namespace Mono.CSharp {
 			Constructor c;
 			int mods = 0;
 
-			c = new Constructor (Basename, Parameters.GetEmptyReadOnlyParameters (),
+			c = new Constructor (Basename, Parameters.EmptyReadOnlyParameters,
 					     new ConstructorBaseInitializer (null, new Location (-1)),
 					     new Location (-1));
 			
@@ -1947,6 +1948,9 @@ namespace Mono.CSharp {
 			return MemberType;
 		}
 
+		// Whether this is an operator method.
+		public bool IsOperator;
+
                 void DuplicateEntryPoint (MethodInfo b, Location location)
                 {
                         Report.Error (
@@ -1998,6 +2002,25 @@ namespace Mono.CSharp {
 			if (!DoDefineParameters (parent))
 				return false;
 
+			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
+			if (!IsOperator) {
+				MemberInfo [] mi_this;
+
+				mi_this = TypeContainer.FindMembers (
+					parent.TypeBuilder, MemberTypes.Method,
+					BindingFlags.NonPublic | BindingFlags.Public |
+					BindingFlags.Static | BindingFlags.Instance |
+					BindingFlags.DeclaredOnly,
+					MethodSignature.method_signature_filter, ms);
+
+				if (mi_this != null && mi_this.Length > 0) {
+					Report.Error (111, Location, "Class `" + parent.Name + "' " +
+						      "already defines a member called `" + Name + "' " +
+						      "with the same parameter types");
+					return false;
+				}
+			}
+
 			//
 			// Verify if the parent has a type with the same name, and then
 			// check whether we have to create a new slot for it or not.
@@ -2006,7 +2029,6 @@ namespace Mono.CSharp {
 
 			// ptype is only null for System.Object while compiling corlib.
 			if (ptype != null){
-				MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
 				MemberInfo [] mi, mi_static, mi_instance;
 
 				mi_static = TypeContainer.FindMembers (
@@ -2028,10 +2050,25 @@ namespace Mono.CSharp {
 					mi = null;
 
 				if (mi != null && mi.Length > 0){
-					if (!CheckMethodAgainstBase (parent, flags, (MethodInfo) mi [0])){
-						return false;
-					}
 					parent_method = (MethodInfo) mi [0];
+					string name = parent_method.DeclaringType.Name + "." +
+						parent_method.Name;
+
+					if (!CheckMethodAgainstBase (parent, flags, parent_method, name))
+						return false;
+
+					if ((ModFlags & Modifiers.NEW) == 0) {
+						Type parent_ret = TypeManager.TypeToCoreType (
+							parent_method.ReturnType);
+
+						if (parent_ret != MemberType) {
+							Report.Error (
+								508, parent.MakeName (Name) + ": cannot " +
+								"change return type when overriding " +
+								"inherited member " + name);
+							return false;
+						}
+					}
 				} else {
 					if ((ModFlags & Modifiers.NEW) != 0)
 						WarningNotHiding (parent);
@@ -2054,6 +2091,9 @@ namespace Mono.CSharp {
 		public override bool Define (TypeContainer parent)
 		{
 			if (!DoDefine (parent))
+				return false;
+
+			if (!CheckBase (parent))
 				return false;
 
 			CallingConventions cc = GetCallingConvention (parent is Class);
@@ -2717,16 +2757,28 @@ namespace Mono.CSharp {
 				//
 				if ((modifiers & Modifiers.ABSTRACT) != 0)
 					Report.Error (
-						500, "Abstract method `" +
+						500, Location, "Abstract method `" +
 						TypeManager.CSharpSignature (builder) +
 						"' can not have a body");
 
 				if ((modifiers & Modifiers.EXTERN) != 0)
 					Report.Error (
-						179, "External method `" +
+						179, Location, "External method `" +
 						TypeManager.CSharpSignature (builder) +
 						"' can not have a body");
 
+				return;
+			}
+
+			//
+			// Methods must have a body unless they're extern or abstract
+			//
+			if (block == null) {
+				Report.Error (
+					501, Location, "Method `" +
+					TypeManager.CSharpSignature (builder) +
+					"' must declare a body since it is not marked " +
+					"abstract or extern");
 				return;
 			}
 
@@ -2926,9 +2978,6 @@ namespace Mono.CSharp {
 			if (MemberType.IsPointer && !UnsafeOK (parent))
 				return false;
 			
-			if (!CheckBase (parent))
-				return false;
-
 			//
 			// Check for explicit interface implementation
 			//
@@ -3095,13 +3144,151 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 	}
-			
-	public class Property : MemberBase {
+
+	//
+	// Properties and Indexers both generate PropertyBuilders, we use this to share 
+	// their common bits.
+	//
+	abstract public class PropertyBase : MethodCore {
 		public Accessor Get, Set;
 		public PropertyBuilder PropertyBuilder;
 		public MethodBuilder GetBuilder, SetBuilder;
 		public MethodData GetData, SetData;
 
+		protected EmitContext ec;
+
+		public PropertyBase (Expression type, string name, int mod_flags, int allowed_mod,
+				     Parameters parameters, Accessor get_block, Accessor set_block,
+				     Attributes attrs, Location loc)
+			: base (type, mod_flags, allowed_mod, name, attrs, parameters, loc)
+		{
+			Get = get_block;
+			Set = set_block;
+		}
+
+		protected override bool DoDefine (TypeContainer parent)
+		{
+			if (!base.DoDefine (parent))
+				return false;
+
+			ec = new EmitContext (parent, Location, null, MemberType, ModFlags);
+
+			return true;
+		}
+
+		//
+		// Checks our base implementation if any
+		//
+		protected override bool CheckBase (TypeContainer parent)
+		{
+			// Check whether arguments were correct.
+			if (!DoDefineParameters (parent))
+				return false;
+
+			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
+			MemberInfo [] props_this;
+
+			props_this = TypeContainer.FindMembers (
+				parent.TypeBuilder, MemberTypes.Property,
+				BindingFlags.NonPublic | BindingFlags.Public |
+				BindingFlags.Static | BindingFlags.Instance |
+				BindingFlags.DeclaredOnly,
+				MethodSignature.method_signature_filter, ms);
+
+			if (props_this != null && props_this.Length > 0) {
+				Report.Error (111, Location, "Class `" + parent.Name + "' " +
+					      "already defines a member called `" + Name + "' " +
+					      "with the same parameter types");
+				return false;
+			}
+
+			//
+			// Find properties with the same name on the base class
+			//
+			MemberInfo [] props;
+			MemberInfo [] props_static = TypeContainer.FindMembers (
+				parent.TypeBuilder.BaseType, MemberTypes.Property,
+				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
+				MethodSignature.inheritable_property_signature_filter, ms);
+
+			MemberInfo [] props_instance = TypeContainer.FindMembers (
+				parent.TypeBuilder.BaseType, MemberTypes.Property,
+				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
+				MethodSignature.inheritable_property_signature_filter,
+				ms);
+
+			//
+			// Find if we have anything
+			//
+			if (props_static != null && props_static.Length > 0)
+				props = props_static;
+			else if (props_instance != null && props_instance.Length > 0)
+				props = props_instance;
+			else
+				props = null;
+
+			//
+			// If we have something on the base.
+			if (props != null && props.Length > 0){
+				PropertyInfo pi = (PropertyInfo) props [0];
+
+				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
+				MethodInfo inherited_set = TypeManager.GetPropertySetter (pi);
+
+				MethodInfo reference = inherited_get == null ?
+					inherited_set : inherited_get;
+				
+				if (reference != null) {
+					string name = reference.DeclaringType.Name + "." + Name;
+
+					if (!CheckMethodAgainstBase (parent, flags, reference, name))
+						return false;
+				}
+
+				if (((ModFlags & Modifiers.NEW) == 0) && (pi.PropertyType != MemberType)) {
+					Report.Error (508, parent.MakeName (Name) + ": cannot " +
+						      "change return type when overriding inherited " +
+						      "member `" + pi.DeclaringType + "." + pi.Name + "'");
+					return false;
+				}
+			} else {
+				if ((ModFlags & Modifiers.NEW) != 0)
+					WarningNotHiding (parent);
+				
+				if ((ModFlags & Modifiers.OVERRIDE) != 0){
+					if (this is Indexer)
+						Report.Error (115, Location,
+							      parent.MakeName (Name) +
+							      " no suitable indexers found to override");
+					else
+						Report.Error (115, Location,
+							      parent.MakeName (Name) +
+							      " no suitable properties found to override");
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public void Emit (TypeContainer tc)
+		{
+			//
+			// The PropertyBuilder can be null for explicit implementations, in that
+			// case, we do not actually emit the ".property", so there is nowhere to
+			// put the attribute
+			//
+			if (PropertyBuilder != null)
+				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
+
+			if (GetData != null)
+				GetData.Emit (tc, Get.Block, Get);
+
+			if (SetData != null)
+				SetData.Emit (tc, Set.Block, Set);
+		}
+	}
+			
+	public class Property : PropertyBase {
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -3119,79 +3306,18 @@ namespace Mono.CSharp {
 		public Property (Expression type, string name, int mod_flags,
 				 Accessor get_block, Accessor set_block,
 				 Attributes attrs, Location loc)
-			: base (type, mod_flags, AllowedModifiers, name, attrs, loc)
+			: base (type, name, mod_flags, AllowedModifiers,
+				Parameters.EmptyReadOnlyParameters,
+				get_block, set_block, attrs, loc)
 		{
-			Get = get_block;
-			Set = set_block;
-		}
-
-		//
-		// Checks our base implementation if any
-		//
-		protected override bool CheckBase (TypeContainer parent)
-		{
-			//
-			// Find properties with the same name on the base class
-			//
-
-			MemberInfo [] props;
-			MemberInfo [] props_static = TypeManager.MemberLookup (
-				parent.TypeBuilder, 
-				parent.TypeBuilder.BaseType,
-				MemberTypes.Property, BindingFlags.Public | BindingFlags.Static,
-				Name);
-
-			MemberInfo [] props_instance = TypeManager.MemberLookup (
-				parent.TypeBuilder, 
-				parent.TypeBuilder.BaseType,
-				MemberTypes.Property, BindingFlags.Public | BindingFlags.Instance,
-				Name);
-
-			//
-			// Find if we have anything
-			//
-			if (props_static != null && props_static.Length > 0)
-				props = props_static;
-			else if (props_instance != null && props_instance.Length > 0)
-				props = props_instance;
-			else
-				props = null;
-
-			//
-			// If we have something on the base.
-			if (props != null && props.Length > 0){
-				if (props.Length > 1)
-					throw new Exception ("Should not happen");
-				
-				PropertyInfo pi = (PropertyInfo) props [0];
-
-				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
-				MethodInfo inherited_set = TypeManager.GetPropertySetter (pi);
-
-				MethodInfo reference = inherited_get == null ?
-					inherited_set : inherited_get;
-				
-				if (reference != null)
-					if (!CheckMethodAgainstBase (parent, flags, reference))
-						return false;
-				
-			} else {
-				if ((ModFlags & Modifiers.NEW) != 0)
-					WarningNotHiding (parent);
-				
-				if ((ModFlags & Modifiers.OVERRIDE) != 0){
-					Report.Error (115, Location,
-						      parent.MakeName (Name) +
-						      " no suitable properties found to override");
-					return false;
-				}
-			}
-			return true;
 		}
 
 		public override bool Define (TypeContainer parent)
 		{
 			if (!DoDefine (parent))
+				return false;
+
+			if (!CheckBase (parent))
 				return false;
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
@@ -3200,7 +3326,7 @@ namespace Mono.CSharp {
 				Type [] parameters = TypeManager.NoTypes;
 
 				InternalParameters ip = new InternalParameters (
-					parent, Parameters.GetEmptyReadOnlyParameters ());
+					parent, Parameters.EmptyReadOnlyParameters);
 
 				GetData = new MethodData (this, "get", MemberType,
 							  parameters, ip, CallingConventions.Standard,
@@ -3262,29 +3388,7 @@ namespace Mono.CSharp {
 			}
 			return true;
 		}
-		
-		public void Emit (TypeContainer tc)
-		{
-			EmitContext ec;
-
-			ec = new EmitContext (tc, Location, null, MemberType, ModFlags);
-
-			//
-			// The PropertyBuilder can be null for explicit implementations, in that
-			// case, we do not actually emit the ".property", so there is nowhere to
-			// put the attribute
-			//
-			if (PropertyBuilder != null)
-				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
-
-			if (GetData != null)
-				GetData.Emit (tc, Get.Block, Get);
-
-			if (SetData != null)
-				SetData.Emit (tc, Set.Block, Set);
-		}
 	}
-
 
 	/// </summary>
 	///  Gigantic workaround  for lameness in SRE follows :
@@ -3471,6 +3575,9 @@ namespace Mono.CSharp {
 			InternalParameters ip = new InternalParameters (
 				parent, new Parameters (parms, null, Location)); 
 
+			if (!CheckBase (parent))
+				return false;
+
 			//
 			// Now define the accessors
 			//
@@ -3587,7 +3694,7 @@ namespace Mono.CSharp {
 	// 
 	// int this [ args ]
  
-	public class Indexer : MemberBase {
+	public class Indexer : PropertyBase {
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -3602,13 +3709,6 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.ABSTRACT;
 
-		public readonly Parameters FormalParameters;
-		public readonly Accessor   Get, Set;
-		public MethodData          GetData;
-		public MethodData          SetData;
-		public MethodBuilder       GetBuilder;
-		public MethodBuilder       SetBuilder;
-		public PropertyBuilder PropertyBuilder;
 		public string IndexerName;
 		public string InterfaceIndexerName;
 
@@ -3617,18 +3717,14 @@ namespace Mono.CSharp {
 		//
 		bool IsImplementing = false;
 		
-		EmitContext ec;
-		
-		public Indexer (Expression type, string int_type, int flags, Parameters parms,
+		public Indexer (Expression type, string int_type, int flags, Parameters parameters,
 				Accessor get_block, Accessor set_block, Attributes attrs, Location loc)
-			: base (type, flags, AllowedModifiers, "", attrs, loc)
+			: base (type, "", flags, AllowedModifiers, parameters, get_block, set_block,
+				attrs, loc)
 		{
 			ExplicitInterfaceName = int_type;
-			FormalParameters = parms;
-			Get = get_block;
-			Set = set_block;
 		}
-			
+
 		public override bool Define (TypeContainer parent)
 		{
 			PropertyAttributes prop_attr =
@@ -3637,14 +3733,6 @@ namespace Mono.CSharp {
 			
 			if (!DoDefine (parent))
 				return false;
-
-			Type [] parameters = FormalParameters.GetParameterInfo (parent);
-
-			// Check if the and arguments were correct
-			if ((parameters == null) || !CheckParameters (parent, parameters))
-				return false;
-
-			ec = new EmitContext (parent, Location, null, MemberType, ModFlags);
 
 			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);
 			if (IndexerName == null)
@@ -3663,11 +3751,14 @@ namespace Mono.CSharp {
 				Name = ShortName;
 			}
 
+			if (!CheckBase (parent))
+				return false;
+
 			if (Get != null){
-                                InternalParameters ip = new InternalParameters (parent, FormalParameters);
+                                InternalParameters ip = new InternalParameters (parent, Parameters);
 
 				GetData = new MethodData (this, "get", MemberType,
-							  parameters, ip, CallingConventions.Standard,
+							  ParameterTypes, ip, CallingConventions.Standard,
 							  Get.OptAttributes, ModFlags, flags, false);
 
 				if (!GetData.Define (parent))
@@ -3677,12 +3768,12 @@ namespace Mono.CSharp {
 			}
 			
 			if (Set != null){
-				int top = parameters.Length;
+				int top = ParameterTypes.Length;
 				Type [] set_pars = new Type [top + 1];
-				parameters.CopyTo (set_pars, 0);
+				ParameterTypes.CopyTo (set_pars, 0);
 				set_pars [top] = MemberType;
 
-				Parameter [] fixed_parms = FormalParameters.FixedParameters;
+				Parameter [] fixed_parms = Parameters.FixedParameters;
 
 				if (fixed_parms == null){
 					throw new Exception ("We currently do not support only array arguments in an indexer");
@@ -3724,7 +3815,7 @@ namespace Mono.CSharp {
 			//
 			// Now name the parameters
 			//
-			Parameter [] p = FormalParameters.FixedParameters;
+			Parameter [] p = Parameters.FixedParameters;
 			if (p != null) {
 				int i;
 				
@@ -3742,8 +3833,8 @@ namespace Mono.CSharp {
 					SetBuilder.DefineParameter (
 						i + 1, ParameterAttributes.None, "value");
 					
-				if (i != parameters.Length) {
-					Parameter array_param = FormalParameters.ArrayParameter;
+				if (i != ParameterTypes.Length) {
+					Parameter array_param = Parameters.ArrayParameter;
 					SetBuilder.DefineParameter (
 						i + 1, array_param.Attributes, array_param.Name);
 				}
@@ -3760,10 +3851,9 @@ namespace Mono.CSharp {
 			// b) the indexer has a different IndexerName and this is no
 			//    explicit interface implementation.
 			//
-			if (!IsImplementing ||
-			    (!IsExplicitImpl && (IndexerName != InterfaceIndexerName))){
+			if (!IsExplicitImpl) {
 				PropertyBuilder = parent.TypeBuilder.DefineProperty (
-					IndexerName, prop_attr, MemberType, parameters);
+					IndexerName, prop_attr, MemberType, ParameterTypes);
 
 				if (GetData != null)
 					PropertyBuilder.SetGetMethod (GetBuilder);
@@ -3771,28 +3861,11 @@ namespace Mono.CSharp {
 				if (SetData != null)
 					PropertyBuilder.SetSetMethod (SetBuilder);
 				
-				TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
+				TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder,
+							     ParameterTypes);
 			}
 
 			return true;
-		}
-
-		public void Emit (TypeContainer tc)
-		{
-			//
-			// The PropertyBuilder can be null for explicit implementations, in that
-			// case, we do not actually emit the ".property", so there is nowhere to
-			// put the attribute
-			//
-			if (PropertyBuilder != null)
-				Attribute.ApplyAttributes (
-					ec, PropertyBuilder, this, OptAttributes, Location);
-
-			if (GetData != null)
-				GetData.Emit (tc, Get.Block, Get);
-
-			if (SetData != null)
-				SetData.Emit (tc, Set.Block, Set);
 		}
 	}
 
@@ -3908,7 +3981,8 @@ namespace Mono.CSharp {
 			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
 						     new Parameters (param_list, null, Location),
 						     OptAttributes, Mono.CSharp.Location.Null);
-			
+
+			OperatorMethod.IsOperator = true;			
 			OperatorMethod.Define (parent);
 
 			if (OperatorMethod.MethodBuilder == null)
@@ -4051,12 +4125,22 @@ namespace Mono.CSharp {
 		///   from the current assembly and class
 		/// </summary>
 		public static MemberFilter inheritable_method_signature_filter;
+
+		/// <summary>
+		///   This delegate is used to extract inheritable methods which
+		///   have the same signature as the argument.  By inheritable,
+		///   this means that we have permissions to override the method
+		///   from the current assembly and class
+		/// </summary>
+		public static MemberFilter inheritable_property_signature_filter;
 		
 		static MethodSignature ()
 		{
 			method_signature_filter = new MemberFilter (MemberSignatureCompare);
 			inheritable_method_signature_filter = new MemberFilter (
 				InheritableMemberSignatureCompare);
+			inheritable_property_signature_filter = new MemberFilter (
+				InheritablePropertySignatureCompare);
 		}
 		
 		public MethodSignature (string name, Type ret_type, Type [] parameters)
@@ -4107,27 +4191,35 @@ namespace Mono.CSharp {
 
 		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria)
 		{
-			MethodInfo mi;
-
-			if (! (m is MethodInfo))
-				return false;
-
 			MethodSignature sig = (MethodSignature) filter_criteria;
 
 			if (m.Name != sig.Name)
 				return false;
-			
-			mi = (MethodInfo) m;
 
+			Type ReturnType;
+			MethodInfo mi = m as MethodInfo;
+			PropertyInfo pi = m as PropertyInfo;
+
+			if (mi != null)
+				ReturnType = mi.ReturnType;
+			else if (pi != null)
+				ReturnType = pi.PropertyType;
+			else
+				return false;
+			
 			//
 			// we use sig.RetType == null to mean `do not check the
 			// method return value.  
 			//
 			if (sig.RetType != null)
-				if (mi.ReturnType != sig.RetType)
+				if (ReturnType != sig.RetType)
 					return false;
 
-			Type [] args = TypeManager.GetArgumentTypes (mi);
+			Type [] args;
+			if (mi != null)
+				args = TypeManager.GetArgumentTypes (mi);
+			else
+				args = TypeManager.GetArgumentTypes (pi);
 			Type [] sigp = sig.Parameters;
 
 			if (args.Length != sigp.Length)
@@ -4155,6 +4247,47 @@ namespace Mono.CSharp {
 		{
 		        if (MemberSignatureCompare (m, filter_criteria)){
 				MethodInfo mi = (MethodInfo) m;
+				MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
+
+				// If only accessible to the current class.
+				if (prot == MethodAttributes.Private)
+					return false;
+
+				// If only accessible to the defining assembly or 
+				if (prot == MethodAttributes.FamANDAssem ||
+				    prot == MethodAttributes.Assembly){
+					if (m.DeclaringType.Assembly == CodeGen.AssemblyBuilder)
+						return true;
+					else
+						return false;
+				}
+
+				// Anything else (FamOrAssembly and Public) is fine
+				return true;
+			}
+			return false;
+		}
+
+		//
+		// This filter should be used when we are requesting properties that
+		// we want to override.
+		//
+		// This makes a number of assumptions, for example
+		// that the methods being extracted are of a parent
+		// class (this means we know implicitly that we are
+		// being called to find out about members by a derived
+		// class).
+		// 
+		static bool InheritablePropertySignatureCompare (MemberInfo m, object filter_criteria)
+		{
+		        if (MemberSignatureCompare (m, filter_criteria)){
+				PropertyInfo pi = (PropertyInfo) m;
+
+				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
+				MethodInfo inherited_set = TypeManager.GetPropertySetter (pi);
+
+				MethodInfo mi = inherited_get == null ? inherited_set : inherited_get;
+
 				MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
 
 				// If only accessible to the current class.

@@ -47,25 +47,21 @@ namespace Mono.CSharp {
 		{
 			Report.Warning (
 				109, Location,
-				"The member `" + parent.Name + "." + Name + "' does not hide an " +
+				"The member " + parent.MakeName (Name) + " does not hide an " +
 				"inherited member.  The keyword new is not required");
 							   
 		}
 
-		static string MethodBaseName (MethodBase mb)
-		{
-			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
-		}
-
-		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method)
+		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method,
+							string name)
 		{
 			//
 			// FIXME: report the old/new permissions?
 			//
 			Report.Error (
-				507, "`" + parent_method + "." + Name +
-				": can't change the access modifiers from `" +
-				parent_method.DeclaringType.Name + "." + parent_method.Name + "'");
+				507, Location, parent.MakeName (Name) +
+				": can't change the access modifiers when overriding inherited " +
+				"member `" + name + "'");
 		}
 		
 		//
@@ -75,8 +71,8 @@ namespace Mono.CSharp {
 		// `name' is the user visible name for reporting errors (this is used to
 		// provide the right name regarding method names and properties)
 		//
-		protected bool CheckMethodAgainstBase (TypeContainer parent,
-						       MethodAttributes my_attrs, MethodInfo mb)
+		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodAttributes my_attrs,
+						       MethodInfo mb, string name)
 		{
 			bool ok = true;
 			
@@ -84,8 +80,8 @@ namespace Mono.CSharp {
 				if (!(mb.IsAbstract || mb.IsVirtual)){
 					Report.Error (
 						506, Location, parent.MakeName (Name) +
-						": cannot override inherited member " +
-						MethodBaseName (mb) + " because it is not " +
+						": cannot override inherited member `" +
+						name + "' because it is not " +
 						"virtual, abstract or override");
 					ok = false;
 				}
@@ -94,8 +90,8 @@ namespace Mono.CSharp {
 				
 				if (mb.IsFinal) {
 					Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
-						      "override inherited member " + MethodBaseName (mb) +
-						      " because it is sealed.");
+						      "override inherited member `" + name +
+						      "' because it is sealed.");
 					ok = false;
 				}
 
@@ -106,7 +102,7 @@ namespace Mono.CSharp {
 				MethodAttributes parentp = mb.Attributes & MethodAttributes.MemberAccessMask;
 
 				if (thisp != parentp){
-					Error_CannotChangeAccessModifiers (parent, mb);
+					Error_CannotChangeAccessModifiers (parent, mb, name);
 					ok = false;
 				}
 			}
@@ -116,10 +112,19 @@ namespace Mono.CSharp {
 					if (Name != "Finalize" && (RootContext.WarningLevel >= 2)){
 						Report.Warning (
 							114, Location, parent.MakeName (Name) + 
-							" hides inherited member " + MethodBaseName (mb) +
-							".  To make the current member override that " +
+							" hides inherited member `" + name +
+							"'.  To make the current member override that " +
 							"implementation, add the override keyword, " +
 							"otherwise use the new keyword");
+					}
+				}
+			} else {
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+					if (Name != "Finalize" && (RootContext.WarningLevel >= 1)){
+						Report.Warning (
+							108, Location, "The keyword new is required on " +
+							parent.MakeName (Name) + " because it hides " +
+							"inherited member `" + name + "'");
 					}
 				}
 			}

@@ -1,3 +1,32 @@
+2002-08-03  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (Method.IsOperator): New public field.
+	(Method.CheckBase): Report CS0111 if there's already a method
+	with the same parameters in the current class.  Report CS0508 when
+	attempting to change the return type of an inherited method.
+	(MethodData.Emit): Report CS0179 if a method doesn't have a body
+	and it's not marked abstract or extern.
+	(PropertyBase): New abstract base class for Property and Indexer.
+	(PropertyBase.CheckBase): Moved here from Property and made it work
+	for indexers.
+	(PropertyBase.Emit): Moved here from Property.Emit, Indexer.Emit is
+	the same so we can reuse it there.
+	(Property, Indexer): Derive from PropertyBase.
+	(MethodSignature.inheritable_property_signature_filter): New delegate
+	to find properties and indexers.
+
+	* decl.cs (MemberCore.CheckMethodAgainstBase): Added `string name'
+	argument and improved error reporting.
+
+	* parameter.cs (Parameters.GetEmptyReadOnlyParameters): Renamed to
+	EmptyReadOnlyParameters and made it a property.
+
+	* typemanager.cs (TypeManager.GetArgumentTypes): Added overloaded
+	version of this method which takes a `PropertyInfo indexer'.
+	(TypeManager.RegisterIndexer): New method.
+
+	* class.cs: Added myself as author of this file :-)
+
 2002-08-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* class.cs: fixed compilation on windoze.

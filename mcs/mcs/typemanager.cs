@@ -197,6 +197,12 @@ public class TypeManager {
 	static Hashtable method_arguments;
 
 	// <remarks>
+	//   Maps PropertyBuilder to a Type array that contains
+	//   the arguments to the indexer
+	// </remarks>
+	static Hashtable indexer_arguments;
+
+	// <remarks>
 	//   Maybe `method_arguments' should be replaced and only
 	//   method_internal_params should be kept?
 	// <remarks>
@@ -318,6 +324,7 @@ public class TypeManager {
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
+		indexer_arguments = new PtrHashtable ();
 		builder_to_container = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
@@ -1061,6 +1068,33 @@ public class TypeManager {
 			return types;
 		}
 	}
+
+	/// <summary>
+	///    Returns the argument types for an indexer based on its PropertyInfo
+	///
+	///    For dynamic indexers, we use the compiler provided types, for
+	///    indexers from existing assemblies we load them from GetParameters,
+	///    and insert them into the cache
+	/// </summary>
+	static public Type [] GetArgumentTypes (PropertyInfo indexer)
+	{
+		if (indexer_arguments.Contains (indexer))
+			return (Type []) indexer_arguments [indexer];
+		else {
+			ParameterInfo [] pi = indexer.GetIndexParameters ();
+			// Property, not an indexer.
+			if (pi == null)
+				return Type.EmptyTypes;
+			int c = pi.Length;
+			Type [] types = new Type [c];
+			
+			for (int i = 0; i < c; i++)
+				types [i] = pi [i].ParameterType;
+
+			indexer_arguments.Add (indexer, types);
+			return types;
+		}
+	}
 	
 	// <remarks>
 	//  This is a workaround the fact that GetValue is not
@@ -1166,7 +1200,17 @@ public class TypeManager {
 
 		return true;
 	}
-	
+
+	static public bool RegisterIndexer (PropertyBuilder pb, MethodBase get, MethodBase set, Type[] args)
+	{
+		if (!RegisterProperty (pb, get,set))
+			return false;
+
+		indexer_arguments.Add (pb, args);
+
+		return true;
+	}
+
 	//
 	// FIXME: we need to return the accessors depending on whether
 	// they are visible or not.
