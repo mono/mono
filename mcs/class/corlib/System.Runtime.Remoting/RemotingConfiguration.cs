@@ -102,7 +102,7 @@ namespace System.Runtime.Remoting
 			}
 		}
 	
-		private static ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes () 
+		public static ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes () 
 		{
 			ActivatedClientTypeEntry[] entries = new ActivatedClientTypeEntry[activatedClientEntries.Count];
 			activatedClientEntries.Values.CopyTo (entries,0);
@@ -274,6 +274,15 @@ namespace System.Runtime.Remoting
 					RegisterWellKnownServiceType ((WellKnownServiceTypeEntry)type);
 			}
 		}
+		
+#if NET_1_1
+		[MonoTODO]
+		public static bool CustomErrorsEnabled (bool isLocalRequest)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 	}
 
 	/***************************************************************

@@ -13,9 +13,11 @@
 using System;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting.Lifetime;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.Remoting {
 
+	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public class ObjectHandle : MarshalByRefObject, IObjectHandle {
 		private object _wrapped;
 		

@@ -301,10 +301,10 @@ namespace System.Runtime.Remoting
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static string GetSessionIdForMethodMessage(IMethodMessage msg)
 		{
-			throw new NotImplementedException (); 
+			// It seems that this it what MS returns.
+			return msg.Uri;
 		}
 
 		public static bool IsMethodOverloaded(IMethodMessage msg)
@@ -338,7 +338,7 @@ namespace System.Runtime.Remoting
 			return atts.Length > 0;
 		}
 
-		public static bool IsAsyncMessage(IMessage msg)
+		internal static bool IsAsyncMessage(IMessage msg)
 		{
 			if (! (msg is MonoMethodMessage)) return false;
 			else if (((MonoMethodMessage)msg).IsAsync) return true;

@@ -1,3 +1,12 @@
+2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* IObjectHandle.cs, ObjectHandle.cs: Added missing attributes.
+	* RemotingConfiguration.cs: GetRegisteredActivatedClientTypes made public.
+	  Declared CustomErrorsEnabled() method.
+	* RemotingServices.cs: Implemented GetSessionIdForMethodMessage().
+	  IsAsyncMessage must be internal.
+	* InternalRemotingServices.cs: Added.
+
 2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingServices.cs: Add ".rem" suffix to generated uri names.
