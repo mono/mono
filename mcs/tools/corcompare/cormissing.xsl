@@ -416,11 +416,11 @@
 	</xsl:template>
 
 	<xsl:template name="status">
-		<xsl:if test="@complete and @complete != 0">
+		<xsl:if test="@complete_total and @complete_total != 0">
 			<SPAN class="st">
 				<img src="cm/sc.gif"/>
 				<xsl:text>: </xsl:text>
-				<xsl:value-of select="@complete"/>
+				<xsl:value-of select="@complete_total"/>
 				<xsl:text>%</xsl:text>
 			</SPAN>
 		</xsl:if>
