@@ -1,3 +1,17 @@
+2003-07-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_is_assignable_from): New function to implement
+	the is_assignable_from logic. Used by mono_object_isinst, 
+	Type::IsAssignableFrom () and the interpreter.
+
+	* class.c (mono_class_is_subclass_of): Make all classes a subclass of
+	Object, even interfaces.
+	
+	* object.c (mono_object_isinst): Implement in terms of 
+	is_assignable_from.
+
+	* icall.c (ves_icall_type_is_assignable_from): New icall.
+
 2003-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* domain.c (foreach_domain): fix compiler warning.
