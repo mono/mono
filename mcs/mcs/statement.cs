@@ -1717,10 +1717,19 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if ((branching.Type == FlowBranchingType.LOOP_BLOCK) &&
-				    branching.MayLeaveLoop && (new_returns == FlowReturns.ALWAYS)) {
-					Returns = FlowReturns.SOMETIMES;
-					return FlowReturns.SOMETIMES;
+				if (branching.Type == FlowBranchingType.LOOP_BLOCK) {
+					Report.Debug (2, "MERGING LOOP BLOCK DONE", branching,
+						      branching.Infinite, branching.MayLeaveLoop,
+						      new_breaks, new_returns);
+
+					// If we may leave the loop, then we do not always return.
+					if (branching.MayLeaveLoop && (new_returns == FlowReturns.ALWAYS)) {
+						Returns = FlowReturns.SOMETIMES;
+						return FlowReturns.SOMETIMES;
+					}
+
+					// A `break' in a loop does not "break" in the outer block.
+					Breaks = FlowReturns.NEVER;
 				}
 
 				return new_returns;
