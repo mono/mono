@@ -30,7 +30,7 @@ class cilc
 		return 0;
 	}
 
-	static void Generate (string assembly, string target)
+	public static void Generate (string assembly, string target)
 	{
 		target_dir = target + Path.DirectorySeparatorChar;
 		if (!Directory.Exists (target_dir)) Directory.CreateDirectory (target_dir);
@@ -39,17 +39,19 @@ class cilc
 		dllname = Path.GetFileName (assembly);
 		AssemblyGen (a);
 
+		string soname = NsToFlat (Path.GetFileNameWithoutExtension (assembly)).ToLower ();
+
 		//create a makefile
 		CodeWriter makefile = new CodeWriter (target_dir + "Makefile");
 		makefile.Indenter = "\t";
 		makefile.WriteLine (@"OBJS = $(shell ls *.c | sed -e 's/\.c/.o/')");
 		makefile.WriteLine (@"CFLAGS = -static -fpic $(shell pkg-config --cflags glib-2.0 gobject-2.0 mono) -I.");
 		makefile.WriteLine ();
-		makefile.WriteLine ("all: lib" + ns.ToLower () + ".so");
+		makefile.WriteLine ("all: lib" + soname + ".so");
 		makefile.WriteLine ();
-		makefile.WriteLine ("lib" + ns.ToLower () + ".so: $(OBJS)");
+		makefile.WriteLine ("lib" + soname + ".so: $(OBJS)");
 		makefile.Indent ();
-		makefile.WriteLine ("gcc -Wall -fpic -shared `pkg-config --libs glib-2.0 gobject-2.0 mono` -lpthread $(OBJS) -o lib" + ns.ToLower () + ".so");
+		makefile.WriteLine ("gcc -Wall -fpic -shared `pkg-config --libs glib-2.0 gobject-2.0 mono` -lpthread $(OBJS) -o lib" + soname + ".so");
 		makefile.Outdent ();
 		makefile.WriteLine ();
 		makefile.WriteLine ("clean:");
