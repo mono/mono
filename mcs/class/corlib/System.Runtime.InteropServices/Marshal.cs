@@ -322,46 +322,32 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static string PtrToStringAnsi (IntPtr ptr) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static string PtrToStringAnsi (IntPtr ptr, int len) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static string PtrToStringAuto (IntPtr ptr, int len) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string PtrToStringAnsi (IntPtr ptr);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string PtrToStringAnsi (IntPtr ptr, int len);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern string PtrToStringAuto (IntPtr ptr);
+		public extern static string PtrToStringAuto (IntPtr ptr);
 		
-		[MonoTODO]
-		public static string PtrToStringBSTR (IntPtr ptr) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string PtrToStringAuto (IntPtr ptr, int len);
 
-		[MonoTODO]
-		public static string PtrToStringUni (IntPtr ptr) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string PtrToStringUni (IntPtr ptr);
 
-		[MonoTODO]
-		public static string PtrToStringUni (IntPtr ptr, int len) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string PtrToStringUni (IntPtr ptr, int len);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string PtrToStringBSTR (IntPtr ptr);
+		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void PtrToStructure (IntPtr ptr, object structure);
 
-		[MonoTODO]
-		public static object PtrToStructure (IntPtr ptr, Type structureType) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static object PtrToStructure (IntPtr ptr, Type structureType);
 
 		[MonoTODO]
 		public static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv) {
