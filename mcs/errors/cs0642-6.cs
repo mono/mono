@@ -1,13 +1,12 @@
 // cs0642.cs: Possible mistaken empty statement
-// Line: 10
+// Line: 9
 // Compiler options: -warnaserror -warn:3
 
 public class C
 {
-    public static void Main ()
+    public void Test ()
     {
-        int i= 5;
-        while (i++ < 100);
+        lock (this);
             { }
     }
 }
