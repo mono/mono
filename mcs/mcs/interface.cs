@@ -1038,6 +1038,9 @@ namespace Mono.CSharp {
 		public string GetSignature (DeclSpace ds)
 		{
 			ReturnType = ds.ResolveTypeExpr (ReturnType, false, Location);
+			if (ReturnType == null)
+				return null;
+			
 			Type ret = ReturnType.Type;
 			string args = Parameters.GetSignature (ds);
 
