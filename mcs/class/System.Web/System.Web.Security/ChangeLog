@@ -1,3 +1,8 @@
+2004-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthenticationModule.cs: don't renew expired cookies. Only renew
+	the cookie if SlidingExpiration is set. Thanks to Jim Pease.
+
 2004-08-03  Sanjay Gupta <gsanjay@novell.com>
 
 	* MembershipSortOptions.cs:
