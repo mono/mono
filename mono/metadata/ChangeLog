@@ -1,3 +1,8 @@
+2005-01-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c (mono_metadata_compute_size): Fix size calculation of
+	HasSematics encoded fields.
+	
 2004-12-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): Fix returning of
