@@ -38,7 +38,9 @@ namespace System.Reflection.Emit {
 		private CallingConvention native_cc;
 		private CallingConventions call_conv;
 		private bool init_locals = true;
+#if NET_1_2
 		private	GenericTypeParameterBuilder[] generic_params;
+#endif
 		private Type[] returnModReq;
 		private Type[] returnModOpt;
 		private Type[][] paramModReq;

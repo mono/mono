@@ -41,7 +41,9 @@ namespace System.Reflection.Emit {
 	private ModuleBuilder pmodule;
 	private int class_size;
 	private PackingSize packing_size;
+#if NET_1_2
 	private	GenericTypeParameterBuilder[] generic_params;
+#endif
 	private RefEmitPermissionSet[] permissions;	
 	#endregion
 	private Type created;
