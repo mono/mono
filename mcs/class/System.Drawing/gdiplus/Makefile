@@ -57,6 +57,10 @@ $(gdiplus) : $(local_sources:.c=.o)
 	$(CCOMPILE) -c -o $@ $^
 
 test-local: 
+	echo Done
+
+test:
+	echo DOne
 
 #detect.h detect.libs: detect-stamp
 #	sh detect
