@@ -1,3 +1,11 @@
+2003-03-21  Alan Tam <Tam@SiuLung.com>
+
+	* DataRow.cs: Fixed problems in accessers, BeginEdit, CancelEdit,
+	EndEdit and AcceptChanges to act correctly according to DataRowState
+	and DataRowVersion.
+	* DataRowCollection.cs: Call AttachRow and DetachRow when a row is
+	attached and detached from the collection.
+
 2003-03-20  Alan Tam <Tam@SiuLung.com>
 
 	* DataColumn.cs: Store empty string for Expression when null is passed in.

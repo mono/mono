@@ -61,7 +61,7 @@ namespace System.Data
 			//TODO: AutoIncrement
 			//TODO: validation
 			list.Add (row);
-			row.RowStateInternal = DataRowState.Added;
+			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
 		}
 
@@ -134,6 +134,7 @@ namespace System.Data
 		public void Remove (DataRow row) 
 		{
 			list.Remove (row);
+			row.DetachRow ();
 			table.DeletedDataRow (row, DataRowAction.Delete);
 		}
 
