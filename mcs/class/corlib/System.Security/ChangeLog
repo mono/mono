@@ -1,3 +1,8 @@
+2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityContextSwitcher.cs: Added missing [ReliabilityContract] to 
+	Undo method.
+
 2004-08-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Basic implementation for Demand (without

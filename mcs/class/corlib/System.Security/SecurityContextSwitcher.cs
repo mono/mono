@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace System.Security {
@@ -49,6 +50,7 @@ namespace System.Security {
 			return 0;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
 		public void Undo ()
 		{
 			_undo = true;
