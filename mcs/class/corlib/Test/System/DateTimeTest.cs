@@ -15,6 +15,7 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
+[TestFixture]
 public class DateTimeTest : TestCase
 {
 	private CultureInfo oldcult;
@@ -60,6 +61,165 @@ public class DateTimeTest : TestCase
 		DateTime t3 = new DateTime (2002,2,25,5,25,13,8);
 		AssertEquals("A11", myTicks[2], t3.Ticks);
 	}
+	
+	[Test]
+	public void Fields ()
+	{
+		AssertEquals ("J01", 3155378975999999999L, DateTime.MaxValue.Ticks);					
+		AssertEquals ("J02", 0, DateTime.MinValue.Ticks);
+	}
+	
+	[Test]
+	public void Add ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		TimeSpan span = new TimeSpan (3, 54, 1);
+		DateTime t2 = t1.Add (span);
+		
+		AssertEquals ("K01", 25, t2.Day);
+		AssertEquals ("K02", 19, t2.Hour);
+		AssertEquals ("K03", 19, t2.Minute);
+		AssertEquals ("K04", 14, t2.Second);
+		
+		AssertEquals ("K05", 25, t1.Day);
+		AssertEquals ("K06", 15, t1.Hour);
+		AssertEquals ("K07", 25, t1.Minute);
+		AssertEquals ("K08", 13, t1.Second);		
+	}
+	
+	[Test]
+	[ExpectedException(typeof (ArgumentOutOfRangeException))]
+	public void AddOutOfRangeException1 ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1.Add (TimeSpan.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException(typeof (ArgumentOutOfRangeException))]
+	public void AddOutOfRangeException2 ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1.Add (TimeSpan.MinValue);
+	}
+	
+	[Test]
+	public void AddDays ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1 = t1.AddDays (3);
+		AssertEquals ("L01", 28, t1.Day);
+		AssertEquals ("L02", 15, t1.Hour);
+		AssertEquals ("L03", 25, t1.Minute);
+		AssertEquals ("L04", 13, t1.Second);		
+		
+		t1 = t1.AddDays (1.9);
+		AssertEquals ("L05", 2, t1.Day);
+		AssertEquals ("L06", 13, t1.Hour);
+		AssertEquals ("L07", 1, t1.Minute);
+		AssertEquals ("L08", 13, t1.Second);		
+
+		t1 = t1.AddDays (0.2);
+		AssertEquals ("L09", 2, t1.Day);
+		AssertEquals ("L10", 17, t1.Hour);
+		AssertEquals ("L11", 49, t1.Minute);
+		AssertEquals ("L12", 13, t1.Second);				
+	}
+	
+	[Test]
+	[ExpectedException(typeof (ArgumentOutOfRangeException))]
+	public void AddDaysOutOfRangeException1 ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1.AddDays (10000000);
+	}
+
+	[Test]
+	[ExpectedException(typeof (ArgumentOutOfRangeException))]
+	public void AddDaysOutOfRangeException2 ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1.AddDays (-10000000);
+	}
+
+	[Test]
+	public void AddHours ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1 = t1.AddHours (10);
+		AssertEquals ("N01", 26, t1.Day);
+		AssertEquals ("N02", 1, t1.Hour);
+		AssertEquals ("N03", 25, t1.Minute);
+		AssertEquals ("N04", 13, t1.Second);		
+		
+		t1 = t1.AddHours (-3.7);
+		AssertEquals ("N05", 25, t1.Day);
+		AssertEquals ("N06", 21, t1.Hour);
+		AssertEquals ("N07", 43, t1.Minute);
+		AssertEquals ("N08", 13, t1.Second);		
+
+		t1 = t1.AddHours (3.732);
+		AssertEquals ("N09", 26, t1.Day);
+		AssertEquals ("N10", 1, t1.Hour);
+		AssertEquals ("N11", 27, t1.Minute);
+		AssertEquals ("N12", 8, t1.Second);				
+	}
+	
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void AddHoursOutOfRangeException1 ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1.AddHours (9E100);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void AddHoursOutOfRangeException2 ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1.AddHours (-9E100);
+	}
+	                                          
+	[Test]
+	public void AddMilliseconds ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1 = t1.AddMilliseconds (1E10);
+		AssertEquals ("O01", 21, t1.Day);
+		AssertEquals ("O02", 9, t1.Hour);
+		AssertEquals ("O03", 11, t1.Minute);
+		AssertEquals ("O04", 53, t1.Second);		
+		
+		t1 = t1.AddMilliseconds (-19E10);
+		AssertEquals ("O05", 13, t1.Day);
+		AssertEquals ("O06", 7, t1.Hour);
+		AssertEquals ("O07", 25, t1.Minute);
+		AssertEquals ("O08", 13, t1.Second);		
+
+		t1 = t1.AddMilliseconds (15.623);
+		AssertEquals ("O09", 13, t1.Day);
+		AssertEquals ("O10", 7, t1.Hour);
+		AssertEquals ("O11", 25, t1.Minute);
+		AssertEquals ("O12", 13, t1.Second);				
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void AddMillisecondsOutOfRangeException1 ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1.AddMilliseconds (9E100);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void AddMillisecondsOutOfRangeException2 ()
+	{
+		DateTime t1 = new DateTime (myTicks [1]);
+		t1.AddMilliseconds (-9E100);
+	}
+
 
 	public void TestToString ()
 	{
