@@ -3,7 +3,7 @@
 //
 // Author: Cesar Octavio Lopez Nataren
 //
-// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2003, 2004 Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
 //
@@ -31,22 +31,35 @@ using System;
 
 namespace Microsoft.JScript {
 
-	[AttributeUsage (AttributeTargets.Method |AttributeTargets.Constructor)]
+	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Constructor)]
 	public class JSFunctionAttribute : Attribute {
+
+		JSFunctionAttributeEnum value;
+		JSBuiltin built_in_function;
 
 		public JSFunctionAttribute (JSFunctionAttributeEnum value)
 		{
-			throw new NotImplementedException ();
+			this.value = value;
+			this.built_in_function = (JSBuiltin) 0;
 		}
 
-		public JSFunctionAttribute (JSFunctionAttributeEnum value, JSBuiltin builinFunction)
+		public JSFunctionAttribute (JSFunctionAttributeEnum value, JSBuiltin built_in_function)
 		{
-			throw new NotImplementedException ();
+			this.value = value;
+			this.built_in_function = built_in_function;
 		}
 
 		public JSFunctionAttributeEnum GetAttributeValue ()
 		{
-			throw new NotImplementedException ();
+			return value;
+		}
+		
+		internal bool IsBuiltIn {
+			get { return built_in_function != (JSBuiltin) 0; }
+		}
+
+		internal JSBuiltin BuiltIn {
+			get { return built_in_function; }
 		}
 	}
 }
