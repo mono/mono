@@ -643,9 +643,20 @@ namespace System.Reflection.Emit {
 
 			sym_writer.MarkSequencePoint (code_len, startLine, startColumn);
 		}
+
 		public virtual void ThrowException (Type exceptionType) {
-			throw new NotImplementedException ();
+			if (exceptionType == null)
+				throw new ArgumentNullException ("exceptionType");
+			if (! ((exceptionType == typeof (Exception)) || 
+				   exceptionType.IsSubclassOf (typeof (Exception))))
+				throw new ArgumentException ("Type should be an exception type", "exceptionType");
+			ConstructorInfo ctor = exceptionType.GetConstructor (new Type[0]);
+			if (ctor == null)
+				throw new ArgumentException ("Type should have a default constructor", "exceptionType");
+			Emit (OpCodes.Newobj, ctor);
+			Emit (OpCodes.Throw);
 		}
+
 		public void UsingNamespace (String usingNamespace) {
 			throw new NotImplementedException ();
 		}

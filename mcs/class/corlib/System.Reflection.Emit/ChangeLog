@@ -1,3 +1,7 @@
+2003-03-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ILGenerator.cs: Implemented ThrowException.
+
 2003-03-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ILGenerator.cs: Propagate maxstack info along branches.
