@@ -1,3 +1,7 @@
+2003-02-04  Patrik Torstensson
+
+	* AppDomain.cs: Fixed lease issue with appdomain
+
 2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* MarshalByRefObject.cs: Implemented GetLifetimeService() and 
@@ -6,9 +10,7 @@
 2003-02-03  Patrik Torstensson
 
 	* AppDomain.cs: New internalcalls for handling domain/context switches
-	
 	* AppDomain.cs (CreateDomain): Return transparant proxy for appdomain object
-	
 
 2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

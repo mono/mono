@@ -445,7 +445,6 @@ namespace System {
 		[MonoTODO]
 		public override object InitializeLifetimeService ()
 		{
-			throw new NotImplementedException ();			
 		}
 
 		[MonoTODO]
