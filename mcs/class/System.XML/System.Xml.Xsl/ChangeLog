@@ -1,3 +1,7 @@
+2005-02-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BUGS-MS.txt : explaination on the last standalone test revert.
+
 2005-02-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BUGS-MS.txt : more bug records.

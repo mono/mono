@@ -38,6 +38,7 @@ No. 0006
 
 
 Not sure the reason why:
+	From mdocs_mdocs01 to mdocs_mdocs18
 	whitespace_whitespace35
 
 Notes:
@@ -74,10 +75,14 @@ Notes:
 
 	gives
 
-		0: - 
-		1: <Foo />
+		1: - 
+		2: <Foo />
 
-	on both MS.NET and Mono. So Microsft must have another writer for
-	XML output, but I don't think that makes sense (at least it brings
-	inconsistent indentation behavior).
+	on both MS.NET and Mono, unlike those ConflictResolution tests expect:
+
+		1: - <Foo />
+
+	So Microsft must have another writer for XML output, but I don't
+	think that makes sense (at least it brings inconsistent indentation
+	behavior).
 
