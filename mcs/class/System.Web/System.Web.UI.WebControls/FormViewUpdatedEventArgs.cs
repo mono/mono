@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls
 		private bool exceptionHandled;
 		private bool keepEditMode;
 		
-		public DetailsViewUpdatedEventArgs (int affectedRows, Exception e)
+		public FormViewUpdatedEventArgs (int affectedRows, Exception e)
 		{
 			this.rowsAffected = affectedRows;
 			this.e = e;
