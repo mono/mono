@@ -90,8 +90,9 @@ mcs-do-run-test-profiles:
 	rm -fr $(tmpinst) ; $$ret
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
+# This doesn't yet work on the 2.0 profile (bug #71963)
 mcs-compileall:
-	d=`pwd`; for profile in $(build_profiles); do for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do echo $$i; $$d/mono-wrapper --compile-all $$i || exit 1; done; done
+	d=`pwd`; for profile in default; do for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do echo $$i; $$d/mono-wrapper --compile-all $$i || exit 1; done; done
 
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
