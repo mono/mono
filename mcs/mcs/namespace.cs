@@ -8,7 +8,6 @@
 //
 using System;
 using System.Collections;
-using Mono.Languages;
 
 namespace Mono.CSharp {
 
@@ -232,11 +231,11 @@ namespace Mono.CSharp {
 
 		public class AliasEntry {
 			public readonly string Name;
-			public readonly string Alias;
+			public readonly Expression Alias;
 			public readonly NamespaceEntry NamespaceEntry;
 			public readonly Location Location;
 			
-			public AliasEntry (NamespaceEntry entry, string name, string alias, Location loc)
+			public AliasEntry (NamespaceEntry entry, string name, Expression alias, Location loc)
 			{
 				Name = name;
 				Alias = alias;
@@ -252,8 +251,10 @@ namespace Mono.CSharp {
 					return resolved;
 
 				NamespaceEntry curr_ns = NamespaceEntry;
+
+				string alias = Alias.ToString ();
 				while ((curr_ns != null) && (resolved == null)) {
-					resolved = curr_ns.Lookup (null, Alias, Location);
+					resolved = curr_ns.Lookup (null, alias, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -346,7 +347,7 @@ namespace Mono.CSharp {
 			using_clauses.Add (ue);
 		}
 
-		public void UsingAlias (string alias, string namespace_or_type, Location loc)
+		public void UsingAlias (string alias, Expression namespace_or_type, Location loc)
 		{
 			if (aliases == null)
 				aliases = new Hashtable ();
@@ -575,7 +576,7 @@ namespace Mono.CSharp {
 					if (alias.Resolve () != null)
 						continue;
 
-					error246 (alias.Location, alias.Alias);
+					error246 (alias.Location, alias.Alias.ToString ());
 				}
 			}
 		}

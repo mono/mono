@@ -313,7 +313,7 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		  current_namespace.UsingAlias ((string) $2, (string) ($4).ToString (), lexer.Location);
+		  current_namespace.UsingAlias ((string) $2, (Expression) $4, lexer.Location);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken);
@@ -347,7 +347,7 @@ namespace_declaration
 					+ " Expected class, delegate, enum, interface, or struct");
 		}
 
-		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) ($3).ToString (), lexer.Location);
+		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, $3.ToString (), lexer.Location);
 	} 
 	  namespace_body opt_semicolon
 	  { 
