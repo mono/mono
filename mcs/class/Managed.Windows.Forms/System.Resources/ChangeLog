@@ -1,3 +1,9 @@
+2005-02-12  Geoff Norton  (gnorton@customerdna.com)
+
+	* ResXResourceReader.cs (load_data): Undo previous change as
+	ResXNullRef is now properly handled.
+	* ResXNullRef.cs: Added
+	
 2005-02-11  Geoff Norton  (gnorton@customerdna.com)
 
 	* ResXResourceReader.cs (load_data): Temporarily re-introduce the 

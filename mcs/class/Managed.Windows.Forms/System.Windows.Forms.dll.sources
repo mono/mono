@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
 Assembly/Locale.cs
+System.Resources/ResXNullRef.cs
 System.Resources/ResXResourceReader.cs
 System.Resources/ResXResourceWriter.cs
 System.Windows.Forms.Design/ComponentEditorForm.cs

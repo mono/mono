@@ -157,14 +157,12 @@ namespace System.Resources
 					Type tt = t == null ? null : Type.GetType (t);
 
 					if (t != null && tt == null) {
-						// We dont implement all the SWF Converters yet so lets silently reintroduce the broken behaviour for now
-						string s = get_value (reader, "value");
-						if (s != null) {
-							hasht [n] = s;
-						}
-						// throw new SystemException ("The type `" + t +"' could not be resolved");
-					} else 
-
+						throw new SystemException ("The type `" + t +"' could not be resolved");
+					}
+					if (tt == typeof (ResXNullRef)) {
+						hasht [n] = null;
+						continue;
+					}
 					if (n != null) {
 						object v = null;
 						string val = get_value (reader, "value");
@@ -172,16 +170,12 @@ namespace System.Resources
 							TypeConverter c = TypeDescriptor.GetConverter (tt);
 							v = c.ConvertFrom (Convert.FromBase64String (val));
 						} else if (tt != null) {
-							// Some of our converters are broken; lets hide that for now as well
-							try {
-								TypeConverter c = TypeDescriptor.GetConverter (tt);
-								v = c.ConvertFromString (val);
-						 	} catch {}
+							TypeConverter c = TypeDescriptor.GetConverter (tt);
+							v = c.ConvertFromString (val);
 						} else { 
 							v = val;
 						}
-						if (v != null) 
-							hasht [n] = v;
+						hasht [n] = v;
 					}
 				}
 			}
