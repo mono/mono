@@ -121,12 +121,18 @@ namespace Mono.CSharp {
 		static public void ResolveTree ()
 		{
 			//
-			// Interfaces are processed first, as classes and
+			// Process the attribute types separately and before anything else
+			//
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.DefineType ();
+			
+			//
+			// Interfaces are processed next, as classes and
 			// structs might inherit from an object or implement
 			// a set of interfaces, we need to be able to tell
 			// them appart by just using the TypeManager.
 			//
-
 			TypeContainer root = Tree.Types;
 
 			ArrayList ifaces = root.Interfaces;
@@ -135,13 +141,7 @@ namespace Mono.CSharp {
 					i.DefineType ();
 			}
 
-			//
-			// Process the attribute types separately and before anything else
-			//
-			if (attribute_types != null)
-				foreach (TypeContainer tc in attribute_types)
-					tc.DefineType ();
-				
+			
 			foreach (TypeContainer tc in root.Types) 
 				tc.DefineType ();
 

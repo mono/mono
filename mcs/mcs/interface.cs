@@ -274,7 +274,7 @@ namespace Mono.CSharp {
 		//
 		// Populates the methods in the interface
 		//
-		void PopulateMethod (InterfaceMethod im)
+		void PopulateMethod (TypeContainer parent, DeclSpace decl_space, InterfaceMethod im)
 		{
 			Type return_type = RootContext.LookupType (this, im.ReturnType, false, im.Location);
 			Type [] arg_types = im.ParameterTypes (this);
@@ -323,12 +323,18 @@ namespace Mono.CSharp {
 				if (i != arg_types.Length)
 					Console.WriteLine ("Implement the type definition for params");
 			}
+
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  return_type, ModFlags, false);
+
+			if (im.OptAttributes != null)
+				Attribute.ApplyAttributes (ec, mb, im, im.OptAttributes, Location);
 		}
 
 		//
 		// Populates the properties in the interface
 		//
-		void PopulateProperty (InterfaceProperty ip)
+		void PopulateProperty (TypeContainer parent, DeclSpace decl_space, InterfaceProperty ip)
 		{
 			PropertyBuilder pb;
 			MethodBuilder get = null, set = null;
@@ -395,6 +401,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  null, ModFlags, false);
+
+			if (ip.OptAttributes != null)
+				Attribute.ApplyAttributes (ec, pb, ip, ip.OptAttributes, Location);
+
 			TypeManager.RegisterProperty (pb, get, set);
 			property_builders.Add (pb);
 		}
@@ -402,7 +414,7 @@ namespace Mono.CSharp {
 		//
 		// Populates the events in the interface
 		//
-		void PopulateEvent (InterfaceEvent ie)
+		void PopulateEvent (TypeContainer parent, DeclSpace decl_space, InterfaceEvent ie)
 		{
 			//
 		        // FIXME: We need to do this after delegates have been
@@ -413,7 +425,7 @@ namespace Mono.CSharp {
 		//
 		// Populates the indexers in the interface
 		//
-		void PopulateIndexer (InterfaceIndexer ii)
+		void PopulateIndexer (TypeContainer parent, DeclSpace decl_space, InterfaceIndexer ii)
 		{
 			PropertyBuilder pb;
 			Type prop_type = RootContext.LookupType (this, ii.Type, false, ii.Location);
@@ -503,8 +515,12 @@ namespace Mono.CSharp {
 				
 				set_item.DefineParameter (i + 1, ParameterAttributes.None, "value");
 			}
-			TypeManager.RegisterProperty (pb, get_item, set_item);
-			property_builders.Add (pb);
+
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  null, ModFlags, false);
+
+			if (ii.OptAttributes != null)
+				Attribute.ApplyAttributes (ec, pb, ii, ii.OptAttributes, Location);
 		}
 
 		/// <summary>
@@ -663,24 +679,24 @@ namespace Mono.CSharp {
 
 			if (defined_method != null){
 				foreach (InterfaceMethod im in defined_method)
-					PopulateMethod (im);
+					PopulateMethod (parent, this, im);
 			}
 
 			if (defined_properties != null){
 				foreach (InterfaceProperty ip in defined_properties)
-					PopulateProperty (ip);
+					PopulateProperty (parent, this, ip);
 			}
 
 			if (defined_events != null)
 				foreach (InterfaceEvent ie in defined_events)
-					PopulateEvent (ie);
+					PopulateEvent (parent, this, ie);
 
 			//
 			// FIXME: Pull the right indexer name out of the `IndexerName' attribute
 			//
 			if (defined_indexer != null) {
 				foreach (InterfaceIndexer ii in defined_indexer)
-					PopulateIndexer (ii);
+					PopulateIndexer (parent, this, ii);
 
 				CustomAttributeBuilder cb = EmitDefaultMemberAttr (
 					parent, "Item", ModFlags, Location);

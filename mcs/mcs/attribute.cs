@@ -437,7 +437,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Event) {
+			} else if (element is Event || element is InterfaceEvent) {
 				if ((targets & AttributeTargets.Event) != 0)
 					return true;
 				else
@@ -452,7 +452,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Method || element is Operator) {
+			} else if (element is Method || element is Operator || element is InterfaceMethod) {
 				if ((targets & AttributeTargets.Method) != 0)
 					return true;
 				else
@@ -462,7 +462,8 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Property || element is Indexer) {
+			} else if (element is Property || element is Indexer ||
+				   element is InterfaceProperty || element is InterfaceIndexer) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
@@ -559,12 +560,11 @@ namespace Mono.CSharp {
 
 					if (!(kind is TypeContainer))
 						if (!CheckAttribute (a, kind)) {
-								Console.WriteLine ("Kind is: " + kind);
 							Error_AttributeNotValidForElement (a, loc);
 							return;
 						}
 
-					if (kind is Method || kind is Operator) {
+					if (kind is Method || kind is Operator || kind is InterfaceMethod) {
 
 						if (a.Type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
@@ -578,9 +578,10 @@ namespace Mono.CSharp {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Field) {
 						((FieldBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Property || kind is Indexer) {
+					} else if (kind is Property || kind is Indexer ||
+						   kind is InterfaceProperty || kind is InterfaceIndexer) {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Event) {
+					} else if (kind is Event || kind is InterfaceEvent) {
 						((MyEventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder) {
 

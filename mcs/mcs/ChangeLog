@@ -1,3 +1,19 @@
+2002-05-25  Ravi Pratap  <ravi@ximian.com>
+
+	* interface.cs (Populate*): Pass in the TypeContainer as well as
+	the DeclSpace as parameters so that we can create EmitContexts and
+	then use that to apply attributes etc.
+
+	(PopulateMethod, PopulateEvent, PopulateProperty)
+	(PopulateIndexer): Apply attributes everywhere.
+
+	* attribute.cs (CheckAttribute): Include InterfaceMethod, InterfaceEvent
+	etc.
+
+	(ApplyAttributes): Update accordingly.
+
+	We now apply interface attributes for all members too.
+
 2002-05-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Indexer.Define); Correctly check if we are explicit
@@ -66,6 +82,7 @@
 	* class.cs: If there is a problem with the parameter types,
 	return. 
 
+>>>>>>> 1.492
 2002-05-24  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (ImplicitConversionExists): Wrapper function which also
