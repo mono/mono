@@ -1,3 +1,11 @@
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: use the argument name when throwing exception.
+
+	* StreamReader.cs:
+	* StringReader.cs:
+	* TextReader.cs: added [In] attribute for the array in Read.
+
 2003-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DirectoryInfo.cs: fixed ToString. Closes bug #50842.

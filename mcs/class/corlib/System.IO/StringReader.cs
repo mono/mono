@@ -6,6 +6,7 @@
 
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.IO {
 	[Serializable]
@@ -68,7 +69,8 @@ namespace System.IO {
 		// the actual number of characters read, or zero if the end of the string
 		// has been reached and no characters are read.
 
-		public override int Read( char[] buffer, int index, int count ) {
+		public override int Read ([In] char [] buffer, int index, int count)
+		{
 
 			CheckObjectDisposedException ();
 

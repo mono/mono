@@ -77,7 +77,7 @@ namespace System.IO
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync)
 		{
 			if (name == null) {
-				throw new ArgumentNullException ("Name is null");
+				throw new ArgumentNullException ("name");
 			}
 			
 			if (name == "") {
