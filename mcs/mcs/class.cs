@@ -2156,6 +2156,14 @@ namespace Mono.CSharp {
 
 			parameter_info = new InternalParameters (container, Parameters);
 
+			Parameter array_param = Parameters.ArrayParameter;
+			if ((array_param != null) &&
+			    (!array_param.ParameterType.IsArray ||
+			     (array_param.ParameterType.GetArrayRank () != 1))) {
+				Report.Error (225, Location, "params parameter has to be a single dimensional array");
+				return false;
+			}
+
 			return true;
 		}
 
@@ -2222,7 +2230,7 @@ namespace Mono.CSharp {
 			if (Parameters.ArrayParameter != null){
 				ParameterBuilder pb;
 				Parameter array_param = Parameters.ArrayParameter;
-				
+
 				if (mb == null)
 					pb = cb.DefineParameter (
 						i + 1, array_param.Attributes,
@@ -4455,6 +4463,7 @@ namespace Mono.CSharp {
 					
 				if (i != ParameterTypes.Length) {
 					Parameter array_param = Parameters.ArrayParameter;
+
 					SetBuilder.DefineParameter (
 						i + 1, array_param.Attributes, array_param.Name);
 				}
