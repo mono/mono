@@ -1,10 +1,5 @@
 2004-12-19  Zoltan Varga  <vargaz@freemail.hu>
 
-	* mini.c (mono_method_to_ir): Optimize the common ldobj+stloc 
-	combination to avoid doing two copies.
-
-	* mini.c: Fix 64 bit warnings.
-
 	* mini-x86.c (INST_IGNORES_CFLAGS): Add OP_STOREI4_MEMBASE_REG.
 
 2004-12-17  Zoltan Varga  <vargaz@freemail.hu>
