@@ -3,4 +3,4 @@ TEST_SOURCES = \
 	simple-assign-bool global-bool-lits global-id global-num global-sum \
 	global-assign-sum empty-func func-form-params func-total-locals func-nested \
 	greater-than less-than greater-than-eq less-than-eq assign-less-than-eq \
-	log-ops
+	log-ops iteration-stmts
