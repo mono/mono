@@ -1,3 +1,8 @@
+2005-01-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SerializationCodeGenerator.cs: don't use _config if it has not been
+	assigned.
+
 2005-01-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlReflectionImporter.cs: Don't check the property type if it has
