@@ -600,6 +600,24 @@ public class ArrayTest : TestCase
 		Array c2 = Array.CreateInstance(Type.GetType("System.Char"), 12, 5);
 		AssertEquals("#F08", 2, c2.Rank);
 		AssertEquals("#F09", 60, c2.Length);
+
+
+		{
+			int[] lengths = { 3 };
+			int[] bounds = { 5 };
+			int[] src = { 512, 718, 912 };
+			Array array = Array.CreateInstance(typeof(int), lengths, bounds);
+
+			AssertEquals("#F10", 3, array.Length);
+			AssertEquals("#F11", 5, array.GetLowerBound(0));
+			AssertEquals("#F12", 7, array.GetUpperBound(0));
+
+			src.CopyTo (array, 5);
+
+			for (int i = 0; i < src.Length; i++)
+				AssertEquals("#F13(" + i + ")", src[i], array.GetValue(i+5));
+		}
+
 	}
 
 	public void TestGetEnumerator() {

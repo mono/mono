@@ -1,5 +1,8 @@
 2002-03-06  Martin Baulig  <martin@gnome.org>
 
+	* ArrayTest.cs (TestCopyTo): Added testcases #F10-#F13 for arrays with
+	non-zero lower bounds.
+
 	* ArrayTest.cs (TestCopyTo): Added test for copying an empty array
 	to an empty array.
 
