@@ -1,3 +1,9 @@
+2004-05-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs: Add patch from Robert Shade
+	<rshade@dvsconsulting.com>, use FileAccess.Read on the keyfile, to
+	sync with mcs.
+
 2004-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: Updated to latest version. Fix issue with 
