@@ -150,7 +150,6 @@
 
 	* mono-debug-debugger.c: Added support for constructors.
 
->>>>>>> 1.1094
 2003-09-06  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_TypeBuilder_get_IsUnboundGenericParameter):
