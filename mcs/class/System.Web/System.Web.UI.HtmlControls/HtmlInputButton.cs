@@ -14,6 +14,10 @@ namespace System.Web.UI.HtmlControls{
 		
 		private static readonly object EventServerClick;
 		
+		public HtmlInputButton(): base ("button")
+		{
+		}
+		
 		public HtmlInputButton(string type): base(type){}
 		
 		protected void OnServerClick(EventArgs e){

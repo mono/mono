@@ -38,22 +38,24 @@ namespace System.Web.UI.HtmlControls{
 			base.RenderAttributes(writer);
 		}
 		
-		//TODO: adapt code for non-IE browsers
 		protected override void Render(HtmlTextWriter output){
-			if (Page.SmartNavigation == true){
-				((IAttributeAccessor) this).SetAttribute("_smartNavigation","true");
-				HttpBrowserCapabilities browserCap = Context.Request.Browser;
-				if (browserCap.Browser.ToLower() != "ie" && browserCap.MajorVersion < 5){
-					base.Render(output);
-					return;
-				}
-				output.WriteLine("<IFRAME ID=_hifSmartNav NAME=_hifSmartNav STYLE=display:none ></IFRAME>");
-				
-				if (browserCap.MinorVersion < 0.5 && browserCap.MajorVersion != 5)
-					Page.RegisterClientScriptFile("SmartNavIncludeScript","JScript","SmartNavIE5.js");
-				else if (Page.IsPostBack) Page.RegisterClientScriptFile("SmartNavIncludeScript","JScript","SmartNav.js");
-				base.Render(output);
+			if (Page.SmartNavigation == false){
+				base.Render (output);
+				return;
 			}
+
+			((IAttributeAccessor) this).SetAttribute("_smartNavigation","true");
+			HttpBrowserCapabilities browserCap = Context.Request.Browser;
+			if (browserCap.Browser.ToLower() != "ie" && browserCap.MajorVersion < 5){
+				base.Render(output);
+				return;
+			}
+			output.WriteLine("<IFRAME ID=_hifSmartNav NAME=_hifSmartNav STYLE=display:none ></IFRAME>");
+				
+			if (browserCap.MinorVersion < 0.5 && browserCap.MajorVersion != 5)
+				Page.RegisterClientScriptFile("SmartNavIncludeScript","JScript","SmartNavIE5.js");
+			else if (Page.IsPostBack) Page.RegisterClientScriptFile("SmartNavIncludeScript","JScript","SmartNav.js");
+			base.Render(output);
 		}
 		
 		protected override void RenderChildren(HtmlTextWriter writer){

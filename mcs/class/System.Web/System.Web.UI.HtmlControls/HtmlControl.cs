@@ -63,11 +63,16 @@ namespace System.Web.UI.HtmlControls{
 			Attributes[name] = value;
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+		protected virtual void RenderBeginTag (HtmlTextWriter writer)
 		{
 			writer.WriteBeginTag (TagName);
 			RenderAttributes (writer);
 			writer.Write ('>');
+		}
+
+		protected override void Render (HtmlTextWriter writer)
+		{
+			RenderBeginTag (writer);
 		}
 		
 		protected virtual void RenderAttributes(HtmlTextWriter writer){
@@ -79,35 +84,23 @@ namespace System.Web.UI.HtmlControls{
 		
 		public AttributeCollection Attributes
 		{
-			get
-			{
-				return _attributes;
-			}
+			get { return _attributes; }
 		}
+
 		public bool Disabled
 		{
-			get
-			{
-				return _disabled;
-			}
-			set
-			{
-				_disabled = value;
-			}
+			get { return _disabled; }
+			set { _disabled = value; }
 		}
+
 		public CssStyleCollection Style
 		{
-			get
-			{
-				return _attributes.CssStyle;
-			}
+			get { return _attributes.CssStyle; }
 		}
+
 		public virtual string TagName
 		{
-			get
-			{
-				return _tagName;
-			}
+			get { return _tagName; }
 		}
 	}
 }

@@ -1,3 +1,15 @@
+2002-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlControl.cs: Render contents moved to new RenderBeginTag method,
+	defined in MS docs. 
+	
+	* HtmlForm.cs: Render output when no IE browser.
+
+	* HtmlInputButton.cs: added constructor without arguments. Xsp used it, 
+	though now it always use the other .ctor.
+	
+	* HtmlInputControl.cs: cosmetic changes and implemented set_Name.
+
 2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlButton.cs: RenderAttributes is an override, not new.

@@ -384,8 +384,12 @@ public class Page : TemplateControl, IHttpHandler
 		_context = context;
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 		
-		foreach (Control ctrl in Controls)
+		foreach (Control ctrl in Controls){
+			// Assing Control.Page here. Controls should do the same before 
+			// rendering their children
+			ctrl.Page = this;
 			ctrl.RenderControl (output);
+		}
 	}
 
 	protected virtual void RaisePostBackEvent (IPostBackEventHandler sourceControl, string eventArgument)

@@ -1,3 +1,8 @@
+2002-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: for each child control to render, assign Control.Page.
+	Probably also needed in HtmlContainerControl derived classes.
+	
 2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AttributeCollection.cs: don't need a Hastable. StateBag now works 
