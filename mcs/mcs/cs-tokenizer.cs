@@ -1947,11 +1947,14 @@ namespace Mono.CSharp
 					} else if (d == '*'){
 						getChar ();
 						bool docAppend = false;
+						bool expecting_end_of_comment = true;
+						
 						if (RootContext.Documentation != null && peekChar () == '*') {
 							getChar ();
 							// But when it is /**/, just do nothing.
 							if (peekChar () == '/') {
 								getChar ();
+								expecting_end_of_comment = false;
 								continue;
 							}
 							if (doc_state == XmlCommentState.Allowed)
@@ -1973,6 +1976,7 @@ namespace Mono.CSharp
 								getChar ();
 								col++;
 								comments_seen = true;
+								expecting_end_of_comment = false;
 								break;
 							}
 							if (docAppend)
@@ -1996,6 +2000,10 @@ namespace Mono.CSharp
 
 						if (docAppend)
 							update_formatted_doc_comment (current_comment_start);
+
+						if (expecting_end_of_comment)
+							Report.Error (1035, Location, "End-of-file found, '*/' expected");
+						
 						continue;
 					}
 					goto is_punct_label;

@@ -2400,9 +2400,6 @@ namespace Mono.CSharp {
 
 					if (l == r)
 						return this;
-					
-					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
-						return this;
 
 					//
 					// Also, a standard conversion must exist from either one
@@ -2421,9 +2418,17 @@ namespace Mono.CSharp {
 						right = new EmptyCast (right, TypeManager.object_type);
 
 					//
-					// FIXME: CSC here catches errors cs254 and cs252
-					//
-					return this;
+					// Report CS0252 / CS0253 if we have to invoke Object.op_Equality
+					// even when either l or r implements of op_Equality.
+					// 
+					if (!HasEqualityOperatorForType (l, r))
+						Warning_UnintendedReferenceComparison (loc, "right", r.FullName);
+					
+					else if (!HasEqualityOperatorForType (r, l))
+						Warning_UnintendedReferenceComparison (loc, "left", l.FullName);
+
+					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
+						return this;
 				}
 
 				//
@@ -2691,6 +2696,29 @@ namespace Mono.CSharp {
 			}
 
 			return this;
+		}
+
+		// Checks whether or not 'container' has op_Equality that can handle 'comparison_type'.
+		public static bool HasEqualityOperatorForType (Type container, Type comparison_type)
+		{
+			// Can't call GetMethod here as there could be multiple impl. of op_Equality.
+			MethodInfo [] methods = container.GetMethods ();
+			foreach (MethodInfo m in methods) {
+				if (m.Name == "op_Equality") {
+					foreach (ParameterInfo param in m.GetParameters ()) {
+						if (param.ParameterType == comparison_type)
+							return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		public static void Warning_UnintendedReferenceComparison (Location loc, string direction, string type_name)
+		{
+			Report.Warning ((direction == "left" ? 252 : 253), 2, loc,
+					"Possible unintended reference comparison; to get a value comparison, " +
+					"cast the " + direction + " hand side to type " + type_name + ".");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
