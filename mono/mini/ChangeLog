@@ -1,3 +1,9 @@
+2005-01-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_local_regalloc): Fix a bug introduced by the
+	previous patch.
+
+	* inssel.brg: Fix a warning.
 
 Wed Jan 5 16:40:18 CET 2005 Paolo Molaro <lupus@ximian.com>
 
