@@ -1,3 +1,21 @@
+2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* class.h: Added MonoRemoteClass struct.
+	* domain.c: Changed hash function for proxy_vtable_hash. It now uses a
+	function for MonoStrings.
+	* icall.c: In GetTransparentProxy, assign a MonoRemoteClass to the proxy.
+	Added internal call for getting the proxy type.
+	* marshal.c: Get the type of transparent proxies from its remote_class.
+	Added methods that generate the IL for type checks and casts:
+	mono_marshal_get_isinst, mono_marshal_get_castclass, 
+	mono_marshal_get_proxy_cancast.
+	* marshal.h: Declaration of the previous new methods.
+	* object.c: Added new moethods for creating and updating MonoRemoteClass
+	instances: mono_remote_class, mono_upgrade_remote_class, 
+	* object.h: Added MonoRemoteClass reference in MonoTransparentProxy.
+	* verify.c: FIx transparent_proxy_fields layout.
+	* appdomain.c: Bump corlib version.
+
 2004-03-04  Jackson Harper  <jackson@ximian.com>
 
 	* icall.c: Add icall to access char conversion tables.
