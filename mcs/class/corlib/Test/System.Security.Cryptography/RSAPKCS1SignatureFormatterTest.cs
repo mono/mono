@@ -2,9 +2,10 @@
 // RSAPKCS1SignatureFormatterTest.cs - NUnit tests for PKCS#1 v.1.5 signature.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -20,7 +21,21 @@ namespace MonoTests.System.Security.Cryptography {
 		private static byte[] signatureRSASHA384 = { 0x86, 0x20, 0x2A, 0xB6, 0xA8, 0x0F, 0x59, 0x42, 0xCA, 0x83, 0xC3, 0x46, 0x2C, 0xA9, 0x2E, 0x62, 0x73, 0x2C, 0xEE, 0x52, 0xA5, 0xAE, 0x4F, 0xFD, 0xB1, 0x1F, 0xFA, 0x0C, 0x71, 0x4A, 0xFD, 0xE2, 0xAC, 0x64, 0x1C, 0x63, 0x41, 0xB8, 0x43, 0x3F, 0x8A, 0xF3, 0x7E, 0x1C, 0x25, 0xBE, 0xEE, 0xFC, 0x7C, 0xCB, 0x33, 0x72, 0x3B, 0x91, 0x1F, 0xF3, 0x78, 0xC2, 0xD0, 0xEA, 0xDF, 0x69, 0xE9, 0x31, 0x2F, 0x39, 0x32, 0x5F, 0x4A, 0x51, 0xAE, 0x24, 0x9E, 0x96, 0x77, 0xFB, 0x16, 0xC4, 0xDD, 0x98, 0xDA, 0xA9, 0x9D, 0xA0, 0x7C, 0x2C, 0x95, 0x12, 0x53, 0x1F, 0x7B, 0x23, 0xEE, 0x78, 0x95, 0x57, 0xFF, 0x02, 0x57, 0x2B, 0x4A, 0x3E, 0x62, 0x6A, 0xC0, 0x99, 0xDF, 0x4B, 0x7E, 0xBF, 0x86, 0xC4, 0xFB, 0x8E, 0xF3, 0x70, 0xA2, 0xEE, 0x7B, 0xCA, 0x8B, 0x22, 0xA4, 0x07, 0xBA, 0xBD, 0x16, 0xA9 };
 		private static byte[] signatureRSASHA512 = { 0xB7, 0x7E, 0x7E, 0xEF, 0x95, 0xCE, 0xE8, 0x9D, 0x0F, 0x40, 0x35, 0x50, 0x88, 0xFE, 0x8B, 0xA3, 0x26, 0xD3, 0x9E, 0xA7, 0x82, 0x23, 0x1A, 0x46, 0x13, 0x46, 0x81, 0x59, 0xD1, 0x24, 0x45, 0xAC, 0x53, 0xEF, 0x5A, 0x06, 0x31, 0xA7, 0xC2, 0x76, 0xDC, 0x2B, 0x60, 0x69, 0xB1, 0x36, 0x1D, 0xE1, 0xFC, 0xD5, 0x9A, 0x01, 0x71, 0x08, 0xE9, 0x0C, 0xAE, 0xF4, 0x29, 0xCF, 0xC4, 0xB0, 0x60, 0xA4, 0xBE, 0x1C, 0x9B, 0x05, 0x2A, 0xA9, 0x6A, 0x12, 0xFF, 0x73, 0x84, 0x5C, 0xA8, 0x74, 0x5B, 0x9C, 0xA2, 0x07, 0x9D, 0x73, 0xB8, 0xE3, 0x20, 0x16, 0x3C, 0x47, 0x8F, 0x27, 0x7A, 0x48, 0xAF, 0x01, 0x07, 0xA0, 0x6A, 0x2D, 0x71, 0xAD, 0xDD, 0x8B, 0x68, 0xC8, 0x32, 0x61, 0x95, 0x68, 0x22, 0x1B, 0x8B, 0xD9, 0x86, 0xA7, 0xBE, 0x60, 0x06, 0x70, 0x7C, 0xED, 0x51, 0x28, 0x66, 0x28, 0xF0, 0x65 };
 
+		private static RSA rsa;
+		private static DSA dsa;
+
 		private RSAPKCS1SignatureFormatter fmt;
+
+		[SetUp]
+		void SetUp () 
+		{
+			if (rsa == null) {
+				rsa = RSA.Create ();
+				rsa.ImportParameters (AllTests.GetRsaKey (true));
+			}
+			if (dsa == null)
+				dsa = DSA.Create ();
+		}
 
 		public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 		{
@@ -44,7 +59,6 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void ConstructorRSA () 
 		{
-			RSA rsa = RSA.Create ();
 			fmt = new RSAPKCS1SignatureFormatter (rsa);
 			AssertNotNull ("RSAPKCS1SignatureFormatter(rsa)", fmt);
 		}
@@ -53,7 +67,6 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (InvalidCastException))]
 		public void ConstructorDSA () 
 		{
-			DSA dsa = DSA.Create ();
 			fmt = new RSAPKCS1SignatureFormatter (dsa);
 		}
 
@@ -61,7 +74,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void SetKeyRSA () 
 		{
 			fmt = new RSAPKCS1SignatureFormatter ();
-			fmt.SetKey (RSA.Create ());
+			fmt.SetKey (rsa);
 		}
 
 		[Test]
@@ -69,7 +82,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void SetKeyDSA () 
 		{
 			fmt = new RSAPKCS1SignatureFormatter ();
-			fmt.SetKey (DSA.Create ());
+			fmt.SetKey (dsa);
 		}
 
 		[Test]
@@ -126,6 +139,16 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+		public void CreateSignatureNullHash () 
+		{
+			fmt = new RSAPKCS1SignatureFormatter ();
+			fmt.SetKey (rsa);
+			byte[] hash = null;
+			byte[] signature = fmt.CreateSignature (hash);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
 		public void CreateSignatureNoHashAlgorithm () 
 		{
 			fmt = new RSAPKCS1SignatureFormatter ();
@@ -150,8 +173,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			fmt = new RSAPKCS1SignatureFormatter ();
 			// we need the private key 
-			RSA rsa = RSA.Create ();
-			rsa.ImportParameters (AllTests.GetRsaKey (true));
 			fmt.SetKey (rsa);
 			// good SHA1
 			fmt.SetHashAlgorithm ("SHA1");
@@ -166,8 +187,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			fmt = new RSAPKCS1SignatureFormatter ();
 			// we need the private key 
-			RSA rsa = RSA.Create ();
-			rsa.ImportParameters (AllTests.GetRsaKey (true));
 			fmt.SetKey (rsa);
 			// wrong length SHA1
 			fmt.SetHashAlgorithm ("SHA1");
@@ -180,8 +199,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			fmt = new RSAPKCS1SignatureFormatter ();
 			// we need the private key 
-			RSA rsa = RSA.Create ();
-			rsa.ImportParameters (AllTests.GetRsaKey (true));
 			fmt.SetKey (rsa);
 			// good MD5
 			fmt.SetHashAlgorithm ("MD5");
@@ -261,8 +278,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			fmt = new RSAPKCS1SignatureFormatter ();
 			// we need the private key 
-			RSA rsa = RSA.Create ();
-			rsa.ImportParameters (AllTests.GetRsaKey (true));
 			fmt.SetKey (rsa);
 			// null (bad ;-)
 			byte[] hash = null;
@@ -298,8 +313,6 @@ namespace MonoTests.System.Security.Cryptography {
 			fmt = new RSAPKCS1SignatureFormatter ();
 			byte[] data = new byte [20];
 			// we need the private key 
-			RSA rsa = RSA.Create ();
-			rsa.ImportParameters (AllTests.GetRsaKey (true));
 			fmt.SetKey (rsa);
 			// good SHA1
 			HashAlgorithm hash = SHA1.Create ();
@@ -314,8 +327,6 @@ namespace MonoTests.System.Security.Cryptography {
 			fmt = new RSAPKCS1SignatureFormatter ();
 			byte[] data = new byte [16];
 			// we need the private key 
-			RSA rsa = RSA.Create ();
-			rsa.ImportParameters (AllTests.GetRsaKey (true));
 			fmt.SetKey (rsa);
 			// good MD5
 			HashAlgorithm hash = MD5.Create ();

@@ -4,6 +4,18 @@
 	exceptions to test exception handling (and get more coverage).
 	* RNGCryptoServiceProviderTest.cs: Updated unit tests for exception 
 	testing.
+	* RSAOAEPKeyExchangeDeformatterTest.cs: Updated unit tests to complete 
+	coverage.
+	* RSAOAEPKeyExchangeFormatterTest.cs: Updated unit tests to complete 
+	coverage.
+	* RSAPKCS1KeyExchangeDeformatterTest.cs: Updated unit tests to 
+	complete coverage.
+	* RSAPKCS1KeyExchangeFormatterTest.cs: Updated unit tests to complete 
+	coverage.
+	* RSAPKCS1SignatureDeformatterTest.cs: Updated unit tests to complete 
+	coverage.
+	* RSAPKCS1SignatureFormatterTest.cs: Updated unit tests to complete 
+	coverage.
 	* RSATest.cs: Updated unit tests for importing XML key pairs.
 	* SHA256Test.cs: Corrected Setup attribtue (was [Test]).
 	* SymmetricAlgorithm2Test.cs: New. Non generated unit test for better

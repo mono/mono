@@ -2,9 +2,10 @@
 // RSAOAEPKeyExchangeDeformatterTest.cs - NUnit Test Cases for RSAOAEPKeyExchangeDeformatter
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -14,7 +15,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class RSAOAEPKeyExchangeDeformatterTest {
+	public class RSAOAEPKeyExchangeDeformatterTest : Assertion {
 
 		protected static RSA key;
 
@@ -206,6 +207,30 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] EM = new byte [(key.KeySize >> 3) + 1];
 			// invalid format
 			byte[] M = keyex.DecryptKeyExchange (EM);
+		}
+
+		[Test]
+		public void Parameters () 
+		{
+			RSAOAEPKeyExchangeDeformatter keyex = new RSAOAEPKeyExchangeDeformatter (key);
+			keyex.Parameters = "Mono";
+			AssertNull ("Parameters", keyex.Parameters);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void ExchangeNoKey () 
+		{
+			AsymmetricKeyExchangeDeformatter keyex = new RSAOAEPKeyExchangeDeformatter ();
+			byte[] M = keyex.DecryptKeyExchange (new byte [(key.KeySize >> 3) - 2 * 20 - 2]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidCastException))]
+		public void ExchangeDSAKey () 
+		{
+			DSA dsa = DSA.Create ();
+			AsymmetricKeyExchangeDeformatter keyex = new RSAOAEPKeyExchangeDeformatter (dsa);
 		}
 	}
 }

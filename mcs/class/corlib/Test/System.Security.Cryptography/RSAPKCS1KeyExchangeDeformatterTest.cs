@@ -2,9 +2,10 @@
 // RSAPKCS1KeyExchangeDeformatterTest.cs - NUnit Test Cases for RSAPKCS1KeyExchangeDeformatter
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -160,6 +161,39 @@ public class RSAPKCS1KeyExchangeDeformatterTest : Assertion {
 		byte[] EM = new byte [(key.KeySize >> 3) + 1];
 		// invalid format
 		byte[] M = keyex.DecryptKeyExchange (EM);
+	}
+
+	[Test]
+	public void Parameters () 
+	{
+		AsymmetricKeyExchangeDeformatter keyex = new RSAPKCS1KeyExchangeDeformatter (key);
+		keyex.Parameters = "Mono";
+		AssertNull ("Parameters", keyex.Parameters);
+	}
+
+	[Test]
+	public void Rng () 
+	{
+		RSAPKCS1KeyExchangeDeformatter keyex = new RSAPKCS1KeyExchangeDeformatter (key);
+		AssertNull ("RNG", keyex.RNG);
+		keyex.RNG = RandomNumberGenerator.Create ();
+		AssertNotNull ("RNG", keyex.RNG);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	public void ExchangeNoKey () 
+	{
+		AsymmetricKeyExchangeDeformatter keyex = new RSAPKCS1KeyExchangeDeformatter ();
+		byte[] M = keyex.DecryptKeyExchange (new byte [(key.KeySize >> 3)- 11]);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void ExchangeDSAKey () 
+	{
+		DSA dsa = DSA.Create ();
+		AsymmetricKeyExchangeDeformatter keyex = new RSAPKCS1KeyExchangeDeformatter (dsa);
 	}
 }
 

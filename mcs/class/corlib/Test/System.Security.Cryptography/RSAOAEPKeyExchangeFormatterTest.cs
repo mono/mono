@@ -2,9 +2,10 @@
 // RSAOAEPKeyExchangeFormatterTest.cs - NUnit Test Cases for RSAOAEPKeyExchangeFormatter
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -14,7 +15,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class RSAOAEPKeyExchangeFormatterTest {
+	public class RSAOAEPKeyExchangeFormatterTest : Assertion {
 
 		protected static RSA key;
 
@@ -71,7 +72,7 @@ namespace MonoTests.System.Security.Cryptography {
 			AsymmetricKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (key);
 			byte[] M = { 0xd4, 0x36, 0xe9, 0x95, 0x69, 0xfd, 0x32, 0xa7, 0xc8, 0xa0, 0x5b, 0xbc, 0x90, 0xd3, 0x2c, 0x49 };
 			try {
-				byte[] EM = keyex.CreateKeyExchange (M);
+				byte[] EM = keyex.CreateKeyExchange (M, typeof (Rijndael));
 				AsymmetricKeyExchangeDeformatter keyback = new RSAOAEPKeyExchangeDeformatter (key);
 				byte[] Mback = keyback.DecryptKeyExchange (EM);
 				AssertEquals ("RSAOAEPKeyExchangeFormatter 128", M, Mback);
@@ -127,6 +128,39 @@ namespace MonoTests.System.Security.Cryptography {
 			AsymmetricKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (key);
 			byte[] M = new byte [(key.KeySize >> 3)- 10];
 			byte[] EM = keyex.CreateKeyExchange (M);
+		}
+
+		[Test]
+		public void Parameter () 
+		{
+			RSAOAEPKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (key);
+			keyex.Parameter = new byte [1];
+			AssertEquals ("Parameter", 1, keyex.Parameter.Length);
+		}
+
+		[Test]
+		public void Rng () 
+		{
+			RSAOAEPKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (key);
+			AssertNull ("Rng", keyex.Rng);
+			keyex.Rng = RandomNumberGenerator.Create ();
+			AssertNotNull ("Rng", keyex.Rng);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void ExchangeNoKey () 
+		{
+			AsymmetricKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter ();
+			byte[] M = keyex.CreateKeyExchange (new byte [16]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidCastException))]
+		public void ExchangeDSAKey () 
+		{
+			DSA dsa = DSA.Create ();
+			AsymmetricKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (dsa);
 		}
 	}
 }

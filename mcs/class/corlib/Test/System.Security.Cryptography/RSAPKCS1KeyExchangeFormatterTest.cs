@@ -2,9 +2,10 @@
 // RSAPKCS1KeyExchangeFormatterTest.cs - NUnit Test Cases for RSAPKCS1KeyExchangeFormatter
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -74,7 +75,7 @@ public class RSAPKCS1KeyExchangeFormatterTest : Assertion {
 	{
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
 		byte[] M = { 0xd4, 0x36, 0xe9, 0x95, 0x69, 0xfd, 0x32, 0xa7, 0xc8, 0xa0, 0x5b, 0xbc, 0x90, 0xd3, 0x2c, 0x49 };
-		byte[] EM = keyex.CreateKeyExchange (M);
+		byte[] EM = keyex.CreateKeyExchange (M, typeof (Rijndael));
 
 		AsymmetricKeyExchangeDeformatter keyback = new RSAPKCS1KeyExchangeDeformatter (key);
 		byte[] Mback = keyback.DecryptKeyExchange (EM);
@@ -115,6 +116,31 @@ public class RSAPKCS1KeyExchangeFormatterTest : Assertion {
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
 		byte[] M = new byte [(key.KeySize >> 3)- 10];
 		byte[] EM = keyex.CreateKeyExchange (M);
+	}
+
+	[Test]
+	public void Rng () 
+	{
+		RSAPKCS1KeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
+		AssertNull ("Rng", keyex.Rng);
+		keyex.Rng = RandomNumberGenerator.Create ();
+		AssertNotNull ("Rng", keyex.Rng);
+	}
+
+	[Test]
+	[ExpectedException (typeof (NullReferenceException))]
+	public void ExchangeNoKey () 
+	{
+		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter ();
+		byte[] M = keyex.CreateKeyExchange (new byte [16]);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void ExchangeDSAKey () 
+	{
+		DSA dsa = DSA.Create ();
+		AsymmetricKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (dsa);
 	}
 }
 
