@@ -7,6 +7,8 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.Serialization;
+
 namespace System {
 
 	public class SystemException : Exception {
@@ -21,6 +23,10 @@ namespace System {
 		{
 		}
 
+		protected SystemException(SerializationInfo info, StreamingContext context)
+			: base (info, context) {
+		}
+		
 		public SystemException (string message, Exception inner)
 			: base (message, inner)
 		{
