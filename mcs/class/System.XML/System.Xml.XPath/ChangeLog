@@ -1,3 +1,14 @@
+2004-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathDocument.cs :
+	  - For .NET 2.0, added a switch to support new XPathDocument2. 
+	    If switch is off, then it uses DTM.
+	  - Implemented remaining 2.0 bits (except for Obsolete ones).
+
+	To use them in XPathDocument, set environment MONO_XPATH_DOCUMENT_2=yes
+	(It is still too unstable to pass all nunit tests and standalone XSLT
+	tests).
+
 2004-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathNavigator.cs : Implemented ReadSubtree().

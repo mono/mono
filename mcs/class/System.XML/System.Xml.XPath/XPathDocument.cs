@@ -45,18 +45,30 @@ namespace System.Xml.XPath
 	[XmlSchemaProvider ("GetSchema")]
 	public class XPathDocument : IXPathNavigable, IXPathEditable,
 		IChangeTracking, IRevertibleChangeTracking, IXmlSerializable
-#else
-	public class XPathDocument : IXPathNavigable
-#endif
 	{
-		DTMXPathDocument document;
-#if NET_2_0
-		XPathEditableDocument editable;
-#endif
+		// FIXME: In the future this switch will disappear.
+		// Regardless of this switch, those constructors that does 
+		// not take input document use editable XPathDocument.
+		static bool useEditable;
+
+		static XPathDocument ()
+		{
+			// FIXME: remove when new XPathDocument2 got more 
+			// stable. This environment value is temporary.
+			if (Environment.GetEnvironmentVariable ("MONO_XPATH_DOCUMENT_2") == "yes")
+				useEditable = true;
+		}
+
+		XPathDocument2Editable editable;
+		DTMXPathDocument dtm;
+
+		XmlSchemaSet schemas;
+
+		// save parameters
+		Encoding encoding;
+		bool preserveWhitespace;
 
 #region Constructors
-
-#if NET_2_0
 		[MonoTODO]
 		public XPathDocument ()
 			: this (new NameTable ())
@@ -66,7 +78,9 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public XPathDocument (XmlNameTable nameTable)
 		{
-			editable = new XPathEditableDocument (new XmlDocument (nameTable));
+			editable = new XPathDocument2Editable (new XPathDocument2 (nameTable));
+
+			InitializeEvents ();
 		}
 
 		public XPathDocument (Stream stream)
@@ -148,7 +162,262 @@ namespace System.Xml.XPath
 		{
 			Initialize (reader, space, acceptChangesOnLoad);
 		}
-#else
+
+		private void Initialize (XmlReader reader, XmlSpace space, bool acceptChangesOnLoad)
+		{
+			if (useEditable)
+				InitializeEditable (reader, space, acceptChangesOnLoad);
+			else
+				dtm = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
+		}
+
+		private void InitializeEditable (XmlReader reader, XmlSpace space, bool acceptChangesOnLoad)
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.NameTable = reader.NameTable;
+			settings.IgnoreWhitespace = (space == XmlSpace.Preserve);
+			XmlReader r = XmlReader.Create (reader, settings);
+			XPathDocument2 doc = new XPathDocument2 ();
+			doc.Load (r, space);
+			editable = new XPathDocument2Editable (doc);
+			if (acceptChangesOnLoad)
+				AcceptChanges ();
+			this.preserveWhitespace = space == XmlSpace.Preserve;
+			this.schemas = reader.Settings != null ? reader.Settings.Schemas : null;
+
+			InitializeEvents ();
+		}
+		
+		private void InitializeEvents ()
+		{
+			editable.ChangeRejected += this.ChangeRejected;
+			editable.ItemUpdated += this.ItemUpdated;
+			editable.ItemUpdating += this.ItemUpdating;
+			editable.ItemInserted += this.ItemInserted;
+			editable.ItemInserting += this.ItemInserting;
+			editable.ItemDeleted += this.ItemDeleted;
+			editable.ItemDeleting += this.ItemDeleting;
+			editable.RejectingChange += this.RejectingChange;
+		}
+#endregion
+
+#region Events
+
+		public event NodeChangedEventHandler ChangeRejected;
+
+		public event NodeChangedEventHandler ItemUpdated;
+
+		public event NodeChangedEventHandler ItemUpdating;
+
+		public event NodeChangedEventHandler ItemInserted;
+
+		public event NodeChangedEventHandler ItemInserting;
+
+		public event NodeChangedEventHandler ItemDeleted;
+
+		public event NodeChangedEventHandler ItemDeleting;
+
+		public event NodeChangedEventHandler RejectingChange;
+
+#endregion // Events
+
+#region Properties
+
+		[MonoTODO]
+		public bool EnableChangeTracking {
+			get { return editable.EnableChangeTracking; }
+			set { editable.EnableChangeTracking = value; }
+		}
+
+		public Encoding Encoding {
+			get { return encoding; }
+			set { encoding = value; }
+		}
+
+		[MonoTODO]
+		bool IChangeTracking.IsChanged {
+			get { return editable.IsChanged; }
+		}
+
+		public XmlNameTable NameTable {
+			get { return editable.NameTable; }
+		}
+
+		public bool PreserveWhiteSpace {
+			get { return preserveWhitespace; }
+		}
+
+		public XmlSchemaSet Schemas {
+			get { return schemas; }
+			set { schemas = value; }
+		}
+
+#endregion // Properies
+
+#region Methods
+		[MonoTODO]
+		public void AcceptChanges ()
+		{
+			editable.AcceptChanges ();
+		}
+
+		/* It will disappear in 2.0 RTM
+		[MonoTODO]
+		public XPathChangeNavigator CreateChangeNavigator ()
+		{
+			throw new NotImplementedException ();
+		}
+		*/
+
+		public XPathEditableNavigator CreateEditor ()
+		{
+			return editable.CreateEditor ();
+		}
+
+		[MonoTODO ("Remove switch")]
+		public XPathNavigator CreateNavigator ()
+		{
+			if (editable != null)
+				return editable.CreateNavigator ();
+			else
+				return dtm.CreateNavigator ();
+		}
+
+		public XmlWriter CreateWriter ()
+		{
+			return CreateEditor ().AppendChild ();
+		}
+
+		[MonoTODO]
+		public virtual XmlSchema GetSchema ()
+		{
+			return editable.GetSchema ();
+		}
+
+		[MonoTODO]
+		public static XmlQualifiedName GetXPathDocumentSchema (XmlSchemaSet schemas)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool HasChanges ()
+		{
+			return editable.HasChanges ();
+		}
+
+		/* It will disappear in 2.0 RTM
+		[Obsolete]
+		[MonoTODO]
+		public void LoadXml (string xml)  
+		{
+			throw new NotImplementedException ();
+//			tree = new XPathDocumentTree (xmlReader);
+//			if (acceptChangesOnLoad)
+//				AcceptChanges ();
+		}
+		*/
+
+		public void ReadXml (XmlReader reader)
+		{
+			editable.ReadXml (reader);
+		}
+
+		[MonoTODO]
+		public void RejectChanges ()
+		{
+			editable.RejectChanges ();
+		}
+
+		[MonoTODO ("Confirm writer settings etc.")]
+		public void Save (Stream stream)
+		{
+			Save (new XmlTextWriter (stream, encoding));
+		}
+
+		[MonoTODO ("Confirm writer settings etc.")]
+		public void Save (string filename)
+		{
+			using (XmlWriter w = new XmlTextWriter (filename, encoding)) {
+				Save (w);
+			}
+		}
+
+		[MonoTODO ("Confirm writer settings etc.")]
+		public void Save (TextWriter writer)
+		{
+			Save (new XmlTextWriter (writer));
+		}
+
+		[MonoTODO]
+		public void Save (XmlWriter writer)
+		{
+			writer.WriteNode (CreateNavigator ().ReadSubtree (), false);
+		}
+
+		[MonoTODO]
+		public XPathNodeIterator SelectNodes (string xpath)
+		{
+			return CreateEditor ().Select (xpath);
+		}
+
+		[MonoTODO]
+		public XPathNodeIterator SelectNodes (XPathExpression expr)
+		{
+			return CreateEditor ().Select (expr);
+		}
+
+		[MonoTODO]
+		public XPathNodeIterator SelectNodes (string xpath ,IXmlNamespaceResolver nsResolver)
+		{
+			return CreateEditor ().Select (xpath, nsResolver);
+		}
+
+		[MonoTODO]
+		public XPathEditableNavigator SelectSingleNode (string xpath)
+		{
+			XPathNodeIterator iter = CreateEditor ().Select (xpath);
+			if (iter.MoveNext ())
+				return (XPathEditableNavigator) iter.Current;
+			else
+				return null;
+		}
+
+		[MonoTODO]
+		public XPathEditableNavigator SelectSingleNode (XPathExpression expr)
+		{
+			XPathNodeIterator iter = CreateEditor ().Select (expr);
+			if (iter.MoveNext ())
+				return (XPathEditableNavigator) iter.Current;
+			else
+				return null;
+		}
+
+		[MonoTODO]
+		public XPathEditableNavigator SelectSingleNode (string xpath ,IXmlNamespaceResolver nsResolver)
+		{
+			XPathNodeIterator iter = CreateEditor ().Select (xpath, nsResolver);
+			if (iter.MoveNext ())
+				return (XPathEditableNavigator) iter.Current;
+			else
+				return null;
+		}
+
+		[MonoTODO]
+		public void WriteXml (XmlWriter writer)
+		{
+			Save (writer);
+		}
+#endregion
+	}
+
+
+#else // !NET_2_0
+
+	public class XPathDocument : IXPathNavigable
+	{
+		DTMXPathDocument document;
+
 		public XPathDocument (Stream stream)
 		{
 			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (stream));
@@ -190,7 +459,6 @@ namespace System.Xml.XPath
 		{
 			Initialize (reader, space);
 		}
-#endif
 
 		private void Initialize (XmlReader reader, XmlSpace space)
 		{
@@ -202,239 +470,13 @@ namespace System.Xml.XPath
 			document = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
 		}
 
-#endregion
-
-#region Events
-
-#if NET_2_0
-
-		public event NodeChangedEventHandler ChangeRejected;
-
-		public event NodeChangedEventHandler ItemUpdated;
-
-		public event NodeChangedEventHandler ItemUpdating;
-
-		public event NodeChangedEventHandler ItemInserted;
-
-		public event NodeChangedEventHandler ItemInserting;
-
-		public event NodeChangedEventHandler ItemDeleted;
-
-		public event NodeChangedEventHandler ItemDeleting;
-
-		public event NodeChangedEventHandler RejectingChange;
-
-#endif // NET_2_0
-
-#endregion // Events
-
-#region Properties
-
-#if NET_2_0
-
-		[MonoTODO]
-		public bool EnableChangeTracking {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public Encoding Encoding {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool IChangeTracking.IsChanged {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public XmlNameTable NameTable {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public bool PreserveWhiteSpace {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public XmlSchemaSet Schemas {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-#endif // NET_2_0
-
-#endregion // Properies
-
-
-#region Methods
-
-#if NET_2_0
-		[MonoTODO]
-		public void AcceptChanges ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		/* It will disappear in 2.0 RTM
-		[MonoTODO]
-		public XPathChangeNavigator CreateChangeNavigator ()
-		{
-			throw new NotImplementedException ();
-		}
-		*/
-
-		[MonoTODO]
-		public XPathEditableNavigator CreateEditor ()
-		{
-			if (editable == null)
-				throw new NotImplementedException ();
-			return editable.CreateEditor ();
-		}
-
-		[MonoTODO ("This code is only for compatibility.")]
-		public XPathNavigator CreateNavigator ()
-		{
-			if (editable == null)
-				return document.CreateNavigator ();
-			else
-				return editable.CreateNavigator ();
-		}
-
-		public XmlWriter CreateWriter ()
-		{
-			return CreateEditor ().AppendChild ();
-		}
-
-		[MonoTODO]
-		public virtual XmlSchema GetSchema ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static XmlQualifiedName GetXPathDocumentSchema (XmlSchemaSet schemas)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public bool HasChanges ()
-		{
-			if (editable == null)
-				throw new NotImplementedException ();
-			return editable.HasChanges ();
-		}
-
-		[Obsolete]
-		[MonoTODO]
-		public void LoadXml (string xml)  
-		{
-			throw new NotImplementedException ();
-//			tree = new XPathDocumentTree (xmlReader);
-//			if (acceptChangesOnLoad)
-//				AcceptChanges ();
-		}
-
-		[MonoTODO]
-		public void ReadXml (XmlReader reader)
-		{
-			if (editable == null)
-				throw new NotImplementedException ();
-			editable.ReadXml (reader);
-		}
-
-		[MonoTODO]
-		public void RejectChanges ()
-		{
-			if (editable == null)
-				throw new NotImplementedException ();
-			editable.RejectChanges ();
-		}
-
-		[MonoTODO ("Confirm writer settings etc.")]
-		public void Save (Stream stream)
-		{
-			Save (new XmlTextWriter (stream, null));
-		}
-
-		[MonoTODO ("Confirm writer settings etc.")]
-		public void Save (string filename)
-		{
-			using (XmlWriter w = new XmlTextWriter (filename, null)) {
-				Save (w);
-			}
-		}
-
-		[MonoTODO ("Confirm writer settings etc.")]
-		public void Save (TextWriter writer)
-		{
-			Save (new XmlTextWriter (writer));
-		}
-
-		[MonoTODO]
-		public void Save (XmlWriter writer)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public XPathNodeIterator SelectNodes (string xpath)
-		{
-			return SelectNodes (xpath, null);
-		}
-
-		[MonoTODO]
-		public XPathNodeIterator SelectNodes (XPathExpression expr)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public XPathNodeIterator SelectNodes (string xpath ,IXmlNamespaceResolver nsResolver)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public XPathEditableNavigator SelectSingleNode (string xpath)
-		{
-			return SelectSingleNode (xpath, null);
-		}
-
-		[MonoTODO]
-		public XPathEditableNavigator SelectSingleNode (XPathExpression expr)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public XPathEditableNavigator SelectSingleNode (string xpath ,IXmlNamespaceResolver nsResolver)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void WriteXml (XmlWriter writer)
-		{
-			throw new NotImplementedException ();
-		}
-
-#else // !NET_2_0
-
 		public XPathNavigator CreateNavigator ()
 		{
 			return document.CreateNavigator ();
 		}
+	}
 
 #endif
-
-#endregion
-
-	}
 
 }
 
