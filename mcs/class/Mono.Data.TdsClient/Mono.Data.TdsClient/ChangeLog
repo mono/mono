@@ -1,3 +1,7 @@
+2002-11-04  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Locale.cs: added missing file.  Build blocker.
+
 2002-11-03  Tim Coleman (tim@timcoleman.com)
 	* TdsDatareader.cs:
 		Add BaseColumnName, rename BaseTableName
