@@ -38,9 +38,9 @@ namespace System.Web.Compilation
 			if (wService.Program.Trim () == "")
 				return wService.GetTypeFromBin (wService.ClassName);
 
-			CompilationCacheItem item = CachingCompiler.GetCached (wService.PhysicalPath);
-			if (item != null) {
-				Assembly a = item.Result.CompiledAssembly;
+			CompilerResults results = (CompilerResults) HttpRuntime.Cache [wService.PhysicalPath];
+			if (results != null) {
+				Assembly a = results.CompiledAssembly;
 				if (a != null)
 					return a.GetType (wService.ClassName, true);
 			}
@@ -52,7 +52,7 @@ namespace System.Web.Compilation
 			sw.Close ();
 
 			//TODO: get the compiler and default options from system.web/compileroptions
-			CompilerResults results = CachingCompiler.Compile (wService.PhysicalPath, fname, this);
+			results = CachingCompiler.Compile (wService.PhysicalPath, fname, this);
 			FileInfo finfo = new FileInfo (fname);
 			finfo.Delete ();
 			CheckCompilerErrors (results);

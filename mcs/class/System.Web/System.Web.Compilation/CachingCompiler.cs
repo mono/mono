@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (c) Copyright Novell, Inc. (http://www.novell.com)
 //
 using System;
 using System.CodeDom;
@@ -13,117 +14,31 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Web.UI;
+using System.Web.Caching;
 
 namespace System.Web.Compilation
 {
-	//TODO: caching should be done using System.Web.Caching, but that namespace still need some work.
-	internal class CompilationCacheItem
+	class CachingCompiler
 	{
-		CompilerResults result;
-		ArrayList dependencies;
-		DateTime reference;
-
-		public CompilationCacheItem (CompilerResults result, ArrayList dependencies)
-		{
-			this.result = result;
-			this.dependencies = dependencies;
-			this.reference = DateTime.Now;
-		}
-
-		public CompilationCacheItem (CompilerResults result, string file)
-		{
-			this.result = result;
-			this.dependencies = new ArrayList (1);
-			dependencies.Add (file);
-			this.reference = DateTime.Now;
-		}
-
-		public bool CheckDependencies (string key)
-		{
-			if (dependencies == null)
-				return true; // Forever young
-
-			foreach (string s in dependencies) {
-				if (!File.Exists (s) || File.GetLastWriteTime (s) > reference)
-					return false;
-			}
-			
-			return true;
-		}
-
-		public CompilerResults Result {
-			get { return result; }
-		}
-	}
-
-	internal class CompilationCache
-	{
-		static Hashtable cache;
-		static CompilationCache instance = new CompilationCache ();
-		
-		private CompilationCache ()
-		{
-		}
-
-		static CompilationCache ()
-		{
-			cache = new Hashtable ();
-		}
-
-		public static CompilationCache GetInstance ()
-		{
-			return instance;
-		}
-
-		public bool CheckDependencies (CompilationCacheItem item, string key)
-		{
-			bool result = item.CheckDependencies (key);
-			if (result == false)
-				cache.Remove (key);
-
-			return result;
-		}
-
-		public CompilationCacheItem this [string key] {
-			get { return cache [key] as CompilationCacheItem; }
-			set { cache [key] = value; }
-		}
-	}
-	
-	internal class CachingCompiler
-	{
-		static CompilationCache cache = CompilationCache.GetInstance ();
-
-		private CachingCompiler () {}
-
-		public static CompilationCacheItem GetCached (string key)
-		{
-			if (key == null)
-				throw new ArgumentNullException ("key");
-
-			CompilationCacheItem item = cache [key];
-			if (item != null && cache.CheckDependencies (item, key))
-				return item;
-
-			return null;
-		}
-
 		static object compilationLock = new object ();
+
 		public static CompilerResults Compile (BaseCompiler compiler)
 		{
+			Cache cache = HttpRuntime.Cache;
 			string key = compiler.Parser.InputFile;
-			CompilationCacheItem item = GetCached (key);
-			if (item != null)
-				return item.Result;
-			
-			CompilerResults results = null;
-			lock (compilationLock) {
-				item = GetCached (key);
-				if (item != null)
-					return item.Result;
+			CompilerResults results = (CompilerResults) cache [key];
+			if (results != null)
+				return results;
 
-				results = compiler.Compiler.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
-				cache [key] = new CompilationCacheItem (results, compiler.Parser.Dependencies);
+			lock (compilationLock) {
+				results = (CompilerResults) cache [key];
+				if (results != null)
+					return results;
+
+				ICodeCompiler comp = compiler.Compiler;
+				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
+				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
+				cache.Insert (key, results, new CacheDependency (deps));
 			}
 
 			return results;
@@ -131,21 +46,22 @@ namespace System.Web.Compilation
 
 		public static CompilerResults Compile (string key, string file, WebServiceCompiler compiler)
 		{
-			CompilationCacheItem item = GetCached (key);
-			if (item != null)
-				return item.Result;
-			
-			CompilerResults results = null;
+			Cache cache = HttpRuntime.Cache;
+			CompilerResults results = (CompilerResults) cache [key];
+			if (results != null)
+				return results;
+
 			lock (compilationLock) {
-				item = GetCached (key);
-				if (item != null)
-					return item.Result;
+				results = (CompilerResults) cache [key];
+				if (results != null)
+					return results;
 
 				SimpleWebHandlerParser parser = compiler.Parser;
 				CompilerParameters options = GetOptions (parser.Assemblies);
 				options.IncludeDebugInformation = parser.Debug;
 				results = compiler.Compiler.CompileAssemblyFromFile (options, file);
-				cache [key] = new CompilationCacheItem (results, parser.Dependencies);
+				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
+				cache.Insert (key, results, new CacheDependency (deps));
 			}
 
 			return results;
@@ -165,19 +81,20 @@ namespace System.Web.Compilation
 
 		public static CompilerResults Compile (string key, string file, ArrayList assemblies)
 		{
-			CompilationCacheItem item = GetCached (key);
-			if (item != null)
-				return item.Result;
-			
-			CompilerResults results = null;
+			Cache cache = HttpRuntime.Cache;
+			CompilerResults results = (CompilerResults) cache [key];
+			if (results != null)
+				return results;
+
 			lock (compilationLock) {
-				item = GetCached (file);
-				if (item != null)
-					return item.Result;
+				results = (CompilerResults) cache [key];
+				if (results != null)
+					return results;
 
 				CompilerParameters options = GetOptions (assemblies);
 				results = CSCompiler.Compiler.CompileAssemblyFromFile (options, file);
-				cache [key] = new CompilationCacheItem (results, file);
+				string [] deps = (string []) assemblies.ToArray (typeof (string));
+				cache.Insert (key, results, new CacheDependency (deps));
 			}
 
 			return results;

@@ -264,9 +264,9 @@ namespace System.Web.Compilation
 		public virtual Type GetCompiledType () 
 		{
 			Init ();
-			CompilationCacheItem item = CachingCompiler.GetCached (parser.InputFile);
-			if (item != null) {
-				Assembly a = item.Result.CompiledAssembly;
+			CompilerResults results = (CompilerResults) HttpRuntime.Cache [parser.InputFile];
+			if (results != null) {
+				Assembly a = results.CompiledAssembly;
 				if (a != null)
 					return a.GetType (mainClassExpr.Type.BaseType, true);
 			}
@@ -296,7 +296,7 @@ namespace System.Web.Compilation
 
 			compilerParameters.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
 
-			CompilerResults results = CachingCompiler.Compile (this);
+			results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
 			if (results.CompiledAssembly == null)
 				throw new CompilationException (parser.InputFile, results.Errors,
