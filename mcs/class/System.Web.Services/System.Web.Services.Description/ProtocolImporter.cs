@@ -14,6 +14,7 @@ using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Xml.Schema;
 using System.Collections;
 using System.Configuration;
 
@@ -40,6 +41,8 @@ namespace System.Web.Services.Description {
 		ServiceDescriptionImportWarnings warnings = (ServiceDescriptionImportWarnings)0;	
 		ServiceDescriptionImporter descriptionImporter;
 		ImportInfo iinfo;
+		XmlSchemas xmlSchemas;
+		XmlSchemas soapSchemas;
 
 		#endregion // Fields
 
@@ -140,6 +143,16 @@ namespace System.Web.Services.Description {
 		{
 			get { return iinfo; }
 		}
+		
+		internal XmlSchemas LiteralSchemas
+		{
+			get { return xmlSchemas; }
+		}
+		
+		internal XmlSchemas EncodedSchemas
+		{
+			get { return soapSchemas; }
+		}
 
 		#endregion // Properties
 
@@ -155,6 +168,8 @@ namespace System.Web.Services.Description {
 			warnings = (ServiceDescriptionImportWarnings) 0;
 			
 			bool found = false;
+			
+			ClasifySchemas (importInfo);
 
 			BeginNamespace ();
 			
@@ -311,6 +326,123 @@ namespace System.Web.Services.Description {
 			}
 		}
 
+		void ClasifySchemas (ArrayList importInfo)
+		{
+			// I don't like this, but I could not find any other way of clasifying
+			// schemas between encoded and literal.
+			
+			xmlSchemas = new XmlSchemas ();
+			soapSchemas = new XmlSchemas ();
+			
+			foreach (ImportInfo info in importInfo)
+			{
+				foreach (Service service in info.ServiceDescription.Services)
+				{
+					foreach (Port port in service.Ports)
+					{
+						this.iinfo = info;
+						this.port = port;
+						binding = ServiceDescriptions.GetBinding (port.Binding);
+						if (binding == null) continue;
+						portType = ServiceDescriptions.GetPortType (binding.Type);
+						if (portType == null) continue;
+						
+						foreach (OperationBinding oper in binding.Operations) 
+						{
+							operationBinding = oper;
+							operation = FindPortOperation ();
+							if (operation == null) continue;
+		
+							foreach (OperationMessage omsg in operation.Messages)
+							{
+								Message msg = ServiceDescriptions.GetMessage (omsg.Message);
+								if (msg == null) continue;
+								
+								if (omsg is OperationInput)
+									inputMessage = msg;
+								else
+									outputMessage = msg;
+							}
+							
+							if (GetMessageEncoding (oper.Input) == SoapBindingUse.Encoded)
+								AddMessageSchema (soapSchemas, oper.Input, inputMessage);
+							else
+								AddMessageSchema (xmlSchemas, oper.Input, inputMessage);
+							
+							if (oper.Output != null) {
+								if (GetMessageEncoding (oper.Output) == SoapBindingUse.Encoded)
+									AddMessageSchema (soapSchemas, oper.Output, outputMessage);
+								else
+									AddMessageSchema (xmlSchemas, oper.Output, outputMessage);
+							}
+						}
+					}
+				}
+			}
+			
+			XmlSchemas defaultList = xmlSchemas;
+				
+			if (xmlSchemas.Count == 0 && soapSchemas.Count > 0)
+				defaultList = soapSchemas;
+				
+			// Schemas not referenced by any message
+			foreach (XmlSchema sc in Schemas)
+			{
+				if (ImportsEncodedNamespace (sc))
+					soapSchemas.Add (sc);
+				else if (!soapSchemas.Contains (sc) && !xmlSchemas.Contains (sc))
+					defaultList.Add (sc);
+			}
+		}
+			
+		void AddMessageSchema (XmlSchemas schemas, MessageBinding mb, Message msg)
+		{
+			foreach (MessagePart part in msg.Parts)
+			{
+				if (part.Element != XmlQualifiedName.Empty)
+					AddIncludingSchema (schemas, part.Element.Namespace);
+				else if (part.Type != XmlQualifiedName.Empty)
+					AddIncludingSchema (schemas, part.Type.Namespace);
+			}
+			SoapBodyBinding sbb = mb.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
+			if (sbb != null) AddIncludingSchema (schemas, sbb.Namespace);
+		}
+		
+		void AddIncludingSchema (XmlSchemas list, string ns)
+		{
+			XmlSchema sc = Schemas [ns];
+			if (sc == null || list.Contains (sc)) return;
+			list.Add (sc);
+			foreach (XmlSchemaObject ob in sc.Includes)
+			{
+				XmlSchemaImport import = ob as XmlSchemaImport;
+				if (import != null) AddIncludingSchema (list, import.Namespace);
+			}
+		}
+		
+		SoapBindingUse GetMessageEncoding (MessageBinding mb)
+		{
+			SoapBodyBinding sbb = mb.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
+			if (sbb == null)
+			{
+				if (mb is InputBinding) return SoapBindingUse.Encoded;
+				else return SoapBindingUse.Literal;
+			}
+			else 
+				if (sbb.Use == SoapBindingUse.Encoded) return SoapBindingUse.Encoded;
+			else
+				return SoapBindingUse.Literal;
+		}
+		
+		bool ImportsEncodedNamespace (XmlSchema sc)
+		{
+			foreach (XmlSchemaObject ob in sc.Includes)
+			{
+				XmlSchemaImport import = ob as XmlSchemaImport;
+				if (import.Namespace == SoapProtocolReflector.EncodingNamespace) return true;
+			}
+			return false;
+		}
 		
 		[MonoTODO]
 		public void AddExtensionWarningComments (CodeCommentStatementCollection comments, ServiceDescriptionFormatExtensionCollection extensions) 

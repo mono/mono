@@ -67,8 +67,8 @@ namespace System.Web.Services.Description
 
 		protected override void BeginNamespace ()
 		{
-			xmlImporter = new XmlSchemaImporter (Schemas, ClassNames);
-			soapImporter = new SoapSchemaImporter (Schemas, ClassNames);
+			xmlImporter = new XmlSchemaImporter (LiteralSchemas, ClassNames);
+			soapImporter = new SoapSchemaImporter (EncodedSchemas, ClassNames);
 			xmlExporter = new XmlCodeExporter (CodeNamespace, null);
 		}
 

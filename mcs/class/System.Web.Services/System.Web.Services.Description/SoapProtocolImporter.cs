@@ -13,6 +13,7 @@ using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.Web.Services.Configuration;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Configuration;
 using System.Collections;
@@ -30,6 +31,8 @@ namespace System.Web.Services.Description {
 		CodeIdentifiers memberIds;
 		ArrayList extensionImporters;
 		Hashtable headerVariables;
+		XmlSchemas xmlSchemas;
+		XmlSchemas soapSchemas;
 		
 		#endregion // Fields
 
@@ -107,11 +110,11 @@ namespace System.Web.Services.Description {
 			headerVariables = new Hashtable ();
 			return codeClass;
 		}
-
+		
 		protected override void BeginNamespace ()
 		{
-			xmlImporter = new XmlSchemaImporter (Schemas, ClassNames);
-			soapImporter = new SoapSchemaImporter (Schemas, ClassNames);
+			xmlImporter = new XmlSchemaImporter (LiteralSchemas, ClassNames);
+			soapImporter = new SoapSchemaImporter (EncodedSchemas, ClassNames);
 			xmlExporter = new XmlCodeExporter (CodeNamespace, null);
 			soapExporter = new SoapCodeExporter (CodeNamespace, null);
 		}
@@ -121,7 +124,15 @@ namespace System.Web.Services.Description {
 			SoapTransportImporter transportImporter = SoapTransportImporter.FindTransportImporter (soapBinding.Transport);
 			if (transportImporter == null) throw new InvalidOperationException ("Transport '" + soapBinding.Transport + "' not supported");
 			transportImporter.ImportContext = this;
-			transportImporter.ImportClass ();			
+			transportImporter.ImportClass ();
+			
+			if (xmlExporter.IncludeMetadata.Count > 0 || soapExporter.IncludeMetadata.Count > 0)
+			{
+				if (CodeTypeDeclaration.CustomAttributes == null)
+					CodeTypeDeclaration.CustomAttributes = new CodeAttributeDeclarationCollection ();
+				CodeTypeDeclaration.CustomAttributes.AddRange (xmlExporter.IncludeMetadata);
+				CodeTypeDeclaration.CustomAttributes.AddRange (soapExporter.IncludeMetadata);
+			}
 		}
 
 		protected override void EndNamespace ()
@@ -218,7 +229,7 @@ namespace System.Web.Services.Description {
 					return soapImporter.ImportMembersMapping (elemName, part.Type.Namespace, ssm);
 				}
 				else
-					return xmlImporter.ImportMembersMapping (part.Element);				
+					return xmlImporter.ImportMembersMapping (part.Element);
 			}
 			else
 			{
@@ -245,9 +256,7 @@ namespace System.Web.Services.Description {
 						throw new InvalidOperationException ("The combination of style=rpc with use=literal is not supported");
 					
 					if (msg.Parts.Count == 1 && msg.Parts[0].Type != XmlQualifiedName.Empty)
-					{
 						return xmlImporter.ImportAnyType (msg.Parts[0].Type, null);
-					}
 					else
 					{
 						XmlQualifiedName[] pnames = new XmlQualifiedName [msg.Parts.Count];

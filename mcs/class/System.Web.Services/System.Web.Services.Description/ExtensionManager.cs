@@ -19,6 +19,8 @@ namespace System.Web.Services.Description
 	{
 		static Hashtable extensionsByName;
 		static Hashtable extensionsByType;
+		static ArrayList maps = new ArrayList ();
+		static ArrayList extensions = new ArrayList ();
 
 		static ExtensionManager ()
 		{
@@ -44,9 +46,11 @@ namespace System.Web.Services.Description
 			
 			foreach (Type type in WSConfig.Instance.FormatExtensionTypes)
 				RegisterExtensionType (type);
+				
+			CreateExtensionSerializers ();
 		}
 	
-		public static void RegisterExtensionType (Type type)
+		static void RegisterExtensionType (Type type)
 		{
 			ExtensionInfo ext = new ExtensionInfo();
 			ext.Type = type;
@@ -71,12 +75,22 @@ namespace System.Web.Services.Description
 			XmlReflectionImporter ri = new XmlReflectionImporter ();
 			XmlTypeMapping map = ri.ImportTypeMapping (type, root);
 			
-			// TODO: use array method to create the serializers
-			ext.Serializer = new XmlSerializer (map);
-
 			if (ext.ElementName == null) throw new InvalidOperationException ("XmlFormatExtensionAttribute must be applied to type " + type);
 			extensionsByName.Add (ext.Namespace + " " + ext.ElementName, ext);
 			extensionsByType.Add (type, ext);
+			
+			maps.Add (map);
+			extensions.Add (ext);
+		}
+		
+		static void CreateExtensionSerializers ()
+		{
+			XmlSerializer[] sers = XmlSerializer.FromMappings ((XmlMapping[]) maps.ToArray (typeof(XmlMapping)));
+			for (int n=0; n<sers.Length; n++)
+				((ExtensionInfo)extensions[n]).Serializer = sers[n];
+			
+			maps = null;
+			extensions = null;
 		}
 		
 		public static ExtensionInfo GetFormatExtensionInfo (string elementName, string namesp)

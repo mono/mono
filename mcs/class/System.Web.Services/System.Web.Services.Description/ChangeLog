@@ -1,3 +1,16 @@
+2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ExtensionManager.cs: Create all serializers for soap extensions at once.
+	* HttpSimpleProtocolImporter.cs: Assign the correct set of schemas to the 
+	  schema importers (do not mix literal schemas with encoded schemas).
+	* ProtocolImporter.cs: Added LiteralSchemas and EncodedSchemas properties.
+	  Separation between literal and encoded schemas is needed to avoid importing
+	  for example a literal schema as encoded. Also implemented ClasifySchemas,
+	  which separates literal from encoded schemas. I really don't like doing it
+	  in this way, but I haven't found another way.
+	* SoapProtocolImporter.cs: Add type include attributes to the generated
+	  proxy classes.
+	  
 2004-02-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapProtocolReflector.cs: Fixed bug #53247. Element name asigned to the 
