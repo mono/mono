@@ -3063,18 +3063,6 @@ class_declaration
 
 		$$ = new_class;
 	  }
-	| opt_attributes
-	  opt_modifiers
-	  CLASS IDENTIFIER
-	  {
-		lexer.ConstraintsParsing = true;
-	  }
-	  WHERE {
-		Report.Error (80, lexer.Location,
-			      "Contraints are not allowed on non-generic declarations");
-		yyErrorFlag = 0;
-		$$ = null;
-	  }
 	;	
 
 opt_modifiers

@@ -1,3 +1,7 @@
+2004-06-09  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay: Removed a reduce/reduce conflict.
+
 2004-06-03  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType.GetMemberAccess): Renamed to
