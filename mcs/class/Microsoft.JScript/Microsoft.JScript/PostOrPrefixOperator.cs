@@ -123,7 +123,7 @@ namespace Microsoft.JScript {
 				// before inc/dec was evaluated
 				//
 				if (!(parent is ScriptBlock || parent is FunctionDeclaration ||
-						 parent is FunctionExpression))
+				      parent is FunctionExpression || parent is Block))
 					ig.Emit (OpCodes.Ldloc, tmp_obj);
 			}
 		}
