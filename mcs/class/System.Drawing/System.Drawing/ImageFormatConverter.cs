@@ -46,25 +46,25 @@ namespace System.Drawing
 			if (strFormat == null)
 				return base.ConvertFrom (context, culture, val);
 			
-			if (strFormat.Equals ("Bmp"))
+			if (strFormat.Equals (ImageFormat.Bmp.ToString ()))
 				return ImageFormat.Bmp;
-			else if (strFormat.Equals ("Emf"))
+			else if (strFormat.Equals (ImageFormat.Emf.ToString ()))
 				return ImageFormat.Emf;
-			else if (strFormat.Equals ("Exif"))
+			else if (strFormat.Equals (ImageFormat.Exif.ToString ()))
 				return ImageFormat.Exif;
-			else if (strFormat.Equals ("Gif"))
+			else if (strFormat.Equals (ImageFormat.Gif.ToString ()))
 				return ImageFormat.Gif;
-			else if (strFormat.Equals ("Icon"))
+			else if (strFormat.Equals (ImageFormat.Icon.ToString ()))
 				return ImageFormat.Icon;
-			else if (strFormat.Equals ("Jpeg"))
+			else if (strFormat.Equals (ImageFormat.Jpeg.ToString ()))
 				return ImageFormat.Jpeg;
-			else if (strFormat.Equals ("MemoryBMP"))
+			else if (strFormat.Equals (ImageFormat.MemoryBmp.ToString ()))
 				return ImageFormat.MemoryBmp;
-			else if (strFormat.Equals ("Png"))
+			else if (strFormat.Equals (ImageFormat.Png.ToString ()))
 				return ImageFormat.Png;
-			else if (strFormat.Equals ("Tiff"))
+			else if (strFormat.Equals (ImageFormat.Tiff.ToString ()))
 				return ImageFormat.Tiff;
-			else if (strFormat.Equals ("Wmf"))
+			else if (strFormat.Equals (ImageFormat.Wmf.ToString ()))
 				return ImageFormat.Wmf;
 			else
 				return new NotSupportedException ("ImageFormatConverter cannot convert from " + val.GetType ());
