@@ -34,66 +34,69 @@ namespace Microsoft.JScript
 		public const int LBRACE = 4;
 		public const int RBRACE = 5;
 		public const int SEMI_COLON = 6;
-		public const int LITERAL_do = 7;
-		public const int LITERAL_while = 8;
-		public const int LPAREN = 9;
-		public const int RPAREN = 10;
-		public const int LITERAL_with = 11;
-		public const int LITERAL_switch = 12;
-		public const int LITERAL_case = 13;
-		public const int COLON = 14;
-		public const int LITERAL_default = 15;
-		public const int IDENTIFIER = 16;
-		public const int LITERAL_try = 17;
-		public const int LITERAL_catch = 18;
-		public const int LITERAL_finally = 19;
-		public const int LITERAL_var = 20;
-		public const int COMMA = 21;
-		public const int ASSIGNMENT = 22;
-		public const int COMPOUND_ASSIGNMENT = 23;
-		public const int INTERROGATION = 24;
-		public const int LOGICAL_OR = 25;
-		public const int LOGICAL_AND = 26;
-		public const int BITWISE_OR = 27;
-		public const int TRIANGLE = 28;
-		public const int BITWISE_AND = 29;
-		public const int L_THAN = 30;
-		public const int G_THAN = 31;
-		public const int LE_THAN = 32;
-		public const int GE_THAN = 33;
-		public const int LITERAL_instanceof = 34;
-		public const int LITERAL_in = 35;
-		public const int PLUS = 36;
-		public const int MINUS = 37;
-		public const int TIMES = 38;
-		public const int SLASH = 39;
-		public const int PERCENT = 40;
-		public const int LITERAL_delete = 41;
-		public const int LITERAL_void = 42;
-		public const int LITERAL_typeof = 43;
-		public const int INCREMENT = 44;
-		public const int DECREMENT = 45;
-		public const int ADMIRATION = 46;
-		public const int LITERAL_new = 47;
-		public const int THIS = 48;
-		public const int STRING_LITERAL = 49;
-		public const int LITERAL_print = 50;
-		public const int LITERAL_function = 51;
-		public const int LITERAL_true = 52;
-		public const int LITERAL_false = 53;
-		public const int LITERAL_null = 54;
-		public const int TAB = 55;
-		public const int VERTICAL_TAB = 56;
-		public const int FORM_FEED = 57;
-		public const int SPACE = 58;
-		public const int NO_BREAK_SPACE = 59;
-		public const int LINE_FEED = 60;
-		public const int CARRIGE_RETURN = 61;
-		public const int LINE_SEPARATOR = 62;
-		public const int PARAGRAPH_SEPARATOR = 63;
-		public const int LSQUARE = 64;
-		public const int RSQUARE = 65;
-		public const int DOT = 66;
+		public const int LITERAL_if = 7;
+		public const int LPAREN = 8;
+		public const int RPAREN = 9;
+		public const int LITERAL_else = 10;
+		public const int LITERAL_do = 11;
+		public const int LITERAL_while = 12;
+		public const int LITERAL_for = 13;
+		public const int LITERAL_in = 14;
+		public const int LITERAL_with = 15;
+		public const int LITERAL_switch = 16;
+		public const int LITERAL_case = 17;
+		public const int COLON = 18;
+		public const int LITERAL_default = 19;
+		public const int IDENTIFIER = 20;
+		public const int LITERAL_try = 21;
+		public const int LITERAL_catch = 22;
+		public const int LITERAL_finally = 23;
+		public const int LITERAL_var = 24;
+		public const int COMMA = 25;
+		public const int ASSIGNMENT = 26;
+		public const int COMPOUND_ASSIGNMENT = 27;
+		public const int INTERROGATION = 28;
+		public const int LOGICAL_OR = 29;
+		public const int LOGICAL_AND = 30;
+		public const int BITWISE_OR = 31;
+		public const int TRIANGLE = 32;
+		public const int BITWISE_AND = 33;
+		public const int L_THAN = 34;
+		public const int G_THAN = 35;
+		public const int LE_THAN = 36;
+		public const int GE_THAN = 37;
+		public const int LITERAL_instanceof = 38;
+		public const int PLUS = 39;
+		public const int MINUS = 40;
+		public const int TIMES = 41;
+		public const int SLASH = 42;
+		public const int PERCENT = 43;
+		public const int LITERAL_delete = 44;
+		public const int LITERAL_void = 45;
+		public const int LITERAL_typeof = 46;
+		public const int INCREMENT = 47;
+		public const int DECREMENT = 48;
+		public const int ADMIRATION = 49;
+		public const int LITERAL_new = 50;
+		public const int THIS = 51;
+		public const int STRING_LITERAL = 52;
+		public const int LSQUARE = 53;
+		public const int RSQUARE = 54;
+		public const int LITERAL_print = 55;
+		public const int LITERAL_function = 56;
+		public const int LITERAL_true = 57;
+		public const int LITERAL_false = 58;
+		public const int LITERAL_null = 59;
+		public const int TAB = 60;
+		public const int VERTICAL_TAB = 61;
+		public const int FORM_FEED = 62;
+		public const int SPACE = 63;
+		public const int NO_BREAK_SPACE = 64;
+		public const int LINE_FEED = 65;
+		public const int CARRIGE_RETURN = 66;
+		public const int LINE_SEPARATOR = 67;
+		public const int PARAGRAPH_SEPARATOR = 68;
+		public const int DOT = 69;
 		
 		public JScriptLexer(Stream ins) : this(new ByteBuffer(ins))
 		{
@@ -116,27 +119,30 @@ namespace Microsoft.JScript
 			caseSensitiveLiterals = true;
 			setCaseSensitive(true);
 			literals = new Hashtable();
-			literals.Add("delete", 41);
-			literals.Add("try", 17);
-			literals.Add("function", 51);
-			literals.Add("while", 8);
-			literals.Add("var", 20);
-			literals.Add("with", 11);
-			literals.Add("null", 54);
-			literals.Add("switch", 12);
-			literals.Add("catch", 18);
-			literals.Add("in", 35);
-			literals.Add("case", 13);
-			literals.Add("void", 42);
-			literals.Add("true", 52);
-			literals.Add("typeof", 43);
-			literals.Add("do", 7);
-			literals.Add("print", 50);
-			literals.Add("false", 53);
-			literals.Add("finally", 19);
-			literals.Add("new", 47);
-			literals.Add("default", 15);
-			literals.Add("instanceof", 34);
+			literals.Add("for", 13);
+			literals.Add("if", 7);
+			literals.Add("delete", 44);
+			literals.Add("try", 21);
+			literals.Add("function", 56);
+			literals.Add("while", 12);
+			literals.Add("var", 24);
+			literals.Add("with", 15);
+			literals.Add("null", 59);
+			literals.Add("switch", 16);
+			literals.Add("catch", 22);
+			literals.Add("in", 14);
+			literals.Add("else", 10);
+			literals.Add("case", 17);
+			literals.Add("void", 45);
+			literals.Add("true", 57);
+			literals.Add("typeof", 46);
+			literals.Add("do", 11);
+			literals.Add("print", 55);
+			literals.Add("false", 58);
+			literals.Add("finally", 23);
+			literals.Add("new", 50);
+			literals.Add("default", 19);
+			literals.Add("instanceof", 38);
 		}
 		
 		public new Token nextToken()			//throws TokenStreamException
@@ -1013,7 +1019,7 @@ tryAgain:
 		match('"');
 		text.Length = _saveIndex;
 		{ // ( ... )+
-		int _cnt140=0;
+		int _cnt149=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -1047,12 +1053,12 @@ tryAgain:
 			}
 			default:
 			{
-				if (_cnt140 >= 1) { goto _loop140_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt149 >= 1) { goto _loop149_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt140++;
+			_cnt149++;
 		}
-_loop140_breakloop:		;
+_loop149_breakloop:		;
 		}    // ( ... )+
 		_saveIndex = text.Length;
 		match('"');
@@ -1137,11 +1143,11 @@ _loop140_breakloop:		;
 				}
 				default:
 				{
-					goto _loop144_breakloop;
+					goto _loop153_breakloop;
 				}
 				 }
 			}
-_loop144_breakloop:			;
+_loop153_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))

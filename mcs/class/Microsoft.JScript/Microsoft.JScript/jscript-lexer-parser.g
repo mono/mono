@@ -16,7 +16,6 @@ options {
 // Parser
 class JScriptParser extends Parser;
 
-
 // Program, see section 14 from Ecma-262, page 75.
 program [Program p]
 { 
@@ -64,6 +63,8 @@ statement returns [Statement stm]
     |
 	empty_statement
     |
+	if_statement	    
+    |
 	iteration_statement	    
     |
 	with_statement
@@ -85,11 +86,21 @@ block: LBRACE (statement_list | ) RBRACE
 empty_statement: SEMI_COLON ;
 
 
+if_statement
+    :
+	"if" LPAREN expression RPAREN statement (("else")=> "else" statement)?    
+    ;
+
+
 // See, Ecma-262 3d. Edition, page 64.
 // FIXME: more options left to implement.
 iteration_statement
     :
 	"do" statement "while" LPAREN expression RPAREN SEMI_COLON
+    |
+	"while" LPAREN expression RPAREN statement
+    |
+	"for" LPAREN left_hand_side_expression "in" expression RPAREN statement
     ;
 
 // WithStatement, see Ecma-262 3d. Edition, section 12.8, page 67.
@@ -318,8 +329,8 @@ call_expression
 // FIXME: more options left to implement
 member_expression
     :
-        primary_expression
-    |
+	primary_expression 
+    | 
 	function_expression
 //    |
 //        "new" member_expression arguments
@@ -348,6 +359,8 @@ primary_expression
     |
         literal
     |
+	array_literal
+    |
 	object_literal
     |
 	LPAREN expression RPAREN
@@ -364,6 +377,16 @@ literal
     |
 	STRING_LITERAL
     ;
+
+
+// FIXME: more options left to implement.
+array_literal
+    :
+	LSQUARE (elision | ) RSQUARE
+    ;
+
+
+elision: (COMMA)+ ;
 
 
 // ObjectLiteral, see Ecma-262 3d. Edition, page 41 and 42.

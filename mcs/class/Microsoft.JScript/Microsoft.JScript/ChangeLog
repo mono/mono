@@ -1,5 +1,14 @@
 2003-04-08	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: Added syntatic rule for:
+	- if_statement.
+	- while and for-in subrules of iteration_statement.
+	- Added array_literal - got tricky - I just could get the simplest rule going :)
+	- Added elision.
+
+	
+2003-04-08	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
+
 	* jscript-lexer-parser.g:
 	- Syntatic rule for iteration_statement.
 	- "do" subrule for it.
