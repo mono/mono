@@ -1,5 +1,9 @@
 2003-02-02 Jackson Harper <jackson@latitudegeo.com>
 
+	* Instructions.cs: Resolve parameters types in a more proper manner.
+
+2003-02-02 Jackson Harper <jackson@latitudegeo.com>
+
 	* Class.cs: Don't try to emit methods if we don't have any
 	* Class.cs: Test for entry point of methods, and set Assembly entrypoint
 	* CodeGen.cs: Add method to set an Assemblys entry point

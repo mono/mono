@@ -179,12 +179,6 @@ namespace Mono.ILASM {
 			this.method_name = method_name;
 			this.args = args;
 		  	
-			Console.WriteLine ("Return Type: {0}", return_type);
-			Console.WriteLine ("Assembly Name: {0}", assembly_name);
-			Console.WriteLine ("Calling Type: {0}", calling_type);
-			Console.WriteLine ("Method Name: {0}", method_name);
-			Console.WriteLine ("Args: {0}", args);
-			
 		}
 
 
@@ -203,7 +197,15 @@ namespace Mono.ILASM {
 
 		private Type[] TypeArray ()
 		{
-			return new Type[] { typeof (string) };
+			string[] type_name_list = args.Split (',');
+			Type[] type_list = new Type[type_name_list.Length];
+			Types type_manager = new Types ();
+
+			for (int i=0; i<type_name_list.Length; i++) {
+				type_list[i] = type_manager.Lookup (type_name_list[i]);
+			}
+
+			return type_list;
 		}
 
 		
