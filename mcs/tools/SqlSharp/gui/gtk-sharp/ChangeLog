@@ -1,4 +1,14 @@
-2003-04-25  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-10-16  Daniel Morgan <danielmorgan@verizon.net>
+
+	* Win32.make: removed file.  replaced with Makefile
+
+	* Makefile: new makefile for building on Linux and Windows
+
+	* LoginDialog.cs
+	* SqlSharpDataAdapter.cs
+	* sqlsharpgtk.cs: correct compile errors
+
+2003-04-25  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* SqlEditorSharp.cs: Change: Glib -> GLib.
 

@@ -55,7 +55,7 @@ namespace Mono.Data.SqlSharp
 
 		#region Properties
 
-		[DataCategory ("Update")]
+//		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for deleted rows in DataSet.")]
 		[DefaultValue (null)]
 		public IDbCommand DeleteCommand {
@@ -63,7 +63,7 @@ namespace Mono.Data.SqlSharp
 			set { deleteCommand = value; }
 		}
 
-		[DataCategory ("Update")]
+//		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for new rows in DataSet.")]
 		[DefaultValue (null)]
 		public IDbCommand InsertCommand {
@@ -71,7 +71,7 @@ namespace Mono.Data.SqlSharp
 			set { insertCommand = value; }
 		}
 
-		[DataCategory ("Fill")]
+//		[DataCategory ("Fill")]
 		[DataSysDescription ("Used during Fill/FillSchema.")]
 		[DefaultValue (null)]
 		public IDbCommand SelectCommand {
@@ -79,7 +79,7 @@ namespace Mono.Data.SqlSharp
 			set { selectCommand = value; }
 		}
 
-		[DataCategory ("Update")]
+//		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for modified rows in DataSet.")]
 		[DefaultValue (null)]
 		public IDbCommand UpdateCommand {
@@ -167,11 +167,11 @@ namespace Mono.Data.SqlSharp
 
 		#region Events and Delegates
 
-		[DataCategory ("Update")]
+//		[DataCategory ("Update")]
 		[DataSysDescription ("Event triggered before every DataRow during Update.")]
 		public event SqlSharpRowUpdatedEventHandler RowUpdated;
 
-		[DataCategory ("Update")]
+//		[DataCategory ("Update")]
 		[DataSysDescription ("Event triggered after every DataRow during Update.")]
 		public event SqlSharpRowUpdatingEventHandler RowUpdating;
 

@@ -55,8 +55,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 		
 			Table table = new Table (2, 3, false);
 			hbox.PackStart (table);
-			table.ColSpacings = 4;
-			table.RowSpacings = 4;
+			table.ColumnSpacing = 4;
+			table.RowSpacing = 4;
 			Label label = null;
 
 			label = Label.NewWithMnemonic ("_Provider");

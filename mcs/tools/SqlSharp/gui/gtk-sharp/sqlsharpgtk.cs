@@ -12,10 +12,6 @@
 
 namespace Mono.Data.SqlSharp.Gui.GtkSharp 
 {
-	using Gtk;
-	using GtkSharp;
-	using SqlEditorSharp;
-
 	using System;
 	using System.Collections;
 	using System.Data;
@@ -28,11 +24,18 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 	using System.IO;
 	using System.Reflection;
 	using System.Runtime.Remoting;
+	using System.Runtime.InteropServices;
 	using System.Diagnostics;
+
+	using Gdk;
+	using Gtk;
+	using GtkSharp;
 	
 	using Mono.GtkSharp.Goodies;
 
 	using Gtk.Controls;
+
+	using SqlEditorSharp;
 
 	public enum OutputResults 
 	{
@@ -109,8 +112,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 		public void CreateGui() 
 		{
 			win = new Gtk.Window (ApplicationName);
-			win.DeleteEvent += new 
-				DeleteEventHandler (OnWindow_Delete);
+			win.DeleteEvent += new GtkSharp.DeleteEventHandler(OnWindow_Delete);
 			win.BorderWidth = 4;
 			win.DefaultSize = new Size (450, 300);
 			
@@ -135,7 +137,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			NewEditorTab();
 			paned.Add1 (sourceFileNotebook);
 			sourceFileNotebook.SwitchPage += new 
-				SwitchPageHandler(OnEditorTabSwitched);
+				GtkSharp.SwitchPageHandler(OnEditorTabSwitched);
 
 			// bottom panel
 			resultsNotebook = CreateOutputResultsGui ();
@@ -154,7 +156,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			editor = new SqlEditorSharp ();
 			editor.View.Show ();
 			editor.View.KeyPressEvent +=
-				new GtkSharp.KeyPressEventHandler(EditorKeyPressedEventHandler);
+				new GtkSharp.KeyPressEventHandler(OnKeyPressEventKey);
 
 			lastUnknownFile ++;
 			string unknownFile = "Unknown" + 
@@ -228,8 +230,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			return sw;
 		}
 
-		void EditorKeyPressedEventHandler(object o,
-						KeyPressEventArgs args) 
+		void OnKeyPressEventKey(object o, GtkSharp.KeyPressEventArgs args) 
 		{
 			if (o is TextView) {
 				TextView tv = (TextView) o;
@@ -600,14 +601,14 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			win.Title = title;
 		}
 
-		void OnEditorTabSwitched (object o, SwitchPageArgs args) 
+		void OnEditorTabSwitched (object o, GtkSharp.SwitchPageArgs args) 
 		{
 			int page = (int) args.PageNum;
 			EditorTab tab = FindEditorTab(page);
 			UpdateTitleBar (tab);
 		}
 
-		void OnWindow_Delete (object o, DeleteEventArgs args) 
+		void OnWindow_Delete (object o, GtkSharp.DeleteEventArgs args) 
 		{
 			QuitApplication();
 		}
