@@ -5902,10 +5902,13 @@ namespace Mono.MonoBASIC {
 
 			if (expr is SimpleName){
 				SimpleName child_expr = (SimpleName) expr;
-				
+
 				Expression new_expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
 
-				return new_expr.Resolve (ec, flags | ResolveFlags.MethodGroup);
+				if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type)
+					return new_expr.Resolve (ec, flags);
+				else
+					return new_expr.Resolve (ec, flags | ResolveFlags.MethodGroup | ResolveFlags.VariableOrValue);
 			}
 					
 			int errors = Report.Errors;

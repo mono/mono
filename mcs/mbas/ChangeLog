@@ -1,4 +1,7 @@
 2004-07-20 Anirban Bhattacharjee <banirban@novell.com>
+	* expression.cs: Resolution of fully qualified type names - bug fixed
+
+2004-07-20 Anirban Bhattacharjee <banirban@novell.com>
 	* assign.cs: Added new argument to Expression.ConvertExplicit function call
 
 2004-07-20 Anirban Bhattacharjee <banirban@novell.com>
