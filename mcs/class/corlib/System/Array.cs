@@ -397,10 +397,7 @@ namespace System
 					castException = true;
 				}
 
-				if (argumentException)
-					throw new InvalidCastException ();
-
-				if (castException)
+				if (argumentException || castException)
 					throw new ArrayTypeMismatchException ();
 			}
 		}

@@ -1,5 +1,9 @@
 2002-03-06  Martin Baulig  <martin@gnome.org>
 
+	* Array.cs (Copy): Always throw an ArrayTypeMismatchException, not
+	an InvalidCastException if the widening conversion failed. See
+	testcases #M94-#M96.
+
 	* Array.cs (CopyTo): Bug fix from Ajay Dwivedi, correctly handle
 	arrays with non-zero lower bounds. Also adding testcases #F10-#F13
 	for this.
