@@ -38,7 +38,7 @@ namespace System.Security.Cryptography {
 		/// <param name="st">FIXME: No clue.  Specifies which derived class to create?</param>
 		[MonoTODO]
 		public static new SHA512 Create (string st) {
-			return new SHA512Managed();
+			return Create();
 		}
 	}
 }
