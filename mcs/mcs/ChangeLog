@@ -1,3 +1,10 @@
+2002-09-05  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Flag a nicer error
+	message (1502, 1503) when we can't locate a method after overload
+	resolution. This is much more informative and closes the bug
+	Miguel reported.
+	
 2002-09-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* compiler.csproj:

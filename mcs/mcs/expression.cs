@@ -3792,8 +3792,21 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (method == null)
+			if (method == null) {
+				for (int i = 0; i < me.Methods.Length; ++i) {
+
+					MethodBase c = (MethodBase) me.Methods [i];
+					ParameterData pd = GetParameterData (c);
+
+					if (pd.Count != argument_count)
+						continue;
+
+					VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
+							       null, loc);
+				}
+				
 				return null;
+			}
 
 			//
 			// Now check that there are no ambiguities i.e the selected method
@@ -3957,11 +3970,16 @@ namespace Mono.CSharp {
 			MethodGroupExpr mg = (MethodGroupExpr) expr;
 			method = OverloadResolve (ec, mg, Arguments, loc);
 
-			if (method == null){
-				Error (-6,
-				       "Could not find any applicable function for this argument list");
-				return null;
-			}
+			//
+			// We don't need this since OverloadResolve itself takes care of flagging
+			// an error 
+			//
+
+// 			if (method == null){
+// 				Error (-6,
+// 				       "Could not find any applicable function for this argument list");
+// 				return null;
+// 			}
 
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
