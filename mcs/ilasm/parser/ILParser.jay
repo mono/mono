@@ -11,29 +11,14 @@ namespace Mono.ILASM {
 
 	public class ILParser {
 
-		// private Method method;
-
-		// private InstrBase currentInstr;
-
-		// private CallingConventions currentCallConv;
-
-		// private TypeAttributes currentTypeAttrs;
-
-		// private Class currentClass;
-
 		private CodeGen codegen;
-
-		private string defaultAsmName = "output";
-
 
 		public ILParser (CodeGen codegen) {
 			this.codegen = codegen;
 		}
 
 		public CodeGen CodeGen {
-			get {
-				return codegen;
-			}
+			get { return codegen; }
 		}
 		
 %}
@@ -682,23 +667,16 @@ propDecl                : D_SET callConv type typeSpec DOUBLE_COLON methodName O
 			;
 
 
-methodHeadPart1         : D_METHOD
+methodHead              : D_METHOD methAttr callConv type_ref methodName 
+				OPEN_PARENS arg_list CLOSE_PARENS implAttr OPEN_BRACE 
 			{
 				/*
-				method = new Method ();
-				currentCallConv = 0;
-				*/
-			}
-			;
-
-methodHead              : methodHeadPart1 methAttr callConv paramAttr type methodName OPEN_PARENS arg_list CLOSE_PARENS implAttr OPEN_BRACE 
-			{
-				
-				/*
-				method.SetMethodName ($6 as MethodName);
-				method.SetParamList ($8 as ArrayList);
-				method.CallConv = currentCallConv;
-				method.RetType = $5 as string;
+				Console.WriteLine ("Method Attributes: {0}", $2);
+				Console.WriteLine ("Method CallConv: {0}", $3);
+				Console.WriteLine ("Method Return Type: {0}", $4);
+				Console.WriteLine ("Method Name: {0}", $5);
+				Console.WriteLine ("Method ParamList: {0}", $7);
+				Console.WriteLine ("Method ImplAttr: {0}", $9);
 				*/
 			}
 			| methodHeadPart1 methAttr callConv paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS methodName OPEN_PARENS sigArgs0 CLOSE_PARENS implAttr OPEN_BRACE
@@ -753,9 +731,9 @@ pinvAttr                : /* EMPTY */
 			| pinvAttr K_FASTCALL 
 			;
 
-methodName              : D_CTOR	{/*$$ = new MethodName ("ctor", true); */}
-			| D_CCTOR	{/*$$ = new MethodName ("cctor", true); */}
-			| name1		{/*$$ = new MethodName ($1 as string); */}
+methodName              : D_CTOR
+			| D_CCTOR
+			| name1
 			;
 
 paramAttr               : /* EMPTY */ 
@@ -788,20 +766,20 @@ fieldAttr               : /* EMPTY */ 			{$$ = FieldAttr.Default; }
 			| fieldAttr K_NOTSERIALIZED 	{$$ = FieldAttr.Notserialized; }
 			;
 
+
 implAttr                : /* empty */ 
-			| implAttr K_NATIVE 
-			| implAttr ELLIPSIS
-			| implAttr K_IL  /* LAMESPEC: absent in docs */
-			| implAttr K_CIL /* LAMESPEC: same as above */
-			| implAttr K_OPTIL 
-			| implAttr K_MANAGED 
-			| implAttr K_UNMANAGED 
-			| implAttr K_FORWARDREF 
-			| implAttr K_PRESERVESIG 
-			| implAttr K_RUNTIME 
-			| implAttr K_INTERNALCALL 
-			| implAttr K_SYNCHRONIZED 
-			| implAttr K_NOINLINING 
+			| implAttr K_NATIVE 	{$$ = (ImplAttr) $1 | ImplAttr.Native; }
+			| implAttr K_IL		{$$ = (ImplAttr) $1 | ImplAttr.IL; }
+			| implAttr K_CIL 	{ /* Do nothing */ }
+			| implAttr K_OPTIL 	{$$ = (ImplAttr) $1 | ImplAttr.Optil; }
+			| implAttr K_MANAGED 	{ /* Do nothing */ }
+			| implAttr K_UNMANAGED 	{$$ = (ImplAttr) $1 | ImplAttr.Unmanaged; }
+			| implAttr K_FORWARDREF {$$ = (ImplAttr) $1 | ImplAttr.ForwardRef; }
+			| implAttr K_PRESERVESIG {$$ = (ImplAttr) $1 | ImplAttr.PreserveSig; }
+			| implAttr K_RUNTIME 	{$$ = (ImplAttr) $1 | ImplAttr.PreserveSig; }
+			| implAttr K_INTERNALCALL {$$ = (ImplAttr) $1 | ImplAttr.InternalCall; }
+			| implAttr K_SYNCHRONIZED {$$ = (ImplAttr) $1 | ImplAttr.Synchronized; }
+			| implAttr K_NOINLINING	{$$ = (ImplAttr) $1 | ImplAttr.NoInLining; }
 			;
 
 localsHead              : D_LOCALS
@@ -1141,18 +1119,18 @@ typeSpec                : className
 			| type 
 			;
 
-callConv                : K_INSTANCE callConv	{ /* currentCallConv |= CallingConventions.HasThis; */}
-			| K_EXPLICIT callConv	{ /* currentCallConv |= CallingConventions.ExplicitThis; */}
+callConv                : K_INSTANCE callConv	{ $$ = (CallConv) $1 | CallConv.Instance; }
+			| K_EXPLICIT callConv	{ $$ = (CallConv) $1 | CallConv.InstanceExplicit; }
 			| callKind 
 			;
 
-callKind                : /* EMPTY */ 
-			| K_DEFAULT		{ /* currentCallConv |= CallingConventions.Standard; */}
-			| K_VARARG		{ /* currentCallConv |= CallingConventions.VarArgs; */}
-			| K_UNMANAGED K_CDECL 
-			| K_UNMANAGED K_STALL 
-			| K_UNMANAGED K_THISCALL 
-			| K_UNMANAGED K_FASTCALL 
+callKind                : /* EMPTY */ 		
+			| K_DEFAULT		{ $$ = (CallConv) $1 | CallConv.Default; }
+			| K_VARARG		{ $$ = (CallConv) $1 | CallConv.Vararg; }
+			| K_UNMANAGED K_CDECL 	{ $$ = (CallConv) $1 | CallConv.Cdecl; }
+			| K_UNMANAGED K_STALL 	{ }
+			| K_UNMANAGED K_THISCALL { $$ = (CallConv) $1 | CallConv.Thiscall; }
+			| K_UNMANAGED K_FASTCALL { $$ = (CallConv) $1 | CallConv.Fastcall; }
 			;
 
 nativeType              : /* EMPTY */  

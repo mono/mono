@@ -1,5 +1,9 @@
 2003-03-09 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Set Call Conventions and Implementation Flags
+
+2003-03-09 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Add implemented interfaces
 
 2003-03-08 Jackson Harper <jackson@latitudegeo.com>
