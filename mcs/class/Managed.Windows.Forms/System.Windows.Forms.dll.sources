@@ -158,6 +158,7 @@ System.Windows.Forms/ScrollEventArgs.cs
 System.Windows.Forms/ScrollEventHandler.cs
 System.Windows.Forms/ScrollEventType.cs
 System.Windows.Forms/Shortcut.cs
+System.Windows.Forms/SizeGripStyle.cs
 System.Windows.Forms/SortOrder.cs
 System.Windows.Forms/StatusBar.cs
 System.Windows.Forms/StatusBarDrawItemEventArgs.cs
@@ -168,6 +169,7 @@ System.Windows.Forms/StatusBarPanelClickEventArgs.cs
 System.Windows.Forms/StatusBarPanelClickEventHandler.cs
 System.Windows.Forms/StatusBarPanel.cs
 System.Windows.Forms/StatusBarPanelStyle.cs
+System.Windows.Forms/StructFormat.cs
 System.Windows.Forms/TabAlignment.cs
 System.Windows.Forms/TabAppearance.cs
 System.Windows.Forms/TabControl.cs

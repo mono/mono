@@ -265,7 +265,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ContextMenu.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -350,6 +350,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DrawItemEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DrawItemEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -869,6 +874,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\SizeGripStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\SortOrder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -915,6 +925,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\StatusBarPanelStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\StructFormat.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
