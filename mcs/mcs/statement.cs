@@ -314,7 +314,6 @@ namespace Mono.CSharp {
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
-			Label while_loop = ig.DefineLabel ();
 			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			bool ret;
 			
@@ -322,9 +321,6 @@ namespace Mono.CSharp {
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
 			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
-
-			ig.Emit (OpCodes.Br, ec.LoopBegin);
-			ig.MarkLabel (while_loop);
 
 			//
 			// Inform whether we are infinite or not
@@ -352,11 +348,14 @@ namespace Mono.CSharp {
 				}
 				ig.MarkLabel (ec.LoopEnd);
 			} else {
-				Statement.Emit (ec);
-			
 				ig.MarkLabel (ec.LoopBegin);
 
-				EmitBoolExpression (ec, expr, while_loop, true);
+				EmitBoolExpression (ec, expr, ec.LoopEnd, false);
+
+				Statement.Emit (ec);
+
+				ig.Emit (OpCodes.Br, ec.LoopBegin);
+
 				ig.MarkLabel (ec.LoopEnd);
 
 				ret = false;
@@ -422,7 +421,6 @@ namespace Mono.CSharp {
 			bool old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
 			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
-			Label loop = ig.DefineLabel ();
 			Label test = ig.DefineLabel ();
 			
 			if (InitStatement != null)
@@ -434,8 +432,14 @@ namespace Mono.CSharp {
 			ec.InLoop = true;
 			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
-			ig.Emit (OpCodes.Br, test);
-			ig.MarkLabel (loop);
+			ig.MarkLabel (test);
+			//
+			// If test is null, there is no test, and we are just
+			// an infinite loop
+			//
+			if (Test != null)
+				EmitBoolExpression (ec, Test, ec.LoopEnd, false);
+
 			ec.Breaks = false;
 			Statement.Emit (ec);
 			bool breaks = ec.Breaks;
@@ -444,15 +448,7 @@ namespace Mono.CSharp {
 			if (!(Increment is EmptyStatement))
 				Increment.Emit (ec);
 
-			ig.MarkLabel (test);
-			//
-			// If test is null, there is no test, and we are just
-			// an infinite loop
-			//
-			if (Test != null)
-				EmitBoolExpression (ec, Test, loop, true);
-			else
-				ig.Emit (OpCodes.Br, loop);
+			ig.Emit (OpCodes.Br, test);
 			ig.MarkLabel (ec.LoopEnd);
 
 			ec.LoopBegin = old_begin;

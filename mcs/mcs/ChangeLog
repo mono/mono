@@ -1,5 +1,16 @@
 2002-07-27  Martin Baulig  <martin@gnome.org>
 
+	These two changes won't give us any performance or code-size
+	improvements, but they make my control flow analyis much simpler.
+
+	* statement.cs (While.Emit): Did some loop-inversion here; emit the
+	test, then the body of the while and then a jump back to the test.
+	(For.Emit): Did some loop-inversion here; emit the initialization,
+	then the test, then the body, then the incrementation and then a jump
+	back to the test.
+
+2002-07-27  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (Invocation.EmitArguments): When calling a varargs
 	function with only its fixed arguments, we need to pass an empty
 	array.
