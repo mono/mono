@@ -32,6 +32,8 @@ using System.Security.Permissions;
 
 namespace System.Data.Common {
 
+	// NOTE: This version of PermissionHelper was customized for System.Data
+
 	internal sealed class PermissionHelper {
 
 		// snippet moved from FileIOPermission (nickd) to be reused in all derived classes
@@ -57,7 +59,7 @@ namespace System.Data.Common {
 				break;
 			default:
 				msg = String.Format (Locale.GetText ("Invalid enum {0}"), state);
-				throw new ArgumentException (msg, "state");
+				throw new ArgumentOutOfRangeException (msg, "state");
 			}
 			return state;
 		}
@@ -67,9 +69,9 @@ namespace System.Data.Common {
 			if (se == null)
 				throw new ArgumentNullException (parameterName);
 
-			if (se.Attribute ("class") == null) {
-				string msg = Locale.GetText ("Missing 'class' attribute.");
-				throw new ArgumentException (msg, parameterName);
+			if (se.Tag != "IPermission") {
+				string msg = Locale.GetText ("Invalid tag '{0}' expected 'IPermission'.");
+				throw new ArgumentException (String.Format (msg, se.Tag), parameterName);
 			}
 
 			// we assume minimum version if no version number is supplied

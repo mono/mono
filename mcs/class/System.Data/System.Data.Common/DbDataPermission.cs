@@ -67,7 +67,7 @@ namespace System.Data.Common {
 			state = permission.state;
 			if (state != PermissionState.Unrestricted) {
 				allowBlankPassword = permission.allowBlankPassword;
-				_connections = (Hashtable) _connections.Clone ();
+				_connections = (Hashtable) permission._connections.Clone ();
 			}
 		}
 
@@ -83,8 +83,10 @@ namespace System.Data.Common {
 			else {
 				state = PermissionState.None;
 				allowBlankPassword = permissionAttribute.AllowBlankPassword;
-				Add (permissionAttribute.ConnectionString, permissionAttribute.KeyRestrictions, 
-					permissionAttribute.KeyRestrictionBehavior);
+				if (permissionAttribute.ConnectionString.Length > 0) {
+					Add (permissionAttribute.ConnectionString, permissionAttribute.KeyRestrictions, 
+						permissionAttribute.KeyRestrictionBehavior);
+				}
 			}
 		}
 
@@ -139,13 +141,13 @@ namespace System.Data.Common {
 		protected virtual void AddConnectionString (string connectionString, string restrictions, 
 			KeyRestrictionBehavior behavior, Hashtable synonyms, bool useFirstKeyValue)
 		{
-			_connections [connectionString] = new object [2] { restrictions, connectionString };
+			_connections [connectionString] = new object [2] { restrictions, behavior };
 		}
 #elif NET_1_1
 		public virtual void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
 			state = PermissionState.None;
-			_connections [connectionString] = new object [2] { restrictions, connectionString };
+			_connections [connectionString] = new object [2] { restrictions, behavior };
 		}
 #endif
 
@@ -156,30 +158,110 @@ namespace System.Data.Common {
 
 		public override IPermission Copy () 
 		{
-			// call protected constructor
-			return (IPermission) Activator.CreateInstance (this.GetType (), new object [1] { this });
+			DBDataPermission dbdp = CreateInstance ();
+			dbdp.allowBlankPassword = this.allowBlankPassword;
+			dbdp._connections = (Hashtable) this._connections.Clone ();
+			return dbdp;
 		}
 
 		protected virtual DBDataPermission CreateInstance ()
 		{
-			return (DBDataPermission) Activator.CreateInstance (this.GetType ());
+			return (DBDataPermission) Activator.CreateInstance (this.GetType (), new object [1] { PermissionState.None });
 		}
 
-		[MonoTODO]
 		public override void FromXml (SecurityElement securityElement) 
 		{
+			PermissionHelper.CheckSecurityElement (securityElement, "securityElement", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
+
+			state = (PermissionHelper.IsUnrestricted (securityElement) ? 
+				PermissionState.Unrestricted : PermissionState.None);
+
+			allowBlankPassword = false;
+			string blank = securityElement.Attribute ("AllowBlankPassword");
+			if (blank != null) {
+#if NET_2_0
+				// avoid possible exceptions with Fx 2.0
+				if (!Boolean.TryParse (blank, out allowBlankPassword))
+					allowBlankPassword = false;
+#else
+				try {
+					allowBlankPassword = Boolean.Parse (blank);
+				}
+				catch {
+					allowBlankPassword = false;
+				}
+#endif
+			}
+
+			if (securityElement.Children != null) {
+				foreach (SecurityElement child in securityElement.Children) {
+					string connect = child.Attribute ("ConnectionString");
+					string restricts = child.Attribute ("KeyRestrictions");
+					KeyRestrictionBehavior behavior = (KeyRestrictionBehavior) Enum.Parse (
+						typeof (KeyRestrictionBehavior), child.Attribute ("KeyRestrictionBehavior"));
+
+					if ((connect != null) && (connect.Length > 0))
+						Add (connect, restricts, behavior);
+				}
+			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("restrictions not completely implemented - nor documented")]
 		public override IPermission Intersect (IPermission target) 
 		{
-			throw new NotImplementedException ();
+			DBDataPermission dbdp = Cast (target);
+			if (dbdp == null)
+				return null;
+			if (IsUnrestricted ()) {
+				if (dbdp.IsUnrestricted ()) {
+					DBDataPermission u = CreateInstance ();
+					u.state = PermissionState.Unrestricted;
+					return u;
+				}
+				return dbdp.Copy ();
+			}
+			if (dbdp.IsUnrestricted ())
+				return Copy ();
+			if (IsEmpty () || dbdp.IsEmpty ())
+				return null;
+
+			DBDataPermission p = CreateInstance ();
+			p.allowBlankPassword = (allowBlankPassword && dbdp.allowBlankPassword);
+			foreach (DictionaryEntry de in _connections) {
+				object o = dbdp._connections [de.Key];
+				if (o != null)
+					p._connections.Add (de.Key, de.Value);
+			}
+			return (p._connections.Count > 0) ? p : null;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("restrictions not completely implemented - nor documented")]
 		public override bool IsSubsetOf (IPermission target) 
 		{
-			throw new NotImplementedException ();
+			DBDataPermission dbdp = Cast (target);
+			if (dbdp == null)
+				return IsEmpty ();
+			if (dbdp.IsUnrestricted ())
+				return true;
+			if (IsUnrestricted ())
+				return dbdp.IsUnrestricted ();
+
+			if (allowBlankPassword && !dbdp.allowBlankPassword)
+				return false;
+			if (_connections.Count > dbdp._connections.Count)
+				return false;
+
+			foreach (DictionaryEntry de in _connections) {
+				object o = dbdp._connections [de.Key];
+				if (o == null)
+					return false;
+				// FIXME: this is a subset of what is required
+				// it seems that we must process both the connect string
+				// and the restrictions - but this has other effects :-/
+			}
+			return true;
 		}
 
 		public bool IsUnrestricted () 
@@ -225,10 +307,49 @@ namespace System.Data.Common {
 			return se;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("restrictions not completely implemented - nor documented")]
 		public override IPermission Union (IPermission target) 
 		{
-			throw new NotImplementedException ();
+			DBDataPermission dbdp = Cast (target);
+			if (dbdp == null)
+				return Copy ();
+			if (IsEmpty () && dbdp.IsEmpty ())
+				return null;
+
+			DBDataPermission p = CreateInstance ();
+			if (IsUnrestricted () || dbdp.IsUnrestricted ()) {
+				p.state = PermissionState.Unrestricted;
+			}
+			else {
+				p.allowBlankPassword = (allowBlankPassword || dbdp.allowBlankPassword);
+				p._connections = new Hashtable (_connections.Count + dbdp._connections.Count);
+				foreach (DictionaryEntry de in _connections)
+					p._connections.Add (de.Key, de.Value);
+				// don't duplicate
+				foreach (DictionaryEntry de in dbdp._connections)
+					p._connections [de.Key] = de.Value;
+			}
+			return p;
+		}
+
+		// helpers
+
+		private bool IsEmpty ()
+		{
+			return ((state != PermissionState.Unrestricted) && (_connections.Count == 0));
+		}
+
+		private DBDataPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			DBDataPermission dbdp = (target as DBDataPermission);
+			if (dbdp == null) {
+				PermissionHelper.ThrowInvalidPermission (target, this.GetType ());
+			}
+
+			return dbdp;
 		}
 
 		#endregion // Methods

@@ -1,3 +1,12 @@
+2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DbDataPermission.cs: Implemented Intersect, IsSubsetOf and Union.
+	Implementation isn't complete as the restrictions seems to change the
+	expected results (breaking some rules like x.IsSubsetOf (x) == false).
+	Better (real-world) tests cases are required.
+	* PermissionHelper.cs: Fixed small differences between System.Data.dll 
+	validations wrt to mscorlib.dll (XML and PermissionState).
+
 2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DbConnectionOptions.cs: New class for Fx 2.0. Partial implementation
