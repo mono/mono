@@ -1,3 +1,16 @@
+2004-04-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ReflectionPropertyDescriptor.cs: Access internal PropertyInfo through
+	GetPropertyInfo(). Take into account that a component may not be sited or
+	not have some services.
+	* TypeDescriptor.cs: GetTypeFromName():  Added null check for Site property.
+	Other minor fixes.
+
+2004-04-16	Joerg Rosenkranz <joergr@voelcker.com>
+
+	* TypeDescriptor.cs: Fixed implementation of GetConverter.
+	  This fixes #57137.
+
 2004-04-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* AttributeCollection.cs: Added new internal constructor.

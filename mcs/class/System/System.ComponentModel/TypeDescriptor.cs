@@ -161,20 +161,24 @@ public sealed class TypeDescriptor
 			return ((ICustomTypeDescriptor) component).GetConverter ();
 		} 
 		else {
+			Type t = null;
 			AttributeCollection atts = GetAttributes (component, false);
 			TypeConverterAttribute tca = (TypeConverterAttribute) atts[typeof(TypeConverterAttribute)];
-			if (tca != null) {
-				Type t = GetTypeFromName (component as IComponent, tca.ConverterTypeName);
-				return (TypeConverter) Activator.CreateInstance (t);
+			if (tca != null && tca.ConverterTypeName.Length > 0) {
+				t = GetTypeFromName (component as IComponent, tca.ConverterTypeName);
 			}
 			
-			Type type = component.GetType ();
-			while (type != typeof(object))
-			{
-				TypeConverter con = (TypeConverter) DefaultConverters [type];
-				if (con != null) return con;
+			Type primitive = component.GetType ();
+			while (t == null && primitive != typeof (object)) {
+				t = (Type) DefaultConverters [primitive];
+				if (t == null)
+					primitive = primitive.BaseType;
 			}
-			return null;
+			
+			if (t != null)
+				return (TypeConverter) Activator.CreateInstance (t);
+			else
+				return null;
 		}
 	}
 
@@ -224,19 +228,28 @@ public sealed class TypeDescriptor
 			// EnumConverter needs to know the enum type
 			return new EnumConverter(type);
 		} else {
-			AttributeCollection atts = GetAttributes (type);
-			TypeConverterAttribute tca = (TypeConverterAttribute) atts[typeof(TypeConverterAttribute)];
+			TypeConverterAttribute tca = null;
+			Type t = null;
+			object [] atts = type.GetCustomAttributes (typeof(TypeConverterAttribute), true);
+			
+			if (atts.Length > 0)
+				tca = (TypeConverterAttribute)atts[0];
+			
 			if (tca != null) {
-				Type t = GetTypeFromName (null, tca.ConverterTypeName);
-				return (TypeConverter) Activator.CreateInstance (t);
+				t = GetTypeFromName (null, tca.ConverterTypeName);
 			}
 			
-			while (type != typeof(object))
-			{
-				TypeConverter con = (TypeConverter) DefaultConverters [type];
-				if (con != null) return con;
+			Type primitive = type;
+			while (t == null && primitive != typeof (object)) {
+				t = (Type) DefaultConverters [primitive];
+				if (t == null)
+					primitive = primitive.BaseType;
 			}
-			return null;
+			
+			if (t != null)
+				return (TypeConverter) Activator.CreateInstance (t);
+			else
+				return null;
 		}
 	}
 
@@ -458,7 +471,7 @@ public sealed class TypeDescriptor
 	
 	static Type GetTypeFromName (IComponent component, string typeName)
 	{
-		if (component != null) {
+		if (component != null && component.Site != null) {
 			ITypeResolutionService resver = (ITypeResolutionService) component.Site.GetService (typeof(ITypeResolutionService));
 			if (resver != null) return resver.GetType (typeName, true, false);
 		}
@@ -510,7 +523,7 @@ public sealed class TypeDescriptor
 			if (_gotDefaultEvent) return _defaultEvent;
 			
 			DefaultEventAttribute attr = (DefaultEventAttribute) GetAttributes()[typeof(DefaultEventAttribute)];
-			if (attr == null) 
+			if (attr == null || attr.Name == null) 
 				_defaultEvent = null;
 			else {
 				EventInfo ei = _infoType.GetEvent (attr.Name);
@@ -527,7 +540,7 @@ public sealed class TypeDescriptor
 			if (_gotDefaultProperty) return _defaultProperty;
 			
 			DefaultPropertyAttribute attr = (DefaultPropertyAttribute) GetAttributes()[typeof(DefaultPropertyAttribute)];
-			if (attr == null) 
+			if (attr == null || attr.Name == null) 
 				_defaultProperty = null;
 			else {
 				PropertyInfo ei = _infoType.GetProperty (attr.Name);

@@ -42,7 +42,7 @@ namespace System.ComponentModel
 			_componentType = _member.DeclaringType;
 		}
 		
-		PropertyInfo GetEventInfo ()
+		PropertyInfo GetPropertyInfo ()
 		{
 			if (_member == null) {
 				_member = _componentType.GetProperty (Name);
@@ -61,7 +61,7 @@ namespace System.ComponentModel
 		{
 			get
 			{
-				return !_member.CanWrite;
+				return !GetPropertyInfo ().CanWrite;
 			}
 		}
 
@@ -69,24 +69,27 @@ namespace System.ComponentModel
 		{
 			get
 			{
-				return _member.PropertyType;
+				return GetPropertyInfo ().PropertyType;
 			}
 		}
 		
 		public override object GetValue (object component)
 		{
-			return _member.GetValue (component, null);
+			return GetPropertyInfo ().GetValue (component, null);
 		}
 		
 		DesignerTransaction CreateTransaction (object obj)
 		{
 			Component com = obj as Component;
-			if (com == null) return null;
+			if (com == null || com.Site == null) return null;
 			
 			IDesignerHost dh = (IDesignerHost) com.Site.GetService (typeof(IDesignerHost));
+			if (dh == null) return null;
+			
 			DesignerTransaction tran = dh.CreateTransaction ();
 			IComponentChangeService ccs = (IComponentChangeService) com.Site.GetService (typeof(IComponentChangeService));
-			ccs.OnComponentChanging (com, this);
+			if (ccs != null)
+				ccs.OnComponentChanging (com, this);
 			return tran;
 		}
 		
@@ -97,7 +100,8 @@ namespace System.ComponentModel
 			if (commit) {
 				Component com = obj as Component;
 				IComponentChangeService ccs = (IComponentChangeService) com.Site.GetService (typeof(IComponentChangeService));
-				ccs.OnComponentChanged (com, this, oldValue, newValue);
+				if (ccs != null)
+					ccs.OnComponentChanged (com, this, oldValue, newValue);
 				tran.Commit ();
 			}
 			else
@@ -111,7 +115,7 @@ namespace System.ComponentModel
 			
 			try
 			{
-				_member.SetValue (component, value, null);
+				GetPropertyInfo ().SetValue (component, value, null);
 				EndTransaction (component, tran, old, value, true);
 			}
 			catch
