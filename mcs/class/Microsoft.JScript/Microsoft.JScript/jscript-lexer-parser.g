@@ -63,7 +63,15 @@ statement returns [Statement stm]
         variable_statement
     |
 	empty_statement
-    |    
+    |
+	with_statement
+    |
+	switch_statement
+    |
+	labelled_statement
+    |
+	try_statement
+    |	    
         stm = print_statement
     ;
 
@@ -74,6 +82,60 @@ block: LBRACE (statement_list | ) RBRACE
 
 empty_statement: SEMI_COLON ;
 
+
+// WithStatement, see Ecma-262 3d. Edition, section 12.8, page 67.
+with_statement
+    : 
+	"with" LPAREN expression RPAREN statement 
+    ;
+
+
+switch_statement
+    :
+	"switch" LPAREN expression RPAREN case_block
+    ;
+
+
+case_block
+    :
+	LBRACE (case_clauses | ) (default_clause (case_clauses | ) | ) RBRACE
+    ;
+
+
+case_clauses: (case_clause)+ ;
+
+case_clause
+    : 
+	"case" expression COLON (statement_list | )
+    ;
+
+
+default_clause
+    : 
+	"default" COLON (statement_list | )
+    ;
+
+
+labelled_statement
+    :
+	IDENTIFIER COLON statement
+    ;
+
+
+// See section 12.14 from Ecma-262, 3d. Edition.
+try_statement
+    : 
+	"try" block ((catch_exp (finally_exp | )) | finally_exp)
+    ;
+
+
+// NOTE: I call it catch_exp, to avoid confusion on antlr.
+catch_exp: "catch" LPAREN IDENTIFIER RPAREN block ;
+
+// NOTE: I call it finally_exp, to avoid confusion on the Java/C# side.
+finally_exp: "finally" block ;
+
+    
 statement_list
     :
 	statement (statement_list | )
@@ -272,6 +334,10 @@ primary_expression
         IDENTIFIER
     |
         literal
+    |
+	object_literal
+    |
+	LPAREN expression RPAREN
     ;
 
 
@@ -283,6 +349,32 @@ literal
     |
 	null_literal
     ;
+
+
+// ObjectLiteral, see Ecma-262 3d. Edition, page 41 and 42.
+object_literal
+    : 
+	LBRACE (property_name_and_value_list | ) RBRACE ;
+
+
+property_name_and_value_list
+    :
+	property_name COLON assignment_expression (COMMA property_name_and_value_list | )
+    ;
+
+
+// PropertyName
+// FIXME:  NumericLiteral missing.
+property_name
+    :
+	IDENTIFIER
+    |
+	STRING_LITERAL
+    ;
+
+
+//  Expression, see Ecma-262 spec, section 11.14, page 60. 
+expression: assignment_expression (COMMA  expression | ) ;
 
 
 // Non-Ecma statements

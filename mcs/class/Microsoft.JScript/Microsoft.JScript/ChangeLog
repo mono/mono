@@ -1,3 +1,12 @@
+2003-04-03	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: Added switch_statement rule, case_block, case_clauses, case_clause, default_clause, labelled_statement, try_statement, catch_exp, finally_exp.
+
+2003-04-01    Cesar Octavio Lopez Nataren
+
+	* jscript-lexer-parser.g: Added the grammar rules for: with_statement, object_literal, ( expression ), property_name_and_value_list, property_name and expression.
+	
+
 2003-03-30    Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 
 	* Added a README file. Explains the dependencies and build process.
