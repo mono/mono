@@ -1,4 +1,13 @@
 
+Sat Aug 4 12:36:54 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* get.c, get.h, main.c, dump.c: implement dis_stringify_method_signature().
+	More magic constants replaced by enum values (spotted at least 3 real bugs
+	doing this). Print usage information if an unknown option is given.
+	Print the full signature when dumping the method table.
+	Changed method and field table dumps to show the typedef name the field
+	or method belongs to.
+
 Fri Aug 3 18:30:16 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* get.c (get_method): fix use of unitialized variable and

@@ -1,3 +1,11 @@
+
+Sat Aug 4 12:46:02 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c: add mono_metadata_decode_row_col () to
+	decode a single column from a row in a metadata table and changes
+	to take advantage of it in the typedef locator (gives a nice speed up).
+	Store offset info for function params.
+
 2001-08-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* image.h (MONO_IMAGE_IS_CORLIB): removed 
