@@ -17,6 +17,7 @@ using System.Web.Services.Configuration;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
+using System.Web.UI;
 
 namespace System.Web.Services.Protocols
 {
@@ -26,13 +27,43 @@ namespace System.Web.Services.Protocols
 		ServiceDescriptionCollection _descriptions;
 		XmlSchemas _schemas;
 		string _url;
+		IHttpHandler _pageHandler = null;
 
 		public SoapDocumentationHandler (Type type, HttpContext context): base (type)
 		{
 			_url = context.Request.Url.ToString();
 			int i = _url.LastIndexOf ('?');
 			if (i != -1) _url = _url.Substring (0,i);
-			_typeStubInfo = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (ServiceType, typeof(SoapTypeStubInfo));
+			_typeStubInfo = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (ServiceType, "Soap");
+			
+			HttpRequest req = context.Request;
+			string key = null;
+			if (req.QueryString.Count == 1)
+				key = req.QueryString.GetKey(0).ToLower();
+				
+			if (key == "wsdl" || key == "schema" || key == "code")
+				return;
+				
+			string help = WSConfig.Instance.WsdlHelpPage;
+			string path = Path.GetDirectoryName (WSConfig.Instance.ConfigFilePath);
+			string file = Path.GetFileName (WSConfig.Instance.ConfigFilePath);
+			string appPath = AppDomain.CurrentDomain.GetData (".appPath").ToString ();
+			string vpath;
+			if (path.StartsWith (appPath)) {
+				vpath = path.Substring (appPath.Length);
+				vpath = vpath.Replace ("\\", "/");
+			} else {
+				vpath = "/";
+			}
+
+			if (vpath.EndsWith ("/"))
+				vpath += help;
+			else
+				vpath += "/" + help;
+
+			string physPath = Path.Combine (path, help);
+			_pageHandler = PageParser.GetCompiledPageInstance (vpath, physPath, context);
+				
 		}
 
 		public override bool IsReusable 
@@ -42,12 +73,21 @@ namespace System.Web.Services.Protocols
 
 		public override void ProcessRequest (HttpContext context)
 		{
-			HttpRequest req = context.Request;
-			string key = req.QueryString.GetKey(0).ToLower();
-			if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
-			else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
-			else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
-			else throw new Exception ("This should never happen");
+			if (_pageHandler != null)
+			{
+				context.Items["wsdls"] = GetDescriptions ();
+				context.Items["schemas"] = GetSchemas ();
+				_pageHandler.ProcessRequest (context);
+			}
+			else
+			{
+				HttpRequest req = context.Request;
+				string key = req.QueryString.GetKey(0).ToLower();
+				if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
+				else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
+				else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
+				else throw new Exception ("This should never happen");
+			}
 		}
 
 		void GenerateWsdlDocument (HttpContext context, string wsdlId)

@@ -17,7 +17,7 @@ namespace System.Web.Services.Protocols {
 
 		public HttpGetClientProtocol () 
 		{
-			TypeStub = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (GetType(), typeof (HttpGetMethodStubInfo));
+			TypeStub = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (GetType(), "HttpGet");
 		}
 		
 		#endregion // Constructors

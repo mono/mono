@@ -18,9 +18,9 @@ namespace System.Web.Services.Protocols
 	{
 		HttpSimpleTypeStubInfo _typeInfo;
 		
-		public HttpSimpleWebServiceHandler (Type type, Type stubType): base (type)
+		public HttpSimpleWebServiceHandler (Type type, string protocolName): base (type)
 		{
-			_typeInfo = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (type, stubType);
+			_typeInfo = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (type, protocolName);
 		}
 		
 		protected HttpSimpleTypeStubInfo TypeStub

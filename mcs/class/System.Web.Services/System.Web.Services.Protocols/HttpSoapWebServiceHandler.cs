@@ -26,7 +26,7 @@ namespace System.Web.Services.Protocols
 
 		public HttpSoapWebServiceHandler (Type type): base (type)
 		{
-			_typeStubInfo = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (ServiceType, typeof(SoapTypeStubInfo));
+			_typeStubInfo = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (ServiceType, "Soap");
 		}
 
 		public override bool IsReusable 

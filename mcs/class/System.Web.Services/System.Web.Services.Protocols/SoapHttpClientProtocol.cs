@@ -100,7 +100,7 @@ namespace System.Web.Services.Protocols {
 
 		public SoapHttpClientProtocol () 
 		{
-			type_info = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (this.GetType (), typeof(SoapTypeStubInfo));
+			type_info = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (this.GetType (), "Soap");
 		}
 
 		#endregion // Constructors

@@ -13,7 +13,7 @@ namespace System.Web.Services.Protocols
 {
 	internal class HttpPostWebServiceHandler: HttpSimpleWebServiceHandler 
 	{
-		public HttpPostWebServiceHandler (Type type): base (type, typeof(HttpPostTypeStubInfo))
+		public HttpPostWebServiceHandler (Type type): base (type, "HttpPost")
 		{
 		}
 	}

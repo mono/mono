@@ -65,40 +65,7 @@ namespace System.Web.Services.Protocols
 				handler = new HttpGetWebServiceHandler (type);
 				break;
 			case WSProtocol.Documentation:
-				HttpRequest req = context.Request;
-				string key = null;
-				if (req.QueryString.Count == 1)
-					key = req.QueryString.GetKey(0).ToLower();
-
-				SoapDocumentationHandler soapHandler;
-				soapHandler = new SoapDocumentationHandler (type, context);
-				handler = soapHandler;
-				
-				if (key != null && (key == "wsdl" || key == "schema" || key == "code"))
-					return handler;
-
-				context.Items["wsdls"] = soapHandler.GetDescriptions ();
-				context.Items["schemas"] = soapHandler.GetSchemas ();
-
-				string help = WSConfig.Instance.WsdlHelpPage;
-				string path = Path.GetDirectoryName (WSConfig.Instance.ConfigFilePath);
-				string file = Path.GetFileName (WSConfig.Instance.ConfigFilePath);
-				string appPath = AppDomain.CurrentDomain.GetData (".appPath").ToString ();
-				string vpath;
-				if (path.StartsWith (appPath)) {
-					vpath = path.Substring (appPath.Length);
-					vpath = vpath.Replace ("\\", "/");
-				} else {
-					vpath = "/";
-				}
-
-				if (vpath.EndsWith ("/"))
-					vpath += help;
-				else
-					vpath += "/" + help;
-
-				string physPath = Path.Combine (path, help);
-				handler = PageParser.GetCompiledPageInstance (vpath, physPath, context);
+				handler = new SoapDocumentationHandler (type, context);
 				break;
 			}
 

@@ -1,3 +1,24 @@
+2003-10-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapDocumentationHandler.cs: Moved here the code from 
+	  WebServiceHandlerFactory that generates the documentation page.
+	* WebServiceHandlerFactory.cs: Moved the code that generates the doc page
+	  to SoapDocumentationHandler.cs.
+	* HttpGetClientProtocol.cs, HttpGetWebServiceHandler.cs,
+	  HttpPostClientProtocol.cs, HttpPostWebServiceHandler.cs,
+	  HttpSimpleWebServiceHandler.cs, HttpSoapWebServiceHandler.cs,
+	  SoapHttpClientProtocol.cs: Changed parameters of GetTypeStub call.
+	* HttpGetTypeStubInfo.cs, HttpPostTypeStubInfo.cs: Added ProtocolName
+	  property. Added check for valid parameters.
+	* HttpSimpleTypeStubInfo.cs: Define return MimeFormatter in constructor.
+	* Methods.cs: BindingInfo and related properties moved to base TypeStubInfo.
+	  Added properties for XmlImporter and SoapImporter.
+	* TypeStubManager.cs: Added BindingInfo and related properties.
+	  Changed GetTypeStub method. Now it takes the name of the protocol for
+	  which to get the type stub info.
+	* ValueCollectionParameterReader.cs: IsSupported should only return true
+	  for input primitive parameters or array of primitives.
+
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SoapDocumentationHandler.cs: it does not generate the documentation

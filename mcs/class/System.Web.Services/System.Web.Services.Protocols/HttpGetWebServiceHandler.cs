@@ -13,7 +13,7 @@ namespace System.Web.Services.Protocols
 {
 	internal class HttpGetWebServiceHandler: HttpSimpleWebServiceHandler 
 	{
-		public HttpGetWebServiceHandler (Type type): base (type, typeof(HttpGetTypeStubInfo))
+		public HttpGetWebServiceHandler (Type type): base (type, "HttpGet")
 		{
 		}
 	}

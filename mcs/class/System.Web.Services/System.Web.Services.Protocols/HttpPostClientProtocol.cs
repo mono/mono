@@ -17,7 +17,7 @@ namespace System.Web.Services.Protocols {
 
 		public HttpPostClientProtocol () 
 		{
-			TypeStub = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (GetType(), typeof (HttpPostMethodStubInfo));
+			TypeStub = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (GetType(), "HttpPost");
 		}
 		
 		#endregion // Constructors

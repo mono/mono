@@ -60,11 +60,13 @@ namespace System.Web.Services.Protocols {
 		Hashtable name_to_method = new Hashtable ();
 		MethodStubInfo[] methods;
 		LogicalMethodInfo[] logicalMethods;
+		ArrayList bindings = new ArrayList ();
 
 		// Precomputed
 		internal string WebServiceName;
 		internal string WebServiceNamespace;
 		internal string Description;
+		internal string DefaultBinding;
 		internal Type Type;
 
 		public TypeStubInfo (Type t)
@@ -81,6 +83,25 @@ namespace System.Web.Services.Protocols {
 				WebServiceName = Type.Name;
 				WebServiceNamespace = WebServiceAttribute.DefaultNamespace;
 			}
+
+			DefaultBinding = WebServiceName + ProtocolName;
+			BindingInfo binfo = new BindingInfo (DefaultBinding, WebServiceNamespace);
+			Bindings.Add (binfo);
+		}
+		
+		public virtual XmlReflectionImporter XmlImporter 
+		{
+			get { return null; }
+		}
+
+		public virtual SoapReflectionImporter SoapImporter 
+		{
+			get { return null; }
+		}
+		
+		public virtual string ProtocolName
+		{
+			get { return null; }
 		}
 
 		//
@@ -103,6 +124,12 @@ namespace System.Web.Services.Protocols {
 				if (msi == null)
 					continue;
 
+				if (name_to_method.ContainsKey (msi.Name)) {
+					string msg = "Both " + msi.MethodInfo.ToString () + " and " + GetMethod (msi.Name).MethodInfo + " use the message name '" + msi.Name + "'. ";
+					msg += "Use the MessageName property of WebMethod custom attribute to specify unique message names for the methods";
+					throw new InvalidOperationException (msg);
+				}
+				
 				name_to_method [msi.Name] = msi;
 				metStubs.Add (msi);
 			}
@@ -128,10 +155,43 @@ namespace System.Web.Services.Protocols {
 		{
 			get { return logicalMethods; }
 		}
+
+		internal ArrayList Bindings
+		{
+			get { return bindings; }
+		}
+		
+		internal BindingInfo GetBinding (string name)
+		{
+			for (int n=0; n<bindings.Count; n++)
+				if (((BindingInfo)bindings[n]).Name == name) return (BindingInfo)bindings[n];
+			return null;
+		}
 	}
 	
+	internal class BindingInfo
+	{
+		public BindingInfo (WebServiceBindingAttribute at, string ns)
+		{
+			Name = at.Name;
+			Namespace = at.Namespace;
+			if (Namespace == "") Namespace = ns;
+			Location = at.Location;
+		}
+		
+		public BindingInfo (string name, string ns)
+		{
+			Name = name;
+			Namespace = ns;
+		}
+		
+		public string Name;
+		public string Namespace;
+		public string Location;
+	}
+
 	//
-	// Manages 
+	// Manages type stubs
 	//
 	internal class TypeStubManager 
 	{
@@ -145,9 +205,9 @@ namespace System.Web.Services.Protocols {
 		//
 		// This needs to be thread safe
 		//
-		static internal TypeStubInfo GetTypeStub (Type t, Type protocolStubType)
+		static internal TypeStubInfo GetTypeStub (Type t, string protocolName)
 		{
-			string key = t.FullName + " : " + protocolStubType.FullName;
+			string key = t.FullName + " : " + protocolName;
 			TypeStubInfo tm = (TypeStubInfo) type_to_manager [key];
 
 			if (tm != null)
@@ -160,7 +220,13 @@ namespace System.Web.Services.Protocols {
 				if (tm != null)
 					return tm;
 
-				tm = (TypeStubInfo) Activator.CreateInstance (protocolStubType, new object[] {t});
+				switch (protocolName)
+				{
+					case "Soap": tm = new SoapTypeStubInfo (t); break;
+					case "HttpGet": tm = new HttpGetTypeStubInfo (t); break;
+					case "HttpPost": tm = new HttpPostTypeStubInfo (t); break;
+				}
+
 				tm.BuildTypeMethods ();
 				type_to_manager [t] = tm;
 

@@ -17,7 +17,6 @@ namespace System.Web.Services.Protocols
 			ReturnWriterType = new MimeFormatterInfo (typeof(XmlReturnWriter));
 
 			if (ParameterWriterType == null) ParameterWriterType = new MimeFormatterInfo (typeof(HtmlFormParameterWriter));
-			if (ReturnReaderType == null) ReturnReaderType = new MimeFormatterInfo (typeof(XmlReturnReader));
 		}
 	}
 	
@@ -27,8 +26,14 @@ namespace System.Web.Services.Protocols
 		{
 		}
 
+		public override string ProtocolName
+		{
+			get { return "HttpPost"; }
+		}
+		
 		protected override MethodStubInfo CreateMethodStubInfo (TypeStubInfo typeInfo, LogicalMethodInfo methodInfo, bool isClientProxy)
 		{
+			if (!ValueCollectionParameterReader.IsSupported (methodInfo)) return null;
 			return new HttpPostMethodStubInfo (typeInfo, methodInfo);
 		}
 	}

@@ -52,6 +52,11 @@ namespace System.Web.Services.Protocols
 				ParameterWriterType = new MimeFormatterInfo (at.ParameterFormatter);
 				ReturnReaderType = new MimeFormatterInfo (at.ReturnFormatter);
 			}
+			
+			if (ReturnReaderType == null) {
+				if (source.IsVoid) ReturnReaderType = new MimeFormatterInfo (typeof(NopReturnReader));
+				else ReturnReaderType = new MimeFormatterInfo (typeof(XmlReturnReader));
+			}
 		}
 	}
 	

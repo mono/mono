@@ -294,27 +294,6 @@ namespace System.Web.Services.Protocols {
 		public XmlNode detail;
 	}
 	
-	internal class BindingInfo
-	{
-		public BindingInfo (WebServiceBindingAttribute at, string ns)
-		{
-			Name = at.Name;
-			Namespace = at.Namespace;
-			if (Namespace == "") Namespace = ns;
-			Location = at.Location;
-		}
-		
-		public BindingInfo (string name, string ns)
-		{
-			Name = name;
-			Namespace = ns;
-		}
-		
-		public string Name;
-		public string Namespace;
-		public string Location;
-	}
-
 	//
 	// Holds the metadata loaded from the type stub, as well as
 	// the metadata for all the methods in the type
@@ -323,34 +302,28 @@ namespace System.Web.Services.Protocols {
 	{
 		Hashtable header_serializers = new Hashtable ();
 		Hashtable header_serializers_byname = new Hashtable ();
-		ArrayList bindings = new ArrayList ();
 
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
 		internal SoapServiceRoutingStyle RoutingStyle;
 		internal SoapBindingUse          Use;
-		internal string                  DefaultBinding;
 		internal XmlSerializer           FaultSerializer;
 		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 		internal SoapBindingStyle SoapBindingStyle;
-		internal XmlReflectionImporter 	XmlImporter;
-		internal SoapReflectionImporter SoapImporter;
+		internal XmlReflectionImporter 	xmlImporter;
+		internal SoapReflectionImporter soapImporter;
 
 		public SoapTypeStubInfo (Type t)
 		: base (t)
 		{
-			XmlImporter = new XmlReflectionImporter ();
-			SoapImporter = new SoapReflectionImporter ();
+			xmlImporter = new XmlReflectionImporter ();
+			soapImporter = new SoapReflectionImporter ();
 			
 			object [] o;
 
-			DefaultBinding = WebServiceName + "Soap";
-			BindingInfo binfo = new BindingInfo (DefaultBinding, WebServiceNamespace);
-			bindings.Add (binfo);
-
 			o = t.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
 			foreach (WebServiceBindingAttribute at in o)
-				bindings.Add (new BindingInfo (at, WebServiceNamespace));
+				Bindings.Add (new BindingInfo (at, WebServiceNamespace));
 
 			o = t.GetCustomAttributes (typeof (SoapDocumentServiceAttribute), false);
 			if (o.Length == 1){
@@ -384,6 +357,21 @@ namespace System.Web.Services.Protocols {
 			SoapExtensions = SoapExtension.GetTypeExtensions (t);
 		}
 
+		public override XmlReflectionImporter XmlImporter 
+		{
+			get { return xmlImporter; }
+		}
+
+		public override SoapReflectionImporter SoapImporter 
+		{
+			get { return soapImporter; }
+		}
+		
+		public override string ProtocolName
+		{
+			get { return "Soap"; }
+		}
+		
 		protected override MethodStubInfo CreateMethodStubInfo (TypeStubInfo parent, LogicalMethodInfo lmi, bool isClientProxy)
 		{
 			object [] ats = lmi.GetCustomAttributes (typeof (SoapDocumentMethodAttribute));
@@ -392,9 +380,9 @@ namespace System.Web.Services.Protocols {
 			if (ats.Length == 0 && isClientProxy)
 				return null;
 			else if (ats.Length == 0)
-				return new SoapMethodStubInfo (parent, lmi, null, XmlImporter, SoapImporter);
+				return new SoapMethodStubInfo (parent, lmi, null, xmlImporter, soapImporter);
 			else
-				return new SoapMethodStubInfo (parent, lmi, ats[0], XmlImporter, SoapImporter);
+				return new SoapMethodStubInfo (parent, lmi, ats[0], xmlImporter, soapImporter);
 		}
 		
 		internal void RegisterHeaderType (Type type)
@@ -418,18 +406,6 @@ namespace System.Web.Services.Protocols {
 		internal XmlSerializer GetHeaderSerializer (XmlQualifiedName qname)
 		{
 			return (XmlSerializer) header_serializers_byname [qname];
-		}
-		
-		internal ArrayList Bindings
-		{
-			get { return bindings; }
-		}
-		
-		internal BindingInfo GetBinding (string name)
-		{
-			for (int n=0; n<bindings.Count; n++)
-				if (((BindingInfo)bindings[n]).Name == name) return (BindingInfo)bindings[n];
-			return null;
-		}
+		}		
 	}
 }

@@ -11,6 +11,7 @@
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Web;
+using System.Xml;
 
 namespace System.Web.Services.Protocols {
 	public abstract class ValueCollectionParameterReader : MimeParameterReader {
@@ -47,7 +48,22 @@ namespace System.Web.Services.Protocols {
 
 		public static bool IsSupported (ParameterInfo paramInfo)
 		{
-			return !paramInfo.ParameterType.IsByRef && !paramInfo.IsOut;
+			Type type = paramInfo.ParameterType;
+			if (type.IsByRef || paramInfo.IsOut) return false;
+			if (type.IsArray) return IsSupportedPrimitive (type.GetElementType());
+			else return IsSupportedPrimitive (type);
+		}
+		
+		public static bool IsSupportedPrimitive (Type type)
+		{
+			return ( type.IsPrimitive || 
+					 type == typeof(string) ||
+					 type == typeof(DateTime) ||
+					 type == typeof(Guid) ||
+					 type == typeof(XmlQualifiedName) ||
+					 type == typeof(TimeSpan) ||
+					 type == typeof(byte[])
+					 );
 		}
 
 		protected object[] Read (NameValueCollection collection)
