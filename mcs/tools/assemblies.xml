@@ -16,5 +16,6 @@
 		<assembly file="System.ServiceProcess.dll"/>
 		<assembly file="System.Web.RegularExpressions.dll"/>
 		<assembly file="System.Web.Services.dll"/>
+		<assembly file="System.Web.Mobile.dll"/>
 	</path>
 </assemblies>
