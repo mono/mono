@@ -75,8 +75,15 @@ namespace System.Xml
 		}
 
 		public XmlTextReader (string url, XmlNameTable nt)
-			: this (url, new XmlStreamReader (url, null, null), nt)
 		{
+			XmlUrlResolver xr = new XmlUrlResolver ();
+			Uri uri = xr.ResolveUri (null, url);
+			Stream s = xr.GetEntity (uri, null, typeof (Stream)) as Stream;
+			XmlParserContext ctx = new XmlParserContext (nt,
+				new XmlNamespaceManager (nt),
+				String.Empty,
+				XmlSpace.None);
+			this.InitializeContext (url, ctx, new XmlStreamReader (s), XmlNodeType.Document);
 		}
 
 		public XmlTextReader (TextReader input, XmlNameTable nt)
@@ -1055,8 +1062,13 @@ namespace System.Xml
 			}
 
 			if (url != null && url != String.Empty) {
-				string path = Path.GetFullPath ("./a");
-				Uri uri = new Uri (new Uri (path), url);
+				Uri uri = null;
+				try {
+					uri = new Uri (url);
+				} catch (Exception) {
+					string path = Path.GetFullPath ("./a");
+					uri = new Uri (new Uri (path), url);
+				}
 				parserContext.BaseURI = uri.ToString ();
 			}
 

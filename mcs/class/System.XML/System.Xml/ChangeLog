@@ -1,5 +1,9 @@
 2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* XmlTextReader.cs : BaseURI was broken. This fixes bug #52098.
+
+2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* XmlUrlResolver.cs : GetEntity() does not return direct network stream
 	  that may hold up connection. Now it reads up all the content stream.
 
