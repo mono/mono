@@ -94,6 +94,17 @@ namespace System.Reflection.Emit {
 			handlers [i].extype = null;
 		}
 
+		internal void AddFault (int offset)
+		{
+			int i;
+			End (offset);
+			add_block (offset);
+			i = handlers.Length - 1;
+			handlers [i].type = ILExceptionBlock.FAULT;
+			handlers [i].start = offset;
+			handlers [i].extype = null;
+		}
+
 		internal void End (int offset)
 		{
 			if (handlers == null)
@@ -370,7 +381,7 @@ namespace System.Reflection.Emit {
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			//System.Console.WriteLine ("Begin fault Block");
-			//throw new NotImplementedException ();
+			ex_handlers [cur_block].AddFault (code_len);
 		}
 		
 		public virtual void BeginFinallyBlock()
