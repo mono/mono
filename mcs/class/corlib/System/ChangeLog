@@ -1,4 +1,8 @@
 
+Thu Dec 20 15:29:52 CET 2001 Paolo Molaro <lupus@ximian.com>
+	
+	* Byte.cs: removed use of Regexes.
+
 Tue Dec 18 18:39:54 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* Enum.cs: implemented GetValues(), GetNames(), GetName(),
