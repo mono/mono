@@ -1,3 +1,9 @@
+2004-11-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS1.cs: Merge from HEAD. Fix PKCS#1 v1.5 decryption when the 
+	ciphertext isn't exactly the same of the public key and some level 4 
+	compiler warnings.
+
 2004-09-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAManaged.cs: KeySize is now always a multiple of 8 bits. 
