@@ -104,48 +104,67 @@ namespace System.Data
 
 		private void Process ()
 		{
-			// set EnforceConstraint to false during load time.
 			bool savedEnforceConstraints =
 				dataset.EnforceConstraints;
-			dataset.EnforceConstraints = false;
+			try {
+				dataset.EnforceConstraints = false;
+				reader.MoveToContent ();
 
-			reader.MoveToContent ();
-
-			if (mode == XmlReadMode.Fragment) {
-				do {
-					if (XmlConvert.DecodeName (reader.LocalName) == dataset.DataSetName && reader.NamespaceURI == dataset.Namespace)
+				if (mode == XmlReadMode.Fragment) {
+					while (reader.NodeType == XmlNodeType.Element && !reader.EOF) {
 						ReadTopLevelElement ();
-					else
-						reader.Skip ();
-				} while (!reader.EOF);
-			} else {
-				// Top level element can be ignored, being regarded 
-				// just as a wrapper (even it is not dataset element).
-				DataTable tab = dataset.Tables [XmlConvert.DecodeName (reader.LocalName)];
-				if (tab != null && tab.Namespace == reader.NamespaceURI)
-					ReadDataSetContent ();
+					}
+				}
 				else
 					ReadTopLevelElement ();
-				reader.MoveToContent ();
+			} finally {
+				dataset.EnforceConstraints = 
+					savedEnforceConstraints;
 			}
+		}
 
-			dataset.EnforceConstraints = savedEnforceConstraints;
+		private bool IsTopLevelDataSet ()
+		{
+			string local = XmlConvert.DecodeName (reader.LocalName);
+
+			// No need to check DataSetName. In fact, it is ignored.
+
+			bool ambiguous = false;
+			DataTable dt = dataset.Tables [local];
+			if (dt == null)
+				return true;
+
+			XmlDocument doc = new XmlDocument ();
+			XmlElement el = (XmlElement) doc.ReadNode (reader);
+			doc.AppendChild (el);
+			reader = new XmlNodeReader (el);
+			reader.MoveToContent ();
+
+			return !XmlDataInferenceLoader.IsDocumentElementTable (
+				el, null);
 		}
 
 		private void ReadTopLevelElement ()
 		{
-			int depth = reader.Depth;
-			reader.Read ();
-			reader.MoveToContent ();
-			do {
-				ReadDataSetContent ();
-			} while (reader.Depth > depth && !reader.EOF);
-
-			if (reader.IsEmptyElement)
+			if (mode == XmlReadMode.Fragment &&
+				(XmlConvert.DecodeName (reader.LocalName) !=
+				dataset.DataSetName ||
+				reader.NamespaceURI != dataset.Namespace))
+				reader.Skip ();
+			else if (mode == XmlReadMode.Fragment ||
+				IsTopLevelDataSet ()) {
+				int depth = reader.Depth;
 				reader.Read ();
-			if (reader.NodeType == XmlNodeType.EndElement)
-				reader.ReadEndElement ();
-			reader.MoveToContent ();
+				reader.MoveToContent ();
+				do {
+					ReadDataSetContent ();
+				} while (reader.Depth > depth && !reader.EOF);
+				if (reader.NodeType == XmlNodeType.EndElement)
+					reader.ReadEndElement ();
+				reader.MoveToContent ();
+			}
+			else
+				ReadDataSetContent ();
 		}
 
 		private void ReadDataSetContent ()
@@ -158,8 +177,6 @@ namespace System.Data
 			}
 
 			// skip if namespace does not match.
-			// TODO: This part is suspicious for MS compatibility
-			// (test required)
 			if (table.Namespace != reader.NamespaceURI) {
 				reader.Skip ();
 				reader.MoveToContent ();

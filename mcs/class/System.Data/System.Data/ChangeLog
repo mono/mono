@@ -1,5 +1,12 @@
 2004-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDataInferenceLoader.cs,
+	  XmlDataReader.cs : Check if the XmlReader (node) represents DataSet
+	  or a table, reusing code block in XmlDataInferenceLoader.
+	  This fixes bug #60118.
+
+2004-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDiffLoader.cs : Ankit Jain <radical@imt.ac.in> has a conflicting
 	  patches and some good catches. Some attributes should be skipped,
 	  and loaded value must be typed.

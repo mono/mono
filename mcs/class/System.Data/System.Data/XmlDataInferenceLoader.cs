@@ -348,7 +348,8 @@ namespace System.Data
 			foreach (XmlAttribute attr in el.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
 					continue;
-				if (ignoredNamespaces.Contains (attr.NamespaceURI))
+				if (ignoredNamespaces != null &&
+					ignoredNamespaces.Contains (attr.NamespaceURI))
 					continue;
 
 				hasAttributes = true;
@@ -372,7 +373,7 @@ namespace System.Data
 					XmlElement cel = n as XmlElement;
 					string childLocalName = XmlConvert.DecodeName (cel.LocalName);
 
-					switch (GetElementMappingType (cel)) {
+					switch (GetElementMappingType (cel, ignoredNamespaces)) {
 					case ElementMappingType.Simple:
 						InferColumnElement (table, cel);
 						break;
@@ -455,12 +456,13 @@ namespace System.Data
 			return col;
 		}
 
-		private ElementMappingType GetElementMappingType (XmlElement el)
+		private static ElementMappingType GetElementMappingType (
+			XmlElement el, ArrayList ignoredNamespaces)
 		{
 			foreach (XmlAttribute attr in el.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
 					continue;
-				if (ignoredNamespaces.Contains (attr.NamespaceURI))
+				if (ignoredNamespaces != null && ignoredNamespaces.Contains (attr.NamespaceURI))
 					continue;
 				return ElementMappingType.Complex;
 			}
@@ -470,18 +472,31 @@ namespace System.Data
 
 			for (XmlNode n = el.NextSibling; n != null; n = n.NextSibling)
 				if (n.NodeType == XmlNodeType.Element && n.LocalName == el.LocalName)
-					return GetElementMappingType (n as XmlElement) == ElementMappingType.Complex ? ElementMappingType.Complex : ElementMappingType.Repeated;
+					return GetElementMappingType (
+						n as XmlElement,
+						ignoredNamespaces)
+						== ElementMappingType.Complex ?
+						ElementMappingType.Complex :
+						ElementMappingType.Repeated;
 
 			return ElementMappingType.Simple;
 		}
 
 		private bool IsDocumentElementTable ()
 		{
-			XmlElement top = document.DocumentElement;
+			return IsDocumentElementTable (
+				document.DocumentElement,
+				ignoredNamespaces);
+		}
+
+		internal static bool IsDocumentElementTable (XmlElement top,
+			ArrayList ignoredNamespaces)
+		{
 			foreach (XmlAttribute attr in top.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
 					continue;
-				if (ignoredNamespaces.Contains (attr.NamespaceURI))
+				if (ignoredNamespaces != null &&
+					ignoredNamespaces.Contains (attr.NamespaceURI))
 					continue;
 				// document element has attributes other than xmlns
 				return true;
@@ -490,7 +505,8 @@ namespace System.Data
 				XmlElement el = n as XmlElement;
 				if (el == null)
 					continue;
-				if (this.GetElementMappingType (el) == ElementMappingType.Simple)
+				if (GetElementMappingType (el, ignoredNamespaces)
+					== ElementMappingType.Simple)
 					return true;
 			}
 			return false;
