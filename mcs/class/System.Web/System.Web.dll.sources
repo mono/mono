@@ -408,6 +408,15 @@ System.Web.UI.WebControls/LoginTextLayout.cs
 System.Web.UI.WebControls/LogoutAction.cs
 System.Web.UI.WebControls/MailMessageEventArgs.cs
 System.Web.UI.WebControls/MailMessageEventHandler.cs
+System.Web.UI.WebControls/Menu.cs
+System.Web.UI.WebControls/MenuEventArgs.cs
+System.Web.UI.WebControls/MenuEventHandler.cs
+System.Web.UI.WebControls/MenuItem.cs
+System.Web.UI.WebControls/MenuItemBinding.cs
+System.Web.UI.WebControls/MenuItemBindingCollection.cs
+System.Web.UI.WebControls/MenuItemCollection.cs
+System.Web.UI.WebControls/MenuItemStyle.cs
+System.Web.UI.WebControls/MenuItemStyleCollection.cs
 System.Web.UI.WebControls/MonthChangedEventArgs.cs
 System.Web.UI.WebControls/MonthChangedEventHandler.cs
 System.Web.UI.WebControls/ObjectDataSourceDisposingEventArgs.cs

@@ -1,5 +1,18 @@
 2004-12-02  Lluis Sanchez Gual <lluis@novell.com>
 
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/Menu.cs
+		System.Web.UI.WebControls/MenuEventArgs.cs
+		System.Web.UI.WebControls/MenuEventHandler.cs
+		System.Web.UI.WebControls/MenuItem.cs
+		System.Web.UI.WebControls/MenuItemBinding.cs
+		System.Web.UI.WebControls/MenuItemBindingCollection.cs
+		System.Web.UI.WebControls/MenuItemCollection.cs
+		System.Web.UI.WebControls/MenuItemStyle.cs
+		System.Web.UI.WebControls/MenuItemStyleCollection.cs
+
+2004-12-02  Lluis Sanchez Gual <lluis@novell.com>
+
 	* Makefile: Added more TreeView resources.
 
 2004-11-30  Raja R Harinath  <rharinath@novell.com>
