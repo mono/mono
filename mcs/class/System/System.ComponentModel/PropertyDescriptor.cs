@@ -97,10 +97,25 @@ namespace System.ComponentModel
 				notifiers [component] = handler;
 		}
 
-		[MonoTODO]
-		public virtual void RemoveValueChanged(object component, System.EventHandler handler)
+		public virtual void RemoveValueChanged (object component, System.EventHandler handler)
 		{
-			throw new NotImplementedException();
+			EventHandler component_notifiers;
+
+			if (component == null)
+				throw new ArgumentNullException ("component");
+
+			if (handler == null)
+				throw new ArgumentNullException ("handler");
+
+			if (notifiers == null) return;
+
+			component_notifiers = (EventHandler) notifiers [component];
+			component_notifiers -= handler;
+			
+			if (component_notifiers == null)
+				notifiers.Remove (component);
+			else
+				notifiers [component] = handler;
 		}
 
 		protected virtual void OnValueChanged (object component, EventArgs e)
@@ -131,17 +146,12 @@ namespace System.ComponentModel
 			return Assembly.GetExecutingAssembly ().CreateInstance (type.Name);
 		}
 
-		[MonoTODO ("Not correctly implemented")]
 		public override bool Equals(object obj)
 		{
-			if (!(obj is PropertyDescriptor))
-				return false;
-			if (obj == this)
-				return true;
-			return (((PropertyDescriptor) obj).AttributeArray == this.AttributeArray) &&
-				(((PropertyDescriptor) obj).Attributes == this.Attributes) &&
-				(((PropertyDescriptor) obj).DisplayName == this.DisplayName) &&
-				(((PropertyDescriptor) obj).Name == this.Name);
+			if (!base.Equals (obj)) return false;
+			PropertyDescriptor other = obj as PropertyDescriptor;
+			if (other == null) return false;
+			return other.PropertyType == PropertyType;
 		}
 
 		public PropertyDescriptorCollection GetChildProperties()
@@ -159,22 +169,19 @@ namespace System.ComponentModel
 			return GetChildProperties (null, filter);
 		}
 
-		[MonoTODO ("Incorrect implementation")]
 		public override int GetHashCode() 
 		{
-			return Name.GetHashCode ();
+			return base.GetHashCode ();
 		}
 
-		[MonoTODO]
-		public virtual PropertyDescriptorCollection GetChildProperties(object instance, Attribute[] filter)
+		public virtual PropertyDescriptorCollection GetChildProperties (object instance, Attribute[] filter)
 		{
-			throw new NotImplementedException();
+			return TypeDescriptor.GetProperties (instance, filter);
 		}
 
-		[MonoTODO]
 		public virtual object GetEditor(Type editorBaseType)
 		{
-			throw new NotImplementedException();
+			return TypeDescriptor.GetEditor (PropertyType, editorBaseType);
 		}
 
 		protected Type GetTypeFromName(string typeName)

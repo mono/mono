@@ -1,3 +1,18 @@
+2004-04-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* AttributeCollection.cs: Added new internal constructor.
+	* DesignerAttribute.cs: Fixed property TypeId.
+	* EventDescriptorCollection.cs: Added internal constructor. Added new
+	  method Filter that removes events that do not have the specified
+	  attributes.
+	* MemberDescriptor.cs: Minor fixes.
+	* PropertyDescriptor.cs: Implemented some missing methods.
+	* PropertyDescriptorCollection.cs: Added internal constructor. Implemented
+	  Sort methods.
+	* ReferenceConverter.cs: Removed some TODOs.
+	* SyntaxCheck.cs: Implemented CheckMachineName and CheckPath.
+	* TypeDescriptor.cs: Implemented most of missing methods.
+	
 2004-04-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* AmbientValueAttribute.cs, EnumConverter.cs, ListChangedEventArgs.cs: 

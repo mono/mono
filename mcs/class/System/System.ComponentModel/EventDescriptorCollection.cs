@@ -19,10 +19,15 @@ namespace System.ComponentModel
 	{
 		private ArrayList eventList = new ArrayList ();
 		
-		public static readonly EventDescriptorCollection Empty;
+		public static readonly EventDescriptorCollection Empty = new EventDescriptorCollection ();
 		
 		private EventDescriptorCollection ()
 		{
+		}
+		
+		internal EventDescriptorCollection (ArrayList list)
+		{
+			eventList = list;
 		}
 		
 		public EventDescriptorCollection (EventDescriptor[] events) 
@@ -128,7 +133,6 @@ namespace System.ComponentModel
 			foreach (object ob in ext)
 				if (ob != null) sorted.Add (ob);
 				
-			sorted.AddRange (eventList);
 			return sorted;
 		}
 		
@@ -136,6 +140,15 @@ namespace System.ComponentModel
 		{
 			EventDescriptorCollection col = new EventDescriptorCollection ();
 			col.eventList = (ArrayList) eventList.Clone ();
+			return col;
+		}
+		
+		internal EventDescriptorCollection Filter (Attribute[] attributes)
+		{
+			EventDescriptorCollection col = new EventDescriptorCollection ();
+			foreach (EventDescriptor ed in eventList)
+				if (ed.Attributes.Contains (attributes))
+					col.eventList.Add (ed);
 			return col;
 		}
 		

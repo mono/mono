@@ -23,6 +23,8 @@ public sealed class TypeDescriptor
 	private static readonly string creatingDefaultConverters = "creatingDefaultConverters";
 	private static Hashtable defaultConverters;
 	private static IComNativeDescriptorHandler descriptorHandler;
+	private static Hashtable componentTable = new Hashtable ();
+	private static Hashtable typeTable = new Hashtable ();
 
 	private TypeDescriptor ()
 	{
@@ -34,44 +36,49 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public static IDesigner CreateDesigner(IComponent component, Type designerBaseType)
 	{
-		throw new NotImplementedException ();
+		string tn = designerBaseType.AssemblyQualifiedName;
+		AttributeCollection col = GetAttributes (component);
+		
+		foreach (Attribute at in col) {
+			DesignerAttribute dat = at as DesignerAttribute;
+			if (dat != null && tn == dat.DesignerBaseTypeName) {
+				return (IDesigner) Activator.CreateInstance (GetTypeFromName (component, dat.DesignerTypeName));
+			}
+		}
+				
+		return null;
 	}
 
-	[MonoTODO]
 	public static EventDescriptor CreateEvent (Type componentType,
 						   string name,
 						   Type type,
 						   Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
+		return new ReflectionEventDescriptor (componentType, name, type, attributes);
 	}
 
-	[MonoTODO]
 	public static EventDescriptor CreateEvent (Type componentType,
 						   EventDescriptor oldEventDescriptor,
 						   Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
+		return new ReflectionEventDescriptor (componentType, oldEventDescriptor, attributes);
 	}
 
-	[MonoTODO]
 	public static PropertyDescriptor CreateProperty (Type componentType,
 							 string name,
 							 Type type,
 							 Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
+		return new ReflectionPropertyDescriptor (componentType, name, type, attributes);
 	}
 
-	[MonoTODO]
 	public static PropertyDescriptor CreateProperty (Type componentType,
 							 PropertyDescriptor oldPropertyDescriptor,
 							 Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
+		return new ReflectionPropertyDescriptor (componentType, oldPropertyDescriptor, attributes);
 	}
 
 	public static AttributeCollection GetAttributes (Type componentType)
@@ -79,8 +86,7 @@ public sealed class TypeDescriptor
 		if (componentType == null)
 			return AttributeCollection.Empty;
 
-		object [] atts = componentType.GetCustomAttributes (false);
-		return new AttributeCollection ((Attribute []) atts);
+		return GetTypeInfo (componentType).GetAttributes ();
 	}
 
 	public static AttributeCollection GetAttributes (object component)
@@ -88,20 +94,19 @@ public sealed class TypeDescriptor
 		return GetAttributes (component, false);
 	}
 
-	[MonoTODO]
 	public static AttributeCollection GetAttributes (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
 		    return AttributeCollection.Empty;
 
-		// FIXME: implementation correct?
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
 		    return ((ICustomTypeDescriptor) component).GetAttributes ();
 		} else {
-		    // FIXME: wrong implementation (we need to check the Attributes of the real instance?
-		    // not of the type?
-		    object [] atts = component.GetType ().GetCustomAttributes (false);
-		    return new AttributeCollection ((Attribute []) atts);
+			IComponent com = component as IComponent;
+			if (com != null)
+				return GetComponentInfo (com).GetAttributes ();
+			else
+				return GetTypeInfo (component.GetType()).GetAttributes ();
 		}
 	}
 
@@ -115,7 +120,6 @@ public sealed class TypeDescriptor
 		if (component == null)
 		    throw new ArgumentNullException ("component", "component cannot be null");
 
-		// FIXME: implementation correct?
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
 		    return ((ICustomTypeDescriptor) component).GetClassName ();
 		} else {
@@ -133,14 +137,13 @@ public sealed class TypeDescriptor
 		if (component == null)
 		    throw new ArgumentNullException ("component", "component cannot be null");
 
-		// FIXME: implementation correct?
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
 		    return ((ICustomTypeDescriptor) component).GetComponentName ();
 		} else {
 		    if (((IComponent) component).Site == null)
-			return null;
+				return null;
 		    else
-			return ((IComponent) component).Site.Name;
+				return ((IComponent) component).Site.Name;
 		}
 	}
 
@@ -149,18 +152,28 @@ public sealed class TypeDescriptor
 		return GetConverter (component.GetType ());
 	}
 
-	[MonoTODO]
 	public static TypeConverter GetConverter (object component, bool noCustomTypeDesc)
 	{
 		if (component == null)
 			throw new ArgumentNullException ("component", "component cannot be null");
 
-		// FIXME: implementation correct?
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
 			return ((ICustomTypeDescriptor) component).GetConverter ();
 		} 
 		else {
-			// return the normal converter of this component
+			AttributeCollection atts = GetAttributes (component, false);
+			TypeConverterAttribute tca = (TypeConverterAttribute) atts[typeof(TypeConverterAttribute)];
+			if (tca != null) {
+				Type t = GetTypeFromName (component as IComponent, tca.ConverterTypeName);
+				return (TypeConverter) Activator.CreateInstance (t);
+			}
+			
+			Type type = component.GetType ();
+			while (type != typeof(object))
+			{
+				TypeConverter con = (TypeConverter) DefaultConverters [type];
+				if (con != null) return con;
+			}
 			return null;
 		}
 	}
@@ -211,38 +224,25 @@ public sealed class TypeDescriptor
 			// EnumConverter needs to know the enum type
 			return new EnumConverter(type);
 		} else {
-			Type t = DefaultConverters [type] as Type;
-			string converter_name = null;
-			if (t == null) {
-				object [] attrs = type.GetCustomAttributes (false);
-				foreach (object o in attrs){
-					if (o is TypeConverterAttribute){
-						TypeConverterAttribute tc = (TypeConverterAttribute) o;
-						converter_name = tc.ConverterTypeName;
-						break;
-					}
-				}
-			} else {
-				converter_name = t.FullName;
+			AttributeCollection atts = GetAttributes (type);
+			TypeConverterAttribute tca = (TypeConverterAttribute) atts[typeof(TypeConverterAttribute)];
+			if (tca != null) {
+				Type t = GetTypeFromName (null, tca.ConverterTypeName);
+				return (TypeConverter) Activator.CreateInstance (t);
 			}
-	
-			if (converter_name == null)
-				return null;
-	
-			object converter = null;
-			try {
-				converter = Activator.CreateInstance (Type.GetType (converter_name));
-			} catch (Exception){
+			
+			while (type != typeof(object))
+			{
+				TypeConverter con = (TypeConverter) DefaultConverters [type];
+				if (con != null) return con;
 			}
-		
-			return converter as TypeConverter;
+			return null;
 		}
 	}
 
-	[MonoTODO]
 	public static EventDescriptor GetDefaultEvent (Type componentType)
 	{
-		throw new NotImplementedException ();
+		return GetTypeInfo (componentType).GetDefaultEvent ();
 	}
 
 	public static EventDescriptor GetDefaultEvent (object component)
@@ -250,16 +250,22 @@ public sealed class TypeDescriptor
 		return GetDefaultEvent (component, false);
 	}
 
-	[MonoTODO]
 	public static EventDescriptor GetDefaultEvent (object component, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
+			return ((ICustomTypeDescriptor) component).GetDefaultEvent ();
+		else {
+			IComponent com = component as IComponent;
+			if (com != null)
+				return GetComponentInfo (com).GetDefaultEvent ();
+			else
+				return GetTypeInfo (component.GetType()).GetDefaultEvent ();
+		}
 	}
 
-	[MonoTODO]
 	public static PropertyDescriptor GetDefaultProperty (Type componentType)
 	{
-		throw new NotImplementedException ();
+		return GetTypeInfo (componentType).GetDefaultProperty ();
 	}
 
 	public static PropertyDescriptor GetDefaultProperty (object component)
@@ -267,10 +273,17 @@ public sealed class TypeDescriptor
 		return GetDefaultProperty (component, false);
 	}
 
-	[MonoTODO]
 	public static PropertyDescriptor GetDefaultProperty (object component, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
+			return ((ICustomTypeDescriptor) component).GetDefaultProperty ();
+		else {
+			IComponent com = component as IComponent;
+			if (com != null)
+				return GetComponentInfo (com).GetDefaultProperty ();
+			else
+				return GetTypeInfo (component.GetType()).GetDefaultProperty ();
+		}
 	}
 
 	[MonoTODO]
@@ -305,24 +318,27 @@ public sealed class TypeDescriptor
 		return GetEvents (component, attributes, false);
 	}
 
-	[MonoTODO]
 	public static EventDescriptorCollection GetEvents (object component, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		return GetEvents (component, null, noCustomTypeDesc);
 	}
 
-	[MonoTODO]
 	public static EventDescriptorCollection GetEvents (Type componentType, Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
+		return GetTypeInfo (componentType).GetEvents (attributes);
 	}
 
-	[MonoTODO]
-	public static EventDescriptorCollection GetEvents (object component,
-							   Attribute [] attributes,
-							   bool noCustomTypeDesc)
+	public static EventDescriptorCollection GetEvents (object component, Attribute [] attributes, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
+			return ((ICustomTypeDescriptor) component).GetEvents (attributes);
+		else {
+			IComponent com = component as IComponent;
+			if (com != null)
+				return GetComponentInfo (com).GetEvents (attributes);
+			else
+				return GetTypeInfo (component.GetType()).GetEvents (attributes);
+		}
 	}
 
 	public static PropertyDescriptorCollection GetProperties (object component)
@@ -340,50 +356,41 @@ public sealed class TypeDescriptor
 		return GetProperties (component, attributes, false);
 	}
 
-	[MonoTODO]
 	public static PropertyDescriptorCollection GetProperties (object component, Attribute [] attributes, bool noCustomTypeDesc)
 	{
-		Type type = component.GetType ();
-		if (typeof (ICustomTypeDescriptor).IsAssignableFrom (type))
+		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
 			return ((ICustomTypeDescriptor) component).GetProperties (attributes);
-
-		throw new NotImplementedException ();
+		else {
+			IComponent com = component as IComponent;
+			if (com != null)
+				return GetComponentInfo (com).GetProperties (attributes);
+			else
+				return GetTypeInfo (component.GetType()).GetProperties (attributes);
+		}
 	}
 
-	[MonoTODO("noCustomTypeDesc")]
 	public static PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc)
 	{
-		Type type = component.GetType ();
-		if (typeof (ICustomTypeDescriptor).IsAssignableFrom (type))
-			return ((ICustomTypeDescriptor) component).GetProperties ();
-
-		return GetProperties (type);
+		return GetProperties (component, null, noCustomTypeDesc);
 	}
 
-	[MonoTODO]
-	public static PropertyDescriptorCollection GetProperties (Type componentType,
-								  Attribute [] attributes)
+	public static PropertyDescriptorCollection GetProperties (Type componentType, Attribute [] attributes)
 	{
-		PropertyInfo [] props = componentType.GetProperties ();
-		DerivedPropertyDescriptor [] propsDescriptor = new DerivedPropertyDescriptor [props.Length];
-		int i = 0;
-		foreach (PropertyInfo prop in props) 
-		{
-			DerivedPropertyDescriptor propDescriptor = new DerivedPropertyDescriptor (prop.Name,
-				null, 0);
-			propDescriptor.SetReadOnly (!prop.CanWrite);
-			propDescriptor.SetComponentType (componentType);
-			propDescriptor.SetPropertyType (prop.PropertyType);
-			propsDescriptor [i++] = propDescriptor;
+		return GetTypeInfo (componentType).GetProperties (attributes);
+	}
+
+	public static void SortDescriptorArray (IList infos)
+	{
+		string[] names = new string [infos.Count];
+		object[] values = new object [infos.Count];
+		for (int n=0; n<names.Length; n++) {
+			names[n] = ((MemberDescriptor)infos[n]).Name;
+			values[n] = infos[n];
 		}
-		
-		return new PropertyDescriptorCollection (propsDescriptor);
-	}
-
-	[MonoTODO]
-	public static void SortDescriptorArray(IList infos)
-	{
-		throw new NotImplementedException ();
+		Array.Sort (names, values);
+		infos.Clear();
+		foreach (object ob in values)
+			infos.Add (ob);
 	}
 
 	public static IComNativeDescriptorHandler ComNativeDescriptorHandler {
@@ -391,34 +398,274 @@ public sealed class TypeDescriptor
 		set { descriptorHandler = value; }
 	}
 
-	[MonoTODO]
 	public static void Refresh (Assembly assembly)
 	{
-		throw new NotImplementedException ();
+		foreach (Type type in assembly.GetTypes())
+			Refresh (type);
 	}
 
-	[MonoTODO]
 	public static void Refresh (Module module)
 	{
-		throw new NotImplementedException ();
+		foreach (Type type in module.GetTypes())
+			Refresh (type);
 	}
 
-	[MonoTODO]
 	public static void Refresh (object component)
 	{
-		throw new NotImplementedException ();
+		lock (componentTable)
+		{
+			componentTable.Remove (component);
+		}
+		if (Refreshed != null) Refreshed (new RefreshEventArgs (component));
 	}
 
-	[MonoTODO]
 	public static void Refresh (Type type)
 	{
-		//FIXME this is just to get rid of the warning about Refreshed never being used
-		if (Refreshed != null)
-			Refreshed (new RefreshEventArgs (type));
-		throw new NotImplementedException ();
+		lock (typeTable)
+		{
+			typeTable.Remove (type);
+		}
+		if (Refreshed != null) Refreshed (new RefreshEventArgs (type));
 	}
 
 	public static event RefreshEventHandler Refreshed;
+	
+	internal static ComponentInfo GetComponentInfo (IComponent com)
+	{
+		lock (componentTable)
+		{
+			ComponentInfo ci = (ComponentInfo) componentTable [com];
+			if (ci == null) {
+				ci = new ComponentInfo (com);
+				componentTable [com] = ci;
+			}
+			return ci;
+		}
+	}
+	
+	internal static TypeInfo GetTypeInfo (Type type)
+	{
+		lock (typeTable)
+		{
+			TypeInfo ci = (TypeInfo) typeTable [type];
+			if (ci == null) {
+				ci = new TypeInfo (type);
+				typeTable [type] = ci;
+			}
+			return ci;
+		}
+	}
+	
+	static Type GetTypeFromName (IComponent component, string typeName)
+	{
+		if (component != null) {
+			ITypeResolutionService resver = (ITypeResolutionService) component.Site.GetService (typeof(ITypeResolutionService));
+			if (resver != null) return resver.GetType (typeName, true, false);
+		}
+		
+		Type t = Type.GetType (typeName);
+		if (t == null) throw new ArgumentException ("Type '" + typeName + "' not found");
+		return t;
+	}
 }
+
+	internal abstract class Info
+	{
+		Type _infoType;
+		EventDescriptor _defaultEvent;
+		bool _gotDefaultEvent;
+		PropertyDescriptor _defaultProperty;
+		bool _gotDefaultProperty;
+		
+		public Info (Type infoType)
+		{
+			_infoType = infoType;
+		}
+		
+		public abstract AttributeCollection GetAttributes ();
+		public abstract EventDescriptorCollection GetEvents ();
+		public abstract PropertyDescriptorCollection GetProperties ();
+		
+		public Type InfoType
+		{
+			get { return _infoType; }
+		}
+		
+		public EventDescriptorCollection GetEvents (Attribute[] attributes)
+		{
+			EventDescriptorCollection evs = GetEvents ();
+			if (attributes == null) return evs;
+			else return evs.Filter (attributes);
+		}
+		
+		public PropertyDescriptorCollection GetProperties (Attribute[] attributes)
+		{
+			PropertyDescriptorCollection props = GetProperties ();
+			if (attributes == null) return props;
+			else return props.Filter (attributes);
+		}
+		
+		public EventDescriptor GetDefaultEvent ()
+		{
+			if (_gotDefaultEvent) return _defaultEvent;
+			
+			DefaultEventAttribute attr = (DefaultEventAttribute) GetAttributes()[typeof(DefaultEventAttribute)];
+			if (attr == null) 
+				_defaultEvent = null;
+			else {
+				EventInfo ei = _infoType.GetEvent (attr.Name);
+				if (ei == null)
+					throw new ArgumentException ("Event '" + attr.Name + "' not found in class " + _infoType);
+				_defaultEvent = new ReflectionEventDescriptor (ei);
+			}
+			_gotDefaultEvent = true;
+			return _defaultEvent;
+		}
+		
+		public PropertyDescriptor GetDefaultProperty ()
+		{
+			if (_gotDefaultProperty) return _defaultProperty;
+			
+			DefaultPropertyAttribute attr = (DefaultPropertyAttribute) GetAttributes()[typeof(DefaultPropertyAttribute)];
+			if (attr == null) 
+				_defaultProperty = null;
+			else {
+				PropertyInfo ei = _infoType.GetProperty (attr.Name);
+				if (ei == null)
+					throw new ArgumentException ("Property '" + attr.Name + "' not found in class " + _infoType);
+				_defaultProperty = new ReflectionPropertyDescriptor (ei);
+			}
+			_gotDefaultProperty = true;
+			return _defaultProperty;
+		}
+	}
+
+	internal class ComponentInfo : Info
+	{
+		IComponent _component;
+		AttributeCollection _attributes;
+		EventDescriptorCollection _events;
+		PropertyDescriptorCollection _properties;
+		
+		public ComponentInfo (IComponent component): base (component.GetType())
+		{
+			_component = component;
+		}
+		
+		public override AttributeCollection GetAttributes ()
+		{
+			if (_attributes != null) return _attributes;
+			
+			bool cache = true;
+			object[] ats = _component.GetType().GetCustomAttributes (typeof(DesignerAttribute), true);
+			Hashtable t = new Hashtable ();
+			foreach (Attribute at in ats)
+				t [at.TypeId] = at;
+					
+			if (_component.Site != null) 
+			{
+				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) _component.Site.GetService (typeof(ITypeDescriptorFilterService));
+				cache = filter.FilterAttributes (_component, t);
+			}
+			
+			ArrayList atts = new ArrayList ();
+			atts.AddRange (t.Values);
+			AttributeCollection attCol = new AttributeCollection (atts);
+			if (cache) _attributes = attCol;
+			return attCol;
+		}
+		
+		public override EventDescriptorCollection GetEvents ()
+		{
+			if (_events != null) return _events;
+			
+			bool cache = true;
+			EventInfo[] events = _component.GetType().GetEvents ();
+			Hashtable t = new Hashtable ();
+			foreach (EventInfo ev in events)
+				t [ev.Name] = new ReflectionEventDescriptor (ev);
+					
+			if (_component.Site != null) 
+			{
+				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) _component.Site.GetService (typeof(ITypeDescriptorFilterService));
+				cache = filter.FilterEvents (_component, t);
+			}
+			
+			ArrayList atts = new ArrayList ();
+			atts.AddRange (t.Values);
+			EventDescriptorCollection attCol = new EventDescriptorCollection (atts);
+			if (cache) _events = attCol;
+			return attCol;
+		}
+		
+		public override PropertyDescriptorCollection GetProperties ()
+		{
+			if (_properties != null) return _properties;
+			
+			bool cache = true;
+			PropertyInfo[] props = _component.GetType().GetProperties ();
+			Hashtable t = new Hashtable ();
+			foreach (PropertyInfo pr in props)
+				t [pr.Name] = new ReflectionPropertyDescriptor (pr);
+					
+			if (_component.Site != null) 
+			{
+				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) _component.Site.GetService (typeof(ITypeDescriptorFilterService));
+				cache = filter.FilterProperties (_component, t);
+			}
+			
+			ArrayList atts = new ArrayList ();
+			atts.AddRange (t.Values);
+			PropertyDescriptorCollection attCol = new PropertyDescriptorCollection (atts);
+			if (cache) _properties = attCol;
+			return attCol;
+		}
+	}
+	
+	internal class TypeInfo : Info
+	{
+		AttributeCollection _attributes;
+		EventDescriptorCollection _events;
+		PropertyDescriptorCollection _properties;
+		
+		public TypeInfo (Type t): base (t)
+		{
+		}
+		
+		public override AttributeCollection GetAttributes ()
+		{
+			if (_attributes != null) return _attributes;
+			
+			object[] atts = InfoType.GetCustomAttributes (true);
+			_attributes = new AttributeCollection ((Attribute[]) atts);
+			return _attributes;
+		}
+		
+		public override EventDescriptorCollection GetEvents ()
+		{
+			if (_events != null) return _events;
+			
+			EventInfo[] events = InfoType.GetEvents ();
+			EventDescriptor[] descs = new EventDescriptor [events.Length];
+			for (int n=0; n<events.Length; n++)
+				descs [n] = new ReflectionEventDescriptor (events[n]);
+
+			_events = new EventDescriptorCollection (descs);
+			return _events;
+		}
+		
+		public override PropertyDescriptorCollection GetProperties ()
+		{
+			if (_properties != null) return _properties;
+			
+			PropertyInfo[] props = InfoType.GetProperties ();
+			PropertyDescriptor[] descs = new PropertyDescriptor [props.Length];
+			for (int n=0; n<props.Length; n++)
+				descs [n] = new ReflectionPropertyDescriptor (props[n]);
+
+			_properties = new PropertyDescriptorCollection (descs);
+			return _properties;
+		}
+	}
 }
 

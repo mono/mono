@@ -18,27 +18,20 @@ namespace System.ComponentModel
 		{
 		}
 
-		[MonoTODO ("Don't know what MS wants to do with this")]
 		public static bool CheckMachineName (string value)
 		{
 			if (value == null || value.Trim ().Length == 0)
 				return false;
 
-			return Environment.MachineName.Equals (value);
+			return value.IndexOf ('\\') == -1;
 		}
 
-		[MonoTODO ("Don't know what MS wants to do with this")]
 		public static bool CheckPath (string value)
 		{
 			if (value == null || value.Trim ().Length == 0)
 				return false;
 
-			try {
-				Path.GetFullPath (value);
-			} catch {
-				return false;
-			}
-			return true;
+			return value.StartsWith (@"\\");
 		}
 
 		public static bool CheckRootedPath (string value)

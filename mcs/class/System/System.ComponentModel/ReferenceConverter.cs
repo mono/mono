@@ -23,34 +23,27 @@ namespace System.ComponentModel
 		public override bool CanConvertFrom (ITypeDescriptorContext context,
 						     Type sourceType)
 		{
-			if (sourceType == typeof (string)) 
-				return true;
-			return base.CanConvertFrom (context, sourceType);
+			return false;
 		}
 
-		[MonoTODO]
 		public override object ConvertFrom (ITypeDescriptorContext context,
 						    CultureInfo culture,
 						    object value)
 		{
-			// Add implementation
 			return base.ConvertFrom(context, culture, value);
 		}
 
-		[MonoTODO]
 		public override object ConvertTo (ITypeDescriptorContext context,
 						  CultureInfo culture,
 						  object value,
 						  Type destinationType)
 		{
-			// Add implementation
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
 
-		[MonoTODO]
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)

@@ -172,13 +172,13 @@ namespace System.ComponentModel
 
         public override int GetHashCode() 
         {
-            return name.GetHashCode ();
+            return base.GetHashCode ();
         }
 
         public override bool Equals(object obj)
         {
 			MemberDescriptor other = obj as MemberDescriptor;
-            if (obj == null) return false;
+            if (other == null) return false;
 			
             return other.name == name;
         }

@@ -65,7 +65,7 @@ namespace System.ComponentModel
 
 		public override object TypeId {
 			get {
-				return this.GetType ();
+				return this.GetType ().ToString() + basetypename.ToString();
 			}
 		}
 			

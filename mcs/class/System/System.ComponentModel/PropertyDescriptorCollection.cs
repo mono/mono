@@ -19,17 +19,25 @@ namespace System.ComponentModel
 	//[DefaultMember ("Item")]
 	public class PropertyDescriptorCollection : IList, ICollection, IEnumerable, IDictionary
 	{
-		public static readonly PropertyDescriptorCollection Empty = new PropertyDescriptorCollection (null);
+		public static readonly PropertyDescriptorCollection Empty = new PropertyDescriptorCollection ((ArrayList)null);
 		ArrayList properties;
 
+		internal PropertyDescriptorCollection (ArrayList list)
+		{
+			properties = list;
+		}
+		
 		public PropertyDescriptorCollection (PropertyDescriptor[] properties)
 		{
 			this.properties = new ArrayList ();
 			if (properties == null)
 				return;
 
-			foreach (PropertyDescriptor p in properties)
-				this.properties.Add (p);
+			this.properties.AddRange (properties);
+		}
+		
+		private PropertyDescriptorCollection ()
+		{
 		}
 
 		public int Add (PropertyDescriptor value)
@@ -148,42 +156,88 @@ namespace System.ComponentModel
 			RemoveAt (index);
 		}
 
+		private PropertyDescriptorCollection CloneCollection ()
+		{
+			PropertyDescriptorCollection col = new PropertyDescriptorCollection ();
+			col.properties = (ArrayList) properties.Clone ();
+			return col;
+		}
+		
 		public virtual PropertyDescriptorCollection Sort ()
 		{
-			properties.Sort ();
-			return this;
+			PropertyDescriptorCollection col = CloneCollection ();
+			col.InternalSort ((IComparer) null);
+			return col;
 		}
 
 		public virtual PropertyDescriptorCollection Sort (IComparer comparer)
 		{
-			properties.Sort (comparer);
-			return this;
+			PropertyDescriptorCollection col = CloneCollection ();
+			col.InternalSort (comparer);
+			return col;
 		}
 
-		[MonoTODO]
 		public virtual PropertyDescriptorCollection Sort (string[] order) 
 		{
-			throw new NotImplementedException ();
+			PropertyDescriptorCollection col = CloneCollection ();
+			col.InternalSort (order);
+			return col;
 		}
 
-		[MonoTODO]
 		public virtual PropertyDescriptorCollection Sort (string[] order, IComparer comparer) 
 		{
-			throw new NotImplementedException ();
+			PropertyDescriptorCollection col = CloneCollection ();
+			ArrayList sorted = col.ExtractItems (order);
+			col.InternalSort (comparer);
+			sorted.AddRange (col.properties);
+			col.properties = sorted;
+			return col;
 		}
 
-		[MonoTODO]
 		protected void InternalSort (IComparer ic)
 		{
-			throw new NotImplementedException ();
+			properties.Sort (ic);
 		}
 
-		[MonoTODO]
 		protected void InternalSort (string [] order)
 		{
-			throw new NotImplementedException ();
+			ArrayList sorted = ExtractItems (order);
+			InternalSort ((IComparer) null);
+			sorted.AddRange (properties);
+			properties = sorted;
 		}
-
+		
+		ArrayList ExtractItems (string[] names)
+		{
+			ArrayList sorted = new ArrayList (properties.Count);
+			object[] ext = new object [names.Length];
+			
+			for (int n=0; n<properties.Count; n++)
+			{
+				PropertyDescriptor ed = (PropertyDescriptor) properties[n];
+				int i = Array.IndexOf (names, ed.Name);
+				if (i != -1) {
+					ext[i] = ed;
+					properties.RemoveAt (n);
+					n--;
+				}
+			}
+			foreach (object ob in ext)
+				if (ob != null) sorted.Add (ob);
+				
+			return sorted;
+		}
+		
+		internal PropertyDescriptorCollection Filter (Attribute[] attributes)
+		{
+			ArrayList list = new ArrayList ();
+			foreach (PropertyDescriptor pd in properties)
+				if (pd.Attributes.Contains (attributes))
+					list.Add (pd);
+					
+			return new PropertyDescriptorCollection (list);
+		}
+		
 		bool IDictionary.IsFixedSize
 		{
 			get {

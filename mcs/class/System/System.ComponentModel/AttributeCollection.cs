@@ -19,7 +19,12 @@ namespace System.ComponentModel
 	public class AttributeCollection : ICollection, IEnumerable
 	{
 		private ArrayList attrList = new ArrayList ();
-		public static readonly AttributeCollection Empty = new AttributeCollection (null);
+		public static readonly AttributeCollection Empty = new AttributeCollection ((ArrayList)null);
+		
+		internal AttributeCollection (ArrayList attributes)
+		{
+			attrList = attributes;
+		}
 		
 		public AttributeCollection (Attribute[] attributes)
 		{
