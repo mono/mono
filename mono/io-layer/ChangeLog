@@ -1,3 +1,10 @@
+2003-12-15  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* daemon.c: change channel data structure so
+	input sources are removed from glib event loop
+	properly. xsp works better on Solaris and 
+	fixes #51278
+
 2003-12-12  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* wapi-private.h: Replace G_GNUC_PRETTY_FUNCTION
