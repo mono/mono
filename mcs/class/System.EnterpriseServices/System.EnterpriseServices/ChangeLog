@@ -1,3 +1,12 @@
+2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* IConfigurationAttribute: added
+	* ApplicationAccessControlAttribute.cs:
+	* ApplicationActivationAttribute.cs:
+	* ApplicationIDAttribute.cs:
+	* ApplicationNameAttribute.cs: stubbed implementation of 
+	IConfigurationAttribute
+
 2004-05-13  Mike Kestner <mkestner@ximian.com>
 
 	* RegistrationHelper.cs : add Guid and 2 methods

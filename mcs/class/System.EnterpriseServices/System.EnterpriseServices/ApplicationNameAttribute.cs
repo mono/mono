@@ -8,12 +8,13 @@
 //
 
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Assembly)]
 	[ComVisible(false)]
-	public sealed class ApplicationNameAttribute : Attribute {
+	public sealed class ApplicationNameAttribute : Attribute, IConfigurationAttribute {
 
 		#region Fields
 
@@ -29,6 +30,26 @@ namespace System.EnterpriseServices {
 		}
 
 		#endregion // Constructors
+
+		#region Implementation of IConfigurationAttribute
+
+		bool IConfigurationAttribute.AfterSaveChanges (Hashtable info)
+		{
+			return false;
+		}
+
+		[MonoTODO]
+		bool IConfigurationAttribute.Apply (Hashtable cache)
+		{
+			throw new NotImplementedException ();
+		}
+
+		bool IConfigurationAttribute.IsValidTarget (string s)
+		{
+			return (s == "Application");
+		}
+
+		#endregion Implementation of IConfigurationAttribute
 
 		#region Properties
 
