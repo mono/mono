@@ -1,3 +1,17 @@
+2003-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: fixes in UniqueID, FindControl, AddedControl,
+	UnloadRecursive, InitRecursive. Reduced the size of __VIEWSTATE. Made
+	FindControl work with NamingContainers.
+	
+	* ControlCollection.cs: notify the parent when clearing the collection.
+
+	* LosFormatter.cs: Added debugging output and generate a valid
+	viewstate even for unknown types.
+
+	* Page.cs: GetPostBackEventReference now uses UniqueID. Reduced
+	viewstate.
+
 2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: make it fire the LoadData related events also for controls

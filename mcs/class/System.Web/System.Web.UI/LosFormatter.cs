@@ -421,7 +421,8 @@ namespace System.Web.UI
 		private void SerializeBinary (TextWriter output, object value)
 		{
 			WebTrace.PushContext ("LosFormatter.SerializeBinary");
-			WebTrace.WriteLine ("not serializing value type: " + value.GetType ());
+			Console.WriteLine ("not serializing value type: " + value.GetType ());
+			output.Write ("<>");
 			/* This is just for debugging purposes */
 			/*if (value is Array) {
 				Array array = (Array) value;

@@ -284,9 +284,9 @@ public class Page : TemplateControl, IHttpHandler
 
 		NameValueCollection coll = null;
 		if (IsPostBack)
-			coll =  _context.Request.Form;
+			coll =  req.Form;
 		else 
-			coll = _context.Request.QueryString;
+			coll = req.QueryString;
 
 		
 		if (coll == null || coll ["__VIEWSTATE"] == null)
@@ -313,7 +313,7 @@ public class Page : TemplateControl, IHttpHandler
 	public string GetPostBackEventReference (Control control, string argument)
 	{
 		RequiresPostBackScript ();
-		return String.Format ("__doPostBack ('{0}', '{1}')", control.ID, argument);
+		return String.Format ("__doPostBack ('{0}', '{1}')", control.UniqueID, argument);
 	}
 
 	internal void RequiresPostBackScript ()
@@ -348,10 +348,9 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public string MapPath (string virtualPath)
 	{
-		throw new NotImplementedException ();
+		return Request.MapPath (virtualPath);
 	}
 	
 	private void RenderPostBackScript (HtmlTextWriter writer, string formUniqueID)
@@ -410,7 +409,7 @@ public class Page : TemplateControl, IHttpHandler
 
 		Hashtable used = new Hashtable ();
 		foreach (string id in data.AllKeys){
-			if (id == "__VIEWSTATE")
+			if (id == "__VIEWSTATE" || id == "__EVENTTARGET" || id == "__EVENTARGUMENT")
 				continue;
 
 			string real_id = id;
@@ -418,7 +417,7 @@ public class Page : TemplateControl, IHttpHandler
 			if (dot >= 1)
 				real_id = real_id.Substring (0, dot);
 			
-			if (used.ContainsKey (real_id))
+			if (real_id == null || used.ContainsKey (real_id))
 				continue;
 
 			used.Add (real_id, real_id);
@@ -455,8 +454,6 @@ public class Page : TemplateControl, IHttpHandler
 		WireupAutomaticEvents ();
 		WebTrace.WriteLine ("Finished hookup");
 		//-- Control execution lifecycle in the docs
-		WebTrace.WriteLine ("Controls.Clear");
-		Controls.Clear ();
 		WebTrace.WriteLine ("FrameworkInitialize");
 		FrameworkInitialize ();
 		WebTrace.WriteLine ("InitRecursive");
@@ -566,7 +563,7 @@ public class Page : TemplateControl, IHttpHandler
 		if (_requiresPostBack == null)
 			_requiresPostBack = new ArrayList ();
 
-		_requiresPostBack.Add (control);
+		_requiresPostBack.Add (control.ID);
 	}
 
 	public virtual void RegisterRequiresRaiseEvent (IPostBackEventHandler control)
@@ -600,8 +597,8 @@ public class Page : TemplateControl, IHttpHandler
 
 		try { 
 			_savedViewState = fmt.Deserialize (view_state);
-		} catch {
-			throw new HttpException ("Error restoring page viewstate.");
+		} catch (Exception e) {
+			throw new HttpException ("Error restoring page viewstate.\n{0}", e);
 		}
 
 		return _savedViewState;
@@ -624,7 +621,8 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		Pair pair = new Pair ();
 		pair.First = SaveViewStateRecursive ();
-		pair.Second = _requiresPostBack;
+		if (_requiresPostBack != null && _requiresPostBack.Count > 0)
+			pair.Second = _requiresPostBack;
 		SavePageStateToPersistenceMedium (pair);
 	}
 

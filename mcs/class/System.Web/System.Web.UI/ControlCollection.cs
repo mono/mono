@@ -81,6 +81,8 @@ namespace System.Web.UI {
 		public virtual void Clear ()
 		{
 			list.Clear ();
+			if (owner != null)
+				owner.ResetChildNames ();
 		}
 
 		public virtual bool Contains (Control c)

@@ -32,7 +32,7 @@
 //SaveViewState is called.
 //Unload then dispose it apears. :)
 
-//Naming Container MUST have some methods. What are they? No clue. Help?
+//Naming Container MUST have some methods. What are they? No clue. Help? (updated: the doc says that it's just a marker interface)
 
 //read this later. http://gotdotnet.com/quickstart/aspplus/
 //This to: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguidnf/html/cpconattributesdesign-timesupport.asp
@@ -95,8 +95,8 @@ namespace System.Web.UI
                 private static readonly object LoadEvent = new object();
                 private static readonly object PreRenderEvent = new object();
                 private static readonly object UnloadEvent = new object();
+		private string uniqueID;
                 private string _userId = null;
-                private string _cachedUserId = null;
                 private string _cachedClientId = null;
                 private ControlCollection _controls = null;
                 private bool _enableViewState = true;
@@ -121,8 +121,9 @@ namespace System.Web.UI
 		bool inited = false;
 		bool loaded = false;
 		bool prerendered = false;
+		int defaultNumberID = 0;
         	
-        	    private DataBindingCollection dataBindings = null;
+		private DataBindingCollection dataBindings = null;
 
                 public Control()
                 {
@@ -139,16 +140,17 @@ namespace System.Web.UI
 			}
 		}
 		
-                public virtual string ClientID //DIT
-                {
-                        get
-                        {
-                                if (_cachedUserId != null && _cachedClientId != null)
-                                        return _cachedClientId;
-                                _cachedUserId = UniqueID.Replace(':', '_');
-                                return _cachedUserId;
-                        }
-                }
+		public virtual string ClientID {
+			get {
+				string client = UniqueID;
+
+				if (client != null)
+					client = client.Replace (':', '_');
+
+				return client;
+			}
+		}
+
                 public virtual ControlCollection Controls //DIT
                 {
                         get
@@ -168,20 +170,21 @@ namespace System.Web.UI
                                 _enableViewState = value;
                         }
                 }
-                public virtual string ID
-                {
-                        get //DIT
-                        {
+		
+                public virtual string ID {
+                        get {
                                 return _userId;
                         }
-                        set
-                        {
-                                if (value == null || value == "") return;
+			
+                        set {
+				if (value == "")
+					value = null;
+
                                 _userId = value;
-                                _cachedUserId = null;
-                                //TODO: Some Naming Container stuff here I think.
+				NullifyUniqueID ();
                         }
                 }
+		
                 public virtual Control NamingContainer //DIT
                 {
                         get
@@ -231,14 +234,26 @@ namespace System.Web.UI
                         get { return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; }
                 }
 
-				[MonoTODO]
-                public virtual string UniqueID
-                {
-                        get
-                        {
-                                //TODO: Some Naming container methods here. What are they? Why arnt they declared?
-                                //Note: Nuked the old stuff here. Was total crap. :)
-                                return ID;
+                public virtual string UniqueID {
+                        get {
+				if (uniqueID != null)
+					return uniqueID;
+
+				if (_namingContainer == null) {
+					return _userId;
+				}
+
+				if (_userId == null)
+					_userId = "_uniqueIDctrl" + _namingContainer.defaultNumberID++;
+
+				string prefix = _namingContainer.UniqueID;
+				if (_namingContainer == _page || prefix == null) {
+					uniqueID = _userId;
+					return uniqueID;
+				}
+
+				uniqueID = prefix + ":" + _userId;
+				return uniqueID;
                         }
                 }
                 public virtual bool Visible
@@ -343,7 +358,21 @@ namespace System.Web.UI
 			bindingContainer = isBC;
 		}
 		
-		private int defaultNumberID;
+		internal void ResetChildNames ()
+		{
+			defaultNumberID = 0;
+		}
+		
+		void NullifyUniqueID ()
+		{
+			uniqueID = null;
+			if (_controls == null)
+				return;
+
+			foreach (Control c in _controls)
+				c.NullifyUniqueID ();
+		}
+		
 		protected internal virtual void AddedControl (Control control, int index)
 		{
 			/* Ensure the control don't have more than 1 parent */
@@ -353,14 +382,15 @@ namespace System.Web.UI
 			control._parent = this;
 			control._page = Page;
 
-			if (_isNamingContainer)
+			if (_isNamingContainer) {
 				control._namingContainer = this;
-			
-			if (control.AutoID == true && control.ID == null)
-				control.ID = ID + "_ctrl_" + defaultNumberID++;
+				if (control.AutoID == true && control._userId == null) {
+					control._userId =  "_ictrl" + defaultNumberID++;
+				}
+			}
 
 			if (inited)
-				control.InitRecursive (_isNamingContainer ? this : NamingContainer);
+				control.InitRecursive (_isNamingContainer ? this : null);
 
 			if (loaded)
 				control.LoadRecursive ();
@@ -404,27 +434,63 @@ namespace System.Web.UI
                         }
                 }
 
-                protected virtual Control FindControl(string id, int pathOffset)
+                public virtual Control FindControl (string id)
                 {
-                        //TODO: I think there is Naming Container stuff here. Redo.
+			Control x = FindControl (id, 0);
+			if (x == null) {
+				Console.WriteLine ("{0} NO encontrado", id);
+			}
+			return x;
+                }
+
+		Control LookForControlByName (string id)
+		{
+			if (!HasChildren)
+				return null;
+
+			foreach (Control c in _controls) {
+				if (String.Compare (id, c._userId, true) == 0)
+					return c;
+
+				if (!c._isNamingContainer && c.HasChildren) {
+					Control child = c.LookForControlByName (id);
+					if (child != null)
+						return child;
+				}
+			}
+
+			Console.WriteLine ("Devuelvo null para {0}", id);
+			return null;
+		}
+		
+                protected virtual Control FindControl (string id, int pathOffset)
+                {
 			EnsureChildControls ();
 			if (_controls == null)
 				return null;
 
-                        for (int i = pathOffset; i < _controls.Count; i++){
-				Control ctrl = _controls [i];
-				
-                                if (ctrl.ID == id)
-					return ctrl;
+			Control namingContainer = null;
+			if (!_isNamingContainer) {
+				namingContainer = NamingContainer;
+				if (namingContainer == null)
+					return null;
 
-				if (ctrl._controls != null && ctrl._controls.Count > 0){
-					Control other = ctrl.FindControl (id);
-					if (other != null)
-						return other;
-				}
-				
+				return namingContainer.FindControl (id, pathOffset);
 			}
-                        return null;
+
+			int colon = id.IndexOf (':', pathOffset);
+			if (colon == -1)
+				return LookForControlByName (id.Substring (pathOffset));
+			
+			Console.WriteLine ("Buscan: {0} {1} {2}", id, pathOffset, colon);
+			string idfound = id.Substring (pathOffset, colon - pathOffset);
+			namingContainer = LookForControlByName (idfound);
+			if (namingContainer == null || !namingContainer._isNamingContainer)
+				return null;
+
+			Console.WriteLine ("Encontrado {0}", idfound);
+			Console.WriteLine ("Ahora {0}", id.Substring (colon + 1));
+			return namingContainer.FindControl (id, colon + 1);
                 }
 
                 protected virtual void LoadViewState(object savedState)
@@ -605,6 +671,7 @@ namespace System.Web.UI
                                 Events.RemoveHandler(UnloadEvent, value);
                         }
                 }
+
                 public virtual void DataBind() //DIT
                 {
                         OnDataBinding(EventArgs.Empty);
@@ -612,15 +679,13 @@ namespace System.Web.UI
                                 foreach (Control c in _controls)
                                         c.DataBind();
                 }
-                public virtual Control FindControl(string id) //DIT
-                {
-                        return FindControl(id, 0);
-                }
+
                 public virtual bool HasControls() //DIT
                 {
                         if (_controls != null && _controls.Count >0) return true;
                         return false;
                 }
+
                 public void RenderControl(HtmlTextWriter writer)
                 {
                         if (_visible)
@@ -647,16 +712,24 @@ namespace System.Web.UI
 
                 protected void LoadRecursive()
                 {
-                        OnLoad(EventArgs.Empty);
-                        if (_controls != null) foreach (Control c in _controls) c.LoadRecursive();
+                        OnLoad (EventArgs.Empty);
+                        if (_controls != null) {
+				foreach (Control c in _controls)
+					c.LoadRecursive ();
+			}
 			loaded = true;
                 }
 
                 protected void UnloadRecursive(Boolean dispose)
                 {
-                        OnUnload(EventArgs.Empty);
-                        if (_controls != null) foreach (Control c in _controls) c.UnloadRecursive(dispose);
-                        if (dispose) Dispose();
+                        if (_controls != null) {
+				foreach (Control c in _controls)
+					c.UnloadRecursive (dispose);
+			}
+
+                        OnUnload (EventArgs.Empty);
+                        if (dispose)
+				Dispose();
                 }
 
                 protected void PreRenderRecursiveInternal()
@@ -676,8 +749,17 @@ namespace System.Web.UI
                 protected void InitRecursive(Control namingContainer)
                 {
                         if (_controls != null) {
+				if (_isNamingContainer)
+					namingContainer = this;
+
+				if (namingContainer != null && 
+				    namingContainer._userId == null &&
+				    namingContainer.autoID)
+					namingContainer._userId = "_ictrl" + namingContainer.defaultNumberID++;
+
 				foreach (Control c in _controls) {
 					c._page = Page;
+					c._namingContainer = namingContainer;
 					c.InitRecursive (namingContainer);
 				}
 			}
@@ -687,7 +769,7 @@ namespace System.Web.UI
 			inited = true;
                 }
                 
-                internal object SaveViewStateRecursive()
+                internal object SaveViewStateRecursive ()
                 {
 			if (!EnableViewState)
 				return null;
@@ -695,16 +777,25 @@ namespace System.Web.UI
 			ArrayList controlList = null;
 			ArrayList controlStates = null;
 
-			foreach (Control ctrl in Controls){
+			foreach (Control ctrl in Controls) {
+				object ctrlState = ctrl.SaveViewStateRecursive ();
+				if (ctrlState == null || ctrl.ID == null)
+					continue;
+
 				if (controlList == null) {
 					controlList = new ArrayList ();
 					controlStates = new ArrayList ();
 				}
+
 				controlList.Add (ctrl.ID);
-				controlStates.Add (ctrl.SaveViewStateRecursive ());
+				controlStates.Add (ctrlState);
 			}
-				
-			return new Triplet (SaveViewState (), controlList, controlStates);
+			
+			object thisState = SaveViewState ();
+			if (thisState == null && controlList == null && controlStates == null)
+				return null;
+
+			return new Triplet (thisState, controlList, controlStates);
                 }
                 
 		internal void LoadViewStateRecursive (object savedState)
@@ -753,7 +844,12 @@ namespace System.Web.UI
 		internal bool AutoID
 		{
 			get { return autoID; }
-			set { autoID = value; }
+			set { 
+				if (value == false && !_isNamingContainer)
+					return;
+
+				autoID = value;
+			}
 		}
 
                 internal void PreventAutoID()
@@ -770,6 +866,5 @@ namespace System.Web.UI
 		}
 
                 //TODO: I think there are some needed Interface implementations to do here.
-                //TODO: Find api for INamingContainer.
         }
 }
