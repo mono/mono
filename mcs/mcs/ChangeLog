@@ -1,5 +1,14 @@
 2003-07-10  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (ArrayCreation): Don't use a byte blob for arrays
+	of decimal.  Fixes #42850.
+
+	NOTE: I also fixed the created byte blob, but this doesn't work on
+	the MS runtime and csc never produces any byte blobs for decimal
+	arrays.
+
+2003-07-10  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (StructInfo.GetStructInfo): Catch deep cycles in
 	structs; fixes #32068.
 	(Block.AddChildVariableNames): Fixed #44302.

@@ -5663,12 +5663,19 @@ namespace Mono.CSharp {
 					if (!(v is Expression)){
 						int [] bits = Decimal.GetBits ((decimal) v);
 						int p = idx;
+
+						// FIXME: For some reason, this doesn't work on the MS runtime.
+						int [] nbits = new int [4];
+						nbits [0] = bits [3];
+						nbits [1] = bits [2];
+						nbits [2] = bits [0];
+						nbits [3] = bits [1];
 						
 						for (int j = 0; j < 4; j++){
-							data [p++] = (byte) (bits [j] & 0xff);
-							data [p++] = (byte) ((bits [j] >> 8) & 0xff);
-							data [p++] = (byte) ((bits [j] >> 16) & 0xff);
-							data [p++] = (byte) (bits [j] >> 24);
+							data [p++] = (byte) (nbits [j] & 0xff);
+							data [p++] = (byte) ((nbits [j] >> 8) & 0xff);
+							data [p++] = (byte) ((nbits [j] >> 16) & 0xff);
+							data [p++] = (byte) (nbits [j] >> 24);
 						}
 					}
 				} else
@@ -5754,7 +5761,7 @@ namespace Mono.CSharp {
 						e = ((EnumConstant) e).Child;
 					}
 					
-					if (e is StringConstant || !(e is Constant) ||
+					if (e is StringConstant || e is DecimalConstant || !(e is Constant) ||
 					    num_automatic_initializers <= max_automatic_initializers) {
 						Type etype = e.Type;
 						
@@ -5845,6 +5852,7 @@ namespace Mono.CSharp {
 				bool dynamic_initializers = true;
 
 				if (underlying_type != TypeManager.string_type &&
+				    underlying_type != TypeManager.decimal_type &&
 				    underlying_type != TypeManager.object_type) {
 					if (num_automatic_initializers > max_automatic_initializers)
 						EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
