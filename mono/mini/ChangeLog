@@ -1,3 +1,15 @@
+2004-10-15  Geoff Norton  <gnorton@customerdna.com>
+
+	* mini-ppc.c (calculate_sizes): Marshal valuetypes for pinvoke
+	methods as their native size, fixed bug #57543, #57545.
+	* mini-ppc.c (mono_arch_output_basic_block): Use mulli for imm16 types
+	This saves a temporary register and mullw call down into 1 (minor perf
+	increase for cases like sum = sum * 5;  This use to translate into:
+	    li r11,5
+	    mullw r28,r28,r11
+	It now translates to
+	    mulli r28,r28,5
+
 2004-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* trace.c (mono_trace_eval): Use mono_method_desc_full_match. Fixes
