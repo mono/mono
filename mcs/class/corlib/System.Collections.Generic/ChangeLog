@@ -1,3 +1,9 @@
+2005-02-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* List.cs: Added internal ReadOnlyCollection class,
+	which is a wrapper for a read only IList<T> version of the List<T>.
+	Used in AsReadOnly () method.
+	
 2005-02-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* List.cs (CheckRange): Comparison error. Duh!

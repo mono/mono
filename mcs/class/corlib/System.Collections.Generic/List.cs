@@ -4,6 +4,7 @@
 // Authors:
 //    Ben Maurer (bmaurer@ximian.com)
 //    Martin Baulig (martin@ximian.com)
+//    Carlos Alberto Cortez (calberto.cortez@gmail.com)
 //
 // (C) 2004 Novell, Inc.
 //
@@ -85,10 +86,9 @@ namespace System.Collections.Generic
 				Add (t);
 		}
 		
-		[MonoTODO]
 		public IList<T> AsReadOnly ()
 		{
-			throw new NotImplementedException ();
+			return new ReadOnlyList<T>(this);
 		}
 		
 		public int BinarySearch(T item)
@@ -492,6 +492,82 @@ namespace System.Collections.Generic
 		}
 #endregion
 		
+		[ComVisible (false)]
+		internal class ReadOnlyList<I> : IList<I>, ICollection<I>, IEnumerable<I>
+		{
+			IList<I> list;
+		
+			internal ReadOnlyList (IList<I> list)
+			{
+				this.list = list;
+			}
+
+			public void Add (I item)
+			{
+				throw new NotSupportedException ();
+			}
+			
+			public void Clear ()
+			{
+				throw new NotSupportedException ();
+			}
+
+			public bool Contains (I item)
+			{
+				return list.Contains (item);
+			}
+
+			public void CopyTo (I [] array, int index)
+			{
+				list.CopyTo (array, index);
+			}
+
+			public IEnumerator<I> GetEnumerator ()
+			{
+				return list.GetEnumerator ();
+			}
+			
+			public int IndexOf (I item)
+			{
+				return list.IndexOf (item);
+			}
+
+			public void Insert (int index, I item)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public bool Remove (I item)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public void RemoveAt (int index)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public int Count {
+				get {
+					return list.Count;
+				}
+			}
+
+			public bool IsReadOnly {
+				get {
+					return true;
+				}
+			}
+
+			public I this [int index] {
+				get {
+					return list [index];
+				}
+				set {
+					throw new NotSupportedException ();
+				}
+			}
+		}
 		
 		public struct Enumerator <T> : IEnumerator <T>, IEnumerator, IDisposable {
 			const int NOT_STARTED = -2;
