@@ -7,8 +7,9 @@ EXTRA_DIST = \
 	jit-thoughts		\
 	jit-trampolines		\
 	local-regalloc.txt	\
-	object-layout	 	\
 	mini-doc.txt		\
 	mini-porting.txt	\
+	opcode-decomp.txt	\
+	object-layout	 	\
 	unmanaged-calls 	\
 	stack-alignment 	\
