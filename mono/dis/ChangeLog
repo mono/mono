@@ -1,4 +1,8 @@
 
+Thu May 16 17:21:07 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c, dump,c, get.h, get.c: diassemble custom attributes.
+
 Wed May 15 16:02:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: output field RVA data.
