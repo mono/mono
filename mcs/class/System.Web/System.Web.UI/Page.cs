@@ -42,15 +42,17 @@ public class Page : TemplateControl, IHttpHandler
 	private object _savedViewState;
 	private ArrayList _requiresPostBack;
 	private ArrayList requiresPostDataChanged;
-	private ArrayList requiresRaiseEvent;
+	private IPostBackEventHandler requiresRaiseEvent;
 	private NameValueCollection secondPostData;
 	private bool requiresPostBackScript = false;
 	private bool postBackScriptRendered = false;
+	Hashtable clientScriptBlocks;
+	Hashtable startupScriptBlocks;
+	Hashtable hiddenFields;
+	bool handleViewState;
 
-	#region Fields
-	 	protected const string postEventArgumentID = ""; //FIXME
-		protected const string postEventSourceID = "";
-	#endregion
+	protected const string postEventArgumentID = "__EVENTARGUMENT";
+	protected const string postEventSourceID = "__EVENTTARGET";
 
 	#region Constructor
 	public Page ()
@@ -150,10 +152,8 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	[MonoTODO]
-	public bool IsReusable
-	{
-		get { throw new NotImplementedException (); }
+	public bool IsReusable {
+		get { return false; }
 	}
 
 	public bool IsValid
@@ -323,7 +323,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual int GetTypeHashCode ()
 	{
-		return GetHashCode ();
+		return 0;
 	}
 
 	[MonoTODO]
@@ -336,16 +336,20 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 	
-	[MonoTODO]
 	public bool IsClientScriptBlockRegistered (string key)
 	{
-		throw new NotImplementedException ();
+		if (clientScriptBlocks == null)
+			return false;
+
+		return clientScriptBlocks.ContainsKey (key);
 	}
 	
-	[MonoTODO]
 	public bool IsStartupScriptRegistered (string key)
 	{
-		throw new NotImplementedException ();
+		if (startupScriptBlocks == null)
+			return false;
+
+		return startupScriptBlocks.ContainsKey (key);
 	}
 
 	public string MapPath (string virtualPath)
@@ -355,19 +359,41 @@ public class Page : TemplateControl, IHttpHandler
 	
 	private void RenderPostBackScript (HtmlTextWriter writer, string formUniqueID)
 	{
-		writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTTARGET\" value=\"\" />");
-		writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTARGUMENT\" value=\"\" />");
+		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventSourceID);
+		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventArgumentID);
 		writer.WriteLine ();
 		writer.WriteLine ("<script language=\"javascript\">");
 		writer.WriteLine ("<!--");
 		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
 		writer.WriteLine ("\t\tvar theform = document.{0};", formUniqueID);
-		writer.WriteLine ("\t\ttheform.__EVENTTARGET.value = eventTarget;");
-		writer.WriteLine ("\t\ttheform.__EVENTARGUMENT.value = eventArgument;");
+		writer.WriteLine ("\t\ttheform.{0}.value = eventTarget;", postEventSourceID);
+		writer.WriteLine ("\t\ttheform.{0}.value = eventArgument;", postEventArgumentID);
 		writer.WriteLine ("\t\ttheform.submit();");
 		writer.WriteLine ("\t}");
 		writer.WriteLine ("// -->");
 		writer.WriteLine ("</script>");
+	}
+
+	static void WriteScripts (HtmlTextWriter writer, Hashtable scripts)
+	{
+		if (scripts == null)
+			return;
+
+		foreach (string key in scripts.Values)
+			writer.WriteLine (key);
+	}
+	
+	void WriteHiddenFields (HtmlTextWriter writer)
+	{
+		if (hiddenFields == null)
+			return;
+
+		foreach (string key in hiddenFields.Keys) {
+			string value = hiddenFields [key] as string;
+			writer.WriteLine ("\n<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />", key, value);
+		}
+
+		hiddenFields = null;
 	}
 
 	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
@@ -377,12 +403,18 @@ public class Page : TemplateControl, IHttpHandler
 
 		renderingForm = true;
 		writer.WriteLine ();
-		writer.Write ("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
-		writer.WriteLine ("value=\"{0}\" />", GetViewStateString ());
+		WriteHiddenFields (writer);
 		if (requiresPostBackScript) {
 			RenderPostBackScript (writer, formUniqueID);
 			postBackScriptRendered = true;
 		}
+
+		if (handleViewState) {
+			writer.Write ("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
+			writer.WriteLine ("value=\"{0}\" />", GetViewStateString ());
+		}
+
+		WriteScripts (writer, clientScriptBlocks);
 	}
 
 	internal string GetViewStateString ()
@@ -398,6 +430,8 @@ public class Page : TemplateControl, IHttpHandler
 		if (!postBackScriptRendered && requiresPostBackScript)
 			RenderPostBackScript (writer, formUniqueID);
 
+		WriteHiddenFields (writer);
+		WriteScripts (writer, startupScriptBlocks);
 		renderingForm = false;
 		postBackScriptRendered = false;
 	}
@@ -409,7 +443,7 @@ public class Page : TemplateControl, IHttpHandler
 
 		Hashtable used = new Hashtable ();
 		foreach (string id in data.AllKeys){
-			if (id == "__VIEWSTATE" || id == "__EVENTTARGET" || id == "__EVENTARGUMENT")
+			if (id == "__VIEWSTATE" || id == postEventSourceID || id == postEventArgumentID)
 				continue;
 
 			string real_id = id;
@@ -477,8 +511,6 @@ public class Page : TemplateControl, IHttpHandler
 		WebTrace.WriteLine ("SavePageViewState");
 		SavePageViewState ();
 		//--
-		StringBuilder sb = new StringBuilder ();
-		StringWriter sr = new StringWriter (sb);
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 		WebTrace.WriteLine ("RenderControl");
 		RenderControl (output);
@@ -491,26 +523,25 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void RaisePostBackEvents ()
 	{
+		if (requiresRaiseEvent != null) {
+			RaisePostBackEvent (requiresRaiseEvent, null);
+			return;
+		}
+
 		NameValueCollection postdata = DeterminePostBackMode ();
 		if (postdata == null)
 			return;
 
-		string eventTarget = postdata ["__EVENTTARGET"];
-		if (eventTarget != null && eventTarget.Length > 0) {
-			Control target = FindControl (eventTarget);
-			if (!(target is IPostBackEventHandler))
-				return;
-			string eventArgument = postdata ["__EVENTARGUMENT"];
-			RaisePostBackEvent ((IPostBackEventHandler) target, eventArgument);
-			return;
-		}
-
-		if (requiresRaiseEvent == null)
+		string eventTarget = postdata [postEventSourceID];
+		if (eventTarget == null || eventTarget.Length == 0)
 			return;
 
-		foreach (Control c in requiresRaiseEvent)
-			RaisePostBackEvent ((IPostBackEventHandler) c, postdata [c.ID]);
-		requiresRaiseEvent.Clear ();
+		IPostBackEventHandler target = FindControl (eventTarget) as IPostBackEventHandler;
+		if (target == null)
+			return;
+
+		string eventArgument = postdata [postEventArgumentID];
+		RaisePostBackEvent (target, eventArgument);
 	}
 
 	internal void RaiseChangedEvents ()
@@ -520,6 +551,7 @@ public class Page : TemplateControl, IHttpHandler
 
 		foreach (IPostBackDataHandler ipdh in requiresPostDataChanged)
 			ipdh.RaisePostDataChangedEvent ();
+
 		requiresPostDataChanged.Clear ();
 	}
 
@@ -534,19 +566,27 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 	
-	[MonoTODO]
 	public virtual void RegisterClientScriptBlock (string key, string script)
 	{
-		throw new NotImplementedException ();
+		if (IsClientScriptBlockRegistered (key))
+			return;
+
+		if (clientScriptBlocks == null)
+			clientScriptBlocks = new Hashtable ();
+
+		clientScriptBlocks.Add (key, script);
 	}
 	
-	[MonoTODO]
 	public virtual void RegisterHiddenField (string hiddenFieldName, string hiddenFieldInitialValue)
 	{
-		throw new NotImplementedException ();
+		if (hiddenFields == null)
+			hiddenFields = new Hashtable ();
+
+		if (!hiddenFields.ContainsKey (hiddenFieldName))
+			hiddenFields.Add (hiddenFieldName, hiddenFieldInitialValue);
 	}
 	
-	[MonoTODO]
+ 	[MonoTODO]
 	public void RegisterClientScriptFile (string a, string b, string c)
 	{
 		throw new NotImplementedException ();
@@ -568,16 +608,23 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual void RegisterRequiresRaiseEvent (IPostBackEventHandler control)
 	{
-		if (requiresRaiseEvent == null)
-			requiresRaiseEvent = new ArrayList ();
-
-		requiresRaiseEvent.Add (control);
+		requiresRaiseEvent = control;
 	}
 
-	[MonoTODO]
+	public virtual void RegisterStartupScript (string key, string script)
+	{
+		if (IsStartupScriptRegistered (key))
+			return;
+
+		if (startupScriptBlocks == null)
+			startupScriptBlocks = new Hashtable ();
+
+		startupScriptBlocks.Add (key, script);
+	}
+
 	public void RegisterViewStateHandler ()
 	{
-		// Do nothing
+		handleViewState = true;
 	}
 
 	protected virtual void SavePageStateToPersistenceMedium (object viewState)
@@ -619,6 +666,9 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void SavePageViewState ()
 	{
+		if (!handleViewState)
+			return;
+
 		Pair pair = new Pair ();
 		pair.First = SaveViewStateRecursive ();
 		if (_requiresPostBack != null && _requiresPostBack.Count > 0)

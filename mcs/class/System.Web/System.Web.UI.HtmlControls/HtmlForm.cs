@@ -21,8 +21,8 @@ namespace System.Web.UI.HtmlControls{
 			Attributes.Remove("name");
 			writer.WriteAttribute("method", Method);
 			Attributes.Remove("method");
-			//writer.WriteAttribute("action", Action, true);
-			//Attributes.Remove("action");
+			writer.WriteAttribute("action", Action, true);
+			Attributes.Remove("action");
 			if (Enctype != null){
 				writer.WriteAttribute ("enctype", Enctype);
 				Attributes.Remove ("enctype");

@@ -33,15 +33,12 @@ namespace System.Web.UI {
 		
 		public static object Eval (object container, string expression)
 		{
-			if (container == null)
-				throw new ArgumentNullException ("container");
-
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
 
 			object current = container;
 
-			while (true) {
+			while (current != null) {
 				int dot = expression.IndexOf ('.');
 				int size = (dot == -1) ? expression.Length : dot;
 				string prop = expression.Substring (0, size);
@@ -67,9 +64,6 @@ namespace System.Web.UI {
 
 		public static object GetIndexedPropertyValue (object container, string expr)
 		{
-			if (container == null)
-				throw new ArgumentNullException ("container");
-
 			if (expr == null)
 				throw new ArgumentNullException ("expr");
 
@@ -109,6 +103,9 @@ namespace System.Web.UI {
 					container = GetPropertyValue (container, property);
 			}
 
+			if (container == null)
+				return null;
+
 			Type t = container.GetType ();
 			// MS does not seem to look for any other than "Item"!!!
 			object [] atts = t.GetCustomAttributes (typeof (DefaultMemberAttribute), false);
@@ -139,8 +136,8 @@ namespace System.Web.UI {
 
 		public static object GetPropertyValue (object container, string propName)
 		{
-			if (container == null || propName == null)
-				throw new ArgumentException ();
+			if (propName == null)
+				throw new ArgumentNullException ("propName");
 
 			PropertyDescriptor prop = TypeDescriptor.GetProperties (container).Find (propName, true);
 			if (prop == null) {

@@ -628,13 +628,12 @@ namespace System.Web.UI.WebControls
 			} else {
 				dkeys.Clear ();
 				source = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
-				if (source != null && source is ICollection) {
+				if (source is ICollection) {
 					dkeys.Capacity = ((ICollection) source).Count;
 					itemsArray.Capacity = ((ICollection) source).Count;
 				}
 			}
 
-			IEnumerator listEnumerator = null;
 			int itemCount = 0;
 			if (source != null) {
 				int index = 0;
@@ -646,9 +645,8 @@ namespace System.Web.UI.WebControls
 					CreateItem (-1, ListItemType.Header, useDataSource, null);
 
 				foreach (object current in source) {
-					if (!useDataSource) {
+					if (!useDataSource)
 						dkeys.Add (DataBinder.GetPropertyValue (current, dataKey));
-					}
 
 					ListItemType type = ListItemType.Item;
 					if (index == editIndex) {
@@ -670,9 +668,8 @@ namespace System.Web.UI.WebControls
 					CreateItem (-1, ListItemType.Footer, useDataSource, null);
 			}
 
-			if (useDataSource) {
-				ViewState ["_!ItemCount"] = (listEnumerator != null ? itemCount : -1);
-			}
+			if (useDataSource)
+				ViewState ["_!ItemCount"] = (source != null ? itemCount : -1);
 		}
 
 		/// <summary>

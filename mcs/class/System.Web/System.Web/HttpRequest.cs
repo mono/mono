@@ -492,10 +492,9 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO()]
 		public string CurrentExecutionFilePath {
 			get {
-				throw new NotImplementedException();
+				return FilePath;
 			}
 		}
 

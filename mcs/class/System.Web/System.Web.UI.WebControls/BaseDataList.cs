@@ -240,7 +240,7 @@ namespace System.Web.UI.WebControls
 			Controls.Clear();
 			if(ViewState[ItemCountViewStateKey]!=null)
 			{
-				CreateControlHierarchy(true);
+				CreateControlHierarchy(false);
 				ClearChildViewState();
 			}
 		}

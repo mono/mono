@@ -244,7 +244,7 @@ namespace System.Web.UI
 				}
 
 				if (_userId == null)
-					_userId = "_uniqueIDctrl" + _namingContainer.defaultNumberID++;
+					_userId = _namingContainer.GetDefaultName ();
 
 				string prefix = _namingContainer.UniqueID;
 				if (_namingContainer == _page || prefix == null) {
@@ -363,6 +363,11 @@ namespace System.Web.UI
 			defaultNumberID = 0;
 		}
 		
+		string GetDefaultName ()
+		{
+			return "_ctrl" + defaultNumberID++;
+		}
+		
 		void NullifyUniqueID ()
 		{
 			uniqueID = null;
@@ -385,7 +390,7 @@ namespace System.Web.UI
 			if (_isNamingContainer) {
 				control._namingContainer = this;
 				if (control.AutoID == true && control._userId == null) {
-					control._userId =  "_ictrl" + defaultNumberID++;
+					control._userId =  GetDefaultName ();
 				}
 			}
 
@@ -479,7 +484,7 @@ namespace System.Web.UI
 			
 			string idfound = id.Substring (pathOffset, colon - pathOffset);
 			namingContainer = LookForControlByName (idfound);
-			if (namingContainer == null || !namingContainer._isNamingContainer)
+			if (namingContainer == null)
 				return null;
 
 			return namingContainer.FindControl (id, colon + 1);
@@ -747,7 +752,7 @@ namespace System.Web.UI
 				if (namingContainer != null && 
 				    namingContainer._userId == null &&
 				    namingContainer.autoID)
-					namingContainer._userId = "_ictrl" + namingContainer.defaultNumberID++;
+					namingContainer._userId = namingContainer.GetDefaultName ();
 
 				foreach (Control c in _controls) {
 					c._page = Page;
