@@ -30,9 +30,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.9  2004/08/13 18:46:26  jordi
+// adds timer and grap window
+//
 // Revision 1.8  2004/08/12 20:29:01  jordi
 // Trackbar enhancement, fix mouse problems, highli thumb, etc
 //
@@ -65,6 +68,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Timers;
 
 namespace System.Windows.Forms
 {	
@@ -83,7 +87,9 @@ namespace System.Windows.Forms
 		private Rectangle thumb_pos = new Rectangle ();	 /* Current position and size of the thumb */
 		private Rectangle thumb_area = new Rectangle (); /* Area where the thumb can scroll */
 		private bool thumb_pressed = false;		 
+		private System.Timers.Timer holdclick_timer = new System.Timers.Timer ();
 		private int thumb_mouseclick;		
+		private bool mouse_clickmove;
 
 		#region Events
 		public event EventHandler Scroll;
@@ -103,6 +109,7 @@ namespace System.Windows.Forms
 			largeChange = 5;
 			Scroll = null;
 			ValueChanged  = null;		
+			mouse_clickmove = false;
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);			
@@ -477,10 +484,11 @@ namespace System.Windows.Forms
 
 		private void OnMouseUpTB (MouseEventArgs e)
 		{	
-			if (!Enabled) return;
+			if (!Enabled) return;			
 
-			if (thumb_pressed == true) {				
+			if (thumb_pressed == true || mouse_clickmove == true) {	
 				thumb_pressed = false;
+				holdclick_timer.Enabled = false;
 				XplatUI.ReleaseWindow (Handle);
 				Refresh ();
 			}
@@ -489,6 +497,8 @@ namespace System.Windows.Forms
 		private void OnMouseDownTB (MouseEventArgs e)
     		{
     			if (!Enabled) return;			    			
+
+			bool fire_timer = false;
     			
     			Point point = new Point (e.X, e.Y);
 
@@ -508,6 +518,8 @@ namespace System.Windows.Forms
 							LargeDecrement ();
 
 						Refresh ();
+						fire_timer = true;
+						mouse_clickmove = true;
 					}
 				}
 			}
@@ -527,10 +539,17 @@ namespace System.Windows.Forms
 							LargeDecrement ();
 
 						Refresh ();
+						fire_timer = true;
+						mouse_clickmove = true;
 					}
 				}
-
 			}
+
+			if (fire_timer) { 
+				holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
+				holdclick_timer.Interval = 300;
+				holdclick_timer.Enabled = true;				
+			}			
     		}
 
     		private void OnMouseMoveTB (MouseEventArgs e)
@@ -540,12 +559,16 @@ namespace System.Windows.Forms
     			Point pnt = new Point (e.X, e.Y);
 
     			/* Moving the thumb */
-    			if ((thumb_pressed) &&  (paint_area.Contains (pnt))) {
+    			if (thumb_pressed) {
 								 				
-    				if (orientation == Orientation.Horizontal)
-					thumb_mouseclick = e.X;					
-    				else
-					thumb_mouseclick = e.Y;
+    				if (orientation == Orientation.Horizontal){
+					if (paint_area.Contains (e.X, thumb_pos.Y))
+						thumb_mouseclick = e.X;	
+				}
+    				else {
+					if (paint_area.Contains (thumb_pos.X, e.Y))
+						thumb_mouseclick = e.Y;
+				}
 
 				Refresh ();
     				OnScroll (new EventArgs ());
@@ -589,6 +612,32 @@ namespace System.Windows.Forms
 				break;
 			}
 		}
+
+		private void OnFirstClickTimer (Object source, ElapsedEventArgs e)
+		{						
+			Point pnt;
+			pnt = PointToClient (MousePosition);			
+
+			if (thumb_area.Contains (pnt)) 	{
+				if (orientation == Orientation.Horizontal) {
+					if (pnt.X > thumb_pos.X + thumb_pos.Width)
+						LargeIncrement ();
+
+					if (pnt.X < thumb_pos.X)
+						LargeDecrement ();						
+				}
+				else 				{
+					if (pnt.Y > thumb_pos.Y + thumb_pos.Height)
+						LargeIncrement ();
+
+					if (pnt.Y < thumb_pos.Y)
+						LargeDecrement ();
+				}
+
+				Refresh ();
+
+			}			
+		}			
 
 
     		#endregion // Private Methods
