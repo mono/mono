@@ -1,3 +1,10 @@
+2005-02-16  Marek Safar <marek.safar@seznam.cz>
+
+	* test-348.cs: New test.
+	
+	* fixed-buffer-dll.cs,
+	* fixed-buffer.cs: Fixed buffer tests.
+
 2005-02-15  Raja R Harinath  <rharinath@novell.com>
 
 	* test-347.cs: New test from #71992.
