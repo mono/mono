@@ -612,33 +612,30 @@ namespace System.Windows.Forms
 				return;
 			}
 			
+			Color back_color, fore_color;
 			Rectangle text_draw = e.Bounds;
 			
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(ThemeEngine.Current.ColorHilight), text_draw);
-
-				if (e.Index != -1) {
-					e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-						ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilightText),
-						text_draw, string_format);
-				}
-
-				// It seems to be a bug in CPDrawFocusRectangle
-				//ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds,
-				//	ThemeEngine.Current.ColorHilightText, BackColor);
+				back_color = ThemeEngine.Current.ColorHilight;
+				fore_color = ThemeEngine.Current.ColorHilightText;
 			}
-			else {				
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(e.BackColor), e.Bounds);
+			else {
+				back_color = e.BackColor;
+				fore_color = e.ForeColor;
+			}			
+							
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (back_color), e.Bounds);
 
-				if (e.Index != -1) {
-					e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-						ThemeEngine.Current.ResPool.GetSolidBrush (e.ForeColor),
-						text_draw, string_format);
-				}
+			if (e.Index != -1) {
+				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+					text_draw, string_format);
 			}
+			
+			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
+				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds, fore_color, back_color);
+			}
+			
 		}		
 
 		protected virtual void OnDropDown (EventArgs e)
@@ -862,12 +859,16 @@ namespace System.Windows.Forms
 		{					
 			// No edit control, we paint the edit ourselfs
 			if (dropdown_style == ComboBoxStyle.DropDownList) {
-
-				Rectangle item_rect = combobox_info.textarea;
+				DrawItemState state = DrawItemState.None;
+				Rectangle item_rect = combobox_info.textarea_drawable;
+				item_rect.Height = ItemHeight + 1;
+				
+				if (CBoxInfo.droppeddown == false) {
+					state = DrawItemState.Focus |DrawItemState.Selected;
+				}
 				
 				OnDrawItem (new DrawItemEventArgs (DeviceContext, Font, item_rect,
-							selected_index, DrawItemState.Selected,
-							ForeColor, BackColor));
+							selected_index, state, ForeColor, BackColor));
 			}						
 			
 			if (clip.IntersectsWith (combobox_info.listbox_area) == true) {
@@ -902,6 +903,10 @@ namespace System.Windows.Forms
     			}
     			
     			CBoxInfo.droppeddown = true;
+    			
+    			if (dropdown_style == ComboBoxStyle.DropDownList) {
+    				Invalidate (combobox_info.textarea_drawable);
+    			}    			
 		}
 		
 		internal void DropDownListBoxFinished ()
@@ -1190,6 +1195,7 @@ namespace System.Windows.Forms
 				MouseMove += new MouseEventHandler (OnMouseMovePUW);				
 				KeyDown += new KeyEventHandler (OnKeyDownPUW);
 				Paint += new PaintEventHandler (OnPaintPUW);
+				LostFocus += new EventHandler (OnLostFocus);
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 
@@ -1325,8 +1331,13 @@ namespace System.Windows.Forms
 						/* Draw item */
 						state = DrawItemState.None;
 
-						if (i == highlighted_item)
+						if (i == highlighted_item) {
 							state |= DrawItemState.Selected;
+							
+							if (owner.DropDownStyle == ComboBoxStyle.DropDownList) {
+								state |= DrawItemState.Focus;
+							}							
+						}
 							
 						owner.OnDrawItem (new DrawItemEventArgs (DeviceContext, owner.Font, item_rect,
 							i, state, owner.ForeColor, owner.BackColor));
@@ -1420,7 +1431,7 @@ namespace System.Windows.Forms
 				}
 				
 				case ItemNavigation.NextPage: {
-					if (highlighted_item + page_size - 1 > owner.Items.Count) {
+					if (highlighted_item + page_size - 1 >= owner.Items.Count) {
 						top_item = owner.Items.Count - page_size;
 						vscrollbar_ctrl.Value = top_item; 						
 						item = owner.Items.Count - 1;
@@ -1522,6 +1533,11 @@ namespace System.Windows.Forms
 				top_item = item;
 				UpdateLastVisibleItem ();
 				Refresh ();
+			}
+			
+			private void OnLostFocus (object sender, EventArgs e) 			
+			{				
+				HideWindow ();
 			}
 			
 			private void OnMouseDownPUW (object sender, MouseEventArgs e)
