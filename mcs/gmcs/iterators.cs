@@ -237,14 +237,22 @@ namespace Mono.CSharp {
 			resume_labels.Add (resume_point);
 		}
 
+		private static MemberName MakeProxyName (string name)
+		{
+			int pos = name.LastIndexOf ('.');
+			if (pos > 0)
+				name = name.Substring (pos + 1);
+
+			return new MemberName ("<" + name + ">__" + (proxy_count++));
+		}
+
 		//
 		// Our constructor
 		//
 		public Iterator (TypeContainer container, string name, Type return_type,
 				 Type [] param_types, InternalParameters parameters,
 				 int modifiers, Block block, Location loc)
-			: base (container.NamespaceEntry, container,
-				new MemberName ("<Iterator:" + name + (proxy_count++) + ":>"),
+			: base (container.NamespaceEntry, container, MakeProxyName (name),
 				Modifiers.PRIVATE, null, loc)
 		{
 			this.container = container;
