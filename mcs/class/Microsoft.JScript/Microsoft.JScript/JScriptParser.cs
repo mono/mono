@@ -1,26 +1,5 @@
 // $ANTLR 2.7.3: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
 
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
 	using System.Collections;
 
 namespace Microsoft.JScript
@@ -2213,7 +2192,11 @@ _loop58_breakloop:			;
 		}
 		case OPEN_BRACKET:
 		{
-			array_literal();
+			l=array_literal(parent);
+			if (0==inputState.guessing)
+			{
+				prim_exp = l;
+			}
 			break;
 		}
 		case OPEN_PARENS:
@@ -3931,8 +3914,17 @@ _loop86_breakloop:			;
 		return l;
 	}
 	
-	public void array_literal() //throws RecognitionException, TokenStreamException
+	public ArrayLiteral  array_literal(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
+		ArrayLiteral array_lit;
+		
+		
+			array_lit = new ArrayLiteral (parent);
+			AST e = null;
+			ASTList elems = ((ArrayLiteral) array_lit).elems;
+			int i = 0;
 		
 		
 		match(OPEN_BRACKET);
@@ -3950,14 +3942,31 @@ _loop86_breakloop:			;
 			case DECIMAL_LITERAL:
 			case HEX_INTEGER_LITERAL:
 			{
-				primary_expr(null);
+				e=primary_expr(array_lit);
+				if (0==inputState.guessing)
+				{
+					if (e != null) { 
+								  elems.Add (e); 
+								  array_lit.size++;
+							    } 
+							
+				}
 				{    // ( ... )*
 					for (;;)
 					{
 						if ((LA(1)==COMMA))
 						{
 							match(COMMA);
-							primary_expr(null);
+							e=primary_expr(array_lit);
+							if (0==inputState.guessing)
+							{
+								
+												  if (e != null) { 
+													  elems.Add (e); 
+													  array_lit.size++; 
+												  }
+											
+							}
 						}
 						else
 						{
@@ -3980,6 +3989,7 @@ _loop142_breakloop:					;
 			 }
 		}
 		match(CLOSE_BRACKET);
+		return array_lit;
 	}
 	
 	public NumericLiteral  numeric_literal(
@@ -4043,27 +4053,45 @@ _loop136_breakloop:		;
 		}    // ( ... )+
 	}
 	
-	public void property_name() //throws RecognitionException, TokenStreamException
+	public PropertyName  property_name() //throws RecognitionException, TokenStreamException
 {
+		PropertyName pn;
 		
+		Token  id = null;
+		Token  st = null;
+		pn = new PropertyName ();
 		
 		{
 			switch ( LA(1) )
 			{
 			case IDENTIFIER:
 			{
+				id = LT(1);
 				match(IDENTIFIER);
+				if (0==inputState.guessing)
+				{
+					pn.Name = id.getText ();
+				}
 				break;
 			}
 			case STRING_LITERAL:
 			{
+				st = LT(1);
 				match(STRING_LITERAL);
+				if (0==inputState.guessing)
+				{
+					pn.Name = st.getText ();
+				}
 				break;
 			}
 			case DECIMAL_LITERAL:
 			case HEX_INTEGER_LITERAL:
 			{
 				numeric_literal(null);
+				if (0==inputState.guessing)
+				{
+					pn.Name = string.Empty;
+				}
 				break;
 			}
 			default:
@@ -4072,6 +4100,7 @@ _loop136_breakloop:		;
 			}
 			 }
 		}
+		return pn;
 	}
 	
 	public void line_terminator() //throws RecognitionException, TokenStreamException
