@@ -19,7 +19,7 @@ Test cases listed by Category:
 
 * Events and Delegates
 
-  test-149.cs verify-3.cs
+  test-149.cs test-164.cs verify-3.cs
 
 * Constant Folding
 
@@ -35,7 +35,7 @@ Test cases listed by Category:
 
 * Invocation
 
-  test-153.cs
+  test-153.cs test-163.c
 
 * Flow Analysis
 
@@ -126,6 +126,14 @@ an instance property/field `DateTime'.
 test-162.cs
 -----------
 Control Flow Analysis wrt. structs.
+
+test-163.cs
+-----------
+Test to check we select string over object when we have a Null literal as the argument.
+
+test-164.cs
+-----------
+Virtual functions in delegate creation expressions.
 
 verify-1.cs
 -----------

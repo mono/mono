@@ -1,3 +1,8 @@
+2002-09-09  Martin Baulig  <martin@gnome.org>
+
+	* test-164.cs: Added testcase for virtual functions in delegate
+	creating expressions (Bug #30043).
+
 2002-09-06  Ravi Pratap  <ravi@ximian.com>
 
 	* test-163.cs : Add test to check we select string
