@@ -111,11 +111,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			while (!exiting && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
-				if (form.end_modal) {
-					break;
-				}
-
+			while (!exiting && !form.end_modal && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);
 

@@ -343,7 +343,7 @@ namespace System.Windows.Forms
 			pen_arrow = new Pen (Color.Black);
 			br_progressbarblock = new SolidBrush (Color.FromArgb (255, 0, 0, 128));			
 
-			defaultWindowBackColor = Color.FromArgb (255, 10, 10, 10);
+			defaultWindowBackColor = SystemColors.Window;
 			defaultWindowForeColor = ColorButtonText;
 			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
 		}	
@@ -3382,6 +3382,15 @@ namespace System.Windows.Forms
 		}
 		#endregion	// VScrollBar
 
+		#region TreeView
+		public override Size TreeViewDefaultSize {
+			get {
+				return new Size (121, 97);
+			}
+		}
+
+		#endregion
+
 		#region ControlPaint
 		private enum DrawFrameControlStates {
 			ButtonCheck		= 0x0000,
@@ -4611,13 +4620,19 @@ namespace System.Windows.Forms
 		
 		public override void CPDrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style) {
 			switch (border_style){
-			case BorderStyle.Fixed3D:				
+			case BorderStyle.Fixed3D:
 				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), area.X, area.Y, area.X +area.Width, area.Y);
 				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), area.X, area.Y, area.X, area.Y + area.Height);
 				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), area.X , area.Y + area.Height - 1, area.X + area.Width , 
 					area.Y + area.Height - 1);
 				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), area.X + area.Width -1 , area.Y, area.X + area.Width -1, 
 					area.Y + area.Height);
+
+				// FIXME: These colors are not correct. Microsoft uses different ones but I didn't find them.
+				dc.DrawLine (ResPool.GetPen (ColorButtonLight), area.X + 1, area.Bottom - 2, area.Right - 2, area.Bottom - 2);
+				dc.DrawLine (ResPool.GetPen (ColorButtonLight), area.Right - 2, area.Top + 1, area.Right - 2, area.Bottom - 2);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), area.X + 1, area.Top + 1, area.X + 1, area.Bottom - 3);
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), area.X + 1, area.Top + 1, area.Right - 3, area.Top + 1);
 				break;
 			case BorderStyle.FixedSingle:
 				dc.DrawRectangle (ResPool.GetPen (ColorWindowFrame), area.X, area.Y, area.Width - 1, area.Height - 1);

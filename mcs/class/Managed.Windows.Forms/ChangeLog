@@ -1,3 +1,12 @@
+2004-11-29  Marek Safar  <marek.safar@seznam.cz>
+
+	* System.Windows.Forms.dll.sources: Added
+	TreeNode.cs, TreeNodeCollection.cs, TreeView.cs,
+	TreeViewAction.cs, TreeViewEventArgs.cs
+
+	* System.Windows.Forms_test.dll.sources: Added
+	TreeNodeTest.cs
+
 2004-11-24  Ravindra  <rkumar@novell.com>
 
 	* SWF.csproj: Updated project.

@@ -1,3 +1,16 @@
+2004-11-29  Marek Safar  <marek.safar@seznam.cz>
+
+	* Application.cs (ModalRun): Don't hang after exit.
+
+	* Theme.cs: New TreeViewDefaultSize property.
+
+	* ThemeWin32Classic.cs: Replaced hardcoded defaultWindowBackColor
+	with less hardcoded SystemColors constant.
+	Implemented TreeViewDefaultSize.
+
+	* TreeNode.cs, TreeNodeCollection.cs, TreeView.cs,
+	TreeViewAction.cs, TreeViewEventArgs.cs: New files.
+
 2004-11-29  John BouAntoun <jba-mono@optusnet.com.au>
 
 	* MonthCalendar.cs: 

@@ -467,6 +467,9 @@ namespace System.Windows.Forms
 		public abstract Size VScrollBarDefaultSize{get;}	// Default size of the scrollbar
 		#endregion	// VScrollBar
 
+		#region TreeView
+		public abstract Size TreeViewDefaultSize { get; }
+		#endregion
 
 		#region	ControlPaint Methods
 		public abstract void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
