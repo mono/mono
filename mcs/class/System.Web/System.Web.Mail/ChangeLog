@@ -1,3 +1,6 @@
+2003-03-06  Per Arneng <pt99par@student.bth.se>
+	* MailMessageWrapper: Added to get at more advanced mail message
+	
 2003-02-23  Per Arneng <pt99par@student.bth.se>
 
 	* SmtpMail.cs: Send method now implemented (needs testing)
