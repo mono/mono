@@ -1,3 +1,9 @@
+2004-06-10 Anirban Bhattacharjee <banirban@novell.com>
+        * mb-parser.jay:
+        * expression.cs:
+                Added support for statement like
+                        delgate_name = AddressOf sub_name
+
 2004-06-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (HAS_TEST): Remove.

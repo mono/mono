@@ -2045,33 +2045,33 @@ statement_list
 statement : 
 	    declaration_statement
 	    {
-		if ($1 != null && (Block) $1 != current_block){
+		  if ($1 != null && (Block) $1 != current_block){
 			current_block.AddStatement ((Statement) $1);
 			current_block = (Block) $1;
-		}
+		  }
 	    }
 	  | embedded_statement
 	    {
-		Statement s = (Statement) $1;
+		  Statement s = (Statement) $1;
 
-		current_block.AddStatement ((Statement) $1);
+		  current_block.AddStatement ((Statement) $1);
 	    } 
 	  | labeled_statement 
 	  | ADDHANDLER prefixed_unary_expression COMMA ADDRESSOF qualified_identifier
-	   {
-	   	AddHandler ((Expression) $2, (string) $5);
-	   }
+	    {
+	   	  AddHandler ((Expression) $2, (string) $5);
+	    }
 	  | RAISEEVENT identifier opt_raise_event_args  //OPEN_PARENS opt_argument_list CLOSE_PARENS
 	    {
-	    	RaiseEvent ((string) $2, (ArrayList) $3);
+	      RaiseEvent ((string) $2, (ArrayList) $3);
 	    }
 	  /* | array_handling_statement */
 	  /* | empty_statement */
 	  | with_statement 
 	    {
-		Statement s = (Statement) $1;
+		  Statement s = (Statement) $1;
 
-		current_block.AddStatement ((Statement) $1);
+	      current_block.AddStatement ((Statement) $1);
 	    }	  
 	  ;	
 	  
@@ -2920,8 +2920,6 @@ delegate_creation_expression
 	: NEW type OPEN_PARENS ADDRESSOF opt_argument_list CLOSE_PARENS
 	  {
 		New n = new New ((Expression) $2, (ArrayList) $5, lexer.Location);
-		if (n==null)
-			Console.WriteLine("empty");
 		$$ = n;
 	  }
 	;
@@ -3772,13 +3770,11 @@ assignment_expression
 	  { 
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| prefixed_unary_expression ASSIGN ADDRESSOF expression
+	| prefixed_unary_expression ASSIGN ADDRESSOF opt_argument_list
 	  { 
-			// fixme: this is not working
-			// d = AddressOf F
-			// type of d has to  get resolved somewhere
-			//$$ = new New ((Expression) $1, (ArrayList) $4, lexer.Location);
-			$$ = new Assign ((Expression) $1, (Expression) $4, lexer.Location);
+		New n = new New ((Expression) $1, (ArrayList) $4, lexer.Location);
+		n.isDelegate = true;
+		$$ = new Assign ((Expression) $1, (Expression) n, lexer.Location);
 	  }
 	| prefixed_unary_expression OP_MULT_ASSIGN expression
 	  {

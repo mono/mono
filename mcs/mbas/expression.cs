@@ -4465,6 +4465,7 @@ namespace Mono.MonoBASIC {
 		//
 		Expression value_target;
 		bool value_target_set = false;
+		public bool isDelegate = false;
 		
 		public New (Expression requested_type, ArrayList arguments, Location l)
 		{
@@ -4513,7 +4514,16 @@ namespace Mono.MonoBASIC {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = ec.DeclSpace.ResolveType (RequestedType, false, loc);
+			if (this.isDelegate) {
+				// if its a delegate resolve the type of RequestedType first
+				Expression dtype = RequestedType.Resolve(ec);
+				string ts = (dtype.Type.ToString()).Replace ('+','.');
+				dtype = Mono.MonoBASIC.Parser.DecomposeQI (ts, Location.Null);
+
+				type = ec.DeclSpace.ResolveType (dtype, false, loc);
+			}
+			else
+				type = ec.DeclSpace.ResolveType (RequestedType, false, loc);
 			
 			if (type == null)
 				return null;
