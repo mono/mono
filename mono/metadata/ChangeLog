@@ -1,3 +1,15 @@
+2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* metadata-internals.h: Added flags to MonoAssembly to cache the most
+	common security informations. This allows us to stay in unmanaged code
+	when doing LinkDemand and it's special cases (except for the first 
+	time for initialization). The flags a very much used with --security.
+	* reflection.c|h: Added code to get declarative security attributes 
+	for LinkDemand and InheritanceDemand. This required to refactor the
+	existing code for Demand.
+	* security-manager.c|h: Added new method fields for the special cases
+	of LinkDemand.
+
 2005-02-10  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c, mono-debug-debugger.c: Completely reworked the
