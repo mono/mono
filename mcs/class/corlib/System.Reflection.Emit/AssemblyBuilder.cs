@@ -16,6 +16,7 @@ using System.Runtime.Serialization;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
@@ -216,39 +217,50 @@ namespace System.Reflection.Emit {
 
 		public ModuleBuilder GetDynamicModule (string name)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name == "")
+				throw new ArgumentException ("Name can't be null");
+
+			if (modules != null)
+				for (int i = 0; i < modules.Length; ++i)
+					if (modules [i].name == name)
+						return modules [i];
 			return null;
 		}
 
 		public override Type[] GetExportedTypes ()
 		{
-			return null;
+			throw not_supported ();
 		}
 
 		public override FileStream GetFile (string name)
 		{
-			return null;
+			throw not_supported ();
 		}
 
-		/*public virtual FileStream[] GetFiles() {
-			return null;
+		public override FileStream[] GetFiles() {
+			throw not_supported ();
 		}
+
 		public override FileStream[] GetFiles(bool getResourceModules) {
-			return null;
-		}*/
+			throw not_supported ();
+		}
 
-		/*public virtual ManifestResourceInfo GetManifestResourceInfo(string resourceName)
-		  {
-			return null;
+		public override ManifestResourceInfo GetManifestResourceInfo(string resourceName) {
+			throw not_supported ();
 		}
-		public virtual string[] GetManifestResourceNames() {
-			return null;
+
+		public override string[] GetManifestResourceNames() {
+			throw not_supported ();
 		}
-		public virtual Stream GetManifestResourceStream(string name) {
-			return null;
+
+		public override Stream GetManifestResourceStream(string name) {
+			throw not_supported ();
 		}
-		public virtual Stream GetManifestResourceStream(Type type, string name) {
-			return null;
-		}*/
+		public override Stream GetManifestResourceStream(Type type, string name) {
+			throw not_supported ();
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int getUSIndex (AssemblyBuilder ab, string str);

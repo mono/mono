@@ -1,3 +1,8 @@
+2003-05-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs: Implement GetDynamicModule. "Implement" various
+	methods not supported under MS.NET.
+
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
 	* AssemblyBuilder.cs (corlib_void_type): New internal field.
