@@ -1,5 +1,8 @@
 2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* assembly.c (mono_assembly_names_equal): Allow a match if one of
+	the cultures is false. Fixes #69090.
+
 	* reflection.c (build_compressed_metadata): Fix invalid memory read 
 	detected by valgrind.
 	
