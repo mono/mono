@@ -231,22 +231,31 @@ namespace Mono.CSharp {
 	}
 
 	public class TypeArguments {
+		public readonly Location Location;
 		ArrayList args;
 		Type[] atypes;
 		bool has_type_args;
+		bool created;
 		
-		public TypeArguments ()
+		public TypeArguments (Location loc)
 		{
 			args = new ArrayList ();
+			this.Location = loc;
 		}
 
 		public void Add (Expression type)
 		{
+			if (created)
+				throw new InvalidOperationException ();
+
 			args.Add (type);
 		}
 
 		public void Add (TypeArguments new_args)
 		{
+			if (created)
+				throw new InvalidOperationException ();
+
 			args.AddRange (new_args.args);
 		}
 
@@ -286,24 +295,28 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec)
 		{
+			DeclSpace ds = ec.DeclSpace;
 			int count = args.Count;
 			bool ok = true;
 
 			atypes = new Type [count];
 			
 			for (int i = 0; i < count; i++){
-				TypeExpr e = ((Expression)args [i]).ResolveAsTypeTerminal (ec);
-				if (e == null) {
+				TypeExpr te = ds.ResolveTypeExpr (
+					(Expression) args [i], false, Location);
+				if (te == null) {
 					ok = false;
 					continue;
 				}
-				if (e is TypeParameterExpr)
+				if (te is TypeParameterExpr)
 					has_type_args = true;
-				args [i] = e;
-				atypes [i] = e.ResolveType (ec);
+				atypes [i] = te.ResolveType (ec);
 
-				if (atypes [i] == null)
+				if (atypes [i] == null) {
+					Report.Error (246, Location, "Cannot find type `{0}'",
+						      te.Name);
 					ok = false;
+				}
 			}
 			return ok;
 		}
@@ -330,7 +343,7 @@ namespace Mono.CSharp {
 			loc = l;
 			this.name = name;
 
-			args = new TypeArguments ();
+			args = new TypeArguments (l);
 			foreach (TypeParameter type_param in type_params)
 				args.Add (new TypeParameterExpr (type_param, l));
 
@@ -402,7 +415,7 @@ namespace Mono.CSharp {
 			if (nested != null) {
 				gt = nested.GetGenericTypeDefinition ();
 
-				TypeArguments new_args = new TypeArguments ();
+				TypeArguments new_args = new TypeArguments (loc);
 				foreach (TypeParameter param in ds.TypeParameters)
 					new_args.Add (new TypeParameterExpr (param, loc));
 				new_args.Add (args);
@@ -417,7 +430,8 @@ namespace Mono.CSharp {
 				return null;
 
 			if (resolved.Type == null) {
-				Report.Error (-220, loc, "Failed to resolve constructed type `{0}'",
+				Report.Error (-220, loc,
+					      "Failed to resolve constructed type `{0}'",
 					      full_name);
 				return null;
 			}
@@ -436,11 +450,8 @@ namespace Mono.CSharp {
 			//
 			// Resolve the arguments.
 			//
-			if (args.Resolve (ec) == false) {
-				Report.Error (-220, loc, "Failed to resolve constructed type `{0}'",
-					      full_name);
+			if (args.Resolve (ec) == false)
 				return null;
-			}
 
 			gen_params = gt.GetGenericArguments ();
 			atypes = args.Arguments;
@@ -630,7 +641,7 @@ namespace Mono.CSharp {
 			if (t == null)
 				return null;
 
-			TypeArguments new_args = new TypeArguments ();
+			TypeArguments new_args = new TypeArguments (loc);
 			new_args.Add (cexpr.TypeArguments);
 			new_args.Add (args);
 

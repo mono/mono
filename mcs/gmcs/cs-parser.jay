@@ -2046,7 +2046,7 @@ opt_type_argument_list
 
 type_arguments
 	: type {
-		TypeArguments type_args = new TypeArguments ();
+		TypeArguments type_args = new TypeArguments (lexer.Location);
 		type_args.Add ((Expression) $1);
 		$$ = type_args;
   	  }

@@ -389,7 +389,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (e.type == null)
+				if ((e.type == null) && !(e is ConstructedType))
 					throw new Exception ("Expression " + e +
 							     " did not set its type after Resolve");
 			}

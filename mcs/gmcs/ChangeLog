@@ -1,3 +1,12 @@
+2004-03-15  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.ResolveLValue): Allow e.type being null if
+	we're a ConstructedType; in this case, the caller must report an
+	error (for instance CS0131).
+
+	* generic.cs (TypeArguments): Added Location argument to the .ctor.
+	(TypeArguments.Resolve): Actually report errors here.
+
 2004-03-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* pending.cs (TypeAndMethods): Add `get_indexer_name' and
