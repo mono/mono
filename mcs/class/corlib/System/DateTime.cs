@@ -1024,8 +1024,10 @@ namespace System
 						num = 1;
 					}
 
-					if (hour >= 12)
+					if (hour > 12)
 						return false;
+					if (hour == 12)
+						hour = 0;
 
 					break;
 				case 'H':

@@ -1,3 +1,9 @@
+2004-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : When hour format is "hh", MS.NET (maybe incorrectly)
+	  allows 12, that should not be accepted (13 is rejected) and
+	  interpreted as 0. This fixes bug 63376.
+
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Version.cs: Fixed Clone so we can use it on versions with only
