@@ -1,3 +1,7 @@
+2002-09-26  Nick Zigarovich <nick@chemlab.org>
+
+	* Corrected typo in gc.c (BOHEM vs BOEHM).
+
 2002-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: fixed bug #31235 by copying a few lines from GetMethods to
