@@ -62,7 +62,7 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			if (operand != null)
-				operand.Emit (ec);
+				operand.Emit (ec);			
 		}			
 	}
 
@@ -108,16 +108,20 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			if (current_op != JSToken.None)
+			ILGenerator ig = ec.ig;			
+			if (current_op == JSToken.None) {
+				if (left != null)
+					left.Emit (ec);
+			} else if (current_op == JSToken.LogicalAnd || current_op == JSToken.LogicalOr)
+				emit_jumping_code (ec);
+			else {
 				emit_operator (ig);
-			if (left != null)
-				left.Emit (ec);
-			if (right != null)
-				right.Emit (ec);			       
-			emit_op_eval (ig);
-
+				if (left != null)
+					left.Emit (ec);
+				if (right != null)
+					right.Emit (ec);			       
+				emit_op_eval (ig);
+			}
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);
 		}
@@ -142,14 +146,30 @@ namespace Microsoft.JScript {
 			case JSToken.UnsignedRightShift:
 				ig.Emit (OpCodes.Call, typeof (BitwiseBinary).GetMethod ("EvaluateBitwiseBinary"));
 					 break;
-			}
+			}			
+		}
+
+		internal void emit_jumping_code (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Type t = typeof (bool);
+			Label false_label = ig.DefineLabel ();
+			Label exit_label = ig.DefineLabel ();
+			CodeGenerator.fall_true (ec, this, false_label);
+			ig.Emit (OpCodes.Ldc_I4_1);			
+			ig.Emit (OpCodes.Box, t);			
+			ig.Emit (OpCodes.Br, exit_label);
+			ig.MarkLabel (false_label);
+			ig.Emit (OpCodes.Ldc_I4_0);			
+			ig.Emit (OpCodes.Box, t);			
+			ig.MarkLabel (exit_label);
 		}
 
 		internal void emit_operator (ILGenerator ig)
 		{
 			LocalBuilder local_builder = null;
 			Type t = null;
-
+			
 			if (current_op == JSToken.Plus) {
 				t = typeof (Plus);
 				local_builder = ig.DeclareLocal (t);				

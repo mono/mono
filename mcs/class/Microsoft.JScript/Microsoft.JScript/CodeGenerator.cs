@@ -233,6 +233,61 @@ namespace Microsoft.JScript {
 			CodeGenerator.Init (file_name);
 			CodeGenerator.Emit (prog);
 			CodeGenerator.Save (trim_extension (file_name) + ".exe");
-		}	
+		}
+
+		internal static void fall_true (EmitContext ec, AST ast, Label lbl)
+		{
+			ILGenerator ig = ec.ig;
+			if (ast is Binary) {
+				Binary b = ast as Binary;
+				switch (b.current_op) {
+				case JSToken.LogicalOr:
+					Label ftLb = ig.DefineLabel ();
+					fall_false (ec, b.left, ftLb);
+					fall_true (ec, b.right, lbl);
+					ig.MarkLabel (ftLb);
+					break;
+				case JSToken.LogicalAnd:
+					fall_true (ec, b.left, lbl);
+					fall_true (ec, b.right, lbl);
+					break;
+				}
+			} else {
+				ast.Emit (ec);
+				emit_to_boolean (ig, 0);
+				ig.Emit (OpCodes.Brfalse, lbl);
+			}
+		}
+
+		internal static void fall_false (EmitContext ec, AST ast, Label lbl)
+		{
+			ILGenerator ig = ec.ig;
+			if (ast is Binary) {
+				Binary b = ast as Binary;
+				switch (b.current_op) {
+				case JSToken.LogicalOr:
+					fall_false (ec, b.left, lbl);
+					fall_false (ec, b.right, lbl);
+					break;
+				case JSToken.LogicalAnd:
+					Label ftLb = ig.DefineLabel ();
+					fall_true (ec, b.left, ftLb);
+					fall_false (ec, b.right, lbl);
+					ig.MarkLabel (ftLb);
+					break;
+				}
+			} else {			        
+				ast.Emit (ec);
+				emit_to_boolean (ig, 0);
+				ig.Emit (OpCodes.Brtrue, lbl);
+			}
+		}
+
+		public static void emit_to_boolean (ILGenerator ig, int i)			
+		{
+			ig.Emit (OpCodes.Ldc_I4, i);
+			ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean", 
+								   new Type [] { typeof (object), typeof (Boolean)}));
+		}
 	}
 }
