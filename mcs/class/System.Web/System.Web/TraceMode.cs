@@ -9,7 +9,7 @@
 
 namespace System.Web
 {
-        public enum 
+        public enum TraceMode
         {
                 SortByCategory,
                 SortByTime

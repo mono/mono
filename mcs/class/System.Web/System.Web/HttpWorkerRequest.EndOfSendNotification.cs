@@ -9,7 +9,9 @@
 
 namespace System.Web
 {
-        public delegate void HttpWorkerRequest.EndOfSendNotification(
+	public class HttpWorkerRequest {
+        	public delegate void EndOfSendNotification(
                                 HttpWorkerRequest wr,
                                 object extraData);
+	}
 }
