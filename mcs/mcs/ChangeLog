@@ -1,3 +1,10 @@
+2004-08-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs (GetAddMethod): Used GetAddMethod (true)
+	for obtaining also private methods.
+	(GetRemoveMethod): Used GetRemoveMethod (true)
+	for obtaining also private methods.
+
 2004-08-23  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in

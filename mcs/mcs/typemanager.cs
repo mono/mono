@@ -1812,8 +1812,8 @@ public class TypeManager {
 			Pair pair = (Pair) events [ei];
 
 			return (MethodInfo) pair.First;
-		} else
-			return ei.GetAddMethod ();
+		}
+		return ei.GetAddMethod (true);
 	}
 
 	static public MethodInfo GetRemoveMethod (EventInfo ei)
@@ -1822,8 +1822,8 @@ public class TypeManager {
 			Pair pair = (Pair) events [ei];
 
 			return (MethodInfo) pair.Second;
-		} else
-			return ei.GetRemoveMethod ();
+		}
+		return ei.GetRemoveMethod (true);
 	}
 
 	static Hashtable priv_fields_events;
