@@ -1,5 +1,9 @@
 2003-02-02  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (MethodData.Emit): Generate debugging info for external methods.
+
+2003-02-02  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (Constructor.Emit): Open the symbol writer before
 	emitting the constructor initializer.
 	(ConstructorInitializer.Emit): Call ec.Mark() to allow

@@ -3124,8 +3124,27 @@ namespace Mono.CSharp {
 			// abstract or extern methods have no bodies
 			//
 			if ((modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
-				if (block == null)
+				if (block == null) {
+					ISymbolWriter sw = CodeGen.SymbolWriter;
+
+					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0)) {
+						MethodToken token = MethodBuilder.GetToken ();
+						sw.OpenMethod (new SymbolToken (token.Token));
+
+						// Avoid error if we don't support debugging for the platform
+						try {
+							sw.SetMethodSourceRange (Location.SymbolDocument,
+										 Location.Row, 0,
+										 Location.SymbolDocument,
+										 Location.Row, 0);
+						} catch {
+						}
+
+						sw.CloseMethod ();
+					}
+
 					return;
+				}
 
 				//
 				// abstract or extern methods have no bodies.
