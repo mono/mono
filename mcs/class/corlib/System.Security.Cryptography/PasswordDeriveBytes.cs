@@ -5,7 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.Text;
 
@@ -81,6 +80,36 @@ public class PasswordDeriveBytes : DeriveBytes {
 		}
 	}
 
+#if NET_2_0
+	public PasswordDeriveBytes (byte[] password, byte[] salt) 
+	{
+		Prepare (password, salt, "SHA1", 100);
+	}
+
+	public PasswordDeriveBytes (byte[] password, byte[] salt, CspParameters cspParams) 
+	{
+		Prepare (password, salt, "SHA1", 100);
+		if (cspParams != null) {
+			throw new NotSupportedException (
+				Locale.GetText ("CspParameters not supported by Mono for PasswordDeriveBytes."));
+		}
+	}
+
+	public PasswordDeriveBytes (byte[] password, byte[] salt, string hashName, int iterations) 
+	{
+		Prepare (password, salt, hashName, iterations);
+	}
+
+	public PasswordDeriveBytes (byte[] password, byte[] salt, string hashName, int iterations, CspParameters cspParams) 
+	{
+		Prepare (password, salt, hashName, iterations);
+		if (cspParams != null) {
+			throw new NotSupportedException (
+				Locale.GetText ("CspParameters not supported by Mono for PasswordDeriveBytes."));
+		}
+	}
+#endif
+
 	~PasswordDeriveBytes () 
 	{
 		// zeroize buffer
@@ -92,15 +121,33 @@ public class PasswordDeriveBytes : DeriveBytes {
 		Array.Clear (password, 0, password.Length);
 	}
 
+#if NET_2_0
 	private void Prepare (string strPassword, byte[] rgbSalt, string strHashName, int iterations) 
 	{
-#if NET_2_0
 		if (strPassword == null)
 			throw new ArgumentNullException ("strPassword");
-		password = Encoding.UTF8.GetBytes (strPassword);
+
+		byte[] pwd = Encoding.UTF8.GetBytes (strPassword);
+		Prepare (pwd, rgbSalt, strHashName, iterations);
+		Array.Clear (pwd, 0, pwd.Length);
+	}
+
+	private void Prepare (byte[] password, byte[] rgbSalt, string strHashName, int iterations)
+	{
+		if (password == null)
+			throw new ArgumentNullException ("password");
+
+		this.password = (byte[]) password.Clone ();
 
 		Salt = rgbSalt;
+
+		HashName = strHashName;
+		IterationCount = iterations;
+		state = 0;
+	}
 #else
+	private void Prepare (string strPassword, byte[] rgbSalt, string strHashName, int iterations)
+	{
 		if (strPassword == null)
 			password = null;
 		else
@@ -110,12 +157,12 @@ public class PasswordDeriveBytes : DeriveBytes {
 			SaltValue = null;
 		else
 			SaltValue = (byte[]) rgbSalt.Clone ();
-#endif
 
 		HashName = strHashName;
 		IterationCount = iterations;
 		state = 0;
 	}
+#endif
 
 	public string HashName {
 		get { return HashNameValue; } 

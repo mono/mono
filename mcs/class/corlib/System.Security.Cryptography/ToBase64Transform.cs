@@ -5,9 +5,6 @@
 //   Sergey Chaban (serge@wildwestsoftware.com)
 //
 // (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 
 namespace System.Security.Cryptography {
@@ -107,8 +103,15 @@ namespace System.Security.Cryptography {
 			if (inputOffset > inputBuffer.Length - inputCount)
 				throw new ArgumentException ("inputOffset", Locale.GetText ("Overflow"));
 			// ordered to avoid possible integer overflow
+#if NET_2_0
+			if (outputOffset < 0)
+				throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
+			if (outputOffset > outputBuffer.Length - inputCount)
+				throw new ArgumentException ("outputOffset", Locale.GetText ("Overflow"));
+#else
 			if ((outputOffset < 0) || (outputOffset > outputBuffer.Length - inputCount))
 				throw new IndexOutOfRangeException ("outputOffset");
+#endif
 /// To match MS implementation
 //			if (inputCount != this.InputBlockSize)
 //				throw new CryptographicException (Locale.GetText ("Invalid input length"));

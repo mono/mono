@@ -7,11 +7,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -108,9 +103,22 @@ public class CryptoConfig {
 	// Oddly OID seems only available for hash algorithms
 	private const string oidSHA1 = "1.3.14.3.2.26";
 	private const string oidMD5 = "1.2.840.113549.2.5";
+#if NET_2_0
+	// changed in 2.0
+	private const string oidSHA256 = "2.16.840.1.101.3.4.2.1";
+	private const string oidSHA384 = "2.16.840.1.101.3.4.2.2";
+	private const string oidSHA512 = "2.16.840.1.101.3.4.2.3";
+	// new in 2.0
+	private const string oidRSA = "1.2.840.113549.1.1.1";
+	private const string oidDSA = "1.2.840.10040.4.1";
+	private const string oidDES = "1.3.14.3.2.7";
+	private const string oid3DES = "1.2.840.113549.3.7";
+	private const string oidRC2 = "1.2.840.113549.3.2";
+#else
 	private const string oidSHA256 = "2.16.840.1.101.3.4.1";
 	private const string oidSHA384 = "2.16.840.1.101.3.4.2";
 	private const string oidSHA512 = "2.16.840.1.101.3.4.3";
+#endif
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string oid3DESKeyWrap = "1.2.840.113549.1.9.16.3.6";
 
@@ -305,6 +313,15 @@ public class CryptoConfig {
 
 		// surprise! documented in ".NET Framework Security" book
 		oid.Add (name3DESKeyWrap, oid3DESKeyWrap);
+
+#if NET_2_0
+		oid.Add (nameRSAa, oidRSA);
+		oid.Add (nameDSAa, oidDSA);
+		oid.Add (nameDESa, oidDES);
+		oid.Add (name3DESa, oid3DES);
+		oid.Add (name3DESb, oid3DES);
+		oid.Add (nameRC2a, oidRC2);
+#endif
 
 		// Add/modify the config as specified by machine.config
 		string config = Environment.GetMachineConfigPath ();

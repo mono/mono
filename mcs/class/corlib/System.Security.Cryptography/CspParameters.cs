@@ -1,14 +1,11 @@
 //
 // System.Security.Cryptography CspParameters.cs
 //
-// Author:
-//   Thomas Neidhart (tome@sbox.tugraz.at)
+// Authors:
+//	Thomas Neidhart (tome@sbox.tugraz.at)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +27,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+#if NET_2_0
+using System.Security.AccessControl;
+#endif
 
 namespace System.Security.Cryptography {
 
@@ -75,5 +74,44 @@ namespace System.Security.Cryptography {
 			get { return _Flags; }
 			set { _Flags = value; }
 		}
+
+#if NET_2_0
+		private SecureString _password;
+		private IntPtr _windowHandle;
+
+		public CspParameters (int dwTypeIn, string strProviderNameIn, string strContainerNameIn, 
+			CryptoKeySecurity cryptoKeySecurity, IntPtr parentWindowHandle)
+			: this (dwTypeIn, strProviderNameIn, strContainerNameIn)
+		{
+			if (cryptoKeySecurity != null)
+				CryptoKeySecurity = cryptoKeySecurity;
+			_windowHandle = parentWindowHandle;
+		}
+
+		public CspParameters (int dwTypeIn, string strProviderNameIn, string strContainerNameIn, 
+			CryptoKeySecurity cryptoKeySecurity, SecureString keyPassword)
+			: this (dwTypeIn, strProviderNameIn, strContainerNameIn)
+		{
+			if (cryptoKeySecurity != null)
+				CryptoKeySecurity = cryptoKeySecurity;
+			_password = keyPassword;
+		}
+
+		[MonoTODO ("access control isn't implemented")]
+		public CryptoKeySecurity CryptoKeySecurity {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		public SecureString KeyPassword {
+			get { return _password; }
+			set { _password = value; }
+		}
+
+		public IntPtr ParentWindowHandle {
+			get { return _windowHandle; }
+			set { _windowHandle = value; }
+		}
+#endif
 	}
 }

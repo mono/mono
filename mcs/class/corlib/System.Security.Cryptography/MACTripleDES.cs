@@ -44,7 +44,6 @@ namespace System.Security.Cryptography {
 		private TripleDES tdes;
 		private MACAlgorithm mac;
 		private bool m_disposed;
-		private PaddingMode _padding;
 	
 		public MACTripleDES ()
 		{

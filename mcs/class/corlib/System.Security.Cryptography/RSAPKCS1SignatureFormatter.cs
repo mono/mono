@@ -5,11 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography { 
@@ -73,6 +68,12 @@ namespace System.Security.Cryptography {
 	
 		public override void SetKey (AsymmetricAlgorithm key) 
 		{
+#if NET_2_0
+			if (key == null)
+				throw new ArgumentNullException ("key");
+#else
+			// 1.0/1.1 accepted null without an ArgumentNullException!
+#endif
 			rsa = (RSA) key;
 		}
 	}

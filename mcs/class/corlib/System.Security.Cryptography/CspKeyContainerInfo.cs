@@ -2,13 +2,10 @@
 // CspKeyContainerInfo.cs: Information about CSP based key containers
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +29,7 @@
 
 #if NET_2_0
 
-using System;
+using System.Security.AccessControl;
 
 namespace System.Security.Cryptography {
 
@@ -55,7 +52,12 @@ namespace System.Security.Cryptography {
 		public bool Accessible {
 			get { return true; }
 		}
-		
+
+		// always null for Mono
+		public CryptoKeySecurity CryptoKeySecurity {
+			get { return null; }
+		}
+
 		// always true for Mono
 		public bool Exportable {
 			get { return true; }

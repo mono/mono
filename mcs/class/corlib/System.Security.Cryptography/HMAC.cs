@@ -2,12 +2,9 @@
 // HMAC.cs: Generic HMAC inplementation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -31,8 +28,6 @@
 //
 
 #if NET_2_0
-
-using System;
 
 using Mono.Security.Cryptography;
 
@@ -137,7 +132,7 @@ namespace System.Security.Cryptography {
 			_algo.TransformBlock (buf, 0, buf.Length, buf, 0);
 			_algo.TransformFinalBlock (intermediate, 0, intermediate.Length);
 			byte[] hash = _algo.Hash;
-			_algo.Clear ();
+			_algo.Initialize ();
 			// zeroize sensitive data
 			Array.Clear (buf, 0, buf.Length);	
 			Array.Clear (intermediate, 0, intermediate.Length);

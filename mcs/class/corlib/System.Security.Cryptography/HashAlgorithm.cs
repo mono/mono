@@ -7,11 +7,7 @@
 //
 // Copyright 2001 by Matthew S. Ford.
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -176,9 +172,22 @@ namespace System.Security.Cryptography {
 			// ordered to avoid possible integer overflow
 			if ((inputOffset < 0) || (inputOffset > inputBuffer.Length - inputCount))
 				throw new ArgumentException ("inputBuffer");
-			// ordered to avoid possible integer overflow
-			if ((outputOffset < 0) || (outputOffset > outputBuffer.Length - inputCount))
+			if (outputOffset < 0) {
+#if NET_2_0
+				throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
+#else
 				throw new IndexOutOfRangeException ("outputBuffer");
+#endif
+			}
+			if (outputOffset > outputBuffer.Length - inputCount) {
+#if NET_2_0
+				throw new ArgumentException ("outputOffset + inputCount", 
+					Locale.GetText ("Overflow"));
+#else
+				throw new IndexOutOfRangeException ("outputBuffer");
+#endif
+			}
+			// ordered to avoid possible integer overflow
 
 			// note: other exceptions are handled by Buffer.BlockCopy
 			Buffer.BlockCopy (inputBuffer, inputOffset, outputBuffer, outputOffset, inputCount);

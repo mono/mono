@@ -4,13 +4,10 @@
 // Author:
 //	Pieter Philippaerts (Pieter@mentalis.org)
 //
-// (C) 2003 The Mentalis.org Team (http://www.mentalis.org/)
-//
 //   References:
 //     - http://www.esat.kuleuven.ac.be/~cosicart/ps/AB-9601/
 //
-
-//
+// (C) 2003 The Mentalis.org Team (http://www.mentalis.org/)
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -35,7 +32,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
@@ -64,6 +60,8 @@ namespace System.Security.Cryptography {
 			_HashValue[4] = 0xc3d2e1f0;
 			_Length = 0;
 			_ProcessingBufferCount = 0;
+			Array.Clear (_X, 0, _X.Length);
+			Array.Clear (_ProcessingBuffer, 0, _ProcessingBuffer.Length);
 		}
 		/// <summary>
 		/// Routes data written to the object into the <see cref="RIPEMD160"/> hash algorithm for computing the hash.
@@ -112,13 +110,6 @@ namespace System.Security.Cryptography {
 			byte[] hash = new byte[20];
 			System.Buffer.BlockCopy(_HashValue, 0, hash, 0, 20);
 			return hash;
-		}
-		/// <summary>
-		/// Releases the resources used by the <see cref="RIPEMD160Managed"/>.
-		/// </summary>
-		/// <param name="disposing"><b>true</b> to release both managed and unmanaged resources; <b>false</b> to release only unmanaged resources.</param>
-		protected override void Dispose(bool disposing) {
-			// nothing todo
 		}
 		/// <summary>
 		/// Finalizes the RIPEMD160Managed.

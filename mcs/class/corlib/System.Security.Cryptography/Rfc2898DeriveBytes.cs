@@ -2,13 +2,10 @@
 // Rfc2898DeriveBytes.cs: RFC2898 (PKCS#5 v2) Key derivation for Password Based Encryption 
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Text;
 
 using Mono.Security.Cryptography;
@@ -53,7 +49,9 @@ namespace System.Security.Cryptography {
 		// constructors
 
 		public Rfc2898DeriveBytes (string password, byte[] salt) 
-			: this (password, salt, defaultIterations) {}
+			: this (password, salt, defaultIterations)
+		{
+		}
 		
 		public Rfc2898DeriveBytes (string password, byte[] salt, int iterations) 
 		{
@@ -64,9 +62,21 @@ namespace System.Security.Cryptography {
 			IterationCount = iterations;
 			_hmac = new HMACSHA1 (Encoding.UTF8.GetBytes (password));
 		}
+
+		public Rfc2898DeriveBytes (byte[] password, byte[] salt, int iterations) 
+		{
+			if (password == null)
+				throw new ArgumentNullException ("password");
+
+			Salt = salt;
+			IterationCount = iterations;
+			_hmac = new HMACSHA1 (password);
+		}
 		
 		public Rfc2898DeriveBytes (string password, int saltSize)
-			: this (password, saltSize, defaultIterations) {}
+			: this (password, saltSize, defaultIterations)
+		{
+		}
 		
 		public Rfc2898DeriveBytes (string password, int saltSize, int iterations)
 		{

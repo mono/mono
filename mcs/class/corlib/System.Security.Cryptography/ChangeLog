@@ -1,3 +1,30 @@
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Change the OID for SHA-2 algorithms to match 2.0
+	and added new OID for asymmetric and symmetric algorithms.
+	* CspKeyContainerInfo.cs: Added CryptoKeySecurity property. This will
+	always return null until we support access control for key containers.
+	* CspParameters.cs: Added new constructors and propertys for access 
+	control and password (2.0).
+	* DSASignatureDeformatter.cs: Throw ArgumentNullException in NET_2_0 
+	if a null key is specified.
+	* DSASignatureFormatter.cs: Throw ArgumentNullException in NET_2_0 if
+	a null key is specified.
+	* HashAlgorithm.cs: Fix the reported exceptions for output buffers.
+	* HMAC.cs: Change the .Clear (which calls Dispose) to a .Initialize.
+	* MACTripleDES.cs: Removed unrequired private field _padding.
+	* PasswordDeriveBytes.cs: Added 4 new constructors where the password
+	is a byte[] (as it seems MS won't be using SecureString for this).
+	* RIPEMD160Managed.cs: Removed overriden Dispose method to match 2.0.
+	Clear buffers when initializing (e.g. re-using the hash instance).
+	* Rfc2898DeriveBytes.cs: Added a new constructor where the password
+	is a byte[] (as it seems MS won't be using SecureString for this).
+	* RSAPKCS1SignatureDeformatter.cs: Throw ArgumentNullException in
+	NET_2_0 if a null key is specified.
+	* RSAPKCS1SignatureFormatter.cs: Throw ArgumentNullException in
+	NET_2_0 if a null key is specified.
+	* ToBase64Transform.cs: Fix the reported exceptions for output buffers.
+
 2005-01-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DES.cs: Change wek and semi-weak key checking to avoid memory 

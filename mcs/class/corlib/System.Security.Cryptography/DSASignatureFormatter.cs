@@ -77,7 +77,12 @@ namespace System.Security.Cryptography {
 				// a DSA keypair
 				dsa = (DSA) key;
 			}
-			// here null is accepted!
+#if NET_2_0
+			else
+				throw new ArgumentNullException ("key");
+#else
+			// null is accepted in 1.0/1.1
+#endif
 		}
 	}
 }
