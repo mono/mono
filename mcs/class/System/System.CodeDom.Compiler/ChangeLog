@@ -1,3 +1,8 @@
+2003-08-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CodeGenerator.cs: When sorting the members of a type, keep the relative
+	  order of the members of the same kind.
+
 2003-08-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CodeGenerator.cs: Generate comments for properties and fields.

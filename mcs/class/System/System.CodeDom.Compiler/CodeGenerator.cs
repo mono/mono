@@ -934,7 +934,12 @@ namespace System.CodeDom.Compiler {
 
 			CodeTypeMember [] members = new CodeTypeMember [type.Members.Count];
 			type.Members.CopyTo (members, 0);
-			Array.Sort (members, CodeTypeMemberComparer.Default);
+
+			int[] order = new int[members.Length];
+			for (int n=0; n<members.Length; n++)
+				order[n] = Array.IndexOf(memberTypes, members[n].GetType()) * members.Length + n;
+
+			Array.Sort (order, members);
 			
 			// WARNING: if anything is missing in the foreach loop and you add it, add the type in
 			// its corresponding place in CodeTypeMemberComparer class (below)
@@ -1095,36 +1100,17 @@ namespace System.CodeDom.Compiler {
 			ValidateIdentifier (value);
 		}
 
-		class CodeTypeMemberComparer : IComparer
-		{
-			private CodeTypeMemberComparer () {}
-
-			static CodeTypeMemberComparer instance = new CodeTypeMemberComparer ();
-			
-			// The position in the array determines the order in which those
-			// kind of CodeTypeMembers are generated. Less is more ;-)
-			static Type [] memberTypes = {  typeof (CodeMemberField),
-							typeof (CodeSnippetTypeMember),
-							typeof (CodeTypeConstructor),
-							typeof (CodeConstructor),
-							typeof (CodeMemberProperty),
-							typeof (CodeMemberEvent),
-							typeof (CodeMemberMethod),
-							typeof (CodeTypeDeclaration),
-							typeof (CodeEntryPointMethod)
-						};
-
-			public static IComparer Default {
-				get { return instance; }
-			}
-			
-			int IComparer.Compare (object x, object y)
-			{
-				int xindex = Array.IndexOf (memberTypes, x.GetType ());
-				int yindex = Array.IndexOf (memberTypes, y.GetType ());
-
-				return xindex - yindex;
-			}
-		}	
+		// The position in the array determines the order in which those
+		// kind of CodeTypeMembers are generated. Less is more ;-)
+		static Type [] memberTypes = {  typeof (CodeMemberField),
+						typeof (CodeSnippetTypeMember),
+						typeof (CodeTypeConstructor),
+						typeof (CodeConstructor),
+						typeof (CodeMemberProperty),
+						typeof (CodeMemberEvent),
+						typeof (CodeMemberMethod),
+						typeof (CodeTypeDeclaration),
+						typeof (CodeEntryPointMethod)
+					};
 	}
 }
