@@ -1,3 +1,9 @@
+2004-02-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+ 	* SslClientStream.cs: Fixed (inverted) condition for ServerCertificate.
+	* SecurityProtocolType.cs: Added [Serializable] to enum to match MS 
+	implementation.
+
 2004-02-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:

@@ -221,7 +221,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get 
 			{ 
-				if (!this.context.HandshakeFinished)
+				if (this.context.HandshakeFinished)
 				{
 					if (this.context.ServerSettings.Certificates != null &&
 						this.context.ServerSettings.Certificates.Count > 0)
