@@ -50,6 +50,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModule] 
 	 public sealed class Utils {
+		private Utils () {}
+
 		 internal const int SEVERITY_ERROR = Int32.MinValue;
 		 internal const int FACILITY_CONTROL = 655360;
 		 internal const int FACILITY_RPC = 65536;
