@@ -1,5 +1,11 @@
 2004-09-23  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix bug #66615
+	* decl.cs (FindMemberWithSameName): Indexer can have more than
+	1 argument.
+
+2004-09-23  Marek Safar  <marek.safar@seznam.cz>
+
 	* expression.cs (LocalVariableReference.DoResolveLValue):
 	Do not report warning 219 for out values.
 	(EmptyExpression.Null): New member to avoid extra allocations.
