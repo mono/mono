@@ -41,6 +41,20 @@ public class Z : Y
 		}
 	}
 
+	public int InstanceTest ()
+	{
+		double index = 5;
+
+		Console.WriteLine ("INSTANCE TEST");
+
+		if (this [index] != 4)
+			return 6;
+		if (base [index] != 3)
+			return 7;
+
+		return 0;
+	}
+
 	public static int Test ()
 	{
 		Z z = new Z ();
@@ -68,7 +82,7 @@ public class Z : Y
 		if (y [index] != 3)
 			return 5;
 
-		return 0;
+		return z.InstanceTest ();
 	}
 
 	public static int Main ()
