@@ -1,3 +1,15 @@
+2002-03-29  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (Method.Emit): Only emit symbolic debugging info if the
+	current location is not Null.
+
+	* codegen.cs (CodeGen.SaveSymbols): Split out symbol writing code into
+	a separate method so we can profile it.
+
+	* driver.cs (ShowTime): We need to use `(int) span.TotalSeconds' since
+	`span.Seconds' are just seconds, but no minutes or hours.
+	(MainDriver): Profile the CodeGen.SaveSymbols calls.
+
 2002-03-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Method.Define), (Property.Define), (Indexer.Define):

@@ -2491,7 +2491,7 @@ namespace Mono.CSharp {
 			else {
 				ISymbolWriter sw = RootContext.CodeGen.SymbolWriter;
 
-				if (sw != null) {
+				if ((sw != null) && (!Location.IsNull (Location))) {
 					MethodToken token = MethodBuilder.GetToken ();
 					sw.OpenMethod (new SymbolToken (token.Token));
 					sw.SetMethodSourceRange (Location.SymbolDocument,

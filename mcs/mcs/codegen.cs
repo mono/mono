@@ -144,7 +144,10 @@ namespace Mono.CSharp {
 			} catch (System.IO.IOException io){
 				Report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
 			}
+		}
 
+		public void SaveSymbols ()
+		{
 			if (SymbolWriter != null) {
 				// If we have a symbol writer, call its Close() method to write
 				// the symbol file to disk.

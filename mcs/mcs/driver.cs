@@ -88,10 +88,10 @@ namespace Mono.CSharp
 			DateTime now = DateTime.Now;
 			TimeSpan span = now - last_time;
 			last_time = now;
-			
+
 			Console.WriteLine (
 				"[{0:00}:{1:000}] {2}",
-				span.Seconds, span.Milliseconds, msg);
+				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
 		
 		static int tokenize_file (string input_file)
@@ -892,8 +892,14 @@ namespace Mono.CSharp
 			}
 			
 			RootContext.CodeGen.Save (output_file);
-			if (timestamps)
+			if (timestamps) {
 				ShowTime ("Saved output");
+
+				if (want_debugging_support) {
+					RootContext.CodeGen.SaveSymbols ();
+					ShowTime ("Saved symbols");
+				}
+			}
 
 			if (Report.Errors > 0){
 				error ("Compilation failed");
