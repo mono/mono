@@ -1,9 +1,11 @@
 //
 // System.Web.UI.ControlCollection.cs
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+//	Duncan Mak  (duncan@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
-// (C) Ximian, Inc.
+// Copyright (c) 2002-2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -34,41 +36,39 @@ namespace System.Web.UI {
 
 	public class ControlCollection : ICollection, IEnumerable
 	{
-		ArrayList list;
 		Control owner;
+		Control [] controls;
+		int version;
+		int count;
+		bool readOnly;
 		
 		public ControlCollection (Control owner)
 		{
 			if (owner == null)
-				throw new ArgumentException ();
+				throw new ArgumentException ("owner");
 
-			list = new ArrayList ();
-			this.owner = owner;
-		}
-
-		internal ControlCollection (Control owner, bool shortList)
-		{
-			if (owner == null)
-				throw new ArgumentException ();
-
-			list = new ArrayList (shortList ? 1 : 0);
 			this.owner = owner;
 		}
 
 		public int Count {
-			get { return list.Count; }
+			get { return count; }
 		}
 
 		public bool IsReadOnly {
-			get { return list.IsReadOnly; }
+			get { return readOnly; }
 		}
 
 		public bool  IsSynchronized {
-			get { return list.IsSynchronized; }
+			get { return false; }
 		}
 
 		public virtual Control this [int index] {
-			get { return list [index] as Control; }
+			get {
+				if (index < 0 || index >= count)
+					throw new ArgumentOutOfRangeException ("index");
+
+				return controls [index];
+			}
 		}
 
 		protected Control Owner {
@@ -76,18 +76,33 @@ namespace System.Web.UI {
 		}
 
 		public object SyncRoot {
-			get { return list.SyncRoot; }
+			get { return this; }
+		}
+
+		void EnsureControls ()
+		{
+			if (controls == null) {
+				controls = new Control [5];
+			} else if (controls.Length < count + 1) {
+				int n = controls.Length == 5 ? 4 : 2;
+				Control [] newControls = new Control [controls.Length * n];
+				Array.Copy (controls, 0, newControls, 0, controls.Length);
+				controls = newControls;
+			}
 		}
 
 		public virtual void Add (Control child)
 		{
 			if (child == null)
 				throw new ArgumentNullException ();
-			if (IsReadOnly)
+
+			if (readOnly)
 				throw new HttpException ();
 
-			list.Add (child);
-			owner.AddedControl (child, list.Count - 1);
+			EnsureControls ();
+			version++;
+			controls [count++] = child;
+			owner.AddedControl (child, count - 1);
 		}
 
 		public virtual void AddAt (int index, Control child)
@@ -95,64 +110,131 @@ namespace System.Web.UI {
 			if (child == null) // maybe we should check for ! (child is Control)?
 				throw new ArgumentNullException ();
 			
-			if ((index < -1) || (index > Count))
+			if (index < -1 || index > count)
 				throw new ArgumentOutOfRangeException ();
 
-			if (IsReadOnly)
+			if (readOnly)
 				throw new HttpException ();
 
-			if (index == -1){
+			if (index == -1) {
 				Add (child);
-			} else {
-				list.Insert (index, child);
-				owner.AddedControl (child, index);
+				return;
 			}
+
+			EnsureControls ();
+			version++;
+			Array.Copy (controls, index, controls, index + 1, count - index);
+			count++;
+			controls [index] = child;
+			owner.AddedControl (child, index);
 		}
 
 		public virtual void Clear ()
 		{
-			foreach (Control ctrl in list) 
-				owner.RemovedControl (ctrl);
+			if (controls == null)
+				return;
 
-			list.Clear ();
+			version++;
+			for (int i = 0; i < count; i++)
+				owner.RemovedControl (controls [i]);
+
+			count = 0;
 			if (owner != null)
 				owner.ResetChildNames ();
 		}
 
 		public virtual bool Contains (Control c)
 		{
-			return list.Contains (c);
+			return (controls != null && Array.IndexOf (controls, c) != -1);
 		}
 
 		public void CopyTo (Array array, int index)
 		{
-			list.CopyTo (array, index);
+			if (controls == null)
+				return;
+
+			controls.CopyTo (array, index);
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			return list.GetEnumerator ();
+			return new SimpleEnumerator (this);
 		}
 
 		public virtual int IndexOf (Control c)
 		{
-			return list.IndexOf (c);
+			if (controls == null)
+				return -1;
+
+			return Array.IndexOf (controls, c);
 		}
 
 		public virtual void Remove (Control value)
 		{
-			list.Remove (value);
-			owner.RemovedControl (value);
+			int idx = IndexOf (value);
+			if (idx == -1)
+				return;
+			RemoveAt (idx);
 		}
 
 		public virtual void RemoveAt (int index)
 		{
-			if (IsReadOnly)
+			if (readOnly)
 				throw new HttpException ();
 
-			Control value = (Control) list [index];
-			list.RemoveAt (index);
-			owner.RemovedControl (value);
+			version++;
+			Control ctrl = controls [index];
+			Array.Copy (controls, index + 1, controls, index, count - index);
+			count--;
+			owner.RemovedControl (ctrl);
+		}
+
+		// Almost the same as in ArrayList
+		sealed class SimpleEnumerator : IEnumerator
+		{
+			ControlCollection coll;
+			int index;
+			int version;
+			object currentElement;
+							
+			public SimpleEnumerator (ControlCollection coll)
+			{
+				this.coll = coll;
+				index = -1;
+				version = coll.version;
+			}
+	
+			public bool MoveNext ()
+			{
+				if (version != coll.version)
+					throw new InvalidOperationException ("List has changed.");
+				
+				if (index >= -1 && ++index < coll.Count) {
+					currentElement = coll [index];
+					return true;
+				} else {
+					index = -2;
+					return false;
+				}
+			}
+	
+			public object Current {
+				get {
+					if (index < 0)
+						throw new InvalidOperationException (index == -1 ? "Enumerator not started" : "Enumerator ended");
+					
+					return currentElement;
+				}
+			}
+	
+			public void Reset ()
+			{
+				if (version != coll.version)
+					throw new InvalidOperationException ("List has changed.");
+				
+				index = -1;
+			}
 		}
 	}
 }
+
