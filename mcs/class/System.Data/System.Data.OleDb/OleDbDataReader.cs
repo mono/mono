@@ -26,6 +26,7 @@ namespace System.Data.OleDb
 		private ArrayList gdaResults;
 		private int currentResult;
 		private int currentRow;
+		private bool disposed = false;
 
 		#endregion
 
@@ -131,12 +132,6 @@ namespace System.Data.OleDb
 			open = false;
 			currentResult = -1;
 			currentRow = -1;
-		}
-
-		~OleDbDataReader ()
-		{
-			if (open)
-				Close ();
 		}
 
 		public bool GetBoolean (int ordinal)
@@ -604,16 +599,9 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		void IDisposable.Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return new DbEnumerator (this);
 		}
 
 		public bool IsDBNull (int ordinal)
@@ -657,5 +645,38 @@ namespace System.Data.OleDb
 		}
 
 		#endregion
+
+		#region Destructors
+
+		private void Dispose (bool disposing) {
+			if (!this.disposed) {
+				if (disposing) {
+					// release any managed resources
+					command = null;
+				}
+				// release any unmanaged resources
+				if (gdaResults != null) {
+					gdaResults.Clear ();
+					gdaResults = null;
+				}
+
+				// close any handles
+				if (open)
+					Close ();
+
+				this.disposed = true;	
+			}
+		}
+
+		void IDisposable.Dispose() {
+			Dispose (true);
+		}
+
+		~OleDbDataReader() {
+			Dispose (false);
+		}
+
+		#endregion // Destructors
+
 	}
 }

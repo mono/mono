@@ -1,0 +1,5 @@
+2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
+
+	* OleDbDataReader.cs: implemented
+	Dispose() and GetEnumerator()
+	
