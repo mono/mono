@@ -1,5 +1,7 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel.brg (stmt): Add a missing _setup_... ().
+
 	* aot.c: Save some parts of the class state to the AOT file and use it
 	to recompute that state when a class is initialized.
 
