@@ -1,4 +1,8 @@
 
+Tue Sep 25 16:48:50 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* ConstructorInfo.cs, MemberFilter.cs, Module.cs: added.
+
 Fri Sep 14 16:12:08 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* MethodBase.cs, MethodInfo.cs: added.
