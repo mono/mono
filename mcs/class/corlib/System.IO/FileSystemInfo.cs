@@ -82,6 +82,7 @@ namespace System.IO {
 			}
 		}
 
+		[ComVisible(false)]
 		public DateTime CreationTimeUtc {
 			get {
 				return CreationTime.ToUniversalTime ();
@@ -111,6 +112,7 @@ namespace System.IO {
 			}
 		}
 
+		[ComVisible(false)]
 		public DateTime LastAccessTimeUtc {
 			get {
 				Refresh (false);
@@ -140,6 +142,7 @@ namespace System.IO {
 			}
 		}
 
+		[ComVisible(false)]
 		public DateTime LastWriteTimeUtc {
 			get {
 				Refresh (false);

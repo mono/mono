@@ -1,6 +1,7 @@
 2004-04-12  Gert Driesen (drieseng@users.sourceforge.net)
 
-	* FileSystemInfo.cs: Implemented ISerializable
+	* FileSystemInfo.cs: Implemented ISerializable, corrected COM 
+	visibility of UTC properties
 
 2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
