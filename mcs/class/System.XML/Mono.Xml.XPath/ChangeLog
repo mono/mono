@@ -1,5 +1,9 @@
 2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DTMXPathDocumentWriter2.cs : use index for string pool.
+
+2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IdPattern.cs, LocationPathPattern.cs :
 	  Use XsltCompiledContext.GetNavCache() that returns reusable
 	  navigator cache for each pattern, to avoid Clone() and not to leave

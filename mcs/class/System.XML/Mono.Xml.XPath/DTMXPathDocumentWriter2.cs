@@ -77,7 +77,9 @@ namespace Mono.Xml.XPath
 
 		// String pool
 		string [] atomicStringPool;
+		int atomicIndex;
 		string [] nonAtomicStringPool;
+		int nonAtomicIndex;
 
 		// idTable [string value] -> int nodeId
 		Hashtable idTable;
@@ -123,6 +125,7 @@ namespace Mono.Xml.XPath
 			atomicStringPool [1] = nonAtomicStringPool [1] = null;
 			atomicStringPool [2] = nonAtomicStringPool [2] = XmlNamespaces.XML;
 			atomicStringPool [3] = nonAtomicStringPool [3] = XmlNamespaces.XMLNS;
+			atomicIndex = nonAtomicIndex = 4;
 
 			// index 0 is dummy. No node (including Root) is assigned to this index
 			// So that we can easily compare index != 0 instead of index < 0.
@@ -202,20 +205,17 @@ namespace Mono.Xml.XPath
 			if (s == null)
 				return 1;
 			int i = 2;
-			for (; i < atomicStringPool.Length; i++) {
-				if (atomicStringPool [i] == null) {
-					atomicStringPool [i] = s;
+			for (; i < atomicIndex; i++)
+				if (Object.ReferenceEquals (s, atomicStringPool [i]))
 					return i;
-				}
-				else if (Object.ReferenceEquals (s,
-					atomicStringPool [i]))
-					return i;
+
+			if (atomicIndex == atomicStringPool.Length) {
+				string [] newArr = new string [atomicIndex * 2];
+				Array.Copy (atomicStringPool, newArr, atomicIndex);
+				atomicStringPool = newArr;
 			}
-			string [] newArr = new string [i * 2];
-			Array.Copy (atomicStringPool, newArr, i);
-			atomicStringPool = newArr;
-			atomicStringPool [i] = s;
-			return i;
+			atomicStringPool [atomicIndex] = s;
+			return atomicIndex++;
 		}
 
 		private int NonAtomicIndex (string s)
@@ -225,19 +225,21 @@ namespace Mono.Xml.XPath
 			if (s == null)
 				return 1;
 			int i = 2;
-			for (; i < nonAtomicStringPool.Length; i++) {
-				if (nonAtomicStringPool [i] == null) {
-					nonAtomicStringPool [i] = s;
+
+			// Here we don't compare all the entries (sometimes it
+			// goes extremely slow).
+			int max = nonAtomicIndex < 100 ? nonAtomicIndex : 100;
+			for (; i < max; i++)
+				if (s == nonAtomicStringPool [i])
 					return i;
-				}
-				else if (s == nonAtomicStringPool [i])
-					return i;
+
+			if (nonAtomicIndex == nonAtomicStringPool.Length) {
+				string [] newArr = new string [nonAtomicIndex * 2];
+				Array.Copy (nonAtomicStringPool, newArr, nonAtomicIndex);
+				nonAtomicStringPool = newArr;
 			}
-			string [] newArr = new string [i * 2];
-			Array.Copy (nonAtomicStringPool, newArr, i);
-			nonAtomicStringPool = newArr;
-			nonAtomicStringPool [i] = s;
-			return i;
+			nonAtomicStringPool [nonAtomicIndex] = s;
+			return nonAtomicIndex++;
 		}
 
 		private void SetNodeArrayLength (int size)
@@ -343,6 +345,15 @@ namespace Mono.Xml.XPath
 			SetNodeArrayLength (nodeIndex + 1);
 			SetAttributeArrayLength (attributeIndex + 1);
 			SetNsArrayLength (nsIndex + 1);
+
+			string [] newArr = new string [atomicIndex];
+			Array.Copy (atomicStringPool, newArr, atomicIndex);
+			atomicStringPool = newArr;
+
+			newArr = new string [nonAtomicIndex];
+			Array.Copy (nonAtomicStringPool, newArr, nonAtomicIndex);
+			nonAtomicStringPool = newArr;
+
 			isClosed = true;
 		}
 
