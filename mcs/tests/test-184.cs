@@ -22,6 +22,12 @@ public class Test
 {
 	User t;
 	Test() { t=new User (new Struct(5)); }
+
+	//
+	// This one was not handled before by the compiler
+	// constrast that to the use on the constructor above, that
+	// worked just fine
+	//
 	User t2=new User(new Struct(251));
 
 	static int Main ()

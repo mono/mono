@@ -170,9 +170,58 @@ test-175.cs
 Check for user-defined implicit conversions if both arguments of a
 binary operator are of a user-defined type.  Bug #30443.
 
+test-176.cs
+-----------
+This tests checks that we perform constant folding on byte values.  The
+compiler had a bug where it did not do so.
+
+test-177.cs
+-----------
+This tests that the compiler is generating "return:" attributes for a 
+method.  This was a separate code path, and was not handled in the past.
+
+test-179.cs
+-----------
+Tests various uses of the indexers in the presence of the `new' keyword
+and various different argument types.
+
+test-180.cs
+-----------
+This test is part of a bug report in which casting an enumeration value
+into System.Enum was not wrapped correctly, and the wrong method was
+called.
+
+test-181.cs
+-----------
+Test whenever mcs correctly handles the MethodImplAttributes
+custom attribute.
+
+test-182.cs
+-----------
+Tests that bug 37473 is gone.  The problem was that we were generating
+incorrect code for field references on a value type.  The code was originally
+written by Martin, but I turned it off as I did not see what it did fix.  The
+code is now turned on again.  
+
+test-183.cs
+-----------
+This test just verifies that we generate the proper signature for
+EndInvoke, something that we were not doing before in the presence
+of out parameters
+
+test-184.cs
+-----------
+This test fixes a bug that exposed a problem when calling a struct
+constructor that is initialized from an instance constructor
+
 test-185.cs
 -----------
 Flow analysis wrt. infinite loops.  Bug #37708.
+
+test-186.cs
+-----------
+Typecasts were not being constant-folded/reduced, which triggered
+the bug 37363.   (String) null was not a null constant in attributes.
 
 verify-1.cs
 -----------
