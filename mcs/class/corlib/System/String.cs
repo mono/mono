@@ -696,7 +696,7 @@ namespace System {
 
 					if (format[ptr] == '{') {
 						start = ptr ++;
-						break;
+						continue;
 					}
 
 					// parse specifier

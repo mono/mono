@@ -1,5 +1,7 @@
 2002-02-28  Martin Baulig  <martin@gnome.org>
 
+	* String.cs (Format): Correctly handle escaped brackets.
+
 	* String.cs (_CompareChar): New internal function which compares two chars.
 	(_Compare): Provide an internal compare method which can do all sorts of
 	comparision and call it from all the Compare() methods. Also fixed a lot of
