@@ -1,3 +1,5 @@
+REM CompilerOptions: /r:Override_dll.dll
+
 Imports System
 Imports NSOverride
 

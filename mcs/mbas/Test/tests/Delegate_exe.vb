@@ -1,4 +1,4 @@
-REM CompilerOptions: /libpath:../vbtestdlls /r:Delegate_dll.dll
+REM CompilerOptions: /r:Delegate_dll.dll
 
 Imports System
 Imports NSDelegate

@@ -1,3 +1,5 @@
+REM CompilerOptions: /r:Dll1.dll
+
 Imports System
 Imports Dll1
 

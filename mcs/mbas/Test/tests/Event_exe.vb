@@ -1,3 +1,5 @@
+REM CompilerOptions: /r:Event_dll.dll
+
 Imports System
 Imports NSEvent
 

@@ -9,6 +9,7 @@ my $Compiler = "mbas";
 my $Runtime;
 my $CompilerFlags = "";
 
+my $Execute = 1;
 my $CompileCmd;
 my $RunCmd;
 my $RetVal=-1;
@@ -66,6 +67,14 @@ sub ParseTestFile
 	}
 	elsif($testAnnotation =~ /\s*Target\s*:\s*(.*)/) {
 	    $target = $1;
+
+	    if($target =~ /library/ || $target =~ /module/) {
+		$Execute = 0;
+	    }
+	    else {
+		$Execute = 1;
+	    }
+
 	    if($target ne "") {
 		$target = "/target:" . $target;
 	    }
@@ -76,7 +85,7 @@ sub ParseTestFile
     }
     close(VB_FILE);
 
-    $cmdLine = $Compiler . " " . $target . " " . $compilerOptions . " " . $VBFile;
+    $cmdLine = $Compiler . " " . $CompilerFlags . " " . $target . " " . $compilerOptions . " " . $VBFile;
 
     if(defined $expectedError)
     {
@@ -234,8 +243,6 @@ if(!$Runtime) {
 
 # Build the list of tests to run
 
-print "Logging to " . $TestResultsFile . "\n";
-
 open(TEST_RESULTS_FILE, ">$TestResultsFile");
 while(defined ($vbFile = glob($FilePattern))) {
     $VBFile = $vbFile;
@@ -251,17 +258,22 @@ while(defined ($vbFile = glob($FilePattern))) {
 	    next;
 	}
 	else {
-	    $VBExeFile = $VBFile;
-	    $VBExeFile =~ s/\.vb$/\.exe/;
-	    $RunCmd = $Runtime . " " . $VBExeFile;
-	    $RetVal = Command($RunCmd);
-	    LogResults($RetVal, "EXECUTION");
+	    if($Execute == 1) {
+		$VBExeFile = $VBFile;
+		$VBExeFile =~ s/\.vb$/\.exe/;
+		$RunCmd = $Runtime . " " . $VBExeFile;
+		$RetVal = Command($RunCmd);
+		LogResults($RetVal, "EXECUTION");
+	    } 
+	    else {
+		LogResults($RetVal, "");
+	    }
 	}
     }
     else {
 	ExtractResults();
 	$RetVal = ValidateResults();
-	LogResults($RetVal);
+	LogResults($RetVal, "");
     }
 
     if($RetVal == 0) {
