@@ -10,7 +10,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using Mono.Data.TdsClient.Internal;
+using Mono.Data.Tds.Protocol;
 using System;
 using System.ComponentModel;
 using System.Data;

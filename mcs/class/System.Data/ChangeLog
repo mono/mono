@@ -1,3 +1,19 @@
+2002-11-21  Tim Coleman <tim@timcoleman.com>
+        * System.Data.build:
+        * System.Data.SqlClient/SqlCommand.cs:
+        * System.Data.SqlClient/SqlConnection.cs:
+        * System.Data.SqlClient/SqlConnectionPool.cs:
+        * System.Data.SqlClient/SqlDataReader.cs:
+        * System.Data.SqlClient/SqlException.cs:
+        * System.Data.SqlClient/SqlInfoMessageEventArgs.cs:
+        * System.Data.SqlClient/SqlParameter.cs:
+        * System.Data.SqlClient/SqlTransaction.cs:
+        * System.Data.SqlClient/SqlXmlTextReader.cs:
+        * System.Data.SqlTypes/SqlDecimal.cs:
+                Modify to accept new Mono.Data.Tds.Protocol
+                namespace in Mono.Data.Tds assembly, replacing
+                Mono.Data.TdsClient.Internal
+
 2002-11-20  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlDecimal.cs: Ported some divide-stuff from 

@@ -8,7 +8,7 @@
 // (C) Copyright 2002 Tim Coleman
 //
 
-using Mono.Data.TdsClient.Internal;
+using Mono.Data.Tds.Protocol;
 using System;
 using System.Text;
 using System.Globalization;

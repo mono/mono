@@ -11,7 +11,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using Mono.Data.TdsClient.Internal;
+using Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -232,7 +232,6 @@ namespace System.Data.SqlClient {
 			}
 
 			SqlParameterCollection localParameters = new SqlParameterCollection (this);
-			SqlParameter parm;
 		
 			localParameters.Add ("@P1", SqlDbType.NVarChar, sql.Length).Value = sql;
 

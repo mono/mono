@@ -7,7 +7,7 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
-using Mono.Data.TdsClient.Internal;
+using Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
 using System.Threading;
@@ -45,8 +45,8 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-		public Tds this[int index] {
-			get { return (Tds) list[index]; }
+		public ITds this[int index] {
+			get { return (ITds) list[index]; }
 		}
 
 		object IList.this[int index] {
