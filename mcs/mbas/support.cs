@@ -22,6 +22,7 @@ namespace Mono.MonoBASIC {
 		int  Count { get; }
 		string ParameterName (int pos);
 		string ParameterDesc (int pos);
+		Expression DefaultValue (int pos);
 		Parameter.Modifier ParameterModifier (int pos);
 	}
 
@@ -65,6 +66,24 @@ namespace Mono.MonoBASIC {
 				}
 		}
 
+		public Expression DefaultValue (int pos)
+		{
+			return null;
+#if false
+			if (last_arg_is_params && pos >= pi.Length - 1)
+				return pi [pi.Length - 1].ParameterType;
+			else
+				if (pos >= pi.Length)
+					return null;
+				else {
+					Type pt = pi [pos].ParameterType;
+                              		if (pt.IsByRef)
+						pt = pt.GetElementType();
+					return pt;
+				}
+#endif
+		}
+
 		public string ParameterName (int pos)
 		{
 			if (last_arg_is_params && pos >= pi.Length - 1)
@@ -95,16 +114,22 @@ namespace Mono.MonoBASIC {
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
 			int len = pi.Length;
-			
+			Parameter.Modifier pm = Parameter.Modifier.NONE;
+
 			if (pos >= len - 1)
-				if (last_arg_is_params)
-					return Parameter.Modifier.PARAMS;
+				if (last_arg_is_params) {
+					pm |= Parameter.Modifier.PARAMS;
+					pos = len - 1;
+				}
 			
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef)
-				return Parameter.Modifier.ISBYREF | Parameter.Modifier.REF;
+				pm |= Parameter.Modifier.ISBYREF | Parameter.Modifier.REF;
+
+			if (pi [pos].IsOptional)
+				pm |= Parameter.Modifier.OPTIONAL;
 			
-			return Parameter.Modifier.NONE;
+			return pm;
 		}
 
 		public int Count {
@@ -146,14 +171,18 @@ namespace Mono.MonoBASIC {
 				return null;
 
 			Parameter [] fixed_pars = Parameters.FixedParameters;
-			if (fixed_pars != null){
-				int len = fixed_pars.Length;
-				if (pos < len)
-					return Parameters.FixedParameters [pos].ParameterType;
-				else 
-					return Parameters.ArrayParameter.ParameterType;
-			} else
+			if (fixed_pars != null && pos < fixed_pars.Length)
+				return Parameters.FixedParameters [pos].ParameterType;
+			else 
 				return Parameters.ArrayParameter.ParameterType;
+		}
+
+		public Expression DefaultValue (int pos)
+		{
+			Parameter [] fixed_pars = Parameters.FixedParameters;
+			if (fixed_pars != null && pos < fixed_pars.Length)
+				return Parameters.FixedParameters [pos].ParameterInitializer;
+			return null;
 		}
 
 		public string ParameterName (int pos)
@@ -173,7 +202,7 @@ namespace Mono.MonoBASIC {
 			string tmp = String.Empty;
 			Parameter p;
 
-			if (pos >= Parameters.FixedParameters.Length)
+			if (Parameters.FixedParameters == null || pos >= Parameters.FixedParameters.Length)
 				p = Parameters.ArrayParameter;
 			else
 				p = Parameters.FixedParameters [pos];

@@ -1,3 +1,10 @@
+2004-09-07 Bernie Solomon <bernard@ugsolutions.com>
+	* ecore.cs:
+	* enum.cs:
+	* expression.cs:
+	* mb-parser.jay:
+	* support.cs: work on improving overload resolution
+
 2004-08-30 Bernie Solomon <bernard@ugsolutions.com>
 	* class.cs (FindMembers): filter on modflags
 	for constructors & constructors are never inherited

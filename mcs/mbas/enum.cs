@@ -488,7 +488,7 @@ namespace Mono.MonoBASIC {
 					Type etype = TypeManager.EnumToUnderlying (c.Type);
 					
 					if ( (!ImplicitConversionExists (etype, UnderlyingType)) &&
-						(!Expression.RuntimeConversionExists (ec, val, UnderlyingType)) ){
+						(!Expression.NarrowingConversionExists (ec, val, UnderlyingType)) ){
 						Expression.Error_CannotConvertImplicit (
 							loc, c.Type, UnderlyingType);
 						return null;

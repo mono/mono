@@ -2270,17 +2270,16 @@ parameter
 	  	if (opt_parm && ($7 == null))
 	  		Report.Error (30812, lexer.Location, "Optional parameters must have a default value");
 
+	  	if (!opt_parm && ($7 != null))
+	  		Report.Error (32024, lexer.Location, "Non-Optional parameters should not have a default value");
+
 	  	if ((pm & Parameter.Modifier.PARAMS) != 0) {
 		  	if ((pm & ~Parameter.Modifier.PARAMS) != 0)
 	  			Report.Error (30667, lexer.Location, "ParamArray parameters must be ByVal");
 		}
 	  	
-	  	if (opt_parm) {
-	  		if ((pm & Parameter.Modifier.REF) !=0)
-	  			pm = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF;
-	  		else
-	  			pm = Parameter.Modifier.NONE;	//FIXME: should take into account BYREF
-		}	
+  		if ((pm & Parameter.Modifier.REF) !=0)
+  			pm |= Parameter.Modifier.ISBYREF;
 		
 	  	if ($4 != null && $6 != null && $4 != $6)
 			Report.Error (-1, lexer.Location, "Type character conflicts with declared type."); // TODO: Correct error number and message text

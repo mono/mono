@@ -3208,132 +3208,8 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
-		/// <summary>
-		///  Determines "better conversion" as specified in 7.4.2.3
-		///  Returns : 1 if a->p is better
-		///            0 if a->q or neither is better 
-		/// </summary>
-		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, Location loc)
-		{
-			Type argument_type = a.Type;
-			Expression argument_expr = a.Expr;
+		enum Applicability { Same, Better, Worse };
 
-			if (argument_type == null)
-				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
-
-			//
-			// This is a special case since csc behaves this way. I can't find
-			// it anywhere in the spec but oh well ...
-			//
-			if (argument_expr is NullLiteral && p == TypeManager.string_type && q == TypeManager.object_type)
-				return 1;
-			else if (argument_expr is NullLiteral && p == TypeManager.object_type && q == TypeManager.string_type)
-				return 0;
-			
-			if (p == q)
-				return 0;
-			
-			if (argument_type == p)
-				return 1;
-
-			if (argument_type == q)
-				return 0;
-
-			//
-			// Now probe whether an implicit constant expression conversion
-			// can be used.
-			//
-			// An implicit constant expression conversion permits the following
-			// conversions:
-			//
-			//    * A constant-expression of type 'int' can be converted to type
-			//      sbyte, byute, short, ushort, uint, ulong provided the value of
-			//      of the expression is withing the range of the destination type.
-			//
-			//    * A constant-expression of type long can be converted to type
-			//      ulong, provided the value of the constant expression is not negative
-			//
-			// FIXME: Note that this assumes that constant folding has
-			// taken place.  We dont do constant folding yet.
-			//
-
-			if (argument_expr is IntConstant){
-				IntConstant ei = (IntConstant) argument_expr;
-				int value = ei.Value;
-				
-				if (p == TypeManager.sbyte_type){
-					if (value >= SByte.MinValue && value <= SByte.MaxValue)
-						return 1;
-				} else if (p == TypeManager.byte_type){
-					if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
-						return 1;
-				} else if (p == TypeManager.short_type){
-					if (value >= Int16.MinValue && value <= Int16.MaxValue)
-						return 1;
-				} else if (p == TypeManager.ushort_type){
-					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
-						return 1;
-				} else if (p == TypeManager.uint32_type){
-					//
-					// we can optimize this case: a positive int32
-					// always fits on a uint32
-					//
-					if (value >= 0)
-						return 1;
-				} else if (p == TypeManager.uint64_type){
-					//
-					// we can optimize this case: a positive int32
-					// always fits on a uint64
-					//
-					if (value >= 0)
-						return 1;
-				}
-			} else if (argument_type == TypeManager.int64_type && argument_expr is LongConstant){
-				LongConstant lc = (LongConstant) argument_expr;
-				
-				if (p == TypeManager.uint64_type){
-					if (lc.Value > 0)
-						return 1;
-				}
-			}
-
-			if (q == null) {
-				Expression tmp = ConvertImplicit (ec, argument_expr, p, loc);
-				
-				if (tmp != null)
-					return 1;
-				else
-					return 0;
-			}
-
-			Expression p_tmp = new EmptyExpression (p);
-			Expression q_tmp = new EmptyExpression (q);
-			
-			if (StandardConversionExists (p_tmp, q) == true &&
-			    StandardConversionExists (q_tmp, p) == false)
-				return 1;
-
-			if (p == TypeManager.sbyte_type)
-				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
-				    q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return 1;
-
-			if (p == TypeManager.short_type)
-				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
-				    q == TypeManager.uint64_type)
-					return 1;
-
-			if (p == TypeManager.int32_type)
-				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return 1;
-
-			if (p == TypeManager.int64_type)
-				if (q == TypeManager.uint64_type)
-					return 1;
-
-			return 0;
-		}
-		
 		/// <summary>
 		///  Determines "Better function"
 		/// </summary>
@@ -3342,14 +3218,14 @@ namespace Mono.MonoBASIC {
 		///    0 if candidate ain't better
 		///    1 if candidate is better than the current best match
 		/// </remarks>
-		static int BetterFunction (EmitContext ec, ArrayList args,
-					   MethodBase candidate, MethodBase best,
-					   bool expanded_form, Location loc)
+		static Applicability BetterFunction (EmitContext ec, ArrayList args,
+					    MethodBase candidate, MethodBase best,
+					    bool expanded_form, Location loc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
 			int argument_count;
-		
+
 			if (args == null)
 				argument_count = 0;
 			else
@@ -3358,45 +3234,16 @@ namespace Mono.MonoBASIC {
 			int cand_count = candidate_pd.Count;
 
 			if (cand_count == 0 && argument_count == 0)
-				return 1;
+				return Applicability.Same;
 
 			if (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS)
 				if (cand_count != argument_count)
-					return 0;
+					return Applicability.Worse;
 			
-			if (best == null) {
-				int x = 0;
-
-				if (argument_count == 0 && cand_count == 1 &&
-				    candidate_pd.ParameterModifier (cand_count - 1) == Parameter.Modifier.PARAMS)
-					return 1;
-				
-				for (int j = argument_count; j > 0;) {
-					j--;
-
-					Argument a = (Argument) args [j];
-					Type t = candidate_pd.ParameterType (j);
-
-					if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-						if (expanded_form)
-							t = t.GetElementType ();
-
-					x = BetterConversion (ec, a, t, null, loc);
-					
-					if (x <= 0)
-						break;
-				}
-
-				if (x > 0)
-					return 1;
-				else
-					return 0;
-			}
-
 			best_pd = GetParameterData (best);
 
-			int rating1 = 0, rating2 = 0;
-			
+			Applicability res = Applicability.Same;
+
 			for (int j = 0; j < argument_count; ++j) {
 				int x, y;
 				
@@ -3413,20 +3260,20 @@ namespace Mono.MonoBASIC {
 					if (expanded_form)
 						bt = bt.GetElementType ();
 				
-				x = BetterConversion (ec, a, ct, bt, loc);
-				y = BetterConversion (ec, a, bt, ct, loc);
-
-				if (x < y)
-					return 0;
-				
-				rating1 += x;
-				rating2 += y;
+				if (ct != bt) {
+					if (!WideningConversionExists (ct, bt))
+						return Applicability.Worse;
+					res = Applicability.Better;
+				}
 			}
 
-			if (rating1 > rating2)
-				return 1;
-			else
-				return 0;
+			if (res == Applicability.Same)
+				if (candidate_pd.Count < best_pd.Count)
+					res = Applicability.Better;
+				else if (candidate_pd.Count > best_pd.Count)
+					res = Applicability.Worse;
+
+			return res;
 		}
 
 		public static string FullMethodDesc (MethodBase mb)
@@ -3577,17 +3424,27 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 
-		static bool CheckParameterAgainstArgument (EmitContext ec, ParameterData pd, int i, Argument a, Type ptype)
+
+		protected enum ConversionType { None, Widening, Narrowing };
+
+		static ConversionType CheckParameterAgainstArgument (EmitContext ec, ParameterData pd, int i, Argument a, Type ptype)
 		{
 			Parameter.Modifier a_mod = a.GetParameterModifier () &
 				~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
 			Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-				~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+				~(Parameter.Modifier.OUT | Parameter.Modifier.REF | Parameter.Modifier.OPTIONAL);
 
-			if (a_mod == p_mod || (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
-				if (a_mod == Parameter.Modifier.NONE)	
-					if (! (ImplicitConversionExists (ec, a.Expr, ptype) || RuntimeConversionExists (ec, a.Expr, ptype)) )
-						return false;
+			if (a_mod == p_mod ||
+				(a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
+				if (a_mod == Parameter.Modifier.NONE) {
+					if (! WideningConversionExists (a.Expr, ptype) ) {
+						if (! NarrowingConversionExists (ec, a.Expr, ptype) )
+							return ConversionType.None;
+						else
+							return ConversionType.Narrowing;
+					} else
+							return ConversionType.Widening;
+				}
 				
 				if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
 					Type pt = pd.ParameterType (i);
@@ -3596,21 +3453,40 @@ namespace Mono.MonoBASIC {
 						pt = TypeManager.LookupType (pt.FullName + "&");
 
 					if (pt != a.Type)
-						return false;
+						return ConversionType.None;
 				}
+				return ConversionType.Widening;
 			} else
-				return false;					
-			return true;					
+				return ConversionType.None;					
 		}
-		
+
+		static bool HasArrayParameter (ParameterData pd)
+		{
+			int c = pd.Count;
+			return c > 0 && (pd.ParameterModifier (c - 1) & Parameter.Modifier.PARAMS) != 0;
+		}
+
+		static int CountStandardParams (ParameterData pd) 
+		{
+			int count = pd.Count;
+			for (int i = 0; i < count; i++) {
+				Parameter.Modifier pm = pd.ParameterModifier (i);
+				if ((pm & (Parameter.Modifier.OPTIONAL | Parameter.Modifier.PARAMS)) != 0)
+					return i;
+			}
+			return count;
+		}
+
 		/// <summary>
 		///  Determines if the candidate method is applicable (section 14.4.2.1)
 		///  to the given set of arguments
 		/// </summary>
-		static bool IsApplicable (EmitContext ec, ref ArrayList arguments, MethodBase candidate)
+		static ConversionType IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate, out bool expanded)
 		{
-			int arg_count, ps_count, po_count;
+			int arg_count, po_count;
 			Type param_type;
+
+			expanded = false;
 			
 			if (arguments == null)
 				arg_count = 0;
@@ -3618,107 +3494,84 @@ namespace Mono.MonoBASIC {
 				arg_count = arguments.Count;
 
 			ParameterData pd = GetParameterData (candidate);
-			Parameters ps = GetFullParameters (candidate);
-			if (ps == null) {
-				ps_count = 0;
-				po_count = 0;
-			}
-			else {
-				ps_count = ps.CountStandardParams();			
-				po_count = ps.CountOptionalParams();
-			}
+			int ps_count = CountStandardParams (pd);			
 			int pd_count = pd.Count;
 
-
 			// Validate argument count
-			if (po_count == 0) {
-				if (arg_count != pd.Count)
-					return false;
+			if (ps_count == pd_count) {
+				if (arg_count != pd_count)
+					return ConversionType.None;
 			}
 			else {
-				if ((arg_count < ps_count) || (arg_count > pd_count))
-					return false;	
+				if (arg_count < ps_count)
+					return ConversionType.None;
+				if (!HasArrayParameter (pd) && arg_count > pd_count)
+					return ConversionType.None;
 			}       
+			ConversionType result = ConversionType.Widening;
+			ArrayList newarglist = new ArrayList();
 			if (arg_count > 0) {
-				for (int i = arg_count; i > 0 ; ) {
-					i--;
-
+				result = ConversionType.None;
+				int array_param_index = -1;
+				for (int i = 0; i < arg_count; ++i) {
 					Argument a = (Argument) arguments [i];
-					if (a.ArgType == Argument.AType.NoArg) {
-						Parameter p = (Parameter) ps.FixedParameters[i];
-						a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
-						param_type = p.ParameterInitializer.Type;
+					param_type = pd.ParameterType (i);
+					Parameter.Modifier mod = pd.ParameterModifier (i);
+					if (array_param_index < 0 && (mod & Parameter.Modifier.PARAMS) != 0)
+						array_param_index = i;
+
+					bool IsDelegate = TypeManager.IsDelegateType (param_type);
+
+					if (IsDelegate)	{	
+						if (a.ArgType == Argument.AType.AddressOf) {
+							a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
+							ArrayList args = new ArrayList();
+							args.Add (a);
+							string param_name = pd.ParameterDesc(i).Replace('+', '.');
+							Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
+
+							New temp_new = new New ((Expression)pname, args, Location.Null);
+							Expression del_temp = temp_new.DoResolve(ec);
+
+							if (del_temp == null)
+								return ConversionType.None;
+
+							a = new Argument (del_temp, Argument.AType.Expression);
+							if (!a.Resolve(ec, Location.Null))
+								return ConversionType.None;
+						}
 					}
 					else {
-						param_type = pd.ParameterType (i);
-						Parameter.Modifier mod;
-						//if (ps != null) {
-						if (pd.Count != 0) {
-							//Parameter p = (Parameter) ps.FixedParameters[i];
-							bool IsDelegate = TypeManager.IsDelegateType (param_type);
-
-							if (IsDelegate)	{	
-								if (a.ArgType == Argument.AType.AddressOf) {
-									a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
-									ArrayList args = new ArrayList();
-									args.Add (a);
-									string param_name = pd.ParameterDesc(i).Replace('+', '.');
-									Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
-
-
-									New temp_new = new New ((Expression)pname, args, Location.Null);
-									Expression del_temp = temp_new.DoResolve(ec);
-
-									if (del_temp == null)
-										return false;
-
-									a = new Argument (del_temp, Argument.AType.Expression);
-									if (!a.Resolve(ec, Location.Null))
-										return false;
-								}
-							}
-							else {
-								if (a.ArgType == Argument.AType.AddressOf)
-									return false;
-							}
-
-							//mod = p.ModFlags;
-							mod = pd.ParameterModifier (i);
-						} else
-							mod = pd.ParameterModifier (i);
-
-						if ((mod & Parameter.Modifier.REF) != 0) {
-							a = new Argument (a.Expr, Argument.AType.Ref);
-							if (!a.Resolve(ec,Location.Null))
-								return false;
-						}
-					}	
-
-					if (!CheckParameterAgainstArgument (ec, pd, i, a, param_type))
-						return (false);
-				}
-			}
-			else {
-				// If we have no arguments AND the first parameter is optional
-				// we must check for a candidate (the loop above wouldn't)	
-				if (po_count > 0) {
-					ArrayList arglist = new ArrayList();
-					
-					// Since we got so far, there's no need to check if
-					// arguments are optional; we simply retrieve
-					// parameter default values and build a brand-new 
-					// argument list.
-					
-					for (int i = 0; i < ps.FixedParameters.Length; i++) {
-						Parameter p = ps.FixedParameters[i];
-						Argument a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
-						a.Resolve(ec, Location.Null);
-						arglist.Add (a);
+						if (a.ArgType == Argument.AType.AddressOf)
+							return ConversionType.None;
 					}
-					arguments = arglist;
-					return true;
+
+					if ((mod & Parameter.Modifier.REF) != 0) {
+						a = new Argument (a.Expr, Argument.AType.Ref);
+						if (!a.Resolve(ec,Location.Null))
+							return ConversionType.None;
+					}
+
+					ConversionType match = ConversionType.None;
+					if (i == array_param_index) 
+						match = CheckParameterAgainstArgument (ec, pd, i, a, param_type);
+					if (match == ConversionType.None && array_param_index >= 0 && i >= array_param_index) {
+						expanded = true;
+						param_type = param_type.GetElementType ();
+					}
+					if (match == ConversionType.None)
+						match = CheckParameterAgainstArgument (ec, pd, i, a, param_type);
+					newarglist.Add (a);
+					if (match == ConversionType.None)
+						return ConversionType.None;
+					if (result == ConversionType.None)
+						result = match;
+					else if (match == ConversionType.Narrowing)
+						result = ConversionType.Narrowing;					
 				}
 			}
+
+#if false
 			// We've found a candidate, so we exchange the dummy NoArg arguments
 			// with new arguments containing the default value for that parameter
 
@@ -3753,11 +3606,11 @@ namespace Mono.MonoBASIC {
 					Expression del_temp = temp_new.DoResolve(ec);
 
 					if (del_temp == null)
-						return false;
+						return ConversionType.None;
 
 					a = new Argument (del_temp, Argument.AType.Expression);
 					if (!a.Resolve(ec, Location.Null))
-						return false;
+						return ConversionType.None;
 				}
 
 				if ((p != null) && ((p.ModFlags & Parameter.Modifier.REF) != 0)) {
@@ -3778,8 +3631,8 @@ namespace Mono.MonoBASIC {
 					}
 				}
 			}
-			arguments = newarglist;
-			return true;
+#endif
+			return result;
 		}
 		
 		static bool compare_name_filter (MemberInfo m, object filterCriteria)
@@ -3787,14 +3640,6 @@ namespace Mono.MonoBASIC {
 			return (m.Name == ((string) filterCriteria));
 		}
 
-		static Parameters GetFullParameters (MethodBase mb)
-		{
-			TypeContainer tc = TypeManager.LookupTypeContainer (mb.DeclaringType);
-			InternalParameters ip = TypeManager.LookupParametersByBuilder(mb);
-			
-			return (ip != null) ? ip.Parameters : null;
-		}
-		
 		// We need an overload for OverloadResolve because Invocation.DoResolve
 		// must pass Arguments by reference, since a later call to IsApplicable
 		// can change the argument list if optional parameters are defined
@@ -3804,6 +3649,28 @@ namespace Mono.MonoBASIC {
 		{
 			ArrayList a = Arguments;
 			return OverloadResolve (ec, me, ref a, loc);	
+		}
+
+		static string ToString(MethodBase mbase)
+		{
+			if (mbase == null)
+				return "NULL";
+
+			if (mbase is MethodBuilder)
+			{
+				MethodBuilder mb = (MethodBuilder) mbase;
+				String res = mb.ReturnType + " (";
+				ParameterInfo [] parms = mb.GetParameters();
+				for (int i = 0; i < parms.Length; i++) {
+					if (i != 0)
+						res += " ";
+					res += parms[i].ParameterType;
+				}
+				res += ")";
+				return res;
+			}
+
+			return mbase.ToString();
 		}
 		
 		/// <summary>
@@ -3830,61 +3697,55 @@ namespace Mono.MonoBASIC {
 			Type current_type = null;
 			int argument_count;
 			ArrayList candidates = new ArrayList ();
+			Hashtable expanded_candidates = new Hashtable();
+			int narrow_count = 0;
+			bool narrowing_candidate = false;
 
 			foreach (MethodBase candidate in me.Methods){
-				int x;
-
-				// If we're going one level higher in the class hierarchy, abort if
-				// we already found an applicable method.
-				if (candidate.DeclaringType != current_type) {
-					current_type = candidate.DeclaringType;
-					if (method != null)
-						break;
+				bool candidate_expanded;
+				ConversionType m = IsApplicable (ec, Arguments, candidate, out candidate_expanded);
+				if (candidate_expanded)
+					expanded_candidates [candidate] = candidate;
+				if (m == ConversionType.None)
+					continue;
+				else if (m == ConversionType.Narrowing) {
+					if (method == null) {
+						method = candidate;
+						narrowing_candidate = true;
+					} 
+					narrow_count++;
+				} else if (m == ConversionType.Widening) {
+					if (method == null || narrowing_candidate) {
+						method = candidate;
+						narrowing_candidate = false;
+					} else {
+						Applicability res = BetterFunction (ec, Arguments, candidate, method, true, loc);
+						if (res == Applicability.Same)
+							continue; // should check it overrides?
+						if (res == Applicability.Better)
+							method = candidate;
+					}
+					candidates.Add (candidate);
 				}
-
-				// Check if candidate is applicable (section 14.4.2.1)
-				if (!IsApplicable (ec, ref Arguments, candidate))
-					continue;
-
-				candidates.Add (candidate);
-				x = BetterFunction (ec, Arguments, candidate, method, false, loc);
-				
-				if (x == 0)
-					continue;
-
-				method = candidate;
 			}
+
+			if (candidates.Count == 0) {
+				if (narrow_count > 1)
+					method = null;
+				else if (narrow_count == 1)
+					candidates = null;
+			} else if (candidates.Count == 1) {
+				method = (MethodBase)candidates [0];
+				candidates = null;
+			} else
+				narrow_count = 0;
 
 			if (Arguments == null)
 				argument_count = 0;
 			else
 				argument_count = Arguments.Count;
+
 			
-			
-			//
-			// Now we see if we can find params functions, applicable in their expanded form
-			// since if they were applicable in their normal form, they would have been selected
-			// above anyways
-			//
-			bool chose_params_expanded = false;
-			
-			if (method == null) {
-				candidates = new ArrayList ();
-				foreach (MethodBase candidate in me.Methods){
-					if (!IsParamsMethodApplicable (ec, Arguments, candidate))
-						continue;
-
-					candidates.Add (candidate);
-
-					int x = BetterFunction (ec, Arguments, candidate, method, true, loc);
-					if (x == 0)
-						continue;
-
-					method = candidate; 
-					chose_params_expanded = true;
-				}
-			}
-
 			if (method == null) {
 				//
 				// Okay so we have failed to find anything so we
@@ -3898,6 +3759,16 @@ namespace Mono.MonoBASIC {
 					if (pd.Count != argument_count)
 						continue;
 
+					bool dummy;
+					if (narrow_count != 0) {
+					 	if (IsApplicable (ec, Arguments, c, out dummy) == ConversionType.None)
+							continue;
+						Report.Error (1502, loc,
+							"Overloaded match for method '" +
+							FullMethodDesc (c) +
+							"' requires narrowing conversionss");
+					}
+
 					VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
 							       null, loc);
 				}
@@ -3910,39 +3781,85 @@ namespace Mono.MonoBASIC {
 			// should be better than all the others
 			//
 
-			foreach (MethodBase candidate in candidates){
- 				if (candidate == method)
- 					continue;
+			if (candidates != null) {
+				foreach (MethodBase candidate in candidates){
+ 					if (candidate == method)
+ 						continue;
 
-				//
-				// If a normal method is applicable in the sense that it has the same
-				// number of arguments, then the expanded params method is never applicable
-				// so we debar the params method.
-				//
-				if (IsParamsMethodApplicable (ec, Arguments, candidate) &&
-				    IsApplicable (ec, ref Arguments, method))
-					continue;
-					
-				int x = BetterFunction (ec, Arguments, method, candidate,
-							chose_params_expanded, loc);
-
-				if (x != 1) {
- 					Report.Error (
- 						121, loc,
- 						"Ambiguous call when selecting function due to implicit casts");
-					return null;
- 				}
+					if (BetterFunction (ec, Arguments, candidate, method,
+								false, loc) == Applicability.Better) {
+ 						Report.Error (
+ 							121, loc,
+ 							"Ambiguous call of '" + me.Name + "' when selecting function due to implicit casts");
+						return null;
+ 					}
+				}
 			}
 
 			//
 			// And now check if the arguments are all compatible, perform conversions
 			// if necessary etc. and return if everything is all right
 			//
+			if (method == null)
+				return null;
+
+			bool chose_params_expanded = expanded_candidates.Contains (method);
+
+			Arguments = ConstructArgumentList(ec, Arguments, method);
 			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
 						   chose_params_expanded, null, loc))
+			{
 				return method;
+			}
 			else
 				return null;
+		}
+
+		public static ArrayList ConstructArgumentList (EmitContext ec, ArrayList Arguments,	MethodBase method)
+		{
+			ArrayList newarglist = new ArrayList();
+			int arg_count = Arguments == null ? 0 : Arguments.Count;
+
+			ParameterData pd = GetParameterData (method);
+
+			for (int i = 0; i < arg_count; i++) {
+				Argument a = (Argument) Arguments [i];
+				Type param_type = pd.ParameterType (i);
+
+				bool IsDelegate = TypeManager.IsDelegateType (param_type);
+				if (IsDelegate)	{	
+					if (a.ArgType == Argument.AType.AddressOf) {
+						a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
+						ArrayList args = new ArrayList();
+						args.Add (a);
+						string param_name = pd.ParameterDesc(i).Replace('+', '.');
+						Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
+
+						New temp_new = new New ((Expression)pname, args, Location.Null);
+						Expression del_temp = temp_new.DoResolve(ec);
+						a = new Argument (del_temp, Argument.AType.Expression);
+						a.Resolve(ec, Location.Null);
+					}
+				}
+				if ((pd.ParameterModifier (i) & Parameter.Modifier.REF) != 0) {
+					a.ArgType = Argument.AType.Ref;
+					a.Resolve(ec, Location.Null);
+				}	
+
+				newarglist.Add (a);
+			}
+
+			for (int i = arg_count; i < pd.Count; i++) {
+				Expression e = pd.DefaultValue (i);
+				Argument a = new Argument (e, Argument.AType.Expression);
+				if ((pd.ParameterModifier (i) & Parameter.Modifier.REF) != 0)
+					a.ArgType = Argument.AType.Ref;
+				e.Resolve (ec);
+				a.Resolve (ec, Location.Null);
+				newarglist.Add (a);
+			}
+
+			return newarglist;
 		}
 
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
@@ -4022,9 +3939,8 @@ namespace Mono.MonoBASIC {
 				Parameter.Modifier a_mod = a.GetParameterModifier () &
 					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
 				Parameter.Modifier p_mod = pd.ParameterModifier (j) &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					~(Parameter.Modifier.OUT | Parameter.Modifier.REF | Parameter.Modifier.OPTIONAL);
 
-				
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
 					if (!Location.IsNull (loc)) {
@@ -4102,7 +4018,6 @@ namespace Mono.MonoBASIC {
 					if ((a.ArgType == Argument.AType.NoArg) && (!(expr is MethodGroupExpr)))
 						Report.Error (999, "This item cannot have empty arguments");
 
-			
 					if (!a.Resolve (ec, loc))
 						return null;				
 				}
@@ -4257,25 +4172,16 @@ namespace Mono.MonoBASIC {
 		/// <summary>
 		///   Emits a list of resolved Arguments that are in the arguments
 		///   ArrayList.
-		/// 
-		///   The MethodBase argument might be null if the
-		///   emission of the arguments is known not to contain
-		///   a 'params' field (for example in constructors or other routines
-		///   that keep their arguments in this structure)
 		/// </summary>
 		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments)
 		{
-			ParameterData pd;
-			if (mb != null)
-				pd = GetParameterData (mb);
-			else
-				pd = null;
+			ParameterData pd = GetParameterData (mb);
 
 			//
 			// If we are calling a params method with no arguments, special case it
 			//
 			if (arguments == null){
-				if (pd != null && pd.Count > 0 &&
+				if (pd.Count > 0 &&
 				    pd.ParameterModifier (0) == Parameter.Modifier.PARAMS){
 					ILGenerator ig = ec.ig;
 
@@ -4290,24 +4196,31 @@ namespace Mono.MonoBASIC {
 			for (int i = 0; i < top; i++){
 				Argument a = (Argument) arguments [i];
 
-				if (pd != null){
-					if (pd.ParameterModifier (i) == Parameter.Modifier.PARAMS){
-						//
-						// Special case if we are passing the same data as the
-						// params argument, do not put it in an array.
-						//
-						if (pd.ParameterType (i) == a.Type)
-							a.Emit (ec);
-						else
-							EmitParams (ec, i, arguments);
-						return;
-					}
+				if (pd.ParameterModifier (i) == Parameter.Modifier.PARAMS){
+					//
+					// Special case if we are passing the same data as the
+					// params argument, do not put it in an array.
+					//
+					if (pd.ParameterType (i) == a.Type)
+						a.Emit (ec);
+					else
+						EmitParams (ec, i, arguments);
+					return;
+				}
+
+				if ((a.ArgType == Argument.AType.Ref || a.ArgType == Argument.AType.Out) &&
+					!(a.Expr is IMemoryLocation)) {
+					LocalTemporary tmp = new LocalTemporary (ec, pd.ParameterType (i));
+					
+					a.Expr.Emit (ec);
+					tmp.Store (ec);
+					a = new Argument (tmp, a.ArgType);
 				}
 					    
 				a.Emit (ec);
 			}
 
-			if (pd != null && pd.Count > top &&
+			if (pd.Count > top &&
 			    pd.ParameterModifier (top) == Parameter.Modifier.PARAMS){
 				ILGenerator ig = ec.ig;
 

@@ -942,10 +942,8 @@ namespace Mono.MonoBASIC {
 		// Tests whether an implicit reference conversion exists between expr_type
 		// and target_type
 		//
-		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
+		public static bool ImplicitReferenceConversionExists (Expression expr, Type expr_type, Type target_type)
 		{
-			Type expr_type = expr.Type;
-			
 			//
 			// This is the boxed case.
 			//
@@ -1025,10 +1023,12 @@ namespace Mono.MonoBASIC {
 			if (StandardConversionExists (expr, target_type) == true)
 				return true;
 
+#if false
 			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
 
 			if (dummy != null)
 				return true;
+#endif
 
 			return false;
 		}
@@ -1039,8 +1039,21 @@ namespace Mono.MonoBASIC {
 		/// </summary>
 		public static bool StandardConversionExists (Expression expr, Type target_type)
 		{
-			Type expr_type = expr.Type;
+			return WideningConversionExists (expr, expr.type, target_type);
+		}
 
+		public static bool WideningConversionExists (Type expr_type, Type target_type)
+		{
+			return WideningConversionExists (null, expr_type, target_type);
+		}
+
+		public static bool WideningConversionExists (Expression expr, Type target_type)
+		{
+			return WideningConversionExists (expr, expr.Type, target_type);
+		}
+
+		public static bool WideningConversionExists (Expression expr, Type expr_type, Type target_type)
+		{
 			if (expr_type == null || expr_type == TypeManager.void_type)
 				return false;
 			
@@ -1160,7 +1173,7 @@ namespace Mono.MonoBASIC {
 					return true;
 			}	
 			
-			if (ImplicitReferenceConversionExists (expr, target_type))
+			if (ImplicitReferenceConversionExists (expr, expr_type, target_type))
 				return true;
 			
 			if (expr is IntConstant){
@@ -1637,7 +1650,7 @@ namespace Mono.MonoBASIC {
 			if (e != null)
 				return e;
 				
-			e = RuntimeConversion (ec, expr, target_type, loc);
+			e = NarrowingConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;				
 
@@ -1665,15 +1678,226 @@ namespace Mono.MonoBASIC {
 			return (e);		
 		}
 		
-		static public bool RuntimeConversionExists (EmitContext ec, Expression expr, Type target_type)
+		static public bool NarrowingConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
-			return (RuntimeConversion (ec, expr, target_type,Location.Null)) != null;	
+			Type expr_type = expr.Type;
+
+			if (target_type == TypeManager.sbyte_type){
+				//
+				// To sbyte from short, int, long, float, double.
+				//
+				if ((expr_type == TypeManager.int32_type) || 
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type)  ||
+				    (expr_type == TypeManager.short_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return true;
+				
+			} else if (target_type == TypeManager.byte_type){
+				//
+				// To byte from short, ushort, int, uint, long, ulong, float, double
+				// 
+				if ((expr_type == TypeManager.short_type) ||
+				    (expr_type == TypeManager.ushort_type) ||
+				    (expr_type == TypeManager.int32_type) ||
+				    (expr_type == TypeManager.uint32_type) ||
+				    (expr_type == TypeManager.uint64_type) ||
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return true;
+	
+			} else if (target_type == TypeManager.short_type){
+				//
+				// To short from int, long, float, double
+				// 
+				if ((expr_type == TypeManager.int32_type) ||
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if (target_type == TypeManager.ushort_type){
+				//
+				// To ushort from int, uint, long, ulong, float, double
+				//
+				if ((expr_type == TypeManager.uint32_type) ||
+				    (expr_type == TypeManager.uint64_type) ||
+				    (expr_type == TypeManager.int32_type) ||
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return true;
+				    
+			} else if (target_type == TypeManager.int32_type){
+				//
+				// To int from long, float, double
+				//
+				if ((expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if (target_type == TypeManager.uint32_type){
+				//
+				// To uint from long, ulong, float, double
+				//
+				if ((expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.uint64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if ((target_type == TypeManager.uint64_type) ||
+				   (target_type == TypeManager.int64_type)) {
+				//
+				// To long/ulong from float, double
+				//
+				if ((expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return true;
+				    
+			} else if (target_type == TypeManager.char_type){
+				//
+				// To char from ushort, int, uint, long, ulong, float, double
+				// 
+				if ((expr_type == TypeManager.ushort_type) ||
+				    (expr_type == TypeManager.int32_type) ||
+				    (expr_type == TypeManager.uint32_type) ||
+				    (expr_type == TypeManager.uint64_type) ||
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return true;
+
+			} else if (target_type == TypeManager.float_type){
+				//
+				// To float from double
+				//
+				if (expr_type == TypeManager.double_type)
+					return true;
+			}	
+
+			return (NarrowingConversion (ec, expr, target_type,Location.Null)) != null;	
 		}
 		
-		static public Expression RuntimeConversion (EmitContext ec, Expression expr,
+		static public Expression NarrowingConversion (EmitContext ec, Expression expr,
 								Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
+
+			if (target_type == TypeManager.sbyte_type){
+				//
+				// To sbyte from short, int, long, float, double.
+				//
+				if ((expr_type == TypeManager.int32_type) || 
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type)  ||
+				    (expr_type == TypeManager.short_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				
+			} else if (target_type == TypeManager.byte_type){
+				//
+				// To byte from short, ushort, int, uint, long, ulong, float, double
+				// 
+				if ((expr_type == TypeManager.short_type) ||
+				    (expr_type == TypeManager.ushort_type) ||
+				    (expr_type == TypeManager.int32_type) ||
+				    (expr_type == TypeManager.uint32_type) ||
+				    (expr_type == TypeManager.uint64_type) ||
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+	
+			} else if (target_type == TypeManager.short_type){
+				//
+				// To short from int, long, float, double
+				// 
+				if ((expr_type == TypeManager.int32_type) ||
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					
+			} else if (target_type == TypeManager.ushort_type){
+				//
+				// To ushort from int, uint, long, ulong, float, double
+				//
+				if ((expr_type == TypeManager.uint32_type) ||
+				    (expr_type == TypeManager.uint64_type) ||
+				    (expr_type == TypeManager.int32_type) ||
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				    
+			} else if (target_type == TypeManager.int32_type){
+				//
+				// To int from long, float, double
+				//
+				if ((expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+					
+			} else if (target_type == TypeManager.uint32_type){
+				//
+				// To uint from long, ulong, float, double
+				//
+				if ((expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.uint64_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+					
+			} else if ((target_type == TypeManager.uint64_type) ||
+				   (target_type == TypeManager.int64_type)) {
+				//
+				// To long/ulong from float, double
+				//
+				if ((expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				    
+			} else if (target_type == TypeManager.char_type){
+				//
+				// To char from ushort, int, uint, long, ulong, float, double
+				// 
+				if ((expr_type == TypeManager.ushort_type) ||
+				    (expr_type == TypeManager.int32_type) ||
+				    (expr_type == TypeManager.uint32_type) ||
+				    (expr_type == TypeManager.uint64_type) ||
+				    (expr_type == TypeManager.int64_type) ||
+				    (expr_type == TypeManager.float_type) ||
+				    (expr_type == TypeManager.double_type) ||
+				    (expr_type == TypeManager.decimal_type))
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+
+			} else if (target_type == TypeManager.float_type){
+				//
+				// To float from double
+				//
+				if (expr_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+			}	
+
 			TypeCode dest_type = Type.GetTypeCode (target_type);
 			TypeCode src_type = Type.GetTypeCode (expr_type);
 			Expression e = null;
@@ -2385,7 +2609,7 @@ namespace Mono.MonoBASIC {
 				if (t != null)
 					return t;
 				
-				t = RuntimeConversion (ec, e, target_type, loc);
+				t = NarrowingConversion (ec, e, target_type, loc);
 				if (t != null)
 					return t;	
 								
@@ -2447,7 +2671,7 @@ namespace Mono.MonoBASIC {
 				return ne;
 
 			if (!(runtimeconv))	{
-				ne = RuntimeConversion (ec, expr, target_type, loc);
+				ne = NarrowingConversion (ec, expr, target_type, loc);
 				if (ne != null)
 					return ne;
 				
@@ -2475,7 +2699,7 @@ namespace Mono.MonoBASIC {
 			if (ne != null)
 				return ne;
 
-			ne = RuntimeConversion (ec, expr, target_type, l);
+			ne = NarrowingConversion (ec, expr, target_type, l);
 			if (ne != null)
 				return ne;				
 
