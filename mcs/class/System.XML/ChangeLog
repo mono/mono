@@ -1,3 +1,9 @@
+2004-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added DTMXPathDocument2.cs,
+	  DTMXPathDocumentBuilder2.cs, DTMXPathDocumentWriter2.cs,
+	  DTMXPathDocumentWriter2.cs and DTMXPathNode2.cs.
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Remove support for being in bootstrap build.

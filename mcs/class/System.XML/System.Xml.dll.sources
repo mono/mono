@@ -11,6 +11,11 @@ Mono.Xml.XPath/DTMXPathDocumentBuilder.cs
 Mono.Xml.XPath/DTMXPathDocumentWriter.cs
 Mono.Xml.XPath/DTMXPathNavigator.cs
 Mono.Xml.XPath/DTMXPathNode.cs
+Mono.Xml.XPath/DTMXPathDocument2.cs
+Mono.Xml.XPath/DTMXPathDocumentBuilder2.cs
+Mono.Xml.XPath/DTMXPathDocumentWriter2.cs
+Mono.Xml.XPath/DTMXPathNavigator2.cs
+Mono.Xml.XPath/DTMXPathNode2.cs
 Mono.Xml.XPath/IdPattern.cs
 Mono.Xml.XPath/KeyPattern.cs
 Mono.Xml.XPath/LocationPathPattern.cs
