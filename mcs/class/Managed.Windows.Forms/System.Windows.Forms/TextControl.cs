@@ -64,6 +64,7 @@ namespace System.Windows.Forms {
 		internal LineTag		tags;			// Tags describing the text
 		internal int			Y;			// Baseline
 		internal int			height;			// Height of the line (height of tallest tag)
+		internal int			ascent;			// Ascent of the line (ascent of the tallest tag)
 
 		// Stuff that's important for the tree
 		internal Line			parent;			// Our parent line
@@ -254,6 +255,7 @@ namespace System.Windows.Forms {
 			tag = this.tags;
 			prev_height = this.height;	// For drawing optimization calculations
 			this.height = 0;		// Reset line height
+			this.ascent = 0;		// Reset the ascent for the line
 			tag.width = 0;
 			widths[0] = 0;
 			this.recalc = false;
@@ -271,11 +273,32 @@ namespace System.Windows.Forms {
 
 				if (pos == (tag.start-1 + tag.length)) {
 					// We just found the end of our current tag
-
-					tag.height = (int)size.Height;
+					tag.height = (int)tag.font.Height;
 					// Check if we're the tallest on the line (so far)
 					if (tag.height > this.height) {
 						this.height = tag.height;		// Yep; make sure the line knows
+					}
+
+					if (tag.ascent == 0) {
+						int	descent;
+
+						XplatUI.GetFontMetrics(g, tag.font, out tag.ascent, out descent);
+					}
+
+					if (tag.ascent > this.ascent) {
+						LineTag		t;
+
+						// We have a tag that has a taller ascent than the line;
+						t = tags;
+						while (t != tag) {
+							t.shift = tag.ascent - this.ascent;
+							t = t.next;
+						}
+
+						// Save on our line
+						this.ascent = tag.ascent;
+					} else {
+						tag.shift = this.ascent - tag.ascent;
 					}
 
 					// Update our horizontal starting pixel position
@@ -796,7 +819,7 @@ namespace System.Windows.Forms {
 
 			XplatUI.DestroyCaret(owner.Handle);
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.line.height - caret.height);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
 		}
 
 		public void PositionCaret(int x, int y) {
@@ -806,13 +829,13 @@ namespace System.Windows.Forms {
 
 			XplatUI.DestroyCaret(owner.Handle);
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.line.height - caret.height);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
 		}
 
 		public void CaretHasFocus() {
 			if (caret.tag != null) {
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.line.height - caret.height);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
 				XplatUI.CaretVisible(owner.Handle, true);
 			}
 		}
@@ -826,7 +849,7 @@ namespace System.Windows.Forms {
 			caret.height = caret.tag.height;
 
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.line.height - caret.height);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
@@ -835,7 +858,7 @@ namespace System.Windows.Forms {
 				caret.height = caret.tag.height;
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
 			}
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.line.height - caret.height);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.shift);
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
@@ -1037,13 +1060,19 @@ namespace System.Windows.Forms {
 
 			// Now draw our elements; try to only draw those that are visible
 			line_no = start;
+
+			#if Debug
+				DateTime	n = DateTime.Now;
+				Console.WriteLine("Started drawing: {0}s {1}ms", n.Second, n.Millisecond);
+			#endif
+
 			while (line_no <= end) {
 				line = GetLine(line_no);
 				tag = line.tags;
 				s = line.text.ToString();
 				while (tag != null) {
 					if (((tag.X + tag.width) > (clip.Left - viewport_x)) || (tag.X < (clip.Right - viewport_x))) {
-						g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, brush, tag.X - viewport_x, line.Y+line.height-tag.height  - viewport_y, StringFormat.GenericTypographic);
+						g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, brush, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 					}
 
 					tag = tag.next;
@@ -1051,6 +1080,11 @@ namespace System.Windows.Forms {
 
 				line_no++;
 			}
+			#if Debug
+				n = DateTime.Now;
+				Console.WriteLine("Finished drawing: {0}s {1}ms", n.Second, n.Millisecond);
+			#endif
+
 		}
 
 
@@ -1654,6 +1688,8 @@ namespace System.Windows.Forms {
 		internal int		height;		// Height in pixels of the text this tag describes
 		internal int		X;		// X location of the text this tag describes
 		internal float		width;		// Width in pixels of the text this tag describes
+		internal int		ascent;		// Ascent of the font for this tag
+		internal int		shift;		// Shift down for this tag, to stay on baseline
 
 		// Administrative
 		internal Line		line;		// The line we're on

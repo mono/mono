@@ -1,5 +1,11 @@
 2004-12-16  Peter Bartok  <pbartok@novell.com>
 
+	* TextControl.cs: Now properly aligns text on a baseline, using the
+	  new XplatUI.GetFontMetrics() method. Simplified several calculations
+	* TextBoxBase.cs: Moved #endif to allow compiling if Debug is not defined
+
+2004-12-16  Peter Bartok  <pbartok@novell.com>
+
 	* XplatUI.cs: Added GetFontMetrics() method
 	* XplatUIDriver.cs: Added GetFontMetrics() abstract
 	* XplatUIX11.cs: Implemented GetFontMetrics() method, now calls

@@ -613,10 +613,10 @@ Console.WriteLine("Received expose: {0}", pevent.ClipRectangle);
 						pevent.Graphics.DrawLine(p, (int)line.widths[i] - viewport_x, line.Y - viewport_y, (int)line.widths[i] - viewport_x, line.Y + line.height  - viewport_y);
 					}
 				}
-#endif
 
 				line_no++;
 			}
+#endif
 		}
 
 		private void TextBoxBase_MouseDown(object sender, MouseEventArgs e) {
