@@ -1,3 +1,8 @@
+2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.cs: Add test for loading dynamic assemblies using 
+	Assembly.LoadWithPartialName ().
+
 2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.cs: New file for assembly loading tests.
