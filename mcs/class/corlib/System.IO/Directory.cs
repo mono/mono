@@ -42,13 +42,22 @@ namespace System.IO
 			if (path == ":")
 				throw new NotSupportedException ("Only ':' In path");
 			
+			return CreateDirectoriesInternal (path);
+		}
+
+		static DirectoryInfo CreateDirectoriesInternal (string path)
+		{
+			DirectoryInfo info = new DirectoryInfo (path);
+			if (info.Parent != null && !info.Parent.Exists)
+				 info.Parent.Create ();
+
 			MonoIOError error;
 			if (!MonoIO.CreateDirectory (path, out error)) {
 				if (error != MonoIOError.ERROR_ALREADY_EXISTS)
 					throw MonoIO.GetException (error);
 			}
 
-			return new DirectoryInfo (path);
+			return info;
 		}
 		
 		public static void Delete (string path)

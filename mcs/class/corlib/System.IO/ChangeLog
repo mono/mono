@@ -1,3 +1,8 @@
+2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: readded mkdir -p behavior. Thanks to kiwnix for
+	pointing it out.
+
 2003-03-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MemoryStream.cs: general fixes and reformatted. Passes all tests in
