@@ -51,6 +51,7 @@ namespace System.Web.Services.Description
 		XmlCodeExporter xmlExporter;
 		XmlSchemaImporter xmlImporter;
 		CodeIdentifiers memberIds;
+		XmlReflectionImporter xmlReflectionImporter;
 		
 		#endregion // Fields
 
@@ -91,6 +92,7 @@ namespace System.Web.Services.Description
 			xmlImporter = new XmlSchemaImporter (LiteralSchemas, ClassNames);
 			soapImporter = new SoapSchemaImporter (EncodedSchemas, ClassNames);
 			xmlExporter = new XmlCodeExporter (CodeNamespace, null);
+			xmlReflectionImporter = new XmlReflectionImporter ();
 		}
 
 		protected override void EndClass ()
@@ -126,18 +128,17 @@ namespace System.Web.Services.Description
 				if (httpOper == null) throw new Exception ("Http operation binding not found");
 				
 				XmlMembersMapping inputMembers = ImportInMembersMapping (InputMessage);
-				XmlMembersMapping outputMembers = ImportOutMembersMapping (OutputMessage);
+				XmlTypeMapping outputMember = ImportOutMembersMapping (OutputMessage);
 				
-				CodeMemberMethod met = GenerateMethod (memberIds, httpOper, inputMembers, outputMembers);
+				CodeMemberMethod met = GenerateMethod (memberIds, httpOper, inputMembers, outputMember);
 				
 				xmlExporter.ExportMembersMapping (inputMembers);
-				xmlExporter.ExportMembersMapping (outputMembers);
+				xmlExporter.ExportTypeMapping (outputMember);
 
 				return met;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine (ex);
 				UnsupportedOperationBindingWarning (ex.Message);
 				return null;
 			}
@@ -156,18 +157,17 @@ namespace System.Web.Services.Description
 			return soapImporter.ImportMembersMapping (Operation.Name, "", mems);
 		}
 		
-		XmlMembersMapping ImportOutMembersMapping (Message msg)
+		XmlTypeMapping ImportOutMembersMapping (Message msg)
 		{
-			if (msg.Parts.Count == 1 && msg.Parts[0].Name == "Body" && msg.Parts[0].Element == XmlQualifiedName.Empty)
-				return xmlImporter.ImportAnyType (XmlQualifiedName.Empty,"");
+			if (msg.Parts.Count == 0) return null;
 			
-			XmlQualifiedName[] pnames = new XmlQualifiedName [msg.Parts.Count];
-			for (int n=0; n<pnames.Length; n++)
-				pnames[n] = msg.Parts[n].Element;
-			return xmlImporter.ImportMembersMapping (pnames);
+			if (msg.Parts[0].Name == "Body" && msg.Parts[0].Element == XmlQualifiedName.Empty)
+				return xmlReflectionImporter.ImportTypeMapping (typeof(XmlNode));
+			else
+				return xmlImporter.ImportTypeMapping (msg.Parts[0].Element);
 		}
 		
-		CodeMemberMethod GenerateMethod (CodeIdentifiers memberIds, HttpOperationBinding httpOper, XmlMembersMapping inputMembers, XmlMembersMapping outputMembers)
+		CodeMemberMethod GenerateMethod (CodeIdentifiers memberIds, HttpOperationBinding httpOper, XmlMembersMapping inputMembers, XmlTypeMapping outputMember)
 		{
 			CodeIdentifiers pids = new CodeIdentifiers ();
 			CodeMemberMethod method = new CodeMemberMethod ();
@@ -182,9 +182,6 @@ namespace System.Web.Services.Description
 			for (int n=0; n<inputMembers.Count; n++)
 				pids.AddUnique (inputMembers[n].MemberName, inputMembers[n]);
 
-			for (int n=0; n<outputMembers.Count; n++)
-				pids.AddUnique (outputMembers[n].MemberName, outputMembers[n]);
-				
 			string varAsyncResult = pids.AddUnique ("asyncResult","asyncResult");
 			string varResults = pids.AddUnique ("results","results");
 			string varCallback = pids.AddUnique ("callback","callback");
@@ -201,12 +198,9 @@ namespace System.Web.Services.Description
 			methodEnd.Parameters.Add (new CodeParameterDeclarationExpression (typeof (IAsyncResult),varAsyncResult));
 
 			CodeExpression[] paramArray = new CodeExpression [inputMembers.Count];
-			CodeParameterDeclarationExpression[] outParams = new CodeParameterDeclarationExpression [outputMembers.Count];
 
 			for (int n=0; n<inputMembers.Count; n++)
 			{
-//				CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (inputMembers[n].TypeFullName, inputMembers[n].MemberName);
-
 				string ptype = GetSimpleType (inputMembers[n]);
 				CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (ptype, inputMembers[n].MemberName);
 				
@@ -217,11 +211,11 @@ namespace System.Web.Services.Description
 			}
 
 			bool isVoid = true;
-			if (outputMembers.Count == 1)
+			if (outputMember != null)
 			{
-				method.ReturnType = new CodeTypeReference (outputMembers[0].TypeFullName);
-				methodEnd.ReturnType = new CodeTypeReference (outputMembers[0].TypeFullName);
-				xmlExporter.AddMappingMetadata (method.ReturnTypeCustomAttributes, outputMembers[0], outputMembers.Namespace, (outputMembers[0].ElementName != method.Name + "Result"));
+				method.ReturnType = new CodeTypeReference (outputMember.TypeFullName);
+				methodEnd.ReturnType = new CodeTypeReference (outputMember.TypeFullName);
+				xmlExporter.AddMappingMetadata (method.ReturnTypeCustomAttributes, outputMember, "");
 				isVoid = false;
 			}
 
