@@ -1,5 +1,9 @@
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_load_remote_field_new): Fix returning uninitialized
+	memory when the remoting callback does not sets the out arguments.
+	Fixes #73007.
+
 	* marshal.c (mono_delegate_free_ftnptr): Remove debug array checked in
 	by mistake.
 
