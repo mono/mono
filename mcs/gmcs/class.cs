@@ -1181,7 +1181,7 @@ namespace Mono.CSharp {
 			Class pclass = Parent as Class;
 			if (pclass != null) {
 				string pname = null;
-				Type ptype = null;
+				TypeExpr ptype = null;
 				Type t = pclass.TypeBuilder.BaseType;
 				while ((t != null) && (ptype == null)) {
 					pname = t.FullName + "." + Basename;

@@ -1,12 +1,37 @@
 2004-04-02  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (IAlias): New public interface.
+	(TypeExpr, TypeExpression): Implement IAlias.
+	(TypeAliasExpression): New public class.
+
+	* namespace.cs (Namespace): Implement IAlias.
+	(Namespace.Lookup): Return an IAlias instead on an object.
+	(Namespace.DefineName): Take an IAlias instead of an object.
+	(NamespaceEntry.AliasEntry.Resolve): Return an IAlias instead of
+	an object.
+	(NamespaceEntry.UsingAlias): Take a Membername instead of an
+	Expression.
+	(NamespaceEntry.LookupAlias): Return an IAlias instead on an
+	object.
+	(NamespaceEntry.Lookup): Likewise.
+
+	* rootcontext.cs (RootContext.LookupType): Return a TypeExpr
+	instead of a Type.	
+
+	* decl.cs (DeclSpace): Implement IAlias.
+	(DeclSpace.LookupAlias): Return an IAlias instead of a string.
+
+	* generic.cs (ConstructedType): Improved error checking.
+
+2004-04-02  Martin Baulig  <martin@ximian.com>
+
 	* convert.cs: Added type parameter conversions.
 
 	* ecore.cs
 	(UnboxCast.Emit): Emit an `unbox.any' for type params.
 	(ClassCast.Emit): If the source type is a type parameter, box it.
 	If the target type is a type parameter, emit an `unbox.any'
-	instead of a `classcast'.	
+	instead of a `classcast'.1	
 
 2004-04-01  Martin Baulig  <martin@ximian.com>
 

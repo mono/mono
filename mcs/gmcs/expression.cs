@@ -6970,7 +6970,7 @@ namespace Mono.CSharp {
 
 			SimpleName sn = (SimpleName) left_original;
 
-			Type t = RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc);
+			TypeExpr t = RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc);
 			if (t != null)
 				return true;
 
@@ -8446,9 +8446,13 @@ namespace Mono.CSharp {
 				//
 				// For now, fall back to the full lookup in that case.
 				//
-				type = RootContext.LookupType (
+				TypeExpr texpr = RootContext.LookupType (
 					ec.DeclSpace, cname, false, loc);
 
+				if (texpr == null)
+					return null;
+
+				type = texpr.ResolveType (ec);
 				if (type == null)
 					return null;
 			}

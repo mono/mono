@@ -587,6 +587,9 @@ namespace Mono.CSharp {
 				return this;
 			}
 
+			Type t;
+			int num_args;
+
 			SimpleName sn = new SimpleName (name, args.Count, loc);
 			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
 			if (resolved == null) {
@@ -599,8 +602,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				Type t = resolved.Type;
-				int num_args = TypeManager.GetNumberOfTypeArguments (t);
+				t = resolved.Type;
+				num_args = TypeManager.GetNumberOfTypeArguments (t);
 
 				if (num_args == 0) {
 					Report.Error (308, loc,
@@ -617,12 +620,22 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (resolved.Type == null)
-				throw new InternalErrorException (
-					"Failed to resolve constructed type `{0}'",
-					full_name);
+			t = resolved.Type;
+			if (t == null) {
+				Report.Error (246, loc, "Cannot find type `{0}'", full_name);
+				return null;
+			}
 
-			gt = resolved.Type.GetGenericTypeDefinition ();
+			num_args = TypeManager.GetNumberOfTypeArguments (t);
+			if (num_args == 0) {
+				Report.Error (308, loc,
+					      "The non-generic type `{0}' cannot " +
+					      "be used with type arguments.",
+					      TypeManager.CSharpName (t));
+				return null;
+			}
+
+			gt = t.GetGenericTypeDefinition ();
 			return this;
 		}
 
@@ -643,9 +656,11 @@ namespace Mono.CSharp {
 			atypes = args.Arguments;
 
 			if (atypes.Length != gen_params.Length) {
-				Report.Error (-217, loc, "Generic type `{0}' takes {1} " +
-					      "type parameters, but specified {2}.", gt.Name,
-					      gen_params.Length, atypes.Length);
+				Report.Error (305, loc,
+					      "Using the generic type `{0}' " +
+					      "requires {1} type arguments",
+					      TypeManager.GetFullName (gt),
+					      gen_params.Length);
 				return null;
 			}
 

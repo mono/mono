@@ -321,8 +321,7 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		Expression expr = ((MemberName) $4).GetTypeExpression (lexer.Location);
-		current_namespace.UsingAlias ((string) $2, expr, lexer.Location);
+		current_namespace.UsingAlias ((string) $2, (MemberName) $4, lexer.Location);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken);

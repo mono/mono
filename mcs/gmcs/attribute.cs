@@ -87,19 +87,19 @@ namespace Mono.CSharp {
                 ///   Tries to resolve the type of the attribute. Flags an error if it can't.
                 /// </summary>
 		private Type CheckAttributeType (EmitContext ec) {
-			Type t;
+			TypeExpr t;
 			bool isattributeclass = true;
 			
 			t = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
 			if (t != null) {
-				isattributeclass = t.IsSubclassOf (TypeManager.attribute_type);
+				isattributeclass = t.IsAttribute;
 				if (isattributeclass)
-					return t;
+					return t.ResolveType (ec);
 			}
 			t = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
 			if (t != null) {
-				if (t.IsSubclassOf (TypeManager.attribute_type))
-					return t;
+				if (t.IsAttribute)
+					return t.ResolveType (ec);
 			}
 			if (!isattributeclass) {
 				Report.Error (616, Location, "'" + Name + "': is not an attribute class");

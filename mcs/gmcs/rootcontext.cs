@@ -470,33 +470,29 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static Type NamespaceLookup (DeclSpace ds, string name,
-					     int num_type_args, Location loc)
+		static TypeExpr NamespaceLookup (DeclSpace ds, string name,
+						 int num_type_args, Location loc)
 		{
 			//
 			// Try in the current namespace and all its implicit parents
 			//
 			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				object result = ns.Lookup (ds, name, loc);
+				IAlias result = ns.Lookup (ds, name, num_type_args, loc);
+
 				if (result == null)
 					continue;
 
-				Type t = result as Type;
-				if (t != null) {
-					if (TypeManager.CheckGeneric (t, num_type_args))
-						return t;
-					else
-						continue;
-				}
+				if (!result.IsType)
+					return null;
 
-				return null;
+				return result.Type;
 			}
 
 			return null;
 		}
 		
-		static public Type LookupType (DeclSpace ds, string name, bool silent,
-					       Location loc)
+		static public TypeExpr LookupType (DeclSpace ds, string name, bool silent,
+						   Location loc)
 		{
 			return LookupType (ds, name, silent, 0, loc);
 		}
@@ -509,13 +505,13 @@ namespace Mono.CSharp {
 		//
 		// Come to think of it, this should be a DeclSpace
 		//
-		static public Type LookupType (DeclSpace ds, string name, bool silent,
-					       int num_type_params, Location loc)
+		static public TypeExpr LookupType (DeclSpace ds, string name, bool silent,
+						   int num_type_params, Location loc)
 		{
-			Type t;
+			TypeExpr t;
 
 			if (ds.Cache.Contains (name)){
-				t = (Type) ds.Cache [name];
+				t = (TypeExpr) ds.Cache [name];
 				if (t != null)
 					return t;
 			} else {
@@ -531,8 +527,9 @@ namespace Mono.CSharp {
 						//
 						// nested class
 						//
-						t = TypeManager.LookupType (current_type.FullName + "." + name);
-						if (t != null){
+						Type type = TypeManager.LookupType (current_type.FullName + "." + name);
+						if (type != null){
+							t = new TypeExpression (type, loc);
 							ds.Cache [name] = t;
 							return t;
 						}
@@ -560,7 +557,7 @@ namespace Mono.CSharp {
 		//   This is the silent version of LookupType, you can use this
 		//   to `probe' for a type
 		// </summary>
-		static public Type LookupType (TypeContainer tc, string name, Location loc)
+		static public TypeExpr LookupType (TypeContainer tc, string name, Location loc)
 		{
 			return LookupType (tc, name, true, loc);
 		}
