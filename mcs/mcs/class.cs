@@ -1115,19 +1115,13 @@ namespace CIR {
 
 			MethodAttributes method_attr = Modifiers.MethodAttr(ModFlags);
 					
-			// FIXME - Right now using Modifiers.MethodAttributes
-			// Guess we need to add a special method for ProprtyAttributes
-			// in modifiers.cs - when we get final comments from miguel
-			// abt why access modifiers like new internal etc are not handled
-			// in modifiers.cs
-
 			// FIXME - how to handle PropertyAttributes.HasDefault
 
 			PropertyAttributes prop_attr = PropertyAttributes.RTSpecialName |
 				                       PropertyAttributes.SpecialName;
 		
 		
-			Type tp = System.Type.GetType(Type);
+			Type tp = parent.LookupType (Type, false);
 			Type [] prop_type = new Type [1];
 			prop_type [0] = tp;
 
@@ -1195,7 +1189,7 @@ namespace CIR {
 			
 			MethodBuilder mb;
 
-			Type t = System.Type.GetType (Type);
+			Type t = parent.LookupType (Type, false);
 			Type [] p_type = new Type [1];
 			p_type [0] = t;
 			
@@ -1257,9 +1251,9 @@ namespace CIR {
 		{
 			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
 			
-			Type ret_type = System.Type.GetType (Type);
+			Type ret_type = parent.LookupType (Type, false);
 			Type [] param_types = FormalParameters.GetParameterInfo (parent);
-			
+
 			GetMethodBuilder = parent.TypeBuilder.DefineMethod ("get_Item", attr, ret_type, param_types);
 			SetMethodBuilder = parent.TypeBuilder.DefineMethod ("set_Item", attr, ret_type, param_types);
 			
@@ -1268,7 +1262,7 @@ namespace CIR {
 			if (p != null) {
 				int i;
 				
-				for (i = 0; i <= p.Length; ++i) {
+				for (i = 0; i < p.Length; ++i) {
 					GetMethodBuilder.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
 					SetMethodBuilder.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
 				}
@@ -1353,13 +1347,13 @@ namespace CIR {
 
 			string name = "Operator" + OperatorType;
 
-			Type ret_type = System.Type.GetType (ReturnType);
+			Type ret_type = parent.LookupType (ReturnType, false);
 
 			Type [] param_types = new Type [2];
 
-			param_types [0] = System.Type.GetType (FirstArgType);
+			param_types [0] = parent.LookupType (FirstArgType, false);
 			if (SecondArgType != null)
-				param_types [1] = System.Type.GetType (SecondArgType);
+				param_types [1] = parent.LookupType (SecondArgType, false);
 			
 			OperatorMethodBuilder = parent.TypeBuilder.DefineMethod (name, attr, ret_type, param_types);
 
