@@ -1,3 +1,7 @@
+2003-12-28  Tim Coleman <tim@timcoleman.com>
+	* SqlResultSet.cs:
+		Stubbed out this class.
+
 2003-12-23  Tim Coleman <tim@timcoleman.com>
 	* SqlConnection.cs:
 		Improved connection string parsing.  See
