@@ -1,3 +1,12 @@
+
+Thu Aug 19 17:26:55 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c, exceptions-x86.c, exceptions-amd64.c,
+	exceptions-ppc.c, exceptions-s390.c, exceptions-s390x.c,
+	exceptions-sparc.c: fix some performance issues in exception
+	handling and setting of the stack trace for exceptions that were
+	already thrown.
+
 2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Merge changes from 
