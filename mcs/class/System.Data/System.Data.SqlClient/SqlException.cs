@@ -99,10 +99,13 @@ namespace System.Data.SqlClient {
 			return new SqlException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State);
 		}
 
-		[MonoTODO ("Determine how to serialize this class.")]
 		public override void GetObjectData (SerializationInfo si, StreamingContext context) 
 		{
-			throw new NotImplementedException ();
+			if (si == null)
+				throw new ArgumentNullException ("si");
+
+			si.AddValue ("errors", errors);
+			base.GetObjectData (si, context);
 		}
 
 		#endregion // Methods

@@ -1,3 +1,7 @@
+2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SqlException.cs: implemented GetObjectData ().
+
 2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* ChangeLog: added this file
