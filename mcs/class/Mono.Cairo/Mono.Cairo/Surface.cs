@@ -27,7 +27,7 @@ namespace Cairo {
                 public static Cairo.Surface CreateForImage (
                         string data, Cairo.Format format, int width, int height, int stride)
                 {
-                        IntPtr p = Cairo.cairo_surface_create_for_image (
+                        IntPtr p = CairoAPI.cairo_surface_create_for_image (
                                 data, format, width, height, stride);
                         
                         return new Cairo.Surface (p);
@@ -36,7 +36,7 @@ namespace Cairo {
                 public static Cairo.Surface CreateSimilar (
                         Cairo.Surface surface, Cairo.Format format, int width, int height)
                 {
-                        IntPtr p = Cairo.cairo_surface_create_similar (
+                        IntPtr p = CairoAPI.cairo_surface_create_similar (
                                 surface.Pointer, format, width, height);
 
                         return new Cairo.Surface (p);
@@ -46,7 +46,7 @@ namespace Cairo {
                         Cairo.Surface surface, Cairo.Format format,
                         int width, int height, double red, double green, double blue, double alpha)
                 {
-                        IntPtr p = Cairo.cairo_surface_create_similar_solid (
+                        IntPtr p = CairoAPI.cairo_surface_create_similar_solid (
                                 surface.Pointer, format, width, height, red, green, blue, alpha);
 
                         return new Cairo.Surface (p);
@@ -54,12 +54,12 @@ namespace Cairo {
 
                 public void Destroy ()
                 {
-                        Cairo.cairo_surface_destroy (surface);
+                        CairoAPI.cairo_surface_destroy (surface);
                 }
 
                 public void PutImage (string data, int width, int height, int stride)
                 {
-                        Cairo.cairo_surface_put_image (surface, data, width, height, stride);
+                        CairoAPI.cairo_surface_put_image (surface, data, width, height, stride);
                 }
 
                 public IntPtr Pointer {
@@ -68,19 +68,19 @@ namespace Cairo {
 
                 public int Repeat {
                         set {
-                                Cairo.cairo_surface_set_repeat (surface, value);
+                                CairoAPI.cairo_surface_set_repeat (surface, value);
                         }
                 }
 
                 public Cairo.Matrix Matrix {
                         set {
-                                Cairo.cairo_surface_set_matrix (surface, value.Pointer);
+                                CairoAPI.cairo_surface_set_matrix (surface, value.Pointer);
                         }
 
                         get {
                                 IntPtr p = IntPtr.Zero;
                                 
-                                Cairo.cairo_surface_get_matrix (surface, ref p);
+                                CairoAPI.cairo_surface_get_matrix (surface, ref p);
 
                                 return new Cairo.Matrix (p);
                         }
@@ -88,7 +88,7 @@ namespace Cairo {
 
                 public Cairo.Filter Filter {
                         set {
-                                Cairo.cairo_surface_set_filter (surface, value);
+                                CairoAPI.cairo_surface_set_filter (surface, value);
                         }
                 }
         }

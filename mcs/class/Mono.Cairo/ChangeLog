@@ -1,5 +1,12 @@
 2003-08-12  Duncan Mak  <duncan@ximian.com>
 
+	* Mono.Cairo/Cairo.cs: csc was having trouble resolving the type
+	name because the namespace name (Cairo) is the same as the class
+	name (also Cairo). To resolve this ambiguity while keeping the
+	code looking decent, the Cairo.Cairo class is now Cairo.CairoAPI.
+
+2003-08-12  Duncan Mak  <duncan@ximian.com>
+
 	* Mono.Cairo/Cairo.cs: Now that the namespace is called 'Cairo',
 	the enums no longer need to be nested inside the Cairo class.
 

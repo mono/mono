@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace Cairo {
 
-	public class Cairo
+	public class CairoAPI
         {
                 const string CairoImp = "cairo";
                 //
@@ -225,6 +225,7 @@ namespace Cairo {
                         out double c, out double d,
                         out double tx, out double ty);
 
+                [DllImport (CairoImp)]
                 public static extern void cairo_get_target_surface (IntPtr cr);
 
                 //
