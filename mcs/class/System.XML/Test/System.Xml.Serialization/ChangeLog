@@ -1,6 +1,10 @@
+2003-05-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlSerializationWriterTests.cs. (by Erik)
+
 2003-04-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
-	* added XmlReflectionImporterTests.cs : added. (by Erik)
+	* added XmlReflectionImporterTests.cs. (by Erik)
 
 2003-04-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
