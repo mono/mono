@@ -42,6 +42,17 @@ public class Program {
 	{
 	}
 
+	[PermissionSet (SecurityAction.PermitOnly, Unrestricted=true)]
+	[PermissionSet (SecurityAction.PermitOnly, Unrestricted=false)]
+	public void Test3 ()
+	{
+	}
+	
+	[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
+	public void Test4 ()
+	{
+	}
+	
 	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlEvidence, UnmanagedCode=true)]
 	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.AllFlags, UnmanagedCode=true)]
 	static public int Main (string[] args)
