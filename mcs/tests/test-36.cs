@@ -7,13 +7,13 @@ using System;
 using System.Collections;
 struct X {
 	int [] a;
-
-		public IEnumerator GetEnumerator ()
-		{
+	
+	public IEnumerator GetEnumerator ()
+	{
 			a = new int [3] { 1, 2, 3};
 			return a.GetEnumerator ();
-		}
 	}
+}
 
 class Y {
 	static X x;
@@ -32,6 +32,14 @@ class Y {
 
 		total = 0;
 
+		foreach (object a in new X ()){
+			total += (int) a;
+		}
+		if (total != 6)
+			return 3;
+			
+		total = 0;
+		
 		//
 		// implicit block
 		//
