@@ -274,7 +274,7 @@ namespace Mono.MonoBASIC
 		
 		public Location Location {
 			get {
-				return new Location (ref_line);
+				return new Location (ref_line, col);
 			}
 		}
 		
@@ -709,7 +709,7 @@ namespace Mono.MonoBASIC
 					break;
 			}
 
-			return id.ToString ();
+			return id.ToString();
 		}
 
 		public int xtoken ()
@@ -760,6 +760,7 @@ namespace Mono.MonoBASIC
 					val = id;
 					if (is_keyword(id))
 						return getKeyword(id);
+						
 					return Token.IDENTIFIER;
 				}
 

@@ -1,3 +1,7 @@
+2003/03/29  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay: corrected some module related rules
+	* location.cs : now handles column information
+	
 2003/03/11  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* makefile.gnu : use $RUNTIME for all targets
 					 actually run the compiled program on 'test-gtk' target 

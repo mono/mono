@@ -113,6 +113,9 @@ namespace Mono.MonoBASIC
 		//
 		Stack oob_stack;
 
+		// Current starting location
+		Location startingLocation;
+		
 		DoOptions do_type;
 		//
 		// Switch stack.
@@ -525,7 +528,7 @@ imports_directive
 
 imports_terms
 	: imports_term
-	| imports_terms COMMA imports_terms
+	| imports_terms COMMA imports_term
 	;
 	
 imports_term
@@ -845,6 +848,33 @@ modifier
 	| OVERLOADS		{ $$ = 0; }
 	;
 
+opt_module_member_modifiers
+	: /* empty */				{ $$ = (int) 0; current_modifiers = 0; }
+	| module_member_modifiers 	{ $$ = $1; current_modifiers = (int) $1; }
+	;
+	
+module_member_modifiers
+	: module_member_modifier
+	| module_member_modifiers module_member_modifier
+	  { 
+		int m1 = (int) $1;
+		int m2 = (int) $2;
+
+		if ((m1 & m2) != 0) {
+			Location l = lexer.Location;
+			Report.Error (1004, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
+		}
+		$$ = (int) (m1 | m2);
+	  }
+        ;
+module_member_modifier
+	: PUBLIC		{ $$ = Modifiers.PUBLIC; }
+	| PRIVATE		{ $$ = Modifiers.PRIVATE; }
+	| FRIEND		{ $$ = Modifiers.INTERNAL; }
+	| OVERLOADS		{ $$ = 0; }
+	;
+	
+
 module_declaration
 	: MODULE identifier EOL
 	  { 
@@ -864,10 +894,8 @@ module_declaration
 	  END MODULE EOL
 	  {
 		Module new_module = (Module)current_container;
-
-		current_container = current_container.Parent;
+		current_container = current_container.Parent;  
 		CheckDef (current_container.AddClass(new_module), new_module.Name, new_module.Location);
-
 		$$ = new_module;
 	  }
 	;
@@ -884,19 +912,29 @@ module_member_declarations
 
 module_member_declaration
 	:  opt_attributes
-	   opt_modifiers
+	   opt_module_member_modifiers
 	   { 
 	   	current_attributes = (Attributes) $1;
-	   	current_modifiers = (int) $2 | (int)Modifiers.STATIC; // FIXME: for type_declaration it can result in trouble
+	   	current_modifiers = (int) $2 | (int)Modifiers.STATIC;
 	   }
 	   module_member_declarator
+	   {
+	   	$$ = $3;
+	   }
+	|  opt_attributes
+	   opt_module_member_modifiers
+	   { 
+	   	current_attributes = (Attributes) $1;
+	   	current_modifiers = (int) $2;
+	   }
+	   module_type_spec_declaration
 	   {
 	   	$$ = $3;
 	   }
 	;
 
 module_member_declarator
-	:  static_constructor_declaration
+	:  shared_constructor_declaration
 	|  method_declaration
 	   { 
 	   	Method method = (Method) $1;
@@ -907,9 +945,16 @@ module_member_declarator
 	|  constant_declaration
 	|  property_declaration			
 	|  event_declaration	
-	|  type_declaration			
 	;
-	
+
+module_type_spec_declaration
+	: class_declaration
+	| interface_declaration
+	| delegate_declaration
+	| struct_declaration
+	| enum_declaration
+	;
+	   
 constant_declaration // TODO: implement truly the logic
 	: CONST identifier ASSIGN constant_expression
 	| CONST identifier AS qualified_identifier ASSIGN constant_expression
@@ -965,21 +1010,7 @@ sub_declaration
 	  	
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
-
-	  	/* This is WEIRD: declaring a method (sub) in a module as static will
-	  	   trigger a syntax error, but the same methods MUST be static in order
-	  	   to be properly called
-	  	*/
-	  	if (current_container is Module) {
-	  	 	if (current_modifiers == Modifiers.STATIC) {
-	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
-	  		}
-	  		else
-	  		{
-	  			current_modifiers = Modifiers.STATIC;
-	  		}
-	  	}
-	  	
+		  
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;		 	
@@ -1019,20 +1050,6 @@ func_declaration
 	  	
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
-	
-	  	/* This is WEIRD: declaring a method (sub) in a module as static will
-	  	   trigger a syntax error, but the same methods MUST be static in order
-	  	   to be properly called
-	  	*/
-	  	if (current_container is Module) {
-	  	 	if (current_modifiers == Modifiers.STATIC) {
-	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
-	  		}
-	  		else
-	  		{
-	  			current_modifiers = Modifiers.STATIC;
-	  		}	  		
-	  	}
 	  	
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
@@ -1601,7 +1618,7 @@ opt_empty_parens
 	| OPEN_PARENS CLOSE_PARENS
 	;	
 	
-static_constructor_declaration
+shared_constructor_declaration
 	: SHARED SUB NEW opt_empty_parens EOL
 	  {
 	  	current_local_parameters = Parameters.EmptyReadOnlyParameters;
@@ -2387,6 +2404,10 @@ constant_declarator
 	: identifier ASSIGN constant_expression
 	  {
 		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+	  }
+	| identifier AS type ASSIGN constant_expression
+	  {
+		$$ = new VariableDeclaration ((string) $1, (Expression) $2, $4, lexer.Location);
 	  }
 	;		
 
@@ -3298,6 +3319,10 @@ public class VariableDeclaration {
 	{
 	}	
 	
+	public VariableDeclaration (string id, Expression t, object eoai, Location l) : this (id, t, eoai, l, null)
+	{
+	}	
+	
 	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs) :	this 
 					(id, TypeManager.system_object_expr, eoai, l, opt_attrs)
 	{
@@ -3581,7 +3606,8 @@ public override int parse ()
 	catch (Exception e)
 	{
 		Console.WriteLine (lexer.location + "  : Parsing error in " + lexer.ref_name);
-		Report.Error (9999, lexer.Location, "");
+		Report.Error(9999, lexer.Location, "");
+		
 		Console.WriteLine (e);
 	}
 	

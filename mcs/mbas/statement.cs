@@ -52,8 +52,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (e.Type != TypeManager.bool_type){
-				e = Expression.ConvertImplicit (ec, e, TypeManager.bool_type,
-								new Location (-1));
+				e = Expression.ConvertImplicit (ec, e, TypeManager.bool_type, Location.Null);
 			}
 
 			if (e == null){

@@ -49,7 +49,7 @@ namespace Mono.CSharp {
 		// If the 'expected' error code is reported then the
                 // compilation succeeds.
 		//
-		// Used for the test suite to excercise the error codes
+		// Used for the test suite to exercise the error codes
 		//
 		static int expected_error = 0;
 
@@ -60,7 +60,8 @@ namespace Mono.CSharp {
 		
 		static void Check (int code)
 		{
-			if (code == expected_error){
+			if (code == expected_error)
+			{
 				if (Fatal)
 					throw new Exception ();
 				
@@ -74,7 +75,7 @@ namespace Mono.CSharp {
 			Console.WriteLine (msg);
 
 			if (Stacktrace)
-				Console.WriteLine (new StackTrace ().ToString ());
+				Console.WriteLine (new StackTrace().ToString ());
 			if (Fatal)
 				throw new Exception (msg);
 		}
@@ -82,8 +83,7 @@ namespace Mono.CSharp {
 		static public void Error (int code, Location l, string text)
 		{
 			string msg = String.Format (
-				"{0}({1}) error BC{2:0000}: {3}", l.Name, l.Row, code, text);
-//				"{0}({1}) error BC{2}: {3}", l.Name, l.Row, code, text);
+				"{0}({1},{2}) error BC{3:0000}: {4}", l.Name, l.Row, l.Col, code, text);
 			
 			RealError (msg);
 			Check (code);

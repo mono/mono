@@ -41,11 +41,11 @@ linux: all
 all: mbas.exe
 
 test: mbas.exe
-	mono mbas.exe --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+	mono mbas.exe --stacktrace --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
 	mono testmbas/WriteOK.exe
 
 verbose: mbas.exe
-	mono mbas.exe --verbose --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs | less
+	mono mbas.exe --stacktrace --verbose --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs | less
 
 mbas.exe: $(COMPILER_SOURCES)
 	$(CSC) $(CSCFLAGS) $(COMPILER_SOURCES)

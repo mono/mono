@@ -1639,7 +1639,7 @@ namespace Mono.CSharp {
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (ec, expr, target_type, new Location (-1));
+			return ConvertImplicit (ec, expr, target_type, Location.Null);
 		}
 
 		public static void Error_OperatorAmbiguous (Location loc, Operator oper, Type l, Type r)

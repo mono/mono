@@ -44,14 +44,13 @@ namespace Mono.MonoBASIC
 			Modifiers.PUBLIC |
 			Modifiers.INTERNAL
 			;
-
+			
 		public Module(TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (parent, name, 0, null, l)
 		{
 			if (parent.Parent != null)
-				Report.Error (30617, l,
-					"'Module' statements can occur only at file or namespace level");
-
+				Report.Error (30617, l, "'Module' statements can occur only at file or namespace level");
+				
 			// overwrite ModFlags
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.INTERNAL, l);
 
