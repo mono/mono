@@ -46,8 +46,7 @@ IReflect
 				URIErrorObject
 
 			ErrorPrototype
-				LenientErrorPrototy
-pe
+				LenientErrorPrototype
 
 			JSPrototypeObject
 
