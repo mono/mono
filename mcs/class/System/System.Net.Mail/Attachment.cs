@@ -39,7 +39,7 @@ namespace System.Net.Mail {
 	{
 		#region Fields
 
-		ContentType contentType;
+		ContentType contentType = new ContentType ();
 		Encoding encoding;
 
 		ContentDisposition contentDisposition;
@@ -55,7 +55,6 @@ namespace System.Net.Mail {
 		public Attachment ()
 		{
 			contentDisposition = new ContentDisposition ("attachment"); 
-			contentType = new ContentType ();
 		}
 
 		public Attachment (string contentString)
@@ -186,13 +185,35 @@ namespace System.Net.Mail {
 			StreamWriter sw = new StreamWriter (contentStream);
 			sw.Write (contentString);
 			sw.Flush ();
-			sw.Close ();
 
 			contentStream.Position = 0;
 		}
 
 		public void SetContent (string contentString, string mediaType, Encoding encoding, TransferEncoding transferEncoding)
 		{
+		}
+
+		public void SetContentFromFile (string fileName)
+		{
+			SetContentFromFile (fileName, null, null);
+		}
+		
+		public void SetContentFromFile (string fileName, string name)
+		{
+			SetContentFromFile (fileName, name, null);
+		}
+
+		public void SetContentFromFile (string fileName, string name, string mediaType)
+		{
+			if (name == null) {
+				char[] match = new char [2] {';','\\'};
+				if (fileName.IndexOfAny (match) > 0)
+					name = fileName.Substring (fileName.LastIndexOfAny (match));
+			}
+
+			Stream s = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+			SetContent (s, name, mediaType);
 		}
 
 		#endregion // Methods

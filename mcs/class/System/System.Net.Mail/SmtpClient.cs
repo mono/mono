@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Net.Mime;
 using System.Net.Sockets;
 using System.Text;
 
@@ -136,6 +137,28 @@ namespace System.Net.Mail {
 			return ((int) status.StatusCode) >= 400;
 		}
 
+		public static string GenerateBoundary() 
+		{
+			StringBuilder  boundary = new StringBuilder ("__MONO__Boundary");
+
+			boundary.Append ("__");
+
+			DateTime now = DateTime.Now;
+			boundary.Append (now.Year);
+			boundary.Append (now.Month);
+			boundary.Append (now.Day);
+			boundary.Append (now.Hour);
+			boundary.Append (now.Minute);
+			boundary.Append (now.Second);
+			boundary.Append (now.Millisecond);
+
+			boundary.Append ("__");
+			boundary.Append ((new Random ()).Next ());
+			boundary.Append ("__");
+
+			return boundary.ToString();
+		}
+
 		protected void OnSendCompleted (AsyncCompletedEventArgs e)
 		{
 			if (SendCompleted != null)
@@ -148,48 +171,102 @@ namespace System.Net.Mail {
 			SmtpResponse status;
 			Sender sender = new Sender (Host, Port);
 
-			string to = CreateAddressList (message.To);
-			string cc = CreateAddressList (message.CC);
-			string bcc = CreateAddressList (message.Bcc);
-
-			Console.WriteLine (to);
+			string hostname = Dns.GetHostName ();
+			string boundary = GenerateBoundary ();
+			string messageID = String.Format ("<{0}@{1}>", Guid.NewGuid ().ToString ("n").ToUpper (), hostname);
 
 			status = sender.Read ();
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
-			status = sender.SendCommand (Command.Helo, Dns.GetHostName ());
+			// HELO
+			status = sender.SendCommand (Command.Helo, hostname);
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
+			// MAIL FROM:
 			status = sender.SendCommand (Command.MailFrom, message.From.Address);
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
-			status = sender.SendCommand (Command.RcptTo, to);
-			if (IsError (status))
-				throw new SmtpException (status.StatusCode);
+			// Send RCPT TO: for all recipients in the To list
+			for (int i = 0; i < message.To.Count; i += 1) {
+				status = sender.SendCommand (Command.RcptTo, message.To [i].Address);
+				if (IsError (status))
+					throw new SmtpException (status.StatusCode);
+			}
 
+			// Send RCPT TO: for all recipients in the CC list
+			for (int i = 0; i < message.CC.Count; i += 1) {
+				status = sender.SendCommand (Command.RcptTo, message.CC [i].Address);
+				if (IsError (status))
+					throw new SmtpException (status.StatusCode);
+			}
+
+			// Send RCPT TO: for all recipients in the Bcc list
+			for (int i = 0; i < message.Bcc.Count; i += 1) {
+				status = sender.SendCommand (Command.RcptTo, message.Bcc [i].Address);
+				if (IsError (status))
+					throw new SmtpException (status.StatusCode);
+			}
+
+			// DATA
 			status = sender.SendCommand (Command.Data);
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
+			// Send message headers
 			sender.SendHeader (HeaderName.From, message.From.ToString ());
-			sender.SendHeader (HeaderName.To, to);
-			
-			if (cc != null)
-				sender.SendHeader (HeaderName.Cc, cc);
-
-			if (bcc != null)
-				sender.SendHeader (HeaderName.Bcc, bcc);
-
+			sender.SendHeader (HeaderName.To, CreateAddressList (message.To));
+			if (message.CC.Count > 0)
+				sender.SendHeader (HeaderName.Cc, CreateAddressList (message.CC));
+			if (message.Bcc.Count > 0)
+				sender.SendHeader (HeaderName.Bcc, CreateAddressList (message.Bcc));
 			sender.SendHeader (HeaderName.Subject, message.Subject);
-			sender.SendHeader (HeaderName.MimeVersion, MimeVersion);
-			sender.SendHeader (HeaderName.ContentType, "");
-			sender.SendHeader (HeaderName.ContentTransferEncoding, "");
+			sender.SendHeader (HeaderName.MessageId, messageID);
 
-			sender.Send ("");
+			foreach (string s in message.Headers.AllKeys)
+				sender.SendHeader (s, message.Headers [s]);
+
+			bool isMultipart = (message.Attachments.Count > 0 || message.AlternateViews.Count > 0);
+
+			if (isMultipart) {
+				ContentType contentType = new ContentType ();
+
+				contentType.Boundary = boundary;
+
+				if (message.Attachments.Count > 0)
+					contentType.MediaType = "multipart/mixed";
+				else
+					contentType.MediaType = "multipart/related";
+
+				sender.SendHeader ("Content-Type", contentType.ToString ());
+				sender.StartSection (boundary, message.BodyContentType);
+			}
+			else {
+				sender.SendHeader ("Content-Type", message.BodyContentType.ToString ());
+				sender.Send ("");
+			}
+
 			sender.Send (message.Body);
+
+			if (message.AlternateViews.Count > 0) {
+				ContentType contentType = new ContentType ("multipart/related");
+				contentType.Boundary = GenerateBoundary ();
+				sender.StartSection (boundary, contentType);
+				SendAttachments (sender, message.AlternateViews, contentType);
+			}
+
+			if (message.Attachments.Count > 0) {
+				ContentType contentType = new ContentType ("multipart/mixed");
+				contentType.Boundary = GenerateBoundary ();
+				sender.StartSection (boundary, contentType);
+				SendAttachments (sender, message.Attachments, contentType);
+			}
+
+			if (isMultipart)
+				sender.EndSection (boundary);
+
 			sender.Send (".");
 
 			status = sender.Read ();
@@ -239,6 +316,15 @@ namespace System.Net.Mail {
 			throw new NotImplementedException ();
 		}
 
+		private void SendAttachments (Sender sender, Collection<Attachment> attachments, ContentType contentType)
+		{
+			for (int i = 0; i < attachments.Count; i += 1) {
+				sender.StartSection (contentType.Boundary, attachments [i].ContentType);
+				sender.Send ("TO BE IMPLEMENTED");
+			}
+			sender.EndSection (contentType.Boundary);
+		}
+
 /*
 		[MonoTODO]
 		private sealed ContextAwareResult IGetContextAwareResult.GetContextAwareResult ()
@@ -267,6 +353,7 @@ namespace System.Net.Mail {
 			public const string Subject = "Subject";
 			public const string To = "To";
 			public const string MimeVersion = "MIME-Version";
+			public const string MessageId = "Message-ID";
 		}
 
 		// This object encapsulates the status code and description of an SMTP response.
@@ -309,6 +396,11 @@ namespace System.Net.Mail {
 				client.Close ();
 			}
 
+			public void EndSection (string section)
+			{
+				Send (String.Format ("--{0}--", section));
+			}
+
 			public void Send (string data)
 			{
 				writer.WriteLine (data);
@@ -349,6 +441,13 @@ namespace System.Net.Mail {
 				response.Description = reader.ReadLine ();
 
 				return response;
+			}
+
+			public void StartSection (string section, ContentType sectionContentType)
+			{
+				Send (String.Format ("--{0}", section));
+				SendHeader ("Content-Type", sectionContentType.ToString ());
+				Send ("");
 			}
 
 			#endregion // Methods

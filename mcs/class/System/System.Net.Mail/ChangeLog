@@ -1,4 +1,9 @@
-2004-09-04 Tim Coleman  <tim@timcoleman.com>
+2004-09-08  Tim Coleman <tim@timcoleman.com>
+	* Attachment.cs: Add SetContentFromFile methods
+	* MailMessage.cs: Add MIME-Version header
+	* SmtpClient.cs: Add some attachment handling.
+
+2004-09-04  Tim Coleman <tim@timcoleman.com>
 	* Attachment.cs MailAddress.cs MailMessage.cs SendCompletedEventHandler.cs
 	* SmtpAccess.cs SmtpClient.cs SmtpException.cs SmtpStatusCode.cs:
 		New class stubs for 2.0

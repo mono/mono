@@ -71,6 +71,8 @@ namespace System.Net.Mail {
 			cc = new Collection<MailAddress> ();
 			bodyContentType = new ContentType (MediaTypeNames.Application.Octet);
 			headers = new NameValueCollection ();
+
+			headers.Add ("MIME-Version", "1.0");
 		}
 
 		public MailMessage (string from, string to)
