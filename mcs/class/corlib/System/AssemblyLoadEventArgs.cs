@@ -14,7 +14,7 @@ namespace System
 {
 	public class AssemblyLoadEventArgs: EventArgs
 	{
-		protected Assembly m_loadedAssembly;
+		private Assembly m_loadedAssembly;
 
 		public AssemblyLoadEventArgs(Assembly loadedAssembly)
 		{
