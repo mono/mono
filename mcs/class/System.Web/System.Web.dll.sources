@@ -448,11 +448,6 @@ System.Web.UI.WebControls/DataSourceInternal.cs
 System.Web.Util/AltSerialization.cs
 System.Web.Util/ApacheVersionInfo.cs
 System.Web.Util/DataSourceHelper.cs
-System.Web.Util/FileAction.cs
-System.Web.Util/FileChangeEventHandler.cs
-System.Web.Util/FileChangedEventArgs.cs
-System.Web.Util/FileChangesMonitor.cs
-System.Web.Util/FilePathParser.cs
 System.Web.Util/ICalls.cs
 System.Web.Util/IISVersionInfo.cs
 System.Web.Util/NativeFileChangeEventHandler.cs
