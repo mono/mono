@@ -934,16 +934,16 @@ namespace System.Drawing
 		internal static extern Status GdipGetImagePixelFormat ( IntPtr image, out PixelFormat format );
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetPropertyCount ( IntPtr image, out uint propNumbers );
+		internal static extern Status GdipGetPropertyCount (IntPtr image, out uint propNumbers);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetPropertyIdList ( IntPtr image, uint propNumbers, [Out] int [] list);
+		internal static extern Status GdipGetPropertyIdList (IntPtr image, uint propNumbers, [Out] int [] list);
  
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetPropertySize ( IntPtr image, out uint bufferSize, out uint propNumbers );
+		internal static extern Status GdipGetPropertySize (IntPtr image, out int bufferSize, out int propNumbers);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetAllPropertyItems ( IntPtr image, uint bufferSize, uint propNumbers, out IntPtr items );
+		internal static extern Status GdipGetAllPropertyItems (IntPtr image, int bufferSize, int propNumbers, IntPtr items);
 												   
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageRawFormat ( IntPtr image, out Guid format );

@@ -519,32 +519,39 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[Browsable (false)]
 	public PropertyItem[] PropertyItems {
 		get {
-			int prop_ptr, prop_size;
-			uint bufferSize, numProperties;
-                        
-			Status st = GDIPlus.GdipGetPropertySize (nativeObject, 
-							out bufferSize, out numProperties);
-			GDIPlus.CheckStatus (st);
-
-			IntPtr dest = Marshal.AllocHGlobal ( (int)bufferSize);           
-
-			st = GDIPlus.GdipGetAllPropertyItems (nativeObject, bufferSize, 
-								numProperties, out dest);
-			GDIPlus.CheckStatus (st);
-
-			GdipPropertyItem gdipProp = new GdipPropertyItem();
-			PropertyItem [] propItems = new PropertyItem [numProperties] ;
-			prop_size = Marshal.SizeOf (gdipProp);			
-			prop_ptr = dest.ToInt32();
+			int propNums, propsSize, propPtr, propSize;
+			IntPtr properties;
+			PropertyItem[] items;
+			GdipPropertyItem gdipProperty = new GdipPropertyItem ();
+			Status status;
 			
-			for (int i = 0; i < numProperties; i++, prop_ptr += prop_size) {
-				gdipProp = (GdipPropertyItem) Marshal.PtrToStructure 
-						((IntPtr)prop_ptr, typeof (GdipPropertyItem));						
-				GdipPropertyItem.MarshalTo (gdipProp, propItems [i]);				
+			status = GDIPlus.GdipGetPropertySize (nativeObject, out propsSize, out propNums);
+			GDIPlus.CheckStatus (status);
+
+			items =  new PropertyItem [propNums];
+			
+			if (propNums == 0)
+				return items;			
+					
+			/* Get PropertyItem list*/
+			properties = Marshal.AllocHGlobal (propsSize);
+			status = GDIPlus.GdipGetAllPropertyItems (nativeObject, propsSize, 
+								propNums, properties);
+			GDIPlus.CheckStatus (status);
+
+			propSize = Marshal.SizeOf (gdipProperty);			
+			propPtr = properties.ToInt32();
+			
+			for (int i = 0; i < propNums; i++, propPtr += propSize)
+			{
+				gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure 
+						((IntPtr)propPtr, typeof (GdipPropertyItem));						
+				items [i] = new PropertyItem ();
+				GdipPropertyItem.MarshalTo (gdipProperty, items [i]);								
 			}
 			
-			Marshal.FreeHGlobal (dest);
-			return propItems;
+			Marshal.FreeHGlobal (properties);
+			return items;
 		}
 	}
 

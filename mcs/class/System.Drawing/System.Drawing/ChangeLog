@@ -1,5 +1,12 @@
 2004-07-29 Sanjay Gupta <gsanjay@novell.com>
 
+	* gdipFunctions.cs: Corrected signatures of GdipGetPropertySize and 
+	GdipGetAllPropertyItems P/Invoke function for Image.
+	* gdipStructs.cs: Corrected MarshalTo() method of GdipPropertyItem.
+	* Image.cs: Corrected implementation of PropertyItems property.
+
+2004-07-29 Sanjay Gupta <gsanjay@novell.com>
+
 	* gdipFunctions.cs: Corrected signature of GdipGetPropertyIdList 
 	P/Invoke function for Image.
 	* Image.cs: Changed implementation of PropertyIdList property.
