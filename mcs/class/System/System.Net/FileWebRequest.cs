@@ -10,6 +10,7 @@ using System.Collections;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
 namespace System.Net 
 {
@@ -23,7 +24,12 @@ namespace System.Net
 		private string connectionGroup;
 		private string method;
 		private int timeout;
-		private bool open = false;
+		
+		private Stream requestStream = null;
+		private FileWebResponse webResponse = null;
+		private AutoResetEvent requestEndEvent = null;
+		private bool requesting = false;
+		private bool asyncResponding = false;
 		
 		// Constructors
 		
@@ -114,78 +120,129 @@ namespace System.Net
 		private delegate Stream GetRequestStreamCallback ();
 		private delegate WebResponse GetResponseCallback ();
 
-// TODO: bit simplistic this, need to add code to check for exceptions..
-// TODO: use Timeout value
-// TODO: as the spec says GetResponse can throw an exception on timeout, 
-// and because in theory one could start an async GetResponse, change 
-// properties, and start a sync GetResponse it seems best that GetResponse 
-// actually works via the async methods and the async delegates delegate 
-// to a private get response method. timeout value probably isn't an 
-// issue here, but it is in HttpWebRequest.
-
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{		
-			GetRequestStreamCallback c = new GetRequestStreamCallback (this.GetRequestStream);
-			return c.BeginInvoke (callback, state);
+			if (method == null || (!method.Equals ("PUT") && !method.Equals ("POST")))
+				throw new ProtocolViolationException ("Cannot send file when method is: " + this.method + ". Method must be PUT.");
+			// workaround for bug 24943
+			Exception e = null;
+			lock (this) {
+				if (asyncResponding || webResponse != null)
+					e = new InvalidOperationException ("This operation cannot be performed after the request has been submitted.");
+				else if (requesting)
+					e = new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
+				else
+					requesting = true;
+			}
+			if (e != null)
+				throw e;
+			/*
+			lock (this) {
+				if (asyncResponding)
+					throw new InvalidOperationException ("This operation cannot be performed after the request has been submitted.");
+				if (requesting)
+					throw new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
+				requesting = true;
+			}
+			*/
+			GetRequestStreamCallback c = new GetRequestStreamCallback (this.GetRequestStreamInternal);
+			return c.BeginInvoke (callback, state);			
 		}
 		
-		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
-		{
-			GetResponseCallback c = new GetResponseCallback (this.GetResponse);
-			return c.BeginInvoke (callback, state);
-		}
-
 		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
+			if (!asyncResult.IsCompleted)
+				asyncResult.AsyncWaitHandle.WaitOne ();				
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetRequestStreamCallback cb = (GetRequestStreamCallback) async.AsyncDelegate;
-			asyncResult.AsyncWaitHandle.WaitOne ();
-			return cb.EndInvoke(asyncResult);
+			return cb.EndInvoke (asyncResult);
+		}
+
+		public override Stream GetRequestStream()
+		{
+			IAsyncResult asyncResult = BeginGetRequestStream (null, null);
+			if (!(asyncResult.AsyncWaitHandle.WaitOne (timeout, false))) {
+				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+			}
+			return EndGetRequestStream (asyncResult);
 		}
 		
+		internal Stream GetRequestStreamInternal ()
+		{
+			this.requestStream = new FileWebStream (
+						this,
+						FileMode.CreateNew,
+						FileAccess.Write, 
+						FileShare.Read);
+			return this.requestStream;
+		}
+		
+		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
+		{
+			// workaround for bug 24943
+			Exception e = null;
+			lock (this) {
+				if (asyncResponding)
+					e = new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
+				else 
+					asyncResponding = true;
+			}
+			if (e != null)
+				throw e;
+			/*
+			lock (this) {
+				if (asyncResponding)
+					throw new InvalidOperationException ("Cannot re-call start of asynchronous method while a previous call is still in progress.");
+				asyncResponding = true;
+			}
+			*/
+			GetResponseCallback c = new GetResponseCallback (this.GetResponseInternal);
+			return c.BeginInvoke (callback, state);
+		}
+
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
 		{
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
+			if (!asyncResult.IsCompleted)
+				asyncResult.AsyncWaitHandle.WaitOne ();			
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetResponseCallback cb = (GetResponseCallback) async.AsyncDelegate;
-			asyncResult.AsyncWaitHandle.WaitOne ();
-			return cb.EndInvoke(asyncResult);		
+			WebResponse webResponse = cb.EndInvoke(asyncResult);
+			asyncResponding = false;
+			return webResponse;
 		}
-		
-		public override Stream GetRequestStream()
+				
+		public override WebResponse GetResponse ()
 		{
-			if (method == null || (!method.Equals ("PUT") && !method.Equals ("POST")))
-				throw new ProtocolViolationException ("Cannot send file when method is: " + this.method + ". Method must be PUT.");
-			if (open)
-				throw new WebException ("Stream already open");
-			open = true;
-			FileStream fileStream = new FileWebStream (
-							this,
-						     	FileMode.CreateNew, 
-							FileAccess.Write, 
-							FileShare.Read,
-							4096,
-							false);
-			return fileStream;					
+			IAsyncResult asyncResult = BeginGetResponse (null, null);
+			if (!(asyncResult.AsyncWaitHandle.WaitOne (timeout, false))) {
+				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+			}
+			return EndGetResponse (asyncResult);
 		}
-		
-		public override WebResponse GetResponse()
+			
+		public WebResponse GetResponseInternal ()
 		{
-			if (method == null || !method.Equals ("GET"))
-				throw new ProtocolViolationException ("Cannot retrieve file when method is: " + this.method + ". Method must be GET.");
-			if (open)
-				throw new WebException ("Stream already open");
+			if (webResponse != null)
+				return webResponse;			
+			lock (this) {
+				if (requesting) {
+					requestEndEvent = new AutoResetEvent (false);
+				}
+			}
+			if (requestEndEvent != null) {
+				requestEndEvent.WaitOne ();
+			}
 			FileStream fileStream = new FileWebStream (
 							this,
 						     	FileMode.Open, 
 							FileAccess.Read, 
-							FileShare.Read,
-							4096,
-							false);
- 			return new FileWebResponse (this, fileStream);
+							FileShare.Read);
+ 			this.webResponse = new FileWebResponse (this.uri, fileStream);
+ 			return (WebResponse) this.webResponse;
 		}
 		
 		[MonoTODO]
@@ -197,12 +254,17 @@ namespace System.Net
 		
 		internal void Close ()
 		{
-			open = false;
-		}
-		
-		internal bool IsClosed ()
-		{
-			return !open;
+			// already done in class below
+			// if (requestStream != null) {
+			// 	requestStream.Close ();
+			// }
+
+			lock (this) {			
+				requesting = false;
+				if (requestEndEvent != null) 
+					requestEndEvent.Set ();
+				// requestEndEvent = null;
+			}
 		}
 		
 		// to catch the Close called on the FileStream
@@ -213,11 +275,9 @@ namespace System.Net
 			internal FileWebStream (FileWebRequest webRequest,    
 					   	FileMode mode,
 					   	FileAccess access,
-					   	FileShare share,
-					   	int bufferSize,
-					   	bool useAsync)
+					   	FileShare share)
 				: base (webRequest.RequestUri.LocalPath, 
-					mode, access, share, bufferSize, useAsync)					   	
+					mode, access, share)
 			{
 				this.webRequest = webRequest;
 			}

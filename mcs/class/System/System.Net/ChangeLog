@@ -1,5 +1,7 @@
 2002-05-19  Lawrence Pit <loz@cable.a2000.nl>
 
+	* FileWebRequest.cs: finished implementation of async methods.
+	* FileWebResponse.cs: improved disposable routines.
 	* IPEndPoint.cs: fixed bug #24666 in Serialize and Create methods, 
 	byte ordering of address was backwards.
 

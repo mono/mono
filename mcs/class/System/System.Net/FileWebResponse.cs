@@ -14,7 +14,7 @@ namespace System.Net
 	[Serializable]
 	public class FileWebResponse : WebResponse, ISerializable, IDisposable
 	{
-		private FileWebRequest webRequest;
+		private Uri responseUri;
 		private FileStream fileStream;
 		private long contentLength;
 		private WebHeaderCollection webHeaders;
@@ -24,10 +24,10 @@ namespace System.Net
 		
 		protected FileWebResponse () { }
 		
-		internal FileWebResponse (FileWebRequest webRequest, FileStream fileStream)
+		internal FileWebResponse (Uri responseUri, FileStream fileStream)
 		{
 			try {
-				this.webRequest = webRequest;
+				this.responseUri = responseUri;
 				this.fileStream = fileStream;
 				this.contentLength = fileStream.Length;
 				this.webHeaders = new WebHeaderCollection ();
@@ -48,29 +48,29 @@ namespace System.Net
 		
 		public override long ContentLength {		
 			get {
-				CheckDisposed ();
-				return this.contentLength; 
+				try { return this.contentLength; }
+				finally { CheckDisposed (); }
 			}
 		}
 		
 		public override string ContentType {		
 			get {
-				CheckDisposed ();
-				return "binary/octet-stream"; 
+				try { return "binary/octet-stream"; }
+				finally { CheckDisposed (); }
 			}
 		}
 		
 		public override WebHeaderCollection Headers {		
 			get {
-				CheckDisposed ();
-				return this.webHeaders;	
+				try { return this.webHeaders; }
+				finally { CheckDisposed (); }
 			}
 		}
 		
 		public override Uri ResponseUri {		
 			get {
-				CheckDisposed ();
-				return this.webRequest.RequestUri;
+				try { return this.responseUri; }
+				finally { CheckDisposed (); }
 			}
 		}		
 
@@ -80,14 +80,15 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{
-			CheckDisposed ();
-			throw new NotImplementedException ();
+			try {
+				throw new NotImplementedException ();
+			} finally { CheckDisposed (); }
 		}		
 
 		public override Stream GetResponseStream()
 		{
-			CheckDisposed ();
-			return this.fileStream;
+			try { return this.fileStream; }
+			finally { CheckDisposed (); }
 		}
 				
 		// Cleaning up stuff
@@ -118,22 +119,21 @@ namespace System.Net
 			
 			if (disposing) {
 				// release managed resources
-				this.disposed = true;
-				this.webRequest = null;
+				this.responseUri = null;
 				this.webHeaders = null;
 			}
 			
 			// release unmanaged resources
-			Stream stream = fileStream;
+			FileStream stream = fileStream;
 			fileStream = null;
 			if (stream != null)
-				stream.Close ();	
+				stream.Close (); // also closes webRequest
 		}
 		
 		private void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("stream");
+				throw new ObjectDisposedException (GetType().FullName);
 		}		
 	}
 }
