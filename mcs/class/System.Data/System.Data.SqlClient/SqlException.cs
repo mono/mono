@@ -54,7 +54,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public SqlErrorCollection Errors {
 			get { return errors; }

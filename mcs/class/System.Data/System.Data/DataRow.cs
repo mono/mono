@@ -108,34 +108,36 @@ namespace System.Data
 					//else if(objIsDBNull == false)
 					//	throw new InvalidCastException ();
 				}
+
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 
 				//MS Implementation doesn't seem to create the proposed or original
 				//set of values when a datarow has just been created or added to the
 				//DataTable and AcceptChanges() has not been called yet.
-				if(rowState == DataRowState.Detached || rowState == DataRowState.Added)
-				{
+
+				if(rowState == DataRowState.Detached || rowState == DataRowState.Added) {
 					if(objIsDBNull)
 						current[columnIndex] = DBNull.Value;
 					else
 						current[columnIndex] = value;
-
 				}
-				else
-				{
-				BeginEdit ();  // implicitly called
-				if(objIsDBNull)
-					proposed[columnIndex] = DBNull.Value;
-				else
-					proposed[columnIndex] = value;
+				else {
+					BeginEdit ();  // implicitly called
+
+					rowState = DataRowState.Modified;
+
+					if(objIsDBNull)
+						proposed[columnIndex] = DBNull.Value;
+					else
+						proposed[columnIndex] = value;
 				}
 
 				//Don't know if this is the rigth thing to do,
 				//but it fixes my test. I believe the MS docs only say this
 				//method is implicitly called when calling AcceptChanges()
 
-				//EndEdit (); // is this the right thing to do?
+				// EndEdit (); // is this the right thing to do?
 
 			}
 		}
@@ -224,6 +226,7 @@ namespace System.Data
 			set {
 				if (value.Length > _table.Columns.Count)
 					throw new ArgumentException ();
+
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 
@@ -246,6 +249,8 @@ namespace System.Data
 
 				//FIXME: BeginEdit() not correct 
 				BeginEdit ();  // implicitly called
+				rowState = DataRowState.Modified;
+
 				//FIXME: this isn't correct.  a shorter array can set the first few values
 				//and not touch the rest.  So not all the values will get replaced
 				proposed = value;
@@ -270,8 +275,7 @@ namespace System.Data
 
 		//FIXME?: Couldn't find a way to set the RowState when adding the DataRow
 		//to a Datatable so I added this method. Delete if there is a better way.
-		internal DataRowState RowStateInternal
-		{
+		internal DataRowState RowStateInternal {
 			set { rowState = value;}
 		}
 
@@ -306,8 +310,7 @@ namespace System.Data
 			switch (rowState)
 			{
 				case DataRowState.Added:
-					rowState = DataRowState.Unchanged;
-					break;
+				case DataRowState.Detached:
 				case DataRowState.Modified:
 					rowState = DataRowState.Unchanged;
 					break;
@@ -378,11 +381,17 @@ namespace System.Data
 		[MonoTODO]
 		public void Delete () 
 		{
-			if (rowState == DataRowState.Deleted)
+			switch (rowState) {
+			case DataRowState.Added:
+				Table.Rows.Remove (this);
+				break;
+			case DataRowState.Deleted:
 				throw new DeletedRowInaccessibleException ();
-
-			//TODO: Events, Constraints
-			rowState = DataRowState.Deleted;
+			default:
+				//TODO: Events, Constraints
+				rowState = DataRowState.Deleted;
+				break;
+			}
 		}
 
 		/// <summary>

@@ -1,3 +1,23 @@
+2002-11-08  Tim Coleman <tim@timcoleman.com>
+	* System.Data/DataRow.cs:
+	* System.Data/DataTable.cs:
+		Some fix-ups related to the DbDataAdapter to make it work.
+	* System.Data.Common/DbDataAdapter.cs:
+		Fix the Fill () and Update () methods.  These now work
+		fairly well.  Need mucho testing.
+	* System.Data.SqlClient/SqlCommandBuilder.cs:
+		Support table mappings and parameter source versions now.
+	* System.Data.SqlClient/SqlConnection.cs:
+	* System.Data.SqlClient/SqlTransaction.cs:
+		Add set accessor for transaction so that SqlTransaction.Commit ()
+		will remove itself from the connection.
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+		Update/Insert/Delete command should be null by default.
+	* System.Data.SqlClient/SqlException.cs:
+		Remove a TODO attribute
+	* System.Data.SqlClient/SqlRowUpdatingEventArgs.cs:
+		Properly handle the SqlCommand object
+
 2002-11-08  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlDateTime.cs: Now the all methods are 

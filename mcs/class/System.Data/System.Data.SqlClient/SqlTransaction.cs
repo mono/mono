@@ -88,6 +88,7 @@ namespace System.Data.SqlClient {
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
 			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 COMMIT TRAN");
+			connection.Transaction = null;
 			isOpen = false;
 		}		
 

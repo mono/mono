@@ -40,10 +40,10 @@ namespace System.Data.SqlClient {
 
 		public SqlDataAdapter (SqlCommand selectCommand) 
 		{
-			DeleteCommand = new SqlCommand ();
-			InsertCommand = new SqlCommand ();
+			DeleteCommand = null;
+			InsertCommand = null;
 			SelectCommand = selectCommand;
-			UpdateCommand = new SqlCommand ();
+			UpdateCommand = null;
 		}
 
 		public SqlDataAdapter (string selectCommandText, SqlConnection selectConnection) 

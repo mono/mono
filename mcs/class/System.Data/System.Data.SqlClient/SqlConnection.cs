@@ -141,6 +141,7 @@ namespace System.Data.SqlClient {
 
 		internal SqlTransaction Transaction {
 			get { return transaction; }
+			set { transaction = value; }
 		}
 
 		[DataSysDescription ("Workstation Id, 'Workstation Id=x' in the ConnectionString.")]	

@@ -557,9 +557,15 @@ namespace System.Data
 		[MonoTODO]
 		public DataRow LoadDataRow(object[] values, bool fAcceptChanges)
 		{
-			//FIXME: implemente
-			DataRow dataRow = null;
-			return dataRow;
+			DataRow row = null;
+			if (PrimaryKey.Length == 0) {
+				row = Rows.Add (values);
+				if (fAcceptChanges)
+					row.AcceptChanges ();
+			}
+			else
+				throw new NotImplementedException ();
+			return row;
 		}
 
 		/// <summary>

@@ -19,7 +19,7 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
-		SqlCommand command;
+		SqlCommand command = null;
 
 		#endregion // Fields
 
@@ -29,9 +29,8 @@ namespace System.Data.SqlClient {
 		public SqlRowUpdatingEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 			: base (row, command, statementType, tableMapping)
 		{
-			if (!(command is SqlCommand))
-				throw new InvalidCastException ("Command is not a SqlCommand object.");
-			this.command = (SqlCommand) command;
+			if (command != null)
+				this.command = (SqlCommand) command;
 		}
 
 		#endregion // Constructors
@@ -39,8 +38,8 @@ namespace System.Data.SqlClient {
 		#region Properties
 
 		public new SqlCommand Command {
-			get { return command; }
-			set { command = value; }
+			get { return (SqlCommand) base.Command; }
+			set { base.Command = value; }
 		}
 
 		#endregion // Properties

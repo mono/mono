@@ -116,6 +116,7 @@ namespace System.Data.SqlClient {
 	
 				SqlDataReader reader = sourceCommand.ExecuteReader (CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo);
 				dbSchemaTable = reader.GetSchemaTable ();
+				reader.Close ();
 				if (closeConnection)
 					connection.Close ();	
 				BuildInformation (dbSchemaTable);
@@ -145,6 +146,7 @@ namespace System.Data.SqlClient {
 			string command = String.Format ("DELETE FROM {0} ", QuotedTableName);
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder where = new StringBuilder ();
+			string dsColumnName = String.Empty;
 
 			int parmIndex = 1;
 
@@ -166,8 +168,11 @@ namespace System.Data.SqlClient {
 				}
 					
 				parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+
+				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 				if (row != null)
-					parameter.Value = row [parameter.SourceColumn, DataRowVersion.Current];
+					parameter.Value = row [dsColumnName, DataRowVersion.Current];
+
 				where.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
 				if (!isKey)
@@ -191,6 +196,7 @@ namespace System.Data.SqlClient {
 			string sql;
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder values = new StringBuilder ();
+			string dsColumnName = String.Empty;
 
 			int parmIndex = 1;
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
@@ -203,8 +209,11 @@ namespace System.Data.SqlClient {
 				}
 
 				SqlParameter parameter = insertCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+
+				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 				if (row != null)
-					parameter.Value = row [parameter.SourceColumn, DataRowVersion.Proposed];
+					parameter.Value = row [dsColumnName];
+
 				columns.Append (GetQuotedString (parameter.SourceColumn));
 				values.Append (parameter.ParameterName);
 			}
@@ -237,8 +246,8 @@ namespace System.Data.SqlClient {
 			string command = String.Format ("UPDATE {0} SET ", QuotedTableName);
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder where = new StringBuilder ();
-
 			int parmIndex = 1;
+			string dsColumnName = String.Empty;
 
 			// First, create the X=Y list for UPDATE
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
@@ -246,8 +255,11 @@ namespace System.Data.SqlClient {
 					columns.Append (" , ");
 
 				SqlParameter parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+
+				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 				if (row != null)
-					parameter.Value = row [parameter.SourceColumn, DataRowVersion.Proposed];
+					parameter.Value = row [dsColumnName, DataRowVersion.Proposed];
+
 				columns.Append (String.Format ("{0} = {1}", GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 			}
 
@@ -271,8 +283,11 @@ namespace System.Data.SqlClient {
 				}
 					
 				parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+
+				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 				if (row != null)
-					parameter.Value = row [parameter.SourceColumn, DataRowVersion.Current];
+					parameter.Value = row [dsColumnName, DataRowVersion.Current];
+
 				where.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
 				if (!isKey)
@@ -401,26 +416,32 @@ namespace System.Data.SqlClient {
 				return;
 			}
 
-			BuildCache (false);
+			try {
+				BuildCache (false);
 
-			switch (e.StatementType) {
-			case StatementType.Delete:
-				e.Command = CreateDeleteCommand (e.Row, e.TableMapping);
-				e.Status = UpdateStatus.Continue;
-				break;
-			case StatementType.Insert:
-				e.Command = CreateInsertCommand (e.Row, e.TableMapping);
-				e.Status = UpdateStatus.Continue;
-				break;
-			case StatementType.Update:
-				e.Command = CreateUpdateCommand (e.Row, e.TableMapping);
-				e.Status = UpdateStatus.Continue;
-				break;
+				switch (e.StatementType) {
+				case StatementType.Delete:
+					e.Command = CreateDeleteCommand (e.Row, e.TableMapping);
+					e.Status = UpdateStatus.Continue;
+					break;
+				case StatementType.Insert:
+					e.Command = CreateInsertCommand (e.Row, e.TableMapping);
+					e.Status = UpdateStatus.Continue;
+					break;
+				case StatementType.Update:
+					e.Command = CreateUpdateCommand (e.Row, e.TableMapping);
+					e.Status = UpdateStatus.Continue;
+					break;
+				}
+
+				if (e.Command != null && e.Row != null) {
+					e.Row.AcceptChanges ();
+					e.Status = UpdateStatus.SkipCurrentRow;
+				}
 			}
-			
-			if (e.Command != null && e.Row != null) {
-				e.Row.AcceptChanges ();
-				e.Status = UpdateStatus.SkipCurrentRow;
+			catch (Exception exception) {
+				e.Errors = exception;
+				e.Status = UpdateStatus.ErrorsOccurred;
 			}
 		}
 
