@@ -16,7 +16,7 @@ namespace System.Xml.Schema
 		private string name;
 		private XmlSchemaAttributeGroup redefined;
 		private XmlQualifiedName qualifiedName;
-		private int errorCount;
+		private static string xmlname = "attributeGroup";
 
 		public XmlSchemaAttributeGroup()
 		{
@@ -104,11 +104,103 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-				
-		internal void error(ValidationEventHandler handle,string message)
+
+		//<attributeGroup
+		//  id = ID
+		//  name = NCName
+		//  ref = QName // Not present in this class.
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, ((attribute | attributeGroup)*, anyAttribute?))
+		//</attributeGroup>
+		internal static XmlSchemaAttributeGroup Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			this.errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaAttributeGroup attrgrp = new XmlSchemaAttributeGroup();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaAttributeGroup.Read, name="+reader.Name,null);
+				reader.SkipToEnd();
+				return null;
+			}
+
+			attrgrp.LineNumber = reader.LineNumber;
+			attrgrp.LinePosition = reader.LinePosition;
+			attrgrp.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					attrgrp.Id = reader.Value;
+				}
+				else if(reader.Name == "name")
+				{
+					attrgrp.name = reader.Value;
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for attributeGroup in this context",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return attrgrp;
+
+			//Content: 1.annotation?, 2.(attribute | attributeGroup)*, 3.anyAttribute?
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaAttributeGroup.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						attrgrp.Annotation = annotation;
+					continue;
+				}
+				if(level <= 2)
+				{
+					if(reader.LocalName == "attribute")
+					{
+						level = 2;
+						XmlSchemaAttribute attr = XmlSchemaAttribute.Read(reader,h);
+						if(attr != null)
+							attrgrp.Attributes.Add(attr);
+						continue;
+					}
+					if(reader.LocalName == "attributeGroup")
+					{
+						level = 2;
+						XmlSchemaAttributeGroupRef attr = XmlSchemaAttributeGroupRef.Read(reader,h);
+						if(attr != null)
+							attrgrp.attributes.Add(attr);
+						continue;
+					}
+				}
+				if(level <= 3 && reader.LocalName == "anyAttribute")
+				{
+					level = 4;
+					XmlSchemaAnyAttribute anyattr = XmlSchemaAnyAttribute.Read(reader,h);
+					if(anyattr != null)
+						attrgrp.AnyAttribute = anyattr;
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return attrgrp;
 		}
+		
 	}
 }

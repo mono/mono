@@ -14,7 +14,7 @@ namespace System.Xml.Schema
 		private XmlSchemaSimpleTypeContent content;
 		//compilation vars
 		internal bool islocal = true; // Assuming local means we have to specify islocal=false only in XmlSchema
-		private int errorCount;
+		private static string xmlname = "simpleType";
 
 		public XmlSchemaSimpleType()
 		{
@@ -138,11 +138,111 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-		
-		internal void error(ValidationEventHandler handle,string message)
+
+		//<simpleType 
+		//  final = (#all | (list | union | restriction)) 
+		//  id = ID 
+		//  name = NCName 
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, (restriction | list | union))
+		//</simpleType>
+		internal static XmlSchemaSimpleType Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			this.errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaSimpleType stype = new XmlSchemaSimpleType();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaGroup.Read, name="+reader.Name,null);
+				reader.Skip();
+				return null;
+			}
+
+			stype.LineNumber = reader.LineNumber;
+			stype.LinePosition = reader.LinePosition;
+			stype.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "final")
+				{
+					Exception innerex;
+					stype.Final = XmlSchemaUtil.ReadDerivationAttribute(reader, out innerex, "final");
+					if(innerex != null)
+						error(h, "some invalid values not a valid value for final", innerex);
+				}
+				else if(reader.Name == "id")
+				{
+					stype.Id = reader.Value;
+				}
+				else if(reader.Name == "name")
+				{
+					stype.Name = reader.Value;
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for simpleType",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return stype;
+
+			//	Content: (annotation?, (restriction | list | union))
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaSimpleType.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						stype.Annotation = annotation;
+					continue;
+				}
+				if(level <= 2)
+				{
+					if(reader.LocalName == "restriction")
+					{
+						level = 3;
+						XmlSchemaSimpleTypeRestriction restriction = XmlSchemaSimpleTypeRestriction.Read(reader,h);
+						if(restriction != null)
+							stype.content = restriction;
+						continue;
+					}
+					if(reader.LocalName == "list")
+					{
+						level = 3;
+						XmlSchemaSimpleTypeList list = XmlSchemaSimpleTypeList.Read(reader,h);
+						if(list != null)
+							stype.content = list;
+						continue;
+					}
+					if(reader.LocalName == "union")
+					{
+						level = 3;
+						XmlSchemaSimpleTypeUnion union = XmlSchemaSimpleTypeUnion.Read(reader,h);
+						if(union != null)
+							stype.content = union;
+						continue;
+					}
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return stype;
 		}
+
+
 	}
 }

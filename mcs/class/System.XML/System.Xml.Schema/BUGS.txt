@@ -1,8 +1,5 @@
 Bugs in Implementation:
 
-1. XmlSchema.Read Fails if there is a wrong value for a enum type. Eg form="none" will throw an exception.
-   The only conformant solution to this is using our own Deserializer or parser.
-2. Schema Compile ignores errors where a name or id (or any other attribute) is empty. Eg if a schama has name="",
-   it will not throw an exception but will be silently ignored. Again the solution is to write own parser.
-3. Not all Compile methods check for the Id attribute. Trivial but needs to be done.
-4. Need to check if errorCount is calculted correctly, and all of the error() methods increase it.
+1. Not all Compile methods check for the Id attribute. Trivial but needs to be done.
+2. None of the XmlSchemaObjects except the XmlSchema populate XmlSerializerNamespaces.
+3. Non schema attributes are not being handled. Need an internal XmlAttribute constructor.

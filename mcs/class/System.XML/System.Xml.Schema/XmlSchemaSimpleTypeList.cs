@@ -14,7 +14,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaSimpleType itemType;
 		private XmlQualifiedName itemTypeName;
-		private int errorCount;
+		private static string xmlname = "list";
 
 		public XmlSchemaSimpleTypeList()
 		{
@@ -69,11 +69,83 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-		
-		internal void error(ValidationEventHandler handle,string message)
+		//<list 
+		//  id = ID 
+		//  itemType = QName 
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, (simpleType?))
+		//</list>
+		internal static XmlSchemaSimpleTypeList Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			this.errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaSimpleTypeList list = new XmlSchemaSimpleTypeList();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaSimpleTypeList.Read, name="+reader.Name,null);
+				reader.Skip();
+				return null;
+			}
+
+			list.LineNumber = reader.LineNumber;
+			list.LinePosition = reader.LinePosition;
+			list.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					list.Id = reader.Value;
+				}
+				else if(reader.Name == "itemType")
+				{
+					Exception innerex;
+					list.ItemTypeName = XmlSchemaUtil.ReadQNameAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for itemType attribute",innerex);
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for list",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return list;
+			//  Content: annotation?, simpleType?
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaSimpleTypeList.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						list.Annotation = annotation;
+					continue;
+				}
+				if(level <= 2 && reader.LocalName == "simpleType")
+				{
+					level = 3;
+					XmlSchemaSimpleType stype = XmlSchemaSimpleType.Read(reader,h);
+					if(stype != null)
+						list.itemType = stype;
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return list;
 		}
 	}
 }

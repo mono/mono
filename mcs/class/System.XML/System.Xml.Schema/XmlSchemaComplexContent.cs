@@ -2,6 +2,7 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Xml.Schema
 {
@@ -12,7 +13,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaContent content;
 		private bool isMixed;
-		private int errorCount=0;
+		private static string xmlname = "complexContent";
 
 		public XmlSchemaComplexContent()
 		{}
@@ -69,11 +70,94 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-
-		internal void error(ValidationEventHandler handle,string message)
+		//<complexContent
+		//  id = ID
+		//  mixed = boolean
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, (restriction | extension))
+		//</complexContent>
+		internal static XmlSchemaComplexContent Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaComplexContent complex = new XmlSchemaComplexContent();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaComplexContent.Read, name="+reader.Name,null);
+				reader.Skip();
+				return null;
+			}
+
+			complex.LineNumber = reader.LineNumber;
+			complex.LinePosition = reader.LinePosition;
+			complex.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					complex.Id = reader.Value;
+				}
+				else if(reader.Name == "mixed")
+				{
+					Exception innerex;
+					complex.isMixed = XmlSchemaUtil.ReadBoolAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h,reader.Value + " is an invalid value for mixed",innerex);
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for complexContent",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return complex;
+			//Content: (annotation?, (restriction | extension))
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaComplexContent.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						complex.Annotation = annotation;
+					continue;
+				}
+				if(level <=2)
+				{
+					if(reader.LocalName == "restriction")
+					{
+						level = 3;
+						XmlSchemaComplexContentRestriction restriction = XmlSchemaComplexContentRestriction.Read(reader,h);
+						if(restriction != null)
+							complex.content = restriction;
+						continue;
+					}
+					if(reader.LocalName == "extension")
+					{
+						level = 3;
+						XmlSchemaComplexContentExtension extension = XmlSchemaComplexContentExtension.Read(reader,h);
+						if(extension != null)
+							complex.content = extension;
+						continue;
+					}
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return complex;
 		}
 	}
 }

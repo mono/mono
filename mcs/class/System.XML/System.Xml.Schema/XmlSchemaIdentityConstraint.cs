@@ -15,7 +15,6 @@ namespace System.Xml.Schema
 		private string name;
 		private XmlQualifiedName qName;
 		private XmlSchemaXPath selector;
-		private int errorCount = 0;
 
 		public XmlSchemaIdentityConstraint()
 		{
@@ -73,12 +72,6 @@ namespace System.Xml.Schema
 				error(h, "id must be a valid ID");
 
 			return errorCount;
-		}
-
-		internal void error(ValidationEventHandler handle, string message)
-		{
-			errorCount++;
-			ValidationHandler.RaiseValidationError(handle, this, message);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace System.Xml.Schema
@@ -11,7 +12,8 @@ namespace System.Xml.Schema
 	public class XmlSchemaAll : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
-		private int errorCount=0;
+		private static string xmlname = "all";
+
 		public XmlSchemaAll()
 		{
 			items = new XmlSchemaObjectCollection();
@@ -52,11 +54,101 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-
-		internal void error(ValidationEventHandler handle,string message)
+		//<all
+		//  id = ID
+		//  maxOccurs = 1 : 1
+		//  minOccurs = (0 | 1) : 1
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, element*)
+		//</all>
+		internal static XmlSchemaAll Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaAll all = new XmlSchemaAll();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaAll.Read, name="+reader.Name,null);
+				reader.SkipToEnd();
+				return null;
+			}
+			
+			all.LineNumber = reader.LineNumber;
+			all.LinePosition = reader.LinePosition;
+			all.SourceUri = reader.BaseURI;
+
+			//Read Attributes
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					all.Id = reader.Value;
+				}
+				else if(reader.Name == "maxOccurs")
+				{
+					try
+					{
+						all.MaxOccursString = reader.Value;
+					}
+					catch(Exception e)
+					{
+						error(h,reader.Value + " is an invalid value for maxOccurs",e);
+					}
+				}
+				else if(reader.Name == "minOccurs")
+				{
+					try
+					{
+						all.MinOccursString = reader.Value;
+					}
+					catch(Exception e)
+					{
+						error(h,reader.Value + " is an invalid value for minOccurs",e);
+					}
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for all",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return all;
+
+			//Content: (annotation?, element*)
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaAll.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2;	//Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						all.Annotation = annotation;
+					continue;
+				}
+				if(level <=2 && reader.LocalName == "element")
+				{
+					level = 2;
+					XmlSchemaElement element = XmlSchemaElement.Read(reader,h);
+					if(element != null)
+						all.items.Add(element);
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return all;
 		}
 	}
 }

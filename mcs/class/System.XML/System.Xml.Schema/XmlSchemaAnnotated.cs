@@ -9,21 +9,7 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// Summary description for XmlSchemaAnnotated.
 	/// </summary>
-	// Include all childrens of this class
-//	[XmlInclude(typeof(XmlSchemaAnyAttribute)),
-//	XmlInclude(typeof(XmlSchemaAttribute)),
-//	XmlInclude(typeof(XmlSchemaAttributeGroup)),
-//	XmlInclude(typeof(XmlSchemaAttributeGroupRef)),
-//	XmlInclude(typeof(XmlSchemaContent)),
-//	XmlInclude(typeof(XmlSchemaContentModel)),
-//	XmlInclude(typeof(XmlSchemaFacet)),
-//	XmlInclude(typeof(XmlSchemaGroup)),
-//	XmlInclude(typeof(XmlSchemaIdentityConstraint)),
-//	XmlInclude(typeof(XmlSchemaNotation)),
-//	XmlInclude(typeof(XmlSchemaParticle)),
-//	XmlInclude(typeof(XmlSchemaSimpleTypeContent)),
-//	XmlInclude(typeof(XmlSchemaType)),
-//	XmlInclude(typeof(XmlSchemaXPath))]
+
 	public class XmlSchemaAnnotated : XmlSchemaObject
 	{
 		private XmlSchemaAnnotation annotation;

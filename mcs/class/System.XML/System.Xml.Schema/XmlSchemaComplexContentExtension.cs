@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectCollection attributes;
 		private XmlQualifiedName baseTypeName;
 		private XmlSchemaParticle particle;
-		private int errorCount = 0;
+		private static string xmlname = "extension";
 
 		public XmlSchemaComplexContentExtension()
 		{
@@ -82,7 +82,7 @@ namespace System.Xml.Schema
 					errorCount += atgrp.Compile(h,info);
 				}
 				else
-					error(h,"object is not valid in this place");
+					error(h,obj.GetType() +" is not valid in this place::ComplexConetnetExtension");
 			}
 			
 			if(Particle != null)
@@ -115,11 +115,138 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-
-		internal void error(ValidationEventHandler handle,string message)
+		//<extension
+		//  base = QName
+		//  id = ID
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, ((group | all | choice | sequence)?, ((attribute | attributeGroup)*, anyAttribute?)))
+		//</extension>
+		internal static XmlSchemaComplexContentExtension Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaComplexContentExtension extension = new XmlSchemaComplexContentExtension();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaComplexContentExtension.Read, name="+reader.Name,null);
+				reader.Skip();
+				return null;
+			}
+
+			extension.LineNumber = reader.LineNumber;
+			extension.LinePosition = reader.LinePosition;
+			extension.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "base")
+				{
+					Exception innerex;
+					extension.baseTypeName = XmlSchemaUtil.ReadQNameAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for base attribute",innerex);
+				}
+				else if(reader.Name == "id")
+				{
+					extension.Id = reader.Value;
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for extension",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return extension;
+			//Content: 1. annotation?, 
+			//			(2.(group | all | choice | sequence)?, (3.(attribute | attributeGroup)*, 4.anyAttribute?)))
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaComplexContentExtension.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						extension.Annotation = annotation;
+					continue;
+				}
+				if(level <= 2)
+				{
+					if(reader.LocalName == "group")
+					{
+						level = 3;
+						XmlSchemaGroupRef group = XmlSchemaGroupRef.Read(reader,h);
+						if(group != null)
+							extension.particle = group;
+						continue;
+					}
+					if(reader.LocalName == "all")
+					{
+						level = 3;
+						XmlSchemaAll all = XmlSchemaAll.Read(reader,h);
+						if(all != null)
+							extension.particle = all;
+						continue;
+					}
+					if(reader.LocalName == "choice")
+					{
+						level = 3;
+						XmlSchemaChoice choice = XmlSchemaChoice.Read(reader,h);
+						if(choice != null)
+							extension.particle = choice;
+						continue;
+					}
+					if(reader.LocalName == "sequence")
+					{
+						level = 3;
+						XmlSchemaSequence sequence = XmlSchemaSequence.Read(reader,h);
+						if(sequence != null)
+							extension.particle = sequence;
+						continue;
+					}
+				}
+				if(level <= 3)
+				{
+					if(reader.LocalName == "attribute")
+					{
+						level = 3;
+						XmlSchemaAttribute attr = XmlSchemaAttribute.Read(reader,h);
+						if(attr != null)
+							extension.Attributes.Add(attr);
+						continue;
+					}
+					if(reader.LocalName == "attributeGroup")
+					{
+						level = 3;
+						XmlSchemaAttributeGroupRef attr = XmlSchemaAttributeGroupRef.Read(reader,h);
+						if(attr != null)
+							extension.attributes.Add(attr);
+						continue;
+					}
+				}
+				if(level <= 4 && reader.LocalName == "anyAttribute")
+				{
+					level = 5;
+					XmlSchemaAnyAttribute anyattr = XmlSchemaAnyAttribute.Read(reader,h);
+					if(anyattr != null)
+						extension.AnyAttribute = anyattr;
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return extension;
 		}
 	}
 }

@@ -24,8 +24,8 @@ namespace System.Xml.Schema
 		private XmlSchemaUse use;
 		//Compilation fields
 		internal bool parentIsSchema = false;
-		internal int errorCount;
-		
+		private static string xmlname = "attribute";
+
 		public XmlSchemaAttribute()
 		{
 			//FIXME: Docs says the default is optional.
@@ -254,11 +254,124 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-		
-		internal void error(ValidationEventHandler handle,string message)
+		//<attribute
+		//  default = string
+		//  fixed = string
+		//  form = (qualified | unqualified)
+		//  id = ID
+		//  name = NCName
+		//  ref = QName
+		//  type = QName
+		//  use = (optional | prohibited | required) : optional
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, (simpleType?))
+		//</attribute>
+		internal static XmlSchemaAttribute Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			this.errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaAttribute attribute = new XmlSchemaAttribute();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaAttribute.Read, name="+reader.Name,null);
+				reader.SkipToEnd();
+				return null;
+			}
+
+			attribute.LineNumber = reader.LineNumber;
+			attribute.LinePosition = reader.LinePosition;
+			attribute.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "default")
+				{
+					attribute.defaultValue = reader.Value;
+				}
+				else if(reader.Name == "fixed")
+				{
+					attribute.fixedValue = reader.Value;
+				}
+				else if(reader.Name == "form")
+				{
+					Exception innerex;
+					attribute.form = XmlSchemaUtil.ReadFormAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for form attribute", innerex);
+				}
+				else if(reader.Name == "id")
+				{
+					attribute.Id = reader.Value;
+				}
+				else if(reader.Name == "name")
+				{
+					attribute.name = reader.Value;
+				}
+				else if(reader.Name == "ref")
+				{
+					Exception innerex;
+					attribute.refName = XmlSchemaUtil.ReadQNameAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for ref attribute",innerex);
+				}
+				else if(reader.Name == "type")
+				{
+					Exception innerex;
+					attribute.schemaTypeName = XmlSchemaUtil.ReadQNameAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for type attribute",innerex);
+				}
+				else if(reader.Name == "use")
+				{
+					Exception innerex;
+					attribute.use = XmlSchemaUtil.ReadUseAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for use attribute", innerex);
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for attribute",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return attribute;
+
+			//  Content: (annotation?, (simpleType?))
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaAttribute.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						attribute.Annotation = annotation;
+					continue;
+				}
+				if(level <=2 && reader.LocalName == "simpleType")
+				{
+					level = 3;
+					XmlSchemaSimpleType stype = XmlSchemaSimpleType.Read(reader,h);
+					if(stype != null)
+						attribute.schemaType = stype;
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return attribute;
 		}
+		
 	}
 }

@@ -37,9 +37,10 @@ namespace System.Xml.Schema
 		private XmlAttribute[] unhandledAttributes ;
 		private string version;
 		private string language;
-
+		
 		// Compiler specific things
 		private XmlSchemaInfo info;
+		private static string xmlname = "schema";
 
 		public XmlSchema()
 		{
@@ -408,12 +409,216 @@ namespace System.Xml.Schema
 		}
 
 		[MonoTODO]
-		//FIXME: Use the validationeventhandler. Probably needs the parser
-		public static XmlSchema Read(XmlReader reader, ValidationEventHandler validationEventHandler)
+		public static XmlSchema Read(XmlReader rdr, ValidationEventHandler validationEventHandler)
 		{
-			XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));
-			return (XmlSchema) xser.Deserialize(reader);
+			//XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));
+			//return (XmlSchema) xser.Deserialize(reader);
+			XmlSchemaReader reader = new XmlSchemaReader(rdr, validationEventHandler);
+
+			while(reader.ReadNextElement())
+			{
+				switch(reader.NodeType)
+				{
+					case XmlNodeType.Element:
+						if(reader.LocalName == "schema")
+						{
+							XmlSchema schema = new XmlSchema();
+							
+							schema.LineNumber = reader.LineNumber;
+							schema.LinePosition = reader.LinePosition;
+							schema.SourceUri = reader.BaseURI;
+
+							ReadAttributes(schema, reader, validationEventHandler);
+							//IsEmptyElement does not behave properly if reader is
+							//positioned at an attribute.
+							reader.MoveToElement();
+							if(!reader.IsEmptyElement)
+							{
+								ReadContent(schema, reader, validationEventHandler);
+							}
+							return schema;
+						}
+						else
+						{
+							//Schema can't be generated. Throw an exception
+							throw new XmlSchemaException("The root element must be schema", null);
+						}
+					default:
+						error(validationEventHandler, "This should never happen. XmlSchema.Read 1 ",null);
+						break;
+				}
+			}
+			throw new XmlSchemaException("The top level schema must have namespace "+XmlSchema.Namespace, null);
 		}
+
+		private static void ReadAttributes(XmlSchema schema, XmlSchemaReader reader, ValidationEventHandler h)
+		{
+			Exception ex; 
+			
+			reader.MoveToElement();
+			while(reader.MoveToNextAttribute())
+			{
+				switch(reader.Name)
+				{
+					case "attributeFormDefault" :
+						schema.attributeFormDefault = XmlSchemaUtil.ReadFormAttribute(reader,out ex);
+						if(ex != null)
+							error(h, reader.Value + " is not a valid value for attributeFormDefault.", ex);
+						break;
+					case "blockDefault" :
+						schema.blockDefault = XmlSchemaUtil.ReadDerivationAttribute(reader,out ex, "blockDefault");
+						if(ex != null)
+							warn(h, ex.Message, ex);
+						break;
+					case "elementFormDefault":
+						schema.elementFormDefault = XmlSchemaUtil.ReadFormAttribute(reader, out ex);
+						if(ex != null)
+							error(h, reader.Value + " is not a valid value for elementFormDefault.", ex);
+						break;
+					case "finalDefault":
+						 schema.finalDefault = XmlSchemaUtil.ReadDerivationAttribute(reader, out ex, "finalDefault");
+						if(ex != null)
+							warn(h, ex.Message , ex);
+						break;
+					case "id":
+						schema.id = reader.Value;
+						break;
+					case "targetNamespace":
+						schema.targetNamespace = reader.Value;
+						break;
+					case "version":
+						schema.version = reader.Value;
+						break;
+					case "xml:lang":
+						schema.language = reader.Value;
+						break;
+					default:
+						if(reader.Prefix == "xmlns")
+							schema.Namespaces.Add(reader.LocalName, reader.Value);
+						else if(reader.Name == "xmlns")
+							schema.Namespaces.Add("",reader.Value);
+						else if(reader.Prefix == "" || reader.NamespaceURI == XmlSchema.Namespace)
+							error(h, reader.Name + " attribute is not allowed in schema element",null);
+//					FIXME: There is no public constructor for XmlAttribute. Nor is there a way to access the XmlNode
+//						else
+//							unknown.Add(new XmlAttibute());
+						break;
+				}
+			}
+		}
+
+		private static void ReadContent(XmlSchema schema, XmlSchemaReader reader, ValidationEventHandler h)
+		{
+			reader.MoveToElement();
+			if(reader.LocalName != "schema" && reader.NamespaceURI != XmlSchema.Namespace && reader.NodeType != XmlNodeType.Element)
+				error(h, "UNREACHABLE CODE REACHED: Method: Schema.ReadContent, " + reader.LocalName + ", " + reader.NamespaceURI,null);
+
+			//(include | import | redefine | annotation)*, 
+			//((simpleType | complexType | group | attributeGroup | element | attribute | notation | annotation)*
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchema.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1)
+				{
+					if(reader.LocalName == "include")
+					{
+						XmlSchemaInclude include = XmlSchemaInclude.Read(reader,h);
+						if(include != null) 
+							schema.includes.Add(include);
+						continue;
+					}
+					if(reader.LocalName == "import")
+					{
+						XmlSchemaImport import = XmlSchemaImport.Read(reader,h);
+						if(import != null)
+							schema.includes.Add(import);
+						continue;
+					}
+					if(reader.LocalName == "redefine")
+					{
+						XmlSchemaRedefine redefine = XmlSchemaRedefine.Read(reader,h);
+						if(redefine != null)
+							schema.includes.Add(redefine);
+						continue;
+					}
+					if(reader.LocalName == "annotation")
+					{
+						XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+						if(annotation != null)
+							schema.items.Add(annotation);
+						continue;
+					}
+				}
+				if(level <=2)
+				{
+					level = 2;
+					if(reader.LocalName == "simpleType")
+					{
+						XmlSchemaSimpleType stype = XmlSchemaSimpleType.Read(reader,h);
+						if(stype != null)
+							schema.items.Add(stype);
+						continue;
+					}
+					if(reader.LocalName == "complexType")
+					{
+						XmlSchemaComplexType ctype = XmlSchemaComplexType.Read(reader,h);
+						if(ctype != null)
+							schema.items.Add(ctype);
+						continue;
+					}
+					if(reader.LocalName == "group")
+					{
+						XmlSchemaGroup group = XmlSchemaGroup.Read(reader,h);
+						if(group != null)
+							schema.items.Add(group);
+						continue;
+					}
+					if(reader.LocalName == "attributeGroup")
+					{
+						XmlSchemaAttributeGroup attributeGroup = XmlSchemaAttributeGroup.Read(reader,h);
+						if(attributeGroup != null)
+							schema.items.Add(attributeGroup);
+						continue;
+					}
+					if(reader.LocalName == "element")
+					{
+						XmlSchemaElement element = XmlSchemaElement.Read(reader,h);
+						if(element != null)
+							schema.items.Add(element);
+						continue;
+					}
+					if(reader.LocalName == "attribute")
+					{
+						XmlSchemaAttribute attr = XmlSchemaAttribute.Read(reader,h);
+						if(attr != null)
+							schema.items.Add(attr);
+						continue;
+					}
+					if(reader.LocalName == "notation")
+					{
+						XmlSchemaNotation notation = XmlSchemaNotation.Read(reader,h);
+						if(notation != null)
+							schema.items.Add(notation);
+						continue;
+					}
+					if(reader.LocalName == "annotation")
+					{
+						XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+						if(annotation != null)
+							schema.items.Add(annotation);
+						continue;
+					}
+				}
+				reader.RaiseInvalidElementError();
+			}
+		}
+
 		public void Write(System.IO.Stream stream)
 		{
 			Write(stream,null);
@@ -439,15 +644,9 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		public void Write(System.Xml.XmlWriter writer, System.Xml.XmlNamespaceManager namespaceManager)
 		{
-			XmlSerializerNamespaces xns;
-			
-			if(Namespaces != null)
+			if(Namespaces == null)
 			{
-				xns = new XmlSerializerNamespaces(this.Namespaces);
-			}
-			else
-			{
-				xns = new XmlSerializerNamespaces();
+				 Namespaces = new XmlSerializerNamespaces();
 			}
 
 			if(namespaceManager != null)
@@ -457,20 +656,13 @@ namespace System.Xml.Schema
 					//xml and xmlns namespaced are added by default in namespaceManager. 
 					//So we should ignore them
 					if(name!="xml" && name != "xmlns")
-						xns.Add(name,namespaceManager.LookupNamespace(name));
+						Namespaces.Add(name,namespaceManager.LookupNamespace(name));
 				}
 			}
 			
-			this.Namespaces = xns;
-			
 			XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));
-			xser.Serialize(writer,this,xns);
+			xser.Serialize(writer,this,Namespaces);
 			writer.Flush();
-		}
-		
-		internal void error(ValidationEventHandler handle,string message)
-		{
-			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

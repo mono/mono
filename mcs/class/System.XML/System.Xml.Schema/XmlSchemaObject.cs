@@ -16,6 +16,8 @@ namespace System.Xml.Schema
 		private string sourceUri;
 		private XmlSerializerNamespaces namespaces;
 
+		internal protected int errorCount = 0;
+
 		protected XmlSchemaObject()
 		{
 			namespaces = new XmlSerializerNamespaces();
@@ -46,5 +48,25 @@ namespace System.Xml.Schema
 			get{ return namespaces; } 
 			set{ namespaces = value; } 
 		}
+
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			errorCount++;
+			ValidationHandler.RaiseValidationError(handle,this,message);
+		}
+		internal void warn(ValidationEventHandler handle,string message)
+		{
+			errorCount++;
+			ValidationHandler.RaiseValidationWarning(handle,this,message);
+		}
+		internal static void error(ValidationEventHandler handle, string message, Exception innerException)
+		{
+			ValidationHandler.RaiseValidationError(handle,message, innerException);
+		}
+		internal static void warn(ValidationEventHandler handle, string message, Exception innerException)
+		{
+			ValidationHandler.RaiseValidationWarning(handle,message, innerException);
+		}
+
 	}
 }

@@ -30,8 +30,10 @@ namespace System.Xml.Schema
 		private XmlQualifiedName schemaTypeName;
 		private XmlQualifiedName substitutionGroup;
 		internal bool parentIsSchema = false;
-		private int errorCount;
 		private string targetNamespace;
+		private string hash;
+
+		private static string xmlname = "element";
 
 		public XmlSchemaElement()
 		{
@@ -42,7 +44,7 @@ namespace System.Xml.Schema
 			refName = XmlQualifiedName.Empty;
 			schemaTypeName = XmlQualifiedName.Empty;
 			substitutionGroup = XmlQualifiedName.Empty;
-
+			hash = ""+new Random().Next();
 			substitutionGroup = XmlQualifiedName.Empty;
 		}
 
@@ -210,7 +212,6 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			
 			if(this.defaultValue != null && this.fixedValue != null)
 				error(h,"both default and fixed can't be present");
 
@@ -218,7 +219,6 @@ namespace System.Xml.Schema
 			{
 				if(this.refName != null && !RefName.IsEmpty)
 					error(h,"ref must be absent");
-				
 				if(this.name == null)	//b1
 					error(h,"Required attribute name must be present");
 				else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
@@ -233,7 +233,6 @@ namespace System.Xml.Schema
 				if(MaxOccursString != null)
 					error(h,"maxOccurs must be absent");
 
-				
 				if(final == XmlSchemaDerivationMethod.All)
 					finalResolved = XmlSchemaDerivationMethod.All;
 				else if(final == XmlSchemaDerivationMethod.None)
@@ -259,19 +258,22 @@ namespace System.Xml.Schema
 					if(schemaType != null)
 					{
 						if(schemaType is XmlSchemaSimpleType)
+						{
 							errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,info);
+						}
 						else if(schemaType is XmlSchemaComplexType)
+						{
 							errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,info);
+						}
 						else
 							error(h,"only simpletype or complextype is allowed");
 					}
 					else
 					{
 						if(schemaTypeName == null || schemaTypeName.IsEmpty)
-							error(h,"one of schemaType or schemaTypeName must be present");
+							error(h,"one of schemaType or schemaTypeName must be present: line 272");
 					}
 				}
-
 				foreach(XmlSchemaObject obj in constraints)
 				{
 					if(obj is XmlSchemaUnique)
@@ -332,7 +334,9 @@ namespace System.Xml.Schema
 						else
 						{
 							if(schemaTypeName == null || schemaTypeName.IsEmpty)
-								error(h,"one of schemaType or schemaTypeName must be present");
+							{
+								error(h,"one of schemaType or schemaTypeName must be present: line 336 "+ hash);
+							}
 						}
 					}
 
@@ -379,10 +383,215 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		internal void error(ValidationEventHandler handle,string message)
+		//<element
+		//  abstract = boolean : false
+		//  block = (#all | List of (extension | restriction | substitution)) 
+		//  default = string
+		//  final = (#all | List of (extension | restriction)) 
+		//  fixed = string
+		//  form = (qualified | unqualified)
+		//  id = ID
+		//  maxOccurs = (nonNegativeInteger | unbounded)  : 1
+		//  minOccurs = nonNegativeInteger : 1
+		//  name = NCName
+		//  nillable = boolean : false
+		//  ref = QName
+		//  substitutionGroup = QName
+		//  type = QName
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, ((simpleType | complexType)?, (unique | key | keyref)*))
+		//</element>
+
+		internal static XmlSchemaElement Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaElement element = new XmlSchemaElement();
+			Exception innerex;
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaElement.Read, name="+reader.Name,null);
+				reader.Skip();
+				return null;
+			}
+
+			element.LineNumber = reader.LineNumber;
+			element.LinePosition = reader.LinePosition;
+			element.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "abstract")
+				{
+					element.IsAbstract = XmlSchemaUtil.ReadBoolAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h,reader.Value + " is invalid value for abstract",innerex);
+				}
+				else if(reader.Name == "block")
+				{
+					element.block = XmlSchemaUtil.ReadDerivationAttribute(reader,out innerex, "block");
+					if(innerex != null)
+						warn(h,"some invalid values for block attribute were found",innerex);
+				}
+				else if(reader.Name == "default")
+				{
+					element.defaultValue = reader.Value;
+				}
+				else if(reader.Name == "final")
+				{
+					element.Final = XmlSchemaUtil.ReadDerivationAttribute(reader,out innerex, "block");
+					if(innerex != null)
+						warn(h,"some invalid values for final attribute were found",innerex);
+				}
+				else if(reader.Name == "fixed")
+				{
+					element.fixedValue = reader.Value;
+				}
+				else if(reader.Name == "form")
+				{
+					element.form = XmlSchemaUtil.ReadFormAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h,reader.Value + " is an invalid value for form attribute",innerex);
+				}
+				else if(reader.Name == "id")
+				{
+					element.Id = reader.Value;
+				}
+				else if(reader.Name == "maxOccurs")
+				{
+					try
+					{
+						element.MaxOccursString = reader.Value;
+					}
+					catch(Exception e)
+					{
+						error(h,reader.Value + " is an invalid value for maxOccurs",e);
+					}
+				}
+				else if(reader.Name == "minOccurs")
+				{
+					try
+					{
+						element.MinOccursString = reader.Value;
+					}
+					catch(Exception e)
+					{
+						error(h,reader.Value + " is an invalid value for minOccurs",e);
+					}
+				}
+				else if(reader.Name == "name")
+				{
+					element.Name = reader.Value;
+				}
+				else if(reader.Name == "nillable")
+				{
+					element.IsNillable = XmlSchemaUtil.ReadBoolAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h,reader.Value + "is not a valid value for nillable",innerex);
+				}
+				else if(reader.Name == "ref")
+				{
+					element.refName = XmlSchemaUtil.ReadQNameAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for ref attribute",innerex);
+				}
+				else if(reader.Name == "substitutionGroup")
+				{
+					element.substitutionGroup = XmlSchemaUtil.ReadQNameAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for substitutionGroup attribute",innerex);
+				}
+				else if(reader.Name == "type")
+				{
+					element.SchemaTypeName = XmlSchemaUtil.ReadQNameAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for type attribute",innerex);
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for element",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return element;
+
+			//  Content: annotation?, 
+			//			(simpleType | complexType)?, 
+			//			(unique | key | keyref)*
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaElement.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						element.Annotation = annotation;
+					continue;
+				}
+				if(level <= 2)
+				{
+					if(reader.LocalName == "simpleType")
+					{
+						level = 3;
+						XmlSchemaSimpleType simple = XmlSchemaSimpleType.Read(reader,h);
+						if(simple != null)
+							element.SchemaType = simple;
+						continue;
+					}
+					if(reader.LocalName == "complexType")
+					{
+						level = 3;
+						XmlSchemaComplexType complex = XmlSchemaComplexType.Read(reader,h);
+						if(complex != null)
+						{
+							element.SchemaType = complex;
+						}
+						continue;
+					}
+				}
+				if(level <= 3)
+				{
+					if(reader.LocalName == "unique")
+					{
+						level = 3;
+						XmlSchemaUnique unique = XmlSchemaUnique.Read(reader,h);
+						if(unique != null)
+							element.constraints.Add(unique);
+						continue;
+					}
+					else if(reader.LocalName == "key")
+					{
+						level = 3;
+						XmlSchemaKey key = XmlSchemaKey.Read(reader,h);
+						if(key != null)
+							element.constraints.Add(key);
+						continue;
+					}
+					else if(reader.LocalName == "keyref")
+					{
+						level = 3;
+						XmlSchemaKeyref keyref = XmlSchemaKeyref.Read(reader,h);
+						if(keyref != null)
+							element.constraints.Add(keyref);
+						continue;
+					}
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return element;
 		}
 	}
 }

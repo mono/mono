@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		private string pub;
 		private string system;
 		private XmlQualifiedName qualifiedName;
-		private int errorCount;
+		private static string xmlname = "notation";
 
 		public XmlSchemaNotation()
 		{
@@ -76,11 +76,84 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-				
-		internal void error(ValidationEventHandler handle,string message)
+
+		//<notation 
+		//  id = ID 
+		//  name = NCName 
+		//  public = anyURI 
+		//  system = anyURI 
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?)
+		//</notation>
+		internal static XmlSchemaNotation Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaNotation notation = new XmlSchemaNotation();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaInclude.Read, name="+reader.Name,null);
+				reader.Skip();
+				return null;
+			}
+
+			notation.LineNumber = reader.LineNumber;
+			notation.LinePosition = reader.LinePosition;
+			notation.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					notation.Id = reader.Value;
+				}
+				else if(reader.Name == "name")
+				{
+					notation.name = reader.Value;
+				}
+				else if(reader.Name == "public")
+				{
+					notation.pub = reader.Value;
+				}
+				else if(reader.Name == "system")
+				{
+					notation.system = reader.Value;
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for notation",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return notation;
+
+			//  Content: (annotation?)
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaNotation.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2;	//Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						notation.Annotation = annotation;
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return notation;
 		}
 	}
 }

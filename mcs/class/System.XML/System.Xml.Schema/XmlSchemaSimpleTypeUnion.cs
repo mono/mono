@@ -13,7 +13,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaObjectCollection baseTypes;
 		private XmlQualifiedName[] memberTypes;
-		private int errorCount;
+		private static string xmlname = "union";
 
 		public XmlSchemaSimpleTypeUnion()
 		{
@@ -84,17 +84,91 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-		
-		internal void error(ValidationEventHandler handle,string message)
+		//<union 
+		//  id = ID 
+		//  memberTypes = List of QName 
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, (simpleType*))
+		//</union>
+		internal static XmlSchemaSimpleTypeUnion Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			this.errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaSimpleTypeUnion union = new XmlSchemaSimpleTypeUnion();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaSimpleTypeUnion.Read, name="+reader.Name,null);
+				reader.Skip();
+				return null;
+			}
+
+			union.LineNumber = reader.LineNumber;
+			union.LinePosition = reader.LinePosition;
+			union.SourceUri = reader.BaseURI;
+
+			//Read Attributes
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					union.Id = reader.Value;
+				}
+				else if(reader.Name == "memberTypes")
+				{
+					Exception innerEx;
+					string[] names = XmlSchemaUtil.SplitList(reader.Value);
+					union.memberTypes = new XmlQualifiedName[names.Length];
+					for(int i=0;i<names.Length;i++)
+					{
+						union.memberTypes[i] = XmlSchemaUtil.ToQName(reader,names[i],out innerEx);
+						if(innerEx != null)
+							error(h,"'"+names[i] + "' is not a valid memberType",innerEx);
+					}
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for union",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return union;
+
+			//  Content: annotation?, simpleType*
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaSimpleTypeUnion.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						union.Annotation = annotation;
+					continue;
+				}
+				if(level <=2 && reader.LocalName == "simpleType")
+				{
+					level = 2;
+					XmlSchemaSimpleType stype = XmlSchemaSimpleType.Read(reader,h);
+					if(stype != null)
+						union.baseTypes.Add(stype);
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return union;
 		}
 
-		internal void warn(ValidationEventHandler handle,string message)
-		{
-			this.errorCount++;
-			ValidationHandler.RaiseValidationWarning(handle,this,message);
-		}
 	}
 }

@@ -25,8 +25,8 @@ namespace System.Xml.Schema
 		private bool isMixed;
 		private XmlSchemaParticle particle;
 		
-		private int errorCount;
 		internal bool istoplevel = false;
+		private static string xmlname = "complexType";
 
 		public XmlSchemaComplexType()
 		{
@@ -85,7 +85,6 @@ namespace System.Xml.Schema
 		}
 
 		//LAMESPEC: The default value for particle in Schema is of Type EmptyParticle (internal?)
-		//But since Particle is a PSVI 
 		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("all",typeof(XmlSchemaAll),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -261,15 +260,14 @@ namespace System.Xml.Schema
 						XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
 						attr.Compile(h,info);
 					}
-					else if(obj is XmlSchemaAttributeGroup)
+					else if(obj is XmlSchemaAttributeGroupRef)
 					{
-						XmlSchemaAttributeGroup atgrp = (XmlSchemaAttributeGroup) obj;
+						XmlSchemaAttributeGroupRef atgrp = (XmlSchemaAttributeGroupRef) obj;
 						atgrp.Compile(h,info);
 					}
 					else
-						error(h,"object is not valid in this place");
+						error(h,obj.GetType() +" is not valid in this place::ComplexType");
 				}
-			
 			}
 			return errorCount;
 		}
@@ -280,9 +278,185 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		internal void error(ValidationEventHandler handle,string message)
+		//<complexType
+		//  abstract = boolean : false
+		//  block = (#all | List of (extension | restriction)) 
+		//  final = (#all | List of (extension | restriction)) 
+		//  id = ID
+		//  mixed = boolean : false
+		//  name = NCName
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, (simpleContent | complexContent | ((group | all | choice | sequence)?, ((attribute | attributeGroup)*, anyAttribute?))))
+		//</complexType>
+		internal static XmlSchemaComplexType Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaComplexType ctype = new XmlSchemaComplexType();
+			reader.MoveToElement();
+			Exception innerex;
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaComplexType.Read, name="+reader.Name,null);
+				reader.SkipToEnd();
+				return null;
+			}
+
+			ctype.LineNumber = reader.LineNumber;
+			ctype.LinePosition = reader.LinePosition;
+			ctype.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "abstract")
+				{
+					ctype.IsAbstract = XmlSchemaUtil.ReadBoolAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h,reader.Value + " is invalid value for abstract",innerex);
+				}
+				else if(reader.Name == "block")
+				{
+					ctype.block = XmlSchemaUtil.ReadDerivationAttribute(reader,out innerex, "block");
+					if(innerex != null)
+						warn(h,"some invalid values for block attribute were found",innerex);
+				}
+				else if(reader.Name == "final")
+				{
+					ctype.Final = XmlSchemaUtil.ReadDerivationAttribute(reader,out innerex, "block");
+					if(innerex != null)
+						warn(h,"some invalid values for final attribute were found",innerex);
+				}
+				else if(reader.Name == "id")
+				{
+					ctype.Id = reader.Value;
+				}
+				else if(reader.Name == "mixed")
+				{
+					ctype.isMixed = XmlSchemaUtil.ReadBoolAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h,reader.Value + " is invalid value for mixed",innerex);
+				}
+				else if(reader.Name == "name")
+				{
+					ctype.Name = reader.Value;
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for complexType",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return ctype;
+
+			//Content: 1. annotation?, 
+			//		   2. simpleContent | 2. complexContent | 
+			//			(3.(group | all | choice | sequence)?, (4.(attribute | attributeGroup)*, 5.anyAttribute?)))
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaComplexType.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						ctype.Annotation = annotation;
+					continue;
+				}
+				if(level <=2)
+				{
+					if(reader.LocalName == "simpleContent")
+					{
+						level = 6;
+						XmlSchemaSimpleContent simple = XmlSchemaSimpleContent.Read(reader,h);
+						if(simple != null)
+							ctype.ContentModel = simple;
+						continue;
+					}
+					if(reader.LocalName == "complexContent")
+					{
+						level = 6;
+						XmlSchemaComplexContent complex = XmlSchemaComplexContent.Read(reader,h);
+						if(complex != null)
+							ctype.contentModel = complex;
+						continue;
+					}
+				}
+				if(level <= 3)
+				{
+					if(reader.LocalName == "group")
+					{
+						level = 4;
+						XmlSchemaGroupRef group = XmlSchemaGroupRef.Read(reader,h);
+						if(group != null)
+							ctype.particle = group;
+						continue;
+					}
+					if(reader.LocalName == "all")
+					{
+						level = 4;
+						XmlSchemaAll all = XmlSchemaAll.Read(reader,h);
+						if(all != null)
+							ctype.particle = all;
+						continue;
+					}
+					if(reader.LocalName == "choice")
+					{
+						level = 4;
+						XmlSchemaChoice choice = XmlSchemaChoice.Read(reader,h);
+						if(choice != null)
+							ctype.particle = choice;
+						continue;
+					}
+					if(reader.LocalName == "sequence")
+					{
+						level = 4;
+						XmlSchemaSequence sequence = XmlSchemaSequence.Read(reader,h);
+						if(sequence != null)
+							ctype.particle = sequence;
+						continue;
+					}
+				}
+				if(level <= 4)
+				{
+					if(reader.LocalName == "attribute")
+					{
+						level = 4;
+						XmlSchemaAttribute attr = XmlSchemaAttribute.Read(reader,h);
+						if(attr != null)
+							ctype.Attributes.Add(attr);
+						continue;
+					}
+					if(reader.LocalName == "attributeGroup")
+					{
+						level = 4;
+						XmlSchemaAttributeGroupRef attr = XmlSchemaAttributeGroupRef.Read(reader,h);
+						if(attr != null)
+							ctype.attributes.Add(attr);
+						continue;
+					}
+				}
+				if(level <= 5 && reader.LocalName == "anyAttribute")
+				{
+					level = 6;
+					XmlSchemaAnyAttribute anyattr = XmlSchemaAnyAttribute.Read(reader,h);
+					if(anyattr != null)
+						ctype.AnyAttribute = anyattr;
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return ctype;
 		}
 	}
 }

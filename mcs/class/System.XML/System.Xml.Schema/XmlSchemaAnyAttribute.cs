@@ -1,6 +1,7 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Xml;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
@@ -13,7 +14,7 @@ namespace System.Xml.Schema
 	{
 		private string nameSpace;
 		private XmlSchemaContentProcessing processing;
-		private int errorCount;
+		private static string xmlname = "anyAttribute";
 
 		public XmlSchemaAnyAttribute()
 		{
@@ -89,11 +90,82 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-				
-		internal void error(ValidationEventHandler handle,string message)
+
+		//<anyAttribute
+		//  id = ID
+		//  namespace = ((##any | ##other) | List of (anyURI | (##targetNamespace | ##local)) )  : ##any
+		//  processContents = (lax | skip | strict) : strict
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?)
+		//</anyAttribute>
+		internal static XmlSchemaAnyAttribute Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			this.errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaAnyAttribute any = new XmlSchemaAnyAttribute();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaAnyAttribute.Read, name="+reader.Name,null);
+				reader.SkipToEnd();
+				return null;
+			}
+
+			any.LineNumber = reader.LineNumber;
+			any.LinePosition = reader.LinePosition;
+			any.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					any.Id = reader.Value;
+				}
+				else if(reader.Name == "namespace")
+				{
+					any.nameSpace = reader.Value;
+				}
+				else if(reader.Name == "processContents")
+				{
+					Exception innerex;
+					any.processing = XmlSchemaUtil.ReadProcessingAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for processContents",innerex);
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for anyAttribute",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return any;
+
+			//  Content: (annotation?)
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaAnyAttribute.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2;	//Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						any.Annotation = annotation;
+					continue;
+				}
+				reader.RaiseInvalidElementError();
+			}	
+			return any;
 		}
 	}
 }

@@ -2,6 +2,7 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Xml.Schema
 {
@@ -11,8 +12,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaSimpleContent : XmlSchemaContentModel
 	{
 		private XmlSchemaContent content;
-		private int errorCount;
-
+		private static string xmlname = "simpleContent";
 		public XmlSchemaSimpleContent()
 		{
 		}
@@ -60,10 +60,87 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-
-		internal void error(ValidationEventHandler handle,string message)
+		//<simpleContent 
+		//  id = ID 
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, (restriction | extension))
+		//</simpleContent>
+		internal static XmlSchemaSimpleContent Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaSimpleContent simple = new XmlSchemaSimpleContent();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaComplexContent.Read, name="+reader.Name,null);
+				reader.SkipToEnd();
+				return null;
+			}
+
+			simple.LineNumber = reader.LineNumber;
+			simple.LinePosition = reader.LinePosition;
+			simple.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					simple.Id = reader.Value;
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for simpleContent",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return simple;
+			//Content: (annotation?, (restriction | extension))
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaSimpleContent.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						simple.Annotation = annotation;
+					continue;
+				}
+				if(level <=2)
+				{
+					if(reader.LocalName == "restriction")
+					{
+						level = 3;
+						XmlSchemaSimpleContentRestriction restriction = XmlSchemaSimpleContentRestriction.Read(reader,h);
+						if(restriction != null)
+							simple.content = restriction;
+						continue;
+					}
+					if(reader.LocalName == "extension")
+					{
+						level = 3;
+						XmlSchemaSimpleContentExtension extension = XmlSchemaSimpleContentExtension.Read(reader,h);
+						if(extension != null)
+							simple.content = extension;
+						continue;
+					}
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return simple;
 		}
+
 	}
 }

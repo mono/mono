@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		private XmlSchemaSimpleType baseType;
 		private XmlQualifiedName baseTypeName;
 		private XmlSchemaObjectCollection facets;
-		private int errorCount;
+		private static string xmlname = "restriction";
 
 		public XmlSchemaSimpleTypeRestriction()
 		{
@@ -84,11 +84,183 @@ namespace System.Xml.Schema
 		{
 			return errorCount;
 		}
-
-		internal void error(ValidationEventHandler handle,string message)
+		//<restriction 
+		//  base = QName 
+		//  id = ID 
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?, (simpleType?, (minExclusive | minInclusive | maxExclusive | maxInclusive | totalDigits | fractionDigits | length | minLength | maxLength | enumeration | whiteSpace | pattern)*))
+		//</restriction>
+		internal static XmlSchemaSimpleTypeRestriction Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			this.errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+			reader.MoveToElement();
+
+			if(reader.NamespaceURI != XmlSchema.Namespace || reader.LocalName != xmlname)
+			{
+				error(h,"Should not happen :1: XmlSchemaSimpleTypeRestriction.Read, name="+reader.Name,null);
+				reader.Skip();
+				return null;
+			}
+
+			restriction.LineNumber = reader.LineNumber;
+			restriction.LinePosition = reader.LinePosition;
+			restriction.SourceUri = reader.BaseURI;
+
+			while(reader.MoveToNextAttribute())
+			{
+				if(reader.Name == "id")
+				{
+					restriction.Id = reader.Value;
+				}
+				else if(reader.Name == "base")
+				{
+					Exception innerex;
+					restriction.baseTypeName = XmlSchemaUtil.ReadQNameAttribute(reader,out innerex);
+					if(innerex != null)
+						error(h, reader.Value + " is not a valid value for base attribute",innerex);
+				}
+				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				{
+					error(h,reader.Name + " is not a valid attribute for restriction",null);
+				}
+				else
+				{
+					//TODO: Add to Unhandled attributes
+				}
+			}
+			
+			reader.MoveToElement();
+			if(reader.IsEmptyElement)
+				return restriction;
+
+			//  Content: annotation?, simpleType?, (minExclusive |. .. | pattern)*
+			int level = 1;
+			while(reader.ReadNextElement())
+			{
+				if(reader.NodeType == XmlNodeType.EndElement)
+				{
+					if(reader.LocalName != xmlname)
+						error(h,"Should not happen :2: XmlSchemaSimpleTypeRestriction.Read, name="+reader.Name,null);
+					break;
+				}
+				if(level <= 1 && reader.LocalName == "annotation")
+				{
+					level = 2; //Only one annotation
+					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
+					if(annotation != null)
+						restriction.Annotation = annotation;
+					continue;
+				}
+				if(level <= 2 && reader.LocalName == "simpleType")
+				{
+					level = 3;
+					XmlSchemaSimpleType stype = XmlSchemaSimpleType.Read(reader,h);
+					if(stype != null)
+						restriction.baseType = stype;
+					continue;
+				}
+				if(level <= 3)
+				{
+					if(reader.LocalName == "minExclusive")
+					{
+						level = 3;
+						XmlSchemaMinExclusiveFacet minex = XmlSchemaMinExclusiveFacet.Read(reader,h);
+						if(minex != null)
+							restriction.facets.Add(minex);
+						continue;
+					}
+					else if(reader.LocalName == "minInclusive")
+					{
+						level = 3;
+						XmlSchemaMinInclusiveFacet mini = XmlSchemaMinInclusiveFacet.Read(reader,h);
+						if(mini != null)
+							restriction.facets.Add(mini);
+						continue;
+					}
+					else if(reader.LocalName == "maxExclusive")
+					{
+						level = 3;
+						XmlSchemaMaxExclusiveFacet maxex = XmlSchemaMaxExclusiveFacet.Read(reader,h);
+						if(maxex != null)
+							restriction.facets.Add(maxex);
+						continue;
+					}
+					else if(reader.LocalName == "maxInclusive")
+					{
+						level = 3;
+						XmlSchemaMaxInclusiveFacet maxi = XmlSchemaMaxInclusiveFacet.Read(reader,h);
+						if(maxi != null)
+							restriction.facets.Add(maxi);
+						continue;
+					}
+					else if(reader.LocalName == "totalDigits")
+					{
+						level = 3;
+						XmlSchemaTotalDigitsFacet total = XmlSchemaTotalDigitsFacet.Read(reader,h);
+						if(total != null)
+							restriction.facets.Add(total);
+						continue;
+					}
+					else if(reader.LocalName == "fractionDigits")
+					{
+						level = 3;
+						XmlSchemaFractionDigitsFacet fraction = XmlSchemaFractionDigitsFacet.Read(reader,h);
+						if(fraction != null)
+							restriction.facets.Add(fraction);
+						continue;
+					}
+					else if(reader.LocalName == "length")
+					{
+						level = 3;
+						XmlSchemaLengthFacet length = XmlSchemaLengthFacet.Read(reader,h);
+						if(length != null)
+							restriction.facets.Add(length);
+						continue;
+					}
+					else if(reader.LocalName == "minLength")
+					{
+						level = 3;
+						XmlSchemaMinLengthFacet minlen = XmlSchemaMinLengthFacet.Read(reader,h);
+						if(minlen != null)
+							restriction.facets.Add(minlen);
+						continue;
+					}
+					else if(reader.LocalName == "maxLength")
+					{
+						level = 3;
+						XmlSchemaMaxLengthFacet maxlen = XmlSchemaMaxLengthFacet.Read(reader,h);
+						if(maxlen != null)
+							restriction.facets.Add(maxlen);
+						continue;
+					}
+					else if(reader.LocalName == "enumeration")
+					{
+						level = 3;
+						XmlSchemaEnumerationFacet enumeration = XmlSchemaEnumerationFacet.Read(reader,h);
+						if(enumeration != null)
+							restriction.facets.Add(enumeration);
+						continue;
+					}
+					else if(reader.LocalName == "whiteSpace")
+					{
+						level = 3;
+						XmlSchemaWhiteSpaceFacet ws = XmlSchemaWhiteSpaceFacet.Read(reader,h);
+						if(ws != null)
+							restriction.facets.Add(ws);
+						continue;
+					}
+					else if(reader.LocalName == "pattern")
+					{
+						level = 3;
+						XmlSchemaPatternFacet pattern = XmlSchemaPatternFacet.Read(reader,h);
+						if(pattern != null)
+							restriction.facets.Add(pattern);
+						continue;
+					}
+				}
+				reader.RaiseInvalidElementError();
+			}
+			return restriction;
 		}
 	}
 }
