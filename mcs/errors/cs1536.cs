@@ -1,4 +1,4 @@
-// CS1547: Keyword 'void' cannot be used in this context
+// CS1536: Invalid parameter type 'void'
 // Line: 7
 using System;
 
