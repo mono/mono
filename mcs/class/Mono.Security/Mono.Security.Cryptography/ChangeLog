@@ -1,3 +1,8 @@
+2004-02-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistance.cs: Provides a similar to CryptoAPI persistence 
+	mechanism for keypairs (based on CspParameters).
+
 2004-01-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConvert.cs: RSA doesn't start with a Q - at least that what
