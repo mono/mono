@@ -276,6 +276,7 @@ System.IO/FileMode.cs
 System.IO/FileNotFoundException.cs
 System.IO/FileShare.cs
 System.IO/FileStream.cs
+System.IO/FileStreamAsyncResult.cs
 System.IO/FileSystemInfo.cs
 System.IO/IntPtrStream.cs
 System.IO/IOException.cs
@@ -289,6 +290,7 @@ System.IO/PathTooLongException.cs
 System.IO/SearchPattern.cs
 System.IO/SeekOrigin.cs
 System.IO/Stream.cs
+System.IO/StreamAsyncResult.cs
 System.IO/StreamReader.cs
 System.IO/StreamWriter.cs
 System.IO/StringReader.cs
