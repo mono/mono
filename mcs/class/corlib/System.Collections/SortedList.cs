@@ -32,7 +32,7 @@ namespace System.Collections {
 
 		private readonly static int INITIAL_SIZE = 16;
 
-		public enum EnumeratorMode : int { KEY_MODE = 0, VALUE_MODE, ENTRY_MODE }
+		private enum EnumeratorMode : int { KEY_MODE = 0, VALUE_MODE, ENTRY_MODE }
 
 		private int inUse;
 		private int modificationCount;

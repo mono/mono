@@ -719,7 +719,7 @@ namespace System.Collections {
 		// Inner classes
 		//
 
-		public enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE, ENTRY_MODE};
+		private enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE, ENTRY_MODE};
 
 		private sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
 
