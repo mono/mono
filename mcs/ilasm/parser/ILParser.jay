@@ -2379,15 +2379,34 @@ module_head		: D_MODULE
 
 file_decl		: D_FILE file_attr comp_name file_entry D_HASH ASSIGN
 			  bytes_list file_entry
+                          {
+                                codegen.SetFileRef (new FileRef ((string) $3, (byte []) $7, (bool) $2, (bool) $8)); 
+                          }
 			| D_FILE file_attr comp_name file_entry
+                          {
+                                // We need to compute the hash ourselves. :-(
+                                // AssemblyName an = AssemblyName.GetName ((string) $3);
+                          }
 			;
 
 file_attr 		: /* EMPTY */
+                          {
+                                $$ = true;
+                          }
 			| file_attr K_NOMETADATA
+                          {
+                                $$ = false;
+                          }
 			;
 
 file_entry		: /* EMPTY */
+                          {
+                                $$ = false;
+                          }
 			| D_ENTRYPOINT
+                          {
+                                $$ = true;
+                          }
 			;
 
 assembly_all		: assembly_head OPEN_BRACE assembly_decls CLOSE_BRACE

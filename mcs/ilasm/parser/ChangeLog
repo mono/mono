@@ -1,5 +1,9 @@
 2004-06-14  Jackson Harper  <jackson@ximian.com>
 
+	* ILParser.jay: Add file refs.
+	
+2004-06-14  Jackson Harper  <jackson@ximian.com>
+
 	* ILParser.jay: Add module refs, allow them to be referenced.
 	
 2004-06-14  Jackson Harper  <jackson@ximian.com>
