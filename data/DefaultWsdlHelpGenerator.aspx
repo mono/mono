@@ -338,6 +338,17 @@ string GetTestResult ()
 	try
 	{
 		WebRequest req = WebRequest.Create (location + "/" + CurrentOperationName + "?" + qs);
+		HttpCookieCollection cookies = Request.Cookies;
+		int last = cookies.Count;
+		if (last > 0) {
+			CookieContainer container = new CookieContainer ();
+			for (int i = 0; i < last; i++) {
+				HttpCookie hcookie = cookies [i];
+				Cookie cookie = new Cookie (hcookie.Name, hcookie.Value, hcookie.Path, hcookie.Domain);
+				container.Add (cookie);
+			}
+			((HttpWebRequest) req).CookieContainer = container;
+		}
 		WebResponse resp = req.GetResponse();
 		StreamReader sr = new StreamReader (resp.GetResponseStream());
 		string s = sr.ReadToEnd ();
