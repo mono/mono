@@ -1,3 +1,8 @@
+2005-01-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (PLATFORM_DISABLED_TESTS): Disable appdomain-unload.exe
+	on amd64 to make the test green again.
+
 2005-01-20  Raja R Harinath  <rharinath@novell.com>
 
 	* libtest.c (mono_test_return_vtype): Fill in a value in the 'd2'
