@@ -55,7 +55,7 @@ namespace System.Data.SqlClient {
 
 		protected override DBDataPermission CreateInstance ()
 		{
-			return (DBDataPermission) new SqlClientPermission ();
+			return (DBDataPermission) new SqlClientPermission (PermissionState.None);
 		}
 
 		#endregion // Methods

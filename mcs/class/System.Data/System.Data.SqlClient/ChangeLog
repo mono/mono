@@ -1,3 +1,8 @@
+2004-01-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SqlClientPermission.cs : Fixed NET_1_2 build related to 
+	  obsolete attribute problem (see DbDataPermission.cs)
+
 2003-12-28  Tim Coleman <tim@timcoleman.com>
 	* SqlResultSet.cs:
 		Stubbed out this class.
