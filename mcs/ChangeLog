@@ -1,3 +1,7 @@
+2003-02-15  Nick Drochak  <ndrochak@gol.com>
+
+        * makefile.gnu: Add testcorlib target to run just the corlib unit tests.
+
 2003-02-10  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile: Add testcorlib target to run just the corlib unit tests.

@@ -36,6 +36,9 @@ test: all
 		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
 	done
 
+testcorlib:
+	$(MAKE) -C class/corlib/Test -f makefile.gnu test
+
 clean:
 	-rm -f monocharge-*.tar.gz
 	for i in $(DIRS) ; do \
