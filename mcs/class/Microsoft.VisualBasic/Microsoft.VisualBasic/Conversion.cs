@@ -13,13 +13,18 @@ using System.Text.RegularExpressions;
 namespace Microsoft.VisualBasic {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class Conversion {
-		//
-		// <summary>
-		//		Collection : The BASIC Collection Object
-		//	</summary>
-		//
-		//	<remarks>
-		//	</remarks>
+		///
+		/// <summary>
+		///		Collection : The BASIC Collection Object
+		///	</summary>
+		///
+		///	<remarks>
+		///	</remarks>
+		private Conversion ()
+		{
+			//Nothing to do, nobody should see this constructor
+		}
+
 		// Declarations
 		private static readonly char[] _HexDigits = {
 			'0', '1', '2', '3', '4', '5', '6', '7', 

@@ -12,7 +12,7 @@ using System;
 using System.Collections;
 
 namespace Microsoft.VisualBasic {
-        public class ForEachEnum : IEnumerator
+        internal class ForEachEnum : IEnumerator
         {
                 Microsoft.VisualBasic.Collection collection;
                 int index;

@@ -16,6 +16,12 @@ namespace Microsoft.VisualBasic
 {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class DateAndTime {
+
+		private DateAndTime ()
+		{
+			//Nobody should see constructor
+		}
+
 		public static string DateString {
 			get { 
 				return DateTime.Today.ToString("MM-dd-yyyy");

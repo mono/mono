@@ -1,3 +1,7 @@
+2004-06-19 Jochen Wezel <jwezel@compumaster.de>
+	* Conversion.cs, DateAndTime.cs, Information.cs, VBMath.cs, 
+	ForEachEnum.cs: changed some public to internal or private constructors
+
 2004-06-18 Anirban Bhattacharjee <banirban@novell.com>
 	* Interaction.cs: shell method implemented
 

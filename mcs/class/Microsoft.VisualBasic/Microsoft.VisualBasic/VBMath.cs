@@ -14,6 +14,12 @@ using System;
 namespace Microsoft.VisualBasic {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class VBMath {
+
+		private VBMath ()
+		{
+			//Nobody should see constructor
+		}
+
 		// Declarations
 		// Constructors
 		// Properties

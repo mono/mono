@@ -21,6 +21,11 @@ namespace Microsoft.VisualBasic
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class Information {
 
+		private Information ()
+		{
+			//Nothing to do here...
+		}
+
 		private static int [] QBColorTable = { 0, 8388608, 32768, 8421376, 
 						       128, 8388736, 32896, 12632256, 
 						       8421504, 16711680, 65280, 16776960, 
@@ -195,7 +200,7 @@ namespace Microsoft.VisualBasic
 			return null;
 		}
 
-		public static String TypeNameOfCOMObject (Object obj, Boolean flag) 
+		internal static String TypeNameOfCOMObject (Object obj, Boolean flag) 
 		{
 			throw new NotImplementedException("Method Microsoft.VisualBasic.Information.TypeNameOfCOMObject() is not supported");
 		}
