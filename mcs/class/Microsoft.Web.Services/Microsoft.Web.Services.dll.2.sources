@@ -99,6 +99,7 @@ Microsoft.Web.Services.Security/EncryptedData.cs
 Microsoft.Web.Services.Security/EncryptedKey.cs
 Microsoft.Web.Services.Security/EncryptionKey.cs
 Microsoft.Web.Services.Security/IDecryptionKeyProvider.cs
+Microsoft.Web.Services.Security/IMutableSecurityToken.cs
 Microsoft.Web.Services.Security/IPasswordProvider.cs
 Microsoft.Web.Services.Security/ISecurityElement.cs
 Microsoft.Web.Services.Security/KeyIdentifier.cs

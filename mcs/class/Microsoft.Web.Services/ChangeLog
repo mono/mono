@@ -1,3 +1,8 @@
+2003-10-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Microsoft.Web.Services.dll.2.sources: Added IMutableSecurityToken.cs
+	in Microsoft.Web.Services.Security (new in WSE2)
+
 2003-10-22  Todd Berman <tberman@gentoo.org>
 
 	* Microsoft.Web.Services.dll.2.sources: Added SoapDimeFormatter.cs
