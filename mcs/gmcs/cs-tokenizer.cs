@@ -1490,6 +1490,11 @@ namespace Mono.CSharp
 			// The first group of pre-processing instructions is always processed
 			//
 			switch (cmd){
+			case "pragma":
+				if (RootContext.V2)
+					return true;
+				break;
+				
 			case "line":
 				if (!PreProcessLine (arg))
 					Report.Error (

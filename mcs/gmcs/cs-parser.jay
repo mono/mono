@@ -903,7 +903,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ((Expression) $3, (int) $2, (string) $4, 
+		Method method = new Method (current_container, (Expression) $3, (int) $2, (string) $4, 
 					    (Parameters) $6, (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
@@ -916,8 +916,9 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method (TypeManager.system_void_expr, (int) $2, (string) $4, 
-					    (Parameters) $6, (Attributes) $1, lexer.Location);
+		Method method = new Method (current_container, TypeManager.system_void_expr, (int) $2,
+					    (string) $4, (Parameters) $6, (Attributes) $1,
+					    lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 		$$ = method;
@@ -1043,8 +1044,8 @@ property_declaration
 		Accessor set_block = (Accessor) pair.Second;
 
 		Location loc = (Location) $6;
-		prop = new Property ((Expression) $3, (string) $4, (int) $2, get_block, set_block,
-				     (Attributes) $1, loc);
+		prop = new Property (current_container, (Expression) $3, (string) $4, (int) $2,
+				     get_block, set_block, (Attributes) $1, loc);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		implicit_value_parameter_type = null;
@@ -1504,7 +1505,8 @@ constructor_declarator
 	  opt_constructor_initializer
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor ((string) $1, (Parameters) $3, (ConstructorInitializer) $6, l);
+		$$ = new Constructor (current_container, (string) $1, (Parameters) $3,
+				      (ConstructorInitializer) $6, l);
 	  }
 	;
 
@@ -1564,7 +1566,7 @@ destructor_declaration
                         }
                         
 			Method d = new Method (
-				TypeManager.system_void_expr, m, "Finalize", 
+				current_container, TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
 			d.Block = (Block) $7;
@@ -1711,8 +1713,8 @@ indexer_declaration
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
-		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
-				       get_block, set_block, (Attributes) $1, loc);
+		indexer = new Indexer (current_container, decl.type, decl.interface_type, (int) $2,
+				       decl.param_list, get_block, set_block, (Attributes) $1, loc);
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis
@@ -3615,7 +3617,17 @@ throw_statement
 	;
 
 yield_statement 
-	: YIELD expression SEMICOLON
+	: YIELD RETURN expression SEMICOLON
+	  {
+		if (iterator_container == null){
+			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+			$$ = null;
+		} else {
+			iterator_container.SetYields ();
+			$$ = new Yield ((Expression) $3, lexer.Location); 
+		}
+	  }
+	| YIELD expression SEMICOLON 
 	  {
 		if (iterator_container == null){
 			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");

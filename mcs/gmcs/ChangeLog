@@ -1,3 +1,52 @@
+2003-10-09  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MethodCore): Added additional `DeclSpace ds' argument
+	to the .ctor.
+	(MethodCore.DoDefineParameters): Removed the TypeContainer
+	argument; use the DeclSpace which was passed to the .ctor instead.
+	(MethodCore.CheckParameter): Take a DeclSpace instead of a
+	TypeContainer; we only need a DeclSpace here.
+
+2003-10-09  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MethodData): Added additional `DeclSpace ds' argument
+	to the .ctor.
+	(MethodData.Define, MethodData.Emit): Pass the `ds' to the
+	EmitContext's .ctor.	
+
+2003-10-09  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.AsAccessible): Moved here from TypeContainer.
+	(AccessLevel, CheckAccessLevel, GetAccessLevel): They're used by
+	AsAccessible(), moved them as well.
+
+	* class.cs (TypeContainer.AsAccessible): Moved to DeclSpace.
+
+2003-10-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.Emit.GreatherThanOrEqual): Fix the code
+	generation for >=, as spotted by Paolo, bug 48679.  
+	Patch from David Waite.
+
+	* cs-tokenizer.cs: Add handling for #pragma.
+
+	* cs-parser.jay: Allow for both yield and yield return in the
+	syntax.  The anti-cobolization of C# fight will go on!
+
+	* class.cs (TypeBuilder.DefineType): Catch error condition here
+	(Parent.DefineType erroring out and returning null).
+
+	* expression.cs (ArrayCreation.EmitDynamicInitializers): When
+	coping with enumerations variables, we were mistakenly processing
+	them as a regular value type instead of built-in types.  Fixes the
+	bug #48063
+
+	* typemanager.cs (IsBuiltinOrEnum): New method.
+
+2003-09-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Upgrade: yield now needs the return clause.
+
 2003-10-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* cs-parser.jay : Renamed yyName to yyNames related to jay.

@@ -1320,6 +1320,16 @@ public class TypeManager {
 		else
 			return false;
 	}
+	public static bool IsBuiltinOrEnum (Type t)
+	{
+		if (IsBuiltinType (t))
+			return true;
+		
+		if (IsEnumType (t))
+			return true;
+
+		return false;
+	}
 
 	//
 	// Only a quick hack to get things moving, while real runtime support appears
