@@ -2449,16 +2449,16 @@ namespace Mono.CSharp {
 						if (r == l)
 							return new PointerArithmetic (
 								false, left, right, TypeManager.int64_type,
-								loc);
+								loc).Resolve (ec);
 					} else {
 						Expression t = Make32or64 (ec, right);
 						if (t != null)
-							return new PointerArithmetic (oper == Operator.Addition, left, t, l, loc);
+							return new PointerArithmetic (oper == Operator.Addition, left, t, l, loc).Resolve (ec);
 					}
 				} else if (r.IsPointer && oper == Operator.Addition){
 					Expression t = Make32or64 (ec, left);
 					if (t != null)
-						return new PointerArithmetic (true, right, t, r, loc);
+						return new PointerArithmetic (true, right, t, r, loc).Resolve (ec);
 				}
 			}
 			
@@ -3322,7 +3322,6 @@ namespace Mono.CSharp {
 		public PointerArithmetic (bool is_addition, Expression l, Expression r, Type t, Location loc)
 		{
 			type = t;
-			eclass = ExprClass.Variable;
 			this.loc = loc;
 			left = l;
 			right = r;
@@ -3331,9 +3330,13 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			//
-			// We are born fully resolved
-			//
+			eclass = ExprClass.Variable;
+			
+			if (left.Type == TypeManager.void_ptr_type) {
+				Error (242, "The operation in question is undefined on void pointers");
+				return null;
+			}
+			
 			return this;
 		}
 
@@ -7370,7 +7373,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		Expression MakePointerAccess ()
+		Expression MakePointerAccess (EmitContext ec)
 		{
 			Type t = Expr.Type;
 
@@ -7384,8 +7387,10 @@ namespace Mono.CSharp {
 			}
 			Expression p;
 
-			p = new PointerArithmetic (true, Expr, ((Argument)Arguments [0]).Expr, t, loc);
-			return new Indirection (p, loc);
+			p = new PointerArithmetic (true, Expr, ((Argument)Arguments [0]).Expr, t, loc).Resolve (ec);
+			if (p == null)
+				return null;
+			return new Indirection (p, loc).Resolve (ec);
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -7409,7 +7414,7 @@ namespace Mono.CSharp {
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).Resolve (ec);
 			else if (t.IsPointer)
-				return MakePointerAccess ();
+				return MakePointerAccess (ec);
 			else
 				return (new IndexerAccess (this, loc)).Resolve (ec);
 		}
@@ -7423,7 +7428,7 @@ namespace Mono.CSharp {
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).ResolveLValue (ec, right_side);
 			else if (t.IsPointer)
-				return MakePointerAccess ();
+				return MakePointerAccess (ec);
 			else
 				return (new IndexerAccess (this, loc)).ResolveLValue (ec, right_side);
 		}
