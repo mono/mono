@@ -1,3 +1,8 @@
+2005-01-13  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-tokenizer.cs (xtoken): Reset 'comments_seen' in a couple more
+	places.
+
 2005-01-12  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs0038-1.cs, cs1640-6.cs.

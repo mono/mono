@@ -3,3 +3,5 @@
 /* foo */
 #define FOO
 
+/* bar */ // bar again
+#define BAR

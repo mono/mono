@@ -21,26 +21,26 @@ all-local $(STD_TARGETS:=-local):
 	if $(CSCOMPILE) $$options -out:$*.$$ext $$f >> $$testlogfile 2>&1 ; then \
 	  if test -f $*.exe; then \
 	    echo '*** $(TEST_RUNTIME) -O=-all ./$*.exe' >> $$testlogfile ; \
-	      if $(TEST_RUNTIME) -O=-all ./$*.exe >> $$testlogfile 2>&1 ; then \
-	        if test -f $*.xml; then \
-	          if $(XMLDOCDIFF) ../$*-ref.xml $*.xml >> $$testlogfile ; then \
-	            echo "PASS: $*: xml comparison" > $@ ; \
-	            rm -f $$testlogfile ; \
-	          else \
-	            echo "FAIL: $*: xml comparison" > $@ ; \
-	          fi \
-	        else \
-	          echo "PASS: $*" > $@ ; \
+	    if $(TEST_RUNTIME) -O=-all ./$*.exe >> $$testlogfile 2>&1 ; then \
+	      if test -f $*.xml; then \
+	        if $(XMLDOCDIFF) ../$*-ref.xml $*.xml >> $$testlogfile ; then \
+	          echo "PASS: $*: xml comparison" > $@ ; \
 	          rm -f $$testlogfile ; \
-	        fi \
+	        else \
+	          echo "FAIL: $*: xml comparison" > $@ ; \
+	        fi ; \
 	      else \
-		echo "Exit code: $$?" >> $$testlogfile ; \
-		echo "FAIL: $*" > $@ ; \
-              fi ; \
+	        echo "PASS: $*" > $@ ; \
+	        rm -f $$testlogfile ; \
+	      fi ; \
 	    else \
-	      echo "PASS: $*: compilation" > $@ ; \
-	      rm -f $$testlogfile ; \
-	    fi ; \
+	      echo "Exit code: $$?" >> $$testlogfile ; \
+	      echo "FAIL: $*" > $@ ; \
+            fi ; \
+	  else \
+	    echo "PASS: $*: compilation" > $@ ; \
+	    rm -f $$testlogfile ; \
+	  fi ; \
 	else \
 	  echo "Exit code: $$?" >> $$testlogfile ; \
 	  echo "FAIL: $*: compilation" > $@ ; \

@@ -117,11 +117,14 @@ TEST_SOURCES_net_2_0 = \
 
 TEST_EXCLUDES_net_2_0 = $(NEW_TEST_SOURCES_common)
 
-TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
-	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
-
 # These tests load User32.dll and/or Kernel32.dll
 TEST_SOURCES_win32 = test-67
+
+# This test fails on Win32 (even with CSC).  This is #71200.
+TEST_EXCLUDES_win32 = test-74
+
+TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
+	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
 
 # The test harness supports running the testcases in parallel.  However, we still need to
 # provide test-ordering rules to support multi-file testcases.  By default, any test named
