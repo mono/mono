@@ -16,7 +16,7 @@ RESOURCES = \
 
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
-	$(RESOURCES:.resources=.resx) $(RESOURCES:=.prebuilt)
+	$(RESOURCES:.resources=.resx) $(RESOURCES:=.prebuilt) build-csproj
 
 TEST_MCS_FLAGS = /r:System.Drawing.dll
 

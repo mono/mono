@@ -379,6 +379,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ContentsResizedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ContentsResizedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ContextMenu.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -450,6 +460,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridTableStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DateBoldEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DateBoldEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -535,6 +555,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ErrorBlinkStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ErrorIconAlignment.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -954,12 +979,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\MonthCalendar.cs"
+                    RelPath = "System.Windows.Forms\MainMenu.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\MainMenu.cs"
+                    RelPath = "System.Windows.Forms\MdiLayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1025,6 +1050,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Message.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\MethodInvoker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\MonthCalendar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1209,31 +1244,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\SelectedGridItemChangedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\SelectedGridItemChangedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\SelectionRange.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\SelectionRangeConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\SelectionMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\ScrollableControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1265,6 +1275,36 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ScrollEventType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SelectedGridItemChangedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SelectedGridItemChangedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SelectionRange.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SelectionRangeConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SelectionMode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SendKeys.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1499,6 +1539,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\TreeNodeConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\TreeView.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1550,6 +1595,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\UpDownBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\UpDownEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\UpDownEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

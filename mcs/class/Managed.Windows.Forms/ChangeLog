@@ -1,3 +1,7 @@
+2005-02-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Add 'build-csproj'.
+
 2005-02-18  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added MethodInvoker.cs,
