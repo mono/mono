@@ -126,7 +126,10 @@ namespace System.Xml.Serialization
 
 		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlTypeMapping member, string ns)
 		{
-			if (member.Namespace != ns && member.Namespace != "") {
+			if ( (member.TypeData.SchemaType == SchemaTypes.Primitive ||
+			      member.TypeData.SchemaType == SchemaTypes.Array) 
+				&& member.Namespace != XmlSchema.Namespace)
+			{
 				CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRoot");
 				ratt.Arguments.Add (MapCodeGenerator.GetArg (member.ElementName));
 				ratt.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", member.Namespace));

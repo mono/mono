@@ -78,7 +78,7 @@ namespace System.Xml.Serialization
 			{
 				namespaces = new ArrayList ();
 				foreach (XmlQualifiedName ns in nss.ToArray())
-					if (ns.Name != "")
+					if (ns.Name != "" && ns.Namespace != "")
 						namespaces.Add (ns);
 			}	
 		}

@@ -1,3 +1,14 @@
+2004-10-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MapCodeGenerator.cs: When the Object type is exported, export all
+	  derived maps. This was done in IncludeMetadata, but this method is
+	  not called by the xsd tool.
+	* XmlCodeExporter.cs: In AddMappingMetadata, only generate the root
+	  attribute for primitive types and arrays.
+	* XmlSchemaImporter.cs: Only export all object-derived maps if the
+	  Object type is explicitly referenced by an element.
+	* XmlSerializationWriter.cs: Minor fix.
+
 2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* CodeIdentifier.cs: MakeValid now returns "Item" for an empty string.

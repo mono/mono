@@ -53,6 +53,7 @@ namespace System.Xml.Serialization
 		XmlReflectionImporter auxXmlRefImporter;
 		SoapReflectionImporter auxSoapRefImporter;
 		CodeGenerationOptions options;
+		bool anyTypeImported;
 
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
 		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array",XmlSerializer.EncodingNamespace);
@@ -603,7 +604,7 @@ namespace System.Xml.Serialization
 			ImportAttributes (typeQName, cmap, stype.Attributes, stype.AnyAttribute, classIds);
 			ImportExtensionTypes (typeQName);
 			
-			GetTypeMapping (TypeTranslator.GetTypeData (typeof(object))).DerivedTypes.Add (map);
+			AddObjectDerivedMap (map);
 		}
 		
 		void ImportAttributes (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaObjectCollection atts, XmlSchemaAnyAttribute anyat, CodeIdentifiers classIds)
@@ -1595,10 +1596,13 @@ namespace System.Xml.Serialization
 
 		XmlTypeMapping GetTypeMapping (TypeData typeData)
 		{
+			if (typeData.Type == typeof(object) && !anyTypeImported)
+				ImportAllObjectTypes ();
+				
 			XmlTypeMapping map = (XmlTypeMapping) dataMappedTypes [typeData];
 			if (map != null) return map;
 			
-			if (map == null && typeData.IsListType)
+			if (typeData.IsListType)
 			{
 				// Create an array map for the type
 
@@ -1618,31 +1622,46 @@ namespace System.Xml.Serialization
 			}
 			else if (typeData.SchemaType == SchemaTypes.Primitive || typeData.Type == typeof(object) || typeof(XmlNode).IsAssignableFrom(typeData.Type))
 			{
-				map = new XmlTypeMapping (typeData.XmlType, XmlSchema.Namespace, typeData, typeData.XmlType, XmlSchema.Namespace);
-				map.IncludeInSchema = false;
-				map.ObjectMap = new ClassMap ();
-				dataMappedTypes [typeData] = map;
-				
-				if (typeData.Type == typeof(object))
-				{
-					// All complex types are subtypes of anyType, so all of them 
-					// must also be imported
-					
-					foreach (XmlSchema schema in schemas) {
-						foreach (XmlSchemaObject sob in schema.Items) 
-						{
-							XmlSchemaComplexType sct = sob as XmlSchemaComplexType;
-							if (sct != null)
-								ImportType (new XmlQualifiedName (sct.Name, schema.TargetNamespace), sct, null);
-						}
-					}					
-				}
-				
-				return map;
+				return CreateSystemMap (typeData);
 			}
 			
 			throw new InvalidOperationException ("Map for type " + typeData.TypeName + " not found");
 		}
+		
+		void AddObjectDerivedMap (XmlTypeMapping map)
+		{
+			TypeData typeData = TypeTranslator.GetTypeData (typeof(object));
+			XmlTypeMapping omap = (XmlTypeMapping) dataMappedTypes [typeData];
+			if (omap == null)
+				omap = CreateSystemMap (typeData);
+			omap.DerivedTypes.Add (map);
+		}
+		
+		XmlTypeMapping CreateSystemMap (TypeData typeData)
+		{
+			XmlTypeMapping map = new XmlTypeMapping (typeData.XmlType, XmlSchema.Namespace, typeData, typeData.XmlType, XmlSchema.Namespace);
+			map.IncludeInSchema = false;
+			map.ObjectMap = new ClassMap ();
+			dataMappedTypes [typeData] = map;
+			return map;
+		}
+		
+		void ImportAllObjectTypes ()
+		{
+			// All complex types are subtypes of anyType, so all of them 
+			// must also be imported
+			
+			anyTypeImported = true;
+			foreach (XmlSchema schema in schemas) {
+				foreach (XmlSchemaObject sob in schema.Items) 
+				{
+					XmlSchemaComplexType sct = sob as XmlSchemaComplexType;
+					if (sct != null)
+						ImportType (new XmlQualifiedName (sct.Name, schema.TargetNamespace), sct, null);
+				}
+			}					
+		}
+		
 
 		XmlTypeMapping GetRegisteredTypeMapping (XmlQualifiedName typeQName)
 		{

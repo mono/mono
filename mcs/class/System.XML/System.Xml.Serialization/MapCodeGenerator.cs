@@ -71,19 +71,8 @@ namespace System.Xml.Serialization {
 				if (includeMetadata != null) return includeMetadata;
 				includeMetadata = new CodeAttributeDeclarationCollection ();
 				
-				if (exportedAnyType != null)
-				{
-					foreach (XmlTypeMapping map in exportedAnyType.DerivedTypes) 
-					{
-						if (IsMapExported (map) || !map.IncludeInSchema) continue;
-						ExportTypeMapping (map);
-						GenerateClassInclude (includeMetadata, map);
-					}
-				}
-				else {
-					foreach (XmlTypeMapping map in includeMaps.Values)
-						GenerateClassInclude (includeMetadata, map);
-				}
+				foreach (XmlTypeMapping map in includeMaps.Values)
+					GenerateClassInclude (includeMetadata, map);
 				
 				return includeMetadata; 
 			}
@@ -146,6 +135,11 @@ namespace System.Xml.Serialization {
 			{
 				exportedAnyType = map;
 				SetMapExported (map, null);
+				foreach (XmlTypeMapping dmap in exportedAnyType.DerivedTypes) {
+					if (IsMapExported (dmap) || !dmap.IncludeInSchema) continue;
+					ExportTypeMapping (dmap);
+					AddInclude (dmap);
+				}
 				return;
 			}
 			
