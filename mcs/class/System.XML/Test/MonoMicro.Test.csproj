@@ -132,6 +132,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlDocumentEventTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlDocumentFragmentTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -153,6 +158,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlEntityReferenceTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlEntityTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -183,6 +193,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlReaderCommonTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlSecureResolverTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -237,6 +252,71 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\nist_dom\ITest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\util.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\Attr\Attr.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\CharacterData\CharacterData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\Comment\Comment.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\Document\Document.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\DOMImplementation\DOMImplementation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\Element\Element.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\NamedNodeMap\NamedNodeMap.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\Node\Node.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\NodeList\NodeList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\nist_dom\fundamental\Text\Text.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlSchemaAssertion.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Schema\XmlSchemaBuiltInDatatypeTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -247,7 +327,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.Schema\XmlSchemaComplexTypeTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Schema\XmlSchemaDatatypeTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlSchemaGroupRefTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -313,6 +403,16 @@
                 />
                 <File
                     RelPath = "System.Xml.XPath\XPathNavigatorTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\MsxslScriptTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\XsltArgumentListTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
