@@ -604,7 +604,7 @@ namespace Mono.Util
 		private void WriteConstructor(XmlTextWriter writer, ConstructorInfo constructor)
 		{
 			writer.WriteStartElement("constructor");
-			writer.WriteAttributeString("name", classname + GetParameterTypes(constructor.GetParameters()));
+			writer.WriteAttributeString("name", docname + GetParameterTypes(constructor.GetParameters()));
 			writer.WriteElementString("summary","TODO");
 			writer.WriteElementString("remarks","TODO");
 
