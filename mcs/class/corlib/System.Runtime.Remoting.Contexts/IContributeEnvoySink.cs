@@ -14,6 +14,6 @@ namespace System.Runtime.Remoting.Contexts {
 
 	public interface IContributeEnvoySink
 	{
-		IDynamicEnvoySink GetEnvoySink (MarshalByRefObject obj, IMessageSink nextSink);
+		IMessageSink GetEnvoySink (MarshalByRefObject obj, IMessageSink nextSink);
 	}
 }
