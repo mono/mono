@@ -1,4 +1,11 @@
 
+Wed Jun 25 18:12:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: in mono_array_class_get (), lookup from the hash with the
+	same type we insert: this works around a bug in
+	mono_metadata_type_hash() with SZARRAY and fixes a leak reported by
+	lluis. The real fix will have to wait for after the release.
+
 Wed Jun 25 13:14:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: fix memory leak when getting type members.
