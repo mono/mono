@@ -56,9 +56,9 @@ namespace System.Net
 			this.requestUri = uri;
 			this.actualUri = uri;
 			this.webHeaders = new WebHeaderCollection (true);
-			// this.webHeaders.SetInternal ("Host", uri.Authority);
-			// this.webHeaders.SetInternal ("Date", DateTime.Now.ToUniversalTime ().ToString ("r", null));
-			// this.webHeaders.SetInternal ("Expect", "100-continue");
+			this.webHeaders.SetInternal ("Host", uri.Authority);
+			this.webHeaders.SetInternal ("Date", DateTime.Now.ToUniversalTime ().ToString ("r", null));
+			this.webHeaders.SetInternal ("Expect", "100-continue");
 			this.method = "GET";
 			this.version = HttpVersion.Version11;
 			this.proxy = GlobalProxySelection.Select;
@@ -451,7 +451,7 @@ namespace System.Net
 		
 		internal Stream GetRequestStreamInternal ()
 		{
-			this.requestStream = null;   // TODO: new HttpWebStream (this);
+			this.requestStream = new HttpWebStream (this);
 			return this.requestStream;
 		}
 		
@@ -512,7 +512,7 @@ namespace System.Net
 			if (requestEndEvent != null) {
 				requestEndEvent.WaitOne ();
 			}
-			Stream responseStream = null; // TODO: new HttpWebStream (this);
+			Stream responseStream = new HttpWebStream (this);
  			this.webResponse = new HttpWebResponse (this.actualUri, method, responseStream);
  			return (WebResponse) this.webResponse;
 		}
@@ -557,15 +557,40 @@ namespace System.Net
 		// Private Classes
 		
 		// to catch the Close called on the NetworkStream
-		/*
-		internal class HttpWebStream : Stream
+		internal class HttpWebStream : NetworkStream
 		{
 			HttpWebRequest webRequest;
 			
-			internal HttpWebStream (HttpWebRequest webRequest)
-				: base (webRequest.RequestUri)
+			internal HttpWebStream (HttpWebRequest webRequest) 
+				: base (HttpWebStream.CreateSocket (webRequest), true)
 			{
+				StreamWriter webWriter = null;
+				string headerValue = null;
+
+
+				webWriter = new StreamWriter (this);
+	
+				webWriter.Write (webRequest.Method + " " + webRequest.actualUri.AbsolutePath + " HTTP/1.1\r\n");
+
+				foreach (string header in webRequest.webHeaders) {
+					headerValue = header + ": " + webRequest.webHeaders[header] + "\r\n";
+					webWriter.Write (headerValue);
+				}
+				webWriter.Write ("\r\n");
+				webWriter.Flush();
+
 				this.webRequest = webRequest;
+			}
+		
+			private static Socket CreateSocket (HttpWebRequest webRequest)
+			{
+				IPAddress hostAddr = Dns.Resolve (webRequest.actualUri.Host).AddressList[0];
+				IPEndPoint endPoint = new IPEndPoint (hostAddr, webRequest.actualUri.Port);
+				Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream,
+					ProtocolType.Tcp);
+
+				socket.Connect (endPoint);
+				return socket;
 			}
 					   	
 			public override void Close() 
@@ -574,6 +599,5 @@ namespace System.Net
 				webRequest.Close ();
 			}
 		}		
-		*/
 	}
 }

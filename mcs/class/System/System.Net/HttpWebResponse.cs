@@ -29,13 +29,53 @@ namespace System.Net
 		
 		internal HttpWebResponse (Uri uri, string method, Stream responseStream) 
 		{ 
+			Text.StringBuilder value = null;
+			string last = null;
+			string line = null;
+			string[] protocol, header;
+
 			this.uri = uri;
 			this.method = method;
 			this.responseStream = responseStream;
+			this.webHeaders = new WebHeaderCollection();
+
+			line = ReadHttpLine(responseStream);
+			protocol = line.Split (' ');
 			
-			// TODO: parse headers from responseStream
+			switch (protocol[0]) {
+				case "HTTP/1.0":
+					this.version = HttpVersion.Version10;
+					break;
+				case "HTTP/1.1":
+					this.version = HttpVersion.Version11;
+					break;
+				default:
+					throw new WebException ("Unrecognized HTTP Version");
+			}
 			
-			this.statusCode = HttpStatusCode.OK;
+			this.statusCode = (HttpStatusCode) Int32.Parse (protocol[1]);
+			while ((line = ReadHttpLine(responseStream)).Length != 0) {
+				if (!Char.IsWhiteSpace (line[0])) { // new header
+					header = line.Split (new char[] {':'}, 2);
+					if (header.Length != 2)
+						throw new WebException ("Bad HTTP Header");
+					if (last != null) { // not the first header
+						if (last.Equals ("Set-Cookie"))
+							SetCookie (value.ToString());
+						else if (last.Equals ("Set-Cookie2"))
+							SetCookie2 (value.ToString());
+						else //don't save Set-Cookie headers
+							this.webHeaders[last] = value.ToString();
+					}
+					last = header[0];
+					value = new Text.StringBuilder (header[1].Trim());
+				}
+				else
+					value.Append (line.Trim());
+			}
+			
+			this.webHeaders[last] = value.ToString(); // otherwise we miss the last header
+			// TODO: parse cookies from headers
 		}
 		
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -100,11 +140,6 @@ namespace System.Net
 			get { 
 				CheckDisposed ();
 				
-				// LAMESPEC: a simple test reveal this always 
-				// returns an empty collection. It is not filled 
-				// with the values from the Set-Cookie or 
-				// Set-Cookie2 response headers, which is a bit
-				// of a shame..
 				if (cookieCollection == null)
 					cookieCollection = new CookieCollection ();
 				return cookieCollection;
@@ -266,6 +301,99 @@ namespace System.Net
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
+		}
+
+		private static string ReadHttpLine (Stream stream)
+		{
+			Text.StringBuilder line = new Text.StringBuilder();
+			byte last = (byte)'\n';
+			bool read_last = false;
+			byte[] buf = new byte[1]; // one at a time to not snarf too much
+			
+			while (stream.Read (buf, 0, buf.Length) != 0) {
+				if (buf[0] == '\r') {
+					if ((last = (byte)stream.ReadByte ()) == '\n') // headers; not at EOS
+						break;
+					read_last = true;
+				}
+
+				line.Append (Convert.ToChar(buf[0]));
+				if (read_last) {
+					line.Append (Convert.ToChar (last));
+					read_last = false;
+				}
+			}
+			
+			return line.ToString();
+		}
+
+		private void SetCookie (string cookie_str)
+		{
+			string[] parts = null;
+			Collections.Queue options = null;
+			Cookie cookie = null;
+
+			options = new Collections.Queue (cookie_str.Split (';'));
+			parts = ((string)options.Dequeue()).Split ('='); // NAME=VALUE must be first
+
+			cookie = new Cookie (parts[0], parts[1]);
+
+			while (options.Count > 0) {
+				parts = ((string)options.Dequeue()).Split ('=');
+				switch (parts[0].ToUpper()) { // cookie options are case-insensitive
+					case "COMMENT":
+						if (cookie.Comment == String.Empty)
+							cookie.Comment = parts[1];
+					break;
+					case "COMMENTURL":
+						if (cookie.CommentUri == null)
+							cookie.CommentUri = new Uri(parts[1]);
+					break;
+					case "DISCARD":
+						cookie.Discard = true;
+					break;
+					case "DOMAIN":
+						if (cookie.Domain == String.Empty)
+							cookie.Domain = parts[1];
+					break;
+					case "MAX-AGE": // RFC Style Set-Cookie2
+						if (cookie.Expires == DateTime.MinValue)
+							cookie.Expires = cookie.TimeStamp.AddSeconds (Int32.Parse (parts[1]));
+					break;
+					case "EXPIRES": // Netscape Style Set-Cookie
+						if (cookie.Expires == DateTime.MinValue)
+							cookie.Expires = DateTime.Parse (parts[1]);
+					break;
+					case "PATH":
+						if (cookie.Path == String.Empty)
+							cookie.Path = parts[1];
+					break;
+					case "PORT":
+						if (cookie.Port == String.Empty)
+							cookie.Port = parts[1];
+					break;
+					case "SECURE":
+						cookie.Secure = true;
+					break;
+					case "VERSION":
+						cookie.Version = Int32.Parse (parts[1]);
+					break;
+				} // switch
+			} // while
+
+			if (cookieCollection == null)
+				cookieCollection = new CookieCollection();
+
+			cookieCollection.Add (cookie);
+		}
+
+		private void SetCookie2 (string cookies_str)
+		{
+			string[] cookies = cookies_str.Split (',');
+	
+			foreach (string cookie_str in cookies)
+				SetCookie (cookie_str);
+
 		}
 	}	
 }

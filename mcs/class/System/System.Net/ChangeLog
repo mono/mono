@@ -1,3 +1,9 @@
+2002-09-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs:
+	* HttpWebResponse.cs: applied patch from Shahms E. King
+	(shahms@shahms.com).
+
 2002-05-29  Lawrence Pit <loz@cable.a2000.nl>
 
 	* MonoHttpDate.cs: added
