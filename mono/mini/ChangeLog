@@ -1,3 +1,7 @@
+2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* mini.c: Use mono_thread_exit() to stop threads, instead of ExitThread.
+
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.c mini.h trace.c: Move the setting of the main assembly into
