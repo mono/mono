@@ -1385,10 +1385,10 @@ namespace Mono.CSharp {
 		public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 						      MemberFilter filter, object criteria)
 		{
-			TypeContainer tc = TypeManager.LookupTypeContainer (t);
+			DeclSpace ds = TypeManager.LookupDeclSpace (t);
 
-			if (tc != null)
-				return tc.FindMembers (mt, bf, filter, criteria);
+			if (ds != null)
+				return ds.FindMembers (mt, bf, filter, criteria);
 			else
 				return new MemberList (t.FindMembers (mt, bf, filter, criteria));
 		}

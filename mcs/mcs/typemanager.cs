@@ -429,6 +429,15 @@ public class TypeManager {
 	}
 
 	/// <summary>
+	///   Returns the DeclSpace whose Type is `t' or null if there is no
+	///   DeclSpace for `t' (ie, the Type comes from a library)
+	/// </summary>
+	public static DeclSpace LookupDeclSpace (Type t)
+	{
+		return builder_to_declspace [t] as DeclSpace;
+	}
+
+	/// <summary>
 	///   Returns the TypeContainer whose Type is `t' or null if there is no
 	///   TypeContainer for `t' (ie, the Type comes from a library)
 	/// </summary>
@@ -436,7 +445,7 @@ public class TypeManager {
 	{
 		return builder_to_declspace [t] as TypeContainer;
 	}
-
+	
 	public static IMemberContainer LookupMemberContainer (Type t)
 	{
 		if (t is TypeBuilder) {

@@ -1,5 +1,13 @@
 2003-05-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (LookupDeclSpace): Add new method, sometimes we
+	want to pull the DeclSpace out of the builder_to_declspace instead
+	of the TypeBuilder (like in TypeContainer.FindMembers).
+
+	* class.cs (TypeContainer.FindMembers): Use LookupDeclSpace
+	instead of LookupTypeContainer.  Fixes the crash on .NET for
+	looking up interface members.
+
 	* const.cs: Create our own emit context during the Definition
 	stage, so that constants are evaluated in the proper context, when
 	a recursive definition happens.
