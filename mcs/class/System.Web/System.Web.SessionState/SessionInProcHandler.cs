@@ -12,7 +12,7 @@
 
 	TODO:
 	    * Remove abandoned sessions., preferably by a worker thread sleeping most of the time.
-            * Increase session security, for example by using UserAgent i hashcode.
+	    * Increase session security, for example by using UserAgent i hashcode.
 	    * Generate SessionID:s in a good (more random) way.
 */
 using System;
@@ -57,10 +57,11 @@ namespace System.Web.SessionState
 	internal class SessionInProcHandler : ISessionHandler
 	{
 		protected Hashtable _sessionTable;
-		const string COOKIE_NAME = "ASPSESSION"; // The name of the cookie.
 		// The length of a session, in minutes. After this length, it's abandoned due to idle.
 		const int SESSION_LIFETIME = 45;
 
+		private SessionConfig config;
+		
 		public void Dispose ()
 		{
 			_sessionTable = null;
@@ -68,6 +69,7 @@ namespace System.Web.SessionState
 
 		public void Init (HttpApplication context, SessionConfig config)
 		{
+			this.config = config;
 			_sessionTable = (Hashtable) AppDomain.CurrentDomain.GetData (".MonoSessionInProc");
 			if (_sessionTable == null)
 				_sessionTable = new Hashtable();
@@ -81,11 +83,12 @@ namespace System.Web.SessionState
 		public bool UpdateContext (HttpContext context, SessionStateModule module)
 		{
 			SessionContainer container = null;
-
+			string id = SessionId.Lookup (context.Request, config.CookieLess);
+			
 			//first we try to get the cookie.
 			// if we have a cookie, we look it up in the table.
-			if (context.Request.Cookies [COOKIE_NAME] != null) {
-				container = (SessionContainer) _sessionTable [context.Request.Cookies [COOKIE_NAME].Value];
+			if (id != null) {
+				container = (SessionContainer) _sessionTable [id];
 
 				// if we have a session, and it is not expired, set isNew to false and return it.
 				if (container!=null && container.SessionState!=null && !container.SessionState.IsAbandoned) {
@@ -97,8 +100,7 @@ namespace System.Web.SessionState
 					context.SetSession (container.SessionState);
 					return false; // and we're done
 				} else if(container!=null) {
-					//A empty or expired session, lets kill it.
-					_sessionTable[context.Request.Cookies[COOKIE_NAME]]=null;
+					_sessionTable.Remove (id);
 				}
 			}
 
@@ -119,12 +121,6 @@ namespace System.Web.SessionState
 			// and returns it.
 			context.SetSession (container.SessionState);
 			context.Session.IsNewSession = true;
-
-
-			// sets the session cookie. We're assuming that session scope is the default mode.
-			HttpCookie cookie = new HttpCookie (COOKIE_NAME,sessionID);
-			cookie.Path = Path.GetDirectoryName (context.Request.Path);
-			context.Response.AppendCookie (cookie);
 
 			// And we're done!
 			return true;

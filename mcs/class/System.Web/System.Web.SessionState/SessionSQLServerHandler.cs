@@ -18,7 +18,6 @@ namespace System.Web.SessionState {
 
 	internal class SessionSQLServerHandler : ISessionHandler
 	{
-		const string CookieName = "ASPSESSION";
 		const int DefTimeout = 600;
 
 		private Type cncType = null;
@@ -75,7 +74,7 @@ namespace System.Web.SessionState {
 		public bool UpdateContext (HttpContext context, SessionStateModule module)
 		{
 			HttpSessionState session = null;
-			string id = GetId (context);
+			string id = SessionId.Lookup (context.Request, config.CookieLess);
 
 			if (id != null) {
 				session = SelectSession (id);
@@ -93,7 +92,6 @@ namespace System.Web.SessionState {
 			InsertSession (session, config.Timeout);
 			context.SetSession (session);
 			context.Session.IsNewSession = true;
-			context.Response.AppendCookie (new HttpCookie (CookieName, id));
 
 			return true;
 		}
@@ -214,15 +212,6 @@ namespace System.Web.SessionState {
 		private DateTime Tommorow ()
 		{
 			return DateTime.Now.AddDays (1);
-		}
-
-		private string GetId (HttpContext context)
-		{
-			if (!config.CookieLess &&
-					context.Request.Cookies [CookieName] != null)
-				return context.Request.Cookies [CookieName].Value;
-
-			return null;
 		}
 
 		private byte [] ReadBytes (IDataReader reader, int index)

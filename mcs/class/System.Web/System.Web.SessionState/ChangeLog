@@ -1,3 +1,16 @@
+2003-12-03  Jackson Harper <jackson@ximian.com>
+
+	* SessionStateModule.cs: If using cookieless sessions add an
+	onbegin request handler that parsers out session ids and rewrites
+	the path. Also redirect to a url with an embedded session id if we
+	are creating a new cookieless session.
+	* SesionInProcHandler.cs:
+	* SessionSQLServerHandler.cs:
+	* SessionStateServerHandler.cs: Use SessionId::Lookup to lookup session
+	ids, don't set the session id cookie anymore. That is handled by
+	the SessionStateModule.
+	* SessionId.cs: Add method for looking up session ids, add some constants.
+	
 2003-11-26  Jackson Harper <jackson@ximian.com>
 
 	* SessionSQLServerHandler.cs: Fix typo in param name.

@@ -3,12 +3,14 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//      Stefan Görling (stefan@gorling.se)
+//	Stefan Görling (stefan@gorling.se)
+//      Jackson Harper (jackson@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 // (C) 2003 Stefan Görling (http://www.gorling.se)
 
 using System.Web;
+using System.Web.Util;
 using System.Security.Cryptography;
 
 namespace System.Web.SessionState
@@ -16,6 +18,9 @@ namespace System.Web.SessionState
 	[MonoTODO]
 	public sealed class SessionStateModule : IHttpModule, IRequiresSessionState
 	{
+		internal static readonly string CookieName = "ASPSESSION";
+		internal static readonly string HeaderName = "AspFilterSessionId";
+		
 		static SessionConfig config;
 		static Type handlerType;
 		ISessionHandler handler;
@@ -27,10 +32,10 @@ namespace System.Web.SessionState
 			rng = new RNGCryptoServiceProvider ();
 		}
 
-                internal RandomNumberGenerator Rng {
-                        get { return rng; }
-                }
-                
+		internal RandomNumberGenerator Rng {
+			get { return rng; }
+		}
+		
 		public void Dispose ()
 		{
 		    if (handler!=null)
@@ -54,7 +59,10 @@ namespace System.Web.SessionState
 				if (config.Mode == SessionStateMode.InProc)
 					handlerType = typeof (SessionInProcHandler);
 			}
-				
+
+			if (config.CookieLess)
+				app.BeginRequest += new EventHandler (OnBeginRequest);
+			
 			app.AddOnAcquireRequestStateAsync (
 				new BeginEventHandler (OnBeginAcquireState),
 				new EndEventHandler (OnEndAcquireState));
@@ -68,6 +76,21 @@ namespace System.Web.SessionState
 			}
 		}
 
+		public void OnBeginRequest (object o, EventArgs args)
+		{
+			HttpApplication application = (HttpApplication) o;
+			HttpContext context = application.Context;
+			string base_path = context.Request.BaseVirtualDir;
+			string id = UrlUtils.GetSessionId (base_path);
+
+			if (id == null)
+				return;
+			
+			context.Request.SetFilePath (UrlUtils.RemoveSessionId (base_path,
+								     context.Request.FilePath));
+			context.Request.SetHeader (HeaderName, id);
+		}
+		
 		void OnReleaseRequestState (object o, EventArgs args)
 		{
 			if (handler == null)
@@ -84,13 +107,24 @@ namespace System.Web.SessionState
 
 		IAsyncResult OnBeginAcquireState (object o, EventArgs args, AsyncCallback cb, object data)
 		{
-
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 
 			bool isNew = false;
 			if (handler != null)
 			    isNew = handler.UpdateContext (context, this);
+
+			if (isNew && config.CookieLess) {
+				string id = context.Session.SessionID;
+				context.Request.SetHeader (HeaderName, id);
+				context.Response.Redirect (UrlUtils.InsertSessionId (id,
+						context.Request.FilePath));
+			} else {
+				string id = context.Session.SessionID;
+				HttpCookie cookie = new HttpCookie (CookieName, id);
+				cookie.Path = UrlUtils.GetDirectory (context.Request.Path);
+				context.Response.AppendCookie (cookie);
+			}
 			
 			// In the future, we might want to move the Async stuff down to
 			// the interface level, if we're going to support other than
@@ -118,7 +152,4 @@ namespace System.Web.SessionState
 		public event EventHandler End;
 	}
 }
-
-
-
 
