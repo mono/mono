@@ -31,9 +31,12 @@
 //	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.11  2004/08/21 22:30:53  pbartok
+// - Signature fixes
+//
 // Revision 1.10  2004/08/21 22:21:13  pbartok
 // - Signature fixes
 //
@@ -469,7 +472,7 @@ namespace System.Windows.Forms
     		 	Console.WriteLine ("CalcAutoSize () after " + Size);
     		}
 
-    		protected virtual void Draw ()
+    		internal void Draw ()
 		{
 			ThemeEngine.Current.DrawLabel (DeviceContext, paint_area, BorderStyle, Text, 
 				ForeColor, BackColor, Font, string_format, Enabled);
@@ -562,14 +565,10 @@ namespace System.Windows.Forms
 
 
 
-#if nodef
-    		protected override void SetBoundsCore (
-    			int x, int y, int width, int height,
-    			BoundsSpecified specified)
+    		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
     		{
     			base.SetBoundsCore (x, y, width, height, specified);
     		}
-#endif
 
 
     		protected override void WndProc(ref Message m)
