@@ -8,14 +8,16 @@
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
 // 
+
 using System;
 using System.Drawing;
-using System.ComponentModel;using System.Windows.Forms;
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace System.Drawing.Design
 {
 	public class FontEditor : UITypeEditor
 	{
-
 		private FontDialog fontEdit;
 
 		public FontEditor()
@@ -26,6 +28,7 @@ namespace System.Drawing.Design
 			IServiceProvider provider, object value)
 		{
 			fontEdit = new FontDialog ();
+
 			if (value is Font)
 				fontEdit.Font = (Font) value;
 			else

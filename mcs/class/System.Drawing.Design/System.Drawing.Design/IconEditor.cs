@@ -8,7 +8,9 @@
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
 // 
+
 using System;
+using System.Text;
 using System.IO;
 using System.Drawing;
 using System.ComponentModel;
@@ -16,7 +18,7 @@ using System.Windows.Forms;
 
 namespace System.Drawing.Design
 {
-	// Strange thing that this is not inherited from ImageEditor
+	// LAMESPEC: Why isn't this class inherited from ImageEditor?
 	public class IconEditor : UITypeEditor
 	{
 
@@ -28,31 +30,37 @@ namespace System.Drawing.Design
 
 		protected static string CreateExtensionsString (string[] extensions, string sep)
 		{
-			if (extensions.Length > 0)
-			{
-				string Ext = extensions[0];
-				for (int x = 1; x < extensions.Length - 1; x++)
-					Ext = string.Concat(Ext, sep, extensions[x]);
-				return Ext;
+			if (extensions.Length > 0) {
+				StringBuilder sb = new StringBuilder();
+
+				sb.Append (extensions[0]);
+				for (int x = 1; x < extensions.Length - 1; x++) {
+					sb.Append (sep);
+					sb.Append (extensions[x]);
+				}
+				return sb.ToString();
 			}
-			else
-			{
+			else {
 				return string.Empty;
 			}
 		}
 
 		protected static string CreateFilterEntry (IconEditor e)
 		{
+			StringBuilder sb = new StringBuilder();
 			string ExtStr = CreateExtensionsString (e.GetExtensions(), ";");
-			string Desc = e.GetFileDialogDescription() + " (" + ExtStr + ")";
-			return String.Concat (Desc, "|", ExtStr);
+
+			sb.Append (e.GetFileDialogDescription());
+			sb.Append (" (" + ExtStr + ")" + "|");
+			sb.Append (ExtStr);
+			return sb.ToString();
 		}
 
 		public override object EditValue (ITypeDescriptorContext context,
 			IServiceProvider provider, object value)
 		{
 			openDialog = new OpenFileDialog();
-			openDialog.Title = Locale.GetText("Open image file");
+			openDialog.Title = Locale.GetText ("Open image file");
 			openDialog.CheckFileExists = true;
 			openDialog.CheckPathExists = true;
 			openDialog.Filter = CreateFilterEntry (this);
@@ -70,8 +78,7 @@ namespace System.Drawing.Design
 				return value;
 		}
 
-		public override UITypeEditorEditStyle GetEditStyle (
-			ITypeDescriptorContext context)
+		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
 			return UITypeEditorEditStyle.Modal;
 		}
@@ -83,11 +90,10 @@ namespace System.Drawing.Design
 
 		protected virtual string GetFileDialogDescription()
 		{
-			return Locale.GetText("Icon files");
+			return Locale.GetText ("Icon files");
 		}
 
-		public override bool GetPaintValueSupported (
-			ITypeDescriptorContext context)
+		public override bool GetPaintValueSupported (ITypeDescriptorContext context)
 		{
 			return true;
 		}
@@ -100,13 +106,13 @@ namespace System.Drawing.Design
 		public override void PaintValue (PaintValueEventArgs e)
 		{
 			Graphics G = e.Graphics;
-			if (e.Value != null)
-			{
+
+			if (e.Value != null) {
 				Image I = (Image) e.Value;
 				G.DrawImage (I, e.Bounds);
 			}
+
 			G.DrawRectangle (Pens.Black, e.Bounds);
 		}
 	}
 }
-

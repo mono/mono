@@ -8,9 +8,11 @@
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
 // 
+
 using System;
 using System.IO;
 using System.Drawing.Imaging;
+
 namespace System.Drawing.Design
 {
 	public class MetafileEditor : ImageEditor
@@ -27,7 +29,7 @@ namespace System.Drawing.Design
 
 		protected override string GetFileDialogDescription()
 		{
-			return Locale.GetText("All metafile files");
+			return Locale.GetText ("All metafile files");
 		}
 
 		protected override Image LoadFromStream (Stream stream)

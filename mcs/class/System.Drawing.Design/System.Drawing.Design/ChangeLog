@@ -1,3 +1,17 @@
+2004-02-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* BitmapEditor.cs
+	* FontEditor.cs
+	* FontNameEditor.cs
+	* IconEditor.cs
+	* ImageEditor.cs
+	* MetafileEditor.cs
+	* ColorEditor.cs: beautifications
+
+	* ContentAlignmentEditor.cs
+	* CursorEditor.cs: Implemented a simple UI
+	* ColorEditor.cs: Implemented a simple UI
+
 2003-07-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* IconEditor.cs: Tiny fix to improve created image
