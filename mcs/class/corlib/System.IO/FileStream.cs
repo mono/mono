@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
@@ -38,6 +39,8 @@ namespace System.IO
 		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool noBuffering)
 		{
 			this.handle = MonoIO.InvalidHandle;
+			if (handle == this.handle)
+				throw new ArgumentException ("handle", Locale.GetText ("Invalid."));
 
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
@@ -251,6 +254,9 @@ namespace System.IO
 				return(buf_start + buf_offset);
 			}
 			set {
+				if (handle == MonoIO.InvalidHandle)
+					throw new ObjectDisposedException ("Stream has been closed");
+
 				if(CanSeek == false) {
 					throw new NotSupportedException("The stream does not support seeking");
 				}
@@ -321,8 +327,10 @@ namespace System.IO
 			if (!CanRead)
 				throw new NotSupportedException ("Stream does not support reading");
 			int len = dest.Length;
-			if (dest_offset < 0 || count < 0)
-				throw new ArgumentException ("dest or count is negative");
+			if (dest_offset < 0)
+				throw new ArgumentOutOfRangeException ("dest_offset", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
 			if (dest_offset > len)
 				throw new ArgumentException ("destination offset is beyond array size");
 			// reordered to avoid possible integer overflow
@@ -383,6 +391,9 @@ namespace System.IO
 		public override IAsyncResult BeginRead (byte [] buffer, int offset, int count,
 							AsyncCallback cback, object state)
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+
 			if (!CanRead)
 				throw new NotSupportedException ("This stream does not support reading");
 
@@ -528,6 +539,9 @@ namespace System.IO
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int count,
 							AsyncCallback cback, object state)
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+
 			if (!CanWrite)
 				throw new NotSupportedException ("This stream does not support writing");
 
@@ -695,6 +709,9 @@ namespace System.IO
 
 		public override void SetLength (long length)
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+
 			if(CanSeek == false) {
 				throw new NotSupportedException("The stream does not support seeking");
 			}
@@ -715,6 +732,9 @@ namespace System.IO
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				throw MonoIO.GetException (name, error);
 			}
+
+			if (Position > length)
+				Position = length;
 		}
 
 		public override void Flush ()
@@ -739,6 +759,8 @@ namespace System.IO
 
 		public virtual void Lock (long position, long length)
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
 			if (position < 0) {
 				throw new ArgumentOutOfRangeException ("position must not be negative");
 			}
@@ -759,6 +781,8 @@ namespace System.IO
 
 		public virtual void Unlock (long position, long length)
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
 			if (position < 0) {
 				throw new ArgumentOutOfRangeException ("position must not be negative");
 			}

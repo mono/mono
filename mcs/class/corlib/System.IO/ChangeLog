@@ -4,7 +4,8 @@
 	Reordered some exceptions to match MS implementation. 
 	* BufferedStream.cs: Fixed Seek logic (check for CanSeek and dispose).
 	SetLength must also reset Position and check for dispose.
-	* FileStream.cs: Added missing check for invalid SeekOrigin.
+	* FileStream.cs: Added missing check for invalid SeekOrigin. Added
+	missing validations.
 
 2004-05-27  Dick Porter  <dick@ximian.com>
 
