@@ -28,6 +28,7 @@ namespace System.Reflection.Emit {
 		private ILGenerator ilgen;
 		private TypeBuilder type;
 		private ParameterBuilder[] pinfo;
+		private MethodInfo override_method;
 		private string pi_dll;
 		private string pi_entry;
 		private CharSet ncharset;
@@ -128,6 +129,10 @@ namespace System.Reflection.Emit {
 		}
 		internal override int get_next_table_index (int table, bool inc) {
 			return type.get_next_table_index (table, inc);
+		}
+
+		internal void set_override (MethodInfo mdecl) {
+			override_method = mdecl;
 		}
 	}
 }

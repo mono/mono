@@ -1,4 +1,9 @@
 
+Mon Dec 24 17:21:30 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs: added DefineMethodOverride().
+	* MethodBuilder.cs: add override_method member and setter.
+
 Mon Nov 19 13:58:01 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: add method to register a string in the "#US"

@@ -185,6 +185,13 @@ namespace System.Reflection.Emit {
 				nativeCallConv, nativeCharSet);
 		}
 
+		public void DefineMethodOverride( MethodInfo methodInfoBody, MethodInfo methodInfoDeclaration) {
+			if (methodInfoBody is MethodBuilder) {
+				MethodBuilder mb = (MethodBuilder)methodInfoBody;
+				mb.set_override (methodInfoDeclaration);
+			}
+		}
+
 		public FieldBuilder DefineField( string fieldName, Type type, FieldAttributes attributes) {
 			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes);
 			if (fields != null) {
