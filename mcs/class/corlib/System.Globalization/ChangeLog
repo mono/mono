@@ -1,3 +1,7 @@
+2001-07-18  Michael Lambert <michaellambert@email.com>
+
+        * DateTimeStyles.cs, NumberStyles.cs: Add.
+
 2001-07-06  Joe Shaw  <joe@ximian.com>
 
 	* UnicodeCategory.cs: Added.

@@ -1,3 +1,7 @@
+2001-07-18  Michael Lambert <michaellambert@email.com>
+
+        *SeekOrigin.cs.cs, FileShare.cs, FileMode.cs, FileAccess.cs: Add.
+
 2001-07-19  Marcin Szczepanski <marcins@zipworld.com.au>
 
 	* System.IO.MemoryStream.cs: Added.  Had quite a few cases of

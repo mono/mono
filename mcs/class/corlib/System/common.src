@@ -5,6 +5,7 @@ ArgumentOutOfRangeException.cs
 ArithmeticException.cs
 Array.cs
 ArrayTypeMismatchException.cs
+AttributeTargets.cs
 Boolean.cs
 Byte.cs
 Char.cs

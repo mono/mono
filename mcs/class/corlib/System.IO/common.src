@@ -1,5 +1,9 @@
+FileAccess.cs
+FileMode.cs
+FileShare.cs
+MemoryStream.cs
+SeekOrigin.cs
 StringReader.cs
 StringWriter.cs
 TextReader.cs
 TextWriter.cs
-MemoryStream.cs

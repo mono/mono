@@ -1,4 +1,16 @@
-DIRS=System System.Collections System.Configuration.Assemblies System.Globalization System.Text System.IO System.Diagnostics
+DIRS=	\
+	System 						\
+	System.Collections 				\
+	System.Configuration.Assemblies 		\
+	System.Diagnostics				\
+	System.Globalization 				\
+	System.IO					\
+	System.Reflection 				\
+	System.Runtime.CompilerServices			\
+	System.Runtime.InteropServices			\
+	System.Security.Permissions			\
+	System.Text					\
+	System.Threading
 
 all:
 	@echo "You must use 'make windows' or 'make unix'."
