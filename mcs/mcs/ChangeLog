@@ -1,3 +1,17 @@
+2001-11-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Cast.DoResolve): Resolve type.
+	(Cast.Cast): Take an expression as the target type.
+	
+	* cs-parser.jay (cast_expression): Remove old hack that only
+	allowed a limited set of types to be handled.  Now we take a
+	unary_expression and we resolve to a type during semantic
+	analysis.
+
+	Use the grammar productions from Rhys to handle casts (this is
+	not complete like Rhys syntax yet, we fail to handle that corner
+	case that C# has regarding (-x), but we will get there.
+	
 2001-11-22  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (EmitFieldInitializer): Take care of the case when we have a

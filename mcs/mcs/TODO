@@ -17,23 +17,6 @@ BUGS
 	They currently can not be defined in terms of other enumerations
 	or constants.
 
-* Known problems:
-
-  Cast expressions
-
-	They should should use:
-
-		OPEN_PARENS type CLOSE_PARENS
-
-	instead of the current production which is wrong, because it
-	only handles a few cases.
-
-	Complex casts like:
-
-		Array r = (string []) object
-
-	Wont be parsed.
-  
 * Interfaces
 
 	For indexers, the output of ix2.cs is different from our

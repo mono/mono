@@ -737,18 +737,18 @@ namespace Mono.CSharp {
 	///   rules, we need to figure those out.
 	/// </summary>
 	public class Cast : Expression {
-		string target_type;
+		Expression target_type;
 		Expression expr;
 		Location   loc;
 			
-		public Cast (string cast_type, Expression expr, Location loc)
+		public Cast (Expression cast_type, Expression expr, Location loc)
 		{
 			this.target_type = cast_type;
 			this.expr = expr;
 			this.loc = loc;
 		}
 
-		public string TargetType {
+		public Expression TargetType {
 			get {
 				return target_type;
 			}
@@ -768,8 +768,17 @@ namespace Mono.CSharp {
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
+
+			target_type = target_type.Resolve (ec);
+			if (target_type == null)
+				return null;
+
+			if (target_type.ExprClass != ExprClass.Type){
+				report118 (loc, target_type, "class");
+				return null;
+			}
 			
-			type = ec.TypeContainer.LookupType (target_type, false);
+			type = target_type.Type;
 			eclass = ExprClass.Value;
 			
 			if (type == null)
@@ -4129,5 +4138,48 @@ namespace Mono.CSharp {
 
 		}
 
+	}
+
+	// <summary>
+	//   This class is used to "construct" the type during a typecast
+	//   operation.  Since the Type.GetType class in .NET can parse
+	//   the type specification, we just use this to construct the type
+	//   one bit at a time.
+	// </summary>
+	public class ComposedCast : Expression {
+		Expression left;
+		string dim;
+		Location loc;
+		
+		public ComposedCast (Expression left, string dim, Location l)
+		{
+			this.left = left;
+			this.dim = dim;
+			loc = l;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			left = left.Resolve (ec);
+			if (left == null)
+				return null;
+
+			if (left.ExprClass != ExprClass.Type){
+				report118 (loc, left, "type");
+				return null;
+			}
+			
+			type = ec.TypeContainer.LookupType (left.Type.FullName + dim, false);
+			if (type == null)
+				return null;
+
+			eclass = ExprClass.Type;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new Exception ("This should never be called");
+		}
 	}
 }

@@ -1685,8 +1685,8 @@ namespace Mono.CSharp {
 			if (expr != null)
 				kind = ExprClassName (expr.ExprClass);
 
-			Error (118, loc, "Expression denotes a '" + kind +
-			       "' where an " + expected + " was expected");
+			Error (118, loc, "Expression denotes a `" + kind +
+			       "' where a `" + expected + "' was expected");
 		}
 
 		/// <summary>

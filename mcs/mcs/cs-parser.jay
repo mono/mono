@@ -1602,6 +1602,21 @@ type
 	| array_type
 	;
 
+non_expression_type
+	: builtin_types	
+	  {
+		$$ = new SimpleName ((string) $1, lexer.Location);
+	  }
+	| non_expression_type rank_specifier
+	  {
+		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+	  }
+	| expression rank_specifiers 
+	  {
+		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+	  }
+	;
+
 type_list
 	: type
 	  {
@@ -2007,50 +2022,60 @@ unchecked_expression
 
 unary_expression
 	: primary_expression
-	| PLUS unary_expression
-	  { 
-	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, lexer.Location);
-	  } 
-	| MINUS unary_expression 
-	  { 
-		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, lexer.Location);
-	  }
-	| BANG unary_expression 
+	| BANG prefixed_unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
 	  }
-	| TILDE unary_expression
+	| TILDE prefixed_unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, lexer.Location);
 	  }
-	| STAR unary_expression
+        | OPEN_PARENS expression CLOSE_PARENS unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.Indirection, (Expression) $2, lexer.Location);
+		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
-	| BITWISE_AND unary_expression
+	| OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, lexer.Location);
+		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
-	| OP_INC unary_expression 
+	;
+
+	//
+	// The idea to split this out is from Rhys' grammar
+	// to solve the problem with casts.
+	//
+prefixed_unary_expression
+	: unary_expression
+	| PLUS prefixed_unary_expression
+	  { 
+	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, lexer.Location);
+	  } 
+	| MINUS prefixed_unary_expression 
+	  { 
+		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, lexer.Location);
+	  }
+	| OP_INC prefixed_unary_expression 
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement,
 				       (Expression) $2, lexer.Location);
 	  }
-	| OP_DEC unary_expression 
+	| OP_DEC prefixed_unary_expression 
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement,
 				       (Expression) $2, lexer.Location);
 	  }
-        | cast_expression 
-	/*
-	 we can not do cast expressions at this level,
-	 as there is an ambiguity.  Check "Cast Expressions" 7.6.8
-	 for the recipe to handle this.
-	 */
+	| STAR prefixed_unary_expression
+	  {
+		$$ = new Unary (Unary.Operator.Indirection, (Expression) $2, lexer.Location);
+	  }
+	| BITWISE_AND prefixed_unary_expression
+	  {
+		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, lexer.Location);
+	  }
 	;
 
 pre_increment_expression
-	: OP_INC unary_expression 
+	: OP_INC prefixed_unary_expression 
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement,
 				       (Expression) $2, lexer.Location);
@@ -2058,45 +2083,26 @@ pre_increment_expression
 	;
 
 pre_decrement_expression
-	: OP_DEC unary_expression 
+	: OP_DEC prefixed_unary_expression 
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement,
 				       (Expression) $2, lexer.Location);
 	  }
 	;
 
-cast_expression
-	/* 
-	 * FIXME: This is actually wrong, it should be `type' but that
-	 * introduces a lot of {shift,reduce}/reduces
-	 *
-	 * This is really really wrong.  We need to track down
-	 * the source of problems with QIs because expressions like:
-	 * foreach (string s in (string []) object) wont be parsed.
-	 */
-	: OPEN_PARENS qualified_identifier CLOSE_PARENS unary_expression
-	  {
-		$$ = new Cast ((string) $2, (Expression) $4, lexer.Location);
-	  }
-	| OPEN_PARENS builtin_types CLOSE_PARENS unary_expression
-	  {
-		$$ = new Cast ((string) $2, (Expression) $4, lexer.Location);
-	  }
-	;
-
 multiplicative_expression
-	: unary_expression
-	| multiplicative_expression STAR unary_expression
+	: prefixed_unary_expression
+	| multiplicative_expression STAR prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Multiply, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| multiplicative_expression DIV unary_expression
+	| multiplicative_expression DIV prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Division, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| multiplicative_expression PERCENT unary_expression 
+	| multiplicative_expression PERCENT prefixed_unary_expression 
 	  {
 		$$ = new Binary (Binary.Operator.Modulus, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
@@ -2233,11 +2239,11 @@ conditional_expression
 	;
 
 assignment_expression
-	: unary_expression ASSIGN expression
+	: prefixed_unary_expression ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| unary_expression OP_MULT_ASSIGN expression
+	| prefixed_unary_expression OP_MULT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2246,7 +2252,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_DIV_ASSIGN expression
+	| prefixed_unary_expression OP_DIV_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2255,7 +2261,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_MOD_ASSIGN expression
+	| prefixed_unary_expression OP_MOD_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2264,7 +2270,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_ADD_ASSIGN expression
+	| prefixed_unary_expression OP_ADD_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2273,7 +2279,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_SUB_ASSIGN expression
+	| prefixed_unary_expression OP_SUB_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2282,7 +2288,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_SHIFT_LEFT_ASSIGN expression
+	| prefixed_unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2291,7 +2297,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_SHIFT_RIGHT_ASSIGN expression
+	| prefixed_unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2300,7 +2306,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_AND_ASSIGN expression
+	| prefixed_unary_expression OP_AND_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2309,7 +2315,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_OR_ASSIGN expression
+	| prefixed_unary_expression OP_OR_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
@@ -2318,7 +2324,7 @@ assignment_expression
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
-	| unary_expression OP_XOR_ASSIGN expression
+	| prefixed_unary_expression OP_XOR_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
