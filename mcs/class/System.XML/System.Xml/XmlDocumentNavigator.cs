@@ -25,6 +25,10 @@ namespace System.Xml
 		{
 			nsNodeXml = document.CreateAttribute ("xmlns", "xml", Xmlns);
 			nsNodeXml.Value = XmlnsXML;
+			if (node.NodeType == XmlNodeType.Attribute && node.NamespaceURI == XmlNamespaceManager.XmlnsXmlns) {
+				nsNode = (XmlAttribute) node; 
+				node = nsNode.OwnerElement;
+			}
 		}
 
 		private XmlDocumentNavigator (XmlNode node, XmlAttribute nsNodeXml)

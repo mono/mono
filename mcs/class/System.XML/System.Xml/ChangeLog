@@ -1,3 +1,8 @@
+2004-03-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentNavigator.cs : When this instance is created from xmlns 
+	  attributes, it should be Namespace node.
+
 2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : ReadInnerXml() should progress reader when it is on
