@@ -302,7 +302,7 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Type create_modified_type (TypeBuilder tb, string modifiers);
 
-		static char[] type_modifiers = {'&', '[', '*'};
+		static readonly char [] type_modifiers = {'&', '[', '*'};
 
 		private TypeBuilder GetMaybeNested (TypeBuilder t, string className) {
 			int subt;

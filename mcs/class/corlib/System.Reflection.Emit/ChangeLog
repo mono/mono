@@ -1,3 +1,7 @@
+2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ILGenerator.cs, ModuleBuilder.cs: readonlyificate.
+
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodRental.cs: New file.

@@ -144,7 +144,7 @@ namespace System.Reflection.Emit {
 			public int maxStack; 
 		}
 		
-		static Type void_type = typeof (void);
+		static readonly Type void_type = typeof (void);
 		#region Sync with reflection.h
 		private byte[] code;
 		private int code_len;
