@@ -1,5 +1,9 @@
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
 
+	* StringReader.cs: Throws exceptions if constructor parameter is null.
+	
+2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
+
 	* StringWriter.cs: Now throws an exception if StringBuilder parameter
 	is null
 	

@@ -18,6 +18,10 @@ namespace System.IO {
 		private int sourceLength;
 
 		public StringReader( string s ) {
+
+			if (s == null) 
+				throw new ArgumentNullException ();
+
 			this.source = s;
 			nextChar = 0;
 			sourceLength = s.Length;
