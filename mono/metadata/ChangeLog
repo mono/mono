@@ -1,3 +1,12 @@
+2004-05-28	Patrik Torstensson	<totte@hiddenpeaks.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): correctly
+	cache methods using signature (special case for methods
+	that are value type or string class)
+	
+	* image.c (mono_image_close): clean up allocated GSList's
+	in runtime_invoke_cache.
+
 2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-config.c: set the correct path for mono_cfg_dir on windows when
