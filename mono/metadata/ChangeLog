@@ -1,8 +1,12 @@
+2004-04-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* class.c: don't display the layout warning for static fields.
+
 2004-04-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* icall.cs: Registered new icalls for Char.ToLower and Char.ToUpper.
-	* locales.c, locales.h: Added new icalls for culture-specific Char.ToLower
-	  and Char.ToUpper.
+	* locales.c, locales.h: Added new icalls for culture-specific
+	Char.ToLower and Char.ToUpper.
 
 2004-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
