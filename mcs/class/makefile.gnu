@@ -32,6 +32,7 @@ DIRS =	corlib				\
 	Microsoft.VisualC		\
 	Cscompmgd			\
 	System.Windows.Forms		\
+	Npgsql				\
 	PEAPI				\
 
 default: all
