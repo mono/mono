@@ -564,7 +564,7 @@ namespace System.Drawing {
 		internal static extern Status GdipImageGetFrameDimensionsCount ( IntPtr image, out uint count );
 												   
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipImageGetFrameDimensionsList ( IntPtr image, out IntPtr dimensionIDs, uint count );
+		internal static extern Status GdipImageGetFrameDimensionsList ( IntPtr image, [Out] Guid[] dimensionIDs, uint count );
  
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageHeight ( IntPtr image, out uint height );
@@ -612,18 +612,18 @@ namespace System.Drawing {
 		internal static extern Status GdipGetImageBounds ( IntPtr image, out RectangleF source, ref GraphicsUnit unit );
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetEncoderParameterListSize ( IntPtr image, IntPtr encoder, out uint size );
+		internal static extern Status GdipGetEncoderParameterListSize ( IntPtr image, ref Guid encoder, out uint size );
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetEncoderParameterList ( IntPtr image, IntPtr encoder, uint size, out IntPtr buffer );
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipImageGetFrameCount ( IntPtr image, IntPtr guidDimension, out uint count );
+		internal static extern Status GdipImageGetFrameCount ( IntPtr image, ref Guid guidDimension, out uint count );
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipImageSelectActiveFrame ( IntPtr image, Guid guidDimension, uint frameIndex );
+		internal static extern Status GdipImageSelectActiveFrame ( IntPtr image, ref Guid guidDimension, uint frameIndex );
 		
-        [DllImport("gdiplus.dll")]
+		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetPropertyItemSize ( IntPtr image, int propertyID, out uint propertySize );
 
 		[DllImport("gdiplus.dll")]
@@ -953,6 +953,15 @@ namespace System.Drawing {
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetStringFormatHotkeyPrefix(IntPtr format, out HotkeyPrefix hotkeyPrefix);
 		
+		//ImgaeCodecInfo functions
+		[DllImport("gdiplus.dll")]
+		static internal extern void GetImageDecodersSize ( out uint decoderNums, out uint arraySize );
+		[DllImport("gdiplus.dll")]
+		static internal extern void GetImageDecoders ( uint decoderNums, uint arraySize, IntPtr decoders);
+		[DllImport("gdiplus.dll")]
+		static internal extern void GetImageEncodersSize ( out uint encoderNums, out uint arraySize );
+		[DllImport("gdiplus.dll")]
+		static internal extern void GetImageEncoders ( uint encoderNums, uint arraySize, IntPtr encoders);
 		
 		
 #endregion      

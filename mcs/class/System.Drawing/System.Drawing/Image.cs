@@ -93,11 +93,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public static Bitmap FromHbitmap (IntPtr hbitmap)
 	{
-		IntPtr ptr;
-		Status status = GDIPlus.GdipCreateBitmapFromHBITMAP ( hbitmap, IntPtr.Zero, out ptr );
-		GDIPlus.CheckStatus ( status );
-		Bitmap bmp = new Bitmap ( ptr );
-		return bmp;
+		return FromHbitmap ( hbitmap, IntPtr.Zero );
 	}
 
 	public static Bitmap FromHbitmap (IntPtr hbitmap, IntPtr hpalette)
@@ -247,14 +243,35 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return rectF;
 	}
 	
-	//public EncoderParameters GetEncoderParameterList(Guid encoder);
-	//public int GetFrameCount(FrameDimension dimension);
-	//public PropertyItem GetPropertyItem(int propid);
-	/*
-	  public Image GetThumbnailImage(int thumbWidth, int thumbHeight,
-	  Image.GetThumbnailImageAbort callback,
-	  IntPtr callbackData);
-	*/
+	public EncoderParameters GetEncoderParameterList(Guid encoder)
+	{
+		uint size;
+		Guid clsid = encoder;
+		Status status = GDIPlus.GdipGetEncoderParameterListSize (nativeObject, ref encoder, out size);
+		GDIPlus.CheckStatus ( status );
+		Console.WriteLine ("Image.cs EncoderParameterList size is " + size);
+		throw new NotImplementedException();
+	}
+
+	public int GetFrameCount(FrameDimension dimension)
+	{
+		uint count;
+		Guid guid = dimension.Guid;
+		Status status = GDIPlus.GdipImageGetFrameCount ( nativeObject,  ref guid, out count);
+		GDIPlus.CheckStatus ( status );
+		return ( int ) count;
+	}
+
+	public PropertyItem GetPropertyItem(int propid)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Image GetThumbnailImage(int thumbWidth, int thumbHeight,
+					  Image.GetThumbnailImageAbort callback, IntPtr callbackData)
+	{
+		throw new NotImplementedException();
+	}
 	
 	public void RemovePropertyItem (int propid)
 	{
@@ -305,7 +322,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)
 	{
-		Status status = GDIPlus.GdipImageSelectActiveFrame ( nativeObject, dimension.Guid, (uint) frameIndex );
+		Guid guid = dimension.Guid;
+		Status status = GDIPlus.GdipImageSelectActiveFrame ( nativeObject, ref guid, (uint) frameIndex );
 		GDIPlus.CheckStatus ( status );
 		return frameIndex;
 	}
@@ -328,7 +346,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public Guid[] FrameDimensionsList {
 		get {
-			throw new NotImplementedException ();
+			uint found;
+			Status status = GDIPlus.GdipImageGetFrameDimensionsCount ( nativeObject, out found );
+			GDIPlus.CheckStatus ( status );
+			Guid[] guid = new Guid [found ];
+			status = GDIPlus.GdipImageGetFrameDimensionsList ( nativeObject, guid, found );
+			GDIPlus.CheckStatus ( status );  
+			return guid;      			
 		}
 	}
 	
@@ -434,8 +458,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			uint width ;
 			Status status = GDIPlus.GdipGetImageWidth ( nativeObject , out width);
 			GDIPlus.CheckStatus ( status );
-			return (int) width;
-			//return image_size.Width;
+			return (int) width;			
 		}
 	}
 	
