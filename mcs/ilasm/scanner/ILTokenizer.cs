@@ -285,7 +285,7 @@ namespace Mono.ILASM {
                         int ch;
 
                         while ((ch = reader.Read ()) != -1) {
-                                if (IsIdChar ((char) ch)) {
+                                if (IsIdChar ((char) ch) || ch == '.') {
                                         idsb.Append ((char) ch);
                                 } else {
                                         reader.Unread (ch);

@@ -1,5 +1,10 @@
 2003-05-22 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILTokenizer.cs: When building instructions allow the '.' char so
+	complex instructions like conv.ovf.u.un can be created.
+	
+2003-05-22 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILTables.cs: Comment out nan and inf keywords, these are not
 	referenced in the grammar. need to check if these keywords work on
 	MS ilasm.
