@@ -1,3 +1,8 @@
+2004-05-07  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlTextWriter.cs: In WriteStartAttribute, when the prefix is xmlns and
+	  the name is empty, convert it to a xmlns attribute.
+
 2004-04-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : don't use NET_1_0.

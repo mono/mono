@@ -644,8 +644,14 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				if (prefix != "xmlns")
 					throw new ArgumentException ("Cannot use prefix with an empty namespace.");
 
-			if ((prefix == "xmlns") && (localName.ToLower ().StartsWith ("xml")))
-				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML: " + prefix + ":" + localName);
+			if (prefix == "xmlns") {
+				if (localName == null || localName.Length == 0) {
+					localName = prefix;
+					prefix = String.Empty;
+				}
+				else if (localName.ToLower ().StartsWith ("xml"))
+					throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML: " + prefix + ":" + localName);
+			}
 
 			// Note that null namespace with "xmlns" are allowed.
 #if NET_1_0
