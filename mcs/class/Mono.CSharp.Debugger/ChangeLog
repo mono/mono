@@ -1,20 +1,32 @@
+2004-01-13  Martin Baulig  <martin@ximian.com>
+
+	* ChangeLog, MonoSymbolTable.cs: Reviewed Ben's patches.  For
+	those which are not ok, I'll add detailed comments to the source
+	code.	
+
 2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	[Revision 1.41, not approved.  Martin]
 	* MonoSymbolTable.cs (MethodEntry): kill more
 	useless fields.
 
 2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	[Revision 1.40, not approved.  Martin]
 	* MonoSymbolTable.cs (MethodEntry): Remove the
 	SourceFileIndex field, we already have the info.
 
 2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	[Revision 1.39, approved.  Martin]
 	* MonoSymbolTable.cs: Don't make the MethodIndexEntry
 	part of the method entry class, because it just
 	takes up extra space.
 
 2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	[Revisions 1.37 and 1.38; not approved.  Martin]
+	* MonoSymbolTable.cs (MethodEntry.BuildLineNumberTable): Removed.
 
 	* MonoSymbolTable.cs, MonoSymbolWriter.cs: Use
 	fewer arrays, dont use arraylists with structs.
@@ -25,6 +37,7 @@
 
 2003-12-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	[Revision 1.36, approved.  Martin]
 	* MonoSymbolTable.cs: Fewer StringBuilder allocs.
 
 2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
@@ -33,6 +46,7 @@
 
 2003-12-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	[Revision 1.35, approved.  Martin]
 	* MonoSymbolTable.cs: It is faster to do a linear search
 	than it is to make a hashtable. Even though the linear
 	search is O(n^2) while the hashtable is O(n), the allocation
