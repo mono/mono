@@ -31,7 +31,7 @@ DIRS =	corlib				\
 	Microsoft.VisualBasic		\
 	Microsoft.VisualC		\
 	Cscompmgd			\
-	System.Windows.Forms
+	PEAPI				\
 
 default: all
 
