@@ -1,3 +1,8 @@
+2004-02-15 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* DTDValidatingReader.cs: simple optimization. there is only
+	one string, skip the string builder and just return the string.
+
 2004-02-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added DTMXPathDocumentWriter.cs.

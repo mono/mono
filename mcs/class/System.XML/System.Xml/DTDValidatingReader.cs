@@ -642,12 +642,24 @@ namespace Mono.Xml
 						case XmlNodeType.EndEntity:
 							break;
 						default:
-							valueBuilder.Append (targetReader.Value);
+							if (attrValue != null) {
+								valueBuilder.Append (attrValue);
+								attrValue = null;
+							}
+							
+							if (valueBuilder.Length != 0)
+								valueBuilder.Append (targetReader.Value);
+							else
+								attrValue = targetReader.Value;
+							
 							break;
 						}
 					}
-					attrValue = valueBuilder.ToString ();
-					valueBuilder.Length = 0;
+					
+					if (attrValue == null) {
+						attrValue = valueBuilder.ToString ();
+						valueBuilder.Length = 0;
+					}
 				}
 				reader.MoveToElement ();
 				reader.MoveToAttribute (attrName);
