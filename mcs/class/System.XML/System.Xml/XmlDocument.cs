@@ -284,7 +284,7 @@ namespace System.Xml
 			return new XmlEntityReference (name, this);
 		}
 
-		internal virtual XPathNavigator CreateNavigator (XmlNode node)
+		protected internal virtual XPathNavigator CreateNavigator (XmlNode node)
 		{
 			return new XmlDocumentNavigator (node);
 		}
@@ -547,7 +547,9 @@ namespace System.Xml
 
 		public virtual void Load (string filename)
 		{
-			Load (new XmlTextReader (filename));
+			XmlReader xr = new XmlTextReader (filename);
+			Load (xr);
+			xr.Close ();
 		}
 
 		public virtual void Load (TextReader txtReader)
@@ -849,10 +851,10 @@ namespace System.Xml
 				doctype.notations.Nodes.Add (n);
 			}
 			foreach (DTDElementDeclaration decl in subset.ElementDecls.Values) {
-				doctype.elementDecls.Add (decl.Name, decl.Clone ());
+				doctype.elementDecls.Add (decl.Name, decl);
 			}
 			foreach (DTDAttListDeclaration decl in subset.AttListDecls.Values) {
-				doctype.attListDecls.Add (decl.Name, decl.Clone ());
+				doctype.attListDecls.Add (decl.Name, decl);
 			}
 			return doctype;
 		}

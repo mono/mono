@@ -1,5 +1,17 @@
 2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocument.cs : Load(string filename) should close its stream.
+	  Small change for the latest DTDObjectModel change.
+	* XmlTextReader.cs : Changed for the latest DTDObjectModel change (all
+	  changed methods are only related to DTD stuff).
+	  Now uses XmlSchemaDatatype for attribute type definition.
+	* XmlValidatingReader : initial (limited) support for DTD validation.
+	  It can handle only XmlTextReader.
+	* DTDObjectModel.cs : changed radically for initial validation support.
+	* added DTDAutomata.cs and DTDValidatingReader.cs.
+
+2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlElement.cs : Removed extraneous xmlns output support (it should
 	  be done by XmlTextWriter).
 	* XmlNode.cs : InsertBefore() now checks validity of the newChild (and

@@ -25,6 +25,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Xml.Schema;
 using Mono.Xml;
 using Mono.Xml.Native;
 
@@ -1563,6 +1564,7 @@ namespace System.Xml
 
 			// now compile DTD
 			currentSubset = new DTDObjectModel ();	// merges both internal and external subsets in the meantime,
+			currentSubset.Name = doctypeName;
 			int originalParserDepth = parserInputStack.Count;
 			if (intSubsetStartLine > 0) {
 				XmlParserInput original = currentInput;
@@ -1900,7 +1902,7 @@ namespace System.Xml
 			case 'A':
 				Expect ("TTLIST");
 				DTDAttListDeclaration atl = ReadAttListDecl ();
-				if (currentSubset.AttListDecls.ContainsKey (atl.Name))
+//				if (currentSubset.AttListDecls.ContainsKey (atl.Name))
 					currentSubset.AttListDecls.Add (atl.Name, atl);
 				break;
 			case 'N':
@@ -1962,7 +1964,7 @@ namespace System.Xml
 		// The reader is positioned on the head of the name.
 		private DTDElementDeclaration ReadElementDecl ()
 		{
-			DTDElementDeclaration decl = new DTDElementDeclaration ();
+			DTDElementDeclaration decl = new DTDElementDeclaration (currentSubset);
 			SkipWhitespace ();
 			TryExpandPERef ();
 			decl.Name = ReadName ();
@@ -1993,7 +1995,7 @@ namespace System.Xml
 				SkipWhitespace ();
 				TryExpandPERef ();
 				if(PeekChar () == '#') {
-					// Mixed Contents
+					// Mixed Contents. "#PCDATA" must appear first.
 					decl.IsMixedContent = true;
 					Expect ("#PCDATA");
 					SkipWhitespace ();
@@ -2004,16 +2006,20 @@ namespace System.Xml
 						SkipWhitespace ();
 						TryExpandPERef ();
 						SkipWhitespace ();
-						model.ChildModels.Add (ReadName ());
+						DTDContentModel elem = new DTDContentModel (currentSubset, decl.Name);
+						model.ElementName = ReadName ();
+						model.ChildModels.Add (elem);
 						SkipWhitespace ();
 						TryExpandPERef ();
 					}
 					Expect (')');
-					if(PeekChar () == '*')
-						ReadChar ();	// ZeroOrMore
+					if (model.ChildModels.Count > 0) {
+						Expect ('*');
+						model.Occurence = DTDOccurence.ZeroOrMore;
+					}
 				} else {
 					// Non-Mixed Contents
-					model.ChildModels.Add (ReadCP ());
+					model.ChildModels.Add (ReadCP (decl));
 					SkipWhitespace ();
 
 					do {	// copied from ReadCP() ...;-)
@@ -2024,7 +2030,7 @@ namespace System.Xml
 							model.OrderType = DTDContentOrderType.Or;
 							ReadChar ();
 							SkipWhitespace ();
-							model.ChildModels.Add (ReadCP ());
+							model.ChildModels.Add (ReadCP (decl));
 							SkipWhitespace ();
 						}
 						else if(PeekChar () == ',')
@@ -2033,7 +2039,7 @@ namespace System.Xml
 							model.OrderType = DTDContentOrderType.Seq;
 							ReadChar ();
 							SkipWhitespace ();
-							model.ChildModels.Add (ReadCP ());
+							model.ChildModels.Add (ReadCP (decl));
 							SkipWhitespace ();
 						}
 						else
@@ -2045,16 +2051,15 @@ namespace System.Xml
 					switch(PeekChar ())
 					{
 					case '?':
-						model.MinOccurs = 0;
+						model.Occurence = DTDOccurence.Optional;
 						ReadChar ();
 						break;
 					case '*':
-						model.MinOccurs = 0;
-						model.MaxOccurs = decimal.MaxValue;
+						model.Occurence = DTDOccurence.ZeroOrMore;
 						ReadChar ();
 						break;
 					case '+':
-						model.MaxOccurs = decimal.MaxValue;
+						model.Occurence = DTDOccurence.OneOrMore;
 						ReadChar ();
 						break;
 					}
@@ -2066,14 +2071,15 @@ namespace System.Xml
 		}
 
 		// Read 'cp' (BNF) of contentdecl (BNF)
-		private DTDContentModel ReadCP ()
+		private DTDContentModel ReadCP (DTDElementDeclaration elem)
 		{
-			DTDContentModel model = new DTDContentModel ();
+			DTDContentModel model = null;
 			TryExpandPERef ();
 			if(PeekChar () == '(') {
+				model = new DTDContentModel (currentSubset, elem.Name);
 				ReadChar ();
 				SkipWhitespace ();
-				model.ChildModels.Add (ReadCP ());
+				model.ChildModels.Add (ReadCP (elem));
 				SkipWhitespace ();
 				do {
 					TryExpandPERef ();
@@ -2083,7 +2089,7 @@ namespace System.Xml
 						model.OrderType = DTDContentOrderType.Or;
 						ReadChar ();
 						SkipWhitespace ();
-						model.ChildModels.Add (ReadCP ());
+						model.ChildModels.Add (ReadCP (elem));
 						SkipWhitespace ();
 					}
 					else if(PeekChar () == ',') {
@@ -2091,7 +2097,7 @@ namespace System.Xml
 						model.OrderType = DTDContentOrderType.Seq;
 						ReadChar ();
 						SkipWhitespace ();
-						model.ChildModels.Add (ReadCP ());
+						model.ChildModels.Add (ReadCP (elem));
 						SkipWhitespace ();
 					}
 					else
@@ -2103,21 +2109,21 @@ namespace System.Xml
 			}
 			else {
 				TryExpandPERef ();
+				model = new DTDContentModel (currentSubset, elem.Name);
 				model.ElementName = ReadName ();
 			}
 
 			switch(PeekChar ()) {
 			case '?':
-				model.MinOccurs = 0;
+				model.Occurence = DTDOccurence.Optional;
 				ReadChar ();
 				break;
 			case '*':
-				model.MinOccurs = 0;
-				model.MaxOccurs = decimal.MaxValue;
+				model.Occurence = DTDOccurence.ZeroOrMore;
 				ReadChar ();
 				break;
 			case '+':
-				model.MaxOccurs = decimal.MaxValue;
+				model.Occurence = DTDOccurence.OneOrMore;
 				ReadChar ();
 				break;
 			}
@@ -2290,8 +2296,8 @@ namespace System.Xml
 
 			while (XmlConstructs.IsName ((char) PeekChar ())) {
 				DTDAttributeDefinition def = ReadAttributeDefinition ();
-				if (decl.AttributeDefinitions [def.Name] == null)
-					decl.AttributeDefinitions.Add (def.Name, def);
+				if (decl [def.Name] == null)
+					decl.Add (def);
 				SkipWhitespace ();
 				TryExpandPERef ();
 				SkipWhitespace ();
@@ -2315,7 +2321,7 @@ namespace System.Xml
 			switch(PeekChar ()) {
 			case 'C':	// CDATA
 				Expect ("CDATA");
-				def.AttributeType = DTDAttributeType.CData;
+				def.Datatype = XmlSchemaDatatype.FromName ("normalizedString");
 				break;
 			case 'I':	// ID, IDREF, IDREFS
 				Expect ("ID");
@@ -2324,23 +2330,23 @@ namespace System.Xml
 					if(PeekChar () == 'S') {
 						// IDREFS
 						ReadChar ();
-						def.AttributeType = DTDAttributeType.IdRefs;
+						def.Datatype = XmlSchemaDatatype.FromName ("IDREFS");
 					}
 					else	// IDREF
-						def.AttributeType = DTDAttributeType.IdRef;
+						def.Datatype = XmlSchemaDatatype.FromName ("IDREF");
 				}
 				else	// ID
-					def.AttributeType = DTDAttributeType.Id;
+					def.Datatype = XmlSchemaDatatype.FromName ("ID");
 				break;
 			case 'E':	// ENTITY, ENTITIES
 				Expect ("ENTIT");
 				switch(ReadChar ()) {
 					case 'Y':	// ENTITY
-						def.AttributeType = DTDAttributeType.Entity;
+						def.Datatype = XmlSchemaDatatype.FromName ("ENTITY");
 						break;
 					case 'I':	// ENTITIES
 						Expect ("ES");
-						def.AttributeType = DTDAttributeType.Entities;
+						def.Datatype = XmlSchemaDatatype.FromName ("ENTITIES");
 						break;
 				}
 				break;
@@ -2351,14 +2357,14 @@ namespace System.Xml
 					Expect ("MTOKEN");
 					if(PeekChar ()=='S') {	// NMTOKENS
 						ReadChar ();
-						def.AttributeType = DTDAttributeType.NmTokens;
+						def.Datatype = XmlSchemaDatatype.FromName ("NMTOKENS");
 					}
 					else	// NMTOKEN
-						def.AttributeType = DTDAttributeType.NmToken;
+						def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN");
 					break;
 				case 'O':
 					Expect ("OTATION");
-					def.AttributeType = DTDAttributeType.Notation;
+					def.Datatype = XmlSchemaDatatype.FromName ("NOTATION");
 					SkipWhitespace ();
 					Expect ('(');
 					SkipWhitespace ();
