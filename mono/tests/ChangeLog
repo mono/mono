@@ -1,3 +1,9 @@
+2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs: Add tests for DllImport problems.
+
+	* pinvoke.cs: Make this run under linux.
+
 2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* custom-attr.cs: Add test for properties with array type.
