@@ -1,3 +1,8 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourcePermissionBase.cs: IsSubset(null) returns false in 1.1 while
+	it returns true in 2.0.
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionHelper.cs: New. Static methods to help implementation of

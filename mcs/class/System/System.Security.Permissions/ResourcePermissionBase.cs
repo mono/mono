@@ -158,9 +158,15 @@ namespace System.Security.Permissions {
 
 		public override bool IsSubsetOf (IPermission target)
 		{
-			// do not use Cast - different permissions return false :-/
-			if (target == null)
+			if (target == null) {
+#if NET_2_0
+				// do not use Cast - different permissions (and earlier Fx) return false :-/
 				return true;
+#else
+				return false;
+#endif
+			}
+
 			ResourcePermissionBase rpb = (target as ResourcePermissionBase);
 			if (rpb == null)
 				return false;
