@@ -128,6 +128,7 @@ namespace System.Windows.Forms {
 		{
 			windowCollection.Remove (windowHandle);
 			Win32.DestroyWindow (windowHandle);
+			windowHandle = (IntPtr)0;
 		}
 
 		public static NativeWindow FromHandle (IntPtr handle) 
