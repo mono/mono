@@ -13,7 +13,7 @@ DIRS =
 
 all: tools
 
-linx: $(MONO_TOOLS)
+linux: $(MONO_TOOLS)
 
 tools: $(MONO_TOOLS)
 
