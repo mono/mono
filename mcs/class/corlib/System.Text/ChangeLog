@@ -1,3 +1,8 @@
+2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringBuilder.cs: Fixed potential integer overflows in several 
+	methods.
+
 2004-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UTF8Encoding.cs: Moved charCount-- after the check for surrogate 

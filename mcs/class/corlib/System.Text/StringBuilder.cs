@@ -45,7 +45,8 @@ namespace System.Text {
 				throw new System.ArgumentOutOfRangeException ("capacity", capacity, "capacity must be greater than zero.");
 
 			// make sure startIndex and length give a valid substring of value
-			if (startIndex + (length -1) > (value.Length - 1) )
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > value.Length - length)
 				throw new System.ArgumentOutOfRangeException ("startIndex", startIndex, "StartIndex and length must refer to a location within the string.");
 
 			if (capacity == 0)
@@ -170,7 +171,8 @@ namespace System.Text {
 
 		public string ToString (int startIndex, int length) 
 		{
-			if( startIndex < 0 || length < 0 || startIndex + length > _length )
+			// re-ordered to avoid possible integer overflow
+			if (startIndex < 0 || length < 0 || startIndex > _length - length)
 				throw new ArgumentOutOfRangeException();
 
 			return _str.Substring (startIndex, length);
@@ -199,7 +201,8 @@ namespace System.Text {
 
 		public StringBuilder Remove (int startIndex, int length)
 		{
-			if( startIndex < 0 || length < 0 || startIndex + length > _length )
+			// re-ordered to avoid possible integer overflow
+			if (startIndex < 0 || length < 0 || startIndex > _length - length)
 				throw new ArgumentOutOfRangeException();
 
 			// Copy everything after the 'removed' part to the start 
@@ -221,7 +224,8 @@ namespace System.Text {
 
 		public StringBuilder Replace (char oldChar, char newChar, int startIndex, int count) 
 		{
-			if( startIndex + count > _length || startIndex < 0 || count < 0 )
+			// re-ordered to avoid possible integer overflow
+			if (startIndex > _length - count || startIndex < 0 || count < 0)
 				throw new ArgumentOutOfRangeException();
 
 			if (null != _cached_str)
@@ -244,7 +248,7 @@ namespace System.Text {
 			if (oldValue == null)
 				throw new ArgumentNullException ("The old value cannot be null.");
 
-			if (startIndex < 0 || count < 0 || startIndex + count > _length)
+			if (startIndex < 0 || count < 0 || startIndex > _length - count)
 				throw new ArgumentOutOfRangeException ();
 
 			if (oldValue.Length == 0)
@@ -388,7 +392,7 @@ namespace System.Text {
 				return this;
 			}
 
-			if ((charCount < 0 || startIndex < 0) || (charCount + startIndex > value.Length)) 
+			if ((charCount < 0 || startIndex < 0) || (startIndex > value.Length - charCount)) 
 				throw new ArgumentOutOfRangeException();
 			
 			
@@ -410,7 +414,7 @@ namespace System.Text {
 				return this;
 			}
 
-			if ((count < 0 || startIndex < 0) || (startIndex + count > value.Length))
+			if ((count < 0 || startIndex < 0) || (startIndex > value.Length - count))
 				throw new ArgumentOutOfRangeException();
 			
 			int needed_cap = _length + count;
@@ -575,7 +579,7 @@ namespace System.Text {
 				throw new ArgumentNullException ("value");
 			}
 
-			if (charCount < 0 || startIndex < 0 || startIndex + charCount > value.Length)
+			if (charCount < 0 || startIndex < 0 || startIndex > value.Length - charCount)
 				throw new ArgumentOutOfRangeException ();
 
 			return Insert (index, new String (value, startIndex, charCount));
