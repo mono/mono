@@ -1,5 +1,10 @@
 2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* decl.cs, typemanager.cs: Avoid using an arraylist
+	as a buffer if there is only one result set.
+
+2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* expression.cs: Make sure you cant call a static method
 	with an instance expression, bug #56174.
 
