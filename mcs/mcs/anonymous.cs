@@ -289,10 +289,10 @@ namespace Mono.CSharp {
 			return method.MethodData.MethodBuilder;
 		}
 		
-		public void EmitMethod (EmitContext ec)
+		public bool EmitMethod (EmitContext ec)
 		{
 			if (!CreateMethodHost (ec, invoke_mb.ReturnType))
-				return;
+				return false;
 
 			MethodBuilder builder = GetMethodBuilder ();
 			ILGenerator ig = builder.GetILGenerator ();
@@ -308,6 +308,7 @@ namespace Mono.CSharp {
 			
 			aec.EmitMeta (Block, amp);
 			aec.EmitResolvedTopBlock (Block, unreachable);
+			return true;
 		}
 
 		public static void Error_AddressOfCapturedVar (string name, Location loc)
@@ -333,12 +334,14 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Value;
+
 			return this;
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
-			am.EmitMethod (ec);
+			if (!am.EmitMethod (ec))
+				return;
 
 			//
 			// Now emit the delegate creation.

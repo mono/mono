@@ -1,3 +1,10 @@
+2005-03-17  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (AnonymousMethod.EmitMethod): Changed return type
+	to bool so we can return an error condition.
+	(AnonymousDelegate.Emit): Check whether AnonymousMethod.EmitMethod()
+	returned an error.
+
 2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* attribute.cs: Encode ThrowOnUnmappableChar and BestFitMapping
