@@ -108,7 +108,10 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		[MonoTODO]
+		enum State {
+			AllowSign, Digits, Decimal, ExponentSign, Exponent, ConsumeWhiteSpace
+		}
+		
 		public static double Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			if (s == null) throw new ArgumentNullException();
@@ -121,62 +124,160 @@ namespace System {
 			if (s == format.NaNSymbol) return Double.NaN;
 			if (s == format.PositiveInfinitySymbol) return Double.PositiveInfinity;
 			if (s == format.NegativeInfinitySymbol) return Double.NegativeInfinity;
-			string[] sl;
-			long integral = 0;
-			long fraction = 0;
-			long exponent = 1;
-			double retval = 0;
-			if ((style & NumberStyles.AllowLeadingWhite) != 0)
-			{
-				s.TrimStart(null);
-			}
-			if ((style & NumberStyles.AllowTrailingWhite) != 0)
-			{
-				s.TrimEnd(null);
-			}
-			sl = s.Split(new Char[] {'e', 'E'}, 2);
-			if (sl.Length > 1)
-			{
-				if ((style & NumberStyles.AllowExponent) == 0)
-				{
+
+			//
+			// validate and prepare string for C
+			//
+			int len = s.Length;
+			byte [] b = new byte [len + 1];
+			int didx = 0;
+			int sidx = 0;
+			char c;
+			
+			if ((style & NumberStyles.AllowLeadingWhite) != 0){
+				while (sidx < len && Char.IsWhiteSpace (c = s [sidx]))
+				       sidx++;
+
+				if (sidx == len)
 					throw new FormatException();
+			}
+
+			bool allow_trailing_white = ((style & NumberStyles.AllowTrailingWhite) != 0);
+
+			//
+			// Machine state
+			//
+			State state = State.AllowSign;
+
+			//
+			// Setup
+			//
+			string decimal_separator = null;
+			int decimal_separator_len = 0;
+			if ((style & NumberStyles.AllowDecimalPoint) != 0){
+				decimal_separator = format.NumberDecimalSeparator;
+				decimal_separator_len = decimal_separator.Length;
+			}
+			string positive = format.PositiveSign;
+			string negative = format.NegativeSign;
+			
+			for (; sidx < len; sidx++){
+				c = s [sidx];
+
+				switch (state){
+				case State.AllowSign:
+					if ((style & NumberStyles.AllowLeadingSign) != 0){
+						if (c == positive [0] &&
+						    s.Substring (sidx, positive.Length) == positive){
+							state = State.Digits;
+							sidx += positive.Length-1;
+							continue;
+						}
+
+						if (c == negative [0] &&
+						    s.Substring (sidx, negative.Length) == negative){
+							state = State.Digits;
+							b [didx++] = (byte) '-';
+							sidx += negative.Length-1;
+							continue;
+						}
+					}
+					state = State.Digits;
+					goto case State.Digits;
+					
+				case State.Digits:
+					if (Char.IsDigit (c)){
+						b [didx++] = (byte) c;
+						break;
+					}
+					if (decimal_separator != null &&
+					    decimal_separator [0] == c){
+						if (s.Substring (sidx, decimal_separator_len) ==
+						    decimal_separator){
+							b [didx++] = (byte) '.';
+							sidx += decimal_separator_len-1;
+							state = State.Decimal; 
+							break;
+						}
+					}
+					
+					if (Char.IsWhiteSpace (c))
+						goto case State.ConsumeWhiteSpace;
+
+					throw new FormatException ("Unknown char: " + c);
+
+				case State.Decimal:
+					if (Char.IsDigit (c)){
+						b [didx++] = (byte) c;
+						break;
+					}
+
+					if (c == 'e' || c == 'E'){
+						if ((style & NumberStyles.AllowExponent) == 0)
+							throw new FormatException ("Unknown char: " + c);
+						b [didx++] = (byte) c;
+						state = State.ExponentSign;
+						break;
+					}
+					
+					if (Char.IsWhiteSpace (c))
+						goto case State.ConsumeWhiteSpace;
+					throw new FormatException ("Unknown char: " + c);
+
+				case State.ExponentSign:
+					if (Char.IsDigit (c)){
+						state = State.Exponent;
+						goto case State.Exponent;
+					}
+
+					if (c == positive [0] &&
+					    s.Substring (sidx, positive.Length) == positive){
+						state = State.Digits;
+						sidx += positive.Length-1;
+						continue;
+					}
+
+					if (c == negative [0] &&
+					    s.Substring (sidx, negative.Length) == negative){
+						state = State.Digits;
+						b [didx++] = (byte) '-';
+						sidx += negative.Length-1;
+						continue;
+					}
+
+					if (Char.IsWhiteSpace (c))
+						goto case State.ConsumeWhiteSpace;
+					
+					throw new FormatException ("Unknown char: " + c);
+
+				case State.Exponent:
+					if (Char.IsDigit (c)){
+						b [didx++] = (byte) c;
+						break;
+					}
+					
+					if (Char.IsWhiteSpace (c))
+						goto case State.ConsumeWhiteSpace;
+					throw new FormatException ("Unknown char: " + c);
+
+				case State.ConsumeWhiteSpace:
+					if (allow_trailing_white && Char.IsWhiteSpace (c))
+						break;
+					throw new FormatException ("Unknown char");
 				}
-				exponent = long.Parse(sl[1], NumberStyles.AllowLeadingSign, format);
 			}
-			s = sl[0];
-			sl = s.Split(format.NumberDecimalSeparator.ToCharArray(), 2);
-			if (sl.Length > 1)
-			{
-				if ((style & NumberStyles.AllowDecimalPoint) == 0)
-				{
-					throw new FormatException();
+
+			b [didx] = 0;
+			unsafe {
+				fixed (byte *p = &b [0]){
+					return ParseImpl (p);
 				}
-				fraction = long.Parse(sl[1], NumberStyles.None, format);
 			}
-			NumberStyles tempstyle = NumberStyles.None;
-			if ((style & NumberStyles.AllowLeadingSign) != 0){
-				tempstyle = NumberStyles.AllowLeadingSign;
-			}
-
-			if (sl[0].Length > 0)
-				integral = long.Parse(sl[0], tempstyle, format);
-			else
-				integral = 0;
-
-			retval = fraction;
-
-			// FIXME: what about the zeros between the decimal point 
-			// and the first non-zero digit?
-			while (retval >1) retval /= 10;
-			if (integral < 0){
-				retval -= integral;
-				retval = -retval;
-			}
-			else retval += integral;
-			if (exponent != 1) retval *= Math.Pow(10, exponent);
-			return retval;
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		unsafe private static extern double ParseImpl (byte *byte_ptr);
+		
 		public override string ToString ()
 		{
 			return ToString (null, null);
