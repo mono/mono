@@ -379,6 +379,12 @@ namespace System.Reflection.Emit {
 						version_res.FileLanguage = new CultureInfo (cb.string_arg ()).LCID;
 					else if (attrname == "System.Reflection.AssemblyFileVersionAttribute")
 						version_res.FileVersion = cb.string_arg ();
+					else if (attrname == "System.Reflection.AssemblyInformationalVersionAttribute")
+						version_res.ProductVersion = cb.string_arg ();
+					else if (attrname == "System.Reflection.AssemblyTitleAttribute")
+						version_res.FileDescription = cb.string_arg ();
+					else if (attrname == "System.Reflection.AssemblyDescriptionAttribute")
+						version_res.Comments = cb.string_arg ();
 				}
 			}
 		}
@@ -434,6 +440,7 @@ namespace System.Reflection.Emit {
 			// Add missing info
 			if (version_res.FileVersion == "0.0.0.0")
 				version_res.FileVersion = version;
+			version_res.InternalName = Path.GetFileNameWithoutExtension (fileName);
 			version_res.OriginalFilename = fileName;
 
 			AddUnmanagedResource (version_res);

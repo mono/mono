@@ -1,3 +1,8 @@
+2004-01-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs (DefineVersionInfoResource): Set more 
+	version info properties.
+
 2004-01-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeBuilder.cs (string_arg): New helper method.
