@@ -8,7 +8,7 @@
  *             Ximian Inc
  */
 
-using System.Web.UI;
+using System.Web.Mobile;
 
 namespace System.Web.UI.MobileControls
 {
@@ -17,6 +17,58 @@ namespace System.Web.UI.MobileControls
 	{
 		public Style()
 		{
+		}
+
+		[MonoTODO]
+		internal BooleanOption Bold
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		[MonoTODO]
+		internal BooleanOption Italic
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		[MonoTODO]
+		internal string FontName
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		[MonoTODO]
+		internal FontSize FontSize
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

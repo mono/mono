@@ -84,9 +84,101 @@ namespace System.Web.UI.MobileControls
 			}
 		}
 
+		public int FirstPage
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual FontInfo Font
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual Color ForeColor
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public Form Form
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual bool IsTemplated
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public int LastPage
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
 		public MobilePage MobilePage
 		{
 			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual string StyleReference
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual int VisibleWeight
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual Wrapping Wrapping
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
 			{
 				throw new NotImplementedException();
 			}

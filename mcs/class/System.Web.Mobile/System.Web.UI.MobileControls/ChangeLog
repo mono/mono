@@ -1,4 +1,11 @@
 
+2003-01-12	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* FontInfo.cs            : Implemented.
+	* Form.cs                : Initial implementation.
+	* Panel.cs               : Initial implementation.
+	* MobileControl.cs       : Stubbed all properties.
+
 2003-01-10	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* DeviceSpecific.cs      : Dummy implementation.
