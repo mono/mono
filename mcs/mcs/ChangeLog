@@ -1,5 +1,11 @@
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* convert.cs (ImplicitReferenceConversion): Corrected typo, I was
+	testing the target_type (which was known to be object_type) and
+	not the source type (which is anonymous_method).
+
+	Fixed reporting of error cs1660.
+
 	* expression.cs (UserCast.Source): Expose the underlying cast.
 
 	* statement.cs (Switch.SwitchGoverningType): Sort the list of
