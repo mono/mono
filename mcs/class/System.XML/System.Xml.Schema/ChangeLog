@@ -1,3 +1,9 @@
+2003-07-26  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* BuiltInDatatype.cs : XsdIDRefs.ParseValue () should be implemented.
+	* XmlSchemaDatatype.cs : public Whitespace and protected Normalize()
+	  should be internal.
+
 2003-07-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchema.cs : Read() now uses XmlSerializer.Deserialize().

@@ -23,7 +23,7 @@ namespace System.Xml.Schema
 			XsdWhitespaceFacet.Preserve;
 
 		// Common Facets
-		public virtual XsdWhitespaceFacet Whitespace {
+		internal virtual XsdWhitespaceFacet Whitespace {
 			get { return WhitespaceValue; }
 		}
 
@@ -36,7 +36,7 @@ namespace System.Xml.Schema
 
 		char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
-		protected string Normalize (string s)
+		internal string Normalize (string s)
 		{
 			switch (Whitespace) {
 			case XsdWhitespaceFacet.Collapse:
@@ -80,7 +80,7 @@ namespace System.Xml.Schema
 				return datatypeNMTokens;
 			case "Name":
 				return datatypeName;
-			case "NCname":
+			case "NCName":
 				return datatypeNCName;
 			case "ID":
 				return datatypeID;

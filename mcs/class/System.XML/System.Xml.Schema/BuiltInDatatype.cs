@@ -266,7 +266,11 @@ namespace Mono.Xml.Schema
 			get { return typeof (string []); }
 		}
 
-		// ParseValue () method is as same as that of xs:string
+		readonly char [] whitespaceArray = new char [] {' '};
+		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		{
+			return this.Normalize (value).Split (whitespaceArray);
+		}
 	}
 
 	// xs:ENTITY
