@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
+<monodoc language="en">
+    <class name="System.ComponentModel.DesignerSerializationVisibilityAttribute" assembly="System">
+        <summary>TODO</summary>
+        <remarks>TODO</remarks>
+        <field name="Content">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+        </field>
+        <field name="Hidden">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+        </field>
+        <field name="Visible">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+        </field>
+        <property name="Visibility">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+    </class>
+</monodoc>

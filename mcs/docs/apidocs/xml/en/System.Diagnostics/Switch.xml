@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
+<monodoc language="en">
+    <class name="System.Diagnostics.Switch" assembly="System">
+        <summary>TODO</summary>
+        <remarks>TODO</remarks>
+        <property name="Description">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="DisplayName">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="SwitchSetting">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+    </class>
+</monodoc>
