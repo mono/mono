@@ -1,3 +1,5 @@
+'Line 11, BC30459: 'Nothing' is not valid in this context.
+
 Imports System
 Module ConditionalCompilation
 	Sub Main()

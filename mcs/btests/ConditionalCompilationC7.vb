@@ -1,4 +1,4 @@
-'BC30012: '#If' must end with a matching '#End If'
+'Line 6, BC30012: '#If' must end with a matching '#End If'
 
 Imports System
 Module ConditionalCompilation

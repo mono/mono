@@ -1,4 +1,4 @@
-'BC30014: '#ElseIf' must be preceded by a matching '#If' or '#ElseIf'
+'Line 7, BC30014: '#ElseIf' must be preceded by a matching '#If' or '#ElseIf'
 
 Imports System
 Module ConditionalCompilation

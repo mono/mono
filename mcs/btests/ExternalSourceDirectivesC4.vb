@@ -1,3 +1,8 @@
+'Line 202, BC30002: Undefined type 'Int'
+'Line 102, BC30002: Undefined type 'Int'
+'Line 24,  BC30002: Undefined type 'Int'
+
+
 ' Force an error to visually examine whether errors within #ExternalSource directives are properly reported
 
 Imports System

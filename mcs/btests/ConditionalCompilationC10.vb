@@ -1,4 +1,4 @@
-'Line 20, BC32030: '#ElseIf' cannot follow another '#ElseIf' in a conditional compilation block
+'Line 8, BC30012: '#If' block must end with a matching '#End If'.
 
 Imports System
 Module ConditionalCompilation
@@ -17,9 +17,4 @@ Module ConditionalCompilation
 	Sub C()
 		Console.WriteLine("Hello World 4")
 	End Sub
-#ElseIf False
-	Sub D()
-		Console.WriteLine("Hello World 5")
-	End Sub
-#End If
 End Module

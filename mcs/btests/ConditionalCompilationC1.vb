@@ -1,3 +1,6 @@
+'Line 9,  BC30648: String constants must end with a double quote.
+'Line 14, BC30037: Character is not valid.
+
 Imports System
 Module ConditionalCompilation
 	Sub Main()

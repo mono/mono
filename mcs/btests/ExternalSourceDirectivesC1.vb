@@ -1,4 +1,4 @@
-'BC30580: ExternalSource Directives may not be nested
+'Line 30, BC30580: ExternalSource Directives may not be nested
 
 Imports System
 Module ExternalDirectives

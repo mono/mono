@@ -1,4 +1,4 @@
-'BC30013: '#EndIf' must be preceded by a matching '#If'
+'Line 9, BC30013: '#EndIf' must be preceded by a matching '#If'
 
 Imports System
 Module ConditionalCompilation

@@ -1,4 +1,4 @@
-'BC30681: '#Region' directive must end with a matching '#End Region' directive
+'Line 10, BC30681: '#Region' directive must end with a matching '#End Region' directive
 
 Imports System
 Module RegionDirectives

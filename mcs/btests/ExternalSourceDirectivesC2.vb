@@ -1,4 +1,4 @@
-'BC30579: '#ExternalSource' directive must end with matching '#End ExternalSource' directive
+'Line 13, BC30579: '#ExternalSource' directive must end with matching '#End ExternalSource' directive
 
 Imports System
 Module ExternalSourceDirective
