@@ -1,5 +1,11 @@
 2004-09-01  Martin Baulig  <martin@ximian.com>
 
+	* metadata.h (MONO_TYPE_ISREFERENCE): Call
+	mono_metadata_generic_inst_is_valuetype() if we're a generic
+	instance to check whether our underlying type is a reference type.
+
+2004-09-01  Martin Baulig  <martin@ximian.com>
+
 	* metadata.c (mono_type_size): If we're a generic instance, call
 	mono_class_value_size() for value types.
 
