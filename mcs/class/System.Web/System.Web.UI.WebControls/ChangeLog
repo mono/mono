@@ -1,3 +1,8 @@
+2004-04-07  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BaseValidator.cs: Store Display property in the correct ViewState
+	property. Don't render anything if Display is ValidatorDisplay.None.
+
 2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Xml.cs: In LoadXpathDoc(), don't use MapPathSecure with documentSource,

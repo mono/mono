@@ -78,7 +78,7 @@ namespace System.Web.UI.WebControls
 				{
 					throw new ArgumentException();
 				}
-				ViewState["ValidatorDisplay"] = value;
+				ViewState["Display"] = value;
 			}
 		}
 
@@ -409,8 +409,8 @@ namespace System.Web.UI.WebControls
 					//FIXME: as of now, don't do client-side validation
 					throw new NotImplementedException();
 				}
-				
-				if (!valid) {
+
+				if (!valid && dis != ValidatorDisplay.None) {
 					RenderBeginTag (writer);
 					if (Text.Trim ().Length > 0 || HasControls ())
 						RenderContents (writer);
