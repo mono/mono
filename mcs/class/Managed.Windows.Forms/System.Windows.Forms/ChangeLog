@@ -1,3 +1,18 @@
+2005-01-27  Peter Bartok  <pbartok@novell.com>
+
+	* GridEntry.cs: Added; Patch by Jonathan S. Chambers
+	* GridItem.cs: Added; Patch by Jonathan S. Chambers
+	* GridItemCollection.cs: Added; Patch by Jonathan S. Chambers
+	* GridItemType.cs: Added; Patch by Jonathan S. Chambers
+	* PropertyGrid.cs: Added; Patch by Jonathan S. Chambers
+	* PropertySort.cs: Added; Patch by Jonathan S. Chambers
+	* PropertyTabChangedEventArgs.cs: Added; Patch by Jonathan S. Chambers
+	* PropertyTabChangedEventHandler.cs: Added; Patch by Jonathan S. Chambers
+	* PropertyValueChangedEventArgs.cs: Added; Patch by Jonathan S. Chambers
+	* PropertyValueChangedEventArgs.cs: Added; Patch by Jonathan S. Chambers
+	* SelectedGridItemChangedEventArgs.cs: Added; Patch by Jonathan S. Chambers
+	* SelectedGridItemChangedEventHandler.cs: Added; Patch by Jonathan S. Chambers
+
 2005-01-27  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Combobox.cs:

@@ -1,5 +1,15 @@
 2005-01-26  Peter Bartok  <pbartok@novell.com>
 
+	* System.Windows.Forms.dll.Sources: Added GridEntry.cs,
+	  GridItem.cs, GridItemCollection.cs, GridItemType.cs,
+	  PropertyGrid.cs, PropertySort.cs, PropertyTabChangedEventArgs.cs,
+	  PropertyTabChangedEventHandler.cs, PropertyValueChangedEventArgs.cs
+	  PropertyValueChangedEventHandler.cs, 
+	  SelectedGridItemChangedEventArgs.cs,
+	  SelectedGridItemChangedEventHandler.cs
+
+2005-01-26  Peter Bartok  <pbartok@novell.com>
+
 	* System.Windows.Forms.dll.Sources: Added NotifyIcon.cs
 
 2005-01-16  Peter Bartok  <pbartok@novell.com>
