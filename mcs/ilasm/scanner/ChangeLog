@@ -1,3 +1,7 @@
+2003-03-13 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTokenizer.cs: Use InstrTable for looking up and getting Opcodes
+
 2003-02-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* IlToken.cs: Add Dash Token (this is used for assembly names)

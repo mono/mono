@@ -165,7 +165,7 @@ namespace Mono.ILASM {
 							}
 						}
 						if (IsOpcode (val)) {
-							res = ILTables.Opcodes [val] as ILToken;
+							res = InstrTable.GetToken (val);
 							break;
 						}
 						if (IsKeyword (val)) {
@@ -212,7 +212,7 @@ namespace Mono.ILASM {
 		/// <returns></returns>
 		public static bool IsOpcode (string name)
 		{
-			return opcodes.Contains (name);
+			return InstrTable.IsOp (name);
 		}
 
 
