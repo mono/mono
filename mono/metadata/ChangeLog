@@ -1,3 +1,14 @@
+2003-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile.am:
+	* assembly.c:
+	* icall.c: make MONO_ASSEMBLIES and MONO_CFG_DIR work on windows.
+
+	* appdomain.c:
+	* appdomain.h:
+	* marshal.c:
+	* object.c: remove warnings.
+
 2003-03-13  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.h (MonoSymbolFileLexicalBlockEntry): New type.
