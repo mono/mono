@@ -1,3 +1,11 @@
+2003-09-27  Martin Baulig  <martin@ximian.com>
+
+	* gen-11.cs, gen-12.cs: New generics tests.
+
+	* gen-13-dll.cs, gen-13.exe.cs: New generics test; this test
+	consists of two files and tests whether this works if it's in two
+	files and not just in one.
+
 2003-09-19  Martin Baulig  <martin@ximian.com>
 
 	* gen-10.cs: New generics test.
