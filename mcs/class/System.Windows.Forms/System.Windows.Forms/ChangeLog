@@ -1,3 +1,14 @@
+
+2002-7-3  DennisHayes <dennish@raytek.com>
+* checked in for Jaak Simm (jaaksimm@firm.ee)
+* PrintPreviewControl.cs
+* PrintPreviewDialog.cs
+* ProgressBar.cs
+* PropertyGrid.cs
+* PropertyManager.cs
+* PropertyTabChangedEventArgs.cs
+* new files added
+
 2002-7-2  DennisHayes <dennish@raytek.com>
 * Application.cs
 * ControlEventArgs.cs
