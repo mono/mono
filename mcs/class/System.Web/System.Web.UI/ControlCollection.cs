@@ -184,8 +184,11 @@ namespace System.Web.UI {
 
 			version++;
 			Control ctrl = controls [index];
-			Array.Copy (controls, index + 1, controls, index, count - index);
 			count--;
+			if (count - index > 0)
+				Array.Copy (controls, index + 1, controls, index, count - index);
+
+			controls [count] = null;
 			owner.RemovedControl (ctrl);
 		}
 

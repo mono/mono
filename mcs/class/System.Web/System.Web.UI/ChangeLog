@@ -1,3 +1,8 @@
+2004-12-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlCollection.cs: fix off-by-one and store a null at the end to
+	remove the reference to the removed control.
+
 2004-12-10 Lluis Sanchez Gual <lluis@novell.com>
 
 	* ClientScriptManager.cs: Added GetScriptLiteral helper method.
