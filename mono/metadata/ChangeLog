@@ -1,3 +1,12 @@
+2003-02-17  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Have Thread.Start() wait for a semaphore to signal
+	that the thread has set up all its local data.  This fixes bug
+	34323, where Abort() raced the new thread's TLS data.
+
+	Also removes the handle_store() call from start_wrapper, because
+	threads are now always created suspended and there is no longer a
+	race between the parent and child threads to store the info.
 
 Mon Feb 17 13:13:31 CET 2003 Paolo Molaro <lupus@ximian.com>
 
