@@ -112,13 +112,22 @@ namespace Mono.CSharp {
 
 				// from any class-type S to any interface-type T.
 				if (target_type.IsInterface) {
+ 					if (target_type != TypeManager.iconvertible_type &&
+					    expr_type.IsValueType && (expr is Constant) &&
+					    !(expr is IntLiteral || expr is BoolLiteral ||
+					      expr is FloatLiteral || expr is DoubleLiteral ||
+					      expr is LongLiteral || expr is CharLiteral ||
+					      expr is StringLiteral || expr is DecimalLiteral ||
+					      expr is UIntLiteral || expr is ULongLiteral)) {
+ 						return null;
+ 					}
+
 					if (TypeManager.ImplementsInterface (expr_type, target_type)){
 						if (expr_type.IsGenericParameter)
 							return new BoxedCast (expr, target_type);
 						else if (expr_type.IsClass)
 							return new EmptyCast (expr, target_type);
-						else if (TypeManager.IsValueType (expr_type) ||
-							 TypeManager.IsEnumType (expr_type))
+						else if (TypeManager.IsValueType (expr_type))
 							return new BoxedCast (expr, target_type);
 						else
 							return new EmptyCast (expr, target_type);
@@ -885,6 +894,8 @@ namespace Mono.CSharp {
 			return UserDefinedConversion (ec, source, target, loc, true);
 		}
 
+		static DoubleHash explicit_conv = new DoubleHash (100);
+		static DoubleHash implicit_conv = new DoubleHash (100);
 		/// <summary>
 		///   Computes the MethodGroup for the user-defined conversion
 		///   operators from source_type to target_type.  `look_for_explicit'
@@ -902,6 +913,9 @@ namespace Mono.CSharp {
 			op_name = "op_Implicit";
 
 			MethodGroupExpr union3;
+			object r;
+			if ((look_for_explicit ? explicit_conv : implicit_conv).Lookup (source_type, target_type, out r))
+				return (MethodGroupExpr) r;
 
 			mg1 = Expression.MethodLookup (ec, source_type, op_name, loc);
 			if (source_type.BaseType != null)
@@ -951,7 +965,9 @@ namespace Mono.CSharp {
 				union4 = Invocation.MakeUnionSet (union5, union6, loc);
 			}
 			
-			return Invocation.MakeUnionSet (union3, union4, loc);
+			MethodGroupExpr ret = Invocation.MakeUnionSet (union3, union4, loc);
+			(look_for_explicit ? explicit_conv : implicit_conv).Insert (source_type, target_type, ret);
+			return ret;
 		}
 		
 		/// <summary>

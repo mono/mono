@@ -105,10 +105,7 @@ namespace Mono.CSharp {
 			if (ns != null)
 				return ns;
 
-			//
-			// The type is not a nested type here
-			//
-			t = TypeManager.LookupTypeDirect (DeclSpace.MakeFQN (fullname, name));
+			t = TypeManager.LookupType (DeclSpace.MakeFQN (fullname, name));
 			if ((t == null) || ((ds != null) && !ds.CheckAccessLevel (t)))
 				return null;
 
@@ -274,7 +271,7 @@ namespace Mono.CSharp {
 				while ((curr_ns != null) && (resolved == null)) {
 					resolved = curr_ns.Lookup (
 						null, alias, Alias.CountTypeArguments,
-						Location);
+						false, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -411,7 +408,7 @@ namespace Mono.CSharp {
 		}
 
 		public IAlias Lookup (DeclSpace ds, string name, int num_type_params,
-				      Location loc)
+				      bool silent, Location loc)
 		{
 			IAlias o;
 			Namespace ns;
@@ -424,7 +421,7 @@ namespace Mono.CSharp {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				o = Lookup (ds, first, 0, loc);
+				o = Lookup (ds, first, 0, silent, loc);
 				if (o == null)
 					return null;
 
@@ -458,6 +455,9 @@ namespace Mono.CSharp {
 					return alias;
 			}
 
+			if (name.IndexOf ('.') > 0)
+				return null;
+
 			//
 			// Check using entries.
 			//
@@ -466,7 +466,8 @@ namespace Mono.CSharp {
 				match = using_ns.Lookup (ds, name, loc);
 				if ((match != null) && match.IsType){
 					if (t != null) {
-						DeclSpace.Error_AmbiguousTypeReference (loc, name, t.Name, match.Name);
+						if (!silent)
+							DeclSpace.Error_AmbiguousTypeReference (loc, name, t.Name, match.Name);
 						return null;
 					} else {
 						t = match;
