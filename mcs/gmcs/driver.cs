@@ -272,7 +272,7 @@ namespace Mono.CSharp
 		
 		public static int Main (string[] args)
 		{
-			RootContext.V2 = true;
+			RootContext.Version = LanguageVersion.Default;
 			bool ok = MainDriver (args);
 			
 			if (ok && Report.Errors == 0) {
@@ -644,7 +644,7 @@ namespace Mono.CSharp
 
 		static void SetupV2 ()
 		{
-			RootContext.V2 = true;
+			RootContext.Version = LanguageVersion.Default;
 			defines.Add ("__V2__");
 		}
 		

@@ -2424,7 +2424,8 @@ namespace Mono.CSharp {
 			//
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
 				if (TypeManager.IsDelegateType (l)){
-					if (right.eclass == ExprClass.MethodGroup && RootContext.V2){
+					if ((right.eclass == ExprClass.MethodGroup) &&
+					    (RootContext.Version != LanguageVersion.ISO_1)){
 						Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 						if (tmp == null)
 							return null;
@@ -4711,11 +4712,11 @@ namespace Mono.CSharp {
 						continue;
 
 					VerifyArgumentsCompat (ec, Arguments, arg_count,
-							       c, false, null, loc);
+							       c, false, null, may_fail, loc);
                                         break;
 				}
 
-				if (!Location.IsNull (loc)) {
+				if (!may_fail) {
 					string report_name = me.Name;
 					if (report_name == ".ctor")
 						report_name = me.DeclaringType.ToString ();
@@ -4848,7 +4849,7 @@ namespace Mono.CSharp {
 			// all right
 			//
                         if (!VerifyArgumentsCompat (ec, Arguments, arg_count, method,
-                                                    method_params, null, loc))
+                                                    method_params, null, may_fail, loc))
 				return null;
 
 			return method;
@@ -4885,16 +4886,15 @@ namespace Mono.CSharp {
 		}
 		
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
-							  int argument_count,
-							  MethodBase method, 
+							  int arg_count, MethodBase method, 
 							  bool chose_params_expanded,
-							  Type delegate_type,
+							  Type delegate_type, bool may_fail,
 							  Location loc)
 		{
 			ParameterData pd = GetParameterData (method);
 			int pd_count = pd.Count;
 			
-			for (int j = 0; j < argument_count; j++) {
+			for (int j = 0; j < arg_count; j++) {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
@@ -4902,7 +4902,7 @@ namespace Mono.CSharp {
 				
 				if (pm == Parameter.Modifier.PARAMS){
 					if ((pm & ~Parameter.Modifier.PARAMS) != a.GetParameterModifier ()) {
-						if (!Location.IsNull (loc))
+						if (!may_fail)
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
 								Argument.FullDesc (a), pd.ParameterDesc (j));
@@ -4918,7 +4918,7 @@ namespace Mono.CSharp {
 					// Check modifiers
 					//
 					if (pd.ParameterModifier (j) != a.GetParameterModifier ()){
-						if (!Location.IsNull (loc))
+						if (!may_fail)
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
 								Argument.FullDesc (a), pd.ParameterDesc (j));
@@ -4935,7 +4935,7 @@ namespace Mono.CSharp {
 					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
-						if (!Location.IsNull (loc)) 
+						if (!may_fail)
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
 								Argument.FullDesc (a), pd.ParameterDesc (j));
@@ -4956,7 +4956,7 @@ namespace Mono.CSharp {
 				
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
-					if (!Location.IsNull (loc)) {
+					if (!may_fail) {
 						Report.Error (1502, loc,
 						       "The best overloaded match for method '" + FullMethodDesc (method)+
 						       "' has some invalid arguments");

@@ -1596,7 +1596,7 @@ namespace Mono.CSharp
 			//
 			switch (cmd){
 			case "pragma":
-				if (RootContext.V2)
+				if (RootContext.Version != LanguageVersion.ISO_1)
 					return caller_is_taking;
 				break;
 				
