@@ -6110,7 +6110,9 @@ namespace Mono.CSharp {
 			int errors = Report.Errors;
 			
 			Type expr_type = expr.Type;
-			if ((expr is TypeExpr) && (expr_type.IsSubclassOf (TypeManager.enum_type))){
+			if ((expr is TypeExpr) &&
+			    (expr_type == TypeManager.enum_type ||
+			     expr_type.IsSubclassOf (TypeManager.enum_type))){
 				
 				Enum en = TypeManager.LookupEnum (expr_type);
 				

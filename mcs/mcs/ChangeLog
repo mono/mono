@@ -1,3 +1,10 @@
+2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ecore.cs:
+	* expression.cs:
+	* typemanager.cs: fixes to allow mcs compile corlib with the new
+	Type.IsSubclassOf fix.
+
 2003-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (LocalVariableReference.DoResolve): Classify a
