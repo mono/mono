@@ -1,5 +1,8 @@
 2004-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* appdomain.c: use the Tls function for appdomain too,
+	at Zoltan's request. Actually return in mono_context_get
+
 	* appdomain.c, profiler.c, threads.c: use __thread
 
 2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
