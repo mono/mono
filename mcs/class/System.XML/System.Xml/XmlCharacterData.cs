@@ -47,13 +47,14 @@ namespace System.Xml
 		}
 
 		public override string Value {
-			get {
+			get { return data; }
+
+			set {
 				if (IsReadOnly)
 					throw new ArgumentException ("Node is read-only.");
-				
-				return data; }
 
-			set { data = value; }
+				data = value;
+			}
 		}
 
 		#endregion
