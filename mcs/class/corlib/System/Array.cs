@@ -145,19 +145,15 @@ namespace System
 			}
 		}
 
-		[MonoTODO]
 		public virtual bool IsSynchronized {
 			get {
-				// FIXME?
 				return false;
 			}
 		}
 
-		[MonoTODO]
 		public virtual object SyncRoot {
 			get {
-				// FIXME
-				return null;
+				return this;
 			}
 		}
 
