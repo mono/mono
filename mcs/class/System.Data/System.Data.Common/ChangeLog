@@ -1,3 +1,8 @@
+2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DbDataAdapter.cs: provide a Type for ToArray to avoid invalid cast
+	exception. Thanks to Mark Easton <measton@tebiki.co.uk>.
+
 2003-07-31  Duncan Mak  <duncan@ximian.com>
 
 	* DataAdapter.cs (CloneInternals): Mark with ObsoleteAttribute for

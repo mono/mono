@@ -347,7 +347,7 @@ namespace System.Data.Common {
 						primaryKey.Add (table.Columns [dsColumnName]);	
 			}
 			if (MissingSchemaAction == MissingSchemaAction.AddWithKey && primaryKey.Count > 0)
-				table.PrimaryKey = (DataColumn[])(primaryKey.ToArray());
+				table.PrimaryKey = (DataColumn[])(primaryKey.ToArray(typeof (DataColumn)));
 		}
 
 		[MonoTODO]
