@@ -1,3 +1,7 @@
+2003-07-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ExtendedKeyUsageExtension.cs: New. Added for makecert.
+
 2003-06-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SubjectAltNameExtension.cs: New. Added for certview.
