@@ -178,7 +178,7 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		public void Initialize (BitmapData info)
+		public void Initialize (Image image, BitmapData info)
 		{
 			biSize = 40;
 			biWidth = info.Width;
@@ -186,9 +186,9 @@ namespace System.Drawing.Imaging {
 			biPlanes = 1;
 			biBitCount = (short) System.Drawing.Image.GetPixelFormatSize (info.PixelFormat);
 			biCompression = (int)BitmapCompression.BI_RGB;
-			biSizeImage =  info.Height * info.Stride;
-			biXPelsPerMeter = 0;
-			biYPelsPerMeter = 0;
+			biSizeImage =  0; // Many tools expect this may be set to zero for BI_RGB bitmaps
+			biXPelsPerMeter = (int) (0.5f + ((image.HorizontalResolution * 3937f) / 100f));
+			biYPelsPerMeter = (int) (0.5f + ((image.VerticalResolution * 3937f) / 100f)); // 1 meter is = 39.37 inch			
 			biClrUsed = 0;
 			biClrImportant = 0;			
 		}
@@ -437,7 +437,7 @@ namespace System.Drawing.Imaging {
 			//bmfh.DumpHeader();
 
 			BITMAPINFOHEADER bmih = new BITMAPINFOHEADER();
-			bmih.Initialize(info);
+			bmih.Initialize(image, info);
 			bw.Write(bmih.biSize);
 			bw.Write(bmih.biWidth);
 			bw.Write(bmih.biHeight);
@@ -446,10 +446,10 @@ namespace System.Drawing.Imaging {
 			bw.Write(bmih.biCompression);
 			bw.Write(bmih.biSizeImage);
 			bw.Write(bmih.biXPelsPerMeter);
-			bw.Write(bmih.biYPelsPerMeter);
+			bw.Write(bmih.biYPelsPerMeter);			
 			bw.Write(bmih.biClrUsed);
 			bw.Write(bmih.biClrImportant);
-			//bmih.DumpHeader();
+			bmih.DumpHeader();
 			
 			// Write palette on disk on BGR
 			Color[] colors  = image.Palette.Entries;											

@@ -1,4 +1,8 @@
 2004-03-04 Jordi Mas i Hernadez <jordi@ximian.com>
+	* BmpCodec.cs: fixes DPI in BMP
+	* Image.cs: gets DPI using GDI+ api
+
+2004-03-04 Jordi Mas i Hernadez <jordi@ximian.com>
 	* BmpCodec.cs
 		Added support for diffent formats
 		Fixed bugs in import and export

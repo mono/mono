@@ -50,7 +50,7 @@ namespace System.Drawing
 			}
 		}
 
-		public float systemDpiY {
+		static internal float systemDpiY {
 			get {
 					if (defDpiY==0) {
 						Bitmap bmp = new Bitmap(1,1);

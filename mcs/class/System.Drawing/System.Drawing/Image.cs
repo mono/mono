@@ -2,11 +2,8 @@
 // System.Drawing.Image.cs
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Christian Meyer
-// eMail: Christian.Meyer@cs.tum.edu
-//
-// Alexandre Pigolkine (pigolkine@gmx.de)
-// 
+// Author: 	Christian Meyer (Christian.Meyer@cs.tum.edu)
+// 		Alexandre Pigolkine (pigolkine@gmx.de)
 //
 namespace System.Drawing {
 
@@ -25,7 +22,7 @@ using System.IO;
 [ImmutableObject (true)]
 public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable 
 {
-	public delegate bool GetThumbnailImageAbort ();
+	public delegate bool GetThumbnailImageAbort();
 	
 	internal IntPtr nativeObject = IntPtr.Zero;
 	protected Size image_size;
@@ -315,7 +312,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public float HorizontalResolution {
 		get {
-			throw new NotImplementedException ();
+			float resolution;
+			
+			GDIPlus.GdipGetImageHorizontalResolution (nativeObject, out resolution);			
+			return resolution;
 		}
 	}
 	
@@ -373,7 +373,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public float VerticalResolution {
 		get {
-			throw new NotImplementedException ();
+			float resolution;
+			
+			GDIPlus.GdipGetImageVerticalResolution (nativeObject, out resolution);			
+			return resolution;
 		}
 	}
 	
