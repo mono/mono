@@ -48,7 +48,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		public override IEnumerable Select ()
+		[MonoTODO]
+		public IEnumerable Select (DataSourceSelectArguments arguments)
 		{
 			return nodes;
 		}
@@ -60,6 +61,18 @@ namespace System.Web.UI.WebControls {
 		string name;
 		ArrayList nodes;
 	
+		[MonoTODO]
+		protected internal override IEnumerable ExecuteSelect (
+						DataSourceSelectArguments arguments)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO ("Extra method to keep things compiling, need to remove later")]
+		public override IEnumerable Select ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 #endif

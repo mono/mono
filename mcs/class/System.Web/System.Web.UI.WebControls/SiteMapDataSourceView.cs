@@ -44,7 +44,20 @@ namespace System.Web.UI.WebControls {
 			this.collection = collection;
 		}
 		
-		[MonoTODO ("Need to bring in sync with latest DataSourceView class")]
+		[MonoTODO]
+		public IEnumerable Select (DataSourceSelectArguments arguments)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected internal override IEnumerable ExecuteSelect (
+						DataSourceSelectArguments arguments)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO ("Extra method to keep things compiling, need to remove later")]
 		public override IEnumerable Select ()
 		{
 			throw new NotImplementedException ();

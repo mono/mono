@@ -1,3 +1,10 @@
+2004-10-20 Sanjay Gupta <gsanjay@novell.com>
+	
+	* SiteMapDataSourceView.cs: 
+	* SqlDataSourceView.cs:
+	* XmlDataSourceView.cs: Cosmetic changes because of modifications in 
+	base class, DataSourceView. Changes are to keep things compiling. 
+
 2004-10-19 Sanjay Gupta <gsanjay@novell.com>
 	
 	* SiteMapDataSourceView.cs: Corrected class definition and updated.
