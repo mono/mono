@@ -1,4 +1,9 @@
 
+Mon Jun 28 18:05:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: reinstated mono_compile_get_interface_var()
+	on x86, too, since the change breaks the Gtk# build there as well.
+
 Fri Jun 25 17:36:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: remove loop from the default optimizations: it seems to
