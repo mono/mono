@@ -1,6 +1,10 @@
 2004-05-13  Sanjay Gupta <gsanjay@novell.com>
 
-	* GraphicsPath: Added stub for missing method CloseFigure().
+	* GraphicsState.cs: Added internal constructor.
+
+2004-05-13  Sanjay Gupta <gsanjay@novell.com>
+
+	* GraphicsPath.cs: Added stub for missing method CloseFigure().
 
 2004-05-11  Ravindra  <rkumar@novell.com>
 
