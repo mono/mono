@@ -166,7 +166,8 @@ ArithmeticOperators \
 ArithmeticOperatorsA \
 LikeOperator \
 LikeOperatorA \
-GetType
+GetType \
+BlockStatementsA
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -348,7 +349,11 @@ ShiftOperatorsC2 \
 ArithmeticOperatorsC1 \
 ArithmeticOperatorsC2 \
 LikeOperatorC1 \
-RelationalOperatorsC1 
+RelationalOperatorsC1 \
+BlockStatementsC1 \
+BlockStatementsC2 \
+BlockStatementsC3 \
+BlockStatementsC4
 
 # All negetive test cases which should fail at
 # runtime goes here

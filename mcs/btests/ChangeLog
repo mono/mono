@@ -1,3 +1,11 @@
+2004-08-11 Sachin Kumar <skumar1@novell.com>
+	* BlockStatementsA.vb:
+	* BlockStatementsC1.vb:
+	* BlockStatementsC2.vb:
+	* BlockStatementsC3.vb:
+	* BlockStatementsC4.vb:
+	* Test.Sources: Included new tests 
+
 2004-08-07 Bernie Solomon <bernard@ugsolutions.com>
 	* GetType.vb:
 	* Test.sources: add a test for GetType
