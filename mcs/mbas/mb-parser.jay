@@ -5,8 +5,6 @@
 // Authors: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
 //	    Anirban Bhattacharjee (banirban@novell.com)
 //          Jambunathan K (kjambunathan@novell.com)
-//          Manjula GHM (mmanjula@novell.com)
-//          Sudharsan V (vsudharsan@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -14,7 +12,6 @@
 // Copyright (C) 2003, 2004 Novell
 //
 //
-
 
 namespace Mono.MonoBASIC
 {
@@ -3506,9 +3503,9 @@ declaration_statement
 	;	 
 	
 local_variable_declaration
-	: DIM variable_declarators 
+	: DIM _mark_ variable_declarators 
 	  {
-		$$ = new DictionaryEntry (DecomposeQI("_local_vars_", lexer.Location), $2);		
+		$$ = new DictionaryEntry (DecomposeQI("_local_vars_", (Location)$2), $3);		
 	  }
  	;
 
@@ -3543,32 +3540,32 @@ constant_declarators
 	;
 
 constant_declarator
-	: variable_name _mark_ opt_type_decl opt_variable_initializer
+	: _mark_ variable_name opt_type_decl opt_variable_initializer
 	  {
-		VarName vname = (VarName) $1;
+		VarName vname = (VarName) $2;
 		string varname = (string) vname.Name;
 		current_rank_specifiers = (ArrayList) vname.Rank;
 		object varinit = $4;
 
 		if (varinit == null)
 			Report.Error (
-				30438, (Location)$2, "Constant should have a value"
+				30438, (Location)$1, "Constant should have a value"
 				);
 
 		if (vname.Type != null && $3 != null)
 			Report.Error (
-				30302, (Location)$2, 
+				30302, (Location)$1, 
 				"Type character cannot be used with explicit type declaration" );
 
 		Expression vartype = ($3 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $3;
 
 		if (current_rank_specifiers != null) 
 		{
-			Report.Error (30424, (Location)$2, "Constant doesn't support array");
+			Report.Error (30424, (Location)$1, "Constant doesn't support array");
 			$$ = null;
 	  	}
 	  	else
-	  	  	$$ = new VariableDeclaration (varname, vartype, varinit, (Location)$2, null);
+	  	  	$$ = new VariableDeclaration (varname, vartype, varinit, (Location)$1, null);
 	  }
 	;		
 
@@ -3588,17 +3585,17 @@ variable_declarators
 	;
 
 variable_declarator
-	: variable_names opt_type_decl opt_variable_initializer
+	: _mark_ variable_names opt_type_decl opt_variable_initializer
 	  {
-	    ArrayList names = (ArrayList) $1;
-		object varinit = $3;
+	    ArrayList names = (ArrayList) $2;
+		object varinit = $4;
 		ArrayList VarDeclarations = new ArrayList();
 	  	Expression vartype;
 	  	ArrayList a_dims = null;
 
 		if ((names.Count > 1) && (varinit != null)) 
 			Report.Error (
-				30671, lexer.Location, 
+				30671, (Location)$1, 
 				"Multiple variables with single type can not have " +
 				"a explicit initialization" );
 
@@ -3608,24 +3605,24 @@ variable_declarator
 			string varname = (string) vname.Name;
 			current_rank_specifiers = (ArrayList) vname.Rank;
 			a_dims = null;
-			varinit = $3;
+			varinit = $4;
 
-	  		if(vname.Type != null && $2 != null)
+	  		if(vname.Type != null && $3 != null)
 				Report.Error (
-					30302, lexer.Location, 
+					30302, (Location)$1, 
 					"Type character cannot be used with explicit type declaration" );
 
 	  		// Some checking is required for particularly weird declarations
 	  		// like Dim a As Integer(,)
-	  		if ($2 is Pair) {
-	  			vartype = (Expression) ((Pair) $2).First;
+	  		if ($3 is Pair) {
+	  			vartype = (Expression) ((Pair) $3).First;
 				
-	  			/*if ($3 != null && $3 is ArrayList)
+	  			/*if ($4 != null && $4 is ArrayList)
 	  				Report.Error (205, "End of statement expected.");*/
 		  			
-				ArrayList args = (ArrayList) ((Pair) $2).Second;
+				ArrayList args = (ArrayList) ((Pair) $3).Second;
 				if (current_rank_specifiers != null)
-					Report.Error (31087, lexer.Location,
+					Report.Error (31087, (Location)$1,
 						 "Array types specified in too many places");	
 				
 				if (VariableDeclaration.IndexesSpecifiedInRank (args))	  	  
@@ -3635,7 +3632,7 @@ variable_declarator
 				current_rank_specifiers.Add (args);				
 	  		}
 	  		else
-				vartype = ($2 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $2;
+				vartype = ($3 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $3;
 
 			// if the variable is an array with explicit bound
 			// and having explicit initialization throw exception
@@ -3649,7 +3646,7 @@ variable_declarator
 						if (!((Expression)expr is EmptyExpression ))
 						{
 							Report.Error (
-								30672, lexer.Location, 
+								30672, (Location)$1, 
 								"Array declared with explicit bound " +
 								" can not have explicit initialization");
 							broken = true;
@@ -3670,14 +3667,14 @@ variable_declarator
 				if (VariableDeclaration.IndexesSpecified(current_rank_specifiers)) {   
 					a_dims = (ArrayList) current_rank_specifiers;
 					VariableDeclaration.VBFixIndexLists (ref a_dims);
-					varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, lexer.Location);
+					varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, (Location)$1);
 				}
-				vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (current_rank_specifiers, false, lexer.Location), lexer.Location);
+				vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (current_rank_specifiers, false, (Location)$1), (Location)$1);
 			}
 
 			if (vartype is New) {
 				if (varinit != null) {
-					Report.Error (30205, lexer.Location, "End of statement expected");
+					Report.Error (30205, (Location)$1, "End of statement expected");
 					$$ = null;
 				}
 				else
@@ -3686,7 +3683,7 @@ variable_declarator
 					vartype = ((New)vartype).RequestedType;
 				}
 			}
-	  		VarDeclarations.Add (new VariableDeclaration (varname, vartype, varinit, lexer.Location, null));
+	  		VarDeclarations.Add (new VariableDeclaration (varname, vartype, varinit, (Location)$1, null));
 	    }// end of for
 	    $$ = VarDeclarations;
 	  } 

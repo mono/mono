@@ -1,3 +1,6 @@
+2005-02-07  Manjula GHM  <mmanjula@novell.com>
+	* mb-parser.jay: Some more fixes related to displaying correct line number
+
 2005-02-04  Satya Sudha K  <ksathyasudha@novell.com>
 	* ecore.cs 	: Fixed the implicit conversion of float/double to integral types:
 				- Rounding the float/double values before performing the actual conversion
