@@ -1,3 +1,9 @@
+
+Tue Feb 22 21:54:47 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* socket-io.c: load System.dll if it's not loaded already
+	(bug #72850 and #70477).
+
 2005-02-21  Martin Baulig  <martin@ximian.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Add support for
