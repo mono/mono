@@ -92,6 +92,32 @@ namespace MonoTests.System.Data
 				AssertEquals (label + ".relatedColumn_" + i, relColNames [i], fk.RelatedColumns [i].ColumnName);
 			AssertEquals (label + ".relatedColCount", relColNames.Length, fk.RelatedColumns.Length);
 		}
+
+		public void AssertDataColumn (string label, DataColumn col, 
+			string colName, bool allowDBNull, 
+			bool autoIncr, int autoIncrSeed, int autoIncrStep, 
+			string caption, MappingType colMap, 
+			Type type, object defaultValue, string expression, 
+			int maxLength, string ns, int ordinal, string prefix, 
+			bool readOnly, bool unique)
+		{
+			AssertEquals (label + "ColumnName: " , colName, col.ColumnName);
+			AssertEquals (label + "AllowDBNull? " , allowDBNull, col.AllowDBNull);
+			AssertEquals (label + "AutoIncrement? " , autoIncr, col.AutoIncrement);
+			AssertEquals (label + "  Seed: " , autoIncrSeed, col.AutoIncrementSeed);
+			AssertEquals (label + "  Step: " , autoIncrStep, col.AutoIncrementStep);
+			AssertEquals (label + "Caption " , caption, col.Caption);
+			AssertEquals (label + "Mapping: " , colMap, col.ColumnMapping);
+			AssertEquals (label + "Type: " , type, col.DataType);
+			AssertEquals (label + "DefaultValue: " , defaultValue, col.DefaultValue);
+			AssertEquals (label + "Expression: " , expression, col.Expression);
+			AssertEquals (label + "MaxLength: " , maxLength, col.MaxLength);
+			AssertEquals (label + "Namespace: " , ns, col.Namespace);
+			AssertEquals (label + "Ordinal: " , ordinal, col.Ordinal);
+			AssertEquals (label + "Prefix: " , prefix, col.Prefix);
+			AssertEquals (label + "ReadOnly: " , readOnly, col.ReadOnly);
+			AssertEquals (label + "Unique: " , unique, col.Unique);
+		}
 	}
 }
 
