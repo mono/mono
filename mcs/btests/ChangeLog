@@ -1,10 +1,13 @@
+2004-08-19 Anirban Bhattacharjee <banirban@novell.com>
+	* Makefile: Changed the makefile to support multiple file compilation sothat  we can compile files A1.vb, A2.vb, A3.vb as A*.vb
+
 2004-08-19 Sachin Kumar <skumar1@novell.com>
 	* AssignmentStatements5.vb:
 	* AssignmentStatementsC.vb:
 	* AssignmentStatementsC4.vb:
 	* Test.Sources: included new tests	
 
-2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
+2004-08-19 Anirban Bhattacharjee <banirban@novell.com>
 	* Override_dll.vb:
 	* Override_exe.vb:
 		New test cases to test Overriding functions across assemblies
@@ -13,7 +16,7 @@
 		New test cases to check delegates invoking functions across assemblies
 	* Makefile: Added new dll names to the dependency list
 
-2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
+2004-08-19 Anirban Bhattacharjee <banirban@novell.com>
 	* EventG.vb: New test case
 	* EventH.vb: New test case
 

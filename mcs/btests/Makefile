@@ -29,6 +29,9 @@ all-local install-local:
 
 # compilation is part of the testing too, so we don't actually 
 # do anything in test-local.
+#  echo "Inside loop" ; \
+#  echo $$i | sed -e 's/\*//' | >> $$target; \ 
+#  echo $$target; \
 
 test-local: 
 
@@ -53,7 +56,7 @@ test-dlls:
 	    echo -n "$$i: "; \
 	    echo "*** $(INTERNAL_MBAS) $(LIBRARY_OPT) $$i.vb" > $$testlogfile ; \
 	    if $(INTERNAL_MBAS) $(LIBRARY_OPT)  $$i.vb >> $$testlogfile 2>&1 ; then \
-		echo -n "COMPILED OK : " ; \
+		echo "COMPILED OK  " ; \
 	    else \
 		echo "Exit code: $$?" >> $$testlogfile ; \
 		failed="$$failed $$i" ; \
@@ -70,11 +73,12 @@ test-compiler-jit-real: test-dlls
 	echo "********** Positive Tests ************" >> $$logfile ; \
 	echo "********** Positive Tests ************" ; \
 	for i in $(TEST_SOURCES) ; do \
+	    targetexe=`echo "$$i" |sed -e 's,\*,,'` ; \
 	    echo -n -e "========================\n$$i: " >> $$logfile; \
 	    testlogfile="$$logpath/$(TEST_TAG)-$$i.log" ; \
 	    echo -n "$$i: "; \
 	    echo "*** $(INTERNAL_MBAS) $(SUPPORT_DLLS) $$i.vb" > $$testlogfile ; \
-	    if $(INTERNAL_MBAS) $(SUPPORT_DLLS) $$i.vb >> $$testlogfile 2>&1 ; then \
+	    if $(INTERNAL_MBAS) $(SUPPORT_DLLS) /o:$$targetexe.exe $$i.vb >> $$testlogfile 2>&1 ; then \
 		echo -n "COMPILED OK : " ; \
 	    else \
 		echo "Exit code: $$?" >> $$testlogfile ; \
@@ -83,8 +87,8 @@ test-compiler-jit-real: test-dlls
 		echo FAILED COMPILATION ; \
 		continue; \
 	    fi ; \
-	    echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
-	    if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
+	    echo "*** $(TEST_RUNTIME) ./$$targetexe.exe" >> $$testlogfile ; \
+	    if $(TEST_RUNTIME) ./$$targetexe.exe >> $$testlogfile 2>&1 ; then \
 		echo "EXECUTED OK: $$i" >> $$logfile ; \
 	        echo "EXECUTED OK" ; rm -f $$testlogfile ; \
 	    else \
@@ -92,7 +96,7 @@ test-compiler-jit-real: test-dlls
 		failed="$$failed $$i" ; \
 		echo "FAILED AT RUNTIME"; \
 	    fi ; \
-	    rm -f ./$$i.exe ; \
+	    rm -f ./$$targetexe.exe ; \
 	done ; \
 
 test-compiler-jit-ngtive_compile: TEST_TAG = mbas-negative-compile
