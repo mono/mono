@@ -461,31 +461,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 			else
 			{
-				int[] indices = new int[array.Rank];
-
-				// Initialize indexes
-				for (int dim = array.Rank-1; dim >= 0; dim--)
-					indices[dim] = array.GetLowerBound (dim);
-
-				bool end = false;
-				while (!end)
-				{
-					WriteValue (writer, elementType, array.GetValue (indices));
-
-					for (int dim = array.Rank-1; dim >= 0; dim--)
-					{
-						indices[dim]++;
-						if (indices[dim] > array.GetUpperBound (dim))
-						{
-							if (dim > 0) {
-								indices[dim] = array.GetLowerBound (dim);
-								continue;	// Increment the next dimension's index
-							}
-							end = true;	// That was the last dimension. Finished.
-						}
-						break;
-					}
-				}
+				foreach (object item in array)
+					WriteValue (writer, elementType, item);
 			}
 		}
 
@@ -604,9 +581,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		private void WriteSingleDimensionArrayElements (BinaryWriter writer, Array array, Type elementType)
 		{
 			int numNulls = 0;
-			for (int n = array.GetLowerBound (0); n<=array.GetUpperBound(0); n++)
+			foreach (object val in array)
 			{
-				object val = array.GetValue (n);
 				if (val != null && numNulls > 0)
 				{
 					WriteNullFiller (writer, numNulls);

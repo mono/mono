@@ -1,3 +1,8 @@
+2004-05-13  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ObjectWriter.cs: Fixed and Simplified WriteGenericArray and 
+	  WriteSingleDimensionArrayElements. This also fixes bug #58345.
+
 2004-05-03  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MessageFormatter.cs: In the all-are-primitive case, serialize Args, 
