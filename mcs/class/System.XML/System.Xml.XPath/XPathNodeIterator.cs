@@ -13,7 +13,7 @@ namespace System.Xml.XPath
 {
 	public abstract class XPathNodeIterator : ICloneable
 	{
-		private int _count;
+		private int _count = -1;
 
 		#region Constructor
 
@@ -29,7 +29,7 @@ namespace System.Xml.XPath
 		{
 			get
 			{
-				if (_count == 0)
+				if (_count == -1)
 				{
 					// compute and cache the count
 					XPathNodeIterator tmp = Clone ();

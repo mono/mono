@@ -1,5 +1,11 @@
 2002-09-12  Piers Haken <piersh@friskit.com>
 
+	* Iterator.cs: added NullIterator to handle unspecified contexts
+	* XPathNavigator.cs: use NullIterator insted of SelfIterator when context is unspecified.
+	* XPathNodeIterator.cs: change default _count to -1 to prevent recalculations for NullIterators
+
+2002-09-12  Piers Haken <piersh@friskit.com>
+
 	* Expression.cs, Parser.jay: allow ExprSLASH to take a generic expression as its left argument.
 	* Iterator.cs: fix SlashIterator.Clone() when _iterRight is null.
 	* DefaultContext.cs: fix id() return type.

@@ -82,7 +82,7 @@ namespace System.Xml.XPath
 		public virtual object Evaluate (XPathExpression expr, XPathNodeIterator context)
 		{
 			if (context == null)
-				context = new SelfIterator (this, new DefaultContext ());
+				context = new NullIterator (this, new DefaultContext ());
 			return ((CompiledExpression) expr).Evaluate ((BaseIterator) context);
 		}
 
@@ -184,7 +184,7 @@ namespace System.Xml.XPath
 
 		public virtual XPathNodeIterator Select (XPathExpression expr)
 		{
-			BaseIterator iter = new SelfIterator (this, new DefaultContext ());
+			BaseIterator iter = new NullIterator (this, new DefaultContext ());
 			return ((CompiledExpression) expr).EvaluateNodeSet (iter);
 		}
 
@@ -247,7 +247,7 @@ namespace System.Xml.XPath
 		internal XPathNodeIterator SelectTest (NodeTest test)
 		{
 			Expression expr = new ExprStep (test, null);
-			BaseIterator iter = new SelfIterator (this, new DefaultContext ());
+			BaseIterator iter = new NullIterator (this, new DefaultContext ());
 			return expr.EvaluateNodeSet (iter);
 		}
 

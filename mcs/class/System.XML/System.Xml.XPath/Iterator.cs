@@ -124,6 +124,18 @@ namespace System.Xml.XPath
 		}
 	}
 
+	internal class NullIterator : SelfIterator
+	{
+		public NullIterator (BaseIterator iter) : base (iter) {}
+		public NullIterator (XPathNavigator nav, XsltContext context) : base (nav, context) {}
+		protected NullIterator (SimpleIterator other) : base (other) {}
+		public override XPathNodeIterator Clone () { return new NullIterator (this); }
+		public override bool MoveNext ()
+		{
+			return false;
+		}
+	}
+
 	internal class ParentIterator : SimpleIterator
 	{
 		public ParentIterator (BaseIterator iter) : base (iter) {}
