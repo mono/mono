@@ -1,3 +1,7 @@
+2003-11-26  Jackson Harper <jackson@ximian.com>
+
+	* SessionSQLServerHandler.cs: Fix typo in param name.
+	
 2003-11-25  Jackson Harper <jackson@ximian.com>
 
 	* RemoteStateServer.cs: Update the session dictionary data and the

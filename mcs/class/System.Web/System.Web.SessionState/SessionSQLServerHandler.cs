@@ -175,7 +175,7 @@ namespace System.Web.SessionState {
 			param.Add (CreateParam (command, DbType.DateTime, ":Created", DateTime.Now));
 			param.Add (CreateParam (command, DbType.DateTime, ":Expires", Tommorow ()));
 			param.Add (CreateParam (command, DbType.Int32, ":Timeout", timeout));
-			param.Add (CreateParam (command, DbType.Binary, ":StaticObjectData",
+			param.Add (CreateParam (command, DbType.Binary, ":StaticObjectsData",
 						   session.StaticObjects.ToByteArray ()));
 			param.Add (CreateParam (command, DbType.Binary, ":SessionData",
 						   session.SessionDictionary.ToByteArray ()));
