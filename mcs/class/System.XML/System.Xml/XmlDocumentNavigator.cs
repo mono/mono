@@ -420,37 +420,56 @@ namespace System.Xml
 			if (NsNode != null)
 				return false;
 
-			if (node.NextSibling != null) {
-				XmlNode n = node.NextSibling;
-				if (node.ParentNode != null && node.ParentNode.NodeType == XmlNodeType.Document) {
-					while (n != null) {
-						switch (n.NodeType) {
-						case XmlNodeType.DocumentType:
-						case XmlNodeType.XmlDeclaration:
-							n = n.NextSibling;
-							continue;
-						}
+			XmlNode n = node;
+			if (NodeType == XPathNodeType.Text) {
+				do {
+					n = n.NextSibling;
+					if (n == null)
+						return false;
+					switch (n.NodeType) {
+					case XmlNodeType.CDATA:
+					case XmlNodeType.EntityReference:
+					case XmlNodeType.SignificantWhitespace:
+					case XmlNodeType.Text:
+					case XmlNodeType.Whitespace:
+						continue;
+					default:
 						break;
 					}
-					if (n != null)
-						node = n;
-					else
-						return false;
-				} else {
-					while (n != null) {
-						if (n.NodeType != XmlNodeType.EntityReference)
-							break;
-						n = n.NextSibling;
-					}
-					if (n != null)
-						node = n;
-					else
-						return false;
-				}
-				return true;
+					break;
+				} while (true);
+			} else {
+				n = n.NextSibling;
+				if (n == null)
+					return false;
 			}
-			else
-				return false;
+
+			if (n.ParentNode != null && n.ParentNode.NodeType == XmlNodeType.Document) {
+				while (n != null) {
+					switch (n.NodeType) {
+					case XmlNodeType.DocumentType:
+					case XmlNodeType.XmlDeclaration:
+						n = n.NextSibling;
+						continue;
+					}
+					break;
+				}
+				if (n != null)
+					node = n;
+				else
+					return false;
+			} else {
+				while (n != null) {
+					if (n.NodeType != XmlNodeType.EntityReference)
+						break;
+					n = n.NextSibling;
+				}
+				if (n != null)
+					node = n;
+				else
+					return false;
+			}
+			return true;
 		}
 
 		public override bool MoveToNextAttribute ()

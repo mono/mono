@@ -1,5 +1,10 @@
 2004-06-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocumentNavigator.cs : MoveToNext() should skip concatenating
+	  text/cdata/whitespace nodes.
+
+2004-06-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlInputStream.cs : Fixed encoding detection detected in xslt
 	  standalone tests. Removed extraneous code.
 
