@@ -1,5 +1,11 @@
 2003-07-24  Piers Haken	<piersh@friskit.com>
 
+	* Parser.jay:
+	* Expression.cs:
+		allow ExprUNION to take non-nodeset (eg, $var) arguments
+
+2003-07-24  Piers Haken	<piersh@friskit.com>
+
 	* Tokenizer.cs: fix variable references
 	* Parser.jay:
 	* Expression.cs:

@@ -449,7 +449,7 @@ case 22:
 case 24:
 					// line 222 "Parser.jay"
   {
-		yyVal = new ExprUNION ((NodeSet) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
+		yyVal = new ExprUNION ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 26:

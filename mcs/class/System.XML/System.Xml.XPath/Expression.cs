@@ -522,7 +522,7 @@ namespace System.Xml.XPath
 	internal class ExprUNION : NodeSet
 	{
 		protected Expression _left, _right;
-		public ExprUNION (NodeSet left, NodeSet right)
+		public ExprUNION (Expression left, Expression right)
 		{
 			_left = left;
 			_right = right;

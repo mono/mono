@@ -220,7 +220,7 @@ UnionExpr
 	: PathExpr 
 	| UnionExpr BAR PathExpr
 	{
-		$$ = new ExprUNION ((NodeSet) $1, (NodeSet) $3);
+		$$ = new ExprUNION ((Expression) $1, (Expression) $3);
 	}
 	;
 
