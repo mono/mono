@@ -359,6 +359,7 @@ namespace MonoTests.System.IO
 			if (!thrown)
 				Assertion.Fail ("#02");
 
+			thrown=false;
 			try {
 				// Oh, yes. They throw IOException for this one, but ArgumentOutOfRange for the previous one
 				ms.Seek (Int64.MinValue, SeekOrigin.Begin);
@@ -368,6 +369,25 @@ namespace MonoTests.System.IO
 
 			if (!thrown)
 				Assertion.Fail ("#03");
+
+			ms=new MemoryStream (256);
+
+			ms.Write (testStreamData, 0, 100);
+			ms.Position=0;
+			Assertion.AssertEquals ("#01", 100, ms.Length);
+			Assertion.AssertEquals ("#02", 0, ms.Position);
+
+			ms.Position=128;
+			Assertion.AssertEquals ("#03", 100, ms.Length);
+			Assertion.AssertEquals ("#04", 128, ms.Position);
+
+			ms.Position=768;
+			Assertion.AssertEquals ("#05", 100, ms.Length);
+			Assertion.AssertEquals ("#06", 768, ms.Position);
+
+			ms.WriteByte (0);
+			Assertion.AssertEquals ("#07", 769, ms.Length);
+			Assertion.AssertEquals ("#08", 769, ms.Position);
 		}
 
 		[Test]
@@ -417,6 +437,29 @@ namespace MonoTests.System.IO
 			Assertion.AssertEquals ("#04", 301, ms.Position);
 			Assertion.AssertEquals ("#05", 301, ms.Length);
 			Assertion.AssertEquals ("#06", 512, ms.Capacity);
+		}
+
+		[Test]
+		public void WriteLengths () {
+			MemoryStream ms=new MemoryStream (256);
+			BinaryWriter writer=new BinaryWriter (ms);
+
+			writer.Write ((byte)'1');
+			Assertion.AssertEquals ("#01", 1, ms.Length);
+			Assertion.AssertEquals ("#02", 256, ms.Capacity);
+			
+			writer.Write ((ushort)0);
+			Assertion.AssertEquals ("#03", 3, ms.Length);
+			Assertion.AssertEquals ("#04", 256, ms.Capacity);
+
+			writer.Write (testStreamData, 0, 23);
+			Assertion.AssertEquals ("#05", 26, ms.Length);
+			Assertion.AssertEquals ("#06", 256, ms.Capacity);
+
+			writer.Write (testStreamData);
+			writer.Write (testStreamData);
+			writer.Write (testStreamData);
+			Assertion.AssertEquals ("#07", 326, ms.Length);
 		}
 	}
 }
