@@ -320,7 +320,7 @@ namespace System.Reflection.Emit
 		}
 
 		public override bool ContainsGenericParameters {
-			get { return false; }
+			get { return true; }
 		}
 
 		public override bool IsGenericParameter {

@@ -1,3 +1,10 @@
+2004-09-28  Martin Baulig  <martin@ximian.com>
+
+	* GenericTypeParameterBuilder.cs
+	(GenericTypeParameterBuilder.ContainsGenericParameters): Return
+	true here; System.Type.ContainsGenericParameters returns true when
+	called on a type parameter, so let's do the same here.
+
 2004-09-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ConstructorBuilder.cs: Add 2.0 GetILGenerator(size) method.
