@@ -1,3 +1,50 @@
+2002-11-11  Tim Coleman <tim@timcoleman.com>
+        * System.Data/ResDescriptionAttribute.cs:
+        * list
+                New internal class added
+        * System.Data/Constraint.cs:
+        * System.Data/ConstraintCollection.cs:
+        * System.Data/DBConcurrencyException.cs:
+        * System.Data/DataColumn.cs:
+        * System.Data/DataColumnCollection.cs:
+        * System.Data/DataRelation.cs:
+        * System.Data/DataRelationCollection.cs:
+        * System.Data/DataRow.cs:
+        * System.Data/DataRowBuilder.cs:
+        * System.Data/DataRowBuilder.cs:
+        * System.Data/DataRowCollection.cs:
+        * System.Data/DataSet.cs:
+        * System.Data/DataTable.cs:
+        * System.Data/DataTableCollection.cs:
+        * System.Data/DataView.cs:
+        * System.Data/DataViewManager.cs:
+        * System.Data/DataViewSetting.cs:
+        * System.Data/DataViewSettingCollection.cs:
+        * System.Data/ForeignKeyConstraint.cs:
+        * System.Data/ForeignKeyConstraint.cs:
+        * System.Data/InternalDataCollectionBase.cs:
+        * System.Data/MergeFailedEventArgs.cs:
+        * System.Data/StrongTypingException.cs:
+        * System.Data/TypeDataSetGeneratorException.cs:
+        * System.Data/UniqueConstraint.cs:
+        * System.Data.Common/DataAdapter.cs:
+        * System.Data.Common/DataColumnMapping.cs:
+        * System.Data.Common/DataColumnMappingCollection.cs:
+        * System.Data.Common/DataTableMapping.cs:
+        * System.Data.Common/DataTableMappingCollection.cs:
+        * System.Data.Common/DbDataAdapter.cs:
+        * System.Data.Common/DbDataPermission.cs:
+        * System.Data.Common/DbDataPermissionAttribute.cs:
+        * System.Data.Common/DbEnumerator.cs:
+        * System.Data.SqlClient/SqlCommand.cs:
+        * System.Data.SqlClient/SqlCommandBuilder.cs:
+        * System.Data.SqlClient/SqlConnection.cs:
+        * System.Data.SqlClient/SqlDataAdapter.cs:
+        * System.Data.SqlClient/SqlParameter.cs:
+                Add missing attributes, methods, properties based on information
+                from System.Data class status page on go-mono.com.
+
+
 2002-11-10  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlString.cs: Now all methods are implemented
