@@ -92,7 +92,7 @@ namespace System.IO
                         }
                 }
 
-		unsafe public override long Length {
+		public override long Length {
 			get { return FileGetLength (handle); }
 		}
 
@@ -107,7 +107,7 @@ namespace System.IO
 
 		// methods
 
-		public unsafe override int ReadByte ()
+		public override int ReadByte ()
 		{
 			if (buf_offset >= buf_length) {
 				RefillBuffer ();
@@ -119,7 +119,7 @@ namespace System.IO
 			return buf [buf_offset ++];
 		}
 
-		public unsafe override void WriteByte (byte value)
+		public override void WriteByte (byte value)
 		{
 			if (buf_offset == buf_size)
 				FlushBuffer ();
@@ -131,7 +131,7 @@ namespace System.IO
 			buf_dirty = true;
 		}
 
-		public unsafe override int Read (byte[] dest, int dest_offset, int count)
+		public override int Read (byte[] dest, int dest_offset, int count)
 		{
 			int copied = 0;
 			while (count > 0) {
@@ -161,7 +161,7 @@ namespace System.IO
 			return copied;
 		}
 
-		public unsafe override void Write (byte[] src, int src_offset, int count)
+		public override void Write (byte[] src, int src_offset, int count)
 		{
 			int copied = 0;
 			while (count > 0) {
