@@ -1,3 +1,7 @@
+2003-05-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (EncodeAsAttribute): Allow nulls here.
+
 2003-04-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs (Attribute.GetAttributeArgumentExpression): Moved

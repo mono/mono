@@ -5775,9 +5775,15 @@ namespace Mono.CSharp {
 			object [] ret = new object [array_data.Count];
 			int i = 0;
 			foreach (Expression e in array_data){
-				object v = Attribute.GetAttributeArgumentExpression (e, Location);
-				if (v == null)
-					return null;
+				object v;
+				
+				if (e is NullLiteral)
+					v = null;
+				else {
+					v = Attribute.GetAttributeArgumentExpression (e, Location);
+					if (v == null)
+						return null;
+				}
 				ret [i++] = v;
 			}
 			return ret;
