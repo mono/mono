@@ -39,7 +39,7 @@ namespace System.Security {
 		{
 			IBuiltInPermission perm = (this as IBuiltInPermission);
 			if (perm == null)
-				throw new SecurityException (Locale.GetText ("Not a IBuiltInPermission and Demand isn't overridden"));
+				return; // not sure about this :(
 
 			// TODO : Loop the stack
 			switch (perm.GetTokenIndex ()) {

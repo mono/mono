@@ -1,14 +1,17 @@
 //
 // System.Security.SecurityException.cs
 //
-// Author:
-//   Nick Drochak(ndrochak@gol.com)
+// Authors:
+//	Nick Drochak(ndrochak@gol.com)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) Nick Drochak
+// (C) 2004 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System.Runtime.Serialization;
 using System.Globalization;
+using System.Text;
 
 namespace System.Security {
 
@@ -98,7 +101,30 @@ namespace System.Security {
 
 		public override string ToString ()
 		{
-			return permissionType.FullName + ": " + permissionState;
+			StringBuilder sb = new StringBuilder (base.ToString ());
+			if (permissionState != null) {
+				sb.Append (Environment.NewLine);
+				sb.Append ("State: ");
+				sb.Append (permissionState);
+			}
+			if (permissionType != null) {
+				sb.Append (Environment.NewLine);
+				sb.Append ("Type: ");
+				sb.Append (permissionType.ToString ());
+			}
+#if ! NET_1_0
+			if (_granted != null) {
+				sb.Append (Environment.NewLine);
+				sb.Append ("Granted: ");
+				sb.Append (_granted.ToString ());
+			}
+			if (_refused != null) {
+				sb.Append (Environment.NewLine);
+				sb.Append ("Refused: ");
+				sb.Append (_refused.ToString ());
+			}
+#endif
+			return sb.ToString ();
 		}
 	}
 }
