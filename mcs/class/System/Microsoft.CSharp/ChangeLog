@@ -1,3 +1,7 @@
+2005-02-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeCompiler.cs : On windows, use gmcs under 2.0 profile too.
+
 2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* CSharpCodeGenerator.cs: Remove extra ' ' emitted after class name in 

@@ -50,8 +50,6 @@ namespace Mono.CSharp
 		static CSharpCodeCompiler ()
 		{
 			if (Path.DirectorySeparatorChar == '\\') {
-				// FIXME: right now we use "fixed" version 1.0
-				// mcs at any time.
 				PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static|BindingFlags.NonPublic);
 				MethodInfo get_gac = gac.GetGetMethod (true);
 				string p = Path.GetDirectoryName (
@@ -65,8 +63,13 @@ namespace Mono.CSharp
 						Path.GetDirectoryName (
 							Path.GetDirectoryName (p)),
 						"bin\\mono.exe");
+#if NET_2_0
+				windowsMcsPath =
+					Path.Combine (p, "2.0\\gmcs.exe");
+#else
 				windowsMcsPath =
 					Path.Combine (p, "1.0\\mcs.exe");
+#endif
 			}
 		}
 
