@@ -48,6 +48,7 @@ System.EnterpriseServices/PrivateComponentAttribute.cs
 System.EnterpriseServices/PropertyLockMode.cs
 System.EnterpriseServices/PropertyReleaseMode.cs
 System.EnterpriseServices/RegistrationErrorInfo.cs
+System.EnterpriseServices/RegistrationConfig.cs
 System.EnterpriseServices/RegistrationException.cs
 System.EnterpriseServices/RegistrationHelper.cs
 System.EnterpriseServices/RegistrationHelperTx.cs

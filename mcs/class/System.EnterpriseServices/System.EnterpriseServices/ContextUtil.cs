@@ -102,13 +102,13 @@ namespace System.EnterpriseServices {
 		}
 
 		[MonoTODO]
-		public static object GetNamedProperty ()
+		public static object GetNamedProperty (string name)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static bool IsCallerInRole ()
+		public static bool IsCallerInRole (string role)
 		{
 			throw new NotImplementedException ();
 		}
