@@ -1,3 +1,8 @@
+2002-03-24  Duncan Mak  <duncan@ximian.com>
+
+	* SortedList.cs (Synchronized): Stubbed out a missing method
+	pointed out by Jakk Simm's test suite.
+
 2002-03-14  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayList.cs (FixedSize(ArrayList)): should return an ArrayList. The

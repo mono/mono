@@ -17,6 +17,7 @@
 				<excludes name="System.Data/DataTable.cs"/>
 				<excludes name="System.Data/DataSet.cs"/>
 				<excludes name="Test/**"/>
+                                <excludes name="System.Data.SqlClient/*"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>

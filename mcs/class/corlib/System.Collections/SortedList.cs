@@ -347,7 +347,11 @@ namespace System.Collections {
 			}
 		}
 
-
+		[MonoTODO]
+		public static SortedList Synchronized (SortedList list)
+		{
+			return null;
+		}
 
 		public virtual void TrimToSize ()
 		{

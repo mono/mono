@@ -12,7 +12,7 @@ namespace System.Data.SqlClient
 	/// <summary>
 	/// Represents a SQL statement that is executed while connected to a SQL database.
 	/// </summary>
-	public class SqlCommand implements IDbCommand
+	public class SqlCommand : IDbCommand
 	{
 		void Cancel();
 		

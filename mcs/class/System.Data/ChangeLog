@@ -1,3 +1,10 @@
+2002-03-24  Duncan Mak  <duncan@ximian.com>
+
+	* System.Data.build: Excluded System.Data.SqlClient from the build.
+	The stubs are incomplete and they are stopping the build.
+
+	* System.Data.SqlClient/SqlCommand.cs: Replaced 'implements' with ':'.
+
 2002-03-24  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.SqlClient/*: added skeletons for the SQL managed
