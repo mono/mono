@@ -1,3 +1,8 @@
+2005-03-11  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcConnection.cs : notify state change through event. clean up
+	handles in case any exception while opening a connection.
+
 2005-03-10  Sureshkumar T  <tsureshkumar@novell.com>
 
 	Migrated core classes to derive from ProviderBase instead of

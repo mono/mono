@@ -253,22 +253,11 @@ namespace System.Data.Odbc
 				if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 					throw new OdbcException (new OdbcError ("SQLDisconnect", OdbcHandleType.Dbc,hdbc));
 
-				// free handles
-				if (hdbc != IntPtr.Zero) {
-					ret = libodbc.SQLFreeHandle ( (ushort) OdbcHandleType.Dbc, hdbc);	
-					if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Dbc,hdbc));
-				}
-				hdbc = IntPtr.Zero;
-
-				if (henv != IntPtr.Zero) {
-					ret = libodbc.SQLFreeHandle ( (ushort) OdbcHandleType.Env, henv);	
-					if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Env,henv));
-				}
-				henv = IntPtr.Zero;
+				FreeHandles ();
 
 				transaction = null;
+
+                                RaiseEventStateChange (ConnectionState.Open, ConnectionState.Closed);
 			}
 		}
 
@@ -332,30 +321,31 @@ namespace System.Data.Odbc
 
 			OdbcReturn ret = OdbcReturn.Error;
 		
-			// allocate Environment handle	
-			ret = libodbc.SQLAllocHandle (OdbcHandleType.Env, IntPtr.Zero, ref henv);
-			if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException (new OdbcError ("SQLAllocHandle"));
+                        try {
+                                // allocate Environment handle	
+                                ret = libodbc.SQLAllocHandle (OdbcHandleType.Env, IntPtr.Zero, ref henv);
+                                if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                        throw new OdbcException (new OdbcError ("SQLAllocHandle"));
 		
-			ret=libodbc.SQLSetEnvAttr (henv, OdbcEnv.OdbcVersion, (IntPtr) libodbc.SQL_OV_ODBC3 , 0); 
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException (new OdbcError ("SQLSetEnvAttr", OdbcHandleType.Env,henv));
+                                ret=libodbc.SQLSetEnvAttr (henv, OdbcEnv.OdbcVersion, (IntPtr) libodbc.SQL_OV_ODBC3 , 0); 
+                                if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                        throw new OdbcException (new OdbcError ("SQLSetEnvAttr", OdbcHandleType.Env,henv));
 		
-			// allocate connection handle
-			ret=libodbc.SQLAllocHandle (OdbcHandleType.Dbc, henv, ref hdbc);
-			if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException (new OdbcError ("SQLAllocHandle",OdbcHandleType.Env,henv));
+                                // allocate connection handle
+                                ret=libodbc.SQLAllocHandle (OdbcHandleType.Dbc, henv, ref hdbc);
+                                if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                        throw new OdbcException (new OdbcError ("SQLAllocHandle",OdbcHandleType.Env,henv));
 			
-			// DSN connection
-			if (ConnectionString.ToLower().IndexOf("dsn=")>=0)
-			{
-				string _uid="", _pwd="", _dsn="";
-				string[] items=ConnectionString.Split(new char[1]{';'});
-				foreach (string item in items)
-				{
-					string[] parts=item.Split(new char[1] {'='});
-					switch (parts[0].Trim().ToLower())
-					{
+                                // DSN connection
+                                if (ConnectionString.ToLower().IndexOf("dsn=")>=0)
+                                {
+                                        string _uid="", _pwd="", _dsn="";
+                                        string[] items=ConnectionString.Split(new char[1]{';'});
+                                        foreach (string item in items)
+                                        {
+                                                string[] parts=item.Split(new char[1] {'='});
+                                                switch (parts[0].Trim().ToLower())
+                                                {
 						case "dsn":
 							_dsn=parts[1].Trim();
 							break;
@@ -365,23 +355,28 @@ namespace System.Data.Odbc
 						case "pwd":
 							_pwd=parts[1].Trim();
 							break;
-					}
-				}
-				ret=libodbc.SQLConnect(hdbc, _dsn, -3, _uid, -3, _pwd, -3);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLConnect",OdbcHandleType.Dbc,hdbc));
-			}
-			else 
-			{
-				// DSN-less Connection
-				string OutConnectionString=new String(' ',1024);
-				short OutLen=0;
-				ret=libodbc.SQLDriverConnect(hdbc, IntPtr.Zero, ConnectionString, -3, 
-					OutConnectionString, (short) OutConnectionString.Length, ref OutLen, 0);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLDriverConnect",OdbcHandleType.Dbc,hdbc));
-			}
+                                                }
+                                        }
+                                        ret=libodbc.SQLConnect(hdbc, _dsn, -3, _uid, -3, _pwd, -3);
+                                        if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                                throw new OdbcException(new OdbcError("SQLConnect",OdbcHandleType.Dbc,hdbc));
+                                }
+                                else 
+                                {
+                                        // DSN-less Connection
+                                        string OutConnectionString=new String(' ',1024);
+                                        short OutLen=0;
+                                        ret=libodbc.SQLDriverConnect(hdbc, IntPtr.Zero, ConnectionString, -3, 
+                                                                     OutConnectionString, (short) OutConnectionString.Length, ref OutLen, 0);
+                                        if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                                throw new OdbcException(new OdbcError("SQLDriverConnect",OdbcHandleType.Dbc,hdbc));
+                                }
 
+                                RaiseEventStateChange (ConnectionState.Closed, ConnectionState.Open);
+                        } catch (Exception) {
+                                // free handles if any.
+                                FreeHandles ();
+                        }
 		}
 
 		[MonoTODO]
@@ -389,6 +384,26 @@ namespace System.Data.Odbc
 		{
 			throw new NotImplementedException ();
 		}
+
+                private void FreeHandles ()
+                {
+                        OdbcReturn ret = OdbcReturn.Error;
+                        if (hdbc != IntPtr.Zero) {
+                                ret = libodbc.SQLFreeHandle ( (ushort) OdbcHandleType.Dbc, hdbc);	
+                                if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                        throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Dbc,hdbc));
+                        }
+                        hdbc = IntPtr.Zero;
+
+                        if (henv != IntPtr.Zero) {
+                                ret = libodbc.SQLFreeHandle ( (ushort) OdbcHandleType.Env, henv);	
+                                if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+                                        throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Env,henv));
+                        }
+                        henv = IntPtr.Zero;
+                                
+                }
+                
 
 		[MonoTODO]
 		public
@@ -418,6 +433,13 @@ namespace System.Data.Odbc
                         return System.Text.Encoding.Default.GetString (buffer);
                 }
 
+
+                private void RaiseEventStateChange (ConnectionState from, ConnectionState to)
+                {
+                        if (StateChange != null)
+                                StateChange (this, new StateChangeEventArgs (from, to));
+                }
+                
 
 		#endregion
 
