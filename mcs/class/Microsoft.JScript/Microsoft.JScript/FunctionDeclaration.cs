@@ -69,7 +69,7 @@ namespace Microsoft.JScript {
 			MethodBuilder method;
 			string name;
 
-			if (ec.no_global_code_method) {
+			if (!ec.is_global_code_method) {
 				if (Function.parent == null) {
 					name = Function.name;
 					type.DefineField (name, 

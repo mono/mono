@@ -46,6 +46,10 @@ namespace Microsoft.JScript {
 			return true;
 		}
 
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	internal class Continue : AST {
@@ -61,6 +65,11 @@ namespace Microsoft.JScript {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	internal class Break : AST {
@@ -73,6 +82,11 @@ namespace Microsoft.JScript {
 		}
 
 		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
 		}
@@ -96,6 +110,11 @@ namespace Microsoft.JScript {
 		{
 			expression.Resolve (context);
 			return true;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
