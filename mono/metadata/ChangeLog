@@ -1,3 +1,13 @@
+2001-07-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* assembly.c: Implement asssembly loading.  This loads an image
+	and loads all the referenced assemblies.  Come to think of it, we
+	could always do lazy loading of the assemblies. 
+
+	* image.c (mono_image_open): Keep loaded images in a hashtable.
+
+	* image.h (MonoImage): Add reference count.
+
 2001-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* assembly.c (mono_assembly_open): Keep track of the file name in
