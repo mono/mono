@@ -1,3 +1,8 @@
+2004-08-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_native_wrapper): Add support for byref 
+	string arrays.
+
 2004-08-28  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c
