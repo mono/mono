@@ -5,10 +5,12 @@
 //	Linus Upson (linus@linus.com)
 //	Duncan Mak (duncan@ximian.com)
 //
-// (C) Copyright, Novell, Inc. 2004
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
+using System.Runtime.Serialization;
+
 using NUnit.Framework;
 
 namespace MonoTests.System
@@ -206,6 +208,14 @@ namespace MonoTests.System
 			a.Source = "foo";
 
 			AssertEquals (null, a.InnerException.Source);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetObjectData_Null ()
+		{
+			Exception e = new Exception ();
+			e.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 		}
 	}
 }

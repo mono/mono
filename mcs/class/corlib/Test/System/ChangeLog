@@ -1,3 +1,8 @@
+2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ExceptionTest.cs: Added check for ArgumentNullException on 
+	GetObjectData method.
+
 2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add new tests for bug #73972.
