@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  80%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -21,34 +21,25 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class FontInfo
 	{
-		private bool bold;
-		private bool italic;
-		private bool overline;
-		private bool strikeout;
-		private bool underline;
-		private string name;		//TODO: This will have the value of names[0] by default
-		private string[] names;		//TODO: How do get the list of fonts available?
-		private FontUnit size = FontUnit.Empty;
+		private Style infoOwner;				
 		
-		internal FontInfo()
+		internal FontInfo(Style owner)
 		{
-			bold      = false;
-			italic    = false;
-			overline  = false;
-			strikeout = false;
-			underline = false;
-			name      = string.Empty;
+			infoOwner = owner;
 		}
 		
 		public bool Bold
 		{
 			get
 			{
-				return bold;
+				if(infoOwner.IsSet(Style.FONT_BOLD))
+					return (bool)(infoOwner.ViewState["FontInfoBold"]);
+				return false;
 			}
 			set
 			{
-				bold = value;
+				infoOwner.ViewState["FontInfoBold"] = value;
+				infoOwner.Set(Style.FONT_BOLD);
 			}
 		}
 		
@@ -56,11 +47,14 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return italic;
+				if(infoOwner.IsSet(Style.FONT_ITALIC))
+					return (bool)(infoOwner.ViewState["FontInfoItalic"]);
+				return false;
 			}
 			set
 			{
-				italic = value;
+				infoOwner.ViewState["FontInfoItalic"] = value;
+				infoOwner.Set(Style.FONT_ITALIC);
 			}
 		}
 		
@@ -68,11 +62,14 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return overline;
+				if(infoOwner.IsSet(Style.FONT_OLINE))
+					return (bool)(infoOwner.ViewState["FontInfoOverline"]);
+				return false;
 			}
 			set
 			{
-				overline = value;
+				infoOwner.ViewState["FontInfoOverline"] = value;
+				infoOwner.Set(Style.FONT_OLINE);
 			}
 		}
 		
@@ -80,11 +77,14 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return strikeout;
+				if(infoOwner.IsSet(Style.FONT_STRIKE))
+					return (bool)(infoOwner.ViewState["FontInfoStrikeout"]);
+				return false;
 			}
 			set
 			{
-				strikeout = value;
+				infoOwner.ViewState["FontInfoStrikeout"] = value;
+				infoOwner.Set(Style.FONT_STRIKE);
 			}
 		}
 		
@@ -92,11 +92,29 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return underline;
+				if(infoOwner.IsSet(Style.FONT_ULINE))
+					return (bool)(infoOwner.ViewState["FontInfoUnderline"]);
+				return false;
 			}
 			set
 			{
-				underline = value;
+				infoOwner.ViewState["FontInfoUnderline"] = value;
+				infoOwner.Set(Style.FONT_ULINE);
+			}
+		}
+		
+		public FontUnit Size
+		{
+			get
+			{
+				if(infoOwner.IsSet(Style.FONT_SIZE))
+					return (FontUnit)(infoOwner.ViewState["FontInfoSize"]);
+				return FontUnit.Empty;
+			}
+			set
+			{
+				infoOwner.ViewState["FontInfoSize"] = value;
+				infoOwner.Set(Style.FONT_SIZE);
 			}
 		}
 		
@@ -104,11 +122,21 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return name;
+				if(Names!=null)
+					return Names[0];
+				return String.Empty;
 			}
 			set
 			{
-				name = value;
+				if(value == null)
+					throw new ArgumentException();
+				string[] strArray = null;
+				if(value.Length > 0)
+				{
+					strArray = new string[1];
+					strArray[0] = value;
+				}
+				Names = strArray;
 			}
 		}
 		
@@ -116,84 +144,93 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return names;
+				if(infoOwner.IsSet(Style.FONT_NAMES))
+					return (string[])(infoOwner.ViewState["FontInfoNames"]);
+				return (new string[0]);
 			}
 			set
 			{
-				names = value;
-				name = names[0];
+				infoOwner.ViewState["FontInfoNames"] = value;
+				infoOwner.Set(Style.FONT_NAMES);
 			}
 		}
-
-		//TODO: To throw exception if the index is negative
-		public FontUnit Size
+		
+		internal void Reset()
+		{
+			if(infoOwner.IsSet(Style.FONT_NAMES))
+				infoOwner.ViewState.Remove("FontInfoNames");
+			if(infoOwner.IsSet(Style.FONT_BOLD))
+				infoOwner.ViewState.Remove("FontInfoBold");
+			if(infoOwner.IsSet(Style.FONT_ITALIC))
+				infoOwner.ViewState.Remove("FontInfoItalic");
+			if(infoOwner.IsSet(Style.FONT_STRIKE))
+				infoOwner.ViewState.Remove("FontInfoStrikeout");
+			if(infoOwner.IsSet(Style.FONT_OLINE))
+				infoOwner.ViewState.Remove("FontInfoOverline");
+			if(infoOwner.IsSet(Style.FONT_ULINE))
+				infoOwner.ViewState.Remove("FontInfoUnderline");
+			if(infoOwner.IsSet(Style.FONT_SIZE) && infoOwner.Size != FontUnit.Empty)
+				infoOwner.ViewState.Remove("FontInfoSize");
+		}
+		
+		internal Style Owner
 		{
 			get
 			{
-				return size;
-			}
-			set
-			{
-				size = value;
+				return infoOwner;
 			}
 		}
 		
-		public void CopyFrom(FontInfo from)
+		public void CopyFrom(FontInfo source)
 		{
-			//TODO: What a rubbish way to accomplish the task
-			/*this.bold = from.Bold;
-			this.italic = from.Italic;
-			this.name = from.Name;
-			this.names = from.Names;
-			this.overline = from.Overline;
-			this.size = from.Size;*/
-			//TODO: Let me try Relflection
-			Type t = from.GetType();
-			MethodInfo[] fi = t.GetMethods();
-			foreach(MethodInfo f in fi)
+			if(source!=null)
 			{
-				//System.Console.WriteLine("Field: {0}", f.Name);
-				if(f.Name.StartsWith("get_"))
-				{
-					System.Console.WriteLine("\tStarts with get_");
-				}
+				if(source.IsSet(Style.FONT_NAMES))
+					Names = source.Names;
+				if(source.IsSet(Style.FONT_BOLD))
+					Bold = source.Bold;
+				if(source.IsSet(Style.FONT_ITALIC))
+					Italic = source.Italic;
+				if(source.IsSet(Style.FONT_STRIKE))
+					Strikeout = source.Strikeout;
+				if(source.IsSet(Style.FONT_OLINE))
+					Overline = source.Overline;
+				if(source.IsSet(Style.FONT_ULINE))
+					Underline = source.Underline;
+				if(source.IsSet(Style.FONT_SIZE) && source.Size != FontUnit.Empty)
+					Size = source.Size;
 			}
 		}
 		
-		private void ListFields(FontInfo from)
-		{
-			Type t = from.GetType();
-			MethodInfo[] fi = t.GetMethods();
-			foreach(MethodInfo f in fi)
-			{
-				System.Console.WriteLine("Field: {0}", f.Name);
-				if(f.Name.StartsWith("get_"))
-				{
-					System.Console.WriteLine("\tStarts with get_");
-				}
-			}
-		}
-
-		//TODO: after CopyFrom is implemented
 		public void MergeWith(FontInfo with)
 		{
-		}
-
-		public override string ToString()
-		{
-			string retVal = this.name;
-			if(this.size != FontUnit.Empty)
+			if(with!=null)
 			{
-				this.name += ("," + this.size);
+				if(source.IsSet(Style.FONT_NAMES) && !infoOwner.IsSet(Style.FONT_NAMES))
+					Names = source.Names;
+				if(source.IsSet(Style.FONT_BOLD && !infoOwner.IsSet(Style.FONT_BOLD)))
+					Bold = source.Bold;
+				if(source.IsSet(Style.FONT_ITALIC && !infoOwner.IsSet(Style.FONT_ITALIC)))
+					Italic = source.Italic;
+				if(source.IsSet(Style.FONT_STRIKE && !infoOwner.IsSet(Style.FONT_STRIKE)))
+					Strikeout = source.Strikeout;
+				if(source.IsSet(Style.FONT_OLINE && !infoOwner.IsSet(Style.FONT_OLINE)))
+					Overline = source.Overline;
+				if(source.IsSet(Style.FONT_ULINE && !infoOwner.IsSet(Style.FONT_ULINE)))
+					Underline = source.Underline;
+				if(source.IsSet(Style.FONT_SIZE) && source.Size != FontUnit.Empty && !infoOwner.IsSet(Style.FONT_SIZE))
+					Size = source.Size;
 			}
-			return retVal;
 		}
-
-		/*
-		protected object MemberwiseClone()
+		
+		public bool ShouldSerializeNames()
 		{
+			return (Names.Length > 0);
 		}
-//*/
-
+		
+		protected override ToString()
+		{
+			return ( (Name.Length > 0) ? (Name.ToString() + ", " + Size.ToString()) : Size.ToString() );
+		}
 	}
 }

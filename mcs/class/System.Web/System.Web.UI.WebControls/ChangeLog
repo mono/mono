@@ -1,6 +1,10 @@
 2001-12-19	Gaurav Vaish <gvaish@iitk.ac.in>
 
-	ListItemCollection.cs       - Initial Implementation
+	ListItemCollection.cs       - Completed
+	ListItem.cs                 - Initial Implementation
+	Style.cs                    - Initial Implementation
+
+  Right now I am in a total mood to do a successful build. Creating so many classes, completing classes in System.Web System.Web.UI namespaces.
 
 2001-12-18	Gaurav Vaish <gvaish@iitk.ac.in>
 
