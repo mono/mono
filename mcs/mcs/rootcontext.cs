@@ -741,12 +741,12 @@ namespace Mono.CSharp {
                         
 			if (Tree.Types.Enums != null) {
 				foreach (Enum e in Tree.Types.Enums)
-					e.Emit (Tree.Types);
+					e.Emit ();
 			}
 
 			if (interface_resolve_order != null) {
 				foreach (Interface iface in interface_resolve_order)
-					iface.Emit (Tree.Types);
+					iface.Emit ();
 			}                        
 			
 			if (type_container_resolve_order != null) {
@@ -759,7 +759,7 @@ namespace Mono.CSharp {
 			
 			if (Tree.Types.Delegates != null) {
 				foreach (Delegate d in Tree.Types.Delegates)
-					d.Emit (Tree.Types);
+					d.Emit ();
 			}			
 			//
 			// Run any hooks after all the types have been defined.

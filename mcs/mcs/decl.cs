@@ -99,14 +99,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Base Emit method. This is also entry point for CLS-Compliant verification.
 		/// </summary>
-		public virtual void Emit (TypeContainer container)
+		public virtual void Emit ()
 		{
 			VerifyObsoleteAttribute ();
 
 			if (!RootContext.VerifyClsCompliance)
 				return;
 
-			VerifyClsCompliance (container);
+			VerifyClsCompliance (Parent);
 		}
 
 		// 

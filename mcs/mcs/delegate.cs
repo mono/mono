@@ -355,15 +355,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void Emit (TypeContainer tc)
+		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
+				EmitContext ec = new EmitContext (
+					Parent, this, Location, null, null, ModFlags, false);
 				Parameters.LabelParameters (ec, InvokeBuilder, Location);
 				OptAttributes.Emit (ec, this);
 			}
 
-			base.Emit (tc);
+			base.Emit ();
 		}
 
 		protected override string[] ValidAttributeTargets {

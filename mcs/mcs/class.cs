@@ -1942,7 +1942,7 @@ namespace Mono.CSharp {
 		{
 			if (constants != null)
 				foreach (Const con in constants)
-					con.Emit (this);
+					con.Emit ();
 			return;
 		}
 
@@ -1998,14 +1998,14 @@ namespace Mono.CSharp {
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this);
 				
-			Emit (this);
+			Emit ();
 
 			if (instance_constructors != null) {
 				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && IsClsCompliaceRequired (this)) {
 					bool has_compliant_args = false;
 
 					foreach (Constructor c in instance_constructors) {
-						c.Emit (this);
+						c.Emit ();
 
 						if (has_compliant_args)
 							continue;
@@ -2016,28 +2016,28 @@ namespace Mono.CSharp {
 						Report.Error_T (3015, Location, GetSignatureForError ());
 				} else {
 					foreach (Constructor c in instance_constructors)
-						c.Emit (this);
+						c.Emit ();
 				}
 			}
 
 			if (default_static_constructor != null)
-				default_static_constructor.Emit (this);
+				default_static_constructor.Emit ();
 			
 			if (methods != null)
 				foreach (Method m in methods)
-					m.Emit (m.Parent);
+					m.Emit ();
 
 			if (operators != null)
 				foreach (Operator o in operators)
-					o.Emit (this);
+					o.Emit ();
 
 			if (properties != null)
 				foreach (Property p in properties)
-					p.Emit (this);
+					p.Emit ();
 
 			if (indexers != null){
 				foreach (Indexer ix in indexers)
-					ix.Emit (this);
+					ix.Emit ();
 				if (IndexerName != null) {
 					CustomAttributeBuilder cb = EmitDefaultMemberAttr ();
 					TypeBuilder.SetCustomAttribute (cb);
@@ -2046,22 +2046,22 @@ namespace Mono.CSharp {
 			
 			if (fields != null)
 				foreach (Field f in fields)
-					f.Emit (this);
+					f.Emit ();
 
 			if (events != null){
 				foreach (Event e in Events)
-					e.Emit (this);
+					e.Emit ();
 			}
 
 			if (delegates != null) {
 				foreach (Delegate d in Delegates) {
-					d.Emit (this);
+					d.Emit ();
 				}
 			}
 
 			if (enums != null) {
 				foreach (Enum e in enums) {
-					e.Emit (this);
+					e.Emit ();
 				}
 			}
 
@@ -3412,10 +3412,10 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		// 
-		public override void Emit (TypeContainer container)
+		public override void Emit ()
 		{
-			MethodData.Emit (container, this);
-			base.Emit (container);
+			MethodData.Emit (Parent, this);
+			base.Emit ();
 			Block = null;
 			MethodData = null;
 		}
@@ -3869,10 +3869,10 @@ namespace Mono.CSharp {
 		//
 		// Emits the code
 		//
-		public override void Emit (TypeContainer container)
+		public override void Emit ()
 		{
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (container, Location, ig, null, ModFlags, true);
+			EmitContext ec = new EmitContext (Parent, Location, ig, null, ModFlags, true);
 
 			//
 			// extern methods have no bodies
@@ -3894,7 +3894,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
-				if (container.Kind == Kind.Class && Initializer == null)
+				if (Parent.Kind == Kind.Class && Initializer == null)
 					Initializer = new ConstructorBaseInitializer (
 						null, Parameters.EmptyReadOnlyParameters, Location);
 
@@ -3918,7 +3918,7 @@ namespace Mono.CSharp {
 				!Location.IsNull (Location) &&
 				!Location.IsNull (block.EndLocation) &&
 				(Location.SymbolDocument != null)) {
-				sw.OpenMethod (container, ConstructorBuilder, Location, block.EndLocation);
+				sw.OpenMethod (Parent, ConstructorBuilder, Location, block.EndLocation);
 
 				generate_debugging = true;
 			}
@@ -3926,7 +3926,7 @@ namespace Mono.CSharp {
 			//
 			// Classes can have base initializers and instance field initializers.
 			//
-			if (container.Kind == Kind.Class){
+			if (Parent.Kind == Kind.Class){
 				if ((ModFlags & Modifiers.STATIC) == 0){
 
 					//
@@ -3934,32 +3934,32 @@ namespace Mono.CSharp {
 					// do not emit field initializers, they are initialized in the other constructor
 					//
 					if (!(Initializer != null && Initializer is ConstructorThisInitializer))
-						container.EmitFieldInitializers (ec);
+						Parent.EmitFieldInitializers (ec);
 				}
 			}
 			if (Initializer != null) {
-				Initializer.CheckObsoleteAttribute (container, Location);
+				Initializer.CheckObsoleteAttribute (Parent, Location);
 				Initializer.Emit (ec);
 			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
-				container.EmitFieldInitializers (ec);
+				Parent.EmitFieldInitializers (ec);
 
 			if (OptAttributes != null) 
 				OptAttributes.Emit (ec, this);
 
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
-			if ((container.Kind == Kind.Struct) &&
+			if ((Parent.Kind == Kind.Struct) &&
 			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
-				Block.AddThisVariable (container, Location);
+				Block.AddThisVariable (Parent, Location);
 
 			ec.EmitTopBlock (block, ParameterInfo, Location);
 
 			if (generate_debugging)
 				sw.CloseMethod ();
 
-			base.Emit (container);
+			base.Emit ();
 
 			block = null;
 		}
@@ -5087,14 +5087,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void Emit (TypeContainer tc)
+		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (tc, Location, null, FieldBuilder.FieldType, ModFlags);
+				EmitContext ec = new EmitContext (
+					Parent, Location, null, FieldBuilder.FieldType,
+					ModFlags);
 				OptAttributes.Emit (ec, this);
 			}
 
-			base.Emit (tc);
+			base.Emit ();
 		}
 	}
 
@@ -5582,7 +5584,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void Emit (TypeContainer tc)
+		public override void Emit ()
 		{
 			//
 			// The PropertyBuilder can be null for explicit implementations, in that
@@ -5593,12 +5595,12 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (ec, this);
 
 			if (Get != null)
-				Get.Emit (tc);
+				Get.Emit (Parent);
 
 			if (Set != null)
-				Set.Emit (tc);
+				Set.Emit (Parent);
 
-			base.Emit (tc);
+			base.Emit ();
 		}
 
 		protected override string[] ValidAttributeTargets {
@@ -6222,19 +6224,20 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void Emit (TypeContainer tc)
+		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (tc, Location, null, MemberType, ModFlags);
+				EmitContext ec = new EmitContext (
+					Parent, Location, null, MemberType, ModFlags);
 				OptAttributes.Emit (ec, this);
 			}
 
 			if (!IsInterface) {
-				Add.Emit (tc);
-				Remove.Emit (tc);
+				Add.Emit (Parent);
+				Remove.Emit (Parent);
 			}
 
-			base.Emit (tc);
+			base.Emit ();
 		}
 
 		public override string GetSignatureForError ()
@@ -6763,7 +6766,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override void Emit (TypeContainer container)
+		public override void Emit ()
 		{
 			//
 			// abstract or extern methods have no bodies
@@ -6771,7 +6774,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
 			
-			OperatorMethod.Emit (container);
+			OperatorMethod.Emit ();
 			Block = null;
 		}
 

@@ -1,5 +1,10 @@
 2004-07-25  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (DeclSpace.Emit): Removed the `TypeContainer' argument,
+	we can just use the `Parent' field instead.
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.Emit): Renamed to EmitType().
 
 2004-07-25  Martin Baulig  <martin@ximian.com>
