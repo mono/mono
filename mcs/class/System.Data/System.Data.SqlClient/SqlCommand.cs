@@ -195,7 +195,9 @@ namespace System.Data.SqlClient {
 
 			string sql = String.Empty;
 			if ((behavior & CommandBehavior.KeyInfo) > 0)
-				sql = "SET FMTONLY OFF; SET NO_BROWSETABLE ON;";
+				sql += "SET FMTONLY OFF; SET NO_BROWSETABLE ON;";
+			if ((behavior & CommandBehavior.SchemaOnly) > 0)
+				sql += "SET FMTONLY ON;";
 	
 			switch (commandType) {
 			case CommandType.Text :
