@@ -62,23 +62,6 @@ namespace System.Drawing.Imaging {
 			Marshal.Copy (value, 0, this.valuePtr, valuesCount);
 		}
 
-		public EncoderParameter (Encoder encoder, int value)
-		{
-			this.encoder = encoder;
-			this.valuesCount = 1;
-			this.type = EncoderParameterValueType.ValueTypeLong;
-			this.valuePtr = Marshal.AllocHGlobal (4);
-			Marshal.WriteInt32 (this.valuePtr, value);
-		}
-
-		public EncoderParameter (Encoder encoder, int[] value)
-		{
-			this.encoder = encoder;
-			this.valuesCount = value.Length;
-			this.type = EncoderParameterValueType.ValueTypeLong;
-			this.valuePtr = Marshal.AllocHGlobal (4 * valuesCount);
-			Marshal.Copy (value, 0, this.valuePtr, valuesCount);
-		}
 
 		public EncoderParameter (Encoder encoder, long value)
 		{
