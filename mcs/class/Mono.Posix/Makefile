@@ -10,8 +10,8 @@ include ../../build/library.make
 
 all-local: Mono.Posix/make-map.exe 
 
-Mono.Posix/make-map.exe: Mono.Posix/make-map.cs ../lib/$(PROFILE)/Mono.Posix.dll
-	cp ../lib/$(PROFILE)/Mono.Posix.dll Mono.Posix/
+Mono.Posix/make-map.exe: Mono.Posix/make-map.cs $(the_lib)
+	cp $(the_lib) Mono.Posix/
 ifneq ($(PLATFORM),win32)
 	$(CSCOMPILE)  -out:Mono.Posix/make-map.exe -r:Mono.Posix.dll Mono.Posix/make-map.cs
 else
