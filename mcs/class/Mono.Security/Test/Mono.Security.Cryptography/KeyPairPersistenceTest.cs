@@ -158,8 +158,10 @@ namespace MonoTests.Mono.Security.Cryptography {
 				kpp.Remove ();
 				Assert ("Remove-!Exists", !File.Exists (kpp.Filename));
 			}
-			catch (UnauthorizedAccessException) {
+			catch (CryptographicException ce) {
 				// not everyone can write to the machine store
+				if (!(ce.InnerException is UnauthorizedAccessException))
+					throw;
 			}
 		}
 

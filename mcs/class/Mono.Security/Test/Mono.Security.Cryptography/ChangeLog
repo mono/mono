@@ -1,3 +1,7 @@
+2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistenceTest.cs: Forgot to re-fix the second failing test.
+
 2004-11-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistenceTest.cs: Re-fix as the UnauthorizedAccessException
