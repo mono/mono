@@ -2826,4 +2826,11 @@ namespace System.Windows.Forms{
 		OFN_ENABLEINCLUDENOTIFY      = 0x00400000,
 		OFN_ENABLESIZING             = 0x00800000
 	}
+
+	internal enum CommDlgErrors : uint {
+		FNERR_FILENAMECODES          = 0x3000,
+		FNERR_SUBCLASSFAILURE        = 0x3001,
+		FNERR_INVALIDFILENAME        = 0x3002,
+		FNERR_BUFFERTOOSMALL         = 0x3003
+	}
 }

@@ -949,6 +949,11 @@ namespace System.Windows.Forms{
 			 CharSet = CharSet.Ansi)]
 		internal static extern bool GetOpenFileName ( ref OPENFILENAME lpofn );
 
+		[DllImport ("Comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern uint CommDlgExtendedError ( );
+
 		#endregion
 
 		internal static void UpdateWindowStyle( IntPtr hwnd, int RemoveStyle, int AddStyle) {
