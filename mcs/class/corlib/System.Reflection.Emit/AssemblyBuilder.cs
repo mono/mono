@@ -119,7 +119,7 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
 		
-		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access) {
+		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal) {
 			name = n.Name;
 			if (directory == null || directory == String.Empty)
 				dir = Directory.GetCurrentDirectory ();
@@ -147,6 +147,8 @@ namespace System.Reflection.Emit {
 					sn = new Mono.Security.StrongName (pk);
 				}
 			}
+
+			CorlibInternal = corlib_internal;
 
 			basic_init (this);
 		}
