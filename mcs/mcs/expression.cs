@@ -3455,25 +3455,6 @@ namespace Mono.CSharp {
 			if (Arguments != null)
 				EmitArguments (ec, method, Arguments);
 
-#if BLAH
-			if (method is MethodInfo){
-				MethodInfo mi = (MethodInfo) method;
-
-				if (!mi.IsVirtual)
-					is_static = true;
-			}
-#endif
-
-			bool debug = false;
-			if (method.Name == "Send"){
-				Console.WriteLine ("is_static: " + is_static);
-				Console.WriteLine ("struct_call: " + struct_call);
-				Console.WriteLine ("is_base: " + is_base);
-
-				Console.WriteLine ("method: " + method.IsStatic);
-				Console.WriteLine ("method: " + method);
-			}
-			
 			if (is_static || struct_call || is_base){
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
