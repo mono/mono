@@ -1,3 +1,8 @@
+2002-04-20  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* jit,h, jit.c, x86.brg: NEWOBJ_SPEC and NEWARR_SPEC terminals for
+	non-shared code.
+
 2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (check_inlining): added statistics about inlineing

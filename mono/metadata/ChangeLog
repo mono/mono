@@ -1,3 +1,8 @@
+2002-04-20  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* object.h, object.c: domain-specific versions of mono_object_new and
+	mono_array_new.
+
 2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.c: changed String layout
