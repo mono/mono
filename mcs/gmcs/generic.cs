@@ -215,6 +215,7 @@ namespace Mono.CSharp {
 		public TypeParameterExpr (TypeParameter type_parameter, Location loc)
 		{
 			this.type_parameter = type_parameter;
+			this.loc = loc;
 		}
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)

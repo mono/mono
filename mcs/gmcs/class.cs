@@ -621,10 +621,11 @@ namespace Mono.CSharp {
 		void Error_TypeParameterAsBase (TypeParameterExpr e)
 		{
 			Report.Error (
-			      -216, e.Location,
-			      String.Format ("Type parameter `{0}' can not be used t as a base class or interface", e.Name));
+				689, e.Location,
+				"Type parameter `{0}' can not be used as a " +
+				"base class or interface", e.Name);
 		}
-		
+
 		/// <remarks>
 		///  The pending methods that need to be implemented (interfaces or abstract methods)
 		/// </remarks>
