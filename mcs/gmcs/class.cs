@@ -2501,13 +2501,15 @@ namespace Mono.CSharp {
 		//
 		public override bool Define (TypeContainer container)
 		{
-			if (GenericMethod != null) {
-				if (!GenericMethod.Define (container))
-					return false;
-			}
-
 			if (!DoDefine (container))
 				return false;
+
+			MethodBuilder mb = null;
+			if (GenericMethod != null) {
+				mb = container.TypeBuilder.DefineGenericMethod (Name, flags);
+				if (!GenericMethod.Define (mb))
+					return false;
+			}
 
 			if (!CheckBase (container))
 				return false;
@@ -2516,7 +2518,7 @@ namespace Mono.CSharp {
 
 			MethodData = new MethodData (ds, this, null, MemberType,
 						     ParameterTypes, ParameterInfo, cc,
-						     OptAttributes, ModFlags, flags, true);
+						     OptAttributes, ModFlags, flags, true, mb);
 
 			if (!MethodData.Define (container))
 				return false;
@@ -2537,7 +2539,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodBuilder = MethodData.MethodBuilder;
-			
+
 			//
 			// This is used to track the Entry Point,
 			//
@@ -2936,6 +2938,17 @@ namespace Mono.CSharp {
 			this.conditionals = null;
 		}
 
+		public MethodData (DeclSpace ds, MemberBase member, string name, Type return_type,
+				   Type [] parameter_types, InternalParameters parameters,
+				   CallingConventions cc, Attributes opt_attrs,
+				   int modifiers, MethodAttributes flags, bool is_method,
+				   MethodBuilder builder)
+			: this (ds, member, name, return_type, parameter_types, parameters,
+				cc, opt_attrs, modifiers, flags, is_method)
+		{
+			this.builder = builder;
+		}
+
 		//
 		// Attributes.
 		//
@@ -3245,10 +3258,12 @@ namespace Mono.CSharp {
 				builder = dllimport_attribute.DefinePInvokeMethod (
 					ec, container.TypeBuilder, method_name, flags,
 					ReturnType, ParameterTypes);
-			} else
+			} else if (builder == null)
 				builder = container.TypeBuilder.DefineMethod (
 					method_name, flags, CallingConventions,
 					ReturnType, ParameterTypes);
+			else
+				builder.SetGenericMethodSignature (ReturnType, ParameterTypes);
 
 			if (builder == null)
 				return false;

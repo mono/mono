@@ -789,8 +789,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				int idx = this is GenericMethod ? i + 1 : 0;
-				type_params [i] = new TypeParameter (name, idx, constraints, Location);
+				type_params [i] = new TypeParameter (name, constraints, Location);
 
 				DefineName (name, type_params [i]);
 			}

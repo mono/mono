@@ -113,7 +113,6 @@ namespace Mono.CSharp {
 	//
 	public class TypeParameter {
 		string name;
-		int index;
 		Constraints constraints;
 		Location loc;
 		Type type;
@@ -123,12 +122,6 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.constraints = constraints;
 			this.loc = loc;
-		}
-
-		public TypeParameter (string name, int index, Constraints constraints, Location loc)
-			: this (name, constraints, loc)
-		{
-			this.index = index;
 		}
 
 		public string Name {
@@ -165,9 +158,6 @@ namespace Mono.CSharp {
 
 		public Type Define (TypeBuilder tb)
 		{
-			if (index > 0)
-				throw new InvalidOperationException ();
-
 			if (constraints != null)
 				type = tb.DefineGenericParameter (name, constraints.Types);
 			else
@@ -176,15 +166,12 @@ namespace Mono.CSharp {
 			return type;
 		}
 
-		public Type DefineMethod (TypeBuilder tb)
+		public Type DefineMethod (MethodBuilder mb)
 		{
-			if (index == 0)
-				throw new InvalidOperationException ();
-
 			if (constraints != null)
-				type = tb.DefineGenericParameter (name, index - 1, constraints.Types);
+				type = mb.DefineGenericParameter (name, constraints.Types);
 			else
-				type = tb.DefineGenericParameter (name, index - 1, new Type [0]);
+				type = mb.DefineGenericParameter (name, new Type [0]);
 
 			return type;
 		}
@@ -431,8 +418,14 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer parent)
 		{
-			foreach (TypeParameter type_param in TypeParameters)
-				type_param.DefineMethod (parent.TypeBuilder);
+			return true;
+		}
+
+		public bool Define (MethodBuilder mb)
+		{
+			Type[] gen_params = new Type [TypeParameters.Length];
+			for (int i = 0; i < TypeParameters.Length; i++)
+				gen_params [i] = TypeParameters [i].DefineMethod (mb);
 
 			return true;
 		}
@@ -452,6 +445,36 @@ namespace Mono.CSharp {
 			get {
 				throw new Exception ();
 			}
+		}
+	}
+
+	public class GenericMemberAccess : MemberAccess
+	{
+		TypeArguments args;
+
+		public GenericMemberAccess (Expression expr, string id, TypeArguments args, Location loc)
+			: base (expr, id, loc)
+		{
+			this.args = args;
+		}
+
+		public override Expression DoResolve (EmitContext ec, Expression right_side,
+						      ResolveFlags flags)
+		{
+			Expression expr = base.DoResolve (ec, right_side, flags);
+			if (expr == null)
+				return null;
+
+			MethodGroupExpr mg = expr as MethodGroupExpr;
+			if (mg == null) {
+				Report.Error (-220, loc, "Member `{0}' has type arguments, but did " +
+					      "not resolve as a method group.", Identifier);
+				return null;
+			}
+
+			Report.Debug (64, "RESOLVE GENERIC MEMBER ACCESS", expr, expr.GetType ());
+
+			return expr;
 		}
 	}
 }

@@ -4819,7 +4819,7 @@ namespace Mono.CSharp {
 				is_base = true;
 
 			Expression old = expr;
-			
+
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
@@ -6763,7 +6763,8 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public Expression DoResolve (EmitContext ec, Expression right_side, ResolveFlags flags)
+		public virtual Expression DoResolve (EmitContext ec, Expression right_side,
+						     ResolveFlags flags)
 		{
 			if (type != null)
 				throw new Exception ();

@@ -1,3 +1,13 @@
+2003-10-13  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Method.Define): If we're a generic method, call
+	TypeBuilder.DefineGenericMethod () before resolving
+	the parameters.
+	(MethodData): Added .ctor which takes an additional MethodBuilder
+	argument; this is used for generic methods.
+	(MethodData.Define): Call `builder.SetGenericMethodSignature()' if
+	we already have a MethodBuilder.
+
 2003-10-10  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (Method): Added .ctor which takes a `GenericMethod'
@@ -13,9 +23,7 @@
 	type declaration or a generic method and create the correct type
 	parameter.
 
-	* generic.cs (TypeParameter): Added .ctor which takes an
-	additional `int index' argument.  It is used for generic methods.
-	(TypeParameter.DefineMethod): New public method.
+	* generic.cs (TypeParameter.DefineMethod): New public method.
 	(GenericMethod): New public class; derives from DeclSpace and is
 	used for generic methods.	
 
