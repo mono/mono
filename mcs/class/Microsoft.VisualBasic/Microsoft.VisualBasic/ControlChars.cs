@@ -7,6 +7,7 @@
 // (C) 2002 Chris J Breisch
 //
 namespace Microsoft.VisualBasic {
+	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute]
 	sealed public class ControlChars {
 		// Declarations
 		public const System.String CrLf = "\n\r";

@@ -1,4 +1,7 @@
 2004-06-17 Anirban Bhattacharjee <banirban@novell.com>
+	* ControlChars.cs: StandardModuleAttribute added
+
+2004-06-15 Anirban Bhattacharjee <banirban@novell.com>
 	* Strings.cs: An effort make this file feature complete
 
 2004-06-17  Jambunathan K  <kjambunathan@novell.com>
