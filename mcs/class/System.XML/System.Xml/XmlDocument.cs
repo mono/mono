@@ -32,7 +32,7 @@ namespace System.Xml
 		string baseURI = String.Empty;
 		XmlImplementation implementation;
 		bool preserveWhitespace = true;	// Its true initial value is false.
-		WeakReference conventionalXmlTextReader;
+		WeakReference reusableXmlTextReader;
 
 		#endregion
 
@@ -83,15 +83,15 @@ namespace System.Xml
 		}
 
 		// Used to read 'InnerXml's for its descendants at any place.
-		internal XmlTextReader ConventionalParser {
+		internal XmlTextReader ReusableReader {
 			get {
-				if(conventionalXmlTextReader == null)
-					conventionalXmlTextReader = new WeakReference (null);
-				if(!conventionalXmlTextReader.IsAlive) {
+				if(reusableXmlTextReader == null)
+					reusableXmlTextReader = new WeakReference (null);
+				if(!reusableXmlTextReader.IsAlive) {
 					XmlTextReader reader = new XmlTextReader ((TextReader)null);
-					conventionalXmlTextReader.Target = reader;
+					reusableXmlTextReader.Target = reader;
 				}
-				return (XmlTextReader)conventionalXmlTextReader.Target;
+				return (XmlTextReader)reusableXmlTextReader.Target;
 			}
 		}
 
@@ -173,15 +173,25 @@ namespace System.Xml
 			get { return null; }
 		}
 
-		[MonoTODO("wait for getting 'xml:space' status for each node")]
+		[MonoTODO("check its behavior")]
 		public bool PreserveWhitespace {
 			get { return preserveWhitespace; }
 			set { preserveWhitespace = value; }
 		}
 
+		internal override string XmlLang {
+			get { return String.Empty; }
+		}
+
 		[MonoTODO]
 		public virtual XmlResolver XmlResolver {
 			set { throw new NotImplementedException (); }
+		}
+
+		internal override XmlSpace XmlSpace {
+			get {
+				return XmlSpace.None;
+			}
 		}
 
 		#endregion
@@ -285,7 +295,7 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public XPathNavigator CreateNavigator (XmlNode node)
+		internal protected virtual XPathNavigator CreateNavigator (XmlNode node)
 		{
 			throw new NotImplementedException ();
 		}
@@ -443,7 +453,7 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("default attributes (of imported doc); EntityReferences; Entity; Notation")]
+		[MonoTODO("default attributes (of imported doc); Entity; Notation")]
 		public virtual XmlNode ImportNode (XmlNode node, bool deep)
 		{
 			switch(node.NodeType)

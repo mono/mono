@@ -555,15 +555,18 @@ namespace System.Xml
 				if (ns != String.Empty) 
 				{
 					string existingPrefix = namespaceManager.LookupPrefix (ns);
+					bool addDefaultNamespace = false;
 
-					if (existingPrefix == String.Empty && !namespaceManager.HasNamespace (prefix))
+					if (existingPrefix == String.Empty && !namespaceManager.HasNamespace (prefix)) {
 						namespaceManager.AddNamespace (prefix, ns);
+						addDefaultNamespace = true;
+					}
 					if (prefix == String.Empty)
 						prefix = existingPrefix;
 
 					if (prefix != existingPrefix)
 						formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
-					else if (existingPrefix == String.Empty)
+					else if (addDefaultNamespace)
 						formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
 				}
 				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace(prefix) != String.Empty)) {

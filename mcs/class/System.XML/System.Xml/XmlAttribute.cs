@@ -84,8 +84,10 @@ namespace System.Xml
 
 			set {
 				XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
-				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr, String.Empty, XmlSpace.Default);
-				XmlTextReader xtr = new XmlTextReader ("'" + value.Replace ("'", "&apos;") + "'", XmlNodeType.Attribute, ctx);
+				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr, XmlLang, this.XmlSpace);
+				XmlTextReader xtr = OwnerDocument.ReusableReader;
+				xtr.SetReaderContext (BaseURI, ctx);
+				xtr.SetReaderFragment (new System.IO.StringReader ("'" + value.Replace ("'", "&apos;") + "'"), XmlNodeType.Attribute);
 				xtr.ReadAttributeValue ();
 				Value = xtr.Value;
 			}
@@ -188,6 +190,14 @@ namespace System.Xml
 				else
 					firstChild.Value = value;
 			}
+		}
+
+		internal override string XmlLang {
+			get { return OwnerElement.XmlLang; }
+		}
+
+		internal override XmlSpace XmlSpace {
+			get { return OwnerElement.XmlSpace; }
 		}
 
 		#endregion

@@ -1,3 +1,21 @@
+2002-12-03  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs (CreateNavigator(XmlNode)) : reverted
+	* XmlTextWriter.cs (WriteStartElementInternal):
+	  fixed when default namespace was specified, all descendants
+	  fail to omit the default namespace declarations.
+	* XmlAttribute.cs,
+	  XmlDocument.cs,
+	  XmlNode.cs (internal XmlLang/XmlSpace) : implemented(defined)
+	* XmlAttribute.cs,
+	  XmlDocumentFragment.cs,
+	  XmlElement.cs (set_InnerXml): now uses XmlLang/XmlSpace
+	* XmlElement.cs (set_IsEmpty) : implemented
+	  (WriteTo) : removed my improper indenting (Writer already done)
+	* XmlNode.cs (BaseURI) : fixed if ParentNode is null, NullPointerEx
+	  (ConstructDOM) : implemented when xmlReader isn't XmlTextReader
+	...and renamed XmlDocument.ConventionalParser to ReusableReader ;-)
+
 2002-12-01  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNode.cs (RemoveChild):

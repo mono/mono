@@ -42,7 +42,11 @@ namespace System.Xml
 		}
 
 		public virtual string BaseURI {
-			get { return ParentNode.BaseURI; }
+			get {
+				// Isn't it conformant to W3C XML Base Recommendation?
+				// As far as I tested, there are not...
+				return (ParentNode != null) ? ParentNode.BaseURI : OwnerDocument.BaseURI;
+			}
 		}
 
 		public virtual XmlNodeList ChildNodes {
@@ -198,6 +202,33 @@ namespace System.Xml
 			set { throw new InvalidOperationException ("This node does not have a value"); }
 		}
 
+		internal virtual string XmlLang {
+			get {
+				if(Attributes != null)
+					foreach(XmlAttribute attr in Attributes)
+						if(attr.Name == "xml:lang")
+							return attr.Value;
+				return (ParentNode != null) ? ParentNode.XmlLang : OwnerDocument.XmlLang;
+			}
+		}
+
+		internal virtual XmlSpace XmlSpace {
+			get {
+				if(Attributes != null) {
+					foreach(XmlAttribute attr in Attributes) {
+						if(attr.Name == "xml:space") {
+							switch(attr.Value) {
+							case "preserve": return XmlSpace.Preserve;
+							case "default": return XmlSpace.Default;
+							}
+							break;
+						}
+					}
+				}
+				return (ParentNode != null) ? ParentNode.XmlSpace : OwnerDocument.XmlSpace;
+			}
+		}
+
 		#endregion
 
 		#region Methods
@@ -317,6 +348,7 @@ namespace System.Xml
 			return InsertBefore (newChild, argNode);
 		}
 
+		[MonoTODO("If inserted node is entity reference, then check conforming entity. Wait for DTD implementation.")]
 		public virtual XmlNode InsertBefore (XmlNode newChild, XmlNode refChild)
 		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
@@ -324,7 +356,7 @@ namespace System.Xml
 			if (NodeType == XmlNodeType.Document ||
 			    NodeType == XmlNodeType.Element ||
 			    NodeType == XmlNodeType.Attribute ||
-			    NodeType == XmlNodeType.DocumentFragment) {			
+			    NodeType == XmlNodeType.DocumentFragment) {
 				if (IsReadOnly)
 					throw new ArgumentException ("The specified node is readonly.");
 
@@ -576,13 +608,14 @@ namespace System.Xml
 					break;
 
 				case XmlNodeType.DocumentType:
-					XmlTextReader xmlTextReader = xmlReader as XmlTextReader;
-					if(xmlTextReader != null) {
-						XmlDocumentType dtdNode = doc.CreateDocumentType (xmlTextReader.Name, xmlTextReader.publicId, xmlTextReader.systemId, xmlTextReader.Value);
-						this.AppendChild (dtdNode);
+					// This logic is kinda hack;-)
+					XmlTextReader xtReader = xmlReader as XmlTextReader;
+					if(xtReader == null) {
+						xtReader = new XmlTextReader (xmlReader.ReadOuterXml (),
+							XmlNodeType.DocumentType,
+							new XmlParserContext (OwnerDocument.NameTable, ConstructNamespaceManager(), XmlLang, XmlSpace));
+						xtReader.Read ();
 					}
-					else
-						throw new XmlException ("construction of DocumentType node from this XmlReader is not supported.");
 					break;
 
 				case XmlNodeType.EntityReference:

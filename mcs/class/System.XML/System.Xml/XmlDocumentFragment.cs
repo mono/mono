@@ -3,10 +3,12 @@
 //
 // Author:
 //   Duncan Mak  (duncan@ximian.com)
+//   Atsushi Enomoto  (ginga@kit.hi-ho.ne.jp)
 //
 // (C), Ximian, Inc
-//
+// (C)2002 Atsushi Enomoto
 using System;
+using System.IO;
 using System.Text;
 
 namespace System.Xml
@@ -38,14 +40,13 @@ namespace System.Xml
 					this.RemoveChild (n);
 				}		  
 
-				// How to get xml:lang and xml:space? Create logic as ConstructNamespaceManager()?
+				// I hope there are any well-performance logic...
 				XmlNameTable nt = this.OwnerDocument.NameTable;
-				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager (); //new XmlNamespaceManager(nt);
-				string lang = "";
-				XmlSpace space = XmlSpace.Default;
-
-				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, lang, space);
-				XmlTextReader xmlReader = new XmlTextReader (value, this.NodeType, ctx);
+				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
+				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, XmlLang, this.XmlSpace);
+				XmlTextReader xmlReader = OwnerDocument.ReusableReader;
+				xmlReader.SetReaderContext (String.Empty, ctx);
+				xmlReader.SetReaderFragment (new StringReader (value), XmlNodeType.Element);
 				this.ConstructDOM (xmlReader, this);
 			}
 			get {

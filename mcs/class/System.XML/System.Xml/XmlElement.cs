@@ -3,13 +3,16 @@
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
+//   Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2002 Jason Diamond  http://injektilo.org/
+// (C) 2002 Atsushi Enomoto
 //
 
 using System;
 using System.Collections;
 using System.Xml.XPath;
+using System.IO;
 using System.Text;
 
 namespace System.Xml
@@ -84,23 +87,26 @@ namespace System.Xml
 					this.RemoveChild(n);
 				}		  
 
-				// How to get xml:lang and xml:space? Create logic as ConstructNamespaceManager()?
+				// I hope there are any well-performance logic...
 				XmlNameTable nt = this.OwnerDocument.NameTable;
-				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager(); //new XmlNamespaceManager(nt);
-				string lang = "";
-				XmlSpace space = XmlSpace.Default;
-
-				XmlParserContext ctx = new XmlParserContext(nt, nsmgr, lang, space);
-				XmlTextReader xmlReader = new XmlTextReader(value, this.NodeType, ctx);
-				this.ConstructDOM(xmlReader, this);
+				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
+				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, XmlLang, this.XmlSpace);
+				XmlTextReader xmlReader = OwnerDocument.ReusableReader;
+				xmlReader.SetReaderContext (String.Empty, ctx);
+				xmlReader.SetReaderFragment (new StringReader (value), XmlNodeType.Element);
+				this.ConstructDOM (xmlReader, this);
 			}
 		}
 
-		[MonoTODO ("This is only a temporary fix, remove ASAP!")]
 		public bool IsEmpty {
 			get { return isEmpty; }
 
-			set { isEmpty = value; }
+			set {
+				if(value) {
+					RemoveAll();
+				}
+				isEmpty = value;
+			}
 		}
 
 		public override string LocalName {
@@ -363,25 +369,7 @@ namespace System.Xml
 					w.WriteAttributeString("xmlns", attributeNode.Prefix, "http://www.w3.org/2000/xmlns/", attributeNode.NamespaceURI);
 			}
 
-			// indent(when PreserveWhitespace = false)
-			// Only XmlWriter has this XmlElement's xml:space information;-)
-			if(!OwnerDocument.PreserveWhitespace && w.XmlSpace != XmlSpace.Preserve)
-			{
-				XmlNode n = this;
-				StringBuilder sb = new StringBuilder();
-				while(n != OwnerDocument)
-				{
-					sb.Append('\t');
-					n = n.ParentNode;
-				}
-				w.WriteWhitespace(sb.ToString());
-			}
-
 			WriteContentTo(w);
-
-			// indent (linefeeding)
-			if(!OwnerDocument.PreserveWhitespace && w.XmlSpace != XmlSpace.Preserve)
-				w.WriteWhitespace("\n");
 
 			w.WriteEndElement();
 		}
