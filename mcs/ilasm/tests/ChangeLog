@@ -1,5 +1,9 @@
 2003-02-10 Jackson Harper <jackson@latitudegeo.com>
 
+	* makefile: remove unneeded rm's
+
+2003-02-10 Jackson Harper <jackson@latitudegeo.com>
+
 	* test-4.il: Add file
 	* makefile: Add new test
 

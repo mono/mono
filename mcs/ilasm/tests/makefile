@@ -1,7 +1,7 @@
 ILASM=mono ../ilasm.exe
 VERIFY=../../tools/verifier.exe
 
-TEST_SOURCES = test-1 test-2 test-3
+TEST_SOURCES = test-1 test-2 test-3 test-4
 
 all: test-compiler
 
@@ -32,6 +32,4 @@ test-compiler:
 
 clean:
 	rm *.exe
-	rm *.out
-	rm casts.cs
 
