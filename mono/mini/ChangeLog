@@ -1,5 +1,8 @@
 2005-03-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini.c mini-x86.c: Pass the domain of the native->managed
+	wrapper to mono_jit_thread_attach.
+
 	* mini.c (mini_jit_thread_attach): New jit icall.
 
 	* mini-x86.c (mono_arch_emit_prolog): Attach to the VM in 
