@@ -1,3 +1,9 @@
+2004-12-08  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (monolite_files): New.  Do away with lib/basic.tar.gz.
+	Create the files in lib/monolite/.
+	(DISTFILES, dist-default, dist-local): Distribute them.
+
 2004-12-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (SUBDIRS): Move I18N after second-pass of System.

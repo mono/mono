@@ -96,19 +96,24 @@ DISTFILES = \
 	doc/API-notes		\
 	doc/NUnitGuidelines	\
 	doc/TemplateTest.cs	\
-	notes/BitVecto32.txt
+	notes/BitVecto32.txt	\
+	$(monolite_files)
 
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
 	@:
 
 basic_files = mcs.exe mscorlib.dll System.dll System.Xml.dll
+monolite_files = $(basic_files:%=lib/monolite/%)
 
 DIST_PROFILE_DIRS = basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0
 
-lib/basic.tar.gz: $(basic_files:%=lib/basic/%)
-	cd lib && { tar cvf - $(basic_files:%=basic/%) | gzip > basic.tar.gz; }
+lib/monolite:
+	$(MKINSTALLDIRS) $@
 
-dist-local: dist-default lib/basic.tar.gz
+$(monolite_files): lib/monolite/%: lib/basic/% lib/monolite
+	cp -p $< $@
+
+dist-default: $(monolite_files)
+dist-local: dist-default
 	-$(MKINSTALLDIRS) $(DIST_PROFILE_DIRS:%=$(distdir)/lib/%)
-	cp lib/basic.tar.gz $(distdir)/lib

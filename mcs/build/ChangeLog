@@ -1,3 +1,8 @@
+2004-12-08  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/basic.make (real-profile-check): Update to new location
+	of secret stash of bootstrap files.
+
 2004-12-07  Raja R Harinath  <rharinath@novell.com>
 
 	* executable.make (uninstall-local): Remove .config file too.

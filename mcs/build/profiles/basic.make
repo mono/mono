@@ -25,9 +25,9 @@ real-profile-check:
 	rm -f basic-profile-check.cs basic-profile-check.exe; \
 	if $$ok; then :; else \
 	    echo "*** The compiler '$(EXTERNAL_MCS)' doesn't appear to be usable." 1>&2 ; \
-	    if test -f $(topdir)/class/lib/basic.tar.gz; then \
+	    if test -f $(topdir)/class/lib/monolite/mcs.exe; then \
 	        echo "*** Falling back to using pre-compiled binaries.  Be warned, this may not work." 1>&2 ; \
-	        ( cd $(topdir)/class/lib; gzip -dc basic.tar.gz | tar xvf - ); \
+	        ( cd $(topdir)/class/lib/monolite/ && cp *.exe *.dll ../basic ); \
 		( cd $(topdir)/jay && $(MAKE) ); ( cd $(topdir)/mcs && $(MAKE) PROFILE=basic cs-parser.cs ); \
 	        touch $(topdir)/class/lib/basic/*; \
 	    else \
