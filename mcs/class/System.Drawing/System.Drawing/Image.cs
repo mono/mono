@@ -366,6 +366,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{
 		if (nativeObject != (IntPtr) 0){
 			DisposeResources ();
+			nativeObject=IntPtr.Zero;
 		}
 	}
 	
