@@ -1,3 +1,6 @@
+2004-07-07 Anirban Bhattacharjee <banirban@novell.com>
+	* expression.cs: bug fixed - 60399
+
 2004-06-13 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Small correction in delegate declaration grammar
 

@@ -5850,7 +5850,7 @@ namespace Mono.MonoBASIC {
 				
 				Expression new_expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
 
-				return new_expr.Resolve (ec, flags);
+				return new_expr.Resolve (ec, flags | ResolveFlags.MethodGroup);
 			}
 					
 			int errors = Report.Errors;
