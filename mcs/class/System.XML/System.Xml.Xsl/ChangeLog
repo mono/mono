@@ -1,3 +1,7 @@
+2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ManagedXslTransform.cs: remove verbose debugging messages
+
 2003-07-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslTransform.cs: Use the new XslTransformImpl class

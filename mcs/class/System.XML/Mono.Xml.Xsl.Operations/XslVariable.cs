@@ -44,7 +44,6 @@ namespace Mono.Xml.Xsl.Operations {
 		}
 		
 		public override void Evaluate (XslTransformProcessor p) {
-			Debug.WriteLine ("EVALUATING : " + name);
 			Evaluate (p, false);
 		}
 		
@@ -65,8 +64,6 @@ namespace Mono.Xml.Xsl.Operations {
 				} else {
 					value = "";
 				}
-				if (value is XPathNodeIterator)	
-					Debug.WriteLine (name + " has " + ((XPathNodeIterator)value).Count + " elements.");
 				
 				evaluated = true;
 				busy = false;

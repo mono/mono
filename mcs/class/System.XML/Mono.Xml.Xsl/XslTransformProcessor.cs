@@ -187,50 +187,7 @@ namespace Mono.Xml.Xsl {
 				
 			throw new Exception ("Could not resolve named template " + name);
 		}
-		
-		public string XPToString (object arg)
-		{
 
-			if (arg == null)
-				throw new ArgumentNullException ();
-			if (arg is string)
-				return (string) arg;
-			if (arg is bool)
-				return ((bool) arg) ? "true" : "false";
-			if (arg is double)
-				return ((double) arg).ToString ("R", System.Globalization.NumberFormatInfo.InvariantInfo);
-			if (arg is XPathNodeIterator)
-			{
-				XPathNodeIterator iter = (XPathNodeIterator) arg;
-				
-				if (!iter.MoveNext ())
-					return "";
-				
-				return iter.Current.Value;
-			}
-			throw new ArgumentException ();
-		}
-		
-		public bool XPToBool (object arg)
-		{
-			if (arg == null)
-				throw new ArgumentNullException ();
-			if (arg is bool)
-				return (bool) arg;
-			if (arg is double) {
-				double dArg = (double) arg;
-				return (dArg != 0.0 && !double.IsNaN (dArg));
-			}
-			if (arg is string)
-				return ((string) arg).Length != 0;
-			if (arg is XPathNodeIterator) {
-				XPathNodeIterator iter = (XPathNodeIterator) arg;
-				iter=iter.Clone ();
-				return iter.MoveNext ();
-			}
-			throw new ArgumentException ();
-		}
-		
 		public XPathNodeIterator CurrentNodeset {
 			get { return (XPathNodeIterator)nodesetStack.Peek (); }
 		}
@@ -259,24 +216,29 @@ namespace Mono.Xml.Xsl {
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			
 			XPathNodeIterator itr = CurrentNodeset;
+			return itr.Current.Evaluate (expr, itr);
+		}
+		
+		public string EvaluateString (XPathExpression expr)
+		{
+			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
 			
-			try {
-				return itr.Current.Evaluate (expr, itr);
-			} catch {
-				Debug.WriteLine ("Error in " + expr.Expression);
-				throw;
-			}
+			XPathNodeIterator itr = CurrentNodeset;
+			return itr.Current.EvaluateString (expr, itr);
+		}
+				
+		public bool EvaluateBoolean (XPathExpression expr)
+		{
+			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
+			
+			XPathNodeIterator itr = CurrentNodeset;
+			return itr.Current.EvaluateBoolean (expr, itr);
 		}
 		
 		public XPathNodeIterator Select (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
-			try {
-				return CurrentNodeset.Current.Select (expr);
-			} catch {
-				Debug.WriteLine ("Error in " + expr.Expression);
-				throw;
-			}
+			return CurrentNodeset.Current.Select (expr);
 		}
 		
 		public XslAttributeSet ResolveAttributeSet (QName name)

@@ -1,3 +1,9 @@
+2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Compiler.cs, XsltCompiledContext.cs: Remove verbose messages
+	* XslTransformProcessor.cs: Use strongtyped evaluation, using new
+	internal methods in XPathNavigator. Remove verbose debugging messages.
+
 2003-07-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Initial Checkin

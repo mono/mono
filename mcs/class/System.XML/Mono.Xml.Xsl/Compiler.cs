@@ -85,9 +85,7 @@ namespace Mono.Xml.Xsl {
 			if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml))
 			{
 				do {
-					Debug.WriteLine (nav.LocalName + "-->" + nav.Value);
 					nsMgr.AddNamespace (nav.LocalName, nav.Value);
-					
 				} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 				nav.MoveToParent ();
 			}
@@ -409,9 +407,7 @@ namespace Mono.Xml.Xsl {
 		public XPathExpression PrepForExecution (XPathExpression e, XslTransformProcessor p)
 		{
 			XPathExpression expr = e.Clone ();
-			
-			Debug.WriteLine ("PREPing : " + expr.Expression );
-			
+
 			expr.SetContext (new XsltCompiledContext (p, (VariableScope)exprToVarCtx [e]));
 			if (exprToSorts.Contains (e))
 			{

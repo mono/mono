@@ -33,7 +33,6 @@ namespace Mono.Xml.Xsl.Operations {
 					case XPathNodeType.Text:
 					case XPathNodeType.Whitespace:
 					case XPathNodeType.SignificantWhitespace:
-						Debug.WriteLine ("ADD: '" + c.Input.Value + "'");
 						this.text += c.Input.Value;
 						break;
 					case XPathNodeType.Comment:
@@ -44,7 +43,6 @@ namespace Mono.Xml.Xsl.Operations {
 					}
 				} while (c.Input.MoveToNext ());
 				c.Input.MoveToParent ();
-				Debug.WriteLine ("is " + c.Input.Value);
 			} else {
 				Debug.WriteLine ("IN XslText, what do i do");
 			}

@@ -1,3 +1,10 @@
+2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslAvt.cs, XslCopyOf.cs, XslIf.cs, XslText.cs, XslValueOf.cs,
+	XslVariable.cs:
+	Use new strong typed methods, remove verbose debugging messages.
+
+
 2003-07-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Initial Checkin

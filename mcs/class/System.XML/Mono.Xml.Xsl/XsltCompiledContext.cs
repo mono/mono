@@ -297,17 +297,7 @@ namespace Mono.Xml.Xsl.Functions {
 		public override object Invoke (XsltContext xsltContext, object [] args, XPathNavigator docContext) {
 			for (int i = 0; i < args.Length; i++)
 				args [i] = ConvertToXPathType(args [i], this.ArgTypes [i], this.typeCodes [i]);
-			
-			string s = method.Name + " (";
-			foreach (ParameterInfo p in method.GetParameters ())
-				s += p.ParameterType.ToString () + ", ";
-			s += ")";
-			Debug.WriteLine ("CALLING: " + s);
-			s = method.Name + " (";
-			foreach (object obj in args)
-				s += obj.GetType ().ToString () + ", ";
-			s += ")";
-			Debug.WriteLine ("with: " +  s);
+
 			try {
 				object result = method.Invoke(extension, args);
 				IXPathNavigable navigable = result as IXPathNavigable;

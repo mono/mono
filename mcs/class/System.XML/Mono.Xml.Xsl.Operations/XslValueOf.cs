@@ -32,7 +32,7 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			p.Out.WriteString (p.XPToString (p.Evaluate (select)));
+			p.Out.WriteString (p.EvaluateString (select));
 		}
 	}
 }

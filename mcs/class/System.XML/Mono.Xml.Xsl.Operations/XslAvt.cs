@@ -145,7 +145,7 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			public override string Evaluate (XslTransformProcessor p)
 			{
-				return p.XPToString (p.Evaluate (expr));
+				return p.EvaluateString (expr);
 			}
 		}
 	}

@@ -64,7 +64,8 @@ namespace Mono.Xml.Xsl.Operations {
 				
 				w.WriteEndElement ();
 				break;
-			case XPathNodeType.Whitespace:
+			case XPathNodeType.Whitespace:                                                     
+
 			case XPathNodeType.SignificantWhitespace:
 			case XPathNodeType.Text:
 				w.WriteString (nav.Value);
@@ -87,7 +88,7 @@ namespace Mono.Xml.Xsl.Operations {
 				while (itr.MoveNext ())
 					CopyNode (p.Out, itr.Current);
 			} else {
-				p.Out.WriteString (p.XPToString (o));
+				p.Out.WriteString (XPathFunctions.ToString (o));
 			}
 
 		}

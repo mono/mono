@@ -21,7 +21,6 @@ namespace System.Xml.Xsl {
 		
 		public override void Load (XPathNavigator stylesheet, XmlResolver resolver)
 		{
-			Console.WriteLine ("REALLY USING MANGED XSL");
 			Compiler c = new Compiler ();
 			p = new XslTransformProcessor (c.Compile (stylesheet, resolver));
 		}

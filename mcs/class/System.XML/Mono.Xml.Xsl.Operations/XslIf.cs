@@ -33,17 +33,9 @@ namespace Mono.Xml.Xsl.Operations {
 			c.Input.MoveToParent ();
 		}	
 		
-		bool IsTrue (XslTransformProcessor p)
-		{
-			object val = p.Evaluate (test);
-			Debug.WriteLine ("GOT " + val);
-			return p.XPToBool (val);
-		}
-		
 		public bool EvaluateIfTrue (XslTransformProcessor p)
 		{
-			if (IsTrue (p)) {
-				Debug.WriteLine ("TRUE");
+			if (p.EvaluateBoolean (test)) {
 				children.Evaluate (p);
 				return true;
 			}
