@@ -156,12 +156,6 @@ namespace System.Data.OracleClient.Oci {
 		#region Methods
 
 		[DllImport ("oci")]
-		public static extern int OCIDateGetDate (IntPtr date,
-							out short year,
-							out byte month,
-							out byte day);
-
-		[DllImport ("oci")]
 		public static extern int OCIDefineByPos (IntPtr stmtp,
 							out IntPtr defnpp,
 							IntPtr errhp,
@@ -177,20 +171,6 @@ namespace System.Data.OracleClient.Oci {
 		public void Dispose ()
 		{
 			Marshal.FreeHGlobal (value);
-		}
-
-		public DateTime GetDateValue ()
-		{
-			short year;
-			byte month;
-			byte day;
-
-			OCIDateGetDate (value,
-					out year,
-					out month,
-					out day);
-
-			return new DateTime (year, month, day);
 		}
 
 		#endregion // Methods
