@@ -1,5 +1,9 @@
 2003-03-10  Alan Tam <Tam@SiuLung.com>
 
+	* XslTransform.cs: Fixed a bug when no args is passed
+
+2003-03-10  Alan Tam <Tam@SiuLung.com>
+
 	* XslTransform.cs: Implemented boolean, number and string parameters.
 	(Node Set and Node Iterator parameters and Extension Objects are left.)
 	* XsltAttributeList.cs: Loosened access modifiers.

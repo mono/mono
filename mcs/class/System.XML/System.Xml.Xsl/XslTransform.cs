@@ -257,19 +257,22 @@ namespace System.Xml.Xsl
 		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
 		{
 			IntPtr xmlInput = GetDocumentFromNavigator (input);
-			string[] argArr = new string[args.parameters.Count * 2 + 1];
-			int index = 0;
-			foreach (object key in args.parameters.Keys) {
-				argArr [index++] = key.ToString();
-				object value = args.parameters [key];
-				if (value is Boolean)
-					argArr [index++] = XmlConvert.ToString((bool) value); // FIXME: How to encode it for libxslt?
-				else if (value is Double)
-					argArr [index++] = XmlConvert.ToString((double) value); // FIXME: How to encode infinity's and Nan?
-				else
-					argArr [index++] = "'" + value.ToString() + "'"; // FIXME: How to encode "'"?
+			string[] argArr = null;
+                        if (args != null) {
+				argArr = new string[args.parameters.Count * 2 + 1];
+				int index = 0;
+				foreach (object key in args.parameters.Keys) {
+					argArr [index++] = key.ToString();
+					object value = args.parameters [key];
+					if (value is Boolean)
+						argArr [index++] = XmlConvert.ToString((bool) value); // FIXME: How to encode it for libxslt?
+					else if (value is Double)
+						argArr [index++] = XmlConvert.ToString((double) value); // FIXME: How to encode infinity's and Nan?
+					else
+						argArr [index++] = "'" + value.ToString() + "'"; // FIXME: How to encode "'"?
+				}
+				argArr[index] = null;
 			}
-			argArr[index] = null;
 			string xslOutputString = ApplyStylesheetAndGetString (xmlInput, argArr);
 			xmlFreeDoc (xmlInput);
 			Cleanup ();
@@ -326,19 +329,22 @@ namespace System.Xml.Xsl
 				throw new ArgumentNullException ("output");
 
 			IntPtr inputDoc = GetDocumentFromNavigator (input);
-			string[] argArr = new string[args.parameters.Count * 2 + 1];
-			int index = 0;
-			foreach (object key in args.parameters.Keys) {
-				argArr [index++] = key.ToString();
-				object value = args.parameters [key];
-				if (value is Boolean)
-					argArr [index++] = XmlConvert.ToString((bool) value); // FIXME: How to encode it for libxslt?
-				else if (value is Double)
-					argArr [index++] = XmlConvert.ToString((double) value); // FIXME: How to encode infinity's and Nan?
-				else
-					argArr [index++] = "'" + value.ToString() + "'"; // FIXME: How to encode "'"?
+			string[] argArr = null;
+                        if (args != null) {
+				argArr = new string[args.parameters.Count * 2 + 1];
+				int index = 0;
+				foreach (object key in args.parameters.Keys) {
+					argArr [index++] = key.ToString();
+					object value = args.parameters [key];
+					if (value is Boolean)
+						argArr [index++] = XmlConvert.ToString((bool) value); // FIXME: How to encode it for libxslt?
+					else if (value is Double)
+						argArr [index++] = XmlConvert.ToString((double) value); // FIXME: How to encode infinity's and Nan?
+					else
+						argArr [index++] = "'" + value.ToString() + "'"; // FIXME: How to encode "'"?
+				}
+				argArr[index] = null;
 			}
-			argArr[index] = null;
 			string transform = ApplyStylesheetAndGetString (inputDoc, argArr);
 			xmlFreeDoc (inputDoc);
 			Cleanup ();
