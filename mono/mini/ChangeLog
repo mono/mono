@@ -1,3 +1,8 @@
+2004-11-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-pentium.md (localloc): Increase max instruction len. Fixes
+	#69664.
+
 2004-11-17  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (clean-local): Rename from 'clean'.
