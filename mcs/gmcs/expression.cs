@@ -4329,8 +4329,8 @@ namespace Mono.CSharp {
 			for (int j = 0; j < argument_count; ++j) {
 				Argument a = (Argument) args [j];
 
-				Type ct = candidate_pd.ParameterType (j);
-				Type bt = best_pd.ParameterType (j);
+				Type ct = TypeManager.TypeToCoreType (candidate_pd.ParameterType (j));
+				Type bt = TypeManager.TypeToCoreType (best_pd.ParameterType (j));
 
 				if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
 					if (candidate_params)
