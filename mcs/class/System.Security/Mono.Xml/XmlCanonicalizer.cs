@@ -7,7 +7,7 @@
 //
 // (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
 //
-
+using System;
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -96,7 +96,6 @@ namespace Mono.Xml {
 				WriteProcessingInstructionNode (node, visible);
 				break;
 			case XmlNodeType.EntityReference:
-//				throw new XmlException ("Entity references should be resolved by parser", null);
 				for (int i = 0; i < node.ChildNodes.Count; i++)
 					WriteNode (node.ChildNodes [i]);
 				break;
@@ -297,10 +296,12 @@ namespace Mono.Xml {
 			// nodes of E's attribute axis that are in the node-set. The 
 			// result of visiting the attribute axis is computed by 
 			// processing the attribute nodes in this merged attribute list.
-			if (!exclusive && node.ParentNode != null && !IsNodeVisible (node.ParentNode.ParentNode)) {
+			if (!exclusive && node.ParentNode != null && node.ParentNode.ParentNode != null && !IsNodeVisible (node.ParentNode.ParentNode)) {
 	    			// if we have whole document then the node.ParentNode.ParentNode
 				// is always visible
 				for (XmlNode cur = node.ParentNode; cur != null; cur = cur.ParentNode) {
+					if (cur.Attributes == null)
+						continue;
 					foreach (XmlNode attribute in cur.Attributes) {
 						// we are looking for "xml:*" attributes
 						if (attribute.Prefix != "xml")
@@ -352,7 +353,8 @@ namespace Mono.Xml {
 		{
 			// Console.WriteLine ("Debug: text node");
 			if (visible)
-				res.Append (NormalizeString (node.Value, XmlNodeType.Text));
+				res.Append (NormalizeString (node.Value, node.NodeType));
+//				res.Append (NormalizeString (node.Value, XmlNodeType.Text));
 		}		
 
 		// Comment Nodes
@@ -447,7 +449,7 @@ namespace Mono.Xml {
 					string p = string.Empty;
 					if (node.Prefix == "xmlns") 
 						p = node.LocalName;
-					if (p == prefix) 
+					if (p == prefix)
 						return node.Value == uri;
 				}
 			}
@@ -462,16 +464,28 @@ namespace Mono.Xml {
 			return node.NamespaceURI == "http://www.w3.org/2000/xmlns/";
 		}
     
+		private bool IsTextNode (XmlNodeType type)
+		{
+			switch (type) {
+			case XmlNodeType.Text:
+			case XmlNodeType.CDATA:
+			case XmlNodeType.SignificantWhitespace:
+			case XmlNodeType.Whitespace:
+				return true;
+			}
+			return false;
+		}
+
 		private string NormalizeString (string input, XmlNodeType type)
 		{
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < input.Length; i++) {
 				char ch = input[i];
-				if (ch == '<' && (type == XmlNodeType.Attribute || type == XmlNodeType.Text))
+				if (ch == '<' && (type == XmlNodeType.Attribute || IsTextNode (type)))
 					sb.Append ("&lt;");
-				else if (ch == '>' && type == XmlNodeType.Text)
+				else if (ch == '>' && IsTextNode (type))
 					sb.Append ("&gt;");
-				else if (ch == '&' && (type == XmlNodeType.Attribute || type == XmlNodeType.Text))
+				else if (ch == '&' && (type == XmlNodeType.Attribute || IsTextNode (type)))
 					sb.Append ("&amp;");
 				else if (ch == '\"' && type == XmlNodeType.Attribute)
 					sb.Append ("&quot;");
@@ -480,10 +494,12 @@ namespace Mono.Xml {
 				else if (ch == '\x0A' && type == XmlNodeType.Attribute)
 					sb.Append ("&#xA;");
 				else if (ch == '\x0D' && (type == XmlNodeType.Attribute ||
-							  type == XmlNodeType.Text ||
+							  IsTextNode (type) && type != XmlNodeType.Whitespace ||
 							  type == XmlNodeType.Comment ||
 							  type == XmlNodeType.ProcessingInstruction))
 					sb.Append ("&#xD;");
+				else if (ch == '\x0D')
+					continue;
 				else
 					sb.Append (ch);
 			}
