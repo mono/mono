@@ -701,7 +701,7 @@ namespace System.Drawing.Imaging
 		internal bool Encode( Stream stream, InternalImageInfo info) {
 			
 			int bpp = Image.GetPixelFormatSize(info.Format) / 8;
-			if( bpp != 3 && bpp != 4) {
+			if( bpp != 3 ) {
 				throw new ArgumentException(String.Format("Supplied pixel format is not yet supported: {0}, {1} bpp", info.Format, Image.GetPixelFormatSize(info.Format)));
 			}
 
