@@ -34,6 +34,7 @@ namespace System.Reflection {
 	internal class MonoMethod : MethodInfo {
 		internal RuntimeMethodHandle mhandle;
 		string name;
+		Type reftype;
 		
 		[MonoTODO]
 		public override MethodInfo GetBaseDefinition() {
@@ -86,9 +87,7 @@ namespace System.Reflection {
 		
 		public override Type ReflectedType {
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.parent;
+				return reftype;
 			}
 		}
 		public override Type DeclaringType {
@@ -130,6 +129,7 @@ namespace System.Reflection {
 	internal class MonoCMethod : ConstructorInfo {
 		internal RuntimeMethodHandle mhandle;
 		string name;
+		Type reftype;
 		
 		public override MethodImplAttributes GetMethodImplementationFlags() {
 			MonoMethodInfo info;
@@ -169,9 +169,7 @@ namespace System.Reflection {
 		
 		public override Type ReflectedType {
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.parent;
+				return reftype;
 			}
 		}
 		public override Type DeclaringType {

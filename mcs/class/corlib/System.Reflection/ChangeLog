@@ -1,3 +1,8 @@
+
+Wed Aug 14 17:37:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoEvent.cs, MonoMethod.cs: implemented ReflectedType.
+
 2002-08-14  Dick Porter  <dick@ximian.com>
 
 	* Assembly.cs: Stub out GetSatelliteAssembly
@@ -289,3 +294,4 @@ Thu Sep 13 18:05:16 CEST 2001 Paolo Molaro <lupus@ximian.com>
 2001-07-18  Michael Lambert <michaellambert@email.com>
 
 	* BindingFlags.cs: Add.
+>>>>>>> 1.52

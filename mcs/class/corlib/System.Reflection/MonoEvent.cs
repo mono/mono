@@ -65,6 +65,14 @@ namespace System.Reflection {
 				return info.parent;
 			}
 		}
+		public override Type ReflectedType {
+			get {
+				MonoEventInfo info;
+				MonoEventInfo.get_event_info (this, out info);
+				
+				return info.parent;
+			}
+		}
 		public override string Name {
 			get {
 				MonoEventInfo info;
