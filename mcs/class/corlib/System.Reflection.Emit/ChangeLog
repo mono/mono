@@ -1,7 +1,14 @@
 
+Tue Apr 16 13:02:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: pad output file to file alignment.
+	* FieldBuilder.cs: ReflectedType.
+	* ModuleBuilder.cs: added guid generation and array method creation.
+	* MonoArrayMethod.cs: array method support code.
+	
 Wed Apr 10 12:57:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
-	* ILGenerator,cs: use a stack to keep track of exception blocks.
+	* ILGenerator.cs: use a stack to keep track of exception blocks.
 
 Mon Apr  8 06:19:01  2002 Piers Haken <piersh@friskit.com>
 

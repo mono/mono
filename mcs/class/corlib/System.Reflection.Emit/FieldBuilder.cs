@@ -52,7 +52,7 @@ namespace System.Reflection.Emit {
 			get {return name;}
 		}
 		public override Type ReflectedType {
-			get {return null;}
+			get {return typeb;}
 		}
 
 		public override object[] GetCustomAttributes(bool inherit) {

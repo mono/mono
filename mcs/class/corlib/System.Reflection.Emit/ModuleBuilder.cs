@@ -20,6 +20,7 @@ namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
 		private TypeBuilder[] types;
 		private CustomAttributeBuilder[] cattrs;
+		private byte[] guid;
 		private int table_idx;
 		private AssemblyBuilder assemblyb;
 		private ISymbolWriter symbol_writer;
@@ -29,6 +30,7 @@ namespace System.Reflection.Emit {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
+			guid = Guid.NewGuid().ToByteArray ();
 			table_idx = get_next_table_index (0x00, true);
 			name_cache = new Hashtable ();
 
@@ -113,7 +115,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public MethodInfo GetArrayMethod( Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
-			return null;
+			return new MonoArrayMethod (arrayClass, methodName, callingConvention, returnType, parameterTypes);
 		}
 
 		public EnumBuilder DefineEnum( string name, TypeAttributes visibility, Type underlyingType) {

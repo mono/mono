@@ -196,7 +196,7 @@ namespace System.Reflection.Emit {
 		{
 			byte[] buf = new byte [2048];
 			FileStream file;
-			int count, data_size;
+			int count, data_size, total;
 
 			if (dir != null) {
 				assemblyFileName = String.Format ("{0}{1}{2}", dir, System.IO.Path.DirectorySeparatorChar, assemblyFileName);
@@ -204,11 +204,17 @@ namespace System.Reflection.Emit {
 
 			file = new FileStream (assemblyFileName, FileMode.Create, FileAccess.Write);
 
-			count = getPEHeader (this, buf, out data_size);
+			total = count = getPEHeader (this, buf, out data_size);
 			file.Write (buf, 0, count);
 			buf = new byte [data_size];
 			count = getDataChunk (this, buf);
 			file.Write (buf, 0, count);
+			// pad to file alignment
+			total += count;
+			total %= 512;
+			total = 512 - total;
+			buf = new byte [total];
+			file.Write (buf, 0, total);
 
 			file.Close ();
 		}
