@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[ComVisible(true)]
-	public class NavigateEventArgs {
+	public class NavigateEventArgs : EventArgs {
 		#region Local Variables
 		private bool	forward;
 		#endregion	// Local Variables
