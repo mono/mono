@@ -1,3 +1,8 @@
+2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackFrameTest.cs: Added new unit tests to validate exceptions.
+	Converted existing unit tests to NUnit 2.2.
+
 2004-05-30  David Sheldon <dave-mono@earth.li>
 
 	* StackFrameTest.cs: Mark the failures that have been failing
