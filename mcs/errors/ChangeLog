@@ -1,3 +1,11 @@
+2003-07-21  Martin Baulig  <martin@ximian.com>
+
+	* syntax0068.cs, syntax0069.cs, syntax0071.cs, syntax0116.cs:
+	These are syntax errors which we'd need to catch in cs-parser.jay;
+	separate them from the other errors.
+
+	* cs0572.cs: New test.
+
 2003-07-14  Martin Baulig  <martin@ximian.com>
 
 	* cs0212.cs: New test.

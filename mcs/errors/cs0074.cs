@@ -4,7 +4,7 @@
 using System;
 
 abstract class ErrorCS0074 {
-	delegate void Handler ();
+	public delegate void Handler ();
 	public abstract event Handler OnFoo = null;
 	public static void Main () {
 	}

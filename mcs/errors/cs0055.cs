@@ -8,8 +8,8 @@ class ErrorCS0055 {
 }
 
 public class Foo {
-	public ErrorCS0055 this[ErrorCS0055 e] {
-		get { return new ErrorCS0055 (); }
+	public int this[ErrorCS0055 e] {
+		get { return 5; }
 	}
 
 	public static void Main () {

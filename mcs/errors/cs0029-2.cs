@@ -3,7 +3,7 @@ public class Foo {
 
   public void Bar ()
   {
-    uint my_uint_var;
+    uint my_uint_var = 0;
     switch (my_uint_var) {
     case MyEnumType.MyValue:
       break;

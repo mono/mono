@@ -4,7 +4,7 @@
 using System;
 
 class ErrorCS0079 {
-	delegate void Handler ();
+	public delegate void Handler ();
 	event Handler privateEvent;
 	public event Handler OnFoo {
 		add {
@@ -20,9 +20,6 @@ class ErrorCS0079 {
 	}
 	
 	public static void Main () {
-		ErrorCS0079 error = new ErrorCS0079 ();
-		error.OnFoo += new Handler (error.Callback);
-		error.privateEvent ();
 	}
 }
 
