@@ -1,3 +1,10 @@
+2004-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* gc.c: added missing LeaveCriticalSection.
+	* icall.c: indented a couple of lines.
+	* threadpool.c: remove dangling LeaveCriticalSection. Don't wait forever
+	if we call EndInvoke inside a callback. Fixes bug #52601.
+
 2004-01-07  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h
