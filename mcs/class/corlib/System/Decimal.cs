@@ -852,9 +852,10 @@ namespace System
 
         public static Decimal Parse(string s, NumberStyles style, IFormatProvider provider) 
         {
-            NumberFormatInfo nfi = NumberFormatInfo.GetInstance(provider);
+            if (s == null)
+		throw new ArgumentNullException ("s");
 
-            if (s == null) throw new ArgumentNullException (Locale.GetText ("string s"));
+            NumberFormatInfo nfi = NumberFormatInfo.GetInstance(provider);
 
             int iDecPos, exp;
             bool isNegative, expFlag;
@@ -893,7 +894,7 @@ namespace System
 				"Value is greater than Byte.MaxValue or less than Byte.MinValue"));
 	  
 		// return truncated value
-		return (byte)(Decimal.Floor (value));
+		return (byte)(Decimal.Truncate (value));
 	}
 
 	public static double ToDouble (decimal value)
@@ -908,7 +909,7 @@ namespace System
 				"Value is greater than Int16.MaxValue or less than Int16.MinValue"));
 	  
 		// return truncated value
-		return (Int16)(Decimal.Floor (value));
+		return (Int16)(Decimal.Truncate (value));
 	}
 
 	public static int ToInt32 (decimal value)
@@ -918,7 +919,7 @@ namespace System
 				"Value is greater than Int32.MaxValue or less than Int32.MinValue"));
 	  
 		// return truncated value
-		return (Int32)(Decimal.Floor (value));
+		return (Int32)(Decimal.Truncate (value));
 	}
 	
 	public static long ToInt64 (decimal value)
@@ -928,7 +929,7 @@ namespace System
 				"Value is greater than Int64.MaxValue or less than Int64.MinValue"));
 	  
 		// return truncated value
-		return (Int64)(Decimal.Floor (value));
+		return (Int64)(Decimal.Truncate (value));
 	}
 
 	public static long ToOACurrency (decimal value)
@@ -944,7 +945,7 @@ namespace System
 				"Value is greater than SByte.MaxValue or less than SByte.MinValue"));
 	  
 		// return truncated value
-		return (SByte)(Decimal.Floor (value));
+		return (SByte)(Decimal.Truncate (value));
 	}
 	
 	public static float ToSingle (decimal value)
@@ -960,7 +961,7 @@ namespace System
 				"Value is greater than UInt16.MaxValue or less than UInt16.MinValue"));
 	  
 		// return truncated value
-		return (UInt16)(Decimal.Floor (value));
+		return (UInt16)(Decimal.Truncate (value));
 	}
 
 	[CLSCompliant(false)]
@@ -971,7 +972,7 @@ namespace System
 				"Value is greater than UInt32.MaxValue or less than UInt32.MinValue"));
 	  
 		// return truncated value
-		return (UInt32)(Decimal.Floor (value));
+		return (UInt32)(Decimal.Truncate (value));
 	}
 
 	[CLSCompliant(false)]
@@ -982,7 +983,7 @@ namespace System
 				"Value is greater than UInt64.MaxValue or less than UInt64.MinValue"));
 	  
 		// return truncated value
-		return (UInt64)(Decimal.Floor (value));
+		return (UInt64)(Decimal.Truncate (value));
 	}
 		
 	object IConvertible.ToType (Type conversionType, IFormatProvider provider)
