@@ -1,3 +1,7 @@
+2004-06-29  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_add_method): Protect the whole function
+	in mono_debugger_lock(), not just parts of it.
 
 Fri Jun 25 21:36:26 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
