@@ -27,7 +27,7 @@ Test cases listed by Category:
 
 * Switch blocks
 
-  test-152.cs test-193.cs verify-4.cs
+  test-152.cs test-193.cs test-234.cs verify-4.cs
 
 * Member Access & Simple Names
 
@@ -456,6 +456,10 @@ Tests for {...}-style array creation
 test-233.cs:
 ------------
 dup of basic-float.cs from mini, for bug 54303.
+
+test-234.cs:
+------------
+Switch statement on a [Flags] style enum. bug 55885.
 
 verify-1.cs
 -----------
