@@ -1,3 +1,7 @@
+2003-04-14  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile.gnu: library location has changed.
+
 2003-04-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* more removed testcases from here.
