@@ -9,6 +9,7 @@
 
 namespace System {
 
+	[CLSCompliant (false)]
 	[MonoTODO ("Is there someone in there ?")]
 	public class __ComObject : MarshalByRefObject {
 	

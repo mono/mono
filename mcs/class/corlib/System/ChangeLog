@@ -1,3 +1,8 @@
+2004-05-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* __ComObject.cs : This class is not regarded as CLSCompliant by csc.
+	  See also bug #58478.
+
 2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomainSetup.cs: don't throw an exception if dynamic_base has not
