@@ -333,7 +333,7 @@ using_namespace_directive
 // detach them
 // 
 namespace_declaration
-	: opt_attributes NAMESPACE qualified_identifier 
+	: opt_attributes NAMESPACE namespace_or_type_name
 	{
 		Attributes attrs = (Attributes) $1;
 
@@ -364,14 +364,6 @@ opt_comma
 	: /* empty */
 	| COMMA
 	;
-
-qualified_identifier
-	: IDENTIFIER { $$ = new QualifiedIdentifier ((string) $1); }
-	| qualified_identifier DOT IDENTIFIER { 
-	 	$$ = new QualifiedIdentifier ((QualifiedIdentifier) $1, (string) $3);
-	  }
-	;
-
 
 namespace_name
 	: namespace_or_type_name { $$ = ($1).ToString (); } 
@@ -1038,7 +1030,7 @@ parameter_array
 	;
 
 member_name 
-	: qualified_identifier { $$ = ($1).ToString (); } 
+	: namespace_or_type_name { $$ = ($1).ToString (); } 
 	;
 
 property_declaration
@@ -1780,14 +1772,14 @@ indexer_declarator
 
 		$$ = new IndexerDeclaration ((Expression) $1, null, pars);
 	  }
-	| type qualified_identifier DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
+	| type namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $6;
 
 		if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
-		$$ = new IndexerDeclaration ((Expression) $1, (string) ($2).ToString (), pars);
+		$$ = new IndexerDeclaration ((Expression) $1, $2.ToString (), pars);
 	  }
 	;
 
@@ -1909,13 +1901,9 @@ type_name
 	;
 
 namespace_or_type_name
-	: qualified_identifier
-	;
-
-type_name_expression
 	: IDENTIFIER { $$ = new SimpleName ((string) $1, lexer.Location);}
-	| type_name_expression DOT IDENTIFIER { 
-	 	$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	| namespace_or_type_name DOT IDENTIFIER { 
+		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
 	  }
 	;
 
@@ -1926,7 +1914,7 @@ type_name_expression
  * gets rid of a shift/reduce couple
  */
 type
-	: type_name_expression {  	/* class_type */
+	: type_name {  	/* class_type */
 		/* 
 	           This does interfaces, delegates, struct_types, class_types, 
 	           parent classes, and more! 4.2 
@@ -3040,7 +3028,7 @@ local_variable_type
 		// Ok, the above "primary_expression" is there to get rid of
 		// both reduce/reduce and shift/reduces in the grammar, it should
 		// really just be "type_name".  If you use type_name, a reduce/reduce
-		// creeps up.  If you use qualified_identifier (which is all we need
+		// creeps up.  If you use namespace_or_type_name (which is all we need
 		// really) two shift/reduces appear.
 		// 
 
@@ -3930,51 +3918,6 @@ public class OperatorDeclaration {
 
 }
 
-public class QualifiedIdentifier {
-	public string s;
-	public QualifiedIdentifier prev;
-
-	public QualifiedIdentifier (string s)
-	{	
-		this.s = s;
-		prev = null;
-	}
-
-	public QualifiedIdentifier (QualifiedIdentifier prev, string s)
-	{
-		this.s = s;
-		this.prev = prev;
-	}
-
-	public override string ToString ()
-	{
-		if (prev == null)
-			return s;
-
-		// Common cases
-
-		if (prev.prev == null)
-			return prev.s + "." + s;
-		if (prev.prev.prev == null)
-			return prev.prev.s + "." + prev.s + "." + s;
-
-		// Uncommon cases.
-		QualifiedIdentifier ptr = this.prev;
-		int count = 1;
-		while (ptr != null){
-			count++;
-			ptr = ptr.prev;
-		}
-		string [] ss = new string [count];
-		ptr = this;
-		for (int i = count; i-- > 0;){
-			ss [i] = ptr.s;
-			ptr = ptr.prev;
-		}
-		return String.Join (".", ss, 0, ss.Length);
-	}
-}
-
 void Error_ExpectingTypeName (Location l, Expression expr)
 {
 	if (expr is Invocation){
@@ -4053,37 +3996,6 @@ CheckDef (bool result, string name, Location l)
 		return;
 	CheckDef (DeclSpace.AdditionResult.NameExists, name, l);
 }
-
-Expression DecomposeQI (QualifiedIdentifier qi, Location loc)
-{
-	Expression o;
-
-	if (qi.prev == null)
-		return new SimpleName (qi.s, loc);
-	else {
-		o = DecomposeQI (qi.prev, loc);
-		return new MemberAccess (o, qi.s, loc);
-	}
-}
-
-// <summary>
-//  This method is used to get at the complete string representation of
-//  a fully-qualified type name, hiding inside a MemberAccess ;-)
-//  This is necessary because local_variable_type admits primary_expression
-//  as the type of the variable. So we do some extra checking
-// </summary>
-#if false
-string GetQualifiedIdentifier (Expression expr)
-{
-	if (expr is SimpleName)
-		return ((SimpleName)expr).Name;
-	else if (expr is MemberAccess)
-		return GetQualifiedIdentifier (((MemberAccess)expr).Expr) + "." + ((MemberAccess) expr).Identifier;
-	else 
-		throw new Exception ("Expr has to be either SimpleName or MemberAccess! (" + expr + ")");
-	
-}
-#endif
 
 Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)
 {
