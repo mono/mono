@@ -1,3 +1,7 @@
+2005-01-10  Marek Safar <marek.safar@seznam.cz>
+
+	* test-333.cs: New test for #70722.
+
 2005-01-06  Duncan Mak  <duncan@ximian.com>
 
 	* test-332.cs: New test for tracking #56460.
