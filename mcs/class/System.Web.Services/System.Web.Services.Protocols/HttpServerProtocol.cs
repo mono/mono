@@ -1,5 +1,5 @@
 // 
-// System.Web.Services.Protocols.SoapServerProtocol.cs
+// System.Web.Services.Protocols.HttpServerProtocol.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -12,27 +12,27 @@ using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
 	[MonoTODO ("Figure out what this class does.")]
-	internal class SoapServerProtocol : ServerProtocol {
+	internal abstract class HttpServerProtocol : ServerProtocol {
 
-		#region Fields
+		#region Constructors
 
-		bool isOneWay;
+		[MonoTODO ("Is the bool parameter the one way?")]
+		protected HttpServerProtocol (bool isOneWay)
+		{
+			throw new NotImplementedException ();
+		}
 
-		#endregion // Fields
+		#endregion // Constructors
 
 		#region Properties
 
-		public override bool IsOneWay {
-			get { return isOneWay; }
-		}
-
 		[MonoTODO]
-		public override LogicalMethodInfo MethodInfo {
+		public override bool IsOneWay {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public override Exception OnewayInitException {
+		public override LogicalMethodInfo MethodInfo {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -41,29 +41,35 @@ namespace System.Web.Services.Protocols {
 		#region Methods
 
 		[MonoTODO]
-		public override bool Initialize ()
+		public static bool AreUrlParametersSupported (LogicalMethodInfo methodInfo)
 		{
 			throw new NotImplementedException ();
 		}
 
-                [MonoTODO]
-                public override object[] ReadParameters ()
+		[MonoTODO]
+		public override bool Initialize () 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override object[] ReadParameters ()
+		{
+			throw new NotImplementedException ();
+		}
+                
+		[MonoTODO]
+		public override bool WriteException (Exception e, Stream outputStream)
                 {
                         throw new NotImplementedException ();
                 }
 
-                [MonoTODO]
-                public override bool WriteException (Exception e, Stream outputStream)
-                {
-                        throw new NotImplementedException ();
-                }
-                
 		[MonoTODO]
                 public override void WriteReturns (object[] returnValues, Stream outputStream)
                 {
                         throw new NotImplementedException ();
                 }
 
-		#endregion
+		#endregion // Methods
 	}
 }
