@@ -30,6 +30,7 @@
 
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Configuration;
 using System.Threading;
@@ -38,7 +39,9 @@ namespace System.Diagnostics {
 
 	internal class TraceImpl {
 
+#if NO_LOCK_FREE
 		private static object lock_ = new object ();
+#endif
 
 		private static bool autoFlush;
 
@@ -68,12 +71,12 @@ namespace System.Diagnostics {
 		public static int IndentLevel {
 			get {return indentLevel;}
 			set {
-				indentLevel = value;
+				lock (ListenersSyncRoot) {
+					foreach (TraceListener t in Listeners) {
+						t.IndentLevel = indentLevel;
+					}
 
-				// Don't need to lock for threadsafety as 
-				// TraceListener.IndentLevel is [ThreadStatic]
-				foreach (TraceListener t in Listeners) {
-					t.IndentLevel = indentLevel;
+					indentLevel = value;
 				}
 			}
 		}
@@ -81,12 +84,12 @@ namespace System.Diagnostics {
 		public static int IndentSize {
 			get {return indentSize;}
 			set {
-				indentSize = value;
+				lock (ListenersSyncRoot) {
+					foreach (TraceListener t in Listeners) {
+						t.IndentSize = indentSize;
+					}
 
-				// Don't need to lock for threadsafety as 
-				// TraceListener.IndentSize is [ThreadStatic]
-				foreach (TraceListener t in Listeners) {
-					t.IndentSize = indentSize;
+					indentSize = value;
 				}
 			}
 		}
@@ -98,6 +101,12 @@ namespace System.Diagnostics {
 				InitOnce ();
 
 				return (TraceListenerCollection) listeners;
+			}
+		}
+
+		private static object ListenersSyncRoot {
+			get {
+				return ((ICollection) Listeners).SyncRoot;
 			}
 		}
 
@@ -176,7 +185,7 @@ namespace System.Diagnostics {
 
 		public static void Close ()
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.Close ();
 				}
@@ -187,7 +196,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		public static void Fail (string message)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.Fail (message);
 				}
@@ -198,7 +207,7 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		public static void Fail (string message, string detailMessage)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.Fail (message, detailMessage);
 				}
@@ -207,7 +216,7 @@ namespace System.Diagnostics {
 
 		public static void Flush ()
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners){
 					listener.Flush ();
 				}
@@ -216,7 +225,7 @@ namespace System.Diagnostics {
 
 		public static void Indent ()
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.IndentLevel++;
 				}
@@ -225,7 +234,7 @@ namespace System.Diagnostics {
 
 		public static void Unindent ()
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.IndentLevel--;
 				}
@@ -234,7 +243,7 @@ namespace System.Diagnostics {
 
 		public static void Write (object value)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.Write (value);
 
@@ -246,7 +255,7 @@ namespace System.Diagnostics {
 
 		public static void Write (string message)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.Write (message);
 
@@ -258,7 +267,7 @@ namespace System.Diagnostics {
 
 		public static void Write (object value, string category)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.Write (value, category);
 
@@ -270,7 +279,7 @@ namespace System.Diagnostics {
 
 		public static void Write (string message, string category)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.Write (message, category);
 
@@ -308,7 +317,7 @@ namespace System.Diagnostics {
 
 		public static void WriteLine (object value)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.WriteLine (value);
 
@@ -320,7 +329,7 @@ namespace System.Diagnostics {
 
 		public static void WriteLine (string message)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.WriteLine (message);
 
@@ -332,7 +341,7 @@ namespace System.Diagnostics {
 
 		public static void WriteLine (object value, string category)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.WriteLine (value, category);
 
@@ -344,7 +353,7 @@ namespace System.Diagnostics {
 
 		public static void WriteLine (string message, string category)
 		{
-			lock (lock_) {
+			lock (ListenersSyncRoot) {
 				foreach (TraceListener listener in Listeners) {
 					listener.WriteLine (message, category);
 

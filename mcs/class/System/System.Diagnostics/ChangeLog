@@ -1,3 +1,13 @@
+2005-02-22 Jonathan Pryor  <jonpryor@vt.edu>
+
+	* TraceImpl.cs: More Thread-safety fixes.  I have to lock on
+	  Listeners.SyncRoot as we're traversing the collection and can't let the
+	  collection change from underneath us while we're iterating over it
+	  (alternately, we could clone the collection and iterate over the clone
+	  without having locking issues -- assuming we had a lock-free clone -- 
+	  but this would kill the GC).  Fixes 69964.  Only define lock_ if we're 
+	  using the lock-free initialization routine; it's not used otherwise.
+
 2005-01-18 Jonathan Pryor  <jonpryor@vt.edu>
 
 	* DiagnosticsConfigurationHandler.cs (DiagnosticsConfiguration): 

@@ -16,6 +16,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
 
 namespace MonoTests.System.Diagnostics {
 
@@ -146,6 +147,83 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		// IndentSize, IndentLevel are thread-static
+
+		class MyTraceListener : TraceListener
+		{
+			public int Writes;
+			public int WriteLines;
+
+			public MyTraceListener ()
+				: base ("mt-test")
+			{
+			}
+
+			public override void Write (string msg)
+			{
+				++Writes;
+			}
+
+			public override void WriteLine (string msg)
+			{
+				++WriteLines;
+			}
+		}
+
+		class MultiThreadModify
+		{
+			public MyTraceListener listener = new MyTraceListener ();
+
+			public const int MaxIterations = 10000;
+
+			public String Exception = null;
+
+			public MultiThreadModify ()
+			{
+				Trace.Listeners.Add (listener);
+			}
+
+			public void Write ()
+			{
+				try {
+					for (int i = 0; i < MaxIterations; ++i)
+						Trace.WriteLine ("message " + i + "... ");
+				}
+				catch (Exception e) {
+					Exception = string.Format (
+							"#MTMW: Exception emitted from Trace.WriteLine: {0}", e);
+				}
+			}
+
+			public void Remove ()
+			{
+				try {
+					Trace.Listeners.Remove (listener);
+				}
+				catch (Exception e) {
+					Exception = string.Format (
+							"#MTMR: Exception emitted from Trace.Listeners.Remove: {0}", e);
+				}
+			}
+		}
+
+		[Test]
+		public void TestMultiThreadModify ()
+		{
+			MultiThreadModify m = new MultiThreadModify ();
+
+			Thread t1 = new Thread (new ThreadStart (m.Write));
+			Thread t2 = new Thread (new ThreadStart (m.Remove));
+
+			t1.Start ();
+			t2.Start ();
+
+			t1.Join ();
+			t2.Join ();
+
+			Assert.IsTrue (m.Exception == null, m.Exception);
+			Assert.IsTrue (m.listener.WriteLines < MultiThreadModify.MaxIterations,
+					"#tmtm: listener was removed before iterations were completed");
+		}
 	}
 }
 

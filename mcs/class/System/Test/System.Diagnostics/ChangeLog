@@ -1,3 +1,7 @@
+2005-02-22  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* TraceTest.cs: Add multi-thread test for #69964.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventLogPermissionTest.cs: Now works on both Fx 1.1 / 2.0.
