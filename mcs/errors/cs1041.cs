@@ -10,3 +10,5 @@ public enum Test {
         /// <summary>Maybe</summary>
         @catch
 }
+
+class Foo { static void Main () {} }
