@@ -26,10 +26,10 @@ namespace System.Xml
 		// Method
 		public override string Add (string key)
 		{
-			if (table.ContainsKey (key))
+			if (table.Contains (key))
 				return (string) table [key];
 			else {
-				table.Add (key.GetHashCode (), key);
+				table.Add (key, key);
 				return key;
 			}
 		}
@@ -50,7 +50,7 @@ namespace System.Xml
 
 		public override string Get (string key)
 		{
-			if (!(table.ContainsKey (key)))
+			if (! (table.Contains (key)))
 				return null;
 		        else
 				return (string) table [key];
@@ -66,9 +66,10 @@ namespace System.Xml
 			if (length == 0)
 				return String.Empty;
 
-			string item = new string (array, offset, length);
+			string key = new string (array, offset, length);
 
-			return Get (item);
+			//return (string) table [key];
+			return Get (key);
 		}
 	}
 }

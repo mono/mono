@@ -1,17 +1,50 @@
-using System;
+//
+// System.Xml.XmlCDataSection.cs
+//
+// Author: Duncan Mak (duncan@ximian.com)
+//
+// (C) Ximian, Inc.
+//
 
 namespace System.Xml
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class XmlCDataSection
+	public class XmlCDataSection : XmlCharacterData
 	{
-		// Private data members
+		// Constructor
+		protected internal XmlCDataSection (string data, XmlDocument doc)
+			: base (doc)
+		{
+		}
 
-		// public properties
-		
+	        // Properties
+		public override string LocalName
+		{
+			get { return "#cdata-section"; }
+		}
 
-		// Public Methods
+		public override string Name
+		{
+			get { return "#cdata-section"; }
+		}
+
+		public override XmlNodeType NodeType
+		{
+			get { return XmlNodeType.CDATA; }
+		}
+
+		// Methods
+		public override XmlNode CloneNode (bool deep)
+		{
+			return null;
+		}
+
+		public override void WriteContentTo (XmlWriter w)
+		{
+			// CDATA nodes have no children, WriteContentTo has no effect.
+		}
+
+		public override void WriteTo (XmlWriter w)
+		{
+		}
 	}
 }

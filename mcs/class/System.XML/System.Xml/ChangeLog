@@ -1,6 +1,9 @@
 2002-02-26  Duncan Mak  <duncan@ximian.com>
 
-	* NameTable.cs: Fix the Add (string) method.
+	* XmlCDataSection.cs: Initial implementation.
+
+	* NameTable.cs: Fixed the whole thing. Wrote a NUnit test to test
+	it out. This should (hopefully) be correct.
 
 2002-02-26  Jason Diamond <jason@injektilo.org>
 
