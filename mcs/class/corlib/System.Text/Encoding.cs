@@ -29,6 +29,7 @@ using System;
 using System.Reflection;
 using System.Globalization;
 using System.Security;
+using System.Runtime.CompilerServices;
 
 [Serializable]
 public abstract class Encoding
@@ -576,6 +577,9 @@ public abstract class Encoding
 		}
 	}
 
+	[MethodImpl (MethodImplOptions.InternalCall)]
+	extern private static string InternalCodePage ();
+	
 	// Get the default encoding object.
 	public static Encoding Default
 	{
@@ -584,15 +588,11 @@ public abstract class Encoding
 				if (defaultEncoding == null) {
 					// See if the underlying system knows what
 					// code page handler we should be using.
-					int codePage = DefaultEncoding.InternalCodePage ();
-					if (codePage != 0) {
-						try {
-							defaultEncoding = GetEncoding (codePage);
-						} catch (NotSupportedException) {
-							defaultEncoding = new DefaultEncoding ();
-						}
-					} else {
-						defaultEncoding = new DefaultEncoding ();
+					string codePage = InternalCodePage ();
+					try {
+						defaultEncoding = GetEncoding (codePage);
+					} catch (NotSupportedException) {
+						defaultEncoding = UTF8;
 					}
 				}
 				return defaultEncoding;

@@ -1,4 +1,9 @@
 
+Wed Sep 4 14:01:25 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Encoding.cs: use icall to get default codepage.
+	* DefaultEncoding.cs: remove useless class.
+
 Mon Aug 26 16:44:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* *.cs: change to conform to mono coding style.

@@ -687,7 +687,6 @@ System.Security.Principal/WindowsIdentity.cs
 System.Security.Principal/WindowsImpersonationContext.cs
 System.Text/ASCIIEncoding.cs
 System.Text/Decoder.cs
-System.Text/DefaultEncoding.cs
 System.Text/Encoder.cs
 System.Text/Encoding.cs
 System.Text/Latin1Encoding.cs
