@@ -634,7 +634,16 @@ public abstract class Encoding
 							if (code_page == -1)
 								defaultEncoding = GetEncoding (code_page_name);
 							else {
+								// map the codepage from internal to our numbers
 								code_page = code_page & 0x0fffffff;
+								switch (code_page){
+								case 1: code_page = ASCIIEncoding.ASCII_CODE_PAGE; break;
+								case 2: code_page = UTF7Encoding.UTF7_CODE_PAGE; break;
+								case 3: code_page = UTF8Encoding.UTF8_CODE_PAGE; break;
+								case 4: code_page = UnicodeEncoding.UNICODE_CODE_PAGE; break;
+								case 5: code_page = UnicodeEncoding.BIG_UNICODE_CODE_PAGE; break;
+								case 6: code_page = Latin1Encoding.ISOLATIN_CODE_PAGE; break;
+								}
 								defaultEncoding = GetEncoding (code_page);
 							}
 						} catch (NotSupportedException) {
