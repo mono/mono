@@ -1,7 +1,7 @@
 2004-08-05  Bernie Solomon  <bernard@ugsolutions.com>
 
-	* mini-sparc.c: move detection of V9 to mono_arch_cpu_init
-	so it happens when mono is embedded too.
+	* mini-sparc.c: redo change, make mono_arch_cpu_init call
+	mono_arch_cpu_optimizazions so sparcv9 is initialized when embedded
 
 2004-08-05  Duncan Mak  <duncan@ximian.com>
 
