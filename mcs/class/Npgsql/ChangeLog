@@ -1,3 +1,6 @@
+2004-12-20  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
+        * Npgsql/NpgsqlCommand.cs: Added IClonable implementation. Also added strong type NpgsqlTransaction property and converted previous interface implementation to implicit interface implementation. Thanks Christopher Gersbo-Moller (cgm at knowledgelab dot sdu dot dk) for heads up.
+        
 2004-12-19  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
 	* Npgsql/NpgsqlCommand.cs: Fixed gborg 1088 and 1080. Thanks Neri (neri at gborg dot postgresql dot org) for help. Now mapped output parameters are correctly updated regardless their position in Parameters collection.
 

@@ -40,7 +40,7 @@ namespace Npgsql
     /// against a PostgreSQL database. This class cannot be inherited.
     /// </summary>
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlCommand)), ToolboxItem(true)]
-    public sealed class NpgsqlCommand : Component, IDbCommand
+    public sealed class NpgsqlCommand : Component, IDbCommand, ICloneable
     {
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlCommand";
@@ -59,6 +59,8 @@ namespace Npgsql
         private NpgsqlBind                  bind;
 
         private Boolean						invalidTransactionDetected = false;
+        
+        private CommandBehavior             commandBehavior;
 
         // Constructors
 
@@ -100,6 +102,7 @@ namespace Npgsql
             timeout = 20;
             type = CommandType.Text;
             this.Transaction = transaction;
+            commandBehavior = CommandBehavior.Default;
         }
 
         /// <summary>
@@ -114,6 +117,7 @@ namespace Npgsql
             text = cmdText;
             this.connector = connector;
             type = CommandType.Text;
+            commandBehavior = CommandBehavior.Default;
         }
 
         // Public properties.
@@ -136,6 +140,7 @@ namespace Npgsql
                 planName = String.Empty;
                 parse = null;
                 bind = null;
+                commandBehavior = CommandBehavior.Default;
             }
         }
 
@@ -181,7 +186,8 @@ namespace Npgsql
             }
         }
 
-        IDbConnection IDbCommand.Connection {
+        IDbConnection IDbCommand.Connection 
+        {
             get
             {
                 return Connection;
@@ -256,6 +262,21 @@ namespace Npgsql
             }
         }
 
+        
+        IDbTransaction IDbCommand.Transaction 
+        {
+            get
+            {
+                return Transaction;
+            }
+
+            set
+            {
+                Transaction = (NpgsqlTransaction) value;
+                NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "IDbCommand.Transaction", value);
+            }
+        }
+        
         /// <summary>
         /// Gets or sets the <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see>
         /// within which the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see> executes.
@@ -263,7 +284,7 @@ namespace Npgsql
         /// <value>The <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see>.
         /// The default value is a null reference.</value>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IDbTransaction Transaction {
+        public NpgsqlTransaction Transaction {
             get
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Transaction");
@@ -315,6 +336,26 @@ namespace Npgsql
 
             // [TODO] Finish method implementation.
             throw new NotImplementedException();
+        }
+        
+        /// <summary>
+        /// Create a new command based on this one.
+        /// </summary>
+        /// <returns>A new NpgsqlCommand object.</returns>
+        Object ICloneable.Clone()
+        {
+            return Clone();
+        }
+
+        /// <summary>
+        /// Create a new connection based on this one.
+        /// </summary>
+        /// <returns>A new NpgsqlConnection object.</returns>
+        public NpgsqlCommand Clone()
+        {
+            // TODO: Add consistency checks.
+
+            return new NpgsqlCommand(CommandText, Connection, Transaction);
         }
 
         /// <summary>
@@ -511,6 +552,7 @@ namespace Npgsql
             // [FIXME] No command behavior handling.
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteReader", cb);
+            commandBehavior = cb;
 
             ExecuteCommand();
 
@@ -716,9 +758,9 @@ namespace Npgsql
 
             if (parameters == null || parameters.Count == 0)
                 if (addProcedureParenthesis)
-                    return result + ")";
+                    return AddSingleRowBehaviorSupport(result + ")");
                 else
-                    return result;
+                    return AddSingleRowBehaviorSupport(result);
 
 
             //CheckParameters();
@@ -751,7 +793,7 @@ namespace Npgsql
             if (addProcedureParenthesis)
                 result += ")";
 
-            return result;
+            return AddSingleRowBehaviorSupport(result);
         }
 
 
@@ -833,7 +875,7 @@ namespace Npgsql
             if (addProcedureParenthesis)
                 return parseCommand + ")";
             else
-                return parseCommand ;
+                return parseCommand;
 
         }
 
@@ -964,6 +1006,24 @@ namespace Npgsql
 
             return result;
         }//ReplaceParameterValue
+        
+        
+        private String AddSingleRowBehaviorSupport(String resultCommandText)
+        {
+        
+            if ((commandBehavior & CommandBehavior.SingleRow) > 0)
+            {
+                if (resultCommandText.EndsWith(";"))
+                    resultCommandText = resultCommandText.Substring(0, resultCommandText.Length - 1);
+                resultCommandText += " limit 1;";
+                
+            }
+            
+            
+            
+            return resultCommandText;
+            
+        }
 
 
         private void ExecuteCommand()
