@@ -23,7 +23,7 @@ namespace System.Data.SqlClient
 		}
 		
 		[MonoTODO]
-		public SqlConnection (string cs) : SqlConnection () {
+		public SqlConnection (string cs) : this () {
 			this.ConnectionString = cs;
 		}
 		
