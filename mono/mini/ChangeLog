@@ -1,3 +1,8 @@
+
+Mon Aug 2 11:59:35 PDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: reg allocator fix.
+
 2004-07-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix OP_X86_PUSH_OBJ.
