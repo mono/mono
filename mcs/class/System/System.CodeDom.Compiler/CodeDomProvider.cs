@@ -12,6 +12,7 @@ using System.IO;
 
 namespace System.CodeDom.Compiler
 {
+	[ToolboxItem("")]
 	public abstract class CodeDomProvider
 		: Component
 	{
@@ -59,10 +60,9 @@ namespace System.CodeDom.Compiler
 			return null;
 		}
 
-		[MonoTODO]
 		public virtual TypeConverter GetConverter( Type type )
 		{
-			throw new NotImplementedException();
+			return TypeDescriptor.GetConverter (type);
 		}
 
 	}

@@ -175,6 +175,13 @@ namespace System.CodeDom.Compiler {
 			newline = true;
 		}
 
+		public override void WriteLine( bool value )
+		{
+			OutputTabs();
+			writer.WriteLine( value );
+			newline = true;
+		}
+
 		public override void WriteLine( char value )
 		{
 			OutputTabs();
@@ -231,6 +238,7 @@ namespace System.CodeDom.Compiler {
 			newline = true;
 		}
 
+		[CLSCompliant(false)]
 		public override void WriteLine( uint value )
 		{
 			OutputTabs();
