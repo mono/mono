@@ -1,3 +1,7 @@
+2003-09-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* x86/tramp.c: Fixes from Bernie Solomon (bernard@ugsolutions.com).
+
 2003-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* x86/tramp.c: Fixes from Bernie Solomon (bernard@ugsolutions.com).
