@@ -1,3 +1,7 @@
+2003-05-06  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h: #include <mono/io-layer/io-layer.h>.
+
 2003-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c:
