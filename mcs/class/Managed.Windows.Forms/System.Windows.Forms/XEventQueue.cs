@@ -16,76 +16,89 @@ namespace System.Windows.Forms {
 
 	internal class XEventQueue {
 
-		private XEvent [] xevents;
-		private XEvent [] lxevents;   // Events inserted from threads other then the main X thread
+		private XQueue xqueue;
+		private XQueue lqueue;	// Events inserted from threads other then the main X thread
 
-		private int xindex;
-		private int lxindex;
-
-		private static readonly int MinXEventSize = 50;
-		private static readonly int MinLXEventSize = 10;
+		private static readonly int InitialXEventSize = 50;
+		private static readonly int InitialLXEventSize = 10;
 
 		public XEventQueue ()
 		{
-			xevents = new XEvent [MinXEventSize];
-			xevents = new XEvent [MinLXEventSize];
+			xqueue = new XQueue (InitialXEventSize);
+			lqueue = new XQueue (InitialLXEventSize);
 		}
 
 		public int Count {
-			get { return xindex + lxindex; }
+			get { return xqueue.Count + lqueue.Count; }
 		}
 
 		public void Enqueue (XEvent xevent)
 		{
-			EnqueueArray (xevent, ref xevents, ref xindex);
+			xqueue.Enqueue (xevent);
 		}
 
 		public void EnqueueLocked (XEvent xevent)
 		{
-			lock (lxevents) {
-				EnqueueArray (xevent, ref lxevents, ref lxindex);
+			lock (lqueue) {
+				lqueue.Enqueue (xevent);
 			}
 		}
 
 		public XEvent Dequeue ()
 		{
-			if (xindex == -1) {
-				lock (lxevents) {
-					if (lxindex == -1)
-						throw new Exception ("No more items in XQueue");
-					return lxevents [lxindex--];
+			if (xqueue.Count == 0) {
+				lock (lqueue) {
+					return lqueue.Dequeue ();
 				}
 			}
-			return xevents [xindex--];
+			return xqueue.Dequeue ();
 		}
 
-		public void CheckSize ()
-		{
-			CheckArraySize (ref xevents, MinXEventSize, xindex);
+		private class XQueue {
 
-			lock (lxevents) {
-				CheckArraySize (ref lxevents, MinLXEventSize, lxindex);
-			}
-		}
-
-		private void CheckArraySize (ref XEvent [] array, int min, int index)
-		{
-			if (array.Length > min && index * 3 < array.Length) {
-				XEvent [] na = new XEvent [min];
-				Array.Copy (array, na, index);
-			}
-		}
-
-		private void EnqueueArray (XEvent xevent, ref XEvent [] array, ref int index)
-		{
-			index++;
-			if (index == array.Length) {
-				XEvent [] na = new XEvent [array.Length * 2];
-				Array.Copy (array, na, array.Length);
-				array = na;
+			private XEvent [] xevents;
+			private int head;
+			private int tail;
+			private int size;
+			
+			public XQueue (int size)
+			{
+				xevents = new XEvent [size];
 			}
 
-			array [index] = xevent;
+			public int Count {
+				get { return size; }
+			}
+
+			public void Enqueue (XEvent xevent)
+			{
+				if (size == xevents.Length)
+					Grow ();
+				
+				xevents [tail] = xevent;
+				tail = (tail + 1) % xevents.Length;
+				size++;
+			}
+
+			public XEvent Dequeue ()
+			{
+				if (size < 1)
+					throw new Exception ("Attempt to dequeue empty queue.");
+				XEvent res = xevents [head];
+				head = (head + 1) % xevents.Length;
+				size--;
+				return res;
+			}
+
+			private void Grow ()
+			{
+				int newcap = (xevents.Length * 2);
+				XEvent [] na = new XEvent [newcap];
+				xevents.CopyTo (na, 0);
+				xevents = na;
+				head = 0;
+				tail = head + size;
+			}
 		}
 	}
 }
