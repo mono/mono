@@ -1030,6 +1030,9 @@ namespace Mono.CSharp
 				if (value == "utf8")
 					cp = (new UTF8Encoding()).WindowsCodePage;
 				if (value == "reset"){
+					//
+					// 28591 is the code page for ISO-8859-1 encoding.
+					//
 					cp = 28591;
 					using_default_encoder = true;
 				}
