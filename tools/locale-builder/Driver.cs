@@ -894,27 +894,28 @@ namespace Mono.Tools.LocaleBuilder {
                         bool in_year_data = false;
                         int month_end = 0;
                         int year_end = 0;
+			bool inquote = false;
                         
                         for (int i = 0; i < full.Length; i++) {
                                 char c = full [i];
-                                if (c == 'M') {
+				if (!inquote && c == 'M') {
                                         month_day += c;
                                         year_month += c;
                                         in_year_data = true;
                                         in_month_data = true;
                                         month_end = month_day.Length;
                                         year_end = year_month.Length;
-                                } else if (Char.ToLower (c) == 'd') {
+                                } else if (!inquote && Char.ToLower (c) == 'd') {
                                         month_day += c;
                                         in_month_data = true;
                                         in_year_data = false;
                                         month_end = month_day.Length;
-                                } else if (Char.ToLower (c) == 'y') {
+                                } else if (!inquote && Char.ToLower (c) == 'y') {
                                         year_month += c;
                                         in_year_data = true;
                                         in_month_data = false;
                                         year_end = year_month.Length;
-                                } else if (control_chars.IndexOf (Char.ToLower (c)) >= 0) {
+                                } else if (!inquote && control_chars.IndexOf (Char.ToLower (c)) >= 0) {
                                         in_year_data = false;
                                         in_month_data = false;
                                 } else if (in_year_data || in_month_data) {
@@ -922,6 +923,10 @@ namespace Mono.Tools.LocaleBuilder {
                                                 month_day += c;
                                         if (in_year_data)
                                                 year_month += c;
+                                }
+
+				if (c == '\'') {
+					inquote = !inquote;
                                 }
                         }
 
