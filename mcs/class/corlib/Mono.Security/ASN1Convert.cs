@@ -1,10 +1,13 @@
 //
 // ASN1Convert.cs: Abstract Syntax Notation 1 convertion routines
 //
-// Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+// Authors:
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Jesper Pedersen  <jep@itplus.dk>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
+// (C) 2004 IT+ A/S (http://www.itplus.dk)
 //
 
 using System;
@@ -48,13 +51,15 @@ namespace Mono.Security {
 			while (integer [x] == 0x00)
 				x--;
 			ASN1 asn1 = new ASN1 (0x02);
-			if (x == 3)
-				asn1.Value = integer;
-			else {
-				byte[] smallerInt = new byte [x + 1];
-				Array.Copy (integer, 0, smallerInt, 0, smallerInt.Length);
-				asn1.Value = smallerInt;
+
+			byte[] smallerInt = new byte [x + 1];
+			int index = smallerInt.Length - 1;
+			for (int i = 0; i < smallerInt.Length; i++) {
+				smallerInt [index] = integer [i];
+				index--;
 			}
+			asn1.Value = smallerInt;
+
 			return asn1;
 		}
 

@@ -1,3 +1,8 @@
+2004-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: Class synched with Mono.Security.
+	* ASN1Convert.cs: Class synched with Mono.Security.
+
 2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* StrongName.cs: Added from Mono.Security assembly for StrongName
