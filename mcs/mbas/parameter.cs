@@ -144,6 +144,14 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		public void AppendParameter (Parameter p)
+		{
+			Parameter [] pa = new Parameter [FixedParameters.Length+1];
+			FixedParameters.CopyTo (pa, 0);
+			pa[FixedParameters.Length] = p;
+			FixedParameters = pa;
+		}
+		
 		public bool Empty {
 			get {
 				return (FixedParameters == null) && (ArrayParameter == null);

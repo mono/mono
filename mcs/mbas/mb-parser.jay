@@ -708,6 +708,7 @@ property_declaration
 	  {
 		get_implicit_value_parameter_type = (Expression) $7;
 		get_implicit_value_parameter_name = (string) $2;
+		current_local_parameters = (Parameters) $4;
 		lexer.PropertyParsing = true;
 
 		$$ = lexer.Location;
@@ -729,6 +730,7 @@ property_declaration
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		get_implicit_value_parameter_type = null;
 		set_implicit_value_parameter_type = null;
+		current_local_parameters = null;
 	  }
 	;
 
@@ -756,7 +758,7 @@ opt_set_accessor_declaration
 get_accessor_declaration
 	: opt_attributes GET EOL
 	  {
-		current_local_parameters = null;
+		//current_local_parameters = null;
 		
 		lexer.PropertyParsing = false;
 		start_block();
@@ -771,7 +773,7 @@ get_accessor_declaration
           END GET EOL
 	  {
 		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
-		current_local_parameters = null;
+		//current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
 	;
@@ -780,15 +782,17 @@ set_accessor_declaration
 	: opt_attributes SET opt_set_parameter EOL
 	  {
 		
-		Parameter [] args;
+		//Parameter [] args;
+		
 		Parameter implicit_value_parameter = new Parameter (
 			set_implicit_value_parameter_type, 
 			set_implicit_value_parameter_name, 
 			Parameter.Modifier.NONE, null);
 
-		args  = new Parameter [1];
-		args [0] = implicit_value_parameter;
-		current_local_parameters = new Parameters (args, null, lexer.Location);
+		//args  = new Parameter [1];
+		//args [0] = implicit_value_parameter;
+		//current_local_parameters = new Parameters (args, null, lexer.Location);
+		current_local_parameters.AppendParameter (implicit_value_parameter);
 		
 		start_block();
 		lexer.PropertyParsing = false;
@@ -948,10 +952,14 @@ constructor_declarator
 	
 	
 opt_formal_parameter_list
-	: /* empty */			{ $$ = Parameters.EmptyReadOnlyParameters; }
+	: /* empty */			
+	  { 
+		$$ = Parameters.EmptyReadOnlyParameters; 
+	  }
 	| formal_parameter_list	
-	  { $$ = $1;	
-	    Parameter p = ((Parameters) $1).FixedParameters[0];
+	  { 
+	  	$$ = $1;	
+	    	Parameter p = ((Parameters) $1).FixedParameters[0];
 	  }
 	;
 	
