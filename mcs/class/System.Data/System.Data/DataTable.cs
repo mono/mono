@@ -1155,10 +1155,13 @@ namespace System.Data {
 
 			ArrayList rowList = new ArrayList();
 			int recordStateFilter = GetRowStateFilter(recordStates);
-			foreach (DataRow row in Rows)
-				if (((int)row.RowState & recordStateFilter) != 0)
-					if (filter != null && (bool)filter.Eval (row))
-						rowList.Add (row);
+			foreach (DataRow row in Rows) {
+				if (((int)row.RowState & recordStateFilter) != 0) {
+					if (filter != null && !(bool)filter.Eval (row))
+						continue;
+					rowList.Add (row);
+				}
+			}
 
 			DataRow[] dataRows = (DataRow[])rowList.ToArray(typeof(DataRow));
 
