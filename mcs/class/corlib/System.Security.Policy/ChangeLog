@@ -1,6 +1,16 @@
+2003-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Hash.cs: Added [Serializable] and ISerializable to class declaration.
+	Changed how the hash algorithm are created (now use system default 
+	implementation). Added some exception handling.
+
 2002-12-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* Evidence.cs: Copy constructor does not attempt to merge if it recieves a null ref
+
+2002-12-16  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* StrongName.cs: New. Implemented.
 
 2002-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
