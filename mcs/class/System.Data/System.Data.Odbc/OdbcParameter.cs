@@ -113,6 +113,7 @@ namespace System.Data.Odbc
 		
 		public bool IsNullable {
 			get { return isNullable; }
+			set { isNullable = value; }
 		}
 
 		public OdbcType OdbcType {
@@ -164,53 +165,47 @@ namespace System.Data.Odbc
 
 		#endregion // Properties
 
-		#region public Properties
+		#region Methods
 
-		public void Bind(IntPtr hstmt,int ParamNum)
-		{
+		internal void Bind(IntPtr hstmt, int ParamNum) {
 			OdbcReturn ret;
 			// Set up the buffer if we haven't done so yet
-			if(!bufferIsSet)
+			if (!bufferIsSet)
 				setBuffer();
-				
+
 			// Convert System.Data.ParameterDirection into odbc enum
-			OdbcInputOutputDirection paramdir=libodbc.ConvertParameterDirection(this.direction);
+			OdbcInputOutputDirection paramdir = libodbc.ConvertParameterDirection(this.direction);
 			// Bind parameter based on type
-			if (odbcType==OdbcType.Int)
-				ret=libodbc.SQLBindParameter(hstmt, (ushort) ParamNum, (short) paramdir, 
-					(short) odbcType, (short) odbcType, Convert.ToUInt32(size), 
+			if (odbcType == OdbcType.Int)
+				ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
+					(short)odbcType, (short)odbcType, Convert.ToUInt32(size),
 					0, ref intbuf, 0, 0);
 			else
-				ret=libodbc.SQLBindParameter(hstmt, (ushort) ParamNum, 	(short) paramdir,
-					(short) OdbcType.Char, (short) odbcType, Convert.ToUInt32(size), 
-					0, 	buffer, 0, 0);
+				ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
+					(short)OdbcType.Char, (short)odbcType, Convert.ToUInt32(size),
+					0, buffer, 0, 0);
 			// Check for error condition
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLBindParam",OdbcHandleType.Stmt,hstmt));
+			if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
+				throw new OdbcException(new OdbcError("SQLBindParam", OdbcHandleType.Stmt, hstmt));
 		}
 
 		private void setBuffer() {
 			// Load buffer with new value
-			if (odbcType==OdbcType.Int)
-				intbuf=(int) ParamValue;
-			else
-			{
+			if (odbcType == OdbcType.Int)
+				intbuf = (int)ParamValue;
+			else {
 				string paramValueString = ParamValue.ToString();
 				// Treat everything else as a string
 				// Init string buffer
-				if (buffer==null || buffer.Length< ((size>20)?size:20) )
-					buffer=new byte[(size>20)?size:20];
+				if (buffer == null || buffer.Length < ((size > 20) ? size : 20))
+					buffer = new byte[(size > 20) ? size : 20];
 				else
 					buffer.Initialize();
 				// Convert value into string and store into buffer
-				System.Text.Encoding.ASCII.GetBytes(paramValueString, 0, paramValueString.Length , buffer, 0);
+				System.Text.Encoding.ASCII.GetBytes(paramValueString, 0, paramValueString.Length, buffer, 0);
 			}
 			bufferIsSet = true;
 		}
-
-		#endregion // public Properties
-
-		#region Methods
 
 		[MonoTODO]
 		object ICloneable.Clone ()

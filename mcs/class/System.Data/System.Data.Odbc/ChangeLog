@@ -1,4 +1,16 @@
 2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
+	* OdbcCommand.cs: No longer use OdbcConnection.Datareader, in order 
+	to fix signature of OdbcConnection
+	* OdbcDataReader.cs: No longer use ODbcConnection.Datareader, in 
+	order to fix signature of OdbcConnection
+	* OdbcConnection.cs: Signature fixes: removed DataReader property, 
+	added setter for ConnectionTimeout, made transaction internal
+	* OdbcParameter.cs: reduced accessibility of Bind method to 
+	internal, added setter for IsNullable
+	* OdbcParameterCollection.cs: made default ctor and Bind method
+	internal
+
+2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
 	* OdbcCommand: fixed linefeeds to DOS to match other sources
 	in System.Data.Odbc
 

@@ -35,7 +35,6 @@ namespace System.Data.Odbc
 		{
 			this.command = command;
 			this.behavior=behavior;
-			this.command.Connection.DataReader = this;
 			open = true;
 			currentRow = -1;
 			hstmt=command.hStmt;
@@ -149,8 +148,6 @@ namespace System.Data.Odbc
 	
 			open = false;
 			currentRow = -1;
-
-			this.command.Connection.DataReader = null;
 
 			if ((behavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
 				this.command.Connection.Close();

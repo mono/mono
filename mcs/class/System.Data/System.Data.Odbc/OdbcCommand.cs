@@ -38,7 +38,7 @@ namespace System.Data.Odbc
 		#region Constructors
 
 		public OdbcCommand ()
-	        {
+		{
 			commandText = String.Empty;
 			timeout = 30; // default timeout 
 			commandType = CommandType.Text;
@@ -239,8 +239,6 @@ namespace System.Data.Odbc
 			if (connection.State == ConnectionState.Closed)
 				throw new InvalidOperationException ();
 			// FIXME: a third check is mentioned in .NET docs
-			if (connection.DataReader != null)
-				throw new InvalidOperationException ();
 
 			ExecSQL(CommandText);
 
@@ -293,8 +291,6 @@ namespace System.Data.Odbc
 		
 		public object ExecuteScalar ()
 		{
-			if (connection.DataReader != null)
-				throw new InvalidOperationException ();
 			object val;
 			OdbcDataReader reader=ExecuteReader();
 			try

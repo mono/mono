@@ -13,14 +13,14 @@ using System.Data.Common;
 
 namespace System.Data.Odbc
 {
+	[DefaultEvent("InfoMessage")]
 	public sealed class OdbcConnection : Component, ICloneable, IDbConnection
 	{
 		#region Fields
 
 		string connectionString;
 		int connectionTimeout;
-		OdbcDataReader dataReader;
-		public OdbcTransaction transaction;
+		internal OdbcTransaction transaction;
 		IntPtr henv=IntPtr.Zero, hdbc=IntPtr.Zero;
 		
 		#endregion
@@ -40,10 +40,8 @@ namespace System.Data.Odbc
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLSetEnvAttr",OdbcHandleType.Env,henv));
 		
-			//Console.WriteLine("ODBCInit Complete.");
 			connectionTimeout = 15;
 			connectionString = null;
-			dataReader = null;
 		}
 
 		public OdbcConnection (string connectionString) : this ()
@@ -73,6 +71,12 @@ namespace System.Data.Odbc
 			get {
 				return connectionTimeout;
 			}
+			set {
+				if (value < 0) {
+					throw new ArgumentException("Timout should not be less than zero.");
+				}
+				connectionTimeout = value;
+			}
 		}
 
 //		public string DataSource {
@@ -101,16 +105,6 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public OdbcDataReader DataReader
-	        {
-			get {
-				return dataReader;
-			}
-			set {
-				dataReader = value;
-			}
-		}
-		
 		#endregion // Properties
 	
 		#region Methods
@@ -145,7 +139,6 @@ namespace System.Data.Odbc
 		{
 			if (State == ConnectionState.Open) {
 				// TODO: Free handles
-				dataReader = null;
 				hdbc = IntPtr.Zero;
 				transaction=null;
 			}

@@ -29,7 +29,7 @@ namespace System.Data.Odbc
 	
 		#region Constructors
 
-		public OdbcParameterCollection () {
+		internal OdbcParameterCollection () {
 		}
 
 		#endregion // Constructors
@@ -147,8 +147,7 @@ namespace System.Data.Odbc
 			return Add (new OdbcParameter (name, type, width, src_col));
 		}
 
-
-		public void Bind(IntPtr hstmt)
+		internal void Bind(IntPtr hstmt)
 		{
 			for (int i=0;i<Count;i++)
 			{
