@@ -1,3 +1,8 @@
+2004-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: don't hang if a sync step is aborted. Fixes the
+	system.web portion of bug #68270.
+
 2004-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceContext.cs: don't cast to Page is the handler it's

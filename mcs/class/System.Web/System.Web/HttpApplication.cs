@@ -675,13 +675,11 @@ namespace System.Web
 								if (timeoutPossible)
 									HttpRuntime.TimeoutManager.Remove (_app.Context);
 							}
-						} while (ready_sync && _currentStateIdx < _endStateIdx);
+						} while (_currentStateIdx < _endStateIdx);
 
 						if (null != lasterror)
 							_app.HandleError (lasterror);
 					} finally {
-
-
 						_app.OnStateExecuteLeave ();
 					}
 				}
