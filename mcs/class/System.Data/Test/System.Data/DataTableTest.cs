@@ -1182,33 +1182,20 @@ namespace MonoTests.System.Data
 			row ["Name"] = "roopa";
 			table.Rows.Add (row);
                 
+			AssertEquals (2, table.Rows.Count);
+			AssertEquals (1, table.ChildRelations.Count);
 			try {
 				table.Reset ();
 				Fail ("#A01");
 			}
-                        catch (InvalidConstraintException) {
+                        catch (ArgumentException) {
 			}
-			try {
-				table.Clear ();
-//#if NET_1_1
-//#else
-				Fail ("#A03");
-//#endif
-			}
-			catch (Exception e) {
+			AssertEquals (0, table.Rows.Count);
+			AssertEquals (0, table.ChildRelations.Count);
+			AssertEquals (0, table.ParentRelations.Count);
+			AssertEquals (0, table.Constraints.Count);
+			table.Clear ();
 
-#if NET_1_1
-				
-				AssertEquals ("#A04", "Cannot clear table Parent because ForeignKeyConstraint DR enforces Child.", e.Message);
-				AssertEquals ("#A11", typeof (InvalidConstraintException), e.GetType());
-#else
-				if (e.GetType () != typeof (AssertionException)) {
-					// FIXME: Don't depend on localizable error messages.
-					AssertEquals ("#A04", "Cannot clear table Parent because ForeignKeyConstraint DR enforces Child.", e.Message);
-				}
-				else throw e;
-#endif
-			}
 			table1.Reset ();
 			AssertEquals ("#A05", 0, table1.Rows.Count);
 			AssertEquals ("#A06", 0, table1.Constraints.Count);
@@ -1217,7 +1204,7 @@ namespace MonoTests.System.Data
 			table.Clear ();
 			AssertEquals ("#A08", 0, table.Rows.Count);
 #if NET_1_1
-			AssertEquals ("#A09", 1, table.Constraints.Count);
+			AssertEquals ("#A09", 0, table.Constraints.Count);
 #else
 			AssertEquals ("#A09", 1, table.Constraints.Count);
 #endif

@@ -1,5 +1,10 @@
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTableTest.cs : finally run-test-ondotnet passes (i.e.
+	  fixed incompatibility).
+
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataViewTest.cs : With a tiny fix, removed NotDotNet.
 
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
