@@ -1274,6 +1274,12 @@ namespace System.Drawing
 				Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
 				GDIPlus.CheckStatus (status);
 				Graphics result = new Graphics ((IntPtr) graphics);
+				
+				if (Environment.OSVersion.Platform == (PlatformID) 128)  {
+					Rectangle rect  = new Rectangle (0,0, image.Width, image.Height);
+					GDIPlus.GdipSetVisibleClip_linux (result.NativeObject, ref rect);
+				}
+				
 				return result;
 			}
 		}
