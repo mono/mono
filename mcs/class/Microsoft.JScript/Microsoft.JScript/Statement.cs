@@ -8,16 +8,11 @@
 //
 
 using System.Text;
+using System;
 
 namespace Microsoft.JScript {
 
-	public class Statement : AST {
-
-		public Statement ()
-		{}
-	}
-
-	internal class If : Statement {
+	internal class If : AST {
 
 		internal AST cond, true_stm, false_stm;
 
@@ -41,9 +36,15 @@ namespace Microsoft.JScript {
 			
 			return sb.ToString ();
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 
-	internal class Continue : Statement {
+	internal class Continue : AST {
 
 		internal string identifier;
 
@@ -51,9 +52,14 @@ namespace Microsoft.JScript {
 		{
 			return identifier;
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
-	internal class Break : Statement {
+	internal class Break : AST {
 
 		internal string identifier;
 
@@ -61,9 +67,14 @@ namespace Microsoft.JScript {
 		{
 			return identifier;
 		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
-	internal class Return : Statement {
+	internal class Return : AST {
 
 		internal AST expression;
 
@@ -75,6 +86,11 @@ namespace Microsoft.JScript {
 		public override string ToString ()
 		{
 			return expression.ToString ();
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
