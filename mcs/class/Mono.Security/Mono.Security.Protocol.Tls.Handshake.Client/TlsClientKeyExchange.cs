@@ -58,7 +58,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 			else 
 			{
-				rsa = this.Context.Cipher.CertificateRSA();
+				rsa = this.Context.ServerSettings.CertificateRSA;
 			}
 			
 			// Encrypt premaster_sercret
@@ -93,7 +93,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 			else 
 			{
-				rsa = this.Context.Cipher.CertificateRSA();
+				rsa = this.Context.ServerSettings.CertificateRSA;
 			}
 			
 			// Encrypt premaster_sercret

@@ -1,3 +1,15 @@
+2004-03-19 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/TlsServerSettings.cs:
+
+		- Added new CertificateRSA property.
+
+		- Added new UpdateCertfificateRSA method.
+
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+
+		- Removed CertificateRSA() method.	
+
 2004-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CipherSuite.cs: Fixed PRF generation when secret is an odd number of 

@@ -132,7 +132,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			{
 				if ((index = this.Context.SupportedCiphers.IndexOf(this.cipherSuites[i])) != -1)	
 				{
-					this.Context.Cipher	= this.Context.SupportedCiphers[index];					
+					this.Context.Cipher	= this.Context.SupportedCiphers[index];
+					break;
 				}
 			}
 

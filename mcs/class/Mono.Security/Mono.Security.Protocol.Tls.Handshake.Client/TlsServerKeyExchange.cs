@@ -105,7 +105,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			stream.Reset();
 			
 			bool isValidSignature = hash.VerifySignature(
-				this.Context.Cipher.CertificateRSA(),
+				this.Context.ServerSettings.CertificateRSA,
 				this.signedParams);
 
 			if (!isValidSignature)

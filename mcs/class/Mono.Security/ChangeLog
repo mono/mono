@@ -1,3 +1,22 @@
+2004-03-19 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientHello.cs:
+
+		- Fixed cipher suite selection.
+
+	* Mono.Security.Protocol.Tls/TlsServerSettings.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientKeyExchange.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerKeyExchange.cs:
+
+		- Added new CertificateRSA property.
+
+		- Added new UpdateCertfificateRSA method.
+
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+
+		- Removed CertificateRSA() method.	
+
 2004-03-17 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientCertificate.cs:

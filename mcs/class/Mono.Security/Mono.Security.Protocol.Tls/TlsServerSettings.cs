@@ -25,6 +25,7 @@
 using System;
 using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
 using Mono.Security.X509;
 using Mono.Security.Protocol.Tls.Handshake;
 
@@ -35,12 +36,13 @@ namespace Mono.Security.Protocol.Tls
 		#region Fields
 
 		private X509CertificateCollection	certificates;
+		private RSA							certificateRSA;
+		private RSAParameters				rsaParameters;
+		private byte[]						signedParams;
+		private string[]					distinguisedNames;
 		private bool						serverKeyExchange;
 		private bool						certificateRequest;
 		private	ClientCertificateType[]		certificateTypes;
-		private string[]					distinguisedNames;
-		private RSAParameters				rsaParameters;
-		private byte[]						signedParams;		
 
 		#endregion
 
@@ -50,8 +52,19 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get { return this.serverKeyExchange; }
 			set { this.serverKeyExchange = value; }
+		}		
+
+		public X509CertificateCollection Certificates
+		{
+			get { return this.certificates; }
+			set { this.certificates = value; }
 		}
 
+		public RSA CertificateRSA
+		{
+			get { return this.certificateRSA; }
+		}
+		
 		public RSAParameters RsaParameters
 		{
 			get { return this.rsaParameters; }
@@ -82,18 +95,33 @@ namespace Mono.Security.Protocol.Tls
 			set { this.distinguisedNames = value; }
 		}
 		
-		public X509CertificateCollection Certificates
-		{
-			get { return this.certificates; }
-			set { this.certificates = value; }
-		}
-
 		#endregion
 
 		#region Constructors
 
 		public TlsServerSettings()
 		{
+		}
+
+		#endregion
+
+		#region Methods
+
+		public void UpdateCertificateRSA()
+		{
+			if (this.certificates == null ||
+				this.certificates.Count == 0)
+			{
+				this.certificateRSA = null;
+			}
+			else
+			{
+				this.certificateRSA = new RSAManaged(
+					this.certificates[0].RSA.KeySize);
+
+				this.certificateRSA.ImportParameters(
+					this.certificates[0].RSA.ExportParameters(false));
+			}
 		}
 
 		#endregion

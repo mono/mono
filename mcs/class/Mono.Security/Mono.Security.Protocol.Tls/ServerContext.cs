@@ -71,6 +71,8 @@ namespace Mono.Security.Protocol.Tls
 			// Add server certificate to the certificate collection
 			this.ServerSettings.Certificates = new MonoX509.X509CertificateCollection();
 			this.ServerSettings.Certificates.Add(cert);
+
+			this.ServerSettings.UpdateCertificateRSA();
 		}
 
 		#endregion

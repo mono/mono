@@ -213,6 +213,7 @@ namespace Mono.Security.Protocol.Tls
 
 				int keySize = (md5.HashSize >> 3); //in bytes not bits
 				byte[] temp = new byte [keySize];
+
 				// Generate final write keys
 				md5.TransformBlock(this.Context.ClientWriteKey, 0, this.Context.ClientWriteKey.Length, temp, 0);
 				md5.TransformFinalBlock(this.Context.RandomCS, 0, this.Context.RandomCS.Length);

@@ -58,7 +58,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		public override void Update()
 		{
 			base.Update();
-			this.Context.ServerSettings.Certificates = certificates;
+			this.Context.ServerSettings.Certificates = this.certificates;
+			this.Context.ServerSettings.UpdateCertificateRSA();
 		}
 
 		#endregion

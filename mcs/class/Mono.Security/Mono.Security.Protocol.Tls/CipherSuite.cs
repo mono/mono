@@ -242,16 +242,6 @@ namespace Mono.Security.Protocol.Tls
 			this.createDecryptionCipher();
 		}
 
-		public RSA CertificateRSA()
-		{
-			RSA rsaCert = this.Context.ServerSettings.Certificates[0].RSA;
-			RSA rsa		= new RSAManaged(rsaCert.KeySize);
-
-			rsa.ImportParameters(rsaCert.ExportParameters(false));
-
-			return rsa;
-		}
-
 		public void UpdateClientCipherIV(byte[] iv)
 		{
 			if (this.cipherMode == CipherMode.CBC)
@@ -378,6 +368,16 @@ namespace Mono.Security.Protocol.Tls
 		{
 			HashAlgorithm md5	= MD5.Create();
 			HashAlgorithm sha1	= SHA1.Create();
+
+			/* Secret Length calc exmplain from the RFC2246. Section 5
+			 * 
+			 * S1 and S2 are the two halves of the secret and each is the same
+			 * length. S1 is taken from the first half of the secret, S2 from the
+			 * second half. Their length is created by rounding up the length of the
+			 * overall secret divided by two; thus, if the original secret is an odd
+			 * number of bytes long, the last byte of S1 will be the same as the
+			 * first byte of S2.
+			 */
 
 			// split secret in 2
 			int secretLen = secret.Length >> 1;
