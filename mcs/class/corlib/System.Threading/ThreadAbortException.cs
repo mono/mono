@@ -31,6 +31,7 @@
 //
 
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 namespace System.Threading
 {
@@ -40,6 +41,10 @@ namespace System.Threading
 		private ThreadAbortException () : base ("Thread was being aborted")
 		{
 			HResult = unchecked ((int) 0x80131530);
+		}
+
+		private ThreadAbortException (SerializationInfo info, StreamingContext sc) : base (info, sc)
+		{
 		}
 
 		public object ExceptionState {

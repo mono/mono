@@ -1,3 +1,7 @@
+2004-12-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ThreadAbortException.cs: added private serialization .ctor.
+
 2004-09-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Timer.cs: don't invoke the callback twice when the timer changes.
