@@ -32,8 +32,41 @@ namespace System.IO {
 
 		private Stream internalStream;
 
-		[MonoTODO("Make Read methods return 0, etc.")]
 		private class NullStreamReader : StreamReader {
+			public override int Peek ()
+			{
+				return -1;
+			}
+
+			public override int Read ()
+			{
+				return -1;
+			}
+
+			public override int Read (char[] buffer, int index, int count)
+			{
+				return 0;
+			}
+
+			public override string ReadLine ()
+			{
+				return null;
+			}
+
+			public override string ReadToEnd ()
+			{
+				return String.Empty;
+			}
+
+			public override Stream BaseStream
+			{
+				get { return Stream.Null; }
+			}
+
+			public override Encoding CurrentEncoding
+			{
+				get { return Encoding.Unicode; }
+			}
 		}
 
 		public new static readonly StreamReader Null = (StreamReader)(new NullStreamReader());
