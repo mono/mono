@@ -1,3 +1,8 @@
+2005-01-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HashTest.cs: Changed [Ignore] to [Category("NotWorking")] to reduce
+	nunit logs.
+
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PolicyLevelTest.cs: Removed [Ignore] from tests as they now execute
