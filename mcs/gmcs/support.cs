@@ -140,10 +140,13 @@ namespace Mono.CSharp {
 			int len = pi.Length;
 
 			if (last_arg_is_params && pos >= pi.Length - 1)
-					return Parameter.Modifier.PARAMS;
+				return Parameter.Modifier.PARAMS;
 			else if (is_varargs && pos >= pi.Length)
 				return Parameter.Modifier.ARGLIST;
 			
+			if (gpd != null)
+				return gpd.ParameterModifier (pos);
+
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef){
 				if ((pi [pos].Attributes & ParameterAttributes.Out) != 0)

@@ -1,5 +1,10 @@
 2004-11-10  Martin Baulig  <martin@ximian.com>
 
+	* support.cs (ReflectionParameters.ParameterModifier): If `gpd' is
+	non-null, call ParameterModifier() on it.
+
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
 	* iterators.cs
 	(Iterators): Added `current_type' and `this_type' fields.
 	(Iterators.DefineIterator): Create a new EmitContext and store it
