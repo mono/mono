@@ -63,54 +63,66 @@ namespace System.Text.RegularExpressions {
 				switch (op) {
 				case OpCode.Anchor: {
 					int skip = program[pc + 1];
-
+					
 					int anch_offset = program[pc + 2];
-					int anch_ptr = ptr + anch_offset;
-					int anch_end = text_end - match_min + anch_offset;	// maximum anchor position
+					bool anch_reverse = (flags & OpFlags.RightToLeft) != 0;	
+					int anch_ptr = anch_reverse ?  ptr - anch_offset  : ptr + anch_offset;
+					int anch_end = text_end - match_min + anch_offset;	// maximum anchor position  
+					
+					
+					int anch_begin =  0;
+
 
 					// the general case for an anchoring expression is at the bottom, however we
 					// do some checks for the common cases before to save processing time. the current
 					// optimizer only outputs three types of anchoring expressions: fixed position,
 					// fixed substring, and no anchor.
 
-					OpCode anch_op = (OpCode)(program[pc + 3] & 0x00ff);
+					OpCode anch_op = (OpCode)(program[pc + 3] & 0x00ff);					
 					if (anch_op == OpCode.Position && skip == 6) {				// position anchor
 						// Anchor
 						// 	Position
 						//	True
 
 						switch ((Position)program[pc + 4]) {
-						case Position.StartOfString:
-							if (anch_ptr == 0) {
-								ptr = 0;
+						case Position.StartOfString:							
+							if (anch_reverse || anch_offset == 0) {
+								ptr = anch_offset;
 								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
 							}
 							break;
 						
 						case Position.StartOfLine:
-							if (anch_ptr == 0) {
+													
+							 if (anch_ptr == 0) {
 								ptr = 0;
 								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
-
+								
 								++ anch_ptr;
 							}
 
-							while (anch_ptr <= anch_end) {
-								if (text[anch_ptr - 1] == '\n') {
-									ptr = anch_ptr - anch_offset;
+							while ((anch_reverse && anch_ptr >= 0) || (!anch_reverse && anch_ptr <= anch_end)) {  
+								if (anch_ptr == 0 || text[anch_ptr - 1] == '\n') {
+									if (anch_reverse)
+										ptr = anch_ptr == anch_end ? anch_ptr : anch_ptr + anch_offset;
+									else
+										ptr = anch_ptr == 0 ? anch_ptr : anch_ptr - anch_offset;
 									if (TryMatch (ref ptr, pc + skip))
 										goto Pass;
 								}
-
-								++ anch_ptr;
+							
+								if (anch_reverse)
+									-- anch_ptr;
+								else
+									++ anch_ptr;
 							}
 							break;
 						
 						case Position.StartOfScan:
-							if (anch_ptr == scan_ptr) {
-								ptr = scan_ptr - anch_offset;
+							if (anch_ptr == scan_ptr) {							
+								ptr = anch_reverse ? scan_ptr + anch_offset : scan_ptr - anch_offset;
 								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
 							}
@@ -126,36 +138,55 @@ namespace System.Text.RegularExpressions {
 						// Anchor
 						//	String
 						//	True
+				 
+						bool reverse = ((OpFlags)program[pc + 3] & OpFlags.RightToLeft) != 0;
+						string substring = GetString (pc + 3);
 
 						if (qs == null) {
 							bool ignore = ((OpFlags)program[pc + 3] & OpFlags.IgnoreCase) != 0;
-							string substring = GetString (pc + 3);
 
-							qs = new QuickSearch (substring, ignore);
+							qs = new QuickSearch (substring, ignore, reverse);
 						}
+						while ((anch_reverse && anch_ptr >= anch_begin) 
+						       || (!anch_reverse && anch_ptr <= anch_end)) {
 
-						while (anch_ptr <= anch_end) {
-							anch_ptr = qs.Search (text, anch_ptr, anch_end);
+							if (reverse) 	
+							{
+								anch_ptr = qs.Search (text, anch_ptr, anch_begin);
+								if (anch_ptr != -1)
+									anch_ptr += substring.Length ;
+								
+							}
+							else
+								anch_ptr = qs.Search (text, anch_ptr, anch_end);
 							if (anch_ptr < 0)
 								break;
 
-							ptr = anch_ptr - anch_offset;
+							ptr = reverse ? anch_ptr + anch_offset : anch_ptr - anch_offset;
 							if (TryMatch (ref ptr, pc + skip))
 								goto Pass;
 
-							++ anch_ptr;
+							if (reverse)
+								anch_ptr -= 2;
+							else 
+								++ anch_ptr;
 						}
 					}
 					else if (anch_op == OpCode.True) {					// no anchor
 						// Anchor
 						//	True
 
-						while (anch_ptr <= anch_end) {
+					
+						while ((anch_reverse && anch_ptr >= anch_begin) 
+						       || (!anch_reverse && anch_ptr <= anch_end)) {
+
 							ptr = anch_ptr;
 							if (TryMatch (ref ptr, pc + skip))
 								goto Pass;
-
-							++ anch_ptr;
+							if (anch_reverse)
+								-- anch_ptr;
+							else 
+								++ anch_ptr;
 						}
 					}
 					else {									// general case
@@ -163,17 +194,22 @@ namespace System.Text.RegularExpressions {
 						//	<expr>
 						//	True
 
-						while (anch_ptr <= anch_end) {
+						while ((anch_reverse && anch_ptr >= anch_begin) 
+						       || (!anch_reverse && anch_ptr <= anch_end)) {
+
 							ptr = anch_ptr;
 							if (Eval (Mode.Match, ref ptr, pc + 3)) {
 								// anchor expression passed: try real expression at the correct offset
 
-								ptr = anch_ptr - anch_offset;
+								ptr = anch_reverse ? anch_ptr + anch_offset : anch_ptr - anch_offset;
 								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
 							}
 
-							++ anch_ptr;
+						    if (anch_reverse)
+								-- anch_ptr;
+							else 
+								++ anch_ptr;
 						}
 					}
 
@@ -205,7 +241,8 @@ namespace System.Text.RegularExpressions {
 						if (ptr < 0)
 							goto Fail;
 					}
-					else if (ptr + len > text_end)
+					else 
+					if (ptr + len > text_end)
 						goto Fail;
 
 					pc += 2;
@@ -460,7 +497,16 @@ namespace System.Text.RegularExpressions {
 						OpFlags tail_flags = (OpFlags)(tail_word & 0xff00);
 
 						if (tail_op == OpCode.String)
-							c1 = program[pc + 2];				// first char of string
+						{
+							int offset = 0;
+						
+							if ((tail_flags & OpFlags.RightToLeft) != 0)
+							{
+								offset = program[pc + 1] - 1 ;
+							}
+							  
+							c1 = program[pc + 2 + offset];				// first char of string
+						}
 						else
 							c1 = program[pc + 1];				// character
 						
@@ -585,6 +631,7 @@ namespace System.Text.RegularExpressions {
 			char c = '\0';
 			bool negate;
 			bool ignore;
+		
 			do {
 				ushort word = program[pc];
 				OpCode op = (OpCode)(word & 0x00ff);
@@ -660,6 +707,7 @@ namespace System.Text.RegularExpressions {
 					int i = (int)c - lo;
 					if (i < 0 || i >= len << 4)
 						break;
+						
 
 					if ((program[bits + (i >> 4)] & (1 << (i & 0xf))) != 0)
 						return !negate;
@@ -876,7 +924,7 @@ namespace System.Text.RegularExpressions {
 		private int[] groups;			// current group definitions
 
 		// private classes
-
+/*
 		private struct Mark {
 			public int Start, End;
 			public int Previous;
@@ -893,7 +941,7 @@ namespace System.Text.RegularExpressions {
 				get { return Start < End ? End - Start : Start - End; }
 			}
 		}
-
+*/
 		private class RepeatContext {
 			public RepeatContext (RepeatContext previous, int min, int max, bool lazy, int expr_pc) {
 				this.previous = previous;

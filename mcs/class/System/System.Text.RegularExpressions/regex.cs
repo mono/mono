@@ -16,6 +16,9 @@ using System.Runtime.Serialization;
 using RegularExpression = System.Text.RegularExpressions.Syntax.RegularExpression;
 using Parser = System.Text.RegularExpressions.Syntax.Parser;
 
+using System.Diagnostics;
+
+
 namespace System.Text.RegularExpressions {
 	
 	public delegate string MatchEvaluator (Match match);
@@ -39,21 +42,49 @@ namespace System.Text.RegularExpressions {
 		public static void CompileToAssembly
 			(RegexCompilationInfo[] regexes, AssemblyName aname)
 		{
-			throw new Exception ("Not implemented.");
+				Regex.CompileToAssembly(regexes, aname, new CustomAttributeBuilder[] {}, null);
 		}
 
 		public static void CompileToAssembly
 			(RegexCompilationInfo[] regexes, AssemblyName aname,
 			 CustomAttributeBuilder[] attribs)
 		{
-			throw new Exception ("Not implemented.");
+			Regex.CompileToAssembly(regexes, aname, attribs, null);		       
 		}
 
 		public static void CompileToAssembly
 			(RegexCompilationInfo[] regexes, AssemblyName aname,
 			 CustomAttributeBuilder[] attribs, string resourceFile)
 		{
-			throw new Exception ("Not implemented.");
+			throw new Exception ("Not fully implemented.");
+			// TODO : Make use of attribs and resourceFile parameters
+			/*
+			AssemblyBuilder asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.RunAndSave);
+			ModuleBuilder modBuilder = asmBuilder.DefineDynamicModule("InnerRegexModule",aname.Name);
+			Parser psr = new Parser ();	
+			
+			System.Console.WriteLine("CompileToAssembly");
+			       
+			for(int i=0; i < regexes.Length; i++)
+				{
+					System.Console.WriteLine("Compiling expression :" + regexes[i].Pattern);
+					RegularExpression re = psr.ParseRegularExpression (regexes[i].Pattern, regexes[i].Options);
+					
+					// compile
+										
+					CILCompiler cmp = new CILCompiler (modBuilder, i);
+					bool reverse = (regexes[i].Options & RegexOptions.RightToLeft) !=0;
+					re.Compile (cmp, reverse);
+					cmp.Close();
+					
+				}
+		       
+
+			// Define a runtime class with specified name and attributes.
+			TypeBuilder builder = modBuilder.DefineType("ITest");
+			builder.CreateType();
+			asmBuilder.Save(aname.Name);
+			*/
 		}
 		
 		public static string Escape (string str) {
@@ -136,6 +167,7 @@ namespace System.Text.RegularExpressions {
 
 		protected Regex () {
 			// XXX what's this constructor for?
+			// : Used to compile to assembly (Custum regex inherit from Regex and use this constructor)
 		}
 
 		public Regex (string pattern) : this (pattern, RegexOptions.None) {
@@ -143,11 +175,11 @@ namespace System.Text.RegularExpressions {
 
 		public Regex (string pattern, RegexOptions options) {
 			this.pattern = pattern;
-			this.options = options;
+			this.roptions = options;
 		
-			this.factory = cache.Lookup (pattern, options);
+			this.machineFactory = cache.Lookup (pattern, options);
 
-			if (this.factory == null) {
+			if (this.machineFactory == null) {
 				// parse and install group mapping
 
 				Parser psr = new Parser ();
@@ -159,8 +191,8 @@ namespace System.Text.RegularExpressions {
 				
 				ICompiler cmp;
 				//if ((options & RegexOptions.Compiled) != 0)
-				//	throw new Exception ("Not implemented.");
-					//cmp = new CILCompiler ();
+				//	//throw new Exception ("Not implemented.");
+				//	cmp = new CILCompiler ();
 				//else
 					cmp = new PatternCompiler ();
 
@@ -168,29 +200,29 @@ namespace System.Text.RegularExpressions {
 
 				// install machine factory and add to pattern cache
 
-				this.factory = cmp.GetMachineFactory ();
-				this.factory.Mapping = mapping;
-				cache.Add (pattern, options, this.factory);
+				this.machineFactory = cmp.GetMachineFactory ();
+				this.machineFactory.Mapping = mapping;
+				cache.Add (pattern, options, this.machineFactory);
 			} else {
-				this.group_count = this.factory.GroupCount;
-				this.mapping = this.factory.Mapping;
+				this.group_count = this.machineFactory.GroupCount;
+				this.mapping = this.machineFactory.Mapping;
 			}
 		}
 
 		protected Regex (SerializationInfo info, StreamingContext context) :
 			this (info.GetString ("pattern"), 
-			      (RegexOptions) info.GetValue ("options", typeof (RegexOptions))) {			
+			      (RegexOptions) info.GetValue ("roptions", typeof (RegexOptions))) {			
 		}
 
 
 		// public instance properties
 		
 		public RegexOptions Options {
-			get { return options; }
+			get { return roptions; }
 		}
 
 		public bool RightToLeft {
-			get { return (options & RegexOptions.RightToLeft) != 0; }
+			get { return (roptions & RegexOptions.RightToLeft) != 0; }
 		}
 
 		// public instance methods
@@ -231,7 +263,10 @@ namespace System.Text.RegularExpressions {
 		// match methods
 		
 		public bool IsMatch (string input) {
-			return IsMatch (input, 0);
+			if (RightToLeft)
+				return IsMatch (input, input.Length);
+			else
+				return IsMatch (input, 0);
 		}
 
 		public bool IsMatch (string input, int startat) {
@@ -239,19 +274,27 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public Match Match (string input) {
-			return Match (input, 0);
+			if (RightToLeft)
+				return Match (input, input.Length);
+			else
+				return Match (input, 0);
 		}
 
 		public Match Match (string input, int startat) {
+	
 			return CreateMachine ().Scan (this, input, startat, input.Length);
 		}
 
 		public Match Match (string input, int startat, int length) {
+	
 			return CreateMachine ().Scan (this, input, startat, startat + length);
 		}
 
 		public MatchCollection Matches (string input) {
-			return Matches (input, 0);
+			if (RightToLeft)
+				return Matches (input, input.Length);
+			else
+				return Matches (input, 0);
 		}
 
 		public MatchCollection Matches (string input, int startat) {
@@ -268,11 +311,17 @@ namespace System.Text.RegularExpressions {
 		// replace methods
 
 		public string Replace (string input, MatchEvaluator evaluator) {
-			return Replace (input, evaluator, Int32.MaxValue, 0);
+			if (RightToLeft)			
+				return Replace (input, evaluator, Int32.MaxValue, input.Length);
+			else
+				return Replace (input, evaluator, Int32.MaxValue, 0);
 		}
 
 		public string Replace (string input, MatchEvaluator evaluator, int count) {
-			return Replace (input, evaluator, count, 0);
+			if (RightToLeft)
+				return Replace (input, evaluator, count, input.Length);
+			else
+				return Replace (input, evaluator, count, 0);
 		}
 
 		public string Replace (string input, MatchEvaluator evaluator, int count, int startat)
@@ -294,11 +343,17 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public string Replace (string input, string replacement) {
-			return Replace (input, replacement, Int32.MaxValue, 0);
+			if (RightToLeft)
+				return Replace (input, replacement, Int32.MaxValue, input.Length);
+			else
+				return Replace (input, replacement, Int32.MaxValue, 0);
 		}
 
 		public string Replace (string input, string replacement, int count) {
-			return Replace (input, replacement, count, 0);
+			if (RightToLeft)			
+				return Replace (input, replacement, count, input.Length);
+			else	
+				return Replace (input, replacement, count, 0);
 		}
 
 		public string Replace (string input, string replacement, int count, int startat) {
@@ -309,11 +364,17 @@ namespace System.Text.RegularExpressions {
 		// split methods
 
 		public string[] Split (string input) {
-			return Split (input, Int32.MaxValue, 0);
+			if (RightToLeft)	
+				return Split (input, Int32.MaxValue, input.Length);
+			else
+				return Split (input, Int32.MaxValue, 0);
 		}
 
 		public string[] Split (string input, int count) {
-			return Split (input, count, 0);
+			if (RightToLeft)				
+				return Split (input, count, input.Length);
+			else
+				return Split (input, count, 0);
 		}
 
 		public string[] Split (string input, int count, int startat) {
@@ -327,21 +388,51 @@ namespace System.Text.RegularExpressions {
 				if (!m.Success)
 					break;
 			
-				splits.Add (input.Substring (ptr, m.Index - ptr));
+				if (RightToLeft)
+					splits.Add (input.Substring (m.Index + m.Length , ptr - m.Index - m.Length ));
+				else
+					splits.Add (input.Substring (ptr, m.Index - ptr));
+					
 				int gcount = m.Groups.Count;
 				for (int gindex = 1; gindex < gcount; gindex++) {
 					Group grp = m.Groups [gindex];
 					splits.Add (input.Substring (grp.Index, grp.Length));
 				}
 
-				ptr = m.Index + m.Length;
+				if (RightToLeft)
+					ptr = m.Index; 
+				else
+					ptr = m.Index + m.Length;
+					
 			}
 
-			if (ptr <= input.Length) {
-				splits.Add (input.Substring (ptr));
+			if (RightToLeft) {
+				if ( ptr >= 0) {
+						splits.Add (input.Substring(0, ptr));
+				}
+			}				
+			else {
+				if (ptr <= input.Length) {
+						splits.Add (input.Substring (ptr));
+				}
+				
 			}
 
 			return (string []) splits.ToArray (typeof (string));
+		}
+
+		// MS undocummented method
+                               
+		protected void InitializeReferences() {
+			throw new Exception ("Not implemented.");
+		}
+		
+		protected bool UseOptionC(){
+			throw new Exception ("Not implemented.");
+		}
+
+		protected bool UseOptionR(){
+			throw new Exception ("Not implemented.");
 		}
 
 		// object methods
@@ -353,7 +444,7 @@ namespace System.Text.RegularExpressions {
 		// ISerializable interface
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {
 			info.AddValue ("pattern", this.ToString (), typeof (string));
-			info.AddValue ("options", this.Options, typeof (RegexOptions));
+			info.AddValue ("roptions", this.Options, typeof (RegexOptions));
 		}
 
 		// internal
@@ -365,15 +456,25 @@ namespace System.Text.RegularExpressions {
 		// private
 
 		private IMachine CreateMachine () {
-			return factory.NewInstance ();
+			return machineFactory.NewInstance ();
 		}
 
-		protected internal string pattern;
-		private RegexOptions options;
-
-		private IMachineFactory factory;
+		private IMachineFactory machineFactory;
 		private IDictionary mapping;
 		private int group_count;
+
+		
+		// protected members
+
+		protected internal string pattern;
+		protected internal RegexOptions roptions;
+		
+		// MS undocumented members
+		protected internal System.Collections.Hashtable capnames;
+		protected internal System.Collections.Hashtable cap;
+		protected internal int capsize;
+		protected internal string[] caplist;
+		protected internal RegexRunnerFactory factory;
 	}
 
 	[Serializable]

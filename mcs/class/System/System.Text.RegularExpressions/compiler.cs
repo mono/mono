@@ -51,7 +51,11 @@ namespace System.Text.RegularExpressions {
 		void EmitIn (LinkRef tail);
 		void EmitInfo (int count, int min, int max);
 		void EmitFastRepeat (int min, int max, bool lazy, LinkRef tail);
-		void EmitAnchor (int offset, LinkRef tail);
+		void EmitAnchor (bool reverse, int offset, LinkRef tail);
+
+		// event for the CILCompiler
+		void EmitBranchEnd();
+		void EmitAlternationEnd();
 
 		LinkRef NewLink ();
 		void ResolveLink (LinkRef link);
@@ -254,9 +258,9 @@ namespace System.Text.RegularExpressions {
 			EmitLink (tail);
 		}
 
-		public void EmitAnchor (int offset, LinkRef tail) {
+		public void EmitAnchor (bool reverse, int offset, LinkRef tail) {
 			BeginLink (tail);
-			Emit (OpCode.Anchor);
+			Emit (OpCode.Anchor, MakeFlags(false, false, reverse, false));
 			EmitLink (tail);
 			Emit ((ushort)offset);
 		}
@@ -278,6 +282,9 @@ namespace System.Text.RegularExpressions {
 			while (stack.Pop ())
 				pgm[stack.OffsetAddress] = (ushort)stack.GetOffset (CurrentAddress);
 		}
+
+		public void EmitBranchEnd(){}
+		public void EmitAlternationEnd(){}
 
 		// private members
 
@@ -318,6 +325,7 @@ namespace System.Text.RegularExpressions {
 			Emit ((ushort)0);	// placeholder
 			stack.Push ();
 		}
+
 
 		private class PatternLinkStack : LinkStack {
 			public PatternLinkStack () {
@@ -375,4 +383,23 @@ namespace System.Text.RegularExpressions {
 
 		private Stack stack;
 	}
+
+	//Used by CILCompiler and Interpreter
+	internal struct Mark {
+		public int Start, End;
+		public int Previous;
+		
+		public bool IsDefined {
+			get { return Start >= 0 && End >= 0; }
+		}
+		
+		public int Index {
+			get { return Start < End ? Start : End; }
+		}
+		
+		public int Length {
+			get { return Start < End ? End - Start : Start - End; }
+		}
+	}
+
 }

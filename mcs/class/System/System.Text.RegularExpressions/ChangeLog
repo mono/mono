@@ -1,3 +1,14 @@
+2004-03-17  Francois Beauchemin <beauche@softhome.net>
+ 	* syntax.cs, interpreter.cs, quicksearch.cs, regex.cs, compiler.cs : 
+ 		Revised support for RigthToLeft. 
+ 		quicksearch has now an reverse option.		
+ 		This fixes bug #54537 
+ 
+  	* regex.cs, compiler.cs :
+ 	 	Some code to support CILCompiler.		
+ 	* regex.cs : 
+ 		Added some undocumented of MS.
+ 
 2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* parser.cs: allow a @"\0" escape sequence. Fixes bug #54797.

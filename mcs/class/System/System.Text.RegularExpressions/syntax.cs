@@ -43,7 +43,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			return -1;
 		}
 
-		public virtual AnchorInfo GetAnchorInfo () {
+		public virtual AnchorInfo GetAnchorInfo (bool reverse) {
 			return new AnchorInfo (this, GetFixedWidth ());
 		}
 
@@ -130,7 +130,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			}
 		}
 
-		public override AnchorInfo GetAnchorInfo () {
+		public override AnchorInfo GetAnchorInfo (bool reverse) {
 			int ptr;
 			int width = GetFixedWidth ();
 
@@ -140,8 +140,16 @@ namespace System.Text.RegularExpressions.Syntax {
 			// accumulate segments
 
 			ptr = 0;
-			foreach (Expression e in Expressions) {
-				AnchorInfo info = e.GetAnchorInfo ();
+			//foreach (Expression e in Expressions) {
+			int count = Expressions.Count;
+			for (int i = 0; i < count; ++ i) {
+				Expression e;
+				if (reverse)
+					e = Expressions [count - i - 1];
+				else
+					e = Expressions [i];		
+				
+				AnchorInfo info = e.GetAnchorInfo (reverse);
 				infos.Add (info);
 
 				if (info.IsPosition)
@@ -170,20 +178,40 @@ namespace System.Text.RegularExpressions.Syntax {
 
 			if (!longest.IsEmpty) {
 				string str = "";
+				ArrayList strs = new ArrayList();
 				bool ignore = false;
 
 				ptr = 0;
-				foreach (AnchorInfo info in infos) {
+				
+				//foreach (AnchorInfo info in infos) {
+				for (int i = 0; i < infos.Count; ++ i) {
+					AnchorInfo info;
+
+					info = (AnchorInfo)infos[i];		
+					
 					if (info.IsSubstring && longest.Contains (info.GetInterval (ptr))) {
-						str += info.Substring;	// TODO mark subexpressions
+						//str += info.Substring;	// TODO mark subexpressions
+						strs.Add(info.Substring);
 						ignore |= info.IgnoreCase;
 					}
 
-					if (info.IsUnknownWidth)
-						break;
-
-					ptr += info.Width;
+					
+					 	if (info.IsUnknownWidth)					 		
+							break;
+					
+						ptr += info.Width;
+				}	
+					
+				for (int i = 0; i< strs.Count; ++i)
+				{
+					if (reverse)
+						str += strs [strs.Count - i - 1];
+					else
+						str += strs [i];
+							
+					
 				}
+			
 
 				return new AnchorInfo (this, longest.low, width, str, ignore);
 			}
@@ -220,12 +248,12 @@ namespace System.Text.RegularExpressions.Syntax {
 
 			// anchoring expression
 
-			AnchorInfo info = GetAnchorInfo ();
-			if (reverse)
-				info = new AnchorInfo (this, GetFixedWidth ());	// FIXME
+			AnchorInfo info = GetAnchorInfo (reverse);
+			//if (reverse)
+			//	info = new AnchorInfo (this, GetFixedWidth ());	// FIXME
 
 			LinkRef pattern = cmp.NewLink ();
-			cmp.EmitAnchor (info.Offset, pattern);
+			cmp.EmitAnchor (reverse, info.Offset, pattern);
 
 			if (info.IsPosition)
 				cmp.EmitPosition (info.Position);
@@ -385,12 +413,12 @@ namespace System.Text.RegularExpressions.Syntax {
 				max = max * this.max;
 		}
 
-		public override AnchorInfo GetAnchorInfo () {
+		public override AnchorInfo GetAnchorInfo (bool reverse) {
 			int width = GetFixedWidth ();
 			if (Minimum == 0)
 				return new AnchorInfo (this, width);
 			
-			AnchorInfo info = Expression.GetAnchorInfo ();
+			AnchorInfo info = Expression.GetAnchorInfo (reverse);
 			if (info.IsPosition)
 				return new AnchorInfo (this, info.Offset, width, info.Position);
 			
@@ -524,7 +552,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			
 			// test expression: lookahead / lookbehind
 
-			TestExpression.Compile (cmp, reverse ^ this.reverse);
+			TestExpression.Compile (cmp, this.reverse);
 			cmp.EmitTrue ();
 
 			// target expressions
@@ -587,18 +615,21 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		public override void Compile (ICompiler cmp, bool reverse) {
-			LinkRef next = cmp.NewLink ();
+			//			LinkRef next = cmp.NewLink ();
 			LinkRef tail = cmp.NewLink ();
 		
 			foreach (Expression e in Alternatives) {
+				LinkRef next = cmp.NewLink ();
 				cmp.EmitBranch (next);
 				e.Compile (cmp, reverse);
 				cmp.EmitJump (tail);
 				cmp.ResolveLink (next);
+				cmp.EmitBranchEnd();
 			}
 
 			cmp.EmitFalse ();
 			cmp.ResolveLink (tail);
+			cmp.EmitAlternationEnd();
 		}
 
 		public override void GetWidth (out int min, out int max) {
@@ -647,7 +678,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			min = max = str.Length;
 		}
 
-		public override AnchorInfo GetAnchorInfo () {
+		public override AnchorInfo GetAnchorInfo (bool reverse) {
 			return new AnchorInfo (this, 0, str.Length, str, ignore);
 		}
 
@@ -681,7 +712,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			return false;
 		}
 
-		public override AnchorInfo GetAnchorInfo () {
+		public override AnchorInfo GetAnchorInfo (bool revers) {
 			switch (pos) {
 			case Position.StartOfString: case Position.StartOfLine: case Position.StartOfScan:
 				return new AnchorInfo (this, 0, 0, pos);
@@ -816,7 +847,6 @@ namespace System.Text.RegularExpressions.Syntax {
 
 		public override void Compile (ICompiler cmp, bool reverse) {
 			// create the meta-collection
-
 			IntervalCollection meta =
 				intervals.GetMetaCollection (new IntervalCollection.CostDelegate (GetIntervalCost));
 
@@ -836,6 +866,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			LinkRef tail = cmp.NewLink ();
 			if (count > 1)
 				cmp.EmitIn (tail);
+				
 
 			// emit categories
 
@@ -1004,3 +1035,4 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 	}
 }
+
