@@ -1,3 +1,8 @@
+2004-04-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* outline.cs: Don't show the interfaces of an enum,
+	s/;/, for enum. Style cop.
+
 2004-04-27  John Luke <jluke@cfl.rr.com>
 
 	* outline.cs: add GetTypeKind so we print

@@ -36,7 +36,7 @@ public class Outline {
 		Type [] interfaces = (Type []) Comparer.Sort (t.GetInterfaces ());
 		Type parent = t.BaseType;
 
-		if ((parent != null && parent != typeof (object) && parent != typeof (ValueType)) || interfaces.Length != 0) {
+		if (((parent != null && parent != typeof (object) && parent != typeof (ValueType)) || interfaces.Length != 0) && ! t.IsEnum) {
 			bool first = true;
 			o.Write (" : ");
 			
@@ -56,16 +56,18 @@ public class Outline {
 		o.WriteLine (" {");
 		o.Indent++;
 
-		if (t.IsEnum)
-		{
+		if (t.IsEnum) {
+			bool is_first = true;
 			foreach (FieldInfo fi in t.GetFields ()) {
-				if (fi.Name != "value__")
-				{
-					o.Write (fi.Name);
-					o.Write (";");
-					o.WriteLine ();
-				}
+				if (fi.Name == "value__")
+					continue;
+				
+				if (! is_first)
+					o.WriteLine (",");
+				is_first = false;
+				o.Write (fi.Name);
 			}
+			o.WriteLine ();
 			o.Indent--; o.WriteLine ("}");
 			return;
 		}
