@@ -531,7 +531,7 @@ namespace System.Reflection
 		private int flags;
 		private Type[] constraints;
 		private bool has_ctor_constraint;
-		bool initialized;
+		private bool initialized;
 
 		[MonoTODO]
 		internal MonoGenericParam ()
