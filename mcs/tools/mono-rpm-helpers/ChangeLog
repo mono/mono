@@ -1,3 +1,8 @@
+2004-08-04  Duncan Mak  <duncan@ximian.com>
+
+	* mono-find-provides/mono-find-provides.cs: Add a hack to work
+	around the issue with a 2.0 corlib.
+
 2004-06-01  Todd Berman  <tberman@sevenl.net>
 
 	* all: move stuff around so that it builds properly.
