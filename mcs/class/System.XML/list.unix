@@ -233,6 +233,7 @@ System.Xml.Serialization/XmlTypeMapElementInfo.cs
 System.Xml.Serialization/XmlTypeMapMember.cs
 System.Xml.Serialization/XmlTypeMapMemberAttribute.cs
 System.Xml.Serialization/XmlTypeMapMemberElement.cs
+System.Xml.Serialization/XmlTypeMapMemberNamespaces.cs
 System.Xml.Serialization/XmlTypeMapping.cs
 System.Xml.Serialization/XmlElementEventHandler.cs
 System.Xml.Serialization/XmlNodeEventHandler.cs
