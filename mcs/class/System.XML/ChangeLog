@@ -1,3 +1,7 @@
+2002-06-20  Ajay kumar Dwivedi <adwiv@yahoo.com>
+	
+	* System.Xml.Serialization: Added to build target
+
 2002-05-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* System.Xml.Serialization/XmlElementAttribute.cs: Add allowmultiple
