@@ -1314,7 +1314,7 @@ namespace Mono.CSharp
 							margs [0] = spec.Substring (cp + 1);
 							margs [1] = spec.Substring (0, cp);
 						} else
-							margs [0] = margs [1] = file;
+							margs [0] = margs [1] = spec;
 						embed_res.Invoke (CodeGen.AssemblyBuilder, margs);
 					}
 				}
