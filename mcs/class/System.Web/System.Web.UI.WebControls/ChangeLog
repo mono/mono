@@ -1,7 +1,6 @@
 2002-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AdRotator.cs:
-	* BaseValidator.cs:
 	* Button.cs:
 	* Calendar.cs:
 	* CheckBox.cs:
@@ -24,6 +23,8 @@
 	* TextBox.cs:
 	* WebControl.cs:
 	* Xml.cs: added/fixed all attributes used by xsp.
+
+	* BaseValidator.cs: some fixes.
 
 2002-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
