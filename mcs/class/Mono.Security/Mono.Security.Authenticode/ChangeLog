@@ -1,3 +1,7 @@
+2004-02-20  Sebastien Pouliot  <sebastien@ximian.com>	
+
+	* AuthenticodeDeformatter.cs: Updated to use the new X509Chain syntax. 
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>	
 
 	* AuthenticodeDeformatter.cs: Now throw a COMException for invalid 

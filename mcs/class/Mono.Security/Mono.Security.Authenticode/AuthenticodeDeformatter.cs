@@ -259,7 +259,7 @@ namespace Mono.Security.Authenticode {
 						RSACryptoServiceProvider rsa = (RSACryptoServiceProvider) x509.RSA;
 						if (rsa.VerifyHash (p7hash, hashOID, signature)) {
 							signerChain.LoadCertificates (coll);
-							if (signerChain.GetChain (x509) != null)
+							if (signerChain.Build (x509))
 								signingCertificate = x509;
 							else
 								return false;
@@ -367,7 +367,7 @@ namespace Mono.Security.Authenticode {
 						RSACryptoServiceProvider rsa = (RSACryptoServiceProvider) x509.RSA;
 						if (rsa.VerifyHash (p7hash, hashOID, counterSignature)) {
 							timestampChain.LoadCertificates (coll);
-							return (timestampChain.GetChain (x509) != null);
+							return (timestampChain.Build (x509));
 						}
 					}
 				}
