@@ -1,3 +1,10 @@
+2003-01-10  Duncan Mak  <duncan@ximian.com>
+
+	* CompilerErrorCollection.cs: 
+	* CompilerParameters.cs: Patch from Sean Kasun
+	<skasun@azstarnet.com> implementing most of the MonoTODOs in
+	CompilerErrorCollection and the CompilerParameters overloads in CompilerParameters.cs.
+
 2002-11-30 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeCompiler.cs: Removed TODO attribute from abstract members

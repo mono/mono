@@ -1,3 +1,8 @@
+2003-01-10  Duncan Mak  <duncan@ximian.com>
+
+	* list.unix (CSharpCodeCompiler): Add
+	Microsoft.Charp.CSharpCodeCompiler for Sean Kasun.
+
 2002-12-10  Jeroen Janssen <japj@darius.demon.nl>
 	
 	* updated .build file(s) to correctly contain required buildfile 

@@ -1,3 +1,9 @@
+2003-01-10  Duncan Mak  <duncan@ximian.com>
+
+	* CSharpCodeCompiler.cs: 
+	* CSharpCodeProvider.cs: Patch from Sean Kasun
+	<skasun@azstarnet.com> to implement CSharpCodeCompiler.
+
 2002-12-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* CompilerError.cs Compiler.cs: Moving these classes to their own assembly

@@ -35,14 +35,23 @@ namespace System.CodeDom.Compiler
 		
 		public CompilerParameters( string[] assemblyNames )
 		{
+			referencedAssemblies=new StringCollection();
+			referencedAssemblies.AddRange(assemblyNames);
 		}
 
 		public CompilerParameters( string[] assemblyNames, string output )
 		{
+			referencedAssemblies=new StringCollection();
+			referencedAssemblies.AddRange(assemblyNames);
+			outputAssembly=output;
 		}
 
 		public CompilerParameters( string[] assemblyNames, string output, bool includeDebugInfo )
 		{
+			referencedAssemblies=new StringCollection();
+			referencedAssemblies.AddRange(assemblyNames);
+			outputAssembly=output;
+			includeDebugInformation=includeDebugInfo;
 		}
 
 		

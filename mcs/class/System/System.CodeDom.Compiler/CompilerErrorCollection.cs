@@ -16,96 +16,81 @@ namespace System.CodeDom.Compiler
 		[MonoTODO]
 		public CompilerErrorCollection ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public CompilerErrorCollection (CompilerErrorCollection value)
 		{
-			throw new NotImplementedException ();
+			InnerList.AddRange(value.InnerList);
 		}
 
-		[MonoTODO]
 		public CompilerErrorCollection (CompilerError[] value)
 		{
-			throw new NotImplementedException ();
+			InnerList.AddRange(value);
 		}
 
-		[MonoTODO]
 		public int Add (CompilerError value)
 		{
-			throw new NotImplementedException ();
+			return InnerList.Add(value);
 		}
 
-		[MonoTODO]
 		public void AddRange (CompilerError[] value)
 		{
-			throw new NotImplementedException ();
+			InnerList.AddRange(value);
 		}
 
-		[MonoTODO]
 		public void AddRange (CompilerErrorCollection value)
 		{
-			throw new NotImplementedException ();
+			InnerList.AddRange(value.InnerList);
 		}
 
-		[MonoTODO]
 		public bool Contains (CompilerError value)
 		{
-			throw new NotImplementedException ();
+			return InnerList.Contains(value);
 		}
 
-		[MonoTODO]
 		public void CopyTo (CompilerError[] array, int index)
 		{
-			throw new NotImplementedException ();
+			InnerList.CopyTo(array,index);
 		}
 
-		[MonoTODO]
 		public int IndexOf (CompilerError value)
 		{
-			throw new NotImplementedException ();
+			return InnerList.IndexOf(value);
 		}
 
-		[MonoTODO]
 		public void Insert (int index, CompilerError value)
 		{
-			throw new NotImplementedException ();
+			InnerList.Insert(index,value);
 		}
 
-		[MonoTODO]
 		public void Remove (CompilerError value)
 		{
-			throw new NotImplementedException ();
+			InnerList.Remove(value);
 		}
 
-		[MonoTODO]
 		public CompilerError this [int index]
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (CompilerError) InnerList[index]; }
+			set { InnerList[index]=value; }
 		}
 
-		[MonoTODO]
 		public bool HasErrors
 		{
 			get {
-				throw new NotImplementedException ();
+				foreach (CompilerError error in InnerList)
+					if (!error.IsWarning) return true;
+				return false;
 			}
 		}
 
-		[MonoTODO]
 		public bool HasWarnings
 		{
 			get {
-				throw new NotImplementedException ();
+				foreach (CompilerError error in InnerList)
+					if (error.IsWarning) return true;
+				return false;
 			}
 		}
 	}
-
 }
 

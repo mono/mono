@@ -35,10 +35,9 @@ namespace Microsoft.CSharp
 		//
 		// Methods
 		//
-		[MonoTODO]
 		public override ICodeCompiler CreateCompiler()
 		{
-			throw new NotImplementedException();
+			return new Mono.CSharp.CSharpCodeCompiler();
 		}
 
 		public override ICodeGenerator CreateGenerator()
