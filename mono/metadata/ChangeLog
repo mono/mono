@@ -1,3 +1,7 @@
+2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object-internals.h (MonoReflectionTypeBuilder): Add 'created' field.
+	
 2004-09-30  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* image.c: Always canonicalize image file names, to avoid loading
