@@ -1,5 +1,8 @@
 2003-10-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (TypeBuilder.DefineType): Catch error condition here
+	(Parent.DefineType erroring out and returning null).
+
 	* expression.cs (ArrayCreation.EmitDynamicInitializers): When
 	coping with enumerations variables, we were mistakenly processing
 	them as a regular value type instead of built-in types.  Fixes the

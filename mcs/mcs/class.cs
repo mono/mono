@@ -811,6 +811,9 @@ namespace Mono.CSharp {
 				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
+				if (builder == null)
+					return null;
+				
 				TypeBuilder = builder.DefineNestedType (
 					Basename, type_attributes, parent, ifaces);
 			}
