@@ -1,3 +1,26 @@
+2005-02-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* domain.c: In mono_init_internal(), instead of selecting the first
+	runtime version supported by an executable, get a list of all
+	supported versions and select the one for which an mscorlib exists
+	(since even if the runtime supports a given version, it doesn't mean
+	that the framework for that version is installed).
+	Modified get_runtimes_from_exe to support this behavior.
+	In supported_runtimes, added information about additional system
+	assembly versions.
+	
+	* assembly.c: Added support for more than one system assembly version
+	per runtime version. Updated the assembly list.
+	In mono_assembly_remap_version, removed the initial version check,
+	since we don't know to which version we need to compare until we
+	get the version set on which the assembly is based.
+	Moved the code for loading corlib into the new method
+	mono_assembly_load_corlib(), so it can be used by the initialization
+	code.
+	
+	* domain-internals.h: Updated data structures and added declaration
+	for mono_assembly_load_corlib.
+
 2005-02-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (resolve_object): Fix the creation of the signature in 
