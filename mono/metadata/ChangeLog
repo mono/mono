@@ -1,4 +1,8 @@
 
+Thu May 16 17:20:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: sort custom attributes table.
+
 Thu May 16 16:08:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: support named args in custom attributes (write support).
