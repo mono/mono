@@ -581,6 +581,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void VerifyUsing ()
 		{
+			EmitContext ec = new EmitContext (null, null, Location.Null, null,
+							  null, 0, false);
+
 			if (using_clauses != null){
 				foreach (UsingEntry ue in using_clauses){
 					if (ue.Resolve () != null)
@@ -592,12 +595,18 @@ namespace Mono.CSharp {
 
 			if (aliases != null){
 				foreach (DictionaryEntry de in aliases){
-					AliasEntry alias = (AliasEntry) de.Value;
+					AliasEntry entry = (AliasEntry) de.Value;
 
-					if (alias.Resolve () != null)
-						continue;
+					IAlias alias = entry.Resolve ();
+					if ((alias != null) && alias.IsType) {
+						TypeExpr texpr = alias.Type;
 
-					error246 (alias.Location, alias.Alias.ToString ());
+						Type t = texpr.ResolveType (ec);
+						if (t == null)
+							continue;
+					}
+
+					error246 (entry.Location, entry.Alias.ToString ());
 				}
 			}
 		}

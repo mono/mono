@@ -1,5 +1,10 @@
 2004-04-02  Martin Baulig  <martin@ximian.com>
 
+	* namespace.cs (NamespaceEntry.VerifyUsing): Added error checking
+	(CS0305 and CS0308).
+
+2004-04-02  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (GenericMemberAccess.ResolveAsTypeStep): Added
 	support for nested types.
 
