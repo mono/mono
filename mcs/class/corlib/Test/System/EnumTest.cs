@@ -701,33 +701,48 @@ public class EnumTest : TestCase
 	enum SomeInt64Enum : long {a,b,c};
 
 	public void TestToString() {
-		AssertEquals("invalid string", "This", 
-			     TestingEnum.This.ToString());
-		AssertEquals("invalid string", "Is", 
-			     TestingEnum.Is.ToString());
-		AssertEquals("invalid string", "A", 
-			     TestingEnum.A.ToString());
-		AssertEquals("invalid string", "Test", 
-			     TestingEnum.Test.ToString());
+		int i = 0;
+		try {
+			i++;
+			AssertEquals("invalid string", "This", 
+				     TestingEnum.This.ToString());
+			i++;
+			AssertEquals("invalid string", "Is", 
+				     TestingEnum.Is.ToString());
+			i++;
+			AssertEquals("invalid string", "A", 
+				     TestingEnum.A.ToString());
+			i++;
+			AssertEquals("invalid string", "Test", 
+				     TestingEnum.Test.ToString());
 
-		Enum is1 = TestingEnum.Is;
+			Enum is1 = TestingEnum.Is;
 
-		AssertEquals("decimal parse wrong", 
-			     "1", is1.ToString("d"));
-		AssertEquals("named format wrong", 
-			     "Is", is1.ToString("g"));
-		AssertEquals("hex format wrong", 
-			     "00000001", is1.ToString("x"));
-		AssertEquals("bitfield format wrong", 
-			     "Is", is1.ToString("f"));
+			i++;
+			AssertEquals("decimal parse wrong", 
+				     "1", is1.ToString("d"));
+			i++;
+			AssertEquals("named format wrong", 
+				     "Is", is1.ToString("g"));
+			i++;
+			AssertEquals("hex format wrong", 
+				     "00000001", is1.ToString("x"));
+			i++;
+			AssertEquals("bitfield format wrong", 
+				     "Is", is1.ToString("f"));
 
-
-		AssertEquals("bitfield with flags format wrong for Int32 enum", 
-			     "b, c", ((SomeEnum)3).ToString("f"));
-		AssertEquals("bitfield with flags format wrong for Byte enum", 
-			     "b, c", ((SomeByteEnum)3).ToString("f"));
-		AssertEquals("bitfield with flags format wrong for Int64 enum", 
-			     "b, c", ((SomeInt64Enum)3).ToString("f"));
+			i++;
+			AssertEquals("bitfield with flags format wrong for Int32 enum", 
+				     "b, c", ((SomeEnum)3).ToString("f"));
+			i++;
+			AssertEquals("bitfield with flags format wrong for Byte enum", 
+				     "b, c", ((SomeByteEnum)3).ToString("f"));
+			i++;
+			AssertEquals("bitfield with flags format wrong for Int64 enum", 
+				     "b, c", ((SomeInt64Enum)3).ToString("f"));
+		} catch (Exception e) {
+			Fail ("Unexpected exception at i = " + i + " with e=" + e);
+		}
 	}
 
 	// TODO - ToString with IFormatProviders
