@@ -1,3 +1,9 @@
+
+Wed May 14 18:10:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: add constructors to array classes.
+	* icall.c: special case array construction for InternalInvoke (),
+
 2003-05-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.h class.c reflection.c object.c: Added support for field
