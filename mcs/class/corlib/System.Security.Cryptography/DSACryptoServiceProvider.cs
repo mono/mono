@@ -24,10 +24,10 @@ namespace System.Security.Cryptography {
 #else
 	public sealed class DSACryptoServiceProvider : DSA {
 #endif
-		private const int PROV_DSS = 2;		// from WinCrypt.h
+		private const int PROV_DSS = 3;		// from WinCrypt.h
 
 		private KeyPairPersistence store;
-		private bool persistKey = true;
+		private bool persistKey;
 		private bool persisted;
 
 		private bool privateKeyExportable = true;
@@ -53,6 +53,15 @@ namespace System.Security.Cryptography {
 
 		public DSACryptoServiceProvider (int dwKeySize, CspParameters parameters)
 		{
+			LegalKeySizesValue = new KeySizes [1];
+			LegalKeySizesValue [0] = new KeySizes (512, 1024, 64);
+
+			// will throw an exception is key size isn't supported
+			KeySize = dwKeySize;
+			dsa = new DSAManaged (dwKeySize);
+			dsa.KeyGenerated += new DSAManaged.KeyGeneratedEventHandler (OnKeyGenerated);
+
+			persistKey = (parameters != null);
 			if (parameters == null) {
 				parameters = new CspParameters (PROV_DSS);
 #if ! NET_1_0
@@ -70,14 +79,6 @@ namespace System.Security.Cryptography {
 					this.FromXmlString (store.KeyValue);
 				}
 			}
-
-			LegalKeySizesValue = new KeySizes [1];
-			LegalKeySizesValue [0] = new KeySizes (512, 1024, 64);
-
-			// will throw an exception is key size isn't supported
-			KeySize = dwKeySize;
-			dsa = new DSAManaged (dwKeySize);
-			dsa.KeyGenerated += new DSAManaged.KeyGeneratedEventHandler (OnKeyGenerated);
 		}
 
 		~DSACryptoServiceProvider ()
@@ -101,14 +102,9 @@ namespace System.Security.Cryptography {
 		public bool PersistKeyInCsp {
 			get { return persistKey; }
 			set {
-				if (value) {
-					OnKeyGenerated (dsa);
-				}
-				else {
-					// delete the container
-					store.Remove ();
-				}
 				persistKey = value;
+				if (persistKey)
+					OnKeyGenerated (dsa);
 			}
 		}
 
@@ -207,6 +203,10 @@ namespace System.Security.Cryptography {
 		protected override void Dispose (bool disposing) 
 		{
 			if (!m_disposed) {
+				// the key is persisted and we do not want it persisted
+				if ((persisted) && (!persistKey)) {
+					store.Remove ();	// delete the container
+				}
 				if (dsa != null)
 					dsa.Clear ();
 				// call base class 
@@ -219,6 +219,7 @@ namespace System.Security.Cryptography {
 
 		private void OnKeyGenerated (object sender) 
 		{
+			// the key isn't persisted and we want it persisted
 			if ((persistKey) && (!persisted)) {
 				// save the current keypair
 				store.KeyValue = this.ToXmlString (!dsa.PublicOnly);

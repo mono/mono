@@ -23,7 +23,7 @@ namespace System.Security.Cryptography {
 		private const int PROV_RSA_FULL = 1;	// from WinCrypt.h
 
 		private KeyPairPersistence store;
-		private bool persistKey = true;
+		private bool persistKey;
 		private bool persisted;
 	
 		private bool privateKeyExportable = true; 
@@ -65,6 +65,15 @@ namespace System.Security.Cryptography {
 	
 		private void Common (int dwKeySize, CspParameters p) 
 		{
+			// Microsoft RSA CSP can do between 384 and 16384 bits keypair
+			LegalKeySizesValue = new KeySizes [1];
+			LegalKeySizesValue [0] = new KeySizes (384, 16384, 8);
+			base.KeySize = dwKeySize;
+
+			rsa = new RSAManaged (KeySize);
+			rsa.KeyGenerated += new RSAManaged.KeyGeneratedEventHandler (OnKeyGenerated);
+
+			persistKey = (p != null);
 			if (p == null) {
 				p = new CspParameters (PROV_RSA_FULL);
 #if ! NET_1_0
@@ -82,14 +91,6 @@ namespace System.Security.Cryptography {
 					this.FromXmlString (store.KeyValue);
 				}
 			}
-
-			// Microsoft RSA CSP can do between 384 and 16384 bits keypair
-			LegalKeySizesValue = new KeySizes [1];
-			LegalKeySizesValue [0] = new KeySizes (384, 16384, 8);
-			base.KeySize = dwKeySize;
-
-			rsa = new RSAManaged (KeySize);
-			rsa.KeyGenerated += new RSAManaged.KeyGeneratedEventHandler (OnKeyGenerated);
 		}
 
 #if ! NET_1_0
@@ -123,14 +124,9 @@ namespace System.Security.Cryptography {
 		public bool PersistKeyInCsp {
 			get { return persistKey; }
 			set {
-				if (value) {
-					OnKeyGenerated (rsa);
-				}
-				else {
-					// delete the container
-					store.Remove ();
-				}
 				persistKey = value;
+				if (persistKey)
+					OnKeyGenerated (rsa);
 			}
 		}
 
@@ -314,6 +310,10 @@ namespace System.Security.Cryptography {
 		protected override void Dispose (bool disposing) 
 		{
 			if (!m_disposed) {
+				// the key is persisted and we do not want it persisted
+				if ((persisted) && (!persistKey)) {
+					store.Remove ();	// delete the container
+				}
 				if (rsa != null)
 					rsa.Clear ();
 				// call base class 
@@ -326,6 +326,7 @@ namespace System.Security.Cryptography {
 
 		private void OnKeyGenerated (object sender) 
 		{
+			// the key isn't persisted and we want it persisted
 			if ((persistKey) && (!persisted)) {
 				// save the current keypair
 				store.KeyValue = this.ToXmlString (!rsa.PublicOnly);

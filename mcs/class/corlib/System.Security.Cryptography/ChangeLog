@@ -1,3 +1,11 @@
+2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSACryptoServiceProvider.cs: Fixed support for key pair persistence.
+	It now requires (like MS) to call Clear to delete an existing 
+	container. PersistKeyInCsp default value also changes if a 
+	CspParameters is supplied (or not) to the constructor.
+	* RSACryptoServiceProvider.cs: Same fixes as DSA.
+
 2004-02-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashAlgorithm.cs: Changed the ComputeHash(Stream) method to (a) not
