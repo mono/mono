@@ -1,3 +1,8 @@
+2003-12-06  Ravindra  <rkumar@novell.com>
+	*MonoIO.cs: Added a new exception case. It is thrown 
+	when a directory creation is attempted with a name that
+	is already used by an existing file.
+
 2003-11-28  Dick Porter  <dick@ximian.com>
 
 	* Path.cs: Use the char form of LastIndexOf, so that the

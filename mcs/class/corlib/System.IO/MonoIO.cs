@@ -46,6 +46,10 @@ namespace System.IO
 				message = String.Format ("Access to the path \"{0}\" is denied.", path);
 				return new UnauthorizedAccessException (message);
 
+			case MonoIOError.ERROR_FILE_EXISTS:
+				message = String.Format ("Could not create directory \"{0}\". File already exists.", path);
+				return new IOException (message);
+
 			default:
 				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);
 				return new IOException (message);
