@@ -530,7 +530,9 @@ System.Net/WebProxy.cs
 System.Net/WebRequest.cs
 System.Net/WebResponse.cs
 System.Net.Mail/Attachment.cs
+System.Net.Mail/AttachmentCollection.cs
 System.Net.Mail/MailAddress.cs
+System.Net.Mail/MailAddressCollection.cs
 System.Net.Mail/MailMessage.cs
 System.Net.Mail/SendCompletedEventHandler.cs
 System.Net.Mail/SmtpAccess.cs
