@@ -570,7 +570,7 @@ namespace System.Xml.Serialization {
 					member.TypeData = GetAttributeTypeData (typeQName, attr);
 					
 					if (refAttr.DefaultValue != null) 
-						member.DefaultValue = XmlCustomFormatter.FromXmlString (member.TypeData, refAttr.DefaultValue);
+						member.DefaultValue = ImportDefaultValue (member.TypeData, refAttr.DefaultValue);
 					else if (member.TypeData.IsValueType)
 						member.IsOptionalValueType = (refAttr.ValidatedUse != XmlSchemaUse.Required);
 						
@@ -760,7 +760,7 @@ namespace System.Xml.Serialization {
 						if (typeData.SchemaType != SchemaTypes.Array)
 						{
 							member = new XmlTypeMapMemberElement ();
-							if (refElem.DefaultValue != null) member.DefaultValue = XmlCustomFormatter.FromXmlString (typeData, refElem.DefaultValue);
+							if (refElem.DefaultValue != null) member.DefaultValue = ImportDefaultValue (typeData, refElem.DefaultValue);
 						}
 						else if (GetTypeMapping (typeData).IsSimpleType)
 						{
@@ -826,6 +826,18 @@ namespace System.Xml.Serialization {
 					ImportParticleContent (typeQName, cmap, (XmlSchemaParticle)item, classIds, multiValue, ref isMixed);
 				}
 			}
+		}
+		
+		object ImportDefaultValue (TypeData typeData, string value)
+		{
+			if (typeData.SchemaType == SchemaTypes.Enum) {
+				XmlTypeMapping map = GetTypeMapping (typeData);
+				EnumMap emap = (EnumMap) map.ObjectMap;
+				string res = emap.GetEnumName (value);
+				if (res == null) throw new InvalidOperationException ("'" + value + "' is not a valid enumeration value");
+				return res;
+			} else
+				return XmlCustomFormatter.FromXmlString (typeData, value);
 		}
 		
 		void ImportChoiceContent (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaChoice choice, CodeIdentifiers classIds, bool multiValue)
