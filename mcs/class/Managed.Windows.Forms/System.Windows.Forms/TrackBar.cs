@@ -30,9 +30,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.12  2004/08/21 20:21:48  pbartok
+// - Replaced direct XplatUI calls with their Control counterpart
+//
 // Revision 1.11  2004/08/20 19:45:50  jordi
 // fixes timer, new properties and methods
 //
@@ -514,7 +517,7 @@ namespace System.Windows.Forms
 			if (thumb_pressed == true || mouse_clickmove == true) {	
 				thumb_pressed = false;
 				holdclick_timer.Enabled = false;
-				XplatUI.ReleaseWindow (Handle);
+				this.Capture = false;
 				Refresh ();
 			}
 		}
@@ -530,7 +533,7 @@ namespace System.Windows.Forms
 			if (orientation == Orientation.Horizontal) {
 				
 				if (thumb_pos.Contains (point)) {
-					XplatUI.GrabWindow (Handle);
+					this.Capture = true;
 					thumb_pressed = true;
 					thumb_mouseclick = e.X;
 					Refresh ();					
@@ -550,7 +553,7 @@ namespace System.Windows.Forms
 			}
 			else {
 				if (thumb_pos.Contains (point)) {
-					XplatUI.GrabWindow (Handle);
+					this.Capture = true;
 					thumb_pressed = true;
 					thumb_mouseclick = e.Y;
 					Refresh ();

@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.10  2004/08/21 20:22:21  pbartok
+// - Replaced direct XplatUI calls with their Control counterpart
+//
 // Revision 1.9  2004/08/20 19:35:33  jackson
 // Use the SWF timer so callbacks are run in the correct thread
 //
@@ -339,7 +342,7 @@ namespace System.Windows.Forms
 			CalcThumbArea ();
 			UpdatePos (position, true);
     		}
-    		
+    						     
 
 		/*
 			Called when the control is created
@@ -518,7 +521,7 @@ namespace System.Windows.Forms
 			
 			if (thumb_pos.Contains (point)) {								
 				thumb_pressed = true;
-				XplatUI.GrabWindow (Handle);
+				this.Capture = true;
 				Refresh ();
 				if (vert)
 					thumb_pixel_click_move = e.Y;
@@ -608,7 +611,7 @@ namespace System.Windows.Forms
 			if (thumb_pressed == true) {				
 				fire_Scroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
 				fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
-				XplatUI.ReleaseWindow (Handle);
+				this.Capture = false;
 				thumb_pressed = false;				
 				Refresh ();
 			}
