@@ -1,3 +1,10 @@
+2003-09-24    <cesar@ciencias.unam.mx>
+
+	* Microsoft.JScript/: Deleted VsaEngine.cs and BaseVsaEngine.cs
+
+	* Microsoft.JScript.dll.sources: Changed the namespaces for VsaEngine and BaseVsaEngine.
+	
+
 2003-07-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Added the new files to the build.
