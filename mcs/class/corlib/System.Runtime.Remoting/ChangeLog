@@ -1,3 +1,10 @@
+2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RemotingServices.cs: When marshalling a custom proxy, allow the creation
+	of a new identity. This fixes bug #52921.
+	* ServerIdentity.cs: Allow the creation of server identities that
+	represent a custom proxy instead of a real object.
+
 2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapServices.cs: Little fix: correctly encode namespaces.

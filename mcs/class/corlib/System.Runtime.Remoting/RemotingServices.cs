@@ -146,7 +146,7 @@ namespace System.Runtime.Remoting
 
 		public static Type GetServerTypeForUri (string uri)
 		{
-			Identity ident = GetIdentityForUri (uri);
+			ServerIdentity ident = GetIdentityForUri (uri) as ServerIdentity;
 			if (ident == null) return null;
 			return ident.ObjectType;
 		}
@@ -203,7 +203,7 @@ namespace System.Runtime.Remoting
 
 				if (identity != null)
 				{
-					if (identity.ObjectType.IsContextful && !identity.IsConnected)
+					if (proxy.GetProxiedType().IsContextful && !identity.IsConnected)
 					{
 						// Unregistered local contextbound object. Register now.
 						ClientActivatedIdentity cboundIdentity = (ClientActivatedIdentity)identity;
@@ -218,8 +218,6 @@ namespace System.Runtime.Remoting
 
 					return proxy.ObjectIdentity.CreateObjRef(requested_type);
 				}
-				else
-					throw new NotSupportedException ();	// TODO
 			}
 
 			if (requested_type == null) requested_type = obj.GetType();

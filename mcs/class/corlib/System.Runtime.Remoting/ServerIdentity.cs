@@ -10,6 +10,7 @@ using System;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Lifetime;
+using System.Runtime.Remoting.Proxies;
 
 namespace System.Runtime.Remoting
 {
@@ -71,12 +72,21 @@ namespace System.Runtime.Remoting
 
 		public void AttachServerObject (MarshalByRefObject serverObject, Context context)
 		{
-			if (_objectType.IsContextful)
-				_envoySink = context.CreateEnvoySink (serverObject);
-
 			_context = context;
 			_serverObject = serverObject;
-			_serverObject.ObjectIdentity = this;
+			
+			if (RemotingServices.IsTransparentProxy (serverObject))
+			{
+				RealProxy rp = RemotingServices.GetRealProxy (serverObject);
+				rp.ObjectIdentity = this;
+			}
+			else
+			{
+				if (_objectType.IsContextful)
+					_envoySink = context.CreateEnvoySink (serverObject);
+	
+				_serverObject.ObjectIdentity = this;
+			}
 		}
 
 		public Lease Lease
