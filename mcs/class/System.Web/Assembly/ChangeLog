@@ -1,3 +1,7 @@
+2004-12-02  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AssemblyInfo.cs: Added more resource attributes.
+
 2004-11-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AssemblyInfo.cs: Added more resource attributes.
