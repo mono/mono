@@ -28,4 +28,11 @@
 			</sources>
 		</csc>
 	</target>
+	<target name="test" depends="build">
+		<nant basedir="Test" target="test"/>
+	</target>
+	<target name="clean">
+		<nant basedir="Test" target="clean"/>
+		<delete file="../lib/System.Web.Services.dll" failonerror="false"/>
+	</target>
 </project>

@@ -1,3 +1,13 @@
+2002-08-07  Tim Coleman <tim@timcoleman.com>
+	* System.Web.Services.build:
+		Added "test" target to build.
+		Added "clean" target to build.
+	* Test:
+		New test suites added.
+
+2002-08-06  Tim Coleman <tim@timcoleman.com>
+	* list: Added System.Web.Services.Protocols/ServerProtocol.cs
+
 2002-07-29  Dave Bettin <javabettin@yahoo.com>
 	* list: added new Discovery classes
 	* System.Web.Services.Discovery: added stubs
