@@ -38,6 +38,10 @@ namespace System.Xml.Serialization
 		[XmlElement ("namespace")]
 		public string Namespace;
 		
+		[XmlArray ("namespaceImports")]
+		[XmlArrayItem ("namespaceImport")]
+		public string [] NamespaceImports;
+		
 		[System.ComponentModel.DefaultValue (SerializationFormat.Literal)]
 		public SerializationFormat SerializationFormat = SerializationFormat.Literal;
 		

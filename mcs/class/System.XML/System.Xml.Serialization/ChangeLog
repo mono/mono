@@ -1,3 +1,9 @@
+2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs,
+	  SerializationCodeGeneratorConfiguration.cs:
+	  Added <namespaceImports> feature ("using XXX;" generation) support.
+
 2004-02-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlSerializationWriter.cs: When writing the root element, use a prefix

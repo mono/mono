@@ -136,6 +136,10 @@ namespace System.Xml.Serialization
 			WriteLine ("using System.Text;");
 			WriteLine ("using System.Collections;");
 			WriteLine ("using System.Globalization;");
+			if (_config.NamespaceImports != null && _config.NamespaceImports.Length > 0) {
+				foreach (string ns in _config.NamespaceImports)
+					WriteLine ("using " + ns + ";");
+			}
 			WriteLine ("");
 			WriteLine ("namespace " + _config.Namespace);
 			WriteLineInd ("{");
