@@ -470,7 +470,7 @@ namespace Mono.Xml.Xsl.Operations {
 		}
 	}
 	
-	public enum XslNumberingLevel
+	internal enum XslNumberingLevel
 	{
 		Single,
 		Multiple,
