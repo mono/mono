@@ -287,19 +287,23 @@ namespace System.Xml
 		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual void RemoveAttribute (string name)
 		{
-			attributes.Remove((XmlAttribute)attributes.GetNamedItem(name));
+			XmlAttribute attr = attributes.GetNamedItem (name) as XmlAttribute;
+			if (attr != null)
+				attributes.Remove(attr);
 		}
 
 		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual void RemoveAttribute (string localName, string namespaceURI)
 		{
-			attributes.Remove((XmlAttribute)attributes.GetNamedItem(localName, namespaceURI));
+			XmlAttribute attr = attributes.GetNamedItem(localName, namespaceURI) as XmlAttribute;
+			if (attr != null)
+				attributes.Remove(attr);
 		}
 
 		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]
 		public virtual XmlNode RemoveAttributeAt (int i)
 		{
-			return attributes.Remove(attributes[i]);
+			return attributes.RemoveAt (i);
 		}
 
 		[MonoTODO ("confirm not resetting default attributes [when DTD feature was implemented.")]

@@ -1,3 +1,8 @@
+2003-03-22  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlElement.cs : RemoveAttribute now don't throws when specified
+	  attribute does not exist.
+
 2003-03-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNode.cs : add descriptions for some node type error.
