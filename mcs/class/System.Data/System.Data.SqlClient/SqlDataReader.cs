@@ -187,10 +187,24 @@ namespace System.Data.SqlClient {
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
-			if (!(value is char[]))
+			char [] valueBuffer;
+			
+			if (value is char[])
+				valueBuffer = (char[])value;
+			else if (value is string)
+				valueBuffer = ((string)value).ToCharArray();
+			else
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
-			Array.Copy ((char []) value, (int) dataIndex, buffer, bufferIndex, length);
-			return ((char []) value).Length - dataIndex;
+			
+			if ( buffer == null ) {
+				// Return length of data
+				return valueBuffer.Length;
+			}
+			else {
+				// Copy data into buffer
+				Array.Copy (valueBuffer, (int) dataIndex, buffer, bufferIndex, length);
+				return valueBuffer.Length - dataIndex;
+			}
 		}
 
 		[MonoTODO ("Implement GetData")]
