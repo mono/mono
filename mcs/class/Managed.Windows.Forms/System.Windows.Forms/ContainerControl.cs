@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ContainerControl.cs,v $
+// Revision 1.3  2004/11/08 20:36:11  pbartok
+// - Implemented BindingContext
+// - Implemented ParentForm
+//
 // Revision 1.2  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -67,16 +71,31 @@ namespace System.Windows.Forms {
 
 		public override BindingContext BindingContext {
 			get {
-				throw new NotImplementedException();
+				if (base.BindingContext == null) {
+					base.BindingContext = new BindingContext();
+				}
+				return base.BindingContext;
 			}
 
 			set {
+				base.BindingContext = value;
 			}
 		}
 
 		public Form ParentForm {
 			get {
-				throw new NotImplementedException();
+				Control parent;
+
+				parent = this.parent;
+
+				while (parent != null) {
+					if (parent is Form) {
+						return (Form)parent;
+					}
+					parent = parent.parent;
+				}
+
+				return null;
 			}
 		}
 		#endregion	// Public Instance Properties
