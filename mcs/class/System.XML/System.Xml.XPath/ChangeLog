@@ -1,3 +1,10 @@
+2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* DefaultContext.cs : XPathFunctions.ToNumber() should catch overflow.
+	  XPathFunctionId.cs : Exposed Id expression.
+	* Expression.cs : Added ExprLiteral.Value, and class ExprParens (it
+	  will be used to solve evaluation precedence problem).
+
 2003-11-09  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Iterator.cs : Fixed SlashIterator that might return nodes 1)in

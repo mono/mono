@@ -86,6 +86,8 @@ namespace System.Xml.XPath
 		{
 			try {
 				return XmlConvert.ToDouble ((string) arg);	// TODO: spec? convert string to number
+			} catch (System.OverflowException) {
+				return double.NaN;
 			} catch (System.FormatException) {
 				return double.NaN;
 			}
@@ -172,6 +174,8 @@ namespace System.Xml.XPath
 			
 			arg0 = args.Arg;
 		}
+
+		public Expression Id { get { return arg0; } }
 		
 		private static char [] rgchWhitespace = {' ', '\t', '\r', '\n'};
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
@@ -193,13 +197,15 @@ namespace System.Xml.XPath
 				strArgs = XPathFunctions.ToString (val);
 			
 			XPathNavigator n = iter.Current.Clone ();
-			ArrayList rgNodes = new ArrayList ();
+			SortedList rgNodes = new SortedList (XPathComparer.Instance);
 			foreach (string strArg in strArgs.Split (rgchWhitespace))
 			{
-				if (n.MoveToId (strArg))
-					rgNodes.Add (n.Clone ());
+				if (n.MoveToId (strArg)) {
+					XPathNavigator clone = n.Clone ();
+					rgNodes.Add (clone, clone);
+				}
 			}
-			return new EnumeratorIterator (iter, rgNodes.GetEnumerator ());
+			return new EnumeratorIterator (iter, rgNodes.Values.GetEnumerator ());
 		}
 	}
 

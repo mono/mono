@@ -1205,6 +1205,7 @@ namespace System.Xml.XPath
 		{
 			_value = value;
 		}
+		public string Value { get { return _value; } }
 		public override String ToString () { return "'" + _value + "'"; }
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		public override object Evaluate (BaseIterator iter)
@@ -1259,6 +1260,23 @@ namespace System.Xml.XPath
 			return objResult;
 		}
 	}
+
+#if false
+	internal class ExprParens : Expression
+	{
+		protected Expression _expr;
+		public ExprParens (Expression expr)
+		{
+			_expr = expr;
+		}
+		public override String ToString () { return "(" + _expr.ToString () + ")"; }
+		public override XPathResultType ReturnType { get { return _expr.ReturnType; }}
+		public override object Evaluate (BaseIterator iter)
+		{
+			return _expr.Evaluate (new ParensIterator (iter));
+		}
+	}
+#endif
 
 	internal class FunctionArguments
 	{
