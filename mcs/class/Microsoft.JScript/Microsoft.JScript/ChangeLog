@@ -1,3 +1,19 @@
+2004-06-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* CodeGenerator.cs: Added LoopBegin and LoopEnd to EmitContext, they are used by
+	break and continue in order to jump to the desired place. Added
+	check for converting to boolean if we encounter an identifier (at need_convert_to_boolean).
+	* Statement.cs: class If.Emit, call fall_true instead of fall_false so we don't
+	need to jump if the expression evaluates to true. Continue class,
+	replaced ParentIsItrStm with InLoop, emit jump to correct
+	place. Break class, implemented Resolve; deleted
+	ParentIsCorrect. DoWhile, While classes, set LoopBegin and
+	LoopEnd. While class, set LoopBegin and LoopEnd. 
+	* ast.cs: Added InLoop and InSwitch.
+	* jscript-lexer-parser.g: pass parent to break_stm. Added block as
+	a statement. Temporarily disabled object_literal in order to test
+	the block structure and continue and break statements.
+	
 2004-05-28  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Statement.cs: changed parent_is_itr_stm method to ParentIsItrStm
