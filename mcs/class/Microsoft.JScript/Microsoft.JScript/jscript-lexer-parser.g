@@ -104,17 +104,17 @@ formal_param_list returns [FormalParameterList p]
 
 statement [AST parent] returns [AST stm]
 { stm = null; }
-	: stm = expr_stm SEMI_COLON
+	: stm = expr_stm [parent] SEMI_COLON
 	| stm = var_stm [parent]
 	| empty_stm
-	| stm = if_stm
-	| iteration_stm
+	| stm = if_stm [parent]
+	| iteration_stm [parent]
 	| stm = continue_stm
 	| stm = break_stm
-	| stm = return_stm
-	| stm = with_stm
-	| switch_stm
-	| stm = throw_stm
+	| stm = return_stm [parent]
+	| stm = with_stm [parent]
+	| switch_stm [parent]
+	| stm = throw_stm [parent]
 	| try_stm
 	;
 
@@ -135,19 +135,19 @@ finally_exp
 	: "finally" block
 	;
 
-throw_stm returns [AST t]
+throw_stm [AST parent] returns [AST t]
 {
 	t = null;
 	AST e = null;
 }
-	: "throw" e = expr SEMI_COLON
+	: "throw" e = expr [parent] SEMI_COLON
 	  {
 		  t = new Throw (e);
 	  }
 	;
 
-switch_stm
-	: "switch"  OPEN_PARENS expr CLOSE_PARENS case_block
+switch_stm [AST parent]
+	: "switch"  OPEN_PARENS expr [parent] CLOSE_PARENS case_block
 	;
 
 case_block
@@ -163,27 +163,27 @@ case_clauses
 	;
 
 case_clause
-	: "case" expr COLON statement_list
+	: "case" expr [null] COLON statement_list
 	;
 
-with_stm returns [AST with]
+with_stm [AST parent] returns [AST with]
 {
 	with = null;
 	AST exp, stm;
 	exp = stm = null;
 }
-	: "with" OPEN_PARENS exp = expr CLOSE_PARENS stm = statement [null]
+	: "with" OPEN_PARENS exp = expr [parent] CLOSE_PARENS stm = statement [null]
 	  {
 		  with = new With (exp, stm);  
 	  }	
 	;
 
-return_stm returns [AST r]
+return_stm [AST parent] returns [AST r]
 {
 	r = null;
 	AST e = null;
 }
-	: "return" (e = expr { r = new Return (e); } | ) SEMI_COLON
+	: "return" (e = expr [parent] { r = new Return (e); } | ) SEMI_COLON
 	;
 
 break_stm returns [AST b]
@@ -202,30 +202,30 @@ continue_stm returns [AST cont]
 	             | { ((Continue) cont).identifier = String.Empty; } ) SEMI_COLON
 	;
 
-iteration_stm
-	: "do" statement [null] "while" OPEN_PARENS expr CLOSE_PARENS SEMI_COLON
-	| "while" OPEN_PARENS expr CLOSE_PARENS statement [null]
-	| "for" OPEN_PARENS inside_for CLOSE_PARENS statement [null]
+iteration_stm [AST parent]
+	: "do" statement [null] "while" OPEN_PARENS expr [parent] CLOSE_PARENS SEMI_COLON
+	| "while" OPEN_PARENS expr [parent] CLOSE_PARENS statement [null]
+	| "for" OPEN_PARENS inside_for [parent] CLOSE_PARENS statement [null]
 	;
 
-inside_for
+inside_for [AST parent]
 	// We must check the NoIn restriction
-	: (expr | ) SEMI_COLON (expr | ) SEMI_COLON (expr | )
+	: (expr [parent] | ) SEMI_COLON (expr [parent] | ) SEMI_COLON (expr [parent] | )
 	// We must keep a counter c, c tells us how many decls are
 	// done, in order to interrupt if c > 1 and we are inside a "in"
 	| "var" (var_decl_list [null, null] 
-		  ( SEMI_COLON (expr | ) SEMI_COLON (expr | )
-		  | "in" expr))
+		  ( SEMI_COLON (expr [parent] | ) SEMI_COLON (expr [parent] | )
+		  | "in" expr [parent]))
 	// FIXME: left_hand_side_expr in exp rule, missing
 	;
 
-if_stm returns [AST ifStm]
+if_stm [AST parent] returns [AST ifStm]
 {
 	ifStm = null;
 	AST cond, true_stm, false_stm;
 	cond = true_stm = false_stm = null;
 }
-	: "if" OPEN_PARENS cond = expr CLOSE_PARENS true_stm = statement [null]
+	: "if" OPEN_PARENS cond = expr [parent] CLOSE_PARENS true_stm = statement [null]
 	  (("else")=> "else" false_stm = statement [null] | )
 	  {
 		  ifStm = new If (cond, true_stm, false_stm);
@@ -263,7 +263,7 @@ var_decl [AST parent] returns [VariableDeclaration var_decl]
 	AST init = null;
 }
 	: id:IDENTIFIER (COLON type_annot:IDENTIFIER | )
-	  (init = initializer
+	  (init = initializer [parent]
 	   { 
 		  if (type_annot == null)
 		  	  var_decl = new VariableDeclaration (parent, id.getText (), null , init);
@@ -279,14 +279,14 @@ var_decl [AST parent] returns [VariableDeclaration var_decl]
 	   })
 	;
 
-initializer returns [AST init]
+initializer [AST parent] returns [AST init]
 { init = null; }
-	: ASSIGN init = assignment_expr
+	: ASSIGN init = assignment_expr [parent]
 	;
 
-expr_stm returns [AST e]
+expr_stm [AST parent] returns [AST e]
 { e = null; }
-	: e = expr
+	: e = expr [parent]
    	;
 
 
@@ -294,131 +294,130 @@ statement_list
 	: (statement [null])*
 	;
 
-expr returns [Expression e]
+expr [AST parent] returns [Expression e]
 {
 	e = new Expression ();
 	AST a = null;
 } 
-	: a = assignment_expr { e.Add (a); } 
-	  (COMMA a = assignment_expr { e.Add (a); } )*
+	: a = assignment_expr [parent] { e.Add (a); } 
+	  (COMMA a = assignment_expr [parent] { e.Add (a); } )*
 	;
-
-assignment_expr returns [AST assign_expr]
+assignment_expr [AST parent] returns [AST assign_expr]
 {     
 	assign_expr = null;
 	JSToken op = JSToken.None;
 	AST left, right;
 	left = right = null;
 }
-	: ((left_hand_side_expr assignment_op)=> 
-	    left = left_hand_side_expr op = assignment_op right = assignment_expr
+	: ((left_hand_side_expr [parent] assignment_op)=> 
+	    left = left_hand_side_expr [parent] op = assignment_op right = assignment_expr [parent]
 	    {
-		  Binary a = new Binary (left, right, op);
+		  Binary a = new Binary (parent, left, right, op);
 		  Console.WriteLine ("\nDEBUG::jscript.g::assign_expr::ToString::" + a.ToString () + "\n");
 		  assign_expr = a;
 	    }
  
-	| assign_expr = cond_expr
+	| assign_expr = cond_expr [parent]
 	)
 	;
 
-member_expr returns [AST mem_exp]
+member_expr [AST parent] returns [AST mem_exp]
 {
 	mem_exp = null;
 }
-	: mem_exp = primary_expr member_aux
-	| "new" member_expr arguments
+	: mem_exp = primary_expr [parent] member_aux [parent]
+	| "new" member_expr [parent] arguments [parent]
 	;
 
-member_aux
-	: ( DOT IDENTIFIER member_aux 
-	  | (OPEN_BRACKET)=> OPEN_BRACKET expr CLOSE_BRACKET
+member_aux [AST parent]
+	: ( DOT IDENTIFIER member_aux [parent]
+	  | (OPEN_BRACKET)=> OPEN_BRACKET expr [parent] CLOSE_BRACKET
 	  |
 	  )
 	;
 
-new_expr returns [AST new_exp]
+new_expr [AST parent] returns [AST new_exp]
 {
 	new_exp = null; 
 	AST mem_exp = null;
 }
-	: mem_exp = member_expr { new_exp = mem_exp; }
+	: mem_exp = member_expr [parent] { new_exp = mem_exp; }
 	;
         
-call_expr returns [Call func_call]
+call_expr [AST parent] returns [Call func_call]
 {
 	func_call = null;
 	AST member = null;
 	AST args1 = null;
 	AST args2 = null;
 }
-	: member = member_expr args1 = arguments args2 = call_aux
+	: member = member_expr [parent] args1 = arguments [parent] args2 = call_aux [parent]
 	  {
-		  func_call = new Call (member, args1, args2);
+		  func_call = new Call (parent, member, args1, args2);
 	  }
 	;
 
-call_aux returns [AST args]
+call_aux [AST parent] returns [AST args]
 {
 	args = null;
 } 
 	: 
-	( arguments 
-	| OPEN_BRACKET expr CLOSE_BRACKET
+	( arguments [parent]
+	| OPEN_BRACKET expr [parent] CLOSE_BRACKET
 	| DOT IDENTIFIER
-	) call_aux
+	) call_aux [parent]
 	|
 	;
 
-arguments returns [Args args]
+arguments [AST parent] returns [Args args]
 {
 	Args tmp = new Args ();
 	args = null; 
 }
-	: OPEN_PARENS (arguments_list [tmp] { args = tmp; } | ) CLOSE_PARENS
+	: OPEN_PARENS (arguments_list [tmp, parent] { args = tmp; } | ) CLOSE_PARENS
 	;
 
-arguments_list [Args args]
+arguments_list [Args args, AST parent]
 {
 	AST a = null;
 }
-	: a = assignment_expr { args.Add (a); } 
-	  (COMMA a = assignment_expr { args.Add (a); })*
+	: a = assignment_expr [parent] { args.Add (a); } 
+	  (COMMA a = assignment_expr [parent] { args.Add (a); })*
 	;
 
-left_hand_side_expr returns [AST lhe]
+left_hand_side_expr [AST parent] returns [AST lhe]
 {
 	lhe = null;
 	Call call = null;
 }
-	: (call_expr)=> call = call_expr { lhe = call; }
-	| lhe = new_expr
+	: (call_expr [parent])=> call = call_expr [parent] { lhe = call; }
+	| lhe = new_expr [parent]
 	;
 
-postfix_expr returns [Unary post_expr]
+postfix_expr [AST parent] returns [Unary post_expr]
 {
 	post_expr = null;
 	JSToken op = JSToken.None;
 	AST left = null;
 }
-	: left = left_hand_side_expr ( INCREMENT { op = JSToken.Increment; } 
-            			     | DECREMENT { op = JSToken.Decrement; } 
-			      	     | )
+	: left = left_hand_side_expr [parent] ( INCREMENT { op = JSToken.Increment; } 
+					      | DECREMENT { op = JSToken.Decrement; } 
+					      | )
 	  {
-		  post_expr = new Unary (left, op);
+		  post_expr = new Unary (parent, left, op);
 	  }
 	;
 
-unary_expr returns [Unary unary_exprn]
+unary_expr [AST parent] returns [Unary unary_exprn]
 {
 	unary_exprn = null;
 	JSToken op = JSToken.None;
 	AST u_expr = null;
 }
-	: unary_exprn = postfix_expr
-	| op = unary_op u_expr = unary_expr
+	: unary_exprn = postfix_expr [parent]
+	| op = unary_op u_expr = unary_expr [parent]
 	  { 
-		  unary_exprn = new Unary (u_expr, op); 
+		  unary_exprn = new Unary (parent, u_expr, op); 
 	  }
 	;
 
@@ -435,22 +434,22 @@ unary_op returns [JSToken unary_op]
 	| LOGICAL_NOT { unary_op = JSToken.LogicalNot; }
 	;
 
-multiplicative_expr returns [AST mult_expr]
+multiplicative_expr [AST parent] returns [AST mult_expr]
 {
 	mult_expr = null;
 	Unary left = null;
 	AST right = null;
 }
-	: left = unary_expr right = multiplicative_aux
+	: left = unary_expr [parent] right = multiplicative_aux [parent]
 	  {
 		  if (right == null)
 			  mult_expr = left;
 		  else
-		  	  mult_expr = new Binary (left, right, ((Binary) right).old_op);
+		  	  mult_expr = new Binary (parent, left, right, ((Binary) right).old_op);
 	  }
 	;
 
-multiplicative_aux returns [AST mult_aux]
+multiplicative_aux [AST parent] returns [AST mult_aux]
 {
 	mult_aux = null;
 	JSToken mult_op = JSToken.None;
@@ -460,33 +459,33 @@ multiplicative_aux returns [AST mult_aux]
 	: (( MULT { mult_op = JSToken.Multiply; }
 	   | DIVISION { mult_op = JSToken.Divide; }
 	   | MODULE { mult_op = JSToken.Modulo; }
-	   ) left = unary_expr right = multiplicative_aux
+	   ) left = unary_expr [parent] right = multiplicative_aux [parent]
 	     {
 			  if (right == null)
-				  mult_aux = new Binary (left, null, JSToken.None);
+				  mult_aux = new Binary (parent, left, null, JSToken.None);
 			  else
-				  mult_aux = new Binary (left, right, ((Binary) right).old_op);
+				  mult_aux = new Binary (parent, left, right, ((Binary) right).old_op);
 			  ((Binary) mult_aux).old_op = mult_op;
 	     }
 	  | )
 	;
 
-additive_expr returns [AST add_expr]
+additive_expr [AST parent] returns [AST add_expr]
 {
 	add_expr = null;
 	AST left, right;
 	left = right = null;
 }
-	: left = multiplicative_expr right = additive_aux
+	: left = multiplicative_expr [parent] right = additive_aux [parent]
 	  {
 			  if (right == null)
 				  add_expr = left;
 			  else
-				  add_expr = new Binary (left, right, ((Binary) right).old_op);
+				  add_expr = new Binary (parent, left, right, ((Binary) right).old_op);
 	  }
 	;
 
-additive_aux returns [AST add_aux]
+additive_aux [AST parent] returns [AST add_aux]
 {
 	add_aux = null;
 	JSToken op = JSToken.None;
@@ -495,45 +494,45 @@ additive_aux returns [AST add_aux]
 }
 	: (( PLUS { op = JSToken.Plus; }
 	   | MINUS { op = JSToken.Minus; }
-	   ) left = multiplicative_expr right = additive_aux
+	   ) left = multiplicative_expr [parent] right = additive_aux [parent]
 	     {
 		     if (right == null)
-			     add_aux = new Binary (left, null, JSToken.None);
+			     add_aux = new Binary (parent, left, null, JSToken.None);
 		     else
-			     add_aux = new Binary (left, right, ((Binary) right).old_op);
+			     add_aux = new Binary (parent, left, right, ((Binary) right).old_op);
 		     ((Binary) add_aux).old_op = op;
 	     }
 	| )
 	;
 
-shift_expr returns [AST shift_expr]
+shift_expr [AST parent] returns [AST shift_expr]
 {
 	shift_expr = null;
 	AST left, right;
 	left = right = null;
 }
-	: left = additive_expr right = shift_aux
+	: left = additive_expr [parent] right = shift_aux [parent]
 	  {
 		  if (right == null)
 			  shift_expr = left;
 		  else
-			  shift_expr = new Binary (left, right, ((Binary) right).old_op);
+			  shift_expr = new Binary (parent, left, right, ((Binary) right).old_op);
 	  }
 	;
 
-shift_aux returns [AST shift_auxr]
+shift_aux [AST parent] returns [AST shift_auxr]
 { 
 	shift_auxr = null; 
 	JSToken op = JSToken.None;
 	AST left, right;
 	left = right = null;
 }
-	: (op = shift_op left = additive_expr right = shift_aux
+	: (op = shift_op left = additive_expr [parent] right = shift_aux [parent]
 	   {
 		   if (right == null)
-			   shift_auxr = new Binary (left, null, JSToken.None);
+			   shift_auxr = new Binary (parent, left, null, JSToken.None);
 		   else
-			   shift_auxr = new Binary (left, right, ((Binary) right).old_op);
+			   shift_auxr = new Binary (parent, left, right, ((Binary) right).old_op);
 
 		   ((Binary) shift_auxr).old_op = op;
 	   }
@@ -547,34 +546,34 @@ shift_op returns [JSToken shift_op]
 	| UNSIGNED_SHIFT_RIGHT { shift_op = JSToken.UnsignedRightShift; }
 	;
 
-relational_expr returns [AST rel_expr]
+relational_expr [AST parent] returns [AST rel_expr]
 {
 	rel_expr = null;
 	AST left = null;
 	Relational right = null;
 }
-	: left = shift_expr right = relational_aux
+	: left = shift_expr [parent] right = relational_aux [parent]
 	  {
 		  if (right == null)
 			  rel_expr = left;
 		  else
-			  rel_expr = new Relational (left, right, right.old_op);
+			  rel_expr = new Relational (parent, left, right, right.old_op);
 	  }
 	;
 
-relational_aux returns [Relational rel_aux]
+relational_aux [AST parent] returns [Relational rel_aux]
 {
 	rel_aux = null;
 	JSToken op = JSToken.None;
 	AST left = null;
 	Relational right = null;
 }
-	: (op = relational_op left = shift_expr right = relational_aux
+	: (op = relational_op left = shift_expr [parent] right = relational_aux [parent]
 	   {
 		   if (right == null)
-			  rel_aux = new Relational (left, null, JSToken.None);
+			  rel_aux = new Relational (parent, left, null, JSToken.None);
 		   else
-			   rel_aux = new Relational (left, right, right.old_op);
+			   rel_aux = new Relational (parent, left, right, right.old_op);
 		   rel_aux.old_op = op;
 
 	   }
@@ -591,35 +590,35 @@ relational_op returns [JSToken rel_op]
 	;
 
 
-equality_expr returns [AST eq_expr]
+equality_expr [AST parent] returns [AST eq_expr]
 {
 	eq_expr = null;
 	AST left = null;
 	Equality right = null;
 }
-	: left = relational_expr  right = equality_aux
+	: left = relational_expr [parent] right = equality_aux [parent]
 	  {
 		  if (right == null)
 			  eq_expr = left;
 		  else {
-			  eq_expr = new Equality (left, right, right.old_op);
+			  eq_expr = new Equality (parent, left, right, right.old_op);
 		  }
 	  }
 	;
 
-equality_aux returns [Equality eq_aux]
+equality_aux [AST parent] returns [Equality eq_aux]
 {
 	eq_aux = null;
 	AST left = null;
 	Equality right = null;
 	JSToken op = JSToken.None;
 }
-	: (op = equality_op left = relational_expr right = equality_aux
+	: (op = equality_op left = relational_expr [parent] right = equality_aux [parent]
 	   {
 		   if (right == null)
-			  eq_aux = new Equality (left, null, JSToken.None);
+			  eq_aux = new Equality (parent, left, null, JSToken.None);
 		   else
-			  eq_aux = new Equality (left, right, right.old_op);
+			  eq_aux = new Equality (parent, left, right, right.old_op);
 
 		  eq_aux.old_op = op;
 	   }
@@ -634,7 +633,7 @@ equality_op returns [JSToken eq_op]
 	| STRICT_NEQ { eq_op = JSToken.StrictNotEqual; }
 	;
 
-bitwise_and_expr returns [AST bit_and_expr]
+bitwise_and_expr [AST parent] returns [AST bit_and_expr]
 {
 	bit_and_expr = null;
     AST left;
@@ -642,158 +641,158 @@ bitwise_and_expr returns [AST bit_and_expr]
 	left = null;
 	right = null;
 }
-	: left = equality_expr  right = bitwise_and_aux
+	: left = equality_expr [parent]  right = bitwise_and_aux [parent]
 	  {
 		  if (right == null)
 			  bit_and_expr = left;
 		  else
-			  bit_and_expr = new Binary (left, right, JSToken.BitwiseAnd);
+			  bit_and_expr = new Binary (parent, left, right, JSToken.BitwiseAnd);
 	  }
 	;
 
-bitwise_and_aux returns [AST bit_and_aux]
+bitwise_and_aux [AST parent] returns [AST bit_and_aux]
 {
 	bit_and_aux = null;
-    AST left = null;
+	AST left = null;
 	AST right = null;
 }
-	: (BITWISE_AND left = equality_expr right = bitwise_and_aux
+	: (BITWISE_AND left = equality_expr [parent] right = bitwise_and_aux [parent]
 	   {
 		   if (right == null)
 			   bit_and_aux = left;
 		   else
-			   bit_and_aux = new Binary (left, right, JSToken.BitwiseAnd);
+			   bit_and_aux = new Binary (parent, left, right, JSToken.BitwiseAnd);
 	   }
 	  | )
 		  
 	;
 
-bitwise_xor_expr returns [AST bit_xor_expr]
+bitwise_xor_expr [AST parent] returns [AST bit_xor_expr]
 {
 	bit_xor_expr = null;
 	AST left, right;
 	left = right = null;
 }
-	: left = bitwise_and_expr right = bitwise_xor_aux
+	: left = bitwise_and_expr [parent] right = bitwise_xor_aux [parent]
 	  {
 		  if (right == null)
 			  bit_xor_expr = left;
 		  else
-			  bit_xor_expr = new Binary (left, right, JSToken.BitwiseXor);
+			  bit_xor_expr = new Binary (parent, left, right, JSToken.BitwiseXor);
 	  }
 	;
 
-bitwise_xor_aux returns [AST bit_xor_aux]
+bitwise_xor_aux [AST parent] returns [AST bit_xor_aux]
 {
 	bit_xor_aux = null;
 	AST left, right;
 	left = right = null;
 }
-	: (BITWISE_XOR left = bitwise_and_expr right = bitwise_xor_aux
+	: (BITWISE_XOR left = bitwise_and_expr [parent] right = bitwise_xor_aux [parent]
 	   {
 		  if (right == null)
 			  bit_xor_aux = left;
 		  else
-			  bit_xor_aux = new Binary (left, right, JSToken.BitwiseXor);
+			  bit_xor_aux = new Binary (parent, left, right, JSToken.BitwiseXor);
 	   }
 	  | )
 	;
 
-bitwise_or_expr returns [AST bit_or_expr]
+bitwise_or_expr [AST parent] returns [AST bit_or_expr]
 { 
 	bit_or_expr = null;
 	AST left, right;
 	left = right = null;
 }
-	: left = bitwise_xor_expr right = bitwise_or_aux
+	: left = bitwise_xor_expr [parent] right = bitwise_or_aux [parent]
 	  {
 	  	  if (right == null)
 			  bit_or_expr = left;
 		  else
-			  bit_or_expr = new Binary (left, right, JSToken.BitwiseOr);
+			  bit_or_expr = new Binary (parent, left, right, JSToken.BitwiseOr);
 	  }
 	;
 
-bitwise_or_aux returns [AST bit_or_aux]
+bitwise_or_aux [AST parent] returns [AST bit_or_aux]
 { 
 	bit_or_aux = null;
 	AST left, right;
 	left = right = null;
 }
-	: (BITWISE_OR left = bitwise_xor_expr right = bitwise_or_aux
+	: (BITWISE_OR left = bitwise_xor_expr [parent] right = bitwise_or_aux [parent]
 	   {
 		   if (right == null)
 			   bit_or_aux = left;
  		   else
-			   bit_or_aux = new Binary (left, right, JSToken.BitwiseOr);
+			   bit_or_aux = new Binary (parent, left, right, JSToken.BitwiseOr);
 	   }
 	  | )
 	;
 
-logical_and_expr returns [AST log_and_expr]
+logical_and_expr [AST parent] returns [AST log_and_expr]
 {
 	log_and_expr = null;
 	AST left, right;
 	left = right = null;
 }
-	: left = bitwise_or_expr right = logical_and_aux
+	: left = bitwise_or_expr [parent] right = logical_and_aux [parent]
 	  {
 		  if (right == null)
 			  log_and_expr = left;
 	  	  else
-			  log_and_expr = new Binary (left, right, JSToken.LogicalAnd);
+			  log_and_expr = new Binary (parent, left, right, JSToken.LogicalAnd);
 	  }
 	;
 
-logical_and_aux returns [AST log_and_aux]
+logical_and_aux [AST parent] returns [AST log_and_aux]
 {
 	log_and_aux = null;
 	AST left, right;
 	left = right = null;
 }
-	: (LOGICAL_AND left = bitwise_or_expr right = logical_and_aux
+	: (LOGICAL_AND left = bitwise_or_expr [parent] right = logical_and_aux [parent]
 	   {
 	   	   if (right == null)
 			   log_and_aux = left;
 		   else
-			   log_and_aux = new Binary (left, right, JSToken.LogicalAnd);
+			   log_and_aux = new Binary (parent, left, right, JSToken.LogicalAnd);
 	   }
 	  | )
 	;
 
-logical_or_expr returns [AST log_or_expr]
+logical_or_expr [AST parent] returns [AST log_or_expr]
 { 
 	log_or_expr = null; 
 	AST left, right;
 	left = right = null;
 }
-	:  left = logical_and_expr right = logical_or_aux
+	:  left = logical_and_expr [parent] right = logical_or_aux [parent]
 	   {
 		  if (right == null)
 		  	  log_or_expr = left;
 		  else
-			  log_or_expr = new Binary (left, right, JSToken.LogicalOr);
+			  log_or_expr = new Binary (parent, left, right, JSToken.LogicalOr);
 	   }
 					    			
 	;
 
-logical_or_aux returns [AST log_or_aux]
+logical_or_aux [AST parent] returns [AST log_or_aux]
 { 
 	AST left, right;
 	log_or_aux = null;
 	left = right = null;	
 }
-	: (LOGICAL_OR left = logical_and_expr right = logical_or_aux
+	: (LOGICAL_OR left = logical_and_expr [parent] right = logical_or_aux [parent]
 	   {
 		  if (right == null)
 		  	  log_or_aux = left; 
 		  else
-			  log_or_aux = new Binary (left, right, JSToken.LogicalOr);
+			  log_or_aux = new Binary (parent, left, right, JSToken.LogicalOr);
 	   }
 	  | )
 	;
 
-cond_expr returns [AST conditional]
+cond_expr [AST parent] returns [AST conditional]
 {
 	conditional = null; 
 	AST cond;
@@ -801,12 +800,12 @@ cond_expr returns [AST conditional]
 	cond = null;
 	trueExpr = falseExpr = null;
 }
-	: cond = logical_or_expr 
-	  (INTERR trueExpr = assignment_expr 
-	   COLON falseExpr = assignment_expr 
+	: cond = logical_or_expr [parent]
+	  (INTERR trueExpr = assignment_expr [parent]
+	   COLON falseExpr = assignment_expr [parent]
 	   { 
 	  	  if (trueExpr != null && falseExpr != null) {
-		  	  Conditional c = new Conditional ((AST) cond, trueExpr, falseExpr); 
+		  	  Conditional c = new Conditional (parent, (AST) cond, trueExpr, falseExpr); 
 			  conditional =  c;
 		  }
 	   }
@@ -832,7 +831,7 @@ assignment_op returns [JSToken assign_op]
 	;
 	
 
-primary_expr returns [AST prim_exp]
+primary_expr [AST parent] returns [AST prim_exp]
 {
 	prim_exp = null;
 	AST l = null;
@@ -845,32 +844,33 @@ primary_expr returns [AST prim_exp]
 		Identifier ident = new Identifier (id.getText ());
 		prim_exp = (AST) ident;
 	  }
-	| l = literal { prim_exp = l; }
+	| l = literal [parent] { prim_exp = l; }
 	| array_literal
-	| OPEN_PARENS e = expr { prim_exp = e; } CLOSE_PARENS
+	| OPEN_PARENS e = expr [parent] { prim_exp = e; } CLOSE_PARENS
 	; 
 
 object_literal
 	: OPEN_BRACE 
-	   ((property_name COLON)=> OPEN_BRACE (property_name COLON assignment_expr)+
-	   | (statement [null])*  // block_stm case
-	   ) CLOSE_BRACE
-
+	   ((property_name COLON)=> property_name COLON assignment_expr [null] 
+	    (COMMA property_name COLON assignment_expr [null])*
+	   | (statement [null])*
+	   ) 
+	  CLOSE_BRACE
 	;
 
-literal returns [AST l]
+literal [AST parent] returns [AST l]
 {
 	l = null; 
 }
 	: "null"
 	| "true"
 	  {
-		  BooleanLiteral bl = new BooleanLiteral (true);
+		  BooleanLiteral bl = new BooleanLiteral (parent, true);
 		  l = bl;
 	  }
 	| "false"
 	  {
-		  BooleanLiteral bl = new BooleanLiteral (false);
+		  BooleanLiteral bl = new BooleanLiteral (parent, false);
 		  l = bl;
 	  }
 	| s:STRING_LITERAL
@@ -882,7 +882,7 @@ literal returns [AST l]
 	;
 
 property_name_and_value_list
-	: (property_name COLON primary_expr)+
+	: (property_name COLON primary_expr [null])+
 	;
 
 property_name
@@ -890,7 +890,7 @@ property_name
 	;
 
 array_literal
-	: OPEN_BRACKET (primary_expr (COMMA primary_expr)* | ) CLOSE_BRACKET
+	: OPEN_BRACKET (primary_expr [null] (COMMA primary_expr [null])* | ) CLOSE_BRACKET
 	;	
 
 numeric_literal returns [NumericLiteral num_lit]
