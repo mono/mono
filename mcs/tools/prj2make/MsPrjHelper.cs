@@ -242,7 +242,7 @@ namespace Mfconsulting.General.Prj2Make
 						{
 							MakefileBuilder.Append("MCS=mcs\n");
 							MakefileBuilder.Append("ifndef (RELEASE)\n");
-							MakefileBuilder.Append("\tMCSFLAGS=-debug --stacktrace\n");
+							MakefileBuilder.Append("\tMCSFLAGS=-debug \n");
 							MakefileBuilder.Append("endif\n");
 							// Define and add the information used in the -lib: arguments passed to the
 							// compiler to assist in finding non-fullyqualified assembly references.
@@ -284,7 +284,7 @@ namespace Mfconsulting.General.Prj2Make
 						{
 							MakefileBuilder.Append("MCS=mcs\n");
 							MakefileBuilder.Append("!if !defined(RELEASE)\n");
-							MakefileBuilder.Append("MCSFLAGS=-debug --stacktrace\n");
+							MakefileBuilder.Append("MCSFLAGS=-debug \n");
 							MakefileBuilder.Append("!endif\n");
 						}    				
 					}
