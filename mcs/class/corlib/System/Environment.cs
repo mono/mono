@@ -151,15 +151,18 @@ namespace System
 			get;
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern string GetOSVersionString ();
+
 		/// <summary>
 		/// Gets the current OS version information
 		/// </summary>
-		[MonoTODO("Correct version")]
 		public static OperatingSystem OSVersion {
 			get {
-				if (os == null)
-					os = new OperatingSystem (Platform, new Version (5,1,2600,0));
-
+				if (os == null) {
+					Version v = Version.CreateFromString (GetOSVersionString ());
+					os = new OperatingSystem (Platform, v);
+				}
 				return os;
 			}
 		}

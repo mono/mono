@@ -267,5 +267,52 @@ namespace System
 		{
 			return v1.CompareTo (v2) <= 0;
 		}
+
+		// a very gentle way to construct a Version object which takes 
+		// the first four numbers in a string as the version
+		internal static Version CreateFromString (string info)
+		{
+			int major = 0;
+			int minor = 0;
+			int build = 0;
+			int revision = 0;
+			int state = 1;
+			int number = UNDEFINED; // string may not begin with a digit
+
+			for (int i=0; i < info.Length; i++) {
+				char c = info [i];
+				if (Char.IsDigit (c)) {
+					if (number < 0) {
+						number = (c - '0');
+					}
+					else {
+						number = (number * 10) + (c - '0');
+					}
+				}
+				else if (number >= 0) {
+					// assign
+					switch (state) {
+					case 1:
+						major = number;
+						break;
+					case 2:
+						minor = number;
+						break;
+					case 3:
+						build = number;
+						break;
+					case 4:
+						revision = number;
+						break;
+					}
+					number = -1;
+					state ++;
+				}
+				// ignore end of string
+				if (state == 5)
+					break;
+			}
+			return new Version (major, minor, build, revision);
+		}
 	}
 }
