@@ -1,3 +1,8 @@
+2004-02-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: arghhh. I used the server response headers instead
+	of what the client is supposed to send. Thanks to Helge Hess.
+
 2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AuthenticationManager.cs: implemented PreAuthenticate().

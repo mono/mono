@@ -830,15 +830,15 @@ namespace System.Net
 
 		void DoPreAuthenticate ()
 		{
-			webHeaders.RemoveInternal ("Proxy-Authenticate");
-			webHeaders.RemoveInternal ("WWW-Authenticate");
+			webHeaders.RemoveInternal ("Proxy-Authorization");
+			webHeaders.RemoveInternal ("Authorization");
 			bool isProxy = (proxy != null && !proxy.IsBypassed (actualUri));
 			ICredentials creds = (!isProxy) ? credentials : proxy.Credentials;
 			Authorization auth = AuthenticationManager.PreAuthenticate (this, creds);
 			if (auth == null)
 				return;
 
-			string authHeader = (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate";
+			string authHeader = (isProxy) ? "Proxy-Authorization" : "Authorization";
 			webHeaders [authHeader] = auth.Message;
 			usedPreAuth = true;
 		}
