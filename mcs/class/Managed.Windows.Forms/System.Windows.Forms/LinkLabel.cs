@@ -30,9 +30,12 @@
 //	- Change the cursor to a hand cursor when you are over a link (when cursors are available)
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: LinkLabel.cs,v $
+// Revision 1.7  2004/08/21 22:32:14  pbartok
+// - Signature Fixes
+//
 // Revision 1.6  2004/08/10 15:24:35  jackson
 // Let Control handle buffering.
 //
@@ -229,18 +232,7 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
-
-		//
-		//  --- Protected Properties
-		//
-		protected override ImeMode DefaultImeMode {
-			get {return base.DefaultImeMode;}
-		}
-
-		//
-		//  --- Protected Methods
-		//
-
+		#region Protected Instance Methods
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
 			return base.CreateAccessibilityInstance();
@@ -375,7 +367,8 @@ namespace System.Windows.Forms
 		{
 			base.OnTabIndexChanged(e);
 		}
-
+		#endregion	// Protected instance methods
+	
 		internal void CreateLinkPieces ()
 		{
 			//Console.WriteLine ("CreateLinkPieces:" + Links.Count);
@@ -459,7 +452,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected override void Draw ()
+		internal void Draw ()
 		{
 			Color color;
 
