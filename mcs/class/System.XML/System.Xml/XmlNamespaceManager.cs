@@ -60,7 +60,7 @@ namespace System.Xml
 				throw new ArgumentNullException ("uri", "Value cannot be null.");
 
 			if (prefix.Length > 2 && prefix.Substring (0, 3).ToLower () == "xml")
-				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.", "prefix");
+				throw new ArgumentException ( "Prefixes beginning with \"xml\" (regardless " + "of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.", "prefix");
 
 			if (currentScope.Namespaces == null)
 				currentScope.Namespaces = new Hashtable ();
@@ -71,10 +71,12 @@ namespace System.Xml
 				currentScope.Namespaces.Add (nameTable.Add (prefix), nameTable.Add (uri));
 		}
 
-		[MonoTODO]
 		public virtual IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			if (currentScope.Namespaces == null)
+				currentScope.Namespaces = new Hashtable ();
+
+			return currentScope.Namespaces.Keys.GetEnumerator ();
 		}
 
 		public virtual bool HasNamespace (string prefix)
@@ -141,10 +143,27 @@ namespace System.Xml
 			currentScope = newScope;
 		}
 
-		[MonoTODO]
 		public virtual void RemoveNamespace (string prefix, string uri)
 		{
-			throw new NotImplementedException ();
+			if (prefix == null)
+				throw new ArgumentNullException ("prefix");
+
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
+			if (currentScope == null || currentScope.Namespaces == null)
+				return;
+
+			string p = nameTable.Get (prefix);
+			string u = nameTable.Get (uri);
+			if (p == null || u == null)
+				return;
+				
+			string storedUri = currentScope.Namespaces [p] as string;
+			if (storedUri == null || storedUri != u)
+				return;
+
+			currentScope.Namespaces.Remove (p);
 		}
 
 		#endregion

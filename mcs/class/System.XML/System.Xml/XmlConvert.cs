@@ -61,7 +61,7 @@ namespace System.Xml {
 			return encoded.Replace (":", encodedColon);
 		}
 
-		private static bool IsInvalid (char c, bool firstOnlyLetter)
+		internal static bool IsInvalid (char c, bool firstOnlyLetter)
 		{
 			if (c == ':') // Special case. allowed in EncodeName, but encoded in EncodeLocalName
 				return false;

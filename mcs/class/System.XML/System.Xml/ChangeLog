@@ -1,3 +1,10 @@
+2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlConvert.cs: IsInvalid is now internal.
+	* XmlNamespaceManager.cs: implemented RemoveNamespace
+	* XmlTextReader.cs: return BaseURI and Encoding from the parser.
+	* XmlTextWriter.cs: implemented WriteName and WriteNmToken.
+
 2002-09-19  Matt Hunter <mahunter@tconl.com>
 
 	* XmlElement.cs: Implementing SetAttributeNode(localName,namespaceURI)

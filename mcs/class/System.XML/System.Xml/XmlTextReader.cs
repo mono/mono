@@ -147,10 +147,9 @@ namespace System.Xml
 			get { return attributes.Count; }
 		}
 
-		[MonoTODO]
 		public override string BaseURI
 		{
-			get { throw new NotImplementedException (); }
+			get { return parserContext.BaseURI; }
 		}
 
 		public override int Depth
@@ -158,10 +157,9 @@ namespace System.Xml
 			get { return depth > 0 ? depth : 0; }
 		}
 
-		[MonoTODO]
 		public Encoding Encoding
 		{
-			get { throw new NotImplementedException (); }
+			get { return parserContext.Encoding; }
 		}
 
 		public override bool EOF

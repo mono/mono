@@ -392,16 +392,25 @@ namespace System.Xml
 			WriteEndElementInternal (true);
 		}
 
-		[MonoTODO]
-		public override void WriteName (string name)
+		private void CheckValidChars (string name, bool firstOnlyLetter)
 		{
-			throw new NotImplementedException ();
+			foreach (char c in name) {
+				if (XmlConvert.IsInvalid (c, firstOnlyLetter))
+					throw new ArgumentException ("There is an invalid character: '" + c +
+								     "'", "name");
+			}
 		}
 
-		[MonoTODO]
+		public override void WriteName (string name)
+		{
+			CheckValidChars (name, true);
+			w.Write (name);
+		}
+
 		public override void WriteNmToken (string name)
 		{
-			throw new NotImplementedException ();
+			CheckValidChars (name, false);
+			w.Write (name);
 		}
 
 		public override void WriteProcessingInstruction (string name, string text)
