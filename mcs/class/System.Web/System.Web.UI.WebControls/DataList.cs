@@ -868,10 +868,11 @@ namespace System.Web.UI.WebControls
 
 		Style IRepeatInfoUser.GetItemStyle (ListItemType itemType, int repeatIndex)
 		{
-			if (ControlStyleCreated && GetItem (itemType, repeatIndex) != null)
-				return ControlStyle;
+			DataListItem item = GetItem (itemType, repeatIndex);
+			if (item == null || !item.ControlStyleCreated)
+				return null;
 
-			return null;
+			return item.ControlStyle;
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataList.cs: fixed IRepeatInfoUser.GetItemStyle.
+
 2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseValidator.cs: return an empty string in GetControlValidationValue
