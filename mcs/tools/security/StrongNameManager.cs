@@ -215,7 +215,14 @@ namespace Mono.Security {
 			
 			Element el = (Element) tokens [token];
 			if (el != null) {
+				// lokok for this specific assembly first
 				string users = el.GetUsers (an.Name);
+				if (users == null) {
+					// nothing for the specific assembly
+					// so look for "*" assembly
+					users = el.GetUsers ("*");
+				}
+
 				if (users != null) {
 					// applicable to any user ?
 					if (users == "*")
