@@ -33,7 +33,7 @@ SUBDIRS = \
 	Microsoft.VisualBasic		\
 	Microsoft.VisualC		\
 	Cscompmgd			\
-	Managed.Windows.Forms		\
+	System.Windows.Forms		\
 	System.Design			\
 	PEAPI				\
 	Npgsql				\
