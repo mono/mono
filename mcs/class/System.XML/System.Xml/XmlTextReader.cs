@@ -897,57 +897,6 @@ namespace System.Xml
 				QuoteChar = '"';
 				LineNumber = LinePosition = 0;
 			}
-
-			internal void FillNames ()
-			{
-				if (Reader.Namespaces) {
-					int indexOfColon = -1;
-					switch (NodeType) {
-					case XmlNodeType.Attribute:
-					case XmlNodeType.Element:
-					case XmlNodeType.EndElement:
-						indexOfColon = Name.IndexOf (':');
-						break;
-					}
-
-					if (indexOfColon == -1) {
-						Prefix = String.Empty;
-						LocalName = Name;
-					} else {
-						// This improves speed by at least nearly 5%, but eats more memory at least nearly 0.3%
-						// However, this might be reverted if NameTable got improved.
-//						char [] nameArr = Name.ToCharArray ();
-//						Prefix = Reader.NameTable.Add (nameArr, 0, indexOfColon);
-//						LocalName = Reader.NameTable.Add (nameArr, indexOfColon + 1, nameArr.Length - indexOfColon - 1);
-						Prefix = Reader.NameTable.Add (Name.Substring (0, indexOfColon));
-						LocalName = Reader.NameTable.Add (Name.Substring (indexOfColon + 1));
-					}
-
-					// NamespaceURI
-					switch (NodeType) {
-					case XmlNodeType.Attribute:
-						if (Prefix.Length == 0)
-							NamespaceURI = string.Empty;
-						else
-							NamespaceURI = Reader.LookupNamespace (Prefix, true);
-						break;
-
-					case XmlNodeType.Element:
-					case XmlNodeType.EndElement:
-						if (Prefix.Length == 0)
-							NamespaceURI = Reader.parserContext.NamespaceManager.DefaultNamespace;
-						else
-							NamespaceURI = Reader.LookupNamespace (Prefix, true);
-						break;
-					default:
-						NamespaceURI = "";
-						break;
-					}
-				} else {
-					Prefix = String.Empty;
-					LocalName = Name;
-				}
-			}
 		}
 
 		internal class XmlAttributeTokenInfo : XmlTokenInfo
@@ -1014,22 +963,8 @@ namespace System.Xml
 				ValueTokenStartIndex = ValueTokenEndIndex = 0;
 			}
 
-			internal void FillPrefixAndXmlns ()
+			internal void FillXmlns ()
 			{
-				if (!Reader.Namespaces) {
-					Prefix = String.Empty;
-					LocalName = Name;
-					return;
-				}
-				int indexOfColon = Name.IndexOf (':');
-
-				if (indexOfColon == -1) {
-					Prefix = String.Empty;
-					LocalName = Name;
-				} else {
-					Prefix = Reader.NameTable.Add (Name.Substring (0, indexOfColon));
-					LocalName = Reader.NameTable.Add (Name.Substring (indexOfColon + 1));
-				}
 				if (Object.ReferenceEquals (Prefix, XmlNamespaceManager.PrefixXmlns))
 					Reader.parserContext.NamespaceManager.AddNamespace (LocalName, Value);
 				else if (Object.ReferenceEquals (Name, XmlNamespaceManager.PrefixXmlns))
@@ -1283,14 +1218,18 @@ namespace System.Xml
 		// be changed in harmony with each other. Maybe the
 		// fields should be in a seperate class to help enforce
 		// this.
+		//
+		// Namespace URI could not be provided here.
 		private void SetProperties (
 			XmlNodeType nodeType,
 			string name,
+			string prefix,
+			string localName,
 			bool isEmptyElement,
 			string value,
 			bool clearAttributes)
 		{
-			SetTokenProperties (currentToken, nodeType, name, isEmptyElement, value, clearAttributes);
+			SetTokenProperties (currentToken, nodeType, name, prefix, localName, isEmptyElement, value, clearAttributes);
 			currentToken.LineNumber = this.currentLinkedNodeLineNumber;
 			currentToken.LinePosition = this.currentLinkedNodeLinePosition;
 		}
@@ -1299,6 +1238,8 @@ namespace System.Xml
 			XmlTokenInfo token,
 			XmlNodeType nodeType,
 			string name,
+			string prefix,
+			string localName,
 			bool isEmptyElement,
 			string value,
 			bool clearAttributes)
@@ -1306,14 +1247,14 @@ namespace System.Xml
 			token.Clear ();
 			token.NodeType = nodeType;
 			token.Name = name;
+			token.Prefix = prefix;
+			token.LocalName = localName;
 			token.IsEmptyElement = isEmptyElement;
 			token.Value = value;
 			this.elementDepth = depth;
 
 			if (clearAttributes)
 				ClearAttributes ();
-
-			token.FillNames ();
 		}
 
 		private void ClearAttributes ()
@@ -1330,13 +1271,12 @@ namespace System.Xml
 			if (peekCharsLength == peekCharsIndex) {
 				if (!ReadTextReader ())
 					return -1;
-				return PeekChar ();
+				else
+					return PeekChar ();
 			}
-			else {
-				char c = peekChars [peekCharsIndex];
-				if (c != 0) return c;
-				else return -1;
-			}
+			else
+				return peekChars [peekCharsIndex] != 0 ?
+					peekChars [peekCharsIndex] : -1;
 		}
 
 		private int ReadChar ()
@@ -1346,7 +1286,6 @@ namespace System.Xml
 			if (peekCharsLength == peekCharsIndex) {
 				if (!ReadTextReader ())
 					return -1;
-				return ReadChar ();
 			}
 			ch = peekChars [peekCharsIndex++];
 
@@ -1369,6 +1308,9 @@ namespace System.Xml
 			peekCharsLength = reader.Read (peekChars, 0, peekCharCapacity);
 			if (peekCharsLength == 0)
 				return false;
+			// set EOF
+			if (peekCharsLength < peekCharCapacity)
+				peekChars [peekCharsLength] = (char) 0;
 			return true;
 		}
 
@@ -1400,6 +1342,8 @@ namespace System.Xml
 					SetProperties (
 						XmlNodeType.None, // nodeType
 						String.Empty, // name
+						String.Empty, // prefix
+						String.Empty, // localName
 						false, // isEmptyElement
 						null, // value
 						true // clearAttributes
@@ -1467,6 +1411,8 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.EntityReference, // nodeType
 				entityReferenceName, // name
+				String.Empty, // prefix
+				entityReferenceName, // localName
 				false, // isEmptyElement
 				null, // value
 				true // clearAttributes
@@ -1489,7 +1435,8 @@ namespace System.Xml
 			currentLinkedNodeLineNumber = line;
 			currentLinkedNodeLinePosition = column;
 
-			string name = ReadName ();
+			string prefix, localName;
+			string name = ReadName (out prefix, out localName);
 			if (currentState == XmlNodeType.EndElement)
 				throw new XmlException (this as IXmlLineInfo,"document has terminated, cannot open new element");
 
@@ -1504,7 +1451,7 @@ namespace System.Xml
 
 			// fill namespaces
 			for (int i = 0; i < attributeCount; i++)
-				attributeTokens [i].FillPrefixAndXmlns ();
+				attributeTokens [i].FillXmlns ();
 			for (int i = 0; i < attributeCount; i++)
 				attributeTokens [i].FillNamespace ();
 
@@ -1552,12 +1499,18 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.Element, // nodeType
 				name, // name
+				prefix, // prefix
+				localName, // name
 				isEmptyElement, // isEmptyElement
 				null, // value
 				false // clearAttributes
 			);
+			if (prefix.Length > 0)
+				currentToken.NamespaceURI = LookupNamespace (prefix, true);
+			else if (namespaces)
+				currentToken.NamespaceURI = parserContext.NamespaceManager.DefaultNamespace;
 
-			if (Namespaces) {
+			if (namespaces) {
 				if (NamespaceURI == null)
 					throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
 				try {
@@ -1596,7 +1549,8 @@ namespace System.Xml
 			currentLinkedNodeLineNumber = line;
 			currentLinkedNodeLinePosition = column;
 
-			string name = ReadName ();
+			string prefix, localName;
+			string name = ReadName (out prefix, out localName);
 			if (elementNameStackPos == 0)
 				throw new XmlException (this as IXmlLineInfo,"closing element without matching opening element");
 			string expected = elementNames [--elementNameStackPos];
@@ -1611,10 +1565,16 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.EndElement, // nodeType
 				name, // name
+				prefix, // prefix
+				localName, // localName
 				false, // isEmptyElement
 				null, // value
 				true // clearAttributes
 			);
+			if (prefix.Length > 0)
+				currentToken.NamespaceURI = LookupNamespace (prefix, true);
+			else if (namespaces)
+				currentToken.NamespaceURI = parserContext.NamespaceManager.DefaultNamespace;
 
 			popScope = true;
 
@@ -1627,18 +1587,12 @@ namespace System.Xml
 				currentState = XmlNodeType.EndElement;
 		}
 
-		private void AppendNameChar (int ch)
+		private void AppendSurrogatePairNameChar (int ch)
 		{
+			nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
 			if (nameLength == nameCapacity)
 				ExpandNameCapacity ();
-			if (ch < Char.MaxValue)
-				nameBuffer [nameLength++] = (char) ch;
-			else {
-				nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
-				if (nameLength == nameCapacity)
-					ExpandNameCapacity ();
-				nameBuffer [nameLength++] = (char) (ch % 0x10000 + 0xDC00);
-			}
+			nameBuffer [nameLength++] = (char) (ch % 0x10000 + 0xDC00);
 		}
 
 		private void ExpandNameCapacity ()
@@ -1655,12 +1609,16 @@ namespace System.Xml
 				ExpandValueCapacity ();
 			if (ch < Char.MaxValue)
 				valueBuffer [valueLength++] = (char) ch;
-			else {
-				valueBuffer [valueLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
-				if (valueLength == valueCapacity)
-					ExpandValueCapacity ();
-				valueBuffer [valueLength++] = (char) (ch % 0x10000 + 0xDC00);
-			}
+			else
+				AppendSurrogatePairValueChar (ch);
+		}
+
+		private void AppendSurrogatePairValueChar (int ch)
+		{
+			valueBuffer [valueLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
+			if (valueLength == valueCapacity)
+				ExpandValueCapacity ();
+			valueBuffer [valueLength++] = (char) (ch % 0x10000 + 0xDC00);
 		}
 
 		private void ExpandValueCapacity ()
@@ -1760,6 +1718,8 @@ namespace System.Xml
 				SetProperties (
 					nodeType, // nodeType
 					String.Empty, // name
+					String.Empty, // prefix
+					String.Empty, // localName
 					false, // isEmptyElement
 					null, // value: create only when required
 					true // clearAttributes
@@ -1869,8 +1829,10 @@ namespace System.Xml
 				currentAttributeToken.LineNumber = line;
 				currentAttributeToken.LinePosition = column;
 
-				currentAttributeToken.LocalName = 
-					currentAttributeToken.Name = ReadName ();
+				string prefix, localName;
+				currentAttributeToken.Name = ReadName (out prefix, out localName);
+				currentAttributeToken.Prefix = prefix;
+				currentAttributeToken.LocalName = localName;
 				ExpectAfterWhitespace ('=');
 				SkipWhitespace ();
 				ReadAttributeValueTokens (-1);
@@ -1901,13 +1863,20 @@ namespace System.Xml
 		{
 			IncrementAttributeToken ();
 			XmlAttributeTokenInfo ati = attributeTokens [currentAttribute];
-			ati.Name = name;
+			ati.Name = parserContext.NameTable.Add (name);
 			ati.Prefix = String.Empty;
 			ati.NamespaceURI = String.Empty;
 			IncrementAttributeValueToken ();
 			XmlTokenInfo vti = attributeValueTokens [currentAttributeValue];
 			vti.Value = value;
-			SetTokenProperties (vti, XmlNodeType.Text, String.Empty, false, value, false);
+			SetTokenProperties (vti,
+				XmlNodeType.Text,
+				String.Empty,
+				String.Empty,
+				String.Empty,
+				false,
+				value,
+				false);
 			attributeCount++;
 		}
 
@@ -2087,6 +2056,8 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
+				String.Empty, // prefix
+				target, // localName
 				false, // isEmptyElement
 				null, // value: create only when required
 				true // clearAttributes
@@ -2129,6 +2100,8 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.XmlDeclaration, // nodeType
 				"xml", // name
+				String.Empty, // prefix
+				"xml", // localName
 				false, // isEmptyElement
 				new string (currentTagBuffer, 6, currentTagLength - 6), // value
 				false // clearAttributes
@@ -2291,6 +2264,8 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.Comment, // nodeType
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				false, // isEmptyElement
 				null, // value: create only when required
 				true // clearAttributes
@@ -2341,6 +2316,8 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.CDATA, // nodeType
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				false, // isEmptyElement
 				null, // value: create only when required
 				true // clearAttributes
@@ -2410,6 +2387,8 @@ namespace System.Xml
 			SetProperties (
 				XmlNodeType.DocumentType, // nodeType
 				doctypeName, // name
+				String.Empty, // prefix
+				doctypeName, // localName
 				false, // isEmptyElement
 				parserContext.InternalSubset, // value
 				true // clearAttributes
@@ -2664,19 +2643,61 @@ namespace System.Xml
 		// of the name.
 		private string ReadName ()
 		{
+			string prefix, local;
+			return ReadName (out prefix, out local);
+		}
+
+		private string ReadName (out string prefix, out string localName)
+		{
+			// FIXME: need to reject non-QName names?
+
 			int ch = PeekChar ();
 			if (!XmlChar.IsFirstNameChar (ch))
 				throw new XmlException (this as IXmlLineInfo,String.Format (CultureInfo.InvariantCulture, "a name did not start with a legal character {0} ({1})", ch, (char) ch));
 
 			nameLength = 0;
 
-			AppendNameChar (ReadChar ());
-
-			while (XmlChar.IsNameChar (PeekChar ())) {
-				AppendNameChar (ReadChar ());
+			ch = ReadChar ();
+			// AppendNameChar (ch);
+			{
+				if (nameLength == nameCapacity)
+					ExpandNameCapacity ();
+				if (ch < Char.MaxValue)
+					nameBuffer [nameLength++] = (char) ch;
+				else
+					AppendSurrogatePairNameChar (ch);
 			}
 
-			return parserContext.NameTable.Add (nameBuffer, 0, nameLength);
+			int colonAt = -1;
+
+			while (XmlChar.IsNameChar (PeekChar ())) {
+				ch = ReadChar ();
+
+				if (namespaces && colonAt < 0 && ch == ':')
+					colonAt = nameLength;
+				// AppendNameChar (ch);
+				{
+					if (nameLength == nameCapacity)
+						ExpandNameCapacity ();
+					if (ch < Char.MaxValue)
+						nameBuffer [nameLength++] = (char) ch;
+					else
+						AppendSurrogatePairNameChar (ch);
+				}
+			}
+
+			string name = parserContext.NameTable.Add (nameBuffer, 0, nameLength);
+
+			if (namespaces && colonAt > 0) {
+				prefix = parserContext.NameTable.Add (nameBuffer, 0, colonAt);
+				localName = parserContext.NameTable.Add (nameBuffer, colonAt + 1, nameLength - colonAt - 1);
+			}
+			else {
+				prefix = String.Empty;
+				localName = name;
+			}
+
+			return name;
 		}
 
 		// Read the next character and compare it against the
@@ -2721,6 +2742,7 @@ namespace System.Xml
 			bool skipped = XmlChar.IsWhitespace (PeekChar ());
 			if (!skipped)
 				return false;
+			ReadChar ();
 			while (XmlChar.IsWhitespace (PeekChar ()))
 				ReadChar ();
 			return skipped;
@@ -2743,6 +2765,8 @@ namespace System.Xml
 				XmlNodeType nodeType = (this.XmlSpace == XmlSpace.Preserve) ?
 					XmlNodeType.SignificantWhitespace : XmlNodeType.Whitespace;
 				SetProperties (nodeType,
+					       String.Empty,
+					       String.Empty,
 					       String.Empty,
 					       false,
 					       null, // value: create only when required

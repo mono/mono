@@ -1,3 +1,12 @@
+2004-11-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Reduced NameTable.Add() for prefixed names. First,
+	  ReadName() now returns atomized LocalName and Prefix. Second, to
+	  avoid extraneous split, SetProperties() now takes prefix and
+	  localName that might be given from ReadName(). Third, removed 
+	  FillNames(). This optimizes "namespace-aware and prefixed document"
+	  parsing 10-20% faster.
+
 2004-11-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs :
