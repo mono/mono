@@ -1,4 +1,9 @@
 
+Wed Jun 18 18:52:11 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* FloatingPointFormatter.cs: if the precision is not specified, use
+	the default precision for the data type.
+
 Wed Jun 18 18:11:30 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Array.cs: throw ArgumentOutOfRangeException in Copy if needed
