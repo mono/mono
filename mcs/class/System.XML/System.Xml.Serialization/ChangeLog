@@ -1,3 +1,27 @@
+2004-01-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MapCodeGenerator.cs: Added helper method for generating an attribute
+	  parameter of type enum.
+	* XmlAttributeAttribute.cs: little fix.
+	* XmlCodeExporter.cs: Support XmlAnyAttribute when generating attributes
+	  for method parameters.
+	* XmlMemberMapping.cs: Improved support for members of type "any".
+	* XmlReflectionImporter.cs: Improved assignment of the attribute form.
+	  If the namespace is explicitly specified, then the form should be
+	  qualified. Also fixed issues with the namespace assigned to attributes.
+	  This should fix bug #53384.
+	* XmlSchemaExporter.cs: ExportMembersMapping(): improved support for
+	  methods that return values of type "any". Changed the methods
+	  AddSchemaArrayElement and AddSchemaElement, so instead of adding the
+	  element, return it, and the caller must add it to the collection.
+	  Other fixes in attribute generation.
+	* XmlSchemaImporter.cs: ImportAnyType(): if a type name is provided,
+	  generate the AnyType mapping from the type described in the schema.
+	  Small fixes regarding IsMixed property of complex types (it means that
+	  the type can contain text, so the XmlTextAttribute must be generated).
+	* XmlSerializationReaderInterpreter.cs: Reading of members by-order must
+	  be only used in the bare+encoded format.
+
 2004-01-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs: Types included with SoapInclude don't need

@@ -23,7 +23,16 @@ namespace System.Xml.Serialization
 			_mapMember = mapMem;
 			_memberName = memberName;
 
-			if (mapMem is XmlTypeMapMemberElement)
+			if (mapMem is XmlTypeMapMemberAnyElement)
+			{
+				XmlTypeMapMemberAnyElement anyelem = (XmlTypeMapMemberAnyElement) mapMem;
+				XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) anyelem.ElementInfo[anyelem.ElementInfo.Count-1];
+				_elementName = info.ElementName;
+				_namespace = info.Namespace;
+				if (info.MappedType != null) _typeNamespace = info.MappedType.Namespace;
+				else _typeNamespace = "";
+			}
+			else if (mapMem is XmlTypeMapMemberElement)
 			{
 				XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) ((XmlTypeMapMemberElement)mapMem).ElementInfo[0];
 				_elementName = info.ElementName;

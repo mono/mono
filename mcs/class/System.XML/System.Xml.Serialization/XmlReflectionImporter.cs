@@ -12,6 +12,7 @@
 
 using System.Reflection;
 using System.Collections;
+using System.Xml.Schema;
 
 namespace System.Xml.Serialization {
 	public class XmlReflectionImporter {
@@ -540,7 +541,7 @@ namespace System.Xml.Serialization {
 					 (rmember.MemberType.FullName == "System.Xml.XmlElement"))
 				{
 					XmlTypeMapMemberAnyElement member = new XmlTypeMapMemberAnyElement();
-					member.ElementInfo = ImportAnyElementInfo (defaultNamespace, rmember.MemberType, member, atts);
+					member.ElementInfo = ImportAnyElementInfo (defaultNamespace, rmember, member, atts);
 					mapMember = member;
 				}
 				else
@@ -564,11 +565,25 @@ namespace System.Xml.Serialization {
 				else 
 					mapAttribute.AttributeName = atts.XmlAttribute.AttributeName;
 
-				mapAttribute.Form = atts.XmlAttribute.Form;
-				mapAttribute.Namespace = (atts.XmlAttribute.Namespace != null) ? atts.XmlAttribute.Namespace : "";
 				if (typeData.IsComplexType)
 					mapAttribute.MappedType = ImportTypeMapping (typeData.Type, null, mapAttribute.Namespace);
-
+				
+				if (atts.XmlAttribute.Namespace != null && atts.XmlAttribute.Namespace != defaultNamespace)
+				{
+					if (atts.XmlAttribute.Form == XmlSchemaForm.Unqualified)
+						throw new InvalidOperationException ("The Form property may not be 'Unqualified' when an explicit Namespace property is present");
+					mapAttribute.Form = XmlSchemaForm.Qualified;
+					mapAttribute.Namespace = atts.XmlAttribute.Namespace;
+				}
+				else
+				{
+					mapAttribute.Form = atts.XmlAttribute.Form;
+					if (atts.XmlAttribute.Form == XmlSchemaForm.Qualified)
+						mapAttribute.Namespace = defaultNamespace;
+					else
+						mapAttribute.Namespace = "";
+				}
+				
 				typeData = TypeTranslator.GetTypeData(rmember.MemberType, atts.XmlAttribute.DataType);
 				mapMember = mapAttribute;
 			}
@@ -671,18 +686,27 @@ namespace System.Xml.Serialization {
 			return list;
 		}
 
-		XmlTypeMapElementInfoList ImportAnyElementInfo (string defaultNamespace, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts)
+		XmlTypeMapElementInfoList ImportAnyElementInfo (string defaultNamespace, XmlReflectionMember rmember, XmlTypeMapMemberElement member, XmlAttributes atts)
 		{
 			XmlTypeMapElementInfoList list = new XmlTypeMapElementInfoList();
 
-			ImportTextElementInfo (list, defaultType, member, atts);
+			ImportTextElementInfo (list, rmember.MemberType, member, atts);
 
 			foreach (XmlAnyElementAttribute att in atts.XmlAnyElements)
 			{
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(typeof(XmlElement)));
-				if (att.Name != null && att.Name != string.Empty) elem.ElementName = att.Name;
-				else elem.IsUnnamedAnyElement = true;
-				elem.Namespace = (att.Namespace != null) ? att.Namespace : "";
+				if (att.Name != null && att.Name != string.Empty) 
+				{
+					elem.ElementName = att.Name;
+					elem.Namespace = (att.Namespace != null) ? att.Namespace : "";
+				}
+				else 
+				{
+					elem.IsUnnamedAnyElement = true;
+					elem.Namespace = defaultNamespace;
+					if (att.Namespace != null) 
+						throw new InvalidOperationException ("The element " + rmember.MemberName + " has been attributed with an XmlAnyElementAttribute and a namespace '" + att.Namespace + "', but no name. When a namespace is supplied, a name is also required. Supply a name or remove the namespace.");
+				}
 				list.Add (elem);
 			}
 			return list;

@@ -122,7 +122,7 @@ namespace System.Xml.Serialization
 				}
 			}
 			else
-				ReadMembers ((ClassMap)typeMap.ObjectMap, parameters, true, true);
+				ReadMembers ((ClassMap)typeMap.ObjectMap, parameters, true, _format == SerializationFormat.Encoded);
 
 			if (_format == SerializationFormat.Encoded)
 				ReadReferencedElements();

@@ -70,7 +70,24 @@ namespace System.Xml.Serialization {
 			CodeAttributeDeclaration att;
 			TypeData memType = member.TypeMapMember.TypeData;
 			
-			if (memType.SchemaType == SchemaTypes.Array)
+			if (member.Any)
+			{
+				XmlTypeMapElementInfoList list = (XmlTypeMapElementInfoList)((XmlTypeMapMemberElement)member.TypeMapMember).ElementInfo;
+				foreach (XmlTypeMapElementInfo info in list)
+				{
+					if (info.IsTextElement)
+						metadata.Add (new CodeAttributeDeclaration ("System.Xml.Serialization.XmlText"));
+					else {
+						att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlAnyElement");
+						if (!info.IsUnnamedAnyElement) {
+							att.Arguments.Add (MapCodeGenerator.GetArg ("Name", info.ElementName));
+							if (info.Namespace != ns) att.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", member.Namespace));
+						}
+						metadata.Add (att);
+					}
+				}
+			}
+			else if (memType.SchemaType == SchemaTypes.Array)
 			{
 				// Array parameter
 				att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlArray");
@@ -144,7 +161,7 @@ namespace System.Xml.Serialization {
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlAttribute");
 			if (attinfo.Name != attinfo.AttributeName) att.Arguments.Add (GetArg (attinfo.AttributeName));
 			if (attinfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", attinfo.Namespace));
-			if (attinfo.Form != XmlSchemaForm.None) att.Arguments.Add (GetArg ("Form",attinfo.Form));
+			if (attinfo.Form != XmlSchemaForm.None) att.Arguments.Add (GetEnumArg ("Form","System.Xml.Schema.XmlSchemaForm",attinfo.Form.ToString()));
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(attinfo.TypeData)) att.Arguments.Add (GetArg ("DataType",attinfo.TypeData.XmlType));
 			AddCustomAttribute (codeField, att, true);
 		}

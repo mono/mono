@@ -72,14 +72,37 @@ namespace System.Xml.Serialization {
 
 		public XmlMembersMapping ImportAnyType (XmlQualifiedName typeName, string elementName)
 		{
-			XmlTypeMapMemberAnyElement mapMem = new XmlTypeMapMemberAnyElement ();
-			mapMem.Name = typeName.Name;
-			mapMem.TypeData = TypeTranslator.GetTypeData(typeof(XmlNode));
-			mapMem.ElementInfo.Add (CreateElementInfo (typeName.Namespace, mapMem, typeName.Name, mapMem.TypeData, true));
-			
-			XmlMemberMapping[] mm = new XmlMemberMapping [1];
-			mm[0] = new XmlMemberMapping (typeName.Name, typeName.Namespace, mapMem, encodedFormat);
-			return new XmlMembersMapping (mm);
+			if (typeName == XmlQualifiedName.Empty)
+			{
+				XmlTypeMapMemberAnyElement mapMem = new XmlTypeMapMemberAnyElement ();
+				mapMem.Name = typeName.Name;
+				mapMem.TypeData = TypeTranslator.GetTypeData(typeof(XmlNode));
+				mapMem.ElementInfo.Add (CreateElementInfo (typeName.Namespace, mapMem, typeName.Name, mapMem.TypeData, true));
+				
+				XmlMemberMapping[] mm = new XmlMemberMapping [1];
+				mm[0] = new XmlMemberMapping (typeName.Name, typeName.Namespace, mapMem, encodedFormat);
+				return new XmlMembersMapping (mm);
+			}
+			else
+			{
+				XmlSchemaComplexType stype = (XmlSchemaComplexType) schemas.Find (typeName, typeof (XmlSchemaComplexType));
+				if (stype == null) 
+					throw new InvalidOperationException ("Referenced type '" + typeName + "' not found");
+				
+				if (!CanBeAnyElement (stype))
+					throw new InvalidOperationException ("The type '" + typeName + "' is not valid for a collection of any elements");
+					
+				ClassMap cmap = new ClassMap ();
+				CodeIdentifiers classIds = new CodeIdentifiers ();
+				bool isMixed = stype.IsMixed;
+				ImportSequenceContent (typeName, cmap, ((XmlSchemaSequence) stype.Particle).Items, classIds, false, ref isMixed);
+				XmlTypeMapMemberAnyElement mapMem = (XmlTypeMapMemberAnyElement) cmap.AllMembers[0];
+				mapMem.Name = typeName.Name;
+				
+				XmlMemberMapping[] mm = new XmlMemberMapping [1];
+				mm[0] = new XmlMemberMapping (typeName.Name, typeName.Namespace, mapMem, encodedFormat);
+				return new XmlMembersMapping (mm);
+			}
 		}
 
 		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name, Type baseType)
@@ -329,7 +352,10 @@ namespace System.Xml.Serialization {
 			}
 			else if (CanBeAnyElement (stype))
 			{
-				return GetTypeMapping (TypeTranslator.GetTypeData(typeof(XmlElement)));
+				if (stype.IsMixed)
+					return GetTypeMapping (TypeTranslator.GetTypeData(typeof(XmlNode)));
+				else
+					return GetTypeMapping (TypeTranslator.GetTypeData(typeof(XmlElement)));
 			}
 			else if (CanBeIXmlSerializable (stype))
 			{
@@ -498,7 +524,7 @@ namespace System.Xml.Serialization {
 			{
 				ClassMap cmap = new ClassMap ();
 				CodeIdentifiers classIds = new CodeIdentifiers();
-				ImportParticleComplexContent (typeQName, cmap, stype.Particle, classIds, false);
+				ImportParticleComplexContent (typeQName, cmap, stype.Particle, classIds, stype.IsMixed);
 	
 				XmlTypeMapMemberFlatList list = (cmap.AllMembers.Count == 1) ? cmap.AllMembers[0] as XmlTypeMapMemberFlatList : null;
 				if (list != null && list.ChoiceMember == null)
@@ -659,9 +685,9 @@ namespace System.Xml.Serialization {
 					XmlTypeMapMemberAnyElement member = new XmlTypeMapMemberAnyElement ();
 					member.Name = classIds.AddUnique ("Any", member);
 					member.Documentation = GetDocumentation (elem);
-
+					
 					Type ctype;
-					if (elem.MaxOccurs > 1 || multiValue)
+					if (elem.MaxOccurs != 1 || multiValue)
 						ctype = isMixed ? typeof(XmlNode[]) : typeof(XmlElement[]);
 					else
 						ctype = isMixed ? typeof(XmlNode) : typeof(XmlElement);
@@ -686,8 +712,7 @@ namespace System.Xml.Serialization {
 				}
 			}
 		}
-
-
+		
 		void ImportChoiceContent (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaChoice choice, CodeIdentifiers classIds, bool multiValue)
 		{
 			XmlTypeMapElementInfoList choices = new XmlTypeMapElementInfoList ();
@@ -1282,7 +1307,9 @@ namespace System.Xml.Serialization {
 			if (!attr.RefName.IsEmpty)
 			{
 				ns = attr.RefName.Namespace;
-				return FindRefAttribute (attr.RefName);
+				XmlSchemaAttribute at = FindRefAttribute (attr.RefName);
+				if (at == null) throw new InvalidOperationException ("The attribute " + attr.RefName + " is missing");
+				return at;
 			}
 			else
 			{

@@ -371,6 +371,11 @@ namespace System.Xml.Serialization {
 			return new CodeAttributeArgument (name, new CodeTypeOfExpression(typeName));
 		}
 
+		public CodeAttributeArgument GetEnumArg (string name, string enumType, string enumValue)
+		{
+			return new CodeAttributeArgument (name, new CodeFieldReferenceExpression (new CodeTypeReferenceExpression(enumType), enumValue));
+		}
+		
 		public static void AddComments (CodeTypeMember member, string comments)
 		{
 			if (comments == null || comments == "") member.Comments.Add (new CodeCommentStatement ("<remarks/>", true));

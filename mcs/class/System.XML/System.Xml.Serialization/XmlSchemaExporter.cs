@@ -55,11 +55,11 @@ namespace System.Xml.Serialization {
 		
 		internal void ExportMembersMapping (XmlMembersMapping xmlMembersMapping, bool exportEnclosingType)
 		{
-			XmlSchema schema = GetSchema (xmlMembersMapping.Namespace);
 			ClassMap cmap = (ClassMap) xmlMembersMapping.ObjectMap;
 
 			if (xmlMembersMapping.HasWrapperElement && exportEnclosingType)
 			{
+				XmlSchema schema = GetSchema (xmlMembersMapping.Namespace);
 				XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 	
 				XmlSchemaSequence particle;
@@ -86,31 +86,63 @@ namespace System.Xml.Serialization {
 				ICollection members = cmap.ElementMembers;
 				if (members != null)
 				{
-					XmlSchemaObjectCollection itemsCol = schema.Items;
-					
-					// In encoded format, the schema elements are not needed
-					if (encodedFormat) itemsCol = new XmlSchemaObjectCollection ();
-					
 					foreach (XmlTypeMapMemberElement member in members)
 					{
-						XmlSchemaElement exe = FindElement (itemsCol, ((XmlTypeMapElementInfo)member.ElementInfo [0]).ElementName);
+						if (member is XmlTypeMapMemberAnyElement && member.TypeData.IsListType)
+						{
+							XmlSchema mschema = GetSchema (xmlMembersMapping.Namespace);
+							XmlSchemaParticle par = GetSchemaArrayElement (mschema, member.ElementInfo);
+							if (par is XmlSchemaAny)
+							{
+								XmlSchemaComplexType ct = FindComplexType (mschema.Items, "any");
+								if (ct != null) continue;
+								
+								ct = new XmlSchemaComplexType ();
+								ct.Name = "any";
+								ct.IsMixed = true;
+								XmlSchemaSequence seq = new XmlSchemaSequence ();
+								ct.Particle = seq;
+								seq.Items.Add (par);
+								mschema.Items.Add (ct);
+								continue;
+							}
+						}
+						
+						
+						XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) member.ElementInfo [0];
+						XmlSchema schema;
+
+						if (encodedFormat)
+						{
+							schema = GetSchema (xmlMembersMapping.Namespace);
+							ImportNamespace (schema, XmlSerializer.EncodingNamespace);
+						}
+						else
+							schema = GetSchema (einfo.Namespace);
+						
+						
+						XmlSchemaElement exe = FindElement (schema.Items, einfo.ElementName);
 						XmlSchemaElement elem;
 						
 						Type memType = member.GetType();
 						if (member is XmlTypeMapMemberFlatList)
 							throw new InvalidOperationException ("Unwrapped arrays not supported as parameters");
 						else if (memType == typeof(XmlTypeMapMemberElement))
-							elem = (XmlSchemaElement) AddSchemaElement (itemsCol, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, false);
+							elem = (XmlSchemaElement) GetSchemaElement (schema, einfo, member.DefaultValue, false);
 						else
-							elem = (XmlSchemaElement) AddSchemaElement (itemsCol, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], false);
-							
+							elem = (XmlSchemaElement) GetSchemaElement (schema, einfo, false);
+						
+						// In encoded format, the schema elements are not needed
+						if (!encodedFormat)
+							schema.Items.Add (elem);
+						
 						if (exe != null)
 						{
 							if (exe.SchemaTypeName.Equals (elem.SchemaTypeName))
-								itemsCol.Remove (elem);
+								schema.Items.Remove (elem);
 							else
 							{
-								string s = "The XML element named '" + ((XmlTypeMapElementInfo)member.ElementInfo [0]).ElementName + "' ";
+								string s = "The XML element named '" + einfo.ElementName + "' ";
 								s += "from namespace '" + schema.TargetNamespace + "' references distinct types " + elem.SchemaTypeName.Name + " and " + exe.SchemaTypeName.Name + ". ";
 								s += "Use XML attributes to specify another XML name or namespace for the element or types.";
 								throw new InvalidOperationException (s);
@@ -120,9 +152,6 @@ namespace System.Xml.Serialization {
 				}
 			}
 			
-			if (encodedFormat) 
-				ImportNamespace (schema, XmlSerializer.EncodingNamespace);
-				
 			CompileSchemas ();
 		}
 
@@ -152,7 +181,7 @@ namespace System.Xml.Serialization {
 				if (xmlTypeMapping.TypeData.IsComplexType)
 					einfo.MappedType = xmlTypeMapping;
 				einfo.IsNullable = false;
-				AddSchemaElement (schema.Items, schema, einfo, false);
+				schema.Items.Add (GetSchemaElement (schema, einfo, false));
 				SetElementExported (xmlTypeMapping);
 			}
 			
@@ -232,19 +261,19 @@ namespace System.Xml.Serialization {
 					Type memType = member.GetType();
 					if (memType == typeof(XmlTypeMapMemberFlatList))
 					{
-						AddSchemaArrayElement (seq.Items, schema, member.ElementInfo);
+						seq.Items.Add (GetSchemaArrayElement (schema, member.ElementInfo));
 					}
 					else if (memType == typeof(XmlTypeMapMemberAnyElement))
 					{
-						AddSchemaArrayElement (seq.Items, schema, member.ElementInfo);
+						seq.Items.Add (GetSchemaArrayElement (schema, member.ElementInfo));
 					}
 					else if (memType == typeof(XmlTypeMapMemberElement))
 					{
-						XmlSchemaElement selem = (XmlSchemaElement) AddSchemaElement (seq.Items, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, true);
+						seq.Items.Add (GetSchemaElement (schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, true));
 					}
 					else
 					{
-						AddSchemaElement (seq.Items, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], true);
+						seq.Items.Add (GetSchemaElement (schema, (XmlTypeMapElementInfo) member.ElementInfo [0], true));
 					}
 				}
 			}
@@ -259,7 +288,7 @@ namespace System.Xml.Serialization {
 			{
 				foreach (XmlTypeMapMemberAttribute attr in attributes) {
 					if (baseMap != null && DefinedInBaseMap (baseMap, attr)) continue;
-					outAttributes.Add (GetSchemaAttribute (schema, attr));
+					outAttributes.Add (GetSchemaAttribute (schema, attr, true));
 				}
 			}
 
@@ -280,17 +309,33 @@ namespace System.Xml.Serialization {
 			return null;
 		}
 
-		XmlSchemaAttribute GetSchemaAttribute (XmlSchema currentSchema, XmlTypeMapMemberAttribute attinfo)
+		XmlSchemaComplexType FindComplexType (XmlSchemaObjectCollection col, string name)
+		{
+			foreach (XmlSchemaObject ob in col)
+			{
+				XmlSchemaComplexType ctype = ob as XmlSchemaComplexType;
+				if (ctype != null && ctype.Name == name) return ctype;
+			}
+			return null;
+		}
+
+		XmlSchemaAttribute GetSchemaAttribute (XmlSchema currentSchema, XmlTypeMapMemberAttribute attinfo, bool isTypeMember)
 		{
 			XmlSchemaAttribute sat = new XmlSchemaAttribute ();
 			if (attinfo.DefaultValue != System.DBNull.Value) sat.DefaultValue = XmlCustomFormatter.ToXmlString (attinfo.TypeData, attinfo.DefaultValue);
 
 			ImportNamespace (currentSchema, attinfo.Namespace);
 
-			XmlSchema memberSchema = GetSchema (attinfo.Namespace);
+			XmlSchema memberSchema;
+			if (attinfo.Namespace.Length == 0 && attinfo.Form != XmlSchemaForm.Qualified)
+				memberSchema = currentSchema;
+			else
+				memberSchema = GetSchema (attinfo.Namespace);
+
 			if (currentSchema == memberSchema || encodedFormat)
 			{
 				sat.Name = attinfo.AttributeName;
+				if (isTypeMember) sat.Form = attinfo.Form;
 				if (attinfo.TypeData.SchemaType == SchemaTypes.Enum)
 				{
 					ImportNamespace (currentSchema, attinfo.DataTypeNamespace);
@@ -311,17 +356,17 @@ namespace System.Xml.Serialization {
 					if (ob is XmlSchemaAttribute && ((XmlSchemaAttribute)ob).Name == attinfo.AttributeName)
 						return sat;
 						
-				memberSchema.Items.Add (GetSchemaAttribute (memberSchema, attinfo));
+				memberSchema.Items.Add (GetSchemaAttribute (memberSchema, attinfo, false));
 			}
 			return sat;
 		}
 
-		XmlSchemaParticle AddSchemaElement (XmlSchemaObjectCollection destcol, XmlSchema currentSchema, XmlTypeMapElementInfo einfo, bool isTypeMember)
+		XmlSchemaParticle GetSchemaElement (XmlSchema currentSchema, XmlTypeMapElementInfo einfo, bool isTypeMember)
 		{
-			return AddSchemaElement (destcol, currentSchema, einfo, System.DBNull.Value, isTypeMember);
+			return GetSchemaElement (currentSchema, einfo, System.DBNull.Value, isTypeMember);
 		}
 		
-		XmlSchemaParticle AddSchemaElement (XmlSchemaObjectCollection destcol, XmlSchema currentSchema, XmlTypeMapElementInfo einfo, object defaultValue, bool isTypeMember)
+		XmlSchemaParticle GetSchemaElement (XmlSchema currentSchema, XmlTypeMapElementInfo einfo, object defaultValue, bool isTypeMember)
 		{
 			if (einfo.IsTextElement) return null;
 
@@ -330,12 +375,10 @@ namespace System.Xml.Serialization {
 				XmlSchemaAny any = new XmlSchemaAny ();
 				any.MinOccurs = 0;
 				any.MaxOccurs = 1;
-				destcol.Add (any);
 				return any;
 			}
 			
 			XmlSchemaElement selem = new XmlSchemaElement ();
-			destcol.Add (selem);
 
 			if (isTypeMember)
 			{
@@ -407,7 +450,7 @@ namespace System.Xml.Serialization {
 					if (ob is XmlSchemaElement && ((XmlSchemaElement)ob).Name == einfo.ElementName)
 						return selem;
 						
-				AddSchemaElement (memberSchema.Items, memberSchema, einfo, defaultValue, false);
+				memberSchema.Items.Add (GetSchemaElement (memberSchema, einfo, defaultValue, false));
 			}
 			return selem;
 		}
@@ -466,7 +509,7 @@ namespace System.Xml.Serialization {
 			return stype;
 		}
 
-		XmlSchemaParticle AddSchemaArrayElement (XmlSchemaObjectCollection destcol, XmlSchema currentSchema, XmlTypeMapElementInfoList infos)
+		XmlSchemaParticle GetSchemaArrayElement (XmlSchema currentSchema, XmlTypeMapElementInfoList infos)
 		{
 			int numInfos = infos.Count;
 			if (numInfos > 0 && ((XmlTypeMapElementInfo)infos[0]).IsTextElement) numInfos--;
@@ -474,7 +517,7 @@ namespace System.Xml.Serialization {
 
 			if (numInfos == 1)
 			{
-				XmlSchemaParticle selem = AddSchemaElement (destcol, currentSchema, (XmlTypeMapElementInfo) infos[infos.Count-1], true);
+				XmlSchemaParticle selem = GetSchemaElement (currentSchema, (XmlTypeMapElementInfo) infos[infos.Count-1], true);
 				selem.MinOccursString = "0";
 				selem.MaxOccursString = "unbounded";
 				return selem;
@@ -482,13 +525,12 @@ namespace System.Xml.Serialization {
 			else
 			{
 				XmlSchemaChoice schoice = new XmlSchemaChoice ();
-				destcol.Add (schoice);
 				schoice.MinOccursString = "0";
 				schoice.MaxOccursString = "unbounded";
 				foreach (XmlTypeMapElementInfo einfo in infos)
 				{
 					if (einfo.IsTextElement) continue;
-					AddSchemaElement (schoice.Items, currentSchema, einfo, true);
+					schoice.Items.Add (GetSchemaElement (currentSchema, einfo, true));
 				}
 				return schoice;
 			}
@@ -582,12 +624,15 @@ namespace System.Xml.Serialization {
 				stype.Name = map.ElementName;
 				schema.Items.Add (stype);
 
-				XmlSchemaSequence seq = new XmlSchemaSequence ();
-				XmlSchemaParticle spart = AddSchemaArrayElement (seq.Items, schema, lmap.ItemInfo);
+				XmlSchemaParticle spart = GetSchemaArrayElement (schema, lmap.ItemInfo);
 				if (spart is XmlSchemaChoice)
 					stype.Particle = spart;
 				else
+				{
+					XmlSchemaSequence seq = new XmlSchemaSequence ();
+					seq.Items.Add (spart);
 					stype.Particle = seq;
+				}
 					
 				return new XmlQualifiedName (map.XmlType, map.XmlTypeNamespace);
 			}

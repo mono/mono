@@ -66,7 +66,6 @@ namespace System.Xml.Serialization
 				return form;
 			}
 			set {
-				if(Namespace != null)
 				form = value;
 			}
 		}
