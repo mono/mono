@@ -46,6 +46,7 @@ namespace Mono.ILASM {
                         private bool show_method_ref = false;
                         private bool show_parser = false;
                         private bool scan_only = false;
+                        private bool delete_on_error = false;
                         private CodeGen codegen;
 
                         public DriverMain (string[] args)
@@ -56,19 +57,27 @@ namespace Mono.ILASM {
 
                         public void Run ()
                         {
-                                if (il_file_list.Count == 0) {
-                                        Usage ();
-                                        return;
-                                }
-                                if (output_file == null)
-                                        output_file = CreateOutputFile ();
-                                codegen = new CodeGen (output_file, target == Target.Dll, true);
-                                foreach (string file_path in il_file_list)
-                                        ProcessFile (file_path);
-                                if (scan_only)
-                                        return;
+                                try {
+                                        if (il_file_list.Count == 0) {
+                                                Usage ();
+                                                return;
+                                        }
+                                        if (output_file == null)
+                                                output_file = CreateOutputFile ();
+                                        codegen = new CodeGen (output_file, target == Target.Dll, true);
+                                        foreach (string file_path in il_file_list)
+                                                ProcessFile (file_path);
+                                        if (scan_only)
+                                                return;
 
-                                codegen.Write ();
+                                        codegen.Write ();
+                                } catch {
+                                        if (delete_on_error) {
+                                                if (File.Exists (output_file))
+                                                        File.Delete (output_file);
+                                        }
+                                        throw;
+                                }
                         }
 
                         private void ProcessFile (string file_path)
@@ -138,40 +147,44 @@ namespace Mono.ILASM {
                                                 continue;
                                         }
                                         switch (GetCommand (str, out command_arg)) {
-                                                case "out":
-                                                        output_file = command_arg;
+                                        case "out":
+                                                output_file = command_arg;
+                                                break;
+                                        case "exe":
+                                                target = Target.Exe;
+                                                break;
+                                        case "dll":
+                                                target = Target.Dll;
+                                                break;
+                                        case "scan_only":
+                                                scan_only = true;
+                                                break;
+                                        case "show_tokens":
+                                                show_tokens = true;
+                                                break;
+                                        case "show_method_def":
+                                                show_method_def = true;
+                                                break;
+                                        case "show_method_ref":
+                                                show_method_ref = true;
+                                                break;
+                                        case "show_parser":
+                                                show_parser = true;
+                                                break;
+                                        case "delete_on_error":
+                                        case "doe":
+                                                delete_on_error = true;
+                                                break;
+                                        case "-about":
+                                                if (str[0] != '-')
                                                         break;
-                                                case "exe":
-                                                        target = Target.Exe;
+                                                About ();
+                                                break;
+                                        case "-version":
+                                                if (str[0] != '-')
                                                         break;
-                                                case "dll":
-                                                        target = Target.Dll;
-                                                        break;
-                                                case "scan_only":
-                                                        scan_only = true;
-                                                        break;
-                                                case "show_tokens":
-                                                        show_tokens = true;
-                                                        break;
-                                                case "show_method_def":
-                                                        show_method_def = true;
-                                                        break;
-                                                case "show_method_ref":
-                                                        show_method_ref = true;
-                                                        break;
-                                                case "show_parser":
-                                                        show_parser = true;
-                                                        break;
-                                                case "-about":
-                                                        if (str[0] != '-')
-                                                                break;
-                                                        About ();
-                                                        break;
-                                                case "-version":
-                                                        if (str[0] != '-')
-                                                                break;
-                                                        Version ();
-                                                        break;
+                                                Version ();
+                                                break;
                                         }
                                 }
                         }

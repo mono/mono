@@ -1,5 +1,10 @@
 2003-05-19 Jackson Harper <jackson@latitudegeo.com>
 
+	* Driver.cs: Add command switch to delete output files created if
+	there is an error. 
+		
+2003-05-19 Jackson Harper <jackson@latitudegeo.com>
+
 	* Driver.cs: Print error exception when compilation fails.
 		
 2003-05-18 Jackson Harper <jackson@latitudegeo.com>
