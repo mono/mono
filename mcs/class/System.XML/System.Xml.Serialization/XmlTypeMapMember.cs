@@ -26,6 +26,7 @@ namespace System.Xml.Serialization
 		object _defaultValue = System.DBNull.Value;
 		string documentation;
 		bool _isOptional;
+		bool _isReturnValue;
 
 		public XmlTypeMapMember()
 		{
@@ -101,6 +102,12 @@ namespace System.Xml.Serialization
 		{
 			get { return _isOptional; }
 			set { _isOptional = value; }
+		}
+		
+		public bool IsReturnValue
+		{
+			get { return _isReturnValue; }
+			set { _isReturnValue = value; }
 		}
 		
 		public void CheckOptionalValueType (Type type)

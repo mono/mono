@@ -123,6 +123,11 @@ namespace System.Xml.Serialization
 			return td;
 		}
 
+		public static TypeData FindPrimitiveTypeData (string typeName)
+		{
+			return (TypeData) primitiveTypes[typeName];
+		}
+
 		public static TypeData GetDefaultPrimitiveTypeData (TypeData primType)
 		{
 			// Returns the TypeData that is mapped by default to the clr type

@@ -1494,9 +1494,13 @@ namespace System.Xml.Serialization
 					{
 						if (info.IsTextElement || info.IsUnnamedAnyElement) continue;
 						string elemCond = first ? "" : "else ";
-						elemCond += "if (Reader.LocalName == " + GetLiteral (info.ElementName);
-						if (!map.IgnoreMemberNamespace) elemCond += " && Reader.NamespaceURI == " + GetLiteral (info.Namespace);
-						elemCond += " && !" + readFlag[info.Member.Index] + ") {";
+						elemCond += "if (";
+						if (!(info.Member.IsReturnValue && info.TypeData.Type == typeof(object) && _format == SerializationFormat.Encoded)) {
+							elemCond += "Reader.LocalName == " + GetLiteral (info.ElementName);
+							if (!map.IgnoreMemberNamespace) elemCond += " && Reader.NamespaceURI == " + GetLiteral (info.Namespace);
+							elemCond += " && ";
+						}
+						elemCond += "!" + readFlag[info.Member.Index] + ") {";
 						WriteLineInd (elemCond);
 					}
 	

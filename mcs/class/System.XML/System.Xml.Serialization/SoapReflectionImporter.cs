@@ -410,6 +410,7 @@ namespace System.Xml.Serialization {
 
 			mapMember.TypeData = typeData;
 			mapMember.Name = rmember.MemberName;
+			mapMember.IsReturnValue = rmember.IsReturnValue;
 			return mapMember;
 		}
 		

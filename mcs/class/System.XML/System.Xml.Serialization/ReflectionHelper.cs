@@ -55,13 +55,13 @@ namespace System.Xml.Serialization
 			if (type.IsArray) return;
 			
 			if (type.GetConstructor (Type.EmptyTypes) == null && !type.IsAbstract && !type.IsValueType)
-				throw new InvalidOperationException (type.Name + " cannot be serialized because it does not have a default public constructor");
+				throw new InvalidOperationException (type.FullName + " cannot be serialized because it does not have a default public constructor");
 				
 			if (type.IsInterface)
-				throw new InvalidOperationException (type.Name + " cannot be serialized because it is an interface");
+				throw new InvalidOperationException (type.FullName + " cannot be serialized because it is an interface");
 				
 			if (type.IsNotPublic)
-				throw new InvalidOperationException (type.Name + " is inaccessible due to its protection level. Only public types can be processed");
+				throw new InvalidOperationException (type.FullName + " is inaccessible due to its protection level. Only public types can be processed");
 		}
 	}
 }

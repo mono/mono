@@ -436,8 +436,10 @@ namespace System.Xml.Serialization {
 			else
 			{
 				WriteCallbackInfo info = GetCallbackInfo (qname);
-				if (info == null) throw CreateUnknownTypeException (qname);
-				ob = info.Callback ();
+				if (info == null)
+					ob = ReadTypedPrimitive (qname);
+				else
+					ob = info.Callback();
 			}
 			AddTarget (id, ob);
 			return ob;
@@ -627,7 +629,7 @@ namespace System.Xml.Serialization {
 		protected object ReadTypedPrimitive (XmlQualifiedName qname)
 		{
 			if (qname == null) qname = GetXsiType ();
-			TypeData typeData = TypeTranslator.GetPrimitiveTypeData (qname.Name);
+			TypeData typeData = TypeTranslator.FindPrimitiveTypeData (qname.Name);
 			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive)
 			{
 				// Put everything into a node array

@@ -153,6 +153,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapMemberAnyAttribute _defaultAnyAttribute;
 		XmlTypeMapMemberNamespaces _namespaceDeclarations;
 		XmlTypeMapMember _xmlTextCollector;
+		XmlTypeMapMember _returnMember;
 		bool _ignoreMemberNamespace;
 		bool _canBeSimpleType = true;
 
@@ -164,6 +165,9 @@ namespace System.Xml.Serialization
 				if (_membersWithDefault == null) _membersWithDefault = new ArrayList ();
 				_membersWithDefault.Add (member);
 			}
+			
+			if (member.IsReturnValue)
+				_returnMember = member;
 			
 			if (member is XmlTypeMapMemberAttribute)
 			{
@@ -326,6 +330,11 @@ namespace System.Xml.Serialization
 		public XmlTypeMapMember XmlTextCollector
 		{
 			get { return _xmlTextCollector; }
+		}
+		
+		public XmlTypeMapMember ReturnMember
+		{
+			get { return _returnMember; }
 		}
 
 		public XmlQualifiedName SimpleContentBaseType

@@ -504,6 +504,7 @@ namespace System.Xml.Serialization
 		    cp.GenerateInMemory = true;
 		    cp.ReferencedAssemblies.Add ("System.dll");
 			cp.ReferencedAssemblies.Add ("System.Xml");
+			cp.ReferencedAssemblies.Add ("System.Data");
 			
 			foreach (Type rtype in gen.ReferencedTypes)
 			{

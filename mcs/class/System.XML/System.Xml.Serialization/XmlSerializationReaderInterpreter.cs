@@ -273,6 +273,9 @@ namespace System.Xml.Serialization
 
 			bool[] readFlag = new bool[(map.ElementMembers != null) ? map.ElementMembers.Count : 0];
 
+			bool hasAnyReturnMember = (isValueList && _format == SerializationFormat.Encoded && map.ReturnMember != null 
+										&& map.ReturnMember.TypeData.Type == typeof(object));
+			
 			Reader.MoveToContent();
 
 			int[] indexes = null;
@@ -307,7 +310,18 @@ namespace System.Xml.Serialization
 			{
 				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
 				{
-					XmlTypeMapElementInfo info = !readByOrder ? map.GetElement (Reader.LocalName, Reader.NamespaceURI) : map.GetElement (ind++);
+					XmlTypeMapElementInfo info;
+					
+					if (readByOrder) {
+						info = map.GetElement (ind++);
+					}
+					else if (hasAnyReturnMember) {
+						info = (XmlTypeMapElementInfo) ((XmlTypeMapMemberElement)map.ReturnMember).ElementInfo[0];
+						hasAnyReturnMember = false;
+					}
+					else
+						info = map.GetElement (Reader.LocalName, Reader.NamespaceURI);
+						
 					if (info != null && !readFlag[info.Member.Index] )
 					{
 						if (info.Member.GetType() == typeof (XmlTypeMapMemberList))

@@ -1,6 +1,22 @@
 2004-05-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs: 
+	  When deserializing an encoded method response, if the return type of the
+	  method is Object, assign to it the first element of the message, whatever
+	  it is.
+	* XmlSerializationReader.cs: 
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs: Set IsReturnValue of
+	  the imported member.
+	* TypeTranslator.cs: Added method to safely get a primitive TypeData.
+	* XmlSerializationReader.cs: Don't throw an exception when the CLR type for
+	  a given xsi type is not found. Just read it as primitive type.
+	* XmlTypeMapMember.cs: Added IsReturnValue property.
+	* XmlTypeMapping.cs: Added ReturnMember property.
+	* XmlSerializer.cs: Reference System.Data when compiling the serializer.
+
+2004-05-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs: 
 	  When reading an object using the typeof(object) map, an emty xsi:type 
 	  means that it has to read the contents into an XmlNode[].
 	* TypeData.cs: Return the correct full name for inner classes.
