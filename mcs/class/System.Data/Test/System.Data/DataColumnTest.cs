@@ -550,8 +550,19 @@ namespace MonoTests.System.Data
 			AssertEquals ("DC76", "False", T.Rows [4] [2]);
 			AssertEquals ("DC77", "True", T.Rows [1] [2]);
 		}
-		
-		 [Test]
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetMaxColumn ()
+		{
+			DataSet ds = new DataSet("Example");
+			ds.Tables.Add("MyType");
+			ds.Tables["MyType"].Columns.Add(new DataColumn("Desc", 
+				typeof (string), "", MappingType.SimpleContent));
+			ds.Tables["MyType"].Columns["Desc"].MaxLength = 32;
+		}
+
+		[Test]
                 public void AdditionToConstraintCollectionTest()
                 {
                         DataTable myTable = new DataTable("myTable");

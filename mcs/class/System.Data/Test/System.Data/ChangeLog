@@ -1,5 +1,9 @@
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataColumnTest.cs : Added SetMaxLength().
+
+2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* store2.xsd, store3.xsd, store4.xsd : Added.
 	* DataSetTest.cs :
 	  Disabled ReadWriteXmlSchema() and ReadWriteXmlSchemaIgnoreSchema()
