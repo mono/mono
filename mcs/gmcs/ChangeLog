@@ -1,5 +1,34 @@
 2004-03-15  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.GetFullName): New public method.
+	(TypeManager.MemberLookup): Added `int_num_type_arguments'
+	argument; only return members with the correct number of type
+	arguments.
+	(TypeManager.CheckGeneric): Allow -1 to bypass the check.
+	(TypeManager.FilterWithClosure): Call CheckGeneric() to check
+	whether the number of type arguments matches.
+
+	* generic.cs (GenericMemberAccess.ResolveAsTypeStep): Allow `expr'
+	not being a ConstructedType; we can now do "typeof (Foo.Bar<U>)".
+
+	* expression.cs (MemberAccess): Added public `NumTypeArguments'
+	field; it's set by the protected .ctor when we're actually a
+	GenericMemberAccess.
+	(MemberAccess.ResolveAsTypeStep): Compute the total number of type
+	arguments and pass it to MemberLookupFinal ().
+
+	* ecore.cs (Expression.MemberLookup): Added `int
+	num_type_arguments' argument; only return members with the correct
+	number of type arguments.
+	(Expression.MemberLookupFailed): Check whether the MemberLookup
+	failed because we did not have the correct number of type
+	arguments; report CS0305 in this case.
+
+	* decl.cs (DeclSpace.ResolveTypeExpr): Don't report an error if
+	`e.ResolveAsTypeTerminal()' already did so.
+
+2004-03-15  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (Expression.ResolveLValue): Allow e.type being null if
 	we're a ConstructedType; in this case, the caller must report an
 	error (for instance CS0131).

@@ -576,7 +576,7 @@ namespace Mono.CSharp {
 		TypeArguments args;
 
 		public GenericMemberAccess (Expression expr, string id, TypeArguments args, Location loc)
-			: base (expr, id, loc)
+			: base (expr, id, args.Count, loc)
 		{
 			this.args = args;
 		}
@@ -630,8 +630,13 @@ namespace Mono.CSharp {
 		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
 			ConstructedType cexpr = expr as ConstructedType;
-			if (cexpr == null)
-				throw new Exception ();
+			if (cexpr != null) {
+				TypeArguments new_args = new TypeArguments (loc);
+				new_args.Add (cexpr.TypeArguments);
+				new_args.Add (args);
+
+				args = new_args;
+			}
 
 			expr = base.ResolveAsTypeStep (ec);
 			if (expr == null)
@@ -641,11 +646,7 @@ namespace Mono.CSharp {
 			if (t == null)
 				return null;
 
-			TypeArguments new_args = new TypeArguments (loc);
-			new_args.Add (cexpr.TypeArguments);
-			new_args.Add (args);
-
-			ConstructedType ctype = new ConstructedType (t, new_args, loc);
+			ConstructedType ctype = new ConstructedType (t, args, loc);
 			return ctype.ResolveAsTypeStep (ec);
 		}
 	}

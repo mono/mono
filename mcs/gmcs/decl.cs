@@ -405,10 +405,12 @@ namespace Mono.CSharp {
 			else
 				type_resolve_ec.ContainerType = TypeBuilder;
 
+			int errors = Report.Errors;
+
 			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
 			 
 			if (d == null || d.eclass != ExprClass.Type){
-				if (!silent){
+				if (!silent && (Report.Errors == errors)){
 					Report.Error (246, loc, "Cannot find type `"+ e +"'");
 				}
 				return null;
