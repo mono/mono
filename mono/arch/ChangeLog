@@ -1,3 +1,7 @@
+2002-05-13  Radek Doulik  <rodo@ximian.com>
+
+	* ppc/tramp.c (emit_save_parameters): fix I8 parameters
+
 2002-05-06  Sergey Chaban  <serge@wildwestsoftware.com>
 
 	* x86/x86-codegen.h: added missing shifts;
