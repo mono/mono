@@ -82,6 +82,10 @@ namespace CIR {
 		}
 	}
 
+	// <summary>
+	//   An Emit Context is created for each body of code (from methods,
+	//   properties bodies, indexer bodies or constructor bodies)
+	// </summary>
 	public class EmitContext {
 		public TypeContainer TypeContainer;
 		public ILGenerator   ig;

@@ -1,3 +1,13 @@
+2001-11-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ArrayCreation.Emit): Some bits to initialize data
+	in an array.
+
+	* typemanager.cs: Load InitializeArray definition.
+
+	* rootcontext.cs (RootContext.MakeStaticData): Used to define
+	static data that can be used to initialize arrays. 
+
 2001-11-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Handle operator== and operator!= for booleans.

@@ -2861,19 +2861,34 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+			
 			if (IsOneDimensional) {
 				Invocation.EmitArguments (ec, Arguments);
-				ec.ig.Emit (OpCodes.Newarr, array_element_type);
+				ig.Emit (OpCodes.Newarr, array_element_type);
 				
 			} else {
 				Invocation.EmitArguments (ec, Arguments);
 
 				if (IsBuiltinType)
-					ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+					ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 				else
-					ec.ig.Emit (OpCodes.Newobj, (MethodInfo) method);
+					ig.Emit (OpCodes.Newobj, (MethodInfo) method);
 			}
-			
+
+			if (Initializers != null){
+				FieldBuilder fb;
+
+				// FIXME: This is just sample data, need to fill with
+				// real values.
+				byte [] a = new byte [4] { 1, 2, 3, 4 };
+				
+				fb = ec.TypeContainer.RootContext.MakeStaticData (a);
+
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Ldtoken, fb);
+				ig.Emit (OpCodes.Call, TypeManager.void_initializearray_array_fieldhandle);
+			}
 		}
 		
 		public override void EmitStatement (EmitContext ec)

@@ -56,6 +56,15 @@ namespace CIR {
 		ArrayList type_container_resolve_order;
 		ArrayList interface_resolve_order;
 		
+		//
+		// Holds a reference to the Private Implementation Details
+		// class.
+		//
+		TypeBuilder impl_details_class;
+
+		//
+		// Constructor
+		//
 		public RootContext ()
 		{
 			tree = new Tree (this);
@@ -165,7 +174,13 @@ namespace CIR {
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates)
 					d.CloseDelegate ();
-			
+
+			//
+			// If we have a <PrivateImplementationDetails> class, close it
+			//
+			if (impl_details_class != null){
+				impl_details_class.CreateType ();
+			}
 		}
 		
 		//
@@ -291,6 +306,42 @@ namespace CIR {
 		// point.
 		//
 		public MethodInfo EntryPoint;
+
+		//
+		// These are used to generate unique names on the structs and fields.
+		//
+		int field_count;
+		
+		//
+		// Makes an initialized struct, returns the field builder that
+		// references the data.  Thanks go to Sergey Chaban for researching
+		// how to do this.  And coming up with a shorter mechanism than I
+		// was able to figure out.
+		//
+		// This works but makes an implicit public struct $ArrayType$SIZE and
+		// makes the fields point to it.  We could get more control if we did
+		// use instead:
+		//
+		// 1. DefineNestedType on the impl_details_class with our struct.
+		//
+		// 2. Define the field on the impl_details_class
+		//
+		public FieldBuilder MakeStaticData (byte [] data)
+		{
+			FieldBuilder fb;
+			int size = data.Length;
+			
+			if (impl_details_class == null)
+				impl_details_class = mb.DefineType (
+					"<PrivateImplementationDetails>", TypeAttributes.NotPublic);
+
+			fb = impl_details_class.DefineInitializedData (
+				"$$field-" + (field_count++), data,
+				FieldAttributes.Static | FieldAttributes.Assembly);
+			
+			return fb;
+		}
 	}
 }
 	      
+
