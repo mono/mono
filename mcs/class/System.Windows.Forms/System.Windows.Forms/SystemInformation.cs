@@ -75,7 +75,7 @@ namespace System.Windows.Forms {
 				fixed (byte *p = &buf [0]){
 					byte *q = p;
 					gethostname (p, 256);
-					while (*q != 0 && ((int)(p-q) < 256))
+					while (*q != 0 && ((int)(q-p) < 256))
 						q++;
 					count = (int) (q - p);
 				}
