@@ -1,5 +1,16 @@
 2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* ApplicationSecurityManager.cs: New stub for Fx 2.0 application trust
+	security manager.
+	* ApplicationSecurityManagerCodeGroup.cs: New stubbed code group for 
+	NET_2_0 profile.
+	* ApplicationTrustCollection.cs: New. ApplicationTrust collection for
+	NET_2_0 profile.
+	* ApplicationTrustEnumerator.cs: New. ApplicationTrust enumerator for
+	NET_2_0 profile.
+
+2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* ApplicationDirectory.cs: Fixed directory validation and ToString.
 	* CodeGroup.cs: Fixed PermissionSetName when policy is null.
 	* Evidence.cs: Fixed Merge for null case. Fixed IsSynchronized for
