@@ -1,3 +1,13 @@
+2002-03-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Switch.EmitObjectInteger): Emit short/ushort
+	values. 
+
+	(Try): Propagate the returns value from the statement.
+
+	* driver.cs: Catch IOExpcetion for Directory.GetFiles as well.
+
+	* modifiers.cs: Fix the computation of MethodAttributes flags.
 
 Tue Mar 26 21:14:36 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -386,6 +386,9 @@ namespace Mono.CSharp
 			} catch (System.IO.DirectoryNotFoundException) {
 				Report.Error (2001, "Source file `" + spec + "' could not be found");
 				return 1;
+			} catch (System.IO.IOException){
+				Report.Error (2001, "Source file `" + spec + "' could not be found");
+				return 1;
 			}
 				
 			foreach (string f in files)

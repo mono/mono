@@ -394,13 +394,12 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
-			if (ec.InTry || ec.InCatch){
+			if (ec.InTry || ec.InCatch)
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-				return false; 
-			} else {
+			else
 				ec.ig.Emit (OpCodes.Ret);
-				return true;
-			}
+
+			return true; 
 		}
 	}
 
@@ -1408,7 +1407,11 @@ namespace Mono.CSharp {
 				IntConstant.EmitInt (ig, (int) ((sbyte) k));
 			else if (k is byte)
 				IntConstant.EmitInt (ig, (int) ((byte) k));
-			else 
+			else if (k is short)
+				IntConstant.EmitInt (ig, (int) ((short) k));
+			else if (k is ushort)
+				IntConstant.EmitInt (ig, (int) ((ushort) k));
+			else
 				throw new Exception ("Unhandled case");
 		}
 		
@@ -1917,7 +1920,7 @@ namespace Mono.CSharp {
 			bool old_in_catch = ec.InCatch;
 			ec.InCatch = true;
 			DeclSpace ds = ec.DeclSpace;
-			
+
 			foreach (Catch c in Specific){
 				Type catch_type = RootContext.LookupType (ds, c.Type, false, c.Location);
 				VariableInfo vi;
@@ -1938,13 +1941,15 @@ namespace Mono.CSharp {
 				} else
 					ig.Emit (OpCodes.Pop);
 				
-				c.Block.Emit (ec);
+				if (!c.Block.Emit (ec))
+					returns = false;
 			}
 
 			if (General != null){
 				ig.BeginCatchBlock (TypeManager.object_type);
 				ig.Emit (OpCodes.Pop);
-				General.Block.Emit (ec);
+				if (!General.Block.Emit (ec))
+					returns = false;
 			}
 			ec.InCatch = old_in_catch;
 
@@ -1964,7 +1969,7 @@ namespace Mono.CSharp {
 			// Replace with `returns' and check test-18, maybe we can
 			// perform an optimization here.
 			//
-			return false;
+			return returns;
 		}
 	}
 
