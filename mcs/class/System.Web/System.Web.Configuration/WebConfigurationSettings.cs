@@ -158,8 +158,11 @@ namespace System.Web.Configuration
 
 			string wcfile = (isUpper) ? upper : (isLower) ? lower : null;
 			string tempDir = dir;
-			if (tempDir == HttpRuntime.AppDomainAppVirtualPath)
+			if (tempDir == HttpRuntime.AppDomainAppVirtualPath ||
+			    tempDir + "/" == HttpRuntime.AppDomainAppVirtualPath) {
 				tempDir = "";
+				realpath = HttpRuntime.AppDomainAppPath;
+			}
 
 			ConfigurationData parent = GetConfigFromFileName (tempDir, context);
 			if (wcfile == null) {

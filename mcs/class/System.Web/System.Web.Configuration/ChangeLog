@@ -1,3 +1,8 @@
+2004-04-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConfigurationSettings.cs: modify realpath when we reach the
+	virtual root of the application.
+
 2004-04-12  Nick Drochak <ndrochak@gol.com>
 
 	* WebConfigurationSettings.cs: Fix build.  Forgot the '?'
