@@ -1190,6 +1190,22 @@ namespace System
 
 				s = s.Substring (num_parsed);
 
+				if (!exact) {
+					switch (chars [pos]) {
+					case 'm':
+					case 's':
+					case 'f':
+					case 'z':
+						if (s.Length > valuePos && s [valuePos] == 'Z'
+						    && (pos + 1 == chars.Length
+						    || chars [pos + 1] != 'Z')) {
+							useutc = true;
+							valuePos++;
+						}
+						break;
+					}
+				}
+
 				pos = pos + num + 1;
 				num = 0;
 			}
