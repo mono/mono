@@ -1,5 +1,8 @@
 2004-07-01  Zoltan Varga  <vargaz@freemail.hu>
 
+	* helpers.c (mono_disassemble_code): Pass -xarch=v9 to assembler on
+	SPARC64.
+
 	* aot.c: Add SPARC64 support. Reorganize patch table to fix alignment
 	problems.
 
