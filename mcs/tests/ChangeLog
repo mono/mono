@@ -1,3 +1,7 @@
+2003-08-04  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Put back test-211.cs.
+
 2003-07-29  Ravi Pratap  <ravi@ximian.com>
 
 	* conv-lib.cs: New Multi stage compilation test for bug #47043.
