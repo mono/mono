@@ -1,3 +1,8 @@
+2004-11-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-pentium.md (localloc): Increase max instruction len. Fixes
+	#69664.
+
 2004-11-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mini.c: Fix pointer overwrite in mini_method_compile.
