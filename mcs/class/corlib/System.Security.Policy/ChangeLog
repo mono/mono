@@ -1,3 +1,9 @@
+2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Publisher.cs: removed extra finalizer to fix public API 
+	signature, renamed private field for serialization compatibility
+	with MS.NET
+
 2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Url.cs: Call invariant ToUpper

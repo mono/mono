@@ -18,51 +18,44 @@ namespace System.Security.Policy {
 [Serializable]
 public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
 	
-	private X509Certificate x509;
+	private X509Certificate m_cert;
 
 	public Publisher (X509Certificate cert) 
 	{
 		if (cert == null)
 			throw new ArgumentNullException ("cert");
-		x509 = cert;
-	}
-
-	~Publisher () 
-	{
-		// X509Certificate doesn't have a Dispose 
-		// (bad design as it deal with unmanaged code in Windows)
-		// not really needed but corcompare will be happier
+		m_cert = cert;
 	}
 
 	public X509Certificate Certificate { 
 		get { 
 			// needed to match MS implementation
-			if (x509.GetRawCertData () == null)
-				throw new NullReferenceException ("x509");
-			return x509; 
+			if (m_cert.GetRawCertData () == null)
+				throw new NullReferenceException ("m_cert");
+			return m_cert; 
 		}
 	}
 
 	public object Copy () 
 	{
-		return (object) new Publisher (x509);
+		return (object) new Publisher (m_cert);
 	}
 
 	public IPermission CreateIdentityPermission (Evidence evidence) 
 	{
-		return new PublisherIdentityPermission (x509);
+		return new PublisherIdentityPermission (m_cert);
 	}
 
 	public override bool Equals (object o) 
 	{
 		if (!(o is Publisher))
 			throw new ArgumentException ("not a Publisher");
-		return x509.Equals ((o as Publisher).Certificate);
+		return m_cert.Equals ((o as Publisher).Certificate);
 	}
 	
 	public override int GetHashCode () 
 	{
-		return x509.GetHashCode ();
+		return m_cert.GetHashCode ();
 	}
 
 	public override string ToString ()
@@ -70,7 +63,7 @@ public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
 		SecurityElement se = new SecurityElement ("System.Security.Policy.Publisher");
 		se.AddAttribute ("version", "1");
 		SecurityElement cert = new SecurityElement ("X509v3Certificate");
-		string data = x509.GetRawCertDataString ();
+		string data = m_cert.GetRawCertDataString ();
 		if (data != null)
 			cert.Text = data;
 		se.AddChild (cert);
