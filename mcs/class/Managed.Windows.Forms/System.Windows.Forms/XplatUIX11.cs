@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.7  2004/08/06 23:17:44  pbartok
+// - Fixed Refresh and Invalidate
+//
 // Revision 1.6  2004/08/06 21:30:56  pbartok
 // - Fixed recursive loop when resizing
 // - Improved/fixed redrawing on expose messages
@@ -257,8 +260,22 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void RefreshWindow(IntPtr handle) {
+			XWindowAttributes	attributes=new XWindowAttributes();
+			XEvent			xevent = new XEvent();
+
+			// We need info about our window to generate the expose
+			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+
+			xevent.type=XEventName.Expose;
+			xevent.ExposeEvent.display=DisplayHandle;
+			xevent.ExposeEvent.window=handle;
+			xevent.ExposeEvent.x=0;
+			xevent.ExposeEvent.y=0;
+			xevent.ExposeEvent.width=attributes.width;
+			xevent.ExposeEvent.height=attributes.height;
+
+			XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
 			XFlush(DisplayHandle);
-			Console.WriteLine("XplatUIX11.RefreshWindow");
 		}
 
 		[MonoTODO("Add support for internal table of windows/DCs for looking up paint area and cleanup")]
@@ -301,7 +318,35 @@ Where();
 		}
 
 		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
-			Console.WriteLine("XplatUIX11.Invalidate");
+			XEvent			xevent = new XEvent();
+
+			xevent.type=XEventName.Expose;
+			xevent.ExposeEvent.display=DisplayHandle;
+			xevent.ExposeEvent.window=handle;
+			xevent.ExposeEvent.count=0;
+
+Console.WriteLine("Invalidating, rc={0}, clear={1}", rc, clear);
+			if (clear) {
+				// Need to clear the whole window, so we force a redraw for the whole window
+				XWindowAttributes	attributes=new XWindowAttributes();
+
+				// We need info about our window to generate the expose
+				XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+
+				xevent.ExposeEvent.x=0;
+				xevent.ExposeEvent.y=0;
+				xevent.ExposeEvent.width=attributes.width;
+				xevent.ExposeEvent.height=attributes.height;
+			} else {
+				xevent.ExposeEvent.x=rc.Left;
+				xevent.ExposeEvent.y=rc.Top;
+				xevent.ExposeEvent.width=rc.Width;
+				xevent.ExposeEvent.height=rc.Height;
+			}
+
+			XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
+			// Flush is not needed, invalidate does not guarantee an immediate effect
+			//XFlush(DisplayHandle);
 			return;
 		}
 
@@ -627,6 +672,9 @@ Console.WriteLine("Setting parent for window {0} to {1}, border width of window:
 
 		[DllImport ("libX11.so", EntryPoint="XStoreName")]
 		internal extern static int XStoreName(IntPtr display, IntPtr window, string window_name);
+
+		[DllImport ("libX11.so", EntryPoint="XSendEvent")]
+		internal extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, EventMask event_mask, ref XEvent send_event);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
