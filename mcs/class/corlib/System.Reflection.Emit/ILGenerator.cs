@@ -264,7 +264,7 @@ namespace System.Reflection.Emit {
 
 		private static int target_len (OpCode opcode)
 		{
-			if (opcode.operandType == OperandType.InlineBrTarget)
+			if (opcode.OperandType == OperandType.InlineBrTarget)
 				return 4;
 			return 1;
 		}

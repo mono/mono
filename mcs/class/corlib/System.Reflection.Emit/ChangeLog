@@ -1,4 +1,8 @@
 
+Tue Jun 3 11:14:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs, OpCode.cs: optimize opcode space usage.
+
 Tue Jun 3 11:13:22 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* UnmanagedMarshal.cs: add ability to define custom attributes (the MS

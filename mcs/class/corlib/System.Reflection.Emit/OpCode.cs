@@ -14,15 +14,15 @@ namespace System.Reflection.Emit {
 
 	public struct OpCode {
 
-		internal string name;
-		internal int size;
-		internal OpCodeType type;
-		internal OperandType operandType;
-		internal StackBehaviour pop;
-		internal StackBehaviour push;
-		internal FlowControl flowCtrl;
+		string name;
 		internal byte op1;
 		internal byte op2;
+		byte size;
+		byte type;
+		byte flowCtrl;
+		byte pop;
+		byte push;
+		byte operandType;
 
 		internal OpCode (string name, int size,
 		                 OpCodeType opcodeType,
@@ -33,12 +33,12 @@ namespace System.Reflection.Emit {
 		                 byte op1, byte op2)
 		{
 			this.name = name;
-			this.size = size;
-			this.type = opcodeType;
-			this.operandType = operandType;
-			this.pop = pop;
-			this.push = push;
-			this.flowCtrl = flowCtrl;
+			this.size = (byte)size;
+			this.type = (byte)opcodeType;
+			this.operandType = (byte)operandType;
+			this.pop = (byte)pop;
+			this.push = (byte)push;
+			this.flowCtrl = (byte)flowCtrl;
 			this.op1 = op1;
 			this.op2 = op2;
 		}
@@ -66,7 +66,7 @@ namespace System.Reflection.Emit {
 		/// </summary>
 		public OpCodeType OpCodeType {
 			get {
-				return type;
+				return (OpCodeType)type;
 			}
 		}
 
@@ -74,7 +74,7 @@ namespace System.Reflection.Emit {
 		/// </summary>
 		public OperandType OperandType {
 			get {
-				return operandType;
+				return (OperandType)operandType;
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace System.Reflection.Emit {
 		/// </summary>
 		public FlowControl FlowControl {
 			get {
-				return flowCtrl;
+				return (FlowControl)flowCtrl;
 			}
 		}
 
@@ -91,7 +91,7 @@ namespace System.Reflection.Emit {
 		/// </summary>
 		public StackBehaviour StackBehaviourPop {
 			get {
-				return pop;
+				return (StackBehaviour)pop;
 			}
 		}
 
@@ -100,7 +100,7 @@ namespace System.Reflection.Emit {
 		/// </summary>
 		public StackBehaviour StackBehaviourPush {
 			get {
-				return push;
+				return (StackBehaviour)push;
 			}
 		}
 
