@@ -62,7 +62,9 @@ runtime when the assembly is executed.
 .TP
 This pre-compiles the methods, but the original assembly is still
 required to execute as this one contains the metadata and exception
-information which is not availble on the generated file. 
+information which is not availble on the generated file.  When
+precompiling code, you might want to compile with all optimizations
+(-O=all).  Pre-compiled code is position independent code.
 .TP
 Pre compilation is just a mechanism to reduce startup time, and avoid
 just-in-time compilation costs.  The original assembly must still be
