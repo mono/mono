@@ -7,6 +7,17 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
+	public delegate void NewTokenEvent (object sender, NewTokenEventArgs args);
+
+	public class NewTokenEventArgs : EventArgs {
+
+		public readonly ILToken Token;
+
+		public NewTokenEventArgs (ILToken token)
+		{
+			Token = token;
+		}
+	}
 
 	/// <summary>
 	/// </summary>
@@ -21,6 +32,7 @@ namespace Mono.ILASM {
 		private StringHelper strBuilder;
 		private NumberHelper numBuilder;
 
+		public event NewTokenEvent NewTokenEvent;
 
 		static ILTokenizer()
 		{
@@ -49,7 +61,6 @@ namespace Mono.ILASM {
 				return reader;
 			}
 		}
-
 
 		/// <summary>
 		/// </summary>
@@ -177,6 +188,7 @@ namespace Mono.ILASM {
 				}
 			}
 
+			OnNewToken (res);
 			lastToken.CopyFrom (res);
 			return res;
 		}
@@ -239,6 +251,11 @@ namespace Mono.ILASM {
 			return keywords.Contains (name);
 		}
 
+		private void OnNewToken (ILToken token)
+		{
+			if (NewTokenEvent != null)
+				NewTokenEvent (this, new NewTokenEventArgs (token));
+		}
 
 	}
 }

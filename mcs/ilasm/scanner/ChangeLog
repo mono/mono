@@ -1,3 +1,7 @@
+2003-03-16 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTokenizer.cs: Fire an event when a new token is ready.
+
 2003-03-14 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILTokenizer.cs: Use the IsInstr method for checking if a string is an instruction
