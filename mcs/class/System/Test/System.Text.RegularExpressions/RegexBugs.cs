@@ -1,0 +1,45 @@
+//
+// MonoTests.System.Text.RegularExpressions misc. test cases
+//
+// Authors:
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) 2003 Novell, Inc. (http://www.novell.com)
+//
+
+using NUnit.Framework;
+using System;
+using System.Text.RegularExpressions;
+
+namespace MonoTests.System.Text.RegularExpressions
+{
+	[TestFixture]
+	public class PathTest : Assertion
+	{
+		[Test]
+		public void SplitGroup () // bug51146
+		{
+		        string [] splitResult = new Regex ("-").Split ("a-bcd-e-fg");
+			string [] expected = new string [] {"a", "bcd", "e", "fg"};
+			int length = expected.Length;
+			int i;
+			AssertEquals ("#01", length, splitResult.Length);
+			for (i = 0; i < length; i++)
+				AssertEquals ("#02 " + i, expected [i], splitResult [i]);
+			
+			splitResult = new Regex ("(-)").Split ("a-bcd-e-fg");
+			expected = new string [] {"a", "-", "bcd", "-", "e", "-", "fg"};
+			length = expected.Length;
+			AssertEquals ("#03", length, splitResult.Length);
+			for (i = 0; i < length; i++)
+				AssertEquals ("#04 " + i, expected [i], splitResult [i]);
+
+			splitResult = new Regex ("(-)b(c)").Split ("a-bcd-e-fg");
+			expected = new string [] {"a", "-", "c", "d-e-fg" };
+			length = expected.Length;
+			AssertEquals ("#04", length, splitResult.Length);
+			for (i = 0; i < length; i++)
+				AssertEquals ("#05 " + i, expected [i], splitResult [i]);
+		}
+	}
+}
