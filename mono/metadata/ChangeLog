@@ -1,3 +1,8 @@
+2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* gc.c: only close the done_event handle if there was no timeout.
+	C-ified comments.
+
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (icall_entries): It's called "System.Activator", not
