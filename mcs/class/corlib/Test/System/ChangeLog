@@ -1,5 +1,9 @@
 2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CharCategoryTest.cs : cleaning ;)
+
+2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Added CharCategoryTest.cs (brute force test for Char.IsXXX()).
 
 2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>

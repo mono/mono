@@ -46,12 +46,6 @@ namespace MonoTests.System
 			AssertEquals (dump, sw.ToString ());
 		}
 
-[Test]
-public void TryPath ()
-{
-	AssertEquals ("", Environment.CurrentDirectory);
-}
-
 		[Test]
 		public void IsControl ()
 		{
