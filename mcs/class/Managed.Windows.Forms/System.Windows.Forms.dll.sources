@@ -99,6 +99,8 @@ System.Windows.Forms/Orientation.cs
 System.Windows.Forms/PaintEventArgs.cs
 System.Windows.Forms/PaintEventHandler.cs
 System.Windows.Forms/Panel.cs
+System.Windows.Forms/PictureBox.cs
+System.Windows.Forms/PictureBoxSizeMode.cs
 System.Windows.Forms/ProgressBar.cs
 System.Windows.Forms/QueryAccessibilityHelpEventArgs.cs
 System.Windows.Forms/QueryAccessibilityHelpEventHandler.cs
@@ -147,3 +149,5 @@ System.Windows.Forms/XplatUIDriver.cs
 System.Windows.Forms/XplatUIStructs.cs
 System.Windows.Forms/XplatUIWin32.cs
 System.Windows.Forms/XplatUIX11.cs
+System.Windows.Forms/Xlib.cs
+
