@@ -1,3 +1,9 @@
+2003-04-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Indirection.EmitAssign): We were using the
+	temporary, but returning immediately instead of continuing the
+	EmitAssing flow.
+
 2003-04-06  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (SimpleName.SimpleNameResolve): Don't report an error

@@ -624,14 +624,14 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			if (temporary != null){
-				if (have_temporary){
+				if (have_temporary)
 					temporary.Emit (ec);
-					return;
+				else {
+					expr.Emit (ec);
+					ec.ig.Emit (OpCodes.Dup);
+					temporary.Store (ec);
+					have_temporary = true;
 				}
-				expr.Emit (ec);
-				ec.ig.Emit (OpCodes.Dup);
-				temporary.Store (ec);
-				have_temporary = true;
 			} else
 				expr.Emit (ec);
 
