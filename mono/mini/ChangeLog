@@ -1,4 +1,10 @@
 
+Sun Dec 21 19:53:16 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-ppc.c, mini-ppc.h: small cleanups and
+	supports for cond branches that overflow the immediate
+	overflow offset. mcs can compile simple programs.
+
 Fri Dec 19 21:17:16 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c: exception handling support wip:
