@@ -1,6 +1,6 @@
 2003-09-02  Ravi Pratap  <ravi@ximian.com>
 
-	* DebuggableAttribute.cs: Fix allowable targets to include class
+	* DebuggerStepThroughAttribute.cs: Fix allowable targets to include class
 	and struct; remove property targets.
 
 2003-07-01  Zoltan Varga  <vargaz@freemail.hu>
