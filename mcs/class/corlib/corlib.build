@@ -20,6 +20,7 @@
 				<excludes name="Linux/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Resources/*"/>
+				<excludes name="System.Security/CodeAccessPermission.cs"/>
 			</sources>
 		</csc>
 		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
@@ -43,6 +44,7 @@
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>
 				<excludes name="System.Resources/*"/>
+				<excludes name="System.Security/CodeAccessPermission.cs"/>
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>
@@ -60,6 +62,7 @@
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Security/CodeAccessPermission.cs"/>
 				<excludes name="System.Resources/*"/>
 			</sources>
 		</csc>
@@ -87,6 +90,7 @@
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>
 				<excludes name="System.Resources/*"/>
+				<excludes name="System.Security/CodeAccessPermission.cs"/>
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>

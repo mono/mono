@@ -92,6 +92,17 @@ public class Int32Test : TestCase
 		Assert(MyInt32_1 == Int32.Parse(MyString1));
 		Assert(MyInt32_2 == Int32.Parse(MyString2));
 		Assert(MyInt32_3 == Int32.Parse(MyString3));
+
+		Assert (1 == Int32.Parse ("1"));
+		Assert (1 == Int32.Parse (" 1"));
+		Assert (1 == Int32.Parse ("     1"));
+		Assert (1 == Int32.Parse ("1    "));
+		Assert (1 == Int32.Parse ("+1"));
+		Assert (-1 == Int32.Parse ("-1"));
+		Assert (-1 == Int32.Parse ("  -1"));
+		Assert (-1 == Int32.Parse ("  -1  "));
+		Assert (-1 == Int32.Parse ("  -1  "));
+
 		try {
 			Int32.Parse(null);
 			Fail("Should raise a System.ArgumentNullException");
@@ -140,6 +151,20 @@ public class Int32Test : TestCase
 		}
 		catch (Exception e) {
 			Assert(typeof(FormatException) == e.GetType());
+		}
+
+		try {
+			Int32.Parse (" - 1 ");
+			Fail ("Should raise FormatException");
+		} catch (Exception e){
+			Assert (typeof (FormatException) == e.GetType ());
+		}
+
+		try {
+			Int32.Parse (" - ");
+			Fail ("Should raise FormatException");
+		} catch (Exception e){
+			Assert (typeof (FormatException) == e.GetType ());
 		}
 	}
 	

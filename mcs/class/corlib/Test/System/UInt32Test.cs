@@ -53,6 +53,25 @@ public class UInt32Test : TestCase
 		Assert(MyUInt32_2.CompareTo(MyUInt32_2) == 0);
 		Assert(MyUInt32_1.CompareTo((UInt32)(42)) == 0);
 		Assert(MyUInt32_2.CompareTo(MyUInt32_3) < 0);
+		Assert (1 == UInt32.Parse ("1"));
+		Assert (1 == UInt32.Parse (" 1"));
+		Assert (1 == UInt32.Parse ("     1"));
+		Assert (1 == UInt32.Parse ("1    "));
+		Assert (1 == UInt32.Parse ("+1"));
+
+		try {
+			UInt32.Parse (" + 1 ");
+			Fail ("Should raise FormatException1");
+		} catch (Exception e){
+			Assert (typeof (FormatException) == e.GetType ());
+		}
+
+		try {
+			UInt32.Parse (" + ");
+			Fail ("Should raise FormatException");
+		} catch (Exception e){
+			Assert (typeof (FormatException) == e.GetType ());
+		}
 		try {
 			MyUInt32_2.CompareTo((Int16)100);
 			Fail("Should raise a System.ArgumentException");
