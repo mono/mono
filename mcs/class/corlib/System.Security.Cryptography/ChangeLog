@@ -1,3 +1,10 @@
+2003-01-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptographicException.cs: Default HResult to CORSEC_E_CRYPTO
+	(0x80131430) as documented.
+	* CryptographicUnexpectedOperationException.cs: Default HResult
+	to CORSEC_E_CRYPTO_UNEX_OPER (0x80131431) as documented.
+
 2003-01-20  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CipherMode.cs: Added missing [Serializable] to enum.
