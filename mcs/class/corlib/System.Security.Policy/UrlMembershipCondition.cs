@@ -55,19 +55,22 @@ namespace System.Security.Policy {
                         FromXml (element, null);
                 }
 
-                public void FromXml (SecurityElement element, PolicyLevel level)
-                {
+		public void FromXml (SecurityElement element, PolicyLevel level)
+		{
 			if (element == null)
 				throw new ArgumentNullException (
-                                        Locale.GetText ("The argument is null."));
-                        
-                        string value = element.Attribute ("Url") as String;
+					Locale.GetText ("The argument is null."));
 
-                        if (value == null)
-                                return;
+			if (element.Attribute ("class") != GetType ().AssemblyQualifiedName)
+				throw new ArgumentException (
+					Locale.GetText ("The argument is invalid."));
 
-                        else url = value;
-                }
+			if (element.Attribute ("version") != "1")
+				throw new ArgumentException (
+					Locale.GetText ("The argument is invalid."));
+			
+			url = element.Attribute ("Url");
+		}
 
                 public override int GetHashCode ()
                 {

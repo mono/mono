@@ -78,8 +78,8 @@ namespace System.Security.Permissions {
 				throw new ArgumentException (
 					Locale.GetText ("The argument is not valid"));
 
-                        flags = (SecurityPermissionFlag) Enum.Parse (
-                                typeof (SecurityPermissionFlag), e.Attribute ("Flags"));
+			flags = (SecurityPermissionFlag) Enum.Parse (
+				typeof (SecurityPermissionFlag), e.Attribute ("Flags"));
 		}
 
 		public override SecurityElement ToXml () 

@@ -1,5 +1,11 @@
 2003-08-05  Duncan Mak  <duncan@ximian.com>
 
+	* ZoneMembershipCondition.cs: Added.
+
+	* StrongNameMembershipCondition.cs:
+	* UrlMembershipCondition.cs: (FromXml): Throw exceptions when the
+	headers do not match.
+
 	* PolicyStatement.cs (FromXml):
 	(ToXml): Implemented.
 

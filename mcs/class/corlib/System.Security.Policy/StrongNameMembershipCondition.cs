@@ -94,19 +94,24 @@ namespace System.Security.Policy {
 			FromXml (e, null);
 		}
 
-		[MonoTODO ("Check for parameter validity")]
 		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
-                        if (e == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The argument is null."));
+			if (e == null)
+				throw new ArgumentNullException (
+					Locale.GetText ("The argument is null."));
 
-                        System.Collections.Hashtable attrs = e.Attributes;
+			if (e.Attribute ("class") != GetType ().AssemblyQualifiedName)
+				throw new ArgumentException (
+					Locale.GetText ("The argument is invalid."));
 
-                        blob = StrongNamePublicKeyBlob.FromString (attrs ["PublicKeyBlob"] as String);
-                        name = attrs ["Name"] as String;;
-                        version = new Version (attrs ["AssemblyVersion"] as String);
-                }
+			if (e.Attribute ("version") != "1")
+				throw new ArgumentException (
+					Locale.GetText ("The argument is invalid."));
+
+			blob = StrongNamePublicKeyBlob.FromString (e.Attribute ("PublicKeyBlob"));
+			name = e.Attribute ("Name");
+			version = new Version (e.Attribute ("AssemblyVersion"));
+		}
 
                 public override string ToString ()
                 {
