@@ -1,5 +1,7 @@
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MonoMethod.cs FieldInfo.cs: Add GetPseudoCustomAttributes () method.
+
 	* AssemblyNameFlags.cs: Add LongevityUnspecified.
 
 2004-09-23  Zoltan Varga  <vargaz@freemail.hu>

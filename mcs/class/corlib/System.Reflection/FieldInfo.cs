@@ -152,6 +152,8 @@ namespace System.Reflection {
 			return internal_from_handle (handle.Value);
 		}
 
+		internal abstract int GetFieldOffset ();
+
 		[CLSCompliant(false)]
 		[MonoTODO]
 		public virtual object GetValueDirect (TypedReference obj)
@@ -164,6 +166,31 @@ namespace System.Reflection {
 		public virtual void SetValueDirect (TypedReference obj, object value)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal object[] GetPseudoCustomAttributes ()
+		{
+			int count = 0;
+
+			/* FIXME: Add support for MarshalAsAttribute */
+
+			if (IsNotSerialized)
+				count ++;
+
+			if (DeclaringType.IsExplicitLayout)
+				count ++;
+
+			if (count == 0)
+				return null;
+			object[] attrs = new object [count];
+			count = 0;
+
+			if (IsNotSerialized)
+				attrs [count ++] = new NonSerializedAttribute ();
+			if (DeclaringType.IsExplicitLayout)
+				attrs [count ++] = new FieldOffsetAttribute (GetFieldOffset ());
+
+			return attrs;
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0

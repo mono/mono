@@ -104,8 +104,8 @@ namespace System.Reflection {
 		}
 
 		/*
-		 * InternalInvoke() receives the parameters corretcly converted by the binder
-		 * to match the types of the method signature.
+		 * InternalInvoke() receives the parameters correctly converted by the 
+		 * binder to match the types of the method signature.
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters);
@@ -171,6 +171,39 @@ namespace System.Reflection {
 		}
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern DllImportAttribute GetDllImportAttribute (IntPtr mhandle);
+
+		internal object[] GetPseudoCustomAttributes ()
+		{
+			int count = 0;
+
+			/* MS.NET doesn't report MethodImplAttribute */
+
+			MonoMethodInfo info;
+			MonoMethodInfo.get_method_info (mhandle, out info);
+			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
+				count ++;
+			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0)
+				count ++;
+			
+			if (count == 0)
+				return null;
+			object[] attrs = new object [count];
+			count = 0;
+
+			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
+				attrs [count ++] = new PreserveSigAttribute ();
+			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
+				DllImportAttribute attr = GetDllImportAttribute (mhandle);
+				if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
+					attr.PreserveSig = true;
+				attrs [count ++] = attr;
+			}
+
+			return attrs;
 		}
 
 		public override string ToString () {
