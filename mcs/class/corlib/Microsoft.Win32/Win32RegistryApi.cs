@@ -89,7 +89,7 @@ namespace Microsoft.Win32
 		///	Open a registry key.
 		///	'unknown' must be zero.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegopenKeyEx")]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegOpenKeyEx")]
 		private static extern int RegOpenKeyEx_Internal (IntPtr keyBase,
 				string keyName, IntPtr reserved, int access,
 				out IntPtr keyHandle);
