@@ -1,3 +1,7 @@
+2004-09-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* added simple.xml (to be used for some tests).
+
 2004-03-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* added literal-data.xml. This file is used by ComplexDataStructure.cs.
