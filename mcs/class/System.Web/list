@@ -35,9 +35,9 @@ System.Web/HttpResponse.cs
 System.Web/HttpResponseHeader.cs
 System.Web/HttpResponseStream.cs
 System.Web/HttpResponseStreamProxy.cs
-System.Web/HttpSessionState.cs
 System.Web/HttpUtility.cs
 System.Web/HttpValueCollection.cs
+System.Web/HttpCacheValidateHandler.cs
 System.Web/HttpCacheVaryByHeaders.cs
 System.Web/HttpCacheVaryByParams.cs
 System.Web/HttpModuleCollection.cs
@@ -289,5 +289,6 @@ System.Web.Security/DefaultAuthenticationEventArgs.cs
 System.Web.SessionState/HttpSessionState.cs
 System.Web.SessionState/IReadOnlySessionState.cs
 System.Web.SessionState/IRequiresSessionState.cs
+System.Web.SessionState/SessionDictionary.cs
 System.Web.SessionState/SessionStateMode.cs
 System.Web.SessionState/SessionStateModule.cs

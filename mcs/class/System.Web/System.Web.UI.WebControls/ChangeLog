@@ -1,3 +1,11 @@
+2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AdRotator.cs:
+	(LoadAdFile): make the dictionary null after every iteration.
+
+	* LinkButton.cs:
+	* ListControl.cs:
+	* ListItem.cs: fixed warnings.
 
 Mon Jul 1 16:23:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

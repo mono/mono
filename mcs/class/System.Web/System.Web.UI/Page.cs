@@ -18,6 +18,7 @@ using System.Text;
 using System.Web;
 using System.Web.Caching;
 using System.Web.SessionState;
+using System.Xml;
 
 namespace System.Web.UI
 {
@@ -450,6 +451,8 @@ public class Page : TemplateControl, IHttpHandler
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 		foreach (Control ctrl in Controls)
 			ctrl.RenderControl (output);
+
+		//SavePageViewState ();
 	}
 
 	protected virtual void RaisePostBackEvent (IPostBackEventHandler sourceControl, string eventArgument)
@@ -530,9 +533,50 @@ public class Page : TemplateControl, IHttpHandler
 		_savedViewState = viewState;
 	}
 
+	private void SaveControlState (Control ctrl, Triplet savedData, XmlTextWriter writer)
+	{
+		writer.WriteStartElement ("control");
+		writer.WriteAttributeString ("id", ctrl.ID);
+		writer.WriteAttributeString ("type", ctrl.GetType ().ToString ());
+		StateBag state = savedData.First as StateBag;
+		if (state != null){
+			foreach (string key in state.Keys){
+				object o = state [key];
+				writer.WriteStartElement ("item");
+				writer.WriteAttributeString ("key", key);
+				if (o  == null)
+					o = "";
+				else if (o is string)
+					writer.WriteAttributeString ("value", o as string);
+				else
+					//FIXME: add more conversions to string for other types.
+					throw new NotSupportedException (o.GetType ().ToString ());
+
+				writer.WriteEndElement ();
+			}
+
+			ArrayList controlList = savedData.Second as ArrayList;
+			ArrayList stateList = savedData.Third as ArrayList;
+			int idx = 0;
+			foreach (Control child in controlList)
+				SaveControlState (child, stateList [idx++] as Triplet, writer);
+		}
+		writer.WriteEndElement ();
+	}
+
 	internal void SavePageViewState ()
 	{
-		SavePageStateToPersistenceMedium (SaveViewStateRecursive ());
+		//SavePageStateToPersistenceMedium (SaveViewStateRecursive ());
+		string outputFile = "page-" + this.ToString () + ".xml";
+		XmlTextWriter xmlWriter = new XmlTextWriter (outputFile, Encoding.UTF8);
+		xmlWriter.Formatting = Formatting.Indented;
+		xmlWriter.Indentation = 4;
+		xmlWriter.WriteStartDocument (true);
+		xmlWriter.WriteStartElement ("viewstate");
+		Triplet savedState = SaveViewStateRecursive () as Triplet;
+		SaveControlState (this, savedState, xmlWriter);
+		xmlWriter.WriteEndElement ();
+		xmlWriter.Close ();
 	}
 
 	public virtual void Validate ()

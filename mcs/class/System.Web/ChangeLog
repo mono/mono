@@ -1,3 +1,11 @@
+2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: updated. Currently mcs cannot compile System.Web because it
+	cannot find NameObjectCollectionBase.KeysCollection.
+
+	* System.Web.build: don't display unused event nor always default value
+	warnings by now.
+
 2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: updated and reformatted.

@@ -111,8 +111,10 @@ namespace System.Web.UI.WebControls
 									}
 									innerNode = innerNode.NextSibling;
 								}
-								if(hybridDict!=null)
-									list.Add(hybridDict);
+								if (hybridDict!=null) {
+									list.Add (hybridDict);
+									hybridDict = null;
+								}
 							}
 							topNode = topNode.NextSibling;
 						}

@@ -292,7 +292,7 @@ namespace System.Web.UI.WebControls
 				}
 		}
 
-		protected virtual void OnPreRender (EventArgs e)
+		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender(e);
 		}

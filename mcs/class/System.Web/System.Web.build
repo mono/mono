@@ -10,6 +10,8 @@
 		<csc target="library" output="../lib/System.Web.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
 			<arg value="/nowarn:0169"/>
+			<arg value="/nowarn:0649"/> <!-- always default value -->
+			<arg value="/nowarn:0067"/> <!-- event never used -->
 			<arg value="/nowarn:0679"/> <!-- internal virual -->
 			<arg value="/nowarn:0168"/> <!-- never used variable -->
 			<arg value="/nowarn:0162"/> <!-- unreachable code -->

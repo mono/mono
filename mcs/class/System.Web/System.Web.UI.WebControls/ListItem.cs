@@ -235,6 +235,11 @@ namespace System.Web.UI.WebControls
 			return (Text == li.Text && Value == li.Value);
 		}
 
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
 		public override string ToString ()
 		{
 			return Text;

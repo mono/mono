@@ -467,10 +467,12 @@ namespace System.Web.UI
                                 foreach (Control c in _controls)
                                         c.RenderControl(writer);
                 }
-                protected virtual object SaveViewState()
+		
+                protected virtual object SaveViewState ()
                 {
-                        return ViewState;
+                        return ViewState.SaveViewState ();
                 }
+
                 protected virtual void TrackViewState()
                 {
                         _trackViewState = true;
@@ -619,21 +621,28 @@ namespace System.Web.UI
                         OnInit(EventArgs.Empty);
                 }
                 
-                [MonoTODO]
                 protected object SaveViewStateRecursive()
                 {
-                        throw new NotImplementedException();
+			ArrayList controlList = new ArrayList ();
+			ArrayList controlStates = new ArrayList ();
+
+			foreach (Control ctrl in Controls){
+				controlList.Add (ctrl);
+				controlStates.Add (ctrl.SaveViewStateRecursive ());
+			}
+				
+			return new Triplet (SaveViewState (), controlList, controlStates);
                 }
                 
                 [MonoTODO]
                 protected void LoadViewStateRecursive(Object savedState)
                 {
-                        throw new NotImplementedException();
+			throw new NotImplementedException ();
                 }
                 
                 void IParserAccessor.AddParsedSubObject(object obj)
                 {
-                	this.AddParsedSubObject(obj);
+                	AddParsedSubObject(obj);
                 }
                 
                 DataBindingCollection IDataBindingsAccessor.DataBindings

@@ -1,3 +1,13 @@
+2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(SaveViewstateRecursive): implemented.
+	(SaveViewState): fixed.
+	(IParserAccessor.AddParsedSubObject): don't use 'this'.
+
+	* Page.cs: added code to save view state to an xml file.  It's not
+	being used right now.
+
 2002-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.UI/LiteralControl.cs: 
