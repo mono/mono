@@ -35,27 +35,28 @@ namespace System.Windows.Forms {
 
 		private Queue message_queue;
 		private Rectangle invalid = Rectangle.Empty;
-		private Graphics dc;
+		private Object dc;
 
+		#region Constructors and destructors
 		public HandleData ()
 		{
 		}
 
-		public Graphics DeviceContext {
+		public void Dispose () {
+			DeviceContext = null;
+		}
+		#endregion
+
+		#region Paint area handling
+		public Object DeviceContext {
 			get { return dc; }
 			set {
-				if (dc != null) {
-					dc.Dispose ();
+				if (value is Graphics) {
+					if (dc != null) {
+						((Graphics)dc).Dispose ();
+					}
 				}
 				dc = value;
-			}
-		}
-
-		public Queue MessageQueue {
-			get {
-				if (message_queue == null)
-					message_queue = new Queue ();
-				return message_queue;
 			}
 		}
 
@@ -64,12 +65,6 @@ namespace System.Windows.Forms {
 				return invalid;
 			}
 		}
-
-		public void Dispose ()
-		{
-			DeviceContext = null;
-		}
-
 		public void AddToInvalidArea (int x, int y, int width, int height)
 		{
 			if (invalid == Rectangle.Empty) {
@@ -92,6 +87,44 @@ namespace System.Windows.Forms {
 		{
 			invalid = Rectangle.Empty;
 		}
+		#endregion	// Paint area methods
+
+		#region Message storage and retrieval
+		public bool MessageWaiting {
+			get {
+				if ((message_queue == null) || (message_queue.Count == 0)) {
+					return false;
+				}
+				return true;
+			}
+		}
+
+		public bool GetMessage(ref MSG msg) {
+			MSG	message;
+
+			if ((message_queue == null) || (message_queue.Count == 0)) {
+				return false;
+			}
+
+			message = (MSG)message_queue.Dequeue();
+			msg = message;
+
+			return true;
+		}
+
+		public bool StoreMessage(ref MSG msg) {
+			MSG message = new MSG();
+
+			if (message_queue == null) {
+				message_queue = new Queue();
+			}
+
+			message = msg;
+			message_queue.Enqueue(message);
+
+			return true;
+		}
+		#endregion	// Message storage and retrieval
 	}
 }
 
