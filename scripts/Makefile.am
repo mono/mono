@@ -1,8 +1,8 @@
-EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in
+EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in  secutil.in sqlsharp.in
 
-bin_SCRIPTS = mcs mbas ilasm cilc
+bin_SCRIPTS = mcs mbas ilasm cilc monoresgen  secutil  sqlsharp
 
-CLEANFILES = mcs mbas ilasm cilc
+CLEANFILES = mcs mbas ilasm cilc monoresgen  secutil  sqlsharp
 
 if X86
 MONO_INTERP = mono
@@ -26,3 +26,15 @@ ilasm: ilasm.in
 cilc: cilc.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/cilc.in > cilc.tmp \
 	&& mv cilc.tmp cilc
+
+monoresgen: monoresgen.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/monoresgen.in > monoresgen.tmp \
+	&& mv monoresgen.tmp monoresgen
+
+secutil: secutil.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/secutil.in > secutil.tmp \
+	&& mv secutil.tmp secutil
+
+sqlsharp: sqlsharp.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/sqlsharp.in > sqlsharp.tmp \
+	&& mv sqlsharp.tmp sqlsharp
