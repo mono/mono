@@ -438,12 +438,6 @@ namespace System {
 			return null;
 		}
 
-		[MonoTODO]
-		public bool IsFinalizingForUnload()
-		{
-			throw new NotImplementedException();
-		}
-	
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern Assembly LoadAssembly (AssemblyName assemblyRef, Evidence securityEvidence);
 
@@ -608,7 +602,14 @@ namespace System {
 			return CreateDomain (friendlyName, securityInfo, info);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]		
+		private extern bool InternalIsFinalizingForUnload (int domain_id);
 
+		public bool IsFinalizingForUnload()
+		{
+			return InternalIsFinalizingForUnload (getDomainID ());
+		}
+	
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void InternalUnload (int domain_id);
 		
@@ -623,9 +624,6 @@ namespace System {
 			if (domain == null)
 				throw new ArgumentNullException ("domain");
 
-			// fire the event(s) that we are unload the domain
-			domain.OnDomainUnload ();
-			
 			// FIX: We need to unload the stuff in another thread
 			// and throw abort exceptions on all threads involved
 			// in any operations in the unloading domain.
@@ -636,11 +634,6 @@ namespace System {
 			// This is just a hack to make unload work (almost anyway)
 		
 			InternalUnload (domain.getDomainID());
-		}
-
-		private void OnDomainUnload () {
-			if (DomainUnload != null)
-				DomainUnload(this, null);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -705,6 +698,11 @@ namespace System {
 			}
 
 			return null;
+		}
+
+		private void DoDomainUnload () {
+			if (DomainUnload != null)
+				DomainUnload(this, null);
 		}
 
 		internal byte[] GetMarshalledDomainObjRef ()
