@@ -1,3 +1,8 @@
+2002-08-16  Jason Diamond  <jason@injektilo.org>
+
+	* makefile.gnu: Added SOURCES_INCLUDE and SOURCES_EXCLUDE variables
+	to get tests to build with the new build system.
+
 2002-08-10  Jason Diamond  <jason@injektilo.org>
 
 	* makefile.gnu: Use relative path to NUnitConsole_mono.exe instead of

@@ -5,6 +5,9 @@ LIBRARY = System.XML_linux_test.dll
 LIB_LIST = System.XML_linux_test.args
 LIB_FLAGS = -r ../../lib/corlib.dll -r ../../lib/System.Xml.dll -r ../../lib/NUnitCore_mono.dll
 
+SOURCES_INCLUDE = *.cs
+SOURCES_EXCLUDE = ./TheTests.cs
+
 include ../../library.make
 
 MCS_FLAGS = --target library --noconfig
