@@ -89,11 +89,11 @@ namespace System.Web.UI.MobileControls.Adapters
 				AddAttributePrivate(writer, "accesskey");
 			}
 		}
-		
+
 		protected virtual void AddAttributes(HtmlMobileTextWriter writer)
 		{
 		}
-		
+
 		protected virtual void AddJPhoneMultiMediaAttributes(
 		                         HtmlMobileTextWriter writer)
 		{
@@ -103,6 +103,32 @@ namespace System.Web.UI.MobileControls.Adapters
 				{
 					AddAttributePrivate(writer, cAttrib);
 				}
+			}
+		}
+
+		protected void ExitSecondaryUIMode()
+		{
+			this.SecondaryUIMode = NotSecondaryUI;
+		}
+
+		public virtual void LoadAdapterState(object state)
+		{
+			if(state != null && state is int)
+			{
+				this.SecondaryUIMode = (int)state;
+			}
+		}
+		
+		public virtual void Render(HtmlMobileTextWriter writer)
+		{
+			base.RenderChildren(writer);
+		}
+		
+		public override void Render(HtmlTextWriter writer)
+		{
+			if(writer is HtmlMobileTextWriter)
+			{
+				Render((HtmlMobileTextWriter)writer);
 			}
 		}
 	}

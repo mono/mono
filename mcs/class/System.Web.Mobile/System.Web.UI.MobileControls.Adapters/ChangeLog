@@ -1,4 +1,12 @@
 
+2003-08-07	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* ControlAdapter.cs     : Mark Render(...) virtual.
+	* HtmlControlAdapter.cs : AddAttributes(...),
+	                          ExitSecondaryUIMode(),
+	                          LoadAdapterState(),
+	                          Render(...)               - Implemented.
+
 2003-06-17	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* HtmlControlAdapter.cs : A little more implementation.

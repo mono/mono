@@ -141,7 +141,7 @@ namespace System.Web.UI.MobileControls.Adapters
 			return;
 		}
 
-		public void Render(HtmlTextWriter writer)
+		public virtual void Render(HtmlTextWriter writer)
 		{
 			RenderChildren(writer);
 		}
