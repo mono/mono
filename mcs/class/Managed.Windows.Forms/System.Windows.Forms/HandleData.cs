@@ -36,6 +36,7 @@ namespace System.Windows.Forms {
 		private Queue message_queue;
 		private Rectangle invalid = Rectangle.Empty;
 		private Object dc;
+		private bool has_expose;
 
 		#region Constructors and destructors
 		public HandleData ()
@@ -57,6 +58,15 @@ namespace System.Windows.Forms {
 					}
 				}
 				dc = value;
+			}
+		}
+
+		public bool HasExpose {
+			get {
+				return has_expose;
+			}
+			set {
+				has_expose = value;
 			}
 		}
 
@@ -86,6 +96,7 @@ namespace System.Windows.Forms {
 		public void ClearInvalidArea ()
 		{
 			invalid = Rectangle.Empty;
+			has_expose = false;
 		}
 		#endregion	// Paint area methods
 

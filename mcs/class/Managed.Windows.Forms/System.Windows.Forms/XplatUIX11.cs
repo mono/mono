@@ -361,6 +361,9 @@ namespace System.Windows.Forms {
 			if (data == null)
 				throw new Exception ("null data on PaintEventEnd");
 			data.ClearInvalidArea ();
+			Graphics g = (Graphics) data.DeviceContext;
+			g.Flush ();
+			g.Dispose ();
 		}
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
@@ -553,30 +556,66 @@ namespace System.Windows.Forms {
 			return (IntPtr)result;
 		}
 
+		private void UpdateMessageQueue ()
+		{
+			while (XPending (DisplayHandle) > 0) {
+				XEvent xevent = new XEvent ();
+
+				XNextEvent (DisplayHandle, ref xevent);
+
+				switch (xevent.type) {
+				case XEventName.Expose:
+					HandleData data = (HandleData) handle_data [xevent.AnyEvent.window];
+					if (data == null) {
+						data = new HandleData ();
+						handle_data [xevent.AnyEvent.window] = data;
+					}
+				   
+					data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+				   
+					if (!data.HasExpose) {
+						lock (message_queue) {
+							message_queue.Enqueue (xevent);
+							data.HasExpose = true;
+						}
+					}
+					break;
+				default:
+					lock (message_queue) {
+						message_queue.Enqueue (xevent);
+					}
+					break;
+				}
+			}
+		}
+
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			XEvent	xevent = new XEvent();
-			bool queued_message = false;
+
+			// TODO: By sorting this list we can optimize a lot. Also DateTime.Now is not
+			// the fastest thing in the world.
+			lock (timer_list) {
+				for (int i = 0; i < timer_list.Count; i++) {
+					Timer timer = (Timer) timer_list [i];
+					DateTime now = DateTime.Now;
+					if (timer.Enabled && timer.Expires <= now) {
+						timer.FireTick ();
+						timer.Update ();
+					}
+				}
+			}
 
 			lock (message_queue) {
 				if (message_queue.Count > 0) {
 					xevent = (XEvent) message_queue.Dequeue ();
-					queued_message = true;
-				}
-			}
-
-			if (!queued_message) {
-				lock (this) {
-					if (!XCheckMaskEvent (DisplayHandle, SelectInputMask, ref xevent)) {
-						for (int i = 0; i < timer_list.Count; i++) {
-							Timer timer = (Timer) timer_list [i];
-							DateTime now = DateTime.Now;
-							if (timer.Enabled && timer.Expires <= now) {
-								timer.FireTick ();
-								timer.Update ();
-							}
-						}
+				} else {
+					UpdateMessageQueue ();
+					if (message_queue.Count > 0) {
+						xevent = (XEvent) message_queue.Dequeue ();
+					} else {
 						msg.message = Msg.WM_ENTERIDLE;
-						return true;
+						return true; 
 					}
 				}
 			}
@@ -711,25 +750,9 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
-					HandleData data = (HandleData) handle_data [xevent.AnyEvent.window];
-					if (data == null) {
-						data = new HandleData ();
-						handle_data [xevent.AnyEvent.window] = data;
-					}
-
-					data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-
-					lock (this) {
-						// Try combining expose events to reduce drawing	
-						while (XCheckWindowEvent (DisplayHandle, xevent.AnyEvent.window,
-								       EventMask.ExposureMask, ref xevent)) {
-							data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-									xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-						}
-					}	
-
 					msg.message=Msg.WM_PAINT;
+					msg.wParam=IntPtr.Zero;
+					msg.lParam=IntPtr.Zero;
 					break;
 				}
 
@@ -1023,6 +1046,8 @@ namespace System.Windows.Forms {
 		internal extern static IntPtr XRootWindow(IntPtr display, int screen_number);
 		[DllImport ("libX11.so", EntryPoint="XNextEvent")]
 		internal extern static IntPtr XNextEvent(IntPtr display, ref XEvent xevent);
+		[DllImport ("libX11.so")]
+		internal extern static int XPending (IntPtr diplay);
 		[DllImport ("libX11.so")]
 		internal extern static bool XCheckWindowEvent (IntPtr display, IntPtr window, EventMask mask, ref XEvent xevent);
 		[DllImport ("libX11.so")]
