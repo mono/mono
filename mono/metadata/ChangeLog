@@ -1,4 +1,13 @@
 
+2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
+	(get_info_from_assembly_name): don't leak value.
+
+	* icall.c:
+	(ves_icall_System_Reflection_Assembly_GetFilesInternal): initialize
+	result.
+
 Sat Mar 1 15:32:56 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: export mono_image_load_references ().
