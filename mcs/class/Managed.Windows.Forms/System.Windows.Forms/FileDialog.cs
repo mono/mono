@@ -303,6 +303,14 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal ArrayList FilterArrayList
+		{
+			get
+			{
+				return filterArrayList;
+			}
+		}
+		
 		public override void Reset( )
 		{
 			addExtension = true;
@@ -353,9 +361,8 @@ namespace System.Windows.Forms
 			if ( filter == null )
 				throw new NullReferenceException( "Filter" );
 			
-			// FIXME: default, MS default is nothing, nada...
 			if ( filter.Length == 0 )
-				filter = "All Files (*.*)|*.*";
+				return;
 			
 			string[] filters = filter.Split( new Char[] {'|'} );
 			
@@ -368,9 +375,6 @@ namespace System.Windows.Forms
 				
 				filterArrayList.Add( filterStruct );
 			}
-			
-//			if ( filterAL.Count > 1 )
-//				filterAL.Sort();
 		}
 		
 		internal void SendHelpRequest( EventArgs e )
@@ -445,7 +449,7 @@ namespace System.Windows.Forms
 			private ComboBox fileTypeComboBox;
 			private ImageList imageListTopToolbar;
 			
-			private FileDialog fileDialog;
+			internal FileDialog fileDialog;
 			
 			private string currentDirectoryName;
 			
@@ -676,13 +680,7 @@ namespace System.Windows.Forms
 				// Key events DONT'T work
 				fileNameComboBox.KeyUp += new KeyEventHandler( OnKeyUpFileNameComboBox );
 				
-				// FIXME: Default for Filter is "", aka nothing, nada...
-				// which means, show all files
-				FilterStruct fs = new FilterStruct( "All Files (*.*)", "*.*" ); // set default filter;
-				
-				fileDialog.filterArrayList.Add( fs );
-				
-				UpdateFilters( fileDialog.filterArrayList );
+				fileTypeComboBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedFileTypeComboBox );
 			}
 			
 			public ComboBox FileNameComboBox
@@ -914,6 +912,13 @@ namespace System.Windows.Forms
 				}
 			}
 			
+			void OnSelectedIndexChangedFileTypeComboBox( object sender, EventArgs e )
+			{
+				fileDialog.FilterIndex = fileTypeComboBox.SelectedIndex + 1;
+				
+				fileListView.UpdateFileListView( );
+			}
+			
 			public void UpdateFilters( ArrayList filters )
 			{
 				fileTypeComboBox.Items.Clear( );
@@ -929,7 +934,7 @@ namespace System.Windows.Forms
 				
 				fileTypeComboBox.EndUpdate( );
 				
-				// TODO: Update the fileListView also...
+				fileListView.UpdateFileListView( );
 			}
 			
 			public void ChangeDirectory( string path )
@@ -1021,12 +1026,30 @@ namespace System.Windows.Forms
 					View = View.List;
 				}
 				
+				private ArrayList GetFileInfoArrayList( DirectoryInfo directoryInfo )
+				{
+					ArrayList arrayList = new ArrayList( );
+					
+					if ( fileDialogPanel.fileDialog.FilterArrayList.Count != 0 )
+					{
+						FilterStruct fs = (FilterStruct)fileDialogPanel.fileDialog.FilterArrayList[ fileDialogPanel.fileDialog.FilterIndex - 1 ];
+						
+						foreach ( string s in fs.filters )
+							arrayList.AddRange( directoryInfo.GetFiles( s ) );
+					}
+					else
+						arrayList.AddRange( directoryInfo.GetFiles( ) );
+					
+					return arrayList;
+				}
+				
 				public void UpdateFileListView( )
 				{
 					DirectoryInfo directoryInfo = fileDialogPanel.DirectoryInfo;
 					
 					DirectoryInfo[] directoryInfoArray = directoryInfo.GetDirectories( );
-					FileInfo[] fileInfoArray = directoryInfo.GetFiles( );
+					
+					ArrayList fileInfoArrayList = GetFileInfoArrayList( directoryInfo );
 					
 					fileDialogPanel.fileHashtable.Clear( );
 					
@@ -1055,7 +1078,7 @@ namespace System.Windows.Forms
 						Items.Add( listViewItem );
 					}
 					
-					foreach ( FileInfo fileInfo in fileInfoArray )
+					foreach ( FileInfo fileInfo in fileInfoArrayList )
 					{
 						FileStruct fileStruct = new FileStruct( );
 						
@@ -1080,15 +1103,11 @@ namespace System.Windows.Forms
 						Items.Add( listViewItem );
 					}
 					
-					Console.WriteLine( "Items.Count: " + Items.Count );
-					
 					EndUpdate( );
 				}
 				
 				protected override void OnClick( EventArgs e )
 				{
-					Console.WriteLine( "SelectedItems.Count: " + SelectedItems.Count );
-					
 					if ( !MultiSelect )
 					{
 						if ( SelectedItems.Count > 0 )

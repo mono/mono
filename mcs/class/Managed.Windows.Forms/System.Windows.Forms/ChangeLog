@@ -1,3 +1,7 @@
+2005-03-24  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* FileDialog.cs: Added Filter support (case sensitiv)
+
 2005-03-24  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Need a couple more pixels for the lines.
