@@ -20,7 +20,7 @@ namespace System {
 	
 	public abstract class Type : MemberInfo /* IReflect */ {
 
-		private RuntimeTypeHandle _handle;
+		private RuntimeTypeHandle _impl;
 
 		/// <summary>
 		///   The assembly where the type is defined.
@@ -89,17 +89,17 @@ namespace System {
 			get;
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern Type internal_from_handle (RuntimeTypeHandle handle);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern Type internal_from_name (string name);
+		
 		public static Type GetType(string typeName) {
-			return null;
+			return internal_from_name (typeName);
 		}
 
-
-		//[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle) { 
-			
-			// FIXME: implement me
-			
-			return null;
+			return internal_from_handle (handle);
 		}
 
 		public bool IsValueType {

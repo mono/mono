@@ -10,6 +10,10 @@ namespace System.Reflection {
 			set {name = value;}
 		}
 
+		public AssemblyName () {
+			name = null;
+		}
+
 	}
 
 }

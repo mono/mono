@@ -10,9 +10,10 @@ using System.Runtime.CompilerServices;
 namespace System.Reflection.Emit {
 	public sealed class AssemblyBuilder : Assembly {
 		private IntPtr _impl;
+		private MethodInfo entry_point;
 
 		public override string CodeBase {get {return null;}}
-		public override MethodInfo EntryPoint {get {return null;}}
+		public override MethodInfo EntryPoint {get {return entry_point;}}
 
 		public override string Location {get {return null;}}
 
@@ -174,17 +175,21 @@ namespace System.Reflection.Emit {
 		private static extern int getDataChunk (AssemblyBuilder ab, int type, byte[] buf);
 
 		public void Save( string assemblyFileName) {
-			byte[] buf = new byte[4096];
+			byte[] buf = new byte[8192];
 			FileStream file = new FileStream (assemblyFileName, FileMode.OpenOrCreate, FileAccess.Write);
 			int count;
 
 			count = getDataChunk (this, 0, buf);
-			file.Write (buf, 0, count);
+			if (count != 0) {
+				file.Write (buf, 0, count);
+				count = getDataChunk (this, 1, buf); /* may be a too small buffer */
+				file.Write (buf, 0, count);
+			}
 
 			file.Close ();
 		}
-		public void SetEntryPoint( MethodInfo entryMethod) {
-			
+		public void SetEntryPoint(MethodInfo entryMethod) {
+			entry_point = entryMethod;
 		}
 
 	}

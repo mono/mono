@@ -2,9 +2,11 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection.Emit {
 	public sealed class MethodBuilder : MethodInfo {
+		private IntPtr _impl;
 		private Type rtype;
 		private Type[] paremeters;
 		private MethodAttributes attrs;
@@ -31,8 +33,16 @@ namespace System.Reflection.Emit {
 		public override ParameterInfo[] GetParameters() {
 			return null;
 		}
+		
+		/*
+		 * FIXME: this method signature needs to be expanded to handle also
+		 * a ILGenerator.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void set_method_body (MethodBuilder method, byte[] il, int count);
+		
 		public void CreateMethodBody( byte[] il, int count) {
-			
+			set_method_body (this, il, count);
 		}
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
 			return null;
