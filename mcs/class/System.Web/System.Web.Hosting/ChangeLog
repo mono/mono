@@ -1,7 +1,3 @@
-2003-08-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* ApplicationHost.cs: workaround for bug #48050.
-
 2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationHost.cs: set hostingInstallDir.

@@ -10,7 +10,6 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.Remoting;
-using System.Text;
 using System.Web.Util;
 
 namespace System.Web.Hosting
@@ -64,8 +63,7 @@ namespace System.Web.Hosting
 				domain.SetData (key, (string) hTable [key]);
 
 			domain.SetData (".hostingVirtualPath", virtualDir);
-			string mid = new StringBuilder (ICalls.GetMachineInstallDirectory ()).ToString ();
-			domain.SetData (".hostingInstallDir", mid);
+			domain.SetData (".hostingInstallDir", ICalls.GetMachineInstallDirectory ());
 			InitConfigInNewAppDomain (domain);
 			ObjectHandle o = domain.CreateInstance (hostType.Assembly.FullName,
 								hostType.FullName);
