@@ -41,6 +41,8 @@ gac_assemblies_list = \
 	Mono.Security.Win32				\
 	Novell.Directory.Ldap				\
 	Npgsql						\
+	NUnit.Util.dll					\
+	NUnit.Framework.dll				\
 	PEAPI						\
 	System.Configuration.Install			\
 	System.Data					\
@@ -64,14 +66,10 @@ gac_assemblies_list = \
 
 gac_assemblies = $(gac_assemblies_list:=.dll)
 
-non_gac_assemblies = \
-	NUnit.Util.dll					\
-	NUnit.Framework.dll
-
 corlibdir = $(libdir)
 dist_corlib_DATA = mscorlib.dll
 
-EXTRA_DIST = $(gac_assemblies) $(non_gac_assemblies) 
+EXTRA_DIST = $(gac_assemblies)
 
 CLEANFILES = $(EXTRA_DIST)
 
@@ -79,13 +77,6 @@ CLEANFILES = $(EXTRA_DIST)
 # Keep in sync with mono/mono/metadata/Makefile.am
 #
 assembliesdir = $(libdir)
-dist_assemblies_DATA = $(non_gac_assemblies)
-
-$(non_gac_assemblies):
-	@f=$(mcs_topdir)/class/lib/$(PROFILE)/$@; \
-	if test -f $$f; then :; else f=$(assembliesdir)/$@; fi ; \
-	echo "cp -f $$f $(srcdir)"; \
-	cp -f $$f $(srcdir)
 
 mscorlib.dll $(gac_assemblies):
 	cp -f $(mcs_topdir)/class/lib/$(PROFILE)/$@ $(srcdir)
