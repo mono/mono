@@ -1,4 +1,8 @@
 
+Mon Mar 11 14:47:21 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: verify that corlib and runtime are in sync.
+
 Mon Mar 11 11:30:56 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* emit-x86.c, jit.c: use the debug-helpers facilities to
