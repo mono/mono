@@ -460,19 +460,40 @@ namespace System
 				return;
 			}
 
-			for (int i = 0; i < length; i++) 
+			if (!Object.ReferenceEquals (source, dest) || source_pos > dest_pos)
 			{
-				Object srcval = source.GetValueImpl (source_pos + i);
+				for (int i = 0; i < length; i++) 
+				{
+					Object srcval = source.GetValueImpl (source_pos + i);
 
-				try {
-					dest.SetValueImpl (srcval, dest_pos + i);
-				} catch {
-					if ((dst_type.IsValueType || dst_type.Equals (typeof (String))) &&
-					    (src_type.Equals (typeof (Object))))
-						throw new InvalidCastException ();
-					else
-						throw new ArrayTypeMismatchException (
-							String.Format ("(Types: source={0};  target={1})", src_type.FullName, dst_type.FullName));
+					try {
+						dest.SetValueImpl (srcval, dest_pos + i);
+					} catch {
+						if ((dst_type.IsValueType || dst_type.Equals (typeof (String))) &&
+							(src_type.Equals (typeof (Object))))
+							throw new InvalidCastException ();
+						else
+							throw new ArrayTypeMismatchException (
+								String.Format ("(Types: source={0};  target={1})", src_type.FullName, dst_type.FullName));
+					}
+				}
+			}
+			else
+			{
+				for (int i = length - 1; i >= 0; i--) 
+				{
+					Object srcval = source.GetValueImpl (source_pos + i);
+
+					try {
+						dest.SetValueImpl (srcval, dest_pos + i);
+					} catch {
+						if ((dst_type.IsValueType || dst_type.Equals (typeof (String))) &&
+							(src_type.Equals (typeof (Object))))
+							throw new InvalidCastException ();
+						else
+							throw new ArrayTypeMismatchException (
+								String.Format ("(Types: source={0};  target={1})", src_type.FullName, dst_type.FullName));
+					}
 				}
 			}
 		}
