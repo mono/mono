@@ -297,7 +297,7 @@ namespace Mono.CSharp.Debugger
 			get { return 24; }
 		}
 
-		internal SourceFileEntry (MonoSymbolFile file, string file_name)
+		protected SourceFileEntry (MonoSymbolFile file, string file_name)
 		{
 			this.file = file;
 			this.file_name = file_name;
@@ -308,15 +308,17 @@ namespace Mono.CSharp.Debugger
 			namespaces = new ArrayList ();
 		}
 
-		public void DefineMethod (MethodBase method, int token, LocalVariableEntry[] locals,
-					  LineNumberEntry[] lines, LexicalBlockEntry[] blocks,
-					  int start, int end, int namespace_id)
+		public void DefineMethod (string name, int token, int num_params,
+					  LocalVariableEntry[] locals, LineNumberEntry[] lines,
+					  LexicalBlockEntry[] blocks, int start, int end,
+					  int namespace_id)
 		{
 			if (!creating)
 				throw new InvalidOperationException ();
 
 			MethodEntry entry = new MethodEntry (
-				file, this, method, token, locals, lines, blocks, start, end, namespace_id);
+				file, this, name, (int) token, num_params,
+				locals, lines, blocks, start, end, namespace_id);
 
 			methods.Add (entry);
 			file.AddMethod (entry);
@@ -521,13 +523,14 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class MethodEntry
+	public class MethodEntry : IComparable
 	{
 		#region This is actually written to the symbol file
 		public readonly int SourceFileIndex;
 		public readonly int Token;
 		public readonly int StartRow;
 		public readonly int EndRow;
+		[Obsolete("", true)]
 		public readonly int ClassTypeIndex;
 		public readonly int NumParameters;
 		public readonly int NumLocals;
@@ -549,7 +552,6 @@ namespace Mono.CSharp.Debugger
 		public readonly int Index;
 		public readonly SourceFileEntry SourceFile;
 		public readonly LineNumberEntry[] LineNumbers;
-		public readonly int[] ParamTypeIndices;
 		public readonly int[] LocalTypeIndices;
 		public readonly LocalVariableEntry[] Locals;
 		public readonly Type[] LocalTypes;
@@ -577,7 +579,7 @@ namespace Mono.CSharp.Debugger
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
 			EndRow = reader.ReadInt32 ();
-			ClassTypeIndex = reader.ReadInt32 ();
+			reader.ReadInt32 ();
 			NumParameters = reader.ReadInt32 ();
 			NumLocals = reader.ReadInt32 ();
 			NumLineNumbers = reader.ReadInt32 ();
@@ -628,11 +630,10 @@ namespace Mono.CSharp.Debugger
 				long old_pos = reader.BaseStream.Position;
 				reader.BaseStream.Position = TypeIndexTableOffset;
 
-				ParamTypeIndices = new int [NumParameters];
 				LocalTypeIndices = new int [NumLocals];
 
 				for (int i = 0; i < NumParameters; i++)
-					ParamTypeIndices [i] = reader.ReadInt32 ();
+					reader.ReadInt32 ();
 				for (int i = 0; i < NumLocals; i++)
 					LocalTypeIndices [i] = reader.ReadInt32 ();
 
@@ -651,12 +652,15 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		internal MethodEntry (MonoSymbolFile file, SourceFileEntry source, MethodBase method,
-				      int token, LocalVariableEntry[] locals, LineNumberEntry[] lines,
+		internal MethodEntry (MonoSymbolFile file, SourceFileEntry source,
+				      string name, int token, int num_params,
+				      LocalVariableEntry[] locals, LineNumberEntry[] lines,
 				      LexicalBlockEntry[] blocks, int start_row, int end_row,
 				      int namespace_id)
 		{
 			this.SymbolFile = file;
+			this.name = name;
+
 			Index = file.GetNextMethodIndex ();
 
 			Token = token;
@@ -666,23 +670,13 @@ namespace Mono.CSharp.Debugger
 			EndRow = end_row;
 			NamespaceID = namespace_id;
 			LexicalBlocks = blocks;
-			NumLexicalBlocks = LexicalBlocks.Length;
+			NumLexicalBlocks = LexicalBlocks != null ? LexicalBlocks.Length : 0;
 
 			LineNumbers = BuildLineNumberTable (lines);
 			NumLineNumbers = LineNumbers.Length;
 
-			ParameterInfo[] parameters = method.GetParameters ();
-			if (parameters == null)
-				parameters = new ParameterInfo [0];
-			
-			name = method.Name;
-			
-			NumParameters = parameters.Length;
-			ParamTypeIndices = new int [NumParameters];
-			for (int i = 0; i < NumParameters; i++)
-				ParamTypeIndices [i] = file.DefineType (parameters [i].ParameterType);
-
-			NumLocals = locals.Length;
+			NumParameters = num_params;
+			NumLocals = locals != null ? locals.Length : 0;
 			Locals = locals;
 
 			if (NumLocals <= 32) {
@@ -716,8 +710,6 @@ namespace Mono.CSharp.Debugger
 			LocalTypeIndices = new int [NumLocals];
 			for (int i = 0; i < NumLocals; i++)
 				LocalTypeIndices [i] = file.GetNextTypeIndex ();
-
-			ClassTypeIndex = file.DefineType (method.ReflectedType);
 		}
 		
 		static LineNumberEntry [] tmp_buff = new LineNumberEntry [20];
@@ -740,6 +732,9 @@ namespace Mono.CSharp.Debugger
 			int pos = 0;
 			int last_offset = -1;
 			int last_row = -1;
+
+			if (line_numbers == null)
+				return new LineNumberEntry [0];
 			
 			if (tmp_buff.Length < (line_numbers.Length + 1))
 				tmp_buff = new LineNumberEntry [(line_numbers.Length + 1) * 2];
@@ -773,7 +768,7 @@ namespace Mono.CSharp.Debugger
 			TypeIndexTableOffset = (int) bw.BaseStream.Position;
 
 			for (int i = 0; i < NumParameters; i++)
-				bw.Write (ParamTypeIndices [i]);
+				bw.Write (-1);
 			for (int i = 0; i < NumLocals; i++)
 				bw.Write (LocalTypeIndices [i]);
 
@@ -796,7 +791,7 @@ namespace Mono.CSharp.Debugger
 			bw.Write (Token);
 			bw.Write (StartRow);
 			bw.Write (EndRow);
-			bw.Write (ClassTypeIndex);
+			bw.Write (-1);
 			bw.Write (NumParameters);
 			bw.Write (NumLocals);
 			bw.Write (NumLineNumbers);
@@ -817,12 +812,24 @@ namespace Mono.CSharp.Debugger
 			new MethodIndexEntry (file_offset, Token).Write (bw);
 		}
 
+		public int CompareTo (object obj)
+		{
+			MethodEntry method = (MethodEntry) obj;
+
+			if (method.Token < Token)
+				return 1;
+			else if (method.Token > Token)
+				return -1;
+			else
+				return 0;
+		}
+
 		public override string ToString ()
 		{
-			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {6}:{7}:{8}:{9} - {5}]",
+			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {6}:{7}:{8} - {5}]",
 					      Index, Token, SourceFileIndex, StartRow, EndRow,
-					      SourceFile, ClassTypeIndex, NumParameters,
-					      NumLocals, NumLineNumbers);
+					      SourceFile, NumParameters, NumLocals,
+					      NumLineNumbers);
 		}
 	}
 

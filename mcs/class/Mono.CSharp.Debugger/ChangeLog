@@ -1,3 +1,19 @@
+2004-07-27  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MonoSymbolFile.Write): Sort the methods
+	according to their token values.
+	(MonoSymbolFile.ReadSymbolFile): Support reading the debugging
+	information from an external ".mdb" file.
+
+	* MonoSymbolTable.cs
+	(SourceFileEntry): Make the .ctor protected, not internal.
+	(SourceFileEntry.DefineMethod): This is no longer specific to
+	System.Reflection(.Emit).
+	(MethodEntry): We don't need the class and parameter types, the
+	JIT is already getting this information automatically.
+	(MethodEntry.ClassTypeIndex): Make this obsolete.
+	(MethodEntry.ParamTypeIndicies): Likewise.
+
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (LIBRARY_USE_INTERMEDIATE_FILE): Define.

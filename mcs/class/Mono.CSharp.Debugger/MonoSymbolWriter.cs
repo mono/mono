@@ -554,10 +554,14 @@ namespace Mono.CSharp.Debugger
 					continue;
 				}
 
+				MethodBase mb = method.MethodBase;
+				ParameterInfo[] parameters = mb.GetParameters ();
+				int num_params = parameters != null ? parameters.Length : 0;
+
 				method.SourceFile.DefineMethod (
-					method.MethodBase, method.Token, method.Locals,
-					method.Lines, method.Blocks, method.Start.Row, method.End.Row,
-					method.NamespaceID);
+					mb.Name, method.Token, num_params, method.Locals,
+					method.Lines, method.Blocks, method.Start.Row,
+					method.End.Row, method.NamespaceID);
 			}
 
 			return file.CreateSymbolFile ();

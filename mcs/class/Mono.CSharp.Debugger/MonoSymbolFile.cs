@@ -370,8 +370,10 @@ namespace Mono.CSharp.Debugger
 			ot.DataSectionSize = (int) bw.BaseStream.Position - ot.DataSectionOffset;
 
 			//
-			// Write method table.
+			// Sort the methods according to their tokens and write
+			// the method table.
 			//
+			methods.Sort ();
 			ot.MethodTableOffset = (int) bw.BaseStream.Position;
 			for (int i = 0; i < methods.Count; i++) {
 				MethodEntry entry = (MethodEntry) methods [i];
@@ -447,9 +449,19 @@ namespace Mono.CSharp.Debugger
 		public static MonoSymbolFile ReadSymbolFile (Assembly assembly)
 		{
 			Stream stream = assembly.GetManifestResourceStream ("MonoSymbolFile");
-			if (stream == null)
-				return null;
+			if (stream != null)
+				return new MonoSymbolFile (assembly, stream);
 
+			string basename;
+			string filename = assembly.Location;
+			if (filename.EndsWith (".exe") || filename.EndsWith (".dll"))
+				basename = filename.Substring (0, filename.Length - 4);
+			else
+				basename = filename;
+
+			string name = basename + ".mdb";
+
+			stream = new FileStream (name, FileMode.Open);
 			return new MonoSymbolFile (assembly, stream);
 		}
 
