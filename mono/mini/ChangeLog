@@ -1,3 +1,7 @@
+2004-07-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg: Fix warning. Add rules for SAVE_LMF and RESTORE_LMF.
+
 2004-07-06  Ben Maurer  <bmaurer@ximian.com>
 	* liveness.c: If liveness is recomputated we need to reset the information
 	for each variable. This way, if the liveness range has been narrowed
