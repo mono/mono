@@ -1,5 +1,9 @@
 2003-03-14 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Emit instructions that take a single type as a param
+
+2003-03-14 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Emit instructions that take a single int32 as a param
 
 2003-03-13 Jackson Harper <jackson@latitudegeo.com>

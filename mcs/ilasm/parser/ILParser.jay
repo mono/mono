@@ -1032,7 +1032,11 @@ instr                   : INSTR_NONE
 						}
 			| INSTR_FIELD type typeSpec DOUBLE_COLON id 
 			| INSTR_FIELD type id 
-			| INSTR_TYPE typeSpec 
+			| INSTR_TYPE type_ref
+			  {
+				TypeRef type_ref = (TypeRef) $2;
+				codegen.CodeBuffer.TypeInst ((TypeOp) $1, type_ref.Type); 
+			  }
 			| INSTR_STRING compQstring 
 				{
 				/*	currentInstr = new InstrString ((OpCode) $1, $2 as string); */
