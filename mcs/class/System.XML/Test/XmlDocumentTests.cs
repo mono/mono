@@ -806,5 +806,40 @@ namespace MonoTests.System.Xml
 			doc.LoadXml("<root />");
 			AssertNotNull(doc.DocumentElement);
 		}
+
+		public void TestDocumentWithDoctypeDecl()
+		{
+			XmlDocument doc = new XmlDocument();
+			try {
+				doc.LoadXml("<!DOCTYPE test><root />");
+			} catch(XmlException) {
+				Fail("#DoctypeDecl.OnlyName");
+			}
+			try 
+			{
+				doc.LoadXml("<!DOCTYPE test SYSTEM 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><root />");
+			} 
+			catch(XmlException) 
+			{
+				Fail("#DoctypeDecl.System");
+			}
+			try 
+			{
+				doc.LoadXml("<!DOCTYPE test PUBLIC '-//test' SYSTEM 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><root />");
+			} 
+			catch(XmlException) 
+			{
+				Fail("#DoctypeDecl.Public");
+			}
+			// Should this be commented out?
+//			try 
+//			{
+//				doc.LoadXml("<!DOCTYPE test [<!ELEMENT foo >]><root />");
+//			} 
+//			catch(XmlException) 
+//			{
+//				Fail("#DoctypeDecl.ElementDecl");
+//			}
+		}
 	}
 }
