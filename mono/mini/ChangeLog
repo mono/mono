@@ -1,3 +1,16 @@
+2005-02-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_amd64_get_delegate_method_ptr_addr): New helper function.
+
+	* mini-amd64.c (emit_call): If both the caller and the callee is
+	guaranteed to have 32 bit addresses, emit a normal call.
+
+	* tramp-amd64.c: Adapt to changes in mini-amd64.c.
+
+	* tramp-amd64.c (amd64_magic_trampoline): Remove patching of trampolines. 
+	* tramp-amd64.c (amd64_magic_trampoline): Add support for patching the
+	method_ptr inside delegates.
+
 2005-02-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_jit_free_method): Free the method info even if the native code is
