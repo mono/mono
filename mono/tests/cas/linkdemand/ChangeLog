@@ -1,3 +1,10 @@
+2005-03-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* cas4-5.cs: Removed. Replaced by new refcas#.cs tests.
+	* refcas1-5.cs: New. CAS test cases for reflection.
+	* Makefile: Update to build/execute new tests.
+	* README: Updated with new tests descriptions.
+
 2005-02-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* cas6-9.cs: New. CAS tests cases for NEWOBK (constructor), LDFTN
