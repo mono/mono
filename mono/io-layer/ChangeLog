@@ -1,3 +1,10 @@
+2004-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-wrappers.h: _wapi_socket == WSASocket now. Added
+	WSA_FLAG_OVERLAPPED.
+
+	* sockets.c: new unused parameters for _wapi_socket.
+
 2004-04-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* timed-thread.c: Replace sem_init with MONO_SEM_INIT to handle
