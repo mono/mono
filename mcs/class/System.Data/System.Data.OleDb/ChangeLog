@@ -1,5 +1,18 @@
 2002-06-02  Rodrigo Moya <rodrigo@ximian.com>
 
+	* OleDbTransaction.cs (Dispose): added missing method.
+
+	* OleDbCommand.cs (Clone): added missing methods.
+	(Parameters, Transaction, Connection): made these overload
+	IDbCommand's ones.
+
+	* OleDbParameterCollection.cs (IndexOf, Remove, RemoveAt):
+	call m_list methods, not own ones.
+
+	* OleDbParameter.cs: more implementation.
+	
+2002-06-02  Rodrigo Moya <rodrigo@ximian.com>
+
 	* OleDbTransaction.cs (Connection, IsolationLevel, Begin,
 	Commit, Rollback): implemented.
 	(GdaConnection): added new internal property.

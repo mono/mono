@@ -83,5 +83,11 @@ namespace System.Data.OleDb
 				    null))
 				throw new InvalidOperationException ();
 		}
+
+		[MonoTODO]
+		void IDisposable.Dispose ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -28,17 +28,17 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public OleDbParameter this[int index]
+		public IDataParameter this[int index]
 		{
 			get {
-				return m_list[index];
+				return (OleDbParameter) m_list[index];
 			}
 			set {
 				m_list[index] = value;
 			}
 		}
 
-		public OleDbParameter this[string name]
+		public object this[string name]
 		{
 			[MonoTODO]
 			get {
@@ -105,7 +105,7 @@ namespace System.Data.OleDb
 
 		bool IList.Contains (object value)
 		{
-			return list.Contains (value);
+			return m_list.Contains (value);
 		}
 
 		bool IDataParameterCollection.Contains (string value)
@@ -133,7 +133,7 @@ namespace System.Data.OleDb
 
 		int IDataParameterCollection.IndexOf (string name)
 		{
-			return IndexOf ((object) this[name]);
+			return m_list.IndexOf ((object) this[name]);
 		}
 
 		void IList.Insert (int index, object value)
@@ -148,12 +148,12 @@ namespace System.Data.OleDb
 
 		void IList.RemoveAt (int index)
 		{
-			Remove (m_list[index]);
+			m_list.Remove ((object) m_list[index]);
 		}
 
 		void IDataParameterCollection.RemoveAt (string name)
 		{
-			Remove (this[name]);
+			m_list.Remove ((object) this[name]);
 		}
 	}
 }

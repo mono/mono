@@ -25,6 +25,10 @@ namespace System.Data.OleDb
 		private CommandType m_type = CommandType.Text;
 		private OleDbParameterCollection m_parameters;
 
+		/*
+		 * Constructors
+		 */
+		
 		public OleDbCommand ()
 	        {
 			m_parameters = new OleDbParameterCollection ();
@@ -50,6 +54,10 @@ namespace System.Data.OleDb
 			m_transaction = xtrans;
 		}
 
+		/*
+		 * Properties
+		 */
+		
 		string IDbCommand.CommandText
 		{
 			get {
@@ -80,13 +88,13 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public OleDbConnection Connection
+		IDbConnection IDbCommand.Connection
 		{
 			get {
 				return m_connection;
 			}
 			set {
-				m_connection = value;
+				m_connection = (OleDbConnection) value;
 			}
 		}
 
@@ -102,20 +110,20 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public OleDbParameterCollection Parameters
+		IDataParameterCollection IDbCommand.Parameters
 		{
 			get {
 				return m_parameters;
 			}
 		}
 
-		public OleDbTransaction Transaction
+		IDbTransaction IDbCommand.Transaction
 		{
 			get {
 				return m_transaction;
 			}
 			set {
-				m_transaction = value;
+				m_transaction = (OleDbTransaction) value;
 			}
 		}
 
@@ -131,12 +139,22 @@ namespace System.Data.OleDb
 			}
 		}
 
+		/*
+		 * Methods
+		 */
+		
 		[MonoTODO]
 		void IDbCommand.Cancel ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+		
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
 			return new OleDbParameter ();
