@@ -54,13 +54,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public delegate bool GetThumbnailImageAbort();
 	
 	internal IntPtr nativeObject = IntPtr.Zero;	
-	ColorPalette colorPalette;
 	
 	
 	// constructor
 	internal  Image()
-	{		
-		colorPalette = new ColorPalette();
+	{	
+		
 	}
 	
 	private Image (SerializationInfo info, StreamingContext context)
@@ -497,11 +496,42 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[Browsable (false)]
 	public ColorPalette Palette {
 		get {							
+			int size = 0;
+			IntPtr palbuff;
 			
-			return colorPalette;
+			Status status = GDIPlus.GdipGetImagePaletteSize (nativeObject, out  size);
+			GDIPlus.CheckStatus (status);			
+						
+			palbuff = Marshal.AllocHGlobal (size);
+			
+			try {
+				Console.WriteLine ("point 2->{0}", size);
+				status = GDIPlus.GdipGetImagePalette (nativeObject, palbuff, size);
+				GDIPlus.CheckStatus (status);
+						
+				ColorPalette colpal = new ColorPalette ();
+				colpal.setFromGDIPalette (palbuff);
+				
+				return colpal;
+			}
+			
+			finally {
+				Marshal.FreeHGlobal (palbuff);
+			}
+			
 		}
 		set {
-			colorPalette = value;					
+			IntPtr palbuff = value.getGDIPalette ();
+			
+			try {
+				Status status = GDIPlus.GdipSetImagePalette (nativeObject, palbuff);
+				GDIPlus.CheckStatus (status);	
+			}
+			
+			finally {
+				Marshal.FreeHGlobal (palbuff);
+			}
+			
 		}
 	}
 		
@@ -672,12 +702,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			GDIPlus.CheckStatus (status);			
 
 			if (this is Bitmap){
-				Bitmap b = new Bitmap (newimage);
-
-				if (colorPalette != null)
-					b.colorPalette = colorPalette.Clone ();
-
-				return b;
+				return new Bitmap (newimage);
 			}
 			
 			throw new NotImplementedException (); 

@@ -1,3 +1,7 @@
+2005-03-23 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ColorPalette.cs: fixes ColorPalette marshaling	
+
 2004-03-21 Jordi Mas i Hernadez <jordi@ximian.com>
 
 	* ColorMatrix.cs: fixes Matrix00 init 

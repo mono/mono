@@ -1,3 +1,8 @@
+2005-03-23 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* gdipFunctions.cs: fixes GdipGetImagePalette signature
+	* Image.cs: Implements Palette property using gdiplus	  
+
 2005-03-17  Peter Bartok  <pbartok@novell.com>
 
 	* gdipFunctions.cs: 

@@ -86,33 +86,30 @@ namespace System.Drawing.Imaging
 			int[] values = new int[palette.Count];
 			
 			for (int i = 0; i < values.Length; i++) {
-				values[i] = entries[i].ToArgb(); 
-				//Console.Write("{0:X} ;", values[i]);			
-			}   			
-			
-			//Console.WriteLine("pal size " + Marshal.SizeOf (palette) + " native " + NativeObject);			
+				values[i] = entries[i].ToArgb(); 				
+			}			
 			
 			Marshal.StructureToPtr (palette, lfBuffer, false);	
-			Marshal.Copy (values, 0, (IntPtr) (lfBuffer.ToInt32() + Marshal.SizeOf (palette)), values.Length);						    								
+			Marshal.Copy (values, 0, (IntPtr) (lfBuffer.ToInt32() + Marshal.SizeOf (palette)), values.Length);
 			
 			return lfBuffer;
 		}
-
-		internal ColorPalette Clone ()
-		{
-			ColorPalette clone = new ColorPalette ();
-
-			clone.flags = flags;
-			clone.entries = new Color [entries.Length];
-			for (int i = 0; i < entries.Length; i++)
-				clone.entries [i] = entries [i];
 			
-			return clone;
-		}
-		
-		internal void setFromGDIPalette(IntPtr palette) 
+		internal void setFromGDIPalette (IntPtr palette)
 		{
-			
+			IntPtr ptr = palette;
+			int cnt, color;			
+
+			flags = Marshal.ReadInt32 (ptr); ptr = (IntPtr) (ptr.ToInt32() + 4);
+			cnt = Marshal.ReadInt32 (ptr); ptr = (IntPtr) (ptr.ToInt32() + 4);
+						
+			entries = new Color [cnt];			
+						
+			for (int i = 0; i < cnt; i++) {
+				color = Marshal.ReadInt32 (ptr);				
+				entries[i] = Color.FromArgb (color);
+				ptr = (IntPtr) (ptr.ToInt32() + 4);
+			}
 		}
 	}
 }

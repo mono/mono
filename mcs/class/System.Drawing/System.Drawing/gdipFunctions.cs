@@ -935,7 +935,7 @@ namespace System.Drawing
 		internal static extern Status GdipGetImagePaletteSize ( IntPtr image, out int size );
 												   
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImagePalette (IntPtr image, out IntPtr palette, int size);
+		internal static extern Status GdipGetImagePalette (IntPtr image, IntPtr palette, int size);
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipSetImagePalette (IntPtr image, IntPtr palette);
