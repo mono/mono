@@ -1,4 +1,9 @@
 
+Tue Aug 3 17:54:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: make GC warning messages use the trace API, they are just
+	noise to most of the users.
+
 Tue Aug 3 16:40:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c, object.h: mono_gc_handle_*() interface and
