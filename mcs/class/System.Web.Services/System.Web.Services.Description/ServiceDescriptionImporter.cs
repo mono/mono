@@ -88,22 +88,12 @@ namespace System.Web.Services.Description {
 		public ServiceDescriptionImportWarnings Import (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
 			ServiceDescriptionImportWarnings warns = 0;
-			CodeIdentifiers classNames = new CodeIdentifiers();
 			ProtocolImporter importer = GetImporter ();
-			bool found = false;
 			
-			foreach (ImportInfo info in importInfo)
-				foreach (Service service in info.ServiceDescription.Services)
-					foreach (Port port in service.Ports)
-					{
-						if (importer.Import (this, codeNamespace, codeCompileUnit, info, service, port, classNames)) {
-							found = true;
-							warns |= importer.Warnings;
-						}
-					}
+			if (!importer.Import (this, codeNamespace, codeCompileUnit, importInfo))
+				throw new Exception ("None of the supported bindings was found");
 				
-			if (!found) throw new Exception ("None of the supported bindings was found");
-			return warns;
+			return importer.Warnings;
 		}
 		
 		ProtocolImporter GetImporter ()

@@ -49,7 +49,7 @@ namespace System.Web.Services.Description {
 		{
 			LogicalTypeInfo ti = TypeStubManager.GetLogicalTypeInfo (ServiceType);
 			HttpOperationBinding sob = new HttpOperationBinding();
-			sob.Location = "/" + OperationBinding.Name;
+			sob.Location = "/" + MethodStubInfo.Name;
 			OperationBinding.Extensions.Add (sob);
 			
 			if (!Method.IsVoid)

@@ -110,8 +110,8 @@ namespace System.Web.Services.Description {
 
 		protected override void BeginNamespace ()
 		{
-			xmlImporter = new XmlSchemaImporter (Schemas);
-			soapImporter = new SoapSchemaImporter (Schemas);
+			xmlImporter = new XmlSchemaImporter (Schemas, ClassNames);
+			soapImporter = new SoapSchemaImporter (Schemas, ClassNames);
 			xmlExporter = new XmlCodeExporter (CodeNamespace, null);
 			soapExporter = new SoapCodeExporter (CodeNamespace, null);
 		}
@@ -152,16 +152,25 @@ namespace System.Web.Services.Description {
 				SoapBodyBinding osbb = OperationBinding.Output.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
 				if (osbb == null) throw new Exception ("Soap body binding not found");
 				
-				XmlMembersMapping inputMembers = ImportMembersMapping (InputMessage, isbb, soapOper);
+				SoapBindingStyle style = soapOper.Style != SoapBindingStyle.Default ? soapOper.Style : soapBinding.Style;
+			
+				XmlMembersMapping inputMembers = ImportMembersMapping (InputMessage, isbb, style, false);
 				if (inputMembers == null) throw new Exception ("Input message not declared");
 
-				XmlMembersMapping outputMembers = ImportMembersMapping (OutputMessage, osbb, soapOper);
+				XmlMembersMapping outputMembers = ImportMembersMapping (OutputMessage, osbb, style, true);
 				if (outputMembers == null) throw new Exception ("Output message not declared");
 				
 				CodeMemberMethod met = GenerateMethod (memberIds, soapOper, isbb, inputMembers, outputMembers);
 				
-				xmlExporter.ExportMembersMapping (inputMembers);
-				xmlExporter.ExportMembersMapping (outputMembers);
+				if (isbb.Use == SoapBindingUse.Literal)
+					xmlExporter.ExportMembersMapping (inputMembers);
+				else
+					soapExporter.ExportMembersMapping (inputMembers);
+				
+				if (osbb.Use == SoapBindingUse.Literal)
+					xmlExporter.ExportMembersMapping (outputMembers);
+				else
+					soapExporter.ExportMembersMapping (outputMembers);
 
 				foreach (SoapExtensionImporter eximporter in extensionImporters)
 				{
@@ -178,9 +187,12 @@ namespace System.Web.Services.Description {
 			}
 		}
 		
-		XmlMembersMapping ImportMembersMapping (Message msg, SoapBodyBinding sbb, SoapOperationBinding soapOper)
+		XmlMembersMapping ImportMembersMapping (Message msg, SoapBodyBinding sbb, SoapBindingStyle style, bool output)
 		{
 			XmlQualifiedName elem = null;
+			string elemName = Operation.Name;
+			if (output) elemName += "Response";
+
 			if (msg.Parts.Count == 1 && msg.Parts[0].Name == "parameters")
 			{
 				// Wrapped parameter style
@@ -191,7 +203,7 @@ namespace System.Web.Services.Description {
 					SoapSchemaMember ssm = new SoapSchemaMember ();
 					ssm.MemberName = part.Name;
 					ssm.MemberType = part.Type;
-					return soapImporter.ImportMembersMapping (Operation.Name, part.Type.Namespace, ssm);
+					return soapImporter.ImportMembersMapping (elemName, part.Type.Namespace, ssm);
 				}
 				else
 					return xmlImporter.ImportMembersMapping (part.Element);				
@@ -210,10 +222,10 @@ namespace System.Web.Services.Description {
 					}
 					
 					// Rpc messages always have a wrapping element
-					if (soapOper.Style == SoapBindingStyle.Rpc)
-						return soapImporter.ImportMembersMapping (Operation.Name, sbb.Namespace, mems, true);
+					if (style == SoapBindingStyle.Rpc)
+						return soapImporter.ImportMembersMapping (elemName, sbb.Namespace, mems, true);
 					else
-						return soapImporter.ImportMembersMapping (Operation.Name, "", mems, false);
+						return soapImporter.ImportMembersMapping ("", "", mems, false);
 				}
 				else
 				{
@@ -234,6 +246,8 @@ namespace System.Web.Services.Description {
 			method.Attributes = MemberAttributes.Public;
 			methodBegin.Attributes = MemberAttributes.Public;
 			methodEnd.Attributes = MemberAttributes.Public;
+			
+			SoapBindingStyle style = soapOper.Style != SoapBindingStyle.Default ? soapOper.Style : soapBinding.Style;
 			
 			// Find unique names for temporary variables
 			
@@ -288,7 +302,9 @@ namespace System.Web.Services.Description {
 				
 				if (found) continue;
 
-				if ((outputMembers [n].ElementName == Operation.Name + "Result") || (inputMembers.Count==0 && outputMembers.Count==1)) {
+				if ((outputMembers [n].ElementName == Operation.Name + "Result") || 
+					(outputMembers.Count==1)) 
+				{
 					method.ReturnType = cpd.Type;
 					methodEnd.ReturnType = cpd.Type;
 					GenerateReturnAttributes (outputMembers, outputMembers[n], bodyBinding.Use, method);
@@ -338,11 +354,17 @@ namespace System.Web.Services.Description {
 			CodeThisReferenceExpression ethis = new CodeThisReferenceExpression();
 			CodePrimitiveExpression varMsgName = new CodePrimitiveExpression (messageName);
 			CodeMethodInvokeExpression inv;
+			CodeVariableDeclarationStatement dec;
 
 			inv = new CodeMethodInvokeExpression (ethis, "Invoke", varMsgName, methodParams);
-			CodeVariableDeclarationStatement dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
-			method.Statements.Add (dec);
-			method.Statements.AddRange (outAssign);
+			if (outputMembers.Count > 0)
+			{
+				dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
+				method.Statements.Add (dec);
+				method.Statements.AddRange (outAssign);
+			}
+			else
+				method.Statements.Add (inv);
 			
 			// Begin Invoke Call
 			
@@ -355,20 +377,29 @@ namespace System.Web.Services.Description {
 			
 			CodeExpression varAsyncr = new CodeVariableReferenceExpression (varAsyncResult);
 			inv = new CodeMethodInvokeExpression (ethis, "EndInvoke", varAsyncr);
-			dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
-			methodEnd.Statements.Add (dec);
-			methodEnd.Statements.AddRange (outAssign);
+			if (outputMembers.Count > 0)
+			{
+				dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
+				methodEnd.Statements.Add (dec);
+				methodEnd.Statements.AddRange (outAssign);
+			}
+			else
+				methodEnd.Statements.Add (inv);
 			
 			// Attributes
 			
-			CodeAttributeDeclaration att = null;
+			ImportHeaders (method);
 			
-			if (soapOper.Style == SoapBindingStyle.Rpc)
+			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.WebMethodAttribute");
+			if (messageName != method.Name) att.Arguments.Add (GetArg ("MessageName",messageName));
+			AddCustomAttribute (method, att, false);
+			
+			if (style == SoapBindingStyle.Rpc)
 			{
 				att = new CodeAttributeDeclaration ("System.Web.Services.Protocols.SoapRpcMethodAttribute");
 				att.Arguments.Add (GetArg (soapOper.SoapAction));
 				if (inputMembers.ElementName != method.Name) att.Arguments.Add (GetArg ("RequestElementName", inputMembers.ElementName));
-				if (outputMembers.ElementName != (method.Name + "Response")) att.Arguments.Add (GetArg ("RequestElementName", outputMembers.ElementName));
+				if (outputMembers.ElementName != (method.Name + "Response")) att.Arguments.Add (GetArg ("ResponseElementName", outputMembers.ElementName));
 				att.Arguments.Add (GetArg ("RequestNamespace", inputMembers.Namespace));
 				att.Arguments.Add (GetArg ("ResponseNamespace", outputMembers.Namespace));
 			}
@@ -382,7 +413,7 @@ namespace System.Web.Services.Description {
 				att.Arguments.Add (GetArg (soapOper.SoapAction));
 				if (inputMembers.ElementName != "") {
 					if (inputMembers.ElementName != method.Name) att.Arguments.Add (GetArg ("RequestElementName", inputMembers.ElementName));
-					if (outputMembers.ElementName != (method.Name + "Response")) att.Arguments.Add (GetArg ("RequestElementName", outputMembers.ElementName));
+					if (outputMembers.ElementName != (method.Name + "Response")) att.Arguments.Add (GetArg ("ResponseElementName", outputMembers.ElementName));
 					att.Arguments.Add (GetArg ("RequestNamespace", inputMembers.Namespace));
 					att.Arguments.Add (GetArg ("ResponseNamespace", outputMembers.Namespace));
 					att.Arguments.Add (GetEnumArg ("ParameterStyle", "System.Web.Services.Protocols.SoapParameterStyle", "Wrapped"));
@@ -394,12 +425,6 @@ namespace System.Web.Services.Description {
 			}
 			
 			AddCustomAttribute (method, att, true);
-				
-			att = new CodeAttributeDeclaration ("System.Web.Services.WebMethodAttribute");
-			if (messageName != method.Name) att.Arguments.Add (GetArg ("MessageName",messageName));
-			AddCustomAttribute (method, att, false);
-			
-			ImportHeaders (method);
 			
 			CodeTypeDeclaration.Members.Add (method);
 			CodeTypeDeclaration.Members.Add (methodBegin);
@@ -472,17 +497,22 @@ namespace System.Web.Services.Description {
 
 			XmlTypeMapping map;
 			if (hb.Use == SoapBindingUse.Literal)
+			{
 				map = xmlImporter.ImportDerivedTypeMapping (part.Element, typeof (SoapHeader));
+				xmlExporter.ExportTypeMapping (map);
+			}
 			else
+			{
 				map = soapImporter.ImportDerivedTypeMapping (part.Type, typeof (SoapHeader), true);
+				soapExporter.ExportTypeMapping (map);
+			}
 
-			xmlExporter.ExportTypeMapping (map);
 			bool required = false;
 
 			string varName = headerVariables [map] as string;
 			if (varName == null) 
 			{
-				varName = memberIds.AddUnique(CodeIdentifier.MakeValid (map.TypeName + "Value"),hb);
+				varName = memberIds.AddUnique(CodeIdentifier.MakeValid (hb.Part + "Value"),hb);
 				headerVariables.Add (map, varName);
 				CodeMemberField codeField = new CodeMemberField (map.TypeFullName, varName);
 				codeField.Attributes = MemberAttributes.Public;

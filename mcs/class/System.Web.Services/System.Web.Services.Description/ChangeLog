@@ -1,3 +1,12 @@
+2003-10-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpSimpleProtocolReflector.cs, ProtocolReflector.cs: 
+	  Fixed naming of messages.
+	* ProtocolImporter.cs: It now iterates through all bindings. It creates
+	  a namespace for all bindings.
+	* ServiceDescriptionImporter.cs: Some code moved to ProtocolImporter.
+	* SoapProtocolImporter.cs: Improved support for RPC format. It now is working.
+
 2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpSimpleProtocolReflector.cs, SoapProtocolReflector.cs: 

@@ -267,22 +267,24 @@ namespace System.Web.Services.Description {
 				if (metBinding != null && (metBinding != binding.Name)) continue;
 				
 				operation = new Operation ();
-				operation.Name = method.Name;
+				operation.Name = method.OperationName;
 				operation.Documentation = method.MethodAttribute.Description;
 				
 				inputMessage = new Message ();
-				inputMessage.Name = operation.Name + ProtocolName + "In";
+				inputMessage.Name = method.Name + ProtocolName + "In";
 				ServiceDescription.Messages.Add (inputMessage);
 				
 				outputMessage = new Message ();
-				outputMessage.Name = operation.Name + ProtocolName + "Out";
+				outputMessage.Name = method.Name + ProtocolName + "Out";
 				ServiceDescription.Messages.Add (outputMessage);
 
 				OperationInput inOp = new OperationInput ();
+				if (method.Name != method.OperationName) inOp.Name = method.Name;
 				Operation.Messages.Add (inOp);
 				inOp.Message = new XmlQualifiedName (inputMessage.Name, ServiceDescription.TargetNamespace);
 				
 				OperationOutput outOp = new OperationOutput ();
+				if (method.Name != method.OperationName) outOp.Name = method.Name;
 				Operation.Messages.Add (outOp);
 				outOp.Message = new XmlQualifiedName (outputMessage.Name, ServiceDescription.TargetNamespace);
 			
@@ -304,13 +306,16 @@ namespace System.Web.Services.Description {
 		void ImportOperationBinding ()
 		{
 			operationBinding = new OperationBinding ();
-			operationBinding.Name = methodStubInfo.Name;
+			operationBinding.Name = methodStubInfo.OperationName;
 			
 			InputBinding inOp = new InputBinding ();
 			operationBinding.Input = inOp;
 			
 			OutputBinding outOp = new OutputBinding ();
 			operationBinding.Output = outOp;
+			
+			if (methodStubInfo.OperationName != methodStubInfo.Name)
+				inOp.Name = outOp.Name = methodStubInfo.Name;
 			
 			binding.Operations.Add (operationBinding);
 		}

@@ -145,24 +145,37 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 		
-		internal bool Import (ServiceDescriptionImporter descriptionImporter, CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ImportInfo info, Service service, Port port, CodeIdentifiers classNames)
+		internal bool Import (ServiceDescriptionImporter descriptionImporter, CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ArrayList importInfo)
 		{
 			this.descriptionImporter = descriptionImporter;
-			this.service = service;
-			this.iinfo = info;
-			this.port = port;
-			binding = ServiceDescriptions.GetBinding (port.Binding);
-			
-			if (!IsBindingSupported ()) return false;
-			
-			this.classNames = classNames;
-			warnings = (ServiceDescriptionImportWarnings) 0;
-			
+			this.classNames = new CodeIdentifiers();;
 			this.codeNamespace = codeNamespace;
 			this.codeCompileUnit = codeCompileUnit;
+			
+			warnings = (ServiceDescriptionImportWarnings) 0;
+			
+			bool found = false;
 
 			BeginNamespace ();
-			ImportPortBinding ();
+			
+			foreach (ImportInfo info in importInfo)
+			{
+				foreach (Service service in info.ServiceDescription.Services)
+				{
+					this.service = service;
+					foreach (Port port in service.Ports)
+					{
+						this.iinfo = info;
+						this.port = port;
+						binding = ServiceDescriptions.GetBinding (port.Binding);
+						if (!IsBindingSupported ()) continue;
+						
+						found = true;
+						ImportPortBinding ();
+					}
+				}
+			}
+
 			EndNamespace ();
 			
 			return true;
