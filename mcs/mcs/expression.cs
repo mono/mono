@@ -537,7 +537,7 @@ namespace Mono.CSharp {
 		public Indirection (Expression expr)
 		{
 			this.expr = expr;
-			this.type = expr.Type.GetElementType ();
+			this.type = TypeManager.TypeToCoreType (expr.Type.GetElementType ());
 			eclass = ExprClass.Variable;
 		}
 

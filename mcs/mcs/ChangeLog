@@ -5,6 +5,11 @@
 
 2002-07-02  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (Indirection.Indirection): Call
+	TypeManager.TypeToCoreType() on `expr.Type.GetElementType ()'.
+
+2002-07-02  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (ArrayAccess.EmitStoreOpcode): If the type is a
 	ValueType, call TypeManager.TypeToCoreType() on it.
 	(Invocations.EmitParams): Call TypeManager.TypeToCoreType() on
