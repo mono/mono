@@ -34,6 +34,9 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
+using System.Reflection;
+using System.Xml;
+using System.IO;
 
 //using UtilityLibrary.WinControls;
 
@@ -567,6 +570,8 @@ namespace System.Windows.Forms{
 		internal static extern IntPtr WindowFromPoint( POINT pt);
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal static extern int GetSysColor( GetSysColorIndex color);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern bool SetSysColors(int cElements, int[] lpaElements, uint[] lpaRgbValues);
 
 		internal delegate void TimerProc(IntPtr hWnd, uint uMsg, uint idEvent, int dwTime);
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
@@ -1258,7 +1263,77 @@ namespace System.Windows.Forms{
 		[DllImport ("libwinnt.dll.so", EntryPoint="LoadLibraryA")]
 		extern static void NTDLL_LoadLibraryA (string s);
 
+		static string[] WinColors = 	{
+									"COLOR_SCROLLBAR",
+									"COLOR_BACKGROUND",
+									"COLOR_ACTIVECAPTION", 
+									"COLOR_INACTIVECAPTION",
+				                                        "COLOR_MENU",
+				                                        "COLOR_WINDOW", 
+				                                        "COLOR_WINDOWFRAMET",
+				                                        "COLOR_MENUTEXT",
+				                                        "COLOR_WINDOWTEXT",
+				                                        "COLOR_CAPTIONTEXT",
+				                                        "COLOR_ACTIVEBORDER",
+				                                        "COLOR_INACTIVEBORDER",
+				                                        "COLOR_APPWORKSPACE",
+				                                        "COLOR_HIGHLIGHT",
+				                                        "COLOR_HIGHLIGHTTEXT",
+				                                        "COLOR_BTNFACE",
+				                                        "COLOR_BTNSHADOW",
+				                                        "COLOR_GRAYTEXT",
+				                                        "COLOR_BTNTEXT",
+				                                        "COLOR_INACTIVECAPTIONTEXT",
+				                                        "COLOR_BTNHIGHLIGHT",
+				                                        "COLOR_3DDKSHADOW",
+				                                        "COLOR_3DLIGHT",
+				                                        "COLOR_INFOTEXT",
+				                                        "COLOR_INFOBK",
+				                                        "COLOR_ALTERNATEBTNFACE",
+				                                        "COLOR_HOTLIGHT",
+				                                        "COLOR_GRADIENTACTIVECAPTION",
+				                                        "COLOR_GRADIENTINACTIVECAPTION"
+					};
+
+		static uint[] GetGtkSharpColors() {
+
+			string file = Path.Combine(Environment.GetEnvironmentVariable ("HOME"),Path.Combine(".gnome", "colors"));
+
+			if (File.Exists(file)) {
+
+				try {
+					XmlDocument doc1 = new XmlDocument();
+					doc1.Load(file);
+		
+					XmlElement root = doc1.DocumentElement;
+	
+					int i = 0;
+					uint[] colors = new UInt32[29];
+	
+					foreach (string colorname in WinColors) {
+				       	        XmlNode node = root.SelectSingleNode("/settings/colors/color[@name=\"" + colorname + "\"]");
+						if(node == null || node.InnerXml == "")
+							colors[i] = 255000000;
+						else
+							colors[i] = Convert.ToUInt32(node.InnerXml);
+		
+						i++;
+					}
+	
+					return colors;
+				}
+				catch {}
+
+			}
+			else {
+				Console.WriteLine("WARNING: Gtk+ colors were not applied. Run 'gtkswf' first.");
+			}
+	
+			return null;
+		}
+
 		internal static bool RunningOnUnix = false;		
+
 		// 
 		// Used to initialize the runtime
 		//
@@ -1285,11 +1360,21 @@ namespace System.Windows.Forms{
 				
 			string [] args = new string [1];
 			args [0] = "mono";
-			
+
 			PROCESS_InitWine (0, args);
 			NTDLL_LoadLibraryA ("kernel32.dll");
 			NTDLL_LoadLibraryA ("user32.dll");
 			NTDLL_LoadLibraryA ("comctl32.dll");
+
+			string gtk_colors = Environment.GetEnvironmentVariable ("SWF_GTK_COLORS");
+			if (gtk_colors == "1") {
+
+				int[] elements = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28};
+				uint[] colors = GetGtkSharpColors();
+				if (colors != null)
+					SetSysColors(29, elements, colors);
+
+			}
 		}
 	}
 }
