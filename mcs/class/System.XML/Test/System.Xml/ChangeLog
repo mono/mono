@@ -1,5 +1,11 @@
 2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderCommonTests.cs : added labels for tests.
+	  Marked MoveToXmlDeclAttributes() as [Ignore] again because there is
+	  no consistent reference implementation to follow.
+
+2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValidatingReaderTests.cs,
 	  XmlReaderCommonTests.cs,
 	  XmlTextWriterTests.cs,
