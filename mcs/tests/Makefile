@@ -46,7 +46,7 @@ TEST_SOURCES = \
 	test-271 test-272 test-273 test-274 test-275 test-276 test-277                   test-280 \
 	                  test-283 test-284 						 test-290 \
 		 test-292 \
-					    test-335 \
+					    test-335 		       test-338 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16
 

@@ -1,3 +1,8 @@
+2005-01-25  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #71602.
+	* expression.cs (MemberAccess.DoResolve): Backport fix from HEAD.
+
 2005-01-13  Raja R Harinath  <rharinath@novell.com>
 
 	Fix test-335.cs (bug #58126).
