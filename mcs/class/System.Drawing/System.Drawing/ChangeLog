@@ -1,3 +1,9 @@
+2004-01-22 Jordi Mas i Hernandez <jordi@ximian.com>
+
+        * gdipFunctions.cs: Fixes GdipGet* function signatures
+        * FontFamily.cs: Fixes GdipGet* function calls
+        * Font.cs: Fixes ToString method
+        
 2004-01-17 Jordi Mas i Hernandez <jordi@ximian.com>
 
         * Graphics.cs: calls XCloseDisplay on X11 when need it

@@ -1412,16 +1412,16 @@ namespace System.Drawing
 		internal static extern Status GdipGetGenericFontFamilyMonospace (out IntPtr fontFamily);
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetCellAscent (IntPtr fontFamily, int style, out uint ascent);
+		internal static extern Status GdipGetCellAscent (IntPtr fontFamily, int style, out short ascent);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetCellDescent (IntPtr fontFamily, int style, out uint descent);
+		internal static extern Status GdipGetCellDescent (IntPtr fontFamily, int style, out short descent);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetLineSpacing (IntPtr fontFamily, int style, out uint spacing);
+		internal static extern Status GdipGetLineSpacing (IntPtr fontFamily, int style, out short spacing);
 
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetEmHeight (IntPtr fontFamily, int style, out uint emHeight);
+		internal static extern Status GdipGetEmHeight (IntPtr fontFamily, int style, out short emHeight);
 
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipIsStyleAvailable (IntPtr fontFamily, int style, out bool styleAvailable);

@@ -597,7 +597,7 @@ namespace System.Drawing
 
 		public override String ToString ()
 		{
-			return String.Format ("[Font: Name={0}, Size={1}, Style={2}, Units={3}, GdiCharSet={4}, GdiVerticalFont={5}]", _name, _size, _style, _unit, _gdiCharSet, _gdiVerticalFont);
+			return String.Format ("[Font: Name={0}, Size={1}, Units={2}, GdiCharSet={3}, GdiVerticalFont={4}]", _name, _size, (int)_unit, _gdiCharSet, _gdiVerticalFont);
 		}
 	}
 }

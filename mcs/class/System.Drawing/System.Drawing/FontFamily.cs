@@ -216,7 +216,7 @@ namespace System.Drawing {
 		public int GetCellAscent (FontStyle style) 
 		{
 			Status status;
-			uint outProperty;
+			short outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipGetCellAscent (nativeFontFamily, styleCheck, out outProperty);
 			GDIPlus.CheckStatus (status);
@@ -227,7 +227,7 @@ namespace System.Drawing {
 		public int GetCellDescent (FontStyle style) 
 		{
 			Status status;
-			uint outProperty;
+			short outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipGetCellDescent (nativeFontFamily, styleCheck, out outProperty);
 			GDIPlus.CheckStatus (status);
@@ -238,7 +238,7 @@ namespace System.Drawing {
 		public int GetEmHeight (FontStyle style) 
 		{
 			Status status;
-			uint outProperty;
+			short outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipGetEmHeight (nativeFontFamily, styleCheck, out outProperty);
 			GDIPlus.CheckStatus (status);
@@ -249,10 +249,10 @@ namespace System.Drawing {
 		public int GetLineSpacing (FontStyle style)
 		{
 			Status status;
-			uint outProperty;
+			short outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipGetLineSpacing (nativeFontFamily, styleCheck, out outProperty);
-			GDIPlus.CheckStatus (status);
+			GDIPlus.CheckStatus (status);	
 
 			return (int) outProperty;
 		}
