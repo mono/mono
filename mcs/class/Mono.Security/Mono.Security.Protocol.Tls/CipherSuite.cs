@@ -30,7 +30,7 @@ using System.Security.Cryptography;
 using Mono.Security;
 using Mono.Security.Cryptography;
 using Mono.Security.X509;
-using M=Mono.Security.Cryptography;
+using M = Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -38,24 +38,26 @@ namespace Mono.Security.Protocol.Tls
 	{
 		#region FIELDS
 
-		private short				code;
-		private string				name;
-		private string				algName;
-		private string				hashName;
-		private bool				isExportable;
-		private CipherMode			cipherMode;
-		private byte				keyMaterialSize;
-		private byte				expandedKeyMaterialSize;
-		private short				effectiveKeyBits;
-		private byte				ivSize;
-		private byte				blockSize;
-		private TlsSessionContext	context;
-		private SymmetricAlgorithm	encryptionAlgorithm;
-		private ICryptoTransform	encryptionCipher;
-		private SymmetricAlgorithm	decryptionAlgorithm;
-		private ICryptoTransform	decryptionCipher;
-		private KeyedHashAlgorithm	clientHMAC;
-		private KeyedHashAlgorithm	serverHMAC;
+		private short					code;
+		private string					name;
+		private CipherAlgorithmType		cipherAlgorithmType;
+		private HashAlgorithmType		hashAlgorithmType;
+		private ExchangeAlgorithmType	exchangeAlgorithmType;
+		private bool					isExportable;
+		private CipherMode				cipherMode;
+		private byte					keyMaterialSize;
+		private int						keyBlockSize;
+		private byte					expandedKeyMaterialSize;
+		private short					effectiveKeyBits;
+		private byte					ivSize;
+		private byte					blockSize;
+		private TlsContext		context;
+		private SymmetricAlgorithm		encryptionAlgorithm;
+		private ICryptoTransform		encryptionCipher;
+		private SymmetricAlgorithm		decryptionAlgorithm;
+		private ICryptoTransform		decryptionCipher;
+		private KeyedHashAlgorithm		clientHMAC;
+		private KeyedHashAlgorithm		serverHMAC;
 			
 		#endregion
 
@@ -63,117 +65,162 @@ namespace Mono.Security.Protocol.Tls
 
 		protected ICryptoTransform EncryptionCipher
 		{
-			get { return encryptionCipher; }
+			get { return this.encryptionCipher; }
 		}
 
 		protected ICryptoTransform DecryptionCipher
 		{
-			get { return decryptionCipher; }
+			get { return this.decryptionCipher; }
 		}
 
 		protected KeyedHashAlgorithm ClientHMAC
 		{
-			get { return clientHMAC; }
+			get { return this.clientHMAC; }
 		}
 		
 		protected KeyedHashAlgorithm ServerHMAC
 		{
-			get { return serverHMAC; }
+			get { return this.serverHMAC; }
 		}
 
 		#endregion
 
 		#region PROPERTIES
 
-		public short Code
+		public CipherAlgorithmType CipherAlgorithmType
 		{
-			get { return code; }
+			get { return this.cipherAlgorithmType; }
 		}
 
-		public string Name
+		public string HashAlgorithmName
 		{
-			get { return name; }
+			get 
+			{  
+				switch (this.hashAlgorithmType)
+				{
+					case HashAlgorithmType.Md5:
+						return "MD5";
+
+					case HashAlgorithmType.Sha1:
+						return "SHA1";
+
+					default:
+						return "None";
+				}
+			}
 		}
 
-		public bool IsExportable
+		public HashAlgorithmType HashAlgorithmType
 		{
-			get { return isExportable; }
-		}
-
-		public CipherMode CipherMode
-		{
-			get { return cipherMode; }
+			get { return this.hashAlgorithmType; }
 		}
 
 		public int HashSize
 		{
-			get { return (int)(hashName == "MD5" ? 16 : 20); }
+			get 
+			{ 
+				switch (this.hashAlgorithmType)
+				{
+					case HashAlgorithmType.Md5:
+						return 16;
+
+					case HashAlgorithmType.Sha1:
+						return 20;
+
+					default:
+						return 0;
+				}
+			}	
+		}
+		
+		public ExchangeAlgorithmType ExchangeAlgorithmType
+		{
+			get { return this.exchangeAlgorithmType; }
+		}
+
+		public CipherMode CipherMode
+		{
+			get { return this.cipherMode; }
+		}
+
+		public short Code
+		{
+			get { return this.code; }
+		}
+
+		public string Name
+		{
+			get { return this.name; }
+		}
+
+		public bool IsExportable
+		{
+			get { return this.isExportable; }
 		}
 
 		public byte	KeyMaterialSize
 		{
-			get { return keyMaterialSize; }
+			get { return this.keyMaterialSize; }
 		}
 
 		public int KeyBlockSize
 		{
-			get 
-			{
-				return keyMaterialSize*2 + HashSize*2 + ivSize*2;
-			}
+			get { return this.keyBlockSize; }
 		}
 
 		public byte	ExpandedKeyMaterialSize
 		{
-			get { return expandedKeyMaterialSize; }
+			get { return this.expandedKeyMaterialSize; }
 		}
 
 		public byte	EffectiveKeyBits
 		{
-			get { return EffectiveKeyBits; }
+			get { return this.EffectiveKeyBits; }
 		}
 		
 		public byte IvSize
 		{
-			get { return ivSize; }
+			get { return this.ivSize; }
 		}
 
 		public byte	BlockSize
 		{
-			get { return blockSize; }
+			get { return this.blockSize; }
 		}
 
-		public string HashName
+		public TlsContext Context
 		{
-			get { return hashName; }
-		}
-
-		public TlsSessionContext Context
-		{
-			get { return context; }
-			set { context = value; }
+			get { return this.context; }
+			set { this.context = value; }
 		}
 
 		#endregion
 
 		#region CONSTRUCTORS
 		
-		public CipherSuite(short code, string name, string algName, string hashName, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
+		public CipherSuite(
+			short code, string name, CipherAlgorithmType cipherAlgorithmType, 
+			HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType,
+			bool exportable, bool blockMode, byte keyMaterialSize, 
+			byte expandedKeyMaterialSize, short effectiveKeyBytes, 
+			byte ivSize, byte blockSize)
 		{
-			this.code						= code;
-			this.name						= name;
-			this.algName					= algName;
-			this.hashName					= hashName;
-			this.isExportable				= exportable;
+			this.code					= code;
+			this.name					= name;
+			this.cipherAlgorithmType	= cipherAlgorithmType;
+			this.hashAlgorithmType		= hashAlgorithmType;
+			this.exchangeAlgorithmType	= exchangeAlgorithmType;
+			this.isExportable			= exportable;
 			if (blockMode)
 			{
-				this.cipherMode				= CipherMode.CBC;
+				this.cipherMode			= CipherMode.CBC;
 			}
-			this.keyMaterialSize			= keyMaterialSize;
-			this.expandedKeyMaterialSize	= expandedKeyMaterialSize;
-			this.effectiveKeyBits			= effectiveKeyBits;
-			this.ivSize						= ivSize;
-			this.blockSize					= blockSize;
+			this.keyMaterialSize		= keyMaterialSize;
+			this.expandedKeyMaterialSize= expandedKeyMaterialSize;
+			this.effectiveKeyBits		= effectiveKeyBits;
+			this.ivSize					= ivSize;
+			this.blockSize				= blockSize;
+			this.keyBlockSize			= this.keyMaterialSize*2 + this.HashSize*2 + this.ivSize*2;
 		}
 
 		#endregion
@@ -182,8 +229,8 @@ namespace Mono.Security.Protocol.Tls
 
 		public void InitializeCipher()
 		{
-			createEncryptionCipher();
-			createDecryptionCipher();
+			this.createEncryptionCipher();
+			this.createDecryptionCipher();
 		}
 
 		public RSA CreateRSA()
@@ -191,50 +238,38 @@ namespace Mono.Security.Protocol.Tls
 			RSA rsa;
 			if (this.Context.ServerSettings.ServerKeyExchange)
 			{
-				rsa = new RSACryptoServiceProvider();
+				rsa = RSA.Create();
 				rsa.ImportParameters(this.Context.ServerSettings.RsaParameters);
 			}
 			else
 			{
-				rsa = this.Context.ServerSettings.ServerCertificates[0].RSA;
+				rsa = this.Context.ServerSettings.Certificates[0].RSA;
 			}
 	
 			return rsa;
 		}
 
-		public RSACryptoServiceProvider CreateRSA(RSAParameters rsaParams)
-		{			
-			// BUG: MS BCL 1.0 can't import a key which 
-			// isn't the same size as the one present in
-			// the container.
-			int keySize = (rsaParams.Modulus.Length << 3);
-			RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(keySize);
-			rsa.ImportParameters(rsaParams);
-
-			return rsa;
-		}
-
 		public void UpdateClientCipherIV(byte[] iv)
 		{
-			if (cipherMode == CipherMode.CBC)
+			if (this.cipherMode == CipherMode.CBC)
 			{
 				// Set the new IV
-				encryptionAlgorithm.IV	= iv;
+				this.encryptionAlgorithm.IV	= iv;
 			
 				// Create encryption cipher with the new IV
-				encryptionCipher = encryptionAlgorithm.CreateEncryptor();
+				this.encryptionCipher = this.encryptionAlgorithm.CreateEncryptor();
 			}
 		}
 
 		public void UpdateServerCipherIV(byte[] iv)
 		{
-			if (cipherMode == CipherMode.CBC)
+			if (this.cipherMode == CipherMode.CBC)
 			{
 				// Set the new IV
-				decryptionAlgorithm.IV	= iv;
+				this.decryptionAlgorithm.IV	= iv;
 			
 				// Create encryption cipher with the new IV
-				decryptionCipher = decryptionAlgorithm.CreateDecryptor();
+				this.decryptionCipher = this.decryptionAlgorithm.CreateDecryptor();
 			}
 		}
 
@@ -294,11 +329,11 @@ namespace Mono.Security.Protocol.Tls
 				}
 				*/
 
-				fragmentSize = (buffer.Length - (paddingLength + 1)) - HashSize;
+				fragmentSize = (buffer.Length - (paddingLength + 1)) - this.HashSize;
 			}
 			else
 			{
-				fragmentSize = buffer.Length - HashSize;
+				fragmentSize = buffer.Length - this.HashSize;
 			}
 
 			dcrFragment = new byte[fragmentSize];
@@ -343,8 +378,8 @@ namespace Mono.Security.Protocol.Tls
 
 		public byte[] PRF(byte[] secret, string label, byte[] data, int length)
 		{
-			MD5CryptoServiceProvider	md5	= new MD5CryptoServiceProvider();
-			SHA1CryptoServiceProvider	sha1 = new SHA1CryptoServiceProvider();
+			HashAlgorithm md5	= MD5.Create();
+			HashAlgorithm sha1	= SHA1.Create();
 
 			int secretLen = secret.Length / 2;
 
@@ -418,93 +453,102 @@ namespace Mono.Security.Protocol.Tls
 
 		#region PRIVATE_METHODS
 
-		// This code is from Mono.Security.X509Certificate class.
-		private byte[] getUnsignedBigInteger(byte[] integer) 
-		{
-			if (integer[0] == 0x00) 
-			{
-				// this first byte is added so we're sure it's an unsigned integer
-				// however we can't feed it into RSAParameters or DSAParameters
-				int		length	 = integer.Length - 1;
-				byte[]	uinteger = new byte[length];				
-				Array.Copy(integer, 1, uinteger, 0, length);
-
-				return uinteger;
-			}
-			else
-			{
-				return integer;
-			}
-		}
-
 		private void createEncryptionCipher()
 		{
 			// Create and configure the symmetric algorithm
-			switch (this.algName)
+			switch (this.cipherAlgorithmType)
 			{
-				case "RC4":
-					encryptionAlgorithm = new ARC4Managed();
+				case CipherAlgorithmType.Des:
+					this.encryptionAlgorithm = DES.Create();
 					break;
 
-				default:
-					encryptionAlgorithm = SymmetricAlgorithm.Create(algName);
+				case CipherAlgorithmType.Rc2:
+					this.encryptionAlgorithm = RC2.Create();
+					break;
+
+				case CipherAlgorithmType.Rc4:
+					this.encryptionAlgorithm = new ARC4Managed();
+					break;
+
+				case CipherAlgorithmType.TripleDes:
+					this.encryptionAlgorithm = TripleDES.Create();
+					break;
+
+				case CipherAlgorithmType.Rijndael:
+					this.encryptionAlgorithm = Rijndael.Create();
 					break;
 			}
 
 			// If it's a block cipher
-			if (cipherMode == CipherMode.CBC)
+			if (this.cipherMode == CipherMode.CBC)
 			{
 				// Configure encrypt algorithm
-				encryptionAlgorithm.Mode		= this.cipherMode;
-				encryptionAlgorithm.Padding		= PaddingMode.None;
-				encryptionAlgorithm.KeySize		= this.keyMaterialSize * 8;
-				encryptionAlgorithm.BlockSize	= this.blockSize * 8;
+				this.encryptionAlgorithm.Mode		= this.cipherMode;
+				this.encryptionAlgorithm.Padding	= PaddingMode.None;
+				this.encryptionAlgorithm.KeySize	= this.keyMaterialSize * 8;
+				this.encryptionAlgorithm.BlockSize	= this.blockSize * 8;
 			}
 
 			// Set the key and IV for the algorithm
-			encryptionAlgorithm.Key = context.ClientWriteKey;
-			encryptionAlgorithm.IV	= context.ClientWriteIV;
+			this.encryptionAlgorithm.Key	= this.context.ClientWriteKey;
+			this.encryptionAlgorithm.IV		= this.context.ClientWriteIV;
 			
 			// Create encryption cipher
-			encryptionCipher = encryptionAlgorithm.CreateEncryptor();
+			this.encryptionCipher = this.encryptionAlgorithm.CreateEncryptor();
 
 			// Create the HMAC algorithm for the client
-			clientHMAC = new M.HMAC(hashName, context.ClientWriteMAC);
+			this.clientHMAC = new M.HMAC(
+				this.HashAlgorithmName,
+				this.context.ClientWriteMAC);
 		}
 
 		private void createDecryptionCipher()
 		{
 			// Create and configure the symmetric algorithm
-			switch (this.algName)
+			switch (this.cipherAlgorithmType)
 			{
-				case "RC4":
-					decryptionAlgorithm = new ARC4Managed();
+				case CipherAlgorithmType.Des:
+					this.decryptionAlgorithm = DES.Create();
 					break;
 
-				default:
-					decryptionAlgorithm = SymmetricAlgorithm.Create(algName);
+				case CipherAlgorithmType.Rc2:
+					this.decryptionAlgorithm = RC2.Create();
+					break;
+
+				case CipherAlgorithmType.Rc4:
+					this.decryptionAlgorithm = new ARC4Managed();
+					break;
+
+				case CipherAlgorithmType.TripleDes:
+					this.decryptionAlgorithm = TripleDES.Create();
+					break;
+
+				case CipherAlgorithmType.Rijndael:
+					this.decryptionAlgorithm = Rijndael.Create();
 					break;
 			}
 
 			// If it's a block cipher
-			if (cipherMode == CipherMode.CBC)
+			if (this.cipherMode == CipherMode.CBC)
 			{
 				// Configure encrypt algorithm
-				decryptionAlgorithm.Mode		= this.cipherMode;
-				decryptionAlgorithm.Padding		= PaddingMode.None;
-				decryptionAlgorithm.KeySize		= this.keyMaterialSize * 8;
-				decryptionAlgorithm.BlockSize	= this.blockSize * 8;
+				this.decryptionAlgorithm.Mode		= this.cipherMode;
+				this.decryptionAlgorithm.Padding	= PaddingMode.None;
+				this.decryptionAlgorithm.KeySize	= this.keyMaterialSize * 8;
+				this.decryptionAlgorithm.BlockSize	= this.blockSize * 8;
 			}
 
 			// Set the key and IV for the algorithm
-			decryptionAlgorithm.Key = context.ServerWriteKey;
-			decryptionAlgorithm.IV	= context.ServerWriteIV;
+			this.decryptionAlgorithm.Key	= this.context.ServerWriteKey;
+			this.decryptionAlgorithm.IV		= this.context.ServerWriteIV;
 
 			// Create decryption cipher			
-			decryptionCipher = decryptionAlgorithm.CreateDecryptor();
+			this.decryptionCipher = this.decryptionAlgorithm.CreateDecryptor();
 
 			// Create the HMAC algorithm for the server
-			serverHMAC = new M.HMAC(hashName, context.ServerWriteMAC);
+			this.serverHMAC = new M.HMAC(
+				this.HashAlgorithmName,
+				this.context.ServerWriteMAC);
 		}
 
 		#endregion

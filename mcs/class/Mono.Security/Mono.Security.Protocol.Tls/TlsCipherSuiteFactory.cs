@@ -28,15 +28,15 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal class TlsCipherSuiteFactory
 	{
-		public static TlsCipherSuiteCollection GetSupportedCiphers(TlsProtocol protocol)
+		public static TlsCipherSuiteCollection GetSupportedCiphers(SecurityProtocolType protocol)
 		{
 			switch (protocol)
 			{
-				case TlsProtocol.Tls1:
-					return TlsCipherSuiteFactory.GetTls1SupportedCiphers();
-
-				case TlsProtocol.Ssl3:
+				case SecurityProtocolType.Ssl3:
 					return TlsCipherSuiteFactory.GetSsl3SupportedCiphers();
+
+				case SecurityProtocolType.Tls:
+					return TlsCipherSuiteFactory.GetTls1SupportedCiphers();
 
 				default:
 					throw new NotSupportedException();
@@ -47,119 +47,118 @@ namespace Mono.Security.Protocol.Tls
 
 		private static TlsCipherSuiteCollection GetTls1SupportedCiphers()
 		{
-			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection(TlsProtocol.Tls1);
+			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection(SecurityProtocolType.Tls);
 
-			// Supported ciphers
-			// scs.Add((0x00 << 0x08) | 0x06, "TLS_RSA_EXPORT_WITH_RC2_CBC_40_MD5", "RC2", "MD5", true, true, 5, 16, 40, 8, 8);
-			scs.Add((0x00 << 0x08) | 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA", "Rijndael", "SHA1", false, true, 32, 32, 256, 16, 16);
-			scs.Add((0x00 << 0x08) | 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA", "Rijndael", "SHA1", false, true, 16, 16, 128, 16, 16);
-			scs.Add((0x00 << 0x08) | 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			scs.Add((0x00 << 0x08) | 0x09, "TLS_RSA_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			scs.Add((0x00 << 0x08) | 0x05, "TLS_RSA_WITH_RC4_128_SHA", "RC4", "SHA1", false, false, 16, 16, 128, 0, 0);
-			scs.Add((0x00 << 0x08) | 0x04, "TLS_RSA_WITH_RC4_128_MD5", "RC4", "MD5", false, false, 16, 16, 128, 0, 0);			
+			// Supported ciphers			
+			// scs.Add((0x00 << 0x08) | 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 32, 32, 256, 16, 16);
+			// scs.Add((0x00 << 0x08) | 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 16, 16, 128, 16, 16);
+			scs.Add((0x00 << 0x08) | 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 24, 24, 168, 8, 8);
+			scs.Add((0x00 << 0x08) | 0x09, "TLS_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 8, 8, 56, 8, 8);
+			scs.Add((0x00 << 0x08) | 0x05, "TLS_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
+			scs.Add((0x00 << 0x08) | 0x04, "TLS_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
 			
 			// Default CipherSuite
-			// scs.Add(0, "TLS_NULL_WITH_NULL_NULL", "", "", true, false, 0, 0, 0, 0, 0);
+			// scs.Add(0, "TLS_NULL_WITH_NULL_NULL", CipherAlgorithmType.None, HashAlgorithmType.None, ExchangeAlgorithmType.None, true, false, 0, 0, 0, 0, 0);
 			
 			// RSA Cipher Suites
-			// scs.Add((0x00 << 0x08) | 0x01, "TLS_RSA_WITH_NULL_MD5", "", "MD5", true, false, 0, 0, 0, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x02, "TLS_RSA_WITH_NULL_SHA", "", "SHA1", true, false, 0, 0, 0, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x03, "TLS_RSA_EXPORT_WITH_RC4_40_MD5", "RC4", "MD5", true, false, 5, 16, 40, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x05, "TLS_RSA_WITH_RC4_128_SHA", "RC4", "SHA1", false, false, 16, 16, 128, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x04, "TLS_RSA_WITH_RC4_128_MD5", "RC4", "MD5", false, false, 16, 16, 128, 0, 0);			
-			// scs.Add((0x00 << 0x08) | 0x06, "TLS_RSA_EXPORT_WITH_RC2_CBC_40_MD5", "RC2", "MD5", true, true, 5, 16, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x07, "TLS_RSA_WITH_IDEA_CBC_SHA", "IDEA", "SHA1", false, true, 16, 16, 128, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x08, "TLS_RSA_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x09, "TLS_RSA_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			
+			// scs.Add((0x00 << 0x08) | 0x01, "TLS_RSA_WITH_NULL_MD5", CipherAlgorithmType.None, HashAlgorithmType.Md5, ExchangeAlgorithmType.None, true, false, 0, 0, 0, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x02, "TLS_RSA_WITH_NULL_SHA", CipherAlgorithmType.None, HashAlgorithmType.Sha1, ExchangeAlgorithmType.None, true, false, 0, 0, 0, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x03, "TLS_RSA_EXPORT_WITH_RC4_40_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaSignKeyX, true, false, 5, 16, 40, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x05, "TLS_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x04, "TLS_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);			
+			// scs.Add((0x00 << 0x08) | 0x06, "TLS_RSA_EXPORT_WITH_RC2_CBC_40_MD5", CipherAlgorithmType.Rc2, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaKeyX, true, true, 5, 16, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x07, "TLS_RSA_WITH_IDEA_CBC_SHA", "IDEA", HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 16, 16, 128, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x08, "TLS_RSA_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x09, "TLS_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 24, 24, 168, 8, 8);
+
 			// Diffie-Hellman Cipher Suites
-			// scs.Add((0x00 << 0x08) | 0x0B, "TLS_DH_DSS_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0C, "TLS_DH_DSS_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0D, "TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0E, "TLS_DH_RSA_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0F, "TLS_DH_RSA_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x10, "TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x11, "TLS_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x12, "TLS_DHE_DSS_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x13, "TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x14, "TLS_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x15, "TLS_DHE_RSA_WITH_DES_CBC_SHA", "SHA1", "DES", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x16, "TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0B, "TLS_DH_DSS_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0C, "TLS_DH_DSS_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, false, ExchangeAlgorithmType.DiffieHellman, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0D, "TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0E, "TLS_DH_RSA_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0F, "TLS_DH_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, false, ExchangeAlgorithmType.DiffieHellman, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x10, "TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x11, "TLS_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x12, "TLS_DHE_DSS_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x13, "TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x14, "TLS_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x15, "TLS_DHE_RSA_WITH_DES_CBC_SHA", HashAlgorithmType.Sha1, CipherAlgorithmType.Des, false, ExchangeAlgorithmType.DiffieHellman, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x16, "TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
 
 			// Anonymous Diffie-Hellman Cipher Suites
-			// scs.Add((0x00 << 0x08) | 0x17, "TLS_DH_anon_EXPORT_WITH_RC4_40_MD5", "RC4", "MD5", true, false, 5, 16, 40, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x18, "TLS_DH_anon_WITH_RC4_128_MD5", "RC4", "MD5", false, false, 16, 16, 128, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x19, "TLS_DH_anon_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", false, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x1A, "TLS_DH_anon_WITH_DES_CBC_SHA", "DES4", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x1B, "TLS_DH_anon_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x17, "TLS_DH_anon_EXPORT_WITH_RC4_40_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.DiffieHellman, true, false, 5, 16, 40, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x18, "TLS_DH_anon_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, false, ExchangeAlgorithmType.DiffieHellman, false, 16, 16, 128, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x19, "TLS_DH_anon_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x1A, "TLS_DH_anon_WITH_DES_CBC_SHA", "DES4", HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x1B, "TLS_DH_anon_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
 
 			// AES CipherSuites
 			//
 			// Ref: RFC3268 - (http://www.ietf.org/rfc/rfc3268.txt)
 		
-			// scs.Add((0x00 << 0x08) | 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA", "Rijndael", "SHA1", false, true, 16, 16, 128, 16, 16);
-			// scs.Add((0x00 << 0x08) | 0x30, "TLS_DH_DSS_WITH_AES_128_CBC_SHA", "Rijndael", "SHA1", false, true, 16, 16, 128, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x31, "TLS_DH_RSA_WITH_AES_128_CBC_SHA", "Rijndael", "SHA1", false, true, 16, 16, 128, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x32, "TLS_DHE_DSS_WITH_AES_128_CBC_SHA", "Rijndael", "SHA1", false, true, 16, 16, 128, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x33, "TLS_DHE_RSA_WITH_AES_128_CBC_SHA", "Rijndael", "SHA1", false, true, 16, 16, 128, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x34, "TLS_DH_anon_WITH_AES_128_CBC_SHA", "Rijndael", "SHA1", false, true, 16, 16, 128, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 16, 16, 128, 16, 16);
+			// scs.Add((0x00 << 0x08) | 0x30, "TLS_DH_DSS_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 16, 16, 128, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x31, "TLS_DH_RSA_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 16, 16, 128, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x32, "TLS_DHE_DSS_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 16, 16, 128, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x33, "TLS_DHE_RSA_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 16, 16, 128, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x34, "TLS_DH_anon_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 16, 16, 128, 8, 8);
 
-			// scs.Add((0x00 << 0x08) | 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA", "Rijndael", "SHA1", false, true, 32, 32, 256, 16, 16);
-			// scs.Add((0x00 << 0x08) | 0x36, "TLS_DH_DSS_WITH_AES_256_CBC_SHA", "Rijndael", "SHA1", false, true, 32, 32, 256, 16, 16);
-			// scs.Add((0x00 << 0x08) | 0x37, "TLS_DH_RSA_WITH_AES_256_CBC_SHA", "Rijndael", "SHA1", false, true, 32, 32, 256, 16, 16);
-			// scs.Add((0x00 << 0x08) | 0x38, "TLS_DHE_DSS_WITH_AES_256_CBC_SHA", "Rijndael", "SHA1", false, true, 32, 32, 256, 16, 16);
-			// scs.Add((0x00 << 0x08) | 0x39, "TLS_DHE_RSA_WITH_AES_256_CBC_SHA", "Rijndael", "SHA1", false, true, 32, 32, 256, 16, 16);
-			// scs.Add((0x00 << 0x08) | 0x3A, "TLS_DH_anon_WITH_AES_256_CBC_SHA", "Rijndael", "SHA1", false, true, 32, 32, 256, 16, 16);
+			// scs.Add((0x00 << 0x08) | 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 32, 32, 256, 16, 16);
+			// scs.Add((0x00 << 0x08) | 0x36, "TLS_DH_DSS_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 32, 32, 256, 16, 16);
+			// scs.Add((0x00 << 0x08) | 0x37, "TLS_DH_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 32, 32, 256, 16, 16);
+			// scs.Add((0x00 << 0x08) | 0x38, "TLS_DHE_DSS_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 32, 32, 256, 16, 16);
+			// scs.Add((0x00 << 0x08) | 0x39, "TLS_DHE_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 32, 32, 256, 16, 16);
+			// scs.Add((0x00 << 0x08) | 0x3A, "TLS_DH_anon_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 32, 32, 256, 16, 16);
 
 			return scs;
 		}
 
 		private static TlsCipherSuiteCollection GetSsl3SupportedCiphers()
 		{
-			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection(TlsProtocol.Ssl3);
+			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection(SecurityProtocolType.Ssl3);
 
 			// Supported ciphers
-			scs.Add((0x00 << 0x08) | 0x0A, "SSL_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			scs.Add((0x00 << 0x08) | 0x09, "SSL_RSA_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			scs.Add((0x00 << 0x08) | 0x05, "SSL_RSA_WITH_RC4_128_SHA", "RC4", "SHA1", false, false, 16, 16, 128, 0, 0);
-			scs.Add((0x00 << 0x08) | 0x04, "SSL_RSA_WITH_RC4_128_MD5", "RC4", "MD5", false, false, 16, 16, 128, 0, 0);			
+			scs.Add((0x00 << 0x08) | 0x0A, "SSL_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 24, 24, 168, 8, 8);
+			scs.Add((0x00 << 0x08) | 0x09, "SSL_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 8, 8, 56, 8, 8);
+			scs.Add((0x00 << 0x08) | 0x05, "SSL_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
+			scs.Add((0x00 << 0x08) | 0x04, "SSL_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
 			
 			// Default CipherSuite
-			// scs.Add(0, "SSL_NULL_WITH_NULL_NULL", "", "", true, false, 0, 0, 0, 0, 0);
+			// scs.Add(0, "SSL_NULL_WITH_NULL_NULL", CipherAlgorithmType.None, HashAlgorithmType.None, true, false, 0, 0, 0, 0, 0);
 			
 			// RSA Cipher Suites
-			// scs.Add((0x00 << 0x08) | 0x01, "SSL_RSA_WITH_NULL_MD5", "", "MD5", true, false, 0, 0, 0, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x02, "SSL_RSA_WITH_NULL_SHA", "", "SHA1", true, false, 0, 0, 0, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x03, "SSL_RSA_EXPORT_WITH_RC4_40_MD5", "RC4", "MD5", true, false, 5, 16, 40, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x05, "SSL_RSA_WITH_RC4_128_SHA", "RC4", "SHA1", false, false, 16, 16, 128, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x04, "SSL_RSA_WITH_RC4_128_MD5", "RC4", "MD5", false, false, 16, 16, 128, 0, 0);			
-			// scs.Add((0x00 << 0x08) | 0x06, "SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5", "RC2", "MD5", true, true, 5, 16, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x07, "SSL_RSA_WITH_IDEA_CBC_SHA", "IDEA", "SHA1", false, true, 16, 16, 128, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x08, "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x09, "SSL_RSA_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0A, "SSL_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			
+			// scs.Add((0x00 << 0x08) | 0x01, "SSL_RSA_WITH_NULL_MD5", CipherAlgorithmType.None, HashAlgorithmType.Md5, ExchangeAlgorithmType.None, true, false, 0, 0, 0, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x02, "SSL_RSA_WITH_NULL_SHA", CipherAlgorithmType.None, HashAlgorithmType.Sha1, true, ExchangeAlgorithmType.None, false, 0, 0, 0, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x03, "SSL_RSA_EXPORT_WITH_RC4_40_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaKeyX, true, false, 5, 16, 40, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x05, "SSL_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x04, "SSL_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaSign, false, false, 16, 16, 128, 0, 0);			
+			// scs.Add((0x00 << 0x08) | 0x06, "SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5", CipherAlgorithmType.Rc2, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaKeyX, true, true, 5, 16, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x07, "SSL_RSA_WITH_IDEA_CBC_SHA", "IDEA", HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 16, 16, 128, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x08, "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyEx, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x09, "SSL_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0A, "SSL_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 24, 24, 168, 8, 8);
+						
 			// Diffie-Hellman Cipher Suites
-			// scs.Add((0x00 << 0x08) | 0x0B, "SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0C, "SSL_DH_DSS_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0D, "SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0E, "SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x0F, "SSL_DH_RSA_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x10, "SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x11, "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x12, "SSL_DHE_DSS_WITH_DES_CBC_SHA", "DES", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x13, "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x14, "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", true, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x15, "SSL_DHE_RSA_WITH_DES_CBC_SHA", "SHA1", "DES", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x16, "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0B, "SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0C, "SSL_DH_DSS_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0D, "SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0E, "SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x0F, "SSL_DH_RSA_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x10, "SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x11, "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x12, "SSL_DHE_DSS_WITH_DES_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x13, "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x14, "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, true, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x15, "SSL_DHE_RSA_WITH_DES_CBC_SHA", HashAlgorithmType.Sha1, CipherAlgorithmType.Des, ExchangeAlgorithmType.DiffieHellman, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x16, "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
 
 			// Anonymous Diffie-Hellman Cipher Suites
-			// scs.Add((0x00 << 0x08) | 0x17, "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5", "RC4", "MD5", true, false, 5, 16, 40, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x18, "SSL_DH_anon_WITH_RC4_128_MD5", "RC4", "MD5", false, false, 16, 16, 128, 0, 0);
-			// scs.Add((0x00 << 0x08) | 0x19, "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA", "DES", "SHA1", false, true, 5, 8, 40, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x1A, "SSL_DH_anon_WITH_DES_CBC_SHA", "DES4", "SHA1", false, true, 8, 8, 56, 8, 8);
-			// scs.Add((0x00 << 0x08) | 0x1B, "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA", "3DES", "SHA1", false, true, 24, 24, 168, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x17, "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.DiffieHellman, true, false, 5, 16, 40, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x18, "SSL_DH_anon_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, false, ExchangeAlgorithmType.DiffieHellman, false, 16, 16, 128, 0, 0);
+			// scs.Add((0x00 << 0x08) | 0x19, "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA", CipherAlgorithmType.Des, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 5, 8, 40, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x1A, "SSL_DH_anon_WITH_DES_CBC_SHA", "DES4", HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 8, 8, 56, 8, 8);
+			// scs.Add((0x00 << 0x08) | 0x1B, "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.DiffieHellman, false, true, 24, 24, 168, 8, 8);
 
 			return scs;
 		}

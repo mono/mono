@@ -41,8 +41,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region CONSTRUCTORS
 
-		public TlsServerKeyExchange(TlsSession session, byte[] buffer)
-			: base(session, TlsHandshakeType.ServerKeyExchange, buffer)
+		public TlsServerKeyExchange(TlsContext context, byte[] buffer)
+			: base(context, TlsHandshakeType.ServerKeyExchange, buffer)
 		{
 			this.verifySignature();
 		}
@@ -55,9 +55,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			this.Session.Context.ServerSettings.ServerKeyExchange	= true;
-			this.Session.Context.ServerSettings.RsaParameters		= this.rsaParams;
-			this.Session.Context.ServerSettings.SignedParams		= this.signedParams;
+			this.Context.ServerSettings.ServerKeyExchange	= true;
+			this.Context.ServerSettings.RsaParameters		= this.rsaParams;
+			this.Context.ServerSettings.SignedParams		= this.signedParams;
 		}
 
 		#endregion
@@ -89,12 +89,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private void verifySignature()
 		{
-			MD5SHA1CryptoServiceProvider hash = new MD5SHA1CryptoServiceProvider();
+			MD5SHA1 hash = new MD5SHA1();
 
 			// Create server params array
 			TlsStream stream = new TlsStream();
 
-			stream.Write(this.Session.Context.RandomCS);
+			stream.Write(this.Context.RandomCS);
 			stream.Write(rsaParams.Modulus.Length);
 			stream.Write(rsaParams.Modulus);
 			stream.Write(rsaParams.Exponent.Length);
@@ -105,9 +105,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			stream.Reset();
 
 			// Verify Signature
-			X509Certificate certificate = this.Session.Context.ServerSettings.ServerCertificates[0];
+			X509Certificate certificate = this.Context.ServerSettings.Certificates[0];
 
-			RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(rsaParams.Modulus.Length << 3);
+			RSA rsa = RSA.Create();
+			
+			rsa.KeySize = rsaParams.Modulus.Length << 3;
 			rsa.ImportParameters(rsaParams);
 
 			byte[] sign = hash.CreateSignature(rsa);

@@ -32,8 +32,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region CONSTRUCTORS
 
-		public TlsClientKeyExchange (TlsSession session) : 
-			base(session,
+		public TlsClientKeyExchange (TlsContext context) : 
+			base(context,
 				TlsHandshakeType.ClientKeyExchange, 
 				TlsContentType.Handshake)
 		{
@@ -46,10 +46,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsSsl3()
 		{
 			// Compute pre master secret
-			byte[] preMasterSecret = this.Session.Context.Cipher.CreatePremasterSecret();
+			byte[] preMasterSecret = this.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
-			RSA rsa = this.Session.Context.Cipher.CreateRSA();
+			RSA rsa = this.Context.Cipher.CreateRSA();
 			
 			// Encrypt premaster_sercret
 			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);
@@ -59,10 +59,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.Write(buffer);
 
 			// Create master secret
-			this.Session.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+			this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
 
 			// Create keys
-			this.Session.Context.Cipher.ComputeKeys();
+			this.Context.Cipher.ComputeKeys();
 
 			// Clear resources
 			rsa.Clear();
@@ -71,10 +71,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsTls1()
 		{
 			// Compute pre master secret
-			byte[] preMasterSecret = this.Session.Context.Cipher.CreatePremasterSecret();
+			byte[] preMasterSecret = this.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
-			RSA rsa = this.Session.Context.Cipher.CreateRSA();
+			RSA rsa = this.Context.Cipher.CreateRSA();
 			
 			// Encrypt premaster_sercret
 			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);
@@ -85,10 +85,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.Write(buffer);
 
 			// Create master secret
-			this.Session.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+			this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
 
 			// Create keys
-			this.Session.Context.Cipher.ComputeKeys();
+			this.Context.Cipher.ComputeKeys();
 
 			// Clear resources
 			rsa.Clear();

@@ -29,8 +29,8 @@ namespace Mono.Security.Protocol.Tls.Alerts
 {
 	internal class TlsCloseNotifyAlert : TlsAlert
 	{
-		public TlsCloseNotifyAlert(TlsSession session) 
-			: base(session,  
+		public TlsCloseNotifyAlert(TlsContext context) 
+			: base(context,  
 					TlsAlertLevel.Warning, 
 					TlsAlertDescription.CloseNotify)
 		{
@@ -38,7 +38,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		public override void UpdateSession()
 		{
-			this.Session.Context.ConnectionEnd = true;
+			this.Context.ConnectionEnd = true;
 		}	
 	}
 }

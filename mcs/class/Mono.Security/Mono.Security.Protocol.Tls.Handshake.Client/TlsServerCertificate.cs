@@ -23,7 +23,10 @@
  */
 
 using System;
+using System.Collections;
+using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using X509Cert = System.Security.Cryptography.X509Certificates;
 
 using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.X509;
@@ -34,23 +37,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region FIELDS
 
-		private X509CertificateCollection certificates;
+		private X509CertificateCollection	certificates;
 		
-		#endregion
-
-		#region PROPERTIES
-
-		public X509CertificateCollection Certificates
-		{
-			get { return certificates; }
-		}
-
 		#endregion
 
 		#region CONSTRUCTORS
 
-		public TlsServerCertificate(TlsSession session, byte[] buffer) 
-			: base(session, TlsHandshakeType.Certificate, buffer)
+		public TlsServerCertificate(TlsContext context, byte[] buffer) 
+			: base(context, TlsHandshakeType.Certificate, buffer)
 		{
 		}
 
@@ -61,7 +55,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		public override void UpdateSession()
 		{
 			base.UpdateSession();
-			this.Session.Context.ServerSettings.ServerCertificates = certificates;
+			this.Context.ServerSettings.Certificates = certificates;
 		}
 
 		#endregion
@@ -107,24 +101,60 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private void validateCertificate(X509Certificate certificate)
 		{
-			#warning "Check validity of certificates"
+			int[] certificateErrors = new int[0];
 
 			// 1 step : Validate dates
 			if (!certificate.IsCurrent)
 			{
-				throw Session.CreateException("Certificate received from the server expired.");
+				#warning "Add error to the list"
 			}
 
 			// 2 step: Validate CA
 			
 
 			// 3 step: Validate digital sign
+			/*
 			if (!certificate.VerifySignature(certificate.RSA))
 			{
-				throw Session.CreateException("Certificate received from the server has invalid signature.");
+				throw this.Context.CreateException("Certificate received from the server has invalid signature.");
 			}
+			*/
 
 			// 4 step: Validate domain name
+			if (!this.checkDomainName(certificate.SubjectName))
+			{
+				#warning "Add error to the list"
+			}
+
+			if (certificateErrors.Length > 0)
+			{
+				if (!this.Context.SslStream.RaiseServerCertificateValidation(
+					new X509Cert.X509Certificate(certificate.RawData), 
+					new int[]{}))
+				{
+					throw this.Context.CreateException("Invalid certificate received form server.");
+				}
+			}
+		}
+
+		private bool checkDomainName(string subjectName)
+		{
+			string	domainName = String.Empty;
+			Regex search = new Regex(@"([\w\s\d]*)\s*=\s*([^,]*)");
+
+			MatchCollection	elements = search.Matches(subjectName);
+
+			foreach (Match element in elements)
+			{
+				switch (element.Groups[1].Value.Trim().ToUpper())
+				{
+					case "CN":
+						domainName = element.Groups[2].Value;
+						break;
+				}
+			}
+
+			return (this.Context.ClientSettings.TargetHost == domainName);
 		}
 
 		#endregion

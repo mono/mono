@@ -33,8 +33,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region CONSTRUCTORS
 
-		public TlsClientFinished(TlsSession session) 
-			: base(session, TlsHandshakeType.Finished,  TlsContentType.Handshake)
+		public TlsClientFinished(TlsContext context) 
+			: base(context, TlsHandshakeType.Finished,  TlsContentType.Handshake)
 		{
 		}
 
@@ -55,10 +55,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsSsl3()
 		{
 			// Compute handshake messages hashes
-			HashAlgorithm hash = new TlsSslHandshakeHash(this.Session.Context.MasterSecret);
+			HashAlgorithm hash = new TlsSslHandshakeHash(this.Context.MasterSecret);
 
 			TlsStream data = new TlsStream();
-			data.Write(this.Session.Context.HandshakeMessages.ToArray());
+			data.Write(this.Context.HandshakeMessages.ToArray());
 			data.Write((int)0x434C4E54);
 			
 			hash.TransformFinalBlock(data.ToArray(), 0, (int)data.Length);
@@ -71,14 +71,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsTls1()
 		{
 			// Compute handshake messages hash
-			HashAlgorithm hash = new MD5SHA1CryptoServiceProvider();
+			HashAlgorithm hash = new MD5SHA1();
 			hash.ComputeHash(
-				Session.Context.HandshakeMessages.ToArray(),
+				this.Context.HandshakeMessages.ToArray(),
 				0,
-				(int)Session.Context.HandshakeMessages.Length);
+				(int)this.Context.HandshakeMessages.Length);
 
 			// Write message
-			Write(Session.Context.Cipher.PRF(Session.Context.MasterSecret, "client finished", hash.Hash, 12));
+			Write(this.Context.Cipher.PRF(this.Context.MasterSecret, "client finished", hash.Hash, 12));
 		}
 
 		#endregion

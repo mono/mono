@@ -23,30 +23,13 @@
  */
 
 using System;
-using System.Text;
-using System.Runtime.Serialization;
-
-using Mono.Security.Protocol.Tls.Alerts;
 
 namespace Mono.Security.Protocol.Tls
 {
-	[Serializable]
-	public sealed class TlsException : Exception
-	{	
-		#region CONSTRUCTORS
-		
-		internal TlsException(string message) : base(message)
-		{
-		}
-
-		internal TlsException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}
-		
-		internal TlsException(string message, Exception ex) : base(message, ex)
-		{
-		}
-
-		#endregion
+	public enum SecurityProtocolType : short
+	{
+		Default = (0x03 << 8) | 0x01,
+		Ssl3	= (0x03 << 8) | 0x00,
+		Tls		= (0x03 << 8) | 0x01
 	}
 }

@@ -30,8 +30,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region FIELDS
 
-		private TlsProtocol				protocol;
-		private TlsCompressionMethod	compressionMethod;
+		private SecurityProtocolType	protocol;
+		private SecurityCompressionType	compressionMethod;
 		private byte[]					random;
 		private byte[]					sessionId;
 		private CipherSuite	cipherSuite;
@@ -40,8 +40,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region CONSTRUCTORS
 
-		public TlsServerHello(TlsSession session, byte[] buffer) 
-			: base(session, TlsHandshakeType.ServerHello, buffer)
+		public TlsServerHello(TlsContext context, byte[] buffer) 
+			: base(context, TlsHandshakeType.ServerHello, buffer)
 		{
 		}
 
@@ -53,24 +53,24 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			this.Session.SetSessionId(this.sessionId);
-			this.Session.Context.ServerRandom		= this.random;
-			this.Session.Context.Cipher				= this.cipherSuite;
-			this.Session.Context.CompressionMethod	= this.compressionMethod;
-			this.Session.Context.Cipher.Context		= this.Session.Context;
+			this.Context.SessionId			= this.sessionId;
+			this.Context.ServerRandom		= this.random;
+			this.Context.Cipher				= this.cipherSuite;
+			this.Context.CompressionMethod	= this.compressionMethod;
+			this.Context.Cipher.Context		= this.Context;
 
 			// Compute ClientRandom + ServerRandom
 			TlsStream random = new TlsStream();
-			random.Write(this.Session.Context.ClientRandom);
-			random.Write(this.Session.Context.ServerRandom);
-			this.Session.Context.RandomCS = random.ToArray();
+			random.Write(this.Context.ClientRandom);
+			random.Write(this.Context.ServerRandom);
+			this.Context.RandomCS = random.ToArray();
 
 			// Server Random + Client Random
 			random.Reset();
-			random.Write(this.Session.Context.ServerRandom);
-			random.Write(this.Session.Context.ClientRandom);
+			random.Write(this.Context.ServerRandom);
+			random.Write(this.Context.ClientRandom);
 
-			this.Session.Context.RandomSC = random.ToArray();
+			this.Context.RandomSC = random.ToArray();
 			random.Reset();
 		}
 
@@ -80,9 +80,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			#warning "Check that the protocol sent by the server is supported"
 			// Read protocol version
-			this.protocol	= (TlsProtocol)this.ReadInt16();
+			this.protocol	= (SecurityProtocolType)this.ReadInt16();
 			
 			// Read random  - Unix time + Random bytes
 			this.random		= this.ReadBytes(32);
@@ -96,21 +95,21 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			// Read cipher suite
 			short cipherCode = this.ReadInt16();
-			if (this.Session.Context.SupportedCiphers.IndexOf(cipherCode) == -1)
+			if (this.Context.SupportedCiphers.IndexOf(cipherCode) == -1)
 			{
 				// The server has sent an invalid ciphersuite
 				throw new TlsException("Invalid cipher suite received from server");
 			}
-			this.cipherSuite = this.Session.Context.SupportedCiphers[cipherCode];
+			this.cipherSuite = this.Context.SupportedCiphers[cipherCode];
 			
 			// Read compression methods ( always 0 )
-			this.compressionMethod = (TlsCompressionMethod)this.ReadByte();
+			this.compressionMethod = (SecurityCompressionType)this.ReadByte();
 		}
 
 		protected override void ProcessAsTls1()
 		{
 			// Read protocol version
-			this.protocol	= (TlsProtocol)this.ReadInt16();
+			this.protocol	= (SecurityProtocolType)this.ReadInt16();
 			
 			// Read random  - Unix time + Random bytes
 			this.random		= this.ReadBytes(32);
@@ -124,15 +123,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			// Read cipher suite
 			short cipherCode = this.ReadInt16();
-			if (this.Session.Context.SupportedCiphers.IndexOf(cipherCode) == -1)
+			if (this.Context.SupportedCiphers.IndexOf(cipherCode) == -1)
 			{
 				// The server has sent an invalid ciphersuite
 				throw new TlsException("Invalid cipher suite received from server");
 			}
-			this.cipherSuite = this.Session.Context.SupportedCiphers[cipherCode];
+			this.cipherSuite = this.Context.SupportedCiphers[cipherCode];
 			
 			// Read compression methods ( always 0 )
-			this.compressionMethod = (TlsCompressionMethod)this.ReadByte();
+			this.compressionMethod = (SecurityCompressionType)this.ReadByte();
 		}
 
 		#endregion

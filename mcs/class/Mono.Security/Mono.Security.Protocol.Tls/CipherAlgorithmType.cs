@@ -24,40 +24,16 @@
 
 using System;
 
-namespace Mono.Security.Protocol.Tls.Handshake.Client
+namespace Mono.Security.Protocol.Tls
 {
-	internal class TlsServerHelloDone : TlsHandshakeMessage
+	public enum CipherAlgorithmType
 	{
-		#region CONSTRUCTORS
-
-		public TlsServerHelloDone(TlsContext context, byte[] buffer) 
-			: base(context, TlsHandshakeType.ServerHello, buffer)
-		{
-		}
-
-		#endregion
-
-		#region METHODS
-
-		public override void UpdateSession()
-		{
-			base.UpdateSession();
-
-			this.Context.HelloDone = true;
-		}
-
-		#endregion
-
-		#region PROTECTED_METHODS
-
-		protected override void ProcessAsSsl3()
-		{
-		}
-
-		protected override void ProcessAsTls1()
-		{
-		}
-
-		#endregion
+		Des,
+		None,
+		Rc2,
+		Rc4,
+		Rijndael,
+		SkipJack,
+		TripleDes
 	}
 }

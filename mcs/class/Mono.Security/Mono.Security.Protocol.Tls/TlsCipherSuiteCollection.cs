@@ -33,7 +33,7 @@ namespace Mono.Security.Protocol.Tls
 	{
 		#region FIELDS
 
-		private TlsProtocol protocol;
+		private SecurityProtocolType protocol;
 
 		#endregion
 
@@ -61,7 +61,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region CONSTRUCTORS
 
-		public TlsCipherSuiteCollection(TlsProtocol protocol) : base()
+		public TlsCipherSuiteCollection(SecurityProtocolType protocol) : base()
 		{
 			this.protocol = protocol;
 		}
@@ -108,17 +108,28 @@ namespace Mono.Security.Protocol.Tls
 			RemoveAt(IndexOf(errorMessage));
 		}
 
-		public CipherSuite Add(short code, string name, string algName, string hashName, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
+		public CipherSuite Add(
+			short code, string name, CipherAlgorithmType cipherType, 
+			HashAlgorithmType hashType, ExchangeAlgorithmType exchangeType,
+			bool exportable, bool blockMode, byte keyMaterialSize, 
+			byte expandedKeyMaterialSize, short effectiveKeyBytes, 
+			byte ivSize, byte blockSize)
 		{
 			switch (this.protocol)
 			{
-				case TlsProtocol.Tls1:
+				case SecurityProtocolType.Ssl3:
 					return this.add(
-						new TlsCipherSuite(code, name, algName, hashName, exportable, blockMode, keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes, ivSize, blockSize));
+						new TlsSslCipherSuite(
+						code, name, cipherType, hashType, exchangeType, exportable, 
+						blockMode, keyMaterialSize, expandedKeyMaterialSize, 
+						effectiveKeyBytes, ivSize, blockSize));
 
-				case TlsProtocol.Ssl3:
+				case SecurityProtocolType.Tls:
 					return this.add(
-						new TlsSslCipherSuite(code, name, algName, hashName, exportable, blockMode, keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes, ivSize, blockSize));
+						new TlsCipherSuite(
+						code, name, cipherType, hashType, exchangeType, exportable, 
+						blockMode, keyMaterialSize, expandedKeyMaterialSize, 
+						effectiveKeyBytes, ivSize, blockSize));
 
 				default:
 					throw new NotSupportedException();

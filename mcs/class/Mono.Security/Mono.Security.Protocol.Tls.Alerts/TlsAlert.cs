@@ -68,7 +68,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 	{
 		#region FIELDS
 
-		private TlsSession			session;
+		private TlsContext			context;
 		private TlsAlertLevel		level;
 		private TlsAlertDescription description;
 
@@ -76,20 +76,20 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#region PROPERTIES
 
-		public TlsSession Session
+		public TlsContext Context
 		{
-			get { return session; }
+			get { return this.context; }
 		}
 
 		#endregion
 
 		#region CONSTRUCTORS
 
-		public TlsAlert(TlsSession session,
+		public TlsAlert(TlsContext context,
 			TlsAlertLevel level,
 			TlsAlertDescription description) : base()
 		{
-			this.session		= session;
+			this.context		= context;
 			this.level			= level;
 			this.description	= description;
 
@@ -118,6 +118,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		internal static string GetAlertMessage(TlsAlertDescription description)
 		{
+			#if (DEBUG)
 			switch (description)
 			{
 				case TlsAlertDescription.AccessDenied:
@@ -178,7 +179,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 					return "Invalid length on TLSCiphertext record or TLSCompressed record.";
 
 				case TlsAlertDescription.UnexpectedMessage:
-					return "Invalid message receive.";
+					return "Invalid message received.";
 
 				case TlsAlertDescription.UnknownCA:
 					return "CA can't be identified as a trusted CA.";
@@ -192,6 +193,82 @@ namespace Mono.Security.Protocol.Tls.Alerts
 				default:
 					return "";
 			}
+			#else
+			switch (description)
+			{
+				case TlsAlertDescription.AccessDenied:
+					return "Invalid message.";
+
+				case TlsAlertDescription.BadCertificate:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.BadRecordMAC:
+					return "Cryptographic failiure.";
+
+				case TlsAlertDescription.CertificateExpired:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.CertificateRevoked:
+					return "Handshake failiure.";
+					
+				case TlsAlertDescription.CertificateUnknown:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.CloseNotify:
+					return "Connection closed.";
+
+				case TlsAlertDescription.DecodeError:
+					return "Invalid message.";
+
+				case TlsAlertDescription.DecompressionFailiure:
+					return "Compression error.";
+
+				case TlsAlertDescription.DecryptError:
+					return "Cryptographic failiure.";
+
+				case TlsAlertDescription.DecryptionFailed:
+					return "Cryptographic failiure.";
+
+				case TlsAlertDescription.ExportRestriction:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.HandshakeFailiure:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.IlegalParameter:
+					return "Handshake failiure.";
+					
+				case TlsAlertDescription.InsuficientSecurity:
+					return "Handshake failiure.";
+					
+				case TlsAlertDescription.InternalError:
+					return "Fatal failiure.";
+
+				case TlsAlertDescription.NoRenegotiation:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.ProtocolVersion:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.RecordOverflow:
+					return "Incorrect message.";
+
+				case TlsAlertDescription.UnexpectedMessage:
+					return "Incorrect message.";
+
+				case TlsAlertDescription.UnknownCA:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.UnsupportedCertificate:
+					return "Handshake failiure.";
+
+				case TlsAlertDescription.UserCancelled:
+					return "Handshake cancelled by user.";
+
+				default:
+					return "";
+			}
+			#endif
 		}
 
 		#endregion

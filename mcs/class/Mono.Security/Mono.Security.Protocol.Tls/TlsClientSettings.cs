@@ -23,77 +23,57 @@
  */
 
 using System;
-using System.Security.Cryptography;
-
-using Mono.Security.X509;
-using Mono.Security.Protocol.Tls.Handshake;
+using System.Text;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal class TlsServerSettings
+	internal sealed class TlsClientSettings
 	{
 		#region FIELDS
 
+		private string						targetHost;
 		private X509CertificateCollection	certificates;
-		private bool						serverKeyExchange;
-		private bool						certificateRequest;
-		private	TlsClientCertificateType[]	certificateTypes;
-		private string[]					distinguisedNames;
-		private RSAParameters				rsaParameters;
-		private byte[]						signedParams;		
-
+		private SecurityCompressionType		compressionMethod;
+	
 		#endregion
 
 		#region PROPERTIES
-		
-		public bool	ServerKeyExchange
+
+		public string TargetHost
 		{
-			get { return serverKeyExchange; }
-			set { serverKeyExchange = value; }
+			get { return this.targetHost; }
+			set { this.targetHost = value; }
 		}
 
-		public RSAParameters RsaParameters
-		{
-			get { return rsaParameters; }
-			set { rsaParameters = value; }
-		}
-
-		public byte[] SignedParams
-		{
-			get { return signedParams; }
-			set { signedParams = value; }
-		}
-
-		public bool	CertificateRequest
-		{
-			get { return certificateRequest; }
-			set { certificateRequest = value; }
-		}
-		
-		public TlsClientCertificateType[] CertificateTypes
-		{
-			get { return certificateTypes; }
-			set { certificateTypes = value; }
-		}
-
-		public string[] DistinguisedNames
-		{
-			get { return distinguisedNames; }
-			set { distinguisedNames = value; }
-		}
-		
 		public X509CertificateCollection Certificates
 		{
-			get { return certificates; }
-			set { certificates = value; }
+			get { return this.certificates; }
+			set { this.certificates = value; }
+		}
+
+		public SecurityCompressionType CompressionMethod
+		{
+			get { return this.compressionMethod; }
+			set 
+			{ 
+				if (value != SecurityCompressionType.None)
+				{
+					throw new NotSupportedException("Specified compression method is not supported");
+				}
+				this.compressionMethod = value; 
+			}
 		}
 
 		#endregion
 
 		#region CONSTRUCTORS
 
-		public TlsServerSettings()
+		public TlsClientSettings()
 		{
+			this.compressionMethod	= SecurityCompressionType.None;
+			this.certificates		= new X509CertificateCollection();
+			this.targetHost			= String.Empty;
 		}
 
 		#endregion

@@ -32,8 +32,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region CONSTRUCTORS
 
-		public TlsClientCertificate(TlsSession session) 
-			: base(session, TlsHandshakeType.Certificate, TlsContentType.Handshake)
+		public TlsClientCertificate(TlsContext context) 
+			: base(context, TlsHandshakeType.Certificate, TlsContentType.Handshake)
 		{
 		}
 
@@ -58,15 +58,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			if (Session.Settings.Certificates == null ||
-				Session.Settings.Certificates.Count == 0)
+			if (this.Context.ClientSettings.Certificates == null ||
+				this.Context.ClientSettings.Certificates.Count == 0)
 			{
-				throw this.Session.CreateException("Client certificate requested by the server and no client certificate specified.");
+				throw this.Context.CreateException("Client certificate requested by the server and no client certificate specified.");
 			}
 			
 			// Write client certificates information to a stream
 			TlsStream stream = new TlsStream();
-			foreach (X509Certificate cert in Session.Settings.Certificates)
+			foreach (X509Certificate cert in this.Context.ClientSettings.Certificates)
 			{
 				stream.WriteInt24(cert.GetRawCertData().Length);
 				stream.Write(cert.GetRawCertData());

@@ -23,30 +23,15 @@
  */
 
 using System;
-using System.Text;
-using System.Runtime.Serialization;
-
-using Mono.Security.Protocol.Tls.Alerts;
 
 namespace Mono.Security.Protocol.Tls
 {
-	[Serializable]
-	public sealed class TlsException : Exception
-	{	
-		#region CONSTRUCTORS
-		
-		internal TlsException(string message) : base(message)
-		{
-		}
-
-		internal TlsException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}
-		
-		internal TlsException(string message, Exception ex) : base(message, ex)
-		{
-		}
-
-		#endregion
+	// Information about compression methods allowed by TLS
+	// can be found in:
+	//	draft-ietf-tls-compression-05.txt (http://www.ietf.org/internet-drafts/draft-ietf-tls-compression-05.txt)
+	public enum SecurityCompressionType : byte
+	{
+		None = 0,
+		Zlib = 1
 	}
 }

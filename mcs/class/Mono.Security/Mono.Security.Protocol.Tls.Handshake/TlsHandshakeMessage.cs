@@ -31,7 +31,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 	{
 		#region FIELDS
 
-		private TlsSession			session;
+		private TlsContext			context;
 		private TlsHandshakeType	handshakeType;
 		private TlsContentType		contentType;
 
@@ -39,30 +39,31 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		#region PROPERTIES
 
-		public TlsSession Session
+		public TlsContext Context
 		{
-			get { return session; }
+			get { return this.context; }
 		}
 
 		public TlsHandshakeType HandshakeType
 		{
-			get { return handshakeType; }
+			get { return this.handshakeType; }
 		}
 
 		public TlsContentType ContentType
 		{
-			get { return contentType; }
+			get { return this.contentType; }
 		}
 
 		#endregion
 
 		#region CONSTRUCTORS
 
-		public TlsHandshakeMessage(TlsSession session,
-			TlsHandshakeType handshakeType,
-			TlsContentType contentType) : base()
+		public TlsHandshakeMessage(
+			TlsContext			context,
+			TlsHandshakeType	handshakeType,
+			TlsContentType		contentType) : base()
 		{
-			this.session		= session;
+			this.context		= context;
 			this.handshakeType	= handshakeType;
 			this.contentType	= contentType;
 
@@ -70,10 +71,12 @@ namespace Mono.Security.Protocol.Tls.Handshake
 			this.process();
 		}
 
-		public TlsHandshakeMessage(TlsSession session, 
-			TlsHandshakeType handshakeType, byte[] data) : base(data)
+		public TlsHandshakeMessage(
+			TlsContext			context, 
+			TlsHandshakeType	handshakeType, 
+			byte[]				data) : base(data)
 		{
-			this.session		= session;
+			this.context		= context;
 			this.handshakeType	= handshakeType;
 						
 			// Process message
@@ -94,14 +97,14 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		private void process()
 		{
-			switch (this.session.Context.Protocol)
+			switch (this.Context.Protocol)
 			{
-				case TlsProtocol.Tls1:
-					this.ProcessAsTls1();
+				case SecurityProtocolType.Ssl3:
+					this.ProcessAsSsl3();
 					break;
 
-				case TlsProtocol.Ssl3:
-					this.ProcessAsSsl3();
+				case SecurityProtocolType.Tls:
+					this.ProcessAsTls1();
 					break;
 			}
 		}
@@ -110,7 +113,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 		{			
 			if (CanWrite)
 			{
-				this.session.Context.HandshakeMessages.Write(this.EncodeMessage());
+				this.context.HandshakeMessages.Write(this.EncodeMessage());
 				this.Reset();
 			}
 		}

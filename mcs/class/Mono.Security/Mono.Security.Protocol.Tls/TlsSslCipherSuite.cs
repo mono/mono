@@ -44,15 +44,18 @@ namespace Mono.Security.Protocol.Tls
 
 		#region CONSTRUCTORS
 		
-		public TlsSslCipherSuite(short code, string name, string algName, 
-			string hashName, bool exportable, bool blockMode, 
-			byte keyMaterialSize, byte expandedKeyMaterialSize, 
-			short effectiveKeyBytes, byte ivSize, byte blockSize) 
-			: base (code, name, algName, hashName, exportable, blockMode,
-			keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes,
-			ivSize, blockSize)
+		public TlsSslCipherSuite(
+			short code, string name, CipherAlgorithmType cipherAlgorithmType, 
+			HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType,
+			bool exportable, bool blockMode, byte keyMaterialSize, 
+			byte expandedKeyMaterialSize, short effectiveKeyBytes, 
+			byte ivSize, byte blockSize) :
+			base(code, name, cipherAlgorithmType, hashAlgorithmType, 
+			exchangeAlgorithmType, exportable, blockMode, keyMaterialSize, 
+			expandedKeyMaterialSize, effectiveKeyBytes, ivSize, blockSize)
+
 		{
-			int padLength = (hashName == "MD5") ? 48 : 40;
+			int padLength = (hashAlgorithmType == HashAlgorithmType.Md5) ? 48 : 40;
 
 			// Fill pad arrays
 			this.pad1 = new byte[padLength];
@@ -72,7 +75,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public override byte[] ComputeServerRecordMAC(TlsContentType contentType, byte[] fragment)
 		{
-			HashAlgorithm	hash	= HashAlgorithm.Create(this.HashName);
+			HashAlgorithm	hash	= HashAlgorithm.Create(this.HashAlgorithmName);
 			TlsStream		block	= new TlsStream();
 
 			block.Write(this.Context.ServerWriteMAC);
@@ -101,7 +104,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public override byte[] ComputeClientRecordMAC(TlsContentType contentType, byte[] fragment)
 		{
-			HashAlgorithm	hash	= HashAlgorithm.Create(this.HashName);
+			HashAlgorithm	hash	= HashAlgorithm.Create(this.HashAlgorithmName);
 			TlsStream		block	= new TlsStream();
 
 			block.Write(this.Context.ClientWriteMAC);
@@ -192,7 +195,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 			else
 			{
-				MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+				HashAlgorithm md5 = MD5.Create();
 
 				// Generate final write keys
 				byte[] finalClientWriteKey	= new byte[md5.HashSize];
@@ -222,8 +225,8 @@ namespace Mono.Security.Protocol.Tls
 
 		private byte[] prf(byte[] secret, string label, byte[] random)
 		{
-			HashAlgorithm md5 = new MD5CryptoServiceProvider();
-			SHA1CryptoServiceProvider sha = new SHA1CryptoServiceProvider();
+			HashAlgorithm md5 = MD5.Create();
+			HashAlgorithm sha = SHA1.Create();
 
 			// Compute SHA hash
 			TlsStream block = new TlsStream();

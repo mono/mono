@@ -37,13 +37,15 @@ namespace Mono.Security.Protocol.Tls
 	{
 		#region CONSTRUCTORS
 		
-		public TlsCipherSuite(short code, string name, string algName, 
-			string hashName, bool exportable, bool blockMode, 
-			byte keyMaterialSize, byte expandedKeyMaterialSize, 
-			short effectiveKeyBytes, byte ivSize, byte blockSize) 
-			: base (code, name, algName, hashName, exportable, blockMode,
-			keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes,
-			ivSize, blockSize)
+		public TlsCipherSuite(
+			short code, string name, CipherAlgorithmType cipherAlgorithmType, 
+			HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType,
+			bool exportable, bool blockMode, byte keyMaterialSize, 
+			byte expandedKeyMaterialSize, short effectiveKeyBytes, 
+			byte ivSize, byte blockSize) :
+			base(code, name, cipherAlgorithmType, hashAlgorithmType, 
+			exchangeAlgorithmType, exportable, blockMode, keyMaterialSize, 
+			expandedKeyMaterialSize, effectiveKeyBytes, ivSize, blockSize)
 		{
 		}
 

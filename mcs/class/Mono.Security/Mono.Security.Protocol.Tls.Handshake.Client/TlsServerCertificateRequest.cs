@@ -39,8 +39,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region CONSTRUCTORS
 
-		public TlsServerCertificateRequest(TlsSession session, byte[] buffer) 
-			: base(session, TlsHandshakeType.ServerHello, buffer)
+		public TlsServerCertificateRequest(TlsContext context, byte[] buffer) 
+			: base(context, TlsHandshakeType.ServerHello, buffer)
 		{
 		}
 
@@ -52,9 +52,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			this.Session.Context.ServerSettings.CertificateTypes	= this.certificateTypes;
-			this.Session.Context.ServerSettings.DistinguisedNames	= this.distinguisedNames;
-			this.Session.Context.ServerSettings.CertificateRequest	= true;
+			this.Context.ServerSettings.CertificateTypes	= this.certificateTypes;
+			this.Context.ServerSettings.DistinguisedNames	= this.distinguisedNames;
+			this.Context.ServerSettings.CertificateRequest	= true;
 		}
 
 		#endregion

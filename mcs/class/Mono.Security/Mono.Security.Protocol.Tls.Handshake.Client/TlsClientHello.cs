@@ -37,8 +37,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region CONSTRUCTORS
 
-		public TlsClientHello(TlsSession session) 
-			: base(session, TlsHandshakeType.ClientHello, TlsContentType.Handshake)
+		public TlsClientHello(TlsContext context) 
+			: base(context, TlsHandshakeType.ClientHello, TlsContentType.Handshake)
 		{
 		}
 
@@ -50,7 +50,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			base.UpdateSession();
 
-			Session.Context.ClientRandom = random;
+			this.Context.ClientRandom = random;
 
 			random = null;
 		}
@@ -67,12 +67,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsTls1()
 		{
 			// Client Version
-			this.Write((short)this.Session.Context.Protocol);
+			this.Write((short)this.Context.Protocol);
 								
 			// Random bytes - Unix time + Radom bytes [28]
 			TlsStream clientRandom = new TlsStream();
-			clientRandom.Write(this.Session.Context.GetUnixTime());
-			clientRandom.Write(this.Session.Context.GetSecureRandomBytes(28));
+			clientRandom.Write(this.Context.GetUnixTime());
+			clientRandom.Write(this.Context.GetSecureRandomBytes(28));
 			this.random = clientRandom.ToArray();
 			clientRandom.Reset();
 
@@ -80,12 +80,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			// Session id
 			// Send the session ID empty
-			if (this.Session.SessionId != null)
+			if (this.Context.SessionId != null)
 			{
-				this.Write((byte)this.Session.SessionId.Length);
-				if (this.Session.SessionId.Length > 0)
+				this.Write((byte)this.Context.SessionId.Length);
+				if (this.Context.SessionId.Length > 0)
 				{
-					this.Write(this.Session.SessionId);
+					this.Write(this.Context.SessionId);
 				}
 			}
 			else
@@ -94,19 +94,19 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 			
 			// Write length of Cipher suites			
-			this.Write((short)(this.Session.Context.SupportedCiphers.Count*2));
+			this.Write((short)(this.Context.SupportedCiphers.Count*2));
 
 			// Write Supported Cipher suites
-			for (int i = 0; i < this.Session.Context.SupportedCiphers.Count; i++)
+			for (int i = 0; i < this.Context.SupportedCiphers.Count; i++)
 			{
-				this.Write((short)this.Session.Context.SupportedCiphers[i].Code);
+				this.Write((short)this.Context.SupportedCiphers[i].Code);
 			}
 
 			// Compression methods length
 			this.Write((byte)1);
 			
 			// Compression methods ( 0 = none )
-			this.Write((byte)this.Session.Context.CompressionMethod);
+			this.Write((byte)this.Context.CompressionMethod);
 		}
 
 		#endregion

@@ -26,9 +26,12 @@ using System;
 
 namespace Mono.Security.Protocol.Tls
 {
-	public enum TlsProtocol : short
+	public enum ExchangeAlgorithmType
 	{
-		Tls1 = (0x03 << 8) | 0x01,
-		Ssl3 = (0x03 << 8) | 0x00
+		DiffieHellman,
+		Fortezza,
+		None,
+		RsaKeyX,
+		RsaSign
 	}
 }

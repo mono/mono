@@ -34,8 +34,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region CONSTRUCTORS
 
-		public TlsClientCertificateVerify(TlsSession session) 
-			: base(session, TlsHandshakeType.Finished, TlsContentType.Handshake)
+		public TlsClientCertificateVerify(TlsContext context) 
+			: base(context, TlsHandshakeType.Finished, TlsContentType.Handshake)
 		{
 		}
 
@@ -60,15 +60,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			foreach (X509Certificate cert in Session.Settings.Certificates)
+			foreach (X509Certificate cert in this.Context.ClientSettings.Certificates)
 			{
-				MD5SHA1CryptoServiceProvider hash = new MD5SHA1CryptoServiceProvider();
+				MD5SHA1					hash = new MD5SHA1();
 				X509.X509Certificate	c	 = new X509.X509Certificate(cert.GetRawCertData());
 				RSA						rsa	 = c.RSA;
 				RSAParameters			p	 = rsa.ExportParameters(false);
 				TlsStream				data = new TlsStream();
 
-				data.Write(this.Session.Context.RandomCS);
+				data.Write(this.Context.RandomCS);
 				data.Write((short)p.Modulus.Length);
 				data.Write(p.Modulus);
 				data.Write((short)p.Exponent.Length);

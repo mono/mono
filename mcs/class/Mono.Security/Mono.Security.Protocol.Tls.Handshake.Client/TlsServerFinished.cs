@@ -33,8 +33,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region CONSTRUCTORS
 
-		public TlsServerFinished(TlsSession session, byte[] buffer) 
-			: base(session, TlsHandshakeType.ServerHello, buffer)
+		public TlsServerFinished(TlsContext context, byte[] buffer) 
+			: base(context, TlsHandshakeType.ServerHello, buffer)
 		{
 		}
 
@@ -47,10 +47,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			base.UpdateSession();
 
 			// Reset Hahdshake messages information
-			this.Session.Context.HandshakeMessages.Reset();
+			this.Context.HandshakeMessages.Reset();
 
 			// Hahdshake is finished
-			this.Session.Context.HandshakeFinished = true;
+			this.Context.HandshakeFinished = true;
 		}
 
 		#endregion
@@ -60,10 +60,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsSsl3()
 		{
 			// Compute handshake messages hashes
-			HashAlgorithm hash = new TlsSslHandshakeHash(this.Session.Context.MasterSecret);
+			HashAlgorithm hash = new TlsSslHandshakeHash(this.Context.MasterSecret);
 
 			TlsStream data = new TlsStream();
-			data.Write(this.Session.Context.HandshakeMessages.ToArray());
+			data.Write(this.Context.HandshakeMessages.ToArray());
 			data.Write((int)0x53525652);
 			
 			hash.TransformFinalBlock(data.ToArray(), 0, (int)data.Length);
@@ -90,14 +90,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsTls1()
 		{
 			byte[]			serverPRF	= this.ReadBytes((int)Length);
-			HashAlgorithm	hash		= new MD5SHA1CryptoServiceProvider();
+			HashAlgorithm	hash		= new MD5SHA1();
 
 			hash.ComputeHash(
-				Session.Context.HandshakeMessages.ToArray(), 
+				this.Context.HandshakeMessages.ToArray(), 
 				0,
-				(int)Session.Context.HandshakeMessages.Length);
+				(int)this.Context.HandshakeMessages.Length);
 
-			byte[] clientPRF = this.Session.Context.Cipher.PRF(this.Session.Context.MasterSecret, "server finished", hash.Hash, 12);
+			byte[] clientPRF = this.Context.Cipher.PRF(this.Context.MasterSecret, "server finished", hash.Hash, 12);
 
 			// Check server prf against client prf
 			if (clientPRF.Length != serverPRF.Length)
