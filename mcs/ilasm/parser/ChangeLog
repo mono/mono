@@ -1,3 +1,7 @@
+2003-04-07 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Implement most field features
+		
 2003-04-05 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Set type parameter index

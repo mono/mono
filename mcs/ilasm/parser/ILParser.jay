@@ -441,7 +441,7 @@ class_head 		: D_CLASS class_attr id typars_clause extends_clause
 					foreach (TypeRef type_ref in impl_list)
 						codegen.CurrentClass.AddImplementedInterface (type_ref.Type as Class);
 				}
-
+                                
                                 if ($4 != null) {
                                         ArrayList typars_list = (ArrayList) $4;
                                         int index = 0;
@@ -1036,50 +1036,159 @@ variant_type		: /* EMPTY */
 			;
 
 field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
+                          {
+                                FieldDef field_def = codegen.AddField ((FieldAttr) $3, 
+					(string) $5, (TypeRef) $4, null);
+                                codegen.AddField (0, "test_field", (TypeRef) $4, null);
+                                if ($2 != null) {
+                                        field_def.SetOffset ((uint) $2);
+                                }
+                                if ($6 != null) {
+                                        field_def.AddDataValue ((DataConstant) $6);
+                                }
+                                if ($7 != null) {
+                                        field_def.AddValue ((Constant) $7);
+                                }
+                          }
 			;
 
 repeat_opt		: /* EMPTY */
 			| OPEN_BRACKET int32 CLOSE_BRACKET
+                          {
+                                $$ = $2;
+                          }
 			;
 
 field_attr		: /* EMPTY */
+                          {
+                                $$ = new FieldAttr ();
+                          }
 			| field_attr K_PUBLIC
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.Public;
+                          }
 			| field_attr K_PRIVATE
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.Private;
+                          }
 			| field_attr K_FAMILY
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.Family;
+                          }
 			| field_attr K_ASSEMBLY
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.Assembly;
+                          }
 			| field_attr K_FAMANDASSEM
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.FamAndAssem;
+                          }
 			| field_attr K_FAMORASSEM
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.FamOrAssem;
+                          }
 			| field_attr K_PRIVATESCOPE
+                          {
+                                // This is just 0x0000
+                          }
 			| field_attr K_STATIC
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.Static;
+                          }
 			| field_attr K_INITONLY
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.Initonly;
+                          }
 			| field_attr K_RTSPECIALNAME
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.RTSpecialName;
+                          }
 			| field_attr K_SPECIALNAME
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.SpecialName;
+                          }
 			| field_attr K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS
+                          {
+                                
+                          }
 			| field_attr K_LITERAL
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.Literal;
+                          }
 			| field_attr K_NOTSERIALIZED
+                          {
+                                $$ = (FieldAttr) $1 | FieldAttr.Notserialized;
+                          }
 			;
 
 at_opt			: /* EMPTY */
 			| K_AT id
+                          {
+                                // TODO: Implement DataTable
+                                // $$ = new DataConstant (DataTable.GetOffset ((string) $2));
+                          }
 			;
 
 init_opt		: /* EMPTY */
 			| ASSIGN field_init
+                          {
+                                $$ = $2;
+                          }
 			;
 
 field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
+                          {
+                                $$ = new FloatConst ((float) $3);
+                          }
 			| K_FLOAT64 OPEN_PARENS float64 CLOSE_PARENS
+                          {
+                                $$ = new DoubleConst ((double) $3);
+                          }
 			| K_FLOAT32 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new FloatConst ((float) $3);
+                          }
 			| K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new DoubleConst ((float) $3);
+                          }
 			| K_INT64 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new IntConst ((long) $3);
+                          }
 			| K_INT32 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new IntConst ((int) $3);
+                          }
 			| K_INT16 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new IntConst ((short) $3);
+                          }
 			| K_CHAR OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new CharConst ((char) $3);
+                          }
 			| K_INT8 OPEN_PARENS int64 CLOSE_PARENS
+                          {
+                                $$ = new IntConst ((sbyte) $3);
+                          }
 			| K_BOOL OPEN_PARENS truefalse CLOSE_PARENS
+                          {
+                                $$ = new BoolConst ((bool) $3);
+                          }
 			| K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS
-			| comp_qstring						// ******** ADDED
+                          {
+                                $$ = new ByteArrConst ((byte[]) $3);
+                          }
+			| comp_qstring
+                          {
+                                // ******** THIS IS NOT IN THE DOCUMENTATION ******** //
+                                $$ = new StringConst ((string) $1);
+                          }
 			| K_NULLREF
+                          {
+                                $$ = new NullConst ();
+                          }
 			;
 
 data_decl		: data_head data_body
