@@ -57,9 +57,12 @@ namespace System.ComponentModel
 			Dispose (false);
 		}
 		
-		[MonoTODO]
-		public virtual object GetService (Type service) {
-			return null;
+		public virtual object GetService (Type service) 
+		{
+			if (mySite != null) {
+				return mySite.GetService(service); 
+			}
+			return null; 
 		}
 		
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

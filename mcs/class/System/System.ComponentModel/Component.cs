@@ -14,13 +14,6 @@ using System.ComponentModel;
 
 namespace System.ComponentModel {
 
-	// <summary>
-	//   Component class.
-	// </summary>
-	//
-	// <remarks>
-	//   Longer description
-	// </remarks>
 	[DesignerCategory ("Component")]
 	public class Component : MarshalByRefObject, IComponent, IDisposable
 	{
@@ -29,17 +22,11 @@ namespace System.ComponentModel {
 		private ISite mySite;
 		private object disposedEvent = new object ();
 
-		// <summary>
-		//   Component Constructor
-		// </summary>
 		public Component ()
 		{
 			event_handlers = null;
 		}
 
-		// <summary>
-		//   Get IContainer of this Component
-		// </summary>
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IContainer Container {
 			get {
@@ -84,9 +71,6 @@ namespace System.ComponentModel {
 			Dispose (false);
 		}
 
-		// <summary>
-		//   Dispose resources used by this component
-		// </summary>
 		public void Dispose ()
 		{
 			Dispose (true);
@@ -114,14 +98,12 @@ namespace System.ComponentModel {
 			mySite = null;
 		}
 
-		// <summary>
-		//   Implements the IServiceProvider interface
-		// </summary>
-		[MonoTODO]
 		protected virtual object GetService (Type service)
 		{
-			// FIXME: Not sure what this should do.
-			return null;
+			if (mySite != null) {
+				return mySite.GetService(service); 
+			}
+			return null; 
 		}
 
 		public override string ToString ()
@@ -131,9 +113,6 @@ namespace System.ComponentModel {
 			return String.Format ("{0} [{1}]", mySite.Name, GetType ().ToString ());
 		}
 
-		// <summary>
-		//   This event is called when the component is explicitly disposed.
-		// </summary>
 		[Browsable (false), EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event EventHandler Disposed {
 			add { Events.AddHandler (disposedEvent, value); }

@@ -38,10 +38,10 @@ namespace System.ComponentModel {
 		
 		class DefaultSite : ISite {
 			private IComponent component;
-			private IContainer container;
+			private Container container;
 			private string     name;
 			
-			public DefaultSite (string name, IComponent component, IContainer container)
+			public DefaultSite (string name, IComponent component, Container container)
 			{
 				this.component = component;
 				this.container = container;
@@ -79,11 +79,12 @@ namespace System.ComponentModel {
 				}
 			}
 
-			[MonoTODO]
 			public virtual object GetService (Type t)
 			{
-				// FIXME: do not know what this is supposed to do.
-				return null;
+				if (typeof(ISite) != t) {
+					return null; 
+				}
+				return container.GetService (t);
 			}
 		}
 		
@@ -95,33 +96,23 @@ namespace System.ComponentModel {
 		}
 
 		public virtual ComponentCollection Components {
-			get 
-            {
-                Array a = c.ToArray(typeof (IComponent));
+			get {
+				Array a = c.ToArray(typeof (IComponent));
 				return new ComponentCollection((IComponent[]) a);
 			}
 		}
 
-		// <summary>
-		//   Adds an IComponent to the Container
-		// </summary>
 		public virtual void Add (IComponent component)
 		{
 			Add (component, null);
 		}
 
-		// <summary>
-		//   Adds an IComponent to the Container.  With a name binding.
-		// </summary>
 		public virtual void Add (IComponent component, string name)
 		{
 			component.Site = CreateSite (component, name);
 			c.Add (component);
 		}
 
-		// <summary>
-		//   Returns an ISite for a component.
-		// <summary>
 		protected virtual ISite CreateSite (IComponent component, string name)
 		{
 			foreach (IComponent Comp in c) {
@@ -159,12 +150,12 @@ namespace System.ComponentModel {
 			Dispose (false);
 		}
 
-		[MonoTODO]
 		protected virtual object GetService (Type service)
 		{
-			// FIXME: Not clear what GetService does.
-			
-			return null;
+			if (typeof(IContainer) != service) {
+				return null; 
+			}
+			return this;
 		}
 
 		public virtual void Remove (IComponent component)

@@ -1,3 +1,10 @@
+2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Component.cs: Implementation added
+	* Container.cs: Implementation added
+	* MarshalByValueComponent.cs: Implementation added
+	* ReferenceConverter.cs: Small addition for future implementation
+
 2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* TypeConverter.cs: Implemented missing methods

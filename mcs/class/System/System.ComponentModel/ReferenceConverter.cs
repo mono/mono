@@ -33,7 +33,8 @@ namespace System.ComponentModel
 						    CultureInfo culture,
 						    object value)
 		{
-			throw new NotImplementedException();
+			// Add implementation
+			return base.ConvertFrom(context, culture, value);
 		}
 
 		[MonoTODO]
@@ -42,7 +43,8 @@ namespace System.ComponentModel
 						  object value,
 						  Type destinationType)
 		{
-			throw new NotImplementedException();
+			// Add implementation
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 
 		[MonoTODO]
