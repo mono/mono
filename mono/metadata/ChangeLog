@@ -1,3 +1,9 @@
+2004-12-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.h threads.c appdomain.c: Clear the culture_info field of
+	all threads during unloading if they point to an object in the dying
+	appdomain.
+
 2004-12-13  Ben Maurer  <bmaurer@ximian.com>
 
 	* culture-info.h (TextInfoEntry): New struct
