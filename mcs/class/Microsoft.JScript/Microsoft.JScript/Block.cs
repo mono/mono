@@ -9,5 +9,10 @@
 namespace Microsoft.JScript
 {
 	public class Block : AST
-	{}
+	{
+		public override object Visit (Visitor v, object args)
+		{
+			return v.VisitBlock (this, args);
+		}
+	}
 }

@@ -12,9 +12,15 @@ namespace Microsoft.JScript
 
 	public class Eval : AST
 	{
-		public static Object JScriptEvaluate (Object src, VsaEngine engine)
+		public static object JScriptEvaluate (object src, VsaEngine engine)
 		{
 			throw new NotImplementedException ();
+		}
+
+
+		public override object Visit (Visitor v, object args)
+		{	
+			return v.VisitEval (this, args);
 		}
 	}
 }

@@ -8,6 +8,13 @@
 
 namespace Microsoft.JScript
 {
+	using System;
+
 	public class DebugBreak : AST
-	{}
+	{
+		public override object Visit (Visitor v, object args)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }
