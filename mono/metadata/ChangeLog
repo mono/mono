@@ -1,5 +1,10 @@
 2002-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* icall.c:
+	(ves_icall_TypeGetProperties): fixed bug #27473. 
+
+2002-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* reflection.c: display image name and token when cannot find the
 	.ctor for an attribute.
 
