@@ -584,9 +584,7 @@ internal_type_ref	: name1
 
 external_type_ref	: assembly_name namespace_name DOT id
 			  {
-				AssemblyRef asmb_ref;
-				asmb_ref = codegen.PEFile.AddExternAssembly ((string) $1);
-				$$ = asmb_ref.AddClass ($2 as string, $4 as string);
+				$$ = codegen.ExternTable.GetClass ($1 as string, $2 as string, $4 as string);
 			  }
 			;
 
@@ -1420,6 +1418,12 @@ localeHead              : D_LOCALE ASSIGN OPEN_PARENS
 			;
 
 assemblyRefHead         : D_ASSEMBLY K_EXTERN name1 
+			  {
+				System.Reflection.AssemblyName asmb_name = 
+					new System.Reflection.AssemblyName ();
+				asmb_name.Name = (string) $3;
+				codegen.ExternTable.AddAssembly ((string) $3, asmb_name);
+			  }
 			;
 
 assemblyRefDecls        : /* EMPTY */
