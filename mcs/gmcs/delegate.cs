@@ -35,8 +35,6 @@ namespace Mono.CSharp {
 		Type [] param_types;
 		Type ret_type;
 
-		MemberName MemberName;
-		
 		Expression instance_expr;
 		MethodBase delegate_method;
 	
@@ -49,13 +47,12 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
  		public Delegate (NamespaceEntry ns, TypeContainer parent, Expression type,
-				 int mod_flags, MemberName name, Parameters param_list,
+				 int mod_flags, string name, Parameters param_list,
 				 Attributes attrs, Location l)
-			: base (ns, parent, name.GetMemberName (), attrs, l)
+			: base (ns, parent, name, attrs, l)
 
 		{
 			this.ReturnType = type;
-			this.MemberName = name;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PRIVATE, l);

@@ -56,6 +56,8 @@ namespace Mono.CSharp
 		/// </summary>
 		Interface  current_interface;
 
+		Delegate   current_delegate;
+
 		/// <summary>
 		///   This is used by the unary_expression code to resolve
 		///   a name against a parameter.  
@@ -1973,10 +1975,19 @@ enum_member_declaration
 delegate_declaration
 	: opt_attributes
 	  opt_modifiers
-	  DELEGATE type
-	  namespace_or_type_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  DELEGATE type IDENTIFIER
+	  opt_type_parameter_list
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
+		Location l = lexer.Location;
+		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
+					     (int) $2, MakeName ((string) $5), (Parameters) $8, 
+					     (Attributes) $1, l);
+		  
+		CheckDef (current_container.AddDelegate (del), del.Name, l);
+
+		current_delegate = del;
+
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_constraints_clauses
@@ -1985,25 +1996,31 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		Location l = lexer.Location;
-		MemberName name = (MemberName) $5;
+		if ($11 != null && $6 == null)
+			Report.Error (-200, current_delegate.Location,
+				      "Type parameter constraints only valid if there is a type parameter list");
 
-		Delegate del = new Delegate (current_namespace, current_container,
-					     (Expression) $4, (int) $2, name, (Parameters) $7,
-					     (Attributes) $1, l);
+		if ($6 != null)
+			CheckDef (current_delegate.SetParameterInfo ((ArrayList) $6, (ArrayList) $11), current_delegate.Name, current_delegate.Location);
 
-		if (name.TypeArguments != null) {
-			CheckDef (del.SetParameterInfo (name.TypeArguments, (ArrayList) $9), name.Name, lexer.Location);
-		}
-
-		CheckDef (current_container.AddDelegate (del), del.Name, l);
-	  }	
+		current_delegate = null;
+	  }
 	| opt_attributes
 	  opt_modifiers
-	  DELEGATE VOID	  
-	  namespace_or_type_name
+	  DELEGATE VOID IDENTIFIER
+	  opt_type_parameter_list
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
+		Location l = lexer.Location;
+		Delegate del = new Delegate (
+			current_namespace, current_container,
+			TypeManager.system_void_expr, (int) $2, MakeName ((string) $5), 
+			(Parameters) $8, (Attributes) $1, l);
+
+		CheckDef (current_container.AddDelegate (del), del.Name, l);
+
+		current_delegate = del;
+
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_constraints_clauses
@@ -2012,18 +2029,14 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		Location l = lexer.Location;
-		MemberName name = (MemberName) $5;
-		Delegate del = new Delegate (
-			current_namespace, current_container,
-			TypeManager.system_void_expr, (int) $2, name,
-			(Parameters) $7, (Attributes) $1, l);
+		if ($11 != null && $6 == null)
+			Report.Error (-200, current_delegate.Location,
+				      "Type parameter constraints only valid if there is a type parameter list");
 
-		if (name.TypeArguments != null) {
-			CheckDef (del.SetParameterInfo (name.TypeArguments, (ArrayList) $9), name.Name, lexer.Location);
-		}
+		if ($6 != null)
+			CheckDef (current_delegate.SetParameterInfo ((ArrayList) $6, (ArrayList) $11), current_delegate.Name, current_delegate.Location);
 
-		CheckDef (current_container.AddDelegate (del), del.Name, l);
+		current_delegate = null;
 	  }
 	;
 
