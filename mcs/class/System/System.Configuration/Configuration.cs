@@ -88,14 +88,12 @@ namespace System.Configuration {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public ConnectionStringsSection ConnectionStrings {
-			get { throw new NotImplementedException (); }
+			get { return (ConnectionStringsSection) GetSection ("connectionStrings"); }
 		}
 
-		[MonoTODO]
 		public string FilePath {
-			get { throw new NotImplementedException (); }
+			get { return fileName; }
 		}
 
 		[MonoTODO]
@@ -151,72 +149,61 @@ namespace System.Configuration {
 
 		public static Configuration GetMachineConfiguration (string path)
 		{
-			return new Configuration (path);
+			return GetMachineConfiguration (path, null);
 		}
 		
-		[MonoTODO]
 		public static Configuration GetMachineConfiguration (string path, string server)
 		{
-			throw new NotImplementedException ();
+			return GetMachineConfiguration (path, server, IntPtr.Zero);
 		}
 
 		[MonoTODO]
 		public static Configuration GetMachineConfiguration (
 						string path, string server, IntPtr user_token)
 		{
-			throw new NotImplementedException ();
+			return new Configuration (path);
 		}
 
 		[MonoTODO]
 		public static Configuration GetMachineConfiguration (
 						string path, string server, string username, string password)
 		{
-			throw new NotImplementedException ();
+			return new Configuration (path);
 		}
 
-		[MonoTODO]
-		public static Configuration GetWebConfiguration ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public static Configuration GetWebConfiguration (string path)
 		{
-			return new Configuration (path, GetMachineConfiguration ());
+			return GetWebConfiguration (path, null);
 		}
 
-		[MonoTODO]
 		public static Configuration GetWebConfiguration (string path, string site)
 		{
-			throw new NotImplementedException ();
+			return GetWebConfiguration (path, site, null);
 		}
 		
-		[MonoTODO]
 		public static Configuration GetWebConfiguration (string path, string site, string subpath)
 		{
-			throw new NotImplementedException ();
+			return GetWebConfiguration (path, site, subpath, null);
 		}
 
-		[MonoTODO]
 		public static Configuration GetWebConfiguration (
 						string path, string site, string subpath, string server)
 		{
-			throw new NotImplementedException ();
+			return GetWebConfiguration (path, site, subpath, server, IntPtr.Zero);
 		}
 
 		[MonoTODO]
 		public static Configuration GetWebConfiguration (
 						string path, string site, string subpath, string server, IntPtr user_token)
 		{
-			throw new NotImplementedException ();
+			return new Configuration (path, GetMachineConfiguration ());
 		}
 
 		[MonoTODO]
 		public static Configuration GetWebConfiguration (
 						string path, string site, string subpath, string server, string username, string password)
 		{
-			throw new NotImplementedException ();
+			return new Configuration (path, GetMachineConfiguration ());
 		}
 		
 		public ConfigurationSection GetSection (string path)

@@ -1,3 +1,7 @@
+2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Configuration.cs: a few MonoTODOs less.
+
 2005-03-02  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* ConfigurationSettings.cs: Implemented ConnectionStrings
