@@ -66,7 +66,7 @@ namespace System.Net
 			initConn = new WaitOrTimerCallback (InitConnection);
 			abortHandler = new EventHandler (Abort);
 			goAhead = new AutoResetEvent (true);
-			queue = new Queue (1);
+			queue = group.Queue;
 		}
 
 		public void Connect ()
@@ -249,12 +249,13 @@ namespace System.Net
 			data.stream = stream;
 			
 			lock (cnc) {
-				if (cnc.queue.Count > 0)
-					stream.ReadAll ();
-				else
-				{
-					cnc.prevStream = stream;
-					stream.CheckComplete ();
+				lock (cnc.queue) {
+					if (cnc.queue.Count > 0) {
+						stream.ReadAll ();
+					} else {
+						cnc.prevStream = stream;
+						stream.CheckComplete ();
+					}
 				}
 			}
 			
@@ -424,7 +425,9 @@ namespace System.Net
 					ThreadPool.RegisterWaitForSingleObject (goAhead, initConn,
 										request, -1, true);
 				} else {
-					queue.Enqueue (request);
+					lock (queue) {
+						queue.Enqueue (request);
+					}
 				}
 			}
 
@@ -433,7 +436,7 @@ namespace System.Net
 		
 		void SendNext ()
 		{
-			lock (this) {
+			lock (queue) {
 				if (queue.Count > 0) {
 					prevStream = null;
 					SendRequest ((HttpWebRequest) queue.Dequeue ());
@@ -459,9 +462,11 @@ namespace System.Net
 				}
 
 				goAhead.Set ();
-				if (queue.Count > 0) {
-					prevStream = null;
-					SendRequest ((HttpWebRequest) queue.Dequeue ());
+				lock (queue) {
+					if (queue.Count > 0) {
+						prevStream = null;
+						SendRequest ((HttpWebRequest) queue.Dequeue ());
+					}
 				}
 			}
 		}

@@ -1,3 +1,9 @@
+2004-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs:
+	* WebConnectionGroup.cs: the requests queue is now shared for all the
+	connections belonging to the same connection group.
+
 2004-02-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DefaultCertificatePolicy.cs: New. Certificate validation

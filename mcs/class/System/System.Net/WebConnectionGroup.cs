@@ -20,12 +20,14 @@ namespace System.Net
 		string name;
 		ArrayList connections;
 		Random rnd;
+		Queue queue;
 
 		public WebConnectionGroup (ServicePoint sPoint, string name)
 		{
 			this.sPoint = sPoint;
 			this.name = name;
 			connections = new ArrayList (1);
+			queue = new Queue ();
 		}
 
 		public WebConnection GetConnection ()
@@ -103,6 +105,10 @@ namespace System.Net
 
 		public string Name {
 			get { return name; }
+		}
+
+		internal Queue Queue {
+			get { return queue; }
 		}
 		
 	}
