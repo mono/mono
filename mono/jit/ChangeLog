@@ -1,3 +1,7 @@
+2002-09-05  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (MONO_DEBUGGER__debugger_info): New global data symbol
+	which is read by the debugger.
 
 Wed Sep 4 14:06:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
