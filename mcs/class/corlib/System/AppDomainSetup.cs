@@ -112,6 +112,7 @@ namespace System {
 			}
 		}
 
+		[MonoTODO("--share-code")]
 		public LoaderOptimization LoaderOptimization
 		{
 			get {
