@@ -21,7 +21,7 @@ namespace System.Security.Permissions
 		private ReflectionPermissionFlag flags;
 		privat bool memberAccess;
 		private bool reflectionEmit;
-		
+		private bool typeInfo;
 		
 		//Constructor
 		public ReflectionPermissionAttribute (SecurityAction action) : base (action) {}
