@@ -2635,7 +2635,7 @@ namespace Mono.CSharp {
 				else
 					ctype = ec.ContainerType;
 
-				if (ctype == FieldInfo.DeclaringType)
+				if (TypeManager.IsEqual (ctype, FieldInfo.DeclaringType))
 					return this;
 			}
 
