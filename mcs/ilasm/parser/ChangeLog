@@ -1,5 +1,9 @@
 2003-02-06 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Allow assembly names to have lots of dashes.
+
+2003-02-06 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Add dash token, allow assembly refs to have dashes in their names.
 
 2003-02-02 Jackson Harper <jackson@latitudegeo.com>
