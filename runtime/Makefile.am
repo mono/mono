@@ -4,8 +4,6 @@
 
 SUBDIRS = . net_1_1 net_2_0
 
-mcs_topdir=$(top_srcdir)/../mcs
-
 monobins_DATA = \
 	monoresgen.exe				\
 	monoresgen.exe.mdb			\
@@ -93,12 +91,12 @@ $(monoone_DATA) $(monotwo_DATA) $(monobins_DATA):
 	wsdl*)    					d=tools/wsdl					 ;; \
 	sqlsharp) 					d=tools/SqlSharp 				 ;; \
 	esac; \
-	echo "test -f $(top_srcdir)/../mcs/$$d/$@" ; \
-	test -f $(top_srcdir)/../mcs/$$d/$@ || exit 1 ; \
+	echo "test -f $(mcs_topdir)/$$d/$@" ; \
+	test -f $(mcs_topdir)/$$d/$@ || exit 1 ; \
 	echo "rm -f $(srcdir)/$@" ; \
 	rm -f $(srcdir)/$@ ; \
-	echo "cd $(srcdir) && $(LN_S) ../../mcs/$$d/$@ $@" ; \
-	cd $(srcdir) && $(LN_S) ../../mcs/$$d/$@ $@
+	echo "cd $(srcdir) && $(LN_S) $(mcs_topdir_from_srcdir)/$$d/$@ $@" ; \
+	cd $(srcdir) && $(LN_S) $(mcs_topdir_from_srcdir)/$$d/$@ $@
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .

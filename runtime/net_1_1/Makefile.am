@@ -83,13 +83,11 @@ EXTRA_DIST = $(gac_assemblies) $(corlib_DATA) $(mdb_files)
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
 mscorlib.dll $(gac_assemblies) $(mdb_files):
-	test -f $(top_srcdir)/../mcs/class/lib/default/$@
+	test -f $(mcs_topdir)/class/lib/default/$@
 	-rm -f $(srcdir)/$@
-	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@ $@
-	-cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@.mdb $@.mdb
+	cd $(srcdir) && $(LN_S) $(mcs_topdir_from_srcdir)/class/lib/default/$@ $@
 
-
-all-local: $(gac_assemblies)
+all-local: $(gac_assemblies) $(mdb_files)
 
 install-data-local:
 	@if test -f $(srcdir)/mscorlib.dll.mdb; then \
