@@ -59,6 +59,10 @@ namespace System.Web {
 			get { return varyByParams; }
 		}
 
+                internal DateTime Expires {
+                        get { return expireDate; }
+                }
+                
 		#endregion // Properties
 
 		#region Methods

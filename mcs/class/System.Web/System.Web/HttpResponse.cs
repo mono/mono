@@ -2,7 +2,7 @@
 // System.Web.HttpResponse
 //
 // Authors:
-// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//	Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
@@ -14,6 +14,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Web.Util;
+using System.Web.Caching;
 
 namespace System.Web
 {
@@ -59,7 +60,9 @@ namespace System.Web
 		HttpWorkerRequest _WorkerRequest;
 
 		ArrayList fileDependencies;
-
+		CachedRawResponse cached_response;
+		ArrayList cached_headers;
+		
 		public HttpResponse (TextWriter output)
 		{
 			 _bBuffering = true;
@@ -125,6 +128,25 @@ namespace System.Web
 			filtered = true;
 		}
 
+		internal bool IsCached {
+			get { return cached_response != null; }
+		}
+		
+		internal void CacheResponse (HttpRequest request) {
+			cached_response = new CachedRawResponse (_CachePolicy, request);
+		}
+
+		internal CachedRawResponse GetCachedResponse () {
+			cached_response.StatusCode = StatusCode;
+			cached_response.StatusDescription = StatusDescription;
+			return cached_response;
+		}
+
+		internal void SetCachedHeaders (ArrayList headers)
+		{
+			cached_headers = headers;
+		}
+		
 		[MonoTODO("We need to add cache headers also")]
 		private ArrayList GenerateHeaders ()
 		{
@@ -160,7 +182,7 @@ namespace System.Web
 				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderContentType,
 								      _sContentType));
 			}
-     			
+
 			if (_CachePolicy != null)
 				_CachePolicy.SetHeaders (this, oHeaders);
 			
@@ -183,12 +205,21 @@ namespace System.Web
 
 			return oHeaders;
 		}
-
+		
 		private void SendHeaders ()
 		{
 			_WorkerRequest.SendStatus (StatusCode, StatusDescription);
 			
-			ArrayList oHeaders = GenerateHeaders ();
+			ArrayList oHeaders;
+
+			if (cached_headers != null)
+				oHeaders = cached_headers;
+			else
+				oHeaders = GenerateHeaders ();
+
+			if (cached_response != null)
+				cached_response.SetHeaders (oHeaders);
+			
 			foreach (HttpResponseHeader oHeader in oHeaders)
 				oHeader.SendContent (_WorkerRequest);
 			
@@ -762,11 +793,12 @@ namespace System.Web
 				}
 
 				_WorkerRequest.FlushResponse (bFinish);
+				if (IsCached)
+					cached_response.SetData (_Writer.GetBuffer ());
 				_Writer.Clear ();
 			} finally {
 				if (bFinish)
 					closed = true;
-
 				_bFlushing = false;
 			}
 		}

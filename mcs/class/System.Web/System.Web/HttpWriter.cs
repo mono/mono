@@ -13,6 +13,8 @@ namespace System.Web
 {
 	public sealed class HttpWriter : TextWriter
 	{
+		internal const int MaxBufferSize = 32768;
+		
 		HttpResponse _Response;
 
 		HttpResponseStream _ResponseStream;
@@ -28,7 +30,7 @@ namespace System.Web
 		{
 			_Response = Response;
 
-			_OutputStream = new MemoryStream (32768);
+			_OutputStream = new MemoryStream (MaxBufferSize);
 			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 			_ResponseStream = new HttpResponseStream (this);
 
@@ -133,6 +135,10 @@ namespace System.Web
 			_OutputStream.Flush ();
 		}
 
+		internal byte[] GetBuffer () {
+			return _OutputStream.GetBuffer ();
+		}
+		
 		public override Encoding Encoding
 		{
 			get { return _Encoding; }

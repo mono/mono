@@ -1,3 +1,11 @@
+2003-11-19  Jackson Harper <jackson@ximian.com>
+
+	* HttpWriter.cs: Use a constant for the buffer size so the cache
+	can get the buffer size. Add method to get the buffer.
+	* HttpResponse.cs: Methods for getting data to cache, and setting
+	vars from the cache.
+	* HttpCachePolicy.cs: Expose a pages cache expire time.
+	
 2003-11-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: 
