@@ -1,3 +1,19 @@
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
+	* HttpSessionState.cs: Make the SessionDictionary accessable
+	* ISessionHandler.cs: Add method to update the session state
+	data in the handler. Pass the session config to handlers when
+	initializing.
+	* SessionConfig.cs: Add StateNetworkTimeout
+	* SessionInProcHandler.cs: Updates because interface has
+	changed, all functionality is the same.
+	* SessionStateModule.cs: Get new config items, allow SQLServer
+	session manager type. Update session handlers when the session
+	state has been released.
+	* SessionStateSectionHandler.cs: Add StateNetworkTimeout
+	* SessionSQLServerHandler.cs: New class allows sessions to be
+	stored in a database.
+	
 2003-10-28 Jackson Harper <jackson@ximian.com>
 
 	* HttpSessionState.cs: Do not allow timeout to be set to less then

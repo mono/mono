@@ -37,15 +37,16 @@ namespace System.Web.SessionState
 				if (config ==  null)
 					config = new SessionConfig (null);
 
-				if (config.Mode == SessionStateMode.StateServer ||
-				    config.Mode == SessionStateMode.SQLServer)
-					throw new NotSupportedException ("Only Off and InProc modes supported.");
+				if (config.Mode == SessionStateMode.StateServer)
+					throw new NotSupportedException ("StateServer mode is not supported.");
+
+				if (config.Mode == SessionStateMode.SQLServer)
+					handlerType = typeof (SessionSQLServerHandler);
 				
 				if (config.Mode == SessionStateMode.InProc)
 					handlerType = typeof (SessionInProcHandler);
 			}
 				
-
 			app.AddOnAcquireRequestStateAsync (
 				new BeginEventHandler (OnBeginAcquireState),
 				new EndEventHandler (OnEndAcquireState));
@@ -55,12 +56,18 @@ namespace System.Web.SessionState
 			
 			if (handlerType != null && handler == null) {
 				handler = (ISessionHandler) Activator.CreateInstance (handlerType);
-				handler.Init(app); //initialize
+				handler.Init(app, config); //initialize
 			}
 		}
 
 		void OnReleaseRequestState (object o, EventArgs args)
 		{
+			if (handler == null)
+				return;
+
+			HttpApplication application = (HttpApplication) o;
+			HttpContext context = application.Context;
+			handler.UpdateHandler (context);
 		}
 
 		void OnEndRequest (object o, EventArgs args)

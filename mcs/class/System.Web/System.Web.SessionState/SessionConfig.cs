@@ -18,6 +18,7 @@ namespace System.Web.SessionState
 		internal bool CookieLess;
 		internal string StateConnectionString;
 		internal string SqlConnectionString;
+		internal string StateNetworkTimeout;
 
 		public SessionConfig (object parent)
 		{
@@ -79,6 +80,11 @@ namespace System.Web.SessionState
 		internal void SetSqlConnectionString (string value)
 		{
 			SqlConnectionString = value;
+		}
+
+		internal void SetStateNetworkTimeout (string value)
+		{
+			StateNetworkTimeout = value;
 		}
 	}
 }

@@ -135,6 +135,10 @@ public sealed class HttpSessionState : ICollection, IEnumerable
                 }
 	}
 
+	internal SessionDictionary SessionDictionary {
+		get { return _dict; }
+	}
+
 	public void Abandon ()
 	{
 		_abandoned = true;

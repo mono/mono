@@ -65,11 +65,14 @@ namespace System.Web.SessionState
 			_sessionTable = null;
 		}
 
-		public void Init (HttpApplication context)
+		public void Init (HttpApplication context, SessionConfig config)
 		{
 			_sessionTable = new Hashtable();
 		}
 
+		public void UpdateHandler (HttpContext context)
+		{
+		}
 
 		//this is the code that actually do stuff.
 		public bool UpdateContext (HttpContext context)

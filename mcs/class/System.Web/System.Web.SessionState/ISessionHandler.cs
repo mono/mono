@@ -13,8 +13,9 @@ namespace System.Web.SessionState
 	internal interface ISessionHandler
 	{
 	      void Dispose ();
-	      void Init (HttpApplication context);
+	      void Init (HttpApplication context, SessionConfig config);
 	      bool UpdateContext (HttpContext context);
+	      void UpdateHandler (HttpContext context);
 	}
 }
 

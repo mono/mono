@@ -48,6 +48,10 @@ namespace System.Web.SessionState
 			if (attvalue != null)
 				config.SetSqlConnectionString (attvalue);
 
+                        attvalue = AttValue ("stateNetworkTimeout", section);
+                        if (attvalue != null)
+                                config.SetStateNetworkTimeout (attvalue);
+
 			if (section.Attributes != null && section.Attributes.Count > 0)
 				HandlersUtil.ThrowException ("Unknown attribute.", section);
 
