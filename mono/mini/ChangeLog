@@ -1,3 +1,6 @@
+2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md: Fix lengths of atomic opcodes.
 
 Mon Feb 21 16:52:20 CET 2005 Paolo Molaro <lupus@ximian.com>
 
