@@ -242,6 +242,11 @@ namespace System.Windows.Forms {
 		protected override bool ProcessMnemonic(char charCode) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		protected override bool ProcessProcessdialogKey(Keys keyData) { // .NET V1.1 Beta
+			throw new NotImplementedException ();
+		}
 		
 		[MonoTODO]
 		protected void SetAboutBoxDelegate(AxHost.AboutBoxDelegate d) {

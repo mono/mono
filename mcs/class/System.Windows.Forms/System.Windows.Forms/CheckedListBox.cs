@@ -72,7 +72,25 @@ namespace System.Windows.Forms {
 		public CheckedListBox.ObjectCollection Items {
 			get { throw new NotImplementedException (); }
 		}
+
+		[MonoTODO]
+		public new object DataSource { // .NET V1.1 Beta. needs implmented
+			get { return base.DataSource; }
+			set { base.DataSource = value; }
+		}
 		
+		[MonoTODO]
+		public new string DisplayMember { // .NET V1.1 Beta. needs implmented
+			get { return base.DisplayMember; }
+			set { base.DisplayMember = value; }
+		}
+
+		[MonoTODO]
+		public new string ValueMember { // .NET V1.1 Beta. needs implmented
+			get { return base.DisplayMember; }
+			set { base.DisplayMember = value; }
+		}
+
 		public override SelectionMode SelectionMode {
 			set {
 				if (value!=SelectionMode.One && value!=SelectionMode.None)

@@ -309,6 +309,19 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+
+			//FIXME shoould this be (ref message m)??
+		protected override void WndProc(Message m) { // .NET V1.1 Beta
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected override void Dispose(bool Disposing) { // .NET V1.1 Beta
+			throw new NotImplementedException ();
+		}
+		
 		#endregion // Protected Methods
 
 	}

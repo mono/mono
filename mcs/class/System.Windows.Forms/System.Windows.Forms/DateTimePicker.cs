@@ -156,6 +156,7 @@ namespace System.Windows.Forms {
 			//	SystemColorsChanged(this, e);
 			//}
 		}
+
 		[MonoTODO]
 		protected virtual void OnValueChanged(EventArgs e)
 		{
@@ -164,11 +165,18 @@ namespace System.Windows.Forms {
 				ValueChanged(this, e);
 			}
 		}
+
+		[MonoTODO]
+		protected override void Dispose(bool disposing) { // .NET V1.1 Beta
+			throw new NotImplementedException ();
+		}
+		
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{

@@ -83,7 +83,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void WndProc(ref Message m)
+		protected virtual void WndProc(Message m) // override changed to virtual in .NET V.1. Beta
 		{
 			throw new NotImplementedException ();
 		}

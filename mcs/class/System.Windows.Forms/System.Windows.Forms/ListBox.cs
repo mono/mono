@@ -360,9 +360,19 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		protected override void OnSelectedValueChanged(EventArgs e) {
+			throw new NotImplementedException ();
+		}
+
 		protected override void RefreshItem(int index) {
 			throw new NotImplementedException ();
 		}
+
+		public override void Refresh() { // .NET V1.1 Beta
+			base.Refresh();
+		}
+		
 		//Inherited
 		//protected ContentAlignment RtlTranslateAlignment(ContentAlignment align) {
 		//	throw new NotImplementedException ();

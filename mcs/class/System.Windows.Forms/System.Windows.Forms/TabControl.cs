@@ -28,6 +28,7 @@ namespace System.Windows.Forms {
 		public TabControl() {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public TabAlignment Alignment  {
 			get {
@@ -37,6 +38,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public TabAppearance Appearance  {
 			get {
@@ -46,6 +48,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public override Color BackColor  {
 			get {
@@ -55,6 +58,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public override Image BackgroundImage  {
 			get {
@@ -64,12 +68,14 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public override Rectangle DisplayRectangle  {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public TabDrawMode DrawMode  {
 			get {
@@ -79,6 +85,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public override Color ForeColor  {
 			get {
@@ -88,6 +95,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public bool HotTrack  {
 			get {
@@ -97,6 +105,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public ImageList ImageList  {
 			get {
@@ -106,6 +115,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public Size ItemSize  {
 			get {
@@ -115,6 +125,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public bool Multiline  {
 			get {
@@ -124,6 +135,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public Point Padding  {
 			get {
@@ -133,12 +145,14 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public int RowCount {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public int SelectedIndex {
 			get {
@@ -148,6 +162,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public TabPage SelectedTab  {
 			get {
@@ -157,6 +172,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public bool ShowToolTips  {
 			get {
@@ -166,6 +182,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public TabSizeMode SizeMode {
 			get {
@@ -175,18 +192,21 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public int TabCount  {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public TabControl.TabPageCollection TabPages  {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public override string Text  {
 			get {
@@ -203,6 +223,7 @@ namespace System.Windows.Forms {
 		public Rectangle GetTabRect(int index) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public override string ToString() {
 			throw new NotImplementedException ();
@@ -221,6 +242,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
@@ -234,58 +256,77 @@ namespace System.Windows.Forms {
 		protected override Control.ControlCollection CreateControlsInstance() {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void CreateHandle() {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		protected override void Dispose(bool disposing) { // .NET V1.1 Beta. .needs implmentation
+			base.Dispose(disposing);
+		}
+
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnDrawItem(DrawItemEventArgs e) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnKeyDown(KeyEventArgs ke) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnSelectedIndexChanged(EventArgs e) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnStyleChanged(EventArgs e) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override bool ProcessKeyPreview(ref Message m) {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected void RemoveAll() {
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
 			throw new NotImplementedException ();
 		}
+
 		//FIXME DONT COMPILE
 //		[MonoTODO]
 //		public class ControlCollection {//: Control.ControlCollection {
@@ -296,6 +337,7 @@ namespace System.Windows.Forms {
 //			public override void Add(Control value) {
 //				throw new NotImplementedException ();
 //			}
+//
 //			[MonoTODO]
 //			public override void Remove(Control value) {
 //				throw new NotImplementedException ();
@@ -318,12 +360,14 @@ namespace System.Windows.Forms {
 					throw new NotImplementedException ();
 				}
 			}
+
 			[MonoTODO]
 			public bool IsReadOnly {
 				get {
 					throw new NotImplementedException ();
 				}
 			}
+
 			[MonoTODO]
 			public virtual TabPage this[int index] {
 				get {
@@ -340,34 +384,42 @@ namespace System.Windows.Forms {
 			public void Add(TabPage value) {
 				throw new NotImplementedException ();
 			}
+
 			[MonoTODO]
 			public void AddRange(TabPage[] pages) {
 				throw new NotImplementedException ();
 			}
+
 			[MonoTODO]
 			public virtual void Clear() {
 				throw new NotImplementedException ();
 			}
+
 			[MonoTODO]
 			public bool Contains(TabPage page) {
 				throw new NotImplementedException ();
 			}
+
 			[MonoTODO]
 			public IEnumerator GetEnumerator() {
 				throw new NotImplementedException ();
 			}
+
 			[MonoTODO]
 			public int IndexOf(TabPage page) {
 				throw new NotImplementedException ();
 			}
+
 			[MonoTODO]
 			public void Remove(TabPage value) {
 				throw new NotImplementedException ();
 			}
+
 			[MonoTODO]
 			public void RemoveAt(int index) {
 				throw new NotImplementedException ();
 			}
+
 			/// <summary>
 			/// IList Interface implmentation.
 			/// </summary>
@@ -377,6 +429,7 @@ namespace System.Windows.Forms {
 					return false;
 				}
 			}
+
 			bool IList.IsFixedSize{
 				get{
 					// We allow addition and removeal of items after creation of the list.
@@ -437,16 +490,19 @@ namespace System.Windows.Forms {
 					throw new NotImplementedException ();
 				}
 			}
+
 			bool ICollection.IsSynchronized{
 				get{
 					throw new NotImplementedException ();
 				}
 			}
+
 			object ICollection.SyncRoot{
 				get{
 					throw new NotImplementedException ();
 				}
 			}
+
 			void ICollection.CopyTo(Array array, int index){
 				throw new NotImplementedException ();
 			}

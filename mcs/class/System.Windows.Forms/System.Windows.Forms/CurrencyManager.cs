@@ -148,10 +148,8 @@ namespace System.Windows.Forms {
 
 		#region Events
 		[MonoTODO]
-		public event ItemChangedEventHandler ItemChanged {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
-		}
+		public event ItemChangedEventHandler ItemChanged;
+		public event EventHandler MetaDataChanged; // .NET V1.1 Beta
 		#endregion
 	}
 }

@@ -39,6 +39,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public override Image BackgroundImage {
 			get {
@@ -211,18 +212,25 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnScroll(EventArgs e) 
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		protected override void OnMouseWheel(MouseEventArgs e) { // .NET V1.1 Beta.
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) 
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected override void WndProc(ref Message m) 
+		protected override void WndProc(ref Message m)
 		{
 			throw new NotImplementedException ();
 		}

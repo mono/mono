@@ -1,3 +1,24 @@
+2002-10-13  DennisHayes <dennish@raytek.com>
+
+	*Application.cs
+	*AxHost.cs
+	*ChangeLog
+	*CheckedListBox.cs
+	*ComboBox.cs
+	*CurrencyManager.cs
+	*DateTimePicker.cs
+	*DomainUpDown.cs
+	*FolderBrowserDialog.cs
+	*ListBox.cs
+	*logfile.txt
+	*StatusBarDrawItemEventArgs.cs
+	*TabControl.cs
+	*TextBox.cs
+	*TrackBar.cs
+	*UpDownBase.cs
+
+	* Updated to match .NET V1.1 Beta
+
 2002-9-2  DennisHayes <dennish@raytek.com>
 
 * AccessibleObject.cs

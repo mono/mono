@@ -18,8 +18,16 @@ namespace System.Windows.Forms {
 		private StatusBarPanel panel;
 
 		/// --- Constructor ---
-		public StatusBarDrawItemEventArgs(Graphics g, Font font, Rectangle r, int itemId, DrawItemState itemState, StatusBarPanel panel)
-		: base(g, font, r, itemId, itemState) {
+		public StatusBarDrawItemEventArgs(Graphics g, Font font, 
+			Rectangle r, int itemId, DrawItemState itemState, 
+			StatusBarPanel panel, Color foreColor, Color backColor)
+			: base(g, font, r, itemId, itemState, foreColor, backColor) {
+			this.panel = panel;
+		}
+
+		public StatusBarDrawItemEventArgs(Graphics g, Font font, 
+			Rectangle r, int itemId, DrawItemState itemState, StatusBarPanel panel)
+			: base(g, font, r, itemId, itemState) {
 			this.panel = panel;
 		}
 		

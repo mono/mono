@@ -99,15 +99,24 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
-		protected override ImeMode DefaultImeMode {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-		}
+		 [MonoTODO]
+		 protected override ImeMode DefaultImeMode {
+			 get {
+				 throw new NotImplementedException ();
+			 }
+		 }
+		 [MonoTODO]
+		 protected override int SelectionLength {
+			 get {
+				 throw new NotImplementedException ();
+			 }
+			 set {
+				 throw new NotImplementedException ();
+			 }
+		 }
 		
 		// --- Protected Members
+
 		
 		protected override bool IsInputKey(Keys keyData)
 		{

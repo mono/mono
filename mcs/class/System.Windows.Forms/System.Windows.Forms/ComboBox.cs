@@ -56,7 +56,7 @@ namespace System.Windows.Forms {
 			sorted = false;
 			backgroundImage = null;
 			text = "";
-			Region
+			
 		}
 		
 		// --- Properties ---
@@ -280,7 +280,7 @@ namespace System.Windows.Forms {
 		
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
-		/// - protected virtual void OnSelectedItemChanged(EventArgs e);
+		protected override void OnSelectedItemChanged(EventArgs e); // .NET V1.1 Beta
 		/// - protected override void SetItemCore(int index,object value);
 		[MonoTODO]
 		protected virtual void AddItemsCore(object[] value) 
