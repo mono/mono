@@ -1,4 +1,8 @@
 
+Sat Aug 25 12:57:36 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: handle enumerations specially (not as valuetypes).
+
 Fri Aug 24 19:34:04 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.h, interp.c: add support for valuetypes.
