@@ -1,5 +1,10 @@
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
 
+	* cs-parser.jay: Fixed problem where the last assembly attribute
+          has been applied also to following declaration (class, struct, etc.)
+          
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
 	* class.cs: Added error CS0538, CS0539 reporting.
         Fixed crash on Microsoft runtime when field type is void.
 

@@ -467,22 +467,24 @@ attribute_sections
           {
 		AttributeSection sect = (AttributeSection) $1;
 
-		if (sect.Target == "assembly") 
+		if (sect.Target == "assembly") {
 			RootContext.AddGlobalAttributeSection (current_container, sect);
-		
-
-		$$ = new Attributes ((AttributeSection) $1);
+			$$ = null;
+		}
+		else
+			$$ = new Attributes (sect);
           }
 	| attribute_sections attribute_section
 	  {
-		Attributes attrs = null;
+		Attributes attrs = $1 as Attributes;
 		AttributeSection sect = (AttributeSection) $2;
 
-		if (sect.Target == "assembly")
+		if (sect.Target == "assembly") {
 			RootContext.AddGlobalAttributeSection (current_container, sect);
-
-		if ($1 != null) {
-			attrs = (Attributes) $1;
+		} else {
+			if (attrs == null)
+				attrs = new Attributes (sect);
+			else
 			attrs.AddAttributeSection (sect);
 		}
 		
