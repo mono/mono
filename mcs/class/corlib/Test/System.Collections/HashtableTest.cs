@@ -35,7 +35,7 @@ public class HashtableTest : Assertion {
 		{
 			bool errorThrown = false;
 			try {
-				Hashtable h = new Hashtable(null);
+				Hashtable h = new Hashtable((IDictionary) null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
