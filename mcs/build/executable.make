@@ -17,11 +17,15 @@ stampfile = $(depsdir)/$(base_prog).stamp
 makefrag = $(depsdir)/$(base_prog).makefrag
 pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
 
+ifndef PROGRAM_INSTALL_DIR
+PROGRAM_INSTALL_DIR = $(prefix)/bin
+endif
+
 all-local: $(PROGRAM)
 
 install-local: $(PROGRAM)
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
-	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(prefix)/bin
+	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 
 uninstall-local:
 	-rm -f $(DESTDIR)$(prefix)/bin/$(base_prog)
