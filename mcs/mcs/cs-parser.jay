@@ -68,6 +68,11 @@ namespace Mono.CSharp
 		// An out-of-band stack.
 		//
 		Stack oob_stack;
+
+		//
+		// Switch stack.
+		//
+		Stack switch_stack;
 %}
 
 %token EOF
@@ -2907,11 +2912,13 @@ switch_statement
 	: SWITCH OPEN_PARENS 
 	  { 
 		oob_stack.Push (lexer.Location);
+		switch_stack.Push (current_block);
 	  }
 	  expression CLOSE_PARENS 
 	  switch_block
 	  {
 		$$ = new Switch ((Expression) $4, (ArrayList) $6, (Location) oob_stack.Pop ());
+		current_block = (Block) switch_stack.Pop ();
 	  }
 	;
 
@@ -2952,14 +2959,11 @@ switch_sections
 switch_section
 	: switch_labels
 	  {
-		current_block = new Block (current_block);
+		current_block = new Block (current_block, true);
 	  }
  	  statement_list 
 	  {
-		while (current_block.Implicit)
-			current_block = current_block.Parent;
 		$$ = new SwitchSection ((ArrayList) $1, current_block);
-		current_block = current_block.Parent;
 	  }
 	;
 
@@ -3906,6 +3910,7 @@ public CSharpParser (string name, System.IO.Stream input, ArrayList defines)
 	current_container = RootContext.Tree.Types;
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();
+	switch_stack = new Stack ();
 
 	lexer = new Tokenizer (input, name, defines);
 }
