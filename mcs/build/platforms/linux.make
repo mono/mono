@@ -23,7 +23,8 @@ hidden_prefix = .
 hidden_suffix = 
 
 platform-check:
-	@set fnord $(BOOTSTRAP_MCS) ; if type $$2 >/dev/null 2>&1 ; then :; else \
+	@set fnord $(BOOTSTRAP_MCS) ; while test "$$#" > 2; do case $$2 in *=*) shift ;; *) break ;; esac done ; \
+	if type $$2 >/dev/null 2>&1 ; then :; else \
 	    echo "*** You need a C# compiler installed to build MCS. (make sure mcs works from the command line)" ; \
 	    echo "*** Read INSTALL.txt for information on how to bootstrap" ; \
 	    echo "*** a Mono installation." ; \

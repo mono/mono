@@ -118,12 +118,13 @@ PROFILE_SUBDIRS = $(SUBDIRS)
 endif
 
 %-recursive:
-	@set . $$MAKEFLAGS; \
+	@set . $$MAKEFLAGS; final_exit=:; \
 	case $$2 in --unix) shift ;; esac; \
 	case $$2 in *=*) dk="exit 1" ;; *k*) dk=: ;; *) dk="exit 1" ;; esac; \
 	list='$(PROFILE_SUBDIRS)'; for d in $$list ; do \
-	    (cd $$d && $(MAKE) $*) || $$dk ; \
-	done
+	    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
+	done; \
+	$$final_exit
 
 ifndef DIST_SUBDIRS
 DIST_SUBDIRS = $(SUBDIRS) $(DIST_ONLY_SUBDIRS)
