@@ -1,3 +1,8 @@
+2004-02-17  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RemotingServices.cs: Client identities are registered using the full url,
+	  not the object uri, so they must be unregistered using the same key.
+
 2004-01-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TypeInfo.cs: The list of interfaces may be null. Added check.

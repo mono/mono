@@ -566,7 +566,12 @@ namespace System.Runtime.Remoting
 			lock (uri_hash)
 			{
 				if (!ident.Disposed) {
-					uri_hash.Remove (ident.ObjectUri);
+					ClientIdentity clientId = ident as ClientIdentity;
+					if (clientId != null)
+						uri_hash.Remove (GetNormalizedUri (clientId.TargetUri));
+					else
+						uri_hash.Remove (ident.ObjectUri);
+						
 					ident.Disposed = true;
 				}
 			}
