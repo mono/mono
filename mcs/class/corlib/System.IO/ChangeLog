@@ -1,3 +1,8 @@
+2002-03-15  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* SearchPattern.cs: New class. Glob matching code for Directory.
+	* Directory.cs: Changed to use SearchPattern instead of mono_glob_*()
+
 2002/03/15 Nick Drochak <ndrochak@gol.com>
 
 	* DirectoryInfo.cs: Fixed the overloaded GetDirectories and GetFiles.

@@ -162,7 +162,7 @@ namespace System.IO
 		internal static ArrayList GetListing (string path, string pattern)
 		{
 			IntPtr dir_handle;
-			IntPtr glob_handle = (IntPtr) 0;
+			SearchPattern search_pattern;
 			ArrayList list;
 			string name, subdir = "";
 			int slashpos;
@@ -177,7 +177,7 @@ namespace System.IO
 				path = "";
 
 			if (pattern == "*")
-				pattern = null;
+				search_pattern = null;
 			else {
 				// do we need to handle globbing in directory names, too?
 				if ((slashpos = pattern.LastIndexOf (Path.DirectorySeparatorStr)) >= 0) {
@@ -185,7 +185,7 @@ namespace System.IO
 					path += subdir;
 					pattern = pattern.Substring (slashpos + 1);
 				}
-				glob_handle = Wrapper.mono_glob_compile (pattern);
+				search_pattern = new SearchPattern (pattern);
 			}
 			
 			dir_handle = Wrapper.opendir (path);
@@ -193,16 +193,14 @@ namespace System.IO
 				return null;
 			list = new ArrayList ();
 			while ((name = Wrapper.readdir (dir_handle)) != null){
-				if (pattern == null){
+				if (search_pattern == null){
 					list.Add (name);
 					continue;
 				}
 
-				if (Wrapper.mono_glob_match (glob_handle, name) != 0)
+				if (search_pattern.IsMatch (name))
 					list.Add (subdir + name);
 			}
-			if (pattern != null)
-				Wrapper.mono_glob_dispose (glob_handle);
 			Wrapper.closedir (dir_handle);
 
 			return list;
