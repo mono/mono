@@ -1,5 +1,9 @@
 2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* BuiltInDatatype.cs : trivia fix
+
+2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* BuiltInDatatype.cs : added BUGGY_MS_COMPLIANT condition and that
 	  handles ms-compatible properties.
 	* XmlSchemaComplexType.cs : ditto for ContentTypeParticle of xs:anyType.

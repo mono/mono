@@ -1286,7 +1286,7 @@ namespace Mono.Xml.Schema
 	{
 		internal XsdBoolean ()
 		{
-      this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
 		internal override XmlSchemaFacet.Facet AllowedFacets {
@@ -1294,7 +1294,7 @@ namespace Mono.Xml.Schema
 		}
 
 		public override XmlTokenizedType TokenizedType {
-#if true//BUGGY_MS_COMPLIANT
+#if BUGGY_MS_COMPLIANT
 			get { return XmlTokenizedType.None; }
 #else
 			get { return XmlTokenizedType.CDATA; }
