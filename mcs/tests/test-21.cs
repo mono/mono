@@ -9,21 +9,26 @@ public class Blah {
 			Console.WriteLine ("Inside the Foo constructor now");
 		}
 		
-		public void Bar ()
+		public int Bar (int i, int j)
 		{
 			Console.WriteLine ("The Bar method");
+			return i+j;
 		}
 		
 		
 	}
 
-	public static void Main ()
+	public static int Main ()
 	{
-		Blah i = new Blah ();
-
 		Foo f = new Foo ();
 
-		f.Bar ();
+		int j = f.Bar (2, 3);
+		Console.WriteLine ("Blah.Foo.Bar returned " + j);
+		
+		if (j == 5)
+			return 0;
+		else
+			return 1;
 
 	}
 

@@ -1,3 +1,8 @@
+2001-10-12  Ravi Pratap  <ravi@ximian.com>
+
+	* test-21.cs : Update to actually do some checking and return
+	an appropriate value.
+
 2001-10-11  Ravi Pratap  <ravi@ximian.com>
 
 	* test-21.cs : Add. This is a test for testing our support
