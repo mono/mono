@@ -8,6 +8,8 @@ NO_TEST = yes
 
 include ../../build/library.make
 
+EXTRA_DISTFILES = Mono.Unix/make-map.cs
+
 all-local: Mono.Unix/make-map.exe 
 
 Mono.Unix/make-map.exe: Mono.Unix/make-map.cs $(the_lib)

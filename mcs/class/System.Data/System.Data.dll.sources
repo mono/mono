@@ -328,7 +328,6 @@ System.Data.ProviderBase/DbMetaDataFactory.cs
 System.Data.ProviderBase/DbParameterBase.cs
 System.Data.ProviderBase/DbParameterCollectionBase.cs
 System.Data.ProviderBase/DbReferenceCollection.cs
-Mono.Data.SqlExpressions/Parser.cs
 Mono.Data.SqlExpressions/Tokenizer.cs
 Mono.Data.SqlExpressions/Numeric.cs
 Mono.Data.SqlExpressions/Expressions.cs

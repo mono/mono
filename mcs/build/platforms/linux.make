@@ -8,7 +8,9 @@ PLATFORM_MCS_FLAGS =
 PLATFORM_RUNTIME = $(RUNTIME)
 PLATFORM_CORLIB = mscorlib.dll
 
-BOOTSTRAP_MCS = mcs
+EXTERNAL_MCS = mcs
+EXTERNAL_MBAS = mbas
+EXTERNAL_RUNTIME = mono
 RESGEN = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN)
 
 PLATFORM_PATH_SEPARATOR = :
@@ -23,15 +25,7 @@ hidden_prefix = .
 hidden_suffix = 
 
 platform-check:
-	@set fnord $(BOOTSTRAP_MCS) ; while test "$$#" -gt 2; do case $$2 in *=*) shift ;; *) break ;; esac done ; \
-	if type $$2 >/dev/null 2>&1 ; then :; else \
-	    echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be available"; \
-	    echo "*** You need a C# compiler installed to build MCS. (make sure mcs works from the command line)" ; \
-	    echo "*** Read INSTALL.txt for information on how to bootstrap" ; \
-	    echo "*** a Mono installation." ; \
-	    exit 1 ; \
-	fi
-
+	@:
 # I tried this but apparently Make's version strings aren't that
 # ... consistent between releases. Whatever.
 #

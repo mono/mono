@@ -1,5 +1,16 @@
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
+	* platforms/linux.make (EXTERNAL_MCS,EXTERNAL_MBAS,EXTERNAL_RUNTIME):
+	New.
+	* platforms/win32.make: Likewise.
+	* profiles/basic.make: Use $(EXTERNAL_MCS).
+	* profiles/net_1_1_bootstrap.make: Likewise.
+	* library.make ($(the_lib)): Add support for BUILT_SOURCES.
+	(run-test-lib): Pass $(TEST_HARNESS_FLAGS) to harness.  Useful to
+	pass, say /labels, to nunit-console.
+
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
 	* library.make ($(gacutil)): Fix path.
 
 2004-11-23  Raja R Harinath  <rharinath@novell.com>

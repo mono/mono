@@ -1,10 +1,16 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (BUILT_SOURCES): New.  Build Mono.Data.SqlExpressions/Parser.cs.
+	(EXTRA_DISTFILES): Add Mono.Data.SqlExpressions/Parser.jay.
+	* System.Data.dll.sources: Don't mention Mono.Data.SqlExpressions/Parser.cs.
+
 2004-11-10  Martin Baulig  <martin@ximian.com>
 
-	 * System.Data.Sql/ISqlCommand.cs,
-	 System.Data.Sql/ISqlConnection.cs,
-	 System.Data.Sql/ISqlExecutionContext.cs,
-	 System.Data.Sql/ISqlParameterCollection.cs,
-	 System.Data.Sql/ISqlTransaction.cs: Added `new' modifiers where needed.
+	* System.Data.Sql/ISqlCommand.cs,
+	System.Data.Sql/ISqlConnection.cs,
+	System.Data.Sql/ISqlExecutionContext.cs,
+	System.Data.Sql/ISqlParameterCollection.cs,
+	System.Data.Sql/ISqlTransaction.cs: Added `new' modifiers where needed.
 
 2004-10-06  Umadevi S <sumadevi@novell.com>
 	* System.Data.dll.sources : Added ISqlNotificationReceiver, SqlNotifcationType,

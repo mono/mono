@@ -8,8 +8,9 @@ PLATFORM_MCS_FLAGS = /nologo /optimize
 PLATFORM_RUNTIME = 
 PLATFORM_CORLIB = mscorlib.dll
 
-BOOTSTRAP_MCS = csc.exe
-MCS = $(BOOTSTRAP_MCS)
+EXTERNAL_MCS = csc.exe
+EXTERNAL_MBAS = vbc.exe
+EXTERNAL_RUNTIME =
 RESGEN = resgen.exe
 
 PLATFORM_MAKE_CORLIB_CMP = yes
@@ -20,3 +21,4 @@ hidden_prefix =
 hidden_suffix = .tmp
 
 platform-check:
+	@:

@@ -1,3 +1,13 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DISTFILES): Add public and private keys.
+	(lib/basic.tar.gz): New.
+	(dist-local): Distribute it.
+	(DIST_ONLY_SUBDIRS): Distribute Managed.Windows.Forms.
+	* I18N/Makefile (DISTFILES): Add Assembly/ChangeLog and
+	Assembly/AssemblyInfo.cs.
+	* IBM.Data.DB2/Makefile (EXTRA_DISTFILES): Distribute ibm.pub.
+
 2004-11-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net_1_1_bootstrap_SUBDIRS): Add Mono.Security.

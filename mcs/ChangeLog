@@ -1,3 +1,7 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DISTFILES): Add nunit.key.
+
 2004-11-24  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (profiles-do--run-test): Allow list of profiles to be

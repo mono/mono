@@ -6,4 +6,8 @@ LIBRARY = Mono.Security.Win32.dll
 LIB_MCS_FLAGS = /unsafe
 EXTRA_DISTFILES = README Test/ChangeLog
 
+ifneq (win32, $(PROFILE))
+NO_TEST = yes
+endif
+
 include ../../build/library.make

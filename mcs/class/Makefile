@@ -16,6 +16,8 @@ net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 
 include ../build/rules.make
 
+# For now, Mono.Security.Win32 is built on Linux too.
+# However, it isn't tested on Linux, since it depends on a Win32 dll.
 SUBDIRS = \
 	corlib				\
 	System				\
@@ -70,33 +72,43 @@ SUBDIRS = \
 # Linux makefile.gnu before, but they build fine, so might as well
 # include them ...
 #
-# Need a way to only build/test Mono.Security.Win32 on Windows.
-# It builds on linux, but make run-test will barf because a
-# DLL doesn't exist.
 
 # These libraries below are either unimplemented or don't compile, but
 # I wrote makefiles for them.
 
+# Managed.Windows.Forms will move to the main SUBDIRS soon.
+
 DIST_ONLY_SUBDIRS = \
 	Custommarshalers		\
-	Mono.Globalization
+	Mono.Globalization		\
+	Managed.Windows.Forms
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
 
 DISTFILES = \
+	ecma.pub		\
+	mono.pub		\
+	msfinal.pub		\
+	mono.snk		\
 	LICENSE 		\
 	README			\
 	doc/API-notes		\
 	doc/NUnitGuidelines	\
-	doc/notes		\
+	doc/TemplateTest.cs	\
 	notes/BitVecto32.txt
 
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
 	@:
 
-DIST_PROFILES = basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0
+basic_files = mcs.exe mscorlib.dll System.dll
 
-dist-local: dist-default
-	-$(MKINSTALLDIRS) $(distdir)/lib $(DIST_PROFILES:%=$(distdir)/lib/%)
+DIST_PROFILE_DIRS = basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0
+
+lib/basic.tar.gz: $(basic_files:%=lib/basic/%)
+	cd lib && { tar cvf - $(basic_files:%=basic/%) | gzip > basic.tar.gz; }
+
+dist-local: dist-default lib/basic.tar.gz
+	-$(MKINSTALLDIRS) $(DIST_PROFILE_DIRS:%=$(distdir)/lib/%)
+	cp lib/basic.tar.gz $(distdir)/lib

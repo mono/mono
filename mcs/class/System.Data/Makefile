@@ -29,11 +29,12 @@ EXTRA_DISTFILES = \
 	Test/System.Xml/2books.xml		\
 	Test/System.Xml/region.xml		\
 	Test/System.Xml/region.xsd		\
-	Test/System.Xml/store.xsd
+	Test/System.Xml/store.xsd		\
+	Mono.Data.SqlExpressions/Parser.jay
+
+BUILT_SOURCES = Mono.Data.SqlExpressions/Parser.cs
 
 Mono.Data.SqlExpressions/Parser.cs: Mono.Data.SqlExpressions/Parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $< >$@
-
-CLEAN_FILES = Mono.Data.SqlExpressions/Parser.cs
 
 include ../../build/library.make

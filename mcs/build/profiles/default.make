@@ -19,6 +19,7 @@ BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap:$$MONO_PATH" $(
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MCS)
 MBAS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MBAS)
 else
+BOOTSTRAP_MCS = $(EXTERNAL_MCS)
 MCS = $(PLATFORM_RUNTIME) $(BOOTSTRAP_MCS) /lib:$(topdir)/class/lib/$(PROFILE)
 MBAS = $(PLATFORM_RUNTIME) $(BOOTSTRAP_MBAS) /lib:$(topdir)/class/lib/$(PROFILE)
 endif

@@ -3,6 +3,8 @@ SUBDIRS = Common West MidEast Other Rare CJK
 include ../../build/rules.make
 
 DISTFILES = \
+	Assembly/ChangeLog \
+	Assembly/AssemblyInfo.cs \
 	README 		\
 	README.mono 	\
 	mklist.sh	\

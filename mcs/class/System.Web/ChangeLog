@@ -1,3 +1,8 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (RESOURCE_FILES): New.  List set of resources.
+	(EXTRA_DISTFILES): New.  Distribute them.
+
 2004-11-23  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Makefile: Added TreeView resources.

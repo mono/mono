@@ -42,9 +42,8 @@ profiles-do--run-test:
 # Orchestrate the bootstrap here.
 profile-do--net_2_0--all: profile-do--net_2_0_bootstrap--all
 profile-do--net_2_0_bootstrap--all: profile-do--default--all
-
-ifeq (linux, $(PLATFORM))
 profile-do--default--all: profile-do--net_1_1_bootstrap--all
+ifeq (linux, $(PLATFORM))
 profile-do--net_1_1_bootstrap--all: profile-do--basic--all
 endif
 
@@ -75,7 +74,8 @@ DISTFILES = \
 	MonoIcon.png		\
 	README			\
 	ScalableMonoIcon.svg	\
-	winexe.in
+	winexe.in		\
+	nunit.key
 
 dist-local: dist-default
 

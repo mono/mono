@@ -1,3 +1,7 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (NO_TEST): Define when not in W32.
+
 2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* README: Updated to match the new version and public token for the 

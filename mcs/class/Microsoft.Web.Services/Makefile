@@ -99,11 +99,11 @@ endif
 dist-local: dist-default
 	for f in `cat $(sourcefile)` $(TEST_FILES) ; do \
 	    dest=`dirname $(distdir)/$$f` ; \
-	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
+	    $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1 ; \
 	done
 	for f in `cat $sourcefile2)` $(TEST_FILES) ; do \
 	    dest=`dirname $(distdir)/$$f` ; \
-	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1; \
+	    $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1; \
 	done
 
 # Fun with dependency tracking

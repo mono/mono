@@ -62,7 +62,7 @@ DISTFILES = $(sourcefile) $(base_prog_config) $(EXTRA_DISTFILES)
 dist-local: dist-default
 	for f in `cat $(sourcefile)` ; do \
 	    dest=`dirname $(distdir)/$$f` ; \
-	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
+	    $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1 ; \
 	done
 
 ifndef PROGRAM_COMPILE

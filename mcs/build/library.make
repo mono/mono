@@ -19,7 +19,7 @@ endif
 
 ifndef response
 response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
-library_CLEAN_FILES += $(response) $(LIBRARY).mdb
+library_CLEAN_FILES += $(response) $(LIBRARY).mdb $(BUILT_SOURCES)
 endif
 
 ifndef LIBRARY_NAME
@@ -162,10 +162,10 @@ run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
 run-test-lib: test-local
-	$(TEST_RUNTIME) $(TEST_HARNESS) /xml:TestResult-$(PROFILE).xml $(test_assemblies)
+	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /xml:TestResult-$(PROFILE).xml $(test_assemblies)
 
 run-test-ondotnet-lib: test-local
-	$(TEST_HARNESS) /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies)
+	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies)
 endif
 
 DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
@@ -207,19 +207,19 @@ $(gacutil):
 
 ifdef sn
 $(sn):
-	cd $(topdir)/tools/security && $(MAKE) PROFILE=net_1_1_bootstrap
+	cd $(topdir) && $(MAKE) PROFILE=net_1_1_bootstrap
 endif
 
 # The library
 
-$(the_lib): $(response) $(sn)
+$(the_lib): $(response) $(sn) $(BUILT_SOURCES)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) $(BUILT_SOURCES) @$(response)
 	$(SN) $(SNFLAGS) $(@F) $(LIBRARY_SNK)
 	mv $(@F) $@
 	-mv $(@F).mdb $@.mdb
 else
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ $(BUILT_SOURCES) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
 endif
 

@@ -1,3 +1,7 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Fix typo.
+
 2004-11-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : don't use -codepage:utf8. It breaks csc build.
