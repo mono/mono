@@ -1,5 +1,7 @@
 2005-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.h mini-sparc.c: Enable out-of-line bblock support.
+
 	* tramp-*.c: Only patch vtable slots if the object is in the current
 	domain. Fixes appdomain-unload.exe.
 
