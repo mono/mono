@@ -1,3 +1,7 @@
+2005-03-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h: Add missing AMD64_XMM7.
+
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* amd64/amd64-codegen.h: Remove some unneccesary REXes.
