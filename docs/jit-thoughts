@@ -1,5 +1,16 @@
 Just some thoughts for the JITer:
 
+General issues:
+===============
+
+We are designing a JIT compiler, so we have to consider two things:
+
+- the quality of the generated code
+- the time needed to generate that code
+
+The current approach is to keep the JITer as simple as possible, and thus as
+fast as possible. The generated code quality will suffer from that.
+
 X86 register allocation:
 ========================
 
@@ -9,9 +20,36 @@ currently ignore that ability and always allocate 32 bit registers, because I
 think we would gain very little from that optimisation and it would complicate
 the code.
 
+Different Register Sets:
+========================
+
+Most processors have more that one register set, at least one for floating
+point values, and one for integers. Should we support architectures with more
+that two sets? Does someone knows such an architecture?
+
+Register Allocation:
+====================
+
+With lcc you can assign a fixed register to a tree before register
+allocation. For example this is needed by call, which return the value always
+in EAX on x86. The current implementation works without such system (due to
+special forest generation), and I wonder if we really need this feature?
 
 Forest generation:
 ==================
+
+One idea was to drive the code generation directly from the CIL code, without
+generating an intermediate forest of trees. I think this is not possible,
+because you always have to gather some attributes and attach it to the
+instruction (for example the register allocation info). So I thing generating a
+tree is the right thing and that also works perfectly with monoburg. IMO we
+would not get any benefit from trying to feed monoburg directly with CIL
+instructions. 
+
+We can also speedup the tree generation by using alloca instead of malloc.
+
+DAG handling:
+=============
 
 Monoburg can't handle DAGs, instead we need real trees as input for
 the code generator. So we have two problems:
@@ -40,4 +78,12 @@ STLOC(CALL)
 STLOC(ADD (LDLOC, LDLOC))
 
 This is what lcc is doing, if I understood 12.8, page 342, 343?
+
+Value Types:
+============
+
+The only CLI instructions which can handle value types are loads and stores,
+either to local variable, to the stack or to array elements. Value types with a
+size smaller than sizeof(int) are handled like any other basic type. For other
+value types we load the base address and emit block copies to store them. 
 
