@@ -1,3 +1,8 @@
+2004-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CipherSuite.cs: Removed unused MD5 and SHA1 instances created in 
+	PRF method (fix compilation warnings).
+
 2004-12-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslClientStream.cs: New internal property, ServerCertificates, to
