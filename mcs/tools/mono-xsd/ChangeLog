@@ -1,0 +1,5 @@
+2003-03-17  Duncan Mak  <duncan@ximian.com>
+
+	* MonoXSD.cs: A simple implementation of MonoXSD. It current
+	supports creating an XML Schema based on a .NET assembly. The
+	handling of schema derivation is simplistic. 
