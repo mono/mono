@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: XplatUIStructs.cs,v $
+// Revision 1.3  2004/08/16 21:46:08  pbartok
+// - Added WM_MOUSE_ENTER & WM_MOUSE_LEAVE to support OnMouseEnter/Leave()
+//
 // Revision 1.2  2004/07/15 17:06:48  jordi
 // added MsgButons enum
 //
@@ -304,6 +307,10 @@ namespace System.Windows.Forms {
 		WM_PENWINLAST             = 0x038F,
 		WM_APP                    = 0x8000,
 		WM_USER                   = 0x0400,
+
+		// Our "private" ones
+		WM_MOUSE_ENTER            = 0x0401,
+		WM_MOUSE_LEAVE            = 0x0402,
 		WM_REFLECT                = WM_USER + 0x1c00
 	}
 
@@ -364,7 +371,6 @@ namespace System.Windows.Forms {
 #endif
 
 	internal enum MsgButtons {
-		
 		MK_LBUTTON		= 0x0001,
 		MK_RBUTTON		= 0x0002,
 		MK_SHIFT		= 0x0004,

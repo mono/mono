@@ -586,8 +586,17 @@ namespace System.Windows.Forms {
 					break;
 				}
 
+				case XEventName.EnterNotify: {
+					msg.message=Msg.WM_MOUSE_ENTER;
+					break;
+				}
+
+				case XEventName.LeaveNotify: {
+					msg.message=Msg.WM_MOUSE_LEAVE;
+					break;
+				}
+
 				case XEventName.ConfigureNotify: {
-//XResizeWindow(DisplayHandle, xevent.ConfigureEvent.window, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 					msg.message=Msg.WM_WINDOWPOSCHANGED;
 					msg.wParam=IntPtr.Zero;
 					msg.lParam=IntPtr.Zero;
