@@ -3,6 +3,9 @@
 	* ecore.cs (GetConversionOperators): Do not pick up op_True operators
 	when we are in an explicit context.
 
+	(ConvertReferenceExplicit): When converting from Iface type S to Class
+	T make sure the rules are implemented as an OR.
+
 2002-05-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (StandardConversionExists): Augment with missing code:

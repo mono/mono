@@ -1737,11 +1737,11 @@ namespace Mono.CSharp {
 			}
 			    
 			//
-			// From any class type S to any interface T, provides S is not sealed
+			// From any class type S to any interface T, provided S is not sealed
 			// and provided S does not implement T.
 			//
 			if (target_type.IsInterface && !source_type.IsSealed &&
-			    !target_type.IsAssignableFrom (source_type))
+			    !TypeManager.ImplementsInterface (source_type, target_type))
 				return true;
 
 			//
@@ -1749,8 +1749,10 @@ namespace Mono.CSharp {
 			// sealed, or provided T implements S.
 			//
 			if (source_type.IsInterface &&
-			    (!target_type.IsSealed || source_type.IsAssignableFrom (target_type)))
+			    (!target_type.IsSealed || TypeManager.ImplementsInterface (target_type, source_type))) {
+				Console.WriteLine ("fooo came here !");
 				return true;
+			}
 
 			// From an array type S with an element type Se to an array type T with an 
 			// element type Te provided all the following are true:
@@ -1804,7 +1806,7 @@ namespace Mono.CSharp {
 		{
 			Type source_type = source.Type;
 			bool target_is_value_type = target_type.IsValueType;
-			
+
 			//
 			// From object to any reference type
 			//
@@ -1833,7 +1835,6 @@ namespace Mono.CSharp {
 			// and provided S does not implement T.
 			//
 			if (target_type.IsInterface && !source_type.IsSealed) {
-				
 				if (TypeManager.ImplementsInterface (source_type, target_type))
 					return null;
 				else
@@ -1846,11 +1847,7 @@ namespace Mono.CSharp {
 			// sealed, or provided T implements S.
 			//
 			if (source_type.IsInterface) {
-
-				if (target_type.IsSealed)
-					return null;
-				
-				if (TypeManager.ImplementsInterface (target_type, source_type))
+				if (!target_type.IsSealed || TypeManager.ImplementsInterface (target_type, source_type))
 					return new ClassCast (source, target_type);
 				else
 					return null;

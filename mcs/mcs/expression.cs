@@ -3261,7 +3261,7 @@ namespace Mono.CSharp {
 			
 			if (pd_count == 1 && arg_count == 0)
 				return true;
-			
+
 			//
 			// If we have come this far, the case which remains is when the number of parameters
 			// is less than or equal to the argument count.
