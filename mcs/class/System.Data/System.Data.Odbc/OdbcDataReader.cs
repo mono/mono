@@ -498,7 +498,13 @@ namespace System.Data.Odbc
                 override
 #endif // NET_2_0
                 DataTable GetSchemaTable() 
-		{	
+		{
+                        // FIXME : 
+                        // * Map OdbcType to System.Type and assign to DataType.
+                        //   This will eliminate the need for IsStringType in
+                        //   OdbcColumn.
+                        // * Cache this DataTable so that it is not contacting 
+                        //   datasource everytime for the same result set.
 
 			DataTable dataTableSchema = null;
 			// Only Results from SQL SELECT Queries 
@@ -545,12 +551,11 @@ namespace System.Data.Odbc
 					dataTableSchema.Rows.Add (schemaRow);
 										
 					schemaRow["ColumnName"] = col.ColumnName;
-					schemaRow["ColumnOrdinal"] = i + 1;
+					schemaRow["ColumnOrdinal"] = i;
 					
 					schemaRow["ColumnSize"] = col.MaxLength;
-					schemaRow["NumericPrecision"] = 0;
-					schemaRow["NumericScale"] = 0;
-					// TODO: need to get KeyInfo
+					schemaRow["NumericPrecision"] = GetColumnAttribute (i+1, FieldIdentifier.Precision);
+					schemaRow["NumericScale"] = GetColumnAttribute (i+1, FieldIdentifier.Scale);
 
 					schemaRow["IsUnique"] = false;
 					schemaRow["IsKey"] = DBNull.Value;
@@ -563,9 +568,9 @@ namespace System.Data.Odbc
                                         }
 
 					schemaRow["BaseCatalogName"] = "";				
-					schemaRow["BaseColumnName"] = col.ColumnName;
+					schemaRow["BaseColumnName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseColumnName);
 					schemaRow["BaseSchemaName"] = "";
-					schemaRow["BaseTableName"] = "";
+					schemaRow["BaseTableName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseTableName);
 					schemaRow["DataType"] = col.DataType;
 
 					schemaRow["AllowDBNull"] = col.AllowDBNull;
@@ -575,7 +580,7 @@ namespace System.Data.Odbc
 					schemaRow["IsAliased"] = false;
 					schemaRow["IsExpression"] = false;
 					schemaRow["IsIdentity"] = false;
-					schemaRow["IsAutoIncrement"] = false;
+					schemaRow["IsAutoIncrement"] = GetColumnAttribute (i+1, FieldIdentifier.AutoUniqueValue) == 1;
 					schemaRow["IsRowVersion"] = false;
 					schemaRow["IsHidden"] = false;
 					schemaRow["IsLong"] = false;
@@ -862,7 +867,9 @@ namespace System.Data.Odbc
                                                                         OdbcHandleType.Stmt,
                                                                         hstmt)
                                                          );
-                        string value = Encoding.Default.GetString (buffer);
+                        string value = "";
+                        if (outsize > 0)
+                                value = Encoding.Default.GetString (buffer, 0, outsize);
                         return value;
                 }
 

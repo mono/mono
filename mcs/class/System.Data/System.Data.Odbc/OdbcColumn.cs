@@ -133,6 +133,7 @@ namespace System.Data.Odbc
 			{
 				switch (OdbcType)
 				{
+					case OdbcType.Char:
 					case OdbcType.Text:
 					case OdbcType.NText:
 					case OdbcType.NVarChar:

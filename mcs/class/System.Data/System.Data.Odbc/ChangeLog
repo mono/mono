@@ -1,4 +1,12 @@
 2005-03-24  Sureshkumar T  <tsureshkumar@novell.com>
+	    Appasamy <appasamy@rediffmail.com>
+
+	* OdbcColumn.cs: IsStringType: OdbcType.Char is also of type
+	String.
+	* OdbcDataReader.cs: GetSchemaTable: Get Additional info using
+	SQLColAttribute. Don't pad with spaces in GetColAttributeStr.
+
+2005-03-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcDataReader.cs:
 	- GetValue: Decode only outsize length for SQL_C_TYPE.CHAR type in
