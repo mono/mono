@@ -700,6 +700,26 @@ public class TypeManager {
 			return pi.GetAccessors ();
 	}
 
+	static public MethodInfo GetPropertyGetter (PropertyInfo pi)
+	{
+		if (pi is PropertyBuilder){
+			DictionaryEntry de = (DictionaryEntry) properties [pi];
+
+			return (MethodInfo) de.Value;
+		} else
+			return pi.GetSetMethod ();
+	}
+
+	static public MethodInfo GetPropertySetter (PropertyInfo pi)
+	{
+		if (pi is PropertyBuilder){
+			DictionaryEntry de = (DictionaryEntry) properties [pi];
+
+			return (MethodInfo) de.Key;
+		} else
+			return pi.GetGetMethod ();
+	}
+				
 	// <remarks>
 	//  The following is used to check if a given type implements an interface.
 	//  The cache helps us reduce the expense of hitting Type.GetInterfaces everytime.

@@ -652,7 +652,7 @@ namespace Mono.CSharp {
 
 				abstract_methods = FindMembers (
 					TypeBuilder.BaseType,
-					MemberTypes.Method, BindingFlags.Public,
+					MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance,
 					abstract_method_filter, null);
 
 				if (abstract_methods != null){
@@ -1667,12 +1667,79 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class MethodCore {
-		public readonly Parameters Parameters;
+	public class MemberCore {
 		public string Name;
 		public int ModFlags;
-		Block block;
 		public readonly Location Location;
+
+		public MemberCore (string name, Location loc)
+		{
+			Name = name;
+			Location = loc;
+		}
+
+		protected void WarningNotHiding (TypeContainer parent)
+		{
+			Report.Warning (
+				109, Location,
+				"The member `" + parent.Name + "." + Name + "' does not hide an " +
+				"inherited member.  The keyword new is not required");
+							   
+		}
+
+		static string MethodBaseName (MethodBase mb)
+		{
+			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
+		}
+
+		//
+		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
+		// that have been defined.
+		//
+		// `name' is the user visible name for reporting errors (this is used to
+		// provide the right name regarding method names and properties)
+		//
+		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodInfo mb)
+		{
+			bool ok = true;
+			
+			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+				Report.Warning (
+					108, Location, "The keyword new is required on " + 
+					parent.MakeName (Name) + " because it hides `" +
+					mb.ReflectedType.Name + "." +
+					mb.Name + "'");
+			}
+
+			if ((ModFlags & Modifiers.OVERRIDE) != 0){
+				if (!(mb.IsAbstract || mb.IsVirtual)){
+					Report.Error (
+						506, Location, parent.MakeName (Name) +
+						": cannot override inherited member `" +
+						mb.ReflectedType.Name + "' because it is not " +
+						"virtual, abstract or override");
+					ok = false;
+				}
+			}
+
+			if (mb.IsVirtual || mb.IsAbstract){
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+					Report.Warning (
+						114, Location, parent.MakeName (Name) + 
+						" hides inherited member " + MethodBaseName (mb) +
+						".  To make the current member override that " +
+						"implementation, add the override keyword, " +
+						"otherwise use the new keyword");
+				}
+			}
+
+			return ok;
+		}
+	}
+	
+	public class MethodCore : MemberCore {
+		public readonly Parameters Parameters;
+		Block block;
 		
 		//
 		// Parameters, cached for semantic analysis.
@@ -1680,20 +1747,21 @@ namespace Mono.CSharp {
 		InternalParameters parameter_info;
 		
 		public MethodCore (string name, Parameters parameters, Location l)
+			: base (name, l)
 		{
 			Name = name;
 			Parameters = parameters;
-			Location = l;
 		}
 		
 		//
 		//  Returns the System.Type array for the parameters of this method
 		//
 		Type [] parameter_types;
+		static Type [] no_types = new Type [0];
 		public Type [] ParameterTypes (TypeContainer parent)
 		{
 			if (Parameters == null)
-				return null;
+				return no_types;
 			
 			if (parameter_types == null)
 				parameter_types = Parameters.GetParameterInfo (parent);
@@ -1793,19 +1861,6 @@ namespace Mono.CSharp {
 			Type [] args = TypeManager.GetArgumentTypes (mi);
 			Type [] sigp = sig.Parameters;
 
-			//
-			// FIXME: remove this assumption if we manage to
-			// not enter a null as a the Parameters in TypeManager's 
-			// MethodBase to Type argument mapper.
-			//
-			if (args == null){
-				if (sigp != null)
-					return false;
-				else
-					return true;
-			} else if (sigp == null)
-				return false;
-			
 			if (args.Length != sigp.Length)
 				return false;
 
@@ -1843,50 +1898,9 @@ namespace Mono.CSharp {
 			return type_return_type;
 		}
 
-		void WarningNotHiding (TypeContainer parent)
-		{
-			Report.Warning (
-				109, Location,
-				"The member `" + parent.Name + "." + Name + "' does not hide an " +
-				"inherited member.  The keyword new is not required");
-							   
-		}
-
-		string MethodBaseName (MethodBase mb)
-		{
-			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
-		}
-
-		bool CheckMethod (TypeContainer parent, MemberInfo [] mi)
-		{
-			MethodInfo mb = (MethodInfo) mi [0];
-
-			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-				Report.Warning (
-					108, Location, "The keyword new is required on " + 
-					parent.MakeName (Name) + " because it hides `" +
-					mb.ReflectedType.Name + "." +
-					mb.Name + "'");
-			}
-
-			if (mb.IsVirtual || mb.IsAbstract){
-				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					Report.Warning (
-						114, Location, parent.MakeName (Name) + 
-						"hides inherited member " + MethodBaseName (mb) +
-						".  To make the current member override that " +
-						"implementation, add the override keyword, " +
-						"otherwise use the new keyword");
-				}
-				
-			}
-
-			return true;
-		}
-
 		//
 		// Creates the type
-		// 
+		//
 		public MethodBuilder Define (TypeContainer parent)
 		{
 			Type ret_type = GetReturnType (parent);
@@ -1896,6 +1910,10 @@ namespace Mono.CSharp {
 			Type iface_type = null;
 			string iface = "", short_name;
 
+			// Check if the return type and arguments were correct
+			if (ret_type == null || parameters == null)
+				return null;
+			
 			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
 				return null;
 
@@ -1905,14 +1923,13 @@ namespace Mono.CSharp {
 			if (!TypeContainer.AsAccessible (ret_type, ModFlags))
 				return null;
 
-			if (parameters != null)
-				foreach (Type partype in parameters)
-					if (!TypeContainer.AsAccessible (partype, ModFlags))
-						error = true;
+			foreach (Type partype in parameters)
+				if (!TypeContainer.AsAccessible (partype, ModFlags))
+					error = true;
 
 			if (error)
 				return null;
-			
+
 			//
 			// Verify if the parent has a type with the same name, and then
 			// check whether we have to create a new slot for it or not.
@@ -1922,15 +1939,29 @@ namespace Mono.CSharp {
 			// ptype is only null for System.Object while compiling corlib.
 			if (ptype != null){
 				MethodSignature ms = new MethodSignature (Name, ret_type, parameters);
-				MemberInfo [] mi;
-				
-				mi = TypeContainer.FindMembers (
+				MemberInfo [] mi, mi_static, mi_instance;
+
+				mi_static = TypeContainer.FindMembers (
 					ptype, MemberTypes.Method,
-					BindingFlags.Public, method_signature_filter,
+					BindingFlags.Public | BindingFlags.Static, method_signature_filter,
 					ms);
 
+				mi_instance = TypeContainer.FindMembers (
+					ptype, MemberTypes.Method,
+					BindingFlags.Public | BindingFlags.Instance, method_signature_filter,
+					ms);
+
+				if (mi_instance != null && mi_instance.Length > 0){
+					mi = mi_instance;
+				} else if (mi_static != null && mi_static.Length > 0)
+					mi = mi_static;
+				else
+					mi = null;
+				
 				if (mi != null && mi.Length > 0){
-					CheckMethod (parent, mi);
+					if (!CheckMethodAgainstBase (parent, (MethodInfo) mi [0])){
+						return null;
+					}
 				} else {
 					if ((ModFlags & Modifiers.NEW) != 0)
 						WarningNotHiding (parent);
@@ -2047,8 +2078,6 @@ namespace Mono.CSharp {
 					ret_type, parameters);
 
 				if (implementing != null){
-					Console.WriteLine ("Defining this as implementing stuff:" + Name);
-					
 					parent.TypeBuilder.DefineMethodOverride (
 						MethodBuilder, implementing);
 				}
@@ -2056,7 +2085,6 @@ namespace Mono.CSharp {
 
 			if (MethodBuilder == null)
 				return null;
-
 
 			//
 			// HACK because System.Reflection.Emit is lame
@@ -2456,17 +2484,12 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Property {
-		
+	public class Property : MemberCore {
 		public readonly string Type;
-		public readonly string Name;
-		public readonly int    ModFlags;
 		public Block           Get, Set;
 		public PropertyBuilder PropertyBuilder;
 		public Attributes OptAttributes;
 		MethodBuilder GetBuilder, SetBuilder;
-
-		Location Location;
 
 		//
 		// The type, once we compute it.
@@ -2487,14 +2510,13 @@ namespace Mono.CSharp {
 
 		public Property (string type, string name, int mod_flags, Block get_block, Block set_block,
 				 Attributes attrs, Location loc)
+			: base (name, loc)
 		{
 			Type = type;
-			Name = name;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
 			Get = get_block;
 			Set = set_block;
 			OptAttributes = attrs;
-			Location = loc;
 		}
 
 		public void Define (TypeContainer parent)
@@ -2509,13 +2531,72 @@ namespace Mono.CSharp {
 			PropertyAttributes prop_attr = PropertyAttributes.RTSpecialName |
 				                       PropertyAttributes.SpecialName;
 		
-		
+			// Lookup Type, verify validity
 			PropertyType = parent.LookupType (Type, false);
+			if (PropertyType == null)
+				return;
+
+			// verify accessibility
+			if (!TypeContainer.AsAccessible (PropertyType, ModFlags))
+				return;
+			
 			Type [] parameters = new Type [1];
 			parameters [0] = PropertyType;
 
-			if (!TypeContainer.AsAccessible (PropertyType, ModFlags))
-				return;
+			//
+			// Find properties with the same name on the base class
+			//
+			MemberInfo [] props;
+			MemberInfo [] props_static = TypeContainer.FindMembers (
+				parent.TypeBuilder.BaseType,
+				MemberTypes.All, BindingFlags.Public | BindingFlags.Static,
+				System.Type.FilterName, Name);
+
+			MemberInfo [] props_instance = TypeContainer.FindMembers (
+				parent.TypeBuilder.BaseType,
+				MemberTypes.All, BindingFlags.Public | BindingFlags.Instance,
+				System.Type.FilterName, Name);
+
+			//
+			// Find if we have anything
+			//
+			if (props_static != null && props_static.Length > 0)
+				props = props_static;
+			else if (props_instance != null && props_instance.Length > 0)
+				props = props_instance;
+			else
+				props = null;
+
+			//
+			// If we have something on the base.
+			if (props != null && props.Length > 0){
+				//
+				// FIXME:
+				// Currently we expect only to get 1 match at most from our
+				// base class, maybe we can get more than one, investigate
+				// whether this is possible
+				//
+				if (props.Length > 1)
+					throw new Exception ("How do we handle this?");
+				
+				PropertyInfo pi = (PropertyInfo) props [0];
+
+				MethodInfo get = TypeManager.GetPropertyGetter (pi);
+				MethodInfo set = TypeManager.GetPropertySetter (pi);
+
+				MethodInfo reference = get == null ? set : get;
+				
+				if (!CheckMethodAgainstBase (parent, reference))
+					return;
+			} else {
+				if ((ModFlags & Modifiers.NEW) != 0)
+					WarningNotHiding (parent);
+				
+				if ((ModFlags & Modifiers.OVERRIDE) != 0)
+					Report.Error (115, Location,
+						      parent.MakeName (Name) +
+						      " no suitable methods found to override");
+			}
 			
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
 				Name, prop_attr, PropertyType, null);
@@ -2605,7 +2686,13 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			
+
+			//
+			// abstract or extern properties have no bodies
+			//
+			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+				return;
+
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, PropertyType, ModFlags);
@@ -2809,10 +2896,28 @@ namespace Mono.CSharp {
 			PropertyAttributes prop_attr =
 				PropertyAttributes.RTSpecialName |
 				PropertyAttributes.SpecialName;
+			bool error = false;
 			
 			IndexerType = parent.LookupType (Type, false);
 			Type [] parameters = FormalParameters.GetParameterInfo (parent);
 
+			// Check if the return type and arguments were correct
+			if (IndexerType == null || parameters == null)
+				return;
+
+			//
+			// verify accessibility
+			//
+			if (!TypeContainer.AsAccessible (IndexerType, ModFlags))
+				return;
+
+			foreach (Type partype in parameters)
+				if (!TypeContainer.AsAccessible (partype, ModFlags))
+					error = true;
+
+			if (error)
+				return;
+			
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
 				TypeManager.IndexerPropertyName (parent.TypeBuilder),
 				prop_attr, IndexerType, parameters);
@@ -3162,11 +3267,6 @@ namespace Mono.CSharp {
 			Name = name;
 			RetType = ret_type;
 			Parameters = parameters;
-
-			if (parameters != null){
-				if (parameters.Length == 0)
-					Parameters = null;
-			} 
 		}
 		
 		public override int GetHashCode ()

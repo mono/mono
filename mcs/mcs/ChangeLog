@@ -1,5 +1,23 @@
 2001-12-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs: (GetPropertyGetter, GetPropertyGetter): New
+	helper functions.
+
+	* class.cs: (MethodSignature.MethodSignature): Removed hack that
+	clears out the parameters field.
+	(MemberSignatureCompare): Cleanup
+
+	(MemberCore): New base class used to share code between MethodCore
+	and Property.
+
+	(RegisterRequiredImplementations) BindingFlags.Public requires
+	either BindingFlags.Instace or Static.  Use instance here.
+
+	* parameter.cs (GetParameterInfo): Return an empty array instead
+	of null on error.
+
+	* class.cs (Property): Abstract or extern properties have no bodies.
+
 	* parameter.cs (GetParameterInfo): return a zero-sized array.
 
 	* class.cs (TypeContainer.MethodModifiersValid): Move all the

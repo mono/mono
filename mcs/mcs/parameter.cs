@@ -253,13 +253,15 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Returns the argument types as an array
 		/// </summary>
+		static Type [] no_types = new Type [0];
+		
 		public Type [] GetParameterInfo (TypeContainer tc)
 		{
 			if (types != null)
 				return types;
 			
 			if (FixedParameters == null)
-				return null;
+				return no_types;
 
 			if (ComputeParameterTypes (tc) == false)
 				return null;
