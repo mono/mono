@@ -1,3 +1,10 @@
+2004-11-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Evidence.cs: Faster default evidence creation by using an internal
+	call to check for a possible Authenticode signature of the assembly.
+	Previously we had to make several I/O to verify this (quite rare)
+	presence (but the runtime already had a good hint about this).
+
 2004-10-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Evidence.cs: Fix the case where GetPublicKey returns a 0 length

@@ -33,8 +33,11 @@
 
 using System.Collections;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 using System.Security.Cryptography.X509Certificates;
+
+using Mono.Security.Authenticode;
 
 namespace System.Security.Policy {
 
@@ -243,6 +246,11 @@ namespace System.Security.Policy {
 		}
 #endif
 
+		// Use an icall to avoid multiple file i/o to detect the 
+		// "possible" presence of an Authenticode signature
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool IsAuthenticodePresent (Assembly a);
+
 		// this avoid us to build all evidences from the runtime
 		// (i.e. multiple unmanaged->managed calls) and also allows
 		// to delay their creation until (if) needed
@@ -270,14 +278,16 @@ namespace System.Security.Policy {
 			}
 
 			// Authenticode(r) signed assemblies get a Publisher evidence
-			try {
-				X509Certificate x509 = X509Certificate.CreateFromSignedFile (a.Location);
-				if (x509.GetHashCode () != 0) {
-					e.AddHost (new Publisher (x509));
+			if (IsAuthenticodePresent (a)) {
+				// Note: The certificate is part of the evidences even if it is not trusted!
+				// so we can't call X509Certificate.CreateFromSignedFile
+				AuthenticodeDeformatter ad = new AuthenticodeDeformatter (a.Location);
+				if (ad.SigningCertificate != null) {
+					X509Certificate x509 = new X509Certificate (ad.SigningCertificate.RawData);
+					if (x509.GetHashCode () != 0) {
+						e.AddHost (new Publisher (x509));
+					}
 				}
-			}
-			catch (ArgumentException) {
-				// URI are not supported
 			}
 #if NET_2_0
 			// assemblies loaded from the GAC also get a Gac evidence (new in Fx 2.0)
