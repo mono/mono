@@ -19,34 +19,26 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Data.SqlClient {
-	/// <summary>
-	/// Represents a parameter to a Command object, and optionally, 
-	/// its mapping to DataSet columns; and is implemented by .NET 
-	/// data providers that access data sources.
-	/// </summary>
 	public sealed class SqlParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 	{
 		#region Fields
 
-		SqlDbType sqlDbType;
+		SqlParameterCollection container = null;
 		DbType dbType;
-		string typeName;
-
-		bool isSizeSet = false;
-		bool isTypeSet = false;
-
-		string parmName;
-		object objValue;
-		int size;
-		string sourceColumn;
 		ParameterDirection direction = ParameterDirection.Input;
 		bool isNullable;
+		bool isSizeSet = false;
+		bool isTypeSet = false;
+		object objValue;
+		int offset;
+		string parameterName;
 		byte precision;
 		byte scale;
+		int size;
+		SqlDbType sqlDbType;
+		string sourceColumn;
 		DataRowVersion sourceVersion;
-		int offset;
-
-		SqlParameterCollection container = null;
+		string typeName;
 
 		#endregion // Fields
 
@@ -59,7 +51,7 @@ namespace System.Data.SqlClient {
 
 		public SqlParameter (string parameterName, object value) 
 		{
-			this.parmName = parameterName;
+			this.parameterName = parameterName;
 			this.objValue = value;
 			this.sourceVersion = DataRowVersion.Current;
 			InferSqlType (value);
@@ -96,13 +88,16 @@ namespace System.Data.SqlClient {
 			SourceVersion = sourceVersion;
 		}
 
+		// This constructor is used internally to construct a
+		// SqlParameter.  The value array comes from sp_procedure_params_rowset.
+		// This is in SqlCommand.DeriveParameters.
 		internal SqlParameter (object[] dbValues)
 		{
 			precision = 0;
 			scale = 0;
 			direction = ParameterDirection.Input;
 
-			parmName = (string) dbValues[3];
+			parameterName = (string) dbValues[3];
 
 			switch ((short) dbValues[5]) {
 			case 1:
@@ -162,8 +157,8 @@ namespace System.Data.SqlClient {
 		}
 
 		string IDataParameter.ParameterName {
-			get { return parmName; }
-			set { parmName = value; }
+			get { return parameterName; }
+			set { parameterName = value; }
 		}
 
 		[Browsable (false)]
@@ -188,8 +183,8 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Name of the parameter, like '@p1'")]
 		[DefaultValue ("")]
 		public string ParameterName {
-			get { return parmName; }
-			set { parmName = value; }
+			get { return parameterName; }
+			set { parameterName = value; }
 		}
 
 		[DataCategory ("Data")]
@@ -268,6 +263,8 @@ namespace System.Data.SqlClient {
 			return new SqlParameter (ParameterName, SqlDbType, Size, Direction, IsNullable, Precision, Scale, SourceColumn, SourceVersion, Value);
 		}
 
+		// If the value is set without the DbType/SqlDbType being set, then we
+		// infer type information.
 		private void InferSqlType (object value)
 		{
 			Type type = value.GetType ();
@@ -350,6 +347,9 @@ namespace System.Data.SqlClient {
                         return result.ToString ();
 		}
 
+		// When the DbType is set, we also set the SqlDbType, as well as the SQL Server
+		// string representation of the type name.  If the DbType is not convertible
+		// to an SqlDbType, throw an exception.
 		private void SetDbType (DbType type)
 		{
 			string exception = String.Format ("No mapping exists from DbType {0} to a known SqlDbType.", type);
@@ -513,6 +513,9 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		// When the SqlDbType is set, we also set the DbType, as well as the SQL Server
+		// string representation of the type name.  If the SqlDbType is not convertible
+		// to a DbType, throw an exception.
 		private void SetSqlDbType (SqlDbType type)
 		{
 			string exception = String.Format ("No mapping exists from SqlDbType {0} to a known DbType.", type);
@@ -622,7 +625,7 @@ namespace System.Data.SqlClient {
 
 		public override string ToString() 
 		{
-			return parmName;
+			return parameterName;
 		}
 
 		#endregion // Methods

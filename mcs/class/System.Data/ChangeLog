@@ -1,10 +1,12 @@
 2002-11-18  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlConnection.cs:
+		BeginTransaction bug.
+	* System.Data.SqlClient/SqlParameter.cs:
+		Add some comments to describe what is going on.
 	* System.Data.SqlClient/SqlCommand.cs:
 		Add a TODO.
 	* System.Data.SqlClient/SqlDataReader.cs:
 		Add support to get SQL Types
-	* System.Data.SqlClient/SqlParameter.cs:
-		Add some comments to describe what is going on.
 
 2002-11-16  Daniel Morgan <danmorg@sc.rr.com>
 

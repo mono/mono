@@ -195,7 +195,7 @@ namespace System.Data.SqlClient {
 
 		public SqlTransaction BeginTransaction (string transactionName)
 		{
-			return BeginTransaction (IsolationLevel.ReadCommitted, String.Empty);
+			return BeginTransaction (IsolationLevel.ReadCommitted, transactionName);
 		}
 
 		public SqlTransaction BeginTransaction (IsolationLevel iso, string transactionName)
