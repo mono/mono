@@ -1,3 +1,8 @@
+2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* object.c: Fixed possible integer overflow when allocating large
+	strings.
+
 2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-tables.h: reflecting locale-builder updates.
