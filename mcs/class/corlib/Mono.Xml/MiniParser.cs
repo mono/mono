@@ -36,10 +36,10 @@ using System.Globalization;
 
 namespace Mono.Xml {
 
-[CLSCompliant(false)] 
 #if INSIDE_CORLIB
 	internal
 #else
+        [CLSCompliant(false)]    
 	public
 #endif
 class MiniParser {

@@ -408,7 +408,6 @@ namespace System.IO {
 			}
 		}
 		
-		[CLSCompliant(false)]
 		public override void Write (uint value)
 		{
 			lock (this){
@@ -416,7 +415,6 @@ namespace System.IO {
 			}
 		}
 		
-		[CLSCompliant(false)]
 		public override void Write (ulong value)
 		{
 			lock (this){
@@ -537,7 +535,6 @@ namespace System.IO {
 			}
 		}
 
-		[CLSCompliant(false)]
 		public override void WriteLine (uint value)
 		{
 			lock (this){
@@ -545,7 +542,6 @@ namespace System.IO {
 			}
 		}
 
-		[CLSCompliant(false)]
 		public override void WriteLine (ulong value)
 		{
 			lock (this){

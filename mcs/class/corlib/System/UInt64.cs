@@ -331,7 +331,6 @@ namespace System
 			return System.Convert.ToInt64 (m_value);
 		}
 
-		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte(IFormatProvider provider)
 		{
 			return System.Convert.ToSByte (m_value);
@@ -347,19 +346,16 @@ namespace System
 			return System.Convert.ToType (m_value, conversionType, provider);
 		}
 
-		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16 (m_value);
 		}
 
-		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);
 		}
 
-		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return m_value;

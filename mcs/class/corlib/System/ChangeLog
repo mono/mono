@@ -1,3 +1,12 @@
+2004-05-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* Boolean.cs, Byte.cs, Char.cs, DBNull.cs, DateTime.cs,
+	  Decimal.cs, Double.cs, Enum.cs, Int16.cs, Int32.cs,
+	  Int64.cs, IntegerFormatter.cs, SByte.cs, Single.cs,
+	  String.cs, UInt16.cs, UInt32.cs, UInt64.cs: Removed
+	  useless [CLSCompliant (false)]
+
+
 2004-05-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* __ComObject.cs: To please corcompare (no implementation).

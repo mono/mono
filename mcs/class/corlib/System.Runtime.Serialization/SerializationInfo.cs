@@ -21,7 +21,7 @@ namespace System.Runtime.Serialization
 		string assemblyName; // the assembly being serialized
 		string fullTypeName; // the type being serialized.
 
-		[CLSCompliant (false)] IFormatterConverter converter;
+		IFormatterConverter converter;
 		
 		/* used by the runtime */
 		private SerializationInfo (Type type)

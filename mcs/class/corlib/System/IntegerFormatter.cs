@@ -162,7 +162,6 @@ namespace System {
 			return NumberToString (format, nfi, maxLongLength, 8, value);
 		}
 
-		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, sbyte value)
 		{
 			return NumberToString (format, nfi, maxIntLength, 1, (long)value);
@@ -210,25 +209,21 @@ namespace System {
 			return NumberToString (format, nfi, maxIntLength, 1, (ulong)value);
 		}		
 
-		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, ushort value)
 		{
 			return NumberToString (format, nfi, maxIntLength, 2, (ulong)value);
 		}
 
-		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, uint value)
 		{
 			return NumberToString (format, nfi, maxIntLength, 4, (ulong)value);
 		}
 
-		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, ulong value)
 		{
 			return NumberToString (format, nfi, maxLongLength, 8, value);
 		}
 		
-		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, int maxLength, int integerSize, ulong value)
 		{
 			char specifier;

@@ -85,7 +85,6 @@ namespace System
 			throw new InvalidCastException ();
 		}
 
-		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			throw new InvalidCastException ();
@@ -103,19 +102,16 @@ namespace System
 			throw new InvalidCastException ();
 		}
 
-		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			throw new InvalidCastException ();
 		}
 
-		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			throw new InvalidCastException ();
 		}
 
-		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			throw new InvalidCastException ();

@@ -1184,7 +1184,6 @@ namespace System
 			return Convert.ToInt64 (this, provider);
 		}
 	
-		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return Convert.ToSByte (this, provider);
@@ -1205,19 +1204,16 @@ namespace System
 			return Convert.ToType (this, conversionType,  provider);
 		}
 
-		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return Convert.ToUInt16 (this, provider);
 		}
 
-		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return Convert.ToUInt32 (this, provider);
 		}
 
-		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return Convert.ToUInt64 (this, provider);

@@ -14,10 +14,10 @@ using System.Security;
 namespace Mono.Xml {
 
 	// convert an XML document into SecurityElement objects
-	[CLSCompliant(false)]
 #if INSIDE_CORLIB
 	internal
 #else
+	[CLSCompliant(false)]    
 	public
 #endif
 	class SecurityParser : MiniParser, MiniParser.IHandler, MiniParser.IReader {

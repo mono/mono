@@ -1586,7 +1586,6 @@ namespace System
 			throw new InvalidCastException();
 		}
 
-		[CLSCompliant(false)]
 		SByte IConvertible.ToSByte(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
@@ -1607,13 +1606,11 @@ namespace System
 			throw new InvalidCastException();
 		}
 		
-		[CLSCompliant(false)]
 		UInt32 IConvertible.ToUInt32(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
-		[CLSCompliant(false)]
 		UInt64 IConvertible.ToUInt64(IFormatProvider provider)
 
 		{

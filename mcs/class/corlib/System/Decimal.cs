@@ -965,7 +965,6 @@ namespace System
 	    throw new InvalidCastException ();
 	}
 
-	[CLSCompliant (false)]
 	DateTime IConvertible.ToDateTime (IFormatProvider provider)
 	{
 	    throw new InvalidCastException ();
@@ -996,7 +995,6 @@ namespace System
 	    return Convert.ToInt64 (this);
 	}
 
-	[CLSCompliant (false)]
 	sbyte IConvertible.ToSByte (IFormatProvider provider)
 	{
 	    return Convert.ToSByte (this);
@@ -1007,19 +1005,16 @@ namespace System
 	    return Convert.ToSingle (this);
 	}
 
-	[CLSCompliant (false)]
 	ushort IConvertible.ToUInt16 (IFormatProvider provider)
 	{
 	    return Convert.ToUInt16 (this);
 	}
 
-	[CLSCompliant (false)]
 	uint IConvertible.ToUInt32 (IFormatProvider provider)
 	{
 	    return Convert.ToUInt32 (this);
 	}
 
-	[CLSCompliant (false)]
 	ulong IConvertible.ToUInt64 (IFormatProvider provider)
 	{
 	    return Convert.ToUInt64 (this);
