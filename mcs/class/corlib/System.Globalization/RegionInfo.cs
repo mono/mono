@@ -14,142 +14,395 @@ namespace System.Globalization {
 
 			switch (culture) {
 			case 0x0401: // ar-SA Arabic (Saudi Arabia)
+				NLS_id = 682;
+				break;
 			case 0x0801: // ar-IQ Arabic (Iraq)
+				NLS_id = 368;
+				break;
 			case 0x0C01: // ar-EG Arabic (Egypt)
+				NLS_id = 818;
+				break;
 			case 0x1001: // ar-LY Arabic (Libya)
+				NLS_id = 434;
+				break;
 			case 0x1401: // ar-DZ Arabic (Algeria)
+				NLS_id = 12;
+				break;
 			case 0x1801: // ar-MA Arabic (Morocco)
+				NLS_id = 504;
+				break;
 			case 0x1C01: // ar-TN Arabic (Tunisia)
+				NLS_id = 788;
+				break;
 			case 0x2001: // ar-OM Arabic (Oman)
+				NLS_id = 512;
+				break;
 			case 0x2401: // ar-YE Arabic (Yemen)
+				NLS_id = 887;
+				break;
 			case 0x2801: // ar-SY Arabic (Syria)
+				NLS_id = 760;
+				break;
 			case 0x2C01: // ar-JO Arabic (Jordan)
+				NLS_id = 400;
+				break;
 			case 0x3001: // ar-LB Arabic (Lebanon)
+				NLS_id = 422;
+				break;
 			case 0x3401: // ar-KW Arabic (Kuwait)
+				NLS_id = 414;
+				break;
 			case 0x3801: // ar-AE Arabic (U.A.E.)
+				NLS_id = 784;
+				break;
 			case 0x3C01: // ar-BH Arabic (Bahrain)
+				NLS_id = 48;
+				break;
 			case 0x4001: // ar-QA Arabic (Qatar)
+				NLS_id = 634;
+				break;
 			case 0x0402: // bg-BG Bulgarian (Bulgaria)
+				NLS_id = 100;
+				break;
 			case 0x0403: // ca-ES Catalan (Spain)
-			case 0x0004: // zh-CHS Chinese (Simplified)
+				NLS_id = 724;
+				break;
 			case 0x0404: // zh-TW Chinese (Taiwan)
+				NLS_id = 158;
+				break;
 			case 0x0804: // zh-CN Chinese (People's Republic of China)
+				NLS_id = 156;
+				break;
 			case 0x0C04: // zh-HK Chinese (Hong Kong S.A.R.)
+				NLS_id = 344;
+				break;
 			case 0x1004: // zh-SG Chinese (Singapore)
+				NLS_id = 702;
+				break;
 			case 0x1404: // zh-MO Chinese (Macau S.A.R.)
-			case 0x7C04: // zh-CHT Chinese (Traditional)
+				NLS_id = 446;
+				break;
 			case 0x0405: // cs-CZ Czech (Czech Republic)
+				NLS_id = 203;
+				break;
 			case 0x0406: // da-DK Danish (Denmark)
+				NLS_id = 208;
+				break;
 			case 0x0407: // de-DE German (Germany)
+				NLS_id = 276;
+				break;
 			case 0x0807: // de-CH German (Switzerland)
+				NLS_id = 756;
+				break;
 			case 0x0C07: // de-AT German (Austria)
+				NLS_id = 40;
+				break;
 			case 0x1007: // de-LU German (Luxembourg)
+				NLS_id = 442;
+				break;
 			case 0x1407: // de-LI German (Liechtenstein)
+				NLS_id = 438;
+				break;
 			case 0x0408: // el-GR Greek (Greece)
+				NLS_id = 300;
+				break;
 			case 0x0409: // en-US English (United States)
+				NLS_id = 840;
+				break;
 			case 0x0809: // en-GB English (United Kingdom)
+				NLS_id = 826;
+				break;
 			case 0x0C09: // en-AU English (Australia)
+				NLS_id = 36;
+				break;
 			case 0x1009: // en-CA English (Canada)
+				NLS_id = 124;
+				break;
 			case 0x1409: // en-NZ English (New Zealand)
+				NLS_id = 554;
+				break;
 			case 0x1809: // en-IE English (Ireland)
+				NLS_id = 372;
+				break;
 			case 0x1C09: // en-ZA English (South Africa)
+				NLS_id = 710;
+				break;
 			case 0x2009: // en-JM English (Jamaica)
-			case 0x2409: // en-CB English (Caribbean)
+				NLS_id = 388;
+				break;
 			case 0x2809: // en-BZ English (Belize)
+				NLS_id = 84;
+				break;
 			case 0x2C09: // en-TT English (Trinidad and Tobago)
+				NLS_id = 780;
+				break;
 			case 0x3009: // en-ZW English (Zimbabwe)
+				NLS_id = 716;
+				break;
 			case 0x3409: // en-PH English (Republic of the Philippines)
+				NLS_id = 608;
+				break;
 			case 0x080A: // es-MX Spanish (Mexico)
+				NLS_id = 484;
+				break;
 			case 0x0C0A: // es-ES Spanish (Spain)
+				NLS_id = 724;
+				break;
 			case 0x100A: // es-GT Spanish (Guatemala)
+				NLS_id = 320;
+				break;
 			case 0x140A: // es-CR Spanish (Costa Rica)
+				NLS_id = 188;
+				break;
 			case 0x180A: // es-PA Spanish (Panama)
+				NLS_id = 591;
+				break;
 			case 0x1C0A: // es-DO Spanish (Dominican Republic)
+				NLS_id = 214;
+				break;
 			case 0x200A: // es-VE Spanish (Venezuela)
+				NLS_id = 862;
+				break;
 			case 0x240A: // es-CO Spanish (Colombia)
+				NLS_id = 170;
+				break;
 			case 0x280A: // es-PE Spanish (Peru)
+				NLS_id = 604;
+				break;
 			case 0x2C0A: // es-AR Spanish (Argentina)
+				NLS_id = 32;
+				break;
 			case 0x300A: // es-EC Spanish (Ecuador)
+				NLS_id = 218;
+				break;
 			case 0x340A: // es-CL Spanish (Chile)
+				NLS_id = 152;
+				break;
 			case 0x380A: // es-UY Spanish (Uruguay)
+				NLS_id = 858;
+				break;
 			case 0x3C0A: // es-PY Spanish (Paraguay)
+				NLS_id = 600;
+				break;
 			case 0x400A: // es-BO Spanish (Bolivia)
+				NLS_id = 68;
+				break;
 			case 0x440A: // es-SV Spanish (El Salvador)
+				NLS_id = 222;
+				break;
 			case 0x480A: // es-HN Spanish (Honduras)
+				NLS_id = 340;
+				break;
 			case 0x4C0A: // es-NI Spanish (Nicaragua)
+				NLS_id = 558;
+				break;
 			case 0x500A: // es-PR Spanish (Puerto Rico)
+				NLS_id = 630;
+				break;
 			case 0x040B: // fi-FI Finnish (Finland)
+				NLS_id = 246;
+				break;
 			case 0x040C: // fr-FR French (France)
+				NLS_id = 250;
+				break;
 			case 0x080C: // fr-BE French (Belgium)
+				NLS_id = 56;
+				break;
 			case 0x0C0C: // fr-CA French (Canada)
+				NLS_id = 124;
+				break;
 			case 0x100C: // fr-CH French (Switzerland)
+				NLS_id = 756;
+				break;
 			case 0x140C: // fr-LU French (Luxembourg)
+				NLS_id = 442;
+				break;
 			case 0x180C: // fr-MC French (Principality of Monaco)
+				NLS_id = 492;
+				break;
 			case 0x040D: // he-IL Hebrew (Israel)
+				NLS_id = 376;
+				break;
 			case 0x040E: // hu-HU Hungarian (Hungary)
+				NLS_id = 348;
+				break;
 			case 0x040F: // is-IS Icelandic (Iceland)
+				NLS_id = 352;
+				break;
 			case 0x0410: // it-IT Italian (Italy)
+				NLS_id = 380;
+				break;
 			case 0x0810: // it-CH Italian (Switzerland)
+				NLS_id = 756;
+				break;
 			case 0x0411: // ja-JP Japanese (Japan)
+				NLS_id = 392;
+				break;
 			case 0x0412: // ko-KR Korean (Korea)
+				NLS_id = 410;
+				break;
 			case 0x0413: // nl-NL Dutch (Netherlands)
+				NLS_id = 528;
+				break;
 			case 0x0813: // nl-BE Dutch (Belgium)
-			case 0x0414: // nb-NO Norwegian (Bokmål) (Norway)
+				NLS_id = 56;
+				break;
+			case 0x0414: // nb-NO Norwegian (Bokm†l) (Norway)
+				NLS_id = 578;
+				break;
 			case 0x0814: // nn-NO Norwegian (Nynorsk) (Norway)
+				NLS_id = 578;
+				break;
 			case 0x0415: // pl-PL Polish (Poland)
-			case 0x0016: // pt Portuguese
+				NLS_id = 616;
+				break;
 			case 0x0416: // pt-BR Portuguese (Brazil)
+				NLS_id = 76;
+				break;
 			case 0x0816: // pt-PT Portuguese (Portugal)
+				NLS_id = 620;
+				break;
 			case 0x0418: // ro-RO Romanian (Romania)
+				NLS_id = 642;
+				break;
 			case 0x0419: // ru-RU Russian (Russia)
+				NLS_id = 643;
+				break;
 			case 0x041A: // hr-HR Croatian (Croatia)
-			case 0x081A: // Lt-sr-SP Serbian (Latin) (Serbia)
-			case 0x0C1A: // Cy-sr-SP Serbian (Cyrillic) (Serbia)
+				NLS_id = 191;
+				break;
 			case 0x041B: // sk-SK Slovak (Slovakia)
+				NLS_id = 703;
+				break;
 			case 0x041C: // sq-AL Albanian (Albania)
+				NLS_id = 8;
+				break;
 			case 0x041D: // sv-SE Swedish (Sweden)
+				NLS_id = 752;
+				break;
 			case 0x081D: // sv-FI Swedish (Finland)
+				NLS_id = 246;
+				break;
 			case 0x041E: // th-TH Thai (Thailand)
+				NLS_id = 764;
+				break;
 			case 0x041F: // tr-TR Turkish (Turkey)
+				NLS_id = 792;
+				break;
 			case 0x0420: // ur-PK Urdu (Islamic Republic of Pakistan)
+				NLS_id = 586;
+				break;
 			case 0x0421: // id-ID Indonesian (Indonesia)
+				NLS_id = 360;
+				break;
 			case 0x0422: // uk-UA Ukrainian (Ukraine)
+				NLS_id = 804;
+				break;
 			case 0x0423: // be-BY Belarusian (Belarus)
+				NLS_id = 112;
+				break;
 			case 0x0424: // sl-SI Slovenian (Slovenia)
+				NLS_id = 705;
+				break;
 			case 0x0425: // et-EE Estonian (Estonia)
+				NLS_id = 233;
+				break;
 			case 0x0426: // lv-LV Latvian (Latvia)
+				NLS_id = 428;
+				break;
 			case 0x0427: // lt-LT Lithuanian (Lithuania)
+				NLS_id = 440;
+				break;
 			case 0x0429: // fa-IR Farsi (Iran)
+				NLS_id = 364;
+				break;
 			case 0x042A: // vi-VN Vietnamese (Viet Nam)
+				NLS_id = 704;
+				break;
 			case 0x042B: // hy-AM Armenian (Armenia)
+				NLS_id = 51;
+				break;
 			case 0x042C: // Lt-az-AZ Azeri (Latin) (Azerbaijan)
+				NLS_id = 31;
+				break;
 			case 0x082C: // Cy-az-AZ Azeri (Cyrillic) (Azerbaijan)
+				NLS_id = 31;
+				break;
 			case 0x042D: // eu-ES Basque (Spain)
+				NLS_id = 724;
+				break;
 			case 0x042F: // mk-MK FYRO Macedonian (Former Yugoslav Republic of Macedonia)
+				NLS_id = 807;
+				break;
 			case 0x0436: // af-ZA Afrikaans (South Africa)
+				NLS_id = 710;
+				break;
 			case 0x0437: // ka-GE Georgian (Georgia)
+				NLS_id = 268;
+				break;
 			case 0x0438: // fo-FO Faeroese (Faeroe Islands)
+				NLS_id = 234;
+				break;
 			case 0x0439: // hi-IN Hindi (India)
+				NLS_id = 356;
+				break;
 			case 0x043E: // ms-MY Malay (Malaysia)
+				NLS_id = 458;
+				break;
 			case 0x083E: // ms-BN Malay (Brunei Darussalam)
+				NLS_id = 96;
+				break;
 			case 0x043F: // kk-KZ Kazakh (Kazakhstan)
+				NLS_id = 398;
+				break;
 			case 0x0440: // ky-KZ Kyrgyz (Kyrgyzstan)
+				NLS_id = 398;
+				break;
 			case 0x0441: // sw-KE Swahili (Kenya)
+				NLS_id = 404;
+				break;
 			case 0x0443: // Lt-uz-UZ Uzbek (Latin) (Uzbekistan)
+				NLS_id = 860;
+				break;
 			case 0x0843: // Cy-uz-UZ Uzbek (Cyrillic) (Uzbekistan)
-			case 0x0444: // tt-TA Tatar (Tatarstan)
+				NLS_id = 860;
+				break;
 			case 0x0446: // pa-IN Punjabi (India)
+				NLS_id = 356;
+				break;
 			case 0x0447: // gu-IN Gujarati (India)
+				NLS_id = 356;
+				break;
 			case 0x0449: // ta-IN Tamil (India)
+				NLS_id = 356;
+				break;
 			case 0x044A: // te-IN Telugu (India)
+				NLS_id = 356;
+				break;
 			case 0x044B: // kn-IN Kannada (India)
+				NLS_id = 356;
+				break;
 			case 0x044E: // mr-IN Marathi (India)
+				NLS_id = 356;
+				break;
 			case 0x044F: // sa-IN Sanskrit (India)
+				NLS_id = 356;
+				break;
 			case 0x0450: // mn-MN Mongolian (Mongolia)
+				NLS_id = 496;
+				break;
 			case 0x0456: // gl-ES Galician (Spain)
+				NLS_id = 724;
+				break;
 			case 0x0457: // kok-IN Konkani (India)
+				NLS_id = 356;
+				break;
 			case 0x045A: // syr-SY Syriac (Syria)
+				NLS_id = 760;
+				break;
 			case 0x0465: // div-MV Divehi (Maldives)
+				NLS_id = 462;
+				break;
 			case 0x007F: //  Invariant Language (Invariant Country)
 				throw new ArgumentException ("There is no region associated with the Invariant Culture (Culture ID: 0x7F).");
 			default:
@@ -159,7 +412,7 @@ namespace System.Globalization {
 		}
 
 		public RegionInfo (string name) {
-			switch (name) {
+			switch (name.ToUpper ()) {
 			case "AF": // Afghanistan
 				NLS_id = 004;
 				break;
@@ -1410,6 +1663,18 @@ namespace System.Globalization {
 				}
 			}
 		}
+
+		public virtual string ISOCurrencySymbol {
+			get {
+				switch (NLS_id) {
+				default:
+					throw new Exception ("This code should not be reached.");
+				}
+			}
+		}
+
+		//
+		// methods
 
                 public override bool Equals(object value) {
 			return value == this;
