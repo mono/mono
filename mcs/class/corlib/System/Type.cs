@@ -642,19 +642,19 @@ namespace System {
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			return GetPropertyImpl (name, DefaultBindingFlags, null, null, null, null);
+			return GetPropertyImpl (name, DefaultBindingFlags, null, null, new Type[0], null);
 		}
 
 		public PropertyInfo GetProperty( string name, BindingFlags bindingAttr) {
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			return GetPropertyImpl (name, bindingAttr, null, null, null, null);
+			return GetPropertyImpl (name, bindingAttr, null, null, new Type[0], null);
 		}
 
 		public PropertyInfo GetProperty( string name, Type returnType) {
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			return GetPropertyImpl (name, DefaultBindingFlags, null, returnType, null, null);
+			return GetPropertyImpl (name, DefaultBindingFlags, null, returnType, new Type[0], null);
 		}
 
 		[MonoTODO]

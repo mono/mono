@@ -1,14 +1,19 @@
+2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
+	
+	* Type.cs (GetProperty): fixed call syntax (needs an empty array not null)
+	* MonoType.cs (GetPropertyImpl) : basic implementation (ignores types, bindingAttr, modifiers)
+
+2002-04-24  Nick Drochak  <ndrochak@gol.com>
+
+	* Double.cs (Parse): Handle case where there are no digits before the 
+	decimal point, such as ".1".
+
 2002-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Int32.cs:
 	* UInt32.cs:
 	* Int64.cs:
 	* UInt64.cs: fixed bug #23738 (hex numbers parsed wrong).
-
-2002-04-24  Nick Drochak  <ndrochak@gol.com>
-
-	* Double.cs (Parse): Handle case where there are no digits before the 
-	decimal point, such as ".1".
 
 2002-04-23	Patrik Torstensson <patrik.torstensson@labs2.com>
 

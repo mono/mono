@@ -2,6 +2,7 @@
 //
 // Sean MacIsaac (macisaac@ximian.com)
 // Paolo Molaro (lupus@ximian.com)
+// Patrik Torstensson (patrik.torstensson@labs2.com)
 //
 // (C) 2001 Ximian, Inc.
 
@@ -103,10 +104,39 @@ namespace System
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override PropertyInfo[] GetProperties( BindingFlags bindingAttr);
-		
+
+		[MonoTODO]
 		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
-			// FIXME
-			return null;
+			// fixme: needs to use the binder, and send the modifiers to that binder
+			if (null == name || types == null)
+				throw new ArgumentNullException();
+			
+			bool found = false;
+			PropertyInfo ret = null;
+			PropertyInfo [] props = GetProperties(bindingAttr);
+
+			foreach (PropertyInfo info in props) {
+					if (info.Name != name) 
+						continue;
+
+					if (returnType != null)
+						if (info.GetGetMethod().ReturnType != returnType)
+							continue;
+
+					if (types.Length > 0) {
+						if (info.GetIndexParameters().Length != types.Length)
+							continue;
+	
+						// fixme: compare parameters
+					}
+
+					if (null != ret)
+						throw new AmbiguousMatchException();
+
+					ret = info;
+			}
+
+			return ret;
 		}
 
 		protected override bool HasElementTypeImpl () {
