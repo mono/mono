@@ -1,3 +1,7 @@
+2004-04-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ReaderWriterLockTest.cs: Added more tests for bugs 55911 and 55909.
+
 2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ThreadTest.cs: Removed [Ignore] on WindowsPrincipal test. Adjusted

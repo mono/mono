@@ -18,29 +18,45 @@ namespace MonoTests.System.Threading
 	{
 		ReaderWriterLock rwlock;
 		
-		Exception resultException;
-		ThreadStart secondaryThread;
-		
-		void StartThread (ThreadStart ts)
+		class ThreadRunner
 		{
-			secondaryThread = ts;
-			resultException = null;
-			Thread t = new Thread (new ThreadStart (ThreadRunner));
-			t.Start ();
-			t.Join ();
-			if (resultException != null) throw resultException;
+			public ThreadStart SecondaryThread;
+			public Exception ResultException;
+			public Thread RunningThread;
+			
+			public void Run ()
+			{
+				try
+				{
+					SecondaryThread();
+				}
+				catch (Exception ex)
+				{
+					ResultException = ex;
+				}
+			}
+			
+			public void Join ()
+			{
+				RunningThread.Join (5000);
+				if (ResultException != null) throw ResultException;
+			}
 		}
 		
-		void ThreadRunner ()
+		void RunThread (ThreadStart ts)
 		{
-			try
-			{
-				secondaryThread();
-			}
-			catch (Exception ex)
-			{
-				resultException = ex;
-			}
+			ThreadRunner tr = StartThread (ts);
+			tr.Join ();
+		}
+		
+		ThreadRunner StartThread (ThreadStart ts)
+		{
+			ThreadRunner tr = new ThreadRunner();
+			tr.SecondaryThread = ts;
+			Thread t = new Thread (new ThreadStart (tr.Run));
+			tr.RunningThread = t;
+			t.Start ();
+			return tr;
 		}
 		
 		[Test]
@@ -50,7 +66,7 @@ namespace MonoTests.System.Threading
 			Assert ("a1", !rwlock.IsReaderLockHeld);
 			rwlock.AcquireReaderLock (500);
 			Assert ("a2", rwlock.IsReaderLockHeld);
-			StartThread (new ThreadStart (IsReaderLockHeld_2));
+			RunThread (new ThreadStart (IsReaderLockHeld_2));
 			rwlock.ReleaseReaderLock ();
 		}
 		
@@ -66,7 +82,7 @@ namespace MonoTests.System.Threading
 			Assert ("a1", !rwlock.IsWriterLockHeld);
 			rwlock.AcquireWriterLock (500);
 			Assert ("a2", rwlock.IsWriterLockHeld);
-			StartThread (new ThreadStart (IsWriterLockHeld_2));
+			RunThread (new ThreadStart (IsWriterLockHeld_2));
 			rwlock.ReleaseWriterLock ();
 		}
 		
@@ -83,18 +99,18 @@ namespace MonoTests.System.Threading
 			rwlock.AcquireReaderLock (500);
 			rwlock.ReleaseReaderLock ();
 			Assert ("a1", rwlock.IsReaderLockHeld);			
-			StartThread (new ThreadStart (AcquireLock_readerWorks));
+			RunThread (new ThreadStart (AcquireLock_readerWorks));
 			Assert ("a2", rwlock.IsReaderLockHeld);
 			
-			StartThread (new ThreadStart (AcquireLock_writerFails));
+			RunThread (new ThreadStart (AcquireLock_writerFails));
 			rwlock.ReleaseReaderLock ();
 			Assert ("a6", !rwlock.IsReaderLockHeld);
 			
-			StartThread (new ThreadStart (AcquireLock_writerWorks));
+			RunThread (new ThreadStart (AcquireLock_writerWorks));
 			
 			rwlock.AcquireWriterLock (200);
-			StartThread (new ThreadStart (AcquireLock_writerFails));
-			StartThread (new ThreadStart (AcquireLock_readerFails));
+			RunThread (new ThreadStart (AcquireLock_writerFails));
+			RunThread (new ThreadStart (AcquireLock_readerFails));
 			rwlock.ReleaseWriterLock ();
 		}
 		
@@ -149,10 +165,10 @@ namespace MonoTests.System.Threading
 			Assert ("r1", rwlock.IsReaderLockHeld);
 			
 			LockCookie co = rwlock.ReleaseLock ();
-			StartThread (new ThreadStart (AcquireLock_writerWorks));
+			RunThread (new ThreadStart (AcquireLock_writerWorks));
 			
 			rwlock.RestoreLock (ref co);
-			StartThread (new ThreadStart (AcquireLock_writerFails));
+			RunThread (new ThreadStart (AcquireLock_writerFails));
 			
 			rwlock.ReleaseReaderLock ();
 			Assert ("r2", rwlock.IsReaderLockHeld);
@@ -169,10 +185,10 @@ namespace MonoTests.System.Threading
 			Assert ("w1", rwlock.IsWriterLockHeld);
 			
 			LockCookie co = rwlock.ReleaseLock ();
-			StartThread (new ThreadStart (AcquireLock_readerWorks));
+			RunThread (new ThreadStart (AcquireLock_readerWorks));
 			
 			rwlock.RestoreLock (ref co);
-			StartThread (new ThreadStart (AcquireLock_readerFails));
+			RunThread (new ThreadStart (AcquireLock_readerFails));
 			
 			rwlock.ReleaseWriterLock ();
 			Assert ("w2", rwlock.IsWriterLockHeld);
@@ -190,12 +206,12 @@ namespace MonoTests.System.Threading
 			LockCookie co = rwlock.UpgradeToWriterLock (200);
 			Assert ("u1", !rwlock.IsReaderLockHeld);
 			Assert ("u2", rwlock.IsWriterLockHeld);
-			StartThread (new ThreadStart (AcquireLock_writerFails));
+			RunThread (new ThreadStart (AcquireLock_writerFails));
 			
 			rwlock.DowngradeFromWriterLock (ref co);
 			Assert ("u3", rwlock.IsReaderLockHeld);
 			Assert ("u4", !rwlock.IsWriterLockHeld);
-			StartThread (new ThreadStart (AcquireLock_readerWorks));
+			RunThread (new ThreadStart (AcquireLock_readerWorks));
 			
 			rwlock.ReleaseReaderLock ();
 			Assert ("u5", rwlock.IsReaderLockHeld);
@@ -226,5 +242,114 @@ namespace MonoTests.System.Threading
 			Assert ("u9", !rwlock.IsReaderLockHeld);
 			Assert ("u10", !rwlock.IsWriterLockHeld);
 		}
+		
+		[Test]
+		public void TestReaderMustWaitWriter ()
+		{
+			// A thread cannot get the reader lock if there are other threads
+			// waiting for the writer lock.
+			
+			rwlock = new ReaderWriterLock ();
+			rwlock.AcquireWriterLock (200);
+			
+			ThreadRunner tr = StartThread (new ThreadStart (ReaderMustWaitWriter_2));
+			Thread.Sleep (200);
+			
+			RunThread (new ThreadStart (AcquireLock_readerFails));
+			
+			rwlock.ReleaseReaderLock ();
+			tr.Join ();
+		}
+		
+		void ReaderMustWaitWriter_2 ()
+		{
+			rwlock.AcquireWriterLock (2000);
+			rwlock.ReleaseWriterLock ();
+		}
+		
+		[Test]
+		public void TestBug_55911 ()
+		{
+			rwlock = new ReaderWriterLock ();
+			
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+			try {
+				LockCookie lc = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+			}
+			finally { rwlock.ReleaseReaderLock(); }
+			
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+			try {
+				LockCookie lc = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+			}
+			finally { rwlock.ReleaseReaderLock(); }
+		}
+		
+		[Test]
+		public void TestBug_55909 ()
+		{
+			rwlock = new ReaderWriterLock ();
+			ThreadRunner tr = StartThread (new ThreadStart(Bug_55909_Thread2));
+			Thread.Sleep (200);
+			rwlock.AcquireReaderLock (Timeout.Infinite);
+			try {
+				LockCookie lc = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+				Thread.Sleep (500);
+			}
+			finally { rwlock.ReleaseReaderLock(); }
+			
+			tr.Join ();
+		}
+		
+		public void Bug_55909_Thread2 ()
+		{
+			rwlock.AcquireReaderLock(Timeout.Infinite);
+			try {
+				Thread.Sleep (1000);
+				LockCookie lc = rwlock.UpgradeToWriterLock (Timeout.Infinite);
+				Thread.Sleep (500);
+			}
+			finally { rwlock.ReleaseReaderLock(); }
+		}
+		
+		[Test]
+		public void TestBug_55909_bis ()
+		{
+			rwlock = new ReaderWriterLock ();
+			ThreadRunner tr1 = StartThread (new ThreadStart(Bug_55909_bis_ReaderWriter));
+			Thread.Sleep(100);
+			ThreadRunner tr2 = StartThread (new ThreadStart(Bug_55909_bis_Reader));
+			Thread.Sleep(100);
+			ThreadRunner tr3 = StartThread (new ThreadStart(Bug_55909_bis_Writer));
+			Thread.Sleep(100);
+			ThreadRunner tr4 = StartThread (new ThreadStart(Bug_55909_bis_Reader));
+			tr1.Join ();
+			tr2.Join ();
+			tr3.Join ();
+			tr4.Join ();
+		}
+		
+		void Bug_55909_bis_Reader ()
+		{
+			rwlock.AcquireReaderLock(-1);
+			Thread.Sleep(2000);
+			rwlock.ReleaseReaderLock();
+		}
+
+		void Bug_55909_bis_ReaderWriter ()
+		{
+			rwlock.AcquireReaderLock(-1);
+			LockCookie lc = rwlock.UpgradeToWriterLock(-1);
+			Thread.Sleep(1000);
+			rwlock.DowngradeFromWriterLock(ref lc);
+			rwlock.ReleaseReaderLock();
+		}
+
+		void Bug_55909_bis_Writer ()
+		{
+			rwlock.AcquireWriterLock(-1);
+			rwlock.ReleaseWriterLock();
+		}
+		
 	}
 }
