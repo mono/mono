@@ -33,8 +33,6 @@ numbers, as they look nicer on the debugging output.
 -10	User-defined conversion cannot convert between types that derive 
 	from each other.
 
--11	Delegate creation expression takes only one argument
-
 -12     More than one integral conversion exists for the type on a
 	switch statement.
 
@@ -77,13 +75,9 @@ numbers, as they look nicer on the debugging output.
 	return type of a method
 
 
-6024    Unused `using' statement
-
-	Sample:
-		using System;
-		class X {} 
-
 -25     Generic parse error
+
+-26     Corlib compilation is not supported in MS.NET
 
 ----------
 
@@ -97,3 +91,6 @@ the Microsoft C# compiler:
 -202    Can not use a type parameter in an attribute.
 
 -203    Can not use type parameters as unmanaged types.
+
+-204	yield statement in something which is not a method-body,
+	accessor-body or operator-body
