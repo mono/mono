@@ -1,3 +1,8 @@
+2005-03-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* process.c: Fix buffer length in ves_icall_System_Diagnostics_Process
+	_ProcessName_internal.
+
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_array_new_full): Fix aligning of array size. Fixes
