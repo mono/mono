@@ -4215,7 +4215,14 @@ namespace Mono.CSharp {
 						pr.AddressOf (ec, mode);
 					}
 				} else {
-					((IMemoryLocation)Expr).AddressOf (ec, mode);
+					if (Expr is IMemoryLocation)
+                                               ((IMemoryLocation) Expr).AddressOf (ec, mode);
+					else {
+						Report.Error (
+							1510, Expr.Location,
+							"An lvalue is required as an argument to out or ref");
+						return;
+					}
 				}
 			} else
 				Expr.Emit (ec);

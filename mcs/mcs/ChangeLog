@@ -1,3 +1,10 @@
+2004-12-29  Duncan Mak  <duncan@ximian.com>
+
+	* expression.cs (Argument.Emit): Check that Expr is
+	IMemoryLocation before casting to it, and report CS1510 otherwise.
+
+	This fixes #70402.
+
 2004-12-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* statement.cs (Block.ThisVariable): remove the recursion here, to

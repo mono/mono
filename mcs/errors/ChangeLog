@@ -1,3 +1,7 @@
+2004-12-29  Duncan Mak  <duncan@ximian.com>
+
+	* cs1510-3.cs: Added to track bug #70402.
+
 2004-12-17  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (run-mcs-tests, run-generics.tests): Don't remove
