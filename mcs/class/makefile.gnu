@@ -8,6 +8,7 @@ DIRS =	corlib				\
 	System.Drawing			\
 	System.EnterpriseServices	\
 	Mono.Data.Tds			\
+	Mono.GetOptions			\
 	System.Data			\
 	System.Web			\
 	System.Web.Services		\
