@@ -3837,7 +3837,7 @@ namespace Mono.CSharp {
 
 				expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
 
-				return expr.Resolve (ec);
+				return expr.ResolveWithSimpleName (ec);
 			}
 					
 			//

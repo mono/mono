@@ -1,3 +1,7 @@
+2001-12-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Use ResolveWithSimpleName on compound names.
+
 2001-12-02  Ravi Pratap  <ravi@ximian.com>
 
 	* constant.cs (EmitConstant): Make sure we resolve the associated expression
