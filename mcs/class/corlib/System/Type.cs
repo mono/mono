@@ -541,10 +541,9 @@ namespace System {
 		}
 
 		public virtual bool IsInstanceOfType (object o) {
-			if (o != null) {
-				Type t = o.GetType ();
-				return (t == this) || t.IsSubclassOf (this);
-			}
+			if (o != null)
+				return IsAssignableFrom (o.GetType ());
+
 			return false;
 		}
 

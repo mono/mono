@@ -1,3 +1,7 @@
+2003-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Type.cs: fixed bug #40123.
+
 2003-03-22  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fixed some bugs for get the same
