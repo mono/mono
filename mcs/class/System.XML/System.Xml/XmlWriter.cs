@@ -34,6 +34,7 @@ using System;
 using System.IO;
 using System.Text;
 #if NET_2_0
+using System.Xml.XPath;
 using MS.Internal.Xml;
 #endif
 
@@ -361,6 +362,14 @@ namespace System.Xml
 			else
 				WriteString (localName);
 		}
+
+#if NET_2_0
+		[MonoTODO ("defattr handling")]
+		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
+		{
+			WriteNode (navigator.ReadSubtree (), defattr);
+		}
+#endif
 
 		public virtual void WriteNode (XmlReader reader, bool defattr)
 		{

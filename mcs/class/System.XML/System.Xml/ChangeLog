@@ -1,5 +1,10 @@
 2004-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlWriter.cs : implemented WriteNode(XPathNavigator, bool) 
+	  incompletely, using XPathNavigator.ReadSubtree().
+
+2004-07-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReader.cs : Implemented new 2.0 virtual members that used to be
 	  abstract in 1.x. Implemented ReadSubtree().
 
