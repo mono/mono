@@ -139,7 +139,7 @@ namespace System.Xml.Schema
 			targetNamespace = GetSafeNs (targetNamespace);
 			XmlTextReader r = null;
 			try {
-				r = new XmlTextReader (url);
+				r = new XmlTextReader (url, nameTable);
 				return Add (targetNamespace, r);
 			} finally {
 				if (r != null)

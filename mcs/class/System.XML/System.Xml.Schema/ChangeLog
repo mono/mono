@@ -1,3 +1,7 @@
+2004-11-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaSet.cs : use NameTable when creating XmlTextReader.
+
 2004-11-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSet.cs : reduced extraneous XmlSchemaObjectTable creation.
