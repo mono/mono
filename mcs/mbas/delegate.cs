@@ -489,11 +489,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void CloseDelegate ()
-		{
-			TypeBuilder.CreateType ();
-		}
-		
 		public Expression InstanceExpression {
 			get {
 				return instance_expr;
@@ -656,7 +651,11 @@ namespace Mono.CSharp {
 			else
 				delegate_instance_expr.Emit (ec);
 			
-			ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
+			if (delegate_method.IsVirtual) {
+				ec.ig.Emit (OpCodes.Dup);
+				ec.ig.Emit (OpCodes.Ldvirtftn, (MethodInfo) delegate_method);
+			} else
+				ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
 			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) constructor_method);
 		}
 	}

@@ -491,6 +491,35 @@ public class TypeManager {
 		return null;
 	}
 
+	//
+	// Returns a list of all namespaces in the assemblies and types loaded.
+	//
+	public static Hashtable GetNamespaces ()
+	{
+		Hashtable namespaces = new Hashtable ();
+
+		foreach (Assembly a in assemblies){
+			foreach (Type t in a.GetTypes ()){
+				string ns = t.Namespace;
+
+				if (namespaces.Contains (ns))
+					continue;
+				namespaces [ns] = ns;
+			}
+		}
+
+		foreach (ModuleBuilder mb in modules){
+			foreach (Type t in mb.GetTypes ()){
+				string ns = t.Namespace;
+
+				if (namespaces.Contains (ns))
+					continue;
+				namespaces [ns] = ns;
+			}
+		}
+		return namespaces;
+	}
+	
 	/// <summary>
 	///   Returns the C# name of a type if possible, or the full type name otherwise
 	/// </summary>
@@ -1038,6 +1067,14 @@ public class TypeManager {
 		} while (type != null);
 
 		return false;
+	}
+
+	//
+	// Checks whether `type' is a nested child of `parent'.
+	//
+	public static bool IsNestedChildOf (Type type, Type parent)
+	{
+		return IsSubclassOrNestedChildOf (type, parent) && !type.IsSubclassOf (parent);
 	}
 
 	/// <summary>

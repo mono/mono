@@ -156,6 +156,13 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		///   The type which declares this member.
+		/// </summary>
+		Type DeclaringType {
+			get;
+		}
+
+		/// <summary>
 		///   The instance expression associated with this member, if it's a
 		///   non-static member.
 		/// </summary>
@@ -791,19 +798,8 @@ namespace Mono.CSharp {
 					return new ULongConstant ((ulong) v);
 			}
 
-			//
-			// If we have an enumeration, extract the underlying type,
-			// use this during the comparission, but wrap around the original
-			// target_type
-			//
-			Type real_target_type = target_type;
+ 			Type real_target_type = target_type;
 
-			if (TypeManager.IsEnumType (real_target_type))
-				real_target_type = TypeManager.EnumToUnderlying (real_target_type);
-
-			if (expr_type == real_target_type)
-				return new EmptyCast (expr, target_type);
-			
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to short, int, long, float, double.
@@ -1047,7 +1043,7 @@ namespace Mono.CSharp {
 
 			return false;
 		}
-		
+
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
@@ -1794,7 +1790,7 @@ namespace Mono.CSharp {
 
 			//
 			// If we have an enumeration, extract the underlying type,
-			// use this during the comparission, but wrap around the original
+			// use this during the comparison, but wrap around the original
 			// target_type
 			//
 			Type real_target_type = target_type;
@@ -1802,6 +1798,9 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEnumType (real_target_type))
 				real_target_type = TypeManager.EnumToUnderlying (real_target_type);
 
+			if (StandardConversionExists (expr, real_target_type))
+ 				return new EmptyCast (expr, target_type);
+			
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to byte, ushort, uint, ulong, char
@@ -3574,6 +3573,14 @@ namespace Mono.CSharp {
 				if (!me.IsStatic && (me.InstanceExpression == null))
 					return e;
 
+				if (!me.IsStatic &&
+				    TypeManager.IsNestedChildOf (me.InstanceExpression.Type, me.DeclaringType)) {
+					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
+					       "outer type `" + me.DeclaringType + "' via nested type `" +
+					       me.InstanceExpression.Type + "'");
+					return null;
+				}
+
 				if (right_side != null)
 					e = e.DoResolveLValue (ec, right_side);
 				else
@@ -3715,6 +3722,12 @@ namespace Mono.CSharp {
 			eclass = ExprClass.MethodGroup;
 			type = TypeManager.object_type;
 		}
+
+		public Type DeclaringType {
+			get {
+				return Methods [0].DeclaringType;
+			}
+		}
 		
 		//
 		// `A method group may have associated an instance expression' 
@@ -3848,6 +3861,12 @@ namespace Mono.CSharp {
 		public bool IsStatic {
 			get {
 				return FieldInfo.IsStatic;
+			}
+		}
+
+		public Type DeclaringType {
+			get {
+				return FieldInfo.DeclaringType;
 			}
 		}
 
@@ -4123,6 +4142,12 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		public Type DeclaringType {
+			get {
+				return PropertyInfo.DeclaringType;
+			}
+		}
+
 		//
 		// The instance expression associated with this expression
 		//
@@ -4158,6 +4183,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if ((instance_expr == null) && ec.IsStatic && !is_static) {
+				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
+				return null;
+			}
+
 			return this;
 		}
 
@@ -4181,7 +4211,8 @@ namespace Mono.CSharp {
 			//
 			// Special case: length of single dimension array is turned into ldlen
 			//
-			if (method == TypeManager.int_array_get_length){
+			if ((method == TypeManager.system_int_array_get_length) ||
+			    (method == TypeManager.int_array_get_length)){
 				Type iet = instance_expr.Type;
 
 				//
@@ -4261,6 +4292,12 @@ namespace Mono.CSharp {
 		public bool IsStatic {
 			get {
 				return is_static;
+			}
+		}
+
+		public Type DeclaringType {
+			get {
+				return EventInfo.DeclaringType;
 			}
 		}
 

@@ -500,7 +500,7 @@ namespace Mono.CSharp {
 			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			
 			//
-			// Inform whether we are infinite or not
+ 			// Inform whether we are infinite or not
 			//
 			if (Test != null){
 				if (Test is BoolConstant){
@@ -511,7 +511,7 @@ namespace Mono.CSharp {
 				}
 				return false;
 			} else
-				return true;
+				return breaks == false;
 		}
 	}
 	
@@ -3031,7 +3031,7 @@ namespace Mono.CSharp {
 
 			if (e is StringConstant || e is NullLiteral){
 				if (required_type == TypeManager.string_type){
-					converted = label;
+					converted = e;
 					ILLabel = ec.ig.DefineLabel ();
 					return true;
 				}
@@ -4172,11 +4172,12 @@ namespace Mono.CSharp {
 		public readonly Block  Block;
 		public readonly Location Location;
 
-		Expression type;
+		Expression type_expr;
+		Type type;
 		
 		public Catch (Expression type, string name, Block block, Location l)
 		{
-			this.type = type;
+			type_expr = type;
 			Name = name;
 			Block = block;
 			Location = l;
@@ -4184,34 +4185,31 @@ namespace Mono.CSharp {
 
 		public Type CatchType {
 			get {
-				if (type == null)
-					throw new InvalidOperationException ();
-
-				return type.Type;
+				return type;
 			}
 		}
 
 		public bool IsGeneral {
 			get {
-				return type == null;
+				return type_expr == null;
 			}
 		}
 
 		public bool Resolve (EmitContext ec)
 		{
-			if (type != null) {
-				type = type.DoResolve (ec);
+			if (type_expr != null) {
+				type = ec.DeclSpace.ResolveType (type_expr, false, Location);
 				if (type == null)
 					return false;
 
-				Type t = type.Type;
-				if (t != TypeManager.exception_type && !t.IsSubclassOf (TypeManager.exception_type)){
+				if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
 					Report.Error (155, Location,
 						      "The type caught or thrown must be derived " +
 						      "from System.Exception");
 					return false;
 				}
-			}
+			} else
+				type = null;
 
 			if (!Block.Resolve (ec))
 				return false;

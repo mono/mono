@@ -44,15 +44,14 @@ namespace Mono.Languages
 		}
 
 		[Option("Adds PARAM to the assembly link path", 'L')]
-		public static string[] LinkPaths = null;
+		public string[] LinkPaths = null;
 
 		[Option("Defines the symbol PARAM", "define")]
-		public static string[] Defines = null;
+		public string[] Defines = null;
 
 		[Option("Only parses the source file (for debugging the tokenizer)", "parse")]
-		public static bool parse_only = false;
+		public bool parse_only = false;
 
-		private static bool load_default_config = true;
 
 		[Option("Disables implicit references to assemblies", "noconfig")]
 		public bool NoConfig { set { load_default_config = !value; } }
@@ -60,35 +59,23 @@ namespace Mono.Languages
 		[Option("Allows unsafe code", "unsafe")]
 		public bool AllowUnsafeCode { set { RootContext.Unsafe = value; } }
 
-		private string output_file;
-
 		[Option("Specifies output file", 'o', "output")]
-		public WhatToDoNext SetOutputFile(string FileName)
-		{
-			output_file = FileName;
-			string bname = CodeGen.Basename (output_file);
-			if (bname.IndexOf (".") == -1)
-				output_file += ".exe";
-			return WhatToDoNext.GoAhead;
-		}
-
+		public string output_file = null;
 
 		[Option("Only tokenizes source files", "tokenize")]
-		public static bool tokenize = true;
+		public bool tokenize = false;
 
 		[Option("Set default context to checked", "checked")]
 		public bool Checked { set { RootContext.Checked = value; } }
 
-		[Option("Shows stack trace at error location", "Stacktrace")]
+		[Option("Shows stack trace at Error location", "Stacktrace")]
 		public bool Stacktrace { set { Report.Stacktrace = value; } }
 
-		private static ArrayList references = new ArrayList();
-
 		[Option("References an assembly", 'r')]
-		public static string reference { set { references.Add(value); } }
+		public string reference { set { references.Add(value); } }
 
 		[Option("Adds PARAM as a resource", "resource")]
-		public static string[] resources;
+		public string[] resources;
 
 		[Option("Set default context to checked", "nostdlib")]
 		public bool nostdlib { set { RootContext.StdLib = !value; } }
@@ -115,7 +102,7 @@ namespace Mono.Languages
 	
 
 		[Option("Write symbolic debugging information to FILE-debug.s", 'g', "debug")]
-		public static bool want_debugging_support = false;
+		public bool want_debugging_support = false;
 
 		[Option("Debugger arguments", "debug-args")]
 		public WhatToDoNext SetDebugArgs(string args)
@@ -154,7 +141,7 @@ namespace Mono.Languages
 		[Option("Sets warning level (the highest is 4, the default)", "wlevel")]
 		public int wlevel { set { RootContext.WarningLevel = value; } }
 
-		[Option("Sets warning level (the highest is 4, the default)")]
+		[Option("Displays time stamps of various compiler events")]
 		public bool timestamp
 		{
 			set
@@ -165,46 +152,25 @@ namespace Mono.Languages
 			}
 		}
 
-	static void Usage (bool is_error)
-		{
-			Console.WriteLine (	@"
-MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
-  --timestamp     Displays time stamps of various compiler events
-  @file           Read response file for more options
-");
-		}
-		
-		//
-		// If any of these fail, we ignore the problem.  This is so
-		// that we can list all the assemblies in Windows and not fail
-		// if they are missing on Linux.
-		//
-		static ArrayList soft_references;
+		// TODO : response file support
 
-		static int error_count = 0;
+	
+		ArrayList defines = new ArrayList();
+		ArrayList references = new ArrayList();
+		ArrayList soft_references = new ArrayList();
+		string first_source = null;
+		Target target = Target.Exe;
+		string target_ext = ".exe";
+		ArrayList debug_arglist = new ArrayList ();
+		bool timestamps = false;
+		Hashtable source_files = new Hashtable ();
+		bool load_default_config = true;
 
-		static string first_source;
-
-		static Target target = Target.Exe;
-		static string target_ext = ".exe";
-
-		static ArrayList debug_arglist = new ArrayList ();
-
-		static bool timestamps = false;
-
-		static Hashtable source_files = new Hashtable ();
-
-		//
-		// An array of the defines from the command line
-		//
-		static ArrayList defines;
-
-		
 		//
 		// Last time we took the time
 		//
-		static DateTime last_time;
-		static void ShowTime (string msg)
+		DateTime last_time;
+		void ShowTime (string msg)
 		{
 			DateTime now = DateTime.Now;
 			TimeSpan span = now - last_time;
@@ -215,21 +181,13 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
 	       		
-		static void error (string msg)
-		{
-			Console.WriteLine ("Error: " + msg);
-		}
-
-		static void notice (string msg)
-		{
-			Console.WriteLine (msg);
-		}
-		
 		public static int Main (string[] args)
 		{
 			Driver Exec = new Driver();
 			
-			if (Exec.MainDriver(args) && Report.Errors == 0) 
+			Exec.MainDriver(args);
+
+			if (Report.Errors == 0) 
 			{
 				Console.Write("Compilation succeeded");
 				if (Report.Warnings > 0) 
@@ -241,24 +199,24 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 			} 
 			else 
 			{
-				Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
+				Console.WriteLine("Compilation failed: {0} Error(s), {1} warnings",
 					Report.Errors, Report.Warnings);
 				return 1;
 			}
 		}
 
-		static public int LoadAssembly (string assembly, bool soft)
+		public int LoadAssembly (string assembly, bool soft)
 		{
 			Assembly a;
 			string total_log = "";
 
 			try {
-				char[] path_chars = { '/', '\\', '.' };
+				char[] path_chars = { '/', '\\' };
 
 				if (assembly.IndexOfAny (path_chars) != -1)
-					a = Assembly.LoadFrom (assembly);
+					a = Assembly.LoadFrom(assembly);
 				else
-					a = Assembly.Load (assembly);
+					a = Assembly.Load(assembly);
 				TypeManager.AddAssembly (a);
 				return 0;
 			} catch (FileNotFoundException){
@@ -277,15 +235,15 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 				if (soft)
 					return 0;
 			} catch (BadImageFormatException f) {
-				error ("// Bad file format while loading assembly");
-				error ("Log: " + f.FusionLog);
+				Error ("// Bad file format while loading assembly");
+				Error ("Log: " + f.FusionLog);
 				return 1;
 			} catch (FileLoadException f){
-				error ("File Load Exception: " + assembly);
-				error ("Log: " + f.FusionLog);
+				Error ("File Load Exception: " + assembly);
+				Error ("Log: " + f.FusionLog);
 				return 1;
 			} catch (ArgumentNullException){
-				error ("// Argument Null exception ");
+				Error ("// Argument Null exception ");
 				return 1;
 			}
 			
@@ -295,10 +253,15 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 			return 0;
 		}
 
+		void Error(string message)
+		{
+			Console.WriteLine(message);
+		}
+
 		/// <summary>
 		///   Loads all assemblies referenced on the command line
 		/// </summary>
-		static public int LoadReferences ()
+		public int LoadReferences ()
 		{
 			int errors = 0;
 
@@ -311,7 +274,7 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 			return errors;
 		}
 
-		static void SetupDefaultDefines ()
+		void SetupDefaultDefines ()
 		{
 			defines = new ArrayList ();
 			defines.Add ("__MonoBASIC__");
@@ -321,7 +284,7 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 		//
 		// Returns the directory where the system assemblies are installed
 		//
-		static string GetSystemDir ()
+		string GetSystemDir ()
 		{
 			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
 
@@ -339,7 +302,7 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 		//
 		// Given a path specification, splits the path from the file/pattern
 		//
-		static void SplitPathAndPattern (string spec, out string path, out string pattern)
+		void SplitPathAndPattern (string spec, out string path, out string pattern)
 		{
 			int p = spec.LastIndexOf ("/");
 			if (p != -1){
@@ -368,29 +331,20 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 			pattern = spec;
 		}
 
-
-		static int ProcessSourceFile(string filename)
-		{
-			if (tokenize)
-				GenericParser.Tokenize(filename);
-			else
-				return GenericParser.Parse(filename);
-
-			return 0;
-		}
-
-		static bool AddFiles (string spec, bool recurse)
+		bool AddFiles (string spec, bool recurse)
 		{
 			string path, pattern;
 
-			SplitPathAndPattern (spec, out path, out pattern);
-			if (pattern.IndexOf ("*") == -1){
-				return AddFile (spec);
+			SplitPathAndPattern(spec, out path, out pattern);
+			if (pattern.IndexOf("*") == -1)
+			{
+				AddFile(spec);
+				return true;
 			}
 
 			string [] files = null;
 			try {
-				files = Directory.GetFiles (path, pattern);
+				files = Directory.GetFiles(path, pattern);
 			} catch (System.IO.DirectoryNotFoundException) {
 				Report.Error (2001, "Source file `" + spec + "' could not be found");
 				return false;
@@ -407,7 +361,7 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 			string [] dirs = null;
 
 			try {
-				dirs = Directory.GetDirectories (path);
+				dirs = Directory.GetDirectories(path);
 			} catch {
 			}
 			
@@ -417,12 +371,11 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 				// directory entry already does
 				AddFiles (d + "/" + pattern, true);
 			}
-			
 
 			return true;
 		}
 
-		static void DefineDefaultConfig ()
+		void DefineDefaultConfig ()
 		{
 			//
 			// For now the "default config" is harcoded into the compiler
@@ -458,119 +411,119 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 #endif
 			};
 			
-			int p = 0;
 			foreach (string def in default_config)
-				soft_references.Insert (p++, def);
+				soft_references.Add(def);
 		}
 
-		private static bool AddFile(string fileName)
+		[ArgumentProcessor]
+		public void AddFile(string fileName)
 		{
 			string f = fileName;
 			if (first_source == null)
 				first_source = f;
 
 			if (source_files.Contains(f))
-			{
-				Report.Error (1516, "Source file `" + f + "' specified multiple times");
-				return false;
-			} 
+				Report.Error(1516, "Source file '" + f + "' specified multiple times");
 			else
 				source_files.Add(f, f);
-
-			return true;
 		}
 
-		
-		/// <summary>
-		///    Parses the arguments, and drives the compilation
-		///    process.
-		/// </summary>
-		///
-		/// <remarks>
-		///    TODO: Mostly structured to debug the compiler
-		///    now, needs to be turned into a real driver soon.
-		/// </remarks>
-		bool MainDriver(string [] args)
+		void ProcessSourceFile(string filename)
 		{
-			int errors = 0;//, i;
-			string output_file = null;
-			
-			soft_references = new ArrayList ();
-			SetupDefaultDefines ();
-			
-			this.ProcessArgs(args);
+			if (tokenize)
+				GenericParser.Tokenize(filename);
+			else
+				GenericParser.Parse(filename);
+		}
 
-			foreach(string arg in this.RemainingArguments)
-				AddFile(arg); 
+		string outputFile_Name = null;
 
-			foreach(string filename in source_files.Values)
-				errors += ProcessSourceFile(filename);
+		string outputFileName
+		{
+			get 
+			{
+				if (outputFile_Name == null)
+				{
+					if (output_file == null)
+					{
+						int pos = first_source.LastIndexOf(".");
 
+						if (pos > 0)
+							output_file = first_source.Substring(0, pos);
+						else
+							output_file = first_source;
+					}
+					string bname = CodeGen.Basename(output_file);
+					if (bname.IndexOf(".") == -1)
+						output_file +=  target_ext;
+					outputFile_Name = output_file;
+				}
+				return outputFile_Name;
+			}
+		}
+
+		/// <summary>
+		///    Parses the arguments, and calls the compilation process.
+		/// </summary>
+		void MainDriver(string [] args)
+		{
+			ProcessArgs(args);
+			CompileAll();
+		}
+
+		public Driver()
+		{
+			SetupDefaultDefines();	
+		}
+
+		bool ParseAll() // Phase 1
+		{
 			if (first_source == null)
 			{
-				Report.Error (2008, "No files to compile were specified");
+				Report.Error(2008, "No files to compile were specified");
 				return false;
 			}
 
-			if (tokenize)
-				return true;
-			
-			if (Report.Errors > 0)
-				return false;
-			
-			if (parse_only)
-				return true;
-			
-			//
-			// Load Core Library for default compilation
-			//
-			if (RootContext.StdLib)
-				references.Insert (0, "mscorlib");
+			foreach(string filename in source_files.Values)
+				ProcessSourceFile(filename);
 
-			if (load_default_config)
-				DefineDefaultConfig ();
+			if (tokenize || parse_only || (Report.Errors > 0))
+				return false;		
 
-			if (errors > 0)
-			{
-				error ("Parsing failed");
-				return false;
-			}
+			return true; // everything went well go ahead
+		}
 
-			//
-			// Load assemblies required
-			//
-			if (timestamps)
-				ShowTime ("Loading references");
-			errors += LoadReferences ();
-			if (timestamps)
-				ShowTime ("   References loaded");
-			
-			if (errors > 0)
-			{
-				error ("Could not load one or more assemblies");
-				return false;
-			}
-
-			error_count = errors;
-
-			//
-			// Quick hack
-			//
-			if (output_file == null)
-			{
-				int pos = first_source.LastIndexOf (".");
-
-				if (pos > 0)
-					output_file = first_source.Substring (0, pos) + target_ext;
-				else
-					output_file = first_source + target_ext;
-			}
-
+		void InitializeDebuggingSupport()
+		{
 			string[] debug_args = new string [debug_arglist.Count];
 			debug_arglist.CopyTo(debug_args);
-			CodeGen.Init (output_file, output_file, want_debugging_support, debug_args);
+			CodeGen.Init(outputFileName, outputFileName, want_debugging_support, debug_args);
+			TypeManager.AddModule(CodeGen.ModuleBuilder);
+		}
 
-			TypeManager.AddModule (CodeGen.ModuleBuilder);
+		public bool ResolveAllTypes() // Phase 2
+		{
+			// Load Core Library for default compilation
+			if (RootContext.StdLib)
+				references.Insert(0, "mscorlib");
+
+			if (load_default_config)
+				DefineDefaultConfig();
+
+			if (timestamps)
+				ShowTime("Loading references");
+
+			// Load assemblies required
+			if (LoadReferences() > 0)
+			{
+				Error ("Could not load one or more assemblies");
+				return false;
+			}
+
+			if (timestamps)
+				ShowTime("References loaded");
+
+			InitializeDebuggingSupport();
 
 			//
 			// Before emitting, we need to get the core
@@ -579,98 +532,106 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 			//
 			if (timestamps)
 				ShowTime ("Initializing Core Types");
+
 			if (!RootContext.StdLib)
-			{
 				RootContext.ResolveCore ();
-				if (Report.Errors > 0)
-					return false;
-			}
+			if (Report.Errors > 0)
+				return false;
 			
-			TypeManager.InitCoreTypes ();
+			TypeManager.InitCoreTypes();
+			if (Report.Errors > 0)
+				return false;
+
 			if (timestamps)
 				ShowTime ("   Core Types done");
-		
-			//
-			// The second pass of the compiler
-			//
+
 			if (timestamps)
 				ShowTime ("Resolving tree");
+
+			// The second pass of the compiler
 			RootContext.ResolveTree ();
+			if (Report.Errors > 0)
+				return false;
+			
 			if (timestamps)
 				ShowTime ("Populate tree");
 
-			if (Report.Errors > 0)
-			{
-				error ("Compilation failed");
-				return false;
-			}
-
 			if (!RootContext.StdLib)
-				RootContext.BootCorlib_PopulateCoreTypes ();
-			RootContext.PopulateTypes ();
-			
-			TypeManager.InitCodeHelpers ();
-				
+				RootContext.BootCorlib_PopulateCoreTypes();
 			if (Report.Errors > 0)
-			{
-				error ("Compilation failed");
 				return false;
-			}
+
+			RootContext.PopulateTypes();
+			if (Report.Errors > 0)
+				return false;
 			
+			TypeManager.InitCodeHelpers();
+			if (Report.Errors > 0)
+				return false;
+
+			return true;
+		}
+		
+		bool GenerateAssembly()
+		{
 			//
 			// The code generator
 			//
 			if (timestamps)
 				ShowTime ("Emitting code");
-			RootContext.EmitCode ();
+
+			RootContext.EmitCode();
+			if (Report.Errors > 0)
+				return false;
+
 			if (timestamps)
 				ShowTime ("   done");
 
-			if (Report.Errors > 0)
-			{
-				error ("Compilation failed");
-				return false;
-			}
 
 			if (timestamps)
 				ShowTime ("Closing types");
-			
+
 			RootContext.CloseTypes ();
+			if (Report.Errors > 0)
+				return false;
 
-			//			PEFileKinds k = PEFileKinds.ConsoleApplication;
-			//				
-			//			if (target == Target.Library || target == Target.Module)
-			//				k = PEFileKinds.Dll;
-			//			else if (target == Target.Exe)
-			//				k = PEFileKinds.ConsoleApplication;
-			//			else if (target == Target.WinExe)
-			//				k = PEFileKinds.WindowApplication;
-			//
-			//			if (target == Target.Exe || target == Target.WinExe){
-			//				MethodInfo ep = RootContext.EntryPoint;
-			//
-			//				if (ep == null){
-			//					Report.Error (5001, "Program " + output_file +
-			//							      " does not have an entry point defined");
-			//					return;
-			//				}
-			//				
-			//				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
-			//			}
+			if (timestamps)
+				ShowTime ("   done");
 
-			//
-			// Add the resources
-			//
-			if (resources != null)
+			PEFileKinds k = PEFileKinds.ConsoleApplication;
+							
+			if (target == Target.Library || target == Target.Module)
+				k = PEFileKinds.Dll;
+			else if (target == Target.Exe)
+				k = PEFileKinds.ConsoleApplication;
+			else if (target == Target.WinExe)
+				k = PEFileKinds.WindowApplication;
+			
+			if (target == Target.Exe || target == Target.WinExe)
 			{
+				MethodInfo ep = RootContext.EntryPoint;
+			
+				if (ep == null)
+				{
+					Report.Error (5001, "Program " + outputFileName +
+						" does not have an entry point defined");
+					return false;
+				}
+							
+				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+			}
+
+			// Add the resources
+			if (resources != null)
 				foreach (string file in resources)
 					CodeGen.AssemblyBuilder.AddResourceFile (file, file);
-			}
 			
-			CodeGen.Save (output_file);
+			CodeGen.Save(outputFileName);
+
 			if (timestamps)
 				ShowTime ("Saved output");
 
+			
 			if (want_debugging_support) 
 			{
 				CodeGen.SaveSymbols ();
@@ -678,13 +639,22 @@ MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
 					ShowTime ("Saved symbols");
 			}
 
+			return true;
+		}
+
+		public void CompileAll()
+		{
+			if (!ParseAll()) // Phase 1
+				return;
+
+			if (!ResolveAllTypes()) // Phase 2
+				return;
+
+			if (!GenerateAssembly()) // Phase 3 
+				return;
+
 			if (Report.ExpectedError != 0)
-			{
-				Console.WriteLine("Failed to report expected error " + Report.ExpectedError);
-				Environment.Exit (1);
-				return false;
-			}
-			return (Report.Errors == 0);
+				Error("Failed to report expected Error " + Report.ExpectedError);
 		}
 
 	}

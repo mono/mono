@@ -1434,20 +1434,13 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			target_type = target_type.Resolve (ec, ResolveFlags.Type);
-			
-			if (target_type == null){
-				if (errors == Report.Errors)
-					Error (-10, "Can not resolve type");
-				return null;
-			}
-
-			type = target_type.Type;
-			eclass = ExprClass.Value;
+			type = ec.DeclSpace.ResolveType (target_type, false, Location);
 			
 			if (type == null)
 				return null;
 
+			eclass = ExprClass.Value;
+			
 			if (expr is Constant){
 				Expression e = TryReduce (ec, type);
 
@@ -3312,6 +3305,15 @@ namespace Mono.CSharp {
 			if (argument_type == null)
 				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
 
+			//
+			// This is a special case since csc behaves this way. I can't find
+			// it anywhere in the spec but oh well ...
+			//
+			if (argument_expr is NullLiteral && p == TypeManager.string_type && q == TypeManager.object_type)
+				return 1;
+			else if (argument_expr is NullLiteral && p == TypeManager.object_type && q == TypeManager.string_type)
+				return 0;
+			
 			if (p == q)
 				return 0;
 			
@@ -3792,8 +3794,25 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (method == null)
+			if (method == null) {
+				//
+				// Okay so we have failed to find anything so we
+				// return by providing info about the closest match
+				//
+				for (int i = 0; i < me.Methods.Length; ++i) {
+
+					MethodBase c = (MethodBase) me.Methods [i];
+					ParameterData pd = GetParameterData (c);
+
+					if (pd.Count != argument_count)
+						continue;
+
+					VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
+							       null, loc);
+				}
+				
 				return null;
+			}
 
 			//
 			// Now check that there are no ambiguities i.e the selected method
@@ -4833,9 +4852,12 @@ namespace Mono.CSharp {
 			byte [] element;
 			int count = array_data.Count;
 
+			if (underlying_type.IsEnum)
+				underlying_type = TypeManager.EnumToUnderlying (underlying_type);
+
 			factor = GetTypeSize (underlying_type);
 			if (factor == 0)
-				return null;
+				throw new Exception ("Unrecognized type in MakeByteBlob");
 
 			data = new byte [(count * factor + 4) & ~3];
 			int idx = 0;
@@ -4960,16 +4982,14 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			byte [] data = MakeByteBlob (array_data, underlying_type, loc);
-			
-			if (data != null) {
-				fb = RootContext.MakeStaticData (data);
 
-				if (is_expression)
-					ig.Emit (OpCodes.Dup);
-				ig.Emit (OpCodes.Ldtoken, fb);
-				ig.Emit (OpCodes.Call,
-					 TypeManager.void_initializearray_array_fieldhandle);
-			}
+			fb = RootContext.MakeStaticData (data);
+
+			if (is_expression)
+				ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Ldtoken, fb);
+			ig.Emit (OpCodes.Call,
+				 TypeManager.void_initializearray_array_fieldhandle);
 		}
 		
 		//
@@ -5302,6 +5322,12 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (!ec.InUnsafe) {
+				Error (233, "Sizeof may only be used in an unsafe context " +
+				       "(consider using System.Runtime.InteropServices.Marshal.Sizeof");
+				return null;
+			}
+				
 			type_queried = ec.DeclSpace.ResolveType (QueriedType, false, loc);
 			if (type_queried == null)
 				return null;
@@ -5722,6 +5748,9 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
+			if (Expr is Constant)
+				return Expr;
+			
 			eclass = Expr.eclass;
 			type = Expr.Type;
 			return this;
@@ -5765,6 +5794,9 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
+			if (Expr is Constant)
+				return Expr;
+			
 			eclass = Expr.eclass;
 			type = Expr.Type;
 			return this;

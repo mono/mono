@@ -538,13 +538,15 @@ namespace Mono.CSharp {
 				if (using_list == null)
 					continue;
 
-				foreach (string n in using_list){
-					t = LookupInterfaceOrClass (n, name, out error);
+				foreach (Namespace.UsingEntry ue in using_list){
+					t = LookupInterfaceOrClass (ue.Name, name, out error);
 					if (error)
 						return null;
 
-					if (t != null)
+					if (t != null){
+						ue.Used = true;
 						return t;
+					}
 				}
 				
 			}

@@ -414,7 +414,7 @@ namespace Mono.CSharp {
 			
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates)
-					d.CloseDelegate ();
+					d.CloseType ();
 
 
 			//
@@ -492,10 +492,12 @@ namespace Mono.CSharp {
 				if (using_list == null)
 					continue;
 
-				foreach (string n in using_list) {
-					t = TypeManager.LookupType (MakeFQN (n, name));
-					if (t != null)
+				foreach (Namespace.UsingEntry ue in using_list) {
+					t = TypeManager.LookupType (MakeFQN (ue.Name, name));
+					if (t != null){
+						ue.Used = true;
 						return t;
+					}
 				}
 
 				//
