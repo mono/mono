@@ -1,3 +1,7 @@
+2004-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TempFileCollection.cs: fixed typo in Delete. Closes bug #54443.
+
 2004-02-10  Jackson Harper <jackson@ximian.com>
 
 	* CompilerParameters.cs: TempFiles should never return null.

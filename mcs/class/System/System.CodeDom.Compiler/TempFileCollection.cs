@@ -131,7 +131,7 @@ namespace System.CodeDom.Compiler
 			filehash.Keys.CopyTo(filenames, 0);
 
 			foreach(string file in filenames) {
-				if((bool)filehash[file]==true) {
+				if((bool)filehash[file]==false) {
 					File.Delete(file);
 					filehash.Remove(file);
 				}
