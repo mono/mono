@@ -483,20 +483,20 @@ namespace NpgsqlTypes
   	
   	private static String ConvertByteArrayToBytea(Byte[] byteArray)
   	{
-        NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertByteArrayToBytea");
-  		StringBuilder  result = new StringBuilder("");		
-  
-  		foreach(Byte byteToConvert in byteArray)
-  		{
-  			result.Append("\\\\");
-  			result.Append((byteToConvert & 0xC0) >> 6);
-  			result.Append((byteToConvert & 0x38) >> 3);
-  			result.Append(byteToConvert & 0x07);
-  		}
-  
-  		return result.ToString();
-  	}	
-		
+	        NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertByteArrayToBytea");
+		Int32 len = byteArray.Length;
+		Char[] res = new Char [len * 5];
+        	for (Int32 i = 0; i <len; i++) 
+		{
+        		res [(i*5)] = '\\';
+		        res [(i*5)+1] = '\\';
+		        res [(i*5)+2] = (Char) (((byteArray[i] & 0xC0) >> 6) + '0');
+		        res [(i*5)+3] = (Char) (((byteArray[i] & 0x38) >> 3) + '0');
+		        res [(i*5)+4] = (Char) ((byteArray[i] & 0x07) + '0');
+        	}
+
+	 	return new String (res);
+	
 	}
 	
 }
