@@ -41,71 +41,60 @@ namespace System {
 			return Type.GetTypeCode (info.utype);
 		}
 
-		[MonoTODO]
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToBoolean (get_value (), provider);
 		}
 
-		[MonoTODO]
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToByte (get_value (), provider);
 		}
 
-		[MonoTODO]
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToChar (get_value (), provider);
 		}
 
-		[MonoTODO]
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToDateTime (get_value (), provider);
 		}
 
-		[MonoTODO]
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
-		{
-			throw new NotImplementedException ();
+		{	
+			return Convert.ToDecimal (get_value (), provider);
 		}
 
-		[MonoTODO]
 		double IConvertible.ToDouble (IFormatProvider provider)
-		{
-			throw new NotImplementedException ();
+		{	
+			return Convert.ToDouble (get_value (), provider);
 		}
 
-		[MonoTODO]
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToInt16 (get_value (), provider);
 		}
 
-		[MonoTODO]
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToInt32 (get_value (), provider);
 		}
 
-		[MonoTODO]
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToInt64 (get_value (), provider);
 		}
 
-		[MonoTODO]
     		[CLSCompliant(false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToSByte (get_value (), provider);
 		}
 
-		[MonoTODO]
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToSingle (get_value (), provider);
 		}
 
 		[MonoTODO]
@@ -114,25 +103,22 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
     		[CLSCompliant(false)]
 		public ushort ToUInt16 (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToUInt16 (get_value (), provider);
 		}
 
-		[MonoTODO]
     		[CLSCompliant(false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToUInt32 (get_value (), provider);
 		}
 
-		[MonoTODO]
     		[CLSCompliant(false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToUInt64 (get_value (), provider);
 		}
 
 		// <-- End IConvertible methods

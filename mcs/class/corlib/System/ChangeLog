@@ -1,3 +1,7 @@
+2002-04-26  Martin Baulig  <martin@gnome.org>
+
+	* Enum.cs: Implemented the IConvertible methods.
+
 2002-04-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SByte.cs: little change in Parse (string) to avoid incorrect
