@@ -85,14 +85,16 @@ $(gac_assemblies_list):
 	cp -f $$f $(srcdir)
 
 install-data-local: $(gac_assemblies_list)
-	@for i in $(gac_assemblies_list); do	\
+	@if test -n '$(gac_assemblies_list)'; then \
+	  for i in ''$(gac_assemblies_list); do	\
 		mono $(gacutil) /i $$i /f || exit 1 ; \
-	done
+	  done; fi
 
 uninstall-local:
-	@for i in $(gac_assemblies_list); do \
+	@if test -n '$(gac_assemblies_list)'; then \
+	  for i in ''$(gac_assemblies_list); do \
 		mono $(gacutil) /u $$i || exit 1 ; \
-	done
+	  done; fi
 
 dist-hook: $(gac_assemblies_list)
 	@for i in $(gac_assemblies_list); do \
