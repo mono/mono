@@ -689,8 +689,16 @@ namespace System.Data {
 		[MonoTODO]
 		public DataRow[] Select(string filterExpression)
 		{
-			DataRow[] dataRows = {null};
-			return dataRows;
+			ExpressionElement Expression = new ExpressionMainElement (filterExpression);
+
+			ArrayList List = new ArrayList ();
+			foreach (DataRow Row in Rows) {
+				
+				if (Expression.Test (Row))
+					List.Add (Row);
+			}
+			
+			return (DataRow [])List.ToArray (typeof (DataRow));
 		}
 
 		/// <summary>

@@ -1,3 +1,9 @@
+2003-01-30  Ville Palo <vi64pa@koti.soon.fi>
+
+	* ExpressionElement.cs: Added new file. This file is for parsing
+	  and DataData.Select () -methods and DataColumn.Expression -property
+	* DataTable.cs: Implemented Select(string) -method	
+	
 2003-01-28  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataSet.cs: One little fix to writing xml
