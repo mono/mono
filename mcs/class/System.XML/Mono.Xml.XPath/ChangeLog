@@ -1,3 +1,10 @@
+2004-07-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathNavigator.cs :
+	  Fixed IsSamePosition(). currentAttr is not always the same as
+	  that of other when current is not attribute. Ditto for currentNS
+	  (when current is not namespace).
+
 2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentBuilder.cs : Close XmlTextReader strictly. It might
