@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.13  2004/08/09 21:21:49  jackson
+// Use known colors for default control colours
+//
 // Revision 1.12  2004/08/09 21:12:15  jackson
 // Make the default font static, it is static in control so this doesn't change functionality and creating fonts is sloooooow.
 //
@@ -286,11 +289,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color DefaultControlBackColor {
-			get { return Color.FromArgb (255, 236, 233, 216); }
+			get { return Color.FromKnownColor (KnownColor.Control); }
 		}
 
 		public Color DefaultControlForeColor {
-			get { return Color.FromArgb (255, 0, 0, 0); }
+			get { return Color.FromKnownColor (KnownColor.ControlText); }
 		}
 
 		public Font DefaultFont {
