@@ -111,22 +111,10 @@ namespace CIR {
 		//
 		// This is so we can catch correctly attempts to invoke instance methods
 		// from a static body (scan for error 120 in ResolveSimpleName).
-		// 
-		protected static Expression MemberLookup (RootContext rc, Type t, string name, bool same_type)
+		//
+		public static Expression MemberLookup (RootContext rc, Type t, string name,
+							  bool same_type, MemberTypes mt, BindingFlags bf)
 		{
-			MemberTypes mt =
-				MemberTypes.Constructor |
-				MemberTypes.Event       |
-				MemberTypes.Field       |
-				MemberTypes.Method      |
-				MemberTypes.NestedType  |
-				MemberTypes.Property;
-			
-			BindingFlags bf =
-				BindingFlags.Public |
-				BindingFlags.Static |
-				BindingFlags.Instance;
-			
 			if (same_type)
 				bf |= BindingFlags.NonPublic;
 
@@ -155,6 +143,25 @@ namespace CIR {
 				}
 
 			return new MethodGroupExpr (mi);
+		}
+
+		public const MemberTypes AllMemberTypes =
+			MemberTypes.Constructor |
+			MemberTypes.Event       |
+			MemberTypes.Field       |
+			MemberTypes.Method      |
+			MemberTypes.NestedType  |
+			MemberTypes.Property;
+		
+		public const BindingFlags AllBindingsFlags =
+			BindingFlags.Public |
+			BindingFlags.Static |
+			BindingFlags.Instance;
+
+		public static Expression MemberLookup (RootContext rc, Type t, string name,
+							  bool same_type)
+		{
+			return MemberLookup (rc, t, name, same_type, AllMemberTypes, AllBindingsFlags);
 		}
 		
 		// <summary>
@@ -901,9 +908,11 @@ namespace CIR {
 			}
 
 			if (left_expr != null || right_expr != null) {
-
-				// Now we need to form the union of these two sets and then call OverloadResolve
+				//
+				// Now we need to form the union of these two sets and
+				// then call OverloadResolve
 				// on that.
+				//
 				MethodGroupExpr left_set = null, right_set = null;
 				int length1 = 0, length2 = 0;
 				
@@ -929,7 +938,7 @@ namespace CIR {
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
 				
-				method = Invocation.OverloadResolve (tc, union, Arguments);
+				method = Invocation.OverloadResolve (union, Arguments);
 				if (method != null)
 					return this;
 
@@ -1532,7 +1541,7 @@ namespace CIR {
 		//   Returns the Parameters (a ParameterData interface) for the
 		//   Method `mb'
 		// </summary>
-		static ParameterData GetParameterData (TypeContainer tc, MethodBase mb)
+		static ParameterData GetParameterData (MethodBase mb)
 		{
 			object pd = method_parameter_cache [mb];
 
@@ -1557,9 +1566,18 @@ namespace CIR {
 		
 		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
+		//
+		//   me: Method Group expression with the members to select.
+		//       it might contain constructors or methods (or anything
+		//       that maps to a method).
+		//
+		//   Arguments: ArrayList containing resolved Argument objects.
+		//
+		//   Returns: The MethodBase (either a ConstructorInfo or a MethodInfo)
+		//            that is the best match of me on Arguments.
+		//
 		// </summary>
-		public static MethodBase OverloadResolve (TypeContainer tc, MethodGroupExpr me,
-							  ArrayList Arguments)
+		public static MethodBase OverloadResolve (MethodGroupExpr me, ArrayList Arguments)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match = 10000;
@@ -1577,7 +1595,7 @@ namespace CIR {
 				MethodBase mb = me.Methods [i];
 				ParameterData pd;
 
-				pd = GetParameterData (tc, mb);
+				pd = GetParameterData (mb);
 
 				// If this is the case, we have a method with no args - presumably
 				if (pd == null && argument_count == 0)
@@ -1649,7 +1667,7 @@ namespace CIR {
 				}
 			}
 
-			method = OverloadResolve (tc, (MethodGroupExpr) this.expr, Arguments);
+			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments);
 
 			if (method == null){
 				tc.RootContext.Report.Error (-6,
@@ -1692,8 +1710,9 @@ namespace CIR {
 
 				mg.InstanceExpression.Emit (ec);
 			}
-			
-			EmitArguments (ec, Arguments);
+
+			if (Arguments != null)
+				EmitArguments (ec, Arguments);
 
 			if (method.IsStatic){
 				if (method is MethodInfo)
@@ -1752,21 +1771,8 @@ namespace CIR {
 
 			Expression ml;
 
-			MemberTypes mt =
-				MemberTypes.Constructor;
-			
-			BindingFlags bf =
-				BindingFlags.Public |
-				BindingFlags.Instance;
-
-			Console.WriteLine ("Lookup up in " + tc.Name + " for New()");
-			MemberInfo [] mi = tc.RootContext.TypeManager.FindMembers (type, mt, bf, null, null);
-
-			Console.WriteLine ("Found: " + mi.Length);
-			for (int i = 0; i < mi.Length; i++)
-				Console.WriteLine (" " + i + ": " + mi [i]);
-			
-			ml = MemberLookup (tc.RootContext, type, ".ctor", false);
+			ml = MemberLookup (tc.RootContext, type, ".ctor", false,
+					   MemberTypes.Constructor, AllBindingsFlags);
 
 			if (! (ml is MethodGroupExpr)){
 				//
@@ -1786,7 +1792,7 @@ namespace CIR {
 				}
 			}
 
-			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments);
+			method = Invocation.OverloadResolve ((MethodGroupExpr) ml, Arguments);
 
 			if (method == null){
 				tc.RootContext.Report.Error (-6,

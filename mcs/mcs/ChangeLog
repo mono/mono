@@ -1,10 +1,19 @@
 2001-09-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Expression::OverloadResolve): Drop TypeContainer
+	argument. 
+
+	(Expression::MemberLookup): Provide a version that allows to
+	specify the MemberTypes and BindingFlags. 
+
+	* statement.cs (Block::GetVariableInfo): Forgot to recurse here,
+	so it was not fetching variable information from outer blocks.
+
 	* modifiers.cs: (Modifiers::TypeAttr): Invert condition on
 	Beforefieldinit as it was buggy.
 
 	* rootcontext.cs (::LookupInterfaceOrClass): Removed an Error -200
-	that Ravi put here.  Ravi, why did you leave an error here?
+	that Ravi put here.  
 
 	* class.cs (Constructor::Emit): Only emit if block is not null.
 	(TypeContainer::EmitDefaultConstructor): Removed routine, now we
@@ -17,6 +26,8 @@
 	(TypeContainer::DefineDefaultConstructor): Used to define the
 	default constructors if none was provided.
 
+	(ConstructorInitializer): Add methods Resolve and Emit. 
+	
 	* expression.cs: Cast to ConstructorInfo instead of MethodInfo
 
 2001-09-17  Ravi Pratap  <ravi@ximian.com>

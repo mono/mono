@@ -358,7 +358,9 @@ namespace CIR {
 			if (variables != null) {
 				object temp;
 				temp = variables [name];
-				return (VariableInfo) temp;
+
+				if (temp != null)
+					return (VariableInfo) temp;
 			}
 
 			if (Parent != null){

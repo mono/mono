@@ -979,6 +979,7 @@ namespace CIR {
 
 	public abstract class ConstructorInitializer {
 		ArrayList argument_list;
+		ConstructorInfo parent_constructor;
 
 		public ConstructorInitializer (ArrayList argument_list)
 		{
@@ -989,6 +990,48 @@ namespace CIR {
 			get {
 				return argument_list;
 			}
+		}
+
+		public bool Resolve (TypeContainer tc)
+		{
+			Expression parent_constructor_group;
+			
+			if (argument_list != null){
+				for (int i = argument_list.Count; i > 0; ){
+					--i;
+
+					Argument a = (Argument) argument_list [i];
+					if (!a.Resolve (tc))
+						return false;
+				}
+			}
+
+			parent_constructor_group = Expression.MemberLookup (
+				tc.RootContext,
+				tc.TypeBuilder.BaseType, ".ctor", false,
+				MemberTypes.Constructor,
+				BindingFlags.Public | BindingFlags.Instance);
+
+			if (parent_constructor_group == null){
+				Console.WriteLine ("Could not find a constructor in our parent");
+				return false;
+			}
+			
+			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (
+				(MethodGroupExpr) parent_constructor_group, argument_list);
+			
+			if (parent_constructor == null)
+				return false;
+			
+			return true;
+		}
+
+		public void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldarg_0);
+			if (argument_list != null)
+				Invocation.EmitArguments (ec, argument_list);
+			ec.ig.Emit (OpCodes.Call, parent_constructor);
 		}
 	}
 
@@ -1049,7 +1092,7 @@ namespace CIR {
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ca |= MethodAttributes.Static;
-			
+
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
 				ca, GetCallingConvention (parent is Class),
 				parameters);
@@ -1062,14 +1105,18 @@ namespace CIR {
 		//
 		public void Emit (TypeContainer parent)
 		{
+			if (!Initializer.Resolve (parent))
+				return;
+
+			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
+			EmitContext ec = new EmitContext (parent, ig);
+
+			Initializer.Emit (ec);
 			
 			if ((ModFlags & Modifiers.STATIC) != 0) 
 				parent.EmitStaticFieldInitializers (this.ConstructorBuilder);
 			else 
 				parent.EmitFieldInitializers (this.ConstructorBuilder);
-
-			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (parent, ig);
 
 			ec.EmitTopBlock (Block);
 		}

@@ -2938,6 +2938,8 @@ object CompositeLookup (string name)
 	string left = name.Substring (0, pos);
 	object o;
 
+Console.WriteLine ("Attempting: [" + left + "] " + name);
+
 	o = SimpleLookup (left);
 	if (o != null){
 		string right = name.Substring (pos + 1);
