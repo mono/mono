@@ -1,3 +1,7 @@
+2003-01-20  Duncan Mak  <duncan@ximian.com>
+
+      * list.unix: Remove the extra reference to ArgumentProcessorAttribute.cs
+      
 2002-09-03  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 
 	* added AboutAttribute.cs, AuthorAttribute.cs, OptionAttribute.cs, 
