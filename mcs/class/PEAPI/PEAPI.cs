@@ -1729,7 +1729,7 @@ namespace PEAPI
       typeIndex = superType.GetTypeIndex();
     }
 
-    internal void SpecialNoSuper() {
+    public void SpecialNoSuper() {
       superType = null;
     }
 
