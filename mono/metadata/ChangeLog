@@ -1,5 +1,9 @@
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_GetFilesInternal): 
+	Add a 'resource_modules' argument.
+	(ves_icall_type_GetTypeCode): Fix typecode of byref types.
+
 	* reflection.c (mono_reflection_create_runtime_class): Move setting
 	of wastypebuilder here, so mono_get_type_object () returns a MonoType
 	for enums too.
