@@ -75,7 +75,7 @@ namespace System.Web.UI
 		private bool _childControlsCreated;
 		private StateBag _viewState;
 		private bool _trackViewState;
-		private EventHandlerList _events = new EventHandlerList();
+		private EventHandlerList _events;
 		private RenderMethod _renderMethodDelegate;
 		private bool autoID = true;
 		private bool creatingControls;
