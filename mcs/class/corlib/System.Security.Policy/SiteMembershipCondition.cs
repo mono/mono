@@ -2,12 +2,9 @@
 // SiteMembershipCondition.cs: Site MembershipCondition
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -43,6 +40,11 @@ namespace System.Security.Policy {
 		private string _site;
 
 		// constructors
+
+		// so System.Activator.CreateInstance can create an instance...
+		internal SiteMembershipCondition ()
+		{
+		}
 
 		public SiteMembershipCondition (string site)
 		{

@@ -1,13 +1,11 @@
 //
 // System.Security.Policy.UnionCodeGroup.cs
 //
-// Author
+// Authors
 //	Duncan Mak (duncan@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -48,7 +46,9 @@ namespace System.Security.Policy {
                 }
 
 		// for PolicyLevel (to avoid validation duplication)
-		internal UnionCodeGroup (SecurityElement e) : base (e) {}
+		internal UnionCodeGroup (SecurityElement e) : base (e)
+		{
+		}
 
                 public override CodeGroup Copy ()
                 {
@@ -59,28 +59,49 @@ namespace System.Security.Policy {
 			return copy;
                 }
 
-                [MonoTODO]
+                [MonoTODO ("no children processing")]
                 public override PolicyStatement Resolve (Evidence evidence)
                 {
-                        if (evidence == null)
+			if (evidence == null)
                                 throw new ArgumentNullException ("evidence");
 
-                        throw new NotImplementedException ();
+ 			if (!MembershipCondition.Check (evidence))
+				return null;
+
+			PolicyStatement pst = this.PolicyStatement.Copy ();
+			if (this.Children.Count > 0) {
+				foreach (CodeGroup cg in this.Children) {
+					PolicyStatement child = cg.Resolve (evidence);
+					if (child != null) {
+						// TODO union
+					}
+				}
+			}
+			return pst;
                 }
 
-                [MonoTODO]
                 public override CodeGroup ResolveMatchingCodeGroups (Evidence evidence)
                 {
-                        if (evidence == null)
+			if (evidence == null)
 				throw new ArgumentNullException ("evidence");
 
-                        throw new NotImplementedException ();
-                }
+ 			if (!MembershipCondition.Check (evidence))
+				return null;
 
-                public override string MergeLogic {
-                        get {
-                                return "Union";
-                        }
-                }
-        }
+			// Copy would add the child (even if they didn't match)
+			CodeGroup match = (CodeGroup) new UnionCodeGroup (MembershipCondition, PolicyStatement);
+			if (this.Children.Count > 0) {
+				foreach (CodeGroup cg in this.Children) {
+					CodeGroup child = cg.ResolveMatchingCodeGroups (evidence);
+					if (child != null)
+						match.AddChild (child);
+				}
+			}
+			return match;
+		}
+
+		public override string MergeLogic {
+			get { return "Union"; }
+		}
+	}
 }

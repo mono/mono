@@ -49,6 +49,11 @@ namespace System.Security.Policy {
 		private HashAlgorithm hash_algorithm;
 		private byte[] hash_value;
 
+		// so System.Activator.CreateInstance can create an instance...
+		internal HashMembershipCondition ()
+		{
+		}
+
 		public HashMembershipCondition (HashAlgorithm hash_algorithm, byte[] hash_value)
 		{
 			if (hash_algorithm == null)

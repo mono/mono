@@ -52,15 +52,16 @@ namespace System.Security.Policy {
 		private string _location;
 		private PolicyLevelType _type;
 
-		internal PolicyLevel (string label)
+		internal PolicyLevel (string label, PolicyLevelType type)
                 {
                         this.label = label;
+			_type = type;
                         full_trust_assemblies = new ArrayList ();
                         named_permission_sets = new ArrayList ();
                 }
 
-		internal PolicyLevel (string label, string filename)
-			: this (label)
+		internal PolicyLevel (string label, PolicyLevelType type, string filename)
+			: this (label, type)
                 {
 			LoadFromFile (filename);
 		}
@@ -68,7 +69,8 @@ namespace System.Security.Policy {
 		internal void LoadFromFile (string filename) 
 		{
 			if (!File.Exists (filename))
-				throw new ArgumentException (Locale.GetText ("file do not exist"));
+				return;
+// TEMP				throw new ArgumentException (Locale.GetText ("file do not exist"));
 			
 			// throw a SecurityException if we don't have Read, Write and PathDiscovery permissions
 			FileIOPermissionAccess access = FileIOPermissionAccess.Read | FileIOPermissionAccess.Write | FileIOPermissionAccess.PathDiscovery;
@@ -131,7 +133,6 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
-		[MonoTODO ("assign type when loading policy")]
 		public PolicyLevelType Type {
 			get { return _type; }
 		}
@@ -201,7 +202,7 @@ namespace System.Security.Policy {
 			NamedPermissionSet fullTrust = new NamedPermissionSet ("FullTrust", PermissionState.Unrestricted);
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (fullTrust));
 			cg.Name = "All_Code";
-			PolicyLevel pl = new PolicyLevel ("AppDomain");
+			PolicyLevel pl = new PolicyLevel ("AppDomain", PolicyLevelType.AppDomain);
 			pl.RootCodeGroup = cg;
                         return pl;
                 }
@@ -310,7 +311,7 @@ namespace System.Security.Policy {
                         return permSet;
                 }
 
-                [MonoTODO ("Check for reserver names")]
+                [MonoTODO ("Check for reserved names")]
                 public NamedPermissionSet RemoveNamedPermissionSet (string name)
                 {
                         if (name == null)
@@ -341,13 +342,12 @@ namespace System.Security.Policy {
                         throw new NotImplementedException ();
                 }
 
-                [MonoTODO]
                 public PolicyStatement Resolve (Evidence evidence)
                 {
                         if (evidence == null)
                                 throw new ArgumentNullException ("evidence");
 
-                        throw new NotImplementedException ();
+			return root_code_group.Resolve (evidence);
                 }
 
                 [MonoTODO]
@@ -422,6 +422,18 @@ namespace System.Security.Policy {
 					return true;
 				default:
 					return false;
+			}
+		}
+
+		// NOTE: Callers are expected to check for ControlPolicy
+		internal void Save ()
+		{
+			// TODO: ??? appdomain level ???
+			if (_location != null) {
+				using (StreamWriter sw = new StreamWriter (_location)) {
+					sw.Write (ToXml ().ToString ());
+					sw.Close ();
+				}
 			}
 		}
         }

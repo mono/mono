@@ -1,3 +1,21 @@
+2004-08-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeGroup.cs: Fixed Equals (true) which, strangely, only compares
+	on level of children.
+	* HashMembershipCondition.cs: Added empty constructor so Activator.
+	CreateInstance can work.
+	* PolicyLevel.cs: Implemented PolicyType (NET_2_0), Resolve and Save.
+	* PublisherMembershipCondition.cs: Added empty constructor so 
+	Activator.CreateInstance can work.
+	* SiteMembershipCondition.cs: Added empty constructor so Activator.
+	CreateInstance can work.
+	* StrongNameMembershipCondition.cs: Added empty constructor so 
+	Activator.CreateInstance can work.
+	* UnionCodeGroup.cs: Partial implementation for Resolve (missing 
+	children support). Implemented ResolveMatchingCodeGroups.
+	* ZoneMembershipCondition.cs: Added empty constructor so Activator.
+	CreateInstance can work. Removed "class" validation in FromXml.
+
 2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NetCodeGroup.cs: Added Equals/GetHashCode methods to NET_2_0 profile.

@@ -5,9 +5,6 @@
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2003, Ximian Inc.
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -40,6 +37,11 @@ namespace System.Security.Policy {
                 : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
         {
                 SecurityZone zone;
+
+		// so System.Activator.CreateInstance can create an instance...
+		internal ZoneMembershipCondition ()
+		{
+		}
                 
                 public ZoneMembershipCondition (SecurityZone zone)
                 {
@@ -89,10 +91,6 @@ namespace System.Security.Policy {
 			if (element == null)
 				throw new ArgumentNullException (
                                         Locale.GetText ("The argument is null."));
-
-                        if (element.Attribute ("class") != GetType ().AssemblyQualifiedName)
-                                throw new ArgumentException (
-                                        Locale.GetText ("The argument is invalid."));
 
                         if (element.Attribute ("version") != "1")
                                 throw new ArgumentException (

@@ -1,11 +1,11 @@
+//
 // System.Security.Policy.CodeGroup
 //
-// Author(s):
-//   Nick Drochak (ndrochak@gol.com)
+// Authors:
+//	Nick Drochak (ndrochak@gol.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Nick Drochak, All rights reserved.
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -33,23 +33,22 @@ using System.Globalization;
 using System.Reflection;
 using System.Security.Policy;
 using System.Security.Permissions;
-//using System;  // for MonoTODO attribute
 
 namespace System.Security.Policy {
 
 	[Serializable]
 	public abstract class CodeGroup {
-		PolicyStatement m_policy = null;
-		IMembershipCondition m_membershipCondition = null;
-		string m_description = null;
-		string m_name = null;
+		PolicyStatement m_policy;
+		IMembershipCondition m_membershipCondition;
+		string m_description;
+		string m_name;
 		ArrayList m_children = new ArrayList();
 		PolicyLevel m_level;
 
 		public CodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)
 		{
 			if (null == membershipCondition)
-				throw new ArgumentNullException("Value cannot be null.");
+				throw new ArgumentNullException ("membershipCondition");
 
 			m_policy = policy;
 			m_membershipCondition = membershipCondition;
@@ -63,34 +62,31 @@ namespace System.Security.Policy {
 
 		// abstract
 
-		public abstract CodeGroup Copy();
-		public abstract string MergeLogic {get;}
+		public abstract CodeGroup Copy ();
+
+		public abstract string MergeLogic { get; }
+
 		public abstract PolicyStatement Resolve (Evidence evidence);
-		public abstract CodeGroup ResolveMatchingCodeGroups(Evidence evidence);
+
+		public abstract CodeGroup ResolveMatchingCodeGroups (Evidence evidence);
+
+		// properties
 
 		public PolicyStatement PolicyStatement {
-
 			get { return m_policy; }
-
 			set { m_policy = value; }
 		}
 
 		public string Description {
-
 			get { return m_description; }
-
 			set { m_description = value; }
 		}
 
 		public IMembershipCondition MembershipCondition	 {
-
-			get {
-				return m_membershipCondition;
-			}
-
+			get { return m_membershipCondition; }
 			set {
 				if (null == value)
-					throw new ArgumentException("Value cannot be null");
+					throw new ArgumentException ("value");
 				m_membershipCondition = value;
 			}
 		}
@@ -105,7 +101,7 @@ namespace System.Security.Policy {
 			set {
 				if (null == value)
 					throw new ArgumentNullException ("value");
-				m_children = new ArrayList(value);
+				m_children = new ArrayList (value);
 			}
 		}
 
@@ -125,22 +121,23 @@ namespace System.Security.Policy {
 			}
 		}
 
-		public void AddChild(CodeGroup group)
+		public void AddChild (CodeGroup group)
 		{
 			if (null == group)
-				throw new ArgumentNullException("The group parameter cannot be null");
+				throw new ArgumentNullException ("group");
+
 			m_children.Add(group);
 		}
 
-		public override bool Equals(object o)
+		public override bool Equals (object o)
 		{
 			if (!(o is CodeGroup))
 				return false;
 
-			return Equals((CodeGroup)o, false);
+			return Equals ((CodeGroup)o, false);
 		}
 
-		public bool Equals(CodeGroup cg, bool compareChildren)
+		public bool Equals (CodeGroup cg, bool compareChildren)
 		{
 			if (cg.Name != this.Name)
 				return false;
@@ -160,11 +157,8 @@ namespace System.Security.Policy {
 					return false;
 
 				for (int index = 0; index < childCount; index++) {
-					// LAMESPEC: are we supposed to check child equality recursively?
-					//		The docs imply 'no' but it seems natural to do a 'deep' compare.
-					//		Will check the children's children, and so-on unless we find out that
-					//		we shouldn't
-					if (!((CodeGroup)(this.Children[index])).Equals((CodeGroup)(cg.Children[index]), true))
+					// not a deep compare
+					if (!((CodeGroup)(this.Children [index])).Equals ((CodeGroup)(cg.Children [index]), false))
 						return false;
 				}
 			}
@@ -222,7 +216,7 @@ namespace System.Security.Policy {
 				Type classType = Type.GetType (className);
 				if (classType == null)
 					classType = Type.GetType ("System.Security.Policy." + className);
-				m_membershipCondition = (IMembershipCondition) Activator.CreateInstance (classType);
+				m_membershipCondition = (IMembershipCondition) Activator.CreateInstance (classType, true);
 				m_membershipCondition.FromXml (mc, level);
 			}
 
@@ -235,11 +229,11 @@ namespace System.Security.Policy {
 			ParseXml (e, level);
 		}
 
-		protected virtual void ParseXml(SecurityElement e, PolicyLevel level)
+		protected virtual void ParseXml (SecurityElement e, PolicyLevel level)
 		{
 		}
 		
-		public SecurityElement ToXml()
+		public SecurityElement ToXml ()
 		{
 			return ToXml (null);
 		}
@@ -269,7 +263,7 @@ namespace System.Security.Policy {
 			return e;
 		}
 		
-		protected virtual void CreateXml(SecurityElement element, PolicyLevel level)
+		protected virtual void CreateXml (SecurityElement element, PolicyLevel level)
 		{
 		}
 
@@ -305,5 +299,5 @@ namespace System.Security.Policy {
 					return (CodeGroup) Activator.CreateInstance (classType, true);
 			}
 		}
-	}  // public abstract class CodeGroup
-}  // namespace System.Security.Policy
+	}
+}

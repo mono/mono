@@ -60,6 +60,11 @@ namespace System.Security.Policy {
 			FromXml (e);
 		}
 
+		// so System.Activator.CreateInstance can create an instance...
+		internal StrongNameMembershipCondition ()
+		{
+		}
+
 		// properties
 
                 public string Name {
