@@ -1,4 +1,10 @@
-2004-02-15 Carlos Guzmán Álvarez  <carlosga@te...>
+2004-02-16 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+ 	* Mono.Security.Protocol.Tls/TlsCipherSuiteFactory.cs:
+
+        - Changed ciphersuites order of preference ( Thanks to Sebastien Pouliot for his feedback ).
+
+2004-02-15 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
  
  	* Mono.Security.Protocol.Tls/SslClientStream.cs:
  
