@@ -1,0 +1,15 @@
+2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
+        * DefaultAttrC1:
+        * DefaultAttrC2:
+        * DefaultAttrC3:
+        * DefaultAttrC4:
+        * DefaultAttrC5:
+        * DefaultAttrC6:
+                Above test cases are contributed by Sudharsan <vsudharsan@novell.com>
+
+2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
+
+        This folder is been created by Jambunathan <kjambunathan@novell.com>
+        on 2004-10-17 and moved all negetive (compilation) test cases for mbas 
+	from btests to here.
+

@@ -1,0 +1,15 @@
+nirban Bhattacharjee <banirban@novell.com>
+        * DefaultAttrA:
+        * DefaultAttrB:
+        * DefaultAttrC:
+        * DefaultAttrD:
+        * DefaultAttrE:
+        * DefaultAttrF:
+        * DefaultAttrG:
+                Above test cases are contributed by Sudharsan <vsudharsan@novell.com>
+
+2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
+
+        This folder is been created by Jambunathan <kjambunathan@novell.com>
+        on 2004-10-17 and moved all positive test cases for mbas from btests
+        to here.
