@@ -1,5 +1,7 @@
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.cs: Implement /addmodule.
+
 	* typemanager.cs:  Change 'modules' field so it now contains Modules not
 	ModuleBuilders.
 

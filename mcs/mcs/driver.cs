@@ -41,6 +41,11 @@ namespace Mono.CSharp
 		//
 		static ArrayList soft_references;
 
+		//
+		// Modules to be linked
+		//
+		static ArrayList modules;
+
 		// Lookup paths
 		static ArrayList link_paths;
 
@@ -308,6 +313,52 @@ namespace Mono.CSharp
 				Report.Error(6, "Cannot load assembly " + f.FusionLog);
 			} catch (ArgumentNullException){
 				Report.Error(6, "Cannot load assembly (null argument)");
+			}
+		}
+
+		static public void LoadModule (MethodInfo adder_method, string module)
+		{
+			Module m;
+			string total_log = "";
+
+			try {
+				try {
+					m = (Module)adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { module });
+				}
+				catch (TargetInvocationException ex) {
+					throw ex.InnerException;
+				}
+				TypeManager.AddModule (m);
+
+			} 
+			catch (FileNotFoundException){
+				foreach (string dir in link_paths){
+					string full_path = Path.Combine (dir, module);
+					if (!module.EndsWith (".netmodule"))
+						full_path += ".netmodule";
+
+					try {
+						try {
+							m = (Module)adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { full_path });
+						}
+						catch (TargetInvocationException ex) {
+							throw ex.InnerException;
+						}
+						TypeManager.AddModule (m);
+						return;
+					} catch (FileNotFoundException ff) {
+						total_log += ff.FusionLog;
+						continue;
+					}
+				}
+				Report.Error (6, "Cannot find module `" + module + "'" );
+				Console.WriteLine ("Log: \n" + total_log);
+			} catch (BadImageFormatException f) {
+				Report.Error(6, "Cannot load module (bad file format)" + f.FusionLog);
+			} catch (FileLoadException f){
+				Report.Error(6, "Cannot load module " + f.FusionLog);
+			} catch (ArgumentNullException){
+				Report.Error(6, "Cannot load module (null argument)");
 			}
 		}
 
@@ -957,6 +1008,18 @@ namespace Mono.CSharp
 				}
 				return true;
 			}
+			case "/addmodule": {
+				if (value == ""){
+					Report.Error (5, arg + " requires an argument");
+					Environment.Exit (1);
+				}
+
+				string [] refs = value.Split (new char [] { ';', ',' });
+				foreach (string r in refs){
+					modules.Add (r);
+				}
+				return true;
+			}
 			case "/doc": {
 				if (value == ""){
 					Report.Error (5, arg + " requires an argument");
@@ -1140,6 +1203,7 @@ namespace Mono.CSharp
 			
 			references = new ArrayList ();
 			soft_references = new ArrayList ();
+			modules = new ArrayList ();
 			link_paths = new ArrayList ();
 
 			SetupDefaultDefines ();
@@ -1280,6 +1344,17 @@ namespace Mono.CSharp
 			}
 
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
+
+			if (modules.Count > 0) {
+				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
+				if (adder_method == null) {
+					Report.Error (0, new Location (-1), "Cannot use /addmodule on this runtime: Try the Mono runtime instead.");
+					Environment.Exit (1);
+				}
+
+				foreach (string module in modules)
+					LoadModule (adder_method, module);
+			}
 
 			TypeManager.ComputeNamespaces ();
 			
