@@ -33,6 +33,24 @@ namespace System
 
 			float fv = (float)v;
 
+			if (IsPositiveInfinity (m_value) && IsPositiveInfinity (fv))
+				return 0;
+
+			if (IsNegativeInfinity (m_value) && IsNegativeInfinity (fv))
+				return 0;
+
+			if (IsNaN (fv))
+				if (IsNaN (m_value))
+					return 0;
+				else
+					return 1;
+
+			if (IsNaN (m_value))
+				if (IsNaN (fv))
+					return 0;
+				else
+					return -1;
+
 			if (this.m_value == fv)
 				return 0;
 			else if (this.m_value > fv)
@@ -45,6 +63,10 @@ namespace System
 		{
 			if (!(o is System.Single))
 				return false;
+
+			if (IsNaN ((float) o)) {
+				return IsNaN (m_value);
+			}
 
 			return ((float) o) == m_value;
 		}
