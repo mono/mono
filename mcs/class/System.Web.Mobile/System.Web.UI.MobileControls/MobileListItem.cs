@@ -39,6 +39,11 @@ namespace System.Web.UI.MobileControls
 			throw new NotImplementedException();
 		}
 
+		internal void SetIndex(int index)
+		{
+			throw new NotImplementedException();
+		}
+
 		public string Text
 		{
 			get
