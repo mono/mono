@@ -250,11 +250,6 @@ namespace System.Data.Common {
 			if (maxRecords < 0)
 				throw new ArgumentException ("The maxRecords parameter was less than 0.");
 
-			//if (dataReader.FieldCount == 0) {
-			//	dataReader.Close ();
-			//	return 0;
-			//}
-
 			DataTable dataTable;
 			int resultIndex = 0;
 			int count = 0;
@@ -274,7 +269,6 @@ namespace System.Data.Common {
 						}
 
 						if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count)) {
-							//break;
 							continue;
 						}
 
@@ -284,11 +278,12 @@ namespace System.Data.Common {
 						maxRecords = 0;
 					}
 				} while (dataReader.NextResult ());
-			} finally {
+			} 
+			finally {
 				dataReader.Close ();
 			}
 
-            return count;
+                        return count;
 		}
 		
 		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
@@ -312,31 +307,32 @@ namespace System.Data.Common {
 			int counterStart = counter;
 			
 			int[] mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
-			
-			object[] readerArray = new object[dataReader.FieldCount];
-			object[] tableArray = new object[mapping.Length];
 
-			for (int i = 0; i < startRecord; i++)
-				dataReader.Read ();
+				for (int i = 0; i < startRecord; i++) {
+					dataReader.Read ();
+				}
 
-			while (dataReader.Read () && (maxRecords == 0 || (counterStart - counter) < maxRecords)) {
-
-				// we get the values from the datareader
-				dataReader.GetValues (readerArray);
-				// copy from datareader columns to table columns according to given mapping
-				for (int i = 0; i < mapping.Length; i++)
-					tableArray[i] = readerArray[mapping[i]];
-
+			while (dataReader.Read () && (maxRecords == 0 || (counter - counterStart) < maxRecords)) {
 				try {
 					dataTable.BeginLoadData ();
-					dataTable.LoadDataRow (tableArray, AcceptChangesDuringFill);
+					dataTable.LoadDataRow (dataReader, mapping, AcceptChangesDuringFill);
 					dataTable.EndLoadData ();
 					counter++;
-				} catch (Exception e) {
+				} 
+				catch (Exception e) {
+					object[] readerArray = new object[dataReader.FieldCount];
+					object[] tableArray = new object[mapping.Length];
+					// we get the values from the datareader
+					dataReader.GetValues (readerArray);
+					// copy from datareader columns to table columns according to given mapping
+					for (int i = 0; i < mapping.Length; i++) {
+						tableArray[i] = readerArray[mapping[i]];
+					}
 					FillErrorEventArgs args = CreateFillErrorEvent (dataTable, tableArray, e);
 					OnFillError (args);
-					if(!args.Continue)
+					if(!args.Continue) {
 						return false;
+					}
 				}
 			}
 			return true;
@@ -473,7 +469,7 @@ namespace System.Data.Common {
 			foreach (DataRow schemaRow in reader.GetSchemaTable ().Rows) {
 				// generate a unique column name in the source table.
 				string sourceColumnName;
-				if (schemaRow ["ColumnName"].Equals (DBNull.Value))
+				if (schemaRow.IsNull("ColumnName"))
 					sourceColumnName = DefaultSourceColumnName;
 				else 
 					sourceColumnName = (string) schemaRow ["ColumnName"];
