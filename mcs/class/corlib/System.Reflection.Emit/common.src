@@ -6,5 +6,6 @@ OpCode.cs
 OpCodeType.cs
 OpCodes.cs
 OperandType.cs
+PackingSize.cs
 PEFileKinds.cs
 StackBehaviour.cs
