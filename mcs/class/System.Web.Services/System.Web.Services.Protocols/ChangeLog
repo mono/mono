@@ -1,3 +1,8 @@
+2004-09-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Methods.cs: Use the service namespace as the base for the soap action.
+	  This fixes bug #60379.
+
 2004-08-25  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HttpSoapWebServiceHandler.cs, WebServiceHandler.cs: Do not assign the

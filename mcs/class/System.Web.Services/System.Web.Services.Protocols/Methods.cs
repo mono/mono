@@ -161,7 +161,7 @@ namespace System.Web.Services.Protocols {
 			if (RequestName == "") RequestName = Name;
 			if (ResponseName == "")	ResponseName = Name + "Response";
 			if (Action == null || Action == "")
-				Action = RequestNamespace.EndsWith("/") ? (RequestNamespace + Name) : (RequestNamespace + "/" + Name);
+				Action = serviceNamespace.EndsWith("/") ? (serviceNamespace + Name) : (serviceNamespace + "/" + Name);
 			
 			bool hasWrappingElem = (ParameterStyle == SoapParameterStyle.Wrapped);
 			bool writeAccessors = (SoapBindingStyle == SoapBindingStyle.Rpc);
