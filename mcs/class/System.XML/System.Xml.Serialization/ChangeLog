@@ -1,3 +1,18 @@
+2002-08-24  Tim Coleman <tim@timcoleman.com>
+	* SoapCodeExporter.cs:
+		Fix return value of ExportTypeMapping.
+	* XmlCustomFormatter.cs:
+		Change methods to be internal instead of public.
+	* XmlSerializationWriter.cs:
+		Modify GetPrimitiveTypeName to build on linux.
+		Modify GetQualifiedName to return an incrementing prefix
+		instead of the same one all the time (still need to manage
+		conflicts)
+		Modify WriteElementString to only do special stuff is XsiType
+		is not defined.
+		Modify WriteTypedPrimitive to use FromXmlQualifiedName if it's
+		an XmlQualifiedName.
+
 2002-08-22  Tim Coleman <tim@timcoleman.com>
 	* XmlSerializationReader.cs:
 		Some implementation

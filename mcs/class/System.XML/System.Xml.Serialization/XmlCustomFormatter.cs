@@ -17,12 +17,12 @@ namespace System.Xml.Serialization {
 		#region Methods
 
 		[MonoTODO]
-		public static byte[] FromByteArrayBase64 (byte[] value)
+		internal static byte[] FromByteArrayBase64 (byte[] value)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static string FromByteArrayHex (byte[] value)
+		internal static string FromByteArrayHex (byte[] value)
 		{
 			StringBuilder output = new StringBuilder ();
 			foreach (byte val in value)
@@ -30,27 +30,27 @@ namespace System.Xml.Serialization {
 			return output.ToString ();
 		}
 
-		public static string FromChar (char value)
+		internal static string FromChar (char value)
 		{
 			return ((int) value).ToString ();
 		}
 
-		public static string FromDate (DateTime value)
+		internal static string FromDate (DateTime value)
 		{
 			return XmlConvert.ToString (value, "HH':'mm':'ss'.'fffffffzzz");
 		}
 
-		public static string FromDateTime (DateTime value)
+		internal static string FromDateTime (DateTime value)
 		{
 			return XmlConvert.ToString (value, "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffzzz");
 		}
 
-		public static string FromTime (DateTime value)
+		internal static string FromTime (DateTime value)
 		{
 			return XmlConvert.ToString (value, "yyyy'-'MM'-'dd");
 		}
 
-		public static string FromEnum (long value, string[] values, long[] ids)
+		internal static string FromEnum (long value, string[] values, long[] ids)
 		{
 			int length = ids.Length;
 
@@ -64,22 +64,22 @@ namespace System.Xml.Serialization {
 			return value.ToString ();
 		}
 
-		public static string FromXmlName (string name)
+		internal static string FromXmlName (string name)
 		{
 			return XmlConvert.EncodeName (name);
 		}
 
-		public static string FromXmlNCName (string ncName)
+		internal static string FromXmlNCName (string ncName)
 		{
 			return XmlConvert.EncodeLocalName (ncName);
 		}
 
-		public static string FromXmlNmToken (string nmToken)
+		internal static string FromXmlNmToken (string nmToken)
 		{
 			return XmlConvert.EncodeNmToken (nmToken);
 		}
 
-		public static string FromXmlNmTokens (string nmTokens)
+		internal static string FromXmlNmTokens (string nmTokens)
 		{
 			StringBuilder output = new StringBuilder ();
 			string [] tokens = nmTokens.Split (' ');
@@ -89,49 +89,49 @@ namespace System.Xml.Serialization {
 		}
 
 		[MonoTODO]
-		public static char ToChar (string value)
+		internal static char ToChar (string value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static DateTime ToDate (string value)
+		internal static DateTime ToDate (string value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static DateTime ToDateTime (string value)
+		internal static DateTime ToDateTime (string value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static DateTime ToTime (string value)
+		internal static DateTime ToTime (string value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static string ToXmlName (string value)
+		internal static string ToXmlName (string value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static string ToXmlNCName (string value)
+		internal static string ToXmlNCName (string value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static string ToXmlNmToken (string value)
+		internal static string ToXmlNmToken (string value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static string ToXmlNmTokens (string value)
+		internal static string ToXmlNmTokens (string value)
 		{
 			throw new NotImplementedException ();
 		}

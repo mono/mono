@@ -20,6 +20,7 @@ namespace System.Xml.Serialization {
 
 		Hashtable references;
 		int referenceCount;
+		int qnameCount;
 
 		ArrayList namespaces;
 		XmlWriter writer;
@@ -31,6 +32,7 @@ namespace System.Xml.Serialization {
 		[MonoTODO]
 		protected XmlSerializationWriter ()
 		{
+			qnameCount = 0;
 			references = new Hashtable ();
 			referenceCount = 0;
 		}
@@ -152,10 +154,31 @@ namespace System.Xml.Serialization {
 			return id;
 		}
 
+		[MonoTODO ("Complete this list.")]
+		private string GetPrimitiveTypeName (Type type)
+		{
+			if (type == typeof (string))
+				return "string";
+			if (type == typeof (bool))
+				return "Boolean";
+			if (type == typeof (float))
+				return "float";
+			if (type == typeof (double))
+				return "double";
+			if (type == typeof (XmlQualifiedName))
+				return "QName";
+
+			return String.Empty;
+		}
+	
+		[MonoTODO ("Need to check for namespace conflicts before blindly allocating qN")]
 		private string GetQualifiedName (string name, string ns)
 		{
-			WriteAttribute ("xmlns", "q1", null, ns);
-			return String.Format ("{0}:{1}", "q1", name);
+			qnameCount += 1;
+			string prefix = String.Format ("q{0}", qnameCount);
+
+			WriteAttribute ("xmlns", prefix, null, ns);
+			return String.Format ("{0}:{1}", prefix, name);
 		}
 
 		protected abstract void InitCallbacks ();
@@ -249,13 +272,14 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteElementString (string localName, string ns, string value, XmlQualifiedName xsiType)
 		{
-			WriteStartElement (localName, ns);
-
-			if (xsiType != null)
+			if (xsiType != null) {
+				WriteStartElement (localName, ns);
 				WriteXsiType (xsiType.Name, xsiType.Namespace);
-
-			Writer.WriteString (value);
-			WriteEndElement ();
+				Writer.WriteString (value);
+				WriteEndElement ();
+			} 
+			else
+				Writer.WriteElementString (localName, ns, value);
 		}
 
 		protected void WriteElementStringRaw (string localName, byte[] value)
@@ -482,15 +506,21 @@ namespace System.Xml.Serialization {
 				Writer.WriteStartElement (name, ns);
 		}
 
-		[MonoTODO ("get primitive type name")]
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)
 		{
+			string value;
+
 			WriteStartElement (name, ns);
 
-			if (xsiType)
-				WriteXsiType (o.GetType ().Name, XmlSchema.Namespace);
+			if (o is XmlQualifiedName)
+				value = FromXmlQualifiedName ((XmlQualifiedName) o);
+			else
+				value = o.ToString ();
 
-			WriteValue (o.ToString ());
+			if (xsiType)
+				WriteXsiType (GetPrimitiveTypeName (o.GetType ()), XmlSchema.Namespace);
+
+			WriteValue (value);
 			WriteEndElement ();
 		}
 
