@@ -135,7 +135,7 @@ namespace System.Web {
 
       public DateTime ValidUntil {
          get {
-            return ValidUntil;
+            return _ValidTo;
          }
       }
 

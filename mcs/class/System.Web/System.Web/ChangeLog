@@ -1,3 +1,7 @@
+2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* HttpClientCertificate.cs (ValidUntil): recursion!
+
 2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* SiteMapNode.cs (GetDataSourceView): Implement.
