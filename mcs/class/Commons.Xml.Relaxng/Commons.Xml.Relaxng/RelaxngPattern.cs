@@ -517,6 +517,11 @@ namespace Commons.Xml.Relaxng
 
 		public void WriteCompact (TextWriter writer, NSResolver res)
 		{
+			RelaxngGrammar g = this as RelaxngGrammar;
+			if (g != null && g.DefaultNamespace != null) {
+				writer.Write ("default namespace = ");
+				writer.WriteLine (g.DefaultNamespace);
+			}
 			WriteRnc (new RncWriter (writer, res));
 		}
 

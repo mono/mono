@@ -47,6 +47,7 @@ namespace Commons.Xml.Relaxng
 			"http://relaxng.org/ns/structure/1.0";
 
 		// object model fields
+		string defaultNamespace;
 		RelaxngGrammarContentList starts = new RelaxngGrammarContentList ();
 		RelaxngGrammarContentList defs = new RelaxngGrammarContentList ();
 		RelaxngGrammarContentList includes = new RelaxngGrammarContentList ();
@@ -113,6 +114,11 @@ namespace Commons.Xml.Relaxng
 			get { return RelaxngPatternType.Grammar; }
 		}
 
+		public string DefaultNamespace {
+			get { return defaultNamespace; }
+			set { defaultNamespace = value; }
+		}
+
 		public RelaxngGrammarContentList Starts {
 			get { return starts; }
 		}
@@ -132,6 +138,8 @@ namespace Commons.Xml.Relaxng
 		public override void Write (XmlWriter writer)
 		{
 			writer.WriteStartElement ("", "grammar", RelaxngGrammar.NamespaceURI);
+			if (defaultNamespace != null)
+				writer.WriteAttributeString ("ns", defaultNamespace);
 			foreach (RelaxngStart start in Starts)
 				start.Write (writer);
 			foreach (RelaxngDefine define in Defines)

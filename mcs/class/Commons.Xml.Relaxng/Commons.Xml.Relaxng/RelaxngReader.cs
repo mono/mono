@@ -59,6 +59,7 @@ namespace Commons.Xml.Relaxng
 		Stack nsStack = new Stack ();
 		Stack datatypeLibraryStack = new Stack ();
 		XmlResolver resolver = new XmlUrlResolver ();
+//		ArrayList annotationNamespaces = new ArrayList ();
 
 		// ctor
 		public RelaxngReader (XmlReader reader)
@@ -70,12 +71,13 @@ namespace Commons.Xml.Relaxng
 //			: base (grammarForRelaxng == null ? reader : new RelaxngValidatingReader (reader, grammarForRelaxng))
 			: base (reader)
 		{
-			nsStack.Push (ns == null ? "" : ns);
-			datatypeLibraryStack.Push ("");
-
+			nsStack.Push (ns == null ? String.Empty : ns);
 			if (Reader.ReadState == ReadState.Initial)
 				Read ();
 			MoveToContent ();
+			string dtlib = GetSpaceStrippedAttribute ("datatypeLibrary", String.Empty);
+			datatypeLibraryStack.Push (dtlib != null ?
+				dtlib : String.Empty);
 		}
 
 		public XmlResolver XmlResolver {
@@ -93,6 +95,14 @@ namespace Commons.Xml.Relaxng
 			el.LineNumber = li != null ? li.LineNumber : 0;
 			el.LinePosition = li != null ? li.LinePosition : 0;
 		}
+
+/*
+		public void AddAnnotationNamespace (string ns)
+		{
+			if (!annotationNamespaces.Contains (ns))
+				annotationNamespaces.Add (ns);
+		}
+*/
 
 		// public
 		public override bool Read ()
@@ -136,8 +146,10 @@ namespace Commons.Xml.Relaxng
 
 			switch (NodeType) {
 			case XmlNodeType.Element:
-				if (MoveToAttribute ("ns"))
+				if (MoveToAttribute ("ns")) {
 					nsStack.Push (Value.Trim ());
+					MoveToElement ();
+				}
 				else
 					nsStack.Push (nsStack.Peek ());
 
@@ -154,10 +166,10 @@ namespace Commons.Xml.Relaxng
 							throw new RelaxngException (ex.Message, ex);
 						}
 					}
+					MoveToElement ();
 				}
 				else
-					datatypeLibraryStack.Push (datatypeLibraryStack.Peek ());
-				MoveToElement ();
+					datatypeLibraryStack.Push (DatatypeLibrary);
 				break;
 
 			case XmlNodeType.EndElement:
@@ -176,7 +188,12 @@ namespace Commons.Xml.Relaxng
 		}
 
 		public string DatatypeLibrary {
-			get { return datatypeLibraryStack.Peek () as string; }
+			get {
+				if (datatypeLibraryStack.Count == 0)
+					// It happens only on initialization.
+					return String.Empty;
+				return datatypeLibraryStack.Peek () as string;
+			}
 		}
 
 		// Utility methods.
@@ -636,6 +653,7 @@ namespace Commons.Xml.Relaxng
 		{
 			RelaxngGrammar grammar = new RelaxngGrammar ();
 			FillLocation (grammar);
+			grammar.DefaultNamespace = Reader.GetAttribute ("ns");
 			Read ();
 			this.readGrammarIncludeContent (grammar.Starts, grammar.Defines, grammar.Divs, grammar.Includes);
 			expectEnd ("grammar");

@@ -1,3 +1,10 @@
+2005-02-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngReader.cs : it was not handling datatypeLibrary attribute
+	  on root element. Added DefaultNamespace handling.
+	* RelaxngGrammar.cs : added DefaultNamespace property.
+	* RelaxngPattern.cs : WriteCompact() now outputs "default namespace =..".
+
 2005-01-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngPattern.cs : fixed 2.0 typo.
