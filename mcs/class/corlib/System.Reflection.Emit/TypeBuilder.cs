@@ -336,7 +336,7 @@ namespace System.Reflection.Emit {
 
 		public ConstructorBuilder DefineDefaultConstructor (MethodAttributes attributes)
 		{
-			ConstructorBuilder cb = DefineConstructor (attributes, CallingConventions.Standard, null);
+			ConstructorBuilder cb = DefineConstructor (attributes, CallingConventions.Standard, new Type [0]);
 
 			Type parent_type;
 

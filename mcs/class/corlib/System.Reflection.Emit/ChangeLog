@@ -1,5 +1,9 @@
 2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TypeBuilder.cs (DefineDefaultConstructor): Pass an array instead of 
+	null to DefineConstructor, to avoid NullReferenceExceptions in the 
+	binder code.
+
 	* AssemblyBuilder.cs ModuleBuilder.cs ILGenerator.cs: Move getUSIndex 
 	and getToken methods, and the associated icalls to ModuleBuilder, 
 	since tokens are per-module.
