@@ -1,4 +1,8 @@
 
+Fri Mar 29 17:43:04 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: fix brokeness.
+
 Fri Mar 29 16:09:54 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: kill some warnings. Check explicit interface method
