@@ -106,31 +106,25 @@ namespace System.Xml
 
 		void ParseInput (string input)
 		{
-//			Encoding = input.Split (new char [] { ' ' }) [1].Split (new char [] { '=' }) [1];
-//			Standalone = input.Split (new char [] { ' ' }) [2].Split (new char [] { '=' }) [1];
-			Match m = XmlDeclRegex.Match(input);
-			if(!m.Success)
-				throw new XmlException("illegal XML declaration format.");
-//			Version = m.Result("${ver}");
-			Encoding = m.Result("${enc}");
-			Standalone = m.Result("${sta}");
-		}
-
-		// This regular expression matches XMLDecl of XML specification BNF[23]
-		static Regex xmlDeclRegex;
-		Regex XmlDeclRegex 
-		{
-			get 
-			{
-				if(xmlDeclRegex == null) xmlDeclRegex = new Regex(allMatch, RegexOptions.Compiled);
-				return xmlDeclRegex;
+			char [] sep = new char [] {'\'', '"'};
+			if (!input.Trim ().StartsWith ("version"))
+				throw new XmlException("missing \"version\".");
+			int start = input.IndexOf ("encoding");
+			int sstart = -1;
+			if (start > 0) {
+				int valStart = input.IndexOfAny (sep, start) + 1;
+				int valEnd = input.IndexOfAny (sep, valStart);
+				Encoding = input.Substring (valStart, valEnd - valStart);
+				sstart = input.IndexOf ("standalone");
 			}
-		}
+			else
+				sstart = input.IndexOf ("standalone");
 
-		// This code makes some loss, but you may understand a bit easily.
-		const string verMatch = "\\s*version\\s*=\\s*(\\'(?<ver>.*?)\\'|\\\"(?<ver>.*?)\")";
-		const string encMatch = "\\s*encoding\\s*=\\s*(\\'(?<enc>.*?)\\'|\\\"(?<enc>.*?)\")";
-		const string staMatch = "\\s*standalone\\s*=\\s*(\\'(?<sta>.*?)\\'|\\\"(?<sta>.*?)\")";
-		const string allMatch = verMatch + "(" + encMatch + ")?(" + staMatch + ")?";
+			if (sstart > 0) {
+				int svalStart = input.IndexOfAny (sep, sstart) + 1;
+				int svalEnd = input.IndexOfAny (sep, svalStart);
+				Standalone = input.Substring (svalStart, svalEnd - svalStart);
+			}	// TODO: some error check
+		}
 	}
 }

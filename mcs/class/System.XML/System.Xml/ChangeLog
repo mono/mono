@@ -1,5 +1,9 @@
 2003-03-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDeclaration.cs : quick fix, not to use regex for set_Value.
+
+2003-03-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextReader.cs : Fixed wrong notationdecl SYSTEM id read.
 	* XmlInputStream.cs : Should allow versionless input stream entity.
 
