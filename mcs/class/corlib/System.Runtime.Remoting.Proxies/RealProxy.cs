@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Activation;
@@ -91,11 +92,15 @@ namespace System.Runtime.Remoting.Proxies
 
 			IMethodReturnMessage res_msg = (IMethodReturnMessage)rp.Invoke (msg);
 
-			if (res_msg.LogicalCallContext != null)
-				CallContext.SetCurrentCallContext (res_msg.LogicalCallContext);
+			if (!(res_msg is IConstructionReturnMessage) && (res_msg.Exception == null))
+				out_args = ProcessResponse (res_msg, mMsg);
+			else
+				out_args = res_msg.OutArgs;
+
+			if (res_msg.LogicalCallContext != null && res_msg.LogicalCallContext.HasInfo)
+				CallContext.UpdateCurrentCallContext (res_msg.LogicalCallContext);
 
 			exc = res_msg.Exception;
-			out_args = res_msg.OutArgs;
 
 			// todo: remove throw exception from the runtime invoke
 			if (null != exc) 
@@ -133,6 +138,54 @@ namespace System.Runtime.Remoting.Proxies
 		protected MarshalByRefObject GetUnwrappedServer()
 		{
 			return _server;
+		}
+
+		static object[] ProcessResponse (IMethodReturnMessage mrm, IMethodCallMessage call)
+		{
+			// Check return type
+
+			MethodInfo mi = (MethodInfo) mrm.MethodBase;
+			if (mrm.ReturnValue != null && !mi.ReturnType.IsInstanceOfType (mrm.ReturnValue))
+				throw new RemotingException ("Return value has an invalid type");
+
+			// Check out parameters
+
+			if (mrm.OutArgCount > 0)
+			{
+				ParameterInfo[] parameters = mi.GetParameters();
+				int no = 0;
+				foreach (ParameterInfo par in parameters)
+					if (par.ParameterType.IsByRef) no++;
+				
+				object[] outArgs = new object [no];
+				int narg = 0;
+				int nout = 0;
+	
+				foreach (ParameterInfo par in parameters)
+				{
+					if (par.IsOut && !par.ParameterType.IsByRef)
+					{
+						// Special marshalling required
+						
+						object outArg = mrm.GetOutArg (nout++);
+						if (outArg != null) {
+							object local = call.GetArg (par.Position);
+							if (local == null) throw new RemotingException ("Unexpected null value in local out parameter");
+							RemotingServices.UpdateOutArgObject (par, local, outArg);
+						}
+					}
+					else if (par.ParameterType.IsByRef)
+					{
+						object outArg = mrm.GetOutArg (nout++);
+						if (outArg != null && !par.ParameterType.IsInstanceOfType (outArg))
+							throw new RemotingException ("Return argument '" + par.Name + "' has an invalid type");
+						outArgs [narg++] = outArg;
+					}
+				}
+				return outArgs;
+			}
+			else
+				return new object [0];
 		}
 	}
 }
