@@ -2,7 +2,7 @@
 Option Strict Off
 Option Compare Text
 
-Imports System, IO = System.Console
+Imports System, IO = System.Console, INFO = Microsoft.VisualBasic.Information
 
 Module WriteOK
 
@@ -41,6 +41,19 @@ Module WriteOK
 		
 		Console.WriteLine(Strings.ChrW(64))
 
+		Console.Write("Positive cases for IsNumeric: ")
+        if (INFO.IsNumeric(octalLit) And INFO.IsNumeric(hexLit) And INFO.IsNumeric(singleLit) And INFO.IsNumeric(doubleLit) And INFO.IsNumeric(decimalLit) And INFO.IsNumeric("123")) then
+			Console.WriteLine("OK")
+		else
+			Console.WriteLine("FAILED")
+		end if
+
+		Console.Write("Negative cases for IsNumeric: ")
+		if not (INFO.IsNumeric(nothing) Or INFO.IsNumeric(charLit) or INFO.IsNumeric(dateLit) or INFO.IsNumeric("123 ABC")) then
+			Console.WriteLine("OK")
+		else
+			Console.WriteLine("FAILED")
+		end if
     End Sub
 
 End Module

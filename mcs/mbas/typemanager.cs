@@ -201,7 +201,7 @@ public class TypeManager {
 	static Hashtable indexer_arguments;
 
 	// <remarks>
-	//   Maybe `method_arguments' should be replaced and only
+	//   Maybe 'method_arguments' should be replaced and only
 	//   method_internal_params should be kept?
 	// <remarks>
 	static Hashtable method_internal_params;
@@ -328,14 +328,14 @@ public class TypeManager {
 				//
 				// This probably never happens, as we catch this before
 				//
-				Report.Error (-17, "The type `" + name + "' has already been defined.");
+				Report.Error (-17, "The type '" + name + "' has already been defined.");
 				return;
 			}
 
 			tc = builder_to_declspace [t] as TypeContainer;
 			
 			Report.Warning (
-				1595, "The type `" + name + "' is defined in an existing assembly;"+
+				1595, "The type '" + name + "' is defined in an existing assembly;"+
 				" Using the new definition from: " + tc.Location);
 			Report.Warning (1595, "Previously defined in: " + prev.Assembly.FullName);
 			
@@ -393,8 +393,8 @@ public class TypeManager {
 	}
 
 	/// <summary>
-	///   Returns the TypeContainer whose Type is `t' or null if there is no
-	///   TypeContainer for `t' (ie, the Type comes from a library)
+	///   Returns the TypeContainer whose Type is 't' or null if there is no
+	///   TypeContainer for 't' (ie, the Type comes from a library)
 	/// </summary>
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
@@ -467,17 +467,21 @@ public class TypeManager {
 	{
 		Type t;
 
-		foreach (Assembly a in assemblies){
-			t = a.GetType (name, false, true);
-			if (t != null)
-				return t;
-		}
-
-		foreach (ModuleBuilder mb in modules) {
-			t = mb.GetType (name, false, true);
-			if (t != null){
-				return t;
+		try {
+			foreach (Assembly a in assemblies){
+				t = a.GetType (name, false, true);
+				if (t != null)
+					return t;
 			}
+
+			foreach (ModuleBuilder mb in modules) {
+				t = mb.GetType (name, false, true);
+				if (t != null){
+					return t;
+				}
+			}
+		} catch (Exception e) {
+			System.Console.WriteLine("\nERROR: " + e.ToString() + "WHILE EXECUTING LookupTypeReflection(\"" + name + "\")\n");
 		}
 		return null;
 	}
@@ -589,9 +593,7 @@ public class TypeManager {
 	{
 		return Regex.Replace (t.FullName, 
 			@"^System\." +
-			@"(Int32|UInt32|Int16|Uint16|Int64|UInt64|" +
-			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
-			@"Boolean|String|Void|DateTime)" +
+			@"(Int32|Int16|Int64|Single|Double|Char|Decimal|Byte|Object|Boolean|String|DateTime)" +
 			@"(\W+|\b)", 
 			new MatchEvaluator (MonoBASIC_NameMatch));
 	}	
@@ -600,14 +602,9 @@ public class TypeManager {
 	{
 		string s = match.Groups [1].Captures [0].Value;
 		return s.ToLower ().
-		Replace ("int32", "int").
-		Replace ("uint32", "uint").
+		Replace ("int32", "integer").
 		Replace ("int16", "short").
-		Replace ("uint16", "ushort").
 		Replace ("int64", "long").
-		Replace ("uint64", "ulong").
-		Replace ("single", "float").
-		Replace ("boolean", "bool").
 		Replace ("datetime", "date")
 		+ match.Groups [2].Captures [0].Value;
 	}
@@ -650,7 +647,7 @@ public class TypeManager {
 		Type t = LookupType (name);
 
 		if (t == null){
-			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
+			Report.Error (518, "The predefined type '" + name + "' is not defined or imported");
 			Environment.Exit (0);
 		}
 
@@ -658,8 +655,8 @@ public class TypeManager {
 	}
 
 	/// <summary>
-	///   Returns the MethodInfo for a method named `name' defined
-	///   in type `t' which takes arguments of types `args'
+	///   Returns the MethodInfo for a method named 'name' defined
+	///   in type 't' which takes arguments of types 'args'
 	/// </summary>
 	static MethodInfo GetMethod (Type t, string name, Type [] args)
 	{
@@ -672,13 +669,13 @@ public class TypeManager {
 		list = FindMembers (t, MemberTypes.Method, instance_and_static | BindingFlags.Public| BindingFlags.IgnoreCase,
 				    signature_filter, sig);
 		if (list.Count == 0) {
-			Report.Error (-19, "Can not find the core function `" + name + "'");
+			Report.Error (-19, "Can not find the core function '" + name + "'");
 			return null;
 		}
 
 		MethodInfo mi = list [0] as MethodInfo;
 		if (mi == null) {
-			Report.Error (-19, "Can not find the core function `" + name + "'");
+			Report.Error (-19, "Can not find the core function '" + name + "'");
 			return null;
 		}
 
@@ -700,13 +697,13 @@ public class TypeManager {
 				    instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.IgnoreCase,
 				    signature_filter, sig);
 		if (list.Count == 0){
-			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
+			Report.Error (-19, "Can not find the core constructor for type '" + t.Name + "'");
 			return null;
 		}
 
 		ConstructorInfo ci = list [0] as ConstructorInfo;
 		if (ci == null){
-			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
+			Report.Error (-19, "Can not find the core constructor for type '" + t.Name + "'");
 			return null;
 		}
 
@@ -960,7 +957,7 @@ public class TypeManager {
 		DeclSpace decl = (DeclSpace) builder_to_declspace [t];
 		bf |= BindingFlags.IgnoreCase;
 		//
-		// `builder_to_declspace' contains all dynamic types.
+		// 'builder_to_declspace' contains all dynamic types.
 		//
 		if (decl != null) {
 			MemberList list;
@@ -1017,7 +1014,7 @@ public class TypeManager {
 
 	/// <summary>
 	///   This method is only called from within MemberLookup.  It tries to use the member
-	///   cache if possible and falls back to the normal FindMembers if not.  The `used_cache'
+	///   cache if possible and falls back to the normal FindMembers if not.  The 'used_cache'
 	///   flag tells the caller whether we used the cache or not.  If we used the cache, then
 	///   our return value will already contain all inherited members and the caller don't need
 	///   to check base classes and interfaces anymore.
@@ -1037,7 +1034,7 @@ public class TypeManager {
 		}
 
 		//
-		// If this is a dynamic type, it's always in the `builder_to_declspace' hash table
+		// If this is a dynamic type, it's always in the 'builder_to_declspace' hash table
 		// and we can ask the DeclSpace for the MemberCache.
 		//
 		if (t is TypeBuilder) {
@@ -1163,7 +1160,7 @@ public class TypeManager {
 	}
 
 	//
-	// Checks whether `type' is a subclass or nested child of `parent'.
+	// Checks whether 'type' is a subclass or nested child of 'parent'.
 	//
 	public static bool IsSubclassOrNestedChildOf (Type type, Type parent)
 	{
@@ -1179,7 +1176,7 @@ public class TypeManager {
 	}
 
 	//
-	// Checks whether `type' is a nested child of `parent'.
+	// Checks whether 'type' is a nested child of 'parent'.
 	//
 	public static bool IsNestedChildOf (Type type, Type parent)
 	{
@@ -1293,7 +1290,7 @@ public class TypeManager {
 			return (Type []) indexer_arguments [indexer];
 		else if (indexer is PropertyBuilder)
 			// If we're a PropertyBuilder and not in the
-			// `indexer_arguments' hash, then we're a property and
+			// 'indexer_arguments' hash, then we're a property and
 			// not an indexer.
 			return NoTypes;
 		else {
@@ -1477,7 +1474,7 @@ public class TypeManager {
 	}
 		
 	/// <summary>
-	///   This function returns the interfaces in the type `t'.  Works with
+	///   This function returns the interfaces in the type 't'.  Works with
 	///   both types and TypeBuilders.
 	/// </summary>
 	public static Type [] GetInterfaces (Type t)
@@ -1527,7 +1524,7 @@ public class TypeManager {
 		//
 		// FIXME OPTIMIZATION:
 		// as soon as we hit a non-TypeBuiler in the interface
-		// chain, we could return, as the `Type.GetInterfaces'
+		// chain, we could return, as the 'Type.GetInterfaces'
 		// will return all the interfaces implement by the type
 		// or its parents.
 		//
@@ -1559,7 +1556,7 @@ public class TypeManager {
 		NumberFormatInfo provider = ci.NumberFormat;
 
 		//
-		// We must use Type.Equals() here since `conversionType' is
+		// We must use Type.Equals() here since 'conversionType' is
 		// the TypeBuilder created version of a system type and not
 		// the system type itself.  You cannot use Type.GetTypeCode()
 		// on such a type - it'd always return TypeCode.Object.
@@ -1734,10 +1731,10 @@ public class TypeManager {
 	///   Returns the name of the indexer in a given type.
 	/// </summary>
 	/// <remarks>
-	///   The default is not always `Item'.  The user can change this behaviour by
+	///   The default is not always 'Item'.  The user can change this behaviour by
 	///   using the DefaultMemberAttribute in the class.
 	///
-	///   For example, the String class indexer is named `Chars' not `Item' 
+	///   For example, the String class indexer is named 'Chars' not 'Item' 
 	/// </remarks>
 	public static string IndexerPropertyName (Type t)
 	{
@@ -1809,7 +1806,7 @@ public class TypeManager {
 	}
 	
 	//
-	// We copy methods from `new_members' into `target_list' if the signature
+	// We copy methods from 'new_members' into 'target_list' if the signature
 	// for the method from in the new list does not exist in the target_list
 	//
 	// The name is assumed to be the same.
@@ -1878,12 +1875,12 @@ public class TypeManager {
 				string method_desc = TypeManager.MonoBASIC_Signature (mb);
 
 				if (oa.IsError) {
-					Report.Error (619, loc, "Method `" + method_desc +
-						      "' is obsolete: `" + oa.Message + "'");
+					Report.Error (619, loc, "Method '" + method_desc +
+						      "' is obsolete: '" + oa.Message + "'");
 					return MethodFlags.IsObsoleteError;
 				} else
-					Report.Warning (618, loc, "Method `" + method_desc +
-							"' is obsolete: `" + oa.Message + "'");
+					Report.Warning (618, loc, "Method '" + method_desc +
+							"' is obsolete: '" + oa.Message + "'");
 
 				flags |= MethodFlags.IsObsolete;
 
@@ -1936,7 +1933,7 @@ public class TypeManager {
 	static internal bool FilterWithClosure (MemberInfo m, object filter_criteria)
 	{
 		//
-		// Hack: we know that the filter criteria will always be in the `closure'
+		// Hack: we know that the filter criteria will always be in the 'closure'
 		// fields. 
 		//
 
@@ -1948,7 +1945,7 @@ public class TypeManager {
 			return true;
 
 		//
-		// Ugly: we need to find out the type of `m', and depending
+		// Ugly: we need to find out the type of 'm', and depending
 		// on this, tell whether we accept or not
 		//
 		if (m is MethodBase){
@@ -2048,10 +2045,10 @@ public class TypeManager {
 	static MemberFilter FilterWithClosure_delegate = new MemberFilter (FilterWithClosure);
 
 	//
-	// Looks up a member called `name' in the `queried_type'.  This lookup
-	// is done by code that is contained in the definition for `invocation_type'.
+	// Looks up a member called 'name' in the 'queried_type'.  This lookup
+	// is done by code that is contained in the definition for 'invocation_type'.
 	//
-	// The binding flags are `bf' and the kind of members being looked up are `mt'
+	// The binding flags are 'bf' and the kind of members being looked up are 'mt'
 	//
 	// Returns an array of a single element for everything but Methods/Constructors
 	// that might return multiple matches.
@@ -2109,7 +2106,7 @@ public class TypeManager {
 			MemberList list;
 
 			//
-			// `NonPublic' is lame, because it includes both protected and
+			// 'NonPublic' is lame, because it includes both protected and
 			// private methods, so we need to control this behavior by
 			// explicitly tracking if a private method is ok or not.
 			//
@@ -2173,7 +2170,7 @@ bf |= BindingFlags.IgnoreCase;
 				continue;
 				
 			//
-			// Events and types are returned by both `static' and `instance'
+			// Events and types are returned by both 'static' and 'instance'
 			// searches, which means that our above FindMembers will
 			// return two copies of the same.
 			//
