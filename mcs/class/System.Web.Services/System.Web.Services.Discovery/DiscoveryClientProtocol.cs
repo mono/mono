@@ -87,7 +87,7 @@ namespace System.Web.Services.Discovery {
 			DiscoveryDocument doc;
 			DiscoveryReference refe = null;
 			
-			if (!DiscoveryDocument.CanRead (reader))
+			if (DiscoveryDocument.CanRead (reader))
 			{
 				doc = DiscoveryDocument.Read (reader);
 				documents.Add (url, doc);
