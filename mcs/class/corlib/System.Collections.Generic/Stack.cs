@@ -70,10 +70,8 @@ namespace System.Collections.Generic
 				data = new T [size];
 				col.CopyTo (data, 0);
 			} else {
-#if GMCS_FIXED
 				foreach (T t in collection)
 					Push (t);
-#endif
 			}
 		}
 		
