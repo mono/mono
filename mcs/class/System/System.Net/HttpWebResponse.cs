@@ -329,20 +329,6 @@ namespace System.Net
 			}
 		}
 		
-		static string [] SplitValue (string input)
-		{
-			string [] result = new string [2];
-			int eq = input.IndexOf ('=');
-			if (eq == -1) {
-				result [0] = "invalid";
-			} else {
-				result [0] = input.Substring (0, eq).Trim ().ToUpper ();
-				result [1] = input.Substring (eq + 1);
-			}
-			
-			return result;
-		}
-		
 		void SetCookie (string header)
 		{
 			string [] name_values = header.Trim ().Split (';');

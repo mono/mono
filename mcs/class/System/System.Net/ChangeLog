@@ -1,3 +1,7 @@
+2004-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: remove unused SplitValue method.
+
 2004-08-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Cookie.cs: don't fail when using default constructor. Fixes bug
