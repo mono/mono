@@ -54,6 +54,7 @@ class X
 
 	static void test5 (out A a)
 	{
+		// CS0165
 		test_output (a);
 		a = new A (5);
 	}
