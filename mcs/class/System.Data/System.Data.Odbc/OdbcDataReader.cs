@@ -94,6 +94,11 @@ namespace System.Data.Odbc
 			}
 		}
 
+		[MonoTODO]
+		public bool HasRows {
+			get { throw new NotImplementedException(); }
+		}
+
 		#endregion
 
 		#region Methods
