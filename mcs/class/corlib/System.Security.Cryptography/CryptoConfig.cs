@@ -50,7 +50,15 @@ public class CryptoConfig {
 #endif
 
 	// LAMESPEC: undocumented names in CryptoConfig
+#if (NET_2_0)
+	private const string xmlAssembly = ", System.Security, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+#elif (NET_1_1)
+	private const string xmlAssembly = ", System.Security, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+#elif (NET_1_0)
+	private const string xmlAssembly = ", System.Security, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+#else
 	private const string xmlAssembly = ", System.Security, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
+#endif
 	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform" + xmlAssembly;
 	private const string defaultC14NWithComments = defaultNamespace + "Xml.XmlDsigC14NWithCommentsTransform" + xmlAssembly;
 	private const string defaultBase64 = defaultNamespace + "Xml.XmlDsigBase64Transform" + xmlAssembly;
