@@ -1,9 +1,11 @@
-2004-04-27 Sanjay Gupta <gsanjay@novell.com>
+2004-03-31 Jordi Mas i Hernadez <jordi@ximian.com>
+	* ImageFormat.cs: completed missimg members
+	* ImageCodecInfo.cs: Use GDI+ calls instead of native C#
 
+2004-04-27 Sanjay Gupta <gsanjay@novell.com>
 	* ImageFormat.cs: Implemented Equals() method.
 
 2004-04-27 Sanjay Gupta <gsanjay@novell.com>
-
 	* ImageFormat.cs: Implemented ToString() method.
 
 2004-04-06  Vladimir Vukicevic  <vladimir@pobox.com>

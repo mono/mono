@@ -855,8 +855,8 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipImageRotateFlip ( IntPtr image, RotateFlipType rotateFlipType );
 		
-		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
-		internal static extern Status GdipSaveImageToFile ( IntPtr image, [MarshalAs(UnmanagedType.LPWStr)] string filename, Guid encoderClsID, IntPtr encoderParameters ); 
+		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
+		internal static extern Status GdipSaveImageToFile (IntPtr image, string filename, ref Guid encoderClsID, IntPtr encoderParameters); 
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipSaveAdd ( IntPtr image, IntPtr encoderParameters );
@@ -867,6 +867,7 @@ namespace System.Drawing {
 		internal static extern Status GdipGetImageGraphicsContext (IntPtr image, out int graphics);		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImage (IntPtr graphics, IntPtr image, float x, float y);
+		
 		
 		/*******************************************************************************/
 		//This following functions are for *IX only as currently there is
@@ -1296,13 +1297,13 @@ namespace System.Drawing {
                 		
 		//ImageCodecInfo functions
 		[DllImport("gdiplus.dll")]
-		static internal extern void GetImageDecodersSize ( out uint decoderNums, out uint arraySize );
+		static internal extern Status GdipGetImageDecodersSize (out int decoderNums, out int arraySize);
 		[DllImport("gdiplus.dll")]
-		static internal extern void GetImageDecoders ( uint decoderNums, uint arraySize, IntPtr decoders);
+		static internal extern Status GdipGetImageDecoders (int decoderNums, int arraySize, IntPtr decoders);
 		[DllImport("gdiplus.dll")]
-		static internal extern void GetImageEncodersSize ( out uint encoderNums, out uint arraySize );
+		static internal extern Status GdipGetImageEncodersSize (out int encoderNums, out int arraySize);
 		[DllImport("gdiplus.dll")]
-		static internal extern void GetImageEncoders ( uint encoderNums, uint arraySize, IntPtr encoders);
+		static internal extern Status GdipGetImageEncoders (int encoderNums, int arraySize, IntPtr encoders);
 
 		//
 		// These are stuff that is unix-only

@@ -1,3 +1,7 @@
+2004-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* gdipStructs.cs: added GdipImageCodecInfo struct
+
 2004-04-28  Sanjay Gupta  <gsanjay@novell.com>
 
 	* ImageFormatConverter.cs: Corrected ConvertFrom method.
