@@ -17,11 +17,11 @@ namespace System.Web.Caching {
 	internal class CachedRawResponse {
 
 		private HttpCachePolicy policy;
-		private Hashtable vparams;
 		private int status_code;
 		private string status_desc;
 		private int content_length;
 		private ArrayList headers;
+		private HttpResponseHeader date_header;
 		private byte[] buffer;
 		
 		internal CachedRawResponse (HttpCachePolicy policy)
@@ -53,6 +53,11 @@ namespace System.Web.Caching {
 		internal ArrayList Headers {
 			get { return headers; }
 		}
+
+		internal HttpResponseHeader DateHeader {
+			get { return date_header; }
+			set { date_header = value; }
+		}
 		
 		internal void SetHeaders (ArrayList headers) {
 			this.headers = headers;
@@ -61,13 +66,6 @@ namespace System.Web.Caching {
 		internal void SetData (byte[] buffer)
 		{
 			this.buffer = buffer;
-		}
-
-		
-		internal void SetResponseHeaders (HttpResponse response)
-		{
-			foreach (HttpResponseHeader hdr in headers)
-				response.AppendHeader (hdr.Name, hdr.Value);
 		}
 		
 		internal byte[] GetData ()

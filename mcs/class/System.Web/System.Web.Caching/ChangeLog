@@ -1,5 +1,11 @@
 2004-01-04  Jackson Harper <jackson@ximian.com>
 
+	* OutputCacheModule.cs: Update the date header value.
+	* CachedRawResponse.cs: Expose a ref to the date header, so it can
+	be easily set/updated. Remove unused methods and vars.
+	
+2004-01-04  Jackson Harper <jackson@ximian.com>
+
 	* CacheDependency.cs: Copy all the entries into the entries array,
 	set on removed callback for items that we are dependent on.
 	* Cache.cs: Add method to get CacheEntry objects.

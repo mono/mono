@@ -8,6 +8,7 @@
 //
 
 using System.Web;
+using System.Web.Util;
 
 namespace System.Web.Caching {
 	
@@ -54,7 +55,9 @@ namespace System.Web.Caching {
 				context.Response.BinaryWrite (c.GetData (), 0, c.ContentLength);
 
 				context.Response.ClearHeaders ();
+				c.DateHeader.Value = TimeUtil.ToUtcTimeString (DateTime.Now);
 				context.Response.SetCachedHeaders (c.Headers);
+
 				context.Response.StatusCode = c.StatusCode;
 				context.Response.StatusDescription = c.StatusDescription;
 				
