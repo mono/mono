@@ -87,9 +87,10 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
-				Fail ("Expected an ArgumentException to be thrown.");
 			} 
-			catch (ArgumentException) {}
+			catch (Exception e) {
+				Fail ("Unexpected Exception thrown" + e);
+			}
 		}
 
 		public void TestAttributeWriteAttributeString ()
