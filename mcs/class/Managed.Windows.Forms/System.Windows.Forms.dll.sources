@@ -97,6 +97,13 @@ System.Windows.Forms/StatusBarPanelClickEventHandler.cs
 System.Windows.Forms/StatusBarPanelStyle.cs
 System.Windows.Forms/Timer.cs
 System.Windows.Forms/TODOAttribute.cs
+System.Windows.Forms/ToolBar.cs
+System.Windows.Forms/ToolBarAppearance.cs 
+System.Windows.Forms/ToolBarButton.cs
+System.Windows.Forms/ToolBarButtonClickEventArgs.cs
+System.Windows.Forms/ToolBarButtonClickEventHandler.cs
+System.Windows.Forms/ToolBarButtonStyle.cs
+System.Windows.Forms/ToolBarTextAlign.cs
 System.Windows.Forms/UICues.cs
 System.Windows.Forms/UICuesEventArgs.cs
 System.Windows.Forms/UICuesEventHandler.cs
