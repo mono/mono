@@ -258,11 +258,8 @@ namespace Mono.CSharp {
 			
 			if (is_static){
 				have_static_constructor = true;
-				if (default_static_constructor != null){
-					Console.WriteLine ("I have a static constructor already");
-					Console.WriteLine ("   " + default_static_constructor);
+				if (default_static_constructor != null)
 					return AdditionResult.MethodExists;
-				}
 
 				default_static_constructor = c;
 			} else {
@@ -2831,7 +2828,63 @@ namespace Mono.CSharp {
 					(Initializer is ConstructorBaseInitializer) &&
 					(Initializer.Arguments == null);
 		}
+		
+		protected override bool CheckBase (TypeContainer container)
+		{
+			base.CheckBase (container);
+			
+			// Check whether arguments were correct.
+			if (!DoDefineParameters ())
+				return false;
+			
+			if ((ModFlags & Modifiers.STATIC) != 0)
+				return true;
+			
+			if (container is Struct && ParameterTypes.Length == 0) {
+				Report.Error (568, Location, 
+					"Structs can not contain explicit parameterless " +
+					"constructors");
+				return false;
+			}
+				
+			//
+			// Check in our class for dups
+			//
+			ArrayList ar = container.InstanceConstructors;
+			
+			// I don't think this is possible (there should be
+			// at least one, us). However, just in case:
+			if (ar == null)
+				return true;
+			
+			int arLen = ar.Count;
+			for (int i = 0; i < arLen; i++) {
+				Constructor m = (Constructor) ar [i];
+				
+				//
+				// Check for a ctor with identical args
+				//
+				if (m == this || m.ConstructorBuilder == null || m.ParameterTypes.Length != ParameterTypes.Length)
+					continue;
 
+				for (int j = ParameterTypes.Length - 1; j >= 0; j --)
+					if (m.ParameterTypes [j] != ParameterTypes [j])
+						goto next;
+				
+				Report.Error (
+					111, Location,
+					"Class `{0}' already contains a definition with the " +
+					"same return value and parameter types for constructor `{1}'",
+					container.Name, Name);
+				return false;
+				
+			next :
+				;
+			}
+			
+			return true;
+		}
+		
 		//
 		// Creates the ConstructorBuilder
 		//
@@ -2839,21 +2892,10 @@ namespace Mono.CSharp {
 		{
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
-
-			// Check if arguments were correct.
-			if (!DoDefineParameters ())
-				return false;
-
-			if ((ModFlags & Modifiers.STATIC) != 0){
+			
+			if ((ModFlags & Modifiers.STATIC) != 0) {
 				ca |= MethodAttributes.Static | MethodAttributes.Private;
 			} else {
-				if (container is Struct && ParameterTypes.Length == 0){
-					Report.Error (
-						568, Location, 
-						"Structs can not contain explicit parameterless " +
-						"constructors");
-					return false;
-				}
 				ca |= MethodAttributes.HideBySig;
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
@@ -2870,6 +2912,10 @@ namespace Mono.CSharp {
 				else
 					ca |= MethodAttributes.Private;
 			}
+			
+			// Check if arguments were correct.
+			if (!CheckBase (container))
+				return false;
 
 			ConstructorBuilder = container.TypeBuilder.DefineConstructor (
 				ca, GetCallingConvention (container is Class), ParameterTypes);
@@ -2880,14 +2926,7 @@ namespace Mono.CSharp {
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			if (!TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, ParameterTypes)) {
-				Report.Error (
-					111, Location,
-					"Class `" +container.Name+ "' already contains a definition with the " +
-					"same return value and parameter types for constructor `" + Name
-					+ "'");
-				return false;
-			}
+			TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, ParameterTypes);
 
 			return true;
 		}

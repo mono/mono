@@ -1,3 +1,12 @@
+2004-03-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs: Create a Constructor.CheckBase method that
+	takes care of all validation type code. The method
+	contains some code that was moved from Define.
+
+	It also includes new code that checks for duplicate ctors.
+	This fixes bug #55148.
+
 2004-03-09  Joshua Tauberer <tauberer@for.net>
 
 	* expression.cs (ArrayCreation): Fix: More than 6 nulls in
