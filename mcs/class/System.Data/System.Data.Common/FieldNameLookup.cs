@@ -26,11 +26,11 @@ namespace System.Data.Common {
 			list = new ArrayList ();
 		}
 
-		public FieldNameLookup (SchemaInfo[] schema)
+		public FieldNameLookup (DataTable schemaTable)
 			: this ()
 		{
-			foreach (SchemaInfo info in schema)
-				list.Add (info.ColumnName);
+			foreach (DataRow row in schemaTable.Rows)
+				list.Add ((string) row["ColumnName"]);
 		}
 
 		#endregion

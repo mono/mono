@@ -199,5 +199,6 @@ System.Data.SqlClient/SqlXmlTextReader.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsPacketTableNameResult.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsPacketUnknown.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsServerType.cs
+../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsSchemaInfo.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsVersion.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TODOAttribute.cs

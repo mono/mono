@@ -62,7 +62,7 @@ namespace System.Data.Common {
 		{
 			return (byte) GetValue (i);
 		}
-	
+
 		[MonoTODO]	
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
@@ -108,7 +108,7 @@ namespace System.Data.Common {
 
 		public Type GetFieldType (int i)
 		{
-			return GetValue (i).GetType ();
+			return schema[i].FieldType;
 		}
 
 		public float GetFloat (int i)

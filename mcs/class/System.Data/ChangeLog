@@ -1,3 +1,19 @@
+2002-10-31  Tim Coleman (tim@timcoleman.com)
+        * System.Data.Common/DbDataAdapter.cs :
+                Fix handling of nulls
+        * System.Data.Common/DbDataRecord.cs :
+                Change GetFieldType ()
+        * System.Data.Common/DbEnumerator.cs :
+                Add new schema information
+        * System.Data.Common/FieldNameLookup.cs :
+                Change definition of schema
+        * System.Data.Common/SchemaInfo.cs :
+                Add more information
+        * System.Data.SqlClient/SqlDataReader.cs :
+                get more schema table data
+        * list :
+                Add Mono.Data.TdsClient.Internal.TdsSchemaInfo
+
 2002-10-31  Ville Palo <vi64pa@koti.soon.fi>
 
 	* SqlBinary.cs:

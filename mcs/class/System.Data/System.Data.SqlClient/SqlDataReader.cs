@@ -36,6 +36,9 @@ namespace System.Data.SqlClient {
 		DataTable schemaTable;
 		FieldNameLookup lookup;
 
+		ArrayList dataTypeNames;
+		ArrayList dataTypes;
+
 		#endregion // Fields
 
 		#region Constructors
@@ -87,10 +90,6 @@ namespace System.Data.SqlClient {
 			get { return recordsAffected; }
 		}
 
-		internal SchemaInfo[] Schema {
-			get { return command.Tds.Schema; }
-		}
-
 		#endregion // Properties
 
 		#region Methods
@@ -124,7 +123,7 @@ namespace System.Data.SqlClient {
 			schemaTable.Columns.Add ("BaseTableName", stringType);
 			schemaTable.Columns.Add ("DataType", typeType);
 			schemaTable.Columns.Add ("AllowDBNull", booleanType);
-			schemaTable.Columns.Add ("ProviderType", booleanType);
+			schemaTable.Columns.Add ("ProviderType", intType);
 			schemaTable.Columns.Add ("IsAliased", booleanType);
 			schemaTable.Columns.Add ("IsExpression", booleanType);
 			schemaTable.Columns.Add ("IsIdentity", booleanType);
@@ -173,10 +172,9 @@ namespace System.Data.SqlClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string GetDataTypeName (int i)
 		{
-			throw new NotImplementedException ();
+			return (string) dataTypeNames [i];
 		}
 
 		public DateTime GetDateTime (int i)
@@ -204,7 +202,7 @@ namespace System.Data.SqlClient {
 
 		public Type GetFieldType (int i)
 		{
-			return GetValue (i).GetType ();
+			return (Type) schemaTable.Rows[i]["DataType"];
 		}
 
 		public float GetFloat (int i)
@@ -272,26 +270,167 @@ namespace System.Data.SqlClient {
 
 			fieldCount = 0;
 
-			foreach (SchemaInfo schemaObject in command.Tds.Schema) {
-				DataRow schemaRow = schemaTable.NewRow ();
+			dataTypeNames = new ArrayList ();
+			dataTypes = new ArrayList ();
 
-				schemaRow ["ColumnName"] = schemaObject.ColumnName;
-				schemaRow ["ColumnOrdinal"] = schemaObject.ColumnOrdinal;
-				schemaRow ["BaseTableName"] = schemaObject.TableName;
-				schemaRow ["AllowDBNull"] = schemaObject.Nullable;
-				schemaRow ["IsReadOnly"] = !schemaObject.Writable;
+			foreach (TdsSchemaInfo schema in command.Tds.Schema) {
+				DataRow row = schemaTable.NewRow ();
 
-				if (schemaObject.NumericPrecision >= 0)
-					schemaRow ["NumericPrecision"] = schemaObject.NumericPrecision;
+
+				switch (schema.ColumnType) {
+					case TdsColumnType.Image :
+						dataTypeNames.Add ("image");
+						row ["ProviderType"] = (int) SqlDbType.Image;
+						row ["DataType"] = typeof (byte[]);
+						break;
+					case TdsColumnType.Text :
+						dataTypes.Add (typeof (string));
+						dataTypeNames.Add ("text");
+						row ["ProviderType"] = (int) SqlDbType.Text;
+						row ["DataType"] = typeof (string);
+						break;
+					case TdsColumnType.UniqueIdentifier :
+						dataTypeNames.Add ("uniqueidentifier");
+						row ["ProviderType"] = (int) SqlDbType.UniqueIdentifier;
+						row ["DataType"] = typeof (Guid);
+						break;
+					case TdsColumnType.VarBinary :
+					case TdsColumnType.BigVarBinary :
+						dataTypeNames.Add ("varbinary");
+						row ["ProviderType"] = (int) SqlDbType.VarBinary;
+						row ["DataType"] = typeof (byte[]);
+						break;
+					case TdsColumnType.IntN :
+					case TdsColumnType.Int4 :
+						dataTypeNames.Add ("int");
+						row ["ProviderType"] = (int) SqlDbType.Int;
+						row ["DataType"] = typeof (int);
+						break;
+					case TdsColumnType.VarChar :
+					case TdsColumnType.BigVarChar :
+						dataTypeNames.Add ("varchar");
+						row ["ProviderType"] = (int) SqlDbType.VarChar;
+						row ["DataType"] = typeof (string);
+						break;
+					case TdsColumnType.Binary :
+					case TdsColumnType.BigBinary :
+						dataTypeNames.Add ("binary");
+						row ["ProviderType"] = (int) SqlDbType.Binary;
+						row ["DataType"] = typeof (byte[]);
+						break;
+					case TdsColumnType.Char :
+					case TdsColumnType.BigChar :
+						dataTypeNames.Add ("char");
+						row ["ProviderType"] = (int) SqlDbType.Char;
+						row ["DataType"] = typeof (string);
+						break;
+					case TdsColumnType.Int1 :
+						dataTypeNames.Add ("tinyint");
+						row ["ProviderType"] = (int) SqlDbType.TinyInt;
+						row ["DataType"] = typeof (byte);
+						break;
+					case TdsColumnType.Bit :
+					case TdsColumnType.BitN :
+						dataTypeNames.Add ("bit");
+						row ["ProviderType"] = (int) SqlDbType.Bit;
+						row ["DataType"] = typeof (bool);
+						break;
+					case TdsColumnType.Int2 :
+						dataTypeNames.Add ("smallint");
+						row ["ProviderType"] = (int) SqlDbType.SmallInt;
+						row ["DataType"] = typeof (short);
+						break;
+					case TdsColumnType.DateTime4 :
+					case TdsColumnType.DateTime :
+					case TdsColumnType.DateTimeN :
+						dataTypeNames.Add ("datetime");
+						row ["ProviderType"] = (int) SqlDbType.DateTime;
+						row ["DataType"] = typeof (DateTime);
+						break;
+					case TdsColumnType.Real :
+						dataTypeNames.Add ("real");
+						row ["ProviderType"] = (int) SqlDbType.Real;
+						row ["DataType"] = typeof (float);
+						break;
+					case TdsColumnType.Money :
+					case TdsColumnType.MoneyN :
+					case TdsColumnType.Money4 :
+						dataTypeNames.Add ("money");
+						row ["ProviderType"] = (int) SqlDbType.Money;
+						row ["DataType"] = typeof (decimal);
+						break;
+					case TdsColumnType.Float8 :
+					case TdsColumnType.FloatN :
+						dataTypeNames.Add ("float");
+						row ["ProviderType"] = (int) SqlDbType.Float;
+						row ["DataType"] = typeof (double);
+						break;
+					case TdsColumnType.NText :
+						dataTypeNames.Add ("ntext");
+						row ["ProviderType"] = (int) SqlDbType.NText;
+						row ["DataType"] = typeof (string);
+						break;
+					case TdsColumnType.NVarChar :
+						dataTypeNames.Add ("nvarchar");
+						row ["ProviderType"] = (int) SqlDbType.NVarChar;
+						row ["DataType"] = typeof (string);
+						break;
+					case TdsColumnType.Decimal :
+					case TdsColumnType.Numeric :
+						dataTypeNames.Add ("decimal");
+						row ["ProviderType"] = (int) SqlDbType.Decimal;
+						row ["DataType"] = typeof (decimal);
+						break;
+					case TdsColumnType.NChar :
+						dataTypeNames.Add ("nchar");
+						row ["ProviderType"] = (int) SqlDbType.Char;
+						row ["DataType"] = typeof (string);
+						break;
+					case TdsColumnType.SmallMoney :
+						dataTypeNames.Add ("smallmoney");
+						row ["ProviderType"] = (int) SqlDbType.SmallMoney;
+						row ["DataType"] = typeof (decimal);
+						break;
+					default :
+						dataTypeNames.Add ("variant");
+						row ["ProviderType"] = (int) SqlDbType.Variant;
+						row ["DataType"] = typeof (object);
+						break;
+				}
+
+				row ["ColumnOrdinal"] = schema.ColumnOrdinal;
+				row ["AllowDBNull"] = schema.AllowDBNull;
+				row ["IsReadOnly"] = schema.IsReadOnly;
+				row ["IsIdentity"] = schema.IsIdentity;
+				row ["IsKey"] = schema.IsKey;
+
+				// FIXME: Base Column Name and Column Name are not necessarily the same
+				if (schema.ColumnName == null)
+					row ["BaseColumnName"] = DBNull.Value;
 				else
-					schemaRow ["NumericPrecision"] = DBNull.Value;
+					row ["BaseColumnName"] = schema.ColumnName;
 
-				if (schemaObject.NumericScale >= 0)
-					schemaRow ["NumericScale"] = schemaObject.NumericScale;
+				if (schema.ColumnName == null)
+					row ["ColumnName"] = DBNull.Value;
 				else
-					schemaRow ["NumericScale"] = DBNull.Value;
+					row ["ColumnName"] = schema.ColumnName;
 
-				schemaTable.Rows.Add (schemaRow);
+				if (schema.TableName == null)
+					row ["BaseTableName"] = DBNull.Value;
+				else
+					row ["BaseTableName"] = schema.TableName;
+
+				if (schema.NumericScale == 0)
+					row ["NumericPrecision"] = DBNull.Value;
+				else
+					row ["NumericPrecision"] = schema.NumericPrecision;
+
+				if (schema.NumericScale == 0)
+					row ["NumericScale"] = DBNull.Value;
+				else
+					row ["NumericScale"] = schema.NumericScale;
+
+				schemaTable.Rows.Add (row);
 
 				fieldCount += 1;
 			}
@@ -347,7 +486,7 @@ namespace System.Data.SqlClient {
 			moreResults = command.Tds.NextResult ();
 			command.Connection.CheckForErrors ();
 			if (moreResults)
-				lookup = new FieldNameLookup (command.Tds.Schema);
+				lookup = new FieldNameLookup (GetSchemaTable ());
 			rowsRead = 0;
 			resultsRead += 1;
 			return moreResults;

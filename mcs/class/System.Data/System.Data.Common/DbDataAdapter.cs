@@ -108,6 +108,7 @@ namespace System.Data.Common
 
 			string tableName = srcTable;
 			string baseColumnName;
+			string baseTableName;
 			string columnName;
 			ArrayList primaryKey;	
 			bool resultsFound;
@@ -116,8 +117,7 @@ namespace System.Data.Common
 
 			DataRow row; // FIXME needed for incorrect operation below.
 
-                        do
-                        {
+                        do {
 				if (dataSet.Tables.Contains (tableName))
 					table = dataSet.Tables[tableName];
 				else
@@ -128,17 +128,22 @@ namespace System.Data.Common
 				foreach (DataRow schemaRow in dataReader.GetSchemaTable ().Rows)
 				{
 					// generate a unique column name in the dataset table.
-					baseColumnName = (string)(schemaRow["BaseColumnName"]);
-					if (baseColumnName == "")
+					if (schemaRow["BaseColumnName"].Equals (DBNull.Value))
 						baseColumnName = "Column";
+					else
+						baseColumnName = (string) schemaRow ["BaseColumnName"];
 
 					columnName = baseColumnName;
 
 					for (int i = 1; table.Columns.Contains (columnName); i += 1) 
 						columnName = String.Format ("{0}{1}", baseColumnName, i);
 
+					if (schemaRow["BaseTableName"].Equals (DBNull.Value))
+						baseTableName = "Table";
+					else
+						baseTableName = (string) schemaRow ["BaseTableName"];
 
-					tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, tableName, (string)(schemaRow["BaseTableName"]), MissingMappingAction);
+					tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, tableName, baseTableName, MissingMappingAction);
 
 					// check to see if the column mapping exists
 					if (tableMapping.ColumnMappings.IndexOfDataSetColumn (baseColumnName) < 0)
@@ -146,7 +151,7 @@ namespace System.Data.Common
 						if (MissingSchemaAction == MissingSchemaAction.Error)
 							throw new SystemException ();
 
-						table.Columns.Add (columnName, Type.GetType ((string)(schemaRow["DataType"])));
+						table.Columns.Add (columnName, (Type) schemaRow ["DataType"]);
 						tableMapping.ColumnMappings.Add (columnName, baseColumnName);
 
 					}
@@ -154,8 +159,8 @@ namespace System.Data.Common
 					if (!TableMappings.Contains (tableMapping))
 						TableMappings.Add (tableMapping);
 
-					if ((schemaRow["IsKey"]).Equals(DBNull.Value) == false)
-						if ((bool)(schemaRow["IsKey"]))
+					if (!schemaRow["IsKey"].Equals (DBNull.Value))
+						if ((bool) (schemaRow["IsKey"]))
 							primaryKey.Add (table.Columns[columnName]);	
 				}
 
