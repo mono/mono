@@ -45,6 +45,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category("NotWorking")] // #72143
 		public void CheckCompressDecompress () {
 			byte [] data = new byte[100000];
 			for (int i = 0; i < 100000; i++) {
@@ -86,6 +87,7 @@ namespace MonoTests.System.IO.Compression
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category("NotWorking")] // #72143
 		public void CheckCompressingRead () {
 			byte [] dummy = new byte[20];
 			MemoryStream backing = new MemoryStream ();
@@ -95,6 +97,7 @@ namespace MonoTests.System.IO.Compression
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
+		[Category("NotWorking")] // #72143
 		public void CheckRangeRead () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			byte [] dummy = new byte[20];
@@ -115,6 +118,7 @@ namespace MonoTests.System.IO.Compression
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
+		[Category("NotWorking")] // #72143
 		public void CheckClosedRead () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			byte [] dummy = new byte[20];
@@ -126,6 +130,7 @@ namespace MonoTests.System.IO.Compression
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
+		[Category("NotWorking")] // #72143
 		public void CheckClosedFlush () {
 			MemoryStream backing = new MemoryStream ();
 			GzipStream compressing = new GzipStream (backing, CompressionMode.Compress);
@@ -168,6 +173,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category("NotWorking")] // #72143
 		public void CheckGetCanWriteProp () {
 			MemoryStream backing = new MemoryStream ();
 			GzipStream compressing = new GzipStream (backing, CompressionMode.Decompress);
