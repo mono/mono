@@ -35,7 +35,6 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Query;
 using System.Xml.XPath;
-using MS.Internal.Xml;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.XPath2

@@ -155,7 +155,7 @@ namespace Mono.Xml.XPath2
 			foreach (FunctionDeclaration func in module.Prolog.Functions.Values) {
 				func.FunctionBody.CheckReference (this);
 				CheckSchemaType (func.ReturnType);
-				foreach (FunctionParam param in func.Parameters)
+				foreach (XQueryFunctionArgument param in func.Parameters)
 					CheckSchemaType (param.Type);
 			}
 		}
@@ -225,7 +225,7 @@ namespace Mono.Xml.XPath2
 
 		private XQueryFunction CompileFunction (FunctionDeclaration func)
 		{
-			throw new NotImplementedException ();
+			return new XQueryUserFunction (func.Name, func.Parameters.ToArray (), func.FunctionBody.Expr, func.ReturnType);
 		}
 
 		private ExprSequence CompileExprSequence (ExprSequence expr)

@@ -294,8 +294,11 @@ namespace Mono.Xml.XQuery.Parser
 			int c = PeekChar ();
 			if (c < 0)
 				throw Error ("Unexpected end of query text inside XML processing instruction content");
-			else if (c == '<')
+			switch ((char) c) {
+			case '<':
+			case '{':
 				return ParseDefault ();
+			}
 
 			while (true) {
 				c = PeekChar ();

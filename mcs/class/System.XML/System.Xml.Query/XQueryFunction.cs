@@ -38,7 +38,6 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Query;
 using System.Xml.XPath;
-using MS.Internal.Xml;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.XPath2
@@ -237,9 +236,12 @@ namespace Mono.Xml.XPath2
 
 		public abstract object Invoke (XQueryContext context, object [] args, XPathItem currentItem);
 
-		public virtual XPathSequence Evaluate (XPathSequence iter)
+		public virtual XPathSequence Evaluate (XPathSequence iter, ExprSequence args)
 		{
-			object o = Invoke (iter.Context, args, iter.Context.CurrentItem);
+			object [] instParams = new object [args.Count];
+			for (int i = 0; i < args.Count; i++)
+				instParams [i] = args [i].Evaluate (iter);
+			object o = Invoke (iter.Context, instParams, iter.Context.CurrentItem);
 			if (o is XPathSequence)
 				return (XPathSequence) o;
 			XPathItem item = o as XPathItem;
@@ -266,6 +268,43 @@ namespace Mono.Xml.XPath2
 
 		public SequenceType Type {
 			get { return type; }
+		}
+	}
+
+	public class XQueryUserFunction : XQueryFunction
+	{
+		ExprSequence expr;
+
+		internal XQueryUserFunction (XmlQualifiedName name,
+			XQueryFunctionArgument [] parameters,
+			ExprSequence expr,
+			SequenceType returnType)
+			: base (name, parameters, returnType)
+		{
+			this.expr = expr;
+		}
+
+		public override int MinArgs {
+			get { return Args.Length; }
+		}
+
+		public override int MaxArgs {
+			get { return Args.Length; }
+		}
+
+		public override object Invoke (XQueryContext context, object [] args, XPathItem currentItem)
+		{
+			throw new NotImplementedException ("Not supported");
+		}
+
+		public virtual XPathSequence Evaluate (XPathSequence iter, ExprSequence args)
+		{
+			for (int i = 0; i < Args.Length; i++)
+				iter.Context.PushVariable (Args [i].Name, args [i].Evaluate (iter));
+			XPathSequence seq = new ExprSequenceIterator (iter, expr);
+			for (int i = 0; i < Args.Length; i++)
+				iter.Context.PopVariable ();
+			return seq;
 		}
 	}
 }

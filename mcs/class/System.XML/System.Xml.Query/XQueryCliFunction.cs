@@ -38,7 +38,6 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Query;
 using System.Xml.XPath;
-using MS.Internal.Xml;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.XPath2
@@ -86,7 +85,7 @@ namespace Mono.Xml.XPath2
 				if (cliReturnType == null)
 					cliReturnType = mi.ReturnType;
 				else if (mi.ReturnType != cliReturnType)
-					throw new ArgumentException ("Argument methodList have different return types.");
+					throw new ArgumentException (String.Format ("Argument methodList have different return types. Method name is {0}.", mi.Name));
 				ParameterInfo [] prms = mi.GetParameters ();
 
 				int args = prms.Length;
@@ -96,7 +95,7 @@ namespace Mono.Xml.XPath2
 				if (hasContextArg)
 					args--;
 				if (methods [args] != null)
-					throw new ArgumentException ("XQuery does not allow functions that accepts such methods that have the same number of parameters in different types.");
+					throw new ArgumentException (String.Format ("XQuery does not allow functions that accepts such methods that have the same number of parameters in different types. Method name is {0}", mi.Name));
 				methods.Add (args, mi);
 				if (args < minArgs || minArgs < 0)
 					minArgs = args;
@@ -125,8 +124,8 @@ namespace Mono.Xml.XPath2
 			XQueryFunctionArgument [] args,
 			SequenceType returnType,
 			Hashtable methods,
-			int maxArgs,
-			int minArgs)
+			int minArgs,
+			int maxArgs)
 			: base (name, args, returnType)
 		{
 			this.methods = methods;

@@ -217,9 +217,11 @@ namespace Mono.Xml.XPath2
 			foreach (ForLetClause flc in fl)
 				foreach (ForLetSingleBody single in flc)
 					single.CheckReference (compiler);
-			whereClause.CheckReference (compiler);
-			foreach (OrderSpec os in orderBy)
-				os.Expression.CheckReference (compiler);
+			if (whereClause != null)
+				whereClause.CheckReference (compiler);
+			if (orderBy != null)
+				foreach (OrderSpec os in orderBy)
+					os.Expression.CheckReference (compiler);
 			ret.CheckReference (compiler);
 		}
 
@@ -229,13 +231,16 @@ namespace Mono.Xml.XPath2
 			foreach (ForLetClause flc in ForLetClauses) {
 				foreach (ForLetSingleBody flsb in flc) {
 					flsb.Expression = flsb.Expression.Compile (compiler);
-					compiler.CheckType (flsb.Expression, flsb.ReturnType);
+					if (flsb.ReturnType != null)
+						compiler.CheckType (flsb.Expression, flsb.ReturnType);
 				}
 			}
-			for (int i = 0; i < WhereClause.Count; i++)
-				WhereClause [i] = WhereClause [i].Compile (compiler);
-			foreach (OrderSpec os in OrderBy)
-				os.Expression = os.Expression.Compile (compiler);
+			if (WhereClause != null)
+				for (int i = 0; i < WhereClause.Count; i++)
+					WhereClause [i] = WhereClause [i].Compile (compiler);
+			if (OrderBy != null)
+				foreach (OrderSpec os in OrderBy)
+					os.Expression = os.Expression.Compile (compiler);
 			ReturnExpr = ReturnExpr.Compile (compiler);
 
 			return this;
@@ -325,7 +330,8 @@ namespace Mono.Xml.XPath2
 		{
 			this.sortOrder = sortOrder;
 			this.emptyOrder = emptyOrder;
-			this.coll = new CultureInfo (collation);
+			if (collation != null)
+				this.coll = new CultureInfo (collation);
 		}
 
 		XmlSortOrder sortOrder;
@@ -414,7 +420,8 @@ namespace Mono.Xml.XPath2
 
 		internal void CheckReference (XQueryASTCompiler compiler)
 		{
-			compiler.CheckSchemaType (type);
+			if (type != null)
+				compiler.CheckSchemaType (type);
 			expr.CheckReference (compiler);
 		}
 	}
@@ -473,7 +480,8 @@ namespace Mono.Xml.XPath2
 		internal override void CheckReference (XQueryASTCompiler compiler)
 		{
 			foreach (QuantifiedExprBody one in body) {
-				compiler.CheckSchemaType (one.Type);
+				if (one.Type != null)
+					compiler.CheckSchemaType (one.Type);
 				one.Expression.CheckReference (compiler);
 			}
 			Satisfies.CheckReference (compiler);
@@ -485,7 +493,8 @@ namespace Mono.Xml.XPath2
 			Satisfies = Satisfies.Compile (compiler);
 			for (int i = 0; i < BodyList.Count; i++) {
 				BodyList [i].Expression = BodyList [i].Expression.Compile (compiler);
-				compiler.CheckType (BodyList [i].Expression, BodyList [i].Type);
+				if (BodyList [i].Type != null)
+					compiler.CheckType (BodyList [i].Expression, BodyList [i].Type);
 			}
 			return this;
 		}
@@ -1921,6 +1930,8 @@ namespace Mono.Xml.XPath2
 
 		public FunctionCallExprBase (XmlQualifiedName name, ExprSequence args)
 		{
+			if (args == null)
+				throw new ArgumentNullException (String.Format ("Function argument expressions for {0} is null.", name));
 			this.name = name;
 			this.args = args;
 		}
@@ -2002,7 +2013,7 @@ namespace Mono.Xml.XPath2
 		{
 			if (args.Count < MinArgs || args.Count > MaxArgs)
 				// FIXME: add more info
-				throw new XmlQueryCompileException (String.Format ("{0} is invalid for the number of {1} function argument.", args.Count, name));
+				throw new XmlQueryCompileException (String.Format ("{0} is invalid for the number of {1} function argument. MinArgs = {2}, MaxArgs = {3}.", args.Count, name, MinArgs, MaxArgs));
 		}
 
 		public abstract int MinArgs { get; }
@@ -2084,7 +2095,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return Function.Evaluate (iter);
+			return Function.Evaluate (iter, Args);
 		}
 
 		// FIXME: add all overrides that delegates to XQueryFunction

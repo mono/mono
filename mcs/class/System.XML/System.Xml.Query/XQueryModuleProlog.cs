@@ -429,7 +429,7 @@ namespace Mono.Xml.XPath2
 	internal class FunctionDeclaration
 	{
 		public FunctionDeclaration (XmlQualifiedName name,
-			FunctionParamList parameters,
+			XQueryFunctionArgumentList parameters,
 			SequenceType type,
 			EnclosedExpr expr)
 		{
@@ -441,7 +441,7 @@ namespace Mono.Xml.XPath2
 
 		XmlQualifiedName name;
 		SequenceType returnType;
-		FunctionParamList parameters;
+		XQueryFunctionArgumentList parameters;
 		EnclosedExpr funcBody;
 
 		public XmlQualifiedName Name {
@@ -456,7 +456,7 @@ namespace Mono.Xml.XPath2
 			get { return funcBody == null; }
 		}
 
-		public FunctionParamList Parameters {
+		public XQueryFunctionArgumentList Parameters {
 			get { return parameters; }
 		}
 
@@ -465,40 +465,27 @@ namespace Mono.Xml.XPath2
 		}
 	}
 
-	public class FunctionParamList : CollectionBase
+	public class XQueryFunctionArgumentList : CollectionBase
 	{
-		public void Add (FunctionParam p)
+		public void Add (XQueryFunctionArgument p)
 		{
 			List.Add (p);
 		}
 
-		public void Insert (int pos, FunctionParam p)
+		public void Insert (int pos, XQueryFunctionArgument p)
 		{
 			List.Insert (pos, p);
 		}
 
-		public FunctionParam this [int i] {
-			get { return (FunctionParam) List [i]; }
+		public XQueryFunctionArgument this [int i] {
+			get { return (XQueryFunctionArgument) List [i]; }
 		}
-	}
 
-	public class FunctionParam
-	{
-		XmlQualifiedName name;
-		SequenceType type;
-
-		public FunctionParam (XmlQualifiedName name, SequenceType type)
+		public XQueryFunctionArgument [] ToArray ()
 		{
-			this.name = name;
-			this.type = type;
-		}
-
-		public XmlQualifiedName Name {
-			get { return name; }
-		}
-
-		public SequenceType Type {
-			get { return type; }
+			XQueryFunctionArgument [] arr = new XQueryFunctionArgument [List.Count];
+			List.CopyTo (arr, 0);
+			return arr;
 		}
 	}
 

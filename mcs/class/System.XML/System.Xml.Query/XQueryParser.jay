@@ -810,7 +810,7 @@ FunctionDecl // returns FunctionDeclaration
 	{
 		$$ = new FunctionDeclaration (
 			(XmlQualifiedName) $4,
-			(FunctionParamList) $6,
+			(XQueryFunctionArgumentList) $6,
 			(SequenceType) $9,
 			(EnclosedExpr) $10);
 	}
@@ -865,29 +865,29 @@ OptionalParamList
 	| ParamList
 	;
 
-ParamList // returns FunctionParamList 
+ParamList // returns XQueryFunctionArgumentList 
 	: Param
 	{
-		FunctionParamList pl = new FunctionParamList ();
-		pl.Add ((FunctionParam) $1);
+		XQueryFunctionArgumentList pl = new XQueryFunctionArgumentList ();
+		pl.Add ((XQueryFunctionArgument) $1);
 		$$ = pl;
 	}
 	| Param COMMA ParamList
 	{
-		FunctionParamList pl = (FunctionParamList) $3;
-		pl.Insert (0, (FunctionParam) $1);
+		XQueryFunctionArgumentList pl = (XQueryFunctionArgumentList) $3;
+		pl.Insert (0, (XQueryFunctionArgument) $1);
 		$$ = pl;
 	}
 	;
 
-Param // returns FunctionParam 
+Param // returns XQueryFunctionArgument 
 	: DOLLAR {
 		tokenizer.State = ParseState.VarName;
 	  } VarName {
 		tokenizer.State = ParseState.Operator;
 	  } OptionalTypeDeclaration
 	{
-		$$ = new FunctionParam ((XmlQualifiedName) $3, (SequenceType) $5);
+		$$ = new XQueryFunctionArgument ((XmlQualifiedName) $3, (SequenceType) $5);
 	}
 	;
 
@@ -941,7 +941,7 @@ FLWORExpr // returns FLWORExpr
 	  } ExprSingle
 	{
 		ForLetClauseCollection col = (ForLetClauseCollection) $1;
-		$$ = new FLWORExpr (col, (ExprSequence) $2, (OrderSpecList) $3, (ExprSingle) $5);
+		$$ = new FLWORExpr (col, (ExprSequence) $2, (OrderSpecList) $3, (ExprSingle) $6);
 	}
 	;
 
@@ -2162,7 +2162,7 @@ ParenthesizedExpr // returns ParenthesizedExpr
 OptionalExpr
 	: // empty
 	{
-		$$ = null;
+		$$ = new ExprSequence ();
 	}
 	| Expr
 	;

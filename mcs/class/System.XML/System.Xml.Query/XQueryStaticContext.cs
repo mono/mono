@@ -139,6 +139,10 @@ namespace Mono.Xml.XPath2
 			get { return nameTable; }
 		}
 
+		public CultureInfo DefaultCollation {
+			get { return defaultCollation; }
+		}
+
 		public XmlSchemaSet InScopeSchemas {
 			get { return inScopeSchemas; }
 		}
@@ -197,6 +201,12 @@ namespace Mono.Xml.XPath2
 			XQueryFunction f = functions [name];
 			if (f != null)
 				return f;
+			return null;
+		}
+
+		// FIXME: wait for W3C clarification.
+		internal CultureInfo GetCulture (string collation)
+		{
 			return null;
 		}
 	}

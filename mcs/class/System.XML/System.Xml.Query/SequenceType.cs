@@ -36,7 +36,6 @@ using System.Xml.Schema;
 using System.Xml.Query;
 using System.Xml.XPath;
 using Mono.Xml.XQuery;
-using MS.Internal.Xml;
 
 namespace Mono.Xml.XPath2
 {
@@ -209,9 +208,12 @@ namespace Mono.Xml.XPath2
 			return t;
 		}
 
+		[MonoTODO]
 		internal static SequenceType ComputeCommonBase (SequenceType t1, SequenceType t2)
 		{
-			throw new NotImplementedException ();
+			// FIXME: implement
+			// throw new NotImplementedException ();
+			return SequenceType.AnyType;
 		}
 
 		// Instance members
@@ -249,9 +251,12 @@ namespace Mono.Xml.XPath2
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		internal bool CanConvertTo (SequenceType other)
 		{
-			throw new NotImplementedException ();
+			// FIXME: implement precisely
+			return this == other;
+			// throw new NotImplementedException ();
 		}
 
 		internal bool CanConvert (XPathSequence iter)

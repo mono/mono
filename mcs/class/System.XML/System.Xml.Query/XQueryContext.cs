@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
@@ -49,17 +50,18 @@ namespace Mono.Xml.XPath2
 		XQueryContext currentContext;
 #if SEEMS_CONTEXT_FOR_CURRENT_REQURED
 #else
-		Stack<XPathItem> contextItemStack = new Stack<XPathItem> ();
+		Stack<XPathSequence> contextSequenceStack = new Stack<XPathSequence> ();
 #endif
 		XmlWriter currentWriter;
-		XPathItem input;
-		XPathItem currentItem;
+		XPathItem input; // source input item(node)
+		XPathSequence currentSequence;
 		Hashtable currentVariables = new Hashtable ();
 		XmlNamespaceManager namespaceManager;
+		Hashtable localCollationCache = new Hashtable ();
 
 		internal XQueryContextManager (XQueryStaticContext ctx, XPathItem input, XmlWriter writer, XmlResolver resolver, XmlArgumentList args)
 		{
-			this.input = currentItem = input;
+			this.input = input;
 			this.staticContext = ctx;
 			this.args = args;
 			currentWriter = writer;
@@ -71,6 +73,8 @@ namespace Mono.Xml.XPath2
 			foreach (DictionaryEntry de in ctx.NSResolver.GetNamespacesInScope (XmlNamespaceScope.ExcludeXml))
 				namespaceManager.AddNamespace (de.Key.ToString (), de.Value.ToString ());
 			namespaceManager.PushScope ();
+
+			this.currentSequence = new SingleItemIterator (input, currentContext);
 		}
 
 		public bool Initialized {
@@ -95,32 +99,44 @@ namespace Mono.Xml.XPath2
 			set { currentWriter = value; }
 		}
 
-		public XPathItem CurrentItem {
-			get { return currentContext.CurrentItem; }
+		internal XQueryContext CurrentContext {
+			get { return currentContext; }
 		}
 
-		public XPathNavigator CurrentNode {
-			get { return (XPathNavigator) CurrentItem; }
+		internal XQueryStaticContext StaticContext {
+			get { return staticContext; }
 		}
 
-		public void PushCurrentItem (XPathItem item)
+		internal CultureInfo GetCulture (string collation)
+		{
+			CultureInfo ci = staticContext.GetCulture (collation);
+			if (ci == null)
+				ci = (CultureInfo) localCollationCache [collation];
+			if (ci != null)
+				return ci;
+			ci = new CultureInfo (collation);
+			localCollationCache [collation] = ci;
+			return ci;
+		}
+
+		public void PushCurrentSequence (XPathSequence sequence)
 		{
 #if SEEMS_CONTEXT_FOR_CURRENT_REQURED
 			contextStack.Push (currentContext);
-			currentItem = item;
+			currentsequence = sequence;
 			currentContext = new XQueryContext (this);
 #else
-			contextItemStack.Push (currentItem);
-			currentItem = item;
+			contextSequenceStack.Push (currentSequence);
+			currentSequence = sequence;
 #endif
 		}
 
-		public void PopCurrentItem ()
+		public void PopCurrentSequence ()
 		{
 #if SEEMS_CONTEXT_FOR_CURRENT_REQURED
 			PopContext ();
 #else
-			currentItem = contextItemStack.Pop ();
+			currentSequence = contextSequenceStack.Pop ();
 #endif
 		}
 
@@ -154,20 +170,28 @@ namespace Mono.Xml.XPath2
 	{
 		XQueryContextManager contextManager;
 		Hashtable currentVariables;
-		XPathItem currentItem;
+		XPathSequence currentSequence;
 
 		internal XQueryContext (XQueryContextManager manager)
 		{
 			contextManager = manager;
 			if (manager.Initialized) // this condition is not filled on initial creation.
-				currentItem = manager.CurrentItem;
+				currentSequence = manager.CurrentContext.currentSequence;
 			currentVariables = (Hashtable) manager.LocalVariables.Clone ();
 		}
 
-		public XmlWriter Writer {
+		internal XmlWriter Writer {
 			get { return contextManager.Writer; }
 			// FIXME: might be better avoid public setter.
 			set { contextManager.Writer = value; }
+		}
+
+		internal XQueryStaticContext StaticContext {
+			get { return contextManager.StaticContext; }
+		}
+
+		internal CultureInfo DefaultCollation {
+			get { return StaticContext.DefaultCollation; }
 		}
 
 		internal XQueryContextManager ContextManager {
@@ -175,7 +199,20 @@ namespace Mono.Xml.XPath2
 		}
 
 		public XPathItem CurrentItem {
-			get { return currentItem; }
+			get { return currentSequence.Current; }
+		}
+
+		public XPathNavigator CurrentNode {
+			get { return CurrentItem as XPathNavigator; }
+		}
+
+		public XPathSequence CurrentSequence {
+			get { return currentSequence; }
+		}
+
+		internal CultureInfo GetCulture (string collation)
+		{
+			return contextManager.GetCulture (collation);
 		}
 
 		internal void PushVariable (XmlQualifiedName name, XPathSequence iter)
@@ -203,6 +240,12 @@ namespace Mono.Xml.XPath2
 			if (item == null)
 				item = new XPathAtomicValue (obj, null);
 			return new SingleItemIterator (item, context);
+		}
+
+		internal XPathSequence ResolveCollection (string name)
+		{
+			// FIXME: support later.
+			return new XPathEmptySequence (currentSequence);
 		}
 
 		public IXmlNamespaceResolver NSResolver {
