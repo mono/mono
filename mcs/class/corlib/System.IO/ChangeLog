@@ -1,3 +1,8 @@
+2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs:
+	(.ctor): call MonoIO.GetException with the file name.
+
 2002-07-02  Mike Kestner  <mkestner@speakeasy.net>
 
 	* StreamReader.cs: Guard against ^\n lines as pointed out by Gonzalo.

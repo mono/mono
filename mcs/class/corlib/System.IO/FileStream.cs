@@ -64,7 +64,7 @@ namespace System.IO
 
 			this.handle = MonoIO.Open (name, mode, access, share);
 			if (handle == MonoIO.InvalidHandle)
-				throw MonoIO.GetException ();
+				throw MonoIO.GetException (name);
 			
 			this.access = access;
 			this.owner = true;
