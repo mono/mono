@@ -466,6 +466,7 @@ namespace Mono.CSharp.Debugger
 		protected ArrayList methods = null;
 		protected Hashtable sources = null;
 		protected DwarfFileWriter writer = null;
+		private ArrayList mbuilder_array = null;
 
 		public ISourceMethod[] Methods {
 			get {
@@ -496,7 +497,7 @@ namespace Mono.CSharp.Debugger
 		// Interface IMonoSymbolWriter
 		//
 
-		public MonoSymbolWriter (ModuleBuilder mb, string filename)
+		public MonoSymbolWriter (ModuleBuilder mb, string filename, ArrayList mbuilder_array)
 		{
 			this.assembly_filename = filename;
 			this.module_builder = mb;
@@ -504,6 +505,7 @@ namespace Mono.CSharp.Debugger
 			this.sources = new Hashtable ();
 			this.orphant_methods = new ArrayList ();
 			this.locals = new ArrayList ();
+			this.mbuilder_array = mbuilder_array;
 		}
 
 		public void Close () {
@@ -618,7 +620,12 @@ namespace Mono.CSharp.Debugger
 		{
 			int token = symbol_token.GetToken ();
 
-			MethodBuilder mb = get_method_builder (module_builder, token);
+			if ((token & 0xff000000) != 0x06000000)
+				throw new ArgumentException ();
+
+			int index = (token & 0xffffff) - 1;
+
+			MethodBuilder mb = (MethodBuilder) mbuilder_array [index];
 
 			current_method = new SourceMethod (mb);
 
@@ -752,9 +759,6 @@ namespace Mono.CSharp.Debugger
 			foreach (ISourceMethod method in source.Methods)
 				WriteMethod (method);
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static MethodBuilder get_method_builder (ModuleBuilder mb, int token);
 
 		protected void DoFixups (Assembly assembly)
 		{
