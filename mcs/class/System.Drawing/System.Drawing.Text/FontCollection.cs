@@ -13,14 +13,14 @@ namespace System.Drawing.Text {
 
 	public abstract class FontCollection : IDisposable {
 		
-		//internal IFontCollection implementation;
 		internal IntPtr nativeFontCollection = IntPtr.Zero;
+		internal FontFamily[] families;
 				
 		internal FontCollection ()
 		{
 		}
         
-        internal FontCollection (IntPtr ptr)
+        internal FontCollection ( IntPtr ptr )
 		{
 			nativeFontCollection = ptr;
 		}
@@ -28,12 +28,21 @@ namespace System.Drawing.Text {
 		// methods
 		public void Dispose()
 		{
-			Dispose (true);
-			System.GC.SuppressFinalize (this);
+			//Dispose ( true );
+			if ( families != null ) {
+				int length = families.Length;
+				Status status;
+				for ( int i = 0; i < length; i++){
+					status = GDIPlus.GdipDeleteFontFamily ( families[i].NativeObject );
+					if ( status != Status.Ok ) 
+						families[i].NativeObject = IntPtr.Zero;
+				}
+			}
+			System.GC.SuppressFinalize ( this );
 		}
 
 		[MonoTODO]
-		protected virtual void Dispose (bool disposing)
+		protected virtual void Dispose ( bool disposing )
 		{
 			//Nothing for now
 		}
@@ -46,47 +55,37 @@ namespace System.Drawing.Text {
 				int returned;
 				Status status;
 				
-				Console.WriteLine("came to Families method of FontCollection");
-				
-				status = GDIPlus.GdipGetFontCollectionFamilyCount( nativeFontCollection, out found);
-				if (status != Status.Ok){
-					throw new Exception ("Error calling GDIPlus.GdipGetFontCollectionFamilyCount: " +status);
+				status = GDIPlus.GdipGetFontCollectionFamilyCount ( nativeFontCollection, out found );
+				if ( status != Status.Ok ) {
+					throw new Exception ( "Error calling GDIPlus.GdipGetFontCollectionFamilyCount: " + status );
 				}
 				
-				Console.WriteLine("FamilyFont count returned in Families method of FontCollection " + found);
-				
-				int nSize =  Marshal.SizeOf(IntPtr.Zero);
-				IntPtr dest = Marshal.AllocHGlobal(nSize* found);			
-				
-				status = GDIPlus.GdipGetFontCollectionFamilyList( nativeFontCollection, found, dest, out returned);
-				if (status != Status.Ok){
-					Console.WriteLine("Error calling GDIPlus.GdipGetFontCollectionFamilyList: " +status);
-					throw new Exception ("Error calling GDIPlus.GdipGetFontCollectionFamilyList: " +status);					
+				int nSize =  Marshal.SizeOf ( IntPtr.Zero );
+				IntPtr dest = Marshal.AllocHGlobal ( nSize * found );           
+               
+				status = GDIPlus.GdipGetFontCollectionFamilyList( nativeFontCollection, found, dest, out returned );
+				if ( status != Status.Ok ) {					
+					throw new Exception ( "Error calling GDIPlus.GdipGetFontCollectionFamilyList: " + status );					
 				}
-				
-				IntPtr[] ptrAr = new IntPtr[returned];
-	        	
-				int pos = dest.ToInt32();
-				for (int i=0; i<returned; i++, pos+=nSize)
-					ptrAr[i] = (IntPtr) Marshal.PtrToStructure((IntPtr)pos, typeof(IntPtr));
-			
-				Marshal.FreeHGlobal(dest);			
-				
-				FontFamily [] familyList = new FontFamily[returned];
-				Console.WriteLine("No of FontFamilies returned in Families method of FontCollection " + returned);
-				for( int i = 0 ; i < returned ; i++ )
-				{
-					Console.WriteLine("Handle returned " + ptrAr[i]);
-					familyList [i] = new FontFamily(ptrAr[i]);
-				}
-				
-				return familyList; 
+                   
+				IntPtr[] ptrAr = new IntPtr [ returned ];
+				int pos = dest.ToInt32 ();
+				for ( int i = 0; i < returned ; i++, pos+=nSize )
+					ptrAr[i] = (IntPtr)Marshal.PtrToStructure ( (IntPtr)pos, typeof(IntPtr) );
+           
+				Marshal.FreeHGlobal ( dest );           
+                   
+				families = new FontFamily [ returned ];
+				for ( int i = 0; i < returned; i++ )
+					families[i] = new FontFamily ( ptrAr[i] );                     
+                           
+				return families;               
 			}
 		}
 
 		~FontCollection()
 		{
-			Dispose (false);
+			Dispose ( false );
 		}
 
 	}

@@ -13,18 +13,17 @@ namespace System.Drawing.Text {
 
 	public sealed class InstalledFontCollection : FontCollection {
 		
-		internal InstalledFontCollection (IntPtr ptr): base (ptr)
+		internal InstalledFontCollection ( IntPtr ptr ): base ( ptr )
 		{}
 
 		public InstalledFontCollection ()
 		{
-			Status status = GDIPlus.GdipNewInstalledFontCollection(out nativeFontCollection);
+			Status status = GDIPlus.GdipNewInstalledFontCollection( out nativeFontCollection );
 						
-			if (status != Status.Ok){
+			if ( status != Status.Ok ) {
 				nativeFontCollection = IntPtr.Zero;
-				throw new Exception ("Error calling GDIPlus.GdipNewInstalledFontCollection: " +status);
-			}
-			Console.WriteLine("Installed fonts are " + nativeFontCollection);				
+				throw new Exception ( "Error calling GDIPlus.GdipNewInstalledFontCollection: " + status );
+			}			
 		}
 	}
 }

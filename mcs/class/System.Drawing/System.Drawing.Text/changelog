@@ -1,3 +1,8 @@
+2004-01-29  Sanjay Gupta <gsanjay@novell.com>
+	* FontCollection.cs: Implemented Dispose method.
+	* InstalledFontCollection.cs: Removed Console.WriteLine calls.
+	* PrivateFontCollection.cs: Implemented AddMemoryFont method.
+
 2004-01-28  Jordi Mas <jordi@ximian.com>
 	* FontCollection.cs: fixed marshalling issues
 

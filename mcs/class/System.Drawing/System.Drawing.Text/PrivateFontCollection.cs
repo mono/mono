@@ -3,7 +3,7 @@
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Everaldo Canuto everaldo.canuto@bol.com.br
-//         Sanjay Gupta (gsanjay@novell.com)
+//		Sanjay Gupta (gsanjay@novell.com)
 //
 using System;
 using System.IO;
@@ -16,48 +16,40 @@ namespace System.Drawing.Text {
 	public sealed class PrivateFontCollection : FontCollection {
 
 		// constructors
-		internal PrivateFontCollection (IntPtr ptr): base (ptr)
+		internal PrivateFontCollection ( IntPtr ptr ): base ( ptr )
 		{}
 
 		public PrivateFontCollection ()
 		{
-			Status status = GDIPlus.GdipNewPrivateFontCollection(out nativeFontCollection);
-						
-			if (status != Status.Ok)
-			{
+			Status status = GDIPlus.GdipNewPrivateFontCollection( out nativeFontCollection );
+			if ( status != Status.Ok ){
 				nativeFontCollection = IntPtr.Zero;
-				throw new Exception ("Error calling GDIPlus.GdipNewPrivateFontCollection: " +status);
+				throw new Exception ( "Error calling GDIPlus.GdipNewPrivateFontCollection: " + status );
 			}
 		}
 		
 		// methods
 		[ComVisible(false)]
-		public void AddFontFile(string filename) 
+		public void AddFontFile( string filename ) 
 		{
-			if (filename == null)
-				throw new Exception("Value cannot be null, Parameter name : filename" );
-			bool exists = File.Exists(filename);
-			if (!exists)
-				throw new Exception("The path is not of a legal form");
+			if ( filename == null )
+				throw new Exception ( "Value cannot be null, Parameter name : filename" );
+			bool exists = File.Exists( filename );
+			if ( !exists )
+				throw new Exception ( "The path is not of a legal form" );
 
-			Status status = GDIPlus.GdipPrivateAddFontFile(nativeFontCollection, filename);
-						
-			if (status != Status.Ok)
-			{
-				throw new Exception ("Error calling GDIPlus.GdipPrivateAddFontFile: " +status);
-			}
-
-			Console.WriteLine("Font file added to collection");
-
+			Status status = GDIPlus.GdipPrivateAddFontFile ( nativeFontCollection, filename );
+			if ( status != Status.Ok ) 
+				throw new Exception ( "Error calling GDIPlus.GdipPrivateAddFontFile: " + status );			
 		}
 
 		[ComVisible(false)]
-		public void AddMemoryFont(IntPtr memory, int length) 
+		public void AddMemoryFont ( IntPtr memory, int length ) 
 		{
-			
+			Status status = GDIPlus.GdipPrivateAddMemoryFont ( nativeFontCollection, memory, length );
+			if ( status != Status.Ok )
+				throw new Exception ( "Error calling GDIPlus.GdipPrivateAddFontFile: " + status );						
 		}
-
 	}
-
 }
 
