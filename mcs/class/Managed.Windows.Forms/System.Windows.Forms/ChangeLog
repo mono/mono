@@ -1,3 +1,8 @@
+2004-11-26  John BouAntoun <jba-mono@optusnet.com.au>
+
+	* MonthCalendar.cs: 
+	  - Fix usage of ScrollChange Property when scrolling months
+
 2004-11-26  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Menu.cs, MainMenu.cs, MenuItem.cs, MenuAPI.cs

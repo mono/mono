@@ -1,4 +1,3 @@
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -107,7 +106,7 @@ namespace System.Windows.Forms {
 			max_selection_count = 7;
 			min_date = new DateTime (1953, 1, 1);
 			monthly_bolded_dates = null;
-			scroll_change = 1;
+			scroll_change = 0;
 			show_today = true;
 			show_today_circle = true;
 			show_week_numbers = false;
@@ -346,16 +345,15 @@ namespace System.Windows.Forms {
 					throw new ArgumentException();
 				}
 
-				// if zero it to the default -> the total number of months currently visible
-				if (value == 0) {
-					scroll_change = CalendarDimensions.Width * CalendarDimensions.Height;
-				}
-
 				if (scroll_change != value) {
 					scroll_change = value;
 				}
 			}
 			get {
+				// if zero it to the default -> the total number of months currently visible
+				if (scroll_change == 0) {
+					return CalendarDimensions.Width * CalendarDimensions.Height;
+				}
 				return scroll_change;
 			}
 		}
@@ -1276,13 +1274,13 @@ namespace System.Windows.Forms {
 					// show the click then move on
 					SetItemClick(hti);
 					this.Invalidate ();
-					this.CurrentMonth = this.CurrentMonth.AddMonths (CalendarDimensions.Width * CalendarDimensions.Height);
+					this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange);
 					break;
 				case HitArea.PrevMonthButton:
 					// show the click then move on
 					SetItemClick(hti);
 					this.Invalidate ();
-					this.CurrentMonth = this.CurrentMonth.AddMonths ((CalendarDimensions.Width * CalendarDimensions.Height)*-1);
+					this.CurrentMonth = this.CurrentMonth.AddMonths (ScrollChange*-1);
 					break;
 				case HitArea.PrevMonthDate:
 					SetItemClick(hti);
