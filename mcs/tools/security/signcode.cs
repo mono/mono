@@ -9,13 +9,14 @@
 //
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 
 using Mono.Security.Authenticode;
+using Mono.Security.X509;
 
 [assembly: AssemblyTitle("Mono SignCode")]
 [assembly: AssemblyDescription("Sign assemblies and PE files using Authenticode(tm).")]
@@ -43,11 +44,11 @@ namespace Mono.Tools {
 		{
 			Console.WriteLine ("Usage: signcode [options] filename{0}", Environment.NewLine);
 			Console.WriteLine ("\t-spc spc\tSoftware Publisher Certificate file");
-			Console.WriteLine ("\t-v pvk\tPrivate Key file");
+			Console.WriteLine ("\t-v pvk\t\tPrivate Key file");
 			Console.WriteLine ("\t-a md5 | sha1\tHash Algorithm (default: MD5)");
 			Console.WriteLine ("\t-$ indivisual | commercial\tSignature type");
-			Console.WriteLine ("\t-n\tDescription for the signed file");
-			Console.WriteLine ("\t-i\tURL for the signed file");
+			Console.WriteLine ("\t-n description\tDescription for the signed file");
+			Console.WriteLine ("\t-i url\tURL for the signed file");
 			Console.WriteLine ("Timestamp options");
 			Console.WriteLine ("\t-t url\tTimestamp service http URL");
 			Console.WriteLine ("\t-tr #\tNumber of retries for timestamp");
@@ -59,6 +60,48 @@ namespace Mono.Tools {
 			Console.WriteLine ("\t-y #\tProvider Type");
 			Console.WriteLine ("\t-ky [signature|exchange|#]\tKey Type");
 			Console.WriteLine ("\t-r [localMachine|currentUser]\tKey Location");
+		}
+
+		static private RSA GetPrivateKey (string keyfile, CspParameters csp)
+		{
+			RSA rsa = null;
+
+			if (keyfile != null) {
+				if (!File.Exists (keyfile)) {
+					Console.WriteLine ("Couldn't find '{0}' file.", keyfile);
+					return null;
+				}
+
+				PrivateKey pvk = PrivateKey.CreateFromFile (keyfile);
+				if (pvk.Encrypted) {
+					Console.WriteLine ("Enter password for {0}: ", keyfile);
+					string password = Console.ReadLine ();
+					pvk = PrivateKey.CreateFromFile (keyfile, password);
+					if (pvk.RSA == null)
+						Console.WriteLine ("Invalid password!");
+				}
+				rsa = pvk.RSA;
+			}
+			else {
+				rsa = new RSACryptoServiceProvider (csp);
+			}
+
+			return rsa;
+		}
+
+		static private X509CertificateCollection GetCertificates (string spcfile)
+		{
+			if (spcfile == null) {
+				Console.WriteLine ("Missing SPC (certificate) file.");
+				return null;
+			}
+			if (!File.Exists (spcfile)) {
+				Console.WriteLine ("Couldn't find '{0}' file.", spcfile);
+				return null;
+			}
+
+			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (spcfile);
+			return spc.Certificates;
 		}
 
 		[STAThread]
@@ -174,32 +217,28 @@ namespace Mono.Tools {
 				}
 			}
 
+			// no need to continue if we can't find the assembly
+			// to be signed (and/or timestamped)
+			if (!File.Exists (tbsFilename)) {
+				Console.WriteLine ("Couldn't find {0}.", tbsFilename);
+				return 1;
+			}
+
 			if (sign) {
-				RSACryptoServiceProvider rsa = new RSACryptoServiceProvider (csp);
-				if (pvkFilename != null) {
-					PrivateKey pvk = PrivateKey.CreateFromFile (pvkFilename);
-					if (pvk.Encrypted) {
-						Console.WriteLine ("Enter password for {0}: ", pvkFilename);
-						string pvkPassword = Console.ReadLine ();
-						pvk = PrivateKey.CreateFromFile (pvkFilename, pvkPassword);
-					}
-					if (pvk.RSA != null) {
-						rsa.ImportParameters (pvk.RSA.ExportParameters (true));
-					}
-					else {
-						Console.WriteLine ("Invalid password for {0}", pvkFilename);
-						return 1;
-					}
+				RSA rsa = GetPrivateKey (pvkFilename, csp);
+				if (rsa == null) {
+					Console.WriteLine ("No private key available to sign the assembly.");
+					return 1;
 				}
-
-				SoftwarePublisherCertificate spc = null;
-				if (spcFilename != null) {
-					spc = SoftwarePublisherCertificate.CreateFromFile (spcFilename);
-					af.Certificates.AddRange (spc.Certificates);
-					// TODO CRL
-				}
-
 				af.RSA = rsa;
+
+				X509CertificateCollection certs = GetCertificates (spcFilename);
+				if ((certs == null) || (certs.Count == 0)) {
+					Console.WriteLine ("No certificates available to sign the assembly.");
+					return 1;
+				}
+				af.Certificates.AddRange (certs);
+
 				af.Sign (tbsFilename);
 			}
 /* TODO
