@@ -2110,6 +2110,7 @@ namespace Mono.CSharp {
 			MethodInfo implementing;
 			Type iface_type = null;
 			string iface = "", short_name;
+			bool explicit_impl = false;
 
 			// Check if the return type and arguments were correct
 			if (ret_type == null || parameters == null)
@@ -2198,6 +2199,7 @@ namespace Mono.CSharp {
 
 				// Compute the full name that we need to export
 				Name = iface_type.FullName + "." + short_name;
+				explicit_impl = true;
 			} else
 				short_name = Name;
 
@@ -2243,7 +2245,6 @@ namespace Mono.CSharp {
 			if (implementing != null){
 				flags |=
 					MethodAttributes.Virtual |
-					MethodAttributes.NewSlot |
 					MethodAttributes.HideBySig;
 
 				// If not abstract, then we can set Final.
@@ -2290,10 +2291,9 @@ namespace Mono.CSharp {
 					GetCallingConvention (parent is Class),
 					ret_type, parameters);
 				
-				if (implementing != null){
+				if (implementing != null && explicit_impl)
 					parent.TypeBuilder.DefineMethodOverride (
 						MethodBuilder, implementing);
-				}
 			}
 
 			if (MethodBuilder == null)
@@ -2890,7 +2890,15 @@ namespace Mono.CSharp {
 				//
 				parent.IsInterfaceMethod (
 					iface_type, name, fn_type, parameters, true);
-			} 
+			}
+
+			//
+			// If this is not an explicit interface implementation,
+			// clear implementing, as it is only used for explicit
+			// interface implementation
+			//
+			if (Name.IndexOf (".") == -1)
+				implementing = null;
 			
 			if (is_get){
 				GetBuilder = parent.TypeBuilder.DefineMethod (
@@ -3460,6 +3468,14 @@ namespace Mono.CSharp {
 				parent.IsInterfaceMethod (
 					iface_type, name, ret_type, parameters, true);
 			}
+
+			//
+			// If this is not an explicit interface implementation,
+			// clear implementing, as it is only used for explicit
+			// interface implementation
+			//
+			if (Name.IndexOf (".") == -1)
+				implementing = null;
 
 			if (is_get){
 

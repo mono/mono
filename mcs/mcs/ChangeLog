@@ -1,3 +1,11 @@
+2002-02-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Method.Define): Track whether we are an explicit
+	implementation or not.  And only call DefineMethodOverride if we
+	are an explicit implementation.
+
+	(Property.DefineMethod): Ditto.
+
 2002-02-11  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (BetterFunction): Catch hideous bug which was
