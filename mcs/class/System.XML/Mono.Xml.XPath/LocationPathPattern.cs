@@ -72,7 +72,7 @@ namespace Mono.Xml.XPath {
 				if (patternPrevious == null && filter == null) {
 					NodeNameTest t = nodeTest as NodeNameTest;
 					if (t != null) {
-						if (t.Name.Name == "*")
+						if (t.Name.Name == "*" || t.Name.Name.Length == 0)
 							return -.25;
 						return 0;
 					}

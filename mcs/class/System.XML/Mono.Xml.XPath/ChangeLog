@@ -1,3 +1,8 @@
+2005-02-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* LocationPathPattern.cs : Wildcard name is held as "", so we should
+	  also check "" for wildcard. Patch by Andrew Skiba.
+
 2005-01-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs : eliminating "throw new Exception".
