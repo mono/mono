@@ -10,16 +10,19 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.IO;
 using System.Diagnostics;
 using System.Collections;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System
 {
 	public sealed class Environment
 	{
 		public enum SpecialFolder
-		{	// TODO: Determin if these windoze style folder identifiers 
-			//       linux counterparts
+		{	// TODO: Determine if these windoze style folder identifiers 
+			//       have unix/linux counterparts
 			ApplicationData,
 			CommonApplicationData,
 			CommonProgramFiles,
@@ -40,29 +43,40 @@ namespace System
 			Templates
 		}
 
+		// TODO: Make sure the security attributes do what I expect
+			
 		/// <summary>
 		/// Gets the command line for this process
 		/// </summary>
 		public static string CommandLine
-		{
+		{	// TODO: Coordinate with implementor of EnvironmentPermissionAttribute
+			[EnvironmentPermissionAttribute(SecurityAction.Demand, Read = "COMMANDLINE")]
 			get
 			{
-				return null;
+				return PlatformSpecific.getCommandLine();
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the current directory
+		/// Gets or sets the current directory. Actually this is supposed to get
+		/// and/or set the process start directory acording to the documentation
+		/// but actually test revealed at beta2 it is just Getting/Setting the CurrentDirectory
 		/// </summary>
 		public static string CurrentDirectory
 		{
+			// originally it was my thought that the external call would be made in
+			// the directory class however that class has additional security requirements
+			// so the Directory class will call this class for its get/set current directory
+			
+			[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
 			get
 			{
-				// TODO: needs more research/work/thought
-				return GetEnvironmentVariable("PWD");
+				return PlatformSpecific.getCurrentDirectory();
 			}
+			[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 			set
 			{
+				PlatformSpecific.setCurrentDirectory(value);
 			}
 		}
 
@@ -70,7 +84,7 @@ namespace System
 		/// Gets or sets the exit code of this process
 		/// </summary>
 		public static int ExitCode
-		{
+		{	// TODO: find a way to implement this property
 			get
 			{
 				return 0;
@@ -86,8 +100,8 @@ namespace System
 		public static string MachineName
 		{
 			get
-			{	// TODO: needs more research/work/thought
-				return GetEnvironmentVariable("HOSTNAME");
+			{
+				return PlatformSpecific.getMachineName();
 			}
 		}
 
@@ -109,7 +123,7 @@ namespace System
 		{
 			get
 			{
-				return null;
+				return PlatformSpecific.getOSVersion();
 			}
 		}
 
@@ -225,11 +239,14 @@ namespace System
 		/// </summary>
 		public static string[] GetCommandLineArgs()
 		{
-			return null;
+			char[] delimiter = new char[1];
+			delimiter[0] = ' ';
+			return PlatformSpecific.getCommandLine().Split(delimiter);
 		}
 
 		/// <summary>
-		/// Return a string containing the value of the environment variable identifed by parameter "variable"
+		/// Return a string containing the value of the environment
+		/// variable identifed by parameter "variable"
 		/// </summary>
 		public static string GetEnvironmentVariable(string variable)
 		{
@@ -272,7 +289,8 @@ namespace System
 		}
 
 		/// <summary>
-		/// Returns the fully qualified path of the folder specified by the "folder" parameter
+		/// Returns the fully qualified path of the
+		/// folder specified by the "folder" parameter
 		/// </summary>
 		public static string GetFolderPath(SpecialFolder folder)
 		{
