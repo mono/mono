@@ -105,7 +105,10 @@ namespace Mono.CSharp {
 			if (ns != null)
 				return ns;
 
-			t = TypeManager.LookupType (DeclSpace.MakeFQN (fullname, name));
+			//
+			// The type is not a nested type here
+			//
+			t = TypeManager.LookupTypeDirect (DeclSpace.MakeFQN (fullname, name));
 			if ((t == null) || ((ds != null) && !ds.CheckAccessLevel (t)))
 				return null;
 

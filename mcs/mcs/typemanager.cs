@@ -664,12 +664,17 @@ public class TypeManager {
 		Type t = (Type) types [name];
 		if (t != null)
 			return t;
-
-		t = LookupTypeReflection (name);
-		if (t == null)
+		
+		if (negative_hits.Contains (name))
 			return null;
-
-		types [name] = t;
+		
+		t = LookupTypeReflection (name);
+		
+		if (t == null)
+			negative_hits [name] = null;
+		else
+			types [name] = t;
+		
 		return t;
 	}
 	
