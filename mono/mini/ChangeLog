@@ -1,3 +1,10 @@
+
+Thu May 1 15:18:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ldscript, Makefile.am: add linker script to reduce the number of
+	exported symbols (should also fix the issues with libwine defining
+	some of the same symbols in io-layer).
+
 2003-05-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.c (mini_main): Avoid assertion when no file name is given on 
@@ -213,4 +220,5 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
