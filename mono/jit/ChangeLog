@@ -1,3 +1,16 @@
+2002-05-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_flow): try blocks are followed by handler
+	blocks, so we need to add all handler blocks as succesors.
+
+	* exception.c (arch_handle_exception): correctly save/restore caller
+	saved regs.
+
+	* emit-x86.c (arch_emit_prologue): correctly save/restore caller
+	saved regs.
+
+	* jit.c (mono_cfg_new): allocate space for caller saved registers.
+
 2002-05-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c: only use one TLS slot to store jit data
