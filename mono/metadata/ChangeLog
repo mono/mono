@@ -1,3 +1,8 @@
+2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
+
+	* socket-io.h:
+	* socket-io.c: Added IPv6 support.
+
 2003-07-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_class_is_assignable_from): New function to implement
