@@ -8,9 +8,12 @@ if [ $# -eq 0 ]; then
 	exit 1
 fi
 
+cp ../../System.Drawing_test.dll .
+
 topdir=../../../..
 NUNITCONSOLE=$topdir/class/lib/nunit-console.exe
 MONO_PATH=$topdir/nunit20:$topdir/class/lib:.
+
 
 for i in $@; do
 	if [ "$i" = "all" ]; then

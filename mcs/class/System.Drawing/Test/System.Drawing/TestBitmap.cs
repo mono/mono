@@ -12,6 +12,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using NUnit.Framework;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace MonoTests.System.Drawing{
 
@@ -191,8 +193,64 @@ namespace MonoTests.System.Drawing{
 			int active = bmp.SelectActiveFrame (FrameDimension.Page, 0);
 			
 			AssertEquals (1, cnt);								
-			AssertEquals (0, active);								
-			
+			AssertEquals (0, active);											
 		}
+
+		static string ByteArrayToString(byte[] arrInput)
+		{
+			int i;
+			StringBuilder sOutput = new StringBuilder(arrInput.Length);
+			for (i=0;i < arrInput.Length -1; i++) 
+			{
+				sOutput.Append(arrInput[i].ToString("X2"));
+			}
+			return sOutput.ToString();
+		}
+
+
+		public string RotateBmp (Bitmap src, RotateFlipType rotate)
+		{			
+			int witdh = 150, height = 150, index = 0;			
+			byte[] pixels = new byte [witdh * height * 3];
+			Bitmap bmp_rotate;
+			byte[] hash;
+			Color clr;
+
+
+			bmp_rotate = src.Clone (new RectangleF (0,0, witdh, height), PixelFormat.Format32bppArgb);	
+			bmp_rotate.RotateFlip (rotate);			
+
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < witdh; x++) {				
+					clr = bmp_rotate.GetPixel (x,y);
+					pixels[index++] = clr.R; pixels[index++] = clr.G; pixels[index++]  = clr.B;	
+				}				
+			}
+		
+			hash = new MD5CryptoServiceProvider().ComputeHash (pixels);
+			return ByteArrayToString (hash);
+		}
+		
+		
+		/*
+			Rotate bitmap in diffent ways, and check the result
+			pixels using MD5
+		*/
+		[Test]
+		public void Rotate()
+		{
+			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");	
+			Bitmap	bmp = new Bitmap(sInFile);		
+			
+			AssertEquals ("312958A3C67402E1299413794988A3", RotateBmp (bmp, RotateFlipType.Rotate90FlipNone));	
+			AssertEquals ("BF70D8DA4F1545AEDD77D0296B47AE", RotateBmp (bmp, RotateFlipType.Rotate180FlipNone));
+			AssertEquals ("15AD2ADBDC7090C0EC744D0F7ACE2F", RotateBmp (bmp, RotateFlipType.Rotate270FlipNone));
+			AssertEquals ("2E10FEC1F4FD64ECC51D7CE68AEB18", RotateBmp (bmp, RotateFlipType.RotateNoneFlipX));
+			AssertEquals ("E63204779B566ED01162B90B49BD9E", RotateBmp (bmp, RotateFlipType.Rotate90FlipX));
+			AssertEquals ("B1ECB17B5093E13D04FF55CFCF7763", RotateBmp (bmp, RotateFlipType.Rotate180FlipX));
+			AssertEquals ("71A173882C16755D86F4BC26532374", RotateBmp (bmp, RotateFlipType.Rotate270FlipX));
+
+		}
+		
 	}
 }
