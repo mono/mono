@@ -31,11 +31,11 @@ namespace System.Web.Compilation
 			sourceFile = GenerateSourceFile (userControlParser);
 
 			CachingCompiler compiler = new CachingCompiler (this);
-			CompilationResult result = new CompilationResult ();
+			CompilationResult result = new CompilationResult (sourceFile);
 			result.Options = options;
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);
-				
+			
 			if (result.Data is Type) {
 				targetFile = result.OutputFile;
 				return (Type) result.Data;

@@ -1788,8 +1788,7 @@ class AspGenerator
 	
 	void ParseError (string msg, int line, int col)
 	{
-		throw new HttpException (String.Format ("error parsing {0} ({1}, {2}): {3}",
-							fullPath, line, col, msg));
+		throw new ParseException (fullPath, msg, line, col);
 	}
 
 	void TagParsed (Tag tag, int line, int col)
@@ -1871,7 +1870,11 @@ class AspGenerator
 		parser.TagParsed += new TagParsedHandler (TagParsed);
 		parser.TextParsed += new TextParsedHandler (TextParsed);
 
-		parser.Parse ();
+		try {
+			parser.Parse ();
+		} catch (Exception e) {
+			throw new ParseException (fullPath, e.Message, parser.Line, parser.Column, e);
+		}
 
 		End ();
 		parse_ok = true;

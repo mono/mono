@@ -1,3 +1,12 @@
+2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlizedException.cs: base class for exceptions that makes it easy to
+	generate error pages.
+
+	* HttpException.cs: improved error displaying.
+
+	* HttpRuntime.cs: removed debugging output.
+
 2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: display the error instead of hanging when we get

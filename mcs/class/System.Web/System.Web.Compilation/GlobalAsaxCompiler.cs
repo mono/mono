@@ -31,7 +31,7 @@ namespace System.Web.Compilation
 			sourceFile = GenerateSourceFile ();
 
 			CachingCompiler compiler = new CachingCompiler (this);
-			CompilationResult result = new CompilationResult ();
+			CompilationResult result = new CompilationResult (sourceFile);
 			result.Options = options;
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);

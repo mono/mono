@@ -30,6 +30,14 @@ namespace System.Web.Compilation
 		{
 		}
 
+		public int Line {
+			get {return tokenizer.Line; }
+		}
+
+		public int Column {
+			get {return tokenizer.Column; }
+		}
+
 		private bool Eat (int expected_token)
 		{
 			if (tokenizer.get_token () != expected_token) {

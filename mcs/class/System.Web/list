@@ -1,5 +1,6 @@
 System.Web/BeginEventHandler.cs
 System.Web/EndEventHandler.cs
+System.Web/HtmlizedException.cs
 System.Web/HttpCacheRevalidation.cs
 System.Web/HttpCacheability.cs
 System.Web/HttpCookie.cs
@@ -364,6 +365,7 @@ System.Web.Compilation/CompilationResult.cs
 System.Web.Compilation/CompilationException.cs
 System.Web.Compilation/GlobalAsaxCompiler.cs
 System.Web.Compilation/PageCompiler.cs
+System.Web.Compilation/ParseException.cs
 System.Web.Compilation/UserControlCompiler.cs
 System.Web.Compilation/WebServiceCompiler.cs
 System.Web.Handlers/TraceHandler.cs

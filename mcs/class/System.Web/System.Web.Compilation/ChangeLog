@@ -1,3 +1,21 @@
+2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: throw ParseException on parse
+	error.
+
+	* AspParser.cs: added Line and Column props.
+
+	* CompilationException.cs: derives now from HtmlizedException.
+
+	* CompilationResult.cs: added fileName field.  Fixed set_ExitCode.
+
+	* GlobalAsaxCompiler.cs:
+	* PageCompiler.cs:
+	* UserControlCompiler.cs: pass the file name in the CompilationResult.
+
+	* ParseException.cs: new exception.
+
+
 2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: remove "file://" from the private bin path. Fixes

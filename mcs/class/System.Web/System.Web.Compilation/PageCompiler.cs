@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
 using System.IO;
@@ -31,11 +31,14 @@ namespace System.Web.Compilation
 			sourceFile = GenerateSourceFile ();
 
 			CachingCompiler compiler = new CachingCompiler (this);
-			CompilationResult result = new CompilationResult ();
+			CompilationResult result = new CompilationResult (sourceFile);
 			result.Options = options;
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);
-				
+			
+			if (result.Data is Type)
+				return (Type) result.Data;
+
 			Assembly assembly = Assembly.LoadFrom (result.OutputFile);
 			Type [] types = assembly.GetTypes ();
 			foreach (Type t in types) {

@@ -14,6 +14,7 @@ namespace System.Web.Compilation
 	internal class CompilationResult
 	{
 		int exitCode;
+		string fileName;
 		string output;
 		string outputFile;
 		object data;
@@ -21,6 +22,11 @@ namespace System.Web.Compilation
 		
 		public CompilationResult ()
 		{
+		}
+
+		public CompilationResult (string fileName)
+		{
+			this.fileName = fileName;
 		}
 
 		public void Reset ()
@@ -39,12 +45,16 @@ namespace System.Web.Compilation
 		
 		public int ExitCode {
 			get { return exitCode; }
-			set { exitCode = exitCode; }
+			set { exitCode = value; }
 		}
 		
 		public string CompilerOutput {
 			get { return output; }
 			set { output = value; }
+		}
+
+		public string FileName {
+			get { return fileName; }
 		}
 
 		public string OutputFile {

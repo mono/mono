@@ -123,8 +123,6 @@ namespace System.Web {
 		}
 
 		internal void FinishRequest(HttpContext context, Exception error) {
-			if (context.Error != null)
-				Console.WriteLine ("context.Error: {0}", context.Error);
 			if (error == null) {
 				try {
 					context.Response.FlushAtEndOfRequest();
