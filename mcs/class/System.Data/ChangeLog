@@ -1,6 +1,8 @@
-2004-05-26  Umadevi S <sumadevi@novell.com.
-        * Added files DataTableCollectionTest and DataRelationCollectionTest to the system.data_test.dll.sources
+2004-05-27 Umadevi S <sumadevi@novell.com>
+	* added files DataTableMappingCollectionTest and DataColumnMappingCollectionTest to system.data_test.dll.sources
 
+2004-05-26  Umadevi S <sumadevi@novell.com>
+        * Added files DataTableCollectionTest and DataRelationCollectionTest to the system.data_test.dll.sources
 
 2004-05-20 Umadevi S <sumadevi@novell.com>
 	* Fixed bug 58406- implemented the hasrow method, test program used
