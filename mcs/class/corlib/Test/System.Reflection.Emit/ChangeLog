@@ -1,3 +1,7 @@
+2004-02-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilderTest.cs: Add some tests.
+
 2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilderTest.cs: Add tests for parameter info.

@@ -18,7 +18,9 @@ using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
-
+using System.Security;
+using System.Security.Permissions;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 
 namespace MonoTests.System.Reflection.Emit
@@ -747,6 +749,69 @@ public class TypeBuilderTest : Assertion
 		}
 	}
 
+	[Test]
+	public void DefineUninitializedDataInvalidArgs () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+		
+		try {
+			tb.DefineUninitializedData (null, 1, 0);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+
+		try {
+			tb.DefineUninitializedData ("", 1, 0);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		// The size of the data is less than or equal to zero ???
+		try {
+			tb.DefineUninitializedData ("BAR", 0, 0);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			string name = String.Format ("{0}", (char)0);
+			tb.DefineUninitializedData (name, 1, 0);
+			Fail ("Names with embedded nulls should be rejected");
+		}
+		catch (ArgumentException) {
+		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void DefineUninitializedDataAlreadyCreated () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+		tb.CreateType ();
+
+		tb.DefineUninitializedData ("BAR2", 1, 0);
+	}
+
+	[Test]
+	public void DefineUninitializedData () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		tb.DefineUninitializedData ("foo", 4, FieldAttributes.Public);
+
+		Type t = tb.CreateType ();
+
+		object o = Activator.CreateInstance (t);
+
+		FieldInfo fi = t.GetField ("foo");
+
+		object fieldVal = fi.GetValue (o);
+
+		IntPtr ptr = Marshal.AllocHGlobal (4);
+		Marshal.StructureToPtr (fieldVal, ptr, true);
+		Marshal.FreeHGlobal (ptr);
+	}
+
 	public void TestDefineMethod () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 
@@ -985,6 +1050,54 @@ public class TypeBuilderTest : Assertion
 		}
 		catch (NotSupportedException) {
 		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void TestAddDeclarativeSecurityAlreadyCreated () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+		tb.CreateType ();
+
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+		tb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void TestAddDeclarativeSecurityNullPermissionSet () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		tb.AddDeclarativeSecurity (SecurityAction.Demand, null);
+	}
+
+	[Test]
+	public void TestAddDeclarativeSecurityInvalidAction () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		SecurityAction[] actions = new SecurityAction [] { 
+			SecurityAction.RequestMinimum,
+			SecurityAction.RequestOptional,
+			SecurityAction.RequestRefuse };
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+
+		foreach (SecurityAction action in actions) {
+			try {
+				tb.AddDeclarativeSecurity (action, set);
+				Fail ();
+			}
+			catch (ArgumentException) {
+			}
+		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void TestAddDeclarativeSecurityDuplicateAction () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+		tb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+		tb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 	}
 
 	/* Test for dynamically generated enums */
