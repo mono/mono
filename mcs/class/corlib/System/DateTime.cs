@@ -34,6 +34,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System
@@ -44,6 +45,7 @@ namespace System
 	/// </summary>
 	/// 
 	[Serializable]
+	[StructLayout (LayoutKind.Auto)]
 	public struct DateTime : IComparable, IFormattable, IConvertible
 	{
 		private TimeSpan ticks;

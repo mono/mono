@@ -1,5 +1,10 @@
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
+        * ArgIterator.cs: changed layout to Auto
+        * DateTime.cs: changed layout to Auto
+
+2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* DateTime.cs: CRLF to LF
 
 2004-06-17  Sebastien Pouliot  <sebastien@ximian.com>
