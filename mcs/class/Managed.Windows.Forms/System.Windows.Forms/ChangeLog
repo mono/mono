@@ -1,5 +1,10 @@
 2005-03-04  Jackson Harper  <jackson@ximian.com>
 
+	* Binding.cs: Implement data type parsing and converting on pulled
+	data. TODO: Are there more ways the data can be converted? 
+
+2005-03-04  Jackson Harper  <jackson@ximian.com>
+
 	* Binding.cs: Support <Property>IsNull checks. Also bind to the
 	controls Validating method so we can repull the data when the
 	control loses focus.

@@ -41,11 +41,13 @@ namespace System.Windows.Forms {
 		private BindingManagerBase manager;
 		private PropertyDescriptor prop_desc;
 		private PropertyDescriptor is_null_desc;
-		private object data;
 
 		private EventDescriptor changed_event;
 		private EventHandler property_value_changed_handler;
 		private object event_current; // The manager.Current as far as the changed_event knows
+
+		private object data;
+		private Type data_type;
 
 		#region Public Constructors
 		public Binding (string propertyName, object dataSource, string dataMember)
@@ -119,7 +121,8 @@ namespace System.Windows.Forms {
 				return;
 
 			prop_desc = TypeDescriptor.GetProperties (control).Find (property_name, false);
-
+			data_type = prop_desc.PropertyType; // Getting the PropertyType is kinda slow and it should never change, so it is cached
+			
 			if (prop_desc == null)
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' on target control."));
 			if (prop_desc.IsReadOnly)
@@ -162,7 +165,8 @@ namespace System.Windows.Forms {
 			}
 
 			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
-			data = pd.GetValue (manager.Current);
+			object pulled = pd.GetValue (manager.Current);
+			data = ParseData (pulled);
 		}
 
 		internal void UpdateIsBinding ()
@@ -198,6 +202,30 @@ namespace System.Windows.Forms {
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)
 		{
 			PullData ();
+		}
+
+                // TODO: Are there more ways the data can be converted?
+		private object ParseData (object data)
+		{
+			ConvertEventArgs e = new ConvertEventArgs (data, data_type);
+
+			OnParse (e);
+			if (e.Value.GetType ().IsSubclassOf (data_type))
+				return e.Value;
+			if (e.Value == Convert.DBNull)
+				return e.Value;
+
+			TypeConverter converter = TypeDescriptor.GetConverter (data.GetType ());
+			if (converter != null && converter.CanConvertTo (data_type))
+				return converter.ConvertTo (data, data_type);
+
+			if (data is IConvertible) {
+				object res = Convert.ChangeType (data, data_type);
+				if (res.GetType ().IsSubclassOf (data_type))
+					return res;
+			}
+
+			return null;
 		}
 
 		#region Events
