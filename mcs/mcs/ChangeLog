@@ -1,5 +1,8 @@
 2003-05-01  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs: reuse the code that handles type clashes for
+	delegates and enumerations.
+
 	* class.cs (Report28): Always report.
 
 	* expression.cs (EncodeAsAttribute): Allow nulls here.

@@ -332,31 +332,42 @@ public class TypeManager {
 		InitExpressionTypes ();
 	}
 
+	public static void HandleDuplicate (string name, Type t)
+	{
+		Type prev = (Type) types [name];
+		TypeContainer tc = builder_to_declspace [prev] as TypeContainer;
+		
+		if (tc != null){
+			//
+			// This probably never happens, as we catch this before
+			//
+			Report.Error (-17, "The type `" + name + "' has already been defined.");
+			return;
+		}
+		
+		Location l;
+		tc = builder_to_declspace [t] as TypeContainer;
+		if (tc != null){
+			Report.Warning (
+					1595, "The type `" + name + "' is defined in an existing assembly;"+
+					" Using the new definition from: " + tc.Location);
+		} else {
+			Report.Warning (
+					1595, "The type `" + name + "' is defined in an existing assembly;");
+		}
+		
+		Report.Warning (1595, "Previously defined in: " + prev.Assembly.FullName);
+		
+		types.Remove (name);
+		types.Add (name, t);
+	}
+	
 	public static void AddUserType (string name, TypeBuilder t, Type [] ifaces)
 	{
 		try {
 			types.Add (name, t);
 		} catch {
-			Type prev = (Type) types [name];
-			TypeContainer tc = builder_to_declspace [prev] as TypeContainer;
-
-			if (tc != null){
-				//
-				// This probably never happens, as we catch this before
-				//
-				Report.Error (-17, "The type `" + name + "' has already been defined.");
-				return;
-			}
-
-			tc = builder_to_declspace [t] as TypeContainer;
-			
-			Report.Warning (
-				1595, "The type `" + name + "' is defined in an existing assembly;"+
-				" Using the new definition from: " + tc.Location);
-			Report.Warning (1595, "Previously defined in: " + prev.Assembly.FullName);
-			
-			types.Remove (name);
-			types.Add (name, t);
+			HandleDuplicate (name, t); 
 		}
 		user_types.Add (t);
 			
@@ -382,13 +393,22 @@ public class TypeManager {
 
 	public static void AddDelegateType (string name, TypeBuilder t, Delegate del)
 	{
-		types.Add (name, t);
+		try {
+			types.Add (name, t);
+		} catch {
+			HandleDuplicate (name, t);
+		}
+		
 		builder_to_declspace.Add (t, del);
 	}
 	
 	public static void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
-		types.Add (name, t);
+		try {
+			types.Add (name, t);
+		} catch {
+			HandleDuplicate (name, t);
+		}
 		builder_to_declspace.Add (t, en);
 	}
 
