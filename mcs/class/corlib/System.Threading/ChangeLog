@@ -1,3 +1,9 @@
+2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompressedStack.cs: Implemented most todo so it's usable for CAS.
+	* CompressedStackSwitcher.cs: Implemented most todo.
+	* Thread.cs: Implement support for getting/setting CompressedStack.
+
 2004-12-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Change type of culture_info and ui_culture_info to 

@@ -40,6 +40,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.IO;
 using System.Collections;
+using System.Security;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
@@ -89,6 +90,8 @@ namespace System.Threading
 		private string thread_name=null;
 		
 		private IPrincipal _principal;
+
+		private CompressedStack _stack;
 		
 		public static Context CurrentContext {
 			get {
@@ -901,16 +904,17 @@ namespace System.Threading
 			}
 		}
 
-		[MonoTODO]
 		public CompressedStack GetCompressedStack ()
 		{
-			throw new NotImplementedException ();
+			// Note: returns null if no CompressedStack has been set.
+			// However CompressedStack.GetCompressedStack returns an 
+			// (empty?) CompressedStack instance.
+			return _stack;
 		}
 
-		[MonoTODO]
 		public void SetCompressedStack (CompressedStack stack)
 		{
-			throw new NotImplementedException ();
+			_stack = stack;
 		}
 
 		[ComVisible (false)]
@@ -925,8 +929,12 @@ namespace System.Threading
 		{
 			throw new NotImplementedException ();
 		}
+#else
+		internal CompressedStack GetCompressedStack ()
+		{
+			return _stack;
+		}
 #endif
-		
 	}
 }
 

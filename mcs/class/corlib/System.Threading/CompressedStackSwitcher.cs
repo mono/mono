@@ -28,7 +28,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
@@ -38,46 +37,68 @@ namespace System.Threading {
 	[ComVisibleAttribute (false)]
 	public struct CompressedStackSwitcher : IDisposable {
 
-		private bool _undo;
+		private CompressedStack _cs;
+		private Thread _t;
 
-		[MonoTODO]
+		internal CompressedStackSwitcher (CompressedStack cs, Thread t)
+		{
+			_cs = cs;
+			_t = t;
+		}
+
 		public override bool Equals (object obj)
 		{
+			if (obj == null)
+				return false;
+
+			if (obj is CompressedStackSwitcher)
+				return op_Equality (this, (CompressedStackSwitcher)obj);
+
 			return false;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return 0;
+			// documented as always the same for all instances
+			return typeof (CompressedStackSwitcher).GetHashCode ();
+			// Microsoft seems to return 1404280835 every time 
+			// (even between executions).
 		}
 
-		[MonoTODO]
 		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
 		public void Undo ()
 		{
-			_undo = true;
+			if ((_cs != null) && (_t != null)) {
+				lock (_cs) {
+					if ((_cs != null) && (_t != null)) {
+						_t.SetCompressedStack (_cs);
+					}
+					_t = null;
+					_cs = null;
+				}
+			}
 		}
 
-// LAMESPEC: documented but not implemented (not shown by corcompare)
-#if false
-		[MonoTODO]
 		public static bool op_Equality (CompressedStackSwitcher c1, CompressedStackSwitcher c2)
 		{
-			return false;
+			if (c1._cs == null)
+				return (c2._cs == null);
+			if (c2._cs == null)
+				return false;
+
+			if (c1._t.ManagedThreadId != c2._t.ManagedThreadId)
+				return false;
+			return c1._cs.Equals (c2._cs);
 		}
 
-		[MonoTODO]
 		public static bool op_Inequality (CompressedStackSwitcher c1, CompressedStackSwitcher c2)
 		{
-			return false;
+			return !op_Equality (c1, c2);
 		}
-#endif
 
 		void IDisposable.Dispose () 
 		{
-			if (!_undo)
-				Undo ();
+			Undo ();
 		}
 	}
 }
