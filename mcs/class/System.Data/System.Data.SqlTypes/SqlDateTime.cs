@@ -224,7 +224,7 @@ namespace System.Data.SqlTypes
 		public override string ToString ()
 		{	
 			if (this.IsNull)
-				return String.Empty;
+				return "Null";
 			else
 				return value.ToString (CultureInfo.InvariantCulture);
 		}

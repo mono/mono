@@ -1,3 +1,13 @@
+2004-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SqlBinary.cs,
+	  SqlDateTime.cs,
+	  SqlDouble.cs,
+	  SqlGuid.cs,
+	  SqlMoney.cs,
+	  SqlSingle.cs,
+	  SqlString.cs : If values are null, ToString() should return "Null".
+
 2004-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SqlMoney.cs : Handle fixed digits correctly.

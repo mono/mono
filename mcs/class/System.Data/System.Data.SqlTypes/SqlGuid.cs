@@ -160,8 +160,8 @@ namespace System.Data.SqlTypes
 
 		public override string ToString ()
 		{
-			if (this.IsNull)
-				return String.Empty;
+			if (!notNull)
+				return "Null";
 			else
 				return value.ToString ();
 		}

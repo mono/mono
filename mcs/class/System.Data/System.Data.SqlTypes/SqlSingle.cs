@@ -196,6 +196,8 @@ namespace System.Data.SqlTypes
 
 		public override string ToString ()
 		{
+			if (!notNull)
+				return "Null";
 			return value.ToString ();
 		}
 

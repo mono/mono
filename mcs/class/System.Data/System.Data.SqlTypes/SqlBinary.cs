@@ -162,6 +162,8 @@ namespace System.Data.SqlTypes
 
 		public override string ToString () 
 		{
+			if (!notNull)
+				return "Null";
 			return "SqlBinary(" + value.Length + ")";
 		}
 
