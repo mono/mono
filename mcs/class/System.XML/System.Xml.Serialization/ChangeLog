@@ -1,5 +1,12 @@
 2003-10-20  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* ReflectionHelper.cs: In CheckSerializableType() check that the type
+	  is public.
+	* XmlSerializationWriter.cs: Added check for circular references.
+	  This fixes bug #49879.
+
+2003-10-20  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* ReflectionHelper.cs: Added check in CheckSerializableType(). Interfaces
 	  can't be serialized. This fixes bug #49878.
 	* TypeData.cs: In ListItemType check that the collection has a valid

@@ -28,16 +28,17 @@ namespace System.Xml.Serialization {
 		XmlWriter writer;
 		Queue referencedElements;
 		Hashtable callbacks;
+		Hashtable serializedObjects;
 		const string xmlNamespace = "http://www.w3.org/2000/xmlns/";
 
 		#endregion // Fields
 
 		#region Constructors
 
-		[MonoTODO]
 		protected XmlSerializationWriter ()
 		{
 			qnameCount = 0;
+			serializedObjects = new Hashtable ();
 		}
 		
 		internal void Initialize (XmlWriter writer, XmlSerializerNamespaces nss)
@@ -409,9 +410,11 @@ namespace System.Xml.Serialization {
 			WriteEndElement (null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteEndElement (object o)
 		{
+			if (o != null)
+				serializedObjects.Remove (o);
+				
 			Writer.WriteEndElement ();
 		}
 
@@ -535,7 +538,7 @@ namespace System.Xml.Serialization {
 				return;
 			}
 
-			WriteStartElement (n, ns, o, true);
+			WriteStartElement (n, ns, true);
 
 			CheckReferenceQueue ();
 
@@ -565,7 +568,7 @@ namespace System.Xml.Serialization {
 				Writer.WriteString (XmlCustomFormatter.ToXmlString (td, o));
 			}
 
-			WriteEndElement (o);
+			WriteEndElement ();
 		}
 
 		protected void WriteReferencedElements ()
@@ -578,14 +581,14 @@ namespace System.Xml.Serialization {
 				object o = referencedElements.Dequeue ();
 				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
 				WriteCallbackInfo info = (WriteCallbackInfo) callbacks[o.GetType()];
-				WriteStartElement (info.TypeName, info.TypeNs, o, true);
+				WriteStartElement (info.TypeName, info.TypeNs, true);
 				Writer.WriteAttributeString ("id", GetId (o, false));
 
 				if (td.SchemaType != SchemaTypes.Array)	// Array use its own "arrayType" attribute
 					WriteXsiType(info.TypeName, info.TypeNs);
 
 				info.Callback (o);
-				WriteEndElement (o);
+				WriteEndElement ();
 			}
 		}
 
@@ -664,6 +667,14 @@ namespace System.Xml.Serialization {
 
 		protected void WriteStartElement (string name, string ns, object o, bool writePrefixed)
 		{
+			if (o != null)
+			{
+				if (serializedObjects.Contains (o))
+					throw new InvalidOperationException ("A cirtular reference was detected while serializing an object of type " + o.GetType().Name);
+				else
+					serializedObjects [o] = o;
+			}
+			
 			WriteState oldState = Writer.WriteState;
 
 			// Elements with schema namespace are always written prefixed

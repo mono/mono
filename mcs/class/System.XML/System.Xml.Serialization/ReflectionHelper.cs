@@ -59,6 +59,9 @@ namespace System.Xml.Serialization
 				
 			if (type.IsInterface)
 				throw new InvalidOperationException (type.Name + " cannot be serialized because it is an interface");
+				
+			if (type.IsNotPublic)
+				throw new InvalidOperationException (type.Name + " is inaccessible due to its protection level. Only public types can be processed");
 		}
 	}
 }
