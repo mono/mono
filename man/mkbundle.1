@@ -1,0 +1,60 @@
+.\" 
+.\" mkbundle manual page.
+.\" (C) 2004 Ximian, Inc. 
+.\" Author:
+.\"   Miguel de Icaza (miguel@gnu.org)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH mkbundle "mkbundle 1.0"
+.SH NAME
+mkbundle \- Creates a bundled executable.
+.SH SYNOPSIS
+.PP
+.B mkbundle [options] assembly1 [assembly2 ...]
+.SH DESCRIPTION
+\fImkbundle\fP generates an executable program that will contain
+static copies of the assemblies listed on the command line.  By
+default only the assemblies specified in the command line will be
+included in the bundle.  To automatically include all of the
+dependencies referenced, use the "--deps" command line option.
+.PP
+For example, to create a bundle for hello world, use the following
+command:
+.nf
+	$ mkbundle -o hello hello.exe
+.fi
+.PP
+The above will pull hello.exe native program called "hello".  Notice
+that the produced image still contains the CIL image and no
+precompilation is done.
+.SH OPTIONS
+.TP
+.I "-L path"
+Adds the `path' do the search list for assemblies.  The rules are the
+same as for the compiler -lib: or -L flags.
+.TP
+.I  "--nodeps"
+This is the default: mkbundle will only include the assemblies that
+were specified on the command line to reduce the size of the resulting
+image created.
+.TP
+.I "--deps"
+This option will bundle all of the referenced assemblies for the
+assemblies listed on the command line option.  This is useful to
+distribute a self-contained image.
+.TP
+.I "--keeptemp"
+By default mkbundle will delete the temporary files that it uses to
+produce the bundle.  This option keeps the file around.
+.SH FILES
+This program will load referenced assemblies from the Mono assembly
+cache. 
+.SH WEB SITE
+Visit: http://www.mono-project.com for details
+.SH SEE ALSO
+.BR mcs(1), mono(1), mono-config(5).
+
+
