@@ -463,16 +463,19 @@ namespace System.Xml.Serialization
 			}
 
 			ArrayList types = typeMap.DerivedTypes;
-			bool first = true;
+			
+			WriteLine ("System.Type type = ob.GetType ();");
+			WriteLine ("if (type == typeof(" + typeMap.TypeFullName + "))");
+			WriteLine ("\t;");
+				
 			for (int n=0; n<types.Count; n++)
 			{
 				XmlTypeMapping map = (XmlTypeMapping)types[n];
 				
-				WriteLineInd ((first?"else ":"") + "if (ob is " + map.TypeFullName + ") { ");
+				WriteLineInd ("else if (type == typeof(" + map.TypeFullName + ")) { ");
 				WriteLine (GetWriteObjectName (map) + "((" + map.TypeFullName + ")ob, element, namesp, isNullable, true, writeWrappingElem);");
 				WriteLine ("return;");
 				WriteLineUni ("}");
-				first = false;
 			}
 			
 			if (typeMap.TypeData.Type == typeof (object)) {
@@ -483,8 +486,10 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				if (types.Count > 0)
-					WriteLine ("");
+				WriteLineInd ("else {");
+				WriteLine ("throw CreateUnknownTypeException (ob);");
+				WriteLineUni ("}");
+				WriteLine ("");
 				
 				WriteLineInd ("if (writeWrappingElem) {");
 				if (_format == SerializationFormat.Encoded) WriteLine ("needType = true;");
@@ -1947,7 +1952,7 @@ namespace System.Xml.Serialization
 
 				WriteLine (td.FullTypeName + " dest = (" + td.FullTypeName + ") list;");
 				WriteLine ("foreach (object ob in (IEnumerable)source)");
-				WriteLine ("\t dest.Add (ob);");
+				WriteLine ("\tdest.Add (" + GetCast (td.ListItemTypeData, "ob") + ");");
 				WriteLineUni ("}");
 				WriteLine ("");
 			}

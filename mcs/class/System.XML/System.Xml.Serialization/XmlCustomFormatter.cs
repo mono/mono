@@ -285,7 +285,7 @@ namespace System.Xml.Serialization {
 				case "int": return "Int32.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "long": return "Int64.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "byte": return "SByte.Parse (" + value + ", CultureInfo.InvariantCulture)";
-				case "float": return "XmlConvert.ToSingle (" + value + ", CultureInfo.InvariantCulture)";
+				case "float": return "XmlConvert.ToSingle (" + value + ")";
 				case "unsignedShort": return "UInt16.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "unsignedInt": return "UInt32.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "unsignedLong": return "UInt64.Parse (" + value + ", CultureInfo.InvariantCulture)";

@@ -1,3 +1,9 @@
+2004-07-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs: Generate check that the object being 
+	  serialized has a known type. Little cast fix.
+	* XmlCustomFormatter.cs: Little fix in Single conversion.
+
 2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TypeData.cs: In the constructor, set the correct xml type name if the
