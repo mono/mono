@@ -258,6 +258,25 @@ namespace System.Runtime.Remoting
 			else return ident.CreateObjRef(null);
 		}
 
+		public static object GetLifetimeService (MarshalByRefObject obj)
+		{
+			if (obj == null) return null;
+			return obj.GetLifetimeService ();
+		}
+
+		public static IMessageSink GetEnvoyChainForProxy (MarshalByRefObject obj)
+		{
+			if (IsTransparentProxy(obj))
+				return ((ClientIdentity)GetRealProxy (obj).ObjectIdentity).EnvoySink;
+			else
+				throw new ArgumentException ("obj must be a proxy","obj");			
+		}
+
+		public static void LogRemotingStage (int stage)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public static string GetSessionIdForMethodMessage(IMethodMessage msg)
 		{

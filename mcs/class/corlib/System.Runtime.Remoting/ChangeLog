@@ -1,3 +1,9 @@
+2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ObjRef.cs: Implemented IsFromThisProcess().
+	* RemotingServices.cs: Implemented methods GetLifetimeService and
+	  GetEnvoyChainForProxy. Stubbed LogRemotingStage.
+	
 2003-07-29  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingServices.cs: GetObjectUri(): For client proxies, return

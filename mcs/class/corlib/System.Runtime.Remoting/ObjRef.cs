@@ -47,7 +47,7 @@ namespace System.Runtime.Remoting {
 			flags = o.flags;
 			if (unmarshalAsProxy) flags |= MarshalledObjectRef;
 		}
-		
+
 		public ObjRef (MarshalByRefObject mbr, Type type)
 		{
 			if (mbr == null)
@@ -130,7 +130,7 @@ namespace System.Runtime.Remoting {
 			return false;
 		}
 
-		public bool IsReferenceToWellKnow
+		internal bool IsReferenceToWellKnow
 		{
 			get { return (flags & WellKnowObjectRef) > 0; }
 		}
@@ -199,11 +199,18 @@ namespace System.Runtime.Remoting {
 			return identity.IsFromThisAppDomain;
 		}
 
-		[MonoTODO]
 		public bool IsFromThisProcess ()
 		{
-			// as yet we do not consider this optimization
-			return false;
+			foreach (object data in channel_info.ChannelData)
+			{
+				if (data is CrossAppDomainData)
+				{
+					string refProcId = ((CrossAppDomainData)data).ProcessID;
+					return (refProcId == RemotingConfiguration.ProcessId);
+				}
+			}
+			
+			return true;
 		}
 
 		internal void UpdateChannelInfo()
