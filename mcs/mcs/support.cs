@@ -62,7 +62,7 @@ namespace Mono.CSharp {
 			if (pi [pos].IsIn)
 				sb.Append ("in ");
 
-			if (pos == pi.Length - 1)
+			if (pos >= pi.Length - 1 && last_arg_is_params)
 				sb.Append ("params ");
 			
 			sb.Append (TypeManager.CSharpName (ParameterType (pos)));

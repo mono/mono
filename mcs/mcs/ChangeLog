@@ -1,3 +1,54 @@
+2002-01-11  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (IsPointerType): Utility method which we are going
+	to need a lot.
+
+	* ecore.cs (ImplicitReferenceConversion): A pointer type cannot be cast to
+	the object type, so we take care of that.
+
+	* expression.cs (FullMethodDesc): Also include the return type in descriptions.
+	
+	* support.cs (ParameterDesc): Fix minor bug which was causing params tags to be
+	added to non-params parameters :-)
+
+	* typemanager.cs (CSharpName): Include 'void' type too.	
+
+	(void_ptr_type): Include in the set of core types.
+
+	* ecore.cs (ConvertImplicit): Make use of ConvertImplicitStandard instead of 
+	duplicating code.
+
+	(ConvertImplicitStandard): Handle standard implicit pointer conversions when we have 
+	an unsafe context.
+
+	* cs-parser.jay (local_variable_pointer_type): Add support for 'void *' as I had 
+	completely forgotten about it.
+
+2002-01-10  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (pointer_type): Add. This begins our implementation
+	of parsing rules for unsafe code.
+
+	(unsafe_statement): Implement.
+
+	(embedded_statement): Modify to include the above.
+
+	* statement.cs (Unsafe): Implement new class for unsafe blocks.
+
+	* codegen.cs (EmitContext.InUnsafe): Add. This determines
+	if the current context is an unsafe one.
+
+	* cs-parser.jay (local_variable_pointer_type): Since local variable types
+	are handled differently, we need separate rules for them.
+
+	(local_variable_declaration): Update to use local_variable_pointer_type
+	to allow variable declarations of unmanaged pointer types.
+
+	* expression.cs (Unary.ResolveOperator): Ensure that the '&' operator is used only
+	in unsafe contexts.
+
+	* ../errors/cs0214.cs : Add.
+
 2002-01-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Method.EmitDestructor): Implement calling our base

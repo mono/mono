@@ -400,6 +400,12 @@ namespace Mono.CSharp {
 					Error (211, loc, "Cannot take the address of non-variables");
 					return null;
 				}
+
+				if (!ec.InUnsafe) {
+					Error (214, loc, "Pointers may only be used in an unsafe context");
+					return null;
+				}
+
 				type = Type.GetType (expr.Type.ToString () + "*");
 
 				return this;
@@ -2716,16 +2722,12 @@ namespace Mono.CSharp {
 			}
 
 			if (q == null) {
-
-				Expression tmp;
-
-				tmp = ConvertImplicitStandard (ec, argument_expr, p, loc);
+				Expression tmp = ConvertImplicitStandard (ec, argument_expr, p, loc);
 				
 				if (tmp != null)
 					return 1;
 				else
 					return 0;
-
 			}
 
 			if (StandardConversionExists (p, q) == true &&
@@ -2844,7 +2846,12 @@ namespace Mono.CSharp {
 
 		public static string FullMethodDesc (MethodBase mb)
 		{
-			StringBuilder sb = new StringBuilder (mb.Name);
+			string ret_type = "";
+
+			if (mb is MethodInfo)
+				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType);
+			
+			StringBuilder sb = new StringBuilder (ret_type + " " + mb.Name);
 			ParameterData pd = GetParameterData (mb);
 
 			int count = pd.Count;
@@ -3137,13 +3144,21 @@ namespace Mono.CSharp {
  				if (candidate == method)
  					continue;
 
+				//
+				// If a normal method is applicable in the sense that it has the same
+				// number of arguments, then the expanded params method is never applicable
+				// so we debar the params method.
+				//
+				if (IsParamsMethodApplicable (Arguments, candidate) &&
+				    IsApplicable (Arguments, method))
+					continue;
 
 				int x = BetterFunction (ec, Arguments, method, candidate,
 							chose_params_expanded, loc);
 
 				if (x != 1) {
-					Console.WriteLine ("Candidate : " + candidate);
-					Console.WriteLine ("Best : " + method);
+					Console.WriteLine ("Candidate : " + FullMethodDesc (candidate));
+					Console.WriteLine ("Best : " + FullMethodDesc (method));
  					Report.Error (
  						121, loc,
  						"Ambiguous call when selecting function due to implicit casts");
