@@ -17,8 +17,8 @@ namespace System.EnterpriseServices {
 
 		#region Methods
 
-		void InstallAssembly ([In] string assembly, [In, Out] ref string application, [In, Out] ref string tlb, [In] InstallationFlags installFlags);
-		void UninstallAssembly ([In] string assembly, [In] string application);
+		void InstallAssembly ([In, MarshalAs(UnmanagedType.BStr)] string assembly, [In, Out, MarshalAs(UnmanagedType.BStr)] ref string application, [In, Out, MarshalAs(UnmanagedType.BStr)] ref string tlb, [In] InstallationFlags installFlags);
+		void UninstallAssembly ([In, MarshalAs (UnmanagedType.BStr)] string assembly, [In, MarshalAs (UnmanagedType.BStr)] string application);
 
 		#endregion
 

@@ -14,7 +14,7 @@ namespace System.EnterpriseServices {
 	[Serializable]
 	[ComVisible (false)]
 	public enum PropertyLockMode {
-		Method,
-		SetGet
+		Method = 1,
+		SetGet = 0
 	}
 }

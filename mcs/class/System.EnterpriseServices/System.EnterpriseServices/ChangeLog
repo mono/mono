@@ -1,4 +1,19 @@
-2004-06-11  Gert Driesen (drieseng@users.sourceforge.net>
+2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AuthenticationOption.cs: fixed enum field values to match MS.NET
+	* IProcessInitializer.cs: added missing marshalling attributes
+ 	* IRegistrationHelper.cs: added missing marshalling attributes
+	* ImpersonationLevelOption: fixed enum field values to match MS.NET
+	* InstallationFlags: fixed enum field values to match MS.NET
+	* PropertyLockMode: fixed enum field values to match MS.NET
+	* PropertyReleaseMode: fixed enum field values to match MS.NET
+	* RegistrationHelper: added missing marshalling attributes
+	* RegistrationHelperTx: added missing marshalling attributes
+	* SynchronizationOption: fixed enum field values to match MS.NET
+	* TransactionIsolationLevel: fixed enum field values to match MS.NET
+	* TransactionVote: fixed enum field values to match MS.NET
+
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* RegistrationHelperTx.cs: added missing attribute on class
 	* TransactionOption.cs: corrected values of enum fields

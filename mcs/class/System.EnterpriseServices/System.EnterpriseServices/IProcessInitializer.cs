@@ -19,7 +19,7 @@ namespace System.EnterpriseServices {
 		#region Methods
 
 		void Shutdown ();
-		void Startup ([In] object punkProcessControl);
+		void Startup ([In, MarshalAs(UnmanagedType.IUnknown)] object punkProcessControl);
 
 		#endregion
 	}

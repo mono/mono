@@ -14,7 +14,7 @@ namespace System.EnterpriseServices {
 	[Serializable]
 	[ComVisible (false)]
 	public enum PropertyReleaseMode {
-		Process,
-		Standard
+		Process = 1,
+		Standard = 0
 	}
 }

@@ -10,10 +10,10 @@
 namespace System.EnterpriseServices {
 	[Serializable]
 	public enum ImpersonationLevelOption {
-		Anonymous,
-		Default,
-		Delegate,
-		Identify,
-		Impersonate
+		Anonymous = 1,
+		Default = 0,
+		Delegate = 4,
+		Identify = 2,
+		Impersonate = 3
 	}
 }

@@ -14,7 +14,7 @@ namespace System.EnterpriseServices {
 	[Serializable]
 	[ComVisible (false)]
 	public enum TransactionVote {
-		Abort,
-		Commit
+		Abort = 1,
+		Commit = 0
 	}
 }

@@ -40,7 +40,7 @@ namespace System.EnterpriseServices {
 
 #if NET_1_1
 		[MonoTODO]
-		public void InstallAssemblyFromConfig (ref RegistrationConfig regConfig)
+		public void InstallAssemblyFromConfig ([MarshalAs(UnmanagedType.IUnknown)] ref RegistrationConfig regConfig)
 		{
 			throw new NotImplementedException ();
 		}
@@ -59,7 +59,7 @@ namespace System.EnterpriseServices {
 
 #if NET_1_1
 		[MonoTODO]
-		public void UninstallAssemblyFromConfig (ref RegistrationConfig regConfig)
+		public void UninstallAssemblyFromConfig ([MarshalAs(UnmanagedType.IUnknown)] ref RegistrationConfig regConfig)
 		{
 			throw new NotImplementedException ();
 		}
