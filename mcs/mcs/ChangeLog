@@ -1,3 +1,8 @@
+2002-07-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ParameterReference): Use ldarg.N (0..3) to
+	generate more compact code. 
+
 2002-07-17  Martin Baulig  <martin@gnome.org>
 
 	* const.cs (Const.LookupConstantValue): Add support for constant

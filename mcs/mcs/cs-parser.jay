@@ -1,10 +1,5 @@
 %{
 //
-// OPTIMIZATION:
-//   This loop is pointless:
-//    while (current_block != prev_block)
-//       current_block = current_block.Parent;
-//
 // cs-parser.jay: The Parser for the C# compiler
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
@@ -15,19 +10,11 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 // TODO:
-//   (1) Get rid of the *Collections.cs, that is an idea I took from System.CodeDOM
-//       And come to think of it, it is not that great, it duplicates a lot of code
-//       for something which is not really needed.  We still have piles of typecasts
-//       anwyays (due to the nature of the stack being a collection of Objects).
 //
-//   (2) Figure out why error productions dont work.  `type-declaration' is a
+//   (1) Figure out why error productions dont work.  `type-declaration' is a
 //       great spot to put an `error' because you can reproduce it with this input:
 //	 "public X { }"
 //
-//   (3) Move Modifier checking from each object into the parser itself, that will
-//       get rid of the global "error" symbol that we use now to report errors. 
-//       We still need to pass a pointer to the tree.ErrorHandler, but that is a 
-//	 separate problem
 //
 using System.Text;
 using System;
@@ -1909,8 +1896,6 @@ primary_expression
 	| checked_expression
 	| unchecked_expression
 	| pointer_member_access
-	// TODO: pointer_element_access
-	// TODO: sizeof-expression
 	;
 
 literal
@@ -1932,10 +1917,6 @@ integer_literal
 	: LITERAL_INTEGER       { 
 		object v = lexer.Value;
 
-		// 
-		// FIXME: Possible optimization would be to 
-		// compute the *Literal objects directly in the scanner
-		//
 		if (v is int)
 			$$ = new IntLiteral ((Int32) v); 
 		else if (v is uint)

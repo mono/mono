@@ -2807,6 +2807,20 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		static void EmitLdArg (ILGenerator ig, int x)
+		{
+			if (x <= 255){
+				switch (x){
+				case 0: ig.Emit (OpCodes.Ldarg_0); break;
+				case 1: ig.Emit (OpCodes.Ldarg_1); break;
+				case 2: ig.Emit (OpCodes.Ldarg_2); break;
+				case 3: ig.Emit (OpCodes.Ldarg_3); break;
+				default: ig.Emit (OpCodes.Ldarg_S, (byte) x); break;
+				}
+			} else
+				ig.Emit (OpCodes.Ldarg, x);
+		}
+		
 		//
 		// This method is used by parameters that are references, that are
 		// being passed as references:  we only want to pass the pointer (that
@@ -2820,11 +2834,8 @@ namespace Mono.CSharp {
 
 			if (!ec.IsStatic)
 				arg_idx++;
-			
-			if (arg_idx <= 255)
-				ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
-			else
-				ig.Emit (OpCodes.Ldarg, arg_idx);
+
+			EmitLdArg (ig, arg_idx);
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -2834,11 +2845,8 @@ namespace Mono.CSharp {
 
 			if (!ec.IsStatic)
 				arg_idx++;
-			
-			if (arg_idx <= 255)
-				ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
-			else
-				ig.Emit (OpCodes.Ldarg, arg_idx);
+
+			EmitLdArg (ig, arg_idx);
 
 			if (!is_ref)
 				return;
@@ -2858,13 +2866,8 @@ namespace Mono.CSharp {
 			if (!ec.IsStatic)
 				arg_idx++;
 
-			if (is_ref){
-				// Load the pointer
-				if (arg_idx <= 255)
-					ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
-				else
-					ig.Emit (OpCodes.Ldarg, arg_idx);
-			}
+			if (is_ref)
+				EmitLdArg (ig, arg_idx);
 			
 			source.Emit (ec);
 
@@ -2876,7 +2879,6 @@ namespace Mono.CSharp {
 				else
 					ig.Emit (OpCodes.Starg, arg_idx);
 			}
-			
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
