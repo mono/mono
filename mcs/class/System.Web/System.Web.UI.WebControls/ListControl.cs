@@ -246,41 +246,44 @@ namespace System.Web.UI.WebControls
 		protected override void OnDataBinding(EventArgs e)
 		{
 			base.OnDataBinding(e);
-			IEnumerable resolvedDataSource = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
-			if(resolvedDataSource != null)
-			{
-				string dataTextField = DataTextField;
-				string dataValueField = DataValueField;
+			IEnumerable ds = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+
+			if(ds != null) {
+				string dtf = DataTextField;
+				string dvf = DataValueField;
+				string dtfs = DataTextFormatString;
+				if (dtfs.Length == 0)
+					dtfs = "{0}";
+
 				Items.Clear();
-				ICollection rdsCollection = (ICollection)resolvedDataSource;
-				if(rdsCollection != null)
-				{
-					Items.Capacity = rdsCollection.Count;
-				}
-				bool valid = ( (dataTextField.Length >= 0) && (dataValueField.Length >=0) );
-				foreach(IEnumerable current in resolvedDataSource)
-				{
+
+				bool useProperties = (dtf.Length > 0 && dvf.Length > 0);
+
+				foreach (object current in ds) {
 					ListItem li = new ListItem();
-					if(valid)
-					{
-						if(dataTextField.Length >= 0)
-						{
-							li.Text = DataBinder.GetPropertyValue(current, dataTextField, null);
-						}
-						if(dataValueField.Length >= 0)
-						{
-							li.Value = DataBinder.GetPropertyValue(current, dataValueField, null);
-						}
-					} else
-					{
-						li.Text  = dataTextField.ToString();
-						li.Value = dataValueField.ToString();
+					if (!useProperties){
+						li.Text  = String.Format (dtfs, current);
+						li.Value = current.ToString ();
+						Items.Add (li);
+						continue;
 					}
+
+					object o;
+					if (dtf.Length > 0) {
+						o = DataBinder.GetPropertyValue (current, dtf, null);
+						li.Text = o.ToString ();
+					}
+
+					if (dvf.Length > 0) {
+						o = DataBinder.GetPropertyValue (current, dvf, null);
+						li.Value = o.ToString ();
+					}
+
 					Items.Add(li);
 				}
 			}
-			if(cachedSelectedIndex != -1)
-			{
+
+			if (cachedSelectedIndex != -1) {
 				SelectedIndex = cachedSelectedIndex;
 				cachedSelectedIndex = -1;
 			}
