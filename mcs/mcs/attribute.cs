@@ -382,11 +382,26 @@ namespace Mono.CSharp {
 							  MethodAttributes flags, Type ret_type, Type [] param_types)
 		{
 			//
-			// We extract from the attribute the information we need from the attribute
+			// We extract from the attribute the information we need 
 			//
 
 			if (Arguments == null) {
 				Console.WriteLine ("Internal error : this is not supposed to happen !");
+				return null;
+			}
+
+			string attr_name = Name;
+
+			if (Name.IndexOf ("Attribute") == -1)
+				attr_name = Name + "Attribute";
+			else if (Name.LastIndexOf ("Attribute") == 0)
+				attr_name = Name + "Attribute";
+			
+			Type = ec.TypeContainer.LookupType (attr_name, false);
+
+			if (Type == null) {
+				Report.Error (246, Location, "Could not find attribute '" + Name + "' (are you" +
+					      " missing a using directive or an assembly reference ?)");
 				return null;
 			}
 			
@@ -413,16 +428,75 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			// FIXME : We need to process CallingConvention and other named
-			// args but for now, we ignore them.
+			// Now we process the named arguments
+			CallingConvention cc = 0;
+			CharSet charset = 0;
+			bool preserve_sig = false;
+			bool exact_spelling = false;
+			bool set_last_err = false;
+			string entry_point = null;
 			
+			for (int i = 0; i < named_args.Count; i++) {
+
+				DictionaryEntry de = (DictionaryEntry) named_args [i];
+
+				string member_name = (string) de.Key;
+				Argument a  = (Argument) de.Value;
+
+				if (!a.Resolve (ec, Location))
+					return null;
+
+				Expression member = Expression.MemberLookup (ec, Type, member_name, false,
+									     MemberTypes.Field | MemberTypes.Property,
+									     BindingFlags.Public | BindingFlags.Instance,
+									     Location);
+
+				if (member == null || !(member is FieldExpr)) {
+					error617 (member_name);
+					return null;
+				}
+
+				if (member is FieldExpr) {
+					FieldExpr fe = (FieldExpr) member;
+					FieldInfo fi = fe.FieldInfo;
+
+					if (fi.IsInitOnly) {
+						error617 (member_name);
+						return null;
+					}
+
+					Expression e = Expression.Reduce (ec, a.Expr);
+					
+					if (e is Literal) {
+						Literal l = (Literal) e;
+						
+						if (member_name == "CallingConvention")
+							cc = (CallingConvention) l.GetValue ();
+						else if (member_name == "CharSet")
+							charset = (CharSet) l.GetValue ();
+						else if (member_name == "EntryPoint")
+							entry_point = (string) l.GetValue ();
+						else if (member_name == "SetLastError")
+							set_last_err = (bool) l.GetValue ();
+						else if (member_name == "ExactSpelling")
+							exact_spelling = (bool) l.GetValue ();
+						else if (member_name == "PreserveSig")
+							preserve_sig = (bool) l.GetValue ();
+					} else { 
+						error182 ();
+						return null;
+					}
+					
+				}
+			}
+
 			MethodBuilder mb = builder.DefinePInvokeMethod (
 								   name, dll_name, flags,
 								   CallingConventions.Standard,
 								   ret_type,
 								   param_types,
-								   CallingConvention.StdCall,
-								   CharSet.Auto); 
+								   cc,
+								   charset); 
 			
 			return mb;
 		}

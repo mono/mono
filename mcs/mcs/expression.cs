@@ -4013,7 +4013,7 @@ namespace Mono.CSharp {
 
 			if (expr is SimpleName){
 				SimpleName child_expr = (SimpleName) expr;
-
+				
 				expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
 
 				return expr.ResolveWithSimpleName (ec);

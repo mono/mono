@@ -1159,9 +1159,16 @@ namespace Mono.CSharp {
 			}
 
 			if ((mt & MemberTypes.Method) != 0) {
-				if (Methods != null){
+				if (Methods != null) {
 					foreach (Method m in Methods) {
 						MethodBuilder mb = m.MethodBuilder;
+
+						// If we are in transit, ignore
+						// This case arises when we are still defining a PInvoke method
+						// and we hit FindMembers because of the need to resolve named
+						// arguments inside of Attribute.DefinePInvokeMethod
+						if (mb == null)
+						        continue;
 
 						if (filter (mb, criteria) == true)
 							members.Add (mb);
@@ -1181,13 +1188,14 @@ namespace Mono.CSharp {
 			// FIXME : This ain't right because EventBuilder is not a
 			// MemberInfo. What do we do ?
 			
-			if ((mt & MemberTypes.Event) != 0 && Events != null) {
-				//foreach (Event e in Events) {
-				//	if (filter (e.EventBuilder, criteria) == true)
-				//		mi [i++] = e.EventBuilder;
-				//}
+			if ((mt & MemberTypes.Event) != 0) {
+				//if (Events != null)
+				//        foreach (Event e in Events) {
+				//		if (filter (e.EventBuilder, criteria) == true)
+				//		        members.Add (e.EventBuilder);
+				//          }
 			}
-
+			
 			if ((mt & MemberTypes.Property) != 0){
 				if (Properties != null)
 					foreach (Property p in Properties) {
@@ -2875,6 +2883,9 @@ namespace Mono.CSharp {
 
 		public void Define (TypeContainer parent)
 		{
+			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
+				return;
+			
 			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
 
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
@@ -2882,6 +2893,14 @@ namespace Mono.CSharp {
 			MethodBuilder mb;
 
 			EventType = parent.LookupType (Type, false);
+
+			if (!EventType.IsSubclassOf (TypeManager.delegate_type)) {
+				Report.Error (66, Location, "'" + parent.Name + "." + Name +
+					      "' : event must be of a delegate type");
+				return;
+			}
+			
+			
 			Type [] parameters = new Type [1];
 			parameters [0] = EventType;
 			

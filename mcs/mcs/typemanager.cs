@@ -492,7 +492,7 @@ public class TypeManager {
 		TypeContainer tc = (TypeContainer) builder_to_container [t];
 
 		if (tc != null)
-		        return tc.FindMembers (mt, bf, filter, criteria);
+			return tc.FindMembers (mt, bf, filter, criteria);
 
 		return null;
 	}

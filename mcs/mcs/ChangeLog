@@ -1,3 +1,23 @@
+2001-12-15  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Event::Define): Check that the type of the event is a delegate
+	type else flag error #66.
+
+	Also, re-use TypeContainer.MethodModifiersValid here too as the rules are the
+	same.
+
+	* attribute.cs (DefinePInvokeMethod): Handle named arguments and process
+	values of EntryPoint, CharSet etc etc.
+
+	Pass in the values to TypeBuilder.DefinePInvokeMethod; determine Type etc neatly.
+
+	* class.cs (FindMembers): If a method is in transit, its MethodBuilder will
+	be null and we should ignore this. I am not sure if this is really clean. Apparently,
+	there's no way of avoiding hitting this because the call is coming from SimpleName.DoResolve,
+	which needs this to do its work.
+
+	* ../errors/cs0066.cs : Add.
+
 2001-12-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: (GetPropertyGetter, GetPropertyGetter): New
