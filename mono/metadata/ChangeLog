@@ -1,3 +1,7 @@
+2002-08-23  Martin Baulig  <martin@gnome.org>
+
+	* debug-helpers.c (mono_method_desc_from_method): New function to get
+	a MonoMethodDesc from a MonoMethod.
 
 Fri Aug 23 15:54:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
