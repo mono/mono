@@ -1,3 +1,8 @@
+2002-02-22  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* sparc/tramp.c (mono_create_trampoline): Much tinkering to get
+	the opcodes more correct. Still needs a lot of work.
+
 2002-02-19  Radek Doulik  <rodo@ximian.com>
 
 	* ppc/tramp.c (emit_save_parameters): don't start saving 64bit values to
