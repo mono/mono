@@ -1,5 +1,10 @@
 2002-03-06  Martin Baulig  <martin@gnome.org>
 
+	* ArrayTest.cs (TestCopyTo): Added test for copying an empty array
+	to an empty array.
+
+2002-03-06  Martin Baulig  <martin@gnome.org>
+
 	* ArrayTest.cs: Use unique labels for all the tests.
 	(TestSetValue4): A big new testcase.
 

@@ -518,6 +518,19 @@ public class ArrayTest : TestCase
 		AssertEquals("#E76", (char)0, copy[7]);
 		AssertEquals("#E77", (char)0, copy[8]);
 		AssertEquals("#E78", (char)0, copy[9]);
+
+		{
+			// The following is valid and must not throw an exception.
+			bool errorThrown = false;
+			try {
+				int[] src = new int [0];
+				int[] dest = new int [0];
+				src.CopyTo (dest, 0);
+			} catch (ArgumentException) {
+				errorThrown = true;
+			}
+			Assert("#E79", !errorThrown);
+		}
 	}
 
 	public void TestCreateInstance() {
