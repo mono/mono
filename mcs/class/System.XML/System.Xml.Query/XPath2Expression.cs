@@ -562,7 +562,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter);
+			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter.Context);
 		}
 
 		public override bool EvaluateAsBoolean (XPathSequence iter)
@@ -822,8 +822,6 @@ namespace Mono.Xml.XPath2
 
 		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
 		{
-//			for (int i = 0; i < Condition.Count; i++)
-//				Condition [i] = Condition [i].Compile (compiler);
 			condition = condition.Compile (compiler);
 			// FIXME: check if condition is constant, and returns trueExpr or falseExpr
 			TrueExpr = TrueExpr.Compile (compiler);
@@ -843,10 +841,6 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-//			foreach (ExprSingle expr in Condition) {
-//				if (expr.EvaluateAsBoolean (iter))
-//					return TrueExpr.Evaluate (iter);
-//			}
 			if (condition.EvaluateAsBoolean (iter))
 				return TrueExpr.Evaluate (iter);
 			return FalseExpr.Evaluate (iter);
@@ -920,7 +914,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new SingleItemIterator (EvaluateAsBoolean (iter) ?AtomicTrue : AtomicFalse, iter);
+			return new SingleItemIterator (EvaluateAsBoolean (iter) ?AtomicTrue : AtomicFalse, iter.Context);
 		}
 
 		/*
@@ -956,7 +950,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter);
+			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter.Context);
 		}
 
 		/*
@@ -1000,14 +994,10 @@ namespace Mono.Xml.XPath2
 		protected AtomicTypeOperationExpr (ExprSingle expr, XmlTypeCode type, bool optional)
 		{
 			this.expr = expr;
-//			this.typeCode = type;
-//			this.optional = optional;
 			this.targetType = SequenceType.Create (type, optional ? Occurence.Optional : Occurence.One);
 		}
 
 		ExprSingle expr;
-//		XmlTypeCode typeCode;
-//		bool optional;
 		SequenceType targetType;
 
 		internal ExprSingle Expr {
@@ -1069,7 +1059,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter);
+			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter.Context);
 		}
 #endregion
 	}
@@ -1124,7 +1114,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new SingleItemIterator (new XPathAtomicValue (EvaluateAsBoolean (iter), XmlSchemaSimpleType.XsBoolean), iter);
+			return new SingleItemIterator (new XPathAtomicValue (EvaluateAsBoolean (iter), XmlSchemaSimpleType.XsBoolean), iter.Context);
 		}
 
 		public override bool EvaluateAsBoolean (XPathSequence iter)
@@ -1179,6 +1169,13 @@ namespace Mono.Xml.XPath2
 		public ComparisonExpr (ExprSingle left, ExprSingle right, ComparisonOperator oper)
 			: base (left, right)
 		{
+			this.oper = oper;
+		}
+
+		ComparisonOperator oper;
+
+		public ComparisonOperator Operation {
+			get { return oper; }
 		}
 
 #region CompileAndEvaluate
@@ -1196,12 +1193,60 @@ namespace Mono.Xml.XPath2
 
 		public override bool EvaluateAsBoolean (XPathSequence iter)
 		{
-			throw new NotImplementedException ();
+			XPathSequence lseq, rseq;
+
+			switch (Operation) {
+			// FIXME: it is curious but currently gmcs requires full typename.
+			case Mono.Xml.XPath2.ComparisonOperator.ValueEQ:
+			case Mono.Xml.XPath2.ComparisonOperator.ValueNE:
+			case Mono.Xml.XPath2.ComparisonOperator.ValueLT:
+			case Mono.Xml.XPath2.ComparisonOperator.ValueLE:
+			case Mono.Xml.XPath2.ComparisonOperator.ValueGT:
+			case Mono.Xml.XPath2.ComparisonOperator.ValueGE:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralEQ:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralNE:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralLT:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralLE:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralGT:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralGE:
+				throw new NotImplementedException ();
+
+			case Mono.Xml.XPath2.ComparisonOperator.NodeIs:
+			case Mono.Xml.XPath2.ComparisonOperator.NodeFWD:
+			case Mono.Xml.XPath2.ComparisonOperator.NodeBWD:
+				lseq = Left.Evaluate (iter);
+				// FIXME: return empty sequence
+				if (!lseq.MoveNext ())
+//					return new XPathEmptySequence (iter.Context);
+					return false;
+				rseq = Right.Evaluate (iter);
+				// FIXME: return empty sequence
+				if (!rseq.MoveNext ())
+//					return new XPathEmptySequence (iter.Context);
+					return false;
+				XPathNavigator lnav = lseq.Current as XPathNavigator;
+				XPathNavigator rnav = rseq.Current as XPathNavigator;
+				if (lnav == null ||
+					rnav == null ||
+					lseq.MoveNext () ||
+					rseq.MoveNext ())
+					throw new XmlQueryException ("Node comparison operand must be evaluated as a single node.");
+				switch (Operation) {
+				case Mono.Xml.XPath2.ComparisonOperator.NodeIs:
+					return lnav.IsSamePosition (rnav);
+				case Mono.Xml.XPath2.ComparisonOperator.NodeFWD:
+					return lnav.ComparePosition (rnav) == XmlNodeOrder.Before;
+				case Mono.Xml.XPath2.ComparisonOperator.NodeBWD:
+					return lnav.ComparePosition (rnav) == XmlNodeOrder.After;
+				}
+				break;
+			}
+			throw new SystemException ("XQuery internal error: should not happen.");
 		}
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter);
+			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter.Context);
 		}
 #endregion
 	}
@@ -1249,7 +1294,7 @@ namespace Mono.Xml.XPath2
 		{
 			int start = Left.EvaluateAsInt (iter);
 			int end = Right.EvaluateAsInt (iter);
-			return new IntegerRangeIterator (iter, start, end);
+			return new IntegerRangeIterator (iter.Context, start, end);
 		}
 
 		public override void Serialize (XPathSequence iter)
@@ -1367,8 +1412,7 @@ namespace Mono.Xml.XPath2
 #region CompileAndEvaluate
 		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
 		{
-			Expr = Expr.Compile (compiler);
-			return this;
+			return new ArithmeticOperationExpr (new DecimalLiteralExpr (-1), Expr, ArithmeticOperator.Mul).Compile (compiler);
 		}
 
 		public override SequenceType StaticType {
@@ -1510,14 +1554,12 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			if (!iter.MoveNext ())
-				return new XPathEmptySequence (iter.Context);
-			XPathNavigator nav = iter.Current as XPathNavigator;
+			XPathNavigator nav = iter.Context.CurrentItem as XPathNavigator;
 			if (nav == null)
-				return new XPathEmptySequence (iter.Context);
+				throw new XmlQueryException ("Context item is not a node when evaluating expression '/'.");
 			nav = nav.Clone ();
 			nav.MoveToRoot ();
-			return new SingleItemIterator (nav, iter);
+			return new SingleItemIterator (nav, iter.Context);
 		}
 #endregion
 	}
@@ -1595,26 +1637,17 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-//			return new DescendantPathIterator (iter, this);
+			XPathSequence seq = First.Evaluate (iter);
+			if (!seq.MoveNext ())
+				return new XPathEmptySequence (iter.Context);
 			return new PathStepIterator (
-				new DescendantOrSelfIterator (First.Evaluate (iter)), this);
+				new DescendantOrSelfIterator (iter.Current as XPathNavigator, iter.Context), this);
 		}
 #endregion
 	}
 
 	internal class AxisStepExpr : PathExpr
 	{
-		static AxisStepExpr parentStep;
-
-		static AxisStepExpr ()
-		{
-			parentStep = new AxisStepExpr (XPathAxis.Parent, null);
-		}
-
-		public static AxisStepExpr ParentStep {
-			get { return parentStep; }
-		}
-
 		public AxisStepExpr (XPathAxis axis, XPath2NodeTest test)
 		{
 			this.axis = axis;
@@ -1675,34 +1708,47 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			XPathSequence argIter = null;
+			XQueryContext ctx = iter.Context;
+
+			if (iter.Position == 0) {
+				iter = iter.Clone ();
+				if (!iter.MoveNext ())
+					return new XPathEmptySequence (iter.Context);
+			}
+
+			XPathNavigator nav = iter.Current as XPathNavigator;
+			if (nav == null)
+				throw new XmlQueryException ("Node set is expected.");
+
+			NodeIterator argIter = null;
+
 			switch (Axis.AxisType) {
 			case XPathAxisType.Child:
-				argIter = new ChildIterator (iter); break;
+				argIter = new ChildIterator (nav, ctx); break;
 			case XPathAxisType.Descendant:
-				argIter = new DescendantIterator (iter); break;
+				argIter = new DescendantIterator (nav, ctx); break;
 			case XPathAxisType.Attribute:
-				argIter = new AttributeIterator (iter); break;
+				argIter = new AttributeIterator (nav, ctx); break;
 			case XPathAxisType.Self:
-				argIter = new SingleItemIterator (iter.Current, iter); break;
+				argIter = new SelfIterator (nav, ctx); break;
 			case XPathAxisType.DescendantOrSelf:
-				argIter = new DescendantOrSelfIterator (iter); break;
+				argIter = new DescendantOrSelfIterator (nav, ctx); break;
 			case XPathAxisType.FollowingSibling:
-				argIter = new FollowingSiblingIterator (iter); break;
+				argIter = new FollowingSiblingIterator (nav, ctx); break;
 			case XPathAxisType.Following:
-				argIter = new FollowingIterator (iter); break;
+				argIter = new FollowingIterator (nav, ctx); break;
 			case XPathAxisType.Parent:
-				argIter = new ParentIterator (iter); break;
+				argIter = new ParentIterator (nav, ctx); break;
 			case XPathAxisType.Ancestor:
-				argIter = new AncestorIterator (iter); break;
+				argIter = new AncestorIterator (nav, ctx); break;
 			case XPathAxisType.PrecedingSibling:
-				argIter = new PrecedingSiblingIterator (iter); break;
+				argIter = new PrecedingSiblingIterator (nav, ctx); break;
 			case XPathAxisType.Preceding:
-				argIter = new PrecedingIterator (iter); break;
+				argIter = new PrecedingIterator (nav, ctx); break;
 			case XPathAxisType.AncestorOrSelf:
-				argIter = new AncestorOrSelfIterator (iter); break;
+				argIter = new AncestorOrSelfIterator (nav, ctx); break;
 			case XPathAxisType.Namespace: // only applicable under XPath 2.0: not XQuery 1.0
-				argIter = new NamespaceIterator (iter); break;
+				argIter = new NamespaceIterator (nav, ctx); break;
 			}
 			return new AxisIterator (argIter, this);
 		}
@@ -2052,7 +2098,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new SingleItemIterator (iter.Context.CurrentItem, iter);
+			return new SingleItemIterator (iter.Context.CurrentItem, iter.Context);
 		}
 #endregion
 	}

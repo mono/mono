@@ -255,7 +255,7 @@ namespace Mono.Xml.XPath2
 			XPathItem item = o as XPathItem;
 			if (item == null)
 				item = new XPathAtomicValue (o, ReturnType.SchemaType);
-			return new SingleItemIterator (item, iter);
+			return new SingleItemIterator (item, iter.Context);
 		}
 	}
 

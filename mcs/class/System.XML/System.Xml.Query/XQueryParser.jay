@@ -1760,7 +1760,7 @@ AbbrevForwardStep // returns NodeTestExpr
 AbbrevReverseStep // returns AxisStepExpr
 	: DOT2
 	{
-		$$ = AxisStepExpr.ParentStep;
+		$$ = new AxisStepExpr (XPathAxis.Parent, null);
 	}
 	;
 

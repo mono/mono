@@ -101,7 +101,7 @@ namespace Mono.Xml.XQuery
 				nav.MoveToFirstChild ();
 				break;
 			}
-			return new SingleItemIterator (nav, iter);
+			return new SingleItemIterator (nav, iter.Context);
 		}
 #endregion
 	}

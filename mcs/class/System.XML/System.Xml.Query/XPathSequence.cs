@@ -145,11 +145,6 @@ namespace Mono.Xml.XPath2
 		XPathItem item;
 		XPathItem current;
 
-		public SingleItemIterator (XPathItem item, XPathSequence iter)
-			: this (item, iter.Context)
-		{
-		}
-
 		// for XQuery execution start point
 		internal SingleItemIterator (XPathItem item, XQueryContext ctx)
 			: base (ctx)
@@ -196,8 +191,8 @@ namespace Mono.Xml.XPath2
 		int next;
 		XPathItem current;
 
-		public IntegerRangeIterator (XPathSequence iter, int start, int end)
-			: base (iter.Context)
+		public IntegerRangeIterator (XQueryContext ctx, int start, int end)
+			: base (ctx)
 		{
 			this.start = start;
 			this.end = end;
@@ -278,7 +273,6 @@ namespace Mono.Xml.XPath2
 		{
 			if (finished)
 				return false;
-//			if (RequireSorting) {
 			if (step.RequireSorting) {
 				// Mainly '//' ('/descendant-or-self::node()/')
 				if (nodeStore == null) {
@@ -404,7 +398,6 @@ namespace Mono.Xml.XPath2
 		public override XPathItem CurrentCore { 
 			get {
 				if (Position <= 0) return null;
-//				if (RequireSorting) {
 				if (step.RequireSorting) {
 					return (XPathNavigator) nodeStore [Position - 1];
 				} else {
@@ -412,14 +405,6 @@ namespace Mono.Xml.XPath2
 				}
 			}
 		}
-
-/*
-		public override bool RequireSorting {
-			get {
-				return left.RequireSorting || step.Next.RequireSorting;
-			}
-		}
-*/
 
 		public override int Count {
 			get {
@@ -545,10 +530,10 @@ namespace Mono.Xml.XPath2
 	// AxisIterator
 	internal class AxisIterator : XPathSequence
 	{
-		XPathSequence iter;
+		NodeIterator iter;
 		AxisStepExpr source;
 
-		public AxisIterator (XPathSequence iter, AxisStepExpr source)
+		public AxisIterator (NodeIterator iter, AxisStepExpr source)
 			: base (iter.Context)
 		{
 			this.iter = iter;
@@ -558,7 +543,7 @@ namespace Mono.Xml.XPath2
 		private AxisIterator (AxisIterator other)
 			: base (other)
 		{
-			iter = other.iter.Clone ();
+			iter = (NodeIterator) other.iter.Clone ();
 			source = other.source;
 		}
 
@@ -587,6 +572,13 @@ namespace Mono.Xml.XPath2
 		XPathNavigator current;
 		bool emptyInput;
 
+		public NodeIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (ctx)
+		{
+			this.node = nav.Clone ();
+		}
+
+		/*
 		public NodeIterator (XPathSequence iter)
 			: base (iter.Context)
 		{
@@ -602,6 +594,7 @@ namespace Mono.Xml.XPath2
 				throw new XmlQueryException (String.Format ("Current item is expected to be a node, but it is {0} ({1}).", item.XmlType.QualifiedName, item.XmlType.TypeCode));
 			node = node.Clone ();
 		}
+		*/
 
 		internal NodeIterator (NodeIterator other, bool cloneFlag)
 			: base (other)
@@ -637,18 +630,39 @@ namespace Mono.Xml.XPath2
 		public virtual bool ReverseAxis {
 			get { return false; }
 		}
-
-//		public override bool RequireSorting {
-//			get { return ReverseAxis; }
-//		}
 	}
 
 	// <copy original='System.Xml.XPath/Iterator.cs'>
 
+	internal class SelfIterator : NodeIterator
+	{
+		public SelfIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
+		{
+		}
+
+		private SelfIterator (SelfIterator other, bool cloneFlag) 
+			: base (other, true)
+		{
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new SelfIterator (this, true);
+		}
+
+		protected override bool MoveNextCore ()
+		{
+			if (Position == 0)
+				return true;
+			return false;
+		}
+	}
+
 	internal class ParentIterator : NodeIterator
 	{
-		public ParentIterator (XPathSequence iter)
-			: base (iter)
+		public ParentIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -676,8 +690,8 @@ namespace Mono.Xml.XPath2
 
 	internal class ChildIterator : NodeIterator
 	{
-		public ChildIterator (XPathSequence iter)
-			: base (iter)
+		public ChildIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -702,8 +716,8 @@ namespace Mono.Xml.XPath2
 
 	internal class FollowingSiblingIterator : NodeIterator
 	{
-		public FollowingSiblingIterator (XPathSequence iter)
-			: base (iter)
+		public FollowingSiblingIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -729,8 +743,8 @@ namespace Mono.Xml.XPath2
 		bool started;
 		XPathNavigator startPosition;
 
-		public PrecedingSiblingIterator (XPathSequence iter)
-			: base (iter)
+		public PrecedingSiblingIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 			startPosition = Node.Clone ();
 		}
@@ -776,8 +790,8 @@ namespace Mono.Xml.XPath2
 		bool finished;
 		ArrayList nodes = new ArrayList ();
 
-		public AncestorIterator (XPathSequence iter)
-			: base (iter)
+		public AncestorIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -827,8 +841,8 @@ namespace Mono.Xml.XPath2
 		bool finished;
 		ArrayList nodes = new ArrayList ();
 
-		public AncestorOrSelfIterator (XPathSequence iter)
-			: base (iter)
+		public AncestorOrSelfIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -879,8 +893,8 @@ namespace Mono.Xml.XPath2
 		private int depth;
 		private bool finished;
 
-		public DescendantIterator (XPathSequence iter)
-			: base (iter)
+		public DescendantIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -923,8 +937,8 @@ namespace Mono.Xml.XPath2
 		protected int depth;
 		private bool finished;
 
-		public DescendantOrSelfIterator (XPathSequence iter) 
-			: base (iter)
+		public DescendantOrSelfIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -970,8 +984,8 @@ namespace Mono.Xml.XPath2
 	{
 		private bool finished;
 
-		public FollowingIterator (XPathSequence iter) 
-			: base (iter)
+		public FollowingIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -1018,8 +1032,8 @@ namespace Mono.Xml.XPath2
 		bool started;
 		XPathNavigator startPosition;
 
-		public PrecedingIterator (XPathSequence iter)
-			: base (iter) 
+		public PrecedingIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 			startPosition = Node.Clone ();
 		}
@@ -1077,8 +1091,8 @@ namespace Mono.Xml.XPath2
 
 	internal class NamespaceIterator : NodeIterator
 	{
-		public NamespaceIterator (XPathSequence iter)
-			: base (iter)
+		public NamespaceIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 
@@ -1108,8 +1122,8 @@ namespace Mono.Xml.XPath2
 
 	internal class AttributeIterator : NodeIterator
 	{
-		public AttributeIterator (XPathSequence iter)
-			: base (iter)
+		public AttributeIterator (XPathNavigator nav, XQueryContext ctx)
+			: base (nav, ctx)
 		{
 		}
 

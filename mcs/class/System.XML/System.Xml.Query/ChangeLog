@@ -1,5 +1,21 @@
 2004-08-31  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPath2Expression.cs :
+	  Revised some parameters for XPathSequence classes ctor().
+	  Don't require XPathSequence while they are not required.
+	  AxisIterator need to accept only current node as its input.
+	  Implemented node comparison operators.
+	  Removed AxisStepExpr.ParentStep (in the future it might hold line
+	  information).
+	* XQueryParser.jay : changes wrt AxisStepExpr.ParentStep.
+	* XPathSequence.cs, XQueryExpression.cs, XQueryFunction.cs :
+	  Removed some extraneous code.
+	  NodeIterator.ctor() now requires XPathNavigator and XQueryContext
+	  instead of XPathSequence.
+	  Added SelfIterator (derived from NodeIterator).
+
+2004-08-31  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XQueryArithmeticOperator.cs : added.
 	* XPath2Expression.cs, XQueryParser.jay :
 	  renamed some ArithmeticOperator enumeration members.
