@@ -1,3 +1,8 @@
+2004-05-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ChannelServices.cs: Configure delayed load channels when a chanel lookup
+	  fails.
+	
 2004-04-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ChannelServices.cs: Implemented partial support for CustomErrors

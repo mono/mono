@@ -85,6 +85,7 @@ namespace System.Runtime.Remoting.Channels
 				}
 				
 				// Not found. Try now creation delayed channels
+				RemotingConfiguration.LoadDefaultDelayedChannels ();
 				foreach (IChannelSender sender in delayedClientChannels) 
 				{
 					IMessageSink sink = CreateClientChannelSinkChain (sender, url, channelDataArray, out objectUri);
