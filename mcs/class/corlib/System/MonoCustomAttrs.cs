@@ -130,9 +130,9 @@ namespace System {
 			MethodInfo method = null;
 			if (obj is MonoProperty) {
 				MonoProperty prop = (MonoProperty) obj;
-				method = prop.GetGetMethod ();
+				method = prop.GetGetMethod (true);
 				if (method == null)
-					method = prop.GetSetMethod ();
+					method = prop.GetSetMethod (true);
 			} else if (obj is MonoMethod) {
 				method = (MethodInfo) obj; 
 			}

@@ -47,10 +47,18 @@ namespace System {
 			return String.Compare (name, m.Name, true, CultureInfo.InvariantCulture) == 0;
 		}
 
-		[MonoTODO]
 		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria)
 		{
-			throw new NotImplementedException ("FilterAttribute_impl");
+			int flags = ((IConvertible)filterCriteria).ToInt32 (null);
+			if (m is MethodInfo)
+				return ((int)((MethodInfo)m).Attributes & flags) != 0;
+			if (m is FieldInfo)
+				return ((int)((FieldInfo)m).Attributes & flags) != 0;
+			if (m is PropertyInfo)
+				return ((int)((PropertyInfo)m).Attributes & flags) != 0;
+			if (m is EventInfo)
+				return ((int)((EventInfo)m).Attributes & flags) != 0;
+			return false;
 		}
 
 		protected Type ()

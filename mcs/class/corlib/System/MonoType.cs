@@ -350,13 +350,13 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					if ((properties [i].GetGetMethod () != null))
+					if ((properties [i].GetGetMethod (true) != null))
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					MethodBase mb = properties [i].GetGetMethod ();
+					MethodBase mb = properties [i].GetGetMethod (true);
 					if (mb != null)
 						smethods [count++] = mb;
 				}
@@ -371,13 +371,13 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					if (properties [i].GetSetMethod () != null)
+					if (properties [i].GetSetMethod (true) != null)
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					MethodBase mb = properties [i].GetSetMethod ();
+					MethodBase mb = properties [i].GetSetMethod (true);
 					if (mb != null)
 						smethods [count++] = mb;
 				}

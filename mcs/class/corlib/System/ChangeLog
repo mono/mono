@@ -1,3 +1,10 @@
+2004-04-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoCustomAttrs.cs, MonoType.cs: Property.GetGetMethod() does not return
+	the method if it is private (it did until now because of a bug). Make sure
+	it works as it worked before the fix.
+	* Type.cs: Implemented FilterAttribute delegate.
+
 2004-04-28  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* IntegerFormatter.cs: Prevent the use of the explicit static constuctor
