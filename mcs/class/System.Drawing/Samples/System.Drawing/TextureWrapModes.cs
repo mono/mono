@@ -80,7 +80,7 @@ namespace MonoSamples.System.Drawing
 			bmp.Save ("TextureWrapModes.bmp");
 		}
 		
-		// Main to test the things
+		// Main to draw the things
 		public static void Main () 
  		{
  			// Make sure that the image dimensions are 
@@ -88,9 +88,9 @@ namespace MonoSamples.System.Drawing
 			// TextureWrapModes (imgName, width, height, top, spacing)
 
 			TextureWrapModes twm = new TextureWrapModes ("horse.bmp", 650,
-									1800, 0, 50);
+									1850, 0, 50);
  			
- 			// Test the constructors
+ 			// Draw different wrapmodes
 			twm.DrawWrapModes ();
 
  			// Save the drawing when done
