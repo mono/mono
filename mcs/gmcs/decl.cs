@@ -761,7 +761,7 @@ namespace Mono.CSharp {
 				t = LookupInterfaceOrClass (ns.FullName, name, out error);
 				if (error)
 					return null;
-				
+
 				if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
 					return t;
 			}
@@ -773,7 +773,7 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 			
-			if (t != null)
+			if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
 				return t;
 			
 			//
@@ -787,7 +787,7 @@ namespace Mono.CSharp {
 				if (error)
 					return null;
 
-				if (t != null)
+				if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
 					return t;
 
 				//
@@ -811,7 +811,7 @@ namespace Mono.CSharp {
 						t = match;
 					}
 				}
-				if (t != null)
+				if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
 					return t;
 			}
 
