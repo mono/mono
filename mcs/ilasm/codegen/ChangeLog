@@ -1,3 +1,8 @@
+2004-05-23  Jackson Harper  <jackson@ximian.com>
+
+	* MethodDef.cs: Cache vararg signatures so a new memberref is not
+	created for each vararg pattern.
+	
 2004-05-22  Jackson Harper  <jackson@ximian.com>
 
 	* InstrTable.cs: ldc.i4.M1 is aliased to ldc.i4.m1. Fixes bug #58524.

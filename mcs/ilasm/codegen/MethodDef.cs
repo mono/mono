@@ -27,6 +27,7 @@ namespace Mono.ILASM {
                 private PEAPI.ImplAttr impl_attr;
                 private string name;
                 private string signature;
+                private Hashtable vararg_sig_table;
                 private ITypeRef ret_type;
                 private ArrayList typar_list;
                 private ArrayList param_list;
@@ -277,7 +278,25 @@ namespace Mono.ILASM {
                         if (!is_resolved)
                                 throw new Exception ("Methods must be resolved before a vararg sig can be created.");
 
-                        return methoddef.MakeVarArgSignature (opt);
+                        PEAPI.MethodRef methref = null;
+                        StringBuilder sigbuilder = new StringBuilder ();
+                        string sig;
+                        foreach (PEAPI.Type t in opt)
+                                sigbuilder.Append (opt + ", ");
+                        sig = sigbuilder.ToString ();
+
+                        if (vararg_sig_table == null) {
+                                vararg_sig_table = new Hashtable ();                                
+                        } else {
+                                methref = vararg_sig_table [sig] as PEAPI.MethodRef;
+                        }
+
+                        if (methref == null) {
+                                methref = methoddef.MakeVarArgSignature (opt);
+                                vararg_sig_table [sig] = methref;
+                        }
+
+                        return methref;
                 }
 
                 /// <summary>
