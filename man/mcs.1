@@ -36,6 +36,9 @@ Executables are not bound to a specific CPU or operating system.
 .I \-\-about
 Displays information about the Mono C# compiler
 .TP
+.I \-\-addmodule:MODULE1[,MODULE2]
+Includes the specified modules in the resulting assembly.  
+.TP
 .I -checked, -checked+
 Sets the default compilation mode to `checked'.  This makes all
 the math operations checked (the default is unchecked).
@@ -123,8 +126,9 @@ shell will perform globbing, so you migth want to use it like this:
 .fi
 .TP
 .I \-target:KIND, \-t:KIND
-Used to specify the desired target.  The possible values are: exe,
-winexe, library and module.  
+Used to specify the desired target.  The possible values are: exe
+(plain executable), winexe (Windows.Forms executable), library
+(component libraries) and module (partial library).
 .TP
 .I \-\-timestamp
 Another debugging flag.  Used to display the times at various points
