@@ -24,12 +24,10 @@
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
-				<includes name="System.Web.Hosting/ApplicationHost.cs"/> 
-				<includes name="System.Web.Hosting/SimpleWorkerRequest.cs.cs"/> 
-				<excludes name="System.Web.Hosting/ISAPIRuntime.cs"/>
-				<excludes name="System.Web.Hosting/IISAPIRuntime.cs"/>
-				<excludes name="System.Web.Hosting/IAppDomainFactory.cs"/>
-				<excludes name="System.Web.Hosting/AppDomainFactory.cs"/>
+				<!--<excludes name="System.Web.Hosting/ISAPIRuntime.cs"/>-->
+				<!--<excludes name="System.Web.Hosting/IISAPIRuntime.cs"/>-->
+				<!--<excludes name="System.Web.Hosting/IAppDomainFactory.cs"/>-->
+				<!--<excludes name="System.Web.Hosting/AppDomainFactory.cs"/>-->
 				<!--<excludes name="System.Web.UI/**"/>-->
 				<!--<excludes name="System.Web.UI.HtmlControls/**"/>-->
 				<!--<excludes name="System.Web.UI.WebControls/**"/>-->

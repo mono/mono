@@ -1,9 +1,11 @@
 //
 // System.Web.UI.CssStyleCollection.cs
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+// 	Duncan Mak  (duncan@ximian.com)
+// 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.
+// (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
@@ -13,36 +15,42 @@ namespace System.Web.UI {
 
 	public sealed class CssStyleCollection
 	{
-		Hashtable list = new Hashtable ();
+		private StateBag bag;
 
+		internal CssStyleCollection (StateBag bag)
+		{
+			this.bag = bag;
+		}
+		
 		public int Count {
-			get { return list.Count; }
+			get { return bag.Count; }
 		}
 
 		public string this [string key] {
 
-			get { return list [key] as string; }
+			get { return bag [key] as string; }
 
-			set { list [key] = value; }
+			set { bag [key] = value; }
 		}
 
 		public ICollection Keys {
-			get { return list.Keys; }
+			get { return bag.Keys; }
 		}
 
 		public void Add (string key, string value)
 		{
-			list.Add (key, value);
+			bag.Add (key, value);
 		}
 
 		public void Clear ()
 		{
-			list.Clear ();
+			bag.Clear ();
 		}
 
 		public void Remove (string key)
 		{
-			list.Remove (key);
+			bag.Remove (key);
 		}
 	}
 }
+

@@ -1,9 +1,11 @@
 //
 // System.Web.UI.ParseChildrenAttribute.cs
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+// 	Duncan Mak  (duncan@ximian.com)
+// 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.
+// (C) 2002 Ximian, Inc. (http://www.ximian.com
 //
 
 using System;
@@ -15,6 +17,7 @@ namespace System.Web.UI {
 	{
 		bool childrenAsProperties;
 		string defaultProperty;
+		public static readonly ParseChildrenAttribute Default = new ParseChildrenAttribute ();
 
 		// LAMESPEC
 		public ParseChildrenAttribute ()
@@ -33,10 +36,9 @@ namespace System.Web.UI {
 					       string defaultProperty)
 		{
 			this.childrenAsProperties = childrenAsProperties;
-			this.defaultProperty = defaultProperty;
+			if (childrenAsProperties)
+				this.defaultProperty = defaultProperty;
 		}
-
-		public static readonly ParseChildrenAttribute Default;
 
 		public bool ChildrenAsProperties {
 
@@ -51,22 +53,28 @@ namespace System.Web.UI {
 			set { defaultProperty = value; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
+			if (!(obj is ParseChildrenAttribute))
+				return false;
+
+			ParseChildrenAttribute o = (ParseChildrenAttribute) obj;
+			if (childrenAsProperties == o.childrenAsProperties){
+				if (childrenAsProperties == false)
+					return true;
+				return (defaultProperty == o.DefaultProperty);
+			}
 			return false;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return 42;
+			return base.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute ()
 		{
-			return false;
+			return Equals (Default);
 		}
 	}
 }

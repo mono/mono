@@ -13,9 +13,9 @@ namespace System.Web.Hosting
 {
         public interface IISAPIRuntime
         {
-                void DoGCCollect();
-                int ProcessRequest(in IntPtr ecb, in int useProcessModel);
-                void StartProcessing();
-                void StopProcessing();
+                void DoGCCollect ();
+                int ProcessRequest (IntPtr ecb, int useProcessModel);
+                void StartProcessing ();
+                void StopProcessing ();
         }
 }

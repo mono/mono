@@ -129,7 +129,7 @@ public class Page : TemplateControl, IHttpHandler
 		set { _errorPage = value; }
 	}
 
-	public ArrayList FileDependencies
+	ArrayList FileDependencies
 	{
 		set { _fileDependencies = value; }
 	}

@@ -1,3 +1,10 @@
+2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.Hosting/AppDomainFactory.cs:
+	* System.Web.Hosting/IAppDomainFactory.cs:
+	* System.Web.Hosting/IISAPIRuntime.cs:
+	* System.Web.Hosting/ISAPIRuntime.cs: make them compile.
+
 2002-04-10  Patrik Torstensson <patrik.torstensson@labs2.com>
 
         * ApplicationHost.cs: Test implementation to support testing.

@@ -48,10 +48,10 @@ namespace System.Web.UI {
 			return new EmptyControlCollection (this);
 		}
 
-		[MonoTODO]
 		protected override void LoadViewState (object savedState)
 		{
-			throw new NotImplementedException ();
+			if (savedState != null)
+				dataBoundLiterals = (string []) savedState;
 		}
 
 		protected override void Render (HtmlTextWriter output)
@@ -59,10 +59,11 @@ namespace System.Web.UI {
 			output.Write (Text);
 		}
 
-		[MonoTODO]
 		protected override object SaveViewState ()
 		{
-			throw new NotImplementedException ();
+			if (dataBoundLiterals.Length == 0)
+				return null;
+			return dataBoundLiterals;
 		}
 
 		public void SetDataBoundString (int index, string s)

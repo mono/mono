@@ -13,6 +13,12 @@ namespace System.Web.Hosting
 {
         public interface IAppDomainFactory
         {
-                object Create(in string module, in string typeName, in string appId, in string appPath, in string strUrlOfAppOrigin, in int iZone);
+                object Create (string module,
+			       string typeName,
+			       string appId,
+			       string appPath,
+			       string strUrlOfAppOrigin,
+			       int iZone);
         }
 }
+

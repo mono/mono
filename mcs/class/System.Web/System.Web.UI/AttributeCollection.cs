@@ -1,9 +1,11 @@
 //
 // System.Web.UI.AttributeCollection.cs
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+// 	Duncan Mak  (duncan@ximian.com)
+// 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.
+// (C) 2002 Ximian, Inc. (http://www.ximian.com
 //
 
 using System;
@@ -14,6 +16,7 @@ namespace System.Web.UI {
 	public sealed class AttributeCollection
 	{
 		private StateBag bag;
+		private CssStyleCollection styleCollection;
 		
 		public AttributeCollection (StateBag bag)
 		{
@@ -24,9 +27,12 @@ namespace System.Web.UI {
 			get { return bag.Count; }
 		}
 
-		[MonoTODO]
 		public CssStyleCollection CssStyle {
-			get { return null; }
+			get {
+				if (styleCollection == null)
+					styleCollection = new CssStyleCollection (bag);
+				return styleCollection;
+			}
 		}
 
 		public string this [string key] {

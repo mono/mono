@@ -1,3 +1,24 @@
+2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.UI/AttributeCollection.cs: added CssStyleCollection.
+
+	* System.Web.UI/CssStyleCollection.cs: use a StateBag instead of a
+	Hashtable. Added internal .ctor.
+
+	* System.Web.UI/DataBinding.cs: propertyType is a Type. Implemented
+	Equals and GetHashCode.
+
+	* System.Web.UI/DataBoundLiteralControl.cs:
+	(LoadViewState):
+	(SaveViewState): implemented.
+
+	* System.Web.UI/Page.cs: FileDependencies is not public.
+
+	* System.Web.UI/ParseChildrenAttribute.cs: give a value to Default.
+	(GetHashCode):
+	(Equals):
+	(IsDefaultAttribute): implemented.
+
 2002-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: fixed Visible property.
