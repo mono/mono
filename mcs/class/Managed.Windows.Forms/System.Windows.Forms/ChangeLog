@@ -1,3 +1,10 @@
+2005-02-01  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Combobox.cs:
+		- Caches ItemHeight calculation for OwnerDrawVariable
+		- Handles dropdown properly 
+		- Fixes several minor bugs
+
 2005-01-31  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs:
