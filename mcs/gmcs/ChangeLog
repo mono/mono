@@ -1,3 +1,10 @@
+2004-06-16  Ben Maurer  <bmaurer@ximian.com>
+	* ecore.cs (MethodGroupExpr.Name): Revert Martin's patch.
+	The name needs to have the actual name of the method in order
+	for other tests (such as the one in OverloadResolve for Invoke
+	on a delegate) to work. As well, it does not really help
+	error reporting because the method group had multiple methods.
+
 2004-06-13  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay: Don't allow generic attributes.

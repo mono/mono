@@ -2679,8 +2679,8 @@ namespace Mono.CSharp {
 
 		public string Name {
 			get {
-                                return TypeManager.CSharpSignature (
-					Methods [Methods.Length - 1]);
+				//return Methods [0].Name;
+                                return Methods [Methods.Length - 1].Name;
 			}
 		}
 
