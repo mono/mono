@@ -489,7 +489,8 @@ namespace System.Data {
 			DataColumn column = _table.Columns[columnName];
 			_table.ChangingDataColumn (this, column, val);
 				
-			if (_original < 0) { 
+			if (_original < 0 || _original == _current) { 
+				// This really creates a new record version if one does not exist
 				_original = Table.RecordCache.NewRecord();
 			}
 			CheckValue (val, column);

@@ -1,3 +1,8 @@
+2004-09-19  Sureshkumar T <tsureshkumar@novell.com>
+	* DataRow.cs : while deserialization of dataset, adding a current row precedes the original row.
+		       hence, adding a row cache is necessary if the original row happens to be current.
+		       fixed bug #63097
+
 2004-08-23  Martin Baulig  <martin@ximian.com>
 
 	* XmlDataInferenceLoader.cs (Driver): Make this class internal,
