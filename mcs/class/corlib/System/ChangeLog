@@ -1,3 +1,8 @@
+2004-02-02  Sebastien Pouliot  <sebastien@ximian.ca>
+
+	* DateTime.cs: Corrected support for "Z" in the mask (Parse). This
+	fix bug #53461.
+
 2004-01-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Exception.cs: Changed ToString to remove the \n when no stack trace

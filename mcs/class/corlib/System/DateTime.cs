@@ -883,6 +883,9 @@ namespace System
 						num = 2;
 					}
 					break;
+				case 'Z':
+					useutc = true;
+					break;
 				case ':':
 					if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
 						return false;
