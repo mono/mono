@@ -1,3 +1,8 @@
+2005-03-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlValidatingReaderTests.cs : Added test for sequential text nodes
+	  which affects on ExpandEntities.
+
 2005-03-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReaderTests.cs : added SurrogatePair() based on bug #73513.

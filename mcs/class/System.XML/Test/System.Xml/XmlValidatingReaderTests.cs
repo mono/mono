@@ -796,5 +796,24 @@ namespace MonoTests.System.Xml
 			AssertEquals ("entity string text", dvr.Value);
 			Assert (!dvr.ReadAttributeValue ());
 		}
+
+		[Test]
+		public void ResolveEntitySequentialText ()
+		{
+			string xml = @"<!DOCTYPE doc [
+				<!ELEMENT doc ANY>
+				<!ELEMENT foo  ANY>
+				<!ENTITY ref1 '<![CDATA[cdata]]>test'>
+				]>
+				<doc><foo>&ref1; test </foo></doc>";
+			string refOut = "<doc><foo><![CDATA[cdata]]>test test </foo></doc>";
+
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			XmlValidatingReader r = new XmlValidatingReader (xtr);
+			r.Read ();
+			r.Read ();
+			r.Read ();
+			AssertEquals (refOut, r.ReadOuterXml ());
+		}
 	}
 }
