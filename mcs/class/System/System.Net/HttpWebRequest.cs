@@ -49,7 +49,7 @@ namespace System.Net
 		IWebProxy proxy;
 		bool sendChunked;
 		ServicePoint servicePoint;
-		int timeout = 10000;//100000;
+		int timeout = 100000;
 		
 		WebConnectionStream writeStream;
 		HttpWebResponse webResponse;
