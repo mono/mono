@@ -4147,9 +4147,8 @@ namespace Mono.CSharp {
 
 					if (instance.GetType () != typeof (This)){
 						if (fe.InstanceExpression.Type.IsSubclassOf (TypeManager.mbr_type)){
-							Report.SymbolRelatedToPreviousError (fe.InstanceExpression.Type);
-							Report.Error (197, loc, "Cannot pass '{0}' as ref or out or take its address because it is a member of a marshal-by-reference class",
-								fe.Name);
+							Report.Error (197, loc,
+								      "Can not pass a type that derives from MarshalByRefObject with out or ref");
 							return false;
 						}
 					}
@@ -5152,9 +5151,6 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-
-			if (mg.InstanceExpression != null)
-				mg.InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
 
 			eclass = ExprClass.Value;
 			return this;
@@ -8181,8 +8177,6 @@ namespace Mono.CSharp {
 				UnsafeError (loc);
 				return null;
 			}
-
-			instance_expr.CheckMarshallByRefAccess (ec.ContainerType);
 			
 			eclass = ExprClass.IndexerAccess;
 			return this;
@@ -8253,8 +8247,6 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			instance_expr.CheckMarshallByRefAccess (ec.ContainerType);
-
 			eclass = ExprClass.IndexerAccess;
 			return this;
 		}
