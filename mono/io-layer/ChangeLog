@@ -1,3 +1,9 @@
+
+Fri May 31 15:40:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* daemon-messages.c: work-around MSG_NOSIGNAL missing on some
+	platforms.
+
 2002-05-15  Dick Porter  <dick@ximian.com>
 
 	* wait.c: Fix a deadlock in WaitForMultipleObjects
