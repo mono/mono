@@ -1,3 +1,12 @@
+2002-07-13  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
+
+	* reflection.[ch]: 
+	(mono_reflection_type_from_name): now it has a MonoImage parameter
+	which is used as the default image to search the type in. If the image
+	is NULL or getting the type from it fails, it defaults to corlib.
+
+	* icall.c: changed 1 call to mono_reflection_type_from_name to match
+	new parameter.
 
 Sat Jul 13 19:32:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
