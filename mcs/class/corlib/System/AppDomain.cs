@@ -351,38 +351,38 @@ namespace System
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions)
+		                                              PermissionSet refusedPermissions)
 		{
 			return DefineDynamicAssembly (name, access, null, null, requiredPermissions, optionalPermissions,
-				refusedPersmissions, false);
+				refusedPermissions, false);
 		}
 
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions)
+		                                              PermissionSet refusedPermissions)
 		{
 			return DefineDynamicAssembly (name, access, null, evidence, requiredPermissions, optionalPermissions,
-				refusedPersmissions, false);
+				refusedPermissions, false);
 		}
 
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions)
+		                                              PermissionSet refusedPermissions)
 		{
 			return DefineDynamicAssembly (name, access, dir, null, requiredPermissions, optionalPermissions,
-				refusedPersmissions, false);
+				refusedPermissions, false);
 		}
 
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              Evidence evidence,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions)
+		                                              PermissionSet refusedPermissions)
 		{
 			return DefineDynamicAssembly (name, access, dir, evidence, requiredPermissions, optionalPermissions,
-				refusedPersmissions, false);
+				refusedPermissions, false);
 		}
 
 		[MonoTODO ("FIXME: examine all other parameters")]
@@ -390,11 +390,12 @@ namespace System
 		                                              Evidence evidence,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions, bool isSynchronized)
+		                                              PermissionSet refusedPermissions, bool isSynchronized)
 		{
 			// FIXME: examine all other parameters
 			
 			AssemblyBuilder ab = new AssemblyBuilder (name, dir, access);
+			ab.AddPermissionRequests (requiredPermissions, optionalPermissions, refusedPermissions);
 			return ab;
 		}
 

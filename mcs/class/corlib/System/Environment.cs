@@ -59,7 +59,7 @@ namespace System
 		private Environment ()
 		{
 		}
-
+                
 		[MonoTODO]
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
@@ -451,6 +451,45 @@ namespace System
 
 		static internal string GetResourceString (string s) { return ""; }
 
+                
+#if NET_2_0
+		public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target)
+		{
+			return (string)(GetEnvironmentVariables (target) [variable]);
+		}
+
+		[MonoTODO]
+		public static IDictionary GetEnvironmentVariables (EnvironmentVariableTarget target)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static void SetEnvironmentVariable (string variable, string value)
+		{
+			SetEnvironmentVariable (variable, value, EnvironmentVariableTarget.Process);
+		}
+
+		[MonoTODO]
+		public static void SetEnvironmentVariable (string variable, string value, EnvironmentVariableTarget target)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		static bool IsServerGC {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		static int ProcessorCount {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif                
+                
 		// private methods
 
 		private static string GacPath {

@@ -1,3 +1,10 @@
+2004-08-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* AppDomain.cs: Fixed typo of DefineDynamicAssembly argument.
+	Added call to AddPermissionRequests to pass permissions
+	arguments.
+	* Environment.cs: Added a few Fx 2.0 methods
+
 2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationId.cs: Fixed typo to fix NET_2_0 compilation.
