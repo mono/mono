@@ -1,5 +1,10 @@
 2004-04-28  Raja R Harinath  <rharinath@novell.com>
 
+	* driver.cs (Driver.MainDriver) [IsModuleOnly]: Open code the
+	setting of this flag, since the 'set' method may be non-public.
+
+2004-04-28  Raja R Harinath  <rharinath@novell.com>
+
 	* flowanalysis.cs (FlowBranchingException.LookupLabel): Add a null
 	check on current_vector.Block.
 

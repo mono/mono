@@ -1404,7 +1404,8 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 
-				module_only.SetValue (CodeGen.Assembly.Builder, true, null);
+				MethodInfo set_method = module_only.GetSetMethod (true);
+				set_method.Invoke (CodeGen.Assembly.Builder, BindingFlags.Default, null, new object[]{true}, null);
 			}
 
 			TypeManager.AddModule (CodeGen.Module.Builder);
