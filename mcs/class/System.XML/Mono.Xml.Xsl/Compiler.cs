@@ -112,7 +112,8 @@ namespace Mono.Xml.Xsl
 				this.res = new XmlUrlResolver ();
 			this.evidence = evidence;
 
-			if (!nav.MoveToFirstChild ()) throw new Exception ("WTF?");
+			if (!nav.MoveToFirstChild ())
+				throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, nav);
 				
 			outputs [""] = new XslOutput ("");
 				

@@ -10,7 +10,6 @@
 //
 
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
@@ -121,11 +120,24 @@ namespace Mono.Xml.Xsl {
 			c.PushStylesheet (this);
 			
 			templates = new XslTemplateTable (this);
+
+			// move to root element
+			while (c.Input.NodeType != XPathNodeType.Element)
+				if (!c.Input.MoveToNext ())
+					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, c.Input);
+
 			if (c.Input.NamespaceURI != XsltNamespace) {
 				// then it is simplified stylesheet.
 				Templates.Add (new XslTemplate (c));
 			} else {
+				if (c.Input.LocalName != "stylesheet" &&
+					c.Input.LocalName != "transform")
+					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, c.Input);
+
 				version = c.Input.GetAttribute ("version", "");
+				if (version == null)
+					throw new XsltCompileException ("Mandatory attribute version is missing.", null, c.Input);
+
 				extensionElementPrefixes = c.ParseQNameListAttribute ("extension-element-prefixes");
 				excludeResultPrefixes = c.ParseQNameListAttribute ("exclude-result-prefixes");
 				if (c.Input.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
