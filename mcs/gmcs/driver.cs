@@ -105,12 +105,6 @@ namespace Mono.CSharp
 		//
 		static bool using_default_encoder = true;
 
-		//
-		// The system version we are using, if not specified on the commandline we
-		// will use the same version as corlib for looking for libraries in the GAC.
-		//
-		static string sys_version;
-
 		public static void ShowTime (string msg)
 		{
 			if (!timestamps)
@@ -1052,7 +1046,15 @@ namespace Mono.CSharp
 				if (embedded_resources == null)
 					embedded_resources = new ArrayList ();
 				
+				if (embedded_resources.Contains (value)) {
+					Report.Error (1508, String.Format ("The resource identifier '{0}' has already been used in this assembly.", value));
+				}
+				else if (value.IndexOf (',') != -1 && embedded_resources.Contains (value.Split (',')[1])) {
+					Report.Error (1508, String.Format ("The resource identifier '{0}' has already been used in this assembly.", value));
+				}
+				else {
 				embedded_resources.Add (value);
+				}
 				return true;
 				
 			case "/recurse":

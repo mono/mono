@@ -825,12 +825,17 @@ constant_declaration
 	  constant_declarators
 	  SEMICOLON
 	  {
+		int modflags = (int) $2;
 		foreach (VariableDeclaration constant in (ArrayList) $5){
 			Location l = constant.Location;
+			if ((modflags & Modifiers.STATIC) != 0) {
+				Report.Error (504, l, "The constant '{0}' cannot be marked static", current_container.GetSignatureForError () + '.' + (string) constant.identifier);
+				continue;
+			}
 
 			Const c = new Const (
 				current_class, (Expression) $4, (string) constant.identifier, 
-				(Expression) constant.expression_or_array_initializer, (int) $2, 
+				(Expression) constant.expression_or_array_initializer, modflags, 
 				(Attributes) $1, l);
 
 			current_container.AddConstant (c);
@@ -1725,7 +1730,7 @@ constructor_declaration
 			}
 		} else {
 			// We let another layer check the validity of the constructor.
-			Console.WriteLine ("{0} and {1}", c.Name, current_container.Basename);
+			//Console.WriteLine ("{0} and {1}", c.Name, current_container.Basename);
 		}
 
 		current_container.AddConstructor (c);
@@ -3995,19 +4000,23 @@ try_statement
 	: TRY block catch_clauses 
 	{
 		Catch g = null;
-		ArrayList s = new ArrayList (4);
 		
-		foreach (Catch cc in (ArrayList) $3) {
-			if (cc.IsGeneral)
+		ArrayList c = (ArrayList)$3;
+		for (int i = 0; i < c.Count; ++i) {
+			Catch cc = (Catch) c [i];
+			if (cc.IsGeneral) {
+				if (i != c.Count - 1)
+					Report.Error (1017, cc.loc, "Empty catch block must be the last in a series of catch blocks");
 				g = cc;
-			else
-				s.Add (cc);
+				c.RemoveAt (i);
+				i--;
+			}
 		}
 
 		// Now s contains the list of specific catch clauses
 		// and g contains the general one.
 		
-		$$ = new Try ((Block) $2, s, g, null, lexer.Location);
+		$$ = new Try ((Block) $2, c, g, null, lexer.Location);
 	}
 	| TRY block opt_catch_clauses FINALLY block
 	  {
@@ -4624,10 +4633,10 @@ public void parse ()
 		Tokenizer tokenizer = lexer as Tokenizer;
 		tokenizer.cleanup ();		
 	} catch (Exception e){
-		// Please do not remove this, it is used during debugging
-		// of the grammar
 		//
-		Console.WriteLine (e);
+		// Removed for production use, use parser verbose to get the output.
+		//
+		// Console.WriteLine (e);
 		Report.Error (-25, lexer.Location, "Parsing error");
 		if (Driver.parser_verbose)
 			Console.WriteLine (e);

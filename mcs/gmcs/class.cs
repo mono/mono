@@ -404,7 +404,7 @@ namespace Mono.CSharp {
 		MethodArrayList methods;
 
 		// Holds the events
-		MemberCoreArrayList events;
+		protected MemberCoreArrayList events;
 
 		// Holds the indexers
 		IndexerArrayList indexers;
@@ -535,7 +535,7 @@ namespace Mono.CSharp {
 		public void AddConstructor (Constructor c)
 		{
 			if (c.Name != Basename) {
-				Report.Error (1520, Location, "Class, struct, or interface method must have a return type");
+				Report.Error (1520, c.Location, "Class, struct, or interface method must have a return type");
 			}
 
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
@@ -1013,8 +1013,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		TypeExpr [] GetClassBases (out TypeExpr parent, out bool error)
 		{
-			ArrayList bases = Bases;
-			int start, j, i;
+			int i;
 
 			error = false;
 
@@ -2126,13 +2125,6 @@ namespace Mono.CSharp {
 						Report.Warning (649, f.Location, "Field '{0}' is never assigned to, and will always have its default value '{1}'", f.GetSignatureForError (), "");
 					}
 				}
-
-				if ((events != null) && (RootContext.WarningLevel >= 3)) {
-					foreach (Event e in events){
-						if (e.status == 0)
-							Report.Warning (67, e.Location, "The event '{0}' is never used", e.GetSignatureForError ());
-					}
-				}
 			}
 		}
 
@@ -2752,7 +2744,15 @@ namespace Mono.CSharp {
 					}
 				}
 			}
+
 			base.VerifyMembers (ec);
+
+			if ((events != null) && (RootContext.WarningLevel >= 3)) {
+				foreach (Event e in events){
+					if (e.status == 0)
+						Report.Warning (67, e.Location, "The event '{0}' is never used", e.GetSignatureForError ());
+				}
+			}
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)

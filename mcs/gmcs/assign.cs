@@ -404,7 +404,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {
-				source.Error_UnexpectedKind ("variable or value");
+				source.Error_UnexpectedKind ("variable or value", loc);
 				return null;
 			} else if ((RootContext.Version == LanguageVersion.ISO_1) &&
 				   (source is MethodGroupExpr)){

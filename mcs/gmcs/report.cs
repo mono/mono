@@ -257,7 +257,7 @@ namespace Mono.CSharp {
         
 		static public void RuntimeMissingSupport (string feature) 
 		{
-			Report.Error (-88, "Your .NET Runtime does not support '{0}'. Please use the latest Mono runtime instead.");
+			Report.Error (-88, "Your .NET Runtime does not support '{0}'. Please use the latest Mono runtime instead.", feature);
 		}
 
 		/// <summary>

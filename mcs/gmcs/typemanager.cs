@@ -2923,7 +2923,6 @@ public class TypeManager {
 
 	static Closure closure = new Closure ();
 	static MemberFilter FilterWithClosure_delegate = new MemberFilter (closure.Filter);
-	static MemberFilter FilterNone_delegate = new MemberFilter (FilterNone);
 
 	//
 	// Looks up a member called `name' in the `queried_type'.  This lookup
@@ -3163,85 +3162,30 @@ public class TypeManager {
 		return null;
 	}
 
-	//
-	// This is used to extract properties and event declarations from a type
-	//
-	static MemberInfo [] SpecialContainerLookup (Type t, bool is_static)
-	{
-		BindingFlags bf = BindingFlags.DeclaredOnly | (is_static ? BindingFlags.Static : BindingFlags.Instance);
-
-		bf |= BindingFlags.Public | BindingFlags.NonPublic;
-		
-		if (t is TypeBuilder) {
-			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
-
-			return (MemberInfo []) decl.FindMembers (
-				MemberTypes.Property | MemberTypes.Event,
-				bf, FilterNone_delegate, null);
-		} else {
-			return t.FindMembers (MemberTypes.Property | MemberTypes.Event,
-					      bf, FilterNone_delegate, null);
-
-		}
-	}
-	
+	// Tests whether external method is really special
 	public static bool IsSpecialMethod (MethodBase mb)
 	{
-		Type t = mb.DeclaringType;
-		
-		MemberInfo [] matches = TypeManager.SpecialContainerLookup (t, mb.IsStatic);
-		if (matches == null)
-			return false;
-		
-		foreach (MemberInfo mi in matches){
-			if (mi is PropertyBuilder){
-				Pair p = (Pair) properties [mi];
+		string name = mb.Name;
+		if (name.StartsWith ("get_") || name.StartsWith ("set_"))
+			return mb.DeclaringType.GetProperty (name.Substring (4)) != null;
+				
+		if (name.StartsWith ("add_"))
+			return mb.DeclaringType.GetEvent (name.Substring (4)) != null;
 
-				if (p.First == mb || p.Second == mb)
-					return true;
-			} else if (mi is PropertyInfo){
-				MethodInfo [] methods = ((PropertyInfo) mi).GetAccessors (true);
-				
-				foreach (MethodInfo m in methods){
-					if (m == mb)
-						return true;
-				}
-			} else if (mi is MyEventBuilder){
-				Pair p = (Pair) events [mi];
+		if (name.StartsWith ("remove_"))
+			return mb.DeclaringType.GetEvent (name.Substring (7)) != null;
 
-				if (p.First == mb || p.Second == mb)
+		if (name.StartsWith ("op_")){
+			foreach (string oname in Unary.oper_names) {
+				if (oname == name)
 					return true;
-			} else if (mi is EventInfo){
-				EventInfo ei = ((EventInfo) mi);
-				
-				if (ei.GetAddMethod (true) == mb)
-					return true;
-				
-				if (ei.GetRemoveMethod (true) == mb)
-					return true;
-				
-				if (ei.GetRaiseMethod (true) == mb)
+			}
+
+			foreach (string oname in Binary.oper_names) {
+				if (oname == name)
 					return true;
 			}
 		}
-
-		//
-		// Now check if it is an operator method
-		//
-		string s = mb.Name;
-
-		if (s.StartsWith ("op_")){
-			foreach (string name in Unary.oper_names){
-				if (s == name)
-					return true;
-			}
-
-			foreach (string name in Binary.oper_names){
-				if (s == name)
-					return true;
-			}
-		}
-		
 		return false;
 	}
 		

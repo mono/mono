@@ -863,7 +863,7 @@ namespace Mono.CSharp {
 
 				return null;
 			} else {
-				expr.Error_UnexpectedKind ("variable, indexer or property access");
+				expr.Error_UnexpectedKind ("variable, indexer or property access", loc);
 				return null;
 			}
 
@@ -5245,7 +5245,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(expr is MethodGroupExpr)){
-				expr.Error_UnexpectedKind (ResolveFlags.MethodGroup);
+				expr.Error_UnexpectedKind (ResolveFlags.MethodGroup, loc);
 				return null;
 			}
 
@@ -5309,8 +5309,10 @@ namespace Mono.CSharp {
 			}
 
 			if ((method.Attributes & MethodAttributes.SpecialName) != 0){
-				if (TypeManager.IsSpecialMethod (method))
-					Report.Error (571, loc, method.Name + ": can not call operator or accessor");
+				if (TypeManager.LookupDeclSpace (method.DeclaringType) != null || TypeManager.IsSpecialMethod (method)) {
+					Report.Error (571, loc, TypeManager.CSharpSignature (method) + ": can not call operator or accessor");
+					return null;
+				}
 			}
 			
 			eclass = ExprClass.Value;
@@ -5814,7 +5816,7 @@ namespace Mono.CSharp {
 			value_target = value;
 			value_target_set = true;
 			if (!(value_target is IMemoryLocation)){
-				Error_UnexpectedKind ("variable");
+				Error_UnexpectedKind ("variable", loc);
 				return false;
 			}
 			return true;
@@ -5934,7 +5936,7 @@ namespace Mono.CSharp {
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
-					ml.Error_UnexpectedKind ("method group");
+					ml.Error_UnexpectedKind ("method group", loc);
 					return null;
 				}
 			}
@@ -6464,7 +6466,7 @@ namespace Mono.CSharp {
 						   AllBindingFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)) {
-					ml.Error_UnexpectedKind ("method group");
+					ml.Error_UnexpectedKind ("method group", loc);
 					return null;
 				}
 				

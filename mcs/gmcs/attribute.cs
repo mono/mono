@@ -114,8 +114,7 @@ namespace Mono.CSharp {
 		{
 			Report.Error (617, Location, "'" + name + "' is not a valid named attribute " +
 				      "argument. Named attribute arguments must be fields which are not " +
-				      "readonly, static or const, or properties with a set accessor which "+
-				      "are not static.");
+				      "readonly, static or const, or read-write properties which are not static.");
 		}
 
 		static void Error_AttributeArgumentNotValid (Location loc)
@@ -404,7 +403,8 @@ namespace Mono.CSharp {
 					PropertyExpr pe = (PropertyExpr) member;
 					PropertyInfo pi = pe.PropertyInfo;
 
-					if (!pi.CanWrite) {
+					if (!pi.CanWrite || !pi.CanRead) {
+						Report.SymbolRelatedToPreviousError (pi);
 						Error_InvalidNamedArgument (member_name);
 						return null;
 					}

@@ -47,6 +47,7 @@ namespace Mono.CSharp {
 				new MemberName (name), null, attrs, loc)
 		{
 			Expr = expr;
+			ModFlags |= Modifiers.STATIC;
 		}
 
 		public FieldAttributes FieldAttr {
