@@ -1,3 +1,7 @@
+2002-10-21  Rodrigo Moya <rodrigo@ximian.com>
+
+	* list: removed libodbchelper.cs file, which has been removed.
+
 2002-10-16  Tim Coleamn <tim@timcoleman.com>
 	* list:
 	* System.Data.build:

@@ -147,4 +147,3 @@ System.Data.Odbc/OdbcParameterCollection.cs
 System.Data.Odbc/OdbcTransaction.cs
 System.Data.Odbc/OdbcType.cs
 System.Data.Odbc/libodbc.cs
-System.Data.Odbc/libodbchelper.cs
