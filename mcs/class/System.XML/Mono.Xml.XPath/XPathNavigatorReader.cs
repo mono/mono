@@ -445,6 +445,7 @@ namespace Mono.Xml.XPath
 				case XPathNodeType.Element:
 					if (current.IsEmptyElement)
 						nextIsEOF = true;
+					attributeCount = GetAttributeCount ();
 					return true;
 				case XPathNodeType.Namespace:
 				case XPathNodeType.Attribute:

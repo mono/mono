@@ -812,7 +812,7 @@ namespace Mono.Xml.XPath
 		public override XmlWriter CreateAttributes ()
 		{
 			XomNode n = ((IHasXomNode) navigator).GetNode ();
-			return document.CreateInsertionWriter (n, null);
+			return document.CreateAttributesWriter (n);
 		}
 
 		public override bool DeleteCurrent ()
@@ -830,8 +830,7 @@ namespace Mono.Xml.XPath
 			while (n.FirstChild != null)
 				document.DeleteNode (n.FirstChild);
 			XmlWriter w = document.CreateInsertionWriter (n, null);
-			// FIXME: Hmm, it does not look like using it.
-			w.WriteFromObject (value);
+			w.WriteValue (value);
 			w.Close ();
 		}
 	}

@@ -1,3 +1,10 @@
+2004-10-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathDocument2Editable.cs : for WriteAttributes(), use
+	  CreateAttributesWriter() that creates attribute tree XmlWriter.
+	* XPathNavigatorReader.cs : the reader was missing attributes when
+	  it is created with an element node that has attriibutes.
+
 2004-10-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs : It can reject attribute and namespace
