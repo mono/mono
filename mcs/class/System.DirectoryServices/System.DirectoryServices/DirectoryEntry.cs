@@ -24,8 +24,9 @@
 //
 // System.DirectoryServices.DirectoryEntry.cs
 //
-// Author:
+// Authors:
 //   Sunil Kumar (sunilk@novell.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C)  Novell Inc.
 //
@@ -34,6 +35,7 @@ using System.ComponentModel;
 using Novell.Directory.Ldap;
 using Novell.Directory.Ldap.Utilclass;
 using System.Globalization;
+using System.DirectoryServices.Design;
 
 namespace System.DirectoryServices
 {
@@ -41,19 +43,21 @@ namespace System.DirectoryServices
 	/// <summary>
 	///Encapsulates a node or object in the Ldap Directory hierarchy.
 	/// </summary>
-    public class DirectoryEntry : Component	
+	[DesignerCategory ("Component")]
+	[TypeConverter (typeof (DirectoryEntryConverter))]
+	public class DirectoryEntry : Component	
 	{
 		
 		private LdapConnection _conn = null;
-        private AuthenticationTypes _AuthenticationType=AuthenticationTypes.None;
-        private DirectoryEntries _Children;
+		private AuthenticationTypes _AuthenticationType=AuthenticationTypes.None;
+		private DirectoryEntries _Children;
 		private string _Fdn = null;
 		private string _Path="";
 		private string _Name=null;
 		private DirectoryEntry _Parent=null;
 		private string _Username="";
 		private string _Password="";
-		private string _Nativeguid;
+		//private string _Nativeguid;
 		private PropertyCollection _Properties = null;
 		private string _SchemaClassName=null;
 		private bool _Nflag = false;
@@ -231,6 +235,8 @@ namespace System.DirectoryServices
 		/// <summary>
 		/// Returns Type of authentication to use while Binding to Ldap server
 		/// </summary>
+		[DSDescription ("Type of authentication to use while Binding to Ldap server")]
+		[DefaultValue (AuthenticationTypes.None)]
 		public AuthenticationTypes AuthenticationType 
 		{
 			get 
@@ -261,6 +267,9 @@ namespace System.DirectoryServices
 		///  example, you might want to use a schema titled "Computer" to add 
 		///  new computers to the hierarchy.
 		///  </remarks>
+		[DSDescription ("Child entries of this node")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public DirectoryEntries Children 
 		{
 			get 
@@ -277,6 +286,9 @@ namespace System.DirectoryServices
 		/// <remarks>
 		/// Not implemented yet.		
 		/// </remarks>
+		[DSDescription ("A globally unique identifier for this DirectoryEntry")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public Guid Guid 
 		{
 			get 
@@ -295,6 +307,9 @@ namespace System.DirectoryServices
 		/// <remarks>This name, along with SchemaClassName, distinguishes this
 		///  entry from its siblings and must be unique amongst its siblings 
 		///  in each instance of DirectoryEntry.</remarks>
+		[DSDescription ("The name of the object as named with the underlying directory")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public string Name 
 		{
 			get								{
@@ -312,6 +327,9 @@ namespace System.DirectoryServices
 		/// Gets this entry's parent in the Ldap Directory hierarchy.
 		/// </summary>
 		/// <value>This entry's parent in the Active Directory hierarc</value>
+		[DSDescription ("This entry's parent in the Ldap Directory hierarchy.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public DirectoryEntry Parent 
 		{
 			get			{
@@ -336,6 +354,9 @@ namespace System.DirectoryServices
 		/// <remarks>
 		/// Not implemented yet.
 		/// </remarks>
+		[DSDescription ("The globally unique identifier of the DirectoryEntry, as returned from the provider")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public string NativeGuid 
 		{
 			get			{
@@ -348,9 +369,29 @@ namespace System.DirectoryServices
 		/// </summary>
 		/// <remarks>
 		/// Not implemented yet
+		[DSDescription ("The native Active Directory Service Interfaces (ADSI) object.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public object NativeObject 
 		{
 			get			{
+				throw new NotImplementedException();
+			}
+		}
+
+		/// <summary>
+		/// Determines if a cache should be used.
+		/// </summary>
+		[DSDescription ("Determines if a cache should be used.")]
+		[DefaultValue (true)]
+		public bool UsePropertyCache
+		{
+			get 
+			{
+				throw new NotImplementedException();
+			}
+			set 
+			{
 				throw new NotImplementedException();
 			}
 		}
@@ -368,6 +409,9 @@ namespace System.DirectoryServices
 		/// example, through Children) are automatically created with the same 
 		/// alternate credentials.
 		/// </remarks>
+		[DSDescription ("The password to use when authenticating the client.")]
+		[DefaultValue (null)]
+		[Browsable (false)]
 		public string Password 
 		{
 			get			{
@@ -392,6 +436,10 @@ namespace System.DirectoryServices
 		/// example, through Children) are automatically created with the same 
 		/// alternate 
 		/// </remarks>
+		[DSDescription ("The user name to use when authenticating the client.")]
+		[DefaultValue (null)]
+		[Browsable (false)]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string Username 
 		{
 			get			{
@@ -424,6 +472,10 @@ namespace System.DirectoryServices
 		/// Currently we Support only Ldap provider.
 		/// e.g Ldap://[hostname]:[port number]/[ObjectFDN]
 		/// </remarks>
+		[DSDescription ("The path for this DirectoryEntry.")]
+		[DefaultValue ("")]
+		[RecommendedAsConfigurable (true)]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string Path 
 		{
 			get			{
@@ -441,6 +493,9 @@ namespace System.DirectoryServices
 		/// <value>
 		/// A PropertyCollection of properties set on this object.
 		/// </value>
+		[DSDescription ("Properties set on this object.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public PropertyCollection Properties
 		{
 			get			{
@@ -496,7 +551,9 @@ namespace System.DirectoryServices
 		/// <value>
 		/// The name of the schema used for this DirectoryEntry.
 		/// </value>
-		/// 
+		[DSDescription ("The name of the schema used for this DirectoryEntry.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public string SchemaClassName 
 		{
 			get			{
@@ -504,6 +561,21 @@ namespace System.DirectoryServices
 						_SchemaClassName = FindAttrValue("structuralObjectClass");
 				}
 				return _SchemaClassName;
+			}
+		}
+
+		/// <summary>
+		/// Gets the current schema directory entry.
+		/// </summary>
+		/// <remarks>
+		/// Not implemented yet
+		[DSDescription ("The current schema directory entry.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public DirectoryEntry SchemaEntry 
+		{
+			get			{
+				throw new NotImplementedException();
 			}
 		}
 

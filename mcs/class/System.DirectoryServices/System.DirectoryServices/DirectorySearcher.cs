@@ -24,8 +24,9 @@
 //
 // System.DirectoryServices.DirectorySearcher.cs
 //
-// Author:
+// Authors:
 //   Sunil Kumar (sunilk@novell.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C)  Novell Inc.
 //
@@ -41,7 +42,8 @@ namespace System.DirectoryServices
 	/// <summary>
 	///Performs queries against Ldap directory.
 	/// </summary>
-    public class DirectorySearcher : Component	
+	[DesignerCategory ("Component")]
+	public class DirectorySearcher : Component	
 	{
 
 		private DirectoryEntry _SearchRoot=null;
@@ -87,25 +89,6 @@ namespace System.DirectoryServices
 			_conn.Bind(SearchRoot.Username,SearchRoot.Password);
 
 		}
-		/// <summary>
-		/// Gets or sets the node in the Ldap Directory hierarchy where the 
-		/// search starts.
-		/// </summary>
-		/// <value>
-		/// The DirectoryEntry in the Ldap Directory hierarchy where the 
-		/// search starts. The default is a null reference 
-		/// </value>
-		public DirectoryEntry SearchRoot 
-		{
-			get
-			{
-				return _SearchRoot;
-			}
-			set
-			{
-				_SearchRoot = value;
-			}
-		}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the result is 
@@ -119,6 +102,8 @@ namespace System.DirectoryServices
 		/// If the search returns a large result set, it is better to set 
 		/// this property to false.
 		/// </remarks>
+		[DSDescription ("The cacheability of results.")]
+		[DefaultValue (true)]
 		public bool CacheResults 
 		{
 			get
@@ -147,6 +132,7 @@ namespace System.DirectoryServices
 		/// the server returns its results and the client stops waiting. The 
 		/// maximum server time limit is 120 seconds.
 		/// </remarks>
+		[DSDescription ("The maximum amount of time that the client waits for the server to return results.")]
 		public TimeSpan ClientTimeout 
 		{
 			get
@@ -179,6 +165,10 @@ namespace System.DirectoryServices
 		/// Anotherexampleis"(&(objectClass=printer)(|(building=42)
 		/// (building=43)))". 
 		/// </remarks>
+		[DSDescription ("The Lightweight Directory Access Protocol (Ldap) format filter string.")]
+		[DefaultValue ("(objectClass=*)")]
+		[RecommendedAsConfigurable (true)]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string Filter 
 		{
 			get
@@ -204,6 +194,8 @@ namespace System.DirectoryServices
 		/// requests more data, the server will restart the search where it 
 		/// left off.
 		/// </remarks>
+		[DSDescription ("The page size in a paged search.")]
+		[DefaultValue (0)]
 		public int PageSize 
 		{
 			get
@@ -228,6 +220,9 @@ namespace System.DirectoryServices
 		/// before you begin the search. For example, searcher.
 		/// PropertiesToLoad.Add("phone");. 
 		/// </remarks>
+		[DSDescription ("The set of properties retrieved during the search.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Editor ("System.Windows.Forms.Design.StringCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public StringCollection PropertiesToLoad 
 		{
 			get
@@ -245,6 +240,8 @@ namespace System.DirectoryServices
 		/// values have been assigned; false if the search obtains the names 
 		/// and values for all the requested attributes. The default is false.
 		/// </value>
+		[DSDescription ("A value indicating whether the search retrieves only the names of attributes to which values have been assigned.")]
+		[DefaultValue (false)]
 		public bool PropertyNamesOnly 
 		{
 			get
@@ -270,6 +267,8 @@ namespace System.DirectoryServices
 		/// domain), the server sends a referral message to the client that 
 		/// the client can choose to ignore or chase.
 		/// </remarks>
+		[DSDescription ("How referrals are chased.")]
+		[DefaultValue (ReferralChasingOption.External)]
 		public ReferralChasingOption ReferralChasing 
 		{
 			get
@@ -283,12 +282,37 @@ namespace System.DirectoryServices
 		}
 
 		/// <summary>
+		/// Gets or sets the node in the Ldap Directory hierarchy where the 
+		/// search starts.
+		/// </summary>
+		/// <value>
+		/// The DirectoryEntry in the Ldap Directory hierarchy where the 
+		/// search starts. The default is a null reference 
+		/// </value>
+		[DSDescription ("The node in the Ldap Directory hierarchy where the search starts.")]
+		[DefaultValue (null)]
+		public DirectoryEntry SearchRoot 
+		{
+			get
+			{
+				return _SearchRoot;
+			}
+			set
+			{
+				_SearchRoot = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the scope of the search that is observed by the 
 		/// server.
 		/// </summary>
 		/// <value>
 		/// One of the SearchScope values. The default is Subtree.
 		/// </value>
+		[DSDescription ("The scope of the search that is observed by the server.")]
+		[DefaultValue (SearchScope.Subtree)]
+		[RecommendedAsConfigurable (true)]
 		public SearchScope SearchScope 
 		{
 			get
@@ -319,6 +343,7 @@ namespace System.DirectoryServices
 		///  		Note:   This property only applies to searches where PageSize 
 		///  		is set to a value that is not the default of -1.
 		/// </remarks>
+		[DSDescription ("The time limit the server should observe to search an individual page of results.")]
 		public TimeSpan ServerPageTimeLimit 
 		{
 			get
@@ -328,6 +353,29 @@ namespace System.DirectoryServices
 			set
 			{
 				_ServerPageTimeLimit = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the time limit the server should observe to search.
+		/// </summary>
+		/// <value>
+		/// A TimeSpan that represents the amount of time the server should 
+		/// observe to search.
+		/// </value>
+		/// <remarks>
+		/// Not implemented
+		/// </remarks>
+		[DSDescription ("The time limit the server should observe to search.")]
+		public TimeSpan ServerTimeLimit 
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
 			}
 		}
 
@@ -347,6 +395,8 @@ namespace System.DirectoryServices
 		/// 		than the server-determined default of 1000 entries, the 
 		/// 		server-determined default is used.
 		/// </remarks>
+		[DSDescription ("The maximum number of objects the server returns in a search.")]
+		[DefaultValue (0)]
 		public int SizeLimit 
 		{
 			get
@@ -356,6 +406,21 @@ namespace System.DirectoryServices
 			set
 			{
 				_SizeLimit =  value;
+			}
+		}
+
+		[DSDescription ("An object that defines how the data should be sorted.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[TypeConverter (typeof (ExpandableObjectConverter))]
+		public SortOption Sort
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
 			}
 		}
 
