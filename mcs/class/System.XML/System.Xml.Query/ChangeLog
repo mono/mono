@@ -1,3 +1,8 @@
+2004-07-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsltCommand.cs, XmlArgumentList.cs : sealed. Added missing MonoTODO.
+	* XQueryConvert.cs : added. (namespace is temporarily MS.Internal.Xml)
+
 2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* IXmlCompilerInclude.cs,

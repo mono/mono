@@ -39,13 +39,14 @@ using System.Xml.XPath;
 
 namespace System.Xml.Query
 {
-	public class XsltCommand
+	public sealed class XsltCommand
 	{
 		[MonoTODO]
 		public XsltCommand ()
 		{
 		}
 
+		[MonoTODO]
 		public event QueryEventHandler OnProcessingEvent;
 
 		// Compile

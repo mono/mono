@@ -37,7 +37,7 @@ using System.Xml;
 
 namespace System.Xml.Query 
 {
-	public class XmlArgumentList
+	public sealed class XmlArgumentList
 	{
 		#region	Fields
 
