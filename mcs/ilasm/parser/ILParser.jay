@@ -592,9 +592,9 @@ slashed_name		: comp_name
 class_ref		: OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                           {
                                 if (codegen.IsThisAssembly ((string) $2)) {
-                                        $$ = new TypeRef ((string) $4, null);
+                                        $$ = new TypeRef ((string) $4, false, null);
                                 } else {
-                                        $$ = new ExternTypeRef ((string) $2, (string) $4);
+                                        $$ = new ExternTypeRef ((string) $2, (string) $4, false);
                                 }
                           }
 			| OPEN_BRACKET D_MODULE file_name CLOSE_BRACKET slashed_name
@@ -605,7 +605,7 @@ class_ref		: OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                                 if (prim != null)
                                         $$ = prim;
                                 else
-                                        $$ = new TypeRef ((string) $1, null);
+                                        $$ = new TypeRef ((string) $1, false, null);
                           }
                       
 			;
@@ -655,15 +655,17 @@ type			: K_CLASS class_ref
                           }
 			| K_VALUE K_CLASS class_ref
                           {
-                                $$ = $3;
+				IClassRef class_ref = (IClassRef) $3;
+				class_ref.MakeValueClass ();
+                                $$ = class_ref;
                           }
 			| K_VALUETYPE OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                           {
-                                $$ = new ExternTypeRef ((string) $3, (string) $5);
+                                $$ = new ExternTypeRef ((string) $3, (string) $5, true);
                           }
                         | K_VALUETYPE slashed_name
                           {
-                                $$ = new TypeRef ((string) $2, null);
+                                $$ = new TypeRef ((string) $2, true, null);
                           }
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
@@ -784,8 +786,7 @@ type			: K_CLASS class_ref
                           }
                         | K_CLASS slashed_name OPEN_ANGLE_BRACKET BANG int32 CLOSE_ANGLE_BRACKET
                           {
-                                // Just cheat for now
-                                $$ = new TypeRef ((string) $2, null);
+                                $$ = new TypeRef ((string) $2, false, null);
                           }
                         | K_CLASS slashed_name OPEN_ANGLE_BRACKET typars CLOSE_ANGLE_BRACKET
                           {
@@ -1492,7 +1493,8 @@ sig_arg			: param_attr type
                           }
                         | ELLIPSIS
                           {
-                                $$ = ParamDef.Ellipsis;
+				$$ = new ParamDef ((ParamAttr) 0, "...", new SentinelTypeRef ());
+                                // $$ = ParamDef.Ellipsis;
                           }
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS id
@@ -1502,13 +1504,16 @@ type_list               : /* EMPTY */
                         | ELLIPSIS
                           {
                                 ArrayList type_list = new ArrayList ();
-                                type_list.Add (TypeRef.Ellipsis);
+                                // type_list.Add (TypeRef.Ellipsis);
+				type_list.Add (new SentinelTypeRef ());
                                 $$ = type_list;
                           }
                         | type_list COMMA ELLIPSIS
                           {
                                 ArrayList type_list = (ArrayList) $1;
-                                type_list.Add (TypeRef.Ellipsis);
+                                // type_list.Add (TypeRef.Ellipsis);
+				type_list.Add (new SentinelTypeRef ());
+				$$ = type_list;
                           }
                         | type opt_id
                           {

@@ -1,5 +1,9 @@
 2003-08-03 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Use new sentinel type. Create valuetypes.
+
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Make value types and enum types.
 	
 2003-08-03 Jackson Harper <jackson@latitudegeo.com>
