@@ -275,6 +275,10 @@ namespace Mono.AssemblyInfo
 				XmlNode ifaces = document.CreateElement ("interfaces", null);
 				nclass.AppendChild (ifaces);
 				foreach (Type t in interfaces) {
+					if (!t.IsPublic) {
+						// we're only interested in public interfaces
+						continue;
+					}
 					XmlNode iface = document.CreateElement ("interface", null);
 					AddAttribute (iface, "name", t.FullName);
 					ifaces.AppendChild (iface);
@@ -374,7 +378,7 @@ namespace Mono.AssemblyInfo
 					continue;
 
 				// we're only interested in public or protected members
-				if (!field.IsPublic && !field.IsFamily)
+				if (!field.IsPublic && !field.IsFamily && !field.IsFamilyOrAssembly)
 					continue;
 
 				list.Add (field);
@@ -442,7 +446,7 @@ namespace Mono.AssemblyInfo
 			ConstructorInfo[] ctors = type.GetConstructors (flags);
 			foreach (ConstructorInfo constructor in ctors) {
 				// we're only interested in public or protected members
-				if (!constructor.IsPublic && !constructor.IsFamily)
+				if (!constructor.IsPublic && !constructor.IsFamily && !constructor.IsFamilyOrAssembly)
 					continue;
 
 				list.Add (constructor);
