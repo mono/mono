@@ -63,6 +63,7 @@ namespace System.Xml
 			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
 			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
 			Init ();
+			// StreamReader does not support url, only filepath;-)
 			reader = new StreamReader(url);
 		}
 
@@ -1152,6 +1153,8 @@ namespace System.Xml
 
 		// The reader is positioned on the first character
 		// of the target.
+		//
+		// Now it also reads XmlDeclaration, this method name became improper...
 		private void ReadProcessingInstruction ()
 		{
 			string target = ReadName ();
@@ -1171,6 +1174,8 @@ namespace System.Xml
 			}
 
 			SetProperties (
+				target == "xml" ?
+				XmlNodeType.XmlDeclaration :
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
 				false, // isEmptyElement

@@ -44,10 +44,38 @@ namespace System.Xml
 
 		public abstract string LookupPrefix (string ns);
 
-		[MonoTODO]
+		[MonoTODO("DTDs must be implemented to use 'defattr' parameter.")]
 		public virtual void WriteAttributes (XmlReader reader, bool defattr)
 		{
-			throw new NotImplementedException ();
+			if(reader == null)
+				throw new ArgumentException("null XmlReader specified.", "reader");
+
+			switch(reader.NodeType)
+			{
+				case XmlNodeType.XmlDeclaration:
+					// this method doesn't write "<?xml " and "?>", at least MS .NET Framework as yet.
+					XmlDeclaration decl = new XmlDeclaration("1.0", String.Empty, String.Empty, null);
+					decl.Value = reader.Value;
+					if(decl.Version != null && decl.Version != String.Empty) WriteAttributeString("version", decl.Version);
+					if(decl.Encoding != null && decl.Encoding != String.Empty) WriteAttributeString("encoding", decl.Encoding);
+					if(decl.Standalone != null && decl.Standalone != String.Empty) WriteAttributeString("standalone", decl.Standalone);
+					break;
+				case XmlNodeType.Element:
+					while (reader.MoveToNextAttribute ()) 
+					{
+						WriteAttributeString(reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.Value);
+					}
+					break;
+				case XmlNodeType.Attribute:
+					do
+					{
+						WriteAttributeString(reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.Value);
+					}
+					while (reader.MoveToNextAttribute ()) ;
+					break;
+				default:
+					throw new XmlException("NodeType is not one of Element, Attribute, nor XmlDeclaration.");
+			}
 		}
 
 		public void WriteAttributeString (string localName, string value)

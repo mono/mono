@@ -8,6 +8,7 @@
 
 using System;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace System.Xml
 {
@@ -99,9 +100,32 @@ namespace System.Xml
 		}
 
 		void ParseInput (string input)
-		{			
-			Encoding = input.Split (new char [] { ' ' }) [1].Split (new char [] { '=' }) [1];
-			Standalone = input.Split (new char [] { ' ' }) [2].Split (new char [] { '=' }) [1];
+		{
+//			Encoding = input.Split (new char [] { ' ' }) [1].Split (new char [] { '=' }) [1];
+//			Standalone = input.Split (new char [] { ' ' }) [2].Split (new char [] { '=' }) [1];
+			Match m = XmlDeclRegex.Match(input);
+			if(!m.Success)
+				throw new XmlException("illegal XML declaration format.");
+			// Version = m.Result("${ver}");
+			Encoding = m.Result("${enc}");
+			Standalone = m.Result("${sta}");
 		}
+
+		// This regular expression matches XMLDecl of XML specification BNF[23]
+		static Regex xmlDeclRegex;
+		Regex XmlDeclRegex 
+		{
+			get 
+			{
+				if(xmlDeclRegex == null) xmlDeclRegex = new Regex(allMatch, RegexOptions.Compiled);
+				return xmlDeclRegex;
+			}
+		}
+
+		// This code makes some loss, but you may understand a bit easily.
+		const string verMatch = "\\s*version\\s*=\\s*(\\'(?<ver>.*?)\\'|\\\"(?<ver>.*)\")";
+		const string encMatch = "\\s*encoding\\s*=\\s*(\\'(?<enc>.*?)\\'|\\\"(?<enc>.*)\")";
+		const string staMatch = "\\s*standalone\\s*=\\s*(\\'(?<sta>.*?)\\'|\\\"(?<sta>.*)\")";
+		const string allMatch = verMatch + "(" + encMatch + ")?(" + staMatch + ")?";
 	}
 }

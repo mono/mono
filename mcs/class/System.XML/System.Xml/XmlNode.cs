@@ -450,6 +450,13 @@ namespace System.Xml
 						newNode = doc.CreateTextNode (xmlReader.Value);
 						currentNode.AppendChild (newNode);
 						break;
+
+					case XmlNodeType.XmlDeclaration:
+						// String Empties are dummy, then gives over setting value contents to setter.
+						newNode = doc.CreateNode(XmlNodeType.XmlDeclaration, String.Empty, String.Empty);
+						((XmlDeclaration)newNode).Value = xmlReader.Value;
+						this.AppendChild(newNode);
+						break;
 				}
 			}
 		}
