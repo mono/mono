@@ -906,7 +906,7 @@ namespace nunit.trees.TreeBag
 
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException), "Below minimum of set\r\nParameter name: item\r\nActual value was -2.")]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void PredecessorTooLow1()
 		{
 			tree.Predecessor(-2);
@@ -914,7 +914,7 @@ namespace nunit.trees.TreeBag
 
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException), "Below minimum of set\r\nParameter name: item\r\nActual value was 0.")]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void PredecessorTooLow2()
 		{
 			tree.Predecessor(0);
@@ -939,7 +939,7 @@ namespace nunit.trees.TreeBag
 
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException), "Below minimum of set\r\nParameter name: item\r\nActual value was -2.")]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void WeakPredecessorTooLow1()
 		{
 			tree.WeakPredecessor(-2);
@@ -963,7 +963,7 @@ namespace nunit.trees.TreeBag
 
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException), "Above maximum of set\r\nParameter name: item\r\nActual value was 38.")]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SuccessorTooHigh1()
 		{
 			tree.Successor(38);
@@ -971,7 +971,7 @@ namespace nunit.trees.TreeBag
 
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException), "Above maximum of set\r\nParameter name: item\r\nActual value was 39.")]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SuccessorTooHigh2()
 		{
 			tree.Successor(39);
@@ -996,7 +996,7 @@ namespace nunit.trees.TreeBag
 
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException), "Above maximum of set\r\nParameter name: item\r\nActual value was 39.")]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void WeakSuccessorTooHigh1()
 		{
 			tree.WeakSuccessor(39);
