@@ -379,7 +379,11 @@ namespace Mono.Security.Protocol.Tls
 			HashAlgorithm md5	= MD5.Create();
 			HashAlgorithm sha1	= SHA1.Create();
 
-			int secretLen = secret.Length / 2;
+			// split secret in 2
+			int secretLen = secret.Length >> 1;
+			// rounding up
+			if ((secret.Length & 0x1) == 0x1)
+				secretLen++;
 
 			// Seed
 			TlsStream seedStream = new TlsStream();
@@ -394,7 +398,7 @@ namespace Mono.Security.Protocol.Tls
 
 			// Secret2
 			byte[] secret2 = new byte[secretLen];
-			Buffer.BlockCopy(secret, secretLen, secret2, 0, secretLen);
+			Buffer.BlockCopy(secret, (secret.Length - secretLen), secret2, 0, secretLen);
 
 			// Secret 1 processing
 			byte[] p_md5 = Expand("MD5", secret1, seed, length);
@@ -483,7 +487,7 @@ namespace Mono.Security.Protocol.Tls
 				// Configure encrypt algorithm
 				this.encryptionAlgorithm.Mode		= this.cipherMode;
 				this.encryptionAlgorithm.Padding	= PaddingMode.None;
-				this.encryptionAlgorithm.KeySize	= this.keyMaterialSize * 8;
+				this.encryptionAlgorithm.KeySize	= this.expandedKeyMaterialSize * 8;
 				this.encryptionAlgorithm.BlockSize	= this.blockSize * 8;
 			}
 
@@ -549,7 +553,7 @@ namespace Mono.Security.Protocol.Tls
 				// Configure encrypt algorithm
 				this.decryptionAlgorithm.Mode		= this.cipherMode;
 				this.decryptionAlgorithm.Padding	= PaddingMode.None;
-				this.decryptionAlgorithm.KeySize	= this.keyMaterialSize * 8;
+				this.decryptionAlgorithm.KeySize	= this.expandedKeyMaterialSize * 8;
 				this.decryptionAlgorithm.BlockSize	= this.blockSize * 8;
 			}
 
