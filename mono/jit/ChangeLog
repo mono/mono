@@ -1,3 +1,7 @@
+2002-04-21  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* emit-x86.c: enter_method handles 8-byte aligned parameters.
+
 2002-04-20  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* jit,h, jit.c, x86.brg: NEWOBJ_SPEC and NEWARR_SPEC terminals for
