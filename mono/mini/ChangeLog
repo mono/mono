@@ -1,4 +1,9 @@
 
+Fri Jul 18 19:26:20 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, mini-x86.c, mini-ppc.c: mono_arch_call_opcode()
+	returns the arguments in a separte list, now.
+
 Fri Jul 18 13:16:18 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* aot.c, mini.c: updates for array type representation changes.
