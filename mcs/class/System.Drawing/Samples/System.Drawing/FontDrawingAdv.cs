@@ -170,28 +170,14 @@ namespace Font1Sample {
 			gr.DrawRectangle( new Pen(Color.Yellow), rect5);			
 			gr.DrawRectangle( new Pen(Color.Blue), rect6);				
 
-			Console.WriteLine ("1shit");
-		
 			SolidBrush solid  =  new SolidBrush(Color.Blue);
 
-				Console.WriteLine ("shit2");
-
-			if (solid==null)
-				Console.WriteLine ("shit");
-			else
-				Console.WriteLine ("solid2");
-			
-			
 			gr.DrawString("Samples of text with different fonts and formatting", 
 				new Font("Verdana",16), new SolidBrush(Color.White), new Rectangle (5,5,600,100), strfmttxt);											
 
 		
-
-		
-			
 			gr.FillEllipse(solid, rect1);
 
-			return;
 			gr.DrawRectangle( new Pen(Color.Green), rect2);			
 			gr.DrawRectangle( new Pen(Color.Green), rect7);			
 			
