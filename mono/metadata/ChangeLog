@@ -1,5 +1,10 @@
 2004-06-21  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.c (mono_debugger_unhandled_exception):
+	Protect the exception object from being finalized.
+
+2004-06-21  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.h (mono_debugger_unhandled_exception): New
 	public function.
 
