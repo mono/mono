@@ -167,7 +167,8 @@ test-generics-2:
 	$(MAKE) PROFILE=net_2_0 TEST_SOURCES="$(TEST_SOURCES_net_2_0)" test-harness
 
 clean-local:
-	rm -f *.exe *.netmodule *.out *.pdb casts.cs
+	-rm -fr dir-*
+	-rm -f *.exe *.netmodule *.out *.pdb casts.cs
 
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs

@@ -1,3 +1,7 @@
+2004-11-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (clean-local): Clean up the temporary dir-* trees.
+
 2004-11-18  Marek Safar <marek.safar@seznam.cz>
 
 	* test-318.cs: New test for wrong warning.
