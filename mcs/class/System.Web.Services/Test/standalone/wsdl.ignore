@@ -21,3 +21,13 @@ http://soapclient.com/xml/certService.wsdl					# Wrong schema
 http://ws.xara.com/navbar/navbar.wsdl						# Wrong schema
 http://www.cs.fsu.edu/~engelen/magic.wsdl					# Wrong schema
 http://www.agnisoft.com/soap/mssoapmp3search.xml			# Wrong schema
+http://www.cs.fsu.edu/~engelen/lu.wsdl						# Old schema version
+http://www.drouet-web.com/webservices/soap_cdtek.php?wsdl	# Wrong WSDL (empty)
+http://www.dotnetisp.com/webservices/dotnetisp/src2html.asmx?WSDL # Not a wsdl doc
+http://www.dotnetisp.com/webservices/dotnetisp/ville.asmx?WSDL # Not a wsdl doc
+http://www.dotnetisp.com/webservices/dotnetisp/codepostal.asmx?WSDL # Not a wsdl doc
+http://interpressfact.net/webservices/promotionService.asmx?wsdl # Not a wsdl doc
+http://www.interpressfact.net/webservices/getAds.asmx?wsdl # Not a wsdl doc
+http://soap.prowizorka.com/spam/wsdl/ISpamCheck # Not working
+http://www.interpressfact.net/webservices/getJoke.asmx?wsdl # Not working
+http://www.transactionalweb.com/SOAP/geoserve.wsdl	# Bug in Mono!!

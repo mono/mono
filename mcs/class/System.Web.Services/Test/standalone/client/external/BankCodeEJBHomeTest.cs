@@ -13,6 +13,8 @@ namespace BankCodeEJBHomeTests
 		[Test]
 		public void TestService ()
 		{
+			// BEA Weblogic / RPC
+			
 			BankCode bc = new BankCode ();
 			
 			AssertEquals ("#1", "10020000  ", bc.getCodeByName ("Berlin"));

@@ -1,3 +1,15 @@
+2004-01-27  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* wstest.cs: Improved the way wsdl documents are downloaded.
+	* services.xml: updated service list.
+	* wsdl.ignore: updated ignore list.
+	* client/external/GlobalWeatherTest.cs: new test.
+	* client/external/syndicateTest.cs: new test.
+	* client/external/TemperatureServiceTest.cs: new test.
+	* client/external/BankCodeEJBHomeTest.cs: added comment.
+	* server/TestBinding1.asmx, server/TestBinding2.asmx,
+	* server/TestBinding3.asmx, server/TestBinding4.asmx: new test services
+
 2004-01-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* wstest.cs: Wsdl documents are cached locally.

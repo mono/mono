@@ -181,19 +181,21 @@ public class Driver
 				Console.Write ("Resolving " + re.Url + " ");
 				try
 				{
-					re.Resolve ();
-					Console.WriteLine ("OK");
-					
-					ServiceDescription doc = client.Documents [re.Url] as ServiceDescription;
-					if (doc != null && sd == null)
+					DiscoveryClientProtocol contract = new DiscoveryClientProtocol ();
+					contract.DiscoverAny (re.Url);
+					if (sd == null)
 					{
-						sd = CreateServiceData (re, doc);
+						sd = CreateServiceData (re, contract);
 						services.services.Add (sd);
 					}
 					
 					string wsdlFile = GetWsdlFile (sd);
 					CreateFolderForFile (wsdlFile);
+					
+					ServiceDescription doc = (ServiceDescription) contract.Documents [re.Url];
 					doc.Write (wsdlFile);
+					
+					Console.WriteLine ("OK");
 				}
 				catch (Exception ex)
 				{
@@ -204,9 +206,12 @@ public class Driver
 		}
 	}
 	
-	public static ServiceData CreateServiceData (DiscoveryReference dref, ServiceDescription doc)
+	public static ServiceData CreateServiceData (DiscoveryReference dref, DiscoveryClientProtocol contract)
 	{
 		ServiceData sd = new ServiceData ();
+		ServiceDescriptionCollection col = new ServiceDescriptionCollection ();
+		foreach (object doc in contract.Documents.Values)
+			if (doc is ServiceDescription) col.Add ((ServiceDescription)doc);
 		
 		string name = GetServiceName (dref);
 		sd.Name = name;
@@ -219,7 +224,7 @@ public class Driver
 		
 		sd.Wsdl = dref.Url;
 		
-		string loc = GetLocation (doc);
+		string loc = GetLocation (col[0]);
 		if (loc != null)
 		{
 			WebResponse res = null;
@@ -238,16 +243,14 @@ public class Driver
 			}
 		}
 		
-		ArrayList bins = GetBindingTypes (doc);
+		ArrayList bins = GetBindingTypes (col);
 		sd.Protocols = (string[]) bins.ToArray(typeof(string));
 		return sd;
 	}
-
-	static ArrayList GetBindingTypes (ServiceDescription doc)
+	
+	static ArrayList GetBindingTypes (ServiceDescriptionCollection col)
 	{
-		ServiceDescriptionCollection col = new ServiceDescriptionCollection ();
-		col.Add (doc);
-		
+		ServiceDescription doc = col [0];
 		ArrayList list = new ArrayList ();
 		foreach (Service s in doc.Services)
 		{
