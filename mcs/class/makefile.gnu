@@ -21,7 +21,7 @@ DIRS =	corlib				\
 	Microsoft.VisualBasic		\
 	System.Windows.Forms
 
-#	Mono.Data.TdsClient		\
+#	Mono.Data.TdsClient		
 
 default: all
 
