@@ -1,6 +1,18 @@
 using System;
 using System.Reflection;
 
+//
+// Test the setting for the default public constructor
+//
+abstract class Abstract {
+}
+
+//
+// Test the setting for the default public consturctor
+//
+class Plain {
+}
+
 class Test {
 
 	static protected internal void MyProtectedInternal () { }
@@ -47,6 +59,23 @@ class Test {
 		if (mpia != MethodAttributes.Private)
 			return 4;
 
+		//
+		// Test 17.10.4 accessibility (default constructor permissions)
+		//
+		ConstructorInfo ci = typeof (Abstract).GetConstructor
+			(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type [0], new
+			 ParameterModifier [0]);
+
+		if (!ci.IsFamily)
+			return 5;
+
+		ci = typeof (Plain).GetConstructor
+			(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type [0], new
+			 ParameterModifier [0]);
+
+		if (!ci.IsPublic)
+			return 6;
+		
 		Console.WriteLine ("All tests pass");
 		return 0;
 	}
