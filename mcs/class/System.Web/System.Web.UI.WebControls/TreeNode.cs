@@ -118,9 +118,9 @@ namespace System.Web.UI.WebControls
 			set {
 				if (SelectedFlag) {
 					if (value != null)
-						value.SetSelectedNode (this);
+						value.SetSelectedNode (this, false);
 					else if (tree != null)
-						tree.SetSelectedNode (null);
+						tree.SetSelectedNode (null, false);
 				}
 				tree = value;
 				if (nodes != null)
@@ -433,9 +433,9 @@ namespace System.Web.UI.WebControls
 			set {
 				if (tree != null) {
 					if (!value && tree.SelectedNode == this)
-						tree.SetSelectedNode (null);
+						tree.SetSelectedNode (null, false);
 					else if (value)
-						tree.SetSelectedNode (this);
+						tree.SetSelectedNode (this, false);
 				}
 				else
 					SelectedFlag = value;
@@ -574,7 +574,7 @@ namespace System.Web.UI.WebControls
 			ViewState.LoadViewState (states [0]);
 			
 			if (tree != null && SelectedFlag)
-				tree.SetSelectedNode (this);
+				tree.SetSelectedNode (this, true);
 			
 			if (!PopulateOnDemand || Populated)
 				((IStateManager)ChildNodes).LoadViewState (states [1]);

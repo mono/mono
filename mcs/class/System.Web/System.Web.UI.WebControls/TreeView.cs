@@ -654,14 +654,15 @@ namespace System.Web.UI.WebControls
 			get { return HtmlTextWriterTag.Div; }
 		}
 		
-		internal void SetSelectedNode (TreeNode node)
+		internal void SetSelectedNode (TreeNode node, bool loading)
 		{
 			if (selectedNode == node) return;
 			if (selectedNode != null)
 				selectedNode.SelectedFlag = false;
 			selectedNode = node;
 			selectedNode.SelectedFlag = true;
-			OnSelectedNodeChanged (new TreeNodeEventArgs (selectedNode));
+			if (!loading)
+				OnSelectedNodeChanged (new TreeNodeEventArgs (selectedNode));
 		}
 		
 		internal void NotifyCheckChanged (TreeNode node)

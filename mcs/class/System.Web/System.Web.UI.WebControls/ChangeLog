@@ -1,3 +1,8 @@
+2005-03-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TreeNode.cs, TreeView.cs: Don't raise the SelectedNodeChanged
+	  event when loading the view state. Fixes #73746.
+
 2005-03-16  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ListControl.cs: Load selected indices in the right place. Fixes #73745.
