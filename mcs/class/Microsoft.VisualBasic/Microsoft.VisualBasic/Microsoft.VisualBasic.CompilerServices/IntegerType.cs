@@ -38,6 +38,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class IntegerType {
+		private IntegerType () {}
+
 		// Methods
 		/**
 		 * The method try to convert given string to int in a following way:

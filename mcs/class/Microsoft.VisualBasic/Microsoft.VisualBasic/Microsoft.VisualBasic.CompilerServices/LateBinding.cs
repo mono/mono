@@ -43,6 +43,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute]
 	sealed public class LateBinding {
+		private LateBinding () {}
 
 		[System.Diagnostics.DebuggerHiddenAttribute] 
 		[System.Diagnostics.DebuggerStepThroughAttribute] 

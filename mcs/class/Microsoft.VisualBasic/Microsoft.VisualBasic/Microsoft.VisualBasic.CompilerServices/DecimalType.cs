@@ -36,6 +36,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class DecimalType {
+		private DecimalType () {}
+
 		// Methods
 		/**
 		 * This method converts given boolean to Decimal. true is converted to -1

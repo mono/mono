@@ -39,6 +39,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class DateType {
+		private DateType () {}
+
 		// Methods
 		/**
 		  * The method converts given object to DateTime by the following logic:

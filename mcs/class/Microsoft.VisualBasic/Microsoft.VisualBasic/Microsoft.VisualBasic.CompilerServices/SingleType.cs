@@ -39,6 +39,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class SingleType {
+		private SingleType () {}
 
 		/**
 		 * Converts given string to float

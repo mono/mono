@@ -37,6 +37,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class ShortType {
+		private ShortType () {}
+
 		// Methods
 		/**
 		 * The method converts given object to long by the following logic:

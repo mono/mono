@@ -40,6 +40,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class ByteType {
+		private ByteType () {}
     
 		/**
 		 * The method converts given object to byte by the following logic:

@@ -41,6 +41,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class FlowControl {
+		private FlowControl () {}
+
 		private sealed /*static (final)in mainsoft java code*/ class ObjectFor {
 			public object Counter;
 

@@ -39,6 +39,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class StringType {
+		private StringType () {}
+
 		/**
 		 * This method is called when a seconf asterisk appears in the pattern.
 		 * @param pattern the relevant part of the original user pattern

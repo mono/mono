@@ -36,6 +36,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class CharType {
+		private CharType () {}
+
 		/**
 		   * The method converts given object to char by the following logic:
 		   * 1. If input object is null - return '\0'

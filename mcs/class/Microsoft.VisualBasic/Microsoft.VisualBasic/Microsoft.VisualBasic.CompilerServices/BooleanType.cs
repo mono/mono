@@ -38,6 +38,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class BooleanType {
+		private BooleanType () {}
+
 		/**
 				 * The method converts given object to boolean by the following logic:
 				 * 1. If input object is null - return null

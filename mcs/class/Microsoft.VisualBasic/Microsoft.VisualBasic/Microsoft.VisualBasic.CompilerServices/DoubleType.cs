@@ -33,6 +33,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	sealed public class DoubleType {
+		private DoubleType () {}
+
 		/**
 		 * Converts given string to double
 		 * @param value string to convert

@@ -46,6 +46,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[StructLayout(LayoutKind.Auto)] 
 	public class ProjectData {
 
+		private ProjectData () {}
+
 		internal static int erl;
 		internal static Microsoft.VisualBasic.ErrObject pErr = new ErrObject();
 

@@ -37,6 +37,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class LongType {
+		private LongType () {}
+
 		// Methods
 		/**
 		 * The method converts given object to long by the following logic:
