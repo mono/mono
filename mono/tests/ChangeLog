@@ -1,5 +1,9 @@
 2004-08-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal9.cs: Clean up and expand custom marshalling tests.
+
+	* marshal10.cs: Merge this into marshal9.cs.
+
 	* pinvoke12.cs: Remove, this was merged into pinvoke2.cs a long time
 	ago.
 
