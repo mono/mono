@@ -1,3 +1,7 @@
+2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs: Make slothash a ThreadStatic field. Fixes #65414.
+
 2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Monitor.cs Interlocked.cs: Add net 2.0 ReliabilityContractAttributes.

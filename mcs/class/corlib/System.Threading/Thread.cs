@@ -76,7 +76,6 @@ namespace System.Threading
 		private IntPtr static_data;
 		private IntPtr jit_data;
 		private IntPtr lock_data;
-		Hashtable slothash;
 		Context current_appcontext;
 		int stack_size;
 		object start_obj;
@@ -90,6 +89,9 @@ namespace System.Threading
 		private IntPtr serialized_ui_culture_info;
 		private int serialized_ui_culture_info_len;
 		#endregion
+
+		[ThreadStatic] 
+		static Hashtable slothash;
 
 		// can be both a ThreadSart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
@@ -144,35 +146,6 @@ namespace System.Threading
 			}
 		}
 
-		private static Hashtable GetTLSSlotHash() {
-			Thread t = CurrentThread;
-			if (t.slothash == null) {
-				// Not synchronised, because this is
-				// thread specific anyway.
-				t.slothash = new Hashtable ();
-			}
-
-			return t.slothash;
-		}
-		
-		internal static object ResetDataStoreStatus () {
-			Thread t = CurrentThread;
-			Hashtable slothash = t.slothash;
-			t.slothash = null;
-			return slothash;
-		}
-
-		internal static void RestoreDataStoreStatus (object data) {
-			Thread t = CurrentThread;
-			t.slothash = ((Hashtable)data);
-		}
-
-		public static LocalDataStoreSlot AllocateDataSlot() {
-			LocalDataStoreSlot slot = new LocalDataStoreSlot();
-
-			return(slot);
-		}
-
 		// Stores a hash keyed by strings of LocalDataStoreSlot objects
 		static Hashtable datastorehash;
 		private static object datastore_lock = new object ();
@@ -216,9 +189,25 @@ namespace System.Threading
 			}
 		}
 
+		private static Hashtable SlotHash {
+			get {
+				if (slothash == null)
+					slothash = new Hashtable ();
+				return slothash;
+			}
+		}
+
+		public static LocalDataStoreSlot AllocateDataSlot() {
+			return new LocalDataStoreSlot();
+		}
+
 		public static object GetData(LocalDataStoreSlot slot) {
-			Hashtable slothash=GetTLSSlotHash();
-			return(slothash[slot]);
+			return SlotHash [slot];
+		}
+
+		public static void SetData(LocalDataStoreSlot slot,
+					   object data) {
+			SlotHash [slot] = data;
 		}
 
 		public static AppDomain GetDomain() {
@@ -249,18 +238,6 @@ namespace System.Threading
 		public static void ResetAbort ()
 		{
 			ResetAbort_internal ();
-		}
-		
-
-		public static void SetData(LocalDataStoreSlot slot,
-					   object data) {
-			Hashtable slothash=GetTLSSlotHash();
-
-			if(slothash.Contains(slot)) {
-				slothash.Remove(slot);
-			}
-			
-			slothash.Add(slot, data);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
