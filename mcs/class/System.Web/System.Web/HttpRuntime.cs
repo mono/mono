@@ -34,11 +34,10 @@ namespace System.Web
 			autogenKeys = new byte[88];
 			initialized = false;
 			isapiLoaded = false;
-			throw new NotImplementedException();
 			if(!DesignTimeParseData.InDesigner)
 				Initialize();
 			runtime     = new HttpRuntime();
-			if(!DesignerTimeParseData.InDesigner)
+			if(!DesignTimeParseData.InDesigner)
 				runtime.Init();
 		}
 		

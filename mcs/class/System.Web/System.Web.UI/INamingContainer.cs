@@ -12,5 +12,7 @@ using System.Web;
 
 namespace System.Web.UI
 {
-        public interface INamingContainer;
+        public interface INamingContainer
+        {
+		}
 }

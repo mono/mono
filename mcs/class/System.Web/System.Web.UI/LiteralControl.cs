@@ -31,7 +31,7 @@ namespace System.Web.UI
                                 _text = value;
                         }
                 }
-                public override Render(HtmlTextWriter writer)
+                protected override void Render(HtmlTextWriter writer)
                 {
                         writer.Write(_text);
                 }

@@ -3,7 +3,7 @@
  * Class:     UrlUtils
  * 
  * Author:  Gaurav Vaish
- * Contact: <gvaish@iitk.ac.in>
+ * Maintainer: gvaish@iitk.ac.in
  * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)

@@ -7,6 +7,11 @@
 // (C) Bob Smith
 //
 
+/*
+ * Maintainer: bob@thestuff.net, gvaish@iitk.ac.in
+ * (C) Bob Smith, Gaurav Vaish
+ */
+
 //notes: view state only tracks changes after OnInit method is executed for the page request. You can read from it at any time, but cant write to it during rendering.
 //even more notes: view state info in trackviewstate method description. read later.
 //Ok, enough notes: what the heck is different between enable view state, and track view state.
@@ -51,7 +56,7 @@
 // ASP.test4_aspx.Page_Unload(Object Sender, EventArgs e) in \\genfs2\www24\bobsmith11\test4.aspx:6
 // System.Web.UI.Control.OnUnload(EventArgs e) +67
 // System.Web.UI.Control.UnloadRecursive(Boolean dispose) +78
-// System.Web.UI.Page.ProcessRequest() 
+// System.Web.UI.Page.ProcessRequest()
 
 // ASP.test4_aspx.Page_Kill(Object Sender, EventArgs e) in \\genfs2\www24\bobsmith11\test4.aspx:6
 // System.Web.UI.Control.OnPreRender(EventArgs e) +67
@@ -73,6 +78,7 @@
 // System.Web.UI.Page.ProcessRequestMain() +256
 
 using System;
+using System.Collections;
 using System.Web;
 using System.ComponentModel;
 
@@ -97,13 +103,16 @@ namespace System.Web.UI
                 private Page _page = null;
                 private Control _parent = null;
                 private ISite _site = null;
-                private bool _visible; //TODO: what default?
+                private bool _visible = true;
                 private HttpContext _context = null;
                 private bool _childControlsCreated = false;
                 private StateBag _viewState = null;
                 private bool _trackViewState = false;
                 private EventHandlerList _events = new EventHandlerList();
                 private RenderMethod _renderMethodDelegate = null;
+        	
+        	    private DataBindingCollection dataBindings = null;
+
                 public Control()
                 {
                         if (this is NamingContainer) isNamingContainer = true;
@@ -532,6 +541,30 @@ namespace System.Web.UI
                 {
                         //TODO
                 }
+                
+                void IParserAccessor.AddParsedSubObject(object obj)
+                {
+                	this.AddParsedSubObject(obj);
+                }
+                
+                DataBindingCollection IDataBindingsAccessor.DataBindings
+                {
+                	get
+                	{
+                		if(dataBindings == null)
+                			dataBindings = new DataBindingCollection();
+                		return dataBindings;
+                	}
+                }
+                
+                bool IDataBindingsAccessor.HasDataBindings
+                {
+                	get
+                	{
+                		return (dataBindings!=null && dataBindings.Count>0);
+                	}
+                }
+                
                 //TODO: I think there are some needed Interface implementations to do here.
                 //TODO: Find api for INamingContainer.
         }

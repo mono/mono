@@ -30,10 +30,12 @@ namespace System.Web.UI.WebControls
 		private TableItemStyle alternatingItemStyle;
 		private TableItemStyle editItemStyle;
 		private TableItemStyle footerStyle;
+		private TableItemStyle headerStyle;
 
 		private ITemplate alternatingItemTemplate;
 		private ITemplate editItemTemplate;
 		private ITemplate footerTemplate;
+		private ITemplate headerTemplate;
 
 		private int editItemIndex;
 		private bool extractTemplateRows;
@@ -47,6 +49,7 @@ namespace System.Web.UI.WebControls
 			alternatingItemTemplate = null;
 			editItemTemplate        = null;
 			footerTemplate          = null;
+			headerTemplate          = null;
 			
 			extractTemplateRows = false;
 		}
@@ -139,6 +142,36 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		public virtual bool ShowHeader
+		{
+			get
+			{
+				object o = ViewState["ShowHeader"];
+				if(o!=null)
+					return (bool)o;
+				return true;
+			}
+			set
+			{
+				ViewState["ShowHeader"] = value;
+			}
+		}
+		
+		public virtual bool ShowFooter
+		{
+			get
+			{
+				object o = ViewState["ShowFooter"];
+				if(o!=null)
+					return (bool)o;
+				return true;
+			}
+			set
+			{
+				ViewState["ShowFooter"] = value;
+			}
+		}
+		
 		//TODO: To implement the following functions found in the BaseDataList abstract class
 		/*
 		 * PrepareControlHierarchy()
@@ -165,9 +198,23 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(footerTemplate!=null)
-					return true;
-				return false;
+				return !(ShowFooter && footerTemplate!=null);
+			}
+		}
+		
+		bool IRepeatInfoUser.HasHeader
+		{
+			get
+			{
+				return !(ShowHeader && headerTemplate!=null);
+			}
+		}
+		
+		bool IRepeatInfoUser.HasSeparators
+		{
+			get
+			{
+				return (separatorTemplate!=null);
 			}
 		}
 	}

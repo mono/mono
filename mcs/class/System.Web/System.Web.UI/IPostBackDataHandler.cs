@@ -9,6 +9,7 @@
 
 using System;
 using System.Web;
+using System.Collections.Specialized;
 
 namespace System.Web.UI
 {
