@@ -1,3 +1,16 @@
+2002-02-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Indirection): New helper class.  Unary will
+	create Indirection classes to be able to implement the
+	IMemoryLocation interface on it.
+
+2002-02-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (fixed_statement): reference the right statement.
+
+	* statement.cs (Fixed.Emit): Finish implementing the fixed
+	statement for the &x case.
+
 2002-02-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Property.Define, Method.Define): Remove newslot when

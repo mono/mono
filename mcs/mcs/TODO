@@ -145,6 +145,14 @@ BUGS
 PENDING TASKS
 -------------
 
+* Code compiled with /unsafe needs:
+	.module b.exe
+	// MVID: {E01E6512-AD32-4108-A407-3857203C261C}
+	.custom instance void [mscorlib]System.Security.UnverifiableCodeAttribute::.ctor() = ( 01 00 00 00 ) 
+
+	
+* Pointer Arithmetic
+
 * Revisit
 
 	Primary-expression, as it has now been split into 

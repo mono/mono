@@ -40,3 +40,5 @@ numbers to match the Microsoft numbers:
 	ret is required or not.
 
 -14     Invalid number passed to probe
+
+-15	Does not implement the IMemoryLocation interface

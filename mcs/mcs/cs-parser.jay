@@ -3337,7 +3337,7 @@ fixed_statement
 		ArrayList list = (ArrayList) $4;
 		int top = list.Count;
 
-		$$ = new Fixed ((string) $3, (ArrayList) $4, (Statement) $6, l);
+		$$ = new Fixed ((string) $3, (ArrayList) $4, (Statement) $7, l);
 	  }
 	;
 

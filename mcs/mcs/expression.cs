@@ -435,9 +435,12 @@ namespace Mono.CSharp {
 						"The * or -> operator can only be applied to pointers");
 					return null;
 				}
-				
-				type = expr_type.GetElementType ();
-				return this;
+
+				//
+				// We create an Indirection expression, because
+				// it can implement the IMemoryLocation.
+				// 
+				return new Indirection (expr);
 			}
 			
 			Error (187, loc, "No such operator '" + OperName () + "' defined for type '" +
@@ -485,11 +488,6 @@ namespace Mono.CSharp {
 				((IMemoryLocation)expr).AddressOf (ec);
 				break;
 				
-			case Operator.Indirection:
-				expr.Emit (ec);
-				LoadFromPtr (ig, Type, false);
-				break;
-				
 			default:
 				throw new Exception ("This should not happen: Operator = "
 						     + oper.ToString ());
@@ -507,9 +505,46 @@ namespace Mono.CSharp {
 
 			expr.Emit (ec);
 		}
+
+		public override string ToString ()
+		{
+			return "Unary (" + oper + ", " + expr + ")";
+		}
 		
 	}
 
+	//
+	// Unary operators are turned into Indirection expressions
+	// after semantic analysis (this is so we can take the address
+	// of an indirection).
+	//
+	public class Indirection : Expression, IMemoryLocation {
+		Expression expr;
+		
+		public Indirection (Expression expr)
+		{
+			this.expr = expr;
+			this.type = expr.Type.GetElementType ();
+			eclass = ExprClass.Value;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			expr.Emit (ec);
+			LoadFromPtr (ec.ig, Type, false);
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			expr.Emit (ec);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+	}
+	
 	/// <summary>
 	///   Unary Mutator expressions (pre and post ++ and --)
 	/// </summary>

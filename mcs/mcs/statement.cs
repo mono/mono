@@ -659,6 +659,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void MakePinned ()
+		{
+			//
+			// FIXME: Flag the "LocalBuilder" type as being
+			// pinned.  Figure out API.
+			//
+		}				
 	}
 		
 	/// <summary>
@@ -1721,6 +1728,7 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
 			Type t;
 			
 			t = RootContext.LookupType (ec.TypeContainer, type, false, loc);
@@ -1731,11 +1739,21 @@ namespace Mono.CSharp {
 				VariableInfo vi = (VariableInfo) p.First;
 				Expression e = (Expression) p.Second;
 
+				vi.MakePinned ();
+				
 				//
 				// The rules for the possible declarators are pretty wise,
 				// but the production on the grammar is more concise.
 				//
-				// So we have to enforce these rules here
+				// So we have to enforce these rules here.
+				//
+				// We do not resolve before doing the case 1 test,
+				// because the grammar is explicit in that the token &
+				// is present, so we need to test for this particular case.
+				//
+
+				//
+				// Case 1: & object.
 				//
 				if (e is Unary && ((Unary) e).Oper == Unary.Operator.AddressOf){
 					Expression child = ((Unary) e).Expr;
@@ -1753,14 +1771,78 @@ namespace Mono.CSharp {
 					if (e == null)
 						continue;
 
-					if (!TypeManager.VerifyUnManaged (e.Type, loc))
+					child = ((Unary) e).Expr;
+					
+					if (!TypeManager.VerifyUnManaged (child.Type, loc))
 						continue;
 
+					//
+					// Store pointer in pinned location
+					//
+					e.Emit (ec);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+					statement.Emit (ec);
+
+					// Clear the pinned variable.
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Conv_U);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+					continue;
 				}
-				
+
 				e = e.Resolve (ec);
 				if (e == null)
 					continue;
+
+				//
+				// Case 2: Array
+				//
+				if (e.Type.IsArray){
+					Type array_type = e.Type.GetElementType ();
+					
+					//
+					// Provided that array_type is unmanaged,
+					//
+					if (!TypeManager.VerifyUnManaged (array_type, loc))
+						continue;
+
+					//
+					// and T* is implicitly convertible to the
+					// pointer type given in the fixed statement.
+					//
+					string array_ptr_type_name = array_type.FullName + "*";
+					Type array_ptr_type = Type.GetType (array_ptr_type_name);
+					if (array_ptr_type == null){
+						ModuleBuilder mb = RootContext.ModuleBuilder;
+
+						array_ptr_type = mb.GetType (array_ptr_type_name);
+					}
+
+#if PENDING
+					Expression converted = Expression.ConvertImplicitRequired (
+						ec, array_ptr_type, vi.VariableType, loc);
+					if (converted == null)
+						continue;
+
+					//
+					// Store pointer in pinned location
+					//
+					converted.Emit (ec);
+#endif
+					
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+					statement.Emit (ec);
+					
+					// Clear the pinned variable.
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Conv_U);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+					continue;
+				}
 			}
 
 			return false;
