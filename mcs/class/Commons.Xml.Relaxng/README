@@ -1,0 +1,26 @@
+* Commons.Xml.Relaxng
+
+** Introduction
+
+  RelaxngValidatingReader is an implementation to validate XML with RELAX NG
+  grammar. You can use full standard grammar components with it.
+
+  Currently it supports only grammar xml syntax (in the future it will 
+  support compact syntax).
+
+  It supports RELAX NG predefined datatypes and XML Schema datatypes (its
+  DatatypeLibrary is http://www.w3.org/2001/XMLSchema-datatypes ).
+
+
+** Known bugs
+
+  Currently it is beta version as yet. It has some bugs:
+
+	- Grammar simplification is incorrectly implemented as yet. It will
+	  fail to check incorrect recursion and might bind ref to incorrect
+	  definitions.
+	  not handle the same name define components properly.
+	- Name class analysis and constraint check is not implemented (part
+	  of spec 7).
+	- Empty string won't be validated properly.
+
