@@ -141,6 +141,10 @@ namespace System.IO {
 				if (DisposedAlready)
 					throw new ObjectDisposedException("StreamWriter");
 				iflush = value;
+
+				if (iflush) {
+					Flush ();
+				}
 			}
 		}
 
