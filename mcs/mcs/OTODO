@@ -1,0 +1,102 @@
+---- This is a list of old tasks, just here for historical value ----
+
+Open question:
+		Create a toplevel block for anonymous methods?	
+
+Anonymous Methods
+-----------------
+
+	Plan:
+
+		* Resolve anonymous methods before.
+		* Each time a Local matches, if the mode is `InAnonymous', flag
+	  	  the VariableInfo for `proxying'.
+		* During Resolve track the depth required for local variables.
+		* Before Emit, create proxy classes with proper depth.
+		* Emit.
+
+Notes on memory allocation
+--------------------------
+
+	Outdated:
+
+	A run of the AllocationProfile shows that the compiler allocates roughly
+	30 megabytes of strings.  From those, 20 megabytes come from
+	LookupType.  
+
+	See the notes on current_container problems below on memory usage.  
+
+LookupTypeReflection:
+---------------------
+
+	With something like `System.Object', LookupTypeReflection will be called
+	twice: once to find out that `System' is not a type and once
+	for System.Object.
+
+	This is required because System.Reflection requires that the type/nested types are
+	not separated by a dot but by a plus sign.
+
+	A nested class would be My+Class (My being the toplevel, Class the nested one).
+
+	It is interesting to look at the most called lookups when bootstrapping MCS:
+
+    647	LTR: ArrayList
+    713	LTR: System.Globalization
+    822	LTR: System.Object+Expression
+    904	LTR: Mono.CSharp.ArrayList
+    976	LTR: System.Runtime.CompilerServices
+    999	LTR: Type
+   1118	LTR: System.Runtime
+   1208	LTR: Mono.CSharp.Type
+   1373	LTR: Mono.Languages
+   1599	LTR: System.Diagnostics
+   2036	LTR: System.Text
+   2302	LTR: System.Reflection.Emit
+   2515	LTR: System.Collections
+   4527	LTR: System.Reflection
+  22273	LTR: Mono.CSharp
+  24245	LTR: System
+  27005	LTR: Mono
+
+	Analysis:
+		The top 9 lookups are done for things which are not types.
+
+		Mono.CSharp.Type happens to be a common lookup: the class Type
+		used heavily in the compiler in the default namespace.
+
+		RED FLAG:
+
+		Then `Type' is looked up alone a lot of the time, this happens
+		in parameter declarations and am not entirely sure that this is
+		correct (FindType will pass to LookupInterfaceOrClass a the current_type.FullName,
+		which for some reason is null!).  This seems to be a problem with a lost
+		piece of context during FindType.
+
+		System.Object is also used a lot as a toplevel class, and we assume it will
+		have children, we should just shortcut this.
+
+    A cache:
+
+	Adding a cache and adding a catch for `System.Object' to flag that it wont be the
+	root of a hierarchy reduced the MCS bootstrap time from 10.22 seconds to 8.90 seconds.
+
+	This cache is currently enabled with SIMPLE_SPEEDUP in typemanager.cs.  Memory consumption
+	went down from 74 megs to 65 megs with this change.  
+
+Major tasks:
+------------
+
+	Pinned and volatile require type modifiers that can not be encoded
+	with Reflection.Emit.
+
+* Revisit
+
+	Primary-expression, as it has now been split into 
+	non-array-creation-expression and array-creation-expression.
+		
+* Emit `pinned' for pinned local variables.
+
+	Both `modreq' and pinned will require special hacks in the compiler.
+
+* Make sure that we are pinning the right variable
+
