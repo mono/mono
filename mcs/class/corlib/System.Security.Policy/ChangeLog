@@ -1,4 +1,6 @@
 2003-08-04  Duncan Mak  <duncan@ximian.com>
+        
+	* IConstantMembershipCondition.cs: added.
 
 	* AllMembershipCondition.cs: 
 	* ApplicationDirectoryMembershipCondition.cs:

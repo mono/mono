@@ -836,6 +836,7 @@ System.Security.Policy/CodeGroup.cs
 System.Security.Policy/Evidence.cs
 System.Security.Policy/FileCodeGroup.cs
 System.Security.Policy/IBuiltInEvidence.cs
+System.Security.Policy/IConstantMembershipCondition.cs
 System.Security.Policy/IIdentityPermissionFactory.cs
 System.Security.Policy/IMembershipCondition.cs
 System.Security.Policy/PolicyException.cs
