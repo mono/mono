@@ -1,5 +1,10 @@
 2004-12-17  Jackson Harper  <jackson@ximian.com>
 
+	* X11Keyboard.cs: Send up/down input when generating
+	messages. Remove some unused vars.
+
+2004-12-17  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs:
 	* TreeView.cs: get rid of warnings.
 

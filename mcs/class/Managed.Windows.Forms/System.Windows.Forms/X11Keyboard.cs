@@ -291,15 +291,15 @@ namespace System.Windows.Forms {
 						KeybdEventFlags.None) | KeybdEventFlags.KeyUp;
 				if ((key_state_table [(int) vkey] & 0x1) != 0) { // it was on
 					if (type != XEventName.KeyPress) {
-						// SendKeyboardInput (vkey, scan, down, event_time);
-						// SendKeyboardInput (vkey, scan, up, event_time);
+						SendKeyboardInput (vkey, scan, down, event_time);
+						SendKeyboardInput (vkey, scan, up, event_time);
 						SetState (vkey, false);
 						key_state_table [(int) vkey] &= unchecked ((byte) ~0x01);
 					}
 				} else {
 					if (type == XEventName.KeyPress) {
-						// SendKeyboardInput (vkey, scan, down, event_time);
-						// SendKeyboardInput (vkey, scan, up, event_time);
+						SendKeyboardInput (vkey, scan, down, event_time);
+						SendKeyboardInput (vkey, scan, up, event_time);
 						SetState (vkey, true);
 						key_state_table [(int) vkey] |= 0x01;
 					}
@@ -502,14 +502,12 @@ namespace System.Windows.Forms {
 			XFreeModifiermap (modmap_unmanaged);
 
 			int [] ckey = new int [4];
-			bool vk_set = false;
 			KeyboardLayout layout = null;
 			int max_score = 0;
 			int max_seq = 0;
 			bool ismatch = false;
 			
 			foreach (KeyboardLayout current in KeyboardLayouts.Layouts) {
-				int ind = 0;
 				int ok = 0;
 				int score = 0;
 				int match = 0;
