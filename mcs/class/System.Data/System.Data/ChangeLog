@@ -1,3 +1,13 @@
+2004-02-02 Eran Domb <erand@mainsoft.com>
+
+	* DataSet.cs : Add indentation to the xml serialization only if we create the XmlWriter.
+	Add the namespace attribute even if namespace is an empty string for inteoperability with MS.NET.
+	* DataTable.cs (NewRow): Create only one DataRowBuilder.
+	Initiate new row with row id -1.
+	* DataRow.cs : Add RowId property.
+	* DataRowBuilder.cs : Add _rowId member.
+	* DataRowCollection.cs (Add) : Use the RowId property of the new row to check if it is already exists in the collection.
+
 2004-01-26 Eran Domb <erand@mainsoft.com>
 
 	* XmlConstants.cs : Added some constants.
