@@ -1,3 +1,7 @@
+2004-06-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Use $(PLATFORM_PATH_SEPARATOR) in MONO_PATH.
+
 2004-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (LIBRARY_SNK): Sign with Npgsql/Npgsql.snk.

@@ -39,7 +39,7 @@ RESX_RES = Npgsql/NpgsqlState.resources Npgsql/NpgsqlClosedState.resources Npgsq
 all: $(RESX_RES) $(the_lib)
 
 %.resources: %.resx
-	MONO_PATH=$(topdir)/class/lib/$(PROFILE):$$MONO_PATH $(INTERNAL_RESGEN) $<
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN) $<
 
 clean: clean-recursive clean-local
 
