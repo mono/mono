@@ -91,7 +91,7 @@ char  *rassoc;
 short **derives;
 char *nullable;
 
-extern char *mktemp();
+extern char *mkstemp();
 extern char *getenv();
 
 done(k)
@@ -273,9 +273,9 @@ create_file_names()
     prolog_file_name[len + 5] = 'p';
     local_file_name[len + 5] = 'l';
 
-    mktemp(action_file_name);
-    mktemp(prolog_file_name);
-    mktemp(local_file_name);
+    mkstemp(action_file_name);
+    mkstemp(prolog_file_name);
+    mkstemp(local_file_name);
 
     len = strlen(file_prefix);
 
