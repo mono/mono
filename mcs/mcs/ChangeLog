@@ -1,3 +1,9 @@
+2004-07-12  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-07-16  Martin Baulig  <martin@ximian.com>
 
 	* iterators.cs: Rewrote this.  We're now using one single Proxy
@@ -18,12 +24,6 @@
 
 	* typemanager.cs
 	(TypeManager.not_supported_exception_type): New type.	
-
-2004-07-12  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-07-14  Martin Baulig  <martin@ximian.com>
 
