@@ -184,7 +184,6 @@ namespace Mono.MonoBASIC
 %token DECLARE
 %token DEFAULT	
 %token DELEGATE	
-%token DESCRIPTION // MonoBASIC extension
 %token DIM
 %token DO	
 %token DOUBLE	
@@ -245,7 +244,6 @@ namespace Mono.MonoBASIC
 %token OVERLOADS
 %token OVERRIDABLE	
 %token OVERRIDES	
-%token PARAMETER // MonoBASIC extension
 %token PARAM_ARRAY
 %token PRESERVE
 %token PRIVATE	
@@ -273,7 +271,6 @@ namespace Mono.MonoBASIC
 %token STRING
 %token STRUCTURE
 %token SUB
-%token SUMMARY // MonoBASIC extension
 %token SYNCLOCK
 %token TEXT
 %token THEN
@@ -291,6 +288,7 @@ namespace Mono.MonoBASIC
 %token WITHEVENTS
 %token WRITEONLY
 %token XOR
+%token YIELD // MonoBASIC extension
 
 /* MonoBASIC single character operators/punctuation. */
 
@@ -1894,6 +1892,7 @@ jump_statement
 	| throw_statement
 	| */return_statement
 	| exit_statement
+	| yield_statement
 	;
 	        
 exit_statement
@@ -1965,6 +1964,42 @@ foreach_statement
 		$$ = f;
 	  }	  
 	;
+
+yield_statement 
+	: YIELD expression
+	  {
+		if (!UseExtendedSyntax)
+		{
+			ReportError9998();
+			$$ = null;
+		}
+/*		else
+			if (iterator_container == null){
+				Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+				$$ = null;
+			} else {
+				iterator_container.SetYields ();
+				$$ = new Yield ((Expression) $2, lexer.Location);
+			} */
+	  }
+	| YIELD STOP
+	  {
+		if (!UseExtendedSyntax)
+		{
+			ReportError9998();
+			$$ = null;
+		}
+/*		else
+			if (iterator_container == null){
+				Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+				$$ = null;
+			} else {
+				iterator_container.SetYields ();
+				$$ = new YieldBreak (lexer.Location);
+			} */
+	  }
+	;
+
 
 
 try_statement
@@ -3795,6 +3830,11 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 
 static bool AlwaysAccept (MemberInfo m, object filterCriteria) {
 	return true;
+}
+
+private void ReportError9998()
+{
+	Report.Error (9998, lexer.Location, "This construct is only available in MonoBASIC extended syntax.");
 }
 
 public override int parse ()

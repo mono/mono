@@ -27,6 +27,8 @@ namespace Mono.MonoBASIC
 	public class Tokenizer : yyParser.yyInput
 	{
 		TextReader reader;
+		// TODO: public SourceFile file_name;
+		public string file_name;
 		public string ref_name;
 		public int ref_line = 1;
 		public int line = 1;
@@ -68,6 +70,22 @@ namespace Mono.MonoBASIC
 		static NumberStyles styles;
 		static NumberFormatInfo csharp_format_info;
 		
+		//
+		// Pre-processor
+		//
+		Hashtable defines;
+
+		const int TAKING        = 1;
+		const int TAKEN_BEFORE  = 2;
+		const int ELSE_SEEN     = 4;
+		const int PARENT_TAKING = 8;
+		const int REGION        = 16;		
+
+		//
+		// pre-processor if stack state:
+		//
+		Stack ifstack;
+
 		//
 		// Values for the associated token returned
 		//
@@ -244,6 +262,11 @@ namespace Mono.MonoBASIC
 			keywords.Add ("withevents", Token.WITHEVENTS);
 			keywords.Add ("writeonly", Token.WRITEONLY);
 			keywords.Add ("xor", Token.XOR);
+
+			if (Parser.UseExtendedSyntax){
+				keywords.Add ("yield", Token.YIELD);
+			}
+
 		}
 
 		//
@@ -278,6 +301,16 @@ namespace Mono.MonoBASIC
 			}
 		}
 		
+		void define (string def)
+		{
+			if (!RootContext.AllDefines.Contains(def)){
+				RootContext.AllDefines [def] = true;
+			}
+			if (defines.Contains (def))
+				return;
+			defines [def] = true;
+		}
+
 		public bool PropertyParsing {
 			get {
 				return handle_get_set;
@@ -712,6 +745,8 @@ namespace Mono.MonoBASIC
 			return id.ToString ();
 		}
 
+		private bool tokens_seen = false;
+
 		public int xtoken ()
 		{
 			int t;
@@ -726,7 +761,8 @@ namespace Mono.MonoBASIC
 					return Token.REM;
 					
 				// Handle line continuation character
-				if (c == '_') {
+				if (c == '_') 
+				{
 					while ((c = getChar ()) != -1 && !IsEOL(c)) {}
 					c = getChar ();					
 				}
@@ -736,6 +772,7 @@ namespace Mono.MonoBASIC
 					line++;
 					ref_line++;
 					col = 0;
+					tokens_seen = false;
 					if (current_token == Token.EOL) // if last token was also EOL keep skipping
 						continue;
 					return Token.EOL;
@@ -748,6 +785,7 @@ namespace Mono.MonoBASIC
 						break;
 					if ((c = getChar()) != ']')
 						break;
+					tokens_seen = true;
 					return Token.IDENTIFIER;
 				}
 
@@ -758,46 +796,65 @@ namespace Mono.MonoBASIC
 					if ((id = GetIdentifier(c)) == null)
 						break;
 					val = id;
+					tokens_seen = true;
 					if (is_keyword(id))
 						return getKeyword(id);
 					return Token.IDENTIFIER;
 				}
 
 				// handle numeric literals
-				if (c == '.'){
+				if (c == '.')
+				{
+					tokens_seen = true;
 					if (Char.IsDigit ((char) peekChar ()))
 						return is_number (c);
 					return Token.DOT;
 				}
 				
 				if (Char.IsDigit ((char) c))
+				{
+					tokens_seen = true;
 					return is_number (c);
+				}
 
-				/* For now, limited support for pre-processor commands */
-				if (col == 1 && c == '#'){
-					System.Text.StringBuilder s = new System.Text.StringBuilder ();
+				if (c == '#' && !tokens_seen)
+				{
+					bool cont = true;
 					
-					while ((c = getChar ()) != -1 && (c != '\n')){
-						s.Append ((char) c);
+				start_again:
+					
+					cont = handle_preprocessing_directive (cont);
+
+					if (cont)
+					{
+						col = 0;
+						continue;
 					}
-					if (String.Compare (s.ToString (), 0, "line", 0, 4) == 0){
-						string arg = s.ToString ().Substring (5);
-						int pos;
+					col = 1;
 
-						if ((pos = arg.IndexOf (' ')) != -1 && pos != 0){
-							ref_line = System.Int32.Parse (arg.Substring (0, pos));
-							pos++;
-
-							char [] quotes = { '\"' };
-
-							ref_name = arg.Substring (pos);
-							ref_name.TrimStart (quotes);
-							ref_name.TrimEnd (quotes);
-						} else
-							ref_line = System.Int32.Parse (arg);
+					bool skipping = false;
+					for (;(c = getChar ()) != -1; col++)
+					{
+						if (IsEOL(c))
+						{
+							col = 0;
+							line++;
+							ref_line++;
+							skipping = false;
+						} 
+						else if (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0)
+							continue;
+						else if (c != '#')
+						{
+							skipping = true;
+							continue;
+						}	
+						if (c == '#' && !skipping)
+							goto start_again;
 					}
-					line++;
-					ref_line++;
+					tokens_seen = false;
+					if (c == -1)
+						Report.Error (1027, Location, "#endif/#endregion expected");
 					continue;
 				}
 				
@@ -806,12 +863,15 @@ namespace Mono.MonoBASIC
 						getChar ();
 						col++;
 					}
+					tokens_seen = true;
 					return t;
 				}
 				
 				// Treat string literals
 				if (c == '"'){
 					System.Text.StringBuilder s = new System.Text.StringBuilder ();
+
+					tokens_seen = true;
 
 					while ((c = getChar ()) != -1){
 						if (c == '"'){
@@ -873,6 +933,506 @@ namespace Mono.MonoBASIC
 			putback_char = -1;
 			
 			Location.Push (fname);
+		}
+
+		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
+		
+		void get_cmd_arg (out string cmd, out string arg)
+		{
+			int c;
+			
+			tokens_seen = false;
+			arg = "";
+			static_cmd_arg.Length = 0;
+				
+			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
+				static_cmd_arg.Append ((char) c);
+			}
+
+			cmd = static_cmd_arg.ToString ();
+
+			if (c == '\n'){
+				line++;
+				ref_line++;
+				return;
+			} else if (c == '\r')
+				col = 0;
+
+			// skip over white space
+			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
+				;
+
+			if (c == '\n'){
+				line++;
+				ref_line++;
+				return;
+			} else if (c == '\r'){
+				col = 0;
+				return;
+			}
+			
+			static_cmd_arg.Length = 0;
+			static_cmd_arg.Append ((char) c);
+			
+			while ((c = getChar ()) != -1 && (c != '\n') && (c != '\r')){
+				static_cmd_arg.Append ((char) c);
+			}
+
+			if (c == '\n'){
+				line++;
+				ref_line++;
+			} else if (c == '\r')
+				col = 0;
+			arg = static_cmd_arg.ToString ().Trim ();
+		}
+
+		//
+		// Handles the #line directive
+		//
+		bool PreProcessLine (string arg)
+		{
+			if (arg == "")
+				return false;
+
+			if (arg == "default"){
+				ref_line = line;
+				ref_name = file_name;
+				Location.Push (ref_name);
+				return true;
+			}
+			
+			try {
+				int pos;
+
+				if ((pos = arg.IndexOf (' ')) != -1 && pos != 0){
+					ref_line = System.Int32.Parse (arg.Substring (0, pos));
+					pos++;
+					
+					char [] quotes = { '\"' };
+					
+					string name = arg.Substring (pos). Trim (quotes);
+					ref_name = name; // TODO: Synchronize with mcs: Location.LookupFile (name);
+					Location.Push (ref_name);
+				} else {
+					ref_line = System.Int32.Parse (arg);
+				}
+			} catch {
+				return false;
+			}
+			
+			return true;
+		}
+
+		//
+		// Handles #define and #undef
+		//
+		void PreProcessDefinition (bool is_define, string arg)
+		{
+			if (arg == "" || arg == "true" || arg == "false"){
+				Report.Error (1001, Location, "Missing identifer to pre-processor directive");
+				return;
+			}
+
+			char[] whitespace = { ' ', '\t' };
+			if (arg.IndexOfAny (whitespace) != -1){
+				Report.Error (1025, Location, "Single-line comment or end-of-line expected");
+				return;
+			}
+
+			foreach (char c in arg){
+				if (!Char.IsLetter (c) && (c != '_')){
+					Report.Error (1001, Location, "Identifier expected");
+					return;
+				}
+			}
+
+			if (is_define){
+				if (defines == null)
+					defines = new Hashtable ();
+				define (arg);
+			} else {
+				if (defines == null)
+					return;
+				if (defines.Contains (arg))
+					defines.Remove (arg);
+			}
+		}
+
+		bool eval_val (string s)
+		{
+			if (s == "true")
+				return true;
+			if (s == "false")
+				return false;
+			
+			if (defines == null)
+				return false;
+			if (defines.Contains (s))
+				return true;
+
+			return false;
+		}
+
+		bool pp_primary (ref string s)
+		{
+			s = s.Trim ();
+			int len = s.Length;
+
+			if (len > 0){
+				char c = s [0];
+				
+				if (c == '('){
+					s = s.Substring (1);
+					bool val = pp_expr (ref s);
+					if (s.Length > 0 && s [0] == ')'){
+						s = s.Substring (1);
+						return val;
+					}
+					Error_InvalidDirective ();
+					return false;
+				}
+				
+				if (is_identifier_start_character (c)){
+					int j = 1;
+
+					while (j < len){
+						c = s [j];
+						
+						if (is_identifier_part_character (c)){
+							j++;
+							continue;
+						}
+						bool v = eval_val (s.Substring (0, j));
+						s = s.Substring (j);
+						return v;
+					}
+					bool vv = eval_val (s);
+					s = "";
+					return vv;
+				}
+			}
+			Error_InvalidDirective ();
+			return false;
+		}
+		
+		bool pp_unary (ref string s)
+		{
+			s = s.Trim ();
+			int len = s.Length;
+
+			if (len > 0){
+				if (s [0] == '!'){
+					if (len > 1 && s [1] == '='){
+						Error_InvalidDirective ();
+						return false;
+					}
+					s = s.Substring (1);
+					return ! pp_primary (ref s);
+				} else
+					return pp_primary (ref s);
+			} else {
+				Error_InvalidDirective ();
+				return false;
+			}
+		}
+		
+		bool pp_eq (ref string s)
+		{
+			bool va = pp_unary (ref s);
+
+			s = s.Trim ();
+			int len = s.Length;
+			if (len > 0){
+				if (s [0] == '='){
+					if (len > 2 && s [1] == '='){
+						s = s.Substring (2);
+						return va == pp_unary (ref s);
+					} else {
+						Error_InvalidDirective ();
+						return false;
+					}
+				} else if (s [0] == '!' && len > 1 && s [1] == '='){
+					s = s.Substring (2);
+
+					return va != pp_unary (ref s);
+
+				} 
+			}
+
+			return va;
+				
+		}
+		
+		bool pp_and (ref string s)
+		{
+			bool va = pp_eq (ref s);
+
+			s = s.Trim ();
+			int len = s.Length;
+			if (len > 0){
+				if (s [0] == '&'){
+					if (len > 2 && s [1] == '&'){
+						s = s.Substring (2);
+						return (va & pp_eq (ref s));
+					} else {
+						Error_InvalidDirective ();
+						return false;
+					}
+				} 
+			}
+			return va;
+		}
+		
+		//
+		// Evaluates an expression for `#if' or `#elif'
+		//
+		bool pp_expr (ref string s)
+		{
+			bool va = pp_and (ref s);
+			s = s.Trim ();
+			int len = s.Length;
+			if (len > 0){
+				char c = s [0];
+				
+				if (c == '|'){
+					if (len > 2 && s [1] == '|'){
+						s = s.Substring (2);
+						return va | pp_expr (ref s);
+					} else {
+						Error_InvalidDirective ();
+						return false;
+					}
+				} 
+			}
+			
+			return va;
+		}
+
+		bool eval (string s)
+		{
+			bool v = pp_expr (ref s);
+			s = s.Trim ();
+			if (s.Length != 0){
+				Error_InvalidDirective ();
+				return false;
+			}
+
+			return v;
+		}
+		
+		void Error_InvalidDirective ()
+		{
+			Report.Error (1517, Location, "Invalid pre-processor directive");
+		}
+
+		void Error_UnexpectedDirective (string extra)
+		{
+			Report.Error (
+				1028, Location,
+				"Unexpected processor directive (" + extra + ")");
+		}
+
+		void Error_TokensSeen ()
+		{
+			Report.Error (
+				1032, Location,
+				"Cannot define or undefine pre-processor symbols after a token in the file");
+		}
+		
+		//
+		// if true, then the code continues processing the code
+		// if false, the code stays in a loop until another directive is
+		// reached.
+		//
+		bool handle_preprocessing_directive (bool caller_is_taking)
+		{
+			char [] blank = { ' ', '\t' };
+			string cmd, arg;
+			bool region_directive = false;
+
+			get_cmd_arg (out cmd, out arg);
+
+			// Eat any trailing whitespaces and single-line comments
+			if (arg.IndexOf ("//") != -1)
+				arg = arg.Substring (0, arg.IndexOf ("//"));
+			arg = arg.TrimEnd (' ', '\t');
+
+			//
+			// The first group of pre-processing instructions is always processed
+			//
+			switch (cmd){
+			case "line":
+				if (!PreProcessLine (arg))
+					Report.Error (
+						1576, Location,
+						"Argument to #line directive is missing or invalid");
+				return true;
+
+			case "region":
+				region_directive = true;
+				arg = "true";
+				goto case "if";
+
+			case "endregion":
+				region_directive = true;
+				goto case "endif";
+				
+			case "if":
+				if (arg == ""){
+					Error_InvalidDirective ();
+					return true;
+				}
+				bool taking = false;
+				if (ifstack == null)
+					ifstack = new Stack ();
+
+				if (ifstack.Count == 0){
+					taking = true;
+				} else {
+					int state = (int) ifstack.Peek ();
+					if ((state & TAKING) != 0)
+						taking = true;
+				}
+
+				if (eval (arg) && taking){
+					int push = TAKING | TAKEN_BEFORE | PARENT_TAKING;
+					if (region_directive)
+						push |= REGION;
+					ifstack.Push (push);
+					return true;
+				} else {
+					int push = (taking ? PARENT_TAKING : 0);
+					if (region_directive)
+						push |= REGION;
+					ifstack.Push (push);
+					return false;
+				}
+				
+			case "endif":
+				if (ifstack == null || ifstack.Count == 0){
+					Error_UnexpectedDirective ("no #if for this #endif");
+					return true;
+				} else {
+					int pop = (int) ifstack.Pop ();
+					
+					if (region_directive && ((pop & REGION) == 0))
+						Report.Error (1027, Location, "#endif directive expected");
+					else if (!region_directive && ((pop & REGION) != 0))
+						Report.Error (1038, Location, "#endregion directive expected");
+					
+					if (ifstack.Count == 0)
+						return true;
+					else {
+						int state = (int) ifstack.Peek ();
+
+						if ((state & TAKING) != 0)
+							return true;
+						else
+							return false;
+					}
+				}
+
+			case "elif":
+				if (ifstack == null || ifstack.Count == 0){
+					Error_UnexpectedDirective ("no #if for this #elif");
+					return true;
+				} else {
+					int state = (int) ifstack.Peek ();
+
+					if ((state & REGION) != 0) {
+						Report.Error (1038, Location, "#endregion directive expected");
+						return true;
+					}
+
+					if ((state & ELSE_SEEN) != 0){
+						Error_UnexpectedDirective ("#elif not valid after #else");
+						return true;
+					}
+
+					if ((state & (TAKEN_BEFORE | TAKING)) != 0)
+						return false;
+
+					if (eval (arg) && ((state & PARENT_TAKING) != 0)){
+						state = (int) ifstack.Pop ();
+						ifstack.Push (state | TAKING | TAKEN_BEFORE);
+						return true;
+					} else 
+						return false;
+				}
+
+			case "else":
+				if (ifstack == null || ifstack.Count == 0){
+					Report.Error (
+						1028, Location,
+						"Unexpected processor directive (no #if for this #else)");
+					return true;
+				} else {
+					int state = (int) ifstack.Peek ();
+
+					if ((state & REGION) != 0) {
+						Report.Error (1038, Location, "#endregion directive expected");
+						return true;
+					}
+
+					if ((state & ELSE_SEEN) != 0){
+						Error_UnexpectedDirective ("#else within #else");
+						return true;
+					}
+
+					ifstack.Pop ();
+
+					bool ret;
+					if ((state & TAKEN_BEFORE) == 0){
+						ret = ((state & PARENT_TAKING) != 0);
+					} else
+						ret = false;
+					
+					if (ret)
+						state |= TAKING;
+					else
+						state &= ~TAKING;
+					
+					ifstack.Push (state | ELSE_SEEN);
+					
+					return ret;
+				}
+			}
+
+			//
+			// These are only processed if we are in a `taking' block
+			//
+			if (!caller_is_taking)
+				return false;
+					
+			switch (cmd){
+			case "define":
+				/* if (any_token_seen){
+					Error_TokensSeen ();
+					return true;
+				} */
+				PreProcessDefinition (true, arg);
+				return true;
+
+			case "undef":
+				/* if (any_token_seen){
+					Error_TokensSeen ();
+					return true;
+				} */
+				PreProcessDefinition (false, arg);
+				return true;
+
+			case "error":
+				Report.Error (1029, Location, "#error: '" + arg + "'");
+				return true;
+
+			case "warning":
+				Report.Warning (1030, Location, "#warning: '" + arg + "'");
+				return true;
+			}
+
+			Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
+			return true;
+
 		}
 
 	}

@@ -32,6 +32,10 @@ Public Class WriteOK2
 '		Const someOtherText as string = "Blah! Some Other Text" ' FIXME: raises InvalidCastException in yyParse
 		Text = "This is a test!"
         Console.WriteLine("Sub:OK! - """ & Text & """ " & someText & " " & someOtherText)
+#if CAUSEERRORS
+	Yield 1
+	Yield Stop
+#endif
     End Sub
 
 End Class
