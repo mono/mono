@@ -431,5 +431,19 @@ namespace MonoTests.System.Xml
 			AssertEquals ("xmlns", nl [7].LocalName);
 			AssertEquals ("xml", nl [8].LocalName);
 		}
+
+		[Test]
+		public void BaseURI ()
+		{
+			// See bug #64120.
+			XmlDocument doc = new XmlDocument ();
+			doc.Load ("Test/XmlFiles/simple.xml");
+			XmlElement el = doc.CreateElement ("foo");
+			AssertEquals (String.Empty, el.BaseURI);
+			doc.DocumentElement.AppendChild (el);
+			Assert (String.Empty != el.BaseURI);
+			XmlAttribute attr = doc.CreateAttribute ("attr");
+			AssertEquals (String.Empty, attr.BaseURI);
+		}
 	}
 }

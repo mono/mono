@@ -455,6 +455,22 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void InnerXmlSetter2 ()
+		{
+			// See bug #63574
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (@"<type>QPair&lt;QString,int&gt;::
+<ref refid='classQPair'>QPair</ref>
+&lt;
+<ref refid='classQString'>QString</ref>
+,int&gt;
+</type>");
+			XmlElement typeNode = doc.DocumentElement;
+			typeNode.InnerText = "QPair<QString, int>";
+			AssertEquals ("QPair<QString, int>", typeNode.InnerText);
+		}
+
+		[Test]
 		public void IsEmpty ()
 		{
 			document.LoadXml ("<root><foo/><bar></bar></root>");

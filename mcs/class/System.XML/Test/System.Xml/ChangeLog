@@ -1,5 +1,13 @@
 2004-09-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlElementTests.cs : added another set_InnerXml test.
+	* XmlNodeTests.cs : added BaseURI test.
+	* XmlTextReaderTests.cs : added tests for Normalization, EOF,
+	  LineNumber, LinePosition (all reported ones).
+	* XsdValidatingReaderTests.cs : more descriptions.
+
+2004-09-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReaderTests.cs : added ProhibitDtd().
 	* XmlWriterTests.cs : added WriteNodeError().
 

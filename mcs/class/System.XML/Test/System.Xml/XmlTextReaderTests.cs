@@ -827,6 +827,66 @@ namespace MonoTests.System.Xml
 			xtr.Read ();
 		}
 
+		[Test]
+		public void NormalizationLineEnd ()
+		{
+			string s = "One\rtwo\nthree\r\nfour";
+			string t = "<hi><![CDATA[" + s + "]]></hi>";
+
+			XmlTextReader r = new XmlTextReader (new StringReader (t));
+			r.WhitespaceHandling = WhitespaceHandling.Significant;
+
+			r.Normalization = true;
+
+			s = r.ReadElementString ("hi");
+			AssertEquals ("One\ntwo\nthree\nfour", s);
+		}
+
+		[Test]
+		public void CloseIsNotAlwaysEOF ()
+		{
+			// See bug #63505
+			XmlTextReader xtr = new XmlTextReader (
+				new StringReader ("<a></a><b></b>"));
+			xtr.Close ();
+			Assert (!xtr.EOF); // Close() != EOF
+		}
+
+		[Test]
+		public void CloseIsNotAlwaysEOF2 ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("Test/XmlFiles/simple.xml");
+			xtr.Close ();
+			Assert (!xtr.EOF); // Close() != EOF
+		}
+
+		[Test]
+		public void IXmlLineInfo ()
+		{
+			// See bug #63507
+			XmlTextReader aux = new XmlTextReader (
+				new StringReader ("<all><hello></hello><bug></bug></all>"));
+			AssertEquals (0, aux.LineNumber);
+			AssertEquals (0, aux.LinePosition);
+			aux.MoveToContent();
+			AssertEquals (1, aux.LineNumber);
+			AssertEquals (2, aux.LinePosition);
+			aux.Read();
+			AssertEquals (1, aux.LineNumber);
+			AssertEquals (7, aux.LinePosition);
+			aux.ReadOuterXml();
+			AssertEquals (1, aux.LineNumber);
+			AssertEquals (22, aux.LinePosition);
+			aux.ReadInnerXml();
+			AssertEquals (1, aux.LineNumber);
+			AssertEquals (34, aux.LinePosition);
+			aux.Read();
+			AssertEquals (1, aux.LineNumber);
+			AssertEquals (38, aux.LinePosition);
+			aux.Close();
+			AssertEquals (0, aux.LineNumber);
+			AssertEquals (0, aux.LinePosition);
+		}
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (XmlException))]

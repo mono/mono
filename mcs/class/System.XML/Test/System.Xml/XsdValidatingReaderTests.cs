@@ -62,7 +62,7 @@ namespace MonoTests.System.Xml
 			xvr.Schemas.Add (schema);
 			try {
 				xvr.Read ();
-				Fail ();
+				Fail ("element mismatch is incorrectly allowed");
 			} catch (XmlSchemaException) {
 			}
 
@@ -71,7 +71,7 @@ namespace MonoTests.System.Xml
 			xvr.Schemas.Add (schema);
 			try {
 				xvr.Read ();
-				Fail ();
+				Fail ("Element in different namespace is incorrectly allowed.");
 			} catch (XmlSchemaException) {
 			}
 		}
