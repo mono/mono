@@ -379,6 +379,8 @@ namespace System.Data {
 			XmlWriter writer = new XmlTextWriter(fileName, null );
 			
 			WriteXml( writer );
+			
+			writer.Close();
 		}
 
 		public void WriteXml(TextWriter writer)
@@ -405,6 +407,8 @@ namespace System.Data {
 			XmlWriter writer = new XmlTextWriter(fileName, null );
 			
 			WriteXml( writer, mode );
+			
+			writer.Close();
 		}
 
 		public void WriteXml(TextWriter writer,	XmlWriteMode mode)

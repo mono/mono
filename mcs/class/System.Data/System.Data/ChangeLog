@@ -1,3 +1,7 @@
+2003-03-12  Alan Tam <Tam@SiuLung.com>
+
+	* DataSet.cs: Fixed a bug that the file written does not close correctly.
+
 2003-03-08  Alan Tam <Tam@SiuLung.com>
 
 	* DataRelationCollection.cs: Removed the mis-overridden methods
