@@ -41,11 +41,13 @@ namespace MonoCasTests.System.Reflection {
 	public class ModuleCas {
 
 		private MonoTests.System.Reflection.ModuleTest mt;
+		private Module main;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
 			mt = new MonoTests.System.Reflection.ModuleTest ();
+			main = typeof (int).Module;
 		}
 
 		[SetUp]
@@ -62,12 +64,13 @@ namespace MonoCasTests.System.Reflection {
 			mt.TearDown ();
 		}
 
-		// Partial Trust Tests - i.e. call "normal" unit with reduced privileges
+		// Partial Trust Tests
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void PartialTrust_DenyUnrestricted ()
 		{
+			// call "normal" unit with reduced privileges
 			mt.FindTypes ();
 #if NET_2_0
 			mt.ResolveType ();
@@ -75,6 +78,45 @@ namespace MonoCasTests.System.Reflection {
 			mt.ResolveField ();
 			mt.ResolveMember ();
 #endif
+			// properties
+			Assert.IsNotNull (main.Assembly, "Assembly");
+			Assert.IsNotNull (main.ScopeName, "ScopeName");
+
+			// methods (incomplete)
+			Assert.IsNotNull (main.ToString (), "ToString");
+		}
+
+		[Test]
+		[FileIOPermission (SecurityAction.Deny, Unrestricted = true)]
+		[ExpectedException (typeof (SecurityException))]
+		public void FullyQualifiedName_Deny_FileIOPermission ()
+		{
+			Assert.IsNotNull (main.FullyQualifiedName, "FullyQualifiedName");
+		}
+
+		[Test]
+		[FileIOPermission (SecurityAction.PermitOnly, Unrestricted = true)]
+		public void FullyQualifiedName_PermitOnly_FileIOPermission ()
+		{
+			Assert.IsNotNull (main.FullyQualifiedName, "FullyQualifiedName");
+		}
+
+		// Note: we do not ask for PathDiscovery because no path is returned here.
+		// However MS Fx requires it (see FDBK23572 for details).
+		[Category ("NotWorking")] // on purpose ;-)
+		[Test]
+		[FileIOPermission (SecurityAction.Deny, Unrestricted = true)]
+		[ExpectedException (typeof (SecurityException))]
+		public void Name_Deny_FileIOPermission ()
+		{
+			Assert.IsNotNull (main.Name, "Name");
+		}
+
+		[Test]
+		[FileIOPermission (SecurityAction.PermitOnly, Unrestricted = true)]
+		public void Name_PermitOnly_FileIOPermission ()
+		{
+			Assert.IsNotNull (main.Name, "Name");
 		}
 
 		// we use reflection to call Module as the GetObjectData method is protected 

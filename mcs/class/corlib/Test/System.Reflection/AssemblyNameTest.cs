@@ -2,9 +2,10 @@
 // AssemblyNameTest.cs - NUnit Test Cases for AssemblyName
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -13,6 +14,7 @@ using System.Configuration.Assemblies;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.Serialization;
 using System.Threading;
 using System.Globalization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -59,7 +61,8 @@ public class AssemblyNameTest {
 	static byte[] token = { 0xFF, 0xEF, 0x94, 0x53, 0x67, 0x69, 0xDA, 0x06 };
 
 	[SetUp]
-	protected void SetUp () {
+	public void SetUp () 
+	{
 		try {
 			if (Directory.Exists (tempDir))
 				Directory.Delete (tempDir, true);
@@ -73,7 +76,8 @@ public class AssemblyNameTest {
 	}
 
 	[TearDown]
-	protected void TearDown () {
+	public void TearDown () 
+	{
 		try {
 			if (Directory.Exists (tempDir))
 			Directory.Delete (tempDir, true);
@@ -84,7 +88,8 @@ public class AssemblyNameTest {
 		}
 	}
 
-	public void TestEmptyAssembly () 
+	[Test]
+	public void EmptyAssembly () 
 	{
 		an = new AssemblyName ();
 		Assert.IsNull (an.CodeBase, "CodeBase");
@@ -100,7 +105,8 @@ public class AssemblyNameTest {
 			an.VersionCompatibility, "VersionCompatibility");
 	}
 
-	public void TestPublicKey () 
+	[Test]
+	public void PublicKey () 
 	{
 		an = new AssemblyName ();
 		Assert.IsNull (an.GetPublicKey (), "PublicKey(empty)");
@@ -113,7 +119,8 @@ public class AssemblyNameTest {
 		AssertEqualsByteArrays ("PublicKeyToken", token, an.GetPublicKeyToken ());
 	}
 
-	public void TestPublicKeyToken () 
+	[Test]
+	public void PublicKeyToken () 
 	{
 		an = new AssemblyName ();
 		an.SetPublicKeyToken (token);
@@ -124,7 +131,8 @@ public class AssemblyNameTest {
 		AssertEqualsByteArrays ("PublicKeyToken", token, an.GetPublicKeyToken ());
 	}
 
-	public void TestKeyPair () 
+	[Test]
+	public void KeyPair () 
 	{
 		an = new AssemblyName ();
 		an.KeyPair = new StrongNameKeyPair (publicKey);
@@ -136,7 +144,8 @@ public class AssemblyNameTest {
 	}
 
 	// !!! this assembly MUST NOT use a StrongName !!!
-	public void TestSelf () 
+	[Test]
+	public void Self () 
 	{
 		Assembly a = Assembly.GetExecutingAssembly ();
 		AssemblyName an = a.GetName ();
@@ -146,7 +155,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	public void TestFullName1 ()
+	public void FullName1 ()
 	{
 		// !!! we assume the mscorlib has a strong name !!!
 		AssemblyName an = typeof(int).Assembly.GetName ();
@@ -157,7 +166,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	public void TestFullName2 ()
+	public void FullName2 ()
 	{
 		const string assemblyName = "TestAssembly";
 
@@ -171,7 +180,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	public void TestFullName3 ()
+	public void FullName3 ()
 	{
 		const string assemblyName = "TestAssembly";
 		const string assemblyVersion = "1.2";
@@ -184,7 +193,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	public void TestFullName4 ()
+	public void FullName4 ()
 	{
 		const string assemblyName = "TestAssembly";
 
@@ -196,7 +205,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	public void TestFullName5 ()
+	public void FullName5 ()
 	{
 		const string assemblyName = "TestAssembly";
 
@@ -208,7 +217,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	public void TestFullName6 ()
+	public void FullName6 ()
 	{
 		const string assemblyName = "TestAssembly";
 		const string assemblyVersion = "1.2";
@@ -223,7 +232,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	public void TestFullName7 ()
+	public void FullName7 ()
 	{
 		const string assemblyName = "TestAssembly";
 		const string assemblyVersion = "1.2";
@@ -239,7 +248,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	public void TestFullName8 ()
+	public void FullName8 ()
 	{
 		const string assemblyName = "TestAssembly";
 
@@ -255,13 +264,15 @@ public class AssemblyNameTest {
 
 	static int nameIndex = 0;
 
-	private AssemblyName GenAssemblyName () {
+	private AssemblyName GenAssemblyName () 
+	{
 		AssemblyName assemblyName = new AssemblyName();
 		assemblyName.Name = "MonoTests.System.Reflection.AssemblyNameTest" + (nameIndex ++);
 		return assemblyName;
 	}
 
-	private Assembly GenerateAssembly (AssemblyName name) {
+	private Assembly GenerateAssembly (AssemblyName name) 
+	{
 		AssemblyBuilder ab = domain.DefineDynamicAssembly (
 			name,
 			AssemblyBuilderAccess.RunAndSave,
@@ -272,6 +283,7 @@ public class AssemblyNameTest {
 		return Assembly.LoadFrom (Path.Combine (tempDir, name.Name + ".dll"));
 	}
 
+	[Test]
 	public void TestCultureInfo ()
 	{
 		AssemblyName name = GenAssemblyName ();
@@ -281,7 +293,8 @@ public class AssemblyNameTest {
 		Assert.AreEqual (a.GetName ().CultureInfo.Name, "ar-DZ");
 	}
 
-	public void TestVersion ()
+	[Test]
+	public void Version ()
 	{
 		AssemblyName name = GenAssemblyName ();
 		name.Version = new Version (1, 2, 3, 4);
@@ -302,13 +315,15 @@ public class AssemblyNameTest {
 		Assert.AreEqual ("1.2.0.0", a.GetName ().Version.ToString ());
 	}
 
-	public void TestHashAlgorithm ()
+	[Test]
+	public void HashAlgorithm ()
 	{
 		Assert.AreEqual (AssemblyHashAlgorithm.SHA1, 
 			typeof (int).Assembly.GetName ().HashAlgorithm);
 	}
 
-	public void TestSerialization ()
+	[Test]
+	public void Serialization ()
 	{
 		AssemblyName an = new AssemblyName ();
 		an.CodeBase = "http://www.test.com/test.dll";
@@ -348,12 +363,15 @@ public class AssemblyNameTest {
 		AssertEqualsByteArrays ("PublicToken", an.GetPublicKeyToken (), dsAssemblyName.GetPublicKeyToken ());
 	}
 
-
-	private AssemblyName GetAssemblyName (string assemblyFile) 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void GetObjectData_Null ()
 	{
-		Assembly a = Assembly.LoadFrom (assemblyFile);
-		return a.GetName ();
+		AssemblyName an = new AssemblyName ();
+		an.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 	}
+
+	// helpers
 
 	private string GetTokenString (byte[] value)
 	{
@@ -362,11 +380,6 @@ public class AssemblyNameTest {
 			tokenString += value[i].ToString ("x2");
 		}
 		return tokenString;
-	}
-
-	public void TestStatic () 
-	{
-		/*an = GetAssemblyName ("System.Reflection.dll");*/
 	}
 }
 

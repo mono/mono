@@ -1,3 +1,11 @@
+2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyNameTest.cs: Add test for ArgumentNullException on 
+	GetObjectData. Made existing tests more nunit2.2 like.
+	* ModuleCas.cs: Added new tests for FullyQualifiedName and Name 
+	properties.
+	* ModuleTest.cs: Add test for ArgumentNullException on GetObjectData.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ModuleCas.cs: New. CAS unit tests for Module.

@@ -4,14 +4,14 @@
 // Zoltan Varga (vargaz@freemail.hu)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
-//
-
 
 using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.Serialization;
 using System.IO;
 using System.Collections;
 
@@ -279,6 +279,14 @@ public class ModuleTest : Assertion
 		AssertEquals (2, t.Length);
 		AssertEquals ("FindTypesTestFirstClass", t [0].Name);
 		AssertEquals ("FindTypesTestSecondClass", t [1].Name);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void GetObjectData_Null ()
+	{
+		Module m = typeof (ModuleTest).Module;
+		m.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 	}
 
 	class FindTypesTestFirstClass { 
