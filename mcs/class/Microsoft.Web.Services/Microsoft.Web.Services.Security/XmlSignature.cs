@@ -53,6 +53,8 @@ namespace Microsoft.Web.Services.Security {
 			internal const string Transforms = "Transforms";
 			internal const string DigestMethod = "DigestMethod";
 			internal const string DigestValue = "DigestValue";
+			internal const string SignatureValue = "SignatureValue";
+			internal const string Object = "Object";
 
 			public ElementNames () {}
 		}

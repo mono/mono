@@ -7,36 +7,49 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
+using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Xml;
 
+using SSCX = System.Security.Cryptography.Xml;
+
 #if (WSE1 || WSE2)
-using System.Security.Cryptography.Xml;
+using Microsoft.Web.Services.Security;
 
 namespace Microsoft.Web.Services.Security {
 #else
+using System.Security.Cryptography.Xml;
+
 namespace System.Security.Cryptography.Xml {
 #endif
 	public class SignedXml {
 
+#if (WSE1 || WSE2)
+		private SignedXmlSignature signature;
+
+		public SignedXml () 
+		{
+			signature = new SignedXmlSignature ();
+			signature.SignedInfo = new SignedInfo ();
+		}
+#else
 		private Signature signature;
-		private AsymmetricAlgorithm key;
-		private string keyName;
-		private XmlDocument envdoc;
 
 		public SignedXml () 
 		{
 			signature = new Signature ();
 			signature.SignedInfo = new SignedInfo ();
 		}
+#endif
+		private AsymmetricAlgorithm key;
+		private string keyName;
+		private XmlDocument envdoc;
 
-		public SignedXml (XmlDocument document)
+		public SignedXml (XmlDocument document) : this ()
 		{
-			signature = new Signature ();
-			signature.SignedInfo = new SignedInfo ();
 			envdoc = document;
 		}
 
@@ -44,8 +57,6 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (elem == null)
 				throw new ArgumentNullException ("elem");
-			signature = new Signature ();
-			signature.SignedInfo = new SignedInfo ();
 		}
 
 		public const string XmlDsigCanonicalizationUrl = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
@@ -57,15 +68,20 @@ namespace System.Security.Cryptography.Xml {
 		public const string XmlDsigRSASHA1Url = XmlDsigNamespaceUrl + "rsa-sha1";
 		public const string XmlDsigSHA1Url = XmlDsigNamespaceUrl + "sha1";
 
-		public KeyInfo KeyInfo {
+		public SSCX.KeyInfo KeyInfo {
 			get { return signature.KeyInfo; }
 			set { signature.KeyInfo = value; }
 		}
 
+#if (WSE1 || WSE2)
+		public SignedXmlSignature Signature {
+			get { return signature; }
+		}
+#else
 		public Signature Signature {
 			get { return signature; }
 		}
-
+#endif
 		public string SignatureLength {
 			get { return signature.SignedInfo.SignatureLength; }
 		}
@@ -92,7 +108,7 @@ namespace System.Security.Cryptography.Xml {
 			set { keyName = value; }
 		}
 
-		public void AddObject (DataObject dataObject) 
+		public void AddObject (SSCX.DataObject dataObject) 
 		{
 			signature.AddObject (dataObject);
 		}
@@ -102,10 +118,10 @@ namespace System.Security.Cryptography.Xml {
 			signature.SignedInfo.AddReference (reference);
 		}
 
-		private Stream ApplyTransform (Transform t, XmlDocument doc) 
+		private Stream ApplyTransform (SSCX.Transform t, XmlDocument doc) 
 		{
 			t.LoadInput (doc);
-			if (t is XmlDsigEnvelopedSignatureTransform) {
+			if (t is SSCX.XmlDsigEnvelopedSignatureTransform) {
 				XmlDocument d = (XmlDocument) t.GetOutput ();
 				MemoryStream ms = new MemoryStream ();
 				d.Save (ms);
@@ -115,7 +131,7 @@ namespace System.Security.Cryptography.Xml {
 				return (Stream) t.GetOutput ();
 		}
 
-		private Stream ApplyTransform (Transform t, Stream s) 
+		private Stream ApplyTransform (SSCX.Transform t, Stream s) 
 		{
 			try {
 				t.LoadInput (s);
@@ -135,7 +151,7 @@ namespace System.Security.Cryptography.Xml {
 			if (r.Uri == "")
 				doc = envdoc;
 			else {
-				foreach (DataObject obj in signature.ObjectList) {
+				foreach (SSCX.DataObject obj in signature.ObjectList) {
 					if ("#" + obj.Id == r.Uri) {
 						doc.LoadXml (obj.GetXml ().OuterXml);
 						break;
@@ -145,7 +161,7 @@ namespace System.Security.Cryptography.Xml {
 
 			Stream s = null;
 			if (r.TransformChain.Count > 0) {		
-				foreach (Transform t in r.TransformChain) {
+				foreach (SSCX.Transform t in r.TransformChain) {
 					if (s == null)
 						s = ApplyTransform (t, doc);
 					else
@@ -153,7 +169,7 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			else
-				s = ApplyTransform (new XmlDsigC14NTransform (), doc);
+				s = ApplyTransform (new SSCX.XmlDsigC14NTransform (), doc);
 
 			// TODO: We should reuse the same hash object (when possible)
 			HashAlgorithm hash = (HashAlgorithm) CryptoConfig.CreateFromName (r.DigestMethod);
@@ -174,7 +190,7 @@ namespace System.Security.Cryptography.Xml {
 		
 		private Stream SignedInfoTransformed () 
 		{
-			Transform t = (Transform) CryptoConfig.CreateFromName (signature.SignedInfo.CanonicalizationMethod);
+			SSCX.Transform t = (SSCX.Transform) CryptoConfig.CreateFromName (signature.SignedInfo.CanonicalizationMethod);
 			if (t == null)
 				return null;
 
@@ -326,10 +342,10 @@ namespace System.Security.Cryptography.Xml {
 		{
 			AsymmetricAlgorithm key = null;
 			if (signature.KeyInfo != null) {
-				foreach (KeyInfoClause kic in signature.KeyInfo) {
-					if (kic is DSAKeyValue)
+				foreach (SSCX.KeyInfoClause kic in signature.KeyInfo) {
+					if (kic is SSCX.DSAKeyValue)
 						key = DSA.Create ();
-					else if (kic is RSAKeyValue) 
+					else if (kic is SSCX.RSAKeyValue) 
 						key = RSA.Create ();
 
 					if (key != null) {

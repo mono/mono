@@ -37,7 +37,7 @@ namespace Microsoft.Web.Services.Security {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 			aek = key;
-			ki = ki.KeyInfo;
+			ki = new KeyInfo ();
 		}
 
 		public EncryptedKey (XmlElement element) : this ()

@@ -95,8 +95,8 @@ namespace Microsoft.Web.Services.Security {
 						Tokens.Add (unt);
 						break;
 					case WSSecurity.ElementNames.BinarySecurityToken:
-						BinarySecurityToken bst = new BinarySecurityToken (xel);
-						Tokens.Add (bst);
+//FIXME						BinarySecurityToken bst = new BinarySecurityToken (xel);
+//FIXME						Tokens.Add (bst);
 						break;
 					}
 					break;

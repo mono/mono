@@ -1,3 +1,13 @@
+2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* EncryptedKey.cs: Fixed typo.
+	* Security.cs: Fixed compilation issues.
+	* SignedXml.cs: Fixed compilation issues.
+	* SignedXmlSignature.cs: Copied from System.Security assembly (where
+	it is known as Signature.cs) as MS duplicate the class (in WSE) to 
+	fixed some issues.
+	* XmlSignature.cs: Added more missing string used in System.Security.
+
 2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Reference.cs: Copied from System.Security assembly as MS duplicate 
