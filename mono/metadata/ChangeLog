@@ -1,3 +1,30 @@
+2005-02-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* appdomain.c: Changed hook functios behavior to include
+	support for the reflection only assemblies. Some icalls were changed
+	to support the mentioned assemblies too. Signatures of static methods
+	try_assembly_resolve and real_load now have an additional parameter:
+	refonly.
+
+	* assembly.c: General changes to mono_assembly_ methods to support
+	reflection only api. Functions mono_assembly_open, mono_assembly_load,
+	mono_assembly_load_from and mono_assembly_loaded have got a '_full'
+	suffix, to support an additional gbool parameter to specify whether
+	the assembli is reflection only or not. Created some new hook functions 
+	to add support for reflection only assemblies. Signatures of static 
+	methods load_in_path, search_loaded, and mono_assembly_load_from_gac 
+	have now an additional parameter: refonly.
+
+	* metadata-internals.h: MonoAssembly now has a gbool ref_only flag,
+	indicating whether the assembly is reflection only or not.
+
+	* exception.c: Add mono_get_exception_invalid_operation.
+
+	* icall.c: Throw an InvalidOperationException when trying to invoke
+	a property/method/event, or trying to set/get the value of a field.
+	Also add an icall to retrieve the ref_only flag to the
+	MonoReflectionAssembly.
+
 2005-02-23  Chris Toshok  <toshok@ximian.com>
 
 	Part of fix for #72827.
