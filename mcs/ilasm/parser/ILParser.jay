@@ -1615,7 +1615,7 @@ type_spec		: class_ref
 
 scope_block		: scope_block_begin method_decls CLOSE_BRACE
                           {
-                                $$ = new HandlerBlock ((int) $1,
+                                $$ = new HandlerBlock ((LabelInfo) $1,
                                         codegen.CurrentMethodDef.AddLabel ());
                           }
 			;
@@ -1645,11 +1645,17 @@ try_block		: D_TRY scope_block
                           }
 			| D_TRY id K_TO id
                           {
-                                $$ = new TryBlock (new HandlerBlock ((string) $2, (string) $4));
+				LabelInfo from = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
+				LabelInfo to = codegen.CurrentMethodDef.AddLabelRef ((string) $4);
+				
+                                $$ = new TryBlock (new HandlerBlock (from, to));
                           }
 			| D_TRY int32 K_TO int32
 			  {
-				$$ = new TryBlock (new HandlerBlock ((int) $2, (int) $4, true));
+				LabelInfo from = codegen.CurrentMethodDef.AddLabel ((int) $2);
+				LabelInfo to = codegen.CurrentMethodDef.AddLabel ((int) $4);
+				
+				$$ = new TryBlock (new HandlerBlock (from, to));
 			  }
 			;
 
@@ -1700,12 +1706,14 @@ filter_clause		: K_FILTER scope_block
                           }
 			| K_FILTER id
                           {
-                                FilterBlock fb = new FilterBlock (new HandlerBlock ((string) $2, null));
+				LabelInfo from = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
+                                FilterBlock fb = new FilterBlock (new HandlerBlock (from, null));
                                 $$ = fb;
                           }
 			| K_FILTER int32
 			  {
-				FilterBlock fb = new FilterBlock (new HandlerBlock (-1, (int) $2, true));
+				LabelInfo from = codegen.CurrentMethodDef.AddLabel ((int) $2);
+				FilterBlock fb = new FilterBlock (new HandlerBlock (from, null));
 				$$ = fb;
 			  }
 			;
@@ -1715,12 +1723,18 @@ handler_block		: scope_block
                                 
                           }
 			| K_HANDLER id K_TO id
-                          {
-                                $$ = new HandlerBlock ((string) $2, (string) $4);
+                          {	
+				LabelInfo from = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
+				LabelInfo to = codegen.CurrentMethodDef.AddLabelRef ((string) $4);
+
+                                $$ = new HandlerBlock (from, to);
                           }
 			| K_HANDLER int32 K_TO int32
 			  {
-				$$ = new HandlerBlock ((int) $2, (int) $4, true);
+				LabelInfo from = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
+				LabelInfo to = codegen.CurrentMethodDef.AddLabelRef ((string) $4);
+
+				$$ = new HandlerBlock (from, to);
 			  }
 			;
 
@@ -1796,15 +1810,15 @@ instr			: INSTR_NONE
 			| INSTR_R OPEN_PARENS bytes CLOSE_PARENS
 			| INSTR_BRTARGET int32
                           {
-				int target = (int) $2;
-				codegen.CurrentMethodDef.AddLabel ((uint) target);
+				LabelInfo target = codegen.CurrentMethodDef.AddLabel ((int) $2);
                                 codegen.CurrentMethodDef.AddInstr (new BranchInstr ((BranchOp) $1,
-								   (uint) target));  
+								   target));  
                           }
 			| INSTR_BRTARGET id
                           {
+				LabelInfo target = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
                                 codegen.CurrentMethodDef.AddInstr (new BranchInstr ((BranchOp) $1,
-                                        			   (string) $2));
+                                        			   target));
                           }
 			| INSTR_METHOD method_ref
                           {
@@ -2299,7 +2313,7 @@ float64			: FLOAT64
 			| K_FLOAT64 OPEN_PARENS INT64 CLOSE_PARENS
                           {
                                 byte[] intb = BitConverter.GetBytes ((long) $3);
-                                $$ = BitConverter.ToDouble (intb, 0);
+				$$ = BitConverter.ToDouble (intb, 0);
                           }
                         | K_FLOAT64 OPEN_PARENS INT32 CLOSE_PARENS
                           {

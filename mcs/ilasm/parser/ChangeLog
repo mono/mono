@@ -1,3 +1,8 @@
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Create label references where appropriate instead
+	of adding labels.
+	
 2003-08-02 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Set from label, not to label for filter block handlers
