@@ -335,8 +335,10 @@ namespace System.Xml
 				if (!row.Table.Columns.Contains (args.Node.ParentNode.Name))
 					return;
 
-				if (row [args.Node.ParentNode.Name].ToString () != args.Node.InnerText)		
-					row [args.Node.ParentNode.Name] = args.Node.InnerText;		
+				if (row [args.Node.ParentNode.Name].ToString () != args.Node.InnerText) {
+					DataColumn col = row.Table.Columns [args.Node.ParentNode.Name];
+					row [col] = StringToObject (col.DataType, args.Node.InnerText);
+				}
 
 			} finally {
 				raiseDataSetEvents = escapedRaiseDataSetEvents;
@@ -433,7 +435,7 @@ namespace System.Xml
 				if (attr != null) { // fill attribute value
 					DataColumn col = row.Table.Columns [attr.LocalName];
 					if (col != null)
-						row [col] = args.Node.Value;
+						row [col] = StringToObject (col.DataType, args.Node.Value);
 				} else {
 					DataRow childRow = GetRowFromElement (args.Node as XmlElement);
 					if (childRow != null) {
@@ -443,11 +445,19 @@ namespace System.Xml
 						if (childRow.RowState != DataRowState.Detached && row.RowState != DataRowState.Detached) {
 							FillRelationship (row, childRow, args.NewParent, args.Node);
 						}
-					} else {
-						// child might be a column
+					} else if (args.Node.NodeType == XmlNodeType.Element) {
+						// child element might be a column
 						DataColumn col = row.Table.Columns [args.Node.LocalName];
 						if (col != null)
-							row [col] = args.Node.InnerText;
+							row [col] = StringToObject (col.DataType, args.Node.InnerText);
+					} else if (args.Node is XmlCharacterData) {
+						if (args.Node.NodeType != XmlNodeType.Comment) {
+							for (int i = 0; i < row.Table.Columns.Count; i++) {
+								DataColumn col = row.Table.Columns [i];
+								if (col.ColumnMapping == MappingType.SimpleContent)
+									row [col] = StringToObject (col.DataType, args.Node.Value);
+							}
+						}
 					}
 				}
 			} finally {
@@ -770,6 +780,34 @@ namespace System.Xml
 			this.NodeChanged += new XmlNodeChangedEventHandler (OnNodeChanged);
 			this.NodeRemoving += new XmlNodeChangedEventHandler (OnNodeRemoving);
 			this.NodeRemoved += new XmlNodeChangedEventHandler (OnNodeRemoved);
+		}
+
+		internal static object StringToObject (Type type, string value)
+		{
+			if (type == null) return value;
+
+			switch (Type.GetTypeCode (type)) {
+				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
+				case TypeCode.Byte: return XmlConvert.ToByte (value);
+				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);
+				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
+				case TypeCode.Decimal: return XmlConvert.ToDecimal (value);
+				case TypeCode.Double: return XmlConvert.ToDouble (value);
+				case TypeCode.Int16: return XmlConvert.ToInt16 (value);
+				case TypeCode.Int32: return XmlConvert.ToInt32 (value);
+				case TypeCode.Int64: return XmlConvert.ToInt64 (value);
+				case TypeCode.SByte: return XmlConvert.ToSByte (value);
+				case TypeCode.Single: return XmlConvert.ToSingle (value);
+				case TypeCode.UInt16: return XmlConvert.ToUInt16 (value);
+				case TypeCode.UInt32: return XmlConvert.ToUInt32 (value);
+				case TypeCode.UInt64: return XmlConvert.ToUInt64 (value);
+			}
+
+			if (type == typeof (TimeSpan)) return XmlConvert.ToTimeSpan (value);
+			if (type == typeof (Guid)) return XmlConvert.ToGuid (value);
+			if (type == typeof (byte[])) return Convert.FromBase64String (value);
+
+			return Convert.ChangeType (value, type);
 		}
 		#endregion // Private methods
 	}
