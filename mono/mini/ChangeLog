@@ -1,4 +1,9 @@
 
+Tue Mar 22 19:03:17 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c, exceptions-ppc.c: added missing icache flush
+	calls (fixes bug#72824).
+
 Tue Mar 22 16:28:48 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: fix tail recursion elimination (see test in bug#73936).
