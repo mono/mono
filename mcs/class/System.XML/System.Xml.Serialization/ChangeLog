@@ -1,3 +1,20 @@
+2004-07-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* IXmlSerializerImplementation.cs: Compile as internal in NET_1_1.
+	* ReflectionHelper.cs: New method for generating map keys.
+	* SerializationCodeGenerator.cs: Added support for generating the serializer
+	  contract class, needed for 2.0.
+	* SerializationSource.cs: Use Type[] instead of ArrayList for storing
+	  extra types.
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs: Assign extra types 
+	  as Type[]. Added check that makes sure that enums being serialized are
+	  public.
+	* XmlMapping.cs: Added internal GetKey method.
+	* XmlSerializer.cs: Added support for IXmlSerializerImplementation.
+	  Added first bits to support loading of serializers from pre-generated
+	  assemblies.
+	* XmlSerializerFactory.cs: Mostly implemeted.
+
 2004-07-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CodeIdentifier.cs: Removed constructor for NET_2_0.

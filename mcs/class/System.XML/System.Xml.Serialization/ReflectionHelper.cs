@@ -89,5 +89,29 @@ namespace System.Xml.Serialization
 			}
 			while (t != null);
 		}
+		
+		public static string BuildMapKey (Type type)
+		{
+			return type.FullName + "::";
+		}
+		
+		public static string BuildMapKey (MethodInfo method, string tag)
+		{
+			string res = method.DeclaringType.FullName + ":" + method.ReturnType.FullName + " " + method.Name + "(";
+			
+			ParameterInfo[] pars = method.GetParameters ();
+			
+			for (int n=0; n<pars.Length; n++)
+			{
+				if (n > 0) res += ", ";
+				res += pars[n].ParameterType.FullName;
+			}
+			res += ")";
+			
+			if (tag != null)
+				res += ":" + tag;
+				
+			return res;
+		}
 	}
 }

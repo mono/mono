@@ -31,60 +31,73 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Security.Policy;
 
 namespace System.Xml.Serialization 
 {
 	public class XmlSerializerFactory
 	{
+		static Hashtable serializersBySource = new Hashtable ();
+		
 		public XmlSerializerFactory ()
 		{
 		}
 
-		[MonoTODO]
 		public XmlSerializer CreateSerializer (Type type)
 		{
-			throw new NotImplementedException ();
+			return CreateSerializer (type, null, null, null, null);
 		}
 
-		[MonoTODO]
 		public XmlSerializer CreateSerializer (XmlTypeMapping xmlTypeMapping)
 		{
-			throw new NotImplementedException ();
+			lock (serializersBySource) 
+			{
+				XmlSerializer ser = (XmlSerializer) serializersBySource [xmlTypeMapping.Source];
+				if (ser == null) {
+					ser = new XmlSerializer (xmlTypeMapping);
+					serializersBySource [xmlTypeMapping.Source] = ser;
+				}
+				return ser;
+			}
 		}
 
-		[MonoTODO]
 		public XmlSerializer CreateSerializer (Type type, string defaultNamespace)
 		{
-			throw new NotImplementedException ();
+			return CreateSerializer (type, null, null, null, defaultNamespace);
 		}
 
-		[MonoTODO]
 		public XmlSerializer CreateSerializer (Type type, Type[] extraTypes)
 		{
-			throw new NotImplementedException ();
+			return CreateSerializer (type, null, extraTypes, null, null);
 		}
 
-		[MonoTODO]
 		public XmlSerializer CreateSerializer (Type type, XmlAttributeOverrides overrides)
 		{
-			throw new NotImplementedException ();
+			return CreateSerializer (type, overrides, null, null, null);
 		}
 
-		[MonoTODO]
 		public XmlSerializer CreateSerializer (Type type, XmlRootAttribute root)
 		{
-			throw new NotImplementedException ();
+			return CreateSerializer (type, null, null, root, null);
 		}
-
-		[MonoTODO]
+		
 		public XmlSerializer CreateSerializer (Type type, 
 			XmlAttributeOverrides overrides, 
 			Type[] extraTypes, 
 			XmlRootAttribute root, 
 			string defaultNamespace)
 		{
-			throw new NotImplementedException ();
+			XmlTypeSerializationSource source = new XmlTypeSerializationSource (type, root, overrides, defaultNamespace, extraTypes);
+			lock (serializersBySource) 
+			{
+				XmlSerializer ser = (XmlSerializer) serializersBySource [source];
+				if (ser == null) {
+					ser = new XmlSerializer (type, overrides, extraTypes, root, defaultNamespace);
+					serializersBySource [ser.Mapping.Source] = ser;
+				}
+				return ser;
+			}
 		}
 
 		[MonoTODO]

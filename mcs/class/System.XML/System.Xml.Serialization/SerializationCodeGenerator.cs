@@ -53,7 +53,7 @@ namespace System.Xml.Serialization
 		GenerationResult _result;
 		XmlMapping[] _xmlMaps;
 		
-		static CodeIdentifiers classNames = new CodeIdentifiers ();
+		CodeIdentifiers classNames = new CodeIdentifiers ();
 
 		public SerializationCodeGenerator (XmlMapping[] xmlMaps): this (xmlMaps, null)
 		{
@@ -178,11 +178,8 @@ namespace System.Xml.Serialization
 			if (writerClassName == null || writerClassName == "")
 				writerClassName = "GeneratedWriter";
 				
-			lock (classNames)
-			{
-				readerClassName = classNames.AddUnique (readerClassName, null);
-				writerClassName = classNames.AddUnique (writerClassName, null);
-			}
+			readerClassName = GetUniqueClassName (readerClassName);
+			writerClassName = GetUniqueClassName (writerClassName);
 			
 			Hashtable mapsByNamespace = new Hashtable ();
 			Hashtable generatedMaps = new Hashtable ();
@@ -230,14 +227,20 @@ namespace System.Xml.Serialization
 			
 			foreach (DictionaryEntry entry in mapsByNamespace)
 			{
+				ArrayList maps = (ArrayList) entry.Value;
+				
 				WriteLine ("namespace " + entry.Key);
 				WriteLineInd ("{");
 				
-				GenerateReader (readerClassName, (ArrayList) entry.Value);
+				GenerateReader (readerClassName, maps);
 				WriteLine ("");
-				GenerateWriter (writerClassName, (ArrayList) entry.Value);
+				GenerateWriter (writerClassName, maps);
 				WriteLine ("");
 				
+#if NET_2_0
+				GenerateContract (maps);
+#endif
+
 				WriteLineUni ("}");
 				WriteLine ("");
 			}
@@ -264,6 +267,139 @@ namespace System.Xml.Serialization
 		}
 
 		#region Writer Generation
+		
+		//*******************************************************
+		// Contract generation
+		//
+		
+#if NET_2_0
+		public void GenerateContract (ArrayList generatedMaps)
+		{
+			// Write the base serializer
+			
+			if (generatedMaps.Count == 0) return;
+			
+			GenerationResult main = (GenerationResult) generatedMaps[0];
+			
+			string baseSerializerName = GetUniqueClassName ("BaseXmlSerializer");
+			
+			WriteLine ("");
+			WriteLine ("public class " + baseSerializerName + " : System.Xml.Serialization.XmlSerializer");
+			WriteLineInd ("{");
+			WriteLineInd ("protected override System.Xml.Serialization.XmlSerializationReader CreateReader () {");
+			WriteLine ("return new " + main.ReaderClassName + " ();");
+			WriteLineUni ("}");
+			WriteLine ("");
+			
+			WriteLineInd ("protected override System.Xml.Serialization.XmlSerializationWriter CreateWriter () {");
+			WriteLine ("return new " + main.WriterClassName + " ();");
+			WriteLineUni ("}");
+			WriteLine ("");
+			
+			WriteLineInd ("public override bool CanDeserialize (System.Xml.XmlReader xmlReader) {");
+			WriteLine ("return true;");
+			WriteLineUni ("}");
+			
+			WriteLineUni ("}");
+			WriteLine ("");
+			
+			// Write a serializer for each imported map
+			
+			foreach (GenerationResult res in generatedMaps)
+			{
+				res.SerializerClassName = GetUniqueClassName (res.Mapping.ElementName + "Serializer");
+				
+				WriteLine ("public sealed class " + res.SerializerClassName + " : " + baseSerializerName);
+				WriteLineInd ("{");
+				WriteLineInd ("protected override void Serialize (object obj, System.Xml.Serialization.XmlSerializationWriter writer) {");
+				WriteLine ("((" + res.WriterClassName + ")writer)." + res.WriteMethodName + "(obj);");
+				WriteLineUni ("}");
+				WriteLine ("");
+				
+				WriteLineInd ("protected override object Deserialize (System.Xml.Serialization.XmlSerializationReader reader) {");
+				WriteLine ("return ((" + res.ReaderClassName + ")reader)." + res.ReadMethodName + "();");
+				WriteLineUni ("}");
+				
+				WriteLineUni ("}");
+				WriteLine ("");
+			}
+
+			WriteLine ("public class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation");
+			WriteLineInd ("{");
+			
+			WriteLine ("System.Collections.Hashtable readMethods = null;");
+			WriteLine ("System.Collections.Hashtable writeMethods = null;");
+			WriteLine ("System.Collections.Hashtable typedSerializers = null;");
+			WriteLine ("");
+		
+			WriteLineInd ("public System.Xml.Serialization.XmlSerializationReader Reader {");
+			WriteLineInd ("get {");
+			WriteLine ("return new " + main.ReaderClassName + "();");
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+			WriteLine ("");
+			
+			WriteLineInd ("public System.Xml.Serialization.XmlSerializationWriter Writer {");
+			WriteLineInd ("get {");
+			WriteLine ("return new " + main.WriterClassName + "();");
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+			WriteLine ("");
+			
+			WriteLineInd ("public System.Collections.Hashtable ReadMethods {");
+			WriteLineInd ("get {");
+			WriteLineInd ("lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {");
+			WriteLineInd ("if (readMethods == null) {");
+			WriteLine ("readMethods = new System.Collections.Hashtable ();");
+			foreach (GenerationResult res in generatedMaps)
+				WriteLine ("readMethods.Add (@\"" + res.Mapping.GetKey () + "\", @\"" + res.ReadMethodName + "\");");
+			WriteLineUni ("}");
+			WriteLine ("return readMethods;");
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+			WriteLine ("");
+			
+			WriteLineInd ("public System.Collections.Hashtable WriteMethods {");
+			WriteLineInd ("get {");
+			WriteLineInd ("lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {");
+			WriteLineInd ("if (writeMethods == null) {");
+			WriteLine ("writeMethods = new System.Collections.Hashtable ();");
+			foreach (GenerationResult res in generatedMaps)
+				WriteLine ("writeMethods.Add (@\"" + res.Mapping.GetKey () + "\", @\"" + res.WriteMethodName + "\");");
+			WriteLineUni ("}");
+			WriteLine ("return writeMethods;");
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+			WriteLine ("");
+			
+			WriteLineInd ("public System.Collections.Hashtable TypedSerializers {");
+			WriteLineInd ("get {");
+			WriteLineInd ("lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {");
+			WriteLineInd ("if (typedSerializers == null) {");
+			WriteLine ("typedSerializers = new System.Collections.Hashtable ();");
+			foreach (GenerationResult res in generatedMaps)
+				WriteLine ("typedSerializers.Add (@\"" + res.Mapping.GetKey () + "\", new " + res.SerializerClassName + "());");
+			WriteLineUni ("}");
+			WriteLine ("return typedSerializers;");
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+			WriteLineUni ("}");
+			
+			WriteLineInd ("public bool CanSerialize (System.Type type) {");
+			foreach (GenerationResult res in generatedMaps) {
+				if (res.Mapping is XmlTypeMapping)
+					WriteLine ("if (type == typeof(" + (res.Mapping as XmlTypeMapping).TypeData.FullTypeName +  ")) return true;");
+			}
+			WriteLine ("return false;");
+			WriteLineUni ("}");
+			
+			WriteLineUni ("}");
+			WriteLine ("");
+		}
+#endif
+
 
 		//*******************************************************
 		// Writer generation
@@ -2320,6 +2456,11 @@ namespace System.Xml.Serialization
 				return GetUniqueName ("fc", typeMap, "FixupCallback__Message");
 		}
 		
+		string GetUniqueClassName (string s)
+		{
+			return classNames.AddUnique (s, null);
+		}
+		
 		string GetReadObjectCall (XmlTypeMapping typeMap, string isNullable, string checkType)
 		{
 			if (_format == SerializationFormat.Literal)
@@ -2444,6 +2585,7 @@ namespace System.Xml.Serialization
 		public string WriterClassName;
 		public string WriteMethodName;
 		public string Namespace;
+		public string SerializerClassName;
 	}
 	
 }

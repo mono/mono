@@ -28,14 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 
 namespace System.Xml.Serialization 
 {
-	public interface IXmlSerializerImplementation
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	
+	interface IXmlSerializerImplementation
 	{
 		XmlSerializationReader Reader {get;}
 		Hashtable ReadMethods {get;}
@@ -47,4 +51,3 @@ namespace System.Xml.Serialization
 	}
 }
 
-#endif

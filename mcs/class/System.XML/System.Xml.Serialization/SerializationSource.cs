@@ -36,11 +36,11 @@ namespace System.Xml.Serialization
 {
 	internal class SerializationSource 
 	{
-		ArrayList includedTypes;
+		Type[] includedTypes;
 		string namspace;
 		bool canBeGenerated = true;
 		
-		public SerializationSource (string namspace, ArrayList includedTypes)
+		public SerializationSource (string namspace, Type[] includedTypes)
 		{
 			this.namspace = namspace;
 			this.includedTypes = includedTypes;
@@ -56,8 +56,8 @@ namespace System.Xml.Serialization
 			if (includedTypes == null)
 				return other.includedTypes == null;
 			
-			if (includedTypes.Count != other.includedTypes.Count) return false;
-			for (int n=0; n<includedTypes.Count; n++)
+			if (includedTypes.Length != other.includedTypes.Length) return false;
+			for (int n=0; n<includedTypes.Length; n++)
 				if (!includedTypes[n].Equals (other.includedTypes[n])) return false;
 
 			return true;
@@ -76,7 +76,7 @@ namespace System.Xml.Serialization
 		Type type;
 		string rootHash;
 		
-		public XmlTypeSerializationSource (Type type, XmlRootAttribute root, XmlAttributeOverrides attributeOverrides, string namspace, ArrayList includedTypes)
+		public XmlTypeSerializationSource (Type type, XmlRootAttribute root, XmlAttributeOverrides attributeOverrides, string namspace, Type[] includedTypes)
 		: base (namspace, includedTypes)
 		{
 			if (attributeOverrides != null) {
@@ -117,7 +117,7 @@ namespace System.Xml.Serialization
 		string attributeOverridesHash;
 		Type type;
 		
-		public SoapTypeSerializationSource (Type type, SoapAttributeOverrides attributeOverrides, string namspace, ArrayList includedTypes)
+		public SoapTypeSerializationSource (Type type, SoapAttributeOverrides attributeOverrides, string namspace, Type[] includedTypes)
 		: base (namspace, includedTypes)
 		{
 			if (attributeOverrides != null) {
@@ -154,7 +154,7 @@ namespace System.Xml.Serialization
 		bool literalFormat;
 		
 		public MembersSerializationSource (string elementName, bool hasWrapperElement, XmlReflectionMember [] members, bool writeAccessors, 
-										   bool literalFormat, string namspace, ArrayList includedTypes)
+										   bool literalFormat, string namspace, Type[] includedTypes)
 		: base (namspace, includedTypes)
 		{
 			this.elementName = elementName;

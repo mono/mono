@@ -90,7 +90,8 @@ namespace System.Xml.Serialization {
 			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, writeAccessors, mapping);
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Encoded;
-			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, writeAccessors, false, null, includedTypes);
+			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
+			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, writeAccessors, false, null, extraTypes);
 			return mps;
 		}
 
@@ -119,11 +120,12 @@ namespace System.Xml.Serialization {
 				case SchemaTypes.Primitive: map = ImportPrimitiveMapping (type, defaultNamespace); break;
 				case SchemaTypes.Enum: map = ImportEnumMapping (type, defaultNamespace); break;
 				case SchemaTypes.XmlSerializable:
-				default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML stialization");
+				default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML serialization");
 			}
 			map.RelatedMaps = relatedMaps;
 			map.Format = SerializationFormat.Encoded;
-			map.Source = new SoapTypeSerializationSource (type, attributeOverrides, defaultNamespace, includedTypes);
+			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
+			map.Source = new SoapTypeSerializationSource (type, attributeOverrides, defaultNamespace, extraTypes);
 			return map;
 		}
 
@@ -330,6 +332,9 @@ namespace System.Xml.Serialization {
 			TypeData typeData = TypeTranslator.GetTypeData (type);
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;
+			
+			ReflectionHelper.CheckSerializableType (type);
+				
 			map = CreateTypeMapping (typeData, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.Namespace);
 

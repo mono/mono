@@ -71,6 +71,25 @@ namespace System.Xml.Serialization
 			public Type WriterType;
 			public MethodInfo WriterMethod;
 			public GenerationBatch Batch;
+			public IXmlSerializerImplementation Implementation;
+			
+			public XmlSerializationReader CreateReader () {
+				if (ReaderType != null)
+					return (XmlSerializationReader) Activator.CreateInstance (ReaderType);
+				else if (Implementation != null)
+					return Implementation.Reader;
+				else
+					return null;
+			}
+			
+			public XmlSerializationWriter CreateWriter () {
+				if (WriterType != null)
+					return (XmlSerializationWriter) Activator.CreateInstance (WriterType);
+				else if (Implementation != null)
+					return Implementation.Writer;
+				else
+					return null;
+			}
 		}
 		
 		internal class GenerationBatch
@@ -170,6 +189,11 @@ namespace System.Xml.Serialization
 			}
 
 			typeMapping = importer.ImportTypeMapping (type, root, defaultNamespace);
+		}
+		
+		internal XmlMapping Mapping
+		{
+			get { return typeMapping; }
 		}
 
 #if NET_2_0
@@ -427,16 +451,25 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static Assembly GenerateSerializer (Type[] types, XmlMapping[] mappings)
 		{
-			throw new NotImplementedException ();
+			return GenerateSerializer (types, mappings, null);
 		}
 		
 		[MonoTODO]
 		public static Assembly GenerateSerializer (Type[] types, XmlMapping[] mappings, CompilerParameters parameters)
 		{
-			throw new NotImplementedException ();
+			GenerationBatch batch = new GenerationBatch ();
+			batch.Maps = mappings;
+			batch.Datas = new SerializerData [mappings.Length];
+			
+			for (int n=0; n<mappings.Length; n++) {
+				SerializerData data = new SerializerData ();
+				data.Batch = batch;
+				batch.Datas [n] = data;
+			}
+			
+			return GenerateSerializers (batch, parameters);
 		}
 		
 		[MonoTODO]
@@ -460,16 +493,14 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static string GetXmlSerializerAssemblyName (Type type)
 		{
-			throw new NotImplementedException ();
+			return type.Assembly.GetName().Name + ".XmlSerializers";
 		}
 
-		[MonoTODO]
 		public static string GetXmlSerializerAssemblyName (Type type, string defaultNamespace)
 		{
-			throw new NotImplementedException ();
+			return GetXmlSerializerAssemblyName (type) + "." + defaultNamespace.GetHashCode ();
 		}
 		
 		[MonoTODO]
@@ -482,9 +513,13 @@ namespace System.Xml.Serialization
 		
 		XmlSerializationWriter CreateWriter (XmlMapping typeMapping)
 		{
+			XmlSerializationWriter writer;
+			
 			lock (this) {
-				if (serializerData != null && serializerData.WriterType != null)
-					return (XmlSerializationWriter) Activator.CreateInstance (serializerData.WriterType);
+				if (serializerData != null) {
+					writer = serializerData.CreateWriter ();
+					if (writer != null) return writer;
+				}
 			}
 			
 			if (!typeMapping.Source.CanBeGenerated || generationThreshold == -1)
@@ -493,8 +528,8 @@ namespace System.Xml.Serialization
 			CheckGeneratedTypes (typeMapping);
 			
 			lock (this) {
-				if (serializerData.WriterType != null)
-					return (XmlSerializationWriter) Activator.CreateInstance (serializerData.WriterType);
+				writer = serializerData.CreateWriter ();
+				if (writer != null) return writer;
 			}
 			
 			return new XmlSerializationWriterInterpreter (typeMapping);
@@ -502,9 +537,13 @@ namespace System.Xml.Serialization
 		
 		XmlSerializationReader CreateReader (XmlMapping typeMapping)
 		{
+			XmlSerializationReader reader;
+			
 			lock (this) {
-				if (serializerData != null && serializerData.ReaderType != null)
-					return (XmlSerializationReader) Activator.CreateInstance (serializerData.ReaderType);
+				if (serializerData != null) {
+					reader = serializerData.CreateReader ();
+					if (reader != null) return reader;
+				}
 			}
 			
 			if (!typeMapping.Source.CanBeGenerated || generationThreshold == -1)
@@ -513,8 +552,8 @@ namespace System.Xml.Serialization
 			CheckGeneratedTypes (typeMapping);
 			
 			lock (this) {
-				if (serializerData.ReaderType != null)
-					return (XmlSerializationReader) Activator.CreateInstance (serializerData.ReaderType);
+				reader = serializerData.CreateReader ();
+				if (reader != null) return reader;
 			}
 			
 			return new XmlSerializationReaderInterpreter (typeMapping);
@@ -546,18 +585,18 @@ namespace System.Xml.Serialization
 			if (generate)
 			{
 				if (serializerData.Batch != null)
-					GenerateSerializers (serializerData.Batch);
+					GenerateSerializersAsync (serializerData.Batch);
 				else
 				{
 					GenerationBatch batch = new GenerationBatch ();
 					batch.Maps = new XmlMapping[] {typeMapping};
 					batch.Datas = new SerializerData[] {serializerData};
-					GenerateSerializers (batch);
+					GenerateSerializersAsync (batch);
 				}
 			}
 		}
 		
-		void GenerateSerializers (GenerationBatch batch)
+		void GenerateSerializersAsync (GenerationBatch batch)
 		{
 			if (batch.Maps.Length != batch.Datas.Length)
 				throw new ArgumentException ("batch");
@@ -578,7 +617,11 @@ namespace System.Xml.Serialization
 		{
 			try
 			{
-				RunSerializerGenerationAux (obj);
+				GenerationBatch batch = (GenerationBatch) obj;
+				batch = LoadFromSatelliteAssembly (batch);
+				
+				if (batch != null)
+					GenerateSerializers (batch, null);
 			}
 			catch (Exception ex)
 			{
@@ -586,14 +629,20 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		void RunSerializerGenerationAux (object obj)
+		static Assembly GenerateSerializers (GenerationBatch batch, CompilerParameters cp)
 		{
 			DateTime tim = DateTime.Now;
 			
-			GenerationBatch batch = (GenerationBatch) obj;
 			XmlMapping[] maps = batch.Maps;
 			
-			string file = Path.GetTempFileName ();
+			if (cp == null) {
+				cp = new CompilerParameters();
+				cp.IncludeDebugInformation = false;
+				cp.GenerateInMemory = true;
+				cp.TempFiles.KeepFiles = !deleteTempFiles;
+			}
+			
+			string file = cp.TempFiles.AddExtension ("cs");
 			StreamWriter sw = new StreamWriter (file);
 			
 			if (!deleteTempFiles)
@@ -609,30 +658,29 @@ namespace System.Xml.Serialization
 			{
 				Console.WriteLine ("Serializer could not be generated");
 				Console.WriteLine (ex);
-				
-				if (deleteTempFiles)
-					File.Delete (file);
-				return;
+				cp.TempFiles.Delete ();
+				return null;
 			}
 			sw.Close ();
 			
 			CSharpCodeProvider provider = new CSharpCodeProvider();
 			ICodeCompiler comp = provider.CreateCompiler ();
 			
-			CompilerParameters cp = new CompilerParameters();
-		    cp.GenerateExecutable = false;
-			cp.IncludeDebugInformation = false;
-		    cp.GenerateInMemory = true;
-		    cp.ReferencedAssemblies.Add ("System.dll");
-			cp.ReferencedAssemblies.Add ("System.Xml");
-			cp.ReferencedAssemblies.Add ("System.Data");
+			cp.GenerateExecutable = false;
 			
 			foreach (Type rtype in gen.ReferencedTypes)
 			{
 				if (!cp.ReferencedAssemblies.Contains (rtype.Assembly.Location))
 					cp.ReferencedAssemblies.Add (rtype.Assembly.Location);
 			}
-
+				
+			if (!cp.ReferencedAssemblies.Contains ("System.dll"))
+				cp.ReferencedAssemblies.Add ("System.dll");
+			if (!cp.ReferencedAssemblies.Contains ("System.Xml"))
+				cp.ReferencedAssemblies.Add ("System.Xml");
+			if (!cp.ReferencedAssemblies.Contains ("System.Data"))
+				cp.ReferencedAssemblies.Add ("System.Data");
+			
 			CompilerResults res = comp.CompileAssemblyFromFile (cp, file);
 			if (res.Errors.Count > 0)
 			{
@@ -640,9 +688,8 @@ namespace System.Xml.Serialization
 				foreach (CompilerError error in res.Errors)
 					Console.WriteLine (error);
 					
-				if (deleteTempFiles)
-					File.Delete (file);
-				return;
+				cp.TempFiles.Delete ();
+				return null;
 			}
 			
 			GenerationResult[] results = gen.GenerationResults;
@@ -660,12 +707,25 @@ namespace System.Xml.Serialization
 				}
 			}
 			
-			if (deleteTempFiles)
-				File.Delete (file);
+			cp.TempFiles.Delete ();
 
 			if (!deleteTempFiles)
 				Console.WriteLine ("Generation finished - " + (DateTime.Now - tim).TotalMilliseconds + " ms");
+				
+			return res.CompiledAssembly;
 		}
+		
+#if NET_2_0
+		GenerationBatch LoadFromSatelliteAssembly (GenerationBatch batch)
+		{
+			
+		}
+#else
+		GenerationBatch LoadFromSatelliteAssembly (GenerationBatch batch)
+		{
+			return batch;
+		}
+#endif
 		
 #endregion // Methods
 	}

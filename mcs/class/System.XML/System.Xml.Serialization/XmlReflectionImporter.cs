@@ -115,7 +115,8 @@ namespace System.Xml.Serialization {
 			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, false, mapping);
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Literal;
-			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, false, true, ns, includedTypes);
+			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
+			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, false, true, ns, extraTypes);
 			if (allowPrivateTypes) mps.Source.CanBeGenerated = false;
 			return mps;
 		}
@@ -184,7 +185,8 @@ namespace System.Xml.Serialization {
 
 			map.RelatedMaps = relatedMaps;
 			map.Format = SerializationFormat.Literal;
-			map.Source = new XmlTypeSerializationSource (type, root, attributeOverrides, defaultNamespace, includedTypes);
+			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
+			map.Source = new XmlTypeSerializationSource (type, root, attributeOverrides, defaultNamespace, extraTypes);
 			if (allowPrivateTypes) map.Source.CanBeGenerated = false;
 			return map;
 		}
@@ -524,6 +526,10 @@ namespace System.Xml.Serialization {
 			TypeData typeData = TypeTranslator.GetTypeData (type);
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
+			
+			if (!allowPrivateTypes)
+				ReflectionHelper.CheckSerializableType (type);
+				
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 
@@ -552,6 +558,10 @@ namespace System.Xml.Serialization {
 			TypeData typeData = TypeTranslator.GetTypeData (type);
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
+			
+			if (!allowPrivateTypes)
+				ReflectionHelper.CheckSerializableType (type);
+				
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 			return map;

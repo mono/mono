@@ -40,6 +40,7 @@ namespace System.Xml.Serialization
 		ArrayList relatedMaps;
 		SerializationFormat format;
 		SerializationSource source;
+		string key;
 		
 		internal string _elementName;
 		internal string _namespace;
@@ -65,9 +66,14 @@ namespace System.Xml.Serialization
 			get { return _namespace; }
 		}
 		
-		[MonoTODO]
 		public void SetKey (string key)
 		{
+			this.key = key;
+		}
+		
+		internal string GetKey ()
+		{
+			return key;
 		}
 #endif
 
