@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 			
 			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
 
-			UnderlyingType = RootContext.TypeManager.LookupType (BaseType);
+			UnderlyingType = TypeManager.LookupType (BaseType);
 			
 			if (UnderlyingType != TypeManager.int32_type &&
 			    UnderlyingType != TypeManager.uint32_type &&
@@ -122,7 +122,7 @@ namespace Mono.CSharp {
 						 FieldAttributes.Public | FieldAttributes.SpecialName
 						 | FieldAttributes.RTSpecialName);
 
-			RootContext.TypeManager.AddEnumType (Name, TypeBuilder, this);
+			TypeManager.AddEnumType (Name, TypeBuilder, this);
 
 			return TypeBuilder;
 		}

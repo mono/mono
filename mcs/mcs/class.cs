@@ -755,7 +755,7 @@ namespace Mono.CSharp {
 			error = false;
 			name = MakeFQN (ns, name);
 			
-			t  = RootContext.TypeManager.LookupType (name);
+			t  = TypeManager.LookupType (name);
 			if (t != null)
 				return t;
 
@@ -1081,7 +1081,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			RootContext.TypeManager.AddUserType (Name, TypeBuilder, this);
+			TypeManager.AddUserType (Name, TypeBuilder, this);
 			RootContext.RegisterOrder (this);
 
 			if (Interfaces != null){

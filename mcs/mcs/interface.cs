@@ -659,6 +659,9 @@ namespace Mono.CSharp {
 			Type [] ifaces;
 			bool error;
 
+			if (TypeBuilder != null)
+				return TypeBuilder;
+			
 			if (InTransit)
 				return null;
 			
@@ -691,7 +694,7 @@ namespace Mono.CSharp {
 				tc.RegisterOrder (this);
 			}
 			
-			RootContext.TypeManager.AddUserInterface (Name, TypeBuilder, this);
+			TypeManager.AddUserInterface (Name, TypeBuilder, this);
 			InTransit = false;
 			
 			return TypeBuilder;

@@ -23,11 +23,6 @@ namespace Mono.CSharp {
 		static Tree tree;
 
 		//
-		// Contains loaded assemblies and our generated code as we go.
-		//
-		static public TypeManager TypeManager;
-
-		//
 		// The System.Reflection.Emit CodeGenerator
 		//
 		static CodeGen cg;
@@ -77,7 +72,6 @@ namespace Mono.CSharp {
 		static RootContext ()
 		{
 			tree = new Tree ();
-			TypeManager = new TypeManager ();
 			interface_resolve_order = new ArrayList ();
 			type_container_resolve_order = new ArrayList ();
 		}

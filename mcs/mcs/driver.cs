@@ -222,7 +222,7 @@ namespace Mono.CSharp
 
 			try {
 				a = Assembly.Load (assembly);
-				RootContext.TypeManager.AddAssembly (a);
+				TypeManager.AddAssembly (a);
 				return 0;
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
@@ -230,7 +230,7 @@ namespace Mono.CSharp
 
 					try {
 						a = Assembly.LoadFrom (full_path);
-						RootContext.TypeManager.AddAssembly (a);
+						TypeManager.AddAssembly (a);
 						return 0;
 					} catch (FileNotFoundException ff) {
 						total_log += ff.FusionLog;
@@ -800,7 +800,7 @@ namespace Mono.CSharp
 			RootContext.CodeGen = new CodeGen (output_file, output_file,
 							   want_debugging_support);
 
-			RootContext.TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
+			TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
 
 			//
 			// Before emitting, we need to get the core
@@ -815,7 +815,7 @@ namespace Mono.CSharp
 					return;
 			}
 			
-			RootContext.TypeManager.InitCoreTypes ();
+			TypeManager.InitCoreTypes ();
 			if (timestamps)
 				ShowTime ("   Core Types done");
 
@@ -830,7 +830,7 @@ namespace Mono.CSharp
 			RootContext.PopulateTypes ();
 			
 			if (RootContext.StdLib)
-				RootContext.TypeManager.InitCodeHelpers ();
+				TypeManager.InitCodeHelpers ();
 				
 			if (Report.Errors > 0){
 				error ("Compilation failed");

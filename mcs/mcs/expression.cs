@@ -5470,7 +5470,7 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		static public Indexers GetIndexersForType (Type t, TypeManager tm, Location loc) 
+		static public Indexers GetIndexersForType (Type t, Location loc) 
 		{
 			Indexers ix = (Indexers) map [t];
 			string p_name = TypeManager.IndexerPropertyName (t);
@@ -5478,7 +5478,7 @@ namespace Mono.CSharp {
 			if (ix != null)
 				return ix;
 
-			MemberInfo [] mi = tm.FindMembers (
+			MemberInfo [] mi = TypeManager.FindMembers (
 				t, MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance,
 				Type.FilterName, p_name);
@@ -5527,7 +5527,7 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					indexer_type, RootContext.TypeManager, ea.loc);
+					indexer_type, ea.loc);
 
 
 			//
@@ -5561,7 +5561,7 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					indexer_type, RootContext.TypeManager, ea.loc);
+					indexer_type, ea.loc);
 
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
 				set_arguments = (ArrayList) ea.Arguments.Clone ();

@@ -76,7 +76,7 @@ namespace Mono.CSharp {
 					name, attr, TypeManager.multicast_delegate_type);
 			}
 
-			RootContext.TypeManager.AddDelegateType (Name, TypeBuilder, this);
+			TypeManager.AddDelegateType (Name, TypeBuilder, this);
 		}
 
 		public override bool Define (TypeContainer parent)
