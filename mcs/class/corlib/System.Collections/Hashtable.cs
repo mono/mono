@@ -293,6 +293,21 @@ namespace System.Collections {
 		// ICollection
 		public virtual void CopyTo (Array array, int arrayIndex)
 		{
+			if (null == array)
+				throw new ArgumentNullException ("array");
+			
+			if (arrayIndex < 0)
+				throw new ArgumentOutOfRangeException ("arrayIndex");
+
+			if (array.Rank > 1)
+				throw new ArgumentException ("array is multidimensional");
+
+			if (arrayIndex >= array.Length)
+				throw new ArgumentException ("arrayIndex is equal to or greater than array.Length");
+			
+			if (arrayIndex + this.inUse > array.Length)
+				throw new ArgumentException ("Not enough room from arrayIndex to end of array for this Hashtable");
+			
 			IDictionaryEnumerator it = GetEnumerator ();
 			int i = arrayIndex;
 
