@@ -1,5 +1,7 @@
 2003-11-04 cesar lopez nataren <cesar@ciencias.unam.mx>
 
+	* FunctionObject.cs: Handle no parameters on functions.
+	
 	* jscript-lexer-parser.g: Allow functions without parameters.
 
 2003-11-03 cesar lopez nataren <cesar@ciencias.unam.mx>

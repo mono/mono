@@ -79,21 +79,25 @@ namespace Microsoft.JScript {
 		}
 
 		internal Type [] params_types ()
-		{		
-			int i, size;
-			ArrayList p = parameters.ids;
+		{
+			if (parameters == null)
+				return new Type [] {};
+			else {
+				int i, size;
+				ArrayList p = parameters.ids;
 
-			size = p.Count + 2;
+				size = p.Count + 2;
 
-			Type [] types = new Type [size];
+				Type [] types = new Type [size];
 
-			types [0] = typeof (Object);
-			types [1] = typeof (Microsoft.JScript.Vsa.VsaEngine);
+				types [0] = typeof (Object);
+				types [1] = typeof (Microsoft.JScript.Vsa.VsaEngine);
 
-			for (i = 2; i < size; i++)
-				types [i] = ((FormalParam) p [i - 2]).type;
+				for (i = 2; i < size; i++)
+					types [i] = ((FormalParam) p [i - 2]).type;
 
-			return types;
+				return types;
+			}
 		}
 	}
 }
