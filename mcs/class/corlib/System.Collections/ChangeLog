@@ -1,3 +1,9 @@
+2004-12-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Hashtable.cs: Add deserialized elements in OnDeserialization, since
+	when the serialization constructor is called, some of the elements
+	may not yet be fully deserialized. This fixes bug #70570.
+
 2004-07-21  Geoff Norton <gnorton@customerdna.com>
 
         * Hashtable.cs: lock the SyncRoot when Cloning a Synchronized hashtable to avoid
