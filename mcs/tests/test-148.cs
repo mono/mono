@@ -114,6 +114,9 @@ public class Z : Y
 
 		Console.WriteLine ("RESULT: " + result);
 
+		E e = new E ();
+		e.g = "monkey";
+
 		return result;
 	}
 }
@@ -152,5 +155,18 @@ public class D : C
 		get {
 			return a * value;
 		}
+	}
+}
+
+public class E {
+	public virtual string g {
+		get { return "g"; }
+		set { }
+	}
+}
+
+public class F : E {
+	public override string g {
+		get { return "h"; }
 	}
 }
