@@ -23,10 +23,17 @@ test:
 	(cd class; make test)
 
 clean:
+	if test x$(OS) = xWindows_NT; then make cleanwindows; else make cleanlinux; fi
+
+cleanwindows:
 	for i in $(DIRS); do 			\
 		(cd $$i; make clean)		\
 	done
 
+cleanlinux:
+	for i in $(DIRS); do 			\
+		(cd $$i; make -f makefile.gnu clean)		\
+	done
 
 dist: 
 	(c=`pwd`; d=`basename $$c`; cd ..; cp -a $$d mcs-$(VERSION); cd mcs-$(VERSION); make clean; cd ..; \
