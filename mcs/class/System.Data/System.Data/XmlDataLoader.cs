@@ -173,8 +173,10 @@ namespace System.Data {
 			reader.MoveToContent ();
 			string Prefix = reader.Prefix;
 			reader.Read ();
-
-			ReadModeDiffGramBefore (new XmlTextReader (reader.BaseURI));
+			XmlTextReader TempReader = new XmlTextReader (reader.BaseURI);
+			ReadModeDiffGramBefore (TempReader);
+			TempReader.Close ();
+						
 			ReadModeDiffGramCurrent (reader);
 		}
 

@@ -409,7 +409,9 @@ namespace System.Data {
 		public XmlReadMode ReadXml (XmlReader r)
 		{
 			XmlDataLoader Loader = new XmlDataLoader (this);
-			return Loader.LoadData (r);
+			XmlReadMode Result = Loader.LoadData (r);
+			r.Close ();
+			return Result;
 		}
 
 		public XmlReadMode ReadXml (Stream stream, XmlReadMode mode)

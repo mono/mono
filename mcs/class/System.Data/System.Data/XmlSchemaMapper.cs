@@ -24,9 +24,8 @@ namespace System.Data {
 
         /*\
 	 *  There is so much TODO here that i dont bother to list them.
-	 *  But colum types, attributes, references ...
+	 *  But colum types, attributes
 	\*/
-
 
         internal class XmlSchemaMapper
 	{	
@@ -35,6 +34,7 @@ namespace System.Data {
 	        private DataSet DSet;
 		enum ElementType {ELEMENT_UNDEFINED, ELEMENT_TABLE, ELEMENT_COLUMN};
 		private Hashtable TypeCollection = new Hashtable ();
+		private Hashtable ElementCollection = new Hashtable ();
 
 		#endregion // Fields
 
@@ -124,13 +124,18 @@ namespace System.Data {
 		private void ReadXmlSchemaChoice (XmlSchemaChoice Choice)
 		{
 			//MaxOccurs
-			
+
 			XmlSchemaObject SchemaObject;
 			foreach (XmlSchemaObject TempObject in Choice.Items) {
 				
 				if ((SchemaObject = TempObject as XmlSchemaElement) != null)
 					ReadXmlSchemaElement ((XmlSchemaElement)SchemaObject, ElementType.ELEMENT_TABLE);
 			}				
+		}
+
+		private void ReadXmlSchemaElement (XmlSchemaElement Element)
+		{
+			ReadXmlSchemaElement (Element, ElementType.ELEMENT_UNDEFINED);
 		}
 
 		private void ReadXmlSchemaElement (XmlSchemaElement Element, ElementType ElType)
@@ -144,6 +149,7 @@ namespace System.Data {
 			DataTable Table2 = null;
 
 			if (Attributes.Contains ("IsDataSet")) { // DataSet -elemt
+
 				if (String.Compare (Attributes ["IsDataSet"].ToString (), "true", true) == 0)
 					DSet.DataSetName = Element.Name;
 			}
@@ -157,9 +163,14 @@ namespace System.Data {
 				if (TypeCollection.Contains (Element.SchemaTypeName.ToString ()))
 					ReadXmlSchemaComplexType ((XmlSchemaComplexType)TypeCollection [Element.SchemaTypeName.ToString ()], TempTable);
 
-				
-			} 
-			else {
+			}
+			else if (Element.RefName != null && Element.RefName.Name != string.Empty) { // if there is a ref=
+
+				if (ElementCollection.Contains (Element.RefName.Name))
+					ReadXmlSchemaElement ((XmlSchemaElement)ElementCollection [Element.RefName.Name], ElementType.ELEMENT_TABLE);
+			}
+			else if (ElementType.ELEMENT_UNDEFINED != ElType) {
+
 				if (ElType == ElementType.ELEMENT_TABLE) {
 
 					DataTable TempTable = new DataTable (Element.Name);
@@ -167,11 +178,15 @@ namespace System.Data {
 					ReadXmlSchemaComplexType (Element.SchemaType, TempTable);
 					return;
 				}
-				else if (ElType == ElementType.ELEMENT_COLUMN) {
+				else if (ElType == ElementType.ELEMENT_COLUMN && Table != null) {
 
 					DataColumn Column = new DataColumn (Element.Name);
 					Table.Columns.Add (Column);
 				}
+			}
+			else {
+				// this element is undefined, for now
+				ElementCollection.Add (Element.Name, Element);
 			}
 
 			XmlSchemaType Type;

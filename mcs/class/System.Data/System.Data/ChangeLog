@@ -1,3 +1,9 @@
+2003-01-02  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataSet.cs: 
+	* XmlDataLoader.cs: XmlReader closing fixes.
+	* XmlSchemaReader.cs: Added support for ref=
+	
 2003-01-01  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataSet.cs: 
