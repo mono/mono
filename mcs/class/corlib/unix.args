@@ -699,7 +699,9 @@ System.Security.Permissions/SecurityAttribute.cs
 System.Security.Permissions/SecurityPermission.cs
 System.Security.Permissions/SecurityPermissionFlag.cs
 System.Security.Permissions/SiteIdentityPermissionAttribute.cs
+System.Security.Permissions/StrongNameIdentityPermission.cs
 System.Security.Permissions/StrongNamePermissionAttribute.cs
+System.Security.Permissions/StrongNamePublicKeyBlob.cs
 System.Security.Permissions/UIPermissionAttribute.cs
 System.Security.Permissions/UIPermissionClipboard.cs
 System.Security.Permissions/UIPermissionWindow.cs
@@ -718,6 +720,7 @@ System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
 System.Security.Policy/Publisher.cs 
 System.Security.Policy/PublisherMembershipCondition.cs
+System.Security.Policy/StrongName.cs 
 System.Security.Principal/GenericIdentity.cs
 System.Security.Principal/GenericPrincipal.cs
 System.Security.Principal/IIdentity.cs
