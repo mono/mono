@@ -1,0 +1,3 @@
+2005-01-27  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* InstanceDescriptor.cs: Constructors don't need to be static.

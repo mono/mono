@@ -64,8 +64,6 @@ namespace System.ComponentModel.Design.Serialization
 			// According to docs only these types are allowed
 			case MemberTypes.Constructor:
 				ConstructorInfo CI = (ConstructorInfo) member;
-				if (!CI.IsStatic)
-					throw new ArgumentException ("InstanceDescriptor only describes static (VB.Net: shared) members", "member");
 				if (arguments == null) // null counts as no arguments
 					if (CI.GetParameters().Length != 0)
 						throw new ArgumentException ("Invalid number of arguments for this constructor", "arguments");
