@@ -1,4 +1,4 @@
-// cs0208-6.cs: Cannot take the address of a managed type ('System.Object')
+// cs0208-6.cs: Cannot take the address of a managed type ('X')
 // Line: 8
 // Compiler options: -unsafe
 
