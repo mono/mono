@@ -30,6 +30,23 @@ class X {
 		return total;
 	}
 
+	//
+	// test that we can iterate on doubles, with a float contorl
+	// variable (this excercises the conversion operator and the
+	// proper loading on the array
+	//
+	static bool test_double (double [] d)
+	{
+		float t = 1.0F;
+		t += 2.0F + 3.0F;
+		float x = 0;
+		
+		foreach (float f in d){
+			x += f;
+		}
+		return x == t;
+	}
+	
 	static int test_break (int [] a)
 	{
 		int total = 0;
@@ -66,12 +83,16 @@ class X {
 			Console.WriteLine ("Expecting: 131, got " + test_continue (a));
 			return 3;
 		}
-
+		
 		if (test_break (a) != 46){
 			Console.WriteLine ("Expecting: 46, got " + test_break (a));
 			return 4;
 		}
 		
+		double [] d = new double [] { 1.0, 2.0, 3.0 };
+		if (!test_double (d))
+			return 5;
+
 		return 0;
 	}
 }
