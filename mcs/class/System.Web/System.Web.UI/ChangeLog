@@ -1,3 +1,7 @@
+2004-09-09 Sanjay Gupta <gsanjay@novell.com>
+
+	* Control.cs: Implemented methods of interface IExpressionAccessor.
+
 2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleWebHandlerParser.cs: correctly cache Type instead of the

@@ -5,9 +5,11 @@
 //   Bob Smith <bob@thestuff.net>
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) Bob Smith
 // (c) 2002,2003 Ximian, Inc. (http://www.ximian.com)
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -1048,13 +1050,20 @@ namespace System.Web.UI
             		get { throw new NotImplementedException (); }
         	}
        
+		ExpressionBindingCollection expressionBindings;
      		ExpressionBindingCollection IExpressionsAccessor.Expressions { 
-            		get { throw new NotImplementedException (); } 
+            		get { 
+				if (expressionBindings == null)
+					expressionBindings = new ExpressionBindingCollection ();
+				return expressionBindings;
+			} 
         	}
 		
         	bool IExpressionsAccessor.HasExpressions { 
-            		get { throw new NotImplementedException (); } 
-        	}
+            		get {
+				return (expressionBindings != null && expressionBindings.Count > 0);
+			}
+		}
 #endif
         }
 }
