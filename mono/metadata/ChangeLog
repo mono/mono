@@ -1,3 +1,7 @@
+2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* reflection.c: fix start address when copying the public key token.
+
 2004-06-23  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c (mono_debugger_unhandled_exception): Store
