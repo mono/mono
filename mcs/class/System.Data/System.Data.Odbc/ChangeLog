@@ -1,3 +1,6 @@
+2004-06-02  Sureshkumar T (tsureshkumar@novell.com)
+      * OdbcDataReader.cs: Implemented GetByte method. Fixed bug #58820
+
 2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
 
        * OdbcParameter.cs: added missing attributes

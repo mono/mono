@@ -169,10 +169,9 @@ namespace System.Data.Odbc
 			return (bool) GetValue(ordinal);
 		}
 
-		[MonoTODO]
 		public byte GetByte (int ordinal)
 		{
-			throw new NotImplementedException ();
+			return (byte) Convert.ToByte(GetValue(ordinal));
 		}
 
 		[MonoTODO]
