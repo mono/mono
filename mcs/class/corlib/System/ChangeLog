@@ -1,3 +1,8 @@
+2003-04-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* Delegate.cs (operator ==): Do not crash if the second argument
+	is null.  Bug fix submitted by Juan Cri.
+
 2003-04-18  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* Array.cs: Deleted the exception in Array.Initialize(), it looks

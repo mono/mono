@@ -175,31 +175,31 @@ namespace System {
 			return CreateDelegate_internal (type, target, info);
 		}
 
-		public object DynamicInvoke( object[] args )
+		public object DynamicInvoke (object[] args)
 		{
-			return DynamicInvokeImpl( args );
+			return DynamicInvokeImpl (args);
 		}
 
-		public virtual object DynamicInvokeImpl( object[] args )
+		public virtual object DynamicInvokeImpl (object[] args)
 		{
-			if (Method == null) {
+			if (Method == null){
 				Type[] mtypes = new Type [args.Length];
-   				for (int i = 0; i < args.Length; ++i) {
-      				mtypes [i] = args [i].GetType ();
-         		}
+   				for (int i = 0; i < args.Length; ++i){
+					mtypes [i] = args [i].GetType ();
+				}
 				method_info = m_target.GetType ().GetMethod (method_name, mtypes);
 			}
-			return Method.Invoke( m_target, args );
+			return Method.Invoke (m_target, args);
 		}
 
-		public virtual object Clone()
+		public virtual object Clone ()
 		{
-			return MemberwiseClone();
+			return MemberwiseClone ();
 		}
 
 		public override bool Equals (object o)
 		{
-			if ( o == null )
+			if (o == null)
 				return false;
 			
 			Delegate d = (Delegate) o;
@@ -256,8 +256,8 @@ namespace System {
 		{
 			Delegate retval = null;
 
-			foreach ( Delegate next in delegates )
-				retval = Combine( retval, next );
+			foreach (Delegate next in delegates)
+				retval = Combine (retval, next);
 
 			return retval;
 		}
@@ -269,33 +269,35 @@ namespace System {
 		}
 		
 		
-		public static Delegate Remove( Delegate source, Delegate value ) 
+		public static Delegate Remove (Delegate source, Delegate value) 
 		{
-			if ( source == null )
+			if (source == null)
 				return null;
 				
-			return source.RemoveImpl( value );
+			return source.RemoveImpl (value);
 		}
 
-		protected virtual Delegate RemoveImpl( Delegate d )
+		protected virtual Delegate RemoveImpl (Delegate d)
 		{
-			if ( this.Equals( d ) )
+			if (this.Equals (d))
 				return null;
 		       
 			return this;
 		}
 
-		public static bool operator ==( Delegate a, Delegate b )
+		public static bool operator == (Delegate a, Delegate b)
 		{
 			if ((object)a == null) {
 				if ((object)b == null)
 					return true;
 				return false;
-			}
-			return a.Equals( b );
+			} else if ((object) b == null)
+				return false;
+			
+			return a.Equals (b);
 		}
 
-		public static bool operator !=( Delegate a, Delegate b )
+		public static bool operator != (Delegate a, Delegate b)
 		{
 			return !(a == b);
 		}
