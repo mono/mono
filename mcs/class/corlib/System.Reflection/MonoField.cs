@@ -94,6 +94,9 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal override extern int GetFieldOffset ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern object GetValueInternal (object obj);
 
 		public override object GetValue (object obj)
