@@ -11,6 +11,8 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Mono.Data.TdsClient.Internal {
         internal class TdsConnectionInternal : Component, ICloneable, IDbConnection
@@ -34,7 +36,10 @@ namespace Mono.Data.TdsClient.Internal {
 		ArrayList tdsPool;
 		TdsVersion tdsVersion = TdsVersion.tds42; // default to TDS version 4.2 which is used by both servers
 		IsolationLevel isolationLevel;
+		TdsCommInternal comm;
 		string user;
+
+		Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 
 		#endregion // Fields
 
@@ -123,16 +128,14 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region Methods
 
-		[System.MonoTODO]
 		public TdsTransactionInternal BeginTransaction ()
 		{
 			return BeginTransaction (IsolationLevel.ReadCommitted);
 		}
 
-		[System.MonoTODO]
 		public TdsTransactionInternal BeginTransaction (IsolationLevel il)
 		{
-			throw new NotImplementedException ();
+			return new TdsTransactionInternal (this, il);
 		}
 
 		[System.MonoTODO]
@@ -141,16 +144,18 @@ namespace Mono.Data.TdsClient.Internal {
 			throw new NotImplementedException ();
 		}
 
-		[System.MonoTODO]
+		[System.MonoTODO("Logout?")]
 		public void Close ()
 		{
-			throw new NotImplementedException ();
+			socket.Shutdown (SocketShutdown.Both);
+			socket.Close ();
 		}
 
-		[System.MonoTODO]
 		public TdsCommandInternal CreateCommand ()
 		{
-			throw new NotImplementedException ();
+			TdsCommandInternal command = new TdsCommandInternal ();
+			command.Connection = this;
+			return command;
 		}
 
                 object ICloneable.Clone()
@@ -173,10 +178,21 @@ namespace Mono.Data.TdsClient.Internal {
 			return CreateCommand ();
 		}
 
-		[System.MonoTODO]
+		[System.MonoTODO("Login?")]
 		public void Open ()
 		{
-			throw new NotImplementedException ();
+			IPHostEntry hostEntry = Dns.GetHostByName (host);
+			IPAddress[] addresses = hostEntry.AddressList;
+		
+			IPEndPoint endPoint;
+
+			foreach (IPAddress address in addresses) {
+				endPoint = new IPEndPoint (address, port);
+				socket.Connect (endPoint);
+
+				if (socket.Connected)
+					break;
+			}
 		}
 
 		#endregion // Methods

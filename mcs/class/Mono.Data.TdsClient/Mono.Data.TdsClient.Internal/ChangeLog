@@ -1,3 +1,14 @@
+2002-10-18  Tim Coleman (tim@timcoleman.com)
+	* TdsConnectionInternal:
+		Add some implementation details
+	* TdsCommInternal:
+		New class, which will handle the low-level
+		communication with the database
+	* TdsPacketTypeInternal:
+		Add new packet type, TdsPacketTypeInternal.None
+		which is used when no packet is being constructed.
+		The value is 0.
+
 2002-10-17  Tim Coleman (tim@timcoleman.com)
 	* ChangeLog:
 		New changelog added

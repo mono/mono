@@ -10,6 +10,7 @@
 namespace Mono.Data.TdsClient.Internal {
         internal enum TdsPacketTypeInternal 
 	{
+		None = 0x0,
 		Query = 0x1,
 		Logon = 0x2,
 		Proc = 0x3,
