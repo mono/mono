@@ -59,20 +59,22 @@ namespace Microsoft.JScript.Tmp
 			JScriptLexer lexer = new JScriptLexer (reader);
 			JScriptParser parser = new JScriptParser (lexer);
 
-			parser.program (program);
+			// parser.program (program);
 		}
 
 
 		public static void Main (string [] args)
 		{
-			try {			
-				Jsc compiler = new Jsc (args [0]);
-
-				compiler.Run ();
-
-			} catch (IndexOutOfRangeException) {
+			if (args.Length < 1) {
 				Console.WriteLine ("Usage: [mono] mjs.exe filename.js");
+				Environment.Exit (0);
 			}
+
+			string filename = args [0];
+			Context ctx = new Context (filename);
+			JSParser parser = new JSParser (ctx);
+
+			ScriptBlock prog_tree = parser.Parse ();
 		}
 	}
 }

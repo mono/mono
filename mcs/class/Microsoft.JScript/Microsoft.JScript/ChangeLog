@@ -1,5 +1,8 @@
 2003-09-20    <cesar@ciencias.unam.mx>
 
+	* driver.cs: Now we are using the Microsoft.JScript public API
+	functions to load the lexer and parser.
+
 	* ScriptBlock.cs,Block.cs: Added ToString function.
 
 2003-09-20    <cesar@ciencias.unam.mx>
