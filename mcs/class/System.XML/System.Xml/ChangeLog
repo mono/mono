@@ -1,3 +1,7 @@
+2002-03-08  Mike Kestner  <mkestner@speakeasy.net>
+
+	* XmlNode.cs (Item): Implemented both indexers.
+
 2002-03-08  Jason Diamond  <jason@injektilo.org>
 
 	* DomEncodingType.cs, TreePosition.cs, XPathNodeType.cs, XmlDataType.cs,

@@ -82,16 +82,33 @@ namespace System.Xml
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public virtual XmlElement this [string name] {
-			get { throw new NotImplementedException (); }
+			get { 
+				foreach (XmlNode node in ChildNodes) {
+					if ((node.NodeType == XmlNodeType.Element) &&
+					    (node.Name == name)) {
+						return (XmlElement) node;
+					}
+				}
+
+				return null;
+			}
 		}
 
-		[MonoTODO]
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public virtual XmlElement this [string localname, string ns] {
-			get { throw new NotImplementedException (); }
+			get { 
+				foreach (XmlNode node in ChildNodes) {
+					if ((node.NodeType == XmlNodeType.Element) &&
+					    (node.LocalName == localname) && 
+					    (node.NamespaceURI == ns)) {
+						return (XmlElement) node;
+					}
+				}
+
+				return null;
+			}
 		}
 
 		public virtual XmlNode LastChild {
