@@ -73,13 +73,7 @@ namespace Microsoft.JScript {
 			MethodBuilder method_builder = type.DefineMethod (name, Function.attr, 
 									  Function.return_type,
 									  Function.params_types ());
-			CustomAttributeBuilder attr_builder;
-			Type func_attr = typeof (JSFunctionAttribute);
-			Type [] func_attr_enum = new Type [] {typeof (JSFunctionAttributeEnum)};
-			attr_builder = new CustomAttributeBuilder (func_attr.GetConstructor (func_attr_enum), 
-								   new object [] {func_type});
-			method_builder.SetCustomAttribute (attr_builder);
-
+			set_custom_attr (method_builder);
 			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,
 							      method_builder.GetILGenerator ());
 			if (parent == null)
@@ -164,6 +158,16 @@ namespace Microsoft.JScript {
 				func_type = JSFunctionAttributeEnum.ClassicFunction;
 			else if (parent is FunctionDeclaration)
 				func_type = JSFunctionAttributeEnum.NestedFunction;
+		}
+
+		internal void set_custom_attr (MethodBuilder mb)
+		{
+			CustomAttributeBuilder attr_builder;
+			Type func_attr = typeof (JSFunctionAttribute);
+			Type [] func_attr_enum = new Type [] {typeof (JSFunctionAttributeEnum)};
+			attr_builder = new CustomAttributeBuilder (func_attr.GetConstructor (func_attr_enum), 
+								   new object [] {func_type});
+			mb.SetCustomAttribute (attr_builder);			
 		}
 
 		internal override bool Resolve (IdentificationTable context)

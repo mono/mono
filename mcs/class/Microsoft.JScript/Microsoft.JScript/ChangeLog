@@ -1,5 +1,7 @@
 2004-03-31  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* FunctionDeclaration.cs: agrouped code for setting custom attribute.
+
 	* expression.cs: added Modulo operator case.
 
 2004-03-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
