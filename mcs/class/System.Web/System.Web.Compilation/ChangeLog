@@ -1,5 +1,10 @@
 2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspComponentFoundry.cs: New file.
+	* AspElements.cs: renamed Component to Aspcomponent.
+
+2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspElements.cs:
 	* AspParser.cs:
 	* AspTokenizer.cs:

@@ -584,7 +584,7 @@ namespace System.Web.Compilation
 	}
 
 	// TODO: support for ControlBuilderAttribute that may be used in custom controls
-	public class Component : Tag
+	public class AspComponent : Tag
 	{
 		private Type type;
 		private string alias;
@@ -630,7 +630,7 @@ namespace System.Web.Compilation
 			return (!(control_collection is System.Web.UI.EmptyControlCollection));
 		}
 		
-		public Component (Tag input_tag, Type type) :
+		public AspComponent (Tag input_tag, Type type) :
 			base (input_tag)
 		{
 			tagType = TagType.SERVERCONTROL;
