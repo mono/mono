@@ -1,5 +1,11 @@
 2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* threads.c:
+	(mono_manage_threads): abort the background threads when finishing.
+	Fixes bug #47232.
+
+2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* gc.c: only close the done_event handle if there was no timeout.
 	C-ified comments.
 
