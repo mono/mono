@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ListView.cs,v $
+// Revision 1.6  2004/10/26 19:51:20  jordi
+// removes warning
+//
 // Revision 1.5  2004/10/26 09:55:48  ravindra
 // Some formatting for my last checkins.
 //
@@ -452,8 +455,7 @@ namespace System.Windows.Forms
 		// Sets the size of the biggest item text
 		// as per the view
 		private void CalcTextSize ()
-		{
-			Size temp;
+		{			
 			// clear the old value
 			text_size = Size.Empty;
 
