@@ -1,3 +1,9 @@
+2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-tables.h: reflecting locale-builder updates.
+
+	  (Added missing ChangeLog entry for 05/26)
+
 2004-05-27  Jackson Harper  <jackson@ximian.com>
 
 	* locales.c: Fix some cut and paste errors.
@@ -5,6 +11,11 @@
 2004-05-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-config.c: set the correct path for config. directory on windows.
+
+2004-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* icall.c : Fixed ves_icall_System_DateTime_GetNow() to return utc
+	  on win32.
 
 2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
