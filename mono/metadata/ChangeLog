@@ -1,3 +1,8 @@
+2004-04-28  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* rand.c: try and talk to egd or prngd
+	for random bytes if opening devices fail.
+
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_load_type_info): Calculate the minimum
