@@ -15,24 +15,27 @@ namespace System.Xml
 {
 	public class XmlTextWriter : XmlWriter
 	{
+		#region Fields
+
+		TextWriter w;
+
+		#endregion
+
 		#region Constructors
 
-		[MonoTODO]
 		public XmlTextWriter (TextWriter w) : base ()
 		{
-			throw new NotImplementedException ();
+			this.w = w;
 		}
 
-		[MonoTODO]
 		public XmlTextWriter (Stream w,	Encoding encoding) : base ()
 		{
-			throw new NotImplementedException ();
+			this.w = new StreamWriter(w, encoding);
 		}
 
-		[MonoTODO]
 		public XmlTextWriter (string filename, Encoding encoding) : base ()
 		{
-			throw new NotImplementedException ();
+			this.w = new StreamWriter(filename, false, encoding);
 		}
 
 		#endregion
@@ -124,10 +127,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteCData (string text)
 		{
-			throw new NotImplementedException ();
+			w.Write("<![CDATA[{0}]]>", text);
 		}
 
 		[MonoTODO]
@@ -142,10 +144,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteComment (string text)
 		{
-			throw new NotImplementedException ();
+			w.Write("<!--{0}-->", text);
 		}
 
 		[MonoTODO]

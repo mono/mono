@@ -1,5 +1,9 @@
 2002-03-14  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XmlTextWriterTests.cs:  Added tests TestCData and TestComment.
+	
+2002-03-14  Kral Ferch <kral_ferch@hotmail.com>
+
 	* XmlTextWriterTests.cs:  Initial checkin.
 	
 2002-03-12  Kral Ferch <kral_ferch@hotmail.com>

@@ -1,3 +1,8 @@
+2002-03-14  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlTextWriter.cs: implemented constructors and 
+	WriteCData and WriteComment.
+
 2002-03-14  Duncan Mak  <duncan@ximian.com>
 
 	* XmlDocument.cs: Moved the NodeChanged EventHandler to its own
