@@ -69,58 +69,62 @@ namespace System.Reflection {
 
 		public virtual void RemoveOnTypeResolve(ResolveEventHandler handler)
 		{
+			throw new NotImplementedException ();
 		}
 
 		public virtual void AddOnTypeResolve(ResolveEventHandler handler)
 		{
+			throw new NotImplementedException ();
 		}
 
 		public virtual void RemoveOnResourceResolve(ResolveEventHandler handler)
 		{
+			throw new NotImplementedException ();
 		}
 		
 		public virtual void AddOnResourceResolve(ResolveEventHandler handler)
 		{
+			throw new NotImplementedException ();
 		}
 
 		public virtual ModuleBuilder DefineDynamicModule(String name, Boolean emitSymbolInfo)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual ModuleBuilder DefineDynamicModule(String name)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual FileStream[] GetFiles()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual FileStream GetFile(String name)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual Stream GetManifestResourceStream(String name)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual Stream GetManifestResourceStream(Type type, String name)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual Type[] GetTypes()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual Type[] GetExportedTypes()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual Type GetType(String name, Boolean throwOnError)
@@ -133,22 +137,22 @@ namespace System.Reflection {
 
 		public Type GetType(String name, Boolean throwOnError, Boolean ignoreCase)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 		
 		public virtual AssemblyName GetName(Boolean copiedName)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public virtual AssemblyName GetName()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public override String ToString()
 		{
-			return "FIXME: assembly";
+			return GetName ().Name;
 		}
 		
 		public static String CreateQualifiedName(String assemblyName, String typeName) 
@@ -163,12 +167,12 @@ namespace System.Reflection {
 
 		public static Assembly GetAssembly(Type type)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public Assembly GetSatelliteAssembly(CultureInfo culture)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public static Assembly LoadFrom(String assemblyFile)
@@ -191,87 +195,87 @@ namespace System.Reflection {
 
 		public static Assembly Load(AssemblyName assemblyRef)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public static Assembly Load(AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public static Assembly Load(Byte[] rawAssembly)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public static Assembly Load(Byte[] rawAssembly, Byte[] rawSymbolStore)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public static Assembly Load(Byte[] rawAssembly, Byte[] rawSymbolStore, Evidence securityEvidence)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public Object CreateInstance(String typeName) 
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public Object CreateInstance(String typeName, Boolean ignoreCase)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public Object CreateInstance(String typeName, Boolean ignoreCase, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
 		{
-		 	return null;
+			throw new NotImplementedException ();
 		}
 
 		public Module[] GetLoadedModules()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public Module[] GetModules()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public Module GetModule(String name)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public String[] GetManifestResourceNames()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public static Assembly GetExecutingAssembly()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public AssemblyName[] GetReferencedAssemblies()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public ManifestResourceInfo GetManifestResourceInfo(String resourceName)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public static Assembly Load(AssemblyName assemblyRef, Evidence assemblySecurity, String callerLocation)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public static Assembly Load(String assemblyString, Evidence assemblySecurity, String callerLocation)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 	}

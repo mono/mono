@@ -95,5 +95,47 @@ namespace System {
 		{
 			throw new NotImplementedException ();
 		}
+
+		public static object ToObject(Type enumType, byte value)
+		{
+			throw new NotImplementedException ();
+		}
+		public static object ToObject(Type enumType, short value)
+		{
+			throw new NotImplementedException ();
+		}
+		public static object ToObject(Type enumType, int value)
+		{
+			throw new NotImplementedException ();
+		}
+		public static object ToObject(Type enumType, long value)
+		{
+			throw new NotImplementedException ();
+		}
+		public static object ToObject(Type enumType, object value)
+		{
+			// needed by mcs
+			throw new NotImplementedException ();
+		}
+		[CLSCompliant(false)]
+		public static object ToObject(Type enumType, sbyte value)
+		{
+			throw new NotImplementedException ();
+		}
+		[CLSCompliant(false)]
+		public static object ToObject(Type enumType, ushort value)
+		{
+			throw new NotImplementedException ();
+		}
+		[CLSCompliant(false)]
+		public static object ToObject(Type enumType, uint value)
+		{
+			throw new NotImplementedException ();
+		}
+		[CLSCompliant(false)]
+		public static object ToObject(Type enumType, ulong value)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -58,7 +58,7 @@ namespace System.Reflection.Emit {
 			code [code_len++] = (byte) (val & 0xFF);
 			code [code_len++] = (byte) ((val >> 8) & 0xFF);
 			code [code_len++] = (byte) ((val >> 16) & 0xFF);
-			code [code_len++] = (byte) ((val << 24) & 0xFF);
+			code [code_len++] = (byte) ((val >> 24) & 0xFF);
 		}
 		/* change to pass by ref to avoid copy */
 		private void ll_emit (OpCode opcode) {

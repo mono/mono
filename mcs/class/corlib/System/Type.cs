@@ -146,6 +146,12 @@ namespace System {
 			}
 		}
 
+		public bool IsEnum {
+			get {
+				return type_is_subtype_of (this, typeof (System.Enum));
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool type_is_subtype_of (Type a, Type b);
 		

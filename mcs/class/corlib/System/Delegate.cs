@@ -116,5 +116,9 @@ namespace System {
 		{
 			throw new MulticastNotSupportedException ("");
 		}
+
+		public static Delegate Remove( Delegate source, Delegate value) {
+			throw new NotImplementedException ();
+		}
 	}
 }
