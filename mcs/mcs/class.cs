@@ -748,8 +748,7 @@ namespace CIR {
 				}
 			}
 			
-			if ((mt & MemberTypes.Method) != 0) {
-				if (Methods != null){
+			if ((mt & MemberTypes.Method) != 0) {				if (Methods != null){
 					foreach (Method m in Methods) {
 						if (filter (m.MethodBuilder, criteria) == true)
 							members.Add (m.MethodBuilder);
@@ -1007,6 +1006,17 @@ namespace CIR {
 			return type_return_type;
 		}
 
+		void WarningNotHiding (TypeContainer parent)
+		{
+			parent.RootContext.Report.Warning (
+				109, Location,
+				"The member `" + parent.Name + "." + Name + "' does not hide an " +
+				"inherited member.  The keyword new is not required");
+							   
+		}
+
+		static Type [] empty_types = new Type [0];
+		
 		//
 		// Creates the type
 		// 
@@ -1018,6 +1028,33 @@ namespace CIR {
 			//
 			// Create the method
 			//
+			Type ptype = parent.TypeBuilder.BaseType;
+			if (false){
+				if (ptype != null){
+					MethodInfo m;
+					
+					if (parameters == null)
+						parameters = empty_types;
+
+					//
+					// FIXME: Replace GetMethod with FindMembers
+					// because it has the same problem that FindMembers does:
+					// it does not work with partial types.
+					//
+					m = ptype.GetMethod (Name, parameters);
+					if (m != null){
+						if ((ModFlags & Modifiers.NEW) == 0){
+							parent.RootContext.Report.Error (
+								108, Location, "The keyword new is required on `" +
+								parent.Name + "." + Name + "' because it hides `" +
+								m.DeclaringType + "." + m.Name + "'");
+						} 
+					} else if ((ModFlags & Modifiers.NEW) != 0)
+						WarningNotHiding (parent);
+				} else if ((ModFlags & Modifiers.NEW) != 0)
+					WarningNotHiding (parent);
+			} 
+			
 			MethodBuilder = parent.TypeBuilder.DefineMethod (
 				Name, Modifiers.MethodAttr (ModFlags),
 				GetCallingConvention (parent is Class),

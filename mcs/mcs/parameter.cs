@@ -121,9 +121,13 @@ namespace CIR {
 
 		public bool VerifyArgs (TypeContainer tc)
 		{
-			int count = FixedParameters.Length;
+			int count;
 			int i, j;
 
+			if (FixedParameters == null)
+				return true;
+			
+			count = FixedParameters.Length;
 			for (i = 0; i < count; i++){
 				for (j = i + 1; j < count; j++){
 					if (FixedParameters [i].Name != FixedParameters [j].Name)

@@ -1,5 +1,15 @@
 2001-09-30  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (report118): require location argument. 
+
+	* parameter.cs: Do not dereference potential null value.
+
+	* class.cs: Catch methods that lack the `new' keyword when
+	overriding a name.  Report warnings when `new' is used without
+	anything being there to override.
+
+	* modifiers.cs: Handle `NEW' as MethodAttributes.NewSlot.
+
 	* class.cs: Only add constructor to hashtable if it is non-null
 	(as now constructors can fail on define).
 

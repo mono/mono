@@ -104,3 +104,19 @@
 
 	And then on error reporting, we map the the integer to the
 	file/line
+
+* In class.cs: Method.Define
+
+	Need to use FindMembers to lookup the member for reporting
+	whether a new is needed or not.  
+
+* virtual-method.cs breaks
+
+	It breaks on the call to: new B ();
+
+	Where B is a class defined in the source code, my guess is that
+	the look for ".ctor" fails
+
+
+
+	

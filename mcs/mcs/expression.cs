@@ -1002,9 +1002,14 @@ namespace CIR {
 		// <summary>
 		//   Reports that we were expecting `expr' to be of class `expected'
 		// </summary>
-		protected void report118 (TypeContainer tc, Expression expr, string expected)
+		protected void report118 (TypeContainer tc, Location l, Expression expr, string expected)
 		{
-			Error (tc, 118, "Expression denotes a '" + ExprClassName (expr.ExprClass) +
+			string kind = "Unknown";
+			
+			if (expr != null)
+				kind = ExprClassName (expr.ExprClass);
+
+			Error (tc, 118, l, "Expression denotes a '" + kind +
 			       "' where an " + expected + " was expected");
 		}
 	}
@@ -1468,7 +1473,8 @@ namespace CIR {
 					//
 					throw new Exception ("Implement me");
 				} else {
-					report118 (tc, expr, "variable, indexer or property access");
+					report118 (tc, location, expr,
+						   "variable, indexer or property access");
 				}
 			}
 
@@ -3270,7 +3276,7 @@ namespace CIR {
 				return null;
 
 			if (!(this.expr is MethodGroupExpr)){
-				report118 (tc, this.expr, "method group");
+				report118 (tc, Location, this.expr, "method group");
 				return null;
 			}
 
@@ -3421,7 +3427,7 @@ namespace CIR {
 				//
 				// FIXME: Find proper error
 				//
-				report118 (tc, ml, "method group");
+				report118 (tc, Location, ml, "method group");
 				return null;
 			}
 			
