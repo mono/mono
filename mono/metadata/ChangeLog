@@ -1,5 +1,11 @@
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
+	* debug-mono-symfile.h
+	(MonoDebugLineNumberEntry): Renamed `offset' to `il_offset' and
+	`address' to `native_offset'.
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_class_create_from_typespec): Only inflate if we
 	either have `context->gclass' or `context->gmethod'.
 
