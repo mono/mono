@@ -315,9 +315,10 @@ namespace System.Security.Cryptography.Xml {
 						continue;
 					if (attr.LocalName == "xml")
 						continue;
+					if (attr.Prefix == el.Prefix)
+						continue;
 					attr.WriteTo (xtw);
 				}
-
 				foreach (XmlNode attr in el.Attributes)
 					attr.WriteTo (xtw);
 				foreach (XmlNode n in el.ChildNodes)

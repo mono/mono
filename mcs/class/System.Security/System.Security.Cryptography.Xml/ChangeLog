@@ -1,3 +1,8 @@
+2004-05-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SignedXml.cs : partial fix for bug #59165 that does not output
+	  namespace that conflicts with element's namespace.
+
 2004-05-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXml.cs: Update TODO informations.
