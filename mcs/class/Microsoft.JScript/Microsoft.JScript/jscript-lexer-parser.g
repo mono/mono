@@ -1,9 +1,10 @@
 //
 // jscript-lexer-parser.g: EcmaScript Grammar written on antlr.
 //
-// Author: Cesar Octavio Lopez Nataren
+// Author:
+//	 Cesar Octavio Lopez Nataren
 //
-// (C) 2003, Cesar Octavio Lopez Nataren (cesar@ciencias.unam.mx)
+// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
 
@@ -23,7 +24,7 @@ program
     ;
 
 
-source_elements
+source_elements	
     : 
 	source_element (source_elements | )
     ;
@@ -99,7 +100,7 @@ iteration_statement
 continue_statement: "continue" (IDENTIFIER | ) SEMI_COLON ;
 
 
-// BreakStatemen, Ecma-262, section 12.8
+// BreakStatement, Ecma-262, section 12.8
 // FIXME: Make sure that no LineSeparator appears between the break keyword and the identifier or semicolon
 break_statement: "break" (IDENTIFIER | ) SEMI_COLON ;
 
@@ -208,16 +209,36 @@ assignment_expression
         
 assignment_operator
     :
-        ASSIGNMENT
+	ASSIGNMENT 
     |
-        COMPOUND_ASSIGNMENT
+	MULTIPLICATION_ASSIGN 
+    |
+	DIVISION_ASSIGN 
+    |
+	REMAINDER_ASSIGN 
+    |
+	ADDITION_ASSIGN 
+    |
+	SUBSTRACTION_ASSIGN 
+    |
+	SIGNED_LEFT_SHIFT_ASSIGN 
+    |
+	SIGNED_RIGHT_SHIFT_ASSIGN 
+    |
+	UNSIGNED_RIGHT_SHIFT_ASSIGN 
+    |
+	BITWISE_AND_ASSIGN 
+    |
+	BITWISE_XOR_ASSIGN 
+    |
+	BITWISE_OR_ASSIGN
     ;
 
 
 // ConditionalExpression, see section 11.12 from Ecma-262, page 58.
 conditional_expression
     :
-        logical_or_expression (INTERROGATION assignment_expression COLON assignment_expression | )
+        logical_or_expression (CONDITIONAL assignment_expression COLON assignment_expression | )
     ;
         
 
@@ -243,7 +264,7 @@ bitwise_or_expression
 
 bitwise_xor_expression
     :
-        bitwise_and_expression (TRIANGLE bitwise_xor_expression | )
+        bitwise_and_expression (BITWISE_XOR bitwise_xor_expression | )
     ;
 
 
@@ -257,7 +278,7 @@ bitwise_and_expression
 // FIXME: more options left to implement
 equality_expression
     :
-        relational_expression
+        relational_expression ((EQUALS | DOES_NOT_EQUALS | STRICT_EQUALS | STRICT_DOES_NOT_EQUALS) equality_expression | )
     ;
 
 
@@ -273,7 +294,7 @@ relational_expression
 // FIXME: more options left to implement
 shift_expression
     :
-        additive_expression
+        additive_expression ((SIGNED_RIGHT_SHIFT | SIGNED_LEFT_SHIFT) shift_expression | )
     ;
 
 
@@ -290,7 +311,7 @@ additive_expression
 // Multiplicative Operators, section 11.5 from Ecma-262, page 48.
 multiplicative_expression
     :
-        unary_expression ((TIMES | SLASH | PERCENT) multiplicative_expression | ) 
+        unary_expression ((TIMES | DIVISION  | REMAINDER) multiplicative_expression | ) 
     ;
 
 
@@ -299,15 +320,15 @@ unary_expression
     :
         postfix_expression
     |
-        ("delete" | "void" | "typeof" | INCREMENT | DECREMENT | PLUS | MINUS | ADMIRATION) unary_expression
+        ("delete" | "void" | "typeof" | INCREMENT | DECREMENT | PLUS | MINUS | BITWISE_NOT | LOGICAL_NOT) unary_expression
     ;
 
 
 // Postfix Expressions, section 11.3 from Ecma-262, page 45.
-// FIXME: more options left to implement
+// FIXME: ensure that no LineTerminator appears between LeftHandSideExpression and INCREMENT and DECREMENT.
 postfix_expression
     :
-        left_hand_side_expression
+        left_hand_side_expression (INCREMENT | DECREMENT | )
     ;
 
 
@@ -332,7 +353,7 @@ new_expression
 // FIXME: more options left to implement
 call_expression
     :
-	member_expression arguments
+	member_expression arguments (arguments | LSQUARE expression RSQUARE | DOT IDENTIFIER)*
     ;
 
 
@@ -340,9 +361,7 @@ call_expression
 // FIXME: more options left to implement
 member_expression
     :
-	primary_expression 
-    | 
-	function_expression
+	(primary_expression | function_expression) (LSQUARE expression RSQUARE | DOT IDENTIFIER)*
 //    |
 //        "new" member_expression arguments
     ;
@@ -469,13 +488,14 @@ class JScriptLexer extends Lexer;
 options {
     charVocabulary='\u0000'..'\uFFFE';
     testLiterals=false;
-    k = 2;
+    k = 4;
 }
 
 
 TAB 
     : 
-        '\u0009' 
+        '\u0009'
+        { _ttype = Token.SKIP; }
     ;
         
    
@@ -557,37 +577,83 @@ SEMI_COLON: ';' ;
 
 COMMA: ',' ;
 
-L_THAN: '<' ('=' { $setType (LE_THAN); })? ;
+L_THAN: '<' ;
 
-G_THAN: '>' ('=' { $setType (GE_THAN); })? ;
+G_THAN: '>' ;
 
-PLUS: '+' ('=' { $setType (COMPOUND_ASSIGNMENT); })? ;
+LE_THAN: "<=" ;
 
-MINUS: '-' ('=' { $setType (COMPOUND_ASSIGNMENT); })? ;
+GE_THAN: ">=" ;
 
-TIMES: '*' ('=' { $setType (COMPOUND_ASSIGNMENT); })? ;
+EQUALS: "==" ;
 
-SLASH: '/' ('=' { $setType (COMPOUND_ASSIGNMENT); })? ;
+DOES_NOT_EQUALS: "!=" ;
 
-PERCENT: '%' ('=' { $setType (COMPOUND_ASSIGNMENT); })? ;
+STRICT_EQUALS: "===" ;
 
-BITWISE_AND: '&' ('&' { $setType (LOGICAL_AND); } | '=' { $setType (COMPOUND_ASSIGNMENT); })?;
+STRICT_DOES_NOT_EQUALS: "!==" ;
 
-BITWISE_OR: '|'  ('|' { $setType (LOGICAL_OR); } | '=' { $setType (COMPOUND_ASSIGNMENT); })? ;
+PLUS: '+' ;
 
-ADMIRATION: '!' ;
+MINUS: '-' ;
 
-INTERROGATION: '?' ;
+TIMES: '*' ;
+
+REMAINDER: '%' ;
+
+INCREMENT: "++" ;
+
+DECREMENT: "--";
+
+SIGNED_LEFT_SHIFT: "<<" ;
+
+SIGNED_RIGHT_SHIFT: ">>" ;
+
+UNSIGNED_RIGHT_SHIFT: ">>>" ;
+
+BITWISE_AND: '&' ;
+
+BITWISE_OR: '|' ;
+
+BITWISE_XOR: '^' ;
+
+LOGICAL_NOT: '!' ;
+
+BITWISE_NOT: '~' ;
+
+LOGICAL_AND: "&&" ;
+
+LOGICAL_OR: "||" ;
+
+CONDITIONAL: '?' ;
 
 COLON: ':' ;
 
 ASSIGNMENT: '=' ;
 
-TRIANGLE: '^' ('=' { $setType (COMPOUND_ASSIGNMENT); })? ;
+ADDITION_ASSIGN: "+=" ;
 
-INCREMENT: "++" ;
+SUBSTRACTION_ASSIGN: "-=" ;
 
-DECREMENT: "--";
+MULTIPLICATION_ASSIGN: "*=" ;
+
+REMAINDER_ASSIGN: "%=" ;
+
+SIGNED_LEFT_SHIFT_ASSIGN: "<<=" ;
+
+SIGNED_RIGHT_SHIFT_ASSIGN: ">>=" ;
+
+UNSIGNED_RIGHT_SHIFT_ASSIGN: ">>>=" ;
+
+BITWISE_AND_ASSIGN: "&=" ;
+
+BITWISE_OR_ASSIGN: "|=" ;
+
+BITWISE_XOR_ASSIGN: "^=" ;
+
+DIVISION: '/' ;
+
+DIVISION_ASSIGN: "/=" ;
 
 
 // FIXME: this just temporal, in order to get into parsing
