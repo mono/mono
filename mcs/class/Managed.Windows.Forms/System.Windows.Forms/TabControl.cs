@@ -485,6 +485,8 @@ namespace System.Windows.Forms {
 					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
 				}
 
+				if (i == SelectedIndex)
+					width += 8;
 				if (width < MinimumTabWidth)
 					width = MinimumTabWidth;
 
@@ -542,10 +544,8 @@ namespace System.Windows.Forms {
 
 				if (width < MinimumTabWidth)
 					width = MinimumTabWidth;
-
-				if (page.Row != prev_row) {
+				if (page.Row != prev_row)
 					xpos = 4 + (slider_pos * size);
-				}
 
 				page.TabBounds = new Rectangle (xpos,
 						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
@@ -568,8 +568,10 @@ namespace System.Windows.Forms {
 						((row_width - TabPages [TabPages.Count - 1].TabBounds.Right) / (TabPages.Count - begin_prev)), spacing);
 			}
 
-			if (SelectedIndex != -1) 
-				ExpandSelected (TabPages [SelectedIndex], xpos == 4 || TabPages [SelectedIndex].TabBounds.Right == row_width, row_width);
+			if (SelectedIndex != -1) {
+				TabPage page = TabPages [SelectedIndex];
+				ExpandSelected (TabPages [SelectedIndex], 2, row_width - 1);
+			}
 		}
 
 		private void FillRow (int start, int end, int amount, Size spacing)
@@ -586,24 +588,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void ExpandSelected (TabPage page, bool edge, int row_width)
+		private void ExpandSelected (TabPage page, int left_edge, int right_edge)
 		{
-			int wexpand = (edge ? 2 : 4);
-
 			if (Appearance != TabAppearance.Normal)
 				return;
 
 			if (Alignment == TabAlignment.Top || Alignment == TabAlignment.Bottom) {
-				int x, y, w, h;
-				x = page.TabBounds.X - wexpand;
-				y = page.TabBounds.Y;
-				w = page.TabBounds.Width + (wexpand * 2);
-				h = page.TabBounds.Height + 2;
+				int l = page.TabBounds.Left - 4;
+				int r = page.TabBounds.Right + 4;
+				int y = page.TabBounds.Y;
+				int h = page.TabBounds.Height + 2;
 
+				if (l < left_edge)
+					l = left_edge;
+				if (r > right_edge && SizeMode != TabSizeMode.Normal)
+					r = right_edge;
 				if (Alignment == TabAlignment.Top)
 					y -= 1;
 
-				page.TabBounds = new Rectangle (x, y, w, h);
+				page.TabBounds = new Rectangle (l, y, r - l, h);
 			} else {
 				// TODO: left and right
 			}
