@@ -1,3 +1,12 @@
+2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: In InternalExecute, use MethodBase instead
+	  of MonoMethod, so it can be also used for running constructors.
+	* ServerIdentity.cs: Added methods for getting and setting the client
+	  proxy in ClientActivatedIdentity. This is needed for CBOs, since
+	  messages need to be dispatched using the proxy as "this", not the
+	  real object.
+
 2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* RemotingServices.cs: use MethodBase rather than looking

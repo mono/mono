@@ -69,7 +69,7 @@ namespace System.Runtime.Remoting
 		private RemotingServices () {}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static object InternalExecute (MonoMethod method, Object obj,
+		internal extern static object InternalExecute (MethodBase method, Object obj,
 							       Object[] parameters, out object [] out_args);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -80,7 +80,7 @@ namespace System.Runtime.Remoting
 		{
 			ReturnMessage result;
 			
-			MonoMethod method = (MonoMethod) reqMsg.MethodBase;
+			MethodBase method = reqMsg.MethodBase;
 			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
 			
 			try 
