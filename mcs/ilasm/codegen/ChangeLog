@@ -16,6 +16,7 @@
 	be easily retrieved, add method to resolve member methods.
 	* TypeRef.cs: Add method for resolving member methods.
 	* ExternTypeRef.cs: Add methods to get classref and methodrefs
+	* MethodRef.cs: New file - Reference to a method in this assembly.
 	
 		
 2003-05-07 Jackson Harper <jackson@latitudegeo.com>
