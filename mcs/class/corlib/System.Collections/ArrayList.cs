@@ -792,7 +792,7 @@ namespace System.Collections {
 					("Collection is fixed size.");
 			}
 
-			if (index < 0 || index >= capacity) {
+			if (index < 0 || index > count) {
 				throw new ArgumentOutOfRangeException ("index < 0 or index >= capacity");
 			}
 

@@ -1,3 +1,8 @@
+2003-01-10  Duncan Mak  <duncan@ximian.com>
+
+	* ArrayList.cs (Insert): Patch from Zoltan
+	(Zoltan.2.Varga@nokia.com).
+
 2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Hashtable.cs: add the key to the error message when
