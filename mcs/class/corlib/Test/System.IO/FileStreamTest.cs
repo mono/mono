@@ -272,10 +272,10 @@ namespace MonoTests.System.IO
                 	AssertEquals ("test#05", 2, stream.ReadByte ());
                 	
 			stream.Seek (3, SeekOrigin.Current);
-                	AssertEquals ("test#06", 6, stream.ReadByte ());                	
+                	AssertEquals ("test#06", 6, stream.ReadByte ());
 
 			stream.Seek (-2, SeekOrigin.Current);
-                	AssertEquals ("test#07", 5, stream.ReadByte ());                	
+                	AssertEquals ("test#07", 5, stream.ReadByte ());
 
 			stream.Flush ();
                 	stream.Close ();
@@ -287,14 +287,14 @@ namespace MonoTests.System.IO
                 public void TestClose ()
                 {
                 	if (File.Exists (".testFileStream.Test.3"))
-                		File.Delete (".testFileStream1.Test.3");
+                		File.Delete (".testFileStream.Test.3");
                 	
                 	FileStream stream = new FileStream (".testFileStream.Test.3", FileMode.CreateNew, FileAccess.ReadWrite);
-                	
+
                 	stream.Write (new byte [] {1, 2, 3, 4}, 0, 4);
                 	stream.ReadByte ();                	
                 	stream.Close ();
-
+			
 			try {                	
                 		stream.ReadByte ();
 				Fail ();
