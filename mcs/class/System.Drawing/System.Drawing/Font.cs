@@ -129,7 +129,29 @@ namespace System.Drawing {
 			return result;
 		}
 
-		public IntPtr ToHfont () { 	/*throw new NotImplementedException ();*/ return (IntPtr)100; }
+		public IntPtr ToHfont ()
+		{
+			IntPtr			Hfont;
+			System.OperatingSystem	osInfo = System.Environment.OSVersion;
+
+			// Sanity. Should we throw an exception?
+			if (fontObject==IntPtr.Zero){				
+				return(IntPtr.Zero);
+			}
+
+			if ((int)osInfo.Platform==128) {
+				// If we're on Unix we use our private gdiplus API
+				GDIPlus.GdipGetHfont(fontObject, out Hfont);
+			} else {
+				// This needs testing, but I don't have a working win32 mono
+				// environment. 
+				LOGFONTA	lf       = new LOGFONTA();
+
+				GDIPlus.GdipGetLogFontA(fontObject, IntPtr.Zero, ref lf);
+				Hfont=GDIPlus.CreateFontIndirectA(ref lf);
+			}
+			return(Hfont);
+		}
 
 		public Font(Font original, FontStyle style)
 		{

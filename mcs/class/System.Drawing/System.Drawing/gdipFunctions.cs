@@ -1149,6 +1149,16 @@ namespace System.Drawing {
 		internal static extern Status GdipCreateFont (IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit  unit,  out IntPtr font);
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipDeleteFont (IntPtr font);		
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetLogFontA(IntPtr font, IntPtr graphics, ref LOGFONTA logfontA);
+
+		// GdfipGetHfont is our private function, it only exists in our own libgdiplus library
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetHfont (IntPtr font, out IntPtr Hfont);	
+
+		// This is win32/gdi, not gdiplus, but it's easier to keep in here
+		[DllImport("gdi32.dll", EntryPoint="CreateFontIndirectA", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+		internal static extern IntPtr CreateFontIndirectA (ref LOGFONTA logfontA);	
 
 		// FontCollection
 		[DllImport ("gdiplus.dll")]

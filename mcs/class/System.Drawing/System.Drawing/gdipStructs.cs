@@ -62,6 +62,24 @@ namespace System.Drawing {
     		internal int to;
 	}
 
-
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	internal  struct LOGFONTA  
+	{
+		internal uint   lfHeight;
+		internal uint   lfWidth;
+		internal uint   lfEscapement;
+		internal uint   lfOrientation;
+		internal uint   lfWeight;
+		internal byte   lfItalic;
+		internal byte   lfUnderline;
+		internal byte   lfStrikeOut;
+		internal byte   lfCharSet;
+		internal byte   lfOutPrecision;
+		internal byte   lfClipPrecision;
+		internal byte   lfQuality;
+		internal byte   lfPitchAndFamily;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
+		internal string lfFaceName;
+	}  
 }
 
