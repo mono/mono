@@ -1,5 +1,8 @@
 2002-07-17  Dietmar Maurer  <dietmar@ximian.com>
 
+	* helpers.c (mono_map_ldind_type): added suggested changes from
+	Zoltan Varga (support MONO_TYPE_U), variou 64bit fixes
+
 	* jit.c (mono_analyze_stack): remove the vtype pointer from the
 	stack (fix bug #27420)
 
