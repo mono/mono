@@ -1,3 +1,12 @@
+2002-11-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	* PgSqlConnection.cs: redid connection parameters
+	based on SqlClient's SqlConnection	
+	
+	* PgSqlCommand.cs: redid handling of different
+	CommandType of CommandText, StoredProcedure, 
+	and TableDirect. Got rid of debug messages
+
 2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
 
 	* PgSqlCommand.cs: get rid of warning

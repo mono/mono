@@ -230,67 +230,45 @@ namespace Mono.Data.PostgreSqlClient {
 
 		private string TweakQuery(string query, CommandType commandType) {
 			string statement = "";
-			StringBuilder td;
-
-#if DEBUG_SqlCommand
-			Console.WriteLine("---------[][] TweakQuery() [][]--------");
-			Console.WriteLine("CommandType: " + commandType + " CommandBehavior: " + cmdBehavior);
-			Console.WriteLine("SQL before command type: " + query);
-#endif						
+			
 			// finish building SQL based on CommandType
 			switch(commandType) {
 			case CommandType.Text:
-				statement = query;
+				// TODO: this parameters utility
+				//       currently only support input variables
+				//       need todo output, input/output, and return.
+				parmUtil = new ParmUtil(query, parmCollection);
+				statement = parmUtil.ReplaceWithParms();
 				break;
 			case CommandType.StoredProcedure:
-				statement = 
-					"SELECT " + query + "()";
+				string sParmList = GetStoredProcParmList ();
+				statement = "SELECT " + query + "(" + sParmList + ")";
 				break;
-			case CommandType.TableDirect:
-				// NOTE: this is for the PostgreSQL provider
-				//       and for OleDb, according to the docs,
-				//       an exception is thrown if you try to use
-				//       this with SqlCommand
-				string[] directTables = query.Split(
-					new Char[] {','});	
-										 
-				td = new StringBuilder("SELECT * FROM ");
-				
-				for(int tab = 0; tab < directTables.Length; tab++) {
-					if(tab > 0)
-						td.Append(',');
-					td.Append(directTables[tab]);
-					// FIXME: if multipe tables, how do we
-					//        join? based on Primary/Foreign Keys?
-					//        Otherwise, a Cartesian Product happens
-				}
-				statement = td.ToString();
-				break;
-			default:
-				// FIXME: throw an exception?
-				statement = query;
+			case CommandType.TableDirect:										 
+				statement = "SELECT * FROM " + query;
 				break;
 			}
-#if DEBUG_SqlCommand			
-			Console.WriteLine("SQL after command type: " + statement);
-#endif
-			// TODO: this parameters utility
-			//       currently only support input variables
-			//       need todo output, input/output, and return.
-#if DEBUG_SqlCommand
-			Console.WriteLine("using ParmUtil in TweakQuery()...");
-#endif
-			parmUtil = new ParmUtil(statement, parmCollection);
-#if DEBUG_SqlCommand
-			Console.WriteLine("ReplaceWithParms...");
-#endif
 
-			statement = parmUtil.ReplaceWithParms();
-
-#if DEBUG_SqlCommand
-			Console.WriteLine("SQL after ParmUtil: " + statement);
-#endif	
 			return statement;
+		}
+
+		string GetStoredProcParmList () {
+			StringBuilder s = new StringBuilder();
+
+			int addedCount = 0;
+			for(int p = 0; p < parmCollection.Count; p++) {
+				PgSqlParameter prm = parmCollection[p];
+				if(prm.Direction == ParameterDirection.Input) {
+					string strObj = PostgresHelper.
+						ObjectToString(prm.DbType, 
+						prm.Value);
+					if(addedCount > 0)
+						s.Append(",");
+					s.Append(strObj);
+					addedCount++;
+				}
+			}
+			return s.ToString();
 		}
 
 		private void ExecuteQuery (string query, PgSqlResult res)

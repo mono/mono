@@ -4,9 +4,11 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002
+// Copyright (C) Tim Coleman, 2002
 //
 // Credits:
 //    SQL and concepts were used from libgda 0.8.190 (GNOME Data Access)
@@ -24,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -228,6 +231,7 @@ namespace Mono.Data.PostgreSqlClient {
 			if(connStatus == ConnStatusType.CONNECTION_OK) {
 				// Successfully Connected
 				disposed = false;
+
 				SetupConnection();
 			}
 			else {
@@ -279,7 +283,7 @@ namespace Mono.Data.PostgreSqlClient {
 
 		#region Private Methods
 
-		private void SetupConnection() {
+		void SetupConnection() {
 			
 			conState = ConnectionState.Open;
 
@@ -296,13 +300,13 @@ namespace Mono.Data.PostgreSqlClient {
 			pgResult = IntPtr.Zero;
 		}
 
-		private string GetDatabaseServerVersion() 
+		string GetDatabaseServerVersion() 
 		{
 			PgSqlCommand cmd = new PgSqlCommand("select version()",this);
 			return (string) cmd.ExecuteScalar();
 		}
 
-		private void CloseDataSource () {
+		void CloseDataSource () {
 			// FIXME: just a quick hack
 			if(conState == ConnectionState.Open) {
 				if(trans != null)
@@ -318,137 +322,119 @@ namespace Mono.Data.PostgreSqlClient {
 			}
 		}
 
-		private void SetConnectionString (string connectionString) {
-			// FIXME: perform error checking on string
-			// while translating string from 
-			// OLE DB format to PostgreSQL 
-			// connection string format
-			//
-			//     OLE DB: "host=localhost;dbname=test;user=joe;password=smoe"
-			// PostgreSQL: "host=localhost dbname=test user=joe password=smoe"
-			//
-			// For OLE DB, you would have the additional 
-			// "provider=postgresql"
-			// OleDbConnection you would be using libgda
-			//
-			// Also, parse the connection string into properties
-
-			// FIXME: if connection is open, you can 
-			//        not set the connection
-			//        string, throw an exception
-
+		void SetConnectionString (string connectionString) {
 			this.connectionString = connectionString;
-			pgConnectionString = ConvertStringToPostgres (
-				connectionString);
+			StringBuilder postgresConnectionString = new StringBuilder ();
 
-#if DEBUG_SqlConnection
-			Console.WriteLine(
-				"OLE-DB Connection String    [in]: " +
-				this.ConnectionString);
-			Console.WriteLine(
-				"Postgres Connection String [out]: " +
-				pgConnectionString);
-#endif // DEBUG_SqlConnection
-		}
+			connectionString += ";";
+			NameValueCollection parameters = new NameValueCollection ();
 
-		private String ConvertStringToPostgres (String 
-			oleDbConnectionString) {
-			StringBuilder postgresConnection = 
-				new StringBuilder();
-			string result;
-			string[] connectionParameters;
+			if (connectionString == String.Empty)
+				return;
 
-			char[] semicolon = new Char[1];
-			semicolon[0] = ';';
-			
-			// FIXME: what is the max number of value pairs 
-			//        can there be for the OLE DB 
-			//	  connnection string? what about libgda max?
-			//        what about postgres max?
+			bool inQuote = false;
+			bool inDQuote = false;
 
-			// FIXME: currently assuming value pairs are like:
-			//        "key1=value1;key2=value2;key3=value3"
-			//        Need to deal with values that have
-			//        single or double quotes.  And error 
-			//        handling of that too.
-			//        "key1=value1;key2='value2';key=\"value3\""
+			string name = String.Empty;
+			string value = String.Empty;
+			StringBuilder sb = new StringBuilder ();
 
-			// FIXME: put the connection parameters 
-			//        from the connection
-			//        string into a 
-			//        Hashtable (System.Collections)
-			//        instead of using private variables 
-			//        to store them
-			connectionParameters = oleDbConnectionString.
-				Split (semicolon);
-			foreach (string sParameter in connectionParameters) {
-				if(sParameter.Length > 0) {
-					BreakConnectionParameter (sParameter);
-					postgresConnection.
-						Append (sParameter + 
-						" ");
+			foreach (char c in connectionString) {
+				switch (c) {
+				case '\'':
+					inQuote = !inQuote;
+					break;
+				case '"' :
+					inDQuote = !inDQuote;
+					break;
+				case ';' :
+					if (!inDQuote && !inQuote) {
+						if (name != String.Empty && name != null) {
+							value = sb.ToString ();
+							parameters [name.ToUpper ().Trim ()] = value.Trim ();
+						}
+						name = String.Empty;
+						value = String.Empty;
+						sb = new StringBuilder ();
+					}
+					else
+						sb.Append (c);
+					break;
+				case '=' :
+					if (!inDQuote && !inQuote) {
+						name = sb.ToString ();
+						sb = new StringBuilder ();
+					}
+					else
+						sb.Append (c);
+					break;
+				default:
+					sb.Append (c);
+					break;
 				}
 			}
-			result = postgresConnection.ToString ();
-			return result;
+
+			SetProperties (parameters);
 		}
 
-		private bool BreakConnectionParameter (String sParameter) {	
-			bool addParm = true;
-			int index;
+		private void SetProperties (NameValueCollection parameters) {
+			StringBuilder postgresConnectionString = new StringBuilder ();
 
-			index = sParameter.IndexOf ("=");
-			if (index > 0) {	
-				string parmKey, parmValue;
+			string value;
+			foreach (string name in parameters) {
+				value = parameters[name];
 
-				// separate string "key=value" to 
-				// string "key" and "value"
-				parmKey = sParameter.Substring (0, index);
-				parmValue = sParameter.Substring (index + 1,
-					sParameter.Length - index - 1);
-
-				switch(parmKey.ToLower()) {
-				case "hostaddr":
-					hostaddr = parmValue;
+				bool found = true;
+				switch (name) {
+				case "PORT" :
+					port = value;
 					break;
-
-				case "port":
-					port = parmValue;
-					break;
-
-				case "host":
+				case "DATA SOURCE" :
+				case "SERVER" :
+				case "HOST" :
 					// set DataSource property
-					host = parmValue;
+					host = value;
 					break;
-
-				case "dbname":
+				case "OPTIONS" :
+					options = value;
+					break;
+				case "TTY" :
+					tty = value;
+					break;		
+				case "REQUIRESSL" :
+					requiressl = value;
+					break;
+				case "ADDRESS" :
+				case "ADDR" :
+				case "NETWORK ADDRESS" :
+				case "HOSTADDR" :
+					hostaddr = value;
+					break;
+				case "INITIAL CATALOG" :
+				case "DATABASE" :
+				case "DBNAME":
 					// set Database property
-					dbname = parmValue;
+					dbname = value;
 					break;
-
-				case "user":
-					user = parmValue;
+				case "PASSWORD" :
+				case "PWD" :
+					password = value;
 					break;
-
-				case "password":
-					password = parmValue;
-					//	addParm = false;
+				case "UID" :
+				case "USER ID" :
+				case "USER" :
+					user = value;
 					break;
-
-				case "options":
-					options = parmValue;
-					break;
-
-				case "tty":
-					tty = parmValue;
-					break;
-							
-				case "requiressl":
-					requiressl = parmValue;
+				default:
+					found = false;
 					break;
 				}
+				if (found == true) {
+					string valuePair = name.ToLower() + "=" + value;
+					postgresConnectionString.Append (valuePair + " ");
+				}
 			}
-			return addParm;
+			this.pgConnectionString = postgresConnectionString.ToString ();
 		}
 
 		private PgSqlTransaction TransactionBegin () {
@@ -575,7 +561,7 @@ namespace Mono.Data.PostgreSqlClient {
 		StateChangeEventHandler StateChange;
 		
 		#endregion
-
+	
 		#region Inner Classes
 
 		private class PostgresTypes {
