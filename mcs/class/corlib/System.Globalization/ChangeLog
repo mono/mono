@@ -1,3 +1,10 @@
+2003-12-04  Dick Porter  <dick@ximian.com>
+
+	* CompareInfo.cs: Implement the deserialization callback
+
+	* CultureInfo.cs: Allow CompareInfo to see the CultureMap so that
+	it can construct the ICU collator itself
+
 2003-12-02  Dick Porter  <dick@ximian.com>
 
 	* NumberFormatInfo.cs: Helper called by runtime locale

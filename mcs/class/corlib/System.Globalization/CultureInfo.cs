@@ -36,7 +36,7 @@ namespace System.Globalization
 		
 		private static readonly string MSG_READONLY = "This instance is read only";
 		
-		private sealed class CultureMap : IEnumerable
+		internal sealed class CultureMap : IEnumerable
 		{
 			private static Hashtable CultureID;
 			private static Hashtable CultureNames;
@@ -1257,10 +1257,6 @@ namespace System.Globalization
 			return(name);
 		}
 		
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void construct_compareinfo (object compareinfo, string locale);
-		
 		public virtual CompareInfo CompareInfo
 		{
 			get {
@@ -1268,7 +1264,6 @@ namespace System.Globalization
 					lock (this) {
 						if(compareinfo==null) {
 							compareinfo=new CompareInfo (lcid);
-							construct_compareinfo (compareinfo, icu_name);
 						}
 					}
 				}

@@ -22,10 +22,14 @@ namespace System.Globalization
 		
 		/* Hide the .ctor() */
 		CompareInfo() {}
-
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void construct_compareinfo (string locale);
+		
 		internal CompareInfo (int lcid)
 		{
 			this.lcid=lcid;
+			this.construct_compareinfo (CultureInfo.CultureMap.lcid_to_icuname (lcid));
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -445,10 +449,16 @@ namespace System.Globalization
 			return("CompareInfo - "+lcid);
 		}
 
-		[MonoTODO]
 		void IDeserializationCallback.OnDeserialization(object sender)
 		{
-			throw new NotImplementedException ();
+			/* This will build the ICU collator, and store
+			 * the pointer in ICU_collator
+			 */
+			try {
+				this.construct_compareinfo (CultureInfo.CultureMap.lcid_to_icuname (lcid));
+			} catch {
+				ICU_collator=IntPtr.Zero;
+			}
 		}
 
 		/* LAMESPEC: not mentioned in the spec, but corcompare
