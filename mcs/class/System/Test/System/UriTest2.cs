@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
@@ -50,7 +50,7 @@ namespace MonoTests.System
 		[Test]
 		public void TestFromFile ()
 		{
-			StreamReader sr = new StreamReader ("System/test-uri-props.txt", Encoding.UTF8);
+			StreamReader sr = new StreamReader ("Test/System/test-uri-props.txt", Encoding.UTF8);
 			while (sr.Peek () > 0) {
 				sr.ReadLine (); // skip
 				string uriString = sr.ReadLine ();

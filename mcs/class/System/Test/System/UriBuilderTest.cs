@@ -69,13 +69,6 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		public void BadPort2 ()
-		{
-			b.Port = 123456789;
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void BadPort3 ()
 		{
 			b.Port = -1;

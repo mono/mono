@@ -1,3 +1,8 @@
+2003-12-31  Nick Drochak  <ndrochak@ieee.com>
+
+	* UriTest2.cs: Use proper path to find file.
+	* UriBuilderTest.cs: 123456789 is not a bad port.
+
 2003-12-11  Nick Drochak  <ndrochak@ieee.com>
 
 	* UriTest.cs: Test for UriFormatException
