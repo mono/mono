@@ -1,3 +1,15 @@
+2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AuthConfig.cs:
+	* AuthenticationConfigHandler.cs: handler and helper class for
+	system.web/authentication configuration section.
+
+	* HttpHandlersSectionHandler.cs: check for null in attributes.
+
+	* MachineKeyConfig.cs:
+	* MachineKeyConfigHandler.cs: handler and helper class for
+	system.web/machineKey tag.
+
 2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpHandlersSectionHandler.cs: more null checks.

@@ -97,6 +97,13 @@ namespace System.Web.Configuration
 			
 		static internal string ExtractAttributeValue (string attKey, XmlNode node, bool optional)
 		{
+			if (node.Attributes == null) {
+				if (optional)
+					return null;
+
+				ThrowException ("Required attribute not found: " + attKey, node);
+			}
+
 			XmlNode att = node.Attributes.RemoveNamedItem (attKey);
 			if (att == null) {
 				if (optional)
