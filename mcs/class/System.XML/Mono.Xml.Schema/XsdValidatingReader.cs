@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -92,6 +93,7 @@ namespace Mono.Xml.Schema
 			this.reader = reader;
 			readerLineInfo = reader as IXmlLineInfo;
 			sourceReaderSchemaInfo = reader as IHasXmlSchemaInfo;
+			schemas.ValidationEventHandler += ValidationEventHandler;
 		}
 #endregion
 
@@ -1124,19 +1126,19 @@ namespace Mono.Xml.Schema
 
 			// Reset Identity constraints.
 			for (int i = 0; i < keyTables.Count; i++) {
-				XsdKeyTable keyTable = this.keyTables [i] as XsdKeyTable;
-				if (keyTable.StartDepth == reader.Depth) {
-					EndIdentityValidation (keyTable);
+				XsdKeyTable seq = this.keyTables [i] as XsdKeyTable;
+				if (seq.StartDepth == reader.Depth) {
+					EndIdentityValidation (seq);
 				} else {
-					for (int k = 0; k < keyTable.Entries.Count; k++) {
-						XsdKeyEntry entry = keyTable.Entries [k] as XsdKeyEntry;
+					for (int k = 0; k < seq.Entries.Count; k++) {
+						XsdKeyEntry entry = seq.Entries [k] as XsdKeyEntry;
 						// Remove finished (maybe key not found) entries.
 						if (entry.StartDepth == reader.Depth) {
 							if (entry.KeyFound)
-								keyTable.FinishedEntries.Add (entry);
+								seq.FinishedEntries.Add (entry);
 							else if (entry.KeySequence.SourceSchemaIdentity is XmlSchemaKey)
 								HandleError ("Key sequence is missing.");
-							keyTable.Entries.RemoveAt (k);
+							seq.Entries.RemoveAt (k);
 							k--;
 						}
 						// Pop validated key depth to find two or more fields.
@@ -1153,8 +1155,8 @@ namespace Mono.Xml.Schema
 				}
 			}
 			for (int i = 0; i < keyTables.Count; i++) {
-				XsdKeyTable keyseq = this.keyTables [i] as XsdKeyTable;
-				if (keyseq.StartDepth == reader.Depth) {
+				XsdKeyTable seq = this.keyTables [i] as XsdKeyTable;
+				if (seq.StartDepth == reader.Depth) {
 					keyTables.RemoveAt (i);
 					i--;
 				}
@@ -1200,7 +1202,7 @@ namespace Mono.Xml.Schema
 				XsdKeyTable seq  = (XsdKeyTable) keyTables [i];
 				// If possible, create new field entry candidates.
 				for (int j = 0; j < seq.Entries.Count; j++) {
-					XsdKeyEntry entry = seq.Entries [j] as XsdKeyEntry;
+					XsdKeyEntry entry = seq.Entries [j];
 					try {
 						entry.FieldMatches (this.elementQNameStack, this);
 					} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
@@ -1517,6 +1519,8 @@ namespace Mono.Xml.Schema
 
 		private void ExamineAdditionalSchema ()
 		{
+			if (resolver == null)
+				return;
 			XmlSchema schema = null;
 			string schemaLocation = reader.GetAttribute ("schemaLocation", XmlSchema.InstanceNamespace);
 			bool schemaAdded = false;
@@ -1536,8 +1540,11 @@ namespace Mono.Xml.Schema
 					XmlTextReader xtr = null;
 					try {
 						absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), tmp [i + 1]);
-						xtr = new XmlTextReader (absUri.ToString (), NameTable);
-						schema = XmlSchema.Read (xtr, null);
+						xtr = new XmlTextReader (
+							absUri.ToString (),
+							(Stream) resolver.GetEntity (absUri, null, typeof (Stream)),
+							NameTable);
+						schema = XmlSchema.Read (xtr, ValidationEventHandler);
 					} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
 						HandleError ("Could not resolve schema location URI: " + absUri, null, true);
 						continue;
@@ -1564,7 +1571,10 @@ namespace Mono.Xml.Schema
 				XmlTextReader xtr = null;
 				try {
 					absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), noNsSchemaLocation);
-					xtr = new XmlTextReader (absUri.ToString (), NameTable);
+					xtr = new XmlTextReader (
+						absUri.ToString (),
+						(Stream) resolver.GetEntity (absUri, null, typeof (Stream)),
+						NameTable);
 					schema = XmlSchema.Read (xtr, null);
 				} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Could not resolve schema location URI: " + absUri, null, true);

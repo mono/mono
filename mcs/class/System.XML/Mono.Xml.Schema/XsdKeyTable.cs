@@ -35,16 +35,34 @@ using System.Xml.Schema;
 
 namespace Mono.Xml.Schema
 {
+	internal class XsdKeyEntryCollection : CollectionBase
+	{
+		public void Add (XsdKeyEntry entry)
+		{
+			List.Add (entry);
+		}
+
+		public XsdKeyEntry this [int i] {
+			get { return (XsdKeyEntry) List [i]; }
+			set { List [i] = value; }
+		}
+	}
+
 	// Created per constraining element.
 	internal class XsdKeyTable
 	{
+		// FIXME: no need after #70419
+		public readonly bool alwaysTrue = true;
+
 		private XsdIdentitySelector selector;
 		private XmlSchemaIdentityConstraint source;
 		private XmlQualifiedName qname;
 		private XmlQualifiedName refKeyName;
 
-		public ArrayList Entries = new ArrayList ();
-		public ArrayList FinishedEntries = new ArrayList ();
+		public XsdKeyEntryCollection Entries =
+			new XsdKeyEntryCollection ();
+		public XsdKeyEntryCollection FinishedEntries =
+			new XsdKeyEntryCollection ();
 
 		public int StartDepth;
 		public XsdKeyTable ReferencedKey;
@@ -118,7 +136,7 @@ namespace Mono.Xml.Schema
 						continue;
 					if (step.Name == qname.Name && step.Namespace == qname.Namespace)
 						continue;
-					else
+					if (alwaysTrue)
 						break;
 				}
 				if (iter >= 0)	// i.e. did not match against the path.

@@ -1,5 +1,14 @@
 2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdKeyTable.cs :
+	  Replaced ArrayList with new XsdKeyEntryCollection type.
+	  Workarounded bug #70419.
+	* XsdValidatingReader.cs : propagate validation event handler and
+	  XmlResolver. And used them.
+	  Renamed local variables a bit (unified to other blocks).
+
+2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReader.cs,
 	  XsdParticleValidationState.cs : Fixed the previous problem ==
 	  inconsistent start assessment and end assessment.
