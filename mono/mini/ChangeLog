@@ -1,3 +1,8 @@
+2004-02-01  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (MTYPE_PARAM_TO_TYPE): Method type arguments are stored
+	in `ginst->mtype_argv'.
+
 2004-01-31  Miguel de Icaza  <miguel@ximian.com>
 
 	* mini.c: Add comments, replace CEE_XXX+128 with OP_XXX to
