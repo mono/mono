@@ -34,7 +34,7 @@ using System.Collections;
 
 namespace System.Web.UI
 {
-        public delegate bool DataSourceViewSelectCallback (IEnumerable data);
+        public delegate void DataSourceViewSelectCallback (IEnumerable data);
 }
 
 #endif
