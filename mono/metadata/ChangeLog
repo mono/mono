@@ -1,3 +1,23 @@
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_runtime_free_method): New function to free a dynamic
+	method.
+
+	* marshal.c (mono_delegate_free_ftnptr): New function to free the
+	delegate trampoline.
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Mark managed wrapper
+	with hasthis as dynamic,
+
+	* icall.c (ves_icall_System_Delegate_FreeTrampoline): New icall.
+
+	* domain.c (mono_jit_info_table_remove): New function to remove an
+	entry from the jit info table.
+
+	* class-internals.h (MonoMethod): Add 'dynamic' field.
+
+	* loader.c: Fix warnings.
+
 2004-09-01  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c, debug-mono-symfile.c: Use mono_loader_lock()
