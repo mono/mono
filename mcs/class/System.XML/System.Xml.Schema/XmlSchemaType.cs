@@ -145,6 +145,8 @@ namespace System.Xml.Schema
 					return typeCodeForPredefinedTypes;
 				if (DatatypeInternal != null)
 					return DatatypeInternal.TypeCode;
+				if (DatatypeInternal == XmlSchemaSimpleType.AnySimpleType)
+					return XmlTypeCode.AnyAtomicType;
 				if (this == XmlSchemaComplexType.AnyType)
 					return XmlTypeCode.None;
 				return BaseXmlSchemaType.TypeCode;
@@ -169,7 +171,6 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlQualifiedName qualifiedName)
 		{
-			// FIXME:
 			if (qualifiedName.Namespace == "http://www.w3.org/2003/11/xpath-datatypes") {
 				switch (qualifiedName.Name) {
 				case "untypedAtomic":
