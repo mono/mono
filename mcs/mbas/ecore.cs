@@ -4887,7 +4887,7 @@ namespace Mono.MonoBASIC {
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
-			PropertyArgs = new ArrayList();
+			PropertyArgs = null;
 			is_static = false;
 			loc = l;
 
@@ -5037,6 +5037,8 @@ namespace Mono.MonoBASIC {
 					return;
 				}
 			}
+			if (PropertyArgs == null)
+				PropertyArgs = new ArrayList ();
 			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, getter, null, PropertyArgs, loc);
 		}
 

@@ -1,3 +1,8 @@
+2005-02-25 Satya Sudha K <ksathyasudha@novell.com>
+	* ecore.cs 
+	* expression.cs: 
+		Fix for default properties by Raja Harinath
+
 2005-02-22 Manjula GHM <mmanjula@novell.com>
 	*expression.cs: Handle String and date before Overloadresolve
 			Added code for char + char

@@ -4438,90 +4438,103 @@ namespace Mono.MonoBASIC {
 				}
 				eclass = ExprClass.Value;
 				expr_to_return = this;
+				return expr_to_return;
 			}
 
 			if (expr is PropertyExpr) 
 			{
 				PropertyExpr pe = ((PropertyExpr) expr);
-				pe.PropertyArgs = (ArrayList) Arguments.Clone();
-				Arguments.Clear();
-				Arguments = new ArrayList();
+				if (pe.PropertyArgs != null)
+					goto skip_already_resolved_property;
+				pe.PropertyArgs = (ArrayList) Arguments;
 				MethodBase mi = pe.PropertyInfo.GetGetMethod(true);
 
-				if(VerifyArgumentsCompat (ec, pe.PropertyArgs, 
-					pe.PropertyArgs.Count, mi, false, null, loc, pe.Name)) 
-				{
-
-					expr_to_return = pe.DoResolve (ec);
-					expr_to_return.eclass = ExprClass.PropertyAccess;
-				}
-				else
-				{
-					throw new Exception("Error resolving Property Access expression\n" + pe.ToString());
+				bool expanded = false;
+				if (IsApplicable(ec, pe.PropertyArgs, mi, out expanded) != ConversionType.None) {
+					if(VerifyArgumentsCompat (ec, pe.PropertyArgs,
+						pe.PropertyArgs.Count, mi, expanded, null, loc, pe.Name))
+					{
+						expr_to_return = pe.DoResolve (ec);
+						expr_to_return.eclass = ExprClass.PropertyAccess;
+						Arguments = new ArrayList ();
+						return expr_to_return;
+					}
+					else
+					{
+						throw new Exception("Error resolving Property Access expression\n" + pe.ToString());
+					}
+				} else {
+					pe.PropertyArgs = new ArrayList ();
+					if (VerifyArgumentsCompat (ec, pe.PropertyArgs,
+						0, mi, false, null, loc, pe.Name)) {
+						expr = pe.DoResolve (ec);
+						expr.eclass = ExprClass.PropertyAccess;
+					} else {
+						throw new Exception("Error resolving Property Access expression\n" + pe.ToString());
+					}
 				}
 			}
 
-			if (expr is FieldExpr || expr is LocalVariableReference || expr is ParameterReference) {
-				if (expr.Type.IsArray) {
-					// If we are here, expr must be an ArrayAccess
-					ArrayList idxs = new ArrayList();
-					foreach (Argument a in Arguments)
-					{
-						idxs.Add (a.Expr);
-					}
-					ElementAccess ea = new ElementAccess (expr, idxs, expr.Location);
-					ArrayAccess aa = new ArrayAccess (ea, expr.Location);
-					expr_to_return = aa.DoResolve(ec);
-					expr_to_return.eclass = ExprClass.Variable;
-				} else {
-					//
-					// check whether this is a indexer
-					//
-					ArrayList idxs = new ArrayList();
-					foreach (Argument a in Arguments) {
-						idxs.Add (a.Expr);
-					}
-					ElementAccess ea = new ElementAccess (expr, idxs, expr.Location);
-					IndexerAccess ia = new IndexerAccess (ea, expr.Location);
+			skip_already_resolved_property:
+			if (expr.Type.IsArray) {
+				// If we are here, expr must be an ArrayAccess
+				ArrayList idxs = new ArrayList();
+				foreach (Argument a in Arguments)
+				{
+					idxs.Add (a.Expr);
+				}
+				ElementAccess ea = new ElementAccess (expr, idxs, expr.Location);
+				ArrayAccess aa = new ArrayAccess (ea, expr.Location);
+				expr_to_return = aa.DoResolve(ec);
+				expr_to_return.eclass = ExprClass.Variable;
+			} else {
+				//
+				// check whether this is a indexer
+				//
+				ArrayList idxs = new ArrayList();
+				foreach (Argument a in Arguments) {
+					idxs.Add (a.Expr);
+				}
+				ElementAccess ea = new ElementAccess (expr, idxs, expr.Location);
+				IndexerAccess ia = new IndexerAccess (ea, expr.Location);
+				if (!is_left_hand)
+					expr_to_return = ia.DoResolve(ec);
+				else
+					expr_to_return = ia.DoResolve(ec);
+				//
+				// Since all the above are failed we need to do
+				// late binding
+				//
+				if (expr_to_return == null) {
+
+					// We can't resolve now, but we
+					// have to try to access the array with a call
+					// to LateIndexGet/Set in the runtime
+					Expression lig_call_expr;
+
 					if (!is_left_hand)
-                        expr_to_return = ia.DoResolve(ec);
+						lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", Location.Null);
 					else
-						expr_to_return = ia.DoResolve(ec);
-					//
-					// Since all the above are failed we need to do
-					// late binding
-					//
-					if (expr_to_return == null) {
+						lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexSet", Location.Null);
+					Expression obj_type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", Location.Null);
+					ArrayList adims = new ArrayList();
 
-						// We can't resolve now, but we
-						// have to try to access the array with a call
-						// to LateIndexGet/Set in the runtime
-						Expression lig_call_expr;
+					ArrayList ainit = new ArrayList();
+					foreach (Argument a in Arguments)
+						ainit.Add ((Expression) a.Expr);
 
-						if (!is_left_hand)
-							lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", Location.Null);
-						else
-							lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexSet", Location.Null);
-						Expression obj_type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", Location.Null);
-						ArrayList adims = new ArrayList();
+					adims.Add ((Expression) new IntLiteral (Arguments.Count));
 
-						ArrayList ainit = new ArrayList();
-						foreach (Argument a in Arguments)
-							ainit.Add ((Expression) a.Expr);
+					Expression oace = new ArrayCreation (obj_type, adims, "", ainit, Location.Null);
 
-						adims.Add ((Expression) new IntLiteral (Arguments.Count));
+					ArrayList args = new ArrayList();
+					args.Add (new Argument(expr, Argument.AType.Expression));
+					args.Add (new Argument(oace, Argument.AType.Expression));
+					args.Add (new Argument(NullLiteral.Null, Argument.AType.Expression));
 
-						Expression oace = new ArrayCreation (obj_type, adims, "", ainit, Location.Null);
-
-						ArrayList args = new ArrayList();
-						args.Add (new Argument(expr, Argument.AType.Expression));
-						args.Add (new Argument(oace, Argument.AType.Expression));
-						args.Add (new Argument(NullLiteral.Null, Argument.AType.Expression));
-
-						Expression lig_call = new Invocation (lig_call_expr, args, Location.Null);
-						expr_to_return = lig_call.Resolve(ec);
-						expr_to_return.eclass = ExprClass.Variable;
-					}
+					Expression lig_call = new Invocation (lig_call_expr, args, Location.Null);
+					expr_to_return = lig_call.Resolve(ec);
+					expr_to_return.eclass = ExprClass.Variable;
 				}
 			}
 
