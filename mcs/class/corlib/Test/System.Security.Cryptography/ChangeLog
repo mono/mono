@@ -1,3 +1,18 @@
+2002-11-16  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: Added suites for DSASignatureDeformatter, 
+	DSASignatureFormatter.
+	* CryptoConfigTest.cs: Tests new URLs. This test will fail
+	if System.Security.dll isn't present (or not yet compiled).
+	* DSACryptoServiceProviderTest.cs: New. Key generation (limited
+	because it's too slow), Import/Export, Signature and Verification.
+	* DSASignatureDeformatterTest.cs: New. Test signature verification. 
+	* DSASignatureFormatterTest.cs: New. Test signature creation.
+	* DSATest.cs: Comment DSA-derived test class as DSA constructor
+	is internal. Reworked the test suite.
+	* SignatureDescriptionTest.cs: Added tests for
+	DSASignatureDescription and RSAPKCS1SHA1SignatureDescription.
+
 2002-11-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Added suites for SignatureDescription and 

@@ -37,7 +37,10 @@ public class CryptoConfigTest : TestCase
 	void CreateFromName (string name, string objectname)
 	{
 		object o = CryptoConfig.CreateFromName (name);
-		AssertEquals (name, objectname, o.ToString());
+		if (objectname == null)
+			AssertNull(name, o);
+		else
+			AssertEquals (name, o.ToString(), objectname);
 	}
 
 	// validate that CryptoConfig create the exact same implementation between mono and MS
@@ -52,7 +55,6 @@ public class CryptoConfigTest : TestCase
 		catch (Exception e) {
 			Fail ("ArgumentNullException not thrown: " + e.ToString());
 		}
-
 		CreateFromName ("SHA", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		// FIXME: We need to support the machine.config file to get exact same results
 		// with the MS .NET Framework
@@ -62,8 +64,10 @@ public class CryptoConfigTest : TestCase
 //		CreateFromName ("SHA1", "System.Security.Cryptography.SHA1Managed");
 //		CreateFromName ("System.Security.Cryptography.SHA1", "System.Security.Cryptography.SHA1Managed");
 		CreateFromName ("System.Security.Cryptography.HashAlgorithm", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+		CreateFromName ("System.Security.Cryptography.SHA1CryptoServiceProvider", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		CreateFromName ("MD5", "System.Security.Cryptography.MD5CryptoServiceProvider");  
 		CreateFromName ("System.Security.Cryptography.MD5", "System.Security.Cryptography.MD5CryptoServiceProvider");  
+		CreateFromName ("System.Security.Cryptography.MD5CryptoServiceProvider", "System.Security.Cryptography.MD5CryptoServiceProvider");
 		CreateFromName ("SHA256", "System.Security.Cryptography.SHA256Managed");  
 		CreateFromName ("SHA-256", "System.Security.Cryptography.SHA256Managed");  
 		CreateFromName ("System.Security.Cryptography.SHA256", "System.Security.Cryptography.SHA256Managed");  
@@ -73,25 +77,17 @@ public class CryptoConfigTest : TestCase
 		CreateFromName ("SHA512", "System.Security.Cryptography.SHA512Managed");  
 		CreateFromName ("SHA-512", "System.Security.Cryptography.SHA512Managed");  
 		CreateFromName ("System.Security.Cryptography.SHA512", "System.Security.Cryptography.SHA512Managed");  
-		/*
-			//FIXME: these algorithms are not in corlib yet.  re-enable when they are
-			CreateFromName ("System.Security.Cryptography.KeyedHashAlgorithm", "System.Security.Cryptography.HMACSHA1");
-			CreateFromName ("HMACSHA1", "System.Security.Cryptography.HMACSHA1");
-			CreateFromName ("System.Security.Cryptography.HMACSHA1", "System.Security.Cryptography.HMACSHA1");
-			CreateFromName ("MACTripleDES", "System.Security.Cryptography.MACTripleDES");
-			CreateFromName ("System.Security.Cryptography.MACTripleDES", "System.Security.Cryptography.MACTripleDES");
-			CreateFromName ("RSA", "System.Security.Cryptography.RSACryptoServiceProvider");  
-			CreateFromName ("System.Security.Cryptography.RSA", "System.Security.Cryptography.RSACryptoServiceProvider");  
-			CreateFromName ("System.Security.Cryptography.AsymmetricAlgorithm", "System.Security.Cryptography.RSACryptoServiceProvider");  
-			CreateFromName ("DSA", "System.Security.Cryptography.DSACryptoServiceProvider");  
-			CreateFromName ("System.Security.Cryptography.DSA", "System.Security.Cryptography.DSACryptoServiceProvider");  
-			CreateFromName ("DES", "System.Security.Cryptography.DESCryptoServiceProvider");  
-			CreateFromName ("System.Security.Cryptography.DES", "System.Security.Cryptography.DESCryptoServiceProvider");  
-			CreateFromName ("3DES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
-			CreateFromName ("TripleDES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
-			CreateFromName ("Triple DES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
-			CreateFromName ("System.Security.Cryptography.TripleDES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
-		*/
+		CreateFromName ("RSA", "System.Security.Cryptography.RSACryptoServiceProvider");  
+		CreateFromName ("System.Security.Cryptography.RSA", "System.Security.Cryptography.RSACryptoServiceProvider");  
+		CreateFromName ("System.Security.Cryptography.AsymmetricAlgorithm", "System.Security.Cryptography.RSACryptoServiceProvider");  
+		CreateFromName ("DSA", "System.Security.Cryptography.DSACryptoServiceProvider");  
+		CreateFromName ("System.Security.Cryptography.DSA", "System.Security.Cryptography.DSACryptoServiceProvider");  
+		CreateFromName ("DES", "System.Security.Cryptography.DESCryptoServiceProvider");  
+		CreateFromName ("System.Security.Cryptography.DES", "System.Security.Cryptography.DESCryptoServiceProvider");  
+		CreateFromName ("3DES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
+		CreateFromName ("TripleDES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
+		CreateFromName ("Triple DES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
+		CreateFromName ("System.Security.Cryptography.TripleDES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
 		// LAMESPEC SymmetricAlgorithm documented as TripleDESCryptoServiceProvider
 		CreateFromName ("System.Security.Cryptography.SymmetricAlgorithm", "System.Security.Cryptography.RijndaelManaged");  
 		CreateFromName ("RC2", "System.Security.Cryptography.RC2CryptoServiceProvider");  
@@ -101,9 +97,44 @@ public class CryptoConfigTest : TestCase
 		// LAMESPEC Undocumented Names in CryptoConfig
 		CreateFromName ("RandomNumberGenerator", "System.Security.Cryptography.RNGCryptoServiceProvider");
 		CreateFromName ("System.Security.Cryptography.RandomNumberGenerator", "System.Security.Cryptography.RNGCryptoServiceProvider");
-
+		CreateFromName ("System.Security.Cryptography.KeyedHashAlgorithm", "System.Security.Cryptography.HMACSHA1");
+		CreateFromName ("HMACSHA1", "System.Security.Cryptography.HMACSHA1");
+		CreateFromName ("System.Security.Cryptography.HMACSHA1", "System.Security.Cryptography.HMACSHA1");
+		CreateFromName ("MACTripleDES", "System.Security.Cryptography.MACTripleDES");
+		CreateFromName ("System.Security.Cryptography.MACTripleDES", "System.Security.Cryptography.MACTripleDES");
+		// note: CryptoConfig can create any object !
+		CreateFromName ("System.Security.Cryptography.CryptoConfig", "System.Security.Cryptography.CryptoConfig");
+		CreateFromName ("System.IO.MemoryStream", "System.IO.MemoryStream");
 		// non existing algo should return null (without exception)
 		AssertNull ("NonExistingAlgorithm", CryptoConfig.CreateFromName("NonExistingAlgorithm"));
+	}
+
+	// additional names (URL) used for XMLDSIG (System.Security.Cryptography.Xml)
+	// URL taken from http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/
+	public void TestCreateFromURL () 
+	{
+		// URL used in SignatureMethod element
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", "System.Security.Cryptography.DSASignatureDescription");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.RSAPKCS1SHA1SignatureDescription");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#hmac-sha1", null);
+		// URL used in DigestMethod element 
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#sha1", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+		// URL used in Canonicalization or Transform elements 
+		CreateFromName ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", "System.Security.Cryptography.Xml.XmlDsigC14NTransform");
+		CreateFromName ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", "System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform");
+		// URL used in Transform element 
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#base64", "System.Security.Cryptography.Xml.XmlDsigBase64Transform");
+		// after installing the WSDK - changes to the machine.config file (not documented)
+//		CreateFromName ("http://www.w3.org/TR/1999/REC-xpath-19991116", "Microsoft.WSDK.Security.XmlDsigXPathTransform");
+		CreateFromName ("http://www.w3.org/TR/1999/REC-xpath-19991116", "System.Security.Cryptography.Xml.XmlDsigXPathTransform");
+		CreateFromName ("http://www.w3.org/TR/1999/REC-xslt-19991116", "System.Security.Cryptography.Xml.XmlDsigXsltTransform");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#enveloped-signature", "System.Security.Cryptography.Xml.XmlDsigEnvelopedSignatureTransform");
+		// URL used in Reference element 
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#Object", null);
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#Manifest", null);
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#SignatureProperties", null);
+		// URL used in RetrievalMethod or Reference elements
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#X509Data", null);
 	}
 
 	// Tests created using "A Layer Man Guide to ASN.1" from RSA, page 19-20
@@ -193,8 +224,9 @@ public class CryptoConfigTest : TestCase
 		AssertEquals ("oid(" + name + ")", oid, CryptoConfig.MapNameToOID (name));
 	}
 
-	// LAMESPEC doesn't support all names defined in CryptoConfig 
+	// LAMESPEC: doesn't support all names defined in CryptoConfig 
 	// non supported names (in MSFW) are commented or null-ed
+	// LAMESPEC: undocumented but full class name is supported
 	public void TestMapNameToOID() 
 	{
 		try {
@@ -210,17 +242,23 @@ public class CryptoConfigTest : TestCase
 		MapNameToOID ("SHA1", "1.3.14.3.2.26");
 		MapNameToOID ("System.Security.Cryptography.SHA1", "1.3.14.3.2.26");
 //		MapNameToOID ("System.Security.Cryptography.HashAlgorithm", "1.3.14.3.2.26");
+		MapNameToOID ("System.Security.Cryptography.SHA1CryptoServiceProvider", "1.3.14.3.2.26");
+		MapNameToOID ("System.Security.Cryptography.SHA1Managed", "1.3.14.3.2.26");
 		MapNameToOID ("MD5", "1.2.840.113549.2.5");
 		MapNameToOID ("System.Security.Cryptography.MD5", "1.2.840.113549.2.5");
+		MapNameToOID ("System.Security.Cryptography.MD5CryptoServiceProvider", "1.2.840.113549.2.5");
 		MapNameToOID ("SHA256", "2.16.840.1.101.3.4.1");
 //		MapNameToOID ("SHA-256", "2.16.840.1.101.3.4.1");
 		MapNameToOID ("System.Security.Cryptography.SHA256", "2.16.840.1.101.3.4.1");
+		MapNameToOID ("System.Security.Cryptography.SHA256Managed", "2.16.840.1.101.3.4.1");
 		MapNameToOID ("SHA384", "2.16.840.1.101.3.4.2");
 //		MapNameToOID ("SHA-384", "2.16.840.1.101.3.4.2");
 		MapNameToOID ("System.Security.Cryptography.SHA384", "2.16.840.1.101.3.4.2");
+		MapNameToOID ("System.Security.Cryptography.SHA384Managed", "2.16.840.1.101.3.4.2");
 		MapNameToOID ("SHA512", "2.16.840.1.101.3.4.3");
 //		MapNameToOID ("SHA-512", "2.16.840.1.101.3.4.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512", "2.16.840.1.101.3.4.3");
+		MapNameToOID ("System.Security.Cryptography.SHA512Managed", "2.16.840.1.101.3.4.3");
 		// no OID defined ?
 		MapNameToOID ("RSA", null);
 		MapNameToOID ("System.Security.Cryptography.RSA", null);

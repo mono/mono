@@ -101,7 +101,6 @@ public class SignatureDescriptionTest : TestCase {
 		AssertNull ("KeyAlgorithm 4", sig.KeyAlgorithm);
 	}
 
-	// I can't get any AsymmetricSignatureDeformatter out of this class!
 	public void TestDeformatter () 
 	{
 		AsymmetricSignatureDeformatter def = null;
@@ -154,8 +153,6 @@ public class SignatureDescriptionTest : TestCase {
 		catch (Exception e) {
 			Fail ("Expected NullReferenceException but got: " + e.ToString ());
 		}
-
-		// TODO: RSA
 	}
 
 	public void TestDigest ()
@@ -209,7 +206,6 @@ public class SignatureDescriptionTest : TestCase {
 		AssertNull ("CreateDigest(bad)", hash);
 	}
 
-	// I can't get any AsymmetricSignatureFormatter out of this class!
 	public void TestFormatter () 
 	{
 		AsymmetricSignatureFormatter fmt = null;
@@ -262,8 +258,48 @@ public class SignatureDescriptionTest : TestCase {
 		catch (Exception e) {
 			Fail ("Expected NullReferenceException but got: " + e.ToString ());
 		}
+	}
 
-		// TODO: RSA
+	public void TestDSASignatureDescription ()  
+	{
+		// internal class - we cannot create one without CryptoConfig
+		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1");
+		AssertEquals ("DSA.DigestAlgorithm", "System.Security.Cryptography.SHA1CryptoServiceProvider", sd.DigestAlgorithm);
+		AssertEquals ("DSA.DeformatterAlgorithm", "System.Security.Cryptography.DSASignatureDeformatter", sd.DeformatterAlgorithm);
+		AssertEquals ("DSA.FormatterAlgorithm", "System.Security.Cryptography.DSASignatureFormatter", sd.FormatterAlgorithm);
+		AssertEquals ("DSA.KeyAlgorithm", "System.Security.Cryptography.DSACryptoServiceProvider", sd.KeyAlgorithm);
+
+		HashAlgorithm hash = sd.CreateDigest();
+		AssertEquals ("DSA.CreateDigest", "System.Security.Cryptography.SHA1CryptoServiceProvider", hash.ToString ());
+
+		AssertEquals ("DSA.Create", dsa.ToString (), sd.KeyAlgorithm);
+
+		AsymmetricSignatureDeformatter asd = sd.CreateDeformatter (dsa);
+		AssertEquals ("DSA.CreateDeformatter", "System.Security.Cryptography.DSASignatureDeformatter", asd.ToString ());
+
+		AsymmetricSignatureFormatter asf = sd.CreateFormatter (dsa);
+		AssertEquals ("DSA.CreateFormatter", "System.Security.Cryptography.DSASignatureFormatter", asf.ToString ());
+	}
+
+	public void TestRSASignatureDescription () 
+	{
+		// internal class - we cannot create one without CryptoConfig
+		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName ("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+		AssertEquals ("RSA.DigestAlgorithm", "System.Security.Cryptography.SHA1CryptoServiceProvider", sd.DigestAlgorithm);
+		AssertEquals ("RSA.DeformatterAlgorithm", "System.Security.Cryptography.RSAPKCS1SignatureDeformatter", sd.DeformatterAlgorithm);
+		AssertEquals ("RSA.FormatterAlgorithm", "System.Security.Cryptography.RSAPKCS1SignatureFormatter", sd.FormatterAlgorithm);
+		AssertEquals ("RSA.KeyAlgorithm", "System.Security.Cryptography.RSACryptoServiceProvider", sd.KeyAlgorithm);
+
+		HashAlgorithm hash = sd.CreateDigest();
+		AssertEquals ("RSA.CreateDigest", "System.Security.Cryptography.SHA1CryptoServiceProvider", hash.ToString ());
+
+		AssertEquals ("RSA.Create", rsa.ToString (), sd.KeyAlgorithm);
+
+		AsymmetricSignatureDeformatter asd = sd.CreateDeformatter (rsa);
+		AssertEquals ("RSA.CreateDeformatter", "System.Security.Cryptography.RSAPKCS1SignatureDeformatter", asd.ToString ());
+
+		AsymmetricSignatureFormatter asf = sd.CreateFormatter (rsa);
+		AssertEquals ("RSA.CreateFormatter", "System.Security.Cryptography.RSAPKCS1SignatureFormatter", asf.ToString ());
 	}
 }
 
