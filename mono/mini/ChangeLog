@@ -1,3 +1,11 @@
+2003-10-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Allow wrapper data for CEE_LDELEMA.
+
+	* inssel-x86.brg (OP_LOCALLOC): Fix register assignment for localloc.
+
+	* driver.c: Add support for compiling icall wrappers to --compile.
+
 2003-10-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel.brg: The empty value in class->interface_offsets is -1, not
