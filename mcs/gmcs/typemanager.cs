@@ -2707,8 +2707,7 @@ public sealed class TypeHandle : IMemberContainer {
 		this.type = type;
 		if (type.BaseType != null)
 			BaseType = GetTypeHandle (type.BaseType);
-		else if ((type != TypeManager.object_type) && (type != typeof (object)))
-			is_interface = true;
+		this.is_interface = type.IsInterface;
 		this.member_cache = new MemberCache (this);
 	}
 
