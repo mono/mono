@@ -3345,7 +3345,10 @@ namespace Mono.CSharp {
 			}
 
 			Report.SymbolRelatedToPreviousError (method);
-			Report.Error (111, Location, TypeContainer.Error111, Parent.Name, Name);
+			if (this is Operator && method is Operator)
+				Report.Error (557, Location, "Duplicate user-defined conversion in type '{0}'", Parent.Name);
+			else
+				Report.Error (111, Location, TypeContainer.Error111, Parent.Name, Name);
 			return true;
 		}
 
@@ -3837,6 +3840,20 @@ namespace Mono.CSharp {
 			get {
 				return base.Location;
 			}
+		}
+
+		protected override bool CheckBase() {
+			if (!base.CheckBase ())
+				return false;
+
+			// TODO: Destructor should derive from MethodCore
+			if (base_method != null && (ModFlags & Modifiers.OVERRIDE) != 0 && Name == "Finalize" &&
+				base_method.DeclaringType == TypeManager.object_type && !(this is Destructor)) {
+				Report.Error (249, Location, "Do not override object.Finalize. Instead, provide a destructor");
+				return false;
+			}
+
+			return true;
 		}
 
 		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
@@ -4521,7 +4538,7 @@ namespace Mono.CSharp {
 			Type[] ParameterTypes = method.ParameterTypes;
 
 			if (container.Pending != null){
-				if (member is Indexer)
+				if (member is Indexer) // TODO: test it, but it should work without this IF
 					implementing = container.Pending.IsInterfaceIndexer (
 						member.InterfaceType, method.ReturnType, ParameterTypes);
 				else
@@ -4530,11 +4547,24 @@ namespace Mono.CSharp {
 
 				if (member.InterfaceType != null){
 					if (implementing == null){
-						Report.Error (539, method.Location,
-							      "'{0}' in explicit interface declaration is not a member of interface", member.GetSignatureForError () );
+						if (member is PropertyBase) {
+							Report.Error (550, method.Location, "'{0}' is an accessor not found in interface member '{1}'",
+								method.GetSignatureForError (container), member.ExplicitInterfaceName);
+
+						} else {
+							Report.Error (539, method.Location,
+								"'{0}' in explicit interface declaration is not a member of interface", member.GetSignatureForError () );
+						}
 						return false;
 					}
 					method_name = member.InterfaceType.FullName + "." + name;
+				} else {
+					if (implementing != null && method is AbstractPropertyEventMethod && !implementing.IsSpecialName) {
+						Report.SymbolRelatedToPreviousError (implementing);
+						Report.Error (688, method.Location, "Accessor '{0}' cannot implement interface member '{1}' for type '{2}'. Use an explicit interface implementation",
+							method.GetSignatureForError (container), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
+						return false;
+					}
 				}
 			}
 
@@ -4790,6 +4820,7 @@ namespace Mono.CSharp {
 		}
 	}
 
+	// Should derive from MethodCore
 	public class Destructor : Method {
 
 		public Destructor (TypeContainer ds, Expression return_type, int mod,
@@ -6938,6 +6969,14 @@ namespace Mono.CSharp {
 			{
 			}
 
+			// TODO: one GetSignatureForError is enough (reuse Parent member)
+			public override string GetSignatureForError (TypeContainer tc)
+			{
+				string core = base.GetSignatureForError (tc);
+				return core.Replace (TypeContainer.DefaultIndexerName, 
+					String.Format ("this[{0}]", TypeManager.CSharpName (ParameterTypes)));
+			}
+
 			public override Type[] ParameterTypes {
 				get {
 					return method.ParameterTypes;
@@ -7063,7 +7102,7 @@ namespace Mono.CSharp {
 
 					if (IsExplicitImpl) {
 						Report.Error (415, indexer_attr.Location,
-							      "The 'IndexerName' attribute is valid only on an" +
+							      "The 'IndexerName' attribute is valid only on an " +
 							      "indexer that is not an explicit interface member declaration");
 						return false;
 					}

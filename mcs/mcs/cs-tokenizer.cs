@@ -1304,21 +1304,22 @@ namespace Mono.CSharp
 		/// </summary>
 		void PreProcessPragma (string arg)
 		{
-			const string disable = "warning disable";
-			const string restore = "warning restore";
+			const string warning = "warning";
+			const string w_disable = warning + " disable";
+			const string w_restore = warning + " restore";
 
-			if (arg == disable) {
+			if (arg == w_disable) {
 				Report.RegisterWarningRegion (Location).WarningDisable (line);
 				return;
 			}
 
-			if (arg == restore) {
+			if (arg == w_restore) {
 				Report.RegisterWarningRegion (Location).WarningEnable (line);
 				return;
 			}
 
-			if (arg.StartsWith (disable)) {
-				int[] codes = ParseNumbers (arg.Substring (disable.Length));
+			if (arg.StartsWith (w_disable)) {
+				int[] codes = ParseNumbers (arg.Substring (w_disable.Length));
 				foreach (int code in codes) {
 					if (code != 0)
 						Report.RegisterWarningRegion (Location).WarningDisable (Location, code);
@@ -1326,15 +1327,18 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (arg.StartsWith (restore)) {
-				int[] codes = ParseNumbers (arg.Substring (restore.Length));
+			if (arg.StartsWith (w_restore)) {
+				int[] codes = ParseNumbers (arg.Substring (w_restore.Length));
 				foreach (int code in codes) {
 					Report.RegisterWarningRegion (Location).WarningEnable (Location, code);
 				}
 				return;
 			}
 
-			return;
+			if (arg.StartsWith (warning)) {
+				Report.Warning (1634, 1, Location , "Expected disable or restore");
+				return;
+			}
 		}
 
 		int[] ParseNumbers (string text)

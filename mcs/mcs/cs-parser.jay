@@ -96,6 +96,8 @@ namespace Mono.CSharp
 		/// assembly and module attribute definition is enabled
 		bool global_attrs_enabled = true;
 
+		bool has_get, has_set;
+
 %}
 
 %token EOF
@@ -357,8 +359,7 @@ namespace_declaration
 	: opt_attributes NAMESPACE namespace_or_type_name
 	{
 		if ($1 != null) {
-			Report.Error(1518, Lexer.Location, "Attributes cannot be applied to namespaces."
-					+ " Expected class, delegate, enum, interface, or struct");
+			Report.Error(1671, Lexer.Location, "A namespace declaration cannot have modifiers or attributes");
 		}
 
 		MemberName name = (MemberName) $3;
@@ -997,6 +998,11 @@ variable_declarator
 	  {
 		$$ = new VariableDeclaration ((string) $1, null, lexer.Location);
 	  }
+	| IDENTIFIER OPEN_BRACKET opt_expression CLOSE_BRACKET
+	  {
+		Report.Error (650, lexer.Location, "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
+			"To declare a fixed buffer field, use the fixed keyword before the field type");
+	  }
 	;
 
 variable_initializer
@@ -1293,9 +1299,13 @@ property_declaration
 	  accessor_declarations 
 	  {
 		lexer.PropertyParsing = false;
+		has_get = has_set = false;
 	  }
 	  CLOSE_BRACE
 	  { 
+		if ($8 == null)
+			break;
+
 		Property prop;
 		Pair pair = (Pair) $8;
 		Accessor get_block = (Accessor) pair.First;
@@ -1320,24 +1330,31 @@ property_declaration
 	;
 
 accessor_declarations
-	: get_accessor_declaration opt_set_accessor_declaration
-	  { 
-		$$ = new Pair ($1, $2);
-	  }
-	| set_accessor_declaration opt_get_accessor_declaration
-	  {
-		$$ = new Pair ($2, $1);
-	  }
-	;
-
-opt_get_accessor_declaration
-	: /* empty */			{ $$ = null; }
-	| get_accessor_declaration
-	;
-
-opt_set_accessor_declaration
-	: /* empty */			{ $$ = null; }
+	: get_accessor_declaration
+	 {
+		$$ = new Pair ($1, null);
+	 }
+	| get_accessor_declaration accessor_declarations
+	 { 
+		Pair pair = (Pair) $2;
+		pair.First = $1;
+		$$ = pair;
+	 }
 	| set_accessor_declaration
+	 {
+		$$ = new Pair (null, $1);
+	 }
+	| set_accessor_declaration accessor_declarations
+	 { 
+		Pair pair = (Pair) $2;
+		pair.Second = $1;
+		$$ = pair;
+	 }
+	| error
+	  {
+		Report.Error (1014, lexer.Location, "A get or set accessor expected");
+		$$ = null;
+	  }
 	;
 
 get_accessor_declaration
@@ -1353,7 +1370,12 @@ get_accessor_declaration
 	  }
           accessor_body
 	  {
+		if (has_get) {
+			Report.Error (1007, lexer.Location, "Property accessor already defined");
+			break;
+		}
 		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
+		has_get = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 
@@ -1394,7 +1416,12 @@ set_accessor_declaration
 	  }
 	  accessor_body
 	  {
+		if (has_set) {
+			Report.Error (1007, lexer.Location, "Property accessor already defined");
+			break;
+		}
 		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
+		has_set = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 
@@ -1481,6 +1508,9 @@ interface_member_declarations
 interface_member_declaration
 	: interface_method_declaration		
 	  { 
+		if ($1 == null)
+			break;
+
 		Method m = (Method) $1;
 
 		if (m.IsExplicitImpl)
@@ -1494,6 +1524,9 @@ interface_member_declaration
 	  }
 	| interface_property_declaration	
 	  { 
+		if ($1 == null)
+			break;
+
 		Property p = (Property) $1;
 
 		if (p.IsExplicitImpl)
@@ -1522,6 +1555,9 @@ interface_member_declaration
 	  }
 	| interface_indexer_declaration
 	  { 
+		if ($1 == null)
+			break;
+
 		Indexer i = (Indexer) $1;
 
 		if (i.IsExplicitImpl)
@@ -1553,6 +1589,10 @@ interface_member_declaration
 	  {
 		Report.Error (524, lexer.Location, "Interfaces can not declare interfaces");
 	  } 
+	| constant_declaration
+	  {
+		Report.Error (525, lexer.Location, "Interfaces cannot contain constants");
+	  }
 	;
 
 opt_new
@@ -1576,16 +1616,12 @@ interface_method_declaration
 		if (RootContext.Documentation != null)
 			((Method) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
-	| opt_attributes opt_new VOID namespace_or_type_name
+	| opt_attributes opt_new type namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
-	  SEMICOLON
+	  OPEN_BRACE opt_statement_list CLOSE_BRACE
 	  {
-		MemberName name = (MemberName) $4;
-
-		$$ = new Method (current_class, TypeManager.system_void_expr, (int) $2,
-				 true, name, (Parameters) $6,  (Attributes) $1, lexer.Location);
-		if (RootContext.Documentation != null)
-			((Method) $$).DocComment = Lexer.consume_doc_comment ();
+		Report.Error (531, lexer.Location, "'{0}': interface members cannot have a definition", $4);
+		$$ = null;
 	  }
 	;
 
@@ -1599,6 +1635,14 @@ interface_property_declaration
 	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
+		if ($3 == TypeManager.system_void_expr) {
+			Report.Error (547, lexer.Location, "'{0}': property cannot have void type", $4);
+			break;
+		}
+
+		if ($7 == null)
+			break;
+
                 InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
 		$$ = new Property (current_class, (Expression) $3, (int) $2, true,
@@ -1618,12 +1662,21 @@ interface_property_declaration
 interface_accessors
 	: opt_attributes opt_modifiers GET SEMICOLON	
 	{ $$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, lexer.Location, lexer.Location); }
+	| opt_attributes opt_modifiers GET OPEN_BRACE
+	 {  
+		Report.Error (531, lexer.Location, "'{0}': interface members cannot have a definition", ".get");
+		$$ = null;
+	 }
 	| opt_attributes opt_modifiers SET SEMICOLON		
 	{ $$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1, 0, (int) $2, lexer.Location, lexer.Location); }
 	| opt_attributes opt_modifiers GET SEMICOLON opt_attributes opt_modifiers SET SEMICOLON 
 	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $5, (int) $2, (int) $6, lexer.Location, lexer.Location); }
 	| opt_attributes opt_modifiers SET SEMICOLON opt_attributes opt_modifiers GET SEMICOLON
 	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $5, (Attributes) $1, (int) $6, (int) $2, lexer.Location, lexer.Location); }
+	|
+	  {
+		Report.Error (548, lexer.Location, "'{0}' : property or indexer must have at least one accessor", "");
+	  }
 	;
 
 interface_event_declaration
@@ -1643,8 +1696,16 @@ interface_event_declaration
 		Report.Error (68, lexer.Location, "Event declarations on interfaces can not be initialized.");
 		$$ = null;
 	  }
-	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE event_accessor_declarations CLOSE_BRACE {
-		Report.Error (69, lexer.Location, "Event accessors not valid on interfaces");
+	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE
+	{
+		lexer.EventParsing = true;
+	}
+	event_accessor_declarations
+	{
+		lexer.EventParsing = false;
+	}
+	CLOSE_BRACE {
+		Report.Error (69, lexer.Location, "Event in interface cannot have add or remove accessors");
  		$$ = null;
  	  }
 	;
@@ -1658,6 +1719,9 @@ interface_indexer_declaration
 	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
+		if ($10 == null)
+			break;
+
 		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
 		$$ = new Indexer (current_class, (Expression) $3,
@@ -2146,10 +2210,14 @@ indexer_declaration
           accessor_declarations 
 	  {
 		  lexer.PropertyParsing = false;
+		  has_get = has_set = false;
 		  parsing_indexer  = false;
 	  }
 	  CLOSE_BRACE
 	  { 
+		if ($7 == null)
+			break;
+
 		// The signature is computed from the signature of the indexer.  Look
 	 	// at section 3.6 on the spec
 		Location loc = (Location) $5;
@@ -2349,27 +2417,6 @@ delegate_declaration
 		current_container.AddDelegate (del);
 		RootContext.Tree.RecordDecl (name.GetName (true), del);
 	  }	
-	| opt_attributes
-	  opt_modifiers
-	  DELEGATE VOID member_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
-	  SEMICOLON
-	  {
-		Location l = lexer.Location;
-		MemberName name = MakeName ((MemberName) $5);
-		Delegate del = new Delegate (
-			current_namespace, current_container,
-			TypeManager.system_void_expr, (int) $2, name,
-			(Parameters) $7, (Attributes) $1, l);
-
-		if (RootContext.Documentation != null) {
-			del.DocComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.Allowed;
-		}
-
-		current_container.AddDelegate (del);
-		RootContext.Tree.RecordDecl (name.GetName (true), del);
-	  }
 	;
 
 namespace_or_type_name

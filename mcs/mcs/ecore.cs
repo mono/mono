@@ -3257,10 +3257,9 @@ namespace Mono.CSharp {
 				if (getter == null)
 					return null;
 				
-				Report.Error (154, loc, 
-					      "The property `" + PropertyInfo.Name +
-					      "' can not be used in " +
-					      "this context because it lacks a set accessor");
+				// TODO: Print better property name
+				Report.Error (200, loc, "Property or indexer '{0}' cannot be assigned to -- it is read only",
+					      PropertyInfo.Name);
 				return null;
 			}
 
