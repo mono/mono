@@ -1051,8 +1051,6 @@ namespace Mono.Security.Protocol.Tls
 
 			// Clear Key Info
 			this.context.ClearKeyInfo();
-
-        Console.WriteLine("Handshake Finished");
 		}
 		
 		private TlsHandshakeMessage createClientHandshakeMessage(TlsHandshakeType type)
