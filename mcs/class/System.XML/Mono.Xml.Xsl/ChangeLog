@@ -1,3 +1,20 @@
+2003-11-02 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Compiler.cs : More complete attribute set gathering.
+	  GetNamespacesToCopy() should only return Local namespaces.
+	* GenericOutputter.cs : Added support for indentation.
+	  Added easy hack for html output.
+	  More correct Prefix handling (considers already defined ones).
+	  Namespace emmission is moved to CheckState().
+	* Emitter.cs, XmlWriterEmitter.cs, GenericOutputter.cs, Outputter.cs :
+	  Added WriteFullEndElement(). (i.e. IsEmptyElement support)
+	* GenericOutputter.cs, Outputter.cs :
+	  Added CanProcessAttributes property for 
+	  use-attribute-sets of xsl:copy.
+	* XslStylesheet.cs : Added support for stylesheet-defined xmlns decls.
+	  Added support for exclude-result-prefixes.
+	* XslTransformProcessor.cs : Added support for stylesheet-defined xmlns.
+
 2003-10-30 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Compiler.cs : It is not important, but attribute order became closer

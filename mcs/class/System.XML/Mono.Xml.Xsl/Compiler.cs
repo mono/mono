@@ -291,9 +291,12 @@ namespace Mono.Xml.Xsl {
 		{
 			XslAttributeSet existing = attrSets [set.Name] as XslAttributeSet;
 			// The latter set will have higher priority
-			if (existing != null)
+			if (existing != null) {
 				existing.Merge (set);
-			attrSets [set.Name] = set;
+				attrSets [set.Name] = existing;
+			}
+			else
+				attrSets [set.Name] = set;
 		}
 		
 		VariableScope curVarScope;
@@ -362,11 +365,11 @@ namespace Mono.Xml.Xsl {
 			XPathNavigator nav = Input.Clone ();
 			XPathNavigator nsScope = nav.Clone ();
 			
-			if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
+			if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
 				do {
 					if (nav.Value != XsltNamespace && !ret.Contains (nav.Name))
 						ret.Add (nav.Name, nav.Value);
-				} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
+				} while (nav.MoveToNextNamespace (XPathNamespaceScope.Local));
 				nav.MoveToParent ();
 			}
 			

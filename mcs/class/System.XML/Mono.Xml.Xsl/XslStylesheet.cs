@@ -48,6 +48,7 @@ namespace Mono.Xml.Xsl {
 		string version;
 		XmlQualifiedName [] extensionElementPrefixes;
 		XmlQualifiedName [] excludeResultPrefixes;
+		StringDictionary stylesheetNamespaces = new StringDictionary ();
 
 		// below are newly introduced in XSLT 2.0
 		//  elements::
@@ -64,6 +65,18 @@ namespace Mono.Xml.Xsl {
 		//  attributes::
 		string xpathDefaultNamespace = "";
 		XslDefaultValidation defaultValidation = XslDefaultValidation.Lax;
+
+		public XmlQualifiedName [] ExtensionElementPrefixes {
+			get { return extensionElementPrefixes; }
+		}
+
+		public XmlQualifiedName [] ExcludeResultPrefixes {
+			get { return excludeResultPrefixes; }
+		}
+
+		public StringDictionary StylesheetNamespaces {
+			get { return stylesheetNamespaces; }
+		}
 
 		public ArrayList Imports {
 			get { return imports; }
@@ -103,7 +116,14 @@ namespace Mono.Xml.Xsl {
 				version = c.Input.GetAttribute ("version", "");
 				extensionElementPrefixes = c.ParseQNameListAttribute ("extension-element-prefixes");
 				excludeResultPrefixes = c.ParseQNameListAttribute ("exclude-result-prefixes");
-				
+				if (c.Input.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
+					do {
+						if (c.Input.Value == XsltNamespace)
+							continue;
+						this.stylesheetNamespaces.Add (c.Input.Name, c.Input.Value);
+					} while (c.Input.MoveToNextNamespace (XPathNamespaceScope.Local));
+					c.Input.MoveToParent ();
+				}
 				ProcessTopLevelElements ();
 			}
 			

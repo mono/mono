@@ -21,7 +21,12 @@ namespace Mono.Xml.Xsl {
 		public abstract void WriteEndDocument ();						
 		public abstract void WriteDocType (string type, string publicId, string systemId);
 		public abstract void WriteStartElement (string prefix, string localName, string nsURI);
-		public abstract void WriteEndElement ();						
+		public abstract void WriteEndElement ();
+		public virtual void WriteFullEndElement ()
+		{
+			WriteEndElement ();
+		}
+
 		public abstract void WriteAttributeString (string prefix, string localName, string nsURI, string value);					
 		public abstract void WriteComment (string text);		
 		public abstract void WriteProcessingInstruction (string name, string text);		

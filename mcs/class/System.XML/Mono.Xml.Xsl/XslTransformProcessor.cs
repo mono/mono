@@ -33,6 +33,7 @@ namespace Mono.Xml.Xsl {
 		XsltContext ctx;
 		XsltArgumentList args;
 		XmlResolver resolver;
+		bool outputStylesheetXmlns;
 		
 		internal readonly XsltCompiledContext XPathContext;
 
@@ -51,7 +52,8 @@ namespace Mono.Xml.Xsl {
 			this.args = args;
 			this.root = root;
 			this.resolver = resolver != null ? resolver : new XmlUrlResolver ();
-			
+			this.outputStylesheetXmlns = true;
+
 			PushNodeset (root.Select ("."));
 			
 			foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
@@ -255,6 +257,26 @@ namespace Mono.Xml.Xsl {
 			currentTemplateStack.Push (t);
 			t.Evaluate (this);
 			currentTemplateStack.Pop ();
+		}
+
+		internal void TryStylesheetNamespaceOutput ()
+		{
+			if (outputStylesheetXmlns) {
+				foreach (string prefix in this.style.StylesheetNamespaces.Keys) {
+					if (style.ExcludeResultPrefixes != null) {
+						bool exclude = false;
+						foreach (XmlQualifiedName exc in style.ExcludeResultPrefixes)
+							if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
+								exclude = true;
+								break;
+							}
+						if (exclude)
+							continue;
+					}
+					Out.WriteNamespaceDecl (prefix, this.style.StylesheetNamespaces [prefix]);
+				}
+				outputStylesheetXmlns = false;
+			}
 		}
 		
 		XslTemplate FindTemplate (XPathNavigator node, QName mode)

@@ -51,6 +51,11 @@ namespace Mono.Xml.Xsl {
 			writer.WriteEndElement ();
 		}
 
+		public override void WriteFullEndElement ()
+		{
+			writer.WriteFullEndElement ();
+		}
+
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
 		{
 			writer.WriteAttributeString (prefix, localName, nsURI, value);

@@ -27,6 +27,10 @@ namespace Mono.Xml.Xsl {
 		
 		public abstract void WriteStartElement (string prefix, string localName, string nsURI);
 		public abstract void WriteEndElement ();
+		public virtual void WriteFullEndElement ()
+		{
+			WriteEndElement ();
+		}
 		
 		public void WriteAttributeString (string localName, string value)
 		{
@@ -44,5 +48,9 @@ namespace Mono.Xml.Xsl {
 		public abstract void WriteRaw (string data);
 		
 		public abstract void Done ();
+
+		public virtual bool CanProcessAttributes {
+			get { return false; }
+		}
 	}
 }
