@@ -1044,8 +1044,11 @@ namespace System.Data {
 			reader.MoveToContent ();
 			reader.ReadStartElement ();
 			reader.MoveToContent ();
-			ReadXmlSchema (reader);
-			reader.MoveToContent ();
+			if (reader.LocalName == "schema" &&
+				reader.NamespaceURI == XmlSchema.Namespace) {
+				ReadXmlSchema (reader);
+				reader.MoveToContent ();
+			}
 			ReadXml (reader, XmlReadMode.DiffGram);
 			reader.MoveToContent ();
 			reader.ReadEndElement ();
@@ -1406,7 +1409,7 @@ namespace System.Data {
 				nsmgr.AddNamespace (XmlConstants.TnsPrefix, Namespace);
 				nsmgr.AddNamespace (String.Empty, Namespace);
 			}
-			if (CheckExtendedPropertyExists ())
+			if (CheckExtendedPropertyExists (tables, relations))
 				nsmgr.AddNamespace (XmlConstants.MspropPrefix, XmlConstants.MspropNamespace);
 
 			if (atts.Count > 0)
@@ -1416,7 +1419,7 @@ namespace System.Data {
 			elem.Name = XmlConvert.EncodeName (DataSetName);
 
 			// Add namespaces used in DataSet components (tables, columns, ...)
-			foreach (DataTable dt in Tables) {
+			foreach (DataTable dt in tables) {
 				foreach (DataColumn col in dt.Columns)
 					CheckNamespace (col.Prefix, col.Namespace, nsmgr, schema);
 				CheckNamespace (dt.Prefix, dt.Namespace, nsmgr, schema);
@@ -1475,11 +1478,13 @@ namespace System.Data {
 			return schema;
 		}
 		
-		private bool CheckExtendedPropertyExists ()
+		private bool CheckExtendedPropertyExists (
+			DataTableCollection tables,
+			DataRelationCollection relations)
 		{
 			if (ExtendedProperties.Count > 0)
 				return true;
-			foreach (DataTable dt in Tables) {
+			foreach (DataTable dt in tables) {
 				if (dt.ExtendedProperties.Count > 0)
 					return true;
 				foreach (DataColumn col in dt.Columns)
@@ -1489,7 +1494,9 @@ namespace System.Data {
 					if (c.ExtendedProperties.Count > 0)
 						return true;
 			}
-			foreach (DataRelation rel in Relations)
+			if (relations == null)
+				return false;
+			foreach (DataRelation rel in relations)
 				if (rel.ExtendedProperties.Count > 0)
 					return true;
 			return false;

@@ -1,3 +1,10 @@
+2004-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : When serializing DataTable, BuildSchema() is passed
+	  null relation collections.
+	  Quick fix for XmlSerializer deserialization. It does not require
+	  XML Schema included.
+
 2004-11-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomDataClassGenerator.cs : generated foreign key constraint
