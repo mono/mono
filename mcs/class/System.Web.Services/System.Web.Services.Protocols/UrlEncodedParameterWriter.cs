@@ -50,9 +50,19 @@ namespace System.Web.Services.Protocols {
 
 		protected void Encode (TextWriter writer, string name, object value)
 		{
-			writer.Write (HttpUtility.UrlEncode (name, requestEncoding));
-			writer.Write ("=");
-			writer.Write (HttpUtility.UrlEncode (value.ToString(), requestEncoding));
+			if (requestEncoding != null)
+			{
+				writer.Write (HttpUtility.UrlEncode (name, requestEncoding));
+				writer.Write ("=");
+				writer.Write (HttpUtility.UrlEncode (value.ToString(), requestEncoding));
+			}
+			else
+			{
+				writer.Write (HttpUtility.UrlEncode (name));
+				writer.Write ("=");
+				writer.Write (HttpUtility.UrlEncode (value.ToString()));
+			}
+				
 		}
 
 		public override object GetInitializer (LogicalMethodInfo methodInfo)

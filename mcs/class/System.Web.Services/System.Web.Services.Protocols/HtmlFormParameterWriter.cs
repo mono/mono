@@ -40,11 +40,9 @@ namespace System.Web.Services.Protocols {
 
 		public override void WriteRequest (Stream requestStream, object[] values)
 		{
-			MemoryStream ms = new MemoryStream ();
-			StreamWriter sw = new StreamWriter (ms);
+			StreamWriter sw = new StreamWriter (requestStream);
 			Encode (sw, values);
 			sw.Flush ();
-			requestStream.Write (ms.GetBuffer(), 0, (int) ms.Length);
 		}
 
 		#endregion // Methods

@@ -1,3 +1,13 @@
+2003-10-06  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HtmlFormParameterWriter.cs: Fixed WriteRequest().
+	* HttpGetTypeStubInfo.cs, HttpPostTypeStubInfo.cs: Check that 
+	  HttpMethodAttribute is present in proxy's method.
+	* HttpSimpleClientProtocol.cs: Forgot to call InitializeRequest before
+	  getting the request stream.
+	* UrlEncodedParameterWriter.cs: in Encode(), take into account that
+	  requestEncoding can be null.
+
 2003-10-04  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapDocumentationHandler.cs: Moved here the code from 

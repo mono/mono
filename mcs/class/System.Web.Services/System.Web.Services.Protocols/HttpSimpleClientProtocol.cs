@@ -134,6 +134,8 @@ namespace System.Web.Services.Protocols {
 			string url = parameterWriter.GetRequestUrl (requestUrl, parameters);
 			WebRequest request = GetWebRequest (new Uri(url));
 			
+			parameterWriter.InitializeRequest (request, parameters);
+			
 			if (parameterWriter.UsesWriteRequest)
 			{
 				Stream stream = request.GetRequestStream ();
