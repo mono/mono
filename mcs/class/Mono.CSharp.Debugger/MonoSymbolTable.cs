@@ -184,7 +184,7 @@ namespace Mono.CSharp.Debugger
 		bool creating;
 
 		internal static int Size {
-			get { return 16; }
+			get { return 24; }
 		}
 
 		internal SourceFileEntry (MonoSymbolFile file, string file_name)
