@@ -14,47 +14,35 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlTransaction : IDbTransaction
 	{
-		#region fields
-		
 		protected SqlConnection connection = null;
 
-		#endregion
-		
-		#region constructors
-		
 		public SqlTransaction (SqlConnection cnc)
 		{
 			connection = cnc;
 		}
 
-		#endregion
-
-		#region methods
-		
+		[MonoTODO]
 		public void Commit ()
 		{
 			throw new NotImplementedException ();
 		}		
 
+		[MonoTODO]
 		void Rollback()
 		{
 			throw new NotImplementedException ();
 		}
 
-		#endregion
-		
-		# region properties
-		
 		public SqlConnection Connection
 		{
 			get { return connection; }
 		}
 
+		[MonoTODO]
 		public IsolationLevel IsolationLevel
 		{
 			get { throw new NotImplementedException (); }
 		}
 
-		#endregion
 	}
 }

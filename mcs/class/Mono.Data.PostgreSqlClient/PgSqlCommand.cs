@@ -14,33 +14,93 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlCommand : IDbCommand
 	{
-		void Cancel();
+		[MonoTODO]
+		void Cancel()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		SqlParameter CreateParameter()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		int ExecuteNonQuery()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		SqlDataReader ExecuteReader()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		SqlDataReader ExecuteReader(CommandBehavior behavior)
+		{
+		}
+
+		[MonoTODO]
+		object ExecuteScalar()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void Prepare()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		string CommandText
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		int CommandTimeout
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		CommandType CommandType
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		SqlConnection Connection
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		SqlParameterCollection Parameters
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		IDbTransaction Transaction
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 		
-		SqlParameter CreateParameter();
-		
-		int ExecuteNonQuery();
-
-		SqlDataReader ExecuteReader();
-
-		SqlDataReader ExecuteReader(CommandBehavior behavior);
-
-		object ExecuteScalar();
-
-		void Prepare();
-
-
-		string CommandText{get; set;}
-
-		int CommandTimeout{get; set;}
-
-		CommandType CommandType{get; set;}
-
-		SqlConnection Connection{get; set;}
-
-		SqlParameterCollection Parameters{get;}
-
-		IDbTransaction Transaction{get; set;}
-
-		UpdateRowSource UpdatedRowSource{get; set;}
+		[MonoTODO]
+		UpdateRowSource UpdatedRowSource
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 	}
 }

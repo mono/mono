@@ -1,3 +1,20 @@
+2002-03-28  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.Common/DataTableMappingCollection.cs:
+	* System.Data.Common/DbDataAdapter.cs:
+	* System.Data.Common/DbDataPermission.cs:
+	* System.Data.Common/DataTableMapping.cs: new skeletons.
+
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+	* System.Data.SqlClient/SqlDataReader.cs:
+	* System.Data.SqlClient/SqlErrors.cs:
+	* System.Data.SqlClient/SqlError.cs:
+	* System.Data.SqlClient/SqlException.cs:
+	* System.Data.SqlClient/SqlParameter.cs:
+	* System.Data.SqlClient/SqlParameterCollection.cs:
+	* System.Data.SqlClient/SqlTransaction.cs:
+	* System.Data.SqlClient/SqlCommand.cs: fixed skeletons.
+
 2002-03-27  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.Common/DataColumnMapping.cs:

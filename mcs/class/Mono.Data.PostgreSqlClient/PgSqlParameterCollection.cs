@@ -16,12 +16,29 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlParameterCollection : IDataParameterCollection
 	{
-		void RemoveAt(string parameterName);
-		
-		int IndexOf(string parameterName);
-		
-		bool Contains(string parameterName);
+		[MonoTODO]
+		void RemoveAt(string parameterName)
+		{
+			throw new NotImplementedException ();
+		}
 
-		object this[string parameterName]{get; set;}
+		[MonoTODO]
+		int IndexOf(string parameterName)
+	        {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		bool Contains(string parameterName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		object this[string parameterName]
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 	}
 }

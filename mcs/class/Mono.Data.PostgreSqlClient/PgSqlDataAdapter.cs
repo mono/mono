@@ -14,12 +14,31 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlDataAdapter : IDbDataAdapter
 	{
-		SqlCommand DeleteCommand{get; set;}
+		[MonoTODO]
+		SqlCommand DeleteCommand
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		SqlCommand InsertCommand{get; set;}
+		[MonoTODO]
+		SqlCommand InsertCommand
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		SqlCommand SelectCommand{get; set;}
+		[MonoTODO]
+		SqlCommand SelectCommand
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		SqlCommand UpdateCommand{get; set;}
+		SqlCommand UpdateCommand
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 	}
 }

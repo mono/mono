@@ -14,19 +14,47 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public interface SqlDataReader : IDataReader
 	{
-		void Close();
-		
-		DataTable GetSchemaTable();
-		
-		bool NextResult();
+		[MonoTODO]
+		void Close()
+		{
+			throw new NotImplementedException ();
+		}
 
-		bool Read();
+		[MonoTODO]
+		DataTable GetSchemaTable()
+		{
+			throw new NotImplementedException ();
+		}
 
-		int Depth{get;}
+		[MonoTODO]
+		bool NextResult()
+		{
+			throw new NotImplementedException ();
+		}
 
-		bool IsClosed{get;}
+		[MonoTODO]
+		bool Read()
+	        {
+			throw new NotImplementedException ();
+		}
 
-		int RecordsAffected{get;}
+		[MonoTODO]
+		int Depth
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		bool IsClosed
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		int RecordsAffected
+		{
+			get { throw new NotImplementedException (); }
+		}
 
 
 	}

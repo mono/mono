@@ -14,26 +14,74 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlParameter : IDbDataParameter, IDataParameter
 	{
-		
-		DbType DbType{get;set;}
+		[MonoTODO]
+		DbType DbType
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		ParameterDirection Direction{get;set;}
+		[MonoTODO]
+		ParameterDirection Direction
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		bool IsNullable{get;}
+		[MonoTODO]
+		bool IsNullable
+		{
+			get { throw new NotImplementedException (); }
+		}
 
-		string ParameterName{get;set;}
+		[MonoTODO]
+		string ParameterName
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		string SourceColumn{get;set;}
+		[MonoTODO]
+		string SourceColumn
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		DataRowVersion SourceVersion {get;set;}
+		[MonoTODO]
+		DataRowVersion SourceVersion
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		object Value {get;set;}
+		[MonoTODO]
+		object Value
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		byte Precision{get; set;}
+		[MonoTODO]
+		byte Precision
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-                byte Scale{get; set;}
+		[MonoTODO]
+                byte Scale
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-                int Size{get; set;}
+		[MonoTODO]
+                int Size
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
 	}
 }

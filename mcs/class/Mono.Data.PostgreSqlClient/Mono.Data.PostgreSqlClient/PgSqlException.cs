@@ -14,7 +14,6 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlException : SystemException
 	{
-		// TODO
-
+		[MonoTODO]
 	}
 }
