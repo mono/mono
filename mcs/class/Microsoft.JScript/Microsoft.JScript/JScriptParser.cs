@@ -3808,7 +3808,7 @@ _loop140_breakloop:					;
 		case DECIMAL_LITERAL:
 		case HEX_INTEGER_LITERAL:
 		{
-			l=numeric_literal();
+			l=numeric_literal(parent);
 			break;
 		}
 		default:
@@ -3891,7 +3891,7 @@ _loop150_breakloop:					;
 			case DECIMAL_LITERAL:
 			case HEX_INTEGER_LITERAL:
 			{
-				numeric_literal();
+				numeric_literal(null);
 				break;
 			}
 			default:
@@ -3902,7 +3902,9 @@ _loop150_breakloop:					;
 		}
 	}
 	
-	public NumericLiteral  numeric_literal() //throws RecognitionException, TokenStreamException
+	public NumericLiteral  numeric_literal(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		NumericLiteral num_lit;
 		
@@ -3919,7 +3921,7 @@ _loop150_breakloop:					;
 			match(DECIMAL_LITERAL);
 			if (0==inputState.guessing)
 			{
-				num_lit = new NumericLiteral (Convert.ToSingle (d.getText ()));
+				num_lit = new NumericLiteral (parent, Convert.ToSingle (d.getText ()));
 			}
 			break;
 		}
