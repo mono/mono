@@ -20,7 +20,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <poll.h>
 #include <grp.h>
 #include <errno.h>
 
