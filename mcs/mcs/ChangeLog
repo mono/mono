@@ -1,5 +1,11 @@
 2003-12-11  Martin Baulig  <martin@ximian.com>
 
+	* flowanalysis.cs: Use a list of `UsageVector's instead of storing
+	them in an `ArrayList' to reduce memory usage.  Thanks to Ben
+	Maurer for this idea.
+
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs (MergeResult): This class is now gone; we now
 	use the `UsageVector' for this.  The reason for this is that if a
 	branching just has one sibling, we don't need to "merge" them at

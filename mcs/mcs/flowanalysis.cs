@@ -419,6 +419,11 @@ namespace Mono.CSharp
 			// </summary>
 			public readonly UsageVector InheritsFrom;
 
+			// <summary>
+			//   This is used to construct a list of UsageVector's.
+			// </summary>
+			public UsageVector Next;
+
 			//
 			// Private.
 			//
@@ -599,10 +604,10 @@ namespace Mono.CSharp
 				IsDirty = true;
 			}
 
-			protected void MergeFinally (FlowBranching branching, ArrayList finally_vectors,
+			protected void MergeFinally (FlowBranching branching, UsageVector f_origins,
 						     MyBitVector f_params)
 			{
-				foreach (UsageVector vector in finally_vectors) {
+				for (UsageVector vector = f_origins; vector != null; vector = vector.Next) {
 					MyBitVector temp_params = f_params.Clone ();
 					temp_params.Or (vector.Parameters);
 
@@ -611,14 +616,14 @@ namespace Mono.CSharp
 			}
 
 			public void MergeFinally (FlowBranching branching, UsageVector f_vector,
-						  ArrayList vectors)
+						  UsageVector f_origins)
 			{
 				if (parameters != null) {
 					if (f_vector != null) {
-						MergeFinally (branching, vectors, f_vector.Parameters);
+						MergeFinally (branching, f_origins, f_vector.Parameters);
 						MyBitVector.Or (ref parameters, f_vector.ParameterVector);
 					} else
-						MergeFinally (branching, vectors, parameters);
+						MergeFinally (branching, f_origins, parameters);
 				}
 
 				if (f_vector != null)
@@ -861,19 +866,16 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected UsageVector Merge (ArrayList children)
+		protected UsageVector Merge (UsageVector sibling_list)
 		{
 			MyBitVector locals = null;
 			MyBitVector parameters = null;
 
 			Reachability reachability = null;
 
-			Report.Debug (2, "  MERGING CHILDREN", Name, children.Count);
+			Report.Debug (2, "  MERGING CHILDREN", Name);
 
-			int children_count = children.Count;
-			for (int ix = 0; ix < children_count; ix++){
-				UsageVector child = (UsageVector) children [ix];
-
+			for (UsageVector child = sibling_list; child != null; child = child.Next) {
 				bool do_break = (Type != BranchingType.Switch) &&
 					(Type != BranchingType.LoopBlock);
 
@@ -1087,8 +1089,7 @@ namespace Mono.CSharp
 
 	public class FlowBranchingBlock : FlowBranching
 	{
-		UsageVector current_vector;
-		ArrayList siblings = new ArrayList ();
+		UsageVector sibling_list = null;
 
 		public FlowBranchingBlock (FlowBranching parent, BranchingType type, SiblingType stype,
 					   Block block, Location loc)
@@ -1096,13 +1097,13 @@ namespace Mono.CSharp
 		{ }
 
 		public override UsageVector CurrentUsageVector {
-			get { return current_vector; }
+			get { return sibling_list; }
 		}
 
 		protected override void AddSibling (UsageVector sibling)
 		{
-			siblings.Add (sibling);
-			current_vector = sibling;
+			sibling.Next = sibling_list;
+			sibling_list = sibling;
 		}
 
 		public override void Label (ArrayList origin_vectors)
@@ -1112,35 +1113,32 @@ namespace Mono.CSharp
 
 		protected override UsageVector Merge ()
 		{
-			return Merge (siblings);
+			return Merge (sibling_list);
 		}
 	}
 
 	public class FlowBranchingException : FlowBranching
 	{
-		ArrayList finally_vectors;
-
-		bool has_params;
 		UsageVector current_vector;
 		UsageVector try_vector;
-		ArrayList catch_vectors = new ArrayList ();
+		UsageVector catch_vectors;
 		UsageVector finally_vector;
+		UsageVector finally_origins;
 
 		public FlowBranchingException (FlowBranching parent, BranchingType type, Block block, Location loc)
 			: base (parent, type, SiblingType.Try, block, loc)
-		{
-			finally_vectors = new ArrayList ();
-			has_params = current_vector.HasParameters;
-		}
+		{ }
 
 		protected override void AddSibling (UsageVector sibling)
 		{
 			if (sibling.Type == SiblingType.Try) {
 				try_vector = sibling;
-				catch_vectors.Add (sibling);
-			} else if (sibling.Type == SiblingType.Catch)
-				catch_vectors.Add (sibling);
-			else if (sibling.Type == SiblingType.Finally) {
+				sibling.Next = catch_vectors;
+				catch_vectors = sibling;
+			} else if (sibling.Type == SiblingType.Catch) {
+				sibling.Next = catch_vectors;
+				catch_vectors = sibling;
+			} else if (sibling.Type == SiblingType.Finally) {
 				// sibling.MergeFinallyOrigins (finally_vectors);
 				finally_vector = sibling;
 			} else
@@ -1160,7 +1158,9 @@ namespace Mono.CSharp
 
 		public override void AddFinallyVector (UsageVector vector)
 		{
-			finally_vectors.Add (vector.Clone ());
+			vector = vector.Clone ();
+			vector.Next = finally_origins;
+			finally_origins = vector;
 		}
 
 		public override void Label (ArrayList origin_vectors)
@@ -1172,7 +1172,7 @@ namespace Mono.CSharp
 		{
 			UsageVector vector = Merge (catch_vectors);
 
-			vector.MergeFinally (this, finally_vector, finally_vectors);
+			vector.MergeFinally (this, finally_vector, finally_origins);
 
 			return vector;
 		}
