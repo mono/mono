@@ -340,6 +340,7 @@ namespace Mono.CSharp {
 		{
 			TypeContainer attr = TypeManager.LookupAttr (a.Type);
 			AttributeTargets targets = 0;
+
 			
 			if (attr == null) {
 
