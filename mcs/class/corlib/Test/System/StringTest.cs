@@ -8,6 +8,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Text;
 using System.Globalization;
 
 namespace MonoTests.System
@@ -70,13 +71,13 @@ public class StringTest : Assertion
 	public void TestUnsafeConstructors ()
 	{
 		unsafe {
-			AssertEquals (String.Empty, new String ((sbyte*)null, 0, 10, System.Text.Encoding.ASCII));
+			AssertEquals (String.Empty, new String ((sbyte*)null, 0, 10, Encoding.ASCII));
 		}
 
 		unsafe {
 			sbyte[] s1 = new sbyte [10];
 			fixed (sbyte* s2 = &s1[0]) {
-				AssertEquals (String.Empty, new String (s2, 0, 0, System.Text.Encoding.ASCII));
+				AssertEquals (String.Empty, new String (s2, 0, 0, Encoding.ASCII));
 			}
 		}
 
@@ -96,7 +97,7 @@ public class StringTest : Assertion
 			sbyte[] s1 = new sbyte [10];
 			fixed (sbyte* s2 = &s1[0]) {
 				try {
-					new String (s2, -1, 10, System.Text.Encoding.ASCII);
+					new String (s2, -1, 10, Encoding.ASCII);
 					Fail ();
 				}
 				catch (ArgumentOutOfRangeException) {
@@ -108,7 +109,7 @@ public class StringTest : Assertion
 			sbyte[] s1 = new sbyte [10];
 			fixed (sbyte* s2 = &s1[0]) {
 				try {
-					new String (s2, 0, -1, System.Text.Encoding.ASCII);
+					new String (s2, 0, -1, Encoding.ASCII);
 					Fail ();
 				}
 				catch (ArgumentOutOfRangeException) {
@@ -118,13 +119,12 @@ public class StringTest : Assertion
 
 		unsafe {    
 			String s = "Hello, World!";
-			byte[] bytes = System.Text.Encoding.ASCII.GetBytes (s);
+			byte[] bytes = Encoding.ASCII.GetBytes (s);
 			sbyte[] s1 = new sbyte [bytes.Length];
 			for (int i = 0; i < s1.Length; ++i)
 				s1 [i] = (sbyte)bytes [i];
 			fixed (sbyte* s2 = &s1[0]) {
-				string res = new String(s2, 0, s1.Length,
-											System.Text.Encoding.ASCII);
+				string res = new String(s2, 0, s1.Length, Encoding.ASCII);
 				AssertEquals (s, res);
 			}    
 		}    

@@ -1,3 +1,9 @@
+2005-01-04  Raja R Harinath  <rharinath@novell.com>
+
+	Fix for forthcoming type-lookup standard-conformance changes.
+	* StringTest.cs: Don't refer to System.Text.Encoding.ASCII.
+	Import the System.Text namespace and refer to Encoding.ASCII.
+
 2004-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add regression test for #69787.
