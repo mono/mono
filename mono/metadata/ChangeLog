@@ -1,3 +1,9 @@
+
+Tue Apr 9 21:31:16 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h: only io-layer.h is supposed to be included.
+	* icall.c: explicitly import environ. Fix warning.
+
 2002-04-10  Nick Drochak  <ndrochak@gol.com>
 
 	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData) :
