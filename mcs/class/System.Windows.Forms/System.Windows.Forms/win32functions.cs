@@ -1404,6 +1404,7 @@ namespace System.Windows.Forms{
 			WineLoadLibrary("comctl32.dll");
 			WineLoadLibrary("user32.dll");
 			WineLoadLibrary("advapi32.dll");
+			WineLoadLibrary("comdlg32.dll");
 
 #if DotNetCtlEnabled
 			/* For Unix this must run after user32 is loaded */
