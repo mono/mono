@@ -1,3 +1,23 @@
+2004-01-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Perform an implicit
+	conversion from MethodGroups to their delegate types on the
+	Addition operation.
+
+	* delegate.cs: Introduce a new class DelegateCreation that is the
+	base class for `NewDelegate' and `ImplicitDelegateCreation',
+	factor some code in here.
+
+	* convert.cs (Convert.ImplicitConversionStandard): Add an implicit
+	conversion from MethodGroups to compatible delegate types. 
+
+	* ecore.cs (Expression.Resolve): Do not flag error 654
+	(Methodgroupd needs parenthesis) if running on the V2 compiler, as
+	we allow conversions from MethodGroups to delegate types now.
+	
+	* assign.cs (Assign.DoResolve): Do not flag errors on methodgroup
+	assignments in v2 either.
+
 2004-01-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldExpr.AddressOf): Fix generated IL for accessing

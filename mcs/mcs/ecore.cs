@@ -314,9 +314,11 @@ namespace Mono.CSharp {
 				break;
 
 			case ExprClass.MethodGroup:
-				if ((flags & ResolveFlags.MethodGroup) == 0) {
-					((MethodGroupExpr) e).ReportUsageError ();
-					return null;
+				if (!RootContext.V2){
+					if ((flags & ResolveFlags.MethodGroup) == 0) {
+						((MethodGroupExpr) e).ReportUsageError ();
+						return null;
+					}
 				}
 				break;
 

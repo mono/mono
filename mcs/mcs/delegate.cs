@@ -573,16 +573,149 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// A delegate-creation-expression
+	// Base class for `NewDelegate' and `ImplicitDelegateCreation'
 	//
-	public class NewDelegate : Expression {
+	public abstract class DelegateCreation : Expression {
+		protected MethodBase constructor_method;
+		protected MethodBase delegate_method;
+		protected Expression delegate_instance_expr;
 
+		public DelegateCreation () {}
+
+		public static void Error_NoMatchingMethodForDelegate (MethodGroupExpr mg, Type t, MethodBase method, Location loc)
+		{
+			string method_desc;
+			
+			if (mg.Methods.Length > 1)
+				method_desc = mg.Methods [0].Name;
+			else
+				method_desc = Invocation.FullMethodDesc (mg.Methods [0]);
+
+			ParameterData param = Invocation.GetParameterData (method);
+			string delegate_desc = Delegate.FullDelegateDesc (t, method, param);
+			
+			Report.Error (123, loc, "Method '" + method_desc + "' does not " +
+				      "match delegate '" + delegate_desc + "'");
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			if (delegate_instance_expr == null ||
+			    delegate_method.IsStatic)
+				ec.ig.Emit (OpCodes.Ldnull);
+			else
+				delegate_instance_expr.Emit (ec);
+			
+			if (delegate_method.IsVirtual) {
+				ec.ig.Emit (OpCodes.Dup);
+				ec.ig.Emit (OpCodes.Ldvirtftn, (MethodInfo) delegate_method);
+			} else
+				ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
+			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) constructor_method);
+		}
+
+		protected bool ResolveConstructorMethod (EmitContext ec)
+		{
+			Expression ml = Expression.MemberLookup (
+				ec, type, ".ctor", loc);
+
+			if (!(ml is MethodGroupExpr)) {
+				Report.Error (-100, loc, "Internal error: Could not find delegate constructor!");
+				return false;
+			}
+
+			constructor_method = ((MethodGroupExpr) ml).Methods [0];
+			return true;
+		}
+
+		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
+		{
+			foreach (MethodInfo mi in mg.Methods){
+				delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
+				
+				if (delegate_method != null)
+					break;
+			}
+			
+			if (delegate_method == null) {
+				Error_NoMatchingMethodForDelegate (mg, type, delegate_method, loc);
+				return null;
+			}
+			
+			//
+			// Check safe/unsafe of the delegate
+			//
+			if (!ec.InUnsafe){
+				ParameterData param = Invocation.GetParameterData (delegate_method);
+				int count = param.Count;
+				
+				for (int i = 0; i < count; i++){
+					if (param.ParameterType (i).IsPointer){
+						Expression.UnsafeError (loc);
+						return null;
+					}
+				}
+			}
+			
+			if (mg.InstanceExpression != null)
+				delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
+			else {
+				if (ec.IsStatic){
+					if (!delegate_method.IsStatic){
+						Report.Error (120, loc,
+							      "An object reference is required for the non-static method " +
+							      delegate_method.Name);
+						return null;
+					}
+					delegate_instance_expr = null;
+				} else
+					delegate_instance_expr = ec.GetThis (loc);
+			}
+			
+			if (delegate_instance_expr != null)
+				if (delegate_instance_expr.Type.IsValueType)
+					delegate_instance_expr = new BoxedCast (delegate_instance_expr);
+			
+			eclass = ExprClass.Value;
+			return this;
+		}
+	}
+
+	//
+	// Created from the conversion code
+	//
+	public class ImplicitDelegateCreation : DelegateCreation {
+
+		ImplicitDelegateCreation (Type t, Location l)
+		{
+			type = t;
+			loc = l;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+		
+		static public Expression Create (EmitContext ec, MethodGroupExpr mge, Type target_type, Location loc)
+		{
+			ImplicitDelegateCreation d = new ImplicitDelegateCreation (target_type, loc);
+			if (d.ResolveConstructorMethod (ec))
+				return d.ResolveMethodGroupExpr (ec, mge);
+			else
+				return null;
+		}
+	}
+	
+	//
+	// A delegate-creation-expression, invoked from the `New' class 
+	//
+	public class NewDelegate : DelegateCreation {
 		public ArrayList Arguments;
 
-		MethodBase constructor_method;
-		MethodBase delegate_method;
-		Expression delegate_instance_expr;
-
+		//
+		// This constructor is invoked from the `New' expression
+		//
 		public NewDelegate (Type type, ArrayList Arguments, Location loc)
 		{
 			this.type = type;
@@ -598,22 +731,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Expression ml = Expression.MemberLookup (
-				ec, type, ".ctor", loc);
-
-			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error: Could not find delegate constructor!");
+			if (!ResolveConstructorMethod (ec))
 				return null;
-			}
 
-			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			Argument a = (Argument) Arguments [0];
 			
-			if (!a.ResolveMethodGroup (ec, Location))
-				return null;
-			
-			Expression e = a.Expr;
-
 			Expression invoke_method = Expression.MemberLookup (
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
@@ -623,70 +745,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (e is MethodGroupExpr) {
-				MethodGroupExpr mg = (MethodGroupExpr) e;
+			if (!a.ResolveMethodGroup (ec, loc))
+				return null;
+			
+			Expression e = a.Expr;
 
-				foreach (MethodInfo mi in mg.Methods){
-					delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
-
-					if (delegate_method != null)
-						break;
-				}
-					
-				if (delegate_method == null) {
-					string method_desc;
-					if (mg.Methods.Length > 1)
-						method_desc = mg.Methods [0].Name;
-					else
-						method_desc = Invocation.FullMethodDesc (mg.Methods [0]);
-
-					MethodBase dm = ((MethodGroupExpr) invoke_method).Methods [0];
-					ParameterData param = Invocation.GetParameterData (dm);
-					string delegate_desc = Delegate.FullDelegateDesc (type, dm, param);
-
-					Report.Error (123, loc, "Method '" + method_desc + "' does not " +
-						      "match delegate '" + delegate_desc + "'");
-
-					return null;
-				}
-
-				//
-				// Check safe/unsafe of the delegate
-				//
-				if (!ec.InUnsafe){
-					ParameterData param = Invocation.GetParameterData (delegate_method);
-					int count = param.Count;
-					
-					for (int i = 0; i < count; i++){
-						if (param.ParameterType (i).IsPointer){
-							Expression.UnsafeError (loc);
-							return null;
-						}
-					}
-				}
-						
-				if (mg.InstanceExpression != null)
-					delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
-				else {
-					if (ec.IsStatic){
-						if (!delegate_method.IsStatic){
-							Report.Error (120, loc,
-								      "An object reference is required for the non-static method " +
-								      delegate_method.Name);
-							return null;
-						}
-						delegate_instance_expr = null;
-					} else
-						delegate_instance_expr = ec.GetThis (loc);
-				}
-
-				if (delegate_instance_expr != null)
-					if (delegate_instance_expr.Type.IsValueType)
-						delegate_instance_expr = new BoxedCast (delegate_instance_expr);
-				
-				eclass = ExprClass.Value;
-				return this;
-			}
+			MethodGroupExpr mg = e as MethodGroupExpr;
+			if (mg != null)
+				return ResolveMethodGroupExpr (ec, mg);
 
 			Type e_type = e.Type;
 
@@ -713,8 +779,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (delegate_instance_expr == null ||
-			    delegate_method.IsStatic)
+			if (delegate_instance_expr == null || delegate_method.IsStatic)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				delegate_instance_expr.Emit (ec);

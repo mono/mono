@@ -2311,10 +2311,6 @@ namespace Mono.CSharp {
 			}
 			
 			//
-			// Step 2: Default operations on CLI native types.
-			//
-
-			//
 			// Step 0: String concatenation (because overloading will get this wrong)
 			//
 			if (oper == Operator.Addition){
@@ -2490,28 +2486,37 @@ namespace Mono.CSharp {
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
 			//
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
-				if (l.IsSubclassOf (TypeManager.delegate_type) &&
-				    r.IsSubclassOf (TypeManager.delegate_type)) {
-					MethodInfo method;
-					ArrayList args = new ArrayList (2);
-					
-					args = new ArrayList (2);
-					args.Add (new Argument (left, Argument.AType.Expression));
-					args.Add (new Argument (right, Argument.AType.Expression));
-					
-					if (oper == Operator.Addition)
-						method = TypeManager.delegate_combine_delegate_delegate;
-					else
-						method = TypeManager.delegate_remove_delegate_delegate;
-
-					if (l != r) {
-						Error_OperatorCannotBeApplied ();
-						return null;
+				if (l.IsSubclassOf (TypeManager.delegate_type)){
+					if (right.eclass == ExprClass.MethodGroup && RootContext.V2){
+						Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
+						if (tmp == null)
+							return null;
+						right = tmp;
+						r = right.Type;
 					}
-
-					return new BinaryDelegate (l, method, args);
+				
+					if (r.IsSubclassOf (TypeManager.delegate_type)){
+						MethodInfo method;
+						ArrayList args = new ArrayList (2);
+						
+						args = new ArrayList (2);
+						args.Add (new Argument (left, Argument.AType.Expression));
+						args.Add (new Argument (right, Argument.AType.Expression));
+						
+						if (oper == Operator.Addition)
+							method = TypeManager.delegate_combine_delegate_delegate;
+						else
+							method = TypeManager.delegate_remove_delegate_delegate;
+						
+						if (l != r) {
+							Error_OperatorCannotBeApplied ();
+							return null;
+						}
+						
+						return new BinaryDelegate (l, method, args);
+					}
 				}
-
+				
 				//
 				// Pointer arithmetic:
 				//

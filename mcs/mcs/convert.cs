@@ -991,7 +991,7 @@ namespace Mono.CSharp {
 		///   in a context that expects a `target_type'. 
 		/// </summary>
 		static public Expression ImplicitConversion (EmitContext ec, Expression expr,
-							  Type target_type, Location loc)
+							     Type target_type, Location loc)
 		{
 			Expression e;
 
@@ -1026,6 +1026,18 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Expression e;
 
+			if (expr.eclass == ExprClass.MethodGroup){
+				if (!TypeManager.IsDelegateType (target_type)){
+					Report.Error (428, loc,
+						      String.Format (
+							   "Cannot convert method group to `{0}', since it is not a delegate",
+							   TypeManager.CSharpName (target_type)));
+					return null;
+				}
+
+				return ImplicitDelegateCreation.Create (ec, (MethodGroupExpr) expr, target_type, loc);
+			}
+			
 			if (expr_type == target_type && !(expr is NullLiteral))
 				return expr;
 
