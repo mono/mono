@@ -44,12 +44,12 @@ namespace System.Web.Services.Protocols
 
 		public IHttpHandler GetHandler (HttpContext context, string verb, string url, string filePath)
 		{
-		    Type type = WebServiceParser.GetCompiledType (filePath, context);
+			Type type = WebServiceParser.GetCompiledType (filePath, context);
 
 			WSProtocol protocol = GuessProtocol (context, verb);
 			IHttpHandler handler = null;
 
-			if (true /*WSConfig.IsSupported (protocol)*/) {
+			if (WSConfig.IsSupported (protocol)) {
 				switch (protocol) {
 				case WSProtocol.HttpSoap:
 					handler = new HttpSoapWebServiceHandler (type);

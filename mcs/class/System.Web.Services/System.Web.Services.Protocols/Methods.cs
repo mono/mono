@@ -54,6 +54,8 @@ namespace System.Web.Services.Protocols {
 
 		internal HeaderInfo[] Headers;
 
+		internal SoapExtensionRuntimeConfig[] SoapExtensions;
+
 		//
 		// Constructor
 		//
@@ -138,34 +140,20 @@ namespace System.Web.Services.Protocols {
 			XmlReflectionMember [] out_members = BuildResponseReflectionMembers (optional_ns);
 
 			XmlMembersMapping [] members = new XmlMembersMapping [2];
-			try {
-				if (use == SoapBindingUse.Literal) {
-					members [0] = xmlImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
-					members [1] = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true);
-				}
-				else {
-					members [0] = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, true, true);
-					members [1] = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true, true);
-				}
 
-				XmlSerializer [] s = null;
-				s = XmlSerializer.FromMappings (members);
-				RequestSerializer = s [0];
-				ResponseSerializer = s [1];
-			} catch {
-				Console.WriteLine ("Got exception while creating serializer");
-				Console.WriteLine ("Method name: " + RequestName + " parameters are:");
-
-				for (int i = 0; i < in_members.Length; i++) {
-					Console.WriteLine ("    {0}: {1} {2}", i, in_members [i].MemberName, in_members [i].MemberType);
-				}
-
-				Console.WriteLine ("Output parameters are:");
-				for (int i = 0; i < out_members.Length; i++) {
-					Console.WriteLine ("    {0}: {1} {2}", i, out_members [i].MemberName, out_members [i].MemberType);
-				}
-				throw;
+			if (use == SoapBindingUse.Literal) {
+				members [0] = xmlImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
+				members [1] = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true);
 			}
+			else {
+				members [0] = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, true, true);
+				members [1] = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true, true);
+			}
+
+			XmlSerializer [] s = null;
+			s = XmlSerializer.FromMappings (members);
+			RequestSerializer = s [0];
+			ResponseSerializer = s [1];
 
 			o = source.GetCustomAttributes (typeof (SoapHeaderAttribute));
 			Headers = new HeaderInfo[o.Length];
@@ -178,6 +166,8 @@ namespace System.Web.Services.Protocols {
 				Headers [i] = new HeaderInfo (mems[0], att);
 				parent.RegisterHeaderType (headerType);
 			}
+
+			SoapExtensions = SoapExtension.GetMethodExtensions (source);
 		}
 
 		static internal MethodStubInfo Create (TypeStubInfo parent, LogicalMethodInfo lmi, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
@@ -293,6 +283,11 @@ namespace System.Web.Services.Protocols {
 			if (Member is PropertyInfo) ((PropertyInfo)Member).SetValue (ob, value, null);
 			else ((FieldInfo)Member).SetValue (ob, value);
 		}
+
+		public SoapHeaderDirection Direction
+		{
+			get { return AttributeInfo.Direction; }
+		}
 	}
 
 	internal class Fault
@@ -330,6 +325,7 @@ namespace System.Web.Services.Protocols {
 		internal string                  WebServiceName;
 		internal string                  WebServiceNamespace;
 		internal XmlSerializer           FaultSerializer;
+		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 
 		void GetTypeAttributes (Type t)
 		{
@@ -373,6 +369,7 @@ namespace System.Web.Services.Protocols {
 				}
 			}
 			FaultSerializer = new XmlSerializer (typeof(Fault));
+			SoapExtensions = SoapExtension.GetTypeExtensions (t);
 		}
 
 		//
@@ -415,8 +412,8 @@ namespace System.Web.Services.Protocols {
 			if (s != null) return;
 
 			XmlReflectionImporter ri = new XmlReflectionImporter ();
-			XmlTypeMapping tm = ri.ImportTypeMapping (type);
-			s = new XmlSerializer (type);
+			XmlTypeMapping tm = ri.ImportTypeMapping (type, WebServiceAttribute.DefaultNamespace);
+			s = new XmlSerializer (tm);
 
 			header_serializers [type] = s;
 			header_serializers_byname [new XmlQualifiedName (tm.ElementName, tm.Namespace)] = s;

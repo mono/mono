@@ -26,11 +26,10 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		internal SoapServerMessage (HttpRequest request, SoapHeaderCollection headers, MethodStubInfo stubInfo, object server, Stream stream)
-			: base (stream, headers)
+		internal SoapServerMessage (HttpRequest request, object server, Stream stream)
+			: base (stream, null)
 		{
 			this.action = request.Headers ["SOAPAction"];
-			this.stubInfo = stubInfo;
 			this.server = server;
 			this.url = request.Url.ToString();
 		}
@@ -58,6 +57,7 @@ namespace System.Web.Services.Protocols {
 
 		internal MethodStubInfo MethodStubInfo {
 			get { return stubInfo; }
+			set { stubInfo = value; }
 		}
 
 		public override bool OneWay {

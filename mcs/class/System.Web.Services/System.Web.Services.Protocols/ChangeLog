@@ -1,3 +1,17 @@
+2003-07-09  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapHttpClientProtocol.cs, HttpSoapWebServiceHandler.cs, Methods.cs: 
+	  Added support for soap extensions. Moved some code to
+	  WebServiceHelper. Implemented support for the two types of RoutingStyle. Added support
+	  for In and Out headers. Improved management of exceptions.
+	* SoapClientMessage.cs: code to retrieve soap headers moved to SoapMessage.
+	* SoapExtension.cs: Added methods for getting and creating soap extensions.
+	* SoapMessage.cs: Added methods for getting and assigning headers to an object.
+	* SoapServerMessage.cs: Added setter for MethodStubInfo. Other minor fixes.
+	* WebServiceHandler.cs: Added support for In and Out headers. Fixed management of exceptions.
+	* WebServiceHandlerFactory.cs: Check if the request protocol is supported.
+	* WebServiceHelper.cs: Added method for reading a soap request.
+
 2003-07-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* LogicalMethodInfo.cs: Fixed Invoke method. If return type is void,

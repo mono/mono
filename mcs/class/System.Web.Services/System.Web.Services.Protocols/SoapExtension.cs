@@ -8,6 +8,8 @@
 //
 
 using System.IO;
+using System.Collections;
+using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Protocols {
 	public abstract class SoapExtension {
@@ -20,10 +22,8 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		[MonoTODO]
 		protected SoapExtension ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Constructors
@@ -41,6 +41,143 @@ namespace System.Web.Services.Protocols {
 		public abstract void Initialize (object initializer);
 		public abstract void ProcessMessage (SoapMessage message);
 
+
+		static ArrayList[] globalExtensions;
+
+		internal static SoapExtension[] CreateExtensionChain (SoapExtensionRuntimeConfig[] extensionConfigs)
+		{
+			if (extensionConfigs == null) return null;
+			SoapExtension[] res = new SoapExtension [extensionConfigs.Length];
+			CreateExtensionChain (extensionConfigs, res, 0);
+			return res;
+		}
+
+		internal static SoapExtension[] CreateExtensionChain (SoapExtensionRuntimeConfig[] hiPrioExts, SoapExtensionRuntimeConfig[] medPrioExts, SoapExtensionRuntimeConfig[] lowPrioExts)
+		{
+			int len = 0;
+			if (hiPrioExts != null) len += hiPrioExts.Length;
+			if (medPrioExts != null) len += medPrioExts.Length;
+			if (lowPrioExts != null) len += lowPrioExts.Length;
+			if (len == 0) return null;
+
+			SoapExtension[] res = new SoapExtension [len];
+			int pos = 0;
+			if (hiPrioExts != null) pos = CreateExtensionChain (hiPrioExts, res, pos);
+			if (medPrioExts != null) pos = CreateExtensionChain (medPrioExts, res, pos);
+			if (lowPrioExts != null) pos = CreateExtensionChain (lowPrioExts, res, pos);
+			return res;
+		}
+
+		static int CreateExtensionChain (SoapExtensionRuntimeConfig[] extensionConfigs, SoapExtension[] destArray, int pos)
+		{
+			for (int n=0; n<extensionConfigs.Length; n++)
+			{
+				SoapExtensionRuntimeConfig econf = extensionConfigs [n];
+				SoapExtension ext = (SoapExtension) Activator.CreateInstance (econf.Type);
+				ext.Initialize (econf.InitializationInfo);
+				destArray [pos++] = ext;
+			}
+			return pos;
+		}
+
+		static void InitializeGlobalExtensions ()
+		{
+			globalExtensions = new ArrayList[2];
+			
+			ArrayList exts = WSConfig.Instance.ExtensionTypes;
+			if (exts == null) return;
+
+			foreach (WSExtensionConfig econf in exts)
+			{
+				if (globalExtensions [(int)econf.Group] == null) globalExtensions [(int)econf.Group] = new ArrayList ();
+				ArrayList destList = globalExtensions [(int) econf.Group];
+				bool added = false;
+				for (int n=0; n<destList.Count && !added; n++)
+					if (((WSExtensionConfig)destList [n]).Priority > econf.Priority) {
+						destList.Insert (n, econf);
+						added = true;
+					}
+				if (!added) destList.Add (econf);
+			}
+		}
+
+		internal static SoapExtensionRuntimeConfig[][] GetTypeExtensions (Type serviceType)
+		{
+			if (globalExtensions == null) InitializeGlobalExtensions();
+			
+			SoapExtensionRuntimeConfig[][] exts = new SoapExtensionRuntimeConfig[2][];
+
+			for (int group = 0; group < 2; group++)
+			{
+				ArrayList globList = globalExtensions[group];
+				if (globList == null) continue;
+				exts [group] = new SoapExtensionRuntimeConfig [globList.Count];
+				for (int n=0; n<globList.Count; n++)
+				{
+					WSExtensionConfig econf = (WSExtensionConfig) globList [n];
+					SoapExtensionRuntimeConfig typeconf = new SoapExtensionRuntimeConfig ();
+					typeconf.Type = econf.Type;
+					SoapExtension ext = (SoapExtension) Activator.CreateInstance (econf.Type);
+					typeconf.InitializationInfo = ext.GetInitializer (serviceType);
+					exts [group][n] = typeconf;
+				}
+			}
+			return exts;
+		}
+
+		internal static SoapExtensionRuntimeConfig[] GetMethodExtensions (LogicalMethodInfo method)
+		{
+			object[] ats = method.GetCustomAttributes (typeof (SoapExtensionAttribute));
+			SoapExtensionRuntimeConfig[] exts = new SoapExtensionRuntimeConfig [ats.Length];
+			int[] priorities = new int[ats.Length];
+
+			for (int n=0; n<ats.Length; n++)
+			{
+				SoapExtensionAttribute at = (SoapExtensionAttribute) ats[n];
+				SoapExtensionRuntimeConfig econf = new SoapExtensionRuntimeConfig ();
+				econf.Type = at.ExtensionType;
+				priorities [n] = at.Priority;
+				SoapExtension ext = (SoapExtension) Activator.CreateInstance (econf.Type);
+				econf.InitializationInfo = ext.GetInitializer (method, at);
+				exts [n] = econf;
+			}
+			Array.Sort (priorities, exts);
+			return exts;
+		}
+
+		public static Stream ExecuteChainStream (SoapExtension[] extensions, Stream stream)
+		{
+			if (extensions == null) return stream;
+
+			Stream newStream = stream;
+			foreach (SoapExtension ext in extensions)
+				newStream = ext.ChainStream (newStream);
+			return newStream;
+		}
+
+		public static void ExecuteProcessMessage(SoapExtension[] extensions, SoapMessage message, bool inverseOrder)
+		{
+			if (extensions == null) return;
+
+			if (inverseOrder)
+			{
+				for (int n = extensions.Length-1; n >= 0; n--)
+					extensions[n].ProcessMessage (message);
+			}
+			else
+			{
+				for (int n = 0; n < extensions.Length; n++)
+					extensions[n].ProcessMessage (message);
+			}
+		}
+
 		#endregion // Methods
+	}
+
+	internal class SoapExtensionRuntimeConfig
+	{
+		public Type Type;
+		public int Priority;
+		public object InitializationInfo;
 	}
 }

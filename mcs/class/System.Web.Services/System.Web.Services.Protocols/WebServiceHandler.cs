@@ -47,19 +47,10 @@ namespace System.Web.Services.Protocols {
 			MethodStubInfo methodInfo = requestMessage.MethodStubInfo;
 
 			// Assign header values to web service members
-			foreach (SoapHeader header in requestMessage.Headers)
-			{
-				HeaderInfo hinfo = methodInfo.GetHeaderInfo (header.GetType ());
-				if (hinfo != null)
-					hinfo.SetHeaderValue (requestMessage.Server, header);
-				else
-					if (header.MustUnderstand)
-						throw new SoapHeaderException ("Unknown header", SoapException.MustUnderstandFaultCode);
-      			header.DidUnderstand = false;
-			}
+
+			requestMessage.UpdateHeaderValues (requestMessage.Server, methodInfo.Headers);
 
 			// Fill an array with the input parameters at the right position
-			
 
 			object[] parameters = new object[methodInfo.MethodInfo.Parameters.Length];
 			ParameterInfo[] inParams = methodInfo.MethodInfo.InParameters;
@@ -67,9 +58,16 @@ namespace System.Web.Services.Protocols {
 				parameters [inParams[n].Position - 1] = requestMessage.InParameters [n];
 
 			// Invoke the method
-									
-			object[] results = methodInfo.MethodInfo.Invoke (requestMessage.Server, parameters);
-			requestMessage.OutParameters = results;
+
+			try
+			{
+				object[] results = methodInfo.MethodInfo.Invoke (requestMessage.Server, parameters);
+				requestMessage.OutParameters = results;
+			}
+			catch (TargetInvocationException ex)
+			{
+				throw ex.InnerException;
+			}
 
 			// Check that headers with MustUnderstand flag have been understood
 			
@@ -78,6 +76,9 @@ namespace System.Web.Services.Protocols {
 				if (header.MustUnderstand && !header.DidUnderstand)
 					throw new SoapHeaderException ("Header not understood: " + header.GetType(), SoapException.MustUnderstandFaultCode);
 			}
+
+			// Collect headers that must be sent to the client
+			requestMessage.CollectHeaders (requestMessage.Server, methodInfo.Headers, SoapHeaderDirection.Out);
 
 			return requestMessage;
 		}

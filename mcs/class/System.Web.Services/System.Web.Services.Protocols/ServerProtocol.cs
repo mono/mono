@@ -15,7 +15,14 @@ namespace System.Web.Services.Protocols {
 	[MonoTODO ("Figure out what this class does.")]
 	internal abstract class ServerProtocol {
 
+		HttpContext _context;
+
 		#region Constructors
+
+		internal ServerProtocol (HttpContext context)
+		{
+			_context = context;
+		}
 
 		protected ServerProtocol ()
 		{
@@ -26,9 +33,8 @@ namespace System.Web.Services.Protocols {
 
 		#region Properties
 
-		[MonoTODO]
 		public HttpContext Context {
-			get { throw new NotImplementedException (); }
+			get { return _context; }
 		}
 
 		public abstract bool IsOneWay {
@@ -44,14 +50,12 @@ namespace System.Web.Services.Protocols {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public HttpRequest Request {
-			get { throw new NotImplementedException (); }
+			get { return _context.Request; }
 		}
 
-		[MonoTODO]
 		public HttpResponse Response {
-			get { throw new NotImplementedException (); }
+			get { return _context.Response; }
 		}
 
 		#endregion

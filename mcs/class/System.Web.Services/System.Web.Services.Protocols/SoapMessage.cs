@@ -36,9 +36,8 @@ namespace System.Web.Services.Protocols {
 			headers = new SoapHeaderCollection ();
 		}
 
-		internal SoapMessage (Stream stream, SoapHeaderCollection headers)
+		internal SoapMessage (Stream stream)
 		{
-			this.headers = headers;
 			this.stream = stream;
 		}
 
@@ -138,6 +137,51 @@ namespace System.Web.Services.Protocols {
 		{
 			if (MethodInfo.IsVoid) return null;
 			else return outParameters [0];
+		}
+
+		internal void SetHeaders (SoapHeaderCollection headers)
+		{
+			this.headers = headers;
+		}
+
+		internal void SetException (SoapException ex)
+		{
+			exception = ex;
+		}
+
+		internal void CollectHeaders (object target, HeaderInfo[] headers, SoapHeaderDirection direction)
+		{
+			Headers.Clear ();
+			foreach (HeaderInfo hi in headers) 
+			{
+				if ((hi.Direction & direction) != 0) 
+				{
+					SoapHeader headerVal = hi.GetHeaderValue (target) as SoapHeader;
+					if (headerVal != null)
+						Headers.Add (headerVal);
+				}
+			}
+		}
+
+		internal void UpdateHeaderValues (object target, HeaderInfo[] headersInfo)
+		{
+			foreach (SoapHeader header in Headers)
+			{
+				HeaderInfo hinfo = FindHeader (headersInfo, header.GetType ());
+				if (hinfo != null)
+					hinfo.SetHeaderValue (target, header);
+				else
+					if (header.MustUnderstand)
+					throw new SoapHeaderException ("Unknown header", SoapException.MustUnderstandFaultCode);
+				header.DidUnderstand = false;
+			}
+		}
+
+		HeaderInfo FindHeader (HeaderInfo[] headersInfo, Type headerType)
+		{
+			foreach (HeaderInfo headerInfo in headersInfo)
+				if (headerInfo.HeaderType == headerType) return headerInfo;
+			return null;
 		}
 
 		#endregion // Methods

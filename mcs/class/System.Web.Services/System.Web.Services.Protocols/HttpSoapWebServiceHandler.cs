@@ -20,6 +20,9 @@ namespace System.Web.Services.Protocols
 	{
 		Type _type;
 		TypeStubInfo _typeStubInfo;
+		SoapExtension[] _extensionChainHighPrio;
+		SoapExtension[] _extensionChainMedPrio;
+		SoapExtension[] _extensionChainLowPrio;
 
 		public HttpSoapWebServiceHandler (Type type)
 		{
@@ -47,8 +50,6 @@ namespace System.Web.Services.Protocols
 			{
 				SerializeFault (context, requestMessage, ex);
 				return;
-
-
 			}
 		}
 
@@ -58,61 +59,143 @@ namespace System.Web.Services.Protocols
 
 			using (stream)
 			{
+				string soapAction = null;
+				MethodStubInfo methodInfo = null;
 				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType);
+				object server = Activator.CreateInstance (_type);
+
+				SoapServerMessage message = new SoapServerMessage (request, server, stream);
+				message.SetStage (SoapMessageStage.BeforeDeserialize);
+
+				// If the routing style is SoapAction, then we can get the method information now
+				// and set it to the SoapMessage
+
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.SoapAction)
+				{
+					soapAction = request.Headers ["SOAPAction"];
+					if (soapAction == null) throw new SoapException ("Missing SOAPAction header", SoapException.ClientFaultCode);
+					methodInfo = GetMethodFromAction (soapAction);
+					message.MethodStubInfo = methodInfo;
+				}
+
+				// Execute the high priority global extensions. Do not try to execute the medium and
+				// low priority extensions because if the routing style is RequestElement we still
+				// don't have method information
+
+				_extensionChainHighPrio = SoapExtension.CreateExtensionChain (_typeStubInfo.SoapExtensions[0]);
+				stream = SoapExtension.ExecuteChainStream (_extensionChainHighPrio, stream);
+				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, false);
+
+				// If the routing style is RequestElement, try to get the method name from the
+				// stream processed by the high priority extensions
+
+				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement)
+				{
+					MemoryStream mstream;
+
+					if (stream.CanSeek)
+					{
+						byte[] buffer = new byte [stream.Length];
+						for (int n=0; n<stream.Length;)
+							n += stream.Read (buffer, n, (int)stream.Length-n);
+						mstream = new MemoryStream (buffer);
+					}
+					else
+					{
+						byte[] buffer = new byte [500];
+						mstream = new MemoryStream ();
+					
+						int len;
+						while ((len = stream.Read (buffer, 0, 500)) > 0)
+							mstream.Write (buffer, 0, len);
+						mstream.Position = 0;
+					}
+
+					soapAction = ReadActionFromRequestElement (new MemoryStream (mstream.GetBuffer ()), encoding);
+
+					stream = mstream;
+					methodInfo = GetMethodFromAction (soapAction);
+					message.MethodStubInfo = methodInfo;
+				}
+
+				// Whatever routing style we used, we should now have the method information.
+				// We can now notify the remaining extensions
+
+				if (methodInfo == null) throw new SoapException ("Method '" + soapAction + "' not defined in the web service '" + _typeStubInfo.WebServiceName + "'", SoapException.ClientFaultCode);
+
+				_extensionChainMedPrio = SoapExtension.CreateExtensionChain (methodInfo.SoapExtensions);
+				_extensionChainLowPrio = SoapExtension.CreateExtensionChain (_typeStubInfo.SoapExtensions[1]);
+
+				stream = SoapExtension.ExecuteChainStream (_extensionChainMedPrio, stream);
+				stream = SoapExtension.ExecuteChainStream (_extensionChainLowPrio, stream);
+				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, false);
+
+				// Deserialize the request
+
 				StreamReader reader = new StreamReader (stream, encoding, false);
 				XmlTextReader xmlReader = new XmlTextReader (reader);
 
-				xmlReader.MoveToContent ();
-				xmlReader.ReadStartElement ("Envelope", WebServiceHelper.SoapEnvelopeNamespace);
-
-				SoapHeaderCollection headers = ReadHeaders (xmlReader);
-
-				xmlReader.MoveToContent ();
-				xmlReader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
-				xmlReader.MoveToContent ();
-
-				string methodName;
-				string methodNamespace;
-				string soapAction = request.Headers ["SOAPAction"];
-
-				if (_typeStubInfo.RoutingStyle ==  SoapServiceRoutingStyle.SoapAction)
-				{
-					if (soapAction == null) throw new SoapException ("Missing SOAPAction header", SoapException.ClientFaultCode);
-					int i = soapAction.LastIndexOf ('/');
-					methodName = soapAction.Substring (i + 1);
-					methodNamespace = soapAction.Substring (0, i);
-				}
-				else
-				{
-					methodName = xmlReader.LocalName;
-					methodNamespace = xmlReader.NamespaceURI;
-				}
-
-				MethodStubInfo methodInfo = _typeStubInfo.GetMethod (methodName);
-				if (methodInfo == null) throw new SoapException ("Method '" + methodName + "' not defined in the web service '" + _typeStubInfo.WebServiceName + "'", SoapException.ClientFaultCode);
-
-
-				object server = Activator.CreateInstance (_type);
-				SoapServerMessage message = new SoapServerMessage (request, headers, methodInfo, server, stream);
-
-				message.SetStage (SoapMessageStage.BeforeDeserialize);
-				// TODO: Call extensions
-
 				try
 				{
-					message.InParameters = (object []) methodInfo.RequestSerializer.Deserialize (xmlReader);
+					object content;
+					SoapHeaderCollection headers;
+					WebServiceHelper.ReadSoapMessage (xmlReader, _typeStubInfo, methodInfo.RequestSerializer, out content, out headers);
+					message.InParameters = (object []) content;
+					message.SetHeaders (headers);
 				}
 				catch (Exception ex)
 				{
 					throw new SoapException ("Could not deserialize Soap message", SoapException.ClientFaultCode, ex);
 				}
 
+				// Notify the extensions after deserialization
+
 				message.SetStage (SoapMessageStage.AfterDeserialize);
-				// TODO: Call extensions
+				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, false);
+				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, false);
 
 				xmlReader.Close ();
 
 				return message;
+			}
+		}
+
+		MethodStubInfo GetMethodFromAction (string soapAction)
+		{
+			int i = soapAction.LastIndexOf ('/');
+			string methodName = soapAction.Substring (i + 1);
+			return _typeStubInfo.GetMethod (methodName);
+		}
+
+		string ReadActionFromRequestElement (Stream stream, Encoding encoding)
+		{
+			try
+			{
+				StreamReader reader = new StreamReader (stream, encoding, false);
+				XmlTextReader xmlReader = new XmlTextReader (reader);
+
+				xmlReader.MoveToContent ();
+				xmlReader.ReadStartElement ("Envelope", WebServiceHelper.SoapEnvelopeNamespace);
+
+				while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace))
+					xmlReader.Skip ();
+
+				xmlReader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
+				xmlReader.MoveToContent ();
+
+				if (xmlReader.NamespaceURI.EndsWith ("/")) return xmlReader.NamespaceURI + xmlReader.LocalName;
+				else return xmlReader.NamespaceURI + "/" + xmlReader.LocalName;
+			}
+			catch (Exception ex)
+			{
+				string errmsg = "The root element for the request could not be determined. ";
+				errmsg += "When RoutingStyle is set to RequestElement, SoapExtensions configured ";
+				errmsg += "via an attribute on the method cannot modify the request stream before it is read. ";
+				errmsg += "The extension must be configured via the SoapExtensionTypes element in web.config ";
+				errmsg += "or the request must arrive at the server as clear text.";
+				throw new SoapException (errmsg, SoapException.ServerFaultCode, ex);
 			}
 		}
 
@@ -123,9 +206,18 @@ namespace System.Web.Services.Protocols
 			Stream outStream = response.OutputStream;
 			using (outStream)
 			{
-				response.ContentType = message.ContentType + "; charset=utf-8";
+				response.ContentType = "text/xml; charset=utf-8";
+
+				// While serializing, process extensions in reverse order
+
+				outStream = SoapExtension.ExecuteChainStream (_extensionChainHighPrio, outStream);
+				outStream = SoapExtension.ExecuteChainStream (_extensionChainMedPrio, outStream);
+				outStream = SoapExtension.ExecuteChainStream (_extensionChainLowPrio, outStream);
+
 				message.SetStage (SoapMessageStage.BeforeSerialize);
-				// TODO: Call extensions
+				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
+				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, true);
+				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
 
 				// What a waste of UTF8encoders, but it has to be thread safe.
 				XmlTextWriter xtw = new XmlTextWriter (outStream, new UTF8Encoding (false));
@@ -140,9 +232,10 @@ namespace System.Web.Services.Protocols
 				}
 
 				message.SetStage (SoapMessageStage.AfterSerialize);
-				// TODO: Call extensions
+				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
+				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, true);
+				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
 
-				xtw.Flush ();
 				xtw.Close ();
 			}
 		}
@@ -164,35 +257,6 @@ namespace System.Web.Services.Protocols
 
 			SerializeResponse (context.Response, faultMessage);
 			return;
-		}
-
-		SoapHeaderCollection ReadHeaders (XmlTextReader xmlReader)
-		{
-			SoapHeaderCollection headers = new SoapHeaderCollection ();
-			while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace))
-			{
-				if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Header" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace)
-				{
-					xmlReader.ReadStartElement ();
-					xmlReader.MoveToContent ();
-					XmlQualifiedName qname = new XmlQualifiedName (xmlReader.LocalName, xmlReader.NamespaceURI);
-					XmlSerializer headerSerializer = _typeStubInfo.GetHeaderSerializer (qname);
-					if (headerSerializer != null)
-					{
-						SoapHeader header = (SoapHeader) headerSerializer.Deserialize (xmlReader);
-						headers.Add (header);
-					}
-					else
-					{
-						while (xmlReader.NodeType == XmlNodeType.EndElement)
-							xmlReader.Skip ();	// TODO: Check if the header has mustUnderstand=true
-						xmlReader.Skip ();
-					}
-				}
-				else
-					xmlReader.Skip ();
-			}
-			return headers;
 		}
 	}
 }

@@ -78,6 +78,50 @@ namespace System.Web.Services.Protocols
 
 			xtw.WriteEndElement ();
 			xtw.WriteEndElement ();
+			xtw.Flush ();
+		}
+
+		public static void ReadSoapMessage (XmlTextReader xmlReader, TypeStubInfo typeStubInfo, XmlSerializer bodySerializer, out object body, out SoapHeaderCollection headers)
+		{
+			xmlReader.MoveToContent ();
+			xmlReader.ReadStartElement ("Envelope", WebServiceHelper.SoapEnvelopeNamespace);
+
+			headers = ReadHeaders (typeStubInfo, xmlReader);
+
+			xmlReader.MoveToContent ();
+			xmlReader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
+			xmlReader.MoveToContent ();
+
+			body = bodySerializer.Deserialize (xmlReader);
+		}
+
+		static SoapHeaderCollection ReadHeaders (TypeStubInfo typeStubInfo, XmlTextReader xmlReader)
+		{
+			SoapHeaderCollection headers = new SoapHeaderCollection ();
+			while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace))
+			{
+				if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Header" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace)
+				{
+					xmlReader.ReadStartElement ();
+					xmlReader.MoveToContent ();
+					XmlQualifiedName qname = new XmlQualifiedName (xmlReader.LocalName, xmlReader.NamespaceURI);
+					XmlSerializer headerSerializer = typeStubInfo.GetHeaderSerializer (qname);
+					if (headerSerializer != null)
+					{
+						SoapHeader header = (SoapHeader) headerSerializer.Deserialize (xmlReader);
+						headers.Add (header);
+					}
+					else
+					{
+						while (xmlReader.NodeType == XmlNodeType.EndElement)
+							xmlReader.Skip ();	// TODO: Check if the header has mustUnderstand=true
+						xmlReader.Skip ();
+					}
+				}
+				else
+					xmlReader.Skip ();
+			}
+			return headers;
 		}
 	}
 }

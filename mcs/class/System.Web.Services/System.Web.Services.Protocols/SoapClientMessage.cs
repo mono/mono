@@ -40,12 +40,6 @@ namespace System.Web.Services.Protocols {
 			this.client_method = client_method;
 			this.url = url;
 			Parameters = parameters;
-
-			foreach (HeaderInfo hi in msi.Headers) {
-				SoapHeader headerVal = hi.GetHeaderValue (client) as SoapHeader;
-				if (headerVal != null)
-					Headers.Add (headerVal);
-			}
 		}
 
 		#endregion 

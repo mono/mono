@@ -22,6 +22,7 @@ using System.Runtime.CompilerServices;
 using System.Web.Services.Description;
 using System.Xml.Serialization;
 using System.Xml.Schema;
+using System.Collections;
 
 namespace System.Web.Services.Protocols {
 	public class SoapHttpClientProtocol : HttpWebClientProtocol {
@@ -74,23 +75,36 @@ namespace System.Web.Services.Protocols {
 			}
 		}
 		
-		void SendRequest (WebRequest request, SoapClientMessage message)
+		void SendRequest (WebRequest request, SoapClientMessage message, SoapExtension[] extensions)
 		{
+			message.CollectHeaders (this, message.MethodStubInfo.Headers, SoapHeaderDirection.In);
+
 			request.Method = "POST";
 			WebHeaderCollection headers = request.Headers;
 			headers.Add ("SOAPAction", message.Action);
 
 			request.ContentType = message.ContentType + "; charset=utf-8";
 
-			using (Stream s = request.GetRequestStream ()){
+			Stream s = request.GetRequestStream ();
+			using (s) {
+
+				if (extensions != null) {
+					s = SoapExtension.ExecuteChainStream (extensions, s);
+					message.SetStage (SoapMessageStage.BeforeSerialize);
+					SoapExtension.ExecuteProcessMessage (extensions, message, true);
+				}
 
 				// What a waste of UTF8encoders, but it has to be thread safe.
-				
 				XmlTextWriter xtw = new XmlTextWriter (s, new UTF8Encoding (false));
 				xtw.Formatting = Formatting.Indented;
 
 				WebServiceHelper.WriteSoapMessage (xtw, type_info, message.MethodStubInfo.RequestSerializer, message.Parameters, message.Headers);
-				
+
+				if (extensions != null) {
+					message.SetStage (SoapMessageStage.AfterSerialize);
+					SoapExtension.ExecuteProcessMessage (extensions, message, true);
+				}
+
 				xtw.Flush ();
 				xtw.Close ();
 			 }
@@ -101,8 +115,7 @@ namespace System.Web.Services.Protocols {
 		// TODO:
 		//    Handle other web responses (multi-output?)
 		//    
-		object [] ReceiveResponse (WebResponse response, SoapClientMessage message)
-
+		object [] ReceiveResponse (WebResponse response, SoapClientMessage message, SoapExtension[] extensions)
 		{
 			HttpWebResponse http_response = (HttpWebResponse) response;
 			HttpStatusCode code = http_response.StatusCode;
@@ -113,43 +126,65 @@ namespace System.Web.Services.Protocols {
 
 			//
 			// Remove optional encoding
-
 			//
 			Encoding encoding = WebServiceHelper.GetContentEncoding (response.ContentType);
 
 			Stream stream = response.GetResponseStream ();
+
+			if (extensions != null) {
+				stream = SoapExtension.ExecuteChainStream (extensions, stream);
+				message.SetStage (SoapMessageStage.BeforeDeserialize);
+				SoapExtension.ExecuteProcessMessage (extensions, message, false);
+			}
+			
+			// Deserialize the response
+
 			StreamReader reader = new StreamReader (stream, encoding, false);
 			XmlTextReader xml_reader = new XmlTextReader (reader);
 
-			xml_reader.MoveToContent ();
-			xml_reader.ReadStartElement ("Envelope", WebServiceHelper.SoapEnvelopeNamespace);
-			xml_reader.MoveToContent ();
-			xml_reader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
+			bool isSuccessful = (code != HttpStatusCode.InternalServerError);
+			SoapHeaderCollection headers;
+			object content;
 
-			if (code != HttpStatusCode.InternalServerError)
-			{
-				object [] ret = (object []) msi.ResponseSerializer.Deserialize (xml_reader);
-				return (object []) ret;
+			if (isSuccessful) {
+				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.ResponseSerializer, out content, out headers);
+				message.OutParameters = (object[]) content;
 			}
+			else {
+				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, type_info.FaultSerializer, out content, out headers);
+				Fault fault = (Fault) content;
+				SoapException ex = new SoapException (fault.faultstring, fault.faultcode, fault.faultactor, fault.detail);
+				message.SetException (ex);
+			}
+
+			message.SetHeaders (headers);
+			message.UpdateHeaderValues (this, message.MethodStubInfo.Headers);
+
+			if (extensions != null) {
+				message.SetStage (SoapMessageStage.AfterDeserialize);
+				SoapExtension.ExecuteProcessMessage (extensions, message, false);
+			}
+
+			if (isSuccessful)
+				return message.OutParameters;
 			else
-			{
-				Fault fault = (Fault) type_info.FaultSerializer.Deserialize (xml_reader);
-				throw new SoapException (fault.faultstring, fault.faultcode, fault.faultactor, fault.detail);
-			}
+				throw message.Exception;
 		}
 
 		protected object[] Invoke (string method_name, object[] parameters)
 		{
 			MethodStubInfo msi = type_info.GetMethod (method_name);
-
+			
 			SoapClientMessage message = new SoapClientMessage (
 				this, msi, Url, parameters);
+
+			SoapExtension[] extensions = SoapExtension.CreateExtensionChain (type_info.SoapExtensions[0], msi.SoapExtensions, type_info.SoapExtensions[1]);
 
 			WebResponse response;
 			try
 			{
 				WebRequest request = GetWebRequest (uri);
-				SendRequest (request, message);
+				SendRequest (request, message, extensions);
 				response = GetWebResponse (request);
 			}
 			catch (WebException ex)
@@ -160,7 +195,7 @@ namespace System.Web.Services.Protocols {
 					throw ex;
 			}
 
-			return ReceiveResponse (response, message);
+			return ReceiveResponse (response, message, extensions);
 		}
 
 		#endregion // Methods
