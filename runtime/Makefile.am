@@ -90,9 +90,15 @@ mcs-do-run-test-profiles:
 	rm -fr $(tmpinst) ; $$ret
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
-# This doesn't yet work on the 2.0 profile (bug #71963)
-mcs-compileall:
-	d=`pwd`; for profile in default; do for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do echo $$i; $$d/mono-wrapper --compile-all $$i || exit 1; done; done
+# This doesn't yet work on the 2.0 profile
+verify_profiles = $(filter-out net_2_0, $(build_profiles))
+#verify_profiles = $(build_profiles)
+mcs-compileall: $(tmpinst)/bin/mono
+	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && pwd`; \
+	for profile in $(verify_profiles); do \
+	  MONO_PATH="$$mcs_topdir/class/lib/$$profile:$$save_MONO_PATH"; export MONO_PATH; \
+	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do \
+	    echo $$i; ./$(tmpinst)/bin/mono --compile-all $$i || exit 1; done; done
 
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
@@ -101,7 +107,7 @@ $(tmpinst)/config: ../data/config
 	d=`cd ../support && pwd`; \
 	sed 's,<configuration>,& <dllmap dll="MonoPosixHelper" target="'$$d/libMonoPosixHelper.la'" />,' ../data/config > $@
 
-$(tmpinst)/bin/mono: mono-wrapper
+$(tmpinst)/bin/mono: mono-wrapper $(tmpinst)/config
 	sed 's,/data/config",/runtime/$(tmpinst)/config",' mono-wrapper > $@
 	chmod +x $@
 
