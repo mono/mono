@@ -155,6 +155,7 @@ System.ComponentModel/EventHandlerList.cs
 System.ComponentModel/ExpandableObjectConverter.cs
 System.ComponentModel/IBindingList.cs
 System.ComponentModel/IComponent.cs
+System.ComponentModel/IComNativeDescriptorHandler.cs
 System.ComponentModel/IContainer.cs
 System.ComponentModel/ICustomTypeDescriptor.cs
 System.ComponentModel/IDataErrorInfo.cs
@@ -192,6 +193,7 @@ System.ComponentModel/RefreshPropertiesAttribute.cs
 System.ComponentModel/RefreshProperties.cs
 System.ComponentModel/RunInstallerAttribute.cs
 System.ComponentModel/StringConverter.cs
+System.ComponentModel/SyntaxCheck.cs
 System.ComponentModel/ToolboxItemAttribute.cs
 System.ComponentModel/TypeConverterAttribute.cs
 System.ComponentModel/TypeConverter.cs

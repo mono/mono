@@ -1,3 +1,9 @@
+2003-06-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IExtenderProvider.cs: mono-stylized.
+	* IComNativeDescriptorHandler.cs:
+	* SyntaxCheck.cs: new files from Andreas Nahr.
+
 2003-03-20  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs: Made the fallback error more useful by
