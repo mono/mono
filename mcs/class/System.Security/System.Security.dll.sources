@@ -1,3 +1,4 @@
+Mono.Xml/XmlCanonicalizer.cs
 System.Security.Cryptography.Xml/DSAKeyValue.cs
 System.Security.Cryptography.Xml/DataObject.cs
 System.Security.Cryptography.Xml/KeyInfo.cs

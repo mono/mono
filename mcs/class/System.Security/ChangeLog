@@ -1,3 +1,8 @@
+2003-07-24  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* System.Security.dll.sources: Added new Mono.Xml.XmlCanonicalizer.cs
+	from Aleksey Sanin.
+
 2003-03-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* System.Security.build: Added a new output System.Security_cmp.dll
