@@ -4,7 +4,7 @@
 // Author:
 //	Cesar Octavio Lopez Nataren
 //
-// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2003, 2004 Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
 using System;
@@ -64,41 +64,18 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label a, b;
-
-			a = ig.DefineLabel ();
-			b = ig.DefineLabel ();
-
-			if (cond != null)
-				cond.Emit (ec);
-
-			Expression e = cond as Expression;
-			AST tmp = (AST) e.exprs [e.exprs.Count - 1];
-
-			if (tmp is Relational)
-				//ig.Emit (OpCodes.Bge, a);
-				ig.Emit (OpCodes.Brfalse, a);
-			else {
-				Console.WriteLine ("cond is not relational");
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.Emit (OpCodes.Call, 
-					 typeof (Convert).GetMethod ("ToBoolean", 
-								     new Type [] { typeof (object), typeof (Boolean)}));
-				ig.Emit (OpCodes.Brfalse, a);
-			}
-			
+			Label true_lbl = ig.DefineLabel ();
+			Label merge_lbl = ig.DefineLabel ();
+			CodeGenerator.fall_false (ec, cond, true_lbl);			
 			if (true_stm != null)
-				true_stm.Emit (ec);
-			
-			ig.Emit (OpCodes.Br, b);
-			ig.MarkLabel (a);
-
+				true_stm.Emit (ec);			
+			ig.Emit (OpCodes.Br, merge_lbl);
+			ig.MarkLabel (true_lbl);
 			if (false_stm != null)
-				false_stm.Emit (ec);
-
-			ig.MarkLabel (b);
+				false_stm.Emit (ec);			
+			ig.MarkLabel (merge_lbl);
 		}
-	}
+ 	}
 
 	internal class Continue : AST {
 

@@ -4,7 +4,7 @@
 // Author:
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) 2003, Cesar Lopez Nataren
+// (C) 2003, 2004 Cesar Lopez Nataren
 //
 
 using System;
@@ -96,20 +96,26 @@ namespace Microsoft.JScript {
 			if (right != null)
 				right.Emit (ec);			       
 			
-			if (current_op == JSToken.Equal) {
+			if (current_op == JSToken.Equal || current_op == JSToken.NotEqual) {
 				ig.Emit (OpCodes.Call, typeof (Equality).GetMethod ("EvaluateEquality"));
-				Label t = ig.DefineLabel ();
-				Label f = ig.DefineLabel ();
-				ig.Emit (OpCodes.Brtrue_S, t);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Br_S, f);
-				ig.MarkLabel (t);
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.MarkLabel (f);
-			}
 
-			if (no_effect)
-				ig.Emit (OpCodes.Pop);
+				if (no_effect) {
+					Label t_lbl = ig.DefineLabel ();
+					Label f_lbl = ig.DefineLabel ();
+
+					if (current_op == JSToken.Equal)
+						ig.Emit (OpCodes.Brtrue_S, t_lbl);
+					else if (current_op == JSToken.NotEqual)
+						ig.Emit (OpCodes.Brfalse_S, t_lbl);
+					
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Br_S, f_lbl);
+					ig.MarkLabel (t_lbl);
+					ig.Emit (OpCodes.Ldc_I4_1);
+					ig.MarkLabel (f_lbl);
+					ig.Emit (OpCodes.Pop);
+				}				
+			}
 		}
 	}
 }

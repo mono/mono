@@ -1,3 +1,11 @@
+2004-04-17  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Statement.cs (class if): reimplemented Emit based on fall_false.
+	* Equality.cs: added code generation for != and emit jumping code
+	only in the case we are at a global expression not statement.
+	* CodeGenerator.cs (fall_true, fall_false): Check if convertion to
+	boolean needed. Made emit_to_boolean internal. Added need_convert_to_boolean.
+
 2004-04-14  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs (Binary.Emit): treat boolean operator

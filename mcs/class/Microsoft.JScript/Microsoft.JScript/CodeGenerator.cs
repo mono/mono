@@ -4,7 +4,7 @@
 // Author:
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) 2003, Cesar Lopez Nataren
+// (C) 2003, 2004 Cesar Lopez Nataren
 //
 
 using System;
@@ -254,7 +254,8 @@ namespace Microsoft.JScript {
 				}
 			} else {
 				ast.Emit (ec);
-				emit_to_boolean (ig, 0);
+				if (need_convert_to_boolean (ast))
+					emit_to_boolean (ast, ig, 0);
 				ig.Emit (OpCodes.Brfalse, lbl);
 			}
 		}
@@ -278,16 +279,34 @@ namespace Microsoft.JScript {
 				}
 			} else {			        
 				ast.Emit (ec);
-				emit_to_boolean (ig, 0);
+				if (need_convert_to_boolean (ast))
+					emit_to_boolean (ast, ig, 0);
 				ig.Emit (OpCodes.Brtrue, lbl);
 			}
 		}
 
-		public static void emit_to_boolean (ILGenerator ig, int i)			
+		internal static void emit_to_boolean (AST ast, ILGenerator ig, int i)			
 		{
 			ig.Emit (OpCodes.Ldc_I4, i);
 			ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean", 
-								   new Type [] { typeof (object), typeof (Boolean)}));
+									   new Type [] { typeof (object), typeof (Boolean)}));
+		}
+
+		internal static bool need_convert_to_boolean (AST ast)
+		{
+			if (ast == null)
+				return false;
+
+			if (ast is Expression) {
+				Expression exp = ast as Expression;
+				int n = exp.exprs.Count - 1;
+				AST tmp = (AST) exp.exprs [n];
+				if (tmp is Equality || tmp is Relational || tmp is BooleanLiteral)
+					return false;
+				else
+					return true;
+			} else 
+				return false;
 		}
 	}
 }
