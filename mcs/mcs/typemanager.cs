@@ -1214,6 +1214,8 @@ public class TypeManager {
 			return TypeManager.int64_type;
 		case TypeCode.UInt64:
 			return TypeManager.uint64_type;
+		case TypeCode.String:
+			return TypeManager.string_type;
 		default:
 			return t;
 		}
