@@ -1,3 +1,12 @@
+2004-09-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml_test.dll.sources : Added XmlWriterSettingsTests.cs.
+
+2004-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml_test.dll.sources : Added XmlReaderSettingsTests.cs.
+	  XmlReaderCommonTests.cs and XmlSchemaSetTests.cs were missing.
+
 2004-08-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources:
