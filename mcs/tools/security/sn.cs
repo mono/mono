@@ -41,7 +41,7 @@ namespace Mono.Tools {
 
 		static string defaultCSP;
 
-		static bool LoadConfig () 
+		static bool LoadConfig (bool quiet) 
 		{
 			MethodInfo config = typeof (System.Environment).GetMethod ("GetMachineConfigPath",
 				BindingFlags.Static|BindingFlags.NonPublic);
@@ -49,9 +49,15 @@ namespace Mono.Tools {
 			if (config != null) {
 				string path = (string) config.Invoke (null, null);
 
+				bool exist = File.Exists (path);
+				if (!quiet && !exist)
+					Console.WriteLine ("Couldn't find machine.config");
+
 				StrongNameManager.LoadConfig (path);
-				return true;
+				return exist;
 			}
+			else if (!quiet)
+				Console.WriteLine ("Couldn't resolve machine.config location (corlib issue)");
 			
 			// default CSP
 			return false;
@@ -294,7 +300,7 @@ namespace Mono.Tools {
 			else
 				Header();
 
-			bool config = LoadConfig ();
+			bool config = LoadConfig (quiet);
 
 			StrongName sn = null;
 			AssemblyName an = null;
