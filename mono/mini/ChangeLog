@@ -1,4 +1,9 @@
 
+Thu May 15 13:04:02 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: fixed typo, added intrins to the set of optimizations
+	tested with regressions.
+
 Thu May 15 11:57:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ops.h, mini.c, inssel.brg: optimize access to 2D arrays.
