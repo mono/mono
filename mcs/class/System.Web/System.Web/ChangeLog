@@ -1,4 +1,15 @@
 2002-07-23  Tim Coleman <tim@timcoleman.com>
+	* HttpCompileException.cs:
+	* HttpParseException.cs:
+	* HttpUnhandledException.cs:
+		New stubbs created.
+	* HttpApplication.cs:
+	* HttpBrowserCapabilities.cs:
+		Added missing methods stubbs and attributes based
+		on the class status page.  Also reformatted some
+		source for consistency.
+
+2002-07-23  Tim Coleman <tim@timcoleman.com>
 	* HttpUtility.cs: Moved entities hashtable into main
 		class as a static object, so we don't instantiate
 		a new one every time.  Also put the hashtable
