@@ -165,16 +165,16 @@ namespace Mono.Xml.XPath
 
 		int prevSibling;
 		int position;
-		int parent;
 		bool skipRead = false;
+
 		public void Read ()
 		{
 			if (!skipRead)
 				if (!xmlReader.Read ())
 					return;
 			skipRead = false;
+			int parent = nodeIndex;
 
-			parent = nodeIndex;
 			if (depth_ [nodeIndex] >= xmlReader.Depth) {	// not ">=" ? But == worked when with ArrayList...
 				// if not, then current node is parent.
 				while (xmlReader.Depth <= depth_ [parent])
@@ -203,13 +203,16 @@ namespace Mono.Xml.XPath
 				if (prevSibling != 0)
 					nextSibling_ [prevSibling] = nodeIndex;
 				if (requireFirstChildFill)
-					firstChild_ [nodeIndex-1] = nodeIndex;
+					firstChild_ [parent] = nodeIndex;
 				break;
 			case XmlNodeType.Whitespace:
 				if (xmlSpace == XmlSpace.Preserve)
 					goto case XmlNodeType.Text;
 				else
 					goto default;
+			case XmlNodeType.EndElement:
+				requireFirstChildFill = false;
+				return;
 			default:
 				// No operations. Doctype, EntityReference, 
 				return;
@@ -223,8 +226,6 @@ namespace Mono.Xml.XPath
 			switch (xmlReader.NodeType) {
 			case XmlNodeType.Element:
 				ProcessElement (parent, prevSibling, position);
-				break;
-			case XmlNodeType.EndElement:
 				break;
 			case XmlNodeType.CDATA:
 			case XmlNodeType.SignificantWhitespace:

@@ -1,3 +1,8 @@
+2003-07-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTMXPathDocumentBuilder.cs :
+	  Fixed Read() that sets nodes' parent incorrectly.
+
 2003-07-17  Peter Williams  <peter@newton.cx>
 
 	* DTMXPathDocumentBuilder.cs: csc.exe is more stringent about namespaces
