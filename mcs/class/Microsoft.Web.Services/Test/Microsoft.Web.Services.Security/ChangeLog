@@ -1,6 +1,7 @@
 2003-10-22 Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyIdentifierTest.cs: New. Unit tests for KeyIdentifier.
+	* SecurityTokenReferenceTest.cs: New. Unit tests for SecurityTokenReference.
 
 2003-10-20 Sebastien Pouliot  <spouliot@videotron.ca>
 
