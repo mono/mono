@@ -1,3 +1,7 @@
+2003-08-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FontConverter.cs: stub it out so that system.web compiles.
+
 2003-07-30 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Image.cs	InternalImageInfo class improved
 
