@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../../build/rules.make
 
 RESGEN = monoresgen
-LOCAL_MCS_FLAGS = /lib:$(topdir)/class/lib /r:Mono.Security.dll /r:System.Xml.dll
+LOCAL_MCS_FLAGS = /lib:$(topdir)/class/lib /r:Mono.Security.dll /r:System.Xml.dll /win32icon:mono.ico
 
 # SWF isn't quite good enough to build this yet.
 
@@ -32,8 +32,6 @@ DISTFILES = \
 	$(wildcard *.png)
 
 dist-local: dist-default
-
-# FIXME: should add  /win32icon:mono.ico to the flags for certview.exe
 
 sources = CertificateViewer.cs CertificateFormatter.cs X509ExtensionsHandler.cs ../AssemblyInfo.cs
 cv_libs = /r:System.Windows.Forms.dll /r:System.Drawing.dll

@@ -1,3 +1,13 @@
+//
+// gcertview.cs: GTK# Certificate Viewer
+//
+// Author:
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//
+// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
+//
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -16,6 +26,21 @@ using GtkSharp;
 namespace Mono.Tools.CertView {
 
         public class GtkCertificateViewer {
+        
+		static private void Header () 
+		{
+			Assembly a = Assembly.GetExecutingAssembly ();
+			AssemblyName an = a.GetName ();
+
+			object [] att = a.GetCustomAttributes (typeof (AssemblyTitleAttribute), false);
+			string title = ((att.Length > 0) ? ((AssemblyTitleAttribute) att [0]).Title : "Mono Certificate Viewer");
+
+			att = a.GetCustomAttributes (typeof (AssemblyCopyrightAttribute), false);
+			string copyright = ((att.Length > 0) ? ((AssemblyCopyrightAttribute) att [0]).Copyright : "");
+
+			Console.WriteLine ("{0} {1}", title, an.Version.ToString ());
+			Console.WriteLine ("{0}{1}", copyright, Environment.NewLine);
+		}
 
 		public static void Main (string[] args)
 		{
@@ -23,7 +48,8 @@ namespace Mono.Tools.CertView {
 			if ((filename != null) && (File.Exists (filename)))
 				new GtkCertificateViewer (filename);
 			else {
-				Console.WriteLine ("Usage: gcertview.exe certificate.cer");
+				Header ();
+				Console.WriteLine ("Usage: mono gcertview.exe certificate.cer");
 			}
 		}
 
@@ -71,7 +97,7 @@ namespace Mono.Tools.CertView {
 			tt.SetTip (issuedByEntry, issuedByEntry.Text, issuedByEntry.Text);
 
 			subjectAltNameLabel.Text = cf.SubjectAltName (false);
-//			subjectAltNameLabel.Visible = (subjectAltNameLabel.Text != String.Empty);
+			subjectAltNameLabel.Visible = (subjectAltNameLabel.Text != null);
 
 			notBeforeEntry.Text = cf.Certificate.ValidFrom.ToString ("yyyy-MM-dd");
 			notAfterEntry.Text = cf.Certificate.ValidUntil.ToString ("yyyy-MM-dd");
@@ -88,12 +114,13 @@ namespace Mono.Tools.CertView {
 			sealImage.Visible = (cf.Status == null);
 			brokenSealImage.Visible = !sealImage.Visible;
 
-			allStore = new ListStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeInt);
-			v1Store = new ListStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeInt);
-			extensionsStore = new ListStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeInt);
-			criticalStore = new ListStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeInt);
-			propertiesStore = new ListStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeInt);
-			emptyStore = new ListStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeInt);
+			Type[] storeType = new Type [4] { typeof (string), typeof (string), typeof (string), typeof (int) };
+			allStore = new ListStore (storeType);
+			v1Store = new ListStore (storeType);
+			extensionsStore = new ListStore (storeType);
+			criticalStore = new ListStore (storeType);
+			propertiesStore = new ListStore (storeType);
+			emptyStore = new ListStore (storeType);
 
 			AddToStores (CertificateFormatter.FieldNames.Version, cf.Version (false), cf.Version (true), 1);
 			AddToStores (CertificateFormatter.FieldNames.SerialNumber, cf.SerialNumber (false), cf.SerialNumber (true), 0);
@@ -153,10 +180,9 @@ namespace Mono.Tools.CertView {
 
 		static void SetCellData (TreeViewColumn col, CellRenderer cell, TreeModel model, TreeIter iter)
 		{
-			GLib.Value icon;
-			model.GetValue (iter, 3, out icon);
+			int icon = (int) model.GetValue (iter, 3);
 			CellRendererPixbuf cr = (CellRendererPixbuf) cell;
-			cr.Pixbuf = version [(int)icon];
+			cr.Pixbuf = version [icon];
 		}
 
 		public static Gtk.TreeCellDataFunc CellDataFunc {
@@ -181,29 +207,28 @@ namespace Mono.Tools.CertView {
 			GLib.Value vv = new GLib.Value (fieldValue);
 			GLib.Value dv = new GLib.Value (detailedValue);
 			GLib.Value iv = new GLib.Value (iconValue);
-			TreeIter iter = new TreeIter ();
 			switch (iconValue) {
 				case 0: // X.509 version 1 fields
-					AddToStore (v1Store, iter, fv, vv, dv, iv);
+					AddToStore (v1Store, fv, vv, dv, iv);
 					break;
 				case 2: // extensions
-					AddToStore (extensionsStore, iter, fv, vv, dv, iv);
+					AddToStore (extensionsStore, fv, vv, dv, iv);
 					break;
 				case 3: // critical extensions
-					AddToStore (extensionsStore, iter, fv, vv, dv, iv);
-					AddToStore (criticalStore, iter, fv, vv, dv, iv);
+					AddToStore (extensionsStore, fv, vv, dv, iv);
+					AddToStore (criticalStore, fv, vv, dv, iv);
 					break;
 				case 4: // properties
-					AddToStore (propertiesStore, iter, fv, vv, dv, iv);
+					AddToStore (propertiesStore, fv, vv, dv, iv);
 					break;
 			}
 			// and we always add to allStore
-			AddToStore (allStore, iter, fv, vv, dv, iv);
+			AddToStore (allStore, fv, vv, dv, iv);
 		}
 
-		private void AddToStore (ListStore store, TreeIter iter, GLib.Value field, GLib.Value value, GLib.Value details, GLib.Value icon)
+		private void AddToStore (ListStore store, GLib.Value field, GLib.Value value, GLib.Value details, GLib.Value icon)
 		{
-			store.Append (out iter);
+			TreeIter iter = store.Append ();
 			store.SetValue (iter, 0, field);
 			store.SetValue (iter, 1, value);
 			store.SetValue (iter, 2, details);
@@ -215,12 +240,10 @@ namespace Mono.Tools.CertView {
 			TreeModel model;
 			TreeIter iter = new TreeIter ();
 			TreeSelection ts = detailsTreeview.Selection;
-			ts.GetSelected (out model, ref iter);
-			GLib.Value val = new GLib.Value ();
-			detailsTreeview.Model.GetValue (iter, 2, out val);
+			ts.GetSelected (out model, out iter);
 
 			TextBuffer tb = new TextBuffer (null);
-			tb.SetText ((string)val);
+			tb.SetText ((string) detailsTreeview.Model.GetValue (iter, 2));
 			detailsTextview.Buffer = tb;
 		}
 

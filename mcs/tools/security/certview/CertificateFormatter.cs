@@ -2,9 +2,10 @@
 // CertificateFormatter.cs: Certificate Formatter (not GUI specific)
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -72,8 +73,10 @@ namespace Mono.Tools.CertView {
 
 			extensions = new Hashtable ();
 			IDictionary exts = (IDictionary) ConfigurationSettings.GetConfig ("X509.Extensions");
-			foreach (DictionaryEntry ext in exts)
-				extensions.Add (ext.Key, ext.Value);
+			if (exts != null) {
+				foreach (DictionaryEntry ext in exts)
+					extensions.Add (ext.Key, ext.Value);
+			}
 		}
 
 		private X509Extension CreateExtensionFromOid (string oid, object[] args) 
@@ -96,11 +99,43 @@ namespace Mono.Tools.CertView {
 
 		public CertificateFormatter (string filename)
 		{
-			FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-			byte[] data = new byte [fs.Length];
-			fs.Read (data, 0, data.Length);
-			fs.Close ();
-			Initialize (new X509Certificate (data));
+			byte[] data = null;
+			using (FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+        			data = new byte [fs.Length];
+        			fs.Read (data, 0, data.Length);
+        			fs.Close ();
+       			}
+       			
+       			if ((data != null) && (data.Length > 0)) {
+        			X509Certificate x509 = null;
+        			if (data [0] != 0x30) {
+        				// it may be PEM encoded
+        				data = FromPEM (data);
+        			}
+        			
+        			if (data [0] == 0x30) {
+        				x509 = new X509Certificate (data);
+                			if (x509 != null) {
+                				Initialize (x509);
+                			}
+        			}
+			}
+		}
+		
+		private byte[] FromPEM (byte[] data) 
+		{
+			string pem = Encoding.ASCII.GetString (data);
+			int start = pem.IndexOf ("-----BEGIN CERTIFICATE-----");
+			if (start < 0)
+				return null;
+
+			start += 27; // 27 being the -----BEGIN CERTIFICATE----- length
+			int end = pem.IndexOf ("-----END CERTIFICATE-----", start);
+			if (end < start)
+				return null;
+				
+			string base64 = pem.Substring (start, (end - start));
+			return Convert.FromBase64String (base64);
 		}
 
 		public CertificateFormatter (X509Certificate cert)
@@ -113,19 +148,18 @@ namespace Mono.Tools.CertView {
 			x509 = cert;
 			thumbprintAlgorithm = defaultThumbprintAlgo;
 			try {
-				if (x509.IsSelfSigned) {
-					status = untrustedRoot;
-					return;
-				}
 				// preprocess some informations
 				foreach (X509Extension xe in x509.Extensions) {
 					if ((!extensions.ContainsKey (xe.OID)) && (xe.Critical))
 						status = unknownCriticalExtension;
 					if (xe.OID == "2.5.29.17") {
-// BUG: Works with CSC but not with MCS
-//						SubjectAltNameExtension san = new SubjectAltNameExtension (xe);
-//						subjectAltName = san.RFC822;
+						SubjectAltNameExtension san = new SubjectAltNameExtension (xe);
+						subjectAltName = san.RFC822;
 					}
+				}
+				
+				if (x509.IsSelfSigned) {
+					status = untrustedRoot;
 				}
 			}
 			catch (Exception e) {
@@ -244,6 +278,9 @@ namespace Mono.Tools.CertView {
 					break;
 				case "1.2.840.113549.1.1.5":
 					result = "sha1RSA";
+					break;
+				case "1.3.14.3.2.29":
+					result = "sha1WithRSASignature";
 					break;
 				default:
 					result = x509.SignatureAlgorithm;
