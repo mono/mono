@@ -4,11 +4,13 @@
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) Ximian, Inc., 2002
 //
 
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -16,10 +18,8 @@ namespace System.Windows.Forms {
 	/// Represents a common dialog box that displays available colors along with controls that allow the user to define custom colors.
 	/// </summary>
 
-	[MonoTODO]
 	public class ColorDialog : CommonDialog {
 
-		// private fields
 		private bool allowFullOpen;
 		private bool anyColor;
 		private Color color;
@@ -28,25 +28,11 @@ namespace System.Windows.Forms {
 		private bool showHelp;
 		private bool solidColorOnly;
 
-		/// --- Constructor ---
 		public ColorDialog() : base() 
 		{
-			allowFullOpen = true;
-			anyColor = false;
-			color = Color.Black;
-			customColors = null;
-			fullOpen = false;
-			showHelp = false;
-			solidColorOnly = false;
+			Reset ( );
 		}
 		
-		
-		
-		
-		/// --- Properties ---
-		/// following properties are not stubbed out, because they only support .NET framework
-		/// - protected virtual IntPtr Instance {get;}
-		/// - protected virtual int Options {get;}
 		public virtual bool AllowFullOpen {
 			get {
 				return allowFullOpen;
@@ -61,7 +47,7 @@ namespace System.Windows.Forms {
 				return anyColor;
 			}
 			set {
-				anyColor=value;
+				anyColor = value;
 			}
 		}
 		
@@ -70,7 +56,7 @@ namespace System.Windows.Forms {
 				return color;
 			}
 			set {
-				color=value;
+				color = value;
 			}
 		}
 		
@@ -79,7 +65,10 @@ namespace System.Windows.Forms {
 				return customColors;
 			}
 			set {
-				customColors=value;
+				if ( value != null ) {
+					for ( int i = 0; i < Math.Min ( customColors.Length, value.Length ); i++ )
+						customColors [ i ] = value [ i ];
+				}
 			}
 		}
 		
@@ -88,7 +77,7 @@ namespace System.Windows.Forms {
 				return fullOpen;
 			}
 			set {
-				fullOpen=value;
+				fullOpen = value;
 			}
 		}
 		
@@ -97,7 +86,7 @@ namespace System.Windows.Forms {
 				return showHelp;
 			}
 			set {
-				showHelp=value;
+				showHelp = value;
 			}
 		}
 		
@@ -106,35 +95,73 @@ namespace System.Windows.Forms {
 				return solidColorOnly;
 			}
 			set {
-				solidColorOnly=value;
+				solidColorOnly = value;
 			}
 		}
 
-		/// --- ColorDialog methods ---
-		[MonoTODO]
 		public override void Reset() 
 		{
 			allowFullOpen = true;
 			anyColor = false;
 			color = Color.Black;
-			customColors = null;
+
+			customColors = new int [ 16 ];
+			for ( int i = 0; i < customColors.Length; i++ )
+				customColors [ i ] = Win32.RGB ( Color.White );
+
 			fullOpen = false;
 			showHelp = false;
 			solidColorOnly = false;
 		}
 		
-		[MonoTODO]
-		protected override bool RunDialog(IntPtr hwndOwner) 
+		protected override bool RunDialog( IntPtr hwndOwner ) 
 		{
-			throw new NotImplementedException ();
+			CHOOSECOLOR cc = new CHOOSECOLOR (  );
+			cc.hwndOwner = hwndOwner;
+			cc.lStructSize  = ( uint ) Marshal.SizeOf( cc );
+			cc.Flags = (int) ( ChooseColorFlags.CC_RGBINIT | ChooseColorFlags.CC_ENABLEHOOK );
+
+			cc.lpfnHook = new Win32.FnHookProc ( this.HookProc );
+
+			if ( AllowFullOpen ) {
+				if ( FullOpen )
+					cc.Flags |= (int) ChooseColorFlags.CC_FULLOPEN;
+			}
+			else cc.Flags |= (int) ChooseColorFlags.CC_PREVENTFULLOPEN;
+
+			if ( AnyColor )
+				cc.Flags |= (int) ChooseColorFlags.CC_ANYCOLOR;
+
+			if ( ShowHelp )
+				cc.Flags |= (int) ChooseColorFlags.CC_SHOWHELP;
+
+			if ( SolidColorOnly )
+				cc.Flags |= (int) ChooseColorFlags.CC_SOLIDCOLOR;
+
+			cc.rgbResult = Win32.RGB ( Color );
+
+			cc.lpCustColors = Marshal.AllocHGlobal ( Marshal.SizeOf( customColors[0] ) * customColors.Length );
+			Marshal.Copy ( customColors, 0, cc.lpCustColors, customColors.Length );
+			
+			bool res = false;
+			try {
+				res = Win32.ChooseColor ( ref cc );
+
+				if ( res ) {
+					this.Color = Color.FromArgb ( cc.rgbResult );
+					Marshal.Copy ( cc.lpCustColors, customColors, 0, customColors.Length );
+				}
+			}
+			finally {
+				Marshal.FreeHGlobal ( cc.lpCustColors );
+			}
+
+			return res;
 		}
 		
-		[MonoTODO]
-		//FIXME: do a better tostring
 		public override string ToString() 
 		{
-			return "Color Dialog " + color.ToString();
+			return GetType( ).FullName.ToString ( ) + ", Color: " + Color.ToString ( );
 		}
-		
 	}
 }

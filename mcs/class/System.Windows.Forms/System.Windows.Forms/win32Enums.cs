@@ -2927,4 +2927,16 @@ namespace System.Windows.Forms{
 		TPM_RETURNCMD       = 0x0100,
 		TPM_RECURSE         = 0x0001
 	}
+
+	internal enum ChooseColorFlags : int {
+		CC_RGBINIT               = 0x00000001,
+		CC_FULLOPEN              = 0x00000002,
+		CC_PREVENTFULLOPEN       = 0x00000004,
+		CC_SHOWHELP              = 0x00000008,
+		CC_ENABLEHOOK            = 0x00000010,
+		CC_ENABLETEMPLATE        = 0x00000020,
+		CC_ENABLETEMPLATEHANDLE  = 0x00000040,
+		CC_SOLIDCOLOR            = 0x00000080,
+		CC_ANYCOLOR              = 0x00000100
+	}
 }

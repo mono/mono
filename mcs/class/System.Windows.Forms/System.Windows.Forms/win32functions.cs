@@ -1016,6 +1016,11 @@ namespace System.Windows.Forms{
 		[DllImport ("comdlg32.dll",
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]
+		internal static extern bool ChooseColor ( ref CHOOSECOLOR lpofn );
+
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
 		internal static extern uint CommDlgExtendedError ( );
 
 		#endregion

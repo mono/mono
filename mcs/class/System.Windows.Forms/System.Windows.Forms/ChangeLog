@@ -1,3 +1,9 @@
+2003-07-16 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* ColorDialog.cs : implemented
+	* win32functions.cs			
+	* win32enums.cs
+	* win32structs.cs : functions, flags and structs for ColorDialog
+
 2003-07-01 Alexandre Pigolkine <pigolkine@gmx.de>
 	* win32Structs.cs			some fields cannot be marshaled
 								OFNOTIFY structure simplified

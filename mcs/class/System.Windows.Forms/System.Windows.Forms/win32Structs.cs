@@ -821,6 +821,19 @@ namespace System.Windows.Forms
 	}
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	public struct CHOOSECOLOR { 
+		internal uint          lStructSize; 
+		internal IntPtr        hwndOwner; 
+		internal IntPtr        hInstance; 
+		internal int           rgbResult; 
+		internal IntPtr        lpCustColors;
+		internal uint          Flags; 
+		internal IntPtr        lCustData; 
+		internal Win32.FnHookProc lpfnHook; 
+		internal string        lpTemplateName; 
+	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	public  struct OPENFILENAME {
 		internal uint          lStructSize; 
 		internal IntPtr        hwndOwner; 
