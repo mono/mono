@@ -4228,7 +4228,6 @@ namespace Mono.CSharp {
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
 							  ArrayList Arguments, Location loc)
 		{
-			ArrayList afm = new ArrayList ();
 			MethodBase method = null;
 			Type current_type = null;
 			int argument_count;

@@ -1,3 +1,10 @@
+2003-04-08  Zoltan Varga  <vargaz@freemail.hu>
+
+        * class.cs: Null out fields holding references to Block objects so
+        they can be garbage collected.
+
+        * expression.cs (OverloadResolve): Remove unused local.
+
 2003-04-07  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (Expression.ResolveBoolean): Don't call ec.Mark().

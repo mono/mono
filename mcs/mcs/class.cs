@@ -2451,6 +2451,7 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer parent)
 		{
 			MethodData.Emit (parent, Block, this);
+			Block = null;
 		}
 	}
 
@@ -2735,6 +2736,8 @@ namespace Mono.CSharp {
 
 			if (generate_debugging)
 				sw.CloseMethod ();
+
+			block = null;
 		}
 	}
 
@@ -3742,11 +3745,15 @@ namespace Mono.CSharp {
 			if (PropertyBuilder != null)
 				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes);
 
-			if (GetData != null)
+			if (GetData != null) {
 				GetData.Emit (tc, Get.Block, Get);
+				Get.Block = null;
+			}
 
-			if (SetData != null)
+			if (SetData != null) {
 				SetData.Emit (tc, Set.Block, Set);
+				Set.Block = null;
+			}
 		}
 	}
 			
@@ -4143,17 +4150,19 @@ namespace Mono.CSharp {
 			ec = new EmitContext (tc, Location, null, MemberType, ModFlags);
 			Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes);
 
-			if (Add != null)
+			if (Add != null) {
 				AddData.Emit (tc, Add.Block, Add);
-			else {
+				Add.Block = null;
+			} else {
 				ILGenerator ig = AddData.MethodBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
 				EmitDefaultMethod (ec, true);
 			}
 
-			if (Remove != null)
+			if (Remove != null) {
 				RemoveData.Emit (tc, Remove.Block, Remove);
-			else {
+				Remove.Block = null;
+			} else {
 				ILGenerator ig = RemoveData.MethodBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
 				EmitDefaultMethod (ec, false);
@@ -4402,7 +4411,7 @@ namespace Mono.CSharp {
 		public readonly Expression ReturnType;
 		public readonly Expression FirstArgType, SecondArgType;
 		public readonly string FirstArgName, SecondArgName;
-		public readonly Block  Block;
+		public Block           Block;
 		public Attributes      OptAttributes;
 		public MethodBuilder   OperatorMethodBuilder;
 		
@@ -4580,6 +4589,7 @@ namespace Mono.CSharp {
 			
 			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (parent);
+			Block = null;
 		}
 
 		public static string GetName (OpType ot)
