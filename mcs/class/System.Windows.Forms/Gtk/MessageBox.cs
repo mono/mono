@@ -253,7 +253,6 @@ namespace System.Windows.Forms{
 					dialog.AddButton(Gtk.Stock.Cancel, (int) Gtk.ResponseType.Cancel);	
 					break;
 				case MessageBoxButtons.AbortRetryIgnore:
-					break;
 					dialog = new Gtk.MessageDialog (
 						w,
 						Gtk.DialogFlags.DestroyWithParent,
@@ -264,6 +263,7 @@ namespace System.Windows.Forms{
 					dialog.AddButton ("Abort",  3);
 					dialog.AddButton ("Retry",  4);
 					dialog.AddButton ("Ignore", 5);
+					break;
 				default:
 					break;
 			}
