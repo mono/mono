@@ -26,6 +26,10 @@ namespace System.Web.Security
 		static string cookiePath;
 		static int timeout;
 		static FormsProtectionEnum protection;
+#if NET_1_1
+		static bool requireSSL;
+		static bool slidingExpiration;
+#endif
 
 		// same names and order used in xsp
 		static string [] indexFiles = { "index.aspx",
@@ -240,11 +244,18 @@ namespace System.Web.Security
 					timeout = authConfig.Timeout;
 					cookiePath = authConfig.CookiePath;
 					protection = authConfig.Protection;
+#if NET_1_1
+					requireSSL = authConfig.RequireSSL;
+					slidingExpiration = authConfig.SlidingExpiration;
+#endif
 				} else {
 					cookieName = ".MONOAUTH";
 					timeout = 30;
 					cookiePath = "/";
 					protection = FormsProtectionEnum.All;
+#if NET_1_1
+					slidingExpiration = true;
+#endif
 				}
 
 				initialized = true;
@@ -332,6 +343,21 @@ namespace System.Web.Security
 				return cookiePath;
 			}
 		}
+#if NET_1_1
+		public static bool RequireSSL {
+			get {
+				Initialize ();
+				return requireSSL;
+			}
+		}
+
+		public static bool SlidingExpiration {
+			get {
+				Initialize ();
+				return slidingExpiration;
+			}
+		}
+#endif
 	}
 }
 
