@@ -795,6 +795,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			// add interfaces that were not added at type creation (weird API issue)
+			if (!is_class && !have_nonstatic_fields) {
+				foreach (Type i in ifaces)
+					TypeBuilder.AddInterfaceImplementation (i);
+			}
+			
 			//
 			// Finish the setup for the EmitContext
 			//
