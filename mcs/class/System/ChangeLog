@@ -1,3 +1,8 @@
+2004-09-20  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System.dll.sources: Moved ReadOnlyCollection.cs and Collection.cs
+	from corlib to System.Collections.Generic in System assembly
+
 2004-09-13  Tim Coleman <tim@timcoleman.com>
 	* System.dll.sources: Add new classes in System.Net.Security and 
 		System.Security.Authentication for Fx 2.0

@@ -126,6 +126,8 @@ System.CodeDom.Compiler/LanguageOptions.cs
 System.CodeDom.Compiler/TempFileCollection.cs
 System.CodeDom/FieldDirection.cs
 System.CodeDom/MemberAttributes.cs
+System.Collections.Generic/Collection.cs
+System.Collections.Generic/ReadOnlyCollection.cs
 System.Collections.Specialized/BitVector32.cs
 System.Collections.Specialized/CollectionsUtil.cs
 System.Collections.Specialized/HybridDictionary.cs
