@@ -1,3 +1,7 @@
+2004-01-11  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CodeAccessPermissionTest.cs: Fixed CustomCAS test under Windows.
+
 2004-01-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CodeAccessPermissionTest.cs: Added a new test for calling Demand on

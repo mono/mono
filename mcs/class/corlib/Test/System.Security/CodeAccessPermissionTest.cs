@@ -42,7 +42,7 @@ namespace MonoTests.System.Security {
 
 		public override bool IsSubsetOf (IPermission target) 
 		{
-			return false;
+			return true;
 		}
 
 		public override SecurityElement ToXml () 
@@ -60,7 +60,7 @@ namespace MonoTests.System.Security {
 		public void CustomCAS () 
 		{
 			// test for http://bugzilla.ximian.com/show_bug.cgi?id=52626
-			NonAbstractCodeAccessPermission p = new NonAbstractCodeAccessPermission (null, null);
+			NonAbstractCodeAccessPermission p = new NonAbstractCodeAccessPermission ("custom", null);
 			p.Demand ();
 		}
 
