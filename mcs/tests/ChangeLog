@@ -1,3 +1,7 @@
+2001-12-03  Ravi Pratap <ravi@ximian.com>
+
+	* test-50.cs : Add. This does not pass yet.
+
 2001-12-02  Ravi Pratap  <ravi@ximian.com>
 
 	* test-40.cs : Update to now test recursive definitions with
