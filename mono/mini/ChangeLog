@@ -1,3 +1,9 @@
+
+Mon Apr 28 17:03:14 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: moved most of the code required to do inlining to its own
+	function so it can be reused. Inline also ctors if appropriate.
+
 2003-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am: Link with -export-dynamic so shared libs loaded by
