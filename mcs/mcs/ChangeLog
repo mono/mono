@@ -1,5 +1,17 @@
 2002-02-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* support.cs (InternalParameters.ParameterModifier): handle null
+	fixed parameters.
+	(InternalParameters.ParameterType): ditto.
+
+	* parameter.cs (VerifyArgs): Also check if the fixed parameter is
+	duplicating the name of the variable parameter.
+	(GetParameterByName): Fix bug where we were not looking up array
+	paramters if they were the only present (thanks Paolo!).
+	(GetParameterInfo): We only have an empty set of types if both
+	fixed and array are set to null.
+	(GetParameterInfo-idx): Handle FixedParameter == null
+
 	* cs-parser.jay: Handle the case where there is no catch
 	statements (missing null test).
 

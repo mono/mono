@@ -157,6 +157,12 @@ namespace Mono.CSharp {
 			//
 		}
 
+		static void error100 (string name)
+		{
+			Report.Error (
+				100, "The parameter name `" + name + "' is a duplicate");
+		}
+		
 		public bool VerifyArgs ()
 		{
 			int count;
@@ -167,12 +173,17 @@ namespace Mono.CSharp {
 			
 			count = FixedParameters.Length;
 			for (i = 0; i < count; i++){
+				string base_name = FixedParameters [i].Name;
+				
 				for (j = i + 1; j < count; j++){
-					if (FixedParameters [i].Name != FixedParameters [j].Name)
+					if (base_name != FixedParameters [j].Name)
 						continue;
-					Report.Error (
-						100, "The parameter name `" + FixedParameters [i].Name +
-						"' is a duplicate");
+					error100 (base_name);
+					return false;
+				}
+
+				if (base_name == ArrayParameter.Name){
+					error100 (base_name);
 					return false;
 				}
 			}
@@ -199,24 +210,24 @@ namespace Mono.CSharp {
 		public Parameter GetParameterByName (string name, out int idx)
 		{
 			idx = 0;
-
-			if (FixedParameters == null)
-				return null;
-
 			int i = 0;
-			foreach (Parameter par in FixedParameters){
-				if (par.Name == name){
-					idx = i;
-					return par;
+
+			if (FixedParameters != null){
+				foreach (Parameter par in FixedParameters){
+					if (par.Name == name){
+						idx = i;
+						return par;
+					}
+					i++;
 				}
-				i++;
 			}
 
-			if (ArrayParameter != null)
+			if (ArrayParameter != null){
 				if (name == ArrayParameter.Name){
 					idx = i;
 					return ArrayParameter;
 				}
+			}
 			
 			return null;
 		}
@@ -225,7 +236,12 @@ namespace Mono.CSharp {
 		{
 			int extra = (ArrayParameter != null) ? 1 : 0;
 			int i = 0;
-			int pc = FixedParameters.Length + extra;
+			int pc;
+
+			if (FixedParameters == null)
+				pc = extra;
+			else
+				pc = extra + FixedParameters.Length;
 			
 			types = new Type [pc];
 			
@@ -233,17 +249,19 @@ namespace Mono.CSharp {
 				FixedParameters = null;
 				return false;
 			}
-			
-			foreach (Parameter p in FixedParameters){
-				Type t = null;
-				
-				if (p.Resolve (ds, loc))
-					t = p.ExternalType ();
-				
-				types [i] = t;
-				i++;
-			}
 
+			if (FixedParameters != null){
+				foreach (Parameter p in FixedParameters){
+					Type t = null;
+					
+					if (p.Resolve (ds, loc))
+						t = p.ExternalType ();
+					
+					types [i] = t;
+					i++;
+				}
+			}
+			
 			if (extra > 0){
 				if (ArrayParameter.Resolve (ds, loc))
 					types [i] = ArrayParameter.ExternalType ();
@@ -262,7 +280,7 @@ namespace Mono.CSharp {
 			if (types != null)
 				return types;
 			
-			if (FixedParameters == null)
+			if (FixedParameters == null && ArrayParameter == null)
 				return no_types;
 
 			if (ComputeParameterTypes (ds) == false)
@@ -287,7 +305,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (FixedParameters == null)
+			if (FixedParameters == null && ArrayParameter == null)
 				return null;
 			
 			if (types == null)
@@ -299,7 +317,8 @@ namespace Mono.CSharp {
 			//
 			// If this is a request for the variable lenght arg.
 			//
-			if (idx == FixedParameters.Length){
+			int array_idx = (FixedParameters != null ? FixedParameters.Length : 0);
+			if (idx == array_idx){
 				is_out = false;
 				return types [idx];
 			} 

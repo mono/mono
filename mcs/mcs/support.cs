@@ -122,17 +122,15 @@ namespace Mono.CSharp {
 			if (param_types == null)
 				return null;
 
-			int len = parameters.FixedParameters.Length;
-
-			if (pos < len)
-				return parameters.FixedParameters [pos].ParameterType;
-			else 
+			Parameter [] fixed_pars = parameters.FixedParameters;
+			if (fixed_pars != null){
+				int len = fixed_pars.Length;
+				if (pos < len)
+					return parameters.FixedParameters [pos].ParameterType;
+				else 
+					return parameters.ArrayParameter.ParameterType;
+			} else
 				return parameters.ArrayParameter.ParameterType;
-
-			//
-			// Return the internal type.
-			//
-			//return p.ParameterType;
 		}
 
 		public string ParameterDesc (int pos)
@@ -159,6 +157,9 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
+			if (parameters.FixedParameters == null)
+				return parameters.ArrayParameter.ModFlags;
+			
 			if (pos >= parameters.FixedParameters.Length)
 				return parameters.ArrayParameter.ModFlags;
 			else {

@@ -2595,7 +2595,7 @@ namespace Mono.CSharp {
 		{
 			type = pars.GetParameterInfo (ec.TypeContainer, idx, out is_ref);
 			eclass = ExprClass.Variable;
-			
+
 			return this;
 		}
 
