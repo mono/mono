@@ -1,3 +1,8 @@
+2005-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataRowTest.cs : no need to gather 3 individual tests as RowEditTest.
+	  Let's not output to Console.
+
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataViewTest.cs : made AddNew_2() and FindRows() pass under .NET 1.1.

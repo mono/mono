@@ -121,15 +121,8 @@ namespace MonoTests.System.Data
                         }
                 }
 
-		[Test]
-                public void RowEditTest()
-                {
-                        DeleteRowTest ();
-                        EditModeTest ();
-                        ParentRowTest ();
-                }
-                                                                                                    
-                private void DeleteRowTest ()
+                [Test]
+                public void DeleteRowTest ()
                 {
                         DataRow newRow;
                                                                                                     
@@ -164,7 +157,7 @@ namespace MonoTests.System.Data
                         table.AcceptChanges ();
                         AssertEquals ("#A06", "Name 1", (table.Rows [0]) [1]);
                         try  {
-                                Console.WriteLine (rc [2]);
+                                object o = rc [2];
                                 Fail ("#A07");
                         }
                         catch (Exception e) {
@@ -172,7 +165,8 @@ namespace MonoTests.System.Data
                         }
                 }
 
-                private void EditModeTest ()
+                [Test]
+                public void EditModeTest ()
                 {
                         try {
                                 //Clear all existing values from table
@@ -194,8 +188,8 @@ namespace MonoTests.System.Data
                                 AssertEquals ("#A12", "LName", row [2, DataRowVersion.Current]);
                                                                                                     
                                 try {
-                                        Console.WriteLine (row [1, DataRowVersion.Original]);
-                                        Console.WriteLine (row [1, DataRowVersion.Proposed]);
+                                      object o = row [1, DataRowVersion.Original];
+                                      o = row [1, DataRowVersion.Proposed];
                                         Fail ("#A13");
                                 }
                                 catch (Exception e) {
@@ -215,7 +209,7 @@ namespace MonoTests.System.Data
                                 AssertEquals ("#A18", "LName", row [2, DataRowVersion.Current]);
                                 
 				try {
-                                        Console.WriteLine (row [1, DataRowVersion.Proposed]);
+                                      object o = row [1, DataRowVersion.Proposed];
                                         Fail ("#A19");
                                 }
                                 catch (Exception e) {
@@ -256,7 +250,7 @@ namespace MonoTests.System.Data
                                 AssertEquals ("#A33", "My LName", row [2, DataRowVersion.Current]);
                                                                                                     
                                 try {
-                                        Console.WriteLine (row [1, DataRowVersion.Proposed]);
+                                      object o = row [1, DataRowVersion.Proposed];
                                         Fail ("#A34");
                                 }
                                 catch (Exception e) {
@@ -279,7 +273,7 @@ namespace MonoTests.System.Data
                                                                                                     
                                                                                                     
                                 try {
-                                        Console.WriteLine (row [1, DataRowVersion.Proposed]);
+                                      object o = row [1, DataRowVersion.Proposed];
                                         Fail ("#A42");
                                 }
                                 catch (Exception e) {
@@ -292,10 +286,12 @@ namespace MonoTests.System.Data
                                                                                                     
                         }
                         catch (Exception e){
-                                Console.WriteLine (e + "" + e.StackTrace);
+//                              Console.WriteLine (e + "" + e.StackTrace);
                         }
                 }                                                                                                     
-		private void ParentRowTest (){
+                [Test]
+                public void ParentRowTest ()
+                {
 
                         //Clear all existing values from table
                         for (int i = 0; i < table.Rows.Count; i++) {
