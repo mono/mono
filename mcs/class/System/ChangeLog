@@ -1,3 +1,7 @@
+2003-03-30  Martin Willemoes Hansen <mwh@sysrq.dk>
+
+	* Stubed rest of System.ComponentModel
+
 2003-03-29  Martin Willemoes Hansen <mwh@sysrq.dk>
 
 	* System.ComponentModel.Design.Serialization
