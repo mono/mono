@@ -5,11 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com) 
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -342,7 +338,11 @@ namespace Mono.Security.X509 {
 		}
 	        
 		public virtual byte[] RawData {
-			get { return (byte[]) m_encodedcert.Clone (); }
+			get {
+				if (m_encodedcert == null)
+					return null;
+				return (byte[]) m_encodedcert.Clone ();
+			}
 		}
 
 		public virtual byte[] SerialNumber {
