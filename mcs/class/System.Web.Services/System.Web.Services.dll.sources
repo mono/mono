@@ -91,6 +91,7 @@ System.Web.Services.Description/SoapTransportImporter.cs
 System.Web.Services.Description/Types.cs
 System.Web.Services.Protocols/Methods.cs
 System.Web.Services.Protocols/AnyReturnReader.cs
+System.Web.Services.Protocols/Fault.cs
 System.Web.Services.Protocols/HtmlFormParameterReader.cs
 System.Web.Services.Protocols/HtmlFormParameterWriter.cs
 System.Web.Services.Protocols/HttpGetClientProtocol.cs
