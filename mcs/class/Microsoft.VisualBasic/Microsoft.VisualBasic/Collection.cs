@@ -183,6 +183,9 @@ namespace Microsoft.VisualBasic {
 		{ 
 			int Index;
 			
+			if (Key == null) {
+				throw new ArgumentNullException();
+			}
 			try {
 				Index = m_HashIndexers.IndexOf(Key) + 1;
 				Remove(Index);
@@ -207,6 +210,9 @@ namespace Microsoft.VisualBasic {
 
 		void IList.Remove (System.Object value)	
 		{
+			if (value == null) {
+				throw new ArgumentNullException();
+			}
 			if (!(value is string)) {
 				throw new ArgumentException();
 			}
