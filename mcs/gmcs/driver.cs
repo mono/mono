@@ -76,6 +76,8 @@ namespace Mono.CSharp
 		//
 		static ArrayList resources;
 		static ArrayList embedded_resources;
+		static string win32ResourceFile;
+		static string win32IconFile;
 		
 		//
 		// An array of the defines from the command line
@@ -220,6 +222,8 @@ namespace Mono.CSharp
 				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource\n" +
 				"   -resource:FILE[,ID]     Embed FILE as a resource\n" +
+				"   -win32res:FILE          Specifies Win32 resource file (.res)\n" +
+				"   -win32icon:FILE         Use this icon for the output\n" +
 				"   --mcs-debug X      Sets MCS debugging level to X\n" +
                                 "   @file              Read response file for more options\n\n" +
 				"Options can be of the form -option or /option");
@@ -1017,6 +1021,24 @@ namespace Mono.CSharp
 				}
 				return true;
 			}
+			case "/win32res": {
+				if (value == "") {
+					Report.Error (5, arg + " requires an argument");
+					Environment.Exit (1);
+				}
+
+				win32ResourceFile = value;
+				return true;
+			}
+			case "/win32icon": {
+				if (value == "") {
+					Report.Error (5, arg + " requires an argument");
+					Environment.Exit (1);
+				}
+
+				win32IconFile = value;
+				return true;
+			}
 			case "/doc": {
 				if (value == ""){
 					Report.Error (5, arg + " requires an argument");
@@ -1136,10 +1158,6 @@ namespace Mono.CSharp
 			case "/fullpaths":
 				return true;
 
-			case "/win32icon":
-				Report.Error (5, "/win32icon is currently not supported");
-				return true;
-				
 			case "/v2":
 			case "/2":
 				SetupV2 ();
@@ -1279,9 +1297,23 @@ namespace Mono.CSharp
 			if (tokenize)
 				return true;
 			
+			//
+			// If we are an exe, require a source file for the entry point
+			//
+			if (RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe){
 			if (first_source == null){
 				Report.Error (2008, "No files to compile were specified");
 				return false;
+			}
+
+			}
+
+			//
+			// If there is nothing to put in the assembly, and we are not a library
+			//
+			if (first_source == null && embedded_resources == null && resources == null){
+					Report.Error (2008, "No files to compile were specified");
+					return false;
 			}
 
 			if (Report.Errors > 0)
@@ -1289,6 +1321,8 @@ namespace Mono.CSharp
 			
 			if (parse_only)
 				return true;
+			
+			Tokenizer.Cleanup ();
 			
 			//
 			// Load Core Library for default compilation
@@ -1491,6 +1525,29 @@ namespace Mono.CSharp
 						}
 					}
 				}
+			}
+
+			//
+			// Add Win32 resources
+			//
+
+			CodeGen.AssemblyBuilder.DefineVersionInfoResource ();
+
+			if (win32ResourceFile != null) {
+				try {
+					CodeGen.AssemblyBuilder.DefineUnmanagedResource (win32ResourceFile);
+				}
+				catch (ArgumentException) {
+					Report.Warning (0, new Location (-1), "Cannot embed win32 resources on this runtime: try the Mono runtime instead.");
+				}
+			}
+
+			if (win32IconFile != null) {
+				MethodInfo define_icon = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+				if (define_icon == null) {
+					Report.Warning (0, new Location (-1), "Cannot embed icon resource on this runtime: try the Mono runtime instead.");
+				}
+				define_icon.Invoke (CodeGen.AssemblyBuilder, new object [] { win32IconFile });
 			}
 
 			if (Report.Errors > 0)

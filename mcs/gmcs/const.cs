@@ -192,6 +192,12 @@ namespace Mono.CSharp {
 			in_transit = true;
 			int errors = Report.Errors;
 
+			//
+			// We might have cleared Expr ourselves in a recursive definition
+			//
+			if (Expr == null)
+				return null;
+			
 			Expr = Expr.Resolve (const_ec);
 
 			in_transit = false;

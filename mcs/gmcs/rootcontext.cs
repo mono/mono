@@ -717,7 +717,7 @@ namespace Mono.CSharp {
 			//
 			if (global_attributes.Count > 0){
 				AssemblyBuilder ab = CodeGen.AssemblyBuilder;
-				TypeContainer dummy = new TypeContainer (null, null, "", new Location (-1));
+				TypeContainer dummy = new TypeContainer ();
 				EmitContext temp_ec = new EmitContext (
 					dummy, Mono.CSharp.Location.Null, null, null, 0, false);
 			

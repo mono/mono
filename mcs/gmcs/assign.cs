@@ -262,9 +262,10 @@ namespace Mono.CSharp {
 			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {
 				source.Error_UnexpectedKind ("variable or value");
 				return null;
-			} else if (source is MethodGroupExpr){
+			} else if (!RootContext.V2 && (source is MethodGroupExpr)){
 				((MethodGroupExpr) source).ReportUsageError ();
 				return null;
+
 			}
 
 			if (target_type == source_type)
@@ -378,10 +379,8 @@ namespace Mono.CSharp {
 			// 
 			IAssignMethod am = (IAssignMethod) target;
 			
-			if (this is CompoundAssign){
+			if (this is CompoundAssign)
 				am.CacheTemporaries (ec);
-				use_temporaries = true;
-			}
 
 			if (!is_statement)
 				use_temporaries = true;

@@ -150,6 +150,12 @@ namespace Mono.CSharp {
 				result =  ((ArrayCreation) e).EncodeAsAttribute ();
 				if (result != null)
 					return true;
+			} else if (e is EmptyCast) {
+				result = e;
+				if (((EmptyCast) e).Child is Constant) {
+					result = ((Constant) ((EmptyCast)e).Child).GetValue();
+				}
+				return true;
 			}
 
 			result = null;
@@ -306,6 +312,8 @@ namespace Mono.CSharp {
 						
 					} else if (e is TypeOf) {
 						prop_values.Add (((TypeOf) e).TypeArg);
+					} else if (e is ArrayCreation) {
+						prop_values.Add (((ArrayCreation) e).EncodeAsAttribute());
 					} else {
 						Error_AttributeArgumentNotValid (Location);
 						return null;
@@ -776,27 +784,37 @@ namespace Mono.CSharp {
 
 		static UnmanagedMarshal GetMarshal (Attribute a)
                 {
-			UnmanagedMarshal marshal;
-
-			if (a.UnmanagedType == UnmanagedType.CustomMarshaler) {
+			object o = GetFieldValue (a, "ArraySubType");
+			UnmanagedType array_sub_type = o == null ? UnmanagedType.I4 : (UnmanagedType) o;
+			switch (a.UnmanagedType) {
+			case UnmanagedType.CustomMarshaler:
 				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
                                                                        BindingFlags.Static | BindingFlags.Public);
-				if (define_custom == null) {
+				if (define_custom == null)
 					return null;
-				}
-				object[] args = new object [4];
+
+				object [] args = new object [4];
 				args [0] = GetFieldValue (a, "MarshalTypeRef");
 				args [1] = GetFieldValue (a, "MarshalCookie");
 				args [2] = GetFieldValue (a, "MarshalType");
 				args [3] = Guid.Empty;
-				marshal = (UnmanagedMarshal) define_custom.Invoke (null, args);
-			/*
-			 * need to special case other special marshal types
-			 */
-			} else {
-				marshal = UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
+				return (UnmanagedMarshal) define_custom.Invoke (null, args);
+
+			case UnmanagedType.LPArray:				
+				return UnmanagedMarshal.DefineLPArray (array_sub_type);
+
+			case UnmanagedType.SafeArray:
+				return UnmanagedMarshal.DefineSafeArray (array_sub_type);
+
+			case UnmanagedType.ByValArray:
+				return UnmanagedMarshal.DefineByValArray ((int) GetFieldValue (a, "SizeConst"));
+
+			case UnmanagedType.ByValTStr:
+				return UnmanagedMarshal.DefineByValTStr ((int) GetFieldValue (a, "SizeConst"));
+
+			default:
+				return UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
 			}
-			return marshal;
 		}
 
 		/// <summary>
@@ -867,7 +885,18 @@ namespace Mono.CSharp {
 					} else if (kind is Constructor) {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Field) {
-						((FieldBuilder) builder).SetCustomAttribute (cb);
+						if (attr_type == TypeManager.marshal_as_attr_type) {
+							UnmanagedMarshal marshal = GetMarshal (a);
+							if (marshal == null) {
+								Report.Warning (-24, loc,
+									"The Microsoft Runtime cannot set this marshal info. " +
+									"Please use the Mono runtime instead.");
+							} else {
+								((FieldBuilder) builder).SetMarshal (marshal);
+							}
+						} else { 
+							((FieldBuilder) builder).SetCustomAttribute (cb);
+						}
 					} else if (kind is Property || kind is Indexer ||
 						   kind is InterfaceProperty || kind is InterfaceIndexer) {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
@@ -927,7 +956,7 @@ namespace Mono.CSharp {
 
 						try {
 							((TypeBuilder) builder).SetCustomAttribute (cb);
-						} catch (System.ArgumentException e) {
+						} catch (System.ArgumentException) {
 							Report.Warning (
 								-21, loc,
 						"The CharSet named property on StructLayout\n"+
@@ -943,7 +972,7 @@ namespace Mono.CSharp {
 						}
 						try {
 							((TypeBuilder) builder).SetCustomAttribute (cb);
-						} catch (System.ArgumentException e) {
+						} catch (System.ArgumentException) {
 							Report.Warning (
 								-21, loc,
 						"The CharSet named property on StructLayout\n"+

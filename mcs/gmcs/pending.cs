@@ -67,10 +67,8 @@ namespace Mono.CSharp {
 
 		static bool IsVirtualFilter (MemberInfo m, object filterCriteria)
 		{
-			if (!(m is MethodInfo))
-				return false;
-
-			return ((MethodInfo) m).IsVirtual;
+			MethodInfo mi = m as MethodInfo;
+			return (mi == null) ? false : mi.IsVirtual;
 		}
 
 		/// <summary>
@@ -212,45 +210,39 @@ namespace Mono.CSharp {
 			// Notice that TypeBuilders will only return the interfaces that the Type
 			// is supposed to implement, not all the interfaces that the type implements.
 			//
-			// Completely broken.  Anyways, we take advantage of this, so we only register
-			// the implementations that we need, as they are those that are listed by the
-			// TypeBuilder.
+			// Even better -- on MS it returns an empty array, no matter what.
 			//
-			Type [] implementing_ifaces = type_builder.GetInterfaces ();
-			int count = implementing_ifaces.Length;
+			// Completely broken.  So we do it ourselves!
+			//
+			TypeExpr [] impl = TypeManager.GetExplicitInterfaces (type_builder);
 
-			if (implementing_ifaces.Length == 0)
+			if (impl == null || impl.Length == 0)
 				return EmptyMissingInterfacesInfo;
 
-			MissingInterfacesInfo [] missing_info = new MissingInterfacesInfo [count];
+			MissingInterfacesInfo [] ret = new MissingInterfacesInfo [impl.Length];
 
-			for (int i = 0; i < count; i++)
-				missing_info [i] = new MissingInterfacesInfo (implementing_ifaces [i]);
+			for (int i = 0; i < impl.Length; i++)
+				ret [i] = new MissingInterfacesInfo (impl [i].Type);
+
+			// we really should not get here because Object doesnt implement any
+			// interfaces. But it could implement something internal, so we have
+			// to handle that case.
+			if (type_builder.BaseType == null)
+				return ret;
 			
+			TypeExpr [] parent_impls = TypeManager.GetInterfaces (type_builder.BaseType);
 			
-			//
-			// Now, we have to extract the interfaces implements by our parents, and
-			// remove them from the implementing_ifaces array.
-			//
-			for (Type t = type_builder.BaseType; t != null; t = t.BaseType){
-				Type [] base_ifaces = t.GetInterfaces ();
+			foreach (TypeExpr te in parent_impls) {
+				Type t = te.Type;
 					
-				foreach (Type base_iface in base_ifaces){
-					for (int i = 0; i < count; i++){
-						if (implementing_ifaces [i] == base_iface)
-							missing_info [i].Optional = true;
+				for (int i = 0; i < ret.Length; i ++) {
+					if (t == ret [i].Type) {
+						ret [i].Optional = true;
+						break;
 					}
 				}
-
-				//
-				// When we reach a `Type' instead of `TypeBuilder', the GetInterfaces
-				// call would have returned all of the parent implementations, so we can end.
-				//
-				if (!(t is TypeBuilder))
-					break;
 			}
-
-			return missing_info;
+			return ret;
 		}
 		
 		//
@@ -528,21 +520,18 @@ namespace Mono.CSharp {
 						if (pending_implementations [i].optional)
 							continue;
 						
-						string extra = "";
-						
-						if (pending_implementations [i].found [j])
-							extra = ".  (method might be non-public or static)";
-						Report.Error (
-							536, container.Location,
-							"`" + container.Name + "' does not implement " +
-							"interface member `" +
-							type.FullName + "." + mi.Name + "'" + extra);
+						if (pending_implementations [i].found [j]) {
+							string[] methodLabel = TypeManager.CSharpSignature (mi).Split ('.');
+							Report.Error (536, container.Location, "'{0}' does not implement interface member '{1}'. '{2}.{3}' is either static, not public, or has the wrong return type",
+								container.Name, methodLabel, container.Name, methodLabel[methodLabel.Length - 1]);
+						}
+						else { 
+							Report.Error (535, container.Location, "'{0}' does not implement interface member '{1}'",
+								container.Name, TypeManager.CSharpSignature (mi));
+						}
 					} else {
-						Report.Error (
-							534, container.Location,
-							"`" + container.Name + "' does not implement " +
-							"inherited abstract member `" +
-							type.FullName + "." + mi.Name + "'");
+						Report.Error (534, container.Location, "'{0}' does not implement inherited abstract member '{1}'",
+							container.Name, TypeManager.CSharpSignature (mi));
 					}
 					errors = true;
 					j++;

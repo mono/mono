@@ -35,48 +35,55 @@ namespace Mono.CSharp
 	
 		IIteratorContainer iterator_container;
 
-		// <summary>
-		//   Current block is used to add statements as we find
-		//   them.  
-		// </summary>
+		/// <summary>
+		///   Current block is used to add statements as we find
+		///   them.  
+		/// </summary>
 
 		Block      current_block;
 
-		// <summary>
-		//   Current interface is used by the various declaration
-		//   productions in the interface declaration to "add"
-		//   the interfaces as we find them.
-		// </summary>
+		/// <summary>
+                ///   If true, creates a toplevel block in the block production
+                ///   This is flagged by the delegate creation
+                /// </summary>
+                bool       create_toplevel_block;
+
+                /// <summary>
+		/// <summary>
+		///   Current interface is used by the various declaration
+		///   productions in the interface declaration to "add"
+		///   the interfaces as we find them.
+		/// </summary>
 		Interface  current_interface;
 
-		// <summary>
-		//   This is used by the unary_expression code to resolve
-		//   a name against a parameter.  
-		// </summary>
+		/// <summary>
+		///   This is used by the unary_expression code to resolve
+		///   a name against a parameter.  
+		/// </summary>
 		Parameters current_local_parameters;
 
-		// <summary>
-		//   Using during property parsing to describe the implicit
-		//   value parameter that is passed to the "set" and "get"accesor
-		//   methods (properties and indexers).
-		// </summary>
+		/// <summary>
+		///   Using during property parsing to describe the implicit
+		///   value parameter that is passed to the "set" and "get"accesor
+		///   methods (properties and indexers).
+		/// </summary>
 		Expression implicit_value_parameter_type;
 		Parameters indexer_parameters;
 
-		// <summary>
-		//   Used to determine if we are parsing the get/set pair
-		//   of an indexer or a property
-		// </summmary>
+		/// <summary>
+		///   Used to determine if we are parsing the get/set pair
+		///   of an indexer or a property
+		/// </summmary>
 		bool  parsing_indexer;
 
-		//
-		// An out-of-band stack.
-		//
+		///
+		/// An out-of-band stack.
+		///
 		Stack oob_stack;
 
-		//
-		// Switch stack.
-		//
+		///
+		/// Switch stack.
+		///
 		Stack switch_stack;
 
 		public bool yacc_verbose_flag;
@@ -84,9 +91,9 @@ namespace Mono.CSharp
 		// Name of the file we are parsing
 		public string name;
 
-		//
-		// The current file.
-		//
+		///
+		/// The current file.
+		///
 		SourceFile file;
 %}
 
@@ -429,6 +436,13 @@ namespace_member_declaration
 	| namespace_declaration {
 		current_namespace.DeclarationFound = true;
 	  }
+
+	| field_declaration {
+		Report.Error (116, lexer.Location, "A namespace can only contain types and namespace declarations");
+	  }
+	| method_declaration {
+		Report.Error (116, lexer.Location, "A namespace can only contain types and namespace declarations");
+	  }
 	;
 
 type_declaration
@@ -460,22 +474,24 @@ attribute_sections
           {
 		AttributeSection sect = (AttributeSection) $1;
 
-		if (sect.Target == "assembly") 
+		if (sect.Target == "assembly") {
 			RootContext.AddGlobalAttributeSection (current_container, sect);
-		
-
-		$$ = new Attributes ((AttributeSection) $1);
+			$$ = null;
+		}
+		else
+			$$ = new Attributes (sect);
           }
 	| attribute_sections attribute_section
 	  {
-		Attributes attrs = null;
+		Attributes attrs = $1 as Attributes;
 		AttributeSection sect = (AttributeSection) $2;
 
-		if (sect.Target == "assembly")
+		if (sect.Target == "assembly") {
 			RootContext.AddGlobalAttributeSection (current_container, sect);
-
-		if ($1 != null) {
-			attrs = (Attributes) $1;
+		} else {
+			if (attrs == null)
+				attrs = new Attributes (sect);
+			else
 			attrs.AddAttributeSection (sect);
 		}
 		
@@ -929,7 +945,8 @@ method_header
 		GenericMethod generic = null;
 		if ($5 != null) {
 			generic = new GenericMethod (current_namespace, current_container,
-						     (string) $4, lexer.Location);
+						     (string) $4, (Attributes) $1,
+						     lexer.Location);
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $5, (ArrayList) $10), generic.Name, generic.Location);
 			method = new Method (generic, (Expression) $3, (int) $2, (string) $4,
@@ -962,7 +979,8 @@ method_header
 		GenericMethod generic = null;
 		if ($5 != null) {
 			generic = new GenericMethod (current_namespace, current_container,
-						     (string) $4, lexer.Location);
+						     (string) $4, (Attributes) $1,
+						     lexer.Location);
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $5, (ArrayList) $10), generic.Name, generic.Location);
 
@@ -976,6 +994,21 @@ method_header
 
 		current_local_parameters = (Parameters) $7;
 
+		$$ = method;
+	  }
+	| opt_attributes
+	  opt_modifiers
+	  type 
+	  modifiers member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  {
+		Report.Error (1585, lexer.Location, 
+			String.Format ("Modifier {0} should appear before type", 
+				Modifiers.Name ((int) $4)));
+		Method method = new Method (current_container, TypeManager.system_void_expr, 0,
+					    (string) $5, (Parameters) $7, (Attributes) $1,
+					    lexer.Location);
+
+		current_local_parameters = (Parameters) $7;
 		$$ = method;
 	  }
 	;
@@ -1291,9 +1324,10 @@ interface_member_declaration
           }
 	| interface_event_declaration 
           { 
+		if ($1 != null){
 		InterfaceEvent e = (InterfaceEvent) $1;
-
 		CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
+	  }
 	  }
 	| interface_indexer_declaration
 	  { 
@@ -1374,6 +1408,14 @@ interface_event_declaration
 		CheckIdentifierToken (yyToken);
 		$$ = null;
 	  }
+	| opt_attributes opt_new EVENT type IDENTIFIER ASSIGN  {
+		Report.Error (68, lexer.Location, "Event declarations on interfaces can not be initialized.");
+		$$ = null;
+	  }
+	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE event_accessor_declarations CLOSE_BRACE {
+		Report.Error (69, lexer.Location, "Event accessors not valid on interfaces");
+ 		$$ = null;
+ 	  }
 	;
 
 interface_indexer_declaration 
@@ -1637,7 +1679,7 @@ destructor_declaration
                                 }
                         }
                         
-			Method d = new Method (
+			Method d = new Destructor (
 				current_container, TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
@@ -1679,6 +1721,10 @@ event_declaration
 	  {
 		Location loc = (Location) oob_stack.Pop ();
 
+		if ($8 == null){
+			Report.Error (65, lexer.Location, "Event must have both add and remove accesors");
+			$$ = null;
+		} else {
 		Pair pair = (Pair) $8;
 		Accessor add_accessor = null;
 		Accessor rem_accessor = null;
@@ -1694,6 +1740,7 @@ event_declaration
 		CheckDef (current_container.AddEvent (e), e.Name, loc);
 		implicit_value_parameter_type = null;
 	  }
+	  }
 	;
 
 event_accessor_declarations
@@ -1705,6 +1752,8 @@ event_accessor_declarations
 	{
 		$$ = new Pair ($2, $1);
 	}	
+	| add_accessor_declaration  { $$ = null; } 
+	| remove_accessor_declaration { $$ = null; } 
 	;
 
 add_accessor_declaration
@@ -1991,6 +2040,13 @@ type_arguments
 	  }
 	;
 	
+type_name_expression
+	: IDENTIFIER { $$ = new SimpleName ((string) $1, lexer.Location);}
+	| type_name_expression DOT IDENTIFIER { 
+	 	$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	  }
+	;
+
 /* 
  * Before you think of adding a return_type, notice that we have been
  * using two rules in the places where it matters (one rule using type
@@ -2524,7 +2580,9 @@ anonymous_method_expression
 	: DELEGATE opt_anonymous_method_signature {
 		oob_stack.Push (current_local_parameters);
 		current_local_parameters = (Parameters)$2;
+		create_toplevel_block = true;
 	  } block {
+		create_toplevel_block = false;
 		if (!RootContext.V2){
 			Report.Error (-213, lexer.Location, "Anonymous methods are only supported in V2");
 			$$ = null;
@@ -2945,8 +3003,13 @@ class_declaration
 
 		if ($6 != null)
 			CheckDef (new_class.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_class.Name, new_class.Location);
-		if ($7 != null)
+		if ($7 != null) {
+			if (new_class.Name == "System.Object") {
+				Report.Error (537, new_class.Location, "The class System.Object cannot have a base class or implement an interface.");
+			}
+
 			new_class.Bases = (ArrayList) $7;
+		}
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
 
@@ -3104,8 +3167,12 @@ type_parameter_constraint
 block
 	: OPEN_BRACE 
 	  {
+		if (current_block == null || create_toplevel_block){
+			current_block = new ToplevelBlock (current_local_parameters, lexer.Location);
+		} else {
 		current_block = new Block (current_block, current_local_parameters,
 					   lexer.Location, Location.Null);
+		}
 	  } 
 	  opt_statement_list CLOSE_BRACE 
 	  { 

@@ -513,6 +513,11 @@ public class TypeManager {
 	/// </summary>
 	public static void AddAssembly (Assembly a)
 	{
+		foreach (Assembly assembly in assemblies) {
+			if (a == assembly)
+				return;
+		}
+
 		int top = assemblies.Length;
 		Assembly [] n = new Assembly [top + 1];
 
@@ -782,6 +787,29 @@ public class TypeManager {
 	}
 
         /// <summary>
+	///  Returns the signature of the method with full namespace classification
+	/// </summary>
+	static public string GetFullNameSignature (MemberInfo mi)
+	{
+		return mi.DeclaringType.FullName.Replace ('+', '.') + '.' + mi.Name;
+	}
+
+	/// <summary>
+	///   Returns the signature of the property and indexer
+	/// </summary>
+	static public string CSharpSignature (PropertyBuilder pb, bool is_indexer) 
+	{
+		if (!is_indexer) {
+			return GetFullNameSignature (pb);
+		}
+
+		MethodBase mb = pb.GetSetMethod (true) != null ? pb.GetSetMethod (true) : pb.GetGetMethod (true);
+		string signature = GetFullNameSignature (mb);
+		string arg = TypeManager.LookupParametersByBuilder (mb).ParameterDesc (0);
+		return String.Format ("{0}.this[{1}]", signature.Substring (0, signature.LastIndexOf ('.')), arg);
+	}
+
+        /// <summary>
         ///   Returns the signature of the method
         /// </summary>
         static public string CSharpSignature (MethodBase mb)
@@ -807,7 +835,7 @@ public class TypeManager {
                 }
                 sig += ")";
 
-                return mb.DeclaringType.Name + "." + mb.Name + sig;
+                return GetFullNameSignature (mb) + sig;
         }
 
 	/// <summary>
@@ -1832,12 +1860,19 @@ public class TypeManager {
 		return ret;
 	}
 		
+	static PtrHashtable iface_cache = new PtrHashtable ();
+		
 	/// <summary>
 	///   This function returns the interfaces in the type `t'.  Works with
 	///   both types and TypeBuilders.
 	/// </summary>
 	public static TypeExpr [] GetInterfaces (Type t)
 	{
+		
+		TypeExpr [] cached = iface_cache [t] as TypeExpr [];
+		if (cached != null)
+			return cached;
+		
 		//
 		// The reason for catching the Array case is that Reflection.Emit
 		// will not return a TypeBuilder for Array types of TypeBuilder types,
@@ -1867,15 +1902,28 @@ public class TypeManager {
 			parent_ifaces.CopyTo (result, 0);
 			type_ifaces.CopyTo (result, parent_count);
 
+			iface_cache [t] = result;
 			return result;
 		} else {
 			Type [] ifaces = t.GetInterfaces ();
+			if (ifaces.Length == 0)
+				return NoTypeExprs;
 
 			TypeExpr [] result = new TypeExpr [ifaces.Length];
 			for (int i = 0; i < ifaces.Length; i++)
 				result [i] = new TypeExpression (ifaces [i], Location.Null);
+			
+			iface_cache [t] = result;
 			return result;
 		}
+	}
+	
+	//
+	// gets the interfaces that are declared explicitly on t
+	//
+	public static TypeExpr [] GetExplicitInterfaces (TypeBuilder t)
+	{
+		return (TypeExpr []) builder_to_ifaces [t];
 	}
 	
 	/// <remarks>

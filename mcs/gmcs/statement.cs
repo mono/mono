@@ -21,12 +21,39 @@ namespace Mono.CSharp {
 	public abstract class Statement {
 		public Location loc;
 		
-		///
+		/// <summary>
 		/// Resolves the statement, true means that all sub-statements
 		/// did resolve ok.
-		//
+		//  </summary>
 		public virtual bool Resolve (EmitContext ec)
 		{
+			return true;
+		}
+		
+		/// <summary>
+		///   We already know that the statement is unreachable, but we still
+		///   need to resolve it to catch errors.
+		/// </summary>
+		public virtual bool ResolveUnreachable (EmitContext ec, bool warn)
+		{
+			//
+			// This conflicts with csc's way of doing this, but IMHO it's
+			// the right thing to do.
+			//
+			// If something is unreachable, we still check whether it's
+			// correct.  This means that you cannot use unassigned variables
+			// in unreachable code, for instance.
+			//
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			bool ok = Resolve (ec);
+			ec.KillFlowBranching ();
+
+			if (!ok)
+				return false;
+
+			if (warn)
+				Report.Warning (162, loc, "Unreachable code detected");
 			return true;
 		}
 		
@@ -36,62 +63,28 @@ namespace Mono.CSharp {
 		protected abstract void DoEmit (EmitContext ec);
 
 		/// <summary>
+		///   Utility wrapper routine for Error, just to beautify the code
+		/// </summary>
+		public void Error (int error, string format, params object[] args)
+		{
+			Error (error, String.Format (format, args));
+		}
+		
+		public void Error (int error, string s)
+		{
+			if (!Location.IsNull (loc))
+				Report.Error (error, loc, s);
+				else
+				Report.Error (error, s);
+		}
+
+		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
 		public virtual void Emit (EmitContext ec)
 		{
 			ec.Mark (loc, true);
 			DoEmit (ec);
-		}
-		
-		/// <remarks>
-		///    Encapsulates the emission of a boolean test and jumping to a
-		///    destination.
-		///
-		///    This will emit the bool expression in `bool_expr' and if
-		///    `target_is_for_true' is true, then the code will generate a 
-		///    brtrue to the target.   Otherwise a brfalse. 
-		/// </remarks>
-		public static void EmitBoolExpression (EmitContext ec, Expression bool_expr,
-						       Label target, bool target_is_for_true)
-		{
-			ILGenerator ig = ec.ig;
-			
-			bool invert = false;
-			if (bool_expr is Unary){
-				Unary u = (Unary) bool_expr;
-				
-				if (u.Oper == Unary.Operator.LogicalNot){
-					invert = true;
-
-					u.EmitLogicalNot (ec);
-				}
-			} else if (bool_expr is Binary){
-				Binary b = (Binary) bool_expr;
-
-				if (b.EmitBranchable (ec, target, target_is_for_true))
-					return;
-			}
-
-			if (!invert)
-				bool_expr.Emit (ec);
-
-			if (target_is_for_true){
-				if (invert)
-					ig.Emit (OpCodes.Brfalse, target);
-				else
-					ig.Emit (OpCodes.Brtrue, target);
-			} else {
-				if (invert)
-					ig.Emit (OpCodes.Brtrue, target);
-				else
-					ig.Emit (OpCodes.Brfalse, target);
-			}
-		}
-
-		public static void Warning_DeadCodeFound (Location loc)
-		{
-			Report.Warning (162, loc, "Unreachable code detected");
 		}
 	}
 
@@ -145,27 +138,49 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
+			//
+			// Dead code elimination
+			//
+			if (expr is BoolConstant){
+				bool take = ((BoolConstant) expr).Value;
+
+				if (take){
+					if (!TrueStatement.Resolve (ec))
+						return false;
+
+					if ((FalseStatement != null) &&
+					    !FalseStatement.ResolveUnreachable (ec, true))
+						return false;
+					FalseStatement = null;
+				} else {
+					if (!TrueStatement.ResolveUnreachable (ec, true))
+						return false;
+					TrueStatement = null;
 			
-			if (!TrueStatement.Resolve (ec)) {
-				ec.KillFlowBranching ();
+					if ((FalseStatement != null) &&
+					    !FalseStatement.Resolve (ec))
 				return false;
 			}
+
+				return true;
+			}
+			
+			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
+			
+			bool ok = TrueStatement.Resolve (ec);
 
 			is_true_ret = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 
 			ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 
-			if ((FalseStatement != null) && !FalseStatement.Resolve (ec)) {
-				ec.KillFlowBranching ();
-				return false;
-			}
+			if ((FalseStatement != null) && !FalseStatement.Resolve (ec))
+				ok = false;
 					
 			ec.EndFlowBranching ();
 
 			Report.Debug (1, "END IF BLOCK", loc);
 
-			return true;
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -175,27 +190,21 @@ namespace Mono.CSharp {
 			Label end;
 
 			//
-			// Dead code elimination
+			// If we're a boolean expression, Resolve() already
+			// eliminated dead code for us.
 			//
 			if (expr is BoolConstant){
 				bool take = ((BoolConstant) expr).Value;
 
-				if (take){
-					if (FalseStatement != null){
-						Warning_DeadCodeFound (FalseStatement.loc);
-					}
+				if (take)
 					TrueStatement.Emit (ec);
-					return;
-				} else {
-					Warning_DeadCodeFound (TrueStatement.loc);
-					if (FalseStatement != null) {
+				else if (FalseStatement != null)
 						FalseStatement.Emit (ec);
+
 						return;
 					}
-				}
-			}
 			
-			EmitBoolExpression (ec, expr, false_target, false);
+			expr.EmitBranchable (ec, false_target, false);
 
 			TrueStatement.Emit (ec);
 
@@ -235,7 +244,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 
 			if (!EmbeddedStatement.Resolve (ec))
 				ok = false;
@@ -262,13 +271,9 @@ namespace Mono.CSharp {
 			Label loop = ig.DefineLabel ();
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
-			bool  old_inloop = ec.InLoop;
-			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
-			ec.InLoop = true;
-			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 				
 			ig.MarkLabel (loop);
 			EmbeddedStatement.Emit (ec);
@@ -283,21 +288,19 @@ namespace Mono.CSharp {
 				if (res)
 					ec.ig.Emit (OpCodes.Br, loop); 
 			} else
-				EmitBoolExpression (ec, expr, loop, true);
+				expr.EmitBranchable (ec, loop, true);
 			
 			ig.MarkLabel (ec.LoopEnd);
 
-			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
-			ec.InLoop = old_inloop;
 		}
 	}
 
 	public class While : Statement {
 		public Expression expr;
 		public readonly Statement Statement;
-		bool empty, infinite;
+		bool infinite, empty;
 		
 		public While (Expression boolExpr, Statement statement, Location l)
 		{
@@ -314,8 +317,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
-
 			//
 			// Inform whether we are infinite or not
 			//
@@ -323,26 +324,21 @@ namespace Mono.CSharp {
 				BoolConstant bc = (BoolConstant) expr;
 
 				if (bc.Value == false){
-					Warning_DeadCodeFound (Statement.loc);
+					if (!Statement.ResolveUnreachable (ec, true))
+						return false;
 					empty = true;
+					return true;
 				} else
 					infinite = true;
-			} else {
-				//
-				// We are not infinite, so the loop may or may not be executed.
-				//
-				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 			}
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 
 			if (!Statement.Resolve (ec))
 				ok = false;
 
-			if (empty)
-				ec.KillFlowBranching ();
-			else {
 				ec.CurrentBranching.Infinite = infinite;
 				ec.EndFlowBranching ();
-			}
 
 			return ok;
 		}
@@ -355,13 +351,9 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
-			bool old_inloop = ec.InLoop;
-			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
-			ec.InLoop = true;
-			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
 			//
 			// Inform whether we are infinite or not
@@ -386,14 +378,13 @@ namespace Mono.CSharp {
 			
 				ig.MarkLabel (ec.LoopBegin);
 
-				EmitBoolExpression (ec, expr, while_loop, true);
+				expr.EmitBranchable (ec, while_loop, true);
+				
 				ig.MarkLabel (ec.LoopEnd);
 			}	
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
-			ec.InLoop = old_inloop;
-			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 		}
 	}
 
@@ -434,15 +425,20 @@ namespace Mono.CSharp {
 					BoolConstant bc = (BoolConstant) Test;
 
 					if (bc.Value == false){
-						Warning_DeadCodeFound (Statement.loc);
+						if (!Statement.ResolveUnreachable (ec, true))
+							return false;
+						if ((Increment != null) &&
+						    !Increment.ResolveUnreachable (ec, false))
+							return false;
 						empty = true;
+						return true;
 					} else
 						infinite = true;
 				}
 			} else
 				infinite = true;
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 			if (!infinite)
 				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 
@@ -454,12 +450,8 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			if (empty)
-				ec.KillFlowBranching ();
-			else {
 				ec.CurrentBranching.Infinite = infinite;
 				ec.EndFlowBranching ();
-			}
 
 			return ok;
 		}
@@ -472,8 +464,6 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
-			bool old_inloop = ec.InLoop;
-			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			Label loop = ig.DefineLabel ();
 			Label test = ig.DefineLabel ();
 			
@@ -482,8 +472,6 @@ namespace Mono.CSharp {
 
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
-			ec.InLoop = true;
-			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
 			ig.Emit (OpCodes.Br, test);
 			ig.MarkLabel (loop);
@@ -500,21 +488,21 @@ namespace Mono.CSharp {
 			//
 			if (Test != null){
 				//
-				// The Resolve code already catches the case for Test == BoolConstant (false)
-				// so we know that this is true
+				// The Resolve code already catches the case for
+				// Test == BoolConstant (false) so we know that
+				// this is true
 				//
 				if (Test is BoolConstant)
 					ig.Emit (OpCodes.Br, loop);
 				else
-					EmitBoolExpression (ec, Test, loop, true);
+					Test.EmitBranchable (ec, loop, true);
+				
 			} else
 				ig.Emit (OpCodes.Br, loop);
 			ig.MarkLabel (ec.LoopEnd);
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
-			ec.InLoop = old_inloop;
-			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 		}
 	}
 	
@@ -556,24 +544,49 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		bool in_exc;
+
 		public override bool Resolve (EmitContext ec)
 		{
+			if (ec.ReturnType == null){
 			if (Expr != null){
+					Error (127, "Return with a value not allowed here");
+					return false;
+				}
+			} else {
+				if (Expr == null){
+					Error (126, "An object of type `{0}' is expected " +
+					       "for the return statement",
+					       TypeManager.CSharpName (ec.ReturnType));
+					return false;
+				}
+
 				Expr = Expr.Resolve (ec);
 				if (Expr == null)
 					return false;
+
+				if (Expr.Type != ec.ReturnType) {
+					Expr = Convert.ImplicitConversionRequired (
+						ec, Expr, ec.ReturnType, loc);
+					if (Expr == null)
+						return false;
+				}
 			}
 
 			if (ec.InIterator){
-				Report.Error (-206, loc, "Return statement not allowed inside iterators");
+				Error (-206, "Return statement not allowed inside iterators");
 				return false;
 			}
 				
 			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
 
-			if (ec.CurrentBranching.InTryBlock ())
+			if (ec.CurrentBranching.InTryOrCatch (true)) {
 				ec.CurrentBranching.AddFinallyVector (vector);
-			else
+				in_exc = true;
+			} else if (ec.CurrentBranching.InFinally (true)) {
+				Error (157, "Control can not leave the body of the finally block");
+				return false;
+			} else
 				vector.CheckOutParameters (ec.CurrentBranching);
 
 			ec.CurrentBranching.CurrentUsageVector.Return ();
@@ -582,46 +595,25 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (ec.InFinally){
-				Report.Error (157, loc, "Control can not leave the body of the finally block");
-				return;
-			}
-
-			if (ec.ReturnType == null){
-				if (Expr != null){
-					Report.Error (127, loc, "Return with a value not allowed here");
-					return;
-				}
-			} else {
-				if (Expr == null){
-					Report.Error (126, loc, "An object of type `" +
-						      TypeManager.CSharpName (ec.ReturnType) + "' is " +
-						      "expected for the return statement");
-					return;
-				}
-
-				if (Expr.Type != ec.ReturnType)
-					Expr = Convert.ImplicitConversionRequired (
-						ec, Expr, ec.ReturnType, loc);
-
-				if (Expr == null)
-					return;
-
+			if (Expr != null) {
 				Expr.Emit (ec);
 
-				if (ec.InTry || ec.InCatch)
+				if (in_exc || !ec.IsLastStatement)
 					ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
-			if (ec.InTry || ec.InCatch) {
-				if (!ec.HasReturnLabel) {
-					ec.ReturnLabel = ec.ig.DefineLabel ();
-					ec.HasReturnLabel = true;
-				}
+			if (in_exc) {
+				ec.NeedReturnLabel ();
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-			} else {
+			} else if (ec.IsLastStatement) {
+				// If we are the last statement in a top-level block, simply
+				// emit a `ret'.
 				ec.ig.Emit (OpCodes.Ret);
-				ec.NeedExplicitReturn = false;
+			} else {
+				// Otherwise, we always create a return label and jump to
+				// it.
+				ec.NeedReturnLabel ();
+				ec.ig.Emit (OpCodes.Br, ec.ReturnLabel);
 			}
 		}
 	}
@@ -828,6 +820,9 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			bool in_catch = ec.CurrentBranching.InCatch ();
+			ec.CurrentBranching.CurrentUsageVector.Throw ();
+
 			if (expr != null){
 				expr = expr.Resolve (ec);
 				if (expr == null)
@@ -846,35 +841,31 @@ namespace Mono.CSharp {
 				if ((t != TypeManager.exception_type) &&
 				    !t.IsSubclassOf (TypeManager.exception_type) &&
 				    !(expr is NullLiteral)) {
-					Report.Error (155, loc,
+					Error (155,
 						      "The type caught or thrown must be derived " +
 						      "from System.Exception");
 					return false;
 				}
+			} else if (!in_catch) {
+				Error (156,
+				       "A throw statement with no argument is only " +
+				       "allowed in a catch clause");
+				return false;
 			}
 
-			ec.CurrentBranching.CurrentUsageVector.Throw ();
 			return true;
 		}
 			
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (expr == null){
-				if (ec.InCatch)
+			if (expr == null)
 					ec.ig.Emit (OpCodes.Rethrow);
 				else {
-					Report.Error (
-						156, loc,
-						"A throw statement with no argument is only " +
-						"allowed in a catch clause");
-				}
-				return;
-			}
-
 			expr.Emit (ec);
 
 			ec.ig.Emit (OpCodes.Throw);
 		}
+	}
 	}
 
 	public class Break : Statement {
@@ -884,8 +875,21 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		bool crossing_exc;
+
 		public override bool Resolve (EmitContext ec)
 		{
+			if (!ec.CurrentBranching.InLoop () && !ec.CurrentBranching.InSwitch ()){
+				Error (139, "No enclosing loop or switch to continue to");
+				return false;
+			} else if (ec.CurrentBranching.InFinally (false)) {
+				Error (157, "Control can not leave the body of the finally block");
+				return false;
+			} else if (ec.CurrentBranching.InTryOrCatch (false))
+				ec.CurrentBranching.AddFinallyVector (ec.CurrentBranching.CurrentUsageVector);
+
+			crossing_exc = ec.CurrentBranching.BreakCrossesTryCatchBoundary ();
+
 			ec.CurrentBranching.CurrentUsageVector.Break ();
 			return true;
 		}
@@ -894,16 +898,13 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (ec.InLoop == false && ec.Switch == null){
-				Report.Error (139, loc, "No enclosing loop or switch to continue to");
-				return;
-			}
-
-			if (ec.InTry || ec.InCatch)
+			if (crossing_exc)
 				ig.Emit (OpCodes.Leave, ec.LoopEnd);
-			else
+			else {
+				ec.NeedReturnLabel ();
 				ig.Emit (OpCodes.Br, ec.LoopEnd);
 		}
+	}
 	}
 
 	public class Continue : Statement {
@@ -913,8 +914,21 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		bool crossing_exc;
+
 		public override bool Resolve (EmitContext ec)
 		{
+			if (!ec.CurrentBranching.InLoop () && !ec.CurrentBranching.InSwitch ()){
+				Error (139, "No enclosing loop to continue to");
+				return false;
+			} else if (ec.CurrentBranching.InFinally (false)) {
+				Error (157, "Control can not leave the body of the finally block");
+				return false;
+			} else if (ec.CurrentBranching.InTryOrCatch (false))
+				ec.CurrentBranching.AddFinallyVector (ec.CurrentBranching.CurrentUsageVector);
+
+			crossing_exc = ec.CurrentBranching.BreakCrossesTryCatchBoundary ();
+
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
@@ -923,26 +937,8 @@ namespace Mono.CSharp {
 		{
 			Label begin = ec.LoopBegin;
 			
-			if (!ec.InLoop){
-				Report.Error (139, loc, "No enclosing loop to continue to");
-				return;
-			} 
-
-			//
-			// UGH: Non trivial.  This Br might cross a try/catch boundary
-			// How can we tell?
-			//
-			// while () {
-			//   try { ... } catch { continue; }
-			// }
-			//
-			// From:
-			// try {} catch { while () { continue; }}
-			//
-			if (ec.TryCatchLevel > ec.LoopBeginTryCatchLevel)
+			if (crossing_exc)
 				ec.ig.Emit (OpCodes.Leave, begin);
-			else if (ec.TryCatchLevel < ec.LoopBeginTryCatchLevel)
-				throw new Exception ("Should never happen");
 			else
 				ec.ig.Emit (OpCodes.Br, begin);
 		}
@@ -1074,6 +1070,9 @@ namespace Mono.CSharp {
 	///
 	///   Implicit blocks are used as labels or to introduce variable
 	///   declarations.
+	///
+	///   Top-level blocks derive from Block, and they are called ToplevelBlock
+	///   they contain extra information that is not necessary on normal blocks.
 	/// </remarks>
 	public class Block : Statement {
 		public readonly Block     Parent;
@@ -1086,7 +1085,8 @@ namespace Mono.CSharp {
 			Unchecked = 2,
 			BlockUsed = 4,
 			VariablesInitialized = 8,
-			HasRet = 16
+			HasRet = 16,
+			IsDestructor = 32	
 		}
 		Flags flags;
 
@@ -1109,6 +1109,7 @@ namespace Mono.CSharp {
 		// The statements in this block
 		//
 		ArrayList statements;
+		int num_statements;
 
 		//
 		// An array of Blocks.  We keep track of children just
@@ -1526,6 +1527,17 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsDestructor {
+			get {
+				return (flags & Flags.IsDestructor) != 0;
+			}
+		}
+
+		public void SetDestructor ()
+		{
+			flags |= Flags.IsDestructor;
+		}
+
 		VariableMap param_map, local_map;
 
 		public VariableMap ParameterMap {
@@ -1707,10 +1719,11 @@ namespace Mono.CSharp {
 				Statement s = (Statement) statements [ix];
 				
 				if (unreachable && !(s is LabeledStatement)) {
-					if (!warning_shown && s != EmptyStatement.Value) {
+					if (!s.ResolveUnreachable (ec, !warning_shown))
+						ok = false;
+
+					if (s != EmptyStatement.Value)
 						warning_shown = true;
-						Warning_DeadCodeFound (s.loc);
-					}
 
 					statements [ix] = EmptyStatement.Value;
 					continue;
@@ -1722,13 +1735,16 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				num_statements = ix + 1;
+
 				if (s is LabeledStatement)
 					unreachable = false;
 				else
 					unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 			}
 
-			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
+			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
+				      ec.CurrentBranching, statement_count, num_statements);
 
 
 			FlowBranching.UsageVector vector = ec.DoEndFlowBranching ();
@@ -1766,9 +1782,17 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			int statement_count = statements.Count;
-			for (int ix = 0; ix < statement_count; ix++){
+			for (int ix = 0; ix < num_statements; ix++){
 				Statement s = (Statement) statements [ix];
+
+				// Check whether we are the last statement in a
+				// top-level block.
+
+				if ((Parent == null) && (ix+1 == num_statements))
+					ec.IsLastStatement = true;
+				else
+					ec.IsLastStatement = false;
+
 				s.Emit (ec);
 			}
 		}
@@ -1810,6 +1834,20 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// 
+	public class ToplevelBlock : Block {
+		public ToplevelBlock (Parameters parameters, Location start) :
+			base (null, parameters, start, Location.Null)
+		{
+		}
+
+		public ToplevelBlock (Flags flags, Parameters parameters, Location start) :
+			base (null, flags, parameters, start, Location.Null)
+		{
+		}
+	}
+	
 	public class SwitchLabel {
 		Expression label;
 		object converted;
@@ -2542,6 +2580,7 @@ namespace Mono.CSharp {
 			ec.Switch = this;
 			ec.Switch.SwitchType = SwitchType;
 
+			Report.Debug (1, "START OF SWITCH BLOCK", loc, ec.CurrentBranching);
 			ec.StartFlowBranching (FlowBranching.BranchingType.Switch, loc);
 
 			bool first = true;
@@ -2559,8 +2598,11 @@ namespace Mono.CSharp {
 			if (!got_default)
 				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.SwitchSection);
 
-			ec.EndFlowBranching ();
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 			ec.Switch = old_switch;
+
+			Report.Debug (1, "END OF SWITCH BLOCK", loc, ec.CurrentBranching,
+				      reachability);
 
 			return true;
 		}
@@ -2616,20 +2658,27 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
-			return Statement.Resolve (ec) && expr != null;
+			if (expr == null)
+				return false;
+
+			if (expr.Type.IsValueType){
+				Error (185, "lock statement requires the expression to be " +
+				       " a reference type (type is: `{0}'",
+				       TypeManager.CSharpName (expr.Type));
+				return false;
+			}
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Exception, loc);
+			bool ok = Statement.Resolve (ec);
+			ec.EndFlowBranching ();
+
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
 			Type type = expr.Type;
 			
-			if (type.IsValueType){
-				Report.Error (185, loc, "lock statement requires the expression to be " +
-					      " a reference type (type is: `" +
-					      TypeManager.CSharpName (type) + "'");
-				return;
-			}
-
 			ILGenerator ig = ec.ig;
 			LocalBuilder temp = ig.DeclareLocal (type);
 				
@@ -2640,11 +2689,8 @@ namespace Mono.CSharp {
 
 			// try
 			ig.BeginExceptionBlock ();
-			bool old_in_try = ec.InTry;
-			ec.InTry = true;
 			Label finish = ig.DefineLabel ();
 			Statement.Emit (ec);
-			ec.InTry = old_in_try;
 			// ig.Emit (OpCodes.Leave, finish);
 
 			ig.MarkLabel (finish);
@@ -2827,6 +2873,11 @@ namespace Mono.CSharp {
 				// is present, so we need to test for this particular case.
 				//
 
+				if (e is Cast){
+					Report.Error (254, loc, "Cast expression not allowed as right hand expression in fixed statement");
+					return false;
+				}
+				
 				//
 				// Case 1: & object.
 				//
@@ -2911,7 +2962,21 @@ namespace Mono.CSharp {
 					data [i].converted = null;
 					data [i].vi = vi;
 					i++;
+					continue;
 				}
+
+				//
+				// For other cases, flag a `this is already fixed expression'
+				//
+				if (e is LocalVariableReference || e is ParameterReference ||
+				    Convert.ImplicitConversionExists (ec, e, vi.VariableType)){
+				    
+					Report.Error (245, loc, "right hand expression is already fixed, no need to use fixed statement ");
+					return false;
+				}
+
+				Report.Error (245, loc, "Fixed statement only allowed on strings, arrays or address-of expressions");
+				return false;
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
@@ -3087,13 +3152,8 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "START OF TRY BLOCK", Block.StartLocation);
 
-			bool old_in_try = ec.InTry;
-			ec.InTry = true;
-
 			if (!Block.Resolve (ec))
 				ok = false;
-
-			ec.InTry = old_in_try;
 
 			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
 
@@ -3111,13 +3171,8 @@ namespace Mono.CSharp {
 					vi.VariableInfo = null;
 				}
 
-				bool old_in_catch = ec.InCatch;
-				ec.InCatch = true;
-
 				if (!c.Resolve (ec))
 					ok = false;
-
-				ec.InCatch = old_in_catch;
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
@@ -3126,13 +3181,8 @@ namespace Mono.CSharp {
 				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Catch);
 				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
 
-				bool old_in_catch = ec.InCatch;
-				ec.InCatch = true;
-
 				if (!General.Resolve (ec))
 					ok = false;
-
-				ec.InCatch = old_in_catch;
 			}
 
 			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
@@ -3142,13 +3192,8 @@ namespace Mono.CSharp {
 					ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Finally);
 				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
 
-				bool old_in_finally = ec.InFinally;
-				ec.InFinally = true;
-
 				if (!Fini.Resolve (ec))
 					ok = false;
-
-				ec.InFinally = old_in_finally;
 			}
 
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
@@ -3162,7 +3207,7 @@ namespace Mono.CSharp {
 				// to the end of the finally block.  This is a problem if `returns'
 				// is true since we may jump to a point after the end of the method.
 				// As a workaround, emit an explicit ret here.
-				ec.NeedExplicitReturn = true;
+				ec.NeedReturnLabel ();
 			}
 
 			return ok;
@@ -3173,19 +3218,12 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Label finish = ig.DefineLabel ();;
 
-			ec.TryCatchLevel++;
 			ig.BeginExceptionBlock ();
-			bool old_in_try = ec.InTry;
-			ec.InTry = true;
 			Block.Emit (ec);
-			ec.InTry = old_in_try;
 
 			//
 			// System.Reflection.Emit provides this automatically:
 			// ig.Emit (OpCodes.Leave, finish);
-
-			bool old_in_catch = ec.InCatch;
-			ec.InCatch = true;
 
 			foreach (Catch c in Specific){
 				LocalInfo vi;
@@ -3209,19 +3247,14 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Pop);
 				General.Block.Emit (ec);
 			}
-			ec.InCatch = old_in_catch;
 
 			ig.MarkLabel (finish);
 			if (Fini != null){
 				ig.BeginFinallyBlock ();
-				bool old_in_finally = ec.InFinally;
-				ec.InFinally = true;
 				Fini.Emit (ec);
-				ec.InFinally = old_in_finally;
 			}
 			
 			ig.EndExceptionBlock ();
-			ec.TryCatchLevel--;
 		}
 	}
 
@@ -3319,18 +3352,13 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int i = 0;
 
-			bool old_in_try = ec.InTry;
-			ec.InTry = true;
 			for (i = 0; i < assign.Length; i++) {
 				assign [i].EmitStatement (ec);
 				
 				ig.BeginExceptionBlock ();
 			}
 			Statement.Emit (ec);
-			ec.InTry = old_in_try;
 
-			bool old_in_finally = ec.InFinally;
-			ec.InFinally = true;
 			var_list.Reverse ();
 			foreach (DictionaryEntry e in var_list){
 				LocalVariableReference var = (LocalVariableReference) e.Key;
@@ -3339,14 +3367,41 @@ namespace Mono.CSharp {
 				
 				ig.BeginFinallyBlock ();
 				
+				if (!var.Type.IsValueType) {
 				var.Emit (ec);
 				ig.Emit (OpCodes.Brfalse, skip);
 				converted_vars [i].Emit (ec);
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				} else {
+					Expression ml = Expression.MemberLookup(ec, typeof(IDisposable), var.Type, "Dispose", Mono.CSharp.Location.Null);
+
+					if (!(ml is MethodGroupExpr)) {
+						var.Emit (ec);
+						ig.Emit (OpCodes.Box, var.Type);
+						ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+					} else {
+						MethodInfo mi = null;
+
+						foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
+							if (mk.GetParameters().Length == 0) {
+								mi = mk;
+								break;
+							}
+						}
+
+						if (mi == null) {
+							Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
+							return false;
+						}
+
+						var.AddressOf (ec, AddressOp.Load);
+						ig.Emit (OpCodes.Call, mi);
+					}
+				}
+
 				ig.MarkLabel (skip);
 				ig.EndExceptionBlock ();
 			}
-			ec.InFinally = old_in_finally;
 
 			return false;
 		}
@@ -3364,21 +3419,16 @@ namespace Mono.CSharp {
 				expr.Emit (ec);
 			ig.Emit (OpCodes.Stloc, local_copy);
 
-			bool old_in_try = ec.InTry;
-			ec.InTry = true;
 			ig.BeginExceptionBlock ();
 			Statement.Emit (ec);
-			ec.InTry = old_in_try;
 			
 			Label skip = ig.DefineLabel ();
-			bool old_in_finally = ec.InFinally;
 			ig.BeginFinallyBlock ();
 			ig.Emit (OpCodes.Ldloc, local_copy);
 			ig.Emit (OpCodes.Brfalse, skip);
 			ig.Emit (OpCodes.Ldloc, local_copy);
 			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 			ig.MarkLabel (skip);
-			ec.InFinally = old_in_finally;
 			ig.EndExceptionBlock ();
 
 			return false;
@@ -3406,7 +3456,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.Exception, loc);
 
 			bool ok = Statement.Resolve (ec);
 
@@ -3422,7 +3472,7 @@ namespace Mono.CSharp {
 				// to the end of the finally block.  This is a problem if `returns'
 				// is true since we may jump to a point after the end of the method.
 				// As a workaround, emit an explicit ret here.
-				ec.NeedExplicitReturn = true;
+				ec.NeedReturnLabel ();
 			}
 
 			return true;
@@ -3501,7 +3551,9 @@ namespace Mono.CSharp {
 				empty = new EmptyExpression (hm.element_type);
 			}
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
+			bool ok = true;
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 			ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 
  			//
@@ -3514,18 +3566,25 @@ namespace Mono.CSharp {
 			//
 			conv = Convert.ExplicitConversion (ec, empty, var_type, loc);
 			if (conv == null)
-				return false;
+				ok = false;
 
 			variable = variable.ResolveLValue (ec, empty);
 			if (variable == null)
-				return false;
+				ok = false;
+
+			bool disposable = (hm != null) && hm.is_disposable;
+			if (disposable)
+				ec.StartFlowBranching (FlowBranching.BranchingType.Exception, loc);
 
 			if (!statement.Resolve (ec))
-				return false;
+				ok = false;
+
+			if (disposable)
+				ec.EndFlowBranching ();
 
 			ec.EndFlowBranching ();
 
-			return true;
+			return ok;
 		}
 		
 		//
@@ -3811,12 +3870,8 @@ namespace Mono.CSharp {
 			// Protect the code in a try/finalize block, so that
 			// if the beast implement IDisposable, we get rid of it
 			//
-			bool old_in_try = ec.InTry;
-
-			if (hm.is_disposable) {
+			if (hm.is_disposable)
 				ig.BeginExceptionBlock ();
-				ec.InTry = true;
-			}
 			
 			Label end_try = ig.DefineLabel ();
 			
@@ -3839,7 +3894,6 @@ namespace Mono.CSharp {
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (end_try);
-			ec.InTry = old_in_try;
 			
 			// The runtime provides this for us.
 			// ig.Emit (OpCodes.Leave, end);
@@ -3849,8 +3903,6 @@ namespace Mono.CSharp {
 			//
 			if (hm.is_disposable) {
 				Label end_finally = ig.DefineLabel ();
-				bool old_in_finally = ec.InFinally;
-				ec.InFinally = true;
 				ig.BeginFinallyBlock ();
 
 				disposable.EmitThis ();
@@ -3864,7 +3916,6 @@ namespace Mono.CSharp {
 				disposable.EmitLoad ();
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				ig.MarkLabel (end_finally);
-				ec.InFinally = old_in_finally;
 
 				// The runtime generates this anyways.
 				// ig.Emit (OpCodes.Endfinally);
@@ -4034,12 +4085,8 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
-			bool old_inloop = ec.InLoop;
-			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
-			ec.InLoop = true;
-			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 			
 			if (hm != null)
 				EmitCollectionForeach (ec);
@@ -4048,8 +4095,6 @@ namespace Mono.CSharp {
 			
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
-			ec.InLoop = old_inloop;
-			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 		}
 	}
 }

@@ -178,6 +178,8 @@ namespace Mono.CSharp
 		const int max_id_size = 512;
 		static char [] id_builder = new char [max_id_size];
 
+		static CharArrayHashtable [] identifiers = new CharArrayHashtable [max_id_size + 1];
+
 		const int max_number_size = 128;
 		static char [] number_builder = new char [max_number_size];
 		static int number_pos;
@@ -381,6 +383,10 @@ namespace Mono.CSharp
 			// find out why the MS compiler allows this
 			//
 			Mono.CSharp.Location.Push (file);
+		}
+
+		public static void Cleanup () {
+			identifiers = null;
 		}
 
 		bool is_identifier_start_character (char c)
@@ -1181,6 +1187,19 @@ namespace Mono.CSharp
 			case Token.TYPEOF:
 			case Token.UNCHECKED:
 			case Token.UNSAFE:
+
+				//
+				// These can be part of a member access
+				//
+			case Token.INT:
+			case Token.UINT:
+			case Token.SHORT:
+			case Token.USHORT:
+			case Token.LONG:
+			case Token.ULONG:
+			case Token.DOUBLE:
+			case Token.FLOAT:
+			case Token.CHAR:
 				return true;
 
 			default:
@@ -1772,7 +1791,26 @@ namespace Mono.CSharp
 				return keyword;
 			}
 
+			//
+			// Keep identifiers in an array of hashtables to avoid needless
+			// allocations
+			//
+
+			if (identifiers [pos] != null) {
+				val = identifiers [pos][id_builder];
+				if (val != null) {
+					return Token.IDENTIFIER;
+				}
+			}
+			else
+				identifiers [pos] = new CharArrayHashtable (pos);
+
 			val = new String (id_builder, 0, pos);
+
+			char [] chars = new char [pos];
+			Array.Copy (id_builder, chars, pos);
+
+			identifiers [pos] [chars] = val;
 
 			return Token.IDENTIFIER;
 		}
@@ -1985,7 +2023,6 @@ namespace Mono.CSharp
 			}
 				
 		}
-
 	}
 }
 

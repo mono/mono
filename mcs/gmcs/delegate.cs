@@ -25,7 +25,6 @@ namespace Mono.CSharp {
 	public class Delegate : DeclSpace {
  		public Expression ReturnType;
 		public Parameters      Parameters;
-		public Attributes      OptAttributes;
 
 		public ConstructorBuilder ConstructorBuilder;
 		public MethodBuilder      InvokeBuilder;
@@ -49,15 +48,14 @@ namespace Mono.CSharp {
  		public Delegate (NamespaceEntry ns, TypeContainer parent, Expression type,
 				 int mod_flags, string name, Parameters param_list,
 				 Attributes attrs, Location l)
-			: base (ns, parent, name, l)
+			: base (ns, parent, name, attrs, l)
+
 		{
 			this.ReturnType = type;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PRIVATE, l);
-			Parameters      = param_list;
-			OptAttributes   = attrs;
-		}
+			Parameters      = param_list;		}
 
 		public override TypeBuilder DefineType ()
 		{
@@ -572,57 +570,64 @@ namespace Mono.CSharp {
 		
 	}
 
-	public class NewDelegate : Expression {
+	//
+	// Base class for `NewDelegate' and `ImplicitDelegateCreation'
+	//
+	public abstract class DelegateCreation : Expression {
+		protected MethodBase constructor_method;
+		protected MethodBase delegate_method;
+		protected Expression delegate_instance_expr;
 
-		public ArrayList Arguments;
+		public DelegateCreation () {}
 
-		MethodBase constructor_method;
-		MethodBase delegate_method;
-		Expression delegate_instance_expr;
-
-		public NewDelegate (Type type, ArrayList Arguments, Location loc)
+		public static void Error_NoMatchingMethodForDelegate (MethodGroupExpr mg, Type t, MethodBase method, Location loc)
 		{
-			this.type = type;
-			this.Arguments = Arguments;
-			this.loc  = loc; 
+			string method_desc;
+
+			if (mg.Methods.Length > 1)
+				method_desc = mg.Methods [0].Name;
+			else
+				method_desc = Invocation.FullMethodDesc (mg.Methods [0]);
+
+			ParameterData param = Invocation.GetParameterData (method);
+			string delegate_desc = Delegate.FullDelegateDesc (t, method, param);
+
+			Report.Error (123, loc, "Method '" + method_desc + "' does not " +
+				      "match delegate '" + delegate_desc + "'");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
-			if (Arguments == null || Arguments.Count != 1) {
-				Report.Error (149, loc,
-					      "Method name expected");
-				return null;
-			}
+			if (delegate_instance_expr == null ||
+			    delegate_method.IsStatic)
+				ec.ig.Emit (OpCodes.Ldnull);
+			else
+				delegate_instance_expr.Emit (ec);
+			
+			if (delegate_method.IsVirtual) {
+				ec.ig.Emit (OpCodes.Dup);
+				ec.ig.Emit (OpCodes.Ldvirtftn, (MethodInfo) delegate_method);
+			} else
+				ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
+			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) constructor_method);
+		}
 
+		protected bool ResolveConstructorMethod (EmitContext ec)
+		{
 			Expression ml = Expression.MemberLookup (
 				ec, type, ".ctor", loc);
 
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error: Could not find delegate constructor!");
-				return null;
+				return false;
 			}
 
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
-			Argument a = (Argument) Arguments [0];
-			
-			if (!a.ResolveMethodGroup (ec, Location))
-				return null;
-			
-			Expression e = a.Expr;
+			return true;
+		}
 
-			Expression invoke_method = Expression.MemberLookup (
-				ec, type, "Invoke", MemberTypes.Method,
-				Expression.AllBindingFlags, loc);
-
-			if (invoke_method == null) {
-				Report.Error (-200, loc, "Internal error ! Could not find Invoke method!");
-				return null;
-			}
-
-			if (e is MethodGroupExpr) {
-				MethodGroupExpr mg = (MethodGroupExpr) e;
-
+		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
+		{
 				foreach (MethodInfo mi in mg.Methods){
 					delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
 
@@ -631,19 +636,7 @@ namespace Mono.CSharp {
 				}
 					
 				if (delegate_method == null) {
-					string method_desc;
-					if (mg.Methods.Length > 1)
-						method_desc = mg.Methods [0].Name;
-					else
-						method_desc = Invocation.FullMethodDesc (mg.Methods [0]);
-
-					MethodBase dm = ((MethodGroupExpr) invoke_method).Methods [0];
-					ParameterData param = Invocation.GetParameterData (dm);
-					string delegate_desc = Delegate.FullDelegateDesc (type, dm, param);
-
-					Report.Error (123, loc, "Method '" + method_desc + "' does not " +
-						      "match delegate '" + delegate_desc + "'");
-
+				Error_NoMatchingMethodForDelegate (mg, type, delegate_method, loc);
 					return null;
 				}
 
@@ -684,6 +677,80 @@ namespace Mono.CSharp {
 				eclass = ExprClass.Value;
 				return this;
 			}
+	}
+
+	//
+	// Created from the conversion code
+	//
+	public class ImplicitDelegateCreation : DelegateCreation {
+
+		ImplicitDelegateCreation (Type t, Location l)
+		{
+			type = t;
+			loc = l;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+		
+		static public Expression Create (EmitContext ec, MethodGroupExpr mge, Type target_type, Location loc)
+		{
+			ImplicitDelegateCreation d = new ImplicitDelegateCreation (target_type, loc);
+			if (d.ResolveConstructorMethod (ec))
+				return d.ResolveMethodGroupExpr (ec, mge);
+			else
+				return null;
+		}
+	}
+	
+	//
+	// A delegate-creation-expression, invoked from the `New' class 
+	//
+	public class NewDelegate : DelegateCreation {
+		public ArrayList Arguments;
+
+		//
+		// This constructor is invoked from the `New' expression
+		//
+		public NewDelegate (Type type, ArrayList Arguments, Location loc)
+		{
+			this.type = type;
+			this.Arguments = Arguments;
+			this.loc  = loc; 
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (Arguments == null || Arguments.Count != 1) {
+				Report.Error (149, loc,
+					      "Method name expected");
+				return null;
+			}
+
+			if (!ResolveConstructorMethod (ec))
+				return null;
+
+			Argument a = (Argument) Arguments [0];
+			
+			Expression invoke_method = Expression.MemberLookup (
+				ec, type, "Invoke", MemberTypes.Method,
+				Expression.AllBindingFlags, loc);
+
+			if (invoke_method == null) {
+				Report.Error (-200, loc, "Internal error ! Could not find Invoke method!");
+				return null;
+			}
+
+			if (!a.ResolveMethodGroup (ec, loc))
+				return null;
+			
+			Expression e = a.Expr;
+
+			MethodGroupExpr mg = e as MethodGroupExpr;
+			if (mg != null)
+				return ResolveMethodGroupExpr (ec, mg);
 
 			Type e_type = e.Type;
 
@@ -710,8 +777,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (delegate_instance_expr == null ||
-			    delegate_method.IsStatic)
+			if (delegate_instance_expr == null || delegate_method.IsStatic)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				delegate_instance_expr.Emit (ec);

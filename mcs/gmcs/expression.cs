@@ -605,16 +605,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		/// <summary>
-		///   This will emit the child expression for `ec' avoiding the logical
-		///   not.  The parent will take care of changing brfalse/brtrue
-		/// </summary>
-		public void EmitLogicalNot (EmitContext ec)
+		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
 		{
-			if (Oper != Operator.LogicalNot)
-				throw new Exception ("EmitLogicalNot can only be called with !expr");
-
-			Expr.Emit (ec);
+			if (Oper == Operator.LogicalNot)
+				Expr.EmitBranchable (ec, target, !onTrue);
+			else
+				base.EmitBranchable (ec, target, onTrue);
 		}
 
 		public override string ToString ()
@@ -651,14 +647,14 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			if (temporary != null){
-				if (have_temporary){
+				if (have_temporary) {
 					temporary.Emit (ec);
-					return;
-				}
+				} else {
 				expr.Emit (ec);
 				ec.ig.Emit (OpCodes.Dup);
 				temporary.Store (ec);
 				have_temporary = true;
+				}
 			} else
 				expr.Emit (ec);
 			
@@ -1050,6 +1046,8 @@ namespace Mono.CSharp {
 				ia.EmitAssign (ec, temp_storage);
 				break;
 			}
+
+			temp_storage.Release (ec);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1147,6 +1145,35 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Isinst, probe_type);
 				ig.Emit (OpCodes.Ldnull);
 				ig.Emit (OpCodes.Cgt_Un);
+				return;
+			}
+			throw new Exception ("never reached");
+		}
+
+		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		{
+			ILGenerator ig = ec.ig;
+
+			switch (action){
+			case Action.AlwaysFalse:
+				if (! onTrue)
+					ig.Emit (OpCodes.Br, target);
+				
+				return;
+			case Action.AlwaysTrue:
+				if (onTrue)
+					ig.Emit (OpCodes.Br, target);
+				
+				return;
+			case Action.LeaveOnStack:
+				// the `e != null' rule.
+				expr.Emit (ec);
+				ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+				return;
+			case Action.Probe:
+				expr.Emit (ec);
+				ig.Emit (OpCodes.Isinst, probe_type);
+				ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 				return;
 			}
 			throw new Exception ("never reached");
@@ -2284,10 +2311,6 @@ namespace Mono.CSharp {
 			}
 			
 			//
-			// Step 2: Default operations on CLI native types.
-			//
-
-			//
 			// Step 0: String concatenation (because overloading will get this wrong)
 			//
 			if (oper == Operator.Addition){
@@ -2463,8 +2486,16 @@ namespace Mono.CSharp {
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
 			//
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
-				if (l.IsSubclassOf (TypeManager.delegate_type) &&
-				    r.IsSubclassOf (TypeManager.delegate_type)) {
+				if (l.IsSubclassOf (TypeManager.delegate_type)){
+					if (right.eclass == ExprClass.MethodGroup && RootContext.V2){
+						Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
+						if (tmp == null)
+							return null;
+						right = tmp;
+						r = right.Type;
+					}
+				
+					if (r.IsSubclassOf (TypeManager.delegate_type)){
 					MethodInfo method;
 					ArrayList args = new ArrayList (2);
 					
@@ -2483,6 +2514,7 @@ namespace Mono.CSharp {
 					}
 
 					return new BinaryDelegate (l, method, args);
+				}
 				}
 
 				//
@@ -2528,13 +2560,15 @@ namespace Mono.CSharp {
 				Expression temp;
 
 				// U operator - (E e, E f)
-				if (lie && rie && oper == Operator.Subtraction){
+				if (lie && rie){
+					if (oper == Operator.Subtraction){
 					if (l == r){
 						type = TypeManager.EnumToUnderlying (l);
 						return this;
 					} 
 					Error_OperatorCannotBeApplied ();
 					return null;
+				}
 				}
 					
 				//
@@ -2545,9 +2579,18 @@ namespace Mono.CSharp {
 					Type enum_type = lie ? l : r;
 					Type other_type = lie ? r : l;
 					Type underlying_type = TypeManager.EnumToUnderlying (enum_type);
-;
 					
 					if (underlying_type != other_type){
+						temp = Convert.ImplicitConversion (ec, lie ? right : left, underlying_type, loc);
+						if (temp != null){
+							if (lie)
+								right = temp;
+							else
+								left = temp;
+							type = enum_type;
+							return this;
+						}
+							
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
@@ -2737,7 +2780,7 @@ namespace Mono.CSharp {
 		///   The expression's code is generated, and we will generate a branch to `target'
 		///   if the resulting expression value is equal to isTrue
 		/// </remarks>
-		public bool EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -2747,130 +2790,79 @@ namespace Mono.CSharp {
 			// but on top of that we want for == and != to use a special path
 			// if we are comparing against null
 			//
-			if (oper == Operator.Equality || oper == Operator.Inequality){
+			if (oper == Operator.Equality || oper == Operator.Inequality) {
 				bool my_on_true = oper == Operator.Inequality ? onTrue : !onTrue;
 
-				if (left is NullLiteral){
+				if (left is NullLiteral || left is IntConstant && ((IntConstant) left).Value == 0) {
 					right.Emit (ec);
 					if (my_on_true)
 						ig.Emit (OpCodes.Brtrue, target);
 					else
 						ig.Emit (OpCodes.Brfalse, target);
-					return true;
-				} else if (right is NullLiteral){
+					
+					return;
+				} else if (right is NullLiteral || right is IntConstant && ((IntConstant) right).Value == 0){
 					left.Emit (ec);
 					if (my_on_true)
 						ig.Emit (OpCodes.Brtrue, target);
 					else
 						ig.Emit (OpCodes.Brfalse, target);
-					return true;
+					
+					return;
 				} else if (left is BoolConstant){
 					right.Emit (ec);
 					if (my_on_true != ((BoolConstant) left).Value)
 						ig.Emit (OpCodes.Brtrue, target);
 					else
 						ig.Emit (OpCodes.Brfalse, target);
-					return true;
+					
+					return;
 				} else if (right is BoolConstant){
 					left.Emit (ec);
 					if (my_on_true != ((BoolConstant) right).Value)
 						ig.Emit (OpCodes.Brtrue, target);
 					else
 						ig.Emit (OpCodes.Brfalse, target);
-					return true;
+					
+					return;
 				}
 
-			} else if (oper == Operator.LogicalAnd){
-				if (left is Binary){
-					Binary left_binary = (Binary) left;
+			} else if (oper == Operator.LogicalAnd) {
 
-					if (onTrue){
+				if (onTrue) {
 						Label tests_end = ig.DefineLabel ();
 						
-						if (left_binary.EmitBranchable (ec, tests_end, false)){
-							if (right is Binary){
-								Binary right_binary = (Binary) right;
-
-								if (right_binary.EmitBranchable (ec, target, true)){
-									ig.MarkLabel (tests_end);
-									return true;
-								}
-							}
-							right.Emit (ec);
-							ig.Emit (OpCodes.Brtrue, target);
+					left.EmitBranchable (ec, tests_end, false);
+					right.EmitBranchable (ec, target, true);
 							ig.MarkLabel (tests_end);
-							return true;
-						}
 					} else {
-						if (left_binary.EmitBranchable (ec, target, false)){
-							if (right is Binary){
-								Binary right_binary = (Binary) right;
-								
-								if (right_binary.EmitBranchable (ec, target, false))
-									return true;
-							}
-							right.Emit (ec);
-							if (onTrue)
-								ig.Emit (OpCodes.Brtrue, target);
-							else
-								ig.Emit (OpCodes.Brfalse, target);
-							return true;
-						}
+					left.EmitBranchable (ec, target, false);
+					right.EmitBranchable (ec, target, false);
 					}
-					//
-					// Give up, and let the regular Emit work, but we could
-					// also optimize the left-non-Branchable, but-right-Branchable
-					//
-				}
-				return false;
+
+				return;
+								
 			} else if (oper == Operator.LogicalOr){
-				if (left is Binary){
-					Binary left_binary = (Binary) left;
-
-					if (onTrue){
-						if (left_binary.EmitBranchable (ec, target, true)){
-							if (right is Binary){
-								Binary right_binary = (Binary) right;
-								
-								if (right_binary.EmitBranchable (ec, target, true))
-									return true;
-							}
-							right.Emit (ec);
-							ig.Emit (OpCodes.Brtrue, target);
-							return true;
-						}
+				if (onTrue) {
+					left.EmitBranchable (ec, target, true);
+					right.EmitBranchable (ec, target, true);
 						
-						//
-						// Give up, and let the regular Emit work, but we could
-						// also optimize the left-non-Branchable, but-right-Branchable
-						//
 					} else {
 						Label tests_end = ig.DefineLabel ();
+					left.EmitBranchable (ec, tests_end, true);
+					right.EmitBranchable (ec, target, false);
+					ig.MarkLabel (tests_end);
+				}
 						
-						if (left_binary.EmitBranchable (ec, tests_end, true)){
-							if (right is Binary){
-								Binary right_binary = (Binary) right;
+				return;
 
-								if (right_binary.EmitBranchable (ec, target, false)){
-									ig.MarkLabel (tests_end);
-									return true;
-								}
-							}
-							right.Emit (ec);
-							ig.Emit (OpCodes.Brfalse, target);
-							ig.MarkLabel (tests_end);
-							return true;
-						}
-					}
+			} else if (!(oper == Operator.LessThan        || oper == Operator.GreaterThan ||
+			             oper == Operator.LessThanOrEqual || oper == Operator.GreaterThanOrEqual ||
+			             oper == Operator.Equality        || oper == Operator.Inequality)) {
+				base.EmitBranchable (ec, target, onTrue);
+				return;
 				}
 				
-				return false;
-			} else if (!(oper == Operator.LessThan ||
-				oper == Operator.GreaterThan ||
-				oper == Operator.LessThanOrEqual ||
-				oper == Operator.GreaterThanOrEqual))
-				return false;
-			
 			left.Emit (ec);
 			right.Emit (ec);
 
@@ -2949,12 +2941,10 @@ namespace Mono.CSharp {
 					else
 						ig.Emit (OpCodes.Blt, target);
 				break;
-
 			default:
-				return false;
+				Console.WriteLine (oper);
+				throw new Exception ("what is THAT");
 			}
-			
-			return true;
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -2967,52 +2957,26 @@ namespace Mono.CSharp {
 			// Handle short-circuit operators differently
 			// than the rest
 			//
-			if (oper == Operator.LogicalAnd){
+			if (oper == Operator.LogicalAnd) {
 				Label load_zero = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
-				bool process = true;
 
-				if (left is Binary){
-					Binary left_binary = (Binary) left;
-
-					if (left_binary.EmitBranchable (ec, load_zero, false)){
+				left.EmitBranchable (ec, load_zero, false);
 						right.Emit (ec);
 						ig.Emit (OpCodes.Br, end);
-						process = false;
-					}
-				}
 
-				if (process){
-					left.Emit (ec);
-					ig.Emit (OpCodes.Brfalse, load_zero);
-					right.Emit (ec);
-					ig.Emit (OpCodes.Br, end);
-				}
 				ig.MarkLabel (load_zero);
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.MarkLabel (end);
 				return;
-			} else if (oper == Operator.LogicalOr){
+			} else if (oper == Operator.LogicalOr) {
 				Label load_one = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
-				bool process = true;
 				
-				if (left is Binary){
-					Binary left_binary = (Binary) left;
-
-					if (left_binary.EmitBranchable (ec, load_one, true)){
+				left.EmitBranchable (ec, load_one, true);
 						right.Emit (ec);
 						ig.Emit (OpCodes.Br, end);
-						process = false;
-					} 
-				}
 
-				if (process){
-					left.Emit (ec);
-					ig.Emit (OpCodes.Brtrue, load_one);
-					right.Emit (ec);
-					ig.Emit (OpCodes.Br, end);
-				}
 				ig.MarkLabel (load_one);
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.MarkLabel (end);
@@ -3306,7 +3270,7 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Nop);
 
-			Statement.EmitBoolExpression (ec, is_and ? op_false : op_true, false_target, false);
+			(is_and ? op_false : op_true).EmitBranchable (ec, false_target, false);
 			left.Emit (ec);
 			ig.Emit (OpCodes.Br, end_target);
 			ig.MarkLabel (false_target);
@@ -3510,7 +3474,7 @@ namespace Mono.CSharp {
 			Label false_target = ig.DefineLabel ();
 			Label end_target = ig.DefineLabel ();
 
-			Statement.EmitBoolExpression (ec, expr, false_target, false);
+			expr.EmitBranchable (ec, false_target, false);
 			trueExpr.Emit (ec);
 			ig.Emit (OpCodes.Br, end_target);
 			ig.MarkLabel (false_target);
@@ -4155,6 +4119,14 @@ namespace Mono.CSharp {
 					// we can optimize this case: a positive int32
 					// always fits on a uint64
 					//
+
+                                        //
+                                        // This special case is needed because csc behaves like this.
+                                        // int -> uint is better than int -> ulong!
+                                        //
+                                        if (q == TypeManager.uint32_type)
+                                                return 0;
+                                        
 					if (q == TypeManager.int64_type)
 						return 0;
 					else if (value >= 0)
@@ -6208,10 +6180,7 @@ namespace Mono.CSharp {
 							ig.Emit (OpCodes.Ldelema, etype);
 						}
 
-						ig.Emit (OpCodes.Nop);
 						e.Emit (ec);
-						ig.Emit (OpCodes.Nop);
-						ig.Emit (OpCodes.Nop);
 
                                                 if (dims == 1)
                                                         ArrayAccess.EmitStoreOpcode (ig, array_element_type);
@@ -8201,7 +8170,8 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (ec.InCatch || ec.InFinally){
+			if (ec.CurrentBranching.InCatch () ||
+			    ec.CurrentBranching.InFinally (true)) {
 				Error (255,
 					      "stackalloc can not be used in a catch or finally block");
 				return null;

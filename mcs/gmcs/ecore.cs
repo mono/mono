@@ -314,9 +314,11 @@ namespace Mono.CSharp {
 				break;
 
 			case ExprClass.MethodGroup:
+				if (!RootContext.V2){
 				if ((flags & ResolveFlags.MethodGroup) == 0) {
 					((MethodGroupExpr) e).ReportUsageError ();
 					return null;
+				}
 				}
 				break;
 
@@ -404,6 +406,12 @@ namespace Mono.CSharp {
 		///   for the expression.  
 		/// </remarks>
 		public abstract void Emit (EmitContext ec);
+
+		public virtual void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		{
+			Emit (ec);
+			ec.ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+		}
 
 		/// <summary>
 		///   Protected constructor.  Only derivate types should
@@ -663,10 +671,14 @@ namespace Mono.CSharp {
 				Report.Error (
 					122, loc, "`" + TypeManager.CSharpName (qualifier_type) + "." +
 					name + "' is inaccessible due to its protection level");
-			else
+			else if (name == ".ctor") {
+				Report.Error (143, loc, String.Format ("The type {0} has no constructors defined",
+								       TypeManager.CSharpName (queried_type)));
+			} else {
 				Report.Error (
 					122, loc, "`" + name + "' is inaccessible due to its " +
 					"protection level");
+		}
 		}
 
 		static public MemberInfo GetFieldFromEvent (EventExpr event_expr)
@@ -1314,6 +1326,12 @@ namespace Mono.CSharp {
 	public class EmptyCast : Expression {
 		protected Expression child;
 		
+		public Expression Child {
+			get {
+				return child;
+			}
+		}		
+
 		public EmptyCast (Expression child, Type return_type)
 		{
 			eclass = child.eclass;
@@ -1958,19 +1976,19 @@ namespace Mono.CSharp {
 				alias_value = null;
 
 			if (ec.ResolvingTypeTree){
-				if (alias_value != null){
-					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
-						return new TypeExpression (t, loc);
-				}
-
 				int errors = Report.Errors;
-				Type dt = ec.DeclSpace.FindType (loc, Name);
+				Type dt = ds.FindType (loc, Name);
 				
 				if (Report.Errors != errors)
 					return null;
 				
 				if (dt != null)
 					return new TypeExpression (dt, loc);
+
+				if (alias_value != null){
+					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
+						return new TypeExpression (t, loc);
+				}
 			}
 
 			//
@@ -2749,9 +2767,21 @@ namespace Mono.CSharp {
 			// Handle initonly fields specially: make a copy and then
 			// get the address of the copy.
 			//
-			if (FieldInfo.IsInitOnly && !ec.IsConstructor){
+			bool need_copy;
+			if (FieldInfo.IsInitOnly){
+				need_copy = true;
+				if (ec.IsConstructor){
+					if (FieldInfo.IsStatic){
+						if (ec.IsStatic)
+							need_copy = false;
+					} else
+						need_copy = false;
+				}
+			} else
+				need_copy = false;
+			
+			if (need_copy){
 				LocalBuilder local;
-				
 				Emit (ec);
 				local = ig.DeclareLocal (type);
 				ig.Emit (OpCodes.Stloc, local);
@@ -2759,9 +2789,10 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (FieldInfo.IsStatic)
+
+			if (FieldInfo.IsStatic){
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
-			else {
+			} else {
 				//
 				// In the case of `This', we call the AddressOf method, which will
 				// only load the pointer, and not perform an Ldobj immediately after

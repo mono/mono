@@ -59,7 +59,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr);
 				if (expr is NullLiteral)
-					return new BoxedCast (expr);
+					return new NullCast (expr, target_type);
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				//
 				// Special case: enumeration to System.Enum.
@@ -1036,6 +1036,18 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Expression e;
 
+			if (expr.eclass == ExprClass.MethodGroup){
+				if (!TypeManager.IsDelegateType (target_type)){
+					Report.Error (428, loc,
+						      String.Format (
+							   "Cannot convert method group to `{0}', since it is not a delegate",
+							   TypeManager.CSharpName (target_type)));
+					return null;
+				}
+
+				return ImplicitDelegateCreation.Create (ec, (MethodGroupExpr) expr, target_type, loc);
+			}
+
 			if (expr_type.Equals (target_type) && !(expr is NullLiteral))
 				return expr;
 
@@ -1502,6 +1514,13 @@ namespace Mono.CSharp {
 			if (source_type == TypeManager.object_type && !target_is_value_type)
 				return new ClassCast (source, target_type);
 
+			//
+			// Unboxing conversion.
+			//
+			if (((source_type == TypeManager.enum_type &&
+				!(source is EmptyCast)) ||
+				source_type == TypeManager.value_type) && target_is_value_type)
+				return new UnboxCast (source, target_type);
 
 			//
 			// From any class S to any class-type T, provided S is a base class of T

@@ -23,7 +23,6 @@ namespace Mono.CSharp {
 		ArrayList ordered_enums;
 		
 		public Expression BaseType;
-		public Attributes  OptAttributes;
 		
 		public Type UnderlyingType;
 
@@ -51,12 +50,11 @@ namespace Mono.CSharp {
 
 		public Enum (NamespaceEntry ns, TypeContainer parent, Expression type, int mod_flags,
 			     string name, Attributes attrs, Location l)
-			: base (ns, parent, name, l)
+			: base (ns, parent, name, attrs, l)
 		{
 			this.BaseType = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags,
 						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE, l);
-			OptAttributes = attrs;
 
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();

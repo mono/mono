@@ -37,13 +37,29 @@ namespace Mono.CSharp {
 		/// </summary>
 		public readonly Location Location;
 
-		public MemberCore (string name, Location loc)
+		/// <summary>
+		///   Attributes for this type
+		/// </summary>
+ 		Attributes attributes;
+
+		public MemberCore (string name, Attributes attrs, Location loc)
 		{
 			Name = name;
 			Location = loc;
+			attributes = attrs;
 		}
 
 		public abstract bool Define (TypeContainer parent);
+
+		public Attributes OptAttributes 
+		{
+			get {
+				return attributes;
+			}
+			set {
+				attributes = value;
+			}
+		}
 
 		// 
 		// Whehter is it ok to use an unsafe pointer in this type container
@@ -106,8 +122,8 @@ namespace Mono.CSharp {
 
 		TypeContainer parent;
 
-		public DeclSpace (NamespaceEntry ns, TypeContainer parent, string name, Location l)
-			: base (name, l)
+		public DeclSpace (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+			: base (name, attrs, l)
 		{
 			NamespaceEntry = ns;
 			Basename = name.Substring (1 + name.LastIndexOf ('.'));

@@ -1,3 +1,342 @@
+2004-01-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FieldInfo.AddressOf): Revert patch from previous
+	#52730 bug, and instead compute correctly the need to use a
+	temporary variable when requesting an address based on the
+	static/instace modified of the field and the constructor.
+ 
+2004-01-21  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Lookup in the current
+	class and namespace before looking up aliases.  Fixes #52517.
+
+2004-01-21  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (UsageVector.Merge): Allow variables being
+	assinged in a 'try'; fixes exception4.cs.
+
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+        * class.cs : Implemented parameter-less constructor for TypeContainer
+        
+        * decl.cs: Attributes are now stored here. New property OptAttributes
+        
+        * delegate.cs, enum.cs, interface.cs: Removed attribute member.
+        
+        * rootcontext.cs, tree.cs: Now use parameter-less constructor of TypeContainer
+
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs (CSharpSignature): Now reports also inner class name.
+          (CSharpSignature): New method for indexer and property signature.
+
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* pending.cs (IsVirtualFilter): Faster implementation.
+
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs: Avoid inclusion of same assembly more than once.
+
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Fixed problem where the last assembly attribute
+          has been applied also to following declaration (class, struct, etc.)
+          
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs: Added error CS0538, CS0539 reporting.
+        Fixed crash on Microsoft runtime when field type is void.
+
+	* cs-parser.jay: Added error CS0537 reporting.
+
+	* pending.cs: Added error CS0535 reporting.
+        Improved error report for errors CS0536, CS0534.
+
+2004-01-20  Miguel de Icaza  <miguel@ximian.com>
+
+	Merge a few bits from the Anonymous Method MCS tree.
+	
+	* statement.cs (ToplevelBlock): New class for toplevel methods,
+	will hold anonymous methods, lifted variables.
+
+	* cs-parser.jay: Create toplevel blocks for delegates and for
+	regular blocks of code. 
+
+2004-01-20  Martin Baulig  <martin@ximian.com>
+
+	* codegen.cs (EmitContext): Removed `InTry', `InCatch',
+	`InFinally', `InLoop', `TryCatchLevel', `LoopBeginTryCatchLevel'
+	and `NeedExplicitReturn'; added `IsLastStatement'.
+	(EmitContext.EmitTopBlock): Emit the explicit "ret" if we either
+	have a `ReturnLabel' or we're not unreachable.
+
+	* flowanalysis.cs (FlowBranching.MergeChild): Actually merge the
+	child's reachability; don't just override ours with it.  Fixes
+	#58058 (lluis's example).
+	(FlowBranching): Added public InTryOrCatch(), InCatch(),
+	InFinally(), InLoop(), InSwitch() and
+	BreakCrossesTryCatchBoundary() methods.
+
+	* statement.cs (Return): Do all error checking in Resolve().
+	Unless we are the last statement in a top-level block, always
+	create a return label and jump to it.
+	(Break, Continue): Do all error checking in Resolve(); also make
+	sure we aren't leaving a `finally'.
+	(Block.DoEmit): Set `ec.IsLastStatement' when emitting the last
+	statement in a top-level block.
+	(Block.Flags): Added `IsDestructor'.
+	(Block.IsDestructor): New public property.
+
+2004-01-20  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Break.DoEmit): Set ec.NeedExplicitReturn; fixes #52427.
+
+2004-01-20  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Statement.ResolveUnreachable): New public method.
+	(If, While): Do the dead-code elimination in Resolve(), not in Emit().
+	(Block.Resolve): Resolve unreachable statements.
+
+2004-01-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: We need to fix the case where we do
+	not have a temp variable here.
+
+	* assign.cs: Only expression compound assignments need
+	temporary variables.
+
+2004-01-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* flowanalysis.cs: Reduce memory allocation in a few ways:
+	  - A block with no variables should not allocate a bit
+	    vector for itself.
+	  - A method with no out parameters does not need any tracking
+	    for assignment of the parameters, so we need not allocate
+	    any data for it.
+	  - The arrays:
+	        public readonly Type[] VariableTypes;
+		public readonly string[] VariableNames;
+	    Are redundant. The data is already stored in the variable
+	    map, so we need not allocate another array for it.
+	  - We need to add alot of checks for if (params | locals) == null
+	    due to the first two changes.
+
+2004-01-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FieldExpr.AddressOf): For ValueTypes that do not
+	implement IMemoryLocation, we store a copy on a local variable and
+	take the address of it.  Patch from Benjamin Jemlich
+
+	* cs-parser.jay: Applied patch from Ben Maurer to the "type" rule
+	to use a special "type_name_expression" rule which reduces the
+	number of "QualifiedIdentifier" classes created, and instead
+	directly creates MemberAccess expressions.
+
+2004-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs: Applied patch from Benjamin Jemlich (pcgod@gmx.net)
+	that fixes #52853.  Null literal assignment to ValueType
+
+	* class.cs (MethodData.Emit): Instead of checking the name of the
+	method to determine if its a destructor, create a new derived
+	class from Method called Destructor, and test for that.  
+
+	* cs-parser.jay: Create a Destructor object instead of a Method.  
+
+	Based on a fix from Benjamin Jemlich (pcgod@gmx.net)
+
+	Fixes: 52933
+	
+2004-01-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Perform an implicit
+	conversion from MethodGroups to their delegate types on the
+	Addition operation.
+
+	* delegate.cs: Introduce a new class DelegateCreation that is the
+	base class for `NewDelegate' and `ImplicitDelegateCreation',
+	factor some code in here.
+
+	* convert.cs (Convert.ImplicitConversionStandard): Add an implicit
+	conversion from MethodGroups to compatible delegate types. 
+
+	* ecore.cs (Expression.Resolve): Do not flag error 654
+	(Methodgroupd needs parenthesis) if running on the V2 compiler, as
+	we allow conversions from MethodGroups to delegate types now.
+	
+	* assign.cs (Assign.DoResolve): Do not flag errors on methodgroup
+	assignments in v2 either.
+
+2004-01-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FieldExpr.AddressOf): Fix generated IL for accessing
+	static read-only fields in ctors.
+
+	Applied patch from Benjamin Jemlich 
+
+	* expression.cs (UnaryMutator): Avoid leaking local variables. 
+	
+2004-01-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs (IsCastToken): Allow the various native types
+	here to return true, as they can be used like this:
+
+		(XXX) int.MEMBER ()
+
+	Fixed 49836 and all the other dups
+	
+2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.cs: Implement /win32res and /win32icon.
+
+2004-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add a rule to improve error handling for the
+	common mistake of placing modifiers after the type.
+
+2004-01-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (interface_event_declaration): Catch
+	initialization of events on interfaces, and report cs0068
+
+	* cs-parser.jay (interface_event_declaration): Catch
+	initialization of events. 
+
+	* ecore.cs: Better report missing constructors.
+	
+	* expression.cs (Binary.ResolveOperator): My previous bug fix had
+	the error reporting done in the wrong place.  Fix.
+
+	* expression.cs (Binary.ResolveOperator): Catch the 
+	operator + (E x, E y) error earlier, and later allow for implicit
+	conversions in operator +/- (E e, U x) from U to the underlying
+	type of E.
+
+	* class.cs (TypeContainer.DefineDefaultConstructor): Fix bug
+	52596, if the container class is abstract, the default constructor
+	is protected otherwise its public (before, we were always public).
+
+	* statement.cs (Fixed.Resolve): Catch a couple more errors in the
+	fixed statement.
+
+	(Using.EmitLocalVariableDecls): Applied patch from Benjamin
+	Jemlich that fixes bug #52597, MCS was generating invalid code for
+	idisposable structs.   Thanks to Ben for following up with this
+	bug as well.
+	
+2004-01-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Allow assemblies without code to be generated, fixes
+	52230.
+
+2004-01-07  Nick Drochak <ndrochak@gol.com>
+
+	* attribute.cs: Remove unneeded catch variables. Eliminates a warning.
+
+2004-01-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add rules to improve error reporting if fields or
+	methods are declared at the namespace level (error 116)
+
+	* Add rules to catch event add/remove
+
+2004-01-04  David Sheldon <dave-mono@earth.li>
+
+  * expression.cs: Added matching ")" to error message for 
+  CS0077
+
+2004-01-03 Todd Berman <tberman@gentoo.org>
+	
+	* ecore.cs, attribute.cs:
+	Applying fix from #52429.
+
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ecore.cs, expression.cs, statement.cs:
+	Total rewrite of how we handle branching. We
+	now handle complex boolean expressions with fewer
+	jumps. As well if (x == 0) no longer emits a ceq.
+
+	if (x is Foo) is much faster now, because we generate
+	better code.
+
+	Overall, we get a pretty big improvement on our benchmark
+	tests. The code we generate is smaller and more readable.
+
+	I did a full two-stage bootstrap. The patch was reviewed
+	by Martin and Miguel.
+
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* cs-parser.jay: Make primary_expression not take a QI.
+	we dont need this because the member_access rule covers
+	us here. So we replace the rule with just IDENTIFIER.
+
+	This has two good effects. First, we remove a s/r conflict.
+	Second, we allocate many fewer QualifiedIdentifier objects.
+
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* attribute.cs: Handle MarshalAs attributes as pseudo, and
+	set the correct information via SRE. This prevents
+	hanging on the MS runtime. Fixes #29374.
+
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* convert.cs: correctly handle conversions to value types
+	from Enum and ValueType as unboxing conversions.
+
+	Fixes bug #52569. Patch by Benjamin Jemlich.
+
+2004-01-02  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (BetterConversion): Prefer int -> uint
+	over int -> ulong (csc's behaviour). This fixed bug #52046.
+
+2004-01-02 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs (MemberCache.FindMembers): now returns a
+	MemberInfo [].
+
+	* typemanager.cs: In general, go with with ^^.
+	(CopyNewMethods): take an IList.
+	(RealMemberLookup): Only allocate an arraylist
+	if we copy from two sets of methods.
+
+	This change basically does two things:
+	1) Fewer array lists allocated due to CopyNewMethods.
+	2) the explicit cast in MemberList costed ALOT.
+
+2004-01-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cs-tokenizer.cs (consume_identifier) driver.cs: Cache identifiers in
+	a hashtable to avoid needless string allocations when an identifier is
+	used more than once (the common case).
+
+2004-01-01 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* pending.cs: MS's TypeBuilder.GetInterfaces ()
+	is broken, it will not return anything. So, we
+	have to use the information we have in mcs to
+	do the task.
+
+	* typemanager.cs: Add a cache for GetInterfaces,
+	since this will now be used more often (due to ^^)
+
+	(GetExplicitInterfaces) New method that gets the
+	declared, not effective, interfaces on a type
+	builder (eg, if you have interface IFoo, interface
+	IBar, Foo : IFoo, Bar : Foo, IBar, GetExplInt (Bar) ==
+	{ IBar }.
+
+	This patch makes MCS able to bootstrap itself on
+	Windows again.
+
+2004-01-01 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Remove the Nop's that Miguel put
+	in by mistake.
+
 2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* report.cs, codegen.cs: Give the real stack trace to

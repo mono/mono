@@ -113,9 +113,6 @@ namespace Mono.CSharp {
 
 		ArrayList type_bases;
 
-		// Attributes for this type
-		protected Attributes attributes;
-
 		// Information in the case we are an attribute type
 
 		public AttributeTargets Targets = AttributeTargets.All;
@@ -134,8 +131,12 @@ namespace Mono.CSharp {
 		//
 		public string IndexerName;
 
-		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Location l)
-			: base (ns, parent, name, l)
+		public TypeContainer ():
+			this (null, null, "", null, new Location (-1)) {
+		}
+
+		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+			: base (ns, parent, name, attrs, l)
 		{
 			types = new ArrayList ();
 
@@ -499,12 +500,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public Attributes OptAttributes {
-			get {
-				return attributes;
-			}
-		}
-		
 		public bool HaveStaticConstructor {
 			get {
 				return have_static_constructor;
@@ -573,11 +568,17 @@ namespace Mono.CSharp {
 			if (is_static)
 				mods = Modifiers.STATIC;
 
+			//
+			// If the class is abstract, the default constructor is protected
+			//
+			if ((ModFlags & Modifiers.ABSTRACT) != 0)
+				mods |= Modifiers.PROTECTED;
+			
 			c.ModFlags = mods;
 
 			AddConstructor (c);
 			
-			c.Block = new Block (null);
+			c.Block = new ToplevelBlock (null, Location);
 			
 		}
 
@@ -1786,7 +1787,7 @@ namespace Mono.CSharp {
 			default_constructor = null;
 			default_static_constructor = null;
 			type_bases = null;
-			attributes = null;
+			OptAttributes = null;
 			ifaces = null;
 			parent_container = null;
 			member_cache = null;
@@ -1941,11 +1942,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;
-		}
-
-		public static void Error_ExplicitInterfaceNotMemberInterface (Location loc, string name)
-		{
-			Report.Error (539, loc, "Explicit implementation: `" + name + "' is not a member of the interface");
 		}
 
 		//
@@ -2176,7 +2172,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE;
 
 		public Class (NamespaceEntry ns, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (ns, parent, name, l)
+			: base (ns, parent, name, attrs, l)
 		{
 			int accmods;
 
@@ -2186,7 +2182,6 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
-			this.attributes = attrs;
 		}
 
 		//
@@ -2213,7 +2208,7 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Struct (NamespaceEntry ns, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (ns, parent, name, l)
+			: base (ns, parent, name, attrs, l)
 		{
 			int accmods;
 			
@@ -2225,8 +2220,6 @@ namespace Mono.CSharp {
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 
 			this.ModFlags |= Modifiers.SEALED;
-			this.attributes = attrs;
-			
 		}
 
 		//
@@ -2732,7 +2725,7 @@ namespace Mono.CSharp {
 			Expression parent_constructor_group;
 			Type t;
 
-			ec.CurrentBlock = new Block (null, Block.Flags.Implicit, parameters);
+			ec.CurrentBlock = new ToplevelBlock (Block.Flags.Implicit, parameters, loc);
 
 			if (argument_list != null){
 				foreach (Argument a in argument_list){
@@ -2808,7 +2801,6 @@ namespace Mono.CSharp {
 	public class Constructor : MethodCore {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
-		new public Attributes OptAttributes;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -3287,8 +3279,7 @@ namespace Mono.CSharp {
 						member.InterfaceType, name, ReturnType, ParameterTypes);
 
 				if (member.InterfaceType != null && implementing == null){
-					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (
-						Location, name);
+					Report.Error (539, Location, "'{0}' in explicit interface declaration is not an interface", method_name);
 					return false;
 				}
 			}
@@ -3503,7 +3494,7 @@ namespace Mono.CSharp {
 			//
 			// FIXME: This code generates buggy code
 			//
-			if (member.Name == "Finalize" && ReturnType == TypeManager.void_type)
+			if (member is Destructor)
 				EmitDestructor (ec, block);
 			else {
 				SymbolWriter sw = CodeGen.SymbolWriter;
@@ -3525,18 +3516,15 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			Label finish = ig.DefineLabel ();
-			bool old_in_try = ec.InTry;
+
+			block.SetDestructor ();
 			
 			ig.BeginExceptionBlock ();
-			ec.InTry = true;
 			ec.ReturnLabel = finish;
 			ec.HasReturnLabel = true;
 			ec.EmitTopBlock (block, null, Location);
-			ec.InTry = old_in_try;
 			
 			// ig.MarkLabel (finish);
-			bool old_in_finally = ec.InFinally;
-			ec.InFinally = true;
 			ig.BeginFinallyBlock ();
 			
 			if (ec.ContainerType.BaseType != null) {
@@ -3551,7 +3539,6 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Call, (MethodInfo) parent_destructor.Methods [0]);
 				}
 			}
-			ec.InFinally = old_in_finally;
 			
 			ig.EndExceptionBlock ();
 			//ig.MarkLabel (ec.ReturnLabel);
@@ -3559,9 +3546,17 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class Destructor : Method {
+
+		public Destructor (DeclSpace ds, Expression return_type, int mod, string name,
+				   Parameters parameters, Attributes attrs, Location l)
+			: base (ds, return_type, mod, name, parameters, attrs, l)
+		{ }
+
+	}
+	
 	abstract public class MemberBase : MemberCore {
 		public Expression Type;
-		public readonly Attributes OptAttributes;
 
 		protected MethodAttributes flags;
 
@@ -3608,12 +3603,11 @@ namespace Mono.CSharp {
 		//
 		protected MemberBase (Expression type, int mod, int allowed_mod, int def_mod, string name,
 				      Attributes attrs, Location loc)
-			: base (name, loc)
+			: base (name, attrs, loc)
 		{
 			explicit_mod_flags = mod;
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
-			OptAttributes = attrs;
 		}
 
 		protected virtual bool CheckBase (TypeContainer container)
@@ -3886,6 +3880,11 @@ namespace Mono.CSharp {
 				if (InterfaceType == null)
 					return false;
 
+				if (InterfaceType.IsClass) {
+					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
+					return false;
+				}
+
 				// Compute the full name that we need to export.
 				Name = InterfaceType.FullName + "." + ShortName;
 				
@@ -4067,10 +4066,17 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			try {
 			FieldBuilder = container.TypeBuilder.DefineField (
 				Name, t, Modifiers.FieldAttr (ModFlags));
 
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
+			}
+			catch (ArgumentException) {
+				Report.Warning (-24, Location, "The Microsoft runtime is unable to use [void|void*] as a field type, try using the Mono runtime.");
+				return false;
+			}
+
 			return true;
 		}
 
