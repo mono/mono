@@ -643,7 +643,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((qualifier_type != null) && (qualifier_type != ec.ContainerType) &&
-			    !qualifier_type.IsSubclassOf (ec.ContainerType)) {
+			    ec.ContainerType.IsSubclassOf (qualifier_type)) {
 				// Although a derived class can access protected members of
 				// its base class it cannot do so through an instance of the
 				// base class (CS1540).  If the qualifier_type is a parent of the
