@@ -1,5 +1,9 @@
 2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslNumber.cs: Stub for parsing xsl:number.
+
+2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XslVariable.cs: Add IsEvaluated.
 
 2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
