@@ -50,9 +50,8 @@ uninstall:
 				    RUNTIME=$$d/mono-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes uninstall-profiles
 
 clean-local:
-	-rm -fr $(symlinks)
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(clean_profiles)' clean-profiles
-	-rm -fr $(tmpinst)
+	-rm -fr $(symlinks) $(tmpinst) .wapi
 
 if INSTALL_2_0
 TEST_SUPPORT_FILES = $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
