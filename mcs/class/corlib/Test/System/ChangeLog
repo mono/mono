@@ -1,3 +1,9 @@
+2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConvertTest.cs: Added tests to convert min/max values of integer
+	types to strings in all bases.
+	* SByteTest.cs: Added test to parse min/max values.
+
 2004-06-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MathTest.cs: Added case to check for negative 0 (double) in

@@ -3475,5 +3475,49 @@ namespace MonoTests.System {
 		{
 			Convert.ChangeType (true, TypeCode.Empty);
 		}
+
+		[Test]
+		public void ToString_MinMax_WithBase () 
+		{
+			AssertEquals ("Byte.MinValue base 2",  "0", Convert.ToString (Byte.MinValue, 2));
+			AssertEquals ("Byte.MinValue base 8",  "0", Convert.ToString (Byte.MinValue, 8));
+			AssertEquals ("Byte.MinValue base 10", "0", Convert.ToString (Byte.MinValue, 10));
+			AssertEquals ("Byte.MinValue base 16", "0", Convert.ToString (Byte.MinValue, 16));
+
+			AssertEquals ("Byte.MaxValue base 2",  "11111111", Convert.ToString (Byte.MaxValue, 2));
+			AssertEquals ("Byte.MaxValue base 8",  "377", Convert.ToString (Byte.MaxValue, 8));
+			AssertEquals ("Byte.MaxValue base 10", "255", Convert.ToString (Byte.MaxValue, 10));
+			AssertEquals ("Byte.MaxValue base 16", "ff", Convert.ToString (Byte.MaxValue, 16));
+
+			AssertEquals ("Int16.MinValue base 2",  "1000000000000000", Convert.ToString (Int16.MinValue, 2));
+			AssertEquals ("Int16.MinValue base 8",  "100000", Convert.ToString (Int16.MinValue, 8));
+			AssertEquals ("Int16.MinValue base 10", "-32768", Convert.ToString (Int16.MinValue, 10));
+			AssertEquals ("Int16.MinValue base 16", "8000", Convert.ToString (Int16.MinValue, 16));
+
+			AssertEquals ("Int16.MaxValue base 2",  "111111111111111", Convert.ToString (Int16.MaxValue, 2));
+			AssertEquals ("Int16.MaxValue base 8",  "77777", Convert.ToString (Int16.MaxValue, 8));
+			AssertEquals ("Int16.MaxValue base 10", "32767", Convert.ToString (Int16.MaxValue, 10));
+			AssertEquals ("Int16.MaxValue base 16", "7fff", Convert.ToString (Int16.MaxValue, 16));
+
+			AssertEquals ("Int32.MinValue base 2",  "10000000000000000000000000000000", Convert.ToString (Int32.MinValue, 2));
+			AssertEquals ("Int32.MinValue base 8",  "20000000000", Convert.ToString (Int32.MinValue, 8));
+			AssertEquals ("Int32.MinValue base 10", "-2147483648", Convert.ToString (Int32.MinValue, 10));
+			AssertEquals ("Int32.MinValue base 16", "80000000", Convert.ToString (Int32.MinValue, 16));
+
+			AssertEquals ("Int32.MaxValue base 2",  "1111111111111111111111111111111", Convert.ToString (Int32.MaxValue, 2));
+			AssertEquals ("Int32.MaxValue base 8",  "17777777777", Convert.ToString (Int32.MaxValue, 8));
+			AssertEquals ("Int32.MaxValue base 10", "2147483647", Convert.ToString (Int32.MaxValue, 10));
+			AssertEquals ("Int32.MaxValue base 16", "7fffffff", Convert.ToString (Int32.MaxValue, 16));
+
+			AssertEquals ("Int64.MinValue base 2",  "1000000000000000000000000000000000000000000000000000000000000000", Convert.ToString (Int64.MinValue, 2));
+			AssertEquals ("Int64.MinValue base 8",  "1000000000000000000000", Convert.ToString (Int64.MinValue, 8));
+			AssertEquals ("Int64.MinValue base 10", "-9223372036854775808", Convert.ToString (Int64.MinValue, 10));
+			AssertEquals ("Int64.MinValue base 16", "8000000000000000", Convert.ToString (Int64.MinValue, 16));
+
+			AssertEquals ("Int64.MaxValue base 2",  "111111111111111111111111111111111111111111111111111111111111111", Convert.ToString (Int64.MaxValue, 2));
+			AssertEquals ("Int64.MaxValue base 8",  "777777777777777777777", Convert.ToString (Int64.MaxValue, 8));
+			AssertEquals ("Int64.MaxValue base 10", "9223372036854775807", Convert.ToString (Int64.MaxValue, 10));
+			AssertEquals ("Int64.MaxValue base 16", "7fffffffffffffff", Convert.ToString (Int64.MaxValue, 16));
+		}
 	}
 }

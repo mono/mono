@@ -3,6 +3,7 @@
 // Mario Martinez (mariom925@home.om)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 
 using NUnit.Framework;
@@ -12,7 +13,8 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
-public class SByteTest : TestCase
+[TestFixture]
+public class SByteTest : Assertion
 {
 	private const SByte MySByte1 = -42;
 	private const SByte MySByte2 = -128;
@@ -36,12 +38,6 @@ public class SByteTest : TestCase
 					"127", "127.00000", "12,700.00000 %", "0007f"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public SByteTest() {}
-
-	protected override void SetUp() 
-	{
-	}
-
 	public void TestMinMax()
 	{
 		AssertEquals(SByte.MinValue, MySByte2);
@@ -138,6 +134,13 @@ public class SByteTest : TestCase
 		catch (Exception e) {
 			Assert(typeof(FormatException) == e.GetType());
 		}
+	}
+
+	[Test]
+	public void Parse_MinMax () 
+	{
+		AssertEquals ("MinValue", SByte.MinValue, SByte.Parse ("-128"));
+		AssertEquals ("MaxValue", SByte.MaxValue, SByte.Parse ("127"));
 	}
 	
 	public void TestToString()
