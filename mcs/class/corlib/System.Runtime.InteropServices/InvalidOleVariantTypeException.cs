@@ -33,6 +33,7 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
+	[Serializable]
 	public class InvalidOleVariantTypeException : SystemException
 	{
 		private const int ErrorCode = -2146233039; // = 0x80131531
