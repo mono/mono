@@ -16,7 +16,7 @@ all:
 		exit 1; \
 	fi;
 	for i in $(DIRS) ; do \
-		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
+		(cd $$i && $(MAKE) -f makefile.gnu $@ && cd ..) || exit 1; \
 	done
 
 install:
@@ -25,7 +25,7 @@ install:
 		exit 1; \
 	fi;
 	for i in $(DIRS) ; do \
-		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
+		(cd $$i && $(MAKE) -f makefile.gnu $@ && cd ..) || exit 1; \
 	done
 	mkdir -p $(prefix)/share/doc/mono
 	$(INSTALL) -m 644 $(DOCFILES) $(prefix)/share/doc/mono
@@ -33,20 +33,20 @@ install:
 
 test: all
 	for i in $(DIRS) ; do \
-		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
+		(cd $$i && $(MAKE) -f makefile.gnu $@ && cd ..) || exit 1; \
 	done
 
 testcorlib:
-	$(MAKE) -C class/corlib/Test -f makefile.gnu test
+	cd class/corlib/Test && $(MAKE) -f makefile.gnu test
 
 clean:
 	-rm -f monocharge-*.tar.gz
 	for i in $(DIRS) ; do \
-		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
+		(cd $$i && $(MAKE) -f makefile.gnu $@ && cd ..) || exit 1; \
 	done
 
 corlib:
-	$(MAKE) -C class/corlib -f makefile.gnu
+	cd class/corlib && $(MAKE) -f makefile.gnu
 
 # Please do only use `binary-snapshot', the `dist' target will disappear really soon !
 binary-snapshot: dist
@@ -54,7 +54,8 @@ binary-snapshot: dist
 dist: all
 	mkdir $(DIST)
 	for i in $(DIRS) ; do \
-		$(MAKE) -C $$i -f makefile.gnu install prefix=$(PWD)/$(DIST) || exit 1; \
+		(cd $$i && $(MAKE) -f makefile.gnu install \
+			prefix=$(PWD)/$(DIST) && cd ..) || exit 1; \
 	done
 	tar -c $(DIST) | gzip > $(DIST).tar.gz
 	rm -rf $(DIST)

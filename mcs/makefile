@@ -1,4 +1,4 @@
-VERSION=0.23.99
+VERSION=0.24.99
 DIST=monocharge-`date -u +%Y%m%d`
 
 DIRS=jay nant mcs class nunit20 monoresgen tools mbas ilasm
@@ -8,7 +8,8 @@ all:
 	if test x$(OS) = xWindows_NT; then make windows; else make -f makefile.gnu; fi
 
 install:
-	if test x$(OS) = xWindows_NT; then make windowsinstall; else make -f makefile.gnu install; fi
+	if test x$(OS) = xWindows_NT; then make windowsinstall; \
+	else make -f makefile.gnu install; fi
 
 windows:
 	for i in $(DIRS); do 			\
@@ -27,11 +28,11 @@ testcorlib:
 	if test x$(OS) = xWindows_NT; then make testcorlibwindows; else make -f makefile.gnu testcorlib; fi
 
 testwindows:
-	$(MAKE) -C nunit20
-	$(MAKE) -C class test
+	cd nunit20 && $(MAKE)
+	cd class && $(MAKE) test
 
 testcorlibwindows:
-	$(MAKE) -C class testcorlib
+	cd class && $(MAKE) testcorlib
 
 clean:
 	if test x$(OS) = xWindows_NT; then make cleanwindows; else make cleanlinux; fi
