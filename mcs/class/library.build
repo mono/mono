@@ -56,7 +56,7 @@
 		<nant basedir="ICSharpCode.SharpZipLib" target="build" buildfile="ICSharpCode.SharpZipLib/SharpZipLib.build"/>
 		<nant basedir="Npgsql" target="build" buildfile="Npgsql/Npgsql.build"/>
 		<nant basedir="ByteFX.Data" target="build" buildfile="ByteFX.Data/ByteFX.Data.build"/>
-		<nant basedir="Commons.Xml.Relaxng" target="build" buildfile="Commons.Xml.Relaxng.build"/>
+		<nant basedir="Commons.Xml.Relaxng" target="build" buildfile="Commons.Xml.Relaxng/Commons.Xml.Relaxng.build"/>
 	</target>
 
 	<target name="test">

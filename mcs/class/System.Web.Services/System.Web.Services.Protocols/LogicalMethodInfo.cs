@@ -129,7 +129,7 @@ namespace System.Web.Services.Protocols {
 
 		public bool IsVoid {
 			get {
-				return method_info.ReturnType == typeof (System.Void);
+				return method_info.ReturnType == typeof (void);
 			}
 		}
 
