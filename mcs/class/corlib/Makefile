@@ -77,41 +77,14 @@ EXTRA_DISTFILES = \
 
 ifeq (net_2_0, $(PROFILE))
 # Net 2.0 corlib is built with in-tree 'gmcs'
+gmcs = $(topdir)/gmcs/gmcs.exe
+
 LIBRARY_COMPILE = MONO_PATH="../lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gmcs) $(USE_MCS_FLAGS) /define:NET_1_1 /define:NET_2_0
 else
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
 include ../../build/library.make
-
-gmcs = $(topdir)/gmcs/gmcs.exe
-net20bootstrapcorlib = $(topdir)/class/lib/net_2_0_bootstrap/mscorlib.dll
-net20bootstrapSystem = $(topdir)/class/lib/net_2_0_bootstrap/System.dll
-
-ifeq (net_2_0, $(PROFILE))
-$(the_lib): $(gmcs)
-
-# The in-tree 'gmcs' needs at least a stripped-down version of the net 2.0 corlib.dll.  We build that first.
-# make sure that $(gmcs) is up-to-date
-FORCE:
-$(gmcs): $(net20bootstrapcorlib) $(net20bootstrapSystem) FORCE
-	cd $(@D) && $(MAKE) $(@F)
-
-#net_2_0_bootstrap
-
-$(net20bootstrapcorlib): FORCE
-	$(MAKE) PROFILE=net_2_0_bootstrap
-
-$(net20bootstrapSystem): FORCE
-	cd $(topdir)/class/System && $(MAKE) PROFILE=net_2_0_bootstrap
-
-clean-local: clean-net20bootstrap
-clean-net20bootstrap:
-	$(MAKE) PROFILE=net_2_0_bootstrap clean
-	cd $(topdir)/class/System && $(MAKE) PROFILE=net_2_0_bootstrap clean
-	cd $(topdir)/gmcs && $(MAKE) clean
-
-endif
 
 # corlib_cmp
 

@@ -1,5 +1,8 @@
+*.dll
+*.mdb
 .makefrag
 .response
+TestResult*.xml
 corlib.dll
 corlib.pdb
 corlib_plattest.dll
@@ -8,4 +11,3 @@ corlib_plattest.pdb
 corlib_test.dll
 corlib_test.pdb
 library-deps.stamp
-*.mdb
