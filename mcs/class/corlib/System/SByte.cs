@@ -119,11 +119,13 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		[MonoTODO]
 		public static sbyte Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
-			// TODO: Implement me
-			throw new NotImplementedException ();
+			int tmpResult = Int32.Parse (s, style, fp);
+			if (tmpResult > SByte.MaxValue || tmpResult < SByte.MinValue)
+				throw new OverflowException ("Value too large or too small.");
+
+			return (sbyte) tmpResult;
 		}
 
 		public override string ToString ()

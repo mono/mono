@@ -114,10 +114,13 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		[MonoTODO]
 		public static short Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
-			throw new NotImplementedException ();
+			int tmpResult = Int32.Parse (s, style, fp);
+			if (tmpResult > Int16.MaxValue || tmpResult < Int16.MinValue)
+				throw new OverflowException ("Value too large or too small.");
+
+			return (short) tmpResult;
 		}
 
 		public override string ToString ()
