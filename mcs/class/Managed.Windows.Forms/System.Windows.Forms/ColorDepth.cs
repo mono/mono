@@ -23,9 +23,12 @@
 //	Peter Bartok	(pbartok@novell.com)
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ColorDepth.cs,v $
+// Revision 1.2  2004/08/15 23:23:56  ravindra
+// Added attribute.
+//
 // Revision 1.1  2004/07/15 20:05:28  pbartok
 // - Implemented ImageList and ImageList.ImageCollection classes
 // - Added ColorDepth enumeration
@@ -37,6 +40,7 @@
 // COMPLETE
 
 namespace System.Windows.Forms {
+	[Serializable]
 	public enum ColorDepth {
 		Depth4Bit	= 4,
 		Depth8Bit	= 8,
