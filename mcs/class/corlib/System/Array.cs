@@ -36,7 +36,9 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 namespace System
 {
 	[Serializable]
@@ -1094,5 +1096,321 @@ namespace System
 				return MemberwiseClone ();
 			}
 		}
+#if NET_2_0
+		[CLSCompliant (false)]
+		public static void Resize <T> (ref T [] arr, int sz) {
+			if (sz < 0)
+				throw new ArgumentOutOfRangeException ();
+			
+			if (arr == null) {
+				arr = new T [sz];
+				return;
+			}
+			
+			if (arr.Length == sz)
+				return;
+			
+			T [] a = new T [sz];
+			Array.Copy (arr, a, Math.Min (sz, arr.Length));
+			arr = a;
+		}
+		
+		[CLSCompliant (false)]
+		public static bool TrueForAll <T> (T [] array, Predicate <T> p)
+		{
+			if (array == null || p == null)
+				throw new ArgumentNullException ();
+			
+			foreach (T t in array)
+				if (! p (t))
+					return false;
+				
+			return true;
+		}
+		[CLSCompliant (false)]
+		public static void ForEach <T> (T [] array, Action <T> a)
+		{
+			if (array == null || a == null)
+				throw new ArgumentNullException ();
+			
+			foreach (T t in array)
+				a (t);
+		}
+		
+		[CLSCompliant (false)]
+		public static U [] ConvertAll <T, U> (T [] s, Converter <T, U> c)
+		{
+			if (s == null || c == null)
+				throw new ArgumentNullException ();
+			
+			U [] r = new U [s.Length];
+			
+			for (int i = 0; i < s.Length; i ++)
+				r [i] = c (s [i]);
+			
+			return r;
+		}
+		
+		[CLSCompliant (false)]
+		public static int FindLastIndex <T> (T [] a, Predicate <T> c)
+		{
+			if (a == null)
+				throw new ArgumentNullException ();
+			
+			return FindLastIndex <T> (a, 0, a.Length, c);
+		}
+		
+		[CLSCompliant (false)]
+		public static int FindLastIndex <T> (T [] a, int idx, Predicate <T> c)
+		{
+			if (a == null)
+				throw new ArgumentNullException ();
+			
+			return FindLastIndex <T> (a, idx, a.Length - idx, c);
+		}
+		
+		[CLSCompliant (false)]
+		public static int FindLastIndex <T> (T [] a, int idx, int cnt, Predicate <T> c)
+		{
+			if (a == null || c == null)
+				throw new ArgumentNullException ();
+			
+			if (idx > a.Length || idx + cnt > a.Length)
+				throw new ArgumentOutOfRangeException ();
+			
+			for (int i = idx + cnt - 1; i >= idx; i --)
+				if (c (a [i]))
+					return i;
+				
+			return -1;
+		}
+		
+		[CLSCompliant (false)]
+		public static int FindIndex <T> (T [] a, Predicate <T> c)
+		{
+			if (a == null)
+				throw new ArgumentNullException ();
+			
+			return FindIndex <T> (a, 0, a.Length, c);
+		}
+		
+		[CLSCompliant (false)]
+		public static int FindIndex <T> (T [] a, int idx, Predicate <T> c)
+		{
+			if (a == null)
+				throw new ArgumentNullException ();
+			
+			return FindIndex <T> (a, idx, a.Length - idx, c);
+		}
+		
+		[CLSCompliant (false)]
+		public static int FindIndex <T> (T [] a, int idx, int cnt, Predicate <T> c)
+		{
+			if (a == null || c == null)
+				throw new ArgumentNullException ();
+			
+			if (idx > a.Length || idx + cnt > a.Length)
+				throw new ArgumentOutOfRangeException ();
+			
+			for (int i = idx; i < idx + cnt; i ++)
+				if (c (a [i]))
+					return i;
+				
+			return -1;
+		}
+		
+		[CLSCompliant (false)]
+		public static int BinarySearch <T> (T [] a, T x)
+		{
+			if (a == null)
+				throw new ArgumentNullException ("a");
+			
+			return BinarySearch <T> (a, 0, a.Length, x, null);
+		}
+		
+		[CLSCompliant (false)]
+		public static int BinarySearch <T> (T [] a, T x, IComparer <T> c)
+		{
+			if (a == null)
+				throw new ArgumentNullException ("a");
+			
+			return BinarySearch <T> (a, 0, a.Length, x, c);
+		}
+		
+		[CLSCompliant (false)]
+		public static int BinarySearch <T> (T [] a, int offset, int length, T x)
+		{
+			return BinarySearch <T> (a, offset, length, x, null);
+		}
+		
+		[CLSCompliant (false)]
+		public static int BinarySearch <T> (T [] a, int offset, int length, T x, IComparer <T> c)
+		{
+			if (a == null)
+				throw new ArgumentNullException ("a");
+			if (offset > a.Length || (offset + length) > a.Length || offset < 0)
+				throw new ArgumentOutOfRangeException ();
+			
+			if (c == null)
+				c = Comparer <T>.Default;
+			
+			int iMin = offset;
+			int iMax = offset + length - 1;
+			int iCmp = 0;
+			try {
+				while (iMin <= iMax) {
+					int iMid = (iMin + iMax) / 2;
+					iCmp = c.Compare (x, a [iMid]);
+
+					if (iCmp == 0)
+						return iMid;
+					else if (iCmp < 0)
+						iMax = iMid - 1;
+					else
+						iMin = iMid + 1; // compensate for the rounding down
+				}
+			}
+			catch (Exception e) {
+				throw new InvalidOperationException (Locale.GetText ("Comparer threw an exception."), e);
+			}
+
+			return ~iMin;
+		}
+		
+		[CLSCompliant (false)]
+		public static int IndexOf <T> (T [] array, T value)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+	
+			return IndexOf (array, value, 0, array.Length);
+		}
+
+		[CLSCompliant (false)]
+		public static int IndexOf <T> (T [] array, T value, int startIndex)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			return IndexOf (array, value, startIndex, array.Length - startIndex);
+		}
+
+		[CLSCompliant (false)]
+		public static int IndexOf <T> (T [] array, T value, int startIndex, int count)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			
+			// re-ordered to avoid possible integer overflow
+			if (count < 0 || startIndex < array.GetLowerBound (0) || startIndex - 1 > array.GetUpperBound (0) - count)
+				throw new ArgumentOutOfRangeException ();
+
+			int max = startIndex + count;
+			for (int i = startIndex; i < max; i++) {
+				if (Object.Equals (array [i], value))
+				if (Object.Equals (array [i], value))
+					return i;
+			}
+
+			return -1;
+		}
+		
+		[CLSCompliant (false)]
+		public static int LastIndexOf <T> (T [] array, T value)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			return LastIndexOf (array, value, array.Length - 1);
+		}
+
+		[CLSCompliant (false)]
+		public static int LastIndexOf <T> (T [] array, T value, int startIndex)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			return LastIndexOf (array, value, startIndex, startIndex - array.Length + 1);
+		}
+		
+		[CLSCompliant (false)]
+		public static int LastIndexOf <T> (T [] array, T value, int startIndex, int count)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			
+			if (count < 0 || startIndex > array.Length || startIndex - count + 1 < 0)
+				throw new ArgumentOutOfRangeException ();
+
+			for (int i = startIndex; i >= startIndex - count + 1; i--) {
+				if (Object.Equals (array [i], value))
+					return i;
+			}
+
+			return -1;
+		}
+		
+		[CLSCompliant (false)]
+		public static T [] FindAll <T> (T [] a, Predicate <T> p)
+		{
+			if (a == null || p == null)
+				throw new ArgumentNullException ();
+			
+			int pos = 0;
+			T [] d = new T [a.Length];
+			foreach (T t in a)
+				if (p (t))
+					d [pos ++] = t;
+			
+			Resize <T> (ref a, pos);
+			return a;
+		}
+
+		[CLSCompliant (false)]
+		public static bool Exists <T> (T [] a, Predicate <T> p)
+		{
+			if (a == null || p == null)
+				throw new ArgumentNullException ();
+			
+			foreach (T t in a)
+				if (p (t))
+					return true;
+			return false;
+		}
+		
+#if FIXME
+		[CLSCompliant (false)]
+		public static Nullable <T> Find <T> (T [] a, Predicate <T> p)
+		{
+			if (a == null || p == null)
+				throw new ArgumentNullException ();
+			
+			foreach (T t in a)
+				if (p (t))
+					return new Nullable <T> (t);
+				
+			return default (Nullable <T>);
+		}
+		
+		[CLSCompliant (false)]
+		public static Nullable <T> FindLast <T> (T [] a, Predicate <T> p)
+		{
+			if (a == null || p == null)
+				throw new ArgumentNullException ();
+			
+			for (int i = a.Length - 1; i >= 0; i--)
+				if (p (a [i]))
+					return new Nullable <T> (a [i]);
+				
+			return default (Nullable <T>);
+		}
+#endif
+		
+		// Fixme: wtf is constrained about this
+		public static void ConstrainedCopy (Array s, int s_i, Array d, int d_i, int c)
+		{
+			Copy (s, s_i, d, d_i, c);
+		}		
+#endif
 	}
 }
