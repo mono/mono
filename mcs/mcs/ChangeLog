@@ -1,3 +1,24 @@
+2002-11-23  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.MemberLookup): Added additional
+	`qualifier_type' argument which is used when we're being called
+	from MemberAccess.DoResolve() and null if we're called from a
+	SimpleName lookup.
+	(Expression.MemberLookupFailed): New method to report errors; this
+	does the CS1540 check and reports the correct error message.
+
+	* typemanager.cs (MemberLookup): Added additional `qualifier_type'
+	argument for the CS1540 check and redone the way how we're dealing
+	with private members.  See the comment in the source code for details.
+	(FilterWithClosure): Reverted this back to revision 1.197; renamed
+	`closure_start_type' to `closure_qualifier_type' and check whether
+	it's not null.  It was not this filter being broken, it was just
+	being called with the wrong arguments.
+
+	* expression.cs (MemberAccess.DoResolve): use MemberLookupFinal()
+	and pass it the correct `qualifier_type'; this also does the error
+	handling for us.
+
 2002-11-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation.EmitParams): If the we are dealing

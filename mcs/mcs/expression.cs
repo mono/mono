@@ -4512,7 +4512,7 @@ namespace Mono.CSharp {
 				return this;
 			
 			Expression ml;
-			ml = MemberLookupFinal (ec, type, ".ctor",
+			ml = MemberLookupFinal (ec, null, type, ".ctor",
 						MemberTypes.Constructor,
 						AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
@@ -5846,53 +5846,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
-
-			if (member_lookup == null){
-				// Error has already been reported.
-				if (errors < Report.Errors)
-					return null;
-
-				//
-				// Try looking the member up from the same type, if we find
-				// it, we know that the error was due to limited visibility
-				//
-				object lookup = TypeManager.MemberLookup (
-					expr_type, expr_type, AllMemberTypes, AllBindingFlags |
-					BindingFlags.NonPublic, Identifier);
-				if (lookup == null)
-					Error (117, "`" + expr_type + "' does not contain a " +
-					       "definition for `" + Identifier + "'");
-				else if ((expr_type != ec.ContainerType) &&
-					 ec.ContainerType.IsSubclassOf (expr_type)){
-
-					// Although a derived class can access protected members of
-					// its base class it cannot do so through an instance of the
-					// base class (CS1540).  If the expr_type is a parent of the
-					// ec.ContainerType and the lookup succeeds with the latter one,
-					// then we are in this situation.
-
-					lookup = TypeManager.MemberLookup (
-						ec.ContainerType, ec.ContainerType, AllMemberTypes,
-						AllBindingFlags, Identifier);
-
-					if (lookup != null)
-						Error (1540, "Cannot access protected member `" +
-						       expr_type + "." + Identifier + "' " +
-						       "via a qualifier of type `" +
-						       TypeManager.CSharpName (expr_type) + "'; the " +
-						       "qualifier must be of type `" +
-						       TypeManager.CSharpName (ec.ContainerType) + "' " +
-						       "(or derived from it)");
-					else
-						Error (122, "`" + expr_type + "." + Identifier + "' " +
-						       "is inaccessible because of its protection level");
-				} else
-					Error (122, "`" + expr_type + "." + Identifier + "' " +
-					       "is inaccessible because of its protection level");
-					      
+			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, Identifier, loc);
+			if (member_lookup == null)
 				return null;
-			}
 
 			if (member_lookup is TypeExpr){
 				member_lookup.Resolve (ec, ResolveFlags.Type);
@@ -6510,7 +6466,7 @@ namespace Mono.CSharp {
 			string p_name = TypeManager.IndexerPropertyName (lookup_type);
 
 			MemberInfo [] mi = TypeManager.MemberLookup (
-				caller_type, lookup_type, MemberTypes.Property,
+				caller_type, caller_type, lookup_type, MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance |
 				BindingFlags.DeclaredOnly, p_name);
 
@@ -6799,11 +6755,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec, base_type, base_type, member,
+			member_lookup = MemberLookup (ec, ec.ContainerType, null, base_type, member,
 						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
-				Error (117, TypeManager.CSharpName (base_type) + " does not " +
-				       "contain a definition for `" + member + "'");
+				MemberLookupFailed (ec, base_type, base_type, member, null, loc);
 				return null;
 			}
 

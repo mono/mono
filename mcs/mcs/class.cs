@@ -2443,7 +2443,7 @@ namespace Mono.CSharp {
 				t = ec.ContainerType;
 
 			parent_constructor_group = Expression.MemberLookup (
-				ec, t, t, ".ctor", 
+				ec, t, null, t, ".ctor", 
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				loc);
@@ -3140,8 +3140,8 @@ namespace Mono.CSharp {
 			
 			if (ec.ContainerType.BaseType != null) {
 				Expression member_lookup = Expression.MemberLookup (
-					ec, ec.ContainerType.BaseType, ec.ContainerType.BaseType, "Finalize",
-					MemberTypes.Method, Expression.AllBindingFlags, Location);
+					ec, ec.ContainerType.BaseType, null, ec.ContainerType.BaseType,
+					"Finalize", MemberTypes.Method, Expression.AllBindingFlags, Location);
 
 				if (member_lookup != null){
 					MethodGroupExpr parent_destructor = ((MethodGroupExpr) member_lookup);

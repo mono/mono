@@ -318,16 +318,8 @@ namespace Mono.CSharp {
 				SimpleName s = (SimpleName) e;
 
 				if ((flags & ResolveFlags.SimpleName) == 0) {
-
-					object lookup = TypeManager.MemberLookup (
-						ec.ContainerType, ec.ContainerType, AllMemberTypes,
-						AllBindingFlags | BindingFlags.NonPublic, s.Name);
-					if (lookup != null)
-						Error (122, "`" + s.Name + "' " +
-						       "is inaccessible because of its protection level");
-					else
-						Error (103, "The name `" + s.Name + "' could not be " +
-						       "found in `" + ec.DeclSpace.Name + "'");
+					MemberLookupFailed (ec, null, ec.ContainerType, s.Name,
+							    ec.DeclSpace.Name, loc);
 					return null;
 				}
 
@@ -406,11 +398,8 @@ namespace Mono.CSharp {
 			if (e != null){
 				if (e is SimpleName){
 					SimpleName s = (SimpleName) e;
-
-					Report.Error (
-						103, loc,
-						"The name `" + s.Name + "' could not be found in `" +
-						ec.DeclSpace.Name + "'");
+					MemberLookupFailed (ec, null, ec.ContainerType, s.Name,
+							    ec.DeclSpace.Name, loc);
 					return null;
 				}
 
@@ -548,26 +537,24 @@ namespace Mono.CSharp {
 		// FIXME: Potential optimization, have a static ArrayList
 		//
 
-		public static Expression MemberLookup (EmitContext ec, Type t, string name,
+		public static Expression MemberLookup (EmitContext ec, Type queried_type, string name,
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, t, name, mt, bf, loc);
+			return MemberLookup (ec, ec.ContainerType, null, queried_type, name, mt, bf, loc);
 		}
 
 		//
-		// Lookup type `t' for code in class `invocation_type'.  Note that it's important
-		// to set `invocation_type' correctly since this method also checks whether the
-		// invoking class is allowed to access the member in class `t'.  When you want to
-		// explicitly do a lookup in the base class, you must set both `t' and `invocation_type'
-		// to the base class (although a derived class can access protected members of its base
-		// class it cannot do so through an instance of the base class (error CS1540)).
-		// 
+		// Lookup type `queried_type' for code in class `container_type' with a qualifier of
+		// `qualifier_type' or null to lookup members in the current class.
+		//
 
-		public static Expression MemberLookup (EmitContext ec, Type invocation_type, Type t,
-						       string name, MemberTypes mt, BindingFlags bf,
-						       Location loc)
+		public static Expression MemberLookup (EmitContext ec, Type container_type,
+						       Type qualifier_type, Type queried_type,
+						       string name, MemberTypes mt,
+						       BindingFlags bf, Location loc)
 		{
-			MemberInfo [] mi = TypeManager.MemberLookup (invocation_type, t, mt, bf, name);
+			MemberInfo [] mi = TypeManager.MemberLookup (container_type, qualifier_type,
+								     queried_type, mt, bf, name);
 
 			if (mi == null)
 				return null;
@@ -596,15 +583,24 @@ namespace Mono.CSharp {
 			BindingFlags.Static |
 			BindingFlags.Instance;
 
-		public static Expression MemberLookup (EmitContext ec, Type t, string name, Location loc)
+		public static Expression MemberLookup (EmitContext ec, Type queried_type,
+						       string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, t, name,
+			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
 					     AllMemberTypes, AllBindingFlags, loc);
 		}
 
-		public static Expression MethodLookup (EmitContext ec, Type t, string name, Location loc)
+		public static Expression MemberLookup (EmitContext ec, Type qualifier_type,
+						       Type queried_type, string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, t, name,
+			return MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type,
+					     name, AllMemberTypes, AllBindingFlags, loc);
+		}
+
+		public static Expression MethodLookup (EmitContext ec, Type queried_type,
+						       string name, Location loc)
+		{
+			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
 					     MemberTypes.Method, AllBindingFlags, loc);
 		}
 
@@ -614,20 +610,24 @@ namespace Mono.CSharp {
 		///   look for private members and display a useful debugging message if we
 		///   find it.
 		/// </summary>
-		public static Expression MemberLookupFinal (EmitContext ec, Type t, string name, 
-							    Location loc)
+		public static Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
+							    Type queried_type, string name, Location loc)
 		{
-			return MemberLookupFinal (ec, t, name, MemberTypes.Method, AllBindingFlags, loc);
+			return MemberLookupFinal (ec, qualifier_type, queried_type, name,
+						  AllMemberTypes, AllBindingFlags, loc);
 		}
 
-		public static Expression MemberLookupFinal (EmitContext ec, Type t, string name,
-							    MemberTypes mt, BindingFlags bf, Location loc)
+		public static Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
+							    Type queried_type, string name,
+							    MemberTypes mt, BindingFlags bf,
+							    Location loc)
 		{
 			Expression e;
 
 			int errors = Report.Errors;
 
-			e = MemberLookup (ec, ec.ContainerType, t, name, mt, bf, loc);
+			e = MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type,
+					  name, mt, bf, loc);
 
 			if (e != null)
 				return e;
@@ -635,20 +635,63 @@ namespace Mono.CSharp {
 			// Error has already been reported.
 			if (errors < Report.Errors)
 				return null;
-			
-			e = MemberLookup (ec, t, name, AllMemberTypes,
-					  AllBindingFlags | BindingFlags.NonPublic, loc);
-			if (e == null){
-				Report.Error (
-					117, loc, "`" + t + "' does not contain a definition " +
-					"for `" + name + "'");
-			} else {
-				Report.Error (
-					122, loc, "`" + t + "." + name +
-					"' is inaccessible due to its protection level");
-			}
-			
+
+			MemberLookupFailed (ec, qualifier_type, queried_type, name, null, loc);
 			return null;
+		}
+
+		public static void MemberLookupFailed (EmitContext ec, Type qualifier_type,
+						       Type queried_type, string name,
+						       string class_name, Location loc)
+		{
+			object lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
+								  AllMemberTypes, AllBindingFlags |
+								  BindingFlags.NonPublic, name);
+
+			if (lookup == null) {
+				if (class_name != null)
+					Report.Error (103, loc, "The name `" + name + "' could not be " +
+						      "found in `" + class_name + "'");
+				else
+					Report.Error (
+						117, loc, "`" + queried_type + "' does not contain a " +
+						"definition for `" + name + "'");
+				return;
+			}
+
+			if ((qualifier_type != null) && (qualifier_type != ec.ContainerType) &&
+			    ec.ContainerType.IsSubclassOf (qualifier_type)) {
+				// Although a derived class can access protected members of
+				// its base class it cannot do so through an instance of the
+				// base class (CS1540).  If the qualifier_type is a parent of the
+				// ec.ContainerType and the lookup succeeds with the latter one,
+				// then we are in this situation.
+
+				lookup = TypeManager.MemberLookup (
+					ec.ContainerType, ec.ContainerType, ec.ContainerType,
+					AllMemberTypes, AllBindingFlags, name);
+
+				if (lookup != null) {
+					Report.Error (
+						1540, loc, "Cannot access protected member `" +
+						TypeManager.CSharpName (qualifier_type) + "." +
+						name + "' " + "via a qualifier of type `" +
+						TypeManager.CSharpName (qualifier_type) + "'; the " +
+						"qualifier must be of type `" +
+						TypeManager.CSharpName (ec.ContainerType) + "' " +
+						"(or derived from it)");
+					return;
+				}
+			}
+
+			if (qualifier_type != null)
+				Report.Error (
+					122, loc, "`" + TypeManager.CSharpName (qualifier_type) + "." +
+					name + "' is inaccessible due to its protection level");
+			else
+				Report.Error (
+					122, loc, "`" + name + "' is inaccessible due to its " +
+					"protection level");
 		}
 
 		static public MemberInfo GetFieldFromEvent (EventExpr event_expr)
@@ -4172,7 +4215,7 @@ namespace Mono.CSharp {
 			MemberInfo[] group;
 
 			group = TypeManager.MemberLookup (
-				invocation_type, PropertyInfo.DeclaringType,
+				invocation_type, invocation_type, PropertyInfo.DeclaringType,
 				MemberTypes.Method, flags, accessor_name + "_" + PropertyInfo.Name);
 
 			//

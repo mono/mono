@@ -1940,7 +1940,7 @@ public class TypeManager {
 	//
 	static Type     closure_invocation_type;
 	static Type     closure_queried_type;
-	static Type     closure_start_type;
+	static Type     closure_qualifier_type;
 
 	//
 	// The assembly that defines the type is that is calling us
@@ -1959,9 +1959,9 @@ public class TypeManager {
 		//
 
 		if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
-				return false;
+			return false;
 
-		if ((closure_start_type == closure_invocation_type) &&
+		if (((closure_qualifier_type == null) || (closure_qualifier_type == closure_invocation_type)) &&
 		    (m.DeclaringType == closure_invocation_type))
 			return true;
 
@@ -2005,10 +2005,11 @@ public class TypeManager {
 
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
-				if (!mb.IsStatic && (closure_invocation_type != closure_start_type) &&
-				    closure_start_type != mb.DeclaringType)
+				if (!mb.IsStatic && (closure_invocation_type != closure_qualifier_type) &&
+				    (closure_qualifier_type != null) &&
+				    closure_invocation_type.IsSubclassOf (closure_qualifier_type))
 					return false;
-				
+
 				return true;
 			}
 
@@ -2052,8 +2053,9 @@ public class TypeManager {
 
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
-				if (!fi.IsStatic && (closure_invocation_type != closure_start_type) &&
-				    closure_start_type != fi.DeclaringType)
+				if (!fi.IsStatic && (closure_invocation_type != closure_qualifier_type) &&
+				    (closure_qualifier_type != null) &&
+				    closure_invocation_type.IsSubclassOf (closure_qualifier_type))
 					return false;
 
 				return true;
@@ -2074,49 +2076,81 @@ public class TypeManager {
 
 	//
 	// Looks up a member called `name' in the `queried_type'.  This lookup
-	// is done by code that is contained in the definition for `invocation_type'.
+	// is done by code that is contained in the definition for `invocation_type'
+	// through a qualifier of type `qualifier_type' (or null if there is no qualifier).
+	//
+	// `invocation_type' is used to check whether we're allowed to access the requested
+	// member wrt its protection level.
+	//
+	// When called from MemberAccess, `qualifier_type' is the type which is used to access
+	// the requested member (`class B { A a = new A (); a.foo = 5; }'; here invocation_type
+	// is B and qualifier_type is A).  This is used to do the CS1540 check.
+	//
+	// When resolving a SimpleName, `qualifier_type' is null.
+	//
+	// The `qualifier_type' is used for the CS1540 check; it's normally either null or
+	// the same than `queried_type' - except when we're being called from BaseAccess;
+	// in this case, `invocation_type' is the current type and `queried_type' the base
+	// type, so this'd normally trigger a CS1540.
 	//
 	// The binding flags are `bf' and the kind of members being looked up are `mt'
+	//
+	// The return value always includes private members which code in `invocation_type'
+	// is allowed to access (using the specified `qualifier_type' if given); only use
+	// BindingFlags.NonPublic to bypass the permission check.
 	//
 	// Returns an array of a single element for everything but Methods/Constructors
 	// that might return multiple matches.
 	//
-	public static MemberInfo [] MemberLookup (Type invocation_type, Type queried_type, 
-						  MemberTypes mt, BindingFlags original_bf, string name)
+	public static MemberInfo [] MemberLookup (Type invocation_type, Type qualifier_type,
+						  Type queried_type,  MemberTypes mt,
+						  BindingFlags original_bf, string name)
 	{
 		Timer.StartTimer (TimerType.MemberLookup);
 
-		MemberInfo[] retval = RealMemberLookup (invocation_type, queried_type,
-							mt, original_bf, name);
+		MemberInfo[] retval = RealMemberLookup (invocation_type, qualifier_type,
+							queried_type, mt, original_bf, name);
 
 		Timer.StopTimer (TimerType.MemberLookup);
 
 		return retval;
 	}
 
-	static MemberInfo [] RealMemberLookup (Type invocation_type, Type queried_type, 
-					       MemberTypes mt, BindingFlags original_bf, string name)
+	static MemberInfo [] RealMemberLookup (Type invocation_type, Type qualifier_type,
+					       Type queried_type, MemberTypes mt,
+					       BindingFlags original_bf, string name)
 	{
 		BindingFlags bf = original_bf;
 		
 		ArrayList method_list = null;
 		Type current_type = queried_type;
 		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
-		bool private_ok;
-		bool always_ok_flag = false;
 		bool skip_iface_check = true, used_cache = false;
+		bool always_ok_flag = false;
 
 		closure_name = name;
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
-		closure_start_type = queried_type;
+		closure_qualifier_type = qualifier_type;
 
 		//
 		// If we are a nested class, we always have access to our container
 		// type names
 		//
-		if (invocation_type != null)
-			always_ok_flag = IsSubclassOrNestedChildOf (invocation_type, queried_type);
+		if (invocation_type != null){
+			string invocation_name = invocation_type.FullName;
+			if (invocation_name.IndexOf ('+') != -1){
+				string container = queried_type.FullName + "+";
+				int container_length = container.Length;
+
+				if (invocation_name.Length > container_length){
+					string shared = invocation_name.Substring (0, container_length);
+				
+					if (shared == container)
+						always_ok_flag = true;
+				}
+			}
+		}
 		
 		do {
 			MemberList list;
@@ -2130,20 +2164,15 @@ public class TypeManager {
 			//    public, private and protected (internal does not come into the
 			//    equation)
 			//
-			if (invocation_type != null){
-				if (invocation_type == current_type){
-					private_ok = true;
-				} else
-					private_ok = always_ok_flag;
+			if ((invocation_type != null) &&
+			    ((invocation_type == current_type) ||
+			     IsNestedChildOf (invocation_type, current_type)) ||
+			    always_ok_flag)
+				bf = original_bf | BindingFlags.NonPublic;
+			else
+				bf = original_bf;
 
-				if (private_ok || invocation_type.IsSubclassOf (current_type))
-					bf = original_bf | BindingFlags.NonPublic;
-			} else {
-				private_ok = false;
-				bf = original_bf & ~BindingFlags.NonPublic;
-			}
-
-			closure_private_ok = private_ok;
+			closure_private_ok = (bf & BindingFlags.NonPublic) != 0;
 			closure_queried_type = current_type;
 
 			Timer.StopTimer (TimerType.MemberLookup);
@@ -2234,7 +2263,7 @@ public class TypeManager {
 		foreach (Type itype in ifaces){
 			MemberInfo [] x;
 
-			x = MemberLookup (null, itype, mt, bf, name);
+			x = MemberLookup (null, null, itype, mt, bf, name);
 			if (x != null)
 				return x;
 		}
