@@ -1,5 +1,11 @@
 2004-08-26  Marek Safar  <marek.safar@seznam.cz>
 
+	* ecore.cs (Constantify): Get underlying type via
+	System.Enum.GetUnderlyingType to avoid StackOverflow on the
+	Windows in special cases.
+
+2004-08-26  Marek Safar  <marek.safar@seznam.cz>
+
 	* typemanager.cs (GetAddMethod): Used GetAddMethod (true)
 	for obtaining also private methods.
 	(GetRemoveMethod): Used GetRemoveMethod (true)

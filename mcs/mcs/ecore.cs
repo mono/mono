@@ -472,7 +472,7 @@ namespace Mono.CSharp {
 			else if (TypeManager.IsEnumType (t)){
 				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
 				if (real_type == t)
-					real_type = real_type.UnderlyingSystemType;
+					real_type = System.Enum.GetUnderlyingType (real_type);
 
 				Constant e = Constantify (v, real_type);
 
