@@ -1,5 +1,9 @@
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* string-icalls.c: if we're not trimming, return the same string.
+
+2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* image.c:
 	(mono_image_open): increment the ref_count inside the critical section.
 
