@@ -1,3 +1,7 @@
+2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: small fix from George Kodinov for Combine when ~ is used. 
+
 2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: ~ is not always /. Fixed.

@@ -132,6 +132,8 @@ namespace System.Web.Util
 						relPath = relPath.Substring (2);
 						slash = "";
 					}
+
+					return Reduce (HttpRuntime.AppDomainAppVirtualPath + slash + relPath);
 				}
 
 				return Reduce (basePath + slash + relPath);
