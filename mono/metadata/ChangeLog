@@ -1,3 +1,8 @@
+2004-01-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_get_custom_attrs): Add support
+	for Modules.
+
 2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_string_builder_to_utf8): Fix stringbuilder 
