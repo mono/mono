@@ -1,4 +1,8 @@
 
+Tue Apr 15 11:18:46 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: don't overwrite symbolic registers.
+
 Mon Apr 14 17:41:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* inssel-x86.brg: fix conversion from long to float.
