@@ -1,3 +1,7 @@
+2004-04-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added DataSetReadXmlTest.cs. (specific to ReadXml() in DataSet).
+
 2004-04-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DataSetTest.cs : More path fix. Don't expect End of Line = "\n".
