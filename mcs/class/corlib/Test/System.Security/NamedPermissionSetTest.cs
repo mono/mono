@@ -2,9 +2,29 @@
 // NamedPermissionSetTest.cs - NUnit Test Cases for NamedPermissionSet
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -74,8 +94,48 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+		public void Copy ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name);
+			nps.Description = sentinel;
+			nps.AddPermission (new SecurityPermission (SecurityPermissionFlag.Assertion));
+			NamedPermissionSet copy = (NamedPermissionSet)nps.Copy ();
+			AssertEquals ("Name", nps.Name, copy.Name);
+			AssertEquals ("Description", nps.Description, copy.Description);
+			AssertEquals ("Count", nps.Count, copy.Count);
+		}
+
+		[Test]
+		public void Copy_Name ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name);
+			nps.Description = sentinel;
+			nps.AddPermission (new SecurityPermission (SecurityPermissionFlag.Assertion));
+			NamedPermissionSet copy = (NamedPermissionSet)nps.Copy ("Copy");
+			AssertEquals ("Name", "Copy", copy.Name);
+			AssertEquals ("Description", nps.Description, copy.Description);
+			AssertEquals ("Count", nps.Count, copy.Count);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Copy_Name_Null ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name);
+			NamedPermissionSet copy = (NamedPermissionSet)nps.Copy (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Copy_Name_Empty ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name);
+			NamedPermissionSet copy = (NamedPermissionSet)nps.Copy (String.Empty);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		public void FromXmlNull () 
+		public void FromXml_Null () 
 		{
 			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
 			nps.FromXml (null);
@@ -83,7 +143,7 @@ namespace MonoTests.System.Security {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void FromXmlInvalidPermission () 
+		public void FromXml_InvalidPermission () 
 		{
 			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
 			SecurityElement se = nps.ToXml ();
@@ -96,8 +156,45 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromXml_WrongTagCase ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
+			SecurityElement se = nps.ToXml ();
+			se.Tag = se.Tag.ToUpper (); // instead of PermissionSet
+			nps.FromXml (se);
+		}
+
+		[Test]
+		public void FromXml_WrongClass ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
+			SecurityElement se = nps.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", "Wrong" + se.Attribute ("class"));
+			w.AddAttribute ("version", se.Attribute ("version"));
+			w.AddAttribute ("Name", se.Attribute ("Name"));
+			nps.FromXml (w);
+			// doesn't care of the class name at that stage
+			// anyway the class has already be created so...
+		}
+
+		[Test]
+		public void FromXml_NoClass ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
+			SecurityElement se = nps.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("version", se.Attribute ("version"));
+			nps.FromXml (w);
+			// doesn't even care of the class attribute presence
+		}
+
+		[Test]
 		// [ExpectedException (typeof (ArgumentException))]
-		public void FromXmlWrongVersion () 
+		public void FromXml_WrongVersion () 
 		{
 			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
 			SecurityElement se = nps.ToXml ();
@@ -108,6 +205,45 @@ namespace MonoTests.System.Security {
 			se2.AddAttribute ("Name", se.Attribute ("Name"));
 			nps.FromXml (se2);
 			// wow - here we accept a version 2 !!!
+		}
+
+		[Test]
+		public void FromXml_NoVersion ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
+			SecurityElement se = nps.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			w.AddAttribute ("Name", se.Attribute ("Name"));
+			nps.FromXml (w);
+		}
+
+		[Test]
+		public void FromXml_NoName ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
+			SecurityElement se = nps.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			w.AddAttribute ("version", "1");
+			nps.FromXml (w);
+
+			// having a null name can badly influence the rest of the class code
+			AssertNull ("Name", nps.Name);
+			NamedPermissionSet copy = (NamedPermissionSet) nps.Copy ();
+			AssertNull ("Copy.Name", copy.Name);
+
+			copy = nps.Copy ("name");
+			AssertEquals ("Copy(Name).Name", "name", copy.Name);
+
+			se = nps.ToXml ();
+			AssertNull ("Name attribute", se.Attribute ("Name"));
+#if NET_2_0
+			AssertEquals ("GetHashCode", 0, nps.GetHashCode ());
+			Assert ("Equals-self", nps.Equals (nps));
+#endif
 		}
 
 		[Test]
@@ -138,7 +274,7 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-		public void ToXmlNone () 
+		public void ToXml_None () 
 		{
 			NamedPermissionSet ps = new NamedPermissionSet (name, PermissionState.None);
 			ps.Description = sentinel;
@@ -152,7 +288,7 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-		public void ToXmlUnrestricted () 
+		public void ToXml_Unrestricted () 
 		{
 			NamedPermissionSet ps = new NamedPermissionSet (name, PermissionState.Unrestricted);
 			SecurityElement se = ps.ToXml ();
@@ -163,5 +299,41 @@ namespace MonoTests.System.Security {
 			AssertNull ("Unrestricted.Description", (se.Attributes ["Description"] as string));
 			AssertEquals ("Unrestricted.Unrestricted", "true", (se.Attributes ["Unrestricted"] as string));
 		}
+#if NET_2_0
+		[Test]
+		public void Equals () 
+		{
+			NamedPermissionSet psn = new NamedPermissionSet (name, PermissionState.None);
+			NamedPermissionSet psu = new NamedPermissionSet (name, PermissionState.Unrestricted);
+			Assert ("psn!=psu", !psn.Equals (psu));
+			Assert ("psu!=psn", !psu.Equals (psn));
+			NamedPermissionSet cpsn = (NamedPermissionSet) psn.Copy ();
+			Assert ("cpsn==psn", cpsn.Equals (psn));
+			Assert ("psn==cpsn", psn.Equals (cpsn));
+			NamedPermissionSet cpsu = (NamedPermissionSet) psu.Copy ();
+			Assert ("cpsu==psu", cpsu.Equals (psu));
+			Assert ("psu==cpsu", psu.Equals (cpsu));
+			cpsn.Description = sentinel;
+			Assert ("cpsn+desc==psn", cpsn.Equals (psn));
+			Assert ("psn==cpsn+desc", psn.Equals (cpsn));
+			cpsn.Description = sentinel;
+			Assert ("cpsu+desc==psu", cpsu.Equals (psu));
+			Assert ("psu==cpsu+desc", psu.Equals (cpsu));
+		}
+
+		[Test]
+		public void GetHashCode_ () 
+		{
+			NamedPermissionSet psn = new NamedPermissionSet (name, PermissionState.None);
+			int nhc = psn.GetHashCode ();
+			NamedPermissionSet psu = new NamedPermissionSet (name, PermissionState.Unrestricted);
+			int uhc = psu.GetHashCode ();
+			Assert ("GetHashCode-1", nhc != uhc);
+			psn.Description = sentinel;
+			Assert ("GetHashCode-2", psn.GetHashCode () == nhc);
+			psu.Description = sentinel;
+			Assert ("GetHashCode-3", psu.GetHashCode () == uhc);
+		}
+#endif
 	}
 }

@@ -1,3 +1,13 @@
+2003-08-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NamedPermissionTest.cs: Added unit tests for Copy(), Copy(name), 
+	more tests for From/ToXml and Equals/GetHashCode (for NET_2_0).
+	* PermissionSetTest.cs: Added new unit tests for AddPermission, 
+	ContainsNonCodeAccessPermissions, partial tests for undocumented
+	ConvertPermissionSet, Copy, CopyTo, GetHashCode (for NET_2_0),
+	GetPermission, Intersect, IsSubset, RemovePermission, SetPermission 
+	and Union.
+
 2003-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManagerTest.cs: More policy resolution tests when using host
