@@ -1,3 +1,10 @@
+2004-03-22 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.c: do not insert non-virtual methods in the vtable.
+	* icall.c, mono-debug-debugger.c, object.c: if method->slot == -1,
+	that means the method is non-virtual. This never would have
+	happened before.
+
 2004-03-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* profiler.c: Added lock for accessing coverage_hash.
