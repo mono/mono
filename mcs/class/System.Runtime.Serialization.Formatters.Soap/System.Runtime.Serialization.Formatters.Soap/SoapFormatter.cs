@@ -26,6 +26,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private SerializationBinder _binder;
 		private StreamingContext _context;
 		private ISurrogateSelector _selector;
+		private FormatterAssemblyStyle _assemblyFormat = FormatterAssemblyStyle.Full;
 		private ISoapMessage _topObject;
 		
 		public SoapFormatter() {
@@ -112,5 +113,17 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				_topObject = value;
 			}
 		}
+		
+		[MonoTODO ("Interpret this")]
+		public FormatterAssemblyStyle AssemblyFormat
+		{
+			get {
+				return _assemblyFormat;
+			}
+			set {
+				_assemblyFormat = value;
+			}
+		}
+
 	}
 }

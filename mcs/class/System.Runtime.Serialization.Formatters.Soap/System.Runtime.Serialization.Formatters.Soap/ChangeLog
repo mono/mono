@@ -1,3 +1,7 @@
+2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapFormatter.cs: Added AssemblyFormat property.
+
 2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ObjectWriter.cs: Added FIXME
