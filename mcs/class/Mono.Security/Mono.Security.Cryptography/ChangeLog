@@ -1,3 +1,13 @@
+2003-11-27  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* MD4.cs: New. Asbtract class for all MD4 implementations. WARNING:
+	The MD4 algorithm is BROKEN (collisions) and SHOULDN'T be used in 
+	NEW designs. However some higher level algorithms (like NTLM) requires 
+	MD4 (and may even be secure using it). YOU'RE WARNED!
+	* MD4Managed.cs: New. Managed implementation of MD4 (RFC1320).
+	* PKCS8.cs: New. Added Private-Key Information Syntax Standard as a 
+	building block for PKCS12.
+
 2003-10-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConvert.cs: Fixed strongname generation for small exponents 
