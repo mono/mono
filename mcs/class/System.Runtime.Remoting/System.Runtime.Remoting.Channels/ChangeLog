@@ -1,3 +1,19 @@
+2004-04-30  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapClientFormatterSink.cs: The deserialized message can be actually a
+	  SoapFault. Taken this into account.
+	* SoapMessageFormatter.cs: Added FormatFault method. In FormatResponse(),
+	  the array of output parameters must also include placeholders for the
+	  input parameters (set to null). 
+	  ParameterInfo.IsOut does not correspond to the "out" keyword in C#, but
+	  to the OutAttribute applied to parameters. There can be input parameters
+	  with the OutAttribute. Fixed this in a couple of places.
+	  Added CreateSoapMessage method, which creates a SoapMessage including
+	  the parameter types (only for responses, since for requests the target
+	  method is not known).
+	* SoapServerFormatterSink.cs: Use soapMsgFormatter.CreateSoapMessage to
+	  create the SoapMessage.
+
 ﻿2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryClientFormatterSink.cs: Don't set the request uri here, this will
