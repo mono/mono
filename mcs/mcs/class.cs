@@ -2672,6 +2672,7 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
 		ReturnParameter return_attributes;
+		bool should_ignore;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -2886,6 +2887,8 @@ namespace Mono.CSharp {
 			if (!MethodData.Define (container))
 				return false;
 
+			should_ignore = MethodData.ShouldIgnore ();
+
 			//
 			// Setup iterator if we are one
 			//
@@ -2988,6 +2991,11 @@ namespace Mono.CSharp {
 		public ObsoleteAttribute GetObsoleteAttribute ()
 		{
 			return GetObsoleteAttribute (ds);
+		}
+
+		public bool ShouldIgnore ()
+		{
+			return should_ignore;
 		}
 		#endregion
 	}
@@ -3512,6 +3520,7 @@ namespace Mono.CSharp {
 
 		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
 		ObsoleteAttribute GetObsoleteAttribute ();
+		bool ShouldIgnore ();
 	}
 
 	//
@@ -3672,13 +3681,13 @@ namespace Mono.CSharp {
 		//
 		// Checks whether this method should be ignored due to its Conditional attributes.
 		//
-		bool ShouldIgnore (Location loc)
+		public bool ShouldIgnore ()
 		{
 			// When we're overriding a virtual method, we implicitly inherit the
 			// Conditional attributes from our parent.
 			if (member.ParentMethod != null) {
 				TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (
-					member.ParentMethod, loc);
+					member.ParentMethod);
 
 				if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
 					return true;
@@ -3695,21 +3704,6 @@ namespace Mono.CSharp {
 				}
 			}
 			return false;
-		}
-
-		//
-		// Returns the TypeManager.MethodFlags for this method.
-		// This emits an error 619 / warning 618 if the method is obsolete.
-		// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
-		//
-		public virtual TypeManager.MethodFlags GetMethodFlags (Location loc)
-		{
-			TypeManager.MethodFlags flags = 0;
-
-			if (ShouldIgnore (loc))
-				flags |= TypeManager.MethodFlags.ShouldIgnore;
-
-			return flags;
 		}
 
 		public bool Define (TypeContainer container)
@@ -3872,8 +3866,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			TypeManager.AddMethod (builder, this);
-			TypeManager.AddMethod2 (builder, method);
+			TypeManager.AddMethod (builder, method);
 
 			return true;
 		}
@@ -4884,6 +4877,11 @@ namespace Mono.CSharp {
 			{
 				return method.GetObsoleteAttribute (method.ds);
 			}
+
+			bool IMethodData.ShouldIgnore ()
+			{
+				return method_data.ShouldIgnore ();
+			}
 			#endregion
 		}
 
@@ -5608,6 +5606,11 @@ namespace Mono.CSharp {
 			public ObsoleteAttribute GetObsoleteAttribute ()
 			{
 				return method.GetObsoleteAttribute (method.ds);
+			}
+
+			bool IMethodData.ShouldIgnore ()
+			{
+				return method_data.ShouldIgnore ();
 			}
 
 			public abstract string MethodName { get; }

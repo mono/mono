@@ -239,7 +239,6 @@ public class TypeManager {
 	// </remarks>
 
 	static Hashtable builder_to_method;
-	static Hashtable builder_to_method_2;
 
 	// <remarks>
 	//  Contains all public types from referenced assemblies.
@@ -360,7 +359,6 @@ public class TypeManager {
 		
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
-		builder_to_method_2 = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
@@ -459,20 +457,14 @@ public class TypeManager {
 	}
 
 
-	[Obsolete("Will be removed very soon")]
-	public static void AddMethod (MethodBuilder builder, MethodData method)
+	public static void AddMethod (MethodBase builder, IMethodData method)
 	{
 		builder_to_method.Add (builder, method);
 	}
 
-	public static void AddMethod2 (MethodBase builder, IMethodData method)
-	{
-		builder_to_method_2.Add (builder, method);
-	}
-
 	public static IMethodData GetMethod (MethodBase builder)
 	{
-		return (IMethodData) builder_to_method_2 [builder];
+		return (IMethodData) builder_to_method [builder];
 	}
 
 	/// <summary>
@@ -2351,19 +2343,22 @@ public class TypeManager {
 	// This emits an error 619 / warning 618 if the method is obsolete.
 	// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
 	//
-	static public MethodFlags GetMethodFlags (MethodBase mb, Location loc)
+	static public MethodFlags GetMethodFlags (MethodBase mb)
 	{
 		MethodFlags flags = 0;
 		
 		if (mb.DeclaringType is TypeBuilder){
-			MethodData method = (MethodData) builder_to_method [mb];
+			IMethodData method = (IMethodData) builder_to_method [mb];
 			if (method == null) {
 				// FIXME: implement Obsolete attribute on Property,
 				//        Indexer and Event.
 				return 0;
 			}
 
-			return method.GetMethodFlags (loc);
+			if (method.ShouldIgnore ())
+				flags |= MethodFlags.ShouldIgnore;
+
+			return flags;
 		}
 
 		object [] attrs = mb.GetCustomAttributes (true);

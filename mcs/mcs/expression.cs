@@ -5228,7 +5228,7 @@ namespace Mono.CSharp {
 			//
 			// This checks the `ConditionalAttribute' on the method
 			//
-			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method, loc);
+			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method);
 			if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
 				return;
 			
