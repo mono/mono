@@ -6,6 +6,7 @@
 // eMail: Christian.Meyer@cs.tum.edu
 //
 using System;
+using System.IO;
 using System.Reflection;
 
 namespace System.Drawing.Imaging {
@@ -35,7 +36,7 @@ namespace System.Drawing.Imaging {
 
 		[MonoTODO]
 		public Metafile (IntPtr referenceHtc, Rectangle frameRect) {
-			throw new NotImplemtedException ();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -45,7 +46,7 @@ namespace System.Drawing.Imaging {
 
 		[MonoTODO]
 		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader) {
-			throw new NotImplemtedException ();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -60,7 +61,7 @@ namespace System.Drawing.Imaging {
 
 		[MonoTODO]
 		public Metafile (IntPtr referenceHdc, EmfType emfType, string description) {
-			throw new NotImplemtedException ();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

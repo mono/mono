@@ -10,7 +10,7 @@
 	<target name="build">
 		<nant basedir="corlib" target="build"/>
 		<nant basedir="System" target="build"/>
-		<!--nant basedir="System.Drawing" target="build"/-->
+		<nant basedir="System.Drawing" target="build"/>
 		<nant basedir="System.XML" target="build"/>
 		<nant basedir="System.Data" target="build"/>
 		<nant basedir="System.Web" target="build"/>
@@ -30,6 +30,7 @@
 		</delete>
 		<nant basedir="corlib" target="clean"/>
 		<nant basedir="System" target="clean"/>
+		<nant basedir="System.Drawing" target="clean"/>
 		<nant basedir="System.XML" target="clean"/>
 		<nant basedir="System.Data" target="clean"/>
 	</target>

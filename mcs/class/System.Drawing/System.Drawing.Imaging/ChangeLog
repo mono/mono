@@ -1,3 +1,7 @@
+2002-05-03  Mike Kestner  <mkestner@speakeasy.net>
+
+	* Metafile.cs : Use System.IO. Fix exception typos.
+
 2002-04-27  Christian Meyer  <Christian.Meyer@cs.tum.edu>
 
 	* Metafile.cs: Copyright now holds Ximian.

@@ -1,3 +1,9 @@
+2002-05-03  Mike Kestner <mkestner@speakeasy.net>
+
+	* Bitmap.cs : using System.IO
+	* ColorTranslator.cs : Stubbed off build breakers.
+	* Image.cs : Stub off IDisposable and ICloneable.
+	
 2002-04-27  Christian Meyer  <Christian.Meyer@cs.tum.edu>
 
 	* Bitmap.cs: Ximian is the new copyright holder now.

@@ -29,7 +29,8 @@ namespace System.Drawing {
 			// .NET colors, XWindows colors, and WWWC web colors 
 			// are (according to Charles Pretziod) base the same
 			//colors, so many shouold work if any do.
-			return Color.FromKnownColor(HtmlFromColor);
+			//return Color.FromKnownColor(HtmlFromColor);
+			return Color.Empty;
 		}
 		
 		/// <summary>
@@ -40,7 +41,8 @@ namespace System.Drawing {
 		public static Color FromOle(int OLEFromColor){
 			int newcolor;
 			//TODO: swap RB bytes i.e. AARRGGBB to AABBGGRR
-			return Color.FromArgb(newcolor);
+			//return Color.FromArgb(newcolor);
+			return Color.Empty;
 		}
 		
 		/// <summary>
@@ -51,7 +53,8 @@ namespace System.Drawing {
 		public static Color FromWin32(int Win32FromColor){
 			int newcolor;
 			//TODO: swap RB bytes i.e. AARRGGBB to AABBGGRR
-			return Color.FromArgb(newcolor);
+			//return Color.FromArgb(newcolor);
+			return Color.Empty;
 		}
 
 		// To converisons
@@ -64,7 +67,8 @@ namespace System.Drawing {
 			}
 			else{
 			}
-			return Color.FromKnownColor(HtmlToColor);
+			//return Color.FromKnownColor(HtmlToColor);
+			return String.Empty;
 		}
 		/// <summary>
 		/// converts from BGR to RGB

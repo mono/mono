@@ -18,7 +18,7 @@ using System.Drawing.Imaging;
 //[Serializable]
 //[ComVisible(true)]
 
-public abstract class Image : MarshalByRefObject, ICloneable, IDisposable /*, ISerializable */ {
+public abstract class Image : MarshalByRefObject /*, ICloneable, IDisposable, ISerializable */ {
 
 	// constructor
 	public Image () {}
