@@ -128,6 +128,9 @@ namespace Mono.CSharp {
 				if (other is SByteConstant || other is ShortConstant || ic != null){
 					left = left.ToLong (loc);
 					right = right.ToLong (loc);
+				} else {
+					left = left.ToUInt (loc);
+					right = left.ToUInt (loc);
 				}
 
 				return;

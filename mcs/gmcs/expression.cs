@@ -1161,16 +1161,11 @@ namespace Mono.CSharp {
 				warning_never_matches = true;
 			}
 			
-			if (RootContext.WarningLevel >= 1){
 				if (warning_always_matches)
-					Warning (183, "The expression is always of type `" +
-						 TypeManager.CSharpName (probe_type) + "'");
+				Warning (183, "The given expression is always of the provided ('{0}') type", TypeManager.CSharpName (probe_type));
 				else if (warning_never_matches){
 					if (!(probe_type.IsInterface || expr.Type.IsInterface))
-						Warning (184,
-							 "The expression is never of type `" +
-							 TypeManager.CSharpName (probe_type) + "'");
-				}
+					Warning (184, "The given expression is never of the provided ('{0}') type", TypeManager.CSharpName (probe_type));
 			}
 
 			return this;
@@ -3373,7 +3368,8 @@ namespace Mono.CSharp {
 		{
 			Type op_type = left.Type;
 			ILGenerator ig = ec.ig;
-			int size = GetTypeSize (TypeManager.GetElementType (op_type));
+			Type element = TypeManager.GetElementType (op_type);
+			int size = GetTypeSize (element);
 			Type rtype = right.Type;
 			
 			if (rtype.IsPointer){
@@ -3386,7 +3382,7 @@ namespace Mono.CSharp {
 
 				if (size != 1){
 					if (size == 0)
-						ig.Emit (OpCodes.Sizeof, op_type);
+						ig.Emit (OpCodes.Sizeof, element);
 					else 
 						IntLiteral.EmitInt (ig, size);
 					ig.Emit (OpCodes.Div);
@@ -3401,7 +3397,7 @@ namespace Mono.CSharp {
 				right.Emit (ec);
 				if (size != 1){
 					if (size == 0)
-						ig.Emit (OpCodes.Sizeof, op_type);
+						ig.Emit (OpCodes.Sizeof, element);
 					else 
 						IntLiteral.EmitInt (ig, size);
 					if (rtype == TypeManager.int64_type)
@@ -6843,7 +6839,7 @@ namespace Mono.CSharp {
 				if (e is NullLiteral)
 					v = null;
 				else {
-					if (!Attribute.GetAttributeArgumentExpression (e, Location, out v))
+					if (!Attribute.GetAttributeArgumentExpression (e, Location, array_element_type, out v))
 						return null;
 				}
 				ret [i++] = v;
@@ -7492,7 +7488,7 @@ namespace Mono.CSharp {
 				expr_type = ((TypeExpr) expr).ResolveType (ec);
 
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
-					Report.Error_T (122, loc, expr_type);
+					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", expr_type);
 					return null;
 				}
 
@@ -8676,6 +8672,9 @@ namespace Mono.CSharp {
 				pe.IsBase = true;
 			}
 
+			if (e is MethodGroupExpr)
+				((MethodGroupExpr) e).IsBase = true;
+
 			return e;
 		}
 
@@ -8998,8 +8997,7 @@ namespace Mono.CSharp {
 			Constant c = count as Constant;
 			// TODO: because we don't have property IsNegative
 			if (c != null && c.ConvertToUInt () == null) {
-                                // "Cannot use a negative size with stackalloc"
-				Report.Error_T (247, loc);
+				Report.Error (247, loc, "Cannot use a negative size with stackalloc");
 				return null;
 			}
 

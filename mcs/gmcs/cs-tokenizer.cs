@@ -805,10 +805,7 @@ namespace Mono.CSharp
 							// if we have not seen anything in between
 							// report this error
 							//
-							Report.Warning (
-								78, Location,
-							"the 'l' suffix is easily confused with digit `1'," +
-							" use 'L' for clarity");
+							Report.Warning (78, Location, "The 'l' suffix is easily confused with the digit '1' (use 'L' for clarity)");
 						}
 						goto case 'L';
 						
@@ -1769,7 +1766,7 @@ namespace Mono.CSharp
 				return true;
 
 			case "warning":
-				Report.Warning (1030, Location, "#warning: '" + arg + "'");
+				Report.Warning (1030, Location, "#warning: '{0}'", arg);
 				return true;
 			}
 

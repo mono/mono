@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 					builder.SetMarshal (marshal);
 					return;
 			}
-				Report.Warning_T (-24, a.Location);
+				Report.Warning (-24, a.Location, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
 				return;
 			}
 
@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
 			}
 			catch (ArgumentOutOfRangeException) {
-				Report.Warning_T (-28, location);
+				Report.Warning (-28, location, "The Microsoft .NET Runtime 1.x does not permit setting custom attributes on the return type");
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Is never called
 		/// </summary>
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return null;
 			}
@@ -109,7 +109,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Is never called
 		/// </summary>
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return null;
 			}
@@ -273,7 +273,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}

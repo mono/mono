@@ -405,29 +405,6 @@ namespace Mono.CSharp {
 		}
 	}			
 
-	//
-	// Compares member infos based on their name and
-	// also allows one argument to be a string
-	//
-	class MemberInfoCompare : IComparer {
-
-		public int Compare (object a, object b)
-		{
-			if (a == null || b == null){
-				Console.WriteLine ("Invalid information passed");
-				throw new Exception ();
-			}
-			
-			if (a is string)
-				return String.Compare ((string) a, ((MemberInfo)b).Name, false, CultureInfo.InvariantCulture);
-
-			if (b is string)
-				return String.Compare (((MemberInfo)a).Name, (string) b, false, CultureInfo.InvariantCulture);
-
-			return String.Compare (((MemberInfo)a).Name, ((MemberInfo)b).Name, false, CultureInfo.InvariantCulture);
-		}
-	}
-
 	struct Pair {
 		public object First;
 		public object Second;

@@ -432,7 +432,7 @@ namespace Mono.CSharp {
 		// IMemberContainer
 		//
 
-		IMemberContainer IMemberContainer.Parent {
+		IMemberContainer IMemberContainer.ParentContainer {
 			get { return null; }
 		}
 

@@ -353,7 +353,7 @@ namespace_declaration
 
 		if (current_namespace.Parent != null && $3 is MemberAccess) {
 			// Cannot use qualified namespace names in nested namespace declarations
-			Report.Error_T (134, lexer.Location);
+			Report.Error (134, lexer.Location, "Cannot use qualified namespace names in nested namespace declarations");
 		}
 
 		current_namespace = new NamespaceEntry (
@@ -860,7 +860,7 @@ constant_declarator
 	| IDENTIFIER
 	  {
 		// A const field requires a value to be provided
-		Report.Error_T (145, lexer.Location);
+		Report.Error (145, lexer.Location, "A const field requires a value to be provided");
 		$$ = null;
 	  }
 	;
@@ -1979,7 +1979,7 @@ indexer_declarator
 		Parameters pars = (Parameters) $4;
 		if (pars.HasArglist) {
 			// "__arglist is not valid in this context"
-			Report.Error_T (1669, lexer.Location);
+			Report.Error (1669, lexer.Location, "__arglist is not valid in this context");
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
@@ -1992,7 +1992,7 @@ indexer_declarator
 
 		if (pars.HasArglist) {
 			// "__arglist is not valid in this context"
-			Report.Error_T (1669, lexer.Location);
+			Report.Error (1669, lexer.Location, "__arglist is not valid in this context");
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
@@ -3576,7 +3576,7 @@ if_statement_rest
 
 		if (RootContext.WarningLevel >= 3){
 			if ($3 == EmptyStatement.Value)
-				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
+				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
 
 	  }
@@ -3698,7 +3698,7 @@ while_statement
 	
 		if (RootContext.WarningLevel >= 3){
 			if ($6 == EmptyStatement.Value)
-				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
+				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
 	}
 	;
@@ -3773,7 +3773,7 @@ for_statement
 
 		if (RootContext.WarningLevel >= 3){
 			if ($10 == EmptyStatement.Value)
-				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
+				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
 
 		current_block.AddStatement (f);
@@ -4181,8 +4181,7 @@ fixed_pointer_declarator
 	  }
 	| IDENTIFIER
 	  {
-		// You must provide an initializer in a fixed or using statement declaration
-		Report.Error_T (210, lexer.Location);
+		Report.Error (210, lexer.Location, "You must provide an initializer in a fixed or using statement declaration");
 		$$ = null;
 	  }
 	;
@@ -4230,8 +4229,7 @@ using_statement
 				} else {
 					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
 					if (init == null) {
-						// You must provide an initializer in a fixed or using statement declaration
-						Report.Error_T (210, l);
+						Report.Error (210, l, "You must provide an initializer in a fixed or using statement declaration");
 					}
 					
 					expr = new ArrayCreation (type, "", init, decl.Location);

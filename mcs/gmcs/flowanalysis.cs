@@ -660,8 +660,12 @@ namespace Mono.CSharp
 							new_r.SetThrowsSometimes ();
 						}
 			}
-				} else if (branching.Type == BranchingType.Switch)
+				} else if (branching.Type == BranchingType.Switch) {
+					if (new_r.MayBreak || new_r.MayReturn)
+						new_r.ResetBarrier ();
+
 					new_r.ResetBreaks ();
+				}
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -745,8 +749,10 @@ namespace Mono.CSharp
 
 				reachability = Reachability.Never ();
 
-				if (o_vectors == null)
+				if (o_vectors == null) {
+					reachability.SetBarrier ();
 					return;
+				}
 
 				bool first = true;
 

@@ -17,22 +17,16 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
-	// Maybe can be usefull to derive from MemberCore
-	class EnumMember: Attributable {
-		string name;
-		Enum parent;
-		Location loc;
-
+	class EnumMember: MemberCore {
 		static string[] attribute_targets = new string [] { "field" };
 
+		Enum parent_enum;
 		public FieldBuilder builder;
 
-		public EnumMember (string name, Enum parent, Location loc, Attributes attrs):
-			base (attrs)
+		public EnumMember (Enum parent_enum, string name, Location loc, Attributes attrs):
+			base (null, new MemberName (name), attrs, loc)
 		{
-			this.name = name;
-			this.parent = parent;
-			this.loc = loc;
+			this.parent_enum = parent_enum;
 		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
@@ -43,7 +37,7 @@ namespace Mono.CSharp {
 					builder.SetMarshal (marshal);
 					return;
 				}
-				Report.Warning_T (-24, a.Location);
+				Report.Warning (-24, a.Location, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
 				return;
 			}
 
@@ -56,9 +50,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		public override bool IsClsCompliaceRequired (DeclSpace ds)
 		{
-			return parent.IsClsCompliaceRequired (ds);
+			return parent_enum.IsClsCompliaceRequired (ds);
 		}
 
 		public void DefineMember (TypeBuilder tb)
@@ -66,7 +60,12 @@ namespace Mono.CSharp {
 			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
 				| FieldAttributes.Literal;
 			
-			builder = tb.DefineField (name, tb, attr);
+			builder = tb.DefineField (Name, tb, attr);
+		}
+
+		public override bool Define ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		public void Emit (EmitContext ec)
@@ -92,11 +91,17 @@ namespace Mono.CSharp {
 			return obsolete;
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
 		}
+
+		protected override void VerifyObsoleteAttribute()
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 
 	/// <summary>
@@ -176,7 +181,7 @@ namespace Mono.CSharp {
 
 			member_to_attributes.Add (name, opt_attrs);
 			
-			name_to_member.Add (name, new EnumMember (name, this, loc, opt_attrs));
+			name_to_member.Add (name, new EnumMember (this, name, loc, opt_attrs));
 
 			return AdditionResult.Success;
 		}
@@ -705,26 +710,21 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 		
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+ 		void VerifyClsName ()
 		{
-			if (!base.IsIdentifierClsCompliant (ds))
-				return false;
-
-			for (int i = 1; i < ordered_enums.Count; ++i) {
-				string checked_name = ordered_enums [i] as string;
-				for (int ii = 0; ii < ordered_enums.Count; ++ii) {
-					if (ii == i)
+ 			Hashtable ht = new Hashtable ();
+ 			foreach (string name in ordered_enums) {
+ 				string locase = name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
+ 				if (!ht.Contains (locase)) {
+ 					ht.Add (locase, name_to_member [name]);
 						continue;
-
-					string enumerator_name = ordered_enums [ii] as string;
-					if (String.Compare (checked_name, enumerator_name, true, CultureInfo.InvariantCulture) == 0) {
-						Report.SymbolRelatedToPreviousError ((Location)member_to_location [enumerator_name], enumerator_name);
-						Report.Error_T (3005, (Location)member_to_location [checked_name], GetEnumeratorName (checked_name));
-						break;
-					}
 				}
+ 
+ 				EnumMember conflict = (EnumMember)ht [locase];
+ 				Report.SymbolRelatedToPreviousError (conflict);
+ 				conflict = (EnumMember)name_to_member [name];
+ 				Report.Error (3005, conflict.Location, "Identifier '{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
 			}
-			return true;
 		}
 
 		protected override bool VerifyClsCompliance (DeclSpace ds)
@@ -732,8 +732,10 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance (ds))
 				return false;
 
+			VerifyClsName ();
+
 			if (!AttributeTester.IsClsCompliant (UnderlyingType)) {
-				Report.Error_T (3009, Location, GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
 			}
 
 			return true;

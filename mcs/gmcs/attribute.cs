@@ -35,7 +35,7 @@ namespace Mono.CSharp {
 		{
 			attributes = attrs;
 			if (attributes != null)
-				attributes.CheckTargets (ValidAttributeTargets);
+				attributes.CheckTargets (this);
 		}
 
 		public Attributes OptAttributes 
@@ -46,7 +46,7 @@ namespace Mono.CSharp {
 			set {
 				attributes = value;
 				if (attributes != null)
-					attributes.CheckTargets (ValidAttributeTargets);
+					attributes.CheckTargets (this);
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace Mono.CSharp {
 		public abstract void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb);
 
 		/// <summary>
-		/// Returns combination of enabled AttributeTargets
+		/// Returns one AttributeTarget for this element.
 		/// </summary>
 		public abstract AttributeTargets AttributeTargets { get; }
 
@@ -66,11 +66,13 @@ namespace Mono.CSharp {
 		/// Gets list of valid attribute targets for explicit target declaration.
 		/// The first array item is default target. Don't break this rule.
 		/// </summary>
-		protected abstract string[] ValidAttributeTargets { get; }
+		public abstract string[] ValidAttributeTargets { get; }
 	};
 
 	public class Attribute {
-		public string Target;
+		public readonly string ExplicitTarget;
+		public AttributeTargets Target;
+
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
@@ -105,7 +107,7 @@ namespace Mono.CSharp {
 			Name = name;
 			Arguments = args;
 			Location = loc;
-			Target = target;
+			ExplicitTarget = target;
 		}
 
 		void Error_InvalidNamedArgument (string name)
@@ -207,10 +209,19 @@ namespace Mono.CSharp {
 		// Given an expression, if the expression is a valid attribute-argument-expression
 		// returns an object that can be used to encode it, or null on failure.
 		//
-		public static bool GetAttributeArgumentExpression (Expression e, Location loc, out object result)
+		public static bool GetAttributeArgumentExpression (Expression e, Location loc, Type arg_type, out object result)
 		{
-			if (e is Constant) {
-				result = ((Constant) e).GetValue ();
+			Constant constant = e as Constant;
+			if (constant != null) {
+				if (e.Type != arg_type) {
+					constant = Const.ChangeType (loc, constant, arg_type);
+					if (constant == null) {
+						result = null;
+						Error_AttributeArgumentNotValid (loc);
+						return false;
+					}
+				}
+				result = constant.GetValue ();
 				return true;
 			} else if (e is TypeOf) {
 				result = ((TypeOf) e).TypeArg;
@@ -238,10 +249,11 @@ namespace Mono.CSharp {
 			
 			// Sanity check.
 			Type = CheckAttributeType (ec, true);
+
 			if (oldType == null && Type == null)
 				return null;
-			if (oldType != null && oldType != Type) {
-				Report.Error (-6, Location,
+			if (oldType != null && oldType != Type){
+				Report.Error (-27, Location,
 					      "Attribute {0} resolved to different types at different times: {1} vs. {2}",
 					      Name, oldType, Type);
 				return null;
@@ -301,7 +313,7 @@ namespace Mono.CSharp {
 				e = a.Expr;
 
 				object val;
-				if (!GetAttributeArgumentExpression (e, Location, out val))
+				if (!GetAttributeArgumentExpression (e, Location, a.Type, out val))
 					return null;
 				
 				pos_values [i] = val;
@@ -370,7 +382,7 @@ namespace Mono.CSharp {
 						Location);
 
 					if (member != null) {
-						Report.Error_T (122, Location, GetFullMemberName (member_name));
+						Report.Error (122, Location, "'{0}' is inaccessible due to its protection level", GetFullMemberName (member_name));
 						return null;
 					}
 				}
@@ -395,38 +407,18 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Type type = e.Type;
-					EmptyCast ecast = e as EmptyCast;
-					if ((ecast != null) && (ecast.Child is Constant))
-						e = ecast.Child;
-
-					Constant c = e as Constant;
-					if (c != null) {
-						if (type != pi.PropertyType) {
-							c = Const.ChangeType (Location, c, pi.PropertyType);
-							if (c == null)
+					object value;
+					if (!GetAttributeArgumentExpression (e, Location, pi.PropertyType, out value))
 								return null;
-						}
-						
-						object o = c.GetValue ();
-						prop_values.Add (o);
 						
 						if (usage_attribute != null) {
 							if (member_name == "AllowMultiple")
-								usage_attribute.AllowMultiple = (bool) o;
+							usage_attribute.AllowMultiple = (bool) value;
 							if (member_name == "Inherited")
-								usage_attribute.Inherited = (bool) o;
-						}
-						
-					} else if (e is TypeOf) {
-						prop_values.Add (((TypeOf) e).TypeArg);
-					} else if (e is ArrayCreation) {
-						prop_values.Add (((ArrayCreation) e).EncodeAsAttribute());
-					} else {
-						Error_AttributeArgumentNotValid (Location);
-						return null;
+							usage_attribute.Inherited = (bool) value;
 					}
 					
+					prop_values.Add (value);
 					prop_infos.Add (pi);
 					
 				} else if (member is FieldExpr) {
@@ -438,32 +430,12 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Type type = e.Type;
-					EmptyCast ecast = e as EmptyCast;
-					if ((ecast != null) && (ecast.Child is Constant))
-						e = ecast.Child;
-					//
-					// Handle charset here, and set the TypeAttributes
-					
-					Constant c = e as Constant;
-					if (c != null) {
-						if (type != fi.FieldType) {
-							c = Const.ChangeType (Location, c, fi.FieldType);
-							if (c == null)
-								return null;
-						} 
-						
-						object value = c.GetValue ();
-						field_values.Add (value);
-					} else if (e is TypeOf) {
-						field_values.Add (((TypeOf) e).TypeArg);
-					} else if (e is ArrayCreation) {
-						field_values.Add (((ArrayCreation) e).EncodeAsAttribute());
-					} else {
-						Error_AttributeArgumentNotValid (Location);
+ 					object value;
+ 					if (!GetAttributeArgumentExpression (e, Location, fi.FieldType, out value))
 						return null;
-					}
-					
+
+					field_values.Add (value);
+
 					field_infos.Add (fi);
 				}
 			}
@@ -804,9 +776,8 @@ namespace Mono.CSharp {
 				return;
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
-			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
-				// "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.";
-				Report.Error_T (592, Location, Name, GetValidTargets ());
+			if ((usage_attr.ValidOn & Target) == 0) {
+				Report.Error (592, Location, "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.", Name, GetValidTargets ());
 				return;
 			}
 
@@ -824,6 +795,9 @@ namespace Mono.CSharp {
 				emitted_targets.Add (Target);
 			}
 
+			if (!RootContext.VerifyClsCompliance)
+				return;
+
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
 				if (Arguments == null)
@@ -837,7 +811,7 @@ namespace Mono.CSharp {
 							return;
 
 						if (arg.Type.IsArray) {
-							Report.Error_T (3016, Location);
+							Report.Error (3016, Location, "Arrays as attribute arguments are not CLS-compliant");
 							return;
 						}
 					}
@@ -855,7 +829,7 @@ namespace Mono.CSharp {
 						return;
 
 					if (arg.Type.IsArray) {
-						Report.Error_T (3016, Location);
+						Report.Error (3016, Location, "Arrays as attribute arguments are not CLS-compliant");
 						return;
 					}
 				}
@@ -1076,31 +1050,41 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Checks whether attribute target is valid for the current element
 		/// </summary>
-		public void CheckTargets (string[] possible_targets)
+		public void CheckTargets (Attributable member)
 		{
+			string[] valid_targets = member.ValidAttributeTargets;
 			foreach (Attribute a in Attrs) {
-				if (a.Target == null) {
-					a.Target = possible_targets [0];
+				if (a.ExplicitTarget == null || a.ExplicitTarget == valid_targets [0]) {
+					a.Target = member.AttributeTargets;
 					continue;
 				}
 
-				if (((IList) possible_targets).Contains (a.Target))
-					continue;
+				// TODO: we can skip the first item
+				if (((IList) valid_targets).Contains (a.ExplicitTarget)) {
+					switch (a.ExplicitTarget) {
+						case "return": a.Target = AttributeTargets.ReturnValue; continue;
+						case "param": a.Target = AttributeTargets.Parameter; continue;
+						case "field": a.Target = AttributeTargets.Field; continue;
+						case "method": a.Target = AttributeTargets.Method; continue;
+						case "property": a.Target = AttributeTargets.Property; continue;
+					}
+					throw new InternalErrorException ("Unknown explicit target: " + a.ExplicitTarget);
+				}
 
 				StringBuilder sb = new StringBuilder ();
-				foreach (string s in possible_targets) {
+				foreach (string s in valid_targets) {
 					sb.Append (s);
 					sb.Append (", ");
 				}
 				sb.Remove (sb.Length - 2, 2);
-				Report.Error_T (657, a.Location, a.Target, sb.ToString ());
+				Report.Error (657, a.Location, "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'", a.Target, sb.ToString ());
 			}
 		}
 
 		private Attribute Search (Type t, EmitContext ec, bool complain)
 		{
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType (ec, false) == t)
+				if (a.ResolveType (ec, complain) == t)
 					return a;
 			}
 			return null;
@@ -1231,7 +1215,7 @@ namespace Mono.CSharp {
 
 			foreach (Parameter arg in fixedParameters) {
 				if (!AttributeTester.IsClsCompliant (arg.ParameterType)) {
-					Report.Error_T (3001, loc, arg.GetSignatureForError ());
+					Report.Error (3001, loc, "Argument type '{0}' is not CLS-compliant", arg.GetSignatureForError ());
 					return false;
 				}
 			}
@@ -1269,30 +1253,6 @@ namespace Mono.CSharp {
 		static object TRUE = new object ();
 		static object FALSE = new object ();
 
-		/// <summary>
-		/// Non-hierarchical CLS Compliance analyzer
-		/// </summary>
-		public static bool IsComplianceRequired (MemberInfo mi, DeclSpace ds)
-		{
-			DeclSpace temp_ds = TypeManager.LookupDeclSpace (mi.DeclaringType);
-
-			// Type is external, we can get attribute directly
-			if (temp_ds == null) {
-				object[] cls_attribute = mi.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
-				return (cls_attribute.Length == 1 && ((CLSCompliantAttribute)cls_attribute[0]).IsCompliant);
-			}
-
-			string tmp_name;
-			// Interface doesn't store full name
-			if (temp_ds is Interface)
-				tmp_name = mi.Name;
-			else
-				tmp_name = String.Concat (temp_ds.Name, ".", mi.Name);
-
-			MemberCore mc = temp_ds.GetDefinition (tmp_name) as MemberCore;
-			return mc.IsClsCompliaceRequired (ds);
-		}
-
 		public static void VerifyModulesClsCompliance ()
 		{
 			Module[] modules = TypeManager.Modules;
@@ -1303,9 +1263,46 @@ namespace Mono.CSharp {
 			for (int i = 1; i < modules.Length; ++i) {
 				Module module = modules [i];
 				if (!IsClsCompliant (module)) {
-					Report.Error_T (3013, module.Name);
+					Report.Error (3013, "Added modules must be marked with the CLSCompliant attribute to match the assembly", module.Name);
 					return;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Tests container name for CLS-Compliant name (differing only in case)
+		/// </summary>
+		public static void VerifyTopLevelNameClsCompliance ()
+		{
+			Hashtable locase_table = new Hashtable ();
+
+			// Convert imported type names to lower case and ignore not cls compliant
+			foreach (DictionaryEntry de in TypeManager.all_imported_types) {
+				Type t = (Type)de.Value;
+				if (!AttributeTester.IsClsCompliant (t))
+					continue;
+
+				locase_table.Add (((string)de.Key).ToLower (System.Globalization.CultureInfo.InvariantCulture), t);
+			}
+
+			foreach (DictionaryEntry de in RootContext.Tree.Decls) {
+				DeclSpace decl = (DeclSpace)de.Value;
+				if (!decl.IsClsCompliaceRequired (decl))
+					continue;
+
+				string lcase = decl.Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
+				if (!locase_table.Contains (lcase)) {
+					locase_table.Add (lcase, decl);
+					continue;
+				}
+
+				object conflict = locase_table [lcase];
+				if (conflict is Type)
+					Report.SymbolRelatedToPreviousError ((Type)conflict);
+				else
+					Report.SymbolRelatedToPreviousError ((MemberCore)conflict);
+
+				Report.Error (3005, decl.Location, "Identifier '{0}' differing only in case is not CLS-compliant", decl.GetSignatureForError ());
 			}
 		}
 
@@ -1378,6 +1375,10 @@ namespace Mono.CSharp {
 			if (mc != null) 
 				return mc.GetObsoleteAttribute ();
 
+			// compiler generated methods are not registered by AddMethod
+			if (mb.DeclaringType is TypeBuilder)
+				return null;
+
 			return GetMemberObsoleteAttribute (mb);
 		}
 
@@ -1407,15 +1408,15 @@ namespace Mono.CSharp {
 		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc)
 		{
 			if (oa.IsError) {
-				Report.Error_T (619, loc, member, oa.Message);
+				Report.Error (619, loc, "'{0}' is obsolete: '{1}'", member, oa.Message);
 				return;
 			}
 
 			if (oa.Message == null) {
-				Report.Warning_T (612, loc, member);
+				Report.Warning (612, loc, "'{0}' is obsolete", member);
 				return;
 			}
-			Report.Warning_T (618, loc, member, oa.Message);
+			Report.Warning (618, loc, "'{0}' is obsolete: '{1}'", member, oa.Message);
 		}
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)

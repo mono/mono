@@ -92,19 +92,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Type ptype = Parent.TypeBuilder.BaseType;
-
-			if (ptype != null) {
-				MemberList list = TypeContainer.FindMembers (
-					ptype, MemberTypes.Field, BindingFlags.Public,
-					System.Type.FilterName, Name);
-				
-				if (list.Count == 0)
-					if ((ModFlags & Modifiers.NEW) != 0)
-						WarningNotHiding (Parent);
-
-			} else if ((ModFlags & Modifiers.NEW) != 0)
-				WarningNotHiding (Parent);
+			if (!CheckBase ())
+				return false;
 
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 

@@ -211,6 +211,7 @@ namespace Mono.CSharp
 				"Mono C# compiler, (C) 2001 - 2003 Ximian, Inc.\n" +
 				"mcs [options] source-files\n" +
 				"   --about            About the Mono C# compiler\n" +
+				"   -addmodule:MODULE  Adds the module to the generated assembly\n" + 
 				"   -checked[+|-]      Set default context to checked\n" +
 				"   -codepage:ID       Sets code page to the one in ID\n" +
 				"                      (number, `utf8' or `reset')\n" +
@@ -1549,8 +1550,11 @@ namespace Mono.CSharp
 			
 			if (RootContext.VerifyClsCompliance) { 
 				CodeGen.Assembly.ResolveClsCompliance ();
+				if (CodeGen.Assembly.IsClsCompliant) {
 				AttributeTester.VerifyModulesClsCompliance ();
 				TypeManager.LoadAllImportedTypes ();
+					AttributeTester.VerifyTopLevelNameClsCompliance ();
+				}
 			}
 			
 			//
@@ -1591,14 +1595,12 @@ namespace Mono.CSharp
 					if (RootContext.MainClass != null) {
 						object main_cont = RootContext.Tree.Decls [RootContext.MainClass];
 						if (main_cont == null) {
-							// "Could not find '{0}' specified for Main method"
-							Report.Error_T (1555, output_file, RootContext.MainClass); 
+							Report.Error (1555, output_file, "Could not find '{0}' specified for Main method", RootContext.MainClass); 
 							return false;
 						}
 
 						if (!(main_cont is ClassOrStruct)) {
-							// "'{0}' specified for Main method must be a valid class or struct"
-							Report.Error_T (1556, output_file, RootContext.MainClass);
+							Report.Error (1556, output_file, "'{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
 							return false;
 						}
 					}

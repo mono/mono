@@ -54,6 +54,319 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class TypeContainer : DeclSpace, IMemberContainer {
 
+ 		public class MemberCoreArrayList: ArrayList
+ 		{
+			/// <summary>
+			///   Defines the MemberCore objects that are in this array
+			/// </summary>
+			public virtual void DefineContainerMembers ()
+			{
+				foreach (MemberCore mc in this) {
+					mc.Define ();
+				}
+			}
+
+			public virtual void Emit ()
+			{
+				foreach (MemberCore mc in this)
+					mc.Emit ();
+			}
+ 		}
+
+ 		public class MethodArrayList: MemberCoreArrayList
+ 		{
+ 			[Flags]
+ 			enum CachedMethods {
+ 				Equals			= 1,
+ 				GetHashCode		= 1 << 1
+ 			}
+ 
+ 			CachedMethods cached_method;
+			TypeContainer container;
+
+			public MethodArrayList (TypeContainer container)
+			{
+				this.container = container;
+			}
+ 
+ 			/// <summary>
+ 			/// Method container contains Equals method
+ 			/// </summary>
+ 			public bool HasEquals {
+ 				set {
+ 					cached_method |= CachedMethods.Equals;
+ 				}
+ 
+ 				get {
+ 					return (cached_method & CachedMethods.Equals) != 0;
+ 				}
+ 			}
+ 
+ 			/// <summary>
+ 			/// Method container contains GetHashCode method
+ 			/// </summary>
+ 			public bool HasGetHashCode {
+ 				set {
+ 					cached_method |= CachedMethods.GetHashCode;
+ 				}
+ 
+ 				get {
+ 					return (cached_method & CachedMethods.GetHashCode) != 0;
+ 				}
+ 			}
+ 
+ 			public override void DefineContainerMembers ()
+ 			{
+ 				base.DefineContainerMembers ();
+ 
+ 				if (HasEquals && !HasGetHashCode) {
+ 					Report.Warning (659, container.Location, "'{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()", container.GetSignatureForError ());
+ 				}
+ 			}
+ 
+ 		}
+
+		public sealed class IndexerArrayList: MemberCoreArrayList
+		{
+			/// <summary>
+			/// The indexer name for this container
+			/// </summary>
+ 			public string IndexerName = DefaultIndexerName;
+
+			bool seen_normal_indexers = false;
+
+			TypeContainer container;
+
+			public IndexerArrayList (TypeContainer container)
+			{
+				this.container = container;
+			}
+
+			/// <summary>
+			/// Defines the indexers, and also verifies that the IndexerNameAttribute in the
+			/// class is consistent.  Either it is `Item' or it is the name defined by all the
+			/// indexers with the `IndexerName' attribute.
+			///
+			/// Turns out that the IndexerNameAttribute is applied to each indexer,
+			/// but it is never emitted, instead a DefaultMember attribute is attached
+			/// to the class.
+			/// </summary>
+			public override void DefineContainerMembers()
+			{
+				base.DefineContainerMembers ();
+
+				string class_indexer_name = null;
+
+				//
+				// If there's both an explicit and an implicit interface implementation, the
+				// explicit one actually implements the interface while the other one is just
+				// a normal indexer.  See bug #37714.
+				//
+
+				// Invariant maintained by AddIndexer(): All explicit interface indexers precede normal indexers
+				foreach (Indexer i in this) {
+					if (i.InterfaceType != null) {
+						if (seen_normal_indexers)
+							throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
+						continue;
+					}
+
+					seen_normal_indexers = true;
+
+					if (class_indexer_name == null) {
+						class_indexer_name = i.IndexerName;
+						continue;
+					}
+
+					if (i.IndexerName != class_indexer_name)
+						Report.Error (668, i.Location, "Two indexers have different names; the IndexerName attribute must be used with the same name on every indexer within a type");
+				}
+
+				if (class_indexer_name != null)
+					IndexerName = class_indexer_name;
+			}
+
+			public override void Emit ()
+			{
+				base.Emit ();
+
+				if (!seen_normal_indexers)
+					return;
+
+				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { IndexerName });
+				container.TypeBuilder.SetCustomAttribute (cb);
+			}
+		}
+
+ 		public class OperatorArrayList: MemberCoreArrayList
+		{
+			TypeContainer container;
+
+			public OperatorArrayList (TypeContainer container)
+			{
+				this.container = container;
+			}
+
+			//
+			// Operator pair checking
+			//
+			class OperatorEntry
+			{
+				public int flags;
+				public Type ret_type;
+				public Type type1, type2;
+				public Operator op;
+				public Operator.OpType ot;
+				
+				public OperatorEntry (int f, Operator o)
+				{
+					flags = f;
+
+					ret_type = o.OperatorMethod.GetReturnType ();
+					Type [] pt = o.OperatorMethod.ParameterTypes;
+					type1 = pt [0];
+					type2 = pt [1];
+					op = o;
+					ot = o.OperatorType;
+				}
+
+				public override int GetHashCode ()
+				{	
+					return ret_type.GetHashCode ();
+				}
+
+				public override bool Equals (object o)
+				{
+					OperatorEntry other = (OperatorEntry) o;
+
+					if (other.ret_type != ret_type)
+						return false;
+					if (other.type1 != type1)
+						return false;
+					if (other.type2 != type2)
+						return false;
+					return true;
+				}
+			}
+				
+			//
+			// Checks that some operators come in pairs:
+			//  == and !=
+			// > and <
+			// >= and <=
+			// true and false
+			//
+			// They are matched based on the return type and the argument types
+			//
+			void CheckPairedOperators ()
+			{
+				Hashtable pairs = new Hashtable (null, null);
+				Operator true_op = null;
+				Operator false_op = null;
+				bool has_equality_or_inequality = false;
+				
+				// Register all the operators we care about.
+				foreach (Operator op in this){
+					int reg = 0;
+					
+					switch (op.OperatorType){
+					case Operator.OpType.Equality:
+						reg = 1;
+						has_equality_or_inequality = true;
+						break;
+					case Operator.OpType.Inequality:
+						reg = 2;
+						has_equality_or_inequality = true;
+						break;
+
+					case Operator.OpType.True:
+						true_op = op;
+						break;
+					case Operator.OpType.False:
+						false_op = op;
+						break;
+						
+					case Operator.OpType.GreaterThan:
+						reg = 1; break;
+					case Operator.OpType.LessThan:
+						reg = 2; break;
+						
+					case Operator.OpType.GreaterThanOrEqual:
+						reg = 1; break;
+					case Operator.OpType.LessThanOrEqual:
+						reg = 2; break;
+					}
+					if (reg == 0)
+						continue;
+
+					OperatorEntry oe = new OperatorEntry (reg, op);
+
+					object o = pairs [oe];
+					if (o == null)
+						pairs [oe] = oe;
+					else {
+						oe = (OperatorEntry) o;
+						oe.flags |= reg;
+					}
+				}
+
+				if (true_op != null){
+					if (false_op == null)
+						Report.Error (216, true_op.Location, "operator true requires a matching operator false");
+				} else if (false_op != null)
+					Report.Error (216, false_op.Location, "operator false requires a matching operator true");
+				
+				//
+				// Look for the mistakes.
+				//
+				foreach (DictionaryEntry de in pairs){
+					OperatorEntry oe = (OperatorEntry) de.Key;
+
+					if (oe.flags == 3)
+						continue;
+
+					string s = "";
+					switch (oe.ot){
+					case Operator.OpType.Equality:
+						s = "!=";
+						break;
+					case Operator.OpType.Inequality: 
+						s = "==";
+						break;
+					case Operator.OpType.GreaterThan: 
+						s = "<";
+						break;
+					case Operator.OpType.LessThan:
+						s = ">";
+						break;
+					case Operator.OpType.GreaterThanOrEqual:
+						s = "<=";
+						break;
+					case Operator.OpType.LessThanOrEqual:
+						s = ">=";
+						break;
+					}
+					Report.Error (216, oe.op.Location,
+							"The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
+				}
+
+ 				if (has_equality_or_inequality && container.Methods == null && (RootContext.WarningLevel > 2)) {
+ 					if (!container.Methods.HasEquals)
+ 						Report.Warning (660, container.Location, "'{0}' defines operator == or operator != but does not override Object.Equals(object o)", container.GetSignatureForError ());
+ 
+ 					if (!container.Methods.HasGetHashCode)
+ 						Report.Warning (661, container.Location, "'{0}' defines operator == or operator != but does not override Object.GetHashCode()", container.GetSignatureForError ());
+ 				}
+			}
+
+	 		public override void DefineContainerMembers ()
+	 		{
+	 			base.DefineContainerMembers ();
+	 			CheckPairedOperators ();
+			}
+		}
+
+
 		// Whether this is a struct, class or interface
 		public readonly Kind Kind;
 
@@ -61,19 +374,19 @@ namespace Mono.CSharp {
 		ArrayList types;
 
 		// Holds the list of properties
-		ArrayList properties;
+		MemberCoreArrayList properties;
 
 		// Holds the list of enumerations
-		ArrayList enums;
+		MemberCoreArrayList enums;
 
 		// Holds the list of delegates
-		ArrayList delegates;
+		MemberCoreArrayList delegates;
 		
 		// Holds the list of constructors
-		ArrayList instance_constructors;
+		MemberCoreArrayList instance_constructors;
 
 		// Holds the list of fields
-		ArrayList fields;
+		MemberCoreArrayList fields;
 
 		// Holds a list of fields that have initializers
 		ArrayList initialized_fields;
@@ -82,22 +395,22 @@ namespace Mono.CSharp {
 		ArrayList initialized_static_fields;
 
 		// Holds the list of constants
-		ArrayList constants;
+		MemberCoreArrayList constants;
 
 		// Holds the list of
-		ArrayList interfaces;
+		MemberCoreArrayList interfaces;
 
 		// Holds the methods.
-		ArrayList methods;
+		MethodArrayList methods;
 
 		// Holds the events
-		ArrayList events;
+		MemberCoreArrayList events;
 
 		// Holds the indexers
-		ArrayList indexers;
+		IndexerArrayList indexers;
 
 		// Holds the operators
-		ArrayList operators;
+		MemberCoreArrayList operators;
 
 		// Holds the iterators
 		ArrayList iterators;
@@ -143,10 +456,7 @@ namespace Mono.CSharp {
 		IMemberContainer parent_container;
 		MemberCache member_cache;
 
-		//
-		// The indexer name for this class
-		//
-		public string IndexerName;
+		public const string DefaultIndexerName = "Item";
 
 		Type GenericType;
 
@@ -214,7 +524,7 @@ namespace Mono.CSharp {
 				return res;
 			
 			if (constants == null)
-				constants = new ArrayList ();
+				constants = new MemberCoreArrayList ();
 
 			constants.Add (constant);
 			DefineName (fullname, constant);
@@ -230,7 +540,7 @@ namespace Mono.CSharp {
 				return res;
 
 			if (enums == null)
-				enums = new ArrayList ();
+				enums = new MemberCoreArrayList ();
 
 			enums.Add (e);
 			DefineName (e.Name, e);
@@ -275,7 +585,7 @@ namespace Mono.CSharp {
 				return res;
 
 			if (delegates == null)
-				delegates = new ArrayList ();
+				delegates = new MemberCoreArrayList ();
 			
 			DefineName (d.Name, d);
 			delegates.Add (d);
@@ -297,7 +607,7 @@ namespace Mono.CSharp {
 				return AdditionResult.EnclosingClash;
 
 			if (methods == null)
-				methods = new ArrayList ();
+				methods = new MethodArrayList (this);
 
 			if (method.Name.IndexOf ('.') != -1)
 				methods.Insert (0, method);
@@ -331,7 +641,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (instance_constructors == null)
-					instance_constructors = new ArrayList ();
+					instance_constructors = new MemberCoreArrayList ();
 				
 				instance_constructors.Add (c);
 			}
@@ -348,7 +658,7 @@ namespace Mono.CSharp {
 				return res;
 			
 			if (interfaces == null)
-				interfaces = new ArrayList ();
+				interfaces = new MemberCoreArrayList ();
 			interfaces.Add (iface);
 			DefineName (iface.Name, iface);
 			
@@ -365,7 +675,7 @@ namespace Mono.CSharp {
 				return res;
 			
 			if (fields == null)
-				fields = new ArrayList ();
+				fields = new MemberCoreArrayList ();
 			
 			fields.Add (field);
 			
@@ -409,7 +719,7 @@ namespace Mono.CSharp {
 			}
 
 			if (properties == null)
-				properties = new ArrayList ();
+				properties = new MemberCoreArrayList ();
 
 			if (prop.Name.IndexOf ('.') != -1)
 				properties.Insert (0, prop);
@@ -442,7 +752,7 @@ namespace Mono.CSharp {
 				return res;
 
 			if (events == null)
-				events = new ArrayList ();
+				events = new MemberCoreArrayList ();
 			
 			events.Add (e);
 			DefineName (fullname, e);
@@ -453,7 +763,7 @@ namespace Mono.CSharp {
 		public void AddIndexer (Indexer i)
 		{
 			if (indexers == null)
-				indexers = new ArrayList ();
+				indexers = new IndexerArrayList (this);
 
 			if (i.MemberName.Left != null)
 				indexers.Insert (0, i);
@@ -464,7 +774,7 @@ namespace Mono.CSharp {
 		public AdditionResult AddOperator (Operator op)
 		{
 			if (operators == null)
-				operators = new ArrayList ();
+				operators = new OperatorArrayList (this);
 
 			operators.Add (op);
 
@@ -524,7 +834,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Methods {
+		public MethodArrayList Methods {
 			get {
 				return methods;
 			}
@@ -567,10 +877,6 @@ namespace Mono.CSharp {
 		public ArrayList Fields {
 			get {
 				return fields;
-			}
-
-			set {
-				fields = value;
 			}
 		}
 
@@ -625,6 +931,12 @@ namespace Mono.CSharp {
 		public virtual TypeAttributes TypeAttr {
 			get {
 				return Modifiers.TypeAttr (ModFlags, this);
+			}
+		}
+
+		public string IndexerName {
+			get {
+				return indexers == null ? DefaultIndexerName : indexers.IndexerName;
 			}
 		}
 
@@ -1195,126 +1507,9 @@ namespace Mono.CSharp {
 					part.TypeBuilder = TypeBuilder;
 					part.parent_type = parent_type;
 				}
-		}
+			}
 
 			return true;
-		}
-
-
-		/// <summary>
-		///   Defines the MemberCore objects that are in the `list' Arraylist
-		///
-		///   The `defined_names' array contains a list of members defined in
-		///   a base class
-		/// </summary>
-		static ArrayList remove_list = new ArrayList ();
-		void DefineMembers (ArrayList list, MemberInfo [] defined_names)
-		{
-			int idx;
-			
-			remove_list.Clear ();
-
-			foreach (MemberCore mc in list){
-
-				if (defined_names != null)
-					idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
-				else
-					idx = -1;
-
-				if (idx < 0){
-					if (RootContext.WarningLevel >= 4){
-						if ((mc.ModFlags & Modifiers.NEW) != 0)
-							Warning_KeywordNewNotRequired (mc.Location, mc);
-					}
-				} else if (mc is MethodCore)
-					((MethodCore) mc).OverridesSomething = true;
-
-				if (!mc.Define ()){
-					remove_list.Add (mc);
-					continue;
-				}
-						
-				if (idx < 0)
-					continue;
-
-				MemberInfo match = defined_names [idx];
-
-				if (match is PropertyInfo && ((mc.ModFlags & Modifiers.OVERRIDE) != 0))
-					continue;
-
-				//
-				// If we are both methods, let the method resolution emit warnings
-				//
-				if (match is MethodBase && mc is MethodCore)
-					continue; 
-
-				if ((mc.ModFlags & Modifiers.NEW) == 0) {
-					if (mc is Event) {
-						if (!(match is EventInfo)) {
-							Error_EventCanOnlyOverrideEvent (mc.Location, defined_names [idx]);
-							return;
-						}
-
-						if ((mc.ModFlags & Modifiers.OVERRIDE) != 0)
-							continue;
-					}
-
-					Warning_KeywordNewRequired (mc.Location, defined_names [idx]);
-				}
-			}
-			
-			foreach (object o in remove_list)
-				list.Remove (o);
-			
-			remove_list.Clear ();
-		}
-
-		//
-		// Defines the indexers, and also verifies that the IndexerNameAttribute in the
-		// class is consistent.  Either it is `Item' or it is the name defined by all the
-		// indexers with the `IndexerName' attribute.
-		//
-		// Turns out that the IndexerNameAttribute is applied to each indexer,
-		// but it is never emitted, instead a DefaultMember attribute is attached
-		// to the class.
-		//
-		void DefineIndexers ()
-		{
-			string class_indexer_name = null;
-
-			//
-			// If there's both an explicit and an implicit interface implementation, the
-			// explicit one actually implements the interface while the other one is just
-			// a normal indexer.  See bug #37714.
-			//
-
-			// Invariant maintained by AddIndexer(): All explicit interface indexers precede normal indexers
-			bool seen_normal_indexers = false;
-			foreach (Indexer i in Indexers) {
-				string name;
-
-				i.Define ();
-
-				name = i.IndexerName;
-
-				if (i.InterfaceType != null) {
-					if (seen_normal_indexers)
-						throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
-					continue;
-				}
-
-				seen_normal_indexers = true;
-
-				if (class_indexer_name == null)
-					class_indexer_name = name;
-				else if (name != class_indexer_name)
-					Report.Error (668, i.Location, "Two indexers have different names, " +
-						      " you should use the same name for all your indexers");
-			}
-
-			if (seen_normal_indexers && class_indexer_name == null)
-				class_indexer_name = "Item";
-			IndexerName = class_indexer_name;
 		}
 
 		static void Error_KeywordNotAllowed (Location loc)
@@ -1338,62 +1533,46 @@ namespace Mono.CSharp {
 
 		bool DoDefineMembers ()
 		{
-			MemberInfo [] defined_names = null;
-
 			//
 			// We need to be able to use the member cache while we are checking/defining
 			//
-#if CACHE
 			if (TypeBuilder.BaseType != null)
 				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
-#endif
 
-			if (RootContext.WarningLevel > 1){
-				Type ptype;
+			// TODO:
+			//if (TypeBuilder.IsInterface) {
+			//	parent_container = TypeManager.LookupInterfaceContainer (base_inteface_types);
+			//}
 
-				//
-				// This code throws an exception in the comparer
-				// I guess the string is not an object?
-				//
-				ptype = TypeBuilder.BaseType;
-				if (ptype != null){
-					defined_names = (MemberInfo []) FindMembers (
-						ptype, MemberTypes.All & ~MemberTypes.Constructor,
-						BindingFlags.Public | BindingFlags.Instance |
-						BindingFlags.Static, null, null);
+ 			if (IsTopLevel) {
+ 				if ((ModFlags & Modifiers.NEW) != 0)
+ 					Error_KeywordNotAllowed (Location);
+ 			} else {
+ 				// HACK: missing implemenation
+ 				// This is not fully functional. Better way how to handle this is to have recursive definition of containers
+ 				// instead of flat as we have now.
+ 				// Now we are not able to check inner attribute class because its parent had not been defined.
 
-					Array.Sort (defined_names, mif_compare);
+ 				// TODO: remove this if
+ 				if (Parent.MemberCache != null) {
+ 					MemberInfo conflict_symbol = Parent.MemberCache.FindMemberWithSameName (Basename, false, TypeBuilder);
+ 					if (conflict_symbol == null) {
+ 						if ((ModFlags & Modifiers.NEW) != 0)
+ 							Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
+ 					} else {
+ 						if ((ModFlags & Modifiers.NEW) == 0) {
+ 							Report.SymbolRelatedToPreviousError (conflict_symbol);
+ 							Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member", GetSignatureForError ());
+						}
+					}
 				}
 			}
 
-			Class pclass = Parent as Class;
-			if (pclass != null) {
-				string pname = null;
-				TypeExpr ptype = null;
-				Type t = pclass.TypeBuilder.BaseType;
-				while ((t != null) && (ptype == null)) {
-					pname = t.FullName + "." + Basename;
-					ptype = RootContext.LookupType (this, pname, true, Location.Null);
-					t = t.BaseType;
-				}
-
-				if ((ModFlags & Modifiers.NEW) != 0) {
-					if (ptype == null)
-						Report.Warning (109, Location, "The member '" + Name + "' does not hide an " +
-								"inherited member. The keyword new is not required.");
-				} else if (ptype != null) {
-					Report.Warning (108, Location, "The keyword new is required on `" +
-							Name + "' because it hides inherited member '" +
-							pname + "'.");
-				}
-			} else if ((ModFlags & Modifiers.NEW) != 0)
-				Error_KeywordNotAllowed (Location);
-
 			if (constants != null)
-				DefineMembers (constants, defined_names);
+				constants.DefineContainerMembers ();
 
 			if (fields != null)
-				DefineMembers (fields, defined_names);
+				fields.DefineContainerMembers ();
 
 			if ((Kind == Kind.Class) && !(this is ClassPart)){
 				if (instance_constructors == null){
@@ -1432,34 +1611,31 @@ namespace Mono.CSharp {
 			// Constructors are not in the defined_names array
 			//
 			if (instance_constructors != null)
-				DefineMembers (instance_constructors, null);
+				instance_constructors.DefineContainerMembers ();
 		
 			if (default_static_constructor != null)
 				default_static_constructor.Define ();
 
 			if (methods != null)
-				DefineMembers (methods, defined_names);
+				methods.DefineContainerMembers ();
 
 			if (properties != null)
-				DefineMembers (properties, defined_names);
+				properties.DefineContainerMembers ();
 
 			if (events != null)
-				DefineMembers (events, defined_names);
+				events.DefineContainerMembers ();
 
 			if (indexers != null)
-				DefineIndexers ();
+				indexers.DefineContainerMembers ();
 
-			if (operators != null){
-				DefineMembers (operators, null);
-
-				CheckPairedOperators ();
-			}
+			if (operators != null)
+				operators.DefineContainerMembers ();
 
 			if (enums != null)
-				DefineMembers (enums, defined_names);
+				enums.DefineContainerMembers ();
 			
 			if (delegates != null)
-				DefineMembers (delegates, defined_names);
+				delegates.DefineContainerMembers ();
 
 			if (CurrentType != null) {
 				GenericType = CurrentType.ResolveType (ec);
@@ -1505,6 +1681,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public MemberInfo FindMemberWithSameName (string name, bool ignore_methods)
+		{
+			return ParentContainer.MemberCache.FindMemberWithSameName (name, ignore_methods, null);
+		}
+
 		/// <summary>
 		///   This function is based by a delegate to the FindMembers routine
 		/// </summary>
@@ -1520,15 +1701,9 @@ namespace Mono.CSharp {
 		static MemberFilter accepting_filter;
 
 		
-		/// <summary>
-		///   A member comparission method based on name only
-		/// </summary>
-		static IComparer mif_compare;
-
 		static TypeContainer ()
 		{
 			accepting_filter = new MemberFilter (AlwaysAccept);
-			mif_compare = new MemberInfoCompare ();
 		}
 		
 		public MethodInfo[] GetMethods ()
@@ -2034,9 +2209,7 @@ namespace Mono.CSharp {
 							continue;
 						
 						if ((f.status & Field.Status.USED) == 0){
-							Report.Warning (
-								169, f.Location, "Private field " +
-								MakeName (f.Name) + " is never used");
+							Report.Warning (169, f.Location, "The private field '{0}' is never used", f.GetSignatureForError ());
 							continue;
 						}
 						
@@ -2049,17 +2222,14 @@ namespace Mono.CSharp {
 						if ((f.status & Field.Status.ASSIGNED) != 0)
 							continue;
 						
-						Report.Warning (
-							649, f.Location,
-							"Field " + MakeName (f.Name) + " is never assigned " +
-							" to and will always have its default value");
+						Report.Warning (649, f.Location, "Field '{0}' is never assigned to, and will always have its default value '{1}'", f.GetSignatureForError (), "");
 					}
 				}
 
 				if (events != null){
 					foreach (Event e in events){
 						if (e.status == 0)
-							Report.Warning (67, "The event " + MakeName (e.Name) + " is never used");
+							Report.Warning (67, e.Location, "The event '{0}' is never used", e.GetSignatureForError ());
 					}
 				}
 			}
@@ -2077,7 +2247,7 @@ namespace Mono.CSharp {
 			Emit ();
 
 			if (instance_constructors != null) {
-				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && IsClsCompliaceRequired (this)) {
+				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && RootContext.VerifyClsCompliance && IsClsCompliaceRequired (this)) {
 					bool has_compliant_args = false;
 
 					foreach (Constructor c in instance_constructors) {
@@ -2089,7 +2259,7 @@ namespace Mono.CSharp {
 						has_compliant_args = c.HasCompliantArgs;
 					}
 					if (!has_compliant_args)
-						Report.Error_T (3015, Location, GetSignatureForError ());
+						Report.Error (3015, Location, "'{0}' has no accessible constructors which use only CLS-compliant types", GetSignatureForError ());
 				} else {
 				foreach (Constructor c in instance_constructors)
 						c.Emit ();
@@ -2112,12 +2282,7 @@ namespace Mono.CSharp {
 					p.Emit ();
 
 			if (indexers != null){
-				foreach (Indexer ix in indexers)
-					ix.Emit ();
-				if (IndexerName != null) {
-					CustomAttributeBuilder cb = EmitDefaultMemberAttr ();
-					TypeBuilder.SetCustomAttribute (cb);
-				}
+				indexers.Emit ();
 			}
 			
 			if (fields != null)
@@ -2161,31 +2326,6 @@ namespace Mono.CSharp {
 //					tc.Emit ();
 		}
 		
-		CustomAttributeBuilder EmitDefaultMemberAttr ()
-		{
-			EmitContext ec = new EmitContext (this, Location, null, null, ModFlags);
-
-			Expression ml = Expression.MemberLookup (ec, TypeManager.default_member_type,
-								 ".ctor", MemberTypes.Constructor,
-								 BindingFlags.Public | BindingFlags.Instance,
-								 Location.Null);
-			
-			MethodGroupExpr mg = (MethodGroupExpr) ml;
-
-			MethodBase constructor = mg.Methods [0];
-
-			string [] vals = { IndexerName };
-
-			CustomAttributeBuilder cb = null;
-			try {
-				cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, vals);
-			} catch {
-				Report.Warning (-100, "Can not set the indexer default member attribute");
-			}
-
-			return cb;
-		}
-
 		public override void CloseType ()
 		{
 			if ((caching_flags & Flags.CloseTypeCreated) != 0)
@@ -2251,36 +2391,10 @@ namespace Mono.CSharp {
 			member_cache = null;
 		}
 
+		// TODO: make it obsolete and use GetSignatureForError
 		public string MakeName (string n)
 		{
 			return "`" + Name + "." + n + "'";
-		}
-
-		public void Warning_KeywordNewRequired (Location l, MemberInfo mi)
-		{
-			Report.Warning (
-				108, l, "The keyword new is required on " + 
-				MakeName (mi.Name) + " because it hides `" +
-				mi.ReflectedType.Name + "." + mi.Name + "'");
-		}
-
-		public void Warning_KeywordNewNotRequired (Location l, MemberCore mc)
-		{
-			Report.Warning (
-				109, l, "The member " + MakeName (mc.Name) + " does not hide an " +
-				"inherited member, the keyword new is not required");
-		}
-
-		public void Error_EventCanOnlyOverrideEvent (Location l, MemberInfo mi)
-		{
-			Report.Error (
-				72, l, MakeName (mi.Name) + " : cannot override; `" +
-				mi.ReflectedType.Name + "." + mi.Name + "' is not an event");
-		}
-		
-		public static int CheckMember (string name, MemberInfo mi, int ModFlags)
-		{
-			return 0;
 		}
 
 		//
@@ -2381,11 +2495,56 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance (ds))
 				return false;
 
+			VerifyClsName ();
+
 			// parent_container is null for System.Object
 			if (parent_container != null && !AttributeTester.IsClsCompliant (parent_container.Type)) {
-				Report.Error_T (3009, Location, GetSignatureForError (),  TypeManager.CSharpName (parent_container.Type));
+				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (parent_container.Type));
 			}
 			return true;
+		}
+
+
+		/// <summary>
+		/// Checks whether container name is CLS Compliant
+		/// </summary>
+		void VerifyClsName ()
+		{
+			Hashtable parent_members = parent_container == null ? 
+				new Hashtable () :
+				parent_container.MemberCache.GetPublicMembers ();
+			Hashtable this_members = new Hashtable ();
+
+			foreach (DictionaryEntry entry in defined_names) {
+				MemberCore mc = (MemberCore)entry.Value;
+				if (!mc.IsClsCompliaceRequired (this))
+					continue;
+
+				string name = (string)entry.Key;
+				string basename = name.Substring (name.LastIndexOf ('.') + 1);
+
+				string lcase = basename.ToLower (System.Globalization.CultureInfo.InvariantCulture);
+				object found = parent_members [lcase];
+				if (found == null) {
+					found = this_members [lcase];
+					if (found == null) {
+						this_members.Add (lcase, mc);
+						continue;
+					}
+				}
+
+				if ((mc.ModFlags & Modifiers.OVERRIDE) != 0)
+					continue;					
+
+				if (found is MemberInfo) {
+					if (basename == ((MemberInfo)found).Name)
+						continue;
+					Report.SymbolRelatedToPreviousError ((MemberInfo)found);
+				} else {
+					Report.SymbolRelatedToPreviousError ((MemberCore) found);
+				}
+				Report.Error (3005, mc.Location, "Identifier '{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
+			}
 		}
 
 
@@ -2444,12 +2603,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		IMemberContainer IMemberContainer.Parent {
-			get {
-				return parent_container;
-			}
-		}
-
 		MemberCache IMemberContainer.MemberCache {
 			get {
 				return member_cache;
@@ -2473,175 +2626,9 @@ namespace Mono.CSharp {
 				return FindMembers (mt, new_bf, null, null);
 		}
 
-		//
-		// Operator pair checking
-		//
-
-		class OperatorEntry {
-			public int flags;
-			public Type ret_type;
-			public Type type1, type2;
-			public Operator op;
-			public Operator.OpType ot;
-			
-			public OperatorEntry (int f, Operator o)
-			{
-				flags = f;
-
-				ret_type = o.OperatorMethod.GetReturnType ();
-				Type [] pt = o.OperatorMethod.ParameterTypes;
-				type1 = pt [0];
-				type2 = pt [1];
-				op = o;
-				ot = o.OperatorType;
-			}
-
-			public override int GetHashCode ()
-			{	
-				return ret_type.GetHashCode ();
-			}
-
-			public override bool Equals (object o)
-			{
-				OperatorEntry other = (OperatorEntry) o;
-
-				if (other.ret_type != ret_type)
-					return false;
-				if (other.type1 != type1)
-					return false;
-				if (other.type2 != type2)
-					return false;
-				return true;
-			}
-		}
-				
-		//
-		// Checks that some operators come in pairs:
-		//  == and !=
-		// > and <
-		// >= and <=
-		// true and false
-		//
-		// They are matched based on the return type and the argument types
-		//
-		void CheckPairedOperators ()
-		{
-			Hashtable pairs = new Hashtable (null, null);
-			Operator true_op = null;
-			Operator false_op = null;
-			bool has_equality_or_inequality = false;
-			
-			// Register all the operators we care about.
-			foreach (Operator op in operators){
-				int reg = 0;
-				
-				switch (op.OperatorType){
-				case Operator.OpType.Equality:
-					reg = 1;
-					has_equality_or_inequality = true;
-					break;
-				case Operator.OpType.Inequality:
-					reg = 2;
-					has_equality_or_inequality = true;
-					break;
-
-				case Operator.OpType.True:
-					true_op = op;
-					break;
-				case Operator.OpType.False:
-					false_op = op;
-					break;
-					
-				case Operator.OpType.GreaterThan:
-					reg = 1; break;
-				case Operator.OpType.LessThan:
-					reg = 2; break;
-					
-				case Operator.OpType.GreaterThanOrEqual:
-					reg = 1; break;
-				case Operator.OpType.LessThanOrEqual:
-					reg = 2; break;
-				}
-				if (reg == 0)
-					continue;
-
-				OperatorEntry oe = new OperatorEntry (reg, op);
-
-				object o = pairs [oe];
-				if (o == null)
-					pairs [oe] = oe;
-				else {
-					oe = (OperatorEntry) o;
-					oe.flags |= reg;
-				}
-			}
-
-			if (true_op != null){
-				if (false_op == null)
-					Report.Error (216, true_op.Location, "operator true requires a matching operator false");
-			} else if (false_op != null)
-				Report.Error (216, false_op.Location, "operator false requires a matching operator true");
-			
-			//
-			// Look for the mistakes.
-			//
-			foreach (DictionaryEntry de in pairs){
-				OperatorEntry oe = (OperatorEntry) de.Key;
-
-				if (oe.flags == 3)
-					continue;
-
-				string s = "";
-				switch (oe.ot){
-				case Operator.OpType.Equality:
-					s = "!=";
-					break;
-				case Operator.OpType.Inequality: 
-					s = "==";
-					break;
-				case Operator.OpType.GreaterThan: 
-					s = "<";
-					break;
-				case Operator.OpType.LessThan:
-					s = ">";
-					break;
-				case Operator.OpType.GreaterThanOrEqual:
-					s = "<=";
-					break;
-				case Operator.OpType.LessThanOrEqual:
-					s = ">=";
-					break;
-				}
-				Report.Error (216, oe.op.Location,
-					      "The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
-			}
-
-			if ((has_equality_or_inequality) && (RootContext.WarningLevel >= 2)) {
-				MethodSignature equals_ms = new MethodSignature (
-					"Equals", TypeManager.bool_type, new Type [] { TypeManager.object_type });
-				MethodSignature hash_ms = new MethodSignature (
-					"GetHashCode", TypeManager.int32_type, new Type [0]);
-
-				MemberList equals_ml = FindMembers (MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance |
-								    BindingFlags.DeclaredOnly, MethodSignature.method_signature_filter,
-								    equals_ms);
-				MemberList hash_ml = FindMembers (MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance |
-								  BindingFlags.DeclaredOnly, MethodSignature.method_signature_filter,
-								  hash_ms);
-
-				bool equals_ok = false;
-				if ((equals_ml != null) && (equals_ml.Count == 1))
-					equals_ok = equals_ml [0].DeclaringType == TypeBuilder;
-				bool hash_ok = false;
-				if ((hash_ml != null) && (hash_ml.Count == 1))
-					hash_ok = hash_ml [0].DeclaringType == TypeBuilder;
-
-				if (!equals_ok)
-					Report.Warning (660, Location, "`" + Name + "' defines operator == or operator != but does " +
-							"not override Object.Equals (object o)");
-				if (!hash_ok)
-					Report.Warning (661, Location, "`" + Name + "' defines operator == or operator != but does " +
-							"not override Object.GetHashCode ()");
+		public virtual IMemberContainer ParentContainer {
+			get {
+				return parent_container;
 			}
 		}
 		
@@ -2785,7 +2772,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class ClassPart : TypeContainer {
+	public class ClassPart : TypeContainer, IMemberContainer {
 		public readonly PartialContainer PartialContainer;
 		public readonly bool IsPartial;
 
@@ -2820,6 +2807,12 @@ namespace Mono.CSharp {
 		{
 			return PartialContainer.VerifyImplements (
 				interface_type, full, name, loc);
+		}
+
+		public override IMemberContainer ParentContainer {
+			get {
+				return PartialContainer.ParentContainer;
+			}
 		}
 	}
 
@@ -2905,6 +2898,10 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
+			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.SEALED)) == (Modifiers.ABSTRACT | Modifiers.SEALED)) {
+				Report.Error (502, Location, "'{0}' cannot be both abstract and sealed", GetSignatureForError ());
+			}
+
 			attribute_usage = new AttributeUsageAttribute (AttributeTargets.All);
 		}
 
@@ -3072,13 +3069,13 @@ namespace Mono.CSharp {
 		protected InternalParameters parameter_info;
 		protected Type [] parameter_types;
 
-		// <summary>
-		//   This is set from TypeContainer.DefineMembers if this method overrides something.
-		// </summary>
-		public bool OverridesSomething;
-
 		// Whether this is an operator method.
 		public bool IsOperator;
+
+		//
+		// The method we're overriding if this is an override method.
+		//
+		protected MethodInfo parent_method = null;
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
@@ -3124,6 +3121,221 @@ namespace Mono.CSharp {
 				block = value;
 			}
 		}
+
+		protected override bool CheckBase ()
+		{
+			if (!base.CheckBase ())
+				return false;
+			
+			// Check whether arguments were correct.
+			if (!DoDefineParameters ())
+				return false;
+
+			if (IsExplicitImpl)
+				return true;
+
+			// TODO: Is it correct ?
+			if (!IsOperator) {
+				if (!CheckForDuplications ())
+					return false;
+			}
+
+			// Is null for System.Object while compiling corlib and base interfaces
+			if (Parent.ParentContainer == null) {
+				if ((ModFlags & Modifiers.NEW) != 0) {
+					Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError (Parent));
+				}
+				return true;
+			}
+
+			Type parent_ret_type = null;
+			parent_method = FindOutParentMethod (Parent, ref parent_ret_type);
+
+			// method is override
+			if (parent_method != null) {
+
+				if (!CheckMethodAgainstBase ())
+					return false;
+
+				if ((ModFlags & Modifiers.NEW) == 0) {
+					if (MemberType != TypeManager.TypeToCoreType (parent_ret_type)) {
+						Report.SymbolRelatedToPreviousError (parent_method);
+						Report.Error (508, Location, GetSignatureForError (Parent) + ": cannot " +
+							"change return type when overriding inherited member");
+						return false;
+					}
+				}
+
+				if (RootContext.WarningLevel > 2) {
+					if (Name == "Equals" && parameter_types.Length == 1 && parameter_types [0] == TypeManager.object_type)
+						Parent.Methods.HasEquals = true;
+					else if (Name == "GetHashCode" && parameter_types.Length == 0)
+						Parent.Methods.HasGetHashCode = true;
+				}
+
+				ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (parent_method);
+				if (oa != null) {
+					Report.SymbolRelatedToPreviousError (parent_method);
+					Report.Warning (672, Location, "Member '{0}' overrides obsolete member. Add the Obsolete attribute to '{0}'", GetSignatureForError (Parent));
+				}
+				return true;
+			}
+
+			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+				Report.Error (115, Location, "'{0}': no suitable methods found to override", GetSignatureForError (Parent));
+				return false;
+			}
+
+			MemberInfo conflict_symbol = Parent.FindMemberWithSameName (Name, !(this is Property));
+			if (conflict_symbol == null) {
+				if ((ModFlags & Modifiers.NEW) != 0) {
+					Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError (Parent));
+				}
+				return true;
+			}
+
+			if ((ModFlags & Modifiers.NEW) == 0) {
+				if (this is Method && conflict_symbol is MethodBase)
+					return true;
+
+				Report.SymbolRelatedToPreviousError (conflict_symbol);
+				Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member", GetSignatureForError (Parent));
+			}
+
+			return true;
+		}
+
+
+		//
+		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
+		// that have been defined.
+		//
+		// `name' is the user visible name for reporting errors (this is used to
+		// provide the right name regarding method names and properties)
+		//
+		bool CheckMethodAgainstBase ()
+		{
+			bool ok = true;
+
+			// TODO: replace with GetSignatureForError 
+			string name = parent_method.DeclaringType.Name + "." + parent_method.Name;
+
+			if ((ModFlags & Modifiers.OVERRIDE) != 0){
+				if (!(parent_method.IsAbstract || parent_method.IsVirtual)){
+					Report.Error (
+						506, Location, Parent.MakeName (Name) +
+						": cannot override inherited member `" +
+						name + "' because it is not " +
+						"virtual, abstract or override");
+					ok = false;
+				}
+				
+				// Now we check that the overriden method is not final
+				
+				if (parent_method.IsFinal) {
+					// This happens when implementing interface methods.
+					if (parent_method.IsHideBySig && parent_method.IsVirtual) {
+						Report.Error (
+							506, Location, Parent.MakeName (Name) +
+							": cannot override inherited member `" +
+							name + "' because it is not " +
+							"virtual, abstract or override");
+					} else
+						Report.Error (239, Location, Parent.MakeName (Name) + " : cannot " +
+							      "override inherited member `" + name +
+							      "' because it is sealed.");
+					ok = false;
+				}
+				//
+				// Check that the permissions are not being changed
+				//
+				MethodAttributes thisp = flags & MethodAttributes.MemberAccessMask;
+				MethodAttributes parentp = parent_method.Attributes & MethodAttributes.MemberAccessMask;
+
+				//
+				// special case for "protected internal"
+				//
+
+				if ((parentp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
+					//
+					// when overriding protected internal, the method can be declared
+					// protected internal only within the same assembly
+					//
+
+					if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
+						if (Parent.TypeBuilder.Assembly != parent_method.DeclaringType.Assembly){
+							//
+							// assemblies differ - report an error
+							//
+							
+							Error_CannotChangeAccessModifiers (Parent, parent_method, name);
+						    ok = false;
+						} else if (thisp != parentp) {
+							//
+							// same assembly, but other attributes differ - report an error
+							//
+							
+							Error_CannotChangeAccessModifiers (Parent, parent_method, name);
+							ok = false;
+						};
+					} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
+						//
+						// if it's not "protected internal", it must be "protected"
+						//
+
+						Error_CannotChangeAccessModifiers (Parent, parent_method, name);
+						ok = false;
+					} else if (Parent.TypeBuilder.Assembly == parent_method.DeclaringType.Assembly) {
+						//
+						// protected within the same assembly - an error
+						//
+						Error_CannotChangeAccessModifiers (Parent, parent_method, name);
+						ok = false;
+					} else if ((thisp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem)) != 
+						   (parentp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem))) {
+						//
+						// protected ok, but other attributes differ - report an error
+						//
+						Error_CannotChangeAccessModifiers (Parent, parent_method, name);
+						ok = false;
+					}
+				} else {
+					if (thisp != parentp){
+						Error_CannotChangeAccessModifiers (Parent, parent_method, name);
+						ok = false;
+					}
+				}
+			}
+
+			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0 && Name != "Finalize") {
+				ModFlags |= Modifiers.NEW;
+				Report.SymbolRelatedToPreviousError (parent_method);
+				Report.Warning (!IsInterface && (parent_method.IsVirtual || parent_method.IsAbstract) ? 114 : 108, Location, GetSignatureForError (Parent));
+			}
+
+			return ok;
+		}
+
+		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method, string name)
+		{
+			//
+			// FIXME: report the old/new permissions?
+			//
+			Report.Error (
+				507, Location, parent.MakeName (Name) +
+				": can't change the access modifiers when overriding inherited " +
+				"member `" + name + "'");
+		}
+
+		/// <summary>
+		/// For custom member duplication search in a container
+		/// </summary>
+		protected abstract bool CheckForDuplications ();
+
+		/// <summary>
+		/// Gets parent method and its return type
+		/// </summary>
+		protected abstract MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type);
 
 		protected virtual bool DoDefineParameters ()
 		{
@@ -3209,7 +3421,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -3219,26 +3431,25 @@ namespace Mono.CSharp {
 		{
 			if (!base.VerifyClsCompliance (ds)) {
 				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly (ds) && ds.IsClsCompliaceRequired (ds)) {
-					Report.Error_T (3011, Location, GetSignatureForError ());
+					Report.Error (3011, Location, "'{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
 				}
 				return false;
 			}
 
 			if (Parameters.HasArglist) {
-				// "Methods with variable arguments are not CLS-compliant"
-				Report.Error_T (3000, Location);
+				Report.Error (3000, Location, "Methods with variable arguments are not CLS-compliant");
+			}
+
+			if (!AttributeTester.IsClsCompliant (MemberType)) {
+				Report.Error (3002, Location, "Return type of '{0}' is not CLS-compliant", GetSignatureForError ());
 			}
 
 			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
 
-			if (!AttributeTester.IsClsCompliant (MemberType)) {
-				Report.Error_T (3002, Location, GetSignatureForError ());
-			}
-
 			return true;
 		}
 
-		protected bool IsDuplicateImplementation (TypeContainer tc, MethodCore method)
+		protected bool IsDuplicateImplementation (MethodCore method)
 		{
 			if ((method == this) || (method.Name != Name))
 				return false;
@@ -3306,35 +3517,18 @@ namespace Mono.CSharp {
 					}
 				}
 
-				Report.Error (111, Location,
-					      "Class `{0}' already defines a member called " +
-					      "`{1}' with the same parameter types",
-					      tc.Name, Name);
+				Report.SymbolRelatedToPreviousError (method);
+				Report.Error (111, Location, "Type '{0}' already defines a member called '{1}' with the same parameter types", Parent.Name, Name);
 				return true;
 			} else if (may_unify) {
 				Report.Error (408, Location,
 					      "`{0}' cannot define overload members that " +
 					      "may unify for some type parameter substitutions",
-					      tc.Name);
+					      Parent.Name);
 				return true;
 			}
 
 			return false;
-		}
-
-		public CallingConventions GetCallingConvention (bool is_class)
-		{
-			CallingConventions cc = 0;
-			
-			cc = Parameters.GetCallingConvention ();
-
-			if (is_class)
-				if ((ModFlags & Modifiers.STATIC) == 0)
-					cc |= CallingConventions.HasThis;
-
-			// FIXME: How is `ExplicitThis' used in C#?
-			
-			return cc;
 		}
 
 		protected override void VerifyObsoleteAttribute()
@@ -3456,7 +3650,7 @@ namespace Mono.CSharp {
 
 		public override AttributeTargets AttributeTargets {
 			get {
-				return AttributeTargets.Method | AttributeTargets.ReturnValue;
+				return AttributeTargets.Method;
 			}
 		}
 		
@@ -3504,14 +3698,6 @@ namespace Mono.CSharp {
                                 TypeManager.CSharpSignature(b) + "'");
                 }
 
-                void Report28 (MethodInfo b)
-                {
-                        Report.Warning (
-                                28, Location,
-                                "`" + TypeManager.CSharpSignature(b) +
-                                "' has the wrong signature to be an entry point");
-                }
-
                 public bool IsEntryPoint (MethodBuilder b, InternalParameters pinfo)
                 {
                         if (b.ReturnType != TypeManager.void_type &&
@@ -3536,7 +3722,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Target == "return") {
+			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (MethodBuilder, Location);
 
@@ -3551,8 +3737,7 @@ namespace Mono.CSharp {
 			if (a.Type == TypeManager.dllimport_type) {
 				const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
 				if ((ModFlags & extern_static) != extern_static) {
-					//"The DllImport attribute must be specified on a method marked `static' and `extern'"
-					Report.Error_T (601, a.Location);
+					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
 				}
 
 				return;
@@ -3560,32 +3745,27 @@ namespace Mono.CSharp {
 
 			if (a.Type == TypeManager.conditional_attribute_type) {
 				if (IsOperator || IsExplicitImpl) {
-					// Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation
-					Report.Error_T (577, Location, GetSignatureForError ());
+					Report.Error (577, Location, "Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation", GetSignatureForError ());
 					return;
 				}
 
 				if (ReturnType != TypeManager.void_type) {
-					// Conditional not valid on '{0}' because its return type is not void
-					Report.Error_T (578, Location, GetSignatureForError ());
+					Report.Error (578, Location, "Conditional not valid on '{0}' because its return new ErrorData ( type is not void", GetSignatureForError ());
 					return;
 				}
 
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-					// Conditional not valid on '{0}' because it is an override method
-					Report.Error_T (243, Location, GetSignatureForError ());
+					Report.Error (243, Location, "Conditional not valid on '{0}' because it is an override method", GetSignatureForError ());
 					return;
 				}
 
 				if (IsInterface) {
-					// Conditional not valid on interface members
-					Report.Error_T (582, Location);
+					Report.Error (582, Location, "Conditional not valid on interface members");
 					return;
 				}
 
 				if (MethodData.IsImplementing) {
-					// Conditional member '{0}' cannot implement interface member
-					Report.Error_T (629, Location, GetSignatureForError ());
+					Report.Error (629, Location, "Conditional member '{0}' cannot implement interface member", GetSignatureForError ());
 					return;
 				}
 			}
@@ -3593,93 +3773,18 @@ namespace Mono.CSharp {
 			MethodBuilder.SetCustomAttribute (cb);
 		}
 
-		//
-		// Checks our base implementation if any
-		//
-		protected override bool CheckBase ()
+  		protected override bool CheckForDuplications ()
 		{
-			base.CheckBase ();
-			
-			// Check whether arguments were correct.
-			if (!DoDefineParameters ())
-				return false;
+			ArrayList ar = Parent.Methods;
+			if (ar != null) {
+				int arLen = ar.Count;
 
-			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
-			if (IsOperator) {
-				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-			} else {
-				//
-				// Check in our class for dups
-				//
-				ArrayList ar = Parent.Methods;
-				if (ar != null) {
-					int arLen = ar.Count;
-
-					for (int i = 0; i < arLen; i++) {
-						Method m = (Method) ar [i];
-						if (IsDuplicateImplementation (Parent, m))
- 							return false;
-					}
+				for (int i = 0; i < arLen; i++) {
+					Method m = (Method) ar [i];
+					if (IsDuplicateImplementation (m))
+						return false;
 				}
 			}
-
-
-			//
-			// Verify if the parent has a type with the same name, and then
-			// check whether we have to create a new slot for it or not.
-			//
-			Type ptype = Parent.TypeBuilder.BaseType;
-
-			// ptype is only null for System.Object while compiling corlib.
-			if (ptype != null) {
-				
-				//
-				// Explicit implementations do not have `parent' methods, however,
-				// the member cache stores them there. Without this check, we get
-				// an incorrect warning in corlib.
-				//
-				if (! IsExplicitImpl) {
-					parent_method = (MethodInfo)((IMemberContainer)Parent).Parent.MemberCache.FindMemberToOverride (
-						Parent.TypeBuilder, Name, ParameterTypes, false);
-				}
-				
-				if (parent_method != null) {
-					string name = parent_method.DeclaringType.Name + "." +
-						parent_method.Name;
-
-					if (!CheckMethodAgainstBase (Parent, flags, parent_method, name))
-						return false;
-
-					if ((ModFlags & Modifiers.NEW) == 0) {
-						Type parent_ret = TypeManager.TypeToCoreType (
-							parent_method.ReturnType);
-
-						if (!parent_ret.Equals (MemberType)) {
-							Report.Error (
-								508, Location, Parent.MakeName (Name) + ": cannot " +
-								"change return type when overriding " +
-								"inherited member " + name);
-							return false;
-						}
-					}
-
-					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (parent_method);
-					if (oa != null) {
-						Report.SymbolRelatedToPreviousError (parent_method);
-						Report.Warning_T (672, Location, GetSignatureForError (Parent));
-					}
-				} else {
-					if (!OverridesSomething && ((ModFlags & Modifiers.NEW) != 0))
-						WarningNotHiding (Parent);
-
-					if ((ModFlags & Modifiers.OVERRIDE) != 0){
-						Report.Error (115, Location,
-							      Parent.MakeName (Name) +
-							      " no suitable methods found to override");
-					}
-				}
-			} else if ((ModFlags & Modifiers.NEW) != 0)
-				WarningNotHiding (Parent);
 
 			return true;
 		}
@@ -3749,7 +3854,9 @@ namespace Mono.CSharp {
                                                 DuplicateEntryPoint (MethodBuilder, Location);
                                         }
                                 } else                                 	
-                               	        Report28(MethodBuilder);
+                               	{
+									Report.Warning (28, Location, "'{0}' has the wrong signature to be an entry point", TypeManager.CSharpSignature(MethodBuilder) );
+								}
 			}
 
 			return true;
@@ -3766,14 +3873,36 @@ namespace Mono.CSharp {
 			MethodData = null;
 		}
 
+		protected override MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type)
+		{
+			MethodInfo mi = (MethodInfo) container.ParentContainer.MemberCache.FindMemberToOverride (
+				container.TypeBuilder, Name, ParameterTypes, false);
+
+			if (mi == null)
+				return null;
+
+			parent_ret_type = mi.ReturnType;
+			return mi;
+		}
+	
+		protected override bool VerifyClsCompliance(DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds))
+				return false;
+
+			if (parameter_types.Length > 0) {
+				ArrayList al = (ArrayList)ds.MemberCache.Members [Name];
+				if (al.Count > 1)
+					ds.MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
+			}
+
+			return true;
+		}
+
+
 		void IIteratorContainer.SetYields ()
 		{
 			ModFlags |= Modifiers.METHOD_YIELDS;
-		}
-	
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
-		{
-			return IsIdentifierAndParamClsCompliant (ds, Name, MethodBuilder, parameter_types);
 		}
 
 		#region IMethodData Members
@@ -4068,7 +4197,7 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Constructor : MethodCore {
+	public class Constructor : MethodCore, IMethodData {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
 
@@ -4136,36 +4265,50 @@ namespace Mono.CSharp {
 			ConstructorBuilder.SetCustomAttribute (cb);
 		}
 
-		protected override bool CheckBase ()
+ 		protected override bool CheckForDuplications ()
 		{
-			base.CheckBase ();
-			
-			// Check whether arguments were correct.
-			if (!DoDefineParameters ())
-				return false;
-			
-			if ((ModFlags & Modifiers.STATIC) != 0)
-				return true;
-			
-			if (Parent.Kind == Kind.Struct && ParameterTypes.Length == 0) {
-				Report.Error (568, Location, 
-					"Structs can not contain explicit parameterless " +
-					"constructors");
-				return false;
-			}
-				
-			//
-			// Check in our class for dups
-			//
 			ArrayList ar = Parent.InstanceConstructors;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
 				for (int i = 0; i < arLen; i++) {
 					Constructor m = (Constructor) ar [i];
-					if (IsDuplicateImplementation (Parent, m))
+					if (IsDuplicateImplementation (m))
 						return false;
 				}
+			}
+			return true;
+		}
+			
+		protected override bool CheckBase ()
+		{
+			// Check whether arguments were correct.
+			if (!DoDefineParameters ())
+				return false;
+			
+			// TODO: skip the rest for generated ctor
+			if ((ModFlags & Modifiers.STATIC) != 0)
+				return true;
+			
+			if (!CheckForDuplications ())
+				return false;
+
+			if (Parent.Kind == Kind.Struct) {
+				if (ParameterTypes.Length == 0) {
+				Report.Error (568, Location, 
+					"Structs can not contain explicit parameterless " +
+					"constructors");
+				return false;
+			}
+				
+				if ((ModFlags & Modifiers.PROTECTED) != 0) {
+					Report.Error (666, Location, "Protected member in struct declaration");
+						return false;
+				}
+			}
+			
+			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0) {
+				Report.Warning (628, Location, "'{0}': new protected member declared in sealed class", GetSignatureForError (Parent));
 			}
 			
 			return true;
@@ -4204,12 +4347,14 @@ namespace Mono.CSharp {
 				return false;
 
 			ConstructorBuilder = Parent.TypeBuilder.DefineConstructor (
-				ca, GetCallingConvention (Parent.Kind == Kind.Class),
+				ca, CallingConventions,
 				ParameterTypes);
 
 			if ((ModFlags & Modifiers.UNSAFE) != 0)
 				ConstructorBuilder.InitLocals = false;
 			
+			TypeManager.AddMethod (ConstructorBuilder, this);
+
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
@@ -4223,8 +4368,7 @@ namespace Mono.CSharp {
 		//
 		public override void Emit ()
 		{
-			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (Parent, Location, ig, null, ModFlags, true);
+			EmitContext ec = CreateEmitContext (null, null);
 
 			//
 			// extern methods have no bodies
@@ -4307,72 +4451,92 @@ namespace Mono.CSharp {
 			block = null;
 		}
 
-		// For constructors is needed to test only parameters
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+		// Is never override
+		protected override MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type)
 		{
-			if (parameter_types == null || parameter_types.Length == 0)
-				return true;
-
-			TypeContainer tc = ds as TypeContainer;
-
-			for (int i = 0; i < tc.InstanceConstructors.Count; i++) {
-				Constructor c = (Constructor) tc.InstanceConstructors [i];
-						
-				if (c == this || c.ParameterTypes.Length == 0)
-					continue;
-
-				if (!c.IsClsCompliaceRequired (ds))
-					continue;
-				
-				if (!AttributeTester.AreOverloadedMethodParamsClsCompliant (parameter_types, c.ParameterTypes)) {
-					Report.Error_T (3006, Location, GetSignatureForError ());
-					return false;
-				}
-			}
-
-			if (tc.TypeBuilder.BaseType == null)
-				return true;
-
-			DeclSpace temp_ds = TypeManager.LookupDeclSpace (tc.TypeBuilder.BaseType);
-			if (temp_ds != null)
-				return IsIdentifierClsCompliant (temp_ds);
-
-			MemberInfo[] ml = tc.TypeBuilder.BaseType.FindMembers (MemberTypes.Constructor, BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance, null, null);
-			// Skip parameter-less ctor
-			if (ml.Length < 2)
-				return true;
-
-			foreach (ConstructorInfo ci in ml) {
-				object[] cls_attribute = ci.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
-				if (cls_attribute.Length == 1 && (!((CLSCompliantAttribute)cls_attribute[0]).IsCompliant))
-					continue;
-
-				if (!AttributeTester.AreOverloadedMethodParamsClsCompliant (parameter_types, TypeManager.GetArgumentTypes (ci))) {
-					Report.Error_T (3006, Location, GetSignatureForError ());
-					return false;
-				}
-			}
-			
-			return true;
+			return null;
 		}
-
+						
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!base.VerifyClsCompliance (ds) || !IsExposedFromAssembly (ds)) {
 				return false;
 			}
-			
-			if (ds.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
-				foreach (Type param in parameter_types) {
-					if (param.IsArray) {
-						return false;
-					}
+
+ 			if (parameter_types.Length > 0) {
+ 				ArrayList al = (ArrayList)ds.MemberCache.Members [".ctor"];
+ 				if (al.Count > 3)
+ 					ds.MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
+				
+				if (ds.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
+					foreach (Type param in parameter_types) {
+						if (param.IsArray) {
+							return true;
+				}
+			}
 				}
 			}
 			has_compliant_args = true;
-			return true;
+				return true;
 		}
 
+		#region IMethodData Members
+
+		public System.Reflection.CallingConventions CallingConventions {
+			get {
+				CallingConventions cc = Parameters.GetCallingConvention ();
+
+				if (Parent.Kind == Kind.Class)
+					if ((ModFlags & Modifiers.STATIC) == 0)
+						cc |= CallingConventions.HasThis;
+
+				// FIXME: How is `ExplicitThis' used in C#?
+			
+				return cc;
+				}
+			}
+			
+		public new Location Location {
+			get {
+				return base.Location;
+			}
+		}
+
+		public string MethodName {
+			get {
+				return ShortName;
+			}
+			}
+			
+		public Type ReturnType {
+			get {
+				return MemberType;
+					}
+				}
+
+		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+		{
+			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
+			return new EmitContext (Parent, Location, ig_, null, ModFlags, true);
+			}
+
+		public ObsoleteAttribute GetObsoleteAttribute ()
+		{
+			return null;
+		}
+
+		public bool IsExcluded(EmitContext ec)
+		{
+			return false;
+		}
+
+		GenericMethod IMethodData.GenericMethod {
+			get {
+				return null;
+			}
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -4394,6 +4558,7 @@ namespace Mono.CSharp {
 		ObsoleteAttribute GetObsoleteAttribute ();
 		string GetSignatureForError (TypeContainer tc);
 		bool IsExcluded (EmitContext ec);
+		bool IsClsCompliaceRequired (DeclSpace ds);
 	}
 
 	//
@@ -4660,8 +4825,7 @@ namespace Mono.CSharp {
 				// We are more strict than Microsoft and report CS0626 like error
 				if (method.OptAttributes == null ||
 					!method.OptAttributes.Contains (TypeManager.methodimpl_attr_type, ec)) {
-					//"Method, operator, or accessor '{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation"
-					Report.Error_T (626, method.Location, method.GetSignatureForError (container));
+					Report.Error (626, method.Location, "Method, operator, or accessor '{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation", method.GetSignatureForError (container));
 					return;
 				}
 			}
@@ -4798,8 +4962,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.conditional_attribute_type) {
-				// Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation
-				Report.Error_T (577, Location, GetSignatureForError ());
+				Report.Error (577, Location, "Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation", GetSignatureForError ());
 				return;
 			}
 
@@ -4846,16 +5009,6 @@ namespace Mono.CSharp {
 		public Type InterfaceType = null;
 
 		//
-		// The method we're overriding if this is an override method.
-		//
-		protected MethodInfo parent_method = null;
-		public MethodInfo ParentMethod {
-			get {
-				return parent_method;
-			}
-		}
-
-		//
 		// The constructor is only exposed to our children
 		//
 		protected MemberBase (TypeContainer parent, Expression type, int mod,
@@ -4870,175 +5023,20 @@ namespace Mono.CSharp {
 
 		protected virtual bool CheckBase ()
 		{
-			if ((Parent.Kind == Kind.Struct) || (RootContext.WarningLevel > 3)){
-				if ((ModFlags & Modifiers.PROTECTED) != 0 && (Parent.ModFlags & Modifiers.SEALED) != 0){
-					if (Parent.Kind == Kind.Struct){
-						Report.Error (666, Location, "Protected member in struct declaration");
-						return false;
-					} else
-						Report.Warning (628, Location, "Member " + Parent.MakeName (Name) + " protected in sealed class");
-				}
+  			if ((ModFlags & Modifiers.PROTECTED) != 0 && Parent.Kind == Kind.Struct) {
+				Report.Error (666, Location, "Protected member in struct declaration");
+				return false;
 			}
+
+  			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0 &&
+			    (ModFlags & Modifiers.OVERRIDE) == 0 && Name != "Finalize") {
+  				Report.Warning (628, Location, "'{0}': new protected member declared in sealed class", GetSignatureForError (Parent));
+			}
+
 			return true;
 		}
 
-		protected void WarningNotHiding (TypeContainer parent)
-		{
-			Report.Warning (
-				109, Location,
-				"The member " + parent.MakeName (Name) + " does not hide an " +
-				"inherited member.  The keyword new is not required");
-							   
-		}
-
-		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method,
-							string name)
-		{
-			//
-			// FIXME: report the old/new permissions?
-			//
-			Report.Error (
-				507, Location, parent.MakeName (Name) +
-				": can't change the access modifiers when overriding inherited " +
-				"member `" + name + "'");
-		}
-
 		protected abstract bool CheckGenericOverride (MethodInfo method, string name);
-		
-		//
-		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
-		// that have been defined.
-		//
-		// `name' is the user visible name for reporting errors (this is used to
-		// provide the right name regarding method names and properties)
-		//
-		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodAttributes my_attrs,
-						       MethodInfo mb, string name)
-		{
-			bool ok = true;
-			
-			if ((ModFlags & Modifiers.OVERRIDE) != 0){
-				if (!(mb.IsAbstract || mb.IsVirtual)){
-					Report.Error (
-						506, Location, parent.MakeName (Name) +
-						": cannot override inherited member `" +
-						name + "' because it is not " +
-						"virtual, abstract or override");
-					ok = false;
-				}
-				
-				// Now we check that the overriden method is not final
-				
-				if (mb.IsFinal) {
-					// This happens when implementing interface methods.
-					if (mb.IsHideBySig && mb.IsVirtual) {
-						Report.Error (
-							506, Location, parent.MakeName (Name) +
-							": cannot override inherited member `" +
-							name + "' because it is not " +
-							"virtual, abstract or override");
-					} else
-						Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
-							      "override inherited member `" + name +
-							      "' because it is sealed.");
-					ok = false;
-				}
-
-				//
-				// Check that the constraints match when overriding a
-				// generic method.
-				//
-
-				if (!CheckGenericOverride (mb, name))
-					ok = false;
-
-				//
-				// Check that the permissions are not being changed
-				//
-				MethodAttributes thisp = my_attrs & MethodAttributes.MemberAccessMask;
-				MethodAttributes parentp = mb.Attributes & MethodAttributes.MemberAccessMask;
-
-				//
-				// special case for "protected internal"
-				//
-
-				if ((parentp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-					//
-					// when overriding protected internal, the method can be declared
-					// protected internal only within the same assembly
-					//
-
-					if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-						if (parent.TypeBuilder.Assembly != mb.DeclaringType.Assembly){
-							//
-							// assemblies differ - report an error
-							//
-							
-							Error_CannotChangeAccessModifiers (parent, mb, name);
-						    ok = false;
-						} else if (thisp != parentp) {
-							//
-							// same assembly, but other attributes differ - report an error
-							//
-							
-							Error_CannotChangeAccessModifiers (parent, mb, name);
-							ok = false;
-						};
-					} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
-						//
-						// if it's not "protected internal", it must be "protected"
-						//
-
-						Error_CannotChangeAccessModifiers (parent, mb, name);
-						ok = false;
-					} else if (parent.TypeBuilder.Assembly == mb.DeclaringType.Assembly) {
-						//
-						// protected within the same assembly - an error
-						//
-						Error_CannotChangeAccessModifiers (parent, mb, name);
-						ok = false;
-					} else if ((thisp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem)) != 
-						   (parentp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem))) {
-						//
-						// protected ok, but other attributes differ - report an error
-						//
-						Error_CannotChangeAccessModifiers (parent, mb, name);
-						ok = false;
-					}
-				} else {
-					if (thisp != parentp){
-						Error_CannotChangeAccessModifiers (parent, mb, name);
-						ok = false;
-					}
-				}
-			}
-
-			if (mb.IsVirtual || mb.IsAbstract){
-				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					if (Name != "Finalize"){
-						Report.Warning (
-							114, 2, Location, parent.MakeName (Name) + 
-							" hides inherited member `" + name +
-							"'.  To make the current member override that " +
-							"implementation, add the override keyword, " +
-							"otherwise use the new keyword");
-						ModFlags |= Modifiers.NEW;
-					}
-				}
-			} else {
-				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					if (Name != "Finalize"){
-						Report.Warning (
-							108, 1, Location, "The keyword new is required on " +
-							parent.MakeName (Name) + " because it hides " +
-							"inherited member `" + name + "'");
-						ModFlags |= Modifiers.NEW;
-					}
-				}
-			}
-
-			return ok;
-		}
 
 		protected virtual bool CheckParameters (DeclSpace ds, Type [] parameters)
 		{
@@ -5091,7 +5089,7 @@ namespace Mono.CSharp {
 			if (IsInterface) {
 				ModFlags = Modifiers.PUBLIC |
 					Modifiers.ABSTRACT |
-					Modifiers.VIRTUAL | (ModFlags & Modifiers.UNSAFE);
+					Modifiers.VIRTUAL | (ModFlags & Modifiers.UNSAFE) | (ModFlags & Modifiers.NEW);
 
 				flags = MethodAttributes.Public |
 					MethodAttributes.Abstract |
@@ -5199,11 +5197,6 @@ namespace Mono.CSharp {
 			return String.Concat (tc.Name, '.', Name);
 		}
 
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
-		{
-			return IsIdentifierAndParamClsCompliant (ds, Name, null, null);
-		}
-
 		protected override bool VerifyClsCompliance(DeclSpace ds)
 		{
 			if (base.VerifyClsCompliance (ds)) {
@@ -5211,7 +5204,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsInterface && HasClsCompliantAttribute && ds.IsClsCompliaceRequired (ds)) {
-				Report.Error_T (3010, Location, GetSignatureForError ());
+				Report.Error (3010, Location, "'{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
 			}
 			return false;
 		}
@@ -5234,6 +5227,11 @@ namespace Mono.CSharp {
 		public enum Status : byte { ASSIGNED = 1, USED = 2 }
 
 		static string[] attribute_targets = new string [] { "field" };
+
+		/// <summary>
+		///  Symbol with same name in parent class/struct
+		/// </summary>
+		public MemberInfo conflict_symbol;
 
 		//
 		// The constructor is only exposed to our children
@@ -5261,7 +5259,7 @@ namespace Mono.CSharp {
 					FieldBuilder.SetMarshal (marshal);
 					return;
 				}
-				Report.Warning_T (-24, a.Location);
+				Report.Warning (-24, a.Location, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
 				return;
 			}
 
@@ -5312,6 +5310,31 @@ namespace Mono.CSharp {
 			return init_expr;
 		}
 
+ 		protected override bool CheckBase ()
+		{
+ 			if (!base.CheckBase ())
+ 				return false;
+
+ 			// TODO: Implement
+ 			if (IsInterface)
+ 				return true;
+
+ 			conflict_symbol = Parent.FindMemberWithSameName (Name, false);
+ 			if (conflict_symbol == null) {
+ 				if ((ModFlags & Modifiers.NEW) != 0) {
+ 					Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError (Parent));
+ 				}
+ 				return true;
+ 			}
+
+ 			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0) {
+ 				Report.SymbolRelatedToPreviousError (conflict_symbol);
+ 				Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member", GetSignatureForError (Parent));
+ 			}
+
+			return true;
+ 		}
+
 		protected override bool DoDefine (DeclSpace ds)
 		{
 			if (!base.DoDefine (ds))
@@ -5324,8 +5347,7 @@ namespace Mono.CSharp {
 			}
 
 			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
-				// "Field or property cannot be of type '{0}'";
-				Report.Error_T (610, Location, TypeManager.CSharpName (MemberType));
+				Report.Error (610, Location, "Field or property cannot be of type '{0}'", TypeManager.CSharpName (MemberType));
 				return false;
 			}
 
@@ -5337,7 +5359,7 @@ namespace Mono.CSharp {
 			return TypeManager.GetFullNameSignature (FieldBuilder);
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -5353,7 +5375,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!AttributeTester.IsClsCompliant (FieldBuilder.FieldType)) {
-				Report.Error_T (3003, Location, GetSignatureForError ());
+				Report.Error (3003, Location, "Type of '{0}' is not CLS-compliant", GetSignatureForError ());
 			}
 			return true;
 		}
@@ -5575,17 +5597,16 @@ namespace Mono.CSharp {
 		{
 			if (a.Type == TypeManager.cls_compliant_attribute_type || a.Type == TypeManager.obsolete_attribute_type ||
 					a.Type == TypeManager.conditional_attribute_type) {
-				//"'{0}' is not valid on property or event accessors. It is valid on '{1}' declarations only"
-				Report.Error_T (1667, a.Location, TypeManager.CSharpName (a.Type), a.GetValidTargets ());
+				Report.Error (1667, a.Location, "'{0}' is not valid on property or event accessors. It is valid on '{1}' declarations only", TypeManager.CSharpName (a.Type), a.GetValidTargets ());
 				return;
 			}
 
-			if (a.Target == "method") {
+			if (a.Target == AttributeTargets.Method) {
 				method_data.MethodBuilder.SetCustomAttribute (cb);
 				return;
 			}
 
-			if (a.Target == "return") {
+			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
 
@@ -5651,7 +5672,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			protected override string[] ValidAttributeTargets {
+			public override string[] ValidAttributeTargets {
 				get {
 					return attribute_targets;
 				}
@@ -5670,7 +5691,7 @@ namespace Mono.CSharp {
 
 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
 			{
-				if (a.Target == "param") {
+				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
                                                param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
@@ -5722,7 +5743,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			protected override string[] ValidAttributeTargets {
+			public override string[] ValidAttributeTargets {
 				get {
 					return attribute_targets;
 				}
@@ -5742,7 +5763,7 @@ namespace Mono.CSharp {
 
 			public override AttributeTargets AttributeTargets {
 				get {
-					return AttributeTargets.Method | AttributeTargets.ReturnValue;
+					return AttributeTargets.Method;
 				}
 			}
 
@@ -5823,8 +5844,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
-				// "Field or property cannot be of type '{0}'";
-				Report.Error_T (610, Location, TypeManager.CSharpName (MemberType));
+				Report.Error (610, Location, "Field or property cannot be of type '{0}'", TypeManager.CSharpName (MemberType));
 				return false;
 			}
 
@@ -5838,148 +5858,39 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpSignature (PropertyBuilder, false);
 		}
 
-		protected virtual string RealMethodName {
-			get {
-				return Name;
-			}
-		}
 
-		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+		protected override bool CheckForDuplications ()
 		{
-			if (!IsIdentifierAndParamClsCompliant (ds, RealMethodName, null, null))
-				return false;
-
-			if (Get != null && !IsIdentifierAndParamClsCompliant (ds, "get_" + RealMethodName, null, null))
-				return false;
-
-			if (Set != null && !IsIdentifierAndParamClsCompliant (ds, "set_" + RealMethodName, null, null))
-				return false;
-
-			return true;
-		}
-
-
-		//
-		// Checks our base implementation if any
-		//
-		protected override bool CheckBase ()
-		{
-			base.CheckBase ();
-			
-			// Check whether arguments were correct.
-			if (!DoDefineParameters ())
-				return false;
-
-			if (IsExplicitImpl)
-				return true;
-
-			//
-			// Check in our class for dups
-			//
 			ArrayList ar = Parent.Properties;
 			if (ar != null) {
 				int arLen = ar.Count;
 					
 				for (int i = 0; i < arLen; i++) {
 					Property m = (Property) ar [i];
-					if (IsDuplicateImplementation (Parent, m))
+					if (IsDuplicateImplementation (m))
 						return false;
 				}
 			}
-
-			if (IsInterface)
-				return true;
-
-			string report_name;
-			MethodSignature ms, base_ms;
-			if (this is Indexer) {
-				string name, base_name;
-
-				report_name = "this";
-				name = TypeManager.IndexerPropertyName (Parent.TypeBuilder);
-				ms = new MethodSignature (name, null, ParameterTypes);
-				base_name = TypeManager.IndexerPropertyName (Parent.TypeBuilder.BaseType);
-				base_ms = new MethodSignature (base_name, null, ParameterTypes);
-			} else {
-				report_name = Name;
-				ms = base_ms = new MethodSignature (Name, null, ParameterTypes);
-			}
-
-			//
-			// Verify if the parent has a type with the same name, and then
-			// check whether we have to create a new slot for it or not.
-			//
-			Type ptype = Parent.TypeBuilder.BaseType;
-
-			// ptype is only null for System.Object while compiling corlib.
-			if (ptype == null) {
-				if ((ModFlags & Modifiers.NEW) != 0)
-					WarningNotHiding (Parent);
-
 				return true;
 			}
 
-			MemberInfo parent_member = null;
+ 		protected override MethodInfo FindOutParentMethod (TypeContainer container, ref Type parent_ret_type)
+ 		{
+ 			PropertyInfo parent_property = container.ParentContainer.MemberCache.FindMemberToOverride (
+ 				container.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
 
-			//
-			// Explicit implementations do not have `parent' methods, however,
-			// the member cache stores them there. Without this check, we get
-			// an incorrect warning in corlib.
-			//
-			if (! IsExplicitImpl) {
-				parent_member = ((IMemberContainer)Parent).Parent.MemberCache.FindMemberToOverride (
-					Parent.TypeBuilder, Name, ParameterTypes, true);
-			}
+ 			if (parent_property == null)
+ 				return null;
 
-			if (parent_member is PropertyInfo) {
-				PropertyInfo parent_property = (PropertyInfo)parent_member;
+ 			parent_ret_type = parent_property.PropertyType;
 
-				string name = parent_property.DeclaringType.Name + "." +
-					parent_property.Name;
+ 			MethodInfo temp_m;
+ 			temp_m = parent_property.GetGetMethod (true);
+ 			if (temp_m != null)
+ 				return temp_m;
 
-				MethodInfo get, set, parent_method;
-				get = parent_property.GetGetMethod (true);
-				set = parent_property.GetSetMethod (true);
-
-				if (get != null)
-					parent_method = get;
-				else if (set != null)
-					parent_method = set;
-				else
-					throw new Exception ("Internal error!");
-
-				if (!CheckMethodAgainstBase (Parent, flags, parent_method, name))
-					return false;
-
-				if ((ModFlags & Modifiers.NEW) == 0) {
-					Type parent_type = TypeManager.TypeToCoreType (
-						parent_property.PropertyType);
-
-					if (parent_type != MemberType) {
-						Report.Error (
-							508, Location, Parent.MakeName (Name) + ": cannot " +
-							"change return type when overriding " +
-							"inherited member " + name);
-						return false;
-					}
-				}
-			} else if (parent_member == null){
-				if ((ModFlags & Modifiers.NEW) != 0)
-					WarningNotHiding (Parent);
-
-				if ((ModFlags & Modifiers.OVERRIDE) != 0){
-					if (this is Indexer)
-						Report.Error (115, Location,
-							      Parent.MakeName (Name) +
-							      " no suitable indexers found to override");
-					else
-						Report.Error (115, Location,
-							      Parent.MakeName (Name) +
-							      " no suitable properties found to override");
-					return false;
-				}
-			}
-			return true;
+ 			System.Diagnostics.Debug.Assert (parent_property.GetSetMethod (true) != null, "Internal error property without get/set");
+ 			return parent_property.GetSetMethod (true);
 		}
 
 		public override void Emit ()
@@ -6001,7 +5912,7 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -6283,7 +6194,7 @@ namespace Mono.CSharp {
 			Remove = new RemoveDelegateMethod (this, remove);
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -6308,12 +6219,12 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Target == "field") {
+			if (a.Target == AttributeTargets.Field) {
 				FieldBuilder.SetCustomAttribute (cb);
 				return;
 			}
 
-			if (a.Target == "method") {
+			if (a.Target == AttributeTargets.Method) {
 				AddBuilder.SetCustomAttribute (cb);
 				RemoveBuilder.SetCustomAttribute (cb);
 				return;
@@ -6322,7 +6233,7 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
@@ -6403,7 +6314,7 @@ namespace Mono.CSharp {
 
 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
 			{
-				if (a.Target == "param") {
+				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
                                                param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
@@ -6507,7 +6418,7 @@ namespace Mono.CSharp {
 				return method.GetObsoleteAttribute (method.Parent);
 			}
 
-			protected override string[] ValidAttributeTargets {
+			public override string[] ValidAttributeTargets {
 				get {
 					return attribute_targets;
 				}
@@ -6630,6 +6541,22 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+ 		protected override bool CheckBase ()
+ 		{
+ 			if (!base.CheckBase ())
+ 				return false;
+ 
+ 			if (conflict_symbol != null && (ModFlags & Modifiers.NEW) == 0) {
+ 				if (!(conflict_symbol is EventInfo)) {
+ 					Report.SymbolRelatedToPreviousError (conflict_symbol);
+ 					Report.Error (72, Location, "Event '{0}' can override only event", GetSignatureForError (Parent));
+ 					return false;
+ 				}
+ 			}
+ 
+ 			return true;
+ 		}
+
 		public override void Emit ()
 		{
 			if (OptAttributes != null) {
@@ -6748,7 +6675,7 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public string IndexerName = "Item";
+		public string IndexerName = TypeContainer.DefaultIndexerName;
 		public string InterfaceIndexerName;
 
 		//
@@ -6787,19 +6714,18 @@ namespace Mono.CSharp {
 					IndexerName = indexer_attr.GetIndexerAttributeValue (ec);
 					if (IsExplicitImpl) {
 						// The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration
-						Report.Error_T (415, indexer_attr.Location);
+						Report.Error (415, indexer_attr.Location, "The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration");
 						return false;
 					}
 				
-					if (IsExplicitImpl) {
-						// The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration
-						Report.Error_T (415, indexer_attr.Location);
+					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+						Report.Error (609, indexer_attr.Location, "Cannot set the 'IndexerName' attribute on an indexer marked override");
 						return false;
 					}
 
 					if (!Tokenizer.IsValidIdentifier (IndexerName)) {
 						// The argument to the 'IndexerName' attribute must be a valid identifier
-						Report.Error_T (633, indexer_attr.Location);
+						Report.Error (633, indexer_attr.Location, "The argument to the 'IndexerName' attribute must be a valid identifier");
 						return false;
 					}
 				}
@@ -6930,10 +6856,9 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpSignature (PropertyBuilder, true);
 		}
 
-		protected override string RealMethodName {
-			get {
-				return IndexerName;
-			}
+		public override string GetSignatureForError(TypeContainer tc)
+		{
+			return String.Concat (tc.Name, ".this[", TypeManager.CSharpName (ParameterTypes [0]), ']');
 		}
 	}
 
@@ -7072,6 +6997,7 @@ namespace Mono.CSharp {
 			OperatorMethod.Block = Block;
 			OperatorMethod.IsOperator = true;			
 			OperatorMethod.Define ();
+			OperatorMethod.flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
 			if (OperatorMethod.MethodBuilder == null)
 				return false;
@@ -7123,12 +7049,10 @@ namespace Mono.CSharp {
 				if (first_arg_type.IsSubclassOf (return_type)
 					|| return_type.IsSubclassOf (first_arg_type)){
 					if (declaring_type.IsSubclassOf (return_type)) {
-						// '{0}' : user defined conversion to/from base class
-						Report.Error_T (553, Location, GetSignatureForError ());
+						Report.Error (553, Location, "'{0}' : user defined conversion to/from base class", GetSignatureForError ());
 						return false;
 					}
-					// '{0}' : user defined conversion to/from derived class
-					Report.Error_T (554, Location, GetSignatureForError ());
+					Report.Error (554, Location, "'{0}' : user defined conversion to/from derived class", GetSignatureForError ());
 					return false;
 				}
 			} else if (SecondArgType == null) {
@@ -7279,7 +7203,7 @@ namespace Mono.CSharp {
 					param_types [0], param_types [1]);
 		}
 
-		protected override string[] ValidAttributeTargets {
+		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}

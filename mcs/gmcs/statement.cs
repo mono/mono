@@ -1757,18 +1757,15 @@ namespace Mono.CSharp {
 					name = (string) de.Key;
 						
 					if (vector.IsAssigned (vi.VariableInfo)){
-						Report.Warning (
-							219, vi.Location, "The variable `" + name +
-							"' is assigned but its value is never used");
+						Report.Warning (219, vi.Location, "The variable '{0}' is assigned but its value is never used", name);
 					} else {
-						Report.Warning (
-							168, vi.Location, "The variable `" +
-							name +
-							"' is declared but never used");
+						Report.Warning (168, vi.Location, "The variable '{0}' is declared but never used", name);
 					} 
 				}
 			}
 		}
+
+		bool unreachable_shown;
 
 		public override bool Resolve (EmitContext ec)
 		{
@@ -1782,7 +1779,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
-			bool unreachable = false, warning_shown = false;
+			bool unreachable = false;
 
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
@@ -1792,11 +1789,11 @@ namespace Mono.CSharp {
 					if (s == EmptyStatement.Value)
 						s.loc = EndLocation;
 
-					if (!s.ResolveUnreachable (ec, !warning_shown))
+					if (!s.ResolveUnreachable (ec, !unreachable_shown))
 						ok = false;
 
 					if (s != EmptyStatement.Value)
-						warning_shown = true;
+						unreachable_shown = true;
 					else
 						s.loc = Location.Null;
 
@@ -1853,6 +1850,12 @@ namespace Mono.CSharp {
 			}
 
 			return ok;
+		}
+		
+		public override bool ResolveUnreachable (EmitContext ec, bool warn)
+		{
+			unreachable_shown = true;
+			return base.ResolveUnreachable (ec, warn);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -2021,6 +2024,8 @@ namespace Mono.CSharp {
 		bool got_default;
 		Label default_target;
 		Expression new_expr;
+		bool is_constant;
+		SwitchSection constant_section;
 
 		//
 		// The types allowed to be implicitly cast from
@@ -2644,6 +2649,36 @@ namespace Mono.CSharp {
 			ig.MarkLabel (end_of_switch);
 		}
 
+		SwitchSection FindSection (SwitchLabel label)
+		{
+			foreach (SwitchSection ss in Sections){
+				foreach (SwitchLabel sl in ss.Labels){
+					if (label == sl)
+						return ss;
+				}
+			}
+
+			return null;
+		}
+
+		bool ResolveConstantSwitch (EmitContext ec)
+		{
+			object key = ((Constant) new_expr).GetValue ();
+			SwitchLabel label = (SwitchLabel) Elements [key];
+
+			if (label == null)
+				return true;
+
+			constant_section = FindSection (label);
+			if (constant_section == null)
+				return true;
+
+			if (constant_section.Block.Resolve (ec) != true)
+				return false;
+
+			return true;
+		}
+
 		public override bool Resolve (EmitContext ec)
 		{
 			Expr = Expr.Resolve (ec);
@@ -2669,6 +2704,14 @@ namespace Mono.CSharp {
 			Report.Debug (1, "START OF SWITCH BLOCK", loc, ec.CurrentBranching);
 			ec.StartFlowBranching (FlowBranching.BranchingType.Switch, loc);
 
+			is_constant = new_expr is Constant;
+			if (is_constant) {
+				object key = ((Constant) new_expr).GetValue ();
+				SwitchLabel label = (SwitchLabel) Elements [key];
+
+				constant_section = FindSection (label);
+			}
+
 			bool first = true;
 			foreach (SwitchSection ss in Sections){
 				if (!first)
@@ -2677,10 +2720,18 @@ namespace Mono.CSharp {
 				else
 					first = false;
 
-				if (ss.Block.Resolve (ec) != true)
+				if (is_constant && (ss != constant_section)) {
+					// If we're a constant switch, we're only emitting
+					// one single section - mark all the others as
+					// unreachable.
+					ec.CurrentBranching.CurrentUsageVector.Goto ();
+					if (!ss.Block.ResolveUnreachable (ec, true))
+						return false;
+				} else {
+					if (!ss.Block.Resolve (ec))
 					return false;
 			}
-
+			}
 
 			if (!got_default)
 				ec.CurrentBranching.CreateSibling (
@@ -2697,12 +2748,16 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			// Store variable for comparission purposes
-			LocalBuilder value = ec.ig.DeclareLocal (SwitchType);
-			new_expr.Emit (ec);
-			ec.ig.Emit (OpCodes.Stloc, value);
-
 			ILGenerator ig = ec.ig;
+
+			// Store variable for comparission purposes
+			LocalBuilder value;
+			if (!is_constant) {
+				value = ig.DeclareLocal (SwitchType);
+			new_expr.Emit (ec);
+				ig.Emit (OpCodes.Stloc, value);
+			} else
+				value = null;
 
 			default_target = ig.DefineLabel ();
 
@@ -2716,7 +2771,10 @@ namespace Mono.CSharp {
 			ec.Switch = this;
 
 			// Emit Code.
-			if (SwitchType == TypeManager.string_type)
+			if (is_constant) {
+				if (constant_section != null)
+					constant_section.Block.Emit (ec);
+			} else if (SwitchType == TypeManager.string_type)
 				SimpleSwitchEmit (ec, value);
 			else
 				TableSwitchEmit (ec, value);
@@ -3313,7 +3371,7 @@ namespace Mono.CSharp {
 				Type resolvedType = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
 					if (resolvedType.IsSubclassOf (prevCatches [ii])) {
-						Report.Error_T (160, c.loc, prevCatches [ii].FullName);
+						Report.Error (160, c.loc, "A previous catch clause already catches all exceptions of this or a super type '{0}'", prevCatches [ii].FullName);
 						return false;
 					}
 				}
@@ -3840,7 +3898,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		//
+		// 
 		// Retrieves a `public void Dispose ()' method from the Type `t'
 		//
 		static MethodInfo FetchMethodDispose (Type t)
@@ -3908,38 +3966,11 @@ namespace Mono.CSharp {
 			ForeachHelperMethods hm = (ForeachHelperMethods) criteria;
 			EmitContext ec = hm.ec;
 
-			//
-			// Check whether GetEnumerator is accessible to us
-			//
-			MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
+			// Check whether GetEnumerator is public
+			if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+					return false;
 
-			Type declaring = mi.DeclaringType;
-			if (prot == MethodAttributes.Private){
-				if (declaring != ec.ContainerType)
-					return false;
-			} else if (prot == MethodAttributes.FamANDAssem){
-				// If from a different assembly, false
-				if (!(mi is MethodBuilder))
-					return false;
-				//
-				// Are we being invoked from the same class, or from a derived method?
-				//
-				if (ec.ContainerType != declaring){
-					if (!ec.ContainerType.IsSubclassOf (declaring))
-						return false;
-				}
-			} else if (prot == MethodAttributes.FamORAssem){
-				if (!(mi is MethodBuilder ||
-				      ec.ContainerType == declaring ||
-				      ec.ContainerType.IsSubclassOf (declaring)))
-					return false;
-			} if (prot == MethodAttributes.Family){
-				if (!(ec.ContainerType == declaring ||
-				      ec.ContainerType.IsSubclassOf (declaring)))
-					return false;
-			}
-
-			if ((mi.ReturnType == TypeManager.ienumerator_type) && (declaring == TypeManager.string_type))
+			if ((mi.ReturnType == TypeManager.ienumerator_type) && (mi.DeclaringType == TypeManager.string_type))
 				//
 				// Apply the same optimization as MS: skip the GetEnumerator
 				// returning an IEnumerator, and use the one returning a 
@@ -4184,7 +4215,7 @@ namespace Mono.CSharp {
 					enumerator.EmitLoad ();
 					ig.Emit (OpCodes.Box, hm.enumerator_type);
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				}					
+				}
 			} else {
 				Label call_dispose = ig.DefineLabel ();
 

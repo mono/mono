@@ -206,22 +206,9 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Utility wrapper routine for Warning, just to beautify the code
 		/// </summary>
-		public void Warning (int warning, string s)
+		public void Warning (int code, string format, params object[] args)
 		{
-			if (!Location.IsNull (loc))
-				Report.Warning (warning, loc, s);
-			else
-				Report.Warning (warning, s);
-		}
-
-		/// <summary>
-		///   Utility wrapper routine for Warning, only prints the warning if
-		///   warnings of level `level' are enabled.
-		/// </summary>
-		public void Warning (int warning, int level, string s)
-		{
-			if (level <= RootContext.WarningLevel)
-				Warning (warning, s);
+			Report.Warning (code, loc, format, args);
 		}
 
 		/// <summary>
@@ -733,12 +720,12 @@ namespace Mono.CSharp {
 
 
 			if (qualifier_type != null)
-				Report.Error_T (122, loc, TypeManager.CSharpName (qualifier_type) + "." + name);
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", TypeManager.CSharpName (qualifier_type) + "." + name);
 			else if (name == ".ctor") {
 				Report.Error (143, loc, String.Format ("The type {0} has no constructors defined",
 								       TypeManager.CSharpName (queried_type)));
 			} else {
-				Report.Error_T (122, loc, name);
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", name);
 		}
 		}
 
@@ -2592,6 +2579,7 @@ namespace Mono.CSharp {
 		bool is_explicit_impl = false;
 		bool has_type_arguments = false;
  		bool identical_type_name = false;
+		bool is_base;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Location l)
 		{
@@ -2673,6 +2661,15 @@ namespace Mono.CSharp {
 
 			set {
 				identical_type_name = value;
+			}
+		}
+
+		public bool IsBase {
+			get {
+				return is_base;
+			}
+			set {
+				is_base = value;
 			}
 		}
 
@@ -3375,7 +3372,7 @@ namespace Mono.CSharp {
 				is_static = true;
 
 			if (setter == null && getter == null){
-				Report.Error_T (122, loc, PropertyInfo.Name);
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", PropertyInfo.Name);
 			}
 		}
 

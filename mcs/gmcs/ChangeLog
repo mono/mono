@@ -1,3 +1,196 @@
+2004-08-23  Martin Baulig  <martin@ximian.com>
+
+	Back to the old error reporting system :-)
+
+	* report.cs (Message): Removed.
+	(Report.MessageData, ErrorData, WarningData): Removed.
+	(Report.Error, Warning): Back to the old system.
+
+2004-08-23  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (IMemberContainer.Parent): Renamed to ParentContainer.
+
+	* class.cs (TypeContainer.ParentContainer): New public virtual
+	method; replaces the explicit interface implementation.
+	(ClassPart.ParentContainer): Override.
+
+2004-08-23  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Switch): Added support for constant switches; see
+	#59428 or test-285.cs.
+
+2004-08-22  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #62740.
+	* statement.cs (GetEnumeratorFilter): Removed useless
+	logic because C# specs is strict. GetEnumerator must be
+	public.
+
+2004-08-22  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	a switch and may break, reset the barrier.  Fixes #59867.
+
+2004-08-22  Marek Safar  <marek.safar@seznam.cz>
+
+	CLS-Compliance speed up (~5% for corlib)
+
+	* attribute.cs (AttributeTester.VerifyTopLevelNameClsCompliance):
+	New method. Tests container for CLS-Compliant names
+
+	* class.cs (TypeContainer.VerifyClsName): New method.
+	Checks whether container name is CLS Compliant.
+	(Constructor): Implements IMethodData.
+
+	* decl.cs (MemberCache.GetPublicMembers ): New method. Builds
+	low-case table for CLS Compliance test.
+	(MemberCache.VerifyClsParameterConflict): New method.
+	Checks method parameters for CS3006 error.
+
+	* enum.cs (EnumMember): Is derived from MemberCore.
+	(Enum.VerifyClsName): Optimized for better performance.
+
+2004-08-06  Marek Safar  <marek.safar@seznam.cz>
+
+	* report.cs: Renamed Error_T to Error and changed all
+	references.
+
+2004-08-06  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (TypeContainer.IndexerArrayList): New inner class
+	container for indexers.
+	(TypeContainer.DefaultIndexerName): New constant for default
+	indexer name. Replaced all "Item" with this constant.
+	(TypeContainer.DefineIndexers): Moved to IndexerArrayList class.
+
+	* typemanager.cs (TypeManager.default_member_ctor): Cache here
+	DefaultMemberAttribute constructor.
+
+2004-08-05  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeJumpOrigins):
+	Fix bug #59429.
+
+2004-08-05  Marek Safar  <marek.safar@seznam.cz>
+
+	* mcs.exe.sources: $(EXTRA_SOURCES) are now here to avoid
+	multi platforms problem.
+
+	* compiler.csproj: Included shared files.
+
+2004-08-04  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug 60333, 55971 in the more general way
+	* attribute.cs (Attribute.GetAttributeArgumentExpression):
+	Added arg_type argument for constant conversion.
+	(Attribute.Resolve): Reuse GetAttributeArgumentExpression.
+
+2004-08-04  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #59760
+	* class.cs (TypeContainer ): New inner classes MethodArrayList, 
+	OperatorArrayList, MethodCoreArrayList for typecontainer
+	containers. Changed class member types to these new types.
+	(MethodArrayList.DefineMembers): Added test for CS0659.
+
+2004-08-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* cfold.cs: Synchronize the folding with the code in expression.cs
+	Binary.DoNumericPromotions for uint operands.
+
+	* attribute.cs: Revert patch from Raja, it introduced a regression
+	while building Blam-1.2.1 (hard to isolate a test case).
+
+2004-08-04  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix for #55382
+	* class.cs:
+	(TypeContainer.Define): Renamed to DefineContainerMembers because of
+	name collision.
+	(MethodCore.parent_method): New member. The method we're overriding
+	if this is an override method.
+	(MethodCore.CheckBase): Moved from Method class and made common.
+	(MethodCore.CheckMethodAgainstBase): Moved from MemberBase and made
+	private.
+	(MethodCore.CheckForDuplications): New abstract method. For custom
+	member duplication search in a container
+	(MethodCore.FindOutParentMethod): New abstract method. Gets parent
+	method and its return type.
+	(Event.conflict_symbol): New member. Symbol with same name in the
+	parent class.
+
+	* decl.cs:
+	(MemberCache.FindMemberWithSameName): New method. The method
+	is looking for conflict with inherited symbols.
+
+2004-08-04  Martin Baulig  <martin@ximian.com>
+
+	* codegen.cs (VariableStorage.EmitLoadAddress): New public method.
+
+	* statement.cs (Foreach.EmitFinally): Make this work for valuetypes.
+
+2004-08-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* report.cs (Message): New enum for better error, warning reference in
+	the code.
+	(MessageData): New inner abstract class. It generally handles printing of
+	error and warning messages.
+	Removed unused Error, Warning, Message methods.
+
+2004-08-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix for cs0592-8.cs test
+	* attribute.cs
+	(Attributable.ValidAttributeTargets): Made public.
+	(Attribute.ExplicitTarget): New member for explicit target value.
+	(Attribute.CheckTargets): Now we translate explicit attribute
+	target to Target here.
+
+2004-08-03  Ben Maurer  <bmaurer@ximian.com>
+
+	* ecore.cs (MethodGroupExpr): new IsBase property.
+
+	* expression.cs (BaseAccess): Set IsBase on MethodGroupExpr.
+
+	* delegate.cs (DelegateCreation): store a MethodGroupExpr
+	rather than an instance expr.
+
+	(DelegateCreation.Emit): Use the method group rather than
+	the instance expression. Also, if you have base.Foo as the
+	method for a delegate, make sure to emit ldftn, not ldftnvirt.
+
+	(ResolveMethodGroupExpr): Use the MethodGroupExpr. 
+
+	(NewDelegate.DoResolve): Only check for the existance of Invoke
+	if the method is going to be needed. Use MethodGroupExpr.
+
+	(NewDelegate.Emit): Remove, DelegateCreation implements this.	
+
+	* expression.cs: For pointer arith., make sure to use
+	the size of the type, not the size of the pointer to
+	the type.
+
+2004-08-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix for #60722
+	* class.cs (Class): Added error CS0502 test.
+
+2004-08-03  John Luke  <jluke@cfl.rr.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	Fix for #60997.
+	* attribute.cs (Attribute.complained_before): New flag.
+	(Attribute.ResolveType, Attribute.Resolve),
+	(Attribute.DefinePInvokeMethod): Set it.
+	(Attributes.Search): Pass 'complain' to Attribute.ResolveType.
+	
+2004-08-03  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Don't abort if we can't
+	use a user-defined operator; we still need to do numeric
+	promotions in case one argument is a builtin type and the other
+	one has an implicit conversion to that type.  Fixes #62322.
+
 2004-08-18  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (Method.Define): Use the correct method name when

@@ -806,8 +806,6 @@ namespace Mono.CSharp {
 
 
 	public abstract class CommonAssemblyModulClass: Attributable {
-		static string[] attribute_targets = new string [] { "assembly", "module" };
-
 		protected CommonAssemblyModulClass ():
 			base (null)
 		{
@@ -820,7 +818,7 @@ namespace Mono.CSharp {
 				return;
 			}
 			OptAttributes.AddAttributes (attrs);
-			OptAttributes.CheckTargets (ValidAttributeTargets);
+			OptAttributes.CheckTargets (this);
 		}
 
 		public virtual void Emit (TypeContainer tc) 
@@ -844,12 +842,6 @@ namespace Mono.CSharp {
 			}
 			return a;
 		}
-
-		protected override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
-			}
-		}
 	}
 
 	public class AssemblyClass: CommonAssemblyModulClass {
@@ -857,6 +849,8 @@ namespace Mono.CSharp {
 		public AssemblyBuilder Builder;
                     
 		bool is_cls_compliant;
+
+		static string[] attribute_targets = new string [] { "assembly" };
 
 		public AssemblyClass (): base ()
 		{
@@ -893,7 +887,7 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null) {
                                foreach (Attribute a in OptAttributes.Attrs) {
-					if (a.Target != "assembly")
+					if (a.Target != AttributeTargets.Assembly)
 						continue;
                                        // TODO: This code is buggy: comparing Attribute name without resolving it is wrong.
                                        //       However, this is invoked by CodeGen.Init, at which time none of the namespaces
@@ -903,8 +897,8 @@ namespace Mono.CSharp {
                                                case "AssemblyKeyFileAttribute":
                                                case "System.Reflection.AssemblyKeyFileAttribute":
 							if (RootContext.StrongNameKeyFile != null) {
-								Report.Warning (1616, "Compiler option -keyfile overrides " +
-									"AssemblyKeyFileAttribute");
+								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+								Report.Warning (1616, "Compiler option '{0}' overrides '{1}' given in source", "keyfile", "System.Reflection.AssemblyKeyFileAttribute");
 							}
 							else {
 								string value = a.GetString ();
@@ -916,8 +910,8 @@ namespace Mono.CSharp {
                                                case "AssemblyKeyNameAttribute":
                                                case "System.Reflection.AssemblyKeyNameAttribute":
 							if (RootContext.StrongNameKeyContainer != null) {
-								Report.Warning (1616, "Compiler option -keycontainer overrides " +
-									"AssemblyKeyNameAttribute");
+								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+								Report.Warning (1616, "keycontainer", "Compiler option '{0}' overrides '{1}' given in source", "System.Reflection.AssemblyKeyNameAttribute");
 							}
 							else {
 								string value = a.GetString ();
@@ -1023,12 +1017,20 @@ namespace Mono.CSharp {
 		{
 			Builder.SetCustomAttribute (customBuilder);
 		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
 	}
 
 	public class ModuleClass: CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
 		public ModuleBuilder Builder;
 		bool m_module_is_unsafe;
+
+		static string[] attribute_targets = new string [] { "module" };
 
 		public ModuleClass (bool is_unsafe)
 		{
@@ -1064,12 +1066,17 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
 			if (a != null && a.Type == TypeManager.cls_compliant_attribute_type) {
-				Report.Warning_T (3012, a.Location);
+				Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
 				return;
 			}
 
 			Builder.SetCustomAttribute (customBuilder);
 		}
-	}
 
+		public override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
+	}
 }
