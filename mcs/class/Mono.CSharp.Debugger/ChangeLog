@@ -1,3 +1,8 @@
+2004-06-19  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(SourceFileTable.Namespaces): New public property.
+
 2004-06-02  Martin Baulig  <martin@ximian.com>
 
 	Set version number to 37.

@@ -382,6 +382,26 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		public NamespaceEntry[] Namespaces {
+			get {
+				if (creating)
+					throw new InvalidOperationException ();
+
+				BinaryReader reader = file.BinaryReader;
+				int old_pos = (int) reader.BaseStream.Position;
+
+				reader.BaseStream.Position = NamespaceTableOffset;
+				ArrayList list = new ArrayList ();
+				for (int i = 0; i < NamespaceCount; i ++)
+					list.Add (new NamespaceEntry (file, reader));
+				reader.BaseStream.Position = old_pos;
+
+				NamespaceEntry[] retval = new NamespaceEntry [list.Count];
+				list.CopyTo (retval, 0);
+				return retval;
+			}
+		}
+
 		public override string ToString ()
 		{
 			return String.Format ("SourceFileEntry ({0}:{1}:{2})",
@@ -801,6 +821,18 @@ namespace Mono.CSharp.Debugger
 			this.Index = index;
 			this.Parent = parent;
 			this.UsingClauses = using_clauses != null ? using_clauses : new string [0];
+		}
+
+		internal NamespaceEntry (MonoSymbolFile file, BinaryReader reader)
+		{
+			Name = file.ReadString ();
+			Index = reader.ReadInt32 ();
+			Parent = reader.ReadInt32 ();
+
+			int count = reader.ReadInt32 ();
+			UsingClauses = new string [count];
+			for (int i = 0; i < count; i++)
+				UsingClauses [i] = file.ReadString ();
 		}
 
 		internal void Write (MonoSymbolFile file, BinaryWriter bw)

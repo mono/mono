@@ -314,12 +314,18 @@ namespace Mono.CSharp.Debugger
 		{
 			int old_pos = (int) reader.BaseStream.Position;
 			reader.BaseStream.Position = offset;
-			int length = reader.ReadInt32 ();
 
-			byte[] data = reader.ReadBytes (length);
-			string text = Encoding.UTF8.GetString (data);
+			string text = ReadString ();
+
 			reader.BaseStream.Position = old_pos;
 			return text;
+		}
+
+		internal string ReadString ()
+		{
+			int length = reader.ReadInt32 ();
+			byte[] data = reader.ReadBytes (length);
+			return Encoding.UTF8.GetString (data);
 		}
 
 		void Write (BinaryWriter bw)
