@@ -22,10 +22,10 @@ namespace External.IODCODESPOSTAUXTests
 			Console.WriteLine ("á");
 			Console.WriteLine (res);
 			Console.WriteLine ("Pyrénées Orientales");
-			AssertEquals ("Pyrénées Orientales", res);
+			Assert.AreEqual ("Pyrénées Orientales", res);
 			
 			res = ser.GetZipForTown ("Perpignan",",",true);
-			AssertEquals ("66000=Perpignan,66100=Perpignan", res);
+			Assert.AreEqual ("66000=Perpignan,66100=Perpignan", res);
 		}
 	}
 }

@@ -17,25 +17,25 @@ namespace External.GlobalWeatherTests
 		{
 			StationInfo si = new StationInfo ();
 			string[] countries = si.listCountries ();
-			AssertNotNull (countries);
-			AssertEquals (215, countries.Length);
-			AssertEquals ("afghanistan", countries[0]);
-			AssertEquals ("spain", countries[177]);
-			AssertEquals ("zimbabwe", countries[214]);
+			Assert.IsNotNull (countries);
+			Assert.AreEqual (215, countries.Length);
+			Assert.AreEqual ("afghanistan", countries[0]);
+			Assert.AreEqual ("spain", countries[177]);
+			Assert.AreEqual ("zimbabwe", countries[214]);
 			
 			Station[] stations = si.searchByCountry ("spain");
-			AssertNotNull (stations);
+			Assert.IsNotNull (stations);
 			foreach (Station sta in stations)
 			{
-				AssertNotNull (sta);
+				Assert.IsNotNull (sta);
 				if (sta.icao == "LEBL")
-					AssertEquals ("Barcelona / Aeropuerto", sta.name);
+					Assert.AreEqual ("Barcelona / Aeropuerto", sta.name);
 			}
 			
 			Station[] st = si.searchByCode ("LEBL");
-			AssertNotNull (st);
-			AssertEquals (1, st.Length);
-			AssertEquals ("Barcelona / Aeropuerto", st[0].name);
+			Assert.IsNotNull (st);
+			Assert.AreEqual (1, st.Length);
+			Assert.AreEqual ("Barcelona / Aeropuerto", st[0].name);
 		}
 		
 		[Test]
@@ -44,9 +44,9 @@ namespace External.GlobalWeatherTests
 			GlobalWeather gw = new GlobalWeather ();
 			WeatherReport wr = gw.getWeatherReport ("LEBL");
 			
-			AssertNotNull (wr.station);
-			AssertEquals ("LEBL", wr.station.icao);
-			AssertEquals ("Barcelona / Aeropuerto", wr.station.name);
+			Assert.IsNotNull (wr.station);
+			Assert.AreEqual ("LEBL", wr.station.icao);
+			Assert.AreEqual ("Barcelona / Aeropuerto", wr.station.name);
 		}
 	}
 }

@@ -1,3 +1,36 @@
+2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* WebServiceTest.cs, client/external/BankCodeEJBHomeTest.cs, 
+	  client/external/GlobalWeatherTest.cs, client/external/HPcatalogTest.cs,
+	  client/external/IODCODESPOSTAUXTest.cs, 
+	  client/external/TemperatureServiceTest.cs,
+	  client/localhost/DataServiceTest.cs, 
+	  client/localhost/DuplicateArrayTestTest.cs, 
+	  client/localhost/IncludeTestTest.cs,
+	  client/localhost/TestBinding4Test.cs: Use new nunit 2.2 api.
+
+	* server/ConvDocLitWra.asmx, server/ConvDocEncWra.asmx, 
+	  server/ConvDocLitBar.asmx, server/ConvDocLitWra.asmx,
+	  server/ConvRpc.asmx, 
+	  
+	* wstest.cs: Added support for generating tests cases from a template.
+	  Useful to test the same case in all formats and protocols.
+	  
+	* proxies.net.xml.gz, wsdlfiles.tar.gz: Updated.
+	
+	* client/localhost/ConvDocEncBarTest.cs, 
+	  client/localhost/ConvDocLitBarTest.cs, 
+	  client/localhost/ConvDocLitWraTest.cs,
+	  client/localhost/ConvRpcTest.cs,
+	  client/localhost/ConvDocEncBar.asmx:
+	  Improved tests. Use new nunit 2.2 api. 
+	  
+	* Conv.cs.template: template for ConverterService client tests.
+	
+	* Conv.asmx.template: template for ConverterService services.
+	
+	* templates.xml: Configuration file for generating the tests.
+
 2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* proxies.net.xml.gz: Updated.

@@ -20,22 +20,22 @@ namespace Localhost.DataServiceTests
 			DataSet dset = service.QueryData ("some query");
 			DataTable t = dset.Tables["PhoneNumbers"];
 			
-			AssertNotNull ("#1", t);
-			AssertEquals ("#2", 2, t.Rows.Count);
+			Assert.IsNotNull (t, "#1");
+			Assert.AreEqual (2, t.Rows.Count, "#2");
 			
 			DataRow row = t.Rows[0];
-			AssertEquals ("#3", "Lluis", row["name"]);
-			AssertEquals ("#4", "23452345", row["home"]);
+			Assert.AreEqual ("Lluis", row["name"], "#3");
+			Assert.AreEqual ("23452345", row["home"], "#4");
 			row = t.Rows[1];
-			AssertEquals ("#5", "Pep", row["name"]);
-			AssertEquals ("#6", "435345", row["home"]);
+			Assert.AreEqual ("Pep", row["name"], "#5");
+			Assert.AreEqual ("435345", row["home"], "#6");
 			
 			DataRow newRow = t.NewRow();
 			newRow["name"] = "Pau";
 			newRow["home"] = "9028374";
 			t.Rows.Add (newRow);
 			int n = service.SaveData (dset);
-			AssertEquals ("#7", 3, n);
+			Assert.AreEqual (3, n, "#7");
 		}
 	}
 }

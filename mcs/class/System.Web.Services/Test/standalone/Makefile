@@ -78,3 +78,6 @@ respage:
 	mono transform.exe proxies.diff.xml ../../../../tools/corcompare/mono-api.xsl > proxies.data.html
 	cat header.html proxies.data.html > proxies.html
 	rm proxies.data.html
+
+genfiles:
+	mono wstest.exe genfiles templates.xml

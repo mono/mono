@@ -1,5 +1,5 @@
 using NUnit.Framework;
 
-public class WebServiceTest: Assertion
+public class WebServiceTest
 {
 }

@@ -31,19 +31,19 @@ namespace Localhost.TestBinding4Tests
 			nodes = data.GetTabStruct ("hello", nodes);
 			Check ("GetTabStruct", nodes);
 			
-			Assert ("RebuildTabList 1", data.RebuildTabList (true));
-			Assert ("RebuildTabList 2", !data.RebuildTabList (false));
+			Assert.IsTrue (data.RebuildTabList (true), "RebuildTabList 1");
+			Assert.IsTrue (!data.RebuildTabList (false), "RebuildTabList 2");
 			
-			Assert ("RebuildTabStruct 1", data.RebuildTabStruct ("a", true));
-			Assert ("RebuildTabStruct 2", !data.RebuildTabStruct ("b", false));
+			Assert.IsTrue (data.RebuildTabStruct ("a", true), "RebuildTabStruct 1");
+			Assert.IsTrue (!data.RebuildTabStruct ("b", false), "RebuildTabStruct 2");
 		}
 		
 		void Check (string met, XmlNode[] nodes)
 		{
-			AssertNotNull (met + " #1", nodes);
-			AssertEquals (met + " #2", 2, nodes.Length);
-			AssertEquals (met + " #3", "<one someAtt=\"someValue\" xmlns=\"\" />", nodes[0].OuterXml);
-			AssertEquals (met + " #4", "<two someAtt=\"someValue\" xmlns=\"\" />", nodes[1].OuterXml);
+			Assert.IsNotNull (nodes, met + " #1");
+			Assert.AreEqual (2, nodes.Length, met + " #2");
+			Assert.AreEqual ("<one someAtt=\"someValue\" xmlns=\"\" />", nodes[0].OuterXml, met + " #3");
+			Assert.AreEqual ("<two someAtt=\"someValue\" xmlns=\"\" />", nodes[1].OuterXml, met + " #4");
 		}
 	}
 }

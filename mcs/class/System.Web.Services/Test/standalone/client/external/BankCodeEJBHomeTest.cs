@@ -17,9 +17,9 @@ namespace External.BankCodeEJBHomeTests
 			
 			BankCode bc = new BankCode ();
 			
-			AssertEquals ("#1", "10020000  ", bc.getCodeByName ("Berlin"));
+			Assert.AreEqual ("10020000  ", bc.getCodeByName ("Berlin"), "#1");
 			string s = bc.getNameByCode ("10020000  ");
-			AssertEquals ("#2", "10020000  ", bc.getCodeByName (s));
+			Assert.AreEqual ("10020000  ", bc.getCodeByName (s), "#2");
 		}
 	}
 }

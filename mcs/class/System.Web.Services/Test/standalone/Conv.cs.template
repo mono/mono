@@ -8,9 +8,9 @@ using System.Threading;
 using NUnit.Framework;
 using System.Web.Services.Protocols;
 using System.Xml;
-using ConvDocEncBarTests.Soap;
+using $PROXY_NAMESPACE$;
 
-namespace Localhost.ConvDocEncBarTests
+namespace Localhost.$TEST_NAMESPACE$
 {
 	[TestFixture]
 	public class ConverterTest: WebServiceTest
@@ -172,7 +172,7 @@ namespace Localhost.ConvDocEncBarTests
 			ConverterServiceExtraTest et = new ConverterServiceExtraTest ();
 			
 			// Test the Discover method.
-			et.Url = "http://localhost:8080/ConvDocEncBar.asmx?disco";
+			et.Url = "http://localhost:8080/$ASMX_NAME$?disco";
 			et.Discover ();
 			
 			string d;
@@ -208,7 +208,7 @@ namespace Localhost.ConvDocEncBarTests
 	[System.Web.Services.WebServiceBindingAttribute(Name="ConverterServiceSoap", Namespace="urn:mono-ws-tests")]
 	public class ConverterServiceExtraTest : System.Web.Services.Protocols.SoapHttpClientProtocol
 	{
-		[System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:mono-ws-tests/GetTestInfo", RequestNamespace="urn:mono-ws-tests", ResponseNamespace="urn:mono-ws-tests" , Use=System.Web.Services.Description.SoapBindingUse.Encoded, ParameterStyle=SoapParameterStyle.Bare)]
+		[System.Web.Services.Protocols.$METHOD_ATTRIBUTE$("urn:mono-ws-tests/GetTestInfo", RequestNamespace="urn:mono-ws-tests", ResponseNamespace="urn:mono-ws-tests" $METHOD_ATTRIBUTE_PARAMS$)]
 		public object GetTestInfo(string s, out string d) {
 			object[] results = this.Invoke("GetTestInfo", new object[] {s});
 			d = (string) results[1];

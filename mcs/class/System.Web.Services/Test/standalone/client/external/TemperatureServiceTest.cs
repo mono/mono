@@ -17,10 +17,10 @@ namespace External.TemperatureServiceTests
 		
 			TemperatureService ts = new TemperatureService ();
 			float temp = ts.getTemp ("95110");
-			Assert (temp < 140 && temp > -60);
+			Assert.IsTrue (temp < 140 && temp > -60);
 			
 			temp = ts.getTemp ("hola");
-			Assert (temp == -999);
+			Assert.IsTrue (temp == -999);
 		}
 	}
 }

@@ -43,7 +43,7 @@ public class Driver
 		
 		if (args[0] == "gp")
 		{
-			BuildProxies (GetArg (args,1) == "all");
+			BuildProxies (GetArg (args,1));
 		}
 		else if (args[0] == "gc")
 		{
@@ -72,6 +72,10 @@ public class Driver
 		else if (args[0] == "msfix")
 		{
 			MsFix (GetArg (args,1));
+		}
+		else if (args[0] == "genfiles")
+		{
+			GenerateFiles (GetArg (args,1));
 		}
 		
 		SaveInfo ();
@@ -478,7 +482,7 @@ public class Driver
 			Console.WriteLine ("{0,-3} {1}", serverCounts[n], serverNames[n]);
 	}
 
-	static void BuildProxies (bool buildAll)
+	static void BuildProxies (string host)
 	{
 		Console.WriteLine ();
 		Console.WriteLine ("Generating proxies");
@@ -488,10 +492,15 @@ public class Driver
 		XmlElement ele = doc.CreateElement ("errors");
 		doc.AppendChild (ele);
 		
+		bool buildAll = host == "*";
+		if (buildAll) host = null;
+		
 		ArrayList proxies = new ArrayList ();
 		
-		foreach (ServiceData fd in services.services)
+		foreach (ServiceData fd in services.services) {
+			if (host != null && host != new Uri (fd.Wsdl).Host) continue;
 			BuildProxy (fd, buildAll, proxies, ele);
+		}
 		
 		StreamWriter sw = new StreamWriter (Path.Combine (basePath, "proxies.sources"));
 		foreach (string f in proxies)
@@ -759,6 +768,53 @@ public class Driver
 		}
 		doc.Save (fileName);
 		sr.Close ();
+	}
+	
+	static void GenerateFiles (string templateFile)
+	{
+		XmlDocument doc = new XmlDocument ();
+		doc.Load (templateFile);
+		
+		XmlNodeList targets = doc.SelectNodes ("fileGeneration/targets/target");
+		XmlElement gvarset = (XmlElement) doc.SelectSingleNode ("fileGeneration/vars[@name='_global']");
+		
+		foreach (XmlElement node in targets) {
+			string tid = node.GetAttribute ("template");
+			string file = node.GetAttribute ("file");
+			XmlElement xtemp = (XmlElement) doc.SelectSingleNode ("fileGeneration/templates/template[@id='" + tid + "']");
+			if (xtemp == null) throw new Exception ("Template " + tid + " not found");
+			string tempFile = xtemp.GetAttribute ("file");
+			
+			StreamReader sr = new StreamReader (tempFile);
+			string template = sr.ReadToEnd ();
+			sr.Close ();
+			
+			string content = ReplaceVars (template, node);
+			content = ReplaceVars (content, gvarset);
+			
+			StreamWriter sw = new StreamWriter (file);
+			sw.Write (content);
+			sw.Close ();
+			Console.WriteLine ("Writen " + file);
+		}
+	}
+	
+	static string ReplaceVars (string content, XmlElement root)
+	{
+		XmlNodeList nodes = root.SelectNodes ("var");
+		foreach (XmlElement elem in nodes) {
+			string include = elem.GetAttribute ("include");
+			if (include != "") {
+				XmlElement varset = (XmlElement) root.OwnerDocument.SelectSingleNode ("fileGeneration/vars[@name='" + include + "']");
+				if (varset == null) throw new Exception ("varset '" + include + "' not found");
+				content = ReplaceVars (content, varset);
+			}
+			else {
+				content = content.Replace ("$" + elem.GetAttribute ("name") + "$", elem.InnerText);
+			}
+		}
+		
+		return content;
 	}
 	
 	static void RegisterFailure (ServiceData sd)

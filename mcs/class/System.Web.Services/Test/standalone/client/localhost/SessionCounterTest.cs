@@ -18,7 +18,7 @@ namespace Localhost.SessionCounterTests
 			s.CookieContainer = new CookieContainer ();
 			s.Reset ();
 			for (int n=1; n<10; n++)
-				AssertEquals ("t"+n, n, s.AddOne ());
+				Assert.AreEqual (n, s.AddOne (), "t"+n);
 		}
 	}
 }

@@ -23,20 +23,20 @@ namespace Localhost.DuplicateArrayTestTests
 			correctionsCorrection[] arr = new correctionsCorrection[2]{c,c};
 			arr = s.SpellCheck(ref title,ref url,arr);
 			
-			AssertEquals ("t1", 2, arr.Length);
+			Assert.AreEqual (2, arr.Length, "t1");
 			
 			for (int i =0; i< arr.Length ; i++)
 			{
 				c = arr[i];
-				AssertNotNull ("t2."+i, c);
-				AssertEquals ("t3."+i, "bye", c.word);
-				AssertNotNull ("t4."+i, c.suggestions);
-				AssertEquals ("t5."+i, 2, c.suggestions.Length);
-				AssertEquals ("t6."+i, "end", c.suggestions[0]);
-				AssertEquals ("t7."+i, "test", c.suggestions[1]);
+				Assert.IsNotNull (c, "t2."+i);
+				Assert.AreEqual ("bye", c.word, "t3."+i);
+				Assert.IsNotNull (c.suggestions, "t4."+i);
+				Assert.AreEqual (2, c.suggestions.Length, "t5."+i);
+				Assert.AreEqual ("end", c.suggestions[0], "t6."+i);
+				Assert.AreEqual ("test", c.suggestions[1], "t7."+i);
 			}
-			AssertEquals ("t8", "hello", title);
-			AssertEquals ("t9", "tmp", url);
+			Assert.AreEqual ("hello", title, "t8");
+			Assert.AreEqual ("tmp", url, "t9");
 		}
 	}
 }
