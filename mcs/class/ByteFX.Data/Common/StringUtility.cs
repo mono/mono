@@ -31,14 +31,13 @@ namespace ByteFX.Data.Common
 		{
 		}
 
-		public static string[] Split( string src, char delimiter, char[] quotedelims )
+		public static string[] Split( string src, char delimiter, params char[] quotedelims )
 		{
 			ArrayList		strings = new ArrayList();
 			StringBuilder	sb = new StringBuilder();
 			ArrayList		ar = new ArrayList(quotedelims);
 			char			quote_open = Char.MinValue;
 
-			src += ";";
 			foreach (char c in src) 
 			{
 				if (c == delimiter && quote_open == Char.MinValue) 
@@ -58,7 +57,11 @@ namespace ByteFX.Data.Common
 				else
 					sb.Append( c );
 			}
-			return (string[])strings.ToArray(typeof(System.String));
+
+			if (sb.Length > 0)
+				strings.Add( sb.ToString());
+
+			return (string[])strings.ToArray(typeof(string));
 		}
 	}
 }

@@ -52,6 +52,10 @@ namespace ByteFX.Data.MySqlClient
 		#endregion
 
 		#region Properties
+
+		/// <summary>
+		/// Gets or sets a MySqlDataAdapter object for which SQL statements are automatically generated.
+		/// </summary>
 		public MySqlDataAdapter DataAdapter 
 		{
 			get { return _adapter; }
@@ -65,12 +69,18 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the beginning character or characters to use when specifying MySql database objects (for example, tables or columns) whose names contain characters such as spaces or reserved tokens.
+		/// </summary>
 		public string QuotePrefix 
 		{
 			get { return _QuotePrefix; }
 			set { _QuotePrefix = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the ending character or characters to use when specifying MySql database objects (for example, tables or columns) whose names contain characters such as spaces or reserved tokens.
+		/// </summary>
 		public string QuoteSuffix
 		{
 			get { return _QuoteSuffix; }
@@ -85,6 +95,10 @@ namespace ByteFX.Data.MySqlClient
 			throw new MySqlException("DeriveParameters is not supported (due to MySql not supporting SP)");
 		}
 
+		/// <summary>
+		/// Gets the automatically generated MySqlCommand object required to perform deletions on the database.
+		/// </summary>
+		/// <returns></returns>
 		public MySqlCommand GetDeleteCommand()
 		{
 			if (_schema == null)
@@ -92,6 +106,10 @@ namespace ByteFX.Data.MySqlClient
 			return CreateDeleteCommand();
 		}
 
+		/// <summary>
+		/// Gets the automatically generated MySqlCommand object required to perform insertions on the database.
+		/// </summary>
+		/// <returns></returns>
 		public MySqlCommand GetInsertCommand()
 		{
 			if (_schema == null)
@@ -99,6 +117,10 @@ namespace ByteFX.Data.MySqlClient
 			return CreateInsertCommand();
 		}
 
+		/// <summary>
+		/// Gets the automatically generated MySqlCommand object required to perform updates on the database.
+		/// </summary>
+		/// <returns></returns>
 		public MySqlCommand GetUpdateCommand() 
 		{
 			if (_schema == null)
@@ -106,6 +128,9 @@ namespace ByteFX.Data.MySqlClient
 			return CreateUpdateCommand();
 		}
 
+		/// <summary>
+		/// Refreshes the database schema information used to generate INSERT, UPDATE, or DELETE statements.
+		/// </summary>
 		public void RefreshSchema()
 		{
 			_schema = null;

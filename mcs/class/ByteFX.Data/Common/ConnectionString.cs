@@ -23,20 +23,99 @@ namespace ByteFX.Data.Common
 	/// <summary>
 	/// Summary description for Utility.
 	/// </summary>
-	public class ConnectionString
+	internal class ConnectionString
 	{
-		public ConnectionString()
+		private	StringDictionary	elements;
+		private string				connString;
+
+		public ConnectionString(string connString)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			this.connString = connString;
+			elements = new StringDictionary();
+			Parse( connString );
 		}
 
-		public static StringDictionary ParseConnectString( String s ) 
+		public string Value
+		{
+			get { return connString; }
+		}
+
+		public string this[string key] 
+		{
+			get 
+			{ 
+				string val = elements[key];
+				return val;
+			}
+		}
+
+		public int  GetIntOption( string key, int defaultvalue ) 
+		{
+			string val = this[ key ];
+			if (null == val) return defaultvalue;
+			return Convert.ToInt32( val );
+		}
+
+		public bool  GetBoolOption( string key, bool defaultvalue ) 
+		{
+			string val = this[ key ];
+			if (null == val) return defaultvalue;
+			val = val.ToLower();
+			if (val == "true" || val == "yes") return true;
+			return false;
+		}
+
+		public bool Contains( string key ) 
+		{
+			return elements.ContainsKey(key);
+		}
+
+		public bool Equals( ConnectionString obj ) 
+		{
+			foreach (string key in elements.Keys) 
+			{
+				if (! obj.Contains(key)) return false;
+				if ( ! this[key].Equals( obj[key] )) return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public bool PoolingEquals( ConnectionString obj ) 
+		{
+			foreach (string key in elements.Keys) 
+			{
+				// these connection string elements only affect pooling
+				// so we don't check them when making sure connection strings
+				// are alike
+				if (key.Equals("connection lifetime")) continue;
+				if (key.Equals("connection reset")) continue;
+				if (key.Equals("enlist")) continue;
+				if (key.Equals("max pool size")) continue;
+				if (key.Equals("min pool size")) continue;
+				if (key.Equals("pooling")) continue;
+
+				if (! obj.Contains(key)) return false;
+				if ( ! this[key].Equals( obj[key] )) return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="s"></param>
+		public void Parse( String s ) 
 		{
 			String[] keyvalues = s.Split( ';' );
 			String[] newkeyvalues = new String[keyvalues.Length];
 			int		 x = 0;
+
+			elements.Clear();
 
 			// first run through the array and check for any keys that
 			// have ; in their value
@@ -57,22 +136,27 @@ namespace ByteFX.Data.Common
 				}
 			}
 
-			StringDictionary dict = new StringDictionary();
-
 			// now we run through our normalized key-values, splitting on equals
 			for (int y=0; y < x; y++) 
 			{
 				String[] parts = newkeyvalues[y].Split( '=' );
-				parts[0] = parts[0].ToLower();
 
-				// normalize the keys going in
-				if (parts[0].Equals("pwd")) parts[0] = "password";
-				if (parts[0].Equals("uid")) parts[0] = "user id";
-				if (parts[0].Equals("initial catalog")) parts[0] = "database";
+				// first trim off any space and lowercase the key
+				parts[0] = parts[0].Trim().ToLower();
+				parts[1] = parts[1].Trim();
+
+				// normalize the keys going in.  We want to support the same synonyms that
+				// SqlClient supports
+				switch (parts[0]) 
+				{
+					case "uid": parts[0] = "user id"; break;
+					case "pwd": parts[0] = "password"; break;
+					case "user": parts[0] = "user id"; break;
+					case "initial catalog": parts[0] = "database"; break;
+					case "server": parts[0] = "data source"; break;
+				}
 
 				// we also want to clear off any quotes
-				// first trim off any space
-				parts[1] = parts[1].Trim();
 				String newvalue = parts[1].Trim( '\'' );
 				if (newvalue.Length == parts[1].Length) 
 				{
@@ -81,21 +165,21 @@ namespace ByteFX.Data.Common
 				parts[1] = newvalue;
 
 				// make sure we don't get dupliate keys
-				if (dict.ContainsKey(parts[0])) 
+				if (elements.ContainsKey(parts[0])) 
 				{
 					throw new ArgumentException("Duplicate key in connection string", parts[0]);
 				}
 
-				dict.Add( parts[0], parts[1] );
-			}
+				elements.Add( parts[0], parts[1] );
 
-			// now make sure we have some reasonable defaults for keys not present
-			if (! dict.ContainsKey("connection timeout")) 
-			{
-				dict.Add("connection timeout", "15");
+				// now put the correct parsed string into the connection string !! (AG 4/8/2003)
+				connString="";
+				foreach(string key in elements.Keys)
+				{
+					connString=connString+key+"="+elements[key]+"; ";
+				}
+				connString=connString.Substring(0,connString.Length-2);
 			}
-
-			return dict;
 		}
 	}
 }

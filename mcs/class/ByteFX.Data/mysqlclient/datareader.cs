@@ -65,12 +65,11 @@ namespace ByteFX.Data.MySqlClient
 			get { return 0;  }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the data reader is closed.
+		/// </summary>
 		public bool IsClosed
 		{
-			/*
-			 * Keep track of the reader state - some methods should be
-			 * disallowed if the reader is closed.
-			 */
 			get  { return ! isOpen; }
 		}
 
@@ -80,6 +79,9 @@ namespace ByteFX.Data.MySqlClient
 				Close();
 		}
 
+		/// <summary>
+		/// Gets the number of rows changed, inserted, or deleted by execution of the SQL statement.
+		/// </summary>
 		public int RecordsAffected 
 		{
 			// RecordsAffected returns the number of rows affected in batch
@@ -88,19 +90,23 @@ namespace ByteFX.Data.MySqlClient
 			get { return command.UpdateCount; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the MySqlDataReader contains one or more rows.
+		/// </summary>
 		public bool HasRows
 		{
 			get { return hasRows; }
 		}
 
 		/// <summary>
-		/// 
+		/// Closes the MySqlDataReader object.
 		/// </summary>
 		public void Close()
 		{
 			// finish any current command
 			ClearCurrentResult();
 			command.ExecuteBatch(false);
+			connection.InternalConnection.Driver.ClearPeekedPacket();
 
 			connection.Reader = null;
 			if (0 != (commandBehavior & CommandBehavior.CloseConnection))
@@ -109,90 +115,299 @@ namespace ByteFX.Data.MySqlClient
 			isOpen = false;
 		}
 
+
+
+
 		/// <summary>
-		/// 
+		/// Gets the number of columns in the current row.
 		/// </summary>
-		/// <returns></returns>
-		public bool NextResult()
+		public int FieldCount
 		{
-			if (! isOpen)
-				throw new MySqlException("Invalid attempt to NextResult when reader is closed.");
-
-			Driver driver = connection.InternalConnection.Driver;
-
-			ClearCurrentResult();
-
-			// tell our command to execute the next sql batch
-			Packet packet = command.ExecuteBatch(true);
-
-			// if there was no more batches, then signal done
-			if (packet == null) return false;
-
-			// When executing query statements, the result byte that is returned
-			// from MySql is the column count.  That is why we reference the LastResult
-			// property here to dimension our field array
-			connection.SetState( ConnectionState.Fetching );
-			
-			_fields = new MySqlField[ packet.ReadLenInteger() ];
-			for (int x=0; x < _fields.Length; x++) 
-			{
-				_fields[x] = new MySqlField();
-				_fields[x].ReadSchemaInfo( packet );
+			// Return the count of the number of columns, which in
+			// this case is the size of the column metadata
+			// array.
+			get 
+			{ 
+				if (_fields != null)
+					return _fields.Length;
+				return 0;
 			}
-
-			// now take a quick peek at the next packet to see if we have rows
-			// 
-			packet = driver.PeekPacket();
-			hasRows = packet.Type != PacketType.Last;
-			canRead = hasRows;
-
-			connection.SetState( ConnectionState.Open );
-			return true;
 		}
 
 		/// <summary>
-		/// 
+		/// Overloaded. Gets the value of a column in its native format.
+		/// In C#, this property is the indexer for the MySqlDataReader class.
 		/// </summary>
-		/// <returns></returns>
-		public bool Read()
+		public object this [ int i ]
 		{
-			if (! isOpen)
-				throw new MySqlException("Invalid attempt to Read when reader is closed.");
-
-			if (! canRead) return false;
-
-			Driver driver = connection.InternalConnection.Driver;
-			connection.SetState( ConnectionState.Fetching );
-
-			try 
+			get 
 			{
-				Packet rowPacket = driver.ReadPacket();
-				if (rowPacket.Type == PacketType.Last) 
-				{
-					canRead = false;
-					return false;
-				}
-				rowPacket.Position = 0;
-
-				for (int col=0; col < _fields.Length; col++)
-				{
-					int len = (int)rowPacket.ReadLenInteger();
-					_fields[col].SetValueData( rowPacket.GetBytes(), (int)rowPacket.Position, len, driver.Encoding );
-					rowPacket.Position += len;
-				}
+				return this.GetValue(i);
 			}
-			catch (Exception ex)
-			{
-				System.Diagnostics.Trace.WriteLine("MySql error: " + ex.Message);
-				throw ex;
-			}
-			finally 
-			{
-				connection.SetState( ConnectionState.Open );
-			}
-			return true;
 		}
 
+		public object this [ String name ]
+		{
+			// Look up the ordinal and return 
+			// the value at that position.
+			get { return this[GetOrdinal(name)]; }
+		}
+
+		private MySqlField GetField(int i)
+		{
+			if (i >= _fields.Length) throw new IndexOutOfRangeException();
+			return _fields[i];
+		}
+
+		#region TypeSafe Accessors
+		/// <summary>
+		/// Gets the value of the specified column as a Boolean.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public bool GetBoolean(int i)
+		{
+			return Convert.ToBoolean(GetValue(i));
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a byte.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public byte GetByte(int i)
+		{
+			return Convert.ToByte(GetValue(i));
+		}
+
+		/// <summary>
+		/// Reads a stream of bytes from the specified column offset into the buffer an array starting at the given buffer offset.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <param name="fieldOffset"></param>
+		/// <param name="buffer"></param>
+		/// <param name="bufferoffset"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
+		{
+			if (i >= _fields.Length) 
+				throw new IndexOutOfRangeException();
+
+			byte[] bytes = (byte[])GetValue(i);
+
+			if (buffer == null) 
+				return bytes.Length;
+
+			/// adjust the length so we don't run off the end
+			if (bytes.Length < (fieldOffset+length)) 
+			{
+				length = (int)(bytes.Length - fieldOffset);
+			}
+
+			for (int x=0; x < length; x++)
+			{
+				buffer[bufferoffset+x] = bytes[fieldOffset+x];	
+			}
+
+			return length;
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a single character.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public char GetChar(int i)
+		{
+			return Convert.ToChar(GetValue(i));
+		}
+
+		/// <summary>
+		/// Reads a stream of characters from the specified column offset into the buffer as an array starting at the given buffer offset.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <param name="fieldOffset"></param>
+		/// <param name="buffer"></param>
+		/// <param name="bufferoffset"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		public long GetChars(int i, long fieldOffset, char[] buffer, int bufferoffset, int length)
+		{
+			if (i >= _fields.Length) 
+				throw new IndexOutOfRangeException();
+
+			// retrieve the bytes of the column
+			long bytesize = GetBytes(i, 0, null, 0, 0);
+			byte[] bytes = new byte[bytesize];
+			GetBytes(i, 0, bytes, 0, (int)bytesize);
+
+			char[] chars = System.Text.Encoding.UTF8.GetChars(bytes, 0, (int)bytesize);
+
+			if (buffer == null) 
+				return chars.Length;
+
+			/// adjust the length so we don't run off the end
+			if (chars.Length < (fieldOffset+length)) 
+			{
+				length = (int)(chars.Length - fieldOffset);
+			}
+
+			for (int x=0; x < length; x++)
+			{
+				buffer[bufferoffset+x] = chars[fieldOffset+x];	
+			}
+
+			return length;
+		}
+
+		/// <summary>
+		/// Gets the name of the source data type.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public String GetDataTypeName(int i)
+		{
+			if (! isOpen) throw new Exception("No current query in data reader");
+			if (i >= _fields.Length) throw new IndexOutOfRangeException();
+
+			// return the name of the type used on the backend
+			return _fields[i].GetFieldTypeName();
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a DateTime object.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public DateTime GetDateTime(int i)
+		{
+			return Convert.ToDateTime(GetValue(i));
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a Decimal object.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public Decimal GetDecimal(int i)
+		{
+			return Convert.ToDecimal(GetValue(i));
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a double-precision floating point number.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public double GetDouble(int i)
+		{
+			return Convert.ToDouble(GetValue(i));
+		}
+
+		/// <summary>
+		/// Gets the Type that is the data type of the object.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public Type GetFieldType(int i)
+		{
+			if (! isOpen) throw new Exception("No current query in data reader");
+			if (i >= _fields.Length) throw new IndexOutOfRangeException();
+
+			return _fields[i].GetFieldType();
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a single-precision floating point number.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public float GetFloat(int i)
+		{
+			return Convert.ToSingle(GetValue(i));
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a globally-unique identifier (GUID).
+		/// This is currently not supported.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public Guid GetGuid(int i)
+		{
+			/*
+			* Force the cast to return the type. InvalidCastException
+			* should be thrown if the data is not already of the correct type.
+			*/
+			// The sample does not support this method.
+			throw new NotSupportedException("GetGUID not supported.");
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a 16-bit signed integer.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public Int16 GetInt16(int i)
+		{
+			return Convert.ToInt16(GetValue(i));
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a 32-bit signed integer.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public Int32 GetInt32(int i)
+		{
+			return Convert.ToInt32(GetValue(i));
+		}
+
+		/// <summary>
+		/// Gets the value of the specified column as a 64-bit signed integer.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public Int64 GetInt64(int i)
+		{
+			return Convert.ToInt64(GetValue(i));
+		}
+
+		/// <summary>
+		/// Gets the name of the specified column.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public String GetName(int i)
+		{
+			return _fields[i].ColumnName;
+		}
+
+		/// <summary>
+		/// Gets the column ordinal, given the name of the column.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public int GetOrdinal(string name)
+		{
+			if (! isOpen)
+				throw new Exception("No current query in data reader");
+
+			for (int i=0; i < _fields.Length; i ++) 
+			{
+				if (_fields[i].ColumnName.ToLower().Equals(name.ToLower()))
+					return i;
+			}
+
+			// Throw an exception if the ordinal cannot be found.
+			throw new IndexOutOfRangeException("Could not find specified column in results");
+		}
+
+		/// <summary>
+		/// Returns a DataTable that describes the column metadata of the MySqlDataReader.
+		/// </summary>
+		/// <returns></returns>
 		public DataTable GetSchemaTable()
 		{
 			// Only Results from SQL SELECT Queries 
@@ -260,44 +475,21 @@ namespace ByteFX.Data.MySqlClient
 			return dataTableSchema;
 		}
 
-		/****
-		 * METHODS / PROPERTIES FROM IDataRecord.
-		 ****/
-		public int FieldCount
+		/// <summary>
+		/// Gets the value of the specified column as a string.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
+		public String GetString(int i)
 		{
-			// Return the count of the number of columns, which in
-			// this case is the size of the column metadata
-			// array.
-			get 
-			{ 
-				if (_fields != null)
-					return _fields.Length;
-				return 0;
-			}
+			return GetValue(i).ToString();
 		}
 
-		public String GetName(int i)
-		{
-			return _fields[i].ColumnName;
-		}
-
-		public String GetDataTypeName(int i)
-		{
-			if (! isOpen) throw new Exception("No current query in data reader");
-			if (i >= _fields.Length) throw new IndexOutOfRangeException();
-
-			// return the name of the type used on the backend
-			return _fields[i].GetFieldTypeName();
-		}
-
-		public Type GetFieldType(int i)
-		{
-			if (! isOpen) throw new Exception("No current query in data reader");
-			if (i >= _fields.Length) throw new IndexOutOfRangeException();
-
-			return _fields[i].GetFieldType();
-		}
-
+		/// <summary>
+		/// Gets the value of the specified column in its native format.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
 		public object GetValue(int i)
 		{
 			if (! isOpen) throw new Exception("No current query in data reader");
@@ -306,6 +498,11 @@ namespace ByteFX.Data.MySqlClient
 			return _fields[i].GetValue();
 		}
 
+		/// <summary>
+		/// Gets all attribute columns in the collection for the current row.
+		/// </summary>
+		/// <param name="values"></param>
+		/// <returns></returns>
 		public int GetValues(object[] values)
 		{
 			for (int i=0; i < _fields.Length; i ++) 
@@ -316,175 +513,38 @@ namespace ByteFX.Data.MySqlClient
 			return 0;
 		}
 
-		public int GetOrdinal(string name)
-		{
-			if (! isOpen)
-				throw new Exception("No current query in data reader");
 
-			for (int i=0; i < _fields.Length; i ++) 
-			{
-				if (_fields[i].ColumnName.ToLower().Equals(name.ToLower()))
-					return i;
-			}
-
-			// Throw an exception if the ordinal cannot be found.
-			throw new IndexOutOfRangeException("Could not find specified column in results");
-		}
-
-		public object this [ int i ]
-		{
-			get 
-			{
-				return this.GetValue(i);
-			}
-		}
-
-		public object this [ String name ]
-		{
-			// Look up the ordinal and return 
-			// the value at that position.
-			get { return this[GetOrdinal(name)]; }
-		}
-
-		private MySqlField GetField(int i)
-		{
-			if (i >= _fields.Length) throw new IndexOutOfRangeException();
-			return _fields[i];
-		}
-
-		#region TypeSafe Accessors
-		public bool GetBoolean(int i)
-		{
-			return Convert.ToBoolean(GetValue(i));
-		}
-
-		public byte GetByte(int i)
-		{
-			return Convert.ToByte(GetValue(i));
-		}
-
-		public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
-		{
-			if (i >= _fields.Length) 
-				throw new IndexOutOfRangeException();
-
-			byte[] bytes = (byte[])GetValue(i);
-
-			if (buffer == null) 
-				return bytes.Length;
-
-			/// adjust the length so we don't run off the end
-			if (bytes.Length < (fieldOffset+length)) 
-			{
-				length = (int)(bytes.Length - fieldOffset);
-			}
-
-			for (int x=0; x < length; x++)
-			{
-				buffer[bufferoffset+x] = bytes[fieldOffset+x];	
-			}
-
-			return length;
-		}
-
-		public char GetChar(int i)
-		{
-			return Convert.ToChar(GetValue(i));
-		}
-
-		public long GetChars(int i, long fieldOffset, char[] buffer, int bufferoffset, int length)
-		{
-			if (i >= _fields.Length) 
-				throw new IndexOutOfRangeException();
-
-			// retrieve the bytes of the column
-			long bytesize = GetBytes(i, 0, null, 0, 0);
-			byte[] bytes = new byte[bytesize];
-			GetBytes(i, 0, bytes, 0, (int)bytesize);
-
-			char[] chars = System.Text.Encoding.UTF8.GetChars(bytes, 0, (int)bytesize);
-
-			if (buffer == null) 
-				return chars.Length;
-
-			/// adjust the length so we don't run off the end
-			if (chars.Length < (fieldOffset+length)) 
-			{
-				length = (int)(chars.Length - fieldOffset);
-			}
-
-			for (int x=0; x < length; x++)
-			{
-				buffer[bufferoffset+x] = chars[fieldOffset+x];	
-			}
-
-			return length;
-		}
-
-		public Guid GetGuid(int i)
-		{
-			/*
-			* Force the cast to return the type. InvalidCastException
-			* should be thrown if the data is not already of the correct type.
-			*/
-			// The sample does not support this method.
-			throw new NotSupportedException("GetGUID not supported.");
-		}
-
-		public Int16 GetInt16(int i)
-		{
-			return Convert.ToInt16(GetValue(i));
-		}
-
+		/// <summary>
+		/// Gets the value of the specified column as a 16-bit unsigned integer.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
 		public UInt16 GetUInt16( int i )
 		{
 			return Convert.ToUInt16(GetValue(i));
 		}
 
-		public Int32 GetInt32(int i)
-		{
-			return Convert.ToInt32(GetValue(i));
-		}
-
+		/// <summary>
+		/// Gets the value of the specified column as a 32-bit unsigned integer.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
 		public UInt32 GetUInt32( int i )
 		{
 			return Convert.ToUInt32(GetValue(i));
 		}
 
-		public Int64 GetInt64(int i)
-		{
-			return Convert.ToInt64(GetValue(i));
-		}
-
+		/// <summary>
+		/// Gets the value of the specified column as a 64-bit unsigned integer.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
 		public UInt64 GetUInt64( int i )
 		{
 			return Convert.ToUInt64(GetValue(i));
 		}
 
-		public float GetFloat(int i)
-		{
-			return Convert.ToSingle(GetValue(i));
-		}
 
-		public double GetDouble(int i)
-		{
-			return Convert.ToDouble(GetValue(i));
-		}
-
-		public String GetString(int i)
-		{
-			return GetValue(i).ToString();
-		}
-
-		public Decimal GetDecimal(int i)
-		{
-			return Convert.ToDecimal(GetValue(i));
-		}
-
-		public DateTime GetDateTime(int i)
-		{
-			return Convert.ToDateTime(GetValue(i));
-		}
 		#endregion
 
 		public IDataReader GetData(int i)
@@ -497,10 +557,100 @@ namespace ByteFX.Data.MySqlClient
 			throw new NotSupportedException("GetData not supported.");
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the column contains non-existent or missing values.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
 		public bool IsDBNull(int i)
 		{
 			return DBNull.Value == GetValue(i);
 		}
+
+		/// <summary>
+		/// Advances the data reader to the next result, when reading the results of batch SQL statements.
+		/// </summary>
+		/// <returns></returns>
+		public bool NextResult()
+		{
+			if (! isOpen)
+				throw new MySqlException("Invalid attempt to NextResult when reader is closed.");
+
+			Driver driver = connection.InternalConnection.Driver;
+
+			ClearCurrentResult();
+
+			// tell our command to execute the next sql batch
+			Packet packet = command.ExecuteBatch(true);
+
+			// if there was no more batches, then signal done
+			if (packet == null) return false;
+
+			// When executing query statements, the result byte that is returned
+			// from MySql is the column count.  That is why we reference the LastResult
+			// property here to dimension our field array
+			connection.SetState( ConnectionState.Fetching );
+			
+			_fields = new MySqlField[ packet.ReadLenInteger() ];
+			for (int x=0; x < _fields.Length; x++) 
+			{
+				_fields[x] = new MySqlField();
+				_fields[x].ReadSchemaInfo( packet );
+			}
+
+			// now take a quick peek at the next packet to see if we have rows
+			// 
+			packet = driver.PeekPacket();
+			hasRows = packet.Type != PacketType.Last;
+			canRead = hasRows;
+
+			connection.SetState( ConnectionState.Open );
+			return true;
+		}
+
+		/// <summary>
+		/// Advances the MySqlDataReader to the next record.
+		/// </summary>
+		/// <returns></returns>
+		public bool Read()
+		{
+			if (! isOpen)
+				throw new MySqlException("Invalid attempt to Read when reader is closed.");
+
+			if (! canRead) return false;
+
+			Driver driver = connection.InternalConnection.Driver;
+			connection.SetState( ConnectionState.Fetching );
+
+			try 
+			{
+				Packet rowPacket = driver.ReadPacket();
+				if (rowPacket.Type == PacketType.Last) 
+				{
+					canRead = false;
+					return false;
+				}
+				rowPacket.Position = 0;
+
+				for (int col=0; col < _fields.Length; col++)
+				{
+					int len = (int)rowPacket.ReadLenInteger();
+					_fields[col].SetValueData( rowPacket.GetBytes(), (int)rowPacket.Position, len, driver.Encoding );
+					rowPacket.Position += len;
+				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Trace.WriteLine("MySql error: " + ex.Message);
+				throw ex;
+			}
+			finally 
+			{
+				connection.SetState( ConnectionState.Open );
+			}
+			return true;
+		}
+
 
 		/*
 		* Implementation specific methods.

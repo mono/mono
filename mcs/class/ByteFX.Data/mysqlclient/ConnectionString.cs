@@ -44,7 +44,10 @@ namespace ByteFX.Data.MySqlClient
 			{
 				case "use compression":
 				case "compress":
-					useCompression = Boolean.Parse( value );
+					if (value.ToLower() == "no" || value.ToLower() == "false")
+						useCompression = false;
+					else
+						useCompression = true;
 					break;
 			}
 

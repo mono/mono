@@ -37,7 +37,9 @@ namespace ByteFX.Data.MySqlClient
 		MySqlParameterCollection	parameters = new MySqlParameterCollection();
 		private ArrayList			arraySql = new ArrayList();
 
-		// Implement the default constructor here.
+		/// <summary>
+		/// Overloaded. Initializes a new instance of the MySqlCommand class.
+		/// </summary>
 		public MySqlCommand()
 		{
 		}
@@ -75,6 +77,10 @@ namespace ByteFX.Data.MySqlClient
 		} 
 
 		#region Properties
+
+		/// <summary>
+		/// Gets or sets the SQL statement to execute at the data source.
+		/// </summary>
 		[Category("Data")]
 		[Description("Command text to execute")]
 #if WINDOWS
@@ -91,25 +97,25 @@ namespace ByteFX.Data.MySqlClient
 			get { return updateCount; }
 		}
 
+		/// <summary>
+		/// Gets or sets the wait time before terminating the attempt to execute a command and generating an error.
+		/// </summary>
 		[Category("Misc")]
 		[Description("Time to wait for command to execute")]
 		public int CommandTimeout
 		{
-			/*
-			* The sample does not support a command time-out. As a result,
-			* for the get, zero is returned because zero indicates an indefinite
-			* time-out period. For the set, throw an exception.
-			*/
+			// TODO: support this
 			get  { return 0; }
 			set  { if (value != 0) throw new NotSupportedException(); }
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating how the CommandText property is to be interpreted.  Only
+		/// type Text is currently supported.
+		/// </summary>
 		[Category("Data")]
 		public CommandType CommandType
 		{
-			/*
-			* The sample only supports CommandType.Text.
-			*/
 			get { return CommandType.Text; }
 			set 
 			{ 
@@ -118,6 +124,9 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the MySqlConnection used by this instance of the MySqlCommand.
+		/// </summary>
 		[Category("Behavior")]
 		[Description("Connection used by the command")]
 		public IDbConnection Connection
@@ -144,6 +153,9 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Gets the MySqlParameterCollection.
+		/// </summary>
 		[Category("Data")]
 		[Description("The parameters collection")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -157,6 +169,9 @@ namespace ByteFX.Data.MySqlClient
 			get  { return parameters; }
 		}
 
+		/// <summary>
+		///	Gets or sets the MySqlTransaction within which the MySqlCommand executes.
+		/// </summary>
 		[Browsable(false)]
 		public IDbTransaction Transaction
 		{
@@ -174,6 +189,9 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets how command results are applied to the DataRow when used by the Update method of the DbDataAdapter.
+		/// </summary>
 		[Category("Behavior")]
 		public UpdateRowSource UpdatedRowSource
 		{
@@ -194,6 +212,10 @@ namespace ByteFX.Data.MySqlClient
 			throw new NotSupportedException();
 		}
 
+		/// <summary>
+		/// Creates a new instance of a MySqlParameter object.
+		/// </summary>
+		/// <returns></returns>
 		public MySqlParameter CreateParameter()
 		{
 			return new MySqlParameter();
@@ -245,7 +267,8 @@ namespace ByteFX.Data.MySqlClient
 				{
 					string parm_name = sql.Substring(parm_start, x-parm_start); 
 
-					if(parm_name.Length<2 || parm_name[1]!='@') // if doesn't begin with @@, do our processing.
+					if (parameters.Contains( parm_name ))//p != null)
+					//if(parm_name.Length<2 || parm_name[1]!='@') // if doesn't begin with @@, do our processing.
 					{
 						MySqlParameter p = (parameters[parm_name] as MySqlParameter);
 						p.SerializeToBytes(ms, connection );
@@ -263,7 +286,13 @@ namespace ByteFX.Data.MySqlClient
 				// then write out what we have as a command
 				if (left_byte == 0 && ! escaped && b == ';' && ms.Length > 0)
 				{
-					commands.Add( ms.ToArray() );
+					bool goodcmd = false;
+					byte[] byteArray = ms.ToArray();
+					foreach (byte cmdByte in byteArray)
+						if (cmdByte != ' ') { goodcmd = true; break; }
+
+					if (goodcmd)
+						commands.Add( ms.ToArray() );
 					ms.SetLength(0);
 				}
 				else if (parm_start == -1)
@@ -277,18 +306,6 @@ namespace ByteFX.Data.MySqlClient
 			return commands;
 		}
 
-/*		internal void ExecuteRemainingCommands()
-		{
-			// let's execute any remaining commands
-			Packet packet = ExecuteNextSql();
-			while (packet != null)
-			{
-				while (packet.Type != PacketType.Last)
-					packet = connection.InternalConnection.Driver.ReadPacket();
-				packet = ExecuteNextSql();
-			}
-		}
-*/
 		/// <summary>
 		/// Internal function to execute the next command in an array of commands
 		/// </summary>
@@ -316,8 +333,7 @@ namespace ByteFX.Data.MySqlClient
 		}
 
 		/// <summary>
-		/// Executes a single non-select SQL statement.  Examples of this are update,
-		/// insert, etc.
+		/// Executes a SQL statement against the connection and returns the number of rows affected.
 		/// </summary>
 		/// <returns>Number of rows affected</returns>
 		public int ExecuteNonQuery()
@@ -351,6 +367,10 @@ namespace ByteFX.Data.MySqlClient
 			return ExecuteReader (behavior);
 		}
 
+		/// <summary>
+		/// Overloaded. Sends the CommandText to the Connection and builds a MySqlDataReader.
+		/// </summary>
+		/// <returns></returns>
 		public MySqlDataReader ExecuteReader()
 		{
 			return ExecuteReader(CommandBehavior.Default);
@@ -419,9 +439,8 @@ namespace ByteFX.Data.MySqlClient
 		}
 
 		/// <summary>
-		/// ExecuteScalar executes a single SQL command that will return
-		/// a single row with a single column, or if more rows/columns are
-		/// returned it will return the first column of the first row.
+		/// Executes the query, and returns the first column of the first row in the 
+		/// result set returned by the query. Extra columns or rows are ignored.
 		/// </summary>
 		/// <returns></returns>
 		public object ExecuteScalar()
@@ -448,6 +467,10 @@ namespace ByteFX.Data.MySqlClient
 			return val;
 		}
 
+		/// <summary>
+		/// Creates a prepared version of the command on an instance of MySQL Server. This
+		/// is currently not supported.
+		/// </summary>
 		public void Prepare()
 		{
 		}

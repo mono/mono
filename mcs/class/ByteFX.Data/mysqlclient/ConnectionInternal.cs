@@ -74,7 +74,7 @@ namespace ByteFX.Data.MySqlClient
 			if (serverVariablesSet) return;
 
 			// retrieve the encoding that should be used for character data
-			MySqlCommand cmd = new MySqlCommand("select @@session.max_allowed_packet", connection);
+			MySqlCommand cmd = new MySqlCommand("select @@max_allowed_packet", connection);
 			driver.MaxPacketSize = Convert.ToInt64(cmd.ExecuteScalar());
 
 			cmd.CommandText = "show variables like 'character_set'";

@@ -128,19 +128,22 @@ namespace ByteFX.Data.Common
 			switch (key.ToLower()) 
 			{
 				case "persist security info":
-					persistSecurityInfo = bool.Parse(value);
+					if (value.ToLower() == "no" || value.ToLower() == "false")
+						persistSecurityInfo = false;
+					else
+						persistSecurityInfo = true;
 					break;
 
 				case "uid":
 				case "username":
 				case "user id":
 				case "user name": 
-					username = value.ToLower();
+					username = value;
 					break;
 
 				case "password": 
 				case "pwd":
-					password = value.ToLower();
+					password = value;
 					break;
 
 				case "host":
@@ -150,12 +153,12 @@ namespace ByteFX.Data.Common
 				case "address":
 				case "addr":
 				case "network address":
-					host = value.ToLower();
+					host = value;
 					break;
 				
 				case "initial catalog":
 				case "database":
-					database = value.ToLower();
+					database = value;
 					break;
 
 				case "connection timeout":
@@ -168,7 +171,10 @@ namespace ByteFX.Data.Common
 					break;
 
 				case "pooling":
-					pooling = Boolean.Parse( value );
+					if (value.ToLower() == "no" || value.ToLower() == "false")
+						pooling = false;
+					else
+						pooling = true;
 					break;
 
 				case "min pool size":

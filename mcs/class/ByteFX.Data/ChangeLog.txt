@@ -1,3 +1,19 @@
+10/13/2003
+MySql - Fixed InternalConnection to not use @@session.max_allowed_packet but use @@max_allowed_packet.  (Thanks Miguel)
+
+10/12/2003
+MySql - Added many new XML doc lines
+
+10/10/2003
+MySql - Fixed sql parsing to not send empty queries (thanks Rory)
+MySql - Fixed problem where the reader was not unpeeking the packet on close
+MySql - Fixed problem where user variables were not being handled (thanks Sami Vaaraniemi)
+MySql - Fixed loop checking in the MySqlPool (thanks Steve M. Brown)
+
+10/7/2003
+MySql - Fixed ParameterCollection.Add method to match SqlClient (thanks Joshua Mouch)
+Common & MySql - Fixed ConnectionSTring parsing to handle no and yes for boolean and not lowercase values (thanks Naucki)
+
 10/3/2003
 MySql - Added InternalConnection class, changes to pooling
 Common - Implemented Persist Security Info

@@ -30,19 +30,22 @@ namespace ByteFX.Data.MySqlClient
 		private ArrayList	_parms = new ArrayList();
 
 		#region ICollection support
+
+		/// <summary>
+		/// Gets the number of MySqlParameter objects in the collection.
+		/// </summary>
 		public int Count 
 		{
 			get { return _parms.Count; }
 		}
 
+		/// <summary>
+		/// Copies MySqlParameter objects from the MySqlParameterCollection to the specified array.
+		/// </summary>
+		/// <param name="array"></param>
+		/// <param name="index"></param>
 		public void CopyTo( Array array, int index ) 
 		{
-/*			if (null == array) throw new ArgumentNullException("array", "Array must not be null");
-			if (index < 0) throw new ArgumentOutOfRangeException("index", index, "Index must be greater than or equal to zero");
-			if (array.Rank > 1) throw new ArgumentException("Array must not be multidimensional", "Array");
-			if (index >= array.Length) throw new ArgumentException("Index must start within the bounds of the array", "Index");
-			if ((index + Count) > array.Length) throw new ArgumentException("Not enough room to copy parameters", "Array");
-*/
 			_parms.CopyTo(array, index);
 		}
 
@@ -58,6 +61,10 @@ namespace ByteFX.Data.MySqlClient
 		#endregion
 
 		#region IList
+
+		/// <summary>
+		/// Removes all items from the collection.
+		/// </summary>
 		public void Clear()
 		{
 			_parms.Clear();
@@ -73,6 +80,11 @@ namespace ByteFX.Data.MySqlClient
 			return _parms.IndexOf(value);
 		}
 
+		/// <summary>
+		/// Inserts a MySqlParameter into the collection at the specified index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="value"></param>
 		public void Insert(int index, object value)
 		{
 			_parms.Insert( index, value );
@@ -88,6 +100,10 @@ namespace ByteFX.Data.MySqlClient
 			get { return _parms.IsReadOnly; }
 		}
 
+		/// <summary>
+		/// Removes the specified MySqlParameter from the collection.
+		/// </summary>
+		/// <param name="value"></param>
 		public void Remove( object value )
 		{
 			_parms.Remove( value );
@@ -189,6 +205,11 @@ namespace ByteFX.Data.MySqlClient
 
 			_parms.Add(value);
 			return value;
+		}
+
+		public MySqlParameter Add( string parameterName, object value )
+		{
+			return Add( new MySqlParameter( parameterName, value ) );
 		}
 
 		public MySqlParameter Add(string parameterName, MySqlDbType type)

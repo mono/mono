@@ -7,7 +7,7 @@ namespace ByteFX.Data.MySqlClient
 	/// <summary>
 	/// Summary description for CharSetMap.
 	/// </summary>
-	public class CharSetMap
+	internal class CharSetMap
 	{
 		private static Hashtable mapping;
 

@@ -26,7 +26,7 @@ namespace ByteFX.Data.MySqlClient
 	/// <summary>
 	/// Summary description for API.
 	/// </summary>
-	public class MySqlStream : Stream
+	internal class MySqlStream : Stream
 	{
 		Stream	stream;
 		Socket	socket;

@@ -26,28 +26,35 @@ using ByteFX.Data.Common;
 namespace ByteFX.Data.MySqlClient
 {
 	/// <summary>
-	/// Summary description for MySqlConnection.
+	/// Represents an open connection to a MySQL Server database. This class cannot be inherited.
 	/// </summary>
+	/// <include file='docs/MySqlConnection.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
 	[System.Drawing.ToolboxBitmap( typeof(MySqlConnection), "Designers.connection.bmp")]
 	[System.ComponentModel.DesignerCategory("Code")]
 	[ToolboxItem(true)]
-	public sealed class MySqlConnection : IDbConnection, ICloneable
+	public sealed class MySqlConnection : Component, IDbConnection, ICloneable
 	{
-		public ConnectionState			state;
-		private MySqlInternalConnection	internalConnection;
-		private MySqlDataReader			dataReader;
-		private NumberFormatInfo		numberFormat;
-		private MySqlConnectionString	settings;
+		internal ConnectionState			state;
+		private  MySqlInternalConnection	internalConnection;
+		private  MySqlDataReader			dataReader;
+		private  NumberFormatInfo		numberFormat;
+		private  MySqlConnectionString	settings;
 
 		public event StateChangeEventHandler	StateChange;
 
 
-		// Always have a default constructor.
+		/// <summary>
+		/// Creates a new connection
+		/// </summary>
 		public MySqlConnection()
 		{
 			settings = new MySqlConnectionString();
 		}
 
+		/// <summary>
+		/// Creates a new connection
+		/// </summary>
+		/// <param name="container"></param>
 		public MySqlConnection(System.ComponentModel.IContainer container)
 		{
 			settings = new MySqlConnectionString();
@@ -55,11 +62,18 @@ namespace ByteFX.Data.MySqlClient
     
 
 		// Have a constructor that takes a connection string.
+		/// <summary>
+		/// Creates a new connection using the specified connection string.
+		/// </summary>
+		/// <param name="connectString"></param>
 		public MySqlConnection(string connectString)
 		{
 			settings = new MySqlConnectionString(connectString);
 		}
 
+		/// <summary>
+		/// Gets the name of the MySQL server to which to connect.
+		/// </summary>
 		#region Properties
 		[Browsable(true)]
 		public string DataSource
@@ -67,42 +81,37 @@ namespace ByteFX.Data.MySqlClient
 			get { return settings.Host; }
 		}
 
-		[Browsable(false)]
-		public string User
-		{
-			get { return settings.Username; }
-		}
-
-		[Browsable(false)]
-		public string Password
-		{
-			get { return settings.Password; }
-		}
-
+		/// <summary>
+		/// Gets the time to wait while trying to establish a connection before terminating the attempt and generating an error.
+		/// </summary>
+		/// <include file='docs/MySqlConnection.xml' path='MyDocs/MyMembers[@name="ConnectionTimeout"]/*'/>
 		[Browsable(true)]
 		public int ConnectionTimeout
 		{
 			get { return settings.ConnectTimeout; }
 		}
 		
+		/// <summary>
+		/// Gets the name of the current database or the database to be used after a connection is opened.
+		/// </summary>
 		[Browsable(true)]
 		public string Database
 		{
 			get	{ return settings.Database; }
 		}
 
+		/// <summary>
+		/// Indicates if this connection should use compression when communicating with the server.
+		/// </summary>
 		[Browsable(false)]
 		public bool UseCompression
 		{
 			get { return settings.UseCompression; }
 		}
 		
-		[Browsable(false)]
-		public int Port
-		{
-			get	{ return settings.Port; }
-		}
-
+		/// <summary>
+		/// Gets the current state of the connection.
+		/// </summary>
 		[Browsable(false)]
 		public ConnectionState State
 		{
@@ -135,7 +144,7 @@ namespace ByteFX.Data.MySqlClient
 		}
 
 		/// <summary>
-		/// Gets a string containing the version of the of the server to which the client is connected.
+		/// Gets a string containing the version of the MySQL server to which the client is connected.
 		/// </summary>
 		[Browsable(false)]
 		public string ServerVersion 
@@ -155,6 +164,9 @@ namespace ByteFX.Data.MySqlClient
 		}
 
 
+		/// <summary>
+		/// Gets or sets the string used to connect to a MySQL Server database.
+		/// </summary>
 #if WINDOWS
 		[Editor(typeof(Designers.ConnectionStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
 #endif
@@ -180,7 +192,7 @@ namespace ByteFX.Data.MySqlClient
 
 		#region Transactions
 		/// <summary>
-		/// 
+		/// Begins a database transaction.
 		/// </summary>
 		/// <returns></returns>
 		public MySqlTransaction BeginTransaction()
@@ -246,7 +258,7 @@ namespace ByteFX.Data.MySqlClient
 		#endregion
 
 		/// <summary>
-		/// 
+		/// Changes the current database for an open MySqlConnection.
 		/// </summary>
 		/// <param name="dbName"></param>
 		public void ChangeDatabase(string dbName)
@@ -266,6 +278,9 @@ namespace ByteFX.Data.MySqlClient
 				StateChange(this, new StateChangeEventArgs( oldState, newState ));
 		}
 
+		/// <summary>
+		/// Opens a database connection with the property settings specified by the ConnectionString.
+		/// </summary>
 		public void Open()
 		{
 			if (state == ConnectionState.Open)
@@ -289,6 +304,9 @@ namespace ByteFX.Data.MySqlClient
 		}
 
 
+		/// <summary>
+		/// Closes the connection to the database. This is the preferred method of closing any open connection.
+		/// </summary>
 		public void Close()
 		{
 			if (state == ConnectionState.Closed) return;
@@ -309,6 +327,10 @@ namespace ByteFX.Data.MySqlClient
 			return CreateCommand();
 		}
 
+		/// <summary>
+		/// Creates and returns a MySqlCommand object associated with the MySqlConnection.
+		/// </summary>
+		/// <returns></returns>
 		public MySqlCommand CreateCommand()
 		{
 			// Return a new instance of a command object.
@@ -328,10 +350,14 @@ namespace ByteFX.Data.MySqlClient
 		#endregion
 
 		#region IDisposeable
-		public void Dispose() 
+		/// <summary>
+		/// Releases the resources used by the MySqlConnection.
+		/// </summary>
+		public new void Dispose() 
 		{
 			if (State == ConnectionState.Open)
 				Close();
+			base.Dispose();
 		}
 		#endregion
   }

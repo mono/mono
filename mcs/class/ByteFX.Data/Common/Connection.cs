@@ -1,3 +1,20 @@
+// ByteFX.Data data access components for .Net
+// Copyright (C) 2002-2003  ByteFX, Inc.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 using System;
 using System.ComponentModel;
 using System.Collections.Specialized;
@@ -9,11 +26,12 @@ namespace ByteFX.Data.Common
 	/// Summary description for Connection.
 	/// </summary>
 	[ToolboxItem(false)]
+	[System.ComponentModel.DesignerCategory("Code")]
 	public class Connection : Component
 	{
-		protected StringDictionary	m_ConnSettings = new StringDictionary();
-		protected string			m_ConnString;
-		internal  ConnectionState	m_State;
+		internal ConnectionString	connString;
+		internal ConnectionState	state;
+		internal IDataReader		reader = null;
 
 
 		public Connection(System.ComponentModel.IContainer container)
@@ -32,7 +50,7 @@ namespace ByteFX.Data.Common
 
 		protected void Init() 
 		{
-			m_State = ConnectionState.Closed;
+			state = ConnectionState.Closed;
 		}
 
 
@@ -41,9 +59,7 @@ namespace ByteFX.Data.Common
 		{
 			get
 			{
-				String s = m_ConnSettings["data source"];
-				if (s == null)
-					s = m_ConnSettings["server"];
+				String s = connString["data source"];
 				if (s == null || s.Length == 0)
 					return "localhost";
 				return s;
@@ -55,7 +71,7 @@ namespace ByteFX.Data.Common
 		{
 			get
 			{
-				string s = m_ConnSettings["user id"];
+				string s = connString["user id"];
 				if (s == null)
 					s = "";
 				return s;
@@ -67,7 +83,7 @@ namespace ByteFX.Data.Common
 		{
 			get
 			{
-				string pwd = m_ConnSettings["password"];
+				string pwd = connString["password"];
 				if (pwd == null)
 					pwd = "";
 				return pwd;
@@ -81,9 +97,9 @@ namespace ByteFX.Data.Common
 			{
 				// Returns the connection time-out value set in the connection
 				// string. Zero indicates an indefinite time-out period.
-				if (m_ConnSettings == null)
+				if (connString == null)
 					return 30;
-				return Convert.ToInt32(m_ConnSettings["connection timeout"]);
+				return connString.GetIntOption("connection timeout", 30);
 			}
 		}
 		
@@ -94,14 +110,20 @@ namespace ByteFX.Data.Common
 			{	
 				// Returns an initial database as set in the connection string.
 				// An empty string indicates not set - do not return a null reference.
-				return m_ConnSettings["database"];
+				return connString["database"];
 			}
 		}
 
 		[Browsable(false)]
 		public ConnectionState State
 		{
-			get { return m_State; }
+			get { return state; }
+		}
+
+		internal IDataReader Reader
+		{
+			get { return reader; }
+			set { reader = value; }
 		}
 	}
 }

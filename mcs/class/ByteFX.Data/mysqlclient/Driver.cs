@@ -247,6 +247,10 @@ namespace ByteFX.Data.MySqlClient
 		{
 		}
 
+		public void ClearPeekedPacket()
+		{
+			peekedPacket = null;
+		}
 
 		/// <summary>
 		/// 

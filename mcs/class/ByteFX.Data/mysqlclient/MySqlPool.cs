@@ -26,21 +26,22 @@ namespace ByteFX.Data.MySqlClient
 		{
 			lock (idlePool.SyncRoot) 
 			{
-				foreach (MySqlInternalConnection conn in idlePool)
+				for (int i=idlePool.Count-1; i >=0; i--)
 				{
+					MySqlInternalConnection conn = (idlePool[i] as MySqlInternalConnection);
 					if (conn.IsAlive()) 
 					{
 						lock (inUsePool) 
 						{
 							inUsePool.Add( conn );
 						}
-						idlePool.Remove( conn );
+						idlePool.RemoveAt( i );
 						return conn;
 					}
 					else 
 					{
 						conn.Close();
-						idlePool.Remove(conn);
+						idlePool.RemoveAt(i);
 					}
 				}
 			}
@@ -90,22 +91,6 @@ namespace ByteFX.Data.MySqlClient
 					"pooled connections were in use and max pool size was reached.");
 
 			return conn;
-			//System.Diagnostics.Debug.WriteLine("Creating a new driver");
-/*			Driver driver = new Driver();
-			try 
-			{
-				driver.Connection = conn;
-				driver.Open( conn.DataSource, conn.Port, conn.User, conn.Password, conn.UseCompression );
-
-				driver.SendCommand( DBCmd.INIT_DB, connString["database"] );
-			}
-			catch (Exception ex)
-			{
-				throw new MySqlException("Database initialization failed with message: " + ex.Message);
-			}
-
-			pool.Add( driver );
-			return driver;*/
 		}
 
 	}
