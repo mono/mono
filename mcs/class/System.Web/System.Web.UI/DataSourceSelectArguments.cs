@@ -100,7 +100,7 @@ namespace System.Web.UI
 		}
 
 		public int MaximumRows {
-			get { return this.MaximumRows; }
+			get { return this.maxRows; }
 			set {
 				this.maxRows = value;
 				this.isEmpty = false;

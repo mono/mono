@@ -1,3 +1,9 @@
+2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Page.cs: Load control state before loading view state, and the
+	same for saving.
+	* DataSourceSelectArguments.cs: Fix recursive property call.
+
 2005-02-25  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataSourceView.cs: Fixed incorrect implementation of

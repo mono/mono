@@ -1082,9 +1082,9 @@ public class Page : TemplateControl, IHttpHandler
 		if (sState != null) {
 #if NET_2_0
 			Triplet data = (Triplet) sState;
+			LoadPageControlState (data.Third);
 			LoadViewStateRecursive (data.First);
 			_requiresPostBack = data.Second as ArrayList;
-			LoadPageControlState (data.Third);
 #else
 			Pair pair = (Pair) sState;
 			LoadViewStateRecursive (pair.First);
@@ -1098,6 +1098,10 @@ public class Page : TemplateControl, IHttpHandler
 		if (!handleViewState)
 			return;
 
+#if NET_2_0
+		object controlState = SavePageControlState ();
+#endif
+
 		object viewState = SaveViewStateRecursive ();
 		object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;
 
@@ -1105,7 +1109,7 @@ public class Page : TemplateControl, IHttpHandler
 		Triplet triplet = new Triplet ();
 		triplet.First = viewState;
 		triplet.Second = reqPostback;
-		triplet.Third = SavePageControlState ();
+		triplet.Third = controlState;
 
 		if (triplet.First == null && triplet.Second == null && triplet.Third == null)
 			triplet = null;
