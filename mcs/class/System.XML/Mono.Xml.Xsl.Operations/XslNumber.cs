@@ -62,8 +62,8 @@ namespace Mono.Xml.Xsl.Operations {
 				break;
 			}
 			
-			count = c.CompilePattern (c.GetAttribute ("count"));
-			from = c.CompilePattern (c.GetAttribute ("from"));
+			count = c.CompilePattern (c.GetAttribute ("count"), c.Input);
+			from = c.CompilePattern (c.GetAttribute ("from"), c.Input);
 			value = c.CompileExpression (c.GetAttribute ("value"));
 			
 			format = c.ParseAvtAttribute ("format");

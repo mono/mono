@@ -99,9 +99,13 @@ namespace Mono.Xml.Xsl.Operations {
 		public override void Evaluate (XslTransformProcessor p)
 		{
 			object o = p.Evaluate (select);
-			if (o is XPathNodeIterator)
-			{
-				XPathNodeIterator itr = (XPathNodeIterator)o;
+			XPathNodeIterator itr = o as XPathNodeIterator;
+			if (itr == null) {
+				XPathNavigator nav = o as XPathNavigator; // RTF
+				if (nav != null)
+					itr = nav.SelectChildren (XPathNodeType.All);
+			}
+			if (itr != null) {
 				while (itr.MoveNext ())
 					CopyNode (p, itr.Current);
 			} else {

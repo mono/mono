@@ -85,7 +85,9 @@ namespace Mono.Xml.Xsl.Operations {
 				content.Evaluate (p);
 				p.PopOutput ();
 //				return w.Document.CreateNavigator ().SelectChildren (XPathNodeType.All);
-				return w.CreateDocument ().CreateNavigator ().SelectChildren (XPathNodeType.All);
+//				return w.CreateDocument ().CreateNavigator ().SelectChildren (XPathNodeType.All);
+//				return w.Document.CreateNavigator ();
+				return w.CreateDocument ().CreateNavigator ();
 			} else {
 				return "";
 			}

@@ -111,7 +111,7 @@ namespace Mono.Xml.Xsl.Operations {
 							break;
 						default:
 							// TODO: handle fallback, like we should
-							throw new Exception ("Did not recognize element " + n.Name);
+							throw new XsltCompileException ("Did not recognize element " + n.Name, null, n);
 						}
 						break;
 					default:
