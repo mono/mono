@@ -1,3 +1,10 @@
+2004-09-21  Martin Baulig  <martin@ximian.com>
+
+	* domain.c (mono_debugger_check_runtime_version): New public
+	function.
+
+	* icall.c (ves_icall_MonoDebugger_check_runtime_version): New icall.	
+
 2004-09-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* reflection.c: Added missing sort to the declarative security 
