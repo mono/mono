@@ -1,3 +1,7 @@
+2004-11-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Make property accessor test #if NET_2_0.
+
 2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add test typeof (IntPtr).IsPrimitive.

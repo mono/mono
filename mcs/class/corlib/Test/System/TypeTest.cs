@@ -232,6 +232,7 @@ namespace MonoTests.System
 			AssertNotNull (typeof (TypeTest).GetField ("afield", BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase));
 		}
 
+#if NET_2_0
 		public int Count {
 			internal get {
 				return 0;
@@ -246,6 +247,7 @@ namespace MonoTests.System
 			AssertNotNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.Public));
 			AssertNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.NonPublic));
 		}
+#endif
 
 		[Test]
 		public void IsPrimitive () {
