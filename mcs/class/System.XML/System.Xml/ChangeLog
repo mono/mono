@@ -1,3 +1,21 @@
+2005-01-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNode.cs,
+	  XmlAttribute.cs,
+	  XmlAttributeCollection.cs :
+	  Now reuse parentNode field for XmlAttribute.OwnerElement and
+	  reduce class allocation size.
+	* XmlNameEntry.cs :
+	  New class that represents a name triplet.
+	  XmlNameEntryCache.cs :
+	  New type to cache name entries.
+	* XmlAttribute.cs,
+	  XmlElement.cs :
+	  Replace name strings with name entry and save class allocation size.
+	  XmlDocument.cs :
+	  Add name entry cache field to document and reuse name entries that 
+	  are already allocated.
+
 2005-01-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs, XmlAttribute.cs : reverted the previous patch. It broke

@@ -698,6 +698,12 @@ namespace System.Xml
 			return oldChild;
 		}
 
+		// WARNING: don't use this member outside XmlAttribute nodes.
+		internal XmlElement AttributeOwnerElement {
+			get { return (XmlElement) parentNode; }
+			set { parentNode = value; }
+		}
+
 		internal void SearchDescendantElements (string name, bool matchAll, ArrayList list)
 		{
 			for (int i = 0; i < ChildNodes.Count; i++) {

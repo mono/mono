@@ -218,7 +218,7 @@ namespace System.Xml
 				attr.SetDefault ();
 				this.SetNamedItem (attr);
 			}
-			retAttr.SetOwnerElement (null);
+			retAttr.AttributeOwnerElement = null;
 			return retAttr;
 		}
 
@@ -260,7 +260,7 @@ namespace System.Xml
 
 			ownerElement.OwnerDocument.onNodeInserting (node, ownerElement);
 
-			attr.SetOwnerElement (ownerElement);
+			attr.AttributeOwnerElement = ownerElement;
 			XmlNode n = AdjustIdenticalAttributes (node as XmlAttribute, base.SetNamedItem (node, -1, false));
 
 			ownerElement.OwnerDocument.onNodeInserted (node, ownerElement);

@@ -60,6 +60,7 @@ namespace System.Xml
 		bool preserveWhitespace = false;
 		XmlResolver resolver;
 		Hashtable idTable = new Hashtable ();
+		XmlNameEntryCache nameCache = new XmlNameEntryCache ();
 #if NET_2_0
 		XmlSchemaSet schemas;
 #endif
@@ -179,6 +180,10 @@ namespace System.Xml
 
 		public override string Name {
 			get { return "#document"; }
+		}
+
+		internal XmlNameEntryCache NameCache {
+			get { return nameCache; }
 		}
 
 		public XmlNameTable NameTable {

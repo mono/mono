@@ -44,11 +44,8 @@ namespace System.Xml
 	{
 		#region Fields
 
-		private string localName;
-		private string namespaceURI;
-		private string prefix;
+		private XmlNameEntry name;
 		internal bool isDefault;
-		private XmlElement ownerElement;
 #if NET_2_0
 		private IXmlSchemaInfo schemaInfo;
 #endif
@@ -94,15 +91,12 @@ namespace System.Xml
 			else if (!XmlChar.IsName (localName))
 				throw new ArgumentException ("Invalid attribute local name.");
 
-			if (atomizedNames) {
-				this.prefix = prefix;
-				this.localName = localName;
-				this.namespaceURI = namespaceURI;
-			} else {
-				this.prefix = doc.NameTable.Add (prefix);
-				this.localName = doc.NameTable.Add (localName);
-				this.namespaceURI = doc.NameTable.Add (namespaceURI);
+			if (!atomizedNames) {
+				prefix = doc.NameTable.Add (prefix);
+				localName = doc.NameTable.Add (localName);
+				namespaceURI = doc.NameTable.Add (namespaceURI);
 			}
+			name = doc.NameCache.Add (prefix, localName, namespaceURI, true);
 		}
 
 		#endregion
@@ -144,19 +138,19 @@ namespace System.Xml
 
 		public override string LocalName {
 			get {
-				return localName;
+				return name.LocalName;
 			}
 		}
 
 		public override string Name {
 			get { 
-				return prefix != String.Empty ? OwnerDocument.NameTable.Add (prefix + ":" + localName) : localName; 
+				return name.Prefix != String.Empty ? OwnerDocument.NameTable.Add (name.Prefix + ":" + name.LocalName) : name.LocalName;
 			}
 		}
 
 		public override string NamespaceURI {
 			get {
-				return namespaceURI;
+				return name.NS;
 			}
 		}
 
@@ -179,7 +173,7 @@ namespace System.Xml
 		}
 
 		public virtual XmlElement OwnerElement {
-			get { return ownerElement; }
+			get { return AttributeOwnerElement; }
 		}
 
 		public override XmlNode ParentNode {
@@ -201,14 +195,16 @@ namespace System.Xml
 					throw new XmlException ("This node is readonly.");
 				if (!XmlChar.IsNCName (value))
 					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
-				if (prefix == "xmlns" && value != "xmlns")
+				if (name.Prefix == "xmlns" && value != "xmlns")
 					throw new ArgumentException ("Cannot bind to the reserved namespace.");
 
-				prefix = OwnerDocument.NameTable.Add (value);
+				value = OwnerDocument.NameTable.Add (value);
+				name = OwnerDocument.NameCache.Add (value,
+					name.LocalName, name.NS, true);
 			}
 			
 			get {
-				return prefix;
+				return name.Prefix;
 			}
 		}
 
@@ -270,7 +266,7 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			XmlNode node = new XmlAttribute (prefix, localName, namespaceURI,
+			XmlNode node = new XmlAttribute (name.Prefix, name.LocalName, name.NS,
 							 OwnerDocument, true, false);
 			if (deep) {
 				for (int i = 0; i < ChildNodes.Count; i++)
@@ -287,11 +283,6 @@ namespace System.Xml
 			isDefault = true;
 		}
 
-		// Parent of XmlAttribute must be null
-		internal void SetOwnerElement (XmlElement el) {
-			ownerElement = el;
-		}
-
 		public override void WriteContentTo (XmlWriter w)
 		{
 			for (int i = 0; i < ChildNodes.Count; i++)
@@ -300,7 +291,7 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteStartAttribute (prefix, localName, namespaceURI);
+			w.WriteStartAttribute (name.Prefix, name.LocalName, name.NS);
 			WriteContentTo (w);
 			w.WriteEndAttribute ();
 		}

@@ -47,9 +47,8 @@ namespace System.Xml
 		#region Fields
 
 		private XmlAttributeCollection attributes;
-		private string localName;
-		private string namespaceURI;
-		private string prefix;
+		private XmlNameEntry name;
+
 		private bool isNotEmpty;
 #if NET_2_0
 		IXmlSchemaInfo schemaInfo;
@@ -76,15 +75,12 @@ namespace System.Xml
 		{
 			XmlConvert.VerifyName (localName);
 
-			if (atomizedNames) {
-				this.prefix = prefix;
-				this.localName = localName;
-				this.namespaceURI = namespaceURI;
-			} else {
-				this.prefix = doc.NameTable.Add (prefix);
-				this.localName = doc.NameTable.Add (localName);
-				this.namespaceURI = doc.NameTable.Add (namespaceURI);
+			if (!atomizedNames) {
+				prefix = doc.NameTable.Add (prefix);
+				localName = doc.NameTable.Add (localName);
+				namespaceURI = doc.NameTable.Add (namespaceURI);
 			}
+			name = doc.NameCache.Add (prefix, localName, namespaceURI, true);
 
 //			attributes = new XmlAttributeCollection (this);
 
@@ -174,20 +170,20 @@ namespace System.Xml
 		}
 
 		public override string LocalName {
-			get { return localName; }
+			get { return name.LocalName; }
 		}
 
 		public override string Name {
 			get {
-				if (prefix == String.Empty || prefix == null)
-					return localName;
+				if (name.Prefix == String.Empty || name.Prefix == null)
+					return name.LocalName;
 				else
-					return OwnerDocument.NameTable.Add (prefix + ":" + localName);
+					return OwnerDocument.NameTable.Add (name.Prefix + ":" + name.LocalName);
 			}
 		}
 
 		public override string NamespaceURI {
-			get { return namespaceURI; }
+			get { return name.NS; }
 		}
 
 		// Why is this override?
@@ -216,14 +212,16 @@ namespace System.Xml
 		}
 
 		public override string Prefix {
-			get { return prefix; }
+			get { return name.Prefix; }
 			set {
 				if (IsReadOnly)
 					throw new XmlException ("This node is readonly.");
 				if (!XmlChar.IsNCName (value))
 					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
 
-				prefix = OwnerDocument.NameTable.Add (value);
+				value = OwnerDocument.NameTable.Add (value);
+				name = OwnerDocument.NameCache.Add (value,
+					name.LocalName, name.NS, true);
 			}
 		}
 
@@ -241,7 +239,7 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlElement node = new XmlElement (
-				prefix, localName, namespaceURI, OwnerDocument, true);
+				name.Prefix, name.LocalName, name.NS, OwnerDocument, true);
 
 			for (int i = 0; i < Attributes.Count; i++)
 				node.SetAttributeNode ((XmlAttribute) 
