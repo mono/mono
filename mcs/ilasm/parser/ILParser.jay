@@ -552,7 +552,7 @@ slashed_name		: comp_name
                           }
 			;
 
-class_ref		: OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
+class_ref		: OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                           {
                                 if (codegen.IsThisAssembly ((string) $2)) {
                                         $$ = new TypeRef ((string) $4, null);
@@ -562,7 +562,7 @@ class_ref		: OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
                                         $$ = new ExternTypeRef (klass, (string) $4);
                                 }
                           }
-			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET slashed_name
+			| OPEN_BRACKET D_MODULE file_name CLOSE_BRACKET slashed_name
 			| slashed_name
                           {
                                 PrimitiveTypeRef prim = PrimitiveTypeRef.GetPrimitiveType ((string) $1);
@@ -620,7 +620,7 @@ type			: K_CLASS class_ref
                           {
                                 $$ = $3;
                           }
-			| K_VALUETYPE OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
+			| K_VALUETYPE OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                           {
                                 ClassRef klass = codegen.ExternTable.GetValueClass ((string) $3, (string)$5);
                                 $$ = new ExternTypeRef (klass, (string) $5);
@@ -1571,12 +1571,12 @@ slot_num                : OPEN_BRACKET int32 CLOSE_BRACKET
                         ;
 
 type_spec		: class_ref
-			| OPEN_BRACKET comp_name CLOSE_BRACKET
+			| OPEN_BRACKET file_name CLOSE_BRACKET
                           {
                                 // This is a reference to a global method in another
                                 // assembly. This is not supported in the MS version of ilasm
                           }
-			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET
+			| OPEN_BRACKET D_MODULE file_name CLOSE_BRACKET
 			| type
 			;
 
@@ -2052,7 +2052,7 @@ file_entry		: /* EMPTY */
 assembly_all		: assembly_head OPEN_BRACE assembly_decls CLOSE_BRACE
 			;
 
-assembly_head		: D_ASSEMBLY asm_attr comp_name
+assembly_head		: D_ASSEMBLY asm_attr file_name
                           {
                                 codegen.SetAssemblyName ((string) $3);
                           }
@@ -2083,14 +2083,14 @@ asm_or_ref_decl		: D_PUBLICKEY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
 assemblyref_all		: assemblyref_head OPEN_BRACE assemblyref_decls CLOSE_BRACE
 			;
 
-assemblyref_head	: D_ASSEMBLY K_EXTERN comp_name
+assemblyref_head	: D_ASSEMBLY K_EXTERN file_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
 				asmb_name.Name = (string) $3;
 				codegen.ExternTable.AddAssembly ((string) $3, asmb_name);
                           }
-			| D_ASSEMBLY K_EXTERN comp_name K_AS comp_name
+			| D_ASSEMBLY K_EXTERN file_name K_AS file_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
@@ -2151,7 +2151,7 @@ manifestres_decls	: /* EMPTY */
 			;
 
 manifestres_decl	: D_FILE comp_name K_AT int32
-			| D_ASSEMBLY K_EXTERN comp_name
+			| D_ASSEMBLY K_EXTERN file_name
 			| customattr_decl
 			;
 
@@ -2243,6 +2243,13 @@ comp_name		: id
                                 $$ = (string) $1 + '.' + (string) $3;
                           }
 			;
+
+file_name               : comp_name
+                        | file_name DASH comp_name
+                          {
+                                $$ = (string) $1 + '-' + (string) $3;
+                          }
+                        ;
 
 
 %%
