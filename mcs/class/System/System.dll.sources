@@ -139,6 +139,7 @@ System.ComponentModel/CollectionChangeAction.cs
 System.ComponentModel/CollectionChangeEventArgs.cs
 System.ComponentModel/CollectionChangeEventHandler.cs
 System.ComponentModel/ComponentCollection.cs
+System.ComponentModel/ComponentResourceManager.cs
 System.ComponentModel/Component.cs
 System.ComponentModel/Container.cs
 System.ComponentModel/DefaultEventAttribute.cs
@@ -440,6 +441,7 @@ System.Net/NetConfig.cs
 System.Net/NetworkAccess.cs
 System.Net/NetworkCredential.cs
 System.Net/ProtocolViolationException.cs
+System.Net/SecurityProtocolType.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/SocketAddress.cs
@@ -503,6 +505,9 @@ System.Timers/ElapsedEventArgs.cs
 System.Timers/ElapsedEventHandler.cs
 System.Timers/Timer.cs
 System.Timers/TimersDescriptionAttribute.cs
+System.Web/AspNetHostingPermission.cs
+System.Web/AspNetHostingPermissionAttribute.cs
+System.Web/AspNetHostingPermissionLevel.cs
 System/SRDescriptionAttribute.cs
 System/TODOAttribute.cs
 System/UriBuilder.cs

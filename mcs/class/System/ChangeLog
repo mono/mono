@@ -1,3 +1,7 @@
+2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.dll.sources: Added some new class files
+
 2003-09-04  Duncan Mak  <duncan@ximian.com>
 
 	* System_test.dll.sources: Add new test, ListDictionaryTest.cs.
