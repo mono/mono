@@ -1,4 +1,7 @@
 2004-05-14 Umadevi S (sumadevi@novell.com)
+        * OleDbCommand.cs - Completed implementing all the attribute
+
+2004-05-14 Umadevi S (sumadevi@novell.com)
         * OleDbConnection.cs - Completed implementing all the attributes
                            - Stubbed EnlistDistributedTransaction method
 

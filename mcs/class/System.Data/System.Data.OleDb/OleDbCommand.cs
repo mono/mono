@@ -20,6 +20,8 @@ namespace System.Data.OleDb
 	/// <summary>
 	/// Represents an SQL statement or stored procedure to execute against a data source.
 	/// </summary>
+	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OleDbCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 	public sealed class OleDbCommand : Component, ICloneable, IDbCommand
 	{
 		#region Fields
@@ -75,6 +77,11 @@ namespace System.Data.OleDb
 
 		#region Properties
 	
+		[DataCategory ("Data")]
+		[DefaultValue ("")]
+                [DataSysDescriptionAttribute ("Command text to execute")]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string CommandText 
 		{
 			get {
@@ -85,6 +92,8 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DataSysDescriptionAttribute ("Time to wait for command to execute")]
+		[DefaultValue (30)]
 		public int CommandTimeout {
 			get {
 				return timeout;
@@ -94,6 +103,10 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DataCategory ("Data")]
+                [DefaultValue ("Text")]
+		[DataSysDescriptionAttribute ("How to interpret the CommandText")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public CommandType CommandType { 
 			get {
 				return commandType;
@@ -103,6 +116,10 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DataCategory ("Behavior")]
+		[DataSysDescriptionAttribute ("Connection used by the command")]
+		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbConnection Connection { 
 			get {
 				return connection;
@@ -111,7 +128,10 @@ namespace System.Data.OleDb
 				connection = value;
 			}
 		}
-
+		
+		[BrowsableAttribute (false)]
+		[DesignOnlyAttribute (true)]
+		[DefaultValue (true)]
 		public bool DesignTimeVisible { 
 			get {
 				return designTimeVisible;
@@ -121,12 +141,18 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescriptionAttribute ("The parameters collection")]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public OleDbParameterCollection Parameters {
 			get {
 				return parameters;
 			}
 		}
-
+		
+		[BrowsableAttribute (false)]
+		[DataSysDescriptionAttribute ("The transaction used by the command")]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public OleDbTransaction Transaction {
 			get {
 				return transaction;
@@ -136,6 +162,9 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DataCategory ("Behavior")]
+		[DefaultValue (UpdateRowSource.Both)]
+		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
 		public UpdateRowSource UpdatedRowSource { 
 			[MonoTODO]
 			get {
