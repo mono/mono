@@ -28,6 +28,25 @@ namespace System.Security.Cryptography.X509Certificates {
 	[Serializable]
 	public class X509Certificate {
 	
+		// typedef struct _CERT_CONTEXT {
+                //	DWORD                   dwCertEncodingType;
+                //	BYTE                    *pbCertEncoded;
+		//	DWORD                   cbCertEncoded;
+		//	PCERT_INFO              pCertInfo;
+		//	HCERTSTORE              hCertStore;
+		// } CERT_CONTEXT, *PCERT_CONTEXT;
+		// typedef const CERT_CONTEXT *PCCERT_CONTEXT;
+		[StructLayout (LayoutKind.Sequential)]
+		internal struct CertificateContext {
+			public UInt32 dwCertEncodingType;
+			public IntPtr pbCertEncoded;
+			public UInt32 cbCertEncoded;
+			public IntPtr pCertInfo;
+			public IntPtr hCertStore;
+		}
+		// NOTE: We only define the CryptoAPI structure (from WINCRYPT.H)
+		// so we don't create any dependencies on Windows DLL in corlib
+
 		private Mono.Security.X509.X509Certificate x509;
 		private bool hideDates;
 		private byte[] cachedCertificateHash;
@@ -123,9 +142,10 @@ namespace System.Security.Cryptography.X509Certificates {
 				return null;
 			}
 		}
-	
+
 		// LAMESPEC: How does it differ from CreateFromCertFile ?
 		// It seems to get the certificate inside a PE file (maybe a CAB too ?)
+		[MonoTODO ("Incomplete - no validation in this version")]
 		public static X509Certificate CreateFromSignedFile (string filename)
 		{
 			byte[] signature = GetAuthenticodeSignature (filename);
@@ -161,12 +181,12 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public X509Certificate (byte[] data) : this (data, true) {}
 	
-		[MonoTODO("Handle on CryptoAPI certificate")]
 		public X509Certificate (IntPtr handle) 
 		{
-			// normally a handle to CryptoAPI
-			// How does Mono "handle this handle" ???
-			throw new NotSupportedException ();
+			CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
+			byte[] data = new byte [cc.cbCertEncoded];
+			Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
+			x509 = new Mono.Security.X509.X509Certificate (data);
 		}
 	
 		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
@@ -323,7 +343,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 	
 		// to please corcompare ;-)
-		public override string ToString() 
+		public override string ToString () 
 		{
 			return base.ToString ();
 		}

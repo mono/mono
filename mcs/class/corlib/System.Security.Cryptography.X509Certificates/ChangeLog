@@ -1,3 +1,8 @@
+2003-06-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509Certificate.cs: Implements X509Certificate(IntPtr)
+	constructor for compatibility with CryptoAPI.
+
 2003-04-23  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509Certificate.cs: Fixed issues for null certificate 
