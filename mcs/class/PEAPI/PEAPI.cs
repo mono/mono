@@ -1002,6 +1002,13 @@ namespace PEAPI
       AddToBuffer(new StringInstr(0x72,str));
     }
 
+          /// <summary>
+          /// Add the load string instruction
+          /// </summary>
+          public void ldstr (byte[] str) {
+                  AddToBuffer (new StringInstr (0x72, str));
+          }
+          
     /// <summary>
     /// Add the calli instruction
     /// </summary>
@@ -3844,6 +3851,7 @@ if (rsrc != null)
 
   internal class StringInstr : Instr {
     string val;
+          byte[] bval;                                                  
     uint strIndex;
 
     internal StringInstr(int inst, string str) : base(inst) {
@@ -3851,8 +3859,16 @@ if (rsrc != null)
       size += 4;
     }
 
+          internal StringInstr (int inst, byte[] str) : base (inst) {
+                  bval = str;
+                  size += 4;
+          }
+                   
     internal sealed override bool Check(MetaData md) {
-      strIndex = md.AddToUSHeap(val);
+            if (val != null)
+                    strIndex = md.AddToUSHeap(val);
+            else
+                    strIndex = md.AddToUSHeap (bval);
       return false;
     }
 
@@ -4407,6 +4423,11 @@ if (rsrc != null)
       return us.Add(str,true);
    }
 
+                internal uint AddToUSHeap(byte[] str) {
+                        if (str == null) return 0;
+                        return us.Add (str, true);
+                }
+                                
     internal uint AddToStringsHeap(string str) {
       if ((str == null) || (str.CompareTo("") == 0)) return 0;
       return strings.Add(str,false);
@@ -4866,6 +4887,7 @@ if (rsrc != null)
     uint sizeOfHeader;
     char[] name;
     Hashtable htable = new Hashtable();
+                Hashtable btable = new Hashtable ();
 
     internal MetaDataStream(char[] name, bool addInitByte) : base(new MemoryStream()) {
       if (addInitByte) { Write((byte)0); size = 1; }
@@ -4925,7 +4947,23 @@ if (rsrc != null)
       }
                         return index;
                 }
+                internal uint Add (byte[] str, bool prependSize) {
+                        Object val = btable [str];
+                        uint index = 0;
+                        if (val == null) {
+                                index = size;
+                                btable [str] = index;
+                                if (prependSize) CompressNum ((uint) str.Length+1);
+                                Write (str);
+                                Write ((byte) 0);
+                                size = (uint) Seek (0, SeekOrigin.Current);
+                        } else {
+                                index = (uint) val;
+                        }
+                        return index;
+                }
 
+                    
                 internal uint Add(Guid guid) {
                         Write(guid.ToByteArray());
                         size =(uint)Seek(0,SeekOrigin.Current);
