@@ -547,6 +547,7 @@ namespace Mono.Security {
 			private ArrayList crls;
 			private SignerInfo signerInfo;
 			private bool mda;
+			private bool signed;
 
 			public SignedData () 
 			{
@@ -556,6 +557,7 @@ namespace Mono.Security {
 				crls = new ArrayList ();
 				signerInfo = new SignerInfo ();
 				mda = true;
+				signed = false;
 			}
 
 			public SignedData (byte[] data) 
@@ -710,7 +712,7 @@ namespace Mono.Security {
 				// contentInfo ContentInfo,
 				ASN1 ci = contentInfo.ASN1;
 				signedData.Add (ci);
-				if (hashAlgorithm != null) {
+				if (!signed && (hashAlgorithm != null)) {
 					if (mda) {
 						// Use authenticated attributes for signature
 						
@@ -732,6 +734,7 @@ namespace Mono.Security {
 						byte[] sig = ha.ComputeHash (ci[1][0].Value);
 						signerInfo.Signature = r.CreateSignature (sig);
 					}
+					signed = true;
 				}
 
 				// certificates [0] IMPLICIT ExtendedCertificatesAndCertificates OPTIONAL,
