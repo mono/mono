@@ -48,7 +48,8 @@
 							WindowStyles.WS_OVERLAPPED |
 							WindowStyles.WS_VISIBLE |
 							WindowStyles.WS_VSCROLL |
-							WindowStyles.WS_HSCROLL );
+							WindowStyles.WS_HSCROLL |
+							(WindowStyles)MDIWindowStyles.MDIS_ALLCHILDSTYLES);
 						pars.ExStyle = (int) (  WindowExStyles.WS_EX_CLIENTEDGE );
 
 						pars.Parent = Parent.Handle;
@@ -128,7 +129,11 @@
 			[MonoTODO]
 			public Form ActiveMdiChild {
 				get {
-					throw new NotImplementedException ();
+					IntPtr	MdiActive;
+
+					MdiActive=(IntPtr)Win32.SendMessage(mdiClientWnd.Handle, Msg.WM_MDIGETACTIVE, 0, 0);
+					Control control = Control.FromChildHandle(MdiActive);
+					return control as Form;
 				}
 			}
     
@@ -380,7 +385,6 @@
 						//							//myStyle |= (long)Win32.WS_OVERLAPPEDWINDOW;
 						//							//Win32.SetWindowLongA( Handle, Win32.GWL_STYLE, myStyle);
 						int res = Win32.SetMenu( Handle, mainMenu_.Handle);
-						Console.WriteLine ("Form.assignMenu. result {0}", res);
 					}
 					else {
 						Win32.SetMenu( Handle, IntPtr.Zero);

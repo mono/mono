@@ -322,6 +322,12 @@ namespace System.Windows.Forms{
 	}
 	#endregion
 
+	#region MDI Window Styles
+	internal enum MDIWindowStyles {
+		MDIS_ALLCHILDSTYLES	= 0x00000001
+	}
+	#endregion
+
 	#region Window Extended Styles
 	internal enum WindowExStyles {
 		WS_EX_DLGMODALFRAME     = 0x00000001,

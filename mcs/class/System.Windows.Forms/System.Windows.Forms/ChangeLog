@@ -1,4 +1,11 @@
 2004-05-24  Peter Bartok <pbartok@novell.com>
+	* Form.cs: 
+	  - Added MDIS_ALLCHILDSTYLES to MDICLIENT window
+	  - Implemented ActiveMdiChild method
+	  - Removed debug output
+	* win32Enums.cs: Added MDIWindowStyle enumeration
+
+2004-05-24  Peter Bartok <pbartok@novell.com>
 	* win32functions.cs:
           - Fixed translation of wine pathnames to their 
             unix counterpart (Was broken in multiple ways, first it had to 
