@@ -9,7 +9,9 @@
 
 #if NET_1_2
 
+using System;
 using System.Collections;
+using System.Data;
 using System.Data.Sql;
 using System.Data.SqlTypes;
 
