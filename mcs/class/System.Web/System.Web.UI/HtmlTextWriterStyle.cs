@@ -1,4 +1,12 @@
-
+//
+// System.Web.UI.HtmlTextWriterStyle.cs
+//
+// Authors:
+//	Leen Toelen (toelen@hotmail.com)
+//	Sanjay Gupta (gsanjay@novell.com)
+//
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -19,31 +27,53 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-/*	System.Web.UI
-*	Authors
-*		Leen Toelen (toelen@hotmail.com)
-*/
-
 
 namespace System.Web.UI{
-
-public enum HtmlTextWriterStyle {
-BackgroundColor,
-BackgroundImage,
-BorderCollapse,
-BorderColor,
-BorderStyle,
-BorderWidth,
-Color,
-FontFamily,
-FontSize,
-FontStyle,
-FontWeight,
-Height,
-TextDecoration,
-Width
-} 
-
-
-} // namespace System.Web.UI.HtmlControls
+	public enum HtmlTextWriterStyle {
+		BackgroundColor,
+		BackgroundImage,
+		BorderCollapse,
+		BorderColor,
+		BorderStyle,
+		BorderWidth,
+		Color,
+		FontFamily,
+		FontSize,
+		FontStyle,
+		FontWeight,
+		Height,
+		TextDecoration,
+		Width,
+#if NET_2_0
+		ListStyleImage = 14,
+		ListStyleType = 15,
+		Cursor = 16,
+		Direction = 17,
+		Display = 18,
+		Filter = 19,
+		FontVariant = 20,
+		Left = 21,
+		Margin = 22,
+		MarginBottom = 23,
+		MarginLeft = 24,
+		MarginRight = 25,
+		MarginTop = 26,
+		Overflow = 27,
+		OverflowX = 28,
+		OverflowY = 29,
+		Padding = 30,
+		PaddingBottom = 31,
+		PaddingLeft = 32,
+		PaddingRight = 33,
+		PaddingTop = 34,
+		Position = 35,
+		TextAlign = 36,
+		TextOverflow = 37,
+		Top = 38,
+		Visibility = 39,
+		WhiteSpace = 40,
+		ZIndex = 41
+#endif
+	}
+}
 

@@ -1,3 +1,20 @@
+2004-08-04 Sanjay Gupta <gsanjay@novell.com>
+
+	* HtmlTextWriterAttribute.cs:
+	* HtmlTextWriterStyle.cs: Added .Net 2.0 enumerations.
+	* CompilationMode.cs:
+	* ConflictOptions.cs:
+	* DataSourceCacheExpiry.cs:
+	* DataSourceCapabilities.cs:
+	* DataSourceOperation.cs:
+	* TemplateContentType.cs:
+	* TemplateInstance.cs:
+	* UrlTypes.cs:
+	* VerificationConditionalOperator.cs:
+	* VerificationReportLevel.cs:
+	* VerificationRule.cs:
+	* XhtmlMobileDocType.cs: Added enumerations.
+
 2004-07-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: style. Reverted previous patch modification of
