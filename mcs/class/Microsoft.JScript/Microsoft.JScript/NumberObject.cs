@@ -32,6 +32,17 @@ using System;
 namespace Microsoft.JScript {
 	
 	public class NumberObject : JSObject {
+		
+		double value;
+
+		internal NumberObject ()
+		{
+		}
+
+		internal NumberObject (object value)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public new Type GetType ()
 		{
