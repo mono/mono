@@ -1,3 +1,10 @@
+2002-11-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: invoke AssemblyLoad and AsemblyResolve events in the
+	current domain when loaded an assembly and failed to load it.
+
+	* icall.c: changed ...Assembly_GetType to Assembly_InternalGetType.
+
 2002-10-31  Dick Porter  <dick@ximian.com>
 
 	* icall.c: 
