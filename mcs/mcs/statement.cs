@@ -1296,7 +1296,7 @@ namespace Mono.CSharp {
 		//   A list of UsageVectors.  A new vector is added each time control flow may
 		//   take a different path.
 		// </summary>
-		public ArrayList Siblings;
+		public UsageVector[] Siblings;
 
 		// <summary>
 		//   If this is an infinite loop.
@@ -1557,7 +1557,7 @@ namespace Mono.CSharp {
 			// <summary>
 			//   Merge a child branching.
 			// </summary>
-			public FlowReturns MergeChildren (FlowBranching branching, ICollection children)
+			public FlowReturns MergeChildren (FlowBranching branching, UsageVector[] children)
 			{
 				MyBitVector new_locals = null;
 				MyBitVector new_params = null;
@@ -1567,7 +1567,7 @@ namespace Mono.CSharp {
 				bool new_returns_set = false, new_breaks_set = false;
 
 				Report.Debug (2, "MERGING CHILDREN", branching, branching.Type,
-					      this, children.Count);
+					      this, children.Length);
 
 				foreach (UsageVector child in children) {
 					Report.Debug (2, "  MERGING CHILD", child, child.is_finally);
@@ -1652,7 +1652,7 @@ namespace Mono.CSharp {
 								new_locals = locals.Clone ();
 								new_locals.Or (child.locals);
 							}
-						} else if (children.Count == 1) {
+						} else if (children.Length == 1) {
 							new_locals = locals.Clone ();
 							new_locals.Or (child.locals);
 						}
@@ -1667,7 +1667,7 @@ namespace Mono.CSharp {
 									new_params = parameters.Clone ();
 									new_params.Or (child.parameters);
 								}
-							} else if (children.Count == 1) {
+							} else if (children.Length == 1) {
 								new_params = parameters.Clone ();
 								new_params.Or (child.parameters);
 							}
@@ -1700,7 +1700,7 @@ namespace Mono.CSharp {
 				if (((new_breaks != FlowReturns.ALWAYS) &&
 				     (new_breaks != FlowReturns.EXCEPTION) &&
 				     (new_breaks != FlowReturns.UNREACHABLE)) ||
-				    (children.Count == 1)) {
+				    (children.Length == 1)) {
 					if (new_locals != null)
 						locals.Or (new_locals);
 
@@ -1881,7 +1881,6 @@ namespace Mono.CSharp {
 
 		FlowBranching (FlowBranchingType type, Location loc)
 		{
-			this.Siblings = new ArrayList ();
 			this.Block = null;
 			this.Location = loc;
 			this.Type = type;
@@ -1921,8 +1920,7 @@ namespace Mono.CSharp {
 					num_params += struct_params [i].Count;
 			}
 
-			Siblings = new ArrayList ();
-			Siblings.Add (new UsageVector (null, num_params, block.CountVariables));
+			AddSibling (new UsageVector (null, num_params, block.CountVariables));
 		}
 
 		// <summary>
@@ -1952,7 +1950,7 @@ namespace Mono.CSharp {
 			else
 				vector = new UsageVector (Parent.CurrentUsageVector);
 
-			Siblings.Add (vector);
+			AddSibling (vector);
 
 			switch (Type) {
 			case FlowBranchingType.EXCEPTION:
@@ -1964,13 +1962,26 @@ namespace Mono.CSharp {
 			}
 		}
 
+		void AddSibling (UsageVector uv)
+		{
+			if (Siblings != null) {
+				UsageVector[] ns = new UsageVector [Siblings.Length + 1];
+				for (int i = 0; i < Siblings.Length; ++i)
+					ns [i] = Siblings [i];
+				Siblings = ns;
+			} else {
+				Siblings = new UsageVector [1];
+			}
+			Siblings [Siblings.Length - 1] = uv;
+		}
+
 		// <summary>
 		//   Returns the branching's current usage vector.
 		// </summary>
 		public UsageVector CurrentUsageVector
 		{
 			get {
-				return (UsageVector) Siblings [Siblings.Count - 1];
+				return Siblings [Siblings.Length - 1];
 			}
 		}
 
@@ -1979,7 +1990,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public void CreateSibling ()
 		{
-			Siblings.Add (new UsageVector (Parent.CurrentUsageVector));
+			AddSibling (new UsageVector (Parent.CurrentUsageVector));
 
 			Report.Debug (1, "CREATED SIBLING", CurrentUsageVector);
 		}
@@ -2072,8 +2083,12 @@ namespace Mono.CSharp {
 
 			vector.MergeChildren (this, Siblings);
 
-			Siblings.Clear ();
-			Siblings.Add (vector);
+			if (Siblings.Length == 1)
+				Siblings [0] = vector;
+			else {
+				Siblings = null;
+				AddSibling (vector);
+			}
 
 			Report.Debug (1, "MERGING TOP BLOCK DONE", Location, vector);
 
@@ -2253,7 +2268,7 @@ namespace Mono.CSharp {
 				sb.Append (Block.StartLocation);
 			}
 			sb.Append (" - ");
-			sb.Append (Siblings.Count);
+			sb.Append (Siblings.Length);
 			sb.Append (" - ");
 			sb.Append (CurrentUsageVector);
 			sb.Append (")");
