@@ -1,3 +1,13 @@
+2005-04-01  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: implements DataGridTextBoxColumn class
+	* GridColumnStylesCollection.cs: implements GridColumnStylesCollection
+	* GridTableStylesCollection.cs: implements GridTableStylesCollection
+	* DataGridTableStyle.cs: implements DataGridTableStyle
+	* DataGridBoolColumn.cs: implements DataGridBoolColumn
+	* DataGridTextBox.cs: implements DataGridTextBox
+	* DataGridColumnStyle.cs: implements DataGridColumnStyle
+
 2005-03-31  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* FileDialog.cs: Added simple PopupButton class for ButtonPanel
