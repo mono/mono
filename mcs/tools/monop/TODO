@@ -8,5 +8,4 @@ TODO
 	* Support for params (show the params keyword)
 	* Handle interfaces:
 		* handle explicit vs. implicit impl
-	* Fields
 	* Do delegates

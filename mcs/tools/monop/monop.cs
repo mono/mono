@@ -141,7 +141,7 @@ class MonoP {
 
 	static void PrintUsage ()
 	{
-		Console.WriteLine ("Usage is: monop [-c] [-r:Assembly] [class-name] [option]");
+		Console.WriteLine ("Usage is: monop [option] [-c] [-r:Assembly] [class-name]");
 	}
 
 	static void PrintHelp ()
@@ -149,6 +149,7 @@ class MonoP {
 		PrintUsage ();
 		Console.WriteLine ("");
 		Console.WriteLine ("options:");
+		Console.WriteLine ("\t--help,-h\t\tShow this information");
 		Console.WriteLine ("\t--private,-p\t\tShow private members");
 	}
 	

@@ -111,6 +111,13 @@ public class Outline {
 		}
 		
 		o.WriteLine ();
+
+		foreach (FieldInfo fi in t.GetFields (flags))
+		{
+			OutlineField (fi);
+		}
+
+		o.WriteLine ();
 		
 		foreach (EventInfo ei in Comparer.Sort (t.GetEvents (flags))) {
 			OutlineEvent (ei);
@@ -205,6 +212,18 @@ public class Outline {
 				o.Write (", ");
 			i++;
 		}
+	}
+
+	void OutlineField (FieldInfo fi)
+	{
+		if (fi.IsPublic)   o.Write ("public ");
+		if (fi.IsFamily)   o.Write ("protected ");
+		if (fi.IsPrivate)  o.Write ("private ");
+		if (fi.IsAssembly) o.Write ("internal ");
+		o.Write (FormatType (fi.FieldType));
+		o.Write (" ");
+		o.Write (fi.Name);
+		o.WriteLine (";");
 	}
 
 	static string GetMethodVisibility (MethodBase m)

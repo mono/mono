@@ -1,3 +1,7 @@
+2004-08-06  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: add field support
+
 2004-08-04  John Luke  <john.luke@gmail.com>
 
 	* monop.cs: add PrintUsage so that it is reused in the few
