@@ -2267,8 +2267,9 @@ namespace CIR {
 					       "'get' method of property `" + Name + "'");
 					return;
 				}
-				
-				
+
+				TypeContainer.RegisterParameterForBuilder (GetBuilder,
+					      new InternalParameters (parent, new Parameters (null, null)));
 			}
 			
 			if (Set != null)
@@ -2297,9 +2298,17 @@ namespace CIR {
 					       " property `" + Name + "'");
 					return;
 				}
+
+				Parameter [] parms = new Parameter [1];
+
+				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+
+				TypeContainer.RegisterParameterForBuilder (SetBuilder,
+					      new InternalParameters (parent, new Parameters (parms, null))); 
 					
 			}
 
+			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
 		}
 		
 		public void Emit (TypeContainer tc)

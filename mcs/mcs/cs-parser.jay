@@ -454,9 +454,12 @@ attribute_list
 
 attribute
 	: attribute_name
+	  {
+		$$ = lexer.Location;
+	  }
 	  opt_attribute_arguments
 	  {
-		$$ = new Attribute ((string) $1, (ArrayList) $2, lexer.Location);
+		$$ = new Attribute ((string) $1, (ArrayList) $3, (Location) $2);
 	  }
 	;
 
@@ -880,6 +883,8 @@ property_declaration
 		implicit_value_parameter_type = (string) $3;
 
 		lexer.properties = true;
+
+		$$ = lexer.Location;
 	  }
 	  accessor_declarations 
 	  {
@@ -898,7 +903,7 @@ property_declaration
 			set_block = (Block) pair.Value;
 
 		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block,
-				     (Attributes) $1, lexer.Location);
+				     (Attributes) $1, (Location) $6);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name);
 		implicit_value_parameter_type = null;
@@ -1416,6 +1421,7 @@ indexer_declaration
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
+		$$ = lexer.Location;
 	  }
           accessor_declarations 
 	  {
@@ -1439,7 +1445,7 @@ indexer_declaration
 			set_block = (Block) pair.Value;
 
 		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
-				       get_block, set_block, (Attributes) $1, lexer.Location);
+				       get_block, set_block, (Attributes) $1, (Location) $5);
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis

@@ -1044,6 +1044,9 @@ namespace CIR {
 			if (expr_type == target_type)
 				return expr;
 
+			if (target_type == null)
+				Console.WriteLine ("NULL");
+
 			e = ImplicitNumericConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;

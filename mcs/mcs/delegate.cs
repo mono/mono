@@ -125,6 +125,9 @@ namespace CIR {
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
+			TypeContainer.RegisterParameterForBuilder (InvokeBuilder,
+								   new InternalParameters (parent, Parameters)); 
+
 			int params_num = param_types.Length;
 			Type [] async_param_types = new Type [params_num + 2];
 
@@ -153,8 +156,18 @@ namespace CIR {
 			
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
-			Type [] end_param_types = new Type [1];
+			Parameter [] async_params = new Parameter [params_num + 2];
+			Parameters.FixedParameters.CopyTo (async_params, 0);
 
+			async_params [params_num] = new Parameter ("System.AsyncCallback", "callback",
+								   Parameter.Modifier.NONE, null);
+			async_params [params_num + 1] = new Parameter ("System.IAsyncResult", "object",
+								   Parameter.Modifier.NONE, null);
+			
+			TypeContainer.RegisterParameterForBuilder (BeginInvokeBuilder,
+					new InternalParameters (parent, new Parameters (async_params, null))); 
+
+			Type [] end_param_types = new Type [1];
 			end_param_types [0] = TypeManager.iasyncresult_type;
 			
 			EndInvokeBuilder = TypeBuilder.DefineMethod ("EndInvoke",
@@ -165,6 +178,13 @@ namespace CIR {
 			EndInvokeBuilder.DefineParameter (1, ParameterAttributes.None, "result");
 			
 			EndInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
+
+			Parameter [] end_params = new Parameter [1];
+			end_params [0] = new Parameter ("System.IAsyncResult", "result",
+							Parameter.Modifier.NONE, null);
+
+			TypeContainer.RegisterParameterForBuilder (EndInvokeBuilder,
+					new InternalParameters (parent, new Parameters (end_params, null))); 
 			
 		}
 

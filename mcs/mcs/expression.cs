@@ -1086,7 +1086,7 @@ namespace CIR {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
-				
+
 				method = Invocation.OverloadResolve (ec, union, Arguments, loc);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
@@ -2411,7 +2411,7 @@ namespace CIR {
 				argument_count = 0;
 			else
 				argument_count = Arguments.Count;
-
+			
 			//
 			// Now we see if we can find params functions, applicable in their expanded form
 			// since if they were applicable in their normal form, they would have been selected
@@ -2479,11 +2479,9 @@ namespace CIR {
 					Expression conv;
 					
 					if (use_standard)
-						conv = ConvertImplicitStandard (ec, a_expr, parameter_type,
-										Location.Null);
+						conv = ConvertImplicitStandard (ec, a_expr, parameter_type, Location.Null);
 					else
-						conv = ConvertImplicit (ec, a_expr, parameter_type,
-									Location.Null);
+						conv = ConvertImplicit (ec, a_expr, parameter_type, Location.Null);
 
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {
@@ -3060,7 +3058,7 @@ namespace CIR {
 				ig.Emit (OpCodes.Newarr, array_element_type);
 				
 			} else {
-				Invocation.EmitArguments (ec, method, Arguments);
+				Invocation.EmitArguments (ec, null, Arguments);
 
 				if (IsBuiltinType)
 					ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);

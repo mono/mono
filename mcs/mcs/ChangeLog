@@ -1,3 +1,31 @@
+2001-11-15  Ravi Pratap  <ravi@ximian.com>
+
+	* support.cs (ReflectionParameters): Fix logic to determine
+	whether the last parameter is a params one. Test 9 passes again.
+
+	* delegate.cs (Populate): Register the builders we define with
+	RegisterParameterForBuilder. Test 19 passes again.
+
+	* cs-parser.jay (property_declaration): Reference $6 instead
+	of $$ to get at the location.
+
+	(indexer_declaration): Similar stuff.
+
+	(attribute): Ditto.
+
+	* class.cs (Property): Register parameters for the Get and Set methods
+	if they exist. Test 23 passes again.
+
+	* expression.cs (ArrayCreation::Emit): Pass null for the method in the
+	call to EmitArguments as we are sure there aren't any params arguments. 
+	Test 32 passes again.
+
+	* suppor.cs (ParameterDesc, ParameterModifier): Fix trivial bug causing
+	IndexOutOfRangeException. 
+
+	* class.cs (Property::Define): Register property using TypeManager.RegisterProperty
+	Test 33 now passes again.
+	
 2001-11-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Kill horrendous hack ($??? = lexer.Location) that

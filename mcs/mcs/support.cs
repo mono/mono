@@ -28,16 +28,17 @@ namespace CIR {
 		
 		public ReflectionParameters (ParameterInfo [] pi)
 		{
-			object a;
+			object [] a;
 			
 			this.pi = pi;
 
 			int count = pi.Length-1;
-			if (count > 0){
+			if (count > 0) {
 				a = pi [count-1].GetCustomAttributes (TypeManager.param_array_type, false);
 			
 				if (a != null)
-					last_arg_is_params = true;
+					if (a.Length != 0)
+						last_arg_is_params = true;
 			} 
 		}
 		       
@@ -70,10 +71,10 @@ namespace CIR {
 			if (pi [pos].IsOut)
 				return Parameter.Modifier.OUT;
 
-			if (pos == pi.Length-1)
+			if (pos == pi.Length-1) 
 				if (last_arg_is_params)
 					return Parameter.Modifier.PARAMS;
-			
+
 			return Parameter.Modifier.NONE;
 		}
 
@@ -137,7 +138,7 @@ namespace CIR {
 			string tmp = null;
 			Parameter p;
 
-			if (pos == parameters.FixedParameters.Length)
+			if (pos >= parameters.FixedParameters.Length)
 				p = parameters.ArrayParameter;
 			else
 				p = parameters.FixedParameters [pos];
@@ -156,7 +157,7 @@ namespace CIR {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			if (pos == parameters.FixedParameters.Length)
+			if (pos >= parameters.FixedParameters.Length)
 				return parameters.ArrayParameter.ModFlags;
 			else
 				return parameters.FixedParameters [pos].ModFlags;
