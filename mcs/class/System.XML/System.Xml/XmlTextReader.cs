@@ -682,7 +682,7 @@ namespace System.Xml
 
 		public void ResetState ()
 		{
-			Init ();
+			throw new InvalidOperationException ("Cannot call ResetState when parsing an XML fragment.");
 		}
 
 		public override void ResolveEntity ()

@@ -1,5 +1,9 @@
 2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	  ResetState() now throws InvalidOperationException() as MS.NET does.
+
+2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextReader.cs : Fixed EOF not to return true when it is just
 	  closed. Element and EndElement location is now adjusted to be the
 	  same as MS.NET does. This fixes bug #63505 and #63507.
