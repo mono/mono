@@ -232,6 +232,13 @@ Finally, namespaces can be specified using the N: prefix:
 	mono --trace=N:System.Xml
 
 .fi
+.SH DEBUGGING
+.PP
+If you are interested in debugging P/Invoke problems with your
+application, you might want to use:
+.nf
+	$ MONO_LOG_LEVEL="debug" MONO_LOG_MASK="dll" mono glue.exe
+.fi
 .SH ENVIRONMENT VARIABLES
 .TP
 .I "GC_DONT_GC"
