@@ -596,7 +596,7 @@ namespace Mono.CSharp {
 					if (alias.Resolve () != null)
 						continue;
 
-					error246 (alias.Location, alias.Alias.ToString ());
+					error246 (alias.Location, alias.Alias.GetPartialName ());
 				}
 			}
 		}

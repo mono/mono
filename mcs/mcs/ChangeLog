@@ -1,3 +1,8 @@
+2004-11-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* namespace.cs (VerifyUsing): use GetPartialName instead of
+	ToString. 
+
 2004-11-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Return.Resolve): Fix regression in typo: if
