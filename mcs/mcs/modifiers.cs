@@ -143,7 +143,7 @@ namespace Mono.CSharp {
 
 		public static MethodAttributes MethodAttr (int mod_flags)
 		{
-			MethodAttributes ma = 0;
+			MethodAttributes ma = MethodAttributes.HideBySig;
 
 			if ((mod_flags & PUBLIC) != 0)
 				ma |= MethodAttributes.Public;
@@ -162,8 +162,7 @@ namespace Mono.CSharp {
 			if ((mod_flags & STATIC) != 0)
 				ma |= MethodAttributes.Static;
 			if ((mod_flags & ABSTRACT) != 0){
-				ma |= MethodAttributes.Abstract | MethodAttributes.Virtual |
-					MethodAttributes.HideBySig;
+				ma |= MethodAttributes.Abstract | MethodAttributes.Virtual;
 			}
 			if ((mod_flags & SEALED) != 0)
 				ma |= MethodAttributes.Final;
@@ -172,14 +171,11 @@ namespace Mono.CSharp {
 				ma |= MethodAttributes.Virtual;
 
 			if ((mod_flags & OVERRIDE) != 0)
-				ma |= MethodAttributes.Virtual | MethodAttributes.HideBySig;
+				ma |= MethodAttributes.Virtual;
 			else {
 				if ((ma & MethodAttributes.Virtual) != 0)
 					ma |= MethodAttributes.NewSlot;
 			}
-			
-			if ((mod_flags & NEW) != 0)
-				ma |= MethodAttributes.HideBySig;
 			
 			return ma;
 		}

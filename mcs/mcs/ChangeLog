@@ -1,8 +1,10 @@
 2004-03-15  Miguel de Icaza  <miguel@ximian.com>
 
-	* modifiers.cs (Check): Loop correctly to report errors modifiers
+	* modifiers.cs (MethodAttr): All methods in C# are HideBySig.
+
+	(Check): Loop correctly to report errors modifiers
 	(UNSAFE was not in the loop, since it was the same as TOP).
-	
+
 	* interface.cs: Every interface member now takes a ModFlags,
 	instead of a "is_new" bool, which we set on the base MemberCore. 
 
