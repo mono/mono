@@ -18,7 +18,7 @@ guidelines are for the sake of consistency.
 
 4. When you implement the drawing method for a control in a theme, it
    should make call to ControlPaint class methods and System.Drawing
-   classes. If it is not possible to implment a control's draw method
+   classes. If it is not possible to implement a control's draw method
    under these restrictions and you need some functionality from
    XplatUIDriver, please let us know. We will try to enhance the
    driver, if *really* required.
@@ -66,10 +66,25 @@ guidelines are for the sake of consistency.
 8. Make sure to call the base class event methods when overriding them.
 
 9. Define regions in your code, as it makes it easy to browse the code
-   in the editors which can collapse/expand regions.
+   in the editors which can collapse/expand regions. Also, keep the 
+   methods and properties sorted alphabetically.
 
 10. Last but not the least, please let others on the mono-winforms-list
     know about your work, so that duplication can be avoided.
+    
+11. Theme.cs provides Pen and Brush caching. This allows to share
+    the same brushes and pens between different controls and also to avoid
+    to create and destroy them in every draw operation. You should not create
+    Brushes or Pens directly, you should ask the Resource Pool for them. For
+    example, instead of:
+
+    new SolidBrush(button.BackColor);
+    
+    you should use:
+    
+    ResPool.GetSolidBrush (button.BackColor);
+    
+    Look at SystemResPool class for more details.
 
 Happy hacking!
 
