@@ -824,6 +824,7 @@ System.Security.Permissions/UIPermissionClipboard.cs
 System.Security.Permissions/UIPermissionWindow.cs
 System.Security.Permissions/UrlIdentityPermission.cs
 System.Security.Permissions/UrlIdentityPermissionAttribute.cs
+System.Security.Permissions/ZoneIdentityPermission.cs
 System.Security.Permissions/ZoneIdentityPermissionAttribute.cs
 System.Security.Policy/AllMembershipCondition.cs
 System.Security.Policy/ApplicationDirectoryMembershipCondition.cs

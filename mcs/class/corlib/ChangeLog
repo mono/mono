@@ -2,8 +2,8 @@
 
 	* unix.args: Added FileDialogPermission.cs, IsolatedStorageFilePermission.cs,
 	PrincipalPermission.cs, PublisherIdentityPermissionAttribute.cs,
-	RegistryPermission.cs, SiteIdentityPermission.cs, UIPermission.cs and
-	UrlIdentityPermission.cs
+	RegistryPermission.cs, SiteIdentityPermission.cs, UIPermission.cs,
+	UrlIdentityPermission.cs and ZoneIdentityPermission.cs.
 
 2003-06-22  Lluis Sanchez Gual <lluis@ximian.com>
 
