@@ -1,0 +1,3 @@
+2005-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataProtectionPermissionAttributeTest.cs: Moving from corlib.
