@@ -1,5 +1,11 @@
 2003-10-09  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs, 
+	  SoapReflectionImporter.cs: Fixed bug #94694. Check for public constructor
+	  is not needed for value types.
+
+2003-10-08  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlSerializer.cs, XmlSerializationWriter.cs: Fixed bug #49353
 	  (XmlSerializer.Serialize() handles namespace parameter incorrectly)
 

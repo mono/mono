@@ -188,8 +188,7 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 
-			if (type.GetConstructor (Type.EmptyTypes) == null && !type.IsAbstract)
-				throw new InvalidOperationException (type.Name + " cannot be serialized because it does not have a default public constructor");
+			ReflectionHelper.CheckSerializableType (type);
 			
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.Namespace);
