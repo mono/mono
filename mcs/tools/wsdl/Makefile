@@ -10,6 +10,6 @@ else
 PROGRAM = wsdl.exe
 endif
 
-EXTRA_DISTFILES = wsdl2.exe.sources
+EXTRA_DISTFILES = wsdl2.exe.sources $(shell cat wsdl2.exe.sources)
 
 include ../../build/executable.make

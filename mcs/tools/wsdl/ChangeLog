@@ -1,3 +1,8 @@
+2004-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Distribute files referenced by
+	wsdl2.exe.sources.
+
 2004-12-02  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Distribute wsdl2.exe.sources.
