@@ -1,5 +1,11 @@
 2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object-internals.h (MonoThread): Remove 'unused1' field.
+
+	* appdomain.c: Bump corlib version.
+
+	* marshal.c: Remove calls to Reset/RestoreDataStoreStatus ().
+
 	* reflection.c (mono_reflection_create_runtime_class): Remove the
 	AssemblyBuilder.Save optimization since it causes too many problems.
 
