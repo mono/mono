@@ -27,124 +27,30 @@ namespace System.IO
 		
 		public static DirectoryInfo CreateDirectory (string path)
 		{
-			DirectoryInfo tmpinfo = null;
-			
-			if (path == null) {
+			if (path == null)
 				throw new ArgumentNullException ("path");
-			}
 			
-			if (path == "") {
+			if (path == "")
 				throw new ArgumentException ("Path is empty");
-			}
 			
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid chars");
-			}
 
-			if (path.Trim().Length == 0){
+			if (path.Trim ().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
-			}
 			
 			if (path == ":")
 				throw new NotSupportedException ("Only ':' In path");
 			
-			string[] pathcomponents = path.Split(new char[] { Path.DirectorySeparatorChar });
-			
-			
-			if (pathcomponents.Length == 1){
-				tmpinfo = Directory.RealCreateDirectory(path);
-				return tmpinfo;
-			} 
-			else {
-				if ((path[0]== Path.DirectorySeparatorChar) ||
-				    ((path[1] == ':') && (path[2] == Path.DirectorySeparatorChar))) //Absolute Path						
-				{
-					//Should Work in Unix, Win* native Directoryes and Samba Shares
-					//FIXME: This is not thread safe
-				    
-					
-					string actual_path = Directory.GetCurrentDirectory();
-					
-					if (Environment.OSVersion.Platform == PlatformID.Unix) //Is Unix
-					{
-						StringBuilder pathsumm = new StringBuilder(path);
-						Directory.SetCurrentDirectory ("/");
-						pathsumm.Remove (0,1);
-						tmpinfo = Directory.CreateDirectory(pathsumm.ToString());
-					}
-					else //We asume is Win*
-					{
-						if ((path[1] == ':') || (path[0] == Path.DirectorySeparatorChar)) //Is a regular path
-						{
-							StringBuilder pathsumm = new StringBuilder(path);
-							Directory.SetCurrentDirectory(path.Substring(0,2));
-							pathsumm.Remove(0,2);
-							tmpinfo = Directory.CreateDirectory(pathsumm.ToString());							
-						}								
-						else if((path[0] == '\\') && (path[1] == '\\')) //Is a Samba Share
-						{
-							if (Directory.Exists(pathcomponents[0] + "\\"
-									     + pathcomponents[1] + "\\"
-									     + pathcomponents[2]))
-							{
-								StringBuilder pathsumm = new StringBuilder();	
-								Directory.SetCurrentDirectory(pathcomponents[0] + 
-											      "\\" + pathcomponents[1] +
-											      "\\" + pathcomponents[2] +
-													"\\" + pathcomponents[3]);
-								pathcomponents[0] = ""; pathcomponents[1] = ""; pathcomponents[2] = "";
-								pathcomponents[3] = "";
-								foreach(string dir in pathcomponents)
-								{
-									if (dir != "")
-										pathsumm.Append(dir + "\\");
-								}		
-								Directory.CreateDirectory(pathsumm.ToString());
-							}
-							else
-							{
-								throw new DirectoryNotFoundException("The samba share do not Exists");
-							}
-						}
-						
-					}
-					Directory.SetCurrentDirectory(actual_path);	
-				}
-				else //Relative Path
-				{
-					StringBuilder pathsumm = new StringBuilder();
-					
-					foreach(string dir in pathcomponents)
-					{
-						if (dir.Length != 0) {
-							if (pathsumm.Length == 0) {
-								pathsumm.Append (dir);
-							} 
-							else {
-								pathsumm.Append (Path.DirectorySeparatorChar + dir);
-							}
-							
-							if (!Directory.Exists (pathsumm.ToString())) {
-								tmpinfo = Directory.RealCreateDirectory (pathsumm.ToString());
-							}
-						}
-					}
-				}
-			}
-			return tmpinfo;
-		}
-		
-		private static DirectoryInfo RealCreateDirectory (string path)
-		{
 			MonoIOError error;
-			
 			if (!MonoIO.CreateDirectory (path, out error)) {
-				throw MonoIO.GetException (error);
+				if (error != MonoIOError.ERROR_ALREADY_EXISTS)
+					throw MonoIO.GetException (error);
 			}
 
 			return new DirectoryInfo (path);
 		}
-
+		
 		public static void Delete (string path)
 		{
 			if (path == null) {

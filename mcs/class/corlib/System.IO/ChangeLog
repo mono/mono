@@ -1,3 +1,8 @@
+2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: fixed bugs #38939 and #38940. No need for separate
+	unix/windows/unc shares code paths.
+
 2003-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* File.cs: fix by Elan Feingold <efeingold@mn.rr.com> for
