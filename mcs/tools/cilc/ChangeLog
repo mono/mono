@@ -1,3 +1,9 @@
+2005-01-20  Alp Toker  <alp@atoker.com>
+
+  * cilc.cs: Name the glib handle getter helper method by namespace for now to
+	fully support assemblies with multiple namespaces. Would be better to
+	generate a toplevel Cindex file in future.
+
 2004-12-13  Alp Toker  <alp@atoker.com>
 
   * cilc.cs:

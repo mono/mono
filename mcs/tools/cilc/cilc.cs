@@ -372,7 +372,7 @@ public class cilc
 		Cindex.WriteLine ();
 
 
-		Cindex.WriteLine ("gpointer cilc_glib_object_get_handle (MonoObject *_mono_object)");
+		Cindex.WriteLine ("gpointer " + NsToC (ns) + "_cilc_glib_object_get_handle (MonoObject *_mono_object)");
 		Cindex.WriteLine ("{");
 		Cindex.WriteLine ("static MonoAssembly *_mono_assembly = NULL;");
 		Cindex.WriteLine ("static MonoMethod *_mono_method = NULL;");
@@ -1095,7 +1095,7 @@ public class cilc
 
 			//TODO: use ->priv, not data for better performance if not wrapping a gobject
 			if (wrap_gobject)
-				C.WriteLine (instance + " = (" + CurType + " *) cilc_glib_object_get_handle (" + mono_obj + ");");
+				C.WriteLine (instance + " = (" + CurType + " *) " + NsToC (ns) + "_cilc_glib_object_get_handle (" + mono_obj + ");");
 			else
 				C.WriteLine (instance + " = (" + CurType + " *) g_object_new (" + NsToC (ns).ToUpper () + "_TYPE_" + CamelToC (t.Name).ToUpper () + ", NULL);");
 
