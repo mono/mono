@@ -121,25 +121,25 @@ namespace System.Diagnostics {
 			set {logFileName = value;}
 		}
 
-    public override void Fail (string message)
-    {
-      base.Fail (message);
-      WriteLine (new StackTrace().ToString());
-    }
+		public override void Fail (string message)
+		{
+			base.Fail (message);
+			WriteLine (new StackTrace().ToString());
+		}
 
- 		public override void Fail (string message, string detailMessage)
- 		{
-      base.Fail (message, detailMessage);
-      WriteLine (new StackTrace().ToString());
- 		}
+		public override void Fail (string message, string detailMessage)
+		{
+			base.Fail (message, detailMessage);
+			WriteLine (new StackTrace().ToString());
+		}
 
 		[DllImport ("kernel32.dll", CharSet=CharSet.Auto)]
-		private extern static void OutputDebugString (string message);
+		private extern static void OutputDebugStringW (string message);
 
 		private void WriteDebugString (string message)
 		{
 			if (OnWin32)
-				OutputDebugString (message);
+				OutputDebugStringW (message);
 			else
 				WriteMonoTrace (message);
 		}
@@ -171,7 +171,7 @@ namespace System.Diagnostics {
 			if (NeedIndent) {
 				WriteIndent ();
 				WritePrefix ();
-      }
+			}
 
 			WriteDebugString (message);
 
@@ -203,7 +203,7 @@ namespace System.Diagnostics {
 
 				using (sw) {
 					sw.Write (message);
-          sw.Flush ();
+					sw.Flush ();
 				}
 			}
 		}
