@@ -1,3 +1,7 @@
+2003-08-12  Nick Drochak <ndrochak@gol.com>
+
+	* Makefile: put .dll on System.Drawing reference. Fix CSC build.
+
 2003-08-11  Duncan Mak  <duncan@ximian.com>
 
 	* makefile:
