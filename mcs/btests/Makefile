@@ -6,7 +6,10 @@ INTERNAL_MBAS = $(TEST_RUNTIME) --debug ../mbas/mbas.exe --stacktrace $(COMPILER
 #INTERNAL_MBAS = vbc $(COMPILER_FLAGS)
 all: test-compiler-jit 
 
-include ../build/rules.make
+# removed this cause INTERNAL_MBAS now getting set in 
+# rules.make which is conflicting with this instance of 
+# INTERNAL_MBAS
+#include ../build/rules.make
 
 DISTFILES = README.tests $(wildcard *.vb)
 
