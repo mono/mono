@@ -143,56 +143,6 @@ namespace System.Configuration
 		}
 	}
 
-        //
-        // TODO: this should be changed to use the FileSystemWatcher
-        //
-        //  -eric@5stops.com 9.20.2003
-        //
-        class FileWatcherCache
-        {
-                Hashtable cacheTable;
-		DateTime lastWriteTime;
-                string filename;
-		static TimeSpan seconds = new TimeSpan (0, 0, 2);
-
-                public FileWatcherCache (string filename)
-                {
-                        cacheTable = Hashtable.Synchronized (new Hashtable ());
-                        lastWriteTime = new FileInfo (filename).LastWriteTime;
-                        this.filename = filename;
-                }
-
-                void CheckFileChange ()
-                {
-			FileInfo info = new FileInfo (filename);
-
-			if (!info.Exists) {
-				lastWriteTime = DateTime.MinValue;
-				cacheTable.Clear ();
-				return;
-			}
-
-			DateTime writeTime = info.LastWriteTime;
-			TimeSpan ts = (info.LastWriteTime - lastWriteTime);
-			if (ts >= seconds) {
-				lastWriteTime = writeTime;
-				cacheTable.Clear ();
-			}
-                }
-
-		public object this [string key] {
-			get {
-				CheckFileChange ();
-				return cacheTable [key];
-			}
-
-			set {
-				CheckFileChange();
-				cacheTable [key] = value;
-			}
-		}
-        }
-
 	enum AllowDefinition
 	{
 		Everywhere,
@@ -228,18 +178,15 @@ namespace System.Configuration
 		static object removedMark = new object ();
 		static object groupMark = new object ();
                 static object emptyMark = new object ();
-                FileWatcherCache fileCache;
+		Hashtable cache;
 
-                FileWatcherCache FileCache {
+                Hashtable FileCache {
                         get {
-				lock (this) {
-					if (fileCache != null)
-						return fileCache;
+				if (cache != null)
+					return cache;
 
-					fileCache = new FileWatcherCache (fileName);
-                                }
-
-                                return fileCache;
+				cache = new Hashtable ();
+                                return cache;
                         }
                 }
 
@@ -376,7 +323,10 @@ namespace System.Configuration
 #endif
 		public object GetConfig (string sectionName)
 		{
-                        object config = this.FileCache [sectionName];
+			object config;
+			lock (this) {
+				config = this.FileCache [sectionName];
+			}
 
                         if (config == emptyMark)
                                 return null;
