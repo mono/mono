@@ -212,9 +212,11 @@ namespace Mono.Xml.XPath
 					this.MoveToElement ();
 					goto case XPathNodeType.Element;
 				case XPathNodeType.Element:
-					int count = 0;
-					while (this.MoveToNextAttribute ())
-						if (++count == i)
+					if (MoveToFirstAttribute ())
+						if (i == 0)
+							return current.Clone ();
+					for (int count = 1; this.MoveToNextAttribute (); count++)
+						if (count == i)
 							return current.Clone ();
 					break;
 				}
