@@ -147,30 +147,30 @@ namespace Microsoft.JScript
 			literals.Add("case", 19);
 			literals.Add("this", 77);
 			literals.Add("for", 26);
-			literals.Add("false", 80);
+			literals.Add("catch", 14);
 			literals.Add("true", 79);
+			literals.Add("default", 18);
 			literals.Add("try", 13);
-			literals.Add("finally", 15);
 			literals.Add(".", 33);
 			literals.Add("void", 40);
-			literals.Add("typeof", 41);
-			literals.Add("instanceof", 56);
-			literals.Add("throw", 16);
+			literals.Add("break", 22);
+			literals.Add("while", 25);
 			literals.Add("continue", 23);
 			literals.Add("do", 24);
 			literals.Add("in", 28);
 			literals.Add("null", 78);
 			literals.Add("function", 4);
-			literals.Add("while", 25);
-			literals.Add("break", 22);
+			literals.Add("throw", 16);
+			literals.Add("instanceof", 56);
+			literals.Add("typeof", 41);
 			literals.Add("new", 32);
 			literals.Add("return", 21);
 			literals.Add("delete", 39);
 			literals.Add("if", 29);
-			literals.Add("default", 18);
+			literals.Add("finally", 15);
+			literals.Add("false", 80);
 			literals.Add("else", 30);
 			literals.Add("var", 27);
-			literals.Add("catch", 14);
 			literals.Add("with", 20);
 		}
 		
@@ -548,11 +548,11 @@ tryAgain:
 						}
 						else
 						{
-							goto _loop155_breakloop;
+							goto _loop156_breakloop;
 						}
 						
 					}
-_loop155_breakloop:					;
+_loop156_breakloop:					;
 				}    // ( ... )*
 				break;
 			}
@@ -575,11 +575,11 @@ _loop155_breakloop:					;
 						}
 						else
 						{
-							goto _loop158_breakloop;
+							goto _loop159_breakloop;
 						}
 						
 					}
-_loop158_breakloop:					;
+_loop159_breakloop:					;
 				}    // ( ... )*
 			}
 			else {
@@ -635,7 +635,7 @@ _loop158_breakloop:					;
 						 }
 					}
 					{ // ( ... )+
-					int _cnt164=0;
+					int _cnt165=0;
 					for (;;)
 					{
 						if (((LA(1) >= '0' && LA(1) <= '9')))
@@ -644,12 +644,12 @@ _loop158_breakloop:					;
 						}
 						else
 						{
-							if (_cnt164 >= 1) { goto _loop164_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+							if (_cnt165 >= 1) { goto _loop165_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 						}
 						
-						_cnt164++;
+						_cnt165++;
 					}
-_loop164_breakloop:					;
+_loop165_breakloop:					;
 					}    // ( ... )+
 				}
 			}
@@ -705,7 +705,7 @@ _loop164_breakloop:					;
 			 }
 		}
 		{ // ( ... )+
-		int _cnt168=0;
+		int _cnt169=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -731,12 +731,12 @@ _loop164_breakloop:					;
 			}
 			default:
 			{
-				if (_cnt168 >= 1) { goto _loop168_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt169 >= 1) { goto _loop169_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt168++;
+			_cnt169++;
 		}
-_loop168_breakloop:		;
+_loop169_breakloop:		;
 		}    // ( ... )+
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
@@ -763,11 +763,11 @@ _loop168_breakloop:		;
 				}
 				else
 				{
-					goto _loop172_breakloop;
+					goto _loop173_breakloop;
 				}
 				
 			}
-_loop172_breakloop:			;
+_loop173_breakloop:			;
 		}    // ( ... )*
 		match('"');
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -850,11 +850,11 @@ _loop172_breakloop:			;
 				}
 				default:
 				{
-					goto _loop176_breakloop;
+					goto _loop177_breakloop;
 				}
 				 }
 			}
-_loop176_breakloop:			;
+_loop177_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -1526,11 +1526,11 @@ _loop176_breakloop:			;
 				}
 				else
 				{
-					goto _loop227_breakloop;
+					goto _loop228_breakloop;
 				}
 				
 			}
-_loop227_breakloop:			;
+_loop228_breakloop:			;
 		}    // ( ... )*
 		_ttype = Token.SKIP;
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))

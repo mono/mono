@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
+// $ANTLR 2.7.2: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
 
 namespace Microsoft.JScript
 {
