@@ -1,3 +1,7 @@
+2002-06-08  Duncan Mak  <duncan@ximian.com>
+
+	* Decimal.cs: Added support for the IConvertible interface.
+
 2002-06-08  Martin Baulig  <martin@gnome.org>
 
 	* Enum.cs (IsDefined): `value' may be of the enum's type itself, it

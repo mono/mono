@@ -26,7 +26,7 @@ namespace System
     /// digits, suitable for financial and commercial calculations
     /// </summary>
 	[Serializable]
-    public struct Decimal: IComparable, IFormattable
+    public struct Decimal: IComparable, IFormattable, IConvertible
     {
         public static readonly Decimal MinValue = new Decimal(-1, -1, -1, true, 0);
         public static readonly Decimal MaxValue = new Decimal(-1, -1, -1, false, 0);
@@ -885,6 +885,91 @@ namespace System
 
             return d;
         }
+
+	public TypeCode GetTypeCode ()
+	{
+	    return TypeCode.Decimal;
+	}
+
+	object IConvertible.ToType (Type conversionType, IFormatProvider provider)
+	{
+	    return Convert.ToType (this, conversionType, provider);
+	}
+
+	bool IConvertible.ToBoolean (IFormatProvider provider)
+	{
+	    return Convert.ToBoolean (this);
+	}
+
+	byte IConvertible.ToByte (IFormatProvider provider)
+	{
+	    return Convert.ToByte (this);
+	}
+
+	char IConvertible.ToChar (IFormatProvider provider)
+	{
+	    throw new InvalidCastException ();
+	}
+
+	[CLSCompliant (false)]
+	DateTime IConvertible.ToDateTime (IFormatProvider provider)
+	{
+	    throw new InvalidCastException ();
+	}
+
+	decimal IConvertible.ToDecimal (IFormatProvider provider)
+	{
+	    return this;
+	}
+
+	double IConvertible.ToDouble (IFormatProvider provider)
+	{
+	    return Convert.ToDouble (this);
+	}
+
+	short IConvertible.ToInt16 (IFormatProvider provider)
+	{
+	    return Convert.ToInt16 (this);
+	}
+
+	int IConvertible.ToInt32 (IFormatProvider provider)
+	{
+	    return Convert.ToInt32 (this);
+	}
+
+	long IConvertible.ToInt64 (IFormatProvider provider)
+	{
+	    return Convert.ToInt64 (this);
+	}
+
+	[CLSCompliant (false)]
+	sbyte IConvertible.ToSByte (IFormatProvider provider)
+	{
+	    return Convert.ToSByte (this);
+	}
+
+	float IConvertible.ToSingle (IFormatProvider provider)
+	{
+	    return Convert.ToSingle (this);
+	}
+
+	[CLSCompliant (false)]
+	ushort IConvertible.ToUInt16 (IFormatProvider provider)
+	{
+	    return Convert.ToUInt16 (this);
+	}
+
+	[CLSCompliant (false)]
+	uint IConvertible.ToUInt32 (IFormatProvider provider)
+	{
+	    return Convert.ToUInt32 (this);
+	}
+
+	[CLSCompliant (false)]
+	ulong IConvertible.ToUInt64 (IFormatProvider provider)
+	{
+	    return Convert.ToUInt64 (this);
+	}
 
         public string ToString(string format, IFormatProvider provider) 
         {
