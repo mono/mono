@@ -1,3 +1,9 @@
+2004-07-29 Sanjay Gupta <gsanjay@novell.com>
+
+	* gdipFunctions.cs: Corrected signature of GdipGetPropertyIdList 
+	P/Invoke function for Image.
+	* Image.cs: Changed implementation of PropertyIdList property.
+
 2004-07-28 Sanjay Gupta <gsanjay@novell.com>
 
 	* gdipStructs.cs: Implementing PropertyItem property in Image.cs.

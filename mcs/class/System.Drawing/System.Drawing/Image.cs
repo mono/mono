@@ -501,13 +501,18 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[Browsable (false)]
 	public int[] PropertyIdList {
 		get {
-			PropertyItem [] propItems = this.PropertyItems ;
-			int length = propItems.Length;
-			int [] ids = new int [length];
-			for (int i = 0; i < length; i++)
-				ids [i] = propItems [i].Id;
-
-			return ids;
+			uint propNumbers;
+			
+			Status status = GDIPlus.GdipGetPropertyCount (nativeObject, 
+									out propNumbers);			
+			GDIPlus.CheckStatus (status);
+			
+			int [] idList = new int [propNumbers];
+			status = GDIPlus.GdipGetPropertyIdList (nativeObject, 
+								propNumbers, idList);
+			GDIPlus.CheckStatus (status);
+			
+			return idList;
 		}
 	}
 	
