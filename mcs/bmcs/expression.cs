@@ -1854,16 +1854,17 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Binary : Expression {
 		public enum Operator : byte {
-			Multiply, Division, Modulus,
+			Exponentiation,
+			Multiply, Division, 
+			IntegerDivision, 
+			Modulus,
 			Addition, Subtraction,
+			Concatenation,
 			LeftShift, RightShift,
-			LessThan, GreaterThan, LessThanOrEqual, GreaterThanOrEqual, 
-			Equality, Inequality,
-			BitwiseAnd,
+				Equality, Inequality, LessThan, GreaterThan, LessThanOrEqual, GreaterThanOrEqual, Like, Is, 
+			BitwiseAnd, LogicalAndAlso,
+			BitwiseOr, LogicalOrElse,
 			ExclusiveOr,
-			BitwiseOr,
-			LogicalAndAlso,
-			LogicalOrElse,
 			TOP
 		}
 

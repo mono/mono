@@ -1,5 +1,12 @@
 2005-03-26  Jambunathan K  <kjambunathan.devel@gmail.com>
 
+	* expression.cs (Binary.Operator): Added Exponentiation,
+	Concatenation, Like, Is and IntegerDivision opeartors
+
+	* mb-parser.jay: Changes relating to the above changes.
+
+2005-03-26  Jambunathan K  <kjambunathan.devel@gmail.com>
+
 	* expression.cs (Binary.Operator): Renamed LogicalAnd/LogicalOr to
 	LogicalAndAlso and LogicalOrElse.
 	
