@@ -1,3 +1,8 @@
+2002-01-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (LDLEN): emit null_reference exception
+	(BLE_UN): bug fix. 
+
 2002-01-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: bug fix in CASTCLASS
