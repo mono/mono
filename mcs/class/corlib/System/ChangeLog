@@ -1,3 +1,7 @@
+2003-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Enum.cs: reverted my previous patch.
+
 2003-04-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Enum.cs: fixed bug #41841.
