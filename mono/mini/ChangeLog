@@ -1,3 +1,11 @@
+2003-05-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mini_select_instructions): add explicit branch if the
+	following block is not the false target of a conditional branch -
+	we need this with any optimization that reorder or remove bblocks
+
+	* mini.c (optimize_branches): bug fixes
+
 2003-06-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_method_to_ir): inline static readonly fields
