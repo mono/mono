@@ -984,12 +984,12 @@ namespace System.Windows.Forms {
 			//
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
-					keyboard.KeyEvent (hWnd, xevent, ref msg);
+					keyboard.KeyEvent (xevent.AnyEvent.window, xevent, ref msg);
 					break;
 				}
 
 				case XEventName.KeyRelease: {
-					keyboard.KeyEvent (hWnd, xevent, ref msg);
+					keyboard.KeyEvent (xevent.AnyEvent.window, xevent, ref msg);
 					break;
 				}
 
@@ -1200,9 +1200,9 @@ namespace System.Windows.Forms {
 						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
 					} else if (xevent.ClientMessageEvent.message_type == (IntPtr) post_message) {
 						msg.message = (Msg) xevent.ClientMessageEvent.ptr1.ToInt32 ();
+						msg.hwnd = xevent.ClientMessageEvent.window;
 						msg.wParam = xevent.ClientMessageEvent.ptr2;
 						msg.lParam = xevent.ClientMessageEvent.ptr3;
-						Console.WriteLine ("inserted message:  {0}  {1}	 {2}", msg.message, (char) msg.wParam, msg.lParam);
 					} else {
 						msg.message=Msg.WM_QUIT;
 						msg.wParam=IntPtr.Zero;

@@ -1,5 +1,11 @@
 2004-12-15  Jackson Harper  <jackson@ximian.com>
 
+	* X11Keyboard.cs: Set messages hwnd.
+	* XplatUIX11.cs: Pass proper hwnd wot keyboard driver. Set hwnd on
+	post_message calls.
+
+2004-12-15  Jackson Harper  <jackson@ximian.com>
+
 	* X11Keyboard.cs: Fix to compile with csc.
 	
 2004-12-15  Jackson Harper  <jackson@ximian.com>

@@ -98,6 +98,7 @@ namespace System.Windows.Forms {
 				if ((vkey & 0x100) != 0)
 					dw_flags |= KeybdEventFlags.ExtendedKey;
 				msg = SendKeyboardInput ((VirtualKeys) (vkey & 0xFF), bscan, dw_flags, event_time);
+				msg.hwnd = hwnd;
 				break;
 			}
 		}
