@@ -1,4 +1,8 @@
 
+Wed Feb 2 16:53:59 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fix typo.
+
 Wed Feb 2 16:37:13 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: setup the statistical profiler in the thread attach
