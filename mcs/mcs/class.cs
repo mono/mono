@@ -1488,41 +1488,11 @@ namespace Mono.CSharp {
 				if (!VerifyPendingMethods ())
 					return;
 
-			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (
-					this, Mono.CSharp.Location.Null, null, null,
-					ModFlags, false);
-				
-				if (OptAttributes.AttributeSections != null) {
-					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes == null)
-							continue;
-						
-						foreach (Attribute a in asec.Attributes) {
-							CustomAttributeBuilder cb = a.Resolve (ec);
-							if (cb == null)
-								continue;
-							
-							if (a.UsageAttr) {
-								this.Targets = a.Targets;
-								this.AllowMultiple = a.AllowMultiple;
-								this.Inherited = a.Inherited;
-								
-								RootContext.TypeManager.RegisterAttrType (
-									TypeBuilder, this);
-							} else {
-								
-								if (!Attribute.CheckAttribute (a, this)) {
-									Attribute.Error592 (a, Location);
-									return;
-								}
-							}
-							
-							TypeBuilder.SetCustomAttribute (cb);
-						}
-					}
-				}
-			}
+			EmitContext ec = new EmitContext (
+						  this, Mono.CSharp.Location.Null, null, null,
+						  ModFlags, false);
+
+			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
 			
 //			if (types != null)
 //				foreach (TypeContainer tc in types)
@@ -2187,27 +2157,9 @@ namespace Mono.CSharp {
 			EmitContext ec = new EmitContext (parent, Location, ig,
 							  GetReturnType (parent), ModFlags);
 
-			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
-				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-				 	if (asec.Attributes == null)
-						continue;
-					
-					foreach (Attribute a in asec.Attributes) {
-						CustomAttributeBuilder cb = a.Resolve (ec);
-						if (cb == null)
-							continue;
-						
-						if (!Attribute.CheckAttribute (a, this)) {
-							Attribute.Error592 (a, Location);
-							return;
-						}
-
-						if (a.Type != TypeManager.dllimport_type)
-							MethodBuilder.SetCustomAttribute (cb);
-					}
-				}
-			}
-
+			Attribute.ApplyAttributes (ec, MethodBuilder, this, OptAttributes, Location);
+			
+			
 			//
 			// abstract or extern methods have no bodies
 			//
@@ -2418,27 +2370,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				parent.EmitFieldInitializers (ec, true);
 
-			if (OptAttributes != null) {
-				if (OptAttributes.AttributeSections != null) {
-					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes == null)
-							continue;
-						
-						foreach (Attribute a in asec.Attributes) {
-							CustomAttributeBuilder cb = a.Resolve (ec);
-							if (cb == null)
-								continue;
-							
-							if (!Attribute.CheckAttribute (a, this)) {
-								Attribute.Error592 (a, Location);
-								return;
-							}
-							
-							ConstructorBuilder.SetCustomAttribute (cb);
-						}
-					}
-				}
-			}
+			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes, Location);
 
 			ec.EmitTopBlock (Block, Location);
 		}
@@ -2506,30 +2438,8 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer tc)
 		{
 			EmitContext ec = new EmitContext (tc, Location, null, FieldBuilder.FieldType, ModFlags);
-			
-			if (OptAttributes == null)
-				return;
 
-			if (OptAttributes.AttributeSections == null)
-				return;
-			
-			foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-				if (asec.Attributes == null)
-					continue;
-				
-				foreach (Attribute a in asec.Attributes) {
-					CustomAttributeBuilder cb = a.Resolve (ec);
-					if (cb == null)
-						continue;
-					
-					if (!Attribute.CheckAttribute (a, this)) {
-						Attribute.Error592 (a, Location);
-						return;
-					}
-
-					FieldBuilder.SetCustomAttribute (cb);
-				}
-			}
+			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes, Location); 
 		}
 	}
 
@@ -2830,29 +2740,9 @@ namespace Mono.CSharp {
 			ILGenerator ig;
 			EmitContext ec;
 
-			if (OptAttributes != null) {
-				ec = new EmitContext (tc, Location, null, PropertyType, ModFlags);
-
-				if (OptAttributes.AttributeSections != null) {
-					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes == null)
-							continue;
-						
-						foreach (Attribute a in asec.Attributes) {
-							CustomAttributeBuilder cb = a.Resolve (ec);
-							if (cb == null)
-								continue;
-
-							if (!Attribute.CheckAttribute (a, this)) {
-								Attribute.Error592 (a, Location);
-								return;
-							}
-
-							PropertyBuilder.SetCustomAttribute (cb);
-						}
-					}
-				}
-			}
+			ec = new EmitContext (tc, Location, null, PropertyType, ModFlags);
+			Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
+			
 
 			//
 			// abstract or extern properties have no bodies
@@ -3174,33 +3064,9 @@ namespace Mono.CSharp {
 			else
 				EmitDefaultMethod (ec, false);
 
-			
-
 			ec = new EmitContext (tc, Location, null, EventType, ModFlags);
+			Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes, Location);
 			
-			if (OptAttributes == null)
-				return;
-			
-			if (OptAttributes.AttributeSections == null)
-				return;
-			
-			foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-				if (asec.Attributes == null)
-					continue;
-				
-				foreach (Attribute a in asec.Attributes) {
-					CustomAttributeBuilder cb = a.Resolve (ec);
-					if (cb == null)
-						continue;
-					
-					if (!Attribute.CheckAttribute (a, this)) {
-						Attribute.Error592 (a, Location);
-						return;
-					}
-					
-					EventBuilder.SetCustomAttribute (cb);
-				}
-			}
 		}
 		
 	}
@@ -3365,28 +3231,8 @@ namespace Mono.CSharp {
 			ILGenerator ig;
 			EmitContext ec;
 
-			if (OptAttributes != null) {
-				ec = new EmitContext (tc, Location, null, IndexerType, ModFlags);
-				if (OptAttributes.AttributeSections != null) {
-					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes == null)
-							continue;
-						
-						foreach (Attribute a in asec.Attributes) {
-							CustomAttributeBuilder cb = a.Resolve (ec);
-							if (cb == null)
-								continue;
-							
-							if (!Attribute.CheckAttribute (a, this)) {
-								Attribute.Error592 (a, Location);
-								return;
-							}
-							
-							PropertyBuilder.SetCustomAttribute (cb);
-						}
-					}
-				}
-			}
+			ec = new EmitContext (tc, Location, null, IndexerType, ModFlags);
+			Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
 
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
@@ -3622,29 +3468,8 @@ namespace Mono.CSharp {
 		
 		public void Emit (TypeContainer parent)
 		{
-			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (parent, Location, null, null, ModFlags);
-
-				if (OptAttributes.AttributeSections != null) {
-					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes == null)
-							continue;
-						
-						foreach (Attribute a in asec.Attributes) {
-							CustomAttributeBuilder cb = a.Resolve (ec);
-							if (cb == null)
-								continue;
-
-							if (!Attribute.CheckAttribute (a, this)) {
-								Attribute.Error592 (a, Location);
-								return;
-							}
-							
-							OperatorMethodBuilder.SetCustomAttribute (cb);
-						}
-					}
-				}
-			}
+			EmitContext ec = new EmitContext (parent, Location, null, null, ModFlags);
+			Attribute.ApplyAttributes (ec, OperatorMethodBuilder, this, OptAttributes, Location);
 			
 			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (parent);

@@ -12,6 +12,11 @@
 	* expression.cs (Binary.ResolveOperator): Handle the '-' binary operator 
 	on delegates too.
 
+	* attribute.cs (ApplyAttributes): New method to take care of common tasks
+	of attaching attributes instead of duplicating code everywhere.
+
+	* everywhere : Update code to do attribute emission using the above method.
+
 2001-12-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (IsParamsMethodApplicable): if there are not

@@ -298,7 +298,7 @@ namespace Mono.CSharp {
 
 		}
 
-		public static void Error592 (Attribute a, Location loc)
+		public static void error592 (Attribute a, Location loc)
 		{
 			Report.Error (592, loc, "Attribute '" + a.Name + "' is not valid on this declaration type. " +
 				      "It is valid on " + GetValidPlaces (a) + "declarations only.");
@@ -377,6 +377,80 @@ namespace Mono.CSharp {
 			}
 
 			return false;
+		}
+
+		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
+						    Attributes opt_attrs, Location loc)
+		{
+			if (opt_attrs == null)
+				return;
+
+			if (opt_attrs.AttributeSections == null)
+				return;
+
+			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
+
+				if (asec.Attributes == null)
+					continue;
+
+				foreach (Attribute a in asec.Attributes) {
+					CustomAttributeBuilder cb = a.Resolve (ec);
+					if (cb == null)
+						continue;
+
+					if (!(kind is TypeContainer))
+						if (!CheckAttribute (a, kind)) {
+							error592 (a, loc);
+							return;
+						}
+
+					
+					if (kind is Method) {
+						if (a.Type != TypeManager.dllimport_type)
+							((MethodBuilder) builder).SetCustomAttribute (cb);
+
+					} else if (kind is Constructor) {
+						((ConstructorBuilder) builder).SetCustomAttribute (cb);
+
+					} else if (kind is Field) {
+						((FieldBuilder) builder).SetCustomAttribute (cb);
+
+					} else if (kind is Property || kind is Indexer) {
+						((PropertyBuilder) builder).SetCustomAttribute (cb);
+
+					} else if (kind is Event) {
+						((EventBuilder) builder).SetCustomAttribute (cb);
+
+					} else if (kind is Operator) {
+						((MethodBuilder) builder).SetCustomAttribute (cb);
+
+					} else if (kind is Enum) {
+						((TypeBuilder) builder).SetCustomAttribute (cb); 
+
+					} else if (kind is TypeContainer) {
+
+						TypeContainer tc = (TypeContainer) kind;
+						
+						if (a.UsageAttr) {
+							tc.Targets = a.Targets;
+							tc.AllowMultiple = a.AllowMultiple;
+							tc.Inherited = a.Inherited;
+							
+							RootContext.TypeManager.RegisterAttrType (
+										 (TypeBuilder) builder, tc);
+
+						} else {
+							if (!CheckAttribute (a, kind)) {
+								error592 (a, loc);
+								return;
+							}
+						}
+						
+						((TypeBuilder) builder).SetCustomAttribute (cb);
+						
+					}
+				}
+			}
 		}
 
 		public MethodBuilder DefinePInvokeMethod (EmitContext ec, TypeBuilder builder, string name,

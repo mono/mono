@@ -365,25 +365,7 @@ namespace Mono.CSharp {
 				default_value = GetNextDefaultValue (default_value);
 			}
 			
-			if (OptAttributes == null)
-				return true;
-			
-			if (OptAttributes.AttributeSections == null)
-				return true;
-			
-			foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-				if (asec.Attributes == null)
-					continue;
-				
-				foreach (Attribute a in asec.Attributes) {
-					CustomAttributeBuilder cb = a.Resolve (ec);
-
-					if (cb == null)
-						continue;
-					
-					EnumBuilder.SetCustomAttribute (cb);
-				}
-			}
+			Attribute.ApplyAttributes (ec, EnumBuilder, this, OptAttributes, Location);
 
 			return true;
 		}
