@@ -1,9 +1,9 @@
 //
-// System.Drawing.Design. FontNameEditor.cs
+// System.Drawing.Design.FontNameEditor.cs
 // 
 // Authors:
-//  Martin Willemoes Hansen (mwh@sysrq.dk)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 // 
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
@@ -30,10 +30,11 @@ namespace System.Drawing.Design
 		{
 			// TODO may not be correct
 			Graphics G = e.Graphics;
+			G.FillRectangle (SystemBrushes.ActiveCaption, e.Bounds);
 			if (e.Value != null)
 			{
 				Font F = (Font) e.Value;
-				G.DrawString("Ab", F, Brushes.Black, e.Bounds);
+				G.DrawString("Ab", F, SystemBrushes.ActiveCaptionText, e.Bounds);
 			}
 			G.DrawRectangle (Pens.Black, e.Bounds);
 		}

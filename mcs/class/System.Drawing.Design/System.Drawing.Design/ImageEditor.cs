@@ -2,8 +2,8 @@
 // System.Drawing.Design.ImageEditor.cs
 // 
 // Authors:
-//  Martin Willemoes Hansen (mwh@sysrq.dk)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 // 
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
@@ -29,8 +29,7 @@ namespace System.Drawing.Design
 			IServiceProvider provider, object value)
 		{
 			openDialog = new OpenFileDialog();
-			// FIXME: Add multilanguage support
-			openDialog.Title = "Open image file";
+			openDialog.Title = Locale.GetText("Open image file");
 			openDialog.CheckFileExists = true;
 			openDialog.CheckPathExists = true;
 			openDialog.Filter = CreateFilterEntry (this);
@@ -98,8 +97,7 @@ namespace System.Drawing.Design
 
 		protected virtual string GetFileDialogDescription()
 		{
-			// FIXME: Add multilanguage support
-			return "All image files";
+			return Locale.GetText("All image files");
 		}
 
 		protected virtual Image LoadFromStream (Stream stream)

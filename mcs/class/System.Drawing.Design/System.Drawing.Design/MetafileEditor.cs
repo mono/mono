@@ -2,8 +2,8 @@
 // System.Drawing.Design.MetafileEditor.cs
 // 
 // Authors:
-//  Martin Willemoes Hansen (mwh@sysrq.dk)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 // 
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
@@ -27,8 +27,7 @@ namespace System.Drawing.Design
 
 		protected override string GetFileDialogDescription()
 		{
-			// FIXME: Add multilanguage support
-			return "All metafile files";
+			return Locale.GetText("All metafile files");
 		}
 
 		protected override Image LoadFromStream (Stream stream)

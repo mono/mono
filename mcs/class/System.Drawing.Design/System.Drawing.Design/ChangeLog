@@ -1,3 +1,12 @@
+2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* BitmapEditor.cs
+	* IconEditor.cs
+	* ImageEditor.cs
+	* MetafileEditor.cs: Added localization support
+
+	* FontNameEditor.cs: Improved implementation
+
 2003-06-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* BitmapEditor.cs
