@@ -1370,15 +1370,61 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return ParseValueType (s, nameTable, nsmgr);
+			return new XmlSchemaUri (Normalize (s));
 		}
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
-			return new UriValueType (Normalize (s));
+			return new UriValueType ((XmlSchemaUri) ParseValue (s, nameTable, nsmgr));
 		}
 	}
-	
+
+	internal class XmlSchemaUri : Uri
+	{
+		public string value;
+
+		// LAMESPEC: In this way, some strings that contain ':' might
+		// result in exception (MS.NET looks implemented as such).
+		public XmlSchemaUri (string src)
+			: this (src, src.IndexOf (':') > 0)
+		{
+		}
+
+		private XmlSchemaUri (string src, bool formal)
+			: base (formal ? src : "anyuri:" + src, !formal)
+		{
+			value = src;
+		}
+
+		public static bool operator == (XmlSchemaUri v1, XmlSchemaUri v2)
+		{
+			return v1.value == v2.value;
+		}
+
+		public static bool operator != (XmlSchemaUri v1, XmlSchemaUri v2)
+		{
+			return v1.value != v2.value;
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj is XmlSchemaUri)
+				return (XmlSchemaUri) obj == this;
+			else
+				return false;
+		}
+
+		public override int GetHashCode () 
+		{
+			return value.GetHashCode ();
+		}
+
+		public override string ToString ()
+		{
+			return value;
+		}
+	}
+
 	// xs:duration
 	internal class XsdDuration : XsdAnySimpleType
 	{
