@@ -1,3 +1,15 @@
+2002-10-29  Tim Coleman (tim@timcoleman.com)
+	* System.Data.SqlClient/SqlCommand.cs:
+		Added code to handle parameters for queries
+	* System.Data.SqlClient/SqlConnection.cs:
+		Properly handle resetting SqlConnections
+	* System.Data.SqlClient/SqlDataReader.cs:
+		Properly handle the case where no results are returned
+	* System.Data.SqlClient/SqlParameter.cs:
+		Default direction to Input
+	* System.Data.SqlClient/SqlParameterCollection.cs:
+		Implement GetEnumerator
+
 2002-10-29  Rodrigo Moya <rodrigo@ximian.com>
 
 	* makefile.gnu: added Test directory.

@@ -32,7 +32,7 @@ namespace System.Data.SqlClient {
 		object objValue;
 		int size;
 		string sourceColumn;
-		ParameterDirection direction;
+		ParameterDirection direction = ParameterDirection.Input;
 		bool isNullable;
 		byte precision;
 		byte scale;

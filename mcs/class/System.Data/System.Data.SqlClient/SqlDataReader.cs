@@ -26,6 +26,7 @@ namespace System.Data.SqlClient {
 		bool hasRows;
 		bool isClosed;
 		int recordsAffected;
+		bool moreResults;
 
 		SqlCommand command;
 		DataTable schemaTable;
@@ -40,6 +41,9 @@ namespace System.Data.SqlClient {
 			this.command = command;
 			this.fieldCount = 0;
 			this.isClosed = false;
+			moreResults = command.Tds.NextResult ();
+			if (command.Tds.Errors.Count > 0)
+				throw SqlException.FromTdsError (command.Tds.Errors);
 		}
 
 		#endregion
@@ -81,7 +85,7 @@ namespace System.Data.SqlClient {
 		public void Close()
 		{
 			isClosed = true;
-			command.Connection.DataReaderOpen = false;
+			command.CloseDataReader (moreResults);
 		}
 
 		private static DataTable ConstructSchemaTable ()
@@ -250,6 +254,9 @@ namespace System.Data.SqlClient {
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
 
+			if (!moreResults)
+				return null;
+
 			fieldCount = 0;
 
 			foreach (TdsColumnSchema schemaObject in command.Tds.ColumnInfo) {
@@ -319,15 +326,19 @@ namespace System.Data.SqlClient {
 		public bool NextResult ()
 		{
 			schemaTable.Rows.Clear ();
-			bool result = command.Tds.NextResult ();
+			moreResults = command.Tds.NextResult ();
 			if (command.Tds.Errors.Count > 0)
 				throw SqlException.FromTdsError (command.Tds.Errors);
-			return result;
+			return moreResults;
 		}
 
 		public bool Read ()
 		{
+			if (!moreResults) 
+				return false;
+
 			bool result = command.Tds.NextRow ();
+
 			if (command.Tds.Errors.Count > 0)
 				throw SqlException.FromTdsError (command.Tds.Errors);
 			return result;

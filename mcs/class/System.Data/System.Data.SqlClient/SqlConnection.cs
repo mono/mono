@@ -245,7 +245,9 @@ namespace System.Data.SqlClient {
 			if (!tds.IsConnected) {
 				tds.Connect (parms);
 				ChangeDatabase (parms.Database);
-			}
+			} 
+			else if (connectionReset) 
+				tds.ExecuteNonQuery ("EXEC sp_connection_reset");
 		}
 
                 void SetConnectionString (string connectionString)

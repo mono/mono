@@ -23,10 +23,9 @@ namespace System.Data.SqlClient {
 	{
 		private ArrayList parameterList = new ArrayList();
 
-		[MonoTODO]
 		public IEnumerator GetEnumerator()
 		{
-			throw new NotImplementedException ();
+			return parameterList.GetEnumerator ();
 		}
 
 		
@@ -57,7 +56,6 @@ namespace System.Data.SqlClient {
 			
 			return Add(sqlparam);
 		}
-
 		
 		public SqlParameter Add(string parameterName, SqlDbType sqlDbType)
 		{
@@ -67,7 +65,6 @@ namespace System.Data.SqlClient {
 			return Add(sqlparam);			
 		}
 
-		
 		public SqlParameter Add(string parameterName,
 			SqlDbType sqlDbType, int size)
 		{

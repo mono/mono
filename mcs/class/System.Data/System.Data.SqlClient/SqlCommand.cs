@@ -42,6 +42,8 @@ namespace System.Data.SqlClient {
 		private int currentQuery = -1;
 		private CommandBehavior cmdBehavior = CommandBehavior.Default;
 
+		Hashtable procedureCache = new Hashtable ();
+
 		#endregion // Fields
 
 		#region Constructors
@@ -162,6 +164,21 @@ namespace System.Data.SqlClient {
 			if (connection == null || connection.Tds == null)
 				return;
 			connection.Tds.Cancel ();
+			if (connection.Tds.Errors.Count > 0)
+				throw SqlException.FromTdsError (connection.Tds.Errors);
+		}
+
+		internal void CloseDataReader (bool moreResults)
+		{
+			while (moreResults)
+				moreResults = connection.Tds.NextResult ();
+
+			if (connection.Tds.OutputParameters.Count > 0)
+			{
+				Console.WriteLine ("Parameters found!");
+				foreach (object o in connection.Tds.OutputParameters)
+					Console.WriteLine (o);
+			}
 		}
 
 		public SqlParameter CreateParameter () 
@@ -179,7 +196,7 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.");
 			if (commandText == String.Empty || commandText == null)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
-			int result = connection.Tds.ExecuteNonQuery (FormatQuery (commandText, commandType));
+			int result = connection.Tds.ExecuteNonQuery (FormatQuery (commandText, commandType, parameters));
 			if (connection.Tds.Errors.Count > 0)
 				throw SqlException.FromTdsError (connection.Tds.Errors);
 			return result;
@@ -200,14 +217,15 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("ExecuteReader requires an open Connection object to continue. This connection is closed.");
 			if (commandText == String.Empty || commandText == null)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
-			connection.Tds.ExecuteQuery (FormatQuery (commandText, commandType));
+
+			string sql;
+			if (procedureCache.ContainsKey (commandText))
+				sql = FormatQuery ((string) procedureCache[commandText], CommandType.StoredProcedure, parameters);
+			else
+				sql = FormatQuery (commandText, commandType, parameters);
+
+			connection.Tds.ExecuteQuery (sql);
 			connection.DataReaderOpen = true;
-
-			
-			bool result = connection.Tds.NextResult ();
-			if (connection.Tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (connection.Tds.Errors);
-
 			return new SqlDataReader (this);
 		}
 
@@ -223,18 +241,109 @@ namespace System.Data.SqlClient {
 			throw new NotImplementedException ();
 		}
 
-		static string FormatQuery (string commandText, CommandType commandType)
+		static string FormatParameter (SqlParameter parameter)
 		{
+			if (parameter.Value == null)
+				return "NULL";
+
+			switch (parameter.SqlDbType) {
+				case SqlDbType.BigInt :
+				case SqlDbType.Bit :
+				case SqlDbType.Decimal :
+				case SqlDbType.Float :
+				case SqlDbType.Int :
+				case SqlDbType.Money :
+				case SqlDbType.Real :
+				case SqlDbType.SmallInt :
+				case SqlDbType.SmallMoney :
+				case SqlDbType.TinyInt :
+					return parameter.Value.ToString ();
+				default:
+					return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+			}
+		}
+
+		static string FormatQuery (string commandText, CommandType commandType, SqlParameterCollection parameters)
+		{
+			StringBuilder result = new StringBuilder ();
+
 			switch (commandType) {
 			case CommandType.Text :
 				return commandText;
 			case CommandType.TableDirect :
 				return String.Format ("SELECT * FROM {0}", commandText);
 			case CommandType.StoredProcedure :
-				return String.Format ("EXEC {0}", commandText);
+
+				StringBuilder parms = new StringBuilder ();
+				StringBuilder declarations = new StringBuilder ();
+
+				foreach (SqlParameter parameter in parameters) {
+					switch (parameter.Direction) {
+					case ParameterDirection.Input :
+						if (parms.Length > 0)
+							result.Append (",");
+						parms.Append (FormatParameter (parameter));
+						break;
+					case ParameterDirection.Output :
+						if (parms.Length > 0)
+							parms.Append (",");
+						parms.Append (parameter.ParameterName);
+						parms.Append (" OUT");
+
+						if (declarations.Length == 0)
+							declarations.Append ("DECLARE ");
+						else
+							declarations.Append (",");
+
+						declarations.Append (GetFormalParameterName (parameter));
+						break;
+					default :
+						throw new NotImplementedException ("Only support input and output parameters.");
+					}
+				}
+				result.Append (declarations.ToString ());
+				result.Append (" EXEC ");
+				result.Append (commandText);
+				result.Append (" ");
+				result.Append (parms);
+				return result.ToString ();
 			default:
 				throw new InvalidOperationException ("The CommandType was not recognized.");
 			}
+		}
+
+		static string GetFormalParameterName (SqlParameter parameter)
+		{
+			StringBuilder result = new StringBuilder ();
+			result.Append (parameter.ParameterName);
+			result.Append (" ");
+			result.Append (parameter.SqlDbType.ToString ());
+
+			switch (parameter.SqlDbType) {
+			case SqlDbType.Image :
+			case SqlDbType.NVarChar :
+			case SqlDbType.VarBinary :
+			case SqlDbType.VarChar :
+				if (parameter.Size == 0)
+					throw new InvalidOperationException ("All variable length parameters must have an explicitly set non-zero size.");
+				result.Append ("(");
+				result.Append (parameter.Size.ToString ());
+				result.Append (")");
+				break;
+			case SqlDbType.Decimal :
+			case SqlDbType.Money :
+			case SqlDbType.SmallMoney :
+				result.Append ("(");
+				result.Append (parameter.Precision.ToString ());
+				result.Append (",");
+				result.Append (parameter.Scale.ToString ());
+				result.Append (")");
+				break;
+			default:
+				break;
+			}
+
+			return result.ToString ();
 		}
 
 		[MonoTODO]
@@ -263,10 +372,31 @@ namespace System.Data.SqlClient {
 			Dispose (true);
 		}
 
-		[MonoTODO]
 		public void Prepare ()
 		{
-			throw new NotImplementedException ();
+			bool prependComma = false;
+			Guid uniqueId = Guid.NewGuid ();
+			string procedureName = String.Format ("#mono#{0}", uniqueId.ToString ("N"));
+			StringBuilder procedureString = new StringBuilder ();
+
+			procedureString.Append ("CREATE PROC ");
+			procedureString.Append (procedureName);
+			procedureString.Append (" (");
+
+			foreach (SqlParameter parameter in parameters) {
+				if (prependComma)
+					procedureString.Append (", ");
+				else
+					prependComma = true;
+				procedureString.Append (GetFormalParameterName (parameter));
+				if (parameter.Direction == ParameterDirection.Output)
+					procedureString.Append (" OUT");
+			}
+				
+			procedureString.Append (") AS ");
+			procedureString.Append (commandText);
+			connection.Tds.ExecuteNonQuery (procedureString.ToString ());
+			procedureCache[commandText] = procedureName;
 		}
 
 		public void ResetCommandTimeout ()
