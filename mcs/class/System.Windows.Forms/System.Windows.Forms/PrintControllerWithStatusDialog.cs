@@ -22,61 +22,41 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 			public PrintControllerWithStatusDialog(PrintController underlyingController)
 		{
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 			public PrintControllerWithStatusDialog(PrintController underlyingController, string dialogTitle)
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
 
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
 		[MonoTODO]
 		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnEndPage(document, e);
 		}
 		[MonoTODO]
 		public override void OnEndPrint(PrintDocument document, PrintEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnEndPrint(document, e);
 		}
 		[MonoTODO]
 		public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.OnStartPage(document, e);
 		}
 		[MonoTODO]
 		public override void OnStartPrint(PrintDocument document, PrintEventArgs e)
 		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException ();
-		}
-
-		//
-		//  --- Destructor
-		//
-		[MonoTODO]
-		~PrintControllerWithStatusDialog()
-		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnStartPrint(document, e);
 		}
 	 }
 }

@@ -17,8 +17,6 @@ using System.Collections;
 namespace System.Windows.Forms {
 
 	// <summary>
-	// Implementation started.
-	//
 	// </summary>
 
 	public class NativeWindow : MarshalByRefObject {

@@ -26,8 +26,9 @@ namespace System.Windows.Forms {
 		}
 
 		public override void DownButton(){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
+
 		//
 		//  --- Public Properties
 		//
@@ -38,7 +39,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -48,7 +49,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -58,7 +59,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -68,7 +69,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -89,7 +90,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -99,7 +100,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -110,13 +111,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 
 		[MonoTODO]
 		public override void UpButton()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		//
@@ -131,48 +133,40 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override AccessibleObject CreateAccessibilityInstance() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CreateAccessibilityInstance();
 		}
 
 		[MonoTODO]
 		protected override void OnTextBoxKeyPress(object source, KeyPressEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnTextBoxKeyPress(source, e);
 		}
 
 		[MonoTODO]
 		protected virtual void OnValueChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected void ParseEditText() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected override void UpdateEditText() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected override void ValidateEditText() 
 		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override bool Equals(object o) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
+			//FIXME:
+			base.ValidateEditText();
 		}
 
 		void ISupportInitialize.BeginInit(){

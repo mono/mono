@@ -39,18 +39,26 @@ namespace System.Windows.Forms {
 		#region Properties
 		[MonoTODO]
 		public override int Count {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public override object Current {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public override int Position {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
 		}
 		#endregion
 		
@@ -58,19 +66,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override void AddNew() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public override void CancelCurrentEdit() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public override void EndCurrentEdit() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -88,31 +96,31 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected internal override void OnCurrentChanged(EventArgs ea) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public override void RemoveAt(int index) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public override void ResumeBinding() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public override void SuspendBinding() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void UpdateIsBinding() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		#endregion
 	}

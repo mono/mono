@@ -94,7 +94,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
+			//FIXME:
+			return base.ToString();
 		}
 
 		[MonoTODO]
@@ -109,37 +110,42 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e) 
 		{
-			throw new NotImplementedException();
+			//FIXME:
+			base.OnEnabledChanged(e);
 		}
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs pe) 
+		protected override void OnPaint(PaintEventArgs e) 
 		{
-			throw new NotImplementedException();
+			//FIXME:
+			base.OnPaint(e);
 		}
 		[MonoTODO]
 		protected override void OnParentChanged(EventArgs e) 
 		{
-			throw new NotImplementedException();
+			//FIXME:
+			base.OnParentChanged(e);
 		}
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) 
 		{
-			throw new NotImplementedException();
+			//FIXME:
+			OnResize(e);
 		}
 		[MonoTODO]
 		protected virtual void OnSizeModeChanged(EventArgs e)
 		{
-			throw new NotImplementedException();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnVisibleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) 
 		{
-			throw new NotImplementedException();
+			//FIXME:
+			base.SetBoundsCore(x, y, width, height, specified);
 		}
 		//
 		// --- Public Events

@@ -105,12 +105,6 @@ namespace System.Windows.Forms {
 		{
 			return base.GetHashCode();
 		}
-		//[Serializable]
-		//[ClassInterface(ClassInterfaceType.AutoDual)]
-		//public Type GetType()
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 		[MonoTODO]
 		public static Rectangle GetWorkingArea(Control ctl)

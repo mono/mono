@@ -21,7 +21,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public OpacityConverter()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//

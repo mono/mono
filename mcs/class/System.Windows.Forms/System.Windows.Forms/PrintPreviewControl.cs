@@ -120,43 +120,48 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void InvalidatePreview() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs pevent) 
+		protected override void OnPaint(PaintEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnPaint(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnResize(EventArgs eventargs) 
+		protected override void OnResize(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnResize(e);
 		}
 		
 		[MonoTODO]
 		protected virtual void OnStartPageChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public override void ResetBackColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.ResetBackColor();
 		}
 		
 		[MonoTODO]
 		public override void ResetForeColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.ResetForeColor();
 		}
 		
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 		#endregion
 		
