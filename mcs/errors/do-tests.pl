@@ -70,6 +70,7 @@ foreach (glob ($files)) {
         print "$_";
 	my ($error_number) = (/[a-z]*(\d+)(-\d+)?\.cs/);
 	my $options = `sed -n 's,^// Compiler options:,,p' $_`;
+	chomp $options;
 	print "...";
 
 	system "$compile $options $_ --expect-error $error_number > /dev/null";
