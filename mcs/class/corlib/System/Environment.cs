@@ -436,7 +436,7 @@ namespace System
 		[MonoTODO]
 		public static string[] GetLogicalDrives ()
 		{
-			return null;
+			return(new string[] { "/" });
 		}
 
 		static internal string GetResourceString (string s) { return ""; }
