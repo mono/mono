@@ -1,4 +1,11 @@
 2004-11-09  Jambunathan K  <kjambunathan@novell.com>
+	* class.cs: Coalesced the functionality of Property and
+	PropertyBase in to Property class and removed the class
+	PropertyBase.
+
+
+2004-11-09  Jambunathan K  <kjambunathan@novell.com>
+
 	* attribute.cs: Injected a new virtual property
 	Attributable.AttributeTargets
 

@@ -3761,26 +3761,13 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
-	//
-	// Properties and Indexers both generate PropertyBuilders, we use this to share 
-	// their common bits.
-	//
-	abstract public class PropertyBase : MethodCore {
+	public class Property : MethodCore {
 		public Accessor Get, Set;
 		public PropertyBuilder PropertyBuilder;
 		public MethodBuilder GetBuilder, SetBuilder;
 		public MethodData GetData, SetData;
 
 		protected EmitContext ec;
-
-		public PropertyBase (Expression type, string name, int mod_flags, int allowed_mod,
-				     Parameters parameters, Accessor get_block, Accessor set_block,
-				     Attributes attrs, Location loc)
-			: base (type, mod_flags, allowed_mod, name, attrs, parameters, loc)
-		{
-			Get = get_block;
-			Set = set_block;
-		}
 
 		public override AttributeTargets AttributeTargets {
 			get {
@@ -3959,26 +3946,7 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 
-		public virtual void Emit (TypeContainer tc)
-		{
-			//
-			// The PropertyBuilder can be null for explicit implementations, in that
-			// case, we do not actually emit the ".property", so there is nowhere to
-			// put the attribute
-			//
-			if (PropertyBuilder != null)
-				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
-/*
-			if (GetData != null)
-				GetData.Emit (tc, Get.Block, Get);
 
-			if (SetData != null)
-				SetData.Emit (tc, Set.Block, Set);
-*/				
-		}
-	}
-			
-	public class Property : PropertyBase {
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -4006,13 +3974,16 @@ namespace Mono.MonoBASIC {
 				Accessor get_block, Accessor set_block,
 				Attributes attrs, Location loc, string set_name, 
 				Parameters p_get, Parameters p_set, ArrayList impl_what)
-			: base (type, name, mod_flags, AllowedModifiers,
-				p_set,
-				get_block, set_block, attrs, loc)
+			: base (type, mod_flags, AllowedModifiers, name, attrs, p_set, loc)
+		
 		{
-			set_parameter_name = set_name;
+			Get = get_block;
 			get_params = p_get;
+
+			Set = set_block;
 			set_params = p_set;
+			set_parameter_name = set_name;
+			
 			Implements = impl_what;
 		}		
 		
@@ -4153,9 +4124,16 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 
-		public override void Emit (TypeContainer tc)
+		public void Emit (TypeContainer tc)
 		{
-			base.Emit (tc);
+			//
+			// The PropertyBuilder can be null for explicit implementations, in that
+			// case, we do not actually emit the ".property", so there is nowhere to
+			// put the attribute
+			//
+			
+			if (PropertyBuilder != null)
+				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
 			
 			if (GetData != null) 
 			{
