@@ -1,3 +1,8 @@
+2004-11-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs,
+	  KeyPattern.cs : warning removal
+
 2004-11-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs : changed to be compatible with that is

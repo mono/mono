@@ -59,7 +59,9 @@ namespace Mono.Xml.XPath
 		bool endElement;
 		bool attributeValueConsumed;
 		StringBuilder readStringBuffer = new StringBuilder ();
+#if NET_2_0
 		StringBuilder innerXmlBuilder = new StringBuilder ();
+#endif
 
 		int depth = 0;
 		int attributeCount = 0;
