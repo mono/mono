@@ -1,3 +1,13 @@
+2002-02-19  Dick Porter  <dick@ximian.com>
+	* threads-dummy-types.c:
+	* threads-dummy-types.h:
+	* threads-dummy.c:
+	* threads-dummy.h:
+	* threads-pthread-types.c:
+	* threads-pthread-types.h:
+	* threads-pthread.c:
+	* threads-pthread.h:  Deleted obsolete files
+
 2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_vtable): runtime init the class when we
