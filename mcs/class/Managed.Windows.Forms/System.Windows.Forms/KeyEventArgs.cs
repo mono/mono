@@ -40,7 +40,7 @@ namespace System.Windows.Forms {
 
 		#region Public Constructors
 		public KeyEventArgs(Keys keyData) {
-			this.key_data=keyData;
+			this.key_data=keyData | XplatUI.State.ModifierKeys;
 			this.event_handled=false;
 		}
 		#endregion	// Public Constructors
