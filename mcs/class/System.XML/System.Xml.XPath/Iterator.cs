@@ -147,21 +147,16 @@ namespace System.Xml.XPath
 
 	internal abstract class SimpleIterator : BaseIterator
 	{
-		protected readonly BaseIterator _iter;
 		protected readonly XPathNavigator _nav;
 		protected XPathNavigator _current;
 
 		public SimpleIterator (BaseIterator iter) : base (iter.NamespaceManager)
 		{
-			_iter = iter;
 			_nav = iter.Current.Clone ();
 		}
 		protected SimpleIterator (SimpleIterator other, bool clone) : base (other)
 		{
-			if (other._nav == null)
-				_iter = (BaseIterator) other._iter.Clone ();
-			else
-				_nav = other._nav.Clone ();
+			_nav = other._nav.Clone ();
 		}
 		public SimpleIterator (XPathNavigator nav, NSResolver nsm) : base (nsm)
 		{
@@ -183,8 +178,6 @@ namespace System.Xml.XPath
 		public SelfIterator (XPathNavigator nav, NSResolver nsm) : base (nav, nsm) {}
 		protected SelfIterator (SelfIterator other, bool clone) : base (other, true) 
 		{
-			if (other._current != null)
-				_current = _nav;
 		}
 
 		public override XPathNodeIterator Clone () { return new SelfIterator (this, true); }
@@ -192,10 +185,13 @@ namespace System.Xml.XPath
 		{
 			if (CurrentPosition == 0)
 			{
-				_current = _nav;
 				return true;
 			}
 			return false;
+		}
+
+		public override XPathNavigator Current {
+			get { return _nav; }
 		}
 
 		public override bool RequireSorting { get { return false; } }
@@ -240,22 +236,25 @@ namespace System.Xml.XPath
 
 	internal class ParentIterator : SimpleIterator
 	{
-		public ParentIterator (BaseIterator iter) : base (iter) {}
-		private ParentIterator (ParentIterator other) : base (other, true)
+		bool canMove;
+		public ParentIterator (BaseIterator iter) : base (iter)
 		{
-			if (other._current != null)
-				_current = _nav;
+			canMove = _nav.MoveToParent ();
+			_current = _nav;
+		}
+		private ParentIterator (ParentIterator other, bool dummy) : base (other, true)
+		{
+			_current = _nav;
+			canMove = other.canMove;
 		}
 		public ParentIterator (XPathNavigator nav, NSResolver nsm) : base (nav, nsm) {}
-		public override XPathNodeIterator Clone () { return new ParentIterator (this); }
+		public override XPathNodeIterator Clone () { return new ParentIterator (this, true); }
 		public override bool MoveNextCore ()
 		{
-			if (CurrentPosition == 0 && _nav.MoveToParent ())
-			{
-				_current = _nav;
-				return true;
-			}
-			return false;
+			if (!canMove)
+				return false;
+			canMove = false;
+			return true;
 		}
 
 		public override bool ReverseAxis { get { return true; } }

@@ -1,5 +1,9 @@
 2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Iterator.cs : more clone reduction.
+
+2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Expression.cs, DefaultContext.cs : more Peer overrides.
 
 2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
