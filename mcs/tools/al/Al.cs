@@ -84,9 +84,12 @@ namespace Mono.AssemblyLinker
 				try {
 					reader = new StreamReader (new FileStream (resfile_name, FileMode.Open));
 
-					foreach (string s in reader.ReadToEnd ().Split (' '))
-						if (s.Length > 0)
-							flat_args.Add (s);
+					string line;
+					while ((line = reader.ReadLine ()) != null) {
+						foreach (string s in line.Split (' '))
+							if (s.Length > 0)
+								flat_args.Add (s);
+					}
 				}
 				catch (Exception ex) {
 					Report (1007, "Error opening response file '" + resfile_name + "' -- '" + ex.Message + "'");
