@@ -6,7 +6,7 @@
 //   Dennis Hayes (dennish@Raytek.com)
 //	 Alexandre Pigolkine (pigolkine@gmx.de)
 //
-// (C) Ximian, Inc 2002
+// (C) Ximian, Inc 2002/3
 //
 
 
@@ -441,8 +441,9 @@ namespace System.Windows.Forms {
 		internal static void DrawFrameControlHelper (Graphics graphics, Rectangle rectangle, uint type, uint state) {
 
 			IntPtr targetDC = graphics.GetHdc ();
-			Bitmap bmp = new Bitmap (rectangle.Width, rectangle.Height, graphics);
+			Bitmap bmp = new Bitmap (rectangle.Width, rectangle.Height);
 			Graphics g = Graphics.FromImage (bmp);
+
 			IntPtr memDC = g.GetHdc ();
 
 			RECT rc = new RECT();
