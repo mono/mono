@@ -20,17 +20,18 @@ namespace System.Xml
 	{
 		#region Constructor
 
+		XmlNode startNode;
 		XmlNode current;
 		ReadState state = ReadState.Initial;
 		int depth;
 		bool isEndElement;
 		bool isEndEntity;
-		bool nextIsEndElement;
+		bool nextIsEndElement;	// used for ReadString()
 		bool alreadyRead;
 
 		public XmlNodeReader (XmlNode node)
 		{
-			current = node;
+			startNode = node;
 			if (node.NodeType != XmlNodeType.Document
 				&& node.NodeType != XmlNodeType.DocumentFragment)
 				alreadyRead = true;
@@ -42,16 +43,26 @@ namespace System.Xml
 
 		public override int AttributeCount {
 			get {
+				if (current == null)
+					return 0;
+
 				return ((ICollection) current.Attributes).Count;
 			}
 		}
 
 		public override string BaseURI {
-			get { return current.BaseURI; }
+			get { 
+				if (current == null)
+					return String.Empty;
+				return current.BaseURI;
+			}
 		}
 
+		[MonoTODO("wait for XML resolver")]
 		public override bool CanResolveEntity {
-			get { return false; }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public override int Depth {
@@ -59,11 +70,17 @@ namespace System.Xml
 		}
 
 		public override bool EOF {
-			get { return this.ReadState == ReadState.EndOfFile; }
+			get {
+				return this.ReadState == ReadState.EndOfFile 
+				|| this.ReadState == ReadState.Error;
+			}
 		}
 
 		public override bool HasAttributes {
 			get {
+				if (current == null)
+					return false;
+
 				if (current.Attributes == null)
 					return false;
 				else
@@ -73,6 +90,9 @@ namespace System.Xml
 
 		public override bool HasValue {
 			get {
+				if (current == null)
+					return false;
+
 				if (current.NodeType == XmlNodeType.Element ||
 				    current.NodeType == XmlNodeType.EntityReference ||
 				    current.NodeType == XmlNodeType.Document ||
@@ -90,6 +110,9 @@ namespace System.Xml
 		[MonoTODO("waiting for DTD implementation")]
 		public override bool IsDefault {
 			get {
+				if (current == null)
+					return false;
+
 				if (current.NodeType != XmlNodeType.Attribute)
 					return false;
 				else
@@ -102,6 +125,9 @@ namespace System.Xml
 		[MonoTODO("test it.")]
 		public override bool IsEmptyElement {
 			get {
+				if (current == null)
+					return false;
+
 				if(current.NodeType == XmlNodeType.Element)
 					return ((XmlElement) current).IsEmpty;
 				else 
@@ -111,6 +137,9 @@ namespace System.Xml
 
 		public override string this [int i] {
 			get {
+				if (current == null)
+					return null;
+
 				if (i < 0 || i > AttributeCount)
 					throw new ArgumentOutOfRangeException ("i is out of range.");
 				
@@ -120,6 +149,9 @@ namespace System.Xml
 
 		public override string this [string name] {
 			get {
+				if (current == null)
+					return null;
+
 				string ret =  current.Attributes [name].Value;
 				
 				if (ret == null)
@@ -131,7 +163,10 @@ namespace System.Xml
 
 		public override string this [string name, string namespaceURI] {
 			get {
-				string ret =  current.Attributes [name].Value;
+				if (current == null)
+					return null;
+
+				string ret =  current.Attributes [name, namespaceURI].Value;
 				
 				if (ret == null)
 					return String.Empty;
@@ -142,6 +177,9 @@ namespace System.Xml
 
 		public override string LocalName {
 			get {
+				if (current == null)
+					return String.Empty;
+
 				if (current is XmlCharacterData)
 					return String.Empty;
 				else
@@ -150,11 +188,19 @@ namespace System.Xml
 		}
 
 		public override string Name {
-			get { return current.Name; }
+			get {
+				if (current == null)
+					return String.Empty;
+
+				return current.Name;
+			}
 		}
 
 		public override string NamespaceURI {
 			get {
+				if (current == null)
+					return String.Empty;
+
 				return current.NamespaceURI;
 			}
 		}
@@ -170,12 +216,18 @@ namespace System.Xml
 
 		public override XmlNodeType NodeType {
 			get {
+				if (current == null)
+					return XmlNodeType.None;
+
 				return isEndElement ? XmlNodeType.EndElement : current.NodeType;
 			}
 		}
 
 		public override string Prefix {
 			get { 
+				if (current == null)
+					return String.Empty;
+
 				return current.Prefix;
 			}
 		}
@@ -195,11 +247,21 @@ namespace System.Xml
 		}
 
 		public override string XmlLang {
-			get { return current.XmlLang; }
+			get {
+				if (current == null)
+					return String.Empty;
+
+				return current.XmlLang;
+			}
 		}
 
 		public override XmlSpace XmlSpace {
-			get { return current.XmlSpace; }
+			get {
+				if (current == null)
+					return XmlSpace.None;
+
+				return current.XmlSpace;
+			}
 		}
 		#endregion
 
@@ -301,21 +363,57 @@ namespace System.Xml
 		[MonoTODO("Entity handling is not supported.")]
 		public override bool Read ()
 		{
-			state = ReadState.Interactive;
+			if (EOF)
+				return false;
 
-			isEndEntity = false;
+			if (ReadState == ReadState.Initial) {
+				current = startNode;
+				state = ReadState.Interactive;
+				// when startNode is document or fragment
+				if (!alreadyRead)
+					current = startNode.FirstChild;
+				else
+					alreadyRead = false;
+				if (current == null) {
+					state = ReadState.Error;
+					return false;
+				} else
+					return true;
+			}
 
 			if (current.NodeType == XmlNodeType.Attribute)
 				current = ((XmlAttribute) current).OwnerElement;
+			isEndEntity = false;
 
-			if (nextIsEndElement) {
+			if (isEndElement) {
+				// Then go up and move to next.
+				// If no more nodes, then set EOF.
+				isEndElement = false;
+				if (current.ParentNode == null
+					|| current.ParentNode.NodeType == XmlNodeType.Document
+					|| current.ParentNode.NodeType == XmlNodeType.DocumentFragment) {
+					current = null;
+					state = ReadState.EndOfFile;
+					return false;
+				} else if (current.ParentNode.NextSibling == null) {
+					current = current.ParentNode;
+					isEndElement = true;
+					return true;
+				} else {
+					current = current.ParentNode.NextSibling;
+					return true;
+				}
+			} else if (nextIsEndElement) {
+				// nextIsEndElement is set only by ReadString.
 				nextIsEndElement = false;
 				isEndElement = true;
+				return current != null;
 			} else if (alreadyRead) {
 				alreadyRead = false;
 				return current != null;
 			}
 
+			// hmm... here may be unnecessary codes. plz check anyone ;)
 			if (!isEndElement && current.FirstChild != null) {
 				isEndElement = false;
 				current = current.FirstChild;
@@ -331,6 +429,7 @@ namespace System.Xml
 				depth--;
 				current = current.ParentNode;
 			}
+
 			return current != null;
 		}
 
@@ -350,6 +449,11 @@ namespace System.Xml
 		// Its traversal behavior is almost same as Read().
 		public override string ReadInnerXml ()
 		{
+			if (ReadState == ReadState.Initial) {
+				state = ReadState.Error;
+				return String.Empty;	// heh
+			}
+		
 			if (current.NodeType != XmlNodeType.Attribute &&
 			    current.NodeType != XmlNodeType.Element)
 				return String.Empty;
@@ -361,6 +465,9 @@ namespace System.Xml
 		// Its traversal behavior is almost same as Read().
 		public override string ReadOuterXml ()
 		{
+			if (NodeType == XmlNodeType.EndElement)
+				return String.Empty;
+
 			if (current.NodeType != XmlNodeType.Attribute &&
 			    current.NodeType != XmlNodeType.Element)
 				return String.Empty;
@@ -368,14 +475,15 @@ namespace System.Xml
 				return current.OuterXml;
 		}
 
-		[MonoTODO("test it.")]
 		public override string ReadString ()
 		{
+			if (NodeType == XmlNodeType.EndElement)
+				return String.Empty;
+
 			XmlNode original = current;
 			StringBuilder builder = new StringBuilder();
-			foreach (XmlNode child in current.ChildNodes)
-			{
-				if (child is XmlCharacterData)
+			foreach (XmlNode child in current.ChildNodes) {
+				if (child is XmlCharacterData && !(child is XmlComment))
 					builder.Append (child.Value);
 				else {
 					depth++;
@@ -384,16 +492,19 @@ namespace System.Xml
 				}
 			}
 			alreadyRead = true;
-			if (current == original)
+			if (current == original) {
 				nextIsEndElement = true;
+				Read ();
+			}
 			return builder.ToString ();
 		}
 
 		[MonoTODO]
 		public override void ResolveEntity ()
 		{
-			if (current.NodeType != XmlNodeType.EntityReference)
-				throw new InvalidOperationException ("The current node is not an Entity Reference");
+			throw new NotImplementedException ();
+//			if (current.NodeType != XmlNodeType.EntityReference)
+//				throw new InvalidOperationException ("The current node is not an Entity Reference");
 		}
 
 		[MonoTODO("test it.")]

@@ -1,3 +1,7 @@
+2003-01-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNodeReader.cs : several fix to get more compatible with MS.NET.
+
 2003-01-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNamespaceManager.cs : fundamental change of LookupPrefix to return
