@@ -26,6 +26,7 @@
 			</references>
 		</csc>
 		<copy file="../lib/Microsoft.VisualBasic.dll" tofile="Test/Microsoft.VisualBasic.dll"/>
+		<copy file="../lib/System.dll" tofile="Test/System.dll"/>
 	</target>
 
 	<target name="test" depends="build">
