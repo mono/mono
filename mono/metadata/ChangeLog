@@ -1,3 +1,12 @@
+2002-11-15  Dick Porter  <dick@ximian.com>
+
+	* threadpool.c: 
+	* threads.c:
+	* appdomain.c: Removed mono_runtime_init_with_attach(),
+	mono_thread_create_arg(), and mono_thread_init_with_attach(), by
+	merging the extra parameter with the existing function.  Removed
+	unneeded code in mono_thread_attach().
+
 2002-11-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* image.c (mono_image_loaded_by_guid): a method to get loaded

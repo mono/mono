@@ -1,3 +1,11 @@
+2002-11-15  Dick Porter  <dick@ximian.com>
+
+	* timed-thread.c: Removed unneeded parameters in
+	_wapi_timed_thread_attach().
+
+	* threads.c: Renamed AttachThread() to make it not look like
+	external API.  Removed unneeded parameters.
+
 2002-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* error.[ch]: added errno_to_WSA (). It displays a warning and return

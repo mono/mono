@@ -1,3 +1,8 @@
+2002-11-15  Dick Porter  <dick@ximian.com>
+
+	* interp.c: mono_runtime_init() now has an extra parameter for
+	thread attaching.
+
 2002-10-31  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am: The previous automake-1.6 fix broke automake-1.4 on

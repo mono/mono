@@ -1,3 +1,7 @@
+2002-11-15  Dick Porter  <dick@ximian.com>
+
+	* jit.c: Pass the attach callback to mono_runtime_init().
+
 2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* jit.c: display the domain name in trace output.
