@@ -1,3 +1,8 @@
+2004-01-05  Jackson Harper <jackson@ximian.com>
+
+	* DataView.cs: Set readonly property of property descriptor. This
+	fixes bug #52598.
+	
 2004-01-01  Sanjay Gupta <gsanjay@novell.com>
 
 	* DataRelationCollection.cs : Fixed incorrect generation of default 

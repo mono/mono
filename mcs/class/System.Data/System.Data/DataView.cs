@@ -542,7 +542,8 @@ namespace System.Data
 					dataColumn.ColumnName, col, null);
 				descriptor.SetComponentType (typeof (System.Data.DataRowView));
 				descriptor.SetPropertyType (dataColumn.DataType);
-				
+				descriptor.SetReadOnly (dataColumn.ReadOnly);
+
 				descriptors[col] = descriptor;
 			}
 
