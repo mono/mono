@@ -1,3 +1,30 @@
+2001-11-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: Implement foreach on multi-dimensional arrays. 
+
+	* parameter.cs (Parameters.GetParameterByName): Also lookup the
+	name of the params argument.
+
+	* expression.cs: Use EmitStoreOpcode to get the right opcode while
+	initializing the array.
+
+	(ArrayAccess.EmitStoreOpcode): move the opcode generation here, so
+	we can use this elsewhere.
+
+	* statement.cs: Finish implementation of foreach for single
+	dimension arrays.
+
+	* cs-parser.jay: Use an out-of-band stack to pass information
+	around, I wonder why I need this.
+
+	foreach_block: Make the new foreach_block the current_block.
+
+	* parameter.cs (Parameters.GetEmptyReadOnlyParameters): New
+	function used to return a static Parameters structure.  Used for
+	empty parameters, as those are created very frequently.
+
+	* cs-parser.jay, class.cs: Use GetEmptyReadOnlyParameters
+
 2001-11-15  Ravi Pratap  <ravi@ximian.com>
 
 	* interface.cs : Default modifier is private, not public. The

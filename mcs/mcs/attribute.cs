@@ -392,6 +392,5 @@ namespace CIR {
 			if (a != null)
 				AttributeSections.Add (a);
 		}
-		
 	}
 }

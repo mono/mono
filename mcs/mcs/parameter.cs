@@ -87,9 +87,11 @@ namespace CIR {
 
 	public class Parameters {
 		public Parameter [] FixedParameters;
-		public readonly Parameter    ArrayParameter;
+		public readonly Parameter ArrayParameter;
 		string signature;
 		Type [] types;
+
+		static Parameters empty_parameters;
 		
 		public Parameters (Parameter [] fixed_parameters, Parameter array_parameter)
 		{
@@ -97,6 +99,18 @@ namespace CIR {
 			ArrayParameter  = array_parameter;
 		}
 
+		// <summary>
+		//   This is used to reuse a set of empty parameters, because they
+		//   are common
+		// </summary>
+		public static Parameters GetEmptyReadOnlyParameters ()
+		{
+			if (empty_parameters == null)
+				empty_parameters = new Parameters (null, null);
+			
+			return empty_parameters;
+		}
+		
 		public bool Empty {
 			get {
 				return (FixedParameters == null) && (ArrayParameter == null);
@@ -174,6 +188,12 @@ namespace CIR {
 				i++;
 			}
 
+			if (ArrayParameter != null)
+				if (name == ArrayParameter.Name){
+					idx = i;
+					return ArrayParameter;
+				}
+			
 			return null;
 		}
 

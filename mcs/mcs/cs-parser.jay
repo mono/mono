@@ -78,6 +78,11 @@ namespace CIR
 		// </summary>
 		Tree tree;
 
+		//
+		// An out-of-band stack.
+		//
+		Stack oob_stack;
+
 		RootContext rc;
 
 %}
@@ -795,7 +800,7 @@ method_body
 	;
 
 opt_formal_parameter_list
-	: /* empty */			{ $$ = new Parameters (null, null); }
+	: /* empty */			{ $$ = Parameters.GetEmptyReadOnlyParameters (); }
 	| formal_parameter_list
 	;
 
@@ -2780,20 +2785,30 @@ statement_expression_list
 
 foreach_statement
 	: FOREACH OPEN_PARENS type IDENTIFIER IN 
-	  { 
-		// empty
-	  } 
+	  {
+		oob_stack.Push (lexer.Location);
+	  }
 	  expression CLOSE_PARENS 
-	  embedded_statement
 	  {
 		Block foreach_block = new Block (current_block, true);
 		LocalVariableReference v;
 
-		foreach_block.AddVariable ((string) $3, (string) $4, (Location) $1);
+		foreach_block.AddVariable ((string) $3, (string) $4, lexer.Location);
 		v = new LocalVariableReference (foreach_block, (string) $4);
-		foreach_block.AddStatement (new Foreach ((string) $3, v, (Expression) $7, 
-					    (Statement) $9, lexer.Location));
-		$$ = foreach_block;
+
+		current_block.AddStatement (foreach_block);
+		current_block = foreach_block;
+
+		oob_stack.Push (foreach_block);
+		oob_stack.Push (v);
+	  } 
+	  embedded_statement 
+	  {
+		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
+		Block foreach_block = (Block) oob_stack.Pop ();
+		Location l = (Location) oob_stack.Pop ();
+
+		$$ = new Foreach ((string) $3, v, (Expression) $7, (Statement) $10, l);
 	  }
 	;
 
@@ -3362,6 +3377,7 @@ public CSharpParser(RootContext rc, string name, System.IO.Stream input)
 	this.input = input;
 	current_container = tree.Types;
 	current_container.Namespace = current_namespace;
+	oob_stack = new Stack ();
 
 	lexer = new Tokenizer (input, name);
 }

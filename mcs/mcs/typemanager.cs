@@ -72,7 +72,8 @@ public class TypeManager {
 	static public MethodInfo void_monitor_enter_object;
 	static public MethodInfo void_monitor_exit_object;
 	static public MethodInfo void_initializearray_array_fieldhandle;
-
+	static public MethodInfo int_getlength_int;
+	
 	//
 	// The attribute constructors.
 	//
@@ -434,6 +435,13 @@ public class TypeManager {
 		void_initializearray_array_fieldhandle = GetMethod (
 			runtime_helpers_type, "InitializeArray", array_field_handle_arg);
 
+		//
+		// Array functions
+		//
+		Type [] int_arg = { int32_type };
+		int_getlength_int = GetMethod (
+			array_type, "GetLength", int_arg);
+		
 		//
 		// Attributes
 		//

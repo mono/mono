@@ -544,7 +544,7 @@ namespace CIR {
 			Constructor c;
 			int mods = 0;
 
-			c = new Constructor (Basename, new Parameters (null, null),
+			c = new Constructor (Basename, Parameters.GetEmptyReadOnlyParameters (),
 					     new ConstructorBaseInitializer (null, new Location (-1)),
 					     new Location (-1));
 			
@@ -1357,29 +1357,30 @@ namespace CIR {
 				
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes != null) {
-							foreach (Attribute a in asec.Attributes) {
-								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb == null)
-									continue;
-
-								if (a.UsageAttr) {
-									this.Targets = a.Targets;
-									this.AllowMultiple = a.AllowMultiple;
-									this.Inherited = a.Inherited;
-
-									RootContext.TypeManager.RegisterAttrType (
-										           TypeBuilder, this);
-								} else {
-
-									if (!Attribute.CheckAttribute (a, this)) {
-										Attribute.Error592 (a, Location);
-										return;
-									}
-								}
+						if (asec.Attributes == null)
+							continue;
+						
+						foreach (Attribute a in asec.Attributes) {
+							CustomAttributeBuilder cb = a.Resolve (ec);
+							if (cb == null)
+								continue;
+							
+							if (a.UsageAttr) {
+								this.Targets = a.Targets;
+								this.AllowMultiple = a.AllowMultiple;
+								this.Inherited = a.Inherited;
 								
-								TypeBuilder.SetCustomAttribute (cb);
+								RootContext.TypeManager.RegisterAttrType (
+									TypeBuilder, this);
+							} else {
+								
+								if (!Attribute.CheckAttribute (a, this)) {
+									Attribute.Error592 (a, Location);
+									return;
+								}
 							}
+							
+							TypeBuilder.SetCustomAttribute (cb);
 						}
 					}
 				}
@@ -1853,6 +1854,12 @@ namespace CIR {
 			if (Name == "Main"){
 				if ((ModFlags & Modifiers.STATIC) != 0){
 					parent.RootContext.EntryPoint = MethodBuilder;
+
+					//
+					// FIXME: Verify that the method signature
+					// is valid for an entry point, and report
+					// error 28 if not.
+					//
 				}
 			}
 			
@@ -2098,19 +2105,20 @@ namespace CIR {
 			if (OptAttributes != null) {
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes != null) {
-							foreach (Attribute a in asec.Attributes) {
-								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb == null)
-									continue;
-
-								if (!Attribute.CheckAttribute (a, this)) {
-									Attribute.Error592 (a, Location);
-									return;
-								}
-								
-								ConstructorBuilder.SetCustomAttribute (cb);
+						if (asec.Attributes == null)
+							continue;
+						
+						foreach (Attribute a in asec.Attributes) {
+							CustomAttributeBuilder cb = a.Resolve (ec);
+							if (cb == null)
+								continue;
+							
+							if (!Attribute.CheckAttribute (a, this)) {
+								Attribute.Error592 (a, Location);
+								return;
 							}
+							
+							ConstructorBuilder.SetCustomAttribute (cb);
 						}
 					}
 				}
@@ -2221,7 +2229,7 @@ namespace CIR {
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
 			Modifiers.VIRTUAL;
-		
+
 		public Property (string type, string name, int mod_flags, Block get_block, Block set_block,
 				 Attributes attrs, Location loc)
 		{
@@ -2269,7 +2277,8 @@ namespace CIR {
 				}
 
 				TypeContainer.RegisterParameterForBuilder (GetBuilder,
-					      new InternalParameters (parent, new Parameters (null, null)));
+					      new InternalParameters (
+						      parent, Parameters.GetEmptyReadOnlyParameters ()));
 			}
 			
 			if (Set != null)
@@ -2318,6 +2327,7 @@ namespace CIR {
 
 			if (OptAttributes != null) {
 				ec = new EmitContext (tc, null, PropertyType, ModFlags);
+
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
 						if (asec.Attributes == null)
@@ -2629,19 +2639,20 @@ namespace CIR {
 				ec = new EmitContext (tc, null, IndexerType, ModFlags);
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes != null) {
-							foreach (Attribute a in asec.Attributes) {
-								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb == null)
-									continue;
-
-								if (!Attribute.CheckAttribute (a, this)) {
-									Attribute.Error592 (a, Location);
-									return;
-								}
-
-								PropertyBuilder.SetCustomAttribute (cb);
+						if (asec.Attributes == null)
+							continue;
+						
+						foreach (Attribute a in asec.Attributes) {
+							CustomAttributeBuilder cb = a.Resolve (ec);
+							if (cb == null)
+								continue;
+							
+							if (!Attribute.CheckAttribute (a, this)) {
+								Attribute.Error592 (a, Location);
+								return;
 							}
+							
+							PropertyBuilder.SetCustomAttribute (cb);
 						}
 					}
 				}
@@ -2849,21 +2860,23 @@ namespace CIR {
 		{
 			if (OptAttributes != null) {
 				EmitContext ec = new EmitContext (parent, null, null, ModFlags);
+
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes != null) {
-							foreach (Attribute a in asec.Attributes) {
-								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb == null)
-									continue;
+						if (asec.Attributes == null)
+							continue;
+						
+						foreach (Attribute a in asec.Attributes) {
+							CustomAttributeBuilder cb = a.Resolve (ec);
+							if (cb == null)
+								continue;
 
-								if (!Attribute.CheckAttribute (a, this)) {
-									Attribute.Error592 (a, Location);
-									return;
-								}
-
-								OperatorMethodBuilder.SetCustomAttribute (cb);
+							if (!Attribute.CheckAttribute (a, this)) {
+								Attribute.Error592 (a, Location);
+								return;
 							}
+							
+							OperatorMethodBuilder.SetCustomAttribute (cb);
 						}
 					}
 				}
@@ -2872,8 +2885,6 @@ namespace CIR {
 			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (parent);
 		}
-		
-
 	}
 
 	//

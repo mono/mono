@@ -138,6 +138,20 @@ BUGS
 
 	Multi-dim arrays are declared as [,] instead of [0..,0..]
 
+* Variables
+
+	Things like:
+
+	for (int i = 0; ...; i++){
+	}
+
+	for (int i = 0; i < 10; i++){
+	}
+
+	Currently defines `i' for the rest of the execution after the first
+	loop, so the second loop generates an error.
+
+	I think we should pop all the blocks until this point.
 
 PENDING TASKS
 -------------

@@ -574,13 +574,13 @@ namespace CIR {
 				object temp;
 				temp = variables [name];
 
-				if (temp != null)
+				if (temp != null){
 					return (VariableInfo) temp;
+				}
 			}
 
-			if (Parent != null){
+			if (Parent != null)
 				return Parent.GetVariableInfo (name);
-			}
 
 			return null;
 		}
@@ -847,8 +847,8 @@ namespace CIR {
 				return false;
 			}
 
-			LocalBuilder temp = ec.GetTemporaryStorage (type);
 			ILGenerator ig = ec.ig;
+			LocalBuilder temp = ig.DeclareLocal (type);
 				
 			e.Emit (ec);
 			ig.Emit (OpCodes.Dup);
@@ -1237,18 +1237,18 @@ namespace CIR {
 			int rank = array_type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
-			Console.WriteLine ("Rank= " + rank);
+			LocalBuilder copy = ig.DeclareLocal (array_type);
+			
+			//
+			// Make our copy of the array
+			//
+			expr.Emit (ec);
+			ig.Emit (OpCodes.Stloc, copy);
+			
 			if (rank == 1){
-				LocalBuilder counter = ec.GetTemporaryStorage (TypeManager.int32_type);
-				LocalBuilder copy = ec.GetTemporaryStorage (array_type);
+				LocalBuilder counter = ig.DeclareLocal (TypeManager.int32_type);
 
 				Label loop, test;
-				
-				//
-				// Make our copy of the array
-				//
-				expr.Emit (ec);
-				ig.Emit (OpCodes.Stloc, copy);
 				
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.Emit (OpCodes.Stloc, counter);
@@ -1258,6 +1258,8 @@ namespace CIR {
 				loop = ig.DefineLabel ();
 				ig.MarkLabel (loop);
 
+				ig.Emit (OpCodes.Ldloc, copy);
+				ig.Emit (OpCodes.Ldloc, counter);
 				ArrayAccess.EmitLoadOpcode (ig, var_type);
 
 				variable.EmitAssign (ec, conv);
@@ -1276,7 +1278,65 @@ namespace CIR {
 				ig.Emit (OpCodes.Conv_I4);
 				ig.Emit (OpCodes.Blt, loop);
 			} else {
-				throw new Exception ("Unimplemented");
+				LocalBuilder [] dim_len   = new LocalBuilder [rank];
+				LocalBuilder [] dim_count = new LocalBuilder [rank];
+				Label [] loop = new Label [rank];
+				Label [] test = new Label [rank];
+				int dim;
+				
+				for (dim = 0; dim < rank; dim++){
+					dim_len [dim] = ig.DeclareLocal (TypeManager.int32_type);
+					dim_count [dim] = ig.DeclareLocal (TypeManager.int32_type);
+					test [dim] = ig.DefineLabel ();
+					loop [dim] = ig.DefineLabel ();
+				}
+					
+				for (dim = 0; dim < rank; dim++){
+					ig.Emit (OpCodes.Ldloc, copy);
+					IntLiteral.EmitInt (ig, dim);
+					ig.Emit (OpCodes.Callvirt, TypeManager.int_getlength_int);
+					ig.Emit (OpCodes.Stloc, dim_len [dim]);
+				}
+
+				for (dim = 0; dim < rank; dim++){
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Stloc, dim_count [dim]);
+					ig.Emit (OpCodes.Br, test [dim]);
+					ig.MarkLabel (loop [dim]);
+				}
+
+				ig.Emit (OpCodes.Ldloc, copy);
+				for (dim = 0; dim < rank; dim++)
+					ig.Emit (OpCodes.Ldloc, dim_count [dim]);
+
+				//
+				// FIXME: Maybe we can cache the computation of `get'?
+				//
+				Type [] args = new Type [rank];
+				MethodInfo get;
+
+				for (int i = 0; i < rank; i++)
+					args [i] = TypeManager.int32_type;
+
+				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				get = mb.GetArrayMethod (
+					array_type, "Get",
+					CallingConventions.HasThis| CallingConventions.Standard,
+					var_type, args);
+				ig.Emit (OpCodes.Call, get);
+				variable.EmitAssign (ec, conv);
+				statement.Emit (ec);
+				for (dim = rank - 1; dim >= 0; dim--){
+					ig.Emit (OpCodes.Ldloc, dim_count [dim]);
+					ig.Emit (OpCodes.Ldc_I4_1);
+					ig.Emit (OpCodes.Add);
+					ig.Emit (OpCodes.Stloc, dim_count [dim]);
+
+					ig.MarkLabel (test [dim]);
+					ig.Emit (OpCodes.Ldloc, dim_count [dim]);
+					ig.Emit (OpCodes.Ldloc, dim_len [dim]);
+					ig.Emit (OpCodes.Blt, loop [dim]);
+				}
 			}
 
 			return false;

@@ -1937,7 +1937,6 @@ namespace CIR {
 
 				return (ParameterData) ip;
 			} else {
-				Console.WriteLine ("Getting parameters for: " + mb);
 				ParameterInfo [] pi = mb.GetParameters ();
 				ReflectionParameters rp = new ReflectionParameters (pi);
 				method_parameter_cache [mb] = rp;
@@ -2601,17 +2600,20 @@ namespace CIR {
 			string array_type = t.FullName + "[]";
 			LocalBuilder array;
 			
-			array = ec.GetTemporaryStorage (Type.GetType (array_type));
+			array = ig.DeclareLocal (Type.GetType (array_type));
 			IntLiteral.EmitInt (ig, count);
 			ig.Emit (OpCodes.Newarr, t);
 			ig.Emit (OpCodes.Stloc, array);
 
 			int top = arguments.Count;
 			for (int j = idx; j < top; j++){
+				a = (Argument) arguments [j];
+				
 				ig.Emit (OpCodes.Ldloc, array);
 				IntLiteral.EmitInt (ig, j - idx);
 				a.Emit (ec);
-				ig.Emit (OpCodes.Stelem_Ref);
+				
+				ArrayAccess.EmitStoreOpcode (ig, t);
 			}
 			ig.Emit (OpCodes.Ldloc, array);
 		}
@@ -2687,7 +2689,7 @@ namespace CIR {
 							Type t = instance_expr.Type;
 							
 							instance_expr.Emit (ec);
-							LocalBuilder temp = ec.GetTemporaryStorage (t);
+							LocalBuilder temp = ig.DeclareLocal (t);
 							ig.Emit (OpCodes.Stloc, temp);
 							ig.Emit (OpCodes.Ldloca, temp);
 						}
@@ -3558,6 +3560,30 @@ namespace CIR {
 			else
 				ig.Emit (OpCodes.Ldelem_Ref);
 		}
+
+		// <summary>
+		//    Emits the right opcode to store an object of Type `t'
+		//    from an array of T.  
+		// </summary>
+		static public void EmitStoreOpcode (ILGenerator ig, Type t)
+		{
+			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type)
+				ig.Emit (OpCodes.Stelem_I1);
+			else if (t == TypeManager.short_type || t == TypeManager.ushort_type)
+				ig.Emit (OpCodes.Stelem_I2);
+			else if (t == TypeManager.int32_type || t == TypeManager.uint32_type)
+				ig.Emit (OpCodes.Stelem_I4);
+			else if (t == TypeManager.int64_type || t == TypeManager.uint64_type)
+				ig.Emit (OpCodes.Stelem_I8);
+			else if (t == TypeManager.float_type)
+				ig.Emit (OpCodes.Stelem_R4);
+			else if (t == TypeManager.double_type)
+				ig.Emit (OpCodes.Stelem_R8);
+			else if (t == TypeManager.intptr_type)
+				ig.Emit (OpCodes.Stelem_I);
+			else
+				ig.Emit (OpCodes.Stelem_Ref);
+		}
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -3604,24 +3630,9 @@ namespace CIR {
 			source.Emit (ec);
 
 			Type t = source.Type;
-			if (rank == 1){
-				if (t == TypeManager.byte_type || t == TypeManager.sbyte_type)
-					ig.Emit (OpCodes.Stelem_I1);
-				else if (t == TypeManager.short_type || t == TypeManager.ushort_type)
-					ig.Emit (OpCodes.Stelem_I2);
-				else if (t == TypeManager.int32_type || t == TypeManager.uint32_type)
-					ig.Emit (OpCodes.Stelem_I4);
-				else if (t == TypeManager.int64_type || t == TypeManager.uint64_type)
-					ig.Emit (OpCodes.Stelem_I8);
-				else if (t == TypeManager.float_type)
-					ig.Emit (OpCodes.Stelem_R4);
-				else if (t == TypeManager.double_type)
-					ig.Emit (OpCodes.Stelem_R8);
-				else if (t == TypeManager.intptr_type)
-					ig.Emit (OpCodes.Stelem_I);
-				else
-					ig.Emit (OpCodes.Stelem_Ref);
-			} else {
+			if (rank == 1)
+				EmitStoreOpcode (ig, t);
+			else {
 				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
 				Type [] args = new Type [ea.Arguments.Count + 1];
 				MethodInfo set;

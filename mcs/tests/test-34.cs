@@ -1,17 +1,33 @@
+//
+// This test tests both how arguments are selected in the presence
+// of ref/out modifiers and the params arguments.
+//
 using System;
 
 public class Blah {
-
+	static int got;
+	
 	public static void Foo (ref int i, ref int j)
 	{
+		got = 1;
 	}
 
-	public static void Bar (int i, params int [] args)
+	public static int Bar (int j, params int [] args)
 	{
+		got = 2;
+		int total = 0;
+		
+		foreach (int i in args){
+			Console.WriteLine ("My argument: " + i);
+			total += i;
+		}
+
+		return total;
 	}
 
 	public static void Foo (int i, int j)
 	{
+		got = 3;
 	}
 
 	public static int Main ()
@@ -20,9 +36,18 @@ public class Blah {
 		int j = 2;
 
 		Foo (i, j);
+		if (got != 3)
+			return 1;
+		
 		Foo (ref i, ref j);
+		if (got != 1)
+			return 2;
 
-		Bar (i, j, 5, 4, 3, 3, 2);
+		if (Bar (i, j, 5, 4, 3, 3, 2) != 19)
+			return 4;
+		
+		if (got != 2)
+			return 3;
 
 		return  0;
 	}

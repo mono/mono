@@ -1,3 +1,8 @@
+2001-11-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-34.cs: Improve this test to check if we are actually
+	walking over the arguments in foreach.
+
 2001-11-15  Ravi Pratap  <ravi@ximian.com>
 
 	* makefile : Update to include test-33 again. All tests

@@ -82,12 +82,12 @@ namespace CIR
 				"-v           Verbose parsing\n"+
 				"-o           Specifies output file\n" +
 				"-L           Specifies path for loading assemblies\n" +
-				"--fatal      Makes errors fatal\n" + 
+				"--checked    Set default context to checked\n" +
+				"--fatal      Makes errors fatal\n" +
 				"--nostdlib   Does not load core libraries\n" +
 				"--target     Specifies the target (exe, winexe, library, module)\n" +
 				"--parse      Only parses the source file\n" +
 				"--probe X L  Probes for the source to generate code X on line L\n" +
-				"--checked    Set default context to checked\n" +
 				"-r           References an assembly\n");
 			
 		}
