@@ -313,6 +313,19 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		unsafe private static extern double ParseImpl (byte *byte_ptr);
 		
+		public static bool TryParse (string s,
+					     NumberStyles style,
+					     IFormatProvider provider,
+					     ref double result)
+		{
+			try {
+				result = Parse (s, style, provider);
+				return true;
+			} catch {
+				return false;
+			}
+		}
+
 		public override string ToString ()
 		{
 			return ToString (null, null);

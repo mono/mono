@@ -30,5 +30,10 @@ namespace System {
 			throw new NotImplementedException ();
                 }
 
+		[MonoTODO]
+		public IntPtr GetFunctionPointer ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

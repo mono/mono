@@ -1,5 +1,17 @@
 2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Double.cs: implemented TryParse.
+
+	* Math.cs: PowImpl is now private.
+
+	* MissingFieldException.cs: implemented Message.
+
+	* RuntimeMethodHandle.cs: stubbed GetFunctionPointer.
+
+	* _AppDomain.cs: Uncommented ToString.
+
+2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Type.cs:
 	(IsValueTypeImpl): it's virtual, not abstract. Implemented.
 

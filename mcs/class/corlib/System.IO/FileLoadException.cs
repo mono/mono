@@ -92,11 +92,15 @@ namespace System.IO {
 			info.AddValue ("FileLoad_FusionLog", fusionLog);
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return "System.IO.FileLoadException: " + Message;
+			string result = GetType ().FullName + ": " + Message;
+			if (this.InnerException != null)
+				result +=" ----> " + InnerException;
+			if (this.StackTrace != null)
+				result += '\n' + StackTrace;
+
+			return result;
 		}
-		
 	}
 }

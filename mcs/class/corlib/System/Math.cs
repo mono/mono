@@ -367,7 +367,7 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-                public extern static double PowImpl (double x, double y);
+                private extern static double PowImpl (double x, double y);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
                 public extern static double Sqrt (double x);

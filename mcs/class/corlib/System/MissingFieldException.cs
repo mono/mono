@@ -42,5 +42,15 @@ namespace System
 			: base (className, fieldName)
 		{
 		}
+
+		public override string Message
+		{
+			get {
+				if (ClassName == null)
+					return base.Message;
+
+				return "Field " + ClassName + "." + MemberName + " not found.";
+			}
+		}
 	}
 }

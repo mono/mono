@@ -1,5 +1,12 @@
 2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FileLoadException.cs: implemented ToString.
+
+	* StreamWriter.cs: added Null field and implemented Write (char) and
+	Write (char []).
+
+2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* StreamReader.cs: implemented NullStreamReader.
 
 2002-08-21  Miguel de Icaza  <miguel@ximian.com>

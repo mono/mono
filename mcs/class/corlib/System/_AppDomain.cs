@@ -147,7 +147,7 @@ public interface _AppDomain {
 	void SetPrincipalPolicy (PrincipalPolicy policy);
 	void SetShadowCopyPath (string s);
 	void SetThreadPrincipal (IPrincipal principal);
-	//string ToString ();
+	string ToString ();
 
 	event AssemblyLoadEventHandler AssemblyLoad;
 	event ResolveEventHandler AssemblyResolve;

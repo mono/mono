@@ -32,7 +32,7 @@ namespace System.IO {
 
 		private bool DisposedAlready = false;
 
-		// new public static readonly StreamWriter Null;
+		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8, 0);
 
 		public StreamWriter (Stream stream)
 			: this (stream, Encoding.UTF8, DefaultBufferSize) {}
@@ -185,6 +185,16 @@ namespace System.IO {
 					if (pos == BufferSize) Flush();
 				}
 			}
+		}
+
+		public override void Write (char value)
+		{
+			Write (new char [] {value}, 0, 1);
+		}
+
+		public override void Write (char [] value)
+		{
+			Write (value, 0, value.Length);
 		}
 
 		public override void Write(string value) {
