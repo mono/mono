@@ -1,8 +1,12 @@
 2003-07-29  Miguel de Icaza  <miguel@ximian.com>
 
-	* IntPtrStream.cs (Read): Use Marshal.Copy instead of the now
+	* IntPtrStream.cs (Read): Use correct offset here;  Change the
+	code to use a byte* instead of an IntPtr to reduce the number of
+	casts used. 
+
+	(Read): Use Marshal.Copy instead of the now
 	deprecated MemCopy.
-	
+
 	(IntPtrStream): New stream implementation, it maps to a region in
 	memory.
 

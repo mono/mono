@@ -18,14 +18,17 @@ using System.Runtime.InteropServices;
 namespace System.IO {
 
 	internal class IntPtrStream : Stream {
-		IntPtr base_address;
+		unsafe byte *base_address;
 		int size;
 		int position;
 		
 		public IntPtrStream (IntPtr base_address, int size)
 		{
-			this.base_address = base_address;
+			unsafe {
+				this.base_address = (byte*)((void *)base_address);
+			}
 			this.size = size;
+			position = 0;
 		}
 
 		public override bool CanRead {
@@ -85,8 +88,13 @@ namespace System.IO {
 			if (position > size - count)
 				count = size - position;
 
-			Marshal.Copy (base_address, buffer, offset, count);
+			unsafe {
+				Marshal.Copy ((IntPtr) (base_address + position), buffer, offset, count);
+			}
 			position += count;
+			for (int i = 0; i < count; i++){
+				Console.Write ((char) buffer [i + offset]);
+			}
 			return count;
 		}
 
@@ -96,8 +104,7 @@ namespace System.IO {
 				return -1;
 
 			unsafe {
-				byte *p = (byte*)base_address;
-				return p [position++];
+				return base_address [position++];
 			}
 		}
 
