@@ -47,7 +47,7 @@ namespace Mono.CSharp {
 			ConstantType = constant_type;
 			Name = name;
 			Expr = expr;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE, loc);
 			OptAttributes = attrs;
 		}
 

@@ -595,15 +595,6 @@ public class TypeManager {
 			return false;
 	}
 
-	public static bool IsPointerType (Type t)
-	{
-		if (t.FullName.IndexOf ("*") != -1)
-			return true;
-		else
-			return false;
-			       
-	}
-
 	/// <summary>
 	///   Returns the User Defined Types
 	/// </summary>

@@ -1692,7 +1692,8 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE |
 			Modifiers.ABSTRACT |
-			Modifiers.SEALED;
+			Modifiers.SEALED |
+			Modifiers.UNSAFE;
 
 		public Class (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (parent, name, l)
@@ -1704,7 +1705,7 @@ namespace Mono.CSharp {
 			else
 				accmods = Modifiers.PRIVATE;
 
-			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods);
+			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 			this.attributes = attrs;
 		}
 
@@ -1724,10 +1725,11 @@ namespace Mono.CSharp {
 		//   Modifiers allowed in a struct declaration
 		// </summary>
 		public const int AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
+			Modifiers.NEW       |
+			Modifiers.PUBLIC    |
 			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
+			Modifiers.INTERNAL  |
+			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
 		public Struct (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
@@ -1740,7 +1742,7 @@ namespace Mono.CSharp {
 			else
 				accmods = Modifiers.PRIVATE;
 			
-			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods);
+			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 
 			this.ModFlags |= Modifiers.SEALED;
 			this.attributes = attrs;
@@ -1852,6 +1854,7 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
+		        Modifiers.UNSAFE |
 			Modifiers.EXTERN;
 
 		//
@@ -1862,7 +1865,7 @@ namespace Mono.CSharp {
 			: base (name, parameters, l)
 		{
 			ReturnType = return_type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, l);
 			OptAttributes = attrs;
 		}
 
@@ -1959,9 +1962,15 @@ namespace Mono.CSharp {
 			if (!TypeContainer.AsAccessible (ret_type, ModFlags))
 				return false;
 
-			foreach (Type partype in parameters)
+			if (ret_type.IsPointer && !UnsafeOK (parent))
+				return false;
+			
+			foreach (Type partype in parameters){
 				if (!TypeContainer.AsAccessible (partype, ModFlags))
 					error = true;
+				if (partype.IsPointer && !UnsafeOK (parent))
+					error = true;
+			}
 
 			if (error)
 				return false;
@@ -2355,6 +2364,7 @@ namespace Mono.CSharp {
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
 			Modifiers.STATIC |
+			Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
 		//
@@ -2483,6 +2493,7 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE |
 			Modifiers.STATIC |
 		        Modifiers.VOLATILE |
+		        Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
 		public Field (string type, int mod, string name, Object expr_or_array_init,
@@ -2490,7 +2501,7 @@ namespace Mono.CSharp {
 			: base (name, loc)
 		{
 			Type = type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, loc);
 			Initializer = expr_or_array_init;
 			OptAttributes = attrs;
 		}
@@ -2505,6 +2516,9 @@ namespace Mono.CSharp {
 			if (!TypeContainer.AsAccessible (t, ModFlags))
 				return false;
 
+			if (t.IsPointer && !UnsafeOK (parent))
+				return false;
+				
 			if (RootContext.WarningLevel > 1){
 				Type ptype = parent.TypeBuilder.BaseType;
 
@@ -2580,6 +2594,7 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
+		        Modifiers.UNSAFE |
 			Modifiers.VIRTUAL;
 
 		public Property (string type, string name, int mod_flags, Block get_block, Block set_block,
@@ -2587,7 +2602,7 @@ namespace Mono.CSharp {
 			: base (name, loc)
 		{
 			Type = type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE, loc);
 			Get = get_block;
 			Set = set_block;
 			OptAttributes = attrs;
@@ -2802,6 +2817,9 @@ namespace Mono.CSharp {
 
 			// verify accessibility
 			if (!TypeContainer.AsAccessible (PropertyType, ModFlags))
+				return false;
+
+			if (PropertyType.IsPointer && !UnsafeOK (parent))
 				return false;
 			
 			if (!CheckBase (parent))
@@ -3037,6 +3055,7 @@ namespace Mono.CSharp {
 			Modifiers.VIRTUAL |
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
+			Modifiers.UNSAFE |
 			Modifiers.ABSTRACT;
 
 		public readonly string    Type;
@@ -3057,7 +3076,7 @@ namespace Mono.CSharp {
 		{
 			Type = type;
 			Initializer = init;
-			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE);  
+			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE, loc);  
 			Add = add_block;
 			Remove = rem_block;
 			OptAttributes = attrs;
@@ -3077,7 +3096,9 @@ namespace Mono.CSharp {
 
 			if (!TypeContainer.AsAccessible (EventType, ModFlags))
 				return false;
-			
+
+			if (EventType.IsPointer && !UnsafeOK (parent))
+				return false;
 
 			if (!EventType.IsSubclassOf (TypeManager.delegate_type)) {
 				Report.Error (66, Location, "'" + parent.Name + "." + Name +
@@ -3214,6 +3235,7 @@ namespace Mono.CSharp {
 			Modifiers.VIRTUAL |
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
+			Modifiers.UNSAFE |
 			Modifiers.ABSTRACT;
 
 		public readonly string     Type;
@@ -3234,7 +3256,7 @@ namespace Mono.CSharp {
 
 			Type = type;
 			InterfaceType = int_type;
-			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE);
+			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE, loc);
 			FormalParameters = parms;
 			Get = get_block;
 			Set = set_block;
@@ -3344,14 +3366,20 @@ namespace Mono.CSharp {
 				return false;
 
 			//
-			// verify accessibility
+			// verify accessibility and unsafe pointers
 			//
 			if (!TypeContainer.AsAccessible (IndexerType, ModFlags))
 				return false;
 
-			foreach (Type partype in parameters)
+			if (IndexerType.IsPointer && !UnsafeOK (parent))
+				return false;
+
+			foreach (Type partype in parameters){
 				if (!TypeContainer.AsAccessible (partype, ModFlags))
 					error = true;
+				if (partype.IsPointer && !UnsafeOK (parent))
+					error = true;
+			}
 
 			if (error)
 				return false;
@@ -3476,6 +3504,7 @@ namespace Mono.CSharp {
 
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
+			Modifiers.UNSAFE |
 			Modifiers.STATIC;
 
 		const int RequiredModifiers =
@@ -3539,7 +3568,7 @@ namespace Mono.CSharp {
 		{
 			OperatorType = type;
 			ReturnType = ret_type;
-			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PUBLIC);
+			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PUBLIC, loc);
 			FirstArgType = arg1type;
 			FirstArgName = arg1name;
 			SecondArgType = arg2type;

@@ -110,8 +110,10 @@ BUGS
 PENDING TASKS
 -------------
 
-	* Unsafe code.
-		Making the parser accept unsafe code.
+* Unsafe contexts:
+	Done: class, struct, interface
+	Everywhere where we lookup a type, we should test for unsafe pointers.
+	
 		
 * Static flow analysis
 

@@ -24,7 +24,8 @@ namespace Mono.CSharp {
 		public const int OVERRIDE  = 0x0400;
 		public const int EXTERN    = 0x0800;
 		public const int VOLATILE  = 0x1000;
-		public const int TOP       = 0x1000;
+		public const int UNSAFE    = 0x2000;
+		public const int TOP       = 0x2000;
 
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;
@@ -169,7 +170,7 @@ namespace Mono.CSharp {
 		//   Returns the new mask.  Side effect: reports any
 		//   incorrect attributes. 
 		// </summary>
-		public static int Check (int allowed, int mod, int def_access)
+		public static int Check (int allowed, int mod, int def_access, Location l)
 		{
 			int invalid_flags  = (~allowed) & mod;
 			int i;
@@ -177,6 +178,14 @@ namespace Mono.CSharp {
 			if (invalid_flags == 0){
 				int a = mod;
 
+				if ((mod & Modifiers.UNSAFE) != 0){
+					if (!RootContext.Unsafe){
+						Report.Error (227, l,
+							      "Unsafe code requires the --unsafe command " +
+							      "line option to be specified");
+					}
+				}
+				
 				//
 				// If no accessibility bits provided
 				// then provide the defaults.
@@ -197,7 +206,7 @@ namespace Mono.CSharp {
 				a = ((a & 2) >> 1) + (a & 5);
 				a = ((a & 4) >> 2) + (a & 3);
 				if (a > 1)
-					CSharpParser.error (107, "More than one protection modifier specified");
+					Report.Error (107, l, "More than one protection modifier specified");
 				
 				return mod;
 			}
@@ -206,7 +215,8 @@ namespace Mono.CSharp {
 				if ((i & invalid_flags) == 0)
 					continue;
 
-				CSharpParser.error (106, "the modifier `" + Name (i) + "' is not valid for this item");
+				Report.Error (106, l, "the modifier `" + Name (i) +
+					      "' is not valid for this item");
 			}
 
 			return allowed & mod;

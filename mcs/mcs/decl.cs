@@ -94,6 +94,24 @@ namespace Mono.CSharp {
 		}
 
 		public abstract bool Define (TypeContainer parent);
+
+		// 
+		// Whehter is it ok to use an unsafe pointer in this type container
+		//
+		public bool UnsafeOK (DeclSpace parent)
+		{
+			//
+			// First check if this MemberCore modifier flags has unsafe set
+			//
+			if ((ModFlags & Modifiers.UNSAFE) != 0)
+				return true;
+
+			if (parent.UnsafeContext)
+				return true;
+
+			Report.Error (214, Location, "Pointers can only be used in an unsafe context");
+			return false;
+		}
 	}
 
 	//
@@ -257,5 +275,19 @@ namespace Mono.CSharp {
 				Created = true;
 			}
 		}
+
+		//
+		// Whether this is an `unsafe context'
+		//
+		public bool UnsafeContext {
+			get {
+				if ((ModFlags & Modifiers.UNSAFE) != 0)
+					return true;
+				if (parent != null)
+					return parent.UnsafeContext;
+				return false;
+			}
+		}
+
 	}
 }

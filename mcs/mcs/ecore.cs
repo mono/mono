@@ -515,11 +515,10 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 
 			if (target_type == TypeManager.object_type) {
-
 				//
 				// A pointer type cannot be converted to object
 				// 
-				if (TypeManager.IsPointerType (expr_type))
+				if (expr_type.IsPointer)
 					return null;
 				
 				if (expr_type.IsClass)
@@ -1229,13 +1228,15 @@ namespace Mono.CSharp {
 			}
 
 			if (ec.InUnsafe) {
-				if (TypeManager.IsPointerType (expr_type))
+				if (expr_type.IsPointer){
 					if (target_type == TypeManager.void_ptr_type)
 						return new EmptyCast (expr, target_type);
+				}
 				
-				if (TypeManager.IsPointerType (target_type))
+				if (target_type.IsPointer){
 					if (expr is NullLiteral)
 						return new EmptyCast (expr, target_type);
+				}
 			}
 
 			return null;

@@ -56,16 +56,17 @@ namespace Mono.CSharp {
 		///   Modifiers allowed in a class declaration
 		/// </summary>
 		public const int AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
+			Modifiers.NEW       |
+			Modifiers.PUBLIC    |
 			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
+			Modifiers.INTERNAL  |
+		 	Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
 		public Interface (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (parent, name, l)
 		{
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, l);
 			OptAttributes = attrs;
 			
 			method_builders = new ArrayList ();
@@ -282,6 +283,14 @@ namespace Mono.CSharp {
 
 			if (return_type == null)
 				return;
+
+			if (return_type.IsPointer && !UnsafeOK (this))
+				return;
+
+			foreach (Type t in arg_types){
+				if (t.IsPointer && !UnsafeOK (this))
+					return;
+			}
 			
 			//
 			// Create the method
@@ -322,6 +331,9 @@ namespace Mono.CSharp {
 			Type [] setter_args = new Type [1];
 
 			if (prop_type == null)
+				return;
+
+			if (prop_type.IsPointer && !UnsafeOK (this))
 				return;
 			
 			setter_args [0] = prop_type;
@@ -405,6 +417,9 @@ namespace Mono.CSharp {
 
 			if (prop_type == null)
 				return;
+
+			if (prop_type.IsPointer && !UnsafeOK (this))
+				return;
 			
 			//
 			// Sets up the extra invisible `value' argument for setters.
@@ -415,6 +430,11 @@ namespace Mono.CSharp {
 
 				arg_types.CopyTo (value_arg_types, 0);
 				value_arg_types [count] = prop_type;
+
+				foreach (Type t in arg_types){
+					if (t.IsPointer && !UnsafeOK (this))
+						return;
+				}
 			} else {
 				value_arg_types = new Type [1];
 

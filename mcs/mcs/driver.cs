@@ -356,7 +356,7 @@ namespace Mono.CSharp
 
 					case "--unsafe":
 						RootContext.Unsafe = true;
-						break;
+						continue;
 						
 					case "--optimize":
 						RootContext.Optimize = true;

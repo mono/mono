@@ -42,6 +42,7 @@ namespace Mono.CSharp {
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
+		        Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
 		public Delegate (string type, int mod_flags, string name, Parameters param_list,
@@ -49,7 +50,7 @@ namespace Mono.CSharp {
 			: base (name, l)
 		{
 			this.ReturnType = type;
-			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
+			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC, l);
 			Parameters      = param_list;
 			OptAttributes   = attrs;
 		}

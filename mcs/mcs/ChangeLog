@@ -1,4 +1,14 @@
+2002-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs (MemberCore.UnsafeOK): New function to test that a
+	pointer is being declared in an unsafe context.
+
 2002-01-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* modifiers.cs (Modifiers.Check): Require a Location argument.
+	Report error 227 for Unsafe use.
+
+	* typemanager.cs: Remove IsPointerType, we should be using Type.IsPointer
 
 	* statement.cs (For.Emit): If the test is null, then report that
 	we do `return', as we wont reach anything afterwards.

@@ -47,7 +47,7 @@ namespace Mono.CSharp {
 			: base (parent, name, l)
 		{
 			this.BaseType = type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC, l);
 			OptAttributes = attrs;
 
 			ordered_enums = new ArrayList ();

@@ -2543,6 +2543,7 @@ modifier
 	| OVERRIDE 		{ $$ = Modifiers.OVERRIDE; }
 	| EXTERN		{ $$ = Modifiers.EXTERN; }
 	| VOLATILE		{ $$ = Modifiers.VOLATILE; }
+	| UNSAFE		{ $$ = Modifiers.UNSAFE; }
 	;
 
 opt_class_base
@@ -3231,9 +3232,14 @@ unchecked_statement
 	;
 
 unsafe_statement
-	: UNSAFE block
+	: UNSAFE 
 	{
-		$$ = new Unsafe ((Block) $2);
+		if (!RootContext.Unsafe){
+			Report.Error (227, lexer.Location, 
+				"Unsafe code can only be used if --unsafe is used");
+		}
+	} block {
+		$$ = new Unsafe ((Block) $3);
 	}
 
 
