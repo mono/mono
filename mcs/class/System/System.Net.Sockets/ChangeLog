@@ -1,3 +1,7 @@
+2005-03-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: don't Poll/block in Connect aither.
+
 2005-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: don't block on Accept if the socket is non-blocking.
