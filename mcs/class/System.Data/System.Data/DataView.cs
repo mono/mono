@@ -42,7 +42,7 @@ namespace System.Data
 		SortableColumn [] sortedColumns = null;
 		DataViewRowState rowState;
 		// DataRow -> DataRowView
-		ListDictionary addNewCache = new ListDictionary ();
+		UnsortedList addNewCache = new UnsortedList ();
 		OptionalSortedList rowViewPool = new OptionalSortedList ();
 
 		bool allowNew = true; 
@@ -189,12 +189,8 @@ namespace System.Data
 
 				if (recordIndex < rowViewPool.Count)
 					return (DataRowView) rowViewPool.GetByIndex (recordIndex);
-				IEnumerator e = addNewCache.GetEnumerator ();
-				int to = recordIndex - rowViewPool.Count;
-				for (int i = 0; i <= to; i++)
-					if (!e.MoveNext ())
-						throw new IndexOutOfRangeException ();
-				return (DataRowView) (((DictionaryEntry) e.Current).Value);
+				else
+					return (DataRowView) addNewCache.GetByIndex (recordIndex - rowViewPool.Count);
 			}
 		}
 
