@@ -1,3 +1,7 @@
+2003-05-28  Ville Palo <vi64pa@kolumbus.fi>
+
+	* XmlDataDocumentTest.cs: fixed some tests. Now works better on ms.net
+	
 2003-05-13  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* XmlDataDocumentTest.cs: Inherited from Assertion and removed
           Assertion. prefixes

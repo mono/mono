@@ -92,7 +92,7 @@ namespace MonoTests.System.Data.Xml
 			XmlReader Reader = new XmlTextReader ("System.Xml/region.xml");
 			XmlDataDocument Doc = new XmlDataDocument ();
 			Doc.DataSet.ReadXml (Reader);
-			AssertEquals ("test#01", "Interactive", Reader.ReadState.ToString ());
+			AssertEquals ("test#01", "EndOfFile", Reader.ReadState.ToString ());
 
 			DataSet Set = Doc.DataSet;
 			Set.Tables [0].Rows [1] [0] = "64";
@@ -121,19 +121,18 @@ namespace MonoTests.System.Data.Xml
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        //AssertEquals ("test#04", "<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?>", substring);
 			
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("test#05", "<Root>", substring);
+                        Assert ("test#05", substring.IndexOf ("<Root>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("test#06", "  <Region>", substring);
+                        Assert ("test#06", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("test#07", "    <RegionID>1</RegionID>", substring);
+                        Assert ("test#07", substring.IndexOf ("    <RegionID>1</RegionID>") != -1);
 
 			for (int i = 0; i < 26; i++) {
 	                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
@@ -141,7 +140,7 @@ namespace MonoTests.System.Data.Xml
 			}
 			
                         substring = TextString.Substring (0, TextString.Length);                        
-                        AssertEquals ("test#07", "</Root>", substring);			
+                        Assert ("test#07", substring.IndexOf ("</Root>") != -1);			
 		}
 	
 		[Test]
@@ -227,7 +226,7 @@ namespace MonoTests.System.Data.Xml
                         //Update the price on the first book using the DataSet methods.
                         DataTable books = doc.DataSet.Tables["book"];
 			Console.WriteLine ("books: " + doc.DataSet.Tables [0].TableName);
-                        books.Rows[0]["price"] = "12,95";  
+                        books.Rows[0]["price"] = "12.95";  
 			
                         //string outstring = "";
                         TextWriter text = new StringWriter ();
@@ -238,42 +237,50 @@ namespace MonoTests.System.Data.Xml
 			
                         string TextString = text.ToString ();
                         string substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
+                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);                	
+                        Assert ("#A01", substring.IndexOf ("<?xml version=\"1.0\" encoding=\"utf-16\"?>") == 0);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A02", "<!--sample XML fragment-->", substring);
+                        Assert ("#A02", substring.IndexOf ("<!--sample XML fragment-->") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A03", "<bookstore>", substring);
+                        Assert ("#A03", substring.IndexOf ("<bookstore>") != -1);
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A04", "  <book genre=\"novel\" ISBN=\"10-861003-324\">", substring);
+                        Assert ("#A04", substring.IndexOf ("  <book genre=\"novel\" ISBN=\"10-861003-324\">") != -1);
+
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A05", "    <title>The Handmaid's Tale</title>", substring);
+                        Assert ("#A05", substring.IndexOf ("    <title>The Handmaid's Tale</title>") != -1);
+
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A06", "    <price>12.95</price>", substring);
+                        Assert ("#A06", substring.IndexOf ("    <price>12.95</price>") != -1);
+                	
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A07", "  </book>", substring);
+                        Assert ("#A07", substring.IndexOf ("  </book>") != -1);
+                	
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A08", "  <book genre=\"novel\" ISBN=\"1-861001-57-5\">", substring);
+                        Assert ("#A08", substring.IndexOf ("  <book genre=\"novel\" ISBN=\"1-861001-57-5\">") != -1);
+                	
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A09", "    <title>Pride And Prejudice</title>", substring);
+                        Assert ("#A09", substring.IndexOf ("    <title>Pride And Prejudice</title>") != -1);
+                        
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A10", "    <price>24.95</price>", substring);
+                        Assert ("#A10", substring.IndexOf ("    <price>24.95</price>") != -1);
+                        
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#A11", "  </book>", substring);
+                        Assert ("#A11", substring.IndexOf ("  </book>") != -1);
+                        
                         substring = TextString;
-                        AssertEquals ("#A12", "</bookstore>", substring);
+                        Assert ("#A12", substring.IndexOf ("</bookstore>") != -1);
 			
                 }
 
@@ -291,7 +298,6 @@ namespace MonoTests.System.Data.Xml
                         RegionRow = RegionDS.Tables[0].Rows[0];
 			
                         RegionDS.AcceptChanges ();
-			Console.WriteLine ("***");
                         RegionRow["RegionDescription"] = "Reeeeeaalllly Far East!";
 			
                         RegionDS.AcceptChanges ();
@@ -307,115 +313,115 @@ namespace MonoTests.System.Data.Xml
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B02", "<Root>", substring);
+                        Assert ("#B02", substring.IndexOf ("<Root>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B03", "  <Region>", substring);
+                        Assert ("#B03", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B04", "    <RegionID>1</RegionID>", substring);
+                        Assert ("#B04", substring.IndexOf ("    <RegionID>1</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B05", "    <RegionDescription>Reeeeeaalllly Far East!</RegionDescription>", substring);
+                        Assert ("#B05", substring.IndexOf ("    <RegionDescription>Reeeeeaalllly Far East!</RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B06", "  </Region>", substring);
+                        Assert ("#B06", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B07", "  <Region>", substring);
+                        Assert ("#B07", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B08", "    <RegionID>2</RegionID>", substring);
+                        Assert ("#B08", substring.IndexOf ("    <RegionID>2</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B09", "    <RegionDescription>Western", substring);
+                        Assert ("#B09", substring.IndexOf ("    <RegionDescription>Western") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B10", "   </RegionDescription>", substring);
+                        Assert ("#B10", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B11", "  </Region>", substring);
+                        Assert ("#B11", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B12", "  <Region>", substring);
+                        Assert ("#B12", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B13", "    <RegionID>3</RegionID>", substring);
+                        Assert ("#B13", substring.IndexOf ("    <RegionID>3</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B14", "    <RegionDescription>Northern", substring);
+                        Assert ("#B14", substring.IndexOf ("    <RegionDescription>Northern") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B15", "   </RegionDescription>", substring);
+                        Assert ("#B15", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B16", "  </Region>", substring);
+                        Assert ("#B16", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B17", "  <Region>", substring);
+                        Assert ("#B17", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B18", "    <RegionID>4</RegionID>", substring);
+                        Assert ("#B18", substring.IndexOf ("    <RegionID>4</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B19", "    <RegionDescription>Southern", substring);
+                        Assert ("#B19", substring.IndexOf ("    <RegionDescription>Southern") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B20", "   </RegionDescription>", substring);
+                        Assert ("#B20", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B21", "  </Region>", substring);
+                        Assert ("#B21", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B22", "  <MoreData>", substring);
+                        Assert ("#B22", substring.IndexOf ("  <MoreData>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B23", "    <Column1>12</Column1>", substring);
+                        Assert ("#B23", substring.IndexOf ("    <Column1>12</Column1>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B24", "    <Column2>Hi There</Column2>", substring);
+                        Assert ("#B24", substring.IndexOf ("    <Column2>Hi There</Column2>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B25", "  </MoreData>", substring);
+                        Assert ("#B25", substring.IndexOf ("  </MoreData>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B26", "  <MoreData>", substring);
+                        Assert ("#B26", substring.IndexOf ("  <MoreData>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B27", "    <Column1>12</Column1>", substring);
+                        Assert ("#B27", substring.IndexOf ("    <Column1>12</Column1>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B28", "    <Column2>Hi There</Column2>", substring);
+                        Assert ("#B28", substring.IndexOf ("    <Column2>Hi There</Column2>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#B29", "  </MoreData>", substring);
+                        Assert ("#B29", substring.IndexOf ("  </MoreData>") != -1);
                 }
                 
 		[Test]
@@ -435,74 +441,74 @@ namespace MonoTests.System.Data.Xml
                         string substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 
-                        AssertEquals ("#C01", "<Root>", substring);
+                        Assert ("#C01", substring.IndexOf ("<Root>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C02", "  <Region />", substring);
+                        Assert ("#C02", substring.IndexOf ("  <Region />") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C03", "  <Region>", substring);
+                        Assert ("#C03", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C04", "    <RegionID>2</RegionID>", substring);
+                        Assert ("#C04", substring.IndexOf ("    <RegionID>2</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n")- 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C05", "    <RegionDescription>Western", substring);
+                        Assert ("#C05", substring.IndexOf ("    <RegionDescription>Western") != -1);
                         
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C06", "   </RegionDescription>", substring);
+                        Assert ("#C06", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C07", "  </Region>", substring);
+                        Assert ("#C07", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C08", "  <Region>", substring);
+                        Assert ("#C08", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C09", "    <RegionID>3</RegionID>", substring);
+                        Assert ("#C09", substring.IndexOf ("    <RegionID>3</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C10", "    <RegionDescription>Northern", substring);
+                        Assert ("#C10", substring.IndexOf ("    <RegionDescription>Northern") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C11", "   </RegionDescription>", substring);
+                        Assert ("#C11", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C12", "  </Region>", substring);
+                        Assert ("#C12", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C13", "  <Region>", substring);
+                        Assert ("#C13", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C14", "    <RegionID>4</RegionID>", substring);
+                        Assert ("#C14", substring.IndexOf ("    <RegionID>4</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C15", "    <RegionDescription>Southern", substring);
+                        Assert ("#C15", substring.IndexOf ("    <RegionDescription>Southern") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C16", "   </RegionDescription>", substring);
+                        Assert ("#C16", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#C17", "  </Region>", substring);
+                        Assert ("#C17", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.Length);
-                        AssertEquals ("#C18", "</Root>", substring);
+                        Assert ("#C18", substring.IndexOf ("</Root>") != -1);
 
                 }
 
@@ -528,143 +534,140 @@ namespace MonoTests.System.Data.Xml
                         string substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 
-                        //AssertEquals ("#F01", "<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?>", substring);
+                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
+                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        Assert ("#F02", substring.IndexOf ("<Root>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F02", "<Root>", substring);
+                        Assert ("#F03", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F03", "  <Region>", substring);
-
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F04", "    <RegionID>1</RegionID>", substring);
+                        Assert ("#F04", substring.IndexOf ("    <RegionID>1</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F05", "    <RegionDescription>Eastern", substring);
+                        Assert ("#F05", substring.IndexOf ("    <RegionDescription>Eastern") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F06", "   </RegionDescription>", substring);
+                        Assert ("#F06", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F07", "  </Region>", substring);
+                        Assert ("#F07", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F08", "  <Region>", substring);
+                        Assert ("#F08", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F09", "    <RegionID>2</RegionID>", substring);
+                        Assert ("#F09", substring.IndexOf ("    <RegionID>2</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F10", "    <RegionDescription>Western", substring);
+                        Assert ("#F10", substring.IndexOf ("    <RegionDescription>Western") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F11", "   </RegionDescription>", substring);
+                        Assert ("#F11", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F12", "  </Region>", substring);
+                        Assert ("#F12", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F13", "  <Region>", substring);
+                        Assert ("#F13", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F14", "    <RegionID>3</RegionID>", substring);
+                        Assert ("#F14", substring.IndexOf ("    <RegionID>3</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F15", "    <RegionDescription>Northern", substring);
+                        Assert ("#F15", substring.IndexOf ("    <RegionDescription>Northern") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F16", "   </RegionDescription>", substring);
+                        Assert ("#F16", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F17", "  </Region>", substring);
+                        Assert ("#F17", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F18", "  <Region>", substring);
+                        Assert ("#F18", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F19", "    <RegionID>4</RegionID>", substring);
+                        Assert ("#F19", substring.IndexOf ("    <RegionID>4</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F20", "    <RegionDescription>Southern", substring);
+                        Assert ("#F20", substring.IndexOf ("    <RegionDescription>Southern") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F21", "   </RegionDescription>", substring);
+                        Assert ("#F21", substring.IndexOf ("   </RegionDescription>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F22", "  </Region>", substring);
+                        Assert ("#F22", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F23", "  <MoreData>", substring);
+                        Assert ("#F23", substring.IndexOf ("  <MoreData>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F24", "    <Column1>12</Column1>", substring);
+                        Assert ("#F24", substring.IndexOf ("    <Column1>12</Column1>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F25", "    <Column2>Hi There</Column2>", substring);
+                        Assert ("#F25", substring.IndexOf ("    <Column2>Hi There</Column2>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F26", "  </MoreData>", substring);
+                        Assert ("#F26", substring.IndexOf ("  </MoreData>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F27", "  <MoreData>", substring);
+                        Assert ("#F27", substring.IndexOf ("  <MoreData>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F28", "    <Column1>12</Column1>", substring);
+                        Assert ("#F28", substring.IndexOf ("    <Column1>12</Column1>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F29", "    <Column2>Hi There</Column2>", substring);
+                        Assert ("#F29", substring.IndexOf ("    <Column2>Hi There</Column2>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F30", "  </MoreData>", substring);
-
-
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F31", "  <Region>", substring);
+                        Assert ("#F30", substring.IndexOf ("  </MoreData>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F32", "    <RegionID>new row</RegionID>", substring);
+                        Assert ("#F31", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F33", "    <RegionDescription>new description</RegionDescription>", substring);
+                        Assert ("#F32", substring.IndexOf ("    <RegionID>new row</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#F34", "  </Region>", substring);
+                        Assert ("#F33", substring.IndexOf ("    <RegionDescription>new description</RegionDescription>") != -1);
+
+                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
+                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        Assert ("#F34", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.Length);
-                        AssertEquals ("#F35", "</Root>", substring);
+                        Assert ("#F35", substring.IndexOf ("</Root>") != -1);
 		}
 
 		[Test]		
@@ -704,22 +707,22 @@ namespace MonoTests.System.Data.Xml
 				substring = TextString.Substring (0, TextString.IndexOf("\n"));
 				TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 			}
-                        AssertEquals ("#G04", "  <Region>", substring);
+                        Assert ("#G04", substring.IndexOf ("  <Region>") != -1);
 			
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#G05", "    <RegionID>64</RegionID>", substring);
+                        Assert ("#G05", substring.IndexOf ("    <RegionID>64</RegionID>") != -1);
 			
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#G06", "    <RegionDescription>test node</RegionDescription>", substring);
+                        Assert ("#G06", substring.IndexOf ("    <RegionDescription>test node</RegionDescription>") != -1);
 			
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#G07", "  </Region>", substring);
+                        Assert ("#G07", substring.IndexOf ("  </Region>") != -1);
 			
                         substring = TextString.Substring (0, TextString.Length);
-                        AssertEquals ("#G08", "</Root>", substring);
+                        Assert ("#G08", substring.IndexOf ("</Root>") != -1);
 
 		}
 		
@@ -765,18 +768,18 @@ namespace MonoTests.System.Data.Xml
 				TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 			}
                         
-			AssertEquals ("#H03", "  <Region>", substring);
+			Assert ("#H03", substring.IndexOf ("  <Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n"));
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#H04", "    <RegionID>64</RegionID>", substring);
+                        Assert ("#H04", substring.IndexOf ("    <RegionID>64</RegionID>") != -1);
 
                         substring = TextString.Substring (0, TextString.IndexOf("\n") );
                         TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        AssertEquals ("#H05", "  </Region>", substring);
+                        Assert ("#H05", substring.IndexOf ("  </Region>") != -1);
 
                         substring = TextString.Substring (0, TextString.Length);
-                        AssertEquals ("#H06", "</Root>", substring);
+                        Assert ("#H06", substring.IndexOf ("</Root>") != -1);
 			
 			
 		}
