@@ -1,3 +1,10 @@
+2003-01-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* MACTripleDES.cs: Now working (the problem was with my stream usage
+	which was removed for performance reason).
+	* TripleDES.cs: Fixed key generation (wasn't called and returned
+	null).
+
 2003-01-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RNGCryptoServiceProvider.cs: Changed methods interacting with 

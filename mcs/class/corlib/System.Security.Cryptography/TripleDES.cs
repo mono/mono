@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -16,6 +16,7 @@ namespace System.Security.Cryptography {
 // a.	FIPS PUB 46-3: TripleDES
 //	http://csrc.nist.gov/publications/fips/fips46-3/fips46-3.pdf
 // b.	ANSI X9.52
+//	not free :-(
 //	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E52%2D1998
 
 public abstract class TripleDES : SymmetricAlgorithm {
@@ -27,22 +28,30 @@ public abstract class TripleDES : SymmetricAlgorithm {
 		BlockSizeValue = 64;
 		FeedbackSizeValue = 64;
 
-		LegalKeySizesValue = new KeySizes[1];
-		LegalKeySizesValue[0] = new KeySizes(128, 192, 64);
+		LegalKeySizesValue = new KeySizes [1];
+		LegalKeySizesValue [0] = new KeySizes (128, 192, 64);
 
-		LegalBlockSizesValue = new KeySizes[1];
-		LegalBlockSizesValue[0] = new KeySizes(64, 64, 0);
+		LegalBlockSizesValue = new KeySizes [1];
+		LegalBlockSizesValue [0] = new KeySizes (64, 64, 0);
 	}
 
 	public override byte[] Key {
-		get { return KeyValue; }
+		get {
+			if (KeyValue == null) {
+				// generate keys as long as we get weak keys
+				GenerateKey ();
+				while (IsWeakKey (KeyValue))
+					GenerateKey ();
+			}
+			return KeyValue;
+		}
 		set { 
 			if (value == null)
 				throw new ArgumentNullException ();
 			// this will check for both key size and weak keys
 			if (IsWeakKey (value))
 				throw new CryptographicException ();
-			KeyValue = (byte[]) value.Clone(); 
+			KeyValue = (byte[]) value.Clone (); 
 		}
 	}
 
