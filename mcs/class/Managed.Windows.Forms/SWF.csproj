@@ -84,6 +84,11 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AccessibleEvents.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Assembly\Consts.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -335,6 +340,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Cursor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\Cursors.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
