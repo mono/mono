@@ -822,6 +822,7 @@ System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs
 System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs
 System.Security.Cryptography/AsymmetricSignatureDeformatter.cs
 System.Security.Cryptography/AsymmetricSignatureFormatter.cs
+System.Security.Cryptography/Base64Constants.cs
 System.Security.Cryptography/CipherMode.cs
 System.Security.Cryptography/CryptoAPITransform.cs
 System.Security.Cryptography/CryptoConfig.cs
