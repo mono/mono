@@ -1,3 +1,9 @@
+2004-06-18  Jackson Harper  <jackson@ximian.com>
+
+	* assembly.c: Trace loading assemblies.
+	* loader.c: Trace loading native libraries.
+	* mono-config.c: Trace loading config files.
+	
 2004-06-18  Dick Porter  <dick@ximian.com>
 
 	* locales.c: Tell ICU the lengths of strings, it can cope with
