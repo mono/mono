@@ -1,5 +1,8 @@
 2002-12-06  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs (pp_expr): Properly recurse here (use pp_expr
+	instead of pp_and).
+
 	* expression.cs (Binary.ResolveOperator): I can only use the
 	Concat (string, string, string) and Concat (string, string,
 	string, string) if the child is actually a concatenation of

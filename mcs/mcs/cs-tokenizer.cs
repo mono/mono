@@ -1197,7 +1197,6 @@ namespace Mono.CSharp
 		bool pp_expr (ref string s)
 		{
 			bool va = pp_and (ref s);
-
 			s = s.Trim ();
 			int len = s.Length;
 			if (len > 0){
@@ -1206,14 +1205,14 @@ namespace Mono.CSharp
 				if (c == '|'){
 					if (len > 2 && s [1] == '|'){
 						s = s.Substring (2);
-						return va | pp_and (ref s);
+						return va | pp_expr (ref s);
 					} else {
 						Error_InvalidDirective ();
 						return false;
 					}
 				} 
 			}
-
+			
 			return va;
 		}
 
