@@ -264,6 +264,7 @@ System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/Calendar.cs
 System.Globalization/CalendarWeekRule.cs
 System.Globalization/CalendricalCalculations.cs
+System.Globalization/CharUnicodeInfo.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
 System.Globalization/CultureInfo.cs
