@@ -34,12 +34,18 @@ namespace CIR {
 		ModuleBuilder mb;
 
 		Report report;
+
+		Type object_type;
 		
 		public RootContext ()
 		{
+			object o = null;
+			
 			tree = new Tree ();
 			type_manager = new TypeManager ();
 			report = new Report ();
+
+			object_type = o.GetType ();
 		}
 
 		public TypeManager TypeManager {
@@ -78,12 +84,11 @@ namespace CIR {
 		{
 			ArrayList bases = iface.Bases;
 			Hashtable source_ifaces;
-			int count = bases.Count;
 			Type [] tbases;
 			int i;
 
 			error = false;
-			if (count == 0)
+			if (bases == null)
 				return null;
 			
 			tbases = new Type [bases.Count];
@@ -101,7 +106,8 @@ namespace CIR {
 				parent = (Interface) source_ifaces [name];
 				if (parent == null){
 					error = true;
-					report.Error (246, "Can not find type `"+name+"'");
+					report.Error (246, "Can not find type `"+name+
+						      "' while defining interface `"+iface.Name+"'");
 					return null;
 				}
 				t = CreateInterface (parent);
@@ -126,8 +132,11 @@ namespace CIR {
 		//
 		TypeBuilder CreateInterface (Interface iface)
 		{
-			TypeBuilder tb;
+			TypeBuilder tb = iface.Definition;
 			bool error;
+
+			if (tb != null)
+				return tb;
 			
 			if (iface.InTransit)
 				return null;
@@ -138,12 +147,13 @@ namespace CIR {
 
 			if (error)
 				return null;
-			
+
 			tb = mb.DefineType (name,
 					    TypeAttributes.Interface |
 					    TypeAttributes.Public |
 					    TypeAttributes.Abstract,
-					    null, ifaces);
+					    null,   // Parent Type
+					    ifaces);
 			iface.Definition = tb;
 
 			//
@@ -155,7 +165,13 @@ namespace CIR {
 			iface.InTransit = false;
 			return tb;
 		}
-		
+
+		// <remarks>
+		//   This function is used to resolve the interfaces:
+		//   it creates the Type's as it scans for the user defined
+		//   interfaces.  This is required so we can tell the
+		//   interfaces from classes appart on the class resolution.
+		// </remarks>
 		public void ResolveInterfaceBases ()
 		{
 			Hashtable ifaces = tree.Interfaces;
@@ -163,13 +179,60 @@ namespace CIR {
 			if (ifaces == null)
 				return;
 
-			foreach (string name in ifaces){
-				CreateInterface ((Interface) ifaces [name]);
-			}
+			foreach (DictionaryEntry de in ifaces)
+				CreateInterface ((Interface) de.Value);
 		}
 
+		Type [] GetBases (out Type parent, out bool error)
+		{
+			error = false;
+			parent = null;
+
+			return null;
+		}
+		
+		TypeBuilder CreateClass (Class c)
+		{
+			TypeBuilder tb = c.Definition;
+			Type parent;
+			Type [] ifaces;
+			bool error;
+			
+			if (tb != null)
+				return tb;
+
+			if (c.InTransit)
+				return null;
+			c.InTransit = true;
+
+			string name = c.Name;
+
+			if (c.Bases != null){
+				ifaces = GetBases (out parent, out error);
+			} else {
+				ifaces = null;
+				parent = object_type;
+			}
+
+			return tb;
+		}
+		       
+		// <remarks>
+		//   This function resolves the parenthood of the classes
+		//   This should be invoked after the ResolveInterfaceBases,
+		//   as we need to be able to tell the difference between interfaces
+		//   and classes in the list of `bases' that was provided in the source
+		// </remarks>
 		public void ResolveClassBases ()
 		{
+			Hashtable classes = tree.Classes;
+
+			if (classes == null)
+				return;
+
+			foreach (DictionaryEntry de in classes){
+				CreateClass ((Class) (de.Value));
+			}
 		}
 
 		// <summary>

@@ -1,4 +1,10 @@
+2001-08-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs: Beginning of the class resolution.
+
 2001-08-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs: Provide better error reporting. 
 
 	* cs-parser.jay (interface_base): set our $$ to be interfaces.
 
