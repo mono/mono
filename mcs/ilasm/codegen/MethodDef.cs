@@ -107,6 +107,10 @@ namespace Mono.ILASM {
                         get { return (call_conv & PEAPI.CallConv.Vararg) != 0; }
                 }
 
+                public bool IsStatic {
+                        get { return (meth_attr & PEAPI.MethAttr.Static) != 0; }
+                }
+
                 public ITypeRef[] ParamTypeList () {
 
                         if (param_list == null)
@@ -621,7 +625,8 @@ namespace Mono.ILASM {
                         if (param_list == null)
                                 return;
 
-                        int count = 0;
+                        int count = (IsStatic ? 0 : 1);
+                        
                         foreach (ParamDef param in param_list) {
                                 if (param.Name != null)
                                         named_param_table.Add (param.Name, count);
