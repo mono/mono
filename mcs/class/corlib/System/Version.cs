@@ -10,18 +10,72 @@
 using System.Globalization;
 
 namespace System {
-
+	
+	[Serializable]
 	public sealed class Version : ICloneable, IComparable {
+
 		int major, minor, build, revision;
 
-		const int MAXINT = int.MaxValue;
+		private const int UNDEFINED = -1;
 		
+		private void CheckedSet (int defined, int major, int minor, int build, int revision)
+		{
+			// defined should be 2, 3 or 4
+
+			if (major < 0) {
+				throw new ArgumentOutOfRangeException ("major");
+			}
+			this.major = major;
+
+			if (minor < 0) {
+				throw new ArgumentOutOfRangeException ("minor");
+			}
+			this.minor = minor;
+
+			if (defined == 2) {
+				this.build = UNDEFINED;
+				this.revision = UNDEFINED;
+				return;
+			}
+
+			if (build < 0) {
+				throw new ArgumentOutOfRangeException ("build");
+			}
+			this.build = build;
+
+			if (defined == 3) {
+				this.revision = UNDEFINED;
+				return;
+			}
+
+			if (revision < 0) {
+				throw new ArgumentOutOfRangeException ("revision");
+			}
+			this.revision = revision;
+		}
+
+		public Version ()
+		{
+			CheckedSet (2, 0, 0, -1, -1);
+		}
+			
 		public Version (string version)
 		{
 			int n;
-			string [] vals = version.Split (new Char [] {'.'});
+			string [] vals;
+			int major = -1, minor = -1, build = -1, revision = -1;
 			
+			if (version == null) {
+				throw new ArgumentNullException ("version");
+			}
+
+			vals = version.Split (new Char [] {'.'});
 			n = vals.Length;
+
+			if (n < 2 || n > 4) {
+				throw new ArgumentException (Locale.GetText ("There must be 2, 3 or 4 components in the version string"));
+			}
+	
 			if (n > 0)
 				major = int.Parse (vals [0]);
 			if (n > 1)
@@ -30,30 +84,23 @@ namespace System {
 				build = int.Parse (vals [2]);
 			if (n > 3)
 				revision = int.Parse (vals [3]);
+
+			CheckedSet (n, major, minor, build, revision);
 		}
 		
 		public Version (int major, int minor)
 		{
-			this.major = major;
-			this.minor = minor;
-			this.build = MAXINT;
-			this.revision = MAXINT;
+			CheckedSet (2, major, minor, 0, 0);
 		}
 
 		public Version (int major, int minor, int build)
 		{
-			this.major = major;
-			this.minor = minor;
-			this.build = build;
-			this.revision = MAXINT;
+			CheckedSet (3, major, minor, build, 0);
 		}
 
 		public Version (int major, int minor, int build, int revision)
 		{
-			this.major = major;
-			this.minor = minor;
-			this.build = build;
-			this.revision = revision;
+			CheckedSet (4, major, minor, build, revision);
 		}
 
 		public int Build {
@@ -90,10 +137,10 @@ namespace System {
 			Version v;
 			
 			if (version == null)
-				return 1;
+				throw new ArgumentNullException ("version");
 			
 			if (! (version is Version))
-				throw new ArgumentException ("version");
+				throw new ArgumentException (Locale.GetText ("Argument to Version.CompareTo must be a Version"));
 
 			v = version as Version;
 
@@ -104,15 +151,14 @@ namespace System {
 
 			if (this.minor > v.minor)
 				return 1;
-			else if (this.minor < this.minor)
+			else if (this.minor < v.minor)
 				return -1;
 
 			if (this.build > v.build)
 				return 1;
-			else if (this.build < this.build)
+			else if (this.build < v.build)
 				return -1;
 
-			// FIXME: Compare revision or build first?
 			if (this.revision > v.revision)
 				return 1;
 			else if (this.revision < v.revision)
@@ -125,9 +171,7 @@ namespace System {
 		{
 			Version x;
 			
-			if (obj == null)
-				throw new ArgumentNullException ("obj");
-			if (!(obj is Version))
+			if (obj == null || !(obj is Version))
 				return false;
 
 			x = (Version) obj;
@@ -153,9 +197,9 @@ namespace System {
 		{
 			string mm = major.ToString () + "." + minor.ToString ();
 			
-			if (build != MAXINT)
+			if (build != UNDEFINED)
 				mm = mm + "." + build.ToString ();
-			if (revision != MAXINT)
+			if (revision != UNDEFINED)
 				mm = mm + "." + revision.ToString ();
 
 			return mm;
@@ -178,19 +222,50 @@ namespace System {
 			if (fields == 2)
 				return major.ToString () + "." + minor.ToString ();
 			if (fields == 3){
-				if (build == MAXINT)
+				if (build == UNDEFINED)
 					throw new ArgumentException (Locale.GetText ("fields is larger than the number of components defined in this instance"));
 				return major.ToString () + "." + minor.ToString () + "." +
 					build.ToString ();
 			}
 			if (fields == 4){
-				if (build == MAXINT || revision == MAXINT)
+				if (build == UNDEFINED || revision == UNDEFINED)
 					throw new ArgumentException (Locale.GetText ("fields is larger than the number of components defined in this instance"));
 				return major.ToString () + "." + minor.ToString () + "." +
 					build.ToString () + "." + revision.ToString ();
 			}
 			throw new ArgumentException (Locale.GetText ("Invalid fields parameter: ") + fields.ToString());	
 		}
+
+		public static bool operator== (Version v1, Version v2) 
+		{
+			return v1.Equals (v2);
+		}
+
+		public static bool operator!= (Version v1, Version v2)
+		{
+			return !v1.Equals (v2);
+		}
+
+		public static bool operator> (Version v1, Version v2)
+		{
+			return v1.CompareTo (v2) > 0;
+		}
+
+		public static bool operator>= (Version v1, Version v2)
+		{
+			return v1.CompareTo (v2) >= 0;
+		}
+
+		public static bool operator< (Version v1, Version v2)
+		{
+			return v1.CompareTo (v2) < 0;
+		}
+
+		public static bool operator<= (Version v1, Version v2)
+		{
+			return v1.CompareTo (v2) <= 0;
+		}
+
 	}
 }
 

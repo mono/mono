@@ -1,3 +1,6 @@
+2002-03-04  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* VersionTest.cs: created test cases for System.Version
+
 2002-03-03  Duco Fijma  <duco@lorentz.xs4all.nl>
 	* CharEnumeratorTest.cs: completed the test cases
 

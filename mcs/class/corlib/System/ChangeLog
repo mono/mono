@@ -1,3 +1,11 @@
+2002-03-04  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* Version.cs: many fixes to failures found by the newly created
+	test cases for this class. Specifically, the CompareTo member
+	returned wrong values due to the use of Int32.MaxValue as a special
+	value indicating an "undefined" version component. Also implemented the
+	missing operators (==, <, >, etc.), one missing constructor and
+	and some exception throwing.
+
 2002-03-04  Nick Drochak  <ndrochak@gol.com>
 
 	* IServiceProvider.cs: Add missing attribute: ComVisible(false)
