@@ -1,3 +1,10 @@
+2003-08-28  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_Type_BindGenericParameters): Use
+	`klass->generic_inst' instead of `&klass->byval_arg' in the
+	mono_type_get_object() call.  The returned type must be
+	MONO_TYPE_GENERICINST and not MONO_TYPE_CLASS.
+
 2003-08-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* NOTES: New file.
