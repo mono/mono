@@ -1,3 +1,23 @@
+2004-03-17  Martin Baulig  <martin@ximian.com>
+
+	* class.h (MonoGenericInst): Replaced the `GList *nested' with an
+	`int count_nested' and a `MonoType **nested'.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): Moved
+	most of the functionality into a new static
+	do_mono_reflection_bind_generic_parameters() and don't take a
+	`MonoType *nested_in' argument any more.  Don't compute nested
+	types here.
+	(mono_reflection_generic_inst_get_nested_types): New public method
+	to get nested types.
+
+	* class.c (mono_class_create_generic): Set `klass->nested_in' if
+	we're a nested class.
+
+	* icall.c (ves_icall_MonoGenericInst_GetNestedTypes): Call
+	mono_reflection_generic_inst_get_nested_types() to compute the
+	nested types.
+
 2004-03-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (ves_icall_System_Threading_Thread_Abort): Add a more
