@@ -21,6 +21,7 @@ namespace Mono.CSharp {
 		Namespace parent;
 		string name;
 		ArrayList using_clauses;
+		Hashtable using_namespaces;
 		Hashtable aliases;
 		public bool DeclarationFound = false;
 
@@ -94,8 +95,18 @@ namespace Mono.CSharp {
 			if (using_clauses == null)
 				using_clauses = new ArrayList ();
 
+			if (using_namespaces == null)
+				using_namespaces = new Hashtable ();
+
+			if (using_namespaces.ContainsKey (ns)) {
+				Report.Warning (105, loc, "The using directive for '" + ns +
+					                  "' appeared previously in this namespace");
+				return;
+			}
+
 			UsingEntry ue = new UsingEntry (ns, loc);
 			using_clauses.Add (ue);
+			using_namespaces.Add (ns, ns);
 		}
 
 		public ArrayList UsingTable {

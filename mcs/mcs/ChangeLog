@@ -1,3 +1,10 @@
+2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* namespace.cs: avoid duplicated 'using xxx' being added to
+	using_clauses. This prevents mcs from issuing and 'ambiguous type' error
+	when we get more than one 'using' statement for the same namespace.
+	Report a CS0105 warning for it.
+
 2002-11-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs (consume_identifier): use read directly, instead
