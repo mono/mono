@@ -191,10 +191,9 @@ namespace System.Windows.Forms {
 		
 			private void OnDrawMenu (Graphics dc) {
 								
-				if (owner.menu != null) {													
-					Rectangle rect = new Rectangle (0,0, Width, 0);								
-					MenuAPI.DrawMenuBar (dc, owner.menu.Handle, rect);				
-				}			
+				if (owner.menu != null) {
+					MenuAPI.DrawMenuBar (owner.menu);
+				}
 			}
 			private void OnFormTextChanged(object sender, EventArgs e) {
 				this.Text = ((Control)sender).Text;
@@ -942,15 +941,8 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_NCPAINT: {
-					if (this.menu != null) {
-						Graphics	hdc;
-						Rectangle	rect;
-
-						hdc = XplatUI.GetMenuDC(window.Handle, m.WParam);
-						rect = new Rectangle (0, ThemeEngine.Current.CaptionHeight + ThemeEngine.Current.FixedFrameBorderSize.Height, Width, 0);
-
-						MenuAPI.DrawMenuBar (hdc, menu.Handle, rect);
-						XplatUI.ReleaseMenuDC(window.Handle, hdc);
+					if (this.menu != null) {						
+						MenuAPI.DrawMenuBar (menu.Handle);
 					}
 
 					base.WndProc(ref m);

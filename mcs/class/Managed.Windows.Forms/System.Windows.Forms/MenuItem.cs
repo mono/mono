@@ -424,7 +424,7 @@ namespace System.Windows.Forms
 			}
 			else {
 				string_format = string_format_text;
-			}
+			}		
 
 			if (Separator == true) {
 				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
@@ -450,28 +450,27 @@ namespace System.Windows.Forms
 
 				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
 					rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
-			}
-
+			}			
+			
+			Color color_text;
+			Color color_back;
+			
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				Rectangle rect = e.Bounds;
-				rect.X++;
-				rect.Width -=2;
-
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(ThemeEngine.Current.ColorHilight), rect);
+				color_text = ThemeEngine.Current.ColorHilightText;
+				color_back = ThemeEngine.Current.ColorHilight;
+			}
+			else {
+				color_text = ThemeEngine.Current.ColorMenuText;
+				color_back = ThemeEngine.Current.ColorMenu;
 			}
 
-			if (Enabled) {
-
-				Color color_text;
-				
-				if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-					color_text = ThemeEngine.Current.ColorHilightText;
-				}
-				else {
-					color_text = ThemeEngine.Current.ColorMenuText;
-				}
-
+			/* Draw background */
+			Rectangle rect_back = e.Bounds;
+			rect_back.X++;
+			rect_back.Width -=2;
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color_back), rect_back);
+			
+			if (Enabled) {					
 				e.Graphics.DrawString (Text, e.Font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
 					rect_text, string_format);

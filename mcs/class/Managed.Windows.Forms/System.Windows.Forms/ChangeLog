@@ -1,3 +1,9 @@
+2005-02-19  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Form.cs: Menu integration with non-client area
+	* MenuItem.cs: Menu integration with non-client area
+	* MenuAPI.cs: Menu integration with non-client area
+
 2005-02-18  Peter Bartok  <pbartok@novell.com>
 
 	* MethodInvoker.cs: Added
