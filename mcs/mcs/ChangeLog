@@ -1,3 +1,9 @@
+2005-02-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Atttribute.Resolve): Add cache for parameter-less
+	attributes. Removed useless attribute double check.
+	It saves almost 2MBs for corlib.
+
 2005-02-25  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #72924.
