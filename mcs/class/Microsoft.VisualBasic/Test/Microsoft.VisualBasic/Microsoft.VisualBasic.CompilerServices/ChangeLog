@@ -1,3 +1,7 @@
+2004-09-14  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
+	* UtilsTest.cs: upgraded to use nunit Assert class, also corrected testing for null that 
+	  was giving an exception when run.
+	  
 2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Added UtilsTest.cs:
 		More tests (with bidimensional arrays) for Utils.CopyArray undocumented runtime function,
