@@ -12,11 +12,12 @@ EXES = demo.exe Demo2.exe singlewidget.exe
 LIBRARY = System.Windows.Forms.dll 
 
 LIB_MCS_FLAGS = /r:glib-sharp.dll /r:gdk-sharp.dll /r:gtk-sharp.dll \
-    /r:gnome-sharp.dll /r:System.Drawing.dll
+    /r:gnome-sharp.dll /r:System.Drawing.dll -L `pkg-config --variable=prefix gtk-sharp`/lib
 
 EXE_MCS_FLAGS = /r:$(LIBRARY) /r:System.Drawing.dll
 
 LIB_SOURCES = \
+	TODOAttribute.cs	\
 	AnchorStyles.cs		\
 	Application.cs		\
 	ContainerControl.cs	\

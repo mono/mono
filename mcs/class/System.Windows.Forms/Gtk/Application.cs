@@ -9,8 +9,6 @@
 
 using System;
 using System.Drawing;
-using Gtk;
-using GtkSharp;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {

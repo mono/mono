@@ -34,7 +34,10 @@ namespace System.Windows.Forms {
 			// needs to initialized with a textbuffer from TextBoxBase
 			// we need default adjustments, but the scrolledwindow constructor does not take null as argument
 			
-			Gtk.ScrolledWindow window = new Gtk.ScrolledWindow (new Gtk.Adjustment (IntPtr.Zero), new Gtk.Adjustment (IntPtr.Zero));
+			Gtk.ScrolledWindow window = new Gtk.ScrolledWindow (
+						 new Gtk.Adjustment (0, 0, 1, .1, .1, .1),
+						 new Gtk.Adjustment (0, 0, 1, .1, .1, .1));
+
 			window.SetPolicy(Gtk.PolicyType.Never, Gtk.PolicyType.Never);
 			window.AddWithViewport(TextView);
 			return window;

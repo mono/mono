@@ -212,7 +212,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public Icon Icon {
+		public System.Drawing.Icon Icon {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -300,7 +300,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				this.menu = value;
-				Control.Controls.Add(this.menu);
+				Controls.Add(this.menu);
 			}
 		}
 
