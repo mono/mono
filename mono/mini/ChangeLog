@@ -1,5 +1,8 @@
 2005-01-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_call_opcode): Add missing MONO_SSA_LOAD/STORE
+	flags.
+
 	* ssa.c (mono_ssa_compute): Fix crashes when using AOT.
 
 	* aot.c (mono_compile_assembly): Fix a warning.
