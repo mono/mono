@@ -219,9 +219,10 @@ Directories are separated by the platform path separator (colons on unix). Examp
 .B /home/username/lib:/usr/local/mono/lib
 .TP
 .I "MONO_DISABLE_SHM"
-If this variable is set, it disables the Windows I/O Emulation layer,
-and handles (files, events, mutexes, pipes) will not be shared across
-processes.  This option is only available on Unix.
+If this variable is set, it disables the shared memory part of the
+Windows I/O Emulation layer, and handles (files, events, mutexes,
+pipes) will not be shared across processes.  Process creation is also
+disabled.  This option is only available on Unix.
 .TP
 .I "MONO_CFG_DIR"
 If set, this variable overrides the default system configuration directory
@@ -237,6 +238,19 @@ If set, enables some features of the runtime useful for debugging.
 
 Currently it only makes the runtime display the stack traces for all the
 threads running and exit. It may not exit cleanly. Use at your own risk.
+.TP
+.I "MONO_EXTERNAL_ENCODINGS"
+If set, contains a colon-separated list of text encodings to try when
+turning externally-generated text (e.g. command-line arguments or
+filenames) into unicode.  The encoding names come from the list
+provided by iconv, and the special case "default_locale" which refers
+to the current locale's default encoding.
+
+When reading externally-generated text strings UTF-8 is tried first,
+and then this list is tried in order with the first successful
+conversion ending the search.  When writing external text (e.g. new
+filenames or arguments to new processes) the first item in this list
+is used, or UTF-8 if the environment variable is not set.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
