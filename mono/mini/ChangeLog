@@ -1,3 +1,10 @@
+2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c (mono_main): Set mono_stats.enabled if needed.
+
+	* mini.c (handle_alloc): New helper function used by CEE_NEWOBJ and
+	CEE_BOX.
+
 2004-08-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* mini-x86.c: use a 1 op rather than a 2 op tls access
