@@ -1,3 +1,11 @@
+2004-12-01  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* inssel-s390.brg : Add OP_OUTARG_VT (OP_REFANYTYPE (reg)) rule.
+	
+	* cpu-s390.md : Increase instruction length of oparglist.
+
+	* mini-s390.c : Implement vararg and TYPEDEBYREF support.
+
 2004-11-30  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): In CEE_CALLVIRT, added support for

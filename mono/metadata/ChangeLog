@@ -1,3 +1,9 @@
+2004-12-01  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* icall.c (mono_ArgIterator_Setup) : Conditionally compile calculation of
+	iter->args based on whether parameters are passed in registers (i.e.
+	MONO_ARCH_REGPARMS is defined)
+
 2004-12-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Use the remapped dll name in

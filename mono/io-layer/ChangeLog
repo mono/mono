@@ -1,3 +1,7 @@
+2004-12-01 Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* atomic.h : Fix InterlockedCompareExchange for s390/s390x.
+
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* processes.c: unquote the cmd path, allow for ' or " when quoting and
