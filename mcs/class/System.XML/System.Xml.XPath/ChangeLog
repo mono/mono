@@ -1,3 +1,8 @@
+2003-01-02  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Tokenizer.cs : Fixed ParseIdentifier to allow digits.
+		(It should be a temporary fix.)
+
 2002-09-22  Nick Drochak  <ndrochak@gol.com>
 
 	* Parser.cs: Remove extraneous "using" that was stopping the build.

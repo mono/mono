@@ -130,12 +130,14 @@ namespace System.Xml.XPath
 		{
 			StringBuilder sb = new StringBuilder ();
 
+			// FIXME: if it may be NCName, then many other characters should be allowed (e.g. unicode multibyte character).
 			while (true)
 			{
 				int ch = Peek ();
 				if (ch == '_' || ch == '-' ||
 						(ch >= 'a' && ch <= 'z') ||
-						(ch >= 'A' && ch <= 'Z'))
+						(ch >= 'A' && ch <= 'Z') ||
+						(ch >= '0' && ch <= '9'))
 				{
 					sb.Append ((char) GetChar ());
 				}
