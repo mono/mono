@@ -26,7 +26,8 @@ namespace System.Security.Cryptography {
 	// d.	ANSI X9.71, Keyed Hash Message Authentication Code.
 	//	not free :-(
 	//	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E71%2D2000
-	
+
+#if (NET_1_0 || NET_1_1)	
 	public class HMACSHA1: KeyedHashAlgorithm {
 		private HMACAlgorithm hmac;
 		private bool m_disposed;
@@ -105,4 +106,22 @@ namespace System.Security.Cryptography {
 			return hmac.Final ();
 		}
 	}
+#else
+	public class HMACSHA1 : HMAC {
+
+		public HMACSHA1 () : this (KeyBuilder.Key (8)) {}
+
+		public HMACSHA1 (byte[] rgbKey) : base () 
+		{
+			HashName = "SHA1";
+			HashSizeValue = 160;
+			Key = rgbKey;
+		}
+
+		~HMACSHA1 () 
+		{
+			Dispose (false);
+		}
+	}
+#endif
 }

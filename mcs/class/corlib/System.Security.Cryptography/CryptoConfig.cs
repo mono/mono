@@ -42,6 +42,11 @@ public class CryptoConfig {
 	// LAMESPEC: undocumented classes (also undocumented in CryptoConfig ;-)
 	private const string defaultDSASigDesc = defaultNamespace + "DSASignatureDescription";
 	private const string defaultRSASigDesc = defaultNamespace + "RSAPKCS1SHA1SignatureDescription";
+
+#if NET_1_2
+	private const string defaultRIPEMD160 = defaultNamespace + "RIPEMD160Managed";
+#endif
+
 	// LAMESPEC: undocumented names in CryptoConfig
 	private const string xmlAssembly = ", System.Security, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
 	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform" + xmlAssembly;
@@ -109,6 +114,12 @@ public class CryptoConfig {
 	private const string nameMAC3DESb = "System.Security.Cryptography.MACTripleDES";
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string name3DESKeyWrap = "TripleDESKeyWrap";
+
+#if NET_1_2
+	private const string nameRIPEMD160a = "RIPEMD160";
+	private const string nameRIPEMD160b = "RIPEMD-160";
+	private const string nameRIPEMD160c = "System.Security.Cryptography.RIPEMD160";
+#endif
 
 	private const string urlXmlDsig = "http://www.w3.org/2000/09/xmldsig#";
 	// LAMESPEC: undocumented URLs in CryptoConfig
@@ -185,6 +196,12 @@ public class CryptoConfig {
 		algorithms.Add (nameHMACb, defaultHMAC);
 		algorithms.Add (nameMAC3DESa, defaultMAC3DES);
 		algorithms.Add (nameMAC3DESb, defaultMAC3DES);
+
+#if NET_1_2
+		algorithms.Add (nameRIPEMD160a, defaultRIPEMD160);
+		algorithms.Add (nameRIPEMD160b, defaultRIPEMD160);
+		algorithms.Add (nameRIPEMD160c, defaultRIPEMD160);
+#endif
 
 		// LAMESPEC These URLs aren't documented but (hint) installing the WSDK
 		// add some of the XMLDSIG urls into machine.config (and they make a LOT

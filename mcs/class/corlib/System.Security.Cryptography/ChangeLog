@@ -1,3 +1,26 @@
+2003-11-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoConfig.cs: Updated for RIPEMD160 and HMAC.
+	* CspKeyContainerInfo.cs: New (1.2). Information about CSP based key
+	containers.
+	* DataProtectionScope.cs: New (1.2). Enumeration for ProtectedData.
+	* HMAC.cs: New (1.2). Base class for all HMAC. Code is mostly copied 
+	from internal Mono.Security.Cryptography.HMACAlgorith.cs.
+	* HMACMD5.cs: New (1.2). HMAC implementation using MD5.
+	* HMACRIPEMD160.cs: New (1.2). HMAC implementation using RIPEMD160.
+	* HMACSHA1.cs: Modified to derive from HMAC for .NET 1.2.
+	* HMACSHA256.cs: New (1.2). HMAC implementation using SHA256.
+	* HMACSHA384.cs: New (1.2). HMAC implementation using SHA384.
+	* HMACSHA512.cs: New (1.2). HMAC implementation using SHA512.
+	* ICspAsymmetricAlgorithm.cs: New (1.2). Interface for CSP based 
+	asymmetric algorithm.
+	* KeyNumber.cs: New (1.2). Enumeration for CspKeyContainerInfo.
+	* MemoryProtectionScope.cs: New (1.2). Enumeration for ProtectedMemory.
+	* PaddingMode.cs: Added two new padding modes to enumeration (for 1.2).
+	* ProtectedData.cs: New (1.2). ProtectedData without protection (TODO).
+	* ProtectedMemory.cs: New (1.2). Stub for ProtectedMemory.
+	* Rfc2898DeriveBytes.cs: New (1.2). Stub for PKCS5 PBKDF2.
+
 2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RIPEMD160.cs: New (1.2). Abstract class for RIPEMD160 hash from 
