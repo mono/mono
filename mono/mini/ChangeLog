@@ -1,3 +1,11 @@
+2003-08-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c mini.c: Added --with-valgrind option to turn off some
+	code which prevents mono from running under valgrind.
+
+	* mini.c (mono_emit_call_args): Fixed warning.
+
+	* mini.c (mono_emulate_opcode): Fixed warning.
 
 Thu Aug 21 19:10:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
