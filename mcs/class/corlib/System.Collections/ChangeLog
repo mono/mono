@@ -1,3 +1,8 @@
+2004-01-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Hashtable.cs: Added serialization support to SynchedHashtable. This
+	fixes bug #52741.
+
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Hashtable.cs: fix Clone. Closes bug #52740. Patch by Benjamin Jemlich

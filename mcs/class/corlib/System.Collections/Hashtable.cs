@@ -923,6 +923,16 @@ namespace System.Collections {
 				this.host = host;
 			}
 
+			internal SynchedHashtable (SerializationInfo info, StreamingContext context)
+			{
+				host = (Hashtable) info.GetValue("host", typeof(Hashtable));
+			}
+			
+			public override void GetObjectData (SerializationInfo info, StreamingContext context)
+			{
+				info.AddValue ("host", host);
+			}
+			
 			// ICollection
 
 			public override int Count {
