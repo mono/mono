@@ -240,6 +240,10 @@ namespace Mono.Data.SqliteClient {
                         return sqlite_changes (parent_conn.Handle);
                 }
 
+                public int LastInsertRowID () {
+                        return sqlite_last_insert_rowid (parent_conn.Handle);
+                }
+
                 internal unsafe delegate int SqliteCallbackFunction (ref object o, int argc, sbyte **argv, sbyte **colnames);
 
                 [DllImport("sqlite")]
@@ -251,6 +255,9 @@ namespace Mono.Data.SqliteClient {
 		
                 [DllImport("sqlite")]
                 static extern int sqlite_changes (IntPtr handle);
+
+                [DllImport("sqlite")]
+                static extern int sqlite_last_insert_rowid (IntPtr sqlite_handle);
 
                 internal enum SqliteError : int {
                         OK,

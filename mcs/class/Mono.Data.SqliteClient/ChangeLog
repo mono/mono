@@ -1,3 +1,9 @@
+2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Mono.Data.SqliteClient/SqliteCommand.cs: implement LastInsertRowId.
+	* Mono.Data.SqliteClient/SqliteDataReader.cs: remove dangling ^Ms.
+	Patch by Philipp <pixelpapst@users.sourceforge.net>.
+
 2003-10-17  Ettore Perazzoli  <ettore@ximian.com>
 
 	* Mono.Data.SqliteClient/SqliteConnection.cs
