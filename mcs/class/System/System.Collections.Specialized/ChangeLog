@@ -1,3 +1,7 @@
+2001-08-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* common.src: Add NameValueCollection.cs to the build
+
 2001-08-22	John Barnette	<jbarn@httcb.net>
 	* StringDictionary.cs:
 		Initial working implementation.

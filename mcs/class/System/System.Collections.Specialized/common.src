@@ -1,5 +1,6 @@
 BitVector32.cs
 ListDictionary.cs
+NameValueCollection.cs
 StringCollection.cs
 StringDictionary.cs
 StringEnumerator.cs

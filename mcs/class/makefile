@@ -13,3 +13,6 @@ windows:
 
 unix:
 	@echo "'make unix' is broken for now."
+
+push:
+	scp */*.dll mono-cvs:libs
