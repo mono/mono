@@ -1,4 +1,9 @@
 
+Tue Feb 8 19:02:59 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, marshal.c, icall.c: register a delegate for finalization
+	only when the native function pointer has been allocated for it.
+
 Tue Feb 8 18:12:27 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: cleaned up some code, allocate objects that are
