@@ -5190,11 +5190,11 @@ namespace Mono.CSharp {
 
 			if (IsExplicitImpl) {
 				Expression expr = ExplicitInterfaceName.GetTypeExpression (Location);
-				expr = expr.ResolveAsTypeTerminal (ec, false);
-				if (expr == null)
+				TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
+				if (texpr == null)
 					return false;
 
-				InterfaceType = expr.Type;
+				InterfaceType = texpr.ResolveType (ec);
 
 				if (InterfaceType.IsClass) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
@@ -5454,20 +5454,20 @@ namespace Mono.CSharp {
 			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
 			ec.InUnsafe = InUnsafe;
 			
-			Type = Type.ResolveAsTypeTerminal (ec, false);
-			if (Type == null)
+			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return false;
 
-			MemberType = Type.Type;
+			MemberType = texpr.ResolveType (ec);
 
 			if (!CheckBase ())
 				return false;
-			
+
 			if (!Parent.AsAccessible (MemberType, ModFlags)) {
 				Report.Error (52, Location,
-					"Inconsistent accessibility: field type `" +
-					TypeManager.CSharpName (MemberType) + "' is less " +
-					"accessible than field `" + Name + "'");
+					      "Inconsistent accessibility: field type `" +
+					      TypeManager.CSharpName (MemberType) + "' is less " +
+					      "accessible than field `" + Name + "'");
 				return false;
 			}
 

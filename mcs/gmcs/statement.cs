@@ -1011,12 +1011,11 @@ namespace Mono.CSharp {
 		public bool Resolve (EmitContext ec)
 		{
 			if (VariableType == null) {
-				Type = Type.ResolveAsTypeTerminal (ec, false);
-
-				if (Type == null)
+				TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
+				if (texpr == null)
 					return false;
 				
-				VariableType = Type.Type;
+				VariableType = texpr.ResolveType (ec);
 			}
 
 			if (VariableType == TypeManager.void_type) {

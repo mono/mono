@@ -5874,11 +5874,11 @@ namespace Mono.CSharp {
 				return this;
 			}
 			
-			RequestedType = RequestedType.ResolveAsTypeTerminal (ec, false);
-			if (RequestedType == null)
+			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return null;
 			
-			type = RequestedType.Type;
+			type = texpr.ResolveType (ec);
 			
 			CheckObsoleteAttribute (type);
 
@@ -8854,11 +8854,11 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			left = left.ResolveAsTypeTerminal (ec, false);
-			if (left == null)
+			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);
+			if (lexpr == null)
 				return null;
 
-			Type ltype = left.Type;
+			Type ltype = lexpr.ResolveType (ec);
 
 			if ((ltype == TypeManager.void_type) && (dim != "*")) {
 				Report.Error (1547, Location,
