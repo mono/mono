@@ -1,3 +1,7 @@
+2002-11-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: fixed get_location.
+
 2002-11-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c: moved MONO_ARCH_SAVE_REGS to the end of the
