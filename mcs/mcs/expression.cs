@@ -6415,10 +6415,9 @@ namespace Mono.CSharp {
 						//
 						// If this happens, then we have an event with its own
 						// accessors and private field etc so there's no need
-						// to transform ourselves : we should instead flag an error
+						// to transform ourselves.
 						//
-						Assign.error70 (ee.EventInfo, loc);
-						return null;
+						return ee;
 					}
 
 					Expression ml = ExprClassFromMemberInfo (ec, mi, loc);

@@ -3848,6 +3848,10 @@ CheckDef (AdditionResult result, string name, Location l)
 	case AdditionResult.NotAConstructor:
 		Report.Error (1520, l, "Class, struct, or interface method must have a return type");
 		break;
+
+	case AdditionResult.Error:
+		// Error has already been reported.
+		break;
 	}
 }
 

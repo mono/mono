@@ -1,3 +1,17 @@
+2003-07-21  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (AdditionResult): Added `Error'.
+
+	* enum.cs (AddEnumMember): Report a CS0076 if name is `value__'.
+
+	* typemanager.cs (TypeManager.ChangeType): Catch exceptions;
+	makes cs0031.cs actually work.
+
+2003-07-20  Martin Baulig  <martin@ximian.com>
+
+	* namespace.cs: Fixed that bug which caused a crash when compiling
+	the debugger's GUI.
+
 2003-07-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (LookupTypeReflection): Never expose types which

@@ -253,7 +253,12 @@ namespace Mono.CSharp {
 			///   error 111, but this error for other things really
 			///   happens at another level for other functions.
 			/// </summary>
-			MethodExists
+			MethodExists,
+
+			/// <summary>
+			///   Some other error.
+			/// </summary>
+			Error
 		}
 
 	/// <summary>

@@ -74,6 +74,11 @@ namespace Mono.CSharp {
 			if (defined_names.Contains (name))
 				return AdditionResult.NameExists;
 
+			if (name == "value__") {
+				Report.Error (76, loc, "An item in an enumeration can't have an identifier `value__'");
+				return AdditionResult.Error;
+			}
+
 			DefineName (name, expr);
 
 			ordered_enums.Add (name);

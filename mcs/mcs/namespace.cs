@@ -237,7 +237,7 @@ namespace Mono.CSharp {
 			this.IsImplicit = is_implicit;
 			this.ID = ++next_id;
 
-			if (parent != null)
+			if (!is_implicit && (parent != null))
 				ns = parent.NS.GetNamespace (name, true);
 			else if (name != null)
 				ns = Namespace.LookupNamespace (name, true);
@@ -428,6 +428,51 @@ namespace Mono.CSharp {
 			Console.WriteLine ("    Try using -r:" + s);
 		}
 
+		protected void error246 (Location loc, string name)
+		{
+			if (TypeManager.LookupType (name) != null)
+				Report.Error (138, loc, "The using keyword only lets you specify a namespace, " +
+					      "`" + name + "' is a class not a namespace.");
+			else {
+				Report.Error (246, loc, "The namespace `" + name +
+					      "' can not be found (missing assembly reference?)");
+
+				switch (name){
+				case "Gtk": case "GtkSharp":
+					Msgtry ("gtk-sharp");
+					break;
+
+				case "Gdk": case "GdkSharp":
+					Msgtry ("gdk-sharp");
+					break;
+
+				case "Glade": case "GladeSharp":
+					Msgtry ("glade-sharp");
+					break;
+							
+				case "System.Drawing":
+					Msgtry ("System.Drawing");
+					break;
+							
+				case "System.Web.Services":
+					Msgtry ("System.Web.Services");
+					break;
+
+				case "System.Web":
+					Msgtry ("System.Web");
+					break;
+							
+				case "System.Data":
+					Msgtry ("System.Data");
+					break;
+
+				case "System.Windows.Forms":
+					Msgtry ("System.Windows.Forms");
+					break;
+				}
+			}
+		}
+
 		/// <summary>
 		///   Used to validate that all the using clauses are correct
 		///   after we are finished parsing all the files.  
@@ -438,43 +483,8 @@ namespace Mono.CSharp {
 				foreach (UsingEntry ue in using_clauses){
 					if (ue.Resolve () != null)
 						continue;
-						
-					Report.Error (246, ue.Location, "The namespace `" + ue.Name +
-						      "' can not be found (missing assembly reference?)");
 
-					switch (ue.Name){
-					case "Gtk": case "GtkSharp":
-						Msgtry ("gtk-sharp");
-						break;
-
-					case "Gdk": case "GdkSharp":
-						Msgtry ("gdk-sharp");
-						break;
-
-					case "Glade": case "GladeSharp":
-						Msgtry ("glade-sharp");
-						break;
-							
-					case "System.Drawing":
-						Msgtry ("System.Drawing");
-						break;
-							
-					case "System.Web.Services":
-						Msgtry ("System.Web.Services");
-						break;
-
-					case "System.Web":
-						Msgtry ("System.Web");
-						break;
-							
-					case "System.Data":
-						Msgtry ("System.Data");
-						break;
-
-					case "System.Windows.Forms":
-						Msgtry ("System.Windows.Forms");
-						break;
-					}
+					error246 (ue.Location, ue.Name);
 				}
 			}
 
@@ -484,10 +494,8 @@ namespace Mono.CSharp {
 
 					if (alias.Resolve () != null)
 						continue;
-						
-					Report.Error (246, String.Format (
-							      "The type or namespace `{0}' could not be found (missing assembly reference?)",
-							      alias.Alias));
+
+					error246 (alias.Location, alias.Alias);
 				}
 			}
 		}

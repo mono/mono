@@ -908,9 +908,20 @@ namespace Mono.CSharp {
 				//
 				if (match is MethodBase && mc is MethodCore)
 					continue; 
-				
-				if ((mc.ModFlags & Modifiers.NEW) == 0)
+
+				if ((mc.ModFlags & Modifiers.NEW) == 0) {
+					if (mc is Event) {
+						if (!(match is EventInfo)) {
+							Error_EventCanOnlyOverrideEvent (mc.Location, defined_names [idx]);
+							return;
+						}
+
+						if ((mc.ModFlags & Modifiers.OVERRIDE) != 0)
+							continue;
+					}
+
 					Warning_KeywordNewRequired (mc.Location, defined_names [idx]);
+				}
 			}
 			
 			foreach (object o in remove_list)
@@ -1610,6 +1621,13 @@ namespace Mono.CSharp {
 			Report.Warning (
 				109, l, "The member " + MakeName (mc.Name) + " does not hide an " +
 				"inherited member, the keyword new is not required");
+		}
+
+		public void Error_EventCanOnlyOverrideEvent (Location l, MemberInfo mi)
+		{
+			Report.Error (
+				72, l, MakeName (mi.Name) + " : cannot override; `" +
+				mi.ReflectedType.Name + "." + mi.Name + "' is not an event");
 		}
 		
 		public static int CheckMember (string name, MemberInfo mi, int ModFlags)
@@ -3445,6 +3463,11 @@ namespace Mono.CSharp {
 						      "Inconsistent accessibility: parameter type `" +
 						      TypeManager.CSharpName (partype) + "' is less " +
 						      "accessible than indexer `" + Name + "'");
+				else if ((this is Method) && ((Method) this).IsOperator)
+					Report.Error (57, Location,
+						      "Inconsistent accessibility: parameter type `" +
+						      TypeManager.CSharpName (partype) + "' is less " +
+						      "accessible than operator `" + Name + "'");
 				else
 					Report.Error (51, Location,
 						      "Inconsistent accessibility: parameter type `" +
@@ -3490,12 +3513,18 @@ namespace Mono.CSharp {
 						      "Inconsistent accessibility: indexer return type `" +
 						      TypeManager.CSharpName (MemberType) + "' is less " +
 						      "accessible than indexer `" + Name + "'");
-				else if (this is Method)
-					Report.Error (50, Location,
-						      "Inconsistent accessibility: return type `" +
-						      TypeManager.CSharpName (MemberType) + "' is less " +
-						      "accessible than method `" + Name + "'");
-				else
+				else if (this is Method) {
+					if (((Method) this).IsOperator)
+						Report.Error (56, Location,
+							      "Inconsistent accessibility: return type `" +
+							      TypeManager.CSharpName (MemberType) + "' is less " +
+							      "accessible than operator `" + Name + "'");
+					else
+						Report.Error (50, Location,
+							      "Inconsistent accessibility: return type `" +
+							      TypeManager.CSharpName (MemberType) + "' is less " +
+							      "accessible than method `" + Name + "'");
+				} else
 					Report.Error (52, Location,
 						      "Inconsistent accessibility: field type `" +
 						      TypeManager.CSharpName (MemberType) + "' is less " +
@@ -4178,7 +4207,8 @@ namespace Mono.CSharp {
 		public override bool Define (TypeContainer container)
 		{
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
-
+			MethodAttributes m_attr = MethodAttributes.HideBySig | MethodAttributes.SpecialName
+;
 			if (!DoDefine (container))
 				return false;
 
@@ -4211,7 +4241,7 @@ namespace Mono.CSharp {
 			AddData = new MethodData (this, "add", TypeManager.void_type,
 						  parameter_types, ip, CallingConventions.Standard,
 						  (Add != null) ? Add.OptAttributes : null,
-						  ModFlags, flags, false);
+						  ModFlags, flags | m_attr, false);
 
 			if (!AddData.Define (container))
 				return false;
@@ -4222,7 +4252,7 @@ namespace Mono.CSharp {
 			RemoveData = new MethodData (this, "remove", TypeManager.void_type,
 						     parameter_types, ip, CallingConventions.Standard,
 						     (Remove != null) ? Remove.OptAttributes : null,
-						     ModFlags, flags, false);
+						     ModFlags, flags | m_attr, false);
 
 			if (!RemoveData.Define (container))
 				return false;

@@ -1642,7 +1642,10 @@ public class TypeManager {
 
 	static public MemberInfo GetPrivateFieldOfEvent (EventInfo ei)
 	{
-		return (MemberInfo) priv_fields_events [ei];
+		if (priv_fields_events == null)
+			return null;
+		else
+			return (MemberInfo) priv_fields_events [ei];
 	}
 		
 	static Hashtable properties;
@@ -1790,40 +1793,44 @@ public class TypeManager {
 		// on such a type - it'd always return TypeCode.Object.
 		//
 		error = false;
-		if (conversionType.Equals (typeof (Boolean)))
-			return (object)(convertValue.ToBoolean (provider));
-		else if (conversionType.Equals (typeof (Byte)))
-			return (object)(convertValue.ToByte (provider));
-		else if (conversionType.Equals (typeof (Char)))
-			return (object)(convertValue.ToChar (provider));
-		else if (conversionType.Equals (typeof (DateTime)))
-			return (object)(convertValue.ToDateTime (provider));
-		else if (conversionType.Equals (typeof (Decimal)))
-			return (object)(convertValue.ToDecimal (provider));
-		else if (conversionType.Equals (typeof (Double)))
-			return (object)(convertValue.ToDouble (provider));
-		else if (conversionType.Equals (typeof (Int16)))
-			return (object)(convertValue.ToInt16 (provider));
-		else if (conversionType.Equals (typeof (Int32)))
-			return (object)(convertValue.ToInt32 (provider));
-		else if (conversionType.Equals (typeof (Int64)))
-			return (object)(convertValue.ToInt64 (provider));
-		else if (conversionType.Equals (typeof (SByte)))
-			return (object)(convertValue.ToSByte (provider));
-		else if (conversionType.Equals (typeof (Single)))
-			return (object)(convertValue.ToSingle (provider));
-		else if (conversionType.Equals (typeof (String)))
-			return (object)(convertValue.ToString (provider));
-		else if (conversionType.Equals (typeof (UInt16)))
-			return (object)(convertValue.ToUInt16 (provider));
-		else if (conversionType.Equals (typeof (UInt32)))
-			return (object)(convertValue.ToUInt32 (provider));
-		else if (conversionType.Equals (typeof (UInt64)))
-			return (object)(convertValue.ToUInt64 (provider));
-		else if (conversionType.Equals (typeof (Object)))
-			return (object)(value);
-		else 
+		try {
+			if (conversionType.Equals (typeof (Boolean)))
+				return (object)(convertValue.ToBoolean (provider));
+			else if (conversionType.Equals (typeof (Byte)))
+				return (object)(convertValue.ToByte (provider));
+			else if (conversionType.Equals (typeof (Char)))
+				return (object)(convertValue.ToChar (provider));
+			else if (conversionType.Equals (typeof (DateTime)))
+				return (object)(convertValue.ToDateTime (provider));
+			else if (conversionType.Equals (typeof (Decimal)))
+				return (object)(convertValue.ToDecimal (provider));
+			else if (conversionType.Equals (typeof (Double)))
+				return (object)(convertValue.ToDouble (provider));
+			else if (conversionType.Equals (typeof (Int16)))
+				return (object)(convertValue.ToInt16 (provider));
+			else if (conversionType.Equals (typeof (Int32)))
+				return (object)(convertValue.ToInt32 (provider));
+			else if (conversionType.Equals (typeof (Int64)))
+				return (object)(convertValue.ToInt64 (provider));
+			else if (conversionType.Equals (typeof (SByte)))
+				return (object)(convertValue.ToSByte (provider));
+			else if (conversionType.Equals (typeof (Single)))
+				return (object)(convertValue.ToSingle (provider));
+			else if (conversionType.Equals (typeof (String)))
+				return (object)(convertValue.ToString (provider));
+			else if (conversionType.Equals (typeof (UInt16)))
+				return (object)(convertValue.ToUInt16 (provider));
+			else if (conversionType.Equals (typeof (UInt32)))
+				return (object)(convertValue.ToUInt32 (provider));
+			else if (conversionType.Equals (typeof (UInt64)))
+				return (object)(convertValue.ToUInt64 (provider));
+			else if (conversionType.Equals (typeof (Object)))
+				return (object)(value);
+			else 
+				error = true;
+		} catch {
 			error = true;
+		}
 		return null;
 	}
 
