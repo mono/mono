@@ -11,6 +11,7 @@ SOURCES = 				\
 	AssemblyInfo.cs			\
 	codegen/CodeGen.cs		\
 	codegen/ClassTable.cs		\
+	codegen/ExternTable.cs		\
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\

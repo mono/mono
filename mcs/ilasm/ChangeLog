@@ -1,5 +1,9 @@
 2003-03-08 Jackson Harper <jackson@latitudegeo.com>
 
+	* makefile, makefile.gnu: Add ExternTable to build
+
+2003-03-08 Jackson Harper <jackson@latitudegeo.com>
+
 	* Driver.cs: If a file does not exist print an error and exit.
 
 2003-03-07 Alp Toker <alp@atoker.com>
