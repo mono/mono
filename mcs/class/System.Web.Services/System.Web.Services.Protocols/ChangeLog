@@ -1,3 +1,14 @@
+2004-01-19  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Methods.cs: Get the method namespace from the binding, not from the web
+	service.
+	* TypeStubManager.cs: When adding a binding, ignore it if it has already
+	been added. Changed WebServiceLiteralNamespace by the method
+	GetWebServiceLiteralNamespace. The literal namespace depends on the binding
+	namespace, so it has to be provided as parameter.
+	* XmlReturnReader.cs, XmlReturnWriter.cs: Use GetWebServiceLiteralNamespace 
+	instead of WebServiceLiteralNamespace.
+
 2004-01-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Methods.cs: Set the correct element name and namespace for headers (those

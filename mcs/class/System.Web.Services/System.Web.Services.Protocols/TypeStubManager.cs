@@ -181,6 +181,14 @@ namespace System.Web.Services.Protocols {
 			get { return bindings; }
 		}
 		
+		internal void AddBinding (BindingInfo info)
+		{
+			foreach (BindingInfo bi in bindings)
+				if (bi.Name == info.Name && bi.Namespace == info.Namespace)
+					return;
+			bindings.Add (info);
+		}
+		
 		internal BindingInfo GetBinding (string name)
 		{
 			for (int n=0; n<bindings.Count; n++)
@@ -221,11 +229,12 @@ namespace System.Web.Services.Protocols {
 
 		internal string WebServiceName;
 		internal string WebServiceNamespace;
-		internal string WebServiceLiteralNamespace;
-		internal string WebServiceEncodedNamespace;
+		string WebServiceLiteralNamespace;
+		string WebServiceEncodedNamespace;
 		internal string WebServiceAbstractNamespace;
 		internal string Description;
 		internal Type Type;
+		bool useEncoded;
 
 		TypeStubInfo soapProtocol;
 		TypeStubInfo httpGetProtocol;
@@ -248,19 +257,19 @@ namespace System.Web.Services.Protocols {
 			
 			// Determine the namespaces for literal and encoded schema types
 			
-			bool encoded = false;
+			useEncoded = false;
 			
 			o = t.GetCustomAttributes (typeof(SoapDocumentServiceAttribute), true);
 			if (o.Length > 0) {
 				SoapDocumentServiceAttribute at = (SoapDocumentServiceAttribute) o[0];
-				encoded = (at.Use == SoapBindingUse.Encoded);
+				useEncoded = (at.Use == SoapBindingUse.Encoded);
 			}
 			else if (t.GetCustomAttributes (typeof(SoapRpcServiceAttribute), true).Length > 0)
-				encoded = true;
+				useEncoded = true;
 			
 			string sep = WebServiceNamespace.EndsWith ("/") ? "" : "/";
 			
-			if (encoded) {
+			if (useEncoded) {
 				WebServiceEncodedNamespace = WebServiceNamespace;
 				WebServiceLiteralNamespace = WebServiceNamespace + sep + "literalTypes";
 			}
@@ -307,10 +316,30 @@ namespace System.Web.Services.Protocols {
 			return tsi;
 		}
 		
-		public string GetWebServiceNamespace (SoapBindingUse use)
+		public string GetWebServiceLiteralNamespace (string baseNamespace)
 		{
-			if (use == SoapBindingUse.Literal) return WebServiceLiteralNamespace;
-			else return WebServiceEncodedNamespace;
+			if (useEncoded) {
+				string sep = baseNamespace.EndsWith ("/") ? "" : "/";
+				return baseNamespace + sep + "literalTypes";
+			}
+			else
+				return baseNamespace;
+		}
+
+		public string GetWebServiceEncodedNamespace (string baseNamespace)
+		{
+			if (useEncoded)
+				return baseNamespace;
+			else {
+				string sep = baseNamespace.EndsWith ("/") ? "" : "/";
+				return baseNamespace + sep + "encodedTypes";
+			}
+		}
+
+		public string GetWebServiceNamespace (string baseNamespace, SoapBindingUse use)
+		{
+			if (use == SoapBindingUse.Literal) return GetWebServiceLiteralNamespace (baseNamespace);
+			else return GetWebServiceEncodedNamespace (baseNamespace);
 		}
 		
 	}

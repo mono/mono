@@ -125,13 +125,16 @@ namespace System.Web.Services.Protocols {
 					throw new Exception ("OneWay methods should not have out/ref parameters");
 			}
 			
-			if (RequestNamespace == "") RequestNamespace = parent.LogicalType.GetWebServiceNamespace (Use);
-			if (ResponseNamespace == "") ResponseNamespace = parent.LogicalType.GetWebServiceNamespace (Use);
+			if (Binding == null || Binding == "") Binding = parent.DefaultBinding;
+			BindingInfo binfo = parent.GetBinding (Binding);
+			if (binfo == null) throw new InvalidOperationException ("Type '" + parent.Type + "' is missing WebServiceBinding attribute that defines a binding named '" + Binding + "'");
+			
+			string serviceNamespace = binfo.Namespace;
+				
+			if (RequestNamespace == "") RequestNamespace = parent.LogicalType.GetWebServiceNamespace (serviceNamespace, Use);
+			if (ResponseNamespace == "") ResponseNamespace = parent.LogicalType.GetWebServiceNamespace (serviceNamespace, Use);
 			if (RequestName == "") RequestName = Name;
 			if (ResponseName == "")	ResponseName = Name + "Response";
-			if (Binding == null || Binding == "") Binding = parent.DefaultBinding;
-			else if (parent.GetBinding (Binding) == null) throw new InvalidOperationException ("Type '" + parent.Type + "' is missing WebServiceBinding attribute that defines a binding named '" + Binding + "'");
-				
 			if (Action == null || Action == "")
 				Action = RequestNamespace.EndsWith("/") ? (RequestNamespace + Name) : (RequestNamespace + "/" + Name);
 			
@@ -162,7 +165,7 @@ namespace System.Web.Services.Protocols {
 				
 				Type headerType = (mems[0] is FieldInfo) ? ((FieldInfo)mems[0]).FieldType : ((PropertyInfo)mems[0]).PropertyType;
 				Headers [i] = new HeaderInfo (mems[0], att);
-				parent.RegisterHeaderType (headerType, Use);
+				parent.RegisterHeaderType (headerType, serviceNamespace, Use);
 			}
 
 			SoapExtensions = SoapExtension.GetMethodExtensions (source);
@@ -328,7 +331,7 @@ namespace System.Web.Services.Protocols {
 
 			o = Type.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
 			foreach (WebServiceBindingAttribute at in o)
-				Bindings.Add (new BindingInfo (at, LogicalType.WebServiceNamespace));
+				AddBinding (new BindingInfo (at, LogicalType.WebServiceNamespace));
 
 			o = Type.GetCustomAttributes (typeof (SoapDocumentServiceAttribute), false);
 			if (o.Length == 1){
@@ -404,7 +407,7 @@ namespace System.Web.Services.Protocols {
 			return GetSerializer (faultSerializerId);
 		}
 		
-		internal void RegisterHeaderType (Type type, SoapBindingUse use)
+		internal void RegisterHeaderType (Type type, string serviceNamespace, SoapBindingUse use)
 		{
 			Hashtable serializers = header_serializers [(int)use];
 			if (serializers == null) {
@@ -429,14 +432,14 @@ namespace System.Web.Services.Protocols {
 				if (ats.XmlRoot != null) root = ats.XmlRoot;
 				else root = new XmlRootAttribute (type.Name);
 				
-				if (root.Namespace == null) root.Namespace = LogicalType.WebServiceLiteralNamespace;
+				if (root.Namespace == null) root.Namespace = LogicalType.GetWebServiceLiteralNamespace (serviceNamespace);
 				if (root.ElementName == null) root.ElementName = type.Name;
 				
 				tm = ri.ImportTypeMapping (type, root);
 			}
 			else {
 				SoapReflectionImporter ri = new SoapReflectionImporter ();
-				tm = ri.ImportTypeMapping (type, LogicalType.WebServiceEncodedNamespace);
+				tm = ri.ImportTypeMapping (type, LogicalType.GetWebServiceEncodedNamespace (serviceNamespace));
 			}
 			
 			int sid = RegisterSerializer (tm);
