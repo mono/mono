@@ -22,9 +22,12 @@
 // Authors:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: FormWindowState.cs,v $
+// Revision 1.2  2004/09/22 20:01:21  pbartok
+// - Fixed wrong values
+//
 // Revision 1.1  2004/09/09 05:47:47  ravindra
 // Enums for Form.
 //
@@ -39,7 +42,7 @@ namespace System.Windows.Forms
 	public enum FormWindowState
 	{
 		Normal = 0,
-		Maximized = 1,
-		Minimized = 2		
+		Minimized = 1,
+		Maximized = 2
 	}
 }
