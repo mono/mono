@@ -18,8 +18,6 @@ namespace System.Web.Security
 {
 	public sealed class FormsAuthenticationModule : IHttpModule
 	{
-		bool noForms;
-
 		public void Dispose ()
 		{
 		}
@@ -36,10 +34,9 @@ namespace System.Web.Security
 			HttpContext context = app.Context;
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
 			if (config.Mode != AuthenticationMode.Forms) {
-				noForms = true;
 				return;
 			}
-				
+
 			string cookieName = config.CookieName;
 			string cookiePath = config.CookiePath;
 			string loginPage = config.LoginUrl;
@@ -77,15 +74,15 @@ namespace System.Web.Security
 
 		void OnEndRequest (object sender, EventArgs args)
 		{
-			if (noForms)
-				return;
-
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
 			if (context.Response.StatusCode != 401 || context.Request.QueryString ["ReturnUrl"] != null)
 				return;
 
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
+			if (config.Mode != AuthenticationMode.Forms)
+				return;
+
 			StringBuilder login = new StringBuilder ();
 			login.Append (UrlUtils.Combine (context.Request.ApplicationPath, config.LoginUrl));
 			login.AppendFormat ("?ReturnUrl={0}", HttpUtility.UrlEncode (context.Request.RawUrl));

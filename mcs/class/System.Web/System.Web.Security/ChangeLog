@@ -1,3 +1,8 @@
+2004-04-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthenticationModule.cs: re-read configuration files if needed
+	when determining if forms auth. is used.
+
 2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: added RequireSSL and SlidingExpiration.
