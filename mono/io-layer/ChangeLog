@@ -1,3 +1,8 @@
+2002-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* sockets.c:
+	(_wapi_recvfrom): added ECONNRESET to the switch.
+
 2002-09-24  Mark Crichton  <crichton@gimp.org>
 
 	* atomic.h: Yea.  On linux, sparc isn't sparc, it's __sparc__.
