@@ -205,20 +205,21 @@ namespace System.Configuration
 		//TODO: Should use XPath when it works properly for this.
 		XmlDocument GetDocumentForSection (string sectionName)
 		{
-			ConfigXmlDocument doc = new ConfigXmlDocument ();
 			XmlTextReader reader = null;
 			try {
 				reader = new XmlTextReader (fileName);
 			} catch {
-				return doc;
+				return null;
 			}
 
+			ConfigXmlDocument doc = new ConfigXmlDocument ();
 			InitRead (reader);
 			string [] sectionPath = sectionName.Split ('/');
 			int i = 0;
 			if (!reader.EOF) {
 				if (reader.Name == "configSections")
 					reader.Skip ();
+
 				while (!reader.EOF) {
 					if (reader.NodeType == XmlNodeType.Element &&
 					    reader.Name == sectionPath [i]) {
@@ -253,14 +254,14 @@ namespace System.Configuration
 				parentConfig = parent.GetConfig (sectionName);
 
 			XmlDocument doc = GetDocumentForSection (sectionName);
-			if (doc == null) {
+			if (doc == null || doc.DocumentElement == null) {
 				if (parentConfig == null)
 					return null;
 
 				return parentConfig;
 			}
-
-			return ((IConfigurationSectionHandler) handler).Create (parentConfig, null, doc);
+			
+			return ((IConfigurationSectionHandler) handler).Create (parentConfig, null, doc.DocumentElement);
 		}
 
 		private object LookForFactory (string key)

@@ -1,3 +1,13 @@
+2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigXmlDocument.cs: don't jump over the first element.
+	* ConfigurationSettings.cs: pass doc.DocumentElement instead of doc.
+
+	This used to work until i tried to access one attribute of the first
+	element and realized that the element was not the expected!
+	This change does not affect the configuration handlers that only use
+	ChildNodes property on the XmlNode they get as argument.
+
 2002-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: removed type loading hack no longer needed.
