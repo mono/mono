@@ -34,15 +34,36 @@ struct C
 	{ }
 }
 
+struct D
+{
+	public int foo;
+}
+
+struct E
+{
+	public D d;
+	public bool e;
+}
+
+struct F
+{
+	public E e;
+	public float f;
+}
+
 class X
 {
 	static void test_output (A x)
-	{
-	}
+	{ }
 
 	static void test_output (B y)
-	{
-	}
+	{ }
+
+	static void test_output (E e)
+	{ }
+
+	static void test_output (F f)
+	{ }
 
 	static void test1 ()
 	{
@@ -81,6 +102,25 @@ class X
 	static void test6 (out B y)
 	{
 		y.a = 1;
+	}
+
+	static void test7 ()
+	{
+		E e;
+		e.e = true;
+		e.d.foo = 5;
+
+		test_output (e);
+	}
+
+	static void test8 ()
+	{
+		F f;
+		f.e.e = true;
+		f.e.d.foo = 5;
+		f.f = 3.14F;
+
+		test_output (f);
 	}
 
 	public static int Main ()

@@ -1,3 +1,8 @@
+2003-05-19  Martin Baulig  <martin@ximian.com>
+
+	* test-162.cs: Added testcases for structs containing other
+	structs as fields.  Bug #42597.
+
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
 	* test-154.cs: Added testcase for bug #41657.
