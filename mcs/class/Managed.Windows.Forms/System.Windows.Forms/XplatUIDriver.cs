@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.21 $
+// $Revision: 1.22 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.22  2004/09/13 21:18:32  pbartok
+// - Added Z-Ordering methods
+//
 // Revision 1.21  2004/09/11 00:57:35  pbartok
 // - Added method to retrieve text from window
 //
@@ -188,6 +191,8 @@ namespace System.Windows.Forms {
 		internal abstract bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax);
 		internal abstract bool TranslateMessage(ref MSG msg);
 		internal abstract bool DispatchMessage(ref MSG msg);
+
+		internal abstract bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom);
 
 		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);
 

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.21 $
+// $Revision: 1.22 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.22  2004/09/13 21:18:32  pbartok
+// - Added Z-Ordering methods
+//
 // Revision 1.21  2004/09/11 00:57:35  pbartok
 // - Added method to retrieve text from window
 //
@@ -314,6 +317,10 @@ namespace System.Windows.Forms {
 
 		internal static void ReleaseWindow(IntPtr hWnd) {
 			driver.ReleaseWindow(hWnd);
+		}
+
+		internal static bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
+			return driver.SetZOrder(hWnd, AfterhWnd, Top, Bottom);
 		}
 
 		internal static bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {

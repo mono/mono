@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.10  2004/09/13 21:18:32  pbartok
+// - Added Z-Ordering methods
+//
 // Revision 1.9  2004/08/24 22:35:44  pbartok
 // - Refined definitions for CrossingEvent
 //
@@ -837,27 +840,56 @@ namespace System.Windows.Forms {
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct XScreen {
-		IntPtr			ext_data;
-		IntPtr			display;
-		IntPtr			root;
-		int			width;
-		int			height;
-		int			mwidth;
-		int			mheight;
-		int			ndepths;
-		IntPtr			depths;
-		int			root_depth;
-		IntPtr			root_visual;
-		IntPtr			default_gc;
-		uint			cmap;
-		uint			white_pixel;
-		uint			black_pixel;
-		int			max_maps;
-		int			min_maps;
-		int			backing_store;
-		bool			save_unders;
-		EventMask		root_input_mask;
+		internal IntPtr		ext_data;
+		internal IntPtr		display;
+		internal IntPtr		root;
+		internal int		width;
+		internal int		height;
+		internal int		mwidth;
+		internal int		mheight;
+		internal int		ndepths;
+		internal IntPtr		depths;
+		internal int		root_depth;
+		internal IntPtr		root_visual;
+		internal IntPtr		default_gc;
+		internal uint		cmap;
+		internal uint		white_pixel;
+		internal uint		black_pixel;
+		internal int		max_maps;
+		internal int		min_maps;
+		internal int		backing_store;
+		internal bool		save_unders;
+		internal EventMask	root_input_mask;
 	}
+
+	[Flags]
+	internal enum ChangeWindowFlags {
+		CWX			= 1<<0,
+		CWY			= 1<<1,
+		CWWidth			= 1<<2,
+		CWHeight		= 1<<3,
+		CWBorderWidth		= 1<<4,
+		CWSibling		= 1<<5,
+		CWStackMode		= 1<<6
+	}
+
+	internal enum StackMode {
+		Above			= 0,
+		Below			= 1,
+		TopIf			= 2,
+		BottomIf		= 3,
+		Opposite		= 4
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct XWindowChanges {
+		internal int		x;
+		internal int		y;
+		internal int		width;
+		internal int		height;
+		internal IntPtr		sibling;
+		internal StackMode	stack_mode;
+	}	
 
 	[Flags]
 	internal enum ColorFlags {

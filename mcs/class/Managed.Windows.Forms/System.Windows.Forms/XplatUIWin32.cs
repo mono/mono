@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.33 $
+// $Revision: 1.34 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.34  2004/09/13 21:18:32  pbartok
+// - Added Z-Ordering methods
+//
 // Revision 1.33  2004/09/11 00:57:35  pbartok
 // - Added method to retrieve text from window
 //
@@ -282,6 +285,31 @@ namespace System.Windows.Forms {
 			PM_NOYIELD			= 0x00000002
 		}
 
+		internal enum SetWindowPosZOrder {
+			HWND_TOP			= 0,
+			HWND_BOTTOM			= 1,
+			HWND_TOPMOST			= -1,
+			HWND_NOTOPMOST			= -2
+		}
+
+		[Flags]
+		internal enum SetWindowPosFlags {
+			SWP_ASYNCWINDOWPOS		= 0x4000, 
+			SWP_DEFERERASE			= 0x2000,
+			SWP_DRAWFRAME			= 0x0020,
+			SWP_FRAMECHANGED		= 0x0020,
+			SWP_HIDEWINDOW			= 0x0080,
+			SWP_NOACTIVATE			= 0x0010,
+			SWP_NOCOPYBITS			= 0x0100,
+			SWP_NOMOVE			= 0x0002,
+			SWP_NOOWNERZORDER		= 0x0200,
+			SWP_NOREDRAW			= 0x0008,
+			SWP_NOREPOSITION		= 0x0200,
+			SWP_NOENDSCHANGING		= 0x0400,
+			SWP_NOSIZE			= 0x0001,
+			SWP_NOZORDER			= 0x0004,
+			SWP_SHOWWINDOW			= 0x0040
+		}
 
 		internal enum VirtualKeys {
 			VK_LBUTTON		= 0x01,
@@ -948,6 +976,19 @@ namespace System.Windows.Forms {
 			return Win32DispatchMessage(ref msg);
 		}
 
+		internal override bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
+			if (Top) {
+				Win32SetWindowPos(hWnd, (IntPtr)SetWindowPosZOrder.HWND_TOPMOST, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
+				return true;
+			} else if (!Bottom) {
+				Win32SetWindowPos(hWnd, AfterhWnd, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
+			} else {
+				Win32SetWindowPos(hWnd, (IntPtr)SetWindowPosZOrder.HWND_BOTTOM, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
+				return true;
+			}
+			return false;
+		}
+
 		internal override bool Text(IntPtr handle, string text) {
 			Win32SetWindowText(handle, text);
 			return true;
@@ -963,7 +1004,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
-			Console.WriteLine("Setting window visibility: {0}", visible);
+			if (visible) {
+				Win32ShowWindow(handle, WindowPlacementFlags.SW_SHOWNORMAL);
+			} else {
+				Win32ShowWindow(handle, WindowPlacementFlags.SW_HIDE);
+			}
 			return true;
 		}
 
@@ -1108,6 +1153,9 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", EntryPoint="MoveWindow", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
 
+		[DllImport ("user32.dll", EntryPoint="SetWindowPos", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, SetWindowPosFlags Flags);
+
 		[DllImport ("user32.dll", EntryPoint="SetWindowTextA", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SetWindowText(IntPtr hWnd, string lpString);
 
@@ -1224,6 +1272,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="KillTimer", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32KillTimer(IntPtr hwnd, int nIDEvent);
+
+		[DllImport ("user32.dll", EntryPoint="ShowWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32ShowWindow(IntPtr hwnd, WindowPlacementFlags nCmdShow);
 		#endregion
 
 	}

@@ -789,6 +789,24 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
+			if (Top) {
+				XRaiseWindow(DisplayHandle, hWnd);
+				return true;
+			} else if (!Bottom) {
+				XWindowChanges	values = new XWindowChanges();
+
+				values.sibling = AfterhWnd;
+				values.stack_mode = StackMode.Below;
+				XConfigureWindow(DisplayHandle, hWnd, ChangeWindowFlags.CWStackMode, ref values);
+			} else {
+				XLowerWindow(DisplayHandle, hWnd);
+				return true;
+			}
+			return false;
+		}
+
+
 		internal override bool Text(IntPtr handle, string text) {
 #if notdef
 			XTextProperty	property = new XTextProperty();
@@ -1102,6 +1120,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11.so", EntryPoint="XRaiseWindow")]
 		internal extern static int XRaiseWindow(IntPtr display, IntPtr window);
+
+		[DllImport ("libX11.so", EntryPoint="XLowerWindow")]
+		internal extern static uint XLowerWindow(IntPtr display, IntPtr window);
+
+		[DllImport ("libX11.so", EntryPoint="XConfigureWindow")]
+		internal extern static uint XConfigureWindow(IntPtr display, IntPtr window, ChangeWindowFlags value_mask, ref XWindowChanges values);
 
 		[DllImport ("libX11.so", EntryPoint="XInternAtom")]
 		internal extern static int XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
