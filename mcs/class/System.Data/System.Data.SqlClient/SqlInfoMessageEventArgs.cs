@@ -4,52 +4,56 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Data;
 
 namespace System.Data.SqlClient {
 	public sealed class SqlInfoMessageEventArgs : EventArgs
 	{
+		#region Fields
+
+		SqlErrorCollection errors = new SqlErrorCollection ();
+
+		#endregion // Fields
+
 		#region Constructors
 	
-		[MonoTODO]	
-		internal SqlInfoMessageEventArgs (SqlException e)
+		internal SqlInfoMessageEventArgs (TdsInternalErrorCollection tdsErrors)
 		{
-			throw new NotImplementedException ();
+			foreach (TdsInternalError e in tdsErrors) 
+				errors.Add (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State);
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		[MonoTODO]
 		public SqlErrorCollection Errors {
-			get { throw new NotImplementedException (); }
+			get { return errors; }
 		}	
 
-		[MonoTODO]
 		public string Message {
-			get { throw new NotImplementedException (); }
+			get { return errors[0].Message; }
 		}	
 
-		[MonoTODO]
 		public string Source {
-			get { throw new NotImplementedException (); }
+			get { return errors[0].Source; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public override string ToString() 
 		{
-			// representation of InfoMessage event
-			return "'ToString() for SqlInfoMessageEventArgs Not Implemented'";
+			return Message;
 		}
 
 		#endregion // Methods

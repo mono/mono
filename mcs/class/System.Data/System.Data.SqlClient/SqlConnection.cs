@@ -58,9 +58,11 @@ namespace System.Data.SqlClient {
 		SqlDataReader dataReader = null;
 		XmlReader xmlReader = null;
 
-
 		// The TDS object
 		ITds tds;
+
+		static readonly object EventSqlInfoMessage = new object ();
+		static readonly object EventStateChange = new object ();
 
 		#endregion // Fields
 
@@ -84,7 +86,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
 		[DefaultValue ("")]
 		[RecommendedAsConfigurable (true)]	
-		//[RefreshProperties (RefreshProperties.All)]
+		[RefreshProperties (RefreshProperties.All)]
 		public string ConnectionString	{
 			get { return connectionString; }
 			set { SetConnectionString (value); }
@@ -154,6 +156,34 @@ namespace System.Data.SqlClient {
 
 		#endregion // Properties
 
+		#region Events
+                
+		public event SqlInfoMessageEventHandler InfoMessage {
+			add { Events.AddHandler (EventSqlInfoMessage, value); }
+			remove { Events.RemoveHandler (EventSqlInfoMessage, value); }
+		}
+
+		public event StateChangeEventHandler StateChange {
+			add { Events.AddHandler (EventStateChange, value); }
+			remove { Events.RemoveHandler (EventStateChange, value); }
+		}
+		
+		#endregion // Events
+
+		#region Delegates
+
+		private void ErrorHandler (object sender, TdsInternalErrorMessageEventArgs e)
+		{
+			throw new SqlException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State);
+		}
+
+		private void MessageHandler (object sender, TdsInternalInfoMessageEventArgs e)
+		{
+			OnSqlInfoMessage (CreateSqlInfoMessageEvent (e.Errors));
+		}
+
+		#endregion // Delegates
+
 		#region Methods
 
 		public SqlTransaction BeginTransaction ()
@@ -173,11 +203,12 @@ namespace System.Data.SqlClient {
 
 		public SqlTransaction BeginTransaction (IsolationLevel iso, string transactionName)
 		{
+			if (state == ConnectionState.Closed)
+				throw new InvalidOperationException ("The connection is not open.");
 			if (transaction != null)
 				throw new InvalidOperationException ("SqlConnection does not support parallel transactions.");
 
 			tds.ExecuteNonQuery (String.Format ("BEGIN TRANSACTION {0}", transactionName));
-			CheckForErrors ();
 
 			transaction = new SqlTransaction (this, iso);
 			return transaction;
@@ -187,19 +218,17 @@ namespace System.Data.SqlClient {
 		{
 			if (!IsValidDatabaseName (database))
 				throw new ArgumentException (String.Format ("The database name {0} is not valid."));
-
 			if (state != ConnectionState.Open)
-				throw new InvalidOperationException ("The connection is not open");
-
+				throw new InvalidOperationException ("The connection is not open.");
 			tds.ExecuteNonQuery (String.Format ("use {0}", database));
-			CheckForErrors ();
 		}
 
-		internal void CheckForErrors ()
+		private void ChangeState (ConnectionState currentState)
 		{
-			if (tds.Errors.Count > 0)
-				throw SqlException.FromTdsError (tds.Errors);
-                }
+			ConnectionState originalState = state;
+			state = currentState;
+			OnStateChange (CreateStateChangeEvent (originalState, currentState));
+		}
 
 		public void Close () 
 		{
@@ -209,7 +238,11 @@ namespace System.Data.SqlClient {
 				pool.ReleaseConnection (tds);
 			else
 				tds.Disconnect ();
-			this.state = ConnectionState.Closed;
+
+			tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
+			tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
+
+			ChangeState (ConnectionState.Closed);
 		}
 
 		public SqlCommand CreateCommand () 
@@ -217,6 +250,16 @@ namespace System.Data.SqlClient {
 			SqlCommand command = new SqlCommand ();
 			command.Connection = this;
 			return command;
+		}
+		
+		private SqlInfoMessageEventArgs CreateSqlInfoMessageEvent (TdsInternalErrorCollection errors)
+		{
+			return new SqlInfoMessageEventArgs (errors);
+		}
+
+		private StateChangeEventArgs CreateStateChangeEvent (ConnectionState originalState, ConnectionState currentState)
+		{
+			return new StateChangeEventArgs (originalState, currentState);
 		}
 
 		protected override void Dispose (bool disposing) 
@@ -260,6 +303,7 @@ namespace System.Data.SqlClient {
 		{
 			if (connectionString == null)
 				throw new InvalidOperationException ("Connection string has not been initialized.");
+
 			if (!pooling)
 				tds = new Tds70 (dataSource, port, packetSize);
 			else {
@@ -271,17 +315,15 @@ namespace System.Data.SqlClient {
 				tds = pool.AllocateConnection ();
 			}
 
-			state = ConnectionState.Open;
+			tds.TdsErrorMessage += new TdsInternalErrorMessageEventHandler (ErrorHandler);
+			tds.TdsInfoMessage += new TdsInternalInfoMessageEventHandler (MessageHandler);
 
-			if (!tds.IsConnected) {
+			if (!tds.IsConnected) 
 				tds.Connect (parms);
-				CheckForErrors ();
-				ChangeDatabase (parms.Database);
-			} 
-			else if (connectionReset) {
-				tds.ExecuteNonQuery ("EXEC sp_connection_reset");
-				CheckForErrors ();
-			}
+			else if (connectionReset)
+				tds.ExecuteNonQuery ("EXEC sp_reset_connection");
+				
+			ChangeState (ConnectionState.Open);
 		}
 
                 void SetConnectionString (string connectionString)
@@ -450,7 +492,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-
 		static bool IsValidDatabaseName (string database)
 		{
 			if (database.Length > 32 || database.Length < 1)
@@ -470,13 +511,21 @@ namespace System.Data.SqlClient {
 			return true;
 		}
 
+		private void OnSqlInfoMessage (SqlInfoMessageEventArgs value)
+		{
+			SqlInfoMessageEventHandler handler = (SqlInfoMessageEventHandler) Events [EventSqlInfoMessage];
+			if (handler != null)
+				handler (this, value);
+		}
+
+		private void OnStateChange (StateChangeEventArgs value)
+		{
+			StateChangeEventHandler handler = (StateChangeEventHandler) Events [EventStateChange];
+			if (handler != null)
+				handler (this, value);
+		}
+
 		#endregion // Methods
 
-		#region Events
-                
-		public event SqlInfoMessageEventHandler InfoMessage;
-		public event StateChangeEventHandler StateChange;
-		
-		#endregion // Events
 	}
 }

@@ -84,7 +84,7 @@ namespace System.Data.SqlClient {
 
 		[DataSysDescription ("Command text to execute.")]
 		[DefaultValue ("")]
-		//[RefreshProperties (RefreshProperties.All)]
+		[RefreshProperties (RefreshProperties.All)]
 		public string CommandText {
 			get { return CommandText; }
 			set { commandText = value; }
@@ -103,7 +103,7 @@ namespace System.Data.SqlClient {
 
 		[DataSysDescription ("How to interpret the CommandText.")]
 		[DefaultValue (CommandType.Text)]
-		//[RefreshProperties (RefreshProperties.All)]
+		[RefreshProperties (RefreshProperties.All)]
 		public CommandType CommandType	{
 			get { return commandType; }
 			set { commandType = value; }
@@ -323,7 +323,6 @@ namespace System.Data.SqlClient {
 			if (connection == null || connection.Tds == null)
 				return;
 			connection.Tds.Cancel ();
-			connection.CheckForErrors ();
 		}
 
 		internal void CloseDataReader (bool moreResults)
@@ -344,7 +343,6 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteNonQuery");
 			int result = connection.Tds.ExecuteNonQuery (BuildCommand ());
-			connection.CheckForErrors ();
 			GetOutputParameters ();
 			return result;
 		}
@@ -359,7 +357,6 @@ namespace System.Data.SqlClient {
 			ValidateCommand ("ExecuteReader");
 			this.behavior = behavior;
 			connection.Tds.ExecuteQuery (BuildCommand ());
-			connection.CheckForErrors ();
 			connection.DataReader = new SqlDataReader (this);
 
 			return connection.DataReader;
@@ -369,16 +366,13 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteScalar");
 			connection.Tds.ExecuteQuery (BuildCommand ());
-			connection.CheckForErrors ();
 
 			bool moreResults = connection.Tds.NextResult ();
-			connection.CheckForErrors ();
 
 			if (!moreResults)
 				return null;
 
 			moreResults = connection.Tds.NextRow ();
-			connection.CheckForErrors ();
 
 			if (!moreResults)
 				return null;
@@ -392,7 +386,6 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteXmlReader");
 			connection.Tds.ExecuteQuery (BuildCommand ());
-			connection.CheckForErrors ();
 
 			SqlDataReader dataReader = new SqlDataReader (this);
 			SqlXmlTextReader textReader = new SqlXmlTextReader (dataReader);
@@ -473,7 +466,6 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("Prepare");
 			connection.Tds.ExecuteNonQuery (BuildPrepare ());
-			connection.CheckForErrors ();
 
 			if (connection.Tds.OutputParameters.Count == 0 || connection.Tds.OutputParameters[0] == null)
 				throw new Exception ("Could not prepare the statement.");

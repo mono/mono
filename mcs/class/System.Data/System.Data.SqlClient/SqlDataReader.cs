@@ -641,7 +641,6 @@ namespace System.Data.SqlClient {
 			schemaTable.Rows.Clear ();
 
 			moreResults = command.Tds.NextResult ();
-			command.Connection.CheckForErrors ();
 			rowsRead = 0;
 			resultsRead += 1;
 			return moreResults;
@@ -657,7 +656,6 @@ namespace System.Data.SqlClient {
 				return false;
 
 			bool result = command.Tds.NextRow ();
-			command.Connection.CheckForErrors ();
 
 			rowsRead += 1;
 

@@ -3,56 +3,69 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
+// Copyright (C) Tim Coleman, 2002
 //
 
-namespace System.Data.Common
-{
-	/// <summary>
-	/// Provides the data for the RowUpdating event of a .NET data provider.
-	/// </summary>
+namespace System.Data.Common {
 	public abstract class RowUpdatingEventArgs : EventArgs
 	{
-		[MonoTODO]
-		protected RowUpdatingEventArgs(DataRow dataRow,
-					       IDbCommand command,
-					       StatementType statementType,
-					       DataTableMapping tableMapping) {
-			throw new NotImplementedException ();
+		#region Fields
+
+		DataRow dataRow;
+		IDbCommand command;
+		StatementType statementType;
+		DataTableMapping tableMapping;
+		UpdateStatus status;
+		Exception errors;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		protected RowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+		{
+			this.dataRow = dataRow;
+			this.command = command;
+			this.statementType = statementType;
+			this.tableMapping = tableMapping;
+			this.status = UpdateStatus.Continue;
+			this.errors = null;
 		}
+
+		#endregion // Constructors
+
+		#region Properties
 		
-		[MonoTODO]
 		public IDbCommand Command {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return command; }
+			set { command = value; }
 		}
 
-		[MonoTODO]
 		public Exception Errors {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return errors; }
+			set { errors = value; }
 		}
 
-		[MonoTODO]
 		public DataRow Row {
-			get { throw new NotImplementedException (); }
+			get { return dataRow; }
 		}
 
-		[MonoTODO]
 		public StatementType StatementType {
-			get { throw new NotImplementedException (); }
+			get { return statementType; }
 		}
 
-		[MonoTODO]
 		public UpdateStatus Status {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return status; }
+			set { status = value; }
 		}
 
-		[MonoTODO]
 		public DataTableMapping TableMapping {
-			get { throw new NotImplementedException (); }
+			get { return tableMapping; }
 		}
+
+		#endregion // Properties
 	}
 }

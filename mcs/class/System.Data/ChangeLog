@@ -1,5 +1,35 @@
 2002-11-04  Tim Coleman <tim@timcoleman.com>
 	* list:
+		Add Mono.Data.TdsClient.Internal.TdsInternalError
+		Add Mono.Data.TdsClient.Internal.TdsInternalErrorCollection
+		Add Mono.Data.TdsClient.Internal.TdsInternalErrorMessageEventHandler
+		Add Mono.Data.TdsClient.Internal.TdsInternalErrorMessageEventArgs
+		Add Mono.Data.TdsClient.Internal.TdsInternalInfoMessageEventHandler
+		Add Mono.Data.TdsClient.Internal.TdsInternalInfoMessageEventArgs
+		Remove Mono.Data.TdsClient.Internal.TdsPacketErrorResult
+		Remove Mono.Data.TdsClient.Internal.TdsPacketErrorResultCollection
+		Remove Mono.Data.TdsClient.Internal.TdsPacketMessageResult
+	* System.Data.Common/RowUpdatedEventArgs.cs:
+	* System.Data.Common/RowUpdatingEventArgs.cs:
+		Implement
+	* System.Data.SqlClient/SqlCommand.cs:
+	* System.Data.SqlClient/SqlDataReader.cs:
+		Remove checks for errors.  These are now handled by events
+	* System.Data.SqlClient/SqlConnection.cs:
+	* System.Data.SqlClient/SqlError.cs:
+	* System.Data.SqlClient/SqlException.cs:
+	* System.Data.SqlClient/SqlInfoMessageEventArgs.cs:
+		Add event handlers and triggers for errors, messages, state change
+	* System.Data.SqlClient/SqlParameter.cs:
+		Re-add refreshproperties
+	* System.Data.SqlClient/SqlRowUpdatedEventArgs.cs:
+	* System.Data.SqlClient/SqlRowUpdatedEventHandler.cs:
+	* System.Data.SqlClient/SqlRowUpdatingEventArgs.cs:
+	* System.Data.SqlClient/SqlRowUpdatingEventHandler.cs:
+		Implement
+
+2002-11-04  Tim Coleman <tim@timcoleman.com>
+	* list:
 		Add Mono.Data.TdsClient.Internal.TdsBigDecimal
 		Add System.Data.SqlClient.SqlParameterConverter
 		Add System.Data.DataSysDescriptionAttribute

@@ -9,10 +9,7 @@
 //
 
 using System;
-using System.Data;
 
-namespace System.Data.SqlClient
-{
-	public delegate void SqlRowUpdatingEventHandler(object sender,
-			SqlRowUpdatingEventArgs e);
+namespace System.Data.SqlClient {
+	public delegate void SqlRowUpdatingEventHandler(object sender, SqlRowUpdatingEventArgs e);
 }

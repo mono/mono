@@ -4,9 +4,12 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
+
 using System;
 using System.Data;
 using System.Runtime.InteropServices;
@@ -18,6 +21,8 @@ namespace System.Data.SqlClient {
 	[Serializable]
 	public sealed class SqlError
 	{
+		#region Fields
+
 		byte theClass = 0;
 		int lineNumber = 0;
 		string message = "";
@@ -27,9 +32,12 @@ namespace System.Data.SqlClient {
 		string source = "";
 		byte state = 0;
 
-		internal SqlError(byte theClass, int lineNumber,
-			string message,	int number, string procedure,
-			string server, string source, byte state) {
+		#endregion // Fields
+
+		#region Constructors
+
+		internal SqlError (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state) 
+		{
 			this.theClass = theClass;
 			this.lineNumber = lineNumber;
 			this.message = message;
@@ -39,6 +47,8 @@ namespace System.Data.SqlClient {
 			this.source = source;
 			this.state = state;
 		}
+
+		#endregion // Constructors
 		
 		#region Properties
 
@@ -47,58 +57,42 @@ namespace System.Data.SqlClient {
 		/// severity level of the error
 		/// </summary>
 		public byte Class {
-			get { 
-				return theClass;
-			}
+			get { return theClass; }
 		}
 
 		[MonoTODO]
 		public int LineNumber {
-			get { 
-			   return lineNumber;
-		   }
+			get { return lineNumber; }
 		}
 
 		[MonoTODO]
 		public string Message {
-			get { 
-				return message;
-			}
+			get { return message; }
 		}
 		
 		[MonoTODO]
 		public int Number {
-			get { 
-				return number;
-			}
+			get { return number; }
 		}
 
 		[MonoTODO]
 		public string Procedure {
-			get { 
-				return procedure;
-			}
+			get { return procedure; }
 		}
 
 		[MonoTODO]
 		public string Server {
-			get { 
-				return server;
-			}
+			get { return server; }
 		}
 
 		[MonoTODO]
 		public string Source {
-			get { 
-				return source;
-			}
+			get { return source; }
 		}
 
 		[MonoTODO]
 		public byte State {
-			get { 
-				return state;
-			}
+			get { return state; }
 		}
 
 		#endregion
@@ -116,35 +110,43 @@ namespace System.Data.SqlClient {
 			return toStr;
 		}
 
-		internal void SetClass(byte theClass) {
+		internal void SetClass (byte theClass) 
+		{
 			this.theClass = theClass;
 		}
 
-		internal void SetLineNumber(int lineNumber) {
+		internal void SetLineNumber (int lineNumber) 
+		{
 			this.lineNumber = lineNumber;
 		}
 
-		internal void SetMessage(string message) {
+		internal void SetMessage (string message) 
+		{
 			this.message = message;
 		}
 
-		internal void SetNumber(int number) {
+		internal void SetNumber (int number) 
+		{
 			this.number = number;
 		}
 
-		internal void SetProcedure(string procedure) {
+		internal void SetProcedure (string procedure) 
+		{
 			this.procedure = procedure;
 		}
 
-		internal void SetServer(string server) {
+		internal void SetServer (string server) 
+		{
 			this.server = server;
 		}
 
-		internal void SetSource(string source) {
+		internal void SetSource (string source) 
+		{
 			this.source = source;
 		}
 
-		internal void SetState(byte state) {
+		internal void SetState (byte state) 
+		{
 			this.state = state;
 		}
 

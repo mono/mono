@@ -147,13 +147,6 @@ namespace System.Data.SqlClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		internal static SqlException FromTdsError (TdsPacketErrorResultCollection errors)
-		{
-			TdsMessage message = errors[0].Message;
-			return new SqlException (message.Severity, message.Line, message.Message, message.Number, message.ProcName, message.Server, "Mono SqlClient Data Provider", message.State);
-		}
-
 		#endregion // Methods
 	}
 }

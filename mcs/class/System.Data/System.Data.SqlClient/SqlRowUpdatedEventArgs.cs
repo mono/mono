@@ -17,22 +17,29 @@ using System.Data.Common;
 namespace System.Data.SqlClient {
 	public sealed class SqlRowUpdatedEventArgs : RowUpdatedEventArgs 
 	{
+		#region Fields
+		
+		SqlCommand command;
+
+		#endregion // Fields
+
 		#region Constructors
 
 		[MonoTODO]
 		public SqlRowUpdatedEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 			: base (row, command, statementType, tableMapping)
 		{
-			throw new NotImplementedException ();
+			if (!(command is SqlCommand))
+				throw new InvalidCastException ("Command is not a SqlCommand object.");
+			this.command = (SqlCommand) command;
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		[MonoTODO]
 		public new SqlCommand Command {
-			get { throw new NotImplementedException (); }
+			get { return command; }
 		}
 
 		#endregion // Properties
