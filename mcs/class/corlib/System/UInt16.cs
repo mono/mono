@@ -108,12 +108,14 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		[MonoTODO]
 		[CLSCompliant(false)]
 		public static ushort Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
-			// TODO: Implement me
-			throw new NotImplementedException ();
+			uint tmpResult = UInt32.Parse (s, style, fp);
+			if (tmpResult > UInt16.MaxValue || tmpResult < UInt16.MinValue)
+				throw new OverflowException ("Value too large or too small.");
+
+			return (ushort) tmpResult;
 		}
 
 		public override string ToString ()

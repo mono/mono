@@ -1,3 +1,17 @@
+2002-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Byte.cs:
+	* UInt16.cs:
+	* UInt32.cs:
+	* UInt64.cs: added complex Parse ().
+
+2002-04-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SByte.cs:
+	* Int16.cs:
+	* Int32.cs:
+	* Int64.cs: added complex Parse ().
+
 2002-04-09  Nick Drochak  <ndrochak@gol.com>
 
 	* Array.cs (BinarySearch): Add checks on paramters before using them
