@@ -47,12 +47,10 @@ namespace System.Text.RegularExpressions {
 				c = replacement[ptr ++];
 
 				if (c == '$') {
-					if (replacement[ptr] == '$') {
+					if (replacement[ptr] != '$') 
+						term = CompileTerm (replacement, ref ptr);
+					else
 						++ ptr;
-						break;
-					}
-
-					term = CompileTerm (replacement, ref ptr);
 				}
 
 				if (term != null) {
