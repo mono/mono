@@ -1036,27 +1036,20 @@ namespace Mono.CSharp {
 			if (method == null || count > 1)
 				return null;
 			
-			Expression original_source = source;
+			
 			//
 			// This will do the conversion to the best match that we
-			// found.  Now we need to perform an implicit standard conversion
+			// found.  Now we need to perform an implict standard conversion
 			// if the best match was not the type that we were requested
 			// by target.
 			//
 			if (look_for_explicit)
-				source = ExplicitConversionStandard (ec, original_source, most_specific_source, loc);
+				source = ExplicitConversionStandard (ec, source, most_specific_source, loc);
 			else
-				source = ImplicitConversionStandard (ec, original_source, most_specific_source, loc);
+				source = ImplicitConversionStandard (ec, source, most_specific_source, loc);
 
-			//
-			// If ImplicitConversionStandard comes up with nothing, try UserDefinedConversion 
-			// again, because a UserCast might be able to cast `original_source' into `most_specific_source'.
-			//
-			if (source == null) {
-				source = UserDefinedConversion (ec, original_source, most_specific_source, loc, false);
-				if (source == null)
-					return null;
-			}
+			if (source == null)
+				return null;
 
 			Expression e;
 			e =  new UserCast ((MethodInfo) method, source, loc);
