@@ -1,3 +1,14 @@
+2004-01-26  Martin Baulig  <martin@ximian.com>
+
+	* dis/main.cs (--show-tokens): New command line argument to show
+	type tokens in the disassembly.
+
+	* dis/get.c (get_typedef, get_typespec, get_typeref): If
+	`show_tokens', include the token in the type name.
+	(get_type): Do some type parsing here and include the token in the
+	returned type name if requested.
+	(get_method): Include tokens if requested.
+
 2004-01-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* main.c get.c: Add support for dumping the custom attributes of
