@@ -348,8 +348,12 @@ public class MathTest : Assertion {
 		Assert ("Positive 0", double.IsNaN (Math.IEEERemainder (y, 0)));
 
 		// http://www.obtuse.com/resources/negative_zero.html
-		double n0 = Convert.ToDouble (0x8000000000000000);
+		double n0 = BitConverter.Int64BitsToDouble (Int64.MinValue);
 		Assert ("Negative 0", double.IsNaN (Math.IEEERemainder (n0, 0)));
+
+		// the "zero" remainder of negative number is negative
+		long result = BitConverter.DoubleToInt64Bits (Math.IEEERemainder (-1, 1));
+		AssertEquals ("Negative Dividend", Int64.MinValue, result);
 	}
 
 	public void TestLog() {

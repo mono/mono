@@ -1,7 +1,7 @@
 2004-06-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MathTest.cs: Added case to check for negative 0 (double) in
-	IEEERemainder.
+	IEEERemainder - including when dividend is negative.
 	* TimeSpanTest.cs: Added more asserts in existing tests cases.
 	Added case to check for ToString with MinValue and MaxValue.
 
