@@ -1,3 +1,10 @@
+2002-05-13  Tim Coleman
+	* System.Data.Common/DbDataAdapter.cs:
+		More implementation.
+	* System.Data.Common/DataAdapter.cs:
+		Correction of some of the stubbing, as well as a
+		little bit more implementation
+
 2002-05-11  Tim Coleman
 	* System.Data.SqlClient/SqlDataAdapter.cs:
 	* System.Data.Common/DbDataAdapter.cs:

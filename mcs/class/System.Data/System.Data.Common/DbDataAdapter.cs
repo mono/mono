@@ -71,29 +71,51 @@ namespace System.Data.Common
 
                 public override int Fill (DataSet dataSet)
                 {
-                        // Adds or refreshes rows in the DataSet to match those in 
-                        // the data source using the DataSet name, and creates
-                        // a DataTable named "Table"
+			return this.Fill (dataSet, "Table", selectCommand.ExecuteReader (), 0, 0);
+                }
 
-                        // If the SELECT query has changed, then clear the results
-                        // that we previously retrieved.
+		[MonoTODO]
+		public int Fill (DataTable dt) 
+		{
+			throw new NotImplementedException ();
+		}
 
+		public int Fill (DataSet dataSet, string srcTable) 
+		{
+			return this.Fill (dataSet, srcTable, selectCommand.ExecuteReader (), 0, 0);
+		}
+
+		[MonoTODO]
+		protected virtual int Fill (DataTable dt, IDataReader idr) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual int Fill (DataTable dt, IDbCommand idc, CommandBehavior behavior) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
+		{
+			if (startRecord < 0)
+				throw new ArgumentException ("The startRecord parameter was less than 0.");
+			if (maxRecords < 0)
+				throw new ArgumentException ("The maxRecords parameter was less than 0.");
+			return this.Fill (dataSet, srcTable, selectCommand.ExecuteReader (), startRecord, maxRecords);
+		}
+
+		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+		{
+                        DataTable table;
                         int changeCount = 0;
+			string tableName = srcTable;
+                        int i = 0;
 
                         if (this.isDirty)
-                        {
                                 dataSet.Tables.Clear ();
-                        }
 
-                        // Run the SELECT query and get the results in a datareader
-                        IDataReader dataReader = selectCommand.ExecuteReader ();
-
-
-                        // The results table in dataSet is called "Table"
-                        string tableName = "Table";
-                        DataTable table;
-
-                        int i = 0;
                         do
                         {
                                 if (!this.isDirty)  // table already exists
@@ -124,7 +146,7 @@ namespace System.Data.Common
                                 DataRow thisRow;
                                 object[] itemArray = new object[dataReader.FieldCount];
 
-                                while (dataReader.Read ())
+                                while (dataReader.Read () && (changeCount != 0 || changeCount < maxRecords))
                                 {
                                         // need to check for existing rows to reconcile if we have key
                                         // information.  skip this step for now
@@ -134,56 +156,23 @@ namespace System.Data.Common
                                         thisRow = table.NewRow ();
                                         thisRow.ItemArray = itemArray;
                                         table.ImportRow (thisRow);
+					
+					if (AcceptChangesDuringFill) thisRow.AcceptChanges ();
+
                                         changeCount += 1;
                                 }
 
                                 i += 1;
-                                tableName = String.Format ("Table{0}", i);
+                                tableName = String.Format ("{0}{1}", srcTable, i);
                         } while (dataReader.NextResult ());
 
                         dataReader.Close ();
                         this.isDirty = false;
                         return changeCount;
-                }
-
-		[MonoTODO]
-		public int Fill (DataTable dt) 
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Fill (DataSet ds, string s) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual int Fill (DataTable dt, IDataReader idr) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual int Fill (DataTable dt, IDbCommand idc, CommandBehavior behavior) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public int Fill (DataSet ds, int i, int j, string s) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual int Fill (DataSet ds, string s, IDataReader idr, int i, int j) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual int Fill (DataSet ds, int i, int j, string s, IDbCommand idc, CommandBehavior behavior) 
+		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand idc, CommandBehavior behavior) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -225,9 +214,22 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public int Update (DataRow[] row) 
+		public int Update (DataRow[] dataRows) 
 		{
 			throw new NotImplementedException ();
+			foreach (DataRow dataRow in dataRows) 
+			{
+				switch (dataRow.RowState)
+				{
+				case DataRowState.Added:
+					dataRow.AcceptChanges ();
+				case DataRowState.Deleted:
+					dataRow.AcceptChanges ();
+				case DataRowState.Modified:
+					dataRow.AcceptChanges ();
+				}
+
+			}
 		}
 
 		[MonoTODO]
