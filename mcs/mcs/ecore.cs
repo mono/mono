@@ -2031,7 +2031,7 @@ namespace Mono.CSharp {
 
 			Block current_block = ec.CurrentBlock;
 			if (current_block != null){
-				LocalInfo vi = current_block.GetLocalInfo (Name);
+				//LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (is_base &&
 				    current_block.IsVariableNameUsedInChildBlock(Name)) {
 					Report.Error (135, Location,

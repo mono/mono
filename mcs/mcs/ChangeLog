@@ -1,3 +1,7 @@
+2004-09-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs: Removed dead code.
+
 2004-09-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs: Do not report warning CS0067 on the interfaces.

@@ -105,12 +105,6 @@ namespace Mono.CSharp
 		//
 		static bool using_default_encoder = true;
 
-		//
-		// The system version we are using, if not specified on the commandline we
-		// will use the same version as corlib for looking for libraries in the GAC.
-		//
-		static string sys_version;
-		
 		public static void ShowTime (string msg)
 		{
 			if (!timestamps)

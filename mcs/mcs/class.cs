@@ -1013,8 +1013,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		TypeExpr [] GetClassBases (out TypeExpr parent, out bool error)
 		{
-			ArrayList bases = Bases;
-			int start, j, i;
+			int i;
 
 			error = false;
 
