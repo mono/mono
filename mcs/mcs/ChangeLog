@@ -1,3 +1,24 @@
+2002-01-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Property, Method, Indexer): Emit Final flag on the
+	method if we are an interface implementation and we are not
+	abstract. 
+
+	* ecore.cs (PropertyExpr): New public field `IsBase', tells
+	whether this property is referencing a `base' method.
+
+	* expression.cs (Invocation.EmitCall): take an extra argument:
+	is_base, this is used to determine whether the `call' or
+	`callvirt' opcode should be used.
+
+	
+	* delegate.cs: update EmitCall.
+
+	* class.cs (Method.Define): Set NewSlot for the cases where we are
+	not implementing an interface method.
+
+	(Property.Define): ditto.
+
 2002-01-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: (Tokenizer.escape): Escape '\r' as '\r' not as

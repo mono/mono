@@ -3095,6 +3095,7 @@ namespace Mono.CSharp {
 	public class PropertyExpr : ExpressionStatement, IAssignMethod {
 		public readonly PropertyInfo PropertyInfo;
 		public readonly bool IsStatic;
+		public bool IsBase;
 		MethodInfo [] Accessors;
 		Location loc;
 		
@@ -3162,7 +3163,7 @@ namespace Mono.CSharp {
 
 		override public void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, IsStatic, instance_expr, Accessors [0], null);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, Accessors [0], null);
 			
 		}
 
@@ -3175,7 +3176,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList ();
 
 			args.Add (arg);
-			Invocation.EmitCall (ec, IsStatic, instance_expr, Accessors [1], args);
+			Invocation.EmitCall (ec, false, IsStatic, instance_expr, Accessors [1], args);
 		}
 
 		override public void EmitStatement (EmitContext ec)
@@ -3236,9 +3237,11 @@ namespace Mono.CSharp {
 			args.Add (arg);
 			
 			if (((Binary) source).Oper == Binary.Operator.Addition)
-				Invocation.EmitCall (ec, IsStatic, InstanceExpression, add_accessor, args);
+				Invocation.EmitCall (
+					ec, false, IsStatic, InstanceExpression, add_accessor, args);
 			else
-				Invocation.EmitCall (ec, IsStatic, InstanceExpression, remove_accessor, args);
+				Invocation.EmitCall (
+					ec, false, IsStatic, InstanceExpression, remove_accessor, args);
 		}
 	}
 }	

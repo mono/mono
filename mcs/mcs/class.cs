@@ -884,18 +884,19 @@ namespace Mono.CSharp {
 				is_class = true;
 			else
 				is_class = false;
-			
+
 			ifaces = GetClassBases (parent_builder, is_class, out parent, out error); 
 			
 			if (error)
 				return null;
-			
+
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
 				//
 				// Structs with no fields need to have a ".size 1"
 				// appended
 				//
+
 				if (!is_class && Fields == null)
 					TypeBuilder = builder.DefineType (Name,
 									  TypeAttr,
@@ -909,7 +910,6 @@ namespace Mono.CSharp {
 									  TypeAttr,
 									  parent,
 									  ifaces);
-
 			} else {
 				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
 				
@@ -2062,11 +2062,14 @@ namespace Mono.CSharp {
 			// If implementing is still valid, set flags
 			//
 			if (implementing != null){
-				flags |= MethodAttributes.Virtual |
-					 MethodAttributes.NewSlot | MethodAttributes.HideBySig;
+				flags |=
+					MethodAttributes.Virtual |
+					MethodAttributes.NewSlot |
+					MethodAttributes.HideBySig;
 
 				// If not abstract, then we can set Final.
-				if ((flags & MethodAttributes.Abstract) == 0)
+				if (((flags & MethodAttributes.Abstract) == 0) &&
+				    implementing.DeclaringType.IsInterface)
 					flags |= MethodAttributes.Final;
 
 				//
@@ -2074,7 +2077,7 @@ namespace Mono.CSharp {
 				//
 				parent.IsInterfaceMethod (
 					iface_type, short_name, ret_type, parameters, true);
-			}
+			} 
 
 			Attribute dllimport_attr = null;
 			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
@@ -2608,6 +2611,9 @@ namespace Mono.CSharp {
 			MethodInfo implementing;
 			Type fn_type;
 			string name;
+
+			flags |= MethodAttributes.HideBySig |
+				MethodAttributes.SpecialName;
 			
 			if (is_get){
 				fn_type = PropertyType;
@@ -2654,11 +2660,14 @@ namespace Mono.CSharp {
 			// If implementing is still valid, set flags
 			//
 			if (implementing != null){
-				flags |= MethodAttributes.Virtual |
-					 MethodAttributes.NewSlot | MethodAttributes.HideBySig;
+				flags |=
+					MethodAttributes.Virtual |
+					MethodAttributes.NewSlot |
+					MethodAttributes.HideBySig;
 
-				// If not abstract, then we can set Final.
-				if ((flags & MethodAttributes.Abstract) == 0)
+				// If an interface implementation, then we can set Final.
+				if (((flags & MethodAttributes.Abstract) == 0) &&
+				    implementing.DeclaringType.IsInterface)
 					flags |= MethodAttributes.Final;
 				
 				//
@@ -2666,7 +2675,7 @@ namespace Mono.CSharp {
 				//
 				parent.IsInterfaceMethod (
 					iface_type, name, fn_type, parameters, true);
-			}
+			} 
 			
 			if (is_get){
 				GetBuilder = parent.TypeBuilder.DefineMethod (
@@ -3217,9 +3226,10 @@ namespace Mono.CSharp {
 					MethodAttributes.Virtual |
 					MethodAttributes.NewSlot |
 					MethodAttributes.HideBySig;
-				
-				// If not abstract, then we can set Final.
-				if ((attr & MethodAttributes.Abstract) == 0)
+
+				// If an interface implementing, then we can set final.
+				if (((attr & MethodAttributes.Abstract) == 0) &&
+				    implementing.DeclaringType.IsInterface)
 					attr |= MethodAttributes.Final;
 				
 				//

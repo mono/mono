@@ -7,6 +7,13 @@ Major tasks:
 
 	Finish pre-processor (and, or and nested expressions not yet supported).
 
+	Implement base indexer access.
+
+	base property access on a virtual method.
+
+	Final should not be set for abstract method implementations.
+	final should be set for implementations of interface methods.
+
 BUGS
 ----
 

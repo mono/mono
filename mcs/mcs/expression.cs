@@ -2522,7 +2522,8 @@ namespace Mono.CSharp {
 
 		Expression expr;
 		MethodBase method = null;
-			
+		bool is_base;
+		
 		static Hashtable method_parameter_cache;
 
 		static Invocation ()
@@ -3207,6 +3208,9 @@ namespace Mono.CSharp {
 			// First, resolve the expression that is used to
 			// trigger the invocation
 			//
+			if (expr is BaseAccess)
+				is_base = true;
+			
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
@@ -3321,7 +3325,22 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static void EmitCall (EmitContext ec,
+		/// <remarks>
+		///   is_base tells whether we want to force the use of the `call'
+		///   opcode instead of using callvirt.  Call is required to call
+		///   a specific method, while callvirt will always use the most
+		///   recent method in the vtable.
+		///
+		///   is_static tells whether this is an invocation on a static method
+		///
+		///   instance_expr is an expression that represents the instance
+		///   it must be non-null if is_static is false.
+		///
+		///   method is the method to invoke.
+		///
+		///   Arguments is the list of arguments to pass to the method or constructor.
+		/// </remarks>
+		public static void EmitCall (EmitContext ec, bool is_base,
 					     bool is_static, Expression instance_expr,
 					     MethodBase method, ArrayList Arguments)
 		{
@@ -3387,7 +3406,7 @@ namespace Mono.CSharp {
 					is_static = true;
 			}
 			
-			if (is_static || struct_call){
+			if (is_static || struct_call || is_base){
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
@@ -3404,7 +3423,7 @@ namespace Mono.CSharp {
 		{
 			MethodGroupExpr mg = (MethodGroupExpr) this.expr;
 
-			EmitCall (ec, method.IsStatic, mg.InstanceExpression, method, Arguments);
+			EmitCall (ec, is_base, method.IsStatic, mg.InstanceExpression, method, Arguments);
 		}
 		
 		public override void EmitStatement (EmitContext ec)
@@ -5385,7 +5404,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, false, ea.Expr, get, ea.Arguments);
+			Invocation.EmitCall (ec, false, false, ea.Expr, get, ea.Arguments);
 		}
 
 		//
@@ -5395,7 +5414,7 @@ namespace Mono.CSharp {
 		//
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			Invocation.EmitCall (ec, false, ea.Expr, set, set_arguments);
+			Invocation.EmitCall (ec, false, false, ea.Expr, set, set_arguments);
 		}
 	}
 
@@ -5417,6 +5436,7 @@ namespace Mono.CSharp {
 			Expression member_lookup;
 			Type current_type = ec.TypeContainer.TypeBuilder;
 			Type base_type = current_type.BaseType;
+			Expression e;
 			
 			member_lookup = MemberLookup (ec, base_type, member, false, loc);
 			if (member_lookup == null)
@@ -5429,7 +5449,14 @@ namespace Mono.CSharp {
 			else
 				left = ec.This;
 			
-			return MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc, null);
+			e = MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc, null);
+			if (e is PropertyExpr){
+				PropertyExpr pe = (PropertyExpr) e;
+
+				pe.IsBase = true;
+			}
+
+			return e;
 		}
 
 		public override void Emit (EmitContext ec)

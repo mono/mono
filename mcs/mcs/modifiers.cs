@@ -149,7 +149,11 @@ namespace Mono.CSharp {
 				ma |= MethodAttributes.Virtual;
 
 			if ((mod_flags & OVERRIDE) != 0)
-				ma |= MethodAttributes.Virtual;
+				ma |= MethodAttributes.Virtual | MethodAttributes.HideBySig;
+			else {
+				if ((ma & MethodAttributes.Virtual) != 0)
+					ma |= MethodAttributes.NewSlot;
+			}
 			
 			if ((mod_flags & NEW) != 0)
 				ma |= MethodAttributes.HideBySig;
