@@ -1,5 +1,10 @@
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* DBConcurrentcyException.cs: CRLF to LF
+	* DataViewSetting.cs: CRLF to LF
+
+2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
+
         * DataViewSetting.cs: renamed fields to match MS.NET
 
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
