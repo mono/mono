@@ -24,6 +24,7 @@ SUBDIRS = \
 	System				\
 	System.Drawing			\
 	System.EnterpriseServices	\
+	Mono.C5				\
 	Mono.Security			\
 	Mono.Data.Tds			\
 	System.Security			\

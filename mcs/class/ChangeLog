@@ -1,3 +1,7 @@
+2004-11-12  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (SUBDIRS): Added Mono.C5.
+
 2004-11-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (basic_SUBDIRS): New.
