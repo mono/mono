@@ -2,6 +2,11 @@
 
 	* icall.c (ves_icall_Type_GetField): impl.
 
+Mon Jun 17 16:08:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c: added mono_metadata_get_marshal_info()
+	to retrieve a marshal description blob for a field or param.
+
 Mon Jun 17 14:57:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.h, reflection.c: change order of nested type emission
