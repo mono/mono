@@ -1,3 +1,8 @@
+2002-01-23  Dick Porter  <dick@ximian.com>
+
+	* interp.c: Added some kludges to cope with CONV_OVF_I2,
+	CONV_OVF_I4 and ADD_OVF so that number formatting works.  Also
+	initialise and cleanup the network support.
 
 Thu Jan 10 20:59:59 CET 2002 Paolo Molaro <lupus@ximian.com>
 

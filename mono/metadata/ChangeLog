@@ -1,3 +1,9 @@
+2002-01-23  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c:
+	* icall.c:
+	* Makefile.am: Added socket support
+
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* icall.c (ves_icall_appdomain_get_default_assemblies): put this

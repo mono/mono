@@ -1,3 +1,14 @@
+2002-01-23  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: Networking support, mostly wrapping BSD socket APIs
+	with handle code, and translating errno into w32 error codes.
+
+	* macros.h: Some w32 macros used with the socket support
+
+	* error.c: Implemented GetLastError() and SetLastError()
+
+	* Makefile.am: Added sockets, with kludge to override some symbols
+
 2001-12-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* unicode.c (_wapi_unicode_to_utf8): byteswap UTF16 strings before
