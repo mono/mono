@@ -1,3 +1,9 @@
+2004-10-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs: Changed private static methods to use a single
+	parameter (as method permissions overrides class permissions for
+	demand, assert, deny and permitonly).
+
 2004-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Implemented stubs (soon to be icalls) to

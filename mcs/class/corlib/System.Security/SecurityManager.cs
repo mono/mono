@@ -397,38 +397,39 @@ namespace System.Security {
 			}
 		}
 
-		private static void InternalDemand (byte[] classPermissions, byte[] methodPermissions)
+		private static void InternalDemand (byte[] permissions)
 		{
-			PermissionSet ps = Union (classPermissions, methodPermissions);
+			PermissionSet ps = Decode (permissions);
 			ps.Demand ();
 		}
 
-		private static void InternalDemandChoice (byte[] classPermissions, byte[] methodPermissions)
+		private static void InternalDemandChoice (byte[] permissions)
 		{
 #if NET_2_0
-			PermissionSet ps = Union (classPermissions, methodPermissions);
+			PermissionSet ps = Decode (permissions);
+			// TODO
 #else
 			throw new SecurityException ("SecurityAction.DemandChoice is only possible in 2.0");
 #endif
 		}
 
-		private static void InternalAssert (byte[] classPermissions, byte[] methodPermissions)
+		private static void InternalAssert (byte[] permissions)
 		{
-			PermissionSet ps = Union (classPermissions, methodPermissions);
+			PermissionSet ps = Decode (permissions);
 			// note: Calling PermissionSet.Assert would have produced an unrequired copy of the PermissionSet
 			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Assert, ps);
 		}
 
-		private static void InternalDeny (byte[] classPermissions, byte[] methodPermissions)
+		private static void InternalDeny (byte[] permissions)
 		{
-			PermissionSet ps = Union (classPermissions, methodPermissions);
+			PermissionSet ps = Decode (permissions);
 			// note: Calling PermissionSet.Deny would have produced an unrequired copy of the PermissionSet
 			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Deny, ps);
 		}
 
-		private static void InternalPermitOnly (byte[] classPermissions, byte[] methodPermissions)
+		private static void InternalPermitOnly (byte[] permissions)
 		{
-			PermissionSet ps = Union (classPermissions, methodPermissions);
+			PermissionSet ps = Decode (permissions);
 			// note: Calling PermissionSet.PermitOnly would have produced an unrequired copy of the PermissionSet
 			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.PermitOnly, ps);
 		}
