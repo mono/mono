@@ -796,16 +796,11 @@ namespace Mono.MonoBASIC
 			{
 				current_token = xtoken ();
 				if(current_token == Token.END) {
-					// In case of any more addition in end block it got to be added here
 					next_token = xtoken();
 					putbacktoken = true;
 					if (next_token == Token.EOL) 
 						return Token.END_EOL;
-					else if (next_token == Token.IDENTIFIER) {
-						next_token=Token.EOL ; 
-						Report.Error(30678,Location,"'End' statement is not accepted") ; 
-						return Token.END_EOL;
-					 } else 
+					 else 
 						return Token.END;
 				}	
 				if (current_token == 0) 

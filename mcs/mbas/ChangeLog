@@ -1,3 +1,6 @@
+2005-03-24 Manjula GHM <mmanjula@novell.com>
+          * mb-tokenizer.cs: To fix parser error for ExternalSource Directives
+
 2005-03-24 Satya Sudha K <ksathyasudha@novell.com>
 	* mb-parser.jay : 
 			- Support for Dictionary Member Access Expressions
