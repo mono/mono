@@ -1539,7 +1539,7 @@ namespace System {
 			}
 
 			matches = true;
-			for (end = this.length; end > begin; end--) {
+			for (end = this.length-1; end > begin; end--) {
 				if (trimChars != null) {
 					matches = false;
 					foreach (char c in trimChars) {

@@ -1,4 +1,8 @@
 
+Tue Sep 25 19:58:14 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: fix off-by-one error in Trim().
+
 Tue Sep 25 18:52:14 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* Type.cs: added GetType () method.
