@@ -1,3 +1,7 @@
+2004-04-07  Jackson Harper  <jackson@ximian.com>
+
+	* Environment.cs: Increase corlib version number.
+	
 2004-04-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Environment.cs:
