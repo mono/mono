@@ -9,7 +9,7 @@ class X {
 		D x = T (1);
 
 		int v = x (10);
-		Console.WriteLine ("Should be 11={0}", x);
+		Console.WriteLine ("Should be 11={0}", v);
 		return v == 11 ? 0 : 1;
 	}
 
