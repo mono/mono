@@ -1,3 +1,8 @@
+2004-11-12  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: Export time-related functions (gettimeofday, settimeofday,
+	  utime, utimes), mknod.
+
 2004-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PosixEnvironment.cs : csc build fix. see bug #69195.

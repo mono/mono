@@ -816,6 +816,21 @@ namespace Mono.Posix {
 		public  /* time_t */    long    st_ctime;   // time of last status change
 	}
 
+	public struct Timeval {
+		public  /* time_t */      long    tv_sec;   // seconds
+		public  /* suseconds_t */ long    tv_usec;  // microseconds
+	}
+
+	public struct Timezone {
+		public  int tz_minuteswest; // minutes W of Greenwich
+		private int tz_dsttime;     // type of dst correction (OBSOLETE)
+	}
+
+	public struct Utimbuf {
+		public  /* time_t */      long    actime;   // access time
+		public  /* time_t */      long    modtime;  // modification time
+	}
+
 	//
 	// Convention: Functions *not* part of the standard C library AND part of
 	// a POSIX and/or Unix standard (X/Open, SUS, XPG, etc.) go here.
@@ -1549,14 +1564,50 @@ namespace Mono.Posix {
 			return sys_mkdir (oldpath, _mode);
 		}
 
-		// TODO: mknod(2)
+		// mknod(2)
+		//    int mknod (const char *pathname, mode_t mode, dev_t dev);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_mknod")]
+		public static extern int mknod (string pathname, FilePermissions mode, ulong dev);
 
 		//
 		// <sys/time.h>
 		//
 
-		// TODO: gettimeofday(2)
-		// TODO: settimeofday(2)
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_gettimeofday")]
+		public static extern int gettimeofday (out Timeval tv, out Timezone tz);
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_gettimeofday")]
+		private static extern int gettimeofday (out Timeval tv, IntPtr ignore);
+
+		public static int gettimeofday (out Timeval tv)
+		{
+			return gettimeofday (out tv, IntPtr.Zero);
+		}
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_gettimeofday")]
+		private static extern int gettimeofday (IntPtr ignore, out Timezone tz);
+
+		public static int gettimeofday (out Timezone tz)
+		{
+			return gettimeofday (IntPtr.Zero, out tz);
+		}
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_gettimeofday")]
+		public static extern int settimeofday (ref Timeval tv, ref Timezone tz);
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_gettimeofday")]
+		private static extern int settimeofday (ref Timeval tv, IntPtr ignore);
+
+		public static int settimeofday (ref Timeval tv)
+		{
+			return settimeofday (ref tv, IntPtr.Zero);
+		}
 
 		//
 		// <sys/timeb.h>
@@ -1634,6 +1685,10 @@ namespace Mono.Posix {
 			int r = _WSTOPSIG (status);
 			return PosixConvert.ToSignum (r);
 		}
+
+		//
+		// <termios.h>
+		//
 
 		//
 		// <time.h>
@@ -2210,7 +2265,22 @@ namespace Mono.Posix {
 		// <utime.h>
 		//
 
-		// TODO: utime(2)
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_utime")]
+		public static extern int utime (string filename, ref Utimbuf buf);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_utime")]
+		private static extern int utime (string filename, IntPtr buf);
+
+		public static int utime (string filename)
+		{
+			return utime (filename, IntPtr.Zero);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_utimes")]
+		public static extern int utimes (string filename, ref Timeval tvp);
 	}
 }
 
