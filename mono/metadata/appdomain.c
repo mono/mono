@@ -44,6 +44,9 @@ mono_domain_assembly_preload (MonoAssemblyName *aname,
 static void
 mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data);
 
+static void
+add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass);
+
 static MonoMethod *
 look_for_method_by_name (MonoClass *klass, const gchar *name);
 
@@ -249,12 +252,12 @@ mono_domain_try_type_resolve (MonoDomain *domain, char *name, MonoObject *tb)
  * if it is being unloaded.
  * Returns:
  *   - TRUE on success
- *   - FALSE if the domain is being unloaded
+ *   - FALSE if the domain is unloaded
  */
 gboolean
 mono_domain_set (MonoDomain *domain, gboolean force)
 {
-	if (!force && (domain->state == MONO_APPDOMAIN_UNLOADING || domain->state == MONO_APPDOMAIN_UNLOADED))
+	if (!force && domain->state == MONO_APPDOMAIN_UNLOADED)
 		return FALSE;
 
 	mono_domain_set_internal (domain);
@@ -357,10 +360,16 @@ ves_icall_System_AppDomain_getCurDomain ()
 	return add->domain;
 }
 
+static void
+add_assembly_to_domain (gpointer key, gpointer value, gpointer user_data)
+{
+	add_assemblies_to_domain ((MonoDomain*)user_data, (MonoAssembly*)value);
+}
+
 MonoAppDomain *
 ves_icall_System_AppDomain_createDomain (MonoString *friendly_name, MonoAppDomainSetup *setup)
 {
-	/*MonoDomain *domain = mono_domain_get (); */
+	MonoDomain *domain = mono_domain_get ();
 	MonoClass *adclass;
 	MonoAppDomain *ad;
 	MonoDomain *data;
@@ -381,7 +390,10 @@ ves_icall_System_AppDomain_createDomain (MonoString *friendly_name, MonoAppDomai
 
 	mono_context_init (data);
 
-	/* FIXME: what to do next ? */
+	/* The new appdomain should have all assemblies loaded */
+	mono_domain_lock (domain);
+	g_hash_table_foreach (domain->assemblies, add_assembly_to_domain, data);
+	mono_domain_unlock (domain);
 
 	return ad;
 }
@@ -547,9 +559,17 @@ reduce_path (const gchar *dirname)
 	for (tmp = list; tmp; tmp = tmp->next) {
 		gchar *data = (gchar *) tmp->data;
 
-		if (data && *data)
-			g_string_append_printf (result, "%c%s", G_DIR_SEPARATOR,
-								(char *) tmp->data);
+		if (data && *data) {
+#ifdef PLATFORM_WIN32
+			if (result->len == 0)
+				g_string_append_printf (result, "%s\\", data);
+			else if (result->str [result->len - 1] == '\\')
+				g_string_append_printf (result, "%s", data);
+			else
+#endif
+				g_string_append_printf (result, "%c%s",
+							G_DIR_SEPARATOR, data);
+		}
 	}
 	
 	res = result->str;
@@ -1000,10 +1020,8 @@ ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad, MonoString *file,
 	assembly = mono_assembly_open (filename, NULL);
 	g_free (filename);
 
-	if (!assembly) {
-		mono_raise_exception ((MonoException *)mono_exception_from_name (
-			mono_defaults.corlib, "System.IO", "FileNotFoundException"));
-	}
+	if (!assembly)
+		mono_raise_exception (mono_get_exception_file_not_found (filename));
 
 	image = assembly->image;
 
@@ -1112,7 +1130,7 @@ ves_icall_System_AppDomain_InternalSetContext (MonoAppContext *mc)
 	MONO_ARCH_SAVE_REGS;
 
 	mono_context_set (mc);
-	
+
 	return old_context;
 }
 
@@ -1215,6 +1233,7 @@ mono_domain_unload (MonoDomain *domain)
 	MonoMethod *method;
 	MonoObject *exc;
 	unload_data thread_data;
+	MonoDomain *caller_domain = mono_domain_get ();
 
 	/* printf ("UNLOAD STARTING FOR %s.\n", domain->friendly_name); */
 
@@ -1232,6 +1251,7 @@ mono_domain_unload (MonoDomain *domain)
 			g_assert_not_reached ();
 	}
 
+	mono_domain_set (domain, FALSE);
 	/* Notify OnDomainUnload listeners */
 	method = look_for_method_by_name (domain->domain->mbr.obj.vtable->klass, "DoDomainUnload");	
 	g_assert (method);
@@ -1241,6 +1261,7 @@ mono_domain_unload (MonoDomain *domain)
 	if (exc) {
 		/* Roll back the state change */
 		domain->state = MONO_APPDOMAIN_CREATED;
+		mono_domain_set (caller_domain, FALSE);
 		mono_raise_exception ((MonoException*)exc);
 	}
 
@@ -1267,6 +1288,7 @@ mono_domain_unload (MonoDomain *domain)
 		; /* wait for the thread */
 	
 
+	mono_domain_set (caller_domain, FALSE);
 	if (thread_data.failure_reason) {
 		MonoException *ex;
 

@@ -340,16 +340,14 @@ static gboolean unref_handle (ChannelData *channel_data, guint32 handle)
 		   channel_data->open_handles[handle]);
 #endif
 
-	if(channel_data->open_handles[handle]==0) {
-		/* This client has released the handle */
-		destroy=TRUE;
-	}
-	
-	if(_wapi_shared_data[segment]->handles[idx].ref==0) {
+	if (_wapi_shared_data[segment]->handles[idx].ref == 0) {
 		gboolean was_file;
 		dev_t device = 0;
 		ino_t inode = 0;
 		
+		/* This client has released the handle */
+		destroy=TRUE;
+	
 		if (channel_data->open_handles[handle]!=0) {
 			g_warning (G_GNUC_PRETTY_FUNCTION ": per-process open_handles mismatch, set to %d, should be 0", 
 					channel_data->open_handles[handle]);
@@ -832,23 +830,11 @@ static void send_reply (GIOChannel *channel, WapiHandleResponse *resp)
 	_wapi_daemon_response (g_io_channel_unix_get_fd (channel), resp);
 }
 
-/*
- * process_new:
- * @channel: The client making the request
- * @channel_data: Our data for this channel
- * @type: type to init handle to
- *
- * Find a free handle and initialize it to 'type', increase refcnt and
- * send back a reply to the client.
- */
-static void process_new (GIOChannel *channel, ChannelData *channel_data,
-			 WapiHandleType type)
+static guint32 new_handle_with_shared_check (WapiHandleType type)
 {
-	guint32 handle;
-	WapiHandleResponse resp={0};
-	
-	handle=_wapi_handle_new_internal (type);
-	if(handle==0) {
+	guint32 handle = 0;
+
+	while ((handle = _wapi_handle_new_internal (type)) == 0) {
 		/* Try and allocate a new shared segment, and have
 		 * another go
 		 */
@@ -873,14 +859,33 @@ static void process_new (GIOChannel *channel, ChannelData *channel_data,
 					channels[i].open_handles=_wapi_g_renew0 (channels[i].open_handles, old_len, new_len);
 				}
 			}
-
-			handle=_wapi_handle_new_internal (type);
 		} else {
 			/* Map failed.  Just return 0 meaning "out of
 			 * handles"
 			 */
+			break;
 		}
 	}
+	
+	return(handle);
+}
+
+/*
+ * process_new:
+ * @channel: The client making the request
+ * @channel_data: Our data for this channel
+ * @type: type to init handle to
+ *
+ * Find a free handle and initialize it to 'type', increase refcnt and
+ * send back a reply to the client.
+ */
+static void process_new (GIOChannel *channel, ChannelData *channel_data,
+			 WapiHandleType type)
+{
+	guint32 handle;
+	WapiHandleResponse resp={0};
+	
+	handle = new_handle_with_shared_check (type);
 	
 	/* handle might still be set to 0.  This is handled at the
 	 * client end
@@ -1066,11 +1071,11 @@ static void process_process_fork (GIOChannel *channel, ChannelData *channel_data
 	 * client must check if either handle is 0 and take
 	 * appropriate error handling action.
 	 */
-	process_handle=_wapi_handle_new_internal (WAPI_HANDLE_PROCESS);
+	process_handle = new_handle_with_shared_check (WAPI_HANDLE_PROCESS);
 	ref_handle (daemon_channel_data, process_handle);
 	ref_handle (channel_data, process_handle);
 	
-	thread_handle=_wapi_handle_new_internal (WAPI_HANDLE_THREAD);
+	thread_handle = new_handle_with_shared_check (WAPI_HANDLE_THREAD);
 	ref_handle (daemon_channel_data, thread_handle);
 	ref_handle (channel_data, thread_handle);
 	
@@ -1248,7 +1253,7 @@ static void process_process_fork (GIOChannel *channel, ChannelData *channel_data
 
 		resp.u.process_fork.pid=pid;
 	}
-			
+
 	resp.u.process_fork.process_handle=process_handle;
 	resp.u.process_fork.thread_handle=thread_handle;
 
@@ -1493,6 +1498,9 @@ void _wapi_daemon_main(gpointer data, gpointer scratch)
 	/* Note that we've got the starting segment already */
 	_wapi_shared_data[0]->num_segments=1;
 	_wapi_shm_mapped_segments=1;
+
+	_wapi_fd_offset_table_size=getdtablesize ();
+	_wapi_shared_data[0]->fd_offset_table_size = _wapi_fd_offset_table_size;
 	
 	startup ();
 	

@@ -61,6 +61,9 @@ typedef struct {
 	MonoMethod *mhandle;
 	guint32 nrefs;
 	gpointer *refs;
+	/* for PInvoke */
+	int charset, lasterr, native_cc;
+	MonoString *dll, *dllentry;
 } ReflectionMethodBuilder;
 
 const unsigned char table_sizes [64] = {
@@ -887,6 +890,8 @@ method_encode_code (MonoDynamicImage *assembly, ReflectionMethodBuilder *mb)
 		max_stack = 8; /* we probably need to run a verifier on the code... */
 	}
 
+	stream_data_align (&assembly->code);
+
 	/* check for exceptions, maxstack, locals */
 	maybe_small = (max_stack <= 8) && (!num_locals) && (!num_exception);
 	if (maybe_small) {
@@ -1260,6 +1265,14 @@ reflection_methodbuilder_from_method_builder (ReflectionMethodBuilder *rmb,
 	rmb->mhandle = mb->mhandle;
 	rmb->nrefs = 0;
 	rmb->refs = NULL;
+
+	if (mb->dll) {
+		rmb->charset = rmb->charset & 0xf;
+		rmb->lasterr = rmb->charset & 0x40;
+		rmb->native_cc = rmb->native_cc;
+		rmb->dllentry = mb->dllentry;
+		rmb->dll = mb->dll;
+	}
 }
 
 static void
@@ -2716,7 +2729,8 @@ mono_image_get_type_info (MonoDomain *domain, MonoReflectionTypeBuilder *tb, Mon
 	 * if we have explicitlayout or sequentiallayouts, output data in the
 	 * ClassLayout table.
 	 */
-	if (((tb->attrs & TYPE_ATTRIBUTE_LAYOUT_MASK) != TYPE_ATTRIBUTE_AUTO_LAYOUT) && (tb->class_size != -1)) {
+	if (((tb->attrs & TYPE_ATTRIBUTE_LAYOUT_MASK) != TYPE_ATTRIBUTE_AUTO_LAYOUT) &&
+	    ((tb->class_size > 0) || (tb->packing_size > 0))) {
 		table = &assembly->tables [MONO_TABLE_CLASSLAYOUT];
 		table->rows++;
 		alloc_table (table, table->rows);
@@ -5256,11 +5270,20 @@ MonoArray*
 mono_param_get_objects (MonoDomain *domain, MonoMethod *method)
 {
 	static MonoClass *System_Reflection_ParameterInfo;
+	static MonoClassField *dbnull_value_field;
+	MonoClass *klass;
 	MonoArray *res = NULL;
 	MonoReflectionMethod *member = NULL;
 	MonoReflectionParameter *param = NULL;
 	char **names;
 	int i;
+
+	if (!dbnull_value_field) {
+		klass = mono_class_from_name (mono_defaults.corlib, "System", "DBNull");
+		mono_class_init (klass);
+		dbnull_value_field = mono_class_get_field_from_name (klass, "Value");
+		g_assert (dbnull_value_field);
+	}
 
 	if (!System_Reflection_ParameterInfo)
 		System_Reflection_ParameterInfo = mono_class_from_name (
@@ -5283,7 +5306,7 @@ mono_param_get_objects (MonoDomain *domain, MonoMethod *method)
 		param = (MonoReflectionParameter *)mono_object_new (domain, 
 															System_Reflection_ParameterInfo);
 		param->ClassImpl = mono_type_get_object (domain, method->signature->params [i]);
-		param->DefaultValueImpl = NULL; /* FIXME */
+		param->DefaultValueImpl = mono_field_get_value_object (domain, dbnull_value_field, NULL); /* FIXME */
 		param->MemberImpl = (MonoObject*)member;
 		param->NameImpl = mono_string_new (domain, names [i]);
 		param->PositionImpl = i;
@@ -5868,6 +5891,7 @@ handle_type:
 				}
 				break;
 			case MONO_TYPE_CLASS:
+			case MONO_TYPE_OBJECT:
 			case MONO_TYPE_STRING:
 				for (i = 0; i < alen; i++) {
 					MonoObject *item = load_cattr_value (image, &t->data.klass->byval_arg, p, &p);
@@ -7005,6 +7029,17 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 	} else if (m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 		/* TODO */
 		m->signature->pinvoke = 1;
+
+		method_aux = g_new0 (MonoReflectionMethodAux, 1);
+
+		method_aux->dllentry = g_strdup (mono_string_to_utf8 (rmb->dllentry));
+		method_aux->dll = g_strdup (mono_string_to_utf8 (rmb->dll));
+		
+		((MonoMethodPInvoke*)m)->piflags = (rmb->native_cc << 8) | (rmb->charset ? (rmb->charset - 1) * 2 : 1) | rmb->lasterr;
+
+		if (klass->image->dynamic)
+			mono_g_hash_table_insert (((MonoDynamicImage*)klass->image)->method_aux_hash, m, method_aux);
+
 		return m;
 	} else if (!m->klass->dummy && 
 			   !(m->flags & METHOD_ATTRIBUTE_ABSTRACT) &&
@@ -7818,6 +7853,7 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 {
 	MonoClass *klass;
 	MonoReflectionType* res;
+	int i;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -7828,7 +7864,6 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	/*
 	 * Fields to set in klass:
 	 * the various flags: delegate/unicode/contextbound etc.
-	 * nested_classes
 	 */
 	klass->flags = tb->attrs;
 
@@ -7839,6 +7874,13 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	/* enums are done right away */
 	if (!klass->enumtype)
 		ensure_runtime_vtable (klass);
+
+	if (tb->subtypes) {
+		for (i = 0; i < mono_array_length (tb->subtypes); ++i) {
+			MonoReflectionTypeBuilder *subtb = mono_array_get (tb->subtypes, MonoReflectionTypeBuilder*, i);
+			klass->nested_classes = g_list_prepend (klass->nested_classes, my_mono_class_from_mono_type (subtb->type.type));
+		}
+	}
 
 	/* fields and object layout */
 	if (klass->parent) {

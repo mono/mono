@@ -1,7 +1,7 @@
 AC_INIT(README)
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.0)
+AM_INIT_AUTOMAKE(mono,1.0.3)
 AM_MAINTAINER_MODE
 
 AC_PROG_LN_S
@@ -67,7 +67,62 @@ case "$host" in
 		libdl=
 		libgc_threads=no
 		;;
-	*-*-*freebsd*|*-*-*openbsd*)
+# these flags will work for all versions of -STABLE
+#
+	*-*-*freebsd4*)
+		platform_win32=no
+		if test "x$PTHREAD_CFLAGS" = "x"; then
+			CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_FREEBSD_THREADS"
+			libmono_cflags="-D_THREAD_SAFE"
+		else
+			CPPFLAGS="$CPPFLAGS $PTHREAD_CFLAGS -DGC_FREEBSD_THREADS"
+			libmono_cflags="$PTHREAD_CFLAGS"
+		fi
+		if test "x$PTHREAD_LIBS" = "x"; then
+			LDFLAGS="$LDFLAGS -pthread"
+			libmono_ldflags="-pthread"
+		else
+			LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
+			libmono_ldflags="$PTHREAD_LIBS"
+		fi
+		need_link_unlink=yes
+		AC_DEFINE(PTHREAD_POINTER_ID)
+		libdl=
+		libgc_threads=pthreads
+# TLS isn't implemented at all on -STABLE
+		with_nptl=no
+		with_tls=pthread
+		;;
+# older versions of -CURRENT will break with these flags but testing
+# indicates these older versions won't run Mono anyway
+#
+	*-*-*freebsd5*)
+		platform_win32=no
+		if test "x$PTHREAD_CFLAGS" = "x"; then
+			CPPFLAGS="$CPPFLAGS -DGC_FREEBSD_THREADS"
+			libmono_cflags=
+		else
+			CPPFLAGS="$CPPFLAGS $PTHREAD_CFLAGS -DGC_FREEBSD_THREADS"
+			libmono_cflags="$PTHREAD_CFLAGS"
+		fi
+		if test "x$PTHREAD_LIBS" = "x"; then
+			LDFLAGS="$LDFLAGS -lpthread"
+			libmono_ldflags="-lpthread"
+		else
+			LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
+			libmono_ldflags="$PTHREAD_LIBS"
+		fi
+		need_link_unlink=yes
+		AC_DEFINE(PTHREAD_POINTER_ID)
+		libdl=
+		libgc_threads=pthreads
+# TLS is only partially implemented on -CURRENT (compiler support
+# but NOT library support)
+#
+		with_nptl=no
+		with_tls=pthread
+		;;
+	*-*-*openbsd*)
 		platform_win32=no
 		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_FREEBSD_THREADS"
 		libmono_cflags="-D_THREAD_SAFE"
@@ -248,9 +303,21 @@ AC_ARG_WITH(gc, [  --with-gc=boehm,included,none],[gc=$with_gc],[gc=$gc_default]
 
 # Enable support for fast thread-local storage
 # Some systems have broken support, so we allow to disable it.
-# This is misnamed: __thread support has no relation to NPTL,
-# but people already use it...
-AC_ARG_WITH(nptl, [  --with-nptl=yes,no      enable/disable support for __thread support],[],[with_nptl=yes])
+AC_ARG_WITH(tls, [  --with-tls=__thread,pthread       select Thread Local Storage implementation],[],[with_tls=__thread])
+
+# Kept for compatibility
+AC_ARG_WITH(nptl, [  --with-nptl=yes,no      deprecated, use --with-tls instead],[],[with_nptl=default])
+
+if test "x$with_nptl" != "xdefault"; then
+   if test "x$with_nptl" = "xyes"; then
+      AC_MSG_WARN([--with-nptl=yes is deprecated, use --with-tls=__thread option instead.])
+	  with_tls=__thread
+   fi
+   if test "x$with_nptl" = "xno"; then
+      AC_MSG_WARN([--with-nptl=no is deprecated, use --with-tls=pthread option instead.])
+	  with_tls=pthread
+   fi
+fi
 
 # Enable support for using sigaltstack for SIGSEGV and stack overflow handling
 # This does not work on some platforms (bug #55253)
@@ -399,6 +466,7 @@ if test x$platform_win32 = xno; then
 	AC_CHECK_FUNCS(getpwuid_r)
 	AC_CHECK_FUNCS(getresuid)
 	AC_CHECK_FUNCS(setresuid)
+	AC_CHECK_FUNCS(kqueue)
 
 	dnl ******************************************************************
 	dnl *** Check for large file support                               ***
@@ -641,7 +709,17 @@ if test x$platform_win32 = xno; then
 	dnl *****************************
 	dnl *** Checks for libpthread ***
 	dnl *****************************
-	AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
+# on FreeBSD -STABLE, the pthreads functions all reside in libc_r
+# and libpthread does not exist
+#
+	case "${host}" in
+		*-*-*freebsd4*)
+			AC_CHECK_LIB(pthread, main, LIBS="$LIBS -pthread")
+		;;
+		*)
+			AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
+		;;
+	esac
 	AC_CHECK_HEADERS(pthread.h)
 	AC_CHECK_FUNCS(pthread_mutex_timedlock)
 	AC_CHECK_FUNCS(pthread_getattr_np pthread_attr_get_np)
@@ -662,7 +740,7 @@ if test x$platform_win32 = xno; then
 	dnl *** Checks for working __thread ***
 	dnl ***********************************
 	AC_MSG_CHECKING(for working __thread)
-	if test "x$with_nptl" != "xyes"; then
+	if test "x$with_tls" != "x__thread"; then
 		AC_MSG_RESULT(disabled)
 	else
 		AC_TRY_RUN([
@@ -954,8 +1032,9 @@ ac_cv_c_socklen_t=yes
 ])
 
 AC_CHECK_FUNCS(trunc, , AC_MSG_CHECKING(for trunc in math.h)
+	# Simply calling trunc (0.0) is no good since gcc will optimize the call away
 	AC_TRY_LINK([#include <math.h>], 
-	[ trunc(0.0); ], 
+	[ static void *p = &trunc; ],
 	[
 		AC_DEFINE(HAVE_TRUNC) 
 		AC_MSG_RESULT(yes)
@@ -1096,7 +1175,11 @@ case "$host" in
 		JIT_SUPPORTED=no
 		;;
 	sparc*-*-*)
-		TARGET=SPARC;
+		if test "x$ac_cv_sizeof_void_p" = "x8"; then
+		   TARGET=SPARC64
+		else
+			TARGET=SPARC
+		fi
 		arch_target=sparc;
 		JIT_SUPPORTED=yes
 		ACCESS_UNALIGNED="no"
@@ -1184,6 +1267,14 @@ case "$host" in
 	LIBC="libc.so.12"
 	INTL="libintl.so.0"
 	;;
+    *-*-*freebsd*)
+    	LIBC="libc.so"
+	INTL="libintl.so"
+	;;
+    *-*-*openbsd*)
+    	LIBC="libc.so"
+	INTL="libintl.so"
+	;;
 esac
 AC_SUBST(libsuffix)
 
@@ -1227,6 +1318,7 @@ AM_CONDITIONAL(INSTALL_2_0, test x$PREVIEW = xyes)
 AM_CONDITIONAL(MIPS_GCC, test ${TARGET}${ac_cv_prog_gcc} = MIPSyes)
 AM_CONDITIONAL(MIPS_SGI, test ${TARGET}${ac_cv_prog_gcc} = MIPSno)
 AM_CONDITIONAL(SPARC, test x$TARGET = xSPARC)
+AM_CONDITIONAL(SPARC64, test x$TARGET = xSPARC64)
 AM_CONDITIONAL(X86, test x$TARGET = xX86)
 AM_CONDITIONAL(AMD64, test x$TARGET = xAMD64)
 AM_CONDITIONAL(ALPHA, test x$TARGET = xALPHA)
@@ -1299,7 +1391,7 @@ echo "
 
 	GC:	     $gc
 	ICU:	     $enable_icu
-	__thread:    $with_nptl
+	TLS:         $with_tls
 	SIGALTSTACK: $with_sigaltstack
 	Engine:      $jit_status
 	2.0 Alpha:   $PREVIEW
