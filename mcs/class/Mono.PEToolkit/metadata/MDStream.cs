@@ -50,10 +50,33 @@ namespace Mono.PEToolkit.Metadata {
 				pos &= ~3;
 				if (stream != null) 
 					pos += stream.Root.filePos;
-
+				
 				// Advance file pointer.
 				reader.BaseStream.Position = pos;
 			}
+			
+			public void Write (BinaryWriter writer, MDStream stream)
+			{
+				writer.Write (offs);
+				writer.Write (size);
+
+				for (int i=0; i<name.Length; i++)
+					writer.Write ((sbyte)name[i]);
+				writer.Write ((sbyte) '\0');	
+			
+				// Round up to dword boundary.
+				long pos = writer.BaseStream.Position;
+				if (stream != null) 
+					pos -= stream.Root.filePos;
+				pos += 3;
+				pos &= ~3;
+				if (stream != null) 
+					pos += stream.Root.filePos;
+
+				// Advance file pointer.
+				writer.BaseStream.Position = pos;
+			}
+
 		} // header
 
 
@@ -151,6 +174,15 @@ namespace Mono.PEToolkit.Metadata {
 			reader.BaseStream.Position = oldPos;
 		}
 
+
+		public void Write (BinaryWriter writer)
+		{
+			hdr.Write (writer, this);
+			long old_pos = writer.BaseStream.Position;
+			writer.BaseStream.Position = root.filePos + hdr.offs;
+			writer.Write (data);
+			writer.BaseStream.Position = old_pos;
+		}
 
 		/// <summary>
 		/// Initializes heap for this stream.
