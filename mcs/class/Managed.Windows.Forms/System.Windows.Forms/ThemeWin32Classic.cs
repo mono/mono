@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.11  2004/08/09 17:31:13  jackson
+// New names for control properties
+//
 // Revision 1.10  2004/08/09 17:00:00  jackson
 // Add default window color properties
 //
@@ -275,11 +278,11 @@ namespace System.Windows.Forms
 			get {return Color.FromArgb (255, 181, 181, 181);}
 		}
 
-		public Color DefaultBackColor {
+		public Color DefaultControlBackColor {
 			get { return Color.FromArgb (255, 236, 233, 216); }
 		}
 
-		public Color DefaultForeColor {
+		public Color DefaultControlForeColor {
 			get { return Color.FromArgb (255, 0, 0, 0); }
 		}
 
