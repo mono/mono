@@ -308,7 +308,7 @@ namespace Mono.Xml.XPath
 			if (doc == null)
 				doc = current as XmlDocument;
 			if (doc == null)
-				throw new Exception ("Should not happen.");
+				throw new SystemException ("Should not happen.");
 			XmlElement el = doc.CreateElement (prefix, name, ns);
 			current.AppendChild (el);
 			document.AppendChild (current, el);

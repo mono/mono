@@ -1,3 +1,7 @@
+2005-01-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathEditableDocument.cs : eliminating "throw new Exception".
+
 2004-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs : added CanReadBinaryContent and
