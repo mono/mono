@@ -605,7 +605,7 @@ namespace System.Data {
 						string colnspc = nspc;
 						object rowObject = row [col];
 												
-						if (rowObject == null)
+						if (rowObject == null || rowObject == DBNull.Value)
 							continue;
 
 						if( col.Namespace != null )

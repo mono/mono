@@ -1,3 +1,7 @@
+2003-01-28  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataSet.cs: One little fix to writing xml
+	
 2003-01-27  Ville Palo <vi64pa@koti.soon.fi>
 
 	* XmlSchemaMapper.cs: Some fixes.
