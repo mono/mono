@@ -1574,7 +1574,7 @@ publicKeyTokenHead      : D_PUBLICKEYTOKEN ASSIGN OPEN_PARENS
 localeHead              : D_LOCALE ASSIGN OPEN_PARENS 
 			;
 
-assemblyRefHead         : D_ASSEMBLY K_EXTERN name1 
+assemblyRefHead         : D_ASSEMBLY K_EXTERN assembly_ref
 			  {
 				System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();

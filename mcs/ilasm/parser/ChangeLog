@@ -1,3 +1,7 @@
+2003-03-16 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Use assembly_ref for extern assemblies so names with dashes can be used.
+
 2003-03-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Define local variables
