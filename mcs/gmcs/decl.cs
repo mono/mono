@@ -87,6 +87,14 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public string GetMethodName ()
+		{
+			if (Left != null)
+				return Left.GetFullName () + "." + Name;
+			else
+				return Name;
+		}
+
 		public string GetFullName ()
 		{
 			string full_name;

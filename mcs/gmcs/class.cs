@@ -3694,7 +3694,8 @@ namespace Mono.CSharp {
 
 			MethodBuilder mb = null;
 			if (GenericMethod != null) {
-				mb = Parent.TypeBuilder.DefineGenericMethod (Name, flags);
+				string mname = MemberName.GetMethodName ();
+				mb = Parent.TypeBuilder.DefineGenericMethod (mname, flags);
 				if (!GenericMethod.Define (mb))
 					return false;
 			}

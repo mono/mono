@@ -1,3 +1,8 @@
+2004-08-18  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Method.Define): Use the correct method name when
+	creating the MethodBuilder for a generic method.
+
 2004-08-17  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Constraints): Support type parameter constraints.
