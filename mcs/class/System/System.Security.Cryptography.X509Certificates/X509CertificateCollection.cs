@@ -39,6 +39,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		
 		// Methods
 
+		public int Add (X509Certificate value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			
+			return list.Add (value);
+		}
+		
 		public void AddRange (X509Certificate [] value) 
 		{
 			if (value == null)
