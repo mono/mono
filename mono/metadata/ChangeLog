@@ -1,5 +1,7 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c (mono_class_init): Fix generics broken by the recent changes.
+
 	* monodiet.c (handle_type): Add missing setup_... calls.
 
 	* class.c: Back out garbage in previous patch.
