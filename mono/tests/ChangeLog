@@ -1,0 +1,10 @@
+2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs pinvoke3.cs: Merge tests 4-8 into these files + 
+	convert tests so they run with the test driver used by mini.
+
+	* pinvoke3.cs libtest.c: Add tests for class arguments and return 
+	values.
+
+	* pinvoke4.cs pinvoke5.cs pinvoke6.cs pinvoke7.cs pinvoke8.cs: Removed.
+	
