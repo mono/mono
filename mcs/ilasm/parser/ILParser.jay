@@ -444,10 +444,11 @@ class_head 		: D_CLASS class_attr id typars_clause extends_clause
 
                                 if ($4 != null) {
                                         ArrayList typars_list = (ArrayList) $4;
+                                        int index = 0;
                                         foreach (DictionaryEntry entry in typars_list) {
                                                 TypeRef type = (TypeRef) entry.Key;
                                                 string name = (string) entry.Value;
-                                                codegen.CurrentClass.AddGenericParameter (type.Type, name);
+                                                codegen.CurrentClass.AddGenericParameter ((short) index++, type.Type, name);
                                         }
                                 }
                           }

@@ -1,5 +1,9 @@
 2003-04-05 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Set type parameter index
+		
+2003-04-05 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Emit parameterized types
 		
 2003-04-04 Jackson Harper <jackson@latitudegeo.com>
