@@ -72,6 +72,37 @@ namespace System.ComponentModel
 				       Locale.GetText("proto no supported"));
 			w32_errors.Add(10044,
 				       Locale.GetText("socket not supproted"));
+			w32_errors.Add(10004,
+			    Locale.GetText("interrupted"));
+
+			w32_errors.Add(10013,
+			    Locale.GetText("Access denied"));
+			w32_errors.Add(11002,
+			    Locale.GetText("A temporary error occurred on an  authoritative  name  server. Try  again later."));
+			w32_errors.Add(10022,
+			    Locale.GetText("Invalid arguments"));
+			w32_errors.Add(10050,
+			    Locale.GetText("Network subsystem is down"));
+			w32_errors.Add(10051,
+			    Locale.GetText("Network is unreachable"));
+			w32_errors.Add(10061,
+			    Locale.GetText("Connection refused"));
+			w32_errors.Add(10045,
+			    Locale.GetText("Operation not supported"));
+			w32_errors.Add(10038,
+			    Locale.GetText("The descriptor is not a socket"));
+			w32_errors.Add(10055,
+			    Locale.GetText("Not enough buffer space is available"));
+			w32_errors.Add(10056,
+			    Locale.GetText("Socket is already connected"));
+			w32_errors.Add(10048,
+			    Locale.GetText("Address already in use"));
+			w32_errors.Add(10057,
+			    Locale.GetText("The socket is not connected"));
+			w32_errors.Add(10058,
+			    Locale.GetText("The socket has been shut down"));
+			w32_errors.Add(10093,
+			    Locale.GetText("Winsock not initialized"));
 		}
 
 		private static string W32ErrorMessage(int error_code) {
