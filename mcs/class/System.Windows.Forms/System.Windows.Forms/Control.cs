@@ -2445,9 +2445,9 @@
 					break;
     			case Msg.WM_KEYUP:
     				// FIXME:
-    				// OnKeyUp (eventArgs);
-					CallControlWndProc(ref m);
-					break;
+    				OnKeyUp ( new KeyEventArgs ( (Keys)m.WParam.ToInt32() ) );
+				CallControlWndProc(ref m);
+				break;
     			case Msg.WM_KILLFOCUS:
     				OnLeave (eventArgs);
     				OnLostFocus (eventArgs);

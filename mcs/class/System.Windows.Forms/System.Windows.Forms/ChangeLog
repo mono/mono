@@ -1,4 +1,13 @@
 2003-03-15 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Control.cs
+	* Panel.cs
+	* StatusBar.cs
+	* StatusBarPanel.cs
+	* win32Enums.cs
+	* win32functions.cs
+		checkin for Aleksey Ryabchuk (ryabchuk@yahoo.com)
+
+2003-03-15 Alexandre Pigolkine <pigolkine@gmx.de>
 	* monogc.c					dynamic loader for gc-wine.dll by John Sohn <jsohn@columbus.rr.com>
 	* makefile					changed to build monogc
 

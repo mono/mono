@@ -168,6 +168,8 @@ namespace System.Windows.Forms{
 		[DllImport("gdi32.dll")]
 		internal static extern int ExtTextOut(IntPtr hdc, int x, int y,
 			ExtTextOutFlags options, ref RECT rc, string str, int strLen, IntPtr distances);
+		[DllImport("gdi32.dll")]
+		internal static extern bool GetTextExtentPoint32(IntPtr hDC, string lpString, int cbString, ref SIZE lpSize);
 
 
 		[DllImport ("gdi32.dll", 
@@ -471,6 +473,9 @@ namespace System.Windows.Forms{
 
 		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal extern static int AdjustWindowRect( ref RECT rc, int dwStyle, int bMenu);
+
+		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal extern static int AdjustWindowRectEx( ref RECT rc, int dwStyle, int bMenu, int dwStyleEx);
 
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal static extern int DrawEdge(IntPtr hdc, ref RECT rc, Border3DStyle edge, Border3DSide flags);
@@ -1037,6 +1042,19 @@ namespace System.Windows.Forms{
 			Win32.SetTextColor(hdc, prevColor);
 			paintOn.ReleaseHdc(hdc);
 		}
-		
+
+		internal static SIZE GetTextExtent ( IntPtr hWnd, string text ) {
+			IntPtr hOldFont = new IntPtr ( 0 );
+			IntPtr hFont = new IntPtr ( Win32.SendMessage ( hWnd, (int)Msg.WM_GETFONT, 0, 0 ) );
+			IntPtr hDC   = Win32.GetWindowDC ( hWnd );
+			if ( hFont != IntPtr.Zero )
+				hOldFont = Win32.SelectObject ( hDC, hFont );
+			SIZE size = new SIZE();
+			Win32.GetTextExtentPoint32 ( hDC, text, text.Length, ref size);
+			if ( hOldFont != IntPtr.Zero )
+				Win32.SelectObject ( hDC, hOldFont );
+			Win32.ReleaseDC ( hWnd, hDC );
+			return size;
+		}
 	}
 }

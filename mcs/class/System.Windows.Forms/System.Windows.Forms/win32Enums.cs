@@ -2381,6 +2381,49 @@ namespace System.Windows.Forms{
 		TB_ENDTRACK         =    8
 	}
 
+	#region StatusBar Control Styles
+	public enum StatusbarControlStyles {
+		SBARS_SIZEGRIP      =    0x0100,
+		SBT_TOOLTIPS	    =	 0x0800
+	}
+	#endregion
+
+	#region StatusBar notifications
+	internal enum StatusbarNotifications : int {
+		SBN_FIRST	= (0 - 880),
+		SBN_LAST	= (0 - 899),
+		SBN_SIMPLEMODECHANGE = (SBN_FIRST - 0)
+	}
+	#endregion
+
+	#region Statusbar Control Messages
+	internal enum StatusbarMessages {
+		SB_SETTEXT	= ( Msg.WM_USER+1 ),
+		SB_GETTEXT	= ( Msg.WM_USER+2 ),
+		SB_GETTEXTLENGTH= ( Msg.WM_USER+3 ),
+		SB_SETPARTS	= ( Msg.WM_USER+4 ),
+		SB_GETPARTS	= ( Msg.WM_USER+6 ),
+		SB_GETBORDERS	= ( Msg.WM_USER+7 ),
+		SB_SETMINHEIGHT	= ( Msg.WM_USER+8 ),
+		SB_SIMPLE	= ( Msg.WM_USER+9 ),
+		SB_GETRECT	= ( Msg.WM_USER+10),
+		SB_ISSIMPLE	= ( Msg.WM_USER+14),
+		SB_SETICON	= ( Msg.WM_USER+15),
+		SB_SETTIPTEXT	= ( Msg.WM_USER+16),
+		SB_GETTIPTEXT	= ( Msg.WM_USER+18),
+		SB_GETICON	= ( Msg.WM_USER+20),
+		SB_SETBKCOLOR	= CommonControlMessages.CCM_SETBKCOLOR
+	}
+	#endregion
+
+	#region Statusbar Drawing Operations Types
+	internal enum StatusbarDrawType {
+		SBT_OWNERDRAW   = 0x1000,
+		SBT_NOBORDERS   = 0x0100,
+		SBT_POPOUT      = 0x0200,
+		SBT_RTLREADING  = 0x0400
+	}
+	#endregion
 
 	internal enum OwnerDrawTypes : int {
 		ODT_COMBOBOX = 3,

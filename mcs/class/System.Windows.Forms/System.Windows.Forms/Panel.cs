@@ -18,6 +18,7 @@ namespace System.Windows.Forms {
 
 	public class Panel : ScrollableControl {
 
+		BorderStyle borderStyle = BorderStyle.None;
 		//
 		//  --- Constructor
 		//
@@ -32,10 +33,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public BorderStyle BorderStyle {
 			get {
-				throw new NotImplementedException ();
+				return borderStyle;
 			}
 			set {
-				//FIXME:
+				borderStyle = value;
 			}
 		}
 
@@ -69,9 +70,6 @@ namespace System.Windows.Forms {
 			get {
 				if( Parent != null) {
 					CreateParams createParams = base.CreateParams;
-					if( window == null) {
-						window = new ControlNativeWindow (this);
-					}
 
 					createParams.Caption = Text;
 					createParams.X = Left;
@@ -85,6 +83,16 @@ namespace System.Windows.Forms {
 					createParams.Style = (int) (
 						WindowStyles.WS_CHILD | 
 						WindowStyles.WS_VISIBLE);
+
+					switch (BorderStyle) {
+					case BorderStyle.Fixed3D:
+						createParams.ExStyle |= (int)WindowExStyles.WS_EX_CLIENTEDGE;
+					break;
+					case BorderStyle.FixedSingle:
+						createParams.Style   |= (int)WindowStyles.WS_BORDER;
+					break;
+					}
+
 					return createParams;
 				}
 				return null;

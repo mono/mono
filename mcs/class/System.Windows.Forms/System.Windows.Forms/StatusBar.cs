@@ -5,6 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -13,6 +14,7 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -21,53 +23,50 @@ namespace System.Windows.Forms {
 	// </summary>
 	public class StatusBar : Control {
 
-		//
-		//  --- Private Fields
-		//
-		private bool showPanels;
 		private bool sizingGrip;
+		private bool showPanels;
+		private StatusBarPanelCollection panels;
+		private string  stext;
+		private const int GripSize = 16;   // FIXME: get size from SystemMetrics
+		private const int PanelGap = 2;    // FIXME: get size from StatusBar
+		private const int TextOffset = 3;
+		internal DockStyle dockstyle;
 
-		//
-		//  --- Constructors/Destructors
-		//
-		[MonoTODO]
 		public StatusBar() : base()
 		{
 			Dock = DockStyle.Bottom;
 			showPanels = false;
 			sizingGrip = true;
+			Size = DefaultSize;
 		}
 
-		//
-		//  --- Public Methods
-		//
-		[MonoTODO]
 		public override string ToString()
 		{
-			//FIXME:
-			return base.ToString();
+			string str = "System.Windows.Forms.StatusBar, Panels.Count: ";
+			str += Panels.Count;
+			for ( int i = 0; i < Panels.Count ; i++ ) {
+				
+				str += ", Panels[" + i + "]: " + Panels[i].ToString ( );
+			}
+			return str;
 		}
 
-		//
-		//  --- Protected Methods
-		//
 		[MonoTODO]
 		protected override void CreateHandle()
 		{
 			base.CreateHandle();
 		}
 
-		[MonoTODO]
 		protected virtual void OnDrawItem(StatusBarDrawItemEventArgs e)
 		{
-			//FIXME:
+			if( DrawItem != null)
+				DrawItem ( this, e );
 		}
 
-		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			//FIXME:
 			base.OnHandleCreated(e);
+			SetPanelsImpl ( );
 		}
 
 		[MonoTODO]
@@ -91,60 +90,65 @@ namespace System.Windows.Forms {
 			base.OnMouseDown(e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnPanelClick(StatusBarPanelClickEventArgs e)
 		{
-			//FIXME:
+			if ( PanelClick != null )
+				PanelClick ( this , e );
 		}
 
 		[MonoTODO]
 		protected override void OnResize(EventArgs e)
 		{
-			//FIXME:
+			UpdatePanels( true, false, null );
 			base.OnResize(e);
 		}
 
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			//FIXME:
-			base.WndProc(ref m);
+			switch ( m.Msg ) {
+			case Msg.WM_DRAWITEM:
+				DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
+				dis = (DRAWITEMSTRUCT)Marshal.PtrToStructure( m.LParam, dis.GetType() );
+				
+				if ( dis.itemID < Panels.Count ) {
+					OnDrawItem (
+						new StatusBarDrawItemEventArgs (
+						Graphics.FromHdc ( dis.hDC ),
+						Font,
+						new Rectangle(  dis.rcItem.left,
+						dis.rcItem.top,
+						dis.rcItem.right - dis.rcItem.left,
+						dis.rcItem.bottom - dis.rcItem.top),
+						dis.itemID,
+						(DrawItemState)dis.itemState,
+						Panels[dis.itemID] ) );
+				}
+				m.Result = (IntPtr)1;
+			break;
+			case Msg.WM_NOTIFY:
+				// FIXME
+			break;
+			default:
+				base.WndProc(ref m);
+			break;
+			}
 		}
 
-		//
-		//  --- Public Events
-		//
 		public event StatusBarDrawItemEventHandler DrawItem;
 		public event StatusBarPanelClickEventHandler PanelClick;
 
-		//
-		//  --- Public Properties
-		//
-		[MonoTODO]
 		public override Color BackColor {
-
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get {	return base.BackColor;	}
+			set {	base.BackColor = value;	}
 		}
 
-		[MonoTODO]
 		public override Image BackgroundImage {
-
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get {	return base.BackgroundImage;	}
+			set {	base.BackgroundImage = value;	}
 		}
 
-		//just to get it to run
 		//FIXME:
-		internal DockStyle dockstyle;
 		[MonoTODO]
 		public override DockStyle Dock {
 			get {
@@ -155,62 +159,69 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public override Font Font {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return base.Font; }
+			set { base.Font = value; }
 		}
 
-		[MonoTODO]
 		public override Color ForeColor {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return base.ForeColor; }
+			set { base.ForeColor = value; }
 		}
 
-		[MonoTODO]
 		public new ImeMode ImeMode {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return DefaultImeMode; }
+			set {  }
 		}
 
-		[MonoTODO]
 		public StatusBar.StatusBarPanelCollection Panels {
+			get { 
+				if( panels == null )
+					panels = new StatusBar.StatusBarPanelCollection( this );
+				return panels;
+			}
+		}
 
-			get { throw new NotImplementedException (); }
+		public bool ShowPanels {
+			get { return showPanels; }
+			set {
+				showPanels = value; 
+				SetPanelsImpl ( );
+			}
 		}
 
 		[MonoTODO]
-		public bool ShowPanels {// default false {
-
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public bool SizingGrip // default true {
+		public bool SizingGrip
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return sizingGrip; }
+			set { 
+				// the only way to get rid of the grip dynamically
+				// is to recreate window
+				bool recreate = sizingGrip != value;
+				sizingGrip = value;
+				if ( IsHandleCreated && recreate )
+					RecreateHandle();
+			}
 		}
 
 		[MonoTODO]
 		public new bool TabStop {
-
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return false; }
+			set {  } 
 		}
 
 		[MonoTODO]
 		public override string Text {
-
-			get { 
-				return base.Text;
+			get {   // should reuse base.Text ?
+				return stext;
 			}
 			set {
-				base.Text = value;
+				stext = value;
+				if ( IsHandleCreated )
+					UpdateStatusText ( );
 			}
 		}
 
@@ -219,13 +230,11 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-
 			get {
 				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
 
 				createParams.Caption = Text;
-				createParams.ClassName = "STATUSBAR";
+				createParams.ClassName = "msctls_statusbar32";
 				createParams.X = Left;
 				createParams.Y = Top;
 				createParams.Width = Width;
@@ -233,25 +242,169 @@ namespace System.Windows.Forms {
 				createParams.ClassStyle = 0;
 				createParams.ExStyle = 0;
 				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
+				createParams.Parent = Parent.Handle;
 				createParams.Style = (int) (
 					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
+					WindowStyles.WS_VISIBLE |
+					WindowStyles.WS_OVERLAPPED |
+					WindowStyles.WS_CLIPCHILDREN |
+					WindowStyles.WS_CLIPCHILDREN );
+
+				if( SizingGrip )
+					createParams.Style |= (int)StatusbarControlStyles.SBARS_SIZEGRIP;
+
+				createParams.Style |= (int)StatusbarControlStyles.SBT_TOOLTIPS;
+
 				return createParams;
 			}		
 		}
 
-		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
-
-			get { throw new NotImplementedException (); }
+			get { return ImeMode.Disable; }
 		}
 
-		[MonoTODO]
 		protected override Size DefaultSize {
+			get { return new Size ( 100, 22 ); }
+		}
+		
+		internal  void UpdateParts ( ) 	{
+			if ( Panels.Count > 0) {
+				int[] array = new int[ panels.Count ];
 
-			get { throw new NotImplementedException (); }
+				CalculatePanelWidths ( array );
+				int size = array.Length;
+
+				IntPtr buffer = Marshal.AllocCoTaskMem( Marshal.SizeOf( size ) * size );
+				Marshal.Copy( array, 0, buffer, size );
+				Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SETPARTS, size, buffer.ToInt32() );
+				Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SIMPLE, 0, 0 );
+				Marshal.FreeCoTaskMem( buffer );
+			}
+			else {
+				Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SIMPLE, 1, 0 );
+				UpdateStatusText ( );
+			}
+		}
+
+		internal  void UpdateText ( StatusBarPanel p ) {
+			// if p is not null then this call is request to 
+			// update text in some specific panel
+			for (int i = 0; i < panels.Count; i++ ) {
+				if ( p != null && p != panels[i] )
+					continue;
+
+				int DrawStyle = i;
+						
+				if ( panels[i].Style == StatusBarPanelStyle.OwnerDraw )
+					DrawStyle |= (int)StatusbarDrawType.SBT_OWNERDRAW;
+
+				switch ( panels[i].BorderStyle ) 
+				{
+					case StatusBarPanelBorderStyle.None:
+						DrawStyle |= (int)StatusbarDrawType.SBT_NOBORDERS;
+						break;
+					case StatusBarPanelBorderStyle.Raised:
+						DrawStyle |= (int)StatusbarDrawType.SBT_POPOUT;
+						break;
+				}
+
+				string TextToSet;
+				
+				switch ( panels[i].Alignment ) {
+				case HorizontalAlignment.Center:
+					TextToSet = panels[i].Text.Insert( 0, "\t" );
+				break;
+				case HorizontalAlignment.Right:
+					TextToSet = panels[i].Text.Insert( 0, "\t\t" );
+				break;
+				default:
+					TextToSet = panels[i].Text;
+				break;
+				}
+
+				Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SETTEXT, DrawStyle,
+							TextToSet );
+			}
+		}
+
+		internal  void UpdateToolTips ( StatusBarPanel p ) {
+			// if p == null set tooltips for each panel
+			for (int i = 0; i < panels.Count; i++ ) {
+				if ( p != null && p != panels[i] )
+					continue;
+
+				Win32.SendMessage ( Handle, (int)StatusbarMessages.SB_SETTIPTEXT, i ,
+							panels[i].ToolTipText );
+			}
+		}
+
+		internal  void UpdatePanels ( bool updateParts, bool updateText, StatusBarPanel p ) {
+			if ( IsHandleCreated ) {
+				if ( updateParts )
+					UpdateParts ( );
+
+				if ( updateText )
+					UpdateText( p );
+
+				Invalidate( );
+			}
+		}
+
+		protected void CalculatePanelWidths ( int[] array ) {
+			int[] WidthArray = new int[panels.Count];
+
+			int FixedWidth = ClientSize.Width - (SizingGrip == true ? GripSize : 0);
+			int NumSpringPanels = 0;
+
+			for (int i = 0; i < panels.Count; i++ )	{
+				switch ( panels[i].AutoSize ) {
+				case StatusBarPanelAutoSize.None: 
+					WidthArray[i] = panels[i].Width + (PanelGap + TextOffset)*2;
+				break;
+				case StatusBarPanelAutoSize.Contents:
+					WidthArray[i] = panels[i].GetContentWidth( ) + (PanelGap + TextOffset)*2;
+				break;
+				default:
+					WidthArray[i] = 0;
+					NumSpringPanels++;
+				break;
+				}
+				FixedWidth   -= WidthArray[i];
+			}
+
+			int SpringPanelLength = 0;
+			if ( NumSpringPanels > 0 && FixedWidth > 0)
+				SpringPanelLength = FixedWidth / NumSpringPanels;
+
+			for (int i = 0; i < panels.Count; i++ )	{
+				if ( panels[i].AutoSize == StatusBarPanelAutoSize.Spring) 
+					WidthArray[i] = SpringPanelLength > panels[i].MinWidth ? 
+							SpringPanelLength : panels[i].MinWidth;
+			}
+
+			for (int i = 0; i < panels.Count; i++ )
+				array[i] = WidthArray[i] + (i == 0 ? 0 : array[i - 1]);
+		}
+
+		internal  void UpdateStatusText ( ){
+			Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SETTEXT,
+						255 | (int)StatusbarDrawType.SBT_NOBORDERS, Text );
+		}
+
+		internal  void SetPanelsImpl ( ) {
+			if( IsHandleCreated ) {
+				if ( base.Font.ToHfont ( ) != IntPtr.Zero )
+					Win32.SendMessage ( Handle, Msg.WM_SETFONT, base.Font.ToHfont().ToInt32(), 0 );
+
+				if( panels == null || panels.Count == 0 || showPanels == false) {
+					Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SIMPLE, 1, 0 );
+					UpdateStatusText ( );
+				}
+				else {
+					UpdatePanels ( true, true, null );
+					UpdateToolTips ( null );
+				}
+			}
 		}
 
 		//
@@ -267,229 +420,179 @@ namespace System.Windows.Forms {
 		//	Represents the collection of panels in a StatusBar control.
 		// </summary>
 		public class StatusBarPanelCollection : IList, ICollection, IEnumerable {
-
-			//
-			//  --- Private Fields
-			//
 			private ArrayList list;
 			private StatusBar owner;
-			private static string class_string = "System.Windows.Forms.StatusBar.StatusBarPanelCollection::";
 
-			//
-			//  --- Constructors/Destructors
-			//
-			StatusBarPanelCollection(StatusBar owner) : base()
-			{
+			public StatusBarPanelCollection( StatusBar owner ) : base() {
 				list = new ArrayList();
 				this.owner = owner;
 			}
 
-			//
-			//  --- Public Methods
-			//
-			[MonoTODO]
-			public virtual int Add(StatusBarPanel panel)
-			{
-				string method_string = "Add(StatusBarPanel) ";
-				if (panel == null) {
+			public virtual int Add( StatusBarPanel value ) {
+				if (value == null)
+					throw new ArgumentNullException("value");
 
-					throw new ArgumentNullException(class_string + method_string + "panel == null");
-				}
-				if (panel.Parent == null) {
+				if (value.Parent != null)
+					throw new ArgumentException("Object already has a parent.", "value");
 
-					throw new ArgumentException(class_string + method_string + "panel.Parent != null");
-				}
-				// FIXME: StatusBarPanel.Parent is readonly!
-				//panel.Parent = owner;
-				return list.Add(panel);
+				value.SetParent( owner );
+				int Index = list.Add( value );
+
+				owner.UpdatePanels ( true, true, null );
+				return Index;
 			}
 
-			[MonoTODO]
-			public virtual StatusBarPanel Add(string s)
-			{
-				throw new NotImplementedException ();
-			//	StatusBarPanel tmp = new StatusBarPanel();
-			//	tmp.Text = s;
-			//	// FIXME: StatusBarPanel.Parent is readonly!
-			//	//tmp.Parent = owner;
-			//	list.Add(tmp);
-			//	return tmp;
+			public virtual StatusBarPanel Add( string text ) {
+				StatusBarPanel panel = new StatusBarPanel();
+				panel.Text = text;
+				this.Add ( panel );
+				return panel;
 			}
 
-			[MonoTODO]
-			public virtual void AddRange(StatusBarPanel[] panels)
-			{
-				string method_string = "AddRange(StatusBarPanel[]) ";
-				if (panels == null) {
+			public virtual void AddRange(StatusBarPanel[] panels) {
+				if (panels == null)
+					throw new ArgumentNullException("panels");
 
-					throw new ArgumentNullException(class_string + method_string + "panels == null");
-				}
-				for (int i = 0; i < panels.Length; i++) {
-					// FIXME: StatusBarPanel.Parent is readonly!
-					//panels[i].Parent = owner;
-				}
+				// do we need to check for panel.Parent
+				// like it is done in Add(StatusBarPanel) ?
+
+				for (int i = 0; i < panels.Length; i++)
+					panels[i].SetParent( owner );
+
 				list.AddRange(panels);
+				owner.UpdatePanels ( true, true, null );
 			}
 
-			public virtual void Clear()
-			{
+			public virtual void Clear() {
+				for (int i = 0; i < list.Count; i++ )
+					((StatusBarPanel)list[i]).SetParent ( null );
+
 				list.Clear();
+				owner.UpdatePanels ( true, true, null );
 			}
 
-			public bool Contains(StatusBarPanel panel)
-			{
+			public bool Contains(StatusBarPanel panel) {
 				return list.Contains(panel);
 			}
 
-			public IEnumerator GetEnumerator()
-			{
+			public IEnumerator GetEnumerator() {
 				return list.GetEnumerator();
 			}
 
-			public int IndexOf(StatusBarPanel panel)
-			{
+			public int IndexOf(StatusBarPanel panel) {
 				return list.IndexOf(panel);
 			}
 
-			[MonoTODO]
-			public virtual void Insert(int index, StatusBarPanel panel)
-			{
-				string method_string = "Insert(int,StatusBarPanel) ";
-				if (panel == null) {
+			public virtual void Insert(int index, StatusBarPanel value) {
+				if (value == null)
+					throw new ArgumentNullException ( "value" );
 
-					throw new ArgumentNullException(class_string + method_string + "panel == null");
-				}
-				if (panel.Parent == null) {
+				if (value.Parent != null)
+					throw new ArgumentException ( "Object already has a parent.", "value" );
 
-					throw new ArgumentException(class_string + method_string + "panel.Parent != null");
-				}
-				if  (panel.AutoSize != StatusBarPanelAutoSize.None &&
-				     panel.AutoSize != StatusBarPanelAutoSize.Contents &&
-				     panel.AutoSize != StatusBarPanelAutoSize.Spring)
-				{
-					throw new InvalidEnumArgumentException(class_string + method_string + "panel.AutoSize is not a valid StatusBarPanelAutoSize value");
-				}
-				list.Insert(index,panel);
-				
-				                      // do this after insert because insert does the range checking and might throw an exception
-				// FIXME: StatusBarPanel.Parent is readonly!
-				// panel.Parent = owner; // a rethrow for a better exception message, or an extra range check, would incur an unnecessary performance cost
+				if (index < 0 || index > Count )
+					throw new ArgumentOutOfRangeException( "index" );
+
+				// very strange place to check autosize property :-))
+				if ( !Enum.IsDefined ( typeof(StatusBarPanelAutoSize), value.AutoSize ) )
+					throw new InvalidEnumArgumentException( "AutoSize",
+						(int)value.AutoSize,
+						typeof(StatusBarPanelAutoSize));
+
+				list.Insert(index, value);
+				value.SetParent ( owner ); 
+				owner.UpdatePanels ( true, true , null );
 			}
 
-			public virtual void Remove(StatusBarPanel panel)
-			{
-				string method_string = "Remove(StatusBarPanel) ";
-				if (panel == null) {
+			public virtual void Remove(StatusBarPanel value) {
+				if (value == null)
+					throw new ArgumentNullException( "value" );
 
-					throw new ArgumentNullException(class_string + method_string + "panel == null");
-				}
-				list.Remove(panel);
+				list.Remove( value );
+				value.SetParent ( null );
 			}
 
-			public virtual void RemoveAt(int index)
-			{
+			public virtual void RemoveAt(int index)	{
+				if (index < 0 || index > Count )
+					throw new ArgumentOutOfRangeException( "index" );
+
+				StatusBarPanel p = (StatusBarPanel)list[index];
 				list.RemoveAt(index);
+				p.SetParent ( null );
+				owner.UpdatePanels( true, true, null );
 			}
 
-			void ICollection.CopyTo(Array dest, int index)
-			{
-				string method_string = "ICollection.CopyTo(Array,int) ";
-				if (dest == null) {
+			[MonoTODO]
+			// This member supports the .NET Framework 
+			void ICollection.CopyTo(Array array, int index)	{
+				if (array == null)
+					throw new ArgumentNullException ( "array" );
 
-					throw new ArgumentNullException(class_string + method_string + "array == null");
-				}
-				if (index < 0) {
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ( "index" );
 
-					throw new ArgumentOutOfRangeException(class_string + method_string + "index < 0");
-				}
-				if (dest.Rank != 1) {
+				if (array.Rank != 1 || index >= array.Length || Count+index >= array.Length)
+					throw new ArgumentException ( ); // FIXME: messages
 
-					throw new ArgumentException(class_string + method_string + "array is multidimensional");
-				}
-				if (index >= dest.Length) {
-
-					throw new ArgumentException(class_string + method_string + "index >= array.Length");
-				}
-				if (Count+index >= dest.Length) {
-
-					throw new ArgumentException(class_string + method_string + "insufficient array capacity");
-				}
 				// easier/quicker to let the runtime throw the invalid cast exception if necessary
-				for (int i = 0; index < dest.Length; i++, index++) {
-
-					dest.SetValue(list[i], index);
-				}
+				for (int i = 0; index < array.Length; i++, index++)
+					array.SetValue(list[i], index);
 			}
-
+			
+			[MonoTODO]
 			int IList.Add(object panel)
 			{
-				string method_string = "IList.Add(object) ";
-				if (!(panel is StatusBarPanel)) {
-
-					throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
-				}
+				if (!(panel is StatusBarPanel))
+					throw new ArgumentException();//FIXME: message
 				return Add((StatusBarPanel) panel);
 			}
 
 			bool IList.Contains(object panel)
 			{
-				if (!(panel is StatusBarPanel)) {
-
+				if (!(panel is StatusBarPanel))
 					return false;
-				}
 				return Contains((StatusBarPanel) panel);
 			}
 
-			int IList.IndexOf(object panel)
-			{
-				if (!(panel is StatusBarPanel)) {
-
+			int IList.IndexOf(object panel)	{
+				if (!(panel is StatusBarPanel))
 					return -1;
-				}
 				return IndexOf((StatusBarPanel) panel);
 			}
 
+			[MonoTODO]
 			void IList.Insert(int index, object panel)
 			{
-				string method_string = "IList.Insert(int,object) ";
-				if (!(panel is StatusBarPanel)) {
+				if (!(panel is StatusBarPanel))
+					throw new ArgumentException();//FIXME: message
 
-					throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
-				}
 				Insert(index, (StatusBarPanel) panel);
 			}
 
+			[MonoTODO]
 			void IList.Remove(object panel)
 			{
-				string method_string = "IList.Remove(object) ";
-				if (!(panel is StatusBarPanel)) {
+				if (!(panel is StatusBarPanel))
+					throw new ArgumentException(); //FIXME: message
 
-					throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
-				}
 				Remove((StatusBarPanel) panel);
 			}
 
 			
-			//  --- Public Properties
-			[MonoTODO]
 			public int Count {
-				get { throw new NotImplementedException (); }
-				//get { return list.Count; }
+				get { return list.Count; }
 			}
 
 			public bool IsReadOnly {
-
 				get { return false; }
 			}
 
 			object IList.this[int index] {
-
 				get { return this[index]; }
-				set { this[index]=(StatusBarPanel)value; }
+				set { this[index]= (StatusBarPanel)value; }
 			}
 
 			public virtual StatusBarPanel this[int index] {
-
 				get
 				{
 					// The same checks are done by the list, so this is redundant
@@ -540,24 +643,7 @@ namespace System.Windows.Forms {
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
-			
-			//  --- Private Properties
-			
 			private bool IsFixedSize { get { return false; } }
-
-//			private object ILList.this[int index]
-//			{
-//				get { return (StatusBarPanel) this[index]; }
-//				set
-//				{
-//					string method_string = "IList.set_Item(int,object) ";
-//					if (!(value is StatusBarPanel))
-//					{
-//						throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
-//					}
-//					this[index] = (StatusBarPanel) value;
-//				}
-//			}
 		}
 	}
 }
