@@ -1,3 +1,8 @@
+2004-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* AssemblyInfo.cs (AssemblyVersion): Define to 2.0.x when
+	BOOTSTRAP_NET_2_0 is defined.
+
 2004-05-07  Raja R Harinath  <rharinath@novell.com>
 
 	* AssemblyInfo.cs (AssemblyDelaySign, AssemblyKeyFile): Disable
