@@ -1084,7 +1084,7 @@ namespace MonoTests.System.Data
 			col.ColumnName = "Id";
 			col.DataType = Type.GetType ("System.Int32");
 			table.Columns.Add (col);
-                        
+
 			col = new DataColumn ();
 			col.ColumnName = "Name";
 			col.DataType = Type.GetType ("System.String");
@@ -1111,6 +1111,31 @@ namespace MonoTests.System.Data
 			AssertEquals ("#A03", DataRowState.Modified, table.Rows [2].RowState);
 			AssertEquals ("#A04", DataRowState.Added, table.Rows [3].RowState);
 		}
+
+                [Test]
+		public void ImportRowDetachedTest ()
+		{
+			DataTable table = new DataTable ();
+			DataColumn col = new DataColumn ();
+			col.ColumnName = "Id";
+			col.DataType = Type.GetType ("System.Int32");
+			table.Columns.Add (col);
+
+                        table.PrimaryKey = new DataColumn [] {col};
+
+                        col = new DataColumn ();
+			col.ColumnName = "Name";
+			col.DataType = Type.GetType ("System.String");
+			table.Columns.Add (col);
+                        
+			DataRow row = table.NewRow ();
+			row ["Id"] = 147;
+			row ["name"] = "Abc";
+
+                        // keep silent as ms.net ;-), though this is not useful.
+                        table.ImportRow (row); 
+		}
+
 		[Test]
 		public void ClearReset () //To test Clear and Reset methods
 		{

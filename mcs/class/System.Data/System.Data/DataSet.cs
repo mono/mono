@@ -496,8 +496,8 @@ namespace System.Data {
 			}
 		
 			DataRow newRow = copyTable.NewRow ();
-			copyTable.Rows.Add (newRow);
 			row.CopyValuesToRow (newRow);
+			copyTable.Rows.Add (newRow);
 			newRow.XmlRowID = row.XmlRowID;
 			addedRows.Add (row,row);
 		}

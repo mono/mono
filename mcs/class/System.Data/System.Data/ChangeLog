@@ -1,3 +1,13 @@
+2005-01-25  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRow.cs: CopyValuesToRow : set the column value with the
+	default version of the given row.
+	* DataTable.cs: ImportRow: Copy values before adding row.
+	* DataSet.cs: AddChangedRow: Add the row to the table after
+	copying values.
+
+	Fixes bug #67317. Patch by Ankit Jain.
+
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRowView.cs : Fixed IsEdit to reflect correct status of DataRow.

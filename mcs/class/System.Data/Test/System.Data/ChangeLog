@@ -1,3 +1,8 @@
+2005-01-25  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableTest.cs: added test case for checking ImportRow when
+	the row state is detached. Test case by Ankit Jain.
+
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRowViewTest.cs : added IsEdit tests and Item tess (not working).

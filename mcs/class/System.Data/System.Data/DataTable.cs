@@ -945,9 +945,9 @@ namespace System.Data {
 		public void ImportRow (DataRow row) 
 		{
 			DataRow newRow = NewRow();
-			Rows.Add(newRow);
-			row.CopyValuesToRow(newRow);
-			
+			row.CopyValuesToRow (newRow);
+			Rows.Add (newRow);
+			row.CopyState (newRow);
 		}
 
 		internal int DefaultValuesRowIndex
