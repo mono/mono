@@ -1,3 +1,10 @@
+2002-07-21  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* daemon-messages.c: #include <sys/types.h> and <sys/sockets.h> -
+	these are needed for sendmsg() and also for struct msghdr (at
+	least on Solaris). Solaris still won't build because struct msghdr
+	doesn't have msg_flags, msg_control, or msg_controllen members.
+
 2002-07-20  Dick Porter  <dick@ximian.com>
 
 	* wapi-private.h:
