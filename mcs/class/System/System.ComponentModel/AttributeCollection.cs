@@ -108,9 +108,10 @@ namespace System.ComponentModel
 			get {
 				Attribute attr = null;
 				foreach (Attribute a in attrList) {
-					if (a.GetType () == type)
+					if (a.GetType () == type){
 						attr = a;
 						break;
+					}
 				}
 
 				if (attr == null)
