@@ -945,7 +945,7 @@ namespace System.Windows.Forms {
 		internal override void KillTimer (Timer timer)
 		{
 			lock (timer_list) {
-				timer_list.Add (timer);
+				timer_list.Remove (timer);
 			}
 		}
 
