@@ -67,16 +67,28 @@ namespace System.Data.OleDb
 			set { list[index] = value; }
 		}
 
-		object IDataParameterCollection.this[string name] {
+		object IDataParameterCollection.this[string name]
+		{
 			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 
 		internal IntPtr GdaParameterList {
 			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				IntPtr param_list;
+
+				param_list = libgda.gda_parameter_list_new ();
+				// FIXME: add parameters to list
+				
+				return param_list;
+			}
 		}
 
 		#endregion // Properties

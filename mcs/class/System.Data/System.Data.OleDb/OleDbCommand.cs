@@ -279,6 +279,9 @@ namespace System.Data.OleDb
 
 				while (glist_node != null) {
 					results.Add (glist_node.data);
+					if (glist_node.next == IntPtr.Zero)
+						break;
+
 					glist_node = (GdaList) Marshal.PtrToStructure (glist_node.next,
 										       typeof (GdaList));
 				}

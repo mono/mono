@@ -81,7 +81,10 @@ namespace System.Data.OleDb
 
 		[DllImport("gda-2")]
 		public static extern bool gda_value_get_boolean (IntPtr value);
-		
+
+		[DllImport("gda-2")]
+		public static extern IntPtr gda_parameter_list_new ();
+
 		[DllImport("gda-2")]
 		public static extern int gda_data_model_get_n_rows (IntPtr model);
 
