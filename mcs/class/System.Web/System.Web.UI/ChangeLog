@@ -1,3 +1,16 @@
+2002-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(MapPathSecure): until security is implemented, return the same path
+	received as argument.
+	(RenderControl): call OnPreRender before rendering the control. So
+	AdRotator can read its configuration file.Is there any other place
+	where this should be done?
+
+	* HtmlTextWriter.cs:
+	(AddAttribute): fixed. Now it really stores attributes.
+	(RenderBeginTag): fixed a couple of bugs (little ones but hard to find).
+
 2002-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlCollection.cs:

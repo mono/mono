@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls
 	[ToolboxData("<{0}:HyperLink runat=\"server\">HyperLink</{0}:HyperLink>")]
 	public class HyperLink: WebControl
 	{
-		public HyperLink(): base()
+		public HyperLink(): base(HtmlTextWriterTag.A)
 		{
 		}
 
@@ -92,7 +92,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender(writer);
 			if(NavigateUrl.Length > 0)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Href, NavigateUrl);
@@ -120,7 +120,7 @@ namespace System.Web.UI.WebControls
 				base.AddParsedSubObject(Text);
 				Text = String.Empty;
 			}
-			AddParsedSubObject(obj);
+			base.AddParsedSubObject (obj);
 		}
 
 		protected override void LoadViewState(object savedState)

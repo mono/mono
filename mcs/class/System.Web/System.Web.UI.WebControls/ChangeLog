@@ -1,3 +1,17 @@
+2002-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AdRotator.cs: GetData does not work as it should, but now it returns
+	useful data (only the first ad in the file).  Set the NavigateUrl
+	property in the hyperlink if available.
+
+	* HyperLink.cs: fixed constructor and a couple of stack overflows.
+
+	* Image.cs: added an attribute and fixed stack overflow.
+
+	* WebControl.cs:
+	(RenderBeginTag): fixed.
+	(TagName): don't call Enum.IsDefined twice.
+
 2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebControl.cs: added attributes PersistChildrenAttribute and 

@@ -140,6 +140,7 @@ namespace System.Web.UI.WebControls
 			return adsArray;
 		}
 
+		[MonoTODO("CacheDependency does nothing")]
 		private AdRecord[] GetData(string file)
 		{
 			string physPath = MapPathSecure(file);
@@ -168,7 +169,7 @@ namespace System.Web.UI.WebControls
 				for(int i=0 ; i < records.Length; i++)
 				{
 					if(IsAdMatching(records[i]))
-						impressions += records[1].hits;
+						impressions += records[i].hits;
 				}
 				if(impressions!=0)
 				{
@@ -189,17 +190,18 @@ namespace System.Web.UI.WebControls
 					}
 					return records[index].adProps;
 				}
+				//FIXME: the line below added. Where should i init hits to make
+				//impressions not be 0?
+				return records [0].adProps;
 			}
 			return null;
 		}
 
 		private bool IsAdMatching(AdRecord currAd)
 		{
-			if(KeywordFilter!=String.Empty)
-			{
-				if(currAd.keyword.ToLower() == KeywordFilter.ToLower())
-					return false;
-			}
+			if (KeywordFilter != String.Empty)
+				return (0 == String.Compare (currAd.keyword, KeywordFilter, true));
+
 			return true;
 		}
 
@@ -342,6 +344,8 @@ namespace System.Web.UI.WebControls
 			hLink.AccessKey = AccessKey;
 			hLink.Enabled   = Enabled;
 			hLink.TabIndex  = TabIndex;
+			if (navigateUrl != null && navigateUrl.Length != 0)
+				hLink.NavigateUrl = ResolveAdUrl (navigateUrl);
 			hLink.RenderBeginTag(writer);
 			if(ControlStyleCreated)
 			{

@@ -19,6 +19,7 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("ImageUrl")]
+	[ParseChildrenAttribute(false)]
 	public class Image : WebControl
 	{
 		public Image(): base(HtmlTextWriterTag.Img)
@@ -92,7 +93,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender(writer);
 			if(ImageUrl.Length > 0)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl(ImageUrl));

@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls
 		{
 			controlStyle   = null;
 			enabled        = true;
-			tagName        = null;
+			tagName        = stringTag;
 			attributeState = null;
 		}
 
@@ -84,7 +84,6 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				throw new NotImplementedException();
 				if(attributes==null)
 				{
 					//FIXME: From where to get StateBag and how? I think this method is OK!
@@ -357,12 +356,7 @@ namespace System.Web.UI.WebControls
 		public virtual void RenderBeginTag(HtmlTextWriter writer)
 		{
 			AddAttributesToRender(writer);
-			if(Enum.IsDefined(typeof(HtmlTextWriterTag), TagKey) )
-			{
-				writer.RenderBeginTag(TagKey);
-				return;
-			}
-			writer.RenderBeginTag(tagName);
+			writer.RenderBeginTag(TagName);
 		}
 
 		public virtual void RenderEndTag(HtmlTextWriter writer)
@@ -382,10 +376,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(tagName==null && Enum.IsDefined(typeof(HtmlTextWriterTag), tagKey) )
+				if(tagName == null && tagKey != 0)
 				{
 					tagName = Enum.Format(typeof(HtmlTextWriterTag), tagKey, "G").ToString();
 				}
+				// What if tagName is null and tagKey 0?
 				return tagName;
 			}
 		}

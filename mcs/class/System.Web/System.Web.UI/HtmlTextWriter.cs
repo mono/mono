@@ -232,7 +232,7 @@ private void AddAttribute(string name, string value, HtmlTextWriterAttribute key
 	rAttr.value = value;
 	rAttr.key = key;
 	rAttr.encode = encode;
-	_attrCount++;
+	_attrList [_attrCount++] = rAttr;
 }
 
 public virtual void AddStyleAttribute(HtmlTextWriterStyle key, string value){
@@ -489,6 +489,7 @@ protected virtual string RenderBeforeTag(){
 
 public virtual void RenderBeginTag(HtmlTextWriterTag tagKey){
 	TagKey = tagKey;
+	bool tagRendered = true;
 	bool tagRender = true;
 	if (_isDescendant) {
 		tagRender = OnTagRender(_tagName, _tagKey);
@@ -501,17 +502,15 @@ public virtual void RenderBeginTag(HtmlTextWriterTag tagKey){
 		}
 	}
 	TagInformation currentTag = HtmlTextWriter._tagNameLookupArray[_tagIndex];
-	bool tagRendered=true;
-	if (!tagRender)
-		tagRendered = false;
 	if (tagRender) {
+		tagRendered = false;
 		if (tabsPending)
 			OutputTabs();
 		writer.Write(TagLeftChar);
 		writer.Write(_tagName);
 		RenderAttribute rAttr;
 		string rAttrValue = null;
-		for (int i=0; i <= _attrCount; i++) {
+		for (int i=0; i < _attrCount; i++) {
 			rAttr = _attrList[i];
 			if (rAttr.key == HtmlTextWriterAttribute.Style)
 				rAttrValue = rAttr.value;

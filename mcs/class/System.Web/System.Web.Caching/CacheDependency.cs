@@ -23,19 +23,17 @@ namespace System.Web.Caching
 		/// <remarks>
 		/// Added by gvaish@iitk.ac.in
 		/// </remarks>
-		[MonoTODO("Constrcutor")]
+		[MonoTODO("Constructor")]
 		public CacheDependency(string filename)
 		{
-			throw new NotImplementedException();
 		}
 		
 		/// <remarks>
 		/// Added by gvaish@iitk.ac.in
 		/// </remarks>
-		[MonoTODO("Constrcutor")]
+		[MonoTODO("Constructor")]
 		public CacheDependency(string[] filenames, string[] cachekeys)
 		{
-			throw new NotImplementedException();
 		}
 
 		public delegate void CacheDependencyCallback(CacheDependency objDependency);

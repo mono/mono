@@ -351,8 +351,9 @@ namespace System.Web.UI
 				[MonoTODO]
                 protected string MapPathSecure(string virtualPath)
                 {
-                        throw new NotImplementedException();
                         //TODO: Need to read up on security+web.
+			//Return the same path. So AdRotator can read its config file.
+			return virtualPath;
                 }
                 protected virtual bool OnBubbleEvent(object source, EventArgs args) //DIT
                 {
@@ -531,6 +532,8 @@ namespace System.Web.UI
                 {
                         if (_visible)
                         {
+				// By now, PreRender is fired here.
+				OnPreRender (EventArgs.Empty); //FIXME
                                 //TODO: Something about tracing here.
                                 Render(writer);
                         }
