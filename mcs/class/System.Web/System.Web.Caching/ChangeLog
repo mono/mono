@@ -1,3 +1,8 @@
+2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Watcher.cs: Removed file. Jackson made it obsolete and already
+	removed it from the .sources file.
+
 2004-02-09  Jackson Harper <jackson@ximian.com>
 
 	* ExpiresBucket.cs: Remove duplicate code. Fixes bug #54031.
