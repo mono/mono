@@ -113,15 +113,13 @@ namespace System
 			set;
 		}
 
-		[MonoTODO]
 #if NET_1_1
 		static
 #endif
-		public bool HasShutdownStarted
+		public extern bool HasShutdownStarted
 		{
-			get {
-				throw new NotImplementedException();
-			}
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 		
 
