@@ -1,3 +1,8 @@
+2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Data_test.dll.sources: Added DBDataPermission unit tests to
+	the build.
+
 2004-09-14 Umadevi S <sumadevi@novell.com>
 	* Added System.Data.SqlTypes/SqlNotFilledException.cs,System.Data.SqlTypes/
 	SqlAlreadyFilledException.cs to System.Data.dll.sources
