@@ -1,5 +1,10 @@
 2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* mono-config.c: set the correct path for mono_cfg_dir on windows when
+	there's no MONO_CFG_DIR environment variable defined.
+
+2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* threads.c: windows version must be >= 0x0500 to include OpenThread.
 
 2004-05-28  Lluis Sanchez Gual  <lluis@ximian.com>
