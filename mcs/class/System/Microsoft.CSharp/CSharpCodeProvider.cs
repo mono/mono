@@ -19,7 +19,7 @@ namespace Microsoft.CSharp
 		//
 		// Constructors
 		//
-		CSharpCodeProvider()
+		public CSharpCodeProvider()
 		{
 		}
 

@@ -1,3 +1,7 @@
+2002-10-11  Duncan Mak  <duncan@ximian.com>
+
+	* DESCryptoServiceProvider.cs: Removed unnecessary Dispose ().
+
 2002-10-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DES.cs: Create() using CryptoConfig, fix #30256

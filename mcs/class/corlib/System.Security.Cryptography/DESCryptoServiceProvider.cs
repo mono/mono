@@ -59,10 +59,6 @@ namespace System.Security.Cryptography {
 			tmpBlock = new byte [DESCore.BLOCK_BYTE_SIZE];
 		}
 
-		void System.IDisposable.Dispose () 
-		{
-		}
-
 		public virtual bool CanTransformMultipleBlocks {
 			get { return false; }
 		}

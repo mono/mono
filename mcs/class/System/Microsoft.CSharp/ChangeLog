@@ -1,3 +1,7 @@
+2002-10-11  Duncan Mak  <duncan@ximian.com>
+
+	* CSharpCodeProvider.cs: Fix constructor visibility.
+
 2002-05-28  Daniel Stodden <stodden@in.tum.de>
 
 	* ChangeLog: added
