@@ -1,3 +1,6 @@
+2004-09-09  Martin Baulig  <martin@ximian.com>
+
+	* mini-amd64.c (get_call_info): Fix support for generic instances.
 
 Thu Sep 9 01:43:53 PDT 2004 Paolo Molaro <lupus@ximian.com>
 
