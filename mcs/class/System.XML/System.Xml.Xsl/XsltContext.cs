@@ -12,13 +12,7 @@ namespace System.Xml.Xsl
 	public abstract class XsltContext : XmlNamespaceManager
 	{
 		#region Constructors
-
-		// should this really be calling new NameTable() in the
-		// base() call?
-		public XsltContext ()
-			: base (new NameTable ())
-		{
-		}
+		public XsltContext () {}
 
 		public XsltContext (NameTable table)
 			: base (table)

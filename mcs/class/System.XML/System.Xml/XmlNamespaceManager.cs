@@ -24,6 +24,7 @@ namespace System.Xml
 
 		#region Constructor
 
+		internal XmlNamespaceManager () {}
 		public XmlNamespaceManager (XmlNameTable nameTable)
 		{
 			this.nameTable = nameTable;
