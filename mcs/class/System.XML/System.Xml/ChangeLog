@@ -1,3 +1,18 @@
+2003-04-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttribute.cs : fixed WriteTo() and WriteContentTo() to write
+	  content EntityReference correctly.
+	* XmlNodeReader.cs : many fix for EndElement handling (AttributeCount,
+	  HasAttributes, indexers, MoveTo*Attribute() and Read() ).
+	  Modified Skip() to call Read () explicitly.
+	* XmlTextReader.cs :
+	  Fixed ReadInnerXml() which ignored EndElement token in certain cases.
+	  Implemented MoveToAttribute (local, ns), and modified GetAttribute()
+	  in relation to this change.
+	  Attributes for XmlDeclaration are now correctly set.
+	* XmlTextWriter.cs : WriteRaw() is now different from WriteString().
+	  Simplified WriteAttributes() for XmlDeclaration.
+
 2003-04-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReader.cs : fixed ReadInnerXml(). it was inconsistent with

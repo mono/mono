@@ -300,7 +300,6 @@ namespace System.Xml
 
 		#region Methods
 
-		[MonoTODO]
 		public override void Close ()
 		{
 			readState = ReadState.Closed;
@@ -323,11 +322,11 @@ namespace System.Xml
 				UnescapeAttributeValue (attributes [name] as string) : String.Empty;
 		}
 
-		public override string GetAttribute (string localName, string namespaceURI)
+		private int GetIndexOfQualifiedAttribute (string localName, string namespaceURI)
 		{
-			foreach (DictionaryEntry entry in attributes)
+			for(int i = 0; i < orderedAttributes.Count; i++)
 			{
-				string thisName = entry.Key as string;
+				string thisName = (string) orderedAttributes [i];
 
 				int indexOfColon = thisName.IndexOf (':');
 
@@ -339,15 +338,20 @@ namespace System.Xml
 						string thisNamespaceURI = LookupNamespace (thisPrefix);
 
 						if (namespaceURI == thisNamespaceURI)
-							return attributes.ContainsKey (thisName) ?
-								UnescapeAttributeValue (attributes [thisName] as string) : String.Empty;
+							return i;
 					}
 				} else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
-					return attributes.ContainsKey (thisName) ? 
-						UnescapeAttributeValue (attributes [thisName] as string) : String.Empty;
+					return i;
 			}
+			return -1;
+		}
 
-			return String.Empty;
+		public override string GetAttribute (string localName, string namespaceURI)
+		{
+			int idx = this.GetIndexOfQualifiedAttribute (localName, namespaceURI);
+			if (idx < 0)
+				return String.Empty;
+			return UnescapeAttributeValue (attributes [orderedAttributes [idx]] as string);
 		}
 
 		[MonoTODO]
@@ -420,10 +424,18 @@ namespace System.Xml
 			return match;
 		}
 
-		[MonoTODO]
 		public override bool MoveToAttribute (string localName, string namespaceName)
 		{
-			throw new NotImplementedException ();
+			MoveToElement ();
+
+			if (attributes == null)
+				return false;
+
+			int idx = GetIndexOfQualifiedAttribute (localName, namespaceName);
+			if (idx < 0)
+				return false;
+			MoveToAttribute (idx);
+			return true;
 		}
 
 		public override bool MoveToElement ()
@@ -608,10 +620,9 @@ namespace System.Xml
 					Read ();
 					if (NodeType ==XmlNodeType.None)
 						throw new XmlException ("unexpected end of xml.");
-					else if (NodeType == XmlNodeType.EndElement) {
-						if (depth == startDepth)
+					else if (NodeType == XmlNodeType.EndElement && depth == startDepth)
 							loop = false;
-					} else
+					else
 						innerXmlBuilder.Append (currentTag);
 				} while (loop);
 				string xml = innerXmlBuilder.ToString ();
@@ -1059,7 +1070,7 @@ namespace System.Xml
 			ClearAttributes ();
 
 			if (XmlConstructs.IsNameStart (PeekChar ()))
-				ReadAttributes ();
+				ReadAttributes (false);
 
 			if (PeekChar () == '/') {
 				ReadChar ();
@@ -1297,8 +1308,9 @@ namespace System.Xml
 
 		// The reader is positioned on the first character of
 		// the attribute name.
-		private void ReadAttributes ()
+		private void ReadAttributes (bool allowPIEnd)
 		{
+			int peekChar = -1;
 			do {
 				string name = ReadName ();
 				SkipWhitespace ();
@@ -1313,7 +1325,10 @@ namespace System.Xml
 					parserContext.NamespaceManager.AddNamespace (name.Substring (6), UnescapeAttributeValue (value));
 
 				AddAttribute (name, value);
-			} while (PeekChar () != '/' && PeekChar () != '>' && PeekChar () != -1);
+				peekChar = PeekChar ();
+				if (peekChar == '?' && allowPIEnd)
+					break;
+			} while (peekChar != '/' && peekChar != '>' && peekChar != -1);
 		}
 
 		// The reader is positioned on the quote character.
@@ -1353,11 +1368,15 @@ namespace System.Xml
 		// The reader is positioned on the first character
 		// of the target.
 		//
-		// Now it also reads XmlDeclaration, this method name became improper...
+		// It may be xml declaration or processing instruction.
 		private void ReadProcessingInstruction ()
 		{
 			string target = ReadName ();
 			SkipWhitespace ();
+			if (target == "xml") {
+				ReadXmlDeclaration ();
+				return;
+			}
 
 			valueLength = 0;
 
@@ -1373,13 +1392,29 @@ namespace System.Xml
 			}
 
 			SetProperties (
-				target == "xml" ?
-				XmlNodeType.XmlDeclaration :
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
 				false, // isEmptyElement
 				CreateValueString (), // value
 				true // clearAttributes
+			);
+		}
+
+		// The reader is positioned after "<?xml "
+		private void ReadXmlDeclaration ()
+		{
+			ClearAttributes ();
+
+			if (XmlConstructs.IsNameStart (PeekChar ()))
+				ReadAttributes (true);
+			Expect ("?>");
+
+			SetProperties (
+				XmlNodeType.XmlDeclaration, // nodeType
+				"xml", // name
+				false, // isEmptyElement
+				currentInput.CurrentMarkup.ToString (6, currentInput.CurrentMarkup.Length - 6), // value
+				false // clearAttributes
 			);
 		}
 

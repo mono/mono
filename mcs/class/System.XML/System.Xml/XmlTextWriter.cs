@@ -501,12 +501,22 @@ namespace System.Xml
 		}
 		public override void WriteRaw (string data)
 		{
+//			WriteRawInternal (data);
 			WriteStringInternal (data, false);
 		}
 
 		public override void WriteRaw (char[] buffer, int index, int count)
 		{
+//			WriteRawInternal (new string (buffer, index, count));
 			WriteStringInternal (new string (buffer, index, count), false);
+		}
+
+		private void WriteRawInternal (string text)
+		{
+			if (text == null)
+				return;
+
+			w.Write (text);
 		}
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
@@ -601,7 +611,7 @@ namespace System.Xml
 
 			string encodingFormatting = "";
 
-			if (!nullEncoding && w.Encoding.WebName != "utf-16" && w.Encoding.WebName != "utf-8") 
+			if (!nullEncoding) 
 				encodingFormatting = String.Format (" encoding={0}{1}{0}", quoteChar, w.Encoding.WebName);
 
 			w.Write("<?xml version={0}1.0{0}{1}{2}?>", quoteChar, encodingFormatting, standaloneFormatting);
@@ -665,8 +675,7 @@ namespace System.Xml
 			if (text == null)
 				text = String.Empty;
 
-			if (text != String.Empty) 
-			{
+			if (text != String.Empty) {
 				CheckState ();
 
 				if (entitize)
@@ -689,6 +698,7 @@ namespace System.Xml
 					IndentingOverriden = true;
 					CloseStartElement ();
 				}
+
 				if (!openXmlLang && !openXmlSpace)
 					w.Write (text);
 				else 

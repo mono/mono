@@ -18,8 +18,6 @@ namespace System.Xml
 {
 	public class XmlNodeReader : XmlReader
 	{
-		#region Constructor
-
 		XmlNode startNode;
 		XmlNode current;
 		ReadState state = ReadState.Initial;
@@ -29,6 +27,8 @@ namespace System.Xml
 		bool nextIsEndElement;	// used for ReadString()
 		bool alreadyRead;
 		StringBuilder valueBuilder = new StringBuilder ();
+
+		#region Constructor
 
 		public XmlNodeReader (XmlNode node)
 		{
@@ -44,7 +44,7 @@ namespace System.Xml
 
 		public override int AttributeCount {
 			get {
-				if (current == null || current.Attributes == null)
+				if (isEndElement || current == null || current.Attributes == null)
 					return 0;
 
 				return current.Attributes.Count;
@@ -79,7 +79,7 @@ namespace System.Xml
 
 		public override bool HasAttributes {
 			get {
-				if (current == null)
+				if (isEndElement || current == null)
 					return false;
 
 				if (current.Attributes == null ||
@@ -138,7 +138,8 @@ namespace System.Xml
 
 		public override string this [int i] {
 			get {
-				if (current == null)
+				// This is MS.NET bug which returns attributes in spite of EndElement.
+				if (isEndElement || current == null)
 					return null;
 
 				if (i < 0 || i > AttributeCount)
@@ -150,7 +151,8 @@ namespace System.Xml
 
 		public override string this [string name] {
 			get {
-				if (current == null)
+				// This is MS.NET bug which returns attributes in spite of EndElement.
+				if (isEndElement || current == null)
 					return null;
 
 				XmlAttribute attr = current.Attributes [name];
@@ -164,7 +166,8 @@ namespace System.Xml
 
 		public override string this [string name, string namespaceURI] {
 			get {
-				if (current == null)
+				// This is MS.NET bug which returns attributes in spite of EndElement.
+				if (isEndElement || current == null)
 					return null;
 
 				XmlAttribute attr = current.Attributes [name, namespaceURI];
@@ -226,8 +229,8 @@ namespace System.Xml
 		public override XmlNameTable NameTable {
 			get {
 				XmlDocument doc = 
-					current.NodeType == XmlNodeType.Document ?
-					current as XmlDocument : current.OwnerDocument;
+					startNode.NodeType == XmlNodeType.Document ?
+					startNode as XmlDocument : startNode.OwnerDocument;
 				return doc.NameTable;
 			}
 		}
@@ -315,7 +318,7 @@ namespace System.Xml
 
 		public override void MoveToAttribute (int attributeIndex)
 		{
-			if (attributeIndex < 0 || attributeIndex > AttributeCount)
+			if (isEndElement || attributeIndex < 0 || attributeIndex > AttributeCount)
 				throw new ArgumentOutOfRangeException ();
 			
 			state = ReadState.Interactive;
@@ -324,6 +327,9 @@ namespace System.Xml
 
 		public override bool MoveToAttribute (string name)
 		{
+			if (isEndElement || current == null)
+				return false;
+
 			if (GetAttribute (name) == null)
 				return false;
 			else {
@@ -334,6 +340,9 @@ namespace System.Xml
 
 		public override bool MoveToAttribute (string name, string namespaceURI)
 		{
+			if (isEndElement || current == null)
+				return false;
+
 			if (GetAttribute (name, namespaceURI) == null)
 				return false;
 			else {
@@ -342,8 +351,9 @@ namespace System.Xml
 			}
 		}
 
-		private void MoveToEndElement ()
+		private void MoveToParentElement ()
 		{
+			// This is buggy. It is not only the case when EndElement = true.
 			isEndElement = true;
 			depth--;
 			current = current.ParentNode;
@@ -396,7 +406,7 @@ namespace System.Xml
 			if (nextIsEndElement) {
 				// nextIsEndElement is set only by ReadString.
 				nextIsEndElement = false;
-				MoveToEndElement ();
+				MoveToParentElement ();
 			} else if (alreadyRead) {
 				alreadyRead = false;
 				return current != null;
@@ -405,9 +415,14 @@ namespace System.Xml
 				isEndElement = false;
 				current = current.NextSibling;
 			} else {
-				MoveToEndElement ();
+				MoveToParentElement ();
 			}
-			return current != null;
+			if (current == null) {
+				state = ReadState.EndOfFile;
+				return false;
+			}
+			else
+				return true;
 		}
 
 		[MonoTODO("Entity handling is not supported.")]
@@ -465,14 +480,14 @@ namespace System.Xml
 				return current != null;
 			}
 
-			// hmm... here may be unnecessary codes. plz check anyone ;)
 			if (!isEndElement && current.FirstChild != null) {
 				isEndElement = false;
 				current = current.FirstChild;
 				depth++;
-			} else if (depth == 0) {
-				state = ReadState.EndOfFile;
-				return false;
+			} else if (current.NodeType == XmlNodeType.Element) {
+				isEndElement = true;
+				if (current.FirstChild != null)
+					depth--;
 			} else
 				MoveToNextSibling ();
 
@@ -587,11 +602,9 @@ namespace System.Xml
 		[MonoTODO("test it.")]
 		public override void Skip ()
 		{
-			MoveToElement ();
-			if(current.ChildNodes.Count > 0)
-				MoveToNextSibling ();
-			else
-				Read ();
+			// Why is this overriden? Such skipping might raise
+			// (or ignore) unexpected validation error.
+			base.Skip ();
 		}
 		#endregion
 	}

@@ -224,12 +224,15 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			w.WriteString (Value);
+			foreach (XmlNode n in ChildNodes)
+				n.WriteTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteAttributeString (prefix, localName, namespaceURI, Value);
+			w.WriteStartAttribute (prefix, localName, namespaceURI);
+			WriteContentTo (w);
+			w.WriteEndAttribute ();
 		}
 
 		#endregion
