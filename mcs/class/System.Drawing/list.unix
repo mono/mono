@@ -158,3 +158,5 @@ System.Drawing.Text/HotkeyPrefix.cs
 System.Drawing.Text/TextRenderingHint.cs
 System.Drawing/TextureBrush.cs
 System.Drawing/ToolboxBitmapAttribute.cs
+System.Drawing/Font.cs
+
