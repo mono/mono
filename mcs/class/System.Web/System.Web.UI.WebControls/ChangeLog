@@ -1,3 +1,7 @@
+2004-08-13  Sanjay Gupta <gsanjay@novell.com>
+
+	* GridViewDeleteEventArgs.cs: Removed extra code.
+
 2004-08-12  Sanjay Gupta <gsanjay@novell.com>
 
 	* SendMailErrorEventArgs.cs:

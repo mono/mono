@@ -38,8 +38,6 @@ namespace System.Web.UI.WebControls
 	public class GridViewDeleteEventArgs : CancelEventArgs
 	{
 		private int rowIndex;
-		private Exception e;
-		private bool exceptionHandled;
 		
 		public GridViewDeleteEventArgs (int index)
 		{
