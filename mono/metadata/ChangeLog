@@ -1,3 +1,8 @@
+2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c (mono_metadata_parse_type): Handle the case when the byref
+	flag is before the custom modifiers. Fixes #49802.
+
 2003-11-16  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_is_open_constructed_type): Implemented the
