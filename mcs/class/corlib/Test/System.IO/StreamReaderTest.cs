@@ -343,15 +343,18 @@ public class StreamReaderTest : TestCase
 	// TODO - Ctor with Encoding
 	
 	public void TestBaseStream() {
+		string progress = "beginning";
 		try {
 			Byte[] b = {};
 			MemoryStream m = new MemoryStream(b);
 			StreamReader r = new StreamReader(m);
 			AssertEquals("wrong base stream ", m, r.BaseStream);
+			progress = "Closing StreamReader";
 			r.Close();
+			progress = "Closing MemoryStream";
 			m.Close();
 		} catch (Exception e) {
-			Fail ("Unexpected exception thrown: " + e.ToString());
+			Fail ("At '" + progress + "' an unexpected exception was thrown: " + e.ToString());
 		}
 	}
 

@@ -1,3 +1,7 @@
+2002-09-19  Nick Drochak  <ndrochak@gol.com>
+
+	* StreamReaderTest.cs: Pinpoint error closing streams
+
 2002-09-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileTest.cs: don't leave AFile.txt open.
