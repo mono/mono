@@ -286,7 +286,10 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			throw new NotImplementedException ();
+			BaseIterator iter = (args.Length == 1) ? ((BaseIterator) args [0]) : new SelfIterator (docContext, xsltContext);
+			if (iter == null || !iter.MoveNext ())
+				return "";
+			return iter.Current.Name;
 		}
 		public override string Name { get { return "name"; }}
 	}

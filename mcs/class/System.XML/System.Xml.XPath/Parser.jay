@@ -247,11 +247,6 @@ Step
 	{
 		$$ = new ExprStep (new NodeTypeTest ((Axes) $1), (ExprPredicates) $3);
 	}
-/*	| AxisSpecifier NCName COLON ASTERISK ZeroOrMorePredicates
-	{
-		$$ = new ExprStep (new NodeNameTestAny ((Axes) $1, (NCName) $2), (ExprPredicates) $5);
-	}
-*/
 	| AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE ZeroOrMorePredicates
 	{
 		$$ = new ExprStep (new NodeTypeTest ((Axes) $1, (XPathNodeType) $2, (String) $4), (ExprPredicates) $6);
