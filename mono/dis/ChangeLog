@@ -1,6 +1,8 @@
 2003-10-08 Jackson Harper <jackson@ximian.com>
 
-	* main.c: NULL cnst_block so we dont explode on interfaces.
+	* main.c (dis_type): NULL cnst_block so we dont explode on
+	interfaces.
+	* main.c (dis_genericparam): oops, fix off-by-one error.
 	
 2003-10-08 Jackson Harper <jackson@ximian.com>
 
