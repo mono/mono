@@ -31,7 +31,7 @@
 #if NET_2_0
 namespace System.Web.SessionState
 {
-	public sealed delegate void SessionStateItemExpireCallback (
+	public delegate void SessionStateItemExpireCallback (
 				string id, SessionStateStoreData item);
 }
 

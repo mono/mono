@@ -1,3 +1,8 @@
+2004-08-31  Sanjay Gupta <gsanjay@novell.com>
+
+	* SessionStateItemExpireCallback.cs: Explicit modifier "sealed" not 
+	required in definition.
+
 2004-08-09  Sanjay Gupta <gsanjay@novell.com>
 
 	* SessionStateItemExpireCallback.cs: Added delegate.
