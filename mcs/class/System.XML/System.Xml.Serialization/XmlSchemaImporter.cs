@@ -485,6 +485,14 @@ namespace System.Xml.Serialization
 			return ImportType (name, type, root);
 		}
 
+		XmlTypeMapping ImportClass (XmlQualifiedName name)
+		{
+			XmlTypeMapping map = ImportType (name, null);
+			if (map.TypeData.SchemaType == SchemaTypes.Class) return map;
+			XmlSchemaComplexType stype = schemas.Find (name, typeof (XmlSchemaComplexType)) as XmlSchemaComplexType;
+			return CreateClassMap (name, stype, new XmlQualifiedName (map.ElementName, map.Namespace));
+		}
+		
 		XmlTypeMapping ImportType (XmlQualifiedName name, XmlSchemaType stype, XmlQualifiedName root)
 		{
 			XmlTypeMapping map = GetRegisteredTypeMapping (name);
@@ -509,8 +517,6 @@ namespace System.Xml.Serialization
 
 		XmlTypeMapping ImportClassComplexType (XmlQualifiedName typeQName, XmlSchemaComplexType stype, XmlQualifiedName root)
 		{
-			XmlTypeMapping map;
-
 			// The need for fixups: If the complex type is an array, then to get the type of the
 			// array we need first to get the type of the items of the array.
 			// But if one of the item types or its children has a referece to this type array,
@@ -528,7 +534,7 @@ namespace System.Xml.Serialization
 				ListMap listMap = BuildArrayMap (typeQName, stype, out typeData);
 				if (listMap != null)
 				{
-					map = CreateArrayTypeMapping (typeQName, typeData);
+					XmlTypeMapping map = CreateArrayTypeMapping (typeQName, typeData);
 					map.ObjectMap = listMap;
 					return map;
 				}
@@ -543,7 +549,12 @@ namespace System.Xml.Serialization
 			// Register the map right now but do not build it,
 			// This will avoid loops.
 
-			map = CreateTypeMapping (typeQName, SchemaTypes.Class, root);
+			return CreateClassMap (typeQName, stype, root);
+		}
+		
+		XmlTypeMapping CreateClassMap (XmlQualifiedName typeQName, XmlSchemaComplexType stype, XmlQualifiedName root)
+		{
+			XmlTypeMapping map = CreateTypeMapping (typeQName, SchemaTypes.Class, root);
 			map.Documentation = GetDocumentation (stype);
 			RegisterMapFixup (map, typeQName, stype);
 			return map;
@@ -606,6 +617,8 @@ namespace System.Xml.Serialization
 
 			ImportAttributes (typeQName, cmap, stype.Attributes, stype.AnyAttribute, classIds);
 			ImportExtensionTypes (typeQName);
+
+			if (isMixed) AddTextMember (typeQName, cmap, classIds);
 			
 			AddObjectDerivedMap (map);
 		}
@@ -769,7 +782,12 @@ namespace System.Xml.Serialization
 		void ImportParticleComplexContent (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaParticle particle, CodeIdentifiers classIds, bool isMixed)
 		{
 			ImportParticleContent (typeQName, cmap, particle, classIds, false, ref isMixed);
-			if (isMixed && cmap.XmlTextCollector == null)
+			if (isMixed) AddTextMember (typeQName, cmap, classIds);
+		}
+		
+		void AddTextMember (XmlQualifiedName typeQName, ClassMap cmap, CodeIdentifiers classIds)
+		{
+			if (cmap.XmlTextCollector == null)
 			{
 				XmlTypeMapMemberFlatList member = new XmlTypeMapMemberFlatList ();
 				member.Name = classIds.AddUnique ("Text", member);
@@ -924,8 +942,22 @@ namespace System.Xml.Serialization
 			bool allEqual = true;
 			Hashtable types = new Hashtable ();
 
-			foreach (XmlTypeMapElementInfo einfo in choices)
+			for (int n = choices.Count - 1; n >= 0; n--)
 			{
+				XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) choices [n];
+				
+				// In some complex schemas, we may end up with several options
+				// with the same name. It is better to ignore the extra options
+				// than to crash. It's the best we can do, and btw it works
+				// better than in MS.NET.
+				
+				if (cmap.GetElement (einfo.ElementName, einfo.Namespace) != null ||
+					choices.IndexOfElement (einfo.ElementName, einfo.Namespace) != n)
+				{
+					choices.RemoveAt (n);
+					continue;
+				}
+					
 				if (types.ContainsKey (einfo.TypeData)) twoEqual = true;
 				else types.Add (einfo.TypeData, einfo);
 
@@ -1139,7 +1171,7 @@ namespace System.Xml.Serialization
 			
 			// Add base map members to this map
 
-			XmlTypeMapping baseMap = ImportType (qname, null);
+			XmlTypeMapping baseMap = ImportClass (qname);
 			BuildPendingMap (baseMap);
 			ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
 

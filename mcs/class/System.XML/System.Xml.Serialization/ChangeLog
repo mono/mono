@@ -1,3 +1,12 @@
+2005-01-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTypeMapElementInfo.cs: Added new IndexOfElement method.
+	* XmlSchemaImporter.cs: When importing a base type of a complex type,
+	make sure that the base class is always imported as a class and not
+	as an array. If it has been imported as array, import it again.
+	This fixes bug #70839. Other minor fixes as well.
+	* XmlSerializationWriter.cs: Fixed warning.
+
 2004-12-09  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationCodeGenerator.cs: Yet another generation fix.
