@@ -4,33 +4,36 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Aleksey Sanin (aleksey@aleksey.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
 //
 
+using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
 
+using Mono.Xml;
+
 namespace System.Security.Cryptography.Xml { 
 
-	[MonoTODO]
 	public class XmlDsigC14NTransform : Transform {
-
 		private Type[] input;
 		private Type[] output;
-		private bool comments;
+		private XmlCanonicalizer canonicalizer;
 		private Stream s;
-
+		
 		public XmlDsigC14NTransform () 
 		{
 			Algorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-			comments = false;
+			canonicalizer = new XmlCanonicalizer(false, false);
 		}
 
 		public XmlDsigC14NTransform (bool includeComments) 
 		{
-			comments = includeComments;
+			canonicalizer = new XmlCanonicalizer(includeComments, false);
 		}
 
 		public override Type[] InputTypes {
@@ -83,28 +86,18 @@ namespace System.Security.Cryptography.Xml {
 			// documented as not changing the state of the transform
 		}
 
+		[MonoTODO]
 		public override void LoadInput (object obj) 
 		{
-			XmlNodeList xnl = null;
-
-			if (obj is Stream) 
+			if (obj is Stream) {
 				s = (obj as Stream);
-			else if (obj is XmlDocument)
-				xnl = (obj as XmlDocument).ChildNodes;
+				// todo: parse doc from stream?
+			} else if (obj is XmlDocument)
+				s = canonicalizer.Canonicalize((obj as XmlDocument));
 			else if (obj is XmlNodeList)
-				xnl = (XmlNodeList) obj;
-
-			if (xnl != null) {
-				StringBuilder sb = new StringBuilder ();
-				foreach (XmlNode xn in xnl)
-					sb.Append (xn.InnerText);
-
-				UTF8Encoding utf8 = new UTF8Encoding ();
-				byte[] data = utf8.GetBytes (sb.ToString ());
-				s = new MemoryStream (data);
-			}
-
+				s = canonicalizer.Canonicalize((obj as XmlNodeList));
 			// note: there is no default are other types won't throw an exception
 		}
 	}
 }
+

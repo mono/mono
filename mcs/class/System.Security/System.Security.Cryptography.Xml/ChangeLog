@@ -1,3 +1,8 @@
+2003-07-24  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* XmlDsigC14NTransform.cs: Patch to use Mono.Xml.XmlCanonicalizer
+	from Aleksey Sanin.
+
 2003-06-19  Nick Drochak <ndrochak@gol.com>
 
 	* DSAKeyValue.cs:
