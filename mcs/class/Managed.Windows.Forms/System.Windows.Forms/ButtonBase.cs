@@ -96,6 +96,7 @@
 
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Text;
 
 namespace System.Windows.Forms {
 	public abstract class ButtonBase : Control {
@@ -183,6 +184,7 @@ namespace System.Windows.Forms {
 			text_format	= new StringFormat();
 			text_format.Alignment = StringAlignment.Center;
 			text_format.LineAlignment = StringAlignment.Center;
+			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
 			TextChanged+=new System.EventHandler(RedrawEvent);
 			ForeColorChanged+=new EventHandler(RedrawEvent);

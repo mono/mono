@@ -1,3 +1,11 @@
+2004-12-13  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Button.cs: implement ProcessMnemonic
+	* ThemeWin32Classic.cs: use ResPool (caching) instead of creating
+	  brushes everytime
+	* Control.cs: fixes IsMnemonic (support for &&, case insensitive, etc)
+	* ButtonBase.cs: Show HotkeyPrefix (not the &)	
+
 2004-12-12  John BouAntoun  <jba-mon@optusnet.com.au>
 	
 	* MonthCalendar.cs: Implemented click-hold for next/previous month

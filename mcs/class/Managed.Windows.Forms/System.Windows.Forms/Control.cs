@@ -1898,13 +1898,17 @@ namespace System.Windows.Forms
 		}
 
 		public static bool IsMnemonic(char charCode, string text) {
-			int amp;
+			int amp;			
 
 			amp = text.IndexOf('&');
 
 			if (amp != -1) {
-				if (charCode == text.ToCharArray(amp, 1)[0]) {
-					return true;
+				if (amp + 1 < text.Length) {
+					if (text[amp + 1] != '&') {
+						if (Char.ToUpper(charCode) == Char.ToUpper(text.ToCharArray(amp + 1, 1)[0])) {
+							return true;
+						}	
+					}
 				}
 			}
 			return false;

@@ -102,7 +102,13 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessMnemonic(char charCode) {
-			return base.ProcessMnemonic (charCode);
+			
+			if (IsMnemonic(charCode, Text) == true) {
+				PerformClick();
+				return true;
+			}
+			
+			return base.ProcessMnemonic(charCode);
 		}
 
 		protected override void WndProc(ref Message m) {

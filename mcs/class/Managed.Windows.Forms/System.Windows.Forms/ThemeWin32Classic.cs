@@ -381,10 +381,8 @@ namespace System.Windows.Forms
 
 			width = button.ClientSize.Width;
 			height = button.ClientSize.Height;
-
-			SolidBrush	sb = new SolidBrush(button.BackColor);
-			dc.FillRectangle(sb, button.ClientRectangle);
-			sb.Dispose();
+			
+			dc.FillRectangle(ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);			
 			
 			// set up the button rectangle
 			buttonRectangle = button.ClientRectangle;
@@ -511,10 +509,9 @@ namespace System.Windows.Forms
 					text_rect.Y++;
 				}
 
-				if (button.is_enabled) {
-					SolidBrush	b = new SolidBrush(button.ForeColor);
-					dc.DrawString(button.text, button.Font, b, text_rect, button.text_format);
-					b.Dispose();
+				if (button.is_enabled) {					
+					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (button.ForeColor), text_rect, button.text_format);
+					
 				} else {
 					if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
 						dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), text_rect, button.text_format);
