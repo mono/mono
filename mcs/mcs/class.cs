@@ -6748,6 +6748,9 @@ namespace Mono.CSharp {
 					return;
 				}
 
+				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+					return;
+
 				ILGenerator ig = method_data.MethodBuilder.GetILGenerator ();
 				FieldInfo field_info = (FieldInfo)method.FieldBuilder;
 
@@ -6952,10 +6955,8 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (ec, this);
 			}
 
-			if (!IsInterface) {
-				Add.Emit (Parent);
-				Remove.Emit (Parent);
-			}
+			Add.Emit (Parent);
+			Remove.Emit (Parent);
 
 			base.Emit ();
 		}

@@ -1,3 +1,9 @@
+2005-04-01  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #74241
+	* class.cs (Event.Emit): Call Add/Remove emit even for interfaces.
+	Attributes are emitted there.
+	
 2005-04-01  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-tokenizer.cs (consume_identifier): Treat 'partial' as a
