@@ -1,3 +1,9 @@
+2001-11-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (enter_method): new debugging code
+	(leave_method): new debbuging code, this functions are called
+	when you use the new option --trace-calls
+
 2001-11-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* testjit.c: impl. STELEM_XX, STELEM_XX
