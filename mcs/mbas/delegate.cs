@@ -751,7 +751,7 @@ namespace Mono.MonoBASIC {
 
 		public override void Emit (EmitContext ec)
 		{
-			Delegate del = TypeManager.LookupDelegate (InstanceExpr.Type);
+			// Delegate del = TypeManager.LookupDelegate (InstanceExpr.Type);
 
 			//
 			// Invocation on delegates call the virtual Invoke member

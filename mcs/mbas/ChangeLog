@@ -1,3 +1,7 @@
+2005-23-03 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* AssemblyInfo.cs: Some more diligent authors
+	* ecore.cs, cfold.cs, delegate.cs: remove warnings-causing code 
+
 2005-03-22 Satya Sudha K <ksathyasudha@novell.com>
 	* mb-parser.jay
 	* expression.cs :

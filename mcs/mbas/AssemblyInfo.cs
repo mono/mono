@@ -28,6 +28,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
+[assembly: Mono.Author("Sudharsan V")]
+[assembly: Mono.Author("Satya Sudha K")]
+[assembly: Mono.Author("Manjula GHM")]
 [assembly: Mono.Author("Anirban Bhattacharjee")]
 [assembly: Mono.Author("Martin Baulig")]
 [assembly: Mono.Author("Marco Ridoni")]
@@ -43,7 +46,7 @@ using System.Runtime.CompilerServices;
 //[assembly: Mono.ForMoreInformation("http://www.go-mono.com")]
 //[assembly: Mono.UsageClause("mbas [options] source-files")]
 
-[assembly: AssemblyVersion("0.95.0.0")]
+[assembly: AssemblyVersion("0.96.0.0")]
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]

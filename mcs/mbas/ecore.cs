@@ -2409,7 +2409,7 @@ namespace Mono.MonoBASIC {
 
 			throw new Exception (msg);
 
-			Report.Error (30512, loc, msg);
+			// Report.Error (30512, loc, msg);
 		}
 
 		/// <summary>

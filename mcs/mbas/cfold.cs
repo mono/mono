@@ -57,16 +57,22 @@ namespace Mono.MonoBASIC {
 				// converted to type ulong.  or an error ocurrs if the other
 				// operand is of type sbyte, short, int or long
 				//
+#if WRONG
 				Constant match, other;
+#endif
 					
 				if (left is ULongConstant){
+#if WRONG
 					other = right;
 					match = left;
+#endif
 					if (!(right is ULongConstant))
 						right = right.ToULong (loc);
 				} else {
+#if WRONG
 					other = left;
 					match = right;
+#endif
 					left = left.ToULong (loc);
 				}
 
@@ -96,13 +102,11 @@ namespace Mono.MonoBASIC {
 				// operand is of type sbyte, short or int, the operands are
 				// converted to type long.
 				//
-				Constant match, other;
+				Constant other;
 				if (left is UIntConstant){
 					other = right;
-					match = left;
 				} else {
 					other = left;
-					match = right;
 				}
 
 				// Nothing to do.
