@@ -1,4 +1,4 @@
-//
+﻿//
 // StringsTest.cs
 //
 // Authors:
