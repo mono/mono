@@ -1,4 +1,9 @@
 
+Tue Sep 25 11:12:35 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fixed get_virtual_method () to deal with interface
+	methods better.
+
 Mon Sep 24 18:50:25 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: catch a few more error conditions with exceptions instead of
