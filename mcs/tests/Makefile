@@ -136,27 +136,26 @@ test-compiler-jit-real:
 	    echo -n "$$i: "; \
 	    echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options $$i.cs" > $$testlogfile ; \
 	    if $(INTERNAL_MCS) $$options $$i.cs >> $$testlogfile 2>&1 ; then \
-		: ; \
+	        if test -f $$i.exe; then \
+	            echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
+	            if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
+		        echo "PASS: $$i" >> $$logfile ; \
+	                echo OK ; rm -f $$testlogfile ; \
+	            else \
+		        echo "Exit code: $$?" >> $$testlogfile ; \
+		        failed="$$failed $$i" ; \
+		        echo "FAIL: $$i" >> $$logfile ; \
+	                echo FAILED ; cat $$testlogfile ; \
+		    fi ; \
+	        else \
+		    echo "PASS: $$i: compilation" >> $$logfile ; \
+		    echo OK ; rm -f $$testlogfile ; \
+	        fi ; \
 	    else \
 		echo "Exit code: $$?" >> $$testlogfile ; \
 		failed="$$failed $$i" ; \
 		echo "FAIL: $$i: compilation" >> $$logfile ; \
 	        echo FAILED COMPILATION ; cat $$testlogfile ; \
-	    fi ; \
-	    if test -f $$i.exe; then \
-	        echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
-	        if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
-		    echo "PASS: $$i" >> $$logfile ; \
-	            echo OK ; rm -f $$testlogfile ; \
-	        else \
-		    echo "Exit code: $$?" >> $$testlogfile ; \
-		    failed="$$failed $$i" ; \
-		    echo "FAIL: $$i" >> $$logfile ; \
-	            echo FAILED ; cat $$testlogfile ; \
-		fi ; \
-	    else \
-		echo "PASS: $$i: compilation" >> $$logfile ; \
-		echo OK ; rm -f $$testlogfile ; \
 	    fi ; \
 	done ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
