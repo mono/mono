@@ -29,7 +29,11 @@ namespace Mono.ILASM {
 
                         DriverMain driver = new DriverMain (args);
                         try {
-                                driver.Run ();
+                                if (!driver.Run ()) {
+                                        Console.WriteLine ();
+                                        Console.WriteLine ("***** FAILURE *****");
+                                        return 1;
+                                }
                         } catch (Exception e) {
                                 Console.WriteLine (e);
                                 Console.WriteLine ("Error while compiling.");
@@ -61,7 +65,7 @@ namespace Mono.ILASM {
                                 report = new Report (quiet);
                         }
 
-                        public void Run ()
+                        public bool Run ()
                         {
                                 try {
                                         if (il_file_list.Count == 0)
@@ -72,12 +76,16 @@ namespace Mono.ILASM {
                                         foreach (string file_path in il_file_list)
                                                 ProcessFile (file_path);
                                         if (scan_only)
-                                                return;
+                                                return true;
 
+                                        if (report.ErrorCount > 0)
+                                                return false;
                                         codegen.Write ();
                                 } catch {
-                                        throw;
+                                        return false;
                                 }
+
+                                return true;
                         }
 
                         private void ProcessFile (string file_path)
@@ -114,6 +122,9 @@ namespace Mono.ILASM {
                                                                 new yydebug.yyDebugSimple ());
                                         else
                                                 parser.yyparse (new ScannerAdapter (scanner),  null);
+                                } catch (ILTokenizingException ilte) {
+                                        report.Error (file_path + "(" + ilte.Location.line + ") : error : " +
+                                                        "syntax error at token '" + ilte.Token + "'.");
                                 } catch {
                                         Console.WriteLine ("Error at: " + scanner.Reader.Location);
                                         throw;

@@ -61,7 +61,7 @@ codegen/ModifiableType.cs
 codegen/Sentinel.cs
 parser/ScannerAdapter.cs
 scanner/ILReader.cs
-scanner/ILSyntaxError.cs
+scanner/ILTokenizingException.cs
 scanner/ILTables.cs
 scanner/ILToken.cs
 scanner/ILTokenizer.cs

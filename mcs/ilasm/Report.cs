@@ -42,12 +42,13 @@ namespace Mono.ILASM {
 
                         Console.WriteLine ("Assembling '{0}' , {1}, to {2} --> '{3}'", file,
                                            GetListing (listing), target, output);
+                        Console.WriteLine ();
                 }
 
                 public void Error (string message)
                 {
                         error_count++;
-                        Console.WriteLine ("Error: " + message);
+                        Console.WriteLine (message);
                 }
 
                 private string GetListing (string listing)
