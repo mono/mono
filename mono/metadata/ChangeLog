@@ -1,5 +1,10 @@
 2004-04-13  Jackson Harper  <jackson@ximian.com>
 
+	* culture-info-tables.h: Fix number of decimal digits for all
+	english locales.
+
+2004-04-13  Jackson Harper  <jackson@ximian.com>
+
 	* icall.c: Clairfy out of sync error message. It is not always
 	your corlib that is out of sync.
 
