@@ -1,4 +1,3 @@
-topdir = ..
 RUNTIME = mono
 topdir = ..
 MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
