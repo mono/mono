@@ -10,6 +10,7 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Threading;
 using System.Globalization;
 
@@ -616,11 +617,13 @@ public class DateTimeTest : Assertion
 		t1 = DateTime.Parse ("February 08");
 		AssertEquals ("H09", t2.Ticks, t1.Ticks);
 
+		// parsed as UTC string
 		t1 = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
-		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime (t1);
 		AssertEquals ("H10a", 2002, t1.Year);
 		AssertEquals ("H10b", 02, t1.Month);
 		AssertEquals ("H10c", 25, t1.Day);
+		AssertEquals ("H10d", 4, t1.Hour);
 		AssertEquals ("H10e", 25, t1.Minute);
 		AssertEquals ("H10f", 13, t1.Second);
 
@@ -648,6 +651,23 @@ public class DateTimeTest : Assertion
 		AssertEquals ("H16", t2.Ticks, t1.Ticks);
 	}
 
+	public void TestParse3 ()
+	{
+		string s = "Wednesday, 09 June 2004";
+		DateTime.ParseExact (s, "dddd, dd MMMM yyyy", CultureInfo.InvariantCulture);
+		try {
+			DateTime.ParseExact (s, "dddd, dd MMMM yyyy", new CultureInfo ("ja-JP"));
+			Fail ("ja-JP culture does not support format \"dddd, dd MMMM yyyy\"");
+		} catch (FormatException) {
+		}
+
+		// Ok, now we can assume ParseExact() works expectedly.
+
+		DateTime.Parse (s, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces);
+		DateTime.Parse (s, new CultureInfo ("ja-JP"), DateTimeStyles.AllowWhiteSpaces);
+//		DateTime.Parse (s, null); currently am not sure if it works for _every_ culture.
+	}
+
 	[Test]
 	[ExpectedException(typeof (FormatException))]
 	public void ParseFormatException1 ()
@@ -664,6 +684,103 @@ public class DateTimeTest : Assertion
 		DateTime d = DateTime.FromOADate(number);
 		DTAssertEquals ("I01", d, new DateTime(1913, 9, 8, 9, 56, 46, 0), Resolution.Second);
 		AssertEquals ("I02", d.ToOADate(), number);
+	}
+
+	[Test]
+	public void ParseAllowsQueerString ()
+	{
+		DateTime.Parse ("Sat,,,,,, 01 Oct 1994 03:00:00", CultureInfo.InvariantCulture);
+	}
+
+	[Test]
+	public void ParseUtcNonUtc ()
+	{
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("es-ES");
+
+		CultureInfo ci;
+		string s, s2, s3, d;
+		DateTime dt;
+		DateTimeFormatInfo dfi = DateTimeFormatInfo.InvariantInfo;
+		s = dfi.UniversalSortableDateTimePattern;
+		s2 = "r";
+
+		s3 = "s";
+
+		long tick1 = 631789220960000000; // 2003-01-23 12:34:56 as is
+		long tick2 = TimeZone.CurrentTimeZone.ToLocalTime (new DateTime (tick1)).Ticks; // adjusted to local time
+
+		// invariant
+		ci = CultureInfo.InvariantCulture;
+
+		d = "2003/01/23 12:34:56";
+		dt = DateTime.Parse (d, ci);
+		AssertEquals (d, tick1, dt.Ticks);
+
+		d = "2003/01/23 12:34:56 GMT";
+		dt = DateTime.Parse (d, ci);
+		AssertEquals (d, tick2, dt.Ticks);
+
+		d = "Thu, 23 Jan 2003 12:34:56 GMT";
+		dt = DateTime.ParseExact (d, s2, ci);
+		AssertEquals (d, tick1, dt.Ticks);
+
+		d = "2003-01-23 12:34:56Z";
+		dt = DateTime.ParseExact (d, s, ci);
+		AssertEquals (d, tick1, dt.Ticks);
+
+		d = "2003-01-23T12:34:56";
+		dt = DateTime.ParseExact (d, s3, ci);
+		AssertEquals (d, tick1, dt.Ticks);
+
+		// ja-JP ... it should be culture independent
+		ci = new CultureInfo ("ja-JP");
+
+		d = "2003/01/23 12:34:56";
+		dt = DateTime.Parse (d, ci);
+		AssertEquals (d, tick1, dt.Ticks);
+
+		d = "2003/01/23 12:34:56 GMT";
+		dt = DateTime.Parse (d, ci);
+		AssertEquals (d, tick2, dt.Ticks);
+
+		d = "Thu, 23 Jan 2003 12:34:56 GMT";
+		dt = DateTime.ParseExact (d, s2, ci);
+		AssertEquals (d, tick1, dt.Ticks);
+
+		d = "2003-01-23 12:34:56Z";
+		dt = DateTime.ParseExact (d, s, ci);
+		AssertEquals (d, tick1, dt.Ticks);
+
+		d = "2003-01-23T12:34:56";
+		dt = DateTime.ParseExact (d, s3, ci);
+		AssertEquals (d, tick1, dt.Ticks);
+	}
+
+	[Test]
+	public void TimeZoneAdjustment ()
+	{
+		CultureInfo ci = Thread.CurrentThread.CurrentCulture;
+		try {
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+			DateTime d1 = DateTime.ParseExact ("2004/06/30", "yyyy/MM/dd", null);
+			DateTime d2 = DateTime.ParseExact ("2004/06/30Z", "yyyy/MM/dd'Z'", null);
+			DateTime d3 = DateTime.ParseExact ("Wed, 30 Jun 2004 00:00:00 GMT", "ddd, dd MMM yyyy HH':'mm':'ss 'GMT'", null);
+			DateTime d4 = DateTime.ParseExact ("2004-06-30 00:00:00Z", "yyyy'-'MM'-'dd HH':'mm':'ss'Z'", null);
+			StringWriter sw = new StringWriter ();
+			sw.Write ("{0} {1}", d1.Ticks, d1);
+			AssertEquals ("#1", "632241504000000000 6/30/2004 12:00:00 AM", sw.ToString ());
+			sw.GetStringBuilder ().Length = 0;
+			sw.Write ("{0} {1}", d2.Ticks, d2);
+			AssertEquals ("#2", "632241504000000000 6/30/2004 12:00:00 AM", sw.ToString ());
+			sw.GetStringBuilder ().Length = 0;
+			sw.Write ("{0} {1}", d3.Ticks, d3);
+			AssertEquals ("#3", "632241504000000000 6/30/2004 12:00:00 AM", sw.ToString ());
+			sw.GetStringBuilder ().Length = 0;
+			sw.Write ("{0} {1}", d4.Ticks, d4);
+			AssertEquals ("#4", "632241504000000000 6/30/2004 12:00:00 AM", sw.ToString ());
+		} finally {
+			Thread.CurrentThread.CurrentCulture = ci;
+		}
 	}
 
 	[Test]
@@ -744,6 +861,11 @@ public class DateTimeTest : Assertion
 		AssertEquals ("yyyyMMddHHmmssZ", "03/12/1996 18:38:47", DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null).ToUniversalTime ().ToString ());
 		// technically this is invalid (PKIX) because of the missing seconds but it exists so...
 		AssertEquals ("yyMMddHHmmZ", "02/23/1996 19:15:00", DateTime.ParseExact ("9602231915Z", "yyMMddHHmmZ", null).ToUniversalTime ().ToString ());
+
+		// However, "Z" and "'Z'" are different.
+		AssertEquals ("Z timezone handling",
+			DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmss'Z'", null).ToLocalTime (),
+			DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null));
 	}
 
 	[Test]
@@ -752,6 +874,100 @@ public class DateTimeTest : Assertion
 		string date = "28/Mar/2004:19:12:37 +0200";
 		string [] expectedFormats = {"dd\"/\"MMM\"/\"yyyy:HH:mm:ss zz\"00\""};
 		DateTime mydate = DateTime.ParseExact (date, expectedFormats, null, DateTimeStyles.AllowWhiteSpaces);
+	}
+
+	[Test]
+	public void CultureIndependentTests ()
+	{
+		// Here I aggregated some tests mainly because of test 
+		// performance (iterating all the culture is heavy process).
+		
+		for (int i = 0; i < 32768; i++) {
+			CultureInfo ci;
+			try {
+				ci = new CultureInfo (i);
+				// In fact InvatiantCulture is not neutral.
+				// See bug #59716.
+				if (ci.IsNeutralCulture && ci != CultureInfo.InvariantCulture)
+					continue;
+				} catch (Exception) {
+				continue;
+			}
+			Thread.CurrentThread.CurrentCulture = ci;
+			DateTime dt;
+
+			// X509Certificate pattern is _always_ accepted.
+			dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
+#if NET_1_1
+			dt = DateTime.Parse ("19960312183847Z");
+#endif
+			// memo: the least LCID is 127, and then 1025(ar-SA)
+
+			// "th-TH" locale rejects them since in
+			// ThaiBuddhistCalendar the week of a day is different.
+			// (and also for years).
+			if (ci.LCID != 1054) {
+				try {
+					dt = DateTime.Parse ("Sat, 29 Oct 1994 12:00:00 GMT", ci);
+				} catch (FormatException ex) {
+					Fail (String.Format ("RFC1123: culture {0} {1} failed: {2}", i, ci, ex.Message));
+				}
+/* comment out until we fix RFC1123
+				// bug #47720
+				if (dt != TimeZone.CurrentTimeZone.ToUniversalTime (dt))
+					Assert (String.Format ("bug #47720 on culture {0} {1}", ci.LCID, ci), 12 != dt.Hour);
+*/
+				// variant of RFC1123
+				try {
+					dt = DateTime.Parse ("Sat, 1 Oct 1994 03:00:00", ci);
+				} catch (FormatException ex) {
+					Fail (String.Format ("RFC1123 variant: culture {0} {1} failed: {2}", i, ci, ex.Message));
+				}
+				AssertEquals (String.Format ("RFC1123 variant on culture {0} {1}", ci.LCID, ci), 3, dt.Hour);
+			}
+
+			switch (ci.LCID) {
+			case 1025: // ar-SA
+			case 1054: // th-TH
+			case 1125: // div-MV
+				break;
+			default:
+				// 02/25/2002 04:25:13 as is
+				long tick1 = 631502079130000000;
+				long tick2 = TimeZone.CurrentTimeZone.ToLocalTime (new DateTime (tick1)).Ticks; // adjusted to local time
+				dt = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT", ci);
+				AssertEquals (String.Format ("GMT variant. culture={0} {1}", i, ci), tick2, dt.Ticks);
+				break;
+			}
+
+#if NET_1_1
+			// ka-GE rejects these formats under MS.NET. 
+			// I wonder why. Also, those tests fail under .NET 1.0.
+			if (ci.LCID != 1079) {
+				dt = DateTime.Parse ("2002-02-25");
+				dt = DateTime.Parse ("2002-02-25Z");
+				dt = DateTime.Parse ("2002-02-25T19:20:00+09:00");
+				// bug #58938
+				dt = DateTime.Parse ("2002#02#25 19:20:00");
+				switch (ci.LCID) {
+				case 1038: // FIXME: MS passes this culture.
+				case 1062: // FIXME: MS passes this culture.
+				case 1078: // MS does not pass this culture. Dunno why.
+					break;
+				default:
+					AssertEquals (String.Format ("bug #58938 on culture {0} {1}", ci.LCID, ci), 19, dt.Hour);
+					break;
+				}
+				dt = DateTime.Parse ("2002-02-25 12:01:03");
+				dt = DateTime.Parse ("2002#02#25 12:01:03");
+				dt = DateTime.Parse ("2002%02%25 12:01:03");
+				if (ci.DateTimeFormat.TimeSeparator != ".")
+					dt = DateTime.Parse ("2002.02.25 12:01:03");
+                                dt = DateTime.Parse ("2003/01/23 12:34:56 GMT");
+				AssertEquals (String.Format ("RFC1123 UTC {0} {1}", i, ci), 12, dt.Hour);
+			}
+#endif
+		}
 	}
 
 	[Test]
