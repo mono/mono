@@ -1,10 +1,12 @@
 //
-// System.ComponentModel.ReferenceConverter
+// System.ComponentModel.ReferenceConverter.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Globalization;
@@ -13,16 +15,17 @@ namespace System.ComponentModel
 {
 	public class ReferenceConverter : TypeConverter
 	{
-		[MonoTODO]
+
 		public ReferenceConverter (Type type)
 		{
 		}
 
-		[MonoTODO]
 		public override bool CanConvertFrom (ITypeDescriptorContext context,
 						     Type sourceType)
 		{
-			throw new NotImplementedException();
+			if (sourceType == typeof (string)) 
+				return true;
+			return base.CanConvertFrom (context, sourceType);
 		}
 
 		[MonoTODO]
@@ -48,27 +51,19 @@ namespace System.ComponentModel
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
 		public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
 		protected virtual bool IsValueAllowed (ITypeDescriptorContext context, object value)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ReferenceConverter()
-		{
+			return true;
 		}
 	}
 }

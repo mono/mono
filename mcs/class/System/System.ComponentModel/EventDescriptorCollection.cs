@@ -17,7 +17,7 @@ namespace System.ComponentModel
 	[ComVisible (true)]
 	public class EventDescriptorCollection : IList, ICollection, IEnumerable
 	{
-		private ArrayList eventList;
+		private ArrayList eventList = new ArrayList ();
 		
 		public static readonly EventDescriptorCollection Empty;
 		
@@ -88,13 +88,12 @@ namespace System.ComponentModel
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected virtual EventDescriptorCollection InternalSort (IComparer comparer) {
-			throw new NotImplementedException ();
+		protected virtual void InternalSort (IComparer comparer) {
+			eventList.Sort (comparer);
 		}
 
 		[MonoTODO]
-		protected virtual EventDescriptorCollection InternalSort (string[] order) {
+		protected virtual void InternalSort (string[] order) {
 			throw new NotImplementedException ();
 		}
 		
@@ -148,17 +147,15 @@ namespace System.ComponentModel
 			get {
 				return eventList[index];
 			}
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				eventList[index] = value;
 			}
 		}
 
 		// ICollection methods
 
-		[MonoTODO]
 		void ICollection.CopyTo (Array array, int index) {
-			throw new NotImplementedException ();
+			eventList.CopyTo (array, index);
 		}
 
 		bool ICollection.IsSynchronized {

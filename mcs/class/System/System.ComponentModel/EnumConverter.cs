@@ -1,12 +1,15 @@
 //
-// System.ComponentModel.EnumConverter
+// System.ComponentModel.EnumConverter.cs
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2003 Andreas Nahr
 //
 using System;
+using System.Collections;
 using System.Globalization;
 
 namespace System.ComponentModel
@@ -34,7 +37,8 @@ namespace System.ComponentModel
 						  Type destinationType)
 		{
 			if (destinationType == typeof (string))
-				return value.ToString ();
+				if (value != null)
+					return Enum.Format (type, value, "G");
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
@@ -85,6 +89,31 @@ namespace System.ComponentModel
 				stdValues = new StandardValuesCollection (values);
 			}
 			return stdValues;
+		}
+
+		protected IComparer Comparer {
+			get { return new EnumConverter.EnumComparer (); }
+		}
+
+		protected Type EnumType {
+			get { return type; }
+		}
+
+		protected TypeConverter.StandardValuesCollection Values {
+			get { return stdValues;  }
+			set { stdValues = value; }
+		}
+
+		private class EnumComparer : IComparer
+		{
+			int IComparer.Compare (object compareObject1, object compareObject2) 
+			{
+				string CompareString1 = (compareObject1 as string);
+				string CompareString2 = (compareObject2 as string);
+				if ((CompareString1 == null) || (CompareString2 == null))
+					return Collections.Comparer.Default.Compare (compareObject1, compareObject2);
+				return CultureInfo.InvariantCulture.CompareInfo.Compare (CompareString1, CompareString2);
+			}
 		}
 	}
 

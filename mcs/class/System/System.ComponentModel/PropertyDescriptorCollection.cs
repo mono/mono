@@ -2,9 +2,9 @@
 // System.ComponentModel.PropertyDescriptorCollection.cs
 //
 // Authors:
-// 	Rodrigo Moya (rodrigo@ximian.com)
-// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Rodrigo Moya (rodrigo@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Rodrigo Moya, 2002
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
@@ -198,14 +198,22 @@ namespace System.ComponentModel
 			}
 		}
 
-		public bool IsReadOnly
+		bool IList.IsReadOnly
 		{
 			get {
 				return readOnly;
 			}
 		}
 
-		public bool IsSynchronized
+		bool IDictionary.IsReadOnly
+		{
+			get 
+			{
+				return readOnly;
+			}
+		}
+
+		bool ICollection.IsSynchronized
 		{
 			get {
 				return false;

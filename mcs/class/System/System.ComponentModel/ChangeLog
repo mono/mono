@@ -1,5 +1,18 @@
 2003-07-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* AttributeCollection.cs: Fixed public members
+	* BaseNumberConverter.cs: Changed InnerType to internal to match public assembly signature
+	* BrowsableAttribute.cs: Removed wrong constructor, Restyle according to guidelines
+	* CategoryAttribute.cs: Changed public fields to properties
+	* EnumConverter.cs: Added and implemented missing properties, improved implementation
+	* EventDescriptorCollection.cs: Fixed wrong signatures, added implementation, fixed potential bug
+	* PropertyDescriptorCollection.cs: Fixed public members
+	* ReferenceConverter.cs: Implementation added
+	* SyntaxCheck.cs: Improved string checks, added MonoTODO descriptions
+	* TypeDescriptor.cs: Implementations added
+	
+2003-07-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* ISite.cs: Fixed attributes, fixed header
 	* ITypeDescriptorContext.cs: Fixed attributes, formatting corrections
 	* WarningException.cs: Fixed attributes, formatting corrections

@@ -1,9 +1,9 @@
 //
-// System.ComponentModel.TypeDescriptor
+// System.ComponentModel.TypeDescriptor.cs
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 // (C) 2003 Andreas Nahr
@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Globalization;
 using System.ComponentModel.Design;
 
 namespace System.ComponentModel
@@ -21,6 +22,7 @@ public sealed class TypeDescriptor
 {
 	private static readonly string creatingDefaultConverters = "creatingDefaultConverters";
 	private static Hashtable defaultConverters;
+	private static IComNativeDescriptorHandler descriptorHandler;
 
 	private TypeDescriptor ()
 	{
@@ -150,7 +152,17 @@ public sealed class TypeDescriptor
 	[MonoTODO]
 	public static TypeConverter GetConverter (object component, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		if (component == null)
+			throw new ArgumentNullException ("component", "component cannot be null");
+
+		// FIXME: implementation correct?
+		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
+			return ((ICustomTypeDescriptor) component).GetConverter ();
+		} 
+		else {
+			// return the normal converter of this component
+			return null;
+		}
 	}
 
 	private static Hashtable DefaultConverters
@@ -163,10 +175,32 @@ public sealed class TypeDescriptor
 				if (defaultConverters != null)
 					return defaultConverters;
 				
-				//FIXME: add more converters as we implement them
 				defaultConverters = new Hashtable ();
-				defaultConverters.Add (typeof (Enum), typeof (EnumConverter));
+				defaultConverters.Add (typeof (bool), typeof (BooleanConverter));
+				defaultConverters.Add (typeof (byte), typeof (ByteConverter));
+				defaultConverters.Add (typeof (sbyte), typeof (SByteConverter));
 				defaultConverters.Add (typeof (string), typeof (StringConverter));
+				defaultConverters.Add (typeof (char), typeof (CharConverter));
+				defaultConverters.Add (typeof (short), typeof (Int16Converter));
+				defaultConverters.Add (typeof (int), typeof (Int32Converter));
+				defaultConverters.Add (typeof (long), typeof (Int64Converter));
+				defaultConverters.Add (typeof (ushort), typeof (UInt16Converter));
+				defaultConverters.Add (typeof (uint), typeof (UInt32Converter));
+				defaultConverters.Add (typeof (ulong), typeof (UInt64Converter));
+				defaultConverters.Add (typeof (float), typeof (SingleConverter));
+				defaultConverters.Add (typeof (double), typeof (DoubleConverter));
+				defaultConverters.Add (typeof (decimal), typeof (DecimalConverter));
+				defaultConverters.Add (typeof (object), typeof (TypeConverter));
+				defaultConverters.Add (typeof (void), typeof (TypeConverter));
+				defaultConverters.Add (typeof (Array), typeof (ArrayConverter));
+				defaultConverters.Add (typeof (CultureInfo), typeof (CultureInfoConverter));
+				defaultConverters.Add (typeof (DateTime), typeof (DateTimeConverter));
+				defaultConverters.Add (typeof (Enum), typeof (EnumConverter));
+				defaultConverters.Add (typeof (Guid), typeof (GuidConverter));
+				defaultConverters.Add (typeof (TimeSpan), typeof (TimeSpanConverter));
+				defaultConverters.Add (typeof (ICollection), typeof (CollectionConverter));
+				//FIXME We need to add the type for the ReferenceConverter
+				//defaultConverters.Add (typeof (????), typeof (ReferenceConverter));
 			}
 			return defaultConverters;
 		}
@@ -363,10 +397,9 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public static IComNativeDescriptorHandler ComNativeDescriptorHandler {
-		get{ throw new NotImplementedException (); }
-		set{ throw new NotImplementedException (); }
+		get { return descriptorHandler; }
+		set { descriptorHandler = value; }
 	}
 
 	[MonoTODO]
@@ -390,10 +423,12 @@ public sealed class TypeDescriptor
 	[MonoTODO]
 	public static void Refresh (Type type)
 	{
+		//FIXME this is just to get rid of the warning about Refreshed never being used
+		if (Refreshed != null)
+			Refreshed (new RefreshEventArgs (type));
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public static event RefreshEventHandler Refreshed;
 }
 }

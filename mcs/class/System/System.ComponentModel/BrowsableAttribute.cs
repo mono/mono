@@ -2,8 +2,8 @@
 // System.ComponentModel.BrowsableAttribute.cs
 //
 // Author:
-//  Miguel de Icaza (miguel@ximian.com)
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Miguel de Icaza (miguel@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) 2003 Andreas Nahr
@@ -20,10 +20,6 @@ namespace System.ComponentModel {
 		public static readonly BrowsableAttribute Default = new BrowsableAttribute (true);
 		public static readonly BrowsableAttribute No = new BrowsableAttribute (false);
 		public static readonly BrowsableAttribute Yes = new BrowsableAttribute (true);
-
-		public BrowsableAttribute ()
-		{
-		}
 
 		public BrowsableAttribute (bool browsable)
 		{
@@ -52,7 +48,6 @@ namespace System.ComponentModel {
 		{
 			return browsable == BrowsableAttribute.Default.Browsable;
 		}
-
 	}
 }
 

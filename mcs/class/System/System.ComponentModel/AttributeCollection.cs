@@ -88,13 +88,13 @@ namespace System.ComponentModel
 			return attr;
 		}
 
-		public bool IsSynchronized {
+		bool ICollection.IsSynchronized {
 			get {
 				return attrList.IsSynchronized;
 			}
 		}
 
-		public object SyncRoot {
+		object ICollection.SyncRoot {
 			get {
 				return attrList.SyncRoot;
 			}

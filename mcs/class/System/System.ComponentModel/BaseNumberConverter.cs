@@ -2,7 +2,7 @@
 // System.ComponentModel.BaseNumberConverter.cs
 //
 // Authors:
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002/2003 Ximian, Inc (http://www.ximian.com)
 // (C) 2003 Andreas Nahr
@@ -16,7 +16,7 @@ namespace System.ComponentModel
 	public abstract class BaseNumberConverter : TypeConverter
 	{
 
-		protected Type InnerType;
+		internal Type InnerType;
 
 		protected BaseNumberConverter()
 		{
