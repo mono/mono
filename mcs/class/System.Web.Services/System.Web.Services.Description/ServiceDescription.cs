@@ -34,7 +34,7 @@ namespace System.Web.Services.Description {
 		ServiceCollection services;
 		string targetNamespace;
 		Types types;
-		static XmlSerializer serializer;
+		static ServiceDescriptionSerializer serializer;
 		XmlSerializerNamespaces ns;
 
 		#endregion // Fields
@@ -43,9 +43,10 @@ namespace System.Web.Services.Description {
 
 		static ServiceDescription ()
 		{
-			serializer = new XmlSerializer (typeof (ServiceDescription), Namespace);
+			serializer = new ServiceDescriptionSerializer ();
 		}
 
+		[MonoTODO ("Move namespaces to subtype, use ServiceDescriptionSerializer")]	
 		public ServiceDescription ()
 		{
 			bindings = new BindingCollection (this);
@@ -196,5 +197,64 @@ namespace System.Web.Services.Description {
 		}
 
 		#endregion
+
+		internal class ServiceDescriptionSerializer : XmlSerializer {
+
+			#region Fields
+
+			XmlSerializerNamespaces ns;
+
+			#endregion
+
+			#region Constructors
+
+			[MonoTODO]
+			public ServiceDescriptionSerializer ()
+				: base (typeof (ServiceDescription), ServiceDescription.Namespace)
+			{
+				ns = new XmlSerializerNamespaces ();
+				ns.Add ("soap", SoapBinding.Namespace);
+				ns.Add ("s", XmlSchema.Namespace);
+				ns.Add ("http", HttpBinding.Namespace);
+				ns.Add ("mime", MimeContentBinding.Namespace);
+				ns.Add ("tm", MimeTextBinding.Namespace);
+			}
+
+			#endregion // Constructors
+
+			#region Methods
+
+			[MonoTODO]
+			public override bool CanDeserialize (XmlReader reader)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			protected override XmlSerializationReader CreateReader ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			protected override XmlSerializationWriter CreateWriter ()
+			{
+				throw new NotImplementedException ();
+			}
+			
+			[MonoTODO]
+			protected override object Deserialize (XmlSerializationReader reader)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			protected override void Serialize (object serviceDescription, XmlSerializationWriter writer)
+			{
+				throw new NotImplementedException ();
+			}
+
+			#endregion // Methods
+		}
 	}
 }
