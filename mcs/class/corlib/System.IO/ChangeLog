@@ -1,3 +1,7 @@
+2004-04-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* BinaryWriter.cs, Stream.cs: ensure we have beforefieldinit.
+
 2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Path.cs: readonlyificate.

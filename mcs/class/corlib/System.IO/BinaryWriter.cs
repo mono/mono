@@ -14,16 +14,12 @@ namespace System.IO {
 	public class BinaryWriter : IDisposable {
 
 		// Null is a BinaryWriter with no backing store.
-		public static readonly BinaryWriter Null;
+		public static readonly BinaryWriter Null = new BinaryWriter ();
 
 		protected Stream OutStream;
 		private Encoding m_encoding;
 		private byte [] buffer;
 		private bool disposed = false;
-
-		static BinaryWriter() {
-			Null = new BinaryWriter();
-		}
 
 		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8Unmarked) {
 		}
