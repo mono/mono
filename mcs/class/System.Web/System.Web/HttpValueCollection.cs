@@ -49,7 +49,7 @@ namespace System.Web
 			sKey = "";
 			sValue = "";
 
-			string [] arrValues = sHeaders.Split(new char [] {'\r', '\n'});
+			string [] arrValues = sHeaders.Split (new char [] {'\r', '\n'});
 			foreach (string sLine in arrValues) {
 				string [] arrKeyValue = sLine.Split (arrSplitValue);
 				if (arrKeyValue.Length == 1 && arrKeyValue [0].Length == 0) {
@@ -88,22 +88,25 @@ namespace System.Web
 		}
 
 		// String = test=aaa&kalle=nisse
-		internal void FillFromQueryString(string sData, Encoding encoding)
+		internal void FillFromQueryString (string sData, Encoding encoding)
 		{
 			_bHeaders = false;
 
 			char [] arrSplitValue = new char [] {'='};
 
+			string k, v;
 			string [] arrValues = sData.Split (new char [] {'&'});
 			foreach (string sValue in arrValues) {
 				string [] arrKeyValue = sValue.Split (arrSplitValue);
 				switch (arrKeyValue.Length) {
 				case 1:	// Add key only
-					Add (HttpUtility.UrlDecode(arrKeyValue[0].Trim(), encoding), string.Empty);
+					k = HttpUtility.UrlDecode (arrKeyValue [0].Trim (), encoding);
+					Add (k, String.Empty);
 					break;
 				case 2:
-					Add(HttpUtility.UrlDecode (arrKeyValue [0].Trim(), encoding), 
-					    HttpUtility.UrlDecode (arrKeyValue [1].Trim(), encoding));
+					k = HttpUtility.UrlDecode (arrKeyValue [0].Trim (), encoding);
+					v = HttpUtility.UrlDecode (arrKeyValue [1].Trim (), encoding);
+					Add (k, v); 
 					break;
 				default:
 					throw new InvalidOperationException ("Data is malformed");

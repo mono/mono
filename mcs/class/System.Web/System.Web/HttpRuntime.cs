@@ -132,7 +132,7 @@ namespace System.Web {
 			}
 
 			if (null != error) {
-				Console.WriteLine("Error happend during execution: ");
+				Console.WriteLine("Error happened during execution: ");
 				Console.WriteLine(error.Message);
 				Console.WriteLine("Trace: " + error.StackTrace);
 				// TODO: Report runtime error

@@ -131,11 +131,12 @@ namespace System.Web
 		{
 			ArrayList oHeaders = new ArrayList (_Headers.ToArray ());
 
+			oHeaders.Add (new HttpResponseHeader ("X-Powered-By", "Mono"));
 			// save culture info, we need us info here
 			CultureInfo oSavedInfo = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo (0x0409);
 
-			string date = DateTime.Now.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss");
+			string date = DateTime.Now.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ");
 			oHeaders.Add (new HttpResponseHeader ("Date", date + "GMT"));
 
 			Thread.CurrentThread.CurrentCulture = oSavedInfo;
@@ -638,15 +639,20 @@ namespace System.Web
 			}
 
 			try {
+				long length;
 				if (!_bHeadersSent && !_bSuppressHeaders && !_bClientDisconnected) {
-					if (_Writer != null && BufferOutput) {
-						_lContentLength = _Writer.BufferSize;
-					} else {
-						_lContentLength = 0;
-					}
+					if (bFinish) {
+						length = _Writer.BufferSize;
+						if (length == 0 && _lContentLength == 0)
+							_sContentType = null;
 
-					if (_lContentLength == 0 && _iStatusCode == 200 &&
-						_sTransferEncoding == null) {
+
+						SendHeaders ();
+						length = _Writer.BufferSize;
+						if (length != 0)
+							_WorkerRequest.SendCalculatedContentLength ((int) length);
+					} else if (_lContentLength == 0 && _iStatusCode == 200 &&
+						   _sTransferEncoding == null) {
 						// Check we are going todo chunked encoding
 						string sProto = Request.ServerVariables ["SERVER_PROTOCOL"];
 
@@ -663,7 +669,7 @@ namespace System.Web
 						}
 
 						SendHeaders ();
-					}					
+					}
 				}
 				if ((!_bSuppressContent && Request.HttpMethod == "HEAD") || _Writer == null) {
 					_bSuppressContent = true;

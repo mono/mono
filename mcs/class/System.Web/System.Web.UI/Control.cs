@@ -661,7 +661,7 @@ namespace System.Web.UI
 					controlList = new ArrayList ();
 					controlStates = new ArrayList ();
 				}
-				controlList.Add (ctrl);
+				controlList.Add (ctrl.ID);
 				controlStates.Add (ctrl.SaveViewStateRecursive ());
 			}
 				
@@ -682,8 +682,9 @@ namespace System.Web.UI
 			ArrayList controlStates = savedInfo.Third as ArrayList;
 			int nControls = controlList.Count;
 			for (int i = 0; i < nControls; i++) {
-				if (controlStates != null)
-					Controls [i].LoadViewStateRecursive (controlStates [i]);
+				Control c = FindControl ((string) controlList [i]);
+				if (c != null && controlStates != null)
+					c.LoadViewStateRecursive (controlStates [i]);
 			}
                 }
                 

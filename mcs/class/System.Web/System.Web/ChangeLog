@@ -1,3 +1,15 @@
+2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: fixed GetRawContent (). Now it only tries to read at
+	most ContentLength bytes.
+
+	* HttpResponse.cs: now it sends the headers. Added
+	X-Powered-By header :-).
+
+	* HttpRuntime.cs: fixed typo.
+
+	* HttpValueCollection.cs: cosmetic changes.
+
 2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: reenabled a few lines of code

@@ -204,54 +204,65 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO("Handle Multipart data also, content-encoding check")]
-		private void ParseFormData() {
-			if (_oFormData == null) {
-				byte [] arrData = GetRawContent();
-				_oFormData = new HttpValueCollection(ContentEncoding.GetString(arrData), true, ContentEncoding);
+		[MonoTODO("Handle multipart/form-data")]
+		private void ParseFormData ()
+		{
+			if (_oFormData != null)
+				return;
+
+			string contentType = ContentType;
+			if (0 != String.Compare (contentType, "application/x-www-form-urlencoded", true)) {
+				Console.WriteLine ("Content-Type -> {0} not supported", contentType);
+				_oFormData = new HttpValueCollection ();
+				return;
 			}
+
+			byte [] arrData = GetRawContent ();
+			Encoding enc = ContentEncoding;
+			string data = enc.GetString (arrData);
+			_oFormData = new HttpValueCollection (data, true, enc);
 		}
 
 		[MonoTODO("void Dispose")]
 		internal void Dispose() {			
 		}
 
-		[MonoTODO("Handle Multipart data, max content length?")]
-		private byte [] GetRawContent() {
-			if (null == _arrRawContent) {
-				if (null == _WorkerRequest) {
-					if (QueryStringRaw == null)
-						return null;
-					char [] q = QueryStringRaw.ToCharArray ();
-					_arrRawContent = new byte [q.Length];
-					for (int i = 0; i < q.Length; i++)
-						_arrRawContent [i] = (byte) q [i];
-					return _arrRawContent;
-				}
+		private byte [] GetRawContent ()
+		{
+			if (_arrRawContent != null)
+				return _arrRawContent;
 
-				// TODO: Check max length?
-				_arrRawContent = _WorkerRequest.GetPreloadedEntityBody();
-				if (!_WorkerRequest.IsEntireEntityBodyIsPreloaded()) {
-					byte [] arrTemp;
-					byte [] arrBuffer;
-					
-					arrBuffer = new byte[16384];
-					int iLoaded = 16384;
+			if (null == _WorkerRequest) {
+				if (QueryStringRaw == null)
+					return null;
+				char [] q = QueryStringRaw.ToCharArray ();
+				_arrRawContent = new byte [q.Length];
+				for (int i = 0; i < q.Length; i++)
+					_arrRawContent [i] = (byte) q [i];
+				return _arrRawContent;
+			}
 
-					while (iLoaded == arrBuffer.Length) {
-						iLoaded = _WorkerRequest.ReadEntityBody(arrBuffer, arrBuffer.Length);
-						
-						// Save data
-						arrTemp = new byte[_arrRawContent.Length + iLoaded];
-						
-						Array.Copy(_arrRawContent, 0, arrTemp, 0, _arrRawContent.Length);
-						Array.Copy(arrBuffer, 0, arrTemp, _arrRawContent.Length, iLoaded);
+			_arrRawContent = _WorkerRequest.GetPreloadedEntityBody ();
+			if (_arrRawContent == null)
+				_arrRawContent = new byte [0];
 
-						_arrRawContent = arrTemp;
-					}
-				}
-			} 
+			int length = ContentLength;
+			if (_WorkerRequest.IsEntireEntityBodyIsPreloaded () || length <= _arrRawContent.Length)
+				return _arrRawContent;
 
+			byte [] arrBuffer = new byte [Math.Min (16384, length)];
+			MemoryStream ms = new MemoryStream (arrBuffer.Length);
+			ms.Write (_arrRawContent, 0, _arrRawContent.Length);
+			int read = 0;
+			for (int loaded = _arrRawContent.Length; loaded < length; loaded += read) {
+				read = _WorkerRequest.ReadEntityBody (arrBuffer, arrBuffer.Length);
+				if (read == 0)
+					break;
+
+				ms.Write (arrBuffer, 0, read);
+			}
+
+			_arrRawContent = ms.GetBuffer ();
 			return _arrRawContent;
 		}
 
@@ -488,7 +499,7 @@ namespace System.Web {
 		public Stream InputStream {
 			get {
 				if (_oInputStream == null) {
-					byte [] arrInputData = GetRawContent();
+					byte [] arrInputData = GetRawContent ();
 
 					if (null != arrInputData) {
 						_oInputStream = new HttpRequestStream(arrInputData, 0, arrInputData.Length);

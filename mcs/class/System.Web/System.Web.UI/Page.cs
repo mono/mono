@@ -282,13 +282,14 @@ public class Page : TemplateControl, IHttpHandler
 
 		NameValueCollection coll = null;
 		if (IsPostBack)
-			//coll =  _context.Request.Form; FIXME: the correct is this one. commented out to let xsp work
-			coll = _context.Request.QueryString;
+			coll =  _context.Request.Form;
 		else 
 			coll = _context.Request.QueryString;
 
+		
 		if (coll == null || coll ["__VIEWSTATE"] == null)
 			return null;
+
 		return coll;
 	}
 	
@@ -414,9 +415,6 @@ public class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("</script>");
 	}
 
-	private bool got_state = false;
-	private int _random;
-	private int queryStringHash;
 	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
 	{
 		if (renderingForm)
@@ -432,23 +430,12 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	public string GetViewStateString ()
+	internal string GetViewStateString ()
 	{
-		StringBuilder state_string = new StringBuilder ();
-		state_string.AppendFormat ("{0:X}", GetTypeHashCode ());
-		state_string.AppendFormat ("{0:X}", queryStringHash);
-
-		if (!got_state) {
-			Random rnd = new Random ();
-			_random = rnd.Next ();
-			if (_random < 0)
-				_random = -_random;
-			_random++;
-			got_state = true;
-		}
-
-		state_string.AppendFormat ("{0:X}", _random);
-		return state_string.ToString ();
+		StringWriter sr = new StringWriter ();
+		LosFormatter fmt = new LosFormatter ();
+		fmt.Serialize (sr, _savedViewState);
+		return sr.GetStringBuilder ().ToString ();
 	}
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
@@ -548,10 +535,8 @@ public class Page : TemplateControl, IHttpHandler
 		FrameworkInitialize ();
 		WebTrace.WriteLine ("InitRecursive");
 		InitRecursive (null);
-		got_state = false;
 		renderingForm = false;	
 		_context = context;
-		queryStringHash = _context.Request.QueryString.GetHashCode ();
 		if (IsPostBack) {
 			LoadPageViewState ();
 			ProcessPostData (DeterminePostBackMode (), false);
@@ -576,6 +561,8 @@ public class Page : TemplateControl, IHttpHandler
 		WebTrace.WriteLine ("RenderControl");
 		RenderControl (output);
 		_context = null;
+		WebTrace.WriteLine ("UnloadRecursive");
+		UnloadRecursive (true);
 		WebTrace.WriteLine ("End");
 		WebTrace.PopContext ();
 	}
@@ -583,6 +570,9 @@ public class Page : TemplateControl, IHttpHandler
 	internal void RaisePostBackEvents ()
 	{
 		NameValueCollection postdata = DeterminePostBackMode ();
+		if (postdata == null)
+			return;
+
 		string eventTarget = postdata ["__EVENTTARGET"];
 		if (eventTarget != null && eventTarget.Length > 0) {
 			Control target = FindControl (eventTarget);
@@ -674,17 +664,34 @@ public class Page : TemplateControl, IHttpHandler
 	
 	protected virtual object LoadPageStateFromPersistenceMedium ()
 	{
+		NameValueCollection postdata = DeterminePostBackMode ();
+		string view_state;
+		if (postdata == null || (view_state = postdata ["__VIEWSTATE"]) == null)
+			return null;
+
+		_savedViewState = null;
+		LosFormatter fmt = new LosFormatter ();
+
+		try { 
+			_savedViewState = fmt.Deserialize (view_state);
+		} catch {
+			throw new HttpException ("Error restoring page viewstate.");
+		}
+
 		return _savedViewState;
 	}
 
 	internal void LoadPageViewState()
 	{
+		WebTrace.PushContext ("LoadPageViewState");
 		object sState = LoadPageStateFromPersistenceMedium ();
+		WebTrace.WriteLine ("sState = '{0}'", sState);
 		if (sState != null) {
 			Pair pair = (Pair) sState;
 			LoadViewStateRecursive (pair.First);
 			_requiresPostBack = pair.Second as ArrayList;
 		}
+		WebTrace.PopContext ();
 	}
 
 	internal void SavePageViewState ()

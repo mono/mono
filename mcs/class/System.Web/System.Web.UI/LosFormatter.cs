@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Web.UI;
 using System.Web.Util;
@@ -33,6 +34,7 @@ namespace System.Web.UI
 		const char tripletID = 't';
 		const char arrayListID = 'L';
 		const char hashtableID = 'h';
+		const char binaryID = 'b';
 		
 		static Hashtable specialTypes;
 		static Hashtable idToType;
@@ -238,6 +240,12 @@ namespace System.Web.UI
 					hash.Add (key, value);
 				}
 				break;
+			case binaryID:
+				byte [] buffer = WebEncoding.Encoding.GetBytes (enclosed);
+				MemoryStream ms = new MemoryStream (buffer);
+				BinaryFormatter fmt = new BinaryFormatter ();
+				obj = fmt.Deserialize (ms);
+				break;
 			default:
 				throw new ArgumentException ("input");
 			}
@@ -370,15 +378,34 @@ namespace System.Web.UI
 			return result;
 		}
 		
+		private void SerializeBinary (TextWriter output, object value)
+		{
+			BinaryFormatter fmt = new BinaryFormatter ();
+			MemoryStream stream = new MemoryStream ();
+
+			fmt.Serialize (stream, value);
+			output.Write (binaryID);
+			output.Write ('<');
+			byte [] buffer = stream.GetBuffer ();
+			output.Write (Convert.ToBase64String (stream.GetBuffer ()));
+			output.Write ('>');
+		}
+
 		private void SerializeObject (TextWriter output, object value)
 		{
-			if (value == null)
+			WebTrace.PushContext ("LosFormatter.SerializeObject");
+			if (value == null) {
+				WebTrace.WriteLine ("value is null");
+				WebTrace.PopContext ();
 				return;
+			}
 
 			Type t = value.GetType ();
 			if (specialTypes.Contains (t)) {
 				WriteObject w = (WriteObject) specialTypes [t];
 				w (this, output, value);
+				WebTrace.WriteLine ("special type: {0}", value.GetType ());
+				WebTrace.PopContext ();
 				return;
 			}
 
@@ -386,11 +413,13 @@ namespace System.Web.UI
 				char c = (char) idToType [t];
 				string s = EscapeSpecialChars (value.ToString ());
 				output.Write (String.Format ("{0}<{1}>", c, value.ToString ()));
+				WebTrace.WriteLine ("regular type: {0}", value.GetType ());
+				WebTrace.PopContext ();
 				return;
 			}
 
-			//TODO: support more types. Serialize if serializable?
-			throw new NotImplementedException (String.Format ("Type {0} not supported yet.", t));
+			SerializeBinary (output, value);
+			WebTrace.PopContext ();
 		}
 	}
 }

@@ -1,3 +1,17 @@
+2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: save control names instead of the controls
+	themselves to the ViewState.
+
+	* LosFormatter.cs: added support for serializing unknown
+	types. BinaryFormatter does not work so you better don't store anything
+	of unknown Type in ViewState.
+
+	* Page.cs: GetViewStateString works now using LosFormatter.
+	Complete "Control execution lifecycle" by unloading all the child
+	controls. Check for null in RaisePostBackEvents.
+	LoadPageViewStateFromPersistenceMedium uses LosFormatter too.
+
 2002-10-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataBinder.cs: implemented Eval and GetIndexedPropertyValue methods.
