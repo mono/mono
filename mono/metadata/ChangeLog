@@ -1,3 +1,9 @@
+
+Thu Nov 18 17:10:32 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: allow getting attributes from ModuleBuilder
+	(used by ikvm).
+
 2004-11-17  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_create_from_typedef): If a type parameter is
