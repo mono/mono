@@ -1,5 +1,15 @@
 2004-12-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h: Bump AOT file format version.
+
+	* aot.c (mono_aot_is_got_entry): New function to determine if an 
+	address is inside a GOT.
+
+	* aot.c mini-x86.c tramp-x86.c: Make all patches use the GOT.
+
+	* cpu-pentium.md: Increase the maximum size of some instructions which
+	might involve a got access.
+	
 	* mini.c (get_method_from_ip): Another debug helper function.
 
 	* mini.c: Call mono_get_got_var () in a couple places. Handle the case
