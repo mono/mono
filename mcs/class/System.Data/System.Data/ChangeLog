@@ -1,3 +1,24 @@
+2003-12-08 Eran Domb <erand@mainsoft.com>
+	* DataColumn.cs (Expression) : Validate the expression.
+	
+	* DataRelationCollection.cs (IndexOf) : Added new method sensetive to case differences in relation name.
+	(Contains, IndexOf, this[], Add) : Call new IndexOf when needed.
+	
+	* DataRow.cs (this[]) : Fix the condition for throwing RowNotInTableException.
+	(RejectChanges) : Detach row when state was Added.
+	(CollectionChanged) : Fix a bug.
+	
+	* ExpressionElement (ValidateExpression) : Fix a bug.
+	
+	* ForeignKeyConstraint.cs (AssertConstraint) : Added implementation. Check all rows from child table have
+	a parent row in the parent table.
+	(_validateColumns) : Fix bugs.
+	
+	* MergeManager.cs (AdjustSchema) : Fix a bug.
+	
+	* XmlDataLoader.cs (ReadModeInferSchema) : Change implementation. Now we can read nested xml, and we generate the relations
+	between the tables.
+
 2003-11-30 Eran Domb <erand@mainsoft.com>
 	* DataColumnCollection.cs (this[string name]) : Use IndexOf to find the column.
 	(Add) : Find if the new column name is the same as the one found in IndexOf.
