@@ -193,6 +193,17 @@ namespace System.Xml
 				return XmlSpace.None;
 			}
 		}
+		
+		internal Encoding TextEncoding {
+			get {
+				XmlDeclaration dec = FirstChild as XmlDeclaration;
+			
+				if (dec == null || dec.Encoding == "")
+					return null;
+				
+				return Encoding.GetEncoding (dec.Encoding);
+			}
+		}
 
 		#endregion
 
@@ -872,7 +883,7 @@ namespace System.Xml
 
 		public virtual void Save(Stream outStream)
 		{
-			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, Encoding.UTF8);
+			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, TextEncoding);
 			xmlWriter.Formatting = Formatting.Indented;
 			WriteContentTo (xmlWriter);
 			xmlWriter.Close ();
@@ -880,7 +891,7 @@ namespace System.Xml
 
 		public virtual void Save (string filename)
 		{
-			XmlTextWriter xmlWriter = new XmlTextWriter (filename, Encoding.UTF8);
+			XmlTextWriter xmlWriter = new XmlTextWriter (filename, TextEncoding);
 			xmlWriter.Formatting = Formatting.Indented;
 			WriteContentTo (xmlWriter);
 			xmlWriter.Close ();

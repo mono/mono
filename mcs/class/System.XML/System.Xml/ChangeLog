@@ -1,3 +1,8 @@
+2003-09-01 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XmlDocument.cs (Save): use the encoding of the document, if
+	available.
+
 2003-08-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlValidatingReader.cs : Implemented SchemaType. Added support for
