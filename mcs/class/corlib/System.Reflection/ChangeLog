@@ -1,3 +1,9 @@
+
+Mon Nov 18 17:52:56 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Assembly.cs: implemented GetManifestResourceStream (Type type,
+	* String name).
+
 2002-11-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Assembly.cs: changed name of GetType (string, bool, bool) to

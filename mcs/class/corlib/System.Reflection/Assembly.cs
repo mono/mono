@@ -131,7 +131,13 @@ namespace System.Reflection {
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			string ns = type.Namespace;
+			if (ns == null)
+				return GetManifestResourceStream (name);
+			else
+				return GetManifestResourceStream (ns + "." + name);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
