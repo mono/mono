@@ -141,7 +141,7 @@ namespace Microsoft.JScript {
 					AST n;
 					if (tt == Token.FUNCTION) {
 						try {
-							n = Function (null, FunctionType.Statement);
+							n = Function (current_script_or_fn, FunctionType.Statement);
 						} catch (ParserException e) {
 							ok = false;
 							break;
@@ -308,14 +308,12 @@ namespace Microsoft.JScript {
 			return func;
 		}
 
-		AST Statements ()
+		AST Statements (AST parent)
 		{
 			int tt;
-			// FIXME: parent == null
-			Block pn = new Block (null);
-			
+			Block pn = new Block (parent);
 			while ((tt = ts.PeekToken ()) > Token.EOF && tt != Token.RC)
-				pn.Add (Statement (null));
+				pn.Add (Statement (pn));
 			return pn;
 		}
 
@@ -437,22 +435,23 @@ namespace Microsoft.JScript {
 			} else if (tt == Token.WHILE) {
 				skip_semi = true;
 				int line_number = ts.LineNumber;
-				AST cond = Condition (parent);
-				AST body = Statement (parent);
-				pn = new While (parent, cond, body, line_number);
+				While w = new While ();
+				AST cond = Condition (w);
+				AST body = Statement (w);
+				w.Init (parent, cond, body, line_number);
+				pn = w;
 			} else if (tt == Token.DO) {
 				int line_number = ts.LineNumber;
-				AST body = Statement (parent);
+				DoWhile do_while = new DoWhile ();
+				AST body = Statement (do_while);
 				MustMatchToken (Token.WHILE, "msg.no.while.do");
-				AST cond = Condition (parent);
-				pn = new DoWhile (parent, body, cond, line_number);
+				AST cond = Condition (do_while);
+				do_while.Init (parent, body, cond, line_number);
+				pn  = do_while;
 			} else if (tt == Token.FOR) {
 				skip_semi = true;
 				int line_number = ts.LineNumber;
-				AST init;
-				AST cond;
-				AST incr = null;
-				AST body;
+				AST init, cond, incr = null, body;
 
 				MustMatchToken (Token.LP, "msg.no.paren.for");
 				tt = ts.PeekToken ();
@@ -468,7 +467,7 @@ namespace Microsoft.JScript {
 						init = Expr (parent, true);
 				}
 				
-				if (ts.MatchToken (Token.IN))					
+				if (ts.MatchToken (Token.IN))
 					cond = Expr (parent, false); // 'cond' is the object over which we're iterating
 				else { 
 					// ordinary for loop
@@ -488,12 +487,13 @@ namespace Microsoft.JScript {
 				}
 
 				MustMatchToken (Token.RP, "msg.no.paren.for.ctrl");
-				body = Statement (parent);
-
-				if (incr == null) // cond could be null if 'in obj' got eaten by the init node.
+				body = Statement (pn);
+								
+				if (incr == null) // cond could be null if 'in obj' got eaten by the init node. 
 					pn = new ForIn (parent, line_number, init, cond, body);
 				else
 					pn = new For (parent, line_number, init, cond, incr, body);
+				body.parent = pn;
 			} else if (tt == Token.TRY) {
 				int line_number = ts.LineNumber;
 				AST try_block;
@@ -526,7 +526,7 @@ namespace Microsoft.JScript {
 						MustMatchToken (Token.LC, "msg.no.brace.catchblock");
 
 						catch_blocks.Add (new Catch (var_name, catch_cond, 
-									     Statements (), parent, ts.LineNumber));
+									     Statements (null), parent, ts.LineNumber));
 						MustMatchToken (Token.RC, "msg.no.brace.after.body");
 					}
 				} else if (peek != Token.FINALLY)
@@ -543,13 +543,13 @@ namespace Microsoft.JScript {
 					CheckWellTerminated ();
 			} else if (tt == Token.BREAK) {
 				int line_number = ts.LineNumber;
-				// matchLabel only matches if there is one
+				// MatchLabel only matches if there is one
 				string label = MatchLabel ();
-				pn = new Break (label, line_number);
+				pn = new Break (parent, label, line_number);
 			} else if (tt == Token.CONTINUE) {
 				int line_number = ts.LineNumber;
 				string label = MatchLabel ();
-				pn = new Continue (null, label, line_number);
+				pn = new Continue (parent, label, line_number);
 			} else if (tt == Token.WITH) {
 				skip_semi = true;
 				int line_number = ts.LineNumber;
@@ -589,7 +589,7 @@ namespace Microsoft.JScript {
 				pn = new Return (parent, ret_expr, line_number);
 			} else if (tt == Token.LC) { 
 				skip_semi = true;
-				pn = Statements ();
+				pn = Statements (parent);
 				MustMatchToken (Token.RC, "msg.no.brace.block");
 			} else if (tt == Token.ERROR || tt == Token.EOL || tt == Token.SEMI) {
 				// FIXME:
@@ -615,11 +615,14 @@ namespace Microsoft.JScript {
 					ts.GetToken (); // eat the colon
 					
 					string name = ts.GetString;
-					// FIXME:
-					pn = new Labelled (name, line_number);
+
+					// bind 'Statement (pn)' to the label
+					Labelled labelled = new Labelled ();
+					labelled.Init (parent, name, Statement (labelled), line_number);
+					pn = labelled;
 					return pn;
 				}
-				// FIXME
+				// FIXME:
 				// pn = nf.createExprStatement(pn, lineno);
 				if (ts.LineNumber == line_number)
 					CheckWellTerminated ();
@@ -659,8 +662,7 @@ namespace Microsoft.JScript {
 
 			if (init == null)
 				throw new Exception ("Expr, L680, AST is null");
-
-			//pn.Add (AssignExpr (in_for_init));
+			
 			while (ts.MatchToken (Token.COMMA))
 				pn.Add (AssignExpr (parent, in_for_init));
 			return pn;
@@ -748,7 +750,7 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.EQ || tt == Token.NE || tt == Token.SHEQ || tt == Token.SHNE) {
 					ts.GetToken ();
-					pn = new Equality (parent, pn, RelExpr (parent, in_for_init), JSToken.Equal);
+					pn = new Equality (parent, pn, RelExpr (parent, in_for_init), ToJSToken (tt));
 					continue;
 				}
 				break;
@@ -879,6 +881,14 @@ namespace Microsoft.JScript {
 				return JSToken.BitwiseNot;
 			else if (tt == Token.NOT)
 				return JSToken.LogicalNot;
+			else if (tt == Token.EQ)
+				return JSToken.Equal;
+			else if (tt == Token.NE)
+				return JSToken.NotEqual;
+			else if (tt == Token.SHEQ)
+				return JSToken.StrictEqual;
+			else if (tt == Token.SHNE)
+				return JSToken.StrictNotEqual;
 			else 
 				return JSToken.None;
 		}
