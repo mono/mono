@@ -1,3 +1,8 @@
+2003-12-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c verify.c: Moved corlib version checking into its own
+	function in appdomain.c since it needs to create vtables etc.
+
 2003-12-13  Patrik Torstensson <p@rxc.se>
 
 	* marshal.c (mono_remoting_wrapper): Fix bug 48015, using TP as this 
