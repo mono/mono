@@ -7,6 +7,8 @@
 // (C) Novell, Inc.  http://www.ximian.com
 //
 
+#if NET_2_0
+
 using System;
 
 namespace System.Runtime.InteropServices 
@@ -20,3 +22,4 @@ namespace System.Runtime.InteropServices
 	}
 }
 
+#endif

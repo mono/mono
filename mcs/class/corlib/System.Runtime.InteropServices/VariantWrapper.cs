@@ -7,6 +7,8 @@
 // (C) Novell, Inc.  http://www.ximian.com
 //
 
+#if NET_2_0
+
 namespace System.Runtime.InteropServices
 {
 	public sealed class VariantWrapper
@@ -27,3 +29,5 @@ namespace System.Runtime.InteropServices
 		}
 	}
 }
+
+#endif
