@@ -50,7 +50,6 @@ namespace System {
 			this.c_str = new char [this.length + 1];
 			for (i = 0; i < this.length; i++)
 				this.c_str[i] = *(value + i);
-			this.c_str[i] = '\0';
 		}
 
 		public String (char[] value)
@@ -62,7 +61,6 @@ namespace System {
 			this.c_str = new char [this.length + 1];
 			for (i = 0; i < this.length; i++)
 				this.c_str[i] = value[i];
-			this.c_str[i] = '\0';
 		}
 
 		unsafe public String (sbyte *value)
@@ -81,7 +79,6 @@ namespace System {
 			this.c_str = new char [this.length + 1];
 			for (i = 0; i < this.length; i++)
 				this.c_str[i] = (char) *(value + i);
-			this.c_str[i] = '\0';
 		}
 
 		public String (char c, int count)
@@ -92,7 +89,6 @@ namespace System {
 			this.c_str = new char [count + 1];
 			for (i = 0; i < count; i++)
 				this.c_str[i] = c;
-			this.c_str[i] = '\0';
 		}
 
 		unsafe public String (char *value, int startIndex, int length)
@@ -109,7 +105,6 @@ namespace System {
 			this.c_str = new char [length + 1];
 			for (i = 0; i < length; i++)
 				this.c_str[i] = *(value + startIndex + i);
-			this.c_str[i] = '\0';
 		}
 
 		public String (char[] value, int startIndex, int length)
@@ -126,7 +121,6 @@ namespace System {
 			this.c_str = new char [length + 1];
 			for (i = 0; i < length; i++)
 				this.c_str[i] = value[startIndex + i];
-			this.c_str[i] = '\0';
 		}
 
 		unsafe public String (sbyte *value, int startIndex, int length)
@@ -144,7 +138,6 @@ namespace System {
 			this.c_str = new char [length + 1];
 			for (i = 0; i < length; i++)
 				this.c_str[i] = (char) *(value + startIndex + i);
-			this.c_str[i] = '\0';
 		}
 
 		unsafe public String (sbyte *value, int startIndex, int length, Encoding enc)
@@ -168,7 +161,7 @@ namespace System {
 		// FIXME: is this correct syntax??
 		public char this [int index] {
 			get {
-				if (index > this.length)
+				if (index >= this.length)
 					throw new ArgumentOutOfRangeException ();
 
 				return this.c_str[index];
@@ -259,9 +252,8 @@ namespace System {
 
 		public static int Compare (string strA, string strB)
 		{
-			int i;
+			int min, i;
 
-			/* Does this remind anyone of the nautilus string.h wrappers? ;-) */
 			if (strA == null) {
 				if (strB == null)
 					return 0;
@@ -270,14 +262,16 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			for (i = 0; strA[i] == strB[i] && strA[i] != '\0'; i++);
+			min = strA.Length < strB.Length ? strA.Length : strB.Length;
+
+			for (i = 0; strA[i] == strB[i] && i < min; i++);
 
 			return ((int) (strA[i] - strB[i]));
 		}
 
 		public static int Compare (string strA, string strB, bool ignoreCase)
 		{
-			int i;
+			int min, i;
 
 			if (!ignoreCase)
 				return Compare (strA, strB);
@@ -295,7 +289,9 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			for (i = 0; strA[i] != '\0' && strB[i] != '\0'; i++) {
+			min = strA.Length < strB.Length ? strA.Length : strB.Length;
+
+			for (i = 0; i < min; i++) {
 				if (Char.ToLower (strA[i]) != Char.ToLower (strB[i]))
 					break;
 			}
@@ -387,6 +383,7 @@ namespace System {
 					return -1;
 			} else if (strB == null)
 				return 1;
+
 			// FIXME: implement me
 			return 0;
 		}
@@ -404,7 +401,7 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			for (i = 0; strA[i] != '\0'; i++) {
+			for (i = 0; i < strA.Length && i < strB.Length; i++) {
 				char cA, cB;
 
 				cA = tolowerordinal (strA[i]);
@@ -425,7 +422,6 @@ namespace System {
 			if (length < 0 || indexA < 0 || indexB < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			/* Nooooooooo!! */
 			if (strA == null) {
 				if (strB == null)
 					return 0;
@@ -798,7 +794,7 @@ namespace System {
 					bool equal = true;
 					int j, nexti = 0;
 
-					for (j = 1; equal && value[j] != '\0'; j++) {
+					for (j = 1; equal && j < value.Length; j++) {
 						equal = this.c_str[i + j] == value[j];
 						if (this.c_str[i + j] == value[0] && nexti == 0)
 							nexti = i + j;
@@ -1613,7 +1609,7 @@ namespace System {
 
 			int l = a.length;
 			for (int i = 0; i < l; i++)
-				if (a.c_str [i] != b.c_str [i])
+				if (a.c_str[i] != b.c_str[i])
 					return false;
 
 			return true;

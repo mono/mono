@@ -1,3 +1,8 @@
+2001-10-28  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* String.cs: Don't use a terminating nil char for our internal
+	array.
+
 2001-10-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* Delegate.cs (Delegate.CombineImpl): Implement.
@@ -14,19 +19,20 @@
 	* FlagsAttribute.cs: Add AttributeUsage to FlagsAttribute
 
 2001-10-15  Martin Weindel <martin.weindel@t-online.de>
-        * added Decimal.cs
-        * added DecimalFormatter.cs (internal class used from System.Decimal)
+
+        * added Decimal.cs * added DecimalFormatter.cs (internal class
+	used from System.Decimal)
 
 2001-10-11  Thomas Neidhart <tome@sbox.tugraz.at>
 
-	* Convert.cs: Added methods for Base64 transforming
-	  just used the existing System.Security.Cryptography.ToBase64Transform,
-	  should be changed to use a stand-alone class, e.g. Base64Encoder
+	* Convert.cs: Added methods for Base64 transforming just used the
+	  existing System.Security.Cryptography.ToBase64Transform, should
+	  be changed to use a stand-alone class, e.g. Base64Encoder
 	  
 2001-10-10  Derek Holden  <dholden@draper.com>
 
-	* IntegerFormatter.cs: Added. Implements ToString for all
-	the integer data types for all the format types.
+	* IntegerFormatter.cs: Added. Implements ToString for all the
+	integer data types for all the format types.
 
 	* Byte.cs: Using IntegerFormatter for ToString's.
 
@@ -71,8 +77,8 @@ Tue Sep 25 17:29:02 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 Tue Sep 25 16:46:43 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
-	* String.cs: don't access the string array out of bounds in LastIndexOf.
-	* Type.cs: fix return type of the Assembly property.
+	* String.cs: don't access the string array out of bounds in
+	LastIndexOf.  * Type.cs: fix return type of the Assembly property.
 
 Mon Sep 24 20:35:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
@@ -105,7 +111,6 @@ Mon Sep 24 20:35:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
 2001-09-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* Object.cs: Shortcut, if (a == b) then return true.
-
 
 Fri Sep 7 18:34:48 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
