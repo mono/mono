@@ -33,9 +33,21 @@ No. 0005
 	(Text_78273, Text_78274, Text_78276, Text_78281)
 
 No. 0006
-	disable-output-escaping is not working on xsl:text.
-	(Text_78308, Text_78311, modified_78308, modified_78309, modified_78311)
+	disable-output-escaping is not working when XmlWriter is specified as
+	output. It affects on almost all output operations such as xsl:text,
+	xsl:value-of, and so on.
+	(Text_78308, Text_78311, modified_78308, modified_78309,
+	modified_78311, output_output03, output_output06, output_output08,
+	output_output46, output_output61, output_output62,
+	output_output74, output_output75,
+	)
 
+No. 0007
+	cdata-section-elements is not working when XmlWriter is specified as
+	output, like disable-output-escaping.
+	(output_output28 - output_output30, output_output41 - output_output43,
+	output_output87, output_output88, output_output91 - output_output98,
+	output_output101 - output_output107).
 
 Not sure the reason why:
 	From mdocs_mdocs01 to mdocs_mdocs18
