@@ -267,9 +267,9 @@ namespace System.Collections {
 				setSize (capacity * 2);
 			}
 
-			dataArray[count++] = value;
+			dataArray[count] = value;
 			version++;
-			return count-1;
+			return count++;
 		}
 
 		public virtual void AddRange (ICollection c) {
@@ -281,20 +281,17 @@ namespace System.Collections {
 			version++;
 		}
 
-		[MonoTODO]
 		public virtual int BinarySearch (object value) {
-			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
+			return BinarySearch (0, count, value, null);
 		}
 
-		[MonoTODO]
 		public virtual int BinarySearch (object value, IComparer comparer) {
-			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
+			return BinarySearch (0, count, value, comparer);
 		}
 
-		[MonoTODO]
 		public virtual int BinarySearch (int index, int count,
 						 object value, IComparer comparer) {
-			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
+			return Array.BinarySearch (dataArray, index, count, value, comparer);
 		}
 
 		public virtual void Clear () {
@@ -319,17 +316,15 @@ namespace System.Collections {
 		}
 
 		public virtual void CopyTo (Array array) {
-			CopyTo (array, 0);
+			System.Array.Copy (dataArray, 0, array, 0, count);
 		}
 
 		public virtual void CopyTo (Array array, int arrayIndex) {
 			System.Array.Copy (dataArray, 0, array, arrayIndex, count);
 		}
 
-		[MonoTODO]
 		public virtual void CopyTo (int index, Array array,
 					    int arrayIndex, int count) {
-			// FIXME: check count...
 			System.Array.Copy (dataArray, index, array, arrayIndex, count);
 		}
 

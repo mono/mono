@@ -15,13 +15,13 @@ namespace System.Collections {
 	public abstract class CollectionBase : IList, ICollection, IEnumerable {
 
 		// private instance properties
-		private System.Collections.ArrayList myList;
+		private ArrayList myList;
 		
 		// public instance properties
 		public int Count { get { return InnerList.Count; } }
 		
 		// Public Instance Methods
-		public System.Collections.IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
+		public IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
 		public void Clear() { 
 			OnClear();
 			InnerList.Clear(); 
@@ -38,12 +38,12 @@ namespace System.Collections {
 		
 		// Protected Instance Constructors
 		protected CollectionBase() { 
-			this.myList = new System.Collections.ArrayList();
+			this.myList = new ArrayList();
 		}
 		
 		// Protected Instance Properties
-		protected System.Collections.ArrayList InnerList {get { return this.myList; } }
-		protected System.Collections.IList List {get { return this; } }
+		protected ArrayList InnerList {get { return this.myList; } }
+		protected IList List {get { return this; } }
 		
 		// Protected Instance Methods
 		protected virtual void OnClear() { }
@@ -66,10 +66,10 @@ namespace System.Collections {
 		
 		// ICollection methods
 		void ICollection.CopyTo(Array array, int index) {
-			lock (InnerList) { InnerList.CopyTo(array, index); }
+			InnerList.CopyTo(array, index);
 		}
 		object ICollection.SyncRoot {
-				get { return InnerList.SyncRoot; }
+			get { return InnerList.SyncRoot; }
 		}
 		bool ICollection.IsSynchronized {
 			get { return InnerList.IsSynchronized; }

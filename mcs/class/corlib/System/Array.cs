@@ -319,27 +319,18 @@ namespace System
 		
 		public static int BinarySearch (Array array, object value)
 		{
-			if (array == null)
-				throw new ArgumentNullException ();
-
 			return BinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
 					     value, null);
 		}
 
 		public static int BinarySearch (Array array, object value, IComparer comparer)
 		{
-			if (array == null)
-				throw new ArgumentNullException ();
-
 			return BinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
 					     value, comparer);
 		}
 
 		public static int BinarySearch (Array array, int index, int length, object value)
 		{
-			if (array == null)
-				throw new ArgumentNullException ();
-
 			return BinarySearch (array, index, length, value, null);
 		}
 
@@ -348,46 +339,64 @@ namespace System
 						IComparer comparer)
 		{
 			if (array == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("array");
 
 			if (array.Rank > 1)
 				throw new RankException ();
 
 			if (index < array.GetLowerBound (0) || length < 0)
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("index");
 
 			if (index + length > array.GetUpperBound (0) + 1)
-				throw new ArgumentException ();
+				throw new ArgumentException ("length");
 
-			if (comparer == null && !(value is IComparable))
-				throw new ArgumentException ();
+			// cache this in case we need it
+			IComparable valueCompare = value as IComparable;
 
-			// FIXME: Throw an ArgumentException if comparer
-			// is null and value is not of the same type as the
-			// elements of array.
-
-			// FIXME: This is implementing linear search. While it should do a binary one
-			// FIXME: Should not throw exception when values are null 
-
-			for (int i = 0; i < length; i++) 
+			int iMin = index;
+			int iMax = index + length;
+			int iCmp = 0;
+			try
 			{
-				int result;
+				// there's a subtle balance here between
+				// 1) the while condition
+				// 2) the rounding down of the '/ 2'
+				// 3) the asymetrical recursion
+				// 4) the fact that iMax starts beyond the end of the array
+				while (iMin < iMax)
+				{
+					int iMid = (iMin + iMax) / 2;
+					object elt = array.GetValue (iMid);
 
-				if (comparer == null && !(array.GetValue(index + i) is IComparable))
-					throw new ArgumentException ();
+					// this order is from MSDN
+					if (comparer != null)
+						iCmp = comparer.Compare (value, elt);
+					else
+					{
+						IComparable eltCompare = elt as IComparable;
+						if (eltCompare != null)
+							iCmp = -eltCompare.CompareTo (value);
+						else
+							iCmp = valueCompare.CompareTo (elt);
+					}
 
-				if (comparer == null)
-					result = (value as IComparable).CompareTo(array.GetValue(index + i));
-				else
-					result = comparer.Compare(value, array.GetValue(index + i));
-
-				if (result == 0)
-					return index + i;
-				else if (result < 0)
-					return ~(index + i);
+					if (iCmp == 0)
+						return iMid;
+					else if (iCmp < 0)
+						iMax = iMid;
+					else
+						iMin = iMid + 1;	// compensate for the rounding down
+				}
+			}
+			catch (InvalidCastException e)
+			{
+				throw new ArgumentException ("array", e);
 			}
 
-			return ~(index + length);
+			if (iCmp > 0)
+				return ~iMax;
+			else
+				return ~iMin;
 		}
 
 		public static void Clear (Array array, int index, int length)
@@ -413,28 +422,32 @@ namespace System
 
 		public static void Copy (Array source, Array dest, int length)
 		{
-			if (source == null || dest == null)
-				throw new ArgumentNullException ();
-
 			Copy (source, source.GetLowerBound (0), dest, dest.GetLowerBound (0), length);			
 		}
 
 		public static void Copy (Array source, int source_idx, Array dest, int dest_idx, int length)
 		{
-			if (source == null || dest == null)
-				throw new ArgumentNullException ();
+			if (source == null)
+				throw new ArgumentNullException ("null");
+
+			if (dest == null)
+				throw new ArgumentNullException ("dest");
 
 			if (length < 0)
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("length");
+
+			if (source_idx < 0)
+				throw new ArgumentException ("source_idx");
+
+			if (dest_idx < 0)
+				throw new ArgumentException ("dest_idx");
 
 			int source_pos = source_idx - source.GetLowerBound (0);
 			int dest_pos = dest_idx - dest.GetLowerBound (0);
 
-			if (source_idx < 0 || dest_idx < 0)
-				throw new ArgumentException ();
 
 			if (source_pos + length > source.Length || dest_pos + length > dest.Length)
-				throw new ArgumentException ();
+				throw new ArgumentException ("length");
 
 			if (source.Rank != dest.Rank)
 				throw new RankException ();
