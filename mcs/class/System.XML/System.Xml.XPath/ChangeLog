@@ -1,3 +1,11 @@
+2002-07-15  Piers Haken <piersh@friskit.com>
+
+	* Iterator.cs:
+		- rename UnionIterator to MergedIterator, 
+		- create new UnionIterator to implment uniqueness for '|' operator
+		- fix position bug in ArrayListIterator.Clone()
+	* Expression.cs: use new UnionIterator constructor syntax
+
 2002-07-12  Piers Haken <piersh@friskit.com>
 
 	* Iterator.cs: PredicateIterator: handle numeric predicates

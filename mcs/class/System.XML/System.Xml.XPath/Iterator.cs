@@ -86,21 +86,21 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class UnionIterator : BaseIterator
+	internal class MergedIterator : BaseIterator
 	{
 		protected ArrayList _iters = new ArrayList ();
 		protected int _pos;
 		protected int _index;
 
-		public UnionIterator (BaseIterator iter ) : base (iter) {}
-		protected UnionIterator (UnionIterator other) : base (other)
+		public MergedIterator (BaseIterator iter ) : base (iter) {}
+		protected MergedIterator (MergedIterator other) : base (other)
 		{
 			foreach (object obj in other._iters)
 				_iters.Add (obj);
 			_pos = other._pos;
 			_index = other._index;
 		}
-		public override XPathNodeIterator Clone () { return new UnionIterator (this); }
+		public override XPathNodeIterator Clone () { return new MergedIterator (this); }
 
 		public void Add (BaseIterator iter)
 		{
@@ -252,14 +252,14 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class AncestorOrSelfIterator : UnionIterator
+	internal class AncestorOrSelfIterator : MergedIterator
 	{
 		public AncestorOrSelfIterator (BaseIterator iter) : base (iter)
 		{
 			Add (new SelfIterator (iter));
 			Add (new AncestorIterator (iter));
 		}
-		protected AncestorOrSelfIterator (UnionIterator other) : base (other) {}
+		protected AncestorOrSelfIterator (MergedIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new AncestorOrSelfIterator (this); }
 	}
 
@@ -293,14 +293,14 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class DescendantOrSelfIterator : UnionIterator
+	internal class DescendantOrSelfIterator : MergedIterator
 	{
 		public DescendantOrSelfIterator (BaseIterator iter) : base (iter)
 		{
 			Add (new SelfIterator (iter));
 			Add (new DescendantIterator (iter));
 		}
-		protected DescendantOrSelfIterator (UnionIterator other) : base (other) {}
+		protected DescendantOrSelfIterator (MergedIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new DescendantOrSelfIterator (this); }
 	}
 
@@ -561,6 +561,7 @@ namespace System.Xml.XPath
 		protected ArrayListIterator (ArrayListIterator other) : base (other)
 		{
 			_rgNodes = other._rgNodes;
+			_pos = other._pos;
 		}
 		public override XPathNodeIterator Clone () { return new ArrayListIterator (this); }
 
@@ -572,6 +573,72 @@ namespace System.Xml.XPath
 			return true;
 		}
 		public override XPathNavigator Current { get { return (XPathNavigator) _rgNodes [_pos - 1]; }}
+		public override int CurrentPosition { get { return _pos; }}
+	}
+
+	internal class UnionIterator : BaseIterator
+	{
+		protected ArrayList _rgNodes;
+		protected BaseIterator _left, _right;
+		protected int _pos;
+
+		public UnionIterator (BaseIterator iter, BaseIterator left, BaseIterator right) : base (iter)
+		{
+			_rgNodes = new ArrayList ();
+			_left = left;
+			_right = right;
+		}
+
+		protected UnionIterator (UnionIterator other) : base (other)
+		{
+			_rgNodes = (ArrayList) other._rgNodes.Clone ();
+			_left = other._left;
+			_right = other._right;
+			_pos = other._pos;
+		}
+		public override XPathNodeIterator Clone () { return new UnionIterator (this); }
+
+		public override bool MoveNext ()
+		{
+			if (_left.MoveNext ())
+			{
+				_rgNodes.Add (_left.Current.Clone ());
+				_pos ++;
+				return true;
+			}
+
+			while (_right.MoveNext ())
+			{
+				XPathNavigator navRight = _right.Current;
+				bool fFound = false;
+				foreach (XPathNavigator navLeft in _rgNodes)
+				{
+					if (navLeft.IsSamePosition (navRight))
+					{
+						fFound = true;
+						break;
+					}
+				}
+				if (!fFound)
+				{
+					_pos ++;
+					return true;
+				}
+			}
+			return false;
+		}
+		public override XPathNavigator Current
+		{
+			get
+			{
+				if (_pos < _rgNodes.Count)
+					throw new Exception ("bug in UnionOperator");	// TODO: better exception
+				if (_pos == _rgNodes.Count)
+					return _left.Current;
+				else
+					return _right.Current;
+			}
+		}
 		public override int CurrentPosition { get { return _pos; }}
 	}
 }

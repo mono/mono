@@ -462,10 +462,9 @@ namespace System.Xml.XPath
 		public override String ToString () { return _left.ToString ()+ " | " + _right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
-			UnionIterator iterUnion = new UnionIterator (iter);
-			iterUnion.Add (_left.EvaluateNodeSet (iter));
-			iterUnion.Add (_right.EvaluateNodeSet (iter));
-			return iterUnion;
+			BaseIterator iterLeft = _left.EvaluateNodeSet (iter);
+			BaseIterator iterRight = _right.EvaluateNodeSet (iter);
+			return new UnionIterator (iter, iterLeft, iterRight);
 		}
 	}
 	internal class ExprSLASH : NodeSet
