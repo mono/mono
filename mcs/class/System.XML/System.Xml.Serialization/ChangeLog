@@ -1,3 +1,8 @@
+2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationWriter.cs : It do not have to handle schema
+	  namespace as special one.
+
 2004-05-03  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializationReaderInterpreter.cs: Removed the check for null 
