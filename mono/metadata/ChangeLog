@@ -1,3 +1,10 @@
+2002-11-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* assembly.c (mono_assembly_open): load precompiled code
+
+	* loader.h (MonoMethod): we store the method token for use in the
+	aot compiler. 
+
 2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: insert the loaded assemblies in the domain->assemblies in
