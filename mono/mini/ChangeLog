@@ -1,5 +1,9 @@
 2003-09-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_print_tree_nl): New function callable while debugging.
+
+	* mini.c (mono_print_code): Export this.
+
 	* tramp-x86.c (x86_magic_trampoline): Tell valgrind to recompile the
 	patched code.
 
