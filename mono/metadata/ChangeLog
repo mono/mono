@@ -1,3 +1,8 @@
+
+Mon May 20 17:36:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, reflection.h: added icall to get info about an event.
+
 2002-05-20  Radek Doulik  <rodo@ximian.com>
 
 	* object.c (mono_value_box): don't use memcpy for boxing on BIG
