@@ -34,8 +34,10 @@ monoone_DATA = \
 	mcs.exe					\
 	mbas.exe
 
-monotwo_DATA = \
-	gmcs.exe
+if ! PLATFORM_WIN32
+gmcs_exe = gmcs.exe
+endif
+monotwo_DATA = $(gmcs_exe)
 
 EXTRA_DIST= $(monobins_DATA) $(monoone_DATA) $(monotwo_DATA)
 
