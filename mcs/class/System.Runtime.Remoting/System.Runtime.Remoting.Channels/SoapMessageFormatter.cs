@@ -267,10 +267,16 @@ namespace System.Runtime.Remoting.Channels {
 				ArrayList paramValues = new ArrayList();
 				ArrayList paramTypes = new ArrayList();
 				soapMessage.MethodName = mrm.MethodName+"Response";
-				if(mrm.ReturnValue != null && mrm.ReturnValue.GetType() != typeof(void)) {
+				
+				Type retType = ((MethodInfo)mrm.MethodBase).ReturnType;
+				
+				if(retType != typeof(void)) {
 					paramNames.Add("return");
 					paramValues.Add(mrm.ReturnValue);
-					paramTypes.Add(mrm.ReturnValue.GetType());
+					if (mrm.ReturnValue != null)
+						paramTypes.Add(mrm.ReturnValue.GetType());
+					else
+						paramTypes.Add(retType);
 				}
 				
 				for(int i = 0; i < mrm.OutArgCount; i++){
