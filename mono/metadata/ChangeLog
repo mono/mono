@@ -1,4 +1,8 @@
 2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
+	* profiler.h profiler-private.h profiler.c: Rework last patch
+	based on suggestion by Paolo.
+	
+2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* profiler.h profiler-private.h profiler.c: Added infrastructure for 
 	instruction level coverage data collection.
