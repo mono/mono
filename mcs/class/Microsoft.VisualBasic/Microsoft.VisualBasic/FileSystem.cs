@@ -44,6 +44,7 @@ namespace Microsoft.VisualBasic
 	[StandardModuleAttribute]
 	sealed public class FileSystem
 	{
+		private FileSystem () {}
 
 		private static Hashtable _fileNameIdMap = new Hashtable();
 		private static Hashtable _openFilesMap = new Hashtable();

@@ -46,6 +46,9 @@ namespace Microsoft.VisualBasic {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
 	sealed public class Interaction {
+
+		private Interaction (){}
+
 		// Declarations
 		// Constructors
 		// Properties
