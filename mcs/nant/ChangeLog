@@ -1,0 +1,6 @@
+2002/03/15  Nick Drochak <ndrochak@gol.com>
+
+	* makefile: Compile a version of NAnt with Mono's libs.  It only does
+	this if you 'make NAnt_mono.exe'. Of course, right now the resulting
+	exe probably is not going to work yet becuase of the immature class
+	libs.
