@@ -1,3 +1,9 @@
+2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConvertTest.cs: New tests for prefixed hexadecimal strings and
+	negative byte convertion.
+	* StringTest.cs: Added new tests for integer overflow and negatives.
+
 2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DateTimeTest.cs: test for bug 56436.

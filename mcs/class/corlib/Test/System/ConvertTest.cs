@@ -6,16 +6,14 @@
 // (C) Krister Hansson & Andreas Jonsson
 // 
 
-
 using NUnit.Framework;
 using System;
 using System.Globalization;
 
-namespace MonoTests.System
-{
-	public class ConvertTest : TestCase
-	{
-		public ConvertTest() {}
+namespace MonoTests.System {
+
+	[TestFixture]
+	public class ConvertTest : Assertion {
 
 		bool boolTrue;
 		bool boolFalse;
@@ -38,8 +36,10 @@ namespace MonoTests.System
 		uint tryUI32;
 		ulong tryUI64;
 		CultureInfo ci;
-		
-		protected override void SetUp() {
+
+		[SetUp]		
+		public void SetUp ()
+		{
 			boolTrue = true;
 			boolFalse = false;
 			tryByte = 0;
@@ -63,7 +63,6 @@ namespace MonoTests.System
 			ci = new CultureInfo("en-US");
 			ci.NumberFormat.NumberDecimalDigits = 3;
 		}
-		protected override void TearDown() {}
 
 		public void TestChangeType() {
 			int iTest = 1;
@@ -2972,5 +2971,20 @@ namespace MonoTests.System
 					AssertEquals ("#W30", 0, Convert.ToUInt64 (null as string));					
 				}
 
+		[Test]
+		public void ToByte_PrefixedHexStringInBase16 () 
+		{
+			AssertEquals ("0xff", 255, Convert.ToByte ("0xff", 16));
+			AssertEquals ("0xfF", 255, Convert.ToByte ("0xfF", 16));
+			AssertEquals ("0xFf", 255, Convert.ToByte ("0xFf", 16));
+			AssertEquals ("0xFF", 255, Convert.ToByte ("0xFF", 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToByte_NegativeString () 
+		{
+			Convert.ToByte ("-1");
+		}
 	}
 }

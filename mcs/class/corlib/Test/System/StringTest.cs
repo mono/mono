@@ -16,8 +16,6 @@ namespace MonoTests.System
 [TestFixture]
 public class StringTest : Assertion
 {
-	public StringTest() {}
-
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void CtrExceptions ()
@@ -251,6 +249,30 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CopyTo_SourceIndexOverflow () 
+	{
+		char[] dest = new char [4];
+		"Mono".CopyTo (Int32.MaxValue, dest, 0, 4);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CopyTo_DestinationIndexOverflow () 
+	{
+		char[] dest = new char [4];
+		"Mono".CopyTo (0, dest, Int32.MaxValue, 4);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CopyTo_CountOverflow () 
+	{
+		char[] dest = new char [4];
+		"Mono".CopyTo (0, dest, 0, Int32.MaxValue);
+	}
+
+	[Test]
 	public void EndsWith()
 	{
 		string s1 = "original";
@@ -301,8 +323,10 @@ public class StringTest : Assertion
 		AssertEquals ("Formatted argument, right justified.", "#  033#", String.Format ("#{0,5:x3}#", 0x33));
 		AssertEquals ("Formatted argument, left justified.", "#033  #", String.Format ("#{0,-5:x3}#", 0x33));
 		AssertEquals ("Escaped bracket", "typedef struct _MonoObject { ... } MonoObject;", String.Format ("typedef struct _{0} {{ ... }} MonoObject;", "MonoObject"));
-		AssertEquals("With Slash", "Could not find file \"a/b\"", String.Format ("Could not find file \"{0}\"", "a/b"));
-		AssertEquals("With BackSlash", "Could not find file \"a\\b\"", String.Format ("Could not find file \"{0}\"", "a\\b"));
+		AssertEquals
+("With Slash", "Could not find file \"a/b\"", String.Format ("Could not find file \"{0}\"", "a/b"));
+		AssertEquals
+("With BackSlash", "Could not find file \"a\\b\"", String.Format ("Could not find file \"{0}\"", "a\\b"));
 
 		// TODO test format exceptions
 
@@ -474,6 +498,34 @@ public class StringTest : Assertion
 			     2, s1.IndexOf("", 2, 3));
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOf_Char_StartIndexOverflow () 
+	{
+		"Mono".IndexOf ('o', Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOf_Char_LengthOverflow () 
+	{
+		"Mono".IndexOf ('o', 1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOf_String_StartIndexOverflow () 
+	{
+		"Mono".IndexOf ("no", Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOf_String_LengthOverflow () 
+	{
+		"Mono".IndexOf ("no", 1, Int32.MaxValue);
+	}
+
 	public void TestIndexOfAny() {
 		string s1 = "abcdefghijklm";
 
@@ -525,6 +577,20 @@ public class StringTest : Assertion
 			errorThrown = true;
 		}
 		Assert("Out of range error", errorThrown);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOfAny_StartIndexOverflow () 
+	{
+		"Mono".IndexOfAny (new char [1] { 'o' }, Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOfAny_LengthOverflow () 
+	{
+		"Mono".IndexOfAny (new char [1] { 'o' }, 1, Int32.MaxValue);
 	}
 
 	public void TestInsert() {
@@ -620,6 +686,38 @@ public class StringTest : Assertion
 			errorThrown = true;
 		}
 		Assert("out of range error", errorThrown);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Join_StartIndexNegative () 
+	{
+		string[] values = { "Mo", "no" };
+		String.Join ("o", values, -1, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Join_StartIndexOverflow () 
+	{
+		string[] values = { "Mo", "no" };
+		String.Join ("o", values, Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Join_LengthNegative () 
+	{
+		string[] values = { "Mo", "no" };
+		String.Join ("o", values, 1, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Join_LengthOverflow () 
+	{
+		string[] values = { "Mo", "no" };
+		String.Join ("o", values, 1, Int32.MaxValue);
 	}
 
 	public void TestLastIndexOf() {
@@ -735,6 +833,34 @@ public class StringTest : Assertion
 			     -1, s1.LastIndexOf("rig", s1.Length-2, 3));
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_Char_StartIndexOverflow () 
+	{
+		"Mono".LastIndexOf ('o', Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_Char_LengthOverflow () 
+	{
+		"Mono".LastIndexOf ('o', 1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_String_StartIndexOverflow () 
+	{
+		"Mono".LastIndexOf ("no", Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_String_LengthOverflow () 
+	{
+		"Mono".LastIndexOf ("no", 1, Int32.MaxValue);
+	}
+
 	public void TestLastIndexOfAny() {
 		string s1 = ".bcdefghijklm";
 
@@ -788,6 +914,20 @@ public class StringTest : Assertion
 		Assert("Out of range error", errorThrown);
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOfAny_StartIndexOverflow () 
+	{
+		"Mono".LastIndexOfAny (new char [1] { 'o' }, Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOfAny_LengthOverflow () 
+	{
+		"Mono".LastIndexOfAny (new char [1] { 'o' }, 1, Int32.MaxValue);
+	}
+
 	public void TestPadLeft() {
 		string s1 = "Hi!";
 
@@ -805,6 +945,13 @@ public class StringTest : Assertion
 			     "  Hi!", s1.PadLeft(5));
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void PadLeft_Negative () 
+	{
+		string s = "Mono".PadLeft (-1);
+	}
+
 	public void TestPadRight() {
 		string s1 = "Hi!";
 
@@ -820,6 +967,13 @@ public class StringTest : Assertion
 			     s1, s1.PadRight(s1.Length-1));
 		AssertEquals("Some padding",
 			     "Hi!  ", s1.PadRight(5));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void PadRight_Negative () 
+	{
+		string s = "Mono".PadLeft (-1);
 	}
 
 	public void TestRemove() {
@@ -849,6 +1003,20 @@ public class StringTest : Assertion
 
 		AssertEquals("basic remove", "oinal",
 			     s1.Remove(1, 3));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Remove_StartIndexOverflow () 
+	{
+		"Mono".Remove (Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Remove_LengthOverflow () 
+	{
+		"Mono".Remove (1, Int32.MaxValue);
 	}
 
 	public void TestReplace() {
@@ -1052,6 +1220,20 @@ public class StringTest : Assertion
 			     s1.Substring(s1.Length, 0));
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Substring_StartIndexOverflow () 
+	{
+		"Mono".Substring (Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Substring_LengthOverflow () 
+	{
+		"Mono".Substring (1, Int32.MaxValue);
+	}
+
 	public void TestToCharArray() {
 		string s1 = "original";
 		char[] c1 = s1.ToCharArray();
@@ -1090,6 +1272,20 @@ public class StringTest : Assertion
 
 		c1 = s1.ToCharArray(0, 3);
 		AssertEquals("Starting char array", "ori", new String(c1));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToCharArray_StartIndexOverflow () 
+	{
+		"Mono".ToCharArray (1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToCharArray_LengthOverflow () 
+	{
+		"Mono".ToCharArray (Int32.MaxValue, 1);
 	}
 
 	public void TestToLower() {
