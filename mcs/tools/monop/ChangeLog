@@ -1,3 +1,6 @@
+2004-05-14  Carlos Alberto Cortez <carlos@unixmexico.org>
+	* outline.cs: Support for delegates and nested types
+	added.
 2004-05-09  John Luke  <jluke@cfl.rr.com>
 
 	* monop.cs: seperate assembly loading into .GetAssembly method,

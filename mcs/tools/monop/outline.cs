@@ -31,11 +31,26 @@ public class Outline {
 		o.Write (" ");
 		o.Write (GetTypeKind (t));
 		o.Write (" ");
-		o.Write (t.Name);
 		
 		Type [] interfaces = (Type []) Comparer.Sort (t.GetInterfaces ());
 		Type parent = t.BaseType;
 
+		if (t.IsSubclassOf (typeof (System.MulticastDelegate))) {
+			MethodInfo method;
+
+			method = t.GetMethod ("Invoke");
+
+			o.Write (FormatType (method.ReturnType));
+			o.Write (" ");
+			o.Write (t.Name);
+			o.Write (" (");
+			OutlineParams (method.GetParameters ());
+			o.WriteLine (");");
+
+			return;
+		}
+		
+		o.Write (t.Name);
 		if (((parent != null && parent != typeof (object) && parent != typeof (ValueType)) || interfaces.Length != 0) && ! t.IsEnum) {
 			bool first = true;
 			o.Write (" : ");
@@ -102,11 +117,15 @@ public class Outline {
 			
 			o.WriteLine ();
 		}
-		
+
+		o.WriteLine ();
+
+		foreach (Type ntype in Comparer.Sort (t.GetNestedTypes (flags)))
+			new Outline (ntype, o).OutlineType (flags);
 		
 		o.Indent--; o.WriteLine ("}");
 	}
-	
+
 	void OutlineEvent (EventInfo ei)
 	{
 		MethodBase accessor = ei.GetAddMethod ();
@@ -187,7 +206,7 @@ public class Outline {
 			i++;
 		}
 	}
-	
+
 	static string GetMethodVisibility (MethodBase m)
 	{
 		if (m.IsPublic)   return "public ";
@@ -215,8 +234,12 @@ public class Outline {
 	{
 		if (t.IsEnum)
 			return "enum";
-		if (t.IsClass)
-			return "class";
+		if (t.IsClass) {
+			if (t.IsSubclassOf (typeof (System.MulticastDelegate)))
+				return "delegate";
+			else
+				return "class";
+		}
 		if (t.IsInterface)
 			return "interface";
 		if (t.IsValueType)
@@ -299,6 +322,25 @@ public class Comparer : IComparer  {
 	public int Compare (object a, object b)
 	{
 		return cmp (a, b);
+	}
+
+	static int CompareType (object a, object b)
+	{
+		Type type1 = (Type) a;
+		Type type2 = (Type) b;
+
+		if (type1.IsSubclassOf (typeof (System.MulticastDelegate)) != type2.IsSubclassOf (typeof (System.MulticastDelegate)))
+				return (type1.IsSubclassOf (typeof (System.MulticastDelegate)))? -1:1;
+		return string.Compare (type1.Name, type2.Name);
+			
+	}
+
+	static Comparer TypeComparer = new Comparer (new ComparerFunc (CompareType));
+
+	static Type [] Sort (Type [] types)
+	{
+		Array.Sort (types, TypeComparer);
+		return types;
 	}
 	
 	static int CompareMemberInfo (object a, object b)
