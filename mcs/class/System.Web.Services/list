@@ -95,6 +95,7 @@ System.Web.Services.Protocols/MimeReturnReader.cs
 System.Web.Services.Protocols/NopReturnReader.cs
 System.Web.Services.Protocols/PatternMatcher.cs
 System.Web.Services.Protocols/SoapClientMessage.cs
+System.Web.Services.Protocols/SoapClientMethod.cs
 System.Web.Services.Protocols/SoapDocumentMethodAttribute.cs
 System.Web.Services.Protocols/SoapDocumentServiceAttribute.cs
 System.Web.Services.Protocols/SoapException.cs
@@ -112,6 +113,7 @@ System.Web.Services.Protocols/SoapParameterStyle.cs
 System.Web.Services.Protocols/SoapRpcMethodAttribute.cs
 System.Web.Services.Protocols/SoapRpcServiceAttribute.cs
 System.Web.Services.Protocols/SoapServerMessage.cs
+System.Web.Services.Protocols/SoapServerProtocol.cs
 System.Web.Services.Protocols/SoapServiceRoutingStyle.cs
 System.Web.Services.Protocols/SoapUnknownHeader.cs
 System.Web.Services.Protocols/TextReturnReader.cs
