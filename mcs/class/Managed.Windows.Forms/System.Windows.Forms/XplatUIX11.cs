@@ -138,7 +138,7 @@ namespace System.Windows.Forms {
 		#region	Properties
 		internal override Keys ModifierKeys {
 			get {
-				return key_state;
+				return keyboard.ModifierKeys;
 			}
 		}
 

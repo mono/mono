@@ -1,3 +1,9 @@
+2004-12-15  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Get the modifier keys from the keyboard driver
+	* X11Keyboard.cs: Expose the currently selected modifier keys
+	through a property.
+
 2004-12-15  Peter Bartok  <pbartok@novell.com>
 
 	* TextControl.cs: Initial check-in. Still incomplete

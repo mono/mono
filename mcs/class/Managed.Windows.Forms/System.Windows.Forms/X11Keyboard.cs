@@ -58,6 +58,19 @@ namespace System.Windows.Forms {
 			CreateConversionArray (layout);
 		}
 
+		public Keys ModifierKeys {
+			get {
+				Keys keys = Keys.None;
+				if ((key_state_table [(int) VirtualKeys.VK_SHIFT] & 0x80) != 0)
+					keys |= Keys.Shift;
+				if ((key_state_table [(int) VirtualKeys.VK_CONTROL] & 0x80) != 0)
+					keys |= Keys.Control;
+				if ((key_state_table [(int) VirtualKeys.VK_MENU] & 0x80) != 0)
+					keys |= Keys.Alt;
+				return keys;
+			}
+		}
+
 		public void KeyEvent (IntPtr hwnd, XEvent xevent, ref MSG msg)
 		{
 			if ((xevent.KeyEvent.keycode >> 8) == 0x10)
