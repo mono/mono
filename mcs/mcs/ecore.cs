@@ -791,19 +791,8 @@ namespace Mono.CSharp {
 					return new ULongConstant ((ulong) v);
 			}
 
-			//
-			// If we have an enumeration, extract the underlying type,
-			// use this during the comparission, but wrap around the original
-			// target_type
-			//
-			Type real_target_type = target_type;
+ 			Type real_target_type = target_type;
 
-			if (TypeManager.IsEnumType (real_target_type))
-				real_target_type = TypeManager.EnumToUnderlying (real_target_type);
-
-			if (expr_type == real_target_type)
-				return new EmptyCast (expr, target_type);
-			
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to short, int, long, float, double.
@@ -1794,7 +1783,7 @@ namespace Mono.CSharp {
 
 			//
 			// If we have an enumeration, extract the underlying type,
-			// use this during the comparission, but wrap around the original
+			// use this during the comparison, but wrap around the original
 			// target_type
 			//
 			Type real_target_type = target_type;
@@ -1802,6 +1791,9 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEnumType (real_target_type))
 				real_target_type = TypeManager.EnumToUnderlying (real_target_type);
 
+			if (StandardConversionExists (expr, real_target_type))
+ 				return new EmptyCast (expr, target_type);
+			
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to byte, ushort, uint, ulong, char

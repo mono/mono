@@ -3970,16 +3970,11 @@ namespace Mono.CSharp {
 			MethodGroupExpr mg = (MethodGroupExpr) expr;
 			method = OverloadResolve (ec, mg, Arguments, loc);
 
-			//
-			// We don't need this since OverloadResolve itself takes care of flagging
-			// an error 
-			//
-
-// 			if (method == null){
-// 				Error (-6,
-// 				       "Could not find any applicable function for this argument list");
-// 				return null;
-// 			}
+			if (method == null){
+				Error (-6,
+				       "Could not find any applicable function for this argument list");
+				return null;
+			}
 
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {

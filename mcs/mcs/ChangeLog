@@ -11,6 +11,14 @@
 	* attribute.cs (Attribute.Resolve): Ensure we allow TypeOf
 	expressions too. Previously we were checking only in one place for
 	positional arguments leaving out named arguments.
+
+	* ecore.cs (ImplicitNumericConversion): Conversion from underlying
+	type to the enum type is not allowed. Remove code corresponding to
+	that.
+
+	(ConvertNumericExplicit): Allow explicit conversions from
+	the underlying type to enum type. This precisely follows the spec
+	and closes a bug filed by Gonzalo.
 	
 2002-09-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
