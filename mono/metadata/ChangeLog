@@ -1,4 +1,11 @@
 
+Wed Feb 27 18:45:03 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: do not free str, since we store it in the hash table.
+	* reflection.h: add label field to MonoILExceptionInfo.
+	* reflection.c: handle references to more than one assembly. Handle
+	case when there isn't a module created in the assembly.
+
 Wed Feb 27 12:35:10 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: Fix typo. Start refactoring of class init code.
