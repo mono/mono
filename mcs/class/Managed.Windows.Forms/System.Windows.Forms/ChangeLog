@@ -1,8 +1,8 @@
 2005-01-14  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: When erasing backgrounds use FromHwnd instead of
-	FromHdc when there is a null wparam. The X11 driver sets the
-	wparam as null.
+	FromHdc when there is a NULL wparam. This occurs on the X driver.
+	* XplatUIX11.cs: Set the wparam to NULL.
 
 2005-01-13  Jackson Harper  <jackson@ximian.com>
 

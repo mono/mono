@@ -1400,7 +1400,7 @@ namespace System.Windows.Forms {
 						HideCaret();
 					}
 
-					NativeWindow.WndProc(msg.hwnd, Msg.WM_ERASEBKGND, msg.hwnd, IntPtr.Zero);
+					NativeWindow.WndProc(msg.hwnd, Msg.WM_ERASEBKGND, IntPtr.Zero, IntPtr.Zero);
 
 					if (caret.visible == 1) {
 						ShowCaret();
