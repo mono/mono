@@ -1,3 +1,9 @@
+
+Mon Mar 25 13:04:56 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, appdomain.c, class.c, object.c: use a GC-safe hash table 
+	for interned strings and vtables.
+
 2002-03-24  Martin Baulig  <martin@gnome.org>
 
 	* icall.c (ves_icall_Type_GetFields): Reverse the list before storing
