@@ -681,20 +681,25 @@ namespace System
 				fp = CultureInfo.CurrentCulture;
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
 
+			bool longYear = false;
 			// Try common formats.
-			if (ParseExact (s, commonFormats, dfi, styles, out result, false))
+			if (ParseExact (s, commonFormats, dfi, styles, out result, false, ref longYear))
 				return result;
 
 			// Try common formats, also with invariant culture
-			if (ParseExact (s, commonFormats, DateTimeFormatInfo.InvariantInfo, styles, out result, false))
+			if (ParseExact (s, commonFormats, DateTimeFormatInfo.InvariantInfo, styles, out result, false, ref longYear))
 				return result;
-
 
 			// Next, try all the patterns
 			string [] patterns = new string [] {"d", "D", "g", "G", "f", "F", "m", "M", "r", "R", "s", "t", "T", "u", "U", "y", "Y"};
 
-			if (ParseExact (s, patterns, dfi, styles, out result, false))
+			if (ParseExact (s, patterns, dfi, styles, out result, false, ref longYear))
 				return result;
+
+			if (longYear) {
+				throw new ArgumentOutOfRangeException ("year",
+					"Valid values are between 1 and 9999 inclusive");
+			}
 
 			throw new FormatException ("String was not recognized as a valid DateTime.");
 		}
@@ -791,7 +796,8 @@ namespace System
 		internal static bool _DoParse (string s, string format, bool exact,
 					       out DateTime result,
 					       DateTimeFormatInfo dfi,
-					       DateTimeStyles style)
+					       DateTimeStyles style,
+					       ref bool longYear)
 		{
 			bool useutc = false, use_localtime = true;
 			bool use_invariant = false;
@@ -978,21 +984,17 @@ namespace System
 						year = _ParseNumber (s, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
 					} else {
 						year = _ParseNumber (s, 4, false, sloppy_parsing, next_not_digit, out num_parsed);
-						if(num_parsed > 4 && Char.IsDigit(s[4]))
-							throw new ArgumentOutOfRangeException ("year", "Valid " + "values are between 1 and 9999 inclusive");
+						if ((year >= 1000) && (num_parsed == 4) && (!longYear) && (s.Length > 4)) {
+							int np = 0;
+							int ly = _ParseNumber (s, 5, false, sloppy_parsing, next_not_digit, out np);
+							longYear = (ly > 9999);
+						}
 						num = 3;
 					}
 
 					//FIXME: We should do use dfi.Calendat.TwoDigitYearMax
 					if (num_parsed <= 2)
 						year += (year < 30) ? 2000 : 1900;
-					
-					// if there is another digit next to the ones we just parsed, then the year value
-					// is too big for sure.
-					//if (num_parsed < s.Length && Char.IsDigit(s[num_parsed]) || (year != 0 && (year < 1 || year > 9999)))
-					if (year != 0 && (year < 1 || year > 9999))
-						throw new ArgumentOutOfRangeException ("year", "Valid " + 
-								"values are between 1 and 9999 inclusive");
 					break;
 				case 'h':
 					if (hour != -1)
@@ -1304,20 +1306,22 @@ namespace System
 				throw new ArgumentNullException (Locale.GetText ("format is null"));
 
 			DateTime result;
-			if (!ParseExact (s, formats, dfi, style, out result, true))
+			bool longYear = false;
+			if (!ParseExact (s, formats, dfi, style, out result, true, ref longYear))
 				throw new FormatException ();
 			return result;
 		}
 		
 		private static bool ParseExact (string s, string [] formats,
-			DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret, bool exact)
+			DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret,
+			bool exact, ref bool longYear)
 		{
 			int i;
 			for (i = 0; i < formats.Length; i++)
 			{
 				DateTime result;
 
-				if (_DoParse (s, formats[i], exact, out result, dfi, style)) {
+				if (_DoParse (s, formats[i], exact, out result, dfi, style, ref longYear)) {
 					ret = result;
 					return true;
 				}

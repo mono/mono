@@ -1,5 +1,7 @@
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DateTime.cs: Throw ArgumentOutOfRangeException if the year is
+	bigger than 9999. Fix bug #41845.
 	* FloatingPointFormatter.cs: Applied correction from Jon Skeet on
 	the "R"eversible format for negative numbers.
 
