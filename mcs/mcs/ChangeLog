@@ -1,3 +1,26 @@
+2002-08-13  Martin Baulig  <martin@gnome.org>
+
+	In addition to a nice code cleanup, this gives us a performance
+	increase of about 1.4% on GNU/Linux - not much, but it's already
+	half a second for the self-hosting MCS compilation.
+
+	* typemanager.cs (IMemberFinder): New interface.  It is used by
+	TypeManager.FindMembers to call FindMembers on a TypeContainer,
+	Enum, Delegate or Interface.
+	(TypeManager.finder_to_member_finder): New PtrHashtable.
+	(TypeManager.finder_to_container): Removed.
+	(TypeManager.finder_to_delegate): Removed.
+	(TypeManager.finder_to_interface): Removed.
+	(TypeManager.finder_to_enum): Removed.
+
+	* interface.cs (Interface): Implement IMemberFinder.
+
+	* delegate.cs (Delegate): Implement IMemberFinder.
+
+	* enum.cs (Enum): Implement IMemberFinder.
+
+	* class.cs (TypeContainer): Implement IMemberFinder.
+
 2002-08-12  Martin Baulig  <martin@gnome.org>
 
 	* ecore.cs (TypeExpr.DoResolveType): Mark this as virtual.

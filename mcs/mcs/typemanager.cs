@@ -22,6 +22,11 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
+public interface IMemberFinder {
+	MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
+				   MemberFilter filter, object criteria);
+}
+	
 public class TypeManager {
 	//
 	// A list of core types that the compiler requires or uses
@@ -179,10 +184,7 @@ public class TypeManager {
 	// </remarks>
 	static ArrayList user_types;
 
-	// <remarks>
-	//   Keeps a mapping between TypeBuilders and their TypeContainers
-	// </remarks>
-	static PtrHashtable builder_to_container;
+	static PtrHashtable builder_to_member_finder;
 
 	// <remarks>
 	//   Tracks the interfaces implemented by typebuilders.  We only
@@ -207,20 +209,6 @@ public class TypeManager {
 	//   method_internal_params should be kept?
 	// <remarks>
 	static Hashtable method_internal_params;
-
-	static PtrHashtable builder_to_interface;
-
-	// <remarks>
-	//  Keeps track of delegate types
-	// </remarks>
-
-	static Hashtable builder_to_delegate;
-
-	// <remarks>
-	//  Keeps track of enum types
-	// </remarks>
-
-	static Hashtable builder_to_enum;
 
 	// <remarks>
 	//  Keeps track of attribute types
@@ -317,15 +305,12 @@ public class TypeManager {
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
 		
-		builder_to_interface = new PtrHashtable ();
-		builder_to_delegate = new PtrHashtable ();
-		builder_to_enum  = new PtrHashtable ();
+		builder_to_member_finder = new PtrHashtable ();
 		builder_to_attr = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
-		builder_to_container = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
 		NoTypes = new Type [0];
@@ -340,7 +325,7 @@ public class TypeManager {
 			types.Add (name, t);
 		} catch {
 			Type prev = (Type) types [name];
-			TypeContainer tc = (TypeContainer) builder_to_container [prev];
+			TypeContainer tc = builder_to_member_finder [prev] as TypeContainer;
 
 			if (tc != null){
 				//
@@ -350,7 +335,7 @@ public class TypeManager {
 				return;
 			}
 
-			tc = (TypeContainer) builder_to_container [t];
+			tc = builder_to_member_finder [t] as TypeContainer;
 			
 			Report.Warning (
 				1595, "The type `" + name + "' is defined in an existing assembly;"+
@@ -377,7 +362,7 @@ public class TypeManager {
 	
 	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc, Type [] ifaces)
 	{
-		builder_to_container.Add (t, tc);
+		builder_to_member_finder.Add (t, tc);
 		typecontainers.Add (name, tc);
 		AddUserType (name, t, ifaces);
 	}
@@ -385,19 +370,19 @@ public class TypeManager {
 	public static void AddDelegateType (string name, TypeBuilder t, Delegate del)
 	{
 		types.Add (name, t);
-		builder_to_delegate.Add (t, del);
+		builder_to_member_finder.Add (t, del);
 	}
 	
 	public static void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
 		types.Add (name, t);
-		builder_to_enum.Add (t, en);
+		builder_to_member_finder.Add (t, en);
 	}
 
 	public static void AddUserInterface (string name, TypeBuilder t, Interface i, Type [] ifaces)
 	{
 		AddUserType (name, t, ifaces);
-		builder_to_interface.Add (t, i);
+		builder_to_member_finder.Add (t, i);
 	}
 
 	public static void AddMethod (MethodBuilder builder, MethodData method)
@@ -416,22 +401,22 @@ public class TypeManager {
 	/// </summary>
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
-		return (TypeContainer) builder_to_container [t];
+		return builder_to_member_finder [t] as TypeContainer;
 	}
 
 	public static Interface LookupInterface (Type t)
 	{
-		return (Interface) builder_to_interface [t];
+		return builder_to_member_finder [t] as Interface;
 	}
 
 	public static Delegate LookupDelegate (Type t)
 	{
-		return (Delegate) builder_to_delegate [t];
+		return builder_to_member_finder [t] as Delegate;
 	}
 
 	public static Enum LookupEnum (Type t)
 	{
-		return (Enum) builder_to_enum [t];
+		return builder_to_member_finder [t] as Enum;
 	}
 	
 	public static TypeContainer LookupAttr (Type t)
@@ -905,30 +890,9 @@ public class TypeManager {
 		        return t.FindMembers (mt, bf, filter, criteria);
 		}
 
-		//
-		// FIXME: We should not have builder_to_blah everywhere,
-		// we should just have a builder_to_findmemberizable
-		// and have them implement a new ICanFindMembers interface
-		//
-		Enum e = (Enum) builder_to_enum [t];
-
-		if (e != null)
-		        return e.FindMembers (mt, bf, filter, criteria);
-		
-		Delegate del = (Delegate) builder_to_delegate [t];
-
-		if (del != null)
-		        return del.FindMembers (mt, bf, filter, criteria);
-
-		Interface iface = (Interface) builder_to_interface [t];
-
-		if (iface != null) 
-		        return iface.FindMembers (mt, bf, filter, criteria);
-		
-		TypeContainer tc = (TypeContainer) builder_to_container [t];
-
-		if (tc != null)
-			return tc.FindMembers (mt, bf, filter, criteria);
+		IMemberFinder finder = (IMemberFinder) builder_to_member_finder [t];
+		if (finder != null)
+			return finder.FindMembers (mt, bf, filter, criteria);
 
 		return null;
 	}
@@ -970,7 +934,7 @@ public class TypeManager {
 	
 	public static bool IsInterfaceType (Type t)
 	{
-		Interface iface = (Interface) builder_to_interface [t];
+		Interface iface = builder_to_member_finder [t] as Interface;
 
 		if (iface != null)
 			return true;

@@ -22,7 +22,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   This is the base class for structs and classes.  
 	/// </summary>
-	public class TypeContainer : DeclSpace {
+	public class TypeContainer : DeclSpace, IMemberFinder {
 		// Holds a list of classes and structures
 		ArrayList types;
 

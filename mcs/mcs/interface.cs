@@ -19,7 +19,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Interfaces
 	/// </summary>
-	public class Interface : DeclSpace {
+	public class Interface : DeclSpace, IMemberFinder {
 		const MethodAttributes interface_method_attributes =
 			MethodAttributes.Public |
 			MethodAttributes.Abstract |

@@ -20,7 +20,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Holds Delegates
 	/// </summary>
-	public class Delegate : DeclSpace {
+	public class Delegate : DeclSpace, IMemberFinder {
  		public Expression ReturnType;
 		public Parameters      Parameters;
 		public Attributes      OptAttributes;

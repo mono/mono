@@ -19,7 +19,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Enumeration container
 	/// </summary>
-	public class Enum : DeclSpace {
+	public class Enum : DeclSpace, IMemberFinder {
 		ArrayList ordered_enums;
 		
 		public Expression BaseType;
