@@ -38,7 +38,7 @@ namespace System
                 public static int Abs(int value)
                 {
                         if (value == Int32.MinValue)
-                                throw new OverflowException (Locale.GetText (Locale.GetText ("Value is too small")));
+                                throw new OverflowException (Locale.GetText ("Value is too small")));
                         return (value < 0)? -value: value;
                 }
                 public static long Abs(long value)
