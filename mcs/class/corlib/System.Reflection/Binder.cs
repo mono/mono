@@ -25,11 +25,18 @@ namespace System.Reflection
 
 		internal static Binder DefaultBinder {
 			get {
-				lock (typeof (Binder)) {
-					if (default_binder == null)
-						default_binder = new Default ();
-					return default_binder;
+				if (null == default_binder)
+				{
+					lock (typeof (Binder)) 
+					{
+						if (default_binder == null)
+							default_binder = new Default ();
+
+						return default_binder;
+					}
 				}
+
+				return default_binder;
 			}
 		}
 		

@@ -1,3 +1,7 @@
+2003-02-03 Patrik Torstensson
+
+	* Binder.cs: minimize locking time in DefaultBinder.
+
 2003-02-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Modules.cs: Oups - not implemented. Added MonoTODO to most methods
