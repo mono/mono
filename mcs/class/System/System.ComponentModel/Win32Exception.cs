@@ -78,6 +78,8 @@ namespace System.ComponentModel
 				       Locale.GetText("Operation in progress"));
 			w32_errors.Add(10038,
 				       Locale.GetText("The descriptor is not a socket"));
+			w32_errors.Add(10040,
+				       Locale.GetText("Message too long"));
 			w32_errors.Add(10043,
 				       Locale.GetText("proto no supported"));
 			w32_errors.Add(10044,
