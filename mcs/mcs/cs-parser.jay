@@ -344,6 +344,11 @@ namespace_declaration
 			Report.Error(1518, Lexer.Location, "Attributes cannot be applied to namespaces."
 					+ " Expected class, delegate, enum, interface, or struct");
 		}
+		
+		if (current_namespace.Parent != null && $3 is MemberAccess) {
+			// Cannot use qualified namespace names in nested namespace declarations
+			Report.Error_T (134, lexer.Location);
+		}
 
 		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, $3.ToString (), lexer.Location);
 	} 
