@@ -32,9 +32,10 @@ public class MyClass {
 			Console.WriteLine ("MERLIN");
 			Merlin ();
 			Console.WriteLine ();
-/* Non working - even on MS runtime ?!?
- * 			Console.WriteLine ("PHAOS");
-			Phaos ();*/
+			// Non working on MS runtime;
+			// they have insufficient support for namespaces.
+ 			Console.WriteLine ("PHAOS");
+			Phaos ();
 		}
 		catch (Exception ex) {
 			Console.WriteLine (ex);
@@ -209,6 +210,10 @@ DumpSignedXml (s);
 		byte[] key = Encoding.ASCII.GetBytes ("test");	
 
 		foreach (FileInfo fi in new DirectoryInfo ("phaos-xmldsig-three").GetFiles ("signature-*.xml")) {
+			if (fi.Name.IndexOf ("exclusive") >= 0) {
+				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll cannot validate exclusive-c14n.");
+				continue;
+			}
 			if (fi.Name.IndexOf ("hmac") >= 0) {
 				Symmetric (fi.FullName, key);
 			}
