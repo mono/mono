@@ -9,14 +9,14 @@
 using System;
 using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class PrincipalPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class PrincipalPermissionAttribute : CodeAccessSecurityAttribute {
+
 		// Fields
 		private bool authenticated;
 		private string name;
@@ -29,21 +29,18 @@ namespace System.Security.Permissions
 		}
 
 		// Properties
-		[MonoTODO]
 		public bool Authenticated
 		{
 			get { return authenticated; }
 			set { authenticated = value; }
 		}
 			 			 
-		[MonoTODO]
 		public string Name
 		{
 			get { return name; }
 			set { name = value; }
 		}
 			 
-		[MonoTODO]
 		public string Role
 		{
 			get { return role; }
@@ -51,10 +48,9 @@ namespace System.Security.Permissions
 		}
 
 		// Method
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			return new PrincipalPermission (name, role, authenticated);
 		}
 	}
 }

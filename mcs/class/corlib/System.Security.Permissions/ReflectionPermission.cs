@@ -95,7 +95,6 @@ namespace System.Security.Permissions {
 				throw new ArgumentException ("wrong type");
 
 			ReflectionPermission o = (ReflectionPermission) target;
-			int n = 0;
 			if (IsUnrestricted ()) {
 				if (o.Flags == ReflectionPermissionFlag.NoFlags)
 					return null;
