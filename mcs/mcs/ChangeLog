@@ -1,5 +1,10 @@
 2003-02-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs: Very sad.  Am backing out the speed up changes
+	introduced by the ArrayList -> Array in the TypeContainer, as they
+	were not actually that much faster, and introduced a bug (no error
+	reports on duplicated methods).
+
 	* assign.cs (CompoundAssign.DoLResolve): Resolve the original
 	source first, this will guarantee that we have a valid expression
 	before calling in lower levels functions that will require a
