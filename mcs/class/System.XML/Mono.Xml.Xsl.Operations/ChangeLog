@@ -1,3 +1,7 @@
+2003-11-28 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslCopy.cs, XslCopyOf.cs : namespace nodes should be written.
+
 2003-11-24 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslAttribute.cs, XslElement.cs, XslLiteralElement.cs :

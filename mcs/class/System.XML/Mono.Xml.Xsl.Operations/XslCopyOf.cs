@@ -66,6 +66,9 @@ namespace Mono.Xml.Xsl.Operations {
 					outputter.WriteFullEndElement ();
 				break;
 				
+			case XPathNodeType.Namespace:
+				outputter.WriteNamespaceDecl (nav.Name, nav.Value);
+				break;
 			case XPathNodeType.Attribute:
 				outputter.WriteAttributeString (nav.Prefix, nav.LocalName, nav.NamespaceURI, nav.Value);
 				break;

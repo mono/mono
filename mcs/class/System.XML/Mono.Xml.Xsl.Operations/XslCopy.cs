@@ -83,7 +83,11 @@ namespace Mono.Xml.Xsl.Operations {
 			case XPathNodeType.ProcessingInstruction:
 				p.Out.WriteProcessingInstruction (p.CurrentNode.Name, p.CurrentNode.Value);
 				break;
-			
+
+			case XPathNodeType.Namespace:
+				p.Out.WriteNamespaceDecl (p.CurrentNode.Name, p.CurrentNode.Value);
+				break;
+
 			default:
 				Console.WriteLine ("unhandled node type {0}", p.CurrentNode.NodeType);
 				break;
