@@ -1,3 +1,10 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Text.RegularExpressions/RegexBugs.cs: test case for bug #57274.
+
+	* System.Text.RegularExpressions/regex.cs: use NextMatch to move on to
+	the next match. Fixes bug #57274.
+
 2004-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Text.RegularExpressions/RegexBugs.cs: added test for bug

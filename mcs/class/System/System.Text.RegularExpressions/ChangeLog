@@ -1,3 +1,8 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* regex.cs: use NextMatch to move on to the next match. Fixes bug
+	#57274.
+
 2004-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* parser.cs : cast.
