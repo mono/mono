@@ -2,13 +2,15 @@
 // CryptoConfig.cs: Handles cryptographic implementations and OIDs mappings.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -331,7 +333,7 @@ public class CryptoConfig {
 	public static object CreateFromName (string name, object[] args)
 	{
 		if (name == null)
-			throw new ArgumentNullException ();
+			throw new ArgumentNullException ("name");
 
 		if (algorithms == null) {
 			lock (lockObject) {
@@ -361,7 +363,7 @@ public class CryptoConfig {
 		// for MS BCL compatibility
 		// comment next two lines to remove restriction
 		if ((x > Int32.MaxValue) || (x < Int32.MinValue))
-			throw new OverflowException ("part of OID doesn't fit in Int32");
+			throw new OverflowException (Locale.GetText ("Part of OID doesn't fit in Int32"));
 
 		long y = x;
 		// number of bytes required to encode this number
@@ -387,8 +389,11 @@ public class CryptoConfig {
 		char[] delim = { '.' };
 		string[] parts = str.Split (delim);
 		// according to X.208 n is always at least 2
-		if (parts.Length < 2)
-			throw new CryptographicUnexpectedOperationException ();
+		if (parts.Length < 2) {
+			throw new CryptographicUnexpectedOperationException (
+				Locale.GetText ("OID must have at least two parts"));
+		}
+
 		// we're sure that the encoded OID is shorter than its string representation
 		byte[] oid = new byte [str.Length];
 		// now encoding value
@@ -406,11 +411,12 @@ public class CryptoConfig {
 			oid[2] = Convert.ToByte (part0 * 40 + part1);
 		}
 		catch {
-			throw new CryptographicUnexpectedOperationException ();
+			throw new CryptographicUnexpectedOperationException (
+				Locale.GetText ("Invalid OID"));
 		}
 		int j = 3;
 		for (int i = 2; i < parts.Length; i++) {
-			long x = Convert.ToInt64( parts [i]);
+			long x = Convert.ToInt64 (parts [i]);
 			if (x > 0x7F) {
 				byte[] num = EncodeLongNumber (x);
 				Array.Copy(num, 0, oid, j, num.Length);
@@ -427,7 +433,8 @@ public class CryptoConfig {
 		// Length (of value)
 		if (j > 0x7F) {
 			// for compatibility with MS BCL
-			throw new CryptographicUnexpectedOperationException ("OID > 127 bytes");
+			throw new CryptographicUnexpectedOperationException (
+				Locale.GetText ("OID > 127 bytes"));
 			// comment exception and uncomment next 3 lines to remove restriction
 			//byte[] num = EncodeLongNumber (j);
 			//Array.Copy (num, 0, oid, j, num.Length);
