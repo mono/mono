@@ -1,4 +1,10 @@
+2005-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CheckBox.cs: when rendering the input tag inside a span tag, keep the
+	attributes that are meant to be in the input tag in their place.
+
 2005-01-10 Juraj Skripsky <juraj@hotfeet.ch>
+
 	* RepeatInfo.cs: fixed bug #68927 (DataList with RepeatLayout='Flow'
 	generates invalid html).
 
