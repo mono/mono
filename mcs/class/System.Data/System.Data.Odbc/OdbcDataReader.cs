@@ -66,6 +66,7 @@ namespace System.Data.Odbc
 			short colcount=0;
 			libodbc.SQLNumResultCols(hstmt, ref colcount);
 			cols=new OdbcColumn[colcount];
+                        GetSchemaTable ();
 		}
 
 		#endregion
@@ -132,11 +133,11 @@ namespace System.Data.Odbc
 			int i=0;
 			foreach (OdbcColumn col in cols)
 			{
-				if (col.ColumnName==colname)
+				if (col != null && col.ColumnName==colname)
 					return i;
 				i++;
 			}
-			return 0;
+			return -1;
 		}
 
 		// Dynamically load column descriptions as needed.
@@ -170,7 +171,8 @@ namespace System.Data.Odbc
 		public void Close ()
 		{
 		
-			OdbcReturn ret=libodbc.SQLCloseCursor(hstmt);
+                        // FIXME : have to implement output parameter binding
+			OdbcReturn ret = libodbc.SQLFreeStmt (hstmt, libodbc.SQLFreeStmtOptions.Close);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLCloseCursor",OdbcHandleType.Stmt,hstmt));
 	
@@ -337,9 +339,6 @@ namespace System.Data.Odbc
 
 		public int GetOrdinal (string name)
 		{
-			if (currentRow == -1)
-				throw new IndexOutOfRangeException ();
-
 			int i=ColIndex(name);
 
 			if (i==-1)
@@ -612,27 +611,45 @@ namespace System.Data.Odbc
 			return (GetValue(ordinal) is DBNull);
 		}
 
+                /// <remarks>
+		/// 	Move to the next result set.
+		/// </remarks>
 		public bool NextResult ()
 		{
-			OdbcReturn ret=libodbc.SQLFetch(hstmt);
-			if (ret!=OdbcReturn.Success)
-				currentRow=-1;
+			OdbcReturn ret = OdbcReturn.Success;
+			ret = libodbc.SQLMoreResults (hstmt);
+			if (ret == OdbcReturn.Success) {
+				short colcount = 0;
+				libodbc.SQLNumResultCols (hstmt, ref colcount);
+				cols = new OdbcColumn [colcount];
+				GetSchemaTable ();
+			}	
+			return (ret==OdbcReturn.Success);
+		}
+
+		/// <remarks>
+		///	Load the next row in the current result set.
+		/// </remarks>
+		public bool NextRow ()
+		{
+			OdbcReturn ret=libodbc.SQLFetch (hstmt);
+			if (ret != OdbcReturn.Success)
+				currentRow = -1;
 			else
 				currentRow++;
-			GetSchemaTable();
-			
+
 			// Clear cached values from last record
 			foreach (OdbcColumn col in cols)
 			{
-				if (col!=null)
-					col.Value=null;
+				if (col != null)
+					col.Value = null;
 			}
-			return (ret==OdbcReturn.Success);
+			return (ret == OdbcReturn.Success);
 		}
 
 		public bool Read ()
 		{
-			return NextResult();
+			return NextRow ();
 		}
 
 		#endregion

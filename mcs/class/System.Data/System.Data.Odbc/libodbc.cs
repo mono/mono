@@ -235,5 +235,18 @@ namespace System.Data.Odbc
                 [DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref long TargetPtr, int BufferLen, ref int Len);
 
-	}
+		[DllImport ("odbc32.dll")]
+		internal static extern OdbcReturn SQLMoreResults (IntPtr Handle);
+
+		internal enum SQLFreeStmtOptions : short
+		{
+			Close = 0,
+			Drop,
+			Unbind,
+			ResetParams
+		}
+
+		[DllImport ("odbc32.dll")]
+		internal static extern OdbcReturn SQLFreeStmt (IntPtr Handle,  SQLFreeStmtOptions option);
+        }
 }

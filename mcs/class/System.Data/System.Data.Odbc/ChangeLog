@@ -1,5 +1,18 @@
 2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* OdbcDataReader.cs: Implement NextResultSet for multiple result
+	set queries. 
+	
+	* OdbcDataReader.cs: build column schema once creating reader and
+	then for each Next result set. Thanks to
+	sebastien.robitaille@croesus.com (Sebastien Robitaille) for
+	pointing out this optimization (bugzilla #70530).
+
+	* libodbc.cs: Added library calls SQLFreeStmt and SQLMoreResults
+	for mutiple resultsets.
+
+2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
+
 	* OdbcDataReader.cs: Pass OdbcCType.SignedBigInt for accessing big
 	int columns.
 
