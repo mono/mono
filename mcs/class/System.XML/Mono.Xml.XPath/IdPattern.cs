@@ -35,6 +35,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using Mono.Xml.Xsl;
 
 namespace Mono.Xml.XPath {
 	internal class IdPattern : LocationPathPattern {
@@ -49,7 +50,7 @@ namespace Mono.Xml.XPath {
 		
 		public override bool Matches (XPathNavigator node, XsltContext ctx)
 		{
-			XPathNavigator tmp = node.Clone ();
+			XPathNavigator tmp = ((XsltCompiledContext) ctx).GetNavCache (this, node);
 			for (int i = 0; i < ids.Length; i++)
 				if (tmp.MoveToId (ids [i]) && tmp.IsSamePosition (node))
 					return true;

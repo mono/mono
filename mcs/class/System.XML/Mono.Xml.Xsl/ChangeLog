@@ -1,5 +1,15 @@
 2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslTransformProcessor.cs : now it looks safe to remove SetContext()
+	  from each EvaluateXXX() methods.
+	* MsxslScriptManager.cs : not to leave reference to stylesheet
+	  navigator, pass current node to Compile().
+	* XslCompiledContext.cs : Added GetNavCache() that returns reusable
+	  navigator cache for each pattern, to avoid Clone() and not to leave
+	  reference to already-done instance navigator.
+
+2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Compiler.cs : Now it holds XPath parser and XSLT pattern parser.
 	* XslKey.cs : Use XSLT pattern parser for match.
 	  UsePattern is now "Use" (it is not a pattern). 

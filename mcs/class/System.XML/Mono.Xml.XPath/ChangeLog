@@ -1,3 +1,10 @@
+2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IdPattern.cs, LocationPathPattern.cs :
+	  Use XsltCompiledContext.GetNavCache() that returns reusable
+	  navigator cache for each pattern, to avoid Clone() and not to leave
+	  reference to already-done instance navigator.
+
 2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Pattern.cs : Pattern.Compile() now uses XSLT pattern parser instead

@@ -35,6 +35,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using Mono.Xml.Xsl;
 
 namespace Mono.Xml.XPath {
 	internal class LocationPathPattern : Pattern {
@@ -43,7 +44,6 @@ namespace Mono.Xml.XPath {
 		bool isAncestor;
 		NodeTest nodeTest;
 		ExprFilter filter;
-		XPathNavigator previousNavigator;
 		
 		public LocationPathPattern (NodeTest nodeTest)
 		{
@@ -100,19 +100,19 @@ namespace Mono.Xml.XPath {
 			if (filter == null && patternPrevious == null)
 				return true;
 			
+			XPathNavigator tmpNav;
 			if (patternPrevious != null) {
+				tmpNav = ((XsltCompiledContext) ctx).GetNavCache (this, node);
 				if (!isAncestor) {
-					XPathNavigator parent = node.Clone ();
-					parent.MoveToParent ();
-					if (!patternPrevious.Matches (parent, ctx))
+					tmpNav.MoveToParent ();
+					if (!patternPrevious.Matches (tmpNav, ctx))
 						return false;
 				} else {
-					XPathNavigator anc = node.Clone ();
 					while (true) {
-						if (!anc.MoveToParent ())
+						if (!tmpNav.MoveToParent ())
 							return false;
 						
-						if (patternPrevious.Matches (anc, ctx))
+						if (patternPrevious.Matches (tmpNav, ctx))
 							break;
 					}
 				}
@@ -127,17 +127,10 @@ namespace Mono.Xml.XPath {
 				return filter.pred.EvaluateBoolean (new NullIterator (node, ctx));
 			}
 
-			XPathNavigator p = null;
-			if (previousNavigator == node) {
-				p = previousNavigator;
-				p.MoveTo (node);
-			} else {
-				p = node.Clone ();
-				previousNavigator = p;
-			}
-			p.MoveToParent ();
+			tmpNav = ((XsltCompiledContext) ctx).GetNavCache (this, node);
+			tmpNav.MoveToParent ();
 
-			BaseIterator matches = filter.EvaluateNodeSet (new NullIterator (p, ctx));
+			BaseIterator matches = filter.EvaluateNodeSet (new NullIterator (tmpNav, ctx));
 			
 			while (matches.MoveNext ()) {
 				if (node.IsSamePosition (matches.Current))

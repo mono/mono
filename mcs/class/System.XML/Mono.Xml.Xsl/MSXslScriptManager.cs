@@ -55,7 +55,7 @@ namespace Mono.Xml.Xsl {
 			string ns = c.Input.GetNamespace (s.ImplementsPrefix);
 			if (ns == null)
 				throw new XsltCompileException ("Specified prefix for msxsl:script was not found: " + s.ImplementsPrefix, null, c.Input);
-			scripts.Add (ns, s.Compile ());
+			scripts.Add (ns, s.Compile (c.Input));
 		}
 		
 		enum ScriptingLanguage {
@@ -75,12 +75,10 @@ namespace Mono.Xml.Xsl {
 			ScriptingLanguage language = ScriptingLanguage.JScript; // default = JScript.
 			string implementsPrefix = null;
 			string code = null;
-			XPathNavigator node;
 			Evidence evidence;
 
 			public MSXslScript (XPathNavigator nav, Evidence evidence)
 			{
-				node = nav.Clone ();
 				this.evidence = evidence;
 				code = nav.Value;
 				if (nav.MoveToFirstAttribute ()) {
@@ -127,7 +125,7 @@ namespace Mono.Xml.Xsl {
 				get { return code; }
 			}
 			
-			public object Compile ()
+			public object Compile (XPathNavigator node)
 			{
 				string suffix = Guid.NewGuid ().ToString ().Replace ("-", String.Empty);
 				switch (this.language) {

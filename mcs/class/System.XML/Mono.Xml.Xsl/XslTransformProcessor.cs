@@ -466,8 +466,6 @@ namespace Mono.Xml.Xsl {
 		public object Evaluate (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
-			expr.SetContext (XPathContext);
-
 			XPathNodeIterator itr = CurrentNodeset;
 			return itr.Current.Evaluate (expr, itr, XPathContext);
 		}
@@ -475,8 +473,6 @@ namespace Mono.Xml.Xsl {
 		public string EvaluateString (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
-			expr.SetContext (XPathContext);
-			
 			XPathNodeIterator itr = CurrentNodeset;
 			return itr.Current.EvaluateString (expr, itr, XPathContext);
 		}
@@ -484,8 +480,6 @@ namespace Mono.Xml.Xsl {
 		public bool EvaluateBoolean (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
-			expr.SetContext (XPathContext);
-			
 			XPathNodeIterator itr = CurrentNodeset;
 			return itr.Current.EvaluateBoolean (expr, itr, XPathContext);
 		}
@@ -493,8 +487,6 @@ namespace Mono.Xml.Xsl {
 		public double EvaluateNumber (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
-			expr.SetContext (XPathContext);
-			
 			XPathNodeIterator itr = CurrentNodeset;
 			return itr.Current.EvaluateNumber (expr, itr, XPathContext);
 		}
@@ -502,7 +494,6 @@ namespace Mono.Xml.Xsl {
 		public XPathNodeIterator Select (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
-			expr.SetContext (XPathContext);
 			return CurrentNodeset.Current.Select (expr, XPathContext);
 		}
 		

@@ -59,6 +59,7 @@ namespace Mono.Xml.Xsl
 
 		Hashtable keyNameCache = new Hashtable ();
 		Hashtable keyIndexTables = new Hashtable ();
+		Hashtable patternNavCaches = new Hashtable ();
 
 		XslTransformProcessor p;
 		XsltContextInfo [] scopes = new XsltContextInfo [40];
@@ -73,6 +74,17 @@ namespace Mono.Xml.Xsl
 		}
 
 		public override string DefaultNamespace { get { return String.Empty; }}
+
+		public XPathNavigator GetNavCache (Mono.Xml.XPath.Pattern p, XPathNavigator node)
+		{
+			XPathNavigator nav =
+				patternNavCaches [p] as XPathNavigator;
+			if (nav == null || !nav.MoveTo (node)) {
+				nav = node.Clone ();
+				patternNavCaches [p] = nav;
+			}
+			return nav;
+		}
 
 		public object EvaluateKey (IStaticXsltContext staticContext,
 			BaseIterator iter,
