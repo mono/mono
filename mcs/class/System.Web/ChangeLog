@@ -1,3 +1,8 @@
+2002-10-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* makefile.trace: used to build System.Web.dll with trace enabled.
+	* System.Web.build: added trace and clean targets.
+
 2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.build: added options (commented out) to activate tracing.
