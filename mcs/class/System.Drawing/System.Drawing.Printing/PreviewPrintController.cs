@@ -16,7 +16,7 @@ namespace System.Drawing.Printing
 	public class PreviewPrintController : PrintController
 	{
 		private bool useantialias;
-		public PreviewPrintControler()
+		public PreviewPrintController()
 		{
 			useantialias = false;
 		}

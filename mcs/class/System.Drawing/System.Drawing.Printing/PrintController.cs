@@ -15,7 +15,7 @@ namespace System.Drawing.Printing
 	/// </summary>
 	public abstract class PrintController
 	{
-		public PrintControler()
+		public PrintController()
 		{
 			//
 			// TODO: Add constructor logic here
