@@ -1,5 +1,8 @@
 2004-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini-x86.h mini-ppc.h: Add MonoCompileArch structure where
+	the arch specific code can store data during a compilation.
+
 	* mini-ops.h: Add OP_SETFRET.
 
 	* mini.c (mini_get_ldelema_ins): Instead of allways calling the same
