@@ -103,6 +103,8 @@ namespace System.Reflection.Emit {
 		private RefEmitPermissionSet[] permissions_minimum;
 		private RefEmitPermissionSet[] permissions_optional;
 		private RefEmitPermissionSet[] permissions_refused;
+		PortableExecutableKind peKind;
+		ImageFileMachine machine;
 		#endregion
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
@@ -588,8 +590,16 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public void Save (string assemblyFileName)
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		void Save (string assemblyFileName, PortableExecutableKind portableExecutableKind, ImageFileMachine imageFileMachine)
 		{
+			this.peKind = portableExecutableKind;
+			this.machine = imageFileMachine;
+
 			if (resource_writers != null) {
 				foreach (IResourceWriter writer in resource_writers) {
 					writer.Generate ();
@@ -653,6 +663,11 @@ namespace System.Reflection.Emit {
 			}
 
 			created = true;
+		}
+
+		public void Save (string assemblyFileName)
+		{
+			Save (assemblyFileName, PortableExecutableKind.ILOnly, ImageFileMachine.I386);
 		}
 
 		public void SetEntryPoint (MethodInfo entryMethod)

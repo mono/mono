@@ -31,7 +31,10 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Specifies the packing size (data alignment) of a type.
 	/// </summary>
+#if NET_2_0
+#else
 	[Flags]
+#endif
 	public enum PackingSize {
 
 		/// <summary>
@@ -57,7 +60,15 @@ namespace System.Reflection.Emit {
 
 		/// <summary>
 		/// </summary>
-		Size16 = 16
+		Size16 = 16,
+
+#if NET_2_0
+		Size32 = 32,
+
+		Size64 = 64,
+
+		Size128 = 128
+#endif
 	}
 
 }

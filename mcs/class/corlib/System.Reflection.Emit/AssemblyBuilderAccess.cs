@@ -30,7 +30,10 @@
 
 namespace System.Reflection.Emit
 {
-  [Flags]
+#if NET_2_0
+#else
+	[Flags]
+#endif
   public enum AssemblyBuilderAccess
   {
     Run = 1,

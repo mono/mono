@@ -1,5 +1,11 @@
 2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyBuilderAccess.cs: Remove [Flags].
+
+	* PackingSize.cs: Add new 2.0 members. Remove [Flags].
+
+	* AssemblyBuilder.cs: Add net 2.0 Save method.
+
 	* LocalBuilder.cs: Make this inherit from LocalVariableInfo under
 	net 2.0. Reorganize fields so the layout visible to the runtime is the
 	same under 1.0 and 2.0. Add 2.0 properties.
