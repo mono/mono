@@ -4926,17 +4926,6 @@ namespace Mono.CSharp {
 
 						candidates [k++] = candidates [i];
 
-#if false
-						//
-						// Methods marked 'override' don't take part in 'applicable_type'
-						// computation.
-						//
-						if (!me.IsBase &&
-						    candidate.IsVirtual &&
-						    (candidate.Attributes & MethodAttributes.NewSlot) == 0)
-							continue;
-#endif
-
 						if (next_applicable_type == null ||
 						    IsAncestralType (next_applicable_type, decl_type))
 							next_applicable_type = decl_type;
