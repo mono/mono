@@ -1,3 +1,27 @@
+2002-09-03  Martin Baulig  <martin@gnome.org>
+
+	* debug-helpers.c (mono_disasm_code_one): Added `const guchar **endp'
+	argument to store the end address of the disassembled instruction.
+
+	* debug-mono-symfile.h (MonoDebugMethodInfo, MonoDebugVarInfo): Moved
+	here from debug-symfile.h.
+	(MonoDebugMethodJitInfo): Moved all fields which are filled out by the
+	JIT into this struct.
+	(MonoSymbolFile): Added `char *image_file' field.
+	(MonoDebugGetMethodFunc): Removed.
+	(mono_debug_update_mono_symbol_file): Removed the hash table argument.
+	(mono_debug_create_mono_symbol_file): Removed the `source_file' argument.
+	(mono_debug_find_method): New method.
+
+	* debug-mono-symfile.c (mono_debug_create_mono_symbol_file): Always
+	create a full symbol file.
+	(mono_debug_update_mono_symbol_file): Don't distinguish between dynamic
+	and static symbol files.
+	(mono_debug_find_method): The symbol file keeps an internal method hash,
+	call this to get a MonoDebugMethodInfo from a MonoMethod.
+
+	* debug-symfile.[ch]: Removed.
+
 2002-08-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* image.c (do_mono_image_open): Remove linker version check.
