@@ -1,3 +1,8 @@
+2001-09-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: (VariableInfo::VariableType): New field to be
+	initialized with the full type once it is resolved. 
+
 2001-09-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* parameter.cs (GetParameterInfo): Use a type cache to compute
