@@ -1,3 +1,9 @@
+2003-07-17  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* socket-io.c: Get system_assembly using mono_image_loaded(), instead
+	  getting it from the "this" socket instance. Did not work
+	  if the socket is a subclass of Socket.
+	  Also fixed bug #35371.
 
 Thu Jul 17 13:39:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
