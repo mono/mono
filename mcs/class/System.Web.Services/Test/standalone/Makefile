@@ -1,9 +1,6 @@
 MCS=mcs -g
 sourcefile = proxies.sources
 
-%.dll: %.cs
-	$(MCS) /r:System.Web.dll /target:library $<
-
 all: tools update gen proxies tests
 
 tools: wstest.exe

@@ -1,3 +1,11 @@
+2004-03-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* services.xml: More services.
+	* wstest.cs: Added null check.
+	* client/localhost/IncludeTestTest.cs: New test.
+	* server/localhost/IncludeTest.asmx, server/localhost/Test1.asmx,
+	  server/localhost/Test2.asmx, server/localhost/TestBinding6.asmx.
+
 2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* services.xml: Updated service list.

@@ -3302,6 +3302,10 @@
   <service>
     <wsdl>http://sms.smspoint.net:8080/special/services/Sms?wsdl</wsdl>
     <name>SmsTest</name>
+    <serverType>Apache Coyote/1.0 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
     <clientTest>false</clientTest>
   </service>
   <service>
@@ -3727,7 +3731,7 @@
       <protocol>HttpGet</protocol>
       <protocol>HttpPost</protocol>
     </protocols>
-    <clientTest>false</clientTest>
+    <clientTest>true</clientTest>
   </service>
   <service>
     <wsdl>http://www.webservicex.com/EMBLNucleotideSequenceWebService.asmx?wsdl</wsdl>
@@ -4029,6 +4033,37 @@
   <service>
     <wsdl>http://www.webservicex.com/icd9.asmx?WSDL</wsdl>
     <name>icd9Test3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://projekt.wifo.uni-mannheim.de/elmar/api/ElmarSearchServices?wsdl</wsdl>
+    <name>ElmarSearchServicesTest</name>
+    <serverType>Apache/2.0.48 (Linux/SuSE) mod_perl/1.99_08 Perl/v5.8.0 PHP/4.3.4 mod_ssl/2.0.48 OpenSSL/0.9.6i mod_jk2/2.0.4-dev # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/TranslateService.asmx?WSDL</wsdl>
+    <name>TranslateServiceTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.xignite.com/xrates.asmx?WSDL</wsdl>
+    <name>xratesTest</name>
     <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
     <protocols>
       <protocol>Soap</protocol>

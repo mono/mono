@@ -424,9 +424,13 @@ public class Driver
 		
 		foreach (ServiceData sd in services.services)
 		{
-			if (Array.IndexOf(sd.Protocols, "Soap") != -1) soap++;
-			if (Array.IndexOf(sd.Protocols, "HttpPost") != -1) post++;
-			if (Array.IndexOf(sd.Protocols, "HttpGet") != -1) get++;
+			if (sd.Protocols != null)
+			{
+				if (Array.IndexOf(sd.Protocols, "Soap") != -1) soap++;
+				if (Array.IndexOf(sd.Protocols, "HttpPost") != -1) post++;
+				if (Array.IndexOf(sd.Protocols, "HttpGet") != -1) get++;
+			}
+			
 			if (sd.ClientTest) tests++;
 			
 			string st = sd.ServerType;
@@ -512,7 +516,6 @@ public class Driver
 			proc.StartInfo.RedirectStandardError = true;
 			proc.StartInfo.FileName = "wsdl";
 			proc.StartInfo.Arguments = "/out:" + pfile + " /nologo /namespace:" + ns + " /protocol:" + prot + " " + wsdl;
-			Console.WriteLine (proc.StartInfo.Arguments);
 			proc.Start();
 			proc.WaitForExit ();
 			
