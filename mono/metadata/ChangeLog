@@ -1,3 +1,9 @@
+
+Thu Feb 10 14:25:00 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: old compilers compilation fix from 
+	robertj@gmx.net (Robert Jordan).
+
 2005-02-09  Ben Maurer  <bmaurer@ximian.com>
 
 	* class-internals.h: Little reminder for the future.
