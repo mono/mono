@@ -919,7 +919,9 @@ namespace Mono.CSharp {
 
 		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
 		{
-			if ((bf & BindingFlags.Instance) == 0)
+			// Interfaces only contain instance members.  However, when querying for
+			// events, neither BindingFlags.Instance nor BindingFlags.Static will be set.
+			if (((bf & BindingFlags.Instance) == 0) && ((mt & MemberTypes.Event) == 0))
 				return MemberList.Empty;
 			if ((bf & BindingFlags.Public) == 0)
 				return MemberList.Empty;
