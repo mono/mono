@@ -29,6 +29,9 @@
 //
 //
 // $Log: MessageBox.cs,v $
+// Revision 1.3  2004/10/14 06:14:03  ravindra
+// Moved InitFormSize () out of Paint method and removed unnecessary calls to Button.Show () method.
+//
 // Revision 1.2  2004/10/05 17:10:57  pbartok
 // - Partial implementation by Benjamin Dasnois
 //
@@ -108,27 +111,28 @@ namespace System.Windows.Forms
 			public DialogResult RunDialog ()
 			{
 				this.StartPosition = FormStartPosition.CenterScreen;
+
+				if (size_known == false) {
+					InitFormsSize ();
+				}
+
 				this.ShowDialog ();
 
 				return this.DialogResult;
 
 			}
 
-			private void MessageBoxForm_Paint(object sender, PaintEventArgs e)
+			private void MessageBoxForm_Paint (object sender, PaintEventArgs e)
 			{
-				if (size_known == false) {
-					InitFormsSize (e);
-				}
-			       
 				e.Graphics.DrawString (msgbox_text, this.Font, new SolidBrush(Color.Black), textleft_up);
 			}
 
-			private void InitFormsSize(PaintEventArgs e)
+			private void InitFormsSize ()
 			{
 				int tb_width = 0;
 		
 				// First we have to know the size of text + image
-				Drawing.SizeF tsize = e.Graphics.MeasureString (msgbox_text, this.Font);
+				Drawing.SizeF tsize = this.DeviceContext.MeasureString (msgbox_text, this.Font);
 
 				if (!(icon_image == null)) {
 					tsize.Width += icon_image.Width;
@@ -183,7 +187,6 @@ namespace System.Windows.Forms
 				button_left = (this.Width / 2) - (tb_width / 2);
 				AddButtons ();
 				size_known = true;
-				this.Refresh ();
 			}
 			#endregion	// MessageBoxForm Methods
 
@@ -237,97 +240,84 @@ namespace System.Windows.Forms
 			{
 				Button bok = new Button ();
 				bok.Text = "OK";
-				this.Controls.Add (bok);
 				bok.Width = 100;
 				bok.Height = 30;
 				bok.Top = this.Height - 70;
 				bok.Left = left;
-				bok.Show ();
 				bok.Click += new EventHandler (OkClick);
-
+				this.Controls.Add (bok);
 			}
 
 			private void AddCancelButton (int left)
 			{
 				Button bcan = new Button ();
 				bcan.Text = "Cancel";
-				this.Controls.Add (bcan);
 				bcan.Width = 100;
 				bcan.Height = 30;
 				bcan.Top = this.Height - 70;
 				bcan.Left = left;
-				bcan.Show ();
 				bcan.Click += new EventHandler (CancelClick);
+				this.Controls.Add (bcan);
 			}
 
 			private void AddAbortButton (int left)
 			{
 				Button babort = new Button ();
 				babort.Text = "Abort";
-				this.Controls.Add (babort);
 				babort.Width = 100;
 				babort.Height = 30;
 				babort.Top = this.Height - 70;
 				babort.Left = left;
-				babort.Show ();
 				babort.Click += new EventHandler (AbortClick);
-
+				this.Controls.Add (babort);
 			}
 
 			private void AddRetryButton(int left)
 			{
 				Button bretry = new Button ();
 				bretry.Text = "Retry";
-				this.Controls.Add (bretry);
 				bretry.Width = 100;
 				bretry.Height = 30;
 				bretry.Top = this.Height - 70;
 				bretry.Left = left;
-				bretry.Show ();
 				bretry.Click += new EventHandler (RetryClick);
-
+				this.Controls.Add (bretry);
 			}
 
 			private void AddIgnoreButton (int left)
 			{
 				Button bignore = new Button ();
 				bignore.Text = "Ignore";
-				this.Controls.Add (bignore);
 				bignore.Width = 100;
 				bignore.Height = 30;
 				bignore.Top = this.Height - 70;
 				bignore.Left = left;
-				bignore.Show ();
 				bignore.Click += new EventHandler (IgnoreClick);
-
+				this.Controls.Add (bignore);
 			}
 
 			private void AddYesButton (int left)
 			{
 				Button byes = new Button ();
 				byes.Text = "Yes";
-				this.Controls.Add (byes);
 				byes.Width = 100;
 				byes.Height = 30;
 				byes.Top = this.Height - 70;
 				byes.Left = left;
-				byes.Show ();
 				byes.Click += new EventHandler (YesClick);
-
+				this.Controls.Add (byes);
 			}
 
 			private void AddNoButton (int left)
 			{
 				Button bno = new Button ();
 				bno.Text = "No";
-				this.Controls.Add (bno);
 				bno.Width = 100;
 				bno.Height = 30;
 				bno.Top = this.Height - 70;
 				bno.Left = left;
-				bno.Show ();
 				bno.Click += new EventHandler (NoClick);
-
+				this.Controls.Add (bno);
 			}
 			#endregion
 
