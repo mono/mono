@@ -1,5 +1,9 @@
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
+	* metadata.h (MonoMarshalSpec): Add elem_mult field.
+
+	* metadata.c reflection.c: Load/Emit elem_mult as well.
+	
 	* metadata.h (MonoMarshalSpec): Add comment.
 
 	* metadata.h: Add MONO_MARSHAL_CONV_LPTSTR_STR.
