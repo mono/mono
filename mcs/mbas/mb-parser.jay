@@ -1120,7 +1120,7 @@ type_spec_declaration
 	;
 
 class_declaration
-	: CLASS identifier logical_end_of_line opt_inherits opt_implements
+	: CLASS identifier end_of_stmt opt_inherits opt_implements
 	  {
 		// Module members are static by default, but Class *can't* be declared static
 		// so we must fix it, if mbas was the one actually responsible for this
@@ -1164,12 +1164,12 @@ class_declaration
 
 opt_inherits
 	: /* empty */				{ $$ = null; }
-	| INHERITS type_list logical_end_of_line 	{ $$ = $2; }
+	| INHERITS type_list end_of_stmt 	{ $$ = $2; }
 	;
 
 opt_implements
 	: /* empty */				{ $$ = null; }
-	| IMPLEMENTS type_list logical_end_of_line 	{ $$ = $2; }
+	| IMPLEMENTS type_list end_of_stmt	 	{ $$ = $2; }
 	;
 
 opt_modifiers
@@ -1281,7 +1281,7 @@ module_member_declarator
 	;
 	
 constant_declaration
-	: CONST constant_declarators logical_end_of_line
+	: CONST constant_declarators end_of_stmt
 	{
 		// Module members are static by default, but constants *can't* be declared static
 		// so we must fix it, if mbas was the one actually responsible for this
@@ -1509,7 +1509,7 @@ func_declaration
 	;		
 
 struct_declaration
-	: STRUCTURE identifier logical_end_of_line
+	: STRUCTURE identifier end_of_stmt
 	  opt_implement_clause
 	  {
 		Struct new_struct;
@@ -2174,7 +2174,7 @@ opt_set_parameter
 			
 field_declaration
 	: opt_dim_stmt 
-	  variable_declarators logical_end_of_line
+	  variable_declarators end_of_stmt
 	  {   		  
 		int mod = (int) current_modifiers;
 

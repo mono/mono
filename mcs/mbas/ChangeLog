@@ -1,4 +1,8 @@
 2005-01-12 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Replaced "logical_end_of_line" with "end_of_stmt" in couple of places
+			 to support delemeter ':' along with "EOL" as end of statement
+
+2005-01-12 Anirban Bhattacharjee <banirban@novell.com>
 	* statement.cs: Another trivial correction 
 
 2005-01-11 Anirban Bhattacharjee <banirban@novell.com>
