@@ -1,3 +1,6 @@
+2004-05-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ChangeLog: Fix author of memory leak patch.
 
 Fri May 14 15:13:06 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
@@ -33,8 +36,8 @@ Thu May 13 11:41:49 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* basic.cs basic-long.cs objects.cs: Make these compile under MS csc.
 
-	* mini.h mini.c dominators.c: Applied patch from David Waite
-	(mass@akuma.org): Fix memory leaks in loop optimizations.
+	* mini.h mini.c dominators.c: Applied patch from Derek Woo
+	(derek@eecg.toronto.edu): Fix memory leaks in loop optimizations.
 
 	* mini.c: Add new icalls for AsAny marshalling.
 
