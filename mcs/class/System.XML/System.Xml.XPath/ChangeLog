@@ -1,5 +1,11 @@
 2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* IXPathChangeNavigable.cs,
+	  XmlChangeFilters.cs,
+	  XPathDocumentNodeChangedAction.cs : removed old files.
+
+2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Iterator.cs : with related to the previous patch, many comments
 	  got making no sense. Thanks to Harinath.
 

@@ -144,10 +144,7 @@ System.Xml/XmlNodeArrayList.cs
 System.Xml/XmlInputStream.cs
 System.Xml/XmlParserInput.cs
 System.Xml.XPath/IXPathNavigable.cs
-System.Xml.XPath/XmlChangeFilters.cs
-System.Xml.XPath/XmlNodeChangeType.cs
 System.Xml.XPath/XPathAtomicValue.cs
-System.Xml.XPath/XPathDocumentNodeChangedAction.cs
 System.Xml.XPath/XPathNavigator.cs
 System.Xml.XPath/XPathExpression.cs
 System.Xml.XPath/XPathItem.cs
