@@ -1,6 +1,6 @@
 // -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// MCS.System.Collections.IDictionary
+// System.Collections.IDictionary
 //
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)
@@ -9,9 +9,9 @@
 //
 
 using System;
-using MCS.System;
+using System;
 
-namespace MCS.System.Collections {
+namespace System.Collections {
 
 	public interface IHashCodeProvider {
 		int GetHashCode (object obj);

@@ -1,3 +1,7 @@
+2001-07-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* All files: Renamespace things to System.
+
 2001-07-05  Vladimir Vukicevic  <vladimir@ximian.com>
 
 	* ArrayList.cs: initial checkin and implementation

@@ -1,5 +1,5 @@
 //
-// MCS.System.Collections.IEnumerator
+// System.Collections.IEnumerator
 //
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)
@@ -8,9 +8,9 @@
 //
 
 using System;
-using MCS.System;
+using System;
 
-namespace MCS.System.Collections {
+namespace System.Collections {
 
     public interface IEnumerator {
 	object Current { get; }

@@ -1,6 +1,6 @@
 // -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// MCS.System.Collections.IList
+// System.Collections.IList
 //
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)
@@ -9,9 +9,8 @@
 //
 
 using System;
-using MCS.System;
 
-namespace MCS.System.Collections {
+namespace System.Collections {
 
 	public interface IList : ICollection, IEnumerable {
 		// properties

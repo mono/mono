@@ -1,6 +1,6 @@
 // -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// MCS.System.Collections.ArrayList
+// System.Collections.ArrayList
 //
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)
@@ -9,9 +9,8 @@
 //
 
 using System;
-using MCS.System;
 
-namespace MCS.System.Collections {
+namespace System.Collections {
 
 	public class ArrayList : IList, ICollection, IEnumerable, ICloneable {
 		// constructors
@@ -40,27 +39,27 @@ namespace MCS.System.Collections {
 		}
 
 		public static ArrayList ReadOnly (ArrayList list) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.ReadOnly");
+			throw new NotImplementedException ("System.Collections.ArrayList.ReadOnly");
 		}
 
 		public static ArrayList ReadOnly (IList list) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.ReadOnly");
+			throw new NotImplementedException ("System.Collections.ArrayList.ReadOnly");
 		}
 
 		public static ArrayList Synchronized (ArrayList list) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.Synchronized");
+			throw new NotImplementedException ("System.Collections.ArrayList.Synchronized");
 		}
 
 		public static ArrayList Synchronized (IList list) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.Synchronized");
+			throw new NotImplementedException ("System.Collections.ArrayList.Synchronized");
 		}
 
 		public static ArrayList FixedSize (ArrayList list) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.FixedSize");
+			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
 		}
 
 		public static ArrayList FixedSize (IList list) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.FixedSize");
+			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
 		}
 
 		public static ArrayList Repeat (object value, int count) {
@@ -74,7 +73,7 @@ namespace MCS.System.Collections {
 		}
 
 		public static ArrayList Adapter (IList list) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.Adapter");
+			throw new NotImplementedException ("System.Collections.ArrayList.Adapter");
 		}
 
 		// properties
@@ -221,7 +220,7 @@ namespace MCS.System.Collections {
 
 		public virtual object SyncRoot {
 			get {
-				throw new NotImplementedException ("MCS.System.Collections.ArrayList.SyncRoot.get");
+				throw new NotImplementedException ("System.Collections.ArrayList.SyncRoot.get");
 			}
 		}
 
@@ -242,20 +241,20 @@ namespace MCS.System.Collections {
 		}
 
 		public virtual void AddRange (ICollection c) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.AddRange");
+			throw new NotImplementedException ("System.Collections.ArrayList.AddRange");
 		}
 
 		public virtual int BinarySearch (object value) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.BinarySearch");
+			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
 		}
 
 		public virtual int BinarySearch (object value, IComparer comparer) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.BinarySearch");
+			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
 		}
 
 		public virtual int BinarySearch (int index, int count,
 						 object value, IComparer comparer) {
-			throw new NotImplementedException ("MCS.System.Collections.ArrayList.BinarySearch");
+			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
 		}
 
 		public virtual void Clear () {

@@ -1,6 +1,6 @@
 // -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// MCS.System.Collections.IComparer
+// System.Collections.IComparer
 //
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)
@@ -9,9 +9,9 @@
 //
 
 using System;
-using MCS.System;
+using System;
 
-namespace MCS.System.Collections {
+namespace System.Collections {
 
 	public interface IComparer {
 		int Compare (object x, object y);
