@@ -1,5 +1,7 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* monodiet.c (handle_type): Add missing setup_... calls.
+
 	* class.c: Back out garbage in previous patch.
 	
 	* class.c: Add missing setup_... calls.
