@@ -1,3 +1,8 @@
+2004-05-15  Duncan Mak  <duncan@ximian.com>
+
+	* GraphicsPath.cs: Instead of casting null to an IntPtr, use
+	IntPtr.Zero instead. Thanks to Nick Drochak for spotting this.
+
 2004-05-14  Nick Drochak <ndrochak@gol.com>
 
 	* GraphicsPath.cs: fix build with csc.  No implicit conversion from
