@@ -297,18 +297,6 @@ namespace Mono.Util.CorCompare
 						}
 						else
 						{
-							bool fVisibleMono = IsVisible (miMono);
-
-					/*
-							if (fVisibleMS != fVisibleMono)
-							{
-								if (fVisibleMS)
-									mm.Status.AddWarning ("Should be visible");
-								else
-									mm.Status.AddWarning ("Should be hidden");
-							}
-					*/
-
 							if (miMono.MemberType != miMS.MemberType)
 							{
 								//AddMember (null, miMS);
@@ -318,7 +306,7 @@ namespace Mono.Util.CorCompare
 								mm.Status.AddWarning ("MemberType mismatch, is: '" + miMono.MemberType.ToString () + "' [should be: '" + miMS.MemberType.ToString ()+"']");
 								AddMember (mm);
 							}
-							else if (fVisibleMS || fVisibleMono)
+							else if (fVisibleMS || IsVisible (miMono))
 							{
 								AddMember (mm);
 							}
@@ -450,20 +438,6 @@ namespace Mono.Util.CorCompare
 			m_nodeStatus.Add (nsInterfaces);
 
 			return m_nodeStatus;
-		}
-
-		MissingMethod FindMethod (MethodInfo mi)
-		{
-			if (mi != null)
-			{
-				string strName = mi.Name;
-				foreach (MissingMethod method in rgMethods)
-				{
-					if (strName == method.BestInfo.Name)
-						return method;
-				}
-			}
-			return null;
 		}
 
 		static bool IsVisible (MemberInfo mi)
