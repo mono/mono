@@ -1,3 +1,18 @@
+2002-06-08  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Accessor): Hold attributes information so we can pass
+	it along.
+
+	* cs-parser.jay (get_accessor_declaration, set_accessor_declaration):
+	Modify to pass in attributes attached to the methods.
+
+	(add_accessor_declaration, remove_accessor_declaration): Ditto.
+
+	* attribute.cs (ApplyAttributes, CheckAttribute): Update accordingly
+	to handle the Accessor kind :-)
+
+	* class.cs (Property.Emit, Event.Emit): Apply attributes to the accessors
+	
 2002-06-08  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (Unary.TryReduceNegative): Added support for

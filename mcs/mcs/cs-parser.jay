@@ -1028,7 +1028,7 @@ get_accessor_declaration
 	  }
           accessor_body
 	  {
-		$$ = new Accessor ((Block) $4);
+		$$ = new Accessor ((Block) $4, (Attributes) $1);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1065,7 +1065,7 @@ set_accessor_declaration
 	  }
 	  accessor_body
 	  {
-		$$ = new Accessor ((Block) $4);
+		$$ = new Accessor ((Block) $4, (Attributes) $1);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1506,15 +1506,15 @@ event_declaration
 		Location loc = (Location) oob_stack.Pop ();
 
 		Pair pair = (Pair) $8;
-		Block add_block = null;
-		Block rem_block = null;
+		Accessor add_accessor = null;
+		Accessor rem_accessor = null;
 
 		if (pair.First != null)
-			add_block = (Block) pair.First;
+			add_accessor = (Accessor) pair.First;
 		if (pair.Second != null)
-			rem_block = (Block) pair.Second;
+			rem_accessor = (Accessor) pair.Second;
 		
-		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_block, rem_block,
+		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_accessor, rem_accessor,
 				     (Attributes) $1, loc);
 		
 		CheckDef (current_container.AddEvent (e), e.Name, loc);
@@ -1548,7 +1548,7 @@ add_accessor_declaration
 	  }
           block
 	  {
-		$$ = $4;
+		$$ = new Accessor ((Block) $4, (Attributes) $1);
 		lexer.EventParsing = true;
 	  }
 	;
@@ -1568,7 +1568,7 @@ remove_accessor_declaration
 	  }
           block
 	  {
-		$$ = $4;
+		$$ = new Accessor ((Block) $4, (Attributes) $1);
 		lexer.EventParsing = true;
 	  }
 	;
