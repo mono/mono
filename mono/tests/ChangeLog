@@ -1,3 +1,8 @@
+2004-09-07  Duncan Mak  <duncan@ximian.com>
+
+	* typeof-ptr.cs: Add an unsafe section to the code that's using
+	direct pointers. This was breaking the test stage on the build boxes.
+
 2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c (mono_test_marshal_string_array): Add test for null
