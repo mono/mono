@@ -1,3 +1,10 @@
+2003-11-02  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (inflate_generic_field): New static method.
+	(mono_method_to_ir): In CEE_LDFLD and CEE_LDSFLD: if we're a
+	generic instance and the field is declared in a generic type, call
+	inflate_generic_field() to inflate it.  Fixes gen-28.cs.
+
 2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h mini.c (mono_method_same_domain): New function to return
