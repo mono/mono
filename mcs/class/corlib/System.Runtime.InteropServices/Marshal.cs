@@ -33,7 +33,7 @@ namespace System.Runtime.InteropServices
 		public extern static IntPtr AllocHGlobal (IntPtr cb);
 
 		public static IntPtr AllocHGlobal (int cb) {
-			return AllocHGlobal (cb);
+			return AllocHGlobal ((IntPtr)cb);
 		}
 
 		[MonoTODO]

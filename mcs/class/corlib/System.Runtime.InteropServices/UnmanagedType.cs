@@ -60,6 +60,8 @@ namespace System.Runtime.InteropServices {
 		/// </summary>
 		R8 = 12,
 
+		Currency = 15,
+
 		/// <summary>
 		/// </summary>
 		BStr = 19,
@@ -134,7 +136,7 @@ namespace System.Runtime.InteropServices {
 
 		/// <summary>
 		/// </summary>
-		LPVoid = 39,
+		// LPVoid = 39,
 
 		/// <summary>
 		/// </summary>
@@ -142,7 +144,7 @@ namespace System.Runtime.InteropServices {
 
 		/// <summary>
 		/// </summary>
-		RPrecise = 41,
+		//RPrecise = 41,
 
 		/// <summary>
 		/// </summary>
@@ -162,7 +164,7 @@ namespace System.Runtime.InteropServices {
 
 		/// <summary>
 		/// </summary>
-		NativeTypeMax = 80,
+		//NativeTypeMax = 80,
 	} // UnmanagedType
 
 } // System.Runtime.InteropServices

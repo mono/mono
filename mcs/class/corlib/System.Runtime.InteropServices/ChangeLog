@@ -1,4 +1,8 @@
 
+Fri Jun 14 16:18:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* UnmanagedType.cs, Marshal.cs: minor fixes.
+
 Wed Jun 12 16:32:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Marshal.c: stubbed out all the methods and filled in some
