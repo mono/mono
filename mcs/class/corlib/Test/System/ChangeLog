@@ -1,3 +1,7 @@
+2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Add test for StructLayoutAttribute.
+
 2004-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RandomTest.cs: Commented test CompareWithMS following constants

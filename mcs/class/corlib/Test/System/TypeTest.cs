@@ -11,6 +11,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace MonoTests.System
 {
@@ -156,11 +157,31 @@ namespace MonoTests.System
 			AssertEquals ("#03", 1, typeof (Derived1).GetProperties ().Length);
 		}
 
-		[Test]
-		unsafe public void TestName () {
-			AssertEquals ("Void*", typeof (void*).Name);
-			AssertEquals ("Void**", typeof (void**).Name);
+		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
+		public class Class1 {
 		}
+
+		[StructLayout(LayoutKind.Explicit, CharSet=CharSet.Unicode)]
+		public class Class2 {
+		}
+
+#if NET_2_0
+		[Test]
+		public void StructLayoutAttribute () {
+			StructLayoutAttribute attr1 = typeof (TypeTest).StructLayoutAttribute;
+			AssertEquals (LayoutKind.Auto, attr1.Value);
+
+			StructLayoutAttribute attr2 = typeof (Class1).StructLayoutAttribute;
+			AssertEquals (LayoutKind.Explicit, attr2.Value);
+			AssertEquals (4, attr2.Pack);
+			AssertEquals (64, attr2.Size);
+
+			StructLayoutAttribute attr3 = typeof (Class2).StructLayoutAttribute;
+			AssertEquals (LayoutKind.Explicit, attr3.Value);
+			AssertEquals (CharSet.Unicode, attr3.CharSet);
+		}
+#endif
+
 	}
 }
 
