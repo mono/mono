@@ -3,13 +3,12 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc 2002
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Specifies the contextual information about an application thread.
 	///
@@ -17,8 +16,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class ApplicationContext
-	{
+	public class ApplicationContext {
+
 		Form mainForm;
 		
 		// --- (public) Properties ---
@@ -28,38 +27,45 @@ namespace System.Windows.Forms
 		}
 		
 		// --- Constructor ---
-		public ApplicationContext() {
+		public ApplicationContext() 
+		{
 			mainForm=null;
 		}
 		
-		public ApplicationContext(Form mainForm) : this() {
+		public ApplicationContext(Form mainForm) : this() 
+		{
 			this.mainForm=mainForm;
 		}
 		
 		// --- Methods ---
 		[MonoTODO]
-		public void Dispose() {
+		public void Dispose() 
+		{
 			// see documentation on ApplicationContext.Dispose Method (Boolean)
 			this.Dispose(true);
 		}
 		
 		[MonoTODO]
-		protected virtual void Dispose(bool disposing) {
+		protected virtual void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ExitThread() {
+		public void ExitThread() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void ExitThreadCore() {
+		protected virtual void ExitThreadCore() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnMainFormClosed(object sender,EventArgs e) {
+		protected virtual void OnMainFormClosed(object sender,EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		

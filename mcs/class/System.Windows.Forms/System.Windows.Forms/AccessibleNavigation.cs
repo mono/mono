@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
 	/// Specifies a values for navigating among accessible objects.
 	/// </summary>
 
 	[Serializable]
-	public enum AccessibleNavigation
-	{
+	public enum AccessibleNavigation {
+
 		//Values were verified with enumcheck.
 		Down = 2,
 		FirstChild = 7,

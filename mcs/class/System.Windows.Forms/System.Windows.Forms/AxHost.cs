@@ -12,8 +12,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.Serialization;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Wraps ActiveX controls and exposes them as fully featured Windows Forms controls.
 	///
@@ -22,8 +22,8 @@ namespace System.Windows.Forms
 	/// </summary>
 	
 	[MonoTODO]
-	public abstract class AxHost : Control, ISupportInitialize, ICustomTypeDescriptor
-	{
+	public abstract class AxHost : Control, ISupportInitialize, ICustomTypeDescriptor {
+
 		/// --- Constructors ---
 		/// Class AxHost does not have a constructor for non-internal purposes.
 		/// Thus, no constructor is stubbed out.
@@ -161,119 +161,142 @@ namespace System.Windows.Forms
 		///  - protected void RaiseOnMouseUp(object o1,object o2,object o3,object o4);
 		
 		[MonoTODO]
-		protected virtual void AttachInterfaces() {
+		protected virtual void AttachInterfaces() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void BeginInit() {
+		public void BeginInit() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void CreateHandle() {
+		protected override void CreateHandle() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void DestroyHandle() {
+		protected override void DestroyHandle() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual void EndInit() {
+		public virtual void EndInit() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public object GetOcx() {
+		public object GetOcx() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public bool HasPropertyPages() {
+		public bool HasPropertyPages() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool IsInputChar(char charCode) {
+		protected override bool IsInputChar(char charCode) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		/// --- methods used with events ---
 		[MonoTODO]
-		protected override void OnBackColorChanged(EventArgs e) {
+		protected override void OnBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnForeColorChanged(EventArgs e) {
+		protected override void OnForeColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnLostFocus(EventArgs e) {
+		protected override void OnLostFocus(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		/// --- END OF: methods used with events ---
 		
 		[MonoTODO]
-		public override bool PreProcessMessage(ref Message msg) {
+		public override bool PreProcessMessage(ref Message msg) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessMnemonic(char charCode) {
+		protected override bool ProcessMnemonic(char charCode) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected void SetAboutBoxDelegate(AxHost.AboutBoxDelegate d) {
+		protected void SetAboutBoxDelegate(AxHost.AboutBoxDelegate d) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) {
+		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void SetVisibleCore(bool value) {
+		protected override void SetVisibleCore(bool value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ShowAboutBox() {
+		public void ShowAboutBox() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ShowPropertyPages() {
+		public void ShowPropertyPages() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ShowPropertyPages(Control control) {
+		public void ShowPropertyPages(Control control) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -325,62 +348,74 @@ namespace System.Windows.Forms
 		/// Note: all of them are supporting .NET framework, but have to be stubbed out for the interface
 		
 		[MonoTODO]
-		AttributeCollection ICustomTypeDescriptor.GetAttributes() {
+		AttributeCollection ICustomTypeDescriptor.GetAttributes() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		string ICustomTypeDescriptor.GetClassName() {
+		string ICustomTypeDescriptor.GetClassName() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		string ICustomTypeDescriptor.GetComponentName() {
+		string ICustomTypeDescriptor.GetComponentName() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		TypeConverter ICustomTypeDescriptor.GetConverter() {
+		TypeConverter ICustomTypeDescriptor.GetConverter() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent() {
+		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty() {
+		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		object ICustomTypeDescriptor.GetEditor(Type editorBaseType) {
+		object ICustomTypeDescriptor.GetEditor(Type editorBaseType) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		EventDescriptorCollection ICustomTypeDescriptor.GetEvents() {
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes) {
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() {
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes) {
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) {
+		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -390,8 +425,8 @@ namespace System.Windows.Forms
 		/// The exception that is thrown when the ActiveX control is referenced while in an invalid state.
 		/// </summary>
 		[MonoTODO]
-		public class InvalidActiveXStateException : Exception
-		{
+		public class InvalidActiveXStateException : Exception {
+
 			/// --- methods ---
 //			[MonoTODO]
 //			public override string ToString() {
@@ -415,7 +450,8 @@ namespace System.Windows.Forms
 			
 			/// --- Methods ---
 			//[Serializable]
-			void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
+			void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) 
+			{
 				throw new NotImplementedException ();
 			}
 		}

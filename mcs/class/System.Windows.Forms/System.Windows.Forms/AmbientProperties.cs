@@ -11,17 +11,18 @@ using System.Runtime.InteropServices;
 using System;
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides ambient property values to top-level controls.
 	/// </summary>
 	
-	public sealed class AmbientProperties
-	{
+	public sealed class AmbientProperties {
+
 		
 		// --- Constructor ---
-		public AmbientProperties() {
+		public AmbientProperties() 
+		{
 			//
 		}
 
@@ -48,7 +49,8 @@ namespace System.Windows.Forms
 		///	Checks equivalence of this AmbientProperties and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o) {
+		public override bool Equals (object o) 
+		{
 			if (!(o is AmbientProperties))
 				return false;
 
@@ -63,7 +65,8 @@ namespace System.Windows.Forms
 		///	Calculates a hashing value.
 		/// </remarks>
 		
-		public override int GetHashCode () {
+		public override int GetHashCode () 
+		{
 			unchecked{//FIXME Add out proprities to the hash
 				return base.GetHashCode();
 			}
@@ -77,7 +80,8 @@ namespace System.Windows.Forms
 		///	Formats the AmbientProperties as a string.
 		/// </remarks>
 		
-		public override string ToString () {
+		public override string ToString () 
+		{
 			//FIXME add our proprities to ToString
 			return base.ToString();// String.Format ("[{0},{1},{2}]", bindingpath, bindingfield, bindingmember);
 		}

@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -11,8 +10,8 @@
 using System;
 using System.Collections;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides the base functionality for creating data-related collections in the System.Windows.Forms namespace.
 	/// ToDo note:
@@ -21,8 +20,8 @@ namespace System.Windows.Forms
 	/// </summary>
 	
 	[MonoTODO]
-	public class BaseCollection : MarshalByRefObject, ICollection, IEnumerable
-	{
+	public class BaseCollection : MarshalByRefObject, ICollection, IEnumerable {
+
 //		ArrayList list;
 //		
 //		
@@ -63,11 +62,13 @@ namespace System.Windows.Forms
 		
 		
 		// --- public Methods ---
-		public void CopyTo (Array ar, int index) {
+		public void CopyTo (Array ar, int index) 
+		{
 			list.CopyTo(ar, index);
 		}
 		
-		public IEnumerator GetEnumerator() {
+		public IEnumerator GetEnumerator() 
+		{
 			return list.GetEnumerator();
 		}
 		

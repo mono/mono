@@ -10,8 +10,8 @@
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents a collection of Binding objects for a control.
 	///
@@ -21,10 +21,11 @@ namespace System.Windows.Forms
 	/// </summary>
 	
 	[MonoTODO]
-	public class BindingsCollection : BaseCollection
-	{
+	public class BindingsCollection : BaseCollection {
+
 		#region Constructors
-		protected internal BindingsCollection () {
+		protected internal BindingsCollection () 
+		{
 		}
 		#endregion
 		
@@ -62,7 +63,8 @@ namespace System.Windows.Forms
 		// Would be nice if someone checked the exact event behavior of .NET implementation.
 		
 		[MonoTODO]
-		protected internal void Add(Binding binding) {
+		protected internal void Add(Binding binding) 
+		{
 			// CHECKME:
 			base.List.Add(binding);
 			OnCollectionChanged(new CollectionChangeEventArgs(
@@ -72,7 +74,8 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
-		protected internal void Clear() {
+		protected internal void Clear() 
+		{
 			// CHECKME:
 			base.List.Clear();
 			OnCollectionChanged(new CollectionChangeEventArgs(
@@ -82,14 +85,16 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO]
-		protected virtual void OnCollectionChanged(CollectionChangeEventArgs ccevent) {
+		protected virtual void OnCollectionChanged(CollectionChangeEventArgs ccevent) 
+		{
 			// CHECKME:
 			if (CollectionChanged != null)
 				CollectionChanged(this, ccevent);
 		}
 
 		[MonoTODO]
-		protected internal void Remove(Binding binding) {
+		protected internal void Remove(Binding binding) 
+		{
 			// CHECKME:
 			base.List.Remove(binding);
 			OnCollectionChanged(new CollectionChangeEventArgs(
@@ -99,7 +104,8 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO]
-		protected internal void RemoveAt(int index) {
+		protected internal void RemoveAt(int index) 
+		{
 			// CHECKME:
 			base.List.RemoveAt(index);
 			OnCollectionChanged(new CollectionChangeEventArgs(
@@ -108,7 +114,8 @@ namespace System.Windows.Forms
 			));
 		}
 		
-		protected internal bool ShouldSerializeMyAll() {
+		protected internal bool ShouldSerializeMyAll() 
+		{
 			if (this.Count>0) return true;
 			else return false;
 		}

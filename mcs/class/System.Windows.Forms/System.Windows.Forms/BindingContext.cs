@@ -3,15 +3,14 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
 
-namespace System.Windows.Forms
-{
-	public class BindingContext
-	{
+namespace System.Windows.Forms {
+
+	public class BindingContext {
+
 		/// <summary>
 		/// Manages the collection of BindingManagerBase objects for any object that inherits from the Control class.
 		/// </summary>
@@ -29,14 +28,14 @@ namespace System.Windows.Forms
 		// Following properties not stubbed out, because they are only supporting internal .NET Framework infrastructure.
 		// - bool IsReadOnly {get;}
 		[MonoTODO]
-		public BindingManagerBase this[object dataSource] 
-		{
+		public BindingManagerBase this[object dataSource]  {
+
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public BindingManagerBase this[object dataSource,string dataMember] 
-		{
+		public BindingManagerBase this[object dataSource,string dataMember]  {
+
 			get { throw new NotImplementedException (); }
 		}
 

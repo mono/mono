@@ -9,8 +9,8 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies how an accessible object is selected or receives focus.
@@ -18,8 +18,8 @@ namespace System.Windows.Forms
 	/// </summary>
 	[Flags]
 	[Serializable]
-	public enum AccessibleSelection
-	{
+	public enum AccessibleSelection {
+
 		AddSelection = 1,
 		ExtendSelection = 2,
 		None = 0,

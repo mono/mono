@@ -34,7 +34,8 @@ namespace System.Windows.Forms {
 		///
 		/// </remarks>
 		
-		public BindingMemberInfo (string dataMember){
+		public BindingMemberInfo (string dataMember)
+		{
 			//TODO: Initilize with real values.
 			bindingmember =  ("");
 			bindingfield =  ("");
@@ -56,8 +57,8 @@ namespace System.Windows.Forms {
 		/// </remarks>
 
 		public static bool operator == (BindingMemberInfo bmi_a, 
-			BindingMemberInfo bmi_b)
-		{
+			BindingMemberInfo bmi_b) {
+
 			return ((bmi_a.bindingfield == bmi_b.bindingfield) &&
 				(bmi_a.bindingpath == bmi_b.bindingpath)&&
 				(bmi_a.bindingmember == bmi_b.bindingmember));

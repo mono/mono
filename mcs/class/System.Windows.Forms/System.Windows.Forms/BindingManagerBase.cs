@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -11,11 +10,11 @@
 using System.ComponentModel;
 using System.Collections;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	[MonoTODO]
-	public abstract class BindingManagerBase
-	{
+	public abstract class BindingManagerBase {
+
 
 		/// <summary>
 		/// Manages all Binding objects that are bound to the same data source and data member. This class is abstract.
@@ -38,23 +37,23 @@ namespace System.Windows.Forms
 		//
 		// --- Public Properties
 		[MonoTODO]
-		public BindingsCollection Bindings 
-		{
+		public BindingsCollection Bindings  {
+
 			get { throw new NotImplementedException (); }
 		}
 		
-		public abstract int Count 
-		{
+		public abstract int Count  {
+
 			get;
 		}
 
-		public abstract object Current 
-		{
+		public abstract object Current  {
+
 			get;
 		}
 
-		public abstract int Position 
-		{
+		public abstract int Position  {
+
 			get;
 			set;
 		}

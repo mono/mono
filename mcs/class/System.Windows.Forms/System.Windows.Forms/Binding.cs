@@ -3,15 +3,14 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
 
-namespace System.Windows.Forms
-{
-	public class Binding
-	{
+namespace System.Windows.Forms {
+
+	public class Binding {
+
 		/// <summary>
 		/// Represents the simple binding between the property value of an object and the property value of a control.
 		///
@@ -32,38 +31,38 @@ namespace System.Windows.Forms
 		// --- Public Properties
 		//
 		[MonoTODO]
-		public BindingManagerBase BindingManagerBase 
-		{
+		public BindingManagerBase BindingManagerBase  {
+
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public BindingMemberInfo BindingMemberInfo 
-		{
+		public BindingMemberInfo BindingMemberInfo  {
+
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public Control Control 
-		{
+		public Control Control  {
+
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public object DataSource 
-		{
+		public object DataSource  {
+
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public bool IsBinding 
-		{
+		public bool IsBinding  {
+
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public string PropertyName 
-		{
+		public string PropertyName  {
+
 			get { throw new NotImplementedException (); }
 		}
 
@@ -86,15 +85,15 @@ namespace System.Windows.Forms
 		// --- Public Events
 		//
 		[MonoTODO]
-		public event ConvertEventHandler Format
-		{
+		public event ConvertEventHandler Format {
+
 			add { throw new NotImplementedException (); }
 			remove { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public event ConvertEventHandler Parse
-		{
+		public event ConvertEventHandler Parse {
+
 			add { throw new NotImplementedException (); }
 			remove { throw new NotImplementedException (); }
 		}
