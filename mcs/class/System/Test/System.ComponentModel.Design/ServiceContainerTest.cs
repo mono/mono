@@ -1,4 +1,4 @@
-// ServiceContainer.cs - NUnit Test Cases for System.ComponentModel.Design.ServiceContainer
+// ServiceContainerTest.cs - NUnit Test Cases for System.ComponentModel.Design.ServiceContainer
 //
 // Alexandre Pigolkine (pigolkine@gmx.de)
 //
@@ -44,12 +44,6 @@ namespace MonoTests.System.ComponentModel.Design
 [TestFixture]
 public class ServiceContainerTest : Assertion {
 	
-	[SetUp]
-	public void GetReady() {}
-
-	[TearDown]
-	public void Clean() {}
-
 	[Test]
 	public void GeneralTest1 () 
 	{
@@ -57,19 +51,22 @@ public class ServiceContainerTest : Assertion {
 			
 		sc.AddService (typeof (Svc), new Svc());
 		Svc service1 = sc.GetService (typeof (Svc)) as Svc;
-		Assertion.AssertNotNull ("GT1#01", service1);
-		Assertion.AssertEquals ("GT1#02", service1, sc.GetService (typeof (Svc)));
+		AssertNotNull ("GT1#01", service1);
+		AssertEquals ("GT1#02", service1, sc.GetService (typeof (Svc)));	
+		AssertNull ("GT1#04", sc.GetService (typeof (NotInSvc)));
+	}
+
+	[Test, ExpectedException (typeof (ArgumentException))]
+	public void GeneralTest2 () 
+	{
+		ServiceContainer sc = new ServiceContainer ();
 			
-		bool exceptionThrown = false;
-		try {
-			sc.AddService (typeof (Svc), new Svc());
-		}
-		catch (ArgumentException ex){
-			exceptionThrown = true;
-		}
-		Assertion.AssertEquals ("GT1#03", exceptionThrown, true);
+		sc.AddService (typeof (Svc), new Svc());
+		Svc service1 = sc.GetService (typeof (Svc)) as Svc;
+		AssertNotNull ("GT1#01", service1);
+		AssertEquals ("GT1#02", service1, sc.GetService (typeof (Svc)));
 			
-		Assertion.AssertNull ("GT1#04", sc.GetService (typeof (NotInSvc)));
+		sc.AddService (typeof (Svc), new Svc());
 	}
 
 	[Test]
@@ -77,15 +74,15 @@ public class ServiceContainerTest : Assertion {
 	{
 		ServiceContainer sc = new ServiceContainer ();
 		sc.AddService(typeof(Svc), new ServiceCreatorCallback(Svc.ServiceCreator));
-		Assertion.AssertNull ("TSC#01", sc.GetService (typeof(NotInSvc)));
+		AssertNull ("TSC#01", sc.GetService (typeof(NotInSvc)));
 		
 		Svc service1 = sc.GetService (typeof(Svc)) as Svc;
-		Assertion.AssertNotNull ("TSC#02", service1);
-		Assertion.AssertEquals ("TSC#03", Svc.TotalObjectsCreatedByCallback, 1);
+		AssertNotNull ("TSC#02", service1);
+		AssertEquals ("TSC#03", Svc.TotalObjectsCreatedByCallback, 1);
 		
 		Svc service2 = sc.GetService (typeof(Svc)) as Svc;
-		Assertion.AssertEquals ("TSC#04", service2, service1);
-		Assertion.AssertEquals ("TSC#05", Svc.TotalObjectsCreatedByCallback, 1);
+		AssertEquals ("TSC#04", service2, service1);
+		AssertEquals ("TSC#05", Svc.TotalObjectsCreatedByCallback, 1);
 	}
 	
 	[Test]
@@ -97,7 +94,7 @@ public class ServiceContainerTest : Assertion {
 		scParent.AddService(typeof(Svc), new Svc());
 			
 		Svc service1 = sc.GetService (typeof(Svc)) as Svc;
-		Assertion.AssertNotNull ("TPS#01", service1);
+		AssertNotNull ("TPS#01", service1);
 		
 	}
 
