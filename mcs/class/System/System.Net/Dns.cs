@@ -63,6 +63,9 @@ namespace System.Net {
                 [MethodImplAttribute(MethodImplOptions.InternalCall)]
                 private extern static bool GetHostByAddr_internal(string addr, out string h_name, out string[] h_aliases, out string[] h_addr_list);
                 
+                [MethodImplAttribute(MethodImplOptions.InternalCall)]
+                private extern static bool GetHostName_internal(string addr);
+		
                 private static IPHostEntry hostent_to_IPHostEntry(string h_name, string[] h_aliases, string[] h_addrlist) {
                         IPHostEntry he = new IPHostEntry();
                         IPAddress[] addrlist = new IPAddress[h_addrlist.Length];
@@ -122,15 +125,16 @@ namespace System.Net {
                 /// <summary>
                 /// This method returns the host name associated with the local host.
                 /// </summary>
-		[MonoTODO]
                 public static string GetHostName() {
 
-			//
-			// This should really PInvoke into `gethostname', which is not the
-			// same thing as `127.0.0.1' which will be most likely localhost
-			//
-                        IPHostEntry h = GetHostByAddress("127.0.0.1");
-                        return h.HostName;
+                        string hostName = "";
+                        
+                        bool ret = GetHostName_internal(hostName);
+                        
+			if (ret == false)
+                                throw new SocketException(11001);
+
+                        return hostName;
                 }
                 
                 /// <summary>
