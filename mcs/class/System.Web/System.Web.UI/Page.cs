@@ -39,7 +39,6 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _viewState = true;
 	private bool _viewStateMac = false;
 	private string _errorPage;
-	private string _ID;
 	private bool _isValid;
 	private bool _smartNavigation = false;
 	private TraceContext _trace;
@@ -173,8 +172,8 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public override string ID
 	{
-		get { return _ID; }
-		set { _ID = value; }
+		get { return base.ID; }
+		set { base.ID = value; }
 	}
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

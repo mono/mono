@@ -1,3 +1,7 @@
+2003-12-04  Alon Gazit <along@mainsoft.com>
+	* Page.cs: Changed Page.ID so it will call Control.ID.
+	Fixed Bug 51682.	  
+
 2003-12-02  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Implemented registered array declarations. Patch by
