@@ -793,7 +793,7 @@ namespace Mono.Xml.Xsl
 	internal class XPathNavigatorNsm : XmlNamespaceManager {
 		XPathNavigator nsScope;
 		
-		public XPathNavigatorNsm (XPathNavigator n) : base () {
+		public XPathNavigatorNsm (XPathNavigator n) : base (n.NameTable) {
 			nsScope = n.Clone ();
 			if (nsScope.NodeType == XPathNodeType.Attribute)
 				nsScope.MoveToParent ();

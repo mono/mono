@@ -1,3 +1,7 @@
+2004-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Compiler.cs : Supply NameTable to base ctor() of XPathNavigatorNsm.
+
 2004-03-22 Atsushi Enomoto <atsushi@ximian.com>
 
 	* Compiler.cs, 
