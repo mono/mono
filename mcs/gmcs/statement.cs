@@ -52,7 +52,7 @@ namespace Mono.CSharp {
 			if (!ok)
 				return false;
 
-			if (warn)
+			if (warn && (RootContext.WarningLevel >= 2))
 				Report.Warning (162, loc, "Unreachable code detected");
 			return true;
 		}
@@ -1747,7 +1747,7 @@ namespace Mono.CSharp {
 		{
 			string name;
 			
-			if (variables != null){
+			if ((variables != null) && (RootContext.WarningLevel >= 3)) {
 				foreach (DictionaryEntry de in variables){
 					LocalInfo vi = (LocalInfo) de.Value;
 					
@@ -1760,7 +1760,7 @@ namespace Mono.CSharp {
 						Report.Warning (219, vi.Location, "The variable '{0}' is assigned but its value is never used", name);
 					} else {
 						Report.Warning (168, vi.Location, "The variable '{0}' is declared but never used", name);
-					} 
+					}
 				}
 			}
 		}

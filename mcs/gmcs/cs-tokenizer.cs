@@ -1,4 +1,3 @@
-// -*- coding: dos -*-
 //
 // cs-tokenizer.cs: The Tokenizer for the C# compiler
 //                  This also implements the preprocessor
@@ -800,7 +799,7 @@ namespace Mono.CSharp
 						break;
 
 					case 'l':
-						if (!is_unsigned){
+						if (!is_unsigned && (RootContext.WarningLevel >= 4)){
 							//
 							// if we have not seen anything in between
 							// report this error

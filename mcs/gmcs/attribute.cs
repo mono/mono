@@ -1416,7 +1416,8 @@ namespace Mono.CSharp {
 				Report.Warning (612, loc, "'{0}' is obsolete", member);
 				return;
 			}
-			Report.Warning (618, loc, "'{0}' is obsolete: '{1}'", member, oa.Message);
+			if (RootContext.WarningLevel >= 2)
+				Report.Warning (618, loc, "'{0}' is obsolete: '{1}'", member, oa.Message);
 		}
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)

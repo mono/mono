@@ -119,7 +119,7 @@ namespace Mono.CSharp {
  			{
  				base.DefineContainerMembers ();
  
- 				if (HasEquals && !HasGetHashCode) {
+ 				if ((RootContext.WarningLevel >= 3) && HasEquals && !HasGetHashCode) {
  					Report.Warning (659, container.Location, "'{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()", container.GetSignatureForError ());
  				}
  			}
@@ -1557,7 +1557,7 @@ namespace Mono.CSharp {
  				if (Parent.MemberCache != null) {
  					MemberInfo conflict_symbol = Parent.MemberCache.FindMemberWithSameName (Basename, false, TypeBuilder);
  					if (conflict_symbol == null) {
- 						if ((ModFlags & Modifiers.NEW) != 0)
+ 						if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0))
  							Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
  					} else {
  						if ((ModFlags & Modifiers.NEW) == 0) {
@@ -2226,7 +2226,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (events != null){
+				if ((events != null) && (RootContext.WarningLevel >= 3)) {
 					foreach (Event e in events){
 						if (e.status == 0)
 							Report.Warning (67, e.Location, "The event '{0}' is never used", e.GetSignatureForError ());
@@ -3142,7 +3142,7 @@ namespace Mono.CSharp {
 
 			// Is null for System.Object while compiling corlib and base interfaces
 			if (Parent.ParentContainer == null) {
-				if ((ModFlags & Modifiers.NEW) != 0) {
+				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
 					Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError (Parent));
 				}
 				return true;
@@ -3188,7 +3188,7 @@ namespace Mono.CSharp {
 
 			MemberInfo conflict_symbol = Parent.FindMemberWithSameName (Name, !(this is Property));
 			if (conflict_symbol == null) {
-				if ((ModFlags & Modifiers.NEW) != 0) {
+				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
 					Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError (Parent));
 				}
 				return true;
@@ -3310,7 +3310,11 @@ namespace Mono.CSharp {
 			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0 && Name != "Finalize") {
 				ModFlags |= Modifiers.NEW;
 				Report.SymbolRelatedToPreviousError (parent_method);
-				Report.Warning (!IsInterface && (parent_method.IsVirtual || parent_method.IsAbstract) ? 114 : 108, Location, GetSignatureForError (Parent));
+				if (!IsInterface && (parent_method.IsVirtual || parent_method.IsAbstract)) {
+					if (RootContext.WarningLevel >= 2)
+						Report.Warning (114, Location, "'{0}' hides inherited member '{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword", GetSignatureForError (Parent), parent_method);
+				} else
+					Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member `{1}'", GetSignatureForError (Parent), parent_method);
 			}
 
 			return ok;
@@ -3853,10 +3857,10 @@ namespace Mono.CSharp {
                                                 DuplicateEntryPoint (RootContext.EntryPoint, RootContext.EntryPointLocation);
                                                 DuplicateEntryPoint (MethodBuilder, Location);
                                         }
-                                } else                                 	
-                               	{
-									Report.Warning (28, Location, "'{0}' has the wrong signature to be an entry point", TypeManager.CSharpSignature(MethodBuilder) );
-								}
+                                } else {
+                                 	if (RootContext.WarningLevel >= 4)
+						Report.Warning (28, Location, "'{0}' has the wrong signature to be an entry point", TypeManager.CSharpSignature(MethodBuilder) );
+				}
 			}
 
 			return true;
@@ -4307,7 +4311,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0) {
+			if ((RootContext.WarningLevel >= 4) && ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0)) {
 				Report.Warning (628, Location, "'{0}': new protected member declared in sealed class", GetSignatureForError (Parent));
 			}
 			
@@ -5028,9 +5032,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-  			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0 &&
-			    (ModFlags & Modifiers.OVERRIDE) == 0 && Name != "Finalize") {
-  				Report.Warning (628, Location, "'{0}': new protected member declared in sealed class", GetSignatureForError (Parent));
+  			if ((RootContext.WarningLevel >= 4) &&
+			    ((Parent.ModFlags & Modifiers.SEALED) != 0) &&
+			    ((ModFlags & Modifiers.PROTECTED) != 0) &&
+			    ((ModFlags & Modifiers.OVERRIDE) == 0) && (Name != "Finalize")) {
+				Report.Warning (628, Location, "'{0}': new protected member declared in sealed class", GetSignatureForError (Parent));
 			}
 
 			return true;
@@ -5321,7 +5327,7 @@ namespace Mono.CSharp {
 
  			conflict_symbol = Parent.FindMemberWithSameName (Name, false);
  			if (conflict_symbol == null) {
- 				if ((ModFlags & Modifiers.NEW) != 0) {
+ 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
  					Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError (Parent));
  				}
  				return true;
