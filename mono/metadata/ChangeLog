@@ -1,4 +1,10 @@
 
+Mon Jun 17 20:23:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, class.c: minifix for code just c&p'ed.
+	* reflection.c: warning fix.
+	* object.h, loader.h, domain.c: load also StringBuilder.
+
 Mon Jun 17 17:29:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.h, marshal.c: some support code to handle complex marshaling.
