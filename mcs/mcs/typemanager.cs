@@ -1803,6 +1803,8 @@ public class TypeManager {
 		new_ifaces.CopyTo (ret, 0);
 		return ret;
 	}
+	
+	static PtrHashtable iface_cache = new PtrHashtable ();
 		
 	/// <summary>
 	///   This function returns the interfaces in the type `t'.  Works with
@@ -1810,6 +1812,11 @@ public class TypeManager {
 	/// </summary>
 	public static TypeExpr [] GetInterfaces (Type t)
 	{
+		
+		TypeExpr [] cached = iface_cache [t] as TypeExpr [];
+		if (cached != null)
+			return cached;
+		
 		//
 		// The reason for catching the Array case is that Reflection.Emit
 		// will not return a TypeBuilder for Array types of TypeBuilder types,
@@ -1839,15 +1846,28 @@ public class TypeManager {
 			parent_ifaces.CopyTo (result, 0);
 			type_ifaces.CopyTo (result, parent_count);
 
+			iface_cache [t] = result;
 			return result;
 		} else {
 			Type [] ifaces = t.GetInterfaces ();
+			if (ifaces.Length == 0)
+				return NoTypeExprs;
 
 			TypeExpr [] result = new TypeExpr [ifaces.Length];
 			for (int i = 0; i < ifaces.Length; i++)
 				result [i] = new TypeExpression (ifaces [i], Location.Null);
+			
+			iface_cache [t] = result;
 			return result;
 		}
+	}
+	
+	//
+	// gets the interfaces that are declared explicitly on t
+	//
+	public static TypeExpr [] GetExplicitInterfaces (TypeBuilder t)
+	{
+		return (TypeExpr []) builder_to_ifaces [t];
 	}
 	
 	/// <remarks>

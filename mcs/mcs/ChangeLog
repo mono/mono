@@ -1,5 +1,24 @@
 2004-01-01 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* pending.cs: MS's TypeBuilder.GetInterfaces ()
+	is broken, it will not return anything. So, we
+	have to use the information we have in mcs to
+	do the task.
+
+	* typemanager.cs: Add a cache for GetInterfaces,
+	since this will now be used more often (due to ^^)
+
+	(GetExplicitInterfaces) New method that gets the
+	declared, not effective, interfaces on a type
+	builder (eg, if you have interface IFoo, interface
+	IBar, Foo : IFoo, Bar : Foo, IBar, GetExplInt (Bar) ==
+	{ IBar }.
+
+	This patch makes MCS able to bootstrap itself on
+	Windows again.
+
+2004-01-01 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* expression.cs: Remove the Nop's that Miguel put
 	in by mistake.
 

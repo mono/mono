@@ -212,45 +212,39 @@ namespace Mono.CSharp {
 			// Notice that TypeBuilders will only return the interfaces that the Type
 			// is supposed to implement, not all the interfaces that the type implements.
 			//
-			// Completely broken.  Anyways, we take advantage of this, so we only register
-			// the implementations that we need, as they are those that are listed by the
-			// TypeBuilder.
+			// Even better -- on MS it returns an empty array, no matter what.
 			//
-			Type [] implementing_ifaces = type_builder.GetInterfaces ();
-			int count = implementing_ifaces.Length;
+			// Completely broken.  So we do it ourselves!
+			//
+			TypeExpr [] impl = TypeManager.GetExplicitInterfaces (type_builder);
 
-			if (implementing_ifaces.Length == 0)
+			if (impl == null || impl.Length == 0)
 				return EmptyMissingInterfacesInfo;
 
-			MissingInterfacesInfo [] missing_info = new MissingInterfacesInfo [count];
+			MissingInterfacesInfo [] ret = new MissingInterfacesInfo [impl.Length];
 
-			for (int i = 0; i < count; i++)
-				missing_info [i] = new MissingInterfacesInfo (implementing_ifaces [i]);
+			for (int i = 0; i < impl.Length; i++)
+				ret [i] = new MissingInterfacesInfo (impl [i].Type);
 			
+			// we really should not get here because Object doesnt implement any
+			// interfaces. But it could implement something internal, so we have
+			// to handle that case.
+			if (type_builder.BaseType == null)
+				return ret;
 			
-			//
-			// Now, we have to extract the interfaces implements by our parents, and
-			// remove them from the implementing_ifaces array.
-			//
-			for (Type t = type_builder.BaseType; t != null; t = t.BaseType){
-				Type [] base_ifaces = t.GetInterfaces ();
-					
-				foreach (Type base_iface in base_ifaces){
-					for (int i = 0; i < count; i++){
-						if (implementing_ifaces [i] == base_iface)
-							missing_info [i].Optional = true;
+			TypeExpr [] parent_impls = TypeManager.GetInterfaces (type_builder.BaseType);
+			
+			foreach (TypeExpr te in parent_impls) {
+				Type t = te.Type;
+				
+				for (int i = 0; i < ret.Length; i ++) {
+					if (t == ret [i].Type) {
+						ret [i].Optional = true;
+						break;
 					}
 				}
-
-				//
-				// When we reach a `Type' instead of `TypeBuilder', the GetInterfaces
-				// call would have returned all of the parent implementations, so we can end.
-				//
-				if (!(t is TypeBuilder))
-					break;
 			}
-
-			return missing_info;
+			return ret;
 		}
 		
 		//
