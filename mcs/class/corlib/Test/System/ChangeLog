@@ -1,8 +1,10 @@
-2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ApplicationIdentityTest.cs: Changed NullReferenceException for
 	ArgumentNullException (fixed in Dec CTP) and added test for cultures
 	in the application indentity.
+	* TimeZoneTest.cs: Ignore (don't fail) test if the current time zone
+	isn't part of the test suite.
 
 2005-01-10  Nick Drochak  <ndrochak@ieee.org>
 

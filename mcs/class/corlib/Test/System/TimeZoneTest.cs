@@ -141,6 +141,7 @@ public class TimeZoneTest : TestCase {
 				CET (t1);
 				break;
 			case "Eastern Standard Time":
+			case "EST":
 				EST (t1);
 				break;
 			case "Tokyo Standard Time":
@@ -150,7 +151,7 @@ public class TimeZoneTest : TestCase {
 				GMT (t1);
 				break;
 			default:
-				Fail ("Your time zone (" + t1.StandardName + ") isn't defined in the test case");
+				NUnit.Framework.Assert.Ignore ("Your time zone (" + t1.StandardName + ") isn't defined in the test case");
 				break;
 		}
         }
