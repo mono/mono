@@ -1,4 +1,9 @@
 
+Mon Feb 11 12:32:35 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: fix handling of multiple marshaleed strings.
+	* x86/x86-codegen.h: some code to patch branch displacements.
+
 Fri Feb 1 16:03:00 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c, ppc/tramp.c: implement mono_method_pointer_get ().
