@@ -112,9 +112,11 @@ namespace System.Collections {
 
 		// from Queue spec
 
+/*
 		public virtual bool IsReadOnly {
 			get { return false; }
 		}
+*/
 
 		public virtual void Clear () {
 			modCount++;
@@ -238,6 +240,7 @@ namespace System.Collections {
 				}
 			}
 			
+/*
 			public override bool IsReadOnly {
 				get { 
 					lock (queue) {
@@ -245,6 +248,7 @@ namespace System.Collections {
 					}
 				}
 			}
+*/
 
 			public override void Clear () {
 				lock (queue) {
