@@ -34,7 +34,7 @@ namespace Mono.ILASM {
 
                 public void Resolve (CodeGen code_gen)
                 {
-                        string sig = MethodDef.CreateSignature (name, new ArrayList (param));
+                        string sig = MethodDef.CreateSignature (name, param);
                         peapi_method = code_gen.ResolveMethod (sig);
                 }
 

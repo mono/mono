@@ -177,21 +177,25 @@ namespace Mono.ILASM {
                         // Int operations
                         //
 
-                        inst_table["ldarg.s"] = new ILToken (Token.INSTR_I, IntOp.ldarg_s);
-                        inst_table["ldarga.s"] = new ILToken (Token.INSTR_I, IntOp.ldarga_s);
-                        inst_table["starg.s"] = new ILToken (Token.INSTR_I, IntOp.starg_s);
-                        inst_table["ldloc.s"] = new ILToken (Token.INSTR_I, IntOp.ldloc_s);
-                        inst_table["ldloca.s"] = new ILToken (Token.INSTR_I, IntOp.ldloca_s);
-                        inst_table["stloc.s"] = new ILToken (Token.INSTR_I, IntOp.stloc_s);
+                        // param
+                        inst_table["ldarg"] = new ILToken (Token.INSTR_PARAM, IntOp.ldarg);
+                        inst_table["ldarga"] = new ILToken (Token.INSTR_PARAM, IntOp.ldarga);
+                        inst_table["starg"] = new ILToken (Token.INSTR_PARAM, IntOp.starg);
+                        inst_table["ldarg.s"] = new ILToken (Token.INSTR_PARAM, IntOp.ldarg_s);
+                        inst_table["ldarga.s"] = new ILToken (Token.INSTR_PARAM, IntOp.ldarga_s);
+                        inst_table["starg.s"] = new ILToken (Token.INSTR_PARAM, IntOp.starg_s);
+
+                        // local
+                        inst_table["ldloc"] = new ILToken (Token.INSTR_LOCAL, IntOp.ldloc);
+                        inst_table["ldloca"] = new ILToken (Token.INSTR_LOCAL, IntOp.ldloca);
+                        inst_table["stloc"] = new ILToken (Token.INSTR_LOCAL, IntOp.stloc);
+                        inst_table["ldloc.s"] = new ILToken (Token.INSTR_LOCAL, IntOp.ldloc_s);
+                        inst_table["ldloca.s"] = new ILToken (Token.INSTR_LOCAL, IntOp.ldloca_s);
+                        inst_table["stloc.s"] = new ILToken (Token.INSTR_LOCAL, IntOp.stloc_s);
+
                         inst_table["ldc.i4.s"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4_s);
                         inst_table["ldc.i4"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4);
                         inst_table["ldc.i8"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4);
-                        inst_table["ldarg"] = new ILToken (Token.INSTR_I, IntOp.ldarg);
-                        inst_table["ldarga"] = new ILToken (Token.INSTR_I, IntOp.ldarga);
-                        inst_table["starg"] = new ILToken (Token.INSTR_I, IntOp.starg);
-                        inst_table["ldloc"] = new ILToken (Token.INSTR_I, IntOp.ldloc);
-                        inst_table["ldloca"] = new ILToken (Token.INSTR_I, IntOp.ldloca);
-                        inst_table["stloc"] = new ILToken (Token.INSTR_I, IntOp.stloc);
                         inst_table["unaligned"] =  new ILToken (Token.INSTR_I, IntOp.unaligned);
 
                         //

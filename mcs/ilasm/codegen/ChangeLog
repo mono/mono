@@ -1,5 +1,19 @@
 2003-05-11 Jackson Harper <jackson@latitudegeo.com>
 
+	* TypeDef.cs: Add named param table and methods to get named param
+	positions. Add method to get named local variables slot
+	number. Make sure param_lists aren't null when defining them. Add
+	specialname and rtspecialname attributes if the method being
+	defined is named '.ctor' or '.cctor'. Add new method for creating
+	signatures using a list of typerefs.
+	* GlobalMethodRef.cs: Use new CreateSignature method that takes an
+	array of typerefs.
+	* MethodRef.cs: Use new CreateSignature method
+	* InstrTable.cs: Use INSTR_LOCAL and INSTR_PARAM tokens for
+	instructions that take local and param operands.
+		
+2003-05-11 Jackson Harper <jackson@latitudegeo.com>
+
 	* TypeDef.cs: Add size and packing information
 		
 2003-05-10 Jackson Harper <jackson@latitudegeo.com>

@@ -38,7 +38,7 @@ namespace Mono.ILASM {
                 public void Resolve (CodeGen code_gen)
                 {
                         TypeDef owner_def = code_gen.TypeManager[owner.FullName];
-                        string sig = MethodDef.CreateSignature (name, new ArrayList (param));
+                        string sig = MethodDef.CreateSignature (name, param);
                         peapi_method = owner_def.ResolveMethod (sig, code_gen);
                 }
 
