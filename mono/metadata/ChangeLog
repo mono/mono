@@ -1,5 +1,8 @@
 2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_native_wrapper): Fix a crash caused by
+	the last change.
+	
 	* marshal.c (mono_marshal_emit_native_wrapper): New helper function
 	extracted from mono_marshal_get_native_wrapper.
 
