@@ -1976,19 +1976,19 @@ namespace Mono.CSharp {
 				alias_value = null;
 
 			if (ec.ResolvingTypeTree){
-				if (alias_value != null){
-					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
-						return new TypeExpression (t, loc);
-				}
-
 				int errors = Report.Errors;
-				Type dt = ec.DeclSpace.FindType (loc, Name);
-				
+				Type dt = ds.FindType (loc, Name);
+
 				if (Report.Errors != errors)
 					return null;
 				
 				if (dt != null)
 					return new TypeExpression (dt, loc);
+
+				if (alias_value != null){
+					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
+						return new TypeExpression (t, loc);
+				}
 			}
 
 			//

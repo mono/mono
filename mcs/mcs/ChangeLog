@@ -1,5 +1,10 @@
 2004-01-21  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Lookup in the current
+	class and namespace before looking up aliases.  Fixes #52517.
+
+2004-01-21  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs (UsageVector.Merge): Allow variables being
 	assinged in a 'try'; fixes exception4.cs.
 
