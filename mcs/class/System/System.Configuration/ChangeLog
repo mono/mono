@@ -1,3 +1,8 @@
+2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ConfigurationSettings.cs: Added null check for fileCache in GetCOnfig.
+	  It can be null if the ConfigurationData instance failed to Load.
+
 2003-10-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: patch by Eric Lindvall (eric@5stops.com)
@@ -153,4 +158,3 @@
 2001-08-26  Christopher Podurgiel <cpodurgiel@msn.com>
 
 	* ConfigurationSettings.cs: No longer references the NameValueSectionHandler 	  directly.  Instead it uses System.Reflection to call the Create() method 		  for the appropriate SectionHandler as defined in the .config file.
-
