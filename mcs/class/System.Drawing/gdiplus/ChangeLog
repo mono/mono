@@ -1,3 +1,6 @@
+2003-11-02  Alexandre Pigolkine <pigolkine@gmx.de>
+	* bitmap.c 		convert 24/32 bpp images in LockBits
+	
 2003-10-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* bitmap.c (GdipCreateBitmapFromScan0): Do not allocate buffer

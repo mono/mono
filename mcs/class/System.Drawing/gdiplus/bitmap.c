@@ -72,7 +72,7 @@ void gdip_bitmap_fill_info_header (gdip_bitmap_ptr bitmap, PBITMAPINFOHEADER bmi
 	bmi->biWidth = bitmap->data.Width;
 	bmi->biHeight = -bitmap->data.Height;
 	bmi->biPlanes = 1;
-	bmi->biBitCount = bitmap->cairo_format == CAIRO_FORMAT_RGB24 ? 24 : 32;
+	bmi->biBitCount = 32;
 	bmi->biCompression = BI_RGB;
 	bmi->biSizeImage = bitmapLen; 
 }
@@ -91,6 +91,7 @@ void gdip_bitmap_save_bmp (const char *name, gdip_bitmap_ptr bitmap)
 	fp = fopen (name, "w+b");
 	fwrite (&bmfh, 1, sizeof (bmfh), fp);
 	gdip_bitmap_fill_info_header (bitmap, &bmi);
+	bmi.biHeight = -bmi.biHeight;
 	fwrite (&bmi, 1, sizeof (bmi), fp);
 	fwrite (bitmap->data.Scan0, 1, bitmapLen, fp);
 	fclose (fp);
@@ -214,6 +215,41 @@ Status GdipCreateBitmapFromGraphics (int width, int height, gdip_graphics_ptr gr
 	return Ok;
 }
 
+static int ChangePixelFormat (gdip_bitmap_ptr bitmap, GdipBitmapData *destData) 
+{
+	int 	sourcePixelIncrement = (bitmap->data.PixelFormat == Format32bppArgb) ? 1 : 0;
+	int 	destinationPixelIncrement = (destData->PixelFormat == Format32bppArgb) ? 1 : 0;
+	char * 	curSrc = bitmap->data.Scan0;
+	char * 	curDst = 0;
+	int 	i, j;
+	
+	//printf("ChangePixelFormat to %d. Src inc %d, Dest Inc %d\n", 
+	//	destData->PixelFormat, sourcePixelIncrement, destinationPixelIncrement);
+	if (bitmap->data.PixelFormat == destData->PixelFormat) return 0;
+	
+	if (destData->PixelFormat != Format32bppArgb && destData->PixelFormat != Format24bppRgb) {
+		fprintf (stderr, "This pixel format is not supported %d\n", destData->PixelFormat);
+		return 0;
+	}
+	destData->Width = bitmap->data.Width;
+	destData->Height = bitmap->data.Height;
+	destData->Stride = ((destData->PixelFormat == Format32bppArgb ) ? 4 : 3 ) * bitmap->data.Width;
+	destData->Scan0 = GdipAlloc (destData->Stride * bitmap->data.Height);
+	destData->Reserved = 1;
+	curSrc = bitmap->data.Scan0;
+	curDst = (char *)destData->Scan0;
+	for ( i = 0; i < bitmap->data.Height; i++) {
+		for( j = 0; j < bitmap->data.Width; j++) {
+			*curDst++ = *curSrc++;
+			*curDst++ = *curSrc++;
+			*curDst++ = *curSrc++;
+			curSrc += sourcePixelIncrement;
+			curDst += destinationPixelIncrement;
+		}
+	}
+	return 1;
+}
+
 Status GdipBitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int format, GdipBitmapData *result)
 {
 	if (bitmap == 0){
@@ -230,17 +266,28 @@ Status GdipBitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int form
 		return Ok;
 	}
 	
-	if (bitmap->data.PixelFormat != format){
-		printf ("Requesting format change, not supported yet %d %d\n", bitmap->data.PixelFormat, format);
-		return InvalidParameter;
+	if (bitmap->data.PixelFormat != format) {
+		GdipBitmapData 		convert;
+		convert.PixelFormat = format;
+		if (!ChangePixelFormat (bitmap, &convert)) {
+			printf ("Requesting format change, not supported yet %d %d\n", bitmap->data.PixelFormat, format);
+			return InvalidParameter;
+		}
+		result->Width = convert.Width; 
+		result->Height = convert.Height; 
+		result->Stride = convert.Stride; 
+		result->PixelFormat = convert.PixelFormat; 
+		result->Reserved = convert.Reserved; 
+		result->Scan0 = convert.Scan0;
 	}
-	
-	result->Width = bitmap->data.Width; 
-	result->Height = bitmap->data.Height; 
-	result->Stride = bitmap->data.Stride; 
-	result->PixelFormat = bitmap->data.PixelFormat; 
-	result->Reserved = bitmap->data.Reserved; 
-	result->Scan0 = bitmap->data.Scan0;
+	else {
+		result->Width = bitmap->data.Width; 
+		result->Height = bitmap->data.Height; 
+		result->Stride = bitmap->data.Stride; 
+		result->PixelFormat = bitmap->data.PixelFormat; 
+		result->Reserved = bitmap->data.Reserved; 
+		result->Scan0 = bitmap->data.Scan0;
+	}
 
 	return Ok;
 }
