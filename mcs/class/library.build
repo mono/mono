@@ -10,9 +10,7 @@
 	<target name="windows">
 		<nant basedir="corlib" target="windows"/>
 		<nant basedir="System" target="build"/>
-		<!-- Doesn't compile, will fix later -Sean
-			<nant basedir="System.Data" target="build"/>
-		-->
+		<nant basedir="System.Data" target="build"/>
 		<nant basedir="System.Drawing" target="build"/>
 		<nant basedir="System.Web" target="build"/>
 		<nant basedir="System.XML" target="build"/>
@@ -24,9 +22,7 @@
 		<nant basedir="System.Drawing" target="build"/>
 		<nant basedir="System.Web" target="build"/>
 		<nant basedir="System.XML" target="build"/>
-		<!-- Doesn't compile, will fix later -Sean
-			<nant basedir="System.Data" target="build"/>
-		-->
+		<nant basedir="System.Data" target="build"/>
 	</target>
 
 	<target name="test">
@@ -44,8 +40,6 @@
 		<nant basedir="corlib" target="clean"/>
 		<nant basedir="System" target="clean"/>
 		<nant basedir="System.XML" target="clean"/>
-		<!-- Doesn't compile, will fix later -Sean
-			<nant basedir="System.Data" target="clean"/>
-		-->
+		<nant basedir="System.Data" target="clean"/>
 	</target>
 </project>
