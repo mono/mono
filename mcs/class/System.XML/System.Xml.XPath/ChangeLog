@@ -1,5 +1,11 @@
 2003-07-27  Piers Haken	<piersh@friskit.com>
 
+	* Expression.cs:
+	* Tokenizer.cs:
+		don't pass null to XmlQualifiedName constructor
+
+2003-07-27  Piers Haken	<piersh@friskit.com>
+
 	* DefaultContext.cs: allow 'concat' to take arbitrary-typed arguments (spec?)
 
 2003-07-27  Piers Haken	<piersh@friskit.com>

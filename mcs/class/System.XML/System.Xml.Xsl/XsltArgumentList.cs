@@ -85,8 +85,6 @@ namespace System.Xml.Xsl
 		{
 			if (name == null)
 				throw (new ArgumentException ("The parameter name is a null reference."));
-			if (namespaceUri == null)
-				throw (new ArgumentException ("The namespaceUri is a null reference."));
 
 			XmlQualifiedName qName = new XmlQualifiedName (name, namespaceUri);
 			return parameters [qName];
@@ -115,13 +113,13 @@ namespace System.Xml.Xsl
 			if (parameter is XPathNavigator)	return parameter;
 			if (parameter is XPathNodeIterator)	return parameter;
 
-			if (parameter is Int16)			return (double) parameter;
-			if (parameter is UInt16)		return (double) parameter;
-			if (parameter is Int32)			return (double) parameter;
-			if (parameter is Int64)			return (double) parameter;
-			if (parameter is UInt64)		return (double) parameter;
-			if (parameter is Single)		return (double) parameter;
-			if (parameter is decimal)		return (double) parameter;
+			if (parameter is Int16)			return (double) (Int16) parameter;
+			if (parameter is UInt16)		return (double) (UInt16) parameter;
+			if (parameter is Int32)			return (double) (Int32) parameter;
+			if (parameter is Int64)			return (double) (Int64) parameter;
+			if (parameter is UInt64)		return (double) (UInt64) parameter;
+			if (parameter is Single)		return (double) (Single) parameter;
+			if (parameter is decimal)		return (double) (decimal) parameter;
 
 			return parameter.ToString ();
 		}

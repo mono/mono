@@ -1,3 +1,9 @@
+2003-07-27  Piers Haken	<piersh@friskit.com>
+
+	* XsltArgumentList.cs:
+		fix type conversions in ValidateParam
+		allow creating params with null namespaceUri
+
 2003-07-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslTransform.cs : fixed WriteTree() and WriteCurrentNode() to follow

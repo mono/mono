@@ -28,14 +28,14 @@ namespace System.Xml
 		public XmlQualifiedName (string name, string ns)
 			: base ()
 		{
-			this.name = name;
-			this.ns = ns;
+			this.name = (name == null) ? "" : name;
+			this.ns = (ns == null) ? "" : ns;
 		}
 
 		// Fields
 		public static readonly XmlQualifiedName Empty = new XmlQualifiedName ();		
-		private string name;
-		private string ns;
+		private readonly string name;
+		private readonly string ns;
 		
 		// Properties
 		public bool IsEmpty
@@ -72,15 +72,12 @@ namespace System.Xml
 
 		public override int GetHashCode () 
 		{ 
-			return ns != null ?
-				unchecked (name.GetHashCode () + ns.GetHashCode ()) : name.GetHashCode ();
+			return unchecked (name.GetHashCode () + ns.GetHashCode ());
 		}
 
 		public override string ToString ()
 		{
-			if (ns == null)
-				return name;
-			else if (ns == string.Empty)
+			if (ns == string.Empty)
 				return name;
 			else
 			 	return ns + ":" + name;
@@ -111,10 +108,7 @@ namespace System.Xml
 
 		public static bool operator != (XmlQualifiedName a, XmlQualifiedName b)
 		{
-			if (a == b)
-				return false;
-			else
-				return true;
+			return !(a == b);
 		}
 	}
 }

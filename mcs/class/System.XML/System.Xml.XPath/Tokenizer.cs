@@ -185,7 +185,7 @@ namespace System.Xml.XPath
 				if (ch == '*')
 				{
 					GetChar ();
-					m_objToken = new XmlQualifiedName (null, strToken);
+					m_objToken = new XmlQualifiedName ("", strToken);
 					return Token.QName;
 				}
 				string strToken2 = ReadIdentifier ();

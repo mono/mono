@@ -995,7 +995,7 @@ namespace System.Xml.XPath
 			if (nav.NodeType != _axis.NodeType)
 				return false;
 
-			if (_name.Name != null && _name.Name != "")
+			if (_name.Name != "")
 			{
 				// test the local part of the name first
 				if (_name.Name != nav.LocalName)
@@ -1004,7 +1004,7 @@ namespace System.Xml.XPath
 
 			// get the prefix for the given name
 			String strURI1 = "";
-			if (_name.Namespace != null && nsm != null)
+			if (nsm != null && _name.Namespace != "")
 			{
 				strURI1 = nsm.LookupNamespace (_name.Namespace);	// TODO: check to see if this returns null or ""
 				if (strURI1 == null)
@@ -1228,7 +1228,7 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			//special-case the 'last' and 'position' functions
-			if (_args.Count == 0 && _name.Namespace == null)
+			if (_args.Count == 0 && _name.Namespace == "")
 			{
 				if (_name.Name == "last")
 				{
