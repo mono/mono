@@ -1,3 +1,7 @@
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* list: Added new files from System.Web.Services.Protocols
+		and System.Web.Services.Configuration
+
 2002-07-19  Tim Coleman <tim@timcoleman.com>
 	* list: Added
 
