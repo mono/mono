@@ -52,6 +52,7 @@ endif
 
 ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
 NO_SIGN_ASSEMBLY = yes
+NO_INSTALL = yes
 all-local: echo-warning
 .PHONY: echo-warning
 

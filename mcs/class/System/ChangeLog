@@ -1,3 +1,7 @@
+2005-03-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (NO_INSTALL): Define during the first pass.
+
 2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.dll.sources: Added OrderedDictionary.cs.
