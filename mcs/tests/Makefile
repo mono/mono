@@ -131,7 +131,7 @@ test-unsafe-compiler-jit:
 #
 # Tests that require separate compilation
 #
-multi: multi-1 multi-2
+multi: multi-1 multi-2 multi-3
 	echo Multi-assembly test passes
 
 multi-1:
@@ -148,3 +148,8 @@ multi-2:
 	$(INTERNAL_MCS) /target:library pp.cs
 	$(INTERNAL_MCS) pu.cs -r:pi.dll -r:pp.dll
 	$(INTERNAL_MCS) pu.cs -r:pp.dll -r:pi.dll
+
+multi-3:
+	$(INTERNAL_MCS) /target:library conv-lib.cs
+	$(INTERNAL_MCS) /r:conv-lib.dll conv-main.cs
+	$(TEST_RUNTIME) conv-main.exe

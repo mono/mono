@@ -1,3 +1,11 @@
+2003-07-29  Ravi Pratap  <ravi@ximian.com>
+
+	* conv-lib.cs: New Multi stage compilation test for bug #47043.
+
+	* conv-main.cs: Main for the above.
+
+	* Makefile: Update.
+
 2003-07-28  Ravi Pratap  <ravi@ximian.com>
 
 	* test-189.cs: Reuse vacant slot. Test for bugs #43367 and
