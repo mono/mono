@@ -23,7 +23,6 @@
 			Size maximumSize;
 			Size minimumSize;
 			double opacity;
-			bool   topLevel;
 			bool   autoScale;
 
 			private bool controlBox;
@@ -79,11 +78,13 @@
 		SizeGripStyle sizeGripStyle;
 		FormStartPosition formStartPosition;
 		FormWindowState   formWindowState;
+		IButtonControl    acceptButton;
+		IButtonControl    cancelButton;
 
 		public Form () : base ()
     		{
 			opacity = 1.00;
-			topLevel = true;
+			TopLevel = true;
 			modal    = false;
 			dialogResult = DialogResult.None;
 			autoScale = true;
@@ -101,6 +102,8 @@
 			formStartPosition = FormStartPosition.WindowsDefaultLocation;
 			visible = false;
 			formWindowState = FormWindowState.Normal;
+			acceptButton = null;
+			cancelButton = null;
     		}
     		
     		static Form ()
@@ -112,12 +115,10 @@
     		//
     		[MonoTODO]
     		public IButtonControl AcceptButton {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-					//FIXME:
-				}
+    			get { return acceptButton; }
+    			set { 
+				acceptButton = value;
+			}
     		}
     
     		[MonoTODO]
@@ -173,12 +174,10 @@
     
     		[MonoTODO]
     		public IButtonControl CancelButton {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-					//FIXME:
-				}
+    			get { return cancelButton;  }
+    			set { 
+				cancelButton = value;
+			}
     		}
     
     		[MonoTODO]
@@ -543,8 +542,8 @@
     
 		[MonoTODO]
 		public bool TopLevel {
-    			get { return topLevel;  }
-    			set { topLevel = value; }
+    			get { return GetTopLevel ( );  }
+    			set { SetTopLevel ( value );   }
     		}
     
     		public bool TopMost {
@@ -1031,6 +1030,14 @@
     
     		protected override bool ProcessDialogKey (Keys keyData)
     		{
+			if ( keyData == Keys.Enter && AcceptButton != null ) {
+				AcceptButton.PerformClick ( );
+				return true;
+			}
+			if ( keyData == Keys.Escape && CancelButton != null ) {
+				CancelButton.PerformClick ( );
+				return true;
+			}
     			return base.ProcessDialogKey (keyData);
     		}
     

@@ -100,6 +100,7 @@
 		private static readonly int RECREATING_HANDLE= BitVector32.CreateMask( DISPOSED );
 		private static readonly int CREATED          = BitVector32.CreateMask( RECREATING_HANDLE );
 		private static readonly int DISPOSING        = BitVector32.CreateMask( CREATED );
+		private static readonly int TOPLEVEL         = BitVector32.CreateMask( DISPOSING );
 
 			object tag;
 			protected bool mouseIsInside_;
@@ -1363,7 +1364,7 @@
     		[MonoTODO]
     		protected bool GetTopLevel () 
     		{
-    			throw new NotImplementedException ();
+    			return statuses [ TOPLEVEL ];
     		}
     		
     		public void Hide ()
@@ -2426,7 +2427,7 @@
 			}
     		
     		protected void SetTopLevel (bool value)
-    		{
+    		{/*
     			if (value)
     				// FIXME: verify on whether this is supposed
     				// to activate/deactive the window
@@ -2437,6 +2438,11 @@
     				// FIXME: this does not make sense but
     				// the docs say the window is hidden
     				Win32.ShowWindow (Handle, ShowWindowStyles.SW_HIDE);
+		*/
+			if ( GetTopLevel ( ) != value && Parent != null )
+				throw new ArgumentException ( );
+
+			statuses [ TOPLEVEL ] = value;
     		}
     		
     		[MonoTODO]

@@ -283,13 +283,20 @@ namespace System.Windows.Forms {
 			MSG msg = new MSG();
 			while( Win32.GetMessageA( ref msg, 0, 0, 0 ) != 0 ) {
 
-				if ( mainForm.ExitModalLoop ) {
+				if ( mainForm.ExitModalLoop )
 					break;
-				}
 
-				if( Win32.IsDialogMessage ( mainForm.Handle, ref msg ) )
-					continue;
-				
+				Message message = new Message ();
+				message.HWnd = msg.hwnd;
+				message.Msg = msg.message;
+				message.WParam = msg.wParam;
+				message.LParam = msg.lParam;
+
+				Control receiver = Control.FromChildHandle ( message.HWnd );
+				if ( receiver != null )
+					if ( receiver.PreProcessMessage ( ref message ) )
+						continue;
+
 				Win32.TranslateMessage (ref msg);
 				Win32.DispatchMessageA (ref msg);
 			}

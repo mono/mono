@@ -1,4 +1,9 @@
 2003-06-30 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Form.cs : TopLevel, AcceptButton, CancelButton
+	* Application.cs : allow keyboard messages in modal forms
+	* Control.cs : basic impl. of GetTopLevel, SetTopLevel
+
+2003-06-30 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Cursors.cs : VSplit, HSplit cursors
 	* Form.cs: WindowState ( not finished ), changes to Form.Close
 	* Splitter.cs, Toolbar.cs : started implementation
