@@ -40,6 +40,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
 using System.Security.Permissions;
 
@@ -109,6 +110,7 @@ namespace System.Reflection.Emit {
 		bool created;
 		bool is_module_only;
 		private Mono.Security.StrongName sn;
+		PermissionSet required_perm, optional_perm, refused_perm;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -194,6 +196,20 @@ namespace System.Reflection.Emit {
 			resources [p].name = name;
 			resources [p].filename = fileName;
 			resources [p].attrs = attribute;
+		}
+
+		/// <summary>
+		/// Don't change the method name and parameters order. It is used by mcs 
+		/// </summary>
+		[MonoTODO ("Missing support in runtime for parameter applying")]
+		internal void AddPermissionRequests (PermissionSet required, PermissionSet optional, PermissionSet refused)
+		{
+			if (created)
+				throw new InvalidOperationException ("Assembly was already saved.");
+
+			required_perm = required;
+			optional_perm = optional;
+			refused_perm = refused;
 		}
 
 		internal void EmbedResourceFile (string name, string fileName)

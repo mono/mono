@@ -1,3 +1,8 @@
+2004-08-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* AssemblyBuilder.cs: Added AddPermissionRequests method
+	used be mcs for SecurityPermissionAttribute handling.
+
 2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* EnumBuilder.cs: Call setup_enum_type () in the constructor. Fixes
