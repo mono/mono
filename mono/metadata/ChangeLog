@@ -1,3 +1,9 @@
+
+Tue Dec 9 15:36:18 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c, icall.c, marshal.c, object.c: ignore fields
+	marked as deleted.
+
 2003-12-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* verify.c (check_corlib): Handle the case when the version field is 
