@@ -69,7 +69,9 @@ namespace System.Windows.Forms {
 		private HScrollBar hbar;
 		private bool hbar_added;
 		private int hbar_offset;
-
+		private SizeGrip grip;
+		private bool grip_added;
+		
 		private int update_stack;
 
 		private TreeViewEventHandler on_after_check;
@@ -347,6 +349,19 @@ namespace System.Windows.Forms {
 			set { total_node_count = value; }
 		}
 
+		// TODO: we shouldn't have to compute this on the fly
+		private Rectangle ViewportRectangle {
+			get {
+				Rectangle res = ClientRectangle;
+
+				if (vbar != null && vbar.Visible)
+					res.Width -= vbar.Width;
+				if (hbar != null && hbar.Visible)
+					res.Height -= hbar.Height;
+				return res;
+			}
+		}
+
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
@@ -580,6 +595,7 @@ namespace System.Windows.Forms {
 				return;
 
 			Draw (pe.ClipRectangle);
+			
 			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 		
@@ -635,15 +651,16 @@ namespace System.Windows.Forms {
 				skipped_nodes = 0;
 			}
 
-			if (add_hscroll && add_vscroll) {
-				Rectangle grip = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
-				DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorButtonFace), grip);
-				ControlPaint.DrawSizeGrip (DeviceContext, ThemeEngine.Current.ColorButtonFace, grip);
-			}
+			if (add_hscroll && add_vscroll)
+				AddSizeGrip ();
+			else if (grip != null)
+				grip.Visible = false;
 
+			/*
 			Console.WriteLine ("treeview drawing time:  " + (DateTime.Now - start));
 			Console.WriteLine ("node count:		    " + node_count);
 			Console.WriteLine ("total node count:	    " + total_node_count);
+			*/
 		}
 
 		private void DumpNode (TreeNode node, ref int depth)
@@ -756,8 +773,9 @@ namespace System.Windows.Forms {
 			if (visible)
 				visible_node_count++;
 
+			
 			// The thing is totally out of the clipping rectangle
-			if (clip.Top > y || clip.Bottom < y)
+			if (clip.Top > y + ItemHeight || clip.Bottom < y)
 				visible = false;
 
 			int _n_count = node.nodes.Count;
@@ -875,6 +893,22 @@ namespace System.Windows.Forms {
 			hbar.Visible = true;
 		}
 
+		private void AddSizeGrip ()
+		{
+			if (grip == null)
+				grip = new SizeGrip ();
+
+			grip.Bounds = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
+
+			if (!grip_added) {
+				grip.BackColor = ThemeEngine.Current.ColorButtonFace;
+				Controls.Add (grip);
+				grip_added = true;
+			}
+
+			grip.Visible = true;
+		}
+
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
 			if (max_node_width > ClientRectangle.Width) {
@@ -891,18 +925,27 @@ namespace System.Windows.Forms {
 				hbar.Top = Bottom - hbar.Height;
 				hbar.Width = Width;
 			}
+
+			if (grip != null) {
+				grip.Top = Bottom - grip.Height;
+			}
 		}
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)
 		{
+			int old_skip = skipped_nodes;
 			skipped_nodes = vbar.Value;
-			Refresh ();
+
+			int y_move = (old_skip - skipped_nodes) * ItemHeight;
+			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, true);
 		}
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
 		{
+			int old_offset = hbar_offset;
 			hbar_offset = hbar.Value;
-			Refresh ();
+
+			XplatUI.ScrollWindow (Handle, ViewportRectangle, old_offset - hbar_offset, 0, true);
 		}
 
 		private int GetOpenNodeCount ()

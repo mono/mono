@@ -1,8 +1,11 @@
 2005-01-10  Jackson Harper  <jackson@ximian.com>
 
-	* TreeView.cs: Implement fast scrolling. Now only the newly
+	* TreeView.cs:
+	- Implement fast scrolling. Now only the newly
 	exposed nodes are drawn and the old image is moved using the
 	XplatUI::ScrollWindow method.
+	- Factor in height of nodes when calculating whether or not the
+	node is in the clipping rect.
 
 2005-01-10  Jackson Harper  <jackson@ximian.com>
 
