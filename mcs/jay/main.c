@@ -200,6 +200,10 @@ char *argv[];
 		vflag = 1;
 		break;
 
+            case 'c':
+		csharp = 1;
+		break;
+
 	    default:
 		usage();
 	    }

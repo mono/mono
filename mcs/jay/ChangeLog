@@ -1,0 +1,5 @@
+2001-07-14  Sean MacIsaac  <macisaac@ximian.com>
+
+	* main.c: fixed error in command line flag -c if it was not first
+	option.
+

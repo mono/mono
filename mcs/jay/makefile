@@ -1,10 +1,13 @@
-all	= jay.$(OSTYPE)
+all	= jay
 c	= closure.c error.c lalr.c lr0.c main.c mkpar.c output.c reader.c \
 	  symtab.c verbose.c warshall.c
 
 CFLAGS=#-g
 
-jay.$(OSTYPE):	$(c:.c=.o)	; $(CC) -o $@ $(CFLAGS) $(c:.c=.o)
+jay:	$(c:.c=.o)	; $(CC) -o $@ $(CFLAGS) $(c:.c=.o)
 
 depend:	*.[ch]		; $(CC) -MM $(CFLAGS) $c > $@
 -include depend
+
+clean:
+	rm -f jay *.o

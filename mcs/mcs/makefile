@@ -1,4 +1,5 @@
 CSC=//c/winnt/microsoft.net/framework/v1.0.2914/csc.exe
+CSCFLAGS=/nologo /debug+ /debug:full 
 
 VERSION=0.13
 
@@ -27,13 +28,15 @@ COMPILER_SOURCES = \
 
 TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 
-all:
-	-rm -f compiler.exe
-	$(CSC) /target:exe /r:System.dll /debug+ /debug:full /out:compiler.exe $(COMPILER_SOURCES)
+all: cs-parser.cs
+	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:compiler.exe $(COMPILER_SOURCES)
+
+windows: all
+
+unix: all
 
 opt:
-	-rm compiler.exe
-	$(CSC) /optimize+ /target:exe /r:System.dll /debug+ /debug:full /out:compiler.exe $(COMPILER_SOURCES)
+	$(CSC) /optimize+ /target:exe /r:System.dll /out:compiler.exe $(COMPILER_SOURCES)
 
 old: test-tokenizer.exe
 test-tokenizer.exe: $(TEST_TOKENIZER_SOURCES)
@@ -43,14 +46,8 @@ bison:
 	perl -pe 's/\015//' < cs-parser.jay > x.y
 	bison --debug --verbose x.y
 
-parser:
-	../jay/jay.$(OSTYPE) -ctv < ../jay/skeleton.cs cs-parser.jay > cs-parser.cs
-
-migparser:
-	jay -tv cs-parser.jay > cs-parser.cs
-
-parsernoline:
-	jay -tv cs-parser.jay | grep -v '^#line' > cs-parser.cs
+cs-parser.cs: cs-parser.jay
+	../jay/jay -ctv < ../jay/skeleton.cs cs-parser.jay > cs-parser.cs
 
 syncunix:
 	rsync -v -a /quack/Barra ~/Barra
@@ -86,3 +83,6 @@ try:
 	for i in $(COMPILER_SOURCES); do \
 		./compiler -t tree $$i > try-dir/$$i; \
 	done
+
+clean:
+	rm -f compiler.exe cs-parser.cs y.output compiler.pdb *~ .*~
