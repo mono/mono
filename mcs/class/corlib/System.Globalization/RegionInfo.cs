@@ -160,486 +160,725 @@ namespace System.Globalization {
 
 		public RegionInfo (string name) {
 			switch (name) {
-			case "AF": // AFGHANISTAN
+			case "AF": // Afghanistan
 				NLS_id = 004;
-			case "AL": // ALBANIA
+				break;
+			case "AL": // Albania
 				NLS_id = 008;
-			case "DZ": // ALGERIA
+				break;
+			case "DZ": // Algeria
 				NLS_id = 012;
-			case "AS": // AMERICAN SAMOA
+				break;
+			case "AS": // American Samoa
 				NLS_id = 016;
-			case "AD": // ANDORRA
+				break;
+			case "AD": // Andorra
 				NLS_id = 020;
-			case "AO": // ANGOLA
+				break;
+			case "AO": // Angola
 				NLS_id = 024;
-			case "AI": // ANGUILLA
+				break;
+			case "AI": // Anguilla
 				NLS_id = 660;
-			case "AQ": // ANTARCTICA
+				break;
+			case "AQ": // Antarctica
 				NLS_id = 010;
-			case "AG": // ANTIGUA AND BARBUDA
+				break;
+			case "AG": // Antigua And Barbuda
 				NLS_id = 028;
-			case "AR": // ARGENTINA
+				break;
+			case "AR": // Argentina
 				NLS_id = 032;
-			case "AM": // ARMENIA
+				break;
+			case "AM": // Armenia
 				NLS_id = 051;
-			case "AW": // ARUBA
+				break;
+			case "AW": // Aruba
 				NLS_id = 533;
-			case "AU": // AUSTRALIA
+				break;
+			case "AU": // Australia
 				NLS_id = 036;
-			case "AT": // AUSTRIA
+				break;
+			case "AT": // Austria
 				NLS_id = 040;
-			case "AZ": // AZERBAIJAN
+				break;
+			case "AZ": // Azerbaijan
 				NLS_id = 031;
-			case "BS": // BAHAMAS
+				break;
+			case "BS": // Bahamas
 				NLS_id = 044;
-			case "BH": // BAHRAIN
+				break;
+			case "BH": // Bahrain
 				NLS_id = 048;
-			case "BD": // BANGLADESH
+				break;
+			case "BD": // Bangladesh
 				NLS_id = 050;
-			case "BB": // BARBADOS
+				break;
+			case "BB": // Barbados
 				NLS_id = 052;
-			case "BY": // BELARUS
+				break;
+			case "BY": // Belarus
 				NLS_id = 112;
-			case "BE": // BELGIUM
+				break;
+			case "BE": // Belgium
 				NLS_id = 056;
-			case "BZ": // BELIZE
+				break;
+			case "BZ": // Belize
 				NLS_id = 084;
-			case "BJ": // BENIN
+				break;
+			case "BJ": // Benin
 				NLS_id = 204;
-			case "BM": // BERMUDA
+				break;
+			case "BM": // Bermuda
 				NLS_id = 060;
-			case "BT": // BHUTAN
+				break;
+			case "BT": // Bhutan
 				NLS_id = 064;
-			case "BO": // BOLIVIA
+				break;
+			case "BO": // Bolivia
 				NLS_id = 068;
-			case "BA": // BOSNIA AND HERZEGOWINA
+				break;
+			case "BA": // Bosnia And Herzegowina
 				NLS_id = 070;
-			case "BW": // BOTSWANA
+				break;
+			case "BW": // Botswana
 				NLS_id = 072;
-			case "BV": // BOUVET ISLAND
+				break;
+			case "BV": // Bouvet Island
 				NLS_id = 074;
-			case "BR": // BRAZIL
+				break;
+			case "BR": // Brazil
 				NLS_id = 076;
-			case "IO": // BRITISH INDIAN OCEAN TERRITORY
+				break;
+			case "IO": // British Indian Ocean Territory
 				NLS_id = 086;
-			case "BN": // BRUNEI DARUSSALAM
+				break;
+			case "BN": // Brunei Darussalam
 				NLS_id = 096;
-			case "BG": // BULGARIA
+				break;
+			case "BG": // Bulgaria
 				NLS_id = 100;
-			case "BF": // BURKINA FASO
+				break;
+			case "BF": // Burkina Faso
 				NLS_id = 854;
-			case "BI": // BURUNDI
+				break;
+			case "BI": // Burundi
 				NLS_id = 108;
-			case "KH": // CAMBODIA
+				break;
+			case "KH": // Cambodia
 				NLS_id = 116;
-			case "CM": // CAMEROON
+				break;
+			case "CM": // Cameroon
 				NLS_id = 120;
-			case "CA": // CANADA
+				break;
+			case "CA": // Canada
 				NLS_id = 124;
-			case "CV": // CAPE VERDE
+				break;
+			case "CV": // Cape Verde
 				NLS_id = 132;
-			case "KY": // CAYMAN ISLANDS
+				break;
+			case "KY": // Cayman Islands
 				NLS_id = 136;
-			case "CF": // CENTRAL AFRICAN REPUBLIC
+				break;
+			case "CF": // Central African Republic
 				NLS_id = 140;
-			case "TD": // CHAD
+				break;
+			case "TD": // Chad
 				NLS_id = 148;
-			case "CL": // CHILE
+				break;
+			case "CL": // Chile
 				NLS_id = 152;
-			case "CN": // CHINA
+				break;
+			case "CN": // China
 				NLS_id = 156;
-			case "CX": // CHRISTMAS ISLAND
+				break;
+			case "CX": // Christmas Island
 				NLS_id = 162;
-			case "CC": // COCOS (KEELING) ISLANDS
+				break;
+			case "CC": // Cocos (Keeling) Islands
 				NLS_id = 166;
-			case "CO": // COLOMBIA
+				break;
+			case "CO": // Colombia
 				NLS_id = 170;
-			case "KM": // COMOROS
+				break;
+			case "KM": // Comoros
 				NLS_id = 174;
-			case "CG": // CONGO
+				break;
+			case "CG": // Congo
 				NLS_id = 178;
-			case "CK": // COOK ISLANDS
+				break;
+			case "CK": // Cook Islands
 				NLS_id = 184;
-			case "CR": // COSTA RICA
+				break;
+			case "CR": // Costa Rica
 				NLS_id = 188;
-			case "CI": // COTE D'IVOIRE
+				break;
+			case "CI": // Cote D'Ivoire
 				NLS_id = 384;
-			case "HR": // CROATIA (local name: Hrvatska)
+				break;
+			case "HR": // Croatia (Local Name: Hrvatska)
 				NLS_id = 191;
-			case "CU": // CUBA
+				break;
+			case "CU": // Cuba
 				NLS_id = 192;
-			case "CY": // CYPRUS
+				break;
+			case "CY": // Cyprus
 				NLS_id = 196;
-			case "CZ": // CZECH REPUBLIC
+				break;
+			case "CZ": // Czech Republic
 				NLS_id = 203;
-			case "DK": // DENMARK
+				break;
+			case "DK": // Denmark
 				NLS_id = 208;
-			case "DJ": // DJIBOUTI
+				break;
+			case "DJ": // Djibouti
 				NLS_id = 262;
-			case "DM": // DOMINICA
+				break;
+			case "DM": // Dominica
 				NLS_id = 212;
-			case "DO": // DOMINICAN REPUBLIC
+				break;
+			case "DO": // Dominican Republic
 				NLS_id = 214;
-			case "TP": // EAST TIMOR
+				break;
+			case "TP": // East Timor
 				NLS_id = 626;
-			case "EC": // ECUADOR
+				break;
+			case "EC": // Ecuador
 				NLS_id = 218;
-			case "EG": // EGYPT
+				break;
+			case "EG": // Egypt
 				NLS_id = 818;
-			case "SV": // EL SALVADOR
+				break;
+			case "SV": // El Salvador
 				NLS_id = 222;
-			case "GQ": // EQUATORIAL GUINEA
+				break;
+			case "GQ": // Equatorial Guinea
 				NLS_id = 226;
-			case "ER": // ERITREA
+				break;
+			case "ER": // Eritrea
 				NLS_id = 232;
-			case "EE": // ESTONIA
+				break;
+			case "EE": // Estonia
 				NLS_id = 233;
-			case "ET": // ETHIOPIA
+				break;
+			case "ET": // Ethiopia
 				NLS_id = 231;
-			case "FK": // FALKLAND ISLANDS (MALVINAS)
+				break;
+			case "FK": // Falkland Islands (Malvinas)
 				NLS_id = 238;
-			case "FO": // FAROE ISLANDS
+				break;
+			case "FO": // Faroe Islands
 				NLS_id = 234;
-			case "FJ": // FIJI
+				break;
+			case "FJ": // Fiji
 				NLS_id = 242;
-			case "FI": // FINLAND
+				break;
+			case "FI": // Finland
 				NLS_id = 246;
-			case "FR": // FRANCE
+				break;
+			case "FR": // France
 				NLS_id = 250;
-			case "FX": // FRANCE, METROPOLITAN
+				break;
+			case "FX": // France, Metropolitan
 				NLS_id = 249;
-			case "GF": // FRENCH GUIANA
+				break;
+			case "GF": // French Guiana
 				NLS_id = 254;
-			case "PF": // FRENCH POLYNESIA
+				break;
+			case "PF": // French Polynesia
 				NLS_id = 258;
-			case "TF": // FRENCH SOUTHERN TERRITORIES
+				break;
+			case "TF": // French Southern Territories
 				NLS_id = 260;
-			case "GA": // GABON
+				break;
+			case "GA": // Gabon
 				NLS_id = 266;
-			case "GM": // GAMBIA
+				break;
+			case "GM": // Gambia
 				NLS_id = 270;
-			case "GE": // GEORGIA
+				break;
+			case "GE": // Georgia
 				NLS_id = 268;
-			case "DE": // GERMANY
+				break;
+			case "DE": // Germany
 				NLS_id = 276;
-			case "GH": // GHANA
+				break;
+			case "GH": // Ghana
 				NLS_id = 288;
-			case "GI": // GIBRALTAR
+				break;
+			case "GI": // Gibraltar
 				NLS_id = 292;
-			case "GR": // GREECE
+				break;
+			case "GR": // Greece
 				NLS_id = 300;
-			case "GL": // GREENLAND
+				break;
+			case "GL": // Greenland
 				NLS_id = 304;
-			case "GD": // GRENADA
+				break;
+			case "GD": // Grenada
 				NLS_id = 308;
-			case "GP": // GUADELOUPE
+				break;
+			case "GP": // Guadeloupe
 				NLS_id = 312;
-			case "GU": // GUAM
+				break;
+			case "GU": // Guam
 				NLS_id = 316;
-			case "GT": // GUATEMALA
+				break;
+			case "GT": // Guatemala
 				NLS_id = 320;
-			case "GN": // GUINEA
+				break;
+			case "GN": // Guinea
 				NLS_id = 324;
-			case "GW": // GUINEA-BISSAU
+				break;
+			case "GW": // Guinea-Bissau
 				NLS_id = 624;
-			case "GY": // GUYANA
+				break;
+			case "GY": // Guyana
 				NLS_id = 328;
-			case "HT": // HAITI
+				break;
+			case "HT": // Haiti
 				NLS_id = 332;
-			case "HM": // HEARD AND MC DONALD ISLANDS
+				break;
+			case "HM": // Heard And Mc Donald Islands
 				NLS_id = 334;
-			case "VA": // HOLY SEE (VATICAN CITY STATE)
+				break;
+			case "VA": // Holy See (Vatican City State)
 				NLS_id = 336;
-			case "HN": // HONDURAS
+				break;
+			case "HN": // Honduras
 				NLS_id = 340;
-			case "HK": // HONG KONG
+				break;
+			case "HK": // Hong Kong
 				NLS_id = 344;
-			case "HU": // HUNGARY
+				break;
+			case "HU": // Hungary
 				NLS_id = 348;
-			case "IS": // ICELAND
+				break;
+			case "IS": // Iceland
 				NLS_id = 352;
-			case "IN": // INDIA
+				break;
+			case "IN": // India
 				NLS_id = 356;
-			case "ID": // INDONESIA
+				break;
+			case "ID": // Indonesia
 				NLS_id = 360;
-			case "IR": // IRAN (ISLAMIC REPUBLIC OF)
+				break;
+			case "IR": // Iran (Islamic Republic Of)
 				NLS_id = 364;
-			case "IQ": // IRAQ
+				break;
+			case "IQ": // Iraq
 				NLS_id = 368;
-			case "IE": // IRELAND
+				break;
+			case "IE": // Ireland
 				NLS_id = 372;
-			case "IL": // ISRAEL
+				break;
+			case "IL": // Israel
 				NLS_id = 376;
-			case "IT": // ITALY
+				break;
+			case "IT": // Italy
 				NLS_id = 380;
-			case "JM": // JAMAICA
+				break;
+			case "JM": // Jamaica
 				NLS_id = 388;
-			case "JP": // JAPAN
+				break;
+			case "JP": // Japan
 				NLS_id = 392;
-			case "JO": // JORDAN
+				break;
+			case "JO": // Jordan
 				NLS_id = 400;
-			case "KZ": // KAZAKHSTAN
+				break;
+			case "KZ": // Kazakhstan
 				NLS_id = 398;
-			case "KE": // KENYA
+				break;
+			case "KE": // Kenya
 				NLS_id = 404;
-			case "KI": // KIRIBATI
+				break;
+			case "KI": // Kiribati
 				NLS_id = 296;
-			case "KP": // KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF
+				break;
+			case "KP": // Korea, Democratic People'S Republic Of
 				NLS_id = 408;
-			case "KR": // KOREA, REPUBLIC OF
+				break;
+			case "KR": // Korea, Republic Of
 				NLS_id = 410;
-			case "KW": // KUWAIT
+				break;
+			case "KW": // Kuwait
 				NLS_id = 414;
-			case "KG": // KYRGYZSTAN
+				break;
+			case "KG": // Kyrgyzstan
 				NLS_id = 417;
-			case "LA": // LAO PEOPLE'S DEMOCRATIC REPUBLIC
+				break;
+			case "LA": // Lao People'S Democratic Republic
 				NLS_id = 418;
-			case "LV": // LATVIA
+				break;
+			case "LV": // Latvia
 				NLS_id = 428;
-			case "LB": // LEBANON
+				break;
+			case "LB": // Lebanon
 				NLS_id = 422;
-			case "LS": // LESOTHO
+				break;
+			case "LS": // Lesotho
 				NLS_id = 426;
-			case "LR": // LIBERIA
+				break;
+			case "LR": // Liberia
 				NLS_id = 430;
-			case "LY": // LIBYAN ARAB JAMAHIRIYA
+				break;
+			case "LY": // Libyan Arab Jamahiriya
 				NLS_id = 434;
-			case "LI": // LIECHTENSTEIN
+				break;
+			case "LI": // Liechtenstein
 				NLS_id = 438;
-			case "LT": // LITHUANIA
+				break;
+			case "LT": // Lithuania
 				NLS_id = 440;
-			case "LU": // LUXEMBOURG
+				break;
+			case "LU": // Luxembourg
 				NLS_id = 442;
-			case "MO": // MACAU
+				break;
+			case "MO": // Macau
 				NLS_id = 446;
-			case "MK": // MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF
+				break;
+			case "MK": // Macedonia, The Former Yugoslav Republic Of
 				NLS_id = 807;
-			case "MG": // MADAGASCAR
+				break;
+			case "MG": // Madagascar
 				NLS_id = 450;
-			case "MW": // MALAWI
+				break;
+			case "MW": // Malawi
 				NLS_id = 454;
-			case "MY": // MALAYSIA
+				break;
+			case "MY": // Malaysia
 				NLS_id = 458;
-			case "MV": // MALDIVES
+				break;
+			case "MV": // Maldives
 				NLS_id = 462;
-			case "ML": // MALI
+				break;
+			case "ML": // Mali
 				NLS_id = 466;
-			case "MT": // MALTA
+				break;
+			case "MT": // Malta
 				NLS_id = 470;
-			case "MH": // MARSHALL ISLANDS
+				break;
+			case "MH": // Marshall Islands
 				NLS_id = 584;
-			case "MQ": // MARTINIQUE
+				break;
+			case "MQ": // Martinique
 				NLS_id = 474;
-			case "MR": // MAURITANIA
+				break;
+			case "MR": // Mauritania
 				NLS_id = 478;
-			case "MU": // MAURITIUS
+				break;
+			case "MU": // Mauritius
 				NLS_id = 480;
-			case "YT": // MAYOTTE
+				break;
+			case "YT": // Mayotte
 				NLS_id = 175;
-			case "MX": // MEXICO
+				break;
+			case "MX": // Mexico
 				NLS_id = 484;
-			case "FM": // MICRONESIA, FEDERATED STATES OF
+				break;
+			case "FM": // Micronesia, Federated States Of
 				NLS_id = 583;
-			case "MD": // MOLDOVA, REPUBLIC OF
+				break;
+			case "MD": // Moldova, Republic Of
 				NLS_id = 498;
-			case "MC": // MONACO
+				break;
+			case "MC": // Monaco
 				NLS_id = 492;
-			case "MN": // MONGOLIA
+				break;
+			case "MN": // Mongolia
 				NLS_id = 496;
-			case "MS": // MONTSERRAT
+				break;
+			case "MS": // Montserrat
 				NLS_id = 500;
-			case "MA": // MOROCCO
+				break;
+			case "MA": // Morocco
 				NLS_id = 504;
-			case "MZ": // MOZAMBIQUE
+				break;
+			case "MZ": // Mozambique
 				NLS_id = 508;
-			case "MM": // MYANMAR
+				break;
+			case "MM": // Myanmar
 				NLS_id = 104;
-			case "NA": // NAMIBIA
+				break;
+			case "NA": // Namibia
 				NLS_id = 516;
-			case "NR": // NAURU
+				break;
+			case "NR": // Nauru
 				NLS_id = 520;
-			case "NP": // NEPAL
+				break;
+			case "NP": // Nepal
 				NLS_id = 524;
-			case "NL": // NETHERLANDS
+				break;
+			case "NL": // Netherlands
 				NLS_id = 528;
-			case "AN": // NETHERLANDS ANTILLES
+				break;
+			case "AN": // Netherlands Antilles
 				NLS_id = 530;
-			case "NC": // NEW CALEDONIA
+				break;
+			case "NC": // New Caledonia
 				NLS_id = 540;
-			case "NZ": // NEW ZEALAND
+				break;
+			case "NZ": // New Zealand
 				NLS_id = 554;
-			case "NI": // NICARAGUA
+				break;
+			case "NI": // Nicaragua
 				NLS_id = 558;
-			case "NE": // NIGER
+				break;
+			case "NE": // Niger
 				NLS_id = 562;
-			case "NG": // NIGERIA
+				break;
+			case "NG": // Nigeria
 				NLS_id = 566;
-			case "NU": // NIUE
+				break;
+			case "NU": // Niue
 				NLS_id = 570;
-			case "NF": // NORFOLK ISLAND
+				break;
+			case "NF": // Norfolk Island
 				NLS_id = 574;
-			case "MP": // NORTHERN MARIANA ISLANDS
+				break;
+			case "MP": // Northern Mariana Islands
 				NLS_id = 580;
-			case "NO": // NORWAY
+				break;
+			case "NO": // Norway
 				NLS_id = 578;
-			case "OM": // OMAN
+				break;
+			case "OM": // Oman
 				NLS_id = 512;
-			case "PK": // PAKISTAN
+				break;
+			case "PK": // Pakistan
 				NLS_id = 586;
-			case "PW": // PALAU
+				break;
+			case "PW": // Palau
 				NLS_id = 585;
-			case "PA": // PANAMA
+				break;
+			case "PA": // Panama
 				NLS_id = 591;
-			case "PG": // PAPUA NEW GUINEA
+				break;
+			case "PG": // Papua New Guinea
 				NLS_id = 598;
-			case "PY": // PARAGUAY
+				break;
+			case "PY": // Paraguay
 				NLS_id = 600;
-			case "PE": // PERU
+				break;
+			case "PE": // Peru
 				NLS_id = 604;
-			case "PH": // PHILIPPINES
+				break;
+			case "PH": // Philippines
 				NLS_id = 608;
-			case "PN": // PITCAIRN
+				break;
+			case "PN": // Pitcairn
 				NLS_id = 612;
-			case "PL": // POLAND
+				break;
+			case "PL": // Poland
 				NLS_id = 616;
-			case "PT": // PORTUGAL
+				break;
+			case "PT": // Portugal
 				NLS_id = 620;
-			case "PR": // PUERTO RICO
+				break;
+			case "PR": // Puerto Rico
 				NLS_id = 630;
-			case "QA": // QATAR
+				break;
+			case "QA": // Qatar
 				NLS_id = 634;
-			case "RE": // REUNION
+				break;
+			case "RE": // Reunion
 				NLS_id = 638;
-			case "RO": // ROMANIA
+				break;
+			case "RO": // Romania
 				NLS_id = 642;
-			case "RU": // RUSSIAN FEDERATION
+				break;
+			case "RU": // Russian Federation
 				NLS_id = 643;
-			case "RW": // RWANDA
+				break;
+			case "RW": // Rwanda
 				NLS_id = 646;
-			case "KN": // SAINT KITTS AND NEVIS
+				break;
+			case "KN": // Saint Kitts And Nevis
 				NLS_id = 659;
-			case "LC": // SAINT LUCIA
+				break;
+			case "LC": // Saint Lucia
 				NLS_id = 662;
-			case "VC": // SAINT VINCENT AND THE GRENADINES
+				break;
+			case "VC": // Saint Vincent And The Grenadines
 				NLS_id = 670;
-			case "WS": // SAMOA
+				break;
+			case "WS": // Samoa
 				NLS_id = 882;
-			case "SM": // SAN MARINO
+				break;
+			case "SM": // San Marino
 				NLS_id = 674;
-			case "ST": // SAO TOME AND PRINCIPE
+				break;
+			case "ST": // Sao Tome And Principe
 				NLS_id = 678;
-			case "SA": // SAUDI ARABIA
+				break;
+			case "SA": // Saudi Arabia
 				NLS_id = 682;
-			case "SN": // SENEGAL
+				break;
+			case "SN": // Senegal
 				NLS_id = 686;
-			case "SC": // SEYCHELLES
+				break;
+			case "SC": // Seychelles
 				NLS_id = 690;
-			case "SL": // SIERRA LEONE
+				break;
+			case "SL": // Sierra Leone
 				NLS_id = 694;
-			case "SG": // SINGAPORE
+				break;
+			case "SG": // Singapore
 				NLS_id = 702;
-			case "SK": // SLOVAKIA (Slovak Republic)
+				break;
+			case "SK": // Slovakia (Slovak Republic)
 				NLS_id = 703;
-			case "SI": // SLOVENIA
+				break;
+			case "SI": // Slovenia
 				NLS_id = 705;
-			case "SB": // SOLOMON ISLANDS
+				break;
+			case "SB": // Solomon Islands
 				NLS_id = 090;
-			case "SO": // SOMALIA
+				break;
+			case "SO": // Somalia
 				NLS_id = 706;
-			case "ZA": // SOUTH AFRICA
+				break;
+			case "ZA": // South Africa
 				NLS_id = 710;
-			case "GS": // SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS
+				break;
+			case "GS": // South Georgia And The South Sandwich Islands
 				NLS_id = 239;
-			case "ES": // SPAIN
+				break;
+			case "ES": // Spain
 				NLS_id = 724;
-			case "LK": // SRI LANKA
+				break;
+			case "LK": // Sri Lanka
 				NLS_id = 144;
-			case "SH": // ST. HELENA
+				break;
+			case "SH": // St. Helena
 				NLS_id = 654;
-			case "PM": // ST. PIERRE AND MIQUELON
+				break;
+			case "PM": // St. Pierre And Miquelon
 				NLS_id = 666;
-			case "SD": // SUDAN
+				break;
+			case "SD": // Sudan
 				NLS_id = 736;
-			case "SR": // SURINAME
+				break;
+			case "SR": // Suriname
 				NLS_id = 740;
-			case "SJ": // SVALBARD AND JAN MAYEN ISLANDS
+				break;
+			case "SJ": // Svalbard And Jan Mayen Islands
 				NLS_id = 744;
-			case "SZ": // SWAZILAND
+				break;
+			case "SZ": // Swaziland
 				NLS_id = 748;
-			case "SE": // SWEDEN
+				break;
+			case "SE": // Sweden
 				NLS_id = 752;
-			case "CH": // SWITZERLAND
+				break;
+			case "CH": // Switzerland
 				NLS_id = 756;
-			case "SY": // SYRIAN ARAB REPUBLIC
+				break;
+			case "SY": // Syrian Arab Republic
 				NLS_id = 760;
-			case "TW": // TAIWAN, PROVINCE OF CHINA
+				break;
+			case "TW": // Taiwan, Province Of China
 				NLS_id = 158;
-			case "TJ": // TAJIKISTAN
+				break;
+			case "TJ": // Tajikistan
 				NLS_id = 762;
-			case "TZ": // TANZANIA, UNITED REPUBLIC OF
+				break;
+			case "TZ": // Tanzania, United Republic Of
 				NLS_id = 834;
-			case "TH": // THAILAND
+				break;
+			case "TH": // Thailand
 				NLS_id = 764;
-			case "TG": // TOGO
+				break;
+			case "TG": // Togo
 				NLS_id = 768;
-			case "TK": // TOKELAU
+				break;
+			case "TK": // Tokelau
 				NLS_id = 772;
-			case "TO": // TONGA
+				break;
+			case "TO": // Tonga
 				NLS_id = 776;
-			case "TT": // TRINIDAD AND TOBAGO
+				break;
+			case "TT": // Trinidad And Tobago
 				NLS_id = 780;
-			case "TN": // TUNISIA
+				break;
+			case "TN": // Tunisia
 				NLS_id = 788;
-			case "TR": // TURKEY
+				break;
+			case "TR": // Turkey
 				NLS_id = 792;
-			case "TM": // TURKMENISTAN
+				break;
+			case "TM": // Turkmenistan
 				NLS_id = 795;
-			case "TC": // TURKS AND CAICOS ISLANDS
+				break;
+			case "TC": // Turks And Caicos Islands
 				NLS_id = 796;
-			case "TV": // TUVALU
+				break;
+			case "TV": // Tuvalu
 				NLS_id = 798;
-			case "UG": // UGANDA
+				break;
+			case "UG": // Uganda
 				NLS_id = 800;
-			case "UA": // UKRAINE
+				break;
+			case "UA": // Ukraine
 				NLS_id = 804;
-			case "AE": // UNITED ARAB EMIRATES
+				break;
+			case "AE": // United Arab Emirates
 				NLS_id = 784;
-			case "GB": // UNITED KINGDOM
+				break;
+			case "GB": // United Kingdom
 				NLS_id = 826;
-			case "US": // UNITED STATES
+				break;
+			case "US": // United States
 				NLS_id = 840;
-			case "UM": // UNITED STATES MINOR OUTLYING ISLANDS
+				break;
+			case "UM": // United States Minor Outlying Islands
 				NLS_id = 581;
-			case "UY": // URUGUAY
+				break;
+			case "UY": // Uruguay
 				NLS_id = 858;
-			case "UZ": // UZBEKISTAN
+				break;
+			case "UZ": // Uzbekistan
 				NLS_id = 860;
-			case "VU": // VANUATU
+				break;
+			case "VU": // Vanuatu
 				NLS_id = 548;
-			case "VE": // VENEZUELA
+				break;
+			case "VE": // Venezuela
 				NLS_id = 862;
-			case "VN": // VIET NAM
+				break;
+			case "VN": // Viet Nam
 				NLS_id = 704;
-			case "VG": // VIRGIN ISLANDS (BRITISH)
+				break;
+			case "VG": // Virgin Islands (British)
 				NLS_id = 092;
-			case "VI": // VIRGIN ISLANDS (U.S.)
+				break;
+			case "VI": // Virgin Islands (U.S.)
 				NLS_id = 850;
-			case "WF": // WALLIS AND FUTUNA ISLANDS
+				break;
+			case "WF": // Wallis And Futuna Islands
 				NLS_id = 876;
-			case "EH": // WESTERN SAHARA
+				break;
+			case "EH": // Western Sahara
 				NLS_id = 732;
-			case "YE": // YEMEN
+				break;
+			case "YE": // Yemen
 				NLS_id = 887;
-			case "YU": // YUGOSLAVIA
+				break;
+			case "YU": // Yugoslavia
 				NLS_id = 891;
-			case "ZR": // ZAIRE
+				break;
+			case "ZR": // Zaire
 				NLS_id = 180;
-			case "ZM": // ZAMBIA
+				break;
+			case "ZM": // Zambia
 				NLS_id = 894;
-			case "ZW": // ZIMBABWE
+				break;
+			case "ZW": // Zimbabwe
 				NLS_id = 716;
+				break;
 			default:
-				throw new ArgumentException ("Region name " + name + " is not supported");
+				throw new ArgumentException ("Region name " + name + " is not supported.");
 			}
 		}
 
