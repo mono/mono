@@ -1,3 +1,8 @@
+2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
+
+	* class/library.build: added Mono.Data.SqliteClient
+	directory to windows build
+
 2002-10-10  Daniel Morgan <danmorg@sc.rr.com>
 
 	* class/library.build: added Mono.Data.MySql directory to windows build.
