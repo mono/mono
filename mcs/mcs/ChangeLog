@@ -1,3 +1,22 @@
+2002-04-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Statement): Added Resolve virtual method to allow
+	for resolution split from the emit code.
+
+2002-04-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (EmitBoolExpression): No longer try to resolve the
+	expression here.    
+	(MakeBoolean): New utility function that resolve, implicitly
+	converts to boolean and tags the expression. 
+	
+
+	(If, Do): Implement dead code elimination.
+	(While): Implement loop inversion
+
+	(Do, While, For, If): Resolve the expression prior to calling our
+	code generation.
+
 2002-04-22  Lawrence Pit <loz@cable.a2000.nl>
 
 	* class.cs:

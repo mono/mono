@@ -330,6 +330,9 @@ namespace Mono.CSharp {
 				block.EmitMeta (this, block);
 
 				if (Report.Errors == errors){
+					if (!block.Resolve (this))
+						return;
+					
 					has_ret = block.Emit (this);
 
 					if (Report.Errors == errors){

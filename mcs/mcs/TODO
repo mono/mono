@@ -22,9 +22,6 @@ BUGS
 * Check for Final when overriding, if the parent is Final, then we cant
   allow an override.
 
-* Do not declare a .property on things that are just implementations, that
-  comes from the parent, just do the method.
-
 * Currently the code path for 108/109 reporting is not being ran for methods
   as we need to compare method signatures.  But since we retrieve the expensive
   method arguments in the method, we probably should do 108/109 processing there.
@@ -156,6 +153,8 @@ PENDING TASKS
 
 OPTIMIZATIONS
 -------------
+
+* Implement loop inversion for `For' as well.
 
 * There is too much unshared code between MemberAccess.Resolve and SimpleName
   resolve.  

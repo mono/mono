@@ -19,22 +19,26 @@ namespace Mono.CSharp {
 	public abstract class Statement {
 		public Location loc;
 
+		///
+		/// Resolves the statement, true means that all sub-statements
+		/// did resolve ok.
+		//
+		public virtual bool Resolve (EmitContext ec)
+		{
+			return true;
+		} 
+		
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
 		public abstract bool Emit (EmitContext ec);
 
-		/// <remarks>
-		///    Emits a bool expression.
-		/// </remarks>
-		public static Expression EmitBoolExpression (EmitContext ec, Expression e,
-							     Label target, bool isTrue, Location loc)
+		public static Expression ResolveBoolean (EmitContext ec, Expression e, Location loc)
 		{
 			e = e.Resolve (ec);
-
 			if (e == null)
 				return null;
-
+			
 			if (e.Type != TypeManager.bool_type){
 				e = Expression.ConvertImplicit (ec, e, TypeManager.bool_type,
 								new Location (-1));
@@ -43,15 +47,25 @@ namespace Mono.CSharp {
 			if (e == null){
 				Report.Error (
 					31, loc, "Can not convert the expression to a boolean");
-				return null;
 			}
 
 			if (CodeGen.SymbolWriter != null)
 				ec.Mark (loc);
 
+			return e;
+		}
+		
+		/// <remarks>
+		///    Emits a bool expression.
+		/// </remarks>
+		public static void EmitBoolExpression (EmitContext ec, Expression bool_expr,
+						       Label target, bool isTrue)
+		{
+			ILGenerator ig = ec.ig;
+			
 			bool invert = false;
-			if (e is Unary){
-				Unary u = (Unary) e;
+			if (bool_expr is Unary){
+				Unary u = (Unary) bool_expr;
 				
 				if (u.Oper == Unary.Operator.LogicalNot){
 					invert = true;
@@ -61,25 +75,28 @@ namespace Mono.CSharp {
 			} 
 
 			if (!invert)
-				e.Emit (ec);
+				bool_expr.Emit (ec);
 
 			if (isTrue){
 				if (invert)
-					ec.ig.Emit (OpCodes.Brfalse, target);
+					ig.Emit (OpCodes.Brfalse, target);
 				else
-					ec.ig.Emit (OpCodes.Brtrue, target);
+					ig.Emit (OpCodes.Brtrue, target);
 			} else {
 				if (invert)
-					ec.ig.Emit (OpCodes.Brtrue, target);
+					ig.Emit (OpCodes.Brtrue, target);
 				else
-					ec.ig.Emit (OpCodes.Brfalse, target);
+					ig.Emit (OpCodes.Brfalse, target);
 			}
-			
-			return e;
 		}
 	}
 
 	public class EmptyStatement : Statement {
+		public override bool Resolve (EmitContext ec)
+		{
+			return true;
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			return false;
@@ -109,15 +126,51 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			if (TrueStatement.Resolve (ec)){
+				if (FalseStatement != null){
+					if (FalseStatement.Resolve (ec))
+						return true;
+					return false;
+				}
+				return true;
+			}
+			return false;
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label false_target = ig.DefineLabel ();
 			Label end;
 			bool is_true_ret, is_false_ret;
-			
-			if (EmitBoolExpression (ec, Expr, false_target, false, loc) == null)
+			Expression bool_expr;
+
+			bool_expr = ResolveBoolean (ec, Expr, loc);
+			if (bool_expr == null)
 				return false;
+
+			//
+			// Dead code elimination
+			//
+			if (bool_expr is BoolConstant){
+				bool take = ((BoolConstant) bool_expr).Value;
+
+				if (take){
+					if (FalseStatement != null){
+						Report.Warning (162, FalseStatement.loc,
+								"Unreachable code detected");
+					}
+					return TrueStatement.Emit (ec);
+				} else {
+					Report.Warning (162, TrueStatement.loc, "Unreachable code detected");
+					if (FalseStatement != null)
+						return FalseStatement.Emit (ec);
+				}
+			}
+			
+			EmitBoolExpression (ec, bool_expr, false_target, false);
 			
 			is_true_ret = TrueStatement.Emit (ec);
 			is_false_ret = is_true_ret;
@@ -156,6 +209,11 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return EmbeddedStatement.Resolve (ec);
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -163,7 +221,11 @@ namespace Mono.CSharp {
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool  old_inloop = ec.InLoop;
-			Expression e;
+			Expression bool_expr;
+
+			bool_expr = ResolveBoolean (ec, Expr, loc);
+			if (bool_expr == null)
+				return false;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
@@ -172,7 +234,18 @@ namespace Mono.CSharp {
 			ig.MarkLabel (loop);
 			EmbeddedStatement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);
-			e = EmitBoolExpression (ec, Expr, loop, true, loc);
+
+			//
+			// Dead code elimination
+			//
+			if (bool_expr is BoolConstant){
+				bool res = ((BoolConstant) bool_expr).Value;
+
+				if (res)
+					ec.ig.Emit (OpCodes.Br, loop); 
+			} else
+				EmitBoolExpression (ec, bool_expr, loop, true);
+			
 			ig.MarkLabel (ec.LoopEnd);
 
 			ec.LoopBegin = old_begin;
@@ -182,8 +255,8 @@ namespace Mono.CSharp {
 			//
 			// Inform whether we are infinite or not
 			//
-			if (e is BoolConstant){
-				BoolConstant bc = (BoolConstant) e;
+			if (bool_expr is BoolConstant){
+				BoolConstant bc = (BoolConstant) bool_expr;
 
 				if (bc.Value == true)
 					return true;
@@ -204,38 +277,67 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return Statement.Resolve (ec);
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
-			Expression e;
+			Label while_loop = ig.DefineLabel ();
+			bool ret;
+			
+			Expression bool_expr = ResolveBoolean (ec, Expr, loc);
+
+			if (bool_expr == null)
+				return false;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
-			
-			ig.MarkLabel (ec.LoopBegin);
-			e = EmitBoolExpression (ec, Expr, ec.LoopEnd, false, loc);
-			Statement.Emit (ec);
+
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
-			ig.MarkLabel (ec.LoopEnd);
+			ig.MarkLabel (while_loop);
+
+			//
+			// Inform whether we are infinite or not
+			//
+			if (bool_expr is BoolConstant){
+				BoolConstant bc = (BoolConstant) bool_expr;
+
+				ig.MarkLabel (ec.LoopBegin);
+				if (bc.Value == false)
+					ret = false;
+				else {
+					Statement.Emit (ec);
+					ig.Emit (OpCodes.Br, ec.LoopBegin);
+					
+					//
+					// Inform that we are infinite (ie, `we return')
+					//
+					ret = true;
+				}
+				ig.MarkLabel (ec.LoopEnd);
+			} else {
+				Statement.Emit (ec);
+			
+				ig.MarkLabel (ec.LoopBegin);
+
+				EmitBoolExpression (ec, bool_expr, while_loop, true);
+				ig.MarkLabel (ec.LoopEnd);
+
+				ret = false;
+			}	
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 
-			//
-			// Inform whether we are infinite or not
-			//
-			if (e is BoolConstant){
-				BoolConstant bc = (BoolConstant) e;
-
-				if (bc.Value == true)
-					return true;
-			}
-			return false;
+			return ret;
 		}
 	}
 
@@ -258,6 +360,20 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			bool init = true;
+			bool incr = true;
+			
+			if (InitStatement != null)
+				init = InitStatement.Resolve (ec);
+
+			if (Increment != null)
+				incr = Increment.Resolve (ec);
+			
+			return Statement.Resolve (ec) && init && incr;
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -265,7 +381,7 @@ namespace Mono.CSharp {
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
 			Label loop = ig.DefineLabel ();
-			Expression e = null;
+			Expression bool_expr = null;
 
 			if (InitStatement != null)
 				if (! (InitStatement is EmptyStatement))
@@ -281,8 +397,13 @@ namespace Mono.CSharp {
 			// If test is null, there is no test, and we are just
 			// an infinite loop
 			//
-			if (Test != null)
-				e = EmitBoolExpression (ec, Test, ec.LoopEnd, false, loc);
+			if (Test != null){
+				bool_expr = ResolveBoolean (ec, Test, loc);
+				if (bool_expr == null)
+					return false;
+				
+				EmitBoolExpression (ec, bool_expr, ec.LoopEnd, false);
+			}
 		
 			Statement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);
@@ -299,8 +420,8 @@ namespace Mono.CSharp {
 			// Inform whether we are infinite or not
 			//
 			if (Test != null){
-				if (e is BoolConstant){
-					BoolConstant bc = (BoolConstant) e;
+				if (bool_expr is BoolConstant){
+					BoolConstant bc = (BoolConstant) bool_expr;
 
 					if (bc.Value)
 						return true;
@@ -320,6 +441,11 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return true;
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -356,6 +482,11 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return true;
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			if (ec.InFinally){
@@ -405,6 +536,11 @@ namespace Mono.CSharp {
 	public class Goto : Statement {
 		string target;
 		Block block;
+		
+		public override bool Resolve (EmitContext ec)
+		{
+			return true;
+		}
 		
 		public Goto (Block parent_block, string label, Location l)
 		{
@@ -1035,19 +1171,29 @@ namespace Mono.CSharp {
 					b.UsageWarning ();
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			foreach (Statement s in statements){
+				if (s.Resolve (ec) == false)
+					return false;
+			}
+
+			return true;
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			bool is_ret = false;
 			Block prev_block = ec.CurrentBlock;
-
+			
 			ec.CurrentBlock = this;
 
 			if (CodeGen.SymbolWriter != null) {
 				ec.Mark (StartLocation);
-
+				
 				foreach (Statement s in statements) {
 					ec.Mark (s.loc);
-
+					
 					is_ret = s.Emit (ec);
 				}
 
@@ -1784,6 +1930,16 @@ namespace Mono.CSharp {
 			
 			return all_return;
 		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			foreach (SwitchSection ss in Sections){
+				if (ss.Block.Resolve (ec) != true)
+					return false;
+			}
+
+			return true;
+		}
 		
 		public override bool Emit (EmitContext ec)
 		{
@@ -1852,6 +2008,11 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return Statement.Resolve (ec);
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			Expression e = Expr.Resolve (ec);
@@ -1904,6 +2065,11 @@ namespace Mono.CSharp {
 			Block = b;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return Block.Resolve (ec);
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
@@ -1928,6 +2094,11 @@ namespace Mono.CSharp {
 			Block = b;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return Block.Resolve (ec);
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
@@ -1952,6 +2123,11 @@ namespace Mono.CSharp {
 			Block = b;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return Block.Resolve (ec);
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			bool previous_state = ec.InUnsafe;
@@ -1981,6 +2157,11 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			return statement.Resolve (ec);
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -2158,6 +2339,29 @@ namespace Mono.CSharp {
 			this.Fini = fini;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			bool ok = true;
+			
+			if (General != null)
+				if (!General.Block.Resolve (ec))
+					ok = false;
+
+			foreach (Catch c in Specific){
+				if (!c.Block.Resolve (ec))
+					ok = false;
+			}
+
+			if (!Block.Resolve (ec))
+				ok = false;
+
+			if (Fini != null)
+				if (!Fini.Resolve (ec))
+					ok = false;
+			
+			return ok;
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -2372,6 +2576,11 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
+		public override bool Resolve (EmitContext ec)
+		{
+			return Statement.Resolve (ec);
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			if (expression_or_block is DictionaryEntry){
@@ -2409,6 +2618,11 @@ namespace Mono.CSharp {
 			this.expr = expr;
 			statement = stmt;
 			loc = l;
+		}
+		
+		public override bool Resolve (EmitContext ec)
+		{
+			return statement.Resolve (ec);
 		}
 		
 		//
