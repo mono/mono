@@ -1,3 +1,10 @@
+2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* UnsafeNativeMethods.cs: added IEnumVariant interface,
+	added to-do's
+	* AccessibleObject.cs: stubbed IEnumVariant implementation,
+	added to-do's
+
 2004-05-14  Peter Bartok <pbartok@novell.com>
    * Control.cs: Fixed get_Text property (fixes bug #55005)
 

@@ -10,17 +10,18 @@
 using System;
 using System.Reflection;
 using System.Globalization;
-//using System.Windows.Forms.AccessibleObject.IAccessible;
 using System.Drawing;
 using Accessibility;
 using System.Runtime.InteropServices;
+using IEnumVariant = System.Windows.Forms.UnsafeNativeMethods.IEnumVariant;
+
 namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Provides information that accessibility applications use to adjust an application's UI for users with impairments.
 	/// </summary>
 	[MonoTODO]
-	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible {
+	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible, UnsafeNativeMethods.IEnumVariant {
 		private string defaultAction;
 		private string description;
 		private string help;
@@ -38,7 +39,6 @@ namespace System.Windows.Forms {
 			role = AccessibleRole.None;
 			state = AccessibleStates.None;
 			value = null;
-
 		}
 
 		// --- Properties ---
@@ -218,86 +218,155 @@ namespace System.Windows.Forms {
 			// FIXME
 			throw new NotImplementedException ();
 		}
-		
-		
+
+		[MonoTODO]
 		Type IReflect.UnderlyingSystemType {
 		//private Type UnderlyingSystemType {
 			get { throw new NotImplementedException (); }
 		}
-		
+
+		[MonoTODO]
 		void IAccessible.accDoDefaultAction(object childID) {
 			//FIXME:
 		}
+
+		[MonoTODO]
 		int IAccessible.accChildCount{
 			get{
 				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		object IAccessible.accFocus{
 			get{
 				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoTODO]
 		object IAccessible.accHitTest(int xLeft, int yTop) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		void IAccessible.accLocation(out int pxLeft, out int pyTop, out int pcxWidth, out int pcyHeight, object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		object IAccessible.accNavigate(int navDir, object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		object IAccessible.accParent {
 			get{
 				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoTODO]
 		void IAccessible.accSelect(int flagsSelect, object childID) {
 			//FIXME:
 		}
+
+		[MonoTODO]
 		object IAccessible.accSelection {
-			get{
+			get
+			{
 				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoTODO]
 		object IAccessible.get_accChild(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		string IAccessible.get_accDefaultAction(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		string IAccessible.get_accDescription(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		string IAccessible.get_accHelp(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		int IAccessible.get_accHelpTopic(out string pszHelpFile,object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		string IAccessible.get_accKeyboardShortcut(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		string IAccessible.get_accName(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		object IAccessible.get_accRole(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		object IAccessible.get_accState(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		string IAccessible.get_accValue(object childID) {
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		void IAccessible.set_accName(object childID, string newName) {
 			//FIXME:
 		}
+
+		[MonoTODO]
 		void IAccessible.set_accValue(object childID, string newValue) {
 			//FIXME:
 		}
+
+		#region Implementation of UnsafeNativeMethods.IEnumVariant
+
+		[MonoTODO]
+		void UnsafeNativeMethods.IEnumVariant.Clone (IEnumVariant[] v)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		int UnsafeNativeMethods.IEnumVariant.Next (int n, IntPtr rgvar, int[] ns)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void UnsafeNativeMethods.IEnumVariant.Reset ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void UnsafeNativeMethods.IEnumVariant.Skip (int n)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion Implementation of UnsafeNativeMethods.IEnumVariant
 	}
-	
+
 }
 
