@@ -815,10 +815,22 @@ namespace System.Web {
 
 		public Uri Url {
 			get {
-				if (null == _oUrl) {
-					_oUrl = new Uri(RawUrl);
-				}
+				if (_oUrl != null || _WorkerRequest == null)
+					return _oUrl;
 
+				string qs = QueryStringRaw;
+				if (qs == null)
+					qs = "";
+				else
+					qs = "?" + qs;
+
+				UriBuilder ub = new UriBuilder (_WorkerRequest.GetProtocol (),
+								_WorkerRequest.GetServerName (),
+								_WorkerRequest.GetLocalPort (),
+								Path,
+								qs);
+
+				_oUrl = ub.Uri;
 				return _oUrl;
 			}
 		}
