@@ -13,9 +13,7 @@ namespace System.Xml
 		#region Constructor
 		public XmlImplementation ()
 		{
-			// The following keys are default of MS .NET Framework
-			NameTable nt = new NameTable();
-			InternalNameTable = nt;
+			InternalNameTable = new NameTable ();
 		}
 		#endregion
 
@@ -27,12 +25,15 @@ namespace System.Xml
 
 		public bool HasFeature (string strFeature, string strVersion)
 		{
-			if (String.Compare (strFeature, "xml", true) == 0 // not case-sensitive
-			    && (String.Compare (strVersion, "1.0", true) == 0
-				|| String.Compare (strVersion, "2.0", true) == 0))
-				return true;
-			else
-				return false;
+			if (String.Compare (strFeature, "xml", true) == 0) { // not case-sensitive
+				switch (strVersion) {
+				case "1.0":
+				case "2.0":
+				case null:
+					return true;
+				}
+			}
+			return false;
 		}
 		#endregion
 
