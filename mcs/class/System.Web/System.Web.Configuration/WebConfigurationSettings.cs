@@ -153,7 +153,10 @@ namespace System.Web.Configuration
 				throw new ConfigurationException ("Both web.config and Web.config exist for " + dir);
 
 			string wcfile = (isUpper) ? upper : (isLower) ? lower : null;
-			string tempDir = (dir == "/") ? "" : dir;
+			string tempDir = dir;
+			if (tempDir == HttpRuntime.AppDomainAppVirtualPath)
+				tempDir = "";
+
 			ConfigurationData parent = GetConfigFromFileName (tempDir, context);
 			if (wcfile == null) {
 				data = new ConfigurationData (parent, null, realpath);
