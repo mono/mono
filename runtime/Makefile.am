@@ -61,6 +61,7 @@ endif
 
 # List of NUnit testcases that should be 100% pass
 centum_nunit_tests = \
+	class/corlib \
 	class/Commons.Xml.Relaxng \
 	class/Cscompmgd \
 	class/Microsoft.JScript \
