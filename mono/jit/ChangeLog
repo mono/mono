@@ -1,3 +1,13 @@
+2003-01-03  Martin Baulig  <martin@ximian.com>
+
+	* debug.c (mono_debugger_trampoline_breakpoint_callback): New
+	function.  This is called from the breakpoint trampoline to signal
+	the debugger and wait until it has reload the symbol tables.
+
+	* trampoline.c (get_breakpoint_trampoline): Call the new
+	mono_debugger_trampoline_breakpoint_callback() in the breakpoint
+	trampoline just before the breakpoint.
+
 2002-12-31  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (MonoDebuggerSymbolFileTable): Added `global_symfile'
