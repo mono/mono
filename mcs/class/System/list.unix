@@ -166,6 +166,8 @@ System.Net.Sockets/NetworkStream.cs
 System.ComponentModel/ITypedList.cs
 System.ComponentModel/Component.cs
 System.ComponentModel/ComponentCollection.cs
+System.ComponentModel/DefaultEventAttribute.cs
+System.ComponentModel/DefaultPropertyAttribute.cs
 System.ComponentModel/IContainer.cs
 System.ComponentModel/BrowsableAttribute.cs
 System.ComponentModel/DescriptionAttribute.cs

@@ -1,3 +1,8 @@
+2002-07-20  Tim Coleman <tim@timcoleman.com>
+	* list.unix: Added System.ComponentModel/DefaultEventAttribute.cs
+		and System.ComponentModel.DefaultProperty.cs to build
+
+
 2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.build: removed System.Drawing.dll dependency.
