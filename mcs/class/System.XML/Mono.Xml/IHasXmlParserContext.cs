@@ -12,7 +12,7 @@ using System.Xml;
 
 namespace Mono.Xml
 {
-	public interface IHasXmlParserContext
+	internal interface IHasXmlParserContext
 	{
 		XmlParserContext ParserContext { get; }
 	}

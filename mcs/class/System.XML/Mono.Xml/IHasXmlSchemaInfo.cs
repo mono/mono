@@ -12,7 +12,7 @@ using System.Xml;
 
 namespace Mono.Xml
 {
-	public interface IHasXmlSchemaInfo
+	internal interface IHasXmlSchemaInfo
 	{
 		object SchemaType { get; }
 	}

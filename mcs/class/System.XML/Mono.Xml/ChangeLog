@@ -1,3 +1,7 @@
+2004-06-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* IHasXmlParserContext.cs, IHasXmlSchemaInfo.cs : internal.
+
 2004-06-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNodeWriter.cs : it's internal.
