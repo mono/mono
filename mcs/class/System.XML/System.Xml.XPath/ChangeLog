@@ -1,3 +1,14 @@
+2004-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathNavigator.cs : Only child and attribute axes are allowed for
+	  Matches().
+	* Expression.cs : Added IsPositional property.
+	* DefaultContext.cs : Added some overrides.
+
+2004-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathNavigator.cs : no, its still not ok. comment out now.
+
 2004-02-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : Added EvaluatedNodeType and NeedAbsoluteMatching

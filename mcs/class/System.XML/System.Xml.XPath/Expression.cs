@@ -365,6 +365,10 @@ namespace System.Xml.XPath
 			get { return false; }
 		}
 
+		internal virtual bool IsPositional {
+			get { return false; }
+		}
+
 		[MonoTODO]
 		public virtual double EvaluateNumber (BaseIterator iter)
 		{
@@ -489,7 +493,11 @@ namespace System.Xml.XPath
 				else
 					return XPathNodeType.All;
 			}
-			}
+		}
+
+		internal override bool IsPositional {
+			get { return _left.IsPositional || _right.IsPositional; }
+		}
 	}
 
 	internal abstract class ExprBoolean : ExprBinary
@@ -828,6 +836,10 @@ namespace System.Xml.XPath
 		{
 			return - _expr.EvaluateNumber (iter);
 		}
+
+		internal override bool IsPositional {
+			get { return _expr.IsPositional; }
+		}
 	}
 
 
@@ -859,6 +871,10 @@ namespace System.Xml.XPath
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return left.EvaluatedNodeType == right.EvaluatedNodeType ? left.EvaluatedNodeType : XPathNodeType.All; }
 		}
+
+		internal override bool IsPositional {
+			get { return left.IsPositional || right.IsPositional; }
+		}
 	}
 
 	internal class ExprSLASH : NodeSet
@@ -880,11 +896,15 @@ namespace System.Xml.XPath
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
 
 		internal override bool NeedAbsoluteMatching {
-			get { return left.NeedAbsoluteMatching; }
+			get { return true; }
 		}
 
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return right.EvaluatedNodeType; }
+		}
+
+		internal override bool IsPositional {
+			get { return left.IsPositional || right.IsPositional; }
 		}
 	}
 	
@@ -919,6 +939,10 @@ namespace System.Xml.XPath
 
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return right.EvaluatedNodeType; }
+		}
+
+		internal override bool IsPositional {
+			get { return left.IsPositional || right.IsPositional; }
 		}
 	}
 
@@ -1109,6 +1133,7 @@ namespace System.Xml.XPath
 			if (param != null && type != XPathNodeType.ProcessingInstruction)
 				throw new XPathException ("No argument allowed for "+ToString (type)+"() test");	// TODO: better description
 		}
+
 		public override String ToString ()
 		{
 			String strType = ToString (type);
@@ -1119,6 +1144,7 @@ namespace System.Xml.XPath
 
 			return _axis.ToString () + "::" + strType;
 		}
+
 		private static String ToString (XPathNodeType type)
 		{
 			switch (type)
@@ -1138,6 +1164,7 @@ namespace System.Xml.XPath
 					return "node-type [" + type.ToString () + "]";
 			}
 		}
+
 		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
 		{
 			XPathNodeType nodeType = nav.NodeType;
@@ -1267,6 +1294,14 @@ namespace System.Xml.XPath
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return expr.EvaluatedNodeType; }
 		}
+
+		internal override bool IsPositional {
+			get {
+				if (pred.ReturnType == XPathResultType.Number)
+					return true;
+				return expr.IsPositional || pred.IsPositional;
+			}
+		}
 	}
 
 	internal class ExprNumber : Expression
@@ -1286,6 +1321,10 @@ namespace System.Xml.XPath
 		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _value;
+		}
+
+		internal override bool IsPositional {
+			get { return false; }
 		}
 	}
 
@@ -1377,6 +1416,10 @@ namespace System.Xml.XPath
 
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return _expr.EvaluatedNodeType; }
+		}
+
+		internal override bool IsPositional {
+			get { return _expr.IsPositional; }
 		}
 	}
 

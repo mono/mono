@@ -37,6 +37,27 @@ namespace System.Xml.XPath
 			}
 			throw new ArgumentException ();
 		}
+
+		public static bool ToBoolean (bool b)
+		{
+			return b;
+		}
+
+		public static bool ToBoolean (double d)
+		{
+			return d != 0.0 && d != double.NaN;
+		}
+
+		public static bool ToBoolean (string s)
+		{
+			return s != null && s.Length > 0;
+		}
+
+		public static bool ToBoolean (BaseIterator iter)
+		{
+			return iter != null && iter.MoveNext ();
+		}
+
 		[MonoTODO]
 		public static string ToString (object arg)
 		{
@@ -64,19 +85,9 @@ namespace System.Xml.XPath
 				throw new ArgumentNullException ();
 			if (arg is BaseIterator)
 				arg = ToString (arg);	// follow on
-			if (arg is string)
-			{
+			if (arg is string) {
 				string s = arg as string;
-				if (s.Length == 0)
-					return double.NaN;
-				try
-				{
-					return XmlConvert.ToDouble (s);	// TODO: spec? convert string to number
-				}
-				catch (System.FormatException)
-				{
-					return double.NaN;
-				}
+				return ToNumber (s); // use explicit overload
 			}
 			if (arg is double)
 				return (double) arg;
@@ -89,10 +100,11 @@ namespace System.Xml.XPath
 		{
 			if (arg == null)
 				throw new ArgumentNullException ();
-			if (arg.Length == 0)
+			string s = arg.Trim (XmlChar.WhitespaceChars);
+			if (s.Length == 0)
 				return double.NaN;
 			try {
-				return XmlConvert.ToDouble ((string) arg.Trim (XmlChar.WhitespaceChars));
+				return XmlConvert.ToDouble (s);
 			} catch (System.OverflowException) {
 				return double.NaN;
 			} catch (System.FormatException) {
@@ -126,6 +138,10 @@ namespace System.Xml.XPath
 		{
 			return "last()";
 		}
+
+		internal override bool IsPositional {
+			get { return true; }
+		}
 	}
 
 
@@ -147,6 +163,10 @@ namespace System.Xml.XPath
 		public override string ToString ()
 		{
 			return "position()";
+		}
+
+		internal override bool IsPositional {
+			get { return true; }
 		}
 	}
 

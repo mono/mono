@@ -277,8 +277,17 @@ namespace System.Xml.XPath
 			if (e is ExprRoot)
 				return NodeType == XPathNodeType.Root;
 			
-			if (e is NodeTest)
-				return ((NodeTest)e).Match (((CompiledExpression)expr).NamespaceManager, this);
+			NodeTest nt = e as NodeTest;
+			if (nt != null) {
+				switch (nt.Axis.Axis) {
+				case Axes.Child:
+				case Axes.Attribute:
+					break;
+				default:
+					throw new XPathException ("Only child and attribute pattern are allowed for a pattern.");
+				}
+				return nt.Match (((CompiledExpression)expr).NamespaceManager, this);
+			}
 			if (e is ExprFilter) {
 				do {
 					e = ((ExprFilter) e).LeftHandSide;
@@ -305,16 +314,14 @@ namespace System.Xml.XPath
 				break;
 			}
 
-			XPathNodeIterator nodes = Select (expr);
-
+			XPathNodeIterator nodes;
+			nodes = this.Select (expr);
 			while (nodes.MoveNext ()) {
 				if (IsSamePosition (nodes.Current))
 					return true;
 			}
 
 			// ancestors might select this node.
-//			if (!e.NeedAbsoluteMatching)
-//				return false;
 
 			XPathNavigator navigator = Clone ();
 
@@ -385,7 +392,7 @@ namespace System.Xml.XPath
 				ctx = cexpr.NamespaceManager;
 			
 			BaseIterator iter = new NullIterator (this, ctx);
-			return cexpr.EvaluateNodeSet (iter);	
+			return cexpr.EvaluateNodeSet (iter);
 		}
 
 		public virtual XPathNodeIterator SelectAncestors (XPathNodeType type, bool matchSelf)
