@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.2  2004/08/06 14:02:33  pbartok
+// - Fixed reparenting
+// - Fixed window border creation
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -544,7 +548,34 @@ namespace System.Windows.Forms {
 		//[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=24)]
 		//[ FieldOffset(0) ] internal int[] pad;
 		[ FieldOffset(0) ] internal XEventPad Pad;
-	} 
+	}
+
+	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	internal struct XWindowAttributes {
+		internal int		x;
+		internal int		y;
+		internal int		width;
+		internal int		height;
+		internal int		border_width;
+		internal int		depth;
+		internal IntPtr		visual;
+		internal IntPtr		root;
+		internal int		c_class;
+		internal int		bit_gravity;
+		internal int		win_gravity;
+		internal int		backing_store;
+		internal ulong		backing_planes;
+		internal ulong		backing_pixel;
+		internal bool		save_under;
+		internal IntPtr		colormap;
+		internal bool		map_installed;
+		internal int		map_state;
+		internal long		all_event_masks;
+		internal long		your_event_mask;
+		internal long		do_not_propagate_mask;
+		internal bool		override_direct;
+		internal IntPtr		screen;
+	}
 	#endregion
 
 	#region X11 Enumerations

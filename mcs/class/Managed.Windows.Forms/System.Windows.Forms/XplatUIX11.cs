@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.4  2004/08/06 14:02:33  pbartok
+// - Fixed reparenting
+// - Fixed window border creation
+//
 // Revision 1.3  2004/08/05 21:38:02  pbartok
 // - Attempted fix for reparenting problems
 //
@@ -193,6 +197,7 @@ namespace System.Windows.Forms {
 			int	Y;
 			int	Width;
 			int	Height;
+			int	BorderWidth;
 
 			ParentHandle=cp.Parent;
 
@@ -200,6 +205,7 @@ namespace System.Windows.Forms {
 			Y=cp.Y;
 			Width=cp.Width;
 			Height=cp.Height;
+			BorderWidth=0;
 
 			if (X<1) X=50;
 			if (Y<1) Y=50;
@@ -211,12 +217,12 @@ namespace System.Windows.Forms {
 					// We need to use our foster parent window until this poor child gets it's parent assigned
 					ParentHandle=FosterParent;
 				} else {
+					BorderWidth=4;
 					ParentHandle=XRootWindow(DisplayHandle, 0);
 				}
 			}
 
-			WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 4, 0, 0);
-Console.WriteLine("Received window handle {0,8:X} at pos {1},{2} {3}x{4}", WindowHandle, X, Y, Width, Height);
+			WindowHandle=XCreateSimpleWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, BorderWidth, 0, 0);
 			XMapWindow(DisplayHandle, WindowHandle);
 
 			XSelectInput(DisplayHandle, WindowHandle, 0xffffff);
@@ -351,15 +357,13 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 
 						keys=Marshal.PtrToStringAuto(buffer);
 						keychars=keys.ToCharArray(0, 1);
+						msg.message=Msg.WM_KEYDOWN;
 						msg.wParam=(IntPtr)keychars[0];
 						Console.WriteLine("Got char {0}", keys);
 					} else {
 						Console.WriteLine("Got special key {0}", keysym);
 					}
 					Marshal.FreeHGlobal(buffer);
-					break;
-
-					msg.message=Msg.WM_KEYDOWN;
 					break;
 				}
 
@@ -438,8 +442,11 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
-			int result=XReparentWindow(DisplayHandle, handle, parent, 0, 0);
-			Console.WriteLine("Setting parent for window {0} to {1}, result {2}", handle, parent, result);
+			XWindowAttributes	attributes=new XWindowAttributes();
+
+			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+			XReparentWindow(DisplayHandle, handle, parent, attributes.x, attributes.y);
+Console.WriteLine("Setting parent for window {0} to {1}, border width of window:{2}", handle, parent, attributes.border_width);
 			return IntPtr.Zero;
 		}
 
@@ -515,7 +522,7 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 		[DllImport ("libX11.so", EntryPoint="XOpenDisplay")]
 		internal extern static IntPtr XOpenDisplay(IntPtr display);
 		[DllImport ("libX11.so", EntryPoint="XCloseDisplay")]
-		internal extern static void XCloseDisplay(IntPtr display);
+		internal extern static void XCloseDisplay(IntPtr display);						    
 
 		[DllImport ("libX11.so", EntryPoint="XCreateWindow")]
 		internal extern static IntPtr XCreateWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int depth, int xclass, IntPtr visual, IntPtr attributes);
@@ -541,6 +548,9 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 		internal extern static int XReparentWindow(IntPtr display, IntPtr window, IntPtr parent, int x, int y);
 		[DllImport ("libX11.so", EntryPoint="XMoveResizeWindow")]
 		internal extern static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
+
+		[DllImport ("libX11.so", EntryPoint="XGetWindowAttributes")]
+		internal extern static int XGetWindowAttributes(IntPtr display, IntPtr window, ref XWindowAttributes attributes);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
