@@ -1025,7 +1025,6 @@ namespace Mono.CSharp {
 				return;
 			}
 			OptAttributes.AddAttributes (attrs);
-			OptAttributes.CheckTargets (this);
 		}
 
 		public virtual void Emit (TypeContainer tc) 
@@ -1122,12 +1121,15 @@ namespace Mono.CSharp {
 			}
 		}
 
+		// TODO: rewrite this code (to kill N bugs and make it faster) and use standard ApplyAttribute way.
 		public AssemblyName GetAssemblyName (string name, string output) 
 		{
 			if (OptAttributes != null) {
 				foreach (Attribute a in OptAttributes.Attrs) {
-					if (a.Target != AttributeTargets.Assembly)
+					// cannot rely on any resolve-based members before you call Resolve
+					if (a.ExplicitTarget == null || a.ExplicitTarget != "assembly")
 						continue;
+
 					// TODO: This code is buggy: comparing Attribute name without resolving it is wrong.
 					//       However, this is invoked by CodeGen.Init, at which time none of the namespaces
 					//       are loaded yet.

@@ -1,3 +1,16 @@
+2004-11-24  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #69462
+
+	* attribute.cs (Attributable): Removed CheckTargets.
+	(Attributes.Emit): Explicit attribute targets are tested here.
+
+	* class.cs (EventField.ValidAttributeTargets): Explicit target "field" is
+	not enabled for interfaces.
+
+	* codegen.cs (CommonAssemblyModulClass.AddAttributes): Removed CheckTargets.
+	(GetAssemblyName): Ouch next bug there.
+
 2004-11-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* expression.cs: Error 275 added.
