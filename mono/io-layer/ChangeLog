@@ -1,3 +1,11 @@
+2002-07-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* daemon.c (_wapi_daemon_main): Use sizeof
+	(main_socket_address.sun_path) instead of hardcoded 108 value.
+
+	* handles.c (shared_init): Use sizeof
+	(shared_socket_address.sun_path) instead of hardcoded 108 value.
+
 2002-07-10  Dennis Haney  <davh@davh.dk>
 
 	* shared.c:
