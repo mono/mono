@@ -1,0 +1,61 @@
+
+
+2001-11-08	Gaurav Vaish <gvaish@iitk.ac.in>
+	WebControl.cs              - Total Revamp, Partial Implementation
+	AdRotator.cs               - Able to load files
+	AdCreatedEventArgs.cs      - Implemented
+
+2001-11-05	Gaurav Vaish <gvaish@iitk.ac.in>
+	Calendar.cs                - Initial Implementation
+	ButtonColumn.cs            - Initial Implementation
+	Button.cs                  - Initial Implementation
+	BoundColumn.cs             - Initial Implementation
+	BaseCompareValidator.cs    - Minor Changes
+	DataList.cs, BaseValidator.cs, BaseDataList.cs
+                                   - Added more functions, other changes
+	
+2001-10-28	Gaurav Vaish <gvaish@iitk.ac.in>
+	WebControl.cs              - Initial Implementation
+	DataList.cs                - Initial Implementation
+	BaseValidator.cs           - Initial Implementation
+	BaseDataList.cs            - Initial Implementation
+
+2001-10-27	Gaurav Vaish <gvaish@iitk.ac.in>
+
+	AdCreatedEventArgs.cs      - Initial Implementation
+	AdCratedEventHandler.cs    - Implemented
+	AdRotator.cs               - Initial Implementation
+	BorderStyle.cs             - Implemented
+	ButtonColumnStyle.cs       - Implemented
+	CalendarSelectionMode.cs   - Implemented
+	DayNameFormat.cs           - Implemented
+	FirstDayOfWeek             - Implemented
+	FontInfo.cs                - Partial Implementation
+	FontSize.cs                - Implemented
+	GridLines.cs               - Implemented
+	HorizontalAlign.cs         - Implemented
+	HyperLink.cs               - Initial Implementation
+	ImageAlign.cs              - Implemented
+	IRepeatInfoUser.cs         - Implemented
+	ListItemType.cs            - Implemented
+	ListSelectionMode.cs       - Implemented
+	NextPrevFormat.cs          - Implemented
+	PagerMode.cs               - Implemented
+	PagerPosition.cs           - Implemented
+        RepeatDirection.cs         - Implemented
+	RepeatLayout.cs            - Implemented
+	TextAlign.cs               - Implemented
+	TextBoxMode.cs             - Implemented
+	TitleFormat.cs             - Implemented
+	UnitType.cs                - Implemented
+	ValidationCompareOperator.cs
+                                   - Implemented
+	ValidationDataType.cs      - Implemented
+	ValidationSummaryDisplayMode.cs
+                                   - Implemented
+	ValidatorDisplay.cs        - Implemented
+	VerticalAlign.cs           - Implemented
+
+
+
+// File Created 2001:11:13

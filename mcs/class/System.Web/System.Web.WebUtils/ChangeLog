@@ -1,0 +1,7 @@
+
+
+2001-11-09	Gaurav Vaish <gvaish@iitk.ac.in>
+	UrlUtil.cs               - Some basic functions
+
+2001-11-08	Gaurav Vaish <gvaish@iitk.ac.in>
+	Namespace    - Created the namespace for commonly used, otherwise not available functions
