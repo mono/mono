@@ -1,4 +1,9 @@
 
+Fri Jul 26 11:36:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: no magic numbers.
+	* tabledefs.h: security action enum.
+
 Fri Jul 26 11:22:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: fix possible memory corruption.
