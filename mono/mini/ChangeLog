@@ -1,3 +1,8 @@
+2004-12-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* mini-x86.c (mono_arch_output_basic_block): Just use ecx as the
+	register to pop to make this cleaner, at the request of Paolo.
+
 2004-12-20  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini-ops.h (OP_GETHASHCODE): New op.
