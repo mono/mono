@@ -234,6 +234,8 @@ namespace System.Data.OleDb
 			if (connection.State == ConnectionState.Closed)
 				throw new InvalidOperationException ();
 			// FIXME: a third check is mentioned in .NET docs
+			if (connection.DataReader != null)
+				throw new InvalidOperationException ();
 
 			IntPtr gdaConnection = connection.GdaConnection;
 			IntPtr gdaParameterList = parameters.GdaParameterList;
@@ -261,6 +263,8 @@ namespace System.Data.OleDb
 			GdaList glist_node;
 
 			if (connection.State != ConnectionState.Open)
+				throw new InvalidOperationException ();
+			if (connection.DataReader != null)
 				throw new InvalidOperationException ();
 
 			this.behavior = behavior;
@@ -299,6 +303,9 @@ namespace System.Data.OleDb
 		
 		public object ExecuteScalar ()
 		{
+			if (connection.DataReader != null)
+				throw new InvalidOperationException ();
+			
 			SetupGdaCommand ();
 			OleDbDataReader reader = ExecuteReader ();
 			return reader.GetValue (0);

@@ -147,6 +147,9 @@ namespace System.Data.OleDb
 		public static extern byte gda_value_get_tinyint (IntPtr value);
 
 		[DllImport("gda-2")]
+		public static extern bool gda_value_is_null (IntPtr value);
+		
+		[DllImport("gda-2")]
 		public static extern string gda_value_stringify (IntPtr value);
 		
 		[DllImport("gda-2")]
@@ -170,6 +173,9 @@ namespace System.Data.OleDb
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_data_model_describe_column (IntPtr model, int col);
 
+		[DllImport("gda-2")]
+		public static extern int gda_data_model_get_column_position (IntPtr model, string name);
+		
 		[DllImport("gda-2")]
 		public static extern void gda_field_attributes_free (IntPtr fa);
 

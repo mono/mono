@@ -34,6 +34,7 @@ namespace System.Data.OleDb
 		internal OleDbDataReader (OleDbCommand command, ArrayList results) 
 		{
 			this.command = command;
+			this.command.Connection.DataReader = this;
 			open = true;
 			if (results != null)
 				gdaResults = results;
@@ -48,9 +49,8 @@ namespace System.Data.OleDb
 		#region Properties
 
 		public int Depth {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return 0; // no nested selects supported
 			}
 		}
 
@@ -72,9 +72,19 @@ namespace System.Data.OleDb
 		}
 
 		public object this[string name] {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				int pos;
+
+				if (currentResult == -1)
+					throw new InvalidOperationException ();
+
+				pos = libgda.gda_data_model_get_column_position (
+					(IntPtr) gdaResults[currentResult],
+					name);
+				if (pos == -1)
+					throw new IndexOutOfRangeException ();
+
+				return this[pos];
 			}
 		}
 
@@ -114,14 +124,16 @@ namespace System.Data.OleDb
 			for (int i = 0; i < gdaResults.Count; i++) {
 				IntPtr obj = (IntPtr) gdaResults[i];
 				libgda.FreeObject (obj);
-				gdaResults = null;
 			}
 
 			gdaResults.Clear ();
+			gdaResults = null;
 			
 			open = false;
 			currentResult = -1;
 			currentRow = -1;
+
+			this.command.Connection.DataReader = null;
 		}
 
 		~OleDbDataReader ()
@@ -383,10 +395,12 @@ namespace System.Data.OleDb
 			throw new IndexOutOfRangeException ();
 		}
 
-		[MonoTODO]
 		public DataTable GetSchemaTable ()
 		{
-			throw new NotImplementedException ();
+			DataTable table = new DataTable ();
+
+			// FIXME: implement
+			return table;
 		}
 
 		public string GetString (int ordinal)
@@ -467,10 +481,19 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public bool IsDBNull (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new IndexOutOfRangeException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new IndexOutOfRangeException ();
+
+			return libgda.gda_value_is_null (value);
 		}
 
 		public bool NextResult ()

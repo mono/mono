@@ -74,6 +74,8 @@ namespace System.Data.OleDb.Test
 				DisplayRow (reader);
 				i++;
 			}
+
+			reader.Close ();
 		}
 
 		void TestTransaction ()
