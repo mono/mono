@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Alexander Olk	xenomorph2@onlinehome.de
@@ -25,11 +25,14 @@
 
 // NOT COMPLETE
 
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty("Color")]
 	public class ColorDialog : CommonDialog
 	{
 		#region Local Variables
@@ -72,6 +75,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(true)]
 		public virtual bool AllowFullOpen
 		{
 			get
@@ -85,8 +89,10 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		//FIXME: Currently AnyColor internally is always true
+		// Currently AnyColor internally is always true
 		// Does really anybody use 256 or less colors ???
+		// Naw, cairo only supports 24bit anyway - pdb
+		[DefaultValue(false)]
 		public virtual bool AnyColor
 		{
 			get
@@ -100,6 +106,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public virtual bool FullOpen
 		{
 			get
@@ -112,7 +119,9 @@ namespace System.Windows.Forms
 				fullOpen = value;
 			}
 		}
-		
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int[] CustomColors
 		{
 			get
@@ -126,6 +135,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public virtual bool ShowHelp
 		{
 			get
@@ -139,6 +149,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public virtual bool SolidColorOnly
 		{
 			get
@@ -170,6 +181,22 @@ namespace System.Windows.Forms
 			return base.ToString( ) + ", Color: " + Color.ToString( );
 		}
 		#endregion	// Public Instance Methods
+
+		#region Protected Instance Properties
+		protected virtual IntPtr Instance {
+			get {
+				// MS Internal
+				return (IntPtr)GetHashCode();
+			}
+		}
+
+		protected virtual int Options {
+			get {
+				// MS Internal
+				return 0;
+			}
+		}
+		#endregion	// Protected Instance Properties
 		
 		#region Protected Instance Methods
 		[MonoTODO]

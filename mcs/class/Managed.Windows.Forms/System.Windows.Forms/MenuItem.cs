@@ -26,13 +26,18 @@
 
 // NOT COMPLETE
 
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Text;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty("Text")]
+	[DefaultEvent("Click")]
+	[DesignTimeVisible(false)]
+	[ToolboxItem(false)]
 	public class MenuItem : Menu
 	{
 		internal Menu parent_menu = null;
@@ -164,40 +169,51 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 
+		[Browsable(false)]
+		[DefaultValue(false)]
 		public bool BarBreak {
 			get { return break_; }
 			set { break_ = value; }
 		}
 
+		[Browsable(false)]
+		[DefaultValue(false)]
 		public bool Break {
 			get { return bar_break; }
 			set { bar_break = value; }
 		}
 
+		[DefaultValue(false)]
 		public bool Checked {
 			get { return checked_; }
 			set { checked_ = value; }
 		}
 
+		[DefaultValue(false)]
 		public bool DefaultItem {
 			get { return defaut_item; }
 			set { defaut_item = value; }
 		}
 
+		[DefaultValue(true)]
+		[Localizable(true)]
 		public bool Enabled {
 			get { return enabled; }
 			set { enabled = value; }
 		}
 
+		[Browsable(false)]
 		public int Index {
 			get { return index; }
 			set { index = value; }
 		}
 
+		[Browsable(false)]
 		public override bool IsParent {
 			get { return IsPopup; }
 		}
 
+		[DefaultValue(false)]
 		public bool MdiList {
 			get { return mdilist; }
 			set { mdilist = value; }
@@ -207,11 +223,13 @@ namespace System.Windows.Forms
 			get { return menuid; }
 		}
 
+		[DefaultValue(0)]
 		public int MergeOrder {
 			get { return mergeorder; }
 			set { mergeorder = value; }
 		}
 
+		[DefaultValue(MenuMerge.Add)]
 		public MenuMerge MergeType {
 			get { return mergetype;	}
 			set {
@@ -222,24 +240,30 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
 		public char Mnemonic {
 			get { return mnemonic; }
 		}
 
+		[DefaultValue(false)]
 		public bool OwnerDraw {
 			get { return ownerdraw; }
 			set { ownerdraw = value; }
 		}
 
+		[Browsable(false)]
 		public Menu Parent {
 			get { return parent_menu;}
 		}
 
+		[DefaultValue(false)]
 		public bool RadioCheck {
 			get { return radiocheck; }
 			set { radiocheck = value; }
 		}
 
+		[DefaultValue(Shortcut.None)]
+		[Localizable(true)]
 		public Shortcut Shortcut {
 			get { return shortcut;}
 			set {
@@ -250,11 +274,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
+		[Localizable(true)]
 		public bool ShowShortcut {
 			get { return showshortcut;}
 			set { showshortcut = value; }
 		}
 
+		[Localizable(true)]
 		public string Text {
 			get { return text; }
 			set {
@@ -269,6 +296,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
+		[Localizable(true)]
 		public bool Visible {
 			get { return visible;}
 			set { visible = value; }

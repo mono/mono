@@ -26,10 +26,15 @@
 // NOT COMPLETE
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-
+	[DefaultProperty("BorderStyle")]
+	[DefaultEvent("Paint")]
+	[Designer ("System.Windows.Forms.Design.PanelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class Panel : ScrollableControl {
 		private BorderStyle border_style;
 
@@ -41,6 +46,8 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors & Destructors
 
 		#region Public Instance Properties
+		[DefaultValue(null)]
+		[DispId(-504)]
 		public BorderStyle BorderStyle {
 			get { return border_style; }
 			set {
@@ -51,6 +58,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(false)]
 		public new bool TabStop {
 			get { return base.TabStop; }
 			set {
@@ -60,6 +68,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Bindable(false)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text {
 			get { return base.Text; }
 			set {
@@ -98,9 +109,21 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event KeyEventHandler		KeyDown;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event KeyPressEventHandler	KeyPress;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event KeyEventHandler		KeyUp;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public event EventHandler		TextChanged;
 		#endregion
 	}
 }

@@ -25,7 +25,7 @@
 //
 // TODO:
 //
-// Copyright (C) Novell Inc., 2004
+// Copyright (C) Novell Inc., 2004-2005
 //
 //
 
@@ -33,25 +33,61 @@
 
 using System.Drawing;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty("Text")]
+	[DefaultEvent("Enter")]
+	[Designer ("System.Windows.Forms.Design.GroupBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class GroupBox : Control
 	{
 		private FlatStyle flat_style;
 		private Rectangle display_rectangle = new Rectangle ();
 
 		#region Events
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event EventHandler Click;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event EventHandler DoubleClick;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event KeyEventHandler KeyDown;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event KeyPressEventHandler KeyPress;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event KeyEventHandler KeyUp;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event MouseEventHandler MouseDown;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event EventHandler MouseEnter;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event EventHandler MouseLeave;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event MouseEventHandler MouseMove;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event MouseEventHandler MouseUp;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new event EventHandler TabStopChanged;
 		#endregion Events
 
@@ -65,6 +101,8 @@ namespace System.Windows.Forms
 		}
 
 		#region Public Properties
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public override bool AllowDrop {
 			get { return base.AllowDrop;  }
 			set { base.AllowDrop = value; }
@@ -88,6 +126,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(FlatStyle.Standard)]
 		public FlatStyle FlatStyle {
 			get { return flat_style; }
 			set {
@@ -102,11 +141,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public new bool TabStop {
 			get { return base.TabStop;  }
 			set { base.TabStop = value; }
 		}
 
+		[Localizable(true)]
 		public override string Text {
 			get { return base.Text; }
 			set {

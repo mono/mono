@@ -27,9 +27,15 @@
 // NOT COMPLETE
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 
 namespace System.Windows.Forms {
+	[DefaultProperty("Text")]
+	[DefaultEvent("MouseDown")]
+	[Designer ("System.Windows.Forms.Design.NotifyIconDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	public sealed class NotifyIcon : System.ComponentModel.Component {
 		#region Local Variables
 		private ContextMenu		context_menu;
@@ -258,6 +264,7 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Instance Properties
+		[DefaultValue(null)]
 		public ContextMenu ContextMenu {
 			get {
 				return context_menu;
@@ -271,6 +278,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue(null)]
 		public Icon Icon {
 			get {
 				return icon;
@@ -287,6 +296,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
 		public string Text {
 			get {
 				return text;
@@ -307,6 +317,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue(false)]
 		public bool Visible {
 			get {
 				return visible;
@@ -344,8 +356,12 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+		[Category]
 		public event EventHandler	Click;
+
+		[Category]
 		public event EventHandler	DoubleClick;
+
 		public event MouseEventHandler	MouseDown;
 		public event MouseEventHandler	MouseMove;
 		public event MouseEventHandler	MouseUp;

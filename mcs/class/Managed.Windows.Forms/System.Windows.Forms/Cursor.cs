@@ -31,6 +31,7 @@ using System.Drawing;
 using System.Runtime.Serialization;
 
 namespace System.Windows.Forms {
+	[Serializable]
 	public sealed class Cursor : IDisposable, ISerializable {
 		#region Local Variables
 		internal IntPtr		handle;

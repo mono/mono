@@ -658,7 +658,7 @@ namespace System.Windows.Forms {
 				} else {
 					CreateParams cp = base.CreateParams;					
 					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
-					cp.ExStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
+					cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);
 					return cp;
 				}
 			}

@@ -29,6 +29,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Checked")]
@@ -42,6 +43,56 @@ namespace System.Windows.Forms {
 		internal bool			three_state;
 		#endregion	// Local Variables
 
+		#region CheckBoxAccessibleObject Subclass
+		[ComVisible(true)]
+			public class CheckBoxAccessibleObject : ControlAccessibleObject {
+			#region CheckBoxAccessibleObject Local Variables
+			private CheckBox owner;
+			#endregion	// CheckBoxAccessibleObject Local Variables
+
+			#region CheckBoxAccessibleObject Constructors
+			public CheckBoxAccessibleObject(Control owner) : base(owner) {
+				this.owner = (CheckBox)owner;
+			}
+			#endregion	// CheckBoxAccessibleObject Constructors
+
+			#region CheckBoxAccessibleObject Properties
+			public override string DefaultAction {
+				get {
+					return "Select";
+				}
+			}
+
+			public override AccessibleRole Role {
+				get {
+					return AccessibleRole.CheckButton;
+				}
+			}
+
+			public override AccessibleStates State {
+				get {
+					AccessibleStates	retval;
+
+					retval = AccessibleStates.Default;
+
+					if (owner.check_state == CheckState.Checked) {
+						retval |= AccessibleStates.Checked;
+					}
+
+					if (owner.Focused) {
+						retval |= AccessibleStates.Focused;
+					}
+
+					if (owner.CanFocus) {
+						retval |= AccessibleStates.Focusable;
+					}
+
+					return retval;
+				}
+			}
+			#endregion	// CheckBoxAccessibleObject Properties
+		}
+		#endregion	// CheckBoxAccessibleObject Sub-class
 
 		#region Public Constructors
 		public CheckBox() {

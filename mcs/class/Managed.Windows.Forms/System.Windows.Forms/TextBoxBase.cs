@@ -484,8 +484,39 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void AppendText(string text) {
-			// FIXME
-			throw new NotImplementedException();
+
+			if (multiline) {
+				string[]	lines;
+				int		linecount;
+
+				// Break the string into separate lines
+				lines = text.Split(new char[] {'\n'});
+				linecount = lines.Length;
+				for (int i = 0; i < linecount; i++) {
+					if (lines[i].EndsWith("\r")) {
+						lines[i] = lines[i].Substring(0, lines[i].Length - 1);
+					}
+				}
+
+				// Grab the formatting for the last element
+				document.MoveCaret(CaretDirection.CtrlEnd);
+
+				// Insert the first line
+				document.InsertString(document.CaretLine, document.CaretPosition, lines[0]);
+
+				for (int i = 1; i < linecount; i++) {
+					document.Add(document.CaretLine.LineNo+i, CaseAdjust(lines[i]), alignment, document.CaretTag.font, document.CaretTag.color);
+				}
+
+				document.RecalculateDocument(CreateGraphics());
+				document.MoveCaret(CaretDirection.CtrlEnd);
+				Invalidate();
+			} else {
+				document.MoveCaret(CaretDirection.CtrlEnd);
+				document.InsertStringAtCaret(text, true);
+				Invalidate();
+			}
+			OnTextChanged(EventArgs.Empty);
 		}
 
 		public void Clear() {
@@ -519,8 +550,8 @@ namespace System.Windows.Forms {
 		}
 
 		public void Select(int start, int length) {
-			// FIXME
-			throw new NotImplementedException();
+			SelectionStart = start;
+			SelectionLength = length;
 		}
 
 

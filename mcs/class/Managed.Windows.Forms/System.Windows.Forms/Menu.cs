@@ -31,9 +31,15 @@
 
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
+	[Designer ("System.Windows.Forms.Design.MenuDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
+	[ListBindable(false)]
 	public abstract class Menu : Component
 	{
 		internal MenuItemCollection menu_items;
@@ -54,6 +60,9 @@ namespace System.Windows.Forms
 
 
 		#region Public Properties
+		[BrowsableAttribute(false)]
+		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public IntPtr Handle {
 			get {
 				if (IsDirty && creating == false) {					
@@ -70,6 +79,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public virtual bool IsParent {
 			get {
 				if (menu_items != null && menu_items.Count > 0)
@@ -79,12 +90,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public MenuItem MdiListItem {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Content)]
+		[MergableProperty(false)]
 		public MenuItemCollection MenuItems {
 			get { return menu_items; }
 		}
@@ -227,6 +243,7 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 
+		[ListBindable(false)]
 		public class MenuItemCollection : IList, ICollection, IEnumerable
 		{
 			private Menu owner;

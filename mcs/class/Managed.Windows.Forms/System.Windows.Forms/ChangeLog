@@ -1,3 +1,19 @@
+2005-02-03  Peter Bartok  <pbartok@novell.com>
+
+	* Menu.cs: Added missing attributes
+	* GroupBox.cs: Added missing attributes
+	* Label.cs: Added missing attributes
+	* CheckBox.cs: Implemented CheckBoxAccessibleObject class
+	* ColorDialog.cs:
+	  - Added Instance and Options properties
+	  - Added missing attributes
+	* Cursor.cs: Made Serializable
+	* NotifyIcon: Added missing attributes
+	* MenuItem.cs: Added missing attributes
+	* TextBoxBase.cs: Implemented AppendText() and Select() methods
+	* Panel.cs: Added Missing attributes
+	* MonthCalendar.cs: Fixed CreateParams
+
 2005-02-08  Jordi Mas i Hernandez <jordi@ximian.com>
 	
 	* LinkLabel.cs:

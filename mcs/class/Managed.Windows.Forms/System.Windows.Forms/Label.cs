@@ -27,14 +27,18 @@
 
 // INCOMPLETE
 
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Drawing.Imaging;
-using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-    	public class Label : Control
+	[DefaultProperty("Text")]
+	[Designer ("System.Windows.Forms.Design.LabelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	public class Label : Control
     	{
     		private BorderStyle border_style;
     		private bool autosize;
@@ -53,13 +57,32 @@ namespace System.Windows.Forms
 
     		#region Events
     		public event EventHandler AutoSizeChanged;
-    		public new event EventHandler BackgroundImageChanged;
-    		public new event EventHandler ImeModeChanged;    		
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler ImeModeChanged;    		
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyDown;		
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyPressEventHandler KeyPress;		
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event KeyEventHandler KeyUp;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler TabStopChanged;
-    		public event EventHandler TextAlignChanged;
+
+		public event EventHandler TextAlignChanged;
 		#endregion
 
     		public Label ()
@@ -92,7 +115,9 @@ namespace System.Windows.Forms
 		}
 
 		#region Public Properties
-
+		[DefaultValue(false)]
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.All)]
     		public virtual bool AutoSize {
     			get { return autosize; }
     			set {
@@ -108,7 +133,10 @@ namespace System.Windows.Forms
     			}
     		}
 
-    		public override Image BackgroundImage {
+		[Browsable(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public override Image BackgroundImage {
     			get {
     				return base.BackgroundImage;
     			}
@@ -124,6 +152,8 @@ namespace System.Windows.Forms
     			}
     		}
 
+		[DefaultValue(BorderStyle.None)]
+		[DispId(-504)]
     		public virtual BorderStyle BorderStyle {
     			get {
     				return border_style;
@@ -152,7 +182,8 @@ namespace System.Windows.Forms
     			get {return ThemeEngine.Current.LabelDefaultSize;}
     		}
 
-    		public FlatStyle FlatStyle {
+		[DefaultValue(FlatStyle.Standard)]
+		public FlatStyle FlatStyle {
     			get {
     				return flat_style;
     			}
@@ -168,6 +199,7 @@ namespace System.Windows.Forms
     			}
     		}
 
+		[Localizable(true)]
     		public Image Image {
     			get {
     				return image;
@@ -181,6 +213,8 @@ namespace System.Windows.Forms
     			}
     		}
 
+		[DefaultValue(ContentAlignment.MiddleCenter)]
+		[Localizable(true)]
     		public ContentAlignment ImageAlign {
     			get {
     				return image_align;
@@ -197,7 +231,11 @@ namespace System.Windows.Forms
     			}
     		}
 
-    		public int ImageIndex {
+		[DefaultValue (-1)]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Localizable (true)]
+		[TypeConverter (typeof (ImageIndexConverter))]
+		public int ImageIndex {
     			get { return image_index;}
     			set {
 
@@ -216,6 +254,7 @@ namespace System.Windows.Forms
 			}
     		}
 
+		[DefaultValue(null)]
     		public ImageList ImageList {
     			get { return image_list;}
     			set {
@@ -229,6 +268,8 @@ namespace System.Windows.Forms
 			}
     		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
     		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
 			set {
@@ -240,11 +281,17 @@ namespace System.Windows.Forms
 			}
 		}
 
-    		public virtual int PreferredHeight {
+		[Browsable(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public virtual int PreferredHeight {
     			get { return preferred_height; }
     		}
 
-    		public virtual int PreferredWidth {
+		[Browsable(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public virtual int PreferredWidth {
     			get {return preferred_width; }
     		}
 
@@ -253,6 +300,9 @@ namespace System.Windows.Forms
 			set { render_transparent = value;}
 		}
     		
+		[Browsable(false)]
+		[DefaultValue(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool TabStop  {
     			get { return base.TabStop; }
     			set {
@@ -265,7 +315,9 @@ namespace System.Windows.Forms
 			}
     		}
 
-    		public virtual ContentAlignment TextAlign {
+		[DefaultValue(ContentAlignment.TopLeft)]
+		[Localizable(true)]
+		public virtual ContentAlignment TextAlign {
     			get { return text_align; }
 
     			set {
@@ -326,7 +378,8 @@ namespace System.Windows.Forms
 			}
     		}
 
-    		public bool UseMnemonic {
+		[DefaultValue(true)]
+		public bool UseMnemonic {
     			get { return use_mnemonic; }
    			set {
     				if (use_mnemonic != value) {
