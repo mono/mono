@@ -54,7 +54,7 @@ RESX_RES = Npgsql/NpgsqlState.resources Npgsql/NpgsqlClosedState.resources Npgsq
 all: $(RESX_RES) $(the_lib)
 
 %.resources: %.resx
-	monoresgen $<
+	$(RESGEN) $<
 
 clean: clean-recursive clean-local
 

@@ -10,6 +10,7 @@ PLATFORM_CORLIB = mscorlib.dll
 
 BOOTSTRAP_MCS = csc.exe
 MCS = $(BOOTSTRAP_MCS)
+RESGEN = resgen.exe
 
 PLATFORM_MAKE_CORLIB_CMP = yes
 PLATFORM_TWEAK_CORLIB_SOURCES=cat - corlib.dll.win32-excludes |sort |uniq -u

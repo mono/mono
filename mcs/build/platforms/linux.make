@@ -9,6 +9,7 @@ PLATFORM_RUNTIME = $(RUNTIME)
 PLATFORM_CORLIB = corlib.dll
 
 BOOTSTRAP_MCS = mcs
+RESGEN = monoresgen
 
 # Define this if this ever will work on Linux
 # PLATFORM_MAKE_CORLIB_CMP = yes

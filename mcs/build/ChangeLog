@@ -1,3 +1,9 @@
+2003-10-22  Dick Porter  <dick@ximian.com>
+
+	* platforms/win32.make:
+	* platforms/linux.make:
+	* rules.make: Added RESGEN platform-specific tool.
+
 2003-08-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* config-default.make: the /nowarn arguments are now set on a per

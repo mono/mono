@@ -43,6 +43,7 @@ export MKINSTALLDIRS
 export TEST_HARNESS
 export BOOTSTRAP_MCS
 export DESTDIR
+export RESGEN
 
 # Get this so the platform.make platform-check rule doesn't become the
 # default target
