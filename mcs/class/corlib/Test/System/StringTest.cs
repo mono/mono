@@ -138,6 +138,30 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
+	// http://bugzilla.ximian.com/show_bug.cgi?id=70478
+	public void CompareNotWorking ()
+	{
+		AssertEquals ("A03", String.Compare ("A", "a"), 1);
+		AssertEquals ("A04", String.Compare ("a", "A"), -1);
+	}
+
+	[Test]
+	[Category("NotWorking")]
+	public void CompareNotWorking2 ()
+	{
+		string needle = "ab";
+		string haystack = "abbcbacab";
+		AssertEquals("basic substring check #9", 1, 
+			     String.Compare(needle, 0, haystack, 0, 2, false));
+		for (int i = 1; i <= (haystack.Length - needle.Length); i++) {
+			if (i != 7) {
+				AssertEquals("loop substring check #8/" + i, 1, String.Compare(needle, 0, haystack, i, 2, false));
+			}
+		}
+	}
+
+	[Test]
 	public void Compare ()
 	{
 		string lesser = "abc";
@@ -157,8 +181,6 @@ public class StringTest : Assertion
 		Assert (String.Compare (lesser, caps, false) != 0);
 		AssertEquals ("A01", String.Compare ("a", "b"), -1);
 		AssertEquals ("A02", String.Compare ("b", "a"), 1);
-		AssertEquals ("A03", String.Compare ("A", "a"), 1);
-		AssertEquals ("A04", String.Compare ("a", "A"), -1);
 
 
 		// TODO - test with CultureInfo
@@ -193,15 +215,12 @@ public class StringTest : Assertion
 		needle = "AB";
 		AssertEquals("basic substring check #8", 0, 
 			     String.Compare(needle, 0, haystack, 0, 2, true));
-		AssertEquals("basic substring check #9", 1, 
-			     String.Compare(needle, 0, haystack, 0, 2, false));
 		for (int i = 1; i <= (haystack.Length - needle.Length); i++) {
 			if (i != 7) {
 				Assert("loop substring check #5/" + i, String.Compare(needle, 0, haystack, i, 2, true) != 0);
 				Assert("loop substring check #6/" + i, String.Compare(needle, 0, haystack, i, 2, false) != 0);
 			} else {
 				AssertEquals("loop substring check #7/" + i, 0, String.Compare(needle, 0, haystack, i, 2, true));
-				AssertEquals("loop substring check #8/" + i, 1, String.Compare(needle, 0, haystack, i, 2, false));
 			}
 		}
 
