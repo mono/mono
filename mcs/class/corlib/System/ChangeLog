@@ -1,5 +1,11 @@
 2004-07-07  Geoff Norton <gnorton@customerdna.com>
 
+       * Monotype.cs: Patch for bug #58844.  Dont throw exceptions right away;
+         pass through all the possibly BindingInfo's and keep a bool value as to the type
+         of exception we might need to throw;
+
+2004-07-07  Geoff Norton <gnorton@customerdna.com>
+
         * Patch to fix bug #58973
 
 2004-06-25  Ben Maurer <bmaurer@ximian.com>
