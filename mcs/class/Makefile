@@ -39,6 +39,7 @@ SUBDIRS = \
 	System.Design			\
 	PEAPI				\
 	Mono.Security			\
+	Mono.Security.Tls			\
 	Npgsql				\
 	ICSharpCode.SharpZipLib		\
 	ByteFX.Data			\

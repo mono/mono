@@ -1,3 +1,7 @@
+2003-10-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Makefile: Add Mono.Security.Tls assembly.
+
 2003-08-11  Duncan Mak  <duncan@ximian.com>
 
 	* Makefile (SUBDIRS): Add Mono.Cairo.dll
