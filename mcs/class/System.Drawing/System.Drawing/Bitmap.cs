@@ -32,12 +32,11 @@ namespace System.Drawing {
 
 		public Bitmap (int width, int height) : this (width, height, PixelFormat.Format32bppArgb)
 		{
-			raw_format = ImageFormat.Bmp;
+			
 		}
 
 		public Bitmap (int width, int height, Graphics g)
-		{
-			raw_format = ImageFormat.Bmp;
+		{			
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
 			GDIPlus.CheckStatus (s);
@@ -46,8 +45,7 @@ namespace System.Drawing {
 		}
 
 		public Bitmap (int width, int height, PixelFormat format)
-		{
-			raw_format = ImageFormat.Bmp;
+		{			
 			int bpp = GetPixelFormatSize (format);
 			int stride = ((bpp * width) / 8);
 			stride = (stride + 3) & ~3;
@@ -69,21 +67,19 @@ namespace System.Drawing {
 		public Bitmap (string filename) : this (filename, false) {}
 
 		public Bitmap (Image original, Size newSize) 
-		{
-			raw_format = ImageFormat.Bmp;
+		{			
 			BitmapFromImage(original, newSize);
 		}
 		
 		internal Bitmap (int width, int height, PixelFormat pixel, IntPtr bmp)
 		{			
-			nativeObject = (IntPtr)bmp;			
-			raw_format = ImageFormat.Bmp;
+			nativeObject = (IntPtr)bmp;						
 		}
 		
 		internal Bitmap (float width, float height, PixelFormat pixel, IntPtr bmp)
 		{			
 			nativeObject = (IntPtr)bmp;			
-			raw_format = ImageFormat.Bmp;
+			
 		}
 		
 		internal void BitmapFromImage(Image original, Size newSize){
@@ -147,8 +143,7 @@ namespace System.Drawing {
 			
 			Status status = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, scan0, out bmp);
 			GDIPlus.CheckStatus (status);	
-			nativeObject = (IntPtr) bmp;						 
-			raw_format = ImageFormat.Bmp;
+			nativeObject = (IntPtr) bmp;						 			
 			
 		}
 

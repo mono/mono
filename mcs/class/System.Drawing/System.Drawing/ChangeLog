@@ -1,3 +1,7 @@
+2004-05-05  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Image.cs: raw_format should be handled by GDI+
+	* Bitmap.cs: raw_format should be handled by GDI+
+
 2004-05-04  Ravindra <rkumar@novell.com>
 
 	* Pen.cs: Modified exception message. Fixed Transform, DashPattern,

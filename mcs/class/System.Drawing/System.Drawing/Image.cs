@@ -28,7 +28,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	internal IntPtr nativeObject = IntPtr.Zero;	
 	protected ColorPalette colorPalette;
-	protected ImageFormat raw_format;
+	
 	
 	// constructor
 	internal  Image()
@@ -435,16 +435,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			Status st = GDIPlus.GdipGetImageRawFormat (nativeObject, out guid);
 			
 			GDIPlus.CheckStatus (st);
-			raw_format = new ImageFormat (guid);
-			return raw_format;
+			return new ImageFormat (guid);			
 		}
 	}
-
-	internal void SetRawFormat (ImageFormat format)
-	{
-		raw_format = format;
-	}
-
+	
 	public Size Size {
 		get {
 			return new Size(Width, Height);
