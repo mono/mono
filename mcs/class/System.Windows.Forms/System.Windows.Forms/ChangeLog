@@ -1,3 +1,18 @@
+2003-03-09 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Application.cs			fixed line terminators
+
+	* Form.cs
+	* TrackBar.cs
+	* win32Enums.cs
+		implementation of TrackBar control by Aleksey Ryabchuk (ryabchuk@yahoo.com)
+
+	* makefile
+	* monostub.c
+	* monosem.c
+		parse command line
+		run assembly not from main thread
+		first implementation of pthread fuctions using Wine
+
 2003-03-01 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Button.cs					changed painting code
 	* ButtonBase.cs				ContentAlignment operations implemented in separate functions

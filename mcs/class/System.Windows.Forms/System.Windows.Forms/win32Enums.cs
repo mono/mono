@@ -2315,6 +2315,73 @@ namespace System.Windows.Forms{
 		LBN_KILLFOCUS       =5
 	}
 
+	#region Trackbar Control Messages
+	internal enum TrackbarMessages {
+		TBM_GETPOS          =  ( Msg.WM_USER ),
+		TBM_GETRANGEMIN     =  ( Msg.WM_USER + 1),
+		TBM_GETRANGEMAX     =  ( Msg.WM_USER + 2),
+		TBM_GETTIC          =  ( Msg.WM_USER + 3),
+		TBM_SETTIC          =  ( Msg.WM_USER + 4),
+		TBM_SETPOS          =  ( Msg.WM_USER + 5 ),
+		TBM_SETRANGE        =  ( Msg.WM_USER + 6 ),
+		TBM_SETRANGEMIN     =  ( Msg.WM_USER + 7 ),
+		TBM_SETRANGEMAX     =  ( Msg.WM_USER + 8 ),
+		TBM_CLEARTICS       =  ( Msg.WM_USER + 9 ),
+		TBM_SETSEL          =  ( Msg.WM_USER + 10 ),
+		TBM_SETSELSTART     =  ( Msg.WM_USER + 11 ),
+		TBM_SETSELEND       =  ( Msg.WM_USER + 12 ),
+		TBM_GETPTICS        =  ( Msg.WM_USER + 14 ),
+		TBM_GETTICPOS       =  ( Msg.WM_USER + 15 ),
+		TBM_GETNUMTICS      =  ( Msg.WM_USER + 16 ),
+		TBM_GETSELSTART     =  ( Msg.WM_USER + 17 ),
+		TBM_GETSELEND       =  ( Msg.WM_USER + 18 ),
+		TBM_CLEARSEL        =  ( Msg.WM_USER + 19 ),
+		TBM_SETTICFREQ      =  ( Msg.WM_USER + 20 ),
+		TBM_SETPAGESIZE     =  ( Msg.WM_USER + 21 ),
+		TBM_GETPAGESIZE     =  ( Msg.WM_USER + 22 ),
+		TBM_SETLINESIZE     =  ( Msg.WM_USER + 23 ),
+		TBM_GETLINESIZE     =  ( Msg.WM_USER + 24 ),
+		TBM_GETTHUMBRECT    =  ( Msg.WM_USER + 25 ),
+		TBM_GETCHANNELRECT  =  ( Msg.WM_USER + 26 ),
+		TBM_SETTHUMBLENGTH  =  ( Msg.WM_USER + 27 ),
+		TBM_GETTHUMBLENGTH  =  ( Msg.WM_USER + 28 ),
+		TBM_SETTOOLTIPS     =  ( Msg.WM_USER + 29 ),
+		TBM_GETTOOLTIPS     =  ( Msg.WM_USER + 30 ),
+		TBM_SETTIPSIDE      =  ( Msg.WM_USER + 31 )
+	}
+	#endregion
+		
+	#region Trackbar Control Styles
+	public enum TrackbarControlStyles {
+		TBS_AUTOTICKS       =    0x0001,
+		TBS_VERT            =    0x0002,
+		TBS_HORZ            =    0x0000,
+		TBS_TOP             =    0x0004,
+		TBS_BOTTOM          =    0x0000,
+		TBS_LEFT            =    0x0004,
+		TBS_RIGHT           =    0x0000,
+		TBS_BOTH            =    0x0008,
+		TBS_NOTICKS         =    0x0010,
+		TBS_ENABLESELRANGE  =    0x0020,
+		TBS_FIXEDLENGTH     =    0x0040,
+		TBS_NOTHUMB         =    0x0080,
+		TBS_TOOLTIPS        =    0x0100
+	}
+	#endregion
+
+	internal enum TrackbarNotifications : int {
+		TB_LINEUP           =    0,
+		TB_LINEDOWN         =    1,
+		TB_PAGEUP           =    2,
+		TB_PAGEDOWN         =    3,
+		TB_THUMBPOSITION    =    4,
+		TB_THUMBTRACK       =    5,
+		TB_TOP              =    6,
+		TB_BOTTOM           =    7,
+		TB_ENDTRACK         =    8
+	}
+
+
 	internal enum OwnerDrawTypes : int {
 		ODT_COMBOBOX = 3,
 		ODT_LISTBOX = 2,

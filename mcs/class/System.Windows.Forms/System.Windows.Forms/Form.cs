@@ -918,6 +918,10 @@
 				case Msg.WM_CTLCOLORLISTBOX:
 					Control.ReflectMessage( m.LParam, ref m);
 					break;
+				case Msg.WM_HSCROLL:
+				case Msg.WM_VSCROLL:
+					Control.ReflectMessage( m.LParam, ref m );
+					break;
 				default:
 					base.WndProc (ref m);
 					break;    

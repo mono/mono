@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -17,13 +18,23 @@ namespace System.Windows.Forms {
 
     public class TrackBar : Control, ISupportInitialize {
 
+		Orientation orientation = Orientation.Horizontal;
+		int minimum = 0;
+		int maximum = 10;
+		int tickFrequency = 1;
+		bool autosize = true;
+		int val = 0;
+		TickStyle tickStyle = TickStyle.BottomRight;
+		int smallChange = 1;
+		int largeChange = 5;
+
 		//
 		//  --- Public Constructors
 		//
 		[MonoTODO]
 		public TrackBar()
 		{
-			
+			Size = DefaultSize;
 		}
 		//
 		// --- Public Properties
@@ -31,127 +42,168 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public bool AutoSize {
 			get {
-				throw new NotImplementedException ();
+				return autosize;
 			}
 			set {
-				//FIXME:
+				autosize = value;
+			}
+		}
+
+		public override Image BackgroundImage {
+			get {
+				return base.BackgroundImage;
+			}
+			set {
+			}
+		}
+
+		public override Font Font {
+			get {
+				return base.Font;
+			}
+			set {
+			}
+		}
+
+		public override Color ForeColor {
+			get {
+				return base.ForeColor;
+			}
+			set {
 			}
 		}
 
 		[MonoTODO]
-		public override Image BackgroundImage {
-			get {
-				//FIXME:
-				return base.BackgroundImage;
-			}
-			set {
-				//FIXME:
-				base.BackgroundImage = value;
-			}
-		}
-		[MonoTODO]
-		public override Font Font {
-			get {
-				//FIXME:
-				return base.Font;
-			}
-			set {
-				//FIXME:
-				base.Font = value;
-			}
-		}
-		[MonoTODO]
-		public override Color ForeColor {
-			get {
-				//FIXME:
-				return base.ForeColor;
-			}
-			set {
-				//FIXME:
-				base.ForeColor = value;
-			}
-		}
-		[MonoTODO]
 		public int LargeChange {
 			get {
-				throw new NotImplementedException ();
+				return largeChange;
 			}
 			set {
-				//FIXME:
+				if ( value < 0 )
+					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+
+				largeChange = value;
+
+				if ( IsHandleCreated ) 
+					Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETPAGESIZE, 0, value);
 			}
 		}
 		[MonoTODO]
 		public int Maximum {
 			get {
-				throw new NotImplementedException ();
+				return maximum;
 			}
 			set {
-				//FIXME:
+				maximum = value;
+
+				if ( maximum < minimum )
+					minimum = maximum;
+
+				if ( IsHandleCreated ) 
+					Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETRANGEMAX, 1, value);
 			}
 		}
 		[MonoTODO]
 		public int Minimum {
 			get {
-				throw new NotImplementedException ();
+				return minimum;
 			}
 			set {
-				//FIXME:
+				minimum = value;
+
+				if ( minimum > maximum )
+					maximum = minimum;
+
+				if ( IsHandleCreated ) 
+					Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETRANGEMIN, 1, value);
 			}
 		}
 		[MonoTODO]
 		public Orientation Orientation {
 			get {
-				throw new NotImplementedException ();
+				return orientation;
 			}
 			set {
-				//FIXME:
+				int oldOrient = GetOrientation();
+
+				orientation = value;
+
+				ChangeWindowStyle( oldOrient, GetOrientation() );
+				if( oldOrient != GetOrientation() )
+					Size = new Size(Height, Width);
 			}
 		}
 		[MonoTODO]
 		public int SmallChange {
 			get {
-				throw new NotImplementedException ();
+				return smallChange;
 			}
 			set {
-				//FIXME:
+				if ( value < 0 )
+					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+
+				smallChange = value;
+
+				if ( IsHandleCreated ) 
+					Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETLINESIZE, 0, value);
 			}
 		}
-		[MonoTODO]
+
 		public override string Text {
 			get {
-				//FIXME:
 				return base.Text;
 			}
 			set {
-				//FIXME:
 				base.Text = value;
 			}
 		}
+
 		[MonoTODO]
 		public int TickFrequency {
 			get {
-				throw new NotImplementedException ();
+				return tickFrequency;
 			}
 			set {
-				//FIXME:
+				if ( value > 0 ) {
+					tickFrequency = value;
+					if ( IsHandleCreated ) 
+						Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETTICFREQ, value, 0);
+				}
 			}
 		}
 		[MonoTODO]
 		public TickStyle TickStyle {
 			get {
-				throw new NotImplementedException ();
+				return tickStyle;
 			}
 			set {
-				//FIXME:
+				int OldStyle = GetTickStyle();
+				tickStyle = value;
+				ChangeWindowStyle( OldStyle, GetTickStyle() );
 			}
 		}
+
 		[MonoTODO]
 		public int Value {
 			get {
-				throw new NotImplementedException ();
+				if ( IsHandleCreated ) {
+					return Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_GETPOS, 0, 0);
+				}
+				return val;
 			}
 			set {
-				//FIXME:
+				if ( value < Minimum || value > Maximum )
+					throw new ArgumentException(
+						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+
+				bool raiseEvent = ( val != value ) && ( ValueChanged != null );
+
+				val = value;
+				if ( IsHandleCreated )
+					Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETPOS, -1, val);
+
+				if( raiseEvent )
+					ValueChanged ( this, new EventArgs() );
 			}
 		}
 		
@@ -160,20 +212,23 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void SetRange(int minValue, int maxValue) 
 		{
-			//FIXME:
+			Minimum = minValue;
+			Maximum = maxValue;
+
+			if ( IsHandleCreated )
+				Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETRANGE, 1,
+							MakeLong(Minimum, Maximum));
 		}
 		[MonoTODO]
 		public override string ToString() 
 		{
-			//FIXME:
-			return base.ToString();
+			return string.Format("System.Windows.Forms.Trackbar, Minimum: {0}, Maximum: {1}, Value: {2}",
+						Minimum, Maximum, Value);
 		}
 		
 		// --- Public Events
 		
-		[MonoTODO]
 		public event EventHandler Scroll;
-		[MonoTODO]
 		public event EventHandler ValueChanged;
         
         // --- Protected Properties
@@ -182,10 +237,9 @@ namespace System.Windows.Forms {
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
 
 				createParams.Caption = Text;
-				createParams.ClassName = "TRACKBAR";
+				createParams.ClassName = "msctls_trackbar32";
 				createParams.X = Left;
 				createParams.Y = Top;
 				createParams.Width = Width;
@@ -193,26 +247,29 @@ namespace System.Windows.Forms {
 				createParams.ClassStyle = 0;
 				createParams.ExStyle = 0;
 				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
+				createParams.Parent = Parent.Handle;
 				createParams.Style = (int) (
 					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
+					WindowStyles.WS_VISIBLE) | GetTickStyle() | 
+					GetOrientation() |
+					(int)TrackbarControlStyles.TBS_AUTOTICKS;
+
+				if( TabStop ) 
+					createParams.Style |= (int)WindowStyles.WS_TABSTOP;
+
 				return createParams;
 			}		
 		}
-		[MonoTODO]
+
 		protected override ImeMode DefaultImeMode {
 			get {
-				//FIXME:
-				return base.DefaultImeMode;
+				return ImeMode.Disable;
 			}
 		}
-		[MonoTODO]
+
 		protected override Size DefaultSize {
 			get {
-				//FIXME: replace with correct values
-				return new System.Drawing.Size(300,20);
+				return new System.Drawing.Size(100,34);
 			}
 		}
 		//
@@ -227,7 +284,12 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) 
 		{
-			//FIXME:
+			if (	keyData == Keys.Left   || keyData == Keys.Right ||
+				keyData == Keys.Up     || keyData == Keys.Down ||
+				keyData == Keys.Home   || keyData == Keys.End ||
+				keyData == Keys.PageUp || keyData == Keys.PageDown )
+			return true;
+
 			return IsInputKey(keyData);
 		}
 		[MonoTODO]
@@ -239,20 +301,18 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			//FIXME:
 			base.OnHandleCreated(e);
+			Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETRANGE, 1, MakeLong(Minimum, Maximum));
+			Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETPOS, 1, val);
+			Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETTICFREQ, TickFrequency, 0);
+			Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETLINESIZE, 0, SmallChange);
+			Win32.SendMessage(Handle, (int)TrackbarMessages.TBM_SETPAGESIZE, 0, LargeChange);
 		}
 
-		[MonoTODO]
 		protected virtual void OnScroll(EventArgs e) 
 		{
-			//FIXME:
-		}
-
-		[MonoTODO]
-		protected override void OnMouseWheel(MouseEventArgs e) { // .NET V1.1 Beta.
-			//FIXME:
-			base.OnMouseWheel(e);
+			if ( Scroll != null)
+				Scroll ( this, e );
 		}
 
 		[MonoTODO]
@@ -265,16 +325,74 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			//FIXME:
+			switch ( m.Msg ) {
+			case Msg.WM_HSCROLL:
+			case Msg.WM_VSCROLL:
+				OnScroll( new EventArgs() );
+				if ( ValueChanged != null )
+					ValueChanged (this, new EventArgs() );
+			break;
+			}
 			base.WndProc(ref m);
 		}
 
-		void ISupportInitialize.BeginInit(){
+		[MonoTODO]
+		void ISupportInitialize.BeginInit()
+		{
 			//FIXME:
 		}
 
+		[MonoTODO]
 		void ISupportInitialize.EndInit(){
 			//FIXME:
+		}
+
+		private int MakeLong(int lo, int hi)
+		{
+			return (hi << 16) | (lo & 0x0000ffff);
+		}
+
+		private int GetTickStyle()
+		{
+			int style = 0;
+
+			switch ( tickStyle ) {
+			case TickStyle.Both:
+				style = (int)TrackbarControlStyles.TBS_BOTH;
+			break;
+			case TickStyle.BottomRight:
+				style = (int)TrackbarControlStyles.TBS_BOTTOM | (int)TrackbarControlStyles.TBS_RIGHT;
+			break;
+			case TickStyle.TopLeft:
+				style = (int)TrackbarControlStyles.TBS_TOP | (int)TrackbarControlStyles.TBS_LEFT;
+			break;
+			default:
+				style = (int)TrackbarControlStyles.TBS_NOTICKS;
+			break;
+			};
+
+			return style;
+		}
+
+		private int GetOrientation()
+		{
+			if ( Orientation == Orientation.Horizontal )
+				return (int)TrackbarControlStyles.TBS_HORZ;
+			else
+				return (int)TrackbarControlStyles.TBS_VERT;
+		}
+
+		private bool ChangeWindowStyle(int Remove, int Add)
+		{
+			if( IsHandleCreated ) {
+				int style = Win32.GetWindowLong( Handle, GetWindowLongFlag.GWL_STYLE ).ToInt32();
+				int newStyle = (style & ~Remove) | Add;
+				if (style != newStyle) {
+					Win32.SetWindowLong(Handle, GetWindowLongFlag.GWL_STYLE, newStyle);
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }
