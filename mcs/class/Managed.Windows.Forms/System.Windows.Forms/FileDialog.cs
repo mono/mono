@@ -423,7 +423,6 @@ namespace System.Windows.Forms
 			
 			private Button cancelButton;
 			private ToolBarButton upToolBarButton;
-//			private ToolBar bigButtonToolBar;
 			private ButtonPanel buttonPanel;
 			private Button openSaveButton;
 			private Button helpButton;
@@ -444,7 +443,6 @@ namespace System.Windows.Forms
 			private ToolBarButton homeToolBarButton;
 			private ToolBarButton workplaceToolBarButton;
 			private ComboBox fileTypeComboBox;
-//			private ImageList imageListLeftToolbar;
 			private ImageList imageListTopToolbar;
 			
 			private FileDialog fileDialog;
@@ -489,26 +487,14 @@ namespace System.Windows.Forms
 				openSaveButton = new Button( );
 				fileDialog.form.AcceptButton = openSaveButton;
 				helpButton = new Button( );
-//				bigButtonToolBar = new ToolBar( );
 				buttonPanel = new ButtonPanel( this );
 				upToolBarButton = new ToolBarButton( );
 				cancelButton = new Button( );
 				fileDialog.form.CancelButton = cancelButton;
 				imageListTopToolbar = new ImageList( );
-//				imageListLeftToolbar = new ImageList( );
 				menueToolBarButtonContextMenu = new ContextMenu( );
 				
 				SuspendLayout( );
-				
-				// imageListLeftToolbar
-//				imageListLeftToolbar.ColorDepth = ColorDepth.Depth32Bit;
-//				imageListLeftToolbar.ImageSize = new Size( 48, 48 );
-//				imageListLeftToolbar.Images.Add( (Image)Locale.GetResource( "last_open" ) );
-//				imageListLeftToolbar.Images.Add( (Image)Locale.GetResource( "desktop" ) );
-//				imageListLeftToolbar.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
-//				imageListLeftToolbar.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
-//				imageListLeftToolbar.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
-//				imageListLeftToolbar.TransparentColor = Color.Transparent;
 				
 				//imageListTopToolbar
 				imageListTopToolbar.ColorDepth = ColorDepth.Depth32Bit;
@@ -614,52 +600,9 @@ namespace System.Windows.Forms
 				menueToolBarButton.DropDownMenu = menueToolBarButtonContextMenu;
 				menueToolBarButton.Style = ToolBarButtonStyle.DropDownButton;
 				
-//				// bigButtonToolBar
-//				bigButtonToolBar.Appearance = ToolBarAppearance.Flat;
-//				bigButtonToolBar.AutoSize = false;
-//				bigButtonToolBar.Buttons.AddRange( new ToolBarButton[] {
-//													  lastUsedToolBarButton,
-//													  desktopToolBarButton,
-//													  homeToolBarButton,
-//													  workplaceToolBarButton,
-//													  networkToolBarButton} );
-//				bigButtonToolBar.ButtonSize = new Size( 82, 68 );
-//				bigButtonToolBar.Dock = DockStyle.None;
-//				bigButtonToolBar.Location = new Point( 7, 37 );
-//				bigButtonToolBar.ShowToolTips = true;
-//				bigButtonToolBar.Size = new Size( 85, 412 ); // 85, 412
-//				bigButtonToolBar.ImageList = imageListLeftToolbar;
-//				bigButtonToolBar.BackColor = Color.FromArgb( 128, 128, 128 );
-//				bigButtonToolBar.TabIndex = 3;
-				
 				buttonPanel.Dock = DockStyle.None;
 				buttonPanel.Location = new Point( 7, 37 );
 				buttonPanel.TabIndex = 3;
-				
-				// lastUsedToolBarButton
-//				lastUsedToolBarButton.ImageIndex = 0;
-//				lastUsedToolBarButton.Style = ToolBarButtonStyle.ToggleButton;
-//				lastUsedToolBarButton.Text = "Last files";
-				
-				// desktopToolBarButton
-//				desktopToolBarButton.ImageIndex = 1;
-//				desktopToolBarButton.Style = ToolBarButtonStyle.ToggleButton;
-//				desktopToolBarButton.Text = "Desktop";
-				
-				// homeToolBarButton
-//				homeToolBarButton.ImageIndex = 2;
-//				homeToolBarButton.Style = ToolBarButtonStyle.ToggleButton;
-//				homeToolBarButton.Text = "Home";
-				
-				// workplaceToolBarButton
-//				workplaceToolBarButton.ImageIndex = 3;
-//				workplaceToolBarButton.Style = ToolBarButtonStyle.ToggleButton;
-//				workplaceToolBarButton.Text = "Workplace";
-				
-				// networkToolBarButton
-//				networkToolBarButton.ImageIndex = 4;
-//				networkToolBarButton.Style = ToolBarButtonStyle.ToggleButton;
-//				networkToolBarButton.Text = "Network";
 				
 				// menueToolBarButtonContextMenu
 				MenuItem mi = new MenuItem( "Small Icon", new EventHandler( OnClickMenuToolBarContextMenu ) );
@@ -713,7 +656,6 @@ namespace System.Windows.Forms
 				Controls.Add( dirComboBox );
 				Controls.Add( searchSaveLabel );
 				Controls.Add( fileListView );
-//				Controls.Add( bigButtonToolBar );
 				Controls.Add( buttonPanel );
 				
 				ResumeLayout( false );
@@ -798,11 +740,15 @@ namespace System.Windows.Forms
 			
 			void OnClickOpenButton( object sender, EventArgs e )
 			{
-				currentFileName = Path.Combine( currentDirectoryName, fileNameComboBox.Text.Trim( ) );
-				Console.WriteLine( "OnClickOpenButton currentFileName: " + currentFileName );
-				
 				if ( !multiSelect )
 				{
+					string fileFromComboBox = fileNameComboBox.Text.Trim( );
+					if ( fileFromComboBox.Length > 0 )
+						fileFromComboBox = Path.Combine( currentDirectoryName, fileFromComboBox );
+					
+					if ( currentFileName != fileFromComboBox )
+						currentFileName = fileFromComboBox;
+					
 					if ( currentFileName.Length == 0 )
 						return;
 					

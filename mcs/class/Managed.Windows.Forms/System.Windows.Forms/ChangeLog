@@ -1,5 +1,11 @@
 2005-03-19  Alexander Olk  <xenomorph2@onlinehome.de>
 
+	* FileDialog.cs:
+	  - Removed unnecessary commented code
+	  - Fixed handling for entering the filename manually in the combobox
+
+2005-03-19  Alexander Olk  <xenomorph2@onlinehome.de>
+
 	* FileDialog.cs, OpenFileDialog.cs: OpenFileDialog Multiselect now works
 
 2005-03-18  Peter Bartok  <pbartok@novell.com>
