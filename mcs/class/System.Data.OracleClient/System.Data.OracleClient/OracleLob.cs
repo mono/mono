@@ -265,7 +265,7 @@ namespace System.Data.OracleClient {
 
 		public long Erase ()
 		{
-			return Erase (1, Length);
+			return Erase (0, Length);
 		}
 
 		public long Erase (long offset, long amount)

@@ -1,3 +1,9 @@
+2004-02-09  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* System.Data.OracleClient/OracleLob.cs:
+		Changed Erase() to call Erase(offset, amount)
+		using zero based offset.
+		
 2004-01-26  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* System.Data.OracleClient.Oci/OciCalls.cs:
