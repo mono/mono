@@ -1,3 +1,7 @@
+2003-05-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c: Call the _specific versions of the object allocation
+	functions if possible.
 
 Tue May 6 17:18:33 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
