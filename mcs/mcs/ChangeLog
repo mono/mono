@@ -1,5 +1,9 @@
 2004-05-03  Todd Berman  <tberman@sevenl.net>
 
+	* driver.cs: remove unused GetSysVersion function.
+
+2004-05-03  Todd Berman  <tberman@sevenl.net>
+
 	* driver.cs: Remove the hack from saturday, as well as the hack
 	from jackson (LoadAssemblyFromGac), also adds the CWD to the
 	link_paths to get that bit proper.

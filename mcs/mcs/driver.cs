@@ -330,14 +330,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		static string GetSysVersion ()
-		{
-			if (sys_version != null)
-				return sys_version;
-			sys_version = typeof (object).Assembly.GetName ().Version.ToString ();
-			return sys_version;
-		}
-
 		static public void LoadModule (MethodInfo adder_method, string module)
 		{
 			Module m;
