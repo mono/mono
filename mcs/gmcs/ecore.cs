@@ -1602,9 +1602,13 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			base.Emit (ec);
-			ig.Emit (OpCodes.Unbox, t);
+			if (t.IsGenericParameter)
+				ig.Emit (OpCodes.Unbox_Any, t);
+			else {
+				ig.Emit (OpCodes.Unbox, t);
 
-			LoadFromPtr (ig, t);
+				LoadFromPtr (ig, t);
+			}
 		}
 	}
 	
@@ -1887,9 +1891,14 @@ namespace Mono.CSharp {
 		{
 			base.Emit (ec);
 
-			ec.ig.Emit (OpCodes.Castclass, type);
-		}			
-		
+			if (child.Type.IsGenericParameter)
+				ec.ig.Emit (OpCodes.Box, child.Type);
+
+			if (type.IsGenericParameter)
+				ec.ig.Emit (OpCodes.Unbox_Any, type);
+			else
+				ec.ig.Emit (OpCodes.Castclass, type);
+		}
 	}
 	
 	/// <summary>

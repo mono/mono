@@ -66,7 +66,7 @@ namespace Mono.CSharp {
 				// System.Enum is not a value type, it is a class, so we need
 				// a boxing conversion
 				//
-				if (expr_type.IsEnum)
+				if (expr_type.IsEnum || expr_type.IsGenericParameter)
 					return new BoxedCast (expr);
 
 				return new EmptyCast (expr, target_type);
@@ -89,7 +89,9 @@ namespace Mono.CSharp {
 				// from any class-type S to any interface-type T.
 				if (target_type.IsInterface) {
 					if (TypeManager.ImplementsInterface (expr_type, target_type)){
-						if (expr_type.IsClass)
+						if (expr_type.IsGenericParameter)
+							return new BoxedCast (expr, target_type);
+						else if (expr_type.IsClass)
 							return new EmptyCast (expr, target_type);
 						else if (TypeManager.IsValueType (expr_type) ||
 							 TypeManager.IsEnumType (expr_type))
@@ -170,7 +172,7 @@ namespace Mono.CSharp {
 				if (expr_type.IsClass || TypeManager.IsValueType (expr_type) ||
 				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return true;
-			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) 
+			} else if (TypeManager.IsSubclassOf (expr_type, target_type))
 				return true;
 			else {
 				// Please remember that all code below actually comes
@@ -1413,11 +1415,18 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool ExplicitReferenceConversionExists (Type source_type, Type target_type)
 		{
+			bool target_is_type_param = target_type.IsGenericParameter;
 			bool target_is_value_type = target_type.IsValueType;
 			
 			if (source_type == target_type)
 				return true;
-			
+
+			//
+			// From object to a generic parameter
+			//
+			if (source_type == TypeManager.object_type && target_is_type_param)
+				return true;
+
 			//
 			// From object to any reference type
 			//
@@ -1506,7 +1515,14 @@ namespace Mono.CSharp {
 		static Expression ExplicitReferenceConversion (Expression source, Type target_type)
 		{
 			Type source_type = source.Type;
+			bool target_is_type_param = target_type.IsGenericParameter;
 			bool target_is_value_type = target_type.IsValueType;
+
+			//
+			// From object to a generic parameter
+			//
+			if (source_type == TypeManager.object_type && target_is_type_param)
+				return new UnboxCast (source, target_type);
 
 			//
 			// From object to any reference type
@@ -1537,7 +1553,7 @@ namespace Mono.CSharp {
 				else
 					return new ClassCast (source, target_type);
 			}
-			    
+
 			//
 			// From any class type S to any interface T, provides S is not sealed
 			// and provided S does not implement T.

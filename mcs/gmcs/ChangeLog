@@ -1,3 +1,13 @@
+2004-04-02  Martin Baulig  <martin@ximian.com>
+
+	* convert.cs: Added type parameter conversions.
+
+	* ecore.cs
+	(UnboxCast.Emit): Emit an `unbox.any' for type params.
+	(ClassCast.Emit): If the source type is a type parameter, box it.
+	If the target type is a type parameter, emit an `unbox.any'
+	instead of a `classcast'.	
+
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
 	* cs-tokenizer.cs (parse_less_than): Allow Token.DOT.
