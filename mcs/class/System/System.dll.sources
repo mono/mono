@@ -338,6 +338,7 @@ System.Diagnostics/EventLog.cs
 System.Diagnostics/EventLogEntryCollection.cs
 System.Diagnostics/EventLogEntry.cs
 System.Diagnostics/EventLogEntryType.cs
+System.Diagnostics/EventLogImpl.cs
 System.Diagnostics/EventLogInstaller.cs
 System.Diagnostics/EventLogPermissionAccess.cs
 System.Diagnostics/EventLogPermissionAttribute.cs
