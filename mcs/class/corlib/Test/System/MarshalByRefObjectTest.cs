@@ -120,7 +120,7 @@ namespace MonoTests.System
       RemotingServices.SetObjectUriForMarshal(objMarshal, "MarshalByRefObjectTest.objMarshal3");
       RemotingServices.Marshal(objMarshal);
 
-      TcpChannel chn = new TcpChannel(1235);
+      TcpChannel chn = new TcpChannel(1234);
       ChannelServices.RegisterChannel(chn);
       
       object objRem = Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1234/MarshalByRefObjectTest.objMarshal3");
@@ -131,7 +131,7 @@ namespace MonoTests.System
 
       // TODO: When implemented in the mono RemotingServices class
       //RemotingServices.Disconnect(objMarshal);
-      chn.StopListening(null);
+//      chn.StopListening(null);
       ChannelServices.UnregisterChannel(chn);
 
       }

@@ -1,3 +1,9 @@
+2003/02/26 Nick Drochak <ndrochak@gol.com>
+
+	* ActivatorTest.cs: Unregister the channel like it should.
+	* MarshalByRefTest.cs: Take out my hack. 
+	  Both from Jean-Marc Andr [jean-marc.andre@polymtl.ca].
+
 2003-02-25  Nick Drochak <ndrochak@gol.com>
 
 	* TimeSpanTest.cs: Isolate test for Negate bug. Same as previous

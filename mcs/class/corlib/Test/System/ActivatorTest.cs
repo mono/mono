@@ -110,6 +110,8 @@ namespace MonoTests.System
       Assertion.Assert("#A07",objRem != null);
       COMTest remCOMTest = (COMTest) objRem;
       Assertion.AssertEquals("#A08", 8, remCOMTest.Id);
+
+      ChannelServices.UnregisterChannel(chnServer);
        // Todo: Implemente the test methods for
        // all the overriden function using activationAttribute
       }
