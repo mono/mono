@@ -484,6 +484,16 @@
 		  The value that is allowed to be returned or NULL if
 		  there is no return type.
 		  
+		* ReturnLabel 
+
+	  	  A `Label' used by the code if it must jump to it.
+		  This is used by a few routines that deals with exception
+		  handling.
+
+		* HasReturnLabel
+
+		  Whether we have a return label defined by the toplevel
+	   	  driver.
 		  
 		* ContainerType
 		  
@@ -522,6 +532,42 @@
 
 		* InUnsafe
 		  Whether we are inside an unsafe block
+
+	Methods exposed by the EmitContext:
+
+		* EmitTopBlock()
+
+		  This emits a toplevel block. 
+
+		  This routine is very simple, to allow the anonymous
+		  method support to roll its two-stage version of this
+		  routine on its own.
+
+		* NeedReturnLabel ():
+
+		  This is used to flag during the resolution phase that 
+		  the driver needs to initialize the `ReturnLabel'
+
+* Anonymous Methods
+
+	The introduction of anonymous methods in the compiler changed
+	various ways of doing things in the compiler.  The most
+	significant one is the hard split between the resolution phase
+	and the emission phases of the compiler.
+
+	For instance, routines that referenced local variables no
+	longer can safely create temporary variables during the
+	resolution phase: they must do so from the emission phase,
+	since the variable might have been "captured", hence access to
+	it can not be done with the local-variable operations from the runtime.
+
+	The code emission is in:
+
+		EmitTopBlock ()
+
+	Which drives the process, it first resolves the topblock, then
+	emits the required metadata (local variable definitions) and
+	finally emits the code.
 		
 * Miscellaneous
 
