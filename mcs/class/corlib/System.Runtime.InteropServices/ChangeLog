@@ -1,5 +1,7 @@
 2004-09-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* UnmanagedFunctionPointerAttribute.cs: New file.
+
 	* Marshal.cs: Make GetFunctionPointerForDelegate icall private.
 
 	* MarshalAsAttribute.cs: Add 2.0 IidParamIndex field.
