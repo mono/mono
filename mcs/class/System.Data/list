@@ -184,3 +184,4 @@ System.Data.SqlClient/SqlRowUpdatingEventArgs.cs
 System.Data.SqlClient/SqlRowUpdatingEventHandler.cs
 System.Data.SqlClient/SqlTransaction.cs
 System.Data.SqlClient/SqlXmlTextReader.cs
+System.Xml/XmlDataDocument.cs
