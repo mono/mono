@@ -1,3 +1,9 @@
+2004-12-09  Alp Toker  <alp@atoker.com>
+
+	* cilc.cs:
+	Support inheritance within a single namespace
+	Enhance CodeWriter
+
 2004-12-08  Alp Toker  <alp@atoker.com>
 
 	* cilc.cs:

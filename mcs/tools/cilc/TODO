@@ -3,6 +3,8 @@ TODO
 
 Support return values and ref/out parameters
 
+Support classes within classes
+
 Complete GObject support including macros and GType, taking into account
 inheritance etc.
 

@@ -139,7 +139,10 @@ class cilc
 		H.WriteLine ("#include <mono/metadata/debug-helpers.h>");
 		H.WriteLine ("#include <mono/metadata/appdomain.h>");
 		H.WriteLine ();
-		H.WriteLine ("#include \"" + ns.ToLower () + ".h\"");
+		
+		if (t.BaseType.Namespace == t.Namespace)
+			H.WriteLine ("#include \"" + t.BaseType.Namespace.ToLower () + t.BaseType.Name.ToLower () + ".h\"");
+
 		H.WriteLine ();
 
 		H.WriteLine ("#ifdef __cplusplus");
@@ -215,7 +218,6 @@ class cilc
 		}
 		
 		H.WriteLine ();
-		//H.WriteLine ("typedef MonoObject " + CurType + ";");
 		H.WriteLine ("typedef struct _" + CurType + " " + CurType + ";");
 		H.WriteLine ();
 
@@ -226,7 +228,16 @@ class cilc
 		H.WriteLine ("struct _" + CurType);
 		H.WriteLine ("{");
 		H.Indent ();
-		H.WriteLine ("GObject parent_instance;");
+
+		//TODO: handle external namespaces
+		string ParentName;
+	 	if (t.BaseType.Namespace == t.Namespace)
+			ParentName = t.BaseType.Namespace + t.BaseType.Name;
+		else
+			ParentName = "GObject";
+
+		//H.WriteLine ("GObject parent_instance;");
+		H.WriteLine (ParentName + " parent_instance;");
 		H.WriteLine (CurType + "Private *priv;");
 		H.Outdent ();
 		H.WriteLine ("};");
@@ -234,7 +245,7 @@ class cilc
 		H.WriteLine ("struct _" + CurType + "Class");
 		H.WriteLine ("{");
 		H.Indent ();
-		H.WriteLine ("GObjectClass parent_class;");
+		H.WriteLine (ParentName + "Class parent_class;");
 		H.WriteLine ();
 		
 		//TODO: event arguments
@@ -300,8 +311,6 @@ class cilc
 
 		C.WriteLine ();
 
-		//TODO: add prototypes for these three functions to .h? At least get_type must be FIXME
-		
 		//generate the GObject init function
 		C.WriteLine ("static void " + cur_type + "_init (" + CurType + " *thiz" + ")");
 		C.WriteLine ("{");
@@ -332,7 +341,7 @@ class cilc
 
 
 		//generate the GObject get_type function
-		C.WriteLine ("GType " + cur_type + "_get_type (void)");
+		C.WriteLine ("GType " + cur_type + "_get_type (void)", H, ";");
 		C.WriteLine ("{");
 		C.Indent ();
 		C.WriteLine ("static GType object_type = 0;");
@@ -546,16 +555,13 @@ class cilc
 
 		if (myargs == "") myargs = "void";
 
-		string myproto;
-		if (has_return)
-			myproto = mytype + myname + " (" + myargs + ")";
-		else
-			myproto = "void " + myname + " (" + myargs + ")";
-
-		H.WriteLine (myproto + ";");
-
 		C.WriteLine ();
-		C.WriteLine (myproto);
+
+		if (has_return)
+			C.WriteLine (mytype + myname + " (" + myargs + ")", H, ";");
+		else
+			C.WriteLine ("void " + myname + " (" + myargs + ")", H, ";");
+
 		C.WriteLine ("{");
 		C.Indent ();
 
@@ -713,6 +719,27 @@ class CodeWriter
 	{
 		w.Write (cur_indent);
 		w.WriteLine (text);
+	}
+
+	public void WriteLine (string text, CodeWriter cc)
+	{
+		WriteLine (text, "", cc, "");
+	}
+
+	public void WriteLine (string text, CodeWriter cc, string suffix)
+	{
+		WriteLine (text, "", cc, suffix);
+	}
+
+	public void WriteLine (string text, string prefix, CodeWriter cc)
+	{
+		WriteLine (text, prefix, cc, "");
+	}
+
+	public void WriteLine (string text, string prefix, CodeWriter cc, string suffix)
+	{
+		WriteLine (text);
+		cc.WriteLine (prefix + text + suffix);
 	}
 
 	public void WriteComment (string text)
