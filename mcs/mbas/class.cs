@@ -2343,7 +2343,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		public Method (Expression return_type, int mod, string name, Parameters parameters,
-			Attributes attrs, Expression impl_what, Location l)
+			Attributes attrs, ArrayList impl_what, Location l)
 			: base (return_type, mod, AllowedModifiers, name, attrs, parameters, l)
 		{ 
 			Implements = impl_what;
@@ -3101,7 +3101,9 @@ namespace Mono.MonoBASIC {
 		public virtual bool Define (TypeContainer parent)
 		{
 			MethodInfo implementing = null;
+			ArrayList implementing_list = null;
 			string method_name, name, prefix, impl_method_name;
+			int pos = -1;
 
 			if (OptAttributes != null)
 				if (!ApplyAttributes (OptAttributes, is_method))
@@ -3116,26 +3118,33 @@ namespace Mono.MonoBASIC {
 			impl_method_name = name;
 
 			if (member.Implements != null) {
-				name = member.Implements.ToString();
-				prefix = name.Substring(0, name.LastIndexOf("."));
-				name = name.Substring(name.LastIndexOf(".") + 1);
+				implementing_list = new ArrayList();
 
-				if (accessor_name != null)
-					impl_method_name = accessor_name + "_" + name;
-				else
-					impl_method_name = name;
+				foreach (Expression Impl in member.Implements) {
+					name = Impl.ToString();
+					prefix = name.Substring(0, name.LastIndexOf("."));
+					name = name.Substring(name.LastIndexOf(".") + 1);
 
-				if (member is Indexer)
-					implementing = parent.Pending.IsInterfaceIndexer (
-						member.InterfaceType, ReturnType, ParameterTypes);
-				else
-					implementing = parent.Pending.IsInterfaceMethod (
-						member.InterfaceType, impl_method_name, ReturnType, ParameterTypes);
+					if (accessor_name != null)
+						impl_method_name = accessor_name + "_" + name;
+					else
+						impl_method_name = name;
 
-				if (implementing == null){
-					TypeContainer.Error_NotInterfaceMember (
-						Location, name, prefix);
-					return false;
+					if (member is Indexer)
+						implementing = parent.Pending.IsInterfaceIndexer (
+							(Type) member.InterfaceTypes[++pos] , ReturnType, ParameterTypes);
+					else
+						implementing = parent.Pending.IsInterfaceMethod (
+							(Type) member.InterfaceTypes[++pos], impl_method_name, ReturnType, ParameterTypes);
+
+					if (implementing == null) {
+						TypeContainer.Error_NotInterfaceMember (
+							Location, name, prefix);
+						return false;
+					}
+					
+					implementing_list.Add (implementing);
+					IsImplementing = true;
 				}
 			}
 
@@ -3143,7 +3152,7 @@ namespace Mono.MonoBASIC {
 			// For implicit implementations, make sure we are public, for
 			// explicit implementations, make sure we are private.
 			//
-			if (implementing != null){
+			if (IsImplementing){
 				//
 				// Setting null inside this block will trigger a more
 				// verbose error reporting for missing interface implementations
@@ -3151,7 +3160,7 @@ namespace Mono.MonoBASIC {
 				// The "candidate" function has been flagged already
 				// but it wont get cleared
 				//
-				if (!member.IsExplicitImpl){
+			/*	if (!member.IsExplicitImpl){
 					//
 					// We already catch different accessibility settings
 					// so we just need to check that we are not private
@@ -3169,13 +3178,13 @@ namespace Mono.MonoBASIC {
 						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
-				}
+				}*/
 			}
 			
 			//
 			// If implementing is still valid, set flags
 			//
-			if (implementing != null){
+			if (IsImplementing){
 				//
 				// When implementing interface methods, set NewSlot.
 				//
@@ -3185,8 +3194,6 @@ namespace Mono.MonoBASIC {
 				flags |=
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
-
-				IsImplementing = true;
 			}
 
 			//
@@ -3218,17 +3225,22 @@ namespace Mono.MonoBASIC {
 				//
 				// clear the pending implemntation flag
 				//
-				if (member is Indexer) {
-					parent.Pending.ImplementIndexer (
-						member.InterfaceType, builder, ReturnType,
-						ParameterTypes, true);
-				} else
-					parent.Pending.ImplementMethod (
-						member.InterfaceType, impl_method_name, ReturnType,
-						ParameterTypes, member.IsExplicitImpl);
+				pos = 0;
+				foreach (MethodInfo Impl in implementing_list) {
+					if (member is Indexer) {
+						parent.Pending.ImplementIndexer (
+							(Type) member.InterfaceTypes[pos++], 
+							builder, ReturnType,
+							ParameterTypes, true);
+					} else
+						parent.Pending.ImplementMethod (
+							(Type) member.InterfaceTypes[pos++], 
+							Impl.Name, ReturnType,
+							ParameterTypes, member.IsExplicitImpl);
 
-				parent.TypeBuilder.DefineMethodOverride (
-						builder, implementing);
+					parent.TypeBuilder.DefineMethodOverride (
+						builder, Impl);
+				}
 			}
 
 			if (!TypeManager.RegisterMethod (builder, ParameterInfo, ParameterTypes)) {
@@ -3377,7 +3389,7 @@ namespace Mono.MonoBASIC {
 	abstract public class MemberBase : MemberCore {
 		public Expression Type;
 		public readonly Attributes OptAttributes;
-		public Expression Implements;
+		public ArrayList Implements;
 
 		protected MethodAttributes flags;
 
@@ -3406,6 +3418,7 @@ namespace Mono.MonoBASIC {
 		// If true, the interface type we are explicitly implementing
 		//
 		public Type InterfaceType = null;
+		public ArrayList InterfaceTypes = null;
 
 		//
 		// The method we're overriding if this is an override method.
@@ -3478,33 +3491,38 @@ namespace Mono.MonoBASIC {
 
 			// check for whether the Interface is implemented by the class
 			if (Implements != null) {
-				string iname = Implements.ToString();
-				iname = iname.Substring(0, iname.LastIndexOf("."));
-				bool iface_found = false;
+				InterfaceTypes = new ArrayList ();
+				foreach (Expression Impls in Implements) {
+					string iname = Impls.ToString();
+					iname = iname.Substring(0, iname.LastIndexOf("."));
+					bool iface_found = false;
 
-				InterfaceType  = RootContext.LookupType (
-					parent, iname, false, Location);
-				if (InterfaceType == null)
-					return false;
+					InterfaceType  = RootContext.LookupType (
+						parent, iname, false, Location);
+					if (InterfaceType == null)
+						return false;
 
-				ArrayList bases = parent.Bases;
-				if (bases != null) {
-					foreach (Expression tbase in bases)	{
-						string bname = tbase.ToString();
-						if (bname.LastIndexOf(".") != -1)
-							bname = bname.Substring(bname.LastIndexOf("."));
+					InterfaceTypes.Add (InterfaceType);
 
-						if (bname == iname)	{
-							iface_found = true;
-							break;
+					ArrayList bases = parent.Bases;
+					if (bases != null) {
+						foreach (Expression tbase in bases)	{
+							string bname = tbase.ToString();
+							if (bname.LastIndexOf(".") != -1)
+								bname = bname.Substring(bname.LastIndexOf("."));
+
+							if (bname == iname)	{
+								iface_found = true;
+								break;
+							}
 						}
 					}
-				}
 
-				if (!iface_found) {
-					Report.Error (31035, Location,
-						"Class '" + parent.Name + "' doesn't implement interface '" + iname + "'");
-					return false;
+					if (!iface_found) {
+						Report.Error (31035, Location,
+							"Class '" + parent.Name + "' doesn't implement interface '" + iname + "'");
+						return false;
+					}
 				}
 			}
 
@@ -3981,7 +3999,7 @@ namespace Mono.MonoBASIC {
 		public Property (Expression type, string name, int mod_flags,
 				Accessor get_block, Accessor set_block,
 				Attributes attrs, Location loc, string set_name, 
-				Parameters p_get, Parameters p_set, Expression impl_what)
+				Parameters p_get, Parameters p_set, ArrayList impl_what)
 			: base (type, name, mod_flags, AllowedModifiers,
 				p_set,
 				get_block, set_block, attrs, loc)
@@ -4314,7 +4332,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		public Event (Expression type, string name, Object init, int mod, Accessor add,
-			Accessor remove, Attributes attrs, Expression impl_what, Location loc)
+			Accessor remove, Attributes attrs, ArrayList impl_what, Location loc)
 			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
 		{
 			Add = add;

@@ -1302,7 +1302,7 @@ sub_declaration
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes, 
-					    (Expression) $5, member_location);
+					    (ArrayList) $5, member_location);
 	
 		method.Block = (Block) end_block();
 		$$ = method;
@@ -1365,7 +1365,7 @@ func_declaration
 
 		Method method = new Method ((Expression) ftype, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes,/* (Attributes) currx ent_attributes,  */
-					    (Expression) $6, member_location);
+					    (ArrayList) $6, member_location);
 		method.Block = end_block();
 		$$ = method;
 	  }	  
@@ -1447,7 +1447,7 @@ event_declaration
 
 		Event e = new Event ((Expression) $4, var.identifier, 
 				     null, current_modifiers, null, null, 
-				     current_attributes, (Expression) $5,
+				     current_attributes, (ArrayList) $5,
 				     lexer.Location);
 
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
@@ -1467,7 +1467,15 @@ event_declaration
 			del.Namespace = current_namespace;
 			CheckDef (current_container.AddDelegate (del), del.Name, lexer.Location);
 		} else {
-			Expression impl = (Expression) $4;
+			ArrayList impls = (ArrayList) $4;
+			if (impls.Count > 1) {
+				string expstr = "Event '" + ((Expression) impls[1]).ToString () +
+					"' can not be implemented with Event '" +
+					(string) $2 + "', since it's delegate type does not match " +
+					"with the delegate type of '" + ((Expression) impls[0]).ToString () + "'";
+				Report.Error (31407, lexer.Location, expstr);
+			}			
+			Expression impl = (Expression) impls[0];  
 			delName = impl.ToString();
 			delName = delName.Substring (delName.LastIndexOf(".") + 1);
 			delName = delName + "EventHandler";
@@ -1476,7 +1484,7 @@ event_declaration
 		Event e = new Event (DecomposeQI (delName, lexer.Location),
 					 (string) $2, 
 				     null, current_modifiers, null, null, 
-				     current_attributes, (Expression) $4, 
+				     current_attributes, (ArrayList) $4, 
 				     lexer.Location);
 
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
@@ -1863,7 +1871,7 @@ abstract_propery_declaration
 		prop = new Property ((Expression) get_implicit_value_parameter_type, 
 					 (string) $2, current_modifiers, get_block, set_block,
 				     current_attributes, loc, set_implicit_value_parameter_name, 
-				     get_parameters, set_parameters, (Expression) $6);
+				     get_parameters, set_parameters, (ArrayList) $6);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		get_implicit_value_parameter_type = null;
@@ -1890,10 +1898,26 @@ opt_implement_clause
 	  {
 	  	$$ = null;
 	  }
-	| IMPLEMENTS qualified_identifier
+	| IMPLEMENTS implement_clause_list
 	  {
-	  	$$ = DecomposeQI ((string)$2, lexer.Location);
+		$$ = $2;
+	  }
+	;
+	
+implement_clause_list
+	: qualified_identifier
+	  {
+	    ArrayList impl_list = new ArrayList ();
+	    impl_list.Add (DecomposeQI ((string)$1, lexer.Location));
+	  	$$ = impl_list;
 	  }	
+	| implement_clause_list COMMA qualified_identifier
+	  {
+		ArrayList impl_list = (ArrayList) $1;
+		impl_list.Add (DecomposeQI ((string)$3, lexer.Location));
+	  	$$ = impl_list;
+	  }	
+	  
 	;
 	
 accessor_declarations
