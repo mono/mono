@@ -1,3 +1,8 @@
+2004-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXml.cs: Commented my last changes to SignedXml as it made other
+	unis tests fail (in the c14n-izer).
+
 2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDsigNodeList.cs : removed BOM from code file.
