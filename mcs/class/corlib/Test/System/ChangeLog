@@ -1,3 +1,7 @@
+2004-04-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EnvironmentTest.cs: New. Add unit tests for ExpandEnvironmentVariables.
+
 2004-03-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* GuidTest.cs: Test constructor when the input string is in format "P" 
