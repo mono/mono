@@ -24,7 +24,7 @@ namespace Mono.Xml
 		internal Hashtable EntityDecls = new Hashtable ();
 		internal Hashtable NotationDecls = new Hashtable ();
 
-		[MonoTODO()]
+		[System.MonoTODO]
 		public string BaseURI {
 			// XmlStreamParser.BaseURI
 			get { return baseURI; }
