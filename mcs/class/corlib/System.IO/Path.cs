@@ -27,6 +27,7 @@ namespace System.IO
 		public static readonly char VolumeSeparatorChar;
 
 		private static readonly char[] PathSeparatorChars;
+		private static bool dirEqualsVolume;
 
 		private Path () {}
 
@@ -47,7 +48,7 @@ namespace System.IO
 				if (extension [0] != '.')
 					extension = "." + extension;
 			} else
-				extension = "";
+				extension = String.Empty;
 			
 			if (iExt < 0) {
 				return path + extension;
@@ -85,24 +86,8 @@ namespace System.IO
 			if (IsPathRooted (path2))
 				return path2;
 			
-			string dirSep = new string (DirectorySeparatorChar, 1);
-			string altSep = new string (AltDirectorySeparatorChar, 1);
-			
-			bool b1 = path1.EndsWith (dirSep) ||
-				  path1.EndsWith (dirSep);
-
-			bool b2 = path2 [0] == DirectorySeparatorChar ||
-				  path2 [0] == AltDirectorySeparatorChar;
-
-			if (b1 && b2)
-			{
-				throw new ArgumentException ("Invalid combination");
-			}
-			
-			if (!b1 && !b2)
-			{
-				return path1 + dirSep + path2;
-			}
+			if (Array.IndexOf (PathSeparatorChars, path1 [path1.Length - 1]) == -1)
+				return path1 + DirectorySeparatorChar + path2;
 
 			return path1 + path2;
 		}
@@ -178,7 +163,7 @@ namespace System.IO
 			if (IsPathRooted (path))
 				return path;
 
-			return Directory.GetCurrentDirectory () + new string (DirectorySeparatorChar, 1) + path;
+			return Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
 		}
 
 		public static string GetPathRoot (string path)
@@ -250,7 +235,7 @@ namespace System.IO
 			char c = path [0];
 			return (c == DirectorySeparatorChar 	||
 				c == AltDirectorySeparatorChar 	||
-				(path.Length > 1 && path [1] == VolumeSeparatorChar));
+				(!dirEqualsVolume && path.Length > 1 && path [1] == VolumeSeparatorChar));
 		}
 
 		// private class methods
@@ -285,6 +270,8 @@ namespace System.IO
 				AltDirectorySeparatorChar,
 				VolumeSeparatorChar
 			};
+
+			dirEqualsVolume = (DirectorySeparatorChar == VolumeSeparatorChar);
 		}
 	}
 }

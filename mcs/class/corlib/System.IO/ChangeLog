@@ -1,3 +1,7 @@
+2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Path.cs: some cleanup. Thanks to Martin Aliger.
+
 2002-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: throw an exception if trying to open a directory.
