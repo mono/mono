@@ -1,3 +1,7 @@
+2005-01-18  Nick Drochak <ndrochak@ieee.com>
+
+	* ThreadTest.cs: Thread.Priority is a MonoTODO. Ignore Test.
+
 2004-09-22  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ThreadTest.cs, MutexTest.cs: Don't leave any thread alive, even if the

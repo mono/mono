@@ -289,6 +289,7 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
+		[Category("NotWorking")] // this is a MonoTODO
 		public void TestPriority2()
 		{
 			C2Test test1 = new C2Test();
@@ -305,6 +306,7 @@ namespace MonoTests.System.Threading {
 			AssertEquals("#44 Incorrect Priority in Aborted thread: ",ThreadPriority.Normal, TestThread.Priority);
 		}
 
+		[Category("NotWorking")] // this is a MonoTODO
 		public void TestPriority3()
 		{
 			C2Test test1 = new C2Test();
