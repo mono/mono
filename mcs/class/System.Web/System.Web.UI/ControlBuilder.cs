@@ -350,18 +350,17 @@ namespace System.Web.UI {
 			if (this is TemplateBuilder)
 				return;
 
-			if (!typeof (IParserAccessor).IsAssignableFrom (type)) {
+			object [] atts = type.GetCustomAttributes (typeof (ParseChildrenAttribute), true);
+			
+			if (!typeof (IParserAccessor).IsAssignableFrom (type) && atts.Length == 0) {
 				isIParserAccessor = false;
 				childrenAsProperties = true;
-			} else {
-				object [] atts = type.GetCustomAttributes (typeof (ParseChildrenAttribute), true);
-				if (atts != null && atts.Length > 0) {
-					ParseChildrenAttribute att = (ParseChildrenAttribute) atts [0];
-					childrenAsProperties = att.ChildrenAsProperties;
-					if (childrenAsProperties && att.DefaultProperty != "") {
-						defaultPropertyBuilder = CreatePropertyBuilder (att.DefaultProperty,
-												parser, null);
-					}
+			} else if (atts.Length > 0) {
+				ParseChildrenAttribute att = (ParseChildrenAttribute) atts [0];
+				childrenAsProperties = att.ChildrenAsProperties;
+				if (childrenAsProperties && att.DefaultProperty != "") {
+					defaultPropertyBuilder = CreatePropertyBuilder (att.DefaultProperty,
+											parser, null);
 				}
 			}
 		}

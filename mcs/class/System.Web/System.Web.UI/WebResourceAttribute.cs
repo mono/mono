@@ -29,6 +29,7 @@
 //
 #if NET_2_0
 namespace System.Web.UI {
+	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple = true)]
 	public sealed class WebResourceAttribute : Attribute {
 		public WebResourceAttribute (string webResource, string contentType) : this (webResource, contentType, false) {}
 		public WebResourceAttribute (string webResource, string contentType, bool performSubstitution)

@@ -1,3 +1,9 @@
+2004-11-23 Lluis Sanchez Gual <lluis@novell.com>
+
+	* ControlBuilder.cs: Always check for the ParseChildrenAttribute,
+	even if the class doesn't implement IParserAccessor.
+	* WebResourceAttribute.cs: Allow multiple attributes of this type.
+
 2004-11-15 Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataSourceView.cs: Moved here implementation of DataSourceViewChanged 
