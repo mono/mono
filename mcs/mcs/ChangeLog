@@ -1,5 +1,11 @@
 2003-05-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* namespace.cs: Also check the using aliases here.
+
+	* driver.cs: Move the test for using validity after the types have
+	been entered, so we do a single pass that also includes the using
+	aliases. 
+
 	* statement.cs (Try.Resolve): Avoid crashing if there is a failure
 	in the regular case.   CreateSiblingForFinally is doing extra
 	error checking.

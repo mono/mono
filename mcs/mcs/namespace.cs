@@ -186,25 +186,36 @@ namespace Mono.CSharp {
 		///   Used to validate that all the using clauses are correct
 		///   after we are finished parsing all the files.  
 		/// </summary>
-		public static bool VerifyUsing ()
+		public static void VerifyUsing ()
 		{
-			int errors = Report.Errors;
-			
 			foreach (Namespace ns in all_namespaces){
 				ArrayList uses = ns.UsingTable;
-				if (uses == null)
-					continue;
-				
-				foreach (UsingEntry ue in uses){
-					if (TypeManager.IsNamespace (ue.Name))
-						continue;
 
-					Report.Error (246, ue.Location, "The namespace `" + ue.Name +
-						      "' can not be found (missing assembly reference?)");
+				if (uses != null){
+					foreach (UsingEntry ue in uses){
+						if (TypeManager.IsNamespace (ue.Name))
+							continue;
+						
+						Report.Error (246, ue.Location, "The namespace `" + ue.Name +
+							      "' can not be found (missing assembly reference?)");
+					}
+				}
+
+				if (ns.aliases != null){
+					foreach (DictionaryEntry de in ns.aliases){
+						string value = (string) de.Value;
+						
+						if (TypeManager.IsNamespace (value))
+							continue;
+						if (TypeManager.LookupTypeDirect (value) != null)
+							continue;
+						
+						Report.Error (246, String.Format (
+								      "The type or namespace `{0}' could not be found (missing assembly reference?)",
+								      value));
+					}
 				}
 			}
-			return errors == Report.Errors;
 		}
-
 	}
 }
