@@ -18,9 +18,11 @@ using Mono.Posix;
 
 class MakeBundle {
 	static string output = "a.out";
+	static string object_out = null;
 	static ArrayList link_paths = new ArrayList ();
 	static bool autodeps = false;
 	static bool keeptemp = false;
+	static bool compile_only = false;
 	
 	static int Main (string [] args)
 	{
@@ -29,21 +31,29 @@ class MakeBundle {
 		link_paths.Add (".");
 		
 		for (int i = 0; i < top; i++){
-
 			switch (args [i]){
 			case "-h":
 				Help ();
 				return 1;
-			}
-			
-			// Now process options that take an argument
-			switch (args [i]){
+
+			case "-c":
+				compile_only = true;
+				break;
+				
 			case "-o": 
 				if (i+1 == top){
 					Help (); 
 					return 1;
 				}
 				output = args [++i];
+				break;
+
+			case "-oo":
+				if (i+1 == top){
+					Help (); 
+					return 1;
+				}
+				object_out = args [++i];
 				break;
 
 			case "-L":
@@ -94,6 +104,11 @@ class MakeBundle {
 		string temp_s = "temp.s"; // Path.GetTempFileName ();
 		string temp_c = "temp.c";
 		string temp_o = Path.GetTempFileName () + ".o";
+
+		if (compile_only)
+			temp_c = output;
+		if (object_out != null)
+			temp_o = object_out;
 		
 		try {
 			ArrayList c_bundle_names = new ArrayList ();
@@ -101,13 +116,18 @@ class MakeBundle {
 
 			StreamWriter ts = new StreamWriter (File.Create (temp_s));
 			StreamWriter tc = new StreamWriter (File.Create (temp_c));
+			string prog = null;
 
+			tc.WriteLine ("/* This source code was produced by mkbundle, do not edit */");
 			tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
 			foreach (string url in files){
 				string fname = url.Substring (7);
 				string aname = fname.Substring (fname.LastIndexOf ("/") + 1);
 				string encoded = aname.Replace ("-", "_").Replace (".", "_");
 
+				if (prog == null)
+					prog = aname;
+				
 				Console.WriteLine ("   embedding: " + fname);
 				
 				FileInfo fi = new FileInfo (fname);
@@ -152,15 +172,15 @@ class MakeBundle {
 				tc.WriteLine ("\t&{0},", c);
 			}
 			tc.WriteLine ("\tNULL\n};\n");
-
-			tc.WriteLine ("int mono_main (int argc, char* argv[]);");
-			tc.WriteLine ("int main (int argc, char* argv[])\n" +
-				      "{\n" +
-				      "\tmono_register_bundled_assemblies(bundled);\n" +
-				      "\treturn mono_main (argc, argv);\n" +
-				      "}");
+			tc.WriteLine ("static char *image_name = \"{0}\";", prog);
+				      
+			StreamReader s = new StreamReader (Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c"));
+			tc.Write (s.ReadToEnd ());
 			tc.Close ();
 
+			if (compile_only)
+				return;
+			
 			cmd = String.Format ("cc -o {2} -Wall {0} `pkg-config --cflags --libs mono` {1}",
 					     temp_c, temp_o, output);
 			Console.WriteLine (cmd);
@@ -172,9 +192,13 @@ class MakeBundle {
 			Console.WriteLine ("Done");
 		} finally {
 			if (!keeptemp){
+				if (object_out == null){
+					//File.Delete (temp_o);
+				}
+				if (!compile_only){
+					//File.Delete (temp_c);
+				}
 				//File.Delete (temp_s);
-				//File.Delete (temp_c);
-				//File.Delete (temp_o);
 			}
 		}
 	}
@@ -269,7 +293,10 @@ class MakeBundle {
 	static void Help ()
 	{
 		Console.WriteLine ("Usage is: mkbundle [options] assembly1 [assembly2...]\n\n" +
-				   "Options:\n" + 
+				   "Options:\n" +
+				   "    -c          Produce stub only, do not compile\n" +
+				   "    -o out      Specifies output filename\n" +
+				   "    -oo obj     Specifies output filename for helper object file" +
 				   "    -L path     Adds `path' to the search path for assemblies\n" +
 				   "    --nodeps    Turns off automatic dependency embedding (default)\n" +
 				   "    --deps      Turns on automatic dependency embedding\n" +
