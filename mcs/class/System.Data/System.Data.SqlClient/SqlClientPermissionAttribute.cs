@@ -57,13 +57,7 @@ namespace System.Data.SqlClient {
 
 		public override IPermission CreatePermission () 
 		{
-			if (base.Unrestricted) {
-				return new SqlClientPermission (PermissionState.Unrestricted);
-			}
-
-			SqlClientPermission p = new SqlClientPermission (PermissionState.None, this.AllowBlankPassword);
-			p.Add (this.ConnectionString, this.KeyRestrictions, this.KeyRestrictionBehavior);
-			return p;
+			return new SqlClientPermission (this);
 		}
 
 		#endregion // Methods

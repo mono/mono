@@ -46,13 +46,9 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		 [Obsolete ("Use SqlClientPermission(PermissionState.None)", true)]
+		[Obsolete ("Use SqlClientPermission(PermissionState.None)", true)]
 		public SqlClientPermission ()
-#if NET_2_0
 			: this (PermissionState.None)
-#else
-//			: this (PermissionState.None, false)
-#endif
 		{
 		}
 
@@ -71,6 +67,12 @@ namespace System.Data.SqlClient {
 		// required for Copy method
 		internal SqlClientPermission (DBDataPermission permission)
 			: base (permission)
+		{
+		}
+
+		// easier (and common) permission creation from attribute class
+		internal SqlClientPermission (DBDataPermissionAttribute attribute)
+			: base (attribute)
 		{
 		}
 

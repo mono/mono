@@ -1,3 +1,10 @@
+2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SqlClientPermission.cs: Added internal constructor accepting an Sql
+	ClientPermissionAttribute parameter (using base class protected ctor).
+	* SqlClientPermissionAttribute.cs: Copy now use the new SqlClient
+	Permission constructor.
+
 2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SqlClientPermission.cs: Mostly completed (needs tests).
