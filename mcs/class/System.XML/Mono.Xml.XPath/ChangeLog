@@ -1,3 +1,13 @@
+2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocument.cs : CreateNavigator() should return the first root
+	  as a clone.
+	* DTMXPathNavigator.cs : ComparePosition() incorrectly compared 
+	  attributes and namespaces orders.  Implemented IsSamePosition() more
+	  efficient.  MoveToFirstNamespace() should return false when the 
+	  current node is either attribute or namespace.  Fixed IsDescendant()
+	  which looks resulted in incorrect behavior.
+
 2003-12-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTMXPathDocumentBuilder.cs : Removed supportsID argument and always

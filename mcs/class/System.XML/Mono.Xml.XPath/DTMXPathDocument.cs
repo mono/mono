@@ -45,9 +45,8 @@ namespace Mono.Xml.XPath
 					attributes,
 					namespaces,
 					idTable);
-				return root;
-			} else
-				return root.Clone ();
+			}
+			return root.Clone ();
 		}
 
 #endregion

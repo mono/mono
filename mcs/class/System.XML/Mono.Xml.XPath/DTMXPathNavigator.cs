@@ -243,22 +243,31 @@ namespace Mono.Xml.XPath
 			if (another == null || another.document != this.document)
 				return XmlNodeOrder.Unknown;
 
-			int result = this.currentNode.CompareTo (another.currentNode);
-			if (result != 0)
-				return result > 0 ? XmlNodeOrder.After : XmlNodeOrder.Before;
+			if (currentNode > another.currentNode)
+				return XmlNodeOrder.After;
+			else if (currentNode < another.currentNode)
+				return XmlNodeOrder.Before;
 
 			// another may attr or ns, 
 			// and this may be also attr or ns.
 			if (another.currentIsAttr) {
 				if (this.currentIsAttr) {
-					int resultAttr = this.currentAttr.CompareTo (another.currentAttr);
-					return result == 0 ? XmlNodeOrder.Same : result > 0 ? XmlNodeOrder.After : XmlNodeOrder.Before;
+					if (currentAttr > another.currentAttr)
+						return XmlNodeOrder.After;
+					else if (currentAttr < another.currentAttr)
+						return XmlNodeOrder.Before;
+					else
+						return XmlNodeOrder.Same;
 				} else
 					return XmlNodeOrder.Before;
 			} else if (!another.currentIsNode) {
 				if (!this.currentIsNode) {
-					int resultNs = this.currentNs.CompareTo (another.currentNs);
-					return result == 0 ? XmlNodeOrder.Same : result > 0 ? XmlNodeOrder.After : XmlNodeOrder.Before;
+					if (currentNs > another.currentNs)
+						return XmlNodeOrder.After;
+					else if (currentNs < another.currentNs)
+						return XmlNodeOrder.Before;
+					else
+						return XmlNodeOrder.Same;
 				} else
 					return XmlNodeOrder.Before;
 			} else
@@ -310,18 +319,31 @@ namespace Mono.Xml.XPath
 			if (another == null || another.document != this.document)
 				return false;
 
-			if (ComparePosition (another) != XmlNodeOrder.After)
-				return false;
-
-			int end = nodes [currentNode].NextSibling;
-			if (end == 0)
-				end = nodes.Length;
-			return another.currentNode < end;
+			// Maybe we can improve here more efficiently by
+			// comparing node indices.
+			if (another.currentNode == currentNode)
+				return !another.currentIsNode;
+			int tmp = nodes [another.currentNode].Parent;
+			while (tmp != 0) {
+				if (tmp == currentNode)
+					return true;
+				tmp = nodes [tmp].Parent;
+			}
+			return false;
 		}
 
 		public override bool IsSamePosition (XPathNavigator other)
 		{
-			return ComparePosition (other) == XmlNodeOrder.Same;
+			DTMXPathNavigator another = other as DTMXPathNavigator;
+
+			if (another == null || another.document != this.document)
+				return false;
+
+			return this.currentNode == another.currentNode &&
+				this.currentAttr == another.currentAttr &&
+				this.currentIsAttr == another.currentIsAttr &&
+				this.currentIsNode == another.currentIsNode &&
+				this.currentNs == another.currentNs;
 		}
 
 		public override bool MoveTo (XPathNavigator other)
@@ -424,6 +446,8 @@ namespace Mono.Xml.XPath
 		public override bool MoveToFirstNamespace (
 			XPathNamespaceScope namespaceScope)
 		{
+			if (!currentIsNode)
+				return false;
 			int cur = nodes [currentNode].FirstNamespace;
 			return moveToSpecifiedNamespace (cur, namespaceScope);
 		}
@@ -441,24 +465,6 @@ namespace Mono.Xml.XPath
 			else
 				return false;
 		}
-
-		/*
-		// This is extension for XPath 2.0
-		public virtual bool MoveToKeyRef (string key, string value)
-		{
-			Hashtable idTable = keyRefTable [key] as Hashtable;
-			if (idTable == null)
-				return false;
-			if (!idTable.ContainsKey (key))
-				return false;
-
-			int target = (int) idTable [key];
-			currentNode = target;
-			currentIsNode = true;
-			currentIsAttr = false;
-			return true;
-		}
-		*/
 
 		private void moveToNamespace (int nsNode)
 		{
@@ -530,8 +536,6 @@ namespace Mono.Xml.XPath
 				return false;
 
 			currentNode = parent;
-			currentIsNode = true;
-			currentIsAttr = false;
 			return true;
 		}
 
