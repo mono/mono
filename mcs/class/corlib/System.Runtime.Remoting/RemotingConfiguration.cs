@@ -10,7 +10,6 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Diagnostics;
 
 namespace System.Runtime.Remoting
 {	
@@ -29,13 +28,7 @@ namespace System.Runtime.Remoting
 		{
 			get 
 			{ 
-				try {
-					applicationID = AppDomain.CurrentDomain.SetupInformation.ApplicationName; 
-				} 
-				catch (Exception e) {
-					throw e;
-				}
-				
+				applicationID = AppDomain.CurrentDomain.SetupInformation.ApplicationName; 
 				return applicationID;
 			}
 		}
@@ -58,12 +51,7 @@ namespace System.Runtime.Remoting
 		public static string ProcessId 
 		{
 			get { 
-				try {
-					processId = String.Format ("{0}", Process.GetCurrentProcess().Id);
-				}
-				catch (Exception e) {
-					throw e;
-				}
+				processId = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
 				return processId; 
 			}
 		}
