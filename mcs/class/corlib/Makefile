@@ -19,11 +19,7 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 # disable, until people fix their code...
 #corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
 
-ifeq (net_2_0, $(PROFILE))
-LIBRARY_INSTALL_DIR = $(prefix)/lib/mono/2.0
-else
-LIBRARY_INSTALL_DIR = $(prefix)/lib
-endif
+LIBRARY_INSTALL_DIR = $(prefix)/lib/mono/$(FRAMEWORK_VERSION)
 
 CLEAN_FILES = $(cmplib) $(reslib) $(plattestlib) $(plattestlib).sources \
 	       $(net20bootstrap_makefrag) \

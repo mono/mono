@@ -1,3 +1,8 @@
+2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Makefile: Use the new FRAMEWORK_VERSION variable to build the destination
+	  path for mscorlib.
+
 2004-07-27  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* corlib.dll.sources: Added new files for NET_2_0 profile: 
