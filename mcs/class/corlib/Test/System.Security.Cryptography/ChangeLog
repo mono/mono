@@ -1,3 +1,8 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStreamTest.cs: Added [ExpectedException] for [Ignored] unit 
+	tests that were converted to [Category]
+
 2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigTest.cs: Added new RIPEMD160 hash algorithm and new HMAC

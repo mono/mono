@@ -336,6 +336,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (IndexOutOfRangeException))]
 #else
 		[Category ("NotDotNet")] // Test cause System.ExecutionEngineException on MS runtime
+		[ExpectedException (typeof (ArgumentNullException))] // should fail like previous test case
 #endif
 		public void Read_Disposed_Break () 
 		{
@@ -436,6 +437,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (IndexOutOfRangeException))]
 #else
 		[Category ("NotDotNet")] // Test cause System.ExecutionEngineException on MS runtime
+		[ExpectedException (typeof (ArgumentNullException))] // to match exception throw by Read in a similar case
 #endif
 		public void Write_Disposed () 
 		{
