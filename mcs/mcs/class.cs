@@ -3406,7 +3406,17 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			
+
+			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
+
+			if (parent is Struct && 
+			    ((fa & FieldAttributes.Static) == 0) &&
+			    t == parent.TypeBuilder &&
+			    !TypeManager.IsBuiltinType (t)){
+				Report.Error (523, Location, "Struct member `" + parent.Name + "." + Name + 
+					      "' causes a cycle in the structure layout");
+				return false;
+			}
 			FieldBuilder = parent.TypeBuilder.DefineField (
 				Name, t, Modifiers.FieldAttr (ModFlags));
 

@@ -1,5 +1,8 @@
 2002-10-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Field.Define): Catch cycles on struct type
+	definitions. 
+
 	* typemanager.cs (IsUnmanagedtype): Do not recursively check
 	fields if the fields are static.  We only need to check instance
 	fields. 
