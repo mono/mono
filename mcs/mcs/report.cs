@@ -246,6 +246,89 @@ namespace Mono.CSharp {
 			Console.WriteLine (error);
 		}
 	}
+
+	public enum TimerType {
+		FindMembers	= 0,
+		MemberLookup	= 1,
+		CachedLookup	= 2,
+		CacheInit	= 3,
+		MiscTimer	= 4,
+		CountTimers	= 5
+	}
+
+	public enum CounterType {
+		MemberCache	= 0,
+		MiscCounter	= 1,
+		CountCounters	= 2
+	}
+
+	[Conditional("TIMER")]
+	public class Timer
+	{
+		static DateTime[] timer_start;
+		static TimeSpan[] timers;
+		static long[] timer_counters;
+		static long[] counters;
+
+		static Timer ()
+		{
+			timer_start = new DateTime [(int) TimerType.CountTimers];
+			timers = new TimeSpan [(int) TimerType.CountTimers];
+			timer_counters = new long [(int) TimerType.CountTimers];
+			counters = new long [(int) CounterType.CountCounters];
+
+			for (int i = 0; i < (int) TimerType.CountTimers; i++) {
+				timer_start [i] = DateTime.Now;
+				timers [i] = TimeSpan.Zero;
+			}
+		}
+
+		[Conditional("TIMER")]
+		static public void IncrementCounter (CounterType which)
+		{
+			++counters [(int) which];
+		}
+
+		[Conditional("TIMER")]
+		static public void StartTimer (TimerType which)
+		{
+			timer_start [(int) which] = DateTime.Now;
+		}
+
+		[Conditional("TIMER")]
+		static public void StopTimer (TimerType which)
+		{
+			timers [(int) which] += DateTime.Now - timer_start [(int) which];
+			++timer_counters [(int) which];
+		}
+
+		[Conditional("TIMER")]
+		static public void ShowTimers ()
+		{
+			ShowTimer (TimerType.FindMembers, "- FindMembers timer");
+			ShowTimer (TimerType.MemberLookup, "- MemberLookup timer");
+			ShowTimer (TimerType.CachedLookup, "- CachedLookup timer");
+			ShowTimer (TimerType.CacheInit, "- Cache init");
+			ShowTimer (TimerType.MiscTimer, "- Misc timer");
+
+			ShowCounter (CounterType.MemberCache, "- Member cache");
+			ShowCounter (CounterType.MiscCounter, "- Misc counter");
+		}
+
+		static public void ShowCounter (CounterType which, string msg)
+		{
+			Console.WriteLine ("{0} {1}", counters [(int) which], msg);
+		}
+
+		static public void ShowTimer (TimerType which, string msg)
+		{
+			Console.WriteLine (
+				"[{0:00}:{1:000}] {2} (used {3} times)",
+				(int) timers [(int) which].TotalSeconds,
+				timers [(int) which].Milliseconds, msg,
+				timer_counters [(int) which]);
+		}
+	}
 }
 
 

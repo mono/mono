@@ -440,8 +440,8 @@ namespace Mono.CSharp {
 		//
 		// Hack around System.Reflection as found everywhere else
 		//
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
-						  MemberFilter filter, object criteria)
+		public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+					       MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 
@@ -451,15 +451,7 @@ namespace Mono.CSharp {
 						members.Add (fb);
 			}
 
-			int count = members.Count;
-
-			if (count > 0) {
-				MemberInfo [] mi = new MemberInfo [count];
-				members.CopyTo (mi, 0);
-				return mi;
-			}
-
-			return null;
+			return new MemberList (members);
 		}
 
 		public ArrayList ValueNames {

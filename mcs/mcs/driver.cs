@@ -83,13 +83,16 @@ namespace Mono.CSharp
 		// Output file
 		//
 		static string output_file = null;
-		
+
 		//
 		// Last time we took the time
 		//
-		static DateTime last_time;
-		static void ShowTime (string msg)
+		static DateTime last_time, first_time;
+		public static void ShowTime (string msg)
 		{
+			if (!timestamps)
+				return;
+
 			DateTime now = DateTime.Now;
 			TimeSpan span = now - last_time;
 			last_time = now;
@@ -98,6 +101,20 @@ namespace Mono.CSharp
 				"[{0:00}:{1:000}] {2}",
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
+
+		public static void ShowTotalTime (string msg)
+		{
+			if (!timestamps)
+				return;
+
+			DateTime now = DateTime.Now;
+			TimeSpan span = now - first_time;
+			last_time = now;
+
+			Console.WriteLine (
+				"[{0:00}:{1:000}] {2}",
+				(int) span.TotalSeconds, span.Milliseconds, msg);
+		}	       
 	       
 		static void tokenize_file (string input_file)
 		{
@@ -705,7 +722,7 @@ namespace Mono.CSharp
 				
 			case "--timestamp":
 				timestamps = true;
-				last_time = DateTime.Now;
+				last_time = first_time = DateTime.Now;
 				debug_arglist.Add ("timestamp");
 				return true;
 				
@@ -1147,6 +1164,7 @@ namespace Mono.CSharp
 			//
 			if (timestamps)
 				ShowTime ("Emitting code");
+			ShowTotalTime ("Total so far");
 			RootContext.EmitCode ();
 			if (timestamps)
 				ShowTime ("   done");
@@ -1157,7 +1175,7 @@ namespace Mono.CSharp
 
 			if (timestamps)
 				ShowTime ("Closing types");
-			
+
 			RootContext.CloseTypes ();
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
@@ -1206,9 +1224,13 @@ namespace Mono.CSharp
 			}
 			
 			CodeGen.Save (output_file);
-			if (timestamps)
+			if (timestamps) {
 				ShowTime ("Saved output");
+				ShowTotalTime ("Total");
+			}
 
+			Timer.ShowTimers ();
+			
 			if (want_debugging_support) {
 				CodeGen.SaveSymbols ();
 				if (timestamps)

@@ -4607,13 +4607,13 @@ namespace Mono.CSharp {
 		//
 		static MethodInfo FetchMethodMoveNext (Type t)
 		{
-			MemberInfo [] move_next_list;
+			MemberList move_next_list;
 			
 			move_next_list = TypeContainer.FindMembers (
 				t, MemberTypes.Method,
 				BindingFlags.Public | BindingFlags.Instance,
 				Type.FilterName, "MoveNext");
-			if (move_next_list == null || move_next_list.Length == 0)
+			if (move_next_list.Count == 0)
 				return null;
 
 			foreach (MemberInfo m in move_next_list){
@@ -4634,13 +4634,13 @@ namespace Mono.CSharp {
 		//
 		static MethodInfo FetchMethodGetCurrent (Type t)
 		{
-			MemberInfo [] move_next_list;
+			MemberList move_next_list;
 			
 			move_next_list = TypeContainer.FindMembers (
 				t, MemberTypes.Method,
 				BindingFlags.Public | BindingFlags.Instance,
 				Type.FilterName, "get_Current");
-			if (move_next_list == null || move_next_list.Length == 0)
+			if (move_next_list.Count == 0)
 				return null;
 
 			foreach (MemberInfo m in move_next_list){
@@ -4781,14 +4781,14 @@ namespace Mono.CSharp {
 
 		static bool TryType (Type t, ForeachHelperMethods hm)
 		{
-			MemberInfo [] mi;
+			MemberList mi;
 			
 			mi = TypeContainer.FindMembers (t, MemberTypes.Method,
 							BindingFlags.Public | BindingFlags.NonPublic |
 							BindingFlags.Instance,
 							FilterEnumerator, hm);
 
-			if (mi == null || mi.Length == 0)
+			if (mi.Count == 0)
 				return false;
 
 			hm.get_enumerator = (MethodInfo) mi [0];

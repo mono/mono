@@ -693,7 +693,7 @@ namespace Mono.CSharp {
 					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs, attrs.Location);
 				}
 			}
-			
+
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
 					tc.Emit ();

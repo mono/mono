@@ -1,5 +1,35 @@
 2002-08-13  Martin Baulig  <martin@gnome.org>
 
+	Rewrote TypeContainer.FindMembers to use a member cache.  This
+	gives us a speed increase of about 35% for the self-hosting MCS
+	build and of about 15-20% for the class libs (both on GNU/Linux).
+
+	* report.cs (Timer): New class to get enhanced profiling.  This
+	whole class is "TIMER" conditional since it remarkably slows down
+	compilation speed.
+
+	* class.cs (MemberList): New class.  This is an IList wrapper
+	which we're now using instead of passing MemberInfo[]'s around to
+	avoid copying this array unnecessarily.
+	(IMemberFinder.FindMember): Return a MemberList, not a MemberInfo [].
+	(ICachingMemberFinder, IMemberContainer): New interface.
+	(TypeManager.FilterWithClosure): If `criteria' is null, the name
+	has already been checked, otherwise use it for the name comparision.
+	(TypeManager.FindMembers): Renamed to RealMemberFinder and
+	provided wrapper which tries to use ICachingMemberFinder.FindMembers
+	if possible.  Returns a MemberList, not a MemberInfo [].
+	(TypeHandle): New class, implements IMemberContainer.  We create
+	one instance of this class per type, it contains a MemberCache
+	which is used to do the member lookups.
+	(MemberCache): New class.  Each instance of this class contains
+	all members of a type and a name-based hash table.
+	(MemberCache.FindMembers): This is our new member lookup
+	function.  First, it looks up all members of the requested name in
+	the hash table.  Then, it walks this list and sorts out all
+	applicable members and returns them.
+
+2002-08-13  Martin Baulig  <martin@gnome.org>
+
 	In addition to a nice code cleanup, this gives us a performance
 	increase of about 1.4% on GNU/Linux - not much, but it's already
 	half a second for the self-hosting MCS compilation.

@@ -976,7 +976,7 @@ namespace Mono.CSharp {
 				//
 				ptype = TypeBuilder.BaseType;
 				if (ptype != null){
-					defined_names = FindMembers (
+					defined_names = (MemberInfo []) FindMembers (
 						ptype, MemberTypes.All & ~MemberTypes.Constructor,
 						BindingFlags.Public | BindingFlags.Instance |
 						BindingFlags.Static, null, null);
@@ -1097,8 +1097,8 @@ namespace Mono.CSharp {
 		//
 		// Since the whole process is a no-op, it is fine to check for null here.
 		//
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
-						  MemberFilter filter, object criteria)
+		public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+					       MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 			bool priv = (bf & BindingFlags.NonPublic) != 0;
@@ -1270,34 +1270,24 @@ namespace Mono.CSharp {
 			// Lookup members in parent if requested.
 			//
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
-				MemberInfo [] mi;
-
-				mi = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
-				if (mi != null)
-					members.AddRange (mi);
-			}
-			
-			int count = members.Count;
-			if (count > 0){
-				MemberInfo [] mi = new MemberInfo [count];
-				members.CopyTo (mi);
-				return mi;
+				MemberList list = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
+				members.AddRange (list);
 			}
 
-			return null;
+			return new MemberList (members);
 		}
 
 		
 
-		public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-							 MemberFilter filter, object criteria)
+		public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+						      MemberFilter filter, object criteria)
 		{
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 
 			if (tc != null)
 				return tc.FindMembers (mt, bf, filter, criteria);
 			else
-				return t.FindMembers (mt, bf, filter, criteria);
+				return new MemberList (t.FindMembers (mt, bf, filter, criteria));
 		}
 
 		//
@@ -2001,7 +1991,7 @@ namespace Mono.CSharp {
 
 			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
 			if (!IsOperator) {
-				MemberInfo [] mi_this;
+				MemberList mi_this;
 
 				mi_this = TypeContainer.FindMembers (
 					parent.TypeBuilder, MemberTypes.Method,
@@ -2010,7 +2000,7 @@ namespace Mono.CSharp {
 					BindingFlags.DeclaredOnly,
 					MethodSignature.method_signature_filter, ms);
 
-				if (mi_this != null && mi_this.Length > 0) {
+				if (mi_this.Count > 0) {
 					Report.Error (111, Location, "Class `" + parent.Name + "' " +
 						      "already defines a member called `" + Name + "' " +
 						      "with the same parameter types");
@@ -2026,7 +2016,7 @@ namespace Mono.CSharp {
 
 			// ptype is only null for System.Object while compiling corlib.
 			if (ptype != null){
-				MemberInfo [] mi, mi_static, mi_instance;
+				MemberList mi, mi_static, mi_instance;
 
 				mi_static = TypeContainer.FindMembers (
 					ptype, MemberTypes.Method,
@@ -2039,14 +2029,14 @@ namespace Mono.CSharp {
 					MethodSignature.inheritable_method_signature_filter,
 					ms);
 
-				if (mi_instance != null && mi_instance.Length > 0){
+				if (mi_instance.Count > 0){
 					mi = mi_instance;
-				} else if (mi_static != null && mi_static.Length > 0)
+				} else if (mi_static.Count > 0)
 					mi = mi_static;
 				else
 					mi = null;
 
-				if (mi != null && mi.Length > 0){
+				if (mi != null && mi.Count > 0){
 					parent_method = (MethodInfo) mi [0];
 					string name = parent_method.DeclaringType.Name + "." +
 						parent_method.Name;
@@ -3129,9 +3119,7 @@ namespace Mono.CSharp {
 
 				// ptype is only null for System.Object while compiling corlib.
 				if (ptype != null){
-					MemberInfo [] mi;
-					
-					mi = TypeContainer.FindMembers (
+					TypeContainer.FindMembers (
 						ptype, MemberTypes.Method,
 						BindingFlags.Public |
 						BindingFlags.Static | BindingFlags.Instance,
@@ -3236,7 +3224,7 @@ namespace Mono.CSharp {
 				return false;
 
 			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
-			MemberInfo [] props_this;
+			MemberList props_this;
 
 			props_this = TypeContainer.FindMembers (
 				parent.TypeBuilder, MemberTypes.Property,
@@ -3245,7 +3233,7 @@ namespace Mono.CSharp {
 				BindingFlags.DeclaredOnly,
 				MethodSignature.method_signature_filter, ms);
 
-			if (props_this != null && props_this.Length > 0) {
+			if (props_this.Count > 0) {
 				Report.Error (111, Location, "Class `" + parent.Name + "' " +
 					      "already defines a member called `" + Name + "' " +
 					      "with the same parameter types");
@@ -3255,13 +3243,13 @@ namespace Mono.CSharp {
 			//
 			// Find properties with the same name on the base class
 			//
-			MemberInfo [] props;
-			MemberInfo [] props_static = TypeContainer.FindMembers (
+			MemberList props;
+			MemberList props_static = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
 				MethodSignature.inheritable_property_signature_filter, ms);
 
-			MemberInfo [] props_instance = TypeContainer.FindMembers (
+			MemberList props_instance = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
 				MethodSignature.inheritable_property_signature_filter,
@@ -3270,16 +3258,16 @@ namespace Mono.CSharp {
 			//
 			// Find if we have anything
 			//
-			if (props_static != null && props_static.Length > 0)
+			if (props_static.Count > 0)
 				props = props_static;
-			else if (props_instance != null && props_instance.Length > 0)
+			else if (props_instance.Count > 0)
 				props = props_instance;
 			else
 				props = null;
 
 			//
 			// If we have something on the base.
-			if (props != null && props.Length > 0){
+			if (props != null && props.Count > 0){
 				PropertyInfo pi = (PropertyInfo) props [0];
 
 				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);

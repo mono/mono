@@ -236,7 +236,7 @@ namespace Mono.CSharp {
 		}
 
 		// Hack around System.Reflection as found everywhere else
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		public MemberList FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 
@@ -259,26 +259,15 @@ namespace Mono.CSharp {
 			}
 
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
-				MemberInfo [] parent_mi;
+				MemberList parent_mi;
 				
 				parent_mi = TypeContainer.FindMembers (
 					TypeBuilder.BaseType, mt, bf, filter, criteria);
 
-				if (parent_mi != null)
-					members.AddRange (parent_mi);
-			}
-			
-			// The rest of the cases, if any, are unhandled at present.
-
-			int count = members.Count;
-
-			if (count > 0) {
-				MemberInfo [] mi = new MemberInfo [count];
-				members.CopyTo (mi, 0);
-				return mi;
+				members.AddRange (parent_mi);
 			}
 
-			return null;
+			return new MemberList (members);
 		}
 
 		//
