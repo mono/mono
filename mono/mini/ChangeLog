@@ -1,3 +1,8 @@
+2005-01-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c mini-exceptions.c aot.c exceptions-*.c: Update after 
+	MonoJitInfo changes.
+
 2005-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c (mono_handle_exception): Compute the stack trace
