@@ -1,0 +1,69 @@
+.\" 
+.\" mint manual page.
+.\" (C) Ximian, Inc. 
+.\" Author:
+.\"   Miguel de Icaza (miguel@gnu.org)
+.\"
+.TH Mono "Mono 1.0"
+.SH NAME
+mono \- Mono ECMA-CLI Just in Time compiler.
+.SH SYNOPSIS
+.PP
+.B mono
+[\-\-help] [\-d] [\-\-debug-asm] [\-\-debug-forest] [\-\-trace-calls]
+[\-\-stabs] [\-\-compile cname] [\-\-ncompile num] [\-\-debug]
+program.exe [arguments...]
+.SH DESCRIPTION
+The \fImono\fP program is a Just in Time compiler for ECMA CLI byte
+codes.  It translates dynamically a CIL stream into native code. 
+.I program.exe
+and optionally passes
+the
+.I arguments
+to it. 
+.SH OPTIONS
+The following options are supported:
+.TP
+.I "--help", "-h"
+Displays usage instructions.
+.I "--share-code"
+This mode makes the LoaderOptimization for Application Domains default
+to sharing code.  This results in slower code, but enables code
+sharing across application domains.  The default is to maximize for
+speed, but disallow JITed code sharing across domains.  See
+System.LoaderOptimization for more information
+.SH DEBUGGING OPTIONS
+The following options are used to debug, or perfomance test the JIT
+compiler:
+.TP
+.I "--trace-calls"
+Shows method names as they are invoked.
+.TP
+.I "--dump-asm"
+Displays the generated code as methods are invoked.
+.TP
+.I "--dump-forest"
+Displays the basic blocks and the forest of trees that is 
+created from a stream of CIL opcodes.
+.TP
+.I "--stabs"
+Writes out stabs debug information
+.TP
+.I "--debug method"
+Debugs the method whose name is `method'
+.TP
+.I "--compile"
+Compiles the method on the given class (namespace.name:methodname).
+.TP
+.I "--ncompile"
+Compiles the method a number of times.  If no argument is specified,
+the method will be compiled a thousand times.
+.SH FILES
+Assemblies are lodaed from the installation lib directory.  If you set
+`prefix' to /usr, the assemblies will be located in /usr/lib.
+.SH MAILING LISTS
+Visit http://mail.ximian.com/mailman/mono-list for details.
+.SH WEB SITE
+Visit: http://www.go-mono.com for details
+.SH SEE ALSO
+.BR mint(1), monodis(1)
