@@ -1,3 +1,8 @@
+2003-09-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBox.cs: patch by yaronsh@mainsoft.com (Yaron Shkop) that fixes
+	bug #48671.
+
 2003-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
                                                                                 
         * FontInfo.cs: fixed Name property as suggested by Rich Alimi

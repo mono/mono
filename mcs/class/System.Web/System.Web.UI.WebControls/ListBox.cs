@@ -143,8 +143,6 @@ namespace System.Web.UI.WebControls
 		{
 			string[] vals = postCollection.GetValues (postDataKey);
 			bool updated = false;
-			ArrayList selected = SelectedIndices;
-			ArrayList final = new ArrayList (vals.Length);
 			if (vals != null){
 				if (SelectionMode == ListSelectionMode.Single){
 					int index = Items.FindByValueInternal (vals [0]);
@@ -153,12 +151,15 @@ namespace System.Web.UI.WebControls
 						updated       = true;
 					}
 				} else {
+					ArrayList indices = SelectedIndices;
+					int length = vals.Length;
+					ArrayList final = new ArrayList (length);
 					foreach (string current in vals)
 						final.Add (Items.FindByValueInternal (current));
 
-					if (selected != null && selected.Count == vals.Length){
-						for (int ctr = 0; ctr < vals.Length; ctr++){
-							if (((int) final [ctr]) != ((int) selected [ctr])){
+					if (indices.Count == length) {
+						for (int ctr = 0; ctr < length; ctr++){
+							if (((int) final [ctr]) != ((int) indices [ctr])){
 								updated = true;
 								break;
 							}
@@ -166,9 +167,9 @@ namespace System.Web.UI.WebControls
 					} else {
 						updated = true;
 					}
+					if (updated)
+						Select (final);
 				}
-				if (!updated)
-					Select (final);
 			} else {
 				if (SelectedIndex != -1)
 					SelectedIndex = -1;
