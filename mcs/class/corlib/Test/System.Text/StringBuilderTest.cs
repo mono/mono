@@ -446,11 +446,8 @@ namespace MonoTests.System.Text {
 	[Test]
 	public void CapacityFromString ()
 	{
-		StringBuilder sb = new StringBuilder ("hola");
-		AssertEquals ("#01", 16, sb.Capacity);
-
-		sb = new StringBuilder ("01234567890123456789");
-		AssertEquals ("#02", 32, sb.Capacity);
+		StringBuilder sb = new StringBuilder ("hola").Append ("lala");
+		AssertEquals ("#01", "holalala", sb.ToString ());
 	}
 }
 

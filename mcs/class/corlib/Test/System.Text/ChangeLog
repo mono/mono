@@ -1,3 +1,8 @@
+2005-01-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilderTest.cs (CapacityFromString): This relies on impl
+	specific behavior. Rewrite the test.
+
 2005-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Text/StringBuilderTest.cs: new tests for capacity when the
