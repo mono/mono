@@ -1,3 +1,11 @@
+2004-05-28  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Statement.cs: changed parent_is_itr_stm method to ParentIsItrStm
+	property. Added initial pieces for Break's Resolve. Fixed bug that
+	did not let Emit the code for case clauses that came after the
+	default clause (we match the jsc behavior).
+	* jscript-lexer-parser.g: set parent of switch's clauses.
+
 2004-05-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Statement.cs: added parent as a parameter on Continue constructor. Added parent_is_itr_stm

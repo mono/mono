@@ -94,7 +94,7 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			if ((parent == null || (!parent_is_itr_stm ())) && identifier == string.Empty)
+			if ((parent == null || !ParentIsItrStm) && identifier == string.Empty)
 				throw new Exception ("A continue can't be outside a iteration stm");
 			return false;
 		}
@@ -104,11 +104,12 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		private bool parent_is_itr_stm ()
-		{
-			if (parent is DoWhile || parent is While || parent is For || parent is ForIn)
-				return true;
-			return false;
+		private bool ParentIsItrStm {
+			get {
+				if (parent is DoWhile || parent is While || parent is For || parent is ForIn)
+					return true;
+				return false;
+			}
 		}
 	}
 
@@ -123,7 +124,17 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			if ((parent == null || !ParentIsCorrect) && identifier == string.Empty)
+				throw new Exception ("A break statement can't be outside a switch or iteration stm");
+			return false;
+		}
+
+		private bool ParentIsCorrect {
+			get {
+				if (parent is DoWhile || parent is While || parent is For || parent is ForIn || parent is Switch)
+					return true;
+				return false;
+			}
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -332,25 +343,45 @@ namespace Microsoft.JScript {
 		{
 			if (exp != null)
 				exp.Emit (ec);
+
 			ILGenerator ig = ec.ig;
+			Label init_default = ig.DefineLabel ();
+			Label end_of_default = ig.DefineLabel ();
+
 			LocalBuilder loc = ig.DeclareLocal (typeof (object));
 			ig.Emit (OpCodes.Stloc, loc);
+
 			foreach (Clause c in case_clauses) {
 				ig.Emit (OpCodes.Ldloc, loc);
 				c.EmitConditional (ec);
 			}
-			Label end = ig.DefineLabel ();
-			ig.Emit (OpCodes.Br, end);
+
+			/* emit conditionals from clauses that come after the default clause */
+			if (sec_case_clauses != null && sec_case_clauses.Count > 0) {
+				foreach (Clause c in sec_case_clauses) {
+					ig.Emit (OpCodes.Ldloc, loc);
+					c.EmitConditional (ec);
+				}
+			} 
+			ig.Emit (OpCodes.Br, init_default);
+
+			/* emit the stms from case_clauses */
 			foreach (Clause c in case_clauses) {
 				ig.MarkLabel (c.matched_block);
 				c.EmitStms (ec);				
 			}
-			ig.MarkLabel (end);
+			
+			ig.MarkLabel (init_default);
 			foreach (AST ast in default_clauses)
 				ast.Emit (ec);
-			// FIXME: clauses after default clause are not being generated.
-			foreach (Clause sc in sec_case_clauses)
-				sc.Emit (ec);
+			ig.MarkLabel (end_of_default);
+
+			if (sec_case_clauses != null && sec_case_clauses.Count > 0) {
+				foreach (Clause c in sec_case_clauses) {
+					ig.MarkLabel (c.matched_block);
+					c.EmitStms (ec);				
+				}
+			} 
 		}
 	}
 
@@ -393,6 +424,6 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-		}
+		}	
 	}
 }
