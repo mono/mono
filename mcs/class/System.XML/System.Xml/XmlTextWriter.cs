@@ -47,6 +47,7 @@ namespace System.Xml
 		string openElementNS;
 		bool hasRoot = false;
 		Hashtable newAttributeNamespaces = new Hashtable ();
+		Hashtable userWrittenNamespaces = new Hashtable ();
 
 		XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 		string savingAttributeValue = String.Empty;
@@ -210,8 +211,9 @@ namespace System.Xml
 						namespaceManager.AddNamespace (prefix, ns);
 					}
 				} 
-				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace (prefix) != ns)) 
-				{
+				else if ((prefix == String.Empty) && 
+					(namespaceManager.LookupNamespace (prefix) != ns) &&
+					userWrittenNamespaces [prefix] == null) {
 					namespaceManager.AddNamespace (prefix, ns);
 					formatXmlns = String.Format ("xmlns={0}{0}", quoteChar);
 				}
@@ -287,6 +289,7 @@ namespace System.Xml
 			openStartElement = false;
 			attributeWrittenForElement = false;
 			newAttributeNamespaces.Clear ();
+			userWrittenNamespaces.Clear ();
 		}
 
 		public override void Flush ()
@@ -467,6 +470,7 @@ namespace System.Xml
 				// add namespace
 				namespaceManager.AddNamespace (
 					savedAttributePrefix, savingAttributeValue);
+				userWrittenNamespaces [savedAttributePrefix] = savingAttributeValue;
 				saveAttributeValue = false;
 				savedAttributePrefix = String.Empty;
 				savingAttributeValue = String.Empty;
@@ -762,6 +766,7 @@ namespace System.Xml
 			CheckState ();
 			CloseStartElement ();
 			newAttributeNamespaces.Clear ();
+			userWrittenNamespaces.Clear ();
 
 			if (prefix == null)
 				prefix = namespaceManager.LookupPrefix (ns);

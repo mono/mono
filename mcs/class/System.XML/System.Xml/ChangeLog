@@ -1,3 +1,8 @@
+2003-11-28  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriter.cs : When element's namespace should be overwritten by
+	  one of its attribute, if exist as such. This fixes bug #51305.
+
 2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs : Fixed ReadContent() which may result in 
