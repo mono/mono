@@ -1248,7 +1248,7 @@ namespace Mono.CSharp {
 						MethodBuilder mb = m.MethodBuilder;
 
 						if (mb != null && filter (mb, criteria) == true)
-							members.Add (mb);
+                                                        members.Add (mb);
 					}
 				}
 
@@ -1440,7 +1440,8 @@ namespace Mono.CSharp {
 				return ds.FindMembers (mt, bf, filter, criteria);
 			else
 				return new MemberList (t.FindMembers (mt, bf, filter, criteria));
-		}
+                        
+                }
 
 		//
 		// FindMethods will look for methods not only in the type `t', but in

@@ -1,3 +1,16 @@
+2003-07-24  Ravi Pratap  <ravi@ximian.com>
+
+	* decl.cs (MemberCache.AddMethods): Reverse the order of the array
+	returned from GetMethods to make things consistent with the
+	assumptions MCS makes about ordering of methods.
+
+	This should comprehensively fix bug #45127 and it does :-)
+
+	* ecore.cs (MethodGroupExpr.DeclaringType): Correct bug - the
+	ordering is actually reverse.
+
+	* Clean up some debug messages I left lying around.
+	
 2003-07-22  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation.OverloadResolve): Follow the spec more

@@ -4483,7 +4483,6 @@ namespace Mono.CSharp {
 				if (!IsApplicable (ec, Arguments, candidate))
 					continue;
 
-                                
 				candidates.Add (candidate);
                                 applicable_type = candidate.DeclaringType;
                                 found_applicable = true;

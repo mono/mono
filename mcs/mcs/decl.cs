@@ -1165,6 +1165,8 @@ namespace Mono.CSharp {
 		{
 			MemberInfo [] members = type.GetMethods (bf);
 
+                        Array.Reverse (members);
+                        
 			foreach (MethodBase member in members) {
 				string name = member.Name;
 
@@ -1187,6 +1189,8 @@ namespace Mono.CSharp {
 
 				list.Add (new CacheEntry (Container, member, MemberTypes.Method, new_bf));
 			}
+
+                        
 		}
 
 		/// <summary>

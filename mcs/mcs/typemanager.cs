@@ -1252,6 +1252,7 @@ public class TypeManager {
 						 FilterWithClosure_delegate, name);
 			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = false;
+                        
 			return list;
 		}
 
@@ -2485,9 +2486,9 @@ public class TypeManager {
 			mt &= (MemberTypes.Method | MemberTypes.Constructor);
 		} while (searching);
 
-		if (method_list != null && method_list.Count > 0) {
+		if (method_list != null && method_list.Count > 0)
                         return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
-                }
+                
 		//
 		// This happens if we already used the cache in the first iteration, in this case
 		// the cache already looked in all interfaces.

@@ -2276,10 +2276,10 @@ namespace Mono.CSharp {
 		public Type DeclaringType {
 			get {
                                 //
-                                // We assume that the top-level type is in the end
+                                // The methods are arranged in this order:
+                                // derived type -> base type
                                 //
-				return Methods [Methods.Length - 1].DeclaringType;
-                                //return Methods [0].DeclaringType;
+				return Methods [0].DeclaringType;
 			}
 		}
 		
@@ -2308,8 +2308,7 @@ namespace Mono.CSharp {
 
 		public string Name {
 			get {
-				//return Methods [0].Name;
-                                return Methods [Methods.Length - 1].Name;
+                                return Methods [0].Name;
 			}
 		}
 
