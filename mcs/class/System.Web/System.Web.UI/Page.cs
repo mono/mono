@@ -60,7 +60,9 @@ public class Page : TemplateControl, IHttpHandler
 	Hashtable hiddenFields;
 	bool handleViewState;
 
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventSourceID = "__EVENTTARGET";
 
 	#region Constructor
@@ -589,7 +591,7 @@ public class Page : TemplateControl, IHttpHandler
 		WebTrace.WriteLine ("End");
 		WebTrace.PopContext ();
 	}
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
+	
 	internal void RaisePostBackEvents ()
 	{
 		if (requiresRaiseEvent != null) {
@@ -624,6 +626,7 @@ public class Page : TemplateControl, IHttpHandler
 		requiresPostDataChanged.Clear ();
 	}
 
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual void RaisePostBackEvent (IPostBackEventHandler sourceControl, string eventArgument)
 	{
 		sourceControl.RaisePostBackEvent (eventArgument);
@@ -704,6 +707,7 @@ public class Page : TemplateControl, IHttpHandler
 		handleViewState = true;
 	}
 
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual void SavePageStateToPersistenceMedium (object viewState)
 	{
 		_savedViewState = viewState;

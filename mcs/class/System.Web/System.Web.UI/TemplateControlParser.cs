@@ -116,7 +116,7 @@ namespace System.Web.UI
 			base.AddDirective (directive, atts);
 		}
 
-		protected override void HandleOptions (object obj)
+		internal override void HandleOptions (object obj)
 		{
 			Control ctrl = obj as Control;
 			ctrl.AutoEventWireup = autoEventWireup;

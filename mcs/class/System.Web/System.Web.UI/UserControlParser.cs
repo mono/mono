@@ -14,7 +14,7 @@ using System.Web.Util;
 
 namespace System.Web.UI
 {
-	public sealed class UserControlParser : TemplateControlParser
+	internal sealed class UserControlParser : TemplateControlParser
 	{
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
 		{
@@ -34,14 +34,14 @@ namespace System.Web.UI
 			return generator.GetCompiledType ();
 		}
 
-		protected override Type DefaultBaseType
+		internal override Type DefaultBaseType
 		{
 			get {
 				return typeof (UserControl);
 			}
 		}
 
-		protected internal override string DefaultDirectiveName
+		internal override string DefaultDirectiveName
 		{
 			get {
 				return "control";

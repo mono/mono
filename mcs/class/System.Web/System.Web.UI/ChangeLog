@@ -1,3 +1,13 @@
+2003-07-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ApplicationFileParser.cs: Fixed signature
+	* DesignTimeParseData.cs: Added missing properties, implemented
+	* Page.cs: Added attributes
+	* PageParser.cs:
+	* TemplateControlParser.cs:
+	* TemplateParser.cs:
+	* UserControlParser.cs: Fixed signature
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* HtmlControlPersistableAttribute.cs: Added

@@ -1,5 +1,5 @@
 //
-// System.Web.UI.ApplicationfileParser
+// System.Web.UI.ApplicationFileParser.cs
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -33,11 +33,11 @@ namespace System.Web.UI
 			return generator.GetCompiledType ();
 		}
 
-		protected override Type DefaultBaseType {
+		internal override Type DefaultBaseType {
 			get { return typeof (HttpApplication); }
 		}
 
-		protected internal override string DefaultDirectiveName {
+		internal override string DefaultDirectiveName {
 			get { return "application"; }
 		}
 

@@ -72,14 +72,14 @@ namespace System.Web.UI
 			get { return readonlySessionState; }
 		}
 		
-		protected override Type DefaultBaseType
+		internal override Type DefaultBaseType
 		{
 			get {
 				return typeof (Page);
 			}
 		}
 
-		protected internal override string DefaultDirectiveName
+		internal override string DefaultDirectiveName
 		{
 			get {
 				return "page";

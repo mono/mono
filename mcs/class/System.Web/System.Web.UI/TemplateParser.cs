@@ -37,7 +37,7 @@ namespace System.Web.UI
 		string compilerOptions;
 		string language;
 
-		public TemplateParser ()
+		internal TemplateParser ()
 		{
 			imports = new ArrayList ();
 			imports.Add ("System");
@@ -65,7 +65,7 @@ namespace System.Web.UI
 
 		protected abstract Type CompileIntoType ();
 
-		protected virtual void HandleOptions (object obj)
+		internal virtual void HandleOptions (object obj)
 		{
 		}
 
@@ -333,9 +333,9 @@ namespace System.Web.UI
 			return result.CompiledAssembly;
 		}
 		
-		protected abstract Type DefaultBaseType { get; }
+		internal abstract Type DefaultBaseType { get; }
 
-		protected internal abstract string DefaultDirectiveName { get; }
+		internal abstract string DefaultDirectiveName { get; }
 
 		internal string InputFile
 		{
