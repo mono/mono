@@ -19,10 +19,10 @@ namespace System.Resources
 	public sealed class ResourceReader : IResourceReader, IDisposable
 	{
 		Stream stream;
-		ArrayList resourceNames = null;
-		ArrayList resourceValues = null;
+		internal ArrayList resourceNames = null;
+		internal ArrayList resourceValues = null;
 		BinaryReader binaryReader;
-		int resourceCount = 0;
+		internal int resourceCount = 0;
 		int typeCount = 0;
 		ArrayList typeArray = new ArrayList();
 		ArrayList hashes = new ArrayList();
@@ -109,6 +109,9 @@ namespace System.Resources
 				}
 
 				dataSectionOffset = binaryReader.ReadInt32();
+
+				// LAMESPEC: what is the next Int32 here?
+				binaryReader.ReadInt32();
 			}
 			catch{
 				return false;
@@ -142,15 +145,31 @@ namespace System.Resources
 			}
 		}
 		
+		internal struct NameOffsetPair {
+			public string name;
+			public int offset;
+		}
+
 		[MonoTODO]
 		private void FillResources(){
+			NameOffsetPair pair;
 			resourceNames = new ArrayList();
+			resourceValues = new ArrayList();
 			BinaryReader unicodeReader = 
 				new BinaryReader(binaryReader.BaseStream, System.Text.Encoding.Unicode);
 			// TODO: need to put these in an array and work out when to get the values.
 			// also need to figure out the hash and how/if to use it.
-			string test = unicodeReader.ReadString();
-			int offset = binaryReader.ReadInt32();
+			for (int index=0; index < resourceCount; index++){
+				pair = new NameOffsetPair();
+				pair.name = unicodeReader.ReadString();
+				pair.offset = binaryReader.ReadInt32();
+				resourceNames.Add(pair);
+			}
+			for (int index=0; index < resourceCount; index++){
+				// LAMESPEC: what the heck is this byte here?  always 0? just a separator?
+				binaryReader.ReadByte();
+				resourceValues.Add(binaryReader.ReadString());
+			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -165,47 +184,82 @@ namespace System.Resources
 			Close();
 		}
 		
-	}
-	
-	internal class ResourceEnumerator : IDictionaryEnumerator
-	{
-		protected DictionaryEntry entry;
-		protected object key;
-		protected object value;
-		protected ResourceReader reader;
-		
-		public ResourceEnumerator(ResourceReader readerToEnumerate){
-			reader = readerToEnumerate;
-		}
+		internal class ResourceEnumerator : IDictionaryEnumerator
+		{
+			protected ResourceReader reader;
+			protected int index = -1;
 
-		public DictionaryEntry Entry
-		{
-			get { return entry; }
-		}
-		
-		public object Key
-	     {
-			get { return key; }
-		}
-		
-		public object Value
-		{
-			get { return value; }
-		}
-		
-		[MonoTODO]
-		public object Current
-		{
-			get { return null; }
-		}
-		
-		[MonoTODO]
-		public bool MoveNext ()
-		{
-			return false;
-		}
-		
-		[MonoTODO]
-		public void Reset () { }
-	}
-}
+			
+			public ResourceEnumerator(ResourceReader readerToEnumerate){
+				reader = readerToEnumerate;
+			}
+
+			public DictionaryEntry Entry
+			{
+				get {
+					if (null == reader.stream)
+						throw new InvalidOperationException("ResourceReader is closed.");
+					if (index < 0)
+						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
+
+					DictionaryEntry entry = new DictionaryEntry();
+					entry.Key = Key;
+					entry.Value = Value;
+					return entry; 
+				}
+			}
+			
+			public object Key
+			{
+				get { 
+					if (null == reader.stream)
+						throw new InvalidOperationException("ResourceReader is closed.");
+					if (index < 0)
+						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
+					return ((NameOffsetPair)(reader.resourceNames[index])).name; 
+				}
+			}
+			
+			public object Value
+			{
+				get { 
+					if (null == reader.stream)
+						throw new InvalidOperationException("ResourceReader is closed.");
+					if (index < 0)
+						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
+					return reader.resourceValues[index];
+				}
+			}
+			
+			public object Current
+			{
+				get {
+					if (null == reader.stream)
+						throw new InvalidOperationException("ResourceReader is closed.");
+					if (index < 0)
+						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
+					return Entry; 
+				}
+			}
+			
+			public bool MoveNext ()
+			{
+				if (null == reader.stream)
+					throw new InvalidOperationException("ResourceReader is closed.");
+				if (++index < reader.resourceCount){
+					return true;
+				}
+				else {
+					--index;
+					return false;
+				}
+			}
+			
+			public void Reset () {
+				if (null == reader.stream)
+					throw new InvalidOperationException("ResourceReader is closed.");
+				index = -1;
+			}
+		} // internal class ResourceEnumerator
+	}  // public sealed class ResourceReader
+} // namespace System.Resources
