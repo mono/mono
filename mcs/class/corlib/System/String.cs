@@ -1188,6 +1188,8 @@ namespace System
 
 			if (startIndex == value.Length)
 				return String.Empty;
+			if (separator == null)
+				separator = String.Empty;
 
 			return InternalJoin (separator, value, startIndex, count);
 		}

@@ -1,3 +1,7 @@
+2004-06-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* String.cs: Fixed Join in case separator parameter is null.
+
 2004-06-06  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* MonoCustomAttrs.cs: fixed issue where an empty array was 
