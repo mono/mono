@@ -5128,7 +5128,7 @@ namespace Mono.CSharp {
 
 			EmitArguments (ec, method, Arguments);
 
-			if (is_static || struct_call || is_base){
+			if (is_static || struct_call || is_base || !method.IsVirtual){
 				if (method is MethodInfo) {
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				} else
@@ -6309,6 +6309,16 @@ namespace Mono.CSharp {
 				ret [i++] = v;
 			}
 			return ret;
+		}
+
+		public Expression TurnIntoConstant ()
+		{
+			//
+			// Should use something like the above attribute thing.
+			// It should return a subclass of Constant that just returns
+			// the computed value of the array
+			//
+			throw new Exception ("Does not support yet Turning array into a Constant");
 		}
 	}
 	

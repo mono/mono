@@ -1,12 +1,15 @@
 2004-02-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Invocation.EmitCall): If the method is not
+	virtual, do not emit a CallVirt to it, use Call.
+
 	* typemanager.cs (GetFullNameSignature): Improve the method to
 	cope with ".ctor" and replace it with the type name.
 
 	* class.cs (ConstructorInitializer.Resolve): Now the method takes
 	as an argument the ConstructorBuilder where it is being defined,
 	to catch the recursive constructor invocations.
-	
+
 2004-02-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* iterators.cs (IteratorHandler.IsIEnumerator, IsIEnumerable): New
