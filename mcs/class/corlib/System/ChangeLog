@@ -1,3 +1,7 @@
+2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Console.cs: Turn off buffering for the streams returned by
+	OpenStandardOutput () and OpenStandardError () if the buffer size is 0.
 
 2003-06-28  Lluis Sanchez Gual <lluis@ximian.com>
 

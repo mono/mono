@@ -64,7 +64,7 @@ namespace System {
 		{
 			return new FileStream (MonoIO.ConsoleError,
 					       FileAccess.Write,
-					       false,  bufferSize);
+					       false,  bufferSize, false, bufferSize == 0);
 		}
 
 		public static Stream OpenStandardInput ()
@@ -76,7 +76,7 @@ namespace System {
 		{
 			return new FileStream (MonoIO.ConsoleInput,
 					       FileAccess.Read,
-					       false,  bufferSize);
+					       false,  bufferSize, false, bufferSize == 0);
 		}
 
 		public static Stream OpenStandardOutput ()
@@ -88,7 +88,7 @@ namespace System {
 		{
 			return new FileStream (MonoIO.ConsoleOutput,
 					       FileAccess.Write,
-					       false,  bufferSize);
+					       false,  bufferSize, false, bufferSize == 0);
 		}
 
 		public static void SetError (TextWriter newError)
