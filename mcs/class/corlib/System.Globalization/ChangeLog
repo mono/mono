@@ -1,3 +1,8 @@
+2004-06-08  Dick Porter  <dick@ximian.com>
+
+	* CultureInfo.cs: Make calendar_data readonly, to match the
+	const-ness in the runtime.
+
 2004-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatInfo.cs : In fact GetAllDateTimePatterns() returns

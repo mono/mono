@@ -54,7 +54,7 @@ namespace System.Globalization
 		private string win3lang;
 		CompareInfo compareInfo;
 		[NonSerialized]
-		private unsafe int *calendar_data;
+		private unsafe readonly int *calendar_data;
 		[NonSerialized]
 		private Calendar [] optional_calendars;
 				
