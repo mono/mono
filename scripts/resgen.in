@@ -1,2 +1,2 @@
 #!/bin/sh
-exec @bindir@/@mono_interp@ @plat_bindir@/monoresgen.exe "$@"
+exec @bindir@/@mono_interp@ @mono_one_instdir@/monoresgen.exe "$@"
