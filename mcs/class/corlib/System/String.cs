@@ -656,6 +656,10 @@ namespace System
 			if (this == String.Empty)
 				return this;
 
+			if (oldValue.Length == 0 || oldValue[0] == '\0') {
+				return(this);
+			}
+			
 			if (newValue == null)
 				newValue = String.Empty;
 

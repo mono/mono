@@ -1,3 +1,7 @@
+2004-04-02  Dick Porter  <dick@ximian.com>
+
+	* String.cs: More sanity checks in Replace().  Fixes bug 55822.
+
 2004-04-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Environment.cs: Implement ExpandEnvironmentVariables static method.
