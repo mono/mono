@@ -1,3 +1,8 @@
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: fixed bug #26133 and also test if the directory exist
+	before performing the search.
+
 2002-06-12  Nick Drochak  <ndrochak@gol.com>
 
 	* StringReader.cs (ReadLine): Return null when we get to end of the

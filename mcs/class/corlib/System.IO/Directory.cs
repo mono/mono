@@ -196,6 +196,9 @@ namespace System.IO
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid characters.");
 
+			if (!Directory.Exists (path))
+				throw new DirectoryNotFoundException ("Directory '" + path + "' not found.");
+
 			search = new SearchPattern (pattern);
 
 			find = MonoIO.FindFirstFile (Path.Combine (path , "*"), out stat);
@@ -205,6 +208,8 @@ namespace System.IO
 				case MonoIOError.ERROR_PATH_NOT_FOUND:
 					string message = String.Format ("Could not find a part of the path \"{0}\"", path);
 					throw new DirectoryNotFoundException (message);
+				case MonoIOError.ERROR_NO_MORE_FILES:
+					return new string [0];
 
 				default:
 					throw MonoIO.GetException (path);
