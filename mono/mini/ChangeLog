@@ -1,3 +1,8 @@
+2005-1-20  Massimiliano Mantione  <massi@ximian.com>
+
+	* driver.c: Disabled SSAPRE until fix the bug that appears
+	in IronPython's parrotbench.
+
 2005-01-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_compile_assembly): Get rid of Skip (other) messages.
