@@ -33,10 +33,6 @@ namespace System.Collections.Specialized {
 			Assert(sc.Count == 7);
 		}
 		
-		public void TestSimpleIsFixedSize() {
-			Assert(!sc.IsFixedSize);
-		}
-		
 		public void TestSimpleIsReadOnly() {
 			Assert(!sc.IsReadOnly);
 		}

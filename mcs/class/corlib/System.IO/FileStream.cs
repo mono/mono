@@ -7,8 +7,8 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 using System;
+using System.PAL;
 using System.Runtime.InteropServices;
-using System.Private;
 
 // fixme: I do not know how to handle errno when calling PInvoke functions
 // fixme: emit the correct exceptions everywhere
@@ -18,49 +18,10 @@ namespace System.IO
 
 	public class FileStream : Stream
 	{
-			
+		private OpSys _os = Platform.OS;
 		private IntPtr fd;
 		private FileAccess acc;
 		private bool owner;
-		
-		private int getUnixFlags (FileMode mode, FileAccess access)
-		{
-			int flags = 0;
-
-			switch (access) {
-			case FileAccess.Read:
-				flags = Wrapper.O_RDONLY;
-				break;
-			case FileAccess.Write:
-				flags = Wrapper.O_WRONLY;
-				break;
-			case FileAccess.ReadWrite:
-				flags = Wrapper.O_RDWR;
-				break;
-			}
-			
-			switch (mode) {
-			case FileMode.Append:
-				flags |= Wrapper.O_APPEND;
-				break;
-			case FileMode.Create:
-				flags |= Wrapper.O_CREAT;
-				break;
-			case FileMode.CreateNew:
-				flags |= Wrapper.O_CREAT |  Wrapper.O_EXCL;
-				break;
-			case FileMode.Open:
-				break;
-			case FileMode.OpenOrCreate:
-				flags |= Wrapper.O_CREAT;				
-				break;
-			case FileMode.Truncate:
-				flags |= Wrapper.O_TRUNC;
-				break;
-			}
-
-			return flags;
-		}
 		
 		public FileStream (IntPtr fd, FileAccess access)
 			: this (fd, access, true, 0, false) {}
@@ -96,9 +57,7 @@ namespace System.IO
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share,
 				   int buferSize, bool useAsync)
 		{
-			int flags = getUnixFlags (mode, access);
-			
-			if ((int)(fd = Wrapper.open (name, flags, 0x1a4)) == -1)
+			if ((int)(fd = _os.OpenFile (name, mode, access, share)) == -1)
 				throw new IOException();
 
 			acc = access;
@@ -143,20 +102,17 @@ namespace System.IO
 		unsafe public override long Length
 		{
 			get {
-				stat fs;
-
-				Wrapper.fstat (fd, &fs);
-				return fs.st_size;
+				return _os.FileLength (fd);
 			}
 		}
 
 		public override long Position
 		{
 			get {
-				return Wrapper.seek (fd, 0,  Wrapper.SEEK_CUR);
+				return _os.SeekFile (fd, 0,  SeekOrigin.Current);
 			}
 			set {
-				Wrapper.seek (fd, value, Wrapper.SEEK_SET);
+				_os.SeekFile (fd, value, SeekOrigin.Begin);
 			}
 		}
 
@@ -166,53 +122,39 @@ namespace System.IO
 
 		public override void Close ()
 		{
-			if (owner && Wrapper.close (fd) != 0)
-				throw new IOException();
+			if (owner) {
+				_os.CloseFile (fd);
+			}
 		}
 
 		public unsafe override int Read (byte[] buffer,
 					  int offset,
 					  int count)
 		{
-			int res;
-
-			fixed (void *p = &buffer [offset]) {
-				res = Wrapper.read (fd, p, count);
-			}
-			
-			return res;
+			return _os.ReadFile (fd, buffer, offset, count);
 		}
 
 		public unsafe override int ReadByte ()
 		{
-			byte val;
+			byte[] val = new byte[1];
 			
-			if (Wrapper.read (fd, &val, 1) != 1)
+			if (Read (val, 0, 1) != 1)
 				throw new IOException();
 			
-			return val;
+			return val[0];
 		}
 
 		public override long Seek (long offset,
 					   SeekOrigin origin)
 		{
-			int off = (int)offset;
-			
-			switch (origin) {
-			case SeekOrigin.End:
-				return Wrapper.seek (fd, Wrapper.SEEK_END, off);
-			case SeekOrigin.Current:
-				return Wrapper.seek (fd, Wrapper.SEEK_CUR, off);
-			default:
-				return Wrapper.seek (fd, Wrapper.SEEK_SET, off);
-			}
+			return _os.SeekFile (fd, offset, origin);
 		}
 
 		public override void SetLength (long value)
 		{
 			int res;
 
-			if ((res = Wrapper.ftruncate (fd, value)) == -1)
+			if ((res = _os.SetLengthFile (fd, value)) == -1)
 				throw new IOException();
 
 			
@@ -222,11 +164,7 @@ namespace System.IO
 						   int offset,
 						   int count)
 		{
-			int res;
-			
-			fixed (void *p = &buffer [offset]) {
-				res = Wrapper.write (fd, p, count);
-			}
+			int res = _os.WriteFile (fd, buffer, offset, count);
 			
 			if (res != count)
 				throw new IOException();
@@ -234,8 +172,11 @@ namespace System.IO
 
 		public unsafe override void WriteByte (byte value)
 		{
-			if (Wrapper.write (fd, &value, 1) != 1)
-				throw new IOException();
+			byte[] buf = new byte[1];
+
+			buf[0] = value;
+
+			Write (buf, 0, 1);
 		}
 
 	}

@@ -10,7 +10,6 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.Private;
 
 namespace System.IO
 {
@@ -19,7 +18,7 @@ namespace System.IO
 	/// </summary>
 	public abstract class FileSystemInfo : MarshalByRefObject
 	{
-		protected stat status;
+		// protected stat status;
 		private bool inited;
 		
 		protected string FullPath;
@@ -27,6 +26,7 @@ namespace System.IO
 
 		protected FileSystemInfo()
 		{
+			/*
 			status.st_dev = 0;
 			status.st_mode = 0;
 			status.st_nlink = 0;
@@ -36,6 +36,7 @@ namespace System.IO
 			status.st_atime = 0;
 			status.st_mtime = 0;
 			status.st_ctime = 0;
+			*/
 
 			FullPath = OriginalPath = String.Empty;
 		}
@@ -63,7 +64,7 @@ namespace System.IO
 				// TODO: fix next line as far as my research has taken me so far, Unix/Linux don't
 				//       have a creation time and according to my man the ctime if the last time
 				//       one of the chmod flags was changed
-				return c2csharpTime(status.st_ctime);
+				return c2csharpTime(10);//status.st_ctime);
 			}
 			set
 			{
@@ -102,7 +103,7 @@ namespace System.IO
 				{
 					update();
 				}
-				return c2csharpTime(status.st_atime);
+				return c2csharpTime(1);//status.st_atime);
 			}
 
 			set
@@ -119,7 +120,7 @@ namespace System.IO
 				{
 					update();
 				}
-				return c2csharpTime(status.st_mtime);
+				return c2csharpTime(1);//status.st_mtime);
 			}
 			set
 			{	// TODO: Implement
@@ -149,6 +150,7 @@ namespace System.IO
 
 		unsafe private void update()
 		{
+			/*
 			stat fs;			
 			int nRetCode = Wrapper.stat(getPathName(), &fs);
 			status = fs;
@@ -165,6 +167,7 @@ namespace System.IO
 			   //break; generates warning CS0162 unreachable code
 			}
 			inited = true;
+			*/
 		}
 
 		private DateTime c2csharpTime(double seconds)
@@ -194,6 +197,7 @@ namespace System.IO
 			// TODO: lots more attribute work needed
 				
 			FileAttributes attrib = 0;
+			/*
 			if(((status.st_mode & Wrapper.S_IFMT) & Wrapper.S_IFDIR) != 0)
 			{
 				attrib |= FileAttributes.Directory;
@@ -202,6 +206,7 @@ namespace System.IO
 			{
 				attrib |= FileAttributes.Normal;
 			}
+			*/
 
 			return attrib;
 		}

@@ -10,8 +10,7 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.Private;
-using System.IO.Private;
+using System.PAL;
 using System.Diagnostics;
 using System.Security.Permissions;
 
@@ -22,6 +21,8 @@ namespace System.IO
 	/// </summary>
 	public sealed class FileInfo : FileSystemInfo
 	{
+		private OpSys _os = Platform.OS;
+
 		public FileInfo(string fileName)
 		{
 			CheckArgument.Path(fileName, false);
@@ -115,7 +116,7 @@ namespace System.IO
 					Debug.WriteLine(ex); // eliminates not used compiler warning
 					throw new FileNotFoundException();
 				}
-				return status.st_size;
+				return _os.FileLength(getPathName());
 			}
 		}
 		
@@ -184,7 +185,7 @@ namespace System.IO
 		{
 			existsOnDisk(true, true); // throw not found, is directory
 			CheckPermission.Demand(FileIOPermissionAccess.AllAccess, getPathName());
-			Wrapper.unlink(getPathName());
+			_os.DeleteFile(getPathName());
 		}
 
 		public void MoveTo(string destName)

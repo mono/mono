@@ -1,7 +1,0 @@
-ConfigurationException.cs
-ConfigurationSettings.cs
-DictionarySectionHandler.cs
-IConfigurationSectionHandler.cs
-IgnoreSectionHandler.cs
-NameValueSectionHandler.cs
-SingleTagSectionHandler.cs

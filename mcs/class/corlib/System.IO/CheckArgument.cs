@@ -15,12 +15,12 @@
 using System;
 using System.IO;
 
-namespace System.IO.Private
+namespace System.IO
 {
 	/// <summary>
 	/// A utility class to assist with various argument validations in System.IO
 	/// </summary>
-	public sealed class CheckArgument
+	internal sealed class CheckArgument
 	{
 		/// <summary>
 		/// Generates and exception if arg contains whitepace only

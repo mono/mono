@@ -9,6 +9,8 @@
 // TODO: Mucho left to implement.
 //
 
+using System.Globalization;
+
 namespace System.Reflection {
 
 	public interface IReflect {
@@ -24,7 +26,7 @@ namespace System.Reflection {
 		MethodInfo   GetMethod  (string name, BindingFlags binding_attr);
 		MethodInfo   GetMethod  (string name, BindingFlags binding_attr,
 					 Binder binder, Type [] types, ParameterModifier [] modifiers);
-		MethofInfo[] GetMethods (BindingFlags binding_attr);
+		MethodInfo[] GetMethods (BindingFlags binding_attr);
 
 		PropertyInfo [] GetProperties (BindingFlags binding_attr);
 		PropertyInfo    GetProperty   (string name, BindingFlags binding_attr);

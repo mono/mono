@@ -1,7 +1,0 @@
-Component.cs
-ComponentCollection.cs
-Container.cs
-EventHandlerList.cs
-IComponent.cs
-IContainer.cs
-ISite.cs

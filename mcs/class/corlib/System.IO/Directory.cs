@@ -11,7 +11,6 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.IO.Private;
 using System.Security.Permissions;
 
 namespace System.IO

@@ -11,10 +11,10 @@
 
 using System;
 using System.IO;
-using System.Private;
 using System.Diagnostics;
 using System.Collections;
 using System.Security;
+using System.PAL;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
 
@@ -22,6 +22,8 @@ namespace System
 {
 	public sealed class Environment
 	{
+		private static OpSys _os = Platform.OS;
+
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
 			//       have unix/linux counterparts
@@ -55,7 +57,7 @@ namespace System
 			[EnvironmentPermissionAttribute(SecurityAction.Demand, Read = "COMMANDLINE")]
 			get
 			{
-				return PlatformSpecific.getCommandLine();
+				return _os.CommandLine;
 			}
 		}
 
@@ -73,12 +75,12 @@ namespace System
 			[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
 			get
 			{
-				return PlatformSpecific.getCurrentDirectory();
+				return _os.GetCurrentDirectory();
 			}
 			[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 			set
 			{
-				PlatformSpecific.setCurrentDirectory(value);
+				_os.SetCurrentDirectory(value);
 			}
 		}
 
@@ -103,7 +105,7 @@ namespace System
 		{
 			get
 			{
-				return PlatformSpecific.getMachineName();
+				return _os.MachineName;
 			}
 		}
 
@@ -114,7 +116,7 @@ namespace System
 		{
 			get
 			{
-				return PlatformSpecific.NewLine;
+				return _os.NewLineSequence;
 			}
 		}
 
@@ -125,7 +127,7 @@ namespace System
 		{
 			get
 			{
-				return PlatformSpecific.getOSVersion();
+				return _os.OSVersion;
 			}
 		}
 
@@ -243,7 +245,7 @@ namespace System
 		{
 			char[] delimiter = new char[1];
 			delimiter[0] = ' ';
-			return PlatformSpecific.getCommandLine().Split(delimiter);
+			return _os.CommandLine.Split(delimiter);
 		}
 
 		/// <summary>
@@ -252,7 +254,7 @@ namespace System
 		/// </summary>
 		public static string GetEnvironmentVariable(string variable)
 		{
-			return Marshal.PtrToStringAuto(Wrapper.getenv(variable));
+			return _os.GetEnvironmentVariable(variable);
 		}
 
 		/// <summary>
@@ -261,42 +263,7 @@ namespace System
 	   
 		public static IDictionary GetEnvironmentVariables()
 		{
-			IntPtr pp = Wrapper.environ(); // pointer to an array of char*
-			Hashtable ht = new Hashtable();
-			
-			if(pp != IntPtr.Zero)
-			{
-				IntPtr p;
-				bool done = false;
-				char[] delimiter = { '=' };
-				
-				while(!done)
-				{
-					p = Marshal.ReadIntPtr(pp);
-					if(p != IntPtr.Zero)
-					{
-						string str = Marshal.PtrToStringAuto(p);
-						string[] ar = str.Split(delimiter, 2);
-						switch(ar.Length)
-						{
-						case 1:
-							ht.Add(ar[0], "");
-							break;
-						case 2:
-							ht.Add(ar[0], ar[1]);
-							break;
-						default:
-							Debug.Assert(false);	// this shouldn't happen
-							break;
-						}	
-					}
-					else
-					{
-						done = true;
-					}
-				} 
-			}			
-			return ht;
+			return _os.EnvironmentVariables;
 		}
 
 		/// <summary>

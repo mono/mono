@@ -149,7 +149,7 @@ namespace System.IO
 		/// <summary>
 		/// Open a StreamReader
 		/// </summary>
-		public StreamReader OpenText(string path)
+		public static StreamReader OpenText(string path)
 		{
 			return getInfo(path).OpenText();
 		}

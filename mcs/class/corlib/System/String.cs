@@ -784,8 +784,6 @@ namespace System {
 
 		public int IndexOf (string value, int startIndex, int count)
 		{
-			int i;
-
 			if (value == null)
 				throw new ArgumentNullException ();
 
@@ -794,6 +792,7 @@ namespace System {
 
 			return BoyerMoore (this.c_str, value, startIndex, count);
 #if XXX
+			int i;
 			for (i = startIndex; i - startIndex + value.Length <= count; ) {
 				if (this.c_str[i] == value[0]) {
 					bool equal = true;

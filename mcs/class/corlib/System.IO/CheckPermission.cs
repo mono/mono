@@ -16,12 +16,12 @@ using System;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.IO.Private
+namespace System.IO
 {
 	/// <summary>
 	/// A utility class to assist with various permission validation in System.IO
 	/// </summary>
-	public sealed class CheckPermission
+	internal sealed class CheckPermission
 	{
 		/// <summary>
 		/// Generates and exception if caller doesn't have flags access to filesystem item specified by path

@@ -10,21 +10,23 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.IO.Private;
+using System.PAL;
 
 namespace System.IO
 {
-	public class Path : Object
+	public class Path
 	{
-		public static readonly char AltDirectorySeparatorChar = PlatformSpecific.AltDirectorySeparatorChar;
-		public static readonly char DirectorySeparatorChar = PlatformSpecific.DirectorySeparatorChar;
-		public static readonly char[] InvalidPathChars = PlatformSpecific.InvalidPathChars;
-		public static readonly char PathSeparator = PlatformSpecific.PathSeparator;
-		public static readonly char VolumeSeparatorChar = PlatformSpecific.VolumeSeparatorChar;
+		private static OpSys _os = Platform.OS;
+
+		public static readonly char AltDirectorySeparatorChar = _os.AltDirectorySeparator;
+		public static readonly char DirectorySeparatorChar = _os.DirectorySeparator;
+		public static readonly char[] InvalidPathChars = _os.InvalidPathChars;
+		public static readonly char PathSeparator = _os.PathSeparator;
+		public static readonly char VolumeSeparatorChar = _os.VolumeSeparator;
 
 		private static readonly char[] PathSeparatorChars = {	DirectorySeparatorChar, 
-																AltDirectorySeparatorChar,
-																VolumeSeparatorChar };
+									AltDirectorySeparatorChar,
+									VolumeSeparatorChar };
 
 		// class methods
 		public static string ChangeExtension(string path, string extension)

@@ -7,6 +7,8 @@
 // (C) Andrew Sutton
 //
 using System;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace System.Net.Sockets
 {
@@ -72,17 +74,6 @@ namespace System.Net.Sockets
 		public override string StackTrace
 		{
 			get { return stack_trace; }
-		}
-
-		public override MethodBase TargetSite
-		{
-			get { return target_site; }
-		}
-
-		protected override int HResult
-		{
-			get { return hresult; }
-			set { hresult = value; }
 		}
 
 		public override int GetHashCode()
