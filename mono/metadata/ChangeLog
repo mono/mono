@@ -1,5 +1,9 @@
 2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_type_isprimitive): Native int is a primitive type.
+
+2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
+
 	* icall.c (ves_icall_Type_GetPropertiesByName): Add support for
 	property access modifiers. Fixes #69389.
 
