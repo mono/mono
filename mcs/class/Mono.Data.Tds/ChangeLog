@@ -1,3 +1,8 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TdsMetaParameter.cs: When the size of the parameter is not specified, 
+	use the same default sizes as in MS.NET.
+
 2003-12-17  Sebastien Pouliot <spouliot@videotron.ca> 
 	for Daniel Morgan <danielmorgan@verizon.net>
 

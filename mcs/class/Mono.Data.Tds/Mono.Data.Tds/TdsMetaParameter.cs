@@ -109,15 +109,17 @@ namespace Mono.Data.Tds {
 				result.Append (String.Format ("({0},{1})", Precision, Scale));
 				break;
 			case "varchar":
-			case "nvarchar":
 			case "varbinary":
-				result.Append (String.Format ("({0})", Size > 0 ? Size : 1));
+				result.Append (String.Format ("({0})", Size > 0 ? Size : GetActualSize ()));
+				break;
+			case "nvarchar":
+				result.Append (String.Format ("({0})", Size > 0 ? Size : 4000));
 				break;
 			case "char":
 			case "nchar":
 			case "binary":
 				if (isSizeSet && Size > 0)
-					result.Append (String.Format ("({0})", Size > 0 ? Size : 1));
+					result.Append (String.Format ("({0})", Size));
 				break;
 			}
 			return result.ToString ();
