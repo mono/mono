@@ -3,8 +3,10 @@
 //
 // Authors:
 //   Gaurav Vaish (gaurav[DOT]vaish[AT]gmail[DOT]com)
+//   Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2004 Gaurav Vaish (http://www.mastergaurav.org)
+// (C) 2004 Novell Inc., (http://www.novell.com)
 //
 
 //
@@ -37,111 +39,169 @@ using System.Web.UI.WebControls;
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public class WebPart : Part //, IWebPart, IWebActionable
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.WebParts.WebPartDesigner, System.Design", 
+		"System.ComponentModel.Design.IDesigner")]			
+	public class WebPart : Part, IWebPart, IWebActionable
 	{
 		private bool allowClose      = true;
 		private bool allowEdit       = true;
 		private bool allowHide       = true;
 		private bool allowMinimize   = true;
 		private bool allowZoneChange = true;
-		
+		private bool allowHelp	     = true;
+
 		private bool isStatic = true;
 		private bool isStandalone = true;
-		
+		private bool isClosed = true;
+
 		private PartChromeState chromeState = PartChromeState.Normal;
+		private PartChromeType chromeType = PartChromeType.Default;
 		private WebPartExportMode exportMode = WebPartExportMode.None;
 		private WebPartHelpMode   helpMode   = WebPartHelpMode.Navigate;
+
+		private string caption;
+		private string catalogIconImageUrl;
+		private string description;
+		private string titleIconImageUrl;
+		private string title;
+		private string titleUrl;
+		private WebPartVerbCollection verbCollection;
 		
 		protected WebPart()
 		{
 		}
 		
-		public virtual bool AllowClose
-		{
-			get {
-				return allowClose;
-			}
-			set {
-				allowClose = value;
-			}
+		[WebSysDescriptionAttribute ("Determines Whether the Web Part can be closed."),
+		DefaultValueAttribute (true), WebCategoryAttribute ("Behavior of Web Part")]
+		//, PersonalizableAttribute 
+		public virtual bool AllowClose {
+			get { return allowClose; }
+			set { allowClose = value; }
 		}
-		
-		public virtual bool AllowEdit
-		{
-			get {
-				return allowEdit;
-			}
-			set {
-				allowEdit = value;
-			}
+
+		[WebSysDescriptionAttribute ("Determines Whether properties of the Web Part can be changed using the EditorZone."),
+		DefaultValueAttribute (true), WebCategoryAttribute ("Behavior of Web Part")]
+		//, PersonalizableAttribute 
+		public virtual bool AllowEdit {
+			get { return allowEdit; }
+			set { allowEdit = value; }
 		}
-		
-		public virtual bool AllowHelp
-		{
-			get {
-				return AllowHelp;
-			}
-			set {
-				allowHelp = value;
-			}
+
+		[WebSysDescriptionAttribute ("Determines Whether properties of the Web Part can be changed using the EditorZone."),
+		DefaultValueAttribute (true), WebCategoryAttribute ("Behavior of Web Part")]
+		//, PersonalizableAttribute 
+		public virtual bool AllowHelp {
+			get { return AllowHelp; }
+			set { allowHelp = value; }
 		}
-		
-		public virtual bool AllowMinimize
-		{
-			get {
-				return allowMinimize;
-			}
-			set {
-				allowMinimize = value;
-			}
+
+		[WebSysDescriptionAttribute ("Determines Whether the Web Part can be minimized."),
+		DefaultValueAttribute (true), WebCategoryAttribute ("Behavior of Web Part")]
+		//, PersonalizableAttribute 
+		public virtual bool AllowMinimize {
+			get { return allowMinimize; }
+			set { allowMinimize = value; }
 		}
-		
-		public virtual bool AllowZoneChange
-		{
-			get {
-				return allowZoneChange;
-			}
-			set {
-				allowZoneChange = value;
-			}
+
+		[WebSysDescriptionAttribute ("Determines Whether the Web Part can be moved to some other zone."),
+		DefaultValueAttribute (true), WebCategoryAttribute ("Behavior of Web Part")]
+		//, PersonalizableAttribute 
+		public virtual bool AllowZoneChange {
+			get { return allowZoneChange; }
+			set { allowZoneChange = value; }
 		}
-		
-		public bool IsClosed
-		{
-			get {
-				return isClosed;
-			}
+
+		[BrowsableAttribute (false), 
+		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public bool IsClosed {
+			get { return isClosed; }
 		}
-		
+
+		[BrowsableAttribute (false),
+		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public bool IsStandalone
 		{
-			get {
-				return isStandalone;
-			}
+			get { return isStandalone; }
 		}
 		
-		public override PartChromeState ChromeState
-		{
-			get {
-				return chromeState;
-			}
+		//[PersonalizableAttribute ]
+		public override PartChromeState ChromeState {
+			get { return chromeState; }
 			set {
-				if(!Enum.IsDefined(typeof(PartChromeState), value))
-					throw new ArgumentException("value");
+				if(!Enum.IsDefined (typeof (PartChromeState), value))
+					throw new ArgumentException ("value");
 				chromeState = value;
 			}
 		}
 		
-		public override PartChromeType ChromeType
-		{
-			get {
-				return chromeType;
-			}
+		//[PersonalizableAttribute ]
+		public override PartChromeType ChromeType {
+			get { return chromeType; }
 			set {
-				if(!Enum.IsDefined(typeof(PartChromeType), value))
-					throw new ArgumentException("value");
+				if(!Enum.IsDefined (typeof (PartChromeType), value))
+					throw new ArgumentException ("value");
 				chromeType = value;
+			}
+		}
+
+		string IWebPart.Caption { 
+			get { return caption; }
+		}
+	
+		[DefaultValueAttribute (String.Empty), 
+		EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design", 
+				"System.Drawing.Design.UITypeEditor, System.Drawing") , 
+		WebCategoryAttribute ("Appearance of the Web Part"),
+		WebSysDescriptionAttribute ("Specifies URL of image which is displayed in WebPart's Catalog.")]
+		//UrlPropertyAttribute, PersonalizableAttribute
+		string IWebPart.CatalogIconImageUrl { 
+			get { return catalogIconImageUrl; }
+			set { catalogIconImageUrl = value; }
+		}
+
+		string IWebPart.Description { 
+			get { return description; }
+			set { description = value; }
+		}
+
+		string IWebPart.Title { 
+			get { return title; }
+			set { title = value; }
+		}
+
+		[DefaultValueAttribute (String.Empty),
+		EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design",
+				"System.Drawing.Design.UITypeEditor, System.Drawing"),
+		WebCategoryAttribute ("Appearance of the Web Part"),
+		WebSysDescriptionAttribute ("Specifies URL of image which is displayed in WebPart's title bar.")]
+		//UrlPropertyAttribute, PersonalizableAttribute
+		string IWebPart.TitleIconImageUrl
+		{
+			get { return titleIconImageUrl; }
+			set { titleIconImageUrl = value; }
+		}
+
+		[DefaultValueAttribute (String.Empty),
+		EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design",
+				"System.Drawing.Design.UITypeEditor, System.Drawing"),
+		WebCategoryAttribute ("Behaviour of the Web Part"),
+		WebSysDescriptionAttribute ("Specifies URL of page, containing additional information about this WebPart.")]
+		//UrlPropertyAttribute, PersonalizableAttribute
+		string IWebPart.TitleUrl { 
+			get { return titleUrl; }
+			set { titleUrl = value; }
+		}
+
+		[BrowsableAttribute (false),
+		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		WebPartVerbCollection IWebActionable.Verbs {
+			get {
+				if (verbCollection == null) {
+					verbCollection = new WebPartVerbCollection ();
+				}
+				return verbCollection;
 			}
 		}
 	}
 }
+#endif

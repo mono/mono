@@ -1,5 +1,9 @@
 2004-09-28  Sanjay Gupta <gsanjay@novell.com>
 		
+	* WebPart.cs: Updated source and fixed bug 66907.
+
+2004-09-28  Sanjay Gupta <gsanjay@novell.com>
+		
 	* WebPartVerbCollection.cs: Completed and corrected implementation.
 
 2004-09-28  Sanjay Gupta <gsanjay@novell.com>
