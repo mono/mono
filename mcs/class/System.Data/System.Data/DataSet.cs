@@ -591,31 +591,31 @@ namespace System.Data {
 
 		public void WriteXml (XmlWriter writer)
 		{
-			WriteXml (writer, XmlWriteMode.IgnoreSchema, false);
+			WriteXml (writer, XmlWriteMode.IgnoreSchema, true);
 		}
 
 		public void WriteXml (string filename, XmlWriteMode mode)
 		{
 			XmlWriter writer = new XmlTextWriter (filename, null);
-			WriteXml (writer, mode, false);
+			WriteXml (writer, mode, true);
 		}
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
 			XmlWriter writer = new XmlTextWriter (stream, null);
 
-			WriteXml (writer, mode, false);
+			WriteXml (writer, mode, true);
 		}
 
 		public void WriteXml (TextWriter writer, XmlWriteMode mode)
 		{
 			XmlWriter xwriter = new XmlTextWriter (writer);
-			WriteXml (xwriter, mode, false);
+			WriteXml (xwriter, mode, true);
 		}
 
 		public void WriteXml (XmlWriter writer, XmlWriteMode mode)
 		{
-			WriteXml (writer, mode, false);
+			WriteXml (writer, mode, true);
 		}
 		
 		internal void WriteXml (Stream stream, XmlWriteMode mode, bool writePI)
@@ -1133,28 +1133,101 @@ namespace System.Data {
 			complex.Particle = choice;
 			choice.MaxOccursString = XmlConstants.Unbounded;
 			
-			//Write out schema for each table in order, providing it is not
-			//part of another table structure via a nested parent relationship
-			foreach (DataTable table in Tables)
-			{		
+			//Write out schema for each table in order
+			foreach (DataTable table in Tables) {		
 				bool isTopLevel = true;
-				foreach (DataRelation rel in table.ParentRelations)
-				{
-					if (rel.Nested)
-					{
+				foreach (DataRelation rel in table.ParentRelations) {
+					if (rel.Nested) {
 						isTopLevel = false;
 						break;
 					}
 				}
 				
-				if (isTopLevel)
-				{
+				if (isTopLevel){
 					choice.Items.Add (GetTableSchema (doc, table));
 				}
 			}
 			
-			//TODO - now add in the relationships as key and unique constraints etc
+			bool nameModifier = true;
+			foreach (DataRelation rel in Relations) {
+				XmlSchemaUnique uniq = new XmlSchemaUnique();
+				XmlSchemaKeyref keyRef = new XmlSchemaKeyref();
+				ForeignKeyConstraint fkConst = rel.ChildKeyConstraint;
+				UniqueConstraint uqConst = rel.ParentKeyConstraint;
+								
+				if (nameModifier) {
+					uniq.Name = uqConst.ConstraintName;
+					keyRef.Name = fkConst.ConstraintName;
+					keyRef.Refer = new XmlQualifiedName(uniq.Name);
+					XmlAttribute[] attrib = null;
+					if (rel.Nested){
+						attrib = new XmlAttribute [2];
+						attrib [0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsNested, XmlConstants.MsdataNamespace);
+						attrib [0].Value = "true";
+		
+						attrib [1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.RelationName, XmlConstants.MsdataNamespace);
+						attrib [1].Value = rel.RelationName;
+					}
+					else {
+						attrib = new XmlAttribute [1];
+						attrib[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.RelationName, XmlConstants.MsdataNamespace);
+						attrib[0].Value = rel.RelationName;
 
+					}
+					keyRef.UnhandledAttributes = attrib;
+					nameModifier = false;
+				}
+				else {
+					uniq.Name = rel.ParentTable.TableName+"_"+uqConst.ConstraintName;
+					keyRef.Name = rel.ChildTable.TableName+"_"+fkConst.ConstraintName;
+					keyRef.Refer = new XmlQualifiedName(uniq.Name);
+					XmlAttribute[] attrib;
+					if (rel.Nested)	{
+						attrib = new XmlAttribute [3];
+						attrib [0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.ConstraintName, XmlConstants.MsdataNamespace);
+						attrib [0].Value = fkConst.ConstraintName;
+						attrib [1] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsNested, XmlConstants.MsdataNamespace);
+						attrib [1].Value = "true";
+		
+						attrib [2] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.RelationName, XmlConstants.MsdataNamespace);
+						attrib [2].Value = rel.RelationName;
+					}
+					else {
+						attrib = new XmlAttribute [2];
+						attrib [0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.ConstraintName, XmlConstants.MsdataNamespace);
+						attrib [0].Value = fkConst.ConstraintName;
+						attrib [1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.RelationName, XmlConstants.MsdataNamespace);
+						attrib [1].Value = rel.RelationName;
+
+					}
+					keyRef.UnhandledAttributes = attrib;
+					attrib = new XmlAttribute [1];
+					attrib [0] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.ConstraintName, XmlConstants.MsdataNamespace);
+					attrib [0].Value = uqConst.ConstraintName; 
+					uniq.UnhandledAttributes = attrib;
+				}
+
+				uniq.Selector = new XmlSchemaXPath();
+				uniq.Selector.XPath = ".//"+rel.ParentTable.TableName;
+				XmlSchemaXPath field;
+				foreach (DataColumn column in rel.ParentColumns) {
+				 	field = new XmlSchemaXPath();
+					field.XPath = column.ColumnName;
+					uniq.Fields.Add(field);
+				}
+				
+				keyRef.Selector = new XmlSchemaXPath();
+				keyRef.Selector.XPath = ".//"+rel.ChildTable.TableName;
+				foreach (DataColumn column in rel.ChildColumns)	{
+				 	field = new XmlSchemaXPath();
+					field.XPath = column.ColumnName;
+					keyRef.Fields.Add(field);
+				}
+				
+				elem.Constraints.Add (uniq);
+				elem.Constraints.Add (keyRef);
+			}
+			
 			return schema;
 		}
 
@@ -1173,24 +1246,22 @@ namespace System.Data {
 			elem.SchemaType = complex;
 
 			//TODO - what about the simple content?
-			if (elements.Count == 0)				
+			if (elements.Count == 0) 
 			{				
 			}
-			else
+			else 
 			{
 				//A sequence of element types or a simple content node
 				//<xs:sequence>
 				XmlSchemaSequence seq = new XmlSchemaSequence ();
 				complex.Particle = seq;
 
-				foreach (DataColumn col in elements)
-				{
+				foreach (DataColumn col in elements) {
 					//<xs:element name=ColumnName type=MappedType Ordinal=index>
 					XmlSchemaElement colElem = new XmlSchemaElement ();
 					colElem.Name = col.ColumnName;
 				
-					if (col.ColumnName != col.Caption && col.Caption != string.Empty)
-					{
+					if (col.ColumnName != col.Caption && col.Caption != string.Empty) {
 						XmlAttribute[] xatts = new XmlAttribute[1];
 						xatts[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Caption, XmlConstants.MsdataNamespace);
 						xatts[0].Value = col.Caption;
@@ -1202,8 +1273,7 @@ namespace System.Data {
 
 					colElem.SchemaTypeName = MapType (col.DataType);
 
-					if (col.AllowDBNull)
-					{
+					if (col.AllowDBNull) {
 						colElem.MinOccurs = 0;
 					}
 
@@ -1213,18 +1283,22 @@ namespace System.Data {
 					//                            col.Ordinal.ToString ());
 
 					// Write SimpleType if column have MaxLength
-					if (col.MaxLength > -1) 
-					{
+					if (col.MaxLength > -1) {
 						colElem.SchemaType = GetTableSimpleType (doc, col);
 					}
 
 					seq.Items.Add (colElem);
 				}
+
+				foreach (DataRelation rel in table.ChildRelations) {
+					if (rel.Nested) {
+						seq.Items.Add(GetTableSchema (doc, rel.ChildTable));
+					}
+				}
 			}
 
 			//Then a list of attributes
-			foreach (DataColumn col in atts)
-			{
+			foreach (DataColumn col in atts) {
 				//<xs:attribute name=col.ColumnName form="unqualified" type=MappedType/>
 				XmlSchemaAttribute att = new XmlSchemaAttribute ();
 				att.Name = col.ColumnName;

@@ -245,8 +245,9 @@ namespace System.Data {
 		#region Add Methods
 		private string GetNextDefaultRelationName ()
 		{
-			string defRelationName = "Relation";
-			for (int index = 1; Contains (defRelationName); ++index) {
+			int index = 1;
+			string defRelationName = "Relation" +index;
+			for (; Contains (defRelationName); ++index) {
 				defRelationName = "Relation" + index;
 			}
 			return defRelationName;

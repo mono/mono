@@ -61,6 +61,9 @@ internal class XmlConstants
 	public const string IsDataSet = "IsDataSet";
 	public const string Locale = "Locale";
 	public const string Ordinal = "Ordinal";
+	public const string IsNested = "IsNested";
+	public const string RelationName = "RelationName";
+	public const string ConstraintName = "ConstraintName";
 
 	public static XmlQualifiedName QnString = new XmlQualifiedName ("string", XmlSchema.Namespace);
 	public static XmlQualifiedName QnShort = new XmlQualifiedName ("short", XmlSchema.Namespace);
