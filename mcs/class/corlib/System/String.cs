@@ -676,27 +676,59 @@ namespace System
 
 		public String ToLower ()
 		{
+			// CurrentCulture can never be invariant or null
 			return InternalToLower (CultureInfo.CurrentCulture);
 		}
 
-		public String ToLower (CultureInfo culture)
+		public unsafe String ToLower (CultureInfo culture)
 		{
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
+			if (culture.LCID == 0x007F) { // Invariant
+				string tmp = InternalAllocateStr (length);
+				fixed (char* source = &start_char, dest = tmp) {
+
+					char* destPtr = (char*)dest;
+					char* sourcePtr = (char*)source;
+
+					for (int n = 0; n < length; n++) {
+						*destPtr = Char.ToLower (*sourcePtr);
+						sourcePtr++;
+						destPtr++;
+					}
+				}
+				return tmp;
+			}
 			return InternalToLower (culture);
 		}
 
 		public String ToUpper ()
 		{
+			// CurrentCulture can never be invariant or null
 			return InternalToUpper (CultureInfo.CurrentCulture);
 		}
 
-		public String ToUpper (CultureInfo culture)
+		public unsafe String ToUpper (CultureInfo culture)
 		{
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
+			if (culture.LCID == 0x007F) { // Invariant
+				string tmp = InternalAllocateStr (length);
+				fixed (char* source = &start_char, dest = tmp) {
+
+					char* destPtr = (char*)dest;
+					char* sourcePtr = (char*)source;
+
+					for (int n = 0; n < length; n++) {
+						*destPtr = Char.ToUpper (*sourcePtr);
+						sourcePtr++;
+						destPtr++;
+					}
+				}
+				return tmp;
+			}
 			return InternalToUpper (culture);
 		}
 

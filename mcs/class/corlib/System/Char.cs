@@ -445,7 +445,15 @@ namespace System
 			return str [0];
 		}
 
+		[MonoTODO ("Fix FIXME")]
 		public static char ToLower (char c)
+		{
+			// FIXME: needs to call line below, but that would probably break a lot of things right now
+			// return InternalToLower (c, CultureInfo.CurrentCulture);
+			return ToLowerInvariant (c);
+		}
+
+		internal static char ToLowerInvariant (char c)
 		{
 			unsafe {
 				if (c <= ((char)0x24cf))
@@ -456,10 +464,28 @@ namespace System
 			return c;
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern char ToLower (char c, CultureInfo culture);
+		public static char ToLower (char c, CultureInfo culture)
+		{
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+			if (culture.LCID == 0x007F) // Invariant
+				return ToLowerInvariant (c);
 
+			return InternalToLower (c, culture);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern char InternalToLower (char c, CultureInfo culture);
+
+		[MonoTODO ("Fix FIXME")]
 		public static char ToUpper (char c)
+		{
+			// FIXME: needs to call line below, but that would probably break a lot of things right now
+			// return InternalToUpper (c, CultureInfo.CurrentCulture);
+			return ToUpperInvariant (c);
+		}
+
+		internal static char ToUpperInvariant (char c)
 		{
 			unsafe {
 				if (c <= ((char)0x24cf))
@@ -470,8 +496,18 @@ namespace System
 			return c;
 		}
 
+		public static char ToUpper (char c, CultureInfo culture)
+		{
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+			if (culture.LCID == 0x007F) // Invariant
+				return ToUpperInvariant (c);
+
+			return InternalToUpper (c, culture);
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern char ToUpper (char c, CultureInfo culture);
+		private static extern char InternalToUpper (char c, CultureInfo culture);
 		
 		public override string ToString ()
 		{

@@ -1,5 +1,10 @@
 2004-04-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* String.cs: Managed impl. of Invariant parts of ToLower, ToUpper
+	* Char.cs: Managed impl. of Invariant parts of ToLower, ToUpper
+
+2004-04-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* String.cs: Check for null values
 
 2004-04-23  Peter Bartok <pbartok@novell.com>
