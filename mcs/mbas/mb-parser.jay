@@ -54,7 +54,7 @@ namespace Mono.MonoBASIC
 		///   productions in the interface declaration to "add"
 		///   the interfaces as we find them.
 		/// </summary>
-		//Interface  current_interface;
+		Interface  current_interface;
 
 		/// <summary>
 		///   This is used by the unary_expression code to resolve
@@ -471,14 +471,14 @@ type_declaration
 type_spec_declaration
 	: class_declaration
 	| module_declaration
-//	| struct_declaration		
-//	| interface_declaration		
-//	| enum_declaration		
+	| interface_declaration
 	| delegate_declaration
+//	| struct_declaration
+//	| enum_declaration
 	;
 	
 class_declaration
-	: CLASS IDENTIFIER EOL opt_class_base 
+	: CLASS IDENTIFIER EOL opt_class_base
 	  {
 		Class new_class;
 		string name;
@@ -511,7 +511,12 @@ opt_class_base
 	;
 
 class_base
-	: INHERITS type_list EOL { $$ = $2; }
+	: inherits_or_implements type_list EOL { $$ = $2; }
+	;
+
+inherits_or_implements
+	: INHERITS
+	| IMPLEMENTS
 	;
 	
 opt_modifiers
@@ -581,8 +586,7 @@ class_member_declarations
 	;
 
 class_member_declaration
-	:  
-	   opt_attributes
+	:  opt_attributes
 	   opt_modifiers
 	   { 
 	   	current_attributes = (Attributes) $1;
@@ -595,8 +599,7 @@ class_member_declaration
 	;
 
 class_member_declarator
-	:	
-	   constructor_declaration
+	:  constructor_declaration
 	|  method_declaration
 	   { 
 	   	Method method = (Method) $1;
@@ -707,7 +710,141 @@ func_declaration
 
 	  }	  
 	;		
+
+interface_declaration
+	: INTERFACE IDENTIFIER EOL
+	  {
+		Interface new_interface;
+		string full_interface_name = MakeName ((string) $2);
+
+		new_interface = new Interface (current_container, full_interface_name, (int) current_modifiers,
+					       (Attributes) current_attributes, lexer.Location);
+		if (current_interface != null) {
+			Location l = lexer.Location;
+			Report.Error (-2, l, "Internal compiler error: interface inside interface");
+		}
+		current_interface = new_interface;
+		new_interface.Namespace = current_namespace;
+		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
+	  }
+	  opt_interface_base
+	  interface_body
+	  { 
+		Interface new_interface = (Interface) current_interface;
+
+		if ($5 != null)
+			new_interface.Bases = (ArrayList) $5;
+
+		current_interface = null;
+		CheckDef (current_container.AddInterface (new_interface),
+			  new_interface.Name, new_interface.Location);
+
+	  }
+	  END INTERFACE EOL
+	;
+
+opt_interface_base
+	: /* empty */			  { $$ = null; }
+	| interface_base
+	;
+
+interface_base
+	: INHERITS interface_type_list	  { $$ = $2; }
+	;
+
+interface_type_list
+	: interface_type
+	  {
+		ArrayList interfaces = new ArrayList ();
+
+		interfaces.Add ($1);
+		$$ = interfaces;
+	  }
+	| interface_type_list COMMA interface_type
+	  {
+		ArrayList interfaces = (ArrayList) $1;
+		interfaces.Add ($3);
+		$$ = interfaces;
+	  }
+	;
+
+interface_body
+	: opt_interface_member_declarations
+	;
+
+opt_interface_member_declarations
+	: /* empty */
+	| interface_member_declarations
+	;
+
+interface_member_declarations
+	: interface_member_declaration
+	| interface_member_declarations interface_member_declaration
+	;
+
+interface_member_declaration
+	: interface_method_declaration		
+	  { 
+		InterfaceMethod m = (InterfaceMethod) $1;
+
+		CheckDef (current_interface.AddMethod (m), m.Name, m.Location);
+	  }
+	| interface_property_declaration	
+	  { 
+		InterfaceProperty p = (InterfaceProperty) $1;
+		
+		CheckDef (current_interface.AddProperty (p), p.Name, p.Location);
+          }
+	| interface_event_declaration 
+          { 
+		InterfaceEvent e = (InterfaceEvent) $1;
+
+		CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
+	  }
+	;
+
+opt_new
+	: /* empty */	{ $$ = false; }
+	| NEW		{ $$ = true; }
+	;
 	
+interface_method_declaration
+	: SUB IDENTIFIER
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
+	  {
+		$$ = new InterfaceMethod (TypeManager.system_void_expr, (string) $2, false,
+					  (Parameters) $4, current_attributes, lexer.Location);
+	  }
+	| FUNCTION IDENTIFIER
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type
+	  {
+		$$ = new InterfaceMethod (
+		 			  (Expression) $7, (string) $2, false, (Parameters) $4,
+					  current_attributes, lexer.Location);
+	  }
+	;
+
+interface_property_declaration
+	: PROPERTY IDENTIFIER
+	  OPEN_PARENS
+	  opt_formal_parameter_list
+	  CLOSE_PARENS opt_type_spec EOL
+	  {
+		// FIXME we MUST pass property parameters
+		$$ = new InterfaceProperty ((Expression) $6, (string) $2, false,
+					    false, false, current_attributes,
+					    lexer.Location);
+	  }
+	;
+
+interface_event_declaration
+	: opt_attributes opt_new EVENT type IDENTIFIER EOL
+	  {
+		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
+					 lexer.Location);
+	  }
+	;
+
 property_declaration
 	  : PROPERTY IDENTIFIER opt_property_parameters AS type EOL
 	  {
@@ -2412,6 +2549,9 @@ integral_type
 	| VOID		{ $$ = TypeManager.system_void_expr; }*/
 	;
 
+interface_type
+	: type_name
+	;
 %%
 
 

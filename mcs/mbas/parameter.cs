@@ -192,7 +192,9 @@ namespace Mono.CSharp {
 		public int CountStandardParams()
 		{
 			int res = 0;
-			
+			if (FixedParameters == null)
+				return 0;
+
 			foreach (Parameter p in FixedParameters) {
 				if (!p.IsOptional)
 					res++;
@@ -206,7 +208,9 @@ namespace Mono.CSharp {
 		public int CountOptionalParams()
 		{
 			int res = 0;
-			
+			if (FixedParameters == null)
+				return 0;
+							
 			foreach (Parameter p in FixedParameters) {
 				if (p.IsOptional)
 					res++;

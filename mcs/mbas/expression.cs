@@ -4253,7 +4253,6 @@ namespace Mono.CSharp {
 					IntConstant.EmitInt (ig, 0);
 					ig.Emit (OpCodes.Newarr, pd.ParameterType (0).GetElementType ());
 				}
-Console.WriteLine ("No arguments");
 				return;
 			}
 
