@@ -115,8 +115,9 @@ Instructs the runtime to collect profiling information about execution
 times and memory allocation, and dump it at the end of the execution.
 If a profiler is not specified, the default profiler is used. profiler_args 
 is a profiler-specific string of options for the profiler itself.
-
-
+.PP
+The default profiler accepts -time and -alloc to options to disable
+the time profiling or the memory allocation profilng.
 .SH JIT MAINTAINER OPTIONS
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
