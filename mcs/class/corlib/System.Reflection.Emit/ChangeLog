@@ -1,3 +1,8 @@
+2004-09-12  Marek Safar  <marek.safar@seznam.cz>
+
+	* TypeBuilder.cs: Do not create default constructor for
+	static classes.
+
 2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs: Set the table_idx of the global type to 1.
