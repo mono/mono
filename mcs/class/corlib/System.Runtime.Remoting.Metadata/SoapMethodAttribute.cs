@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Metadata.SoapMethodAttribute.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -14,73 +15,74 @@ namespace System.Runtime.Remoting.Metadata {
 	[AttributeUsage (AttributeTargets.Method)]
 	public sealed class SoapMethodAttribute : SoapAttribute
 	{
+		string _responseElement;
+		string _responseNamespace;
+		string _returnElement;
+		string _soapAction;
+		bool _useAttribute;
+		string _namespace;
+		
 		public SoapMethodAttribute ()
 		{
 		}
 
-		[MonoTODO]
 		public string ResponseXmlElementName {
 			get {
-				throw new NotImplementedException ();
+				return _responseElement;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_responseElement = value;
 			}
 		}
 		
-		[MonoTODO]
 		public string ResponseXmlNamespace {
 			get {
-				throw new NotImplementedException ();
+				return _responseNamespace;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_responseNamespace = value;
 			}
 		}
 
-		[MonoTODO]
 		public string ReturnXmlElementName {
 			get {
-				throw new NotImplementedException ();
+				return _returnElement;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_returnElement = value;
 			}
 		}
 
-		[MonoTODO]
 		public string SoapAction {
 			get {
-				throw new NotImplementedException ();
+				return _soapAction;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_soapAction = value;
 			}
 		}
 
-		[MonoTODO]
 		public override bool UseAttribute {
 			get {
-				throw new NotImplementedException ();
+				return _useAttribute;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_useAttribute = value;
 			}
 		}
 
-		[MonoTODO]
 		public override string XmlNamespace {
 			get {
-				throw new NotImplementedException ();
+				return _namespace;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_namespace = value;
 			}
 		}
 	}

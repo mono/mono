@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Metadata.SoapFieldAttribute.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -13,29 +14,30 @@ namespace System.Runtime.Remoting.Metadata {
 	[AttributeUsage (AttributeTargets.Field)]
 	public sealed class SoapFieldAttribute : SoapAttribute
 	{
+		int _order;
+		string _elementName;
+		
 		public SoapFieldAttribute ()
 		{
 		}
 
-		[MonoTODO]
 		public int Order {
 			get {
-				throw new NotImplementedException ();
+				return _order;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_order = value;
 			}
 		}
 		
-		[MonoTODO]
 		public string XmlElementName {
 			get {
-				throw new NotImplementedException ();
+				return _elementName;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_elementName = value;
 			}
 		}
 

@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Metadata.SoapTypeAttribute.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -15,84 +16,85 @@ namespace System.Runtime.Remoting.Metadata {
 			 AttributeTargets.Enum | AttributeTargets.Interface)]
 	public sealed class SoapTypeAttribute : SoapAttribute
 	{
+		SoapOption _soapOption;
+		bool _useAttribute;
+		string _xmlElementName;
+		XmlFieldOrderOption _xmlFieldOrder;
+		string _xmlNamespace;
+		string _xmlTypeName;
+		string _xmlTypeNamespace;
+		
 		public SoapTypeAttribute ()
 		{
 		}
 
-		[MonoTODO]
 		public SoapOption SoapOptions {
 			get {
-				throw new NotImplementedException ();
+				return _soapOption;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_soapOption = value;
 			}
 		}
 
-		[MonoTODO]
 		public override bool UseAttribute {
 			get {
-				throw new NotImplementedException ();
+				return _useAttribute;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_useAttribute = value;
 			}
 		}
 
-		[MonoTODO]
 		public string XmlElementName {
 			get {
-				throw new NotImplementedException ();
+				return _xmlElementName;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_xmlElementName = value;
 			}
 		}
 
-		[MonoTODO]
 		public XmlFieldOrderOption XmlFieldOrder {
 			get {
-				throw new NotImplementedException ();
+				return _xmlFieldOrder;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_xmlFieldOrder = value;
 			}
 		}
 
-		[MonoTODO]
 		public override string XmlNamespace {
 			get {
-				throw new NotImplementedException ();
+				return _xmlNamespace;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_xmlNamespace = value;
 			}
 		}
 
-		[MonoTODO]
 		public string XmlTypeName {
 			get {
-				throw new NotImplementedException ();
+				return _xmlTypeName;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_xmlTypeName = value;
 			}
 		}
 
-		[MonoTODO]
 		public string XmlTypeNamespace {
 			get {
-				throw new NotImplementedException ();
+				return _xmlTypeNamespace;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_xmlTypeNamespace = value;
 			}
 		}
 	}
