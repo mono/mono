@@ -20,6 +20,8 @@ System.Web.Compilation/BuildProviderResultFlags.cs
 System.Web.Compilation/CachingCompiler.cs
 System.Web.Compilation/CompilationException.cs
 System.Web.Compilation/Directive.cs
+System.Web.Compilation/ExpressionBuilder.cs
+System.Web.Compilation/ExpressionBuilderContext.cs
 System.Web.Compilation/GlobalAsaxCompiler.cs
 System.Web.Compilation/IImplicitResourceProvider.cs
 System.Web.Compilation/ILocation.cs
@@ -44,6 +46,7 @@ System.Web.Configuration/AuthenticationMode.cs
 System.Web.Configuration/AuthorizationConfig.cs
 System.Web.Configuration/AuthorizationConfigHandler.cs
 System.Web.Configuration/AuthorizationRuleAction.cs
+System.Web.Configuration/BuildProvider.cs
 System.Web.Configuration/BuildProviderAppliesTo.cs
 System.Web.Configuration/ClientTargetSectionHandler.cs
 System.Web.Configuration/CompilationConfiguration.cs
@@ -588,6 +591,7 @@ System.Web.UI/ApplicationFileParser.cs
 System.Web.UI/AttributeCollection.cs
 System.Web.UI/BaseParser.cs
 System.Web.UI/BasePartialCachingControl.cs
+System.Web.UI/BoundPropertyEntry.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
 System.Web.UI/ClientScriptManager.cs
@@ -702,9 +706,11 @@ System.Web.UI/PersistenceMode.cs
 System.Web.UI/PersistenceModeAttribute.cs
 System.Web.UI/PostBackOptions.cs
 System.Web.UI/PropertyConverter.cs
+System.Web.UI/PropertyEntry.cs
 System.Web.UI/RenderMethod.cs
 System.Web.UI/RootBuilder.cs
 System.Web.UI/SimpleHandlerFactory.cs
+System.Web.UI/SimplePropertyEntry.cs
 System.Web.UI/SimpleWebHandlerParser.cs
 System.Web.UI/StateBag.cs
 System.Web.UI/StateItem.cs
@@ -721,6 +727,7 @@ System.Web.UI/TemplateParser.cs
 System.Web.UI/ThemeableAttribute.cs
 System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Triplet.cs
+System.Web.UI/TwoWayBoundPropertyEntry.cs
 System.Web.UI/UrlPropertyAttribute.cs
 System.Web.UI/UrlTypes.cs
 System.Web.UI/UserControl.cs

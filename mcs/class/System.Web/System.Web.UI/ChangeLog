@@ -1,3 +1,9 @@
+2005-02-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BoundPropertyEntry.cs:
+	* PropertyEntry.cs:
+	* TwoWayBoundPropertyEntry.cs: implemented.
+
 2005-02-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Page.cs: Added support for validation groups. Some fixes in
