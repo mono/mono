@@ -1,3 +1,9 @@
+2002-02-16  Radek Doulik  <rodo@ximian.com>
+
+	* unicode.c (ves_icall_iconv_new_encoder): decide on big_endian,
+	force big_endian to be 1 for big endian machines 
+	(ves_icall_iconv_new_decoder): ditto
+
 2002-02-16  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* socket-io.c (convert_sockopt_level_and_name): If the system
