@@ -1,3 +1,19 @@
+2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeGroup.cs: Added PolicyLevel parameter to internal 
+	constructor. Added support for attribute PermissionSetName in
+	FromXml.
+	* FileCodeGroup.cs: Added PolicyLevel parameter to internal 
+	constructor.
+	* FirstMatchCodeGroup.cs: Added PolicyLevel parameter to internal 
+	constructor.
+	* NetCodeGroup.cs: Added PolicyLevel parameter to internal 
+	constructor.
+	* PolicyLevel.cs: Throw a PolicyException when asked to save a 
+	AppDomain policy. Use new CodeGroup constructor with "this".
+	* UnionCodeGroup.cs: Added PolicyLevel parameter to internal 
+	constructor. Added Copy(bool) to copy, or not, the childs.
+
 2004-08-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeGroup.cs: Fixed Equals (true) which, strangely, only compares

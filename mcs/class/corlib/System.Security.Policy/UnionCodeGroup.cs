@@ -46,18 +46,28 @@ namespace System.Security.Policy {
                 }
 
 		// for PolicyLevel (to avoid validation duplication)
-		internal UnionCodeGroup (SecurityElement e) : base (e)
+		internal UnionCodeGroup (SecurityElement e, PolicyLevel level)
+			: base (e, level)
 		{
 		}
 
-                public override CodeGroup Copy ()
-                {
-                        UnionCodeGroup copy = new UnionCodeGroup (MembershipCondition, PolicyStatement);
-			foreach (CodeGroup child in Children) {
-				copy.AddChild (child.Copy ());	// deep copy
+		public override CodeGroup Copy ()
+		{
+			return Copy (true);
+                }
+
+		internal CodeGroup Copy (bool childs) 
+		{
+			UnionCodeGroup copy = new UnionCodeGroup (MembershipCondition, PolicyStatement);
+			copy.Name = Name;
+			copy.Description = Description;
+			if (childs) {
+				foreach (CodeGroup child in Children) {
+					copy.AddChild (child.Copy ());
+				}
 			}
 			return copy;
-                }
+		}
 
                 [MonoTODO ("no children processing")]
                 public override PolicyStatement Resolve (Evidence evidence)
@@ -88,8 +98,8 @@ namespace System.Security.Policy {
  			if (!MembershipCondition.Check (evidence))
 				return null;
 
-			// Copy would add the child (even if they didn't match)
-			CodeGroup match = (CodeGroup) new UnionCodeGroup (MembershipCondition, PolicyStatement);
+			// Copy() would add the child (even if they didn't match)
+			CodeGroup match = Copy (false);
 			if (this.Children.Count > 0) {
 				foreach (CodeGroup cg in this.Children) {
 					CodeGroup child = cg.ResolveMatchingCodeGroups (evidence);

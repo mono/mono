@@ -1,11 +1,10 @@
+//
 // System.Security.Policy.FirstMatchCodeGroup
 //
 // Author(s):
 //  Jackson Harper (Jackson@LatitudeGeo.com)
 //
 // (C) 2002 Jackson Harper, All rights reserved.
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -39,7 +38,10 @@ namespace System.Security.Policy {
 			base (membershipCondition, policy) {}
 
 		// for PolicyLevel (to avoid validation duplication)
-		internal FirstMatchCodeGroup (SecurityElement e) : base (e) {}
+		internal FirstMatchCodeGroup (SecurityElement e, PolicyLevel level)
+			: base (e, level)
+		{
+		}
 
 		//
 		// Public Properties

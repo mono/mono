@@ -50,14 +50,15 @@ namespace System.Security.Policy {
 			if (null == membershipCondition)
 				throw new ArgumentNullException ("membershipCondition");
 
-			m_policy = policy;
-			m_membershipCondition = membershipCondition;
+			if (policy != null)
+				m_policy = policy.Copy ();
+			m_membershipCondition = membershipCondition.Copy ();
 		}
 
 		// for PolicyLevel (to avoid validation duplication)
-		internal CodeGroup (SecurityElement e) 
+		internal CodeGroup (SecurityElement e, PolicyLevel level) 
 		{
-			FromXml (e);
+			FromXml (e, level);
 		}
 
 		// abstract
@@ -190,21 +191,28 @@ namespace System.Security.Policy {
 				throw new ArgumentNullException("e");
 
 			PermissionSet ps = null;
-			SecurityElement pset = e.SearchForChildByTag ("PermissionSet");
-			if (pset != null) {
-				Type classType = Type.GetType (pset.Attribute ("class"));
-				ps = (PermissionSet) Activator.CreateInstance (classType, true);
-				ps.FromXml (pset);
+			string psetname = e.Attribute ("PermissionSetName");
+			if ((psetname != null) && (level != null)) {
+				ps = level.GetNamedPermissionSet (psetname);
 			}
-			else
-				ps = new NamedPermissionSet ("Nothing", new PermissionSet (PermissionState.None));
+			else {
+				SecurityElement pset = e.SearchForChildByTag ("PermissionSet");
+				if (pset != null) {
+					Type classType = Type.GetType (pset.Attribute ("class"));
+					ps = (PermissionSet) Activator.CreateInstance (classType, true);
+					ps.FromXml (pset);
+				}
+				else {
+					ps = new NamedPermissionSet ("Nothing", new PermissionSet (PermissionState.None));
+				}
+			}
 			m_policy = new PolicyStatement (ps);
 
 			m_children.Clear ();
 			if ((e.Children != null) && (e.Children.Count > 0)) {
 				foreach (SecurityElement se in e.Children) {
 					if (se.Tag == "CodeGroup") {
-						this.AddChild (CodeGroup.CreateFromXml (se));
+						this.AddChild (CodeGroup.CreateFromXml (se, level));
 					}
 				}
 			}
@@ -269,7 +277,7 @@ namespace System.Security.Policy {
 
 		// internal stuff
 
-		internal static CodeGroup CreateFromXml (SecurityElement se) 
+		internal static CodeGroup CreateFromXml (SecurityElement se, PolicyLevel level) 
 		{
 			string fullClassName = se.Attribute ("class");
 			string className = fullClassName;
@@ -287,16 +295,18 @@ namespace System.Security.Policy {
 			// much faster than calling Activator.CreateInstance
 			switch (className) {
 				case "FileCodeGroup":
-					return new FileCodeGroup (se);
+					return new FileCodeGroup (se, level);
 				case "FirstMatchCodeGroup":
-					return new FirstMatchCodeGroup (se);
+					return new FirstMatchCodeGroup (se, level);
 				case "NetCodeGroup":
-					return new NetCodeGroup (se);
+					return new NetCodeGroup (se, level);
 				case "UnionCodeGroup":
-					return new UnionCodeGroup (se);
+					return new UnionCodeGroup (se, level);
 				default: // unknown
 					Type classType = Type.GetType (fullClassName);
-					return (CodeGroup) Activator.CreateInstance (classType, true);
+					CodeGroup cg = (CodeGroup) Activator.CreateInstance (classType, true);
+					cg.FromXml (se, level);
+					return cg;
 			}
 		}
 	}

@@ -51,7 +51,10 @@ namespace System.Security.Policy {
 		}
 
 		// for PolicyLevel (to avoid validation duplication)
-		internal FileCodeGroup (SecurityElement e) : base (e) {}
+		internal FileCodeGroup (SecurityElement e, PolicyLevel level)
+			: base (e, level)
+		{
+		}
 
 		public override CodeGroup Copy ()
 		{

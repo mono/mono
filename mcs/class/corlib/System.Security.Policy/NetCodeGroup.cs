@@ -52,8 +52,8 @@ namespace System.Security.Policy {
 		}
 
 		// for PolicyLevel (to avoid validation duplication)
-		internal NetCodeGroup (SecurityElement e) 
-			: base (e) 
+		internal NetCodeGroup (SecurityElement e, PolicyLevel level)
+			: base (e, level)
 		{
 		}
 	

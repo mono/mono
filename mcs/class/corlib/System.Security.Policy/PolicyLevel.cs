@@ -236,7 +236,7 @@ namespace System.Security.Policy {
 
 			SecurityElement cg = e.SearchForChildByTag ("CodeGroup");
 			if ((cg != null) && (cg.Children != null) && (cg.Children.Count > 0)) {
-				root_code_group = CodeGroup.CreateFromXml (cg);
+				root_code_group = CodeGroup.CreateFromXml (cg, this);
 			}
 			else
 				throw new ArgumentException (Locale.GetText ("Missing Root CodeGroup"));
@@ -339,6 +339,9 @@ namespace System.Security.Policy {
                 [MonoTODO ("Find out what the default state is")]
                 public void Reset ()
                 {
+			// 1. Use the .default file if existing (like Fx 2.0 does)
+			//    http://blogs.msdn.com/shawnfa/archive/2004/04/21/117833.aspx
+			// 2. If not the return to hard-coded default values
                         throw new NotImplementedException ();
                 }
 
@@ -350,13 +353,12 @@ namespace System.Security.Policy {
 			return root_code_group.Resolve (evidence);
                 }
 
-                [MonoTODO]
                 public CodeGroup ResolveMatchingCodeGroups (Evidence evidence)
                 {
                         if (evidence == null)
 				throw new ArgumentNullException ("evidence");
 
-                        throw new NotImplementedException ();
+			return root_code_group.ResolveMatchingCodeGroups (evidence);
                 }
 
                 public SecurityElement ToXml ()
@@ -428,7 +430,11 @@ namespace System.Security.Policy {
 		// NOTE: Callers are expected to check for ControlPolicy
 		internal void Save ()
 		{
-			// TODO: ??? appdomain level ???
+			if (_type == PolicyLevelType.AppDomain) {
+				throw new PolicyException (Locale.GetText (
+					"Can't save AppDomain PolicyLevel"));
+			}
+
 			if (_location != null) {
 				using (StreamWriter sw = new StreamWriter (_location)) {
 					sw.Write (ToXml ().ToString ());
