@@ -1,3 +1,30 @@
+2004-02-09  Martin Baulig  <martin@ximian.com>
+
+	* class.h (MonoGenericMethod): New type.
+	(MonoGenericInst): Remove `mtype_argc', `mtype_argv' and
+	`generic_method'.
+
+	* metadata.h (MonoMethodHeader): Replaced the `geninst' field with
+	a `MonoGenericMethod *gen_method' one.
+
+	* class.c (mono_class_inflate_generic_type): Take an additional
+	`MonoGenericMethod * argument.  This is only non-NULL if we're
+	inflating types for a generic method.	
+	(mono_class_inflate_generic_signature): Renamed to
+	inflate_generic_signature() and made static; take a
+	`MonoGenericMethod *' argument instead of a `MonoGenericInst *'.
+	(inflate_generic_header): Take a `MonoGenericMethod *' argument
+	instead of a `MonoGenericInst *' one.
+	(mono_class_inflate_generic_method): Likewise.
+
+	* reflection.c (encode_generic_method_sig): Take a
+	`MonoGenericMethod *' argument instead of a `MonoGenericInst *'.
+	(method_encode_methodspec): Likewise.
+	(inflated_method_get_object): Likewise.	
+
+	* reflection.h (MonoReflectionGenericInst): Replaced the `ginst'
+	field with a `MonoGenericMethod *gmethod' one.	
+
 2004-02-08  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* class.h (mono_class_has_parent): add parens to expansion
