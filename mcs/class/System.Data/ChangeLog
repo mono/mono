@@ -1,3 +1,16 @@
+2002-04-29  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/ReadPostgresData.cs: added - Uses the 
+	PostgresLibrary to retrieve a recordset.
+	This is not meant to be used in Production, but as a
+	learning aid in coding 
+	class System.Data.SqlClient.SqlDataReader.
+	This sample does work.
+	
+	* Test/TestSqlDataReader.cs: added - used
+	to test SqlDataReader (does not work yet)
+	Forgot to add to ChangeLog on last commit.
+
 2002-04-28  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data/DataViewSetting.cs: new class.
