@@ -1,3 +1,8 @@
+2004-02-22  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Math.cs: MonoStyled, replaced space with tabs,
+	  speedup of some methods by avoiding method calls
+
 2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Char.cs : optimized IsSeparator(), IsWhiteSpace() and IsDigit().
