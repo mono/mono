@@ -4469,8 +4469,10 @@ namespace Mono.CSharp {
 				}
 
 				sb.Append (name.Substring (start, pos-start));
-				while ((pos+1 < name.Length) && Char.IsNumber (name [++pos]))
-					;
+
+				pos++;
+				while ((pos < name.Length) && Char.IsNumber (name [pos]))
+					pos++;
 
 				start = pos;
 			}
