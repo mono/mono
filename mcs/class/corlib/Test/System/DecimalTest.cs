@@ -857,6 +857,23 @@ namespace MonoTests.System {
             }
         }
 
+	[Test]
+	public void Truncate () 
+	{
+		decimal dd = 249.9m;
+		decimal dt = Decimal.Truncate (dd);
+		AssertEquals ("Original", 249.9m, dd);
+		AssertEquals ("Truncate", 249m, dt);
+		AssertEquals ("Cast-Byte", 249, (byte)dd);
+		AssertEquals ("Cast-Char", 249, (char)dd);
+		AssertEquals ("Cast-Int16", 249, (short)dd);
+		AssertEquals ("Cast-UInt16", 249, (ushort)dd);
+		AssertEquals ("Cast-Int32", 249, (int)dd);
+		AssertEquals ("Cast-UInt32", 249, (uint)dd);
+		AssertEquals ("Cast-Int64", 249, (long)dd);
+		AssertEquals ("Cast-UInt64", 249, (ulong)dd);
+	}
+
 	public void TestRound()
         {
             decimal[,] dtab = { 

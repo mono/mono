@@ -1,3 +1,8 @@
+2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DecimalTest.cs: Added test case for truncating including indirect
+	truncates with cast to integer types.
+
 2004-06-07  Duncan Mak  <duncan@ximian.com>
 
 	* ExceptionTest.cs: Added [Test] attributes to the test methods.
