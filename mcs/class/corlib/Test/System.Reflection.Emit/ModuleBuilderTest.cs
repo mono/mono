@@ -24,7 +24,7 @@ namespace MonoTests.System.Reflection.Emit
 [TestFixture]
 public class ModuleBuilderTest : Assertion
 {	
-	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.Emit.ModuleBuilderTest");
+	static string TempFolder = Path.Combine (Path.GetTempPath (), "MT.S.R.E.MBT");
 
 	[SetUp]
 	public void SetUp () {
