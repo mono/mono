@@ -1,3 +1,8 @@
+2003-04-20  Alan Tam <Tam@SiuLung.com>
+
+	* DataRelationCollection.cs: Fix a bug that prevent relations
+	from being added via DataSet.
+
 2003-04-12  Ville Palo <vi64pa@kolumbus.fi>
 
 	* UniqueConstraint.cs: one tiny fix.

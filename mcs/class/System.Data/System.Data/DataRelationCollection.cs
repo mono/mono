@@ -181,13 +181,11 @@ namespace System.Data {
 			protected override void AddCore (DataRelation relation)
 			{
 				base.AddCore (relation);
-				GetDataSet ().Relations.Add (relation);
 			}
 
 			protected override void RemoveCore (DataRelation relation)
 			{
 				base.RemoveCore (relation);
-				GetDataSet ().Relations.Remove (relation);
 			}
 
 			protected override ArrayList List {
