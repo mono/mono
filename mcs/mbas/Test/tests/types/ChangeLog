@@ -1,0 +1,13 @@
+2005-04-05 Ritvik Mayank <mritvik@novell.com>
+	* TypeValRefStringA.vb
+	* TypeValRefArrayA.vb
+	* TypeValRefC.vb
+	* TypeValRefB.vb
+	* TypeValRefVoidA1.vb
+	* TypeObjectA.vb
+	* TypeValRefA.vb
+	* TypeStructureA.vb
+		Added the above Test Cases
+
+2005-04-04 Ritvik Mayank <mritvik@novell.com>
+	Moved All the 'types' Test Cases to this directory 

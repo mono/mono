@@ -1,0 +1,16 @@
+2005-04-05 Ritvik Mayank <mritvik@novell.com>
+	* AttributesClassNoparameterA.vb
+	* AttributesClassA.vb
+	* AttributesClassB.vb
+	* AttributesClassBothSuffixA.vb
+	* AttributesClassC.vb
+	* AttributesClassUseA.vb
+	* AttributesClassUseB.vb
+	* AttributesClassUseC.vb
+	* AttributesClassUseD.vb
+	* AttributesNewA.vb
+	* AttributesNewB.vb
+		Added the above test cases
+
+2005-04-04 Ritvik Mayank <mritvik@novell.com>
+	* Moved all the Attribute Test Cases to this folder

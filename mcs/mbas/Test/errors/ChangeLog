@@ -1,3 +1,17 @@
+2005-04-05 Ritvik Mayank <mritvik@novell.com>
+	* AttributesMustInheritClassA1.vb
+	* AttributesClassC1.vb
+	* AttributesArguments1.vb
+	* AttributesClassUseADecimal1.vb
+	* AttributesClassUseADate1.vb
+	* AttributesArguments2.vb
+	* AttributesArguments3.vb
+	* AttributesClassUseNoSingle1.vb
+	* AttributesArguments4.vb
+	* TypeValRefVoidA1.vb
+	* AttributesClassUseA1.vb
+		Added the above test cases
+
 2005-04-04 Ritvik Mayank <mritvik@novell.com>
 	* ConditionalStatementsC10.vb
 	* ConstructorC1.vb
