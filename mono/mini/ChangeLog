@@ -1,3 +1,8 @@
+
+Tue May 11 13:59:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini.c: use mono_resolve_patch_target ().
+
 2004-05-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* mini.c: In the thread abort signal handler, if the thread is in the
@@ -2616,6 +2621,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 
