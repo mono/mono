@@ -148,6 +148,7 @@ namespace System.Runtime.Remoting
 			// FIXME: use type name when fRefine==true
 
 			Type classToProxy = fRefine ? objref.ServerType : typeof (MarshalByRefObject);
+			if (classToProxy == null) classToProxy = typeof (MarshalByRefObject);
 
 			if (objref.IsReferenceToWellKnow)
 				return GetRemoteObject(objref, classToProxy);

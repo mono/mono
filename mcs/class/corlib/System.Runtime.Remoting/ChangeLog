@@ -1,3 +1,8 @@
+2003-07-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RemotingServices.cs: If the type for a proxy is not available in
+	  the client site, use the MarshalByRefObject type.
+
 2003-07-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ServerIdentity.cs: Fixed bug #46645
