@@ -4,7 +4,7 @@
 // Author:
 //	 Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) 2003, Cesar Lopez Nataren
+// (C) 2003, 2004, Cesar Lopez Nataren
 //
 
 header {
@@ -110,7 +110,7 @@ statement [AST parent] returns [AST stm]
 	| empty_stm
 	| stm = if_stm [parent]
 	| stm = iteration_stm [parent]
-	| stm = continue_stm
+	| stm = continue_stm [parent]
 	| stm = break_stm
 	| stm = return_stm [parent]
 	| stm = with_stm [parent]
@@ -232,8 +232,10 @@ break_stm returns [AST b]
 		  | { ((Break) b).identifier = String.Empty; } ) SEMI_COLON
 	;
 	
-continue_stm returns [AST cont]
-{ cont = new Continue (); }
+continue_stm [AST parent] returns [AST cont]
+{ 
+	cont = new Continue (parent); 
+}
 	: "continue" ( id:IDENTIFIER 
 	               { ((Continue) cont).identifier = id.getText (); } 
 	             | { ((Continue) cont).identifier = String.Empty; } ) SEMI_COLON
@@ -246,17 +248,20 @@ iteration_stm [AST parent] returns [AST iter]
 	AST exprn = null;
 	AST [] exprs = null;
 }
-	: "do" stm = statement [parent] "while" OPEN_PARENS exprn = expr [parent] CLOSE_PARENS SEMI_COLON
+	: "do" stm = statement [iter] "while" OPEN_PARENS exprn = expr [iter] CLOSE_PARENS SEMI_COLON
 	  {
 		  iter = new DoWhile (parent, stm, exprn);
+		  exprn.parent = stm.parent = iter;
 	  }
-	| "while" OPEN_PARENS exprn = expr [parent] CLOSE_PARENS stm = statement [parent]
+	| "while" OPEN_PARENS exprn = expr [iter] CLOSE_PARENS stm = statement [iter]
 	  {
 		  iter = new While (parent, exprn, stm);
+		  exprn.parent = stm.parent = iter;
 	  }
-	| "for" OPEN_PARENS exprs = inside_for [parent] CLOSE_PARENS stm = statement [parent]
+	| "for" OPEN_PARENS exprs = inside_for [iter] CLOSE_PARENS stm = statement [iter]
 	  {
 		  iter = new For (parent, exprs, stm);
+		  stm.parent = iter;
 
 	  }
 	;
