@@ -1,4 +1,10 @@
 
+Wed May 1 17:07:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c, dump.h, main.c: dump ExportedTypes table.
+	* get.c: fix get_module (), remove magic numbers.
+	* monodis.1: update manpage (hi miguel!:)
+
 Mon Apr 29 12:12:35 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c, dump.h, main.c: support for dumping the manifest resource table.
