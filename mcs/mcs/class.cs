@@ -4030,6 +4030,12 @@ namespace Mono.CSharp {
 			if (!DoDefine (parent))
 				return false;
 
+			if (init != null && ((ModFlags & Modifiers.ABSTRACT) != 0)){
+				Report.Error (74, Location, "'" + parent.Name + "." + Name +
+					      "': abstract event can not have an initializer");
+				return false;
+			}
+			
 			if (!MemberType.IsSubclassOf (TypeManager.delegate_type)) {
 				Report.Error (66, Location, "'" + parent.Name + "." + Name +
 					      "' : event must be of a delegate type");

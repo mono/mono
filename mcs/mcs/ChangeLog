@@ -1,4 +1,12 @@
+2003-04-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Event.Define): Do not allow abstract events to have
+	initializers. 
+
 2003-04-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add error productions for ADD/REMOVE missing a
+	block in event declarations.
 
 	* expression.cs (Is.Emit): For action `LeaveOnStack' we were
 	leaving a class on the stack instead of a boolean value (int
