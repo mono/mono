@@ -1,0 +1,16 @@
+<Combine name="mbas" fileversion="2.0">
+  <Configurations>
+    <Configuration name=".NET 1.1" ctype="CombineConfiguration">
+      <Entry build="True" name="mbas" />
+    </Configuration>
+    <Configuration name=".NET 2.0" ctype="CombineConfiguration">
+      <Entry build="True" name="mbas" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="mbas" single="True">
+    <Execute type="None" entry="mbas" />
+  </StartMode>
+  <Entries>
+    <Entry filename="./Makefile" />
+  </Entries>
+</Combine>
