@@ -577,12 +577,16 @@ class AspGenerator
 	{
 		// First try loaded assemblies, then try assemblies in Bin directory.
 		// By now i do this 'by hand' but may be this is a runtime/gac task.
-		Type type = Type.GetType (typeName);
-		if (type != null)
-			return type;
+		Type type = null;
+		Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
+		foreach (Assembly ass in assemblies) {
+			type = ass.GetType (typeName);
+			if (type != null)
+				return type;
+		}
 
-		string [] binDlls = Directory.GetFiles (privateBinPath, "*.dll");
 		Assembly assembly;
+		string [] binDlls = Directory.GetFiles (privateBinPath, "*.dll");
 		foreach (string dll in binDlls) {
 			string dllPath = Path.Combine (privateBinPath, dll);
 			assembly = null;

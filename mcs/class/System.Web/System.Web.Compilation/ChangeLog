@@ -1,3 +1,9 @@
+
+2003-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: modified loading of the parent type now that
+	Type.GetType is fixed.
+
 2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: cast to Control if the container does not implement
