@@ -1,5 +1,9 @@
 2004-03-23  Martin Baulig  <martin@ximian.com>
 
+	* MonoGenericInst.cs: Added support for events.
+
+2004-03-23  Martin Baulig  <martin@ximian.com>
+
 	* MonoMethod.cs (MonoMethod.ToString): Don't include the namespace
 	if it's the empty string.
 

@@ -31,7 +31,7 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties);
+		protected extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern MethodInfo[] GetMethods_internal (Type reflected_type);
@@ -46,10 +46,21 @@ namespace System.Reflection
 		protected extern PropertyInfo[] GetProperties_internal (Type reflected_type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern EventInfo[] GetEvents_internal (Type reflected_type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern Type[] GetNestedTypes_internal ();
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+		EventInfo[] get_event_info ()
+		{
+			if (generic_type is TypeBuilder)
+				return ((TypeBuilder) generic_type).GetEvents_internal (flags);
+			else
+				return generic_type.GetEvents (flags);
+		}
 
 		void initialize ()
 		{
@@ -63,7 +74,8 @@ namespace System.Reflection
 			initialize (generic_type.GetMethods (flags),
 				    generic_type.GetConstructors (flags),
 				    generic_type.GetFields (flags),
-				    generic_type.GetProperties (flags));
+				    generic_type.GetProperties (flags),
+				    get_event_info ());
 
 			initialized = true;
 		}
@@ -378,6 +390,80 @@ namespace System.Reflection
 				l.Add (c);
 			}
 			PropertyInfo[] result = new PropertyInfo [l.Count];
+			l.CopyTo (result);
+			return result;
+		}
+
+		public override EventInfo[] GetEvents (BindingFlags bf)
+		{
+			initialize ();
+
+			ArrayList l = new ArrayList ();
+
+			Type current_type = this;
+			do {
+				MonoGenericInst gi = current_type as MonoGenericInst;
+				if (gi != null)
+					l.AddRange (gi.GetEvents_impl (bf, this));
+				else if (current_type is TypeBuilder)
+					l.AddRange (current_type.GetEvents (bf));
+				else {
+					MonoType mt = (MonoType) current_type;
+					l.AddRange (mt.GetEvents (bf));
+					break;
+				}
+
+				if ((bf & BindingFlags.DeclaredOnly) != 0)
+					break;
+				current_type = current_type.BaseType;
+			} while (current_type != null);
+
+			EventInfo[] result = new EventInfo [l.Count];
+			l.CopyTo (result);
+			return result;
+		}
+
+		protected EventInfo[] GetEvents_impl (BindingFlags bf, Type reftype)
+		{
+			ArrayList l = new ArrayList ();
+			bool match;
+			MethodAttributes mattrs;
+			MethodInfo accessor;
+
+			EventInfo[] events = GetEvents_internal (reftype);
+
+			for (int i = 0; i < events.Length; i++) {
+				EventInfo c = events [i];
+
+				match = false;
+				accessor = c.GetAddMethod (true);
+				if (accessor == null)
+					accessor = c.GetRemoveMethod (true);
+				if (accessor == null)
+					continue;
+				mattrs = accessor.Attributes;
+				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
+					if ((bf & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bf & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((mattrs & MethodAttributes.Static) != 0) {
+					if ((bf & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bf & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (c);
+			}
+			EventInfo[] result = new EventInfo [l.Count];
 			l.CopyTo (result);
 			return result;
 		}
