@@ -1,3 +1,8 @@
+2003-10-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyName.cs: Fix Version property when some version fields are
+	undefined.
+
 2003-10-17  Martin Baulig  <martin@ximian.com>
 
 	* MethodInfo.cs (MethodInfo.GetGenericArguments): New method.
@@ -582,4 +587,3 @@ Thu Sep 13 18:05:16 CEST 2001 Paolo Molaro <lupus@ximian.com>
 2001-07-18  Michael Lambert <michaellambert@email.com>
 
 	* BindingFlags.cs: Add.
->>>>>>> 1.52

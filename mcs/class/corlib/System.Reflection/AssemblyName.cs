@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
@@ -117,7 +118,13 @@ namespace System.Reflection {
 			get {
 				if (name == null)
 					return null;
-				return new Version (major, minor, build, revision);
+				if (build == -1)
+					return new Version (major, minor);
+				else
+					if (revision == -1)
+						return new Version (major, minor, build);
+				else
+					return new Version (major, minor, build, revision);
 			}
 
 			set {
