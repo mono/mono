@@ -45,7 +45,6 @@ namespace System.Drawing {
 										
 		}
 		
-		
 		~FontFamily()
 		{	
 			Dispose ();

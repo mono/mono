@@ -312,11 +312,5 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmap_data);
 			GDIPlus.CheckStatus (status);
 		}
-
-		protected override void DisposeResources ()
-		{
-			base.DisposeResources ();
-			
-		}
 	}
 }

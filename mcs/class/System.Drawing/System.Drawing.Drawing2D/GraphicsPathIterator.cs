@@ -62,6 +62,10 @@ namespace System.Drawing.Drawing2D
                 {
                 }
 
+		~GraphicsPathIterator ()
+		{
+		}
+		
                 public int Enumerate (ref PointF [] points, ref byte [] types)
                 {
                         points = _points;

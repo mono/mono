@@ -31,7 +31,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public delegate bool GetThumbnailImageAbort();
 	
 	internal IntPtr nativeObject = IntPtr.Zero;	
-	protected ColorPalette colorPalette;
+	ColorPalette colorPalette;
 	
 	
 	// constructor
@@ -553,7 +553,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Dispose (false);
 	}
 
-	protected virtual void DisposeResources ()
+	protected internal virtual void DisposeResources ()
 	{
 		Status status = GDIPlus.GdipDisposeImage (nativeObject);
 		GDIPlus.CheckStatus (status);

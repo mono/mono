@@ -221,7 +221,7 @@ namespace System.Drawing {
 			setProperties (original.FontFamily, original.Size, style, original.Unit, 
 				original.GdiCharSet, original.GdiVerticalFont);
 			
-			status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);
+			status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject, Size, Style, Unit, out fontObject);
 			GDIPlus.CheckStatus (status);
 		}
 		

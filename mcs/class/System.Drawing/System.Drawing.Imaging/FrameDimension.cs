@@ -66,10 +66,5 @@ public sealed class FrameDimension {
 		return "FrameDimension :" + guid;
 	}
 
-	//destructor
-	~FrameDimension() 
-	{
-	
-	}
 }
 }
