@@ -756,6 +756,13 @@ namespace System {
 				if (c == '{') {
 					result.Append (format, start, ptr - start - 1);
 
+					// check for escaped bracket
+
+					if (format[ptr] == '{') {
+						start = ptr ++;
+						break;
+					}
+
 					// parse specifier
 				
 					int n, width;
