@@ -78,7 +78,7 @@ namespace MonoTests.System
 		public void Query ()
 		{
 			b.Query = ((char) 0xa9) + " 2002";
-			AssertEquals ("#1", "?\xC2\xA9 2002", b.Query);			
+			AssertEquals ("#1", "?\xA9 2002", b.Query);			
 			AssertEquals ("#2", String.Empty, b.Fragment);
 			b.Query = "?test";
 			AssertEquals ("#3", "??test", b.Query);
@@ -90,7 +90,7 @@ namespace MonoTests.System
 		public void Fragment ()
 		{
 			b.Fragment = ((char) 0xa9) + " 2002";
-			AssertEquals ("#1", "#\xC2\xA9 2002", b.Fragment);
+			AssertEquals ("#1", "#\xA9 2002", b.Fragment);
 			AssertEquals ("#2", String.Empty, b.Query);
 			b.Fragment = "#test";
 			AssertEquals ("#3", "##test", b.Fragment);

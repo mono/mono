@@ -1,5 +1,10 @@
 2004-06-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriBuilderTest.cs : Actually Query() and Fragment() didnt pass under
+	  MS.NET.
+
+2004-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UriBuilderTest.cs: Please don't hardcode non-ASCII/non-UTF8
 	  character in the sources.
 
