@@ -1044,7 +1044,7 @@ namespace Mono.CSharp
 			case "/res":
 			case "/resource":
 				if (value == ""){
-					Report.Error (5, arg + " requires an argument");
+					Report.Error (5, "-resource requires an argument");
 					Environment.Exit (1);
 				}
 				if (embedded_resources == null)
@@ -1055,7 +1055,7 @@ namespace Mono.CSharp
 				
 			case "/recurse":
 				if (value == ""){
-					Report.Error (5, "/recurse requires an argument");
+					Report.Error (5, "-recurse requires an argument");
 					Environment.Exit (1);
 				}
 				CompileFiles (value, true); 
@@ -1064,7 +1064,7 @@ namespace Mono.CSharp
 			case "/r":
 			case "/reference": {
 				if (value == ""){
-					Report.Error (5, arg + " requires an argument");
+					Report.Error (5, "-reference requires an argument");
 					Environment.Exit (1);
 				}
 

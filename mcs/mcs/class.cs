@@ -1020,7 +1020,7 @@ namespace Mono.CSharp {
 				if (class_indexer_name == null)
 					class_indexer_name = name;
 				else if (name != class_indexer_name)
-					Report.Error (668, "Two indexers have different names, " +
+					Report.Error (668, i.Location, "Two indexers have different names, " +
 						      " you should use the same name for all your indexers");
 			}
 
