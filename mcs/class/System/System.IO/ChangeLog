@@ -1,5 +1,11 @@
 2004-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DefaultWatcher.cs: if the file is removed between reading the
+	directory and filling the file info, catch the exception and ignore the
+	file. Fixes bug #59482.
+
+2004-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DefaultWatcher.cs: don't use Directory.GetFileSystemEntries when the
 	pattern has no wildcards. Fixes bug #67447.
 
