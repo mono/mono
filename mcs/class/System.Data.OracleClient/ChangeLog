@@ -1,3 +1,8 @@
+2004-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs: added support for
+	basic RAW data type. Patch by Eduard Nesiba.
+
 2004-03-31  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
