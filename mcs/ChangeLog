@@ -1,3 +1,9 @@
+2004-05-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile: disable net_2_0 on windows. It doesn't build. Don't
+	try to build net_1_0 and net_2_0 if we provide a PROFILE=xxx in the
+	command line.
+
 2004-05-10  Raja R Harinath  <rharinath@novell.com>
 
 	* INSTALL.txt: Don't mention 'fullbuild'.  Mention 'bootstrap'
