@@ -19,7 +19,7 @@ namespace System.Web.UI.HtmlControls{
 		public HtmlForm(): base("form"){}
 				
 		protected override void RenderAttributes(HtmlTextWriter writer){
-			writer.WriteAttribute("name", RenderedName);
+			writer.WriteAttribute("name", Name);
 			Attributes.Remove("name");
 			writer.WriteAttribute("method", Method);
 			Attributes.Remove("method");
@@ -158,27 +158,11 @@ namespace System.Web.UI.HtmlControls{
 		[WebCategory("Appearance")]
 		public virtual string Name{
 			get{
-				string attr = Attributes["name"];
-				if (attr != null){
-					return attr;
-				}
-				return String.Empty;
-			}
-			set {
-				Attributes ["Name"] = value;
-			}
-		}
-		
-		internal string RenderedName{
-			get{
-				string attr = Name;
-				if (attr.Length > 0){
-					return attr;
-				}
 				return UniqueID;
 			}
-		}
-		
+			set {
+			}
+		}		
 	} // class HtmlForm
 } // namespace System.Web.UI.HtmlControls
 
