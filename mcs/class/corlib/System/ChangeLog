@@ -1,3 +1,10 @@
+2004-02-27  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* String.cs: Concat() fixed crash when one of the arguments is an object
+	  whose ToString() method returns null.
+	* TypeLoadException.cs: Added some serialization fiels, needed for
+	  compatibility with MS.NET.
+
 2004-02-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* String.cs (Equals): Speed up this method by avoiding Array

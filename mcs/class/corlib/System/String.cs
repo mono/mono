@@ -824,16 +824,17 @@ namespace System {
 		{
 			string s1, s2;
 
-			if (obj1 == null){
-				if (obj2 == null)
+			s1 = (obj1 != null) ? obj1.ToString () : null;
+			s2 = (obj2 != null) ? obj2.ToString () : null;
+			
+			if (s1 == null) {
+				if (s2 == null)
 					return String.Empty;
 				else
-					return obj2.ToString ();
-			} else if (obj2 == null)
-				return obj1.ToString ();
+					return s2;
+			} else if (s2 == null)
+				return s1;
 
-			s1 = obj1.ToString ();
-			s2 = obj2.ToString ();
 			String tmp = InternalAllocateStr (s1.Length + s2.Length);
 			InternalStrcpy (tmp, 0, s1);
 			InternalStrcpy (tmp, s1.length, s2);

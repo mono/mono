@@ -42,7 +42,7 @@ namespace System {
 			if (info == null)
 				throw new ArgumentNullException ("info is null.");
 
-			type = info.GetString ("type");
+			type = info.GetString ("TypeLoadClassName");
 		}
 
 		// Properties
@@ -74,7 +74,10 @@ namespace System {
 				throw new ArgumentNullException ("info is null.");
 
 			base.GetObjectData (info, context);
-			info.AddValue ("type", type, typeof (string)); 
+			info.AddValue ("TypeLoadClassName", type, typeof (string)); 
+			info.AddValue ("TypeLoadAssemblyName", "", typeof (string)); 
+			info.AddValue ("TypeLoadMessageArg", "", typeof (string)); 
+			info.AddValue ("TypeLoadResourceID", 0, typeof (int)); 
 		}
 	}
 }
