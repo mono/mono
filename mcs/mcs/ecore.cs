@@ -838,6 +838,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static object ConvertIntLiteral (Constant c, Type target_type, Location loc)
 		{
+			if (!Convert.ImplicitStandardConversionExists (c, target_type)){
+				Convert.Error_CannotImplicitConversion (loc, c.Type, target_type);
+				return null;
+			}
+			
 			string s = "";
 
 			if (c.Type == target_type)

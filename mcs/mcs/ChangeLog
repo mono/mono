@@ -1,5 +1,8 @@
 2003-07-01  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs: (Convert.ConvertIntLiteral): Add test for
+	ImplicitStandardConversion.
+
 	* class.cs (TypeContainer.GetClassBases): Small bug fix for 45649.
 
 2003-07-01  Zoltan Varga  <vargaz@freemail.hu>
