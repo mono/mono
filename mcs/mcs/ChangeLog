@@ -1,5 +1,8 @@
 2001-09-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (CheckedExpr::Resolve, CheckedExpr::Emit,
+	UnCheckedExpr::Resolve, UnCheckedExpr::Emit): Implement.
+
 	* expression.cs (This::Emit): Implement. 
 	(This::Resolve): Implement.
 	(TypeOf:Resolve): Implement.

@@ -2176,7 +2176,7 @@ namespace CIR {
 	
 	public class CheckedExpr : Expression {
 
-		public readonly Expression Expr;
+		public Expression Expr;
 
 		public CheckedExpr (Expression e)
 		{
@@ -2185,19 +2185,32 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME : Implement !
+			Expr = Expr.Resolve (tc);
+
+			if (Expr == null)
+				return null;
+
+			eclass = Expr.ExprClass;
+			type = Expr.Type;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			bool last_check = ec.CheckState;
+
+			ec.CheckState = true;
+			
+			Expr.Emit (ec);
+
+			ec.CheckState = last_check;
 		}
 		
 	}
 
 	public class UnCheckedExpr : Expression {
 
-		public readonly Expression Expr;
+		public Expression Expr;
 
 		public UnCheckedExpr (Expression e)
 		{
@@ -2206,12 +2219,25 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME : Implement !
+			Expr = Expr.Resolve (tc);
+
+			if (Expr == null)
+				return null;
+
+			eclass = Expr.ExprClass;
+			type = Expr.Type;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			bool last_check = ec.CheckState;
+
+			ec.CheckState = false;
+			
+			Expr.Emit (ec);
+
+			ec.CheckState = last_check;
 		}
 		
 	}
