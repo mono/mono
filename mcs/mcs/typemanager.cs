@@ -174,7 +174,7 @@ public class TypeManager {
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
 	{
 		TypeContainer tc;
-
+		
 		tc = (TypeContainer) typecontainers [t.FullName];
 
 		if (tc == null)

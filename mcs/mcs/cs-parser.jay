@@ -1100,8 +1100,8 @@ operator_declarator
 
 overloadable_operator
 // Unary operators:
-	: BANG   { $$ = Operator.OpType.Bang; }
-        | TILDE  { $$ = Operator.OpType.Tilde; }  
+	: BANG   { $$ = Operator.OpType.Negate; }
+        | TILDE  { $$ = Operator.OpType.BitComplement; }  
         | OP_INC { $$ = Operator.OpType.Increment; }
         | OP_DEC { $$ = Operator.OpType.Decrement; }
         | TRUE   { $$ = Operator.OpType.True; }
@@ -1110,20 +1110,20 @@ overloadable_operator
         | PLUS { $$ = Operator.OpType.Plus; }
         | MINUS { $$ = Operator.OpType.Minus; }
 // Binary:
-        | STAR { $$ = Operator.OpType.Star; }
-        | DIV {  $$ = Operator.OpType.Div; }
-        | PERCENT { $$ = Operator.OpType.Percent; }
-        | BITWISE_AND { $$ = Operator.OpType.BitAnd; }
-        | BITWISE_OR { $$ = Operator.OpType.BitOr; }
-        | CARRET { $$ = Operator.OpType.Carret; }
+        | STAR { $$ = Operator.OpType.Multiply; }
+        | DIV {  $$ = Operator.OpType.Divide; }
+        | PERCENT { $$ = Operator.OpType.Modulo; }
+        | BITWISE_AND { $$ = Operator.OpType.BitwiseAnd; }
+        | BITWISE_OR { $$ = Operator.OpType.BitwiseOr; }
+        | CARRET { $$ = Operator.OpType.ExclusiveOr; }
         | OP_SHIFT_LEFT { $$ = Operator.OpType.ShiftLeft; }
         | OP_SHIFT_RIGHT { $$ = Operator.OpType.ShiftRight; }
-        | OP_EQ { $$ = Operator.OpType.Eq; }
-        | OP_NE { $$ = Operator.OpType.NotEq; }
+        | OP_EQ { $$ = Operator.OpType.Equal; }
+        | OP_NE { $$ = Operator.OpType.NotEqual; }
         | OP_GT { $$ = Operator.OpType.GreaterThan; }
-        | OP_LT { $$ = Operator.OpType.LesserThan; }
-        | OP_GE { $$ = Operator.OpType.GreaterOrEq; }
-        | OP_LE { $$ = Operator.OpType.LesserOrEq; }
+        | OP_LT { $$ = Operator.OpType.LessThan; }
+        | OP_GE { $$ = Operator.OpType.GreaterOrEqual; }
+        | OP_LE { $$ = Operator.OpType.LesserOrEqual; }
 	;
 
 conversion_operator_declarator
@@ -1920,7 +1920,7 @@ additive_expression
 	  }
 	| additive_expression MINUS multiplicative_expression
 	  {
-		$$ = new Binary (Binary.Operator.Substract, 
+		$$ = new Binary (Binary.Operator.Subtract, 
 			         (Expression) $1, (Expression) $3);
 	  }
 	;
@@ -1948,7 +1948,7 @@ relational_expression
 	  }
 	| relational_expression OP_GT shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.GreatherThan, 
+		$$ = new Binary (Binary.Operator.GreaterThan, 
 			         (Expression) $1, (Expression) $3);
 	  }
 	| relational_expression OP_LE shift_expression
@@ -1958,7 +1958,7 @@ relational_expression
 	  }
 	| relational_expression OP_GE shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.GreatherOrEqual, 
+		$$ = new Binary (Binary.Operator.GreaterOrEqual, 
 			         (Expression) $1, (Expression) $3);
 	  }
 	| relational_expression IS type
@@ -2076,7 +2076,7 @@ assignment_expression
 	| unary_expression OP_SUB_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
-				 new Binary (Binary.Operator.Substract, 
+				 new Binary (Binary.Operator.Subtract, 
 					     (Expression) $1,
 					     (Expression) $3));
 	  }
@@ -3048,7 +3048,7 @@ void CheckUnaryOperator (Operator.OpType op)
 {
 	switch (op) {
 		
-	case Operator.OpType.Bang : case Operator.OpType.Tilde : case Operator.OpType.Increment :
+	case Operator.OpType.Negate : case Operator.OpType.BitComplement : case Operator.OpType.Increment :
 	case Operator.OpType.Decrement :
 	case Operator.OpType.True : case Operator.OpType.False : case Operator.OpType.Plus : case Operator.OpType.Minus :
 		
@@ -3066,12 +3066,13 @@ void CheckBinaryOperator (Operator.OpType op)
 {
 	switch (op) {
 		
-	case Operator.OpType.Plus : case Operator.OpType.Minus : case Operator.OpType.Star : case Operator.OpType.Div :
-	case Operator.OpType.Percent : case Operator.OpType.BitAnd : case Operator.OpType.BitOr :
-	case Operator.OpType.Carret : case Operator.OpType.ShiftLeft : case Operator.OpType.ShiftRight :
-	case Operator.OpType.Eq : case Operator.OpType.NotEq :
-	case Operator.OpType.GreaterThan : case Operator.OpType.LesserThan : case Operator.OpType.GreaterOrEq :
-	case Operator.OpType.LesserOrEq :
+	case Operator.OpType.Plus : case Operator.OpType.Minus : case Operator.OpType.Multiply :
+	case Operator.OpType.Divide :
+	case Operator.OpType.Modulo : case Operator.OpType.BitwiseAnd : case Operator.OpType.BitwiseOr :
+	case Operator.OpType.ExclusiveOr : case Operator.OpType.ShiftLeft : case Operator.OpType.ShiftRight :
+	case Operator.OpType.Equal : case Operator.OpType.NotEqual :
+	case Operator.OpType.GreaterThan : case Operator.OpType.LessThan : case Operator.OpType.GreaterOrEqual :
+	case Operator.OpType.LesserOrEqual :
 		
 		break;
 		

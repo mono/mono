@@ -170,7 +170,7 @@ namespace Generator {
 					prec = 8;
 					op = "+"; break;
 				
-				case Binary.Operator.Substract:
+				case Binary.Operator.Subtract:
 					prec = 8;
 					op = "-"; break;
 				
@@ -186,7 +186,7 @@ namespace Generator {
 					prec = 6;
 					op = "<"; break;
 				
-				case Binary.Operator.GreatherThan:
+				case Binary.Operator.GreaterThan:
 					prec = 6;
 					op = ">"; break;
 				
@@ -194,7 +194,7 @@ namespace Generator {
 					prec = 6;
 					op = "<="; break;
 				
-				case Binary.Operator.GreatherOrEqual:
+				case Binary.Operator.GreaterOrEqual:
 					prec = 6;
 					op = ">="; break;
 				

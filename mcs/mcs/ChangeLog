@@ -1,3 +1,26 @@
+2001-09-17  Ravi Pratap  <ravi@ximian.com>
+
+	* rootcontext.cs (IsNameSpace): Compare against null.
+
+	* everywhere : Correct spelling to 'Greater' and to 'Subtract'
+
+	* class.cs (Operator::OpType): Change names to match the ones in Binary::Operator
+	and Unary::Operator.
+
+	* cs-parser.jay (operator_declaration, CheckBinaryOperator, CheckUnaryOperator): Update
+	accordingly.
+
+	* expression.cs (Binary::method): New member to hold the MethodBase for the case when
+	we have overloaded operators.
+	(Binary::ResolveOperator): Implement the part which does the operator overload
+	resolution.
+
+	* class.cs (Operator::Emit): Implement.
+	(TypeContainer::Emit): Emit the operators we have too.
+
+	* expression.cs (Binary::Emit): Update to emit the appropriate code for
+	the case when we have a user-defined operator.
+	
 2001-09-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs: Fix bug: tree.Namespaces might be null.

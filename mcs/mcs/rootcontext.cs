@@ -567,7 +567,7 @@ namespace CIR {
 		{
 			Namespace ns;
 
-			if (tree.Namespaces){
+			if (tree.Namespaces != null){
 				ns = (Namespace) tree.Namespaces [name];
 
 				if (ns != null)

@@ -641,6 +641,10 @@ namespace CIR {
 			if (Methods != null)
 				foreach (Method m in Methods)
 					m.Emit (this);
+
+			if (Operators != null)
+				foreach (Operator o in Operators)
+					o.Emit (this);
 		}
 		
 		public delegate void ExamineType (TypeContainer container, object cback_data);
@@ -1347,8 +1351,8 @@ namespace CIR {
 		public enum OpType {
 
 			// Unary operators
-			Bang,
-			Tilde,
+			Negate,
+			BitComplement,
 			Increment,
 			Decrement,
 			True,
@@ -1359,20 +1363,20 @@ namespace CIR {
 			Minus,
 			
 			// Binary operators
-			Star,
-			Div,
-			Percent,
-			BitAnd,
-			BitOr,
-			Carret,
+			Multiply,
+			Divide,
+			Modulo,
+			BitwiseAnd,
+			BitwiseOr,
+			ExclusiveOr,
 			ShiftLeft,
 			ShiftRight,
-			Eq,
-			NotEq,
+			Equal,
+			NotEqual,
 			GreaterThan,
-			LesserThan,
-			GreaterOrEq,
-			LesserOrEq,
+			LessThan,
+			GreaterOrEqual,
+			LesserOrEqual,
 
 			// Implicit and Explicit
 			Implicit,
@@ -1425,6 +1429,14 @@ namespace CIR {
 			if (SecondArgType != null)
 				OperatorMethodBuilder.DefineParameter (2, ParameterAttributes.None, SecondArgName);
 
+		}
+
+		public void Emit (TypeContainer parent)
+		{
+			ILGenerator ig = OperatorMethodBuilder.GetILGenerator ();
+			EmitContext ec = new EmitContext (parent, ig);
+
+			ec.EmitTopBlock (Block);
 		}
 		
 

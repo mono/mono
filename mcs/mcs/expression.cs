@@ -632,9 +632,9 @@ namespace CIR {
 	public class Binary : Expression {
 		public enum Operator {
 			Multiply, Divide, Modulo,
-			Add, Substract,
+			Add, Subtract,
 			ShiftLeft, ShiftRight,
-			LessThan, GreatherThan, LessOrEqual, GreatherOrEqual, 
+			LessThan, GreaterThan, LessOrEqual, GreaterOrEqual, 
 			Equal, NotEqual,
 			BitwiseAnd,
 			ExclusiveOr,
@@ -645,6 +645,8 @@ namespace CIR {
 
 		Operator oper;
 		Expression left, right;
+		MethodBase method;
+		ArrayList  Arguments;
 
 		public Binary (Operator oper, Expression left, Expression right)
 		{
@@ -695,7 +697,7 @@ namespace CIR {
 				return "%";
 			case Operator.Add:
 				return "+";
-			case Operator.Substract:
+			case Operator.Subtract:
 				return "-";
 			case Operator.ShiftLeft:
 				return "<<";
@@ -703,11 +705,11 @@ namespace CIR {
 				return ">>";
 			case Operator.LessThan:
 				return "<";
-			case Operator.GreatherThan:
+			case Operator.GreaterThan:
 				return ">";
 			case Operator.LessOrEqual:
 				return "<=";
-			case Operator.GreatherOrEqual:
+			case Operator.GreaterOrEqual:
 				return ">=";
 			case Operator.Equal:
 				return "==";
@@ -878,8 +880,50 @@ namespace CIR {
 			//
 			// Step 1: Perform Operator Overload location
 			//
-
+			Expression i, j;
 			
+			string op = "Operator" + oper;
+
+			i = MemberLookup (tc.RootContext, l, op, false);
+
+			if (!(i is MethodGroupExpr)){
+				// FIXME: Find proper error
+				tc.RootContext.Report.Error (118, "Did find something that is not a method");
+				return null;
+			}
+			
+			j = MemberLookup (tc.RootContext, r, op, false);
+
+			if (!(j is MethodGroupExpr)){
+				// FIXME: Find proper error
+				tc.RootContext.Report.Error (118, "Did find something that is not a method");
+				return null;
+			}
+
+			// Now we need to form the union of these two sets and then call OverloadResolve
+			// on that.
+			MethodGroupExpr left_set = (MethodGroupExpr) i;
+			MethodGroupExpr right_set = (MethodGroupExpr) j;
+			
+			int length1, length2;
+			length1 = left_set.Methods.Length;
+			length2 = right_set.Methods.Length;
+
+			MemberInfo [] mi = new MemberInfo [length1 + length2];
+			left_set.Methods.CopyTo (mi, 0);
+			right_set.Methods.CopyTo (mi, length1);
+			
+			MethodGroupExpr union = new MethodGroupExpr (mi);
+
+			Arguments = new ArrayList ();
+			Arguments.Add (new Argument (left, Argument.AType.Expression));
+			Arguments.Add (new Argument (right, Argument.AType.Expression));
+			
+			method = Invocation.OverloadResolve (tc, union, Arguments);
+			if (method != null)
+				return this;
+
+
 			//
 			// Step 2: Default operations on CLI native types.
 			//
@@ -915,8 +959,8 @@ namespace CIR {
 			    oper == Operator.NotEqual ||
 			    oper == Operator.LessOrEqual ||
 			    oper == Operator.LessThan ||
-			    oper == Operator.GreatherOrEqual ||
-			    oper == Operator.GreatherThan){
+			    oper == Operator.GreaterOrEqual ||
+			    oper == Operator.GreaterThan){
 				type = TypeManager.bool_type;
 			}
 			
@@ -939,9 +983,9 @@ namespace CIR {
 			if (oper == Operator.Equal ||
 			    oper == Operator.NotEqual ||
 			    oper == Operator.LessThan ||
-			    oper == Operator.GreatherThan ||
+			    oper == Operator.GreaterThan ||
 			    oper == Operator.LessOrEqual ||
-			    oper == Operator.GreatherOrEqual){
+			    oper == Operator.GreaterOrEqual){
 				return true;
 			} else
 				return false;
@@ -990,7 +1034,7 @@ namespace CIR {
 					opcode = OpCodes.Blt;
 				break;
 
-			case Operator.GreatherThan:
+			case Operator.GreaterThan:
 				if (close_target)
 					opcode = OpCodes.Bgt_S;
 				else
@@ -1004,7 +1048,7 @@ namespace CIR {
 					opcode = OpCodes.Ble;
 				break;
 
-			case Operator.GreatherOrEqual:
+			case Operator.GreaterOrEqual:
 				if (close_target)
 					opcode = OpCodes.Bge_S;
 				else
@@ -1025,6 +1069,14 @@ namespace CIR {
 			Type l = left.Type;
 			Type r = right.Type;
 			OpCode opcode;
+
+			if (method != null) {
+				if (method is MethodInfo) {
+					Invocation.EmitArguments (ec, Arguments);
+					ec.ig.Emit (OpCodes.Call, (MethodInfo) method);
+					return;
+				}
+			}
 			
 			left.Emit (ec);
 			right.Emit (ec);
@@ -1069,7 +1121,7 @@ namespace CIR {
 					opcode = OpCodes.Add;
 				break;
 
-			case Operator.Substract:
+			case Operator.Subtract:
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Sub_Ovf;
@@ -1104,7 +1156,7 @@ namespace CIR {
 				opcode = OpCodes.Clt;
 				break;
 
-			case Operator.GreatherThan:
+			case Operator.GreaterThan:
 				opcode = OpCodes.Cgt;
 				break;
 
@@ -1115,7 +1167,7 @@ namespace CIR {
 				opcode = OpCodes.Ceq;
 				break;
 
-			case Operator.GreatherOrEqual:
+			case Operator.GreaterOrEqual:
 				ec.ig.Emit (OpCodes.Clt);
 				ec.ig.Emit (OpCodes.Ldc_I4_1);
 				
@@ -2076,12 +2128,12 @@ namespace CIR {
 		}
 		
 	}
-
-		public class ElementAccess : Expression {
-
+	
+	public class ElementAccess : Expression {
+		
 		public readonly ArrayList  Arguments;
 		public readonly Expression Expr;
-
+		
 		public ElementAccess (Expression e, ArrayList e_list)
 		{
 			Expr = e;
@@ -2093,14 +2145,14 @@ namespace CIR {
 			// FIXME : Implement
 			return this;
 		}
-
+		
 		public override void Emit (EmitContext ec)
 		{
 			// FIXME : Implement !
 		}
-
+		
 	}
-
+	
 	public class BaseAccess : Expression {
 
 		public enum BaseAccessType {
