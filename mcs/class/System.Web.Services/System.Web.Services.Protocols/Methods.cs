@@ -276,7 +276,9 @@ namespace System.Web.Services.Protocols {
 		}
 	}
 
-	internal class Fault
+	// FIXME: this class should be internal, but it needs to be public in
+	// order to be serialized using XmlSerializer.
+	public class Fault
 	{
 		public Fault () {}
 
