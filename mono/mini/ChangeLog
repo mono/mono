@@ -1,5 +1,17 @@
 2004-12-20  Ben Maurer  <bmaurer@ximian.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Rather than
+
+	add ebp, 4
+
+	Emit
+
+	pop edx
+
+	The first is 3 bytes while the second is 1. This saves 36 kb on
+	mscorlib, quite a big saving. When bootstraping mcs, I was able to
+	see a small boost because of icache locality.
+
 	* cfold.c (FOLD_BINOPCOMM): Kill add foo, 0
 
 Mon Dec 20 12:19:40 EST 2004 Paolo Molaro <lupus@ximian.com>
