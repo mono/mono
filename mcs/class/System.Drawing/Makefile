@@ -9,6 +9,7 @@ SUBDIRS =
 LIBRARY = System.Drawing.dll
 LIB_MCS_FLAGS = /unsafe /define:DECLARE_CDECL_DELEGATES /r:$(corlib) \
 		/r:System.dll /nowarn:649 /nowarn:169
-NO_TEST = yes
+
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /r:System.Drawing.dll 
 
 include ../../build/library.make

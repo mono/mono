@@ -1,21 +1,26 @@
 #!/bin/sh
 
-if [ ! -d "mono" ]; then
-	mkdir mono
+if [ $# -eq 0 ]; then
+	echo "You should give a list of test names such as: "
+	echo "$0 System.Drawing.TestStringFormat"
+	echo "or"
+	echo "$0 all"
+	exit 1
 fi
 
-mcs TestPoint.cs /r:NUnit.Framework.dll /r:System.Drawing.dll /target:library 
-nunit-console TestPoint.dll
+topdir=../../../..
+NUNITCONSOLE=$topdir/class/lib/nunit-console.exe
+MONO_PATH=$topdir/nunit20:$topdir/class/lib:.
 
-mcs TestBitmap.cs /r:NUnit.Framework.dll /r:System.Drawing.dll  /target:library 
-mono --debug nunit-console.exe TestBitmap.dll
+for i in $@; do
+	if [ "$i" = "all" ]; then
+		fixture=""
+	else
+		fixture="/fixture:MonoTests.${i}"
+	fi
+	MONO_PATH=$MONO_PATH \
+		mono --debug ${NUNITCONSOLE} System.Drawing_test.dll $fixture
+done
 
-mcs TestSize.cs /r:NUnit.Framework.dll /r:System.Drawing.dll  /target:library 
-mono --debug nunit-console.exe TestSize.dll
 
-mcs TestSizeF.cs /r:NUnit.Framework.dll /r:System.Drawing.dll  /target:library 
-mono --debug nunit-console.exe TestSizeF.dll
-
-mcs TestStringFormat.cs /r:NUnit.Framework.dll /r:System.Drawing.dll  /target:library 
-mono --debug nunit-console.exe TestStringFormat.dll
 

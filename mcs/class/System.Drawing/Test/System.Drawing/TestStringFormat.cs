@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]	
-	public class BitMapTest : Assertion {
+	public class StringFormatTest : Assertion {
 		
 		[TearDown]
 		public void Clean() {}

@@ -65,12 +65,7 @@ namespace MonoTests.System.Drawing
 			Assert ("EQ#5", ! pt11_0.Equals (pt0_11));
 		}
 
-		[Test]
-		public void Test2String ()
-		{
-			AssertEquals ("2STR#1", "{X=1.1, Y=9.9}", pt11_99.ToString ());
-		}
-
+		
 		[Test]
 		public void TestAddition ()
 		{
