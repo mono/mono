@@ -49,3 +49,4 @@ ns.res: ns0.res
 gen-13-exe.res: gen-13-dll.res
 gen-17-exe.res: gen-17-dll.res
 gen-47-exe.res: gen-47-dll.res
+pover-b.res: pover-a.res

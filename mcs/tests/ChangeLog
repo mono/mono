@@ -1,3 +1,7 @@
+2004-11-17  Raja R Harinath  <rharinath@novell.com>
+
+	* harness.mk: Add the pover-a and pover-b multi-file test.
+
 2004-11-17  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Reverted Miguel's last commit and correctly added his
