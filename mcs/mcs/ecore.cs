@@ -187,22 +187,9 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Utility wrapper routine for Warning, just to beautify the code
 		/// </summary>
-		public void Warning (int warning, string s)
+		public void Warning (Message msg, string arg)
 		{
-			if (!Location.IsNull (loc))
-				Report.Warning (warning, loc, s);
-			else
-				Report.Warning (warning, s);
-		}
-
-		/// <summary>
-		///   Utility wrapper routine for Warning, only prints the warning if
-		///   warnings of level `level' are enabled.
-		/// </summary>
-		public void Warning (int warning, int level, string s)
-		{
-			if (level <= RootContext.WarningLevel)
-				Warning (warning, s);
+			Report.Warning (msg, loc, arg);
 		}
 
 		/// <summary>
@@ -692,12 +679,12 @@ namespace Mono.CSharp {
 			}
 
 			if (qualifier_type != null)
-				Report.Error_T (122, loc, TypeManager.CSharpName (qualifier_type) + "." + name);
+				Report.Error_T (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, TypeManager.CSharpName (qualifier_type) + "." + name);
 			else if (name == ".ctor") {
 				Report.Error (143, loc, String.Format ("The type {0} has no constructors defined",
 								       TypeManager.CSharpName (queried_type)));
 			} else {
-				Report.Error_T (122, loc, name);
+				Report.Error_T (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, name);
 			}
 		}
 
@@ -3100,7 +3087,7 @@ namespace Mono.CSharp {
 				is_static = true;
 
 			if (setter == null && getter == null){
-				Report.Error_T (122, loc, PropertyInfo.Name);
+				Report.Error_T (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, PropertyInfo.Name);
 			}
 		}
 

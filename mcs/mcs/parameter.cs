@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 					builder.SetMarshal (marshal);
 					return;
 				}
-				Report.Warning_T (-24, a.Location);
+				Report.Warning (Message.CS_24_The_Microsoft_Runtime_cannot_set_this_marshal_info, a.Location);
 				return;
 			}
 
@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
 			}
 			catch (ArgumentOutOfRangeException) {
-				Report.Warning_T (-28, location);
+				Report.Warning (Message.CS_28_The_Microsoft_NET_Runtime_does_not_permit_setting_custom_attributes_on_the_return_type, location);
 			}
 		}
 

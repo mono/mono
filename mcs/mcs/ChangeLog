@@ -1,5 +1,13 @@
 2004-08-03  Marek Safar  <marek.safar@seznam.cz>
 
+	* report.cs (Message): New enum for better error, warning reference in
+	the code.
+	(MessageData): New inner abstract class. It generally handles printing of
+	error and warning messages.
+	Removed unused Error, Warning, Message methods.
+
+2004-08-03  Marek Safar  <marek.safar@seznam.cz>
+
 	Fix for cs0592-8.cs test
 	* attribute.cs
 	(Attributable.ValidAttributeTargets): Made public.

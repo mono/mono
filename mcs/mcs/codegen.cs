@@ -884,8 +884,8 @@ namespace Mono.CSharp {
 						case "AssemblyKeyFileAttribute":
 						case "System.Reflection.AssemblyKeyFileAttribute":
 							if (RootContext.StrongNameKeyFile != null) {
-								Report.Warning (1616, "Compiler option -keyfile overrides " +
-									"AssemblyKeyFileAttribute");
+								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+								Report.Warning (Message.CS1616_Option_overrides_options_given_in_source, "keyfile", "System.Reflection.AssemblyKeyFileAttribute");
 							}
 							else {
 								string value = a.GetString ();
@@ -897,8 +897,8 @@ namespace Mono.CSharp {
 						case "AssemblyKeyNameAttribute":
 						case "System.Reflection.AssemblyKeyNameAttribute":
 							if (RootContext.StrongNameKeyContainer != null) {
-								Report.Warning (1616, "Compiler option -keycontainer overrides " +
-									"AssemblyKeyNameAttribute");
+								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+								Report.Warning (Message.CS1616_Option_overrides_options_given_in_source, "keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
 							}
 							else {
 								string value = a.GetString ();
@@ -1053,7 +1053,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
 			if (a != null && a.Type == TypeManager.cls_compliant_attribute_type) {
-				Report.Warning_T (3012, a.Location);
+				Report.Warning (Message.CS3012_You_must_specify_the_CLSCompliant_attribute_on_the_assembly_not_the_module_to_enable_CLS_compliance_checking, a.Location);
 				return;
 			}
 

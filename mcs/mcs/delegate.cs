@@ -383,7 +383,7 @@ namespace Mono.CSharp {
 			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
 
 			if (!AttributeTester.IsClsCompliant (ReturnType.Type)) {
-				Report.Error_T (3002, Location, GetSignatureForError ());
+				Report.Error_T (Message.CS3002_Return_type_of_is_not_CLS_compliant, Location, GetSignatureForError ());
 			}
 			return true;
 		}
@@ -732,13 +732,11 @@ namespace Mono.CSharp {
 			IMethodData md = TypeManager.GetMethod (delegate_method);
 			if (md == null) {
 				if (System.Attribute.GetCustomAttribute (delegate_method, TypeManager.conditional_attribute_type) != null) {
-					// Cannot create delegate with '{0}' because it has a Conditional attribute
-					Report.Error_T (1618, loc, TypeManager.CSharpSignature (delegate_method));
+					Report.Error_T (Message.CS1618_Cannot_create_delegate_with_because_it_has_a_Conditional_attribute, loc, TypeManager.CSharpSignature (delegate_method));
 				}
 			} else {
 				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type, ec) != null) {
-					// Cannot create delegate with '{0}' because it has a Conditional attribute
-					Report.Error_T (1618, loc, TypeManager.CSharpSignature (delegate_method));
+					Report.Error_T (Message.CS1618_Cannot_create_delegate_with_because_it_has_a_Conditional_attribute, loc, TypeManager.CSharpSignature (delegate_method));
 				}
 			}
 			

@@ -43,7 +43,7 @@ namespace Mono.CSharp {
 					builder.SetMarshal (marshal);
 					return;
 				}
-				Report.Warning_T (-24, a.Location);
+				Report.Warning (Message.CS_24_The_Microsoft_Runtime_cannot_set_this_marshal_info, a.Location);
 				return;
 			}
 
@@ -719,7 +719,7 @@ namespace Mono.CSharp {
 					string enumerator_name = ordered_enums [ii] as string;
 					if (String.Compare (checked_name, enumerator_name, true, CultureInfo.InvariantCulture) == 0) {
 						Report.SymbolRelatedToPreviousError ((Location)member_to_location [enumerator_name], enumerator_name);
-						Report.Error_T (3005, (Location)member_to_location [checked_name], GetEnumeratorName (checked_name));
+						Report.Error_T (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, (Location)member_to_location [checked_name], GetEnumeratorName (checked_name));
 						break;
 					}
 				}
@@ -733,7 +733,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!AttributeTester.IsClsCompliant (UnderlyingType)) {
-				Report.Error_T (3009, Location, GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+				Report.Error_T (Message.CS3009_base_type_is_not_CLS_compliant, Location, GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
 			}
 
 			return true;

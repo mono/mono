@@ -53,7 +53,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (warn)
-				Report.Warning (162, loc, "Unreachable code detected");
+				Report.Warning (Message.CS0162_Unreachable_code_detected, loc);
 			return true;
 		}
 		
@@ -1757,14 +1757,9 @@ namespace Mono.CSharp {
 					name = (string) de.Key;
 
 					if (vector.IsAssigned (vi.VariableInfo)){
-						Report.Warning (
-							219, vi.Location, "The variable `" + name +
-							"' is assigned but its value is never used");
+						Report.Warning (Message.CS0219_The_variable_is_assigned_but_its_value_is_never_used, vi.Location, name);
 					} else {
-						Report.Warning (
-							168, vi.Location, "The variable `" +
-							name +
-							"' is declared but never used");
+						Report.Warning (Message.CS0168_The_variable_is_declared_but_never_used, vi.Location, name);
 					} 
 				}
 			}
@@ -3313,7 +3308,7 @@ namespace Mono.CSharp {
 				Type resolvedType = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
 					if (resolvedType.IsSubclassOf (prevCatches [ii])) {
-						Report.Error_T (160, c.loc, prevCatches [ii].FullName);
+						Report.Error_T (Message.CS0160_A_previous_catch_clause_already_catches_all_exceptions_of_this_or_a_super_type, c.loc, prevCatches [ii].FullName);
 						return false;
 					}
 				}

@@ -375,7 +375,7 @@ namespace Mono.CSharp {
 						Location);
 
 					if (member != null) {
-						Report.Error_T (122, Location, GetFullMemberName (member_name));
+						Report.Error_T (Message.CS0122_is_inaccessible_due_to_its_protection_level, Location, GetFullMemberName (member_name));
 						return null;
 					}
 				}
@@ -806,8 +806,7 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & Target) == 0) {
-				// "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.";
-				Report.Error_T (592, Location, Name, GetValidTargets ());
+				Report.Error_T (Message.CS0592_Attribute_is_not_valid_on_this_declaration_type, Location, Name, GetValidTargets ());
 				return;
 			}
 
@@ -838,7 +837,7 @@ namespace Mono.CSharp {
 							return;
 
 						if (arg.Type.IsArray) {
-							Report.Error_T (3016, Location);
+							Report.Error_T (Message.CS3016_Arrays_as_attribute_arguments_are_not_CLS_compliant, Location);
 							return;
 						}
 					}
@@ -856,7 +855,7 @@ namespace Mono.CSharp {
 						return;
 
 					if (arg.Type.IsArray) {
-						Report.Error_T (3016, Location);
+						Report.Error_T (Message.CS3016_Arrays_as_attribute_arguments_are_not_CLS_compliant, Location);
 						return;
 					}
 				}
@@ -1104,7 +1103,7 @@ namespace Mono.CSharp {
 					sb.Append (", ");
 				}
 				sb.Remove (sb.Length - 2, 2);
-				Report.Error_T (657, a.Location, a.Target, sb.ToString ());
+				Report.Error_T (Message.CS0657_is_not_a_valid_attribute_location_for_this_declaration, a.Location, a.Target, sb.ToString ());
 			}
 		}
 
@@ -1242,7 +1241,7 @@ namespace Mono.CSharp {
 
 			foreach (Parameter arg in fixedParameters) {
 				if (!AttributeTester.IsClsCompliant (arg.ParameterType)) {
-					Report.Error_T (3001, loc, arg.GetSignatureForError ());
+					Report.Error_T (Message.CS3001_Argument_type_is_not_CLS_compliant, loc, arg.GetSignatureForError ());
 					return false;
 				}
 			}
@@ -1314,7 +1313,7 @@ namespace Mono.CSharp {
 			for (int i = 1; i < modules.Length; ++i) {
 				Module module = modules [i];
 				if (!IsClsCompliant (module)) {
-					Report.Error_T (3013, module.Name);
+					Report.Error_T (Message.CS3013_Added_modules_must_be_marked_with_the_CLSCompliant_attribute_to_match_the_assembly, module.Name);
 					return;
 				}
 			}
@@ -1414,15 +1413,15 @@ namespace Mono.CSharp {
 		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc)
 		{
 			if (oa.IsError) {
-				Report.Error_T (619, loc, member, oa.Message);
+				Report.Error_T (Message.CS0619_error_is_obsolete, loc, member, oa.Message);
 				return;
 			}
 
 			if (oa.Message == null) {
-				Report.Warning_T (612, loc, member);
+				Report.Warning (Message.CS0612_is_obsolete, loc, member);
 				return;
 			}
-			Report.Warning_T (618, loc, member, oa.Message);
+			Report.Warning (Message.CS0618_warning_is_obsolete, loc, member, oa.Message);
 		}
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)
