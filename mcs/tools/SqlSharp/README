@@ -4,6 +4,22 @@ SQL# CLI - SQL Sharp Command Line Interface
 Use this tool to test connection strings and enter SQL queries 
 to different ADO.NET providers in Mono.
 
+Basically, there are five commands a user should know:
+	\provider, \connectionstring, \open, \quit, and \help
+	
+To connect to a database, you need to do the following:
+1. set your data provider via \provider
+	Example:
+		SQL# \provider mysql
+
+2. set your connection string via \connectionstring
+	Example:
+		SQL# \connectionstring Server=localhost;Database=test;User ID=someuser;Password=somepass
+		
+3. open a connection to the database via \open
+	Example:
+		SQL# \open
+
 Here are the SQL# Commands taken from the help command: \h
 SQL# Commands are case insensitive, so \Q and \q work the same.
 
@@ -11,10 +27,11 @@ CONNECTION AND PROVIDER COMMANDS
 ================================
 
 \ConnectionString to set the ConnectionString
+	
 	Example connection strings for various providers:
 	
 	Microsoft SQL Server via System.Data.SqlClient or Mono.Data.TdsClient provider:
-			SQL# \ConnectionString Server=DANPC;Database=pubs;User ID=danmorg;Password=freetds
+		SQL# \ConnectionString Server=DANPC;Database=pubs;User ID=danmorg;Password=freetds
 		
 	PostgreSQL via Mono.Data.PostgreSqlClient provider:
 		SQL# \ConnectionString host=localhost;dbname=test;user=postgres;pass=fun2db

@@ -1,5 +1,10 @@
 2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
 
+	* README: updated to include directions on
+	connecting to a database
+
+2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
+
 	* README: updated by including help for all the
 	SQL# commands with examples
 
