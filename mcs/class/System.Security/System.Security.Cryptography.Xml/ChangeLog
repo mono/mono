@@ -1,3 +1,12 @@
+2004-03-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Signature.cs: KeyInfo isn't required in schema.
+	* SignedInfo.cs: Added support for missing HMACOutputLength.
+	* SignedXml.cs: Added support to download a reference (experimental).
+	Now throw exception for unknown hash algorithm or canonicalization 
+	methods. Changed GetPublicKey to iterate all available keys (not just
+	the first one).
+
 2004-03-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* KeyInfo.cs : Attribute Id was not handlded.

@@ -2,9 +2,10 @@
 // SignedInfo.cs - SignedInfo implementation for XML Signature
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Collections;
@@ -55,7 +56,6 @@ namespace System.Security.Cryptography.Xml {
 			get { return references; }
 		}
 
-		[MonoTODO ("when does it return non-null string?")]
 		public string SignatureLength {
 			get { return signatureLength; }
 			set { signatureLength = value; }
@@ -132,7 +132,6 @@ namespace System.Security.Cryptography.Xml {
 			return ((xa != null) ? xa.InnerText : null);
 		}
 
-		[MonoTODO("signatureLength for HMAC")]
 		public void LoadXml (XmlElement value) 
 		{
 			if (value == null)
@@ -143,8 +142,16 @@ namespace System.Security.Cryptography.Xml {
 
 			id = GetAttribute (value, XmlSignature.AttributeNames.Id);
 			c14nMethod = XmlSignature.GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.CanonicalizationMethod);
-			signatureMethod = XmlSignature.GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.SignatureMethod);
-			// TODO signatureLength for HMAC
+
+			XmlElement sm = XmlSignature.GetChildElement (value, XmlSignature.ElementNames.SignatureMethod, XmlSignature.NamespaceURI);
+			if (sm != null) {
+				signatureMethod = sm.GetAttribute (XmlSignature.AttributeNames.Algorithm);
+				XmlElement length = XmlSignature.GetChildElement (sm, XmlSignature.ElementNames.HMACOutputLength, XmlSignature.NamespaceURI);
+				if (length != null) {
+					signatureLength = length.InnerText;
+				}
+			}
+
 			for (int i = 0; i < value.ChildNodes.Count; i++) {
 				XmlNode n = value.ChildNodes [i];
 				if (n.NodeType == XmlNodeType.Element &&

@@ -2,15 +2,17 @@
 // SignedXml.cs - SignedXml implementation for XML Signature
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Net;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -21,6 +23,7 @@ namespace System.Security.Cryptography.Xml {
 		private AsymmetricAlgorithm key;
 		private string keyName;
 		private XmlDocument envdoc;
+		private IEnumerator pkEnumerator;
 
 		public SignedXml () 
 		{
@@ -106,8 +109,15 @@ namespace System.Security.Cryptography.Xml {
 				d.Save (ms);
 				return ms;
 			}
-			else
-				return (Stream) t.GetOutput ();
+
+			object obj = t.GetOutput ();
+			if (obj is Stream)
+				return (Stream) obj;
+			else {
+				// e.g. XmlDsigXPathTransform returns XmlNodeList
+				// TODO - fix
+				return null;
+			}
 		}
 
 		private Stream ApplyTransform (Transform t, Stream s) 
@@ -125,20 +135,33 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO("incomplete")]
 		private byte[] GetReferenceHash (Reference r) 
 		{
-			XmlDocument doc = new XmlDocument ();
-			doc.PreserveWhitespace = true;
-			if (r.Uri == "")
+			Stream s = null;
+			XmlDocument doc = null;
+			if (r.Uri == String.Empty) {
 				doc = envdoc;
+			}
 			else {
-				foreach (DataObject obj in signature.ObjectList) {
-					if ("#" + obj.Id == r.Uri) {
-						doc.LoadXml (obj.GetXml ().OuterXml);
-						break;
+				doc = new XmlDocument ();
+				doc.PreserveWhitespace = true;
+
+				if (r.Uri [0] == '#') {
+					foreach (DataObject obj in signature.ObjectList) {
+						if ("#" + obj.Id == r.Uri) {
+							doc.LoadXml (obj.GetXml ().OuterXml);
+							break;
+						}
+					}
+				}
+				else {
+					if (r.Uri.EndsWith (".xml"))
+						doc.Load (r.Uri);
+					else {
+						WebRequest req = WebRequest.Create (r.Uri);
+						s = req.GetResponse ().GetResponseStream ();
 					}
 				}
 			}
 
-			Stream s = null;
 			if (r.TransformChain.Count > 0) {		
 				foreach (Transform t in r.TransformChain) {
 					if (s == null)
@@ -147,11 +170,15 @@ namespace System.Security.Cryptography.Xml {
 						s = ApplyTransform (t, s);
 				}
 			}
-			else
+			else if (s == null) {
+				// apply default C14N transformation
 				s = ApplyTransform (new XmlDsigC14NTransform (), doc);
+			}
 
 			// TODO: We should reuse the same hash object (when possible)
 			HashAlgorithm hash = (HashAlgorithm) CryptoConfig.CreateFromName (r.DigestMethod);
+			if (hash == null)
+				throw new CryptographicException ("Unknown digest algorithm {0}", r.DigestMethod);
 			return hash.ComputeHash (s);
 		}
 
@@ -171,7 +198,7 @@ namespace System.Security.Cryptography.Xml {
 		{
 			Transform t = (Transform) CryptoConfig.CreateFromName (signature.SignedInfo.CanonicalizationMethod);
 			if (t == null)
-				return null;
+				throw new CryptographicException ("Unknown Canonicalization Method {0}", signature.SignedInfo.CanonicalizationMethod);
 
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (signature.SignedInfo.GetXml ().OuterXml);
@@ -187,14 +214,12 @@ namespace System.Security.Cryptography.Xml {
 
 		public bool CheckSignature () 
 		{
-			// CryptographicException
-			if (key == null)
-				key = GetPublicKey ();
-			return CheckSignatureInternal (key);
+			return (CheckSignatureInternal (null) != null);
 		}
 
 		private bool CheckReferenceIntegrity () 
 		{
+			pkEnumerator = null;
 			// check digest (hash) for every reference
 			foreach (Reference r in signature.SignedInfo.References) {
 				// stop at first broken reference
@@ -208,30 +233,50 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
-			return CheckSignatureInternal (key);
+			return (CheckSignatureInternal (key) != null);
 		}
 
-		private bool CheckSignatureInternal (AsymmetricAlgorithm key)
+		private AsymmetricAlgorithm CheckSignatureInternal (AsymmetricAlgorithm key)
 		{
 			// Part 1: Are all references digest valid ?
-			bool result = CheckReferenceIntegrity ();
-			if (result) {
-				// Part 2: Is the signature (over SignedInfo) valid ?
-				SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (signature.SignedInfo.SignatureMethod);
+			if (!CheckReferenceIntegrity ())
+				return null;
 
-				byte[] hash = Hash (sd.DigestAlgorithm);
-				AsymmetricSignatureDeformatter verifier = (AsymmetricSignatureDeformatter) CryptoConfig.CreateFromName (sd.DeformatterAlgorithm);
-
-				if (verifier != null) {
-					verifier.SetKey (key);
-					verifier.SetHashAlgorithm (sd.DigestAlgorithm);
-					result = verifier.VerifySignature (hash, signature.SignatureValue); 
+			if (key != null) {
+				// check with supplied key
+				if (CheckSignatureWithKey (key))
+					return key;
+			}
+			else {
+				// no supplied key, iterates all KeyInfo
+				while ((key = GetPublicKey ()) != null) {
+					if (CheckSignatureWithKey (key))
+						return key;
 				}
-				else
-					result = false;
 			}
 
-			return result;
+			return null;
+		}
+
+		// Is the signature (over SignedInfo) valid ?
+		private bool CheckSignatureWithKey (AsymmetricAlgorithm key) 
+		{
+			if (key == null)
+				return false;
+
+			SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (signature.SignedInfo.SignatureMethod);
+			if (sd == null)
+				return false;
+
+			AsymmetricSignatureDeformatter verifier = (AsymmetricSignatureDeformatter) CryptoConfig.CreateFromName (sd.DeformatterAlgorithm);
+			if (verifier == null)
+				return false;
+
+			verifier.SetKey (key);
+			verifier.SetHashAlgorithm (sd.DigestAlgorithm);
+
+			byte[] hash = Hash (sd.DigestAlgorithm);
+			return verifier.VerifySignature (hash, signature.SignatureValue); 
 		}
 
 		private bool Compare (byte[] expected, byte[] actual) 
@@ -259,7 +304,27 @@ namespace System.Security.Cryptography.Xml {
 			bool result = CheckReferenceIntegrity ();
 			if (result) {
 				// Part 2: Is the signature (over SignedInfo) valid ?
-				byte[] actual = macAlg.ComputeHash (SignedInfoTransformed ());
+				Stream s = SignedInfoTransformed ();
+				if (s == null)
+					return false;
+
+				byte[] actual = macAlg.ComputeHash (s);
+				int length = actual.Length;
+				// HMAC signature may be partial
+				if (signature.SignedInfo.SignatureLength != null) {
+					try {
+						// SignatureLength is in bits
+						length = (Int32.Parse (signature.SignedInfo.SignatureLength) >> 3);
+					}
+					catch {
+					}
+				}
+				if (length != actual.Length) {
+					byte[] trunked = new byte [length];
+					Buffer.BlockCopy (actual, 0, trunked, 0, length);
+					actual = trunked;
+				}
+
 				result = Compare (signature.SignatureValue, actual);
 			}
 			return result;
@@ -267,14 +332,8 @@ namespace System.Security.Cryptography.Xml {
 
 		public bool CheckSignatureReturningKey (out AsymmetricAlgorithm signingKey) 
 		{
-			// here's the key used for verifying the signature
-			if (key == null)
-				key = GetPublicKey ();
-			signingKey = key;
-			// we'll find the key if we haven't already
-
-			// But it might be null when the signature contains only KeyName
-			return CheckSignature (key);
+			signingKey = CheckSignatureInternal (null);
+			return (signingKey != null);
 		}
 
 		public void ComputeSignature () 
@@ -329,23 +388,29 @@ namespace System.Security.Cryptography.Xml {
 			return xel;
 		}
 
+		// According to book ".NET Framework Security" this method
+		// iterates all possible keys then return null
 		protected virtual AsymmetricAlgorithm GetPublicKey () 
 		{
-			AsymmetricAlgorithm key = null;
-			if (signature.KeyInfo != null) {
-				foreach (KeyInfoClause kic in signature.KeyInfo) {
-					if (kic is DSAKeyValue)
-						key = DSA.Create ();
-					else if (kic is RSAKeyValue) 
-						key = RSA.Create ();
+			if (pkEnumerator == null) {
+				pkEnumerator = signature.KeyInfo.GetEnumerator ();
+			}
 
-					if (key != null) {
-						key.FromXmlString (kic.GetXml ().InnerXml);
-						break;
-					}
+			if (pkEnumerator.MoveNext ()) {
+				AsymmetricAlgorithm key = null;
+				KeyInfoClause kic = (KeyInfoClause) pkEnumerator.Current;
+
+				if (kic is DSAKeyValue)
+					key = DSA.Create ();
+				else if (kic is RSAKeyValue) 
+					key = RSA.Create ();
+
+				if (key != null) {
+					key.FromXmlString (kic.GetXml ().InnerXml);
+					return key;
 				}
 			}
-			return key;
+			return null;
 		}
 
 		public XmlElement GetXml () 

@@ -126,7 +126,8 @@ namespace System.Security.Cryptography.Xml {
 				XmlElement sigValue = (XmlElement) value.ChildNodes [i];
 				signature = Convert.FromBase64String (sigValue.InnerText);
 
-				i = NextElementPos (value.ChildNodes, ++i, XmlSignature.ElementNames.KeyInfo, XmlSignature.NamespaceURI, true);
+				// signature isn't required: <element ref="ds:KeyInfo" minOccurs="0"/> 
+				i = NextElementPos (value.ChildNodes, ++i, XmlSignature.ElementNames.KeyInfo, XmlSignature.NamespaceURI, false);
 				if (i > 0) {
 					XmlElement kinfo = (XmlElement) value.ChildNodes [i];
 					key = new KeyInfo ();
