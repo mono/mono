@@ -46,6 +46,7 @@ public class ModuleTest : Assertion
 	// Some of these tests overlap with the tests for ModuleBuilder
 
 	[Test]
+	[Category("NotDotNet")] // path length can cause suprious failures
 	public void TestGlobalData () {
 
 		string name = "moduletest-assembly";
