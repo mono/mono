@@ -1,3 +1,8 @@
+2003-12-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* PathTest.cs : On Unix, "Z:" can be valid local file.
+	  And cosmetic character case fix.
+
 2003-12-19  Nick Drochak <ndrochak@gol.com>
 
 	* PathTest.cs: Make tests pass on .NET 1.1.  Probably still

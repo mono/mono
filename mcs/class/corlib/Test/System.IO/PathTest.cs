@@ -432,7 +432,7 @@ namespace MonoTests.System.IO
 		public void TestGetFullPath2 ()
 		{
 			if (Windows) {
-				AssertEquals ("GetFullPath w#01", @"Z:\", Path.GetFullPath ("z:"));
+				AssertEquals ("GetFullPath w#01", @"Z:\", Path.GetFullPath ("Z:"));
 				AssertEquals ("GetFullPath w#02", @"c:\abc\def", Path.GetFullPath (@"c:\abc\def"));
 				Assert ("GetFullPath w#03", Path.GetFullPath (@"\").EndsWith (@"\"));
 				// "\\\\" is not allowed
@@ -541,11 +541,15 @@ namespace MonoTests.System.IO
 			Assert ("IsPathRooted #08", Path.IsPathRooted ("//"));
 			Assert ("IsPathRooted #09", Path.IsPathRooted ("\\\\"));
 			Assert ("IsPathRooted #10", !Path.IsPathRooted (":"));
-			Assert ("IsPathRooted #11", Path.IsPathRooted ("z:"));
+			if (OS == OsType.Windows) 
+				Assert ("IsPathRooted #11", Path.IsPathRooted ("z:"));
+			else
+				Assert ("IsPathRooted #11", !Path.IsPathRooted ("z:"));
 			Assert ("IsPathRooted #12", Path.IsPathRooted ("z:\\"));
 			Assert ("IsPathRooted #13", Path.IsPathRooted ("z:\\topdir"));
 			// This looks MS BUG. It is treated as absolute path
 			Assert ("IsPathRooted #14", Path.IsPathRooted ("z:curdir"));
+			Assert ("IsPathRooted #15", Path.IsPathRooted ("\\abc\\def"));
 		}
 
 		public void TestCanonicalizeDots ()
