@@ -1,8 +1,9 @@
 //
-// System.Net.WebProxy
+// System.Net.WebProxy.cs
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 
 using System;
@@ -62,10 +63,13 @@ namespace System.Net
 			CheckBypassList ();
 		}
 		
-		[MonoTODO]
 		protected WebProxy (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
-			throw new NotImplementedException ();
+			this.address = (Uri) serializationInfo.GetValue ("address", typeof(Uri));
+			this.bypassOnLocal = serializationInfo.GetBoolean ("bypassOnLocal");
+			this.bypassList = (ArrayList) serializationInfo.GetValue ("bypassList", typeof(ArrayList));
+			this.credentials = null;
+			CheckBypassList ();
 		}
 		
 		// Properties
@@ -159,12 +163,13 @@ namespace System.Net
 				return false;
 			}
 		}
-
-		[MonoTODO]		
+	
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		                                  StreamingContext streamingContext)
 		{
-			throw new NotImplementedException ();
+			serializationInfo.AddValue ("bypassOnLocal", bypassOnLocal);
+			serializationInfo.AddValue ("address", address);
+			serializationInfo.AddValue ("bypassList", bypassList);
 		}
 		
 		// Private Methods

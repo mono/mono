@@ -1,3 +1,7 @@
+2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* WebProxy.cs: Add serialization/ deserialization support
+
 2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ProxyUseType.cs:
