@@ -1,0 +1,6 @@
+2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ChangeLog: Added
+	* AspNetHostingPermissionLevel.cs: Added and implemented
+	* AspNetHostingPermissionAttribute.cs: Added and partially implemented
+	* AspNetHostingPermission.cs: Added and partially implemented
