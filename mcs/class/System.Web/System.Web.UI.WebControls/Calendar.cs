@@ -658,6 +658,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[MonoTODO]
+		protected override void OnPreRender (EventArgs e)
+		{
+		}
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
@@ -1233,6 +1238,12 @@ namespace System.Web.UI.WebControls
 				SelectedDates.SelectRange (fromDate, toDate);
 				OnSelectionChanged ();
 			}
+		}
+
+		[MonoTODO]
+		protected bool HasWeekSelectors (CalendarSelectionMode selectionMode)
+		{
+			return true;
 		}
 	}
 }

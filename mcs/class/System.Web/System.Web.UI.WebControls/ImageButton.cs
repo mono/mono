@@ -81,6 +81,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected override HtmlTextWriterTag TagKey
 		{
 			get

@@ -9,6 +9,7 @@
 // (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
+using System.Collections;
 using System.Globalization;
 using System.IO;
 
@@ -273,6 +274,13 @@ namespace System.Web.UI
 		protected override string RenderBeforeTag ()
 		{
                         return base.RenderBeforeTag ();
+		}
+
+		[MonoTODO]
+		protected Stack FontStack {
+			get {
+				return null;
+			}
 		}
 	}
 }

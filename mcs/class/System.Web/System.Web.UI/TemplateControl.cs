@@ -47,12 +47,13 @@ namespace System.Web.UI {
 		#endregion
 
 		#region Properties
-
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected virtual int AutoHandlers {
 			get { return 0; }
 			set { }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected virtual bool SupportAutoEvents {
 			get { return true; }
 		}

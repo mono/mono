@@ -60,6 +60,12 @@ namespace System.Web.UI
 			GetDirectivesAndContent ();
 		}
 
+		[MonoTODO]
+		protected Type GetCompiledTypeFromCache ()
+		{
+			return null;
+		}
+
 		void GetDirectivesAndContent ()
 		{
 			StreamReader reader = new StreamReader (File.OpenRead (physPath));

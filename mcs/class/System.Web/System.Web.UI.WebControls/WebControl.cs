@@ -351,6 +351,8 @@ namespace System.Web.UI.WebControls
 			writer.RenderEndTag();
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected virtual HtmlTextWriterTag TagKey
 		{
 			get
@@ -359,6 +361,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected virtual string TagName
 		{
 			get

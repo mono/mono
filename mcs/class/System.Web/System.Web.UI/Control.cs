@@ -268,6 +268,9 @@ namespace System.Web.UI
                                 _childControlsCreated = value;
                         }
                 }
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
                 protected virtual HttpContext Context //DIT
                 {
                         get
@@ -309,6 +312,10 @@ namespace System.Web.UI
                                 return _trackViewState;
                         }
                 }
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("ViewState")]
                 protected virtual StateBag ViewState
                 {
                         get
@@ -323,6 +330,8 @@ namespace System.Web.UI
                         }
                 }
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
                 protected virtual bool ViewStateIgnoresCase
                 {
                         get {

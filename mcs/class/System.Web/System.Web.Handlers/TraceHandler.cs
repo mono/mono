@@ -9,6 +9,8 @@
 // (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
+using System.Collections;
+using System.Data;
 using System.Web;
 using System.Web.Util;
 using System.Web.UI;
@@ -127,6 +129,16 @@ namespace System.Web.Handlers
 		private void RenderItem (TraceManager manager, HtmlTextWriter output, int item)
 		{
 			manager.TraceData [item - 1].Render (output);
+		}
+
+		[MonoTODO ("Appears in class status, but...")]
+		protected void ShowDetails (DataSet data)
+		{
+		}
+
+		[MonoTODO ("Appears in class status, but...")]
+		protected void ShowRequests (ArrayList list)
+		{
 		}
 	}
 }

@@ -68,6 +68,8 @@ namespace System.Web.UI.WebControls
 			selectionBits = 0x00;
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected internal StateBag ViewState {
 			get {
 				if (viewState == null) {

@@ -1,3 +1,11 @@
+2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs:
+	* CompareValidator.cs:
+	* ImageButton.cs:
+	* Style.cs:
+	* WebControl.cs: Added protected missing members and attributes.
+
 2004-05-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TextBox.cs: don't save the Text if in ViewState if it's a password.

@@ -365,7 +365,7 @@ protected bool IsAttributeDefined(HtmlTextWriterAttribute key){
 	return false;
 }
 
-protected bool IsAttributeDefined(HtmlTextWriterAttribute key, ref string value){
+protected bool IsAttributeDefined(HtmlTextWriterAttribute key, out string value){
 	value = null;
 	for (int i=0; i < _attrCount; i++) {
 		if (_attrList[i].key == key) {
@@ -384,7 +384,7 @@ protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key){
 	return false;
 }
 
-protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key, ref string value){
+protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key, out string value){
 	value = null;
 	for( int i=0; i < _styleCount; i++) {
 		if (_styleList[i].key == key) {

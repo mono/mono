@@ -95,5 +95,17 @@ namespace System.Web.UI.WebControls
 
 			return Compare (ctrl, cmp, Operator, Type);
 		}
+
+		[MonoTODO]
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			base.AddAttributesToRender (writer);
+		}
+
+		[MonoTODO]
+		protected override bool ControlPropertiesValid ()
+		{
+			return base.ControlPropertiesValid ();
+		}
 	}
 }

@@ -1,5 +1,13 @@
 2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Control.cs:
+	* Html32TextWriter.cs:
+	* HtmlTextWriter.cs:
+	* SimpleWebHandlerParser.cs:
+	* TemplateControl.cs: Added protected missing members and attributes.
+
+2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ObjectStateFormatter.cs: use ObjectFormatter methods instead of
 	calling a protected method of another object.
 
