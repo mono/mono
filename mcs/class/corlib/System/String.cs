@@ -764,12 +764,14 @@ namespace System {
 			return format+arg0.ToString()+arg1.ToString()+arg2.ToString();
 		}
 
-		//public CharEnumerator GetEnumerator ()
-		[MonoTODO]
-                public IEnumerator GetEnumerator ()
+		public CharEnumerator GetEnumerator ()
 		{
-			// FIXME: implement me
-			return null;
+			return new CharEnumerator (this);
+		}
+		
+                IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return new CharEnumerator (this);
 		}
 
 		public override int GetHashCode ()

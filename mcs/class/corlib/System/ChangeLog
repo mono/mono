@@ -1,4 +1,8 @@
 2002-01-18  Duncan Mak  <duncan@ximian.com>
+
+	* CharEnumerator.cs: Implemented.
+	* String.cs (System): Fixed the GetEnumerator () method(s).
+
 	* ObsoleteAttribute.cs:
 	* STAThreadAttribute.cs:
 	* MTAThreadAttribute.cs:
@@ -31,8 +35,6 @@
 
 	* ContextStaticAttribute.cs: Added [Serializable] attribute and
 	put in the missing constructor.
-
-2002-01-18  Duncan Mak  <duncan@ximian.com>
 
 	* Environment.cs: Commented out references to
 	EnvironmentPermissionAttribute, because they're just stubbed out
