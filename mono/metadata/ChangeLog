@@ -1,3 +1,7 @@
+2005-03-17  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_type): Add MONO_TYPE_ARRAY.
+
 2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* file-io.c: disabled file async. IO using aio_*. It uses the
