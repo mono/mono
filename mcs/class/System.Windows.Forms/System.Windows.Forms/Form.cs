@@ -706,8 +706,10 @@
     		{
 			if ( IsMdiChild )
 				window.DefMDIChildProc ( ref m );
-			else if ( IsMdiContainer && mdiClientWnd.IsHandleCreated )
-				window.DefFrameProc ( ref m, mdiClientWnd );
+			else if ( IsMdiContainer && mdiClientWnd.IsHandleCreated ) {
+				if ( m.Msg != Msg.WM_SIZE )
+					window.DefFrameProc ( ref m, mdiClientWnd );
+			}
 			else
     				window.DefWndProc (ref m);
     		}
@@ -816,7 +818,7 @@
     		protected override void  OnResize (EventArgs e)
     		{
     			base.OnResize (e);
-			resizeMdiClient ();
+//			resizeMdiClient ();
     		}
     
     		protected override void  OnStyleChanged (EventArgs e)

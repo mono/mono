@@ -324,7 +324,11 @@
     				return anchor;
     			}
     			set {
-    				anchor=value;
+				if ( anchor != value ) {
+    					anchor = value;
+					if ( anchor != ( AnchorStyles.Left | AnchorStyles.Top ) )
+						Dock = DockStyle.None;
+				}
     			}
     		}
     		
@@ -438,18 +442,8 @@
 	 		//Compact Framework
     		public Rectangle ClientRectangle {
     			get {
-    				if (IsHandleCreated) {
-    					RECT rect = new RECT();
-    					Win32.GetClientRect (Handle, ref rect);
-    					return new Rectangle ((int) rect.left, 
-    							      (int) rect.top,
-    							      (int) rect.right, 
-    							      (int) rect.bottom);
-    				}
-    
-    				// FIXME: is the correct return value for
-    				// window who's handle is not created
-    				return new Rectangle (0, 0, 0, 0);
+				return new Rectangle ( 0, 0, ClientSize.Width, ClientSize.Height );
+ 
     			}
     		}
     		
@@ -672,7 +666,12 @@
     				return dock;
     			}
     			set {
-    				dock=value;
+				if ( dock != value ) {
+    					dock = value;
+					if ( dock != DockStyle.None )
+						 Anchor = ( AnchorStyles.Left | AnchorStyles.Top );
+					OnDockChanged ( EventArgs.Empty );					
+				}
     			}
     		}
     
@@ -1453,6 +1452,7 @@
     		
     		protected virtual void OnDockChanged (EventArgs e)
     		{
+			PerformLayout ( this, "Dock" );
     			if (DockChanged != null)
     				DockChanged (this, e);
     		}
@@ -1606,6 +1606,7 @@
     		
     		protected virtual void OnLocationChanged (EventArgs e) 
     		{
+			PerformLayout ( this, "Location" );
     			if (LocationChanged != null)
     				LocationChanged (this, e);
     		}
@@ -1830,6 +1831,7 @@
     		
     		protected virtual void OnSizeChanged (EventArgs e) 
     		{
+			PerformLayout ( this, "Size" );
     			if (SizeChanged != null)
     				SizeChanged (this, e);
     		}
@@ -2325,7 +2327,12 @@
     		protected void UpdateBounds (
     			int x, int y, int width, int height, int clientWidth,
     			int clientHeight)
-    		{
+		{
+			oldBounds.X = bounds.X;
+			oldBounds.Y = bounds.Y;
+			oldBounds.Width = bounds.Width;
+			oldBounds.Height = bounds.Height;
+
 			bool bLocationChanged = ( bounds.X != x ) || ( bounds.Y != y );
 			bounds.X = x;
 			bounds.Y = y;
@@ -2589,7 +2596,7 @@
 				CallControlWndProc(ref m);
 				break;
     			case Msg.WM_WINDOWPOSCHANGED:
-    				//OnResize (eventArgs);
+    				UpdateBounds ( );
     				CallControlWndProc(ref m);
     			break;
     			case Msg.WM_STYLECHANGED:
@@ -2646,14 +2653,40 @@
 		private void DoDockAndAnchorLayout ( LayoutEventArgs e ) {
 			Rectangle area = DisplayRectangle;
 			
-			/*
-			IEnumerator cw = childControls.GetEnumerator();
-			while ( cw.MoveNext() ) {
-				Control control = (Control) cw.Current;
-				if ( control.Dock == DockStyle.Bottom ) {
-					control.Width = ClientSize.Width;
-				}				
-			}*/
+			for ( int i = childControls.Count - 1; i >= 0; i-- ) {
+				Control control = childControls[i];
+				
+				switch ( control.Dock ) {
+				case DockStyle.Bottom:
+					control.SetBounds ( area.Left, area.Bottom - control.Height,
+								area.Width, control.Height );
+					area.Height -= control.Height;
+				break;
+				case DockStyle.Top:
+					control.SetBounds ( area.Left, area.Y, area.Width, control.Height );
+					area.Y += control.Height;
+					area.Height -= control.Height;
+				break;
+				case DockStyle.Right:
+					control.SetBounds ( area.Right - control.Width,	area.Top,
+								control.Width, area.Height );
+					area.Width -= control.Width;
+				break;
+				case DockStyle.Left:
+					control.SetBounds ( area.Left, area.Y, control.Width, area.Height );
+					area.X += control.Width;
+					area.Width -= control.Width;
+				break;
+				}
+			}
+
+			for ( int i = childControls.Count - 1; i >= 0; i-- ) {
+				Control control = childControls[i];
+				
+				if ( control.Dock == DockStyle.Fill ) {
+					control.SetBounds ( area.X, area.Y, area.Width, area.Height );
+				}	
+			}
 		}
     		
     		/// --- Control: events ---

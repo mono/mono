@@ -78,8 +78,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnLayout(LayoutEventArgs e)
 		{
-			//FIXME:
 			base.OnLayout(e);
+			if ( IsHandleCreated )
+				UpdateParts ( );
 		}
 
 		[MonoTODO]
@@ -239,7 +240,8 @@ namespace System.Windows.Forms {
 					WindowStyles.WS_VISIBLE |
 					WindowStyles.WS_OVERLAPPED |
 					WindowStyles.WS_CLIPCHILDREN |
-					WindowStyles.WS_CLIPCHILDREN );
+					WindowStyles.WS_CLIPCHILDREN ) |
+					(int)( CommonControlStyles.CCS_NORESIZE );
 
 				if( SizingGrip )
 					createParams.Style |= (int)StatusbarControlStyles.SBARS_SIZEGRIP;

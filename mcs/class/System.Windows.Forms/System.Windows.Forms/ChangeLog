@@ -1,3 +1,8 @@
+2003-04-22 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : implementation of docking
+	* Form.cs    : small changes regarding resizing of MDI client window
+	* StatusBar.cs : update parts on Layout event, new style to prevent resizing by the system
+
 2003-04-17 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : implementation of scale functions, bug-fix in ControlCollection.Add
 	* Form.cs    : implementation of ScaleCore method
