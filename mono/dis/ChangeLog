@@ -1,5 +1,9 @@
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
+	* get.c: New function to stringify function pointers.
+	
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
 	* get.c: Fix name escaping so we dont escape everything in the
 	world anymore.
 	
