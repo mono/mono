@@ -276,11 +276,18 @@ namespace CIR {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.Populate ();
 
-			ArrayList delegates = Tree.Types.Delegates;
+			TypeContainer root = Tree.Types;
+
+			ArrayList delegates = root.Delegates;
 			if (delegates != null)
 				foreach (Delegate d in delegates)
-					d.Populate (Tree.Types);
-		       
+					d.Populate (root);
+
+			ArrayList enums = root.Enums;
+			if (enums != null)
+				foreach (Enum en in enums)
+					en.Populate (root);
+			
 		}
 
 		public void EmitCode ()
@@ -288,11 +295,6 @@ namespace CIR {
 			if (type_container_resolve_order != null)
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.Emit ();
-
-			if (Tree.Types.Enums != null)
-				foreach (Enum en in Tree.Types.Enums)
-					en.Emit (Tree.Types);
-
 		}
 		
 		// <summary>

@@ -3107,7 +3107,12 @@ namespace CIR {
 
 				if (fi.IsLiteral) {
 					Type t = fi.FieldType;
-					object o = fi.GetValue (null);
+					object o;
+
+					if (fi is FieldBuilder)
+						o = TypeManager.GetValue ((FieldBuilder) fi);
+					else
+						o = fi.GetValue (fi);
 					
 					if (t.IsSubclassOf (TypeManager.enum_type)) {
 						Expression enum_member = MemberLookup (ec, t, "value__", false, loc); 

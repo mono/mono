@@ -1,3 +1,40 @@
+2001-11-11  Ravi Pratap  <ravi@ximian.com>
+
+	* enum.cs (Emit): Rename to Populate to be more consistent with what
+	we expect it to do and when exactly it is called.
+
+	* class.cs, rootcontext.cs : Update accordingly.
+
+	* typemanager.cs (RegisterField, GetValue): Workarounds for the fact that
+	FieldInfo.GetValue does not work on dynamic types ! S.R.E lameness strikes again !
+
+	* enum.cs (Populate): Register fields with TypeManager.RegisterField.
+
+	* expression.cs (MemberAccess.DoResolve): Adjust code to obtain the value
+	of a fieldinfo using the above, when dealing with a FieldBuilder.
+
+2001-11-10  Ravi Pratap  <ravi@ximian.com>
+
+	* ../errors/cs0031.cs : Add.
+
+	* ../errors/cs1008.cs : Add.
+
+	* ../errrors/cs0543.cs : Add.
+
+	* enum.cs (DefineEnum): Check the underlying type and report an error if not a valid
+	enum type.
+
+	(FindMembers): Implement.
+
+	* typemanager.cs (FindMembers): Re-write to call the appropriate methods for
+	enums and delegates too.
+
+	(enum_types): Rename to builder_to_enum.
+
+	(delegate_types): Rename to builder_to_delegate.
+
+	* delegate.cs (FindMembers): Implement.
+
 2001-11-09  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (IsEnumType): Implement.

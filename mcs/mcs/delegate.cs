@@ -306,6 +306,36 @@ namespace CIR {
 			
 		}
 		
+		// Hack around System.Reflection as found everywhere else
+		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		{
+			ArrayList members = new ArrayList ();
+
+			if ((mt & MemberTypes.Method) != 0) {
+				if (filter (ConstructorBuilder, criteria))
+					members.Add (ConstructorBuilder);
+
+				if (filter (InvokeBuilder, criteria))
+					members.Add (InvokeBuilder);
+
+				if (filter (BeginInvokeBuilder, criteria))
+					members.Add (BeginInvokeBuilder);
+
+				if (filter (EndInvokeBuilder, criteria))
+					members.Add (EndInvokeBuilder);
+			}
+
+			int count = members.Count;
+
+			if (count > 0) {
+				MemberInfo [] mi = new MemberInfo [count];
+				members.CopyTo (mi, 0);
+				return mi;
+			}
+
+			return null;
+		}
+		
 		public void CloseDelegate ()
 		{
 			TypeBuilder.CreateType ();

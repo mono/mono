@@ -119,14 +119,14 @@ public class TypeManager {
 	//  Keeps track of delegate types
 	// </remarks>
 
-	static Hashtable delegate_types;
+	static Hashtable builder_to_delegate;
 
 	// <remarks>
 	//  Keeps track of enum types
 	// </remarks>
 
-	static Hashtable enum_types;
-	
+	static Hashtable builder_to_enum;
+
 	public TypeManager ()
 	{
 		assemblies = new ArrayList ();
@@ -135,8 +135,8 @@ public class TypeManager {
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
 		builder_to_interface = new Hashtable ();
-		delegate_types = new Hashtable ();
-		enum_types = new Hashtable ();
+		builder_to_delegate = new Hashtable ();
+		builder_to_enum  = new Hashtable ();
 	}
 
 	static TypeManager ()
@@ -162,13 +162,13 @@ public class TypeManager {
 	public void AddDelegateType (string name, TypeBuilder t, Delegate del)
 	{
 		types.Add (name, t);
-		delegate_types.Add (t, del);
+		builder_to_delegate.Add (t, del);
 	}
 
 	public void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
 		types.Add (name, t);
-		enum_types.Add (t, en);
+		builder_to_enum.Add (t, en);
 	}
 
 	public void AddUserInterface (string name, TypeBuilder t, Interface i)
@@ -193,7 +193,7 @@ public class TypeManager {
 
 	public static Delegate LookupDelegate (Type t)
 	{
-		return (Delegate) delegate_types [t];
+		return (Delegate) builder_to_delegate [t];
 	}
 	
 	// <summary>
@@ -401,26 +401,30 @@ public class TypeManager {
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
 	{
-		TypeContainer tc;
+		if (!(t is TypeBuilder))
+		        return t.FindMembers (mt, bf, filter, criteria);
 
-		if (IsDelegateType (t))
-		        return null;
+		Enum e = (Enum) builder_to_enum [t];
 
-		if (IsEnumType (t))
-		        return null;
+		if (e != null)
+		        return e.FindMembers (mt, bf, filter, criteria);
+		
+		Delegate del = (Delegate) builder_to_delegate [t];
+
+		if (del != null)
+		        return del.FindMembers (mt, bf, filter, criteria);
 
 		Interface iface = (Interface) builder_to_interface [t];
 
 		if (iface != null) 
 		        return iface.FindMembers (mt, bf, filter, criteria);
 		
-		tc = (TypeContainer) builder_to_container [t];
+		TypeContainer tc = (TypeContainer) builder_to_container [t];
 
-		if (tc == null) 
-		        return t.FindMembers (mt, bf, filter, criteria);
-		else 
+		if (tc != null)
 		        return tc.FindMembers (mt, bf, filter, criteria);
-		
+
+		return null;
 	}
 
 	public static bool IsBuiltinType (Type t)
@@ -436,7 +440,7 @@ public class TypeManager {
 
 	public static bool IsDelegateType (Type t)
 	{
-		Delegate del = (Delegate) delegate_types [t];
+		Delegate del = (Delegate) builder_to_delegate [t];
 
 		if (del != null)
 			return true;
@@ -446,7 +450,7 @@ public class TypeManager {
 
 	public static bool IsEnumType (Type t)
 	{
-		Enum en = (Enum) enum_types [t];
+		Enum en = (Enum) builder_to_enum [t];
 
 		if (en != null)
 			return true;
@@ -533,6 +537,31 @@ public class TypeManager {
 			return types;
 		}
 	}
+	
+	// <remarks>
+	//  This is a workaround the fact that GetValue is not
+	//  supported for dynamic types
+	// </remarks>
+	static Hashtable fields;
+
+	static public bool RegisterField (FieldBuilder fb, object value)
+	{
+		if (fields == null)
+			fields = new Hashtable ();
+
+		if (fields.Contains (fb))
+			return false;
+
+		fields.Add (fb, value);
+
+		return true;
+	}
+
+	static public object GetValue (FieldBuilder fb)
+	{
+		return fields [fb];
+	}
+
 
 	static Hashtable properties;
 	

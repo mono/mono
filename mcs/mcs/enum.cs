@@ -29,7 +29,8 @@ namespace CIR {
 		public readonly RootContext RootContext;
 
 		Hashtable member_to_location;
-		
+		ArrayList field_builders;
+
 		public const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -47,6 +48,7 @@ namespace CIR {
 			OptAttributes = attrs;
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();
+			field_builders = new ArrayList ();
 		}
 
 		// <summary>
@@ -71,6 +73,15 @@ namespace CIR {
 			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
 
 			UnderlyingType = RootContext.TypeManager.LookupType (BaseType);
+
+			if (UnderlyingType != TypeManager.int32_type && UnderlyingType != TypeManager.uint32_type &&
+			    UnderlyingType != TypeManager.int64_type && UnderlyingType != TypeManager.uint64_type &&
+			    UnderlyingType != TypeManager.short_type && UnderlyingType != TypeManager.ushort_type &&
+			    UnderlyingType != TypeManager.byte_type  && UnderlyingType != TypeManager.sbyte_type) {
+				Report.Error (1008, Location,
+					      "Type byte, sbyte, short, ushort, int, uint, long, or ulong expected");
+				return;
+			}
 
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
@@ -182,7 +193,7 @@ namespace CIR {
 			return;
 		}
 		
-		public void Emit (TypeContainer tc)
+		public void Populate (TypeContainer tc)
 		{
 			EmitContext ec = new EmitContext (tc, null, UnderlyingType, ModFlags);
 			
@@ -231,6 +242,10 @@ namespace CIR {
 				}
 				
 				fb.SetConstant (default_value);
+				field_builders.Add (fb);
+
+				if (!TypeManager.RegisterField (fb, default_value))
+					return;
 
 				default_value = GetNextDefaultValue (default_value);
 			}
@@ -254,6 +269,30 @@ namespace CIR {
 					EnumBuilder.SetCustomAttribute (cb);
 				}
 			}
+		}
+		
+		//
+		// Hack around System.Reflection as found everywhere else
+		//
+		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		{
+			ArrayList members = new ArrayList ();
+
+			if ((mt & MemberTypes.Field) != 0) {
+				foreach (FieldBuilder fb in field_builders)
+					if (filter (fb, criteria) == true)
+						members.Add (fb);
+			}
+
+			int count = members.Count;
+
+			if (count > 0) {
+				MemberInfo [] mi = new MemberInfo [count];
+				members.CopyTo (mi, 0);
+				return mi;
+			}
+
+			return null;
 		}
 
 		public void CloseEnum ()

@@ -1010,6 +1010,10 @@ namespace CIR {
 				}
 			}
 
+			if (Enums != null)
+				foreach (Enum en in Enums)
+					en.Populate (this);
+			
 			if (Delegates != null) {
 				foreach (Delegate d in Delegates) 
 					d.Populate (this);
@@ -1337,10 +1341,6 @@ namespace CIR {
 			if (events != null)
 				foreach (Event e in Events)
 					e.Emit (this);
-
-			if (enums != null)
-				foreach (Enum en in enums)
-					en.Emit (this);
 			
 			if (pending_implementations != null)
 				VerifyPendingMethods ();
