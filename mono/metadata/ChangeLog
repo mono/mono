@@ -1,4 +1,10 @@
 
+Mon Mar 4 20:32:43 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, icall.c: use a different method (GetInterfaces)
+	to gather interface info and add isbyref, isprimitive and
+	ispointer to the ves_icall_get_type_info() return value.
+
 Mon Mar 4 11:22:26 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.h: stared adding support for events.
