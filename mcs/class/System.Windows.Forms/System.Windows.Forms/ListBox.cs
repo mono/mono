@@ -9,6 +9,7 @@
 //
 using System.Collections;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -33,6 +34,7 @@ namespace System.Windows.Forms {
 		protected ListBox.ObjectCollection	Items_ = null;
 		protected DrawMode DrawMode_ = DrawMode.Normal;
 		protected bool UseTabStops_ = false;
+		protected bool MultiColumn_ = false;
 		
 		//
 		//	 --- Public Fields
@@ -67,6 +69,19 @@ namespace System.Windows.Forms {
 				base.BackgroundImage = value;
 			}
 		}
+
+		public bool MultiColumn {
+			get {
+				return MultiColumn_;
+			}
+			set {
+				if( MultiColumn_ != value) {
+					MultiColumn_ = value;
+					RecreateHandle();
+				}
+			}
+		}
+
 		[MonoTODO]
 		public override RightToLeft RightToLeft {
 			get {
@@ -324,6 +339,12 @@ namespace System.Windows.Forms {
 							createParams.Style |= (int)ListBoxStyles.LBS_OWNERDRAWVARIABLE;
 							break;
 					}
+					if( MultiColumn_) {
+						createParams.Style |= (int)ListBoxStyles.LBS_MULTICOLUMN | (int)WindowStyles.WS_HSCROLL;
+					}
+					else {
+						createParams.Style |= (int)WindowStyles.WS_VSCROLL;
+					}
 					// CHECKME : this call is commented because (IMHO) Control.CreateHandle supposed to do this
 					// and this function is CreateParams, not CreateHandle
 					// window.CreateHandle (createParams);
@@ -403,6 +424,11 @@ namespace System.Windows.Forms {
 		protected override void OnHandleCreated(EventArgs e) {
 			//FIXME:
 			base.OnHandleCreated(e);
+			if( Items_ != null) {
+				foreach( object item in Items_) {
+					Win32.SendMessage(Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
+				}
+			}
 		}
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) {
@@ -461,24 +487,26 @@ namespace System.Windows.Forms {
 			switch (m.Msg) {
 				case Msg.WM_MEASUREITEM: {
 					MEASUREITEMSTRUCT mis = new MEASUREITEMSTRUCT();
-					Win32.CopyMemory(ref mis, m.LParam, 24);
+					mis = (MEASUREITEMSTRUCT)Marshal.PtrToStructure(m.LParam, mis.GetType());
 					MeasureItemEventArgs args = new MeasureItemEventArgs(CreateGraphics(),mis.itemID);
 					args.ItemHeight = mis.itemHeight;
 					args.ItemWidth = mis.itemWidth;
 					OnMeasureItem( args);
 					mis.itemHeight = args.ItemHeight;
 					mis.itemWidth = args.ItemWidth;
-					Win32.CopyMemory(m.LParam, ref mis, 24);
+					Marshal.StructureToPtr(mis, m.LParam, false);
+					m.Result = (IntPtr)1;
 					}
 					break;
 				case Msg.WM_DRAWITEM: {
 					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
-					Win32.CopyMemory(ref dis, m.LParam, 48);
+					dis = (DRAWITEMSTRUCT)Marshal.PtrToStructure(m.LParam, dis.GetType());
 					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
 					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
 						rect, dis.itemID, (DrawItemState)dis.itemState);
 					OnDrawItem( args);
-					Win32.CopyMemory(m.LParam, ref dis, 48);
+					//Marshal.StructureToPtr(dis, m.LParam, false);
+					m.Result = (IntPtr)1;
 					}
 					break;
 				default:
@@ -696,6 +724,9 @@ namespace System.Windows.Forms {
 				int result = -1;
 				if( item != null) {
 					result = items_.Add(item);
+					if( owner_.IsHandleCreated) {
+						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
+					}
 				}
 				return result;
 			}

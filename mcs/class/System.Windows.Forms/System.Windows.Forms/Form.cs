@@ -304,7 +304,8 @@
 //							//long myStyle = Win32.GetWindowLongA( Handle, Win32.GWL_STYLE);
 //							//myStyle |= (long)Win32.WS_OVERLAPPEDWINDOW;
 //							//Win32.SetWindowLongA( Handle, Win32.GWL_STYLE, myStyle);
-							Win32.SetMenu( Handle, mainMenu_.Handle);
+							int res = Win32.SetMenu( Handle, mainMenu_.Handle);
+							Console.WriteLine ("Form.assignMenu. result {0}", res);
 						}
 						else {
 							Win32.SetMenu( Handle, IntPtr.Zero);
@@ -656,7 +657,7 @@
     		protected override void OnHandleCreated (EventArgs e)
     		{
     			base.OnHandleCreated (e);
-				Console.WriteLine ("OnHandleCreated");
+				Console.WriteLine ("Form.OnHandleCreated");
 				assignMenu();
 			}
     

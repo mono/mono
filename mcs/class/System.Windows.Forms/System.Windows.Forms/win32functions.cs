@@ -40,7 +40,7 @@ namespace System.Windows.Forms{
 	/// <summary>
 	/// Windows API Functions
 	/// </summary>
-	public class Win32
+	public class Win32 
 	{
 		#region Constructors
 		// No need to construct this object
@@ -76,19 +76,6 @@ namespace System.Windows.Forms{
 			int systemNameBufferSize);
 		[DllImport("kernel32.dll")]
 		internal static extern void OutputDebugString(string message);
-
-		[DllImport("kernel32.dll")]
-		internal static extern MEASUREITEMSTRUCT MulDiv(IntPtr ptr, int AlwaysOne, int AlwaysOneDiv);
-		[DllImport("kernel32.dll")]
-		internal static extern void CopyMemory(IntPtr ptr, ref MEASUREITEMSTRUCT mis, int Size);
-		[DllImport("kernel32.dll")]
-		internal static extern void CopyMemory(ref MEASUREITEMSTRUCT mis, IntPtr ptr, int Size);
-		[DllImport("kernel32.dll")]
-		internal static extern void CopyMemory(IntPtr ptr, ref DRAWITEMSTRUCT mis, int Size);
-		[DllImport("kernel32.dll")]
-		internal static extern void CopyMemory(ref DRAWITEMSTRUCT mis, IntPtr ptr, int Size);
-		[DllImport("kernel32.dll")]
-		internal static extern void CopyMemory(ref PAINTSTRUCT ps, IntPtr ptr, int Size);
 
 		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
 			 CharSet = CharSet.Auto)]
@@ -133,47 +120,47 @@ namespace System.Windows.Forms{
 		static internal extern int SetMapMode(IntPtr hDC, int fnMapMode);
 		[DllImport("gdi32.dll")]
 		static internal extern int GetObjectType(IntPtr handle);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFO_FLAT bmi, 
 			int iUsage, ref int ppvBits, IntPtr hSection, int dwOffset);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int GetDIBits(IntPtr hDC, IntPtr hbm, int StartScan, int ScanLines, int lpBits, BITMAPINFOHEADER bmi, int usage);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int GetDIBits(IntPtr hdc, IntPtr hbm, int StartScan, int ScanLines, int lpBits, ref BITMAPINFO_FLAT bmi, int usage);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern IntPtr GetPaletteEntries(IntPtr hpal, int iStartIndex, int nEntries, byte[] lppe);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern IntPtr GetSystemPaletteEntries(IntPtr hdc, int iStartIndex, int nEntries, byte[] lppe);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int SetDCBrushColor(IntPtr hdc,  int crColor);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern IntPtr CreateSolidBrush(int crColor);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int SetBkMode(IntPtr hDC, BackgroundMode mode);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int SetViewportOrgEx(IntPtr hdc,  int x, int y,  int param);
-		[DllImport("gdi32")]
-        internal static extern int SetTextColor(IntPtr hDC, int colorRef);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
+		internal static extern int SetTextColor(IntPtr hDC, int colorRef);
+		[DllImport("gdi32.dll")]
 		internal static extern int SetStretchBltMode(IntPtr hDC, StrechModeFlags StrechMode);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int SetPixel(IntPtr hDC, int x, int y, int color);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern IntPtr CreatePen(PenStyle penStyle, int width, int color);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int GetClipRgn(IntPtr hDC, ref IntPtr region);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern IntPtr CreateRectRgn(int nLeftRect,  int TopRect, int nRightRect, int nBottomRect);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int GetRgnBox(IntPtr hRegion, ref RECT rc);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern IntPtr GetStockObject(GSO_ objectType);
-		[DllImport("gdi32")]
+		[DllImport("gdi32.dll")]
 		internal static extern int ExtTextOut(IntPtr hdc, int x, int y,
-				ExtTextOutFlags options, ref RECT rc, int str, int strLen, IntPtr distances);
-		[DllImport("gdi32")]
+			ExtTextOutFlags options, ref RECT rc, int str, int strLen, IntPtr distances);
+		[DllImport("gdi32.dll")]
 		internal static extern int ExtTextOut(IntPtr hdc, int x, int y,
-				ExtTextOutFlags options, ref RECT rc, string str, int strLen, IntPtr distances);
+			ExtTextOutFlags options, ref RECT rc, string str, int strLen, IntPtr distances);
 
 		[DllImport ("gdi32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
@@ -185,7 +172,7 @@ namespace System.Windows.Forms{
 			 CharSet = CharSet.Auto)]
 		internal static extern uint SetBkColor (IntPtr hdc, uint crColor);
 
-		internal static int RGB(Color color)
+		internal static int RGB(Color color) 
 		{
 			return color.R | (color.G << 8) | (color.B << 16);
 		}
@@ -195,7 +182,7 @@ namespace System.Windows.Forms{
 		#region Uxtheme.dll functions
 		[DllImport("uxtheme.dll")]
 		static public extern int SetWindowTheme(IntPtr hWnd, StringBuilder AppID, StringBuilder ClassID);
-		static public void DisableWindowsXPTheme(IntPtr hWnd)
+		static public void DisableWindowsXPTheme(IntPtr hWnd) 
 		{
 			// Disable using the Window XP Theme for the Window handle
 			// passed as a parameter
@@ -205,7 +192,7 @@ namespace System.Windows.Forms{
 		}
 		#endregion
 	
-		#region User32.dll functions
+		#region user32.dll functions
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		static internal extern IntPtr GetDesktopWindow();
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
@@ -222,45 +209,45 @@ namespace System.Windows.Forms{
 		static internal extern IntPtr SetClipboardData( int Format, IntPtr hData);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		static internal extern bool GetMenuItemRect(IntPtr hWnd, IntPtr hMenu, int Item, ref RECT rc);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern int SendMessage(IntPtr hWnd, Msg msg, int wParam, int lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, int msg, int wParam, ref RECT lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref POINT lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern int SendMessage(IntPtr hWnd, int msg, int wParam, string lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern int SendMessage(IntPtr hWnd, Msg msg, int wParam, string lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, ToolBarMessages msg, int wParam, ref TBBUTTON lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, ToolBarMessages msg, int wParam, ref TBBUTTONINFO lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern int SendMessage(IntPtr hWnd, RebarMessages msg, int wParam, ref REBARBANDINFO lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TVITEM lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TVINSERTSTRUCT lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TVSORTCB lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern int SendMessage(IntPtr hWnd, TreeViewMessages msg, int wParam, ref TVHITTESTINFO hti);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, ListViewMessages msg, int wParam, ref LVITEM lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, HeaderControlMessages msg, int wParam, ref HDITEM lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern void SendMessage(IntPtr hWnd, HeaderControlMessages msg, int wParam, ref HD_HITTESTINFO hti);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		internal static extern int SendMessage(IntPtr hWnd, HeaderControlMessages msg, int wParam, int lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="PostMessageA")]
 		internal static extern IntPtr PostMessage(IntPtr hWnd, int msg, int wParam, int lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="PostMessageA")]
 		internal static extern IntPtr PostMessage(IntPtr hWnd, Msg msg, int wParam, int lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr SetWindowsHookEx(WindowsHookCodes hookid, HookProc pfnhook, IntPtr hinst, int threadid);
@@ -273,83 +260,119 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal extern static IntPtr GetDlgItem(IntPtr hDlg, int nControlID);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-        internal extern static int InvalidateRect(IntPtr hWnd,  ref RECT rc, int bErase);
+		internal extern static int InvalidateRect(IntPtr hWnd,  ref RECT rc, int bErase);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal extern static int InvalidateRect(IntPtr hWnd,  IntPtr rc, int bErase);
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool WaitMessage();
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="PeekMessageA")]
 		internal static extern bool PeekMessage(ref MESSAGE msg, int hWnd, int wFilterMin, int wFilterMax, PeekMessageFlags flags);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="GetMessageA")]
 		internal static extern bool GetMessage(ref MESSAGE msg, int hWnd, int wFilterMin, int wFilterMax);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool TranslateMessage(ref MESSAGE msg);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="DispatchMessageA")]
 		internal static extern bool DispatchMessage(ref MESSAGE msg);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="LoadCursorA")]
 		internal static extern IntPtr LoadCursor(IntPtr hInstance, CursorType cursor);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr SetCursor(IntPtr hCursor);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr BeginPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref POINT pptDst, ref SIZE psize, 
 			IntPtr hdcSrc, ref POINT pprSrc, Int32 crKey, ref BLENDFUNCTION pblend, UpdateLayeredWindowFlags dwFlags);
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool ClientToScreen(IntPtr hWnd, ref POINT pt);
+		
+		internal static bool ClientToScreen(IntPtr hWnd, ref RECT rect) {
+			POINT pt1 = new POINT();
+			pt1.x = rect.left;
+			pt1.y = rect.top;
+			POINT pt2 = new POINT();
+			pt2.x = rect.right;
+			pt2.y = rect.bottom;
+			bool result = Win32.ClientToScreen(hWnd, ref pt1);
+			result &= Win32.ClientToScreen(hWnd, ref pt2);
+			rect.left = pt1.x;
+			rect.top = pt1.y;
+			rect.right = pt2.x;
+			rect.bottom = pt2.y;
+			return result;
+		}
 
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern bool TrackMouseEvent(ref TRACKMOUSEEVENT tme);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern bool SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool redraw);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern short GetKeyState(int virtKey);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern int GetClassName(IntPtr hWnd,  StringBuilder ClassName, int nMaxCount);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern int SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, int dwNewLong);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern IntPtr SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, WinProc winProc);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern IntPtr SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, WndProc winProc);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern IntPtr GetDCEx(IntPtr hWnd, IntPtr hRegion, int flags);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern IntPtr GetWindowDC(IntPtr hWnd);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern int FillRect(IntPtr hDC, ref RECT rect, IntPtr hBrush);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern int SetWindowText(IntPtr hWnd, string text);
-
-		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int maxCount);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern bool ScreenToClient(IntPtr hWnd, ref POINT pt);
+
+		internal static bool ScreenToClient(IntPtr hWnd, ref RECT rect) {
+			POINT pt1 = new POINT();
+			pt1.x = rect.left;
+			pt1.y = rect.top;
+			POINT pt2 = new POINT();
+			pt2.x = rect.right;
+			pt2.y = rect.bottom;
+			bool result = Win32.ScreenToClient(hWnd, ref pt1);
+			result &= Win32.ScreenToClient(hWnd, ref pt2);
+			rect.left = pt1.x;
+			rect.top = pt1.y;
+			rect.right = pt2.x;
+			rect.bottom = pt2.y;
+			return result;
+		}
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern bool TrackMouseEvent(ref TRACKMOUSEEVENT tme);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern bool SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool redraw);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern short GetKeyState(int virtKey);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern int GetClassName(IntPtr hWnd,  StringBuilder ClassName, int nMaxCount);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="SetWindowLongA")]
+		internal static extern int SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, int dwNewLong);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="SetWindowLongA")]
+		internal static extern IntPtr SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, WinProc winProc);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="SetWindowLongA")]
+		internal static extern IntPtr SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, WndProc winProc);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern IntPtr GetDCEx(IntPtr hWnd, IntPtr hRegion, int flags);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern int FillRect(IntPtr hDC, ref RECT rect, IntPtr hBrush);
+
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SetWindowTextA")]
+		internal static extern int SetWindowText(IntPtr hWnd, string text);
+
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="GetWindowTextA")]
+		internal static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int maxCount);
+
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
 		static internal extern int SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)] 
@@ -395,25 +418,25 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		static internal extern int GetScrollBarInfo(IntPtr hWnd, SystemObject id, ref SCROLLBARINFO sbi);
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="GetWindowLongA")]
 		static internal extern IntPtr GetWindowLong(IntPtr hWnd, GetWindowLongFlag flag);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		static internal extern int SetProp(IntPtr hWnd, IntPtr atom, IntPtr hData);
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="CallWindowProcA")]
 		static internal extern int CallWindowProc(IntPtr hOldProc, IntPtr hWnd, int message, int wParam, int lParam);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		static internal extern int EndMenu();
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-        static internal extern int DefWindowProc(IntPtr hWnd, int message, int wParam, int lParam);
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="DefWindowProcA")]
+		static internal extern int DefWindowProc(IntPtr hWnd, int message, int wParam, int lParam);
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-        static internal extern IntPtr LoadCursor(IntPtr hInstance, LC_ standardCursor);
+		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="LoadCursorA")]
+		static internal extern IntPtr LoadCursor(IntPtr hInstance, LC_ standardCursor);
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="RegisterWindowMessageA")]
 		static internal extern int RegisterWindowMessage( string message_name);
 
 		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall, 
@@ -455,27 +478,27 @@ namespace System.Windows.Forms{
 
 		#region Shell32.dll functions
 
-		[DllImport("Shell32.dll", CharSet=CharSet.Auto)]
-		internal static extern IntPtr SHGetFileInfo(string drivePath, int fileAttributes, 
+		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
+		internal static extern IntPtr SHGetFileInfo(string drivePath, int fileAttributes,
 			out SHFILEINFO fileInfo, int countBytesFileInfo, ShellFileInfoFlags flags);
 
-		[DllImport("Shell32.dll", CharSet=CharSet.Auto)]
-		internal static extern IntPtr SHGetFileInfo(IntPtr idl, int fileAttributes, 
+		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
+		internal static extern IntPtr SHGetFileInfo(IntPtr idl, int fileAttributes,
 			out SHFILEINFO fileInfo, int countBytesFileInfo, ShellFileInfoFlags flags);
 
-		[DllImport("Shell32.dll", CharSet=CharSet.Auto)]
+		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
 		internal static extern int SHGetSpecialFolderLocation(IntPtr hwndOwner, ShellSpecialFolder folder, out IntPtr idl);
 
-		[DllImport("Shell32.dll", CharSet=CharSet.Auto)]
+		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
 		internal static extern int SHGetMalloc(out IMalloc alloc);
 
-		[DllImport("Shell32.dll", CharSet=CharSet.Auto)]
+		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
 		internal static extern int SHGetDesktopFolder(out IShellFolder folder);
-		
-		[DllImport("Shell32.dll", CharSet=CharSet.Auto)]
+
+		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
 		internal static extern int SHGetPathFromIDList(IntPtr idl, StringBuilder path);
 
-		internal static void SHFreeMalloc(IntPtr handle)
+		internal static void SHFreeMalloc(IntPtr handle) 
 		{
 			IMalloc alloc = null;
 			try 
@@ -487,14 +510,14 @@ namespace System.Windows.Forms{
 				IUnknown iUnknown = (IUnknown)alloc;
 				iUnknown.Release();
 			}
-			catch (Exception e)
+			catch (Exception e) 
 			{
 				// In case the Garbage collector is trying to free
 				// this memory from its own thread
 				Debug.WriteLine(e.Message);
 			}
 		}
-		
+
 		#endregion
 
 		#region Common Controls functions
@@ -552,11 +575,11 @@ namespace System.Windows.Forms{
 
 		[DllImport("comctl32.dll")]
 		internal static extern int ImageList_SetDragCursorImage(IntPtr himlDrag, int iDrag, int dxHotspot, int dyHotspot);
-								
+
 		internal static int ImageList_DrawEx(IntPtr hImageList, int imageIndex, IntPtr hDCDest, int x, int y, int dx, int dy,   
-			ImageListDrawColor backColor, ImageListDrawColor foreColor, ImageListDrawFlags flags)
+			ImageListDrawColor backColor, ImageListDrawColor foreColor, ImageListDrawFlags flags) 
 		{
-            uint bColor = (uint)ImageListDrawColors.CLR_NONE;
+			uint bColor = (uint)ImageListDrawColors.CLR_NONE;
 			if ( backColor == ImageListDrawColor.Default )
 				bColor =  (uint)ImageListDrawColors.CLR_DEFAULT;
 
@@ -569,7 +592,7 @@ namespace System.Windows.Forms{
 		}
 
 		
-		static internal bool IsCommonCtrl6()
+		static internal bool IsCommonCtrl6() 
 		{
 			DLLVERSIONINFO dllVersion = new DLLVERSIONINFO();
 			// We are assummng here that anything greater or equal than 6
@@ -582,67 +605,67 @@ namespace System.Windows.Forms{
 		#endregion
 
 		#region Win32 Macro-Like helpers
-		internal static int X_LPARAM(int lParam)
+		internal static int X_LPARAM(int lParam) 
 		{
 			return (lParam & 0xffff);
 		}
 	 
-		internal static int Y_LPARAM(int lParam)
+		internal static int Y_LPARAM(int lParam) 
 		{
 			return (lParam >> 16);
 		}
 
-		internal static Point GetPointFromLPARAM(int lParam)
+		internal static Point GetPointFromLPARAM(int lParam) 
 		{
 			return new Point(X_LPARAM(lParam), Y_LPARAM(lParam));
 		}
 
-		internal static int LOW_ORDER(int param)
+		internal static int LOW_ORDER(int param) 
 		{
 			return (param & 0xffff);
 		}
 
-		internal static int HIGH_ORDER(int param)
+		internal static int HIGH_ORDER(int param) 
 		{
 			return (param >> 16);
 		}
 
-		internal static int INDEXTOOVERLAYMASK(int index)
+		internal static int INDEXTOOVERLAYMASK(int index) 
 		{
 			return (int)((uint)index << 8); 
 		}
 
-		internal static int OVERLAYMASKTOINDEX(int index)
+		internal static int OVERLAYMASKTOINDEX(int index) 
 		{
-			return (int)((uint)index >> 8); 
+			return (int)((uint)index >> 8);
 		}
 
-		internal static int INDEXTOSTATEIMAGEMASK(int i)
+		internal static int INDEXTOSTATEIMAGEMASK(int i) 
 		{
 			return (int)((uint)i << 12);
 		}
 
-		internal static int STATEIMAGEMASKTOINDEX(int i)
+		internal static int STATEIMAGEMASKTOINDEX(int i) 
 		{
-			 return (int)((uint)i >> 12);
+			return (int)((uint)i >> 12);
 		}
 
-		internal static short HRESULT_CODE(int hr)
+		internal static short HRESULT_CODE(int hr) 
 		{
-             return (short)(hr & 0xFFFF);
+			return (short)(hr & 0xFFFF);
 		}
 
-		internal static bool SUCCEEDED(int status)
+		internal static bool SUCCEEDED(int status) 
 		{
 			return (status >= 0);
 		}
 
-		internal static bool FAILED(int status)
+		internal static bool FAILED(int status) 
 		{
 			return (status < 0);
 		}
 
-		internal static int  MAKEINTRESOURCE(int res)
+		internal static int  MAKEINTRESOURCE(int res) 
 		{
 			return 0x0000FFFF & res;
 		}
@@ -661,7 +684,7 @@ namespace System.Windows.Forms{
 		//correct?
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
+			 CharSet = CharSet.Auto,EntryPoint="SendMessageA")]
 		internal static extern uint SendMessage(
 			IntPtr hWnd, uint Msg,
 			IntPtr wParam, IntPtr lParam);
@@ -722,7 +745,7 @@ namespace System.Windows.Forms{
 			 CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal static extern int  TranslateMessage (ref MSG msg);
 
-		[DllImport ("user32.dll", CallingConvention = 
+		[DllImport ("user32.dll", CallingConvention =
 			 CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal static extern int DispatchMessageA (ref MSG msg);
 
@@ -756,7 +779,7 @@ namespace System.Windows.Forms{
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Auto)]
+			 CharSet = CharSet.Ansi)]
 		internal static extern int MessageBoxA (
 			IntPtr hWnd, string pText, string pCaption, uint uType);
 
@@ -772,7 +795,7 @@ namespace System.Windows.Forms{
 		internal static extern IntPtr GetParent (IntPtr hWnd);
 
 		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall, 
+			 CallingConvention = CallingConvention.StdCall,
 			 CharSet = CharSet.Auto)]
 		internal static extern bool SetWindowTextA (
 			IntPtr hWnd, string lpString);
@@ -812,7 +835,7 @@ namespace System.Windows.Forms{
 			 CharSet = CharSet.Auto)]
 		internal static extern bool IsMenu (IntPtr hWnd);
 
-		
+
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Auto)]

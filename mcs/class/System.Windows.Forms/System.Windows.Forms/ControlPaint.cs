@@ -285,21 +285,28 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawCheckBox(
-			Graphics graphics,
-			Rectangle rectangle) {
-			//FIXME:
+		public static void DrawCheckBox( Graphics graphics, Rectangle rectangle, ButtonState state) {
+			// FIXME: (sometimes) DrawFrameControl paints control not in "desired" position ( DC coordinates transformed or something like this)
+			// so, we paint to the bitmap ( fresh DC, (0,0)) and then DrawImage to requested position
+			Bitmap bmp = new Bitmap(rectangle.Width+1, rectangle.Height+1,graphics);
+			Graphics g = Graphics.FromImage(bmp);
+			// FIXME: fill new context with some color here?
+			IntPtr hdc = g.GetHdc();
+			RECT rc = new RECT();
+			rc.left = 0;
+			rc.top = 0;
+			rc.right = rectangle.Width;
+			rc.bottom = rectangle.Height;
+			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, (uint)DrawFrameControl.DFCS_BUTTONCHECK);
+			g.ReleaseHdc(hdc);
+			g.Dispose();
+			graphics.DrawImage(bmp, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			bmp.Dispose();
 		}
 		
 		[MonoTODO]
-		public static void DrawCheckBox(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			ButtonState state) {
-			//FIXME:
+		public static void DrawCheckBox(Graphics graphics, int x, int y, int width, int height, ButtonState state) {
+			DrawCheckBox(graphics, new Rectangle(x, y, width, height), state);
 		}
 		
 		[MonoTODO]

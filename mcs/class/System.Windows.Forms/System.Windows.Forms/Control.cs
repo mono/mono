@@ -81,6 +81,7 @@
     		bool visible;
 			object tag;
 			protected bool mouseIsInside_;
+			bool recreatingHandle;
 
 			// BeginInvoke() etc. helpers
 			static int InvokeMessage = Win32.RegisterWindowMessage("mono_control_invoke_helper");
@@ -189,6 +190,7 @@
     			visible = true;
     			parent = null;
 				mouseIsInside_ = false;
+				recreatingHandle = false;
 				// Do not create Handle here, only in CreateHandle
     			// CreateHandle();//sets window handle. FIXME: No it does not
     		}
@@ -354,12 +356,7 @@
     				} else return bounds;
     			}
     			set {
-    				if (IsHandleCreated)
-    					Win32.SetWindowPos (
-    						//Handle, (IntPtr) 0, value.X, value.Y,
-							Handle, SetWindowPosZOrder.HWND_TOPMOST, value.X, value.Y,
-							value.Width, value.Height, 0);
-    				else bounds = value;
+					SetBounds(value.Left, value.Top, value.Width, value.Height);
     			}
     		}
     		
@@ -487,8 +484,7 @@
 				else {
 					Win32.AdjustWindowRect( ref rc, styleIfNoWindow, menuIfNoWindow ? 1 : 0);
 				}
-				Width = rc.right - rc.left;
-				Height = rc.bottom - rc.top;
+				Size = new Size(rc.right - rc.left, rc.bottom - rc.top);
 			}    		
     		
     		public bool ContainsFocus {
@@ -755,10 +751,11 @@
     				return bounds.Height;
     			}
     			set {
-    				bounds.Height = value;
+    				//bounds.Height = value;
     				if (IsHandleCreated) {
     					// FIXME: SetWindowPos
     				}
+					SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
     			}
     		}
     		
@@ -807,11 +804,10 @@
 					} else return bounds.X;
 				}
 				set {
-					bounds.X = value;
- 
 					if (IsHandleCreated) {
 						// FIXME: SetWindowPos
 					}
+					SetBounds(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
 				}
 			}
  		
@@ -822,13 +818,10 @@
 					return new Point (Top, Left);
 				}
 				set {
-					bounds.X = value.X;
-					bounds.Y = value.Y;
-    
 					if (IsHandleCreated) {
 						// FIXME: SetWindowPos
 					}
-    
+					SetBounds(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
 				}
 			}
     		
@@ -918,7 +911,7 @@
     		[MonoTODO]
     		public bool RecreatingHandle {
     			get {
-    				throw new NotImplementedException ();
+    				return recreatingHandle;
     			}
     		}
     		
@@ -1004,15 +997,16 @@
     			}
     			set {
 					if( IsHandleCreated) {
+/*
 						Win32.SetWindowPos(Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, value.Width, value.Height,
 							SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOMOVE | 
 							SetWindowPosFlags.SWP_NOZORDER);// Activating might be a good idea?? | SetWindowPosFlags.SWP_NOACTIVATE);
+*/							
 					}
-
-					Width = value.Width;
-					Height = value.Height;
-    			}
+					SetBounds(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
+				}
     		}
+
     		internal int tabindex;//for debug/test only. remove
     		[MonoTODO]
     		public int TabIndex {
@@ -1078,12 +1072,11 @@
     				} else return bounds.Top;
  			}
  			set {
- 				bounds.Y = value;
- 
  				if (IsHandleCreated) {
  					// FIXME: SetWindowPos
  				}
- 			}
+				SetBounds(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
+			}
  		}
  		
     		[MonoTODO]
@@ -1117,11 +1110,11 @@
     				return bounds.Width;
     			}
     			set {
-    				bounds.Width = value;
     				if (IsHandleCreated) {
     					// FIXME: SetWindowPos
     				}
-    			}
+					SetBounds(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
+				}
     		}
     		
     		/// --- methods ---
@@ -1656,7 +1649,7 @@
     		
     		protected virtual void OnMouseEnter (EventArgs e) 
     		{
-				System.Console.WriteLine("OnMouseEnter");
+				//System.Console.WriteLine("OnMouseEnter");
     			if (MouseEnter != null)
     				MouseEnter (this, e);
     		}
@@ -1669,7 +1662,7 @@
     		
     		protected virtual void OnMouseLeave (EventArgs e) 
     		{
-				System.Console.WriteLine("OnMouseLeave");
+				//System.Console.WriteLine("OnMouseLeave");
 
 				mouseIsInside_ = false;
     			if (MouseLeave != null)
@@ -1978,25 +1971,41 @@
     		// are big enough to warrant recreating the HWND
     		protected void RecreateHandle() 
     		{
+				recreatingHandle = true;
 				if( IsHandleCreated) {
 					DestroyHandle ();
 					CreateHandle ();
 				}
-       		}
+				recreatingHandle = false;
+			}
     		
  			//Compact Framework
     		[MonoTODO]
     		public Rectangle RectangleToClient (Rectangle r) 
     		{
-    			throw new NotImplementedException ();
+				// FIXME: What to return if Handle is not created yet ?
+				RECT rect = new RECT();
+				rect.left = r.Left;
+				rect.top = r.Top;
+				rect.right = r.Right;
+				rect.bottom = r.Bottom;
+				Win32.ScreenToClient(Handle,ref rect);
+				return new Rectangle( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
     		}
     		
  			//Compact Framework
     		[MonoTODO]
     		public Rectangle RectangleToScreen (Rectangle r) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				// FIXME: What to return if Handle is not created yet ?
+				RECT rect = new RECT();
+				rect.left = r.Left;
+				rect.top = r.Top;
+				rect.right = r.Right;
+				rect.bottom = r.Bottom;
+				Win32.ClientToScreen(Handle,ref rect);
+				return new Rectangle( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+			}
     		
     		[MonoTODO]
     		protected static bool ReflectMessage (IntPtr hWnd, ref Message m) {
@@ -2161,22 +2170,45 @@
     		[MonoTODO]
     		public void SetBounds (int x, int y, int width, int height) 
     		{
-				//FIXME:
+				SetBounds(x, y, width, height, BoundsSpecified.All);
 			}
     		
     		[MonoTODO]
-    		public void SetBounds (int x, int y, int width, int height,
-    				       BoundsSpecified specified) 
+    		public void SetBounds (int x, int y, int width, int height, BoundsSpecified specified) 
     		{
-				//FIXME:
+				SetBoundsCore( x, y, width, height, specified);
 			}
     		
     		[MonoTODO]
-    		protected virtual void SetBoundsCore (
-    			int x, int y, int width, int height,
-    			BoundsSpecified specified) 
+    		protected virtual void SetBoundsCore ( int x, int y, int width, int height, BoundsSpecified specified) 
     		{
-				//FIXME:
+				if( IsHandleCreated) {
+//					SetWindowPosFlags flags = SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOZORDER |
+//						SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_DRAWFRAME;
+					SetWindowPosFlags flags = SetWindowPosFlags.SWP_NOZORDER |
+						SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_DRAWFRAME;
+					Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_NOTOPMOST, x, y, width, height, flags);
+					RECT rect = new RECT();
+					Win32.GetWindowRect (Handle, ref rect);
+					if( Parent != null) {
+						Win32.ScreenToClient(Parent.Handle, ref rect);
+					}
+					bounds = new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+				}
+				else {
+					if( (specified & BoundsSpecified.X) != 0) {
+						bounds.X = x;
+					}
+					if( (specified & BoundsSpecified.Y) != 0) {
+						bounds.Y = y;
+					}
+					if( (specified & BoundsSpecified.Width) != 0) {
+						bounds.Width = width;
+					}
+					if( (specified & BoundsSpecified.Height) != 0) {
+						bounds.Height = height;
+					}
+				}
 			}
     		
     		[MonoTODO]

@@ -11,6 +11,7 @@
 using System.ComponentModel;
 using System.Collections;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -37,6 +38,7 @@ namespace System.Windows.Forms {
 		int selecedStart;
 		private ComboBox.ObjectCollection Items_ = null;
 		int itemHeight_;
+		int maxDropDownItems;
 
 		bool updateing; // true when begin update has been called. do not paint when true;
 		// --- Constructor ---
@@ -58,8 +60,10 @@ namespace System.Windows.Forms {
 			text = "";
 			Items_ = new ComboBox.ObjectCollection(this);
 			itemHeight_ = 13;
-
+			maxDropDownItems = 8;
 			SubClassWndProc_ = true;
+
+			Size = DefaultSize;
 		}
 		
 		// --- Properties ---
@@ -91,6 +95,12 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		internal int getDropDownHeight() {
+			// FIXME: use PreferredHeight instead of DefaultSize.Height ?
+			// FIXME: those calculations probably wrong
+			return DefaultSize.Height + (maxDropDownItems + 1) * itemHeight_ - (itemHeight_ / 2);
+		}
+
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
@@ -105,8 +115,12 @@ namespace System.Windows.Forms {
 					createParams.X = Left;
 					createParams.Y = Top;
 					createParams.Width = Width;
-					// FIXME: Create combo box with 5 elements in drop down list box
-					createParams.Height = Height * 5;
+					if( DropDownStyle == ComboBoxStyle.Simple) {
+						createParams.Height = Height;
+					}
+					else {
+						createParams.Height = getDropDownHeight();
+					}
 					createParams.ClassStyle = 0;
 					createParams.ExStyle = (int)( WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_NOPARENTNOTIFY);
 					createParams.Param = 0;
@@ -141,10 +155,12 @@ namespace System.Windows.Forms {
 					if( !integralHeight) {
 						createParams.Style |= (int)ComboBoxStyles.CBS_NOINTEGRALHEIGHT;
 					}
+/*
+ *	Keep Control unsorted, but sort data in Items (ArrayList)
 					if( sorted) {
 						createParams.Style |= (int)ComboBoxStyles.CBS_SORT;
 					}
-
+*/
 					return createParams;
 				}
 				return null;
@@ -156,7 +172,25 @@ namespace System.Windows.Forms {
 				return new Size(121,21);//correct size
 			}
 		}
+/*
+		public new Size Size {
+			//FIXME: should we return client size or someother size???
+			get {
+				return base.Size;
+			}
+			set {
 
+				if( dropDownStyle == ComboBoxStyle.Simple) {
+					Size sz = value;
+					sz.Height += maxDropDownItems * itemHeight_;
+					base.Size = sz;
+				}
+				else {
+					base.Size = value;
+				}
+			}
+		}
+*/
 		public DrawMode DrawMode {
 			get {
 				return drawMode;
@@ -268,10 +302,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public int MaxDropDownItems {
 			get {
-				throw new NotImplementedException ();
+				return maxDropDownItems;
 			}
 			set {
-				//FIXME:		
+				if( maxDropDownItems != value) {
+					maxDropDownItems = value;
+					if( DropDownStyle != ComboBoxStyle.Simple) {
+						Height = getDropDownHeight();
+					}
+				}
 			}
 		}
 		
@@ -371,16 +410,13 @@ namespace System.Windows.Forms {
 					sorted = value;
 					if( IsHandleCreated) {
 						if( sorted) {
-							Win32.UpdateWindowStyle(Handle, 0, (int)ComboBoxStyles.CBS_SORT);
 							object[] items = new object[Items.Count];
 							Items.CopyTo(items, 0);
 							Items.Clear();
 							Items.AddRange(items);
 						}
-						else {
-							Win32.UpdateWindowStyle(Handle, (int)ComboBoxStyles.CBS_SORT, 0);
-						}
 					}
+					selectedIndex = -1;
 				}
 			}
 		}
@@ -395,15 +431,13 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		
-		
-		
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 
 		internal void populateControl( ICollection items) {
 			if( IsHandleCreated && items != null) {
 				foreach( object obj in items) {
+					// CHECKME : shall we check for null here or in Add/Insert functions
 					if( obj != null) {
 						Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_ADDSTRING, 0, getDisplayMemberOfObj(obj));
 					}
@@ -514,7 +548,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnDropDownStyleChanged(EventArgs e) 
 		{
-			//FIXME:		
+			if( DropDownStyleChanged != null) {
+				DropDownStyleChanged(this, e);
+			}
 		}
 		
 		[MonoTODO]
@@ -615,7 +651,24 @@ namespace System.Windows.Forms {
 		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) 
 		{
 			//FIXME:
+			// If DropDownStyle == ComboBoxStyle.Simple, the heigth is a real window height - no control over it
+			// else, 
+			//		if Handle created - specify complete height, ComboBox-control will adjust window rectangle
+			//			else - set the height to Default.
+			if(DropDownStyle != ComboBoxStyle.Simple) {
+				if( IsHandleCreated) {
+					height = getDropDownHeight();
+				}
+				else {
+					height = DefaultSize.Height;
+				}
+			}
 			base.SetBoundsCore(x,y,width,height,specified);
+			// FIXME: this is needed, otherwise painting is not correct
+			if( dropDownStyle == ComboBoxStyle.Simple ) {
+				Win32.InvalidateRect(Handle, IntPtr.Zero, 0);
+				Win32.UpdateWindow(Handle);
+			}
 		}
 		
 		// for IList interface
@@ -639,24 +692,26 @@ namespace System.Windows.Forms {
 			switch (m.Msg) {
 				case Msg.WM_MEASUREITEM: {
 					MEASUREITEMSTRUCT mis = new MEASUREITEMSTRUCT();
-					Win32.CopyMemory(ref mis, m.LParam, 24);
+					mis = (MEASUREITEMSTRUCT)Marshal.PtrToStructure(m.LParam, mis.GetType());
 					MeasureItemEventArgs args = new MeasureItemEventArgs(CreateGraphics(),mis.itemID);
 					args.ItemHeight = mis.itemHeight;
 					args.ItemWidth = mis.itemWidth;
 					OnMeasureItem( args);
 					mis.itemHeight = args.ItemHeight;
 					mis.itemWidth = args.ItemWidth;
-					Win32.CopyMemory(m.LParam, ref mis, 24);
+					Marshal.StructureToPtr(mis, m.LParam, false);
+					m.Result = (IntPtr)1;
 				}
 					break;
 				case Msg.WM_DRAWITEM: {
 					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
-					Win32.CopyMemory(ref dis, m.LParam, 48);
+					dis = (DRAWITEMSTRUCT)Marshal.PtrToStructure(m.LParam, dis.GetType());
 					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
 					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
 						rect, dis.itemID, (DrawItemState)dis.itemState);
 					OnDrawItem( args);
-					Win32.CopyMemory(m.LParam, ref dis, 48);
+					//Marshal.StructureToPtr(dis, m.LParam, false);
+					m.Result = (IntPtr)1;
 				}
 					break;
 /*
@@ -771,22 +826,49 @@ namespace System.Windows.Forms {
 				[MonoTODO] get { return collection_.IsSynchronized; }
 			}
 			
+			class ComboItemComparer : IComparer {
+				private ComboBox owner_ = null;
+				public ComboItemComparer(ComboBox owner) {
+					owner_ = owner;
+				}
+
+				public int Compare(object x, object y) {
+					return owner_.getDisplayMemberOfObj(x).CompareTo(owner_.getDisplayMemberOfObj(y));
+				}
+			}
+
 			/// --- methods ---
 			/// --- ObjectCollection Methods ---
 			/// Note: IList methods are stubbed out, otherwise IList interface cannot be implemented
 			[MonoTODO]
-			public int Add(object item) 
-			{
-				int result = collection_.Add(item);
-				owner_.populateControl(new object[] {item});
-				return result;
+			public int Add(object item) {
+				// FIXME: not optimal 
+				int idx = collection_.Add(item);
+				if( owner_.Sorted) {
+					ComboItemComparer cic = new ComboItemComparer(owner_);
+					collection_.Sort(cic);
+					idx = collection_.BinarySearch(item,cic);
+					if( owner_.IsHandleCreated) {
+						Win32.SendMessage(owner_.Handle, (int)ComboBoxMessages.CB_INSERTSTRING, idx, owner_.getDisplayMemberOfObj(item));
+					}
+				}
+				else {
+					if( owner_.IsHandleCreated) {
+						Win32.SendMessage(owner_.Handle, (int)ComboBoxMessages.CB_ADDSTRING, 0, owner_.getDisplayMemberOfObj(item));
+					}
+				}
+				return idx;
 			}
 			
 			[MonoTODO]
 			public void AddRange(object[] items) 
 			{
-				collection_.AddRange(items);
-				owner_.populateControl(items);
+				// FIXME: not optimal 
+				foreach(object item in items) {
+					Add(item);
+				}
+//				owner_.populateControl(items);
+//				collection_.AddRange(items);
 			}
 			
 			[MonoTODO]

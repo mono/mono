@@ -11,6 +11,7 @@
 //
 
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -261,12 +262,13 @@ namespace System.Windows.Forms {
 			switch (m.Msg) {
 				case Msg.WM_DRAWITEM: {
 					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
-					Win32.CopyMemory(ref dis, m.LParam, 48);
+					dis = (DRAWITEMSTRUCT)Marshal.PtrToStructure(m.LParam, dis.GetType());
 					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
 					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
 						rect, dis.itemID, (DrawItemState)dis.itemState);
 					OnDrawItem( args);
-					Win32.CopyMemory(m.LParam, ref dis, 48);
+					//Marshal.StructureToPtr(dis, m.LParam, false);
+					m.Result = (IntPtr)1;
 				}
 					break;
 				default:

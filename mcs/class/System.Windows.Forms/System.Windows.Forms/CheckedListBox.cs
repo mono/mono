@@ -23,6 +23,7 @@ namespace System.Windows.Forms {
 		// private fields
 		private bool checkOnClick;
 		private bool threeDCheckBoxes;
+		private CheckedListBox.ObjectCollection Items_;
 		
 		
 		// --- Constructor ---
@@ -30,6 +31,8 @@ namespace System.Windows.Forms {
 		{
 			checkOnClick = false;
 			threeDCheckBoxes = true;
+			Items_ = new CheckedListBox.ObjectCollection(this);
+			DrawMode_ = DrawMode.Normal;
 		}
 		
 		// --- CheckedListBox Properties ---
@@ -57,37 +60,23 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
-
-				createParams.Caption = Text;
-				createParams.ClassName = "CHECKEDLISTBOX";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE |
-					WindowStyles.WS_CLIPSIBLINGS);
-				window.CreateHandle (createParams);
-				return createParams;
+				if( Parent != null) {
+					CreateParams createParams = base.CreateParams;
+					// set ownerDraw flag to be able to paint check-boxes
+					createParams.Style |= (int)ListBoxStyles.LBS_OWNERDRAWFIXED;
+					return createParams;
+				}
+				return null;
 			}		
 		}
 		
 		[MonoTODO]
 		public override DrawMode DrawMode {
 			get {
-				//FIXME
-				return base.DrawMode;
+				return DrawMode.Normal;
 			}
 			set {
-				//FIXME
-				base.DrawMode = value;
+				// always DrawMode.Normal
 			}
 		}
 		
@@ -106,7 +95,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public CheckedListBox.ObjectCollection Items {
 			get {
-				throw new NotImplementedException (); 
+				return Items_; 
 			}
 		}
 
@@ -188,8 +177,11 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
-			//FIXME
-			base.OnDrawItem(e);
+			Rectangle checkRect = new Rectangle( e.Bounds.Left, e.Bounds.Top, e.Bounds.Height, e.Bounds.Height);
+			Rectangle textRect = new Rectangle( checkRect.Right, e.Bounds.Top, e.Bounds.Width - checkRect.Width, e.Bounds.Height);
+			ControlPaint.DrawCheckBox(e.Graphics, checkRect, ButtonState.Normal);
+			e.Graphics.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
+			//base.OnDrawItem(e);
 		}
 		
 		[MonoTODO]
@@ -204,6 +196,11 @@ namespace System.Windows.Forms {
 		{
 			//FIXME
 			base.OnHandleCreated(e);
+			if( Items_ != null) {
+				foreach( object item in Items_) {
+					Win32.SendMessage(Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
+				}
+			}
 		}
 		
 		// only supports .NET framework, thus is not stubbed out
@@ -265,9 +262,6 @@ namespace System.Windows.Forms {
 		/// - public new event DrawItemEventHandler DrawItem;
 		/// - public new event MeasureItemEventHandler MeasureItem;
 		public event ItemCheckEventHandler ItemCheck;
-		
-		
-		
 		
 		/// sub-class: CheckedListBox.CheckedIndexCollection
 		/// <summary>
