@@ -1,4 +1,13 @@
 2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
+	* expression.cs:
+	* ecore.cs:
+		Fix for resolution of event expression 
+		when we have a AddHandler statement 
+		like 
+		AddHandler Me.E, AddressOf Me.EH
+		Submitted by Raja Harinath<rharinath@novell.com>
+
+2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Unnecessary to and fro conversion of types
 			is removed from AddHandler function
 

@@ -5732,38 +5732,6 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			if (member_lookup is EventExpr) {
-
-				EventExpr ee = (EventExpr) member_lookup;
-				
-				//
-				// If the event is local to this class, we transform ourselves into
-				// a FieldExpr
-				//
-
-				if (ee.EventInfo.DeclaringType == ec.ContainerType) {
-					MemberInfo mi = GetFieldFromEvent (ee);
-
-					if (mi == null) {
-						//
-						// If this happens, then we have an event with its own
-						// accessors and private field etc so there's no need
-						// to transform ourselves : we should instead flag an error
-						//
-						Assign.error70 (ee.EventInfo, loc);
-						return null;
-					}
-
-					Expression ml = ExprClassFromMemberInfo (ec, mi, loc);
-					
-					if (ml == null) {
-						Report.Error (-200, loc, "Internal error!!");
-						return null;
-					}
-					
-					return ResolveMemberAccess (ec, ml, left, loc, left_original);
-				}
-			}
 			
 			if (member_lookup is IMemberExpr) {
 				IMemberExpr me = (IMemberExpr) member_lookup;
@@ -5843,7 +5811,7 @@ namespace Mono.MonoBASIC {
 
 			Expression original = expr;
 			expr = expr.Resolve (ec, flags | ResolveFlags.DisableFlowAnalysis);
-
+			
 			if (expr == null)
 				return null;
 
@@ -6809,7 +6777,7 @@ namespace Mono.MonoBASIC {
 			
 			e = MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc, null);
 
-			if (e is PropertyExpr){
+			if (e is PropertyExpr) {
 				PropertyExpr pe = (PropertyExpr) e;
 
 				pe.IsBase = true;

@@ -4790,6 +4790,8 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
+		Expression field_expr = null;
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (instance_expr != null) {
@@ -4798,12 +4800,20 @@ namespace Mono.MonoBASIC {
 					return null;
 			}
 
+			MemberInfo mi = GetFieldFromEvent (this);
+			if (mi == null)
+					return null;
+			field_expr = ExprClassFromMemberInfo (ec, mi, loc);
+			((FieldExpr) field_expr).InstanceExpression = instance_expr;
+			field_expr = field_expr.DoResolve (ec);
+			if (field_expr == null)
+					return null;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			Report.Error (70, loc, "The event '" + Name + "' can only appear on the left hand side of += or -= (except on the defining type)");
+			field_expr.Emit (ec);
 		}
 
 		public void EmitAddOrRemove (EmitContext ec, Expression source)
