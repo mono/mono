@@ -1,3 +1,7 @@
+2003-03-31  Alan Tam <Tam@SiuLung.com>
+
+	* list.unix: Added UITypeEditor.cs.
+
 2003-02-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list.unix: added ImageAttributes.cs.

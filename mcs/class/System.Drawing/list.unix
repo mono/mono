@@ -23,6 +23,7 @@ System.Drawing.Design/ToolboxComponentsCreatingEventArgs.cs
 System.Drawing.Design/ToolboxComponentsCreatingEventHandler.cs
 System.Drawing.Design/ToolboxItemCreatorCallback.cs
 System.Drawing.Design/ToolboxItem.cs
+System.Drawing.Design/UITypeEditor.cs
 System.Drawing.Drawing2D/AdjustableArrowCap.cs
 System.Drawing.Drawing2D/Blend.cs
 System.Drawing.Drawing2D/ColorBlend.cs
