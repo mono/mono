@@ -1,3 +1,8 @@
+2004-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlElement.cs : set_InnerText was removing children incompletely.
+	  This fixes bug #63574.
+
 2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : Fixed EOF not to return true when it is just
