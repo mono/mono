@@ -1,5 +1,17 @@
 2002-11-22  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Invocation.EmitParams): If the we are dealing
+	with a non-built-in value type, load its address as well.
+
+	(ArrayCreation): Use a a pretty constant instead
+	of the hardcoded value 2.   Use 6 instead of 2 for the number of
+	static initializers.  
+
+	(ArrayCreation.EmitDynamicInitializers): Peel enumerations,
+	because they are not really value types, just glorified integers. 
+
+	* driver.cs: Do not append .exe, the CSC compiler does not do it.
+
 	* ecore.cs: Remove redundant code for enumerations, make them use
 	the same code path as everything else, fixes the casting issue
 	with enumerations in Windows.Forms.

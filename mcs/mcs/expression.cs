@@ -4196,6 +4196,10 @@ namespace Mono.CSharp {
 				
 				ig.Emit (OpCodes.Ldloc, array);
 				IntConstant.EmitInt (ig, j - idx);
+
+				if (t.IsSubclassOf (TypeManager.value_type) && (!TypeManager.IsBuiltinType (t) || t == TypeManager.decimal_type))
+					ig.Emit (OpCodes.Ldelema, t);
+			
 				a.Emit (ec);
 				
 				ArrayAccess.EmitStoreOpcode (ig, t);
@@ -4662,6 +4666,8 @@ namespace Mono.CSharp {
 		// via the InitializeArray method - through EmitStaticInitializers
 		//
 		int num_automatic_initializers;
+
+		const int max_automatic_initializers = 6;
 		
 		public ArrayCreation (Expression requested_base_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
 		{
@@ -5240,8 +5246,12 @@ namespace Mono.CSharp {
 					// Basically we do this for string literals and
 					// other non-literal expressions
 					//
+					if (e is EnumConstant){
+						e = ((EnumConstant) e).Child;
+					}
+					
 					if (e is StringConstant || !(e is Constant) ||
-					    num_automatic_initializers <= 2) {
+					    num_automatic_initializers <= max_automatic_initializers) {
 						Type etype = e.Type;
 						
 						ig.Emit (OpCodes.Ldloc, temp);
@@ -5331,7 +5341,7 @@ namespace Mono.CSharp {
 
 				if (underlying_type != TypeManager.string_type &&
 				    underlying_type != TypeManager.object_type) {
-					if (num_automatic_initializers > 2)
+					if (num_automatic_initializers > max_automatic_initializers)
 						EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
 				}
 				

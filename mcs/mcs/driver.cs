@@ -523,9 +523,6 @@ namespace Mono.CSharp
 		static void SetOutputFile (string name)
 		{
 			output_file = name;
-			string bname = CodeGen.Basename (output_file);
-			if (bname.IndexOf (".") == -1)
-				output_file += ".exe";
 		}
 
 		static void SetWarningLevel (string s)
