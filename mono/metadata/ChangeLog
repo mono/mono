@@ -1,3 +1,10 @@
+2003-10-10  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (MonoReflectionGenericParam): Added `guint32 index'.
+	(mono_reflection_define_generic_parameter): If `gparam->index' is
+	non-zero, create a MONO_TYPE_MVAR.
+	(encode_type): Added support for MONO_TYPE_MVAR.
+
 2003-10-09  Dick Porter  <dick@ximian.com>
 
 	* icall.c:
