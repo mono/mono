@@ -1,3 +1,9 @@
+2002-02-17  Duncan Mak  <duncan@ximian.com>
+
+	* FileDialogPermissionAccess.cs: Add in namespace declaration, so
+	that this one little unique enum wouldn't show up in the System
+	namespace when we ildasm corlib.dll ;-) Oops, my bad.
+
 2002-02-13  Dan Lewis	<dihlewis@yahoo.co.uk>
 
 	* SecurityPermission.cs,

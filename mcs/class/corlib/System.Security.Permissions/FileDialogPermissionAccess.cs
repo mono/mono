@@ -8,12 +8,14 @@
 
 using System;
 
-[Flags]
-[Serializable]
-public enum FileDialogPermissionAccess {
-	None = 0,
-	Open = 1,
-	Save = 2,
-	OpenSave = 3,
+namespace System.Security.Permissions
+{
+	[Flags]	[Serializable]
+	public enum FileDialogPermissionAccess
+	{
+		None = 0,
+		Open = 1,
+		Save = 2,
+		OpenSave = 3,
+	}
 }
-
