@@ -3,6 +3,8 @@
 	* emit-x86.c (arch_handle_exception): big fix - dont use
 	uninitialized next_bp
 	(arch_compile_method): make the jit thread save
+	(x86_magic_trampoline): moved lock/unlock to x86_magic_trampoline
+	to avoid need of recursive mutexes
 
 	* x86.brg: use new mono_assert macros
 
