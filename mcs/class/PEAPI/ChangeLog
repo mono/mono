@@ -1,3 +1,8 @@
+2004-06-03  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: Do not null terminate byte arrays when writing to the
+	blob stream.
+	
 2004-05-25  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: When writing to the blob heap we always set a size.

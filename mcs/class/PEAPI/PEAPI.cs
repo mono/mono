@@ -4982,9 +4982,8 @@ if (rsrc != null)
                         if (val == null) {
                                 index = size;
                                 btable [str] = index;
-                                if (prependSize) CompressNum ((uint) str.Length+1);
+                                if (prependSize) CompressNum ((uint) str.Length);
                                 Write (str);
-                                Write ((byte) 0);
                                 size = (uint) Seek (0, SeekOrigin.Current);
                         } else {
                                 index = (uint) val;
