@@ -55,6 +55,10 @@ namespace System.Windows.Forms {
 				  // Should we reinvent the Button-object for that? (Inherit from Gtk.Container
 				  // and implement our own OnClicked handlers and stuff like that)
 
+				  // Or .. we remove the label and replace it with a Container which
+				  // we fill with the added Controls .. (question: how do I remove the
+				  // label and/or get the Gtk.Widget inside the button ?)
+
 					Gtk.Button gtkbutton = (Gtk.Button)this.owner.widget;
 					gtkbutton.Add (value.widget);
 					list.Add (value);
