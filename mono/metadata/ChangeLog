@@ -1,3 +1,13 @@
+2003-07-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* icall.c: in MS.NET ves_icall_Type_GetInterfaces returns an
+	  empty array if the type is an array. Fixed.
+	  ves_icall_MonoMethod_get_base_definition: if the base method
+	  is abstract, get the MethodInfo from the list of methods of
+	  the class.
+	* reflection.c: ParameterInfo.PositionImpl should be zero-based
+	  and it was 1-based. Fixed in mono_param_get_objects.
+
 2003-07-20  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h: Set version number to 31.
