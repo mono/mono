@@ -477,9 +477,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public TypeExpr CurrentType;
 
-		// The emit context for toplevel objects.
-		protected EmitContext ec;
-
 		//
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
@@ -591,12 +588,6 @@ namespace Mono.CSharp {
 
 			set {
 				in_transit = value;
-			}
-		}
-
-		public EmitContext EmitContext {
-			get {
-				return ec;
 			}
 		}
 
@@ -793,15 +784,15 @@ namespace Mono.CSharp {
 				//
 				// Only accessible to methods in current type or any subtypes
 				//
-				return FamilyAccessible (check_type);
+				return FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamANDAssem:
 				return (check_type.Assembly == tb.Assembly) &&
-					FamilyAccessible (check_type);
+					FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamORAssem:
 				return (check_type.Assembly == tb.Assembly) ||
-					FamilyAccessible (check_type);
+					FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedAssembly:
 				return check_type.Assembly == tb.Assembly;
