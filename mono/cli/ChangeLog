@@ -1,3 +1,11 @@
+Fri Jul 27 13:51:11 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: add a class_size member to MonoClass. We store
+	the static fields after the other class data. Offsets for static
+	fields are offsets from the MonoClass pointer.
+	Properly initialize class->instance_size and deal with static
+	fields when layouting them.
+
 2001-07-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* loader.c (ves_map_ffi_type): impl.
