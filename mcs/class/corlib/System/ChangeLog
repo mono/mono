@@ -1,5 +1,7 @@
 2004-01-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Environment.cs: Bump corlib version number for real this time.
+	
 	* AppDomain.cs (LoadAssembly): Pass the assembly name as a string to
 	the runtime, so it can take into account the Culture etc.
 
