@@ -582,7 +582,7 @@ namespace System.Reflection.Emit {
 		private static extern void build_metadata (ModuleBuilder mb);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getDataChunk (ModuleBuilder mb, byte[] buf, int offset);
+		private extern void WriteToFile (IntPtr handle);
 
 		internal void Save ()
 		{
@@ -606,21 +606,11 @@ namespace System.Reflection.Emit {
 
 			string fileName = fqname;
 			if (assemblyb.AssemblyDir != null)
-				fileName = System.IO.Path.Combine (assemblyb.AssemblyDir, fileName);
-
-			byte[] buf = new byte [65536];
-			FileStream file;
-			int count, offset;
-
-			file = new FileStream (fileName, FileMode.Create, FileAccess.Write);
-
-			offset = 0;
-			while ((count = getDataChunk (this, buf, offset)) != 0) {
-				file.Write (buf, 0, count);
-				offset += count;
-			}
-			file.Close ();
-
+				fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
+			
+			using (FileStream file = new FileStream (fileName, FileMode.Create, FileAccess.Write))
+				WriteToFile (file.Handle);
+			
 			//
 			// The constant 0x80000000 is internal to Mono, it means `make executable'
 			//
