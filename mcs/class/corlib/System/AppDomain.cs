@@ -531,7 +531,15 @@ namespace System {
 		// Changes the active domain and returns the old domain
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern AppDomain InternalSetDomain (AppDomain context);
-			
+
+		// Execute the given method in the given appdomain
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object InternalInvokeInDomain (AppDomain domain, MethodInfo method, object obj, object[] args);
+
+		// Execute the given method in the given appdomain
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object InternalInvokeInDomainByID (int domain_id, MethodInfo method, object obj, object[] args);
+
 		// Changes the active context and returns the old context
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Context InternalSetContext (Context context);

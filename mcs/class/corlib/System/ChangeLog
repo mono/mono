@@ -1,3 +1,7 @@
+2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs: Add InternalInvokeInDomain[ByID] icalls.
+
 2003-10-24  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DateTime.cs: When handling '-' as a date separator, MS.NET uses
