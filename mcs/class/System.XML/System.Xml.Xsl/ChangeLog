@@ -1,3 +1,11 @@
+2005-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BUGS-MS.txt : more bug records.
+
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BUGS-MS.txt : added MS bug information.
+
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ManagedXslTransform.cs : no need to write XML declaration here.
