@@ -5454,7 +5454,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EventField: Event {
 
-		static string[] attribute_targets = new string [] { "method", "field", "event" };
+		static string[] attribute_targets = new string [] { "event", "field", "method" };
 
 		public EventField (DeclSpace ds, Expression type, int mod_flags, bool is_iface, string name,
 			Object init, Attributes attrs, Location loc)

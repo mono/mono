@@ -1,3 +1,8 @@
+2004-06-08  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed #59640
+	* class.cs: (EventField.attribute_targets): Changed default target.
+
 2004-06-08  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.EmitCall): Enable varargs methods.
