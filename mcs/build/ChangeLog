@@ -1,3 +1,15 @@
+2004-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* executable.make ($(PROGRAM)): Move depend on the makefrags ...
+	(all-local): ... here.
+	* library.make ($(the_lib), $(test_lib), $(btest_lib), all-local):
+	Likewise.
+	(LIBRARY_SNK): New default define.  Allows library to be signed
+	with a key other than mono.snk.
+	($(the_lib_signature_stamp)): New stamp file created when an
+	assembly is signed.
+	(install-local, uninstall-local, maybe-sign-lib): Set MONO_PATH.
+
 2004-06-16  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make ($(makefrag),$(test_makefrag),$(btest_makefrag)): 

@@ -55,7 +55,7 @@ ifndef PROGRAM_COMPILE
 PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
-$(PROGRAM): $(makefrag) $(BUILT_SOURCES) $(response)
+$(PROGRAM): $(BUILT_SOURCES) $(response)
 	$(PROGRAM_COMPILE) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 $(makefrag): $(sourcefile)
@@ -70,4 +70,5 @@ endif
 
 -include $(makefrag)
 
+all-local: $(makefrag)
 $(makefrag): $(topdir)/build/executable.make

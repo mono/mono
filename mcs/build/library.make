@@ -28,8 +28,9 @@ endif
 
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
+the_lib_signature_stamp = $(makefrag:.makefrag=.was_signed)
 the_pdb = $(the_lib:.dll=.pdb)
-library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb)
+library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_lib_signature_stamp)
 
 ifndef NO_TEST
 test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll
@@ -88,7 +89,7 @@ endif
 
 all-local: $(the_lib)
 
-install-local: $(the_lib) maybe-sign-lib
+install-local: $(the_lib) 
 
 ifdef LIBRARY_INSTALL_DIR
 install-local:
@@ -101,20 +102,26 @@ uninstall-local:
 else
 
 install-local: $(gacutil)
-	$(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(GACDIR) /package $(PACKAGE)
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(GACDIR) /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
-	$(RUNTIME) $(gacutil) /u $(LIBRARY_NAME:.dll=)
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(gacutil) /u $(LIBRARY_NAME:.dll=)
 
 $(gacutil):
 	cd $(topdir)/tools/gacutil && $(MAKE)
 
 endif
 
-maybe-sign-lib:
 ifndef NO_SIGN_ASSEMBLY
-maybe-sign-lib: $(sn)
-	$(RUNTIME) $(sn) -q -R $(the_lib) $(topdir)/class/mono.snk
+install-local: $(the_lib_signature_stamp)
+
+ifndef LIBRARY_SNK
+LIBRARY_SNK = $(topdir)/class/mono.snk
+endif
+
+$(the_lib_signature_stamp): $(the_lib) $(sn)
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(sn) -q -R $(the_lib) $(LIBRARY_SNK)
+	echo stamp > $@
 endif
 
 $(sn):
@@ -200,7 +207,7 @@ endif
 
 # Fun with dependency tracking
 
-$(the_lib): $(makefrag) $(response)
+$(the_lib): $(response)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
 
 $(makefrag): $(sourcefile)
@@ -220,7 +227,7 @@ endif
 
 ifdef HAVE_CS_TESTS
 
-$(test_lib): $(test_makefrag) $(test_dep) $(test_response) $(test_nunit_dep)
+$(test_lib): $(test_dep) $(test_response) $(test_nunit_dep)
 	$(TEST_COMPILE) /target:library /out:$@ $(test_flags) @$(test_response)
 
 $(test_response): $(test_sourcefile)
@@ -237,7 +244,7 @@ endif
 
 ifdef HAVE_VB_TESTS
 
-$(btest_lib): $(btest_makefrag) $(test_dep) $(btest_response) $(test_nunit_dep)
+$(btest_lib): $(test_dep) $(btest_response) $(test_nunit_dep)
 	$(BTEST_COMPILE) /target:library /out:$@ $(btest_flags) @$(btest_response)
 
 $(btest_response): $(btest_sourcefile)
@@ -252,4 +259,5 @@ $(btest_makefrag): $(btest_response)
 
 endif
 
+all-local: $(makefrag) $(test_makefrag) $(btest_makefrag)
 $(makefrag) $(test_makefrag) $(btest_makefrag): $(topdir)/build/library.make
