@@ -67,6 +67,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override bool Define ()
 		{
+			// Make Define () idempotent.
+			if (FieldBuilder != null)
+				return true;
+
 			if (!base.Define ())
 				return false;
 
