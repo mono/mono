@@ -386,18 +386,31 @@ namespace CIR {
 			} else {
 				// from any class-type S to any interface-type T.
 				if (expr_type.IsClass && target_type.IsInterface) {
-					Type [] interfaces = expr_type.FindInterfaces (Module.FilterTypeName,
-										       target_type.FullName);
-					if (interfaces != null)
-						return new EmptyCast (expr, target_type);
-				}	
+
+					Type [] ifaces = expr_type.GetInterfaces ();
+
+					for (int i = ifaces.Length; i > 0;) {
+						i--;
+						if (ifaces [i] == target_type)
+							return new EmptyCast (expr, target_type);
+					}
+
+					return null;
+				}
 
 				// from any interface type S to interface-type T.
-				// FIXME : Is it right to use IsAssignableFrom ?
-				if (expr_type.IsInterface && target_type.IsInterface)
-					if (target_type.IsAssignableFrom (expr_type))
-						return new EmptyCast (expr, target_type);
-				
+				if (expr_type.IsInterface && target_type.IsInterface) {
+
+					Type [] ifaces = expr_type.GetInterfaces ();
+
+					for (int i = ifaces.Length; i > 0;) {
+						i--;
+						if (ifaces [i] == target_type)
+							return new EmptyCast (expr, target_type);
+					}
+
+					return null;
+				}
 				
 				// from an array-type S to an array-type of type T
 				if (expr_type.IsArray && target_type.IsArray) {
@@ -415,14 +428,13 @@ namespace CIR {
 				
 				
 				// from an array-type to System.Array
-				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
+				if (expr_type.IsArray && target_type == TypeManager.array_type)
 					return new EmptyCast (expr, target_type);
 				
 				// from any delegate type to System.Delegate
 				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
 				    target_type == TypeManager.delegate_type)
-					if (target_type.IsAssignableFrom (expr_type))
-						return new EmptyCast (expr, target_type);
+					return new EmptyCast (expr, target_type);
 					
 				// from any array-type or delegate type into System.ICloneable.
 				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
@@ -1459,26 +1471,58 @@ namespace CIR {
 			// From any interface type S to any interface T provided S is not derived from T
 			//
 			if (source_type.IsInterface && target_type.IsInterface){
-				if (!target_type.IsSubclassOf (source_type))
-					return new ClassCast (source, target_type);
+
+				Type [] ifaces = source_type.GetInterfaces ();
+
+				for (int i = ifaces.Length; i > 0; ) {
+					i--;
+
+					if (ifaces [i] == target_type)
+						return null;
+				}	
+				
+				return new ClassCast (source, target_type);
 			}
 			    
 			//
 			// From any class type S to any interface T, provides S is not sealed
 			// and provided S does not implement T.
 			//
-			if (target_type.IsInterface && !source_type.IsSealed &&
-			    !target_type.IsAssignableFrom (source_type))
+			if (target_type.IsInterface && !source_type.IsSealed) {
+
+				Type [] ifaces = source_type.GetInterfaces ();
+				
+				for (int i = ifaces.Length; i > 0; ) {
+					i--;
+					
+					if (ifaces [i] == target_type)
+						return null;
+				}	
+				
 				return new ClassCast (source, target_type);
+			}
 
 			//
 			// From any interface-type S to to any class type T, provided T is not
 			// sealed, or provided T implements S.
 			//
-			if (source_type.IsInterface &&
-			    (!target_type.IsSealed || source_type.IsAssignableFrom (target_type)))
-				return new ClassCast (source, target_type);
+			if (source_type.IsInterface) {
 
+				if (target_type.IsSealed)
+					return null;
+				
+				Type [] ifaces = target_type.GetInterfaces ();
+				
+				for (int i = ifaces.Length; i > 0; ) {
+					i--;
+					
+					if (ifaces [i] == source_type)
+						return new ClassCast (source, target_type);
+				}	
+				
+				return null;
+			}
+			
 			// From an array type S with an element type Se to an array type T with an 
 			// element type Te provided all the following are true:
 			//     * S and T differe only in element type, in other words, S and T

@@ -39,7 +39,9 @@ namespace CIR {
 		ArrayList defined_indexer;
 		ArrayList defined_events;
 		ArrayList defined_properties;
+
 		ArrayList method_builders;
+		ArrayList property_builders;
 		
 		TypeContainer parent;
 
@@ -71,6 +73,7 @@ namespace CIR {
 			RootContext = rc;
 			
 			method_builders = new ArrayList ();
+			property_builders = new ArrayList ();
 		}
 
 		public AdditionResult AddMethod (InterfaceMethod imethod)
@@ -242,6 +245,37 @@ namespace CIR {
 
 			return mi;
 		}
+
+		// Hack around System.Reflection as found everywhere else
+		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		{
+			ArrayList members = new ArrayList ();
+
+			if ((mt & MemberTypes.Method) != 0) {
+				foreach (MethodBuilder mb in method_builders)
+					if (filter (mb, criteria))
+						members.Add (mb);
+			}
+
+			if ((mt & MemberTypes.Property) != 0) {
+				foreach (PropertyBuilder pb in property_builders)
+				        if (filter (pb, criteria))
+				                members.Add (pb);
+			}
+
+			// The rest of the cases, if any, are unhandled at present.
+
+			int count = members.Count;
+
+			if (count > 0) {
+				MemberInfo [] mi = new MemberInfo [count];
+				members.CopyTo (mi, 0);
+				return mi;
+			}
+
+			return null;
+		}
+		
 		
 		//
 		// Populates the methods in the interface
@@ -325,6 +359,8 @@ namespace CIR {
 				//
 				RegisterMethod (mb, setter_args);
 			}
+
+			property_builders.Add (pb);
 		}
 
 		//

@@ -1817,7 +1817,8 @@ namespace CIR {
 				ec.TypeContainer.TypeBuilder.BaseType, ".ctor", false,
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance, location);
-
+			
+			//Console.WriteLine ("Base type : " + ec.TypeContainer.TypeBuilder.BaseType);
 			if (parent_constructor_group == null){
 				Console.WriteLine ("Could not find a constructor in our parent");
 				return false;

@@ -439,7 +439,7 @@ namespace CIR {
 		}
 	}
 
-	public class DelegateInvocation : Expression {
+	public class DelegateInvocation : ExpressionStatement {
 
 		public Expression InstanceExpr;
 		public ArrayList  Arguments;
@@ -489,6 +489,18 @@ namespace CIR {
 		{
 			Delegate del = TypeManager.LookupDelegate (InstanceExpr.Type);
 			Invocation.EmitCall (ec, del.TargetMethod.IsStatic, InstanceExpr, method, Arguments);
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			Emit (ec);
+			// 
+			// Pop the return value if there is one
+			//
+			if (method is MethodInfo){
+				if (((MethodInfo) method).ReturnType != TypeManager.void_type)
+					ec.ig.Emit (OpCodes.Pop);
+			}
 		}
 
 	}

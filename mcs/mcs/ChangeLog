@@ -1,3 +1,25 @@
+2001-10-21  Ravi Pratap  <ravi@ximian.com>
+
+	* interface.cs (FindMembers): Implement to work around S.R.E
+	lameness.
+
+	* typemanager.cs (IsInterfaceType): Implement.
+
+	(FindMembers): Update to handle interface types too.
+
+	* expression.cs (ImplicitReferenceConversion): Re-write bits which
+	use IsAssignableFrom as that is not correct - it doesn't work.
+
+	* delegate.cs (DelegateInvocation): Derive from ExpressionStatement
+	and accordingly override EmitStatement.
+
+	* expression.cs (ConvertReferenceExplicit): Re-write similary, this time
+	using the correct logic :-)
+
+2001-10-19  Ravi Pratap  <ravi@ximian.com>
+
+	* ../errors/cs-11.cs : Add to demonstrate error -11 
+
 2001-10-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs (Assign::Resolve): Resolve right hand side first, and

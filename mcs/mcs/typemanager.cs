@@ -322,6 +322,11 @@ public class TypeManager {
 
 		if (IsDelegateType (t))
 		        return null;
+
+		Interface iface = (Interface) builder_to_interface [t];
+
+		if (iface != null) 
+		        return iface.FindMembers (mt, bf, filter, criteria);
 		
 		tc = (TypeContainer) builder_to_container [t];
 		
@@ -337,6 +342,16 @@ public class TypeManager {
 		Delegate del = (Delegate) delegate_types [t];
 
 		if (del != null)
+			return true;
+		else
+			return false;
+	}
+
+	public static bool IsInterfaceType (Type t)
+	{
+		Interface iface = (Interface) builder_to_interface [t];
+
+		if (iface != null)
 			return true;
 		else
 			return false;
