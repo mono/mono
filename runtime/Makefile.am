@@ -14,7 +14,7 @@ symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config
 etc/mono/1.0/machine.config: $(top_srcdir)/data/net_1_1/machine.config
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 
-$(symlinks): $(top_builddir)/config.status
+$(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 # The write check is to foil 'make distcheck'
