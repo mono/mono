@@ -9,7 +9,8 @@ LIB_MCS_FLAGS = \
 	/r:System.dll 			\
 	/r:System.Drawing.dll 		\
 	/r:System.Data.dll		\
-	/r:System.Xml.dll
+	/r:System.Xml.dll		\
+	/r:System.EnterpriseServices.dll
 NO_TEST = yes
 
 include ../../build/library.make
