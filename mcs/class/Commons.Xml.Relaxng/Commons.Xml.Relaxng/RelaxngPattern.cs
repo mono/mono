@@ -970,8 +970,13 @@ namespace Commons.Xml.Relaxng
 
 		public override bool Nullable {
 			get {
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("Internal error: should not reach.");
 			}
+		}
+
+		public override void GetLabels (Hashtable elements, Hashtable attributes)
+		{
+			throw new InvalidOperationException ("Internal error: should not reach.");
 		}
 
 		internal override RdpPattern ExpandRef (Hashtable defs)

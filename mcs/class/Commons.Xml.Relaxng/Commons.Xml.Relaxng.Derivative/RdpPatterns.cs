@@ -36,6 +36,9 @@ using System.Collections;
 using System.Xml;
 using Commons.Xml.Relaxng;
 
+using LabelList = System.Collections.Hashtable;
+
+
 namespace Commons.Xml.Relaxng.Derivative
 {
 	public delegate RdpPattern RdpApplyAfterHandler (RdpPattern p);
@@ -212,6 +215,27 @@ namespace Commons.Xml.Relaxng.Derivative
 		}
 
 		public abstract bool Nullable { get; }
+
+		// fills QName collection
+		public abstract void GetLabels (LabelList elements, LabelList attributes);
+
+		internal void AddNameLabel (LabelList names, RdpNameClass nc)
+		{
+			RdpName name = nc as RdpName;
+			if (name != null) {
+				XmlQualifiedName qname = new XmlQualifiedName (
+					name.LocalName, name.NamespaceURI);
+				names [qname] = qname;
+				return;
+			}
+			RdpNameClassChoice choice = nc as RdpNameClassChoice;
+			if (choice != null) {
+				AddNameLabel (names, choice.LValue);
+				AddNameLabel (names, choice.RValue);
+				return;
+			}
+			// For NsName and AnyName, do nothing.
+		}
 
 		#region Derivative
 		public virtual RdpPattern TextDeriv (string s, XmlReader reader)
@@ -411,6 +435,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RdpContentType.Empty; }
 		}
 
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			// do nothing
+		}
+
 		internal override void MarkReachableDefs () 
 		{
 			// do nothing
@@ -473,6 +502,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return false;
 		}
+
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			// FIXME: Supposed to clear something here?
+		}
 	}
 
 	// Text
@@ -522,6 +556,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		internal override bool ContainsText()
 		{
 			return true;
+		}
+
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			// do nothing
 		}
 	}
 
@@ -635,6 +674,12 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			LValue.GetLabels (elements, attributes);
+			RValue.GetLabels (elements, attributes);
+		}
+
 
 		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
@@ -735,6 +780,12 @@ namespace Commons.Xml.Relaxng.Derivative
 				}
 				return isNullable;
 			}
+		}
+
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			LValue.GetLabels (elements, attributes);
+			RValue.GetLabels (elements, attributes);
 		}
 
 		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
@@ -842,6 +893,13 @@ namespace Commons.Xml.Relaxng.Derivative
 				}
 				return isNullable;
 			}
+		}
+
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			LValue.GetLabels (elements, attributes);
+			if (LValue.Nullable)
+				RValue.GetLabels (elements, attributes);
 		}
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
@@ -954,6 +1012,11 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override bool Nullable {
 			get { return Child.Nullable; }
+		}
+
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			Child.GetLabels (elements, attributes);
 		}
 
 		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
@@ -1069,6 +1132,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RdpContentType.Simple; }
 		}
 
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			Child.GetLabels (elements, attributes);
+		}
+
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			RdpPattern p = Child.ListDeriv (Util.NormalizeWhitespace (s).Split (RdpUtil.WhitespaceChars), 0, reader);			
@@ -1118,6 +1186,11 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override RdpContentType ContentType {
 			get { return RdpContentType.Simple; }
+		}
+
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			// do nothing.
 		}
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
@@ -1242,6 +1315,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RdpContentType.Simple; }
 		}
 
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			// do nothing
+		}
+
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
 		{
 			if (dt.IsTypeEqual (value, s, reader))
@@ -1296,6 +1374,11 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override RdpContentType ContentType {
 			get { return RdpContentType.Empty; }
+		}
+
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			AddNameLabel (attributes, NameClass);
 		}
 
 		bool isExpanded;
@@ -1405,6 +1488,11 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			AddNameLabel (elements, NameClass);
+		}
+
 
 		bool isExpanded;
 		short expanding; // FIXME: It is totally not required, but there is
@@ -1477,6 +1565,11 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public override bool Nullable {
 			get { return false; }
+		}
+
+		public override void GetLabels (LabelList elements, LabelList attributes)
+		{
+			LValue.GetLabels (elements, attributes);
 		}
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)

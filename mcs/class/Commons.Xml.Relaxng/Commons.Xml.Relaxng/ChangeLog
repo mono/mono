@@ -1,3 +1,12 @@
+2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngPattern.cs : added GetLabels() override to RdpUnresolvedRef.
+	* RelaxngValidatingReader.cs :
+	  Added GetLabels() that collects "allowed element names and
+	  attributes" at current state.
+	  Added IsEmptiable that indicates whether current reader can be
+	  closed by an end tag.
+
 2004-11-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngGrammar.cs : fixed error that happened on recompilation.

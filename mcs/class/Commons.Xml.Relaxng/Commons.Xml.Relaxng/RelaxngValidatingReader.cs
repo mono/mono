@@ -75,6 +75,23 @@ namespace Commons.Xml.Relaxng
 			get { return RdpUtil.DebugRdpPattern (prevState, new Hashtable ()); }
 		}
 
+		public bool IsEmptiable {
+			get {
+				PrepareState ();
+				return vState.Nullable;
+			}
+		}
+
+		public void GetLabels (Hashtable elements, Hashtable attributes)
+		{
+			if (elements == null)
+				throw new ArgumentNullException ("elements");
+			if (attributes == null)
+				throw new ArgumentNullException ("attributes");
+			PrepareState ();
+			vState.GetLabels (elements, attributes);
+		}
+
 		private RelaxngException createValidationError (string message)
 		{
 			IXmlLineInfo li = reader as IXmlLineInfo;
@@ -85,13 +102,18 @@ namespace Commons.Xml.Relaxng
 			return new RelaxngException (message + lineInfo, prevState);
 		}
 
-		public override bool Read ()
+		private void PrepareState ()
 		{
 			if (!pattern.IsCompiled) {
 				pattern.Compile ();
 			}
 			if (vState == null)
 				vState = pattern.StartPattern;
+		}
+
+		public override bool Read ()
+		{
+			PrepareState ();
 
 			bool ret = reader.Read ();
 
