@@ -402,7 +402,6 @@ namespace System.Data.SqlClient {
 			ValidateCommand ("ExecuteReader");
 			try {
                                 this.behavior = behavior;
-                                Console.WriteLine (this.behavior.ToString ());
 				Execute (behavior, true);
                                 Connection.DataReader = new SqlDataReader (this);
 			}
