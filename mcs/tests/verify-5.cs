@@ -28,5 +28,24 @@ class T {
 		return n;
 	}
 
+	// This is from System.Text.RegularExpressions.Syntax.Parser::ParseGroup.
+	void foo (int a)
+	{
+		bool b = false;
+
+		while (true) {
+			switch (a) {
+			case 3:
+				break;
+			}
+
+			if (b)
+				goto EndOfGroup;
+		}
+
+	EndOfGroup:
+		;
+	}
+
 	static void Main() {}
 }
