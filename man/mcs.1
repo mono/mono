@@ -6,7 +6,7 @@ mcs \- Mono Compiler Suite.
 [option] [source-files]
 .SH DESCRIPTION
 mcs is the Mono C# compiler, an implementation of the ECMA-334
-specification.  You can pass one or more options to drive the
+language specification.  You can pass one or more options to drive the
 compiler, and a set of source files.  Extra options or arguments can
 be provided in a response file.  Response files are referenced by
 prepending the @ symbol to the response file name.
@@ -38,8 +38,7 @@ Defines a symbol named SYMBOL.  This can be tested in the source code
 by the pre-processor.
 .TP
 .I \-\-debug or \-g
-Generate debugging information.  The debugging information is written
-into an assembler file FILE-debug.s.
+Generate debugging information.  
 .TP
 .I \-\-fatal 
 This is used for debugging the compiler.  This makes the error emission
@@ -137,6 +136,9 @@ Ximian.
 The Mono Compiler Suite is released under the terms of the GNU GPL.
 Please read the accompanying `COPYING' file for details.  Alternative
 licenses are available from Ximian.
+.PP
+.SH SEE ALSO
+mono(1), mint(1)
 .PP
 .SH BUGS
 To report bugs in the compiler, you can use `bug-buddy', or you can
