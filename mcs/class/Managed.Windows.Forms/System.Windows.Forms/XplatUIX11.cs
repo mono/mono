@@ -887,7 +887,7 @@ namespace System.Windows.Forms {
 
 		internal override void DoEvents () {
 			MSG msg = new MSG ();
-			while (GetMessage (ref msg, IntPtr.Zero, 0, 0)) {
+			while (PeekMessage(ref msg, IntPtr.Zero, 0, 0, 0)) {
 				if (msg.message == Msg.WM_PAINT) {
 					TranslateMessage (ref msg);
 					DispatchMessage (ref msg);
@@ -895,9 +895,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO("Obey flags; currently we always PM_REMOVE")]
 		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
-			Console.WriteLine("XplatUIX11.PeekMessage");
-			return true;
+			bool	 pending;
+
+			pending = false;
+			if (message_queue.Count > 0) {
+				pending = true;
+			} else {
+				// Only call UpdateMessageQueue if real events are pending 
+				// otherwise we go to sleep on the socket
+				if (XPending(DisplayHandle) != 0) {
+					UpdateMessageQueue();
+					pending = true;
+				}
+			}
+			if (!pending) {
+				return false;
+			}
+			return GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
 		private IntPtr GetMousewParam(int Delta) {

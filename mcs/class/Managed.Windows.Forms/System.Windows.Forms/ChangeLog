@@ -1,5 +1,11 @@
 2005-01-11  Peter Bartok  <pbartok@novell.com>
 
+	* XplatUIX11.cs (DoEvents): Needs to return when no more events
+	  are pending, so it now calls PeekMessage instead of GetMessage;
+	  implemented a incomplete version of PeekMessage
+	
+2005-01-11  Peter Bartok  <pbartok@novell.com>
+
 	* XplatUIWin32.cs: Switched P/Invokes to unicode charset to avoid
 	  I18n issues
 	* TextBoxBase.cs: Added sending of TextChanged event
