@@ -327,10 +327,9 @@ namespace System.Web {
 			return UrlDecode(str, WebEncoding.Encoding);
 		}
 	
-		private static char [] GetChars (ArrayList b, Encoding e)
+		private static char [] GetChars (MemoryStream b, Encoding e)
 		{
-			byte [] bytes = (byte []) b.ToArray (typeof (byte));
-			return e.GetChars (bytes);
+			return e.GetChars (b.GetBuffer (), 0, (int) b.Length);
 		}
 		
 		public static string UrlDecode (string s, Encoding e)
@@ -344,44 +343,41 @@ namespace System.Web {
 			StringBuilder output = new StringBuilder ();
 			long len = s.Length;
 			NumberStyles hexa = NumberStyles.HexNumber;
-			ArrayList bytes = new ArrayList ();
-			char [] chars;
+			MemoryStream bytes = new MemoryStream ();
 	
 			for (int i = 0; i < len; i++) {
 				if (s [i] == '%' && i + 2 < len) {
 					if (s [i + 1] == 'u' && i + 5 < len) {
-						if (bytes.Count > 0) {
-							chars = GetChars (bytes, e);
-							output.Append (chars);
-							bytes.Clear ();
+						if (bytes.Length > 0) {
+							output.Append (GetChars (bytes, e));
+							bytes.SetLength (0);
 						}
 						output.Append ((char) Int32.Parse (s.Substring (i + 2, 4), hexa));
 						i += 5;
 					} else {
-						bytes.Add ((byte) Int32.Parse (s.Substring (i + 1, 2), hexa));
+						bytes.WriteByte ((byte) Int32.Parse (s.Substring (i + 1, 2), hexa));
 						i += 2;
 					}
-				} 
-				else {
-					if (bytes.Count > 0) {
-						chars = GetChars (bytes, e);
-						output.Append (chars);
-						bytes.Clear ();
-					}
+					continue;
+				}
 
-					if (s [i] == '+') {
-						output.Append (' ');
-					} else {
-						output.Append (s [i]);
-					}
+				if (bytes.Length > 0) {
+					output.Append (GetChars (bytes, e));
+					bytes.SetLength (0);
+				}
+
+				if (s [i] == '+') {
+					output.Append (' ');
+				} else {
+					output.Append (s [i]);
 				}
 	         	}
 	
-			if (bytes.Count > 0) {
-				chars = GetChars (bytes, e);
-				output.Append (chars);
+			if (bytes.Length > 0) {
+				output.Append (GetChars (bytes, e));
 			}
 
+			bytes = null;
 			return output.ToString ();
 		}
 	
@@ -430,44 +426,42 @@ namespace System.Web {
 				throw new ArgumentOutOfRangeException ("count");
 
 			StringBuilder output = new StringBuilder ();
-			ArrayList byteArray = new ArrayList ();
-			char [] chars;
+			MemoryStream acc = new MemoryStream ();
 
 			int end = count + offset;
 			for (int i = offset; i < end; i++) {
 				if (bytes [i] == '%' && i + 2 < count) {
 					if (bytes [i + 1] == (byte) 'u' && i + 5 < end) {
-						if (byteArray.Count > 0) {
-							chars = GetChars (byteArray, e);
-							output.Append (chars);
-							byteArray.Clear ();
+						if (acc.Length > 0) {
+							output.Append (GetChars (acc, e));
+							acc.SetLength (0);
 						}
 						output.Append (GetChar (bytes, offset + 2, 4));
 						i += 5;
 					} else {
-						byteArray.Add ((byte) GetChar (bytes, offset + 1, 2));
+						acc.WriteByte ((byte) GetChar (bytes, offset + 1, 2));
 						i += 2;
 					}
-				} else {
-					if (byteArray.Count > 0) {
-						chars = GetChars (byteArray, e);
-						output.Append (chars);
-						byteArray.Clear ();
-					}
+					continue;
+				}
 
-					if (bytes [i] == '+') {
-						output.Append (' ');
-					} else {
-						output.Append ((char) bytes [i]);
-					}
+				if (acc.Length > 0) {
+					output.Append (GetChars (acc, e));
+					acc.SetLength (0);
+				}
+
+				if (bytes [i] == '+') {
+					output.Append (' ');
+				} else {
+					output.Append ((char) bytes [i]);
 				}
 			}
 
-			if (byteArray.Count > 0) {
-				chars = GetChars (byteArray, e);
-				output.Append (chars);
+			if (acc.Length > 0) {
+				output.Append (GetChars (acc, e));
 			}
 			
+			acc = null;
 			return output.ToString ();
 		}
 	

@@ -1,3 +1,7 @@
+2003-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: small memory usage reduction.
+
 2003-10-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: pass the Uri, not the file path to
