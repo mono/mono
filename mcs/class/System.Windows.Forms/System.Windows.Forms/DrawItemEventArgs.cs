@@ -80,28 +80,36 @@ namespace System.Windows.Forms {
 
 		#region Public Properties
 
-		public Color BackColor 
+		public Color BackColor
 		{
-			get { 
-				return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.Highlight : backColor; 
+			get {
+				//return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.Highlight : backColor;
+				if(DrawItemState.Selected == (state & DrawItemState.Selected)) {
+					return SystemColors.Highlight;
+				}
+				return backColor;
 			}
 		}
 
 		public Rectangle Bounds {
-			get { 
-				return bounds; 
+			get {
+				return bounds;
 			}
 		}
 
 		public Font Font {
-			get { 
-				return font; 
+			get {
+				return font;
 			}
 		}
 
 		public Color ForeColor {
-			get { 
-				return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.HighlightText : foreColor; 
+			get {
+				//return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.HighlightText : foreColor;
+				if(DrawItemState.Selected == (state & DrawItemState.Selected)) {
+					return SystemColors.HighlightText;
+				}
+				return foreColor;
 			}
 		}
 

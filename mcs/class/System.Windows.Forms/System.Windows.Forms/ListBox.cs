@@ -27,6 +27,7 @@ namespace System.Windows.Forms {
 			SubClassWndProc_ = true;
 			BorderStyle_ = BorderStyle.Fixed3D;
 			BackColor = SystemColors.Window;
+			controlStyles_ |= ControlStyles.AllPaintingInWmPaint; 
 		}
 
 		//
@@ -518,7 +519,6 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		
-		bool EraseCompleteBkg_ = false;
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
 			switch (m.Msg) {
@@ -538,15 +538,6 @@ namespace System.Windows.Forms {
 				case Msg.WM_DRAWITEM: {
 					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
 					dis = (DRAWITEMSTRUCT)Marshal.PtrToStructure(m.LParam, dis.GetType());
-					if(EraseCompleteBkg_) {
-						PAINTSTRUCT	ps = new PAINTSTRUCT();
-						Rectangle rc = new Rectangle(new Point(0,0), Size);
-						PaintEventArgs paintEventArgs = new PaintEventArgs( Graphics.FromHdc(dis.hDC), rc);
-						OnPaintBackground(paintEventArgs);
-						paintEventArgs.Dispose();
-						
-						EraseCompleteBkg_ = false;
-					}
 					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
 					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
 						rect, dis.itemID, (DrawItemState)dis.itemState);
@@ -567,12 +558,6 @@ namespace System.Windows.Forms {
 							break;
 					}
 					break;
-				
-				case Msg.WM_ERASEBKGND:
-					m.Result = (IntPtr)1;
-					EraseCompleteBkg_ = true;
-					break;
-				
 				default:
 					base.WndProc(ref m);
 					break;

@@ -156,6 +156,8 @@ namespace System.Windows.Forms {
 			Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height,e.Graphics);
 			Graphics paintOn = Graphics.FromImage(bmp);
 			
+			Color controlColor = BackColor; //SystemColors.Control;
+			Color textColor = ForeColor; // SystemColors.ControlText;
 			//Graphics paintOn = e.Graphics;
 			Rectangle rc = e.Bounds;
 			Rectangle rcImageClip = e.Bounds;
@@ -163,26 +165,28 @@ namespace System.Windows.Forms {
 
 			if( FlatStyle == FlatStyle.Flat) {
 				if( (e.State & DrawItemState.Selected) != 0) {
-					SolidBrush sb = new SolidBrush(ControlPaint.Light(SystemColors.Control));
+					SolidBrush sb = new SolidBrush(ControlPaint.Light(controlColor));
 					paintOn.FillRectangle(sb, rc);
 					sb.Dispose();
 				}
 				else {
 					if( mouseIsInside_) {
-						SolidBrush sb = new SolidBrush(ControlPaint.Dark(SystemColors.Control));
+						SolidBrush sb = new SolidBrush(ControlPaint.Dark(controlColor));
 						paintOn.FillRectangle(sb, rc);
 						sb.Dispose();
 					}
 					else {
-						paintOn.FillRectangle(SystemBrushes.Control, rc);
+						SolidBrush sb = new SolidBrush( controlColor);
+						paintOn.FillRectangle(sb, rc);
+						sb.Dispose();
 					}
 				}
 
-				ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+				ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 				rc.Inflate(-1,-1);
 
 				if( (e.State & DrawItemState.Focus) != 0) {
-					ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+					ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 				}
 				else {
 					rcImageClip.Inflate(1,1);
@@ -191,29 +195,31 @@ namespace System.Windows.Forms {
 			}
 			else if( FlatStyle == FlatStyle.Popup) {
 				if( (e.State & DrawItemState.Selected) != 0) {
-					ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+					ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 					rc.Inflate(-1,-1);
-					ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+					ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 					rc.Inflate(-1,-1);
 				}
 				else {
 					if( (e.State & DrawItemState.Focus) != 0) {
-						ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+						ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 						rc.Inflate(-1,-1);
 					}
 
 					if( mouseIsInside_) {
-						Color colorLight = ControlPaint.Light(SystemColors.Control);
+						Color colorLight = ControlPaint.Light(controlColor);
 						ControlPaint.DrawBorder(paintOn, rc, colorLight, 1, ButtonBorderStyle.Solid,
-							colorLight, 1, ButtonBorderStyle.Solid, SystemColors.ControlText, 1, ButtonBorderStyle.Solid,
-							SystemColors.ControlText, 1, ButtonBorderStyle.Solid);
+							colorLight, 1, ButtonBorderStyle.Solid, textColor, 1, ButtonBorderStyle.Solid,
+							textColor, 1, ButtonBorderStyle.Solid);
 					}
 					else {
-						ControlPaint.DrawBorder(paintOn, rc, SystemColors.ControlText, ButtonBorderStyle.Solid);
+						ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 					}
-					rc.Inflate(-2,-2);
+					rc.Inflate(-1,-1);
 				}
-				paintOn.FillRectangle(SystemBrushes.Control, rc);
+				SolidBrush sb = new SolidBrush( controlColor);
+				paintOn.FillRectangle(sb, rc);
+				sb.Dispose();
 
 				rc.Inflate(-1,-1);
 			}
@@ -277,10 +283,10 @@ namespace System.Windows.Forms {
 
 			// DrawString does not paint _ under character, so we can use Win32 function call
 			if( Enabled) {
-				Win32.DrawText(paintOn, Text, Font, SystemColors.ControlText, rc, TextAlign);
+				Win32.DrawText(paintOn, Text, Font, textColor, rc, TextAlign);
 			}
 			else {
-				ControlPaint.DrawStringDisabled(paintOn, Text, Font, SystemColors.ControlText, rc, Win32.ContentAlignment2StringFormat(TextAlign));
+				ControlPaint.DrawStringDisabled(paintOn, Text, Font, textColor, rc, Win32.ContentAlignment2StringFormat(TextAlign));
 			}
 
 			if( (e.State & DrawItemState.Focus) != 0) {

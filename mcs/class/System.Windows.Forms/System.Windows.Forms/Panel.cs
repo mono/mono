@@ -24,7 +24,7 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public Panel() {
-			
+			controlStyles_ |= ControlStyles.UserPaint;
 		}
 
 		//

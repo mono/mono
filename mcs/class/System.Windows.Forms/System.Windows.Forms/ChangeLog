@@ -1,3 +1,15 @@
+2003-04-24 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Button.cs 	paint with Back/Fore colors
+	* ComboBox.cs   fix to notification handler
+	* ContainerControl.cs
+	* ControlStyles.cs 
+	* ListBox.cs
+	* Panel.cs			changes for ControlStyles
+	* Control.cs		ControlStyles, BackColor, painting logic
+	
+	* DrawItemEventArgs.cs	temporary fix to avoid crach in jit
+	
+
 2003-04-23 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Application.cs : new internal functions enterModalLoop, exitModalLoop
 	* Button.cs : changes in DialogResult and OnClick

@@ -12,6 +12,7 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum ControlStyles {
 		AllPaintingInWmPaint = 8192,
 		CacheText = 16384,

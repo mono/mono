@@ -246,10 +246,12 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Color ForeColor {
 			get {
-				throw new NotImplementedException ();
+				//FIXME: 
+				return base.ForeColor;
 			}
 			set {
-				//FIXME:
+				//FIXME: 
+				base.ForeColor = value;
 			}
 		}
 		
@@ -722,16 +724,24 @@ namespace System.Windows.Forms {
 					break;
 */					
 				case Msg.WM_COMMAND: 
-					switch(m.HiWordWParam) {
-						case (uint)ComboBoxNotification.CBN_SELCHANGE:
-							//OnSelectedIndexChanged(new EventArgs());
-							SelectedIndex = Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_GETCURSEL, 0, 0);
-							m.Result = IntPtr.Zero;
-							CallControlWndProc(ref m);
-							break;
-						default:
-							CallControlWndProc(ref m);
-							break;
+					if( m.LParam != Handle) {
+						base.WndProc(ref m);
+					}
+					else {
+						switch(m.HiWordWParam) {
+							case (uint)ComboBoxNotification.CBN_SELCHANGE:
+								//OnSelectedIndexChanged(new EventArgs());
+								SelectedIndex = Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_GETCURSEL, 0, 0);
+								m.Result = IntPtr.Zero;
+								//CallControlWndProc(ref m);
+								break;
+							default:
+								Console.WriteLine("ComboBox enter default");
+								//CallControlWndProc(ref m);
+								m.Result = IntPtr.Zero;
+								Console.WriteLine("ComboBox exit default");
+								break;
+						}
 					}
 					break;
 				default:

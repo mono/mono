@@ -86,6 +86,7 @@
     		bool tabStop;
     		string text;
     		bool visible;
+    		protected ControlStyles controlStyles_;
 
 		int clientWidth;
 		int clientHeight;
@@ -215,6 +216,7 @@
 			clientHeight	 = DefaultSize.Height;
 
 			mouseIsInside_ = false;
+    			controlStyles_ = ControlStyles.Selectable | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
 				// Do not create Handle here, only in CreateHandle
     			// CreateHandle();//sets window handle. FIXME: No it does not
     		}
@@ -338,7 +340,10 @@
 					return backColor;
     			}
     			set {
-    				backColor = value;
+					if( backColor != value) {
+						backColor = value;
+						OnBackColorChanged(new EventArgs());
+					}
     			}
     		}
     		
@@ -862,7 +867,13 @@
 						Console.WriteLine ("add ourself to the parents control");
 						// add ourself to the parents control
 						parent.Controls.Add (this);
-	    
+
+						// FIXME: Is this logic correct ?
+						if( BackColor == DefaultBackColor) {
+							if( parent.BackColor != BackColor)
+								OnParentBackColorChanged(new EventArgs());
+						}
+
 						Console.WriteLine ("SetParent");
 						if (IsHandleCreated) {
 							Console.WriteLine ("Handle created");
@@ -1257,7 +1268,7 @@
     		[MonoTODO]
     		protected bool GetStyle (ControlStyles flag) 
     		{
-    			throw new NotImplementedException ();
+    			return (controlStyles_ & flag) != 0;
     		}
     	
     		[MonoTODO]
@@ -1396,7 +1407,11 @@
     		{
     			if (BackColorChanged != null)
     				BackColorChanged (this, e);
-    		}
+
+				foreach( Control ctl in Controls) {
+					ctl.OnParentBackColorChanged(e);
+				}
+			}
     		
     		protected virtual void OnBackgroundImageChanged (EventArgs e)
     		{
@@ -1736,41 +1751,27 @@
     		{
     			if (Paint != null)
     				Paint (this, e);
-    			else {
-#if SysDrawing
-					Brush br = new SolidBrush(BackColor);
-					e.Graphics.FillRectangle(br, e.ClipRectangle);
-					br.Dispose();
-#else
-					IntPtr hdc = e.Graphics.GetHdc();
-					IntPtr hbr = Win32.CreateSolidBrush(Win32.RGB(BackColor));
-					IntPtr prevHbr = Win32.SelectObject(hdc, hbr);
-					RECT rc = new RECT();
-					rc.left = e.ClipRectangle.Left;
-					rc.top = e.ClipRectangle.Top;
-					rc.right = e.ClipRectangle.Right;
-					rc.bottom = e.ClipRectangle.Bottom;
-					Win32.FillRect( hdc, ref rc, hbr);
-					Win32.SelectObject(hdc, prevHbr);
-					Win32.DeleteObject(hbr);
-					e.Graphics.ReleaseHdc(hdc);
-#endif
-    			}
     		}
     		
  			//Compact Framework
     		protected virtual void OnPaintBackground (PaintEventArgs e) 
     		{
-                //FIXME:
-                Brush br = new SolidBrush(BackColor);
-                e.Graphics.FillRectangle(br, e.ClipRectangle);
-                br.Dispose();
+                if( GetStyle(ControlStyles.UserPaint)) {
+                    Brush br = new SolidBrush(BackColor);
+                    e.Graphics.FillRectangle(br, e.ClipRectangle);
+                    br.Dispose();
+                }
             }
     		
     		protected virtual void OnParentBackColorChanged (EventArgs e) 
     		{
+				BackColor = Parent.BackColor;
+				// FIXME: setting BackColor fires the BackColorChanged event,
+				// so we do not need to call this here
+				/*
     			if (BackColorChanged != null)
     				BackColorChanged (this, e);
+				*/					
     		}
     		
     		protected virtual void OnParentBackgroundImageChanged (
@@ -2264,7 +2265,12 @@
     		[MonoTODO]
     		protected void SetStyle (ControlStyles flag, bool value) 
     		{
-				//FIXME:
+    			if( value) {
+    				controlStyles_ |= flag;
+    			}
+    			else {
+    				controlStyles_ &= ~flag;
+    			}
 			}
     		
     		protected void SetTopLevel (bool value)
@@ -2592,11 +2598,20 @@
 					//OnNotifyMessage (eventArgs);
 					break;
     			case Msg.WM_ERASEBKGND:
-					//CallControlWndProc(ref m);
-    				m.Result = (IntPtr)1;
+    				if( GetStyle(ControlStyles.UserPaint)){
+	    				if( !GetStyle(ControlStyles.AllPaintingInWmPaint)) {
+							PaintEventArgs eraseEventArgs = new PaintEventArgs( Graphics.FromHdc(m.WParam), new Rectangle(new Point(0,0),Size));
+		    				OnPaintBackground(eraseEventArgs);
+							eraseEventArgs.Dispose();
+	    				}
+	    				m.Result = (IntPtr)1;
+    				}
+    				else {
+						CallControlWndProc(ref m);
+    				}
     				break;
 				case Msg.WM_PAINT:
-					if( ControlRealWndProc != IntPtr.Zero) {
+					if( !GetStyle(ControlStyles.UserPaint)) {
 						CallControlWndProc(ref m);
 					}
 					else {
@@ -2608,6 +2623,9 @@
 						rc.Width = ps.rcPaint.right - ps.rcPaint.left;
 						rc.Height = ps.rcPaint.bottom - ps.rcPaint.top;
 						PaintEventArgs paintEventArgs = new PaintEventArgs( Graphics.FromHdc(hdc), rc);
+	    				if( GetStyle(ControlStyles.AllPaintingInWmPaint)) {
+	    					OnPaintBackground(paintEventArgs);
+	    				}
 						OnPaint (paintEventArgs);
 						paintEventArgs.Dispose();
 						Win32.EndPaint(Handle, ref ps);
@@ -2616,6 +2634,9 @@
     			case Msg.WM_SIZE:
     				OnResize (eventArgs);
 				UpdateBounds ( );
+    				if( GetStyle(ControlStyles.ResizeRedraw)) {
+    					Invalidate();		
+    				}
 				CallControlWndProc(ref m);
 				break;
     			case Msg.WM_WINDOWPOSCHANGED:

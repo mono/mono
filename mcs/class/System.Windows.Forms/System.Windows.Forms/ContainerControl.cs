@@ -23,6 +23,7 @@ namespace System.Windows.Forms {
 
 		protected ContainerControl () : base () 
 		{
+			controlStyles_ |= ControlStyles.ContainerControl;
 		}
 		
 		
