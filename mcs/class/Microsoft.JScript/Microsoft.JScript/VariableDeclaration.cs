@@ -70,7 +70,7 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (ec.no_global_code_method)
+			if (!ec.is_global_code_method)
 				if (parent == null) {
 					FieldBuilder field;
 					TypeBuilder type  = ec.type_builder;

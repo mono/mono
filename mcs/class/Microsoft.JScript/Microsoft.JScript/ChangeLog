@@ -1,5 +1,24 @@
 2003-11-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* expression.cs (Expression): implemented Emit.
+
+	* expression.cs (Binary): Emit now creates a local for the
+	different kinds of binary expressions (initial code for this).
+
+	* ast.cs: Emit method now is abstract instead of virtual.
+
+	* CodeGenerator.cs: changed no_global_code_method to is_global_code_method.
+
+	* ASTList.cs, ArrayLiteral.cs, BitwiseBinary.cs, DebugBreak.cs,
+	Enum.cs, Equality.cs, Eval.cs, ForIn.cs, FormalParameterList.cs,
+	FunctionExpression.cs, Import.cs, InstanceOf.cs, Literal.cs,
+	NumericLiteral, NumericBinary.cs, NumericUnary.cs, Package.cs,
+	Plus.cs, PostOrPrefixOperator.cs, Print.cs, Relational.cs,
+	Continue, Break, Return, StrictEquality.cs, StringLiteral.cs,
+	Throw.cs, Try.cs, TypeOf.cs, VariableDeclaration.cs, With.cs,
+	Conditional, Call, Identifier, Args, Expression, :
+	added Emit method.
+
 	* FunctionDeclaration.cs: Check if values are not null first (at
 	Resolve). Ignore code generation is at 'Global Code'.
 

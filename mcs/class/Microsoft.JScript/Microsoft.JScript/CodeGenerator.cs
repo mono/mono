@@ -18,12 +18,12 @@ namespace Microsoft.JScript {
 
 		internal TypeBuilder type_builder;
 		internal ILGenerator ig;
-		internal bool no_global_code_method;
+		internal bool is_global_code_method;
 
 		internal EmitContext (TypeBuilder type)
 		{
 			type_builder = type;
-			no_global_code_method = true;
+			is_global_code_method = false;
 		}
 	}
 
@@ -94,7 +94,7 @@ namespace Microsoft.JScript {
 									  new Type [] {});
 									     
 			ec.ig = method.GetILGenerator ();
-			ec.no_global_code_method = false;
+			ec.is_global_code_method = true;
 
 			prog.Emit (ec);			       
 

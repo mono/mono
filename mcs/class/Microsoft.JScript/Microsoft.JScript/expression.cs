@@ -10,6 +10,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
@@ -38,6 +39,11 @@ namespace Microsoft.JScript {
 			operand.Resolve (context);
 
 			return true;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
 		}			
 	}
 
@@ -76,6 +82,28 @@ namespace Microsoft.JScript {
 
 			return true;
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			if (ec.is_global_code_method) {
+				ILGenerator ig = ec.ig;
+				emit_operator (ig);
+			}
+		}
+
+		internal void emit_operator (ILGenerator ig)
+		{
+			if (current_op == JSToken.Plus)
+				ig.DeclareLocal (typeof (Microsoft.JScript.Plus));
+			else if (current_op == JSToken.Minus || current_op == JSToken.Divide ||
+				 current_op == JSToken.Modulo)
+				ig.DeclareLocal (typeof (Microsoft.JScript.NumericBinary));
+			else if (current_op == JSToken.BitwiseOr || current_op == JSToken.BitwiseXor ||
+				 current_op == JSToken.BitwiseAnd)
+				ig.DeclareLocal (typeof (Microsoft.JScript.BitwiseBinary));
+			else if (current_op == JSToken.Equal || current_op == JSToken.NotEqual)
+				ig.DeclareLocal (typeof (Microsoft.JScript.Equality));
+		}
 	}
 
 	public class Conditional : AST {
@@ -104,6 +132,11 @@ namespace Microsoft.JScript {
 		}
 
 		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
 		}
@@ -142,6 +175,11 @@ namespace Microsoft.JScript {
 
 			return true;
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	internal class Identifier : AST {
@@ -165,6 +203,11 @@ namespace Microsoft.JScript {
 			else if (context.Contains (name))
 				return true;
 			else throw new Exception ("variable not found: " +  name);
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 
@@ -192,6 +235,11 @@ namespace Microsoft.JScript {
 				tmp.Resolve (context);
 			}
 			return true;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 
@@ -233,6 +281,19 @@ namespace Microsoft.JScript {
 				((AST) exprs [i]).Resolve (context);
 
 			return true;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			int i, n = exprs.Count;
+			AST exp;
+
+			Console.WriteLine ("n = {0}", n);
+
+			for (i = 0; i < n; i++) {
+				exp = (AST) exprs [i];
+				exp.Emit (ec);
+			}
 		}
 	}
 }

@@ -14,9 +14,7 @@ namespace Microsoft.JScript {
 		//
 		// Here the actual IL code generation happens.
 		//
-		internal virtual void Emit (EmitContext ec)
-		{
-		}
+		internal abstract void Emit (EmitContext ec);
 
 		//
 		// Perform type checks and associates expressions

@@ -9,7 +9,7 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public sealed class Plus : BinaryOp {
 
@@ -31,6 +31,11 @@ namespace Microsoft.JScript.Tmp {
 		}
 
 		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
 		}

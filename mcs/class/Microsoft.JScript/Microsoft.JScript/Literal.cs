@@ -17,6 +17,11 @@ namespace Microsoft.JScript {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	internal class BooleanLiteral : AST {
@@ -34,6 +39,11 @@ namespace Microsoft.JScript {
 		}
 
 		internal override bool Resolve (IdentificationTable context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
 		}
@@ -56,6 +66,11 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			return true;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

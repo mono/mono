@@ -32,5 +32,10 @@ namespace Microsoft.JScript {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
