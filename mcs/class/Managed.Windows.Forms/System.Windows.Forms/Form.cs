@@ -23,9 +23,16 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.14  2004/10/02 19:05:52  pbartok
+// - Added KeyPreview property
+// - Added Menu property (still incomplete, pending Jordi's menu work)
+// - Implemented ProcessCmdKey
+// - Implemented ProcessDialogKey
+// - Implemented ProcessKeyPreview
+//
 // Revision 1.13  2004/10/01 17:53:26  jackson
 // Implement the Close method so work on MessageBox can continue.
 //
@@ -104,6 +111,8 @@ namespace System.Windows.Forms {
 		private FormStartPosition	start_position;
 		private Form			owner;
 		private Form.ControlCollection	owned_forms;
+		private bool			key_preview;
+		private MainMenu		menu;
 		#endregion	// Local Variables
 
 		#region Public Classes
@@ -133,6 +142,8 @@ namespace System.Windows.Forms {
 			end_modal = false;
 			dialog_result = DialogResult.None;
 			start_position = FormStartPosition.WindowsDefaultLocation;
+			key_preview = false;
+			menu = null;
 		}
 		#endregion	// Public Constructor & Destructor
 
@@ -144,6 +155,7 @@ namespace System.Windows.Forms {
 
 			if (owner != null) {
 				//this.Parent = owner;
+//XplatUIWin32.EnableWindow(owner.window.Handle, false);
 			} else {
 				;; // get an owner
 			}
@@ -163,6 +175,7 @@ namespace System.Windows.Forms {
 			is_modal = false;
 
 			Hide();
+//XplatUIWin32.EnableWindow(owner.window.Handle, true);
 
 			return DialogResult;
 		}
@@ -222,6 +235,31 @@ namespace System.Windows.Forms {
 
 				if (is_modal && (dialog_result != DialogResult.None)) {
 					end_modal = true;
+				}
+			}
+		}
+
+		public bool KeyPreview {
+			get {
+				return key_preview;
+			}
+
+			set {
+				key_preview = value;
+			}
+		}
+
+		public MainMenu Menu {
+			get {
+				return menu;
+			}
+
+			set {
+				if (menu != value) {
+					// FIXME - I have to wait for jordi to finish menus before I can do some of this
+					// We'll need a way to store what form owns the menu inside the menu; I'd
+					// have to set this here.
+					menu = value;
 				}
 			}
 		}
@@ -382,6 +420,19 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+			if (base.ProcessCmdKey (ref msg, keyData)) {
+				return true;
+			}
+
+			// Give our menu a shot
+			if (menu != null) {
+				return menu.ProcessCmdKey(ref msg, keyData);
+			}
+
+			return false;
+		}
+
 		protected override bool ProcessDialogKey(Keys keyData) {
 			if (keyData == Keys.Enter && accept_button != null) {
 				accept_button.PerformClick();
@@ -391,6 +442,15 @@ namespace System.Windows.Forms {
 				return true;
 			}
 			return base.ProcessDialogKey(keyData);
+		}
+
+		protected override bool ProcessKeyPreview(ref Message msg) {
+			if (key_preview) {
+				if (ProcessKeyEventArgs(ref msg)) {
+					return true;
+				}
+			}
+			return base.ProcessKeyPreview (ref msg);
 		}
 
 		protected override void WndProc(ref Message m) {
