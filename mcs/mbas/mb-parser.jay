@@ -321,9 +321,9 @@ namespace Mono.MonoBASIC
 %token OP_GE                  ">="
 //%token OP_EQ                  "=="
 %token OP_NE                  "<>"
-%token OP_AND                 //"and"
-%token OP_OR                  //"or"
-%token OP_XOR                 //"xor"
+//%token OP_AND                 "and"
+//%token OP_OR                  "or"
+%token OP_XOR                 "xor"
 %token OP_MODULUS             //"mod"
 %token OP_MULT_ASSIGN         "*="
 %token OP_DIV_ASSIGN          "/="
@@ -1653,11 +1653,16 @@ delegate_declaration
 	
 opt_evt_handler
 	: /* empty */
-	{ 	$$ = null; }
+	  { 	$$ = null; }
 	| HANDLES qualified_identifier
-	{
+	  {
 		$$ = (Expression) DecomposeQI ((string)$2, lexer.Location);	
-	}
+	  }
+	| HANDLES MYBASE DOT qualified_identifier
+	  {
+	  	// FIXME: this is blatantly wrong and crash-prone
+		$$ = (Expression) DecomposeQI ("MyBase." + (string)$4, lexer.Location);
+	  }
 	;	
 
 opt_empty_parens
@@ -3173,15 +3178,11 @@ relational_expression
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| relational_expression IS type_name
-	  {
-		$$ = new Is ((Expression) $1, (Expression) $3, lexer.Location);
-	  }
-	| relational_expression IS NOTHING
+	| relational_expression IS unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Equality,
-			(Expression) $1, (Expression) NullLiteral.Null, lexer.Location);
-	  }	  
+			(Expression) $1, (Expression) $3, lexer.Location);
+	  }
 	| relational_expression AS type_name
 	  {
 		$$ = new As ((Expression) $1, (Expression) $3, lexer.Location);
@@ -3204,7 +3205,7 @@ equality_expression
 
 and_expression
 	: equality_expression
-	| and_expression OP_AND equality_expression
+	| and_expression AND equality_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseAnd,
 			         (Expression) $1, (Expression) $3, lexer.Location);
@@ -3222,7 +3223,7 @@ exclusive_or_expression
 
 conditional_and_expression
 	: exclusive_or_expression
-	| conditional_and_expression OP_AND exclusive_or_expression
+	| conditional_and_expression AND exclusive_or_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalAnd,
 			         (Expression) $1, (Expression) $3, lexer.Location);
@@ -3231,7 +3232,7 @@ conditional_and_expression
 
 conditional_or_expression
 	: conditional_and_expression
-	| conditional_or_expression OP_OR conditional_and_expression
+	| conditional_or_expression OR conditional_and_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalOr,
 			         (Expression) $1, (Expression) $3, lexer.Location);
