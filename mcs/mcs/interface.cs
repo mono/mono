@@ -44,6 +44,7 @@ namespace Mono.CSharp {
 
 		ArrayList method_builders;
 		ArrayList property_builders;
+		ArrayList event_builders;
 		
 		Attributes OptAttributes;
 
@@ -73,6 +74,7 @@ namespace Mono.CSharp {
 			
 			method_builders = new ArrayList ();
 			property_builders = new ArrayList ();
+			event_builders = new ArrayList ();
 		}
 
 		public AdditionResult AddMethod (InterfaceMethod imethod)
@@ -250,6 +252,12 @@ namespace Mono.CSharp {
 				                members.Add (pb);
 			}
 
+			if ((mt & MemberTypes.Event) != 0) {
+				foreach (MyEventBuilder eb in event_builders)
+				        if (filter (eb, criteria))
+				                members.Add (eb);
+			}
+
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
 				MemberInfo [] parent_mi;
 				
@@ -423,6 +431,63 @@ namespace Mono.CSharp {
 		        // FIXME: We need to do this after delegates have been
 			// declared or we declare them recursively.
 			//
+			MyEventBuilder eb;
+			MethodBuilder add = null, remove = null;
+			ie.Type = this.ResolveTypeExpr (ie.Type, false, ie.Location);
+			Type event_type = ie.Type.Type;
+
+			if (event_type == null)
+				return;
+
+			if (event_type.IsPointer && !UnsafeOK (this))
+				return;
+
+			Type [] parameters = new Type [1];
+			parameters [0] = event_type;
+
+			eb = new MyEventBuilder (TypeBuilder, ie.Name,
+						 EventAttributes.None, event_type);
+
+			//
+			// Now define the accessors
+			//
+			string add_name = "add_" + ie.Name;
+			
+			add = TypeBuilder.DefineMethod (
+				add_name, property_attributes, null, parameters);
+			add.DefineParameter (1, ParameterAttributes.None, "value");
+			eb.SetAddOnMethod (add);
+
+			string remove_name = "remove_" + ie.Name;
+			remove = TypeBuilder.DefineMethod (
+				remove_name, property_attributes, null, parameters);
+			remove.DefineParameter (1, ParameterAttributes.None, "value");
+			eb.SetRemoveOnMethod (remove);
+
+			Parameter [] parms = new Parameter [1];
+			parms [0] = new Parameter (ie.Type, "value", Parameter.Modifier.NONE, null);
+			InternalParameters ip = new InternalParameters (
+				this, new Parameters (parms, null, Location.Null));
+
+			if (!RegisterMethod (add, ip, parameters)) {
+				Error111 (ie);
+				return;
+			}
+			
+			if (!RegisterMethod (remove, ip, parameters)) {
+				Error111 (ie);
+				return;
+			}
+
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  null, ModFlags, false);
+
+
+			if (ie.OptAttributes != null)
+				Attribute.ApplyAttributes (ec, eb, ie, ie.OptAttributes, Location);
+
+			TypeManager.RegisterEvent (eb, add, remove);
+			event_builders.Add (eb);
 		}
 
 		//
@@ -822,12 +887,15 @@ namespace Mono.CSharp {
 	}
 
 	public class InterfaceEvent : InterfaceMemberBase {
-		public readonly Expression Type;
+		public readonly Location Location;
+		public Expression Type;
 		
-		public InterfaceEvent (Expression type, string name, bool is_new, Attributes attrs)
+		public InterfaceEvent (Expression type, string name, bool is_new, Attributes attrs,
+				       Location loc)
 			: base (name, is_new, attrs)
 		{
 			Type = type;
+			Location = loc;
 		}
 	}
 	

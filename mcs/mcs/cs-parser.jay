@@ -1216,7 +1216,8 @@ interface_accesors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1);
+		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
+					 lexer.Location);
 	  }
 	;
 
