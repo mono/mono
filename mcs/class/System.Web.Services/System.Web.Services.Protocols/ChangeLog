@@ -1,3 +1,13 @@
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* SoapHeaderException.cs:
+		Fixed name error in constructor
+	* SoapUnknownHeader.cs:
+		Added reference to System.Xml.Serialization
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* SoapHeaderException.cs:
+		New file added
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>	
 	* AnyReturnReader.cs:
 	* HtmlFormParameterReader.cs :

@@ -8,6 +8,7 @@
 //
 
 using System.Xml;
+using System.Xml.Serialization
 
 namespace System.Web.Services.Protocols {
 	public sealed class SoapUnknownHeader : SoapHeader {

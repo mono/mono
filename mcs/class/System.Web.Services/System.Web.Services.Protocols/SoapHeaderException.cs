@@ -14,24 +14,24 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		public SoapException (string message, XmlQualifiedName code)
+		public SoapHeaderException (string message, XmlQualifiedName code)
 			: base (message, code)
 		{
 			this.code = code;
 		}
 
-		public SoapException (string message, XmlQualifiedName code, Exception innerException)
+		public SoapHeaderException (string message, XmlQualifiedName code, Exception innerException)
 			: this (message, code)
 		{
 		}
 
-		public SoapException (string message, XmlQualifiedName code, string actor)
+		public SoapHeaderException (string message, XmlQualifiedName code, string actor)
 			: this (message, code)
 		{
 			this.actor = actor;
 		}
 
-		public SoapException (string message, XmlQualifiedName code, string actor, Exception innerException)
+		public SoapHeaderException (string message, XmlQualifiedName code, string actor, Exception innerException)
 			: this (message, code, actor)
 		{
 		}
