@@ -424,8 +424,12 @@ namespace System.Data {
 				Table.InitializeIndex (Index);
 			}
 			catch (ConstraintException) {
+#if false//NET_1_1
+				throw;
+#else
 				Index = null;
 				throw new ArgumentException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));
+#endif
 			}
 			
 			// if there is no index with same columns - add the new index to the table.

@@ -527,7 +527,7 @@ namespace System.Data {
 			DataColumn column = this[name];
 			
 			if (column == null)
-				throw new ArgumentException ("Column '" + name + "' does not belong to table " + ( parentTable != null ? "" : parentTable.TableName ) + ".");
+				throw new ArgumentException ("Column '" + name + "' does not belong to table " + ( parentTable == null ? "" : parentTable.TableName ) + ".");
 			Remove(column);
 		}
 

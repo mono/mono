@@ -1,5 +1,15 @@
 2004-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataColumnCollection.cs : NullReferenceException was thrown when
+	  the table was not found.
+	* DataRowCollection.cs :
+	  Find() just returns null for null value under MS.NET 1.1.
+	  RemoveAt() should also avoid to call AcceptChanges() like Remove().
+	* UniqueConstraint.cs : in AssertConstraint() throw ConstraintException
+	  directly under MS.NET (for nunit test).
+
+2004-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaDataImporter.cs : Setting startindex in LastIndexOf() 
 	  caused problem on qualified name to get schema Field name.
 

@@ -154,7 +154,11 @@ namespace System.Data
 				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 1 value(s).");
 
 			if (key == null)
+#if NET_1_1
+				return null;
+#else
 				throw new ArgumentException("Expecting 1 value(s) for the key being indexed, but received 0 value(s).");
+#endif
 
 			DataColumn primaryKey = table.PrimaryKey[0];
 			Index primaryKeyIndex = table.GetIndexByColumns(table.PrimaryKey);
@@ -325,7 +329,10 @@ namespace System.Data
 				throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
 			DataRow row = (DataRow)List [index];
 			row.Delete();
-			row.AcceptChanges();
+			// if the row was in added state it will be in Detached state after the
+			// delete operation, so we have to check it.
+			if (row.RowState != DataRowState.Detached)
+				row.AcceptChanges();
 		}
 
 		///<summary>
