@@ -1,5 +1,11 @@
 2001-08-20  Dietmar Maurer  <dietmar@ximian.com>
 
+	* object.c (mono_new_string): impl.
+
+	* loader.c (mono_init): impl.
+
+	* object.c (mono_new_utf16_string): impl.
+
 	* class.h: replaced 'struct MonoMethod' with 'MonoMethod'
 
 	* cli.h: removed #include <mono/cli/object.h> 
