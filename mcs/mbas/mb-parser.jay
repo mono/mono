@@ -2986,7 +2986,8 @@ relational_expression
 	  }
 	| relational_expression IS NOTHING
 	  {
-		$$ = new Is ((Expression) $1, TypeManager.system_void_expr, lexer.Location);
+		$$ = new Binary (Binary.Operator.Equality,
+			(Expression) $1, (Expression) NullLiteral.Null, lexer.Location);
 	  }	  
 	| relational_expression AS type_name
 	  {
