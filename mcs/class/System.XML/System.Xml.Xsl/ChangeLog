@@ -1,3 +1,9 @@
+2005-02-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformImpl.cs : Load() should use argument XmlResolver to
+	  get file stream. This fixes bug #72942.
+	* BUGS-MS.txt : more bug info.
+
 2005-02-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BUGS-MS.txt : all output_outputXXX comparison does not make sense.

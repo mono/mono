@@ -36,12 +36,24 @@ using System.Text;
 using System.Xml.XPath;
 
 
-namespace System.Xml.Xsl {
-	internal abstract class XslTransformImpl {
-
+namespace System.Xml.Xsl
+{
+	internal abstract class XslTransformImpl
+	{
 		public virtual void Load (string url, XmlResolver resolver)
 		{
-			Load (new XPathDocument (url, XmlSpace.Preserve).CreateNavigator (), resolver, null);
+			XmlResolver res = resolver;
+			if (res == null)
+				res = new XmlUrlResolver ();
+			Uri uri = res.ResolveUri (null, url);
+			using (Stream s = res.GetEntity (uri, null, typeof (Stream)) as Stream) {
+				XmlTextReader xtr = new XmlTextReader (uri.ToString (), s);
+				xtr.XmlResolver = res;
+				XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+				xvr.XmlResolver = res;
+				xvr.ValidationType = ValidationType.None;
+				Load (new XPathDocument (xvr, XmlSpace.Preserve).CreateNavigator (), resolver, null);
+			}
 		}
 
 		public virtual void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
