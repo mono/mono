@@ -1,3 +1,9 @@
+2002-08-02  Nick Drochak  <ndrochak@gol.com>
+
+	* BufferTest.cs (TestBlockCopy): BlockCopy uses the number of bytes,
+	so hard-code some of that info into the test since sizeof() is a very
+	unsafe thing to do.
+
 2002-07-31  Nick Drochak  <ndrochak@gol.com>
 
 	* BufferTest.cs: Fixed noisy compiler warnings about unused vars.

@@ -34,16 +34,17 @@ namespace MonoTests.System
 			}
 		}
 
-	
+			
 		public void TestBlockCopy ()
 		{
+			int SizeOfInt32 = 4;
 			int [] myArray1 = new int [5] {1, 2, 3, 4, 5};
 			int [] myArray2 = new int [10] { 0, 0, 0, 0, 0, 6, 7, 8, 9, 10 };
 		
-			Buffer.BlockCopy (myArray1, 0, myArray2, 0, 20);
+			Buffer.BlockCopy (myArray1, 0, myArray2, 0, SizeOfInt32  * myArray1.Length);
 		
-			for (int i = 0; i < 10; i++) 
-				AssertEquals ("TestBlockCopy Error", i + 1, myArray1 [i]);		
+			for (int i = 0; i < myArray1.Length; i++) 
+				AssertEquals ("TestBlockCopy Error at i=" + i, i + 1, myArray2 [i]);		
 		}
 	
 	
@@ -106,7 +107,7 @@ namespace MonoTests.System
 		
 			// FIXME: test the case when the ArgumentException is thrown.
 		
-			AssertEquals ("TestGetByte Error", 8, Buffer.GetByte (byteArray, 5));
+			AssertEquals ("TestGetByte Error", (Byte)8, Buffer.GetByte (byteArray, 5));
 		}
 	
 	
@@ -143,7 +144,7 @@ namespace MonoTests.System
 			// FIXME: test the case when the ArgumentException is thrown
 			
 			Buffer.SetByte (byteArray, 3, (byte) 10);
-			AssertEquals ("TestSetByte", 10, Buffer.GetByte (byteArray, 3));
+			AssertEquals ("TestSetByte", (Byte)10, Buffer.GetByte (byteArray, 3));
 		}
 	}
 }
