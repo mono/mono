@@ -1,6 +1,14 @@
+2005-02-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (centum_tests): New list of test subdirs that should
+	pass 100%.
+	(default_centum_tests, net_2_0_centum_tests): New.
+	(ONLY_CENTUM_TESTS): New check.  If defined during 'make
+	run-test', only the tests in centum_tests are run.
+
 2004-12-20  Jambunathan K  <kjambunathan@novell.com>
 
-	* (btests) : Removed. This directory is now superseded by
+	* btests: Removed. This directory is now superseded by
 	mbas/Test.
 	
 2004-12-13  Raja R Harinath  <rharinath@novell.com>

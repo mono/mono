@@ -8,6 +8,31 @@ net_1_1_bootstrap_SUBDIRS := jay mcs class tools
 net_2_0_bootstrap_SUBDIRS := class
 net_2_0_SUBDIRS := jay gmcs class nunit20 tests errors tools
 
+# List of test subdirs that should pass 100%
+centum_tests := \
+	class/Commons.Xml.Relaxng \
+	class/Cscompmgd \
+	class/Microsoft.JScript \
+	class/Mono.Posix \
+	class/System.Configuration.Install \
+	class/System.Runtime.Serialization.Formatters.Soap \
+	class/System.Web.Services \
+	tests \
+	errors
+#	class/System
+
+default_centum_tests := \
+	class/corlib \
+	class/Mono.Security \
+	class/System.Runtime.Remoting \
+	$(centum_tests)
+
+net_2_0_centum_tests := $(centum_tests)
+
+ifdef ONLY_CENTUM_TESTS
+TEST_SUBDIRS := $($(PROFILE)_centum_tests)
+endif
+
 ifdef TEST_SUBDIRS
 $(PROFILE)_SUBDIRS := $(TEST_SUBDIRS)
 endif
