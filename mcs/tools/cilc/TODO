@@ -7,8 +7,6 @@ HIGH PRIORITY
 Don't generate GObjects by default, said to be too heavy. Might need to clean
 up the generator to make this easier.
 
-For GObject generation, tie in generated code with Gtk+ etc. hierarchy -- validate this and provide examples.
-
 Consider moving the suffix underscore into NsToC (ns) to better handle namespaceless assemblies.
 
 Handle nested classes
@@ -20,6 +18,8 @@ Better support for return values and ref/out parameters
 Support more primitive types
 
 Only install relevant headers, and use the proper subdirectory path for includes
+
+Allow bundling of glib-sharp.dll if using the GObject tie-in feature.
 
 LOW PRIORITY
 ------------

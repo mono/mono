@@ -1,3 +1,10 @@
+2004-12-13  Alp Toker  <alp@atoker.com>
+
+  * cilc.cs:
+	Use the GObject of the object if it already has one, rather than creating a
+	new GObject instance of our own. Store the reference to the MonoObject in
+	a GObject data field.
+
 2004-12-12  Alp Toker  <alp@atoker.com>
 
   * cilc.cs:

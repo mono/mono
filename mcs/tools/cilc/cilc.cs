@@ -336,6 +336,10 @@ public class cilc
 		Cindex.WriteLine ("#include <glib.h>");
 		Cindex.WriteLine ("#include <mono/jit/jit.h>");
 		Cindex.WriteLine ();
+		Cindex.WriteLine ("#include <mono/metadata/object.h>");
+		Cindex.WriteLine ("#include <mono/metadata/debug-helpers.h>");
+		Cindex.WriteLine ("#include <mono/metadata/appdomain.h>");
+		Cindex.WriteLine ();
 		Cindex.WriteLine ("#ifdef CILC_BUNDLE");
 		Cindex.WriteLine ("#include \"bundle.h\"");
 		Cindex.WriteLine ("#endif");
@@ -348,7 +352,7 @@ public class cilc
 		Cindex.WriteLine ("domain = mono_jit_init (\"cilc\");");
 		Cindex.WriteLine ();
 		Cindex.WriteLine ("#ifdef CILC_BUNDLE");
-		Cindex.WriteLine ("mono_register_bundled_assemblies(bundled);");
+		Cindex.WriteLine ("mono_register_bundled_assemblies (bundled);");
 		Cindex.WriteLine ("#endif");
 		Cindex.WriteLine ();
 
@@ -365,6 +369,32 @@ public class cilc
 
 		Cindex.WriteLine ("return assembly;");
 		Cindex.WriteLine ("}");
+		Cindex.WriteLine ();
+
+
+		Cindex.WriteLine ("gpointer cilc_glib_object_get_handle (MonoObject *_mono_object)");
+		Cindex.WriteLine ("{");
+		Cindex.WriteLine ("static MonoAssembly *_mono_assembly = NULL;");
+		Cindex.WriteLine ("static MonoMethod *_mono_method = NULL;");
+		Cindex.WriteLine ("static MonoClass *_mono_class = NULL;");
+		Cindex.WriteLine ("gpointer *retval;");
+		Cindex.WriteLine ();
+		Cindex.WriteLine ("if (_mono_assembly == NULL) {");
+		Cindex.WriteLine ("_mono_assembly = mono_domain_assembly_open (" + NsToC (ns) + "_get_mono_domain (), \"" + "glib-sharp" + "\");");
+		Cindex.WriteLine ("}");
+		Cindex.WriteLine ("if (_mono_class == NULL) {");
+		Cindex.WriteLine ("_mono_class = (MonoClass*) mono_class_from_name ((MonoImage*) mono_assembly_get_image (_mono_assembly), \"GLib\", \"Object\");");
+		Cindex.WriteLine ("}");
+		Cindex.WriteLine ("if (_mono_method == NULL) {");
+		Cindex.WriteLine ("MonoMethodDesc *_mono_method_desc = mono_method_desc_new (\":get_Handle()\", FALSE);");
+		Cindex.WriteLine ("_mono_method = mono_method_desc_search_in_class (_mono_method_desc, _mono_class);");
+		Cindex.WriteLine ("}");
+		Cindex.WriteLine ();
+		Cindex.WriteLine ("retval = (gpointer *) mono_object_unbox (mono_runtime_invoke (_mono_method, _mono_object, NULL, NULL));");
+		Cindex.WriteLine ("return (gpointer ) *retval;");
+		Cindex.WriteLine ("}");
+		Cindex.WriteLine ();
+
 
 		Console.Write ("Generating sources in " + ns);
 		foreach (Type t in types) {
@@ -567,8 +597,6 @@ public class cilc
 			C.WriteLine ();
 		}
 
-
-		//TODO: if the class inherits a known GLib Object, use its raw handle
 		C.WriteLine ("static gpointer parent_class;");
 
 		if (events.Length == 0)
@@ -650,6 +678,7 @@ public class cilc
 		C.WriteLine ("return object_type;");
 		C.WriteLine ("}");
 
+		wrap_gobject = TypeIsGObject (t);
 
 		//generate constructors
 		ConstructorInfo[] constructors;
@@ -671,6 +700,18 @@ public class cilc
 		H.WriteLine ();
 		H.WriteLine ("G_END_DECLS");
 	}
+
+	static bool TypeIsGObject (Type t)
+	{
+		if (t == null)
+			return false;
+
+		if (t.FullName == "GLib.Object")
+			return true;
+
+		return TypeIsGObject (t.BaseType);
+	}
+
 
 	//FIXME: clean up this mess with hits as the type registry uses strings
 
@@ -876,7 +917,7 @@ public class cilc
 
 		return s;
 	}
-	
+
 	static string ToValidFuncName (string name)
 	{
 		//avoid generated function name conflicts with internal functions
@@ -893,6 +934,8 @@ public class cilc
 		}
 	}
 
+	static bool wrap_gobject = false;
+
 	static void FunctionGen (ParameterInfo[] parameters, MethodBase m, Type t, Type ret_type, bool ctor)
 	{
 		string myargs = "";
@@ -900,6 +943,7 @@ public class cilc
 		bool stat = m.IsStatic;
 
 		string mytype, rettype;
+
 		mytype = CurType + " *";
 
 		if (ctor) {
@@ -907,17 +951,20 @@ public class cilc
 			rettype = mytype;
 			stat = true;
 		} else
-				rettype = CsTypeToC (ret_type);
+			rettype = CsTypeToC (ret_type);
 
 		string params_arg = "NULL";
 		if (parameters.Length != 0)
 			params_arg = "_mono_params";
 
 		string instance = "thiz";
-		string instance_arg = "NULL";
-	 
+		string mono_obj = "NULL";
+
 		if (ctor || !stat)
-			instance_arg = instance + "->priv->mono_object";
+			mono_obj = "_mono_object";
+
+		//if (ctor || !stat)
+		//	mono_obj = instance + "->priv->mono_object";
 
 		if (!stat) {
 			myargs = mytype + instance;
@@ -976,19 +1023,24 @@ public class cilc
 
 		C.WriteLine ();
 
-		if (has_return)
-			C.WriteLine (rettype + myname + " (" + myargs + ")", H, ";");
-		else
-			C.WriteLine ("void " + myname + " (" + myargs + ")", H, ";");
+		C.WriteLine (rettype + myname + " (" + myargs + ")", H, ";");
 
 		C.WriteLine ("{");
 
 		C.WriteLine ("static MonoMethod *_mono_method = NULL;");
+
+		if (ctor || !stat)
+			C.WriteLine ("MonoObject *" + mono_obj + ";");
+
 		if (parameters.Length != 0) C.WriteLine ("gpointer " + params_arg + "[" + parameters.Length + "];");
+
 		if (ctor) {
 			C.WriteLine (CurType + " *" + instance + ";");
+		}
+
+		if (!ctor && !stat) {
 			C.WriteLine ();
-			C.WriteLine (instance + " = g_object_new (" + NsToC (ns).ToUpper () + "_TYPE_" + CamelToC (t.Name).ToUpper () + ", NULL);");
+			C.WriteLine (mono_obj + " = g_object_get_data (G_OBJECT (" + instance + "), \"mono-object\");");
 		}
 
 		C.WriteLine ();
@@ -1016,30 +1068,41 @@ public class cilc
 			C.WriteLine ();
 
 		if (ctor)
-			C.WriteLine (instance_arg + " = (MonoObject*) mono_object_new ((MonoDomain*) " + NsToC (ns) + "_get_mono_domain ()" + ", " + cur_type + "_get_mono_class ());");
+			C.WriteLine (mono_obj + " = (MonoObject*) mono_object_new ((MonoDomain*) " + NsToC (ns) + "_get_mono_domain ()" + ", " + cur_type + "_get_mono_class ());");
 
 		//delegates are a special case as we want their constructor to take a function pointer
 		if (ctor && t.IsSubclassOf (typeof (MulticastDelegate))) {
-			C.WriteLine ("mono_delegate_ctor (" + instance_arg + ", object, method);");
+			C.WriteLine ("mono_delegate_ctor (" + mono_obj + ", object, method);");
 		} else {
 			//code to invoke the method
 
 			if (!ctor && has_return)
 				if (IsRegisteredByVal (ret_type)) {
 					C.WriteLine ("{");
-					C.WriteLine (rettype + "* retval = (" + rettype + "*) mono_object_unbox (mono_runtime_invoke (_mono_method, " + instance_arg + ", " + params_arg + ", NULL));");
+					C.WriteLine (rettype + "* retval = (" + rettype + "*) mono_object_unbox (mono_runtime_invoke (_mono_method, " + mono_obj + ", " + params_arg + ", NULL));");
 					C.WriteLine ("return (" + rettype + ") *retval;");
 					C.WriteLine ("}");
 				} else {
 					//TODO: this isn't right
-					C.WriteLine ("return (" + rettype + ") mono_runtime_invoke (_mono_method, " + instance_arg + ", " + params_arg + ", NULL);");
+					C.WriteLine ("return (" + rettype + ") mono_runtime_invoke (_mono_method, " + mono_obj + ", " + params_arg + ", NULL);");
 				}
-			else
-				C.WriteLine ("mono_runtime_invoke (_mono_method, " + instance_arg + ", " + params_arg + ", NULL);");
+				else
+					C.WriteLine ("mono_runtime_invoke (_mono_method, " + mono_obj + ", " + params_arg + ", NULL);");
 		}
 
-		if (ctor)
+		if (ctor) {
+			C.WriteLine ();
+
+			//TODO: use ->priv, not data for better performance if not wrapping a gobject
+			if (wrap_gobject)
+				C.WriteLine (instance + " = cilc_glib_object_get_handle (" + mono_obj + ");");
+			else
+				C.WriteLine (instance + " = g_object_new (" + NsToC (ns).ToUpper () + "_TYPE_" + CamelToC (t.Name).ToUpper () + ", NULL);");
+
+			C.WriteLine ("g_object_set_data (G_OBJECT (" + instance + "), \"mono-object\", " + mono_obj + ");");
+			C.WriteLine ();
 			C.WriteLine ("return " + instance + ";");
+		}
 
 		C.WriteLine ("}");
 	}
