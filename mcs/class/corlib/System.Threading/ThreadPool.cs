@@ -150,7 +150,7 @@ namespace System.Threading
 		    CheckIfStartThread();
             }
 
-            Thread.Sleep(5000);
+            Thread.Sleep(500);
          }
       }
 
