@@ -1,3 +1,9 @@
+2004-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c:
+	(GetFileAttributes): set the error depending on errno instead of
+	setting ERROR_FILE_NOT_FOUND always. See bug #55160.
+
 2004-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c:
