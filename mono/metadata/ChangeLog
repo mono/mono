@@ -1,3 +1,8 @@
+2003-07-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* image.c (load_metadata_ptrs): use g_strndup because strndup is
+	not available on all plattforms
+
 2003-07-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.h image.c: Store the metadata version string in MonoImage.
