@@ -1,3 +1,7 @@
+2003-01-16  Martin Baulig  <martin@ximian.com>
+
+	* debug.c: Use the mono/io-layer functions here instead of gthread.
+
 2003-01-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_jit_compile_method):  make sure runtime_init is called 
