@@ -457,18 +457,12 @@ System.Runtime.Remoting.Activation/ActivatorLevel.cs
 System.Runtime.Remoting.Activation/IActivator.cs
 System.Runtime.Remoting.Activation/IConstructionCallMessage.cs
 System.Runtime.Remoting.Activation/IConstructionReturnMessage.cs
-System.Runtime.Remoting.Activation/UrlAttribute.cs
 System.Runtime.Remoting.Channels/BaseChannelObjectWithProperties.cs
 System.Runtime.Remoting.Channels/BaseChannelSinkWithProperties.cs
 System.Runtime.Remoting.Channels/BaseChannelWithProperties.cs
-System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs
-System.Runtime.Remoting.Channels/BinaryClientFormatterSinkProvider.cs
-System.Runtime.Remoting.Channels/BinaryServerFormatterSink.cs
-System.Runtime.Remoting.Channels/BinaryServerFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/ChannelDataStore.cs
 System.Runtime.Remoting.Channels/ChannelServices.cs
 System.Runtime.Remoting.Channels/ClientChannelSinkStack.cs
-System.Runtime.Remoting.Channels/CommonTransportKeys.cs
 System.Runtime.Remoting.Channels/IChannel.cs
 System.Runtime.Remoting.Channels/IChannelDataStore.cs
 System.Runtime.Remoting.Channels/IChannelReceiver.cs
@@ -489,12 +483,8 @@ System.Runtime.Remoting.Channels/ITransportHeaders.cs
 System.Runtime.Remoting.Channels/ServerChannelSinkStack.cs
 System.Runtime.Remoting.Channels/ServerProcessing.cs
 System.Runtime.Remoting.Channels/SinkProviderData.cs
-System.Runtime.Remoting.Channels/SoapClientFormatterSink.cs
-System.Runtime.Remoting.Channels/SoapServerFormatterSink.cs
-System.Runtime.Remoting.Channels/SoapServerFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/TransportHeaders.cs
 System.Runtime.Remoting.Contexts/Context.cs
-System.Runtime.Remoting.Contexts/ContextAttribute.cs
 System.Runtime.Remoting.Contexts/ContextProperty.cs
 System.Runtime.Remoting.Contexts/CrossContextDelegate.cs
 System.Runtime.Remoting.Contexts/IContextAttribute.cs
@@ -503,7 +493,6 @@ System.Runtime.Remoting.Contexts/IContributeClientContextSink.cs
 System.Runtime.Remoting.Contexts/IContributeServerContextSink.cs
 System.Runtime.Remoting.Contexts/IDynamicMessageSink.cs
 System.Runtime.Remoting.Contexts/IDynamicProperty.cs
-System.Runtime.Remoting.Contexts/SynchronizationAttribute.cs
 System.Runtime.Remoting.Lifetime/ClientSponsor.cs
 System.Runtime.Remoting.Lifetime/ILease.cs
 System.Runtime.Remoting.Lifetime/ISponsor.cs
@@ -538,6 +527,7 @@ System.Runtime.Remoting.Metadata/SoapParameterAttribute.cs
 System.Runtime.Remoting.Metadata/SoapTypeAttribute.cs
 System.Runtime.Remoting.Metadata/XmlFieldOrderOption.cs
 System.Runtime.Remoting.Proxies/RealProxy.cs
+System.Runtime.Remoting.Proxies/RemotingProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Serialization/FormatterConverter.cs
