@@ -416,7 +416,7 @@ namespace Mono.CSharp {
 
 		/// <remarks>
 		///  Should be overriten by the appropriate declaration space
-		/// <remarks>
+		/// </remarks>
 		public abstract TypeBuilder DefineType ();
 		
 		/// <summary>
