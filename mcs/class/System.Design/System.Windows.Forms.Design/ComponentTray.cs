@@ -325,6 +325,10 @@ namespace System.Windows.Forms.Design
 		}
 
 		[MonoTODO]
+		[DesignOnly (true)]
+		[Category ("Layout")]
+		[Localizable (false)]
+		[Browsable (false)]
 		public Point GetLocation (IComponent receiver)
 		{
 			throw new NotImplementedException ();

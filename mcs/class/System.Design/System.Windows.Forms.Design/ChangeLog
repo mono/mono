@@ -1,5 +1,11 @@
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* ComponentEditorForm.cs: CRLF to LF
+	* ControlDesigner.cs: API signature fix
+	* DocumentDesigner.cs: API signature fixes, CRLF to LF
+
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* AxParameterData.cs: stubbed
 	* AxWrapperGen.cs: stubbed
 	* DockEditor.cs: stubbed

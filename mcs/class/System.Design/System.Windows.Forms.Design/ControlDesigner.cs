@@ -234,9 +234,11 @@ namespace System.Windows.Forms.Design {
 
 		[MonoTODO]
 		public virtual AccessibleObject AccessibilityObject {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if (accessibilityObj == null)
+					accessibilityObj = new ControlDesignerAccessibleObject (this, Control);
+
+				return accessibilityObj;
 			}
 		}
 
@@ -276,6 +278,7 @@ namespace System.Windows.Forms.Design {
 		#region Protected Static Fields
 
 		protected static readonly Point InvalidPoint;
+		protected AccessibleObject accessibilityObj;
 
 		#endregion Protected Static Fields
 

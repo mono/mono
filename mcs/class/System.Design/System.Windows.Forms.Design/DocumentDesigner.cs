@@ -168,5 +168,8 @@ namespace System.Windows.Forms.Design
 		}
 
 		#endregion Implementation of IOleDragClient
+
+		[MonoTODO]
+		protected IMenuEditorService menuEditorService;
 	}
 }
