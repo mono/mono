@@ -1,5 +1,7 @@
 2004-12-06  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* expression.cs: added StringConstructor case.
+
 	* MemberInfoList.cs: added internal classes Node, ListIter,
 	ChainHash and implement MemberInfoList.
 	* JSObject.cs: implement AddField, AddProperty, AddMethod,

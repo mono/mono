@@ -1256,6 +1256,9 @@ namespace Microsoft.JScript {
 				case "RegExp":
 					type = typeof (RegExpConstructor);
 					break;
+				case "String":
+					type = typeof (StringConstructor);
+					break;
 				}
 				if (type != null)
 					ig.Emit (OpCodes.Call, type.GetMethod ("CreateInstance"));
