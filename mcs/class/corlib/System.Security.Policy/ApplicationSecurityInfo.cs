@@ -34,7 +34,7 @@ using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
-	public sealed class ApplicationSecurityInfo {
+	public sealed class ApplicationSecurityInfo : ISecurityEncodable, ISecurityPolicyEncodable {
 
 		private ActivationContext _context;
 		private Evidence _evidence;

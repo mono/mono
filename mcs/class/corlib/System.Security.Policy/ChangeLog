@@ -1,3 +1,13 @@
+2004-08-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationSecurityInfo.cs: Added missing interfaces.
+	* PolicyLevel.cs: Load policies from files, using *.default files if
+	policy is missing (like Fx 2.0). Fixed Resolve never to return null.
+	Added hardcoded policy defaults (to be updated as CAS progress) in 
+	case no policy file, nor default files, are available.
+	* PolicyStatement.cs: Fixed AttributeString. Added internal static
+	Empty method (helper).
+
 2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationSecurityInfo.cs: New. Stub for NET_2_0.

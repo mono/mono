@@ -43,7 +43,8 @@ namespace System.Security.Policy {
 		{
 		}
 
-		public PolicyStatement (PermissionSet perms, PolicyStatementAttribute attrs) {
+		public PolicyStatement (PermissionSet perms, PolicyStatementAttribute attrs) 
+		{
 			this.perms = perms;
 			this.attrs = attrs;
 		}
@@ -59,7 +60,18 @@ namespace System.Security.Policy {
 		}
 
 		public string AttributeString {
-			get { return attrs.ToString ("F"); }
+			get {
+				switch (attrs) {
+					case PolicyStatementAttribute.Exclusive:
+						return "Exclusive";
+					case PolicyStatementAttribute.LevelFinal:
+						return "LevelFinal";
+					case PolicyStatementAttribute.All:
+						return "Exclusive LevelFinal";
+					default:
+						return String.Empty;
+				}
+			}
 		}
 
 		public PolicyStatement Copy ()
@@ -124,5 +136,10 @@ namespace System.Security.Policy {
 			return (perms.GetHashCode () ^ (int) attrs);
 		}
 #endif
+
+		internal static PolicyStatement Empty ()
+		{
+			return new PolicyStatement (new PermissionSet (PermissionState.None));
+		}
 	}
 }

@@ -68,19 +68,44 @@ namespace System.Security.Policy {
 
 		internal void LoadFromFile (string filename) 
 		{
-			if (!File.Exists (filename))
-				return;
-// TEMP				throw new ArgumentException (Locale.GetText ("file do not exist"));
-			
-			// throw a SecurityException if we don't have Read, Write and PathDiscovery permissions
-			FileIOPermissionAccess access = FileIOPermissionAccess.Read | FileIOPermissionAccess.Write | FileIOPermissionAccess.PathDiscovery;
-			new FileIOPermission (access, filename).Demand ();
-
-			using (StreamReader sr = File.OpenText (filename)) {
-				string xml = sr.ReadToEnd ();
-				LoadFromString (xml);
+			bool loaded = false;
+			try {
+				// check for policy file
+				if (!File.Exists (filename)) {
+					// if it doesn't exist use the default configuration (like Fx 2.0)
+					// ref: http://blogs.msdn.com/shawnfa/archive/2004/04/21/117833.aspx
+					string defcfg = filename + ".default";
+					if (File.Exists (defcfg)) {
+						// create policy from default file
+						File.Copy (defcfg, filename);
+					}
+				}
+				// load security policy configuration
+				if (File.Exists (filename)) {
+					using (StreamReader sr = File.OpenText (filename)) {
+						LoadFromString (sr.ReadToEnd ());
+					}
+					loaded = true;
+				}
+				else {
+					CreateFromHardcodedDefault (_type);
+					loaded = true;
+					Save ();
+				}
 			}
-			_location = filename;
+			catch (Exception) {
+				// this can fail in many ways include
+				// * can't lookup policy (path discovery);
+				// * can't copy default file to policy
+				// * can't read policy file;
+				// * can't save hardcoded policy to filename
+				// * can't decode policy file
+				if (!loaded)
+					CreateFromHardcodedDefault (_type);
+			}
+			finally {
+				_location = filename;
+			}
 		}
 
 		internal void LoadFromString (string xml) 
@@ -336,13 +361,22 @@ namespace System.Security.Policy {
                         return retval;
                 }
 
-                [MonoTODO ("Find out what the default state is")]
                 public void Reset ()
                 {
-			// 1. Use the .default file if existing (like Fx 2.0 does)
-			//    http://blogs.msdn.com/shawnfa/archive/2004/04/21/117833.aspx
-			// 2. If not the return to hard-coded default values
-                        throw new NotImplementedException ();
+                        full_trust_assemblies.Clear ();
+                        named_permission_sets.Clear ();
+
+			if ((_location != null) && (File.Exists (_location))) {
+				try {
+					File.Delete (_location);
+				}
+				catch {}
+			}
+			// because the policy doesn't exist LoadFromFile will try to
+			// 1. use the .default file if existing (like Fx 2.0 does); or
+			// 2. use the hard-coded default values
+			// and recreate a policy file
+			LoadFromFile (_location);
                 }
 
                 public PolicyStatement Resolve (Evidence evidence)
@@ -350,7 +384,8 @@ namespace System.Security.Policy {
                         if (evidence == null)
                                 throw new ArgumentNullException ("evidence");
 
-			return root_code_group.Resolve (evidence);
+			PolicyStatement ps = root_code_group.Resolve (evidence);
+			return ((ps != null) ? ps : PolicyStatement.Empty ());
                 }
 
                 public CodeGroup ResolveMatchingCodeGroups (Evidence evidence)
@@ -358,7 +393,10 @@ namespace System.Security.Policy {
                         if (evidence == null)
 				throw new ArgumentNullException ("evidence");
 
-			return root_code_group.ResolveMatchingCodeGroups (evidence);
+			CodeGroup cg = root_code_group.ResolveMatchingCodeGroups (evidence);
+			// TODO
+			return ((cg != null) ? cg : null);
+
                 }
 
                 public SecurityElement ToXml ()
@@ -440,6 +478,27 @@ namespace System.Security.Policy {
 					sw.Write (ToXml ().ToString ());
 					sw.Close ();
 				}
+			}
+		}
+
+		// TODO : hardcode defaults in case 
+		// (a) the specified policy file doesn't exists; and
+		// (b) no corresponding default policy file exists
+		internal void CreateFromHardcodedDefault (PolicyLevelType type) 
+		{
+			PolicyStatement psu = new PolicyStatement (new PermissionSet (PermissionState.Unrestricted));
+
+			switch (type) {
+			case PolicyLevelType.Machine:
+				// by default all stuff is in the machine policy...
+				root_code_group = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.MyComputer), psu);
+				break;
+			case PolicyLevelType.User:
+			case PolicyLevelType.Enterprise:
+			case PolicyLevelType.AppDomain:
+				// while the other policies don't restrict anything
+				root_code_group = new UnionCodeGroup (new AllMembershipCondition (), psu); 
+				break;
 			}
 		}
         }
