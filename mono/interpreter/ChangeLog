@@ -1,3 +1,9 @@
+2003-09-25  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c - reinstate use of mono_marshal_get_delegate_invoke
+	for ordering and fix CALLI to handle wrapper. More wrapper handling
+	in CALL and LDSTR. Add another string conversion case.
+
 2003-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (ves_exec_method): Fix warning.
