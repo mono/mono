@@ -30,16 +30,17 @@ namespace System.Windows.Forms {
 		public MenuItem() : base(null) {
 		}
 
-		public MenuItem(string s) : base(null) {
-			throw new NotImplementedException ();
+		public MenuItem(string s) : base(null){
+			text_ = s;
 		}
 
 		public MenuItem(string s, EventHandler e) : base(null) {
-			throw new NotImplementedException ();
+			text_ = s;
+			Click += e;
 		}
 
-		public MenuItem(string s, MenuItem[] items) : base(null) {
-			throw new NotImplementedException ();
+		public MenuItem(string s, MenuItem[] items) : base(items) {
+			text_ = s;
 		}
 
 		public MenuItem(string s, EventHandler e, Shortcut sc) : base(null) {
@@ -74,7 +75,7 @@ namespace System.Windows.Forms {
 		//public override bool Equals(object o, object o1) {
 		//	throw new NotImplementedException ();
 		//}
-                
+
 		public override bool Equals(object o) {
 			throw new NotImplementedException ();
 		}
@@ -117,9 +118,9 @@ namespace System.Windows.Forms {
 		//public virtual void MergeMenu(Menu m) {
 		//	throw new NotImplementedException ();
 		//}
-                
+
 		public void PerformClick() {
-			throw new NotImplementedException ();
+			OnClick( new EventArgs());
 		}
                 
 		public virtual void PerformSelect() {
@@ -129,7 +130,7 @@ namespace System.Windows.Forms {
 		public override string ToString() {
 			throw new NotImplementedException ();
 		}
-                
+
 		//
 		// -- Protected Methods
 		//
@@ -155,35 +156,37 @@ namespace System.Windows.Forms {
 		//protected virtual object GetService(Type t) {
 		//	throw new NotImplementedException ();
 		//}
-                
+
 		//protected object MemberwiseClone() {
 		//	throw new NotImplementedException ();
 		//}
-                
+
 		protected virtual void OnClick(EventArgs e) {
-			throw new NotImplementedException ();
+			if( Click != null){
+				Click(this,e);
+			}
 		}
-                
+
 		protected virtual void OnDrawItem(DrawItemEventArgs e) {
 			throw new NotImplementedException ();
 		}
-                
+
 		protected virtual void OnMeasureItem(MeasureItemEventArgs e) {
 			throw new NotImplementedException ();
 		}
-                
+
 		protected virtual void OnPopUp(EventArgs e) {
 			throw new NotImplementedException ();
 		}
-                
+
 		protected virtual void OnSelect(EventArgs e) {
 			throw new NotImplementedException ();
 		}
-                
+
 		//
 		// -- Public Properties
 		//
-                
+
 		public bool BarBreak {
 
 			get {
@@ -245,7 +248,7 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-                
+
 		public int Index {
 
 			get {
@@ -255,11 +258,11 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public override bool IsParent {
 
 			get {
-				throw new NotImplementedException ();
+				return base.IsParent;
 			}
 		}
                 
@@ -284,7 +287,7 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-                
+
 		public int MergeOrder {
 
 			get {
@@ -328,7 +331,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-                
+
 		public bool RadioCheck {
 
 			get {
@@ -399,14 +402,14 @@ namespace System.Windows.Forms {
 		protected int MenuID {
 
 			get {
-				throw new NotImplementedException ();
+				return (int)MenuID_;
 			}
 		}
-                
+
 		//
 		// -- Public Events
 		//
-                
+
 		public event EventHandler Click;
 		//inherited
 		//public event EventHandler Disposed;

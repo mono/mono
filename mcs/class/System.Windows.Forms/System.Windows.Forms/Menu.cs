@@ -90,17 +90,18 @@ namespace System.Windows.Forms  {
 		protected void CloneMenu(Menu menuSrc) {
 			throw new NotImplementedException();
 		}
-		
-		private IntPtr menuHandle_ = IntPtr.Zero;
-		private Menu.MenuItemCollection  menuCollection_ = null;
+
 		protected Menu( MenuItem[] items) {
-			menuHandle_ = Win32.CreateMenu();
-			menuCollection_ = new Menu.MenuItemCollection( this);
+			if( items != null) {
+				IsParent_ = true;
+				MenuItems.AddRange ( items);
+			}
 		}
 
 		~Menu() {
-			Win32.DestroyMenu( menuHandle_);
-			//throw new NotImplementedException();
+			// TODO: Check whats happening if Menu was already destroyed by Win32 Window
+			if( Win32.IsMenu( menuHandle_) != 0)
+				Win32.DestroyMenu( menuHandle_);
 		}
 
 		//protected virtual object GetService(Type service) {
@@ -129,17 +130,23 @@ namespace System.Windows.Forms  {
 		//	}
 		//}
 
+		private IntPtr menuHandle_ = IntPtr.Zero;
 		public IntPtr Handle {
-
 			get {
+				if( menuHandle_ == IntPtr.Zero) {
+					menuHandle_ = Win32.CreateMenu();
+					//System.Console.WriteLine("Create menu {0}", menuHandle_);
+				}
 				return menuHandle_;
 			}
 		}
 
+		protected bool IsParent_ = false;
+
 		public virtual bool IsParent {
 
 			get {
-				throw new NotImplementedException();
+				return IsParent_;
 			}
 		}
 
@@ -150,12 +157,56 @@ namespace System.Windows.Forms  {
 			}
 		}
 
-		public Menu.MenuItemCollection MenuItems {
+		private Menu.MenuItemCollection  menuCollection_ = null;
 
+		public Menu.MenuItemCollection MenuItems {
 			get {
+				if( menuCollection_ == null) {
+					menuCollection_ = new Menu.MenuItemCollection( this);
+				}
 				return menuCollection_;
 			}
 		}
+
+		internal const uint INVALID_MENU_ID = (uint)-1;
+		// Variables are stored here to provide access for the base functions
+		protected uint MenuID_ = INVALID_MENU_ID;
+
+		// Provides unique id to all items in all menus, hopefully space is enougth.
+		// Possible to use array to keep ids from deleted menu items
+		// and reuse them.
+		protected static uint MenuIDs_ = 1;
+
+		// Library interface
+
+		// Recursively searches for specified item in menu.
+		// Goes immediately into child, when mets one.
+		internal virtual MenuItem GetMenuItemByID( uint id)
+		{
+			foreach( MenuItem mi in MenuItems) {
+				if( mi.IsParent_) {
+					MenuItem submi = mi.GetMenuItemByID(id);
+					if( submi != null) return submi;
+				}
+				else {
+					if( mi.MenuID_ == id){
+						return mi;
+					}
+				}
+			}
+			return null;
+		}
+
+		internal virtual uint GetIDByMenuItem( MenuItem mi)
+		{
+			// FIXME: Pay attention, do not assign an id to a "stranger"
+			// If reusing IDs, get one from array first
+			if ( mi.MenuID_ == INVALID_MENU_ID) {
+				mi.MenuID_ = MenuIDs_++;
+			}
+			return  mi.MenuID_;
+		}
+
 		//inherited
 		//public virtual ISite Site {
 		//	get {
@@ -209,67 +260,74 @@ namespace System.Windows.Forms  {
 			// -- Public Methods
 			//
 
-			public virtual int Add(MenuItem m) {
+			public virtual int Add(MenuItem mi) {
 				int result = -1;
 				// FIXME: MenuItem cannot be inserted to several containers. Check this here.
-				if( m != null){
+				if( mi != null){
 					// FIXME: Set MenuItem's owner here.
-					items_.Add(m);
+					items_.Add(mi);
 					result = items_.Count;
+					//System.Console.WriteLine("Adding menuItem {0}, parent {1}", mi.Text, mi.IsParent);
 					if( parentMenu_ != null) {
-						Win32.AppendMenuA( parentMenu_.Handle, Win32.MF_ENABLED | Win32.MF_STRING,
-															(uint)result, m.Text);
+						if( mi.IsParent){
+							Win32.AppendMenuA( parentMenu_.Handle, Win32.MF_ENABLED | Win32.MF_STRING | Win32.MF_POPUP,
+																mi.Handle, mi.Text);
+						}
+						else {
+							Win32.AppendMenuA( parentMenu_.Handle, Win32.MF_ENABLED | Win32.MF_STRING,
+																parentMenu_.GetIDByMenuItem(mi), mi.Text);
+						}
 					}
 				}
 				return result;
 			}
-
-			public virtual MenuItem Add(string s) {
-				MenuItem result = new MenuItem();
-				result.Text = s;
-				if( -1 == Add(result)){
-					result = null;
-				}
-				return result;
+			private MenuItem AddMenuItemCommon( MenuItem mi) {
+				return ( -1 != Add (mi)) ? mi : null;
 			}
 
-			public virtual int Add(int i, MenuItem m) {
+			public virtual MenuItem Add ( string s) {
+				return AddMenuItemCommon( new MenuItem (s));
+			}
+
+			public virtual int Add ( int i, MenuItem m) {
 				throw new NotImplementedException ();
 			}
 
-			public virtual MenuItem Add(string s, EventHandler e) {
-				throw new NotImplementedException ();
+			public virtual MenuItem Add (string s, EventHandler e) {
+				return AddMenuItemCommon(new MenuItem ( s, e));
 			}
 
-			public virtual MenuItem Add(string s, MenuItem[] items) {
-				throw new NotImplementedException ();
+			public virtual MenuItem Add (string s, MenuItem[] items) {
+				return AddMenuItemCommon(new MenuItem ( s, items));
 			}
 
 			public virtual void AddRange(MenuItem[] items) {
-				throw new NotImplementedException ();
+				foreach( MenuItem mi in items) {
+					Add(mi);
+				}
 			}
-		
+
 			public virtual void Clear() {
 				throw new NotImplementedException ();
 			}
-		
+
 			public bool Contains(MenuItem m) {
 				throw new NotImplementedException ();
 			}
-		
+
 			public void CopyTo(Array a, int i) {
 				throw new NotImplementedException ();
 			}
-		
+
 			public override bool Equals(object o) {
 				throw new NotImplementedException ();
 			}
-		
+
 			//inherited
 			//public static bool Equals(object o1, object o2) {
 			//	throw new NotImplementedException ();
 			//}
-		
+
 			[MonoTODO]
 			public override int GetHashCode() {
 				//FIXME add our proprities
@@ -277,7 +335,7 @@ namespace System.Windows.Forms  {
 			}
 
 			public IEnumerator GetEnumerator() {
-				throw new NotImplementedException ();
+				return items_.GetEnumerator();
 			}
 
 			//public override Type GetType() {
@@ -415,9 +473,9 @@ namespace System.Windows.Forms  {
 			}
 			// End Of ICollection
 		}
-
 	}
+	
 }
-			
+
 
 

@@ -38,7 +38,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public MainMenu(MenuItem[] items) : base(items)
 		{
-			throw new NotImplementedException ();
 		}
 
 		//
