@@ -173,7 +173,7 @@ namespace System.Net
 			}
 
 			if (cookie.Port == "" && uri != null && !uri.IsDefaultPort) {
-				cookie.Port = uri.Port.ToString ();
+				cookie.Port = "\"" + uri.Port.ToString () + "\"";
 			}
 		}
 
