@@ -1,4 +1,12 @@
 
+2003-06-28  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Random.cs: Changed behavior of Random to match MS.NET. When Next is
+	  called with maxvalue==0 or minvalue==maxvalue, MS.NET internally generates
+	  a new random number (although it is not needed), while mono did not. 
+	  As a result, the sequence of random numbers could be different for the
+	  same seed.
+
 Thu Jun 26 16:06:35 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* FloatingPointFormatter.cs: use dec_len2 as default precision.
