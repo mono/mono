@@ -1,3 +1,16 @@
+2003-04-17 Jackson Harper <jackson@latitudegeo.com>
+
+	* ExternTypeRef.cs: New file - Represents a reference to a type in
+	an external assembly
+	* FieldDef.cs: New file - Represents a field definition
+	* IClassRef.cs: New file - Interface that classrefs must
+	implement. This needs some more thought though because once a
+	classref has been modified it is no longer a classref.
+	* ITypeRef.cs: New file - Interface that references to types must
+	implement
+	* TypeDef.cs: New file - Represents the a class definition, and
+	will hold all of the classes members.
+
 2003-04-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* TypeRef.cs: Return FieldDef when adding a field def to a class
