@@ -46,9 +46,9 @@ namespace System.IO {
 		private int buffer_size;
 
 		//
-		// Index into `input_buffer' where we start decoding
+		// Base stream's position where we start filling our buffer.
 		//
-		private int parse_start;
+		private long buffer_start;
 
 		int do_checks;
 		
@@ -252,12 +252,21 @@ namespace System.IO {
 
 			return 0;
 		}
+
+		public void DiscardBufferedData ()
+		{
+			buffer_start += pos;
+			base_stream.Position = buffer_start;
+			pos = decoded_count = 0;
+		}
 		
 		// the buffer is empty, fill it again
 		private int ReadBuffer ()
 		{
 			pos = 0;
 			int cbEncoded = 0;
+
+			buffer_start = base_stream.Position;
 
 			// keep looping until the decoder gives us some chars
 			decoded_count = 0;
