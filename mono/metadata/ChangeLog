@@ -1,4 +1,8 @@
 
+Thu May 16 16:08:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: support named args in custom attributes (write support).
+
 Thu May 16 13:04:59 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fix finally position calculation.
