@@ -30,6 +30,7 @@ namespace MonoTests.System.Data
 				suite.AddTest (new TestSuite (typeof (DataRowCollectionTest)));
 				suite.AddTest (new TestSuite (typeof (DataRowTest)));
 				suite.AddTest (new TestSuite (typeof (DataColumnCollectionTest)));
+				suite.AddTest (new TestSuite (typeof (DataSetTest)));
 				return suite;
 			}
 		}

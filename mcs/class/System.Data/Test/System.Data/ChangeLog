@@ -1,3 +1,10 @@
+2002-12-17  Ville Palo <vi64pa@koti.soon.fi>
+
+	* region.xml: 
+	* store.xsd: new xmldoment and xmlschema for testing DataSet
+	* DataSetTest.cs: Added some Xml-tests.
+	* AllTests.cs: Added DataSetTest
+	
 2002-10-23  Nick Drochak  <ndrochak@gol.com>
 
 	* ConstraintCollectionTest.cs (SetUp): Clear the constraints before 
