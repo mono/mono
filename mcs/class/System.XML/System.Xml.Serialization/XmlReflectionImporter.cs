@@ -360,14 +360,22 @@ namespace System.Xml.Serialization {
 
 			XmlTypeMapping map = CreateTypeMapping (typeData, root, name, defaultNamespace);
 			map.ObjectMap = obmap;
-
+			
+			// Register any of the including types as a derived class of object
+			XmlIncludeAttribute[] includes = (XmlIncludeAttribute[])type.GetCustomAttributes (typeof (XmlIncludeAttribute), false);
+			
+			XmlTypeMapping objectMapping = ImportTypeMapping (typeof(object));
+			for (int i = 0; i < includes.Length; i++)
+			{
+				Type includedType = includes[i].Type;
+				objectMapping.DerivedTypes.Add(ImportTypeMapping (includedType, null, defaultNamespace));
+			}
+			
 			// Register this map as a derived class of object
 
 			helper.RegisterSchemaType (map, name, defaultNamespace);
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 
-			ImportIncludedTypes (type, defaultNamespace);
-			
 			return map;
 		}
 
