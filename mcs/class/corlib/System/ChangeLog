@@ -1,3 +1,10 @@
+2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: Fixed banker rounding by calling Math.Round. This won't
+	be a performance winner (the actual Math code has a note to wait a
+	better Decimal implementation) but it returns the correct results
+	(without adding new code in corlib or the runtime). Fix #37744.
+
 2004-06-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs :

@@ -491,15 +491,10 @@ namespace System
             return d;
         }
 
-        public static Decimal Round(Decimal d, int decimals) 
+        public static Decimal Round (Decimal d, int decimals) 
         {
-            if (decimals < 0 || decimals > iMAX_SCALE) 
-            {
-                throw new ArgumentOutOfRangeException(Locale.GetText ("decimals must be between 0 and 28"));
-            }
-
-            decimalRound(ref d, decimals);
-            return d;
+		// until Math.Round can call an optimized Decimal.Round ;-)
+		return Math.Round (d, decimals);
         }
 
         public static Decimal Multiply (Decimal d1, Decimal d2) 
