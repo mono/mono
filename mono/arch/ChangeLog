@@ -1,3 +1,7 @@
+2002-07-08  Radek Doulik  <rodo@ximian.com>
+
+	* ppc/tramp.c: marshaling for SZARRAY
+
 2002-07-05  Radek Doulik  <rodo@ximian.com>
 
 	* ppc/tramp.c: removed magic hack
