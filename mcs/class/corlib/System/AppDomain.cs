@@ -456,6 +456,9 @@ namespace System {
 
 		public Assembly Load (string assemblyString)
 		{
+			if (assemblyString == null)
+				throw new ArgumentNullException ("assemblyString");
+				
 			AssemblyName an = new AssemblyName ();
 			an.Name = assemblyString;
 			
@@ -464,6 +467,9 @@ namespace System {
 
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
 		{
+			if (assemblyString == null)
+				throw new ArgumentNullException ("assemblyString");
+				
 			AssemblyName an = new AssemblyName ();
 			an.Name = assemblyString;
 			
@@ -483,6 +489,9 @@ namespace System {
 		[MonoTODO]
 		public Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence)
 		{
+			if (rawAssembly == null)
+				throw new ArgumentNullException ("rawAssembly");
+				
 			throw new NotImplementedException ();
 		}
 			
