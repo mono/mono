@@ -252,7 +252,7 @@ namespace System.Web.UI
 			foreach (Assembly ass in assemblies) {
 				type = ass.GetType (typeName);
 				if (type != null) {
-					AddAssembly (ass, false);
+					AddAssembly (ass, (Path.GetDirectoryName (ass.Location) == PrivateBinPath));
 					AddDependency (ass.Location);
 					return type;
 				}
