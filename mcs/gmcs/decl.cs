@@ -1643,22 +1643,20 @@ namespace Mono.CSharp {
 			Timer.StopTimer (TimerType.CacheInit);
 		}
 
-		public MemberCache (IMemberContainer container, Type[] ifaces)
+		public MemberCache (Type[] ifaces)
 		{
-			this.Container = container;
+			//
+			// The members of this cache all belong to other caches.  
+			// So, 'Container' will not be used.
+			//
+			this.Container = null;
 
 			member_hash = new Hashtable ();
 			if (ifaces == null)
 				return;
 
-			foreach (Type itype in ifaces) {
-				IMemberContainer iface_container =
-					TypeManager.LookupMemberContainer (itype);
-
-				MemberCache iface_cache = iface_container.MemberCache;
-
-				AddHashtable (member_hash, iface_cache);
-			}
+			foreach (Type itype in ifaces)
+				AddCacheContents (TypeManager.LookupMemberCache (itype));
 		}
 
 		/// <summary>
@@ -1680,16 +1678,15 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Add the contents of `new_hash' to `hash'.
+		///   Add the contents of `cache' to the member_hash.
 		/// </summary>
-		void AddHashtable (Hashtable hash, MemberCache cache)
+		void AddCacheContents (MemberCache cache)
 		{
-			Hashtable new_hash = cache.member_hash;
-			IDictionaryEnumerator it = new_hash.GetEnumerator ();
+			IDictionaryEnumerator it = cache.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
-				ArrayList list = (ArrayList) hash [it.Key];
+				ArrayList list = (ArrayList) member_hash [it.Key];
 				if (list == null)
-					hash [it.Key] = list = new ArrayList ();
+					member_hash [it.Key] = list = new ArrayList ();
 
 				ArrayList entries = (ArrayList) it.Value;
 				for (int i = entries.Count-1; i >= 0; i--) {

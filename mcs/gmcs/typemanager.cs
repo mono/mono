@@ -514,31 +514,37 @@ public class TypeManager {
 		return LookupTypeContainer (t);
 	}
 
-	public static IMemberContainer LookupMemberContainer (Type t)
+	public static MemberCache LookupMemberCache (Type t)
 	{
 		if (t is TypeBuilder) {
 			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
 			if (container != null)
-				return container;
+				return container.MemberCache;
 		}
 
 		if (t is GenericTypeParameterBuilder) {
 			IMemberContainer container = builder_to_type_param [t] as IMemberContainer;
 
 			if (container != null)
-				return container;
+				return container.MemberCache;
 		}
 
-		return TypeHandle.GetTypeHandle (t);
+		return TypeHandle.GetMemberCache (t);
 	}
 
-	public static MemberCache LookupInterfaceCache (IMemberContainer container, Type t)
+	public static MemberCache LookupParentInterfacesCache (Type t)
 	{
+		Type [] ifaces = t.GetInterfaces ();
+
+		if (ifaces != null && ifaces.Length == 1)
+			return LookupMemberCache (ifaces [0]);
+
+		// TODO: the builder_to_member_cache should be indexed by 'ifaces', not 't'
 		MemberCache cache = builder_to_member_cache [t] as MemberCache;
 		if (cache != null)
 			return cache;
 
-		cache = new MemberCache (container, GetInterfaces (t));
+		cache = new MemberCache (ifaces);
 		builder_to_member_cache.Add (t, cache);
 		return cache;
 	}
@@ -1535,6 +1541,8 @@ public class TypeManager {
 	private static MemberInfo [] MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 							    string name, out bool used_cache)
 	{
+		MemberCache cache;
+
 		//
 		// We have to take care of arrays specially, because GetType on
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
@@ -1552,7 +1560,7 @@ public class TypeManager {
 		//
 		if (t is TypeBuilder) {
 			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
-			MemberCache cache = decl.MemberCache;
+			cache = decl.MemberCache;
 
 			//
 			// If this DeclSpace has a MemberCache, use it.
@@ -1590,13 +1598,13 @@ public class TypeManager {
 
 		//
 		// This call will always succeed.  There is exactly one TypeHandle instance per
-		// type, TypeHandle.GetTypeHandle() will either return it or create a new one
-		// if it didn't already exist.
+		// type, TypeHandle.GetMemberCache() will, if necessary, create a new one, and return
+		// the corresponding MemberCache.
 		//
-		TypeHandle handle = TypeHandle.GetTypeHandle (t);
+		cache = TypeHandle.GetMemberCache (t);
 
 		used_cache = true;
-		return handle.MemberCache.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
+		return cache.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
 	}
 
 	public static bool IsBuiltinType (Type t)
@@ -3335,7 +3343,7 @@ public sealed class TypeHandle : IMemberContainer {
 	///   a TypeHandle yet, a new instance of it is created.  This static method
 	///   ensures that we'll only have one TypeHandle instance per type.
 	/// </summary>
-	public static TypeHandle GetTypeHandle (Type t)
+	private static TypeHandle GetTypeHandle (Type t)
 	{
 		TypeHandle handle = (TypeHandle) type_hash [t];
 		if (handle != null)
@@ -3344,6 +3352,11 @@ public sealed class TypeHandle : IMemberContainer {
 		handle = new TypeHandle (t);
 		type_hash.Add (t, handle);
 		return handle;
+	}
+
+	public static MemberCache GetMemberCache (Type t)
+	{
+		return GetTypeHandle (t).MemberCache;
 	}
 	
 	public static void CleanUp ()
@@ -3398,7 +3411,7 @@ public sealed class TypeHandle : IMemberContainer {
 			BaseType = GetTypeHandle (type.BaseType);
 			parent_cache = BaseType.MemberCache;
 		} else if (type.IsInterface)
-			parent_cache = TypeManager.LookupInterfaceCache (this, type);
+			parent_cache = TypeManager.LookupParentInterfacesCache (type);
 		this.is_interface = type.IsInterface || type.IsGenericParameter;
 		this.member_cache = new MemberCache (this);
 	}
