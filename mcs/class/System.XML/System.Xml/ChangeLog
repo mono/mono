@@ -1,3 +1,8 @@
+2003-06-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNodeReader.cs : LookupNamespace () has refered invalid current
+	  node for attributes. Modified to use private "document" property.
+
 2003-06-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlTextWriter.cs: when adding an attribute with a namespace, a prefix must be automaticaly

@@ -18,6 +18,7 @@ namespace System.Xml
 {
 	public class XmlNodeReader : XmlReader
 	{
+		XmlDocument document;
 		XmlNode startNode;
 		XmlNode current;
 		ReadState state = ReadState.Initial;
@@ -40,10 +41,14 @@ namespace System.Xml
 		public XmlNodeReader (XmlNode node)
 		{
 			startNode = node;
+			document = startNode.NodeType == XmlNodeType.Document ?
+				startNode as XmlDocument : startNode.OwnerDocument;
+
 			if (node.NodeType != XmlNodeType.Document
 				&& node.NodeType != XmlNodeType.DocumentFragment)
 				alreadyRead = true;
 			defaultNsmgr = new XmlNamespaceManager (this.NameTable);
+
 		}
 		
 		#endregion
@@ -272,12 +277,7 @@ namespace System.Xml
 		}
 
 		public override XmlNameTable NameTable {
-			get {
-				XmlDocument doc = 
-					startNode.NodeType == XmlNodeType.Document ?
-					startNode as XmlDocument : startNode.OwnerDocument;
-				return doc.NameTable;
-			}
+			get { return document.NameTable; }
 		}
 
 		public override XmlNodeType NodeType {
@@ -367,7 +367,7 @@ namespace System.Xml
 					XmlAttribute attr = target.Attributes ["xmlns"];
 					if (attr != null)
 						return attr.Value;
-					target = current.ParentNode;
+					target = target.ParentNode;
 				} while (target.NodeType != XmlNodeType.Document);
 			} else {
 				string name = "xmlns:" + prefix;
@@ -375,7 +375,7 @@ namespace System.Xml
 					XmlAttribute attr = target.Attributes [name];
 					if (attr != null)
 						return attr.Value;
-					target = current.ParentNode;
+					target = target.ParentNode;
 				} while (target.NodeType != XmlNodeType.Document);
 			}
 			return defaultNsmgr.LookupNamespace (prefix);
