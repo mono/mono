@@ -1,3 +1,8 @@
+2004-11-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* tramp-ppc.c (ppc_magic_trampoline): Don't trampoline methods
+	between appdomains.  Fixes appdomain-unload on PPC.
+
 2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* exceptions-ppc.c, exceptions-s390.c, exceptions-s390x.c,
