@@ -2282,6 +2282,25 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		protected bool IsDuplicateImplementation (MethodCore method)
+		{
+			if ((method == this) || (method.Name != Name))
+				return false;
+
+			Type[] param_types = method.ParameterTypes;
+			if (param_types == null)
+				return false;
+
+			if (param_types.Length != ParameterTypes.Length)
+				return false;
+
+			for (int i = 0; i < param_types.Length; i++)
+				if (param_types [i] != ParameterTypes [i])
+					return false;
+
+			return true;
+		}
+
 		public CallingConventions GetCallingConvention (bool is_class)
 		{
 			CallingConventions cc = 0;
@@ -2499,7 +2518,6 @@ namespace Mono.CSharp {
 			if (IsOperator) {
 				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 			} else {
-				
 				//
 				// Check in our class for dups
 				//
@@ -2509,23 +2527,16 @@ namespace Mono.CSharp {
 					
 					for (int i = 0; i < arLen; i++) {
 						Method m = (Method) ar [i];
-						if (m == this || m.Name != this.Name)
+						if (!IsDuplicateImplementation (m))
 							continue;
-						
-						if (m.MethodBuilder != null && m.ParameterTypes.Length == ParameterTypes.Length) {
 							
-							for (int j = ParameterTypes.Length - 1; j >= 0; j --)
-								if (m.ParameterTypes [j] != ParameterTypes [j])
-									goto next;
-							
-							Report.Error (111, Location, "Class `" + container.Name + "' " +
-								      "already defines a member called `" + Name + "' " +
-								      "with the same parameter types");
-							return false;
-						}
-						
-					next :
-						;
+						Report.Error (
+							111, Location,
+							"Class `{0}' already defines a " +
+							"member called `{1}' with the same " +
+							"parameter types", container.Name,
+							Name);
+						return false;
 					}
 				}
 			}
@@ -2828,35 +2839,22 @@ namespace Mono.CSharp {
 			// Check in our class for dups
 			//
 			ArrayList ar = container.InstanceConstructors;
-			
-			// I don't think this is possible (there should be
-			// at least one, us). However, just in case:
-			if (ar == null)
-				return true;
-			
-			int arLen = ar.Count;
-			for (int i = 0; i < arLen; i++) {
-				Constructor m = (Constructor) ar [i];
-				
-				//
-				// Check for a ctor with identical args
-				//
-				if (m == this || m.ConstructorBuilder == null || m.ParameterTypes.Length != ParameterTypes.Length)
-					continue;
-
-				for (int j = ParameterTypes.Length - 1; j >= 0; j --)
-					if (m.ParameterTypes [j] != ParameterTypes [j])
-						goto next;
-				
-				Report.Error (
-					111, Location,
-					"Class `{0}' already contains a definition with the " +
-					"same return value and parameter types for constructor `{1}'",
-					container.Name, Name);
-				return false;
-				
-			next :
-				;
+			if (ar != null) {
+				int arLen = ar.Count;
+					
+				for (int i = 0; i < arLen; i++) {
+					Constructor m = (Constructor) ar [i];
+					if (!IsDuplicateImplementation (m))
+						continue;
+						
+					Report.Error (
+						111, Location,
+						"Class `{0}' already defines a " +
+						"member called `{1}' with the same " +
+						"parameter types", container.Name,
+						Name);
+					return false;
+				}
 			}
 			
 			return true;
@@ -4179,22 +4177,28 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			MemberList props_this;
-
-			props_this = TypeContainer.FindMembers (
-				container.TypeBuilder, MemberTypes.Property,
-				BindingFlags.NonPublic | BindingFlags.Public |
-				BindingFlags.Static | BindingFlags.Instance |
-				BindingFlags.DeclaredOnly,
-				MethodSignature.method_signature_filter, ms);
-
-			if (props_this.Count > 0) {
-				Report.Error (111, Location, "Class `" + container.Name + "' " +
-					      "already defines a member called `" + report_name + "' " +
-					      "with the same parameter types");
-				return false;
+			//
+			// Check in our class for dups
+			//
+			ArrayList ar = container.Properties;
+			if (ar != null) {
+				int arLen = ar.Count;
+					
+				for (int i = 0; i < arLen; i++) {
+					Property m = (Property) ar [i];
+					if (!IsDuplicateImplementation (m))
+						continue;
+						
+					Report.Error (
+						111, Location,
+						"Class `{0}' already defines a " +
+						"member called `{1}' with the same " +
+						"parameter types", container.Name,
+						Name);
+					return false;
+				}
 			}
-			
+
 			PropertyInfo parent_property = null;
 			
 			//
