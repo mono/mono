@@ -35,7 +35,7 @@ namespace Mono.Doc.Utils
 			Assembly loadedAssembly = null;
 
 			if (assemblyString == null || assemblyString == string.Empty) {
-				throw new ArgumentException("assemblyString", "assemblyString is null or empty.");
+				throw new ArgumentException("assemblyString", "Invalid assembly specified for load.");
 			}
 
 			if (assemblyString.StartsWith(INTERNAL_PREFIX))  {
