@@ -1,3 +1,6 @@
+2002-05-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-49.cs: Improve test.
 
 Wed May 8 16:48:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

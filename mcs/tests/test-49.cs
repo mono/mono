@@ -393,6 +393,20 @@ class X {
 			return 10;
 		}
 	}
+
+	static int test_goto (int a)
+	{
+		switch (a){
+		case 0:
+			goto case 2;
+		case 1:
+			return 10;
+		case 2:
+			return 20;
+		default:
+			return 100;
+		}
+	}
 	
 	static int Main ()
 	{
@@ -473,6 +487,15 @@ class X {
 
 		if (test_coverage (100) != 10)
 			return 30;
+
+		if (test_goto (0) != 20)
+			return 31;
+		if (test_goto (1) != 10)
+			return 32;
+		if (test_goto (2) != 20)
+			return 33;
+		if (test_goto (200) != 100)
+			return 34;
 		
 		Console.WriteLine ("All tests pass");
 		return 0;
