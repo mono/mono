@@ -8,8 +8,6 @@
 // Copyright (C) Tim Coleman, 2004
 // Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
-
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -42,7 +40,7 @@ namespace System.Security.Cryptography.Xml {
 		public string IssuerName;
 		public string SerialNumber;
 
-		public X509IssuerSerial (string issuer, string serial) 
+		internal X509IssuerSerial (string issuer, string serial) 
 		{
 			IssuerName = issuer;
 			SerialNumber = serial;

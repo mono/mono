@@ -48,8 +48,8 @@ namespace System.Security.Cryptography.Xml {
 		public const string XmlEncAES256KeyWrapUrl	= XmlEncNamespaceUrl + "kw-aes256";
 		public const string XmlEncAES256Url		= XmlEncNamespaceUrl + "aes256-cbc";
 		public const string XmlEncDESUrl		= XmlEncNamespaceUrl + "des-cbc";
-		public const string XmlEncElementContentUrl	= XmlEncNamespaceUrl + "ElementContent";
-		public const string XmlEncElementUrl		= XmlEncNamespaceUrl + "element";
+		public const string XmlEncElementContentUrl	= XmlEncNamespaceUrl + "Content";
+		public const string XmlEncElementUrl		= XmlEncNamespaceUrl + "Element";
 		public const string XmlEncEncryptedKeyUrl	= XmlEncNamespaceUrl + "EncryptedKey";
 		public const string XmlEncNamespaceUrl		= "http://www.w3.org/2001/04/xmlenc#";
 		public const string XmlEncRSA1_5Url		= XmlEncNamespaceUrl + "rsa-1_5";

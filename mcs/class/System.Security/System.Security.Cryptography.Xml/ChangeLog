@@ -1,3 +1,10 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EncryptedXml.cs: Fixed Urls for XmlEncElementUrl and 
+	XmlEncElementContentUrl.
+	* X509IssuerSerial.cs: Make constructor internal so it doesn't show up
+	in corcompare results for NET_2_0 profile.
+
 2004-06-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyInfoX509Data.cs: Removed old internal IssuerSerial for the 
