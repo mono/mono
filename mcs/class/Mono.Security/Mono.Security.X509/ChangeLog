@@ -1,3 +1,15 @@
+2003-09-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ITrustAnchors.cs: New. Interface to trust anchors.
+	* TestAnchors.cs: New. Include 2 tests anchors: Microsoft Root Agency
+	(for Windows compatibility) and Mono Test Root.
+	* TrustAnchors.cs: New. Include some widely used (commercial) code 
+	signing root certificates.
+	* X509CertificateCollection.cs: New. Collection for Mono's X509 
+	certificates.
+	* X509Chain.cs: New. MINIMAL certificate chaining engine to support
+	Authenticode(tm). VERY PARTIAL IMPLEMENTATION!!!
+
 2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X501Name.cs: New. X.501 Distinguished Names stuff
