@@ -10,12 +10,11 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
 	public enum MessageQueueTransactionType 
 	{
-		Automatic, 
-		None, 
-		Single
+		Automatic = 1,
+		None = 0,
+		Single = 3
 	}
 }

@@ -10,17 +10,16 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
 	public enum MessagePriority 
 	{
-		AboveNormal, 
-		High, 
-		Highest,
-		Low, 
-		Lowest, 
-		Normal,
-		VeryHigh, 
-		VeryLow
+		AboveNormal = 4,
+		High = 5,
+		Highest = 7,
+		Low = 2,
+		Lowest = 0,
+		Normal = 3,
+		VeryHigh = 6,
+		VeryLow = 1
 	}
 }

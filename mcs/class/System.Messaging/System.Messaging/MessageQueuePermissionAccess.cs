@@ -10,16 +10,15 @@ using System;
 
 namespace System.Messaging
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Flags]
 	[Serializable]
 	public enum MessageQueuePermissionAccess 
 	{
-		Administer, 
-		Browse, 
-		None,
-		Peek, 
-		Receive, 
-		Send
+		Administer = 62,
+		Browse = 2,
+		None = 0,
+		Peek = 10,
+		Receive = 26,
+		Send = 6
 	}
 }

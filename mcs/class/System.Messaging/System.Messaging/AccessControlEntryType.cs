@@ -10,13 +10,12 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
 	public enum AccessControlEntryType 
 	{
-		Allow, 
-		Deny, 
-		Revoke, 
-		Set
+		Allow = 1,
+		Deny = 3,
+		Revoke = 4,
+		Set = 2
 	}
 }

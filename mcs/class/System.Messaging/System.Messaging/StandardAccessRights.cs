@@ -10,21 +10,20 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Flags]
 	[Serializable]
 	public enum StandardAccessRights 
 	{
-		All,
-		Delete,
-		Execute,
-		ModifyOwner,
-		None,
-		Read,
-		ReadSecurity,
-		Required,
-		Synchronize,
-		Write,
-		WriteSecurity
+		All = 2031616,
+		Delete = 65536,
+		Execute = 131072,
+		ModifyOwner = 524288,
+		None = 0,
+		Read = 131072,
+		ReadSecurity = 131072,
+		Required = 851968,
+		Synchronize = 1048576,
+		Write = 131072,
+		WriteSecurity = 262144
 	}
 }

@@ -10,12 +10,11 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
 	public enum MessageType 
 	{
-		Acknowledgment, 
-		Normal, 
-		Report
+		Acknowledgment = 1,
+		Normal = 2,
+		Report = 3
 	}
 }

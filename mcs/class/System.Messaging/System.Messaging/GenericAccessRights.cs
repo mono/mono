@@ -10,15 +10,14 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Flags]
 	[Serializable]
 	public enum GenericAccessRights 
 	{
-		All, 
-		Execute, 
-		None,
-		Read, 
-		Write
+		All = 268435456,
+		Execute = 536870912,
+		None = 0,
+		Read = -2147483648,
+		Write = 1073741824
 	}
 }

@@ -8,15 +8,14 @@
 //
 using System;
 
-namespace System.Messaging 
+namespace System.Messaging
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
-	public enum MessageQueueTransactionStatus 
+	public enum MessageQueueTransactionStatus
 	{
-		Aborted, 
-		Committed, 
-		Initialized,
-		Pending
+		Aborted = 0,
+		Committed = 1,
+		Initialized = 2,
+		Pending = 3
 	}
 }

@@ -8,17 +8,16 @@
 //
 using System;
 
-namespace System.Messaging 
+namespace System.Messaging
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
-	public enum HashAlgorithm 
+	public enum HashAlgorithm
 	{
-		Mac, 
-		Md2, 
-		Md4,
-		Md5, 
-		None, 
-		Sha
+		Mac = 32773,
+		Md2 = 32769,
+		Md4 = 32770,
+		Md5 = 32771,
+		None = 0,
+		Sha = 32772
 	}
 }

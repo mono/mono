@@ -1,3 +1,37 @@
+2004-06-16  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AccessControlEntryType.cs: fixed enum field values to correspond
+	with MS.NET, removed TODO
+	* AcknowledgeTypes.cs: fixed enum field values to correspond with 
+	MS.NET, removed TODO
+	* CryptographicProviderType.cs: fixed enum field values to correspond 
+	with MS.NET, removed TODO
+	* EncryptionAlgorithm.cs: fixed enum field values to correspond with 
+	MS.NET, removed TODO
+	* EncryptionRequired.cs: fixed enum field values to correspond with 
+	MS.NET, removed TODO
+	* GenericAccessRights.cs: fixed enum field values to correspond with 
+	MS.NET, removed TODO
+	* HashAlgortihm.cs: fixed enum field values to correspond with 
+	MS.NET, removed TODO
+	* MessagePriority.cs: fixed enum field values to correspond with 
+	MS.NET, removed TODO
+	* MessageQueueErrorCode.cs: fixed enum field values to correspond 
+	with MS.NET, removed TODO
+	* MessageQueueException.cs: marked serializable
+	* MessageQueuePermissionAccess.cs: fixed enum field values to 
+	correspond with MS.NET, removed TODO
+	* MessageQueueTransactionStatus.cs: fixed enum field values to 
+	correspond with MS.NET, removed TODO
+	* MessageQueueTransactionType.cs: fixed enum field values to 
+	correspond with MS.NET, removed TODO
+	* MessageType.cs: fixed enum field values to correspond with MS.NET, 
+	removed TODO
+	* StandardAccessRights.cs: fixed enum field values to correspond 
+	with MS.NET, removed TODO
+	* TrusteeType.cs: fixed enum field values to correspond with MS.NET, 
+	removed TODO
+
 2004-06-03  Duncan Mak  <duncan@ximian.com>
 
 	* MonoTODO.cs: Remove the Description field and use Comment, this

@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 
 namespace System.Messaging 
 {	
+	[Serializable]
 	public class MessageQueueException: ExternalException 
 	{
 		private MessageQueueErrorCode _messageQueueErrorCode;

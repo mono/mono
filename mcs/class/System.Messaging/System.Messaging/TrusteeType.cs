@@ -10,15 +10,14 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
 	public enum TrusteeType 
 	{
-		Alias, 
-		Computer, 
-		Domain,
-		Group, 
-		Unknown, 
-		User
+		Alias = 4,
+		Computer = 5,
+		Domain = 3,
+		Group = 2,
+		Unknown = 0,
+		User = 1
 	}
 }

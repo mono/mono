@@ -10,21 +10,20 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
 	public enum CryptographicProviderType 
 	{
-		Dss, 
-		Fortezza, 
-		MicrosoftExchange,
-		None, 
-		RsaFull, 
-		RsqSig,
-		Ssl, 
-		SttAcq, 
-		SttBrnd,
-		SttIss, 
-		SttMer, 
-		SttRoot
+		Dss = 3,
+		Fortezza = 4,
+		MicrosoftExchange = 5,
+		None = 0,
+		RsaFull = 1,
+		RsqSig = 2,
+		Ssl = 6,
+		SttAcq = 8,
+		SttBrnd = 9,
+		SttIss = 11,
+		SttMer = 7,
+		SttRoot = 10
 	}
 }

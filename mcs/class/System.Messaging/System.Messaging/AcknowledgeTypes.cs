@@ -10,18 +10,17 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Flags]
 	[Serializable]
 	public enum AcknowledgeTypes 
 	{
-		FullReachQueue, 
-		FullReceive, 
-		NegativeReceive,
-		None, 
-		NotAcknowledgeReachQueue, 
-		NotAcknowledgeReceive,
-		PositiveArrival, 
-		PositiveReceive
+		FullReachQueue = 5,
+		FullReceive = 14,
+		NegativeReceive = 8,
+		None = 0, 
+		NotAcknowledgeReachQueue = 4,
+		NotAcknowledgeReceive = 12,
+		PositiveArrival = 1,
+		PositiveReceive = 2
 	}
 }

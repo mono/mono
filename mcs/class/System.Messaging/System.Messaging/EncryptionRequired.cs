@@ -10,12 +10,11 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Serializable]
 	public enum EncryptionRequired 
 	{
-		Body, 
-		None,	
-		Optional
+		Body = 2,
+		None = 0,
+		Optional = 1
 	}
 }
