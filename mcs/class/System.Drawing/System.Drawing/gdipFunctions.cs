@@ -187,7 +187,7 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipSetMatrixElements (IntPtr matrix, float m11, float m12, float m21, float m22, float dx, float dy);
                 [DllImport ("gdiplus.dll")]
-                internal static extern Status GdipGetMatrixElements (IntPtr matrix, out float[] matrixOut);
+                internal static extern Status GdipGetMatrixElements (IntPtr matrix, IntPtr matrixOut);
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipMultiplyMatrix (IntPtr matrix, IntPtr matrix2, MatrixOrder order);
                 [DllImport ("gdiplus.dll")]

@@ -1,5 +1,11 @@
 2003-11-17  Duncan Mak  <duncan@ximian.com>
 
+	* gdipFunctions.cs (GdipGetMatrixElements): Fix signature.
+	
+	* Graphics.cs (MultiplyTransform): Commented out until my Matrix commit.
+
+2003-11-17  Duncan Mak  <duncan@ximian.com>
+	
 	* Bitmap.cs (LockBits):
 	* Graphics.cs (DrawString): Use GpRectF.
 

@@ -1194,7 +1194,7 @@ namespace System.Drawing
 
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
-			GDIPlus.GdipMultiplyWorldTransform (nativeObject, matrix.nativeMatrix, order);
+			// GDIPlus.GdipMultiplyWorldTransform (nativeObject, matrix.nativeMatrix, order);
 		}
 
 		[MonoTODO]
