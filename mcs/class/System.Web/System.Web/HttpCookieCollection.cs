@@ -77,7 +77,10 @@ namespace System.Web
 			_AllCookies = null;
 			_AllKeys = null;
 
-			BaseAdd (cookie.Name, cookie);
+			if (BaseGet (cookie.Name) == null)
+				BaseAdd (cookie.Name, cookie);
+			else
+				BaseSet (cookie.Name, cookie);
 
 			if (null != _Response)
 				_Response.OnCookieAdd (cookie);
