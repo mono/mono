@@ -168,6 +168,7 @@ ArithmeticOperatorsA \
 LikeOperator \
 LikeOperatorA \
 GetType \
+TypeOf \
 BlockStatementsA \
 LocalVariablesA \
 LocalVariablesB
