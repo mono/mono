@@ -30,6 +30,7 @@ namespace System.Xml
 		bool openAttribute = false;
 		bool attributeWrittenForElement = false;
 		ArrayList openElements = new ArrayList ();
+		int openElementCount;
 		Formatting formatting = Formatting.None;
 		int indentation = 2;
 		char indentChar = ' ';
@@ -101,14 +102,15 @@ namespace System.Xml
 		private bool IndentingOverriden 
 		{
 			get {
-				if (openElements.Count == 0)
+				if (openElementCount == 0)
 					return false;
 				else
-					return ((XmlTextWriterOpenElement)openElements [openElements.Count - 1]).IndentingOverriden;
+					return ((XmlTextWriterOpenElement)
+openElements [openElementCount - 1]).IndentingOverriden;
 			}
 			set {
-				if (openElements.Count > 0)
-					((XmlTextWriterOpenElement) openElements [openElements.Count - 1]).IndentingOverriden = value;
+				if (openElementCount > 0)
+					((XmlTextWriterOpenElement) openElements [openElementCount - 1]).IndentingOverriden = value;
 			}
 		}
 
@@ -157,8 +159,8 @@ namespace System.Xml
 				string xmlLang = null;
 				int i;
 
-				for (i = openElements.Count - 1; i >= 0; i--) {
-					xmlLang = ((XmlTextWriterOpenElement)openElements [i]).XmlLang;
+				for (i = openElementCount - 1; i >= 0; i--) {
+					xmlLang = ((XmlTextWriterOpenElement) openElements [i]).XmlLang;
 					if (xmlLang != null)
 						break;
 				}
@@ -172,7 +174,7 @@ namespace System.Xml
 				XmlSpace xmlSpace = XmlSpace.None;
 				int i;
 
-				for (i = openElements.Count - 1; i >= 0; i--) {
+				for (i = openElementCount - 1; i >= 0; i--) {
 					xmlSpace = ((XmlTextWriterOpenElement)openElements [i]).XmlSpace;
 					if (xmlSpace != XmlSpace.None)
 						break;
@@ -270,7 +272,7 @@ namespace System.Xml
 			if (openAttribute)
 				WriteEndAttribute ();
 
-			while (openElements.Count > 0) {
+			while (openElementCount > 0) {
 				WriteEndElement();
 			}
 		}
@@ -453,7 +455,7 @@ namespace System.Xml
 			if (openXmlLang) {
 				w.Write (xmlLang);
 				openXmlLang = false;
-				((XmlTextWriterOpenElement) openElements [openElements.Count - 1]).XmlLang = xmlLang;
+				((XmlTextWriterOpenElement) openElements [openElementCount - 1]).XmlLang = xmlLang;
 			}
 
 			if (openXmlSpace) 
@@ -463,7 +465,7 @@ namespace System.Xml
 				else if (xmlSpace == XmlSpace.Default)
 					w.Write ("default");
 				openXmlSpace = false;
-				((XmlTextWriterOpenElement) openElements [openElements.Count - 1]).XmlSpace = xmlSpace;
+				((XmlTextWriterOpenElement) openElements [openElementCount - 1]).XmlSpace = xmlSpace;
 			}
 
 			w.Write (quoteChar);
@@ -502,7 +504,7 @@ namespace System.Xml
 
 		private void WriteEndElementInternal (bool fullEndElement)
 		{
-			if (openElements.Count == 0)
+			if (openElementCount == 0)
 				throw new InvalidOperationException("There was no XML start tag open.");
 
 			if (openAttribute)
@@ -529,13 +531,15 @@ namespace System.Xml
 				} else
 					w.Write (" />");
 
-				openElements.RemoveAt (openElements.Count - 1);
+//				openElements.RemoveAt (openElements.Count - 1);
+				openElementCount--;
 				openStartElement = false;
 			} else {
 				w.Write (indentFormatting);
 				w.Write ("</");
-				XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElements.Count - 1];
-				openElements.RemoveAt (openElements.Count - 1);
+				XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElementCount - 1];
+//				openElements.RemoveAt (openElements.Count - 1);
+				openElementCount--;
 				if (el.Prefix != String.Empty) {
 					w.Write (el.Prefix);
 					w.Write (':');
@@ -799,7 +803,11 @@ namespace System.Xml
 			}
 			w.Write (localName);
 
-			openElements.Add (new XmlTextWriterOpenElement (prefix, localName));
+			if (openElements.Count == openElementCount)
+				openElements.Add (new XmlTextWriterOpenElement (prefix, localName));
+			else
+				((XmlTextWriterOpenElement) openElements [openElementCount]).Reset (prefix, localName);
+			openElementCount++;
 			ws = WriteState.Element;
 			openStartElement = true;
 			openElementNS = ns;

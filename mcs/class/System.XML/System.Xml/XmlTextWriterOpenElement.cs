@@ -29,11 +29,16 @@ namespace System.Xml
 
 		public XmlTextWriterOpenElement (string prefix, string localName)
 		{
-			this.prefix = prefix;
-			this.localName = localName;
+			Reset (prefix, localName);
 		}
 
 		#endregion
+
+		public void Reset (string prefix, string localName)
+		{
+			this.prefix = prefix;
+			this.localName = localName;
+		}
 
 		#region Properties
 
