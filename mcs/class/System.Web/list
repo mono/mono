@@ -106,6 +106,7 @@ System.Web.Mail/IAttachmentEncoder.cs
 System.Web.Mail/Base64AttachmentEncoder.cs
 System.Web.Mail/ToUUEncodingTransform.cs
 System.Web.Mail/MailHeader.cs
+System.Web.Mail/MailUtil.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
 System.Web.UI/Control.cs
