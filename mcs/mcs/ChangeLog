@@ -1,5 +1,11 @@
 2002-09-09  Martin Baulig  <martin@gnome.org>
 
+	* ecore.cs (PropertyExpr.Emit): Also check for
+	TypeManager.system_int_array_get_length so this'll also work when
+	compiling corlib.  Fixes #30003.
+
+2002-09-09  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (ArrayCreation.MakeByteBlob): Added support for enums
 	and throw an exception if we can't get the type's size.  Fixed #30040,
 	added test-165.cs.
