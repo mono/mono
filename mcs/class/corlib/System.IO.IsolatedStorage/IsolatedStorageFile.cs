@@ -31,7 +31,7 @@ namespace System.IO.IsolatedStorage
 		}
 
 		[CLSCompliant(false)]
-                [MonoTODO ("The IsolatedStorage area should be limited, to prevent DOS attacks.  What's a reasonable size?")]
+		[MonoTODO ("The IsolatedStorage area should be limited, to prevent DOS attacks.  What's a reasonable size?")]
 		public override ulong MaximumSize {
 			get {return ulong.MaxValue;}
 		}
@@ -39,7 +39,7 @@ namespace System.IO.IsolatedStorage
 		[MonoTODO ("Pay attention to scope")]
 		public static IEnumerator GetEnumerator (IsolatedStorageScope scope)
 		{
-                        Array a = Directory.GetFileSystemEntries (IsolatedStorageInfo.GetIsolatedStorageDirectory());
+			Array a = Directory.GetFileSystemEntries (IsolatedStorageInfo.GetIsolatedStorageDirectory());
 			return a.GetEnumerator ();
 		}
 
@@ -76,9 +76,9 @@ namespace System.IO.IsolatedStorage
 		{
 			string dir = GetScopeDirectory (scope);
 
-                        storage_scope = scope;
-
-			return new IsolatedStorageFile (dir);
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (dir);
+			storageFile.InitStore (scope, (Type) null, (Type) null);
+			return storageFile;
 		}
 
 		private static string GetScopeDirectory (IsolatedStorageScope scope)
@@ -87,12 +87,11 @@ namespace System.IO.IsolatedStorage
 
 			if ((scope & IsolatedStorageScope.Domain) != 0)
 				dir = IsolatedStorageInfo.CreateDomainFilename (
-                                        Assembly.GetEntryAssembly (),
-                                        AppDomain.CurrentDomain);
+					Assembly.GetEntryAssembly (),
+					AppDomain.CurrentDomain);
 			else
 				dir = IsolatedStorageInfo.CreateAssemblyFilename (
-                                        Assembly.GetEntryAssembly ());
-
+					Assembly.GetEntryAssembly ());
 			return dir;
 		}
 
@@ -139,21 +138,21 @@ namespace System.IO.IsolatedStorage
 		public string[] GetDirectoryNames (string searchPattern)
 		{
 			DirectoryInfo[] adi = directory.GetDirectories (searchPattern);
-                        return GetNames (adi);
+			return GetNames (adi);
 		}
 
-                private string[] GetNames (FileSystemInfo[] afsi)
-                {
-                        string[] r = new string[afsi.Length];
-                        for (int i = 0; i != afsi.Length; ++i)
-                                r[i] = afsi[i].Name;
-                        return r;
-                }
+		private string[] GetNames (FileSystemInfo[] afsi)
+		{
+			string[] r = new string[afsi.Length];
+			for (int i = 0; i != afsi.Length; ++i)
+				r[i] = afsi[i].Name;
+			return r;
+		}
 
 		public string[] GetFileNames (string searchPattern)
 		{
-                        FileInfo[] afi = directory.GetFiles (searchPattern);
-                        return GetNames (afi);
+			FileInfo[] afi = directory.GetFiles (searchPattern);
+			return GetNames (afi);
 		}
 
 		public override void Remove ()

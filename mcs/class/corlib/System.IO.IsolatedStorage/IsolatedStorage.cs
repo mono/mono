@@ -14,13 +14,13 @@ namespace System.IO.IsolatedStorage
 {
 	public abstract class IsolatedStorage : MarshalByRefObject
 	{
+		private IsolatedStorageScope _scope;
+
 		// Constructor
 		protected IsolatedStorage ()
 			: base ()
 		{
 		}
-
-                protected static IsolatedStorageScope storage_scope;
 
 		// Properties
 		[MonoTODO ("Code Identity is CAS related")]
@@ -34,9 +34,9 @@ namespace System.IO.IsolatedStorage
 		[CLSCompliant (false)]
 		public virtual ulong CurrentSize {
 			get {
-                                throw new InvalidOperationException (
-                                        Locale.GetText ("IsolatedStorage does not have a preset CurrentSize."));
-                        }
+				throw new InvalidOperationException (
+					Locale.GetText ("IsolatedStorage does not have a preset CurrentSize."));
+			}
 		}
 
 		[MonoTODO ("Code Identity is CAS related")]
@@ -49,14 +49,14 @@ namespace System.IO.IsolatedStorage
 
 		[CLSCompliant (false)]
 		public virtual ulong MaximumSize {
-                        get {
-                                throw new InvalidOperationException (
-                                        Locale.GetText ("IsolatedStorage does not have a preset MaximumSize."));
-                        }
-                }
+			get {
+				throw new InvalidOperationException (
+					Locale.GetText ("IsolatedStorage does not have a preset MaximumSize."));
+			}
+		}
 
 		public IsolatedStorageScope Scope {
-			get { return storage_scope; }
+			get { return _scope; }
 		}
 
 		protected virtual char SeparatorExternal {
@@ -72,10 +72,12 @@ namespace System.IO.IsolatedStorage
 
 		[MonoTODO ("Evidences are CAS related")]
 		protected void InitStore (
-                        IsolatedStorageScope scope, Type domainEvidenceType,
-                        Type assemblyEvidenceType)
+			IsolatedStorageScope scope, Type domainEvidenceType,
+			Type assemblyEvidenceType)
 		{
 			// no exception here because this can work without CAS
+			_scope = scope;
+
 		}
 
 		public abstract void Remove ();
