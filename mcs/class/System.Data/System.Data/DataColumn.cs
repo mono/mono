@@ -33,6 +33,7 @@ namespace System.Data {
 	[DefaultMember ("Item")]
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
+	[TypeConverterAttribute ("System.Data.ComponentConverter, "+ Consts.AssemblySystem)]
 	public class DataColumn : MarshalByValueComponent
 	{		
 		#region Events
@@ -294,6 +295,7 @@ namespace System.Data {
 		[DataSysDescription ("Indicates the type of data stored in this column.")]
 		[DefaultValue (typeof (string))]
 		[RefreshProperties (RefreshProperties.All)]
+		[TypeConverterAttribute ("System.Data.ColumnTypeConverter, "+ Consts.AssemblySystem_Data)] 
 		public Type DataType
 		{
 			get {
@@ -326,6 +328,7 @@ namespace System.Data {
 		/// <exception cref="System.ArgumentException"></exception>
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the default column value used when adding new rows to the table.")]
+		[TypeConverterAttribute ("System.Data.DefaultValueTypeConverter, "+ Consts.AssemblySystem_Data)]
 		public object DefaultValue
 		{
 			get {
@@ -378,14 +381,16 @@ namespace System.Data {
 				return expression;
 			}
 			set {
-				//TODO: validation of the expression
-				expression = value;  //Check?
+		 		if ( value != null ) {
+					
+					expression = value;  
 
-				//Check the validate expression of ExpressionElement with string
-				expression = System.Data.ExpressionElement.ValidateExpression(expression);
+					//Check the validate expression of ExpressionElement with string
+					expression = System.Data.ExpressionElement.ValidateExpression(expression);
 				
-				if (expression != string.Empty)
-					ReadOnly = true;
+					if (expression != string.Empty)
+						ReadOnly = true;
+   				} 
 			}
 		}
 
