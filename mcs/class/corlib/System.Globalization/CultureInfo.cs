@@ -161,7 +161,7 @@ namespace System.Globalization
 		{
 			get {
 				if (cultureID == 0x7f)
-					return new CultureInfo (cultureID);
+					return this;
 				if (!constructed) Construct ();
 				if (parent_lcid == cultureID)
 					return null;
