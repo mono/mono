@@ -241,6 +241,7 @@ namespace System.Web.Caching {
 				_lock.AcquireWriterLock (-1);	
 				try {
 					foreach (ExpiresEntry entry in removeList) { 
+						ExpiresEntry e = entry;
 						int id = entry.Entry.ExpiresIndex;
 
 						//push the index for reuse
@@ -248,17 +249,17 @@ namespace System.Web.Caching {
 
 						if (entry.Entry.ExpiresBucket == _byteID) {
 							// add to our flush list
-							flushList.Add (entry.Entry);
+							flushList.Add (e.Entry);
 
 							// Remove from bucket
-							entry.Entry.ExpiresBucket = CacheEntry.NoBucketHash;
-							entry.Entry.ExpiresIndex = CacheEntry.NoIndexInBucket;
+							e.Entry.ExpiresBucket = CacheEntry.NoBucketHash;
+							e.Entry.ExpiresIndex = CacheEntry.NoIndexInBucket;
 						} 
 						
-						entry.Entry = null;
+						e.Entry = null;
 						
 						// Entries is structs, put it back
-						_arrEntries [id] = objEntry;
+						_arrEntries [id] = e;
 					}
 				}
 				finally {
