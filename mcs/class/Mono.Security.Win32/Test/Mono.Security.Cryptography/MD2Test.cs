@@ -31,9 +31,9 @@ public class MD2Test {
 		if ((array1 == null) && (array2 == null))
 			return;
 		if (array1 == null)
-			TestCase.Fail (msg + " -> First array is NULL");
+			Assertion.Fail (msg + " -> First array is NULL");
 		if (array2 == null)
-			TestCase.Fail (msg + " -> Second array is NULL");
+			Assertion.Fail (msg + " -> Second array is NULL");
         
 		bool a = (array1.Length == array2.Length);
 		if (a) {
@@ -48,7 +48,7 @@ public class MD2Test {
 			msg += " -> Expected " + BitConverter.ToString (array1, 0);
 			msg += " is different than " + BitConverter.ToString (array2, 0);
 		}
-		TestCase.Assert (msg, a);
+		Assertion.Assert (msg, a);
 	}
 
 	// MD2 ("") = 8350e5a3e24c153df2275c9f80692773
@@ -208,7 +208,7 @@ public class MD2Test {
 		for (int i=0; i < input.Length - 1; i++)
 			hash.TransformBlock (input, i, 1, copy, i);
 		byte[] output = hash.TransformFinalBlock (input, input.Length - 1, 1);
-		TestCase.AssertEquals (testName + ".e.1", input [input.Length - 1], output [0]);
+		Assertion.AssertEquals (testName + ".e.1", input [input.Length - 1], output [0]);
 		AssertEquals (testName + ".e.2", result, hash.Hash);
 		// required or next operation will still return old hash
 		hash.Initialize ();
@@ -218,9 +218,9 @@ public class MD2Test {
 	public virtual void StaticInfo () 
 	{
 		string className = hash.ToString ();
-		TestCase.AssertEquals (className + ".HashSize", 128, hash.HashSize);
-		TestCase.AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
-		TestCase.AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
+		Assertion.AssertEquals (className + ".HashSize", 128, hash.HashSize);
+		Assertion.AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
+		Assertion.AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
 	}
 }
 

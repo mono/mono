@@ -1,3 +1,13 @@
+2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MD2Test.cs: Removed obsolete NUnit1 TestCase references.
+	* MD4Test.cs: Removed obsolete NUnit1 TestCase references.
+	* MD5Test.cs: Removed obsolete NUnit1 TestCase references.
+	* MD5Test.cs: Removed obsolete NUnit1 TestCase references.
+	* RandomNumberGeneratorTest.cs: Removed obsolete NUnit1 TestCase 
+	and SetUp references.
+	* SHA1Test.cs: Removed obsolete NUnit1 TestCase references.
+
 2003-02-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* MD2CryptoServiceProviderTest.cs: New. Run the MD2Test

@@ -26,11 +26,12 @@ namespace MonoTests.Security.Cryptography {
 //	not implemented
 //	http://www.ietf.org/rfc/rfc1750.txt
 
-public class RandomNumberGeneratorTest : TestCase {
+public class RandomNumberGeneratorTest : Assertion {
 
 	protected RandomNumberGenerator rng;
 
-	protected override void SetUp () 
+	[SetUp]
+	void Create () 
 	{
 		rng = new Mono.Security.Cryptography.RNGCryptoServiceProvider ();
 	}
