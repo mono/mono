@@ -1,3 +1,11 @@
+2002-06-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: implemented PreventAutoID.
+
+	* Page.cs:
+	(SetDefaults): don't set ID automatically if Control.PreventAutoID has
+	been called.
+
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs:

@@ -26,148 +26,122 @@ namespace System.Web.UI.WebControls
 	[PersistChildren(true)]
 	public class TableCell: WebControl
 	{
-		[MonoTODO]
-		public TableCell(): base(HtmlTextWriterTag.Td)
+		public TableCell () : base (HtmlTextWriterTag.Td)
 		{
-			//TODO: What's the function to prevent Control to give _auto_generated_id
+			PreventAutoID ();
 		}
 
-		[MonoTODO]
-		internal TableCell(HtmlTextWriterTag tag): base(tag)
+		internal TableCell (HtmlTextWriterTag tag) : base (tag)
 		{
-			//TODO: What's the function to prevent Control to give _auto_generated_id
+			PreventAutoID ();
 		}
 
 		public virtual int ColumnSpan
 		{
-			get
-			{
-				object o = ViewState["ColumnSpan"];
-				if(o != null)
-					return (int)o;
-				return 0;
+			get {
+				object o = ViewState ["ColumnSpan"];
+				return (o == null) ? 0 : (int) o;
 			}
-			set
-			{
-				ViewState["ColumnSpan"] = value;
-			}
+
+			set { ViewState ["ColumnSpan"] = value; }
 		}
 
 		public virtual int RowSpan
 		{
-			get
-			{
-				object o = ViewState["RowSpan"];
-				if(o != null)
-					return (int)o;
-				return 0;
+			get {
+				object o = ViewState ["RowSpan"];
+				return (o == null) ? 0 : (int) o;
 			}
-			set
-			{
-				ViewState["RowSpan"] = value;
-			}
+
+			set { ViewState ["RowSpan"] = value; }
 		}
 
 		public virtual string Text
 		{
-			get
-			{
-				object o = ViewState["Text"];
-				if(o != null)
-					return (string)o;
-				return String.Empty;
+			get {
+				object o = ViewState ["Text"];
+				return (o == null) ? String.Empty : (string) o;
 			}
-			set
-			{
-				ViewState["Text"] = value;
-			}
+
+			set { ViewState ["Text"] = value; }
 		}
 
 		public virtual HorizontalAlign HorizontalAlign
 		{
-			get
-			{
-				if(ControlStyleCreated)
-					return ((TableItemStyle)ControlStyle).HorizontalAlign;
+			get {
+				if (ControlStyleCreated)
+					return ((TableItemStyle) ControlStyle).HorizontalAlign;
 				return HorizontalAlign.NotSet;
 			}
-			set
-			{
-				((TableItemStyle)ControlStyle).HorizontalAlign = value;
-			}
+			set { ((TableItemStyle) ControlStyle).HorizontalAlign = value; }
 		}
 
 		public virtual VerticalAlign VerticalAlign
 		{
-			get
-			{
-				if(ControlStyleCreated)
-					return ((TableItemStyle)ControlStyle).VerticalAlign;
+			get {
+				if (ControlStyleCreated)
+					return ((TableItemStyle) ControlStyle).VerticalAlign;
 				return VerticalAlign.NotSet;
 			}
-			set
-			{
-				((TableItemStyle)ControlStyle).VerticalAlign = value;
-			}
+
+			set { ((TableItemStyle) ControlStyle).VerticalAlign = value; }
 		}
 
 		public virtual bool Wrap
 		{
-			get
-			{
-				if(ControlStyleCreated)
-					return ((TableItemStyle)ControlStyle).Wrap;
+			get {
+				if (ControlStyleCreated)
+					return ((TableItemStyle) ControlStyle).Wrap;
 				return true;
 			}
-			set
-			{
-				((TableItemStyle)ControlStyle).Wrap = value;
-			}
+			set { ((TableItemStyle) ControlStyle).Wrap = value; }
 		}
 
-		protected override void AddAttributesToRender(HtmlTextWriter writer)
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			AddAttributesToRender(writer);
-			if(ColumnSpan > 0)
-				writer.AddAttribute(HtmlTextWriterAttribute.Colspan, ColumnSpan.ToString(NumberFormatInfo.InvariantInfo));
-			if(RowSpan > 0)
-				writer.AddAttribute(HtmlTextWriterAttribute.Rowspan, RowSpan.ToString(NumberFormatInfo.InvariantInfo));
+			base.AddAttributesToRender (writer);
+			if (ColumnSpan > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Colspan,
+						     ColumnSpan.ToString (NumberFormatInfo.InvariantInfo));
+
+			if (RowSpan > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Rowspan,
+						     RowSpan.ToString (NumberFormatInfo.InvariantInfo));
 		}
 
-		protected override void AddParsedSubObject(object obj)
+		protected override void AddParsedSubObject (object obj)
 		{
-			if(HasControls())
-			{
-				AddParsedSubObject(obj);
+			if (HasControls ()){
+				base.AddParsedSubObject (obj);
 				return;
 			}
-			if(obj is LiteralControl)
-			{
-				Text = ((LiteralControl)obj).Text;
+
+			if (obj is LiteralControl){
+				Text = ((LiteralControl) obj).Text;
 				return;
 			}
+
 			string text = Text;
-			if(text.Length > 0)
-			{
+			if (text.Length > 0){
 				Text = String.Empty;
-				AddParsedSubObject(new LiteralControl(text));
+				base.AddParsedSubObject (new LiteralControl (text));
 			}
-			AddParsedSubObject(obj);
+
+			base.AddParsedSubObject (obj);
 		}
 
-		protected override Style CreateControlStyle()
+		protected override Style CreateControlStyle ()
 		{
-			return new TableItemStyle(ViewState);
+			return new TableItemStyle (ViewState);
 		}
 
-		protected override void RenderContents(HtmlTextWriter writer)
+		protected override void RenderContents (HtmlTextWriter writer)
 		{
-			if(HasControls())
-			{
-				RenderContents(writer);
-				return;
-			}
-			writer.Write(Text);
+			if (HasControls ())
+				base.RenderContents (writer);
+			else
+				writer.Write (Text);
 		}
 	}
 }
+

@@ -91,7 +91,7 @@ namespace System.Web.UI.WebControls
 			{
 				if(IsSet(GRID_LINE))
 					return (GridLines)(ViewState["GridLines"]);
-				return GridLines.Both;
+				return GridLines.None;
 			}
 			set
 			{

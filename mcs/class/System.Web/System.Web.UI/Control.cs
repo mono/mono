@@ -110,6 +110,7 @@ namespace System.Web.UI
                 private bool _trackViewState = false;
                 private EventHandlerList _events = new EventHandlerList();
                 private RenderMethod _renderMethodDelegate = null;
+		private bool autoID = true;
         	
         	    private DataBindingCollection dataBindings = null;
 
@@ -605,10 +606,15 @@ namespace System.Web.UI
                 	}
                 }
                 
-                [MonoTODO("To set a flag to prevent automatic generation of IDs")]
+		internal bool AutoID
+		{
+			get { return autoID; }
+			set { autoID = value; }
+		}
+
                 internal void PreventAutoID()
                 {
-                	throw new NotImplementedException();
+			AutoID = false;
                 }
                 
                 //TODO: I think there are some needed Interface implementations to do here.

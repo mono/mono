@@ -29,162 +29,131 @@ namespace System.Web.UI.WebControls
 
 		private class TableRowControlCollection : ControlCollection
 		{
-			public TableRowControlCollection(Control owner): base(owner)
+			public TableRowControlCollection (Control owner) : base (owner)
 			{
 			}
 
-			public override void Add(Control child)
+			public override void Add (Control child)
 			{
-				if(child is TableRow)
-				{
-					Add(child);
-					return;
-				}
-				throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "Table", child.GetType().Name.ToString()));
+				if (!(child is TableRow))
+					throw new ArgumentException (HttpRuntime.FormatResourceString (
+									"Cannot_Have_Children_Of_Type",
+									"Table",
+									child.GetType ().Name.ToString ()));
+				base.Add (child);
 			}
 
 			public override void AddAt(int index, Control child)
 			{
-				if(child is TableRow)
-				{
-					Add(child);
-					return;
-				}
-				throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "Table", child.GetType().Name.ToString()));
+				if (!(child is TableRow))
+					throw new ArgumentException (HttpRuntime.FormatResourceString (
+									"Cannot_Have_Children_Of_Type",
+									"Table",
+									child.GetType ().Name.ToString ()));
+				base.AddAt (index, child);
 			}
 		}
 
-		public Table(): base(HtmlTextWriterTag.Table)
+		public Table () : base (HtmlTextWriterTag.Table)
 		{
 		}
 
 		public virtual string BackImageUrl
 		{
-			get
-			{
-				if(ControlStyleCreated)
-				{
-					return ((TableStyle)ControlStyle).BackImageUrl;
-				}
+			get {
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).BackImageUrl;
 				return String.Empty;
 			}
-			set
-			{
-				((TableStyle)ControlStyle).BackImageUrl = value;
-			}
+
+			set { ((TableStyle) ControlStyle).BackImageUrl = value; }
 		}
 
 		public virtual int CellPadding
 		{
-			get
-			{
-				if(ControlStyleCreated)
-				{
-					return ((TableStyle)ControlStyle).CellPadding;
-				}
+			get {
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).CellPadding;
 				return -1;
 			}
-			set
-			{
-				((TableStyle)ControlStyle).CellPadding = value;
-			}
+
+			set { ((TableStyle) ControlStyle).CellPadding = value; }
 		}
 
 		public virtual int CellSpacing
 		{
-			get
-			{
-				if(ControlStyleCreated)
-				{
-					return ((TableStyle)ControlStyle).CellSpacing;
-				}
+			get {
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).CellSpacing;
 				return -1;
 			}
-			set
-			{
-				((TableStyle)ControlStyle).CellSpacing = value;
-			}
+
+			set { ((TableStyle) ControlStyle).CellSpacing = value; }
 		}
 
 		public virtual GridLines GridLines
 		{
-			get
-			{
-				if(ControlStyleCreated)
-				{
-					return ((TableStyle)ControlStyle).GridLines;
-				}
+			get {
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).GridLines;
 				return GridLines.None;
 			}
-			set
-			{
-				((TableStyle)ControlStyle).GridLines = value;
-			}
+
+			set { ((TableStyle) ControlStyle).GridLines = value; }
 		}
 
 		public virtual HorizontalAlign HorizontalAlign
 		{
-			get
-			{
-				if(ControlStyleCreated)
-				{
-					return ((TableStyle)ControlStyle).HorizontalAlign;
-				}
+			get {
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).HorizontalAlign;
 				return HorizontalAlign.NotSet;
 			}
-			set
-			{
-				((TableStyle)ControlStyle).HorizontalAlign = value;
-			}
+
+			set { ((TableStyle) ControlStyle).HorizontalAlign = value; }
 		}
 
 		public virtual TableRowCollection Rows
 		{
-			get
-			{
-				if(rows == null)
-				{
-					rows = new TableRowCollection(this);
-				}
+			get {
+				if (rows == null)
+					rows = new TableRowCollection (this);
 				return rows;
 			}
 		}
 
-		protected override void AddAttributesToRender(HtmlTextWriter writer)
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender (writer);
 			if(!BorderColor.IsEmpty)
-			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Bordercolor, ColorTranslator.ToHtml(BorderColor));
-			}
+				writer.AddAttribute (HtmlTextWriterAttribute.Bordercolor,
+						     ColorTranslator.ToHtml (BorderColor));
 
 			Unit bw = BorderWidth;
-			if(GridLines == GridLines.None)
-			{
-				bw = Unit.Pixel(0);
-			} else if(!bw.IsEmpty && bw.Type == UnitType.Pixel)
-			{
+			if (GridLines == GridLines.None)
+				bw = Unit.Pixel (0);
+			else if (!bw.IsEmpty && bw.Type == UnitType.Pixel)
 				bw = Unit.Pixel(1);
-			}
-			writer.AddAttribute(HtmlTextWriterAttribute.Border, ((int)bw.Value).ToString(NumberFormatInfo.InvariantInfo));
+
+			writer.AddAttribute (HtmlTextWriterAttribute.Border,
+					     ((int) bw.Value).ToString (NumberFormatInfo.InvariantInfo));
 		}
 
-		protected override ControlCollection CreateControlCollection()
+		protected override ControlCollection CreateControlCollection ()
 		{
-			return new TableRowControlCollection(this);
+			return new TableRowControlCollection (this);
 		}
 
-		protected override Style CreateControlStyle()
+		protected override Style CreateControlStyle ()
 		{
-			return new TableStyle(ViewState);
+			return new TableStyle (ViewState);
 		}
 
-		protected override void RenderContents(HtmlTextWriter writer)
+		protected override void RenderContents (HtmlTextWriter writer)
 		{
-			foreach(object current in Rows)
-			{
-				((TableRow)current).RenderControl(writer);
-			}
+			foreach (TableRow current in Rows)
+				 current.RenderControl (writer);
 		}
 	}
 }
+

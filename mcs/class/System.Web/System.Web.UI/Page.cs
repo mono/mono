@@ -381,14 +381,12 @@ public class Page : TemplateControl, IHttpHandler
 	private int defaultNumberID;
 	private void SetDefaults (ControlCollection col)
 	{
-		if (col.Count == 0)
-			return;
 		foreach (Control ctrl in col){
 			/*
 			 * Assing a default ID for controls that don't have one.
 			 * This can happen for programatically added controls (see web_placeholder.aspx).
 			 */
-			if (ctrl.ID == null)
+			if (ctrl.AutoID == true && ctrl.ID == null)
 				ctrl.ID = "_ctrl_" + defaultNumberID++;
 			//
 			ctrl.Page = this;

@@ -17,94 +17,81 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[ParseChildren(false)]
 	public class TableRow: WebControl
 	{
 		private TableCellCollection cells;
 
-		public TableRow(): base(HtmlTextWriterTag.Tr)
+		public TableRow() : base (HtmlTextWriterTag.Tr)
 		{
-			PreventAutoID();
+			PreventAutoID ();
 		}
 
 		public virtual TableCellCollection Cells
 		{
-			get
-			{
-				if(cells == null)
-				{
-					cells = new TableCellCollection(this);
-				}
+			get {
+				if (cells == null)
+					cells = new TableCellCollection (this);
 				return cells;
 			}
 		}
 
 		public virtual HorizontalAlign HorizontalAlign
 		{
-			get
-			{
-				object o = ViewState["HorizontalAlign"];
-				if(o != null)
-					return (HorizontalAlign)o;
-				return HorizontalAlign.NotSet;
+			get {
+				object o = ViewState ["HorizontalAlign"];
+				return (o == null) ? HorizontalAlign.NotSet : (HorizontalAlign) o;
 			}
-			set
-			{
-				ViewState["HorizontalAlign"] = value;
-			}
+
+			set { ViewState ["HorizontalAlign"] = value; }
 		}
 
 		public virtual VerticalAlign VerticalAlign
 		{
-			get
-			{
-				object o = ViewState["VerticalAlign"];
-				if(o != null)
-					return (VerticalAlign)o;
-				return VerticalAlign.NotSet;
+			get {
+				object o = ViewState ["VerticalAlign"];
+				return (o == null) ? VerticalAlign.NotSet : (VerticalAlign) o;
 			}
-			set
-			{
-				ViewState["VerticalAlign"] = value;
-			}
+
+			set { ViewState ["VerticalAlign"] = value; }
 		}
 
-		protected override Style CreateControlStyle()
+		protected override Style CreateControlStyle ()
 		{
-			return new TableItemStyle(ViewState);
+			return new TableItemStyle (ViewState);
 		}
 
-		protected override ControlCollection CreateControlCollection()
+		protected override ControlCollection CreateControlCollection ()
 		{
-			return new CellControlCollection(this);
+			return new CellControlCollection (this);
 		}
 
-		class CellControlCollection: ControlCollection
+		class CellControlCollection : ControlCollection
 		{
-			public CellControlCollection(Control owner): base(owner)
+			public CellControlCollection (Control owner) : base (owner)
 			{
 			}
 
-			public override void Add(Control child)
+			public override void Add (Control child)
 			{
-				if(child is TableCell)
-				{
-					base.Add(child);
-				} else
-				{
-					throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "TableRow", GetType().Name.ToString()));
-				}
+				if (!(child is TableCell))
+					throw new ArgumentException (HttpRuntime.FormatResourceString (
+								     "Cannot_Have_Children_Of_Type",
+								     "TableRow",
+								     GetType ().Name.ToString ()));
+				base.Add (child);
 			}
 
 			public override void AddAt(int index, Control child)
 			{
-				if(child is TableCell)
-				{
-					base.AddAt(index, child);
-				} else
-				{
-					throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "TableRow", GetType().Name.ToString()));
-				}
+				if (!(child is TableCell))
+					throw new ArgumentException (HttpRuntime.FormatResourceString (
+								     "Cannot_Have_Children_Of_Type",
+								     "TableRow",
+								     GetType ().Name.ToString ()));
+				base.AddAt (index, child);
 			}
 		}
 	}
 }
+

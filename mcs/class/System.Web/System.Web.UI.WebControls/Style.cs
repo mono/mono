@@ -211,7 +211,7 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				ViewState["Width"] = value;
-				Set(HEIGHT);
+				Set(WIDTH);
 			}
 		}
 
@@ -227,10 +227,7 @@ namespace System.Web.UI.WebControls
 
 		internal virtual bool IsEmpty
 		{
-			get
-			{
-				return (selectionBits != 0);
-			}
+			get { return (selectionBits == 0); }
 		}
 
 		private void AddColor(HtmlTextWriter writer, HtmlTextWriterStyle style, Color color)
