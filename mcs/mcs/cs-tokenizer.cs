@@ -998,12 +998,67 @@ namespace Mono.CSharp
 		{
 			return val;
 		}
-		
-		public int token ()
+
+		public void putBack ()
 		{
-			current_token = xtoken ();
-			return current_token;
+			is_lookahead = true;
 		}
+
+		bool is_lookahead;
+		public bool parenthesized = false;
+
+		bool IsCastToken (int token)
+		{
+			switch (token) {
+			case Token.BANG:
+			case Token.TILDE:
+			case Token.IDENTIFIER:
+			case Token.LITERAL_INTEGER:
+			case Token.LITERAL_FLOAT:
+			case Token.LITERAL_DOUBLE:
+			case Token.LITERAL_DECIMAL:
+			case Token.LITERAL_CHARACTER:
+			case Token.LITERAL_STRING:
+			case Token.BASE:
+			case Token.CHECKED:
+			case Token.FALSE:
+			case Token.FIXED:
+			case Token.NEW:
+			case Token.NULL:
+			case Token.SIZEOF:
+			case Token.THIS:
+			case Token.THROW:
+			case Token.TRUE:
+			case Token.TYPEOF:
+			case Token.UNCHECKED:
+			case Token.UNSAFE:
+				return true;
+
+			default:
+				return false;
+			}
+		}
+
+		public int token ()
+                {
+                        if (is_lookahead)
+                                is_lookahead = false;
+                        else
+                                current_token = xtoken ();
+
+			if (parenthesized) {
+				parenthesized = false;
+				if (IsCastToken (current_token)) {
+					is_lookahead = true;
+					return Token.CAST_FOLLOWING_TOKEN;
+				} else if (current_token != Token.OPEN_PARENS) {
+					is_lookahead = true;
+					return Token.NO_CAST_FOLLOWING_TOKEN;
+				}
+			}
+
+                        return current_token;
+                }
 
 		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
 		

@@ -1,3 +1,18 @@
+2003-07-28  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay: Solve the abiguities with casts; fixes bugs
+	#46923 and #35459.
+	(CAST_FOLLOWING_TOKEN, NO_CAST_FOLLOWING_TOKEN): New tokens;
+	they're returned by the tokenizer in some cases to resolve
+	ambiguities with casts.
+	(invocation_expression): Tell the tokenizer to check whether the
+	following token may follow a cast.
+	(cast_expression): A cast is only a cast if it's followed by a
+	token which may actually follow a cast.
+
+	* expression.cs (ParenthesizedExpression): New class.
+	(Binary.DoResolve): Fix #35459.
+
 2003-07-26  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Indexers.Indexer): New nested struct; contains
