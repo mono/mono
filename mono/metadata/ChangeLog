@@ -1,4 +1,9 @@
 
+Tue Sep 24 13:24:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: allow custom modifiers in local var signatures
+	(bug spotted by Zoltan Varga).
+
 Tue Sep 24 12:12:16 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: deal with the <Module> class that may have a NULL vtable.
