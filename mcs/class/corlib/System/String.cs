@@ -681,6 +681,9 @@ namespace System
 
 		public String ToLower (CultureInfo culture)
 		{
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+
 			return InternalToLower (culture);
 		}
 
@@ -691,6 +694,9 @@ namespace System
 
 		public String ToUpper (CultureInfo culture)
 		{
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+
 			return InternalToUpper (culture);
 		}
 

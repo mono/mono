@@ -1,12 +1,16 @@
+2004-04-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* String.cs: Check for null values
+
 2004-04-23  Peter Bartok <pbartok@novell.com>
 
-   * Environment.cs: GetLogicalDrives now returns "/" instead of null. Gonzalo
-   will do a better fix in the future, but this way apps can at least use it.
+	* Environment.cs: GetLogicalDrives now returns "/" instead of null. Gonzalo
+	  will do a better fix in the future, but this way apps can at least use it.
 
 2004-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Environment.cs: Better support for GetFolderPath (same results as MS 
-	on Windows).
+	  on Windows).
 
 2004-04-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
@@ -45,24 +49,24 @@
 
 2004-04-16  David Sheldon <dave-mono@earth.li>
 
-  * DecimalFormatter.cs: Don't append a decimal point after the
-    end of a number. ((decimal)1).ToString("P0") should be "100 %", not
-    "100. %"
+	* DecimalFormatter.cs: Don't append a decimal point after the
+	  end of a number. ((decimal)1).ToString("P0") should be "100 %", not
+	  "100. %"
 
 2004-04-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* OutOfMemoryException.cs: Removed the call to Locale.GetText from
-	this.
+	  this.
 
 2004-04-10  Gert Driesen (drieseng@users.sourceforge.net)
 
    	* MonoDummy.cs: added MonoTODO to make sure we remove this class
-	when its no longer needed
+	  when its no longer needed
 
 2004-04-09  David Sheldon <dave-mono@earth.li>
 
-    * Convert.cs: Allow + signs in strings for ToInt32, and
-	- if it is base 10.
+	* Convert.cs: Allow + signs in strings for ToInt32, and
+	  - if it is base 10.
 
 2004-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
