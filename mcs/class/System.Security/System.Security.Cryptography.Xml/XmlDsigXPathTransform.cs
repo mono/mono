@@ -94,7 +94,6 @@ namespace System.Security.Cryptography.Xml
 				}
 			}
 
-			return doc.SelectNodes (x, ctx);
 			ctx = new XmlDsigXPathContext (doc);
 			return EvaluateMatch (doc, x);
 		}

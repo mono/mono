@@ -1,3 +1,7 @@
+2004-03-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDsigXPathTransform.cs : just found stupid bug.
+
 2004-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXml.cs: Lot of small changes to complete TODOs and to match 
