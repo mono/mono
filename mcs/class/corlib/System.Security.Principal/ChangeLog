@@ -1,3 +1,8 @@
+2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WindowsIdentity.cs: Added security permissions for ControlPrincipal
+	when creating new instances of WindowsIdentity.
+
 2004-09-12  Tim Coleman <tim@timcoleamn.com>
 	* TokenImpersonationLevel.cs: New enum for Fx 2.0
 

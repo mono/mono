@@ -7,11 +7,7 @@
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,9 +29,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Security.Principal {
 
@@ -56,21 +52,25 @@ namespace System.Security.Principal {
 		// that seems to be the value used for (at least) AIX and MacOSX
 		static private IntPtr invalidPosix = (IntPtr) unchecked (-2);
 
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (IntPtr userToken) 
 			: this (userToken, null, WindowsAccountType.Normal, false)
 		{
 		}
 
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (IntPtr userToken, string type) 
 			: this (userToken, type, WindowsAccountType.Normal, false)
 		{
 		}
 
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (IntPtr userToken, string type, WindowsAccountType acctType)
 			: this (userToken, type, acctType, false)
 		{
 		}
 
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (IntPtr userToken, string type, WindowsAccountType acctType, bool isAuthenticated)
 		{
 			_type = type;
@@ -81,11 +81,13 @@ namespace System.Security.Principal {
 			SetToken (userToken);
 		}
 #if !NET_1_0
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (string sUserPrincipalName) 
 			: this (sUserPrincipalName, null)
 		{
 		}
 
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (string sUserPrincipalName, string type)
 		{
 			if (sUserPrincipalName == null)
@@ -104,6 +106,7 @@ namespace System.Security.Principal {
 			SetToken (token);
 		}
 
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (SerializationInfo info, StreamingContext context)
 		{
 			_info = info;
@@ -149,6 +152,7 @@ namespace System.Security.Principal {
 			return new WindowsImpersonationContext (_token);
 		}
 
+		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public static WindowsImpersonationContext Impersonate (IntPtr userToken)
 		{
 			return new WindowsImpersonationContext (userToken);
