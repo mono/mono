@@ -1,5 +1,12 @@
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
+	* debug-dwarf2-plus.c (mono_debug_open_assembly_dwarf2_plus): Only run
+	the assembler if necessary, ie. the assembler file is newer than the
+	symbol file or the symbol file does not exist.
+
+	* debug.c: Added "update_on_exit" argument to recreate the symbol file
+	when the JIT exists.
+
 	* debug-dwarf2.c: Produce assembler code which is free of comments and
 	extra whitespaces so that it's suitable for `as -f'.
 
