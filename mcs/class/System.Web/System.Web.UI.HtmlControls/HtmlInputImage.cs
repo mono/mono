@@ -24,12 +24,20 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		protected void OnServerClick(ImageClickEventArgs e){
+		protected override void RenderAttributes(HtmlTextWriter writer)
+		{
+			base.RenderAttributes (writer);
+			// Anything else?
+		}
+
+		protected virtual void OnServerClick(ImageClickEventArgs e){
 			ImageClickEventHandler handler = (ImageClickEventHandler) Events[EventServerClick];
-			// if (handler != null) handler.Invoke(this, e);
+			if (handler != null) handler (this, e);
 		}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+						       NameValueCollection postCollection)
+		{
 			string postX = postCollection[String.Concat(RenderedName,".x")];
 			string postY = postCollection[String.Concat(RenderedName,".y")];
 			if (postX != null && postY != null && postX.Length >= 0 && postY.Length >= 0){
@@ -40,14 +48,16 @@ namespace System.Web.UI.HtmlControls{
 			return false;
 		}
 		
-		public void RaisePostBackEvent(string eventArgument){
-			if (CausesValidation){
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			if (CausesValidation)
 				Page.Validate();
-			}
-			OnServerClick(new ImageClickEventArgs(_x,_y));
+			OnServerClick (new ImageClickEventArgs(_x, _y));
 		}
 		
-		public void RaisePostDataChangedEvent(){}
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+		}
 		
 		public event EventHandler ServerClick{
 			add{

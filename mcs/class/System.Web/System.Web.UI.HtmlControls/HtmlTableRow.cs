@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
+	[ParseChildren(true, "Cells")]
 	public class HtmlTableRow : HtmlContainerControl {
 		private HtmlTableCellCollection _cells;
 		public HtmlTableRow():base("tr"){}

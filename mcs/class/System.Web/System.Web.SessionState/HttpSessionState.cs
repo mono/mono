@@ -49,6 +49,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 	public int CodePage
 	{
 		get { return 0; }
+		set { }
 	}
 
 	public HttpSessionState Contents

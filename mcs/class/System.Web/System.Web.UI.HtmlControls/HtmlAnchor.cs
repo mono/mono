@@ -4,11 +4,13 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerClick")]
 	public class HtmlAnchor : HtmlContainerControl, IPostBackEventHandler{
 		
 		private static readonly object EventServerClick;
@@ -19,6 +21,11 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlAnchor(): base("a"){}
 		
+		protected override void OnPreRender (EventArgs e)
+		{
+			base.OnPreRender (e);
+		}
+
 		protected virtual void OnServerClick(EventArgs e){
 			EventHandler handler;
 			handler = (EventHandler) Events[EventServerClick];

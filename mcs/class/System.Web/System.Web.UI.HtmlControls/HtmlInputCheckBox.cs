@@ -4,33 +4,45 @@
 */
 
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
-using System.Globalization;
-using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerChange")]
 	public class HtmlInputCheckBox : HtmlInputControl, IPostBackDataHandler{
 		
 		private static readonly object EventServerChange;
 		
 		public HtmlInputCheckBox(): base("checkbox"){}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
-			string postValue = postCollection[postDataKey];
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, 
+							       NameValueCollection postCollection)
+		{
+			string postValue = postCollection [postDataKey];
 			bool postChecked = false;
+			bool retval = false;
+
 			if (postValue != null)
 				postChecked = postValue.Length > 0;
-			Checked = postChecked;
-			return (postChecked == Checked == false);
+
+			if (Checked != postChecked){
+				retval = true;
+				Checked = postChecked;
+			}
+
+			return retval;
 		}
 		
-		public void RaisePostDataChangedEvent(){
-			OnServerChange(EventArgs.Empty);
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			OnServerChange (EventArgs.Empty);
 		}
 		
-		protected void OnServerChange(EventArgs e){
+		protected virtual void OnServerChange(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerChange];
 			if (handler != null) handler.Invoke(this, e);
 		}

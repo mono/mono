@@ -1,3 +1,14 @@
+2002-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.UI/LiteralControl.cs: 
+	Fixes based on class status page:
+	
+		- Add attributes (DefaultEvent, ParseChildren).
+		- Fix declarations.
+		- Explicitly implement some interfaces (IPostBackDataHandler
+		and IPostBackEventHandler).
+		- Implemented some missing methods.
+
 2002-06-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: reimplemented FindControls.

@@ -349,7 +349,7 @@ namespace System.Web {
       }
 
       [MonoTODO("Set expiresabsolute in the cache policy")]
-      public int ExpiresAbsolute {
+      public DateTime ExpiresAbsolute {
          get {
             throw new NotImplementedException();
          }

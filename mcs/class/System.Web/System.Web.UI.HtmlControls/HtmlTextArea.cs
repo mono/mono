@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerChange")]
 	public class HtmlTextArea : HtmlContainerControl, IPostBackDataHandler{
 		
 		private static readonly object EventServerChange;
@@ -80,7 +81,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+							NameValueCollection postCollection)
+		{
 			string currentValue = Value;
 			string postedValue = postCollection[postDataKey];
 			if (!currentValue.Equals(postedValue) && currentValue != null){
@@ -96,8 +99,9 @@ namespace System.Web.UI.HtmlControls{
 			base.RenderAttributes(writer);
 		}
 		
-		public void RaisePostDataChangedEvent(){
-			OnServerChange(EventArgs.Empty);
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			OnServerChange (EventArgs.Empty);
 		}
 		
 		protected override void OnPreRender(EventArgs e){

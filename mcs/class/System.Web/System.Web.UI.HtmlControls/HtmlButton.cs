@@ -4,11 +4,13 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerClick")]
 	public class HtmlButton : HtmlContainerControl, IPostBackEventHandler{
 		
 		private static readonly object EventServerClick;

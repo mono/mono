@@ -1,3 +1,32 @@
+2002-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.UI.HtmlControls/HtmlAnchor.cs: 
+	* System.Web.UI.HtmlControls/HtmlButton.cs: 
+	* System.Web.UI.HtmlControls/HtmlControl.cs: 
+	* System.Web.UI.HtmlControls/HtmlForm.cs: 
+	* System.Web.UI.HtmlControls/HtmlGenericControl.cs: 
+	* System.Web.UI.HtmlControls/HtmlInputButton.cs: 
+	* System.Web.UI.HtmlControls/HtmlInputCheckBox.cs: 
+	* System.Web.UI.HtmlControls/HtmlInputControl.cs: 
+	* System.Web.UI.HtmlControls/HtmlInputFile.cs: 
+	* System.Web.UI.HtmlControls/HtmlInputHidden.cs: 
+	* System.Web.UI.HtmlControls/HtmlInputImage.cs: 
+	* System.Web.UI.HtmlControls/HtmlInputRadioButton.cs: 
+	* System.Web.UI.HtmlControls/HtmlInputText.cs: 
+	* System.Web.UI.HtmlControls/HtmlSelect.cs: 
+	* System.Web.UI.HtmlControls/HtmlTable.cs: 
+	* System.Web.UI.HtmlControls/HtmlTableCell.cs: 
+	* System.Web.UI.HtmlControls/HtmlTableRow.cs: 
+	* System.Web.UI.HtmlControls/HtmlTextArea.cs: 
+
+	Fixes based on class status page:
+	
+		- Add attributes (DefaultEvent, ParseChildren).
+		- Fix declarations.
+		- Explicitly implement some interfaces (IPostBackDataHandler
+		and IPostBackEventHandler).
+		- Implemented some missing methods.
+
 2002-06-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlForm.cs:

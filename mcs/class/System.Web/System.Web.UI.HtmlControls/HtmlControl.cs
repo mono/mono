@@ -29,6 +29,11 @@ namespace System.Web.UI.HtmlControls{
 			if(tag != null && tag != String.Empty) _tagName = tag;
 		}
 		
+		protected override ControlCollection CreateControlCollection ()
+		{
+			return new EmptyControlCollection (this);
+		}
+
 		internal static string AttributeToString(int n){
 			if (n != -1)return n.ToString(NumberFormatInfo.InvariantInfo);
 			return null;

@@ -15,14 +15,18 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlInputFile():base("file"){}
 		
-		public virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection){
-			string postValue = postCollection[postDataKey];
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+						       NameValueCollection postCollection)
+		{
+			string postValue = postCollection [postDataKey];
 			if (postValue != null)
 				Value = postValue;
 			return false;
 		}
 		
-		public virtual void RaisePostDataChangedEvent(){}
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+		}
 		
 		public string Accept{
 			get{

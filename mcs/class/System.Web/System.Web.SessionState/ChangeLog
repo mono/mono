@@ -1,3 +1,14 @@
+2002-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.SessionState/HttpSessionState.cs: 
+	Fixes based on class status page:
+	
+		- Add attributes (DefaultEvent, ParseChildren).
+		- Fix declarations.
+		- Explicitly implement some interfaces (IPostBackDataHandler
+		and IPostBackEventHandler).
+		- Implemented some missing methods.
+
 2002-06-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSessionState.cs: implemented more methods/properties.

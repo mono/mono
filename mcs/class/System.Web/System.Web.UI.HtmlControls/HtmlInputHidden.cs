@@ -4,13 +4,15 @@
 */
 
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
-using System.Globalization;
-using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerChange")]
 	public class HtmlInputHidden : HtmlInputControl, IPostBackDataHandler{
 		
 		private static readonly object EventServerChange;
@@ -19,20 +21,24 @@ namespace System.Web.UI.HtmlControls{
 		{
 		}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
-			string postValue = postCollection[postDataKey];
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+						       NameValueCollection postCollection)
+		{
+			string postValue = postCollection [postDataKey];
 			if (postValue != null)
 				Value = postValue;
 			return false;
 		}
 		
-		public virtual void RaisePostDataChangedEvent(){
-			OnServerChange(EventArgs.Empty);
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			// don't need anything. LoadPostData always returns false.
 		}
 		
-		protected void OnServerChange(EventArgs e){
-			EventHandler handler = (EventHandler) Events[EventServerChange];
-			if (handler != null) handler.Invoke(this, e);
+		protected virtual void OnServerChange (EventArgs e)
+		{
+			EventHandler handler = (EventHandler) Events [EventServerChange];
+			if (handler != null) handler.Invoke (this, e);
 		}
 		
 		protected override void OnPreRender(EventArgs e){

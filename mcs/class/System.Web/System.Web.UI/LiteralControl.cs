@@ -35,5 +35,10 @@ namespace System.Web.UI
                 {
                         writer.Write(_text);
                 }
+
+		protected override ControlCollection CreateControlCollection ()
+		{
+			return new EmptyControlCollection (this);
+		}
         }
 }

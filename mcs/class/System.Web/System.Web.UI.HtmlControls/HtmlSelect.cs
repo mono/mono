@@ -14,6 +14,7 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerChange")]
 	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler{
 		
 		
@@ -171,7 +172,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+							NameValueCollection postCollection)
+		{
 			//get the posted selectedIndices[]
 			string[] postedValueColl = postCollection.GetValues(postDataKey);
 			bool valid = false;
@@ -212,12 +215,13 @@ namespace System.Web.UI.HtmlControls{
 			return valid;
 		}
 		
-		public void RaisePostDataChangedEvent(){
-			OnServerChange(EventArgs.Empty);
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			OnServerChange (EventArgs.Empty);
 		}
 		
 		//starts tracking changes to the viewstate
-		internal virtual new void TrackViewState(){
+		protected override void TrackViewState(){
 			TrackViewState();
 			Items.TrackViewState();
 		}

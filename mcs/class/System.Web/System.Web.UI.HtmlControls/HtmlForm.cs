@@ -135,7 +135,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public string Name{
+		public virtual string Name{
 			get{
 				string attr = Attributes["name"];
 				if (attr != null){

@@ -4,13 +4,15 @@
 */
 
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
-using System.Globalization;
-using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerChange")]
 	public class HtmlInputRadioButton : HtmlInputControl, IPostBackDataHandler{
 		
 		private static readonly object EventServerChange;
@@ -26,7 +28,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		protected void OnServerChange(EventArgs e){
+		protected virtual void OnServerChange(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerChange];
 			if (handler != null){
 				handler.Invoke(this, e);
@@ -39,17 +41,18 @@ namespace System.Web.UI.HtmlControls{
 			base.RenderAttributes(writer);
 		}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
-			string postValue = postCollection[postDataKey];
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+							NameValueCollection postCollection)
+		{
+			string postValue = postCollection [postDataKey];
 			bool myBool = false;
-			if (postValue != null && postValue.Equals(Value)){
-				if (!Checked){
+			if (postValue != null && postValue.Equals (Value)) {
+				if (!Checked) {
 					Checked = true;
 					myBool = true;
 				}
-			}
-			else{
-				if (Checked){
+			} else {
+				if (Checked) {
 					Checked = false;
 					myBool = false;
 				}
@@ -57,8 +60,9 @@ namespace System.Web.UI.HtmlControls{
 			return myBool;
 		}
 		
-		public void RaisePostDataChangedEvent(){
-			OnServerChange(EventArgs.Empty);
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			OnServerChange (EventArgs.Empty);
 		}
 		
 		public event EventHandler ServerChange{

@@ -4,12 +4,14 @@
 */
 
 using System;
+using System.ComponentModel;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
-using System.Globalization;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerClick")]
 	public class HtmlInputButton : HtmlInputControl, IPostBackEventHandler{
 		
 		private static readonly object EventServerClick;
@@ -20,14 +22,25 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlInputButton(string type): base(type){}
 		
-		protected void OnServerClick(EventArgs e){
+		protected override void OnPreRender (EventArgs e)
+		{
+			base.OnPreRender(e);
+		}
+
+		protected override void RenderAttributes (HtmlTextWriter writer)
+		{
+			base.RenderAttributes (writer);
+		}
+
+		protected virtual void OnServerClick(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerClick];
 			if (handler != null){
 				handler.Invoke(this, e);
 			}
 		}
 		
-		public void RaisePostBackEvent(string eventArgument){
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
 			if(CausesValidation == true){
 				Page.Validate();
 			}

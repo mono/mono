@@ -9,6 +9,7 @@ using System.Web.UI;
 using System.Globalization;
 
 namespace System.Web.UI.HtmlControls{
+	[ConstructorNeedsTag]
 	public class HtmlTableCell : HtmlContainerControl {
 		public HtmlTableCell(): base("td"){}
 		

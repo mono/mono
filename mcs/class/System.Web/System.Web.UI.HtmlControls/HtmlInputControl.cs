@@ -11,7 +11,7 @@ using System.Globalization;
 namespace System.Web.UI.HtmlControls
 {
 	
-	public class HtmlInputControl : HtmlControl
+	public abstract class HtmlInputControl : HtmlControl
 	{
 		
 		public HtmlInputControl (string type) : base ("input")
@@ -37,7 +37,7 @@ namespace System.Web.UI.HtmlControls
 		{
 			get { return Name; }
 		}
-		
+
 		public string Type
 		{
 			get {

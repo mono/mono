@@ -10,6 +10,7 @@ using System.Globalization;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[ParseChildren(true, "Rows")]
 	public class HtmlTable : HtmlContainerControl {
 		private HtmlTableRowCollection _rows;
 		

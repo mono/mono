@@ -4,13 +4,15 @@
 */
 
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
-using System.Globalization;
-using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[DefaultEvent("ServerChange")]
 	public class HtmlInputText : HtmlInputControl, IPostBackDataHandler{
 		
 		private static readonly object EventServerChange;
@@ -24,9 +26,10 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		protected void OnServerChange(EventArgs e){
-			EventHandler handler = (EventHandler) Events[EventServerChange];
-			if (handler != null) handler.Invoke(this, e);
+		protected virtual void OnServerChange (EventArgs e)
+		{
+			EventHandler handler = (EventHandler) Events [EventServerChange];
+			if (handler != null) handler (this, e);
 		}
 		
 		protected override void RenderAttributes(HtmlTextWriter writer){
@@ -36,18 +39,21 @@ namespace System.Web.UI.HtmlControls{
 			base.RenderAttributes(writer);
 		}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+							NameValueCollection postCollection)
+		{
 			string currentValue = Value;
-			string[] postedValue = postCollection.GetValues(postDataKey);
-			if (!currentValue.Equals(postedValue)){
-				Value = postedValue[0];
+			string[] postedValue = postCollection.GetValues (postDataKey);
+			if (!currentValue.Equals (postedValue)){
+				Value = postedValue [0];
 				return true;
 			}
 			return false;
 		}
 		
-		public void RaisePostDataChangedEvent(){
-			OnServerChange(EventArgs.Empty);
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			OnServerChange (EventArgs.Empty);
 		}
 		
 		public event EventHandler ServerChange{
