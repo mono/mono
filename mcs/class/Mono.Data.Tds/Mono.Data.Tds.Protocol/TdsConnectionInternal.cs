@@ -123,31 +123,31 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region Methods
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public TdsTransactionInternal BeginTransaction ()
 		{
 			return BeginTransaction (IsolationLevel.ReadCommitted);
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public TdsTransactionInternal BeginTransaction (IsolationLevel il)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public void ChangeDatabase (string databaseName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public void Close ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public TdsCommandInternal CreateCommand ()
 		{
 			throw new NotImplementedException ();
@@ -173,7 +173,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return CreateCommand ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public void Open ()
 		{
 			throw new NotImplementedException ();

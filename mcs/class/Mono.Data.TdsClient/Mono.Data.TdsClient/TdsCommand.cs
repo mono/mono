@@ -100,7 +100,7 @@ namespace Mono.Data.TdsClient {
 			return command.ExecuteScalar ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
                 object ICloneable.Clone()
                 {
                         throw new NotImplementedException ();

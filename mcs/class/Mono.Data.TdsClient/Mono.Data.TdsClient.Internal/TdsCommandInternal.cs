@@ -66,7 +66,7 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		IDataParameterCollection IDbCommand.Parameters {
 			get { throw new NotImplementedException (); }
 		}
@@ -85,7 +85,7 @@ namespace Mono.Data.TdsClient.Internal {
 			set { transaction = value; }
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public UpdateRowSource UpdatedRowSource {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -95,37 +95,37 @@ namespace Mono.Data.TdsClient.Internal {
 
                 #region Methods
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public void Cancel ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public IDbDataParameter CreateParameter ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public int ExecuteNonQuery ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		IDataReader IDbCommand.ExecuteReader ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
 		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
 		{
 			throw new NotImplementedException ();
 		}
 /*
-		[MonoTODO]
+		[System.MonoTODO]
 		public TdsDataReaderInternal ExecuteReader (CommandBehavior behavior)
 		{
 			throw new NotImplementedException ();
@@ -137,19 +137,19 @@ namespace Mono.Data.TdsClient.Internal {
 		}
 */
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public object ExecuteScalar ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[System.MonoTODO]
                 object ICloneable.Clone()
                 {
                         throw new NotImplementedException ();
                 }
 
-		[MonoTODO]
+		[System.MonoTODO]
 		public void Prepare ()
 		{
 			throw new NotImplementedException ();
