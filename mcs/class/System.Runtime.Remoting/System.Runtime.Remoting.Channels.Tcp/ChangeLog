@@ -1,3 +1,14 @@
+2004-12-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TcpChannel.cs: Don't use regular expressions to parse the url, it's
+	too slow.
+	* TcpMessageIO.cs: Read byte chunks using the new StreamRead method,
+	which won't block if the connection is closed.
+	* TcpServerChannel.cs: Flush the stream after writing the response.
+	Wrap the close call in a try/catch (some bytes can be left in the
+	buffered stream if a connection is suddently closed, and it will fail
+	when trying to flush them).
+
 2004-12-09  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TcpConnectionPool.cs: Access the socket stream through a

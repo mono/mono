@@ -140,17 +140,26 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			objectURI = null;
 			port = 0;
 			
-			Match m = Regex.Match (url, "tcp://([^:]+):([0-9]+)/?(.*)");
+			if (!url.StartsWith ("tcp://")) return null;
+			int colon = url.IndexOf (':', 6);
+			if (colon == -1) return null;
+			string host = url.Substring (6, colon - 6);
 
-			if (!m.Success)
-				return null;
+			int slash = url.IndexOf ('/', colon + 1);
+			if (slash == -1) slash = url.Length;
+			string port_str = url.Substring (colon + 1, slash - colon - 1);
 			
-			string host = m.Groups[1].Value;
-			string port_str = m.Groups[2].Value;
-			objectURI = m.Groups[3].Value;
-			port = Convert.ToInt32 (port_str);
+			if (slash < url.Length)
+				objectURI = url.Substring (slash + 1);
 
-			if (objectURI == string.Empty) objectURI = null;
+			try {
+				port = Convert.ToInt32 (port_str);
+			} catch {
+				return null;
+			}
+
+			if (objectURI == string.Empty)
+				objectURI = null;
 				
 			return host;
 		}
