@@ -32,6 +32,7 @@ namespace System.Data {
 		private string[] columnErrors;
 		private string rowError;
 		private DataRowState rowState;
+		protected internal int xmlRowID = 0;
 
 		#endregion
 
@@ -285,6 +286,15 @@ namespace System.Data {
 		/// </summary>
 		public DataTable Table {
 			get { return _table; }
+		}
+
+		/// <summary>
+		/// Gets and sets index of row. This is used from 
+		/// XmlDataDocument.
+		// </summary>
+		internal int XmlRowID {
+			get { return xmlRowID; }
+			set { xmlRowID = value; }
 		}
 
 		#endregion
