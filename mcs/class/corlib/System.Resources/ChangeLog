@@ -2,9 +2,14 @@
 
 	* ResourceManager.cs: Fixed the GetSatelliteContractVersion()
 	method. It was missing a cast before. Removed MonoTODO
-	attribute. ;-) It was tested by John Barn, so this shouldn't break
+	attribute. ;-) It was tested by John Barnette, so this shouldn't break
 	the build.
-	
+
+	* ResourceManager.cs: Removed MonoTODO attribute on GetString
+	(string), as I believe it's correct. However, GetString
+	(string, CultureInfo) is definitely broken, so I'm marking it with
+	MonoTODO there. I also added MonoTODO to IntenalGetResourceSet().
+
 2002-01-06  Duco Fijma <duco@lorentz.xs4all.nl>
 	* Finalizing IResourceReader and IResourceWriter interfaces: 
           Added "new"-modifier to IResourceReader.GetEnumerator

@@ -75,7 +75,6 @@ namespace System.Resources {
 				return null;
 			 }
 
-		         [MonoTODO]
 			 public virtual string GetString (string name) {
 				    if (name == null)
 						  throw new ArgumentNullException ("Name is null.");
@@ -85,14 +84,14 @@ namespace System.Resources {
 												     "not a string.");
 						  return ResourceSets[name].ToString();
 				    }
-				    // TODO check for correctness.				    
 				    return null;	
 			 }
-			 
+
+			 [MonoTODO]
 			 public virtual string GetString (string name, CultureInfo culture) {
 				    if (name == null)
 						  throw new ArgumentNullException ("Name is null.");
-				return name;
+				    return null;
 			 }
 
 		         [MonoTODO]
