@@ -1,5 +1,11 @@
 2004-09-02  Marek Safar  <marek.safar@seznam.cz>
 
+	Fixed bug #62342, #63102
+	* class.cs: ImplementIndexer uses member.IsExplicitImpl
+	like ImplementMethod.
+
+2004-09-02  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs (Attribute.GetAttributeArgumentExpression):
 	Fixed bug #65170.
 

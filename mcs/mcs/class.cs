@@ -4530,7 +4530,7 @@ namespace Mono.CSharp {
 				if (member is Indexer) {
 					container.Pending.ImplementIndexer (
 						member.InterfaceType, builder, method.ReturnType,
-						ParameterTypes, true);
+						ParameterTypes, member.IsExplicitImpl);
 				} else
 					container.Pending.ImplementMethod (
 						member.InterfaceType, name, method.ReturnType,
