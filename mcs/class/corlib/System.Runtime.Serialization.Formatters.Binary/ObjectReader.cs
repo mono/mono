@@ -19,9 +19,14 @@ namespace System.Runtime.Serialization.Formatters.Binary
 {
 	internal class ObjectReader
 	{
+		BinaryFormatter _formatter;
 		ISurrogateSelector _surrogateSelector;
 		StreamingContext _context;
 		SerializationBinder _binder;
+		
+#if NET_1_1
+		TypeFilterLevel _filterLevel;
+#endif
 
 		ObjectManager _manager;
 		Hashtable _registeredAssemblies = new Hashtable();
@@ -47,12 +52,17 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			public int NullCount;
 		}
 
-		public ObjectReader(ISurrogateSelector surrogateSelector, StreamingContext context, SerializationBinder binder)
+		public ObjectReader (BinaryFormatter formatter)
 		{
-			_manager = new ObjectManager (surrogateSelector, context);
-			_surrogateSelector = surrogateSelector;
-			_context = context;
-			_binder = binder;
+			_formatter = formatter;
+			_surrogateSelector = formatter.SurrogateSelector;
+			_context = formatter.Context;
+			_binder = formatter.Binder;
+			_manager = new ObjectManager (_surrogateSelector, _context);
+			
+#if NET_1_1
+			_filterLevel = formatter.FilterLevel;
+#endif
 		}
 
 		public void ReadObjectGraph (BinaryReader reader, bool readHeaders, out object result, out Header[] headers)
@@ -214,7 +224,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		private void ReadObjectContent (BinaryReader reader, TypeMetadata metadata, long objectId, out object objectInstance, out SerializationInfo info)
 		{
-			objectInstance = FormatterServices.GetUninitializedObject (metadata.Type);
+#if NET_1_1
+			if (_filterLevel == TypeFilterLevel.Low)
+				objectInstance = FormatterServices.GetSafeUninitializedObject (metadata.Type);
+			else
+#endif
+				objectInstance = FormatterServices.GetUninitializedObject (metadata.Type);
+				
 			info = metadata.NeedsSerializationInfo ? new SerializationInfo(metadata.Type, new FormatterConverter()) : null;
 
    			if (metadata.MemberNames != null)

@@ -22,6 +22,10 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 		private ISurrogateSelector surrogate_selector;
 		private FormatterTypeStyle type_format;			// TODO: Do something with this
 		
+#if NET_1_1
+		private TypeFilterLevel filter_level;
+#endif
+		
 		public BinaryFormatter()
 		{
 			surrogate_selector=null;
@@ -84,6 +88,14 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			}
 		}
 
+#if NET_1_1
+		public TypeFilterLevel FilterLevel 
+		{
+			get { return filter_level; }
+			set { filter_level = value; }
+		}
+#endif
+
 		public object Deserialize(Stream serializationStream)
 		{
 			return Deserialize (serializationStream, null);
@@ -112,13 +124,13 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			BinaryElement elem = (BinaryElement) reader.PeekChar();
 
 			if (elem == BinaryElement.MethodCall) {
-				return MessageFormatter.ReadMethodCall (reader, hasHeader, handler, surrogate_selector, context, binder);
+				return MessageFormatter.ReadMethodCall (reader, hasHeader, handler, this);
 			}
 			else if (elem == BinaryElement.MethodResponse) {
-				return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, null, surrogate_selector, context, binder);
+				return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, null, this);
 			}
 			else {
-				ObjectReader serializer = new ObjectReader (surrogate_selector, context, binder);
+				ObjectReader serializer = new ObjectReader (this);
 
 				object result;
 				Header[] headers;
@@ -142,7 +154,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 
 			bool hasHeader;
 			ReadBinaryHeader (reader, out hasHeader);
-			return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, methodCallmessage, surrogate_selector, context, binder);
+			return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, methodCallmessage, this);
 		}
 
 		public void Serialize(Stream serializationStream, object graph)
