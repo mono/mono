@@ -1,3 +1,11 @@
+2003-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetTest.cs: Added tests for IsEmpty which can return true
+	even when Count > 0. Added tests for FromXml to see if class names
+	requires to be resolved when loaded from policy files.
+	* SecurityManagerTest.cs: Minor changes to tests so they succeed with 
+	both Fx 1.1 and Fx 2.0 (beta 1).
+
 2003-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetTest.cs: Fixed two typos than changed the behaviour of

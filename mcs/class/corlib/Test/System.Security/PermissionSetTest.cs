@@ -457,6 +457,64 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+		public void FromXml_PermissionWithoutNamespace ()
+		{
+			SecurityElement child = new SecurityElement ("IPermission");
+			child.AddAttribute ("class", "EnvironmentPermission");
+			child.AddAttribute ("version", "1");
+			child.AddAttribute ("Read", "USERNAME");
+
+			SecurityElement se = new SecurityElement ("PermissionSet");
+			se.AddAttribute ("class", "PermissionSet");
+			se.AddAttribute ("version", "1");
+			se.AddChild (child);
+
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.FromXml (se);
+			// not enough information but:
+			// a. it doesn't fail
+			// b. it does work for policies
+			AssertEquals ("Count", 0, ps.Count);
+		}
+
+		[Test]
+		public void FromXml_PermissionOutsideCorlib () 
+		{
+			SecurityElement child = new SecurityElement ("IPermission");
+			child.AddAttribute ("class", "PrintingPermission");	// System.Drawing
+			child.AddAttribute ("version", "1");
+			child.AddAttribute ("Level", "DefaultPrinting");
+
+			SecurityElement se = new SecurityElement ("PermissionSet");
+			se.AddAttribute ("class", "PermissionSet");
+			se.AddAttribute ("version", "1");
+			se.AddChild (child);
+
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.FromXml (se);
+			// not enough information but:
+			// a. it doesn't fail
+			// b. it does work for policies
+			AssertEquals ("Count", 0, ps.Count);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromXml_WithPermissionWithoutClass ()
+		{
+			SecurityElement child = new SecurityElement ("IPermission");
+			child.AddAttribute ("version", "1");
+
+			SecurityElement se = new SecurityElement ("PermissionSet");
+			se.AddAttribute ("class", "PermissionSet");
+			se.AddAttribute ("version", "1");
+			se.AddChild (child);
+
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.FromXml (se);
+		}
+
+		[Test]
 		public void GetEnumerator ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
@@ -570,6 +628,26 @@ namespace MonoTests.System.Security {
 			ups2.AddPermission (zip);
 			Compare ("UPS1 N UPS2+ZIP", ups1.Intersect (ups2), true, 1);
 			Compare ("UPS2+ZIP N UPS1", ups2.Intersect (ups1), true, 1);
+		}
+
+		[Test]
+		public void IsEmpty_None ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			Assert ("Empty.IsEmpty", ps.IsEmpty ());
+			ps.AddPermission (new ZoneIdentityPermission (SecurityZone.NoZone));
+			AssertEquals ("Count==1", 1, ps.Count);
+			Assert ("Zip.IsEmpty", ps.IsEmpty ());	// yes empty!
+		}
+
+		[Test]
+		public void IsEmpty_Unrestricted ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
+			Assert ("Unrestricted.IsEmpty", !ps.IsEmpty ());
+			ps.AddPermission (new ZoneIdentityPermission (SecurityZone.NoZone));
+			AssertEquals ("Count==1", 1, ps.Count);
+			Assert ("Zip.IsEmpty", !ps.IsEmpty ());	// yes empty!
 		}
 
 		[Test]

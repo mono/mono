@@ -186,13 +186,19 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (PolicyException))]
+#endif
 		public void ResolvePolicy_Evidence_DenyUnrestricted_CurrentAssembly ()
 		{
 			PermissionSet deny = new PermissionSet (PermissionState.Unrestricted);
 			PermissionSet denied = null;
-			SecurityManager.ResolvePolicy (CurrentEvidence, null, null, deny, out denied);
+			PermissionSet granted = SecurityManager.ResolvePolicy (CurrentEvidence, null, null, deny, out denied);
 			// doing this we denied the Execution right
+#if !NET_2_0
+			Assert.IsNull (denied, "denied");
+			Assert.IsTrue (granted.IsUnrestricted (), "Granted.IsUnrestricted");
+#endif
 		}
 
 		[Test]
