@@ -1,3 +1,9 @@
+2004-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CodeAccessPermissionTest.cs: New. Unit tests on a non-abstract 
+	CodeAccessPermission class.
+	* SecurityManagerTest.cs: Removed .Policy from namespace. 
+
 2004-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SecurityManagerTest.cs: New. Added VERY minimal unit tests that I 

@@ -14,7 +14,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 
-namespace MonoTests.System.Security.Policy {
+namespace MonoTests.System.Security {
 
 	[TestFixture]
 	public class SecurityManagerTest : Assertion {
