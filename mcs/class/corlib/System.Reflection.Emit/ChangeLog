@@ -1,3 +1,8 @@
+2004-09-02  Martin Baulig  <martin@ximian.com>
+
+	* MethodBuilder.cs (MethodBuilder.GetParameters): Throw a
+	NotSupportedException() until the type has been fully created.
+
 2004-09-01  Martin Baulig  <martin@ximian.com>
 
 	* IMonoSymbolWriter.cs: Removed.

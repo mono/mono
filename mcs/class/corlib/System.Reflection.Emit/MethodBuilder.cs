@@ -150,6 +150,8 @@ namespace System.Reflection.Emit {
 			return iattrs;
 		}
 		public override ParameterInfo[] GetParameters() {
+			if (!type.is_created)
+				throw NotSupported ();
 			if (parameters == null)
 				return null;
 
