@@ -89,6 +89,7 @@ namespace System.Net
 		bool authCompleted;
 		byte[] bodyBuffer;
 		int bodyBufferLength;
+		bool getResponseCalled;
 #if NET_1_1
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
@@ -641,6 +642,7 @@ namespace System.Net
 
 			CommonChecks (send);
 			Monitor.Enter (this);
+			getResponseCalled = true;
 			if (asyncRead != null && !haveResponse) {
 				Monitor.Exit (this);
 				throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
@@ -846,7 +848,7 @@ namespace System.Net
 		string GetHeaders ()
 		{
 			bool continue100 = false;
-			if (gotRequestStream && contentLength != -1) {
+			if (contentLength != -1) {
 				continue100 = true;
 				webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
 				webHeaders.RemoveInternal ("Transfer-Encoding");
@@ -972,6 +974,9 @@ namespace System.Net
 				writeStream.Write (bodyBuffer, 0, bodyBufferLength);
 				bodyBuffer = null;
 				writeStream.Close ();
+			} else if (method == "PUT" || method == "POST") {
+				if (getResponseCalled && !writeStream.RequestWritten)
+					writeStream.WriteRequest ();
 			}
 
 			if (asyncWrite != null) {
