@@ -23,7 +23,8 @@ public class DateTimeTest : TestCase
 		631502115130080000L,	// 25 Feb 2002 - 05:25:13,8
 		631502115000000000L,	// 25 Feb 2002 - 05:25:00
 		631502115130000000L,	// 25 Feb 2002 - 05:25:13
-		631502079130000000L	// 25 Feb 2002 - 04:25:13
+		631502079130000000L,	// 25 Feb 2002 - 04:25:13
+		629197085770000000L	// 06 Nov 1994 - 08:49:37 
 	};
 
 	public DateTimeTest() : base ("MonoTests.System.DateTimeTest testcase") {}
@@ -32,11 +33,10 @@ public class DateTimeTest : TestCase
 	public static ITest Suite
 	{
 		get {
-			TestSuite suite = new TestSuite ();
-			return suite;
+			return new TestSuite (typeof (DateTimeTest));
 		}
 	}
-
+	
 	public void TestCtors ()
 	{
 		DateTime t1 = new DateTime (2002,2,25);
@@ -252,6 +252,23 @@ public class DateTimeTest : TestCase
 		t1 = DateTime.ParseExact ("  02 / 25 / 2002    ", "d", null,
 					  DateTimeStyles.AllowWhiteSpaces);
 		AssertEquals ("G07", myTicks[0], t1.Ticks);
+
+		// Multi Custom Patterns
+
+		string rfc1123_date = "r";
+		string rfc850_date = "dddd, dd-MMM-yy HH:mm:ss G\\MT";
+		string asctime_date = "ddd MMM d HH:mm:ss yyyy";
+		string [] formats = new string [] {rfc1123_date, rfc850_date, asctime_date};
+		CultureInfo enUS = new CultureInfo("en-US", false);
+		t1 = DateTime.ParseExact ("Sun, 06 Nov 1994 08:49:37 GMT", formats, enUS, 
+					DateTimeStyles.AllowWhiteSpaces);
+		AssertEquals ("M01", myTicks[6], t1.Ticks);
+		t1 = DateTime.ParseExact ("Sunday, 06-Nov-94 08:49:37 GMT", formats, enUS, 
+					DateTimeStyles.AllowWhiteSpaces);
+		AssertEquals ("M02", myTicks[6], t1.Ticks);
+		t1 = DateTime.ParseExact ("Sun Nov  6 08:49:37 1994", formats, enUS, 
+					DateTimeStyles.AllowWhiteSpaces);
+		AssertEquals ("M03", myTicks[6], t1.Ticks);
 	}
 
 	public void TestParse ()
@@ -307,7 +324,6 @@ public class DateTimeTest : TestCase
 		AssertEquals ("H16", t2.Ticks, t1.Ticks);
 	}
 
-
 	protected override void RunTest ()
 	{
 		CultureInfo oldcult = Thread.CurrentThread.CurrentCulture;
@@ -321,7 +337,6 @@ public class DateTimeTest : TestCase
 
 		Thread.CurrentThread.CurrentCulture = oldcult;
 	}
-
 }
 
 }

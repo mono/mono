@@ -1,3 +1,12 @@
+2002-05-29  Lawrence Pit  <loz@cable.a2000.nl>
+
+	* DateTimeTest.cs: Added tests M01 to M03 to TestParseExact, 
+	passing typeof this class as arg in property Suite.
+
+2002-05-22  Lawrence Pit  <loz@cable.a2000.nl>
+
+	* ConsoleTest.cs: Added test writing null.
+
 2002-05-21  Nick Drochak  <ndrochak@gol.com>
 
 	* MathTest.cs:
