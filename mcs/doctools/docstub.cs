@@ -163,8 +163,6 @@ namespace Mono.Util
 			writer.WriteStartDocument();
 			writer.WriteStartElement("monodoc");
 			writer.WriteAttributeString("language",language);
-			writer.WriteElementString("summary","description");
-			writer.WriteElementString("remarks","description");
 			return writer;
 		}
 
@@ -379,11 +377,8 @@ namespace Mono.Util
 			writer.WriteStartElement(isStruct ? "struct" : "class");
 			writer.WriteAttributeString("name", type.FullName);
 			writer.WriteAttributeString("assembly", assemblyName.Name);
-			writer.WriteElementString("summary","description");
-			writer.WriteElementString("remarks","description");
-			writer.WriteStartElement("seealso");
-			writer.WriteAttributeString("cref", "description");
-			writer.WriteEndElement();
+			writer.WriteElementString("summary","TODO");
+			writer.WriteElementString("remarks","TODO");
 
 			WriteClasses(writer, types);
 			WriteInterfaces(writer, types);
@@ -410,10 +405,10 @@ namespace Mono.Util
 			writer.WriteStartElement("interface");
 			writer.WriteAttributeString("name", type.FullName);
 			writer.WriteAttributeString("assembly", assemblyName.Name);
-			writer.WriteElementString("summary","description");
-			writer.WriteElementString("remarks","description");
+			writer.WriteElementString("summary","TODO");
+			writer.WriteElementString("remarks","TODO");
 			writer.WriteStartElement("seealso");
-			writer.WriteAttributeString("cref", "description");
+			writer.WriteAttributeString("cref", "TODO");
 			writer.WriteEndElement();
 			writer.WriteEndElement();
 		}
@@ -427,10 +422,10 @@ namespace Mono.Util
 			writer.WriteStartElement("delegate");
 			writer.WriteAttributeString("name", type.FullName);
 			writer.WriteAttributeString("assembly", assemblyName.Name);
-			writer.WriteElementString("summary","description");
-			writer.WriteElementString("remarks","description");
+			writer.WriteElementString("summary","TODO");
+			writer.WriteElementString("remarks","TODO");
 			writer.WriteStartElement("seealso");
-			writer.WriteAttributeString("cref", "description");
+			writer.WriteAttributeString("cref", "TODO");
 			writer.WriteEndElement();
 
 			//param
@@ -447,11 +442,11 @@ namespace Mono.Util
 			writer.WriteStartElement("enum");
 			writer.WriteAttributeString("name", type.FullName);
 			writer.WriteAttributeString("assembly", assemblyName.Name);
-			writer.WriteElementString("summary","description");
-			writer.WriteElementString("remarks","description");
+			writer.WriteElementString("summary","TODO");
+			writer.WriteElementString("remarks","TODO");
 
 			writer.WriteStartElement("member");
-			writer.WriteAttributeString("name", "description");
+			writer.WriteAttributeString("name", "TODO");
 			writer.WriteEndElement();
 
 			writer.WriteEndElement();
@@ -581,10 +576,10 @@ namespace Mono.Util
 		{
 			writer.WriteStartElement("field");
 			writer.WriteAttributeString("name", field.Name);
-			writer.WriteElementString("summary","description");
-			writer.WriteElementString("remarks","description");
+			writer.WriteElementString("summary","TODO");
+			writer.WriteElementString("remarks","TODO");
 			writer.WriteStartElement("seealso");
-			writer.WriteAttributeString("cref", "description");
+			writer.WriteAttributeString("cref", "TODO");
 			writer.WriteEndElement();
 
 			writer.WriteEndElement();
@@ -595,11 +590,11 @@ namespace Mono.Util
 		{
 			writer.WriteStartElement("event");
 			writer.WriteAttributeString("name", eventInfo.Name);
-			writer.WriteElementString("summary","description");
-			writer.WriteElementString("remarks","description");
-			writer.WriteElementString("data","description");
+			writer.WriteElementString("summary","TODO");
+			writer.WriteElementString("remarks","TODO");
+			writer.WriteElementString("data","TODO");
 			writer.WriteStartElement("seealso");
-			writer.WriteAttributeString("cref", "description");
+			writer.WriteAttributeString("cref", "TODO");
 			writer.WriteEndElement();
 
 			writer.WriteEndElement();
@@ -610,8 +605,8 @@ namespace Mono.Util
 		{
 			writer.WriteStartElement("constructor");
 			writer.WriteAttributeString("name", classname + GetParameterTypes(constructor.GetParameters()));
-			writer.WriteElementString("summary","description");
-			writer.WriteElementString("remarks","description");
+			writer.WriteElementString("summary","TODO");
+			writer.WriteElementString("remarks","TODO");
 
 			foreach (ParameterInfo parameter in constructor.GetParameters())
 			{
@@ -619,7 +614,7 @@ namespace Mono.Util
 			}
 
 			writer.WriteStartElement("seealso");
-			writer.WriteAttributeString("cref", "description");
+			writer.WriteAttributeString("cref", "TODO");
 			writer.WriteEndElement();
 
 			writer.WriteEndElement();
@@ -632,11 +627,11 @@ namespace Mono.Util
 			{
 				writer.WriteStartElement("property");
 				writer.WriteAttributeString("name", property.Name);
-				writer.WriteElementString("summary","description");
-				writer.WriteElementString("remarks","description");
-				writer.WriteElementString("value","description");
+				writer.WriteElementString("summary","TODO");
+				writer.WriteElementString("remarks","TODO");
+				writer.WriteElementString("value","TODO");
 				writer.WriteStartElement("seealso");
-				writer.WriteAttributeString("cref", "description");
+				writer.WriteAttributeString("cref", "TODO");
 				writer.WriteEndElement();
 
 				writer.WriteEndElement();
@@ -650,8 +645,8 @@ namespace Mono.Util
 			{
 				writer.WriteStartElement("operator");
 				writer.WriteAttributeString("name", method.Name + GetParameterTypes(method.GetParameters()));
-				writer.WriteElementString("summary","description");
-				writer.WriteElementString("remarks","description");
+				writer.WriteElementString("summary","TODO");
+				writer.WriteElementString("remarks","TODO");
 
 				foreach (ParameterInfo parameter in method.GetParameters())
 				{
@@ -660,7 +655,7 @@ namespace Mono.Util
 
 				writer.WriteElementString("returnType", method.ReturnType.FullName);
 				writer.WriteStartElement("seealso");
-				writer.WriteAttributeString("cref", "description");
+				writer.WriteAttributeString("cref", "TODO");
 				writer.WriteEndElement();
 
 				writer.WriteEndElement();
@@ -674,8 +669,8 @@ namespace Mono.Util
 			{
 				writer.WriteStartElement("method");
 				writer.WriteAttributeString("name", method.Name + GetParameterTypes(method.GetParameters()));
-				writer.WriteElementString("summary","description");
-				writer.WriteElementString("remarks","description");
+				writer.WriteElementString("summary","TODO");
+				writer.WriteElementString("remarks","TODO");
 
 				foreach (ParameterInfo parameter in method.GetParameters())
 				{
@@ -684,7 +679,7 @@ namespace Mono.Util
 
 				writer.WriteElementString("returnType", method.ReturnType.FullName);
 				writer.WriteStartElement("seealso");
-				writer.WriteAttributeString("cref", "description");
+				writer.WriteAttributeString("cref", "TODO");
 				writer.WriteEndElement();
 
 				writer.WriteEndElement();
@@ -695,7 +690,7 @@ namespace Mono.Util
 		{
 			writer.WriteStartElement("param");
 			writer.WriteAttributeString("name", parameter.Name);
-			writer.WriteString("description");
+			writer.WriteString("TODO");
 			writer.WriteEndElement();
 		}
 	}
