@@ -46,6 +46,17 @@ namespace System.Data.Common {
 			set { allowBlankPassword = value; }
 		}
 
+		[MonoTODO]
+		public string KeyRestrictions {
+			get { 
+				throw new NotImplementedException ();
+			}	
+			
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
 #if NET_1_1
 		public String ConnectionString {
 			get { return connectionString; }
