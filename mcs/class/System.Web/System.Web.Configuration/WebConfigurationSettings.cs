@@ -791,16 +791,13 @@ namespace System.Web.Configuration
 
 		void StoreLocation (string name, XmlTextReader reader)
 		{
-			if (locations == null) {
-				locations = new Hashtable ();
-			}
-
 			string path = null;
 			bool haveAllow = false;
 			bool allowOverride = true;
+			string att = null;
 
 			while (reader.MoveToNextAttribute ()) {
-				string att = reader.Name;
+				att = reader.Name;
 
 				if (att == "path") {
 					if (path != null)
@@ -830,8 +827,13 @@ namespace System.Web.Configuration
 				ThrowException ("Unrecognized attribute.", reader);
 			}
 
+			if (att == null)
+				return; // empty location tag
+
 			Location loc = new Location (this, path, allowOverride);
-			if (locations.ContainsKey (loc.Path))
+			if (locations == null)
+				locations = new Hashtable ();
+			else if (locations.ContainsKey (loc.Path))
 				ThrowException ("Duplicated location path: " + loc.Path, reader);
 
 			reader.MoveToElement ();
