@@ -361,18 +361,18 @@ namespace CIR
 			context.CodeGen = new CodeGen (output_file, output_file);
 
 			//
-			// The second pass of the compiler
-			//
-			context.ResolveTree ();
-			context.PopulateTypes ();
-
-			//
 			// Before emitting, we need to get the core
 			// types emitted from the user defined types
 			// or from the system ones.
 			//
 			context.TypeManager.InitCoreTypes ();
-
+			
+			//
+			// The second pass of the compiler
+			//
+			context.ResolveTree ();
+			context.PopulateTypes ();
+			
 			if (context.Report.Errors > 0){
 				error ("Compilation failed");
 				return;

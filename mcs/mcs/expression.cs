@@ -376,19 +376,51 @@ namespace CIR {
 					return new BoxedCast (expr);
 			} else if (expr_type.IsSubclassOf (target_type))
 				return new EmptyCast (expr, target_type);
-			else 
-				// FIXME: missing implicit reference conversions:
-				// 
+			else {
 				// from any class-type S to any interface-type T.
+				if (expr_type.IsClass && target_type.IsInterface) {
+					Type [] interfaces = expr_type.FindInterfaces (Module.FilterTypeName,
+										       target_type.FullName);
+					if (interfaces != null)
+						return new EmptyCast (expr, target_type);
+				}	
+
 				// from any interface type S to interface-type T.
+				// FIXME : Is it right to use IsAssignableFrom ?
+				if (expr_type.IsInterface && target_type.IsInterface)
+					if (target_type.IsAssignableFrom (expr_type))
+						return new EmptyCast (expr, target_type);
+				
+				
 				// from an array-type S to an array-type of type T
+				if (expr_type.IsArray && target_type.IsArray) {
+					
+					throw new Exception ("Implement array conversion");
+					
+				}
+				
 				// from an array-type to System.Array
+				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
+					return new EmptyCast (expr, target_type);
+				
 				// from any delegate type to System.Delegate
+				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
+				    target_type == TypeManager.delegate_type)
+					if (target_type.IsAssignableFrom (expr_type))
+						return new EmptyCast (expr, target_type);
+					
 				// from any array-type or delegate type into System.ICloneable.
+				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
+					if (target_type == TypeManager.cloneable_interface)
+						throw new Exception ("Implement conversion to System.ICloneable");
+				
 				// from the null type to any reference-type.
-				     
+				// FIXME : How do we do this ?
+
 				return null;
 
+			}
+			
 			return null;
 		}
 
@@ -601,7 +633,7 @@ namespace CIR {
 
 				method = Invocation.OverloadResolve (tc, union, arguments, l, true);
 
-				if (method != null) {
+				if (method != null) { 
 					MethodInfo mi = (MethodInfo) method;
 					
 					if (mi.ReturnType == target)
@@ -625,8 +657,7 @@ namespace CIR {
 				arguments = new ArrayList ();
 				arguments.Add (new Argument (source, Argument.AType.Expression));
 			
-				method = Invocation.OverloadResolve (tc, union, arguments,
-								     new Location ("FIXME", 1, 1), true);
+				method = Invocation.OverloadResolve (tc, union, arguments, l, true);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
 

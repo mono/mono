@@ -1073,7 +1073,7 @@ operator_declaration
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
 		Operator op = new Operator (decl.optype, decl.ret_type, (int) $2, decl.arg1type, decl.arg1name,
-					    decl.arg2type, decl.arg2name, (Block) $4, (Attributes) $1);
+					    decl.arg2type, decl.arg2name, (Block) $4, (Attributes) $1, decl.location);
 
 		// Note again, checking is done in semantic analysis
 		current_container.AddOperator (op);
@@ -1086,7 +1086,8 @@ operator_declarator
 	{
 		CheckUnaryOperator ((Operator.OpType) $3);
 
-		$$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6, null, null);
+		$$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6,
+					      null, null, lexer.Location);
 	}
 	| type OPERATOR overloadable_operator
 	  OPEN_PARENS 
@@ -1097,7 +1098,7 @@ operator_declarator
 	       CheckBinaryOperator ((Operator.OpType) $3);
 	       
 	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6,
-					     (string) $8, (string) $9);
+					     (string) $8, (string) $9, lexer.Location);
         }
 	| conversion_operator_declarator
 	;
@@ -1134,12 +1135,12 @@ conversion_operator_declarator
 	: IMPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	  {
 		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (string) $3, (string) $5, (string) $6,
-					      null, null);
+					      null, null, lexer.Location);
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	  {
 		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (string) $3, (string) $5, (string) $6,
-					      null, null);
+					      null, null, lexer.Location);
 	  }
 	;
 
@@ -2884,9 +2885,10 @@ public class OperatorDeclaration {
 	public string arg1name;
 	public string arg2type;
 	public string arg2name;
+	public Location location;
 
 	public OperatorDeclaration (Operator.OpType op, string ret_type, string arg1type, string arg1name,
-				    string arg2type, string arg2name)
+				    string arg2type, string arg2name, Location location)
 	{
 		optype = op;
 		this.ret_type = ret_type;
@@ -2894,6 +2896,7 @@ public class OperatorDeclaration {
 		this.arg1name = arg1name;
 		this.arg2type = arg2type;
 		this.arg2name = arg2name;
+		this.location = location;
 	}
 
 }

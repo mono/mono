@@ -1559,12 +1559,13 @@ namespace CIR {
 		public readonly Block  Block;
 		public Attributes      OptAttributes;
 		public MethodBuilder   OperatorMethodBuilder;
-
+		public Location        Location;
+		
 		public string MethodName;
 		public Method OperatorMethod;
 
 		public Operator (OpType type, string ret_type, int flags, string arg1type, string arg1name,
-				 string arg2type, string arg2name, Block block, Attributes attrs)
+				 string arg2type, string arg2name, Block block, Attributes attrs, Location loc)
 		{
 			OperatorType = type;
 			ReturnType = ret_type;
@@ -1575,6 +1576,7 @@ namespace CIR {
 			SecondArgName = arg2name;
 			Block = block;
 			OptAttributes = attrs;
+			Location = loc;
 		}
 
 		string Prototype (TypeContainer parent)
@@ -1595,12 +1597,12 @@ namespace CIR {
 
 			if ((ModFlags & RequiredModifiers) != RequiredModifiers){
 				parent.RootContext.Report.Error (
-					558,
+					558, Location, 
 					"User defined operators `" +
 					Prototype (parent) +
 					"' must be declared static and public");
 			}
-			    
+
 			param_list[0] = new Parameter (FirstArgType, FirstArgName,
 						       Parameter.Modifier.NONE, null);
 			if (SecondArgType != null)
@@ -1613,6 +1615,74 @@ namespace CIR {
 			
 			OperatorMethod.Define (parent);
 			OperatorMethodBuilder = OperatorMethod.MethodBuilder;
+
+			Type [] param_types = OperatorMethod.ParameterTypes (parent);
+			Type declaring_type = OperatorMethodBuilder.DeclaringType;
+			Type return_type = OperatorMethod.GetReturnType (parent);
+			Type first_arg_type = param_types [0];
+
+			// Rules for conversion operators
+			
+			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
+				
+				if (first_arg_type == return_type && first_arg_type == declaring_type)
+					parent.RootContext.Report.Error (555, Location,
+					       "User-defined conversion cannot take an object of the enclosing type " +
+					       "and convert to an object of the enclosing type");
+				
+				if (first_arg_type != declaring_type && return_type != declaring_type)
+					parent.RootContext.Report.Error (556, Location, 
+					       "User-defined conversion must convert to or from the enclosing type");
+				
+				if (first_arg_type == TypeManager.object_type || return_type == TypeManager.object_type)
+					parent.RootContext.Report.Error (-8, Location,
+					       "User-defined conversion cannot convert to or from object type");
+				
+				if (first_arg_type.IsInterface || return_type.IsInterface)
+					parent.RootContext.Report.Error (-9, Location,
+					       "User-defined conversion cannot convert to or from an interface type");	 
+				
+				if (first_arg_type.IsSubclassOf (return_type) || return_type.IsSubclassOf (first_arg_type))
+					parent.RootContext.Report.Error (-10, Location,
+						"User-defined conversion cannot convert between types that " +
+						"derive from each other"); 
+				
+			}
+			
+			if (SecondArgType == null) {
+				// Checks for Unary operators
+				
+				if (first_arg_type != declaring_type) 
+					parent.RootContext.Report.Error (562, Location,
+						   "The parameter of a unary operator must be the containing type");
+				
+				
+				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
+					if (return_type != declaring_type)
+						parent.RootContext.Report.Error (559, Location,
+						       "The parameter and return type for ++ and -- " +
+						       "must be the containing type");
+					
+				}
+				
+				if (OperatorType == OpType.True || OperatorType == OpType.False) {
+					if (return_type != TypeManager.bool_type)
+						parent.RootContext.Report.Error (215, Location,
+						       "The return type of operator True or False " +
+						       "must be bool");
+				}
+				
+			} else {
+				// Checks for Binary operators
+				
+				if (first_arg_type != declaring_type &&
+				    param_types [1] != declaring_type)
+					parent.RootContext.Report.Error (563, Location,
+					       "One of the parameters of a binary operator must be the containing type");
+			}
+			
+		
+			
 		}
 		
 		public void Emit (TypeContainer parent)

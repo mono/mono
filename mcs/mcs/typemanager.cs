@@ -37,10 +37,13 @@ public class TypeManager {
 	static public Type delegate_type;
 	static public Type void_type;
 	static public Type enumeration_type;
+	static public Type array_type;
 
+	static public Type cloneable_interface;
+	
 	static public MethodInfo string_concat_string_string;
 	static public MethodInfo string_concat_object_object;
-	
+
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
 	//   (either because it is the default or the user used the
@@ -207,7 +210,10 @@ public class TypeManager {
 		bool_type     = CoreLookupType ("System.Boolean");
 		enum_type     = CoreLookupType ("System.Enum");
 		delegate_type = CoreLookupType ("System.Delegate");
+		array_type    = CoreLookupType ("System.Array");
 		void_type     = CoreLookupType ("System.Void");
+
+		cloneable_interface = CoreLookupType ("System.ICloneable");
 
 		//
 		// Now load the default methods that we use.

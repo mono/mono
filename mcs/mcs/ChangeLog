@@ -1,3 +1,24 @@
+2001-10-01  Ravi Pratap  <ravi@ximian.com>
+
+	*  expression.cs (Expression::ImplicitUserConversion): Use location
+        even in the case when we are examining True operators.
+ 
+        * class.cs (Operator::Define): Perform extensive checks to conform
+        with the rules for operator overloading in the spec.
+
+	* expression.cs (Expression::ImplicitReferenceConversion): Implement
+	some of the other conversions mentioned in the spec.
+
+	* typemanager.cs (array_type): New static member for the System.Array built-in
+	type.
+
+	(cloneable_interface): For System.ICloneable interface.
+
+	* driver.cs (Driver::Driver): Initialize TypeManager's core types even before
+	we start resolving the tree and populating types.
+
+	* ../errors/errors.txt : Update for error numbers -7, -8, -9, -10
+ 
 2001-10-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Expression::ExprClassFromMemberInfo,
