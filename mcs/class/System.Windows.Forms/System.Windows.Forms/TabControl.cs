@@ -16,15 +16,30 @@ namespace System.Windows.Forms {
 
 	public class TabControl : Control  {
 
-		public class TabPageControlCollection : ControlCollection {
+		public class ControlCollection : Control.ControlCollection {
 
-			public TabPageControlCollection ( Control owner ): base( owner ){ }
+			public ControlCollection ( TabControl owner ): base( owner ){ }
 
 			public override void Add( Control c ) {
 				if ( !( c is TabPage ) ) {
 					throw new ArgumentException();
 				}
 				base.Add(c);
+				if ( owner.IsHandleCreated )
+					((TabControl) owner).addPage ( c, Count - 1);
+			}
+
+			public override void Clear () {
+				base.Clear ( );
+				if ( owner.IsHandleCreated )
+					((TabControl) owner).removeAllTabs ( );
+			}
+
+			public override void Remove ( Control value ) {
+				int index = IndexOf ( value );
+				base.Remove ( value );
+				if ( index != -1 && owner.IsHandleCreated )
+					((TabControl) owner).removeTab ( index );
 			}
 		}
 
@@ -110,7 +125,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Rectangle DisplayRectangle  {
 			get {
-				throw new NotImplementedException ();
+				RECT rect = new RECT( );
+				Rectangle disp = base.DisplayRectangle;
+
+				rect.left = disp.Left;
+				rect.top  = disp.Top;
+				rect.right= disp.Right;
+				rect.bottom = disp.Bottom;
+				
+				Win32.SendMessage ( Handle, (int)TabControlMessages.TCM_ADJUSTRECT, 0, ref rect );
+
+				return new Rectangle ( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 			}
 		}
 
@@ -294,29 +319,35 @@ namespace System.Windows.Forms {
 			set {	base.Text = value;}
 		}
 		 
-		[MonoTODO]
-		public Rectangle GetTabRect(int index) {
-			throw new NotImplementedException ();
+		public Rectangle GetTabRect( int index ) {
+			if ( index < 0 || index >= TabCount )
+				throw new ArgumentOutOfRangeException( "index" );
+			RECT rect = new RECT();
+			Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_GETITEMRECT, index, ref rect );
+			return new Rectangle( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top );
+
 		}
 
-		[MonoTODO]
 		public override string ToString() {
-			throw new NotImplementedException ();
+			string str = GetType().FullName.ToString () + ", TabPages.Count: ";
+			str += TabCount.ToString ( );
+			for ( int i = 0; i < TabPages.Count ; i++ ) {
+				
+				str += ", TabPage[" + i + "]: " + TabPages[i].ToString ( );
+			}
+			return str;
 		}
 		
-		// --- Public Events
-		
-		[MonoTODO]
 		public event DrawItemEventHandler DrawItem;
 		public event EventHandler SelectedIndexChanged;		
-		// --- Protected Properties
 		
 		[MonoTODO]
 		protected override CreateParams CreateParams  {
 			get {
 				CreateParams createParams = base.CreateParams;
 				createParams.ClassName = Win32.TABCONTROL;
-				createParams.Style = (int) ( WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE );
+				createParams.Style = (int) ( WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE | WindowStyles.WS_OVERLAPPED ) |
+							(int) ( TabControlStyles.TCS_RAGGEDRIGHT );
 				
 				if ( Multiline )
 					createParams.Style |= (int) TabControlStyles.TCS_MULTILINE;
@@ -349,6 +380,9 @@ namespace System.Windows.Forms {
 				case TabAppearance.FlatButtons:
 					createParams.Style |= (int) TabControlStyles.TCS_FLATBUTTONS;
 				break;
+				case TabAppearance.Normal:
+					createParams.Style |= (int) TabControlStyles.TCS_TABS;
+				break;
 				}
 
 				switch ( SizeMode ) {
@@ -364,20 +398,14 @@ namespace System.Windows.Forms {
 			}		
 		}
 
-		[MonoTODO]
 		protected override Size DefaultSize {
-			get {
-				return new System.Drawing.Size(200,100);
-			}
+			get { return new System.Drawing.Size(200, 100); }
 		}
-		
-		// --- Protected Methods
 		
 		protected override Control.ControlCollection CreateControlsInstance() {
-			return new TabPageControlCollection ( this );
+			return new ControlCollection ( this );
 		}
 
-		[MonoTODO]
 		protected override void CreateHandle() {
 			initCommonControlsLibrary ( );
 			base.CreateHandle();
@@ -415,7 +443,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) {
 			base.OnHandleDestroyed ( e );
-			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -425,7 +452,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) {
-			//throw new NotImplementedException ();
+			base.OnResize ( e );
 		}
 
 		protected virtual void OnSelectedIndexChanged(EventArgs e) {
@@ -447,6 +474,10 @@ namespace System.Windows.Forms {
 			Controls.Clear ( );
 		}
 
+		protected override void OnCreateControl () {
+			// create pages as needed
+		}
+
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
 			switch ( m.Msg ) {
@@ -455,7 +486,11 @@ namespace System.Windows.Forms {
 				switch ( nmhdr.code ) {
 				case (int)TabControlNotifications.TCN_SELCHANGE:
 					selectedIndex =	Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_GETCURSEL, 0, 0);
+					updatePageBounds ( selectedIndex );
 					OnSelectedIndexChanged ( EventArgs.Empty );
+				break;
+				case (int)TabControlNotifications.TCN_SELCHANGING:
+					m.Result = IntPtr.Zero;
 				break;
 				}
 			break;
@@ -473,21 +508,37 @@ namespace System.Windows.Forms {
 		private void update ( ) {
 		}
 
-		private void setPages ( ) {
-			for (int i = 0; i < Controls.Count; i++ ) {
-				TCITEMHEADER header = new TCITEMHEADER();
-				header.mask = (uint) TabControlItemFlags.TCIF_TEXT;
-				header.pszText = Controls[i].Text;
-				
-				sendMessageHelper ( TabControlMessages.TCM_INSERTITEM, i, ref header );
+		private void updatePageBounds ( int index ) {
+			if ( Controls.Count != 0 && index >=0 && index < Controls.Count ) {
+				Control c = Controls[ index ];
+
+				c.SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
+
+				if ( c.Created == false )
+					c.CreateControl ( );
+
+				showOrHidePages( index );
 			}
+		}
+
+		private void setPages ( ) {
+			for (int i = 0; i < Controls.Count; i++ )
+				addPage ( Controls[i], i );
+		}
+
+		private void addPage ( Control page, int index ) {
+			TCITEM header = new TCITEM();
+			header.mask = (uint) TabControlItemFlags.TCIF_TEXT;
+			header.pszText = page.Text;
+				
+			sendMessageHelper ( TabControlMessages.TCM_INSERTITEM, index, ref header );
 		}
 
 		internal void pageTextChanged ( TabPage page ) {
 			if ( IsHandleCreated ) {
 				int index = Controls.IndexOf ( page );
 				if ( index != -1 ) {
-					TCITEMHEADER header = new TCITEMHEADER();
+					TCITEM header = new TCITEM();
 					header.mask = (uint) TabControlItemFlags.TCIF_TEXT;
 					header.pszText = page.Text;
 				
@@ -496,7 +547,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void sendMessageHelper ( TabControlMessages mes, int index, ref TCITEMHEADER hdr ) {
+		private void sendMessageHelper ( TabControlMessages mes, int index, ref TCITEM hdr ) {
 			if ( IsHandleCreated ) {
 				IntPtr ptr	= Marshal.AllocHGlobal ( Marshal.SizeOf ( hdr ) );
 				Marshal.StructureToPtr( hdr, ptr, false );
@@ -511,13 +562,31 @@ namespace System.Windows.Forms {
 
 		private void setItemSize ( ) {
 			if ( ItemSize != Size.Empty ) {
-				Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETPADDING, 0, Win32.MAKELONG ( ItemSize.Width, ItemSize.Height ) );
+				Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETITEMSIZE, 0, Win32.MAKELONG ( ItemSize.Width, ItemSize.Height ) );
 			}
 		}
 
 		private void selectPage ( int selectedIndex ) {
-			if ( Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETCURSEL, selectedIndex, 0 ) != -1 )
-				OnSelectedIndexChanged ( EventArgs.Empty );
+			if ( selectedIndex != -1 ) {
+				if ( Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETCURSEL, selectedIndex, 0 ) != -1 )
+					OnSelectedIndexChanged ( EventArgs.Empty );
+			}
+			updatePageBounds ( selectedIndex != -1 ? selectedIndex : 0 );
+		}
+
+		private void removeAllTabs ( ) {
+			if ( IsHandleCreated )
+				Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_DELETEALLITEMS, 0, 0 );
+		}
+
+		private void removeTab ( int index ) {
+			if ( IsHandleCreated )
+				Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_DELETEITEM, index, 0 );
+		}
+
+		private void showOrHidePages ( int index ) {
+			for (int i = 0; i < Controls.Count; i++ )
+				Controls[i].Visible = ( i == index ) ? true : false;
 		}
 
 		public class TabPageCollection : IList, ICollection, IEnumerable {
@@ -548,17 +617,14 @@ namespace System.Windows.Forms {
 			
 			public void Add(TabPage value) {
 				collection.Add ( value );
-				owner.update ( );
 			}
 
 			public void AddRange( TabPage[] pages ) {
 				collection.AddRange ( pages );
-				owner.update ( );
 			}
 
 			public virtual void Clear() {
 				collection.Clear ( );
-				owner.update ( );
 			}
 
 			public bool Contains( TabPage page ) {
@@ -575,12 +641,10 @@ namespace System.Windows.Forms {
 
 			public void Remove( TabPage value ) {
 				collection.Remove ( value );
-				owner.update ( );
 			}
 
 			public void RemoveAt(int index) {
 				collection.RemoveAt ( index );
-				owner.update ( );
 			}
 
 			/// <summary>

@@ -774,13 +774,14 @@ namespace System.Windows.Forms
 	}
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-	internal struct  TCITEMHEADER {
+	internal struct  TCITEM {
 		internal uint mask;
-		internal uint lpReserved1;
-		internal uint lpReserved2;
+		internal uint dwState;
+		internal uint dwStateMask;
 		internal string pszText;
 		internal int cchTextMax;
 		internal int iImage;
+		internal int lParam;   
 	}
 
 	//

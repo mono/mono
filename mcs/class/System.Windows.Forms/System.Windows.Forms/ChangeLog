@@ -1,3 +1,10 @@
+2003-04-25  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : check if control is already in control collection, Created property,
+		       ControlCollection.RemoveAt reimplemented using ControlCollection.Remove
+	* TabControl.cs
+	* TabPage.cs : some more implementation
+	* win32structs.cs: TCITEMHEADER replaced with TCITEM
+
 2003-04-24  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs: change to CreateControlInstance function
 	* Panel.cs:   use base CreateParams

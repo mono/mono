@@ -4,10 +4,12 @@
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   implemented by Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
 using System.ComponentModel;
+using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -15,9 +17,9 @@ namespace System.Windows.Forms {
 
 	public class TabPage : Panel {
 
-		public class PageControlsControlCollection : ControlCollection {
+		public class TabPageControlCollection : ControlCollection {
 
-			public PageControlsControlCollection ( Control owner ): base( owner ){ }
+			public TabPageControlCollection ( Control owner ): base( owner ){ }
 
 			public override void Add( Control c ) {
 				if ( c is TabPage  ) {
@@ -27,9 +29,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		//
-		//  --- Public Constructor
-		//
+		private string toolTipText;
+
 		[MonoTODO]
 		public TabPage() {
 			//FIXME:
@@ -69,47 +70,26 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public string ToolTipText  {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {	return toolTipText; }
+			set {	toolTipText = value;}
 		}
-		
-		//  --- Public Methods
 		
 		[MonoTODO]
 		public static TabPage GetTabPageOfComponent(object comp) {
-			//FIXME:
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		public override string ToString() {
-			//FIXME:
-			return base.ToString();
+			return GetType().Name.ToString () + ": {" + Text + "}";
 		}
-		
-		//  --- Protected Methods
 		
 		protected override ControlCollection CreateControlsInstance() {
-			return new PageControlsControlCollection ( this );
+			return new TabPageControlCollection ( this );
 		}
 
-		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			//FIXME:
-			base.SetBoundsCore(x,y,width,height,specified);
+			Rectangle rect = Parent.DisplayRectangle;			
+			base.SetBoundsCore(rect.Left, rect.Top, rect.Width, rect.Height, BoundsSpecified.All);
 		}
-		// FIXME  dont compile
-		//[MonoTODO]
-		//public class TabPageControlCollection : Control.ControlCollection {
-		//	//
-		//	// --- Public Methods
-		//	//
-		//	public override void Add(Control value) {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
 	}
 }

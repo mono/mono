@@ -96,6 +96,7 @@
 		private static readonly int LAYOUT_PENDING   = BitVector32.CreateMask( LAYOUT_SUSPENDED );
 		private static readonly int DISPOSED	     = BitVector32.CreateMask( LAYOUT_PENDING );
 		private static readonly int RECREATING_HANDLE= BitVector32.CreateMask( DISPOSED );
+		private static readonly int CREATED          = BitVector32.CreateMask( RECREATING_HANDLE );
 
 			object tag;
 			protected bool mouseIsInside_;
@@ -522,11 +523,7 @@
     		}
     		
     		public bool Created {
-    			get { 
-    				if (Handle != (IntPtr) 0)
-    					return true;
-    				return false;
-    			}
+    			get { return statuses[ CREATED ]; }
     		}
     		
     		protected virtual CreateParams CreateParams {
@@ -866,7 +863,8 @@
 	    
 						Console.WriteLine ("add ourself to the parents control");
 						// add ourself to the parents control
-						parent.Controls.Add (this);
+						if ( !parent.Controls.Contains ( this ) )
+							parent.Controls.Add (this);
 
 						// FIXME: Is this logic correct ?
 						if( BackColor == DefaultBackColor) {
@@ -1128,8 +1126,9 @@
     		public void CreateControl () 
     		{
     			CreateHandle ();
-				OnCreateControl();
-    		}
+			OnCreateControl();
+			statuses [ CREATED ] = true;
+		}
     
     		[MonoTODO]
     		protected virtual AccessibleObject CreateAccessibilityInstance() {
@@ -3034,7 +3033,7 @@
     		public class ControlCollection : IList, ICollection, IEnumerable, ICloneable {
     
     			private ArrayList collection = new ArrayList ();
-    			private Control owner;
+    			protected Control owner;
     
     			/// --- ControlCollection.constructor ---
     			public ControlCollection (Control owner) 
@@ -3128,7 +3127,9 @@
     			
     			public void RemoveAt (int index) 
     			{
-    				collection.RemoveAt (index);
+				Remove ( this [ index ] );
+				// have to give a chance to handle this situation in derived class
+    				//collection.RemoveAt (index);
     			}
     			
     			[MonoTODO]
