@@ -1,3 +1,10 @@
+2002-05-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (enter_method): print method signature
+
+	* exception.c (arch_handle_exception): set trace info before we
+	call handlers.
+
 2002-05-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_find_final_block): make it work with mcs
