@@ -1,3 +1,10 @@
+2004-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Synched with Mono.Security.dll. Fix bug #57941 
+	(truncated key pair).
+	* RSAManaged.cs: Synched with Mono.Security.dll. Fix bug #57941 
+	(truncated key pair).
+
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: In sync with Mono.Security.dll version.
