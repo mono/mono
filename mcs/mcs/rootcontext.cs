@@ -84,6 +84,11 @@ namespace CIR {
 			}
 		}
 
+		// 
+		// The default compiler checked state
+		//
+		public bool Checked = false;
+
 		string MakeFQN (string nsn, string name)
 		{
 			string prefix = (nsn == "" ? "" : nsn + ".");

@@ -89,6 +89,7 @@ namespace CIR
 				"--dumper     Specifies a tree dumper\n" +
 				"--parse      Only parses the source file\n" +
 				"--probe X L  Probes for the source to generate code X on line L\n" +
+				"--checked    Set default context to checked\n" +
 				"-r           References an assembly\n");
 			
 		}
@@ -243,6 +244,11 @@ namespace CIR
 								error_count++;
 								return;
 							}
+							continue;
+						}
+
+						if (arg == "--checked"){
+							context.Checked = true;
 							continue;
 						}
 						

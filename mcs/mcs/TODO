@@ -178,3 +178,53 @@
 	Write tests for the various reference conversions.  We have
 	test for all the numeric conversions.
 
+* Handle destructors specially
+
+	Turn ~X () { a () } into:
+	void Finalize () { try { a (); } finally { base.Finalize (); } }
+
+* Handle volatile
+
+* Support Re-Throw exceptions:
+
+	try {
+		X ();
+	} catch (SomeException e){
+		LogIt ();
+		throw;
+	}
+
+* Implement lock()
+
+* SimpleNames and ElementAccess
+
+	If a SimpleName makes it outside the ElementAccess, we should
+	flag a 246.  I am not sure the current hack in
+	Invocation.DoResolve is appropiate (catching 246 there), as I
+	am pretty sure, SimpleNames will appear elsewhere.
+
+* Remove the tree dumper
+
+	And make all the stuff which is `public readonly' be private unless
+	required.
+
+* Use of lexer.Location in the parser
+
+	Currently we do:
+
+	TOKEN nt TERMINAL nt TERMINAL nt3 {
+		$$ = new Blah ($2, $4, $6, lexer.Location);
+	}
+
+	This is bad, because the lexer.Location is for the last item in `nt3'
+
+	We need to change that to use this pattern:
+
+	TOKEN { $$ = lexer.Location } nt TERMINAL nt TERMINAL nt3 {
+		$$ = new Blah ($3, $5, $7, (Location) $2);
+	}
+
+	Notice how numbering of the arguments changes, as the { $$ =
+	lexer.Location } takes up a number
+
+

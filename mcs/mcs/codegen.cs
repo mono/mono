@@ -109,16 +109,19 @@ namespace CIR {
 		// </summary>
 		public Hashtable temporary_storage;
 
+		public Block CurrentBlock;
+		
 		public EmitContext (TypeContainer parent, ILGenerator ig, Type return_type,
 				    int code_flags, bool is_constructor)
 		{
 			this.ig = ig;
 
 			TypeContainer = parent;
-			CheckState = false;
+			CheckState = parent.RootContext.Checked;
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
+			CurrentBlock = null;
 			
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;

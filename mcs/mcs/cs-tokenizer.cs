@@ -168,7 +168,7 @@ namespace CIR
 			keywords.Add ("interface", Token.INTERFACE);
 			keywords.Add ("internal", Token.INTERNAL);
 			keywords.Add ("is", Token.IS);
-			keywords.Add ("lock ", Token.LOCK );
+			keywords.Add ("lock", Token.LOCK);
 			keywords.Add ("long", Token.LONG);
 			keywords.Add ("namespace", Token.NAMESPACE);
 			keywords.Add ("new", Token.NEW);

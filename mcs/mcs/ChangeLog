@@ -1,3 +1,27 @@
+2001-10-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Invocation::DoResolve): Catch SimpleNames that
+	might arrive here.  I have my doubts that this is correct.
+
+	* statement.cs (Lock): Implement lock statement.
+
+	* cs-parser.jay: Small fixes to support `lock' and `using'
+
+	* cs-tokenizer.cs: Remove extra space
+
+	* driver.cs: New flag --checked, allows to turn on integer math
+	checking. 
+
+	* typemanger.cs: Load methodinfos for Threading.Monitor.Enter and
+	Threading.Monitor.Exit 
+	
+2001-10-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (IndexerAccess::DoResolveLValue): Set the
+	Expression Class to be IndexerAccess.
+
+	Notice that Indexer::DoResolve sets the eclass to Value.
+
 2001-10-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer::Emit): Emit code for indexers.

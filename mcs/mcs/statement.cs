@@ -320,6 +320,8 @@ namespace CIR {
 
 		public override bool Emit (EmitContext ec)
 		{
+			Console.WriteLine ("Attempting to goto to: " + target);
+			
 			return false;
 		}
 	}
@@ -438,7 +440,11 @@ namespace CIR {
 		StatementCollection statements;
 
 		//
-		// An array of Blocks
+		// An array of Blocks.  We keep track of children just
+		// to generate the local variable declarations.
+		//
+		// Statements and child statements are handled through the
+		// statements.
 		//
 		ArrayList children;
 		
@@ -706,10 +712,13 @@ namespace CIR {
 		public override bool Emit (EmitContext ec)
 		{
 			bool is_ret = false;
-
+			Block prev_block = ec.CurrentBlock;
+			
+			ec.CurrentBlock = this;
 			foreach (Statement s in Statements)
 				is_ret = s.Emit (ec);
 
+			ec.CurrentBlock = prev_block;
 			return is_ret;
 		}
 	}
@@ -787,18 +796,54 @@ namespace CIR {
 	public class Lock : Statement {
 		public readonly Expression Expr;
 		public readonly Statement Statement;
-		
-		public Lock (Expression expr, Statement stmt)
+		Location loc;
+			
+		public Lock (Expression expr, Statement stmt, Location l)
 		{
 			Expr = expr;
 			Statement = stmt;
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
 		{
-			throw new Exception ("Unimplemented");
+			Expression e = Expr.Resolve (ec);
+			if (e == null)
+				return false;
+
+			Type type = e.Type;
+			
+			if (type.IsValueType){
+				Report.Error (185, loc, "lock statement requires the expression to be " +
+					      " a reference type (type is: `" +
+					      TypeManager.CSharpName (type) + "'");
+				return false;
+			}
+
+			LocalBuilder temp = ec.GetTemporaryStorage (type);
+			ILGenerator ig = ec.ig;
+				
+			e.Emit (ec);
+			ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Stloc, temp);
+			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
+
+			// try
+			Label end = ig.BeginExceptionBlock ();
+			Label finish = ig.DefineLabel ();
+			Statement.Emit (ec);
+			// ig.Emit (OpCodes.Leave, finish);
+
+			ig.MarkLabel (finish);
+			
+			// finally
+			ig.BeginFinallyBlock ();
+			ig.Emit (OpCodes.Ldloc, temp);
+			ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
+			ig.EndExceptionBlock ();
+			
+			return false;
 		}
-		
 	}
 
 	public class Unchecked : Statement {
@@ -923,6 +968,45 @@ namespace CIR {
 			ig.EndExceptionBlock ();
 
 			return false;
+		}
+	}
+
+	public class Using : Statement {
+		object expression_or_block;
+		Statement Statement;
+		Location loc;
+		
+		public Using (object expression_or_block, Statement stmt, Location l)
+		{
+			this.expression_or_block = expression_or_block;
+			Statement = stmt;
+			loc = l;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			//
+			// Expressions are simple. 
+			// The problem is with blocks, blocks might contain
+			// more than one variable, ie like this:
+			//
+			// using (a = new X (), b = new Y ()) stmt;
+			//
+			// which is turned into:
+			// using (a = new X ()) using (b = new Y ()) stmt;
+			//
+			// The trick is that the block will contain a bunch
+			// of potential Assign expressions
+			//
+			//
+			// We need to signal an error if a variable lacks
+			// an assignment. (210).
+			//
+			// This is one solution.  Another is to set a flag
+			// when we get the USING token, and have declare_local_variables
+			// do something *different* that we can better cope with
+			//
+			throw new Exception ("Implement me!");
 		}
 	}
 	

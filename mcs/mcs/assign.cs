@@ -192,7 +192,7 @@ namespace CIR {
 			} else if (eclass == ExprClass.PropertyAccess ||
 				   eclass == ExprClass.IndexerAccess){
 				IAssignMethod am = (IAssignMethod) target;
-				
+
 				if (is_statement)
 					am.EmitAssign (ec, source);
 				else {
@@ -205,7 +205,9 @@ namespace CIR {
 					am.EmitAssign (ec, source);
 					tempo.Emit (ec);
 				}
-			} 
+			} else {
+				Console.WriteLine ("Unhandled class: " + eclass + "\n Type:" + target);
+			}
 		}
 		
 		public override void Emit (EmitContext ec)

@@ -1242,6 +1242,16 @@ constructor_initializer
 destructor_declaration
 	: opt_attributes TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
+		//
+		// FIXME: The destructor needs to generate special code:
+		//
+		// ~X ()
+		// { balh (); }
+		//
+		//
+		// void Finalize () { 
+		// try { code } finally { base.Finalize (); }
+		//
 		Method d = new Method ("System.Void", 0, "Finalize", 
 				       new Parameters (null, null), (Attributes) $1, lexer.Location);
 		  
@@ -2855,24 +2865,36 @@ unchecked_statement
 	;
 
 lock_statement
-	: LOCK OPEN_PARENS expression CLOSE_PARENS embedded_statement
+	: LOCK OPEN_PARENS expression CLOSE_PARENS 
 	  {
-		$$ = new Lock ((Expression) $3, (Statement) $5);
+		$1 = lexer.Location;
+ 	  } 
+	  embedded_statement
+	  {
+		$$ = new Lock ((Expression) $3, (Statement) $6, (Location) $1);
 	  }
 	;
 
 using_statement
-	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS embedded_statement
-	  // finishme
+	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS 
+	  {
+		$5 = lexer.Location;
+	  } 
+	  embedded_statement
+	  {
+		$$ = new Using ($3, (Statement) $6, (Location) $5);
+	  }
 	; 
 
 resource_acquisition
 	: local_variable_declaration
 	  {
-		// FIXME: Add the current block chaining for local_variable_decl
+		if ((Block) $1 != current_block){
+			current_block.AddStatement ((Statement) $1);
+			current_block = (Block) $1;
+		}
 	  }
-	  expression
-	  // finishme
+	| expression
 	;
 
 %%

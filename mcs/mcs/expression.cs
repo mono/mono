@@ -4010,19 +4010,32 @@ namespace CIR {
 			// First, resolve the expression that is used to
 			// trigger the invocation
 			//
-			this.expr = expr.Resolve (ec);
-			if (this.expr == null)
+			expr = expr.Resolve (ec);
+			if (expr == null)
 				return null;
 
-			Type expr_type = null;
-			if (!(this.expr is MethodGroupExpr)) {
-				expr_type = this.expr.Type;
-				IsDelegate = TypeManager.IsDelegateType (expr_type);
+			//
+			// If SimpleNames make it here, it is an error
+			//
+			if (expr is SimpleName){
+				SimpleName s = (SimpleName) expr;
+				
+				Report.Error (246, s.Location,
+					      "The type or name `" + s.Name + "' could not be found, " +
+					      "maybe you are missing a using directive");
+				return null;
 			}
 			
-			if (IsDelegate)
-				return (new DelegateInvocation (this.expr, Arguments, Location)).Resolve (ec);
-			
+			if (!(expr is MethodGroupExpr)) {
+				Type expr_type = expr.Type;
+
+				if (expr_type == null){
+					IsDelegate = TypeManager.IsDelegateType (expr_type);
+					if (IsDelegate)
+						return (new DelegateInvocation (
+							this.expr, Arguments, Location)).Resolve (ec);
+				}
+			}
 			
 			if (!(this.expr is MethodGroupExpr)){
 				report118 (Location, this.expr, "method group");
@@ -5200,7 +5213,7 @@ namespace CIR {
 			}
 
 			type = TypeManager.void_type;
-			eclass = ExprClass.Value;
+			eclass = ExprClass.IndexerAccess;
 			return this;
 		}
 		

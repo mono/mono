@@ -35,7 +35,6 @@ TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 
 all: cs-parser.cs
 	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
-	-rm compiler.exe
 
 windows: all
 
