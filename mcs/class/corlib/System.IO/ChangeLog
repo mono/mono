@@ -1,3 +1,7 @@
+2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* StreamWriter.cs: avoid String.ToCharArray for perf.
+
 2004-08-18  Dick Porter  <dick@ximian.com>
 
 	* StreamWriter.cs: Flush the buffer if AutoFlush is set to true.
