@@ -4,7 +4,7 @@
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) Chris Podurgiel
 //
 using System;
 using System.Xml;
@@ -26,5 +26,3 @@ namespace System.Configuration
 		object Create(object parent, object configContext, XmlNode section);
 	}
 }
-
-

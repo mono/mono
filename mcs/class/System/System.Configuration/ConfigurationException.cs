@@ -4,13 +4,13 @@
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) Chris Podurgiel
 //
 
 using System;
 using System.Xml;
 
-namespace System.Configuration
+namespace System.Configuration 
 {
 
 	/// <summary>
@@ -21,11 +21,11 @@ namespace System.Configuration
 	/// </remarks>
 	public class ConfigurationException : SystemException
 	{
-
-		private static string _stringBareMessage;
-		private static string _stringFilename;
-		private static int _intLine;
-		private static string _stringMessage;
+	
+		private static string	_stringBareMessage;
+		private static string	_stringFilename;
+		private static int		_intLine;
+		private static string	_stringMessage;
 
 		/// <summary>
 		///		ConfigurationException Constructor.
@@ -35,9 +35,9 @@ namespace System.Configuration
 			_stringBareMessage = null;
 			_stringFilename = null;
 			_intLine = 0;
-			_stringMessage = null;
+			_stringMessage = null;	
 		}
-
+		
 		/// <summary>
 		///		ConfigurationException Constructor.
 		/// </summary>
@@ -57,7 +57,7 @@ namespace System.Configuration
 			_stringBareMessage = message + " " + inner.ToString();
 			_stringFilename = null;
 			_intLine = 0;
-			_stringMessage = null;
+			_stringMessage = null; 
 		}
 
 		/// <summary>
@@ -105,7 +105,7 @@ namespace System.Configuration
 		}
 
 
-
+		
 		/// <summary>
 		///		Returns the name of the file containing the configuration section node.
 		/// </summary>
@@ -124,7 +124,7 @@ namespace System.Configuration
 		/// <returns></returns>
 		public static int GetXmlNodeLineNumber(XmlNode node)
 		{
-
+			
 			//FIXME: not sure how this should work.
 			return 0;
 		}
@@ -135,7 +135,7 @@ namespace System.Configuration
 		/// </summary>
 		public string BareMessage
 		{
-			get
+			get 
 			{
 				return _stringBareMessage;
 			}
@@ -146,7 +146,7 @@ namespace System.Configuration
 		/// </summary>
 		public string Filename
 		{
-			get
+			get 
 			{
 				return _stringFilename;
 			}
@@ -157,7 +157,7 @@ namespace System.Configuration
 		/// </summary>
 		public int Line
 		{
-			get
+			get 
 			{
 				return _intLine;
 			}
@@ -168,12 +168,11 @@ namespace System.Configuration
 		/// </summary>
 		public override string Message
 		{
-			get
+			get 
 			{
 				return _stringMessage;
 			}
 		}
 	}
 }
-
-
+	
