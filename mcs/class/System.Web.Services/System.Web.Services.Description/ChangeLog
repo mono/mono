@@ -1,3 +1,8 @@
+2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapProtocolReflector.cs: Don't generate wsdl for unknown header
+	  attributes.
+
 2004-06-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpSimpleProtocolImporter.cs: Added null check. The XmlTypeMapping for

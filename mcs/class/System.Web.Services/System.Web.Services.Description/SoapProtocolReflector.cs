@@ -97,6 +97,8 @@ namespace System.Web.Services.Description {
 
 			foreach (HeaderInfo hf in method.Headers)
 			{
+				if (hf.IsUnknownHeader) continue;
+				
 				Message msg = new Message ();
 				msg.Name = Operation.Name + hf.HeaderType.Name;
 				MessagePart part = new MessagePart ();
