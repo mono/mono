@@ -1,3 +1,9 @@
+2003-08-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlValidatingReader.cs : Implemented SchemaType. Added support for
+	  ValidationType.Schema. Added support for XmlResolver. Fixed 
+	  ReadTypedValue() not to consume EndElement.
+
 2003-08-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentNavigator.cs : Fixed MoveToFirstNamespace() that arose

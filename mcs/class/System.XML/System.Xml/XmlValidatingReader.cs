@@ -24,10 +24,12 @@ namespace System.Xml {
 		XmlTextReader xmlTextReader;
 		XmlReader validatingReader;
 		XmlResolver resolver;
+		bool specifiedResolver;
 		ValidationType validationType;
 		XmlSchemaCollection schemas;
 		DTDValidatingReader dtdReader;
 		IHasXmlSchemaInfo schemaInfo;
+		StringBuilder storedCharacters;
 
 		#endregion // Fields
 
@@ -40,6 +42,7 @@ namespace System.Xml {
 			entityHandling = EntityHandling.ExpandEntities;
 			validationType = ValidationType.Auto;
 			schemas = new XmlSchemaCollection ();
+			storedCharacters = new StringBuilder ();
 		}
 
 		public XmlValidatingReader (Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
@@ -212,8 +215,7 @@ namespace System.Xml {
 		}
 
 		public object SchemaType {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return schemaInfo.SchemaType; }
 		}
 
 		[MonoTODO]
@@ -226,9 +228,9 @@ namespace System.Xml {
 				case ValidationType.Auto:
 				case ValidationType.DTD:
 				case ValidationType.None:
+				case ValidationType.Schema:
 					validationType = value; 
 					break;
-				case ValidationType.Schema:
 				case ValidationType.XDR:
 					throw new NotImplementedException ();
 				}
@@ -244,12 +246,12 @@ namespace System.Xml {
 		}
 
 		public XmlResolver XmlResolver {
-			[MonoTODO]
 			set {
+				specifiedResolver = true;
 				resolver = value;
-//				XmlSchemaValidatingReader xsvr = validatingReader as XmlSchemaValidatingReader;
-//				if (xsvr != null)
-//					xsvr.XmlResolver = value;
+				XsdValidatingReader xsvr = validatingReader as XsdValidatingReader;
+				if (xsvr != null)
+					xsvr.XmlResolver = value;
 				DTDValidatingReader dvr = validatingReader as DTDValidatingReader;
 				if (dvr != null)
 					dvr.XmlResolver = value;
@@ -364,14 +366,24 @@ namespace System.Xml {
 						goto case ValidationType.DTD;
 				case ValidationType.DTD:
 					validatingReader = dtdReader = new DTDValidatingReader (sourceReader, this);
+					if (specifiedResolver)
+						dtdReader.XmlResolver = resolver;
 					break;
 				case ValidationType.Schema:
-//					dtdReader = new DTDValidatingReader (sourceReader, this);
-//					validatingReader = new XmlSchemaValidatingReader (dtdReader, this);
-//					break;
+					dtdReader = new DTDValidatingReader (sourceReader, this);
+					XsdValidatingReader xsvr = new XsdValidatingReader (dtdReader, this);
+					foreach (XmlSchema schema in Schemas)
+						xsvr.Schemas.Add (schema);
+					validatingReader = xsvr;
+					if (specifiedResolver) {
+						xsvr.XmlResolver = resolver;
+						dtdReader.XmlResolver = resolver;
+					}
+					break;
 				case ValidationType.XDR:
 					throw new NotImplementedException ();
 				}
+				schemaInfo = validatingReader as IHasXmlSchemaInfo;
 			}
 			return validatingReader.Read ();
 		}
@@ -416,7 +428,6 @@ namespace System.Xml {
 		}
 #endif
 
-		[MonoTODO]
 		public object ReadTypedValue ()
 		{
 			if (dtdReader == null)
@@ -426,7 +437,27 @@ namespace System.Xml {
 				return null;
 			switch (NodeType) {
 			case XmlNodeType.Element:
-				return dt.ParseValue (ReadString (), NameTable, dtdReader.ParserContext.NamespaceManager);
+				if (IsEmptyElement)
+					return null;
+
+				storedCharacters.Length = 0;
+				bool loop = true;
+				do {
+					Read ();
+					switch (NodeType) {
+					case XmlNodeType.SignificantWhitespace:
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+						storedCharacters.Append (Value);
+						break;
+					case XmlNodeType.Comment:
+						break;
+					default:
+						loop = false;
+						break;
+					}
+				} while (loop && !EOF);
+				return dt.ParseValue (storedCharacters.ToString (), NameTable, dtdReader.ParserContext.NamespaceManager);
 			case XmlNodeType.Attribute:
 				return dt.ParseValue (Value, NameTable, dtdReader.ParserContext.NamespaceManager);
 			}
