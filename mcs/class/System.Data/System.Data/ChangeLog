@@ -1,3 +1,8 @@
+2004-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDataReader.cs : Now data reader is namespace aware in all places.
+	  When table's namespace is different, it entered to infinite loop.
+
 2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
 	* MergeManager.cs : AdjustSchema now updates by reference new created table,
 	so in Merge you do not need to lookup for it (were unable to do this for unnamed tables).

@@ -89,7 +89,7 @@ namespace System.Data
 
 			if (mode == XmlReadMode.Fragment) {
 				do {
-					if (XmlConvert.DecodeName (reader.LocalName) == dataset.DataSetName)
+					if (XmlConvert.DecodeName (reader.LocalName) == dataset.DataSetName && reader.NamespaceURI == dataset.Namespace)
 						ReadTopLevelElement ();
 					else
 						reader.Skip ();
@@ -98,7 +98,7 @@ namespace System.Data
 				// Top level element can be ignored, being regarded 
 				// just as a wrapper (even it is not dataset element).
 				DataTable tab = dataset.Tables [XmlConvert.DecodeName (reader.LocalName)];
-				if (tab != null)
+				if (tab != null && tab.Namespace == reader.NamespaceURI)
 					ReadDataSetContent ();
 				else
 					ReadTopLevelElement ();
@@ -127,7 +127,7 @@ namespace System.Data
 		private void ReadDataSetContent ()
 		{
 			DataTable table = dataset.Tables [XmlConvert.DecodeName (reader.LocalName)];
-			if (table == null) {
+			if (table == null || table.Namespace != reader.NamespaceURI) {
 				reader.Skip ();
 				reader.MoveToContent ();
 				return; // skip if there is no matching table
@@ -136,8 +136,11 @@ namespace System.Data
 			// skip if namespace does not match.
 			// TODO: This part is suspicious for MS compatibility
 			// (test required)
-			if (table.Namespace != reader.NamespaceURI)
-				return; 
+			if (table.Namespace != reader.NamespaceURI) {
+				reader.Skip ();
+				reader.MoveToContent ();
+				return; // skip if there is no matching table
+			}
 
 			DataRow row = table.NewRow ();
 			ReadElement (row);
@@ -178,7 +181,7 @@ namespace System.Data
 		private void ReadElementAttribute (DataRow row)
 		{
 			DataColumn col = row.Table.Columns [XmlConvert.DecodeName (reader.LocalName)];
-			if (col == null)
+			if (col == null || col.Namespace != reader.NamespaceURI)
 				return;
 			row [col] = reader.Value;
 		}
@@ -235,7 +238,7 @@ namespace System.Data
 			DataColumn col = null;
 			DataColumnCollection cols = row.Table.Columns;
 			for (int i = 0; i < cols.Count; i++) {
-				if (cols [i].ColumnName == XmlConvert.DecodeName (reader.LocalName)) {
+				if (cols [i].ColumnName == XmlConvert.DecodeName (reader.LocalName) && cols [i].Namespace == reader.NamespaceURI) {
 					col = cols [i];
 					break;
 				}
@@ -281,7 +284,8 @@ namespace System.Data
 				DataRelation rel = rels [i];
 				if (!rel.Nested)
 					continue;
-				if (rel.ChildTable.TableName != XmlConvert.DecodeName (reader.LocalName))
+				DataTable ct = rel.ChildTable;
+				if (ct.TableName != XmlConvert.DecodeName (reader.LocalName) || ct.Namespace != reader.NamespaceURI)
 					continue;
 
 				DataRow childRow = rel.ChildTable.NewRow ();
