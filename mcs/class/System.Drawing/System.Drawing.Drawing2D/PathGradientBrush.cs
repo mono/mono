@@ -26,7 +26,7 @@ namespace System.Drawing.Drawing2D
 		PointF center;
 		PointF focus;
 		RectangleF rectangle;
-		Color[] surroundColors;
+		Color [] surroundColors;
 		ColorBlend interpolationColors;
 		Matrix transform;
 		WrapMode wrapMode;
@@ -44,24 +44,26 @@ namespace System.Drawing.Drawing2D
 			GDIPlus.CheckStatus (status);
 		}
 
-		public PathGradientBrush (Point[] points) : this (points, WrapMode.Clamp)
+		public PathGradientBrush (Point [] points) : this (points, WrapMode.Clamp)
 		{
 		}
 
-		public PathGradientBrush (PointF[] points) : this (points, WrapMode.Clamp)
+		public PathGradientBrush (PointF [] points) : this (points, WrapMode.Clamp)
 		{
 		}
 
-		public PathGradientBrush (Point[] points, WrapMode wrapMode)
+		public PathGradientBrush (Point [] points, WrapMode wrapMode)
 		{
 			Status status = GDIPlus.GdipCreatePathGradientI (points, points.Length, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
 
-			status = GDIPlus.GdipGetPathGradientRect (nativeObject, out rectangle);
+			Rectangle rect;
+			status = GDIPlus.GdipGetPathGradientRectI (nativeObject, out rect);
 			GDIPlus.CheckStatus (status);
+			rectangle = (RectangleF) rect;
 		}
 
-		public PathGradientBrush (PointF[] points, WrapMode wrapMode)
+		public PathGradientBrush (PointF [] points, WrapMode wrapMode)
 		{
 			Status status = GDIPlus.GdipCreatePathGradient (points, points.Length, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -121,8 +123,8 @@ namespace System.Drawing.Drawing2D
 				return interpolationColors;
 			}
 			set {
-				Color[] colors = value.Colors;
-				int[] blend = new int [colors.Length];
+				Color [] colors = value.Colors;
+				int [] blend = new int [colors.Length];
 				for (int i = 0; i < colors.Length; i++)
 					blend [i] = colors [i].ToArgb ();
 
@@ -134,18 +136,17 @@ namespace System.Drawing.Drawing2D
 
 		public RectangleF Rectangle {
 			get {
-				
 				return rectangle;
 			}
 		}
 
-		public Color[] SurroundColors {
+		public Color [] SurroundColors {
 			get {
 				return surroundColors;
 			}
 			set {
 				int length = value.Length;
-				int[] colors = new int [length];
+				int [] colors = new int [length];
 				for (int i = 0; i < length; i++)
 					colors [i] = value [i].ToArgb ();
 
