@@ -1,9 +1,9 @@
 ﻿//	monostyle.cs
 //
 //	Adam Treat (manyoso@yahoo.com)
-//  Ben Maurer (bmaurer@users.sf.net)
+//	Ben Maurer (bmaurer@users.sf.net)
 //	(C) 2002 Adam Treat
-//  (C) 2003 Ben Maurer
+//	(C) 2003 Ben Maurer
 //
 //	This program is free software; you can redistribute it and/or modify
 //	it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ namespace Mono.Util {
 					if (!found && !IsBlankLine(str)) {
 						return -1;
 					}
-				 } catch (Exception) {
+				} catch (Exception) {
 					return -1;
 				}
 			}
@@ -282,7 +282,7 @@ namespace Mono.Util {
 
 		public static bool IsHangingBrace(String str)
 		{
-			return Regex.IsMatch(str, @"(^|\s+)\{");
+			return Regex.IsMatch(str, @"^\s*\{");
    		}
 
 		public static bool IsBlankLine(String str)
