@@ -74,6 +74,96 @@ namespace MonoTests.System.Xml
 			AssertEquals ("initial.NodeType", XmlNodeType.None, nrdr.NodeType);
 		}
 
+		[Test]
+		public void ResolveEntity ()
+		{
+			string ent1 = "<!ENTITY ent 'entity string'>";
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent1 + ent2;
+			string xml = dtd + "<root>&ent;&ent2;</root>";
+			document.LoadXml (xml);
+			AssertEquals (xml, document.OuterXml);
+			XmlNodeReader nr = new XmlNodeReader (document);
+			nr.Read ();	// DTD
+			nr.Read ();	// root
+			nr.Read ();	// &ent;
+			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			AssertEquals (1, nr.Depth);
+			nr.ResolveEntity ();
+			// It is still entity reference.
+			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			nr.Read ();
+			AssertEquals (XmlNodeType.Text, nr.NodeType);
+			AssertEquals (2, nr.Depth);
+			AssertEquals ("entity string", nr.Value);
+			nr.Read ();
+			AssertEquals (XmlNodeType.EndEntity, nr.NodeType);
+			AssertEquals (1, nr.Depth);
+			AssertEquals ("", nr.Value);
+
+			nr.Read ();	// &ent2;
+			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			AssertEquals (1, nr.Depth);
+			nr.ResolveEntity ();
+			// It is still entity reference.
+			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			// It now became element node.
+			nr.Read ();
+			AssertEquals (XmlNodeType.Element, nr.NodeType);
+			AssertEquals (2, nr.Depth);
+
+			AssertEquals (xml, document.OuterXml);
+		}
+
+		[Test]
+		public void ResolveEntity2 ()
+		{
+			document.RemoveAll ();
+			string ent1 = "<!ENTITY ent 'entity string'>";
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent1 + ent2;
+			string xml = dtd + "<root>&ent3;&ent2;</root>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.Read ();
+			document.AppendChild (document.ReadNode (xtr));
+			document.AppendChild (document.ReadNode (xtr));
+			AssertEquals (xml, document.OuterXml);
+			XmlNodeReader nr = new XmlNodeReader (document);
+			nr.Read ();	// DTD
+			nr.Read ();	// root
+			nr.Read ();	// &ent3;
+			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			// ent3 does not exists in this dtd.
+			nr.ResolveEntity ();
+			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			nr.Read ();
+#if false
+			// Hmm... MS.NET returned as it is a Text node.
+			AssertEquals (XmlNodeType.Text, nr.NodeType);
+			AssertEquals (String.Empty, nr.Value);
+			nr.Read ();
+			// Really!?
+			AssertEquals (XmlNodeType.EndEntity, nr.NodeType);
+			AssertEquals (String.Empty, nr.Value);
+#endif
+		}
+
+		[Test]
+		public void ResolveEntityWithoutDTD ()
+		{
+			document.RemoveAll ();
+			string xml = "<root>&ent;&ent2;</root>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.Read ();
+			document.AppendChild (document.ReadNode (xtr));
+			AssertEquals (xml, document.OuterXml);
+			XmlNodeReader nr = new XmlNodeReader (document);
+			nr.Read ();	// root
+			nr.Read ();	// &ent;
+			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			// ent does not exists in this dtd.
+			nr.ResolveEntity ();
+		}
 	}
 
 }

@@ -960,5 +960,25 @@ namespace MonoTests.System.Xml
 //			// set any URL of well-formed XML.
 //			document.Load ("xmlfiles/test.xml");
 //		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void LoadThrowsUndeclaredEntity ()
+		{
+			string ent1 = "<!ENTITY ent 'entity string'>";
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent1 + ent2;
+			string xml = dtd + "<root>&ent3;&ent2;</root>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			document.Load (xtr);
+		}
+
+		[Test]
+		public void ResolveEntityWithoutDTD ()
+		{
+			document.RemoveAll ();
+			document.AppendChild (document.CreateElement ("root"));
+			document.DocumentElement.AppendChild (document.CreateEntityReference ("foo"));
+		}
 	}
 }
