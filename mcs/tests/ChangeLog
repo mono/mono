@@ -1,3 +1,8 @@
+2004-11-03  Carlos Alberto Cortez <carlos@unixmexico.org>
+
+	* acc-modifiers.cs: New test for accessor modifiers
+	* acc-modifiers2.cs: New test for accessor modifiers
+
 2004-10-31  Marek Safar <marek.safar@seznam.cz>
 
 	* test-311.cs: New test for security attrbiutes.
