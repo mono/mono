@@ -279,7 +279,7 @@ public class TypeManager {
 		return (TypeContainer) builder_to_container [t];
 	}
 
-	public Interface LookupInterface (Type t)
+	public static Interface LookupInterface (Type t)
 	{
 		return (Interface) builder_to_interface [t];
 	}
