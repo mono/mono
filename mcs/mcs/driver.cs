@@ -66,11 +66,12 @@ namespace CSC
 		public void Usage ()
 		{
 			Console.WriteLine (
-				"compiler [-v] [-t tree] [-o output] [-L path] [-r reference] sources.cs\n" +
-				"-v  Verbose parsing\n"+
-				"-o  Specifies output file\n" +
-				"-L  Specifies path for loading assemblies\n" +
-				"-r  References an assembly\n");
+				"compiler [options] source-files\n\n" +
+				"-v         Verbose parsing\n"+
+				"-o         Specifies output file\n" +
+				"-L         Specifies path for loading assemblies\n" +
+				"--nostdlib Does not load core libraries\n" +
+				"-r         References an assembly\n");
 			
 		}
 
@@ -166,7 +167,6 @@ namespace CSC
 			//
 			// Setup defaults
 			//
-			references.Add ("mscorlib");
 			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
 			
 			for (i = 0; i < args.Length; i++){
@@ -209,6 +209,10 @@ namespace CSC
 						continue;
 					}
 
+					if (arg == "--nostdlib"){
+						context.StdLib = false;
+					}
+
 					Usage ();
 					error_count++;
 					return;
@@ -222,11 +226,18 @@ namespace CSC
 
 				errors += parse (context.Tree, arg);
 			}
+
+			//
+			// Load Core Library for default compilation
+			//
+			if (context.StdLib)
+				references.Add ("mscorlib");
+
 			if (errors > 0){
-				error ("// Parsing failed");
+				error ("Parsing failed");
 				return;
 			} else
-				notice ("// Parsing successful");
+				notice ("Parsing successful");
 
 			//
 			// Load assemblies required
@@ -234,7 +245,7 @@ namespace CSC
 			errors += LoadReferences ();
 
 			if (errors > 0){
-				error ("// Could not load one or more assemblies");
+				error ("Could not load one or more assemblies");
 				return;
 			}
 
@@ -243,8 +254,7 @@ namespace CSC
 			// Dumping the parsed tree.
 			//
 			// This code generation interface is only here
-			// for debugging purposes, it will change as we
-			// move to the new tree. 
+			// for debugging the parser. 
 			//
 			if (generator != null){
 				if (output_file == null){
@@ -258,10 +268,10 @@ namespace CSC
 				errors += generator.Dump (context.Tree, output);
 
 				if (errors > 0){
-					error ("// Compilation failed");
+					error ("Compilation failed");
 					return;
 				} else
-					notice ("// Compilation successful");
+					notice ("Compilation successful");
 
 				output.Flush ();
 				output.Close ();
@@ -281,12 +291,18 @@ namespace CSC
 			//
 			// The second pass of the compiler
 			//
-			context.ResolveInterfaceBases ();
-			context.ResolveClassBases ();
+			context.ResolveTree ();
 
+			if (context.Report.Errors > 0){
+				error ("Compilation failed");
+				return;
+			}
+			
 			context.CloseTypes ();
 			
 			context.CodeGen.Save (output_file);
+
+			notice ("Success");
 		}
 
 	}

@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Diagnostics;
 
 namespace CIR {
 
@@ -31,21 +32,35 @@ namespace CIR {
 		//
 		CilCodeGen cg;
 
+		//
+		// The module builder pointer
+		//
 		ModuleBuilder mb;
 
+		//
+		// Error reporting object
+		// 
 		Report report;
 
+		//
+		// The `System.Object' type, as it is used so often.
+		//
 		Type object_type;
+
+		//
+		// Whether we are being linked against the standard libraries.
+		// This is only used to tell whether `System.Object' should
+		// have a parent or not.
+		//
+		bool stdlib = true;
 		
 		public RootContext ()
 		{
-			object o = null;
-			
 			tree = new Tree ();
 			type_manager = new TypeManager ();
 			report = new Report ();
 
-			object_type = o.GetType ();
+			object_type = System.Type.GetType ("System.Object");
 		}
 
 		public TypeManager TypeManager {
@@ -77,13 +92,66 @@ namespace CIR {
 		}
 
 		//
-		// Returns the list of interfaces that this interface implements
-		// Null on error
+		// Returns the Type that represents the interface whose name
+		// is `name'.
 		//
-		Type [] GetInterfaces (Interface iface, out bool error)
+		
+		Type GetInterfaceTypeByName (string name)
+		{
+			Interface parent;
+			Type t = type_manager.LookupType (name);
+
+			if (t != null) {
+
+				if (t.IsInterface)
+					return t;
+				
+				string cause;
+				
+				if (t.IsValueType)
+					cause = "is a struct";
+				else if (t.IsClass) 
+					cause = "is a class";
+				else
+					cause = "Should not happen.";
+
+				report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
+				
+				return null;
+			}
+
+			parent = (Interface) tree.Interfaces [name];
+			if (parent == null){
+				string cause = "is undefined";
+				
+				if (tree.Classes [name] != null)
+					cause = "is a class";
+				else if (tree.Structs [name] != null)
+					cause = "is a struct";
+				
+				report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
+				return null;
+			}
+			
+			t = CreateInterface ((Interface) parent);
+			if (t == null){
+				report.Error (529,
+					      "Inherited interface `"+name+"' is circular");
+				return null;
+			}
+
+			return t;
+		}
+		
+		//
+		// Returns the list of interfaces that this interface implements
+		// Or null if it does not implement any interface.
+		//
+		// Sets the error boolean accoringly.
+		//
+		Type [] GetInterfaceBases (Interface iface, out bool error)
 		{
 			ArrayList bases = iface.Bases;
-			Hashtable source_ifaces;
 			Type [] tbases;
 			int i;
 
@@ -93,31 +161,16 @@ namespace CIR {
 			
 			tbases = new Type [bases.Count];
 			i = 0;
-			source_ifaces = tree.Interfaces;
 
 			foreach (string name in iface.Bases){
-				Type t = type_manager.LookupType (name);
-				Interface parent;
-				
-				if (t != null){
-					tbases [i++] = t;
-					continue;
-				}
-				parent = (Interface) source_ifaces [name];
-				if (parent == null){
-					error = true;
-					report.Error (246, "Can not find type `"+name+
-						      "' while defining interface `"+iface.Name+"'");
-					return null;
-				}
-				t = CreateInterface (parent);
+				Type t;
+
+				t = GetInterfaceTypeByName (name);
 				if (t == null){
-					report.Error (529,
-						      "Inherited interface `"+name+"' in `"+
-						      iface.Name+"' is recursive");
 					error = true;
 					return null;
 				}
+				
 				tbases [i++] = t;
 			}
 
@@ -128,11 +181,15 @@ namespace CIR {
 		// Creates the Interface @iface using the ModuleBuilder
 		//
 		// TODO:
-		//   Resolve recursively dependencies.
+		//   Rework the way we recurse, because for recursive
+		//   definitions of interfaces (A:B and B:A) we report the
+		//   error twice, rather than once.  
 		//
 		TypeBuilder CreateInterface (Interface iface)
 		{
 			TypeBuilder tb = iface.Definition;
+			Type [] ifaces;
+			string name;
 			bool error;
 
 			if (tb != null)
@@ -140,10 +197,12 @@ namespace CIR {
 			
 			if (iface.InTransit)
 				return null;
+			
 			iface.InTransit = true;
 
-			string name = iface.Name;
-			Type [] ifaces = GetInterfaces (iface, out error);
+			name = iface.Name;
+
+			ifaces = GetInterfaceBases (iface, out error);
 
 			if (error)
 				return null;
@@ -156,47 +215,151 @@ namespace CIR {
 					    ifaces);
 			iface.Definition = tb;
 
-			//
-			// if Recursive_Def (child) == false
-			//      error (child.Name recursive def with iface.Name)
-			//
 			type_manager.AddUserType (name, tb);
 
 			iface.InTransit = false;
 			return tb;
 		}
 
-		// <remarks>
-		//   This function is used to resolve the interfaces:
-		//   it creates the Type's as it scans for the user defined
-		//   interfaces.  This is required so we can tell the
-		//   interfaces from classes appart on the class resolution.
-		// </remarks>
-		public void ResolveInterfaceBases ()
+		//
+		// Returns the type for an interface or a class
+		//
+		Type GetInterfaceOrClass (string name)
 		{
-			Hashtable ifaces = tree.Interfaces;
+			Type t = type_manager.LookupType (name);
+			Class parent;
 
-			if (ifaces == null)
-				return;
+			if (t != null)
+				return t;
 
-			foreach (DictionaryEntry de in ifaces)
-				CreateInterface ((Interface) de.Value);
+			parent = (Class) tree.Classes [name];
+			if (parent == null){
+				report.Error (246, "Can not find type `"+name+"'");
+				return null;
+			}
+
+			t = CreateClass ((Class) parent);
+			if (t == null){
+				report.Error (146, "Class definition is circular: `"+name+"'");
+				return null;
+			}
+
+			return t;
 		}
 
-		Type [] GetBases (out Type parent, out bool error)
+		static bool ugliness_shown = false;
+		
+		//
+		// This function computes the Base class and also the
+		// list of interfaces that the class @c implements.
+		//
+		// The return value is an array (might be null) of
+		// interfaces implemented (as Types).
+		//
+		// The @parent argument is set to the parent object or null
+		// if this is `System.Object'. 
+		//
+		Type [] GetClassBases (Class c, out Type parent, out bool error)
 		{
+			ArrayList bases = c.Bases;
+			int count;
+			int start, j, i;
+			
 			error = false;
 			parent = null;
 
-			return null;
+			if (bases == null){
+				if (stdlib)
+					parent = object_type;
+				else if (c.Name != "System.Object")
+					parent = object_type;
+
+				return null;
+			}
+
+			//
+			// Bases should be null if there are no bases at all
+			//
+			count = bases.Count;
+			Debug.Assert (count > 0);
+
+			if (!ugliness_shown){
+				Console.WriteLine ("This is horrid, kill TypeRef and TypeRefManager in type.cs");
+				ugliness_shown = true;
+			}
+
+			string name = ((TypeRef) bases [0]).UnresolvedData.Name;
+			Type first = GetInterfaceOrClass (name);
+
+			if (first == null){
+				Console.WriteLine ("Handle Struct miguel!");
+				return null;
+			}
+			
+			if (first.IsClass){
+				parent = first;
+				start = 1;
+			} else {
+				parent = object_type;
+				start = 0;
+			}
+
+			//
+			// No interfaces
+			//
+			if (count == 1)
+				return null;
+				
+			Type [] ifaces = new Type [count-start];
+			
+			for (i = start, j = 0; i < count; i++, j++){
+				name = ((TypeRef) bases [i]).UnresolvedData.Name;
+				Type t = GetInterfaceOrClass (name);
+
+				if (t == null){
+					error = true;
+					return null;
+				}
+
+				if (t.IsSealed) {
+					string detail = "";
+					
+					if (t.IsValueType)
+						detail = " (a class can not inherit from a struct)";
+							
+					report.Error (509, "class `"+c.Name+
+						      "': Cannot inherit from sealed class `"+
+						      bases [i]+"'"+detail);
+					error = true;
+					return null;
+				}
+
+				if (t.IsClass) {
+					if (parent != null){
+						report.Error (527, "In Class `"+c.Name+"', type `"+
+							      name+"' is not an interface");
+						error = true;
+						return null;
+					}
+				}
+				
+				ifaces [j] = t;
+			}
+
+			return ifaces;
 		}
-		
+
+		// <remarks>
+		//   Creates the TypeBuilder for the class @c.  
+		// </remarks>
+		//
 		TypeBuilder CreateClass (Class c)
 		{
 			TypeBuilder tb = c.Definition;
 			Type parent;
 			Type [] ifaces;
 			bool error;
+			string name;
 			
 			if (tb != null)
 				return tb;
@@ -205,36 +368,72 @@ namespace CIR {
 				return null;
 			c.InTransit = true;
 
-			string name = c.Name;
+			name = c.Name;
 
-			if (c.Bases != null){
-				ifaces = GetBases (out parent, out error);
-			} else {
-				ifaces = null;
-				parent = object_type;
-			}
+			ifaces = GetClassBases (c, out parent, out error);
 
+			if (error)
+				return null;
+
+			tb = mb.DefineType (name,
+					    c.TypeAttr | TypeAttributes.Class,
+					    parent,
+					    ifaces);
+			c.Definition = tb;
+			type_manager.AddUserType (name, tb);
+			c.InTransit = false;
+			
 			return tb;
 		}
-		       
-		// <remarks>
-		//   This function resolves the parenthood of the classes
-		//   This should be invoked after the ResolveInterfaceBases,
-		//   as we need to be able to tell the difference between interfaces
-		//   and classes in the list of `bases' that was provided in the source
-		// </remarks>
-		public void ResolveClassBases ()
+
+		TypeBuilder CreateStruct (Struct s)
 		{
-			Hashtable classes = tree.Classes;
+			// FIXME: I should really just reuse the code above.
+			// 
 
-			if (classes == null)
-				return;
-
-			foreach (DictionaryEntry de in classes){
-				CreateClass ((Class) (de.Value));
-			}
+			return null;
 		}
 
+		// <remarks>
+		//   This function is used to resolve the hierarchy tree.
+		//   It processes interfaces, structs and classes in that order.
+		//
+		//   It creates the TypeBuilder's as it processes the user defined
+		//   types.  
+		// </remarks>
+		public void ResolveTree ()
+		{
+			Hashtable ifaces, classes, structs;
+
+			//
+			// Interfaces are processed first, as classes and
+			// structs might inherit from an object or implement
+			// a set of interfaces, we need to be able to tell
+			// them appart by just using the TypeManager.
+			//
+			ifaces = tree.Interfaces;
+			if (ifaces != null){
+				foreach (DictionaryEntry de in ifaces)
+					CreateInterface ((Interface) de.Value);
+			}
+
+			//
+			// Process structs and classes next.  Our code assumes
+			// this order (just for error reporting purposes).
+			//
+			structs = tree.Structs;
+			if (structs != null){
+				foreach (DictionaryEntry de in structs)
+					CreateStruct ((Struct) de.Value);
+			}
+
+			classes = tree.Classes;
+			if (classes != null){
+				foreach (DictionaryEntry de in classes)
+					CreateClass ((Class) de.Value);
+			}
+		}
+			
 		// <summary>
 		//   Closes all open types
 		// </summary>
@@ -249,6 +448,25 @@ namespace CIR {
 		{
 			foreach (TypeBuilder t in type_manager.UserTypes){
 				t.CreateType ();
+			}
+		}
+
+		// <summary>
+		//   Compiling against Standard Libraries property.
+		// </summary>
+		public bool StdLib {
+			get {
+				return stdlib;
+			}
+
+			set {
+				stdlib = value;
+			}
+		}
+
+		public Report Report {
+			get {
+				return report;
 			}
 		}
 	}

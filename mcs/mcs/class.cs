@@ -15,6 +15,7 @@
 //
 
 using System.Collections;
+using System.Reflection;
 using System;
 
 namespace CIR {
@@ -315,6 +316,34 @@ namespace CIR {
 			return 0;
 		}
 
+		// <summary>
+		//   Returns the TypeAttributes for this TypeContainer
+		// </summary>
+		public TypeAttributes TypeAttr {
+			get {
+				TypeAttributes x = 0;
+
+				//
+				// FIXME: Figure out exactly how private, public and protected
+				// map to the TypeAttribute flags.
+				//
+				// FIXME: Figure out what `new' in the context of a class/struct means.
+				//
+				// FIXME: figure out what `internal' means in the context of class/structs
+				//
+				if ((mod_flags & Modifiers.PRIVATE) == 0)
+					x |= TypeAttributes.Public;
+				
+				if ((mod_flags & Modifiers.ABSTRACT) != 0)
+					x |= TypeAttributes.Abstract;
+				
+				if ((mod_flags & Modifiers.SEALED) != 0)
+					x |= TypeAttributes.Sealed;
+
+				return x;
+			}
+		}
+		
 		public delegate void VisitContainer (TypeContainer container, object cback_data);
 
 		void VisitTypesAt (TypeContainer root, VisitContainer visit, object cback)
@@ -487,6 +516,8 @@ namespace CIR {
 				accmods = Modifiers.PRIVATE;
 			
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, accmods);
+
+			this.mod_flags |= Modifiers.SEALED;
 		}
 	}
 

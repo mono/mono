@@ -1,5 +1,27 @@
 2001-08-04  Miguel de Icaza  <miguel@ximian.com>
 
+	* rootcontext.cs: 
+
+	* class.cs (Struct::Struct): set the SEALED flags after
+	checking the modifiers.
+	(TypeContainer::TypeAttr): new property, returns the
+	TypeAttributes for a class.  
+
+	* cs-parser.jay (type_list): Oops, list production was creating a
+	new list of base types.
+
+	* rootcontext.cs (StdLib): New property.
+	(GetInterfaceTypeByName): returns an interface by type name, and
+	encapsulates error handling here.
+	(GetInterfaces): simplified.
+	(ResolveTree): Encapsulated all the tree resolution here.
+	(CreateClass, GetClassBases, GetInterfaceOrClass): Create class
+	types. 
+	
+	* driver.cs: Add support for --nostdlib, to avoid loading the
+	default assemblies.
+	(Main): Do not put tree resolution here. 
+
 	* rootcontext.cs: Beginning of the class resolution.
 
 2001-08-03  Miguel de Icaza  <miguel@ximian.com>

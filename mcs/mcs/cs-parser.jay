@@ -1289,8 +1289,9 @@ type_list
 	  }
 	| type_list COMMA type
 	  {
-		ArrayList types = new ArrayList ();
-		types.Add ($2);
+		ArrayList types = (ArrayList) $1;
+
+		types.Add ($3);
 		$$ = types;
 	  }
 	;
@@ -1985,7 +1986,7 @@ modifier
 
 opt_class_base
 	: /* empty */		{ $$ = null; }
-	| class_base		{ $$ = $1; }
+	| class_base		{ $$ = $1;   }
 	;
 
 class_base
