@@ -1,3 +1,7 @@
+2004-12-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BaseCalls.cs: Removed useless try/catch.
+
 2004-09-27  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ContextsTest.cs: Fixed test sequence.

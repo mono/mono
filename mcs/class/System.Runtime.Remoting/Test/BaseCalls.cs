@@ -34,14 +34,7 @@ namespace MonoTests.Remoting
 		[TestFixtureSetUp]
 		public void Run()
 		{
-			try
-			{
-				remoteDomId = CreateServer ();
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine (ex);
-			}
+			remoteDomId = CreateServer ();
 		}
 
 		[TestFixtureTearDown]
