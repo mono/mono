@@ -1503,6 +1503,10 @@ namespace CIR {
 		
 		public override Expression Resolve (TypeContainer tc)
 		{
+			expr = expr.Resolve (tc);
+			if (expr == null)
+				return null;
+			
 			type = tc.LookupType (target_type, false);
 			eclass = ExprClass.Value;
 			
