@@ -130,54 +130,54 @@ namespace MonoTests.System.Drawing
 			}
 
 			
-			AssertEquals ("CF#1", imageFmt, (ImageFormat) imgFmtConvFrmTD.ConvertFrom (null,
+			AssertEquals ("CF#1A", imageFmt, (ImageFormat) imgFmtConvFrmTD.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
 								ImageFormat.Bmp.ToString ()));
 			
 			try {
 				imgFmtConvFrmTD.ConvertFrom ("System.Drawing.String");
-				Fail ("CF#2: must throw NotSupportedException");
+				Fail ("CF#2A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#2", e is NotSupportedException);
+				Assert ("CF#2A", e is NotSupportedException);
 			}
 
 			try {
 				imgFmtConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   "System.Drawing.String");
-				Fail ("CF#2a: must throw NotSupportedException");
+				Fail ("CF#2aA: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#2a", e is NotSupportedException);
+				Assert ("CF#2aA", e is NotSupportedException);
 			}
 
 			try {
 				imgFmtConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   ImageFormat.Bmp);
-				Fail ("CF#3: must throw NotSupportedException");
+				Fail ("CF#3A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#3", e is NotSupportedException);
+				Assert ("CF#3A", e is NotSupportedException);
 			}
 
 			try {
 				imgFmtConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   ImageFormat.Bmp.Guid);
-				Fail ("CF#4: must throw NotSupportedException");
+				Fail ("CF#4A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#4", e is NotSupportedException);
+				Assert ("CF#4A", e is NotSupportedException);
 			}
 
 			try {
 				imgFmtConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Object ());
-				Fail ("CF#5: must throw NotSupportedException");
+				Fail ("CF#5A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#5", e is NotSupportedException);
+				Assert ("CF#5A", e is NotSupportedException);
 			}
 
 			try {
 				imgFmtConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, 10);
-				Fail ("CF#6: must throw NotSupportedException");
+				Fail ("CF#6A: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#6", e is NotSupportedException);
+				Assert ("CF#6A", e is NotSupportedException);
 			}
 		}
 
@@ -202,9 +202,9 @@ namespace MonoTests.System.Drawing
 			try {
 				imgFmtConv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 imageFmt, typeof (Guid));
-				Fail ("CT#2: must throw NotSupportedException");
+				Fail ("CT#2a: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#2", e is NotSupportedException);
+				Assert ("CT#2a", e is NotSupportedException);
 			}
 
 			try {
@@ -242,9 +242,9 @@ namespace MonoTests.System.Drawing
 			try {
 				imgFmtConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 						 imageFmt, typeof (Guid));
-				Fail ("CT#2A: must throw NotSupportedException");
+				Fail ("CT#2aA: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#2A", e is NotSupportedException);
+				Assert ("CT#2aA", e is NotSupportedException);
 			}
 
 			try {
